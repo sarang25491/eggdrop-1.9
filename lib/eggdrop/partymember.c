@@ -68,6 +68,11 @@ int partymember_get_pid()
 {
 	int pid;
 
+	for (pid = 0; partymember_lookup_pid(pid); pid++) {
+		;
+	}
+	return(pid);
+#if 0
 	while (partymember_lookup_pid(g_pid)) {
 		g_pid++;
 		if (g_pid >= PID_WRAPAROUND) g_pid = 0;
@@ -75,6 +80,7 @@ int partymember_get_pid()
 	pid = g_pid++;
 	if (g_pid >= PID_WRAPAROUND) g_pid = 0;
 	return(pid);
+#endif
 }
 
 partymember_t *partymember_new(int pid, user_t *user, const char *nick, const char *ident, const char *host, partyline_event_t *handler, void *client_data)

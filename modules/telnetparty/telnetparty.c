@@ -24,12 +24,13 @@ static int telnet_port = 0;
 static int telnet_on_newclient(void *client_data, int idx, int newidx, const char *peer_ip, int peer_port);
 static int telnet_on_read(void *client_data, int idx, char *data, int len);
 static int telnet_on_eof(void *client_data, int idx, int err, const char *errmsg);
+static int telnet_on_delete(void *client_data, int idx);
 static int telnet_filter_read(void *client_data, int idx, char *data, int len);
 static int telnet_filter_write(void *client_data, int idx, const char *data, int len);
 static int telnet_filter_delete(void *client_data, int idx);
 
 static int ident_result(void *client_data, const char *ip, int port, const char *reply);
-static int dns_result(void *client_data, const char *ip, const char *host);
+static int dns_result(void *client_data, const char *ip, char **hosts);
 static int process_results(telnet_session_t *session);
 
 static sockbuf_handler_t server_handler = {
@@ -50,7 +51,8 @@ static sockbuf_filter_t telnet_filter = {
 static sockbuf_handler_t client_handler = {
 	"telnet",
 	NULL, telnet_on_eof, NULL,
-	telnet_on_read, NULL
+	telnet_on_read, NULL,
+	telnet_on_delete
 };
 
 int telnet_init()
@@ -114,11 +116,14 @@ static int ident_result(void *client_data, const char *ip, int port, const char 
 	return(0);
 }
 
-static int dns_result(void *client_data, const char *ip, const char *host)
+static int dns_result(void *client_data, const char *ip, char **hosts)
 {
 	telnet_session_t *session = client_data;
+	const char *host;
 
-	if (!host) host = ip;
+	if (!hosts || !hosts[0]) host = ip;
+	else host = hosts[0];
+
 	session->host = strdup(host);
 	process_results(session);
 	return(0);
@@ -203,7 +208,7 @@ static int telnet_on_eof(void *client_data, int idx, int err, const char *errmsg
 	return(0);
 }
 
-static int telnet_on_delete(void *client_data)
+static int telnet_on_delete(void *client_data, int idx)
 {
 	telnet_session_t *session = client_data;
 

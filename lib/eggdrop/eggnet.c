@@ -22,7 +22,7 @@ typedef struct connect_info {
 	int port;
 } connect_info_t;
 
-static int connect_host_resolved(void *client_data, const char *host, const char *ip);
+static int connect_host_resolved(void *client_data, const char *host, char **ips);
 static int egg_connect_timeout(void *client_data);
 static int egg_on_connect(void *client_data, int idx, const char *peer_ip, int peer_port);
 static int egg_on_eof(void *client_data, int idx, int err, const char *errmsg);
@@ -115,7 +115,7 @@ int egg_reconnect(int idx, const char *host, int port, int timeout)
 	connect_info->idx = idx;
 	sockbuf_attach_filter(connect_info->idx, &eggnet_connect_filter, connect_info);
 	connect_info->timer_id = -1;
-	connect_info->dns_id = egg_dns_lookup(host, DNS_IPV4, connect_host_resolved, connect_info);
+	connect_info->dns_id = egg_dns_lookup(host, -1, connect_host_resolved, connect_info);
 	if (timeout > 0) {
 		char buf[128];
 
@@ -136,14 +136,14 @@ int egg_connect(const char *host, int port, int timeout)
 	return(idx);
 }
 
-static int connect_host_resolved(void *client_data, const char *host, const char *ip)
+static int connect_host_resolved(void *client_data, const char *host, char **ips)
 {
 	connect_info_t *connect_info = client_data;
 	int sock, idx;
 
 	connect_info->dns_id = -1;
 
-	if (!ip) {
+	if (!ips || !ips[0]) {
 		idx = connect_info->idx;
 		detach(client_data, idx);
 		sockbuf_on_eof(idx, EGGNET_LEVEL, -1, "Could not resolve host");
@@ -152,7 +152,7 @@ static int connect_host_resolved(void *client_data, const char *host, const char
 
 	/* Proxy/firewall/vhost code goes here. */
 
-	sock = socket_create(ip, connect_info->port, NULL, 0, SOCKET_CLIENT|SOCKET_TCP|SOCKET_NONBLOCK);
+	sock = socket_create(ips[0], connect_info->port, NULL, 0, SOCKET_CLIENT|SOCKET_TCP|SOCKET_NONBLOCK);
 	if (sock < 0) {
 		idx = connect_info->idx;
 		detach(client_data, idx);

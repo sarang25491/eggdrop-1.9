@@ -302,7 +302,7 @@ int bind_check(bind_table_t *table, flags_t *user_flags, const char *match, ...)
 	void *args[11];
 	bind_entry_t *entry, *next, *winner = NULL;
 	int i, cmp, retval;
-	int tie = 0, matchlen = 0, masklen = 0;
+	int tie = 0, matchlen = 0;
 	va_list ap;
 
 	check_bind_executing++;
@@ -340,10 +340,10 @@ int bind_check(bind_table_t *table, flags_t *user_flags, const char *match, ...)
 		}
 		else if (table->match_type & MATCH_PARTIAL) {
 			cmp = 1;
-			masklen = strlen(entry->mask);
-			if (!strncasecmp(match, entry->mask, masklen < matchlen ? masklen : matchlen)) {
+			if (!strncasecmp(match, entry->mask, matchlen)) {
 				winner = entry;
-				if (masklen == matchlen) {
+				/* Is it an exact match? */
+				if (!entry->mask[matchlen]) {
 					tie = 1;
 					break;
 				}

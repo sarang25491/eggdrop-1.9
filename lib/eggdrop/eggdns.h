@@ -7,10 +7,11 @@
 
 #define DNS_PORT	53
 
+typedef int (*dns_callback_t)(void *client_data, const char *query, char **result);
 int egg_dns_init();
 void egg_dns_send(char *query, int len);
-int egg_dns_lookup(const char *host, int timeout, int (*callback)(), void *client_data);
-int egg_dns_reverse(const char *ip, int timeout, int (*callback)(), void *client_data);
+int egg_dns_lookup(const char *host, int timeout, dns_callback_t callback, void *client_data);
+int egg_dns_reverse(const char *ip, int timeout, dns_callback_t callback, void *client_data);
 int egg_dns_cancel(int id, int issue_callback);
 
 #endif /* _EGGDNS_H_ */

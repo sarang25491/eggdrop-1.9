@@ -94,9 +94,9 @@ static sockbuf_filter_t dcc_recv_filter = {
 	NULL, dcc_recv_delete
 };
 
-static int dcc_dns_callback(void *client_data, const char *host, const char *ip)
+static int dcc_dns_callback(void *client_data, const char *host, char **ips)
 {
-	if (ip) str_redup(&current_server.myip, ip);
+	if (ips && ips[0]) str_redup(&current_server.myip, ips[0]);
 	else str_redup(&current_server.myip, "127.0.0.1");
 	socket_ip_to_uint(current_server.myip, &current_server.mylongip);
 	return(0);

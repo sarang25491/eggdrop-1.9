@@ -72,7 +72,7 @@ static int party_who(partymember_t *p, const char *nick, user_t *u, const char *
 	qsort(pids, len, sizeof(int), intsorter);
 	for (i = 0; i < len; i++) {
 		who = partymember_lookup_pid(pids[i]);
-		partymember_printf(p, "  [%.5d] %s (%s@%s)", who->pid, who->nick, who->ident, who->host);
+		partymember_printf(p, "  [%5d] %s (%s@%s)", who->pid, who->nick, who->ident, who->host);
 	}
 	free(pids);
 	return(0);

@@ -1,8 +1,8 @@
-# $Id: Makefile.am,v 1.22 2003/06/11 08:37:38 stdarg Exp $
+# $Id: Makefile.am,v 1.23 2003/06/18 04:10:22 stdarg Exp $
 
 MAINTAINERCLEANFILES	= Makefile.in
 
-INCLUDES		= -I$(top_srcdir) -I$(top_srcdir)/lib
+INCLUDES		= -I$(top_srcdir) -I$(top_srcdir)/lib $(INCLTDL)
 
 lib_LTLIBRARIES 	= libeggdrop.la
 
@@ -40,6 +40,4 @@ libeggdrop_la_SOURCES	= base64.c base64.h \
 			xml.c xmlread.c xmlwrite.c xml.h
 
 libeggdrop_la_LIBADD	= @LIBLTDL@ \
-			$(top_builddir)/lib/compat/libcompat.la \
-		   	$(top_builddir)/lib/egglib/libegg.la
-
+			$(top_builddir)/lib/compat/libcompat.la
