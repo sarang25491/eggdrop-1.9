@@ -1,3 +1,14 @@
+2001-12-18 06:30  Jeff Fisher <guppy@techmonkeys.org>
+
+	* eggdrop.complete.conf, doc/html/mod-server.html,
+	doc/settings/mod.server, lib/eggdrop/module.h,
+	modules/server/server.c, modules/server/servmsg.c,
+	modules/server/help/set/server.help:
+
+	strict-servernames is gone, also I cleaned up a few leftovers from
+	the old bind code ... hopefully it was done right otherwise stdarg
+	is gonna murder me 
+
 2001-12-18 05:49  Jeff Fisher <guppy@techmonkeys.org>
 
 	* eggdrop.complete.conf, doc/html/egg-core.html,
