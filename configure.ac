@@ -78,7 +78,7 @@ EGG_TYPE_SOCKLEN_T
 EGG_INADDR_LOOPBACK
 
 # Checks for library functions
-AC_CHECK_FUNCS(clock dprintf fsync getdtablesize getrusage isascii)
+AC_CHECK_FUNCS(clock dprintf fsync getdtablesize getrusage isascii strerror)
 AC_CHECK_FUNCS(random srandom rename setpgid sigaction sigemptyset uname)
 
 # Check for these functions, and replace those not found

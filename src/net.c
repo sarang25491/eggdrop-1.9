@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.53 2002/01/19 20:08:58 ite Exp $
+ * $Id: net.c,v 1.54 2002/03/05 19:53:48 stdarg Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -139,6 +139,14 @@ struct in6_addr ipv4to6(IP a)
 
 void neterror(char *s)
 {
+#ifdef HAVE_STRERROR
+	int e = errno;
+	char *err = strerror(e);
+
+	/* Calling procs usually use char s[UHOSTLEN] for the error message. */
+	if (err) strncpyz(s, err, UHOSTLEN);
+	else sprintf(s, "Unforeseen error %d", e);
+#else
   switch (errno) {
   case EADDRINUSE:
     strcpy(s, "Address already in use");
@@ -208,6 +216,7 @@ void neterror(char *s)
     sprintf(s, "Unforseen error %d", errno);
     break;
   }
+#endif
 }
 
 /* Sets/Unsets options for a specific socket.
