@@ -1,3 +1,9 @@
+2001-10-14 21:01  Tothwolf <tothwolf@techmonkeys.org>
+
+	* src/mod/irc.mod/mode.c:
+
+	* need to initialize msg in gotmode() 
+
 2001-10-14 20:31  Federico Mennite <ite@techmonkeys.org>
 
 	* src/mod/blowfish.mod/blowfish.c:
