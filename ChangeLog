@@ -1,3 +1,9 @@
+2002-02-13 23:56  Axel Franke <eule@berlin.snafu.de>
+
+	* doc/tcl-commands.doc, modules/channels/tclchan.c:
+
+	added as tcl-command isglobalban, isglobalexempt and isglobalinvite 
+
 2002-02-13 22:57  Federico Mennite <ite@techmonkeys.org>
 
 	* src/: main.c, userrec.c:
