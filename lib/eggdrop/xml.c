@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xml.c,v 1.12 2004/06/22 20:12:37 wingman Exp $";
+static const char rcsid[] = "$Id: xml.c,v 1.13 2004/06/22 21:55:32 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -57,10 +57,17 @@ xml_node_t *xml_node_new(void)
 	return node;
 }
 
-/* Delete a node and its children. */
-void xml_node_destroy (xml_node_t *node)
+void xml_node_delete(xml_node_t *node)
+{
+	xml_node_delete_callbacked(node, NULL);
+}
+
+void xml_node_delete_callbacked(xml_node_t *node, void (*callback)(void *))
 {
 	int i;
+
+	if (node->client_data && callback)
+		callback(node->client_data);
 
 	if (node->parent) {
 		xml_node_t *parent = node->parent;
@@ -83,7 +90,7 @@ void xml_node_destroy (xml_node_t *node)
 	if (node->attributes) free(node->attributes);
 	for (i = 0; i < node->nchildren; i++) {
 		node->children[i]->parent = NULL;
-		xml_node_destroy(node->children[i]);
+		xml_node_delete_callbacked(node->children[i], callback);
 	}
 	if (node->children) free(node->children);
 	free(node);
@@ -293,15 +300,8 @@ int xml_node_set_str(const char *str, xml_node_t *node, ...)
 	va_end(args);
 	if (!node) return(-1);
 
-	if (node->text) free(node->text);
-	if (str) {
-		node->text = strdup(str);
-		node->len = strlen(str);
-	}
-	else {
-		node->text = NULL;
-		node->len = -1;
-	}
+	str_redup(&node->text, str);
+	node->len = (str) ? strlen(str) : -1;
 
 	return(0);
 }

@@ -18,13 +18,17 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: memory.c,v 1.4 2004/06/22 20:12:37 wingman Exp $";
+static const char rcsid[] = "$Id: memory.c,v 1.5 2004/06/22 21:55:32 wingman Exp $";
 #endif
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <malloc.h>
 #include <string.h>
+
+#define MEM_DEBUG_NONE               (1 << 0)
+#define MEM_DEBUG_PRINT_EACH_CALL    (1 << 1)
+#define MEM_DEBUG_PRINT_ERRORS       (1 << 2)
 
 typedef struct {
 	void *ptr;
@@ -40,9 +44,16 @@ struct {
 	mem_block_t *blocks;
 } mem = { 0, 0, NULL };
 
+static int options = MEM_DEBUG_NONE;
+
 static int mem_dbg_trace_alloc(void *ptr, size_t size, const char *file, int line, const char *func);
 static int mem_dbg_trace_realloc(void *newptr, void *oldptr, size_t size, const char *file, int line, const char *func);
 static int mem_dbg_trace_free(void *ptr, const char *file, int line, const char *func);
+
+void mem_dbg_set_options(int opts)
+{
+	options = opts;
+}
 
 void *mem_dbg_calloc(size_t nmemb, size_t size, const char *file, int line, const char *func)
 {
@@ -50,8 +61,9 @@ void *mem_dbg_calloc(size_t nmemb, size_t size, const char *file, int line, cons
 
 	/* invalid size */
 	if (size <= 0 || nmemb <= 0) {
-		fprintf(stderr, "*** Failed calloc call at %s in line %i (%s): negative (%i) size or no (%i) requested.\n",
-				file, line, func, size, nmemb);
+		if (options & MEM_DEBUG_PRINT_ERRORS)
+			fprintf(stderr, "*** Failed calloc call at %s in line %i (%s): negative (%i) size or no (%i) requested.\n",
+					file, line, func, size, nmemb);
 		return NULL;
 	}
 
@@ -62,8 +74,9 @@ void *mem_dbg_calloc(size_t nmemb, size_t size, const char *file, int line, cons
 
 	/* failed to allocate bytes */
 	if (ptr == NULL) {
-		fprintf(stderr, "*** Failed calloc call at %s in line %i (%s): NULL returned.\n",
-				file, line, func);
+		if (options & MEM_DEBUG_PRINT_ERRORS)
+			fprintf(stderr, "*** Failed calloc call at %s in line %i (%s): NULL returned.\n",
+					file, line, func);
 		return NULL;
 	} 
 
@@ -76,8 +89,9 @@ void *mem_dbg_alloc(size_t size, const char *file, int line, const char *func)
 
 	/* invalid size */
 	if (size <= 0) {
-		fprintf(stderr, "*** Failed malloc call at %s in line %i (%s): negative (%i) size requested.\n",
-				file, line, func, size);
+		if (options & MEM_DEBUG_PRINT_ERRORS)
+			fprintf(stderr, "*** Failed malloc call at %s in line %i (%s): negative (%i) size requested.\n",
+					file, line, func, size);
 		return NULL;
 	}
 
@@ -88,8 +102,9 @@ void *mem_dbg_alloc(size_t size, const char *file, int line, const char *func)
 		
 	/* failed to allocate bytes */
 	if (ptr == NULL) {
-		fprintf(stderr, "*** Failed malloc call at %s in line %i (%s): NULL returned.\n",
-				file, line, func);
+		if (options & MEM_DEBUG_PRINT_ERRORS)
+			fprintf(stderr, "*** Failed malloc call at %s in line %i (%s): NULL returned.\n",
+					file, line, func);
 		return NULL;
 	}	
 
@@ -142,8 +157,9 @@ void *mem_dbg_realloc(void *ptr, size_t size, const char *file, int line, const 
 
 	/* invalid size */
 	if (size < 0) {
-		fprintf(stderr, "*** Failed realloc call at %s in line %i (%s): negative (%i) size requested.\n",
-				file, line, func, size);
+		if (options & MEM_DEBUG_PRINT_ERRORS)
+			fprintf(stderr, "*** Failed realloc call at %s in line %i (%s): negative (%i) size requested.\n",
+					file, line, func, size);
 		return NULL;
 	}
 
@@ -154,8 +170,9 @@ void *mem_dbg_realloc(void *ptr, size_t size, const char *file, int line, const 
 
 	/* failed to allocate bytes */
 	if (newptr == NULL) {
-		fprintf(stderr, "*** Failed realloc call at %s in line %i (%s): NULL returned.\n",
-				file, line, func);
+		if (options & MEM_DEBUG_PRINT_ERRORS)
+			fprintf(stderr, "*** Failed realloc call at %s in line %i (%s): NULL returned.\n",
+					file, line, func);
 		return NULL;
 	}
 
@@ -176,7 +193,8 @@ static int mem_dbg_trace_alloc(void *ptr, size_t size, const char *file, int lin
 	
 	block = &mem.blocks[mem.length++];
 	
-	/*fprintf(stderr, "*** N %s:%i@%s: %i 0x%p\n", file, line, func, size, ptr);*/
+	if (options & MEM_DEBUG_PRINT_EACH_CALL)
+		fprintf(stderr, "*** N %s:%i@%s: %i %p\n", file, line, func, size, ptr);
 
 	block->ptr = ptr;
 	block->size = size;
@@ -200,12 +218,14 @@ static int mem_dbg_trace_realloc(void *newptr, void *oldptr, size_t size, const 
 	}
 	
 	if (block == NULL) {
-		fprintf(stderr, "*** Invalid realloc call at %s in line %i (%s): Unknown pointer passed (0x%p).\n",
-			file, line, func, oldptr);
+		if (options & MEM_DEBUG_PRINT_ERRORS)
+			fprintf(stderr, "*** Invalid realloc call at %s in line %i (%s): Unknown pointer passed (%p).\n",
+				file, line, func, oldptr);
 		return 0;
 	}
 	
-	/*fprintf(stderr, "*** U %s:%i@%s: %i 0x%x 0x%x\n", file, line, func, size, newptr, oldptr);*/
+	if (options & MEM_DEBUG_PRINT_EACH_CALL)
+		fprintf(stderr, "*** U %s:%i@%s: %i %p %p\n", file, line, func, size, newptr, oldptr);
 
 	/* update block */
 	block->ptr = newptr;
@@ -230,12 +250,14 @@ static int mem_dbg_trace_free(void *ptr, const char *file, int line, const char 
 	}
 	
 	if (block == NULL) {
-		fprintf(stderr, "Invalid free call at %s in line %i (%s): Unknown pointer passed (0x%p).\n",
-				file, line, func, ptr);
+		if (options & MEM_DEBUG_PRINT_ERRORS)
+			fprintf(stderr, "Invalid free call at %s in line %i (%s): Unknown pointer passed (%p).\n",
+					file, line, func, ptr);
 		return 0;
 	}
 	
-	/*fprintf(stderr, "*** F %s:%i@%s: %i 0x%p\n", file, line, func, block->size, ptr);*/
+	if (options & MEM_DEBUG_PRINT_EACH_CALL)
+		fprintf(stderr, "*** F %s:%i@%s: %i %p\n", file, line, func, block->size, ptr);
 
 	/* overwrite with last entry, we don't care about ordered array */
 	mem.blocks[i] = mem.blocks[--mem.length];
@@ -277,7 +299,7 @@ void mem_dbg_stats()
 			data = (char *)block->ptr;
 		}
 
-		fprintf(fd, "%-16s %4i %-25s %5i 0x%p %s\n", block->file, block->line, block->func, block->size, block->ptr, data);
+		fprintf(fd, "%-16s %4i %-25s %5i %p %s\n", block->file, block->line, block->func, block->size, block->ptr, data);
 
 		size += block->size;
 	}

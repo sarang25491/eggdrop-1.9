@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.175 2004/06/22 20:12:37 wingman Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.176 2004/06/22 21:55:32 wingman Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -206,7 +206,6 @@ static void do_args(int argc, char *const *argv)
 				backgrd = 0;
 				debug_run = 1;
 				break;
-
 			case 'v':
 				print_version();
 				exit(0);

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partychan.c,v 1.14 2004/06/22 20:12:37 wingman Exp $";
+static const char rcsid[] = "$Id: partychan.c,v 1.15 2004/06/22 21:55:32 wingman Exp $";
 #endif
 
 #include <stdarg.h>
@@ -59,6 +59,9 @@ int partychan_shutdown(void)
 	bind_table_del(BT_partypart);
 	bind_table_del(BT_partyjoin);
 	
+	/* flush any pending partychan deletes */
+	garbage_run();
+
 	hash_table_destroy(cid_ht);
 
 	return (0);

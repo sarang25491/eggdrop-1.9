@@ -16,12 +16,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: memory.h,v 1.1 2004/06/22 10:54:42 wingman Exp $
+ * $Id: memory.h,v 1.2 2004/06/22 21:55:32 wingman Exp $
  */
 #ifndef _EGG_MEMORY_H
 #define _EGG_MEMORY_H
 
 #include <stdlib.h>			/* size_t	*/
+
+#define MEM_DEBUG_NONE			(1 << 0)
+#define MEM_DEBUG_PRINT_EACH_CALL	(1 << 1)
+#define MEM_DEBUG_PRINT_ERRORS		(1 << 2)
 
 #ifdef DEBUG
 
@@ -63,6 +67,7 @@ void *mem_dbg_alloc(size_t size, const char *file, int line, const char *func);
 void *mem_dbg_realloc(void *ptr, size_t size, const char *file, int line, const char *func);
 void mem_dbg_free(void *ptr, const char *file, int line, const char *func);
 
+void mem_dbg_set_options(int options);
 void mem_dbg_stats();
 
 #endif /* _EGG_MEMORY_H */

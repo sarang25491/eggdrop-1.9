@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: config.c,v 1.3 2004/06/22 19:08:15 wingman Exp $";
+static const char rcsid[] = "$Id: config.c,v 1.4 2004/06/22 21:55:31 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -44,6 +44,8 @@ typedef struct {
 static config_handle_t *roots = NULL;
 int nroots = 0;
 
+static void config_delete_var(void *client_data);
+
 int config_init(void)
 {
 	BT_config_str = bind_table_add(BTN_CONFIG_STR, 2, "ss", MATCH_MASK, BIND_STACKABLE);	/* DDD	*/
@@ -56,15 +58,9 @@ int config_shutdown(void)
 {
 	int i;
 
-	for (i = 0; i < nroots; i++) {
-		if (roots[i].handle)
-			free(roots[i].handle);
-		if (roots[i].root)
-			xml_node_destroy(roots[i].root);
+	for (i = nroots - 1; i >= 0; i--) {
+		config_delete_root(roots[i].handle);
 	}
-	if (roots)
-		free(roots);
-	roots = NULL;
 	nroots = 0;
 
 	bind_table_del(BT_config_str);
@@ -99,11 +95,16 @@ int config_delete_root(const char *handle)
 
 	for (i = 0; i < nroots; i++) {
 		if (!strcasecmp(handle, roots[i].handle)) {
+			if (roots[i].handle) free(roots[i].handle);
+			xml_node_delete_callbacked(roots[i].root, config_delete_var);
 			memmove(roots+i, roots+i+1, sizeof(*roots) * (nroots-i-1));
-			nroots--;
-			return(0);
+			if (--nroots == 0)
+				free(roots);
+			return (0);	
 		}
 	}
+
+
 	return(-1);
 }
 
@@ -133,11 +134,26 @@ int config_save(const char *handle, const char *fname)
 	return(0);
 }
 
+static void config_delete_var(void *client_data)
+{
+	config_var_t *var = client_data;
+
+	switch (var->type) {
+		case (CONFIG_STRING):
+			free(*(char **)var->ptr);
+			var->ptr = NULL;
+			break;
+		case (CONFIG_INT):
+			break;
+	}
+}
+
 int config_destroy(void *config_root)
 {
 	xml_node_t *root = config_root;
 
-	xml_node_destroy(root);
+	xml_node_delete_callbacked(root, config_delete_var);
+
 	return(0);
 }
 
@@ -304,8 +320,18 @@ int config_update_table(config_var_t *table, void *config_root, ...)
 	while (table->name) {
 		node = xml_node_lookup(root, 1, table->name, 0, NULL);
 		node->client_data = table;
-		if (table->type == CONFIG_INT) config_set_int(*(int *)table->ptr, root, table->name, 0, NULL);
-		else if (table->type == CONFIG_STRING) config_set_str(*(char **)table->ptr, root, table->name, 0, NULL);
+	
+		switch (table->type) {
+
+			case (CONFIG_INT):
+				config_set_int(*(int *)table->ptr, root, table->name, 0, NULL);
+				break;
+
+			case (CONFIG_STRING):
+				config_set_str(*(char **)table->ptr, root, table->name, 0, NULL);
+				break;
+		}
+
 		table++;
 	}
 
@@ -326,7 +352,8 @@ int config_unlink_table(config_var_t *table, void *config_root, ...)
 
 	while (table->name) {
 		node = xml_node_lookup(root, 0, table->name, 0, NULL);
-		if (node) xml_node_destroy(node);
+		if (node) 
+			xml_node_delete_callbacked(node, config_delete_var);
 		table++;
 	}
 	return(0);

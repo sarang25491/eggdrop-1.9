@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partymember.c,v 1.13 2004/06/22 20:12:37 wingman Exp $";
+static const char rcsid[] = "$Id: partymember.c,v 1.14 2004/06/22 21:55:32 wingman Exp $";
 #endif
 
 #include <stdarg.h>
@@ -51,6 +51,12 @@ int partymember_init(void)
 int partymember_shutdown(void)
 {
 	bind_rem_list(BTN_USER_DELETE, partymember_udelete_binds);
+
+	/* force a garbage run since we might have some partymembers 
+ 	 * marked as deleted and w/o a garbage_run we may not destroy
+	 * our hashtable */
+	garbage_run();
+
 	hash_table_destroy(pid_ht);
 	return (0);
 }

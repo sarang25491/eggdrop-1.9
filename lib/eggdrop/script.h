@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: script.h,v 1.15 2004/06/14 23:57:59 wingman Exp $
+ * $Id: script.h,v 1.16 2004/06/22 21:55:32 wingman Exp $
  */
 
 #ifndef _EGG_SCRIPT_H_
@@ -172,7 +172,8 @@ typedef struct {
 	void *client_data;
 } script_raw_command_t;
 
-extern int script_init();
+extern int script_init(void);
+extern int script_shutdown(void);
 
 extern int script_load(char *filename);
 extern int script_link_vars(script_linked_var_t *table);

@@ -24,7 +24,7 @@
  */
  
 #ifndef lint
-static const char rcsid[] = "$Id: help.c,v 1.9 2004/06/22 19:08:15 wingman Exp $";
+static const char rcsid[] = "$Id: help.c,v 1.10 2004/06/22 21:55:32 wingman Exp $";
 #endif
 
 #include <sys/types.h>
@@ -309,6 +309,7 @@ static void help_delete_entry(help_entry_t *entry)
 	if (entry->name) free(entry->name);
 	if (entry->filename) free(entry->filename);
 	if (entry->flags) free(entry->flags);
+	if (entry->module) free(entry->module);
 
 	if (0 == strcmp(entry->type, "Variable")) {
 		if (entry->ext.command.syntax) free(entry->ext.command.syntax);
@@ -486,7 +487,7 @@ static int help_load_internal(const char *module, const char *filename)
 			help_lookup_section(name), module, buf, node);
 	}
 	
-	xml_node_destroy(doc);
+	xml_node_delete(doc);
 
 	return 1;
 }

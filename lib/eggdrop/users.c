@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.25 2004/06/22 20:12:37 wingman Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.26 2004/06/22 21:55:32 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -89,6 +89,9 @@ int user_shutdown(void)
 	bind_table_del(BT_uset);
 	bind_table_del(BT_uflags);
 	
+	/* flush any pending user delete events */
+	garbage_run();
+
 	hash_table_destroy(irchost_cache_ht);
 	hash_table_destroy(uid_ht);
 	hash_table_destroy(handle_ht);
@@ -109,7 +112,7 @@ int user_load(const char *fname)
 		return -1;
 
 	if (xml_node_get_int(&uid, root, "next_uid", 0, 0)) {
-		xml_node_destroy(root);
+		xml_node_delete(root);
 		return(0);
 	}
 	g_uid = uid;
@@ -172,7 +175,7 @@ int user_load(const char *fname)
 			u->nsettings = 1;
 		}
 	}
-	xml_node_destroy(root);
+	xml_node_delete(root);
 	return(0);
 }
 
@@ -218,7 +221,7 @@ int user_save(const char *fname)
 	if (!fp) return(-1);
 	xml_write_node(fp, root, 0);
 	fclose(fp);
-	xml_node_destroy(root);
+	xml_node_delete(root);
 	return(0);
 }
 

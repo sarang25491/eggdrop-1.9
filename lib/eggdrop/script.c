@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: script.c,v 1.15 2004/06/21 11:33:40 wingman Exp $";
+static const char rcsid[] = "$Id: script.c,v 1.16 2004/06/22 21:55:32 wingman Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -45,16 +45,47 @@ static int njournal_events = 0;
 static script_module_t **script_modules = NULL;
 static int nscript_modules = 0;
 
+static void *journal_del(int event, void *key);
+static void journal_add(int event, void *data, void *key);
+
 static script_command_t script_cmds[] = {
 	{"", "loadscript", script_load, NULL, 1, "s", "filename", SCRIPT_INTEGER, 0},
 	{0}
 };
 
-int script_init()
+int script_init(void)
 {
 	script_create_commands(script_cmds);
 
 	return(0);
+}
+
+int script_shutdown(void)
+{
+	int i;
+
+	/* XXX: this may be the wrong place. This should be handled by module
+ 	 * XXX: dependencies. E.g. if someone unloads "script", e.g. "tclscript" 
+	 * XXX: should be magicly unloaded too */
+	if (nscript_modules > 0) {
+		for (i = nscript_modules - 1; i >= 0; i--) {
+			script_unregister_module(script_modules[i]);
+		}
+	}
+
+	/* XXX: this shouldn't be necessary too if everything gets unloaded. */
+	if (njournal_events > 0) {
+		for (i = njournal_events - 1; i >= 0; i--) {
+			journal_del(
+				journal_events[i].event,
+				journal_events[i].key);
+		}
+		printf("hi\n");
+	}
+
+	script_delete_commands(script_cmds);
+	
+	return (0);
 }
 
 /* Called by scripting modules to register themselves. */
@@ -406,14 +437,16 @@ int script_delete_commands(script_command_t *table)
 	int i;
 	script_raw_command_t *cmd;
 
-	while (table->class && table->name) {
+	for (; table->class && table->name; table++) {
 		cmd = journal_del(EVENT_CMD, table);
-		if (!cmd) continue;
+		if (!cmd)
+			continue;
+
 		for (i = 0; i < nscript_modules; i++) {
 			script_modules[i]->delete_command(script_modules[i]->client_data, cmd);
 		}
+
 		free(cmd);
-		table++;
 	}
 	return(0);
 }

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: xml.h,v 1.14 2004/06/22 20:12:37 wingman Exp $
+ * $Id: xml.h,v 1.15 2004/06/22 21:55:32 wingman Exp $
  */
 
 #ifndef _EGG_XML_H_
@@ -81,7 +81,8 @@ xml_node_t *xml_node_path_lookup(xml_node_t *root, const char *path, int index, 
 char *xml_node_fullname(xml_node_t *node);
 
 xml_node_t *xml_node_new(void);
-void xml_node_destroy(xml_node_t *node);
+void xml_node_delete(xml_node_t *node);
+void xml_node_delete_callbacked(xml_node_t *node, void (*callback)(void *));
 
 xml_node_t *xml_root_element(xml_node_t *node);
 xml_node_t *xml_node_select(xml_node_t *parent, const char *path);
