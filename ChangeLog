@@ -1,3 +1,10 @@
+2002-06-07 06:38  stdarg <stdarg@techmonkeys.org>
+
+	* modules/server/servmsg.c:
+
+	
+	* got432(), got433(), and renamed gotfake433 to choose_altnick 
+
 2002-06-05 05:11  stdarg <stdarg@techmonkeys.org>
 
 	* modules/server/servmsg.c:
