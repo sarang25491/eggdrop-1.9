@@ -1,3 +1,9 @@
+2003-03-07 12:58  Tothwolf <tothwolf@techmonkeys.org>
+
+	* Makefile.am, configure.ac:
+
+	* Updates and fixes for configure/Makefile stuff.  
+
 2003-03-07 12:12  Tothwolf <tothwolf@techmonkeys.org>
 
 	* acconfig/mpatrol.m4:
