@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.9 2002/02/27 05:34:00 guppy Exp $
+ * $Id: mode.c,v 1.10 2002/03/02 07:51:53 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -508,7 +508,7 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
     }
 
     /* do we want to reop victim? */
-    if (!ok && had_op && !match_my_nick(nick) && rfc_casecmp(who, nick) && 
+    if (!ok && had_op && !match_my_nick(nick) && irccmp(who, nick) && 
 	!match_my_nick(who)) {
       /* Is the deopper NOT a master or bot? */
       if (reversing || (!glob_master(user) && !chan_master(user) && !glob_bot(user) &&
