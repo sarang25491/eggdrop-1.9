@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.76 2001/08/13 14:17:53 guppy Exp $
+ * $Id: server.c,v 1.77 2001/08/13 14:51:13 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1441,10 +1441,6 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
     putlog(LOG_MISC, "*", "%s: CHAT (%s!%s)", _("DCC invalid port"),
 	   nick, from);
   } else {
-/*
-    if (!sanitycheck_dcc(nick, from, ip, prt))
-      return 1;
-*/
     i = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
     if (i < 0) {
       putlog(LOG_MISC, "*", "DCC connection: CHAT (%s!%s)", dcc[i].nick, ip);
@@ -1479,13 +1475,6 @@ static void dcc_chat_hostresolved(int i)
   struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
 
   egg_snprintf(buf, sizeof buf, "%d", dcc[i].port);
-/*
-  if (!hostsanitycheck_dcc(dcc[i].nick, dcc[i].host, dcc[i].addr,
-			   dcc[i].u.dns->host, buf)) {
-    lostdcc(i);
-    return;
-  }
-*/
   dcc[i].sock = getsock(0);
   if (dcc[i].sock < 0 ||
           open_telnet_dcc(dcc[i].sock, dcc[i].addr, buf) < 0) {

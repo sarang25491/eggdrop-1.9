@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.57 2001/08/13 14:17:52 guppy Exp $
+ * $Id: modules.c,v 1.58 2001/08/13 14:51:12 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -452,7 +452,7 @@ Function global_table[] =
   /* 212 - 215 */
   (Function) 0,			/* remove_gunk() -- UNUSED! (drummer)	*/
   (Function) check_tcl_chjn,
-  (Function) sanitycheck_dcc,
+  (Function) 0,
   (Function) isowner,
   /* 216 - 219 */
   (Function) 0,			/* min_dcc_port -- UNUSED! (guppy)	*/
@@ -491,7 +491,7 @@ Function global_table[] =
   (Function) call_ipbyhost,
   (Function) iptostr,
   (Function) & DCC_DNSWAIT,	 /* struct dcc_table *			*/
-  (Function) hostsanitycheck_dcc,
+  (Function) 0,
   /* 240 - 243 */
   (Function) dcc_dnsipbyhost,
   (Function) dcc_dnshostbyip,

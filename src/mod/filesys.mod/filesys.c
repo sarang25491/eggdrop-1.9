@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.47 2001/08/13 14:17:53 guppy Exp $
+ * $Id: filesys.c,v 1.48 2001/08/13 14:51:12 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -664,13 +664,6 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
 	     nick);
     } else {
       struct in_addr ip4;
-      /* This looks like a good place for a sanity check. */
-/*
-      if (!sanitycheck_dcc(nick, from, ip, prt)) {
-	my_free(buf);
-	return;
-      }
-*/
       i = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
       if (i < 0) {
 	dprintf(DP_HELP, "NOTICE %s :Sorry, too many DCC connections.\n",
@@ -744,13 +737,6 @@ static void filesys_dcc_send_hostresolved(int i)
   int len = dcc[i].u.dns->ibuf, j;
 
   sprintf(prt, "%d", dcc[i].port);
-/* FIXME:
-  if (!hostsanitycheck_dcc(dcc[i].nick, dcc[i].u.dns->host, dcc[i].addr,
-                           dcc[i].u.dns->host, prt)) {
-    lostdcc(i);
-    return;
-  }
-*/
   param = nmalloc(strlen(dcc[i].u.dns->cbuf) + 1);
   strcpy(param, dcc[i].u.dns->cbuf);
 

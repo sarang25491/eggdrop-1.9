@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.53 2001/08/13 14:17:52 guppy Exp $
+ * $Id: module.h,v 1.54 2001/08/13 14:51:12 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -360,7 +360,7 @@
 /* 212 - 215 */
 /* 212: remove_gunk() -- UNUSED (drummer) */
 #define check_tcl_chjn ((void (*) (const char *,const char *,int,char,int,const char *))global[213])
-#define sanitycheck_dcc ((int (*)(char *, char *, char *, char *))global[214])
+/* 214: sanitycheck_dcc() -- UNUSED (guppy) */
 #define isowner ((int (*)(char *))global[215])
 /* 216 - 219 */
 /* 216: min_dcc_port -- UNUSED (guppy) */
@@ -402,7 +402,7 @@
 #define call_ipbyhost ((void(*)(char *, char *, int))global[236])
 #define iptostr ((char *(*)(IP))global[237])
 #define DCC_DNSWAIT (*(struct dcc_table *)(global[238]))
-#define hostsanitycheck_dcc ((int(*)(char *, char *, IP, char *, char *))global[239])
+/* 239: hostsanitycheck_dcc() -- UNUSED (guppy) */
 /* 240 - 243 */
 #define dcc_dnsipbyhost ((void (*)(char *))global[240])
 #define dcc_dnshostbyip ((void (*)(char *))global[241])

@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.46 2001/07/31 16:40:40 guppy Exp $
+ * $Id: proto.h,v 1.47 2001/08/13 14:51:12 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -255,8 +255,6 @@ void tputs(int, char *, unsigned int);
 void dequeue_sockets();
 int sockgets(char *, int *);
 void tell_netdebug(int);
-int sanitycheck_dcc(char *, char *, char *, char *);
-int hostsanitycheck_dcc(char *, char *, IP, char *, char *);
 char *iptostr(IP);
 char *getlocaladdr(int);
 int sock_has_data(int, int);

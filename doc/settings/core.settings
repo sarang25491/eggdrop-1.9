@@ -305,15 +305,6 @@ set use-telnet-banner 0
     to 1. The telnet banner is set by 'telnet-banner'.
 
 
-set dcc-sanitycheck 1
-    This setting will make the bot ignore DCC chat requests which appear to
-    have bogus information on the grounds that the user may have been trying
-    to make the bot connect to somewhere that will get it into trouble, or
-    that the user has a broken client (like mIRC tends to do), in which case
-    the connect wouldn't work anyway.  It's suggested that you turn this on.
-    Valid settings are 0 for OFF and 1 ON.
-
-
 set quiet-reject 1
     If turned to 1, the bot will squelch the error message when rejecting a
     DCC CHAT or SEND.
