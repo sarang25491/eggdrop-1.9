@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.29 2004/06/15 19:19:16 wingman Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.30 2004/06/17 13:32:44 wingman Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -193,7 +193,8 @@ static int party_status(partymember_t *p, const char *nick, user_t *u, const cha
 #ifdef HAVE_UNAME
 	if (!uname(&un)) partymember_printf(p, _("OS: %1$s %2$s"), un.sysname, un.release);
 #endif
-	partymember_printf(p, _("Help path: %s (%d help entries loaded)"), core_config.help_path, help_count());
+	partymember_printf(p, _("Help path: %s (%d entries, %d sections)"), core_config.help_path, help_count_entries(),
+		help_count_sections ());
 	partymember_printf(p, "");
 	check_bind_status(p, text);
 	return(0);
@@ -454,7 +455,7 @@ static int party_chattr(partymember_t *p, const char *nick, user_t *u, const cha
 	}
 	dest = user_lookup_by_handle(who);
 	if (dest) {
-		user_set_flag_str(dest, chan, flags);
+		user_set_flags_str(dest, chan, flags);
 		user_get_flags(dest, chan, &flagstruct);
 		flag_to_str(&flagstruct, flagstr);
 		partymember_printf(p, _("Flags for %s are now '%s'."), who, flagstr);
@@ -468,27 +469,14 @@ static int party_chattr(partymember_t *p, const char *nick, user_t *u, const cha
 
 static int party_help(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
-	help_t *h;
-
-	if (!text || !*text) {
-		partymember_printf(p, _("Syntax: help <section>"));
-		return(0);
-	}
-
-	h = help_lookup_by_name(text);
-	if (!h) {
-		partymember_printf(p, _("No help found for '%s'."), text);
-		return(0);
-	}
-
-	help_print_party(p, h);
-	return(0);
+	return help_print_party(p, text);
 }
 
 static int party_addlog(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	putlog(LOG_MISC, "*", "%s: %s", nick, text);
-	return(0);
+
+	return BIND_RET_LOG;
 }
 
 static int party_modules(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
@@ -500,14 +488,15 @@ static int party_modules(partymember_t *p, const char *nick, user_t *u, const ch
 	partymember_printf(p, _("Loaded modules:"));
 	for (ctr = 0; ctr < nummods; ctr++) partymember_printf(p, "   %s", modules[ctr]);
 	free(modules);
-	return(0);
+
+	return BIND_RET_LOG;
 }
 
 static int party_loadmod(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	if (!text || !*text) {
 		partymember_printf(p, _("Syntax: loadmod <module name>"));
-		return(0);
+		return BIND_RET_BREAK;
 	}
 	switch (module_load(text)) {
 		case 0:
@@ -523,14 +512,14 @@ static int party_loadmod(partymember_t *p, const char *nick, user_t *u, const ch
 			partymember_printf(p, _("Module '%s' does not have a valid initialization function. Perhaps it is not an eggdrop module?"), text);
 			break;
 	}
-	return(0);
+	return BIND_RET_LOG;
 }
 
 static int party_unloadmod(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	if (!text || !*text) {
 		partymember_printf(p, _("Syntax: unloadmod <module name>"));
-		return(0);
+		return BIND_RET_BREAK;
 	}
 	switch (module_unload(text, EGGMOD_USER)) {
 		case 0:
@@ -546,33 +535,33 @@ static int party_unloadmod(partymember_t *p, const char *nick, user_t *u, const 
 			partymember_printf(p, _("Module '%s' refuses to be unloaded by you!"), text);
 			break;
 	}
-	return(0);
+	return BIND_RET_LOG;
 }
 
 static bind_list_t core_party_binds[] = {
 	{NULL, "join", party_join},		/* DDD	*/
 	{NULL, "whisper", party_whisper},	/* DDD	*/
 	{NULL, "newpass", party_newpass},	/* DDD	*/
-	{NULL, "help", party_help},		/* DDD	*/
+	{NULL, "help", party_help},		/* DDC	*/
 	{NULL, "part", party_part},		/* DDD	*/
 	{NULL, "quit", party_quit},		/* DDD	*/
 	{NULL, "who", party_who},		/* DDD	*/
 	{NULL, "whois", party_whois},		/* DDD	*/
 	{"n", "addlog", party_addlog},		/* DDD	*/
-	{"n", "get", party_get},		/* DDD	*/
-	{"n", "set", party_set},		/* DDD	*/
-	{"n", "unset", party_unset},		/* DDD	*/
+	{"n", "get", party_get},		/* DDC	*/
+	{"n", "set", party_set},		/* DDC	*/
+	{"n", "unset", party_unset},		/* DDC	*/
 	{"n", "status", party_status},		/* DDD	*/
 	{"n", "save", party_save},		/* DDD	*/
 	{"n", "die", party_die},		/* DDD	*/
-	{"n", "+user", party_plus_user},	/* DDD	*/
-	{"n", "-user", party_minus_user},	/* DDD	*/
-	{"n", "chattr", party_chattr},		/* DDD	*/
+	{"n", "+user", party_plus_user},	/* DDC	*/
+	{"n", "-user", party_minus_user},	/* DDC	*/
+	{"n", "chattr", party_chattr},		/* DDC	*/
 	{"n", "modules", party_modules},	/* DDD	*/
 	{"n", "loadmod", party_loadmod},	/* DDD	*/
 	{"n", "unloadmod", party_unloadmod},	/* DDD	*/
-	{"m", "+host", party_plus_host},	/* DDD	*/
-	{"m", "-host", party_minus_host},	/* DDD	*/
+	{"m", "+host", party_plus_host},	/* DDC	*/
+	{"m", "-host", party_minus_host},	/* DDC	*/
 	{0}
 };
 

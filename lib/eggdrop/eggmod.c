@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggmod.c,v 1.13 2004/06/15 19:19:16 wingman Exp $";
+static const char rcsid[] = "$Id: eggmod.c,v 1.14 2004/06/17 13:32:43 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -108,8 +108,9 @@ int module_load(const char *name)
 		return(-4);
 	}
 
-	bind_check(BT_load, NULL, name, name);
 	putlog(LOG_MISC, "*", "Module loaded: %s", name);
+	bind_check(BT_load, NULL, name, name);
+
 	return(0);
 }
 

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: flags.c,v 1.6 2003/12/17 07:39:14 wcc Exp $";
+static const char rcsid[] = "$Id: flags.c,v 1.7 2004/06/17 13:32:43 wingman Exp $";
 #endif
 
 #include "flags.h"
@@ -36,7 +36,7 @@ int flag_to_str(flags_t *flags, char *str)
 		if (flags->udef & (1 << i)) str[j++] = 'A' + i;
 	}
 	str[j] = 0;
-	return(0);
+	return 1;
 }
 
 static inline void add_flag(int *intptr, int dir, int flag)
@@ -66,7 +66,7 @@ int flag_merge_str(flags_t *flags, const char *str)
 		str++;
 	}
 
-	return(0);
+	return 1;
 }
 
 int flag_from_str(flags_t *flags, const char *str)

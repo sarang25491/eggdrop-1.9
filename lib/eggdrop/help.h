@@ -16,31 +16,72 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: help.h,v 1.1 2004/01/11 12:16:08 wcc Exp $
+ * $Id: help.h,v 1.2 2004/06/17 13:32:43 wingman Exp $
  */
 
 #ifndef _EGG_HELP_H_
 #define _EGG_HELP_H_
 
-#define HELP_HASH_SIZE 50
+#define HELP_HASH_SIZE		50
 
-typedef struct help {
-	char *name;
-	char *syntax;	/* Command syntax */
-	char *flags;	/* Flags required to use command (if entry is a command) */
+typedef struct help_entry	help_entry_t;
+typedef struct help_section	help_section_t;
 
-	char **lines;	/* Lines of help data */
-	int nlines;	/* Number of help data lines */
+typedef struct
+{
+	char	**lines;		/* Lines of help data		*/
+	int	  nlines;		/* Number of help data lines 	*/
+} help_desc_t;
 
-	char **seealso;	/* See also entries */
-	int nseealso;	/* Number of see also entries */
-} help_t;
+struct help_section
+{
+	char 	 	 *name;		/* Section name			*/
+	help_desc_t	  desc;		/* Description			*/
+	help_entry_t	**entries;	/* Entries			*/
+	int	  	  nentries;	/* Number of entries		*/
+};
 
-int help_init();
-int help_load(const char *, const char *);
-help_t *help_new(const char *);
-help_t *help_lookup_by_name(const char *);
-int help_count();
-int help_print_party(partymember_t *, help_t *);
+struct help_entry
+{
+	char		 *type;		/* Entry type			*/
+	char		 *flags;	/* Entry flags			*/
+	char		 *module;	/* Source module		*/
+	char		 *filename;	/* Source file			*/
+	char  		 *name;		/* Entry name 			*/
+	help_section_t	 *section;	/* Entry section		*/
+	help_desc_t	  desc;		/* Description 			*/
+	char 		**seealso;	/* See also entries 		*/
+	int   		  nseealso;	/* Number of see also entries 	*/
+		
+	union
+	{
+		struct
+		{
+			char	*syntax;	/* Command syntax	*/
+		} command;
+		struct
+		{
+			char	 *type;		/* Variable type	*/
+			char	 *path;		/* Variable path	*/			
+		} variable;
+	} ext;
+};
+
+int	 	 help_init		(void);
+int	 	 help_shutdown		(void);
+
+int		 help_count_sections	(void);
+int		 help_count_entries	(void);
+
+int	 	 help_load		(const char *filename);
+int		 help_unload		(const char *filename);
+
+int		 help_load_by_module	(const char *name);
+int		 help_unload_by_module	(const char *name);
+
+help_entry_t	*help_lookup_entry	(const char *name);
+help_section_t	*help_lookup_section	(const char *name);
+
+int	 	 help_print_party	(partymember_t *member, const char *args);
 
 #endif /* !_EGG_HELP_H_ */

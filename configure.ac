@@ -1,14 +1,14 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 dnl
-dnl $Id: configure.ac,v 1.51 2004/06/16 06:33:44 wcc Exp $
+dnl $Id: configure.ac,v 1.52 2004/06/17 13:32:43 wingman Exp $
 
 AC_PREREQ(2.57)
 AC_INIT([Eggdrop], [1.7.0], [bugs@eggheads.org])
 AC_COPYRIGHT([Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team])
-AC_REVISION($Revision: 1.51 $)
+AC_REVISION($Revision: 1.52 $)
 AC_CONFIG_AUX_DIR(acconfig)
 AM_CONFIG_HEADER(config.h)
-AC_CONFIG_FILES([Makefile lib/Makefile lib/compat/Makefile lib/eggdrop/Makefile m4/Makefile po/Makefile.in src/Makefile modules/Makefile])
+AC_CONFIG_FILES([Makefile lib/Makefile lib/compat/Makefile lib/eggdrop/Makefile m4/Makefile po/Makefile.in src/Makefile modules/Makefile acconfig/module.mk])
 
 
 # Print start message
@@ -143,9 +143,9 @@ EGG_CHECK_MODULES
 AC_SUBST(EGG_MODULES_ENABLED)
 
 
-# XXX: for what is this?
-AC_SUBST(ac_aux_dir)
+# Export auxiliary dir (./acconfig/) 
 
+AC_SUBST(ac_aux_dir)
 
 # Export list of preloaded shared objects
 AC_SUBST(LIBEGGDROP_PRELOAD)

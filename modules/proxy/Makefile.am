@@ -1,18 +1,8 @@
-# $Id: Makefile.am,v 1.2 2003/12/19 00:51:37 stdarg Exp $
+# $Id: Makefile.am,v 1.3 2004/06/17 13:32:44 wingman Exp $
 
-# FIXME: optionally allow a system wide install by ignoring the line below.
-pkglibdir		= $(exec_prefix)/modules
+include $(top_srcdir)/$(ac_aux_dir)/module.mk
 
 pkglib_LTLIBRARIES	= proxy.la
 proxy_la_SOURCES	= proxy.c proxy.h http.c socks5.c
 proxy_la_LDFLAGS	= -module -avoid-version -no-undefined
 proxy_la_LIBADD	= @LIBS@ $(top_builddir)/lib/eggdrop/libeggdrop.la
-
-MAINTAINERCLEANFILES	= Makefile.in
-
-INCLUDES		= -I$(top_builddir) -I$(top_srcdir) @INCLTDL@ \
-			-I$(top_builddir)/intl -I$(top_srcdir)/intl \
-			-I$(top_builddir)/lib \
-			-I$(top_srcdir)/lib
-
-DEFS			= $(EGG_DEBUG) @DEFS@

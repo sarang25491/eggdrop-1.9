@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptuser.c,v 1.7 2004/06/15 19:19:16 wingman Exp $";
+static const char rcsid[] = "$Id: scriptuser.c,v 1.8 2004/06/17 13:32:44 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -120,7 +120,7 @@ static int script_setflags(user_t *u, char *chan, char *flags)
 		chan = NULL;
 	}
 
-	user_set_flag_str(u, chan, flags);
+	user_set_flags_str(u, chan, flags);
 	return(0);
 }
 

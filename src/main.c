@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.168 2004/06/15 11:54:33 wingman Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.169 2004/06/17 13:32:44 wingman Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -418,10 +418,10 @@ int main(int argc, char **argv)
 	eggdrop_init();
 	core_config_init(configfile);
 	logfile_init();
-	if (core_config.userfile) user_load(core_config.userfile);
+	if (core_config.userfile)
+		user_load(core_config.userfile);
 	core_party_init();
 	core_binds_init();
-	if (help_load(core_config.help_path, "core_commands.xml") == -1) putlog(LOG_MISC, "*", _("Help file core_commands.xml could not be opened."));
 
 	if (make_userfile) {
 		user_t *owner;
@@ -452,7 +452,7 @@ int main(int argc, char **argv)
 		}
 		user_rand_pass(password, sizeof(password));
 		user_set_pass(owner, password);
-		user_set_flag_str(owner, NULL, "+n");
+		user_set_flags_str(owner, NULL, "+n");
 		printf("Your owner handle is '%s' and your password is '%s' (without the quotes).\n\n", handle, password);
 		memset(password, 0, sizeof(password));
 		str_redup(&core_config.owner, handle);
@@ -480,8 +480,12 @@ int main(int argc, char **argv)
 		}
 	}
 
+	/* Load core help */
+	help_load_by_module ("core");
+
 	/* Put the module directory in the ltdl search path. */
-	if (core_config.module_path) module_add_dir(core_config.module_path);
+	if (core_config.module_path)
+		module_add_dir(core_config.module_path);
 
 	/* Scan the autoload section of config. */
 	config_root = config_get_root("eggdrop");

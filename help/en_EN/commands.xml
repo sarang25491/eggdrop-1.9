@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<commands module="core">
+
+	<section name="Common">
+		<command name="help" flags="">
+			<args>
+				<arg type="string">pattern</arg>
+			</args>
+			<description>
+				Let's you search through our help database. Pattern
+				can either be a command or an entry name or a wildcard
+				pattern (?, *).
+				
+				For example:
+				
+					.help +user
+					.help User Commands
+					.help *bot*					
+			</description>
+		</command>
+	</section>
+	
+	<section name="User Management">
+
+		<command name="+host" flags="m">		
+			<args>
+				<arg type="string" optional="yes">handle</arg>
+				<arg type="string">hostmask</arg>
+			</args>			
+			<description>
+				Adds a hostmask to a user's user record. Hostmask are used
+				to identify your username on IRC. If a username is not speicifed,
+				the hostmask will be added to the current logged in user.
+			</description>
+			<seealso>-host</seealso>
+		</command>
+		
+		<command name="-host" flags="m">
+			<args>
+				<arg type="string" optional="yes">handle</arg>
+				<arg type="string">hostmask</arg>
+			</args>			
+			<description>
+				Removes a hostmask to a user's user record. Hostmask are used
+				to identify your username on IRC. If a username is not speicifed,
+				the hostmask will be removed from the current logged in user.
+			</description>
+			<seealso>+host</seealso>
+		</command>
+		
+		<command name="+user" flags="n">
+			<args>
+				<arg type="string">handle</arg>
+			</args>
+			<description>
+				Adds a new user record with the specified handle.
+			</description>
+			<seealso>-user</seealso>
+		</comnand>
+		
+		<command name="-user" flags="n">
+			<args>
+				<arg type="string">handle</arg>
+			</args>
+			<description>
+				Removes a user record with the specified handle.
+			</description>
+			<seealso>-user</seealso>
+		</comnand>
+	
+		<command name="chattr" flags="n">
+			<args>
+				<arg type="string" optional="yes">channel</arg>
+				<arg type="string">flags</args>	
+			</args>
+			<description>
+				This lets you change the flags for a user. If a channel is
+				specified, flags will be modified for that channel instead of	
+				globally. The channel does not have to exist.
+			</description>
+			<seealso>+user</seealso>
+			<seealso>-user</seealso>
+		</command>
+	</section>
+	
+	<section name="Settings">
+		
+		<command name="get" flags="n">
+			<args>
+				<arg type="string">path</arg>
+			</args>			
+			<description>
+				Shows the value of a configuration setting.
+				
+				For example:
+					.get server.realname
+					Current value: 'Mr. Egg Drop'
+				
+				To get the value of setting which is part of a list, specifiy
+				its item number in square brackes ([]) after its name.
+				
+				For example:
+					.get eggdrop.autoload.module[0]
+					Current value: 'telnetparty'
+			</description>
+			<seealso>set</seealso>
+			<seealso>unset</seealso>			
+		</command>
+		
+		<command name="set" flags="no">
+			<args>
+				<arg type="string">path</arg>
+				<arg type="string" optional="yes">new value</arg>
+			</args>
+			<description>
+				Sets a new value for the specified configuration setting.
+				
+				For example:
+					.set server.realname Mr. Egg Drop
+					Old value: '1.7 Test Bot'
+					New value: 'Mr Egg Drop'
+				
+				If you don't specify a new value, then the setting will be
+				unset (null).
+			</description>
+			<seealso>get</seealso>
+			<seealso>unset</seealso>
+		</command>	
+
+		<command name="unset" flags="no">
+			<args>
+				<arg type="string">path</arg>
+			</args>
+			<description>
+				Removes a value for the specified configuration setting.
+				Same as calling .set <path> without a value.
+			</description>
+			<seealso>get</seealso>
+			<seealso>set</seealso>
+		</command>				
+	</section>
+	
+</commands>

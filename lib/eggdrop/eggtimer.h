@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: eggtimer.h,v 1.8 2003/12/17 07:39:14 wcc Exp $
+ * $Id: eggtimer.h,v 1.9 2004/06/17 13:32:43 wingman Exp $
  */
 
 #ifndef _EGG_EGGTIMER_H_
@@ -27,7 +27,7 @@ typedef struct egg_timeval {
 	int usec;
 } egg_timeval_t;
 
-#define TIMER_REPEAT 1
+#define TIMER_REPEAT	1
 
 /* Create a simple timer with no client data and no flags. */
 #define timer_create(howlong,name,callback) timer_create_complex(howlong, name, callback, NULL, 0)
@@ -48,5 +48,6 @@ extern int timer_get_shortest(egg_timeval_t *howlong);
 extern int timer_run();
 extern int timer_list(int **ids);
 extern int timer_info(int id, char **name, egg_timeval_t *initial_len, egg_timeval_t *trigger_time);
+extern int timer_get_timestamp (char *buf, size_t size);
 
 #endif /* !_EGG_EGGTIMER_H_ */

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xmlread.c,v 1.9 2004/06/15 19:19:16 wingman Exp $";
+static const char rcsid[] = "$Id: xmlread.c,v 1.10 2004/06/17 13:32:43 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -29,6 +29,7 @@ static const char rcsid[] = "$Id: xmlread.c,v 1.9 2004/06/15 19:19:16 wingman Ex
 extern xml_amp_conversion_t builtin_conversions[];
 
 /* These are pretty much in 'most common' order. */
+static int original_text = 0;
 static const char *spaces = " \t\n\r\v";
 static const char *name_terminators = "= \t\n\r\v?/>";
 
@@ -128,6 +129,9 @@ int xml_decode_text(char *text, int inlen)
 	char *amp, *colon, *next;
 	int i;
 
+	if (original_text)
+		return inlen;
+		
 	/* text = input, result = output */
 	orig = result = text;
 	end = text + inlen;
@@ -314,6 +318,77 @@ int xml_read_node(xml_node_t *parent, char **data)
 
 	/* Otherwise, end-of-input. */
 	return(1);
+}
+
+int
+xml_load (FILE *fd, xml_node_t **node)
+{
+	size_t size, read;
+	char *data;
+	int ret;
+
+	/* seek to begin */
+	fseek (fd, 0l, SEEK_SET);
+
+	/* seek to end */
+	fseek (fd, 0l, SEEK_END);
+	size = ftell (fd) * sizeof(char);
+	fseek (fd, 0l, SEEK_SET);
+
+	data = malloc(size + (1 * sizeof(char)));
+	read = fread (data, sizeof(char), size, fd);
+	data[read] = 0;
+
+	ret = xml_load_str (data, node);
+
+	free (data);
+
+	return ret;
+}
+
+int
+xml_load_file (const char *file, xml_node_t **node)
+{
+	FILE *fd;
+	int ret;
+
+	fd = fopen (file, "r");
+	if (fd == NULL)
+		return -1;
+	ret = xml_load (fd, node);
+	fclose (fd);
+
+	return ret;
+}
+
+int
+xml_load_str (char *str, xml_node_t **node)
+{
+	xml_node_t *root;
+
+	(*node) = NULL;
+
+	root = malloc (sizeof (xml_node_t));
+	if (root == NULL)
+		return 0;
+
+	memset (root, 0, sizeof (xml_node_t));
+
+	original_text = 1; /* XXX: remove this hack */
+	while (!xml_read_node(root, &str)) {
+		; /* empty */
+	}
+	original_text = 0; /* XXX: remove this hack */
+
+	if (root->nchildren == 0) {
+		free (root);
+		return -1;
+	}
+	root->len = xml_decode_text(root->text, root->len);
+
+	(*node) = root;
+
+	return 0;
 }
 
 int xml_read(xml_node_t *root, const char *fname)

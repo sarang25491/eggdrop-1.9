@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggstring.c,v 1.7 2004/01/20 22:47:56 stdarg Exp $";
+static const char rcsid[] = "$Id: eggstring.c,v 1.8 2004/06/17 13:32:43 wingman Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -29,7 +29,8 @@ static const char rcsid[] = "$Id: eggstring.c,v 1.7 2004/01/20 22:47:56 stdarg E
 #include <stdarg.h>
 #include <string.h>
 #include <ctype.h>
-#include "eggstring.h"
+#include <eggdrop/eggdrop.h>
+#include <eggdrop/eggstring.h>
 
 int egg_get_word(const unsigned char *text, const char **next, char **word)
 {
@@ -239,3 +240,33 @@ void egg_append_str(char **dest, int *cur, int *max, const char *src)
 	memmove(*dest + *cur, src, len);
 	*cur += len;
 }
+
+int
+str_ends_with   (const char *text, const char *str)
+{
+	int len1, len2;
+
+	egg_return_val_if_fail (text != NULL, 0);
+	egg_return_val_if_fail (str != NULL, 0);
+
+	len1 = strlen (text);
+	len2 = strlen (str);
+
+	if (len2 > len1)
+		return 0;
+
+	return (strcmp (text + (len1 - len2), str) == 0);
+}
+
+int
+str_starts_with (const char *text, const char *str)
+{
+	egg_return_val_if_fail (text != NULL, 0);
+	egg_return_val_if_fail (str != NULL, 0);
+
+	while (*text && *str && *text++ == *str++)
+		;
+
+	return (*str);
+}
+

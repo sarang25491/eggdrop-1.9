@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_config.c,v 1.15 2004/03/01 22:58:33 stdarg Exp $";
+static const char rcsid[] = "$Id: core_config.c,v 1.16 2004/06/17 13:32:44 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -31,31 +31,31 @@ void *config_root = NULL;
 
 static config_var_t core_config_vars[] = {
 	/* General bot stuff. */
-	{"botname", &core_config.botname, CONFIG_STRING},
-	{"userfile", &core_config.userfile, CONFIG_STRING},
+	{"botname", &core_config.botname, CONFIG_STRING},		/* DDC	*/
+	{"userfile", &core_config.userfile, CONFIG_STRING},		/* DDC	*/
 
 	/* The owner. */
-	{"owner", &core_config.owner, CONFIG_STRING},
-	{"admin", &core_config.admin, CONFIG_STRING},
+	{"owner", &core_config.owner, CONFIG_STRING},			/* DDD	*/
+	{"admin", &core_config.admin, CONFIG_STRING},			/* DDD	*/
 
 	/* Paths. */
-	{"help_path", &core_config.help_path, CONFIG_STRING},
-	{"temp_path", &core_config.temp_path, CONFIG_STRING},
-	{"text_path", &core_config.text_path, CONFIG_STRING},
-	{"module_path", &core_config.module_path, CONFIG_STRING},
+	{"help_path", &core_config.help_path, CONFIG_STRING},		/* DDD	*/
+	{"temp_path", &core_config.temp_path, CONFIG_STRING},		/* DDD	*/
+	{"text_path", &core_config.text_path, CONFIG_STRING},		/* DDD	*/
+	{"module_path", &core_config.module_path, CONFIG_STRING},	/* DDD	*/
 
 	/* Logfile. */
-	{"logfile_suffix", &core_config.logfile_suffix, CONFIG_STRING},
-	{"max_logsize", &core_config.max_logsize, CONFIG_INT},
-	{"switch_logfiles_at", &core_config.switch_logfiles_at, CONFIG_INT},
-	{"keep_all_logs", &core_config.keep_all_logs, CONFIG_INT},
-	{"quick_logs", &core_config.quick_logs, CONFIG_INT},
+	{"logfile_suffix", &core_config.logfile_suffix, CONFIG_STRING},	/* DDD	*/
+	{"max_logsize", &core_config.max_logsize, CONFIG_INT},		/* DDD	*/
+	{"switch_logfiles_at", &core_config.switch_logfiles_at, CONFIG_INT},	/* DDD	*/
+	{"keep_all_logs", &core_config.keep_all_logs, CONFIG_INT},	/* DDD	*/
+	{"quick_logs", &core_config.quick_logs, CONFIG_INT},		/* DDD	*/
 
 	/* Whois. */
-	{"whois_items", &core_config.whois_items, CONFIG_STRING},
+	{"whois_items", &core_config.whois_items, CONFIG_STRING},	/* DDD	*/
 
 	/* Other. */
-	{"die_on_sigterm", &core_config.die_on_sigterm, CONFIG_INT},
+	{"die_on_sigterm", &core_config.die_on_sigterm, CONFIG_INT},	/* DDD	*/
 	{0}
 };
 

@@ -1,0 +1,22 @@
+<commands module="server">
+
+	<section name="IRC">
+		<description>
+			All commands around IRC support.
+		</description>
+		
+		<command name="+server" flags="m">
+	               <args>
+	                       <arg type="string">hostname</arg>
+	                       <arg type="int" optional="yes">port</arg>
+	                       <arg type="string" optional="yes">password</arg>
+	               </args>
+	               <description>
+	                       Adds a server to our server list.
+	               </description>
+	               <seealso>jump</seealso>
+	       </command>
+	       
+	</section>
+	
+</commands>

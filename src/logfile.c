@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: logfile.c,v 1.40 2004/06/15 19:19:16 wingman Exp $";
+static const char rcsid[] = "$Id: logfile.c,v 1.41 2004/06/17 13:32:44 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -78,15 +78,6 @@ void logfile_init()
 	script_create_commands(log_script_cmds);
 	bind_add_list("log", log_binds);
 	bind_add_list("event", log_events);
-}
-
-static int get_timestamp(char *t)
-{
-	time_t now2 = time(NULL);
-
-	/* Calculate timestamp. */
-	strftime(t, 32, "[%H:%M] ", localtime(&now2));
-	return(0);
 }
 
 static int logfile_minutely()
@@ -191,7 +182,7 @@ int logfile_del(char *filename)
 	if (prev) prev->next = log->next;
 	else log_list_head = log->next;
 	if (log->fp) {
-		get_timestamp(timestamp);
+		timer_get_timestamp(timestamp, sizeof (timestamp));
 		flushlog(log, timestamp);
 		fclose(log->fp);
 	}
@@ -206,7 +197,7 @@ static int on_putlog(int flags, const char *chan, const char *text, int len)
 	log_t *log;
 	char timestamp[32];
 
-	get_timestamp(timestamp);
+	timer_get_timestamp(timestamp, sizeof (timestamp));
 	for (log = log_list_head; log; log = log->next) {
 		/* If this log doesn't match, skip it. */
 		if (!(log->mask & flags)) continue;
@@ -295,7 +286,7 @@ void flushlogs()
 	char timestamp[32];
 	log_t *log;
 
-	get_timestamp(timestamp);
+	timer_get_timestamp(timestamp, sizeof (timestamp));
 	for (log = log_list_head; log; log = log->next) {
 		flushlog(log, timestamp);
 	}

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: binds.c,v 1.13 2004/06/15 12:23:19 wingman Exp $";
+static const char rcsid[] = "$Id: binds.c,v 1.14 2004/06/17 13:32:43 wingman Exp $";
 #endif
 
 #include <string.h>
@@ -421,6 +421,7 @@ void bind_add_simple(const char *table_name, const char *flags, const char *mask
 
 	snprintf(name, 50, "*%s:%s", table->name, mask ? mask : "");
 	name[49] = 0;
+	
 	bind_entry_add(table, flags, mask, name, 0, callback, NULL);
 }
 

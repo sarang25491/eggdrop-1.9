@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<variables module="core">
+
+	<section name="Common">
+		<variable name="botname" type="string" path="eggdrop.botname" flags="n">
+			<description>
+				Current bot name.
+			</description>
+		</variable>	
+		
+		<variable name="userfile" type="string" path="eggdrop.userfile" flags="n">
+			<description>
+				Filename of our userlist.
+			</description>
+		</variable>
+	</section>
+	
+</variables>

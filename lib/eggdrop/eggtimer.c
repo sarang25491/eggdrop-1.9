@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggtimer.c,v 1.8 2003/12/17 07:39:14 wcc Exp $";
+static const char rcsid[] = "$Id: eggtimer.c,v 1.9 2004/06/17 13:32:43 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -263,3 +263,12 @@ int timer_info(int id, char **name, egg_timeval_t *initial_len, egg_timeval_t *t
 	if (trigger_time) memcpy(trigger_time, &timer->trigger_time, sizeof(*trigger_time));
 	return(0);
 }
+
+int timer_get_timestamp(char *buf, size_t size)
+{
+        time_t now = time(NULL);
+                                                                                                                                     
+	/* XXX: make this configurable */
+        return (int)strftime(buf, size, "[%H:%M] ", localtime(&now));
+}
+

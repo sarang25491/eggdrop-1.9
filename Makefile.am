@@ -1,10 +1,12 @@
-# $Id: Makefile.am,v 1.20 2004/06/08 00:51:58 stdarg Exp $
+# $Id: Makefile.am,v 1.21 2004/06/17 13:32:43 wingman Exp $
 
 AUX_DIST		= $(ac_aux_dir)/install-sh \
 			$(ac_aux_dir)/ltmain.sh \
 			$(ac_aux_dir)/missing \
 			$(ac_aux_dir)/mkinstalldirs \
-			$(ac_aux_dir)/depcomp
+			$(ac_aux_dir)/depcomp \
+			$(ac_aux_dir)/config.stubs \
+			$(ac_aux_dir)install-help.sh
 
 AUX_DIST_EXTRA		= $(ac_aux_dir)/acinclude.m4 \
 			$(ac_aux_dir)/mpatrol.m4 \
@@ -31,11 +33,14 @@ dist-hook:
 	  ln $$file $(distdir) 2>/dev/null || cp -p $$file $(distdir); \
 	done
 
+install-data-hook:
+	$(top_srcdir)/$(ac_aux_dir)/install-help.sh "$(prefix)" .
+
 install-data-local:
 	@if test ! -f $(prefix)/config.xml; then \
 		$(INSTALL_DATA) $(srcdir)/config.xml $(prefix)/config.xml; \
 		chmod 0600 $(prefix)/config.xml; \
-	fi
+	fi 
 
 distclean-local:
 	-test -z "$(DISTCLEANLOCAL)" || rm -rf $(DISTCLEANLOCAL)

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xml.c,v 1.9 2004/06/15 19:19:16 wingman Exp $";
+static const char rcsid[] = "$Id: xml.c,v 1.10 2004/06/17 13:32:43 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -300,9 +300,18 @@ int xml_node_set_str(const char *str, xml_node_t *node, ...)
 xml_node_t *
 xml_root_element (xml_node_t *node)
 {
-	while (node && node->parent)
-		node = node->parent;
-	return node->children[0];
+	 int i;
+
+	 if (node == NULL)
+		  return NULL;
+
+	 while (node && node->parent)
+		  node = node->parent;
+
+	 for (i = 0; i < node->nchildren; i++)
+		if (node->children[i]->type == XML_ELEMENT)
+			return node->children[i];
+	 return NULL;
 }
 
 xml_node_t *

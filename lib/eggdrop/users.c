@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.20 2004/06/15 19:19:16 wingman Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.21 2004/06/17 13:32:43 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -507,7 +507,7 @@ int user_set_flags(user_t *u, const char *chan, flags_t *flags)
 	return(0);
 }
 
-int user_set_flag_str(user_t *u, const char *chan, const char *flags)
+int user_set_flags_str(user_t *u, const char *chan, const char *flags)
 {
 	flags_t *oldflags, newflags;
 
@@ -518,11 +518,6 @@ int user_set_flag_str(user_t *u, const char *chan, const char *flags)
 	if (check_flag_change(u, chan, oldflags, &newflags)) return(0);
 	oldflags->builtin = newflags.builtin;
 	oldflags->udef = newflags.udef;
-	return(0);
-}
-
-int user_check_flag_str(user_t *u, const char *flags, const char *chan, int method)
-{
 	return(0);
 }
 
@@ -672,3 +667,25 @@ int user_rand_pass(char *buf, int bufsize)
 	buf[i] = 0;
 	return(0);
 }
+
+int
+user_check_flags (user_t *u, const char *chan, flags_t *flags)
+{
+	flags_t f;
+
+	user_get_flags (u, chan, &f);
+
+	/* XXX: this is wrong. */
+	return flag_match_partial (flags, &f);
+}
+
+int
+user_check_flags_str (user_t *u, const char *chan, const char *flags)
+{
+	flags_t f;
+
+	flag_from_str (&f, flags);
+
+	return user_check_flags (u, chan, &f);
+}
+

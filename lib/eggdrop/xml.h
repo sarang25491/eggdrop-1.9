@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: xml.h,v 1.7 2004/06/15 19:19:16 wingman Exp $
+ * $Id: xml.h,v 1.8 2004/06/17 13:32:43 wingman Exp $
  */
 
 #ifndef _EGG_XML_H_
@@ -105,5 +105,13 @@ char		*xml_attr_get_str	(xml_node_t *node, const char *name);
 int		 xml_write_node		(FILE *fp, xml_node_t *node, int indent);
 int		 xml_read_node		(xml_node_t *parent, char **data);
 int		 xml_read		(xml_node_t *root, const char *fname);
+
+int		 xml_load		(FILE *fd, xml_node_t **node);
+int		 xml_load_file		(const char *file, xml_node_t **node);
+int		 xml_load_str		(char *str, xml_node_t **node);
+
+int		 xml_save		(FILE *fd, xml_node_t *node, int indent);
+int		 xml_save_file		(const char *file, xml_node_t *node, int indent);
+int		 xml_save_str		(char **str, xml_node_t *node, int indent);
 
 #endif /* !_EGG_XML_H_ */

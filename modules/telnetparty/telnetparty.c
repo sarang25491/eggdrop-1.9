@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: telnetparty.c,v 1.14 2004/06/17 02:01:14 stdarg Exp $";
+static const char rcsid[] = "$Id: telnetparty.c,v 1.15 2004/06/17 13:32:44 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -322,8 +322,14 @@ static int telnet_on_newclient(void *client_data, int idx, int newidx, const cha
 	linemode_on(newidx);
 
 	if (newidx == terminal_idx) {
-		if (terminal_user == NULL)
-			terminal_user = user_new (PARTY_TERMINAL_NICK);
+		if (terminal_user == NULL) {
+			terminal_user = user_lookup_by_handle (PARTY_TERMINAL_NICK);
+			if (terminal_user == NULL) {
+				terminal_user = user_new (PARTY_TERMINAL_NICK);
+				user_set_flags_str (terminal_user, NULL, "n");
+ 			}
+		}
+
 			
 		session->state = STATE_PARTYLINE;
 		session->party = partymember_new (-1,
