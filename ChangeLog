@@ -1,3 +1,10 @@
+2001-08-21 20:00  Teemu Hjelt <sup@techmonkeys.org>
+
+	* doc/tcl-commands.doc, src/mod/irc.mod/irc.c,
+	src/mod/irc.mod/msgcmds.c, src/mod/irc.mod/help/msg/irc.help:
+
+	Removed the GO command and added need-cycle.  
+
 2001-08-21 00:21  Federico Mennite <ite@techmonkeys.org>
 
 	* .cvsignore, Makefile.in, acconfig.h, aclocal.m4, bootstrap,
