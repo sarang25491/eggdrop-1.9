@@ -1,3 +1,26 @@
+2003-06-13 03:35  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/binds.c, lib/eggdrop/binds.h,
+	lib/eggdrop/eggconfig.c, lib/eggdrop/eggdrop.c,
+	lib/eggdrop/eggdrop.h, lib/eggdrop/egglog.c, lib/eggdrop/egglog.h,
+	lib/eggdrop/eggmod.c, lib/eggdrop/flags.c, lib/eggdrop/ircmasks.c,
+	lib/eggdrop/partyline.c, lib/eggdrop/partyline.h,
+	lib/eggdrop/partymember.c, lib/eggdrop/users.c,
+	modules/perlscript/mod_iface.c, modules/script/scriptbind.c,
+	modules/script/scriptmisc.c, modules/script/scriptmod.c,
+	modules/script/scriptuser.c, modules/server/binds.c,
+	modules/server/channels.c, modules/server/dcc.c,
+	modules/server/dcc_commands.c, modules/server/input.c,
+	modules/server/output.c, modules/server/server.c,
+	modules/server/servsock.c, modules/tclscript/tclscript.c,
+	src/core_binds.c, src/core_binds.h, src/core_party.c,
+	src/logfile.c, src/main.c:
+
+	
+	* Added 'flags' param back to bind 
+	* Partyline fixes/expansion 
+	* Scripts can use 'bind' before the correct module is loaded 
+
 2003-06-11 08:37  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/Makefile.am, lib/eggdrop/eggdrop.c,
