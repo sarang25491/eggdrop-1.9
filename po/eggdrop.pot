@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-12-19 18:15-0600\n"
+"POT-Creation-Date: 2003-12-20 00:15-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -315,7 +315,7 @@ msgstr ""
 
 #: modules/server/party_commands.c:87 modules/server/party_commands.c:133
 #, c-format
-msgid "Added %s:%d.\n"
+msgid "Added %s/%d.\n"
 msgstr ""
 
 #: modules/server/party_commands.c:98
@@ -335,7 +335,7 @@ msgstr ""
 msgid "Syntax: dump <server stuff>"
 msgstr ""
 
-#: modules/server/party_commands.c:151
+#: modules/server/party_commands.c:152
 #, c-format
 msgid "Syntax: %s <nick/chan> <message>"
 msgstr ""
@@ -345,46 +345,46 @@ msgstr ""
 msgid "Msg to %s: %s"
 msgstr ""
 
-#: modules/server/party_commands.c:169
+#: modules/server/party_commands.c:170
 msgid "Syntax: act <nick/chan> <action>"
 msgstr ""
 
 #: modules/server/party_commands.c:175
 #, c-format
-msgid "Action to %s: %s"
+msgid "Action to %1$s: %2$s"
 msgstr ""
 
-#: modules/server/server.c:93
+#: modules/server/server.c:100
 #, c-format
-msgid "   Connecting to server %s:%d."
+msgid "   Connecting to server %s/%d."
 msgstr ""
 
-#: modules/server/server.c:94
+#: modules/server/server.c:101
 #, c-format
 msgid "   Connecting to next server in %d seconds."
 msgstr ""
 
 #. First line, who we've connected to.
-#: modules/server/server.c:98
-#, c-format
-msgid "   Connected to %s:%d."
-msgstr ""
-
-#: modules/server/server.c:102
-#, c-format
-msgid "    Online as %s!%s@%s (%s)."
-msgstr ""
-
-#: modules/server/server.c:103
-#, c-format
-msgid "    Online as %s (still waiting for WHOIS result)."
-msgstr ""
-
 #: modules/server/server.c:105
+#, c-format
+msgid "   Connected to %s/%d."
+msgstr ""
+
+#: modules/server/server.c:109
+#, c-format
+msgid "   Online as %s!%s@%s (%s)."
+msgstr ""
+
+#: modules/server/server.c:110
+#, c-format
+msgid "   Online as %s (still waiting for WHOIS result)."
+msgstr ""
+
+#: modules/server/server.c:112
 msgid "   Still logging in."
 msgstr ""
 
-#: modules/server/server.c:117
+#: modules/server/server.c:156
 msgid "server module unloading"
 msgstr ""
 
@@ -449,147 +449,159 @@ msgid ""
 "tclversion]\\n    Reported patchlevel: [info patchlevel]\""
 msgstr ""
 
-#: src/core_party.c:45
+#: src/core_party.c:46
 msgid "Syntax: join <channel>"
 msgstr ""
 
-#: src/core_party.c:79
+#: src/core_party.c:80
 msgid "Syntax: whisper <partylineuser> <msg>"
 msgstr ""
 
-#: src/core_party.c:85
+#: src/core_party.c:86
 #, c-format
 msgid "No such user '%s'."
 msgstr ""
 
-#: src/core_party.c:104
-msgid "That setting was not found."
+#: src/core_party.c:105
+msgid "That setting does not exist."
 msgstr ""
 
-#: src/core_party.c:117
+#: src/core_party.c:118
 msgid "You cannot access that setting."
 msgstr ""
 
-#: src/core_party.c:127
+#: src/core_party.c:128
 msgid "Syntax: get <path>"
 msgstr ""
 
-#: src/core_party.c:139
-msgid "Config setting not found."
+#: src/core_party.c:140
+msgid "==> null (unset)"
 msgstr ""
 
-#: src/core_party.c:152
+#: src/core_party.c:153
 msgid "Syntax: set <path> <new value>"
 msgstr ""
 
-#: src/core_party.c:163
+#: src/core_party.c:164 src/core_party.c:186
 #, c-format
 msgid "Old value: '%s'"
 msgstr ""
 
-#: src/core_party.c:166
+#: src/core_party.c:167 src/core_party.c:190
 #, c-format
 msgid "New value: '%s'"
 msgstr ""
 
-#: src/core_party.c:176
-#, c-format
-msgid "I am %s, running Eggdrop %s."
-msgstr ""
-
-#: src/core_party.c:177
-#, c-format
-msgid "Owner: %s"
+#: src/core_party.c:168 src/core_party.c:191
+msgid "New value: null (unset)"
 msgstr ""
 
 #: src/core_party.c:178
-#, c-format
-msgid "Admin: %s"
+msgid "Syntax: unset <path>"
 msgstr ""
 
-#: src/core_party.c:180
-#, c-format
-msgid "OS: %s %s"
-msgstr ""
-
-#: src/core_party.c:187 src/core_party.c:228 src/main.c:144
-msgid "Saving user file..."
-msgstr ""
-
-#: src/core_party.c:189 src/main.c:146
-msgid "Saving config file..."
-msgstr ""
-
-#: src/core_party.c:197
-msgid "Please use at least 6 characters."
+#: src/core_party.c:187
+msgid "Old value: null (unset)"
 msgstr ""
 
 #: src/core_party.c:201
 #, c-format
+msgid "I am %1$s, running Eggdrop %2$s."
+msgstr ""
+
+#: src/core_party.c:202
+#, c-format
+msgid "Owner: %s"
+msgstr ""
+
+#: src/core_party.c:203
+#, c-format
+msgid "Admin: %s"
+msgstr ""
+
+#: src/core_party.c:205
+#, c-format
+msgid "OS: %1$s %2$s"
+msgstr ""
+
+#: src/core_party.c:214 src/core_party.c:263 src/main.c:144
+msgid "Saving user file..."
+msgstr ""
+
+#: src/core_party.c:216 src/main.c:146
+msgid "Saving config file..."
+msgstr ""
+
+#: src/core_party.c:224
+msgid "Please use at least 6 characters."
+msgstr ""
+
+#: src/core_party.c:228
+#, c-format
 msgid "Changed password to '%s'."
 msgstr ""
 
-#: src/core_party.c:215
+#: src/core_party.c:242
 msgid "Partyline members:"
 msgstr ""
 
-#: src/core_party.c:230
+#: src/core_party.c:265
 #, c-format
 msgid "Bot shutting down: %s"
 msgstr ""
 
-#: src/core_party.c:231
+#: src/core_party.c:266
 msgid "Bot shutting down."
 msgstr ""
 
-#: src/core_party.c:242
+#: src/core_party.c:277
 msgid "Syntax: +user <handle>"
 msgstr ""
 
-#: src/core_party.c:246
+#: src/core_party.c:281
 #, c-format
 msgid "User '%s' already exists!"
 msgstr ""
 
-#: src/core_party.c:250
+#: src/core_party.c:285
 #, c-format
 msgid "User '%s' created."
 msgstr ""
 
-#: src/core_party.c:251
+#: src/core_party.c:286
 #, c-format
 msgid "Could not create user '%s'."
 msgstr ""
 
-#: src/core_party.c:260
+#: src/core_party.c:295
 msgid "Syntax: -user <handle>"
 msgstr ""
 
-#: src/core_party.c:264
+#: src/core_party.c:299
 #, c-format
 msgid "User '%s' not found."
 msgstr ""
 
-#: src/core_party.c:266
+#: src/core_party.c:301
 #, c-format
 msgid "Deleting user '%s'."
 msgstr ""
 
-#: src/core_party.c:294
+#: src/core_party.c:329
 msgid "Syntax: chattr <user> [channel] <+/-flags>"
 msgstr ""
 
-#: src/core_party.c:306
+#: src/core_party.c:341
 #, c-format
 msgid "Flags for %s are now '%s'."
 msgstr ""
 
-#: src/core_party.c:309
+#: src/core_party.c:344
 #, c-format
 msgid "'%s' is not a valid user."
 msgstr ""
 
-#: src/core_party.c:323
+#: src/core_party.c:358
 msgid "Loaded modules:"
 msgstr ""
 
