@@ -1,3 +1,24 @@
+2003-04-15 08:18  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/Makefile.am, lib/eggdrop/eggdrop.c,
+	lib/eggdrop/eggdrop.h, lib/eggdrop/eggmod.c, lib/eggdrop/eggmod.h,
+	lib/eggdrop/eggowner.c, lib/eggdrop/eggowner.h,
+	lib/eggdrop/eggtimer.c, lib/eggdrop/eggtimer.h,
+	modules/blowfish/bf_tab.h, modules/blowfish/blowfish.c,
+	modules/blowfish/blowfish.h, modules/perlscript/mod_iface.c,
+	modules/script/scriptmisc.c, modules/script/scriptmod.c,
+	modules/server/channels.c, modules/server/dcc.c,
+	modules/server/input.c, modules/server/nicklist.c,
+	modules/server/scriptcmds.c, modules/server/server.c,
+	modules/server/serverlist.c, modules/server/servsock.c,
+	modules/tclscript/tclscript.c, src/Makefile.am, src/core_binds.c,
+	src/core_binds.h, src/core_config.c, src/logfile.c, src/main.c,
+	src/main.h:
+
+	
+	* Start of new module interface 
+	* Global function table is gone 
+
 2003-04-09 02:01  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/eggdns.c, lib/eggdrop/my_socket.c,
