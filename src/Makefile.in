@@ -1,5 +1,5 @@
 # Makefile for src/
-# $Id: Makefile.in,v 1.19 2001/08/21 00:21:17 ite Exp $
+# $Id: Makefile.in,v 1.20 2001/08/25 02:43:38 ite Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -17,6 +17,7 @@ VERSION = @VERSION@
 datadir = @datadir@
 localedir = $(datadir)/locale
 DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
+top_builddir = ..
 
 CC = @CC@
 LD = @CC@
