@@ -1,3 +1,26 @@
+2003-06-08 03:23  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/: garbage.c, garbage.h:
+
+	
+	* basic garbage collection helper 
+
+2003-06-08 03:21  stdarg <stdarg@techmonkeys.org>
+
+	* configure.ac, lib/eggdrop/Makefile.am, lib/eggdrop/eggdrop.h,
+	lib/eggdrop/partychan.c, lib/eggdrop/partyline.c,
+	lib/eggdrop/partyline.h, lib/eggdrop/partymember.c,
+	lib/eggdrop/script.h, modules/Makefile.am,
+	modules/perlscript/mod_iface.c, modules/perlscript/perlscript.c,
+	modules/script/scriptparty.c, modules/server/dcc_commands.c,
+	modules/tclscript/tclscript.c, modules/telnetparty/Makefile.am,
+	modules/telnetparty/events.c, modules/telnetparty/telnetparty.c,
+	modules/telnetparty/telnetparty.h, src/Makefile.am,
+	src/core_party.c, src/main.c:
+
+	
+	* Partyline updates 
+
 2003-05-13 07:16  stdarg <stdarg@techmonkeys.org>
 
 	* acconfig/acinclude.m4, lib/eggdrop/module.h,
