@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2003-02-16 04:00-0600\n"
+"POT-Creation-Date: 2003-02-17 04:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1751,7 +1751,7 @@ msgid "You need the server module to use the uptime module."
 msgstr ""
 
 #. Kill bot incase a botchk is run from crond.
-#: src/bg.c:134 src/bg.c:142 src/main.c:671 src/main.c:677
+#: src/bg.c:134 src/bg.c:142 src/main.c:670 src/main.c:676
 #, c-format
 msgid "* Warning!  Could not write %s file!\n"
 msgstr ""
@@ -2668,19 +2668,19 @@ msgstr ""
 msgid "ERROR: Eggdrop will not run as root!"
 msgstr ""
 
-#: src/main.c:647
+#: src/main.c:646
 #, c-format
 msgid "I detect %s already running from this directory.\n"
 msgstr ""
 
-#: src/main.c:648
+#: src/main.c:647
 #, c-format
 msgid "If this is incorrect, erase the %s\n"
 msgstr ""
 
 #. Should be only 2 modules now - blowfish (or some other
 #. encryption module) and eggdrop.
-#: src/main.c:878
+#: src/main.c:877
 msgid "Stagnant module; there WILL be memory leaks!"
 msgstr ""
 
