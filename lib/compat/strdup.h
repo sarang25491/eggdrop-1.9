@@ -21,18 +21,18 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: strdup.h,v 1.3 2002/05/05 16:40:32 tothwolf Exp $
+ * $Id: strdup.h,v 1.4 2002/10/11 06:56:02 stdarg Exp $
  */
 
 #ifndef _EGG_STRDUP_H
 #define _EGG_STRDUP_H
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+# include <config.h>
 #endif
 
 #ifndef HAVE_STRDUP
-const char *strdup(const char *);
+char *strdup(const char *);
 #endif
 
 #endif				/* !_EGG_STRDUP_H */

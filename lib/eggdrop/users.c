@@ -2,12 +2,16 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "eggdrop.h"
+#include "binds.h"
+#include "flags.h"
 #include "users.h"
 #include "ircmasks.h"
 #include "hash_table.h"
 #include "xml.h"
-#include "flags.h"
 #include "match.h"
+
+static FILE *fp = NULL;
 
 /* When we walk along irchost_cache_ht, we pass along this struct so the
  * function can keep track of modified entries. */
@@ -34,6 +38,10 @@ static hash_table_t *uid_ht = NULL;
 /* List to keep all users' ircmasks in. */
 static ircmask_list_t ircmask_list = {NULL};
 
+/* Bind tables. */
+static bind_table_t *BT_uflags = NULL,	/* user flags */
+	*BT_uset = NULL;	/* settings */
+
 /* Prototypes for internal functions. */
 static user_t *real_user_new(const char *handle, int uid);
 static int user_get_uid();
@@ -43,12 +51,16 @@ static int cache_user_del(user_t *u, const char *ircmask);
 
 int user_init()
 {
+	fp = fopen("users.log", "a");
+
 	/* Create hash tables. */
 	handle_ht = hash_table_create(NULL, NULL, USER_HASH_SIZE, HASH_TABLE_STRINGS);
 	uid_ht = hash_table_create(NULL, NULL, USER_HASH_SIZE, HASH_TABLE_INTS);
 	irchost_cache_ht = hash_table_create(NULL, NULL, HOST_HASH_SIZE, HASH_TABLE_STRINGS);
 
 	/* And bind tables. */
+	BT_uflags = bind_table_add("uflag", 4, "ssss", MATCH_MASK, 0);
+	BT_uset = bind_table_add("uset", 4, "ssss", MATCH_MASK, 0);
 	return(0);
 }
 
@@ -75,10 +87,6 @@ int user_load(const char *fname)
 		xml_node_get_int(&uid, user_node, "uid", 0, 0);
 		if (!handle || !uid) break;
 		u = real_user_new(handle, uid);
-		xml_node_get_str(&u->pass, user_node, "password", 0, 0);
-		if (u->pass) u->pass = strdup(u->pass);
-		xml_node_get_str(&u->salt, user_node, "salt", 0, 0);
-		if (u->salt) u->salt = strdup(u->salt);
 		for (j = 0; ; j++) {
 			xml_node_get_str(&ircmask, user_node, "ircmask", j, 0);
 			if (!ircmask) break;
@@ -93,8 +101,8 @@ int user_load(const char *fname)
 			u->settings = realloc(u->settings, sizeof(*u->settings) * (j+1));
 			u->nsettings++;
 			setting = u->settings+j;
-			xml_node_get_int(&setting->flags, setting_node, "flags", 0, 0);
-			xml_node_get_int(&setting->udef_flags, setting_node, "udef_flags", 0, 0);
+			xml_node_get_int(&setting->flags.builtin, setting_node, "builtin_flags", 0, 0);
+			xml_node_get_int(&setting->flags.udef, setting_node, "udef_flags", 0, 0);
 			setting->nextended = 0;
 			setting->extended = NULL;
 			xml_node_get_str(&chan, setting_node, "chan", 0, 0);
@@ -134,16 +142,14 @@ static int save_walker(const void *key, void *dataptr, void *param)
 	user_node->name = strdup("user");
 	xml_node_set_str(u->handle, user_node, "handle", 0, 0);
 	xml_node_set_int(u->uid, user_node, "uid", 0, 0);
-	if (u->pass) xml_node_set_str(u->pass, user_node, "password", 0, 0);
-	if (u->salt) xml_node_set_str(u->salt, user_node, "salt", 0, 0);
 	for (i = 0; i < u->nircmasks; i++) {
 		xml_node_set_str(u->ircmasks[i], user_node, "ircmask", i, 0);
 	}
 	for (i = 0; i < u->nsettings; i++) {
 		setting = u->settings+i;
 		if (setting->chan) xml_node_set_str(setting->chan, user_node, "setting", i, "chan", 0, 0);
-		xml_node_set_int(u->settings[i].flags, user_node, "setting", i, "flags", 0, 0);
-		xml_node_set_int(u->settings[i].udef_flags, user_node, "setting", i, "udef_flags", 0, 0);
+		xml_node_set_int(u->settings[i].flags.builtin, user_node, "setting", i, "builtin_flags", 0, 0);
+		xml_node_set_int(u->settings[i].flags.udef, user_node, "setting", i, "udef_flags", 0, 0);
 		for (j = 0; j < setting->nextended; j++) {
 			xml_node_set_str(setting->extended[j].name, user_node, "setting", i, "extended", j, "name", 0, 0);
 			xml_node_set_str(setting->extended[j].value, user_node, "setting", i, "extended", j, "value", 0, 0);
@@ -201,10 +207,6 @@ static user_t *real_user_new(const char *handle, int uid)
 	if (!uid) uid = user_get_uid();
 	u->uid = uid;
 
-	/* All users have the global setting by default. */
-	u->settings = calloc(1, sizeof(*u->settings));
-	u->nsettings = 1;
-
 	hash_table_insert(handle_ht, u->handle, u);
 	hash_table_insert(uid_ht, (void *)u->uid, u);
 	hash_table_check_resize(&handle_ht);
@@ -215,9 +217,16 @@ static user_t *real_user_new(const char *handle, int uid)
 user_t *user_new(const char *handle)
 {
 	int uid;
+	user_t *u;
 
 	uid = user_get_uid();
-	return real_user_new(handle, uid);
+	u = real_user_new(handle, uid);
+
+	/* All users have the global setting by default. */
+	u->settings = calloc(1, sizeof(*u->settings));
+	u->nsettings = 1;
+
+	return(u);
 }
 
 int user_delete(user_t *u)
@@ -237,12 +246,6 @@ int user_delete(user_t *u)
 	if (u->ircmasks) free(u->ircmasks);
 	u->ircmasks = NULL;
 	u->nircmasks = 0;
-
-	/* The password. */
-	if (u->pass) free(u->pass);
-	if (u->salt) free(u->salt);
-	u->pass = NULL;
-	u->salt = NULL;
 
 	/* And all of the settings. */
 	for (i = 0; i < u->nsettings; i++) {
@@ -403,7 +406,7 @@ int user_del_ircmask(user_t *u, const char *ircmask)
 	return(0);
 }
 
-static int get_flags(user_t *u, const char *chan, int **flags, int **udef)
+static int get_flags(user_t *u, const char *chan, flags_t **flags)
 {
 	int i;
 
@@ -415,27 +418,60 @@ static int get_flags(user_t *u, const char *chan, int **flags, int **udef)
 		if (i == u->nsettings) return(-1);
 	}
 	*flags = &u->settings[i].flags;
-	*udef = &u->settings[i].udef_flags;
 	return(0);
 }
 
 int user_get_flags(user_t *u, const char *chan, flags_t *flags)
 {
-	int *builtin, *udef;
+	flags_t *uflags;
 
-	if (get_flags(u, chan, &builtin, &udef)) return(-1);
-	flags->builtin = *builtin;
-	flags->udef = *udef;
+	if (get_flags(u, chan, &uflags)) return(-1);
+
+	flags->builtin = uflags->builtin;
+	flags->udef = uflags->udef;
+	return(0);
+}
+
+int check_flag_change(user_t *u, const char *chan, flags_t *oldflags, flags_t *newflags)
+{
+	char oldstr[64], newstr[64], *change;
+	int r;
+
+	flag_to_str(oldflags, oldstr);
+	flag_to_str(newflags, newstr);
+	change = egg_msprintf(NULL, 0, NULL, "%s %s %s", chan ? chan : "", oldstr, newstr);
+	r = bind_check(BT_uflags, change, u->handle, chan, oldstr, newstr);
+	free(change);
+
+	/* Does a callback want to cancel this flag change? */
+	if (r & BIND_RET_BREAK) return(-1);
 	return(0);
 }
 
 int user_set_flags(user_t *u, const char *chan, flags_t *flags)
 {
-	int *builtin, *udef;
+	flags_t *oldflags, newflags;
 
-	if (get_flags(u, chan, &builtin, &udef)) return(-1);
-	*builtin = flags->builtin;
-	*udef = flags->udef;
+	if (get_flags(u, chan, &oldflags)) return(-1);
+	newflags.builtin = flags->builtin;
+	newflags.udef = flags->udef;
+	if (check_flag_change(u, chan, oldflags, &newflags)) return(0);
+	oldflags->builtin = newflags.builtin;
+	oldflags->udef = newflags.udef;
+	return(0);
+}
+
+int user_set_flag_str(user_t *u, const char *chan, const char *flags)
+{
+	flags_t *oldflags, newflags;
+
+	if (get_flags(u, chan, &oldflags)) return(-1);
+	newflags.builtin = oldflags->builtin;
+	newflags.udef = oldflags->udef;
+	flag_merge_str(&newflags, flags);
+	if (check_flag_change(u, chan, oldflags, &newflags)) return(0);
+	oldflags->builtin = newflags.builtin;
+	oldflags->udef = newflags.udef;
 	return(0);
 }
 
@@ -475,9 +511,15 @@ int user_get_setting(user_t *u, const char *chan, const char *setting, char **va
 
 int user_set_setting(user_t *u, const char *chan, const char *setting, const char *newvalue)
 {
-	int i, j;
-	char **value;
+	int i, j, r;
+	char **value, *change;
 	user_setting_t *setptr;
+
+	change = egg_msprintf(NULL, 0, NULL, "%s %s", chan ? chan : "", setting);
+	r = bind_check(BT_uset, change, u->handle, chan, setting, newvalue);
+	free(change);
+
+	if (r & BIND_RET_BREAK) return(0);
 
 	if (find_setting(u, chan, setting, &i, &j) < 0) {
 		/* See if we need to add the channel. */

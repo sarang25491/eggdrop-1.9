@@ -1,4 +1,5 @@
 #include "main.h"
+#include <eggdrop/flags.h>
 #include <eggdrop/users.h>
 
 static char *script_uid_to_handle(int uid)
@@ -112,16 +113,21 @@ static int script_setflags(int uid, char *chan, char *flags)
 		chan = NULL;
 	}
 
-	//user_setflags(u, chan, flags);
+	user_set_flag_str(u, chan, flags);
 	return(0);
 }
 
 static char *script_getflags(int uid, char *chan)
 {
 	user_t *u;
+	flags_t flags;
+	char flagstr[64];
 
 	u = user_lookup_by_uid(uid);
-	if (!u) return(-1);
+	if (!u) return(NULL);
+	if (user_get_flags(u, chan, &flags)) return(NULL);
+	flag_to_str(&flags, flagstr);
+	return strdup(flagstr);
 }
 
 script_command_t script_new_user_cmds[] = {
@@ -134,6 +140,9 @@ script_command_t script_new_user_cmds[] = {
 	{"", "user_find", script_user_find, NULL, 1, "s", "irchost", SCRIPT_STRING, 0},
 	{"", "user_get", script_user_get, NULL, 2, "iss", "uid ?channel? setting", SCRIPT_STRING, SCRIPT_VAR_ARGS | SCRIPT_PASS_COUNT},
 	{"", "user_set", script_user_set, NULL, 3, "isss", "uid ?channel? setting value", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_PASS_COUNT},
+	{"", "user_getflags", script_getflags, NULL, 1, "is", "uid ?chan?", SCRIPT_STRING | SCRIPT_FREE, SCRIPT_VAR_ARGS},
+	{"", "user_setflags", script_setflags, NULL, 2, "iss", "uid ?chan? flags", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
+	{"", "user_load", user_save, NULL, 0, "s", "?fname?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
 	{"", "user_save", script_user_save, NULL, 0, "s", "?fname?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
 	{0}
 };

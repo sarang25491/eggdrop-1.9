@@ -21,11 +21,16 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: compat.h,v 1.8 2002/05/18 07:41:33 stdarg Exp $
+ * $Id: compat.h,v 1.9 2002/10/11 06:56:02 stdarg Exp $
  */
 
 #ifndef _EGG_COMPAT_H
 #define _EGG_COMPAT_H
+
+/* Include config.h */
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 /*
  * Include prototypes

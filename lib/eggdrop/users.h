@@ -14,7 +14,7 @@ typedef struct {
 	char *chan;
 
 	/* Builtin flags and user defined flags. */
-	int flags, udef_flags;
+	flags_t flags;
 
 	/* Extended settings done by modules/scripts. */
 	extended_setting_t *extended;
@@ -25,9 +25,6 @@ typedef struct user {
 	/* Each user has a unique handle and a permanent uid. */
 	char *handle;
 	int uid;
-
-	/* The encrypted password and its salt (initialization vector). */
-	char *pass, *salt;
 
 	/* Masks that the user is recognized by on irc (nick!user@host). */
 	char **ircmasks;
@@ -40,6 +37,7 @@ typedef struct user {
 
 int user_init();
 int user_load(const char *fname);
+int user_save(const char *fname);
 user_t *user_new(const char *handle);
 int user_delete(user_t *u);
 user_t *user_lookup_by_handle(const char *handle);
@@ -50,5 +48,8 @@ int user_add_ircmask(user_t *u, const char *ircmask);
 int user_del_ircmask(user_t *u, const char *ircmask);
 int user_get_setting(user_t *u, const char *chan, const char *setting, char **valueptr);
 int user_set_setting(user_t *u, const char *chan, const char *setting, const char *newvalue);
+int user_get_flags(user_t *u, const char *chan, flags_t *flags);
+int user_set_flags(user_t *u, const char *chan, flags_t *flags);
+int user_set_flag_str(user_t *u, const char *chan, const char *flags);
 
 #endif
