@@ -1,3 +1,10 @@
+2001-08-29 19:21  stdarg
+
+	* src/mod/channels.mod/tclchan.c:
+
+	I guess "channel get mode" should really be "channel get chanmode"
+	since we use "chanmode" for the "channel set" command.  
+
 2001-08-28 01:41  Federico Mennite <ite@techmonkeys.org>
 
 	* po/eggdrop.pot:
