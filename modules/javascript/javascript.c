@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: javascript.c,v 1.3 2002/05/06 10:41:02 stdarg Exp $";
+static const char rcsid[] = "$Id: javascript.c,v 1.4 2002/05/07 10:02:45 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -40,7 +40,7 @@ static const char rcsid[] = "$Id: javascript.c,v 1.3 2002/05/06 10:41:02 stdarg 
 
 static eggdrop_t *egg = NULL;
 
-/* Data we need for a tcl callback. */
+/* Data we need for a JavaScript callback. */
 typedef struct {
 	JSContext *mycx;
 	JSObject *myobj;
@@ -60,6 +60,45 @@ static JSObject  *global_js_object;
 
 static char *error_logfile = NULL;
 
+static int my_getter(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
+{
+	char *str;
+
+	str = JS_GetStringBytes(JS_ValueToString(cx, id));
+
+	putlog(LOG_MISC, "*", "my_getter: %s", str);
+	return JS_TRUE;
+}
+
+static int my_setter(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
+{
+	char *str;
+
+	str = JS_GetStringBytes(JS_ValueToString(cx, id));
+
+	putlog(LOG_MISC, "*", "my_setter: %s", str);
+	return JS_TRUE;
+}
+
+static JSClass eggvar_class = {
+	"eggvar", JSCLASS_HAS_PRIVATE,
+	JS_PropertyStub, JS_PropertyStub, my_getter, my_setter,
+	JS_EnumerateStub, JS_ResolveStub, JS_ConvertStub, JS_FinalizeStub
+};
+
+static JSClass eggfunc_class = {
+	"eggvar", JSCLASS_HAS_PRIVATE,
+	JS_PropertyStub, JS_PropertyStub, my_getter, my_setter,
+	JS_EnumerateStub, JS_ResolveStub, JS_ConvertStub, JS_FinalizeStub,
+	NULL, NULL,
+	my_command_handler
+};
+
+static JSClass global_class = {"global", JSCLASS_HAS_PRIVATE,
+	JS_PropertyStub,JS_PropertyStub,JS_PropertyStub,JS_PropertyStub,
+	JS_EnumerateStub,JS_ResolveStub,JS_ConvertStub,JS_FinalizeStub
+};
+
 /* Load a JS script. */
 static int my_load_script(registry_entry_t *entry, char *fname)
 {
@@ -77,48 +116,31 @@ static int my_load_script(registry_entry_t *entry, char *fname)
 	return(0);
 }
 
-/* This function handles trace callbacks from Tcl. */
-static int my_linked_var_get()
-{
-	return(0);
-}
-
-static int my_linked_var_set()
+/* This should only be called for integers. */
+static int my_value_of(JSContext *cx, JSObject *obj, int argc, jsval *argv, jsval *rval)
 {
 	script_linked_var_t *linked_var;
-	script_var_t newvalue;
 
-	//tcl_to_c_var(irp, obj, &newvalue, linked_var->type);
+	linked_var = JS_GetPrivate(cx, obj);
+	putlog(LOG_MISC, "*", "getting value of %s", linked_var->name);
+	*rval = JSVAL_VOID;
+	return JS_FALSE;
+}
 
-	/* If they give a callback, then let them handle it. Otherwise, we
-		do some default handling for strings and ints. */
-	if (linked_var->callbacks && linked_var->callbacks->on_write) {
-		int r;
+/* This can be called for anything. */
+static int my_to_string(JSContext *cx, JSObject *obj, int argc, jsval *argv, jsval *rval)
+{
+	script_linked_var_t *linked_var;
 
-		r = (linked_var->callbacks->on_write)(linked_var, &newvalue);
-		return(r);
+	putlog(LOG_MISC, "*", "my_to_string");
+	linked_var = JS_GetPrivate(cx, obj);
+	if (linked_var->type == SCRIPT_STRING) {
+		*rval = STRING_TO_JSVAL(JS_NewStringCopyZ(cx, *(char **)linked_var->value));
 	}
-	switch (linked_var->type & SCRIPT_TYPE_MASK) {
-		case SCRIPT_UNSIGNED:
-		case SCRIPT_INTEGER:
-			/* linked_var->value is a pointer to an int/uint */
-			*(int *)(linked_var->value) = (int) newvalue.value;
-			break;
-		case SCRIPT_STRING: {
-			/* linked_var->value is a pointer to a (char *) */
-			char **charptr = (char **)(linked_var->value);
-
-			/* Free the old value. */
-			if (*charptr) free(*charptr);
-
-			/* If we copied the string (> 8.0) then just use the copy. */
-			if (newvalue.type & SCRIPT_FREE) *charptr = newvalue.value;
-			else *charptr = strdup(newvalue.value);
-			break;
-		}
-		default:
-			return(0);
+	else if (linked_var->type == SCRIPT_INTEGER) {
+		*rval = INT_TO_JSVAL(*(int **)linked_var->value);
 	}
+	return JS_FALSE;
 }
 
 /* This function creates the JS <-> C variable linkage on reads, writes, and unsets. */
@@ -130,12 +152,17 @@ static int my_link_var(void *ignore, script_linked_var_t *var)
 	if (var->class && strlen(var->class)) varname = msprintf("%s(%s)", var->class, var->name);
 	else varname = strdup(var->name);
 
-	//set_linked_var(var);
-	//obj = JS_DefineObject(global_js_context, global_js_object,
-		//varname, NULL, NULL, JSPROP_PERMANENT | JSPROP_EXPORTED);
-	//JS_SetPrivate(global_js_context, obj, var);
-
-	free(varname);
+	obj = JS_DefineObject(global_js_context, global_js_object,
+		varname, &eggvar_class, NULL, JSPROP_ENUMERATE|JSPROP_EXPORTED|JSPROP_PERMANENT);
+	if (!obj) {
+		putlog(LOG_MISC, "*", "failed 1");
+		return(0);
+	}
+	JS_SetPrivate(global_js_context, obj, var);
+	JS_DefineFunction(global_js_context, obj,
+		"toString", my_to_string, 0, 0);
+	JS_DefineFunction(global_js_context, obj,
+		"valueOf", my_value_of, 0, 0);
 	return(0);
 }
 
@@ -232,7 +259,7 @@ static int my_js_cb_delete(script_callback_t *me)
 static int my_create_cmd(void *ignore, script_command_t *info)
 {
 	char *cmdname;
-	JSFunction *func;
+	//JSFunction *func;
 	JSObject *obj;
 
 	if (info->class && strlen(info->class)) {
@@ -242,11 +269,15 @@ static int my_create_cmd(void *ignore, script_command_t *info)
 		cmdname = strdup(info->name);
 	}
 
-	func = JS_NewFunction(global_js_context, my_command_handler, 0, 0, NULL, cmdname);
+	obj = JS_DefineObject(global_js_context, global_js_object,
+		cmdname, &eggfunc_class, NULL, JSPROP_ENUMERATE|JSPROP_EXPORTED|JSPROP_PERMANENT|JSPROP_READONLY);
+
+	if (!obj) return(0);
 
 	//free(cmdname);
 
-	obj = JS_GetFunctionObject(func);
+	JS_DefineFunction(global_js_context, obj,
+		"toString", my_to_string, 0, 0);
 	JS_SetPrivate(global_js_context, obj, info);
 
 	return(0);
@@ -371,7 +402,6 @@ static int js_to_c_var(JSContext *cx, JSObject *obj, jsval val, script_var_t *va
 	switch (type) {
 		case SCRIPT_STRING: {
 			JSString *str;
-			int len;
 
 			str = JS_ValueToString(cx, val);
 			var->value = JS_GetStringBytes(str);
@@ -429,7 +459,7 @@ static int js_to_c_var(JSContext *cx, JSObject *obj, jsval val, script_var_t *va
 			struct userrec *u;
 			char *handle;
 
-			handle = JS_ValueToString(cx, val);
+			handle = JS_GetStringBytes(JS_ValueToString(cx, val));
 			u = get_user_by_handle(userlist, handle);
 			var->value = u;
 			if (!u) {
@@ -487,9 +517,17 @@ static int my_command_handler(JSContext *cx, JSObject *obj, int argc, jsval *arg
 	int simple_retval; /* Return value for simple commands. */
 	int i, err, skip;
 	char *syntax;
+	JSObject *this_obj;
+
+	/* Start off with a void value. */
+	*rval = JSVAL_VOID;
+
+	/* I don't know how well documented this is, or if it's the best way
+		to do it, but argv[-2] is the function's "this" object. */
+	this_obj = JSVAL_TO_OBJECT(argv[-2]);
 
 	/* Get the associated command structure stored in the object. */
-	cmd = (script_command_t *)JS_GetPrivate(cx, obj);
+	cmd = (script_command_t *)JS_GetPrivate(cx, this_obj);
 
 	/* Check for proper number of args. */
 	if (cmd->flags & SCRIPT_VAR_ARGS) i = (cmd->nargs <= argc);
@@ -585,16 +623,9 @@ static int my_command_handler(JSContext *cx, JSObject *obj, int argc, jsval *arg
 	return JS_TRUE;
 }
 
+
 static int javascript_init()
 {
-	JSVersion version;
-	JSObject  *it;
-	JSClass global_class = {"global", 0, 
-		JS_PropertyStub,JS_PropertyStub,JS_PropertyStub,JS_PropertyStub,
-		JS_EnumerateStub,JS_ResolveStub,JS_ConvertStub,JS_FinalizeStub
-	};
-	JSBool builtins;
-
 	/* Create a new runtime environment. */
 	global_js_runtime = JS_NewRuntime(0x100000);
 	if (!global_js_runtime) return(1);
@@ -607,7 +638,19 @@ static int javascript_init()
 	global_js_object = JS_NewObject(global_js_context, &global_class, NULL, NULL);
 
 	/* Initialize the built-in JS objects and the global object */
-	builtins = JS_InitStandardClasses(global_js_context, global_js_object);
+	JS_InitStandardClasses(global_js_context, global_js_object);
+
+	/* Now initialize our eggvar class. */
+	JS_InitClass(global_js_context, global_js_object,
+		NULL, &eggvar_class, NULL, 0,
+		NULL, NULL, NULL, NULL);
+
+	/* And eggfunc as well. */
+	JS_InitClass(global_js_context, global_js_object,
+		NULL, &eggfunc_class, NULL, 0,
+		NULL, NULL, NULL, NULL);
+
+	return(0);
 }
 
 static registry_simple_chain_t my_functions[] = {
@@ -654,7 +697,12 @@ static int cmd_js(struct userrec *u, int idx, char *text)
 		JSString *str;
 
 		str = JS_ValueToString(global_js_context, js_rval);
-		dprintf(idx, "JS: %s\n", JS_GetStringBytes(str));
+		if (!str) {
+			dprintf(idx, "JS:\n");
+		}
+		else {
+			dprintf(idx, "JS: %s\n", JS_GetStringBytes(str));
+		}
 	}
 	return(0);
 }
