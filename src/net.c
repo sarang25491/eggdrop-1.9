@@ -9,7 +9,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: net.c,v 1.60 2002/05/18 07:41:33 stdarg Exp $";
+static const char rcsid[] = "$Id: net.c,v 1.61 2002/05/19 04:41:32 stdarg Exp $";
 #endif
 
 #include <fcntl.h>
@@ -544,9 +544,10 @@ inline int open_listen(int *port, int af)
 char *iptostr(IP ip)
 {
   struct in_addr a;
+  static char ipbuf[32];
 
   a.s_addr = ip;
-  return inet_ntoa(a);
+  return (char *)inet_ntop(AF_INET, &a, ipbuf, sizeof(ipbuf));
 }
 
 char *getlocaladdr(int sock)
@@ -629,7 +630,6 @@ int answer(int sock, char *caller, char *ip, unsigned short *port,
 int open_telnet_dcc(int sock, char *server, char *port)
 {
   int p;
-  struct in_addr ia;
 
 debug2("|NET| open_telnet_dcc: %s %s", server, port);
   if (port != NULL)
@@ -638,11 +638,7 @@ debug2("|NET| open_telnet_dcc: %s %s", server, port);
     return -3;
   if (server == NULL)
     return -3;
-  /* fix the IPv4 IP format (ie: 167772161 -> 10.0.0.1) */
-  if (inet_pton(AF_INET, server, &ia))
-    return open_telnet_raw(sock, inet_ntoa(ia), p);
-  else
-    return open_telnet_raw(sock, server, p);
+  return open_telnet_raw(sock, server, p);
 }
 
 void egg_dns_gotanswer(int status, adns_answer *aw, char *origname)

@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: server.c,v 1.21 2002/05/18 07:41:33 stdarg Exp $";
+static const char rcsid[] = "$Id: server.c,v 1.22 2002/05/19 04:41:32 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "server"
@@ -1284,12 +1284,21 @@ static int ctcp_DCC_CHAT(char *nick, char *from, struct userrec *u,
   int i;
   struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
   struct in_addr ip4;
+  unsigned long ipnum;
+  char ipbuf[32];
 
   strcpy(msg, text);
   action = newsplit(&msg);
   param = newsplit(&msg);
   ip = newsplit(&msg);
   prt = newsplit(&msg);
+
+  /* Convert to a real ip address. */
+  ipnum = strtoul(ip, NULL, 10);
+  ipnum = htonl(ipnum);
+  inet_ntop(AF_INET, &ipnum, ipbuf, sizeof(ipbuf));
+  ip = ipbuf;
+
   if (strcasecmp(action, "CHAT") || strcasecmp(object, botname) || !u)
     return 0;
   get_user_flagrec(u, &fr, 0);
@@ -1321,10 +1330,7 @@ static int ctcp_DCC_CHAT(char *nick, char *from, struct userrec *u,
       return 1;
     }
 debug1("|SERVER| dcc chat ip: (%s)", ip);
-    if (inet_pton(AF_INET, ip, &ip4))
-	strlcpy(dcc[i].addr, inet_ntoa(ip4), ADDRLEN);
-    else
-	strlcpy(dcc[i].addr, ip, ADDRLEN);
+    strlcpy(dcc[i].addr, ip, ADDRLEN);
 debug1("|SERVER| addr: (%s)", dcc[i].addr);
     dcc[i].port = atoi(prt);
     dcc[i].sock = -1;

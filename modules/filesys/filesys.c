@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: filesys.c,v 1.13 2002/05/18 07:41:33 stdarg Exp $";
+static const char rcsid[] = "$Id: filesys.c,v 1.14 2002/05/19 04:41:31 stdarg Exp $";
 #endif
 
 #include <fcntl.h>
@@ -579,6 +579,8 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
 {
   char *param, *ip, *prt, *buf = NULL, *msg;
   int atr = u ? u->flags : 0, i;
+  unsigned long ipnum;
+  char ipbuf[32];
 
   buf = malloc(strlen(text) + 1);
   msg = buf;
@@ -618,7 +620,6 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
       putlog(LOG_FILES, "*", "Refused dcc send %s (%s): file too large", param,
 	     nick);
     } else {
-      struct in_addr ip4;
       i = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
       if (i < 0) {
 	dprintf(DP_HELP, "NOTICE %s :Sorry, too many DCC connections.\n",
@@ -628,10 +629,11 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
 	return;
       }
 debug1("|FILESYS| dcc send ip: (%s)", ip);
-    if (inet_pton(AF_INET, ip, &ip4)) /* fix the format! */
-	strlcpy(dcc[i].addr, inet_ntoa(ip4), ADDRLEN);
-    else
-	strlcpy(dcc[i].addr, ip, ADDRLEN);
+    ipnum = strtoul(ip, NULL, 10);
+    ipnum = htonl(ipnum);
+    inet_ntop(AF_INET, &ipnum, ipbuf, sizeof(ipbuf));
+    ip = ipbuf;
+    strlcpy(dcc[i].addr, ip, ADDRLEN);
 debug1("|FILESYS| addr: (%s)", dcc[i].addr);
       dcc[i].port = atoi(prt);
       dcc[i].sock = (-1);
