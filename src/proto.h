@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.60 2001/12/19 06:25:08 guppy Exp $
+ * $Id: proto.h,v 1.61 2002/01/04 02:56:25 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -58,7 +58,6 @@ extern int (*match_noterej) (struct userrec *, char *);
 
 /* botcmd.c */
 void bot_share(int, char *);
-int base64_to_int(char *);
 
 /* botnet.c */
 void answer_local_whom(int, int);
@@ -90,11 +89,8 @@ int getparty(char *, int);
 
 /* botmsg.c */
 int add_note(char *, char *, char *, int, int);
-int simple_sprintf EGG_VARARGS(char *, arg1);
 void tandout_but EGG_VARARGS(int, arg1);
-char *int_to_base10(int);
 char *unsigned_int_to_base10(unsigned int);
-char *int_to_base64(unsigned int);
 
 /* chanprog.c */
 void tell_verbose_status(int);

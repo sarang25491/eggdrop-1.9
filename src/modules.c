@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.93 2001/12/26 05:03:03 tothwolf Exp $
+ * $Id: modules.c,v 1.94 2002/01/04 02:56:25 ite Exp $
  */
 /* 
  * Copyright (C) 1997 Robey Pointer
@@ -163,10 +163,10 @@ Function global_table[] =
   (Function) add_tcl_strings,
   (Function) rem_tcl_strings,
   /* 20 - 23 */
-  (Function) base64_to_int,
-  (Function) int_to_base64,
-  (Function) int_to_base10,
-  (Function) simple_sprintf,
+  0,
+  0,
+  0,
+  0,
   /* 24 - 27 */
   (Function) botnet_send_zapf,
   (Function) botnet_send_zapf_broad,

@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.16 2001/10/29 23:01:35 ite Exp $
+# $Id: Makefile.am,v 1.17 2002/01/04 02:56:25 ite Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 bindir			= $(exec_prefix)
@@ -13,8 +13,8 @@ MAINTAINERCLEANFILES	= Makefile.in
 
 INCLUDES		= -I$(top_builddir) -I$(top_srcdir) @INCLTDL@ \
 			-I$(top_builddir)/intl -I$(top_srcdir)/intl \
-			-I$(top_builddir)/lib/eggdrop \
-			-I$(top_srcdir)/lib/eggdrop
+			-I$(top_builddir)/lib \
+			-I$(top_srcdir)/lib
 
 localedir		= $(datadir)/locale
 DEFS			= -DLOCALEDIR=\"\$(localedir)\" $(EGG_DEBUG) @DEFS@
@@ -38,7 +38,7 @@ eggdrop_SOURCES		= bg.c \
 			dns.h \
 			egg_timer.c \
 			egg_timer.h \
-			eggdrop.h \
+			egg.h \
 			flags.c \
 			flags.h \
 			irccmp.c \

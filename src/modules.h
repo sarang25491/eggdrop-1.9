@@ -4,7 +4,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: modules.h,v 1.11 2001/10/27 16:34:54 ite Exp $
+ * $Id: modules.h,v 1.12 2002/01/04 02:56:25 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -30,7 +30,7 @@
 
 /* Module related structures
  */
-#include <modvals.h>
+#include <eggdrop/modvals.h>
 
 #ifndef MAKING_NUMMODS
 

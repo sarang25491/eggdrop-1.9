@@ -2,6 +2,7 @@ Makefile
 Makefile.in
 libeggdrop.la
 *.o
+*.lo
 *.obj
 *.a
 *.la

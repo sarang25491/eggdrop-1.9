@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.52 2001/12/18 07:04:21 guppy Exp $
+ * $Id: egg.h,v 1.1 2002/01/04 02:56:25 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.1 2001/10/28 13:30:33 ite Exp $
+# $Id: Makefile.am,v 1.2 2002/01/04 02:56:22 ite Exp $
 
 ## libcompat is built as convenience library
 
@@ -9,6 +9,9 @@ INCLUDES		= -I$(top_builddir) -I$(top_srcdir)
 noinst_LTLIBRARIES	= libegg.la
 libegg_la_SOURCES	= avl.c \
 			avl.h \
+			base64.c \
+			base64.h \
+			egglib.h \
 			hash_table.c \
 			hash_table.h \
 			linked_list.c \

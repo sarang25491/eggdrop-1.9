@@ -1,5 +1,4 @@
 #include "main.h"
-#include <modvals.h>
 
 #include "modules.h" /* add_hook() */
 

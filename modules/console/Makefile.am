@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.3 2001/11/24 20:42:24 ite Exp $
+# $Id: Makefile.am,v 1.4 2002/01/04 02:56:23 ite Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 pkglibdir		= $(exec_prefix)/modules
@@ -13,7 +13,7 @@ MAINTAINERCLEANFILES	= Makefile.in
 
 INCLUDES		= -I$(top_builddir) -I$(top_srcdir) @INCLTDL@ \
 			-I$(top_builddir)/intl -I$(top_srcdir)/intl \
-			-I$(top_builddir)/lib/eggdrop \
-			-I$(top_srcdir)/lib/eggdrop
+			-I$(top_builddir)/lib \
+			-I$(top_srcdir)/lib
 
 DEFS			= $(EGG_DEBUG) @DEFS@
