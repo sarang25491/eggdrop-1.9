@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.64 2001/08/15 17:09:53 guppy Exp $
+ * $Id: cmds.c,v 1.65 2001/08/27 23:14:45 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -602,7 +602,7 @@ static void cmd_boot(struct userrec *u, int idx, char *par)
   if (strchr(who, '@') != NULL) {
     char whonick[HANDLEN + 1];
 
-    splitcn(whonick, who, '@', HANDLEN);
+    splitcn(whonick, who, '@', HANDLEN + 1);
     if (!egg_strcasecmp(who, botnetnick)) {
       cmd_boot(u, idx, whonick);
       return;
