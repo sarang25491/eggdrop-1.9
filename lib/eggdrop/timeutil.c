@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: timeutil.c,v 1.2 2004/08/26 18:32:07 darko Exp $";
+static const char rcsid[] = "$Id: timeutil.c,v 1.3 2004/08/27 19:16:43 darko Exp $";
 #endif
 
 #include <stdio.h>
@@ -35,6 +35,7 @@ char *duration_to_string(time_t difftime)
 	time_t days, hours, mins;
 	int len;
 
+	*durstring = '\0';
 	days = difftime/86400;
 	difftime -= days*86400;
 	hours = difftime/3600;
@@ -54,7 +55,7 @@ char *duration_to_string(time_t difftime)
 			len?" and ":"", mins, mins==1?"minute":"minutes");
 	}
 
-	return strlen(durstring)?durstring:NULL;
+	return strlen(durstring)?durstring:"less than minute";
 }
 
 /* Returns time_t calcualted out of %XdYhZm */

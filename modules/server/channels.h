@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: channels.h,v 1.18 2004/08/19 18:39:36 darko Exp $
+ * $Id: channels.h,v 1.19 2004/08/27 19:16:43 darko Exp $
  */
 
 #ifndef _EGG_MOD_SERVER_CHANNELS_H_
@@ -75,7 +75,7 @@ typedef struct channel_mask {
 
 typedef struct channel_mask_list {
 	struct channel_mask *head;
-	int len; /* Is this really needed? It wasn't even incremented before */
+	int len;
 	int loading;
 	char type;
 } channel_mask_list_t;

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: party_commands.c,v 1.15 2004/08/26 18:32:07 darko Exp $";
+static const char rcsid[] = "$Id: party_commands.c,v 1.16 2004/08/27 19:16:43 darko Exp $";
 #endif
 
 #include "server.h"
@@ -459,7 +459,7 @@ static int party_list_masks(partymember_t *p, const char *nick, user_t *u, const
 			if (cm[j]->creator)
 				partymember_printf(p, _("    Created by:\t%s"), cm[j]->creator);
 			if (cm[j]->set_by)
-				partymember_printf(p, _("    Active:\tset by %s on %s"),
+				partymember_printf(p, _("    Set by:\t%s on %s"),
 						cm[j]->set_by, ctime((time_t *)&cm[j]->time));
 			if (cm[j]->creator)
 				partymember_printf(p, _("    Expires:\t%s"),

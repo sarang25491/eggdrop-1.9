@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.30 2004/08/26 18:32:07 darko Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.31 2004/08/27 19:16:43 darko Exp $";
  #endif
 
 #include "server.h"
@@ -246,10 +246,13 @@ int channel_lookup(const char *chan_name, int create, channel_t **chanptr, chann
 		chan->nlists = strlen(current_server.type1modes);
 		chan->lists = calloc(chan->nlists, sizeof(*chan->lists));
 		for (i = 0; i < chan->nlists; i++) {
+			chan->lists[i] = calloc(1, sizeof(*chan->lists[i]));
 			chan->lists[i]->type = current_server.type1modes[i];
 		}
 	}
 
+	/* FIXME - I suspect this code is buggy in the same way channel lists code was
+			few weeks ago. It will recive attention later. */
 	if (current_server.type2modes) {
 		chan->nargs = strlen(current_server.type2modes);
 		chan->args = calloc(chan->nargs, sizeof(*chan->args));
@@ -1678,8 +1681,15 @@ static int channels_minutely()
 	/* Expire global masks */
 	for (i = 0; i < global_chan.nlists; i++)
 		for (m = (&global_chan)->lists[i]->head; m; m = m->next)
-			if (m->expire && cursecs > m->expire)
-				channel_del_mask(NULL, (&global_chan)->lists[i]->type, m->mask, 1);
+			if (m->expire && cursecs > m->expire) {
+				char *tmpmask = strdup(m->mask);
+				putlog(LOG_MISC, "*", _("Expiring global +%c list item '%s'"),
+							(&global_chan)->lists[i]->type, tmpmask);
+				channel_del_mask(NULL, (&global_chan)->lists[i]->type, tmpmask, 1);
+				for (chan = channel_head; chan; chan = chan->next)
+					channel_del_mask(chan, (&global_chan)->lists[i]->type, tmpmask, 1);
+				free(tmpmask);
+			}
 
 	if (!current_server.registered)
 		return 0;
@@ -1701,8 +1711,11 @@ static int channels_minutely()
 			/* expire channel masks */
 			for (i = 0; i < chan->nlists; i++)
 				for (m = chan->lists[i]->head; m; m = m->next)
-					if (m->expire && cursecs > m->expire)
+					if (m->expire && cursecs > m->expire) {
+						putlog(LOG_MISC, "*", _("Expiring %s +%c list item '%s'"),
+								chan->name, chan->lists[i]->type, m->mask);
 						channel_del_mask(chan, chan->lists[i]->type, m->mask, 1);
+					}
 		}
 	}
 	return 0;
