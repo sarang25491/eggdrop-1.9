@@ -1,3 +1,11 @@
+2002-06-01 03:50  stdarg <stdarg@techmonkeys.org>
+
+	* testcode/dns.c:
+
+	
+	* dns resolving seems to work now, even for strange replies like
+	irc.dal.net and www.lycos.com 
+
 2002-05-31 08:02  stdarg <stdarg@techmonkeys.org>
 
 	* modules/server/servmsg.c:
