@@ -1,3 +1,20 @@
+2001-10-13 21:36  Tothwolf <tothwolf@techmonkeys.org>
+
+	* acconfig.h, acinclude.m4, configure.in, src/Makefile.am,
+	src/mod/assoc.mod/Makefile.am, src/mod/blowfish.mod/Makefile.am,
+	src/mod/channels.mod/Makefile.am, src/mod/compress.mod/Makefile.am,
+	src/mod/console.mod/Makefile.am, src/mod/ctcp.mod/Makefile.am,
+	src/mod/filesys.mod/Makefile.am, src/mod/irc.mod/Makefile.am,
+	src/mod/notes.mod/Makefile.am, src/mod/server.mod/Makefile.am,
+	src/mod/share.mod/Makefile.am, src/mod/transfer.mod/Makefile.am,
+	src/mod/uptime.mod/Makefile.am, src/mod/woobie.mod/Makefile.am:
+
+	* configure cleanups 
+	* updated many autoconf macros to new formats 
+	* removed acconfig.h 
+	* --disable-debug configure option 
+	* changed @EGG_DEBUG@ to $(EGG_DEBUG) in Makefile.am files 
+
 2001-10-13 15:55  Tothwolf <tothwolf@techmonkeys.org>
 
 	* src/: chanprog.c, misc.c, modules.c, proto.h, mod/module.h,
