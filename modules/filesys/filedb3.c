@@ -26,7 +26,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: filedb3.c,v 1.10 2003/02/15 05:04:57 wcc Exp $";
+static const char rcsid[] = "$Id: filedb3.c,v 1.11 2003/02/15 09:24:57 wcc Exp $";
 #endif
 */
 
@@ -968,10 +968,9 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
 	  s3 = malloc(42 + strlen(s2 ? s2 : "") + 6 +
 		       strlen(_("requires")) + strlen(fdbe->flags_req) + 1 +
 		       strlen(fdbe->chan ? fdbe->chan : "") + 1);
-	  sprintf(s3, "%-30s <DIR%s>  (%s %s%s%s)\n", s2,
-		  fdbe->stat & FILE_SHARE ?
-		  " SHARE" : "", _("requires"), fdbe->flags_req,
-		  fdbe->chan ? " " : "", fdbe->chan ? fdbe->chan : "");
+	  sprintf(s3, "%-30s <DIR>  (%s %s%s%s)\n", s2, _("requires"),
+                  fdbe->flags_req, fdbe->chan ? " " : "",
+                  fdbe->chan ? fdbe->chan : "");
 	} else {
 	  s3 = malloc(38 + strlen(s2 ? s2 : ""));
 	  sprintf(s3, "%-30s <DIR>\n", s2 ? s2 : "");
@@ -985,8 +984,6 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
 
 	s2[0] = 0;
 	if (showall) {
-	  if (fdbe->stat & FILE_SHARE)
-	    strcat(s2, " (shr)");
 	  if (fdbe->stat & FILE_HIDDEN)
 	    strcat(s2, " (hid)");
 	}

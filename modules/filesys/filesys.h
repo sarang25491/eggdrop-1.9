@@ -22,13 +22,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: filesys.h,v 1.7 2003/02/15 05:04:57 wcc Exp $
+ * $Id: filesys.h,v 1.8 2003/02/15 09:24:57 wcc Exp $
  */
 
 #ifndef _EGG_MOD_FILESYS_FILESYS_H
 #define _EGG_MOD_FILESYS_FILESYS_H
-
-#include "modules/transfer/transfer.h"
 
 #ifdef MAKING_FILESYS
 static int too_many_filers();

@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: modvals.h,v 1.8 2003/02/15 05:04:57 wcc Exp $
+ * $Id: modvals.h,v 1.9 2003/02/15 09:24:57 wcc Exp $
  */
 
 #ifndef _EGG_MOD_MODVALS_H
@@ -65,9 +65,6 @@
 #define FILESYS_ADDFILE		  5
 #define FILESYS_INCRGOTS	  6
 #define FILESYS_ISVALID		  7
-/* Share */
-#define SHARE_FINISH		  4
-#define SHARE_DUMP_RESYNC	  5
 /* Channels */
 #define CHANNEL_CLEAR		 15
 /* Server */

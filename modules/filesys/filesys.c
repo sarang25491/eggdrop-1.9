@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: filesys.c,v 1.20 2003/02/15 05:04:57 wcc Exp $";
+static const char rcsid[] = "$Id: filesys.c,v 1.21 2003/02/15 09:24:57 wcc Exp $";
 #endif
 
 #include <fcntl.h>
@@ -265,7 +265,7 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
   long dccfilesize;
   FILE *f, *dccfile;
 
-debug1("|TRANSFER| raw_dcc_resend_send(... addr=\"%s\")", addr);
+debug1("|FILESYS| raw_dcc_resend_send(... addr=\"%s\")", addr);
   zz = -1;
   dccfile = fopen(filename,"r");
   fseek(dccfile, 0, SEEK_END);
@@ -464,37 +464,7 @@ static void fstat_display(int idx, struct user_entry *e)
 static int fstat_gotshare(struct userrec *u, struct user_entry *e,
 			  char *par, int idx)
 {
-  char *p;
-  struct filesys_stats *fs;
-
-  noshare = 1;
-  switch (par[0]) {
-  case 'u':
-  case 'd':
-    /* No stats_add_up/dnload here, it's already been sent... --rtc */
-    break;
-  case 'r':
-    set_user(&USERENTRY_FSTAT, u, NULL);
-    break;
-  default:
-    if (!(fs = e->u.extra))
-      fs = calloc(1, sizeof(struct filesys_stats));
-    p = newsplit (&par);
-    if (p[0])
-      fs->uploads = atoi (p);
-    p = newsplit (&par);
-    if (p[0])
-      fs->upload_ks = atoi (p);
-    p = newsplit (&par);
-    if (p[0])
-      fs->dnloads = atoi (p);
-    p = newsplit (&par);
-    if (p[0])
-      fs->dnload_ks = atoi (p);
-    set_user(&USERENTRY_FSTAT, u, fs);
-    break;
-  }
-  return 1;
+  return 0;
 }
 
 static int fstat_dupuser(struct userrec *u, struct userrec *o,
@@ -1353,10 +1323,6 @@ char *start(eggdrop_t *eggdrop)
   if (!module_depend(MODULE_NAME, "eggdrop", 107, 0)) {
     module_undepend(MODULE_NAME);
     return _("This module requires eggdrop1.7.0 or later");
-  }
-  if (!(transfer_funcs = module_depend(MODULE_NAME, "transfer", 2, 0))) {
-    module_undepend(MODULE_NAME);
-    return _("You need the transfer module to use the filesystem module.");
   }
   add_tcl_commands(mytcls);
   add_tcl_strings(mystrings);
