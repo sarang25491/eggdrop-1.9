@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.69 2001/08/13 03:05:53 guppy Exp $
+ * $Id: chan.c,v 1.70 2001/08/19 08:33:43 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1874,12 +1874,14 @@ static int gotnick(char *from, char *msg)
 static int gotquit(char *from, char *msg)
 {
   char *nick, *p, *alt;
+  char from2[NICKMAX + UHOSTMAX +1];
   int split = 0;
   memberlist *m;
   struct chanset_t *chan;
   struct userrec *u;
 
-  u = get_user_by_host(from);
+  strcpy(from2,from);
+  u = get_user_by_host(from2);
   nick = splitnick(&from);
   fixcolon(msg);
   /* Fred1: Instead of expensive wild_match on signoff, quicker method.
@@ -1905,7 +1907,7 @@ static int gotquit(char *from, char *msg)
   for (chan = chanset; chan; chan = chan->next) {
     m = ismember(chan, nick);
     if (m) {
-      u = get_user_by_host(from);
+      u = get_user_by_host(from2);
       if (u) {
         set_handle_laston(chan->dname, u, now); /* If you remove this, the bot will crash when the user record in question
 						   is removed/modified during the tcl binds below, and the users was on more
