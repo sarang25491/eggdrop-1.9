@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: userrec.c,v 1.58 2003/02/03 11:41:35 wcc Exp $";
+static const char rcsid[] = "$Id: userrec.c,v 1.59 2003/02/15 05:04:58 wcc Exp $";
 #endif
 
 #include <sys/stat.h>
@@ -37,7 +37,7 @@ static const char rcsid[] = "$Id: userrec.c,v 1.58 2003/02/03 11:41:35 wcc Exp $
 #include "modules.h"		/* encrypt_pass				*/
 #include "cmdt.h"		/* cmd_t				*/
 #include "chanprog.h"		/* clear_chanlist, set_chanlist		*/
-#include "dccutil.h"		/* shareout, chanout_but		*/
+#include "dccutil.h"		/* chanout_but				*/
 #include "irccmp.h"		/* irccmp				*/
 #include "flags.h"
 #include "match.h"		/* wild_match				*/
@@ -45,7 +45,7 @@ static const char rcsid[] = "$Id: userrec.c,v 1.58 2003/02/03 11:41:35 wcc Exp $
 
 extern struct dcc_t *dcc;
 extern struct chanset_t *chanset;
-extern int default_flags, default_uflags, dcc_total, share_greet;
+extern int default_flags, default_uflags, dcc_total;
 extern char userfile[], ver[], myname[];
 extern time_t now;
 
@@ -53,7 +53,6 @@ extern time_t now;
 extern struct dcc_table DCC_CHAT;
 #endif /* MAKING_MODS   */
 
-int noshare = 1; /* don't send out to sharebots	    */
 struct userrec	*userlist = NULL; /* user records are stored here	    */
 struct userrec	*lastuser = NULL; /* last accessed user record	    */
 maskrec *global_bans = NULL, *global_exempts = NULL, *global_invites = NULL;
@@ -307,21 +306,10 @@ int write_user(struct userrec *u, FILE * f, int idx)
     return 0;
   for (ch = u->chanrec; ch; ch = ch->next) {
     cst = findchan_by_dname(ch->channel);
-    if (cst && ((idx < 0) || channel_shared(cst))) {
+    if (cst && (idx < 0)) {
       if (idx >= 0) {
 	fr.match = (FR_CHAN | FR_BOT);
 	get_user_flagrec(dcc[idx].user, &fr, ch->channel);
-      } else
-	fr.chan = BOT_SHARE;
-      if ((fr.chan & BOT_SHARE) || (fr.bot & BOT_GLOBAL)) {
-	fr.match = FR_CHAN;
-	fr.chan = ch->flags;
-	fr.udef_chan = ch->flags_udef;
-	build_flags(s, &fr, NULL);
-	if (fprintf(f, "! %-20s %lu %-10s %s\n", ch->channel, ch->laston, s,
-		    (((idx < 0) || share_greet) && ch->info) ? ch->info
-		    : "") == EOF)
-	  return 0;
       }
     }
   }
@@ -416,9 +404,6 @@ int change_handle(struct userrec *u, char *newh)
   /* Nothing that will confuse the userfile */
   if (!newh[1] && strchr(BADHANDCHARS, newh[0]))
     return 0;
-  /* Yes, even send bot nick changes now: */
-  if (!noshare && !(u->flags & USER_UNSHARED))
-    shareout(NULL, "h %s %s\n", u->handle, newh);
   strlcpy(s, u->handle, sizeof s);
   strlcpy(u->handle, newh, sizeof u->handle);
   for (i = 0; i < dcc_total; i++)
@@ -439,9 +424,7 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
 {
   struct userrec *u, *x;
   struct xtra_key *xk;
-  int oldshare = noshare;
 
-  noshare = 1;
   u = (struct userrec *) malloc(sizeof(struct userrec));
 
   /* u->next=bu; bu=u; */
@@ -489,18 +472,6 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
     set_user(&USERENTRY_HOSTS, u, "none");
   if (bu == userlist)
     clear_chanlist();
-  noshare = oldshare;
-  if ((!noshare) && (handle[0] != '*') && (!(flags & USER_UNSHARED)) &&
-      (bu == userlist)) {
-    struct flag_record fr = {FR_GLOBAL, 0, 0, 0, 0, 0};
-    char x[100];
-
-    fr.global = u->flags;
-    fr.udef_global = u->flags_udef;
-    build_flags(x, &fr, 0);
-    shareout(NULL, "n %s %s %s %s\n", handle, host && host[0] ? host : "none",
-             pass, x);
-  }
   if (bu == NULL)
     bu = u;
   else {
@@ -571,8 +542,6 @@ int deluser(char *handle)
     userlist = u->next;
   else
     prev->next = u->next;
-  if (!noshare && (handle[0] != '*') && !(u->flags & USER_UNSHARED))
-    shareout(NULL, "k %s\n", handle);
   for (fnd = 0; fnd < dcc_total; fnd++)
     if (dcc[fnd].type && dcc[fnd].user == u)
       dcc[fnd].user = 0;	/* Clear any dcc users for this entry,
@@ -625,8 +594,6 @@ int delhost_by_handle(char *handle, char *host)
   }
   if (!qprev)
     set_user(&USERENTRY_HOSTS, u, "none");
-  if (!noshare && i && !(u->flags & USER_UNSHARED))
-    shareout(NULL, "-h %s %s\n", handle, host);
   clear_chanlist();
   return i;
 }
@@ -636,13 +603,6 @@ void addhost_by_handle(char *handle, char *host)
   struct userrec *u = get_user_by_handle(userlist, handle);
 
   set_user(&USERENTRY_HOSTS, u, host);
-  /* u will be cached, so really no overhead, even tho this looks dumb: */
-  if ((!noshare) && !(u->flags & USER_UNSHARED)) {
-    if (u->flags & USER_BOT)
-      shareout(NULL, "+bh %s %s\n", handle, host);
-    else
-      shareout(NULL, "+h %s %s\n", handle, host);
-  }
   clear_chanlist();
 }
 

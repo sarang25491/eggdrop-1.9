@@ -1,31 +1,31 @@
-/* 
+/*
  * modules.c --
  *
  *	support for modules in eggdrop
- * 
+ *
  * by Darrin Smith (beldin@light.iinet.net.au)
  */
 /*
  * Copyright (C) 1997 Robey Pointer
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: modules.c,v 1.128 2003/02/10 00:09:08 wcc Exp $";
+static const char rcsid[] = "$Id: modules.c,v 1.129 2003/02/15 05:04:58 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -37,17 +37,17 @@ static const char rcsid[] = "$Id: modules.c,v 1.128 2003/02/10 00:09:08 wcc Exp 
 #include "dns.h"
 #include "cmdt.h"		/* cmd_t				*/
 #include "core_binds.h"
-#include "chanprog.h"		/* clear_chanlist, reaffirm_owners, 
-				   logmodes, masktype, isowner, 
+#include "chanprog.h"		/* clear_chanlist, reaffirm_owners,
+				   logmodes, masktype, isowner,
 				   clear_chanlist_member		*/
 //#include "cmds.h"		/* check_dcc_attrs, check_dcc_chanattrs	*/
 #include "dccutil.h"		/* chatout, chanout_but, new_dcc,
-				   lostdcc, makepass, flush_lines, 
+				   lostdcc, makepass, flush_lines,
 				   changeover_dcc			*/
-#include "net.h"		/* getlocaladdr, flush_inbuf, 
+#include "net.h"		/* getlocaladdr, flush_inbuf,
 				   sockoptions, open_address_listen,
 				   sock_has_data, iptostr, allocsock,
-				   open_telnet, open_telnet_dcc, 
+				   open_telnet, open_telnet_dcc,
 				   killsock, open_listen, getsock,
 				   tputs, neterror, getmyip, answer	*/
 #include "tcl.h"		/* do_tcl, readtclprog	*/
@@ -55,10 +55,10 @@ static const char rcsid[] = "$Id: modules.c,v 1.128 2003/02/10 00:09:08 wcc Exp 
 #include "userent.h"		/* list_type_kill, xtra_set		*/
 #include "userrec.h"		/* fixfrom, user_del_chan, touch_laston,
 				   count_users, clear_userlist,
-				   write_user, change_handle, 
+				   write_user, change_handle,
 				   write_userfile, u_pass_match, deluser,
 				   addhost_by_handle, delhost_by_handle	*/
-#include "irccmp.h"		/* _irccmp, _ircncmp, _irctolower, 
+#include "irccmp.h"		/* _irccmp, _ircncmp, _irctolower,
 				   _irctoupper				*/
 #include "match.h"		/* wild_match				*/
 
@@ -73,11 +73,11 @@ extern struct userrec	*userlist, *lastuser;
 extern char tempdir[], myname[], *botname, natip[], origbotname[], botuser[],
             admin[], userfile[], ver[], notify_new[], helpdir[], version[],
             quit_msg[];
-extern int noshare, dcc_total, egg_numver, userfile_perm, ignore_time,
-           learn_users, raw_log, make_userfile, default_flags, max_dcc,
-           share_greet, password_timeout, use_invites, use_exempts,
-           force_expire, do_restart, protect_readonly, reserved_port_min,
-           reserved_port_max, copy_to_tmp, quiet_reject;
+extern int dcc_total, egg_numver, userfile_perm, ignore_time, learn_users,
+           raw_log, make_userfile, default_flags, max_dcc, password_timeout,
+           use_invites, use_exempts, force_expire, do_restart,
+           protect_readonly, reserved_port_min, reserved_port_max, copy_to_tmp,
+           quiet_reject;
 extern time_t now, online_since;
 extern egg_timeval_t egg_timeval_now;
 extern struct chanset_t *chanset;
@@ -85,7 +85,7 @@ extern sock_list *socklist;
 
 #ifndef MAKING_MODS
 extern struct dcc_table DCC_CHAT_PASS, DCC_LOST, DCC_DNSWAIT,
-			DCC_CHAT; 
+			DCC_CHAT;
 #endif /* MAKING_MODS   */
 
 int xtra_kill();
@@ -126,24 +126,9 @@ int false_func()
  */
 struct hook_entry *hook_list[REAL_HOOKS];
 
-static void null_share(int idx, char *x)
-{
-  if ((x[0] == 'u') && (x[1] == 'n')) {
-    putlog(LOG_BOTS, "*", _("User file rejected by %s: %s"),
-	   dcc[idx].nick, x + 3);
-    dcc[idx].status &= ~STAT_OFFERED;
-    if (!(dcc[idx].status & STAT_GETTING)) {
-      dcc[idx].status &= ~STAT_SHARE;
-    }
-  } else if ((x[0] != 'v') && (x[0] != 'e'))
-    dprintf(idx, "s un Not sharing userfile.\n");
-}
-
 void (*encrypt_pass) (char *, char *) = 0;
 char *(*encrypt_string) (char *, char *) = 0;
 char *(*decrypt_string) (char *, char *) = 0;
-void (*shareout) () = null_func;
-void (*sharein) (int, char *) = null_share;
 void (*qserver) (int, char *, int) = (void (*)(int, char *, int)) null_func;
 void (*add_mode) () = null_func;
 int (*irccmp) (const char *, const char *) = _irccmp;
@@ -249,7 +234,7 @@ Function global_table[] =
   (Function) flagrec_eq,
   (Function) flagrec_ok,
   /* 68 - 71 */
-  (Function) 0, /* & shareout, */
+  (Function) 0,
   (Function) dprintf,
   (Function) chatout,
   (Function) chanout_but,
@@ -287,7 +272,7 @@ Function global_table[] =
   (Function) & global_bans,	 /* struct banrec *			*/
   (Function) & global_ign,	 /* struct igrec *			*/
   (Function) & password_timeout, /* int					*/
-  (Function) & share_greet,	 /* int					*/
+  (Function) 0,
   /* 100 - 103 */
   (Function) & max_dcc,		 /* int					*/
   (Function) 0,
@@ -297,7 +282,7 @@ Function global_table[] =
   (Function) & reserved_port_min,
   (Function) & reserved_port_max,
   (Function) & raw_log,	 	 /* int					*/
-  (Function) & noshare,		 /* int					*/
+  (Function) 0,
   /* 108 - 111 */
   (Function) 0, /* gban_total -- UNUSED! (Eule)				*/
   (Function) & make_userfile,	 /* int					*/
@@ -466,7 +451,7 @@ Function global_table[] =
   /* 240 - 243 */
   (Function) dcc_dnsipbyhost,
   (Function) dcc_dnshostbyip,
-  (Function) changeover_dcc,  
+  (Function) changeover_dcc,
   (Function) make_rand_str,
   /* 244 - 247 */
   (Function) & protect_readonly, /* int					*/
@@ -507,7 +492,7 @@ Function global_table[] =
 #else
   (Function) 0,
 #endif
-  /* 272 - 275 */ 
+  /* 272 - 275 */
   (Function) getlocaladdr,
   (Function) kill_bot,
   (Function) quit_msg,                /* char *				  */
@@ -548,7 +533,7 @@ void modules_init()
   module_list->hand = NULL;
   module_list->next = NULL;
   module_list->funcs = NULL;
-  
+
   LTDL_SET_PRELOADED_SYMBOLS();
   if (lt_dlinit() != 0) {
     snprintf(wbuf, sizeof(wbuf),
@@ -556,13 +541,13 @@ void modules_init()
 		    lt_dlerror());
     fatal(wbuf, 0);
   }
-  
+
   if (moddir[0] != '/') {
     if (getcwd(wbuf, sizeof(wbuf)) == NULL)
       fatal(_("Cant determine current directory."), 0);
     sprintf(&(wbuf[strlen(wbuf)]), "/%s", moddir);
     if (lt_dladdsearchdir(wbuf)) fatal(_("Invalid module's search path."), 0);
-  } else 
+  } else
     if (lt_dladdsearchdir(moddir)) fatal(_("Invalid module's search path."), 0);
 
   for (i = 0; i < REAL_HOOKS; i++)
@@ -637,7 +622,7 @@ char *module_unload(char *name, char *user)
     if ((p->name != NULL) && (!strcmp(name, p->name))) {
       dependancy *d;
 
-      for (d = dependancy_list; d; d = d->next)  
+      for (d = dependancy_list; d; d = d->next)
 	if (d->needed == p)
 	  return _("Needed by another module");
 
@@ -671,8 +656,8 @@ module_entry *module_find(char *name, int major, int minor)
 {
   module_entry *p;
 
-  for (p = module_list; p && p->name; p = p->next) 
-    if ((major == p->major || !major) && minor <= p->minor && 
+  for (p = module_list; p && p->name; p = p->next)
+    if ((major == p->major || !major) && minor <= p->minor &&
 	!strcasecmp(name, p->name))
       return p;
   return NULL;
@@ -773,7 +758,7 @@ void add_hook(int hook_num, Function func)
       break;
     case HOOK_DECRYPT_STRING:
       decrypt_string = (char *(*)(char *, char *)) func;
-      break; 
+      break;
     case HOOK_QSERV:
       if (qserver == (void (*)(int, char *, int)) null_func)
 	qserver = (void (*)(int, char *, int)) func;
@@ -838,14 +823,6 @@ void del_hook(int hook_num, Function func)
       if (decrypt_string == (char *(*)(char *, char *)) func)
         decrypt_string = (char *(*)(char *, char *)) null_func;
       break;
-    case HOOK_SHAREOUT:
-      if (shareout == (void (*)()) func)
-	shareout = null_func;
-      break;
-    case HOOK_SHAREIN:
-      if (sharein == (void (*)(int, char *)) func)
-	sharein = null_share;
-      break;
     case HOOK_QSERV:
       if (qserver == (void (*)(int, char *, int)) func)
 	qserver = null_func;
@@ -893,7 +870,7 @@ void do_module_report(int idx, int details, char *which)
 	dprintf(idx, "Module: %s, v %d.%d\n", p->name ? p->name : "CORE",
 		p->major, p->minor);
       if (details > 1) {
-	for (d = dependancy_list; d; d = d->next) 
+	for (d = dependancy_list; d; d = d->next)
 	  if (d->needing == p)
 	    dprintf(idx, "    requires: %s, v %d.%d\n", d->needed->name,
 		    d->major, d->minor);

@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: flags.h,v 1.17 2003/02/15 00:23:51 wcc Exp $
+ * $Id: flags.h,v 1.18 2003/02/15 05:04:58 wcc Exp $
  */
 
 #ifndef _EGG_FLAGS_H
@@ -45,13 +45,13 @@ struct flag_record {
 
 /*
  * userflags:
- *   abc?efgh?j??mnop???tuvwx??
+ *   abc?efgh?j??mnop???t?vwx??
  * + user defined A-Z
- *   unused letters: dillqrsyz
+ *   unused letters: dillqrsuyz
  *
  * botflags:
- *   0123456789ab????ghi??l???p?rs???????
- *   unused letters: cdefjkmnoqtuvwxyz
+ *   0123456789ab?????hi??l?????r????????
+ *   unused letters: cdefgjkmnopqstuvwxyz
  *
  * chanflags:
  *   a???efg?????mno?????uv????
@@ -60,7 +60,7 @@ struct flag_record {
  */
 #define USER_VALID    0x78F273   /* all USER_ flags in use */
 #define CHAN_VALID    0x603071   /* all flags that can be chan specific */
-#define BOT_VALID     0x7fe689C1 /* all BOT_ flags in use */
+#define BOT_VALID     0x68F273   /* all BOT_ flags in use */
 
 
 #define USER_AUTOOP    0x00000001
@@ -83,7 +83,7 @@ struct flag_record {
 #define USER_R         0x00020000
 #define USER_S         0x00040000
 #define USER_BOTMAST   0x00080000
-#define USER_UNSHARED  0x00100000
+#define USER_U         0x00100000
 #define USER_VOICE     0x00200000
 #define USER_WASOPTEST 0x00400000
 #define USER_XFER      0x00800000
@@ -100,7 +100,7 @@ struct flag_record {
 #define BOT_D         0x00000008	/* d  unused			 */
 #define BOT_E         0x00000010	/* e  unused			 */
 #define BOT_F         0x00000020	/* f  unused			 */
-#define BOT_GLOBAL    0x00000040	/* g  all channel are shared	 */
+#define BOT_G         0x00000040	/* g  unused			 */
 #define BOT_HUB       0x00000080	/* h  auto-link to ONE of these
 					      bots			 */
 #define BOT_ISOLATE   0x00000100	/* i  isolate party line from
@@ -111,12 +111,11 @@ struct flag_record {
 #define BOT_M         0x00001000	/* m  unused			 */
 #define BOT_N         0x00002000	/* n  unused			 */
 #define BOT_O         0x00004000	/* o  unused			 */
-#define BOT_PASSIVE   0x00008000	/* p  share passively with this
-					      bot			 */
-#define BOT_Q         0x00010000	/* q  unused */
+#define BOT_P         0x00008000	/* p  unused			 */
+#define BOT_Q         0x00010000	/* q  unused			 */
 #define BOT_REJECT    0x00020000	/* r  automatically reject
 					      anywhere			 */
-#define BOT_AGGRESSIVE 0x00040000	/* s  bot shares user files	 */
+#define BOT_S         0x00040000	/* s  unused		 	 */
 #define BOT_T         0x00080000	/* t  unused			 */
 #define BOT_U         0x00100000	/* u  unused			 */
 #define BOT_V         0x00200000	/* v  unused			 */
@@ -134,8 +133,6 @@ struct flag_record {
 #define BOT_FLAG7     0x10000000	/* 7  user-defined flag #7	 */
 #define BOT_FLAG8     0x20000000	/* 8  user-defined flag #8	 */
 #define BOT_FLAG9     0x40000000	/* 9  user-defined flag #9	 */
-
-#define BOT_SHARE    (BOT_AGGRESSIVE|BOT_PASSIVE)
 
 
 /* Flag checking macros
@@ -162,10 +159,6 @@ struct flag_record {
 #define glob_xfer(x)		((x).global & USER_XFER)
 #define chan_exempt(x)		((x).chan & USER_EXEMPT)
 #define glob_exempt(x)		((x).global & USER_EXEMPT)
-
-#define bot_global(x)		((x).bot & BOT_GLOBAL)
-#define bot_chan(x)		((x).chan & BOT_AGGRESSIVE)
-#define bot_shared(x)		((x).bot & BOT_SHARE)
 
 
 #ifndef MAKING_MODS

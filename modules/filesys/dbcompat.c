@@ -26,7 +26,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: dbcompat.c,v 1.5 2003/01/29 07:42:49 wcc Exp $";
+static const char rcsid[] = "$Id: dbcompat.c,v 1.6 2003/02/15 05:04:57 wcc Exp $";
 #endif
 */
 
@@ -174,8 +174,6 @@ static void convert_version1(FILE *fdb_s, FILE *fdb_t)
 	fdbe->uploaded = fdb1.uploaded;
 	fdbe->size = fdb1.size;
 	fdbe->gots = fdb1.gots;
-	if (fdb1.sharelink[0])
-	  realloc_strcpy(fdbe->sharelink, fdb1.sharelink);
 	filedb_addfile(fdb_s, fdbe);
 	free_fdbe(&fdbe);
       }
@@ -211,8 +209,6 @@ static void convert_version2(FILE *fdb_s, FILE *fdb_t)
 	fdbe->uploaded = fdb2.uploaded;
 	fdbe->size = fdb2.size;
 	fdbe->gots = fdb2.gots;
-	if (fdb2.sharelink[0])
-	  realloc_strcpy(fdbe->sharelink, fdb2.sharelink);
 	filedb_addfile(fdb_t, fdbe);
 	free_fdbe(&fdbe);
       }

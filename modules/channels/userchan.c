@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: userchan.c,v 1.14 2003/02/10 00:09:08 wcc Exp $";
+static const char rcsid[] = "$Id: userchan.c,v 1.15 2003/02/15 05:04:57 wcc Exp $";
 #endif
 */
 
@@ -51,8 +51,6 @@ static struct chanuserrec *add_chanrec(struct userrec *u, char *chname)
     ch->laston = 0;
     strncpy(ch->channel, chname, 81);
     ch->channel[80] = 0;
-    if (!noshare && !(u->flags & USER_UNSHARED))
-      shareout(findchan_by_dname(chname), "+cr %s %s\n", u->handle, chname);
   }
   return ch;
 }
@@ -116,10 +114,6 @@ static void set_handle_chaninfo(struct userrec *bu, char *handle,
   else
     ch->info = NULL;
   cst = findchan_by_dname(chname);
-  if ((!noshare) && (bu == userlist) &&
-      !(u->flags & (USER_UNSHARED | USER_BOT)) && share_greet) {
-    shareout(cst, "chchinfo %s %s %s\n", handle, chname, info ? info : "");
-  }
 }
 
 static void del_chanrec(struct userrec *u, char *chname)
@@ -135,8 +129,6 @@ static void del_chanrec(struct userrec *u, char *chname)
       if (ch->info != NULL)
 	free(ch->info);
       free(ch);
-      if (!noshare && !(u->flags & USER_UNSHARED))
-	shareout(findchan_by_dname(chname), "-cr %s %s\n", u->handle, chname);
       return;
     }
     lst = ch;
@@ -209,10 +201,6 @@ static int u_setsticky_mask(int type, struct chanset_t *chan, char *uhost,
 	return 0;
       if (!j)
 	strcpy(uhost, u->mask);
-
-      if (!noshare)
-        shareout(chan, "%s %s %d %s\n", botcmd, uhost, sticky,
-                                        (chan) ? chan->dname : "");
       return 1;
     }
 
@@ -284,20 +272,6 @@ static int u_delmask(char type, struct chanset_t *c, char *who, int doit)
       return 0;
   }
   if (i && doit) {
-    if (!noshare) {
-      char *mask = str_escape(temp, ':', '\\');
-
-      if (mask) {
-	/* Distribute chan bans differently */
-	if (c)
-	  shareout(c, "-%s %s %s\n",
-		   type == 'b' ? "bc" : type == 'e' ? "ec" : "invc", c->dname, mask);
-	else
-	  shareout(NULL, "-%s %s\n",
-		   type == 'b' ? "b" : type == 'e' ? "e" : "inv", mask);
-	free(mask);
-      }
-    }
     free((*u)->mask);
     if ((*u)->desc)
       free((*u)->desc);
@@ -386,25 +360,6 @@ static int u_addmask(char type, struct chanset_t *chan, char *who, char *from,
   p->mask = strdup(host);
   p->user = strdup(from);
   p->desc = strdup(note);
-  if (!noshare) {
-    char *mask = str_escape(host, ':', '\\');
-
-    if (mask) {
-      if (!chan)
-	shareout(NULL, "+%s %s %lu %s%s %s %s\n",
-		 type == 'b' ? "b" : type == 'e' ? "e" : "inv",
-		 mask, expire_time - now,
-		 (flags & MASKREC_STICKY) ? "s" : "",
-		 (flags & MASKREC_PERM) ? "p" : "-", from, note);
-      else
-	shareout(chan, "+%s %s %lu %s %s%s %s %s\n",
-		 type == 'b' ? "bc" : type == 'e' ? "ec" : "invc",	
-		 mask, expire_time - now,
-		 chan->dname, (flags & MASKREC_STICKY) ? "s" : "",
-		 (flags & MASKREC_PERM) ? "p" : "-", from, note);
-      free(mask);
-    }
-  }
   return 1;
 }
 
@@ -868,31 +823,11 @@ static int write_bans(FILE *f, int idx)
     free(mask);
   }
   for (chan = chanset; chan; chan = chan->next)
-    if ((idx < 0) || (chan->status & CHAN_SHARED)) {
+    if (idx < 0) {
       struct flag_record fr = {FR_CHAN | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0};
 
       if (idx >= 0)
 	get_user_flagrec(dcc[idx].user, &fr, chan->dname);
-      else
-	fr.chan = BOT_SHARE;
-      if ((fr.chan & BOT_SHARE) || (fr.bot & BOT_GLOBAL)) {
-	if (fprintf(f, "::%s bans\n", chan->dname) == EOF)
-	  return 0;
-	for (b = chan->bans; b; b = b->next) {
-	  mask = str_escape(b->mask, ':', '\\');
-	  if (!mask ||
-	      fprintf(f, "- %s:%s%lu%s:+%lu:%lu:%s:%s\n", mask,
-		      (b->flags & MASKREC_PERM) ? "+" : "", b->expire,
-		      (b->flags & MASKREC_STICKY) ? "*" : "", b->added,
-		      b->lastactive, b->user ? b->user : myname,
-		      b->desc ? b->desc : "requested") == EOF) {
-	    if (mask)
-	      free(mask);
-	    return 0;
-	  }
-	  free(mask);
-	}
-      }
     }
   return 1;
 }
@@ -923,31 +858,11 @@ static int write_exempts(FILE *f, int idx)
     free(mask);
   }
   for (chan = chanset;chan;chan=chan->next)
-    if ((idx < 0) || (chan->status & CHAN_SHARED)) {
+    if (idx < 0) {
       struct flag_record fr = {FR_CHAN | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0};
 
       if (idx >= 0)
 	get_user_flagrec(dcc[idx].user,&fr,chan->dname);
-      else
-	fr.chan = BOT_SHARE;
-      if ((fr.chan & BOT_SHARE) || (fr.bot & BOT_GLOBAL)) {
-	if (fprintf(f, "&&%s exempts\n", chan->dname) == EOF)
-	  return 0;
-	for (e = chan->exempts; e; e = e->next) {
-	  mask = str_escape(e->mask, ':', '\\');
-	  if (!mask ||
-	      fprintf(f,"%s %s:%s%lu%s:+%lu:%lu:%s:%s\n","%",e->mask,
-		      (e->flags & MASKREC_PERM) ? "+" : "", e->expire,
-		      (e->flags & MASKREC_STICKY) ? "*" : "", e->added,
-		      e->lastactive, e->user ? e->user : myname,
-		      e->desc ? e->desc : "requested") == EOF) {
-	    if (mask)
-	      free(mask);
-	    return 0;
-	  }
-	  free(mask);
-	}
-      }
     }
   return 1;
 }
@@ -978,31 +893,11 @@ static int write_invites(FILE *f, int idx)
     free(mask);
   }
   for (chan = chanset; chan; chan = chan->next)
-    if ((idx < 0) || (chan->status & CHAN_SHARED)) {
+    if (idx < 0) {
       struct flag_record fr = {FR_CHAN | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0};
 
       if (idx >= 0)
 	get_user_flagrec(dcc[idx].user,&fr,chan->dname);
-      else
-	fr.chan = BOT_SHARE;
-      if ((fr.chan & BOT_SHARE) || (fr.bot & BOT_GLOBAL)) {
-	if (fprintf(f, "$$%s invites\n", chan->dname) == EOF)
-	  return 0;
-	for (ir = chan->invites; ir; ir = ir->next) {
-	  mask = str_escape(ir->mask, ':', '\\');
-	  if (!mask ||
-	      fprintf(f,"@ %s:%s%lu%s:+%lu:%lu:%s:%s\n",ir->mask,
-		      (ir->flags & MASKREC_PERM) ? "+" : "", ir->expire,
-		      (ir->flags & MASKREC_STICKY) ? "*" : "", ir->added,
-		      ir->lastactive, ir->user ? ir->user : myname,
-		      ir->desc ? ir->desc : "requested") == EOF) {
-	    if (mask)
-	      free(mask);
-	    return 0;
-	  }
-	  free(mask);
-	}
-      }
     }
   return 1;
 }

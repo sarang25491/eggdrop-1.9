@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: tclchan.c,v 1.29 2003/02/12 08:42:22 wcc Exp $";
+static const char rcsid[] = "$Id: tclchan.c,v 1.30 2003/02/15 05:04:57 wcc Exp $";
 #endif
 */
 
@@ -780,7 +780,6 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
     /* Initialize chan->channel info */
     init_channel(chan, 0);
     list_append((struct list_type **) &chanset, (struct list_type *) chan);
-    /* Channel name is stored in xtra field for sharebot stuff */
     join = 1;
   }
   if (setstatic)

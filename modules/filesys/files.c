@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: files.c,v 1.10 2003/02/15 00:23:51 wcc Exp $";
+static const char rcsid[] = "$Id: files.c,v 1.11 2003/02/15 05:04:57 wcc Exp $";
 #endif
 */
 
@@ -276,7 +276,7 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
 	realloc_strcpy(*real, current);
 	return 0;
       }
-      if (!(fdbe->stat & FILE_DIR) || fdbe->sharelink) {
+      if (!(fdbe->stat & FILE_DIR)) {
 	/* Not a dir */
 	free_fdbe(&fdbe);
 	free_null(elem);
@@ -539,39 +539,7 @@ static void cmd_reget_get(int idx, char *par, int resend)
     where = ftell(fdb);
     if (!(fdbe->stat & (FILE_HIDDEN | FILE_DIR))) {
       ok = 1;
-      if (fdbe->sharelink) {
-	char *bot, *whoto = NULL;
-
-	/* This is a link to a file on another bot... */
-	bot = malloc(strlen(fdbe->sharelink) + 1);
-	splitc(bot, fdbe->sharelink, ':');
-	if (!strcasecmp(bot, myname)) {
-	  dprintf(idx, "Can't get that file, it's linked to this bot!\n");
-	} else if (!in_chain(bot)) {
-	  dprintf(idx, _("%s isnt available right now.\n"), fdbe->filename);
-	} else {
-	  i = nextbot(bot);
-	  realloc_strcpy(whoto, par);
-	  if (!whoto[0])
-	    realloc_strcpy(whoto, dcc[idx].nick);
-	  s = malloc(strlen(whoto) + strlen(myname) + 13);
-	  simple_sprintf(s, "%d:%s@%s", dcc[idx].sock, whoto, myname);
-	  botnet_send_filereq(i, s, bot, fdbe->sharelink);
-	  dprintf(idx, _("Requested %s from %s ...\n"), fdbe->sharelink, bot);
-	  /* Increase got count now (or never) */
-	  fdbe->gots++;
-	  s = realloc(s, strlen(bot) + strlen(fdbe->sharelink) + 2);
-	  sprintf(s, "%s:%s", bot, fdbe->sharelink);
-	  realloc_strcpy(fdbe->sharelink, s);
-	  filedb_updatefile(fdb, fdbe->pos, fdbe, UPDATE_ALL);
-	  free_null(whoto);
-	  free_null(s);
-	}
-	free_null(bot);
-      } else {
-	do_dcc_send(idx, destdir, fdbe->filename, par, resend);
-	/* Don't increase got count till later */
-      }
+      do_dcc_send(idx, destdir, fdbe->filename, par, resend);
     }
     free_fdbe(&fdbe);
     fdbe = filedb_matchfile(fdb, where, what);
@@ -695,161 +663,6 @@ static void cmd_unhide(int idx, char *par)
     putlog(LOG_FILES, "*", "files: #%s# unhide %s", dcc[idx].nick, par);
     if (ok > 1)
       dprintf(idx, "%s %d file%s.\n", _("Unhid"), ok, ok == 1 ? "" : "s");
-  }
-}
-
-static void cmd_share(int idx, char *par)
-{
-  FILE *fdb;
-  filedb_entry *fdbe;
-  long where;
-  int ok = 0;
-
-  if (!par[0]) {
-    dprintf(idx, "%s: share <file(s)>\n", _("Usage"));
-    return;
-  }
-  fdb = filedb_open(dcc[idx].u.file->dir, 0);
-  if (!fdb)
-    return;
-  filedb_readtop(fdb, NULL);
-  fdbe = filedb_matchfile(fdb, ftell(fdb), par);
-  if (!fdbe) {
-    filedb_close(fdb);
-    dprintf(idx, _("No matching files.\n"));
-    return;
-  }
-  while (fdbe) {
-    where = ftell(fdb);
-    if (!(fdbe->stat & (FILE_HIDDEN | FILE_DIR | FILE_SHARE))) {
-      fdbe->stat |= FILE_SHARE;
-      ok++;
-      dprintf(idx, "%s: %s\n", _("Shared"), fdbe->filename);
-      filedb_updatefile(fdb, fdbe->pos, fdbe, UPDATE_HEADER);
-    }
-    free_fdbe(&fdbe);
-    fdbe = filedb_matchfile(fdb, where, par);
-  }
-  filedb_close(fdb);
-  if (!ok)
-    dprintf(idx, _("No matching files.\n"));
-  else {
-    putlog(LOG_FILES, "*", "files: #%s# share %s", dcc[idx].nick, par);
-    if (ok > 1)
-      dprintf(idx, "%s %d file%s.\n", _("Shared"), ok, ok == 1 ? "" : "s");
-  }
-}
-
-static void cmd_unshare(int idx, char *par)
-{
-  FILE *fdb;
-  filedb_entry *fdbe;
-  long where;
-  int ok = 0;
-
-  if (!par[0]) {
-    dprintf(idx, "%s: unshare <file(s)>\n", _("Usage"));
-    return;
-  }
-  fdb = filedb_open(dcc[idx].u.file->dir, 0);
-  if (!fdb)
-    return;
-  filedb_readtop(fdb, NULL);
-  fdbe = filedb_matchfile(fdb, ftell(fdb), par);
-  if (!fdbe) {
-    filedb_close(fdb);
-    dprintf(idx, _("No matching files.\n"));
-    return;
-  }
-  while (fdbe) {
-    where = ftell(fdb);
-    if ((fdbe->stat & FILE_SHARE) &&
-	!(fdbe->stat & (FILE_DIR | FILE_HIDDEN))) {
-      fdbe->stat &= ~FILE_SHARE;
-      ok++;
-      dprintf(idx, "%s: %s\n", _("Unshared"), fdbe->filename);
-      filedb_updatefile(fdb, fdbe->pos, fdbe, UPDATE_HEADER);
-    }
-    free_fdbe(&fdbe);
-    fdbe = filedb_matchfile(fdb, where, par);
-  }
-  filedb_close(fdb);
-  if (!ok)
-    dprintf(idx, _("No matching files.\n"));
-  else {
-    putlog(LOG_FILES, "*", "files: #%s# unshare %s", dcc[idx].nick, par);
-    if (ok > 1)
-      dprintf(idx, "%s %d file%s.\n", _("Unshared"), ok,
-	      ok == 1 ? "" : "s");
-  }
-}
-
-/* Link a file from another bot.
- */
-static void cmd_ln(int idx, char *par)
-{
-  char *share, *newpath = NULL, *newfn = NULL, *p;
-  FILE *fdb;
-  filedb_entry *fdbe;
-
-  share = newsplit(&par);
-  if (strlen(share) > 60)
-    share[60] = 0;
-  /* Correct format? */
-  if (!(p = strchr(share, ':')) || !par[0])
-    dprintf(idx, "%s: ln <bot:path> <localfile>\n", _("Usage"));
-  else if (p[1] != '/')
-    dprintf(idx, "Links to other bots must have absolute paths.\n");
-  else {
-    if ((p = strrchr(par, '/'))) {
-      *p = 0;
-      realloc_strcpy(newfn, p + 1);
-      if (!resolve_dir(dcc[idx].u.file->dir, par, &newpath, idx)) {
-	dprintf(idx, _("No such directory.\n"));
-	free_null(newfn);
-	free_null(newpath);
-	return;
-      }
-    } else {
-      realloc_strcpy(newpath, dcc[idx].u.file->dir);
-      realloc_strcpy(newfn, par);
-    }
-    fdb = filedb_open(newpath, 0);
-    if (!fdb) {
-      free_null(newfn);
-      free_null(newpath);
-      return;
-    }
-    filedb_readtop(fdb, NULL);
-    fdbe = filedb_matchfile(fdb, ftell(fdb), newfn);
-    if (fdbe) {
-      if (!fdbe->sharelink) {
-	dprintf(idx, _("%s is already a normal file.\n"), newfn);
-	filedb_close(fdb);
-      } else {
-	realloc_strcpy(fdbe->sharelink, share);
-	filedb_updatefile(fdb, fdbe->pos, fdbe, UPDATE_ALL);
-	filedb_close(fdb);
-	dprintf(idx, _("Changed link to %s\n"), share);
-	putlog(LOG_FILES, "*", "files: #%s# ln %s %s",
-	       dcc[idx].nick, par, share);
-      }
-    } else {
-      /* New entry */
-      fdbe = malloc_fdbe();
-      realloc_strcpy(fdbe->filename, newfn);
-      realloc_strcpy(fdbe->uploader, dcc[idx].nick);
-      fdbe->uploaded = now;
-      realloc_strcpy(fdbe->sharelink, share);
-      filedb_addfile(fdb, fdbe);
-      filedb_close(fdb);
-      dprintf(idx, "%s %s -> %s\n", _("Added link"), fdbe->filename, share);
-      putlog(LOG_FILES, "*", "files: #%s# ln /%s%s%s %s", dcc[idx].nick,
-	     newpath, newpath[0] ? "/" : "", newfn, share);
-    }
-    free_fdbe(&fdbe);
-    free_null(newpath);
-    free_null(newfn);
   }
 }
 
@@ -986,9 +799,7 @@ static void cmd_rm(int idx, char *par)
       sprintf(s, "%s%s/%s", dccdir, dcc[idx].u.file->dir, fdbe->filename);
       ok++;
       filedb_delfile(fdb, fdbe->pos);
-      /* Shared file links won't be able to be unlinked */
-      if (!(fdbe->sharelink))
-	unlink(s);
+      unlink(s);
       dprintf(idx, "%s: %s\n", _("Erased"), fdbe->filename);
       free_null(s);
     }
@@ -1286,9 +1097,7 @@ static void cmd_mv_cp(int idx, char *par, int copy)
 	free_fdbe(&fdbe_new);
       }
       if (!skip_this) {
-        if ((fdbe_old->sharelink) ||
-            ((copy ? copyfile(s, s1) : movefile(s, s1)) == 0)) {
-
+        if ((copy ? copyfile(s, s1) : movefile(s, s1)) == 0) {
 	  /* Raw file moved okay: create new entry for it */
 	  ok++;
 	  fdbe_new = malloc_fdbe();
@@ -1306,7 +1115,6 @@ static void cmd_mv_cp(int idx, char *par, int copy)
 	  fdbe_new->uploaded = fdbe_old->uploaded;
 	  fdbe_new->size = fdbe_old->size;
 	  fdbe_new->gots = fdbe_old->gots;
-	  realloc_strcpy(fdbe_new->sharelink, fdbe_old->sharelink);
 	  filedb_addfile(fdb_new, fdbe_new);
 	  if (!copy)
 	    filedb_delfile(fdb_old, fdbe_old->pos);
@@ -1372,7 +1180,7 @@ static int cmd_filestats(int idx, char *par)
     dprintf(idx, "No such user.\n");
   else if (!strcmp(par, "clear") && dcc[idx].user &&
 	   (dcc[idx].user->flags & USER_JANITOR)) {
-    set_user (&USERENTRY_FSTAT, u, NULL);
+    set_user(&USERENTRY_FSTAT, u, NULL);
     dprintf(idx, "Cleared filestats for %s.\n", nick);
   } else
     my_tell_file_stats(idx, nick);
@@ -1408,7 +1216,6 @@ static cmd_t myfiles[] =
   {"reget",	"",	(Function) cmd_reget,		NULL},
   {"help",	"",	(Function) cmd_file_help,	NULL},
   {"hide",	"j",	(Function) cmd_hide,		NULL},
-  {"ln",	"j",	(Function) cmd_ln,		NULL},
   {"ls",	"",	(Function) cmd_ls,		NULL},
   {"lsa",	"j",	(Function) cmd_lsa,		NULL},
   {"mkdir",	"j",	(Function) cmd_mkdir,		NULL},
@@ -1419,11 +1226,9 @@ static cmd_t myfiles[] =
   {"quit",	"",	(Function) CMD_LEAVE,		NULL},
   {"rm",	"j",	(Function) cmd_rm,		NULL},
   {"rmdir",	"j",	(Function) cmd_rmdir,		NULL},
-  {"share",	"j",	(Function) cmd_share,		NULL},
   {"optimize",	"j",	(Function) cmd_optimize,	NULL},
   {"stats",	"",	(Function) cmd_stats,		NULL},
   {"unhide",	"j",	(Function) cmd_unhide,		NULL},
-  {"unshare",	"j",	(Function) cmd_unshare,		NULL},
   {NULL,	NULL,	NULL,				NULL}
 };
 
@@ -1475,54 +1280,6 @@ static int files_reget(int idx, char *fn, char *nick, int resend)
     free_null(destdir);
     free_fdbe(&fdbe);
     return 0;
-  }
-  if (fdbe->sharelink) {
-    char *bot, *whoto = NULL;
-
-    /* This is a link to a file on another bot... */
-    bot = malloc(strlen(fdbe->sharelink) + 1);
-    splitc(bot, fdbe->sharelink, ':');
-    if (!strcasecmp(bot, myname)) {
-      /* Linked to myself *duh* */
-      filedb_close(fdb);
-      free_null(what);
-      free_null(destdir);
-      free_null(bot);
-      free_fdbe(&fdbe);
-      return 0;
-    } else if (!in_chain(bot)) {
-      filedb_close(fdb);
-      free_null(what);
-      free_null(destdir);
-      free_null(bot);
-      free_fdbe(&fdbe);
-      return 0;
-    } else {
-      i = nextbot(bot);
-      if (nick[0]) {
-        realloc_strcpy(whoto, nick);
-      } else {
-	realloc_strcpy(whoto, dcc[idx].nick);
-      }
-      s = malloc(strlen(whoto) + strlen(myname) + 13);
-      simple_sprintf(s, "%d:%s@%s", dcc[idx].sock, whoto, myname);
-      botnet_send_filereq(i, s, bot, fdbe->sharelink);
-      dprintf(idx, _("Requested %s from %s ...\n"), fdbe->sharelink, bot);
-      /* Increase got count now (or never) */
-      fdbe->gots++;
-      s = realloc(s, strlen(bot) + strlen(fdbe->sharelink) + 2);
-      sprintf(s, "%s:%s", bot, fdbe->sharelink);
-      realloc_strcpy(fdbe->sharelink, s);
-      filedb_updatefile(fdb, fdbe->pos, fdbe, UPDATE_ALL);
-      filedb_close(fdb);
-      free_fdbe(&fdbe);
-      free_null(what);
-      free_null(destdir);
-      free_null(bot);
-      free_null(whoto);
-      free_null(s);
-      return 1;
-    }
   }
   filedb_close(fdb);
   do_dcc_send(idx, destdir, fdbe->filename, nick, resend);

@@ -31,7 +31,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.45 2003/02/03 11:41:35 wcc Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.46 2003/02/15 05:04:58 wcc Exp $";
 #endif
 
 #include "main.h"
@@ -41,8 +41,7 @@ static const char rcsid[] = "$Id: users.c,v 1.45 2003/02/03 11:41:35 wcc Exp $";
 #include "logfile.h"
 #include "misc.h"
 #include "chanprog.h"		/* clear_chanlist			*/
-#include "dccutil.h"		/* shareout, dprintf_eggdrop, chatout,
-				   lostdcc				*/
+#include "dccutil.h"		/* dprintf_eggdrop, chatout, lostdcc	*/
 #include "net.h"		/* killsock				*/
 #include "userrec.h"		/* clear_masks				*/
 #include "match.h"		/* wild_match				*/
@@ -59,7 +58,7 @@ char spaces2[33] = "                                 ";
 extern struct dcc_t *dcc;
 extern struct userrec *userlist, *lastuser;
 extern struct chanset_t *chanset;
-extern int dcc_total, noshare;
+extern int dcc_total;
 extern char myname[];
 extern Tcl_Interp *interp;
 extern time_t now;
@@ -130,14 +129,6 @@ int delignore(char *ign)
       }
   }
   if (i) {
-    if (!noshare) {
-      char *mask = str_escape(ign, ':', '\\');
-
-      if (mask) {
-	shareout(NULL, "-i %s\n", mask);
-	free(mask);
-      }
-    }
     free((*u)->igmask);
     if ((*u)->msg)
       free((*u)->msg);
@@ -166,15 +157,6 @@ void addignore(char *ign, char *from, char *mnote, time_t expire_time)
   p->igmask = strdup(ign);
   p->user = strdup(from);
   p->msg = strdup(mnote);
-  if (!noshare) {
-    char *mask = str_escape(ign, ':', '\\');
-
-    if (mask) {
-      shareout(NULL, "+i %s %lu %c %s %s\n", mask, expire_time - now,
-	       (p->flags & IGREC_PERM) ? 'p' : '-', from, mnote);
-      free(mask);
-    }
-  }
 }
 
 /* take host entry from ignore list and display it ignore-style */
@@ -701,7 +683,7 @@ int readuserfile(char *file, struct userrec **ret)
   f = fopen(file, "r");
   if (f == NULL)
     return 0;
-  noshare = noxtra = 1;
+  noxtra = 1;
   /* read opening comment */
   s = buf;
   fgets(s, 180, f);
@@ -807,11 +789,8 @@ int readuserfile(char *file, struct userrec **ret)
 	    }
 	    lasthand[0] = 0;
 	  } else {
-	    /* Remove all bans for this channel to avoid dupes */
-	    /* NOTE only remove bans for when getting a userfile
-	     * from another bot & that channel is shared */
 	    cst = findchan_by_dname(lasthand);
-	    if ((*ret == userlist) || channel_shared(cst)) {
+	    if (*ret == userlist) {
 	      clear_masks(cst->bans);
 	      cst->bans = NULL;
 	    } else {
@@ -833,11 +812,8 @@ int readuserfile(char *file, struct userrec **ret)
 	    }
 	    lasthand[0] = 0;
 	  } else {
-	    /* Remove all exempts for this channel to avoid dupes */
-	    /* NOTE only remove exempts for when getting a userfile
-	     * from another bot & that channel is shared */
 	    cst = findchan_by_dname(lasthand);
-	    if ((*ret == userlist) || channel_shared(cst)) {
+	    if (*ret == userlist) {
 	      clear_masks(cst->exempts);
 	      cst->exempts = NULL;
 	    } else {
@@ -859,11 +835,8 @@ int readuserfile(char *file, struct userrec **ret)
 	    }
 	    lasthand[0] = 0;
 	  } else {
-	    /* Remove all invites for this channel to avoid dupes */
-	    /* NOTE only remove invites for when getting a userfile
-	     * from another bot & that channel is shared */
 	    cst = findchan_by_dname(lasthand);
-	    if ((*ret == userlist) || channel_shared(cst)) {
+	    if (*ret == userlist) {
 	      clear_masks(cst->invites);
               cst->invites = NULL;
 	    } else {
@@ -926,11 +899,8 @@ int readuserfile(char *file, struct userrec **ret)
 	    lasthand[0] = 0;
 	  } else {
 	    u = get_user_by_handle(bu, code);
-	    if (u && !(u->flags & USER_UNSHARED)) {
+	    if (u) {
 	      putlog(LOG_MISC, "*", "* %s '%s'!", _("Duplicate user record"), code);
-	      lasthand[0] = 0;
-	      u = NULL;
-	    } else if (u) {
 	      lasthand[0] = 0;
 	      u = NULL;
 	    } else {
@@ -984,7 +954,7 @@ int readuserfile(char *file, struct userrec **ret)
 	}
       }
   }
-  noshare = noxtra = 0;
+  noxtra = 0;
   /* process the user data *now* */
   return 1;
 }

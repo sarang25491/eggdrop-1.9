@@ -3,7 +3,6 @@
  *
  *	maskhost() dumplots() daysago() days() daysdur()
  *	queueing output for the bot (msg and help)
- *	resync buffers for sharebots
  *	help system
  *	motd display and %var substitution
  */
@@ -27,7 +26,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: misc.c,v 1.75 2003/02/10 00:09:08 wcc Exp $";
+static const char rcsid[] = "$Id: misc.c,v 1.76 2003/02/15 05:04:58 wcc Exp $";
 #endif
 
 #include "main.h"

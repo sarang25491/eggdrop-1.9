@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: filesys.c,v 1.19 2003/02/15 00:23:51 wcc Exp $";
+static const char rcsid[] = "$Id: filesys.c,v 1.20 2003/02/15 05:04:57 wcc Exp $";
 #endif
 
 #include <fcntl.h>
@@ -86,16 +86,6 @@ static int dcc_users = 0;
  * each directory.
  */
 static char filedb_path[121] = "";
-
-/* Prototypes */
-static int is_valid();
-static void eof_dcc_files(int idx);
-static void dcc_files(int idx, char *buf, int i);
-static void disp_dcc_files(int idx, char *buf);
-static void kill_dcc_files(int idx, void *x);
-static void out_dcc_files(int idx, char *buf, void *x);
-static char *mktempfile(char *filename);
-static void wipe_tmp_filename(char *fn, int idx);
 
 static struct dcc_table DCC_FILES =
 {
@@ -360,6 +350,229 @@ static int raw_dcc_send(char *filename, char *nick, char *from,
 			    char *dir, char *addr)
 {
   return raw_dcc_resend_send(filename, nick, from, dir, 0, addr);
+}
+
+static int fstat_unpack(struct userrec *u, struct user_entry *e)
+{
+  char *par, *arg;
+  struct filesys_stats *fs;
+
+  fs = calloc(1, sizeof(struct filesys_stats));
+  par = e->u.list->extra;
+  arg = newsplit(&par);
+  if (arg[0])
+    fs->uploads = atoi(arg);
+  arg = newsplit(&par);
+  if (arg[0])
+    fs->upload_ks = atoi(arg);
+  arg = newsplit(&par);
+  if (arg[0])
+    fs->dnloads = atoi(arg);
+  arg = newsplit(&par);
+  if (arg[0])
+    fs->dnload_ks = atoi(arg);
+
+  list_type_kill(e->u.list);
+  e->u.extra = fs;
+  return 1;
+}
+
+static int fstat_pack(struct userrec *u, struct user_entry *e)
+{
+  struct filesys_stats *fs;
+  struct list_type *l = malloc(sizeof(struct list_type));
+
+  fs = e->u.extra;
+  l->extra = malloc(41);
+  snprintf(l->extra, 41, "%09u %09u %09u %09u",
+          fs->uploads, fs->upload_ks, fs->dnloads, fs->dnload_ks);
+  l->next = NULL;
+  e->u.list = l;
+  free(fs);
+  return 1;
+}
+
+static int fstat_write_userfile(FILE *f, struct userrec *u,
+				struct user_entry *e)
+{
+  struct filesys_stats *fs;
+
+  fs = e->u.extra;
+  if (fprintf(f, "--FSTAT %09u %09u %09u %09u\n",
+	      fs->uploads, fs->upload_ks,
+	      fs->dnloads, fs->dnload_ks) == EOF)
+    return 0;
+  return 1;
+}
+
+static int fstat_set(struct userrec *u, struct user_entry *e, void *buf)
+{
+  struct filesys_stats *fs = buf;
+
+  if (e->u.extra != fs) {
+    if (e->u.extra)
+      free(e->u.extra);
+    e->u.extra = fs;
+  } else if (!fs)
+    return 1;
+  return 1;
+}
+
+static int fstat_tcl_get(Tcl_Interp *irp, struct userrec *u,
+			 struct user_entry *e, int argc, char **argv)
+{
+  struct filesys_stats *fs;
+  char d[50];
+
+  BADARGS(3, 4, " handle FSTAT ?u/d?");
+  fs = e->u.extra;
+  if (argc == 3)
+    snprintf(d, sizeof d, "%u %u %u %u", fs->uploads, fs->upload_ks,
+                 fs->dnloads, fs->dnload_ks);
+  else
+    switch (argv[3][0]) {
+    case 'u':
+      snprintf(d, sizeof d, "%u %u", fs->uploads, fs->upload_ks);
+      break;
+    case 'd':
+      snprintf(d, sizeof d, "%u %u", fs->dnloads, fs->dnload_ks);
+      break;
+    }
+
+  Tcl_AppendResult(irp, d, NULL);
+  return TCL_OK;
+}
+
+static int fstat_kill(struct user_entry *e)
+{
+  if (e->u.extra)
+    free(e->u.extra);
+  free(e);
+  return 1;
+}
+
+static void fstat_display(int idx, struct user_entry *e)
+{
+  struct filesys_stats *fs;
+
+  fs = e->u.extra;
+  dprintf(idx, "  FILES: %u download%s (%luk), %u upload%s (%luk)\n",
+	  fs->dnloads, (fs->dnloads == 1) ? "" : "s", fs->dnload_ks,
+	  fs->uploads, (fs->uploads == 1) ? "" : "s", fs->upload_ks);
+}
+
+static int fstat_gotshare(struct userrec *u, struct user_entry *e,
+			  char *par, int idx)
+{
+  char *p;
+  struct filesys_stats *fs;
+
+  noshare = 1;
+  switch (par[0]) {
+  case 'u':
+  case 'd':
+    /* No stats_add_up/dnload here, it's already been sent... --rtc */
+    break;
+  case 'r':
+    set_user(&USERENTRY_FSTAT, u, NULL);
+    break;
+  default:
+    if (!(fs = e->u.extra))
+      fs = calloc(1, sizeof(struct filesys_stats));
+    p = newsplit (&par);
+    if (p[0])
+      fs->uploads = atoi (p);
+    p = newsplit (&par);
+    if (p[0])
+      fs->upload_ks = atoi (p);
+    p = newsplit (&par);
+    if (p[0])
+      fs->dnloads = atoi (p);
+    p = newsplit (&par);
+    if (p[0])
+      fs->dnload_ks = atoi (p);
+    set_user(&USERENTRY_FSTAT, u, fs);
+    break;
+  }
+  return 1;
+}
+
+static int fstat_dupuser(struct userrec *u, struct userrec *o,
+			 struct user_entry *e)
+{
+  struct filesys_stats *fs;
+
+  if (e->u.extra) {
+    fs = malloc(sizeof(struct filesys_stats));
+    memcpy(fs, e->u.extra, sizeof(struct filesys_stats));
+    return set_user(&USERENTRY_FSTAT, u, fs);
+  }
+  return 0;
+}
+
+static void stats_add_dnload(struct userrec *u, unsigned long bytes)
+{
+  struct user_entry *ue;
+  struct filesys_stats *fs;
+
+  if (u) {
+    if (!(ue = find_user_entry(&USERENTRY_FSTAT, u)) ||
+        !(fs = ue->u.extra))
+      fs = calloc(1, sizeof(struct filesys_stats));
+    fs->dnloads++;
+    fs->dnload_ks += ((bytes + 512) / 1024);
+    set_user(&USERENTRY_FSTAT, u, fs);
+  }
+}
+
+static void stats_add_upload(struct userrec *u, unsigned long bytes)
+{
+  struct user_entry *ue;
+  struct filesys_stats *fs;
+
+  if (u) {
+    if (!(ue = find_user_entry(&USERENTRY_FSTAT, u)) ||
+        !(fs = ue->u.extra))
+      fs = calloc(1, sizeof(struct filesys_stats));
+    fs->uploads++;
+    fs->upload_ks += ((bytes + 512) / 1024);
+    set_user(&USERENTRY_FSTAT, u, fs);
+  }
+}
+
+static int fstat_tcl_set(Tcl_Interp *irp, struct userrec *u,
+			 struct user_entry *e, int argc, char **argv)
+{
+  struct filesys_stats *fs;
+  int f = 0, k = 0;
+
+  BADARGS(4, 6, " handle FSTAT u/d ?files ?ks??");
+  if (argc > 4)
+    f = atoi(argv[4]);
+  if (argc > 5)
+    k = atoi(argv[5]);
+  switch (argv[3][0]) {
+  case 'u':
+  case 'd':
+    if (!(fs = e->u.extra))
+      fs = calloc(1, sizeof(struct filesys_stats));
+    switch (argv[3][0]) {
+    case 'u':
+      fs->uploads = f;
+      fs->upload_ks = k;
+      break;
+    case 'd':
+      fs->dnloads = f;
+      fs->dnload_ks = k;
+      break;
+    }
+    set_user(&USERENTRY_FSTAT, u, fs);
+    break;
+  case 'r':
+    set_user(&USERENTRY_FSTAT, u, NULL);
+    break;
+  }
+  return TCL_OK;
 }
 
 static void dcc_files_pass(int idx, char *buf, int x)
@@ -1126,7 +1339,7 @@ static Function filesys_table[] =
   (Function) 0,
   (Function) filesys_report,
   /* 4 - 7 */
-  (Function) remote_filereq,
+  (Function) 0,
   (Function) add_file,
   (Function) incr_file_gots,
   (Function) is_valid,
@@ -1154,10 +1367,8 @@ char *start(eggdrop_t *eggdrop)
   add_builtins("file", myfiles);
   add_help_reference("filesys.help");
   init_server_ctcps(0);
-  memcpy(&USERENTRY_DCCDIR, &USERENTRY_INFO,
-	    sizeof(struct user_entry_type) - sizeof(char *));
-
-  USERENTRY_DCCDIR.got_share = 0;	/* We dont want it shared tho */
+  memcpy(&USERENTRY_DCCDIR, &USERENTRY_INFO, sizeof(struct user_entry_type) -
+         sizeof(char *));
   add_entry_type(&USERENTRY_DCCDIR);
   DCC_FILES_PASS.timeout_val = &password_timeout;
   return NULL;

@@ -35,22 +35,6 @@ getops-2.2d.tcl
    a way to get ops from other bots on the botnet (if they're on the
    same channel)
 
-klined.tcl
-   removes servers from your server list that your bot has been k-lined on
-   to prevent admins getting peeved with constant connects from your bot's host
-
-notes2.tcl
-   Check your notes on every shared bot of the hub.
-
-ques5.tcl
-   makes web pages of who's on each channel, updated periodically
-   (requires alltools.tcl)
-
-sentinel.tcl (by slennox)
-   flood protection script for eggdrop with integrated BitchX CTCP simulation.
-   this script is designed to provide strong protection for your bot and
-   channels against large floodnets and proxy floods.
-
 userinfo1.0.tcl
    cute user info settings things
 

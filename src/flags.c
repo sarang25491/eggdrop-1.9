@@ -23,20 +23,20 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: flags.c,v 1.37 2003/02/03 10:43:36 wcc Exp $";
+static const char rcsid[] = "$Id: flags.c,v 1.38 2003/02/15 05:04:58 wcc Exp $";
 #endif
 
 #include <ctype.h>
 #include "main.h"
 #include "logfile.h"
-#include "chan.h"		/* findchan_by_dname, channel_shared	*/
+#include "chan.h"		/* findchan_by_dname,			*/
 #include "users.h"		/* USERENTRY_BOTFL, get_user		*/
-#include "dccutil.h"		/* shareout, dprintf_eggdrop		*/
+#include "dccutil.h"		/* dprintf_eggdrop			*/
 #include "userent.h"		/* list_type_kill			*/
 #include "irccmp.h"		/* irccmp				*/
 #include "flags.h"		/* prototypes				*/
 
-extern int raw_log, noshare;
+extern int raw_log;
 
 typedef struct {
 	int flag;
@@ -59,8 +59,6 @@ static logmode_mapping_t logmode_mappings[] = {
 	{LOG_SERV, 's', "server"},
 	{LOG_DEBUG, 'd', "debug"},
 	{LOG_SRVOUT, 'v', "server output"},
-	{LOG_BOTNET, 't', "botnet traffic"},
-	{LOG_BOTSHARE, 'h', "share traffic"},
 	{LOG_LEV1, '1', "level 1"},
 	{LOG_LEV2, '2', "level 2"},
 	{LOG_LEV3, '3', "level 3"},
@@ -73,7 +71,7 @@ static logmode_mapping_t logmode_mappings[] = {
 	{0}
 };
 
-#define NEEDS_RAW_LOG (LOG_RAW|LOG_SRVOUT|LOG_BOTNET|LOG_BOTSHARE)
+#define NEEDS_RAW_LOG (LOG_RAW|LOG_SRVOUT|LOG_BOTNET)
 
 int logmodes(char *s)
 {
@@ -170,9 +168,6 @@ int chan_sanity_check(int chatr, int atr)
   /* Master implies op */
   if (chatr & USER_MASTER)
     chatr |= USER_OP ;
-  /* Can't be +s on chan unless you're a bot */
-  if (!(atr & USER_BOT))
-    chatr &= ~BOT_SHARE;
   return chatr;
 }
 
@@ -481,17 +476,10 @@ void set_user_flagrec(struct userrec *u, struct flag_record *fr,
     return;
   if (oldflags & FR_GLOBAL) {
     u->flags = fr->global;
-
     u->flags_udef = fr->udef_global;
-    if (!noshare && !(u->flags & USER_UNSHARED)) {
-      fr->match = FR_GLOBAL;
-      build_flags(buffer, fr, NULL);
-      shareout(NULL, "a %s %s\n", u->handle, buffer);
-    }
   }
   if ((oldflags & FR_BOT) && (u->flags & USER_BOT))
     set_user(&USERENTRY_BOTFL, u, (void *) fr->bot);
-  /* Don't share bot attrs */
   if ((oldflags & FR_CHAN) && chname) {
     for (cr = u->chanrec; cr; cr = cr->next)
       if (!irccmp(chname, cr->channel))
@@ -506,11 +494,6 @@ void set_user_flagrec(struct userrec *u, struct flag_record *fr,
     if (cr && ch) {
       cr->flags = fr->chan;
       cr->flags_udef = fr->udef_chan;
-      if (!noshare && !(u->flags & USER_UNSHARED) && channel_shared(ch)) {
-	fr->match = FR_CHAN;
-	build_flags(buffer, fr, NULL);
-	shareout(ch, "a %s %s %s\n", u->handle, buffer, chname);
-      }
     }
   }
   fr->match = oldflags;
@@ -616,15 +599,11 @@ static int botfl_set(struct userrec *u, struct user_entry *e, void *buf)
   if ((atr & BOT_HUB) && (atr & BOT_ALT))
     atr &= ~BOT_ALT;
   if (atr & BOT_REJECT) {
-    if (atr & BOT_SHARE)
-      atr &= ~(BOT_SHARE | BOT_REJECT);
     if (atr & BOT_HUB)
       atr &= ~(BOT_HUB | BOT_REJECT);
     if (atr & BOT_ALT)
       atr &= ~(BOT_ALT | BOT_REJECT);
   }
-  if (!(atr & BOT_SHARE))
-    atr &= ~BOT_GLOBAL;
   e->u.ulong = atr;
   return 1;
 }

@@ -22,7 +22,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: logfile.h,v 1.5 2003/02/03 01:01:07 stdarg Exp $
+ * $Id: logfile.h,v 1.6 2003/02/15 05:04:58 wcc Exp $
  */
 
 #ifndef _EGG_LOGILE_H
@@ -51,8 +51,6 @@
 #define LOG_DEBUG    0x040000   /* d   debug                            */
 #define LOG_WALL     0x080000   /* w   wallops                          */
 #define LOG_SRVOUT   0x100000   /* v   server output                    */
-#define LOG_BOTNET   0x200000   /* t   botnet traffic                   */
-#define LOG_BOTSHARE 0x400000   /* h   share traffic                    */
 #define LOG_ALL      0xFFFFFF   /* (dump to all logfiles)               */
 
 #ifndef MAKING_MODS

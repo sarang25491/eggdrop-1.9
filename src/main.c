@@ -30,7 +30,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.134 2003/02/14 20:55:02 stdarg Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.135 2003/02/15 05:04:58 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -256,7 +256,7 @@ static void got_ill(int z)
 }
 
 
-static void print_version (void)
+static void print_version(void)
 {
   char x[1024], *z = x;
     
@@ -268,7 +268,7 @@ static void print_version (void)
     printf("  (patches: %s)\n", z);
 }
 
-static void print_help (void)
+static void print_help(void)
 {
   print_version ();
   printf("\n\
@@ -280,9 +280,7 @@ Usage: %s [OPTIONS]... [FILE]\n", PACKAGE);
   -c  --channel-stats        (with -n) Display channel stats every 10 seconds\n\
   -t  --terminal             (with -n) Use terminal to simulate dcc-chat\n\
   -m  --make-userfile        Userfile creation mode\n\
-  -p  --load-module=STRING   Modules to load before parsing any configuration\n\
-                             file\n\
-  FILE  optional config filename (default 'eggdrop.conf')\n"));
+  FILE  optional config filename (default 'config.xml')\n"));
   printf("\n");
 }
 

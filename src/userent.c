@@ -10,20 +10,17 @@
 #include "modules.h"		/* encrypt_pass				*/
 #include "tcl.h"		/* Tcl_Free				*/
 #include "flags.h"		/* USER_*				*/
-#include "dccutil.h"		/* shareout, dprintf_eggdrop		*/
+#include "dccutil.h"		/* dprintf_eggdrop			*/
 #include "userrec.h"		/* addhost_by_handle			*/
 #include "irccmp.h"		/* irccmp				*/
 #include "match.h"		/* wild_match				*/
 #include "userent.h"		/* prototypes				*/
 
-extern int		 noshare;
 extern struct userrec	*userlist;
 extern struct dcc_t	*dcc;
 extern Tcl_Interp	*interp;
 extern char		 whois_fields[];
 
-
-int share_greet = 0;		/* Share greeting info			*/
 static struct user_entry_type *entry_type_list;
 
 
@@ -122,20 +119,13 @@ int def_set(struct userrec *u, struct user_entry *e, void *buf)
   } else { /* string == NULL && e->u.string != NULL */
     free_null(e->u.string);
   }
-  if (!noshare && !(u->flags & (USER_BOT | USER_UNSHARED))) {
-    if (e->type != &USERENTRY_INFO || share_greet)
-      shareout(NULL, "c %s %s %s\n", e->type->name, u->handle,
-	       e->u.string ? e->u.string : "");
-  }
   return 1;
 }
 
 int def_gotshare(struct userrec *u, struct user_entry *e,
 		 char *data, int idx)
 {
-  putlog(LOG_CMDS, "*", "%s: change %s %s", dcc[idx].nick, e->type->name,
-	 u->handle);
-  return e->type->set(u, e, data);
+  return 0;
 }
 
 int def_tcl_get(Tcl_Interp * interp, struct userrec *u,
@@ -229,8 +219,6 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
       encrypt_pass(pass, new);
     e->u.extra = strdup(new);
   }
-  if (!noshare && !(u->flags & (USER_BOT | USER_UNSHARED)))
-    shareout(NULL, "c PASS %s %s\n", u->handle, pass ? pass : "");
   return 1;
 }
 
@@ -325,7 +313,6 @@ static int laston_set(struct userrec *u, struct user_entry *e, void *buf)
 
     li = e->u.extra = buf;
   }
-  /* donut share laston info */
   return 1;
 }
 
@@ -493,13 +480,6 @@ static int botaddr_set(struct userrec *u, struct user_entry *e, void *buf)
     }
     bi = e->u.extra = buf;
   }
-  if (bi && !noshare && !(u->flags & USER_UNSHARED)) {
-    register char *tmp;
-    shareout(NULL, "c BOTADDR %s %s %d %d\n", u->handle,
-             (tmp = str_escape(bi->address, ':', '\\')),
-	     bi->telnet_port, bi->relay_port);
-    free(tmp);
-  }
   return 1;
 }
 
@@ -554,24 +534,7 @@ static void botaddr_display(int idx, struct user_entry *e)
 static int botaddr_gotshare(struct userrec *u, struct user_entry *e,
 			    char *buf, int idx)
 {
-  char *arg;
-  struct bot_addr *bi;
-
-  bi = calloc(1, sizeof(struct bot_addr));
-  arg = newsplit(&buf);
-  str_unescape(arg, '\\');
-  bi->address = strdup(arg);
-  arg = newsplit(&buf);
-  bi->telnet_port = atoi(arg);
-  bi->relay_port = atoi(buf);
-  if (!bi->telnet_port)
-    bi->telnet_port = 3333;
-  if (!bi->relay_port)
-    bi->relay_port = bi->telnet_port;
-  if (!(dcc[idx].status & STAT_GETTING))
-    putlog(LOG_CMDS, "*", "%s: change botaddr %s", dcc[idx].nick,
-	   u->handle);
-  return botaddr_set(u, e, bi);
+  return 0;
 }
 
 static int botaddr_dupuser(struct userrec *new, struct userrec *old,
@@ -628,12 +591,6 @@ int xtra_set(struct userrec *u, struct user_entry *e, void *buf)
     return TCL_OK;
   }
 
-  /* We will possibly free new below, so let's send the information
-   * to the botnet now
-   */
-  if (!noshare && !(u->flags & (USER_BOT | USER_UNSHARED)))
-    shareout(NULL, "c XTRA %s %s %s\n", u->handle, new->key,
-	     new->data ? new->data : "");
   if ((old && old != new) || !new->data || !new->data[0]) {
     list_delete((struct list_type **) (&e->u.extra),
 		(struct list_type *) old);
@@ -747,31 +704,7 @@ static void xtra_display(int idx, struct user_entry *e)
 static int xtra_gotshare(struct userrec *u, struct user_entry *e,
 			 char *buf, int idx)
 {
-  char *arg;
-  struct xtra_key *xk;
-  int l;
-
-  arg = newsplit (&buf);
-  if (!arg[0])
-    return 1;
-
-  xk = calloc(1, sizeof(struct xtra_key));
-  l = strlen(arg);
-  if (l > 500)
-    l = 500;
-  xk->key = malloc(l + 1);
-  strlcpy(xk->key, arg, l + 1);
-
-  if (buf[0]) {
-    int k = strlen(buf);
-
-    if (k > 500 - l)
-      k = 500 - l;
-    xk->data = malloc(k + 1);
-    strlcpy(xk->data, buf, k + 1);
-  }
-  xtra_set(u, e, xk);
-  return 1;
+  return 0;
 }
 
 static int xtra_dupuser(struct userrec *new, struct userrec *old,
@@ -978,7 +911,6 @@ static int hosts_tcl_set(Tcl_Interp * irp, struct userrec *u,
 static int hosts_gotshare(struct userrec *u, struct user_entry *e,
 			  char *buf, int idx)
 {
-  /* doh, try to be too clever and it bites your butt */
   return 0;
 }
 

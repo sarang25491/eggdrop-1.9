@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: dbcompat.h,v 1.4 2003/01/02 21:33:14 wcc Exp $
+ * $Id: dbcompat.h,v 1.5 2003/02/15 05:04:57 wcc Exp $
  */
 
 #ifndef _EGG_MOD_FILESYS_DBCOMPAT_H
@@ -53,7 +53,6 @@ typedef struct {
   time_t		uploaded;	/* Time it was uploaded */
   unsigned int		size;		/* File length */
   unsigned short int	gots;		/* Times the file was downloaded */
-  char			sharelink[61];	/* Points to where? */
   char			unused[512 - sizeof(struct filler1)];
 } filedb1;
 
@@ -77,7 +76,6 @@ typedef struct {
   time_t		uploaded;	/* Time it was uploaded */
   unsigned int		size;		/* File length */
   unsigned short int	gots;		/* Times the file was downloaded */
-  char			sharelink[61];	/* Points to where? */
   char			unused[512 - sizeof(struct filler2)];
 } filedb2;
 

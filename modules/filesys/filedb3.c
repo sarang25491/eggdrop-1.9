@@ -26,7 +26,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: filedb3.c,v 1.9 2003/02/15 00:23:51 wcc Exp $";
+static const char rcsid[] = "$Id: filedb3.c,v 1.10 2003/02/15 05:04:57 wcc Exp $";
 #endif
 */
 
@@ -50,8 +50,6 @@ static const char rcsid[] = "$Id: filedb3.c,v 1.9 2003/02/15 00:23:51 wcc Exp $"
  *  | uploader      |      |                     |
  *  |- - - - - - - -|      |                     |
  *  | flags_req     |      |                     |
- *  |- - - - - - - -|      |                     |
- *  | share link    |      |                     |
  *  |- - - - - - - -|      |                     |
  *  | buffer        |     _|                    _|
  *  |---------------|
@@ -147,8 +145,6 @@ static void free_fdbe(filedb_entry **fdbe)
     free_null((*fdbe)->filename);
   if ((*fdbe)->desc)
     free_null((*fdbe)->desc);
-  if ((*fdbe)->sharelink)
-    free_null((*fdbe)->sharelink);
   if ((*fdbe)->chan)
     free_null((*fdbe)->chan);
   if ((*fdbe)->uploader)
@@ -353,8 +349,6 @@ static int _filedb_updatefile(FILE *fdb, long pos, filedb_entry *fdbe,
     fdh.uploader_len = strlen(fdbe->uploader) + 1;
   if (fdbe->flags_req)
     fdh.flags_req_len = strlen(fdbe->flags_req) + 1;
-  if (fdbe->sharelink)
-    fdh.sharelink_len = strlen(fdbe->sharelink) + 1;
 
   odyntot = fdbe->dyn_len;		/* Old length of dynamic data	*/
   obuftot = fdbe->buf_len;		/* Old length of spare space	*/
@@ -436,8 +430,6 @@ static int _filedb_updatefile(FILE *fdb, long pos, filedb_entry *fdbe,
       fwrite(fdbe->uploader, 1, fdh.uploader_len, fdb);
     if (fdbe->flags_req)
       fwrite(fdbe->flags_req, 1, fdh.flags_req_len, fdb);
-    if (fdbe->sharelink)
-      fwrite(fdbe->sharelink, 1, fdh.sharelink_len, fdb);
   } else
     fseek(fdb, ndyntot, SEEK_CUR);	/* Skip over dynamic data */
   fseek(fdb, nbuftot, SEEK_CUR);	/* Skip over buffer	  */
@@ -505,14 +497,6 @@ static filedb_entry *_filedb_getfile(FILE *fdb, long pos, int get,
   fdbe->pos = pos;			/* Save position		*/
   fdbe->_type = TYPE_EXIST;		/* Entry exists in DB		*/
 
-  /* This is useful for cases where we don't read the rest of the
-   * data, but need to know whether the file is a link.
-   */
-  if (fdh.sharelink_len > 0)
-    fdbe->stat |= FILE_ISLINK;
-  else
-    fdbe->stat &= ~FILE_ISLINK;
-
   /* Read additional data from db */
   if (get >= GET_FILENAME) {
     filedb_read(fdb, fdbe->filename, fdh.filename_len);
@@ -525,7 +509,6 @@ static filedb_entry *_filedb_getfile(FILE *fdb, long pos, int get,
     filedb_read(fdb, fdbe->chan, fdh.chan_len);
     filedb_read(fdb, fdbe->uploader, fdh.uploader_len);
     filedb_read(fdb, fdbe->flags_req, fdh.flags_req_len);
-    filedb_read(fdb, fdbe->sharelink, fdh.sharelink_len);
   }
   fseek(fdb, fdh.buffer_len, SEEK_CUR);	/* Skip buffer			*/
   return fdbe;				/* Return the ready structure	*/
@@ -1012,8 +995,6 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
 	  sprintf(s1, "%5d", fdbe->size);
 	else
 	  sprintf(s1, "%4dk", (int) (fdbe->size / 1024));
-	if (fdbe->sharelink)
-	  strcpy(s1, "     ");
 	/* Too long? */
 	if (strlen(fdbe->filename) > 30) {
 	  s3 = malloc(strlen(fdbe->filename) + 2);
@@ -1031,12 +1012,6 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
 	  free_null(s3);
 	filelist_addout(flist, s4);
 	free_null(s4);
-	if (fdbe->sharelink) {
-	  s4 = malloc(9 + strlen(fdbe->sharelink));
-	  sprintf(s4, "   --> %s\n", fdbe->sharelink);
-	  filelist_addout(flist, s4);
-	  free_null(s4);
-	}
       }
       if (fdbe->desc) {
 	p = strchr(fdbe->desc, '\n');
@@ -1078,81 +1053,6 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
   }
   filelist_free(flist);
 }
-
-static void remote_filereq(int idx, char *from, char *file)
-{
-  char *p   = NULL, *what   = NULL, *dir = NULL,
-       *s1  = NULL, *reject = NULL, *s   = NULL;
-  FILE *fdb = NULL;
-  int	i   = 0;
-  filedb_entry *fdbe = NULL;
-
-  realloc_strcpy(what, file);
-  p = strrchr(what, '/');
-  if (p) {
-    *p = 0;
-    realloc_strcpy(dir, what);
-    strcpy(what, p + 1);
-  } else {
-    realloc_strcpy(dir, "");
-  }
-  fdb = filedb_open(dir, 0);
-  if (!fdb) {
-    reject = _("Directory does not exist");
-  } else {
-    filedb_readtop(fdb, NULL);
-    fdbe = filedb_matchfile(fdb, ftell(fdb), what);
-    filedb_close(fdb);
-    if (!fdbe) {
-      reject = _("File does not exist");
-    } else {
-      if ((!(fdbe->stat & FILE_SHARE)) ||
-	  (fdbe->stat & (FILE_HIDDEN | FILE_DIR)))
-	reject = _("File is not shared");
-      else {
-	s1 = malloc(strlen(dccdir) + strlen(dir) + strlen(what) + 2);
-	/* Copy to /tmp if needed */
-	sprintf(s1, "%s%s%s%s", dccdir, dir, dir[0] ? "/" : "", what);
-	if (copy_to_tmp) {
-	  s = malloc(strlen(tempdir) + strlen(what) + 1);
-	  sprintf(s, "%s%s", tempdir, what);
-	  copyfile(s1, s);
-	} else
-	  s = s1;
-	i = raw_dcc_send(s, "*remote", _("(remote)"), s, 0);
-	if (i > 0) {
-	  wipe_tmp_filename(s, -1);
-	  reject = _("Error trying to send file");
-	}
-	if (s1 != s)
-	  free_null(s);
-	free_null(s1);
-      }
-      free_fdbe(&fdbe);
-    }
-  }
-  s1 = malloc(strlen(myname) + strlen(dir) + strlen(what) + 3);
-  simple_sprintf(s1, "%s:%s/%s", myname, dir, what);
-  if (reject) {
-    botnet_send_filereject(idx, s1, from, reject);
-    free_null(s1);
-    free_null(what);
-    free_null(dir);
-    return;
-  }
-  /* Grab info from dcc struct and bounce real request across net */
-  i = dcc_total - 1;
-  s = malloc(40);	/* Enough? */
-  simple_sprintf(s, "%d %u %d", iptolong(getmyip()), dcc[i].port,
-		dcc[i].u.xfer->length);
-  botnet_send_filesend(idx, s1, from, s);
-  putlog(LOG_FILES, "*", _("Remote request for /%s%s%s (sending)"), dir, dir[0] ? "/" : "", what);
-  free_null(s1);
-  free_null(s);
-  free_null(what);
-  free_null(dir);
-}
-
 
 /*
  *    Tcl functions
@@ -1233,55 +1133,6 @@ static void filedb_setowner(char *dir, char *fn, char *owner)
   filedb_close(fdb);
 }
 
-static void filedb_setlink(char *dir, char *fn, char *link)
-{
-  filedb_entry *fdbe = NULL;
-  FILE	       *fdb  = NULL;
-
-  fdb = filedb_open(dir, 0);
-  if (!fdb)
-    return;
-  filedb_readtop(fdb, NULL);
-  fdbe = filedb_matchfile(fdb, ftell(fdb), fn);
-  if (fdbe) {
-    /* Change existing one? */
-    if ((fdbe->stat & FILE_DIR) || !fdbe->sharelink)
-      return;
-    if (!link || !link[0])
-      filedb_delfile(fdb, fdbe->pos);
-    else {
-      free_null(fdbe->sharelink);
-      realloc_strcpy(fdbe->sharelink, link);
-      filedb_updatefile(fdb, fdbe->pos, fdbe, UPDATE_ALL);
-    }
-    free_fdbe(&fdbe);
-    return;
-  }
-
-  fdbe = malloc_fdbe();
-  realloc_strcpy(fdbe->uploader, myname);
-  realloc_strcpy(fdbe->filename, fn);
-  realloc_strcpy(fdbe->sharelink, link);
-  fdbe->uploaded = now;
-  filedb_addfile(fdb, fdbe);
-  free_fdbe(&fdbe);
-  filedb_close(fdb);
-}
-
-static void filedb_getlink(char *dir, char *fn, char **link)
-{
-  filedb_entry *fdbe = NULL;
-
-  fdbe = filedb_getentry(dir, fn);
-  if (fdbe && (!(fdbe->stat & FILE_DIR))) {
-    *link = strdup(fdbe->sharelink);
-  } else
-    *link = NULL;
-  if (fdbe)
-    free_fdbe(&fdbe);
-  return;
-}
-
 static void filedb_getfiles(Tcl_Interp * irp, char *dir)
 {
   FILE *fdb;
@@ -1322,7 +1173,7 @@ static void filedb_getdirs(Tcl_Interp * irp, char *dir)
   filedb_close(fdb);
 }
 
-static void filedb_change(char *dir, char *fn, int what)
+static void filedb_change(char *dir, char *fn)
 {
   FILE *fdb;
   filedb_entry *fdbe;
@@ -1334,27 +1185,8 @@ static void filedb_change(char *dir, char *fn, int what)
   filedb_readtop(fdb, NULL);
   fdbe = filedb_matchfile(fdb, ftell(fdb), fn);
   if (fdbe) {
-    if (!(fdbe->stat & FILE_DIR)) {
-      switch (what) {
-      case FILEDB_SHARE:
-	fdbe->stat |= FILE_SHARE;
-	break;
-      case FILEDB_UNSHARE:
-	fdbe->stat &= ~FILE_SHARE;
-	break;
-      }
+    if (!(fdbe->stat & FILE_DIR))
       changed = 1;
-    }
-    switch (what) {
-    case FILEDB_HIDE:
-      fdbe->stat |= FILE_HIDDEN;
-      changed = 1;
-      break;
-    case FILEDB_UNHIDE:
-      fdbe->stat &= ~FILE_HIDDEN;
-      changed = 1;
-      break;
-    }
     if (changed)
       filedb_updatefile(fdb, fdbe->pos, fdbe, UPDATE_HEADER);
     free_fdbe(&fdbe);

@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: module.h,v 1.39 2003/02/10 00:09:08 wcc Exp $
+ * $Id: module.h,v 1.40 2003/02/15 05:04:57 wcc Exp $
  */
 
 #ifndef _EGG_MOD_MODULE_H
@@ -139,7 +139,7 @@
 #define flagrec_eq ((int(*)(struct flag_record*,struct flag_record *))egg->global[66])
 #define flagrec_ok ((int(*)(struct flag_record*,struct flag_record *))egg->global[67])
 /* 68 - 71 */
-#define shareout (*(Function *)(egg->global[68]))
+/* shareout - Wcc */
 #define dprintf (egg->global[69])
 #define chatout (egg->global[70])
 #define chanout_but ((void(*)())egg->global[71])
@@ -173,7 +173,7 @@
 #define global_bans (*(maskrec **)(egg->global[96]))
 #define global_ign (*(struct igrec **)(egg->global[97]))
 #define password_timeout (*(int *)(egg->global[98]))
-#define share_greet (*(int *)egg->global[99])
+/* share_greet */
 /* 100 - 103 */
 #define max_dcc (*(int *)egg->global[100])
 /* #define require_p (*(int *)egg->global[101]) */
@@ -183,7 +183,7 @@
 #define reserved_port_min (*(int *)(egg->global[104]))
 #define reserved_port_max (*(int *)(egg->global[105]))
 #define raw_log (*(int *)(egg->global[106]))
-#define noshare (*(int *)(egg->global[107]))
+/* noshare */
 /* 108 - 111 */
 /* 108: gban_total -- UNUSED (Eule) */
 #define make_userfile (*(int*)egg->global[109])

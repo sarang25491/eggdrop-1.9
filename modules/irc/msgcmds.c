@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: msgcmds.c,v 1.16 2003/02/10 00:09:08 wcc Exp $";
+static const char rcsid[] = "$Id: msgcmds.c,v 1.17 2003/02/15 05:04:57 wcc Exp $";
 #endif
 */
 
@@ -355,12 +355,7 @@ static int msg_who(char *nick, char *host, struct userrec *u, char *par)
 	dprintf(DP_HELP, "NOTICE %s :[%9s] <-- I'm the bot, of course.\n",
 		nick, m->nick);
       else if (u && (u->flags & USER_BOT)) {
-	if (bot_flags(u) & BOT_SHARE)
-	  dprintf(DP_HELP, "NOTICE %s :[%9s] <-- a twin of me\n",
-		  nick, m->nick);
-	else
-	  dprintf(DP_HELP, "NOTICE %s :[%9s] <-- another bot\n",
-		  nick, m->nick);
+	dprintf(DP_HELP, "NOTICE %s :[%9s] <-- another bot\n", nick, m->nick);
       } else {
 	if (i) {
 	  also[i++] = ',';

@@ -23,7 +23,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: chan.h,v 1.36 2003/02/12 08:42:22 wcc Exp $
+ * $Id: chan.h,v 1.37 2003/02/15 05:04:58 wcc Exp $
  */
 
 #ifndef _EGG_CHAN_H
@@ -181,7 +181,7 @@ struct chanset_t {
 #define CHAN_DONTKICKOPS     0x1000
 #define CHAN_INACTIVE        0x2000
 /*			     0x4000 */
-#define CHAN_SHARED          0x8000
+/*			     0x8000 */
 /*			     0x10000 */
 /*			     0x20000 */
 #define CHAN_NODESYNCH       0x40000
@@ -228,7 +228,6 @@ struct chanset_t *findchan_by_dname(const char *name);
 #define channel_dynamicbans(chan) (chan->status & CHAN_DYNAMICBANS)
 #define channel_dontkickops(chan) (chan->status & CHAN_DONTKICKOPS)
 #define channel_secret(chan) (chan->status & CHAN_SECRET)
-#define channel_shared(chan) (chan->status & CHAN_SHARED)
 #define channel_static(chan) (chan->status & CHAN_STATIC)
 #define channel_cycle(chan) (chan->status & CHAN_CYCLE)
 #define channel_inactive(chan) (chan->status & CHAN_INACTIVE)

@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: dccutil.h,v 1.5 2003/01/18 22:36:52 wcc Exp $
+ * $Id: dccutil.h,v 1.6 2003/02/15 05:04:58 wcc Exp $
  */
 
 #ifndef _EGG_DCCUTIL_H
@@ -39,8 +39,6 @@
 
 void dprintf EGG_VARARGS(int, arg1);
 void chatout EGG_VARARGS(char *, arg1);
-extern void (*shareout) ();
-extern void (*sharein) (int, char *);
 void chanout_but EGG_VARARGS(int, arg1);
 void dcc_chatter(int);
 void killtransfer(int);

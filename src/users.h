@@ -22,7 +22,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: users.h,v 1.17 2003/01/02 21:33:17 wcc Exp $
+ * $Id: users.h,v 1.18 2003/02/15 05:04:58 wcc Exp $
  */
 
 #ifndef _EGG_USERS_H
@@ -52,8 +52,7 @@ struct user_entry;
 struct user_entry_type {
   struct user_entry_type *next;
   int (*got_share) (struct userrec *, struct user_entry *, char *, int);
-  int (*dup_user) (struct userrec *, struct userrec *,
-		   struct user_entry *);
+  int (*dup_user) (struct userrec *, struct userrec *, struct user_entry *);
   int (*unpack) (struct userrec *, struct user_entry *);
   int (*pack) (struct userrec *, struct user_entry *);
   int (*write_userfile) (FILE *, struct userrec *, struct user_entry *);

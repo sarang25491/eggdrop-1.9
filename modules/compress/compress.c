@@ -26,7 +26,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: compress.c,v 1.8 2003/01/02 21:33:14 wcc Exp $";
+static const char rcsid[] = "$Id: compress.c,v 1.9 2003/02/15 05:04:57 wcc Exp $";
 #endif
 
 #define MODULE_NAME "compress"
@@ -37,7 +37,6 @@ static const char rcsid[] = "$Id: compress.c,v 1.8 2003/01/02 21:33:14 wcc Exp $
 #include <zlib.h>
 
 #include "lib/eggdrop/module.h"
-#include "modules/share/share.h"
 
 #ifdef HAVE_MMAP
 #  include <sys/types.h>
@@ -52,11 +51,9 @@ static const char rcsid[] = "$Id: compress.c,v 1.8 2003/01/02 21:33:14 wcc Exp $
 
 
 static eggdrop_t *egg = NULL;
-static Function *share_funcs = NULL;
 
 static unsigned int compressed_files;	/* Number of files compressed.      */
 static unsigned int uncompressed_files;	/* Number of files uncompressed.    */
-static unsigned int share_compressed;	/* Compress userfiles when sharing? */
 static unsigned int compress_level;	/* Default compression used.	    */
 
 
@@ -339,42 +336,11 @@ static int uncompress_file(char *filename)
   return ret;
 }
 
-
-/*
- *    Userfile feature releated functions
- */
-
-static int uff_comp(int idx, char *filename)
-{
-  debug1("Compressing user file for %s.", dcc[idx].nick);
-  return compress_file(filename, compress_level);
-}
-
-static int uff_uncomp(int idx, char *filename)
-{
-  debug1("Uncompressing user file from %s.", dcc[idx].nick);
-  return uncompress_file(filename);
-}
-
-static int uff_ask_compress(int idx)
-{
-  if (share_compressed)
-    return 1;
-  else
-    return 0;
-}
-
-static uff_table_t compress_uff_table[] = {
-  {"compress",	UFF_COMPRESS,	uff_ask_compress, 100, uff_comp, uff_uncomp},
-  {NULL,	0,		NULL,		    0,	   NULL,       NULL}
-};
-
 /*
  *    Compress module related code
  */
 
 static tcl_ints my_tcl_ints[] = {
-  {"share_compressed",  	&share_compressed},
   {"compress_level",		&compress_level},
   {NULL,                	NULL}
 };
@@ -395,8 +361,6 @@ static char *compress_close()
   rem_help_reference("compress.help");
   rem_tcl_commands(my_tcl_cmds);
   rem_tcl_ints(my_tcl_ints);
-  uff_deltable(compress_uff_table);
-
   module_undepend(MODULE_NAME);
   return NULL;
 }
@@ -424,7 +388,6 @@ char *start(eggdrop_t *eggdrop)
   egg = eggdrop;
   compressed_files	= 0;
   uncompressed_files	= 0;
-  share_compressed	= 0;
   compress_level	= 9;
 
   module_register(MODULE_NAME, compress_table, 1, 1);
@@ -432,13 +395,6 @@ char *start(eggdrop_t *eggdrop)
     module_undepend(MODULE_NAME);
     return _("This module needs eggdrop1.7.0 or later");
   }
-  share_funcs = module_depend(MODULE_NAME, "share", 2, 3);
-  if (!share_funcs) {
-    module_undepend(MODULE_NAME);
-    return _("You need share module version 2.3 to use the compress module.");
-  }
-
-  uff_addtable(compress_uff_table);
   add_tcl_ints(my_tcl_ints);
   add_tcl_commands(my_tcl_cmds);
   add_help_reference("compress.help");

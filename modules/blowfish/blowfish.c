@@ -26,7 +26,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: blowfish.c,v 1.7 2003/01/02 21:33:14 wcc Exp $";
+static const char rcsid[] = "$Id: blowfish.c,v 1.8 2003/02/15 05:04:57 wcc Exp $";
 #endif
 
 #define MODULE_NAME "encryption"
@@ -246,9 +246,6 @@ static void blowfish_init(u_8bit_t * key, int keybytes)
   }
 }
 
-/* Of course, if you change either of these, then your userfile will
- * no longer be able to be shared. :)
- */
 #define SALT1  0xdeadd061
 #define SALT2  0x23f6b095
 

@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: tclfiles.c,v 1.7 2003/02/10 00:09:08 wcc Exp $";
+static const char rcsid[] = "$Id: tclfiles.c,v 1.8 2003/02/15 05:04:57 wcc Exp $";
 #endif
 */
 
@@ -86,28 +86,6 @@ static int tcl_getgots(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
   return TCL_OK;
 }
 
-static int tcl_setlink(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
-{
-  BADARGS(4, 4, " dir file link");
-  filedb_setlink(argv[1], argv[2], argv[3]);
-  return TCL_OK;
-}
-
-static int tcl_getlink(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
-{
-  char *s = NULL;
-
-  BADARGS(3, 3, " dir file");
-  filedb_getlink(argv[1], argv[2], &s);
-  if (s) {
-    Tcl_AppendResult(irp, s, NULL);
-    return TCL_OK;
-  } else {
-    Tcl_AppendResult(irp, "filedb access failed", NULL);
-    return TCL_ERROR;
-  }
-}
-
 static int tcl_setpwd(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 {
   int idx;
@@ -155,28 +133,14 @@ static int tcl_getdirs(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 static int tcl_hide(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 {
   BADARGS(3, 3, " dir file");
-  filedb_change(argv[1], argv[2], FILEDB_HIDE);
+  filedb_change(argv[1], argv[2]);
   return TCL_OK;
 }
 
 static int tcl_unhide(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 {
   BADARGS(3, 3, " dir file");
-  filedb_change(argv[1], argv[2], FILEDB_UNHIDE);
-  return TCL_OK;
-}
-
-static int tcl_share(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
-{
-  BADARGS(3, 3, " dir file");
-  filedb_change(argv[1], argv[2], FILEDB_SHARE);
-  return TCL_OK;
-}
-
-static int tcl_unshare(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
-{
-  BADARGS(3, 3, " dir file");
-  filedb_change(argv[1], argv[2], FILEDB_UNSHARE);
+  filedb_change(argv[1], argv[2]);
   return TCL_OK;
 }
 
@@ -550,8 +514,7 @@ static int tcl_mv_cp(Tcl_Interp * irp, int argc, char **argv, int copy)
 	free_fdbe(&fdbe_new);
       }
       if (!skip_this) {
-        if ((fdbe_old->sharelink) ||
-            ((copy ? copyfile(s, s1) : movefile(s, s1)) == 0)) {
+        if ((copy ? copyfile(s, s1) : movefile(s, s1)) == 0) {
 	  /* Raw file moved okay: create new entry for it */
 	  ok++;
 	  fdbe_new = malloc_fdbe();
@@ -569,7 +532,6 @@ static int tcl_mv_cp(Tcl_Interp * irp, int argc, char **argv, int copy)
 	  fdbe_new->uploaded = fdbe_old->uploaded;
 	  fdbe_new->size = fdbe_old->size;
 	  fdbe_new->gots = fdbe_old->gots;
-	  realloc_strcpy(fdbe_new->sharelink, fdbe_old->sharelink);
 	  filedb_addfile(fdb_new, fdbe_new);
 	  if (!copy)
 	    filedb_delfile(fdb_old, fdbe_old->pos);
@@ -654,14 +616,10 @@ static tcl_cmds mytcls[] =
   {"getgots",		tcl_getgots},
   {"getpwd",		tcl_getpwd},
   {"setpwd",		tcl_setpwd},
-  {"getlink",		tcl_getlink},
-  {"setlink",		tcl_setlink},
   {"getfiles",		tcl_getfiles},
   {"getdirs",		tcl_getdirs},
   {"hide",		tcl_hide},
   {"unhide",		tcl_unhide},
-  {"share",		tcl_share},
-  {"unshare",		tcl_unshare},
   {"filesend",		tcl_filesend},
   {"fileresend",	tcl_fileresend},
   {"mkdir",		tcl_mkdir},

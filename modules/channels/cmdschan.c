@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: cmdschan.c,v 1.17 2003/02/12 08:42:22 wcc Exp $";
+static const char rcsid[] = "$Id: cmdschan.c,v 1.18 2003/02/15 05:04:57 wcc Exp $";
 #endif
 */
 
@@ -838,11 +838,10 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
       dprintf(idx, "invite_time: 0\n");
 
     dprintf(idx, "Other modes:\n");
-    dprintf(idx, "     %cinactive       %cstatuslog      %csecret         %cshared\n",
+    dprintf(idx, "     %cinactive       %cstatuslog      %csecret\n",
 	    (chan->status & CHAN_INACTIVE) ? '+' : '-',
 	    (chan->status & CHAN_LOGSTATUS) ? '+' : '-',
-	    (chan->status & CHAN_SECRET) ? '+' : '-',
-	    (chan->status & CHAN_SHARED) ? '+' : '-');
+	    (chan->status & CHAN_SECRET) ? '+' : '-');
     dprintf(idx, "     %cgreet          %ccycle          %cdontkickops\n",
 	    (chan->status & CHAN_GREET) ? '+' : '-',
 	    (chan->status & CHAN_CYCLE) ? '+' : '-',

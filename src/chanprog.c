@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: chanprog.c,v 1.57 2003/02/14 20:55:02 stdarg Exp $";
+static const char rcsid[] = "$Id: chanprog.c,v 1.58 2003/02/15 05:04:58 wcc Exp $";
 #endif
 
 #include "main.h"
@@ -51,9 +51,8 @@ extern char ver[], firewall[], motdfile[], userfile[], helpdir[],
             tempdir[], moddir[], notify_new[], owner[], configfile[];
 extern time_t now, online_since;
 extern int backgrd, term_z, con_chan, cache_hit, cache_miss, firewallport,
-default_flags, conmask,
-			 protect_readonly, make_userfile, noshare,
-			 ignore_time;
+           default_flags, conmask, protect_readonly, make_userfile,
+           ignore_time;
 
 struct chanset_t *chanset = NULL;	/* Channel list			*/
 char		  admin[121] = "";	/* Admin info			*/
@@ -383,9 +382,7 @@ void reload()
     return;
   }
 
-  noshare = 1;
   clear_userlist(userlist);
-  noshare = 0;
   userlist = NULL;
   if (!readuserfile(userfile, &userlist))
     fatal(_("User file is missing!"), 0);
@@ -396,9 +393,7 @@ void reload()
 void rehash()
 {
   call_hook(HOOK_PRE_REHASH);
-  noshare = 1;
   clear_userlist(userlist);
-  noshare = 0;
   userlist = NULL;
   chanprog();
 }

@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tcluser.c,v 1.47 2003/02/03 11:41:35 wcc Exp $";
+static const char rcsid[] = "$Id: tcluser.c,v 1.48 2003/02/15 05:04:58 wcc Exp $";
 #endif
 
 #include "main.h"
@@ -121,13 +121,6 @@ static char *script_chattr_botattr(void *client_data, struct userrec *u, char *c
 	if (changes) {
 		pls.match = user.match;
 		break_down_flags(changes, &pls, &mns);
-		/* Nobody can change these flags on-the-fly */
-		pls.global &= ~(USER_BOT);
-		mns.global &= ~(USER_BOT);
-		if (chan) {
-			pls.chan &= ~(BOT_SHARE);
-			mns.chan &= ~(BOT_SHARE);
-		}
 		user.global = sanity_check((user.global|pls.global) & (~mns.global));
 		user.bot = sanity_check((user.bot|pls.bot) & (~mns.bot));
 		user.udef_global = (user.udef_global | pls.udef_global) & (~mns.udef_global);

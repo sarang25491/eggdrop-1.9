@@ -1,18 +1,5 @@
 # List of source files containing translatable strings.
 
-src/bg.c
-src/botcmd.c
-src/botmsg.c
-src/botnet.c
-src/chanprog.c
-src/cmds.c
-src/dcc.c
-src/dccutil.c
-src/dns.c
-src/main.c
-src/misc.c
-src/logfile.c
-modules/assoc/assoc.c
 modules/blowfish/blowfish.c
 modules/channels/channels.c
 modules/channels/cmdschan.c
@@ -28,18 +15,23 @@ modules/irc/cmdsirc.c
 modules/irc/irc.c
 modules/irc/mode.c
 modules/irc/msgcmds.c
+modules/javascript/javascript.c
 modules/notes/cmdsnote.c
 modules/notes/notes.c
-modules/server/cmdsserv.c
-modules/server/server.c
-modules/server/servmsg.c
-modules/share/share.c
-modules/transfer/transfer.c
+modules/server/input.c
+modules/tclscript/tclscript.c
 modules/uptime/uptime.c
+src/bg.c
+src/chanprog.c
+src/cmds.c
+src/dcc.c
+src/dccutil.c
+src/egg.h
+src/logfile.c
+src/main.c
+src/misc.c
 src/modules.c
 src/tcldcc.c
-src/tclhash.c
-src/tclmisc.c
 src/userrec.c
 src/users.c
 

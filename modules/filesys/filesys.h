@@ -22,7 +22,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: filesys.h,v 1.6 2003/01/02 21:33:14 wcc Exp $
+ * $Id: filesys.h,v 1.7 2003/02/15 05:04:57 wcc Exp $
  */
 
 #ifndef _EGG_MOD_FILESYS_FILESYS_H
@@ -30,17 +30,11 @@
 
 #include "modules/transfer/transfer.h"
 
-#define FILEDB_HIDE     1
-#define FILEDB_UNHIDE   2
-#define FILEDB_SHARE    3
-#define FILEDB_UNSHARE  4
-
 #ifdef MAKING_FILESYS
 static int too_many_filers();
 static int welcome_to_files(int);
 static void add_file(char *, char *, char *);
 static void incr_file_gots(char *);
-static void remote_filereq(int, char *, char *);
 static FILE *filedb_open(char *, int);
 static void filedb_close(FILE *);
 static void filedb_add(FILE *, char *, char *);
@@ -50,16 +44,37 @@ static void filedb_setowner(char *, char *, char *);
 static void filedb_getdesc(char *, char *, char **);
 static void filedb_setdesc(char *, char *, char *);
 static int filedb_getgots(char *, char *);
-static void filedb_setlink(char *, char *, char *);
-static void filedb_getlink(char *, char *, char **);
 static void filedb_getfiles(Tcl_Interp *, char *);
 static void filedb_getdirs(Tcl_Interp *, char *);
-static void filedb_change(char *, char *, int);
+static void filedb_change(char *, char *);
 static void my_tell_file_stats(int, char *);
 static int do_dcc_send(int, char *, char *, char *, int);
 static int files_reget(int, char *, char *, int);
 static void files_setpwd(int, char *);
 static int resolve_dir(char *, char *, char **, int);
+static int fstat_unpack(struct userrec *, struct user_entry *);
+static int fstat_pack(struct userrec *, struct user_entry *);
+static int fstat_write_userfile(FILE *, struct userrec *, struct user_entry *);
+static int fstat_set(struct userrec *, struct user_entry *, void *);
+static int fstat_tcl_get(Tcl_Interp *, struct userrec *, struct user_entry *,
+                         int, char **);
+static int fstat_kill(struct user_entry *);
+static void fstat_display(int, struct user_entry *);
+static int fstat_gotshare(struct userrec *, struct user_entry *, char *, int);
+static int fstat_dupuser(struct userrec *, struct userrec *,
+                         struct user_entry *);
+static void stats_add_dnload(struct userrec *, unsigned long);
+static void stats_add_upload(struct userrec *, unsigned long);
+static int fstat_tcl_set(Tcl_Interp *, struct userrec *, struct user_entry *,
+                         int, char **);
+static int is_valid();
+static void eof_dcc_files(int);
+static void dcc_files(int, char *, int);
+static void disp_dcc_files(int, char *);
+static void kill_dcc_files(int, void *);
+static void out_dcc_files(int, char *, void *);
+static char *mktempfile(char *);
+static void wipe_tmp_filename(char *, int);
 
 #else
 #define H_fil (*(p_tcl_hash_list *)(filesys_funcs[8]))

@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: modvals.h,v 1.7 2003/02/10 00:09:08 wcc Exp $
+ * $Id: modvals.h,v 1.8 2003/02/15 05:04:57 wcc Exp $
  */
 
 #ifndef _EGG_MOD_MODVALS_H
@@ -43,8 +43,6 @@
 #define HOOK_BACKUP     	 14
 #define HOOK_DIE		 15
 #define REAL_HOOKS		 16
-#define HOOK_SHAREOUT		105
-#define HOOK_SHAREIN		106
 #define HOOK_ENCRYPT_PASS	107
 #define HOOK_QSERV		108
 #define HOOK_ADD_MODE		109

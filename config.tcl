@@ -2,7 +2,7 @@
 # ^- This should contain a fully qualified path to your Eggdrop executable.
 #  Make sure you preload a config parser using the -p<name> parameter.
 #
-# $Id: config.tcl,v 1.2 2003/02/15 00:23:51 wcc Exp $
+# $Id: config.tcl,v 1.3 2003/02/15 05:04:57 wcc Exp $
 #
 # This is a sample Eggdrop configuration file which includes all possible
 # settings that can be used to configure your bot.
@@ -77,7 +77,6 @@ set offset "5"
 #   b - information about bot linking and userfile sharing
 #   c - commands
 #   d - misc debug information
-#   h - raw share traffic
 #   j - joins, parts, quits, and netsplits on the channel
 #   k - kicks, bans, and mode changes on the channel
 #   m - private msgs, notices and ctcps to the bot
@@ -85,7 +84,6 @@ set offset "5"
 #   p - public text on the channel
 #   r - raw incoming server traffic
 #   s - server connects, disconnects, and notices
-#   t - raw botnet traffic
 #   v - raw outgoing server traffic
 #   w - wallops (make sure the bot sets +w in init-server)
 #   x - file transfers and file-area commands
@@ -111,11 +109,10 @@ set max_logsize 0
 set quick_logs 0
 
 # This setting allows you the logging of raw incoming server traffic via
-# console/log flag 'r', raw outgoing server traffic via console/log mode 'v',
-# raw botnet traffic via console/log mode 't', and raw share traffic via
-# console/log mode 'h'. These flags can create a large security hole,
-# allowing people to see user passwords. This is now restricted to +n users
-# only. Please choose your owners with care.
+# console/log flag 'r', and raw outgoing server traffic via console/log mode
+# 'v'. These flags can create a large security hole, allowing people to see
+# user passwords. This is now restricted to +n users only. Please choose your
+# owners with care.
 set raw_log 0
 
 # This creates a logfile named eggdrop.log containing private msgs/ctcps,
@@ -355,10 +352,6 @@ set chanfile "LamestBot.chan"
 # by other opped bots on the channel.
 set force_expire 0
 
-# Set this setting to 1 if you want your bot to share user greets with other
-# bots on the channel if sharing user data.
-set share_greet 0
-
 # Set this setting to 1 if you want to allow users to store an info line.
 set use_info 1
 
@@ -371,15 +364,10 @@ set global_exempt_time 60
 set global_invite_time 60
 
 set global-chanset {
-        -autoop               -autovoice
-        +cycle                +dontkickops
-        +dynamicbans          +dynamicexempts
-        +dynamicinvites       -enforcebans
-        +greet                -inactive
-        -nodesynch            -secret
-        +shared               +statuslog
-        +honor-global-bans    +honor-global-invites
-        +honor-global-exempts
+  -autoop       -autovoice       +cycle      +dontkickops
+  +dynamicbans  +dynamicexempts  +greet      +honor-global-invites
+  -inactive     +dynamicinvites  -secret     +honor-global-exempts
+  +statuslog    -enforcebans     -nodesynch  +honor-global-bans
 }
 
 # Add each static channel you want your bot to sit in using the following
@@ -433,7 +421,7 @@ set global-chanset {
 #   channel set #lamest +enforcebans +dynamicbans +dynamicexempts -autoop
 #   channel set #lamest +statuslog +dontkickops +autovoice +honor-global-bans
 #   channel set #lamest +honor-global-exempts +greet +honor-global-invites
-#   channel set #lamest +dynamicinvites -secret -shared +cycle
+#   channel set #lamest +dynamicinvites -secret +cycle
 #
 # A complete list of all available channel settings:
 #
@@ -483,9 +471,6 @@ set global-chanset {
 #
 # secret
 #    Prevent this channel from being listed on the botnet?
-#
-# shared
-#    Share channel-related user info for this channel?
 #
 # cycle
 #    Cycle the channel when it has no ops?
@@ -721,89 +706,12 @@ unbind msg - ident *msg:ident
 set no_chanrec_info 0
 
 
-#### TRANSFER MODULE ####
-
-# The transfer module provides dcc send/get support and userfile transfer
-# support for userfile sharing. Un-comment the next line to load it if you
-# need this functionality.
-#loadmodule transfer
-
-# Set here the maximum number of simultaneous downloads to allow for
-# each user.
-set dcc_limit 3
-
-# Set here the block size for dcc transfers. ircII uses 512 bytes,
-# but admits that it may be too small. 1024 is standard these days.
-# 0 is turbo-dcc (recommended).
-set dcc_block 0
-
-# Enable this setting if you want to copy files into the /tmp directory
-# before sending them. This is useful on most systems for file stability,
-# but if your directories are NFS mounted, it's a pain, and you'll want
-# to set this to 0. If you are low on disk space, you may also want to
-# set this to 0.
-set copy_to_tmp 1
-
-# Set here the time (in seconds) to wait before an inactive transfer times out.
-set xfer_timeout 30
-
-
-#### SHARE MODULE ####
-
-# This module provides userfile sharing support between two directly
-# linked bots. The transfer and channels modules are required for this
-# module to correctly function. Un-comment the following line to load
-# the share module.
-#loadmodule share
-
-# Settings in this section must be un-commented before setting.
-
-# When two bots get disconnected, this setting allows them to create a
-# resync buffer which saves all changes done to the userfile during
-# the disconnect. When they reconnect, they will not have to transfer
-# the complete user file, but, instead, just send the resync buffer.
-#
-# NOTE: This has been known to cause loss of channel flags and other
-# problems. Using this setting is not recommended.
-#set allow_resync 0
-
-# This setting specifies how long to hold another bots resync data
-# before flushing it.
-#set resync_time 900
-
-# When sharing user lists, DON'T ACCEPT global flag changes from other bots?
-# NOTE: The bot will still send changes made on the bot, it just won't accept
-# any global flag changes from other bots.
-#set private_global 0
-
-# When sharing user lists, if private_global isn't set, which global flag
-# changes from other bots should be ignored?
-#set private_globals "mnot"
-
-# When sharing user lists, don't accept ANY userfile changes from other
-# bots? Paranoid people should use this feature on their hub bot. This
-# will force all userlist changes to be made via the hub.
-#set private_user 0
-
-# This setting makes the bot discard its own bot records in favor of
-# the ones sent by the hub.
-# NOTE: No passwords or botflags are shared, only ports and
-# address are added to sharing procedure. This only works with hubs that
-# are v1.5.1 or higher.
-#set override_bots 0
-
-
 #### COMPRESS MODULE ####
 
 # This module provides provides support for file compression. This allows the
 # bot to transfer compressed user files and therefore save a significant amount
-# of bandwidth. The share module must be loaded to load this module. Un-comment
-# the following line to the compress module.
+# of bandwidth. Un-comment the following line to the compress module.
 #loadmodule compress
-
-# Allow compressed sending of user files? The user files are compressed with
-# the compression level defined in `compress_level'.
-set share_compressed 1
 
 # This is the default compression level used.
 #set compress_level 9

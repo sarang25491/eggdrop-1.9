@@ -24,7 +24,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: cmds.c,v 1.114 2003/02/15 00:23:51 wcc Exp $";
+static const char rcsid[] = "$Id: cmds.c,v 1.115 2003/02/15 05:04:58 wcc Exp $";
 #endif
 
 #include "main.h"
@@ -496,7 +496,7 @@ static int cmd_console(user_t *u, int idx, char *par)
 		    LOG_DEBUG);
 	}
 	if (!glob_owner(fr) && pls)
-	  md &= ~(LOG_RAW | LOG_SRVOUT | LOG_BOTNET | LOG_BOTSHARE);
+	  md &= ~(LOG_RAW | LOG_SRVOUT);
 	if (!glob_botmast(fr) && pls)
 	  md &= ~LOG_BOTS;
 	if (pls)
@@ -637,8 +637,6 @@ static int cmd_chhandle(user_t *u, int idx, char *par)
     if ((atr & USER_BOTMAST) && !(atr & USER_MASTER) &&
        !(atr2 & USER_BOT))
       dprintf(idx, _("You can't change handles for non-bots.\n"));
-    else if ((bot_flags(u2) & BOT_SHARE) && !(atr & USER_OWNER))
-      dprintf(idx, _("You can't change a share bot's handle.\n"));
     else if ((atr2 & USER_OWNER) && !(atr & USER_OWNER) &&
             strcasecmp(dcc[idx].nick, hand))
       dprintf(idx, _("You can't change a bot owner's handle.\n"));
@@ -701,8 +699,6 @@ static int cmd_chpass(user_t *u, int idx, char *par)
     else if ((atr & USER_BOTMAST) && !(atr & USER_MASTER) &&
 	     !(u->flags & USER_BOT))
       dprintf(idx, _("You can't change passwords for non-bots.\n"));
-    else if ((bot_flags(u) & BOT_SHARE) && !(atr & USER_OWNER))
-      dprintf(idx, _("You can't change a share bot's password.\n"));
     else if ((u->flags & USER_OWNER) && !(atr & USER_OWNER) &&
 	     strcasecmp(handle, dcc[idx].nick))
       dprintf(idx, _("You can't change a bot owner's password.\n"));
@@ -745,10 +741,6 @@ static int cmd_chaddr(user_t *u, int idx, char *par)
   u1 = get_user_by_handle(userlist, handle);
   if (!u1 || !(u1->flags & USER_BOT)) {
     dprintf(idx, _("This command is only useful for tandem bots.\n"));
-    return(0);
-  }
-  if ((bot_flags(u1) & BOT_SHARE) && (!u || !u->flags & USER_OWNER)) {
-    dprintf(idx, _("You can't change a share bot's address.\n"));
     return(0);
   }
   dprintf(idx, _("Changed bot's address.\n"));
@@ -1169,16 +1161,9 @@ static int cmd_chattr(user_t *u, int idx, char *par)
     pls.match = user.match;
     break_down_flags(chg, &pls, &mns);
     /* No-one can change these flags on-the-fly */
-    pls.global &= ~(USER_BOT);
-    mns.global &= ~(USER_BOT);
-
-    if (chan) {
-      pls.chan &= ~(BOT_SHARE);
-      mns.chan &= ~(BOT_SHARE);
-    }
     if (!glob_owner(user)) {
-      pls.global &= ~(USER_OWNER | USER_MASTER | USER_BOTMAST | USER_UNSHARED);
-      mns.global &= ~(USER_OWNER | USER_MASTER | USER_BOTMAST | USER_UNSHARED);
+      pls.global &= ~(USER_OWNER | USER_MASTER | USER_BOTMAST);
+      mns.global &= ~(USER_OWNER | USER_MASTER | USER_BOTMAST);
 
       if (chan) {
 	pls.chan &= ~USER_OWNER;
@@ -1234,7 +1219,6 @@ static int cmd_chattr(user_t *u, int idx, char *par)
   if (chan) {
     user.match = FR_CHAN;
     get_user_flagrec(u2, &user, par);
-    user.chan &= ~BOT_SHARE;
     if (chg)
       check_dcc_chanattrs(u2, chan->dname, user.chan, ocf);
     build_flags(work, &user, NULL);
@@ -1344,26 +1328,11 @@ static int cmd_botattr(user_t *u, int idx, char *par)
     user.match = FR_BOT | (chan ? FR_CHAN : 0);
     pls.match = user.match;
     break_down_flags(chg, &pls, &mns);
-    /* No-one can change these flags on-the-fly */
-    pls.global &=~BOT_BOT;
-    mns.global &=~BOT_BOT;
-
-    if (chan && glob_owner(user)) {
-      pls.chan &= BOT_SHARE;
-      mns.chan &= BOT_SHARE;
-    } else {
-      pls.chan = 0;
-      mns.chan = 0;
-    }
-    if (!glob_owner(user)) {
-      pls.bot &= ~(BOT_SHARE | BOT_GLOBAL);
-      mns.bot &= ~(BOT_SHARE | BOT_GLOBAL);
-    }
+    pls.chan = 0;
+    mns.chan = 0;
     user.match = FR_BOT | (chan ? FR_CHAN : 0);
     get_user_flagrec(u2, &user, par);
     user.bot = (user.bot | pls.bot) & ~mns.bot;
-    if ((user.bot & BOT_SHARE) == BOT_SHARE)
-      user.bot &= ~BOT_SHARE;
     if (chan)
       user.chan = (user.chan | pls.chan) & ~mns.chan;
     set_user_flagrec(u2, &user, par);
@@ -1381,7 +1350,6 @@ static int cmd_botattr(user_t *u, int idx, char *par)
   if (chan) {
     user.match = FR_CHAN;
     get_user_flagrec(u2, &user, par);
-    user.chan &= BOT_SHARE;
     build_flags(work, &user, NULL);
     if (work[0] != '-')
       dprintf(idx, _("Bot flags for %1$s on %2$s are now +%3$s.\n"), hand,
@@ -1716,10 +1684,6 @@ static int cmd_mns_user(user_t *u, int idx, char *par)
     return(0);
   }
   if (u2->flags & USER_BOT) {
-    if ((bot_flags(u2) & BOT_SHARE) && !(u->flags & USER_OWNER)) {
-      dprintf(idx, _("You can't remove share bots.\n"));
-      return(0);
-    }
     for (idx2 = 0; idx2 < dcc_total; idx2++)
       if (dcc[idx2].type && !strcasecmp(dcc[idx2].nick, handle))
         break;
@@ -1778,10 +1742,6 @@ static int cmd_pls_host(user_t *u, int idx, char *par)
     get_user_flagrec(u2, &fr2, NULL);
     if (!glob_master(fr) && !glob_bot(fr2) && !chan_master(fr)) {
       dprintf(idx, _("You can't add hostmasks to non-bots.\n"));
-      return(0);
-    }
-    if (!glob_owner(fr) && glob_bot(fr2) && (bot_flags(u2) & BOT_SHARE)) {
-      dprintf(idx, _("You can't add hostmasks to share bots.\n"));
       return(0);
     }
     if ((glob_owner(fr2) || glob_master(fr2)) && !glob_owner(fr)) {
@@ -1849,10 +1809,6 @@ static int cmd_mns_host(user_t *u, int idx, char *par)
   if (strcasecmp(handle, dcc[idx].nick)) {
     if (!glob_master(fr) && !glob_bot(fr2) && !chan_master(fr)) {
       dprintf(idx, _("You can't remove hostmasks from non-bots.\n"));
-      return(0);
-    }
-    if (glob_bot(fr2) && (bot_flags(u2) & BOT_SHARE) && !glob_owner(fr)) {
-      dprintf(idx, _("You can't remove hostmasks from a share bot.\n"));
       return(0);
     }
     if ((glob_owner(fr2) || glob_master(fr2)) && !glob_owner(fr)) {

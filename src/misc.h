@@ -3,7 +3,6 @@
  *
  *	maskhost() dumplots() daysago() days() daysdur()
  *	queueing output for the bot (msg and help)
- *	resync buffers for sharebots
  *	help system
  *	motd display and %var substitution
  */
@@ -26,7 +25,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: misc.h,v 1.8 2003/02/10 00:09:08 wcc Exp $
+ * $Id: misc.h,v 1.9 2003/02/15 05:04:58 wcc Exp $
  */
 
 #ifndef _EGG_MISC_H

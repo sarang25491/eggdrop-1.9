@@ -23,7 +23,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: filedb3.h,v 1.6 2003/02/15 00:23:51 wcc Exp $
+ * $Id: filedb3.h,v 1.7 2003/02/15 05:04:57 wcc Exp $
  */
 
 #ifndef _EGG_MOD_FILESYS_FILEDB3_H
@@ -62,7 +62,6 @@ typedef struct {
   unsigned short int gots;		/* Number of gets		*/
   unsigned short int filename_len; 	/* Length of filename buf	*/
   unsigned short int desc_len;	 	/* Length of description buf	*/
-  unsigned short int sharelink_len;	/* Length of sharelink buf	*/
   unsigned short int chan_len;		/* Length of channel name buf	*/
   unsigned short int uploader_len;	/* Length of uploader buf	*/
   unsigned short int flags_req_len;	/* Length of flags buf		*/
@@ -89,8 +88,6 @@ typedef struct {
 
   char *filename;			/* Filename			*/
   char *desc;				/* Description			*/
-  char *sharelink;			/* Share link. Points to remote
-		 			   file on linked bot.		*/
   char *chan;				/* Channel name			*/
   char *uploader;			/* Uploader			*/
   char *flags_req;			/* Required flags		*/
@@ -103,8 +100,7 @@ typedef struct {
 
 /* Macro to calculate the total length of dynamic data. */
 #define filedb_tot_dynspace(fdh) ((fdh).filename_len + (fdh).desc_len +	\
-	(fdh).chan_len + (fdh).uploader_len + (fdh).flags_req_len + \
-	(fdh).sharelink_len)
+	(fdh).chan_len + (fdh).uploader_len + (fdh).flags_req_len)
 
 #define filedb_zero_dynspace(fdh) {					\
 	(fdh).filename_len	= 0;					\
@@ -112,7 +108,6 @@ typedef struct {
 	(fdh).chan_len		= 0;					\
 	(fdh).uploader_len	= 0;					\
 	(fdh).flags_req_len	= 0;					\
-	(fdh).sharelink_len	= 0;					\
 }
 
 /* Memory debugging makros */
@@ -143,9 +138,7 @@ typedef struct {
 
 #define FILE_UNUSED	0x0001	/* Deleted entry.			*/
 #define FILE_DIR	0x0002	/* It's actually a directory.		*/
-#define FILE_SHARE	0x0004	/* Can be shared on the botnet.		*/
-#define FILE_HIDDEN	0x0008	/* Hidden file.				*/
-#define FILE_ISLINK	0x0010	/* The file is a link to another bot.	*/
+#define FILE_HIDDEN	0x0004	/* Hidden file.				*/
 
 #define FILEDB_ESTDYN	50	/* Estimated dynamic length of an entry	*/
 

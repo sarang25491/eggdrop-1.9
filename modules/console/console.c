@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: console.c,v 1.13 2003/02/03 11:41:34 wcc Exp $";
+static const char rcsid[] = "$Id: console.c,v 1.14 2003/02/15 05:04:57 wcc Exp $";
 #endif
 
 #define MODULE_NAME "console"
@@ -127,8 +127,6 @@ static int console_set(struct userrec *u, struct user_entry *e, void *buf)
     }
     ci = e->u.extra = buf;
   }
-
-  /* Note: Do not share console info */
   return 1;
 }
 

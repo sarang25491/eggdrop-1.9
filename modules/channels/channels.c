@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.28 2003/02/12 08:42:22 wcc Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.29 2003/02/15 05:04:57 wcc Exp $";
 #endif
 
 #define MODULE_NAME "channels"
@@ -249,7 +249,6 @@ static void remove_channel(struct chanset_t *chan)
      (me->funcs[IRC_DO_CHANNEL_PART])(chan);
 
    clear_channel(chan, 0);
-   noshare = 1;
    /* Remove channel-bans */
    while (chan->bans)
      u_delmask('b', chan, chan->bans->mask, 1);
@@ -261,7 +260,6 @@ static void remove_channel(struct chanset_t *chan)
      u_delmask('I', chan, chan->invites->mask, 1);
    /* Remove channel specific user flags */
    user_del_chan(chan->dname);
-   noshare = 0;
    free(chan->channel.key);
    for (i = 0; i < 6 && chan->cmode[i].op; i++)
      free(chan->cmode[i].op);
@@ -355,7 +353,7 @@ static void write_channels()
             "channel %s %s%schanmode %s aop_delay %d:%d ban_time %d "
             "exempt_time %d invite_time %d %cenforcebans %cdynamicbans "
             "%cautoop %cgreet %cdontkickops %cstatuslog %cautovoice %csecret "
-            "%cshared %ccycle %cinactive %cdynamicexempts %chonor-global-bans "
+            "%ccycle %cinactive %cdynamicexempts %chonor-global-bans "
             "%chonor-global-exempts %chonor-global-invites %cdynamicinvites "
             "%cnodesynch ", channel_static(chan) ? "set" : "add", name,
             channel_static(chan) ? " " : " { ", w2, chan->aop_min,
@@ -369,7 +367,6 @@ static void write_channels()
             PLSMNS(channel_logstatus(chan)),
             PLSMNS(channel_autovoice(chan)),
             PLSMNS(channel_secret(chan)),
-            PLSMNS(channel_shared(chan)),
             PLSMNS(channel_cycle(chan)),
             PLSMNS(channel_inactive(chan)),
             PLSMNS(channel_dynamicexempts(chan)),
@@ -547,8 +544,6 @@ static void channels_report(int idx, int details)
 	  i += my_strcpy(s + i, "log-status ");
 	if (channel_secret(chan))
 	  i += my_strcpy(s + i, "secret ");
-	if (channel_shared(chan))
-	  i += my_strcpy(s + i, "shared ");
 	if (!channel_static(chan))
 	  i += my_strcpy(s + i, "dynamic ");
 	if (channel_autovoice(chan))
@@ -622,7 +617,6 @@ static char *traced_globchanset(ClientData cdata, Tcl_Interp * irp,
 
 static tcl_ints my_tcl_ints[] =
 {
-  {"share_greet",		NULL,				0},
   {"use_info",			&use_info,			0},
   {"global_ban_time",		&global_ban_time,		0},
   {"global_exempt_time",	&global_exempt_time,		0},
@@ -763,7 +757,6 @@ char *start(eggdrop_t *eggdrop)
 	 "+cycle "
 	 "+dontkickops "
 	 "-inactive "
-	 "+shared "
 	 "+dynamicexempts "
 	 "+dynamicinvites "
 	 "+honor-global-bans "
@@ -792,7 +785,6 @@ char *start(eggdrop_t *eggdrop)
   add_tcl_strings(my_tcl_strings);
   add_help_reference("channels.help");
   add_help_reference("chaninfo.help");
-  my_tcl_ints[0].val = &share_greet;
   add_tcl_ints(my_tcl_ints);
   add_tcl_coups(mychan_tcl_coups);
   read_channels(0);

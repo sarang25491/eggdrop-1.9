@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: egg.h,v 1.14 2003/02/03 10:43:36 wcc Exp $
+ * $Id: egg.h,v 1.15 2003/02/15 05:04:58 wcc Exp $
  */
 
 #ifndef _EGG_EGG_H
@@ -264,7 +264,6 @@ struct bot_info {
   char linker[NOTENAMELEN + 1];	/* who requested this link		*/
   int  numver;
   int  port;			/* base port				*/
-  int  uff_flags;		/* user file feature flags		*/
 };
 
 struct relay_info {
@@ -335,19 +334,6 @@ struct dupwait_info {
 #define STAT_BOTONLY 0x00020	/* telnet on bots-only connect		*/
 #define STAT_USRONLY 0x00040	/* telnet on users-only connect		*/
 #define STAT_PAGE    0x00080	/* page output to the user		*/
-
-/* for dcc bot links: */
-#define STAT_PINGED  0x00001	/* waiting for ping to return		 */
-#define STAT_SHARE   0x00002	/* sharing user data with the bot	 */
-#define STAT_CALLED  0x00004	/* this bot called me			 */
-#define STAT_OFFERED 0x00008	/* offered her the user file		 */
-#define STAT_SENDING 0x00010	/* in the process of sending a user list */
-#define STAT_GETTING 0x00020	/* in the process of getting a user list */
-#define STAT_WARNED  0x00040	/* warned him about unleaflike behavior  */
-#define STAT_LEAF    0x00080	/* this bot is a leaf only		 */
-#define STAT_LINKING 0x00100	/* the bot is currently going through
-				   the linking stage			 */
-#define STAT_AGGRESSIVE   0x200	/* aggressively sharing with this bot	 */
 
 /* Flags for listening sockets
  */
