@@ -1,3 +1,15 @@
+2002-05-09 07:37  stdarg <stdarg@techmonkeys.org>
+
+	* src/: dcc.c, egg.h, tcldcc.c, tclmisc.c:
+
+	
+	* Quickly converted the network functions to language neutrality 
+	* script_listen_script() doesn't work, I think. I haven't tested it
+	yet, but I'm 99.9% sure. I'll do it later.  
+	* Sort of a cool little new function... script_export. It lets you
+	define a function in tcl/perl/javascript, and make it available in
+	the other scripting modules. It needs some tuning, but it's a start.  
+
 2002-05-09 03:34  stdarg <stdarg@techmonkeys.org>
 
 	* modules/tclscript/tclscript.c:
