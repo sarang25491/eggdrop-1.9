@@ -107,7 +107,7 @@ static int sockbuf_real_write(int idx, const char *data, int len)
 			}
 			nbytes = 0;
 		}
-		sockbuf_on_written(idx, SOCKBUF_LEVEL_INTERNAL, nbytes, 0);
+
 		if (nbytes == len) return(nbytes);
 		sockbuf_block(idx);
 		data += nbytes;
@@ -241,7 +241,7 @@ static void sockbuf_got_eof(int idx, int err)
 	/* Get the associated error message. */
 	errmsg = strerror(err);
 
-	socket_close(sbuf->sock);
+	sockbuf_close(sbuf->sock);
 	sockbuf_on_eof(idx, SOCKBUF_LEVEL_INTERNAL, err, errmsg);
 }
 
@@ -418,6 +418,40 @@ int sockbuf_set_sock(int idx, int sock, int flags)
 	return(idx);
 }
 
+int sockbuf_noread(int idx)
+{
+	int i;
+
+	if (!sockbuf_isvalid(idx)) return(-1);
+
+	/* Find the entry in the pollfds array. */
+	for (i = 0; i < npollfds; i++) {
+		if (idx_array[i] == idx) break;
+	}
+
+	if (i == npollfds) return(-1);
+
+	pollfds[i].events &= (~POLLIN);
+	return(0);
+}
+
+int sockbuf_read(int idx)
+{
+	int i;
+
+	if (!sockbuf_isvalid(idx)) return(-1);
+
+	/* Find the entry in the pollfds array. */
+	for (i = 0; i < npollfds; i++) {
+		if (idx_array[i] == idx) break;
+	}
+
+	if (i == npollfds) return(-1);
+
+	pollfds[i].events |= POLLIN;
+	return(0);
+}
+
 int sockbuf_isvalid(int idx)
 {
 	if (idx >= 0 && idx < nsockbufs && !(sockbufs[idx].flags & (SOCKBUF_AVAIL | SOCKBUF_DELETED))) return(1);
@@ -431,7 +465,7 @@ int sockbuf_close(int idx)
 	if (!sockbuf_isvalid(idx)) return(-1);
 	sbuf = &sockbufs[idx];
 	if (sbuf->sock >= 0) {
-		close(sbuf->sock);
+		socket_close(sbuf->sock);
 		sockbuf_set_sock(idx, -1, 0);
 	}
 	return(0);
@@ -445,6 +479,7 @@ int sockbuf_delete(int idx)
 	if (!sockbuf_isvalid(idx)) return(-1);
 	sbuf = &sockbufs[idx];
 
+	sbuf->flags |= SOCKBUF_DELETED;
 	/* Call the on_delete handler for all filters. */
 	for (i = 0; i < sbuf->nfilters; i++) {
 		if (sbuf->filters[i]->on_delete) {
@@ -455,7 +490,7 @@ int sockbuf_delete(int idx)
 	if (sbuf->handler->on_delete) sbuf->handler->on_delete(sbuf->client_data, idx);
 
 	/* Close the file descriptor. */
-	if (sbuf->sock >= 0) close(sbuf->sock);
+	if (sbuf->sock >= 0) socket_close(sbuf->sock);
 
 	/* Free the peer ip. */
 	if (sbuf->peer_ip) free(sbuf->peer_ip);
@@ -567,6 +602,22 @@ int sockbuf_attach_filter(int idx, sockbuf_filter_t *filter, void *client_data)
 	return(0);
 }
 
+int sockbuf_get_filter_data(int idx, sockbuf_filter_t *filter, void *client_data_ptr)
+{
+	int i;
+	sockbuf_t *sbuf;
+
+	if (!sockbuf_isvalid(idx)) return(-1);
+	sbuf = &sockbufs[idx];
+	for (i = 0; i < sbuf->nfilters; i++) {
+		if (sbuf->filters[i] == filter) {
+			*(void **)client_data_ptr = sbuf->filter_client_data[i];
+			return(0);
+		}
+	}
+	return(-1);
+}
+
 /* Detach the specified filter, and return the filter's client data in the
 	client_data pointer (it should be a pointer to a pointer). */
 int sockbuf_detach_filter(int idx, sockbuf_filter_t *filter, void *client_data)
@@ -584,7 +635,7 @@ int sockbuf_detach_filter(int idx, sockbuf_filter_t *filter, void *client_data)
 	}
 
 	if (client_data) *(void **)client_data = sbuf->filter_client_data[i];
-	memmove(sbuf->filter_client_data+i, sbuf->filter_client_data+i+1, sizeof(void *) * sbuf->nfilters-i-1);
+	memmove(sbuf->filter_client_data+i, sbuf->filter_client_data+i+1, sizeof(void *) * (sbuf->nfilters-i-1));
 	memmove(sbuf->filters+i, sbuf->filters+i+1, sizeof(void *) * (sbuf->nfilters-i-1));
 	sbuf->nfilters--;
 	return(0);

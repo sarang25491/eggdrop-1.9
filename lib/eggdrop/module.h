@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: module.h,v 1.30 2002/09/20 21:41:49 stdarg Exp $
+ * $Id: module.h,v 1.31 2002/10/07 22:33:54 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_MODULE_H
@@ -37,7 +37,6 @@
 #include "src/users.h"
 #include "src/bg.h"
 #include "src/chan.h"
-#include "src/chanprog.h"
 #include "src/cmds.h"
 #include "src/cmdt.h"
 #include "src/core_binds.h"

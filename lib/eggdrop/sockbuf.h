@@ -20,10 +20,11 @@
 #define SOCKBUF_LEVEL_INTERNAL	-1
 #define SOCKBUF_LEVEL_WRITE_INTERNAL	1000000
 #define SOCKBUF_LEVEL_PROXY	1000
-#define SOCKBUF_LEVEL_ENCRYPTION	2000
-#define SOCKBUF_LEVEL_COMPRESSION	3000
-#define SOCKBUF_LEVEL_TEXT_ALTERATION	4000
-#define SOCKBUF_LEVEL_TEXT_BUFFER	5000
+#define SOCKBUF_LEVEL_THROTTLE	2000
+#define SOCKBUF_LEVEL_ENCRYPTION	3000
+#define SOCKBUF_LEVEL_COMPRESSION	4000
+#define SOCKBUF_LEVEL_TEXT_ALTERATION	5000
+#define SOCKBUF_LEVEL_TEXT_BUFFER	6000
 
 typedef struct {
 	const char *name;
@@ -69,7 +70,10 @@ int sockbuf_flush(int idx);
 int sockbuf_set_handler(int idx, sockbuf_handler_t *handler, void *client_data);
 int sockbuf_get_sock(int idx);
 int sockbuf_set_sock(int idx, int sock, int flags);
+int sockbuf_read(int idx);
+int sockbuf_noread(int idx);
 int sockbuf_attach_listener(int fd);
+int sockbuf_get_filter_data(int idx, sockbuf_filter_t *filter, void *client_data_ptr);
 int sockbuf_detach_listener(int fd);
 int sockbuf_attach_filter(int idx, sockbuf_filter_t *filter, void *client_data);
 int sockbuf_detach_filter(int idx, sockbuf_filter_t *filter, void *client_data);

@@ -99,7 +99,7 @@ int egg_listen(int port, int *real_port)
 
 /* Connect to a given host/port. If proxies/firewalls/vhosts are configured, it
  * will automatically use them. Returns an idx for your connection. */
-int egg_connect(const char *host, int port, int timeout)
+int egg_reconnect(int idx, const char *host, int port, int timeout)
 {
 	connect_info_t *connect_info;
 	egg_timeval_t howlong;
@@ -107,7 +107,7 @@ int egg_connect(const char *host, int port, int timeout)
 	/* Resolve the hostname. */
 	connect_info = calloc(1, sizeof(*connect_info));
 	connect_info->port = port;
-	connect_info->idx = sockbuf_new();
+	connect_info->idx = idx;
 	sockbuf_attach_filter(connect_info->idx, &eggnet_connect_filter, connect_info);
 	connect_info->timer_id = -1;
 	connect_info->dns_id = egg_dns_lookup(host, DNS_IPV4, connect_host_resolved, connect_info);
@@ -117,6 +117,15 @@ int egg_connect(const char *host, int port, int timeout)
 		connect_info->timer_id = timer_create_complex(&howlong, egg_connect_timeout, connect_info, 0);
 	}
 	return(connect_info->idx);
+}
+
+int egg_connect(const char *host, int port, int timeout)
+{
+	int idx;
+
+	idx = sockbuf_new();
+	egg_reconnect(idx, host, port, timeout);
+	return(idx);
 }
 
 static int connect_host_resolved(void *client_data, const char *host, const char *ip)

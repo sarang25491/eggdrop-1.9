@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.9 2002/09/20 02:06:25 stdarg Exp $
+# $Id: Makefile.am,v 1.10 2002/10/07 22:33:54 stdarg Exp $
 
 MAINTAINERCLEANFILES	= Makefile.in
 
@@ -15,15 +15,20 @@ libeggdrop_la_SOURCES	= botnetutil.c \
 			eggident.c eggident.h \
 			eggnet.h eggnet.c \
 			eggtimer.c eggtimer.h \
-			fileutil.c \
-			fileutil.h \
+			fileutil.c fileutil.h \
+			hash_table.c hash_table.h \
+			ircmasks.c ircmasks.h \
 			linemode.c linemode.h \
+			match.c match.h \
 			memutil.c \
 			memutil.h \
 			my_socket.c my_socket.h \
 			script.c script.h \
 			sockbuf.c sockbuf.h \
-			stat.h
+			stat.h \
+			throttle.c throttle.h \
+			users.c users.h \
+			xml.c xmlread.c xmlwrite.c xml.h
 
 libeggdrop_la_LIBADD	= $(top_builddir)/lib/compat/libcompat.la \
 		   	$(top_builddir)/lib/egglib/libegg.la \
