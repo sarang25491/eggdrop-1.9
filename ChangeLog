@@ -1,3 +1,18 @@
+2001-10-21 17:38  Federico Mennite <ite@techmonkeys.org>
+
+	* bootstrap, configure.ac, acconfig/.cvsignore,
+	acconfig/acinclude.m4, src/Makefile.am, src/mod/Makefile.am,
+	src/mod/compress.mod/.cvsignore, src/mod/compress.mod/Makefile.am,
+	src/mod/perlscript.mod/.cvsignore,
+	src/mod/perlscript.mod/Makefile.am,
+	src/mod/perlscript.mod/perlscript.c:
+
+	* Added autoconf and automake support for perlscript.mod.  
+	* Removed old stuff from bootstrap and
+	src/mod/compress.mod/Makefile.am.  
+	* Removed eggdrop_DEPENDENCIES. They are unneeded.  
+	* Readded -Wall and -g3 compile options.  
+
 2001-10-21 16:05  Tothwolf <tothwolf@techmonkeys.org>
 
 	* Makefile.am, scripts/Makefile.am, src/Makefile.am,
