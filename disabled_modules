@@ -1,7 +1,7 @@
 #  disabled_modules -- File which lists all eggdrop modules that are
 #                      disabled by default.
 #
-#  $Id: disabled_modules,v 1.4 2001/07/25 04:21:06 guppy Exp $
+#  $Id: disabled_modules,v 1.5 2001/07/26 17:02:34 guppy Exp $
 #
 # Note:
 #   -  Lines which start with a '#' character are ignored.
@@ -9,6 +9,4 @@
 
 # Woobie only serves as an example for module programming. No need to
 # compile it for normal bots ...
-seen
-wire
 woobie
