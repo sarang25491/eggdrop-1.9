@@ -1,5 +1,5 @@
 # Makefile for src/
-# $Id: Makefile.in,v 1.16 2001/07/26 17:04:33 drummer Exp $
+# $Id: Makefile.in,v 1.17 2001/07/29 19:43:05 drummer Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -23,16 +23,13 @@ dccutil.o dns.o flags.o language.o main.o mem.o misc.o misc_file.o \
 modules.o net.o rfc1459.o tcl.o tcldcc.o tclhash.o tclmisc.o \
 tcluser.o userent.o userrec.o users.o
 
-MAKE_GENERIC = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
-'STRIP=$(STRIP)' 'CFLGS=$(CFLGS)'
-
 doofus:
 	@echo ""
 	@echo "Let's try this from the right directory..."
 	@echo ""
 	@cd .. && $(MAKE)
 
-../$(EGGEXEC): build_msg $(eggdrop_objs) $(XREQS) compile_md5 compatability
+../$(EGGEXEC): build_msg $(eggdrop_objs) $(XREQS)
 	@echo ""
 	@echo "Linking eggdrop... $(EGGBUILD)"
 	@echo ""
@@ -58,13 +55,6 @@ main.o:
 '-DCCFLAGS="$(CC) $(CFLAGS) $(CPPFLAGS)"' \
 '-DLDFLAGS="$(LD)"' \
 '-DSTRIPFLAGS="$(STRIP)"' -c $(srcdir)/main.c
-
-compatability:
-	@cd compat && $(MAKE_GENERIC) compat
-	@echo "---------- Yeah! that's the compiling, now the linking! ----------"
-
-compile_md5:
-	@cd md5 && $(MAKE_GENERIC) md5
 
 libtcle.a: $(TCLLIB)/lib$(TCLLIBFN)
 	@echo "[ Fixing lib$(TCLLIBFN) -> libtcle.a ]"

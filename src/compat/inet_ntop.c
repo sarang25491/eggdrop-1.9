@@ -1,7 +1,7 @@
 /*
  * inet_ntop.c -- provides inet_ntop() if necessary.
  *
- * $Id: inet_ntop.c,v 1.1 2001/07/26 17:39:35 drummer Exp $
+ * $Id: inet_ntop.c,v 1.2 2001/07/29 19:43:05 drummer Exp $
  */
 /*
  * Copyright (c) 1996-1999 by Internet Software Consortium.
@@ -37,6 +37,8 @@ static const char rcsid[] = "$BINDId: inet_ntop.c,v 1.8 1999/10/13 16:39:28 vixi
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
+
+#include "config.h"
 
 #ifdef SPRINTF_CHAR
 # define SPRINTF(x) strlen(sprintf/**/x)

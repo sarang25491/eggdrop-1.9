@@ -1,7 +1,7 @@
 /*
  * inet_pton.c -- provides inet_pton() if necessary.
  *
- * $Id: inet_pton.c,v 1.1 2001/07/26 17:39:35 drummer Exp $
+ * $Id: inet_pton.c,v 1.2 2001/07/29 19:43:05 drummer Exp $
  */
 /*
  * Copyright (c) 1996,1999 by Internet Software Consortium.
@@ -33,6 +33,8 @@ static const char rcsid[] = "$BINDId: inet_pton.c,v 1.7 1999/10/13 16:39:28 vixi
 #include <ctype.h>
 #include <string.h>
 #include <errno.h>
+
+#include "config.h"
 
 #define NS_INADDRSZ     4       /* IPv4 T_A */
 #define NS_IN6ADDRSZ    16      /* IPv6 T_AAAA */

@@ -3355,24 +3355,67 @@ then
 fi
 
 
+echo $ac_n "checking for kernel IPv6 support""... $ac_c" 1>&6
+echo "configure:3360: checking for kernel IPv6 support" >&5
+if eval "test \"`echo '$''{'egg_cv_ipv6_supported'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  
+ cat > conftest.$ac_ext <<EOF
+#line 3366 "configure"
+#include "confdefs.h"
+
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+int main()
+{
+    int s = socket(AF_INET6, SOCK_STREAM, 0);
+    if (s != -1)
+	close(s);
+    return s == -1;
+}
+
+EOF
+if { (eval echo configure:3382: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext} && (./conftest; exit) 2>/dev/null
+then
+  egg_cv_ipv6_supported=yes
+else
+  echo "configure: failed program was:" >&5
+  cat conftest.$ac_ext >&5
+  rm -fr conftest*
+  egg_cv_ipv6_supported=no
+fi
+rm -fr conftest*
+fi
+
+if test "$egg_cv_ipv6_supported" = yes; then
+ echo "$ac_t""yes" 1>&6
+else
+ echo "$ac_t""no" 1>&6
+fi
+
+echo $ac_n "checking whether you enabled IPv6 support""... $ac_c" 1>&6
+echo "configure:3401: checking whether you enabled IPv6 support" >&5
 # Check whether --enable-ipv6 or --disable-ipv6 was given.
 if test "${enable_ipv6+set}" = set; then
   enableval="$enable_ipv6"
-   ac_cv_ipv6=$enableval 
-else
-   ac_cv_ipv6='no' 
-fi
+   ac_cv_ipv6=$enableval
+  echo "$ac_t""$ac_cv_ipv6" 1>&6
 
+else
+  
+  ac_cv_ipv6='no'
+  echo "$ac_t""(default) $ac_cv_ipv6" 1>&6
+
+fi
 
 if test "$ac_cv_ipv6" = "yes" ; then
         cat >> confdefs.h <<\EOF
 #define IPV6 1
 EOF
 
-        echo "Using IPv6 support."
-        echo "Warning! This option requires kernel IPv6 support!"
-        echo "If your kernel does not support IPv6 your bot won't be able"
-        echo "to connect to any IPv4 or IPv6 host!"
 fi
 
 
@@ -3609,7 +3652,7 @@ EOF
 fi
 
 echo $ac_n "checking for Tcl library""... $ac_c" 1>&6
-echo "configure:3613: checking for Tcl library" >&5
+echo "configure:3656: checking for Tcl library" >&5
 
 # Attempt autodetect for $TCLLIBFN if it's not set
 if test ! "${TCLLIBFN-x}" = "x"
@@ -3643,7 +3686,7 @@ then
 fi
 
 echo $ac_n "checking for Tcl header""... $ac_c" 1>&6
-echo "configure:3647: checking for Tcl header" >&5
+echo "configure:3690: checking for Tcl header" >&5
 
 # Attempt autodetect for $TCLINCFN if it's not set
 if test ! "${TCLINCFN-x}" = "x"
@@ -3692,7 +3735,7 @@ then
 fi
 
   echo $ac_n "checking whether the tcl system has changed""... $ac_c" 1>&6
-echo "configure:3696: checking whether the tcl system has changed" >&5
+echo "configure:3739: checking whether the tcl system has changed" >&5
   egg_tcl_changed=yes
   egg_tcl_id="$TCLLIB:$TCLLIBFN:$TCLINC:$TCLINCFN"
   if test ! "$egg_tcl_id" = ":::"
@@ -3737,7 +3780,7 @@ then
 
   fi
   echo $ac_n "checking for Tcl version""... $ac_c" 1>&6
-echo "configure:3741: checking for Tcl version" >&5
+echo "configure:3784: checking for Tcl version" >&5
   if eval "test \"`echo '$''{'egg_cv_var_tcl_version'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -3761,7 +3804,7 @@ fi
 
   fi
   echo $ac_n "checking for Tcl patch level""... $ac_c" 1>&6
-echo "configure:3765: checking for Tcl patch level" >&5
+echo "configure:3808: checking for Tcl patch level" >&5
   if eval "test \"`echo '$''{'egg_cv_var_tcl_patch_level'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -3842,7 +3885,7 @@ fi
 
 # Check for Tcl_Free()
 echo $ac_n "checking for Tcl_Free in -l$TCL_TEST_LIB""... $ac_c" 1>&6
-echo "configure:3846: checking for Tcl_Free in -l$TCL_TEST_LIB" >&5
+echo "configure:3889: checking for Tcl_Free in -l$TCL_TEST_LIB" >&5
 ac_lib_var=`echo $TCL_TEST_LIB'_'Tcl_Free | sed 'y%./+-%__p_%'`
 if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -3850,7 +3893,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-l$TCL_TEST_LIB $TCL_TEST_OTHERLIBS $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 3854 "configure"
+#line 3897 "configure"
 #include "confdefs.h"
 /* Override any gcc2 internal prototype to avoid an error.  */
 /* We use char because int might match the return type of a gcc2
@@ -3861,7 +3904,7 @@ int main() {
 Tcl_Free()
 ; return 0; }
 EOF
-if { (eval echo configure:3865: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:3908: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   eval "ac_cv_lib_$ac_lib_var=yes"
 else
@@ -3907,7 +3950,7 @@ fi
 
 # Check for TclpFinalizeThreadData()
 echo $ac_n "checking for TclpFinalizeThreadData in -l$TCL_TEST_LIB""... $ac_c" 1>&6
-echo "configure:3911: checking for TclpFinalizeThreadData in -l$TCL_TEST_LIB" >&5
+echo "configure:3954: checking for TclpFinalizeThreadData in -l$TCL_TEST_LIB" >&5
 ac_lib_var=`echo $TCL_TEST_LIB'_'TclpFinalizeThreadData | sed 'y%./+-%__p_%'`
 if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -3915,7 +3958,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-l$TCL_TEST_LIB $TCL_TEST_OTHERLIBS $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 3919 "configure"
+#line 3962 "configure"
 #include "confdefs.h"
 /* Override any gcc2 internal prototype to avoid an error.  */
 /* We use char because int might match the return type of a gcc2
@@ -3926,7 +3969,7 @@ int main() {
 TclpFinalizeThreadData()
 ; return 0; }
 EOF
-if { (eval echo configure:3930: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:3973: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   eval "ac_cv_lib_$ac_lib_var=yes"
 else
@@ -4251,7 +4294,6 @@ s%@DEFAULT_MAKE@%$DEFAULT_MAKE%g
 s%@MOD_EXT@%$MOD_EXT%g
 s%@EXEEXT@%$EXEEXT%g
 s%@EGGEXEC@%$EGGEXEC%g
-s%@MAKEIPV6@%$MAKEIPV6%g
 s%@TCLLIB@%$TCLLIB%g
 s%@TCLLIBFN@%$TCLLIBFN%g
 s%@TCLINC@%$TCLINC%g

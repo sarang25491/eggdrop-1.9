@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.46 2001/07/27 00:46:27 drummer Exp $
+dnl $Id: aclocal.m4,v 1.47 2001/07/29 19:43:05 drummer Exp $
 dnl
 
 
@@ -1283,19 +1283,19 @@ dnl
 dnl  EGG_ENABLE_IPV6()
 dnl
 AC_DEFUN(EGG_ENABLE_IPV6, [dnl
+AC_MSG_CHECKING(whether you enabled IPv6 support)
 AC_ARG_ENABLE(ipv6,
 [  --enable-ipv6           Enable IPV6 support.
   --disable-ipv6          Disable IPV6 support. ],
-    [ ac_cv_ipv6=$enableval ], [ ac_cv_ipv6='no' ])
-
+[ ac_cv_ipv6=$enableval
+  AC_MSG_RESULT($ac_cv_ipv6)
+], [
+  ac_cv_ipv6='no'
+  AC_MSG_RESULT((default) $ac_cv_ipv6)
+])
 if test "$ac_cv_ipv6" = "yes" ; then
         AC_DEFINE(IPV6)
-        echo "Using IPv6 support."
-        echo "Warning! This option requires kernel IPv6 support!"
-        echo "If your kernel does not support IPv6 your bot won't be able"
-        echo "to connect to any IPv4 or IPv6 host!"
 fi
-AC_SUBST(MAKEIPV6)dnl
 ])dnl
 
 
@@ -1343,3 +1343,31 @@ else
  ])
 fi
 ])dnl
+
+dnl EGG_IPV6_SUPPORTED
+dnl
+dnl AC_TRY_RUN(PROGRAM, [ACTION-IF-TRUE [, ACTION-IF-FALSE
+dnl            [, ACTION-IF-CROSS-COMPILING]]])
+AC_DEFUN(EGG_IPV6_SUPPORTED, [dnl
+AC_MSG_CHECKING(for kernel IPv6 support)
+AC_CACHE_VAL(egg_cv_ipv6_supported,[
+ AC_TRY_RUN_NATIVE([
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+int main()
+{
+    int s = socket(AF_INET6, SOCK_STREAM, 0);
+    if (s != -1)
+	close(s);
+    return s == -1;
+}
+], egg_cv_ipv6_supported=yes, egg_cv_ipv6_supported=no)])
+if test "$egg_cv_ipv6_supported" = yes; then
+ AC_MSG_RESULT(yes)
+else
+ AC_MSG_RESULT(no)
+fi
+])dnl
+

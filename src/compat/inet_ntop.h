@@ -2,7 +2,7 @@
  * inet_ntop.h
  *   prototypes for inet_ntop.c
  *
- * $Id: inet_ntop.h,v 1.1 2001/07/26 17:39:35 drummer Exp $
+ * $Id: inet_ntop.h,v 1.2 2001/07/29 19:43:05 drummer Exp $
  */
 /*
  * Copyright (C) 2000, 2001 Eggheads Development Team
@@ -25,7 +25,7 @@
 #ifndef _EGG_COMPAT_INET_NTOP_H
 #define _EGG_COMPAT_INET_NTOP_H
 
-/* #include "config.h" */
+#include "config.h"
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>

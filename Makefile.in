@@ -2,7 +2,7 @@
 #  This is the Makefile for EGGDROP (the irc bot)
 #  You should never need to edit this.
 #
-# $Id: Makefile.in,v 1.28 2001/07/27 00:46:26 drummer Exp $
+# $Id: Makefile.in,v 1.29 2001/07/29 19:43:05 drummer Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -118,6 +118,9 @@ MAKE_CONFIG = $(MAKE) 'MAKE=$(MAKE)'
 
 MAKE_INSTALL = $(MAKE) 'MAKE=$(MAKE)' 'DEST=$(DEST)'
 
+MAKE_GENERIC = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
+'STRIP=$(STRIP)' 'CFLGS=$(CFLGS)'
+
 all: @DEFAULT_MAKE@
 
 eggclean:
@@ -137,10 +140,6 @@ distclean: eggclean clean-modconfig
 	@cd src/mod && $(MAKE) distclean
 	@rm -f Makefile doc/Makefile scripts/Makefile src/Makefile src/md5/Makefile src/compat/Makefile src/mod/Makefile
 	@rm -f config.cache config.log config.status config.h lush.h
-
-adns:
-	@echo "Making the ADNS library..."
-	@cd src/adns && $(MAKE)
 
 distrib: distclean
 	@rm -f `find . \( -name '*~' -o -name '*#' -o -name '*.orig' \
@@ -204,66 +203,78 @@ conftest:
 
 reconfig: clean-modconfig config
 
-eggdrop: modegg modules
+eggdrop: modtest
+	@echo "Making the ADNS library..." && \
+	cd src/adns && $(MAKE) && cd ../.. && \
+	echo "" && \
+	cd src/md5 && $(MAKE_GENERIC) md5 && cd ../.. && \
+	cd src/compat && $(MAKE_GENERIC) compat && cd ../.. && \
+	rm -f src/mod/mod.xlibs && \
+	cd src && $(MAKE_MODEGG) $(EGGEXEC) && cd .. && \
+	echo "" && \
+	$(egg_test_run) && \
+	ls -l $(EGGEXEC) && \
+	cd src/mod && $(MAKE_MODULES) modules && cd ../.. && \
+	echo "" && \
+	echo "modules made:" && \
+	ls -l *.$(MOD_EXT) && \
+	$(egg_install_msg)
 
-modegg: modtest adns
-	@rm -f src/mod/mod.xlibs
-	@cd src && $(MAKE_MODEGG) $(EGGEXEC)
-	@echo ""
-	@$(egg_test_run)
-	@ls -l $(EGGEXEC)
+static: eggtest
+	@echo "Making the ADNS library..." && \
+	cd src/adns && $(MAKE) && cd ../.. && \
+	echo "" && \
+	cd src/md5 && $(MAKE_GENERIC) md5 && cd ../.. && \
+	cd src/compat && $(MAKE_GENERIC) compat && cd ../.. && \
+	rm -f src/mod/mod.xlibs && \
+	echo "" && \
+	echo "Making module objects for static linking..." && \
+	echo "" && \
+	cd src/mod && $(MAKE_STATIC) static && cd ../.. && \
+	echo "" && \
+	echo "Making core eggdrop for static linking..." && \
+	echo "" && \
+	cd src && $(MAKE_STATIC) $(EGGEXEC) && cd .. && \
+	echo "" && \
+	$(egg_test_run) && \
+	ls -l $(EGGEXEC) && \
+	$(egg_install_msg)
 
-modules: modtest
-	@cd src/mod && $(MAKE_MODULES) modules
-	@echo ""
-	@echo "modules made:"
-	@ls -l *.$(MOD_EXT)
-	@$(egg_install_msg)
+debug: modtest
+	@echo "Making the ADNS library..." && \
+	cd src/adns && $(MAKE) && cd ../.. && \
+	echo "" && \
+	cd src/md5 && $(MAKE_GENERIC) md5 && cd ../.. && \
+	cd src/compat && $(MAKE_GENERIC) compat && cd ../.. && \
+	cd src && $(MAKE_DEBEGG) $(EGGEXEC) && cd .. && \
+	echo "" && \
+	$(egg_test_run) && \
+	ls -l $(EGGEXEC) && \
+	cd src/mod && $(MAKE_DEBMODULES) modules && cd ../.. && \
+	echo "" && \
+	echo "modules made:" && \
+	ls -l *.$(MOD_EXT) && \
+	$(egg_install_msg)
 
-static: eggtest adns
-	@echo ""
-	@echo "Making module objects for static linking..."
-	@echo ""
-	@rm -f src/mod/mod.xlibs
-	@cd src/mod && $(MAKE_STATIC) static
-	@echo ""
-	@echo "Making core eggdrop for static linking..."
-	@echo ""
-	@cd src && $(MAKE_STATIC) $(EGGEXEC)
-	@echo ""
-	@$(egg_test_run)
-	@ls -l $(EGGEXEC)
-	@$(egg_install_msg)
-
-debug: debegg debmodules
-
-debegg: modtest adns
-	@cd src && $(MAKE_DEBEGG) $(EGGEXEC)
-	@echo ""
-	@$(egg_test_run)
-	@ls -l $(EGGEXEC)
-
-debmodules: modtest
-	@cd src/mod && $(MAKE_DEBMODULES) modules
-	@echo ""
-	@echo "modules made:"
-	@ls -l *.$(MOD_EXT)
-	@$(egg_install_msg)
-
-sdebug: eggtest adns
-	@echo ""
-	@echo "Making module objects for static linking..."
-	@echo ""
-	@rm -f src/mod/mod.xlibs
-	@cd src/mod && $(MAKE_SDEBUG) static
-	@echo ""
-	@echo "Making core eggdrop for static linking..."
-	@echo ""
-	@cd src && $(MAKE_SDEBUG) $(EGGEXEC)
-	@echo ""
-	@$(egg_test_run)
-	@ls -l $(EGGEXEC)
-	@$(egg_install_msg)
+sdebug: eggtest
+	@echo "Making the ADNS library..." && \
+	cd src/adns && $(MAKE) && cd ../.. && \
+	echo "" && \
+	cd src/md5 && $(MAKE_GENERIC) md5 && cd ../.. && \
+	cd src/compat && $(MAKE_GENERIC) compat && cd ../.. && \
+	rm -f src/mod/mod.xlibs && \
+	echo "" && \
+	echo "Making module objects for static linking..." && \
+	echo "" && \
+	cd src/mod && $(MAKE_SDEBUG) static && cd ../.. && \
+	echo "" && \
+	echo "Making core eggdrop for static linking..." && \
+	echo "" && \
+	cd src && $(MAKE_SDEBUG) $(EGGEXEC) && cd .. && \
+	echo "" && \
+	$(egg_test_run) && \
+	ls -l $(EGGEXEC) && \
+	$(egg_install_msg)
 
 eggtest: conftest
 	@if test -f EGGMOD.stamp; then \
