@@ -1,3 +1,17 @@
+2003-02-16 11:15  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/binds.c, lib/eggdrop/eggconfig.c,
+	lib/eggdrop/eggconfig.h, lib/eggdrop/users.c, lib/eggdrop/xml.c,
+	lib/eggdrop/xml.h, lib/eggdrop/xmlread.c, lib/eggdrop/xmlwrite.c,
+	modules/server/dcc_commands.c, modules/server/output.c,
+	modules/server/server.c, modules/server/serverlist.c,
+	modules/server/serverlist.h, src/Makefile.am, src/chanprog.c,
+	src/core_config.c, src/core_config.h, src/main.c, src/tcl.c:
+
+	
+	* Variables can be linked to config now (auto-update).  
+	* config_str bind for changes to config strings 
+
 2003-02-16 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
