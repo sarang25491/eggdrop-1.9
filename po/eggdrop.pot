@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2001-12-18 04:00-0600\n"
+"POT-Creation-Date: 2001-12-19 04:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -734,7 +734,7 @@ msgstr ""
 #: modules/notes/cmdsnote.c:73 modules/notes/cmdsnote.c:153
 #: modules/notes/cmdsnote.c:187 modules/notes/cmdsnote.c:221
 #: modules/notes/notes.c:738 modules/notes/notes.c:774 src/cmds.c:2259
-#: src/cmds.c:2281 src/cmds.c:2541
+#: src/cmds.c:2281 src/cmds.c:2548
 msgid "Usage"
 msgstr ""
 
@@ -755,65 +755,65 @@ msgstr ""
 msgid "Module unloaded:"
 msgstr ""
 
-#: src/cmds.c:2541
+#: src/cmds.c:2548
 msgid "handle"
 msgstr ""
 
-#: src/cmds.c:2542
+#: src/cmds.c:2549
 msgid "hostmask"
 msgstr ""
 
-#: modules/notes/cmdsnote.c:159 src/cmds.c:2555
+#: modules/notes/cmdsnote.c:159 src/cmds.c:2562
 msgid "No such user."
 msgstr ""
 
-#: src/cmds.c:2563
+#: src/cmds.c:2570
 msgid "You can't remove hosts while having the +d or +k flag."
 msgstr ""
 
-#: src/cmds.c:2570
+#: src/cmds.c:2577
 msgid "You can't remove hostmasks from non-bots.\n"
 msgstr ""
 
-#: src/cmds.c:2574
+#: src/cmds.c:2581
 msgid "You can't remove hostmask from a shared bot.\n"
 msgstr ""
 
-#: src/cmds.c:2578
+#: src/cmds.c:2585
 msgid "Can't remove hostmasks from the bot owner/master.\n"
 msgstr ""
 
-#: src/cmds.c:2581
+#: src/cmds.c:2588
 msgid "Permission denied.\n"
 msgstr ""
 
-#: src/cmds.c:2587
+#: src/cmds.c:2594
 #, c-format
 msgid "Removed '%1$s' from %2$s\n"
 msgstr ""
 
-#: modules/filesys/files.c:990 modules/filesys/files.c:1086 src/cmds.c:2589
+#: modules/filesys/files.c:990 modules/filesys/files.c:1086 src/cmds.c:2601
 msgid "Failed.\n"
 msgstr ""
 
-#: src/cmds.c:2597
+#: src/cmds.c:2609
 msgid "Usage: modules <bot>\n"
 msgstr ""
 
-#: src/cmds.c:2604
+#: src/cmds.c:2616
 msgid "No such bot online.\n"
 msgstr ""
 
-#: src/cmds.c:2707
+#: src/cmds.c:2719
 #, c-format
 msgid "You are %s@%s\n"
 msgstr ""
 
-#: src/cmds.c:2717
+#: src/cmds.c:2729
 msgid "*** Ja mata!\n"
 msgstr ""
 
-#: src/cmds.c:2719
+#: src/cmds.c:2731
 #, c-format
 msgid "DCC connection closed (%s!%s)"
 msgstr ""
@@ -1878,7 +1878,7 @@ msgstr ""
 msgid "banned: "
 msgstr ""
 
-#: modules/irc/chan.c:423 modules/irc/chan.c:492 modules/irc/chan.c:1696
+#: modules/irc/chan.c:423 modules/irc/chan.c:492 modules/irc/chan.c:1686
 msgid "You are banned"
 msgstr ""
 
@@ -1886,46 +1886,46 @@ msgstr ""
 msgid "...and thank you for playing."
 msgstr ""
 
-#: modules/irc/chan.c:849
+#: modules/irc/chan.c:851
 msgid "Hmm, mode info from a channel Im not on"
 msgstr ""
 
-#: modules/irc/chan.c:1198
+#: modules/irc/chan.c:1188
 #, c-format
 msgid "Im on too many channels--cant join: %s"
 msgstr ""
 
-#: modules/irc/chan.c:1262 modules/irc/chan.c:1265
+#: modules/irc/chan.c:1252 modules/irc/chan.c:1255
 #, c-format
 msgid "Channel full--cant join: %s"
 msgstr ""
 
-#: modules/irc/chan.c:1290 modules/irc/chan.c:1293
+#: modules/irc/chan.c:1280 modules/irc/chan.c:1283
 #, c-format
 msgid "Channel invite only--cant join: %s"
 msgstr ""
 
-#: modules/irc/chan.c:1318 modules/irc/chan.c:1321
+#: modules/irc/chan.c:1308 modules/irc/chan.c:1311
 #, c-format
 msgid "Banned from channel--can't join: %s"
 msgstr ""
 
-#: modules/irc/chan.c:1346 modules/irc/chan.c:1354
+#: modules/irc/chan.c:1336 modules/irc/chan.c:1344
 #, c-format
 msgid "Bad key--cant join: %s"
 msgstr ""
 
-#: modules/irc/chan.c:1712
+#: modules/irc/chan.c:1702
 msgid "...and dont come back."
 msgstr ""
 
-#: modules/irc/chan.c:1977 modules/server/servmsg.c:638
+#: modules/irc/chan.c:1968 modules/server/servmsg.c:638
 #: modules/server/servmsg.c:784 modules/server/servmsg.c:796
 #, c-format
 msgid "Switching back to nick %s"
 msgstr ""
 
-#: modules/irc/chan.c:1981 modules/server/servmsg.c:641
+#: modules/irc/chan.c:1972 modules/server/servmsg.c:641
 #: modules/server/servmsg.c:788 modules/server/servmsg.c:800
 #, c-format
 msgid "Switching back to altnick %s"
