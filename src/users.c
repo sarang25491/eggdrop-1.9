@@ -10,7 +10,7 @@
  *
  * dprintf'ized, 9nov1995
  *
- * $Id: users.c,v 1.37 2002/04/25 23:18:03 stdarg Exp $
+ * $Id: users.c,v 1.38 2002/04/27 18:15:12 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -52,9 +52,21 @@ extern int dcc_total, noshare;
 extern char botnetnick[];
 extern Tcl_Interp *interp;
 extern time_t now;
+extern int userfile_perm;
 
 char userfile[121] = "";	/* where the user records are stored */
 int ignore_time = 10;		/* how many minutes will ignores last? */
+
+static script_linked_var_t user_script_vars[] = {
+	{"", "userfile_perm", &userfile_perm, SCRIPT_INTEGER, NULL},
+	{0}
+};
+
+int user_init()
+{
+	script_link_var_table(user_script_vars);
+	return(0);
+}
 
 /* is this nick!user@host being ignored? */
 int match_ignore(char *uhost)

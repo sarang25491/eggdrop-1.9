@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.79 2002/04/26 17:33:37 stdarg Exp $
+ * $Id: dcc.c,v 1.80 2002/04/27 18:15:11 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -49,6 +49,7 @@ extern char		 botnetnick[], ver[], origbotname[], notify_new[];
 
 struct dcc_t *dcc = NULL;	/* DCC list				   */
 int	dcc_total = 0;		/* Total dcc's				   */
+int	max_dcc = 20;		/* Max number of dcc's			   */
 char	tempdir[121] = "";	/* Temporary directory
 				   (default: current directory)		   */
 int	learn_users = 0;	/* Allow people to introduce themselves    */
@@ -63,17 +64,29 @@ int	flood_telnet_thr = 5;	/* Number of telnet connections to be
 int	flood_telnet_time = 60;	/* In how many seconds?			   */
 char	bannerfile[121] = "text/banner"; /* File displayed on telnet login */
 
+/* This var specifies the chars to recognize as commands characters for dcc
+	commands. Default value is "./" */
 static char *dcc_command_chars = NULL;
 
 static void dcc_telnet_hostresolved(int);
 static void dcc_telnet_got_ident(int, char *);
 static void dcc_telnet_pass(int, int);
 
+/* Callback functions for linked variables. */
+static int dcc_write_max_dcc(script_linked_var_t *linked_var, script_var_t *newvalue);
+
 
 extern void init_dcc_max();
 
+static script_var_callbacks_t max_dcc_callback = {
+	NULL,
+	dcc_write_max_dcc,
+	NULL
+};
+
 static script_linked_var_t dcc_script_vars[] = {
 	{"", "dcc_command_chars", &dcc_command_chars, SCRIPT_STRING, NULL},
+	{"", "max_dcc", &max_dcc, SCRIPT_INTEGER, &max_dcc_callback},
 	{0}
 };
 
@@ -1971,4 +1984,29 @@ void dcc_telnet_got_ident(int i, char *host)
 
   if (learn_users)
     dprintf(i, "(If you are new, enter 'NEW' here.)\n");
+}
+
+/* Trace callbacks for our script variables. */
+int dcc_write_max_dcc(script_linked_var_t *linked_var, script_var_t *newvalue)
+{
+	int newval = (int) newvalue->value;
+	int i;
+
+	/* If they're shrinking it, determine the most we can shrink. */
+	if (newval < dcc_total) {
+		for (i = dcc_total-1; i >= 0; i--) {
+			if (dcc[i].type) break;
+		}
+		if (newval < i+1) newval = i+1;
+		dcc_total = newval;
+	}
+
+	/* Reallocate the array. */
+	dcc = (struct dcc_t *)realloc(dcc, sizeof(*dcc) * newval);
+	if (newval > max_dcc) memset(dcc+max_dcc, 0, (newval-max_dcc) * sizeof(*dcc));
+	max_dcc = newval;
+
+	putlog(LOG_MISC, "*", "max_dcc set to %d", max_dcc);
+
+	return(0);
 }

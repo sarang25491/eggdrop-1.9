@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.72 2002/04/25 04:06:40 stdarg Exp $
+ * $Id: tcl.c,v 1.73 2002/04/27 18:15:12 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -73,8 +73,6 @@ int	    use_exempts = 0;		/* Jason/drummer */
 int	    force_expire = 0;		/* Rufus */
 int	    remote_boots = 2;
 int	    allow_dk_cmds = 1;
-int	    max_dcc = 20;		/* needs at least 4 or 5 just to
-					   get started. 20 should be enough   */
 int	    par_telnet_flood = 1;       /* trigger telnet flood for +f
 					   ppl? - dw			      */
 int	    quiet_save = 0;             /* quiet-save patch by Lucas	      */
@@ -184,23 +182,12 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp, char *name1,
 	break_down_flags(s, &fr, 0);
 	default_flags = sanity_check(fr.global); /* drummer */
 	default_uflags = fr.udef_global;
-      } else if ((int *) ii->var == &userfile_perm) {
-	int p = oatoi(s);
-
-	if (p <= 0)
-	  return "invalid userfile permissions";
-	userfile_perm = p;
       } else if ((ii->ro == 2) || ((ii->ro == 1) && protect_readonly)) {
 	return "read-only variable";
       } else {
 	if (Tcl_ExprLong(interp, s, &l) == TCL_ERROR)
 	  return interp->result;
-	if ((int *) ii->var == &max_dcc) {
-	  if (l < max_dcc)
-	    return "you can't DECREASE max-dcc";
-	  max_dcc = l;
-	  init_dcc_max();
-	} else
+	else
 	  *(ii->var) = (int) l;
       }
     }
@@ -324,7 +311,6 @@ static tcl_ints def_tcl_ints[] =
   {"die-on-sighup",		&die_on_sighup,		1},
   {"die-on-sigterm",		&die_on_sigterm,	1},
   {"remote-boots",		&remote_boots,		1},
-  {"max-dcc",			&max_dcc,		0},
   {"debug-output",		&debug_output,		1},
   {"protect-telnet",		&protect_telnet,	0},
   {"sort-users",		&sort_users,		0},

@@ -4,7 +4,7 @@
  *   signal handling
  *   command line arguments
  *
- * $Id: main.c,v 1.111 2002/04/01 13:33:33 ite Exp $
+ * $Id: main.c,v 1.112 2002/04/27 18:15:11 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -434,6 +434,7 @@ void restart_chons();
 
 int init_userent(), init_net(),
  init_tcl(int, char **);
+int user_init();
 void botnet_init();
 void dns_init();
 void binds_init();
@@ -564,6 +565,7 @@ int main(int argc, char **argv)
   dns_init();
   core_binds_init();
   dcc_init();
+  user_init();
   init_userent();
   botnet_init();
   init_net();
