@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.49 2001/10/19 01:55:05 tothwolf Exp $
+ * $Id: tcl.c,v 1.50 2001/10/19 05:26:32 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -54,7 +54,7 @@ extern char	origbotname[], botuser[], motdfile[], admin[], userfile[],
 		firewall[], helpdir[], notify_new[], myip[],
 		moddir[], tempdir[], owner[], network[], botnetnick[],
 		bannerfile[], egg_version[], natip[], configfile[],
-		textdir[], myip6[];
+		textdir[], myip6[], pid_file[];
 extern int	die_on_sighup, die_on_sigterm,
 		enable_simul, dcc_total, debug_output, identtimeout,
 		protect_telnet, dupwait_timeout, egg_numver, share_unlinks,
@@ -323,6 +323,7 @@ static tcl_strings def_tcl_strings[] =
 /* confvar patch by aaronwl */
   {"config",		configfile,	0,		0},
   {"telnet-banner",	bannerfile,	120,		STR_PROTECT},
+  {"pidfile",		pid_file,	120,		STR_PROTECT},
   {NULL,		NULL,		0,		0}
 };
 

@@ -3,9 +3,11 @@ of the normal Tcl built-in commands are still there, of course. But you
 can also use these to manipulate features of the bot. They are listed
 according to category.
 
-NOTICE: This list is accurate for eggdrop v1.6.0! Scripts written for
-  v1.3/v1.4 series of eggdrop should probably work with a few minor
-  modifications depending on the script.
+NOTICE: This list should not be considered accurate for the eggdrop v1.7.x
+  series as long as it is in development. We are in the process of reworking
+  how scripting is handled -- and this will involve a lot of _major_ changes.
+  Also, to begin the process of porting your scripts to v1.7.x is silly and 
+  a waste of time -- do not do it yet.
 
 Scripts which were written for v0.9, v1.0, v1.1 or v1.2 will probably not work
 without modification. Commands which have been changed in the v1.6 series

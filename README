@@ -145,8 +145,8 @@ README
                (3) type 'cvs login'
                (4) press <enter> when it asks for a password.
                (5) in your home dir, type 'cvs checkout
-               eggdrop1.6'
-               (6) in ~/eggdrop1.6, you should have a copy of the
+               eggdrop1.7'
+               (6) in ~/eggdrop1.7, you should have a copy of the
                latest CVS version of eggdrop.
 
           Notes:
@@ -155,7 +155,7 @@ README
                (2) you don't need to go through this whole
                process every time; if you want to get a CVS
                version of eggdrop at a later time, you can just
-               'cd ~/eggdrop1.6' and type 'cvs update -A'.
+               'cd ~/eggdrop1.7' and type 'cvs update -dAP'.
                (3) if you experience errors when using 'export',
                you might be using tclsh as a shell. If so, try
                using the command 'setenv' instead of 'export':
