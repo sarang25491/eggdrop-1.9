@@ -1,3 +1,10 @@
+2002-05-04 09:18  Axel Franke <eule@berlin.snafu.de>
+
+	* modules/channels/cmdschan.c, src/patch.h:
+
+	clean up cmd_pls_ban/exempt/invite and cmd_mns_ban/exempt/invite
+	with maskfunctions 
+
 2002-05-03 20:16  Will Buckner <wcc@techmonkeys.org>
 
 	* text/banner:
