@@ -51,6 +51,9 @@ EGG_PROG_BASENAME
 AC_CHECK_PROG(EGG_UNAME,uname,uname)
 AC_CHECK_PROG(AR,ar,ar)
 
+# Should -O2 CFLAG be removed? 
+EGG_DISABLE_CC_OPTIMIZATION
+
 # Test the os and set the module linking settings
 EGG_CHECK_OS
 
