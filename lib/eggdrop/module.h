@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.2 2001/10/29 23:01:32 ite Exp $
+ * $Id: module.h,v 1.3 2001/12/09 21:38:12 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -391,7 +391,7 @@
 /* 256 - 259 */
 /* #define strncasecmp ((int (*)(const char *, const char *, size_t))global[256]) */
 #define is_file ((int (*)(const char *))global[257])
-#define must_be_owner (*(int *)(global[258]))
+/* #define must_be_owner (*(int *)(global[258])) */
 #define tandbot (*(tand_t **)(global[259]))
 /* 260 - 263 */
 #define party (*(party_t **)(global[260]))

@@ -363,7 +363,7 @@ static int dcc_cmd_perl(struct userrec *u, int idx, char *text)
 	char *msg;
 	int len;
 
-	if (must_be_owner && !(isowner(dcc[idx].nick))) return(0);
+	if (!isowner(dcc[idx].nick)) return(0);
 
 	result = eval_pv(text, FALSE);
 	if (SvTRUE(ERRSV)) {

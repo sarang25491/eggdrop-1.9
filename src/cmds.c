@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.79 2001/12/08 19:17:44 ite Exp $
+ * $Id: cmds.c,v 1.80 2001/12/09 21:38:12 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -33,8 +33,8 @@ extern struct chanset_t	*chanset;
 extern struct dcc_t	*dcc;
 extern struct userrec	*userlist;
 extern int		 dcc_total, remote_boots, backgrd, make_userfile,
-			 do_restart, conmask, require_p, must_be_owner,
-			 strict_host, term_z, con_chan;
+			 do_restart, conmask, require_p, strict_host,
+			 term_z, con_chan;
 extern unsigned long	 otraffic_irc, otraffic_irc_today,
 			 itraffic_irc, itraffic_irc_today,
 			 otraffic_bn, otraffic_bn_today,
@@ -2202,7 +2202,7 @@ static void cmd_tcl(struct userrec *u, int idx, char *msg)
 {
   int code;
 
-  if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
+  if (!isowner(dcc[idx].nick)) {
     dprintf(idx, _("What?  You need .help\n"));
     return;
   }
@@ -2221,7 +2221,7 @@ static void cmd_set(struct userrec *u, int idx, char *msg)
   int code;
   char s[512];
 
-  if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
+  if (!isowner(dcc[idx].nick)) {
     dprintf(idx, _("What?  You need .help\n"));
     return;
   }
@@ -2254,7 +2254,7 @@ static void cmd_loadmod(struct userrec *u, int idx, char *par)
 {
   const char *p;
 
-     if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
+     if (!isowner(dcc[idx].nick)) {
          dprintf(idx, _("What?  You need .help\n"));
          return;
      }
@@ -2276,7 +2276,7 @@ static void cmd_unloadmod(struct userrec *u, int idx, char *par)
 {
   char *p;
 
-     if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
+     if (!isowner(dcc[idx].nick)) {
          dprintf(idx, _("What?  You need .help\n"));
          return;
      }

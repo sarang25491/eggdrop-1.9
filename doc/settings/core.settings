@@ -442,13 +442,6 @@ set die-on-sigterm 0
     Valid settings are 0 for OFF and 1 ON.
 
 
-set must-be-owner 0
-    If you enable this setting, only permanent owners (owner setting) will be
-    able to use .tcl and .set
-    moreover if you want only let permanent owners use .dump, then set it to 2
-    Valid settings are 0, 1 and 2
-
-
 set enable-simul 1
     Enable this setting, if you want to enable the 'dccsimul' tcl command
     Valid settings are 0 for OFF and 1 ON.

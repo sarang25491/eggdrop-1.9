@@ -2,7 +2,7 @@
  * cmdsserv.c -- part of server.mod
  *   handles commands from a user via dcc that cause server interaction
  *
- * $Id: cmdsserv.c,v 1.1 2001/10/27 16:34:52 ite Exp $
+ * $Id: cmdsserv.c,v 1.2 2001/12/09 21:38:12 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -49,10 +49,6 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
 
 static void cmd_dump(struct userrec *u, int idx, char *par)
 {
-  if (!(isowner(dcc[idx].nick)) && (must_be_owner == 2)) {
-    dprintf(idx, _("What?  You need .help\n"));
-    return;
-  }
   if (!par[0]) {
     dprintf(idx, "Usage: dump <server stuff>\n");
     return;
