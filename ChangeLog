@@ -1,3 +1,16 @@
+2001-10-15 18:47  Matthew Hallacy <poptix@techmonkeys.org>
+
+	* src/patch.h:
+
+	[no log message] 
+
+2001-10-15 18:47  Matthew Hallacy <poptix@techmonkeys.org>
+
+	* src/userrec.c:
+
+	* Oops, forgot to fix it here too, weren't supposed to free
+	xk,xk->data in adduser 
+
 2001-10-15 09:54  stdarg <stdarg@techmonkeys.org>
 
 	* src/: main.c, script.c, mod/tclscript.mod/tclscript.c:
