@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.31 2004/06/19 17:19:25 wingman Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.32 2004/06/19 18:07:01 wingman Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -39,6 +39,7 @@ static const char rcsid[] = "$Id: core_party.c,v 1.31 2004/06/19 17:19:25 wingma
 #include "core_config.h"
 #include "core_binds.h"
 #include "logfile.h"
+#include "main.h"			/* SHUTDOWN_*, core_shutdown, core_restart	*/
 
 /* from main.c */
 extern char pid_file[];
@@ -309,13 +310,12 @@ static int party_whois(partymember_t *p, const char *nick, user_t *u, const char
 
 static int party_die(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
-	putlog(LOG_MISC, "*", _("Saving user file..."));
-	user_save(core_config.userfile);
-	if (text && *text) putlog(LOG_MISC, "*", _("Bot shutting down: %s"), text);
-	else putlog(LOG_MISC, "*", _("Bot shutting down."));
-	flushlogs();
-	unlink(pid_file);
-	exit(0);
+	/* XXX: should we really enable hard shutdowns? 
+	if (*text && 0 == strcmp(text, "force")) {
+		return core_shutdown(SHUTDOWN_HARD, nick, text);
+	} else
+	*/
+	return core_shutdown(SHUTDOWN_GRACEFULL, nick, text);
 }
 
 static int party_plus_user(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
@@ -538,6 +538,25 @@ static int party_unloadmod(partymember_t *p, const char *nick, user_t *u, const 
 	return BIND_RET_LOG;
 }
 
+static int party_binds(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	bind_table_t *table;
+	bind_entry_t *entry;
+	char flags[64];
+
+	partymember_printf(p, "%-16s %-16s %-16s %-10s %-5s %s", _("TABLE"), _("SYNTAX"),
+		 _("FUNCTION"), _("MASK"), _("FLAGS"), _("HITS"));
+	for (table = bind_table_list(); table; table = table->next) {
+		for (entry = table->entries; entry; entry = entry->next) {
+			flag_to_str(&entry->user_flags, flags);
+			partymember_printf(p, "%-16s %-16s %-16s %-10s %-5s %i", table->name, table->syntax,
+				entry->function_name, entry->mask, flags, entry->nhits);
+		}
+	}
+
+	return BIND_RET_LOG;
+}
+
 static bind_list_t core_party_binds[] = {
 	{NULL, "join", party_join},		/* DDD	*/
 	{NULL, "whisper", party_whisper},	/* DDD	*/
@@ -560,6 +579,7 @@ static bind_list_t core_party_binds[] = {
 	{"n", "modules", party_modules},	/* DDD	*/
 	{"n", "loadmod", party_loadmod},	/* DDD	*/
 	{"n", "unloadmod", party_unloadmod},	/* DDD	*/
+	{"n", "binds", party_binds},		/* DDD 	*/
 	{"m", "+host", party_plus_host},	/* DDC	*/
 	{"m", "-host", party_minus_host},	/* DDC	*/
 	{0}

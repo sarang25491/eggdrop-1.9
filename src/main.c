@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.169 2004/06/17 13:32:44 wingman Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.170 2004/06/19 18:07:01 wingman Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -76,8 +76,8 @@ static const char rcsid[] = "$Id: main.c,v 1.169 2004/06/17 13:32:44 wingman Exp
 #  define _POSIX_SOURCE 1 /* Solaris needs this */
 #endif
 
+int running = 1;	/* The most important variable ever!  */
 int backgrd = 1;	/* Run in the background? */
-int con_chan = 0;	/* Foreground: constantly display channel stats? */
 int make_userfile = 0;	/* Start bot in make-userfile mode? */
 
 const char *configfile = NULL;	/* Name of the config file */
@@ -210,7 +210,6 @@ static void do_args(int argc, char *const *argv)
 			{"version", 0, NULL, 'v'},
 			{"load-module", 1, NULL, 'p'},
 			{"foreground", 0, NULL, 'n'},
-			{"channel-stats", 0, NULL, 'c'},
 			{"terminal", 0, NULL, 't'},
 			{"make-userfile", 0, NULL, 'm'},
 			{NULL, 0, NULL, 0}
@@ -222,12 +221,7 @@ static void do_args(int argc, char *const *argv)
 			case 'n':
 				backgrd = 0;
 				break;
-			case 'c':
-				con_chan = 1;
-				partyline_terminal_mode = 0;
-				break;
 			case 't':
-				con_chan = 0;
 				partyline_terminal_mode = 1;
 				break;
 			case 'm':
@@ -420,8 +414,8 @@ int main(int argc, char **argv)
 	logfile_init();
 	if (core_config.userfile)
 		user_load(core_config.userfile);
-	core_party_init();
 	core_binds_init();
+	core_party_init();
 
 	if (make_userfile) {
 		user_t *owner;
@@ -552,9 +546,11 @@ int main(int argc, char **argv)
 
 	putlog(LOG_DEBUG, "*", "Entering main loop.");
 	
-	check_bind_init ();
+	core_init();
 	
-	while (1) {
+	putlog(LOG_DEBUG, "*", "Entering main loop.");
+
+	while (running) {
 		timer_update_now(&egg_timeval_now);
 		now = egg_timeval_now.sec;
 		random(); /* Woop, lets really jumble things */
@@ -565,5 +561,46 @@ int main(int argc, char **argv)
 		garbage_run();
 	}
 	
-	check_bind_shutdown ();
+	/* No work need to be done here ever since if we can only reach this
+  	 * if someone called core_shutdown. So do your shutdown work THERE! */
+
+	return 1;
+}
+
+int core_init()
+{
+	check_bind_init();
+
+	return 1;
+}
+
+int core_shutdown(int how, const char *nick, const char *reason)
+{
+	putlog(LOG_MISC, "*", "Shutdown requested by %s: %s", nick, (reason) ? reason : "No reason");
+
+	/* notify that we go down NOW */
+	check_bind_shutdown();
+
+	/* XXX: move this to users.c */
+	putlog(LOG_MISC, "*", _("Saving user file..."));
+	user_save(core_config.userfile);
+	
+	/* flush logs */
+	flushlogs();
+
+	/* remove pid file */
+	unlink(pid_file);
+
+	switch (how) {
+
+		case (SHUTDOWN_GRACEFULL):
+			running = 0;
+			break;
+
+		case (SHUTDOWN_HARD):
+			exit(0);
+			break;
+	}
+
+	return BIND_RET_LOG;
 }

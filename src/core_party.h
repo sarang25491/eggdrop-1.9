@@ -16,13 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: core_party.h,v 1.1 2004/06/15 11:24:46 wingman Exp $
+ * $Id: core_party.h,v 1.2 2004/06/19 18:07:01 wingman Exp $
  */
 
 #ifndef _EGG_CORE_PARTY_H
 #define _EGG_CORE_PARTY_H
 
-void	core_party_init			(void);
-int	core_party_terminal_mode	(void);
+void core_party_init (void);
+int core_party_terminal_mode (void);
 
 #endif /* !_EGG_MAIN_H */

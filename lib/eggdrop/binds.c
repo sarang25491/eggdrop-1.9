@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: binds.c,v 1.14 2004/06/17 13:32:43 wingman Exp $";
+static const char rcsid[] = "$Id: binds.c,v 1.15 2004/06/19 18:07:01 wingman Exp $";
 #endif
 
 #include <string.h>
@@ -34,6 +34,11 @@ static int bind_vcheck_hits (bind_table_t *table, flags_t *user_flags, const cha
 /* Garbage collection stuff. */
 static void bind_table_really_del(bind_table_t *table);
 static void bind_entry_really_del(bind_table_t *table, bind_entry_t *entry);
+
+bind_table_t *bind_table_list(void)
+{
+	return bind_table_list_head;
+}
 
 static int internal_bind_cleanup()
 {
