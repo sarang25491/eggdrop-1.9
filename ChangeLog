@@ -1,3 +1,21 @@
+2001-10-07 04:02  stdarg
+
+	* src/: botcmd.c, botnet.c, cmds.c, dccutil.c, tclhash.c,
+	tclhash.h, mod/modvals.h, mod/ctcp.mod/ctcp.c, mod/irc.mod/irc.c,
+	mod/irc.mod/irc.h, mod/server.mod/server.c,
+	mod/server.mod/server.h, mod/server.mod/servmsg.c:
+
+	Got rid of bind tables in the exported irc function table. They're
+	not used anywhere in the core or other normal modules. Other people
+	should use find_bind_table(), not #define's.  Got rid of H_* bind
+	tables in irc module. All are BT_* now.  Integrated the new bind
+	tables in with the normal bind/unbind command.  Made tcl callbacks
+	work with the normal data types (string, int, user (handle)).  Got
+	rid of old bind tables in server.mod Made ctcp.mod use the new bind
+	tables.  Wrote down most of the stuff I did so that ITE could see a
+	detailed report :) hehe (although I have a feeling I've left
+	something out) 
+
 2001-10-05 04:28  Jeff Fisher <guppy@techmonkeys.org>
 
 	* src/cmds.c:
