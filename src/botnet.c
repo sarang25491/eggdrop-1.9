@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.51 2002/01/22 01:17:16 ite Exp $
+ * $Id: botnet.c,v 1.52 2002/01/26 13:18:36 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -935,15 +935,17 @@ int botunlink(int idx, char *nick, char *reason)
 	bots = bots_in_subtree(bot);
 	users = users_in_subtree(bot);
 	if (reason && reason[0]) {
+	  /* FIXME PLURAL: handle this correctly with gettext */
 	  simple_sprintf(s, "%s %s (%s) (lost %d bot%s and %d user%s)",
 	  		 _("Unlinked from:"), dcc[i].nick, reason, bots,
-			 (bots > 1) ? "s" : "", users, (users > 1) ?
+			 (bots != 1) ? "s" : "", users, (users != 1) ?
 			 "s" : "");
 	  dprintf(i, "bye %s\n", reason);
 	} else {
+	  /* FIXME PLURAL: handle this correctly with gettext */
 	  simple_sprintf(s, "%s %s (lost %d bot%s and %d user%s)",
 	  		 _("Unlinked from:"), dcc[i].nick, bots, (bots > 1) ?
-			 "s" : "", users, (users > 1) ? "s" : "");
+			 "s" : "", users, (users != 1) ? "s" : "");
 	  dprintf(i, "bye No reason\n");
 	}
 	chatout("*** %s\n", s);

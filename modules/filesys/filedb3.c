@@ -4,7 +4,7 @@
  *
  * Rewritten by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: filedb3.c,v 1.2 2002/01/16 22:09:41 ite Exp $
+ * $Id: filedb3.c,v 1.3 2002/01/26 13:18:35 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1011,7 +1011,8 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
   else {
     filelist_sort(flist);
     filelist_idxshow(flist, idx);
-    dprintf(idx, "--- %d file%s.\n", cnt, cnt > 1 ? "s" : "");
+    /* FIXME PLURAL: handle this correctly with gettext */
+    dprintf(idx, "--- %d file%s.\n", cnt, cnt != 1 ? "s" : "");
   }
   filelist_free(flist);
 }

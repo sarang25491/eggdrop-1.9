@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.4 2002/01/22 21:45:01 wcc Exp $
+ * $Id: notes.c,v 1.5 2002/01/26 13:18:35 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -652,12 +652,13 @@ static void notes_del(char *hand, char *nick, char *sdl, int idx)
       else
 	dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, _("Erased all notes"));
     } else {
+      /* FIXME PLURAL: handle these correctly with gettext */
       if (idx >= 0)
 	dprintf(idx, "%s %d note%s; %d %s.\n", _("Erased"), er,
-		er > 1 ? "s" : "", in - 1 - er, _("left"));
+		(er != 1) ? "s" : "", in - 1 - er, _("left"));
       else
 	dprintf(DP_HELP, "NOTICE %s :%s %d note%s; %d %s.\n", nick, _("Erased"),
-		er, (er > 1) ? "s" : "", in - 1 - er, _("left"));
+		er, (er != 1) ? "s" : "", in - 1 - er, _("left"));
     }
   }
 }
