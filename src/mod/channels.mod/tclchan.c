@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.50 2001/08/13 19:12:29 guppy Exp $
+ * $Id: tclchan.c,v 1.51 2001/08/22 23:49:28 sup Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -526,6 +526,7 @@ static int tcl_newchanban STDVAR
       expire_time = now + (atoi(argv[5]) * 60);
   }
   if (u_addban(chan, ban, from, cmt, expire_time, sticky))
+    if (sticky || !channel_dynamicbans(chan))
     add_mode(chan, '+', 'b', ban);
   return TCL_OK;
 }
@@ -562,6 +563,7 @@ static int tcl_newban STDVAR
   u_addban(NULL, ban, from, cmt, expire_time, sticky);
   chan = chanset;
   while (chan != NULL) {
+    if (sticky || !channel_dynamicbans(chan))
     add_mode(chan, '+', 'b', ban);
     chan = chan->next;
   }
@@ -603,6 +605,7 @@ static int tcl_newchanexempt STDVAR
       expire_time = now + (atoi(argv[5]) * 60);
   }
   if (u_addexempt(chan, exempt, from, cmt, expire_time,sticky))
+    if (sticky || !channel_dynamicexempts(chan))
     add_mode(chan, '+', 'e', exempt);
   return TCL_OK;
 }
@@ -639,6 +642,7 @@ static int tcl_newexempt STDVAR
   u_addexempt(NULL,exempt, from, cmt, expire_time,sticky);
   chan = chanset;
   while (chan != NULL) {
+    if (sticky || !channel_dynamicexempts(chan))
     add_mode(chan, '+', 'e', exempt);
     chan = chan->next;
   }
@@ -680,6 +684,7 @@ static int tcl_newchaninvite STDVAR
       expire_time = now + (atoi(argv[5]) * 60);
   }
   if (u_addinvite(chan, invite, from, cmt, expire_time,sticky))
+    if (sticky || !channel_dynamicinvites(chan))
     add_mode(chan, '+', 'I', invite);
   return TCL_OK;
 }
@@ -716,6 +721,7 @@ static int tcl_newinvite STDVAR
   u_addinvite(NULL,invite, from, cmt, expire_time,sticky);
   chan = chanset;
   while (chan != NULL) {
+    if (sticky || !channel_dynamicinvites(chan))
      add_mode(chan, '+', 'I', invite);
      chan = chan->next;
   }
