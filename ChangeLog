@@ -1,3 +1,17 @@
+2003-04-19 06:53  stdarg <stdarg@techmonkeys.org>
+
+	* modules/tclscript/tclscript.c:
+
+	
+	* tcl: check for read-only status on linked vars 
+
+2003-04-19 06:31  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/users.c, modules/server/server.c,
+	modules/server/servsock.c:
+
+	[no log message] 
+
 2003-04-19 05:47  stdarg <stdarg@techmonkeys.org>
 
 	* config.xml:
