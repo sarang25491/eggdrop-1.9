@@ -1,7 +1,7 @@
 /*
  * tclhash.h
  *
- * $Id: tclhash.h,v 1.12 2001/08/26 03:52:32 stdarg Exp $
+ * $Id: tclhash.h,v 1.13 2001/09/20 19:50:19 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -90,6 +90,7 @@ typedef struct bind_table_b {
 	struct bind_table_b *next;
 	bind_chain_t *chains;
 	char *name;
+	char *syntax;
 	int flags;
 } bind_table_t;
 

@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.76 2001/08/21 00:21:17 ite Exp $
+ * $Id: main.c,v 1.77 2001/09/20 19:50:19 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -347,6 +347,7 @@ static void got_term(int z)
 {
   write_userfile(-1);
   check_tcl_event("sigterm");
+  check_event2("sigterm");
   if (die_on_sigterm) {
     botnet_send_chat(-1, botnetnick, "ACK, I've been terminated!");
     fatal("TERMINATE SIGNAL -- SIGNING OFF", 0);
@@ -358,6 +359,7 @@ static void got_term(int z)
 static void got_quit(int z)
 {
   check_tcl_event("sigquit");
+  check_event2("sigquit");
   putlog(LOG_MISC, "*", "RECEIVED QUIT SIGNAL (IGNORING)");
   return;
 }
@@ -366,6 +368,7 @@ static void got_hup(int z)
 {
   write_userfile(-1);
   check_tcl_event("sighup");
+  check_event2("sighup");
   if (die_on_sighup) {
     fatal("HANGUP SIGNAL -- SIGNING OFF", 0);
   } else
@@ -388,6 +391,7 @@ static void got_alarm(int z)
 static void got_ill(int z)
 {
   check_tcl_event("sigill");
+  check_event2("sigill");
 #ifdef DEBUG_CONTEXT
   putlog(LOG_MISC, "*", "* Context: %s/%d [%s]", cx_file[cx_ptr],
 	 cx_line[cx_ptr], (cx_note[cx_ptr][0]) ? cx_note[cx_ptr] : "");
@@ -619,21 +623,25 @@ static void core_hourly()
 static void event_rehash()
 {
   check_tcl_event("rehash");
+  check_event2("rehash");
 }
 
 static void event_prerehash()
 {
   check_tcl_event("prerehash");
+  check_event2("prerehash");
 }
 
 static void event_save()
 {
   check_tcl_event("save");
+  check_event2("save");
 }
 
 static void event_logfile()
 {
   check_tcl_event("logfile");
+  check_event2("logfile");
 }
 
 static void event_resettraffic()
@@ -658,6 +666,7 @@ static void event_resettraffic()
 static void event_loaded()
 {
   check_tcl_event("loaded");
+  check_event2("loaded");
 }
 
 void kill_tcl();
@@ -1036,7 +1045,8 @@ module, please consult the default config file for info.\n"));
 	char xx[256];
 
  	/* oops, I guess we should call this event before tcl is restarted */
-   	check_tcl_event("prerestart");
+	check_tcl_event("prerestart");
+	check_event2("prerestart");
 
 	while (f) {
 	  f = 0;

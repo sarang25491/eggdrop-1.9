@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.34 2001/08/26 03:52:32 stdarg Exp $
+ * $Id: tclhash.c,v 1.35 2001/09/20 19:50:19 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -40,7 +40,8 @@ extern int		 dcc_total;
 extern time_t		 now;
 
 /* New bind table list */
-bind_table_t *bind_table_list_head;
+bind_table_t *bind_table_list_head = NULL;
+bind_table_t *BT_event = NULL;
 
 p_tcl_bind_list		bind_table_list;
 p_tcl_bind_list		H_chat, H_act, H_bcst, H_chon, H_chof,
@@ -219,6 +220,16 @@ int expmem_tclhash(void)
 
 extern cmd_t C_dcc[];
 static int tcl_bind();
+static int tcl_bind2();
+static int tcl_unbind2();
+
+void init_bind2(void)
+{
+	bind_table_list_head = NULL;
+	Tcl_CreateCommand(interp, "bind2", tcl_bind2, NULL, NULL);
+	Tcl_CreateCommand(interp, "unbind2", tcl_unbind2, NULL, NULL);
+	BT_event = add_bind_table2("event", "s", 0);
+}
 
 void init_bind(void)
 {
@@ -270,18 +281,18 @@ void kill_bind(void)
   bind_table_list = NULL;
 }
 
-bind_table_t *add_bind_table2(const char *name, int flags)
+bind_table_t *add_bind_table2(const char *name, const char *syntax, int flags)
 {
 	bind_table_t *table;
 
 	for (table = bind_table_list_head; table; table = table->next) {
-		/* If it already exists, and isn't marked for deletion, return it. */
 		if (!strcmp(table->name, name)) return(table);
 	}
 	/* Nope, we have to create a new one. */
 	table = (bind_table_t *)nmalloc(sizeof(*table));
 	table->chains = NULL;
 	table->name = my_strdup(name);
+	table->syntax = my_strdup(syntax);
 	table->flags = flags;
 	table->next = bind_table_list_head;
 	bind_table_list_head = table;
@@ -396,15 +407,6 @@ tcl_bind_list_t *find_bind_table(const char *nme)
   return NULL;
 }
 
-static void dump_bind_tables2(Tcl_Interp *irp)
-{
-	bind_table_t *table;
-
-	for (table = bind_table_list_head; table; table = table->next) {
-		Tcl_AppendResult(irp, table->name, " ", NULL);
-	}
-}
-
 static void dump_bind_tables(Tcl_Interp *irp)
 {
   tcl_bind_list_t	*tl;
@@ -477,7 +479,7 @@ static int unbind_bind_entry(tcl_bind_list_t *tl, const char *flags,
   return 0;			/* No match.	*/
 }
 
-static int add_bind_entry(bind_table_t *table, const char *flags, const char *mask, const char *function_name, Function callback, void *client_data)
+static int add_bind_entry(bind_table_t *table, const char *flags, const char *mask, const char *function_name, int bind_flags, Function callback, void *client_data)
 {
 	bind_chain_t *chain;
 	bind_entry_t *entry, *prev;
@@ -514,13 +516,14 @@ static int add_bind_entry(bind_table_t *table, const char *flags, const char *ma
 	else {
 		entry = (bind_entry_t *)nmalloc(sizeof(*entry));
 		entry->next = chain->entries;
+		chain->entries = entry;
 	}
 
 	entry->function_name = my_strdup(function_name);
 	entry->callback = callback;
 	entry->client_data = client_data;
 	entry->hits = 0;
-	entry->bind_flags = 0;
+	entry->bind_flags = bind_flags;
 
 	entry->user_flags.match = FR_GLOBAL | FR_CHAN;
 	break_down_flags(flags, &(entry->user_flags), NULL);
@@ -615,6 +618,48 @@ static int tcl_getbinds(tcl_bind_list_t *tl_kind, const char *name)
     }
   }
   return TCL_OK;
+}
+
+/* Only needs to work for "event" right now */
+static int my_tcl_bind_callback(char *cmd, char *event)
+{
+	Tcl_VarEval(interp, cmd, " ", event, NULL);
+	return(0);
+}
+
+static int tcl_bind2 STDVAR
+{
+	bind_table_t *table;
+	char *cmd;
+
+	BADARGS(5, 5, " type flags cmd/mask procname");
+
+	table = find_bind_table2(argv[1]);
+	if (!table) {
+		Tcl_AppendResult(irp, "invalid table type", NULL);
+		return(TCL_ERROR);
+	}
+
+	/* We pass the callback cmd as our client data */
+	cmd = my_strdup(argv[4]);
+	add_bind_entry(table, argv[2], argv[3], argv[4], BIND_WANTS_CD, my_tcl_bind_callback, cmd);
+	Tcl_AppendResult(irp, "moooo", NULL);
+	return(TCL_OK);
+}
+
+static int tcl_unbind2 STDVAR
+{
+	bind_table_t *table;
+
+	BADARGS(5, 5, " type flags cmd/mask procname");
+	table = find_bind_table2(argv[1]);
+	if (!table) {
+		Tcl_AppendResult(irp, "invalid table type", NULL);
+		return(TCL_ERROR);
+	}
+	del_bind_entry(table, argv[2], argv[3], argv[4]);
+	Tcl_AppendResult(irp, "mooooo", NULL);
+	return(TCL_OK);
 }
 
 static int tcl_bind STDVAR
@@ -876,7 +921,7 @@ int check_bind(bind_table_t *table, const char *match, struct flag_record *flags
 			else cmp = egg_strncasecmp(match, chain->mask, len);
 		}
 		else if (match_type & MATCH_MASK) {
-			cmp = wild_match_per((unsigned char *)match, (unsigned char *)chain->mask);
+			cmp = !wild_match_per((unsigned char *)chain->mask, (unsigned char *)match);
 		}
 		else {
 			if (match_type & MATCH_CASE) cmp = strcmp(match, chain->mask);
@@ -912,8 +957,6 @@ int check_bind(bind_table_t *table, const char *match, struct flag_record *flags
 			}
 			if (entry->bind_flags & BIND_WANTS_CD) n_args--;
 			else al--;
-
-			/* Another break */
 		}
 	}
 	return(0);
@@ -1270,6 +1313,11 @@ void check_tcl_time(struct tm *tm)
   check_tcl_bind(H_time, y, 0,
 		 " $_time1 $_time2 $_time3 $_time4 $_time5",
 		 MATCH_MASK | BIND_STACKABLE);
+}
+
+void check_event2(const char *event)
+{
+	check_bind(BT_event, event, NULL, MATCH_MASK, 1, event);
 }
 
 void check_tcl_event(const char *event)

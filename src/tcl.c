@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.41 2001/08/19 02:36:23 drummer Exp $
+ * $Id: tcl.c,v 1.42 2001/09/20 19:50:19 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -618,6 +618,7 @@ resetPath:
 #endif
 
   /* Initialize binds and traces */
+  init_bind2();
   init_bind();
   init_traces();
 
