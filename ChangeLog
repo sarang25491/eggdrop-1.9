@@ -1,3 +1,12 @@
+2002-02-24 08:14  Jeff Fisher <guppy@techmonkeys.org>
+
+	* doc/UPDATES1.6, lib/eggdrop/module.h, modules/channels/tclchan.c,
+	modules/channels/userchan.c, modules/server/server.c,
+	modules/server/servmsg.c, src/botnet.c, src/dccutil.c,
+	src/modules.c, src/patch.h, src/users.c, text/motd:
+
+	sync'd 1.6 to 1.7 
+
 2002-02-23 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
