@@ -1,3 +1,9 @@
+2002-03-02 07:51  Jeff Fisher <guppy@techmonkeys.org>
+
+	* modules/irc/mode.c:
+
+	thanks eule for catching rfc_casecmp should be irccmp 
+
 2002-03-01 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
