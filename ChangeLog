@@ -1,3 +1,11 @@
+2002-05-09 03:34  stdarg <stdarg@techmonkeys.org>
+
+	* modules/tclscript/tclscript.c:
+
+	
+	* Don't bother with remaining arguments if there's a conversion
+	error.  
+
 2002-05-09 03:26  stdarg <stdarg@techmonkeys.org>
 
 	* modules/irc/: irc.c, scriptcmds.c, tclirc.c:
