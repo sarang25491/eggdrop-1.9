@@ -1,3 +1,9 @@
+2001-10-25 09:00  Automatic CVS Scripts
+
+	* po/eggdrop.pot:
+
+	Pots 
+
 2001-10-24 10:08  stdarg <stdarg@techmonkeys.org>
 
 	* src/: dcc.c, dns.c, egg_timer.c, logfile.c, script.c,
