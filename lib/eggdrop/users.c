@@ -15,7 +15,7 @@
 #include "base64.h"
 */
 
-static FILE *fp = NULL;
+//static FILE *fp = NULL;
 
 /* When we walk along irchost_cache_ht, we pass along this struct so the
  * function can keep track of modified entries. */
@@ -55,7 +55,7 @@ static int cache_user_del(user_t *u, const char *ircmask);
 
 int user_init()
 {
-	fp = fopen("users.log", "a");
+	//fp = fopen("users.log", "a");
 
 	/* Create hash tables. */
 	handle_ht = hash_table_create(NULL, NULL, USER_HASH_SIZE, HASH_TABLE_STRINGS);
@@ -289,10 +289,10 @@ user_t *user_lookup_by_handle(const char *handle)
 user_t *user_lookup_authed(const char *handle, const char *pass)
 {
 	user_t *u = user_lookup_by_handle(handle);
-	if (!u) fprintf(fp, "handle '%s' not found\n", handle);
+	//if (!u) fprintf(fp, "handle '%s' not found\n", handle);
 	if (!u) return(NULL);
 	if (user_check_pass(u, pass)) return(u);
-	fprintf(fp, "pass '%s' failed\n", pass);
+	//fprintf(fp, "pass '%s' failed\n", pass);
 	return(NULL);
 }
 
