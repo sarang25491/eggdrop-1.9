@@ -1,3 +1,13 @@
+2003-04-07 07:20  stdarg <stdarg@techmonkeys.org>
+
+	* doc/SCRIPTING-COMMANDS, modules/server/input.c,
+	modules/server/scriptcmds.c, modules/server/servsock.c,
+	src/telnet.c, testcode/client.c:
+
+	
+	* Renamed match_nick to irccmp 
+	* Added a default fake005 in case it's not set in the config file 
+
 2003-04-04 20:41  stdarg <stdarg@techmonkeys.org>
 
 	* doc/SCRIPTING-COMMANDS, modules/server/scriptcmds.c:
