@@ -24,32 +24,23 @@ int server_err(int idx, int err, void *client_data)
 	exit(0);
 }
 
-static sockbuf_event_t server_event = {
-	(Function) 4,
-	(Function) "server",
-	server_read,
-	NULL,
-	server_eof,
-	server_err
-};
-
 int server_connect(int idx, void *client_data)
 {
 	printf("Connected to server!\n");
-	sockbuf_set_handler(idx, server_event, NULL);
 	sslmode_on(idx, 0); /* 0 means client, 1 means server */
 	zipmode_on(idx);
 	linemode_on(idx);
 	return(0);
 }
 
-static sockbuf_event_t server_connecting_event = {
-	(Function) 4,
+static sockbuf_event_t server_event = {
+	(Function) 5,
 	(Function) "server",
+	server_read,
 	NULL,
-	server_connect,
-	NULL,
-	server_err
+	server_eof,
+	server_err,
+	server_connect
 };
 
 int stdin_read(int idx, sockbuf_iobuf_t *data, void *client_data)
@@ -102,7 +93,7 @@ main (int argc, char *argv[])
 	socket_set_nonblock(sock, 1);
 	socket_set_nonblock(0, 1);
 	server_idx = sockbuf_new(sock, SOCKBUF_CLIENT);
-	sockbuf_set_handler(server_idx, server_connecting_event, NULL);
+	sockbuf_set_handler(server_idx, server_event, NULL);
 	sslmode_init();
 
 	stdin_idx = sockbuf_new(0, 0);
