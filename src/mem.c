@@ -3,7 +3,7 @@
  *   memory allocation and deallocation
  *   keeping track of what memory is being used by whom
  *
- * $Id: mem.c,v 1.16 2001/08/13 20:47:52 guppy Exp $
+ * $Id: mem.c,v 1.17 2001/08/16 13:27:38 drummer Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -115,7 +115,7 @@ void tell_mem_status_dcc(int idx)
 void debug_mem_to_dcc(int idx)
 {
 #ifdef DEBUG_MEM
-#define MAX_MEM 12
+#define MAX_MEM 11
   unsigned long exp[MAX_MEM], use[MAX_MEM], l;
   int i, j;
   char fn[20], sofar[81];
