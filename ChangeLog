@@ -1,3 +1,9 @@
+2002-04-28 06:15  Federico Mennite <ite@techmonkeys.org>
+
+	* src/: tcl.c, tclmisc.c:
+
+	Got rid of tcl_loadmodule() in favour of script_loadmodule.  
+
 2002-04-28 05:58  Federico Mennite <ite@techmonkeys.org>
 
 	* eggdrop.complete.conf, eggdrop.simple.conf:
