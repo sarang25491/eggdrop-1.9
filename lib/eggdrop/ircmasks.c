@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: ircmasks.c,v 1.12 2005/03/03 21:40:33 lordares Exp $";
+static const char rcsid[] = "$Id: ircmasks.c,v 1.13 2005/03/05 18:14:17 lordares Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -120,7 +120,7 @@ char *ircmask_create_separate(int type, const char *nick, const char *user, cons
 	}
 */
 	if (type < 5) nick = "*";
-	if (type == 2 || type == 7) user = "*";
+	if (type == 2 || type == 4 || type == 7 || type == 9) user = "*";
 	else if (type == 1 || type == 3 || type == 6 || type == 8) {
 		while (*user && !isalnum(*user)) user++;
 		ustar[0] = '*';
