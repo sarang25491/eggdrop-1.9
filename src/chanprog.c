@@ -4,7 +4,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.38 2001/12/09 14:14:47 ite Exp $
+ * $Id: chanprog.c,v 1.39 2001/12/29 21:21:18 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -364,6 +364,11 @@ void chanprog()
   /* We should be safe now */
   call_hook(HOOK_REHASH);
   protect_readonly = 1;
+  if (!botnetnick[0]) {
+    strncpyz(botnetnick, origbotname, HANDLEN + 1);
+  }
+  if (!botnetnick[0])
+    fatal("I don't have a botnet nick!!\n", 0);
   if (!userfile[0])
     fatal(_("STARTING BOT IN USERFILE CREATION MODE.\n\
 Telnet to the bot and enter 'NEW' as your nickname."), 0);
@@ -377,7 +382,7 @@ Telnet to the bot and enter 'NEW' as your nickname."), 0);
     printf(_("\n\nSTARTING BOT IN USERFILE CREATION MODE.\n\
 Telnet to the bot and enter 'NEW' as your nickname.\n"));
     if (module_find("server", 0, 0))
-      printf(_("OR Go to IRC and:  /msg %s hello\n"), origbotname);
+      printf(_("OR Go to IRC and:  /msg %s hello\n"), botnetnick);
     printf(_("This will make the bot recognize you as the master.\n\n"));
   } else if (make_userfile) {
      make_userfile = 0;
@@ -389,11 +394,6 @@ Telnet to the bot and enter 'NEW' as your nickname.\n"));
   if (tempdir[0])
     if (tempdir[strlen(tempdir) - 1] != '/')
       strcat(tempdir, "/");
-  if (!botnetnick[0]) {
-    strncpyz(botnetnick, origbotname, HANDLEN + 1);
-  }
-  if (!botnetnick[0])
-    fatal(_("I don't have a botnet nick!!\n"), 0);
   /* Test tempdir: it's vital */
   {
     FILE *f;

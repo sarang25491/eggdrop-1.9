@@ -4,7 +4,7 @@
  *   signal handling
  *   command line arguments
  *
- * $Id: main.c,v 1.102 2001/12/26 05:03:02 tothwolf Exp $
+ * $Id: main.c,v 1.103 2001/12/29 21:21:18 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -601,7 +601,7 @@ module, please consult the default config file for info.\n"));
     kill(xx, SIGCHLD);		/* Meaningless kill to determine if pid
 				   is used */
     if (errno != ESRCH) {
-      printf(_("I detect %s already running from this directory.\n"), origbotname);
+      printf(_("I detect %s already running from this directory.\n"), botnetnick);
       printf(_("If this is incorrect, erase the %s\n"), pid_file);
       bg_send_quit(BG_ABORT);
       exit(1);
@@ -830,7 +830,7 @@ module, please consult the default config file for info.\n"));
 	    }
 	    if (ok) {
 	      strcpy(xx, p->name);
-	      if (module_unload(xx, origbotname) == NULL) {
+	      if (module_unload(xx, botnetnick) == NULL) {
 		f = 1;
 		break;
 	      }

@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.7 2001/12/20 00:42:21 stdarg Exp $
+ * $Id: servmsg.c,v 1.8 2001/12/29 21:21:17 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -334,7 +334,7 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
     /* Private msg */
     simple_sprintf(h, "*!*@%s", p);
     putlog(LOG_MISC, "*", _("Flood from @%s!  Placing on ignore!"), p);
-    addignore(h, origbotname, (which == FLOOD_CTCP) ? "CTCP flood" :
+    addignore(h, botnetnick, (which == FLOOD_CTCP) ? "CTCP flood" :
 	      "MSG/NOTICE flood", now + (60 * ignore_time));
   }
   return 0;

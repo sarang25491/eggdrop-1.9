@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.8 2001/12/29 21:13:26 guppy Exp $
+ * $Id: chan.c,v 1.9 2001/12/29 21:21:17 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -285,7 +285,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
       else
 	putlog(LOG_MISC | LOG_JOIN, chan->dname, _("NICK flood from @%s!  Banning."), p);
       strcpy(ftype + 4, " flood");
-      u_addban(chan, h, origbotname, ftype, now + (60 * ban_time), 0);
+      u_addban(chan, h, botnetnick, ftype, now + (60 * ban_time), 0);
       if (!channel_enforcebans(chan) && me_op(chan)) {
 	  char s[UHOSTLEN];
 	  for (m = chan->channel.member; m && m->nick[0]; m = m->next) {	  

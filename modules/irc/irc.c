@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.5 2001/12/10 02:50:55 guppy Exp $
+ * $Id: irc.c,v 1.6 2001/12/29 21:21:17 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -230,7 +230,7 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
     baduhost = strtok(NULL, "!");
     maskhost(baduhost, s1);
     simple_sprintf(s2, "(%s) %s", ct, reason);
-    u_addban(chan, s1, origbotname, s2, now + (60 * ban_time), 0);
+    u_addban(chan, s1, botnetnick, s2, now + (60 * ban_time), 0);
     if (!mevictim && me_op(chan)) {
       add_mode(chan, '+', 'b', s1);
       flush_mode(chan, QUICK);
