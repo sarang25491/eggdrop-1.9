@@ -1,3 +1,11 @@
+2002-08-12 01:16  stdarg <stdarg@techmonkeys.org>
+
+	* src/tclhash.c:
+
+	
+	* MATCH_PARTIAL bind tables (like dcc) were not being checked for
+	correct user flags.  
+
 2002-08-11 20:50  stdarg <stdarg@techmonkeys.org>
 
 	* testcode/: client.c, my_poll.c, sockbuf.c:
