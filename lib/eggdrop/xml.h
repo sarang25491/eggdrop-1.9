@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: xml.h,v 1.19 2004/09/26 09:42:09 stdarg Exp $
+ * $Id: xml.h,v 1.20 2004/09/29 15:38:39 stdarg Exp $
  */
 
 #ifndef _EGG_XML_H_
@@ -87,6 +87,8 @@ int xml_node_set_str(const char *str, xml_node_t *node, ...);
 int xml_node_get_int(int *value, xml_node_t *node, ...);
 int xml_node_int(xml_node_t *node, int def);
 int xml_node_set_int(int value, xml_node_t *node, ...);
+
+int xml_node_get_vars(xml_node_t *node, const char *fmt, ...);
 
 xml_node_t *xml_node_new(void);
 void xml_node_free(xml_node_t *node);

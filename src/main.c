@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.184 2004/09/26 09:42:09 stdarg Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.185 2004/09/29 15:38:39 stdarg Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -597,8 +597,13 @@ int core_init()
 	//help_load_by_module ("core");
 
 	/* Put the module directory in the ltdl search path. */
-	if (core_config.module_path)
-		module_add_dir(core_config.module_path);
+	if (core_config.module_path) module_add_dir(core_config.module_path);
+
+	/* Initialize help system. */
+	if (core_config.help_path) {
+		help_set_default_path(core_config.help_path);
+		/* Load all help files here... */
+	}
 
 	/* Scan the autoload section of config. */
 	config_root = config_get_root("eggdrop");
@@ -606,6 +611,8 @@ int core_init()
 		name = NULL;
 		config_get_str(&name, entry, NULL);
 		module_load(name);
+		/* For now we'll just load these help files... */
+		help_load_by_module(name);
 	}
 	for (i = 0; (entry = config_exists(config_root, "eggdrop", 0, "autoload", 0, "script", i, NULL)); i++) {
 		name = NULL;

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.40 2004/09/26 09:42:09 stdarg Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.41 2004/09/29 15:38:39 stdarg Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -42,8 +42,35 @@ static const char rcsid[] = "$Id: core_party.c,v 1.40 2004/09/26 09:42:09 stdarg
 #include "terminal.h"			/* TERMINAL_NICK				*/
 #include "main.h"			/* SHUTDOWN_*, core_shutdown, core_restart	*/
 
-/* from main.c */
-extern char pid_file[];
+static int party_help(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	help_summary_t *entry;
+	help_search_t *search;
+	int hits = 0;
+
+	if (!text || !*text) {
+		partymember_printf(p, "Syntax: help <command|variable|*search*>");
+		return(0);
+	}
+	/* First try to look up an exact match. */
+	entry = help_lookup_summary(text);
+	if (entry) {
+		partymember_printf(p, "Full help! (not done)\n");
+		return(0);
+	}
+
+	/* No, do a search. */
+	search = help_search_new(text);
+	while ((entry = help_search_result(search))) {
+		partymember_printf(p, "%s - %s", entry->syntax, entry->summary);
+		hits++;
+	}
+	if (hits == 0) {
+		partymember_printf(p, "No help was found! Try more wildcards...");
+	}
+	help_search_end(search);
+	return(0);
+}
 
 static int party_join(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
@@ -468,11 +495,6 @@ static int party_chattr(partymember_t *p, const char *nick, user_t *u, const cha
 	return(0);
 }
 
-static int party_help(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
-{
-	return 0;
-}
-
 static int party_addlog(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	putlog(LOG_MISC, "*", "%s: %s", nick, text);
@@ -763,6 +785,7 @@ static int party_match(partymember_t *p, const char *nick, user_t *u, const char
 }
 
 static bind_list_t core_party_binds[] = {		/* Old flags requirement */
+	{NULL, "help", party_help},
 	{NULL, "join", party_join},		/* DDD	*/
 	{NULL, "whisper", party_whisper},	/* DDD	*/
 	{NULL, "newpass", party_newpass},	/* DDC	*/ /* -|- */

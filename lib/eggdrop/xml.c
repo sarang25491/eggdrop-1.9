@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xml.c,v 1.20 2004/09/26 09:42:09 stdarg Exp $";
+static const char rcsid[] = "$Id: xml.c,v 1.21 2004/09/29 15:38:39 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -305,6 +305,35 @@ int xml_node_set_str(const char *str, xml_node_t *node, ...)
 
 	str_redup(&node->text, str);
 
+	return(0);
+}
+
+int xml_node_get_vars(xml_node_t *node, const char *fmt, ...)
+{
+	va_list args;
+	char *name, **strptr;
+	int *intptr;
+	xml_node_t **nodeptr;
+
+	va_start(args, fmt);
+	while (*fmt) {
+		name = va_arg(args, char *);
+		switch (*fmt) {
+			case 's':
+				strptr = va_arg(args, char **);
+				xml_node_get_str(strptr, node, name, 0, 0);
+				break;
+			case 'i':
+				intptr = va_arg(args, int *);
+				xml_node_get_int(intptr, node, name, 0, 0);
+				break;
+			case 'n':
+				nodeptr = va_arg(args, xml_node_t **);
+				*nodeptr = xml_node_path_lookup(node, name, 0, 0);
+				break;
+		}
+		fmt++;
+	}
 	return(0);
 }
 

@@ -1,0 +1,29 @@
+<helpfile>
+	<section>commands</section>
+	<help>
+		<name>+server</name>
+		<summary>add a new server to the server list</summary>
+		<args>
+			<arg>
+				<name>hostname</name>
+				<desc>the host (or ip address) of the new server</desc>
+			</arg>
+			<arg>
+				<name>port</name>
+				<optional>1</optional>
+				<desc>the port of the new server</desc>
+			</arg>
+			<arg>
+				<name>pass</name>
+				<optional>1</optional>
+				<desc>the password to use for the new server</desc>
+			</arg>
+		</args>
+		<desc>This command ...</desc>
+		<seealso>
+			<see>-server</see>
+			<see>servers</see>
+			<see>jump</see>
+		</seealso>
+	</help>
+</helpfile>
