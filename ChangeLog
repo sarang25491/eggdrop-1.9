@@ -1,3 +1,13 @@
+2002-01-23 22:18  Federico Mennite <ite@techmonkeys.org>
+
+	* lib/eggdrop/memutil.c, lib/eggdrop/memutil.h,
+	lib/eggdrop/module.h, src/chanprog.c, src/modules.c, src/proto.h:
+
+	* moved rmspace() from the core to libeggdrop 
+	* deleted a couple of prototypes missing the relative function
+	definition 
+	* strchr_unescape() was still exported 
+
 2002-01-23 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
