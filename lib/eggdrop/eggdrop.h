@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: eggdrop.h,v 1.12 2002/10/10 04:41:59 stdarg Exp $
+ * $Id: eggdrop.h,v 1.13 2002/10/11 09:00:34 stdarg Exp $
  */
 
 #ifndef _EGGDROP_H
@@ -44,6 +44,8 @@
 #include <eggdrop/throttle.h>
 #include <eggdrop/hash_table.h>
 #include <eggdrop/xml.h>
+#include <eggdrop/flags.h>
+#include <eggdrop/users.h>
 
 BEGIN_C_DECLS
 

@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tclscript.c,v 1.22 2002/10/10 04:41:59 stdarg Exp $";
+static const char rcsid[] = "$Id: tclscript.c,v 1.23 2002/10/11 09:00:35 stdarg Exp $";
 #endif
 
 #include "lib/eggdrop/module.h"
@@ -404,7 +404,7 @@ static Tcl_Obj *c_to_tcl_var(Tcl_Interp *myinterp, script_var_t *v)
 		case SCRIPT_USER: {
 			/* An eggdrop user record (struct userrec *). */
 			char *handle;
-			struct userrec *u = (struct userrec *)v->value;
+			user_t *u = v->value;;
 
 			if (u) handle = u->handle;
 			else handle = "*";
@@ -491,12 +491,12 @@ static int tcl_to_c_var(Tcl_Interp *myinterp, Tcl_Obj *obj, script_var_t *var, i
 			break;
 		}
 		case SCRIPT_USER: {
-			struct userrec *u;
+			user_t *u;
 			script_var_t handle;
 
 			/* Call ourselves recursively to get the handle as a string. */
 			tcl_to_c_var(myinterp, obj, &handle, SCRIPT_STRING);
-			u = get_user_by_handle(userlist, (char *)handle.value);
+			u = user_lookup_by_handle((char *)handle.value);
 			if (handle.type & SCRIPT_FREE) free(handle.value);
 			var->value = u;
 			if (!u) {

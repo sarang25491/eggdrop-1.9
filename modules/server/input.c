@@ -12,7 +12,7 @@
 #include "nicklist.h"
 
 /* 001: welcome to IRC */
-static int got001(char *from_nick, char *from_uhost, struct userrec *u, char *cmd, int nargs, char *args[])
+static int got001(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
 	current_server.registered = 1;
 
@@ -39,7 +39,7 @@ static int got001(char *from_nick, char *from_uhost, struct userrec *u, char *cm
 /* Got 442: not on channel
 	:server 442 nick #chan :You're not on that channel
  */
-static int got442(char *from_nick, char *from_uhost, struct userrec *u, char *cmd, int nargs, char *args[])
+static int got442(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
 	struct chanset_t *chan;
 	char *chname = args[1];
@@ -60,7 +60,7 @@ static int got442(char *from_nick, char *from_uhost, struct userrec *u, char *cm
   return 0;
 }
 
-static int check_ctcp_ctcr(int which, int to_channel, struct userrec *u, char *nick, char *uhost, char *dest, char *trailing)
+static int check_ctcp_ctcr(int which, int to_channel, user_t *u, char *nick, char *uhost, char *dest, char *trailing)
 {
 	char *cmd, *space, *logdest, *text, *ctcptype;
 	bind_table_t *table;
@@ -120,7 +120,7 @@ static int check_global_notice(char *from_nick, char *from_uhost, char *dest, ch
 /* Got a private (or public) message.
 	:nick!uhost PRIVMSG dest :msg
  */
-static int gotmsg(char *from_nick, char *from_uhost, struct userrec *u, char *cmd, int nargs, char *args[])
+static int gotmsg(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
 	char *dest, *trailing, *first, *space, *text;
 	struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
@@ -198,7 +198,7 @@ static int gotmsg(char *from_nick, char *from_uhost, struct userrec *u, char *cm
 /* Got a private notice.
 	:nick!uhost NOTICE dest :hello there
  */
-static int gotnotice(char *from_nick, char *from_uhost, struct userrec *u, char *cmd, int nargs, char *args[])
+static int gotnotice(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
 	char *dest, *trailing;
 	struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
@@ -246,7 +246,7 @@ static int gotnotice(char *from_nick, char *from_uhost, struct userrec *u, char 
 /* WALLOPS: oper's nuisance
 	:csd.bu.edu WALLOPS :Connect '*.uiuc.edu 6667' from Joshua
  */
-static int gotwall(char *from_nick, char *from_uhost, struct userrec *u, char *cmd, int nargs, char *args[])
+static int gotwall(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
 	char *msg;
 	int r;
@@ -264,7 +264,7 @@ static int gotwall(char *from_nick, char *from_uhost, struct userrec *u, char *c
 /* 432 : Bad nickname
  * If we're registered already, then just inform the user and keep the current
  * nick. Otherwise, generate a random nick so that we can get registered. */
-static int got432(char *from_nick, char *from_uhost, struct userrec *u, char *cmd, int nargs, char *args[])
+static int got432(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
 	char *badnick;
 
@@ -282,7 +282,7 @@ static int got432(char *from_nick, char *from_uhost, struct userrec *u, char *cm
 /* 433 : Nickname in use
  * Change nicks till we're acceptable or we give up
  */
-static int got433(char *from_nick, char *from_uhost, struct userrec *u, char *cmd, int nargs, char *args[])
+static int got433(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
 	char *badnick;
 
@@ -299,7 +299,7 @@ static int got433(char *from_nick, char *from_uhost, struct userrec *u, char *cm
 }
 
 /* 435 : Cannot change to a banned nickname. */
-static int got435(char *from_nick, char *from_uhost, struct userrec *u, char *cmd, int nargs, char *args[])
+static int got435(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
 	char *banned_nick, *chan;
 
@@ -310,7 +310,7 @@ static int got435(char *from_nick, char *from_uhost, struct userrec *u, char *cm
 }
 
 /* 437 : Nickname juped (IRCnet) */
-static int got437(char *from_nick, char *from_uhost, struct userrec *u, char *cmd, int nargs, char *args[])
+static int got437(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
 	char *chan;
 
@@ -326,13 +326,13 @@ static int got437(char *from_nick, char *from_uhost, struct userrec *u, char *cm
 }
 
 /* 438 : Nick change too fast */
-static int got438(char *from_nick, char *from_uhost, struct userrec *u, char *cmd, int nargs, char *args[])
+static int got438(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
 	putlog(LOG_MISC, "*", "%s", _("Nick change was too fast."));
 	return(0);
 }
 
-static int got451(char *from_nick, char *from_uhost, struct userrec *u, char *cmd, int nargs, char *args[])
+static int got451(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
   /* Usually if we get this then we really messed up somewhere
    * or this is a non-standard server, so we log it and kill the socket
@@ -344,7 +344,7 @@ static int got451(char *from_nick, char *from_uhost, struct userrec *u, char *cm
 }
 
 /* Got error */
-static int goterror(char *from_nick, char *from_uhost, struct userrec *u, char *cmd, int nargs, char *args[])
+static int goterror(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
   putlog(LOG_SERV | LOG_MSGS, "*", "-ERROR from server- %s", args[0]);
   putlog(LOG_SERV, "*", "Disconnecting from server.");
@@ -353,7 +353,7 @@ static int goterror(char *from_nick, char *from_uhost, struct userrec *u, char *
 }
 
 /* Got nick change.  */
-static int gotnick(char *from_nick, char *from_uhost, struct userrec *u, char *cmd, int nargs, char *args[])
+static int gotnick(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
 	char *newnick = args[0];
 
@@ -362,14 +362,14 @@ static int gotnick(char *from_nick, char *from_uhost, struct userrec *u, char *c
 }
 
 /* Pings are immediately returned, no queue. */
-static int gotping(char *from_nick, char *from_uhost, struct userrec *u, char *cmd, int nargs, char *args[])
+static int gotping(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
 	printserv(SERVER_NOQUEUE, "PONG :%s", args[0]);
 	return(0);
 }
 
 /* 311 : save our user@host from whois reply */
-static int got311(char *from_nick, char *from_uhost, struct userrec *u, char *cmd, int nargs, char *args[])
+static int got311(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
 	char *nick, *user, *host, *realname;
   
@@ -401,8 +401,8 @@ bind_list_t my_new_raw_binds[] = {
 	{"435", (Function) got435},
 	{"438", (Function) got438},
 	{"437",	(Function) got437},
-	{"451",	(Function) got451,},
-	{"442",	(Function) got442,},
-	{"311", (Function) got311,},
+	{"451",	(Function) got451},
+	{"442",	(Function) got442},
+	{"311", (Function) got311},
 	{NULL, NULL, NULL, NULL}
 };

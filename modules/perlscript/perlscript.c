@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: perlscript.c,v 1.22 2002/09/21 07:40:16 stdarg Exp $";
+static const char rcsid[] = "$Id: perlscript.c,v 1.23 2002/10/11 09:00:34 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -37,6 +37,8 @@ static const char rcsid[] = "$Id: perlscript.c,v 1.22 2002/09/21 07:40:16 stdarg
 #include "lib/egglib/mstack.h"
 #include "lib/egglib/msprintf.h"
 #include <eggdrop/eggdrop.h>
+#include <eggdrop/flags.h>
+#include <eggdrop/users.h>
 
 static PerlInterpreter *ginterp; /* Our global interpreter. */
 
@@ -67,8 +69,6 @@ typedef struct {
 } my_args_data_t;
 
 /* Functions from mod_iface.c */
-extern void *fake_get_user_by_handle(char *handle);
-extern char *fake_get_handle(void *user_record);
 extern int log_error(char *msg);
  
 static int my_load_script(void *ignore, char *fname)
@@ -364,8 +364,9 @@ static SV *c_to_perl_var(script_var_t *v)
 		case SCRIPT_USER: {
 			char *handle;
 			int str_len;
+			user_t *u = v->value;
 
-			handle = fake_get_handle(v->value);
+			handle = u->handle;
 
 			str_len = strlen(handle);
 			result = newSVpv(handle, str_len);
@@ -410,13 +411,13 @@ static int perl_to_c_var(SV *sv, script_var_t *var, int type)
 			break;
 		}
 		case SCRIPT_USER: { /* User. */
-			void *user_record;
+			user_t *u;
 			char *handle;
 
 			handle = SvPV(sv, len);
-			if (handle) user_record = fake_get_user_by_handle(handle);
-			else user_record = NULL;
-			var->value = user_record;
+			if (handle) u = user_lookup_by_handle(handle);
+			else u = NULL;
+			var->value = u;
 			break;
 		}
 		default:

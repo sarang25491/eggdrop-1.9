@@ -54,12 +54,12 @@ void server_binds_init()
 	bind_add_list("ctcp", ctcp_dcc_binds);
 }
 
-void check_tcl_notc(char *nick, char *uhost, struct userrec *u, char *dest, char *arg)
+void check_tcl_notc(char *nick, char *uhost, user_t *u, char *dest, char *arg)
 {
   bind_check(BT_notice, arg, nick, uhost, u, arg, dest);
 }
 
-static int check_tcl_ctcpr(char *nick, char *uhost, struct userrec *u,
+static int check_tcl_ctcpr(char *nick, char *uhost, user_t *u,
 			   char *dest, char *keyword, char *args,
 			   bind_table_t *table)
 {

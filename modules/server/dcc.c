@@ -613,7 +613,7 @@ static void got_chat(char *nick, char *uhost, user_t *u, char *text)
 	bind_check(BT_dcc_chat, nick, nick, uhost, u, type, ip, nport);
 }
 
-static void got_resume(char *nick, char *uhost, struct userrec *u, char *text)
+static void got_resume(char *nick, char *uhost, user_t *u, char *text)
 {
 	int port, pos, n;
 	dcc_send_t *send;
@@ -641,7 +641,7 @@ static void got_resume(char *nick, char *uhost, struct userrec *u, char *text)
 	}
 }
 
-static void got_accept(char *nick, char *uhost, struct userrec *u, char *text)
+static void got_accept(char *nick, char *uhost, user_t *u, char *text)
 {
 	int port, pos, n;
 	dcc_send_t *send;
@@ -708,7 +708,7 @@ static void got_send(char *nick, char *uhost, user_t *u, char *text)
 }
 
 /* PRIVMSG ((target) :^ADCC CHAT ((type) ((longip) ((port)^A */
-static int got_dcc(char *nick, char *uhost, struct userrec *u, char *dest, char *cmd, char *text)
+static int got_dcc(char *nick, char *uhost, user_t *u, char *dest, char *cmd, char *text)
 {
 	if (!strncasecmp(text, "chat ", 5)) {
 		got_chat(nick, uhost, u, text+5);

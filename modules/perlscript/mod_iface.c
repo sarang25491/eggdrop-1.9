@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: mod_iface.c,v 1.9 2002/10/10 04:41:59 stdarg Exp $";
+static const char rcsid[] = "$Id: mod_iface.c,v 1.10 2002/10/11 09:00:34 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -37,21 +37,6 @@ extern int perlscript_init();
 extern int perlscript_destroy();
 extern script_module_t my_script_interface;
 extern char *real_perl_cmd(char *text);
-
-/* A get_user_by_handle() command for perlscript.c */
-void *fake_get_user_by_handle(char *handle)
-{
-	return get_user_by_handle(userlist, handle);
-}
-
-/* Get the handle from a userrec, or "*" if it's NULL. */
-char *fake_get_handle(void *user_record)
-{
-	struct userrec *u = (struct userrec *)user_record;
-
-	if (u && u->handle) return(u->handle);
-	return("*");
-}
 
 /* Log an error message. */
 int log_error(char *msg)

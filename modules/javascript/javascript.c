@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: javascript.c,v 1.13 2002/10/10 04:41:59 stdarg Exp $";
+static const char rcsid[] = "$Id: javascript.c,v 1.14 2002/10/11 09:00:34 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -451,7 +451,7 @@ static int c_to_js_var(JSContext *cx, script_var_t *v, jsval *result)
 		case SCRIPT_USER: {
 			/* An eggdrop user record (struct userrec *). */
 			char *handle;
-			struct userrec *u = (struct userrec *)v->value;
+			user_t *u = v->value;
 
 			if (u) handle = u->handle;
 			else handle = "*";
@@ -534,11 +534,11 @@ static int js_to_c_var(JSContext *cx, JSObject *obj, jsval val, script_var_t *va
 			break;
 		}
 		case SCRIPT_USER: {
-			struct userrec *u;
+			user_t *u;
 			char *handle;
 
 			handle = JS_GetStringBytes(JS_ValueToString(cx, val));
-			u = get_user_by_handle(userlist, handle);
+			u = user_lookup_by_handle(handle);
 			var->value = u;
 			if (!u) {
 				JS_ReportError(cx, "User not found: %s", handle);

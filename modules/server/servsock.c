@@ -123,7 +123,7 @@ static int server_on_read(void *client_data, int idx, char *text, int len)
 	/* The components of any irc message. */
 	irc_msg_t msg;
 	char *from_nick = NULL, *from_uhost = NULL, *prefix = NULL;
-	struct userrec *u = NULL;
+	user_t *u = NULL;
 
 	if (!len) return(0);
 
@@ -139,7 +139,7 @@ static int server_on_read(void *client_data, int idx, char *text, int len)
 		from_nick = msg.prefix;
 		from_uhost = strchr(from_nick, '!');
 		if (from_uhost) {
-			u = get_user_by_host(from_nick);
+			u = user_lookup_by_irchost(from_nick);
 			*from_uhost = 0;
 			from_uhost++;
 		}

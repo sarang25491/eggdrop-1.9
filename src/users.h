@@ -22,7 +22,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: users.h,v 1.15 2002/09/20 21:41:49 stdarg Exp $
+ * $Id: users.h,v 1.16 2002/10/11 09:00:35 stdarg Exp $
  */
 
 #ifndef _EGG_USERS_H
@@ -164,8 +164,6 @@ struct userrec {
   struct chanuserrec *chanrec;
   struct user_entry *entries;
 };
-
-typedef struct userrec user_t;
 
 struct igrec {
   struct igrec *next;
