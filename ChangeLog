@@ -1,3 +1,9 @@
+2001-10-19 07:33  stdarg <stdarg@techmonkeys.org>
+
+	* src/modules.c:
+
+	del_hook() wasn't deleting the match_noterej hook correctly.  
+
 2001-10-19 06:01  Jeff Fisher <guppy@techmonkeys.org>
 
 	* eggdrop.complete.conf, doc/html/egg-core.html,
