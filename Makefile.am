@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.14 2003/03/07 11:30:33 tothwolf Exp $
+# $Id: Makefile.am,v 1.15 2003/03/07 12:58:23 tothwolf Exp $
 
 AUX_DIST		= $(ac_aux_dir)/install-sh \
 			$(ac_aux_dir)/ltmain.sh \
@@ -45,6 +45,6 @@ distclean-local:
 maintainer-clean-local:
 	-test -z "$(MAINTAINERCLEANLOCAL)" || rm -rf $(MAINTAINERCLEANLOCAL)
 
-$(OBJECTS): libtool
+LIBTOOL_DEPS = @LIBTOOL_DEPS@
 libtool: $(LIBTOOL_DEPS)
 	$(SHELL) ./config.status --recheck

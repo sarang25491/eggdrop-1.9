@@ -3,6 +3,10 @@ AC_INIT(src/egg.h)
 AC_PREREQ(2.52)
 AC_CONFIG_AUX_DIR(acconfig)
 AM_CONFIG_HEADER(config.h)
+
+# FIXME: make module Makefile list dynamic
+AC_CONFIG_FILES([Makefile doc/Makefile intl/Makefile lib/Makefile lib/compat/Makefile lib/eggdrop/Makefile lib/egglib/Makefile m4/Makefile modules/Makefile modules/blowfish/Makefile modules/javascript/Makefile modules/perlscript/Makefile modules/script/Makefile modules/server/Makefile modules/tclscript/Makefile nettype/Makefile.in po/Makefile.in scripts/Makefile src/Makefile])
+
 EGG_MSG_CONFIGURE_START
 AM_INIT_AUTOMAKE(eggdrop, 1.7.0)
 
@@ -24,7 +28,6 @@ AC_ISC_POSIX
 AC_MINIX
 
 # Checks for compiler characteristics
-AC_PROG_CC_STDC
 AC_C_BIGENDIAN
 AC_C_CONST
 AC_C_VOLATILE
@@ -169,7 +172,6 @@ AC_SUBST(ac_aux_dir)
 
 EGG_LTLIBOBJS
 
-# FIXME: module Makefile list will HOPEFULLY become dynamic
-AC_OUTPUT([Makefile doc/Makefile intl/Makefile lib/Makefile lib/compat/Makefile lib/eggdrop/Makefile lib/egglib/Makefile m4/Makefile modules/Makefile modules/blowfish/Makefile modules/javascript/Makefile modules/perlscript/Makefile modules/script/Makefile modules/server/Makefile modules/tclscript/Makefile po/Makefile.in scripts/Makefile nettype/Makefile src/Makefile])
+AC_OUTPUT
 
 EGG_MSG_CONFIGURE_END
