@@ -73,24 +73,23 @@ main (int argc, char *argv[])
 	}
 
 	printf("Connecting to %s %d\n", host, port);
-	sock = socket_create(host, port, NULL, 0, SOCKET_CLIENT);
+	sock = socket_create(host, port, NULL, 0, SOCKET_CLIENT | SOCKET_NONBLOCK);
 	if (sock < 0) {
 		perror("socket_create");
 		return(0);
 	}
-	socket_set_nonblock(sock, 1);
-	socket_set_nonblock(0, 1);
 	server_idx = sockbuf_new();
 	sockbuf_set_sock(server_idx, sock, SOCKBUF_CLIENT);
 	sockbuf_set_handler(server_idx, &server_event, NULL);
 	sslmode_init();
 
 	stdin_idx = sockbuf_new();
+	socket_set_nonblock(0, 1);
 	sockbuf_set_sock(stdin_idx, 0, 0);
 	sockbuf_set_handler(stdin_idx, &stdin_event, NULL);
 	linemode_on(stdin_idx);
 	while (1) {
-		sockbuf_update_all(-1);
+		sockbuf_update_all(1000);
 	}
 	return(0);
 }

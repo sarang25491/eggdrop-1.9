@@ -11,6 +11,7 @@
 	#include <sys/poll.h>
 #else
 	#include "my_poll.h"
+	#define poll my_poll
 #endif
 
 #include <errno.h>

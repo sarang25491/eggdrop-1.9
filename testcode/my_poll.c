@@ -3,7 +3,7 @@
 #include <sys/select.h>
 #include "my_poll.h"
 
-int poll(struct pollfd *pollfds, int npollfds, int timeout)
+int my_poll(struct pollfd *pollfds, int npollfds, int timeout)
 {
 	fd_set reads, writes, excepts;
 	int i, n;
