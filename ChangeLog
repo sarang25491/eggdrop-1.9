@@ -1,3 +1,11 @@
+2002-05-06 09:39  stdarg <stdarg@techmonkeys.org>
+
+	* modules/javascript/javascript.c:
+
+	
+	* It doesn't compile yet. Can somebody make a proper Makefile for it
+	though? I tried for a little while, but it's failing horribly. ITE? 
+
 2002-05-06 05:44  stdarg <stdarg@techmonkeys.org>
 
 	* lib/egglib/: regexp.c, regexp.h:
