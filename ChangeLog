@@ -1,3 +1,10 @@
+2002-05-04 16:17  Federico Mennite <ite@techmonkeys.org>
+
+	* configure.ac, acconfig/acinclude.m4, src/bg.c:
+
+	Preforking is now enbaled by default (not matter if Tcl is threaded
+	or not).  
+
 2002-05-04 14:14  Federico Mennite <ite@techmonkeys.org>
 
 	* acconfig/acinclude.m4:
