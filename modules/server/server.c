@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: server.c,v 1.31 2002/06/01 05:15:54 stdarg Exp $";
+static const char rcsid[] = "$Id: server.c,v 1.32 2002/06/02 08:52:19 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "server"
@@ -108,7 +108,7 @@ static void msgq_clear(struct msgq_head *qh);
 struct server_list *server_get_current();
 
 /* New bind tables. */
-static bind_table_t *BT_wall, *BT_new_raw, *BT_raw, *BT_notice, *BT_msg, *BT_msgm;
+static bind_table_t *BT_wall, *BT_new_raw, *BT_raw, *BT_notice, *BT_msg, *BT_msgm, *BT_pub, *BT_pubm;
 static bind_table_t *BT_flood, *BT_ctcr, *BT_ctcp;
 
 #include "servmsg.c"
@@ -1411,6 +1411,8 @@ static char *server_close()
   bind_table_del(BT_notice);
   bind_table_del(BT_msgm);
   bind_table_del(BT_msg);
+  bind_table_del(BT_pubm);
+  bind_table_del(BT_pub);
   bind_table_del(BT_flood);
   bind_table_del(BT_ctcr);
   bind_table_del(BT_ctcp);
@@ -1561,10 +1563,12 @@ char *start(eggdrop_t *eggdrop)
 	/* Create our own bind tables. */
 	BT_wall = bind_table_add("wall", 2, "ss", MATCH_MASK, BIND_STACKABLE);
 	BT_raw = bind_table_add("raw", 3, "sss", MATCH_MASK, BIND_STACKABLE);
-	BT_new_raw = bind_table_add("newraw", 5, "sssss", MATCH_MASK, BIND_STACKABLE);
+	BT_new_raw = bind_table_add("newraw", 6, "UsssiS", MATCH_MASK, BIND_STACKABLE);
 	BT_notice = bind_table_add("notice", 5, "ssUss", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
 	BT_msg = bind_table_add("msg", 4, "ssUs", 0, BIND_USE_ATTR);
 	BT_msgm = bind_table_add("msgm", 4, "ssUs", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
+	BT_pub = bind_table_add("pub", 5, "ssUss", 0, BIND_USE_ATTR);
+	BT_pubm = bind_table_add("pubm", 5, "ssUss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
 	BT_flood = bind_table_add("flood", 5, "ssUss", MATCH_MASK, BIND_STACKABLE);
 	BT_ctcr = bind_table_add("ctcr", 6, "ssUsss", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
 	BT_ctcp = bind_table_add("ctcp", 6, "ssUsss", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);

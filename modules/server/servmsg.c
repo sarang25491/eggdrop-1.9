@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: servmsg.c,v 1.19 2002/06/01 17:57:11 stdarg Exp $";
+static const char rcsid[] = "$Id: servmsg.c,v 1.20 2002/06/02 08:52:19 stdarg Exp $";
 #endif
 */
 
@@ -95,25 +95,6 @@ static int gotfake433(char *from)
   return 0;
 }
 
-/* Check for tcl-bound msg command, return 1 if found
- *
- * msg: proc-name <nick> <user@host> <handle> <args...>
- */
-static int check_tcl_msg(char *cmd, char *nick, char *uhost,
-			 struct userrec *u, char *args)
-{
-  struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
-  char *hand = u ? u->handle : "*";
-  int x;
-
-  get_user_flagrec(u, &fr, NULL);
-
-  x = check_bind(BT_msg, cmd, &fr, nick, uhost, u, args);
-  if (x & BIND_RET_LOG) putlog(LOG_CMDS, "*", "(%s!%s) !%s! %s %s", nick, uhost, hand, cmd, args);
-  if (x) return(1);
-  else return(0);
-}
-
 static void check_tcl_notc(char *nick, char *uhost, struct userrec *u,
 	       		   char *dest, char *arg)
 {
@@ -121,21 +102,6 @@ static void check_tcl_notc(char *nick, char *uhost, struct userrec *u,
 
   get_user_flagrec(u, &fr, NULL);
   check_bind(BT_notice, arg, &fr, nick, uhost, u, arg, dest);
-}
-
-static void check_tcl_msgm(char *nick, char *uhost, struct userrec *u, char *arg)
-{
-  struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
-
-/*
-  if (arg[0])
-    simple_sprintf(args, "%s %s", cmd, arg);
-  else
-    strcpy(args, cmd);
-*/
-
-  get_user_flagrec(u, &fr, NULL);
-  check_bind(BT_msgm, arg, &fr, nick, uhost, u, arg);
 }
 
 static int check_tcl_ctcpr(char *nick, char *uhost, struct userrec *u,
@@ -175,11 +141,11 @@ static int match_my_nick(char *nick)
 
 /* 001: welcome to IRC (use it to fix the server name)
  */
-static int got001(char *from_nick, char *from_uhost, char *cmd, char *middle, char *trailing)
+static int got001(struct userrec *u, char *from_nick, char *from_uhost, char *cmd, int nargs, char *args[])
 {
-	/* Ok... 'middle' is what server decided our nick is. */
+	/* Ok... first arg is what server decided our nick is. */
 	server_online = now;
-	str_redup(&botname, middle);
+	str_redup(&botname, args[0]);
 
 	check_bind_event("init-server");
 
@@ -204,29 +170,16 @@ static int got001(char *from_nick, char *from_uhost, char *cmd, char *middle, ch
 }
 
 /* Got 442: not on channel
+	:server 442 nick #chan :You're not on that channel
  */
-static int got442(char *from, char *ignore, char *msg)
+static int got442(struct userrec *u, char *from_nick, char *from_uhost, int nargs, char *args[], char *ignore, char *msg)
 {
-  char			*chname;
-  struct chanset_t	*chan;
-  struct server_list	*x;
-  int			 i;
+	struct chanset_t *chan;
+	char *chname = args[1];
 
-/* Erm, is there any point to this? Only the server can send numeric. */
-/*
-  for (x = serverlist, i = 0; x; x = x->next, i++)
-    if (i == curserv) {
-      if (strcasecmp(from, x->realname ? x->realname : x->name))
-	return 0;
-      break;
-    }
-*/
+	chan = findchan(chname);
 
-  newsplit(&msg);
-  chname = newsplit(&msg);
-  chan = findchan(chname);
-  if (chan)
-    if (!channel_inactive(chan)) {
+  if (chan && !channel_inactive(chan)) {
       module_entry	*me = module_find("channels", 0, 0);
 
       putlog(LOG_MISC, chname, _("Server says Im not on channel: %s"), chname);
@@ -235,7 +188,7 @@ static int got442(char *from, char *ignore, char *msg)
       chan->status &= ~CHAN_ACTIVE;
       dprintf(DP_MODE, "JOIN %s %s\n", chan->name,
 	      chan->channel.key[0] ? chan->channel.key : chan->key_prot);
-    }
+  }
 
   return 0;
 }
@@ -326,130 +279,125 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
   return 0;
 }
 
-/* Got a private message.
- */
-static int gotmsg(char *from, char *ignore, char *msg)
+static void handle_ctcp_ctcr(int which, int to_channel, struct userrec *u, char *nick, char *uhost, char *dest, char *text)
 {
-  char *to, buf[UHOSTLEN], *nick, *uhost, ctcpbuf[512], *ctcp, *p, *p1;
-  char *code;
-  struct userrec *u;
-  int ctcp_count = 0;
-  int ignoring;
+	struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+	char *cmd, *space, *logdest;
+	bind_table_t *table;
+	int r, flags;
 
-  if (msg[0] && ((strchr(CHANMETA, *msg) != NULL) ||
-     (*msg == '@')))           /* Notice to a channel, not handled here */
-    return 0;
-  ignoring = match_ignore(from);
-  to = newsplit(&msg);
-  fixcolon(msg);
-  strlcpy(buf, from, sizeof buf);
-  nick = strtok(buf, "!");
-  uhost = strtok(NULL, "!");
+	space = strchr(text, ' ');
+	if (!space) return;
 
-  /* Check for CTCP: */
-  ctcp_reply[0] = 0;
-  p = strchr(msg, 1);
-  while ((p != NULL) && (*p)) {
-    p++;
-    p1 = p;
-    while ((*p != 1) && (*p != 0))
-      p++;
-    if (*p == 1) {
-      *p = 0;
-      ctcp = strcpy(ctcpbuf, p1);
-      strcpy(p1 - 1, p + 1);
-      if (!ignoring)
-	detect_flood(nick, uhost, from,
-		     strncmp(ctcp, "ACTION ", 7) ? FLOOD_CTCP : FLOOD_PRIVMSG);
-      /* Respond to the first answer_ctcp */
-      p = strchr(msg, 1);
-      if (ctcp_count < answer_ctcp) {
-	ctcp_count++;
-	if (ctcp[0] != ' ') {
-	  code = newsplit(&ctcp);
-	  if ((to[0] == '$') || strchr(to, '.')) {
-	    if (!ignoring)
-	      /* Don't interpret */
-	      putlog(LOG_PUBLIC, to, "CTCP %s: %s from %s (%s) to %s",
-		     code, ctcp, nick, uhost, to);
-	  } else {
-	    u = get_user_by_host(from);
-	    if (!ignoring || trigger_on_ignore) {
-	      if (!check_tcl_ctcp(nick, uhost, u, to, code, ctcp) &&
-		  !ignoring) {
-		if (!strcasecmp(code, "DCC")) {
-		  /* If it gets this far unhandled, it means that
-		   * the user is totally unknown.
-		   */
-		  code = newsplit(&ctcp);
-		  if (!strcmp(code, "CHAT")) {
-		    if (!quiet_reject) {
-		      if (u)
-			dprintf(DP_HELP, "NOTICE %s :%s\n", nick,
-				"I'm not accepting call at the moment.");
-		      else
-			dprintf(DP_HELP, "NOTICE %s :%s\n",
-				nick, _("I dont accept DCC chats from strangers."));
-		    }
-		    putlog(LOG_MISC, "*", "%s: %s",
-			   _("Refused DCC chat (no access)"), from);
-		  } else
-		    putlog(LOG_MISC, "*", "Refused DCC %s: %s",
-			   code, from);
-		}
-	      }
-	      if (!strcmp(code, "ACTION")) {
-		putlog(LOG_MSGS, "*", "Action to %s: %s %s",
-		       to, nick, ctcp);
-	      } else {
-		putlog(LOG_MSGS, "*", "CTCP %s: %s from %s (%s)",
-		       code, ctcp, nick, uhost);
-	      }			/* I love a good close cascade ;) */
-	    }
-	  }
+	*space = 0;
+	cmd = text;
+	text = space+1;
+
+	if (which == 0) table = BT_ctcp;
+	else table = BT_ctcr;
+
+	get_user_flagrec(u, &fr, dest);
+
+	r = check_bind(table, cmd, &fr, nick, uhost, u, dest, cmd, text);
+
+	if (r & BIND_RET_BREAK) return;
+
+	if (which == 1) return;
+
+	/* This should probably go in the partyline module later. */
+	if (to_channel) {
+		flags = LOG_PUBLIC;
+		logdest = dest;
 	}
-      }
-    }
-  }
-  /* Send out possible ctcp responses */
-  if (ctcp_reply[0]) {
-    if (ctcp_mode != 2) {
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, ctcp_reply);
-    } else {
-      if (now - last_ctcp > flud_ctcp_time) {
-	dprintf(DP_HELP, "NOTICE %s :%s\n", nick, ctcp_reply);
-	count_ctcp = 1;
-      } else if (count_ctcp < flud_ctcp_thr) {
-	dprintf(DP_HELP, "NOTICE %s :%s\n", nick, ctcp_reply);
-	count_ctcp++;
-      }
-      last_ctcp = now;
-    }
-  }
-  if (msg[0]) {
-    if ((to[0] == '$') || (strchr(to, '.') != NULL)) {
-      /* Msg from oper */
-      if (!ignoring) {
-	detect_flood(nick, uhost, from, FLOOD_PRIVMSG);
-	/* Do not interpret as command */
-	putlog(LOG_MSGS | LOG_SERV, "*", "[%s!%s to %s] %s",
-	       nick, uhost, to, msg);
-      }
-    } else {
-      char *code;
-      struct userrec *u;
+	else {
+		flags = LOG_MSGS;
+		logdest = "*";
+	}
+	if (!strcasecmp(cmd, "ACTION")) putlog(flags, logdest, "Action: %s %s", nick, text);
+	else putlog(flags, logdest, "CTCP %s: %s from %s (%s)", cmd, text, nick, dest);
+}
 
-      detect_flood(nick, uhost, from, FLOOD_PRIVMSG);
-      u = get_user_by_host(from);
-      if (!ignoring || trigger_on_ignore) check_tcl_msgm(nick, uhost, u, msg);
-      code = newsplit(&msg);
-      rmspace(msg);
-      if (!ignoring)
-	if (!check_tcl_msg(code, nick, uhost, u, msg))
-	  putlog(LOG_MSGS, "*", "[%s] %s %s", from, code, msg);
-    }
-  }
-  return 0;
+/* Got a private (or public) message.
+	:nick!uhost PRIVMSG dest :msg
+ */
+static int gotmsg(struct userrec *u, char *from_nick, char *from_uhost, char *cmd, int nargs, char *args[])
+{
+	char *dest, *space, *first, *trailing, *text;
+	struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+	int len;	/* Length of message. */
+	int to_channel;	/* Is it going to a channel? */
+	int r;	/* Return value of check_bind() */
+
+	dest = args[0];
+	trailing = args[1];
+
+	/* If it's a global message from an oper, just log it. */
+	if (*dest == '$') {
+		putlog(LOG_MSGS | LOG_SERV, "*", "[%s!%s to %s] %s", from_nick, from_uhost, dest, trailing);
+		return(0);
+	}
+
+	if ((*dest == '@' || *dest == '+') && strchr(CHANMETA, *(dest+1))) {
+		to_channel = 1;
+		dest++;
+	}
+	else to_channel = 0;
+
+	/* Check if it's a ctcp. */
+	len = strlen(trailing);
+	if ((len > 1) && (trailing[0] == 1) && (trailing[len-1] == 1)) {
+		/* Yes it is. */
+		trailing[len-1] = 0;
+		handle_ctcp_ctcr(0, to_channel, u, from_nick, from_uhost, dest, trailing+1);
+		trailing[len-1] = 1;
+		return(0);
+	}
+
+	/* If it's a message, it goes to msg/msgm or pub/pubm. */
+	/* Get the first word so we can do msg or pub. */
+	first = trailing;
+	space = strchr(trailing, ' ');
+	if (space) {
+		*space = 0;
+		text = space+1;
+	}
+	else text = "";
+
+	get_user_flagrec(u, &fr, dest);
+	if (to_channel) {
+		r = check_bind(BT_pub, first, &fr, from_nick, from_uhost, u, dest, text);
+		if (r & BIND_RET_LOG) {
+			putlog(LOG_CMDS, dest, "<<%s>> !%s! %s %s", from_nick, u ? u->handle : "*", first, text);
+		}
+	}
+	else {
+		r = check_bind(BT_msg, first, &fr, from_nick, from_uhost, u, text);
+		if (r & BIND_RET_LOG) {
+			putlog(LOG_CMDS, "*", "(%s!%s) !%s! %s %s", from_nick, from_uhost, u ? u->handle : "*", first, text);
+		}
+	}
+
+	if (r & BIND_RET_BREAK) return(BIND_RET_BREAK);
+
+	/* And now the stackable version. */
+	if (space) *space = ' ';
+	if (to_channel) {
+		r = check_bind(BT_pubm, trailing, &fr, from_nick, from_uhost, u, dest, trailing);
+	}
+	else {
+		r = check_bind(BT_msg, trailing, &fr, from_nick, from_uhost, u, trailing);
+	}
+
+	if (r & BIND_RET_BREAK) return(BIND_RET_BREAK);
+
+	/* This should probably go in the partyline module later. */
+	if (to_channel) {
+		putlog(LOG_PUBLIC, dest, "<%s> %s", from_nick, trailing);
+	}
+	else {
+		putlog(LOG_MSGS, "*", "[%s] %s", from_nick, trailing);
+	}
+	return(0);
 }
 
 /* Got a private notice.
@@ -881,12 +829,29 @@ static struct dcc_table SERVER_SOCKET =
   NULL
 };
 
+static void add_arg(int *nargs, char ***args, char *static_args[], char *arg)
+{
+	if (*nargs >= 10) {
+		if (*nargs == 10) {
+			*args = (char **)malloc(sizeof(char *) * 11);
+			memcpy(*args, static_args, sizeof(char *) * 10);
+		}
+		else *args = (char **)realloc(*args, sizeof(char *) * (*nargs+1));
+	}
+	(*args)[*nargs] = arg;
+	(*nargs)++;
+}
+
 static void server_activity(int idx, char *msg, int len)
 {
 	/* The components of any irc message. */
-	char *prefix, *cmd = "", *middle = "", *trailing = "";
-	char *from_nick, *from_uhost;
+	char *prefix = NULL, *cmd = NULL;
+	char *space;
+	char *from_nick = NULL, *from_uhost = NULL;
+	char *static_args[10], **args = static_args;
 	char *remainder;
+	int nargs = 0;
+	struct userrec *u = NULL;
 
 	if (trying_server) {
 		strcpy(dcc[idx].nick, "(server)");
@@ -897,6 +862,8 @@ static void server_activity(int idx, char *msg, int len)
 	waiting_for_awake = 0;
 
 	if (!len) return;
+
+	remainder = strdup("");
 
 	/* This would be a good place to put an SFILT bind, so that scripts
 		and other modules can modify text sent from the server. */
@@ -912,7 +879,6 @@ static void server_activity(int idx, char *msg, int len)
 		*msg = 0;
 		msg++;
 	}
-	else prefix = "";
 
 	cmd = msg;
 	msg = strchr(msg, ' ');
@@ -920,37 +886,39 @@ static void server_activity(int idx, char *msg, int len)
 	*msg = 0;
 	msg++;
 
-	/* Next comes the 'middle' or args to the command. */
-	if (*msg == ':') {
-		trailing = msg;
-		goto done_parsing;
+	/* Save the remainder to call the old binds (temporary). */
+	str_redup(&remainder, msg);
+
+	/* Next comes the args to the command. */
+	while ((*msg != ':') && (space = strchr(msg, ' '))) {
+		add_arg(&nargs, &args, static_args, msg);
+		*space = 0;
+		msg = space+1;
 	}
-	else {
-		middle = msg;
-		msg = strchr(msg, ':');
-		if (!msg) goto done_parsing;
-		if (*(msg-1) == ' ') *(msg-1) = 0;
-		trailing = msg;
-	}
+
+	if (*msg == ':') add_arg(&nargs, &args, static_args, msg+1);
 
 done_parsing:
 
-	from_nick = prefix;
-	from_uhost = strchr(prefix, '!');
-	if (!from_uhost) from_uhost = "";
-	else {
-		*from_uhost = 0;
-		from_uhost++;
+	if (prefix) {
+		u = get_user_by_host(prefix);
+		from_nick = prefix;
+		from_uhost = strchr(prefix, '!');
+		if (from_uhost) {
+			*from_uhost = 0;
+			from_uhost++;
+		}
 	}
-	check_bind(BT_new_raw, cmd, NULL, from_nick, from_uhost, cmd, middle, trailing);
+
+	check_bind(BT_new_raw, cmd, NULL, u, from_nick, from_uhost, cmd, nargs, args);
+
+	if (args != static_args) free(args);
 
 	/* For now, let's emulate the old style. */
 
-	if (strlen(from_nick) && strlen(from_uhost)) prefix = msprintf("%s!%s", from_nick, from_uhost);
-	else prefix = strdup(from_nick);
-
-	if (strlen(middle) && strlen(trailing)) remainder = msprintf("%s %s", middle, trailing);
-	else remainder = msprintf("%s%s", middle, trailing);
+	if (from_nick && from_uhost) prefix = msprintf("%s!%s", from_nick, from_uhost);
+	else if (from_nick) prefix = strdup(from_nick);
+	else prefix = strdup("");
 
 	check_bind(BT_raw, cmd, NULL, prefix, cmd, remainder);
 	free(prefix);
@@ -1023,13 +991,13 @@ static int got311(char *from, char *ignore, char *msg)
 }
 
 static cmd_t my_new_raw_binds[] = {
-	{"001",	"",	(Function) got001,		NULL},
+	{"001", "", (Function) got001, NULL},
+	{"PRIVMSG", "", (Function) gotmsg, NULL},
 	{0}
 };
 
 static cmd_t my_raw_binds[] =
 {
-  {"PRIVMSG",	"",	(Function) gotmsg,		NULL},
   {"NOTICE",	"",	(Function) gotnotice,		NULL},
   {"MODE",	"",	(Function) gotmode,		NULL},
   {"PING",	"",	(Function) gotping,		NULL},

@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: irc.c,v 1.21 2002/05/26 02:49:29 stdarg Exp $";
+static const char rcsid[] = "$Id: irc.c,v 1.22 2002/06/02 08:52:18 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "irc"
@@ -42,7 +42,7 @@ static const char rcsid[] = "$Id: irc.c,v 1.21 2002/05/26 02:49:29 stdarg Exp $"
 static bind_table_t *BT_ctcp, *BT_ctcr;
 
 /* We also create a few. */
-static bind_table_t *BT_topic, *BT_split, *BT_rejoin, *BT_quit, *BT_join, *BT_part, *BT_kick, *BT_nick, *BT_mode, *BT_need, *BT_pub, *BT_pubm;
+static bind_table_t *BT_topic, *BT_split, *BT_rejoin, *BT_quit, *BT_join, *BT_part, *BT_kick, *BT_nick, *BT_mode, *BT_need;
 
 static eggdrop_t *egg = NULL;
 static Function *channels_funcs = NULL, *server_funcs = NULL;
@@ -708,44 +708,6 @@ static void check_tcl_kickmode(char *nick, char *uhost, struct userrec *u,
   check_bind(table, args, &fr, nick, uhost, u, chname, dest, reason);
 }
 
-static int check_tcl_pub(char *nick, char *from, char *chname, char *msg)
-{
-  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
-  int x;
-  char *cmd, *text, host[161];
-  struct userrec *u;
-
-  text = msg;
-  cmd = newsplit(&text);
-  simple_sprintf(host, "%s!%s", nick, from);
-  u = get_user_by_host(host);
-  get_user_flagrec(u, &fr, chname);
-
-  x = check_bind(BT_pub, cmd, &fr, nick, from, u, chname, text);
-
-  if (x & BIND_RET_LOG) {
-    putlog(LOG_CMDS, chname, "<<%s>> !%s! %s %s", nick, u ? u->handle : "*", cmd, text);
-  }
-  /* This should work.. undoes the "newsplit" */
-  if (text > cmd) *(text-1) = ' ';
-  if (x & BIND_RET_BREAK) return(1);
-  return(0);
-}
-
-static void check_tcl_pubm(char *nick, char *from, char *chname, char *msg)
-{
-  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
-  char buf[1024], host[161];
-  struct userrec *u;
-
-  simple_sprintf(buf, "%s %s", chname, msg);
-  simple_sprintf(host, "%s!%s", nick, from);
-  u = get_user_by_host(host);
-  get_user_flagrec(u, &fr, chname);
-
-  check_bind(BT_pubm, buf, &fr, nick, from, u, chname, msg);
-}
-
 static void check_tcl_need(char *chname, char *type)
 {
   char buf[1024];
@@ -876,8 +838,6 @@ static char *irc_close()
   bind_table_del(BT_mode);
   bind_table_del(BT_kick);
   bind_table_del(BT_join);
-  bind_table_del(BT_pubm);
-  bind_table_del(BT_pub);
   bind_table_del(BT_need);
   rem_tcl_ints(myints);
 
@@ -972,8 +932,6 @@ char *start(eggdrop_t *eggdrop)
   BT_mode = bind_table_add("mode", 6, "ssUsss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
   BT_kick = bind_table_add("kick", 6, "ssUsss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
   BT_need = bind_table_add("need", 2, "ss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
-  BT_pub = bind_table_add("pub", 5, "ssUss", 0, BIND_USE_ATTR);
-  BT_pubm = bind_table_add("pubm", 5, "ssUss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
 
   script_create_commands(irc_script_cmds);
   add_help_reference("irc.help");

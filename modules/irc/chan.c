@@ -28,7 +28,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: chan.c,v 1.21 2002/05/05 16:40:35 tothwolf Exp $";
+static const char rcsid[] = "$Id: chan.c,v 1.22 2002/06/02 08:52:18 stdarg Exp $";
 #endif
 */
 
@@ -2050,118 +2050,6 @@ static int gotquit(char *from, char *ignore, char *msg)
   return 0;
 }
 
-/* Got a private message.
- */
-static int gotmsg(char *from, char *ignore, char *msg)
-{
-  char buf[UHOSTLEN], *nick, *uhost, *to, *realto, buf2[512], *p, *p1;
-  char *code, *ctcp;
-  int ctcp_count = 0;
-  struct chanset_t *chan;
-  int ignoring;
-  struct userrec *u;
-
-  if (!strchr("&#!+@$", msg[0]))
-    return 0;
-  ignoring = match_ignore(from);
-  to = newsplit(&msg);
-  realto = (to[0] == '@') ? to + 1 : to;
-  chan = findchan(realto);
-  if (!chan)
-    return 0;			/* Private msg to an unknown channel?? */
-  fixcolon(msg);
-  strlcpy(buf, from, sizeof buf);
-  nick = strtok(buf, "!");
-  uhost = strtok(NULL, "!");
-
-  /* Check for CTCP: */
-  ctcp_reply[0] = 0;
-  p = strchr(msg, 1);
-  while (p && *p) {
-    p++;
-    p1 = p;
-    while ((*p != 1) && *p)
-      p++;
-    if (*p == 1) {
-      *p = 0;
-      ctcp = buf2;
-      strcpy(ctcp, p1);
-      strcpy(p1 - 1, p + 1);
-      detect_chan_flood(nick, uhost, from, chan,
-			strncmp(ctcp, "ACTION ", 7) ?
-			FLOOD_CTCP : FLOOD_PRIVMSG, NULL);
-      chan = findchan(realto);
-      if (!chan)
-	return 0;
-      /* Respond to the first answer_ctcp */
-      p = strchr(msg, 1);
-      if (ctcp_count < answer_ctcp) {
-	ctcp_count++;
-	if (ctcp[0] != ' ') {
-	  code = newsplit(&ctcp);
-	  u = get_user_by_host(from);
-	  if (!ignoring || trigger_on_ignore) {
-	    if (!check_tcl_ctcp(nick, uhost, u, to, code, ctcp)) {
-	      chan = findchan(realto); 
-	      if (!chan)
-		return 0;
-	      update_idle(chan->dname, nick);
-	    }
-	    if (!ignoring) {
-	      /* Log DCC, it's to a channel damnit! */
-	      if (!strcmp(code, "ACTION")) {
-		putlog(LOG_PUBLIC, chan->dname, "Action: %s %s", nick, ctcp);
-	      } else {
-		putlog(LOG_PUBLIC, chan->dname,
-		       "CTCP %s: %s from %s (%s) to %s", code, ctcp, nick,
-		       from, to);
-	      }
-	    }
-	  }
-	}
-      }
-    }
-  }
-  /* Send out possible ctcp responses */
-  if (ctcp_reply[0]) {
-    if (ctcp_mode != 2) {
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, ctcp_reply);
-    } else {
-      if (now - last_ctcp > flud_ctcp_time) {
-	dprintf(DP_HELP, "NOTICE %s :%s\n", nick, ctcp_reply);
-	count_ctcp = 1;
-      } else if (count_ctcp < flud_ctcp_thr) {
-	dprintf(DP_HELP, "NOTICE %s :%s\n", nick, ctcp_reply);
-	count_ctcp++;
-      }
-      last_ctcp = now;
-    }
-  }
-  if (msg[0]) {
-    /* Check even if we're ignoring the host. (modified by Eule 17.7.99) */
-    detect_chan_flood(nick, uhost, from, chan, FLOOD_PRIVMSG, NULL);
-    chan = findchan(realto);
-    if (!chan)
-      return 0;
-    if (!ignoring || trigger_on_ignore) {
-      if (check_tcl_pub(nick, uhost, chan->dname, msg))
-	return 0;
-      check_tcl_pubm(nick, uhost, chan->dname, msg);
-      chan = findchan(realto);
-      if (!chan)
-	return 0;
-    }
-    if (!ignoring) {
-      if (to[0] == '@')
-	putlog(LOG_PUBLIC, chan->dname, "@<%s> %s", nick, msg);
-      else
-	putlog(LOG_PUBLIC, chan->dname, "<%s> %s", nick, msg);
-    }
-    update_idle(chan->dname, nick);
-  }
-  return 0;
-}
-
 /* Got a private notice.
  */
 static int gotnotice(char *from, char *ignore, char *msg)
@@ -2263,7 +2151,6 @@ static cmd_t irc_raw[] =
   {"KICK",	"",	(Function) gotkick,	"irc:kick"},
   {"NICK",	"",	(Function) gotnick,	"irc:nick"},
   {"QUIT",	"",	(Function) gotquit,	"irc:quit"},
-  {"PRIVMSG",	"",	(Function) gotmsg,	"irc:msg"},
   {"NOTICE",	"",	(Function) gotnotice,	"irc:notice"},
   {"MODE",	"",	(Function) gotmode,	"irc:mode"},
   {"346",	"",	(Function) got346,	"irc:346"},
