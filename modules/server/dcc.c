@@ -13,6 +13,8 @@
 
 #include "dcc.h"
 
+#define now egg_timeval_now.sec
+
 typedef struct dcc_listen {
 	int serv, client;
 	int timer_id, timeout;
@@ -93,6 +95,23 @@ static sockbuf_filter_t dcc_recv_filter = {
 	NULL, dcc_recv_delete
 };
 
+static char *myip = NULL;
+static unsigned int mylongip = 0;
+
+static int dcc_dns_callback(void *client_data, const char *host, const char *ip)
+{
+	if (ip) str_redup(&myip, ip);
+	else str_redup(&myip, "127.0.0.1");
+	socket_ip_to_uint(myip, &mylongip);
+	return(0);
+}
+
+int dcc_dns_set(const char *host)
+{
+	egg_dns_lookup(host, 0, dcc_dns_callback, NULL);
+	return(0);
+}
+
 static dcc_listen_t *dcc_listen(int timeout)
 {
 	dcc_listen_t *listen;
@@ -128,7 +147,7 @@ static dcc_listen_t *dcc_listen(int timeout)
 int dcc_start_chat(const char *nick, int timeout)
 {
 	dcc_listen_t *listen;
-	int idx, longip;
+	int idx;
 
 	/* Create a listening idx to accept the chat connection. */
 	listen = dcc_listen(timeout);
@@ -140,8 +159,7 @@ int dcc_start_chat(const char *nick, int timeout)
 	sockbuf_attach_filter(idx, &dcc_chat_filter, (void *)listen->serv);
 	listen->client = idx;
 
-	longip = htonl(getmyip());
-	printserv(SERVER_NORMAL, "PRIVMSG %s :%cDCC CHAT chat %u %d%c", nick, 1, longip, listen->port, 1);
+	printserv(SERVER_NORMAL, "PRIVMSG %s :%cDCC CHAT chat %u %d%c", nick, 1, mylongip, listen->port, 1);
 	return(idx);
 }
 
@@ -221,7 +239,7 @@ int dcc_start_send(const char *nick, const char *fname, int timeout)
 {
 	dcc_listen_t *listen;
 	dcc_send_t *send;
-	int idx, longip, size, fd;
+	int idx, size, fd;
 	char *quote, *slash;
 
 	fd = open(fname, O_RDONLY);
@@ -261,8 +279,7 @@ int dcc_start_send(const char *nick, const char *fname, int timeout)
 	if (strchr(fname, ' ')) quote = "\"";
 	else quote = "";
 
-	longip = htonl(getmyip());
-	printserv(SERVER_NORMAL, "PRIVMSG %s :%cDCC SEND %s%s%s %u %d %d%c", nick, 1, quote, fname, quote, longip, listen->port, size, 1);
+	printserv(SERVER_NORMAL, "PRIVMSG %s :%cDCC SEND %s%s%s %u %d %d%c", nick, 1, quote, fname, quote, mylongip, listen->port, size, 1);
 	return(idx);
 }
 
@@ -657,7 +674,6 @@ static void got_accept(char *nick, char *uhost, user_t *u, char *text)
 
 static void got_send(char *nick, char *uhost, user_t *u, char *text)
 {
-	struct flag_record fr = {FR_GLOBAL, 0, 0, 0, 0, 0};
 	char *space, *fname, ip[256];
 	int port, size, n;
 

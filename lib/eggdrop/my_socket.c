@@ -258,3 +258,12 @@ int socket_valid_ip(const char *ip)
 #endif
 	return(0);
 }
+
+int socket_ip_to_uint(const char *ip, unsigned int *longip)
+{
+	struct in_addr addr;
+
+	inet_pton(AF_INET, ip, &addr);
+	*longip = htonl(addr.s_addr);
+	return(0);
+}

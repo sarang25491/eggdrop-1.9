@@ -123,7 +123,6 @@ static int server_on_connect(void *client_data, int idx, const char *peer_ip, in
 
 static int server_on_read(void *client_data, int idx, char *text, int len)
 {
-	/* The components of any irc message. */
 	irc_msg_t msg;
 	char *from_nick = NULL, *from_uhost = NULL;
 	user_t *u = NULL;
@@ -132,7 +131,7 @@ static int server_on_read(void *client_data, int idx, char *text, int len)
 
 	/* This would be a good place to put an SFILT bind, so that scripts
 		and other modules can modify text sent from the server. */
-	if (raw_log) {
+	if (server_config.raw_log) {
 		putlog(LOG_RAW, "*", "[@] %s", text);
 	}
 

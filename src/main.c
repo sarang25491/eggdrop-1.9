@@ -30,7 +30,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.139 2003/02/25 06:52:19 stdarg Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.140 2003/02/25 10:28:22 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -51,11 +51,8 @@ static const char rcsid[] = "$Id: main.c,v 1.139 2003/02/25 06:52:19 stdarg Exp 
 #include <signal.h>
 #include <netdb.h>
 #include <setjmp.h>
-#include "users.h"			/* check_expired_ignores, 
-					   get_user_by_handle		*/
 #include "chanprog.h"			/* tell_verbose_status, 
 					   chanprog, rehash		*/
-#include "userrec.h"			/* write_userfile, count_users	*/
 #include <locale.h>
 
 #ifdef STOP_UAC				/* osf/1 complains a lot */
@@ -73,11 +70,6 @@ static const char rcsid[] = "$Id: main.c,v 1.139 2003/02/25 06:52:19 stdarg Exp 
 #include "logfile.h"
 #include "misc.h"
 #include "traffic.h"
-#include "dccutil.h"			/* dprintf_eggdrop, new_dcc, 
-					   dcc_chatter, dcc_remove_lost,
-					   lostdcc			*/
-
-#include "lib/adns/adns.h"
 
 #ifdef CYGWIN_HACKS
 #include <windows.h>
@@ -88,12 +80,9 @@ static const char rcsid[] = "$Id: main.c,v 1.139 2003/02/25 06:52:19 stdarg Exp 
 #define _POSIX_SOURCE 1
 #endif
 
-extern char userfile[], myname[];
-extern int dcc_total, conmask, cache_hit, cache_miss;
+extern int conmask;
 extern struct dcc_t *dcc;
 extern struct userrec *userlist;
-extern struct chanset_t	*chanset;
-extern jmp_buf alarmret;
 
 #ifndef MAKING_MODS
 extern struct dcc_table DCC_CHAT;
@@ -186,7 +175,6 @@ static void got_fpe(int z)
 
 static void got_term(int z)
 {
-  write_userfile(-1);
   check_bind_event("sigterm");
   if (die_on_sigterm) {
     fatal("TERMINATE SIGNAL -- SIGNING OFF", 0);
@@ -204,7 +192,6 @@ static void got_quit(int z)
 
 static void got_hup(int z)
 {
-  write_userfile(-1);
   check_bind_event("sighup");
   if (die_on_sighup) {
     fatal("HANGUP SIGNAL -- SIGNING OFF", 0);
@@ -212,15 +199,6 @@ static void got_hup(int z)
     putlog(LOG_MISC, "*", "Received HUP signal: rehashing...");
   do_restart = -2;
   return;
-}
-
-/* A call to resolver (gethostbyname, etc) timed out
- */
-static void got_alarm(int z)
-{
-  longjmp(alarmret, 1);
-
-  /* -Never reached- */
 }
 
 /* Got ILL signal
@@ -346,15 +324,6 @@ static int core_secondly()
 
   call_hook(HOOK_SECONDLY);	/* Will be removed later */
   cnt++;
-  if (cnt >= 10) {		/* Every 10 seconds */
-    cnt = 0;
-    if (con_chan && !backgrd) {
-      dprintf(DP_STDOUT, "\033[2J\033[1;1H");
-      //tell_verbose_status(DP_STDOUT);
-      do_module_report(DP_STDOUT, 0, "server");
-      do_module_report(DP_STDOUT, 0, "channels");
-    }
-  }
   memcpy(&nowtm, localtime(&now), sizeof(struct tm));
   if (nowtm.tm_min != lastmin) {
     int i = 0;
@@ -362,7 +331,6 @@ static int core_secondly()
     /* Once a minute */
     lastmin = (lastmin + 1) % 60;
     call_hook(HOOK_MINUTELY);
-    check_expired_ignores();
     /* In case for some reason more than 1 min has passed: */
     while (nowtm.tm_min != lastmin) {
       /* Timer drift, dammit */
@@ -398,7 +366,6 @@ static void core_minutely()
 
 static void core_hourly()
 {
-  write_userfile(-1);
 }
 
 static void event_rehash()
@@ -428,11 +395,9 @@ static void event_loaded()
 
 extern module_entry *module_list;
 
-int init_userent(), init_net();
 void core_party_init();
 void core_config_init();
 void telnet_init();
-void dns_init();
 void binds_init();
 
 void patch(const char *str)
@@ -457,6 +422,27 @@ static inline void garbage_collect(void)
     run_cnt++;
 }
 */
+
+int owner_check(const char *handle)
+{
+	int len;
+	char *powner;
+
+	len = strlen(handle);
+	if (!len) return(-1);
+
+	powner = core_config.owner;
+	while (powner) {
+		while (*powner && !isalnum(*powner)) powner++;
+		if (!*powner) break;
+		if (!strncasecmp(powner, handle, len)) {
+			powner += len;
+			if (!*powner || isalnum(*powner)) return(0);
+		}
+		while (*powner && isalnum(*powner)) powner++;
+	}
+	return(-1);
+}
 
 int main(int argc, char **argv)
 {
@@ -533,13 +519,10 @@ int main(int argc, char **argv)
   sigaction(SIGPIPE, &sv, NULL);
   sv.sa_handler = got_ill;
   sigaction(SIGILL, &sv, NULL);
-  sv.sa_handler = got_alarm;
-  sigaction(SIGALRM, &sv, NULL);
 
   /* Initialize variables and stuff */
   timer_update_now(&egg_timeval_now);
   now = egg_timeval_now.sec;
-  chanset = NULL;
   memcpy(&nowtm, localtime(&now), sizeof(struct tm));
   lastmin = nowtm.tm_min;
   srandom(now % (getpid() + getppid()));
@@ -565,11 +548,8 @@ int main(int argc, char **argv)
   core_party_init();
   telnet_init();
   modules_init();
-  dns_init();
   egg_net_init();
   core_binds_init();
-  init_userent();
-  traffic_init();
 
   if (backgrd)
     bg_prepare_split();
@@ -592,8 +572,6 @@ int main(int argc, char **argv)
 	}
 
 
-  cache_miss = 0;
-  cache_hit = 0;
 
   if (!pid_file[0])
     snprintf(pid_file, sizeof pid_file, "pid.%s", core_config.botname);
@@ -659,9 +637,6 @@ int main(int argc, char **argv)
   }
 
   online_since = now;
-  add_help_reference("cmds1.help");
-  add_help_reference("cmds2.help");
-  add_help_reference("core.help");
   howlong.sec = 1;
   howlong.usec = 0;
   timer_create_repeater(&howlong, core_secondly);
@@ -672,7 +647,6 @@ int main(int argc, char **argv)
   add_hook(HOOK_REHASH, (Function) event_rehash);
   add_hook(HOOK_PRE_REHASH, (Function) event_prerehash);
   add_hook(HOOK_USERFILE, (Function) event_save);
-  add_hook(HOOK_BACKUP, (Function) backup_userfile);
   add_hook(HOOK_DAILY, (Function) event_logfile);
   add_hook(HOOK_LOADED, (Function) event_loaded);
 

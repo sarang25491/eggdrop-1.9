@@ -129,6 +129,10 @@ static config_var_t server_config_vars[] = {
 
 	{"chantypes", &server_config.chantypes, CONFIG_STRING},
 	{"strcmp", &server_config.strcmp, CONFIG_STRING},
+
+	{"raw_log", &server_config.raw_log, CONFIG_INT},
+
+	{"ip_lookup", &server_config.ip_lookup, CONFIG_INT},
 	{0}
 };
 

@@ -16,6 +16,10 @@ typedef struct {
 	char *realname;
 	char *chantypes;
 	char *strcmp;
+
+	int raw_log;
+
+	int ip_lookup;	/* 0 - normal, 1 - server */
 } server_config_t;
 
 /* All the stuff we need to know about the currently connected server. */

@@ -26,7 +26,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: blowfish.c,v 1.8 2003/02/15 05:04:57 wcc Exp $";
+static const char rcsid[] = "$Id: blowfish.c,v 1.9 2003/02/25 10:28:21 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "encryption"
@@ -130,26 +130,12 @@ static void blowfish_decipher(u_32int_t * xl, u_32int_t * xr)
 
 static void blowfish_report(int idx, int details)
 {
-  int i, tot = 0;
-
-  if (details) {
-    for (i = 0; i < BOXES; i++)
-      if (box[i].P != NULL)
-	tot++;
-    dprintf(idx, _("    Blowfish encryption module:\n"));
-    dprintf(idx, _("    %d of %d boxes in use:"), tot, BOXES);
-    for (i = 0; i < BOXES; i++)
-      if (box[i].P != NULL) {
-	dprintf(idx, _(" (age: %d)"), now - box[i].lastuse);
-      }
-    dprintf(idx, "\n");
-  }
 }
 
 static void blowfish_init(u_8bit_t * key, int keybytes)
 {
   int i, j, bx;
-  time_t lowest;
+  time_t lowest = 0;
   u_32int_t data;
   u_32int_t datal;
   u_32int_t datar;
@@ -167,7 +153,7 @@ static void blowfish_init(u_8bit_t * key, int keybytes)
       if ((box[i].keybytes == keybytes) &&
 	  (!strncmp((char *) (box[i].key), (char *) key, keybytes))) {
 	/* Match! */
-	box[i].lastuse = now;
+	box[i].lastuse = egg_timeval_now.sec;
 	bf_P = box[i].P;
 	bf_S = box[i].S;
 	return;
@@ -184,7 +170,7 @@ static void blowfish_init(u_8bit_t * key, int keybytes)
   }
   if (bx < 0) {
     /* Find oldest */
-    lowest = now;
+    lowest = egg_timeval_now.sec;
     for (i = 0; i < BOXES; i++)
       if (box[i].lastuse <= lowest) {
 	lowest = box[i].lastuse;
@@ -206,7 +192,7 @@ static void blowfish_init(u_8bit_t * key, int keybytes)
   box[bx].keybytes = keybytes;
   strncpy(box[bx].key, key, keybytes);
   box[bx].key[keybytes] = 0;
-  box[bx].lastuse = now;
+  box[bx].lastuse = egg_timeval_now.sec;
   /* Robey: Reset blowfish boxes to initial state
    * (I guess normally it just keeps scrambling them, but here it's
    * important to get the same encrypted result each time)

@@ -1,5 +1,11 @@
 <eggdrop>
-	<botname>eggdrop</botname>
+	<botname>
+		eggdrop
+		<help>The identity of the bot as seen by users.</help>
+	</botname>
+	<owner>
+		<help>The owner of the bot gets special privileges and protection. You can specify multiple owners using a comma separated list, e.g. "owner1, owner2, owner3".</help>
+	</owner>
 	<userfile>users.xml</userfile>
 	<telnet_vhost />
 	<telnet_port>3141</telnet_port>

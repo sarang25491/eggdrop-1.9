@@ -7,9 +7,9 @@
 #include "core_config.h"
 #include "modules.h" 			/* add_hook() 			*/
 #include "logfile.h"			/* prototypes			*/
-#include "dccutil.h"			/* dprintf_eggdrop		*/
 #include "chanprog.h"	/* logmodes */
 #include <eggdrop/eggdrop.h>
+#include <stdio.h>
 
 typedef struct log_b {
 	struct log_b *next;
@@ -27,13 +27,6 @@ extern int term_z;
 extern int backgrd;
 extern int con_chan;
 extern time_t now;
-
-extern int dcc_total;
-extern struct dcc_t *dcc;
-
-#ifndef MAKING_MODS
-extern struct dcc_table DCC_CHAT;
-#endif /* MAKING_MODS   */
 
 static log_t *log_list_head = NULL; /* Linked list of logfiles. */
 
@@ -153,7 +146,7 @@ char *logfile_add(char *modes, char *chan, char *fname)
 	log->filename = strdup(fname);
 	log->chname = strdup(chan);
 	log->last_msg = strdup("");
-	log->mask = logmodes(modes);
+	log->mask = LOG_ALL;
 	log->fp = fp;
 
 	log->next = log_list_head;
@@ -218,14 +211,10 @@ static int on_putlog(int flags, const char *chan, const char *text, int len)
 		fprintf(log->fp, "%s%s\n", timestamp, text);
 	}
 
-  for (i = 0; i < dcc_total; i++)
-    if ((dcc[i].type == &DCC_CHAT)) {
-	dprintf(i, "%s%s\n", timestamp, text);
-    }
   if ((!backgrd) && (!con_chan) && (!term_z))
-    dprintf(DP_STDOUT, "%s%s\n", timestamp, text);
+    printf("%s%s\n", timestamp, text);
   else if (use_stderr) {
-    dprintf(DP_STDERR, "%s%s\n", timestamp, text);
+    fprintf(stderr, "%s%s\n", timestamp, text);
   }
 
   return(0);

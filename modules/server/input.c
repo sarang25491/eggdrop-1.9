@@ -2,6 +2,7 @@
  * servmsg.c --
  */
 
+#include <eggdrop/eggdrop.h>
 #include "lib/eggdrop/module.h"
 #include "server.h"
 #include "channels.h"
@@ -10,6 +11,7 @@
 #include "binds.h"
 #include "servsock.h"
 #include "nicklist.h"
+#include "dcc.h"
 
 /* 001: welcome to IRC */
 static int got001(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
@@ -59,30 +61,6 @@ static int got005(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 		}
 	}
 	return(0);
-}
-
-/* Got 442: not on channel
-	:server 442 nick #chan :You're not on that channel
- */
-static int got442(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
-{
-	struct chanset_t *chan;
-	char *chname = args[1];
-
-	chan = findchan(chname);
-
-  if (chan && !channel_inactive(chan)) {
-      module_entry	*me = module_find("channels", 0, 0);
-
-      putlog(LOG_MISC, chname, _("Server says Im not on channel: %s"), chname);
-      if (me && me->funcs)
-	(me->funcs[CHANNEL_CLEAR])(chan, 1);
-      chan->status &= ~CHAN_ACTIVE;
-      printserv(SERVER_MODE, "JOIN %s %s", chan->name,
-	      chan->channel.key[0] ? chan->channel.key : chan->key_prot);
-  }
-
-  return 0;
 }
 
 static int check_ctcp_ctcr(int which, int to_channel, user_t *u, char *nick, char *uhost, char *dest, char *trailing)
@@ -137,7 +115,7 @@ static int check_ctcp_ctcr(int which, int to_channel, user_t *u, char *nick, cha
 static int check_global_notice(char *from_nick, char *from_uhost, char *dest, char *trailing)
 {
 	if (*dest == '$') {
-		putlog("ms", "*", "[%s!%s to %s] %s", from_nick, from_uhost, dest, trailing);
+		putlog(LOG_MSGS|LOG_SERV, "*", "[%s!%s to %s] %s", from_nick, from_uhost, dest, trailing);
 		return(1);
 	}
 	return(0);
@@ -149,7 +127,6 @@ static int check_global_notice(char *from_nick, char *from_uhost, char *dest, ch
 static int gotmsg(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
 	char *dest, *trailing, *first, *space, *text;
-	struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 	int to_channel;	/* Is it going to a channel? */
 	int r;
 
@@ -225,7 +202,6 @@ static int gotmsg(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 static int gotnotice(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
 	char *dest, *trailing;
-	struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 	int r, to_channel;
 
 	dest = args[0];
@@ -356,13 +332,13 @@ static int got438(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 
 static int got451(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
-  /* Usually if we get this then we really messed up somewhere
-   * or this is a non-standard server, so we log it and kill the socket
-   * hoping the next server will work :) -poptix
-   */
-  putlog(LOG_MISC, "*", _("%s says I'm not registered, trying next one."), from_nick);
-  kill_server("The server says we are not registered yet.");
-  return 0;
+	/* Usually if we get this then we really messed up somewhere
+	* or this is a non-standard server, so we log it and kill the socket
+	* hoping the next server will work :) -poptix
+	*/
+	putlog(LOG_MISC, "*", _("%s says I'm not registered, trying next one."), from_nick);
+	kill_server("The server says I'm not registered, trying next one.");
+	return 0;
 }
 
 /* Got error */
@@ -440,6 +416,10 @@ static int got311(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 		str_redup(&current_server.host, host);
 		str_redup(&current_server.real_name, realname);
 	}
+
+	/* If we're using server lookup to determine ip address, start that now. */
+	if (server_config.ip_lookup == 1) dcc_dns_set(host);
+
 	return(0);
 }
 
@@ -461,7 +441,6 @@ bind_list_t server_raw_binds[] = {
 	{"438", (Function) got438},
 	{"437",	(Function) got437},
 	{"451",	(Function) got451},
-	{"442",	(Function) got442},
 	{"311", (Function) got311},
 	{NULL, NULL}
 };

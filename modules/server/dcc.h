@@ -7,6 +7,7 @@
 #define DCC_SEND_CPS_TOTAL	3
 #define DCC_SEND_CPS_SNAPSHOT	4
 
+int dcc_dns_set(const char *host);
 int dcc_start_chat(const char *nick, int timeout);
 int dcc_start_send(const char *nick, const char *fname, int timeout);
 int dcc_send_info(int idx, int field, void *valueptr);

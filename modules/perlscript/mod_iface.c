@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: mod_iface.c,v 1.11 2003/01/02 21:33:15 wcc Exp $";
+static const char rcsid[] = "$Id: mod_iface.c,v 1.12 2003/02/25 10:28:22 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -46,21 +46,24 @@ int log_error(char *msg)
 }
 
 /* A stub for the .perl command. */
-static int dcc_cmd_perl(struct userrec *u, int idx, char *text)
+static int party_perl(int pid, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	char *retval;
 
 	/* You must be owner to use this command. */
-	if (!isowner(dcc[idx].nick)) return(0);
+	if (!u || owner_check(u->handle)) {
+		partyline_printf(pid, "Sorry, you must be a permanent owner to use this command.");
+		return(0);
+	}
 
 	retval = real_perl_cmd(text);
-	dprintf(idx, "%s", retval);
+	partyline_printf(pid, "%s", retval);
 	free(retval);
 	return(0);
 }
 
-static bind_list_t my_dcc_cmds[] = {
-	{"perl", (Function) dcc_cmd_perl},
+static bind_list_t my_party_cmds[] = {
+	{"perl", party_perl},
 	{0}
 };
 
@@ -90,13 +93,13 @@ char *perlscript_LTX_start(eggdrop_t *eggdrop)
 	script_register_module(&my_script_interface);
 	script_playback(&my_script_interface);
 
-	bind_add_list("dcc", my_dcc_cmds);
+	bind_add_list("party", my_party_cmds);
 	return(NULL);
 }
 
 static char *perlscript_close()
 {
-	bind_rem_list("dcc", my_dcc_cmds);
+	bind_rem_list("party", my_party_cmds);
 
 	/* Destroy interpreter. */
 	perlscript_destroy();

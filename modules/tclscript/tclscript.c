@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tclscript.c,v 1.27 2003/02/25 06:52:19 stdarg Exp $";
+static const char rcsid[] = "$Id: tclscript.c,v 1.28 2003/02/25 10:28:22 stdarg Exp $";
 #endif
 
 #include <tcl.h>
@@ -561,33 +561,11 @@ static int my_get_arg(void *ignore, script_args_t *args, int num, script_var_t *
 	return tcl_to_c_var(argdata->irp, argdata->objv[num+1], var, type);
 }
 
-/* Here we process the dcc console .tcl command. */
-static int cmd_tcl(struct userrec *u, int idx, char *text)
-{
-	char *str;
-
-	if (!isowner(dcc[idx].nick)) {
-		dprintf(idx, _("You must be a permanent owner (defined in the config file) to use this command.\n"));
-		return(BIND_RET_LOG);
-	}
-
-	if (Tcl_GlobalEval(ginterp, text) != TCL_OK) {
-		str = Tcl_GetVar(ginterp, "errorInfo", TCL_GLOBAL_ONLY);
-		if (!str) str = Tcl_GetStringResult(ginterp);
-		dprintf(idx, "Tcl error: %s\n", str);
-	}
-	else {
-		str = Tcl_GetStringResult(ginterp);
-		dprintf(idx, "Tcl: %s\n", str);
-	}
-	return(0);
-}
-
 static int party_tcl(int pid, char *nick, user_t *u, char *cmd, char *text)
 {
 	char *str;
 
-	if (!isowner(nick)) {
+	if (!u || owner_check(u->handle)) {
 		partyline_write(pid, _("You must be a permanent owner (defined in the config file) to use this command.\n"));
 		return(BIND_RET_LOG);
 	}
@@ -606,6 +584,7 @@ static int party_tcl(int pid, char *nick, user_t *u, char *cmd, char *text)
 
 static void tclscript_report(int idx, int details)
 {
+	/*
 	char script[512];
 	char *reported;
 
@@ -619,6 +598,7 @@ static void tclscript_report(int idx, int details)
 	Tcl_GlobalEval(ginterp, script);
 	reported = Tcl_GetStringResult(ginterp);
 	dprintf(idx, "%s\n", reported);
+	*/
 }
 
 static int hook_secondly()
@@ -626,11 +606,6 @@ static int hook_secondly()
 	Tcl_DoOneEvent(TCL_ALL_EVENTS | TCL_DONT_WAIT);
 	return(0);
 }
-
-static bind_list_t dcc_commands[] = {
-	{"tcl", (Function) cmd_tcl},
-	{0}
-};
 
 static bind_list_t party_commands[] = {
 	{"tcl", (Function) party_tcl},
@@ -665,7 +640,6 @@ char *tclscript_LTX_start(eggdrop_t *eggdrop)
 	script_register_module(&my_script_interface);
 	script_playback(&my_script_interface);
 
-	bind_add_list("dcc", dcc_commands);
 	bind_add_list("party", party_commands);
 
 	add_hook(HOOK_SECONDLY, hook_secondly);
@@ -676,7 +650,6 @@ static char *tclscript_close()
 {
 	Tcl_DeleteInterp(ginterp);
 
-	bind_rem_list("dcc", dcc_commands);
 	bind_rem_list("party", party_commands);
 
 	module_undepend("tclscript");

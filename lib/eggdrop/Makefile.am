@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.17 2003/02/17 10:22:30 stdarg Exp $
+# $Id: Makefile.am,v 1.18 2003/02/25 10:28:21 stdarg Exp $
 
 MAINTAINERCLEANFILES	= Makefile.in
 
@@ -37,6 +37,5 @@ libeggdrop_la_SOURCES	= base64.c base64.h \
 			xml.c xmlread.c xmlwrite.c xml.h
 
 libeggdrop_la_LIBADD	= $(top_builddir)/lib/compat/libcompat.la \
-		   	$(top_builddir)/lib/egglib/libegg.la \
-			$(top_builddir)/lib/adns/libadns.la
+		   	$(top_builddir)/lib/egglib/libegg.la
 

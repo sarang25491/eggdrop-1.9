@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.38 2003/02/25 06:52:19 stdarg Exp $
+# $Id: Makefile.am,v 1.39 2003/02/25 10:28:22 stdarg Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 bindir			= $(exec_prefix)
@@ -20,40 +20,18 @@ localedir		= $(datadir)/locale
 DEFS			= -DLOCALEDIR=\"\$(localedir)\" $(EGG_DEBUG) @DEFS@
 
 bin_PROGRAMS		= eggdrop
-eggdrop_SOURCES		= bg.c \
-			bg.h \
-			chan.h \
-			chanprog.c chanprog.h \
+eggdrop_SOURCES		= bg.c bg.h \
 			cmdt.h \
 			core_binds.c core_binds.h \
 			core_config.c core_config.h \
 			core_party.c \
-			dcc.c dcc.h \
-			dccutil.c dccutil.h \
 			debug.h \
-			dns.c dns.h \
 			egg.h \
-			flags.c \
-			flags.h \
 			logfile.c logfile.h \
-			main.c \
-			main.h \
-			misc.c \
-			misc.h \
-			modules.c \
-			modules.h \
-			net.c \
-			net.h \
+			main.c main.h \
+			modules.c modules.h \
 			patch.h \
-			telnet.c \
-			traffic.c \
-			traffic.h \
-			userent.c \
-			userent.h \
-			userrec.c \
-			userrec.h \
-			users.c \
-			users.h
+			telnet.c
 
 eggdrop_LDFLAGS		= -no-undefined
 
