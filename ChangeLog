@@ -1,3 +1,19 @@
+2001-10-13 12:00  stdarg <stdarg@techmonkeys.org>
+
+	* src/: Makefile.am, egg_timer.c, egg_timer.h, main.c, net.c,
+	tclmisc.c, mod/filesys.mod/filesys.c:
+
+	Added code for C-based microsecond-precision timers.  Made utimer
+	and timer use the new timer stuff. (But utimers and timers don't
+	work with it yet, either does killtimer + killutimer, maybe somebody
+	else can update those :) or I'll do it later) Added new tcl command,
+	mutimer, to make a timer with a fractional second (i.e. mutimer
+	500000 hi == run 'hi' after 1/2 second) Made net.c change the
+	select() timeout based on the shortest timer.  Added a guard clause
+	to lostdcc(n) to make sure n is valid.  When the socket table is
+	reallocated, now the new sockets are marked SOCK_UNUSED (heh).  
+	Fixed a typo in filesys.mod (mine) (looked up the wrong bind table) 
+
 2001-10-12 17:40  Tothwolf <tothwolf@techmonkeys.org>
 
 	* src/: irccmp.c, patch.h, mod/server.mod/server.c,
