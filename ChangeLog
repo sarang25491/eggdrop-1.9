@@ -1,3 +1,9 @@
+2002-05-06 04:52  Jeff Fisher <guppy@techmonkeys.org>
+
+	* testcode/match.c:
+
+	added zip's matching code 
+
 2002-05-05 20:04  stdarg <stdarg@techmonkeys.org>
 
 	* src/: match.c, match.h:
