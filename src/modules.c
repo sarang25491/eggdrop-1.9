@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: modules.c,v 1.119 2002/09/20 21:41:49 stdarg Exp $";
+static const char rcsid[] = "$Id: modules.c,v 1.120 2002/10/07 22:36:37 stdarg Exp $";
 #endif
 
 #include "main.h"		/* NOTE: when removing this, include config.h */
@@ -40,7 +40,7 @@ static const char rcsid[] = "$Id: modules.c,v 1.119 2002/09/20 21:41:49 stdarg E
 #include "chanprog.h"		/* clear_chanlist, reaffirm_owners, 
 				   logmodes, masktype, isowner, 
 				   clear_chanlist_member		*/
-#include "cmds.h"		/* check_dcc_attrs, check_dcc_chanattrs	*/
+//#include "cmds.h"		/* check_dcc_attrs, check_dcc_chanattrs	*/
 #include "dccutil.h"		/* chatout, chanout_but, new_dcc,
 				   lostdcc, makepass, flush_lines, 
 				   changeover_dcc			*/
@@ -90,7 +90,6 @@ extern struct dcc_table DCC_CHAT_PASS, DCC_LOST, DCC_DNSWAIT,
 			DCC_CHAT; 
 #endif /* MAKING_MODS   */
 
-int cmd_die();
 int xtra_kill();
 int xtra_unpack();
 static int module_rename(char *name, char *newname);
@@ -332,7 +331,7 @@ Function global_table[] =
   (Function) findanyidx,
   (Function) findchan,
   /* 132 - 135 */
-  (Function) cmd_die,
+  (Function) 0,
   (Function) days,
   (Function) daysago,
   (Function) daysdur,
@@ -425,9 +424,9 @@ Function global_table[] =
   (Function) sub_lang,
   (Function) & online_since,	/* time_t *				*/
   (Function) 0,
-  (Function) check_dcc_attrs,
+  (Function) 0,
   /* 208 - 211 */
-  (Function) check_dcc_chanattrs,
+  (Function) 0,
   (Function) add_tcl_coups,
   (Function) rem_tcl_coups,
   (Function) &botname,

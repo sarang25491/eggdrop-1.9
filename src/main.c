@@ -30,7 +30,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.123 2002/09/21 07:40:16 stdarg Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.124 2002/10/07 22:36:37 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -372,7 +372,7 @@ static void core_secondly()
     check_expired_dcc();
     if (con_chan && !backgrd) {
       dprintf(DP_STDOUT, "\033[2J\033[1;1H");
-      tell_verbose_status(DP_STDOUT);
+      //tell_verbose_status(DP_STDOUT);
       do_module_report(DP_STDOUT, 0, "server");
       do_module_report(DP_STDOUT, 0, "channels");
     }
@@ -456,6 +456,7 @@ void script_net_init();
 void dns_init();
 void binds_init();
 void dcc_init();
+int user_init();
 
 void patch(const char *str)
 {
@@ -577,6 +578,8 @@ int main(int argc, char **argv)
   script_init();
   script_net_init();
   binds_init();
+  user_init();
+  user_load("users.xml");
   modules_init();
   logfile_init();
   timer_init();
@@ -584,7 +587,7 @@ int main(int argc, char **argv)
   egg_dns_init();
   core_binds_init();
   dcc_init();
-  user_init();
+  old_user_init();
   init_userent();
   init_net();
   traffic_init();

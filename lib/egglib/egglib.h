@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: egglib.h,v 1.4 2002/05/05 16:40:33 tothwolf Exp $
+ * $Id: egglib.h,v 1.5 2002/10/07 22:36:36 stdarg Exp $
  */
 
 #ifndef _EGGLIB_H
@@ -34,6 +34,5 @@
 #include "../compat/compat.h"
 #include "mstack.h"
 #include "msprintf.h"
-#include "hash_table.h"
 
 #endif				/* !_EGGLIB_H */

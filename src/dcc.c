@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dcc.c,v 1.92 2002/09/20 21:41:49 stdarg Exp $";
+static const char rcsid[] = "$Id: dcc.c,v 1.93 2002/10/07 22:36:36 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -42,8 +42,8 @@ static const char rcsid[] = "$Id: dcc.c,v 1.92 2002/09/20 21:41:49 stdarg Exp $"
 			   check_bind_chjn, check_bind_chon,
 			   check_bind_listen				*/
 #include "users.h"	/* match_ignore, addignore, get_user_by_host	*/
-#include "chanprog.h"	/* reaffirm_owners				*/
-#include "cmds.h"	/* check_dcc_attrs				*/
+//#include "chanprog.h"	/* reaffirm_owners				*/
+//#include "cmds.h"	/* check_dcc_attrs				*/
 #include "dccutil.h"	/* dprintf_eggdrop, lostdcc, chatout, 
 			   dcc_chatter, chanout_but, add_cr, not_away
 			   not_away, flush_lines, new_dcc,
@@ -870,11 +870,11 @@ static void dcc_telnet_new(int idx, char *buf, int x)
       userlist = adduser(userlist, buf, work, "-",
 			 sanity_check(USER_PARTY | default_flags));
     }
-    reaffirm_owners();
+    //reaffirm_owners();
     dcc[idx].status = STAT_ECHO | STAT_TELNET;
     dcc[idx].type = &DCC_CHAT;	/* Just so next line will work */
     dcc[idx].user = get_user_by_handle(userlist, buf);
-    check_dcc_attrs(dcc[idx].user, USER_PARTY | default_flags);
+    //check_dcc_attrs(dcc[idx].user, USER_PARTY | default_flags);
     dcc[idx].type = &DCC_TELNET_PW;
     if (make_userfile) {
       dprintf(idx, _("\nYOU ARE THE MASTER/OWNER ON THIS BOT NOW\n"));

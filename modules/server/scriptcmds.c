@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.12 2002/09/22 08:50:46 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.13 2002/10/07 22:36:36 stdarg Exp $";
 #endif
 */
 
@@ -38,6 +38,7 @@ static const char rcsid[] = "$Id: scriptcmds.c,v 1.12 2002/09/22 08:50:46 stdarg
 static int script_isbotnick (char *nick);
 static int script_putserv(char *queue, char *next, char *text);
 static int script_jump (int nargs, int num);
+static int script_dcc_send_info(int idx, char *what);
 
 /* From serverlist.c */
 extern int server_list_index;
@@ -64,6 +65,9 @@ script_command_t server_script_cmds[] = {
 	{"", "nick_del", nick_del, NULL, 1, "i", "nick-num", SCRIPT_INTEGER, 0},
 	{"", "nick_clear", nick_clear, NULL, 0, "", "", SCRIPT_INTEGER, 0},
 	{"", "dcc_chat", dcc_start_chat, NULL, 1, "si", "nick ?timeout?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
+	{"", "dcc_send", dcc_start_send, NULL, 2, "ssi", "nick filename ?timeout?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
+	{"", "dcc_send_info", script_dcc_send_info, NULL, 2, "is", "idx stat", SCRIPT_INTEGER, 0},
+	{"", "dcc_accept_send", dcc_accept_send, NULL, 7, "sssiisii", "nick localfile remotefile size resume ip port ?timeout?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
         {0}
 };
 
@@ -123,4 +127,18 @@ static int script_jump(int nargs, int num)
 	kill_server("changing servers");
 	
 	return(0);
+}
+
+static int script_dcc_send_info(int idx, char *what)
+{
+	int field, value;
+
+	if (!strcasecmp(what, "bytes_left")) field = DCC_SEND_LEFT;
+	else if (!strcasecmp(what, "bytes_sent")) field = DCC_SEND_SENT;
+	else if (!strcasecmp(what, "total_cps")) field = DCC_SEND_CPS_TOTAL;
+	else if (!strcasecmp(what, "snapshot_cps")) field = DCC_SEND_CPS_SNAPSHOT;
+	else return(-1);
+
+	if (dcc_send_info(idx, field, &value) < 0) return(-1);
+	return(value);
 }

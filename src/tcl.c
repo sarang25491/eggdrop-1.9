@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tcl.c,v 1.84 2002/09/20 21:41:49 stdarg Exp $";
+static const char rcsid[] = "$Id: tcl.c,v 1.85 2002/10/07 22:36:37 stdarg Exp $";
 #endif
 
 #include <stdlib.h>		/* getenv()				*/
@@ -343,6 +343,7 @@ void kill_tcl()
 extern tcl_cmds tcluser_cmds[], tcldcc_cmds[];
 extern script_command_t script_dcc_cmds[];
 extern script_command_t script_user_cmds[];
+extern script_command_t script_new_user_cmds[];
 extern script_command_t script_misc_cmds[];
 
 /* Not going through Tcl's crazy main() system (what on earth was he
@@ -397,6 +398,7 @@ void init_tcl(int argc, char **argv)
   add_tcl_commands(tcluser_cmds);
   script_create_commands(script_dcc_cmds);
   script_create_commands(script_user_cmds);
+  script_create_commands(script_new_user_cmds);
   script_create_commands(script_misc_cmds);
 }
 

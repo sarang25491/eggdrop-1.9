@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tcluser.c,v 1.43 2002/09/20 21:41:49 stdarg Exp $";
+static const char rcsid[] = "$Id: tcluser.c,v 1.44 2002/10/07 22:36:37 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -50,8 +50,11 @@ static int script_countusers()
 	return count_users(userlist);
 }
 
-static int script_validuser(struct userrec *u)
+static int script_validuser(char *handle)
 {
+	struct userrec *u;
+
+	u = get_user_by_handle(userlist, handle);
 	if (u) return(1);
 	return(0);
 }
@@ -415,7 +418,7 @@ static int tcl_setuser STDVAR
 
 script_command_t script_user_cmds[] = {
 	{"", "countusers", script_countusers, NULL, 0, "", "", SCRIPT_INTEGER, 0},
-	{"", "validuser", script_validuser, NULL, 1, "U", "handle", SCRIPT_INTEGER, 0},
+	{"", "validuser", script_validuser, NULL, 1, "s", "handle", SCRIPT_INTEGER, 0},
 	{"", "finduser", (Function) script_finduser, NULL, 1, "s", "nick!user@host", SCRIPT_USER, 0},
 	{"", "passwdok", script_passwd_ok, NULL, 2, "Us", "handle password", SCRIPT_INTEGER, 0},
 	{"", "chattr", (Function) script_chattr_botattr, NULL, 1, "Uss", "handle ?changes ?channel??", SCRIPT_STRING, SCRIPT_PASS_CDATA|SCRIPT_VAR_ARGS},

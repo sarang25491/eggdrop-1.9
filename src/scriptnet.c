@@ -41,6 +41,7 @@ static int script_net_write(int idx, const char *text, int len);
 static int script_net_linemode(int idx, int onoff);
 static int script_net_handler(int idx, const char *event, script_callback_t *handler);
 static int script_net_info(script_var_t *retval, int idx, char *what);
+static int script_net_throttle_set(void *client_data, int idx, int speed);
 
 static script_command_t script_cmds[] = {
 	{"", "net_takeover", script_net_takeover, NULL, 1, "i", "idx", SCRIPT_INTEGER, 0},
@@ -50,6 +51,9 @@ static script_command_t script_cmds[] = {
 	{"", "net_handler", script_net_handler, NULL, 2, "isc", "idx event callback", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
 	{"", "net_linemode", script_net_linemode, NULL, 2, "ii", "idx on-off", SCRIPT_INTEGER, 0},
 	{"", "net_info", script_net_info, NULL, 2, "is", "idx what", 0, SCRIPT_PASS_RETVAL},
+	{"", "net_throttle", throttle_on, NULL, 1, "i", "idx", SCRIPT_INTEGER, 0},
+	{"", "net_throttle_in", script_net_throttle_set, (void *)0, 2, "ii", "idx speed", SCRIPT_INTEGER, SCRIPT_PASS_CDATA},
+	{"", "net_throttle_out", script_net_throttle_set, (void *)1, 2, "ii", "idx speed", SCRIPT_INTEGER, SCRIPT_PASS_CDATA},
 	{0}
 };
 
@@ -204,6 +208,11 @@ static int script_net_info(script_var_t *retval, int idx, char *what)
 	return(0);
 }
 
+static int script_net_throttle_set(void *client_data, int idx, int speed)
+{
+	return throttle_set(idx, (int) client_data, speed);
+}
+
 /* Sockbuf handler functions. */
 static int on_connect(void *client_data, int idx, const char *peer_ip, int peer_port)
 {
@@ -222,7 +231,7 @@ static int on_eof(void *client_data, int idx, int err, const char *errmsg)
 	script_net_info_t *info = client_data;
 
 	if (info->on_eof) info->on_eof->callback(info->on_eof, idx, err, errmsg);
-	if (sockbuf_isvalid(idx)) sockbuf_delete(idx);
+	sockbuf_delete(idx);
 	return(0);
 }
 

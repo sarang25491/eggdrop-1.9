@@ -21,11 +21,11 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: logfile.c,v 1.22 2002/05/12 05:59:52 stdarg Exp $";
+static const char rcsid[] = "$Id: logfile.c,v 1.23 2002/10/07 22:36:37 stdarg Exp $";
 #endif
 
 #include "main.h"
-#include "chanprog.h"			/* logmodes			*/
+//#include "chanprog.h"			/* logmodes			*/
 #include "modules.h" 			/* add_hook() 			*/
 #include "lib/egglib/msprintf.h"
 #include "logfile.h"			/* prototypes			*/
@@ -181,8 +181,9 @@ static int script_putloglev(char *level, char *chan, char *text)
 {
 	int lev = 0;
 
-	lev = logmodes(level);
-	if (!lev) return(-1);
+	//lev = logmodes(level);
+	//if (!lev) return(-1);
+	lev = LOG_MISC;
 	return putlog(lev, chan, "%s", text);
 }
 
@@ -202,7 +203,8 @@ char *logfile_add(char *modes, char *chan, char *fname)
 	log->filename = strdup(fname);
 	log->chname = strdup(chan);
 	log->last_msg = strdup("");
-	log->mask = logmodes(modes);
+	log->mask = LOG_MISC;
+	//log->mask = logmodes(modes);
 	log->fp = fp;
 
 	log->next = log_list_head;

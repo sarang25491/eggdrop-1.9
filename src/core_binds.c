@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_binds.c,v 1.5 2002/05/26 08:34:13 stdarg Exp $";
+static const char rcsid[] = "$Id: core_binds.c,v 1.6 2002/10/07 22:36:36 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -44,7 +44,6 @@ static script_linked_var_t core_binds_script_vars[] = {
 	{0}
 };
 
-extern cmd_t C_dcc[];
 extern struct dcc_t *dcc;
 extern struct userrec *userlist;
 extern time_t now;
@@ -63,7 +62,7 @@ void core_binds_init()
 	BT_disc = bind_table_add("disc", 1, "s", MATCH_MASK, BIND_STACKABLE);
 	BT_away = bind_table_add("away", 3, "sis", MATCH_MASK, BIND_STACKABLE);
 	BT_dcc = bind_table_add("dcc", 3, "Uis", MATCH_PARTIAL, BIND_USE_ATTR);
-	add_builtins("dcc", C_dcc);
+	//add_builtins("dcc", C_dcc);
 	BT_chat = bind_table_add("chat", 3, "sis", MATCH_MASK, BIND_STACKABLE | BIND_BREAKABLE);
 	BT_act = bind_table_add("act", 3, "sis", MATCH_MASK, BIND_STACKABLE);
 	BT_bcst = bind_table_add("bcst", 3, "sis", MATCH_MASK, BIND_STACKABLE);

@@ -11,7 +11,8 @@ extern bind_table_t *BT_wall,
 	*BT_pubm,
 	*BT_ctcp,
 	*BT_ctcr,
-	*BT_dcc_chat;
+	*BT_dcc_chat,
+	*BT_dcc_recv;
 
 extern void server_binds_destroy();
 extern void server_binds_init();

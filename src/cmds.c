@@ -24,7 +24,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: cmds.c,v 1.107 2002/09/20 21:41:49 stdarg Exp $";
+static const char rcsid[] = "$Id: cmds.c,v 1.108 2002/10/07 22:36:36 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -43,10 +43,6 @@ static const char rcsid[] = "$Id: cmds.c,v 1.107 2002/09/20 21:41:49 stdarg Exp 
 				   tell_dcc, do_boot, chanout_but,
 				   dcc_chatter, flush_lines		*/
 #include "net.h"		/* tell_netdebug, killsock		*/
-#include "userrec.h"		/* addhost_by_handle, change_handle,
-				   write_userfile, correct_handle,
-				   u_pass_match, deluser,
-				   delhost_by_handle			*/
 #include "cmds.h"		/* prototypes				*/
 
 #include <ctype.h>
@@ -54,7 +50,7 @@ static const char rcsid[] = "$Id: cmds.c,v 1.107 2002/09/20 21:41:49 stdarg Exp 
 
 extern struct chanset_t	*chanset;
 extern struct dcc_t	*dcc;
-extern struct userrec	*userlist;
+extern user_t	*userlist;
 extern int		 dcc_total, remote_boots, backgrd, make_userfile,
 			 do_restart, conmask, strict_host,
 			 term_z, con_chan;
@@ -72,40 +68,7 @@ extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_RELAY, DCC_FORK_BOT,
 static char	*btos(unsigned long);
 
 
-/* Add hostmask to a bot's record if possible.
- */
-static int add_bot_hostmask(int idx, char *nick)
-{
-  struct chanset_t *chan;
-
-  for (chan = chanset; chan; chan = chan->next)
-    if (channel_active(chan)) {
-      memberlist *m = ismember(chan, nick);
-
-      if (m) {
-	char s[UHOSTLEN];
-	struct userrec *u;
-
-	snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
-	u = get_user_by_host(s);
-	if (u) {
-	  dprintf(idx, _("(Can't add hostmask for %1$s because it matches %2$s)\n"),
-		  nick, u->handle);
-	  return(0);
-	}
-	if (strchr("~^+=-", m->userhost[0]))
-	  snprintf(s, sizeof s, "*!%s%s", strict_host ? "?" : "", m->userhost+1);
-	else
-	  snprintf(s, sizeof s, "*!%s", m->userhost);
-	dprintf(idx, _("(Added hostmask for %1$s from %2$s)\n"), nick, chan->dname);
-	addhost_by_handle(nick, s);
-	return(1);
-      }
-    }
-  return 0;
-}
-
-static void tell_who(struct userrec *u, int idx, int chan)
+static void tell_who(user_t *u, int idx, int chan)
 {
   int i, k, ok = 0, atr = u ? u->flags : 0, len;
   char s[1024];			/* temp fix - 1.4 has a better one */
@@ -219,7 +182,7 @@ static void tell_who(struct userrec *u, int idx, int chan)
   }
 }
 
-static int cmd_me(struct userrec *u, int idx, char *par)
+static int cmd_me(user_t *u, int idx, char *par)
 {
   int i;
 
@@ -238,13 +201,13 @@ static int cmd_me(struct userrec *u, int idx, char *par)
   return(0);
 }
 
-static int cmd_motd(struct userrec *u, int idx, char *par)
+static int cmd_motd(user_t *u, int idx, char *par)
 {
     show_motd(idx);
   return(1);
 }
 
-static int cmd_away(struct userrec *u, int idx, char *par)
+static int cmd_away(user_t *u, int idx, char *par)
 {
   if (strlen(par) > 60)
     par[60] = 0;
@@ -252,13 +215,13 @@ static int cmd_away(struct userrec *u, int idx, char *par)
   return(1);
 }
 
-static int cmd_back(struct userrec *u, int idx, char *par)
+static int cmd_back(user_t *u, int idx, char *par)
 {
   not_away(idx);
   return(1);
 }
 
-static int cmd_newpass(struct userrec *u, int idx, char *par)
+static int cmd_newpass(user_t *u, int idx, char *par)
 {
   char *new;
 
@@ -279,14 +242,14 @@ static int cmd_newpass(struct userrec *u, int idx, char *par)
   return(0);
 }
 
-static int cmd_rehelp(struct userrec *u, int idx, char *par)
+static int cmd_rehelp(user_t *u, int idx, char *par)
 {
   dprintf(idx, _("Reload help cache...\n"));
   reload_help_data();
   return(1);
 }
 
-static int cmd_help(struct userrec *u, int idx, char *par)
+static int cmd_help(user_t *u, int idx, char *par)
 {
   struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
@@ -317,7 +280,7 @@ static int cmd_help(struct userrec *u, int idx, char *par)
   return(1);
 }
 
-static int cmd_who(struct userrec *u, int idx, char *par)
+static int cmd_who(user_t *u, int idx, char *par)
 {
     putlog(LOG_CMDS, "*", "#%s# who", dcc[idx].nick);
     if (dcc[idx].u.chat->channel < 0)
@@ -328,7 +291,7 @@ static int cmd_who(struct userrec *u, int idx, char *par)
   return(1);
 }
 
-static int cmd_whois(struct userrec *u, int idx, char *par)
+static int cmd_whois(user_t *u, int idx, char *par)
 {
   if (!par[0]) {
     dprintf(idx, "Usage: whois <handle>\n");
@@ -338,7 +301,7 @@ static int cmd_whois(struct userrec *u, int idx, char *par)
   return(1);
 }
 
-static int cmd_match(struct userrec *u, int idx, char *par)
+static int cmd_match(user_t *u, int idx, char *par)
 {
   int start = 1, limit = 20;
   char *s, *s1, *chname;
@@ -365,7 +328,7 @@ static int cmd_match(struct userrec *u, int idx, char *par)
   return(1);
 }
 
-static int cmd_uptime(struct userrec *u, int idx, char *par)
+static int cmd_uptime(user_t *u, int idx, char *par)
 {
   char s[256];
   unsigned long uptime, tmp, hr, min; 
@@ -388,7 +351,7 @@ static int cmd_uptime(struct userrec *u, int idx, char *par)
   return(1);
 }
 
-static int cmd_status(struct userrec *u, int idx, char *par)
+static int cmd_status(user_t *u, int idx, char *par)
 {
   int atr = u ? u->flags : 0;
 
@@ -408,17 +371,17 @@ static int cmd_status(struct userrec *u, int idx, char *par)
   return(1);
 }
 
-static int cmd_dccstat(struct userrec *u, int idx, char *par)
+static int cmd_dccstat(user_t *u, int idx, char *par)
 {
   tell_dcc(idx);
   return(1);
 }
 
-static int cmd_boot(struct userrec *u, int idx, char *par)
+static int cmd_boot(user_t *u, int idx, char *par)
 {
   int i, files = 0, ok = 0;
   char *who;
-  struct userrec *u2;
+  user_t *u2;
 
   if (!par[0]) {
     dprintf(idx, "Usage: boot nick[@bot]\n");
@@ -453,7 +416,7 @@ static int cmd_boot(struct userrec *u, int idx, char *par)
   return(1);
 }
 
-static int cmd_console(struct userrec *u, int idx, char *par)
+static int cmd_console(user_t *u, int idx, char *par)
 {
   char *nick, s[2], s1[512];
   int dest = 0, i, ok = 0, pls, md;
@@ -568,10 +531,10 @@ static int cmd_console(struct userrec *u, int idx, char *par)
   return(1);
 }
 
-static int cmd_pls_bot(struct userrec *u, int idx, char *par)
+static int cmd_pls_bot(user_t *u, int idx, char *par)
 {
   char *handle, *addr, *p, *q, *host;
-  struct userrec *u1;
+  user_t *u1;
   struct bot_addr *bi;
   int addrlen;
 
@@ -637,11 +600,11 @@ static int cmd_pls_bot(struct userrec *u, int idx, char *par)
   return(1);
 }
 
-static int cmd_chhandle(struct userrec *u, int idx, char *par)
+static int cmd_chhandle(user_t *u, int idx, char *par)
 {
   char hand[HANDLEN + 1], newhand[HANDLEN + 1];
   int i, atr = u ? u->flags : 0, atr2;
-  struct userrec *u2;
+  user_t *u2;
 
   strlcpy(hand, newsplit(&par), sizeof hand);
   strlcpy(newhand, newsplit(&par), sizeof newhand);
@@ -682,7 +645,7 @@ static int cmd_chhandle(struct userrec *u, int idx, char *par)
   return(1);
 }
 
-static int cmd_handle(struct userrec *u, int idx, char *par)
+static int cmd_handle(user_t *u, int idx, char *par)
 {
   char oldhandle[HANDLEN + 1], newhandle[HANDLEN + 1];
   int i;
@@ -714,7 +677,7 @@ static int cmd_handle(struct userrec *u, int idx, char *par)
   return(1);
 }
 
-static int cmd_chpass(struct userrec *u, int idx, char *par)
+static int cmd_chpass(user_t *u, int idx, char *par)
 {
   char *handle, *new;
   int atr = u ? u->flags : 0, l;
@@ -754,12 +717,12 @@ static int cmd_chpass(struct userrec *u, int idx, char *par)
   return(0);
 }
 
-static int cmd_chaddr(struct userrec *u, int idx, char *par)
+static int cmd_chaddr(user_t *u, int idx, char *par)
 {
   int telnet_port = 3333, relay_port = 3333;
   char *handle, *addr, *p, *q;
   struct bot_addr *bi;
-  struct userrec *u1;
+  user_t *u1;
   int addrlen;
 
   if (!par[0]) {
@@ -824,10 +787,10 @@ static int cmd_chaddr(struct userrec *u, int idx, char *par)
   return(1);
 }
 
-static int cmd_comment(struct userrec *u, int idx, char *par)
+static int cmd_comment(user_t *u, int idx, char *par)
 {
   char *handle;
-  struct userrec *u1;
+  user_t *u1;
 
   if (!par[0]) {
     dprintf(idx, "Usage: comment <handle> <newcomment>\n");
@@ -854,7 +817,7 @@ static int cmd_comment(struct userrec *u, int idx, char *par)
   return(1);
 }
 
-static int cmd_restart(struct userrec *u, int idx, char *par)
+static int cmd_restart(user_t *u, int idx, char *par)
 {
   if (!backgrd) {
     dprintf(idx, "%s\n", _("You cannot .restart a bot when running -n (due to tcl)."));
@@ -869,7 +832,7 @@ static int cmd_restart(struct userrec *u, int idx, char *par)
   return(1);
 }
 
-static int cmd_rehash(struct userrec *u, int idx, char *par)
+static int cmd_rehash(user_t *u, int idx, char *par)
 {
   dprintf(idx, "%s\n", _("Rehashing."));
   if (make_userfile)
@@ -880,14 +843,14 @@ static int cmd_rehash(struct userrec *u, int idx, char *par)
   return(1);
 }
 
-static int cmd_reload(struct userrec *u, int idx, char *par)
+static int cmd_reload(user_t *u, int idx, char *par)
 {
   dprintf(idx, "%s\n", _("Reloading user file..."));
   reload();
   return(1);
 }
 
-void cmd_die(struct userrec *u, int idx, char *par)
+void cmd_die(user_t *u, int idx, char *par)
 {
   char s1[1024], s2[1024];
 
@@ -907,7 +870,7 @@ void cmd_die(struct userrec *u, int idx, char *par)
   kill_bot(s1, s2);
 }
 
-static int cmd_simul(struct userrec *u, int idx, char *par)
+static int cmd_simul(user_t *u, int idx, char *par)
 {
   char *nick;
   int i, ok = 0;
@@ -934,14 +897,14 @@ static int cmd_simul(struct userrec *u, int idx, char *par)
   return(1);
 }
 
-static int cmd_save(struct userrec *u, int idx, char *par)
+static int cmd_save(user_t *u, int idx, char *par)
 {
   dprintf(idx, _("Saving user file...\n"));
   write_userfile(-1);
   return(1);
 }
 
-static int cmd_backup(struct userrec *u, int idx, char *par)
+static int cmd_backup(user_t *u, int idx, char *par)
 {
   dprintf(idx, _("Backing up the channel & user files...\n"));
   call_hook(HOOK_BACKUP);
@@ -951,7 +914,7 @@ static int cmd_backup(struct userrec *u, int idx, char *par)
 /* After messing with someone's user flags, make sure the dcc-chat flags
  * are set correctly.
  */
-int check_dcc_attrs(struct userrec *u, int oatr)
+int check_dcc_attrs(user_t *u, int oatr)
 {
   int i, stat;
 
@@ -1045,7 +1008,7 @@ int check_dcc_attrs(struct userrec *u, int oatr)
   return u->flags;
 }
 
-int check_dcc_chanattrs(struct userrec *u, char *chname, int chflags,
+int check_dcc_chanattrs(user_t *u, char *chname, int chflags,
 			int ochatr)
 {
   int i, found = 0, atr = u ? u->flags : 0;
@@ -1103,11 +1066,11 @@ int check_dcc_chanattrs(struct userrec *u, char *chname, int chflags,
   return chflags;
 }
 
-static int cmd_chattr(struct userrec *u, int idx, char *par)
+static int cmd_chattr(user_t *u, int idx, char *par)
 {
   char *hand, *arg = NULL, *tmpchg = NULL, *chg = NULL, work[1024];
   struct chanset_t *chan = NULL;
-  struct userrec *u2;
+  user_t *u2;
   struct flag_record pls = {0, 0, 0, 0, 0, 0},
   		     mns = {0, 0, 0, 0, 0, 0},
 		     user = {0, 0, 0, 0, 0, 0};
@@ -1282,11 +1245,11 @@ static int cmd_chattr(struct userrec *u, int idx, char *par)
   return(1);
 }
 
-static int cmd_botattr(struct userrec *u, int idx, char *par)
+static int cmd_botattr(user_t *u, int idx, char *par)
 {
   char *hand, *chg = NULL, *arg = NULL, *tmpchg = NULL, work[1024];
   struct chanset_t *chan = NULL;
-  struct userrec *u2;
+  user_t *u2;
   struct flag_record pls = {0, 0, 0, 0, 0, 0},
 		     mns = {0, 0, 0, 0, 0, 0},
 		     user = {0, 0, 0, 0, 0, 0};
@@ -1422,7 +1385,7 @@ static int cmd_botattr(struct userrec *u, int idx, char *par)
   return(1);
 }
 
-static int cmd_su(struct userrec *u, int idx, char *par)
+static int cmd_su(user_t *u, int idx, char *par)
 {
   int atr = u ? u->flags : 0;
   struct flag_record fr = {FR_ANYWH | FR_CHAN | FR_GLOBAL, 0, 0, 0, 0, 0};
@@ -1487,7 +1450,7 @@ static int cmd_su(struct userrec *u, int idx, char *par)
   return(1);
 }
 
-static int cmd_fixcodes(struct userrec *u, int idx, char *par)
+static int cmd_fixcodes(user_t *u, int idx, char *par)
 {
   if (dcc[idx].status & STAT_ECHO) {
     dcc[idx].status |= STAT_TELNET;
@@ -1506,7 +1469,7 @@ static int cmd_fixcodes(struct userrec *u, int idx, char *par)
   return(1);
 }
 
-static int cmd_page(struct userrec *u, int idx, char *par)
+static int cmd_page(user_t *u, int idx, char *par)
 {
   int a;
   module_entry *me;
@@ -1547,13 +1510,13 @@ static int cmd_page(struct userrec *u, int idx, char *par)
   return(1);
 }
 
-static int cmd_module(struct userrec *u, int idx, char *par)
+static int cmd_module(user_t *u, int idx, char *par)
 {
   do_module_report(idx, 2, par[0] ? par : NULL);
   return(1);
 }
 
-static int cmd_loadmod(struct userrec *u, int idx, char *par)
+static int cmd_loadmod(user_t *u, int idx, char *par)
 {
   const char *p;
 
@@ -1575,7 +1538,7 @@ static int cmd_loadmod(struct userrec *u, int idx, char *par)
   return(1);
 }
 
-static int cmd_unloadmod(struct userrec *u, int idx, char *par)
+static int cmd_unloadmod(user_t *u, int idx, char *par)
 {
   char *p;
 
@@ -1596,7 +1559,7 @@ static int cmd_unloadmod(struct userrec *u, int idx, char *par)
   return(1);
 }
 
-static int cmd_pls_ignore(struct userrec *u, int idx, char *par)
+static int cmd_pls_ignore(user_t *u, int idx, char *par)
 {
   char			*who;
   char			 s[UHOSTLEN];
@@ -1670,7 +1633,7 @@ static int cmd_pls_ignore(struct userrec *u, int idx, char *par)
   return(1);
 }
 
-static int cmd_mns_ignore(struct userrec *u, int idx, char *par)
+static int cmd_mns_ignore(user_t *u, int idx, char *par)
 {
   char buf[UHOSTLEN];
 
@@ -1686,13 +1649,13 @@ static int cmd_mns_ignore(struct userrec *u, int idx, char *par)
   return(1);
 }
 
-static int cmd_ignores(struct userrec *u, int idx, char *par)
+static int cmd_ignores(user_t *u, int idx, char *par)
 {
   tell_ignores(idx, par);
   return(1);
 }
 
-static int cmd_pls_user(struct userrec *u, int idx, char *par)
+static int cmd_pls_user(user_t *u, int idx, char *par)
 {
   char *handle, *host;
 
@@ -1718,11 +1681,11 @@ static int cmd_pls_user(struct userrec *u, int idx, char *par)
   return(1);
 }
 
-static int cmd_mns_user(struct userrec *u, int idx, char *par)
+static int cmd_mns_user(user_t *u, int idx, char *par)
 {
   int idx2;
   char *handle;
-  struct userrec *u2;
+  user_t *u2;
   module_entry *me;
 
   if (!par[0]) {
@@ -1773,10 +1736,10 @@ static int cmd_mns_user(struct userrec *u, int idx, char *par)
   return(1);
 }
 
-static int cmd_pls_host(struct userrec *u, int idx, char *par)
+static int cmd_pls_host(user_t *u, int idx, char *par)
 {
   char *handle, *host;
-  struct userrec *u2;
+  user_t *u2;
   struct list_type *q;
   struct flag_record fr = {FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
   module_entry *me;
@@ -1843,10 +1806,10 @@ static int cmd_pls_host(struct userrec *u, int idx, char *par)
   return(1);
 }
 
-static int cmd_mns_host(struct userrec *u, int idx, char *par)
+static int cmd_mns_host(user_t *u, int idx, char *par)
 {
   char *handle, *host;
-  struct userrec *u2;
+  user_t *u2;
   struct flag_record fr = {FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
   module_entry *me;
 
@@ -1906,7 +1869,7 @@ static int cmd_mns_host(struct userrec *u, int idx, char *par)
   return(1);
 }
 
-static int cmd_modules(struct userrec *u, int idx, char *par)
+static int cmd_modules(user_t *u, int idx, char *par)
 {
   module_entry *me;
 
@@ -1917,7 +1880,7 @@ static int cmd_modules(struct userrec *u, int idx, char *par)
   return(1);
 }
 
-static int cmd_traffic(struct userrec *u, int idx, char *par)
+static int cmd_traffic(user_t *u, int idx, char *par)
 {
   unsigned long itmp, itmp2;
 
@@ -2006,13 +1969,13 @@ static char *btos(unsigned long  bytes)
   return traffictxt;
 }
 
-static int cmd_whoami(struct userrec *u, int idx, char *par)
+static int cmd_whoami(user_t *u, int idx, char *par)
 {
   dprintf(idx, _("You are %s@%s.\n"), dcc[idx].nick, botnetnick);
   return(1);
 }
 
-static int cmd_quit(struct userrec *u, int idx, char *text)
+static int cmd_quit(user_t *u, int idx, char *text)
 {
   dprintf(idx, _("*** Ja mata!\n"));
   flush_lines(idx, dcc[idx].u.chat);
