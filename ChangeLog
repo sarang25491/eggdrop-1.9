@@ -1,3 +1,10 @@
+2002-05-01 04:28  stdarg <stdarg@techmonkeys.org>
+
+	* scripts/compat.tcl:
+
+	
+	* Oops, forgot a } 
+
 2002-05-01 03:56  stdarg <stdarg@techmonkeys.org>
 
 	* eggdrop.complete.conf, eggdrop.simple.conf,
