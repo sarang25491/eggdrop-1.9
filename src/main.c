@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.86 2001/10/15 09:27:08 stdarg Exp $
+ * $Id: main.c,v 1.87 2001/10/15 09:54:01 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1035,6 +1035,7 @@ module, please consult the default config file for info.\n"));
 	  putlog(LOG_MISC, "*", _("Stagnant module; there WILL be memory leaks!"));
 	flushlogs();
 	kill_tcl();
+	timer_destroy_all(); /* Destroy all timers. */
 	init_tcl(argc, argv);
 	/* We expect the encryption module as the current module pointed
 	 * to by `module_list'.
@@ -1049,7 +1050,6 @@ module, please consult the default config file for info.\n"));
 	call_hook(HOOK_LOADED);
       }
       do_restart = 0;
-      timer_destroy_all(); /* Destroy all timers. */
     }
   }
 }

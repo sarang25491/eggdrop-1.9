@@ -194,7 +194,7 @@ static Tcl_Obj *my_resolve_var(Tcl_Interp *myinterp, script_var_t *v)
 		}
 	}
 	else if (v->type & SCRIPT_POINTER) {
-		/* A pointer variable (will be represented as a hex string). */
+		/* A pointer variable (will be represented as a decimal string). */
 		char str[32];
 
 		sprintf(str, "#%u", v->value);

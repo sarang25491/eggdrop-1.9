@@ -21,6 +21,7 @@ static void add_event(int type, int arg1, int arg2, int arg3)
 	event->arg1 = arg1;
 	event->arg2 = arg2;
 	event->arg3 = arg3;
+	mstack_push(script_events, event);
 }
 
 static int my_create_cmd(void *ignore, script_command_t *info)
