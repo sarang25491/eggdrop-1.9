@@ -2,7 +2,7 @@
  * main.h
  *   include file to include most other include files
  *
- * $Id: main.h,v 1.23 2002/01/04 02:56:25 ite Exp $
+ * $Id: main.h,v 1.24 2002/01/04 03:36:11 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -73,7 +73,7 @@ extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
 #define iptolong(a)		(0xffffffff &                           \
 				 (long) (htonl((unsigned long) a)))
 #define fixcolon(x)		do {                                    \
-        if ((x)[0] == ':')                                              \
+	if ((x)[0] == ':')                                              \
 		(x)++;                                                  \
 	else                                                            \
 		(x) = newsplit(&(x));                                   \

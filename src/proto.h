@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.61 2002/01/04 02:56:25 ite Exp $
+ * $Id: proto.h,v 1.62 2002/01/04 03:36:11 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -90,7 +90,6 @@ int getparty(char *, int);
 /* botmsg.c */
 int add_note(char *, char *, char *, int, int);
 void tandout_but EGG_VARARGS(int, arg1);
-char *unsigned_int_to_base10(unsigned int);
 
 /* chanprog.c */
 void tell_verbose_status(int);

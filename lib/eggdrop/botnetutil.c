@@ -2,7 +2,7 @@
  * botnetutil.c -- handles:
  *   utility functions for the botnet protocol
  *
- * $Id: botnetutil.c,v 1.1 2002/01/04 02:56:21 ite Exp $
+ * $Id: botnetutil.c,v 1.2 2002/01/04 03:36:11 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -84,7 +84,7 @@ char *int_to_base10(int val)
   return buf_base10 + i;
 }
 
-char *unsigned_int_to_base10(unsigned int val)
+static char *unsigned_int_to_base10(unsigned int val)
 {
   static char buf_base10[16];
   int i = 15;
