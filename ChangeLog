@@ -1,3 +1,20 @@
+2002-10-10 04:41  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/Makefile.am, lib/eggdrop/binds.c,
+	lib/eggdrop/binds.h, lib/eggdrop/eggdrop.h, lib/eggdrop/eggtimer.c,
+	lib/eggdrop/module.h, lib/eggdrop/users.c,
+	modules/javascript/javascript.c, modules/perlscript/mod_iface.c,
+	modules/server/binds.c, modules/server/dcc.c, modules/server/dcc.h,
+	modules/server/input.c, modules/server/server.c,
+	modules/server/servsock.c, modules/tclscript/tclscript.c,
+	src/Makefile.am, src/core_binds.c, src/dcc.c, src/dccutil.c,
+	src/main.c, src/modules.c, src/net.c, src/scriptbind.c,
+	src/scriptuser.c, src/tcl.c, src/tcldcc.c, src/tclhash.c,
+	src/tclhash.h, src/tcluser.c, src/userrec.c, testcode/match.c:
+
+	
+	* Moved bind tables to libeggdrop 
+
 2002-10-09 09:09  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/: flags.h, hash_table.c, hash_table.h, ircmasks.c,
