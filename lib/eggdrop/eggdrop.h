@@ -16,13 +16,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: eggdrop.h,v 1.35 2004/06/21 11:33:40 wingman Exp $
+ * $Id: eggdrop.h,v 1.36 2004/06/21 11:35:46 wingman Exp $
  */
 
 #ifndef _EGG_EGGDROP_H_
 #define _EGG_EGGDROP_H_
 
-#include <eggdrop/memory.h>
 #include <eggdrop/common.h>
 #include <eggdrop/flags.h>
 #include <eggdrop/ircmasks.h>
