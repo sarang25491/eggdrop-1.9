@@ -1,3 +1,10 @@
+2003-02-11 06:59  stdarg <stdarg@techmonkeys.org>
+
+	* src/: core_config.c, core_config.h, logfile.c:
+
+	
+	* A bit more to configure.  
+
 2003-02-11 02:32  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/Makefile.am, lib/eggdrop/eggconfig.c,
