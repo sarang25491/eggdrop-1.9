@@ -1,3 +1,14 @@
+2003-02-11 02:32  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/Makefile.am, lib/eggdrop/eggconfig.c,
+	lib/eggdrop/eggconfig.h, lib/eggdrop/my_socket.c,
+	lib/eggdrop/xml.c, src/Makefile.am, src/chanprog.c,
+	src/core_config.c, src/core_config.h, src/core_party.c, src/main.c,
+	src/telnet.c:
+
+	
+	* Some initial config code to play around with.  
+
 2003-02-10 00:09  Will Buckner <wcc@techmonkeys.org>
 
 	* configure.ac, doc/UPDATES1.6, lib/eggdrop/fileutil.c,
