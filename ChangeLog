@@ -1,3 +1,15 @@
+2001-10-14 10:55  Tothwolf <tothwolf@techmonkeys.org>
+
+	* src/mod/server.mod/servmsg.c:
+
+	* lets make sure nick and uhost are not NULL 
+
+2001-10-14 10:37  Tothwolf <tothwolf@techmonkeys.org>
+
+	* src/mod/server.mod/servmsg.c:
+
+	* check uhost[0] instead of from[0] in gotnotice() 
+
 2001-10-14 10:22  Tothwolf <tothwolf@techmonkeys.org>
 
 	* Makefile.am, src/Makefile.am, src/adns/Makefile.am,
