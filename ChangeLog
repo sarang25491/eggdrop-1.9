@@ -1,3 +1,23 @@
+2002-02-17 12:44  Federico Mennite <ite@techmonkeys.org>
+
+	* nettype/: .cvsignore, Makefile.am, custom.irc.conf,
+	custom.server.conf, dalnet.irc.conf, dalnet.server.conf,
+	efnet.irc.conf, efnet.server.conf, hybridefnet.irc.conf,
+	hybridefnet.server.conf, ircnet.irc.conf, ircnet.server.conf,
+	undernet.irc.conf, undernet.server.conf:
+
+	nettype templates directory was missing from the last commit.  
+
+2002-02-17 12:40  Federico Mennite <ite@techmonkeys.org>
+
+	* Makefile.am, configure.ac, eggdrop.complete.conf,
+	eggdrop.simple.conf, modules/irc/irc.c, modules/server/server.c,
+	modules/server/server.h:
+
+	* acconfig/mpatrol.m4 wasn't distributed 
+	* net-type is history. Added config templates for network specific
+	features.  
+
 2002-02-17 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
