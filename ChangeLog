@@ -1,3 +1,19 @@
+2004-02-28 06:15  Automatic CVS Scripts
+
+	* po/eggdrop.pot:
+
+	Pots 
+
+2004-02-28 06:00  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/binds.c, modules/server/channels.c,
+	modules/server/channels.h, modules/server/scriptcmds.c,
+	modules/server/servsock.c:
+
+	
+	* Generalized channel mask lists based on 005. Except for binds,
+	which should be configurable or moved to another module/script.  
+
 2004-02-28 00:15  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
