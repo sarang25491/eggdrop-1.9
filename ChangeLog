@@ -1,3 +1,12 @@
+2003-03-25 19:20  stdarg <stdarg@techmonkeys.org>
+
+	* acconfig/acinclude.m4, doc/SCRIPTING-COMMANDS,
+	modules/script/scriptnet.c, modules/server/channels.c,
+	modules/server/input.c:
+
+	
+	* Scripting doc update for network commands 
+
 2003-03-24 02:42  Will Buckner <wcc@techmonkeys.org>
 
 	* configure.ac, doc/howto/PATCHING, src/Makefile.am, src/main.c,
