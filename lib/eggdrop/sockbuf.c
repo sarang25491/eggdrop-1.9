@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: sockbuf.c,v 1.7 2003/12/17 07:39:14 wcc Exp $";
+static const char rcsid[] = "$Id: sockbuf.c,v 1.8 2004/01/10 01:43:18 stdarg Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -44,16 +44,19 @@ static const char rcsid[] = "$Id: sockbuf.c,v 1.7 2003/12/17 07:39:14 wcc Exp $"
 #endif
 
 #include <errno.h>
-
-#include "my_socket.h"
-#include "sockbuf.h"
+#include <eggdrop.h>
 
 typedef struct {
 	int sock;	/* Underlying socket descriptor */
 	int flags;	/* Keep track of blocked status, client/server */
 
-	char *peer_ip;	/* Who we're connected to. */
+	char *peer_ip;	/* Connection data. */
 	int peer_port;
+	char *my_ip;
+	int my_port;
+
+	/* Some stats. */
+	sockbuf_stats_t *stats;
 
 	char *data;	/* Output buffer. */
 	int len;	/* Length of buffer. */
@@ -87,6 +90,12 @@ static sockbuf_handler_t sockbuf_idler = {
 };
 
 static void sockbuf_got_eof(int idx, int err);
+
+/* Stats helpers. */
+static void stats_in(sockbuf_stats_t *stats, int len);
+static void stats_out(sockbuf_stats_t *stats, int len);
+static void skip_stats(sockbuf_stats_t *stats, int curtime);
+static void update_stats(sockbuf_stats_t *stats);
 
 /* Mark a sockbuf as blocked and put it on the POLLOUT list. */
 static void sockbuf_block(int idx)
@@ -132,6 +141,7 @@ static int sockbuf_real_write(int idx, const char *data, int len)
 			nbytes = 0;
 		}
 
+		if (nbytes > 0) stats_out(sbuf->stats, nbytes);
 		if (nbytes == len) return(nbytes);
 		sockbuf_block(idx);
 		data += nbytes;
@@ -176,7 +186,8 @@ int sockbuf_on_connect(int idx, int level, const char *peer_ip, int peer_port)
 		}
 	}
 
-	if (peer_ip) sbuf->peer_ip = strdup(peer_ip);
+	timer_get_now(&sbuf->stats->connected_at);
+	if (peer_ip) str_redup(&sbuf->peer_ip, peer_ip);
 	sbuf->peer_port = peer_port;
 	if (sbuf->handler->on_connect) {
 		sbuf->handler->on_connect(sbuf->client_data, idx, peer_ip, peer_port);
@@ -214,6 +225,7 @@ int sockbuf_on_read(int idx, int level, char *data, int len)
 		}
 	}
 
+	sbuf->stats->bytes_in += len;
 	if (sbuf->handler->on_read ){
 		sbuf->handler->on_read(sbuf->client_data, idx, data, len);
 	}
@@ -309,6 +321,7 @@ static void sockbuf_got_readable_server(int idx)
 	socket_set_nonblock(newsock, 1);
 
 	newidx = sockbuf_new();
+	timer_get_now(&sockbufs[newidx].stats->connected_at);
 	sockbuf_set_sock(newidx, newsock, 0);
 	sockbuf_on_newclient(idx, SOCKBUF_LEVEL_INTERNAL, newidx, peer_ip, peer_port);
 }
@@ -325,7 +338,9 @@ static void sockbuf_got_writable(int idx)
 	errno = 0;
 	nbytes = write(sbuf->sock, sbuf->data, sbuf->len);
 	if (nbytes > 0) {
+		stats_out(sbuf->stats, nbytes);
 		sbuf->len -= nbytes;
+		sbuf->stats->raw_bytes_left = sbuf->len;
 		if (!sbuf->len) sockbuf_unblock(idx);
 		else memmove(sbuf->data, sbuf->data+nbytes, sbuf->len);
 		sockbuf_on_written(idx, SOCKBUF_LEVEL_INTERNAL, nbytes, sbuf->len);
@@ -349,6 +364,7 @@ static void sockbuf_got_readable(int idx)
 	errno = 0;
 	nbytes = read(sbuf->sock, buf, sizeof(buf)-1);
 	if (nbytes > 0) {
+		stats_in(sbuf->stats, nbytes);
 		buf[nbytes] = 0;
 		sockbuf_on_read(idx, SOCKBUF_LEVEL_INTERNAL, buf, nbytes);
 	}
@@ -382,6 +398,7 @@ int sockbuf_new()
 	sbuf->flags = SOCKBUF_BLOCK;
 	sbuf->sock = -1;
 	sbuf->handler = &sockbuf_idler;
+	sbuf->stats = calloc(1, sizeof(*sbuf->stats));
 
 	return(idx);
 }
@@ -440,6 +457,32 @@ int sockbuf_set_sock(int idx, int sock, int flags)
 	if (!(flags & SOCKBUF_NOREAD)) pollfds[i].events |= POLLIN;
 
 	return(idx);
+}
+
+int sockbuf_get_peer(int idx, const char **peer_ip, int *peer_port)
+{
+	if (!sockbuf_isvalid(idx)) return(-1);
+	if (peer_ip) *peer_ip = sockbufs[idx].peer_ip;
+	if (peer_port) *peer_port = sockbufs[idx].peer_port;
+	return(0);
+}
+
+int sockbuf_get_self(int idx, const char **my_ip, int *my_port)
+{
+	if (!sockbuf_isvalid(idx)) return(-1);
+	if (my_ip) *my_ip = sockbufs[idx].my_ip;
+	if (my_port) *my_port = sockbufs[idx].my_port;
+	return(0);
+}
+
+int sockbuf_get_stats(int idx, sockbuf_stats_t **stats)
+{
+	if (!sockbuf_isvalid(idx)) return(-1);
+	if (stats) {
+		*stats = sockbufs[idx].stats;
+		update_stats(*stats);
+	}
+	return(0);
 }
 
 int sockbuf_noread(int idx)
@@ -522,6 +565,9 @@ int sockbuf_delete(int idx)
 	/* Free its output buffer. */
 	if (sbuf->data) free(sbuf->data);
 
+	/* Free the stats struct. */
+	if (sbuf->stats) free(sbuf->stats);
+
 	/* Mark it as deleted. */
 	memset(sbuf, 0, sizeof(*sbuf));
 	sbuf->sock = -1;
@@ -544,6 +590,7 @@ int sockbuf_write(int idx, const char *data, int len)
 {
 	if (!sockbuf_isvalid(idx)) return(-1);
 	if (len < 0) len = strlen(data);
+	sockbufs[idx].stats->bytes_out += len;
 	return sockbuf_on_write(idx, SOCKBUF_LEVEL_WRITE_INTERNAL, data, len);
 }
 
@@ -645,7 +692,7 @@ int sockbuf_get_filter_data(int idx, sockbuf_filter_t *filter, void *client_data
 
 /* Detach the specified filter, and return the filter's client data in the
 	client_data pointer (it should be a pointer to a pointer). */
-int sockbuf_detach_filter(int idx, sockbuf_filter_t *filter, void *client_data)
+int sockbuf_detach_filter(int idx, sockbuf_filter_t *filter, void *client_data_ptr)
 {
 	int i;
 	sockbuf_t *sbuf;
@@ -655,11 +702,11 @@ int sockbuf_detach_filter(int idx, sockbuf_filter_t *filter, void *client_data)
 
 	for (i = 0; i < sbuf->nfilters; i++) if (sbuf->filters[i] == filter) break;
 	if (i == sbuf->nfilters) {
-		if (client_data) *(void **)client_data = NULL;
+		if (client_data_ptr) *(void **)client_data_ptr = NULL;
 		return(0);
 	}
 
-	if (client_data) *(void **)client_data = sbuf->filter_client_data[i];
+	if (client_data_ptr) *(void **)client_data_ptr = sbuf->filter_client_data[i];
 	memmove(sbuf->filter_client_data+i, sbuf->filter_client_data+i+1, sizeof(void *) * (sbuf->nfilters-i-1));
 	memmove(sbuf->filters+i, sbuf->filters+i+1, sizeof(void *) * (sbuf->nfilters-i-1));
 	sbuf->nfilters--;
@@ -724,4 +771,73 @@ int sockbuf_update_all(int timeout)
 	}
 
 	return(0);
+}
+
+/* Helper functions to update stats. */
+static void stats_out(sockbuf_stats_t *stats, int len)
+{
+	timer_get_now(&stats->last_output_at);
+	skip_stats(stats, stats->last_output_at.sec);
+	stats->raw_bytes_out += len;
+	stats->snapshot_out_bytes[stats->snapshot_counter] += len;
+}
+
+static void stats_in(sockbuf_stats_t *stats, int len)
+{
+	timer_get_now(&stats->last_input_at);
+	skip_stats(stats, stats->last_input_at.sec);
+	stats->raw_bytes_in += len;
+	stats->snapshot_in_bytes[stats->snapshot_counter] += len;
+}
+
+static void skip_stats(sockbuf_stats_t *stats, int curtime)
+{
+	int diff, i;
+
+	diff = curtime - stats->last_snapshot;
+	stats->last_snapshot = curtime;
+	if (diff > 5) diff = 5;
+
+	/* Reset counters for seconds that were skipped. */
+	for (i = 0; i < diff; i++) {
+		stats->snapshot_counter++;
+		if (stats->snapshot_counter >= 5) stats->snapshot_counter = 0;
+		stats->snapshot_out_bytes[stats->snapshot_counter] = 0;
+		stats->snapshot_in_bytes[stats->snapshot_counter] = 0;
+	}
+}
+
+/* Should be called to update the cps stats. */
+static void update_stats(sockbuf_stats_t *stats)
+{
+	int curtime = timer_get_now_sec(NULL);
+	int nsecs;
+	int snap_in = 0, snap_out = 0;
+	int i;
+
+	/* Compute total input cps. */
+	nsecs = curtime - stats->connected_at.sec + 1;
+
+	stats->total_in_cps = stats->raw_bytes_in / nsecs;
+	stats->total_out_cps = stats->raw_bytes_out / nsecs;
+
+	/* Compute cps. */
+
+	/* Zero out any skipped seconds. */
+	skip_stats(stats, curtime);
+
+	/* When we calculate the totals, we do not include the current second
+	 * because more data might be sent during this second and our report
+	 * will be pretty inaccurate. */
+	for (i = 0; i < 5; i++) {
+		if (i != stats->snapshot_counter) {
+			snap_in += stats->snapshot_in_bytes[i];
+			snap_out += stats->snapshot_out_bytes[i];
+		}
+	}
+	if (nsecs > 4) nsecs = 4;
+	else if (nsecs > 1) nsecs--;
+	else nsecs = 1;
+	stats->snapshot_in_cps = snap_in / nsecs;
+	stats->snapshot_out_cps = snap_out / nsecs;
 }

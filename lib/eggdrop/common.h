@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: common.h,v 1.8 2003/12/17 07:39:14 wcc Exp $
+ * $Id: common.h,v 1.9 2004/01/10 01:43:18 stdarg Exp $
  */
 
 #ifndef _EGG_COMMON_H_
@@ -46,6 +46,14 @@
 #  define EGG_VARARGS(type, name)		()
 #  define EGG_VARARGS_DEF(type, name)		(va_alist) va_dcl
 #  define EGG_VARARGS_START(type, name, list)	(va_start(list), va_arg(list,type))
+#endif
+
+#ifdef HAVE_INTTYPES_H
+	#include <inttypes.h>
+#else
+	#ifdef HAVE_STDINT_H
+		#include <stdint.h>
+	#endif
 #endif
 
 #include "lib/compat/compat.h"

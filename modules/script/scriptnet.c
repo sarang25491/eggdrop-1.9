@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptnet.c,v 1.4 2003/12/18 06:50:47 wcc Exp $";
+static const char rcsid[] = "$Id: scriptnet.c,v 1.5 2004/01/10 01:43:18 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -29,19 +29,9 @@ static const char rcsid[] = "$Id: scriptnet.c,v 1.4 2003/12/18 06:50:47 wcc Exp 
 typedef struct script_net_info {
 	struct script_net_info *prev, *next;
 	int idx;
-	char *peer_ip, *peer_host, *peer_ident;
-	int peer_port;
 	script_callback_t *on_connect, *on_eof, *on_newclient;
 	script_callback_t *on_read, *on_written;
 	script_callback_t *on_delete;
-
-	/* Some stats about this connection. */
-	egg_timeval_t connected_at;
-	egg_timeval_t last_input_at;
-	egg_timeval_t last_output_at;
-
-	unsigned int bytes_in, bytes_out;
-	unsigned int bytes_left;
 } script_net_info_t;
 
 /* We keep a list of script-controlled sockbufs. */
@@ -211,12 +201,31 @@ static int script_net_handler(int idx, const char *event, script_callback_t *cal
 
 static int script_net_info(script_var_t *retval, int idx, char *what)
 {
-	script_net_info_t *info = script_net_info_lookup(idx);
+	sockbuf_stats_t *stats = NULL;
 
+	sockbuf_get_stats(idx, &stats);
 	retval->type = SCRIPT_INTEGER;
-	if (!info) return(0);
+	if (!stats) return(0);
 
-	if (!strcasecmp(what, "bytesleft")) retval->value = (void *)info->bytes_left;
+	if (!strcasecmp(what, "all")) {
+		retval->type = SCRIPT_ARRAY | SCRIPT_FREE | SCRIPT_VAR;
+		retval->len = 0;
+		script_list_append(retval, script_int(stats->connected_at.sec));
+		script_list_append(retval, script_int(stats->last_input_at.sec));
+		script_list_append(retval, script_int(stats->last_output_at.sec));
+		script_list_append(retval, script_int(stats->raw_bytes_in));
+		script_list_append(retval, script_int(stats->raw_bytes_out));
+		script_list_append(retval, script_int(stats->raw_bytes_left));
+		script_list_append(retval, script_int(stats->bytes_in));
+		script_list_append(retval, script_int(stats->bytes_out));
+		script_list_append(retval, script_int(stats->total_in_cps));
+		script_list_append(retval, script_int(stats->snapshot_in_cps));
+		script_list_append(retval, script_int(stats->total_out_cps));
+		script_list_append(retval, script_int(stats->snapshot_out_cps));
+	}
+	else if (!strcasecmp(what, "raw_bytes_left")) retval->value = (void *)(int)stats->raw_bytes_left;
+	else if (!strcasecmp(what, "raw_bytes_in")) retval->value = (void *)(int)stats->raw_bytes_in;
+	else if (!strcasecmp(what, "raw_bytes_out")) retval->value = (void *)(int)stats->raw_bytes_out;
 	return(0);
 }
 
@@ -237,10 +246,6 @@ static int script_net_throttle_set(void *client_data, int idx, int speed)
 static int on_connect(void *client_data, int idx, const char *peer_ip, int peer_port)
 {
 	script_net_info_t *info = client_data;
-
-	str_redup(&info->peer_ip, peer_ip);
-	info->peer_port = peer_port;
-	timer_get_now(&info->connected_at);
 
 	if (info->on_connect) info->on_connect->callback(info->on_connect, idx, peer_ip, peer_port);
 	return(0);
@@ -268,9 +273,6 @@ static int on_read(void *client_data, int idx, char *data, int len)
 	script_net_info_t *info = client_data;
 	byte_array_t bytes;
 
-	info->bytes_in += len;
-	timer_get_now(&info->last_input_at);
-
 	if (info->on_read) {
 		bytes.bytes = data;
 		bytes.len = len;
@@ -283,11 +285,6 @@ static int on_read(void *client_data, int idx, char *data, int len)
 static int on_written(void *client_data, int idx, int len, int remaining)
 {
 	script_net_info_t *info = client_data;
-
-	timer_get_now(&info->last_output_at);
-
-	info->bytes_out += len;
-	info->bytes_left = remaining;
 
 	if (info->on_written) info->on_written->callback(info->on_written, idx, len, remaining);
 	return(0);

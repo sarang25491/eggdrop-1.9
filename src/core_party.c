@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.21 2003/12/23 22:23:04 stdarg Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.22 2004/01/10 01:43:18 stdarg Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -92,30 +92,15 @@ done:
 	return(0);
 }
 
-static void *lookup_and_check(partymember_t *p, const char *path)
+static void *lookup_setting(partymember_t *p, const char *path)
 {
 	void *root;
 	char *flags;
-	flags_t uflags, rflags;
 
 	root = config_get_root("eggdrop");
 	root = config_exists(root, path, 0, NULL);
-	if (!root) {
-		partymember_printf(p, _("That setting does not exist."));
-		return(NULL);
-	}
-
-	config_get_str(&flags, root, "flags", 0, NULL);
-	if (flags) {
-		flag_from_str(&rflags, flags);
-		if (!p->user) goto nope;
-		user_get_flags(p->user, NULL, &uflags);
-		if (!flag_match_partial(&uflags, &rflags)) goto nope;
-	}
+	if (!root) partymember_printf(p, _("That setting does not exist."));
 	return(root);
-nope:
-	partymember_printf(p, _("You cannot access that setting."));
-	return(NULL);
 }
 
 static int party_get(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
@@ -128,15 +113,15 @@ static int party_get(partymember_t *p, const char *nick, user_t *u, const char *
 		return(0);
 	}
 
-	root = lookup_and_check(p, text);
+	root = lookup_setting(p, text);
 	if (!root) return(0);
 
 	config_get_str(&str, root, NULL);
 	if (str) {
-		partymember_printf(p, "==> '%s'", str);
+		partymember_printf(p, "Current value: '%s'", str);
 	}
 	else {
-		partymember_printf(p, _("==> null (unset)"));
+		partymember_printf(p, _("Current value: null (unset)"));
 	}
 	return(0);
 }
@@ -148,13 +133,16 @@ static int party_set(partymember_t *p, const char *nick, user_t *u, const char *
 	const char *next;
 
 	egg_get_arg(text, &next, &path);
-	if (!next || !*next || !path || !*path) {
-		partymember_printf(p, _("Syntax: set <path> <new value>"));
-		if (path) free(path);
+	if (!path) {
+		partymember_printf(p, _("Syntax: set <path> [new value]"));
 		return(0);
 	}
+	if (!next) {
+		free(path);
+		return party_get(p, nick, u, cmd, text);
+	}
 
-	root = lookup_and_check(p, path);
+	root = lookup_setting(p, path);
 	free(path);
 	if (!root) return(0);
 
@@ -177,7 +165,7 @@ static int party_unset(partymember_t *p, const char *nick, user_t *u, const char
 		return(0);
 	}
 
-	root = lookup_and_check(p, text);
+	root = lookup_setting(p, text);
 	if (!root) return(0);
 
 	config_get_str(&str, root, NULL);

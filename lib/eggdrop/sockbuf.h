@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: sockbuf.h,v 1.5 2003/12/17 07:39:14 wcc Exp $
+ * $Id: sockbuf.h,v 1.6 2004/01/10 01:43:18 stdarg Exp $
  */
 
 #ifndef _EGG_SOCKBUF_H_
@@ -47,6 +47,21 @@
 #define SOCKBUF_LEVEL_COMPRESSION	4000
 #define SOCKBUF_LEVEL_TEXT_ALTERATION	5000
 #define SOCKBUF_LEVEL_TEXT_BUFFER	6000
+
+/* Some connection stats for sockbufs. */
+typedef struct {
+	egg_timeval_t connected_at;
+	egg_timeval_t last_input_at;
+	egg_timeval_t last_output_at;
+
+	uint64_t raw_bytes_in, raw_bytes_out, raw_bytes_left;
+	uint64_t bytes_in, bytes_out;
+
+	int total_in_cps, snapshot_in_cps;
+	int total_out_cps, snapshot_out_cps;
+
+	int snapshot_in_bytes[5], snapshot_out_bytes[5], snapshot_counter, last_snapshot;
+} sockbuf_stats_t;
 
 typedef struct {
 	const char *name;
@@ -92,13 +107,16 @@ int sockbuf_flush(int idx);
 int sockbuf_set_handler(int idx, sockbuf_handler_t *handler, void *client_data);
 int sockbuf_get_sock(int idx);
 int sockbuf_set_sock(int idx, int sock, int flags);
+int sockbuf_get_peer(int idx, const char **peer_ip, int *peer_port);
+int sockbuf_get_self(int idx, const char **my_ip, int *my_port);
+int sockbuf_get_stats(int idx, sockbuf_stats_t **stats);
 int sockbuf_read(int idx);
 int sockbuf_noread(int idx);
 int sockbuf_attach_listener(int fd);
 int sockbuf_get_filter_data(int idx, sockbuf_filter_t *filter, void *client_data_ptr);
 int sockbuf_detach_listener(int fd);
 int sockbuf_attach_filter(int idx, sockbuf_filter_t *filter, void *client_data);
-int sockbuf_detach_filter(int idx, sockbuf_filter_t *filter, void *client_data);
+int sockbuf_detach_filter(int idx, sockbuf_filter_t *filter, void *client_data_ptr);
 int sockbuf_update_all(int timeout);
 
 /* Filter functions. */
