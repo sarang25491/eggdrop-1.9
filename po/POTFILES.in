@@ -11,10 +11,13 @@ src/dccutil.c
 src/dns.c
 src/main.c
 src/misc.c
+src/logfile.c
 src/mod/assoc.mod/assoc.c
+src/mod/blowfish.mod/blowfish.c
 src/mod/channels.mod/channels.c
 src/mod/channels.mod/cmdschan.c
 src/mod/channels.mod/userchan.c
+src/mod/compress.mod/compress.c
 src/mod/console.mod/console.c
 src/mod/filesys.mod/dbcompat.c
 src/mod/filesys.mod/filedb3.c
@@ -32,6 +35,7 @@ src/mod/server.mod/server.c
 src/mod/server.mod/servmsg.c
 src/mod/share.mod/share.c
 src/mod/transfer.mod/transfer.c
+src/mod/uptime.mod/uptime.c
 src/modules.c
 src/tcldcc.c
 src/tclhash.c
