@@ -30,7 +30,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.130 2003/02/03 01:01:07 stdarg Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.131 2003/02/03 06:42:40 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -498,6 +498,7 @@ int main(int argc, char **argv)
   struct sigaction sv;
   struct chanset_t *chan;
   egg_timeval_t howlong;
+  int timeout;
 
 #ifdef DEBUG
   /* Make sure it can write core, if you make debug. Else it's pretty
@@ -765,7 +766,14 @@ module, please consult the default config file for info.\n"));
     /* Free unused structures. */
     /* garbage_collect(); */
 
-    sockbuf_update_all(0);
+	if (timer_get_shortest(&howlong)) {
+		timeout = 1000;
+	}
+	else {
+		timeout = howlong.sec * 1000 + howlong.usec / 1000;
+	}
+	sockbuf_update_all(timeout);
+
     xx = sockgets(buf, &i);
     timer_update_now(&egg_timeval_now);
     if (xx >= 0) {		/* Non-error */

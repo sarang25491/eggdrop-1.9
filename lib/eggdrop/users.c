@@ -225,6 +225,7 @@ user_t *user_new(const char *handle)
 
 	uid = user_get_uid();
 	u = real_user_new(handle, uid);
+	if (!u) return(NULL);
 
 	/* All users have the global setting by default. */
 	u->settings = calloc(1, sizeof(*u->settings));

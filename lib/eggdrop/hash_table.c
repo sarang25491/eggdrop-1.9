@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: hash_table.c,v 1.2 2003/01/02 21:33:13 wcc Exp $";
+static const char rcsid[] = "$Id: hash_table.c,v 1.3 2003/02/03 06:42:40 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -208,6 +208,8 @@ static unsigned int my_string_hash(const void *key)
 	hash = 0;
 	k = (unsigned char *)key;
 	keylen = strlen((char *)key);
+
+	if (!keylen) return(0);
 
 	loop = (keylen + 8 - 1) >> 3;
 	switch (keylen & (8 - 1)) {

@@ -9,7 +9,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: net.c,v 1.66 2003/01/30 07:47:17 wcc Exp $";
+static const char rcsid[] = "$Id: net.c,v 1.67 2003/02/03 06:42:40 stdarg Exp $";
 #endif
 
 #include <fcntl.h>
@@ -754,15 +754,8 @@ static int sockread(char *s, int *len)
     fds = FD_SETSIZE;		/* Fixes YET ANOTHER freebsd bug!!! */
 #endif
 
-  if (timer_get_shortest(&howlong)) {
-    /* No timer, default to 1 second. */
-    t.tv_sec = 1;
-    t.tv_usec = 0;
-  }
-  else {
-    t.tv_sec = howlong.sec;
-    t.tv_usec = howlong.usec;
-  }
+  t.tv_sec = 0;
+  t.tv_usec = 0;
 
   FD_ZERO(&fd);
   

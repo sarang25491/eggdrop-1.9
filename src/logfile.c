@@ -49,10 +49,6 @@ static int logfile_cycle();
 static void check_logsizes();
 static void flushlog(log_t *log, char *timestamp);
 
-/* Functions for accessing the logfiles via scripts. */
-static int script_putlog(char *text);
-static int script_putloglev(char *level, char *chan, char *text);
-
 /* Bind for the log table. The core does logging to files and the partyline, but
  * modules may implement sql logging or whatever. */
 static int on_putlog(int flags, const char *chan, const char *text, int len);
@@ -66,6 +62,11 @@ static script_linked_var_t log_script_vars[] = {
 	{0}
 };
 
+static script_command_t log_script_cmds[] = {
+	{"", "logfile", logfile_add, NULL, 3, "sss", "modes chan filename", SCRIPT_STRING, 0},
+	{0}
+};
+
 static bind_list_t log_binds[] = {
 	{"", on_putlog},
 	{0}
@@ -75,6 +76,7 @@ void logfile_init()
 {
 	logfile_suffix = strdup(".%d%b%Y");
 	script_link_vars(log_script_vars);
+	script_create_commands(log_script_cmds);
 	add_hook(HOOK_MINUTELY, logfile_minutely);
 	add_hook(HOOK_5MINUTELY, logfile_5minutely);
 	bind_add_list("log", log_binds);
