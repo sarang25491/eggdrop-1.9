@@ -1,3 +1,10 @@
+2002-03-05 19:53  stdarg <stdarg@techmonkeys.org>
+
+	* configure.ac, src/net.c:
+
+	
+	* Use strerror() within neterror() if we have it 
+
 2002-03-05 08:12  stdarg <stdarg@techmonkeys.org>
 
 	* src/flags.c:
