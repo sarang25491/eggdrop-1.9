@@ -3,7 +3,7 @@
  *   saved console settings based on console.tcl
  *   by cmwagner/billyjoe/D. Senso
  *
- * $Id: console.c,v 1.21 2001/07/17 19:53:40 guppy Exp $
+ * $Id: console.c,v 1.22 2001/07/25 04:21:08 guppy Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -379,9 +379,9 @@ char *console_start(Function * global_funcs)
   global = global_funcs;
 
   module_register(MODULE_NAME, console_table, 1, 1);
-  if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
+  if (!module_depend(MODULE_NAME, "eggdrop", 107, 0)) {
     module_undepend(MODULE_NAME);
-    return "This module requires eggdrop1.6.0 or later";
+    return "This module requires eggdrop1.7.0 or later";
   }
   add_builtins(H_chon, mychon);
   add_builtins(H_dcc, mydcc);

@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.40 2001/07/17 19:53:43 guppy Exp $
+ * $Id: transfer.c,v 1.41 2001/07/25 04:21:09 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1965,9 +1965,9 @@ char *transfer_start(Function *global_funcs)
 
   fileq = NULL;
   module_register(MODULE_NAME, transfer_table, 2, 2);
-  if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
+  if (!module_depend(MODULE_NAME, "eggdrop", 107, 0)) {
     module_undepend(MODULE_NAME);
-    return "This module requires eggdrop1.6.0 or later";
+    return "This module requires eggdrop1.7.0 or later";
   }
 
   add_tcl_commands(mytcls);

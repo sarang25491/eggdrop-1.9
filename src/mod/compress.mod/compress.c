@@ -6,7 +6,7 @@
  * Written by Fabian Knittel <fknittel@gmx.de>. Based on zlib examples
  * by Jean-loup Gailly and Miguel Albrecht.
  *
- * $Id: compress.c,v 1.11 2001/07/17 19:53:40 guppy Exp $
+ * $Id: compress.c,v 1.12 2001/07/25 04:21:07 guppy Exp $
  */
 /*
  * Copyright (C) 2000, 2001 Eggheads Development Team
@@ -426,9 +426,9 @@ char *compress_start(Function *global_funcs)
   compress_level	= 9;
 
   module_register(MODULE_NAME, compress_table, 1, 1);
-  if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
+  if (!module_depend(MODULE_NAME, "eggdrop", 107, 0)) {
     module_undepend(MODULE_NAME);
-    return "This module needs eggdrop1.6.0 or later";
+    return "This module needs eggdrop1.7.0 or later";
   }
   share_funcs = module_depend(MODULE_NAME, "share", 2, 3);
   if (!share_funcs) {

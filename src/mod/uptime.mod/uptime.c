@@ -1,6 +1,6 @@
 /* Original Copyright (c) 2000-2001 proton
  * 
- * $Id: uptime.c,v 1.9 2001/07/17 19:53:43 guppy Exp $
+ * $Id: uptime.c,v 1.10 2001/07/25 04:21:10 guppy Exp $
  * Borrowed from Emech, reports to http://uptime.energymech.net, feel free to opt out if you
  * dont like it by not loading the module.
  * 
@@ -236,6 +236,10 @@ char *uptime_start(Function * global_funcs)
 	global = global_funcs;
 
 	Context;
+	if (!module_depend(MODULE_NAME, "eggdrop", 107, 0)) {
+		module_undepend(MODULE_NAME);
+		return "This module requires eggdrop1.7.0 or later";
+	}              
 	if (!(server_funcs = module_depend(MODULE_NAME, "server", 1, 0)))
 		return "You need the server module to use the uptime module.";
 	module_register(MODULE_NAME, uptime_table, 1, 1);
