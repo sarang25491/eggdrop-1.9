@@ -24,7 +24,7 @@
  */
  
 #ifndef lint
-static const char rcsid[] = "$Id: help.c,v 1.11 2004/06/22 23:20:23 wingman Exp $";
+static const char rcsid[] = "$Id: help.c,v 1.12 2004/06/23 20:19:45 wingman Exp $";
 #endif
 
 #include <sys/types.h>
@@ -100,8 +100,8 @@ int help_shutdown(void)
 	bind_rem_simple(BTN_LOAD_MODULE, NULL, "*", (Function)help_load_by_module);
 	bind_rem_simple(BTN_UNLOAD_MODULE, NULL, "*", (Function)help_unload_by_module);
 
-	hash_table_destroy(entries);
-	hash_table_destroy(sections);
+	hash_table_delete(entries);
+	hash_table_delete(sections);
 
 	return 0;
 }
@@ -512,7 +512,7 @@ static void unload_entry(const char *name, help_entry_t **e, help_unload_t *ul)
 	}
 	
 	/* Remove it from hash table */
-	hash_table_delete(entries, name, e);
+	hash_table_remove(entries, name, e);
 	
 	/* Remove it from section */
 	if (section->nentries > 1) {

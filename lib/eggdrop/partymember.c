@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partymember.c,v 1.14 2004/06/22 21:55:32 wingman Exp $";
+static const char rcsid[] = "$Id: partymember.c,v 1.15 2004/06/23 20:19:45 wingman Exp $";
 #endif
 
 #include <stdarg.h>
@@ -57,7 +57,7 @@ int partymember_shutdown(void)
 	 * our hashtable */
 	garbage_run();
 
-	hash_table_destroy(pid_ht);
+	hash_table_delete(pid_ht);
 	return (0);
 }
 
@@ -67,7 +67,7 @@ static void partymember_really_delete(partymember_t *p)
 	if (p->prev) p->prev->next = p->next;
 	else party_head = p->next;
 	if (p->next) p->next->prev = p->prev;
-	hash_table_delete(pid_ht, (void *)p->pid, NULL);
+	hash_table_remove(pid_ht, (void *)p->pid, NULL);
 
 	/* Free! */
 	if (p->nick) free(p->nick);

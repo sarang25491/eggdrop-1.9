@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: hash_table.h,v 1.4 2004/03/01 22:58:32 stdarg Exp $
+ * $Id: hash_table.h,v 1.5 2004/06/23 20:19:45 wingman Exp $
  */
 
 #ifndef _EGG_HASH_TABLE_H_
@@ -57,13 +57,13 @@ typedef struct hash_table_b {
 } hash_table_t;
 
 hash_table_t *hash_table_create(hash_table_hash_alg alg, hash_table_cmp_alg cmp, int nrows, int flags);
-int hash_table_destroy(hash_table_t *ht);
+int hash_table_delete(hash_table_t *ht);
 int hash_table_check_resize(hash_table_t *ht);
 int hash_table_resize(hash_table_t *ht, int nrows);
 int hash_table_insert(hash_table_t *ht, const void *key, void *data);
 int hash_table_replace(hash_table_t *ht, const void *key, void *data);
 int hash_table_find(hash_table_t *ht, const void *key, void *dataptr);
-int hash_table_delete(hash_table_t *ht, const void *key, void *dataptr);
+int hash_table_remove(hash_table_t *ht, const void *key, void *dataptr);
 int hash_table_walk(hash_table_t *ht, hash_table_node_func callback, void *param);
 
 #endif /* !_EGG_HASH_TABLE_H_ */

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: hash_table.c,v 1.9 2004/06/22 18:47:27 wingman Exp $";
+static const char rcsid[] = "$Id: hash_table.c,v 1.10 2004/06/23 20:19:45 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -58,7 +58,7 @@ hash_table_t *hash_table_create(hash_table_hash_alg alg, hash_table_cmp_alg cmp,
 	return(ht);
 }
 
-int hash_table_destroy(hash_table_t *ht)
+int hash_table_delete(hash_table_t *ht)
 {
 	hash_table_entry_t *entry, *next;
 	hash_table_row_t *row;
@@ -165,7 +165,7 @@ int hash_table_find(hash_table_t *ht, const void *key, void *dataptr)
 	return(-1);
 }
 
-int hash_table_delete(hash_table_t *ht, const void *key, void *dataptr)
+int hash_table_remove(hash_table_t *ht, const void *key, void *dataptr)
 {
 	int idx;
 	unsigned int hash;

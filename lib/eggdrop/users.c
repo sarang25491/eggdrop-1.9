@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.28 2004/06/23 17:24:43 wingman Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.29 2004/06/23 20:19:45 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -92,9 +92,9 @@ int user_shutdown(void)
 	/* flush any pending user delete events */
 	garbage_run();
 
-	hash_table_destroy(irchost_cache_ht);
-	hash_table_destroy(uid_ht);
-	hash_table_destroy(handle_ht);
+	hash_table_delete(irchost_cache_ht);
+	hash_table_delete(uid_ht);
+	hash_table_delete(handle_ht);
 
 	return (0);
 }
@@ -312,8 +312,8 @@ int user_delete(user_t *u)
 	if (!u || (u->flags & USER_DELETED)) return(-1);
 
 	nusers--;
-	hash_table_delete(handle_ht, u->handle, NULL);
-	hash_table_delete(uid_ht, (void *)u->uid, NULL);
+	hash_table_remove(handle_ht, u->handle, NULL);
+	hash_table_remove(uid_ht, (void *)u->uid, NULL);
 	cache_user_del(u, "*");
 	for (i = 0; i < u->nircmasks; i++) ircmask_list_del(&ircmask_list, u->ircmasks[i], u);
 	u->flags |= USER_DELETED;
@@ -424,7 +424,7 @@ static int cache_user_del(user_t *u, const char *ircmask)
 	info.nentries = 0;
 	hash_table_walk(irchost_cache_ht, cache_check_del, &info);
 	for (i = 0; i < info.nentries; i++) {
-		hash_table_delete(irchost_cache_ht, info.entries[i], NULL);
+		hash_table_remove(irchost_cache_ht, info.entries[i], NULL);
 		free((void *)info.entries[i]);
 	}
 	if (info.entries) free(info.entries);

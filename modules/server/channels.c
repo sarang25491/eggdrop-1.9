@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.20 2004/06/15 11:54:33 wingman Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.21 2004/06/23 20:19:45 wingman Exp $";
 #endif
 
 #include "server.h"
@@ -102,7 +102,7 @@ void channel_reset()
 
 	/* And the uhost cache. */
 	hash_table_walk(uhost_cache_ht, uhost_cache_delete, NULL);
-	hash_table_destroy(uhost_cache_ht);
+	hash_table_delete(uhost_cache_ht);
 	uhost_cache_ht = hash_table_create(NULL, NULL, UHOST_CACHE_SIZE, HASH_TABLE_STRINGS);
 }
 
@@ -110,7 +110,7 @@ void server_channel_destroy()
 {
 	/* Free everything. */
 	channel_reset();
-	hash_table_destroy(uhost_cache_ht);
+	hash_table_delete(uhost_cache_ht);
 }
 
 void channel_lookup(const char *chan_name, int create, channel_t **chanptr, channel_t **prevptr)
@@ -215,7 +215,7 @@ void uhost_cache_decref(const char *nick)
 
 	cache->ref_count--;
 	if (cache->ref_count <= 0) {
-		hash_table_delete(uhost_cache_ht, cache->nick, NULL);
+		hash_table_remove(uhost_cache_ht, cache->nick, NULL);
 		uhost_cache_delete(NULL, cache, NULL);
 	}
 }
@@ -347,7 +347,7 @@ void channel_on_nick(const char *old_nick, const char *new_nick)
 
 	lnick = egg_msprintf(buf, sizeof(buf), NULL, "%s", old_nick);
 	make_lowercase(lnick);
-	hash_table_delete(uhost_cache_ht, lnick, &cache);
+	hash_table_remove(uhost_cache_ht, lnick, &cache);
 	if (lnick != buf) free(lnick);
 
 	if (cache) {
