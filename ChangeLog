@@ -1,3 +1,13 @@
+2003-05-12 23:32  Will Buckner <wcc@techmonkeys.org>
+
+	* doc/UPDATES1.6, modules/filesys/files.c, modules/irc/cmdsirc.c,
+	modules/irc/mode.c, scripts/autobotchk, scripts/cmd_resolve.tcl,
+	scripts/getops.tcl, src/cmds.c:
+
+	* Sync 1.6: key_locking, flushmode-key, bug315,
+	            has_flags-get_channel2, getops-timer, fixcodes-fix, (autobotchk
+	            stuff), (cmd_resolve stuff).  
+
 2003-05-12 14:11  wingman
 
 	* lib/eggdrop/binds.c, lib/eggdrop/eggdns.c, lib/eggdrop/modvals.h,
