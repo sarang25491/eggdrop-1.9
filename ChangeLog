@@ -1,3 +1,10 @@
+2003-03-07 18:50  stdarg <stdarg@techmonkeys.org>
+
+	* lib/compat/inet_ntop.h:
+
+	
+	* Added necessary include file for inet_ntop on freebsd 
+
 2003-03-07 13:00  Tothwolf <tothwolf@techmonkeys.org>
 
 	* configure.ac:
