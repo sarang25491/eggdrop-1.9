@@ -1,3 +1,17 @@
+2001-12-08 16:28  Federico Mennite <ite@techmonkeys.org>
+
+	* modules/channels/tclchan.c:
+
+	More ban issues fixes. Patch by Jeff Fisher <guppy@techmonkeys.org> 
+
+2001-12-08 16:16  Federico Mennite <ite@techmonkeys.org>
+
+	* doc/text-substitutions.doc, doc/html/app-textsub.html,
+	help/set/cmds1.help, src/misc.c:
+
+	Added %n for  to the list of motd text substitutions. Patch by
+	Benoit Timbert <Benoit.TIMBERT@free.fr> 
+
 2001-12-08 15:59  Federico Mennite <ite@techmonkeys.org>
 
 	* help/cmds1.help, help/cmds2.help, help/core.help, src/cmds.c:
