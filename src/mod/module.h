@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.64 2001/10/13 15:55:33 tothwolf Exp $
+ * $Id: module.h,v 1.65 2001/10/14 04:44:37 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -32,6 +32,7 @@
 #include "src/main.h"
 #include "modvals.h"
 #include "src/tandem.h"
+#include "src/registry.h"
 
 /*
  * This file contains all the orrible stuff required to do the lookup
@@ -437,11 +438,15 @@
 #define kill_bot ((void (*)(char *, char *))global[273])
 #define quit_msg ((char *)(global[274]))
 #define add_bind_table2 ((bind_table_t *(*)(const char *, int, char *, int, int))global[275])
+/* 276 - 280 */
 #define del_bind_table2 ((void (*)(bind_table_t *))global[276])
 #define add_builtins2 ((void (*)(bind_table_t *, cmd_t *))global[277])
 #define rem_builtins2 ((void (*)(bind_table_t *, cmd_t *))global[278])
 #define find_bind_table2 ((bind_table_t *(*)(const char *))global[279])
 #define check_bind ((int (*)(bind_table_t *, const char *, struct flag_record *, ...))global[280])
+/* 281 - 285 */
+#define registry_lookup ((int (*)(const char *, const char *, Function *, void **))global[281])
+#define registry_add_simple_chains ((int (*)(registry_simple_chain_t *))global[282])
 
 /* This is for blowfish module, couldnt be bothered making a whole new .h
  * file for it ;)

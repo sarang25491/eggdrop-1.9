@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.82 2001/10/13 12:00:22 stdarg Exp $
+ * $Id: main.c,v 1.83 2001/10/14 04:44:36 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -638,6 +638,7 @@ void check_static(char *, char *(*)());
 int init_dcc_max(), init_userent(), init_misc(), init_net(),
  init_modules(), init_tcl(int, char **);
 void botnet_init();
+void script_init();
 void init_binds();
 
 void patch(const char *str)
@@ -754,6 +755,7 @@ int main(int argc, char **argv)
   if (((int) getuid() == 0) || ((int) geteuid() == 0))
     fatal(_("ERROR: Eggdrop will not run as root!"), 0);
 
+  script_init();
   init_binds();
   init_dcc_max();
   init_userent();

@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.45 2001/10/12 15:50:26 tothwolf Exp $
+ * $Id: tcl.c,v 1.46 2001/10/14 04:44:36 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -479,11 +479,6 @@ extern tcl_cmds tcluser_cmds[], tcldcc_cmds[], tclmisc_cmds[], tclmisc_objcmds[]
  */
 void init_tcl(int argc, char **argv)
 {
-#if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
-  const char *encoding;
-  int i;
-  char *langEnv;
-#endif
 #ifndef HAVE_PRE7_5_TCL
   int j;
   char pver[1024] = "";
@@ -513,79 +508,6 @@ void init_tcl(int argc, char **argv)
 
   /* Setup script library facility */
   Tcl_Init(interp);
-
-/* Code based on Tcl's TclpSetInitialEncodings() */
-#if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
-  /* Determine the current encoding from the LC_* or LANG environment
-   * variables.
-   */
-  langEnv = getenv("LC_ALL");
-  if (langEnv == NULL || langEnv[0] == '\0') {
-    langEnv = getenv("LC_CTYPE");
-  }
-  if (langEnv == NULL || langEnv[0] == '\0') {
-    langEnv = getenv("LANG");
-  }
-  if (langEnv == NULL || langEnv[0] == '\0') {
-    langEnv = NULL;
-  }
-
-  encoding = NULL;
-  if (langEnv != NULL) {
-    for (i = 0; localeTable[i].lang != NULL; i++)
-      if (strcmp(localeTable[i].lang, langEnv) == 0) {
-	encoding = localeTable[i].encoding;
-	break;
-      }
-
-    /* There was no mapping in the locale table.  If there is an
-     * encoding subfield, we can try to guess from that.
-     */
-    if (encoding == NULL) {
-      char *p;
-
-      for (p = langEnv; *p != '\0'; p++) {
-        if (*p == '.') {
-          p++;
-          break;
-        }
-      }
-      if (*p != '\0') {
-        Tcl_DString ds;
-        Tcl_DStringInit(&ds);
-        Tcl_DStringAppend(&ds, p, -1);
-
-        encoding = Tcl_DStringValue(&ds);
-        Tcl_UtfToLower(Tcl_DStringValue(&ds));
-        if (Tcl_SetSystemEncoding(NULL, encoding) == TCL_OK) {
-          Tcl_DStringFree(&ds);
-          goto resetPath;
-        }
-        Tcl_DStringFree(&ds);
-        encoding = NULL;
-      }
-    }
-  }
-
-  if (encoding == NULL) {
-    encoding = "iso8859-1";
-  }
-
-  Tcl_SetSystemEncoding(NULL, encoding);
-
-resetPath:
-
-  /* Initialize the C library's locale subsystem. */
-  setlocale(LC_CTYPE, "");
-
-  /* In case the initial locale is not "C", ensure that the numeric
-   * processing is done in "C" locale regardless. */
-  setlocale(LC_NUMERIC, "C");
-
-  /* Keep the iso8859-1 encoding preloaded.  The IO package uses it for
-   * gets on a binary channel. */
-  Tcl_GetEncoding(NULL, "iso8859-1");
-#endif
 
 #ifndef HAVE_PRE7_5_TCL
   /* Add eggdrop to Tcl's package list */

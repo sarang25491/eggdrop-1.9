@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.7 2001/10/13 21:36:59 tothwolf Exp $
+# $Id: Makefile.am,v 1.8 2001/10/14 04:44:36 stdarg Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 bindir    = $(exec_prefix)
@@ -54,6 +54,11 @@ eggdrop_SOURCES = bg.c \
 		net.c \
 		patch.h \
 		proto.h \
+		registry.c \
+		registry.h \
+		script.c \
+		script.h \
+		script_api.h \
 		stat.h \
 		tandem.h \
 		tcl.c \
@@ -84,6 +89,7 @@ eggdrop_LDADD 	= @LIBLTDL@ \
 		"-dlopen" mod/notes.mod/notes.la \
 		"-dlopen" mod/server.mod/server.la \
 		"-dlopen" mod/share.mod/share.la \
+		"-dlopen" mod/tclscript.mod/tclscript.la \
 		"-dlopen" mod/transfer.mod/transfer.la \
 		"-dlopen" mod/uptime.mod/uptime.la \
 		"-dlopen" mod/woobie.mod/woobie.la \
@@ -102,6 +108,7 @@ eggdrop_DEPENDENCIES= $(XREQS)
 			src/mod/notes.la \
 			src/mod/server.la \
 			src/mod/share.la \
+			src/mod/tclscript.la \
 			src/mod/transfer.la \
 			src/mod/uptime.la \
 			src/mod/woobie.la

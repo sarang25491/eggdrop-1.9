@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.68 2001/10/13 15:55:33 tothwolf Exp $
+ * $Id: modules.c,v 1.69 2001/10/14 04:44:36 stdarg Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -28,6 +28,7 @@
 #include "main.h"
 #include "modules.h"
 #include "tandem.h"
+#include "registry.h"
 #include <ctype.h>
 
 #include <ltdl.h>
@@ -517,7 +518,10 @@ Function global_table[] =
   (Function) add_builtins2,
   (Function) rem_builtins2,
   (Function) find_bind_table2,
-  (Function) check_bind
+  (Function) check_bind,
+  /* 281 - 285 */
+  (Function) registry_lookup,
+  (Function) registry_add_simple_chains
 };
 
 void init_modules(void)
