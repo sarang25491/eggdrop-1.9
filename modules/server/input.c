@@ -87,18 +87,12 @@ static int got005(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 	char *arg, *name, *equalsign, *value;
 	int i;
 
-	/* We only process this once (fake or real). */
-	if (current_server.got005) return(0);
-	current_server.got005 = 1;
+	/* Some servers send multiple 005 messages, so we need to process
+	 * them all. */
+	current_server.got005++;
 
-	for (i = 0; i < current_server.nsupport; i++) {
-		free(current_server.support[i].name);
-		free(current_server.support[i].value);
-	}
-	if (current_server.support) free(current_server.support);
-
-	current_server.support = malloc(sizeof(*current_server.support) * (nargs-1));
-	current_server.nsupport = nargs-2;
+	current_server.support = realloc(current_server.support, sizeof(*current_server.support) * (current_server.nsupport+nargs-1));
+	current_server.nsupport += nargs-2;
 
 	for (i = 1; i < nargs-1; i++) {
 		arg = args[i];
@@ -166,11 +160,19 @@ static int got376(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 {
 	char *fake;
 
-	if (server_config.fake005 && server_config.fake005[0]) {
+	if (!current_server.got005 && server_config.fake005 && server_config.fake005[0]) {
 		fake = strdup(server_config.fake005);
 		server_parse_input(fake);
 		free(fake);
 	}
+	if (!current_server.chantypes) current_server.chantypes = strdup("#&");
+	if (!current_server.strcmp) current_server.strcmp = irccmp;
+	if (!current_server.type1modes) current_server.type1modes = strdup("b");
+	if (!current_server.type2modes) current_server.type2modes = strdup("k");
+	if (!current_server.type3modes) current_server.type3modes = strdup("l");
+	if (!current_server.type4modes) current_server.type4modes = strdup("imnprst");
+	if (!current_server.modeprefix) current_server.modeprefix = strdup("ov");
+	if (!current_server.whoprefix) current_server.whoprefix = strdup("@+");
 	return(0);
 }
 
@@ -330,10 +332,10 @@ static int gotnotice(char *from_nick, char *from_uhost, user_t *u, char *cmd, in
 	if (r) return(0);
 
 	/* Skip any mode prefix to the destination (e.g. PRIVMSG @#trivia :blah). */
-	if (strchr(current_server.whoprefix, *dest)) destname = dest+1;
+	if (current_server.whoprefix && strchr(current_server.whoprefix, *dest)) destname = dest+1;
 	else destname = dest;
 
-	if (strchr(current_server.chantypes, *destname)) to_channel = 1;
+	if (current_server.chantypes && strchr(current_server.chantypes, *destname)) to_channel = 1;
 	else to_channel = 0;
 
 	/* Check if it's a ctcr. */
@@ -463,8 +465,9 @@ static int goterror(char *from_nick, char *from_uhost, user_t *u, char *cmd, int
 		uhost = egg_mprintf("%s@%s", current_server.user, current_server.host);
 		full = egg_mprintf("%s!%s", current_server.nick, uhost);
 		u = user_lookup_by_irchost_nocache(full);
-		channel_on_quit(current_server.nick, full, u);
+		channel_on_quit(current_server.nick, uhost, u);
 		free(full);
+		free(uhost);
 	}
 
 	putlog(LOG_MSGS | LOG_SERV, "*", "-ERROR from server- %s", args[0]);

@@ -4,6 +4,7 @@
 /* Status bits for channels. */
 #define CHANNEL_WHOLIST	1
 #define CHANNEL_BANLIST	2
+#define CHANNEL_NAMESLIST	4
 
 typedef struct {
 	char *nick;

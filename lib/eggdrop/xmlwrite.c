@@ -18,6 +18,7 @@ int xml_write_node(FILE *fp, xml_node_t *node, int indent)
 	else if (node->type == 2) {
 		/* comment like <!-- ... --> */
 		fprintf(fp, "%s<!--%s-->\n", tabs, node->text);
+		free(tabs);
 		return(0);
 	}
 
@@ -30,6 +31,7 @@ int xml_write_node(FILE *fp, xml_node_t *node, int indent)
 	else if (node->len > 0) {
 		/* If it's just small text and no children... */
 		fprintf(fp, ">%s</%s>\n", node->text, node->name);
+		free(tabs);
 		return(0);
 	}
 	else {
@@ -49,5 +51,6 @@ int xml_write_node(FILE *fp, xml_node_t *node, int indent)
 	if (node->name) {
 		fprintf(fp, "%s</%s>\n", tabs, node->name);
 	}
+	free(tabs);
 	return(0);
 }

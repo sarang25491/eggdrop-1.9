@@ -21,6 +21,7 @@
 	<quick_logs>0</quick_logs>
 	<module_path>modules/</module_path>
 	<autoload>
+		<module>telnetparty</module>
 		<module>tclscript</module>
 		<module>script</module>
 		<module>server</module>
@@ -53,3 +54,9 @@
 		<port>6667</port>
 	</server>
 </server>
+<telnetparty>
+	<vhost />
+	<port>3333</port>
+	<stealth>0</stealth>
+	<max_retries>3</max_retries>
+</telnetparty>

@@ -175,11 +175,11 @@ channel_member_t *channel_add_member(const char *chan_name, const char *nick, co
 	}
 
 	/* Nope, so add him and put him in the cache. */
-	uhost_cache_fillin(nick, uhost, 1);
+	if (uhost) uhost_cache_fillin(nick, uhost, 1);
 
 	m = calloc(1, sizeof(*m));
 	m->nick = strdup(nick);
-	m->uhost = strdup(uhost);
+	if (uhost) m->uhost = strdup(uhost);
 	timer_get_now_sec(&m->join_time);
 
 	m->next = chan->member_head;
@@ -200,7 +200,7 @@ void channel_on_join(const char *chan_name, const char *nick, const char *uhost)
 
 	if (create) {
 		chan->status |= CHANNEL_WHOLIST | CHANNEL_BANLIST;
-		printserv(SERVER_NORMAL, "WHO %s\r\n", chan_name);
+		//printserv(SERVER_NORMAL, "WHO %s\r\n", chan_name);
 		printserv(SERVER_NORMAL, "MODE %s +b\r\n", chan_name);
 	}
 
@@ -220,7 +220,7 @@ static void real_channel_leave(channel_t *chan, const char *nick, const char *uh
 			next = m->next;
 			uhost_cache_decref(m->nick);
 			free(m->nick);
-			free(m->uhost);
+			if (m->uhost) free(m->uhost);
 			free(m);
 		}
 		if (chan->topic) free(chan->topic);
@@ -246,7 +246,7 @@ static void real_channel_leave(channel_t *chan, const char *nick, const char *uh
 		else chan->member_head = m->next;
 
 		free(m->nick);
-		free(m->uhost);
+		if (m->uhost) free(m->uhost);
 		free(m);
 	}
 
@@ -348,7 +348,7 @@ static int got352(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 	while (*flags) {
 		ptr = strchr(current_server.whoprefix, *flags);
 		if (ptr) {
-			i = current_server.whoprefix - ptr;
+			i = ptr - current_server.whoprefix;
 			changestr[1] = current_server.modeprefix[i];
 			flag_merge_str(&m->mode, changestr);
 		}
@@ -366,6 +366,54 @@ static int got315(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 
 	channel_lookup(chan_name, 0, &chan, NULL);
 	if (chan) chan->status &= ~CHANNEL_WHOLIST;
+	return(0);
+}
+
+/* :server 353 <ournick> = <chan> :<mode><nick1> <mode><nick2> ... */
+static int got353(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
+{
+	char *chan_name, *nick, *nicks, *flags, *ptr, *prefixptr, changestr[3];
+	int i;
+	channel_member_t *m;
+
+	chan_name = args[2];
+	nicks = strdup(args[3]);
+	ptr = nicks;
+	changestr[0] = '+';
+	changestr[2] = 0;
+	while (ptr && *ptr) {
+		while (isspace(*ptr)) ptr++;
+		flags = ptr;
+		while (strchr(current_server.whoprefix, *ptr)) ptr++;
+		nick = ptr;
+		while (*ptr && !isspace(*ptr)) ptr++;
+		if (*ptr) *ptr = 0;
+		else ptr = NULL;
+		m = channel_add_member(chan_name, nick, NULL);
+		*nick = 0;
+		while (*flags) {
+			prefixptr = strchr(current_server.whoprefix, *flags);
+			if (prefixptr) {
+				i = prefixptr - current_server.whoprefix;
+				changestr[1] = current_server.modeprefix[i];
+				flag_merge_str(&m->mode, changestr);
+			}
+			flags++;
+		}
+		if (ptr) ptr++;
+	}
+	free(nicks);
+	return(0);
+}
+
+/* :server 366 <ournick> <name> :End of /NAMES list */
+static int got366(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
+{
+	char *chan_name = args[1];
+	channel_t *chan = NULL;
+
+	channel_lookup(chan_name, 0, &chan, NULL);
+	if (chan) chan->status &= ~CHANNEL_NAMESLIST;
 	return(0);
 }
 
@@ -720,6 +768,10 @@ static bind_list_t channel_raw_binds[] = {
 	/* WHO replies */
 	{NULL, "352", got352}, /* WHO reply */
 	{NULL, "315", got315}, /* end of WHO */
+
+	/* NAMES replies */
+	{NULL, "353", got353}, /* NAMES reply */
+	{NULL, "366", got366}, /* end of NAMES */
 
 	/* Topic info */
 	{NULL, "TOPIC", gottopic},

@@ -70,18 +70,26 @@ void kill_server(const char *reason)
 static void disconnect_server()
 {
 	int connected = current_server.connected;
+	int i, idx = current_server.idx;
 
 	cycle_delay = server_config.cycle_delay;
 
-	current_server.connected = 0;
-	current_server.registered = 0;
-	current_server.got005 = 0;
-
-	if (current_server.idx != -1) {
-		sockbuf_delete(current_server.idx);
-		current_server.idx = -1;
+	if (current_server.server_host) free(current_server.server_host);
+	if (current_server.server_self) free(current_server.server_self);
+	if (current_server.nick) free(current_server.nick);
+	if (current_server.user) free(current_server.user);
+	if (current_server.host) free(current_server.host);
+	if (current_server.real_name) free(current_server.real_name);
+	if (current_server.pass) free(current_server.pass);
+	for (i = 0; i < current_server.nsupport; i++) {
+		free(current_server.support[i].name);
+		free(current_server.support[i].value);
 	}
+	if (current_server.support) free(current_server.support);
+	memset(&current_server, 0, sizeof(current_server));
+	current_server.idx = -1;
 
+	if (idx != -1) sockbuf_delete(idx);
 	if (connected) eggdrop_event("disconnect-server");
 }
 
