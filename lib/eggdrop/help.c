@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: help.c,v 1.17 2004/09/29 15:38:39 stdarg Exp $";
+static const char rcsid[] = "$Id: help.c,v 1.18 2004/09/29 18:03:53 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -120,7 +120,10 @@ int help_parse_file(const char *fname)
 	if (!root) return(-1);
 
 	xml_node_get_vars(root, "sn", "section", &secname, "help", &node);
-	if (!secname || !node) return(-1);
+	if (!secname || !node) {
+		xml_node_delete(root);
+		return(-1);
+	}
 
 	for (i = 0; i < nsections; i++) {
 		if (!strcasecmp(sections[i].name, secname)) break;
@@ -149,6 +152,7 @@ int help_parse_file(const char *fname)
 		section->nentries++;
 	}
 	nhelp_files++;
+	xml_node_delete(root);
 	return(0);
 }
 
@@ -168,9 +172,21 @@ help_summary_t *help_lookup_summary(const char *name)
 	return(NULL);
 }
 
-help_entry_t *help_lookup_entry(const char *name)
+xml_node_t *help_lookup_entry(help_summary_t *entry)
 {
-	return(NULL);
+	xml_node_t *root = xml_parse_file(entry->file->name);
+	xml_node_t *node;
+	char *name;
+
+	node = xml_node_lookup(root, 0, "help", 0, 0);
+	for (; node; node = node->next_sibling) {
+		xml_node_get_str(&name, node, "name", 0, 0);
+		if (name && !strcasecmp(name, entry->name)) {
+			xml_node_unlink(node);
+			break;
+		}
+	}
+	return(node);
 }
 
 static void localized_help_fname(char *buf, size_t size, const char *filename)

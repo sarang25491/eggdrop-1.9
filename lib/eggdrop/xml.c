@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xml.c,v 1.21 2004/09/29 15:38:39 stdarg Exp $";
+static const char rcsid[] = "$Id: xml.c,v 1.22 2004/09/29 18:03:53 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -71,20 +71,12 @@ void xml_node_free(xml_node_t *node)
 	if (node->attributes) free(node->attributes);
 }
 
-void xml_node_delete(xml_node_t *node)
+void xml_node_unlink(xml_node_t *node)
 {
-	xml_node_delete_callbacked(node, NULL);
-}
+	xml_node_t *parent = node->parent;
 
-void xml_node_delete_callbacked(xml_node_t *node, void (*callback)(void *))
-{
-	xml_node_t *child;
-
-	if (node->client_data && callback) callback(node->client_data);
-
-	if (node->parent) {
-		xml_node_t *parent = node->parent;
-
+	/* Unlink from parent. */
+	if (parent) {
 		parent->nchildren--;
 		if (parent->children == node) parent->children = node->next;
 		if (parent->last_child == node) parent->last_child = node->prev;
@@ -99,6 +91,20 @@ void xml_node_delete_callbacked(xml_node_t *node, void (*callback)(void *))
 	/* Unlink from sibling list. */
 	if (node->prev_sibling) node->prev_sibling->next_sibling = node->next_sibling;
 	if (node->next_sibling) node->next_sibling->prev_sibling = node->prev_sibling;
+}
+
+void xml_node_delete(xml_node_t *node)
+{
+	xml_node_delete_callbacked(node, NULL);
+}
+
+void xml_node_delete_callbacked(xml_node_t *node, void (*callback)(void *))
+{
+	xml_node_t *child;
+
+	if (node->client_data && callback) callback(node->client_data);
+
+	xml_node_unlink(node);
 
 	/* Delete children. */
 	for (child = node->children; child; child = child->next) {

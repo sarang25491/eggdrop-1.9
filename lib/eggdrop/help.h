@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: help.h,v 1.4 2004/09/29 15:38:39 stdarg Exp $
+ * $Id: help.h,v 1.5 2004/09/29 18:03:53 stdarg Exp $
  */
 
 #ifndef _EGG_HELP_H_
@@ -60,6 +60,7 @@ int help_unload_by_module(const char *name);
 
 help_summary_t *help_lookup_summary(const char *name);
 help_section_t *help_lookup_section(const char *name);
+int help_print_entry(partymember_t *p, const char *name);
 
 help_search_t *help_search_new(const char *searchstr);
 int help_search_end(help_search_t *search);

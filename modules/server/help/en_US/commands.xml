@@ -19,11 +19,92 @@
 				<desc>the password to use for the new server</desc>
 			</arg>
 		</args>
-		<desc>This command ...</desc>
+		<desc>
+<line>The +server command adds a new server to the server list according</line>
+<line>to the given arguments. The only required argument, hostname,</line>
+<line>specifies the host or ip address that the bot will try to connect</line>
+<line>to. If no value for port is given, the default port (set in the</line>
+<line>config file) will be used. If no value for pass is given, then</line>
+<line>the bot will not attempt to send any password when it connects</line>
+<line>to the server.</line>
+<line/>
+<line>Note that if you want to specify a password, you must also specify</line>
+<line>a port, since the order of arguments is important.</line>
+		</desc>
 		<seealso>
 			<see>-server</see>
 			<see>servers</see>
 			<see>jump</see>
+		</seealso>
+	</help>
+	<help>
+		<name>-server</name>
+		<summary>remove a server from the server list</summary>
+		<args>
+			<arg>
+				<name>hostname</name>
+				<desc>the host (or ip address) of the server to remove</desc>
+			</arg>
+			<arg>
+				<name>port</name>
+				<optional>1</optional>
+				<desc>the port of the server to remove</desc>
+			</arg>
+			<arg>
+				<name>pass</name>
+				<optional>1</optional>
+				<desc>the password of the server to remove</desc>
+			</arg>
+		</args>
+		<desc>
+<line>The -server command removes a server from the server list according</line>
+<line>to the given arguments. The only required argument, hostname,</line>
+<line>specifies the host or ip address of the server to remove. In the</line>
+<line>event that more than one server uses the same hostname, you can</line>
+<line>narrow down the choices by specifying the target server's port and</line>
+<line>even password.</line>
+<line/>
+<line>If more than one server matches the given criteria, the first match</line>
+<line>will be the one deleted.</line>
+		</desc>
+		<seealso>
+			<see>+server</see>
+			<see>servers</see>
+			<see>jump</see>
+		</seealso>
+	</help>
+	<help>
+		<name>jump</name>
+		<summary>connect to a new server</summary>
+		<args>
+			<arg>
+				<name>hostname</name>
+				<optional>1</optional>
+				<desc>the host (or ip address) of the server to jump to</desc>
+			</arg>
+			<arg>
+				<name>port</name>
+				<optional>1</optional>
+				<desc>the port of the server to jump to</desc>
+			</arg>
+			<arg>
+				<name>pass</name>
+				<optional>1</optional>
+				<desc>the password of the server to jump to</desc>
+			</arg>
+		</args>
+		<desc>
+<line>The jump command disconnects from the current server (if connected)</line>
+<line>and begins a new connection. If no server is specified, then the</line>
+<line>bot will jump to the next position on the server list. If a server</line>
+<line>is specified, the bot will search for the first matching server on</line>
+<line>the server list and connect to it. If the server is not found, a</line>
+<line>new entry is created and the bot begins connecting to it.</line>
+		</desc>
+		<seealso>
+			<see>+server</see>
+			<see>-server</see>
+			<see>servers</see>
 		</seealso>
 	</help>
 </helpfile>

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.41 2004/09/29 15:38:39 stdarg Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.42 2004/09/29 18:03:53 stdarg Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -47,6 +47,10 @@ static int party_help(partymember_t *p, const char *nick, user_t *u, const char 
 	help_summary_t *entry;
 	help_search_t *search;
 	int hits = 0;
+	xml_node_t *node, *arg, *desc, *see;
+	char *argname, *argdesc;
+	int optional;
+
 
 	if (!text || !*text) {
 		partymember_printf(p, "Syntax: help <command|variable|*search*>");
@@ -55,11 +59,43 @@ static int party_help(partymember_t *p, const char *nick, user_t *u, const char 
 	/* First try to look up an exact match. */
 	entry = help_lookup_summary(text);
 	if (entry) {
-		partymember_printf(p, "Full help! (not done)\n");
+		node = help_lookup_entry(entry);
+		partymember_printf(p, "Syntax:");
+		partymember_printf(p, "    %s", entry->syntax);
+		partymember_printf(p, "");
+		partymember_printf(p, "Summary:");
+		partymember_printf(p, "    %s", entry->summary);
+		partymember_printf(p, "");
+		xml_node_get_vars(node, "nnn", "desc.line", &desc, "args.arg", &arg, "seealso.see", &see);
+		if (arg) {
+			partymember_printf(p, "Arguments:");
+			for (; arg; arg = arg->next_sibling) {
+				xml_node_get_vars(arg, "sis", "name", &argname, "optional", &optional, "desc", &argdesc);
+				partymember_printf(p, "    %s%s - %s", argname, optional ? " (optional)" : "", argdesc);
+			}
+			partymember_printf(p, "");
+		}
+		partymember_printf(p, "Description:");
+		for (; desc; desc = desc->next_sibling) {
+			partymember_printf(p, "    %s", xml_node_str(desc, ""));
+		}
+		partymember_printf(p, "");
+		if (see) {
+			partymember_printf(p, "See also:");
+			for (; see; see = see->next_sibling) {
+				partymember_printf(p, "    %s", xml_node_str(see, ""));
+			}
+		}
+		xml_node_delete(node);
 		return(0);
 	}
 
 	/* No, do a search. */
+	if (!strchr(text, '*') && !strchr(text, '?')) {
+		partymember_printf(p, "No help was found! Try searching with wildcards, e.g. *%s*", text);
+		return(0);
+	}
+
 	search = help_search_new(text);
 	while ((entry = help_search_result(search))) {
 		partymember_printf(p, "%s - %s", entry->syntax, entry->summary);
