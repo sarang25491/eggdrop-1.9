@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.54 2001/10/13 15:55:33 tothwolf Exp $
+ * $Id: mode.c,v 1.55 2001/10/14 11:08:10 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -920,56 +920,56 @@ static int gotmode(char *from, char *ignore, char *origmsg)
 	  break;
 	case 'i':
 	  todo = CHANINV;
-	  if ((!nick[0]) && (bounce_modes))
+	  if (!nick && bounce_modes)
 	    reversing = 1;
 	  break;
 	case 'p':
 	  todo = CHANPRIV;
-	  if ((!nick[0]) && (bounce_modes))
+	  if (!nick && bounce_modes)
 	    reversing = 1;
 	  break;
 	case 's':
 	  todo = CHANSEC;
-	  if ((!nick[0]) && (bounce_modes))
+	  if (!nick && bounce_modes)
 	    reversing = 1;
 	  break;
 	case 'm':
 	  todo = CHANMODER;
-	  if ((!nick[0]) && (bounce_modes))
+	  if (!nick && bounce_modes)
 	    reversing = 1;
 	  break;
 	case 'c':
 	  todo = CHANNOCLR;
-	  if ((!nick[0]) && (bounce_modes))
+	  if (!nick && bounce_modes)
 	    reversing = 1;
 	  break;
 	case 'R':
 	  todo = CHANREGON;
-	  if ((!nick[0]) && (bounce_modes))
+	  if (!nick && bounce_modes)
 	    reversing = 1;
 	  break;
 	case 't':
 	  todo = CHANTOPIC;
-	  if ((!nick[0]) && (bounce_modes))
+	  if (!nick && bounce_modes)
 	    reversing = 1;
 	  break;
 	case 'n':
 	  todo = CHANNOMSG;
-	  if ((!nick[0]) && (bounce_modes))
+	  if (!nick && bounce_modes)
 	    reversing = 1;
 	  break;
 	case 'a':
 	  todo = CHANANON;
-	  if ((!nick[0]) && (bounce_modes))
+	  if (!nick && bounce_modes)
 	    reversing = 1;
 	  break;
 	case 'q':
 	  todo = CHANQUIET;
-	  if ((!nick[0]) && (bounce_modes))
+	  if (!nick && bounce_modes)
 	    reversing = 1;
 	  break;
 	case 'l':
-	  if ((!nick[0]) && (bounce_modes))
+	  if (!nick && bounce_modes)
 	    reversing = 1;
 	  if (ms2[0] == '-') {
 	    check_tcl_mode(nick, uhost, u, chan->dname, ms2, "");
@@ -1133,7 +1133,7 @@ static int gotmode(char *from, char *ignore, char *origmsg)
 	}
 	chg++;
       }
-      if (!me_op(chan) && !nick[0])
+      if (!me_op(chan) && !nick)
         chan->status |= CHAN_ASKEDMODES;
     }
   }

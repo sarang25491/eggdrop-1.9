@@ -1,7 +1,7 @@
 /*
  * userchan.c -- part of channels.mod
  *
- * $Id: userchan.c,v 1.29 2001/10/13 15:55:33 tothwolf Exp $
+ * $Id: userchan.c,v 1.30 2001/10/14 11:08:10 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -788,7 +788,7 @@ static void tell_bans(int idx, int show_inact, char *match)
 	strncpyz(buf, b->who, sizeof buf);
 	nick = strtok(buf, "!");
 	uhost = strtok(NULL, "!");
-	if (nick[0])
+	if (nick)
 	  sprintf(fill, "%s (%s!%s)", b->mask, nick, uhost);
 	else
 	  sprintf(fill, "%s (server %s)", b->mask, uhost);
@@ -878,7 +878,7 @@ static void tell_exempts(int idx, int show_inact, char *match)
 	strncpyz(buf, e->who, sizeof buf);
 	nick = strtok(buf, "!");
 	uhost = strtok(NULL, "!");
-	if (nick[0])
+	if (nick)
 	  sprintf(fill, "%s (%s!%s)", e->mask, nick, uhost);
 	else
 	  sprintf(fill, "%s (server %s)", e->mask, uhost);
@@ -968,7 +968,7 @@ static void tell_invites(int idx, int show_inact, char *match)
 	strncpyz(buf, i->who, sizeof buf);
 	nick = strtok(buf, "!");
 	uhost = strtok(NULL, "!");
-	if (nick[0])
+	if (nick)
 	  sprintf(fill, "%s (%s!%s)", i->mask, nick, uhost);
 	else
 	  sprintf(fill, "%s (server %s)", i->mask, uhost);
@@ -1215,7 +1215,7 @@ static int expired_mask(struct chanset_t *chan, char *who)
   nick = strtok(buf, "!");
   uhost = strtok(NULL, "!");
 
-  if (!nick[0])
+  if (!nick)
     return 1;
 
   m = ismember(chan, nick);

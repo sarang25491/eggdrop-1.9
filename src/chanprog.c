@@ -5,7 +5,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.31 2001/10/13 15:55:33 tothwolf Exp $
+ * $Id: chanprog.c,v 1.32 2001/10/14 11:08:10 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -195,8 +195,8 @@ void set_chanlist(const char *host, struct userrec *rec)
   register struct chanset_t	*chan;
 
   strncpyz(buf, host, sizeof buf);
-  uhost = strtok(buf, "!");
-  nick = strtok(NULL, "!");
+  nick = strtok(buf, "!");
+  uhost = strtok(NULL, "!");
   for (chan = chanset; chan; chan = chan->next)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next)
       if (!irccmp(nick, m->nick) && !egg_strcasecmp(uhost, m->userhost))
