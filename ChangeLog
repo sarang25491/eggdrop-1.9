@@ -1,3 +1,14 @@
+2001-10-26 22:22  stdarg <stdarg@techmonkeys.org>
+
+	* src/: chanprog.c, cmds.c, main.c, modules.c, tcl.c, tcldcc.c,
+	tclegg.h, tclhash.c, tclhash.h, mod/module.h,
+	mod/filesys.mod/filesys.c, mod/notes.mod/notes.c,
+	mod/transfer.mod/transfer.c, mod/transfer.mod/transfer.h:
+
+	
+	* Converted the last few bind tables (I think).  
+	* Removed unused builtin_* functions.  
+
 2001-10-26 09:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
