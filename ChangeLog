@@ -1,3 +1,9 @@
+2001-10-17 01:03  stdarg <stdarg@techmonkeys.org>
+
+	* eggdrop.complete.conf, eggdrop.simple.conf:
+
+	updated config files for tclscript.mod 
+
 2001-10-17 00:43  stdarg <stdarg@techmonkeys.org>
 
 	* src/mod/assoc.mod/assoc.c:
