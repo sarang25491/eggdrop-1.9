@@ -1,3 +1,9 @@
+2002-01-21 10:00  Automatic CVS Scripts
+
+	* po/eggdrop.pot:
+
+	Pots 
+
 2002-01-20 16:56  Federico Mennite <ite@techmonkeys.org>
 
 	* doc/tcl-commands.doc, src/tcldcc.c, src/tclmisc.c:
