@@ -1,3 +1,16 @@
+2001-10-10 15:52  tothwolf
+
+	* src/mod/: assoc.mod/help/assoc.help,
+	channels.mod/help/chaninfo.help, channels.mod/help/channels.help,
+	channels.mod/help/set/channels.help, console.mod/help/console.help,
+	console.mod/help/set/console.help, filesys.mod/help/filesys.help,
+	irc.mod/help/irc.help, irc.mod/help/set/irc.help,
+	notes.mod/help/notes.help, notes.mod/help/set/notes.help,
+	server.mod/help/server.help, server.mod/help/set/server.help,
+	share.mod/help/share.help:
+
+	more documentation updates from alpha tree 
+
 2001-10-10 14:50  tothwolf
 
 	* acinclude.m4, configure.in, src/Makefile.am, src/dcc.c,
