@@ -1,3 +1,10 @@
+2002-05-28 05:13  stdarg <stdarg@techmonkeys.org>
+
+	* modules/channels/tclchan.c:
+
+	
+	* Some more converted channel commands.  
+
 2002-05-27 04:19  stdarg <stdarg@techmonkeys.org>
 
 	* modules/channels/tclchan.c:
