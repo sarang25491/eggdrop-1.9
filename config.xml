@@ -15,6 +15,7 @@
 	<switch_logfiles_at>0</switch_logfiles_at>
 	<keep_all_logs>0</keep_all_logs>
 	<quick_logs>0</quick_logs>
+	<whois_items>Handle UID Flags Ircmasks</whois_items>
 	<die_on_sigterm>1</die_on_sigterm>
 	<module_path>modules/</module_path>
 	<autoload>
