@@ -1,3 +1,21 @@
+2003-03-07 12:12  Tothwolf <tothwolf@techmonkeys.org>
+
+	* acconfig/mpatrol.m4:
+
+	* Upgraded to latest mpatrol.m4.  
+
+2003-03-07 12:10  Tothwolf <tothwolf@techmonkeys.org>
+
+	* lib/egglib/Makefile.am:
+
+	* Fixed small typo.  
+
+2003-03-07 12:06  Tothwolf <tothwolf@techmonkeys.org>
+
+	* acconfig/: config.rpath, config.rpath:
+
+	* Corrected file permissions for config.rpath.  
+
 2003-03-07 11:44  Tothwolf <tothwolf@techmonkeys.org>
 
 	* m4/Makefile.am:
