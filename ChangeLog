@@ -1,3 +1,10 @@
+2002-01-20 12:55  Federico Mennite <ite@techmonkeys.org>
+
+	* modules/channels/userchan.c:
+
+	Update already existing bans/invites/exempt entries instead of
+	removing and readding them. (synch 1.6) 
+
 2002-01-20 11:57  Federico Mennite <ite@techmonkeys.org>
 
 	* src/botcmd.c:
