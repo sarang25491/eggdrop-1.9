@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.44 2001/12/29 21:26:56 guppy Exp $
+ * $Id: tcldcc.c,v 1.45 2002/01/03 07:33:04 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -442,78 +442,51 @@ static int script_dcclist(script_var_t *retval, char *match)
 	return(0);
 }
 
-/* list of { nick bot host flag idletime awaymsg [channel]}
- */
-static int tcl_whom STDVAR
+static void whom_entry(script_var_t *retval, char *nick, char *bot, char *host ,char icon, int idletime, char *away, int chan)
 {
-  char c[2], idle[11], work[20], *list[7], *p;
-  int chan, i;
+	script_var_t *sublist, *vnick, *vbot, *vhost, *vflag, *vidle, *vaway, *vchan;
+	char flag[2];
 
-  BADARGS(2, 2, " chan");
-  if (argv[1][0] == '*')
-     chan = -1;
-  else {
-    if ((argv[1][0] < '0') || (argv[1][0] > '9')) {
-      Tcl_SetVar(interp, "chan", argv[1], 0);
-      if ((Tcl_VarEval(interp, "assoc ", "$chan", NULL) != TCL_OK) ||
-	  !interp->result[0]) {
-	Tcl_AppendResult(irp, "channel name is invalid", NULL);
-	return TCL_ERROR;
-      }
-      chan = atoi(interp->result);
-    } else
-      chan = atoi(argv[1]);
-    if ((chan < 0) || (chan > 199999)) {
-      Tcl_AppendResult(irp, "channel out of range; must be 0 thru 199999",
-		       NULL);
-      return TCL_ERROR;
-    }
-  }
-  for (i = 0; i < dcc_total; i++)
-    if (dcc[i].type == &DCC_CHAT) {
-      if (dcc[i].u.chat->channel == chan || chan == -1) {
-	c[0] = geticon(i);
-	c[1] = 0;
-	snprintf(idle, sizeof idle, "%lu", (now - dcc[i].timeval) / 60);
-	list[0] = dcc[i].nick;
-	list[1] = botnetnick;
-	list[2] = dcc[i].host;
-	list[3] = c;
-	list[4] = idle;
-	list[5] = dcc[i].u.chat->away ? dcc[i].u.chat->away : "";
-	if (chan == -1) {
-	  snprintf(work, sizeof work, "%d", dcc[i].u.chat->channel);
-	  list[6] = work;
+	vnick = script_string(nick, -1);
+	vbot = script_string(bot, -1);
+	vhost = script_string(host, -1);
+
+	flag[0] = icon;
+	flag[1] = 0;
+	vflag = script_string(strdup(flag), 1);
+	vflag->type |= SCRIPT_FREE;
+
+	vidle = script_int((now - idletime) / 60);
+	vaway = script_string(away ? away : "", -1);
+	vchan = script_int(chan);
+
+	sublist = script_list(7, vnick, vbot, vhost, vflag, vidle, vaway, vchan);
+	script_list_append(retval, sublist);
+}
+
+/* list of {nick bot host flag idletime awaymsg channel}
+ */
+static int script_whom(script_var_t *retval, int nargs, int which_chan)
+{
+	int i;
+
+	retval->type = SCRIPT_ARRAY | SCRIPT_FREE | SCRIPT_VAR;
+	retval->len = 0;
+	retval->value = NULL;
+
+	/* FIXME: Add non-tcl assoc.mod support for channel */
+	if (nargs == 0) which_chan = -1;
+
+	for (i = 0; i < dcc_total; i++) {
+		if (dcc[i].type != &DCC_CHAT) continue;
+		if (which_chan != -1 && dcc[i].u.chat->channel != which_chan) continue;
+		whom_entry(retval, dcc[i].nick, botnetnick, dcc[i].host, geticon(i), dcc[i].timeval, dcc[i].u.chat->away, dcc[i].u.chat->channel);
 	}
-	p = Tcl_Merge((chan == -1) ? 7 : 6, list);
-	Tcl_AppendElement(irp, p);
-	Tcl_Free((char *) p);
-      }
-    }
-  for (i = 0; i < parties; i++) {
-    if (party[i].chan == chan || chan == -1) {
-      c[0] = party[i].flag;
-      c[1] = 0;
-      if (party[i].timer == 0L)
-	strcpy(idle, "0");
-      else
-	snprintf(idle, sizeof idle, "%lu", (now - party[i].timer) / 60);
-      list[0] = party[i].nick;
-      list[1] = party[i].bot;
-      list[2] = party[i].from ? party[i].from : "";
-      list[3] = c;
-      list[4] = idle;
-      list[5] = party[i].status & PLSTAT_AWAY ? party[i].away : "";
-      if (chan == -1) {
-	snprintf(work, sizeof work, "%d", party[i].chan);
-	list[6] = work;
-      }
-      p = Tcl_Merge((chan == -1) ? 7 : 6, list);
-      Tcl_AppendElement(irp, p);
-      Tcl_Free((char *) p);
-    }
-  }
-  return TCL_OK;
+	for (i = 0; i < parties; i++) {
+		if (which_chan != -1 && party[i].chan != which_chan) continue;
+		whom_entry(retval, party[i].nick, party[i].bot, party[i].from, party[i].flag, party[i].timer, party[i].status & PLSTAT_AWAY ? party[i].away : "", party[i].chan);
+	}
+	return(0);
 }
 
 static int script_dccused()
@@ -833,6 +806,7 @@ script_command_t script_full_dcc_cmds[] = {
 	{"", "botlist", script_botlist, NULL, 0, "", "", 0, SCRIPT_PASS_RETVAL},
 	{"", "dcclist", script_dcclist, NULL, 0, "s", "?match?", 0, SCRIPT_PASS_RETVAL|SCRIPT_VAR_ARGS},
 	{"", "link", script_link, NULL, 1, "ss", "?via-bot? target-bot", 0, SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT},
+	{"", "whom", script_whom, NULL, 0, "i", "?channel?", 0, SCRIPT_PASS_RETVAL|SCRIPT_PASS_COUNT|SCRIPT_VAR_ARGS},
 	{0}
 };
 
@@ -840,7 +814,6 @@ tcl_cmds tcldcc_cmds[] =
 {
   {"control",		tcl_control},
   {"killdcc",		tcl_killdcc},
-  {"whom",		tcl_whom},
   {"connect",		tcl_connect},
   {"listen",		tcl_listen},
   {NULL,		NULL}
