@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.55 2001/10/14 11:08:10 tothwolf Exp $
+ * $Id: mode.c,v 1.56 2001/10/14 21:01:09 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -865,6 +865,7 @@ static int gotmode(char *from, char *ignore, char *origmsg)
   struct chanset_t *chan;
 
   strncpyz(buf2, origmsg, sizeof buf2);
+  msg = buf2;
   /* Usermode changes? */
   if (msg[0] && (strchr(CHANMETA, msg[0]) != NULL)) {
     ch = newsplit(&msg);
