@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-12-17 00:15-0600\n"
+"POT-Creation-Date: 2003-12-17 06:15-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -75,13 +75,13 @@ msgstr ""
 msgid "%s: option `-W %s' doesn't allow an argument\n"
 msgstr ""
 
-#: modules/javascript/javascript.c:665
+#: modules/javascript/javascript.c:634
 msgid ""
 "You must be a permanent owner (defined in the config file) to use this "
 "command.\n"
 msgstr ""
 
-#: modules/server/input.c:449
+#: modules/server/input.c:451
 msgid "Nick change was too fast."
 msgstr ""
 
@@ -89,7 +89,7 @@ msgstr ""
 #. * or this is a non-standard server, so we log it and kill the socket
 #. * hoping the next server will work :) -poptix
 #.
-#: modules/server/input.c:459
+#: modules/server/input.c:461
 #, c-format
 msgid "%s says I'm not registered, trying next one."
 msgstr ""
@@ -126,218 +126,218 @@ msgstr ""
 msgid "COMMUNICATION THROUGH PIPE BROKE."
 msgstr ""
 
-#: src/core_party.c:43
+#: src/core_party.c:45
 msgid "Syntax: join <channel>"
 msgstr ""
 
-#: src/core_party.c:62
+#: src/core_party.c:64
 msgid "Goodbye!"
 msgstr ""
 
-#: src/core_party.c:63
+#: src/core_party.c:65
 msgid "Quit"
 msgstr ""
 
-#: src/core_party.c:77
+#: src/core_party.c:79
 msgid "Syntax: whisper <partylineuser> <msg>"
 msgstr ""
 
-#: src/core_party.c:83
+#: src/core_party.c:85
 #, c-format
 msgid "No such user '%s'."
 msgstr ""
 
-#: src/core_party.c:102
+#: src/core_party.c:104
 msgid "That setting was not found."
 msgstr ""
 
-#: src/core_party.c:115
+#: src/core_party.c:117
 msgid "You cannot access that setting."
 msgstr ""
 
-#: src/core_party.c:125
+#: src/core_party.c:127
 msgid "Syntax: get <path>"
 msgstr ""
 
-#: src/core_party.c:137
+#: src/core_party.c:139
 msgid "Config setting not found."
 msgstr ""
 
-#: src/core_party.c:150
+#: src/core_party.c:152
 msgid "Syntax: set <path> <new value>"
 msgstr ""
 
-#: src/core_party.c:161
+#: src/core_party.c:163
 #, c-format
 msgid "Old value: '%s'"
 msgstr ""
 
-#: src/core_party.c:164
+#: src/core_party.c:166
 #, c-format
 msgid "New value: '%s'"
 msgstr ""
 
-#: src/core_party.c:174
+#: src/core_party.c:176
 #, c-format
 msgid "I am %s, running Eggdrop %s."
 msgstr ""
 
-#: src/core_party.c:175
+#: src/core_party.c:177
 #, c-format
 msgid "Owner: %s"
 msgstr ""
 
-#: src/core_party.c:176
+#: src/core_party.c:178
 #, c-format
 msgid "Admin: %s"
 msgstr ""
 
-#: src/core_party.c:178
+#: src/core_party.c:180
 #, c-format
 msgid "OS: %s %s"
 msgstr ""
 
-#: src/core_party.c:185 src/core_party.c:226 src/main.c:142
+#: src/core_party.c:187 src/core_party.c:228 src/main.c:143
 msgid "Saving user file..."
 msgstr ""
 
-#: src/core_party.c:187 src/core_party.c:228 src/main.c:144
+#: src/core_party.c:189 src/core_party.c:230 src/main.c:145
 msgid "Saving config file..."
 msgstr ""
 
-#: src/core_party.c:195
+#: src/core_party.c:197
 msgid "Please use at least 6 characters."
 msgstr ""
 
-#: src/core_party.c:199
+#: src/core_party.c:201
 #, c-format
 msgid "Changed password to '%s'."
 msgstr ""
 
-#: src/core_party.c:213
+#: src/core_party.c:215
 msgid "Partyline members:"
 msgstr ""
 
-#: src/core_party.c:230
+#: src/core_party.c:232
 #, c-format
 msgid "Bot shutting down: %s"
 msgstr ""
 
-#: src/core_party.c:231
+#: src/core_party.c:233
 msgid "Bot shutting down."
 msgstr ""
 
-#: src/core_party.c:242
+#: src/core_party.c:244
 msgid "Syntax: +user <handle>"
 msgstr ""
 
-#: src/core_party.c:246
+#: src/core_party.c:248
 #, c-format
 msgid "User '%s' already exists!"
 msgstr ""
 
-#: src/core_party.c:250
+#: src/core_party.c:252
 #, c-format
 msgid "User '%s' created."
 msgstr ""
 
-#: src/core_party.c:251
+#: src/core_party.c:253
 #, c-format
 msgid "Could not create user '%s'."
 msgstr ""
 
-#: src/core_party.c:260
+#: src/core_party.c:262
 msgid "Syntax: -user <handle>"
-msgstr ""
-
-#: src/core_party.c:264
-#, c-format
-msgid "User '%s' not found."
 msgstr ""
 
 #: src/core_party.c:266
 #, c-format
+msgid "User '%s' not found."
+msgstr ""
+
+#: src/core_party.c:268
+#, c-format
 msgid "Deleting user '%s'."
 msgstr ""
 
-#: src/core_party.c:294
+#: src/core_party.c:296
 msgid "Syntax: chattr <user> [channel] <+/-flags>"
 msgstr ""
 
-#: src/core_party.c:306
+#: src/core_party.c:308
 #, c-format
 msgid "Flags for %s are now '%s'."
 msgstr ""
 
-#: src/core_party.c:309
+#: src/core_party.c:311
 #, c-format
 msgid "'%s' is not a valid user."
 msgstr ""
 
-#: src/core_party.c:323
+#: src/core_party.c:325
 msgid "Loaded modules:"
 msgstr ""
 
-#: src/logfile.c:122
+#: src/logfile.c:124
 msgid "Cycling logfiles..."
 msgstr ""
 
-#: src/logfile.c:221 src/logfile.c:263
+#: src/logfile.c:223 src/logfile.c:265
 #, c-format
 msgid "Last message repeated %d time(s).\n"
 msgstr ""
 
 #. It's too big.
-#: src/logfile.c:249
+#: src/logfile.c:251
 #, c-format
 msgid "Cycling logfile %s: over max-logsize (%d kilobytes)."
 msgstr ""
 
-#: src/main.c:102
+#: src/main.c:103
 #, c-format
 msgid "Fatal: %s"
 msgstr ""
 
-#: src/main.c:113
+#: src/main.c:114
 msgid "BUS ERROR."
 msgstr ""
 
-#: src/main.c:124
+#: src/main.c:125
 msgid "SEGMENT VIOLATION."
 msgstr ""
 
-#: src/main.c:135
+#: src/main.c:136
 msgid "FLOATING POINT ERROR."
 msgstr ""
 
-#: src/main.c:146
+#: src/main.c:147
 msgid "Bot shutting down: received TERMINATE signal."
 msgstr ""
 
-#: src/main.c:151
+#: src/main.c:152
 msgid "Received TERMINATE signal (ignoring)."
 msgstr ""
 
-#: src/main.c:157
+#: src/main.c:158
 msgid "Received QUIT signal (ignoring)."
 msgstr ""
 
-#: src/main.c:164
+#: src/main.c:165
 msgid "Received HUP signal (ignoring)."
 msgstr ""
 
-#: src/main.c:171
+#: src/main.c:172
 msgid "Received ILL signal (ignoring)."
 msgstr ""
 
-#: src/main.c:183
+#: src/main.c:184
 #, c-format
 msgid ""
 "\n"
 "Usage: %s [OPTIONS]... [FILE]\n"
 msgstr ""
 
-#: src/main.c:184
+#: src/main.c:185
 msgid ""
 "\n"
 "  -h, --help                 Print help and exit\n"
@@ -351,33 +351,33 @@ msgid ""
 msgstr ""
 
 #. bug: option not considered.
-#: src/main.c:251
+#: src/main.c:252
 #, c-format
 msgid "%s: option unknown: %c\n"
 msgstr ""
 
-#: src/main.c:285
+#: src/main.c:286
 #, c-format
 msgid "Warning: timer drift (%d minutes)."
 msgstr ""
 
-#: src/main.c:345
+#: src/main.c:346
 #, c-format
 msgid "Fatal error initializing ltdl: %s\n"
 msgstr ""
 
-#: src/main.c:403
+#: src/main.c:404
 msgid ""
 "WARNING: Do NOT run this DEVELOPMENT version for any purpose other than "
 "testing.\n"
 "\n"
 msgstr ""
 
-#: src/main.c:405
+#: src/main.c:406
 msgid "Eggdrop will not run as root!"
 msgstr ""
 
-#: src/main.c:409
+#: src/main.c:410
 msgid ""
 "ERROR\n"
 "\n"
