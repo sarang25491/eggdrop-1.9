@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# $Id: bootstrap,v 1.8 2001/10/20 01:19:41 tothwolf Exp $
+# $Id: bootstrap,v 1.9 2001/10/21 14:51:34 tothwolf Exp $
 #
 # Recommended development tools versions:
 #   autoconf 2.52
@@ -31,7 +31,7 @@ set -x
 aclocal -I . -I acconfig
 
 # Bring in libtool with libtdl abstraction
-libtoolize --force --copy --ltdl
+libtoolize --copy --ltdl
 
 # Generate config.h.in from configure.in
 autoheader
@@ -43,7 +43,7 @@ automake --add-missing --copy
 autoconf
 
 # Remove previous config.cache
-if [ -f config.cache ]
+if test -f config.cache
 then
   rm -f config.cache
 fi

@@ -1,12 +1,10 @@
-# $Id: Makefile.am,v 1.4 2001/10/20 06:04:19 tothwolf Exp $
+# $Id: Makefile.am,v 1.5 2001/10/21 14:51:34 tothwolf Exp $
 
 AUX_DIST		= $(ac_aux_dir)/install-sh \
 			$(ac_aux_dir)/ltmain.sh \
 			$(ac_aux_dir)/missing \
 			$(ac_aux_dir)/mkinstalldirs \
-			$(ac_aux_dir)/depcomp \
-			$(ac_aux_dir)/config.guess \
-			$(ac_aux_dir)/config.sub
+			$(ac_aux_dir)/depcomp
 
 AUX_DIST_EXTRA		= $(ac_aux_dir)/codeset.m4 \
 			$(ac_aux_dir)/gettext.m4 \
@@ -15,7 +13,9 @@ AUX_DIST_EXTRA		= $(ac_aux_dir)/codeset.m4 \
 			$(ac_aux_dir)/isc-posix.m4 \
 			$(ac_aux_dir)/lcmessage.m4 \
 			$(ac_aux_dir)/progtest.m4 \
-			$(ac_aux_dir)/acinclude.m4
+			$(ac_aux_dir)/acinclude.m4 \
+			$(ac_aux_dir)/config.guess \
+			$(ac_aux_dir)/config.sub
 
 EXTRA_DIST		= bootstrap
 
