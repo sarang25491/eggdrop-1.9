@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.54 2001/10/11 13:01:35 tothwolf Exp $
+ * $Id: filesys.c,v 1.55 2001/10/13 12:00:22 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -972,7 +972,7 @@ char *start(Function * global_funcs)
   add_tcl_strings(mystrings);
   add_tcl_ints(myints);
   H_fil = add_bind_table("fil", 0, builtin_fil);
-  BT_dcc = find_bind_table("dcc");
+  BT_dcc = find_bind_table2("dcc");
   if (BT_dcc) add_builtins2(BT_dcc, mydcc);
   add_builtins(H_fil, myfiles);
   add_builtins(H_load, myload);

@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.45 2001/10/12 15:50:26 tothwolf Exp $
+ * $Id: net.c,v 1.46 2001/10/13 12:00:22 stdarg Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -27,6 +27,7 @@
 #include <setjmp.h>
 
 #include "adns/adns.h"
+#include "egg_timer.h"
 
 #if !HAVE_GETDTABLESIZE
 #  ifdef FD_SETSIZE
@@ -256,9 +257,12 @@ int allocsock(int sock, int options)
   }
 
   if (i == MAXSOCKS) {
+    int j;
+
     /* Expand table by 5 */
     socklist = (sock_list *)realloc(socklist, (MAXSOCKS+5) * sizeof(sock_list));
     memset(socklist+MAXSOCKS, 0, 5 * sizeof(sock_list));
+    for (j = 0; j < 5; j++) socklist[MAXSOCKS+j].flags = SOCK_UNUSED;
     MAXSOCKS += 5;
   }
 
@@ -816,15 +820,24 @@ static int sockread(char *s, int *len)
   struct timeval t, tnow;
   struct timeval *pt = &t;
   int grab = 511;
+  egg_timeval_t howlong;
 
   fds = getdtablesize();
 #ifdef FD_SETSIZE
   if (fds > FD_SETSIZE)
     fds = FD_SETSIZE;		/* Fixes YET ANOTHER freebsd bug!!! */
 #endif
-  /* timeout: 1 sec */
-  t.tv_sec = 1;
-  t.tv_usec = 0;
+
+  if (timer_get_shortest(&howlong)) {
+    /* No timer, default to 1 second. */
+    t.tv_sec = 1;
+    t.tv_usec = 0;
+  }
+  else {
+    t.tv_sec = howlong.sec;
+    t.tv_usec = howlong.usec;
+  }
+
   FD_ZERO(&fd);
   
   for (i = 0; i < MAXSOCKS; i++)

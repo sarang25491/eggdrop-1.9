@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.81 2001/10/12 15:50:26 tothwolf Exp $
+ * $Id: main.c,v 1.82 2001/10/13 12:00:22 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -53,6 +53,7 @@
 #include "modules.h"
 #include "tandem.h"
 #include "bg.h"
+#include "egg_timer.h"
 
 #include "adns/adns.h"
 
@@ -486,6 +487,7 @@ static void core_secondly()
   static int cnt = 0;
   int miltime;
 
+  call_hook(HOOK_SECONDLY);	/* Will be removed later */
   do_check_timers(&utimer);	/* Secondly timers */
   cnt++;
   if (cnt >= 10) {		/* Every 10 seconds */
@@ -666,6 +668,7 @@ int main(int argc, char **argv)
   FILE *f;
   struct sigaction sv;
   struct chanset_t *chan;
+  egg_timeval_t howlong;
 
 #ifdef DEBUG
   /* Make sure it can write core, if you make debug. Else it's pretty
@@ -875,7 +878,9 @@ module, please consult the default config file for info.\n"));
   add_help_reference("cmds1.help");
   add_help_reference("cmds2.help");
   add_help_reference("core.help");
-  add_hook(HOOK_SECONDLY, (Function) core_secondly);
+  howlong.sec = 1;
+  howlong.usec = 0;
+  timer_create_repeater(&howlong, (Function) core_secondly);
   add_hook(HOOK_MINUTELY, (Function) core_minutely);
   add_hook(HOOK_HOURLY, (Function) core_hourly);
   add_hook(HOOK_REHASH, (Function) event_rehash);
@@ -902,8 +907,9 @@ module, please consult the default config file for info.\n"));
      */
     now = time(NULL);
     random();			/* Woop, lets really jumble things */
+    timer_run();
     if (now != then) {		/* Once a second */
-      call_hook(HOOK_SECONDLY);
+      /* call_hook(HOOK_SECONDLY); */
       then = now;
     }
 
