@@ -1,3 +1,10 @@
+2003-03-04 10:33  Tothwolf <tothwolf@techmonkeys.org>
+
+	* acconfig/acinclude.m4, lib/compat/snprintf.c,
+	lib/compat/snprintf.h:
+
+	Simplify checking for broken snprintf/vsnprintf functions.  
+
 2003-03-04 09:16  Will Buckner <wcc@techmonkeys.org>
 
 	* configure.ac, acconfig/acinclude.m4, doc/howto/PATCHING,
