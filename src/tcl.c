@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.66 2002/01/19 20:08:58 ite Exp $
+ * $Id: tcl.c,v 1.67 2002/01/20 14:22:14 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -333,6 +333,8 @@ static tcl_strings def_tcl_strings[] =
 static tcl_ints def_tcl_ints[] =
 {
   {"ignore-time",		&ignore_time,		0},
+  {"handlen",                   &handlen,               2},
+  /* FIXME: remove this later ... before first stable release */
   {"hand-len",			&handlen,		2},
   {"dcc-flood-thr",		&dcc_flood_thr,		0},
   {"hourly-updates",		&notify_users_at,	0},

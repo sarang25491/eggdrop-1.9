@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.8 2002/01/16 22:09:41 ite Exp $
+ * $Id: server.c,v 1.9 2002/01/20 14:22:14 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1240,6 +1240,8 @@ static tcl_ints my_tcl_ints[] =
   {"double-help",		&double_help,			0},
   {"use-penalties",		&use_penalties,			0},
   {"use-fastdeq",		&use_fastdeq,			0},
+  {"nicklen",                   &nick_len,                      0},
+  /* FIXME: remove this later ... before first stable release */
   {"nick-len",			&nick_len,			0},
   {"optimize-kicks",		&optimize_kicks,		0},
   {"isjuped",			&nick_juped,			0},
