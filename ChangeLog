@@ -1,3 +1,11 @@
+2003-03-04 22:02  Will Buckner <wcc@techmonkeys.org>
+
+	* doc/UPDATES1.6, lib/compat/snprintf.c, lib/compat/snprintf.h,
+	modules/channels/channels.c, modules/channels/udefchan.c,
+	modules/filesys/filesys.c, src/egg.h, src/main.c:
+
+	* Removed debugx() macros.  
+
 2003-03-04 11:31  Tothwolf <tothwolf@techmonkeys.org>
 
 	* acconfig/acinclude.m4, lib/compat/snprintf.h:
