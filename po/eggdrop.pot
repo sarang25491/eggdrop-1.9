@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-12-18 12:15-0600\n"
+"POT-Creation-Date: 2003-12-18 18:15-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -208,43 +208,43 @@ msgstr ""
 msgid "Syntax: .perl <perlexpression>"
 msgstr ""
 
-#: modules/server/input.c:250
+#: modules/server/input.c:251
 #, c-format
 msgid "Action: %s %s"
 msgstr ""
 
-#: modules/server/input.c:417
+#: modules/server/input.c:418
 #, c-format
 msgid "NICK IS INVALID: %s (keeping '%s')."
 msgstr ""
 
-#: modules/server/input.c:420
+#: modules/server/input.c:421
 #, c-format
 msgid "Server says my nickname ('%s') is invalid, trying new random nick."
 msgstr ""
 
 #. We are online and have a nickname, we'll keep it
-#: modules/server/input.c:436
+#: modules/server/input.c:437
 #, c-format
 msgid "Nick is in use: '%s' (keeping '%s')."
 msgstr ""
 
-#: modules/server/input.c:439
+#: modules/server/input.c:440
 #, c-format
 msgid "Nick is in use: '%s' (trying next one)."
 msgstr ""
 
-#: modules/server/input.c:452
+#: modules/server/input.c:453
 #, c-format
 msgid "Cannot change to banned nickname (%s on %s)."
 msgstr ""
 
-#: modules/server/input.c:462
+#: modules/server/input.c:463
 #, c-format
 msgid "Can't change nickname to %s. Is my nickname banned?"
 msgstr ""
 
-#: modules/server/input.c:475
+#: modules/server/input.c:476
 msgid "Nick change was too fast."
 msgstr ""
 
@@ -252,20 +252,20 @@ msgstr ""
 #. * or this is a non-standard server, so we log it and kill the socket
 #. * hoping the next server will work :) -poptix
 #.
-#: modules/server/input.c:485
+#: modules/server/input.c:486
 #, c-format
 msgid "%s says I'm not registered, trying next one."
 msgstr ""
 
-#: modules/server/input.c:486
+#: modules/server/input.c:487
 msgid "The server says I'm not registered, trying next one."
 msgstr ""
 
-#: modules/server/input.c:508
+#: modules/server/input.c:509
 msgid "Disconnecting from server."
 msgstr ""
 
-#: modules/server/input.c:509
+#: modules/server/input.c:510
 msgid "disconnecting due to error"
 msgstr ""
 
