@@ -1,3 +1,10 @@
+2002-01-18 21:42  stdarg <stdarg@techmonkeys.org>
+
+	* modules/tclscript/tclscript.c:
+
+	
+	* Fixes for Tcl < 8.2 
+
 2002-01-18 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
