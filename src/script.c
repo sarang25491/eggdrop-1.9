@@ -66,8 +66,8 @@ static int my_playback(void *ignore, Function *table)
 static registry_simple_chain_t my_functions[] = {
 	{"script", NULL, 0},
 	{"create cmd", my_create_cmd, 2},
-	{"link int", my_link_int, 2},
-	{"link str", my_link_str, 2},
+	{"link int", my_link_int, 3},
+	{"link str", my_link_str, 3},
 	{"playback", my_playback, 2},
 	0
 };
@@ -91,7 +91,7 @@ int script_link_int_table(script_int_t *table)
 	script_int_t *intval;
 
 	for (intval = table; intval->class && intval->name; intval++) {
-		link_int(link_int_h, intval, 0);
+		link_int(link_int_h, intval, 0, 0, 0);
 	}
 	return(0);
 
