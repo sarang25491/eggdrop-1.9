@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2001-08-19 20:10+0200\n"
+"POT-Creation-Date: 2001-08-28 03:40+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -585,6 +585,16 @@ msgstr ""
 msgid "User file is missing!"
 msgstr ""
 
+#: src/cmds.c:75
+#, c-format
+msgid "(Can't add hostmask for %1$s because it matches %2$s)\n"
+msgstr ""
+
+#: src/cmds.c:83
+#, c-format
+msgid "(Added hostmask for %1$s from %2$s)\n"
+msgstr ""
+
 #: src/cmds.c:1063
 msgid "You can not .restart a bot when running -n (due to tcl)"
 msgstr ""
@@ -622,11 +632,11 @@ msgid "requested"
 msgstr ""
 
 #: src/cmds.c:2219 src/cmds.c:2238 src/cmds.c:2271 src/cmds.c:2293
-#: src/mod/server.mod/cmdsserv.c:53 src/tclhash.c:845
+#: src/mod/server.mod/cmdsserv.c:53 src/tclhash.c:1074
 msgid "What?  You need .help\n"
 msgstr ""
 
-#: src/cmds.c:2275 src/cmds.c:2297 src/cmds.c:2551 src/cmds.c:2607
+#: src/cmds.c:2275 src/cmds.c:2297 src/cmds.c:2551
 #: src/mod/filesys.mod/files.c:325 src/mod/filesys.mod/files.c:337
 #: src/mod/filesys.mod/files.c:434 src/mod/filesys.mod/files.c:556
 #: src/mod/filesys.mod/files.c:598 src/mod/filesys.mod/files.c:640
@@ -675,36 +685,42 @@ msgid "You can't remove hosts while having the +d or +k flag."
 msgstr ""
 
 #: src/cmds.c:2580
-msgid "You can't remove hostmasks from non-bots."
+msgid "You can't remove hostmasks from non-bots.\n"
 msgstr ""
 
 #: src/cmds.c:2584
-msgid "You can't remove hostmask from a shared bot."
+msgid "You can't remove hostmask from a shared bot.\n"
 msgstr ""
 
 #: src/cmds.c:2588
-msgid "Can't remove hostmasks from the bot owner/master."
+msgid "Can't remove hostmasks from the bot owner/master.\n"
 msgstr ""
 
 #: src/cmds.c:2591
-msgid "Permission denied."
+msgid "Permission denied.\n"
 msgstr ""
 
 #: src/cmds.c:2597
 #, c-format
-msgid "Removed '%s' from %s"
+msgid "Removed '%1$s' from %2$s\n"
 msgstr ""
 
-#: src/cmds.c:2599
-msgid "Failed."
+#: src/cmds.c:2599 src/mod/filesys.mod/files.c:990
+#: src/mod/filesys.mod/files.c:1086
+msgid "Failed.\n"
+msgstr ""
+
+#: src/cmds.c:2607
+msgid "Usage: modules <bot>\n"
 msgstr ""
 
 #: src/cmds.c:2614
-msgid "No such bot online."
+msgid "No such bot online.\n"
 msgstr ""
 
 #: src/cmds.c:2717
-msgid "You are"
+#, c-format
+msgid "You are %s@%s\n"
 msgstr ""
 
 #: src/dcc.c:128
@@ -881,7 +897,7 @@ msgstr ""
 #.
 #. Turn off remote telnet echo (send IAC WILL ECHO).
 #: src/dcc.c:1505 src/mod/filesys.mod/filesys.c:879
-#: src/mod/server.mod/server.c:1501
+#: src/mod/server.mod/server.c:1500
 msgid "Enter your password."
 msgstr ""
 
@@ -1133,22 +1149,22 @@ msgstr ""
 msgid "--- (%s) %s named this channel '%s'.\n"
 msgstr ""
 
-#: src/mod/channels.mod/channels.c:558
+#: src/mod/channels.mod/channels.c:564
 msgid "lurking"
 msgstr ""
 
-#: src/mod/channels.mod/cmdschan.c:446 src/mod/channels.mod/cmdschan.c:472
-#: src/mod/channels.mod/cmdschan.c:493
+#: src/mod/channels.mod/cmdschan.c:434 src/mod/channels.mod/cmdschan.c:460
+#: src/mod/channels.mod/cmdschan.c:481
 msgid "Removed ban"
 msgstr ""
 
-#: src/mod/channels.mod/cmdschan.c:535 src/mod/channels.mod/cmdschan.c:561
-#: src/mod/channels.mod/cmdschan.c:582
+#: src/mod/channels.mod/cmdschan.c:523 src/mod/channels.mod/cmdschan.c:549
+#: src/mod/channels.mod/cmdschan.c:570
 msgid "Removed exempt"
 msgstr ""
 
-#: src/mod/channels.mod/cmdschan.c:624 src/mod/channels.mod/cmdschan.c:651
-#: src/mod/channels.mod/cmdschan.c:673
+#: src/mod/channels.mod/cmdschan.c:612 src/mod/channels.mod/cmdschan.c:639
+#: src/mod/channels.mod/cmdschan.c:661
 msgid "Removed invite"
 msgstr ""
 
@@ -1156,118 +1172,118 @@ msgstr ""
 msgid "Wanted to ban myself--deflected."
 msgstr ""
 
-#: src/mod/channels.mod/userchan.c:614 src/mod/channels.mod/userchan.c:662
-#: src/mod/channels.mod/userchan.c:710
+#: src/mod/channels.mod/userchan.c:602 src/mod/channels.mod/userchan.c:650
+#: src/mod/channels.mod/userchan.c:698
 msgid "Created"
 msgstr ""
 
-#: src/mod/channels.mod/userchan.c:617 src/mod/channels.mod/userchan.c:665
-#: src/mod/channels.mod/userchan.c:713
+#: src/mod/channels.mod/userchan.c:605 src/mod/channels.mod/userchan.c:653
+#: src/mod/channels.mod/userchan.c:701
 msgid "last used"
 msgstr ""
 
-#: src/mod/channels.mod/userchan.c:644 src/mod/channels.mod/userchan.c:692
-#: src/mod/channels.mod/userchan.c:740
+#: src/mod/channels.mod/userchan.c:632 src/mod/channels.mod/userchan.c:680
+#: src/mod/channels.mod/userchan.c:728
 msgid "inactive"
 msgstr ""
 
-#: src/mod/channels.mod/userchan.c:762 src/mod/channels.mod/userchan.c:941
+#: src/mod/channels.mod/userchan.c:750 src/mod/channels.mod/userchan.c:929
 msgid "No such channel defined"
 msgstr ""
 
-#: src/mod/channels.mod/userchan.c:772 src/mod/channels.mod/userchan.c:775
+#: src/mod/channels.mod/userchan.c:760 src/mod/channels.mod/userchan.c:763
 msgid "Global bans"
 msgstr ""
 
-#: src/mod/channels.mod/userchan.c:773 src/mod/channels.mod/userchan.c:861
-#: src/mod/channels.mod/userchan.c:952
+#: src/mod/channels.mod/userchan.c:761 src/mod/channels.mod/userchan.c:849
+#: src/mod/channels.mod/userchan.c:940
 msgid "not active on"
 msgstr ""
 
-#: src/mod/channels.mod/userchan.c:787
+#: src/mod/channels.mod/userchan.c:775
 #, c-format
 msgid "Channel bans for %s:   (! = not active, * = not placed by bot)\n"
 msgstr ""
 
-#: src/mod/channels.mod/userchan.c:790
+#: src/mod/channels.mod/userchan.c:778
 #, c-format
 msgid "Channel bans for %s:  (* = not placed by bot)\n"
 msgstr ""
 
-#: src/mod/channels.mod/userchan.c:832
+#: src/mod/channels.mod/userchan.c:820
 msgid "(There are no bans, permanent or otherwise.)\n"
 msgstr ""
 
-#: src/mod/channels.mod/userchan.c:834
+#: src/mod/channels.mod/userchan.c:822
 msgid "Use .bans all to see the total list.\n"
 msgstr ""
 
-#: src/mod/channels.mod/userchan.c:850
+#: src/mod/channels.mod/userchan.c:838
 msgid "No such channel defined.\n"
 msgstr ""
 
-#: src/mod/channels.mod/userchan.c:860
+#: src/mod/channels.mod/userchan.c:848
 msgid "Global exempts"
 msgstr ""
 
-#: src/mod/channels.mod/userchan.c:863
+#: src/mod/channels.mod/userchan.c:851
 msgid "Global exempts:\n"
 msgstr ""
 
-#: src/mod/channels.mod/userchan.c:876 src/mod/channels.mod/userchan.c:881
+#: src/mod/channels.mod/userchan.c:864 src/mod/channels.mod/userchan.c:869
 msgid "Channel exempts for"
 msgstr ""
 
-#: src/mod/channels.mod/userchan.c:877 src/mod/channels.mod/userchan.c:968
+#: src/mod/channels.mod/userchan.c:865 src/mod/channels.mod/userchan.c:956
 msgid "not active"
 msgstr ""
 
-#: src/mod/channels.mod/userchan.c:878 src/mod/channels.mod/userchan.c:882
-#: src/mod/channels.mod/userchan.c:969 src/mod/channels.mod/userchan.c:973
+#: src/mod/channels.mod/userchan.c:866 src/mod/channels.mod/userchan.c:870
+#: src/mod/channels.mod/userchan.c:957 src/mod/channels.mod/userchan.c:961
 msgid "not placed by bot"
 msgstr ""
 
-#: src/mod/channels.mod/userchan.c:925
+#: src/mod/channels.mod/userchan.c:913
 msgid "Use .exempts all to see the total list"
 msgstr ""
 
-#: src/mod/channels.mod/userchan.c:951 src/mod/channels.mod/userchan.c:954
+#: src/mod/channels.mod/userchan.c:939 src/mod/channels.mod/userchan.c:942
 msgid "Global invites"
 msgstr ""
 
-#: src/mod/channels.mod/userchan.c:967 src/mod/channels.mod/userchan.c:972
+#: src/mod/channels.mod/userchan.c:955 src/mod/channels.mod/userchan.c:960
 msgid "Channel invites for"
 msgstr ""
 
-#: src/mod/channels.mod/userchan.c:1016
+#: src/mod/channels.mod/userchan.c:1004
 msgid "Use .invites all to see the total list"
 msgstr ""
 
-#: src/mod/channels.mod/userchan.c:1216 src/userrec.c:534 src/userrec.c:549
+#: src/mod/channels.mod/userchan.c:1204 src/userrec.c:534 src/userrec.c:549
 msgid "ERROR writing user file."
 msgstr ""
 
-#: src/mod/channels.mod/userchan.c:1286 src/mod/channels.mod/userchan.c:1303
+#: src/mod/channels.mod/userchan.c:1274 src/mod/channels.mod/userchan.c:1291
 msgid "No longer banning"
 msgstr ""
 
-#: src/mod/channels.mod/userchan.c:1287 src/mod/channels.mod/userchan.c:1304
-#: src/mod/channels.mod/userchan.c:1332 src/mod/channels.mod/userchan.c:1378
-#: src/mod/channels.mod/userchan.c:1406 src/mod/channels.mod/userchan.c:1424
+#: src/mod/channels.mod/userchan.c:1275 src/mod/channels.mod/userchan.c:1292
+#: src/mod/channels.mod/userchan.c:1320 src/mod/channels.mod/userchan.c:1366
+#: src/mod/channels.mod/userchan.c:1394 src/mod/channels.mod/userchan.c:1412
 #: src/users.c:220
 msgid "expired"
 msgstr ""
 
-#: src/mod/channels.mod/userchan.c:1304 src/mod/channels.mod/userchan.c:1378
-#: src/mod/channels.mod/userchan.c:1424
+#: src/mod/channels.mod/userchan.c:1292 src/mod/channels.mod/userchan.c:1366
+#: src/mod/channels.mod/userchan.c:1412
 msgid "on"
 msgstr ""
 
-#: src/mod/channels.mod/userchan.c:1331 src/mod/channels.mod/userchan.c:1377
+#: src/mod/channels.mod/userchan.c:1319 src/mod/channels.mod/userchan.c:1365
 msgid "No longer ban exempting"
 msgstr ""
 
-#: src/mod/channels.mod/userchan.c:1405 src/mod/channels.mod/userchan.c:1423
+#: src/mod/channels.mod/userchan.c:1393 src/mod/channels.mod/userchan.c:1411
 msgid "No longer inviteing"
 msgstr ""
 
@@ -1480,10 +1496,6 @@ msgstr ""
 msgid "Erased"
 msgstr ""
 
-#: src/mod/filesys.mod/files.c:990 src/mod/filesys.mod/files.c:1086
-msgid "Failed.\n"
-msgstr ""
-
 #: src/mod/filesys.mod/files.c:1000
 msgid "Created directory"
 msgstr ""
@@ -1536,30 +1548,30 @@ msgid "Moved"
 msgstr ""
 
 #: src/mod/filesys.mod/filesys.c:652 src/mod/filesys.mod/filesys.c:852
-#: src/mod/server.mod/server.c:1440 src/mod/server.mod/server.c:1484
+#: src/mod/server.mod/server.c:1439 src/mod/server.mod/server.c:1483
 #: src/mod/transfer.mod/transfer.c:723
 msgid "Failed to connect"
 msgstr ""
 
-#: src/mod/filesys.mod/filesys.c:831 src/mod/server.mod/server.c:1425
+#: src/mod/filesys.mod/filesys.c:831 src/mod/server.mod/server.c:1424
 #, c-format
 msgid "DCC connections full: %s %s (%s!%s)"
 msgstr ""
 
-#: src/mod/filesys.mod/filesys.c:836 src/mod/server.mod/server.c:1430
+#: src/mod/filesys.mod/filesys.c:836 src/mod/server.mod/server.c:1429
 msgid "No access"
 msgstr ""
 
-#: src/mod/filesys.mod/filesys.c:837 src/mod/server.mod/server.c:1431
-#: src/mod/server.mod/servmsg.c:492
+#: src/mod/filesys.mod/filesys.c:837 src/mod/server.mod/server.c:1430
+#: src/mod/server.mod/servmsg.c:493
 msgid "Refused DCC chat (no access)"
 msgstr ""
 
-#: src/mod/filesys.mod/filesys.c:840 src/mod/server.mod/server.c:1434
+#: src/mod/filesys.mod/filesys.c:840 src/mod/server.mod/server.c:1433
 msgid "You must have a password set."
 msgstr ""
 
-#: src/mod/filesys.mod/filesys.c:841 src/mod/server.mod/server.c:1435
+#: src/mod/filesys.mod/filesys.c:841 src/mod/server.mod/server.c:1434
 msgid "Refused DCC chat (no password)"
 msgstr ""
 
@@ -1567,7 +1579,7 @@ msgstr ""
 msgid "Refused DCC chat (+x but no file area)"
 msgstr ""
 
-#: src/mod/filesys.mod/filesys.c:853 src/mod/server.mod/server.c:1485
+#: src/mod/filesys.mod/filesys.c:853 src/mod/server.mod/server.c:1484
 #: src/mod/transfer.mod/transfer.c:724
 msgid "DCC connection failed"
 msgstr ""
@@ -1666,20 +1678,20 @@ msgstr ""
 msgid "...and dont come back."
 msgstr ""
 
-#: src/mod/irc.mod/chan.c:1934 src/mod/server.mod/servmsg.c:722
-#: src/mod/server.mod/servmsg.c:870 src/mod/server.mod/servmsg.c:882
+#: src/mod/irc.mod/chan.c:1937 src/mod/server.mod/servmsg.c:723
+#: src/mod/server.mod/servmsg.c:871 src/mod/server.mod/servmsg.c:883
 #, c-format
 msgid "Switching back to nick %s"
 msgstr ""
 
-#: src/mod/irc.mod/chan.c:1938 src/mod/server.mod/servmsg.c:725
-#: src/mod/server.mod/servmsg.c:874 src/mod/server.mod/servmsg.c:886
+#: src/mod/irc.mod/chan.c:1941 src/mod/server.mod/servmsg.c:726
+#: src/mod/server.mod/servmsg.c:875 src/mod/server.mod/servmsg.c:887
 #, c-format
 msgid "Switching back to altnick %s"
 msgstr ""
 
-#: src/mod/irc.mod/chan.c:1987 src/mod/irc.mod/chan.c:1992
-#: src/mod/irc.mod/chan.c:2123 src/mod/irc.mod/chan.c:2128
+#: src/mod/irc.mod/chan.c:1990 src/mod/irc.mod/chan.c:1995
+#: src/mod/irc.mod/chan.c:2126 src/mod/irc.mod/chan.c:2131
 msgid "that was fun, lets do it again!"
 msgstr ""
 
@@ -2202,31 +2214,31 @@ msgstr ""
 msgid "NOTICE %s :You have %d note%s waiting on %s.\n"
 msgstr ""
 
-#: src/mod/server.mod/server.c:1424
+#: src/mod/server.mod/server.c:1423
 msgid "Sorry, too many DCC connections."
 msgstr ""
 
-#: src/mod/server.mod/server.c:1441
+#: src/mod/server.mod/server.c:1440
 msgid "DCC invalid port"
 msgstr ""
 
-#: src/mod/server.mod/server.c:1531
+#: src/mod/server.mod/server.c:1530
 msgid "Server got stoned; jumping..."
 msgstr ""
 
-#: src/mod/server.mod/server.c:1602
+#: src/mod/server.mod/server.c:1604
 msgid "No server currently."
 msgstr ""
 
-#: src/mod/server.mod/server.c:1604
+#: src/mod/server.mod/server.c:1606
 msgid "Mode queue is at"
 msgstr ""
 
-#: src/mod/server.mod/server.c:1608
+#: src/mod/server.mod/server.c:1610
 msgid "Server queue is at"
 msgstr ""
 
-#: src/mod/server.mod/server.c:1611
+#: src/mod/server.mod/server.c:1613
 msgid "Help queue is at"
 msgstr ""
 
@@ -2235,35 +2247,35 @@ msgstr ""
 msgid "NICK IN USE: Trying %s"
 msgstr ""
 
-#: src/mod/server.mod/servmsg.c:296
+#: src/mod/server.mod/servmsg.c:297
 #, c-format
 msgid "Server says Im not on channel: %s"
 msgstr ""
 
-#: src/mod/server.mod/servmsg.c:390
+#: src/mod/server.mod/servmsg.c:391
 #, c-format
 msgid "Flood from @%s!  Placing on ignore!"
 msgstr ""
 
-#: src/mod/server.mod/servmsg.c:489
+#: src/mod/server.mod/servmsg.c:490
 msgid "I dont accept DCC chats from strangers."
 msgstr ""
 
-#: src/mod/server.mod/servmsg.c:743
+#: src/mod/server.mod/servmsg.c:744
 msgid "Server says my nickname is invalid."
 msgstr ""
 
-#: src/mod/server.mod/servmsg.c:786
+#: src/mod/server.mod/servmsg.c:787
 #, c-format
 msgid "Cant change nickname on %s.  Is my nickname banned?"
 msgstr ""
 
-#: src/mod/server.mod/servmsg.c:789
+#: src/mod/server.mod/servmsg.c:790
 #, c-format
 msgid "Channel %s is juped. :("
 msgstr ""
 
-#: src/mod/server.mod/servmsg.c:800
+#: src/mod/server.mod/servmsg.c:801
 msgid "Nickname has been juped"
 msgstr ""
 
@@ -2275,28 +2287,28 @@ msgstr ""
 #. * (minutely) sending of joins occurs before the bot does its ping reply.
 #. * Probably should do something about it some time - beldin
 #.
-#: src/mod/server.mod/servmsg.c:827
+#: src/mod/server.mod/servmsg.c:828
 #, c-format
 msgid "%s says Im not registered, trying next one."
 msgstr ""
 
-#: src/mod/server.mod/servmsg.c:828
+#: src/mod/server.mod/servmsg.c:829
 msgid "You have a fucked up server."
 msgstr ""
 
-#: src/mod/server.mod/servmsg.c:928
+#: src/mod/server.mod/servmsg.c:930
 msgid "Disconnected from"
 msgstr ""
 
-#: src/mod/server.mod/servmsg.c:1134
+#: src/mod/server.mod/servmsg.c:1156
 msgid "Trying server"
 msgstr ""
 
-#: src/mod/server.mod/servmsg.c:1174 src/mod/server.mod/servmsg.c:1192
+#: src/mod/server.mod/servmsg.c:1198 src/mod/server.mod/servmsg.c:1216
 msgid "Failed connect to"
 msgstr ""
 
-#: src/mod/server.mod/servmsg.c:1175
+#: src/mod/server.mod/servmsg.c:1199
 msgid "DNS lookup failed"
 msgstr ""
 
@@ -2356,11 +2368,11 @@ msgstr ""
 msgid "Restarting..."
 msgstr ""
 
-#: src/tclhash.c:841
+#: src/tclhash.c:1070
 msgid "Ambiguous command.\n"
 msgstr ""
 
-#: src/tclhash.c:1079
+#: src/tclhash.c:1308
 msgid "Command bindings:\n"
 msgstr ""
 
