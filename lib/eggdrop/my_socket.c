@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -281,14 +282,15 @@ int socket_ipv6_to_dots(const char *ip, char *dots)
 	dots[0] = 0;
 	if (inet_pton(AF_INET6, ip, &buf) <= 0) return(-1);
 	sprintf(dots, "%u.%u.%u.%u.%u.%u.%u.%u.%u.%u.%u.%u.%u.%u.%u.%u",
-		buf.in6_u.u6_addr8[0], buf.in6_u.u6_addr8[1],
-		buf.in6_u.u6_addr8[2], buf.in6_u.u6_addr8[3],
-		buf.in6_u.u6_addr8[4], buf.in6_u.u6_addr8[5],
-		buf.in6_u.u6_addr8[6], buf.in6_u.u6_addr8[7],
-		buf.in6_u.u6_addr8[8], buf.in6_u.u6_addr8[9],
-		buf.in6_u.u6_addr8[10], buf.in6_u.u6_addr8[11],
-		buf.in6_u.u6_addr8[12], buf.in6_u.u6_addr8[13],
-		buf.in6_u.u6_addr8[14], buf.in6_u.u6_addr8[15]
+		buf.s6_addr[0], buf.s6_addr[1],
+		buf.s6_addr[2], buf.s6_addr[3],
+		buf.s6_addr[4], buf.s6_addr[5],
+		buf.s6_addr[6], buf.s6_addr[7],
+		buf.s6_addr[8], buf.s6_addr[9],
+		buf.s6_addr[10], buf.s6_addr[11],
+		buf.s6_addr[12], buf.s6_addr[13],
+		buf.s6_addr[14], buf.s6_addr[15]
 	);
+	return(0);
 #endif
 }
