@@ -286,14 +286,74 @@ static Tcl_Obj *my_resolve_var(Tcl_Interp *myinterp, script_var_t *v)
 	return(result);
 }
 
-static int my_argument_parser(Tcl_Interp *myinterp, int objc, Tcl_Obj *CONST objv[], char *syntax, script_argstack_t *argstack)
+static int my_argument_cleanup(mstack_t *args, mstack_t *bufs, mstack_t *cbacks)
 {
-	Tcl_Obj *objptr;
-	int i, err = 0, len = 0;
-	void *arg;
+	int i;
 
-	for (i = 1; i < objc; i++) {
+	for (i = 0; i < bufs->len; i++) {
+		free((void *)bufs->stack[i]);
+	}
+	if (cbacks) {
+		for (i = 0; i < cbacks->len; i++) {
+			script_callback_t *cback;
+
+			cback = (script_callback_t *)cbacks->stack[i];
+			cback->delete(cback);
+		}
+		mstack_destroy(cbacks);
+	}
+	mstack_destroy(bufs);
+	mstack_destroy(args);
+	return(0);
+}
+
+static int my_command_handler(ClientData client_data, Tcl_Interp *myinterp, int objc, Tcl_Obj *CONST objv[])
+{
+	script_command_t *cmd = (script_command_t *)client_data;
+	script_var_t retval;
+	Tcl_Obj *tcl_retval = NULL, *objptr;
+	mstack_t *args, *bufs, *cbacks;
+	int *al; /* Argument list to pass to the callback*/
+	int nopts; /* Number of optional args we're passing. */
+	int simple_retval; /* Return value for simple commands. */
+	int i, len, err = TCL_OK;
+	int skip;
+	char *syntax;
+
+	/* Check for proper number of args. */
+	if (cmd->flags & SCRIPT_VAR_ARGS) i = (cmd->nargs <= (objc-1));
+	else i = (cmd->nargs < 0 || cmd->nargs == (objc-1));
+	if (!i) {
+		Tcl_WrongNumArgs(myinterp, 0, NULL, cmd->syntax_error);
+		return(TCL_ERROR);
+	}
+
+	/* We want space for at least 10 args. */
+	args = mstack_new(2*objc+10);
+
+	/* Reserve space for 3 optional args. */
+	mstack_push(args, NULL);
+	mstack_push(args, NULL);
+	mstack_push(args, NULL);
+
+	/* Have some space for buffers too. */
+	bufs = mstack_new(objc);
+
+	/* And callbacks. */
+	cbacks = mstack_new(objc);
+
+	/* Parse arguments. */
+	syntax = cmd->syntax;
+	if (cmd->flags & SCRIPT_VAR_FRONT) {
+		skip = (objc-1) - cmd->nargs;
+		if (skip < 0) skip = 0;
+		syntax += skip;
+	}
+	else skip = 0;
+
+	for (i = skip+1; i < objc; i++) {
 		objptr = objv[i];
+
 		switch (*syntax++) {
 		case SCRIPT_STRING: { /* Null-terminated string. */
 			char *nullterm;
@@ -304,51 +364,45 @@ static int my_argument_parser(Tcl_Interp *myinterp, int objc, Tcl_Obj *CONST obj
 				nullterm = (char *)malloc(len+1);
 				memcpy(nullterm, orig, len);
 				nullterm[len] = 0;
-				mstack_push(argstack->bufs, nullterm);
+				mstack_push(bufs, nullterm);
 			#else
 				nullterm = Tcl_GetStringFromObj(objptr, &len);
 			#endif
-
-			arg = (void *)nullterm;
+			mstack_push(args, nullterm);
 			break;
 		}
-		case SCRIPT_BYTES: { /* Byte-array (could be anything). */
+		case SCRIPT_BYTES: { /* Byte-array (string + length). */
+			void *bytes;
 			#ifdef USE_BYTE_ARRAYS
-			arg = (void *)Tcl_GetByteArrayFromObj(objptr, &len);
+			bytes = (void *)Tcl_GetByteArrayFromObj(objptr, &len);
 			#else
-			arg = (void *)Tcl_GetStringFromObj(objptr, &len);
+			bytes = (void *)Tcl_GetStringFromObj(objptr, &len);
 			#endif
+			mstack_push(args, bytes);
 			break;
 		}
 		case SCRIPT_INTEGER: { /* Integer. */
-			err = Tcl_GetIntFromObj(myinterp, objptr, (int *)&arg);
+			int intval;
+			err = Tcl_GetIntFromObj(myinterp, objptr, &intval);
+			mstack_push(args, (void *)intval);
 			break;
 		}
 		case SCRIPT_CALLBACK: { /* Callback. */
 			script_callback_t *cback; /* Callback struct */
 			my_callback_cd_t *cdata; /* Our client data */
-			char *name, *nullterm;
 
 			cback = (script_callback_t *)calloc(1, sizeof(*cback));
 			cdata = (my_callback_cd_t *)calloc(1, sizeof(*cdata));
 			cback->callback = (Function) my_tcl_callbacker;
 			cback->callback_data = (void *)cdata;
 			cback->delete = (Function) my_tcl_cb_delete;
-			#ifdef USE_BYTE_ARRAYS
-			name = (void *)Tcl_GetByteArrayFromObj(objptr, &len);
-			nullterm = (char *)malloc(len+1);
-			memcpy(nullterm, name, len);
-			nullterm[len] = 0;
-			#else
-			name = (char *)Tcl_GetStringFromObj(objptr, &len);
-			malloc_strcpy(nullterm, name);
-			#endif
-			cback->name = nullterm;
+			cback->name = (char *)Tcl_GetStringFromObj(objptr, &len);
 			cdata->myinterp = myinterp;
 			cdata->command = objptr;
 			Tcl_IncrRefCount(objptr);
 
-			arg = (void *)cback;
+			mstack_push(args, cback);
+			mstack_push(cbacks, cback);
 			break;
 		}
 		case SCRIPT_USER: { /* User. */
@@ -358,104 +412,67 @@ static int my_argument_parser(Tcl_Interp *myinterp, int objc, Tcl_Obj *CONST obj
 			handle = Tcl_GetStringFromObj(objptr, NULL);
 			if (handle) u = get_user_by_handle(userlist, handle);
 			else u = NULL;
-
-			arg = (void *)u;
+			mstack_push(args, u);
 			break;
 		}
-		case 'l': { /* Length of previous string or byte-array. */
-			arg = (void *)len;
-			i--; /* Doesn't take up a Tcl object. */
+		case 'l': /* Length of previous string/byte-array. */
+			mstack_push(args, (void *)len);
+			i--; /* Doesn't take up a tcl object. */
 			break;
-		}
-		case '*': { /* Repeat last entry. */
-			if (*(syntax-2) == 'l') syntax -= 3;
-			else syntax -= 2;
-			i--; /* Doesn't take up a Tcl object. */
-			continue;
-		}
-		default: return(1);
+		default:
+			err = TCL_ERROR;
 		} /* End of switch */
 
-		if (err != TCL_OK) return(2);
-
-		mstack_push(argstack->args, arg);
-	}
-	return(0);
-}
-
-static int my_argument_cleanup(script_argstack_t *argstack)
-{
-	int i;
-
-	for (i = 0; i < argstack->bufs->len; i++) {
-		free((void *)argstack->bufs->stack[i]);
-	}
-	mstack_destroy(argstack->bufs);
-	mstack_destroy(argstack->args);
-	return(0);
-}
-
-static int my_command_handler(ClientData client_data, Tcl_Interp *myinterp, int objc, Tcl_Obj *CONST objv[])
-{
-	script_command_t *cmd = (script_command_t *)client_data;
-	script_var_t retval;
-	Tcl_Obj *tcl_retval = NULL;
-	script_argstack_t argstack; /* For my_argument_parser */
-	void **al; /* Argument list to pass to the callback*/
-	int my_err; /* Flag to indicate we should return a TCL_ERROR */
-
-	/* Check for proper number of args. */
-	if (cmd->nargs >= 0 && cmd->nargs != (objc-1)) {
-		Tcl_WrongNumArgs(myinterp, 1, objv, cmd->syntax_error);
-		return(TCL_ERROR);
+		if (err != TCL_OK) break;
 	}
 
-	/* Init argstack */
-	/* We want space for at least 5 args. */
-	argstack.args = mstack_new(2*objc+5);
-
-	/* The command's client data is the first arg. */
-	mstack_push(argstack.args, cmd->client_data);
-
-	/* Have some space for buffers too. */
-	argstack.bufs = mstack_new(objc);
-
-	/* Parse arguments. */
-	if (my_argument_parser(myinterp, objc, objv, cmd->syntax, &argstack)) {
-		my_argument_cleanup(&argstack);
+	if (err != TCL_OK) {
+		my_argument_cleanup(args, bufs, cbacks);
 		Tcl_WrongNumArgs(myinterp, 0, NULL, cmd->syntax_error);
 		return(TCL_ERROR);
 	}
 
 	memset(&retval, 0, sizeof(retval));
 
-	al = (void **)argstack.args->stack; /* Argument list shortcut name. */
-
-	/* If they don't want their client data, bump the pointer. */
-	if (!(cmd->flags & SCRIPT_WANTS_CD)) {
-		al++;
-		argstack.args->len--;
+	al = args->stack; /* Argument list shortcut name. */
+	nopts = 0;
+	if (cmd->flags & SCRIPT_PASS_COUNT) {
+		al[2-nopts] = args->len - 3;
+		nopts++;
 	}
+	if (cmd->flags & SCRIPT_PASS_RETVAL) {
+		al[2-nopts] = (int)&retval;
+		nopts++;
+	}
+	if (cmd->flags & SCRIPT_PASS_CDATA) {
+		al[2-nopts] = (int)cmd->client_data;
+		nopts++;
+	}
+	al += (3-nopts);
+	args->len -= (3-nopts);
 
-	if (cmd->flags & SCRIPT_COMPLEX) {
-		if (cmd->pass_array) cmd->callback(&retval, argstack.args->len, al);
-		else cmd->callback(&retval, al[0], al[1], al[2], al[3], al[4]);
+	if (cmd->flags & SCRIPT_PASS_ARRAY) {
+		simple_retval = cmd->callback(args->len, al);
 	}
 	else {
-		retval.type = cmd->retval_type;
-		retval.len = -1;
-		if (cmd->pass_array) retval.value = (void *)cmd->callback(argstack.args->len, al);
-		else retval.value = (void *)cmd->callback(al[0], al[1], al[2], al[3], al[4]);
+		simple_retval = cmd->callback(al[0], al[1], al[2], al[3], al[4]);
 	}
 
-	my_err = retval.type & SCRIPT_ERROR;
+	if (!(cmd->flags & SCRIPT_PASS_RETVAL)) {
+		retval.type = cmd->retval_type;
+		retval.len = -1;
+		retval.value = (void *)simple_retval;
+	}
+
+	err = retval.type & SCRIPT_ERROR;
 	tcl_retval = my_resolve_var(myinterp, &retval);
 
 	if (tcl_retval) Tcl_SetObjResult(myinterp, tcl_retval);
+	else Tcl_ResetResult(myinterp);
 
-	my_argument_cleanup(&argstack);
+	my_argument_cleanup(args, bufs, NULL);
 
-	if (my_err) return TCL_ERROR;
+	if (err) return TCL_ERROR;
 	return TCL_OK;
 }
 

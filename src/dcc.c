@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.62 2001/10/21 06:02:48 stdarg Exp $
+ * $Id: dcc.c,v 1.63 2001/10/24 10:08:03 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -77,7 +77,7 @@ extern void init_dcc_max();
 
 static script_str_t dcc_script_strings[] = {
 	{"", "dcc_command_chars", &dcc_command_chars},
-	0
+	{0}
 };
 
 void dcc_init()

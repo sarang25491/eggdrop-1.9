@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.54 2001/10/21 06:02:48 stdarg Exp $
+ * $Id: tclhash.c,v 1.55 2001/10/24 10:08:03 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -61,7 +61,7 @@ static bind_table_t *BT_filt;
 static char *global_filt_string; /* String for FILT binds to modify. */
 static script_str_t tclhash_script_strings[] = {
 	{"", "filt_string", &global_filt_string},
-	0
+	{0}
 };
 
 p_tcl_bind_list		bind_table_list;
@@ -163,7 +163,7 @@ static script_simple_command_t script_commands[] = {
 	{"", NULL, NULL, NULL, 0},
 	{"bind", script_bind, "sssc", "table flags mask command", SCRIPT_INTEGER},
 	{"unbind", script_unbind, "ssss", "table flags mask command", SCRIPT_INTEGER},
-	0
+	{0}
 };
 
 void binds_init(void)
@@ -950,10 +950,7 @@ const char *check_tcl_filt(int idx, const char *text)
 
 int check_tcl_note(const char *from, const char *to, const char *text)
 {
-  int	x;
-
-  check_bind(BT_note, to, NULL, from, to, text);
-  return (x == BIND_MATCHED || x == BIND_EXECUTED || x == BIND_EXEC_LOG);
+  return check_bind(BT_note, to, NULL, from, to, text);
 }
 
 void check_tcl_listen(const char *cmd, int idx)
@@ -972,7 +969,7 @@ void check_tcl_chjn(const char *bot, const char *nick, int chan,
 		    const char type, int sock, const char *host)
 {
   struct flag_record	fr = {FR_GLOBAL, 0, 0, 0, 0, 0};
-  char			s[11], t[2], u[11];
+  char			s[11], t[2];
 
   t[0] = type;
   t[1] = 0;

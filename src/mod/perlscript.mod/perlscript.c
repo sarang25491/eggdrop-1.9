@@ -39,7 +39,14 @@ static int my_load_script(registry_entry_t * entry, char *fname)
 	fread(data, size, 1, fp);
 	data[size] = 0;
 	fclose(fp);
-	perl_eval_pv(data, TRUE);
+	eval_pv(data, TRUE);
+	if (SvTRUE(ERRSV)) {
+		char *msg;
+		int len;
+
+		msg = SvPV(ERRSV, len);
+		putlog(LOG_MISC, "*", "Perl error: %s", msg);
+	}
 	free(data);
 	return(0);
 }
@@ -69,10 +76,18 @@ static int my_perl_callbacker(script_callback_t *me, ...)
 	}
 	PUTBACK;
 
-	count = call_sv((SV *)me->callback_data, G_SCALAR);
+	count = call_sv((SV *)me->callback_data, G_EVAL|G_SCALAR);
 
 	SPAGAIN;
 
+	if (SvTRUE(ERRSV)) {
+		char *msg;
+		int len;
+
+		msg = SvPV(ERRSV, len);
+		retval = POPi;
+		putlog(LOG_MISC, "*", "Perl error: $s", msg);
+	}
 	if (count > 0) {
 		retval = POPi;
 	}
@@ -93,6 +108,7 @@ static int my_perl_cb_delete(script_callback_t *me)
 	if (me->syntax) free(me->syntax);
 	if (me->name) free(me->name);
 	sv_2mortal((SV *)me->callback_data);
+	SvREFCNT_dec((SV *)me->callback_data);
 	free(me);
 	return(0);
 }
@@ -184,26 +200,39 @@ static XS(my_command_handler)
 	script_command_t *cmd = (script_command_t *) XSANY.any_i32;
 	script_var_t retval;
 	SV *result = NULL;
-	mstack_t *args;
-	int i, len, my_err;
+	mstack_t *args, *cbacks;
+	int i, len, my_err, simple_retval;
+	int skip, nopts;
 	char *syntax;
 	void **al;
 
 	/* Check for proper number of args. */
 	/* -1 means "any number" and implies pass_array. */
-	if (cmd->nargs >= 0 && cmd->nargs != items) {
+	if (cmd->flags & SCRIPT_VAR_ARGS) i = (cmd->nargs <= items);
+	else i = (cmd->nargs >= 0 && cmd->nargs == items);
+	if (!i) {
 		Perl_croak(aTHX_ cmd->syntax_error);
 		return;
 	}
 
-	/* Initialize argstack. We want at least 5 items. */
-	args = mstack_new(2*items+5);
+	/* We want at least 10 items. */
+	args = mstack_new(2*items+10);
+	cbacks = mstack_new(items);
 
-	/* Callback's client data is first arg. */
-	mstack_push(args, cmd->client_data);
+	/* Reserve space for 3 optional args. */
+	mstack_push(args, NULL);
+	mstack_push(args, NULL);
+	mstack_push(args, NULL);
 
+	/* Parse arguments. */
 	syntax = cmd->syntax;
-	for (i = 0; i < items; i++) {
+	if (cmd->flags & SCRIPT_VAR_FRONT) {
+		skip = items - cmd->nargs;
+		if (skip < 0) skip = 0;
+		syntax += skip;
+	}
+	else skip = 0;
+	for (i = skip; i < items; i++) {
 		switch (*syntax++) {
 			case SCRIPT_BYTES: /* Byte-array. */
 			case SCRIPT_STRING: { /* String. */
@@ -247,38 +276,43 @@ static XS(my_command_handler)
 				/* Doesn't take up a perl object. */
 				i--;
 				break;
-			case '*':
-				/* Repeat last entry. */
-				if (*(syntax - 2) == 'l') syntax -= 3;
-				else syntax -= 2;
-				i--; /* No perl object. */
-				break;
 			default:
 				goto argerror;
 		} /* End of switch. */
 	} /* End of for loop. */
 
-	/* Ok, now we have our arg stack. */
+	/* Ok, now we have our args. */
 
 	memset(&retval, 0, sizeof(retval));
 
 	al = (void **)args->stack; /* Argument list shortcut name. */
-
-	/* If they don't want their client data, bump the pointer. */
-	if (!(cmd->flags & SCRIPT_WANTS_CD)) {
-		al++;
-		args->len--;
+	nopts = 0;
+	if (cmd->flags & SCRIPT_PASS_COUNT) {
+		al[2-nopts] = (void *)(args->len - 3);
+		nopts++;
 	}
+	if (cmd->flags & SCRIPT_PASS_RETVAL) {
+		al[2-nopts] = (void *)&retval;
+		nopts++;
+	}
+	if (cmd->flags & SCRIPT_PASS_CDATA) {
+		al[2-nopts] = cmd->client_data;
+		nopts++;
+	}
+	al += (3-nopts);
+	args->len -= (3-nopts);
 
-	if (cmd->flags & SCRIPT_COMPLEX) {
-		if (cmd->pass_array) cmd->callback(&retval, args->len, al);
-		else cmd->callback(&retval, al[0], al[1], al[2], al[3], al[4]);
+	if (cmd->flags & SCRIPT_PASS_ARRAY) {
+		simple_retval = cmd->callback(args->len, al);
 	}
 	else {
+		simple_retval = cmd->callback(al[0], al[1], al[2], al[3], al[4], al[5], al[6], al[7], al[8], al[9]);
+	}
+
+	if (!(cmd->flags & SCRIPT_PASS_RETVAL)) {
 		retval.type = cmd->retval_type;
 		retval.len = -1;
-		if (cmd->pass_array) retval.value = (void *)cmd->callback(args->len, al);
-		else retval.value = (void *)cmd->callback(al[0], al[1], al[2], al[3], al[4]);
+		retval.value = (void *)simple_retval;
 	}
 
 	my_err = retval.type & SCRIPT_ERROR;
@@ -297,14 +331,48 @@ static XS(my_command_handler)
 
 argerror:
 	mstack_destroy(args);
+	for (i = 0; i < cbacks->len; i++) {
+		script_callback_t *cback;
+		cback = (script_callback_t *)cbacks->stack[i];
+		cback->delete(cback);
+	}
+	mstack_destroy(cbacks);
 	Perl_croak(aTHX_ cmd->syntax_error);
 }
+
+static int dcc_cmd_perl(struct userrec *u, int idx, char *text)
+{
+	SV *result;
+	char *msg;
+	int len;
+
+	if (must_be_owner && !(isowner(dcc[idx].nick))) return(0);
+
+	len = strlen(text);
+
+	result = eval_pv(text, FALSE);
+	if (SvTRUE(ERRSV)) {
+		msg = SvPV(ERRSV, len);
+		dprintf(idx, "Perl error: %s\n", msg);
+	}
+	else {
+		msg = SvPV(result, len);
+		dprintf(idx, "Perl result: %s\n", msg);
+	}
+
+	return(0);
+}
+
+static cmd_t my_dcc_cmds[] = {
+	{"perl", "n", (Function) dcc_cmd_perl, NULL},
+	{0}
+};
 
 static registry_simple_chain_t my_functions[] = {
 	{"script", NULL, 0},
 	{"load script", my_load_script, 2},
 	{"create cmd", my_create_cmd, 2},
-	0
+	{0}
 };
 
 static void init_xs_stuff()
@@ -343,14 +411,9 @@ static Function perlscript_table[] = {
 char *perlscript_LTX_start(Function *global_funcs)
 {
 	char *embedding[] = {"", "-e", "0"};
+	bind_table_t *BT_dcc;
 
 	global = global_funcs;
-	ginterp = perl_alloc();
-	perl_construct(ginterp);
-	perl_parse(ginterp, init_xs_stuff, 3, embedding, NULL);
-	registry_add_simple_chains(my_functions);
-        registry_lookup("script", "playback", &journal_playback, &journal_playback_h);
-        if (journal_playback) journal_playback(journal_playback_h, journal_table);
 
 	module_register("perlscript", perlscript_table, 1, 2);
 	if (!module_depend("perlscript", "eggdrop", 107, 0)) {
@@ -358,11 +421,23 @@ char *perlscript_LTX_start(Function *global_funcs)
 		return "This module requires eggdrop1.7.0 of later";
 	}
 
+	ginterp = perl_alloc();
+	perl_construct(ginterp);
+	perl_parse(ginterp, init_xs_stuff, 3, embedding, NULL);
+	registry_add_simple_chains(my_functions);
+        registry_lookup("script", "playback", &journal_playback, &journal_playback_h);
+        if (journal_playback) journal_playback(journal_playback_h, journal_table);
+
+	BT_dcc = find_bind_table2("dcc");
+	if (BT_dcc) add_builtins2(BT_dcc, my_dcc_cmds);
 	return(NULL);
 }
 
 static char *perlscript_close()
 {
+	bind_table_t *BT_dcc = find_bind_table2("dcc");
+	if (BT_dcc) rem_builtins2(BT_dcc, my_dcc_cmds);
+	PL_perl_destruct_level = 1;
 	perl_destruct(ginterp);
 	perl_free(ginterp);
 	module_undepend("perlscript");

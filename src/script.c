@@ -14,7 +14,7 @@ int script_load(char *fname);
 int script_create_cmd_table(script_command_t *table);
 
 static script_command_t my_script_cmds[] = {
-	{"", "loadscript", script_load, NULL, 1, 0, "s", "filename", SCRIPT_INTEGER, 0},
+	{"", "loadscript", script_load, NULL, 1, "s", "filename", SCRIPT_INTEGER, 0},
 	{0}
 };
 
@@ -77,7 +77,7 @@ static registry_simple_chain_t my_functions[] = {
 	{"link int", my_link_int, 3},
 	{"link str", my_link_str, 3},
 	{"playback", my_playback, 2},
-	0
+	{0}
 };
 
 int script_init()
@@ -92,7 +92,7 @@ int script_init()
 	registry_lookup("script", "create cmd", &create_cmd, &create_cmd_h);
 	registry_lookup("script", "delete cmd", &delete_cmd, &delete_cmd_h);
 
-	script_create_cmd_table(&my_script_cmds);
+	script_create_cmd_table(my_script_cmds);
 
 	return(0);
 }

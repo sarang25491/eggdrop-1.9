@@ -22,8 +22,12 @@ enum {
 };
 
 /* Flags for commands. */
-#define SCRIPT_WANTS_CD	1
-#define SCRIPT_COMPLEX	2
+#define SCRIPT_PASS_CDATA	1
+#define SCRIPT_PASS_RETVAL	2
+#define SCRIPT_PASS_ARRAY	4
+#define SCRIPT_PASS_COUNT	8
+#define SCRIPT_VAR_ARGS	16
+#define SCRIPT_VAR_FRONT	32
 
 /* Flags for callbacks. */
 #define SCRIPT_CALLBACK_ONCE	1
@@ -81,7 +85,6 @@ typedef struct script_command_b {
 	Function callback;
 	void *client_data;
 	int nargs; /* Number of arguments the script wants. */
-	int pass_array; /* Want an array of stuff? */
 	char *syntax; /* Argument types. */
 	char *syntax_error; /* Error to print when called incorrectly. */
 	int retval_type; /* Limited return value type, for simple stuff. */

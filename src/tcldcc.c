@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.38 2001/10/21 20:59:49 stdarg Exp $
+ * $Id: tcldcc.c,v 1.39 2001/10/24 10:08:03 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -26,6 +26,8 @@
 #include "main.h"
 #include "tandem.h"
 #include "modules.h"
+#include "script_api.h"
+#include "script.h"
 
 extern Tcl_Interp	*interp;
 extern tcl_timer_t	*timer,
@@ -45,18 +47,11 @@ static struct portmap	*root = NULL;
 
 /***********************************************************************/
 
-static int tcl_putdcc STDVAR
+static int script_putdcc(int idx, char *text)
 {
-  int idx;
-
-  BADARGS(3, 3, " idx text");
-  idx = atoi(argv[1]);
-  if (idx < 0 ||  idx >= dcc_total || !dcc[idx].type) {
-    Tcl_AppendResult(irp, "invalid idx", NULL);
-    return TCL_ERROR;
-  }
-  dumplots(-(dcc[idx].sock), "", argv[2]);
-  return TCL_OK;
+  if (idx < 0 ||  idx >= dcc_total || !dcc[idx].type) return(1);
+  dumplots(-(dcc[idx].sock), "", text);
+  return(0);
 }
 
 /* Allows tcl scripts to send out raw data. Can be used for fast server
@@ -70,12 +65,10 @@ static int tcl_putdcc STDVAR
  * (added by drummer@sophia.jpte.hu)
  */
 
-static int tcl_putdccraw STDVAR
+static int script_putdccraw(int idx, int len, char *text)
 {
-  int i, idx;
+  int i;
 
-  BADARGS(4, 4, " idx size text");
-  idx = atoi(argv[1]);
   if (idx == -1) {
     /* -1 means search for the server's idx. */
     for (i = 0; i < dcc_total; i++) {
@@ -85,160 +78,94 @@ static int tcl_putdccraw STDVAR
       }
     }
   }
-  if (idx < 0 || idx >= dcc_total || !dcc[idx].type) {
-    Tcl_AppendResult(irp, "invalid idx", NULL);
-    return TCL_ERROR;
-  }
-  tputs(idx, argv[3], atoi(argv[2]));
-  return TCL_OK;
+  if (idx < 0 || idx >= dcc_total || !dcc[idx].type) return(1);
+  tputs(dcc[idx].sock, text, len);
+  return(0);
 }
 
-static int tcl_dccsimul STDVAR
+static int script_dccsimul(int idx, char *cmd)
 {
-  BADARGS(3, 3, " idx command");
-  if (enable_simul) {
-    int idx = findidx(atoi(argv[1]));
+  int len;
+  if (!enable_simul) return(1);
+  if (idx < 0 || !dcc->type || !(dcc[idx].type->flags & DCT_SIMUL)
+    || !(dcc[idx].type->activity)) return(1);
 
-    if (idx >= 0 && (dcc[idx].type->flags & DCT_SIMUL)) {
-      int l = strlen(argv[2]);
+  len = strlen(cmd);
+  if (len > 510) len = 510;
 
-      if (l > 510) {
-	l = 510;
-	argv[2][510] = 0;	/* Restrict length of cmd */
-      }
-      if (dcc[idx].type && dcc[idx].type->activity) {
-	dcc[idx].type->activity(idx, argv[2], l);
-	return TCL_OK;
-      }
-    } else
-      Tcl_AppendResult(irp, "invalid idx", NULL);
-  } else
-    Tcl_AppendResult(irp, "simul disabled", NULL);
-  return TCL_ERROR;
+  dcc[idx].type->activity(idx, cmd, len);
+  return(0);
 }
 
-static int tcl_dccbroadcast STDVAR
+static int script_dccbroadcast(char *msg)
 {
-  char msg[401];
-
-  BADARGS(2, 2, " message");
-  strncpyz(msg, argv[1], sizeof msg);
   chatout("*** %s\n", msg);
   botnet_send_chat(-1, botnetnick, msg);
-  return TCL_OK;
+  return(0);
 }
 
-static int tcl_hand2idx STDVAR
+static int script_hand2idx(char *nick)
 {
   int i;
-  char s[11];
 
-  BADARGS(2, 2, " nickname");
-  for (i = 0; i < dcc_total; i++)
-    if ((dcc[i].type->flags & DCT_SIMUL) &&
-        !strcasecmp(argv[1], dcc[i].nick)) {
-      snprintf(s, sizeof s, "%ld", dcc[i].sock);
-      Tcl_AppendResult(irp, s, NULL);
-      return TCL_OK;
+  for (i = 0; i < dcc_total; i++) {
+    if ((dcc[i].type) && (dcc[i].type->flags & DCT_SIMUL) &&
+        !strcasecmp(nick, dcc[i].nick)) {
+      return(i);
     }
-  Tcl_AppendResult(irp, "-1", NULL);
-  return TCL_OK;
+  }
+  return(-1);
 }
 
-static int tcl_getchan STDVAR
+static int script_getchan(int idx)
 {
-  char s[7];
-  int idx;
-
-  BADARGS(2, 2, " idx");
-  idx = findidx(atoi(argv[1]));
-  if (idx < 0 ||
+  if (idx < 0 || !(dcc[idx].type) ||
       (dcc[idx].type != &DCC_CHAT && dcc[idx].type != &DCC_SCRIPT)) {
-    Tcl_AppendResult(irp, "invalid idx", NULL);
-    return TCL_ERROR;
+    return(-2);
   }
   if (dcc[idx].type == &DCC_SCRIPT)
-    snprintf(s, sizeof s, "%d", dcc[idx].u.script->u.chat->channel);
+    return(dcc[idx].u.script->u.chat->channel);
   else
-    snprintf(s, sizeof s, "%d", dcc[idx].u.chat->channel);
-  Tcl_AppendResult(irp, s, NULL);
-  return TCL_OK;
+    return(dcc[idx].u.chat->channel);
 }
 
-static int tcl_setchan STDVAR
+static int script_setchan(int idx, int chan)
 {
-  int idx, chan;
-  module_entry *me;
+  int oldchan;
 
-  BADARGS(3, 3, " idx channel");
-  idx = findidx(atoi(argv[1]));
-  if (idx < 0 ||
+  if (idx < 0 || !(dcc[idx].type) ||
       (dcc[idx].type != &DCC_CHAT && dcc[idx].type != &DCC_SCRIPT)) {
-    Tcl_AppendResult(irp, "invalid idx", NULL);
-    return TCL_ERROR;
+    return(1);
   }
-  if (argv[2][0] < '0' || argv[2][0] > '9') {
-    if (!strcmp(argv[2], "-1") || !strcasecmp(argv[2], "off"))
-      chan = (-1);
-    else {
-      Tcl_SetVar(irp, "chan", argv[2], 0);
-      if (Tcl_VarEval(irp, "assoc ", "$chan", NULL) != TCL_OK ||
-	  !interp->result[0]) {
-	Tcl_AppendResult(irp, "channel name is invalid", NULL);
-	return TCL_ERROR;
-      }
-      chan = atoi(interp->result);
-    }
-  } else
-    chan = atoi(argv[2]);
+
   if ((chan < -1) || (chan > 199999)) {
-    Tcl_AppendResult(irp, "channel out of range; must be -1 thru 199999",
-		     NULL);
-    return TCL_ERROR;
+    return(1);
   }
-  if (dcc[idx].type == &DCC_SCRIPT)
+  if (dcc[idx].type == &DCC_SCRIPT) {
     dcc[idx].u.script->u.chat->channel = chan;
-  else {
-    int oldchan = dcc[idx].u.chat->channel;
-
-    if (dcc[idx].u.chat->channel >= 0) {
-      if ((chan >= GLOBAL_CHANS) && (oldchan < GLOBAL_CHANS))
-	botnet_send_part_idx(idx, "*script*");
-      check_tcl_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock,
-		     dcc[idx].u.chat->channel);
-    }
-    dcc[idx].u.chat->channel = chan;
-    if (chan < GLOBAL_CHANS)
-      botnet_send_join_idx(idx, oldchan);
-    check_tcl_chjn(botnetnick, dcc[idx].nick, chan, geticon(idx),
-		   dcc[idx].sock, dcc[idx].host);
+    return(0);
   }
-  /* Console autosave. */
-  if ((me = module_find("console", 1, 1))) {
-    Function *func = me->funcs;
 
-    (func[CONSOLE_DOSTORE]) (idx);
+  oldchan = dcc[idx].u.chat->channel;
+
+  if (oldchan >= 0) {
+    if ((chan >= GLOBAL_CHANS) && (oldchan < GLOBAL_CHANS)) botnet_send_part_idx(idx, "*script*");
+    check_tcl_chpt(botnetnick, dcc[idx].nick, idx, oldchan);
   }
-  return TCL_OK;
+  dcc[idx].u.chat->channel = chan;
+  if (chan < GLOBAL_CHANS) botnet_send_join_idx(idx, oldchan);
+  check_tcl_chjn(botnetnick, dcc[idx].nick, chan, geticon(idx),
+	   idx, dcc[idx].host);
+  return(0);
 }
 
-static int tcl_dccputchan STDVAR
+static int script_dccputchan(int chan, char *msg)
 {
-  int chan;
-  char msg[401];
-
-  BADARGS(3, 3, " channel message");
-  chan = atoi(argv[1]);
-  if ((chan < 0) || (chan > 199999)) {
-    Tcl_AppendResult(irp, "channel out of range; must be 0 thru 199999",
-		     NULL);
-    return TCL_ERROR;
-  }
-  strncpyz(msg, argv[2], sizeof msg);
-  chanout_but(-1, chan, "*** %s\n", argv[2]);
-  botnet_send_chan(-1, botnetnick, NULL, chan, argv[2]);
-  check_tcl_bcst(botnetnick, chan, argv[2]);
-  return TCL_OK;
+  if ((chan < 0) || (chan > 199999)) return(1);
+  chanout_but(-1, chan, "*** %s\n", msg);
+  botnet_send_chan(-1, botnetnick, NULL, chan, msg);
+  check_tcl_bcst(botnetnick, chan, msg);
+  return(0);
 }
 
 static int tcl_console STDVAR
@@ -1021,17 +948,21 @@ static int tcl_restart STDVAR
   return TCL_OK;
 }
 
+script_simple_command_t script_dcc_cmds[] = {
+	{"", NULL, NULL, NULL, 0},
+	{"putdcc", script_putdcc, "is", "idx text", SCRIPT_INTEGER},
+	{"putdccraw", script_putdccraw, "iis", "idx len text", SCRIPT_INTEGER},
+	{"dccsimul", script_dccsimul, "is", "idx command", SCRIPT_INTEGER},
+	{"dccbroadcast", script_dccbroadcast, "s", "text", SCRIPT_INTEGER},
+	{"hand2idx", script_hand2idx, "s", "handle", SCRIPT_INTEGER},
+	{"getchan", script_getchan, "i", "idx", SCRIPT_INTEGER},
+	{"setchan", script_setchan, "ii", "idx chan", SCRIPT_INTEGER},
+	{"dccputchan", script_dccputchan, "is", "chan text", SCRIPT_INTEGER},
+	{0}
+};
+
 tcl_cmds tcldcc_cmds[] =
 {
-  {"putdcc",		tcl_putdcc},
-  {"putdccraw",		tcl_putdccraw},
-  {"putidx",		tcl_putdcc},
-  {"dccsimul",		tcl_dccsimul},
-  {"dccbroadcast",	tcl_dccbroadcast},
-  {"hand2idx",		tcl_hand2idx},
-  {"getchan",		tcl_getchan},
-  {"setchan",		tcl_setchan},
-  {"dccputchan",	tcl_dccputchan},
   {"console",		tcl_console},
   {"strip",		tcl_strip},
   {"echo",		tcl_echo},

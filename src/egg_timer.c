@@ -29,7 +29,7 @@ static script_simple_command_t script_cmds[] = {
 	{"timer", script_single_timer, "iic", "seconds microseconds callback", SCRIPT_INTEGER},
 	{"rtimer", script_repeat_timer, "iic", "seconds microseconds callback", SCRIPT_INTEGER},
 	{"killtimer", timer_destroy, "i", "timer-id", SCRIPT_INTEGER},
-	0
+	{0}
 };
 
 void timer_init()
@@ -51,7 +51,7 @@ int timer_get_time(egg_timeval_t *curtime)
 
 int timer_create_complex(egg_timeval_t *howlong, Function callback, void *client_data, int flags)
 {
-	egg_timer_t *timer, *prev, *next;
+	egg_timer_t *timer, *prev;
 	egg_timeval_t trigger_time;
 
 	timer_get_time(&trigger_time);
@@ -147,7 +147,8 @@ int timer_run()
 	Function callback;
 	void *client_data;
 
-	while (timer = timer_list_head) {
+	while (timer_list_head) {
+		timer = timer_list_head;
 		timer_get_time(&curtime);
 		if (timer->trigger_time.sec > curtime.sec || (timer->trigger_time.sec == curtime.sec && timer->trigger_time.usec > curtime.usec)) break;
 

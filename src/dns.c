@@ -4,7 +4,7 @@
  *   provides the code used by the bot if the DNS module is not loaded
  *   DNS script commands
  *
- * $Id: dns.c,v 1.29 2001/10/19 01:55:05 tothwolf Exp $
+ * $Id: dns.c,v 1.30 2001/10/24 10:08:03 stdarg Exp $
  */
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -58,7 +58,7 @@ static int script_dnslookup(char *iporhost, script_callback_t *callback);
 static script_simple_command_t scriptdns_cmds[] = {
 	{"", NULL, NULL, NULL, 0},
 	{"dnslookup", script_dnslookup, "sc", "ip-address/hostname callback", SCRIPT_INTEGER},
-	0
+	{0}
 };
 
 void dns_init()

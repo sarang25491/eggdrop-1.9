@@ -48,13 +48,13 @@ static int script_putlog(void *cdata, char *text);
 static int script_putloglev(char *level, char *chan, char *text);
 
 static script_command_t log_script_cmds[] = {
-	{"", "putlog", script_putlog, (void *)LOG_MISC, 1, 0, "s", "text", SCRIPT_INTEGER, SCRIPT_WANTS_CD},
-	{"", "putcmdlog", script_putlog, (void *)LOG_CMDS, 1, 0, "s", "text", SCRIPT_INTEGER, SCRIPT_WANTS_CD},
-	{"", "putxferlog", script_putlog, (void *)LOG_FILES, 1, 0, "s", "text", SCRIPT_INTEGER, SCRIPT_WANTS_CD},
-	{"", "putloglev", script_putloglev, NULL, 3, 0, "sss", "level channel text", SCRIPT_INTEGER, 0},
-	{"", "logfile", (Function) logfile_add, NULL, 3, 0, "sss", "modes channel filename", SCRIPT_STRING, 0},
-	{"", "stoplog", logfile_del, NULL, 1, 0, "s", "filename", SCRIPT_INTEGER, 0},
-	0
+	{"", "putlog", script_putlog, (void *)LOG_MISC, 1, "s", "text", SCRIPT_INTEGER, SCRIPT_PASS_CDATA},
+	{"", "putcmdlog", script_putlog, (void *)LOG_CMDS, 1, "s", "text", SCRIPT_INTEGER, SCRIPT_PASS_CDATA},
+	{"", "putxferlog", script_putlog, (void *)LOG_FILES, 1, "s", "text", SCRIPT_INTEGER, SCRIPT_PASS_CDATA},
+	{"", "putloglev", script_putloglev, NULL, 3, "sss", "level channel text", SCRIPT_INTEGER, 0},
+	{"", "logfile", (Function) logfile_add, NULL, 3, "sss", "modes channel filename", SCRIPT_STRING, 0},
+	{"", "stoplog", logfile_del, NULL, 1, "s", "filename", SCRIPT_INTEGER, 0},
+	{0}
 };
 
 static script_str_t log_script_strings[] = {

@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.51 2001/10/21 03:44:30 stdarg Exp $
+ * $Id: tcl.c,v 1.52 2001/10/24 10:08:03 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -28,6 +28,8 @@
 #include <stdlib.h>		/* getenv()				*/
 #include <locale.h>		/* setlocale()				*/
 #include "main.h"
+#include "script_api.h"
+#include "script.h"
 
 /* Used for read/write to internal strings */
 typedef struct {
@@ -395,6 +397,7 @@ void kill_tcl()
 }
 
 extern tcl_cmds tcluser_cmds[], tcldcc_cmds[], tclmisc_cmds[], tclmisc_objcmds[];
+extern script_simple_command_t script_dcc_cmds[];
 
 /* Not going through Tcl's crazy main() system (what on earth was he
  * smoking?!) so we gotta initialize the Tcl interpreter
@@ -449,6 +452,7 @@ void init_tcl(int argc, char **argv)
   add_tcl_commands(tcldcc_cmds);
   add_tcl_commands(tclmisc_cmds);
   add_tcl_objcommands(tclmisc_objcmds);
+  script_create_simple_cmd_table(script_dcc_cmds);
 }
 
 void do_tcl(char *whatzit, char *script)
