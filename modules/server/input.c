@@ -36,6 +36,31 @@ static int got001(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 	return(0);
 }
 
+/* 005: things the server supports
+ * :irc.example.org 005 nick NOQUIT WATCH=128 SAFELIST MODES=6 MAXCHANNELS=15 MAXBANS=100 NICKLEN=30
+ * TOPICLEN=307 KICKLEN=307 CHANTYPES=# PREFIX=(ov)@+ NETWORK=DALnet SILENCE=10 CASEMAPPING=ascii
+ * CHANMODES=b,k,l,ciLmMnOprRst :are available on this server
+ */
+static int got005(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
+{
+	char *arg;
+	int i;
+
+	for (i = 1; i < nargs-1; i++) {
+		arg = args[i];
+		if (!strncasecmp(arg, "chantypes=", 10)) {
+			str_redup(&current_server.chantypes, arg+10);
+		}
+		else if (!strncasecmp(arg, "casemapping=", 12)) {
+			arg += 12;
+			if (!strcasecmp(arg, "ascii")) current_server.strcmp = strcasecmp;
+			else if (!strcasecmp(arg, "rfc1459")) current_server.strcmp = irccmp;
+			else current_server.strcmp = strcasecmp;
+		}
+	}
+	return(0);
+}
+
 /* Got 442: not on channel
 	:server 442 nick #chan :You're not on that channel
  */
@@ -65,7 +90,7 @@ static int check_ctcp_ctcr(int which, int to_channel, user_t *u, char *nick, cha
 	char *cmd, *space, *logdest, *text, *ctcptype;
 	bind_table_t *table;
 	int r, len;
-	const char *flags;
+	int flags;
 
 	len = strlen(trailing);
 	if ((len < 2) || (trailing[0] != 1) || (trailing[len-1] != 1)) {
@@ -135,12 +160,10 @@ static int gotmsg(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 	r = check_global_notice(from_nick, from_uhost, dest, trailing);
 	if (r) return(0);
 
-	/* Check if it's an op/voice message. */
-	if ((*dest == '@' || *dest == '+') && strchr(CHANMETA, *(dest+1))) {
-		to_channel = 1;
-		dest++;
-	}
-	else if (strchr(CHANMETA, *dest)) to_channel = 1;
+	/* Check if it's an op/voice message -- should this be a separate bind? */
+	if (*dest == '@' || *dest == '+') dest++;
+
+	if (strchr(current_server.chantypes, *dest)) to_channel = 1;
 	else to_channel = 0;
 
 	/* Check if it's a ctcp. */
@@ -218,14 +241,12 @@ static int gotnotice(char *from_nick, char *from_uhost, user_t *u, char *cmd, in
 	r = check_global_notice(from_nick, from_uhost, dest, trailing);
 	if (r) return(0);
 
-	if ((*dest == '@' || *dest == '+') && strchr(CHANMETA, *(dest+1))) {
-		to_channel = 1;
-		dest++;
-	}
-	else if (strchr(CHANMETA, *dest)) to_channel = 1;
+	if (*dest == '@' || *dest == '+') dest++;
+
+	if (strchr(current_server.chantypes, *dest)) to_channel = 1;
 	else to_channel = 0;
 
-	/* Check if it's a ctcp. */
+	/* Check if it's a ctcr. */
 	r = check_ctcp_ctcr(1, to_channel, u, from_nick, from_uhost, dest, trailing);
 	if (r) return(0);
 
@@ -347,10 +368,10 @@ static int got451(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 /* Got error */
 static int goterror(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
-  putlog("ms", "*", "-ERROR from server- %s", args[0]);
-  putlog(LOG_SERV, "*", "Disconnecting from server.");
-  kill_server("disconnecting due to error");
-  return 1;
+	putlog("ms", "*", "-ERROR from server- %s", args[0]);
+	putlog(LOG_SERV, "*", "Disconnecting from server.");
+	kill_server("disconnecting due to error");
+	return(0);
 }
 
 /* Got nick change.  */
@@ -359,6 +380,7 @@ static int gotnick(char *from_nick, char *from_uhost, user_t *u, char *cmd, int 
 	char *newnick = args[0];
 
 	if (match_my_nick(from_nick)) str_redup(&botname, newnick);
+	bind_check(BT_nick, from_nick, from_nick, from_uhost, u, newnick);
 	return(0);
 }
 
@@ -397,6 +419,7 @@ bind_list_t my_new_raw_binds[] = {
 	{"NICK", (Function) gotnick},
 	{"ERROR", (Function) goterror},
 	{"001", (Function) got001},
+	{"005", got005},
 	{"432",	(Function) got432},
 	{"433",	(Function) got433},
 	{"435", (Function) got435},

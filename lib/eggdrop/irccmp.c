@@ -41,68 +41,10 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: irccmp.c,v 1.6 2003/01/02 21:33:16 wcc Exp $";
+static const char rcsid[] = "$Id: irccmp.c,v 1.1 2003/02/17 10:22:30 stdarg Exp $";
 #endif
 
-/* prototypes */
-#include "irccmp.h"
-
-#include "debug.h"	/* assert */
-
-
-/*
- * irccmp - case insensitive comparison of two 0 terminated strings.
- *
- *      returns  0, if s1 equal to s2
- *              <0, if s1 lexicographically less than s2
- *              >0, if s1 lexicographically greater than s2
- */
-int _irccmp(const char *s1, const char *s2)
-{
-  const unsigned char* str1 = (const unsigned char*) s1;
-  const unsigned char* str2 = (const unsigned char*) s2;
-  int   res;
-  assert(0 != s1);
-  assert(0 != s2);
-
-  while ((res = ToUpper(*str1) - ToUpper(*str2)) == 0) {
-    if (*str1 == '\0')
-      return 0;
-    str1++;
-    str2++;
-  }
-  return (res);
-}
-
-int _ircncmp(const char* s1, const char *s2, int n)
-{
-  const unsigned char* str1 = (const unsigned char*) s1;
-  const unsigned char* str2 = (const unsigned char*) s2;
-  int res;
-  assert(0 != s1);
-  assert(0 != s2);
-
-  while ((res = ToUpper(*str1) - ToUpper(*str2)) == 0) {
-    str1++;
-    str2++;
-    n--;
-    if (n == 0 || (*str1 == '\0' && *str2 == '\0'))
-      return 0;
-  }
-  return (res);
-}
-
-int _irctolower(int c)
-{
-  return ToLower(c);
-}
-
-int _irctoupper(int c)
-{
-  return ToUpper(c);
-}
-
-const unsigned char ToLowerTab[] = {
+static const unsigned char ToLowerTab[] = {
   0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa,
   0xb, 0xc, 0xd, 0xe, 0xf, 0x10, 0x11, 0x12, 0x13, 0x14,
   0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d,
@@ -137,7 +79,7 @@ const unsigned char ToLowerTab[] = {
   0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff
 };
 
-const unsigned char ToUpperTab[] = {
+static const unsigned char ToUpperTab[] = {
   0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa,
   0xb, 0xc, 0xd, 0xe, 0xf, 0x10, 0x11, 0x12, 0x13, 0x14,
   0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d,
@@ -171,3 +113,42 @@ const unsigned char ToUpperTab[] = {
   0xf0, 0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8, 0xf9,
   0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff
 };
+
+#define ToUpper(c) (ToUpperTab[(unsigned)c])
+#define ToLower(c) (ToLowerTab[(unsigned)c])
+
+/*
+ * irccmp - case insensitive comparison of two 0 terminated strings.
+ *
+ *      returns  0, if s1 equal to s2
+ *              <0, if s1 lexicographically less than s2
+ *              >0, if s1 lexicographically greater than s2
+ */
+int irccmp(const char *s1, const char *s2)
+{
+  const unsigned char* str1 = (const unsigned char*) s1;
+  const unsigned char* str2 = (const unsigned char*) s2;
+  int   res;
+
+  while ((res = ToUpper(*str1) - ToUpper(*str2)) == 0) {
+    if (*str1 == '\0') return 0;
+    str1++;
+    str2++;
+  }
+  return (res);
+}
+
+int ircncmp(const char* s1, const char *s2, int n)
+{
+  const unsigned char* str1 = (const unsigned char*) s1;
+  const unsigned char* str2 = (const unsigned char*) s2;
+  int res;
+
+  while ((res = ToUpper(*str1) - ToUpper(*str2)) == 0) {
+    str1++;
+    str2++;
+    n--;
+    if (n == 0 || (*str1 == '\0' && *str2 == '\0')) return 0;
+  }
+  return (res);
+}

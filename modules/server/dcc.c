@@ -109,7 +109,7 @@ static dcc_listen_t *dcc_listen(int timeout)
 	sockbuf_set_handler(idx, &dcc_listen_handler, listen);
 
 	/* See if they want the default timeout. */
-	if (!timeout) timeout = config.dcc_timeout;
+	if (!timeout) timeout = server_config.dcc_timeout;
 
 	if (timeout > 0) {
 		howlong.sec = timeout;
@@ -143,20 +143,6 @@ int dcc_start_chat(const char *nick, int timeout)
 	longip = htonl(getmyip());
 	printserv(SERVER_NORMAL, "PRIVMSG %s :%cDCC CHAT chat %u %d%c", nick, 1, longip, listen->port, 1);
 	return(idx);
-}
-
-/* If we receive a connect event, that means we belong to a dcc get resume. */
-static int dcc_listen_connect(void *client_data, int idx, const char *peer_ip, int peer_port)
-{
-	int sock;
-	dcc_listen_t *recv = client_data;
-
-	sock = sockbuf_get_sock(idx);
-	sockbuf_set_sock(idx, -1, 0);
-	sockbuf_set_sock(recv->client, sock, SOCKBUF_CLIENT);
-	recv->client = -1;
-	sockbuf_delete(idx);
-	return(0);
 }
 
 static int dcc_listen_newclient(void *client_data, int idx, int newidx, const char *peer_ip, int peer_port)
@@ -462,7 +448,7 @@ int dcc_accept_send(char *nick, char *localfname, char *fname, int size, int res
 	dcc_recv_head = send;
 
 	/* See if they want the default timeout. */
-	if (!timeout) timeout = config.dcc_timeout;
+	if (!timeout) timeout = server_config.dcc_timeout;
 	if (timeout > 0) {
 		howlong.sec = timeout;
 		howlong.usec = 0;
@@ -703,7 +689,6 @@ static void got_send(char *nick, char *uhost, user_t *u, char *text)
 		sprintf(ip, "%d.%d.%d.%d", (longip >> 24) & 255, (longip >> 16) & 255, (longip >> 8) & 255, (longip) & 255);
 	}
 
-	get_user_flagrec(u, &fr, NULL);
 	bind_check(BT_dcc_recv, nick, nick, uhost, u, fname, ip, port, size);
 }
 

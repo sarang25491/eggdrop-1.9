@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.14 2003/01/02 21:33:15 wcc Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.15 2003/02/17 10:22:30 stdarg Exp $";
 #endif
 */
 
@@ -123,7 +123,7 @@ static int script_jump(int nargs, int num)
 {
   	if (nargs) server_set_next(num);
   
-	cycle_delay = config.cycle_delay;
+	cycle_delay = server_config.cycle_delay;
 	kill_server("changing servers");
 	
 	return(0);

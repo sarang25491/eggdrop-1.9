@@ -31,7 +31,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.49 2003/02/16 07:05:25 wcc Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.50 2003/02/17 10:22:30 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -45,7 +45,6 @@ static const char rcsid[] = "$Id: users.c,v 1.49 2003/02/16 07:05:25 wcc Exp $";
 #include "net.h"		/* killsock				*/
 #include "userrec.h"		/* clear_masks				*/
 #include "match.h"		/* wild_match				*/
-#include "irccmp.h"		/* irccmp				*/
 #include "users.h"		/* prototypes				*/
 
 char natip[121] = "";

@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: flags.c,v 1.38 2003/02/15 05:04:58 wcc Exp $";
+static const char rcsid[] = "$Id: flags.c,v 1.39 2003/02/17 10:22:30 stdarg Exp $";
 #endif
 
 #include <ctype.h>
@@ -33,7 +33,6 @@ static const char rcsid[] = "$Id: flags.c,v 1.38 2003/02/15 05:04:58 wcc Exp $";
 #include "users.h"		/* USERENTRY_BOTFL, get_user		*/
 #include "dccutil.h"		/* dprintf_eggdrop			*/
 #include "userent.h"		/* list_type_kill			*/
-#include "irccmp.h"		/* irccmp				*/
 #include "flags.h"		/* prototypes				*/
 
 extern int raw_log;

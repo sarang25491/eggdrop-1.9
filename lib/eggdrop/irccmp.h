@@ -22,33 +22,16 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: irccmp.h,v 1.6 2003/01/02 21:33:16 wcc Exp $
+ * $Id: irccmp.h,v 1.1 2003/02/17 10:22:30 stdarg Exp $
  */
 
-#ifndef _EGG_IRCCMP_H
-#define _EGG_IRCCMP_H
-
+#ifndef _IRCCMP_H_
+#define _IRCCMP_H_
 
 /*
  * Prototypes
  */
-extern int _irccmp(const char *, const char *);
-extern int _ircncmp(const char *, const char *, int);
-extern int _irctolower(int);
-extern int _irctoupper(int);
-extern int (*irccmp) (const char *, const char *);
-extern int (*ircncmp) (const char *, const char *, int);
-extern int (*irctoupper) (int);
-extern int (*irctolower) (int);
-
-
-/*
- * Character macros
- */
-extern const unsigned char ToLowerTab[];
-#define ToLower(c) (ToLowerTab[(unsigned char)(c)])
-
-extern const unsigned char ToUpperTab[];
-#define ToUpper(c) (ToUpperTab[(unsigned char)(c)])
+extern int irccmp(const char *, const char *);
+extern int ircncmp(const char *, const char *, int);
 
 #endif				/* !_EGG_IRCCMP_H */

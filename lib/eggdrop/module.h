@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: module.h,v 1.40 2003/02/15 05:04:57 wcc Exp $
+ * $Id: module.h,v 1.41 2003/02/17 10:22:30 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_MODULE_H
@@ -46,7 +46,6 @@
 #include "src/dns.h"
 #include "src/egg.h"
 #include "src/flags.h"
-#include "src/irccmp.h"
 #include "src/logfile.h"
 #include "src/misc.h"
 #include "src/modules.h"
@@ -303,8 +302,6 @@
 /* 216 - 219 */
 /* 216: min_dcc_port -- UNUSED (guppy) */
 /* 217: max_dcc_port -- UNUSED (guppy) */
-#define irccmp ((int(*)(char *, char *))(*(Function**)(egg->global[218])))
-#define ircncmp ((int(*)(char *, char *, int *))(*(Function**)(egg->global[219])))
 /* 220 - 223 */
 #define global_exempts (*(maskrec **)(egg->global[220]))
 #define global_invites (*(maskrec **)(egg->global[221]))

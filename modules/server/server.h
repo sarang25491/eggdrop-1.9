@@ -1,7 +1,7 @@
 #ifndef _SERVER_H_
 #define _SERVER_H_
 
-#define match_my_nick(test) (!irccmp(current_server.nick, test))
+#define match_my_nick(test) (!((current_server.strcmp)(current_server.nick, test)))
 
 /* Configuration data for this module. */
 typedef struct {
@@ -14,6 +14,8 @@ typedef struct {
 	int dcc_timeout;
 	char *user;
 	char *realname;
+	char *chantypes;
+	char *strcmp;
 } server_config_t;
 
 /* All the stuff we need to know about the currently connected server. */
@@ -29,9 +31,13 @@ typedef struct {
 	int registered;	/* Has the server accepted our registration? */
 	char *nick, *user, *host, *real_name;
 	char *pass;
+
+	/* Information about this server. */
+	char *chantypes;
+	int (*strcmp)(const char *s1, const char *s2);
 } current_server_t;
 
-extern server_config_t config;
+extern server_config_t server_config;
 extern current_server_t current_server;
 
 #endif

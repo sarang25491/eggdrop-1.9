@@ -46,11 +46,14 @@ void connect_to_next_server() {
 	str_redup(&current_server.server_host, serv->host);
 	str_redup(&current_server.server_self, serv->host);
 	str_redup(&current_server.pass, serv->pass);
+	str_redup(&current_server.chantypes, server_config.chantypes);
+	if (!strcasecmp(server_config.strcmp, "ascii")) current_server.strcmp = strcasecmp;
+	else current_server.strcmp = irccmp;
 
 	if (serv->port) current_server.port = serv->port;
-	else current_server.port = config.default_port;
+	else current_server.port = server_config.default_port;
 
-	current_server.idx = egg_connect(current_server.server_host, current_server.port, config.connect_timeout);
+	current_server.idx = egg_connect(current_server.server_host, current_server.port, server_config.connect_timeout);
 	sockbuf_set_handler(current_server.idx, &server_handler, NULL);
 }
 
@@ -66,7 +69,7 @@ static void disconnect_server()
 {
 	int connected = current_server.connected;
 
-	cycle_delay = config.cycle_delay;
+	cycle_delay = server_config.cycle_delay;
 
 	current_server.connected = 0;
 	current_server.registered = 0;
@@ -112,7 +115,7 @@ static int server_on_connect(void *client_data, int idx, const char *peer_ip, in
 	check_bind_event("connect-server");
 	if (!current_server.connected) return(0);
 
-	printserv(SERVER_NOQUEUE, "USER %s localhost %s :%s\r\n", config.user, current_server.server_host, config.realname);
+	printserv(SERVER_NOQUEUE, "USER %s localhost %s :%s\r\n", server_config.user, current_server.server_host, server_config.realname);
 	if (current_server.pass) printserv(SERVER_NOQUEUE, "PASS %s\r\n", current_server.pass);
 	try_next_nick();
 	return(0);

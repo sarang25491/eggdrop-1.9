@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: userrec.c,v 1.59 2003/02/15 05:04:58 wcc Exp $";
+static const char rcsid[] = "$Id: userrec.c,v 1.60 2003/02/17 10:22:30 stdarg Exp $";
 #endif
 
 #include <sys/stat.h>
@@ -38,7 +38,6 @@ static const char rcsid[] = "$Id: userrec.c,v 1.59 2003/02/15 05:04:58 wcc Exp $
 #include "cmdt.h"		/* cmd_t				*/
 #include "chanprog.h"		/* clear_chanlist, set_chanlist		*/
 #include "dccutil.h"		/* chanout_but				*/
-#include "irccmp.h"		/* irccmp				*/
 #include "flags.h"
 #include "match.h"		/* wild_match				*/
 #include "userrec.h"		/* prototypes				*/

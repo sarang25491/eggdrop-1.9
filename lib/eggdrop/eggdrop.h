@@ -31,6 +31,7 @@
 #include <eggdrop/users.h>
 #include <eggdrop/partyline.h>
 #include <eggdrop/egglog.h>
+#include <eggdrop/irccmp.h>
 
 BEGIN_C_DECLS
 

@@ -8,7 +8,6 @@
 #include "modules.h" 			/* add_hook() 			*/
 #include "logfile.h"			/* prototypes			*/
 #include "dccutil.h"			/* dprintf_eggdrop		*/
-#include "irccmp.h"			/* irccmp			*/
 #include "chanprog.h"	/* logmodes */
 #include <eggdrop/eggdrop.h>
 

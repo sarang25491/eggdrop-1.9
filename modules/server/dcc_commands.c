@@ -31,7 +31,7 @@ static int party_plus_server(int pid, const char *nick, user_t *u, const char *c
 
 	parse_server(text, &host, &port, &pass);
 	server_add(host, port, pass);
-	partyline_printf(pid, "Added %s:%d\n", host, port ? port : config.default_port);
+	partyline_printf(pid, "Added %s:%d\n", host, port ? port : server_config.default_port);
 	free(host);
 	return(0);
 }

@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: modules.c,v 1.129 2003/02/15 05:04:58 wcc Exp $";
+static const char rcsid[] = "$Id: modules.c,v 1.130 2003/02/17 10:22:30 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -58,8 +58,6 @@ static const char rcsid[] = "$Id: modules.c,v 1.129 2003/02/15 05:04:58 wcc Exp 
 				   write_user, change_handle,
 				   write_userfile, u_pass_match, deluser,
 				   addhost_by_handle, delhost_by_handle	*/
-#include "irccmp.h"		/* _irccmp, _ircncmp, _irctolower,
-				   _irctoupper				*/
 #include "match.h"		/* wild_match				*/
 
 
@@ -131,10 +129,6 @@ char *(*encrypt_string) (char *, char *) = 0;
 char *(*decrypt_string) (char *, char *) = 0;
 void (*qserver) (int, char *, int) = (void (*)(int, char *, int)) null_func;
 void (*add_mode) () = null_func;
-int (*irccmp) (const char *, const char *) = _irccmp;
-int (*ircncmp) (const char *, const char *, int) = _ircncmp;
-int (*irctolower) (int) = _irctolower;
-int (*irctoupper) (int) = _irctoupper;
 int (*match_noterej) (struct userrec *, char *) = (int (*)(struct userrec *, char *)) false_func;
 int (*storenote)(char *from, char *to, char *msg, int idx, char *who, int bufsize) = (int (*)(char *from, char *to, char *msg, int idx, char *who, int bufsize)) minus_func;
 
@@ -421,8 +415,8 @@ Function global_table[] =
   /* 216 - 219 */
   (Function) 0,			/* min_dcc_port -- UNUSED! (guppy)	*/
   (Function) 0,			/* max_dcc_port -- UNUSED! (guppy)	*/
-  (Function) & irccmp,		/* Function *				*/
-  (Function) & ircncmp,		/* Function *				*/
+  (Function) 0,		/* Function *				*/
+  (Function) 0,		/* Function *				*/
   /* 220 - 223 */
   (Function) & global_exempts,	/* struct exemptrec *			*/
   (Function) & global_invites,	/* struct inviterec *			*/
@@ -766,20 +760,6 @@ void add_hook(int hook_num, Function func)
     case HOOK_ADD_MODE:
       if (add_mode == (void (*)()) null_func)
 	add_mode = (void (*)()) func;
-      break;
-    /* special hook <drummer> */
-    case HOOK_IRCCMP:
-      if (func == NULL) {
-	irccmp = strcasecmp;
-	ircncmp = (int (*)(const char *, const char *, int)) strncasecmp;
-	irctolower = tolower;
-	irctoupper = toupper;
-      } else {
-	irccmp = _irccmp;
-	ircncmp = _ircncmp;
-	irctolower = _irctolower;
-	irctoupper = _irctoupper;
-      }
       break;
     case HOOK_MATCH_NOTEREJ:
       if (match_noterej == (int (*)(struct userrec *, char *))false_func)

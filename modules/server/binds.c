@@ -18,7 +18,8 @@ bind_table_t *BT_wall = NULL,
 	*BT_ctcp = NULL,
 	*BT_ctcr = NULL,
 	*BT_dcc_chat = NULL,
-	*BT_dcc_recv = NULL;
+	*BT_dcc_recv = NULL,
+	*BT_nick = NULL;
 
 void server_binds_destroy()
 {
@@ -33,6 +34,7 @@ void server_binds_destroy()
 	bind_table_del(BT_ctcr);
 	bind_table_del(BT_ctcp);
 	bind_table_del(BT_dcc_chat);
+	bind_table_del(BT_nick);
 }
 
 void server_binds_init()
@@ -50,30 +52,7 @@ void server_binds_init()
 	BT_ctcp = bind_table_add("ctcp", 6, "ssUsss", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
 	BT_dcc_chat = bind_table_add("dcc_chat", 6, "ssUssi", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
 	BT_dcc_recv = bind_table_add("dcc_recv", 7, "ssUssii", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
+	BT_nick = bind_table_add("nick", 4, "ssUs", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
 
 	bind_add_list("ctcp", ctcp_dcc_binds);
-}
-
-void check_tcl_notc(char *nick, char *uhost, user_t *u, char *dest, char *arg)
-{
-  bind_check(BT_notice, arg, nick, uhost, u, arg, dest);
-}
-
-static int check_tcl_ctcpr(char *nick, char *uhost, user_t *u,
-			   char *dest, char *keyword, char *args,
-			   bind_table_t *table)
-{
-  return bind_check(table, keyword, nick, uhost, u, dest, keyword, args);
-}
-
-static int check_tcl_wall(char *from, char *msg)
-{
-  int x;
-
-  x = bind_check(BT_wall, msg, from, msg);
-  if (x & BIND_RET_LOG) {
-    putlog(LOG_WALL, "*", "!%s! %s", from, msg);
-    return 1;
-  }
-  else return 0;
 }

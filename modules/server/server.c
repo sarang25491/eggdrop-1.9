@@ -13,20 +13,8 @@
 
 eggdrop_t *egg = NULL;
 
-static server_config_t default_config = {
-	0,	/* trigger on ignore */
-	0,	/* keepnick */
-	30,	/* connect_timeout */
-	10,	/* cycle delay */
-	6667,	/* default port */
-	30,	/* ping timeout */
-	30,	/* dcc timeout */
-	NULL,	/* user */
-	NULL,	/* real name */
-};
-
 current_server_t current_server = {0};
-server_config_t config = {0};
+server_config_t server_config = {0};
 
 int cycle_delay = 0;
 
@@ -122,15 +110,49 @@ static Function server_table[] =
   (Function) server_report,
 };
 
+static config_var_t server_config_vars[] = {
+	/* Registration information. */
+	{"user", &server_config.user, CONFIG_STRING},
+	{"realname", &server_config.realname, CONFIG_STRING},
+
+	/* Timeouts. */
+	{"connect_timeout", &server_config.connect_timeout, CONFIG_INT},
+	{"ping_timeout", &server_config.ping_timeout, CONFIG_INT},
+	{"dcc_timeout", &server_config.dcc_timeout, CONFIG_INT},
+
+	{"trigger_on_ignore", &server_config.trigger_on_ignore, CONFIG_INT},
+	{"keepnick", &server_config.keepnick, CONFIG_INT},
+	{"cycle_delay", &server_config.cycle_delay, CONFIG_INT},
+	{"default_port", &server_config.default_port, CONFIG_INT},
+
+	{"chantypes", &server_config.chantypes, CONFIG_STRING},
+	{"strcmp", &server_config.strcmp, CONFIG_STRING},
+	{0}
+};
+
 char *start(eggdrop_t *eggdrop)
 {
 	cmd_t *cmd;
+	void *config_root;
+
 	egg = eggdrop;
 
-	/* Let's wait for the new config system before we redo all this mess. */
-	memcpy(&config, &default_config, sizeof(config));
-	config.user = strdup("user");
-	config.realname = strdup("real name");
+	/* Set default values. */
+	server_config.user = strdup("user");
+	server_config.realname = strdup("real name");
+	server_config.connect_timeout = 30;
+	server_config.ping_timeout = 30;
+	server_config.dcc_timeout = 30;
+	server_config.trigger_on_ignore = 0;
+	server_config.keepnick = 0;
+	server_config.cycle_delay = 10;
+	server_config.default_port = 6667;
+	server_config.chantypes = strdup("#&");
+	server_config.strcmp = strdup("rfc1459");
+
+	/* Link our config vars. */
+	config_root = config_get_root("eggdrop");
+	config_link_table(server_config_vars, config_root, "server", 0, NULL);
 
 	memset(&current_server, 0, sizeof(current_server));
 	current_server.idx = -1;
