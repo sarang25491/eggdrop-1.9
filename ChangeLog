@@ -1,3 +1,14 @@
+2002-02-25 02:59  stdarg <stdarg@techmonkeys.org>
+
+	* src/: egg_timer.c, egg_timer.h, logfile.c, main.c:
+
+	
+	* Added 'timers' and 'timer_info' commands 
+	* Removed some unnecessary usage of time(NULL) in logfile.c 
+	* New global variable egg_timeval_now (like 'now' but with
+	microseconds) 
+	* Fixed some bugs, cleaned up some code, in egg_timer.c 
+
 2002-02-24 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
