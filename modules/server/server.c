@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: server.c,v 1.22 2002/05/19 04:41:32 stdarg Exp $";
+static const char rcsid[] = "$Id: server.c,v 1.23 2002/05/21 21:23:01 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "server"
@@ -122,6 +122,10 @@ static bind_table_t *BT_flood, *BT_ctcr, *BT_ctcp;
 static int maxqmsg;
 static struct msgq_head mq, hq, modeq;
 static int burst;
+
+/* Prototypes for serverlist manipulation. */
+static int server_add(char *host, int port, char *pass);
+static int server_clear();
 
 #include "cmdsserv.c"
 #include "scriptcmds.c"
@@ -909,74 +913,42 @@ static void queue_server(int which, char *buf, int len)
 			   possible. */
 }
 
-/* Add a new server to the server_list.
- */
-static void add_server(char *ss)
+/* Add a server to the server list. */
+static int server_add(char *host, int port, char *pass)
 {
-  struct server_list *x, *z;
-  char *p, *q;
+	struct server_list *serv, *listend;
 
-  for (z = serverlist; z && z->next; z = z->next);
-  while (ss) {
-    p = strchr(ss, ',');
-    if (p)
-      *p++ = 0;
-    x = malloc(sizeof(struct server_list));
+	if (!port) port = default_port;
 
-    x->next = 0;
-    x->realname = 0;
-    if (z)
-      z->next = x;
-    else
-      serverlist = x;
-    z = x;
-    if (*ss == '[') {
-	ss++;
-	if ((q = strchr(ss, ']'))) {
-	    *(q++) = 0;
-	    if (*q != ':')
-		q = 0;
+	/* Go to the end of the serverlist. */
+	for (listend = serverlist; listend && listend->next; listend = listend->next) {
+		; /* empty */
 	}
-    } else
-	q = strchr(ss, ':');
-    if (!q) {
-      x->port = default_port;
-      x->pass = 0;
-      x->name = strdup(ss);
-    } else {
-      *(q++) = 0;
-      x->name = strdup(ss);
-      ss = q;
-      q = strchr(ss, ':');
-      if (!q) {
-	x->pass = 0;
-      } else {
-	*q++ = 0;
-	x->pass = strdup(q);
-      }
-      x->port = atoi(ss);
-    }
-    ss = p;
-  }
+
+	serv = (struct server_list *)calloc(1, sizeof(*serv));
+	serv->name = strdup(host);
+	serv->port = port;
+	if (pass) serv->pass = strdup(pass);
+
+	if (listend) listend->next = serv;
+	else serverlist = serv;
+
+	return(0);
 }
 
-/* Clear out the given server_list.
- */
-static void clearq(struct server_list *xx)
+/* Clear out the server_list. */
+static int server_clear()
 {
-  struct server_list *x;
+	struct server_list *cur, *next;
 
-  while (xx) {
-    x = xx->next;
-    if (xx->name)
-      free(xx->name);
-    if (xx->pass)
-      free(xx->pass);
-    if (xx->realname)
-      free(xx->realname);
-    free(xx);
-    xx = x;
-  }
+	for (cur = serverlist; cur; cur = next) {
+		next = cur->next;
+		if (cur->name) free(cur->name);
+		if (cur->realname) free(cur->realname);
+		if (cur->pass) free(cur->pass);
+		free(cur);
+	}
+	return(0);
 }
 
 /* Set botserver to the next available server.
@@ -1213,9 +1185,8 @@ static char *tcl_eggserver(ClientData cdata, Tcl_Interp *irp, char *name1,
 			   char *name2, int flags)
 {
   Tcl_DString ds;
-  char *slist, **list, x[1024];
+  char *slist, x[1024];
   struct server_list *q;
-  int lc, code, i;
 
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
     /* Create server list */
@@ -1231,30 +1202,6 @@ static char *tcl_eggserver(ClientData cdata, Tcl_Interp *irp, char *name1,
     slist = Tcl_DStringValue(&ds);
     Tcl_SetVar2(interp, name1, name2, slist, TCL_GLOBAL_ONLY);
     Tcl_DStringFree(&ds);
-  } else {		/* TCL_TRACE_WRITES */
-    if (serverlist) {
-      clearq(serverlist);
-      serverlist = NULL;
-    }
-    slist = Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
-    if (slist != NULL) {
-      code = Tcl_SplitList(interp, slist, &lc, &list);
-      if (code == TCL_ERROR)
-	return interp->result;
-      for (i = 0; i < lc && i < 50; i++)
-	add_server(list[i]);
-
-      /* Tricky way to make the bot reset its server pointers
-       * perform part of a '.jump <current-server>':
-       */
-      if (server_online) {
-	int servidx = findanyidx(serv);
-
-	curserv = (-1);
-	next_server(&curserv, dcc[servidx].host, &dcc[servidx].port, "");
-      }
-      Tcl_Free((char *) list);
-    }
   }
   return NULL;
 }
@@ -1283,7 +1230,6 @@ static int ctcp_DCC_CHAT(char *nick, char *from, struct userrec *u,
   char *action, *param, *ip, *prt, buf[512], *msg = buf;
   int i;
   struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
-  struct in_addr ip4;
   unsigned long ipnum;
   char ipbuf[32];
 
@@ -1522,7 +1468,7 @@ static char *server_close()
 {
   cycle_time = 100;
   nuke_server("Connection reset by peer");
-  clearq(serverlist);
+  server_clear();
 
   rem_builtins("dcc", C_dcc_serv);
   rem_builtins("raw", my_raw_binds);

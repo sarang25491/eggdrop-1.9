@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.3 2002/05/05 16:40:36 tothwolf Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.4 2002/05/21 21:23:01 stdarg Exp $";
 #endif
 */
 
@@ -40,10 +40,10 @@ static script_command_t server_script_cmds[] = {
         {"", "clearqueue", script_clearqueue, NULL, 1, "s", "queuetype", SCRIPT_INTEGER, SCRIPT_PASS_RETVAL},
         {"", "queuesize", script_queuesize, NULL, 0, "s", "?queuetype?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_PASS_COUNT | SCRIPT_PASS_RETVAL},
         {"", "putserv", script_putserv, NULL, 1, "sss", "?-queuetype? ?-next? text", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT},
+	{"", "server_add", server_add, NULL, 1, "sis", "host ?port? ?pass?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
+	{"", "server_clear", server_clear, NULL, 0, "", "", SCRIPT_INTEGER, 0},
         {0}
 };
-
-
 
 static int script_isbotnick (char *nick)
 {
