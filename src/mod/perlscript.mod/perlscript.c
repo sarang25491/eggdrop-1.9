@@ -14,10 +14,6 @@ static Function *global = NULL;
 
 static PerlInterpreter *ginterp; /* Our global interpreter. */
 
-typedef struct {
-	AV *result;
-} my_walking_data;
-
 static XS(my_command_handler);
 
 static int my_load_script(registry_entry_t * entry, char *fname)
@@ -44,6 +40,57 @@ static int my_load_script(registry_entry_t * entry, char *fname)
 	fclose(fp);
 	perl_eval_pv(data, TRUE);
 	free(data);
+	return(0);
+}
+
+static int my_perl_callbacker(script_callback_t *me, ...)
+{
+	int retval, i, n;
+	script_var_t var;
+	void **al;
+	dSP;
+
+	ENTER;
+	SAVETMPS;
+	PUSHMARK(SP);
+
+	al = (int *)&me;
+	al++;
+	if (me->syntax) n = strlen(me->syntax);
+	else n = 0;
+	for (i = 0; i < n; i++) {
+		var.type = me->syntax[i];
+		var.value = (void *)al[i];
+		var.len = -1;
+		arg = my_resolve_variable(&var);
+		XPUSHs(sv_2mortal(arg));
+	}
+	PUTBACK;
+
+	count = call_pv(me->name, G_SCALAR);
+
+	SPAGAIN;
+
+	if (count > 0) {
+		retval = POPi;
+	}
+	else retval = 0;
+
+	PUTBACK;
+	FREETMPS;
+	LEAVE;
+
+	/* If it's a one-time callback, delete it. */
+	if (me->flags & SCRIPT_CALLBACK_ONCE) me->delete(me);
+
+	return(retval);
+}
+
+static int my_perl_cb_delete(script_callback_t *me)
+{
+	if (me->syntax) free(me->syntax);
+	if (me->name) free(me->name);
+	free(me);
 	return(0);
 }
 
@@ -142,23 +189,42 @@ static XS(my_command_handler)
 	syntax = cmd->syntax;
 	for (i = 0; i < items; i++) {
 		switch (*syntax++) {
-			case SCRIPT_BYTES:	/* Byte-arrays. */
-			case SCRIPT_STRING: {
+			case SCRIPT_BYTES: /* Byte-array. */
+			case SCRIPT_STRING: { /* String. */
 				char *val;
 				val = SvPV(ST(i), len);
 				mstack_push(args, (void *)val);
 				break;
 			}
-			case SCRIPT_INTEGER: {	/* Integer. */
+			case SCRIPT_INTEGER: { /* Integer. */
 				int val;
 				val = SvIV(ST(i));
 				mstack_push(args, (void *)val);
 				break;
 			}
-			case SCRIPT_CALLBACK:	/* Callback. */
-				/* No callbacks yet. */
-				mstack_push(args, NULL);
+			case SCRIPT_CALLBACK: { /* Callback. */
+				script_callback_t *cback;
+				char *name;
+
+				cback = (script_callback_t *)calloc(1, sizeof(*cback));
+				cback->callback = (Function) my_perl_callbacker;
+				cback->delete = (Function) my_perl_cb_delete;
+				name = SvPV(ST(i), len);
+				malloc_strcpy(cback->name, name);
+				cback->callback_data = name;
+				mstack_push(args, cback);
 				break;
+			}
+			case SCRIPT_USER: { /* User. */
+				struct userrec *u;
+				char *handle;
+
+				handle = SvPV(ST(i), len);
+				if (handle) u = get_user_by_handle(userlist, handle);
+				else u = NULL;
+				mstack_push(args, u);
+				break;
+			}
 			case 'l':
 				/* Length of previous string or byte-array. */
 				mstack_push(args, (void *)len);

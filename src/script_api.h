@@ -25,6 +25,9 @@ enum {
 #define SCRIPT_WANTS_CD	1
 #define SCRIPT_COMPLEX	2
 
+/* Flags for callbacks. */
+#define SCRIPT_CALLBACK_ONCE	1
+
 /* Flags for linked variables. */
 #define SCRIPT_READ_ONLY	1
 
@@ -49,6 +52,7 @@ typedef struct script_callback_b {
 	void *delete_data;
 	char *syntax;
 	char *name;
+	int flags;
 } script_callback_t;
 
 typedef struct script_var_b {

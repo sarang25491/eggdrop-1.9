@@ -3,7 +3,7 @@
  *   Tcl stubs for file system commands
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.32 2001/10/17 03:28:16 stdarg Exp $
+ * $Id: tclmisc.c,v 1.33 2001/10/17 06:08:11 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -29,13 +29,11 @@
 #include "modules.h"
 #include "tandem.h"
 #include "md5.h"
-#include "egg_timer.h"
 #ifdef HAVE_UNAME
 #include <sys/utsname.h>
 #endif
 
 extern p_tcl_bind_list	 bind_table_list;
-extern tcl_timer_t	*timer, *utimer;
 extern struct dcc_t	*dcc;
 extern char		 origbotname[], botnetnick[], quit_msg[];
 extern struct userrec	*userlist;
@@ -132,121 +130,6 @@ static int tcl_binds STDVAR
       }
     }
   }
-  return TCL_OK;
-}
-
-typedef struct {
-  Tcl_Interp *irp;
-  char *script;
-} tcl_timer_cdata;
-
-static int tcl_timer_callback(tcl_timer_cdata *cdata)
-{
-  Tcl_Eval(cdata->irp, cdata->script);
-  free(cdata->script);
-  free(cdata);
-  return(0);
-}
-
-static int tcl_timer STDVAR
-{
-  unsigned long x;
-  char s[16];
-
-  BADARGS(3, 3, " minutes command");
-  if (atoi(argv[1]) < 0) {
-    Tcl_AppendResult(irp, "time value must be positive", NULL);
-    return TCL_ERROR;
-  }
-  if (argv[2][0] != '#') {
-    tcl_timer_cdata *cdata;
-    egg_timeval_t howlong;
-
-    cdata = (tcl_timer_cdata *)malloc(sizeof(*cdata));
-    cdata->irp = irp;
-    malloc_strcpy(cdata->script, argv[2]);
-    howlong.sec = 60 * atoi(argv[1]);
-    howlong.usec = 0;
-    x = timer_create_complex(&howlong, tcl_timer_callback, cdata, 0);
-    egg_snprintf(s, sizeof s, "timer%lu", x);
-    Tcl_AppendResult(irp, s, NULL);
-  }
-  return TCL_OK;
-}
-
-static int tcl_utimer STDVAR
-{
-  unsigned long x;
-  char s[16];
-
-  BADARGS(3, 3, " seconds command");
-  if (atoi(argv[1]) < 0) {
-    Tcl_AppendResult(irp, "time value must be positive", NULL);
-    return TCL_ERROR;
-  }
-  if (argv[2][0] != '#') {
-    tcl_timer_cdata *cdata;
-    egg_timeval_t howlong;
-
-    cdata = (tcl_timer_cdata *)malloc(sizeof(*cdata));
-    cdata->irp = irp;
-    malloc_strcpy(cdata->script, argv[2]);
-    howlong.sec = atoi(argv[1]);
-    howlong.usec = 0;
-    x = timer_create_complex(&howlong, tcl_timer_callback, cdata, 0);
-    egg_snprintf(s, sizeof s, "timer%lu", x);
-    Tcl_AppendResult(irp, s, NULL);
-  }
-  return TCL_OK;
-}
-
-static int tcl_mutimer STDVAR
-{
-  unsigned long x;
-  char s[16];
-
-  BADARGS(3, 3, " microseconds command");
-  if (atoi(argv[1]) < 0) {
-    Tcl_AppendResult(irp, "time value must be positive", NULL);
-    return TCL_ERROR;
-  }
-  if (argv[2][0] != '#') {
-    tcl_timer_cdata *cdata;
-    egg_timeval_t howlong;
-
-    cdata = (tcl_timer_cdata *)malloc(sizeof(*cdata));
-    cdata->irp = irp;
-    malloc_strcpy(cdata->script, argv[2]);
-    howlong.sec = atoi(argv[1]) / 1000000;
-    howlong.usec = atoi(argv[1]) % 1000000;
-    x = timer_create_complex(&howlong, tcl_timer_callback, cdata, 0);
-    egg_snprintf(s, sizeof s, "timer%lu", x);
-    Tcl_AppendResult(irp, s, NULL);
-  }
-  return TCL_OK;
-}
-
-static int tcl_killtimer STDVAR
-{
-  BADARGS(2, 2, " timerID");
-  return TCL_OK;
-}
-
-static int tcl_killutimer STDVAR
-{
-  BADARGS(2, 2, " timerID");
-  return TCL_OK;
-}
-
-static int tcl_timers STDVAR
-{
-  BADARGS(1, 1, "");
-  return TCL_OK;
-}
-
-static int tcl_utimers STDVAR
-{
-  BADARGS(1, 1, "");
   return TCL_OK;
 }
 
@@ -597,13 +480,6 @@ tcl_cmds tclmisc_cmds[] =
   {"putcmdlog",		tcl_putcmdlog},
   {"putxferlog",	tcl_putxferlog},
   {"putloglev",		tcl_putloglev},
-  {"timer",		tcl_timer},
-  {"utimer",		tcl_utimer},
-  {"mutimer",		tcl_mutimer},
-  {"killtimer",		tcl_killtimer},
-  {"killutimer",	tcl_killutimer},
-  {"timers",		tcl_timers},
-  {"utimers",		tcl_utimers},
   {"unixtime",		tcl_unixtime},
   {"strftime",          tcl_strftime},
   {"ctime",		tcl_ctime},

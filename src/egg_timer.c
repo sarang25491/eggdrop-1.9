@@ -3,6 +3,8 @@
 
 typedef int (*Function)();
 #include "egg_timer.h"
+#include "script_api.h"
+#include "script.h"
 
 /* Internal use only. */
 typedef struct egg_timer_b {
@@ -18,6 +20,22 @@ typedef struct egg_timer_b {
 /* We keep a sorted list of active timers. */
 static egg_timer_t *timer_list_head = NULL;
 static unsigned int timer_next_id = 1;
+
+static int script_single_timer(int sec, int usec, script_callback_t *callback);
+static int script_repeat_timer(int sec, int usec, script_callback_t *callback);
+
+static script_simple_command_t script_cmds[] = {
+	{"", NULL, NULL, NULL, 0},
+	{"timer", script_single_timer, "iic", "seconds microseconds callback", SCRIPT_INTEGER},
+	{"rtimer", script_repeat_timer, "iic", "seconds microseconds callback", SCRIPT_INTEGER},
+	{"killtimer", timer_destroy, "i", "timer-id", SCRIPT_INTEGER},
+	0
+};
+
+void timer_init()
+{
+	script_create_simple_cmd_table(script_cmds);
+}
 
 /* Based on TclpGetTime from Tcl 8.3.3 */
 int timer_get_time(egg_timeval_t *curtime)
@@ -133,6 +151,8 @@ int timer_run()
 		timer_get_time(&curtime);
 		if (timer->trigger_time.sec > curtime.sec || (timer->trigger_time.sec == curtime.sec && timer->trigger_time.usec > curtime.usec)) break;
 
+		timer_list_head = timer_list_head->next;
+
 		callback = timer->callback;
 		client_data = timer->client_data;
 
@@ -142,8 +162,6 @@ int timer_run()
 			/* Update timer. */
 			timer->trigger_time.sec += timer->howlong.sec;
 			timer->trigger_time.usec += timer->howlong.usec;
-
-			timer_list_head = timer_list_head->next;
 
 			prev = NULL;
 			for (tptr = timer_list_head; tptr; tptr = tptr->next) {
@@ -160,11 +178,33 @@ int timer_run()
 			}
 		}
 		else {
-			timer_list_head = timer_list_head->next;
 			free(timer);
 		}
-
 		callback(client_data);
 	}
 	return(0);
+}
+
+static int script_timer(int sec, int usec, script_callback_t *callback, int flags)
+{
+	egg_timeval_t howlong;
+	int id;
+
+	howlong.sec = sec;
+	howlong.usec = usec;
+	callback->syntax = (char *)malloc(1);
+	callback->syntax[0] = 0;
+	id = timer_create_complex(&howlong, callback->callback, callback, flags);
+	return(id);
+}
+
+static int script_single_timer(int sec, int usec, script_callback_t *callback)
+{
+	callback->flags |= SCRIPT_CALLBACK_ONCE;
+	return script_timer(sec, usec, callback, 0);
+}
+
+static int script_repeat_timer(int sec, int usec, script_callback_t *callback)
+{
+	return script_timer(sec, usec, callback, TIMER_REPEAT);
 }

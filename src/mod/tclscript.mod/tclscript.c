@@ -135,6 +135,9 @@ static int my_tcl_callbacker(script_callback_t *me, ...)
 	result = Tcl_GetObjResult(cd->myinterp);
 	Tcl_GetIntFromObj(cd->myinterp, result, &retval);
 
+	/* If it's a one-time callback, delete it. */
+	if (me->flags & SCRIPT_CALLBACK_ONCE) me->delete(me);
+
 	return(retval);
 }
 
@@ -322,7 +325,9 @@ static int my_argument_cleanup(script_argstack_t *argstack)
 	void *ptr;
 	int i;
 
-	while (!mstack_pop(argstack->bufs, &ptr)) free(ptr);
+	for (i = 0; i < argstack->bufs->len; i++) {
+		free((void *)argstack->bufs->stack[i]);
+	}
 	mstack_destroy(argstack->bufs);
 	mstack_destroy(argstack->args);
 	return(0);
