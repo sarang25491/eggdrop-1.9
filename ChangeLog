@@ -1,3 +1,42 @@
+2003-12-17 03:01  Federico Mennite <ite@techmonkeys.org>
+
+	* m4/.cvsignore, modules/dccparty/.cvsignore,
+	modules/ircparty/.cvsignore, modules/oldbotnet/.cvsignore,
+	modules/script/.cvsignore, modules/telnetparty/.cvsignore:
+
+	* .cvsignore updates.  
+	* Removed some unneeded macros from acconfig/tcl.m4.  
+	* Removed some unneded compat functions related to tcl.m4.  
+	* Do not exit when tcl isn't installed on the system. Just warn.  
+	* Prerequire autconf 2.53.  
+	* bootstrap to use automake-1.6.  
+
+2003-12-17 02:24  Federico Mennite <ite@techmonkeys.org>
+
+	* .cvsignore, bootstrap, configure.ac, acconfig/tcl.m4,
+	lib/compat/fixstrtod.c, lib/compat/tclLoadAix.c, po/eggdrop.pot:
+
+	../commit.txt 
+
+2003-12-17 00:58  Will Buckner <wcc@techmonkeys.org>
+
+	* lib/eggdrop/eggmod.c, modules/script/scriptbind.c,
+	modules/script/scriptparty.c, scripts/CONTENTS,
+	scripts/Makefile.am, scripts/action.fix.tcl, scripts/alltools.tcl,
+	scripts/autobotchk, scripts/botchk, scripts/cmd_resolve.tcl,
+	scripts/compat.tcl, scripts/getops.tcl, scripts/userinfo.tcl,
+	scripts/weed:
+
+	* More cleanups.  
+	* Updated alltools.  
+	* botchk works now.  
+
+2003-12-17 00:15  Automatic CVS Scripts
+
+	* po/eggdrop.pot:
+
+	Pots 
+
 2003-12-16 23:01  stdarg <stdarg@techmonkeys.org>
 
 	* Makefile.am:
@@ -217,10 +256,7 @@
 	modules/filesys/filelist.c, modules/filesys/filelist.h,
 	modules/filesys/files.c, modules/filesys/files.h,
 	modules/filesys/filesys.c, modules/filesys/filesys.h,
-	modules/filesys/tclfiles.c, modules/irc/chan.c,
-	modules/irc/cmdsirc.c, modules/irc/irc.c, modules/irc/irc.h,
-	modules/irc/mode.c, modules/irc/msgcmds.c,
-	modules/irc/scriptcmds.c, modules/javascript/javascript.c,
+	modules/filesys/tclfiles.c, modules/javascript/javascript.c,
 	modules/notes/cmdsnote.c, modules/notes/notes.c,
 	modules/notes/notes.h, modules/perlscript/perlscript.c,
 	modules/server/scriptcmds.c, modules/uptime/uptime.c,
@@ -317,8 +353,7 @@
 
 2003-08-02 05:56  Tothwolf <tothwolf@techmonkeys.org>
 
-	* modules/irc/chan.c, modules/irc/mode.c, modules/irc/msgcmds.c,
-	src/cmds.c:
+	* src/cmds.c:
 
 	* Removed unnecessary quiet_reject checks in msg_ident() that have
 	been present since 1.3.0+bel17.  
@@ -463,9 +498,8 @@
 
 2003-05-12 23:32  Will Buckner <wcc@techmonkeys.org>
 
-	* doc/UPDATES1.6, modules/filesys/files.c, modules/irc/cmdsirc.c,
-	modules/irc/mode.c, scripts/autobotchk, scripts/cmd_resolve.tcl,
-	scripts/getops.tcl, src/cmds.c:
+	* doc/UPDATES1.6, modules/filesys/files.c, scripts/autobotchk,
+	scripts/cmd_resolve.tcl, scripts/getops.tcl, src/cmds.c:
 
 	* Sync 1.6: key_locking, flushmode-key, bug315,
 	            has_flags-get_channel2, getops-timer, fixcodes-fix, (autobotchk
@@ -484,7 +518,7 @@
 
 	* lib/eggdrop/eggdns.c, lib/eggdrop/eggmod.c, lib/eggdrop/eggnet.c,
 	lib/eggdrop/eggowner.c, lib/eggdrop/ircmasks.c, lib/eggdrop/md5.c,
-	lib/eggdrop/xmlwrite.c, modules/irc/msgcmds.c, src/main.c:
+	lib/eggdrop/xmlwrite.c, src/main.c:
 
 	 * removed some compile warnings here and there 
 	 * removed some old notes code which was still in our core 
@@ -679,8 +713,7 @@
 
 	* doc/UPDATES1.6, modules/channels/channels.c,
 	modules/channels/cmdschan.c, modules/channels/tclchan.c,
-	modules/channels/userchan.c, modules/irc/cmdsirc.c, po/eggdrop.pot,
-	src/patch.h:
+	modules/channels/userchan.c, po/eggdrop.pot, src/patch.h:
 
 	* Sync 1.6: pls_chan_error, mns_ban-fix, has_flags-get_channel.  
 
@@ -830,10 +863,9 @@
 
 	* modules/blowfish/blowfish.c, modules/channels/tclchan.c,
 	modules/channels/userchan.c, modules/filesys/files.c,
-	modules/filesys/filesys.c, modules/irc/chan.c, modules/irc/mode.c,
-	modules/irc/msgcmds.c, modules/notes/notes.c, modules/server/dcc.c,
-	modules/server/input.c, src/cmds.c, src/misc.c, src/modules.c,
-	src/userent.c, src/users.c:
+	modules/filesys/filesys.c, modules/notes/notes.c,
+	modules/server/dcc.c, modules/server/input.c, src/cmds.c,
+	src/misc.c, src/modules.c, src/userent.c, src/users.c:
 
 	* Converted most strncpy() usage to strlcpy().  
 	  + See: http://www.courtesan.com/todd/papers/strlcpy.html 
@@ -858,12 +890,6 @@
 	* lib/eggdrop/: memutil.c, memutil.h:
 
 	Removed egg_strcatn().  
-
-2003-03-06 07:55  Tothwolf <tothwolf@techmonkeys.org>
-
-	* modules/irc/mode.c:
-
-	Convert flush_mode() to use strlcat() instead of egg_strcatn().  
 
 2003-03-06 07:51  Tothwolf <tothwolf@techmonkeys.org>
 
@@ -934,12 +960,6 @@
 	* More doc stuff.  
 	* Traffic cleanups.  
 
-2003-03-04 01:56  Tothwolf <tothwolf@techmonkeys.org>
-
-	* modules/irc/: chan.c, mode.c:
-
-	Fixed a couple of egg_snprintf/snprintf typos.  
-
 2003-03-03 22:31  stdarg <stdarg@techmonkeys.org>
 
 	* acconfig/acinclude.m4, modules/javascript/javascript.c,
@@ -965,7 +985,7 @@
 
 2003-02-27 02:44  Will Buckner <wcc@techmonkeys.org>
 
-	* modules/irc/chan.c, modules/tclscript/tclscript.c, src/patch.h:
+	* modules/tclscript/tclscript.c, src/patch.h:
 
 	* Synch 1.6: Tothwolf's TCL_MAJOR_VERSION/TCL_MINOR_VERSION fixes,
 	qa_as_op.  
@@ -1176,8 +1196,7 @@
 	modules/filesys/dbcompat.h, modules/filesys/filedb3.c,
 	modules/filesys/filedb3.h, modules/filesys/files.c,
 	modules/filesys/filesys.c, modules/filesys/filesys.h,
-	modules/filesys/tclfiles.c, modules/irc/mode.c,
-	modules/irc/msgcmds.c, po/POTFILES.in, po/eggdrop.pot,
+	modules/filesys/tclfiles.c, po/POTFILES.in, po/eggdrop.pot,
 	scripts/CONTENTS, src/chan.h, src/chanprog.c, src/cmds.c,
 	src/dccutil.h, src/egg.h, src/flags.c, src/flags.h, src/logfile.h,
 	src/main.c, src/misc.c, src/misc.h, src/modules.c, src/tcluser.c,
@@ -1242,9 +1261,7 @@
 
 	* eggdrop.conf, modules/channels/channels.c,
 	modules/channels/cmdschan.c, modules/channels/flagmaps.c,
-	modules/channels/tclchan.c, modules/irc/chan.c,
-	modules/irc/cmdsirc.c, modules/irc/mode.c, src/chan.h, text/banner,
-	text/motd:
+	modules/channels/tclchan.c, src/chan.h, text/banner, text/motd:
 
 	* Finished protection removal -- this is everything (will be added
 	  back in a module later).  
@@ -1273,12 +1290,10 @@
 	lib/eggdrop/fileutil.h, lib/eggdrop/module.h,
 	lib/eggdrop/modvals.h, modules/channels/userchan.c,
 	modules/filesys/files.c, modules/filesys/filesys.c,
-	modules/filesys/tclfiles.c, modules/irc/chan.c, modules/irc/mode.c,
-	modules/irc/msgcmds.c, modules/irc/scriptcmds.c,
-	modules/transfer/Makefile.am, modules/transfer/transfer.c,
-	modules/transfer/transfer.h, scripts/compat.tcl, src/chanprog.c,
-	src/cmds.c, src/dccutil.c, src/misc.c, src/misc.h, src/modules.c,
-	src/patch.h, src/tcl.c:
+	modules/filesys/tclfiles.c, modules/transfer/Makefile.am,
+	modules/transfer/transfer.c, modules/transfer/transfer.h,
+	scripts/compat.tcl, src/chanprog.c, src/cmds.c, src/dccutil.c,
+	src/misc.c, src/misc.h, src/modules.c, src/patch.h, src/tcl.c:
 
 	* Synch 1.6: transfer-cleanups, filesys-move, delbancrash,
 	             plsbot_cosmetic, stricthostfix, opreverselogic, dontdelfile 
@@ -1292,8 +1307,8 @@
 	doc/settings/mod.filesys, doc/settings/mod.irc,
 	doc/settings/mod.notes, doc/settings/mod.server,
 	doc/settings/mod.share, doc/settings/mod.transfer,
-	doc/settings/mod.woobie, doc/settings/tricks,
-	modules/irc/msgcmds.c, scripts/alltools.tcl, src/tcl.c:
+	doc/settings/mod.woobie, doc/settings/tricks, scripts/alltools.tcl,
+	src/tcl.c:
 
 	* More botnet removal.  
 	* More config updates.  
@@ -1313,11 +1328,10 @@
 
 	* eggdrop.conf, lib/eggdrop/module.h, modules/channels/channels.c,
 	modules/channels/userchan.c, modules/filesys/filedb3.c,
-	modules/filesys/files.c, modules/irc/msgcmds.c,
-	modules/notes/notes.c, modules/uptime/uptime.c, src/chanprog.c,
-	src/cmds.c, src/dcc.c, src/dccutil.c, src/main.c, src/misc.c,
-	src/modules.c, src/tcl.c, src/tcldcc.c, src/tcluser.c,
-	src/userrec.c, src/users.c:
+	modules/filesys/files.c, modules/notes/notes.c,
+	modules/uptime/uptime.c, src/chanprog.c, src/cmds.c, src/dcc.c,
+	src/dccutil.c, src/main.c, src/misc.c, src/modules.c, src/tcl.c,
+	src/tcldcc.c, src/tcluser.c, src/userrec.c, src/users.c:
 
 	* More botnet removal.  
 
@@ -1325,12 +1339,9 @@
 
 	* eggdrop.conf, modules/channels/channels.c,
 	modules/channels/cmdschan.c, modules/channels/flagmaps.c,
-	modules/channels/tclchan.c, modules/irc/chan.c,
-	modules/irc/cmdsirc.c, modules/irc/irc.c, modules/irc/irc.h,
-	modules/irc/mode.c, modules/irc/msgcmds.c, scripts/klined.tcl,
-	scripts/notes2.tcl, scripts/ques5.tcl, scripts/sentinel.tcl,
-	src/chan.h, src/cmds.c, src/egg.h, src/flags.c, src/flags.h,
-	src/tcl.c:
+	modules/channels/tclchan.c, scripts/klined.tcl, scripts/notes2.tcl,
+	scripts/ques5.tcl, scripts/sentinel.tcl, src/chan.h, src/cmds.c,
+	src/egg.h, src/flags.c, src/flags.h, src/tcl.c:
 
 	* Removed protection stuff, will be added back in a module later.  
 	* Removed klined, ques5, sentinel, and notes2 as they won't be
@@ -1416,12 +1427,7 @@
 
 	* eggdrop.conf, doc/UPDATES1.6, modules/channels/channels.c,
 	modules/channels/cmdschan.c, modules/channels/tclchan.c,
-	modules/transfer/transfer.c, nettype/custom.irc.conf,
-	nettype/custom.server.conf, nettype/dalnet.server.conf,
-	nettype/efnet.irc.conf, nettype/efnet.server.conf,
-	nettype/hybridefnet.irc.conf, nettype/hybridefnet.server.conf,
-	nettype/ircnet.irc.conf, nettype/ircnet.server.conf,
-	nettype/undernet.irc.conf, nettype/undernet.server.conf:
+	modules/transfer/transfer.c:
 
 	  * Removed dont-idle-kick (same as idle-kick 0).  
 	  * Config cleanups (synch 1.6 (not recent)).  
@@ -1441,7 +1447,6 @@
 	* lib/eggdrop/memutil.c, lib/eggdrop/module.h,
 	modules/channels/channels.c, modules/channels/userchan.c,
 	modules/filesys/dbcompat.c, modules/filesys/filedb3.h,
-	modules/irc/chan.c, modules/irc/msgcmds.c,
 	modules/transfer/transfer.c, modules/transfer/transfer.h,
 	src/dccutil.c, src/egg.h, src/main.c, src/modules.c, src/patch.h,
 	src/tcl.c, src/tclmisc.c, src/userrec.c, src/userrec.h:
@@ -1457,9 +1462,9 @@
 
 2003-01-18 22:36  Will Buckner <wcc@techmonkeys.org>
 
-	* doc/UPDATES1.6, lib/eggdrop/module.h, modules/irc/chan.c,
-	src/dccutil.c, src/dccutil.h, src/logfile.c, src/modules.c,
-	src/patch.h, src/tcldcc.c, src/tclmisc.c:
+	* doc/UPDATES1.6, lib/eggdrop/module.h, src/dccutil.c,
+	src/dccutil.h, src/logfile.c, src/modules.c, src/patch.h,
+	src/tcldcc.c, src/tclmisc.c:
 
 	* Synch 1.6: nickbind, unixtime_incr, transfer-close, logblocking.  
 
@@ -1499,10 +1504,7 @@
 	modules/filesys/filelist.c, modules/filesys/filelist.h,
 	modules/filesys/files.c, modules/filesys/files.h,
 	modules/filesys/filesys.c, modules/filesys/filesys.h,
-	modules/filesys/tclfiles.c, modules/irc/chan.c,
-	modules/irc/cmdsirc.c, modules/irc/irc.c, modules/irc/irc.h,
-	modules/irc/mode.c, modules/irc/msgcmds.c,
-	modules/irc/scriptcmds.c, modules/javascript/javascript.c,
+	modules/filesys/tclfiles.c, modules/javascript/javascript.c,
 	modules/notes/cmdsnote.c, modules/notes/notes.c,
 	modules/notes/notes.h, modules/perlscript/mod_iface.c,
 	modules/perlscript/perlscript.c, modules/server/scriptcmds.c,
@@ -1525,8 +1527,7 @@
 2002-12-27 23:07  Will Buckner <wcc@techmonkeys.org>
 
 	* eggdrop.conf, doc/UPDATES1.6, modules/channels/channels.c,
-	modules/transfer/transfer.c, nettype/undernet.irc.conf,
-	src/patch.h:
+	modules/transfer/transfer.c, src/patch.h:
 
 	* Fixed default setting for the help-path and text-path settings.  
 	  Patch by poptix.  
@@ -1548,8 +1549,7 @@
 
 2002-11-29 06:15  Will Buckner <wcc@techmonkeys.org>
 
-	* doc/UPDATES1.6, modules/irc/cmdsirc.c, modules/irc/irc.c,
-	modules/irc/irc.h, src/patch.h, testcode/match.c:
+	* doc/UPDATES1.6, src/patch.h, testcode/match.c:
 
 	* check_this_user() had the wrong function number in irc_table.  
 	* Exported me_voice() in irc_table (synch 1.6).  
@@ -1560,8 +1560,8 @@
 2002-11-24 04:50  Will Buckner <wcc@techmonkeys.org>
 
 	* eggdrop.conf, doc/UPDATES1.6, modules/channels/channels.c,
-	modules/channels/tclchan.c, modules/irc/chan.c, modules/irc/mode.c,
-	scripts/alltools.tcl, src/chan.h, src/patch.h:
+	modules/channels/tclchan.c, scripts/alltools.tcl, src/chan.h,
+	src/patch.h:
 
 	* Synch'd 1.6 with 1.7 as of November 23rd.  
 
@@ -1659,10 +1659,8 @@
 2002-10-11 00:49  Will Buckner <wcc@techmonkeys.org>
 
 	* eggdrop.simple.conf, modules/channels/channels.c,
-	modules/channels/tclchan.c, modules/irc/chan.c,
-	modules/irc/cmdsirc.c, modules/irc/irc.c,
-	modules/transfer/transfer.c, src/chan.h, src/cmds.c, src/egg.h,
-	src/net.c, src/patch.h:
+	modules/channels/tclchan.c, modules/transfer/transfer.c,
+	src/chan.h, src/cmds.c, src/egg.h, src/net.c, src/patch.h:
 
 	* Completed 1.6<>1.7 patch synch.  
 
@@ -1680,8 +1678,6 @@
 	lib/compat/snprintf.c, modules/channels/channels.c,
 	modules/channels/channels.h, modules/channels/cmdschan.c,
 	modules/channels/tclchan.c, modules/filesys/filesys.c,
-	modules/irc/chan.c, modules/irc/cmdsirc.c, modules/irc/irc.c,
-	modules/irc/mode.c, modules/irc/msgcmds.c,
 	modules/transfer/transfer.c, scripts/alltools.tcl, src/chan.h,
 	src/chanprog.c, src/misc.c:
 
@@ -1952,7 +1948,6 @@
 
 	* configure.ac, eggdrop.complete.conf, help/cmds2.help,
 	help/core.help, lib/eggdrop/module.h, modules/Makefile.am,
-	modules/irc/chan.c, modules/irc/cmdsirc.c,
 	modules/server/servmsg.c, src/Makefile.am, src/botcmd.c,
 	src/cmds.c, src/cmds.h, src/dcc.c, src/egg.h, src/flags.c,
 	src/flags.h, src/main.c, src/misc.c, src/modules.c, src/tcldcc.c:
@@ -1990,8 +1985,8 @@
 
 2002-06-17 06:14  Jeff Fisher <guppy@techmonkeys.org>
 
-	* help/cmds2.help, help/core.help, modules/irc/msgcmds.c,
-	modules/notes/notes.c, src/flags.c, src/flags.h:
+	* help/cmds2.help, help/core.help, modules/notes/notes.c,
+	src/flags.c, src/flags.h:
 
 	removed the common user access flag sice this is a throw back to the
 	earlier days of IRC -- common accounts are almost non-existant on
@@ -2000,8 +1995,7 @@
 2002-06-17 06:04  Jeff Fisher <guppy@techmonkeys.org>
 
 	* eggdrop.complete.conf, help/cmds1.help, help/cmds2.help,
-	help/core.help, modules/irc/msgcmds.c,
-	modules/irc/help/msg/irc.help, src/cmds.c, src/misc.c, src/misc.h:
+	help/core.help, src/cmds.c, src/misc.c, src/misc.h:
 
 	removed some legacy commands that are fairly non-useful and addhost
 	which is just wrong.  
@@ -2045,7 +2039,7 @@
 
 2002-06-02 18:06  stdarg <stdarg@techmonkeys.org>
 
-	* modules/: irc/chan.c, server/server.c, server/servmsg.c:
+	* modules/server/: server.c, servmsg.c:
 
 	
 	* gotnotice() 
@@ -2059,8 +2053,7 @@
 
 2002-06-02 08:52  stdarg <stdarg@techmonkeys.org>
 
-	* modules/: irc/chan.c, irc/irc.c, server/server.c,
-	server/servmsg.c:
+	* modules/server/: server.c, servmsg.c:
 
 	
 	* Changed the raw bind syntax again: user nick uhost cmd nargs
@@ -2216,8 +2209,8 @@
 
 2002-05-26 02:49  stdarg <stdarg@techmonkeys.org>
 
-	* lib/eggdrop/module.h, modules/irc/irc.c, src/modules.c,
-	src/tclegg.h, src/tclhash.c, src/tclhash.h:
+	* lib/eggdrop/module.h, src/modules.c, src/tclegg.h, src/tclhash.c,
+	src/tclhash.h:
 
 	
 	* Bind table cleanups 
@@ -2288,12 +2281,12 @@
 2002-05-17 07:29  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/module.h, modules/channels/channels.c,
-	modules/filesys/filesys.c, modules/irc/irc.c,
-	modules/javascript/javascript.c, modules/notes/notes.c,
-	modules/perlscript/mod_iface.c, modules/server/server.c,
-	modules/tclscript/tclscript.c, modules/transfer/transfer.c,
-	modules/uptime/uptime.c, src/botnet.c, src/core_binds.c,
-	src/modules.c, src/tcl.c, src/tclhash.c, src/tclhash.h:
+	modules/filesys/filesys.c, modules/javascript/javascript.c,
+	modules/notes/notes.c, modules/perlscript/mod_iface.c,
+	modules/server/server.c, modules/tclscript/tclscript.c,
+	modules/transfer/transfer.c, modules/uptime/uptime.c, src/botnet.c,
+	src/core_binds.c, src/modules.c, src/tcl.c, src/tclhash.c,
+	src/tclhash.h:
 
 	
 	* Bind table cleanups, especially renaming bind table functions and
@@ -2348,7 +2341,7 @@
 
 2002-05-12 06:23  stdarg <stdarg@techmonkeys.org>
 
-	* modules/irc/irc.c, modules/server/server.c, src/tcldcc.c:
+	* modules/server/server.c, src/tcldcc.c:
 
 	
 	* Overlooked name changes 
@@ -2367,10 +2360,10 @@
 	lib/eggdrop/registry.c, lib/eggdrop/registry.h,
 	lib/eggdrop/script.c, lib/eggdrop/script.h,
 	modules/blowfish/blowfish.c, modules/channels/channels.c,
-	modules/irc/irc.c, modules/javascript/javascript.c,
-	modules/perlscript/mod_iface.c, modules/perlscript/perlscript.c,
-	modules/server/server.c, modules/tclscript/tclscript.c, src/dcc.c,
-	src/dns.c, src/egg_timer.c, src/logfile.c, src/tcl.c, src/tcldcc.c,
+	modules/javascript/javascript.c, modules/perlscript/mod_iface.c,
+	modules/perlscript/perlscript.c, modules/server/server.c,
+	modules/tclscript/tclscript.c, src/dcc.c, src/dns.c,
+	src/egg_timer.c, src/logfile.c, src/tcl.c, src/tcldcc.c,
 	src/tclhash.c, src/tclmisc.c, src/users.c:
 
 	
@@ -2414,14 +2407,6 @@
 	
 	* Don't bother with remaining arguments if there's a conversion
 	error.  
-
-2002-05-09 03:26  stdarg <stdarg@techmonkeys.org>
-
-	* modules/irc/: irc.c, scriptcmds.c, tclirc.c:
-
-	
-	* Added patch by Guillaume Leclanche <mo-ize@nul-en.info> to convert
-	functions in the irc module to language-independent form.  
 
 2002-05-09 03:11  stdarg <stdarg@techmonkeys.org>
 
@@ -2529,42 +2514,39 @@
 	modules/filesys/filelist.c, modules/filesys/filelist.h,
 	modules/filesys/files.c, modules/filesys/files.h,
 	modules/filesys/filesys.c, modules/filesys/filesys.h,
-	modules/filesys/tclfiles.c, modules/irc/chan.c,
-	modules/irc/cmdsirc.c, modules/irc/irc.c, modules/irc/irc.h,
-	modules/irc/mode.c, modules/irc/msgcmds.c, modules/irc/tclirc.c,
-	modules/notes/cmdsnote.c, modules/notes/notes.c,
-	modules/notes/notes.h, modules/perlscript/mod_iface.c,
-	modules/perlscript/perlscript.c, modules/server/cmdsserv.c,
-	modules/server/scriptcmds.c, modules/server/server.c,
-	modules/server/server.h, modules/server/servmsg.c,
-	modules/tclscript/tclscript.c, modules/transfer/transfer.c,
-	modules/transfer/transfer.h, modules/uptime/uptime.c,
-	modules/uptime/uptime.h, src/bg.c, src/bg.h, src/botcmd.c,
-	src/botcmd.h, src/botmsg.c, src/botmsg.h, src/botnet.c,
-	src/botnet.h, src/chan.h, src/chanprog.c, src/chanprog.h,
-	src/cmds.c, src/cmds.h, src/cmdt.h, src/core_binds.c,
-	src/core_binds.h, src/dcc.c, src/dcc.h, src/dccutil.c,
-	src/dccutil.h, src/debug.h, src/dns.c, src/dns.h, src/egg.h,
-	src/egg_timer.c, src/egg_timer.h, src/flags.c, src/flags.h,
-	src/irccmp.c, src/irccmp.h, src/logfile.c, src/logfile.h,
-	src/main.c, src/main.h, src/match.c, src/match.h, src/misc.c,
-	src/misc.h, src/modules.c, src/modules.h, src/net.c, src/net.h,
-	src/patch.h, src/tandem.h, src/tcl.c, src/tcl.h, src/tcldcc.c,
-	src/tclegg.h, src/tclhash.c, src/tclhash.h, src/tclmisc.c,
-	src/tcluser.c, src/traffic.h, src/userent.c, src/userent.h,
-	src/userrec.c, src/userrec.h, src/users.c, src/users.h:
+	modules/filesys/tclfiles.c, modules/notes/cmdsnote.c,
+	modules/notes/notes.c, modules/notes/notes.h,
+	modules/perlscript/mod_iface.c, modules/perlscript/perlscript.c,
+	modules/server/cmdsserv.c, modules/server/scriptcmds.c,
+	modules/server/server.c, modules/server/server.h,
+	modules/server/servmsg.c, modules/tclscript/tclscript.c,
+	modules/transfer/transfer.c, modules/transfer/transfer.h,
+	modules/uptime/uptime.c, modules/uptime/uptime.h, src/bg.c,
+	src/bg.h, src/botcmd.c, src/botcmd.h, src/botmsg.c, src/botmsg.h,
+	src/botnet.c, src/botnet.h, src/chan.h, src/chanprog.c,
+	src/chanprog.h, src/cmds.c, src/cmds.h, src/cmdt.h,
+	src/core_binds.c, src/core_binds.h, src/dcc.c, src/dcc.h,
+	src/dccutil.c, src/dccutil.h, src/debug.h, src/dns.c, src/dns.h,
+	src/egg.h, src/egg_timer.c, src/egg_timer.h, src/flags.c,
+	src/flags.h, src/irccmp.c, src/irccmp.h, src/logfile.c,
+	src/logfile.h, src/main.c, src/main.h, src/match.c, src/match.h,
+	src/misc.c, src/misc.h, src/modules.c, src/modules.h, src/net.c,
+	src/net.h, src/patch.h, src/tandem.h, src/tcl.c, src/tcl.h,
+	src/tcldcc.c, src/tclegg.h, src/tclhash.c, src/tclhash.h,
+	src/tclmisc.c, src/tcluser.c, src/traffic.h, src/userent.c,
+	src/userent.h, src/userrec.c, src/userrec.h, src/users.c,
+	src/users.h:
 
 	Grafted GPL header onto newer files.  Storing rcsid in binary files
 	now.  
 
 2002-05-05 15:21  wingman
 
-	* lib/egglib/linked_list_test.c, modules/irc/irc.h,
-	modules/server/server.h, src/botcmd.h, src/botmsg.h, src/botnet.h,
-	src/chanprog.h, src/cmds.h, src/core_binds.c, src/dcc.h,
-	src/dccutil.h, src/misc.h, src/modules.h, src/net.c, src/net.h,
-	src/proto.h, src/tcl.h, src/tclhash.h, src/userent.h,
-	src/userrec.h:
+	* lib/egglib/linked_list_test.c, modules/server/server.h,
+	src/botcmd.h, src/botmsg.h, src/botnet.h, src/chanprog.h,
+	src/cmds.h, src/core_binds.c, src/dcc.h, src/dccutil.h, src/misc.h,
+	src/modules.h, src/net.c, src/net.h, src/proto.h, src/tcl.h,
+	src/tclhash.h, src/userent.h, src/userrec.h:
 
 	i knew i forgot something :-P 
 
@@ -2726,16 +2708,9 @@
 
 	* eggdrop.complete.conf, eggdrop.simple.conf,
 	modules/channels/channels.c, modules/compress/compress.c,
-	modules/filesys/filesys.c, modules/irc/irc.c,
-	modules/notes/notes.c, modules/server/server.c,
-	modules/transfer/transfer.c, nettype/custom.irc.conf,
-	nettype/custom.server.conf, nettype/dalnet.irc.conf,
-	nettype/dalnet.server.conf, nettype/efnet.irc.conf,
-	nettype/efnet.server.conf, nettype/hybridefnet.irc.conf,
-	nettype/hybridefnet.server.conf, nettype/ircnet.irc.conf,
-	nettype/ircnet.server.conf, nettype/undernet.irc.conf,
-	nettype/undernet.server.conf, scripts/compat.tcl,
-	scripts/userinfo.tcl, src/logfile.c, src/tcl.c:
+	modules/filesys/filesys.c, modules/notes/notes.c,
+	modules/server/server.c, modules/transfer/transfer.c,
+	scripts/compat.tcl, scripts/userinfo.tcl, src/logfile.c, src/tcl.c:
 
 	I changed a lot of variable names (- became _). I may have missed
 	some so keep your eyes open and if your scripts stop working, this
@@ -2958,12 +2933,6 @@
 	removed an extra space from the 'Writing channel file...' message
 	(synch 1.6) 
 
-2002-04-17 21:16  Federico Mennite <ite@techmonkeys.org>
-
-	* modules/irc/mode.c:
-
-	Defines cleanups (synch 1.6) 
-
 2002-04-17 21:09  Federico Mennite <ite@techmonkeys.org>
 
 	* src/botnet.c:
@@ -2972,7 +2941,7 @@
 
 2002-04-16 23:08  Federico Mennite <ite@techmonkeys.org>
 
-	* modules/irc/mode.c, src/chan.h:
+	* src/chan.h:
 
 	Fixed crashes relating to flushmodes (synch 1.6) 
 
@@ -3037,8 +3006,7 @@
 
 	* modules/channels/channels.c, modules/channels/channels.h,
 	modules/channels/cmdschan.c, modules/channels/tclchan.c,
-	modules/channels/userchan.c, modules/irc/chan.c,
-	modules/irc/cmdsirc.c, modules/irc/irc.c, src/patch.h:
+	modules/channels/userchan.c, src/patch.h:
 
 	move u_addban, u_addexempt and u_addinvite into u_addmask 
 
@@ -3050,9 +3018,7 @@
 	lib/eggdrop/eggdrop.h, lib/eggdrop/memutil.c,
 	lib/eggdrop/memutil.h, modules/channels/cmdschan.c,
 	modules/channels/tclchan.c, modules/channels/userchan.c,
-	modules/filesys/filesys.c, modules/irc/chan.c,
-	modules/irc/cmdsirc.c, modules/irc/irc.c, modules/irc/mode.c,
-	modules/irc/msgcmds.c, modules/server/cmdsserv.c,
+	modules/filesys/filesys.c, modules/server/cmdsserv.c,
 	modules/server/server.c, modules/server/servmsg.c,
 	modules/server/tclserv.c, src/chanprog.c, src/cmds.c, src/dcc.c,
 	src/dns.c, src/flags.c, src/main.c, src/misc.c, src/modules.c,
@@ -3086,14 +3052,13 @@
 	lib/eggdrop/registry.c, lib/eggdrop/registry.h,
 	lib/egglib/egglib.h, modules/blowfish/blowfish.c,
 	modules/channels/channels.c, modules/compress/compress.c,
-	modules/filesys/filesys.c, modules/irc/irc.c,
-	modules/notes/notes.c, modules/perlscript/mod_iface.c,
-	modules/server/server.c, modules/tclscript/Makefile.am,
-	modules/tclscript/tclscript.c, modules/transfer/transfer.c,
-	modules/uptime/uptime.c, src/Makefile.am, src/egg.h,
-	src/egg_timer.c, src/egg_timer.h, src/main.c, src/main.h,
-	src/modules.c, src/modules.h, src/registry.c, src/registry.h,
-	src/script.c, src/script.h:
+	modules/filesys/filesys.c, modules/notes/notes.c,
+	modules/perlscript/mod_iface.c, modules/server/server.c,
+	modules/tclscript/Makefile.am, modules/tclscript/tclscript.c,
+	modules/transfer/transfer.c, modules/uptime/uptime.c,
+	src/Makefile.am, src/egg.h, src/egg_timer.c, src/egg_timer.h,
+	src/main.c, src/main.h, src/modules.c, src/modules.h,
+	src/registry.c, src/registry.h, src/script.c, src/script.h:
 
 	* Created eggdrop's library context.  
 	* Moved registry stuff to libeggdrop.  
@@ -3214,12 +3179,6 @@
 
 	Pots 
 
-2002-03-02 07:51  Jeff Fisher <guppy@techmonkeys.org>
-
-	* modules/irc/mode.c:
-
-	thanks eule for catching rfc_casecmp should be irccmp 
-
 2002-03-01 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
@@ -3240,7 +3199,7 @@
 
 2002-02-27 05:34  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, modules/irc/chan.c, modules/irc/mode.c:
+	* doc/UPDATES1.6:
 
 	sync'd 1.6 to 1.7 
 
@@ -3318,12 +3277,6 @@
 
 	Pots 
 
-2002-02-22 02:43  Axel Franke <eule@berlin.snafu.de>
-
-	* modules/irc/chan.c:
-
-	fix a crash in gotquit 
-
 2002-02-21 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
@@ -3344,8 +3297,7 @@
 
 2002-02-20 02:37  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, modules/irc/chan.c, modules/irc/irc.c,
-	src/patch.h:
+	* doc/UPDATES1.6, src/patch.h:
 
 	added a few patches to sync with 1.6 
 
@@ -3354,18 +3306,6 @@
 	* po/eggdrop.pot:
 
 	Pots 
-
-2002-02-18 22:53  Federico Mennite <ite@techmonkeys.org>
-
-	* modules/irc/chan.c:
-
-	PART messages weren't parsed correctly (synch 1.6) 
-
-2002-02-18 22:43  Federico Mennite <ite@techmonkeys.org>
-
-	* modules/irc/chan.c:
-
-	Fixed missing sanity check in check_this_member() (synch 1.6) 
 
 2002-02-18 10:00  Automatic CVS Scripts
 
@@ -3379,12 +3319,6 @@
 
 	Fixed a couple of cosmetic problems in cmd_pls_user (synch 1.6) 
 
-2002-02-17 19:49  Federico Mennite <ite@techmonkeys.org>
-
-	* nettype/dalnet.server.conf:
-
-	changed kick-method from 1 to 4 in DALnet's server config template 
-
 2002-02-17 18:34  Federico Mennite <ite@techmonkeys.org>
 
 	* configure.ac, acconfig/acinclude.m4,
@@ -3393,20 +3327,10 @@
 	tclscript modules isn't being compiled anymore with tcl versions
 	prior to 8.  
 
-2002-02-17 12:44  Federico Mennite <ite@techmonkeys.org>
-
-	* nettype/: .cvsignore, Makefile.am, custom.irc.conf,
-	custom.server.conf, dalnet.irc.conf, dalnet.server.conf,
-	efnet.irc.conf, efnet.server.conf, hybridefnet.irc.conf,
-	hybridefnet.server.conf, ircnet.irc.conf, ircnet.server.conf,
-	undernet.irc.conf, undernet.server.conf:
-
-	nettype templates directory was missing from the last commit.  
-
 2002-02-17 12:40  Federico Mennite <ite@techmonkeys.org>
 
 	* Makefile.am, configure.ac, eggdrop.complete.conf,
-	eggdrop.simple.conf, modules/irc/irc.c, modules/server/server.c,
+	eggdrop.simple.conf, modules/server/server.c,
 	modules/server/server.h:
 
 	* acconfig/mpatrol.m4 wasn't distributed 
@@ -3553,25 +3477,23 @@
 	modules/filesys/filelist.c, modules/filesys/filelist.h,
 	modules/filesys/files.c, modules/filesys/files.h,
 	modules/filesys/filesys.c, modules/filesys/filesys.h,
-	modules/filesys/tclfiles.c, modules/irc/chan.c,
-	modules/irc/cmdsirc.c, modules/irc/irc.c, modules/irc/irc.h,
-	modules/irc/mode.c, modules/irc/msgcmds.c, modules/irc/tclirc.c,
-	modules/notes/cmdsnote.c, modules/notes/notes.c,
-	modules/notes/notes.h, modules/server/cmdsserv.c,
-	modules/server/server.c, modules/server/server.h,
-	modules/server/servmsg.c, modules/server/tclserv.c,
-	modules/transfer/transfer.c, modules/transfer/transfer.h,
-	modules/uptime/uptime.c, modules/uptime/uptime.h,
-	scripts/autobotchk, scripts/ques5.tcl, src/bg.c, src/bg.h,
-	src/botcmd.c, src/botmsg.c, src/botnet.c, src/chan.h,
-	src/chanprog.c, src/cmds.c, src/cmdt.h, src/dcc.c, src/dccutil.c,
-	src/debug.h, src/dns.c, src/dns.h, src/egg.h, src/flags.c,
-	src/flags.h, src/irccmp.c, src/irccmp.h, src/logfile.h, src/main.c,
-	src/main.h, src/misc.c, src/misc.h, src/modules.c, src/modules.h,
-	src/patch.h, src/proto.h, src/tandem.h, src/tcl.c, src/tcldcc.c,
-	src/tclegg.h, src/tclhash.c, src/tclhash.h, src/tclmisc.c,
-	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c,
-	src/users.h, FEATURES, INSTALL, NEWS, README:
+	modules/filesys/tclfiles.c, modules/notes/cmdsnote.c,
+	modules/notes/notes.c, modules/notes/notes.h,
+	modules/server/cmdsserv.c, modules/server/server.c,
+	modules/server/server.h, modules/server/servmsg.c,
+	modules/server/tclserv.c, modules/transfer/transfer.c,
+	modules/transfer/transfer.h, modules/uptime/uptime.c,
+	modules/uptime/uptime.h, scripts/autobotchk, scripts/ques5.tcl,
+	src/bg.c, src/bg.h, src/botcmd.c, src/botmsg.c, src/botnet.c,
+	src/chan.h, src/chanprog.c, src/cmds.c, src/cmdt.h, src/dcc.c,
+	src/dccutil.c, src/debug.h, src/dns.c, src/dns.h, src/egg.h,
+	src/flags.c, src/flags.h, src/irccmp.c, src/irccmp.h,
+	src/logfile.h, src/main.c, src/main.h, src/misc.c, src/misc.h,
+	src/modules.c, src/modules.h, src/patch.h, src/proto.h,
+	src/tandem.h, src/tcl.c, src/tcldcc.c, src/tclegg.h, src/tclhash.c,
+	src/tclhash.h, src/tclmisc.c, src/tcluser.c, src/userent.c,
+	src/userrec.c, src/users.c, src/users.h, FEATURES, INSTALL, NEWS,
+	README:
 
 	Updated copyright info for 2002 
 
@@ -3641,7 +3563,7 @@
 	* eggdrop.complete.conf, eggdrop.simple.conf,
 	modules/channels/channels.c, modules/channels/channels.h,
 	modules/channels/cmdschan.c, modules/channels/flagmaps.c,
-	modules/irc/chan.c, modules/irc/cmdsirc.c, src/chan.h:
+	src/chan.h:
 
 	adding as channelset honor-global-bans, honor-global-exempts and
 	honor-global-invites 
@@ -3672,8 +3594,8 @@
 
 2002-01-27 14:59  Federico Mennite <ite@techmonkeys.org>
 
-	* modules/channels/cmdschan.c, modules/irc/cmdsirc.c,
-	modules/server/cmdsserv.c, po/.potignore, src/cmds.c:
+	* modules/channels/cmdschan.c, modules/server/cmdsserv.c,
+	po/.potignore, src/cmds.c:
 
 	* Cosmetic changes for some partyline's commands output (synch 1.6) 
 	* More gettextification in the core and in the channels, irc and
@@ -3748,13 +3670,6 @@
 
 	Pots 
 
-2002-01-24 21:06  Federico Mennite <ite@techmonkeys.org>
-
-	* modules/irc/chan.c:
-
-	Patch fixing key for channel request on op wasn't fully applied
-	(synch 1.6) 
-
 2002-01-24 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
@@ -3810,13 +3725,6 @@
 
 	Added tcl_traffic (synch 1.6) 
 
-2002-01-20 14:29  Federico Mennite <ite@techmonkeys.org>
-
-	* modules/irc/chan.c:
-
-	fixed a bug that prevented MODE from being sent when we get ops on a
-	channel to retrieve the proper channel key (synch 1.6) 
-
 2002-01-20 14:22  Federico Mennite <ite@techmonkeys.org>
 
 	* modules/server/server.c, src/tcl.c:
@@ -3845,14 +3753,13 @@
 2002-01-19 20:08  Federico Mennite <ite@techmonkeys.org>
 
 	* lib/eggdrop/eggdrop.h, lib/eggdrop/module.h,
-	modules/filesys/filesys.h, modules/irc/irc.h,
-	modules/perlscript/perlscript.c, src/Makefile.am, src/botcmd.c,
-	src/botmsg.c, src/botnet.c, src/chanprog.c, src/cmds.c, src/dcc.c,
-	src/dccutil.c, src/dns.c, src/dns.h, src/egg.h, src/flags.c,
-	src/logfile.c, src/logfile.h, src/main.c, src/misc.c, src/misc.h,
-	src/modules.c, src/net.c, src/proto.h, src/tcl.c, src/tcldcc.c,
-	src/tclhash.c, src/tclmisc.c, src/userent.c, src/userrec.c,
-	src/users.c:
+	modules/filesys/filesys.h, modules/perlscript/perlscript.c,
+	src/Makefile.am, src/botcmd.c, src/botmsg.c, src/botnet.c,
+	src/chanprog.c, src/cmds.c, src/dcc.c, src/dccutil.c, src/dns.c,
+	src/dns.h, src/egg.h, src/flags.c, src/logfile.c, src/logfile.h,
+	src/main.c, src/misc.c, src/misc.h, src/modules.c, src/net.c,
+	src/proto.h, src/tcl.c, src/tcldcc.c, src/tclhash.c, src/tclmisc.c,
+	src/userent.c, src/userrec.c, src/users.c:
 
 	* varoius header inclusion cleanups 
 	* moved FILEDB* defines from src/egg.h to a more suitable place in
@@ -4268,12 +4175,11 @@
 	lib/eggdrop/module.h, lib/egglib/Makefile.am, lib/egglib/egglib.h,
 	modules/blowfish/Makefile.am, modules/channels/Makefile.am,
 	modules/compress/Makefile.am, modules/filesys/Makefile.am,
-	modules/irc/Makefile.am, modules/notes/Makefile.am,
-	modules/perlscript/Makefile.am, modules/server/Makefile.am,
-	modules/tclscript/Makefile.am, modules/transfer/Makefile.am,
-	modules/uptime/Makefile.am, src/Makefile.am, src/egg.h,
-	src/eggdrop.h, src/logfile.c, src/main.h, src/modules.c,
-	src/modules.h, src/proto.h:
+	modules/notes/Makefile.am, modules/perlscript/Makefile.am,
+	modules/server/Makefile.am, modules/tclscript/Makefile.am,
+	modules/transfer/Makefile.am, modules/uptime/Makefile.am,
+	src/Makefile.am, src/egg.h, src/eggdrop.h, src/logfile.c,
+	src/main.h, src/modules.c, src/modules.h, src/proto.h:
 
 	* Moved some botnet utility functions from the core to libeggdrop.  
 	* Moved some common macros to libeggdrop.  
@@ -4335,8 +4241,7 @@
 
 2001-12-29 21:43  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, modules/irc/irc.c, modules/transfer/transfer.c,
-	src/patch.h:
+	* doc/UPDATES1.6, modules/transfer/transfer.c, src/patch.h:
 
 	added Wcc's old_debugs patch 
 
@@ -4348,8 +4253,7 @@
 
 2001-12-29 21:39  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, modules/filesys/filesys.c, modules/irc/cmdsirc.c,
-	modules/irc/mode.c, src/patch.h:
+	* doc/UPDATES1.6, modules/filesys/filesys.c, src/patch.h:
 
 	added Wcc's mod_cosmetic patch from 1.6 
 
@@ -4374,21 +4278,20 @@
 
 2001-12-29 21:25  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, modules/irc/irc.c, src/patch.h:
+	* doc/UPDATES1.6, src/patch.h:
 
 	added Wcc's nettype_modes patch from 1.6 
 
 2001-12-29 21:21  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, modules/channels/channels.c, modules/irc/chan.c,
-	modules/irc/irc.c, modules/irc/msgcmds.c, modules/server/servmsg.c,
-	src/chanprog.c, src/main.c, src/patch.h:
+	* doc/UPDATES1.6, modules/channels/channels.c,
+	modules/server/servmsg.c, src/chanprog.c, src/main.c, src/patch.h:
 
 	added my correctname patch from 1.6 
 
 2001-12-29 21:13  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, modules/irc/chan.c, src/patch.h:
+	* doc/UPDATES1.6, src/patch.h:
 
 	added both onopmodefix 1 and 2 from 1.6 
 
@@ -4406,23 +4309,21 @@
 
 2001-12-29 20:59  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, modules/irc/tclirc.c, src/botcmd.c, src/patch.h:
+	* doc/UPDATES1.6, src/botcmd.c, src/patch.h:
 
 	added BarkerJr's whomsg patch from 1.6 including a small fix to my
 	last commit on tclirc.c 
 
 2001-12-29 20:55  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, doc/tcl-commands.doc, modules/irc/tclirc.c,
-	src/patch.h:
+	* doc/UPDATES1.6, doc/tcl-commands.doc, src/patch.h:
 
 	added my optionalchannelarg patch from 1.6 (with the fixes BarkerJr
 	pointed out) 
 
 2001-12-29 20:36  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, doc/tcl-commands.doc, modules/irc/tclirc.c,
-	src/patch.h:
+	* doc/UPDATES1.6, doc/tcl-commands.doc, src/patch.h:
 
 	added my onchanfix patch from 1.6 
 
@@ -4525,8 +4426,7 @@
 
 2001-12-20 04:57  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, modules/irc/tclirc.c, modules/server/tclserv.c,
-	src/patch.h:
+	* doc/UPDATES1.6, modules/server/tclserv.c, src/patch.h:
 
 	applied jumpfix from eggdrop1.6 and changed rfc_casecmp to irccmp in
 	tclirc.c 
@@ -4553,22 +4453,20 @@
 
 2001-12-19 06:31  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, modules/irc/tclirc.c, src/patch.h:
+	* doc/UPDATES1.6, src/patch.h:
 
 	applied my morespeedyness.diff from eggdrop1.6 
 
 2001-12-19 06:28  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, modules/irc/chan.c, modules/irc/mode.c,
-	src/patch.h:
+	* doc/UPDATES1.6, src/patch.h:
 
 	added Eule's small-fixes patch from eggdrop1.6 
 
 2001-12-19 06:25  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, lib/eggdrop/module.h, modules/irc/chan.c,
-	modules/irc/cmdsirc.c, modules/irc/msgcmds.c, src/chan.h,
-	src/cmds.c, src/modules.c, src/patch.h, src/proto.h, src/userrec.c:
+	* doc/UPDATES1.6, lib/eggdrop/module.h, src/chan.h, src/cmds.c,
+	src/modules.c, src/patch.h, src/proto.h, src/userrec.c:
 
 	added Eule's membercheck 2 and 3 patches from eggdrop1.6 (Eule can
 	you please check these over as the diff seemed to fail alot and I
@@ -4576,7 +4474,7 @@
 
 2001-12-19 06:03  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, modules/irc/tclirc.c, src/patch.h:
+	* doc/UPDATES1.6, src/patch.h:
 
 	added speedyhand2nick.diff from eggdrop1.6 
 
@@ -4703,9 +4601,9 @@
 
 2001-12-10 02:50  Jeff Fisher <guppy@techmonkeys.org>
 
-	* eggdrop.complete.conf, doc/settings/mod.irc, modules/irc/chan.c,
-	modules/irc/irc.c, modules/server/server.c,
-	modules/server/server.h, modules/server/servmsg.c:
+	* eggdrop.complete.conf, doc/settings/mod.irc,
+	modules/server/server.c, modules/server/server.h,
+	modules/server/servmsg.c:
 
 	kick-fun and ban-fun have been removed as settings 
 
@@ -4713,7 +4611,7 @@
 
 	* eggdrop.complete.conf, doc/settings/core.settings,
 	help/core.help, help/set/cmds2.help, lib/eggdrop/module.h,
-	modules/irc/irc.c, src/dcc.c, src/modules.c, src/tcl.c:
+	src/dcc.c, src/modules.c, src/tcl.c:
 
 	open-telnets is no longer a config setting, learn-users handles both
 	irc and telnet 
@@ -4780,13 +4678,6 @@
 
 	Sync doc/UPDATES1.6 with 1.6 tree.  
 
-2001-12-08 20:03  Federico Mennite <ite@techmonkeys.org>
-
-	* modules/irc/irc.c:
-
-	Don't show status_log if we don't have a server. Patch by Jeff
-	Fisher <guppy@techmonkeys.org> 
-
 2001-12-08 19:48  Federico Mennite <ite@techmonkeys.org>
 
 	* configure.ac, acconfig/acinclude.m4, doc/compiling.FAQ:
@@ -4796,9 +4687,7 @@
 
 2001-12-08 19:17  Federico Mennite <ite@techmonkeys.org>
 
-	* lib/eggdrop/modvals.h, modules/irc/chan.c, modules/irc/cmdsirc.c,
-	modules/irc/irc.c, modules/irc/irc.h, modules/irc/msgcmds.c,
-	src/cmds.c, src/misc.c:
+	* lib/eggdrop/modvals.h, src/cmds.c, src/misc.c:
 
 	Added a missing channel membercheck in a few commands. Patch by Axel
 	Franke <eule@berlin.snafu.de> 
@@ -4892,7 +4781,7 @@
 2001-12-04 01:30  Federico Mennite <ite@techmonkeys.org>
 
 	* modules/: channels/help/chaninfo.help,
-	channels/help/channels.help, irc/help/irc.help, server/server.c,
+	channels/help/channels.help, server/server.c,
 	server/help/server.help, server/help/set/server.help,
 	transfer/transfer.c:
 
@@ -4904,12 +4793,6 @@
 	* po/eggdrop.pot:
 
 	Pots 
-
-2001-12-03 03:25  Federico Mennite <ite@techmonkeys.org>
-
-	* modules/irc/mode.c:
-
-	Fixed stopnethack bug. Patch by Axel Franke <eule@berlin.snafu.de> 
 
 2001-12-02 15:15  Federico Mennite <ite@techmonkeys.org>
 
@@ -4953,19 +4836,6 @@
 	Made uptime module to server. Patch by Matthew Hallacy
 	<poptix@techmonkeys.org> 
 
-2001-12-02 12:22  Federico Mennite <ite@techmonkeys.org>
-
-	* modules/irc/tclirc.c:
-
-	wasop command wasn't working correctly. Patch by TaKeDa
-	<takeda@eggheads.w.pl> 
-
-2001-12-02 11:43  Federico Mennite <ite@techmonkeys.org>
-
-	* modules/irc/mode.c:
-
-	Minor code indenting fixes. Patch by guppy <guppy@techmonkeys.org> 
-
 2001-12-02 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
@@ -4974,19 +4844,11 @@
 
 2001-12-01 17:35  Federico Mennite <ite@techmonkeys.org>
 
-	* modules/channels/channels.c, modules/irc/chan.c,
-	modules/irc/mode.c, src/chan.h, src/tcluser.c:
+	* modules/channels/channels.c, src/chan.h, src/tcluser.c:
 
 	* Added DalNet's +M support. Patch by Wcc
 	<will@centerofnowhere.com>* Fixed a stupid typo of mine in
 	tcl_botattr, which prevented a successful build.  
-
-2001-12-01 16:49  Federico Mennite <ite@techmonkeys.org>
-
-	* modules/irc/chan.c:
-
-	Get right flags also when a user joins \!channels. Patch by Lam
-	<unknown> 
 
 2001-12-01 16:39  Federico Mennite <ite@techmonkeys.org>
 
@@ -5028,20 +4890,6 @@
 	* src/tcluser.c:
 
 	chattr hand crashed. Patch by stdarg <stdarg@techmonkeys.org> 
-
-2001-12-01 14:27  Federico Mennite <ite@techmonkeys.org>
-
-	* modules/irc/mode.c:
-
-	Ban reason string was unitialized. Patch by Matthew Hallacy
-	<poptix@techmonkeys.org> 
-
-2001-12-01 13:46  Federico Mennite <ite@techmonkeys.org>
-
-	* modules/irc/tclirc.c:
-
-	Fixed potential crashes in the getchanhost command. Patch by Matthew
-	Hallacy <poptix@techmonkeys.org> 
 
 2001-12-01 10:00  Automatic CVS Scripts
 
@@ -5125,10 +4973,10 @@
 
 	* modules/blowfish/Makefile.am, modules/channels/Makefile.am,
 	modules/compress/Makefile.am, modules/filesys/Makefile.am,
-	modules/irc/Makefile.am, modules/notes/Makefile.am,
-	modules/perlscript/Makefile.am, modules/server/Makefile.am,
-	modules/tclscript/Makefile.am, modules/transfer/Makefile.am,
-	modules/uptime/Makefile.am, src/eggdrop.h:
+	modules/notes/Makefile.am, modules/perlscript/Makefile.am,
+	modules/server/Makefile.am, modules/tclscript/Makefile.am,
+	modules/transfer/Makefile.am, modules/uptime/Makefile.am,
+	src/eggdrop.h:
 
 	Added mssing stuff in Makefile.am's that prevented compilation in
 	some environments.  
@@ -5354,10 +5202,10 @@
 	* lib/eggdrop/Makefile.am, lib/eggdrop/module.h,
 	modules/blowfish/Makefile.am, modules/channels/Makefile.am,
 	modules/compress/Makefile.am, modules/filesys/Makefile.am,
-	modules/irc/Makefile.am, modules/notes/Makefile.am,
-	modules/perlscript/Makefile.am, modules/server/Makefile.am,
-	modules/tclscript/Makefile.am, modules/transfer/Makefile.am,
-	modules/uptime/Makefile.am, src/Makefile.am, src/modules.c:
+	modules/notes/Makefile.am, modules/perlscript/Makefile.am,
+	modules/server/Makefile.am, modules/tclscript/Makefile.am,
+	modules/transfer/Makefile.am, modules/uptime/Makefile.am,
+	src/Makefile.am, src/modules.c:
 
 	Created libeggdrop: libadns, libegg and libcompat are now linked in
 	it. Cleaned up some unneeded function exports :) 
@@ -5413,12 +5261,6 @@
 
 	Pots 
 
-2001-10-27 18:39  Federico Mennite <ite@techmonkeys.org>
-
-	* modules/irc/.cvsignore:
-
-	Added a missing .cvsignore.  
-
 2001-10-27 18:35  Federico Mennite <ite@techmonkeys.org>
 
 	* po/: .potignore, POTFILES.in:
@@ -5461,12 +5303,7 @@
 	modules/filesys/filesys.c, modules/filesys/filesys.h,
 	modules/filesys/modinfo, modules/filesys/tclfiles.c,
 	modules/filesys/help/filesys.help,
-	modules/filesys/help/set/filesys.help, modules/irc/Makefile.am,
-	modules/irc/chan.c, modules/irc/cmdsirc.c, modules/irc/irc.c,
-	modules/irc/irc.h, modules/irc/mode.c, modules/irc/modinfo,
-	modules/irc/msgcmds.c, modules/irc/tclirc.c,
-	modules/irc/help/irc.help, modules/irc/help/msg/irc.help,
-	modules/irc/help/set/irc.help, modules/notes/.cvsignore,
+	modules/filesys/help/set/filesys.help, modules/notes/.cvsignore,
 	modules/notes/Makefile.am, modules/notes/cmdsnote.c,
 	modules/notes/modinfo, modules/notes/notes.c,
 	modules/notes/notes.h, modules/notes/help/notes.help,
@@ -6188,7 +6025,7 @@
 	doc/eggdrop.doc, doc/text-substitutions.doc, help/cmds1.help,
 	help/cmds2.help, help/core.help, scripts/CONTENTS,
 	scripts/compat.tcl, scripts/notes2.tcl, scripts/userinfo.tcl,
-	scripts/weed, scripts/help/userinfo.help:
+	scripts/weed:
 
 	documentation and misc updates from alpha tree 
 
@@ -6583,8 +6420,7 @@
 
 	* eggdrop.complete.conf, doc/settings/core.settings,
 	doc/settings/mod.dns, help/core.help, help/set/cmds1.help,
-	scripts/help/cmd_resolve.help, src/modules.c, src/net.c, src/tcl.c,
-	src/tclmisc.c:
+	src/modules.c, src/net.c, src/tcl.c, src/tclmisc.c:
 
 	Removed my-hostname. Cache local ipv4 address. Updated docs. FIXME
 	for tcl_getmyip6(). Cleanups for channel.mod.  
@@ -8438,8 +8274,7 @@
 2000-11-05 21:36  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.5, scripts/CONTENTS, scripts/Makefile.in,
-	scripts/cmd_resolve.tcl, scripts/help/cmd_resolve.help,
-	src/patch.h:
+	scripts/cmd_resolve.tcl, src/patch.h:
 
 	fabian: applied guppy's cmd_resolve patch 
 
@@ -11135,14 +10970,12 @@
 	help/console.help, help/filesys.help, help/irc.help,
 	help/notes.help, help/seen.help, help/server.help, help/share.help,
 	help/userinfo.help, scripts/CONTENTS, scripts/Makefile.in,
-	scripts/bugreport.tcl, scripts/help/userinfo.help,
-	scripts/help/msg/userinfo.help, src/Makefile, src/Makefile.in,
-	src/botcmd.c, src/botmsg.c, src/botnet.c, src/chanprog.c,
-	src/cmds.c, src/dcc.c, src/dccutil.c, src/dns.c, src/eggdrop.h,
-	src/main.c, src/main.h, src/mem.c, src/misc.c, src/modules.c,
-	src/net.c, src/patch.h, src/proto.h, src/tandem.h, src/tcl.c,
-	src/tcldcc.c, src/tcluser.c, src/userent.c, src/userrec.c,
-	src/users.c:
+	scripts/bugreport.tcl, src/Makefile, src/Makefile.in, src/botcmd.c,
+	src/botmsg.c, src/botnet.c, src/chanprog.c, src/cmds.c, src/dcc.c,
+	src/dccutil.c, src/dns.c, src/eggdrop.h, src/main.c, src/main.h,
+	src/mem.c, src/misc.c, src/modules.c, src/net.c, src/patch.h,
+	src/proto.h, src/tandem.h, src/tcl.c, src/tcldcc.c, src/tcluser.c,
+	src/userent.c, src/userrec.c, src/users.c:
 
 	resync with 1.3 tree, 939863113-940380771 
 
