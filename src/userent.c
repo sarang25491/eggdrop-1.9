@@ -2,7 +2,7 @@
  * userent.c -- handles:
  *   user-entry handling, new stylem more versatile.
  *
- * $Id: userent.c,v 1.26 2001/12/14 05:35:06 guppy Exp $
+ * $Id: userent.c,v 1.27 2002/01/16 22:09:43 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -237,7 +237,7 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
       strcpy(new, pass);
     else
       encrypt_pass(pass, new);
-    malloc_strcpy(e->u.extra, new);
+    e->u.extra = strdup(new);
   }
   if (!noshare && !(u->flags & (USER_BOT | USER_UNSHARED)))
     shareout(NULL, "c PASS %s %s\n", u->handle, pass ? pass : "");
@@ -296,7 +296,7 @@ static int laston_pack(struct userrec *u, struct user_entry *e)
   sprintf(work, "%lu %s", li->laston, li->lastonplace);
   e->u.list = malloc(sizeof(struct list_type));
   e->u.list->next = NULL;
-  malloc_strcpy(e->u.list->extra, work);
+  e->u.list->extra = strdup(work);
   free(li->lastonplace);
   free(li);
   return 1;
@@ -382,7 +382,7 @@ static int laston_tcl_set(Tcl_Interp * irp, struct userrec *u,
   li = malloc(sizeof(struct laston_info));
 
   if (argc == 5)
-    malloc_strcpy(li->lastonplace, argv[4]);
+    li->lastonplace = strdup(argv[4]);
   else
     li->lastonplace = calloc(1, 1);
 
@@ -400,7 +400,7 @@ static int laston_dupuser(struct userrec *new, struct userrec *old,
     li2 = malloc(sizeof(struct laston_info));
 
     li2->laston = li->laston;
-    malloc_strcpy(li2->lastonplace, li->lastonplace);
+    li2->lastonplace = strdup(li->lastonplace);
     return set_user(&USERENTRY_LASTON, new, li2);
   }
   return 0;
@@ -430,11 +430,11 @@ static int botaddr_unpack(struct userrec *u, struct user_entry *e)
 
   bi = calloc(1, sizeof(struct bot_addr));
   q = (e->u.list->extra);
-  malloc_strcpy(p, q);
+  p = strdup(q);
   if (!(q = strchr_unescape(p, ':', '\\')))
-    malloc_strcpy(bi->address, p);
+    bi->address = strdup(p);
   else {
-    malloc_strcpy(bi->address, p);
+    bi->address = strdup(p);
     bi->telnet_port = atoi(q);
     if ((q = strchr(q, '/')))
       bi->relay_port = atoi(q + 1);
@@ -462,7 +462,7 @@ static int botaddr_pack(struct userrec *u, struct user_entry *e)
   free(tmp);
   e->u.list = malloc(sizeof(struct list_type));
   e->u.list->next = NULL;
-  malloc_strcpy(e->u.list->extra, work);
+  e->u.list->extra = strdup(work);
   free(bi->address);
   free(bi);
   return 1;
@@ -539,7 +539,7 @@ static int botaddr_tcl_set(Tcl_Interp *irp, struct userrec *u,
     } else {
       free(bi->address);
     }
-    malloc_strcpy(bi->address, argv[3]);
+    bi->address = strdup(argv[3]);
     if (argc > 4)
       bi->telnet_port = atoi(argv[4]);
     if (argc > 5)
@@ -570,7 +570,7 @@ static int botaddr_gotshare(struct userrec *u, struct user_entry *e,
   bi = calloc(1, sizeof(struct bot_addr));
   arg = newsplit(&buf);
   str_unescape(arg, '\\');
-  malloc_strcpy(bi->address, arg);
+  bi->address = strdup(arg);
   arg = newsplit(&buf);
   bi->telnet_port = atoi(arg);
   bi->relay_port = atoi(buf);
@@ -595,7 +595,7 @@ static int botaddr_dupuser(struct userrec *new, struct userrec *old,
 
       bi2->telnet_port = bi->telnet_port;
       bi2->relay_port = bi->relay_port;
-      malloc_strcpy(bi2->address, bi->address);
+      bi2->address = strdup(bi->address);
       return set_user(&USERENTRY_BOTADDR, new, bi2);
     }
   }
@@ -703,8 +703,8 @@ int xtra_unpack(struct userrec *u, struct user_entry *e)
     data = curr->extra;
     key = newsplit(&data);
     if (data[0]) {
-      malloc_strcpy(t->key, key);
-      malloc_strcpy(t->data, data);
+      t->key = strdup(key);
+      t->data = strdup(data);
       list_insert((&e->u.extra), t);
     }
     curr = curr->next;
@@ -792,8 +792,8 @@ static int xtra_dupuser(struct userrec *new, struct userrec *old,
   for (x1 = e->u.extra; x1; x1 = x1->next) {
     x2 = malloc(sizeof(struct xtra_key));
 
-    malloc_strcpy(x2->key, x1->key);
-    malloc_strcpy(x2->data, x1->data);
+    x2->key = strdup(x1->key);
+    x2->data = strdup(x1->data);
     set_user(&USERENTRY_XTRA, new, x2);
   }
   return 1;
@@ -958,7 +958,7 @@ static int hosts_set(struct userrec *u, struct user_entry *e, void *buf)
     *t = malloc(sizeof(struct list_type));
 
     (*t)->next = NULL;
-    malloc_strcpy((*t)->extra, host);
+    (*t)->extra = strdup(host);
   }
   return 1;
 }
@@ -1061,7 +1061,7 @@ int del_entry_type(struct user_entry_type *type)
 
     if (e && !e->name) {
       e->type->pack(u, e);
-      malloc_strcpy(e->name, e->type->name);
+      e->name = strdup(e->type->name);
       e->type = NULL;
     }
   }

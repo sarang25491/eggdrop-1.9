@@ -1,10 +1,10 @@
 /*
- * eggdrop.h
+ * egg.h
  *   Eggdrop compile-time settings
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: egg.h,v 1.1 2002/01/04 02:56:25 ite Exp $
+ * $Id: egg.h,v 1.2 2002/01/16 22:09:43 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -147,34 +147,6 @@
 #  define sigemptyset(x) ((*(int *)(x))=0)
 #endif
 
-
-/* Macros for commonly used commands.
- */
-
-#define free_null(ptr)							\
-  if (ptr) {								\
-    free(ptr);								\
-    ptr = NULL;								\
-  }
-
-#define malloc_strcpy(target, entry)					\
-do {									\
-  (target) = malloc(strlen(entry) + 1);					\
-  strcpy((target), (entry));						\
-} while (0)
-
-/* Copy entry to target -- Uses dynamic memory allocation, which
- * means you'll eventually have to free the memory again. 'target'
- * will be overwritten.
- */
-#define realloc_strcpy(target, entry)					\
-do {									\
-  if (entry) {								\
-    (target) = realloc((target), strlen(entry) + 1);			\
-    strcpy((target), (entry));						\
-  } else								\
-    free_null(target);							\
-} while (0)
 
 /* 32 bit type
  */

@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.67 2001/12/18 05:49:39 guppy Exp $
+ * $Id: dcc.c,v 1.68 2002/01/16 22:09:43 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -78,7 +78,7 @@ static script_str_t dcc_script_strings[] = {
 
 void dcc_init()
 {
-	malloc_strcpy(dcc_command_chars, "./");
+	dcc_command_chars = strdup("./");
 	script_link_str_table(dcc_script_strings);
 	init_dcc_max();
 }

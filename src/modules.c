@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.97 2002/01/14 15:39:24 stdarg Exp $
+ * $Id: modules.c,v 1.98 2002/01/16 22:09:43 ite Exp $
  */
 /* 
  * Copyright (C) 1997 Robey Pointer
@@ -518,7 +518,7 @@ void init_modules(void)
   BT_unload = add_bind_table2("unload", 1, "s", MATCH_MASK, 0);
 
   module_list = malloc(sizeof(module_entry));
-  malloc_strcpy(module_list->name, "eggdrop");
+  module_list->name = strdup("eggdrop");
   module_list->major = (egg_numver) / 10000;
   module_list->minor = ((egg_numver) / 100) % 100;
   module_list->hand = NULL;
@@ -586,7 +586,7 @@ const char *module_load(char *name)
   p = malloc(sizeof(module_entry));
   if (p == NULL)
     return _("Malloc error");
-  malloc_strcpy(p->name, name);
+  p->name = strdup(name);
   p->major = 0;
   p->minor = 0;
   p->hand = hand;
@@ -667,7 +667,7 @@ static int module_rename(char *name, char *newname)
   for (p = module_list; p && p->name; p = p->next)
     if (!strcasecmp(name, p->name)) {
       free(p->name);
-      malloc_strcpy(p->name, newname);
+      p->name = strdup(newname);
       return 1;
     }
   return 0;

@@ -73,7 +73,7 @@ static script_int_t log_script_ints[] = {
 
 void logfile_init()
 {
-	malloc_strcpy(logfile_suffix, ".%d%b%Y");
+	logfile_suffix = strdup(".%d%b%Y");
 	script_create_cmd_table(log_script_cmds);
 	script_link_int_table(log_script_ints);
 	script_link_str_table(log_script_strings);
@@ -187,9 +187,9 @@ char *logfile_add(char *modes, char *chan, char *fname)
 	if (!fp) return("");
 
 	log = (log_t *)calloc(1, sizeof(*log));
-	malloc_strcpy(log->filename, fname);
-	malloc_strcpy(log->chname, chan);
-	malloc_strcpy(log->last_msg, "");
+	log->filename = strdup(fname);
+	log->chname = strdup(chan);
+	log->last_msg = strdup("");
 	log->mask = logmodes(modes);
 	log->fp = fp;
 

@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.7 2001/12/18 06:30:55 guppy Exp $
+ * $Id: server.c,v 1.8 2002/01/16 22:09:41 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -944,17 +944,17 @@ static void add_server(char *ss)
     if (!q) {
       x->port = default_port;
       x->pass = 0;
-      malloc_strcpy(x->name, ss);
+      x->name = strdup(ss);
     } else {
       *(q++) = 0;
-      malloc_strcpy(x->name, ss);
+      x->name = strdup(ss);
       ss = q;
       q = strchr(ss, ':');
       if (!q) {
 	x->pass = 0;
       } else {
 	*q++ = 0;
-	malloc_strcpy(x->pass, q);
+	x->pass = strdup(q);
       }
       x->port = atoi(ss);
     }
@@ -1008,10 +1008,10 @@ static void next_server(int *ptr, char *serv, unsigned int *port, char *pass)
 
     x->next = 0;
     x->realname = 0;
-    malloc_strcpy(x->name, serv);
+    x->name = strdup(serv);
     x->port = *port ? *port : default_port;
     if (pass && pass[0])
-      malloc_strcpy(x->pass, pass);
+      x->pass = strdup(pass);
     else
       x->pass = NULL;
     list_append((struct list_type **) (&serverlist), (struct list_type *) x);

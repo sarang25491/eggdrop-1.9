@@ -4,7 +4,7 @@
  *   provides the code used by the bot if the DNS module is not loaded
  *   DNS script commands
  *
- * $Id: dns.c,v 1.31 2001/10/28 13:30:33 ite Exp $
+ * $Id: dns.c,v 1.32 2002/01/16 22:09:43 ite Exp $
  */
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -193,7 +193,7 @@ void dcc_dnsipbyhost(char *hostn)
 
   de->type = &DNS_DCCEVENT_IPBYHOST;
   de->lookup = RES_IPBYHOST;
-  malloc_strcpy(de->hostname, hostn);
+  de->hostname = strdup(hostn);
 
   /* Send request. */
   dns_ipbyhost(hostn);
@@ -220,7 +220,7 @@ void dcc_dnshostbyip(char *ip)
 
   de->type = &DNS_DCCEVENT_HOSTBYIP;
   de->lookup = RES_HOSTBYIP;
-  malloc_strcpy(de->hostname, ip);
+  de->hostname = strdup(ip);
 
   /* Send request. */
   dns_hostbyip(ip);
@@ -261,8 +261,8 @@ static void script_dnsipbyhost(char *hostn, script_callback_t *callback)
 
   de->type = &DNS_SCRIPTEVENT_IPBYHOST;
   de->lookup = RES_IPBYHOST;
-  malloc_strcpy(de->hostname, hostn);
-  malloc_strcpy(callback->syntax, "ssi");
+  de->hostname = strdup(hostn);
+  callback->syntax = strdup("ssi");
   de->other = callback;
 
   /* Send request. */
@@ -281,8 +281,8 @@ static void script_dnshostbyip(char *ip, script_callback_t *callback)
 
   de->type = &DNS_SCRIPTEVENT_HOSTBYIP;
   de->lookup = RES_HOSTBYIP;
-  malloc_strcpy(de->hostname, ip);
-  malloc_strcpy(callback->syntax, "ssi");
+  de->hostname = strdup(ip);
+  callback->syntax = strdup("ssi");
   de->other = callback;
 
   /* Send request. */
@@ -494,7 +494,7 @@ void dns_hostbyip(char *ip)
 
     if (inet_pton(AF_INET, ip, &in.sin_addr)) {
 debug1("|DNS| adns_dns_hostbyip(\"%s\") (IPv4)", ip);
-	malloc_strcpy(origname, ip);
+	origname = strdup(ip);
 	in.sin_family = AF_INET;
 	in.sin_port = 0;
 	r = adns_submit_reverse(ads, (struct sockaddr *) &in,
@@ -506,7 +506,7 @@ debug1("|DNS| adns_submit_reverse failed, errno: %d", r);
 #ifdef IPV6
     } else if (inet_pton(AF_INET6, ip, &in6.sin6_addr)) {
 debug1("|DNS| adns_dns_hostbyip(\"%s\") (IPv6)", ip);
-	malloc_strcpy(origname, ip);
+	origname = strdup(ip);
 	in6.sin6_family = AF_INET6;
 	in6.sin6_port = 0;
 	r = adns_submit_reverse(ads, (struct sockaddr *) &in6,
@@ -543,7 +543,7 @@ debug1("|DNS| adns_dns_ipbyhost(\"%s\");", host);
 	char *p;
 	char *origname;
 	int type, r;
-	malloc_strcpy(origname, host);
+	origname = strdup(host);
 	if (!strncasecmp("ipv6%", host, 5)) {
 #ifdef IPV6
 	    type = adns_r_addr6;

@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  *
- * $Id: dccutil.c,v 1.41 2002/01/14 02:23:27 ite Exp $
+ * $Id: dccutil.c,v 1.42 2002/01/16 22:09:43 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -360,7 +360,7 @@ void set_away(int idx, char *s)
   }
   if (dcc[idx].u.chat->away != NULL)
     free(dcc[idx].u.chat->away);
-  malloc_strcpy(dcc[idx].u.chat->away, s);
+  dcc[idx].u.chat->away = strdup(s);
   if (dcc[idx].u.chat->channel >= 0) {
     chanout_but(-1, dcc[idx].u.chat->channel,
 		"*** %s is now away: %s\n", dcc[idx].nick, s);

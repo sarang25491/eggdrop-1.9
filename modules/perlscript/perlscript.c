@@ -122,7 +122,7 @@ static int my_create_cmd(void *ignore, script_command_t *info)
 		cmdname = msprintf("%s_%s", info->class, info->name);
 	}
 	else {
-		malloc_strcpy(cmdname, info->name);
+		cmdname = strdup(info->name);
 	}
 	cv = newXS(cmdname, my_command_handler, "eggdrop");
 	XSANY.any_i32 = (int) info;
@@ -274,7 +274,7 @@ static XS(my_command_handler)
 				cback->callback = (Function) my_perl_callbacker;
 				cback->delete = (Function) my_perl_cb_delete;
 				name = SvPV(ST(i), len);
-				malloc_strcpy(cback->name, name);
+				cback->name = strdup(name);
 				cback->callback_data = (void *)newSVsv(ST(i));
 				mstack_push(args, cback);
 				break;

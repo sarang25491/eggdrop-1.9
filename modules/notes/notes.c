@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.2 2001/12/20 01:08:49 guppy Exp $
+ * $Id: notes.c,v 1.3 2002/01/16 22:09:41 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -955,7 +955,7 @@ int get_note_ignores(struct userrec *u, char ***ignores)
     return 0;
 
   rmspace(xk->data);
-  malloc_strcpy(buf, xk->data);
+  buf = strdup(xk->data);
   p = buf;
 
   /* Split up the string into small parts */
@@ -1001,8 +1001,8 @@ int add_note_ignore(struct userrec *u, char *mask)
     if (!ue)
       return 0;
     mxk->next = 0;
-    malloc_strcpy(mxk->data, mask);
-    malloc_strcpy(mxk->key, NOTES_IGNKEY);
+    mxk->data = strdup(mask);
+    mxk->key = strdup(NOTES_IGNKEY);
     xtra_set(u, ue, mxk);
   } else { /* ... else, we already have other entries. */
     xk->data = realloc(xk->data, strlen(xk->data) + strlen(mask) + 2);

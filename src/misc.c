@@ -6,7 +6,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.58 2002/01/14 02:23:27 ite Exp $
+ * $Id: misc.c,v 1.59 2002/01/16 22:09:43 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -668,7 +668,7 @@ void add_help_reference(char *file)
       return;			/* Already exists, can't re-add :P */
   current = malloc(sizeof(struct help_ref));
 
-  malloc_strcpy(current->name, file);
+  current->name = strdup(file);
   current->next = help_list;
   current->first = NULL;
   help_list = current;

@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.50 2001/12/18 07:04:21 guppy Exp $
+ * $Id: net.c,v 1.51 2002/01/16 22:09:43 ite Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -737,7 +737,7 @@ debug2("|DNS| egg_dns_gotanswer: status=%d adns_answer=%x", status, (int)aw);
 		    strncasecmp(origname, "ipv6%", 5) &&
 		    strncasecmp(origname, "ipv4%", 5)) {
 	    adns_query q6;
-	    malloc_strcpy(orign2, origname);
+	    orign2 = strdup(origname);
 	    /* ...it may be AAAA */
 debug1("|DNS| egg_dns_gotanswer: A failed, checking for AAAA (%s)", origname);
 	    adns_submit(ads, origname, adns_r_addr6, 0, orign2, &q6);

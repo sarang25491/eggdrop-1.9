@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.6 2002/01/04 04:49:49 ite Exp $
+ * $Id: transfer.c,v 1.7 2002/01/16 22:09:42 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -191,7 +191,7 @@ static char *replace_spaces(char *fn)
 {
   register char *ret, *p;
 
-  malloc_strcpy(ret, fn);
+  ret = strdup(fn);
   p = ret;
   while ((p = strchr(p, ' ')) != NULL)
     *p = '_';
@@ -229,8 +229,8 @@ static void queue_file(char *dir, char *file, char *from, char *to)
 
   fileq = (fileq_t *) malloc(sizeof(fileq_t));
   fileq->next = q;
-  malloc_strcpy(fileq->dir, dir);
-  malloc_strcpy(fileq->file, file);
+  fileq->dir = strdup(dir);
+  fileq->file = strdup(file);
   strcpy(fileq->nick, from);
   strcpy(fileq->to, to);
 }
@@ -320,7 +320,7 @@ static void send_next_file(char *to)
       return;
     }
   } else
-    malloc_strcpy(s1, s);
+    s1 = strdup(s);
   if (this->dir[0] == '*') {
     s = realloc(s, strlen(&this->dir[1]) + strlen(this->file) + 2);
     sprintf(s, "%s/%s", &this->dir[1], this->file);
@@ -563,7 +563,7 @@ static int tcl_dccsend STDVAR
     sprintf(sys, "%s%s", tempdir, nfn);		/* New filename, in /tmp */
     copyfile(argv[1], sys);
   } else
-    malloc_strcpy(sys, argv[1]);
+    sys = strdup(argv[1]);
   i = raw_dcc_send(sys, argv[2], "*", argv[1], 0);
   if (i > 0)
     wipe_tmp_filename(sys, -1);

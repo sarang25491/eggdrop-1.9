@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  *
- * $Id: userrec.c,v 1.39 2001/12/19 06:25:08 guppy Exp $
+ * $Id: userrec.c,v 1.40 2002/01/16 22:09:43 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -507,7 +507,7 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
   set_user(&USERENTRY_PASS, u, pass);
   if (!noxtra) {
     xk = malloc(sizeof(struct xtra_key));
-    malloc_strcpy(xk->key, "created");
+    xk->key = strdup("created");
     xk->data = malloc(15);		/* should be enough, this should be changed  */
     sprintf(xk->data, "%lu", now);	/* when time_t is a 64 bit integer.. -poptix */ 
     set_user(&USERENTRY_XTRA, u, xk);
@@ -707,7 +707,7 @@ void touch_laston(struct userrec *u, char *where, time_t timeval)
       free(li->lastonplace);
     li->laston = timeval;
     if (where)
-      malloc_strcpy(li->lastonplace, where);
+      li->lastonplace = strdup(where);
     else
       li->lastonplace = NULL;
     set_user(&USERENTRY_LASTON, u, li);

@@ -3,7 +3,7 @@
  *   some macros and functions for common operations with strings and memory
  *   in general.
  *
- * $Id: memutil.h,v 1.3 2002/01/07 21:04:47 ite Exp $
+ * $Id: memutil.h,v 1.4 2002/01/16 22:09:40 ite Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -37,12 +37,6 @@ BEGIN_C_DECLS
     free(ptr);                                                          \
     ptr = NULL;                                                         \
   }
-
-#define malloc_strcpy(target, entry)                                    \
-do {                                                                    \
-  (target) = malloc(strlen(entry) + 1);                                 \
-  strcpy((target), (entry));                                            \
-} while (0)
 
 /* Copy entry to target -- Uses dynamic memory allocation, which
  * means you'll eventually have to free the memory again. 'target'

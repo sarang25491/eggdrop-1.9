@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.57 2001/12/09 03:55:58 stdarg Exp $
+ * $Id: tclhash.c,v 1.58 2002/01/16 22:09:43 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -72,7 +72,7 @@ extern cmd_t C_dcc[];
 void binds_init(void)
 {
 	bind_table_list_head = NULL;
-	malloc_strcpy(global_filt_string, "");
+	global_filt_string = strdup("");
 	script_link_str_table(tclhash_script_strings);
 	script_create_cmd_table(tclhash_script_cmds);
 	BT_link = add_bind_table2("link", 2, "ss", MATCH_MASK, BIND_STACKABLE);
@@ -108,9 +108,9 @@ bind_table_t *add_bind_table2(const char *name, int nargs, const char *syntax, i
 	/* Nope, we have to create a new one. */
 	table = (bind_table_t *)malloc(sizeof(*table));
 	table->chains = NULL;
-	malloc_strcpy(table->name, name);
+	table->name = strdup(name);
 	table->nargs = nargs;
-	malloc_strcpy(table->syntax, syntax);
+	table->syntax = strdup(syntax);
 	table->match_type = match_type;
 	table->flags = flags;
 	table->next = bind_table_list_head;
@@ -198,7 +198,7 @@ int add_bind_entry(bind_table_t *table, const char *flags, const char *mask, con
 	if (!chain) {
 		chain = (bind_chain_t *)malloc(sizeof(*chain));
 		chain->entries = NULL;
-		malloc_strcpy(chain->mask, mask);
+		chain->mask = strdup(mask);
 		chain->next = table->chains;
 		table->chains = chain;
 	}
@@ -224,7 +224,7 @@ int add_bind_entry(bind_table_t *table, const char *flags, const char *mask, con
 		chain->entries = entry;
 	}
 
-	malloc_strcpy(entry->function_name, function_name);
+	entry->function_name = strdup(function_name);
 	entry->callback = callback;
 	entry->client_data = client_data;
 	entry->hits = 0;
@@ -244,7 +244,7 @@ static int script_bind(char *table_name, char *flags, char *mask, script_callbac
 	table = find_bind_table2(table_name);
 	if (!table) return(1);
 
-	malloc_strcpy(callback->syntax, table->syntax);
+	callback->syntax = strdup(table->syntax);
 	retval = add_bind_entry(table, flags, mask, callback->name, BIND_WANTS_CD, callback->callback, callback);
 	return(retval);
 }
@@ -490,7 +490,7 @@ const char *check_tcl_filt(int idx, const char *text)
   struct flag_record	fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.chat->con_chan);
-  malloc_strcpy(global_filt_string, text);
+  global_filt_string = strdup(text);
   x = check_bind(BT_filt, text, &fr, idx, text);
   return(global_filt_string);
 }

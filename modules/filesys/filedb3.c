@@ -4,7 +4,7 @@
  *
  * Rewritten by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: filedb3.c,v 1.1 2001/10/27 16:34:50 ite Exp $
+ * $Id: filedb3.c,v 1.2 2002/01/16 22:09:41 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1101,7 +1101,7 @@ static void filedb_getdesc(char *dir, char *fn, char **desc)
 
   fdbe = filedb_getentry(dir, fn);
   if (fdbe) {
-    malloc_strcpy(*desc, fdbe->desc);
+    *desc = strdup(fdbe->desc);
     free_fdbe(&fdbe);
   } else
     *desc = NULL;
@@ -1113,7 +1113,7 @@ static void filedb_getowner(char *dir, char *fn, char **owner)
 
   fdbe = filedb_getentry(dir, fn);
   if (fdbe) {
-    malloc_strcpy(*owner, fdbe->uploader);
+    *owner = strdup(fdbe->uploader);
     free_fdbe(&fdbe);
   } else
     *owner = NULL;
@@ -1211,7 +1211,7 @@ static void filedb_getlink(char *dir, char *fn, char **link)
 
   fdbe = filedb_getentry(dir, fn);
   if (fdbe && (!(fdbe->stat & FILE_DIR))) {
-    malloc_strcpy(*link, fdbe->sharelink);
+    *link = strdup(fdbe->sharelink);
   } else
     *link = NULL;
   if (fdbe)

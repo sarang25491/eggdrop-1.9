@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.1 2001/10/27 16:34:48 ite Exp $
+ * $Id: cmdschan.c,v 1.2 2002/01/16 22:09:40 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1360,7 +1360,7 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
 	  /* Par gets modified in tcl_channel_modify under some
   	   * circumstances, so save it now.
 	   */
-	  malloc_strcpy(parcpy, par);
+	  parcpy = strdup(par);
           if (tcl_channel_modify(0, chan, 2, list) == TCL_OK) {
 	    strcat(answers, list[0]);
 	    strcat(answers, " { ");

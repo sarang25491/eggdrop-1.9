@@ -4,7 +4,7 @@
  *
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: filelist.c,v 1.1 2001/10/27 16:34:50 ite Exp $
+ * $Id: filelist.c,v 1.2 2002/01/16 22:09:41 ite Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -58,7 +58,7 @@ static void filelist_add(filelist_t *flist, char *filename)
 {
   flist->tot++;
   flist->elements = realloc(flist->elements, flist->tot * sizeof(filelist_t));
-  malloc_strcpy(FILELIST_LE(flist).fn, filename);
+  FILELIST_LE(flist).fn = strdup(filename);
   FILELIST_LE(flist).output = NULL;
 }
 
@@ -70,7 +70,7 @@ static void filelist_addout(filelist_t *flist, char *desc)
     FILELIST_LE(flist).output = realloc(FILELIST_LE(flist).output, strlen(FILELIST_LE(flist).output) + strlen(desc) + 1);
     strcat(FILELIST_LE(flist).output, desc);
   } else
-    malloc_strcpy(FILELIST_LE(flist).output, desc);
+    FILELIST_LE(flist).output = strdup(desc);
 }
 
 /* Dump all data to specified idx */

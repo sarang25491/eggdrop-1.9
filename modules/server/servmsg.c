@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.8 2001/12/29 21:21:17 guppy Exp $
+ * $Id: servmsg.c,v 1.9 2002/01/16 22:09:41 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -212,7 +212,7 @@ static int got001(char *from, char *ignore, char *msg)
     }
     if (x->realname)
       free(x->realname);
-    malloc_strcpy(x->realname, from);
+    x->realname = strdup(from);
   }
   return 0;
 }

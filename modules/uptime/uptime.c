@@ -1,5 +1,5 @@
 /* 
- * $Id: uptime.c,v 1.5 2001/12/18 07:04:21 guppy Exp $
+ * $Id: uptime.c,v 1.6 2002/01/16 22:09:42 ite Exp $
  *
  * This module reports uptime information about your bot to http://uptime.eggheads.org. The
  * purpose for this is to see how your bot rates against many others (including EnergyMechs 
@@ -240,7 +240,7 @@ char *start(Function * global_funcs)
 	BT_dcc = find_bind_table2("dcc");
 	if (BT_dcc) add_builtins2(BT_dcc, mydcc);
 	add_hook(HOOK_HOURLY, (Function) check_hourly);
-	malloc_strcpy(uptime_host, UPTIME_HOST);
+	uptime_host = strdup(UPTIME_HOST);
 	init_uptime();
 	return NULL;
 }

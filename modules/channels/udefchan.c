@@ -2,7 +2,7 @@
  * udefchan.c -- part of channels.mod
  *   user definable channel flags/settings
  *
- * $Id: udefchan.c,v 1.1 2001/10/27 16:34:48 ite Exp $
+ * $Id: udefchan.c,v 1.2 2002/01/16 22:09:41 ite Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -60,7 +60,7 @@ static void setudef(struct udef_struct *us, char *name, int value)
     }
 
   ul = malloc(sizeof(struct udef_chans));
-  malloc_strcpy(ul->chan, name);
+  ul->chan = strdup(name);
   ul->value = value;
   ul->next = NULL;
   if (ul_last)
@@ -86,7 +86,7 @@ static void initudef(int type, char *name, int defined)
 
   debug2("Creating %s (type %d)", name, type);
   ul = malloc(sizeof(struct udef_struct));
-  malloc_strcpy(ul->name, name);
+  ul->name = strdup(name);
   if (defined)
     ul->defined = 1;
   else

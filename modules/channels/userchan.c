@@ -1,7 +1,7 @@
 /*
  * userchan.c -- part of channels.mod
  *
- * $Id: userchan.c,v 1.1 2001/10/27 16:34:48 ite Exp $
+ * $Id: userchan.c,v 1.2 2002/01/16 22:09:41 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -108,7 +108,7 @@ static void set_handle_chaninfo(struct userrec *bu, char *handle,
   if (ch->info != NULL)
     free(ch->info);
   if (info && info[0])
-    malloc_strcpy(ch->info, info);
+    ch->info = strdup(info);
   else
     ch->info = NULL;
   cst = findchan_by_dname(chname);
@@ -434,9 +434,9 @@ static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
   p->added = now;
   p->lastactive = 0;
   p->flags = flags;
-  malloc_strcpy(p->mask, host);
-  malloc_strcpy(p->user, from);
-  malloc_strcpy(p->desc, note);
+  p->mask = strdup(host);
+  p->user = strdup(from);
+  p->desc = strdup(note);
   if (!noshare) {
     char *mask = str_escape(host, ':', '\\');
 
@@ -496,9 +496,9 @@ static int u_addinvite(struct chanset_t *chan, char *invite, char *from,
   p->added = now;
   p->lastactive = 0;
   p->flags = flags;
-  malloc_strcpy(p->mask, host);
-  malloc_strcpy(p->user, from);
-  malloc_strcpy(p->desc, note);
+  p->mask = strdup(host);
+  p->user = strdup(from);
+  p->desc = strdup(note);
   if (!noshare) {
     char *mask = str_escape(host, ':', '\\');
 
@@ -558,9 +558,9 @@ static int u_addexempt(struct chanset_t *chan, char *exempt, char *from,
   p->added = now;
   p->lastactive = 0;
   p->flags = flags;
-  malloc_strcpy(p->mask, host);
-  malloc_strcpy(p->user, from);
-  malloc_strcpy(p->desc, note);
+  p->mask = strdup(host);
+  p->user = strdup(from);
+  p->desc = strdup(note);
   if (!noshare) {
     char *mask = str_escape(host, ':', '\\');
 

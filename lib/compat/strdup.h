@@ -1,8 +1,8 @@
 /*
- * compat.h
- *   prototypes for compability functions
+ * strdup.h
+ *   prototypes for strdup.c
  *
- * $Id: compat.h,v 1.2 2002/01/16 22:09:40 ite Exp $
+ * $Id: strdup.h,v 1.1 2002/01/16 22:09:40 ite Exp $
  */
 /*
  * Copyright (C) 2000, 2001 Eggheads Development Team
@@ -21,21 +21,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-#ifndef _EGG_COMPAT_H
-#define _EGG_COMPAT_H
+#ifndef _EGG_STRDUP_H
+#define _EGG_STRDUP_H
 
-/*
- * Include prototypes
- */
-#include "memcpy.h"
-#include "memset.h"
-#include "strcasecmp.h"
-#include "strncasecmp.h"
-#include "snprintf.h"
-#include "strftime.h"
-#include "inet_aton.h"
-#include "inet_ntop.h"
-#include "inet_pton.h"
-#include "strdup.h"
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
 
-#endif				/* !_EGG_COMPAT_H */
+#ifndef HAVE_STRDUP
+const char *strdup(const char *);
+#endif
+
+#endif				/* !_EGG_STRDUP_H */

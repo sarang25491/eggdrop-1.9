@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  *
- * $Id: tcluser.c,v 1.35 2002/01/14 02:23:27 ite Exp $
+ * $Id: tcluser.c,v 1.36 2002/01/16 22:09:43 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -196,7 +196,7 @@ static int script_addbot(char *handle, char *address)
 	else if ((q = strchr(addr, ':'))) addrlen = q - addr;
 	else addrlen = strlen(addr);
 	if (!q) {
-		malloc_strcpy(bi->address, addr);
+		bi->address = strdup(addr);
 		bi->telnet_port = 3333;
 		bi->relay_port = 3333;
 	}

@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.7 2001/12/29 21:40:34 guppy Exp $
+ * $Id: share.c,v 1.8 2002/01/16 22:09:42 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1140,7 +1140,7 @@ static void share_ufsend(int idx, char *par)
       strcpy(dcc[i].addr, iptostr(htonl(ip_int)));
       dcc[i].port = atoi(port);
       strcpy(dcc[i].nick, "*users");
-      malloc_strcpy(dcc[i].u.xfer->filename, s);
+      dcc[i].u.xfer->filename = strdup(s);
       dcc[i].u.xfer->origname = dcc[i].u.xfer->filename;
       dcc[i].u.xfer->length = atoi(par);
       dcc[i].u.xfer->f = f;
@@ -1472,7 +1472,7 @@ static struct share_msgq *q_addmsg(struct share_msgq *qq,
 
     q->chan = chan;
     q->next = NULL;
-    malloc_strcpy(q->msg, s);
+    q->msg = strdup(s);
     return q;
   }
   cnt = 0;
@@ -1485,7 +1485,7 @@ static struct share_msgq *q_addmsg(struct share_msgq *qq,
   q = q->next;
   q->chan = chan;
   q->next = NULL;
-  malloc_strcpy(q->msg, s);
+  q->msg = strdup(s);
   return qq;
 }
 
@@ -1678,7 +1678,7 @@ static struct userrec *dup_userlist(int t)
 
 	    list = malloc(sizeof(struct list_type));
 	    list->next = NULL;
-	    malloc_strcpy(list->extra, lt->extra);
+	    list->extra = strdup(lt->extra);
 	    list_append((&nue->u.list), list);
 	  }
 	} else {

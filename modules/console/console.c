@@ -3,7 +3,7 @@
  *   saved console settings based on console.tcl
  *   by cmwagner/billyjoe/D. Senso
  *
- * $Id: console.c,v 1.1 2001/10/27 16:34:49 ite Exp $
+ * $Id: console.c,v 1.2 2002/01/16 22:09:41 ite Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -57,7 +57,7 @@ static int console_unpack(struct userrec *u, struct user_entry *e)
 
   par = e->u.list->extra;
   arg = newsplit(&par);
-  malloc_strcpy(ci->channel, arg);
+  ci->channel = strdup(arg);
   arg = newsplit(&par);
   ci->conflags = logmodes(arg);
   arg = newsplit(&par);
@@ -87,7 +87,7 @@ static int console_pack(struct userrec *u, struct user_entry *e)
 
   e->u.list = malloc(sizeof(struct list_type));
   e->u.list->next = NULL;
-  malloc_strcpy(e->u.list->extra, work);
+  e->u.list->extra = strdup(work);
 
   free(ci->channel);
   free(ci);
@@ -210,7 +210,7 @@ static int console_dupuser(struct userrec *new, struct userrec *old,
   j = malloc(sizeof(struct console_info));
   memcpy(j, i, sizeof(struct console_info));
 
-  malloc_strcpy(j->channel, i->channel);
+  j->channel = strdup(i->channel);
   return set_user(e->type, new, j);
 }
 
@@ -287,7 +287,7 @@ static int console_store(struct userrec *u, int idx, char *par)
     i = calloc(1, sizeof(struct console_info));
   if (i->channel)
     free(i->channel);
-  malloc_strcpy(i->channel, dcc[idx].u.chat->con_chan);
+  i->channel = strdup(dcc[idx].u.chat->con_chan);
   i->conflags = dcc[idx].u.chat->con_flags;
   i->stripflags = dcc[idx].u.chat->strip_flags;
   i->echoflags = (dcc[idx].status & STAT_ECHO) ? 1 : 0;

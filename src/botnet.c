@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.48 2001/12/29 21:31:07 guppy Exp $
+ * $Id: botnet.c,v 1.49 2002/01/16 22:09:42 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -184,7 +184,7 @@ int addparty(char *bot, char *nick, int chan, char flag, int sock,
 	party[i].flag = flag;
 	if (party[i].from)
 	  free(party[i].from);
-	malloc_strcpy(party[i].from, from);
+	party[i].from = strdup(from);
       }
       *idx = i;
       return oldchan;
@@ -208,10 +208,10 @@ int addparty(char *bot, char *nick, int chan, char flag, int sock,
     if (flag == ' ')
       flag = '-';
     party[parties].flag = flag;
-    malloc_strcpy(party[parties].from, from);
+    party[parties].from = strdup(from);
   } else {
     party[parties].flag = ' ';
-    malloc_strcpy(party[parties].from, "(unknown)");
+    party[parties].from = strdup("(unknown)");
   }
   *idx = parties;
   parties++;
@@ -309,7 +309,7 @@ void partyaway(char *bot, int sock, char *msg)
       if (party[i].away)
 	free(party[i].away);
       if (msg[0])
-	malloc_strcpy(party[i].away, msg);
+	party[i].away = strdup(msg);
       else
 	party[i].away = 0;
     }

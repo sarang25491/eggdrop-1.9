@@ -10,7 +10,7 @@
  *
  * dprintf'ized, 9nov1995
  *
- * $Id: users.c,v 1.31 2001/10/19 01:55:05 tothwolf Exp $
+ * $Id: users.c,v 1.32 2002/01/16 22:09:43 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -137,9 +137,9 @@ void addignore(char *ign, char *from, char *mnote, time_t expire_time)
   p->expire = expire_time;
   p->added = now;
   p->flags = expire_time ? 0 : IGREC_PERM;
-  malloc_strcpy(p->igmask, ign);
-  malloc_strcpy(p->user, from);
-  malloc_strcpy(p->msg, mnote);
+  p->igmask = strdup(ign);
+  p->user = strdup(from);
+  p->msg = strdup(mnote);
   if (!noshare) {
     char *mask = str_escape(ign, ':', '\\');
 
@@ -239,9 +239,9 @@ static void addmask_fully(struct chanset_t *chan, maskrec **m, maskrec **global,
   p->added = added;
   p->lastactive = last;
   p->flags = flags;
-  malloc_strcpy(p->mask, mask);
-  malloc_strcpy(p->user, from);
-  malloc_strcpy(p->desc, note);
+  p->mask = strdup(mask);
+  p->user = strdup(from);
+  p->desc = strdup(note);
 }
 
 static void restore_chanban(struct chanset_t *chan, char *host)
@@ -443,10 +443,10 @@ static void restore_ignore(char *host)
       p->expire = atoi(expi);
       p->added = atoi(added);
       p->flags = flags;
-      malloc_strcpy(p->igmask, host);
-      malloc_strcpy(p->user, user);
+      p->igmask = strdup(host);
+      p->user = strdup(user);
       if (desc)
-	malloc_strcpy(p->msg, desc);
+	p->msg = strdup(desc);
       else
 	p->msg = NULL;
       return;
@@ -762,7 +762,7 @@ int readuserfile(char *file, struct userrec **ret)
 		cr->flags = fr.chan;
 		cr->flags_udef = fr.udef_chan;
 		if (s[0])
-		  malloc_strcpy(cr->info, s);
+		  cr->info = strdup(s);
 		else
 		  cr->info = NULL;
 	      }
@@ -859,7 +859,7 @@ int readuserfile(char *file, struct userrec **ret)
 		list = malloc(sizeof(struct list_type));
 
 		list->next = NULL;
-		malloc_strcpy(list->extra, s);
+		list->extra = strdup(s);
 		list_append((&ue->u.list), list);
 		ok = 1;
 	      }
@@ -872,7 +872,7 @@ int readuserfile(char *file, struct userrec **ret)
 	      ue->u.list = malloc(sizeof(struct list_type));
 
 	      ue->u.list->next = NULL;
-	      malloc_strcpy(ue->u.list->extra, s);
+	      ue->u.list->extra = strdup(s);
 	      list_insert((&u->entries), ue);
 	    }
 	  }

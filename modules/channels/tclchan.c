@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.4 2001/12/08 16:28:29 ite Exp $
+ * $Id: tclchan.c,v 1.5 2002/01/16 22:09:40 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1586,7 +1586,7 @@ static int tcl_renudef STDVAR
   for (ul = udef; ul; ul = ul->next) {
     if (ul->type == type && !strcasecmp(ul->name, argv[2])) {
       free(ul->name);
-      malloc_strcpy(ul->name, argv[3]);
+      ul->name = strdup(argv[3]);
       found = 1;
     }
   }

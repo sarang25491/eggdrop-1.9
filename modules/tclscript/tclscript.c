@@ -210,7 +210,7 @@ static int my_create_cmd(void *ignore, script_command_t *info)
 		cmdname = msprintf("%s_%s", info->class, info->name);
 	}
 	else {
-		malloc_strcpy(cmdname, info->name);
+		cmdname = strdup(info->name);
 	}
 	Tcl_CreateObjCommand(interp, cmdname, my_command_handler, (ClientData) info, NULL);
 	free(cmdname);
@@ -545,7 +545,7 @@ char *tclscript_LTX_start(Function *global_funcs)
 	/* interp = Tcl_CreateInterp(); */
 	ginterp = interp;
 
-	malloc_strcpy(error_logfile, "logs/tcl_errors.log");
+	error_logfile = strdup("logs/tcl_errors.log");
 	Tcl_LinkVar(ginterp, "error_logfile", (char *)&error_logfile, TCL_LINK_STRING);
 
 	registry_add_simple_chains(my_functions);

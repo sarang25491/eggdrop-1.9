@@ -82,7 +82,7 @@ AC_CHECK_FUNCS(clock dprintf fsync getdtablesize getrusage isascii)
 AC_CHECK_FUNCS(random srandom rename setpgid sigaction sigemptyset uname)
 
 # Check for these functions, and replace those not found
-AC_REPLACE_FUNCS(memcpy memset strcasecmp strncasecmp strftime)
+AC_REPLACE_FUNCS(memcpy memset strcasecmp strncasecmp strftime strdup)
 AC_REPLACE_FUNCS(inet_aton inet_ntop inet_pton)
 
 # These all share a common file: snprintf.c
