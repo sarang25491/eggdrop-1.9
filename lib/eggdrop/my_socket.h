@@ -17,5 +17,6 @@ int socket_get_error(int sock);
 int socket_accept(int sock, char **peer_ip, int *peer_port);
 int socket_valid_ip(const char *ip);
 int socket_ip_to_uint(const char *ip, unsigned int *longip);
+int socket_ipv6_to_dots(const char *ip, char *dots);
 
 #endif

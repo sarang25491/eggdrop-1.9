@@ -109,6 +109,7 @@ static int telnet_on_newclient(void *client_data, int idx, int newidx, const cha
 	sockbuf_attach_filter(newidx, &telnet_filter, flags);
 	linemode_on(newidx);
 
+	egg_iprintf(newidx, "Hello %s/%d!\r\n", peer_ip, peer_port);
 	/* Stealth logins are where we don't say anything until we know they
 	 * are a valid user. */
 	if (core_config.telnet_stealth) {

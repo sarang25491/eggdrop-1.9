@@ -305,7 +305,7 @@ static int reverse_ip(const char *host, char *reverse)
 
 static int dns_make_query(const char *host, int type, char **buf, int *query_len, int (*callback)(), void *client_data)
 {
-	char *newhost = NULL;
+	char *newhost;
 	int len = 0;
 	int ns_type = 0;
 	int i;
@@ -324,10 +324,19 @@ static int dns_make_query(const char *host, int type, char **buf, int *query_len
 
 		/* We need to transform the ip address into the proper form
 		 * for reverse lookup. */
-		newhost = (char *)malloc(strlen(host) + 14);
-		reverse_ip(host, newhost);
-		strcat(newhost, ".in-addr.arpa");
-		host = newhost;
+		if (strchr(host, ':')) {
+			char temp[65];
+
+			socket_ipv6_to_dots(host, temp);
+			newhost = malloc(strlen(temp) + 10);
+			reverse_ip(temp, newhost);
+			strcat(newhost, ".in6.arpa");
+		}
+		else {
+			newhost = (char *)malloc(strlen(host) + 14);
+			reverse_ip(host, newhost);
+			strcat(newhost, ".in-addr.arpa");
+		}
 		ns_type = 12; /* PTR (reverse lookup) */
 	}
 	else {
@@ -341,15 +350,17 @@ static int dns_make_query(const char *host, int type, char **buf, int *query_len
 		if (type == DNS_IPV4) ns_type = 1; /* IPv4 */
 		else if (type == DNS_IPV6) ns_type = 28; /* IPv6 */
 		else return(-1);
+		newhost = host;
 	}
 
-	*buf = (char *)malloc(strlen(host) + 512);
+	*buf = (char *)malloc(strlen(newhost) + 512);
 	len = make_header(*buf, query_id);
-	len += cut_host(host, *buf + len);
+	len += cut_host(newhost, *buf + len);
 	(*buf)[len] = 0; len++; (*buf)[len] = ns_type; len++;
 	(*buf)[len] = 0; len++; (*buf)[len] = 1; len++;
-	if (newhost) free(newhost);
 	*query_len = len;
+
+	if (newhost != host) free(newhost);
 
 	q = calloc(1, sizeof(*q));
 	q->id = query_id;

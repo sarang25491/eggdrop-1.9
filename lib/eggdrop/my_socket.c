@@ -267,3 +267,28 @@ int socket_ip_to_uint(const char *ip, unsigned int *longip)
 	*longip = htonl(addr.s_addr);
 	return(0);
 }
+
+/* Converts shorthand ipv6 notation (123:456::789) into long dotted-decimal
+ * notation. 'dots' must be 16*4+1 = 65 bytes long. */
+int socket_ipv6_to_dots(const char *ip, char *dots)
+{
+#ifndef DO_IPV6
+	dots[0] = 0;
+	return(-1);
+#else
+	struct in6_addr buf;
+
+	dots[0] = 0;
+	if (inet_pton(AF_INET6, ip, &buf) <= 0) return(-1);
+	sprintf(dots, "%u.%u.%u.%u.%u.%u.%u.%u.%u.%u.%u.%u.%u.%u.%u.%u",
+		buf.in6_u.u6_addr8[0], buf.in6_u.u6_addr8[1],
+		buf.in6_u.u6_addr8[2], buf.in6_u.u6_addr8[3],
+		buf.in6_u.u6_addr8[4], buf.in6_u.u6_addr8[5],
+		buf.in6_u.u6_addr8[6], buf.in6_u.u6_addr8[7],
+		buf.in6_u.u6_addr8[8], buf.in6_u.u6_addr8[9],
+		buf.in6_u.u6_addr8[10], buf.in6_u.u6_addr8[11],
+		buf.in6_u.u6_addr8[12], buf.in6_u.u6_addr8[13],
+		buf.in6_u.u6_addr8[14], buf.in6_u.u6_addr8[15]
+	);
+#endif
+}
