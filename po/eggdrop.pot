@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-06-15 06:15-0500\n"
+"POT-Creation-Date: 2004-06-15 12:15-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -460,283 +460,283 @@ msgid ""
 "tclversion]\\n    Reported patchlevel: [info patchlevel]\""
 msgstr ""
 
-#: src/core_party.c:48
+#: src/core_party.c:49
 msgid "Syntax: join <channel>"
 msgstr ""
 
-#: src/core_party.c:81
+#: src/core_party.c:87
 msgid "Syntax: whisper <partylineuser> <msg>"
 msgstr ""
 
-#: src/core_party.c:87
+#: src/core_party.c:93
 #, c-format
 msgid "No such user '%s'."
 msgstr ""
 
-#: src/core_party.c:103
+#: src/core_party.c:109
 msgid "That setting does not exist."
 msgstr ""
 
-#: src/core_party.c:113
+#: src/core_party.c:119
 msgid "Syntax: get <path>"
 msgstr ""
 
-#: src/core_party.c:122
+#: src/core_party.c:128
 msgid "Current value: null (unset)"
 msgstr ""
 
-#: src/core_party.c:134
+#: src/core_party.c:140
 msgid "Syntax: set <path> [new value]"
 msgstr ""
 
-#: src/core_party.c:147 src/core_party.c:169
+#: src/core_party.c:153 src/core_party.c:175
 #, c-format
 msgid "Old value: '%s'"
 msgstr ""
 
-#: src/core_party.c:150 src/core_party.c:173
+#: src/core_party.c:156 src/core_party.c:179
 #, c-format
 msgid "New value: '%s'"
 msgstr ""
 
-#: src/core_party.c:151 src/core_party.c:174
+#: src/core_party.c:157 src/core_party.c:180
 msgid "New value: null (unset)"
 msgstr ""
 
-#: src/core_party.c:161
+#: src/core_party.c:167
 msgid "Syntax: unset <path>"
 msgstr ""
 
-#: src/core_party.c:170
+#: src/core_party.c:176
 msgid "Old value: null (unset)"
-msgstr ""
-
-#: src/core_party.c:184
-#, c-format
-msgid "I am %1$s, running Eggdrop %2$s."
-msgstr ""
-
-#: src/core_party.c:185
-#, c-format
-msgid "Owner: %s"
-msgstr ""
-
-#: src/core_party.c:186
-#, c-format
-msgid "Admin: %s"
-msgstr ""
-
-#: src/core_party.c:188
-#, c-format
-msgid "OS: %1$s %2$s"
 msgstr ""
 
 #: src/core_party.c:190
 #, c-format
+msgid "I am %1$s, running Eggdrop %2$s."
+msgstr ""
+
+#: src/core_party.c:191
+#, c-format
+msgid "Owner: %s"
+msgstr ""
+
+#: src/core_party.c:192
+#, c-format
+msgid "Admin: %s"
+msgstr ""
+
+#: src/core_party.c:194
+#, c-format
+msgid "OS: %1$s %2$s"
+msgstr ""
+
+#: src/core_party.c:196
+#, c-format
 msgid "Help path: %s (%d help entries loaded)"
 msgstr ""
 
-#: src/core_party.c:198 src/core_party.c:305 src/main.c:142
+#: src/core_party.c:204 src/core_party.c:311 src/main.c:141
 msgid "Saving user file..."
 msgstr ""
 
-#: src/core_party.c:200 src/main.c:144
+#: src/core_party.c:206 src/main.c:143
 msgid "Saving config file..."
 msgstr ""
 
-#: src/core_party.c:208
+#: src/core_party.c:214
 msgid "Please use at least 6 characters."
 msgstr ""
 
-#: src/core_party.c:212
+#: src/core_party.c:218
 #, c-format
 msgid "Changed password to '%s'."
 msgstr ""
 
-#: src/core_party.c:226
+#: src/core_party.c:232
 msgid "Partyline members:"
 msgstr ""
 
-#: src/core_party.c:307
+#: src/core_party.c:313
 #, c-format
 msgid "Bot shutting down: %s"
 msgstr ""
 
-#: src/core_party.c:308
+#: src/core_party.c:314
 msgid "Bot shutting down."
 msgstr ""
 
-#: src/core_party.c:319
+#: src/core_party.c:325
 msgid "Syntax: +user <handle>"
 msgstr ""
 
-#: src/core_party.c:323
+#: src/core_party.c:329
 #, c-format
 msgid "User '%s' already exists!"
 msgstr ""
 
-#: src/core_party.c:327
+#: src/core_party.c:333
 #, c-format
 msgid "User '%s' created."
 msgstr ""
 
-#: src/core_party.c:328
+#: src/core_party.c:334
 #, c-format
 msgid "Could not create user '%s'."
 msgstr ""
 
-#: src/core_party.c:337
+#: src/core_party.c:343
 msgid "Syntax: -user <handle>"
 msgstr ""
 
-#: src/core_party.c:341 src/core_party.c:366 src/core_party.c:404
+#: src/core_party.c:347 src/core_party.c:372 src/core_party.c:410
 #, c-format
 msgid "User '%s' not found."
 msgstr ""
 
-#: src/core_party.c:343
+#: src/core_party.c:349
 #, c-format
 msgid "Deleting user '%s'."
 msgstr ""
 
-#: src/core_party.c:356
+#: src/core_party.c:362
 msgid "Syntax: +host [handle] <host>"
 msgstr ""
 
-#: src/core_party.c:373
+#: src/core_party.c:379
 msgid "Only valid users can add hosts."
 msgstr ""
 
-#: src/core_party.c:378
+#: src/core_party.c:384
 #, c-format
 msgid "Added '%1$s' to user '%2$s'."
 msgstr ""
 
-#: src/core_party.c:394
+#: src/core_party.c:400
 msgid "Syntax: -host [handle] <host>"
 msgstr ""
 
-#: src/core_party.c:411
+#: src/core_party.c:417
 msgid "Only valid users can remove hosts."
 msgstr ""
 
-#: src/core_party.c:416
+#: src/core_party.c:422
 #, c-format
 msgid "Mask '%1$s' not found for user '%2$s'."
 msgstr ""
 
-#: src/core_party.c:419
+#: src/core_party.c:425
 #, c-format
 msgid "Removed '%1$s' from user '%2$s'."
 msgstr ""
 
-#: src/core_party.c:442
+#: src/core_party.c:448
 msgid "Syntax: chattr <handle> [channel] <+/-flags>"
 msgstr ""
 
-#: src/core_party.c:454
+#: src/core_party.c:460
 #, c-format
 msgid "Flags for %s are now '%s'."
 msgstr ""
 
-#: src/core_party.c:456
+#: src/core_party.c:462
 #, c-format
 msgid "'%s' is not a valid user."
 msgstr ""
 
-#: src/core_party.c:468
+#: src/core_party.c:474
 msgid "Syntax: help <section>"
 msgstr ""
 
-#: src/core_party.c:474
+#: src/core_party.c:480
 #, c-format
 msgid "No help found for '%s'."
 msgstr ""
 
-#: src/core_party.c:494
+#: src/core_party.c:500
 msgid "Loaded modules:"
 msgstr ""
 
-#: src/core_party.c:503
+#: src/core_party.c:509
 msgid "Syntax: loadmod <module name>"
-msgstr ""
-
-#: src/core_party.c:508
-#, c-format
-msgid "Module '%s' loaded successfully."
-msgstr ""
-
-#: src/core_party.c:511
-#, c-format
-msgid "Module '%s' is already loaded."
 msgstr ""
 
 #: src/core_party.c:514
 #, c-format
-msgid "Module '%s' could not be loaded."
+msgid "Module '%s' loaded successfully."
 msgstr ""
 
 #: src/core_party.c:517
+#, c-format
+msgid "Module '%s' is already loaded."
+msgstr ""
+
+#: src/core_party.c:520
+#, c-format
+msgid "Module '%s' could not be loaded."
+msgstr ""
+
+#: src/core_party.c:523
 #, c-format
 msgid ""
 "Module '%s' does not have a valid initialization function. Perhaps it is not "
 "an eggdrop module?"
 msgstr ""
 
-#: src/core_party.c:526
+#: src/core_party.c:532
 msgid "Syntax: unloadmod <module name>"
 msgstr ""
 
-#: src/core_party.c:531
+#: src/core_party.c:537
 #, c-format
 msgid "Module '%s' unloaded successfully."
 msgstr ""
 
-#: src/core_party.c:534
+#: src/core_party.c:540
 #, c-format
 msgid "Module '%s' is not loaded."
 msgstr ""
 
-#: src/core_party.c:537
+#: src/core_party.c:543
 #, c-format
 msgid ""
 "Module '%s' has dependencies that are still loaded. You must unload them "
 "first."
 msgstr ""
 
-#: src/core_party.c:540
+#: src/core_party.c:546
 #, c-format
 msgid "Module '%s' refuses to be unloaded by you!"
 msgstr ""
 
-#: src/logfile.c:124
+#: src/logfile.c:125
 msgid "Cycling logfiles..."
 msgstr ""
 
-#: src/logfile.c:223 src/logfile.c:265
+#: src/logfile.c:225 src/logfile.c:284
 #, c-format
 msgid "Last message repeated %d time(s).\n"
 msgstr ""
 
 #. It's too big.
-#: src/logfile.c:251
+#: src/logfile.c:270
 #, c-format
 msgid "Cycling logfile %s: over max-logsize (%d kilobytes)."
 msgstr ""
 
-#: src/main.c:146
+#: src/main.c:145
 msgid "Bot shutting down: received TERMINATE signal."
 msgstr ""
 
-#: src/main.c:151
+#: src/main.c:150
 msgid "Received TERMINATE signal (ignoring)."
 msgstr ""
 
-#: src/main.c:157
+#: src/main.c:156
 msgid "Received QUIT signal (ignoring)."
 msgstr ""
 
-#: src/main.c:164
+#: src/main.c:163
 msgid "Received HUP signal (ignoring)."
 msgstr ""
 
@@ -744,14 +744,14 @@ msgstr ""
 msgid "Received ILL signal (ignoring)."
 msgstr ""
 
-#: src/main.c:183
+#: src/main.c:184
 #, c-format
 msgid ""
 "\n"
 "Usage: %s [OPTIONS]... [FILE]\n"
 msgstr ""
 
-#: src/main.c:184
+#: src/main.c:185
 #, c-format
 msgid ""
 "\n"
@@ -766,16 +766,16 @@ msgid ""
 msgstr ""
 
 #. bug: option not considered.
-#: src/main.c:251
+#: src/main.c:252
 #, c-format
 msgid "%s: option unknown: %c\n"
 msgstr ""
 
-#: src/main.c:286
+#: src/main.c:287
 #, c-format
 msgid "Warning: timer drift (%d minutes)."
 msgstr ""
 
-#: src/main.c:420
+#: src/main.c:424
 msgid "Help file core_commands.xml could not be opened."
 msgstr ""
