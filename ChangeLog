@@ -1,3 +1,22 @@
+2003-12-20 00:34  stdarg <stdarg@techmonkeys.org>
+
+	* config.xml, lib/eggdrop/eggconfig.c, lib/eggdrop/eggconfig.h,
+	modules/proxy/http.c, modules/proxy/proxy.c,
+	modules/proxy/socks5.c, modules/script/scriptconfig.c,
+	modules/server/nicklist.c, modules/server/nicklist.h,
+	modules/server/party_commands.c, modules/server/server.c,
+	src/core_binds.c, src/core_binds.h, src/core_config.c,
+	src/core_party.c, src/main.c:
+
+	
+	* Server saves nick list and server list 
+
+2003-12-20 00:15  Automatic CVS Scripts
+
+	* po/eggdrop.pot:
+
+	Pots 
+
 2003-12-19 22:12  stdarg <stdarg@techmonkeys.org>
 
 	* modules/proxy/.cvsignore:
