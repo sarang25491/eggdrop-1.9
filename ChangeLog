@@ -1,3 +1,10 @@
+2002-05-16 22:56  stdarg <stdarg@techmonkeys.org>
+
+	* src/: botnet.c, dcc.c, dccutil.c:
+
+	
+	* check_tcl_chon wasn't being called with the real idx 
+
 2002-05-13 17:40  stdarg <stdarg@techmonkeys.org>
 
 	* modules/ctcp/ctcp.c:
