@@ -3,8 +3,10 @@
  *
  */
 
-#include <stdio.h> /* NULL */
 #include <eggdrop/eggdrop.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
 typedef struct script_net_info {
 	struct script_net_info *prev, *next;

@@ -1,4 +1,6 @@
 #include <eggdrop/eggdrop.h>
+#include <string.h>
+#include <stdlib.h>
 
 /* Prototypes for the commands we create in this file. */
 static int script_bind(char *table_name, char *flags, char *mask, script_callback_t *callback);

@@ -1,6 +1,7 @@
 #include <eggdrop/eggdrop.h>
 #include <eggdrop/flags.h>
 #include <eggdrop/users.h>
+#include <string.h>
 
 static char *script_uid_to_handle(int uid)
 {

@@ -1,4 +1,5 @@
 #include <eggdrop/eggdrop.h>
+#include <string.h>
 #include "ircparty.h"
 
 static int on_privmsg(void *client_data, partymember_t *dest, partymember_t *src, const char *text, int len);

@@ -1,5 +1,7 @@
 #include <eggdrop/eggdrop.h>
 #include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
 #include "ircparty.h"
 
 irc_config_t irc_config = {0};

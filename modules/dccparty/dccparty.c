@@ -1,5 +1,7 @@
 #include <eggdrop/eggdrop.h>
 #include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
 #include "dccparty.h"
 
 dcc_config_t dcc_config = {0};

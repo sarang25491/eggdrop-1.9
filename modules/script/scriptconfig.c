@@ -1,4 +1,6 @@
 #include <eggdrop/eggdrop.h>
+#include <string.h>
+#include <stdlib.h>
 
 static void *resolve_path(void *root, char *path)
 {

@@ -5,6 +5,8 @@
  */
 
 #include <eggdrop/eggdrop.h>
+#include <string.h>
+#include <stdlib.h>
 
 #ifdef TIME_WITH_SYS_TIME
 #  include <sys/time.h>

@@ -2,7 +2,8 @@
  * scripttimer.c - script interface for timer functions
  */
 
-#include <stdio.h> /* NULL */
+#include <stdio.h>
+#include <stdlib.h>
 #include <eggdrop/eggdrop.h>
 
 static int script_single_timer(int nargs, int sec, int usec, script_callback_t *callback);

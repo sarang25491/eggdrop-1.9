@@ -1,5 +1,7 @@
 #include <eggdrop/eggdrop.h>
 #include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
 #include "oldbotnet.h"
 
 EXPORT_SCOPE int oldbotnet_LTX_start(egg_module_t *modinfo);

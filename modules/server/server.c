@@ -5,6 +5,8 @@
 #define MODULE_NAME "server"
 #define MAKING_SERVER
 #include <eggdrop/eggdrop.h>
+#include <string.h>
+#include <stdlib.h>
 #include "server.h"
 #include "servsock.h"
 #include "serverlist.h"

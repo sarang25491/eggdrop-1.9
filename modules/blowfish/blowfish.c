@@ -26,14 +26,16 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: blowfish.c,v 1.13 2003/12/16 22:36:37 wcc Exp $";
+static const char rcsid[] = "$Id: blowfish.c,v 1.14 2003/12/17 08:06:52 wcc Exp $";
 #endif
 
 #define MODULE_NAME "encryption"
 #define MAKING_ENCRYPTION
 
-#include <sys/types.h>
 #include <eggdrop/eggdrop.h>
+#include <sys/types.h>
+#include <stdlib.h>
+#include <string.h>
 #include "blowfish.h"
 #include "bf_tab.h"		/* P-box P-array, S-box */
 

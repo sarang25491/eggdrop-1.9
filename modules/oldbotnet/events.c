@@ -1,5 +1,6 @@
 #include <eggdrop/eggdrop.h>
 #include <ctype.h>
+#include <stdlib.h>
 #include "oldbotnet.h"
 
 static int on_pub(const char *name, int cid, partymember_t *src, const char *text, int len);
