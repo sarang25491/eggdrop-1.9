@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: server.c,v 1.25 2002/05/24 06:52:05 stdarg Exp $";
+static const char rcsid[] = "$Id: server.c,v 1.26 2002/05/28 20:36:06 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "server"
@@ -37,6 +37,7 @@ static eggdrop_t *egg = NULL;
 
 static int ctcp_mode;
 static int serv;		/* sock # of server currently */
+static int servidx;		/* idx of server */
 static int strict_host;		/* strict masking of hosts ? */
 static char newserver[121];	/* new server? */
 static int newserverport;	/* new server port? */
@@ -1321,8 +1322,6 @@ static void server_5minutely()
       /* Uh oh!  Never got pong from last time, five minutes ago!
        * Server is probably stoned.
        */
-      int servidx = findanyidx(serv);
-
       disconnect_server(servidx);
       lostdcc(servidx);
       putlog(LOG_SERV, "*", _("Server got stoned; jumping..."));
@@ -1373,7 +1372,6 @@ static void server_die()
 static void server_report(int idx, int details)
 {
   char s1[64], s[128];
-  int servidx;
 
   if (server_online) {
     dprintf(idx, "    Online as: %s%s%s (%s)\n", botname,
@@ -1395,7 +1393,7 @@ static void server_report(int idx, int details)
     }
   }
   if ((trying_server || server_online) &&
-          ((servidx = findanyidx(serv)) != (-1))) {
+          (servidx != (-1))) {
     dprintf(idx, "    Server %s %d %s\n", dcc[servidx].host, dcc[servidx].port,
 	    trying_server ? "(trying)" : s);
   } else
@@ -1518,7 +1516,7 @@ static Function server_table[] =
   (Function) & cycle_time,	/* int					*/
   (Function) & default_port,	/* int					*/
   (Function) & server_online,	/* int					*/
-  (Function) NULL,		/* min_servs - removed useless feature	*/
+  (Function) &servidx,		/* int, server's idx			*/
   /* 28 - 31 */
   (Function) 0,		/* p_tcl_bind_list			*/
   (Function) 0,		/* p_tcl_bind_list			*/
@@ -1547,6 +1545,7 @@ char *start(eggdrop_t *eggdrop)
    * globally.
    */
   serv = -1;
+  servidx = -1;
   strict_host = 1;
   botname[0] = 0;
   trying_server = 0L;

@@ -26,7 +26,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: botmsg.c,v 1.37 2002/05/26 08:34:13 stdarg Exp $";
+static const char rcsid[] = "$Id: botmsg.c,v 1.38 2002/05/28 20:36:07 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -774,7 +774,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
   }
   if (idx == (-2))
     return NOTE_OK;		/* Error msg from a tandembot: don't store */
-  status = storenote(from, to, msg, dcc[idx].sock, NULL, 0);
+  status = storenote(from, to, msg, idx, NULL, 0);
   if (status < 0) status = NOTE_ERROR;
   else if (status == NOTE_AWAY) {
       /* User is away in all sessions -- just notify the user that a

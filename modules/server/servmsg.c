@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: servmsg.c,v 1.13 2002/05/05 16:40:36 tothwolf Exp $";
+static const char rcsid[] = "$Id: servmsg.c,v 1.14 2002/05/28 20:36:06 stdarg Exp $";
 #endif
 */
 
@@ -182,7 +182,7 @@ static int match_my_nick(char *nick)
 static int got001(char *from, char *ignore, char *msg)
 {
   struct server_list *x;
-  int i, servidx = findanyidx(serv);
+  int i;
   struct chanset_t *chan;
 
   /* Ok...param #1 of 001 = what server thinks my nick is */
@@ -258,10 +258,7 @@ static int got442(char *from, char *ignore, char *msg)
 static void nuke_server(char *reason)
 {
   if (serv >= 0) {
-    int servidx = findanyidx(serv);
-
-    if (reason && (servidx > 0))
-      dprintf(servidx, "QUIT :%s\n", reason);
+    if (reason && (servidx > 0)) dprintf(servidx, "QUIT :%s\r\n", reason);
     disconnect_server(servidx);
     lostdcc(servidx);
   }
@@ -816,8 +813,6 @@ static int gotmode(char *from, char *ignore, char *msg)
       /* umode +r? - D0H dalnet uses it to mean something different */
       fixcolon(msg);
       if ((msg[0] == '+') && strchr(msg, 'r')) {
-	int servidx = findanyidx(serv);
-
 	putlog(LOG_MISC | LOG_JOIN, "*",
 	       "%s has me i-lined (jumping)", dcc[servidx].host);
 	nuke_server("i-lines suck");
@@ -835,7 +830,8 @@ static void disconnect_server(int idx)
   if (dcc[idx].sock >= 0)
     killsock(dcc[idx].sock);
   dcc[idx].sock = (-1);
-  serv = (-1);
+  serv = -1;
+  servidx = -1;
   botuserhost[0] = 0;
 }
 
@@ -1016,7 +1012,6 @@ static void connect_server(void)
 {
   char pass[121], botserver[UHOSTLEN];
   static int oldserv = -1;
-  int servidx;
   unsigned int botserverport = 0;
 
   waiting_for_awake = 0;
@@ -1126,10 +1121,9 @@ static void server_resolve_success(int servidx)
     strcpy(botname, origbotname);
     /* Start alternate nicks from the beginning */
     altnick_char = 0;
-    if (pass[0])
-      dprintf(DP_MODE, "PASS %s\n", pass);
-    dprintf(DP_MODE, "NICK %s\n", botname);
-    dprintf(DP_MODE, "USER %s localhost %s :%s\n", botuser, dcc[servidx].host, botrealname);
+    if (pass[0]) dprintf(DP_MODE, "PASS %s\r\n", pass);
+    dprintf(DP_MODE, "NICK %s\r\n", botname);
+    dprintf(DP_MODE, "USER %s localhost %s :%s\r\n", botuser, dcc[servidx].host, botrealname);
     /* Wait for async result now */
   }
 }

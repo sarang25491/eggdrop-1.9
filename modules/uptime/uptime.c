@@ -34,7 +34,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: uptime.c,v 1.10 2002/05/17 07:29:25 stdarg Exp $";
+static const char rcsid[] = "$Id: uptime.c,v 1.11 2002/05/28 20:36:07 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "uptime"
@@ -148,7 +148,7 @@ int send_uptime(void)
 	struct  sockaddr_in sai;
 	struct  stat st;
 	PackUp  *mem;
-	int     len, servidx = findanyidx(serv);
+	int     len;
 	
 	uptimecookie = (uptimecookie + 1) * 18457;
 	upPack.cookie = htonl(uptimecookie);

@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: tclfiles.c,v 1.3 2002/05/05 16:40:35 tothwolf Exp $";
+static const char rcsid[] = "$Id: tclfiles.c,v 1.4 2002/05/28 20:36:06 stdarg Exp $";
 #endif
 */
 
@@ -110,11 +110,10 @@ static int tcl_getlink STDVAR
 
 static int tcl_setpwd STDVAR
 {
-  int i, idx;
+  int idx;
 
   BADARGS(3, 3, " idx dir");
-  i = atoi(argv[1]);
-  idx = findanyidx(i);
+  idx = atoi(argv[1]);
   if ((idx < 0) || (dcc[idx].type != &DCC_FILES)) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
     return TCL_ERROR;
@@ -126,11 +125,10 @@ static int tcl_setpwd STDVAR
 
 static int tcl_getpwd STDVAR
 {
-  int i, idx;
+  int idx;
 
   BADARGS(2, 2, " idx");
-  i = atoi(argv[1]);
-  idx = findanyidx(i);
+  idx = atoi(argv[1]);
   if ((idx < 0) || (dcc[idx].type != &DCC_FILES)) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
     return TCL_ERROR;
@@ -623,8 +621,7 @@ static int tcl_fileresend_send(ClientData cd, Tcl_Interp *irp, int argc,
   char s[21];
 
   BADARGS(3, 4, " idx filename ?nick?");
-  i = atoi(argv[1]);
-  idx = findanyidx(i);
+  idx = atoi(argv[1]);
   if (idx < 0 || dcc[idx].type != &DCC_FILES) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
     return TCL_ERROR;

@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: server.h,v 1.6 2002/05/05 16:40:36 tothwolf Exp $
+ * $Id: server.h,v 1.7 2002/05/28 20:36:06 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_SERVER_SERVER_H
@@ -64,7 +64,7 @@
 #define cycle_time (*(int *)(server_funcs[23]))
 #define default_port (*(int *)(server_funcs[24]))
 #define server_online (*(int *)(server_funcs[25]))
-/* #define min_servs (*(int *)(server_funcs[26])) -- removed useless feature */
+#define servidx (*(int *)(server_funcs[26]))
 /* 27 - 30 */
 #define H_raw (*(p_tcl_bind_list *)(server_funcs[27]))
 #define H_wall (*(p_tcl_bind_list *)(server_funcs[28]))
