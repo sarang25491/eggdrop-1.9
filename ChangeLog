@@ -1,3 +1,9 @@
+2002-08-11 20:50  stdarg <stdarg@techmonkeys.org>
+
+	* testcode/: client.c, my_poll.c, sockbuf.c:
+
+	[no log message] 
+
 2002-08-10 09:31  Matthew Hallacy <poptix@techmonkeys.org>
 
 	* src/: chanprog.c, patch.h:
