@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: inet_ntop.h,v 1.4 2003/01/02 21:33:13 wcc Exp $
+ * $Id: inet_ntop.h,v 1.5 2003/03/07 18:50:17 stdarg Exp $
  */
 
 #ifndef _EGG_INET_NTOP_H
@@ -31,6 +31,7 @@
 # include "config.h"
 #endif
 
+#include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
