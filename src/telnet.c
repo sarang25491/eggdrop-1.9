@@ -1,4 +1,5 @@
 #include <eggdrop/eggdrop.h>
+#include "core_config.h"
 
 /* Possible states of the connection. */
 #define STATE_RESOLVE	0
@@ -24,13 +25,6 @@
 #define STEALTH_LOGIN	1
 
 typedef struct {
-	char *host;
-	int port;
-	int stealth_logins;
-	int max_retries;
-} telnet_config_t;
-
-typedef struct {
 	/* Who we're connected to. */
 	user_t *user;
 	char *nick, *ident, *host, *ip;
@@ -44,13 +38,6 @@ typedef struct {
 	/* Connection state we're in. */
 	int state, count;
 } telnet_session_t;
-
-static telnet_config_t telnet_config = {
-	NULL,	/* vhost */
-	3141,	/* port */
-	0,	/* stealth logins */
-	3	/* max retries */
-};
 
 static int telnet_idx = -1;
 static int telnet_port = 0;
@@ -92,7 +79,7 @@ static sockbuf_handler_t client_handler = {
 int telnet_init()
 {
 	/* Open our listening socket. */
-	telnet_idx = egg_server(telnet_config.host, telnet_config.port, &telnet_port);
+	telnet_idx = egg_server(core_config.telnet_vhost, core_config.telnet_port, &telnet_port);
 	sockbuf_set_handler(telnet_idx, &server_handler, NULL);
 	return(0);
 }
@@ -124,7 +111,7 @@ static int telnet_on_newclient(void *client_data, int idx, int newidx, const cha
 
 	/* Stealth logins are where we don't say anything until we know they
 	 * are a valid user. */
-	if (telnet_config.stealth_logins) {
+	if (core_config.telnet_stealth) {
 		session->state = STATE_RESOLVE;
 	}
 	else {
@@ -134,7 +121,7 @@ static int telnet_on_newclient(void *client_data, int idx, int newidx, const cha
 	}
 
 	/* Start lookups. */
-	egg_ident_lookup(peer_ip, peer_port, telnet_config.port, -1, ident_result, session);
+	egg_ident_lookup(peer_ip, peer_port, telnet_port, -1, ident_result, session);
 	egg_dns_reverse(peer_ip, -1, dns_result, session);
 
 	return(0);
@@ -201,7 +188,7 @@ static int telnet_on_read(void *client_data, int idx, char *data, int len)
 			if (!session->user) {
 				sockbuf_write(session->idx, "Invalid username/password.\r\n\r\n", -1);
 				session->count++;
-				if (session->count > telnet_config.max_retries) {
+				if (session->count > core_config.telnet_max_retries) {
 					kill_session(session);
 					break;
 				}

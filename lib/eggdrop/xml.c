@@ -155,8 +155,14 @@ int xml_node_set_str(char *str, xml_node_t *node, ...)
 	va_end(args);
 	if (!node) return(-1);
 	if (node->text) free(node->text);
-	node->text = strdup(str);
-	node->len = strlen(str);
+	if (str) {
+		node->text = strdup(str);
+		node->len = strlen(str);
+	}
+	else {
+		node->text = NULL;
+		node->len = -1;
+	}
 	return(0);
 }
 

@@ -1,5 +1,4 @@
-/*
- * chanprog.c --
+/* * chanprog.c --
  *
  *	telling the current programmed settings
  *	initializing a lot of stuff and loading the tcl scripts
@@ -24,10 +23,11 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: chanprog.c,v 1.55 2003/02/10 00:09:08 wcc Exp $";
+static const char rcsid[] = "$Id: chanprog.c,v 1.56 2003/02/11 02:32:05 stdarg Exp $";
 #endif
 
 #include "main.h"
+#include "core_config.h"
 #if HAVE_GETRUSAGE
 #include <sys/resource.h>
 #if HAVE_SYS_RUSAGE_H
@@ -47,7 +47,7 @@ static const char rcsid[] = "$Id: chanprog.c,v 1.55 2003/02/10 00:09:08 wcc Exp 
 #include "irccmp.h"		/* irccmp				*/
 
 extern struct userrec	*userlist;
-extern char ver[], myname[], firewall[], motdfile[], userfile[], helpdir[],
+extern char ver[], firewall[], motdfile[], userfile[], helpdir[],
             tempdir[], moddir[], notify_new[], owner[], configfile[];
 extern time_t now, online_since;
 extern int backgrd, term_z, con_chan, cache_hit, cache_miss, firewallport,
@@ -214,7 +214,7 @@ void tell_verbose_status(int idx)
 #endif
 
   i = count_users(userlist);
-  dprintf(idx, _("I am %1$s, running %2$s:  "), myname, ver);
+  dprintf(idx, _("I am %1$s, running %2$s:  "), core_config.botname, ver);
   dprintf(idx, P_("%d user\n", "%d users\n", i), i);
   now2 = now - online_since;
   s[0] = 0;
@@ -273,7 +273,7 @@ void tell_settings(int idx)
   char s[1024];
   struct flag_record fr = {FR_GLOBAL, 0, 0, 0, 0, 0};
 
-  dprintf(idx, _("My name: %s\n"), myname);
+  dprintf(idx, _("My name: %s\n"), core_config.botname);
   if (firewall[0])
     dprintf(idx, _("Firewall: %1$s, port %2$d\n"), firewall, firewallport);
   dprintf(idx, _("Userfile: %1$s   Motd: %2$s\n"), userfile, motdfile);
@@ -332,7 +332,7 @@ void chanprog()
   /* We should be safe now */
   call_hook(HOOK_REHASH);
   protect_readonly = 1;
-  if (!myname[0])
+  if (!core_config.botname)
     fatal("Please set the myname setting.\n", 0);
   if (!userfile[0])
     fatal(_("STARTING BOT IN USERFILE CREATION MODE.\n\

@@ -38,16 +38,6 @@ static int socket_name(sockname_t *name, const char *ipaddr, int port)
 {
 	memset(name, 0, sizeof(*name));
 
-	#ifdef DO_IPV6
-	if (inet_pton(AF_INET6, ipaddr, &name->u.ipv6.sin6_addr) > 0) {
-		name->len = sizeof(name->u.ipv6);
-		name->family = PF_INET6;
-		name->u.ipv6.sin6_port = htons(port);
-		name->u.ipv6.sin6_family = AF_INET6;
-		return(0);
-	}
-	#endif
-
 	#ifdef DO_IPV4
 	if (inet_pton(AF_INET, ipaddr, &name->u.ipv4.sin_addr) > 0) {
 		name->len = sizeof(name->u.ipv4);
@@ -58,7 +48,22 @@ static int socket_name(sockname_t *name, const char *ipaddr, int port)
 	}
 	#endif
 
-	return(-1);
+	#ifdef DO_IPV6
+	if (inet_pton(AF_INET6, ipaddr, &name->u.ipv6.sin6_addr) > 0) {
+		name->len = sizeof(name->u.ipv6);
+		name->family = PF_INET6;
+		name->u.ipv6.sin6_port = htons(port);
+		name->u.ipv6.sin6_family = AF_INET6;
+		return(0);
+	}
+	#endif
+
+	/* Invalid name? Then use passive. */
+	name->len = sizeof(name->u.ipv4);
+	name->family = PF_INET;
+	name->u.ipv4.sin_port = htons(port);
+	name->u.ipv4.sin_family = AF_INET;
+	return(0);
 }
 
 int socket_get_name(int sock, char **ip, int *port)
