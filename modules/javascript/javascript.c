@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: javascript.c,v 1.2 2002/05/06 10:33:09 stdarg Exp $";
+static const char rcsid[] = "$Id: javascript.c,v 1.3 2002/05/06 10:41:02 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -636,7 +636,6 @@ static void *journal_playback_h;
 /* Here we process the dcc console .tcl command. */
 static int cmd_js(struct userrec *u, int idx, char *text)
 {
-	char *str;
 	static int curline = 1;
 	int retval;
 	jsval js_rval;
@@ -648,12 +647,14 @@ static int cmd_js(struct userrec *u, int idx, char *text)
 
 	retval = JS_EvaluateScript(global_js_context, global_js_object,
 			text, strlen(text), "console", curline++, &js_rval);
-	if (retval) {
+	if (!retval) {
 		dprintf(idx, "JS Error: unknown for now\n");
 	}
 	else {
-		str = JSVAL_TO_STRING(js_rval);
-		dprintf(idx, "JS: %s\n", str);
+		JSString *str;
+
+		str = JS_ValueToString(global_js_context, js_rval);
+		dprintf(idx, "JS: %s\n", JS_GetStringBytes(str));
 	}
 	return(0);
 }
