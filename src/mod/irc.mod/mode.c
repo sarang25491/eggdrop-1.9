@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.56 2001/10/14 21:01:09 tothwolf Exp $
+ * $Id: mode.c,v 1.57 2001/10/19 01:55:08 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -655,7 +655,7 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from,
       for (b = cycle ? chan->bans : global_bans; b; b = b->next) {
 	if (wild_match(b->mask, who)) {
 	  if (b->desc && b->desc[0] != '@')
-	    egg_snprintf(resn, sizeof resn, "%s%s", _("banned: "), b->desc);
+	    snprintf(resn, sizeof resn, "%s%s", _("banned: "), b->desc);
 	  else
 	    resn[0] = 0;
 	}

@@ -1,7 +1,7 @@
 /*
  * blowfish.h -- part of blowfish.mod
  *
- * $Id: blowfish.h,v 1.6 2001/04/12 02:39:44 guppy Exp $
+ * $Id: blowfish.h,v 1.7 2001/10/19 01:55:06 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -32,7 +32,7 @@
 #define KEYBYTES	 8
 
 union aword {
-  u_32bit_t word;
+  u_32int_t word;
   u_8bit_t byte[4];
   struct {
 #ifdef WORDS_BIGENDIAN

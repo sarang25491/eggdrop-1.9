@@ -1,7 +1,7 @@
 /*
  * tclirc.c -- part of irc.mod
  *
- * $Id: tclirc.c,v 1.22 2001/06/30 14:51:16 guppy Exp $
+ * $Id: tclirc.c,v 1.23 2001/10/19 01:55:08 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -620,7 +620,7 @@ static int tcl_hand2nick STDVAR
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       simple_sprintf(s, "%s!%s", m->nick, m->userhost);
       u = get_user_by_host(s);
-      if (u && !egg_strcasecmp(u->handle, argv[1])) {
+      if (u && !strcasecmp(u->handle, argv[1])) {
 	Tcl_AppendResult(irp, m->nick, NULL);
 	return TCL_OK;
       }

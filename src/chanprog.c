@@ -5,7 +5,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.34 2001/10/18 09:06:43 stdarg Exp $
+ * $Id: chanprog.c,v 1.35 2001/10/19 01:55:04 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -133,7 +133,7 @@ struct userrec *check_chanlist(const char *host)
   uhost = strtok(NULL, "!");
   for (chan = chanset; chan; chan = chan->next)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next)
-      if (!irccmp(nick, m->nick) && !egg_strcasecmp(uhost, m->userhost))
+      if (!irccmp(nick, m->nick) && !strcasecmp(uhost, m->userhost))
 	return m->user;
   return NULL;
 }
@@ -147,7 +147,7 @@ struct userrec *check_chanlist_hand(const char *hand)
 
   for (chan = chanset; chan; chan = chan->next)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next)
-      if (m->user && !egg_strcasecmp(m->user->handle, hand))
+      if (m->user && !strcasecmp(m->user->handle, hand))
 	return m->user;
   return NULL;
 }
@@ -198,7 +198,7 @@ void set_chanlist(const char *host, struct userrec *rec)
   uhost = strtok(NULL, "!");
   for (chan = chanset; chan; chan = chan->next)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next)
-      if (!irccmp(nick, m->nick) && !egg_strcasecmp(uhost, m->userhost))
+      if (!irccmp(nick, m->nick) && !strcasecmp(uhost, m->userhost))
 	m->user = rec;
 }
 
@@ -376,7 +376,7 @@ Telnet to the bot and enter 'NEW' as your nickname."), 0);
     if (!make_userfile) {
       char tmp[178];
 
-      egg_snprintf(tmp, sizeof tmp, _("USER FILE NOT FOUND!  (try ./eggdrop -m %s to make one)\n"), configfile);
+      snprintf(tmp, sizeof tmp, _("USER FILE NOT FOUND!  (try ./eggdrop -m %s to make one)\n"), configfile);
       fatal(tmp, 0);
     }
     printf(_("\n\nSTARTING BOT IN USERFILE CREATION MODE.\n\
@@ -474,7 +474,7 @@ int isowner(char *name)
       pb++;
     }
     pl = (unsigned int) pb - (unsigned int) pa;
-    if (pl == nl && !egg_strncasecmp(pa, name, nl))
+    if (pl == nl && !strncasecmp(pa, name, nl))
       return (1);
     while (1) {
       if ((*pb == 0) || ((*pb != ',') && (*pb != ' ')))

@@ -1,7 +1,7 @@
 /*
  * transfer.h -- part of transfer.mod
  *
- * $Id: transfer.h,v 1.12 2001/07/26 17:04:34 drummer Exp $
+ * $Id: transfer.h,v 1.13 2001/10/19 01:55:09 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -68,7 +68,7 @@ typedef struct {
   u_16bit_t packet_id;		/* Identification ID, should be equal
 	 			   to TRANSFER_REGET_PACKETID		*/
   u_8bit_t  byte_order;		/* Byte ordering, see byte_order_test()	*/
-  u_32bit_t byte_offset;	/* Number of bytes to skip relative to
+  u_32int_t byte_offset;	/* Number of bytes to skip relative to
 				   the file beginning			*/
 } transfer_reget;
 

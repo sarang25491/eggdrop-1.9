@@ -2,7 +2,7 @@
  * blowfish.c -- part of blowfish.mod
  *   encryption and decryption of passwords
  *
- * $Id: blowfish.c,v 1.25 2001/10/14 22:35:25 ite Exp $
+ * $Id: blowfish.c,v 1.26 2001/10/19 01:55:06 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -51,19 +51,19 @@ static Function *global = NULL;
 
 /* Keep a set of rotating P & S boxes */
 static struct box_t {
-  u_32bit_t *P;
-  u_32bit_t **S;
+  u_32int_t *P;
+  u_32int_t **S;
   char key[81];
   char keybytes;
   time_t lastuse;
 } box[BOXES];
 
-/* static u_32bit_t bf_P[bf_N+2]; */
-/* static u_32bit_t bf_S[4][256]; */
-static u_32bit_t *bf_P;
-static u_32bit_t **bf_S;
+/* static u_32int_t bf_P[bf_N+2]; */
+/* static u_32int_t bf_S[4][256]; */
+static u_32int_t *bf_P;
+static u_32int_t **bf_S;
 
-static void blowfish_encipher(u_32bit_t * xl, u_32bit_t * xr)
+static void blowfish_encipher(u_32int_t * xl, u_32int_t * xr)
 {
   union aword Xl;
   union aword Xr;
@@ -94,7 +94,7 @@ static void blowfish_encipher(u_32bit_t * xl, u_32bit_t * xr)
   *xl = Xr.word;
 }
 
-static void blowfish_decipher(u_32bit_t * xl, u_32bit_t * xr)
+static void blowfish_decipher(u_32int_t * xl, u_32int_t * xr)
 {
   union aword Xl;
   union aword Xr;
@@ -148,9 +148,9 @@ static void blowfish_init(u_8bit_t * key, int keybytes)
 {
   int i, j, bx;
   time_t lowest;
-  u_32bit_t data;
-  u_32bit_t datal;
-  u_32bit_t datar;
+  u_32int_t data;
+  u_32int_t datal;
+  u_32int_t datar;
   union aword temp;
 
   /* drummer: Fixes crash if key is longer than 80 char. This may cause the key
@@ -195,10 +195,10 @@ static void blowfish_init(u_8bit_t * key, int keybytes)
   }
   /* Initialize new buffer */
   /* uh... this is over 4k */
-  box[bx].P = (u_32bit_t *) malloc((bf_N + 2) * sizeof(u_32bit_t));
-  box[bx].S = (u_32bit_t **) malloc(4 * sizeof(u_32bit_t *));
+  box[bx].P = (u_32int_t *) malloc((bf_N + 2) * sizeof(u_32int_t));
+  box[bx].S = (u_32int_t **) malloc(4 * sizeof(u_32int_t *));
   for (i = 0; i < 4; i++)
-    box[bx].S[i] = (u_32bit_t *) malloc(256 * sizeof(u_32bit_t));
+    box[bx].S[i] = (u_32int_t *) malloc(256 * sizeof(u_32int_t));
   bf_P = box[bx].P;
   bf_S = box[bx].S;
   box[bx].keybytes = keybytes;
@@ -265,7 +265,7 @@ static int base64dec(char c)
 
 static void blowfish_encrypt_pass(char *text, char *new)
 {
-  u_32bit_t left, right;
+  u_32int_t left, right;
   int n;
   char *p;
 
@@ -294,7 +294,7 @@ static void blowfish_encrypt_pass(char *text, char *new)
  */
 static char *encrypt_string(char *key, char *str)
 {
-  u_32bit_t left, right;
+  u_32int_t left, right;
   unsigned char *p;
   char *s, *dest, *d;
   int i;
@@ -341,7 +341,7 @@ static char *encrypt_string(char *key, char *str)
  */
 static char *decrypt_string(char *key, char *str)
 {
-  u_32bit_t left, right;
+  u_32int_t left, right;
   char *p, *s, *dest, *d;
   int i;
 

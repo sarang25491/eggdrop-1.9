@@ -22,6 +22,15 @@ AC_AIX
 AC_ISC_POSIX
 AC_MINIX
 
+# Checks for compiler characteristics
+AC_PROG_CC_STDC
+AC_C_BIGENDIAN
+AC_C_CONST
+AC_C_VOLATILE
+AC_C_INLINE
+AC_C_LONG_DOUBLE
+EGG_C_LONG_LONG
+
 # Gettext support
 EGG_GNU_GETTEXT
 
@@ -47,32 +56,42 @@ EGG_CHECK_LIBS
 
 # Checks for header files
 AC_HEADER_DIRENT
+AC_HEADER_STAT
+AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS(sys/time.h)
 AC_HEADER_TIME
-AC_CHECK_HEADERS(sys/select.h sys/rusage.h unistd.h dlfcn.h stdarg.h std_args.h strings.h limits.h)
-EGG_INADDR_LOOPBACK
+AC_CHECK_HEADERS(string.h strings.h ctype.h stdlib.h limits.h unistd.h)
+AC_CHECK_HEADERS(sys/rusage.h sys/select.h stdarg.h std_args.h)
 
-# Checks for typedefs, structures, and compiler characteristics
+# Checks for types and structures
 AC_TYPE_PID_T
 AC_TYPE_SIZE_T
+EGG_TYPE_32BIT
 EGG_TYPE_SOCKLEN_T
-AC_C_CONST
-AC_C_BIGENDIAN
-AC_C_INLINE
-AC_CHECK_SIZEOF(long, 0)
-AC_CHECK_SIZEOF(int, 0)
+EGG_INADDR_LOOPBACK
 
 # Checks for library functions
-AC_CHECK_FUNCS(clock getrusage setpgid uname sigaction sigemptyset rename strcasecmp strncasecmp getdtablesize random srandom dlopen dprintf snprintf vsnprintf isascii inet_aton strftime fsync inet_pton inet_ntop)
-EGG_CHECK_FUNC_VSPRINTF
+AC_CHECK_FUNCS(clock dprintf fsync getdtablesize getrusage isascii)
+AC_CHECK_FUNCS(random srandom rename setpgid sigaction sigemptyset uname)
 
-# Make sure we have stdc headers, since we can't compile without them
-EGG_HEADER_STDC
+# Check for these functions, and replace those not found
+AC_REPLACE_FUNCS(memcpy memset strcasecmp strncasecmp strftime)
+AC_REPLACE_FUNCS(inet_aton inet_ntop inet_pton)
+
+# These all share a common file: snprintf.c
+AC_CHECK_FUNCS(vsnprintf snprintf asprintf vasprintf,,egg_replace_snprintf="yes")
+
+# Check if vsnprintf is C99 compliant
+EGG_FUNC_C99_VSNPRINTF
+
+# Check if we need to compile all or part of snprintf.c
+EGG_REPLACE_SNPRINTF
 
 # Checks for cygwin
 EGG_CYGWIN
 
+# Checks for IPV6
 EGG_IPV6_SUPPORTED
 EGG_IPV6_OPTIONS
 

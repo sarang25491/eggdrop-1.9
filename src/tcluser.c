@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  *
- * $Id: tcluser.c,v 1.26 2001/10/17 02:01:56 poptix Exp $
+ * $Id: tcluser.c,v 1.27 2001/10/19 01:55:05 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -405,7 +405,7 @@ static int tcl_chhandle STDVAR
       x = 0;
     else if (get_user_by_handle(userlist, newhand))
       x = 0;
-    else if (!egg_strcasecmp(botnetnick, newhand) &&
+    else if (!strcasecmp(botnetnick, newhand) &&
              (!(u->flags & USER_BOT) || nextbot (argv [1]) != -1))
       x = 0;
     else if (newhand[0] == '*')
@@ -478,9 +478,9 @@ static int tcl_ignorelist STDVAR
   for (i = global_ign; i; i = i->next) {
     list[0] = i->igmask;
     list[1] = i->msg;
-    egg_snprintf(expire, sizeof expire, "%lu", i->expire);
+    snprintf(expire, sizeof expire, "%lu", i->expire);
     list[2] = expire;
-    egg_snprintf(added, sizeof added, "%lu", i->added);
+    snprintf(added, sizeof added, "%lu", i->added);
     list[3] = added;
     list[4] = i->user;
     p = Tcl_Merge(5, list);
@@ -497,7 +497,7 @@ static int tcl_getuser STDVAR
   struct user_entry *e;
 
   BADARGS(3, 999, " handle type");
-  if (!(et = find_entry_type(argv[2])) && egg_strcasecmp(argv[2], "HANDLE")) {
+  if (!(et = find_entry_type(argv[2])) && strcasecmp(argv[2], "HANDLE")) {
     Tcl_AppendResult(irp, "No such info type: ", argv[2], NULL);
     return TCL_ERROR;
   }
@@ -508,7 +508,7 @@ static int tcl_getuser STDVAR
     } else
       return TCL_OK;		/* silently ignore user * */
   }
-  if (!egg_strcasecmp(argv[2], "HANDLE")) {
+  if (!strcasecmp(argv[2], "HANDLE")) {
     Tcl_AppendResult(irp,u->handle, NULL);
   } else {
   e = find_user_entry(et, u);

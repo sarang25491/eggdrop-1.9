@@ -1,8 +1,8 @@
 /*
- * inet_aton.h
- *   prototypes for inet_aton.c
+ * memcpy.h
+ *   prototypes for memcpy.c
  *
- * $Id: inet_aton.h,v 1.5 2001/10/19 01:55:06 tothwolf Exp $
+ * $Id: memcpy.h,v 1.5 2001/10/19 01:55:06 tothwolf Exp $
  */
 /*
  * Copyright (C) 2000, 2001 Eggheads Development Team
@@ -21,19 +21,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-#ifndef _EGG_INET_ATON_H
-#define _EGG_INET_ATON_H
+#ifndef _EGG_MEMCPY_H
+#define _EGG_MEMCPY_H
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
 
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#include <stdio.h>
 
-#ifndef HAVE_INET_ATON
-int inet_aton(const char *cp, struct in_addr *addr);
+#ifndef HAVE_MEMCPY
+void *memcpy(void *dest, const void *src, size_t n);
 #endif
 
-#endif				/* !_EGG_INET_ATON_H */
+#endif				/* !_EGG_MEMCPY_H */

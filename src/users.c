@@ -10,7 +10,7 @@
  *
  * dprintf'ized, 9nov1995
  *
- * $Id: users.c,v 1.30 2001/10/11 18:24:02 tothwolf Exp $
+ * $Id: users.c,v 1.31 2001/10/19 01:55:05 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -478,9 +478,9 @@ void tell_user(int idx, struct userrec *u, int master)
   else {
     now2 = now - li->laston;
     if (now2 > 86400)
-      egg_strftime(s1, 7, "%d %b", localtime(&li->laston));
+      strftime(s1, 7, "%d %b", localtime(&li->laston));
     else
-      egg_strftime(s1, 6, "%H:%M", localtime(&li->laston));
+      strftime(s1, 6, "%H:%M", localtime(&li->laston));
   }
   spaces[l] = 0;
   dprintf(idx, "%s%s %-5s%5d %-15s %s (%-10.10s)\n", u->handle, spaces,
@@ -497,9 +497,9 @@ void tell_user(int idx, struct userrec *u, int master)
       else {
 	now2 = now - (ch->laston);
 	if (now2 > 86400)
-	  egg_strftime(s1, 7, "%d %b", localtime(&ch->laston));
+	  strftime(s1, 7, "%d %b", localtime(&ch->laston));
 	else
-	  egg_strftime(s1, 6, "%H:%M", localtime(&ch->laston));
+	  strftime(s1, 6, "%H:%M", localtime(&ch->laston));
       }
       fr.match = FR_CHAN;
       fr.chan = ch->flags;
@@ -853,7 +853,7 @@ int readuserfile(char *file, struct userrec **ret)
 	    int ok = 0;
 
 	    for (ue = u->entries; ue && !ok; ue = ue->next)
-	      if (ue->name && !egg_strcasecmp(code + 2, ue->name)) {
+	      if (ue->name && !strcasecmp(code + 2, ue->name)) {
 		struct list_type *list;
 
 		list = malloc(sizeof(struct list_type));
@@ -923,7 +923,7 @@ int readuserfile(char *file, struct userrec **ret)
 
 	      u = get_user_by_handle(bu, code);
 	      for (i = 0; i < dcc_total; i++)
-		if (!egg_strcasecmp(code, dcc[i].nick))
+		if (!strcasecmp(code, dcc[i].nick))
 		  dcc[i].user = u;
 	      u->flags_udef = fr.udef_global;
 	      /* if s starts with '/' it's got file info */
@@ -942,7 +942,7 @@ int readuserfile(char *file, struct userrec **ret)
   for (u = bu; u; u = u->next) {
     struct user_entry *e;
 
-    if (!(u->flags & USER_BOT) && !egg_strcasecmp (u->handle, botnetnick)) {
+    if (!(u->flags & USER_BOT) && !strcasecmp (u->handle, botnetnick)) {
       putlog(LOG_MISC, "*", "(!) I have an user record, but without +b");
       /* u->flags |= USER_BOT; */
     }
@@ -1024,7 +1024,7 @@ void autolink_cycle(char *start)
 	  }
 	  /* did we make it where we're supposed to start?  yay! */
 	  if (!ready)
-	    if (!egg_strcasecmp(u->handle, start)) {
+	    if (!strcasecmp(u->handle, start)) {
 	      ready = 1;
 	      autc = NULL;
 	      /* if starting point is a +h bot, must be in 2nd cycle */
@@ -1042,7 +1042,7 @@ void autolink_cycle(char *start)
 	  int i;
 
 	  i = nextbot(u->handle);
-	  if ((i >= 0) && !egg_strcasecmp(dcc[i].nick, u->handle)) {
+	  if ((i >= 0) && !strcasecmp(dcc[i].nick, u->handle)) {
 	    char *p = _("rejected");
 
 	    /* we're directly connected to the offending bot?! (shudder!) */
@@ -1052,7 +1052,7 @@ void autolink_cycle(char *start)
 	    dprintf(i, "bye %s\n", _("Rejecting bot"));
 	    killsock(dcc[i].sock);
 	    lostdcc(i);
-	  } else if ((i < 0) && egg_strcasecmp(botnetnick, u->handle)) {
+	  } else if ((i < 0) && strcasecmp(botnetnick, u->handle)) {
 	    /* The bot is not connected, but listed in our tandem list! */
 	    putlog(LOG_BOTS, "*", "(!) BUG: rejecting not connected bot %s!",
 		   u->handle);

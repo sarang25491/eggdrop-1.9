@@ -1,7 +1,8 @@
 /*
- * inet_ntop.c -- provides inet_ntop() if necessary.
+ * inet_ntop.c
+ *   provides inet_ntop()
  *
- * $Id: inet_ntop.c,v 1.3 2001/08/10 14:33:11 drummer Exp $
+ * $Id: inet_ntop.c,v 1.4 2001/10/19 01:55:06 tothwolf Exp $
  */
 /*
  * Copyright (c) 1996-1999 by Internet Software Consortium.
@@ -20,11 +21,13 @@
  * SOFTWARE.
  */
 
-#ifndef HAVE_INET_NTOP
-
 #if defined(LIBC_SCCS) && !defined(lint)
 static const char rcsid[] = "$BINDId: inet_ntop.c,v 1.8 1999/10/13 16:39:28 vixie Exp $";
 #endif /* LIBC_SCCS and not lint */
+
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
 
 #include <sys/param.h>
 #include <sys/types.h>
@@ -36,8 +39,6 @@ static const char rcsid[] = "$BINDId: inet_ntop.c,v 1.8 1999/10/13 16:39:28 vixi
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
-
-#include "config.h"
 
 #ifdef SPRINTF_CHAR
 # define SPRINTF(x) strlen(sprintf/**/x)
@@ -66,7 +67,7 @@ static const char *inet_ntop6 (const u_char *src, char *dst, socklen_t size);
  *	Paul Vixie, 1996.
  */
 const char *
-egg_inet_ntop(af, src, dst, size)
+inet_ntop(af, src, dst, size)
 	int af;
 	const void *src;
 	char *dst;
@@ -206,5 +207,3 @@ inet_ntop6(src, dst, size)
 	}
 	return strcpy(dst, tmp);
 }
-
-#endif

@@ -2,7 +2,7 @@
  * userent.c -- handles:
  *   user-entry handling, new stylem more versatile.
  *
- * $Id: userent.c,v 1.24 2001/10/11 18:24:01 tothwolf Exp $
+ * $Id: userent.c,v 1.25 2001/10/19 01:55:05 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -624,7 +624,7 @@ int xtra_set(struct userrec *u, struct user_entry *e, void *buf)
   struct xtra_key *curr, *old = NULL, *new = buf;
 
   for (curr = e->u.extra; curr; curr = curr->next) {
-    if (curr->key && !egg_strcasecmp(curr->key, new->key)) {
+    if (curr->key && !strcasecmp(curr->key, new->key)) {
       old = curr;
       break;
     }
@@ -747,7 +747,7 @@ static void xtra_display(int idx, struct user_entry *e)
   for (xk = e->u.extra; xk; xk = xk->next) {
     /* Ok, it's a valid xtra field entry */
     for (j = 0; j < lc; j++) {
-      if (!egg_strcasecmp(list[j], xk->key))
+      if (!strcasecmp(list[j], xk->key))
 	dprintf(idx, "  %s: %s\n", xk->key, xk->data);
     }
   }
@@ -831,7 +831,7 @@ static int xtra_tcl_get(Tcl_Interp *irp, struct userrec *u,
   BADARGS(3, 4, " handle XTRA ?key?");
   if (argc == 4) {
     for (x = e->u.extra; x; x = x->next)
-      if (!egg_strcasecmp(argv[3], x->key)) {
+      if (!strcasecmp(argv[3], x->key)) {
 	Tcl_AppendResult(irp, x->data, NULL);
 	return TCL_OK;
       }
@@ -926,7 +926,7 @@ static void hosts_display(int idx, struct user_entry *e)
 
 static int hosts_set(struct userrec *u, struct user_entry *e, void *buf)
 {
-  if (!buf || !egg_strcasecmp(buf, "none")) {
+  if (!buf || !strcasecmp(buf, "none")) {
     /* When the bot crashes, it's in this part, not in the 'else' part */
     list_type_kill(e->u.list);
     e->u.list = NULL;
@@ -1074,7 +1074,7 @@ struct user_entry_type *find_entry_type(char *name)
   struct user_entry_type *p;
 
   for (p = entry_type_list; p; p = p->next) {
-    if (!egg_strcasecmp(name, p->name))
+    if (!strcasecmp(name, p->name))
       return p;
   }
   return NULL;
@@ -1087,7 +1087,7 @@ struct user_entry *find_user_entry(struct user_entry_type *et,
 
   for (e = &(u->entries); *e; e = &((*e)->next)) {
     if (((*e)->type == et) ||
-	((*e)->name && !egg_strcasecmp((*e)->name, et->name))) {
+	((*e)->name && !strcasecmp((*e)->name, et->name))) {
       t = *e;
       *e = t->next;
       t->next = u->entries;

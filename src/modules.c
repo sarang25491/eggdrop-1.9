@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.75 2001/10/18 02:57:51 stdarg Exp $
+ * $Id: modules.c,v 1.76 2001/10/19 01:55:05 tothwolf Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -25,7 +25,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "main.h"
+#include "main.h"		/* NOTE: when removing this, include config.h */
 #include "modules.h"
 #include "tandem.h"
 #include "registry.h"
@@ -251,7 +251,11 @@ Function global_table[] =
   (Function) open_telnet,
   /* 88 - 91 */
   (Function) check_bind_event,
+#ifndef HAVE_MEMCPY
+  (Function) memcpy,
+#else
   (Function) 0,
+#endif
   (Function) 0,
   (Function) my_strcpy,
   /* 92 - 95 */
@@ -457,14 +461,38 @@ Function global_table[] =
   (Function) sock_has_data,
   (Function) bots_in_subtree,
   (Function) users_in_subtree,
-  (Function) egg_inet_aton,
-  /* 252 - 255 */
-  (Function) egg_snprintf,
-  (Function) egg_vsnprintf,
+#ifndef HAVE_INET_ATON
+  (Function) inet_aton,
+#else
   (Function) 0,
-  (Function) egg_strcasecmp,
+#endif
+  /* 252 - 255 */
+#ifndef HAVE_SNPRINTF
+  (Function) snprintf,
+#else
+  (Function) 0,
+#endif
+#ifndef HAVE_VSNPRINTF
+  (Function) vsnprintf,
+#else
+  (Function) 0,
+#endif
+#ifndef HAVE_MEMSET
+  (Function) memset,
+#else
+  (Function) 0,
+#endif
+#ifndef HAVE_STRCASECMP
+  (Function) strcasecmp,
+#else
+  (Function) 0,
+#endif
   /* 256 - 259 */
-  (Function) egg_strncasecmp,
+#ifndef HAVE_STRNCASECMP
+  (Function) strncasecmp,
+#else
+  (Function) 0,
+#endif
   (Function) is_file,
   (Function) & must_be_owner,	/* int					*/
   (Function) & tandbot,		/* tand_t *				*/
@@ -496,15 +524,41 @@ Function global_table[] =
   (Function) kill_bot,
   (Function) quit_msg,                /* char *				  */
   (Function) add_bind_table2,
-  /* 276 - 280 */
+  /* 276 - 279 */
   (Function) del_bind_table2,
   (Function) add_builtins2,
   (Function) rem_builtins2,
   (Function) find_bind_table2,
+  /* 280 - 283 */
   (Function) check_bind,
-  /* 281 - 285 */
   (Function) registry_lookup,
-  (Function) registry_add_simple_chains
+  (Function) registry_add_simple_chains,
+#ifndef HAVE_STRFTIME
+  (Function) strftime,
+#else
+  (Function) 0,
+#endif
+  /* 284 - 287 */
+#ifndef HAVE_INET_NTOP
+  (Function) inet_ntop,
+#else
+  (Function) 0,
+#endif
+#ifndef HAVE_INET_PTON
+  (Function) inet_pton,
+#else
+  (Function) 0,
+#endif
+#ifndef HAVE_VASPRINTF
+  (Function) vasprintf,
+#else
+  (Function) 0,
+#endif
+#ifndef HAVE_ASPRINTF
+  (Function) asprintf
+#else
+  (Function) 0
+#endif
 };
 
 static bind_table_t *BT_load, *BT_unload;
@@ -525,7 +579,7 @@ void init_modules(void)
   
   LTDL_SET_PRELOADED_SYMBOLS();
   if (lt_dlinit() != 0) {
-    egg_snprintf(wbuf, sizeof(wbuf),
+    snprintf(wbuf, sizeof(wbuf),
 		    _("error during libtdl initialization: %s\n"),
 		    lt_dlerror());
     fatal(wbuf, 0);
@@ -543,7 +597,7 @@ int module_register(char *name, Function * funcs,
   module_entry *p;
 
   for (p = module_list; p && p->name; p = p->next)
-    if (!egg_strcasecmp(name, p->name)) {
+    if (!strcasecmp(name, p->name)) {
       p->major = major;
       p->minor = minor;
       p->funcs = funcs;
@@ -651,7 +705,7 @@ module_entry *module_find(char *name, int major, int minor)
 
   for (p = module_list; p && p->name; p = p->next) 
     if ((major == p->major || !major) && minor <= p->minor && 
-	!egg_strcasecmp(name, p->name))
+	!strcasecmp(name, p->name))
       return p;
   return NULL;
 }
@@ -661,11 +715,11 @@ static int module_rename(char *name, char *newname)
   module_entry *p;
 
   for (p = module_list; p; p = p->next)
-    if (!egg_strcasecmp(newname, p->name))
+    if (!strcasecmp(newname, p->name))
       return 0;
 
   for (p = module_list; p && p->name; p = p->next)
-    if (!egg_strcasecmp(name, p->name)) {
+    if (!strcasecmp(name, p->name)) {
       free(p->name);
       malloc_strcpy(p->name, newname);
       return 1;
@@ -769,8 +823,8 @@ void add_hook(int hook_num, Function func)
     /* special hook <drummer> */
     case HOOK_IRCCMP:
       if (func == NULL) {
-	irccmp = egg_strcasecmp;
-	ircncmp = (int (*)(const char *, const char *, int)) egg_strncasecmp;
+	irccmp = strcasecmp;
+	ircncmp = (int (*)(const char *, const char *, int)) strncasecmp;
 	irctolower = tolower;
 	irctoupper = toupper;
       } else {
@@ -863,7 +917,7 @@ void do_module_report(int idx, int details, char *which)
   if (p && !which && details)
     dprintf(idx, _("MODULES LOADED:\n"));
   for (; p; p = p->next) {
-    if (!which || !egg_strcasecmp(which, p->name)) {
+    if (!which || !strcasecmp(which, p->name)) {
       dependancy *d;
 
       if (details)

@@ -1,7 +1,7 @@
 /*
  * userchan.c -- part of channels.mod
  *
- * $Id: userchan.c,v 1.31 2001/10/14 13:50:30 tothwolf Exp $
+ * $Id: userchan.c,v 1.32 2001/10/19 01:55:07 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1245,7 +1245,7 @@ static int expired_mask(struct chanset_t *chan, char *who)
   m = ismember(chan, nick);
   if (!m)
     for (m2 = chan->channel.member; m2 && m2->nick[0]; m2 = m2->next)
-      if (!egg_strcasecmp(uhost, m2->userhost)) {
+      if (!strcasecmp(uhost, m2->userhost)) {
 	m = m2;
 	break;
       }

@@ -1,7 +1,8 @@
 /*
- * inet_pton.c -- provides inet_pton() if necessary.
+ * inet_pton.c
+ *   provides inet_pton()
  *
- * $Id: inet_pton.c,v 1.3 2001/07/31 16:40:41 guppy Exp $
+ * $Id: inet_pton.c,v 1.4 2001/10/19 01:55:06 tothwolf Exp $
  */
 /*
  * Copyright (c) 1996,1999 by Internet Software Consortium.
@@ -20,11 +21,13 @@
  * SOFTWARE.
  */
 
-#ifndef HAVE_INET_PTON
-
 #if defined(LIBC_SCCS) && !defined(lint)
 static const char rcsid[] = "$BINDId: inet_pton.c,v 1.7 1999/10/13 16:39:28 vixie Exp $";
 #endif /* LIBC_SCCS and not lint */
+
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
 
 #include <sys/param.h>
 #include <sys/types.h>
@@ -33,8 +36,6 @@ static const char rcsid[] = "$BINDId: inet_pton.c,v 1.7 1999/10/13 16:39:28 vixi
 #include <ctype.h>
 #include <string.h>
 #include <errno.h>
-
-#include "config.h"
 
 #define NS_INADDRSZ     4       /* IPv4 T_A */
 #define NS_IN6ADDRSZ    16      /* IPv6 T_AAAA */
@@ -60,7 +61,7 @@ static int inet_pton6 (const char *src, u_char *dst);
  *	Paul Vixie, 1996.
  */
 int
-egg_inet_pton(af, src, dst)
+inet_pton(af, src, dst)
 	int af;
 	const char *src;
 	void *dst;
@@ -224,6 +225,3 @@ inet_pton6(src, dst)
 	memcpy(dst, tmp, NS_IN6ADDRSZ);
 	return (1);
 }
-
-#endif
-

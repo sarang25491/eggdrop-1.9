@@ -1,7 +1,8 @@
 /*
- * strcasecmp.c -- provides strcasecmp() and strncasecmp if necessary.
+ * strcasecmp.c
+ *   provides strcasecmp()
  *
- * $Id: strcasecmp.c,v 1.4 2001/10/10 10:44:04 tothwolf Exp $
+ * $Id: strcasecmp.c,v 1.5 2001/10/19 01:55:06 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -22,10 +23,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "../main.h"
+#include <ctype.h>
 
-#ifndef HAVE_STRCASECMP
-int egg_strcasecmp(const char *s1, const char *s2)
+int strcasecmp(const char *s1, const char *s2)
 {
   while ((*s1) && (*s2) && (toupper(*s1) == toupper(*s2))) {
     s1++;
@@ -33,17 +33,3 @@ int egg_strcasecmp(const char *s1, const char *s2)
   }
   return toupper(*s1) - toupper(*s2);
 }
-#endif /* !HAVE_STRCASECMP */
-
-#ifndef HAVE_STRNCASECMP
-int egg_strncasecmp(const char *s1, const char *s2, size_t n)
-{
-  if (!n)
-    return 0;
-  while (--n && (*s1) && (*s2) && (toupper(*s1) == toupper(*s2))) {
-    s1++;
-    s2++;
-  }
-  return toupper(*s1) - toupper(*s2);
-}
-#endif /* !HAVE_STRNCASECMP */

@@ -1,7 +1,7 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.7 2001/10/14 19:30:49 ite Exp $
+dnl $Id: acinclude.m4,v 1.8 2001/10/19 01:55:04 tothwolf Exp $
 dnl
 
 
@@ -225,36 +225,95 @@ fi
 ])
 
 
-dnl  EGG_CHECK_FUNC_VSPRINTF()
+dnl  EGG_C_LONG_LONG
 dnl
-AC_DEFUN(EGG_CHECK_FUNC_VSPRINTF, [dnl
-AC_CHECK_FUNCS(vsprintf)
-if test "$ac_cv_func_vsprintf" = "no"
+AC_DEFUN(EGG_C_LONG_LONG, [dnl
+# Code borrowed from Samba
+AC_CACHE_CHECK([for long long], egg_cv_have_long_long, [
+AC_TRY_RUN([
+#include <stdio.h>
+int main() {
+	long long x = 1000000;
+	x *= x;
+	exit(((x / 1000000) == 1000000) ? 0: 1);
+}
+],
+egg_cv_have_long_long="yes",
+egg_cv_have_long_long="no",
+egg_cv_have_long_long="cross")])
+if test "$egg_cv_have_long_long" = "yes"
 then
-  cat << 'EOF' >&2
-configure: error:
-
-  Your system does not have the sprintf/vsprintf libraries.
-  These are required to compile almost anything.  Sorry.
-
-EOF
-  exit 1
+  AC_DEFINE(HAVE_LONG_LONG, 1,
+	    [Define if system supports long long])
 fi
 ])
 
 
-dnl  EGG_HEADER_STDC()
+dnl  EGG_FUNC_C99_VSNPRINTF
 dnl
-AC_DEFUN(EGG_HEADER_STDC, [dnl
-if test "$ac_cv_header_stdc" = "no"
+AC_DEFUN(EGG_FUNC_C99_VSNPRINTF, [dnl
+# Code borrowed from Samba
+AC_CACHE_CHECK([for C99 vsnprintf], egg_cv_have_c99_vsnprintf, [
+AC_TRY_RUN([
+#include <sys/types.h>
+#include <stdarg.h>
+void foo(const char *format, ...) { 
+	va_list ap;
+	int len;
+	char buf[5];
+
+	va_start(ap, format);
+	len = vsnprintf(0, 0, format, ap);
+	va_end(ap);
+	if (len != 5) exit(1);
+
+	if (snprintf(buf, 3, "hello") != 5 || strcmp(buf, "he") != 0) exit(1);
+
+	exit(0);
+}
+int main(){
+	foo("hello");
+}
+],
+egg_cv_have_c99_vsnprintf="yes",
+egg_cv_have_c99_vsnprintf="no",
+egg_cv_have_c99_vsnprintf="cross")])
+if test "$egg_cv_have_c99_vsnprintf" = "yes"
 then
-  cat << 'EOF' >&2
-configure: error:
+  AC_DEFINE(HAVE_C99_VSNPRINTF, 1,
+            [Define if vsnprintf is C99 compliant])
+  egg_replace_snprintf=yes
+fi
+])
 
-  Your system must support ANSI C Header files.
 
-EOF
-  exit 1
+dnl  EGG_REPLACE_SNPRINTF
+dnl
+AC_DEFUN(EGG_REPLACE_SNPRINTF, [dnl
+if test "${egg_replace_snprintf-x}" = "yes"
+then
+  AC_LIBOBJ(snprintf)
+  SNPRINTF_LIBS="-lm"
+fi
+AC_SUBST(SNPRINTF_LIBS)
+])
+
+
+dnl  EGG_TYPE_32BIT()
+dnl
+AC_DEFUN(EGG_TYPE_32BIT, [dnl
+AC_CHECK_SIZEOF(unsigned int, 4)
+if test "$ac_cv_sizeof_unsigned_int" = 4
+then
+  AC_DEFINE(UNSIGNED_INT32, 1,
+            [Define this if an unsigned int is 32 bits])
+else
+  AC_CHECK_SIZEOF(unsigned long, 4)
+  if test "$ac_cv_sizeof_unsigned_long" = 4
+  then
+    AC_DEFINE(UNSIGNED_LONG32, 1,
+              [Define this if an unsigned long is 32 bits])
+  fi
 fi
 ])
 
@@ -1125,6 +1184,7 @@ AC_ARG_ENABLE(debug,
                              debug="$enableval", debug=yes)
 if test "$debug" = "yes"
 then
+  # FIXME: this should be done along with `--with-efence'
   AC_CHECK_LIB(efence, malloc)
   EGG_DEBUG="-DDEBUG"
 fi

@@ -3,7 +3,7 @@
  *   Tcl stubs for file system commands
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.34 2001/10/18 09:06:43 stdarg Exp $
+ * $Id: tclmisc.c,v 1.35 2001/10/19 01:55:05 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -71,7 +71,7 @@ static int tcl_binds STDVAR
             !wild_match(argv[1], tc->func_name))
           continue;
 	build_flags(flg, &(tc->flags), NULL);
-        egg_snprintf(hits, sizeof hits, "%i", (int) tc->hits);
+        snprintf(hits, sizeof hits, "%i", (int) tc->hits);
         list[0] = tl->name;
         list[1] = flg;
         list[2] = tm->mask;
@@ -136,7 +136,7 @@ static int tcl_unixtime STDVAR
   char s[11];
 
   BADARGS(1, 1, "");
-  egg_snprintf(s, sizeof s, "%lu", (unsigned long) now);
+  snprintf(s, sizeof s, "%lu", (unsigned long) now);
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }
@@ -165,7 +165,7 @@ static int tcl_strftime STDVAR
   else
     t = now;
     tm1 = localtime(&t);
-  if (egg_strftime(buf, sizeof(buf) - 1, argv[1], tm1)) {
+  if (strftime(buf, sizeof(buf) - 1, argv[1], tm1)) {
     Tcl_AppendResult(irp, buf, NULL);
     return TCL_OK;
   }
@@ -178,7 +178,7 @@ static int tcl_myip STDVAR
   char s[16];
 
   BADARGS(1, 1, "");
-  egg_snprintf(s, sizeof s, "%lu", iptolong(getmyip()));
+  snprintf(s, sizeof s, "%lu", iptolong(getmyip()));
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }
@@ -205,7 +205,7 @@ static int tcl_rand STDVAR
     return TCL_ERROR;
   }
   x = random() % (atol(argv[1]));
-  egg_snprintf(s, sizeof s, "%lu", x);
+  snprintf(s, sizeof s, "%lu", x);
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }
@@ -218,7 +218,7 @@ static int tcl_sendnote STDVAR
   strncpyz(from, argv[1], sizeof from);
   strncpyz(to, argv[2], sizeof to);
   strncpyz(msg, argv[3], sizeof msg);
-  egg_snprintf(s, sizeof s, "%d", add_note(to, from, msg, -1, 0));
+  snprintf(s, sizeof s, "%d", add_note(to, from, msg, -1, 0));
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }
@@ -265,7 +265,7 @@ static int tcl_die STDVAR
 
   BADARGS(1, 2, " ?reason?");
   if (argc == 2) {
-    egg_snprintf(s, sizeof s, "BOT SHUTDOWN (%s)", argv[1]);
+    snprintf(s, sizeof s, "BOT SHUTDOWN (%s)", argv[1]);
     strncpyz(quit_msg, argv[1], 1024);
   } else {
     strncpyz(s, "BOT SHUTDOWN (No reason)", sizeof s);
@@ -325,13 +325,13 @@ static int tcl_modules STDVAR
   BADARGS(1, 1, "");
   for (current = module_list; current; current = current->next) {
     list[0] = current->name;
-    egg_snprintf(s, sizeof s, "%d.%d", current->major, current->minor);
+    snprintf(s, sizeof s, "%d.%d", current->major, current->minor);
     list[1] = s;
     i = 2;
     for (dep = dependancy_list; dep && (i < 100); dep = dep->next) {
       if (dep->needing == current) {
 	list2[0] = dep->needed->name;
-	egg_snprintf(s2, sizeof s2, "%d.%d", dep->major, dep->minor);
+	snprintf(s2, sizeof s2, "%d.%d", dep->major, dep->minor);
 	list2[1] = s2;
 	list[i] = Tcl_Merge(2, list2);
 	i++;

@@ -4,7 +4,7 @@
  *   provides the code used by the bot if the DNS module is not loaded
  *   DNS script commands
  *
- * $Id: dns.c,v 1.28 2001/10/17 03:28:16 stdarg Exp $
+ * $Id: dns.c,v 1.29 2001/10/19 01:55:05 tothwolf Exp $
  */
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -125,7 +125,7 @@ static void dns_dcchostbyip(char *ip, char *hostn, int ok, void *other)
   for (idx = 0; idx < dcc_total; idx++) {
     if ((dcc[idx].type == &DCC_DNSWAIT) &&
         (dcc[idx].u.dns->dns_type == RES_HOSTBYIP) &&
-        (!egg_strcasecmp(dcc[idx].u.dns->host, ip))) {
+        (!strcasecmp(dcc[idx].u.dns->host, ip))) {
 debug3("|DNS| idx: %d, dcchostbyip: %s is %s", idx, ip, hostn);
       free(dcc[idx].u.dns->host);
       dcc[idx].u.dns->host = calloc(1, strlen(hostn) + 1);
@@ -148,7 +148,7 @@ static void dns_dccipbyhost(char *ip, char *hostn, int ok, void *other)
   for (idx = 0; idx < dcc_total; idx++) {
     if ((dcc[idx].type == &DCC_DNSWAIT) &&
         (dcc[idx].u.dns->dns_type == RES_IPBYHOST) &&
-        !egg_strcasecmp(dcc[idx].u.dns->host, hostn)) {
+        !strcasecmp(dcc[idx].u.dns->host, hostn)) {
 debug3("|DNS| idx: %d, dccipbyhost: %s is %s", idx, ip, hostn);
       free(dcc[idx].u.dns->host);
       dcc[idx].u.dns->host = calloc(1, strlen(ip) + 1);
@@ -179,7 +179,7 @@ void dcc_dnsipbyhost(char *hostn)
     if (de->type && (de->type == &DNS_DCCEVENT_IPBYHOST) &&
 	(de->lookup == RES_IPBYHOST)) {
       if (de->hostname &&
-	  !egg_strcasecmp(de->hostname, hostn))
+	  !strcasecmp(de->hostname, hostn))
 	/* No need to add anymore. */
 	return;
     }
@@ -206,7 +206,7 @@ void dcc_dnshostbyip(char *ip)
   for (de = dns_events; de; de = de->next) {
     if (de->type && (de->type == &DNS_DCCEVENT_HOSTBYIP) &&
 	(de->lookup == RES_HOSTBYIP)) {
-      if (!egg_strcasecmp(de->hostname, ip))
+      if (!strcasecmp(de->hostname, ip))
 	/* No need to add anymore. */
 	return;
     }
@@ -302,7 +302,7 @@ void call_hostbyip(char *ip, char *hostn, int ok)
     nde = de->next;
     if ((de->lookup == RES_HOSTBYIP) &&
 	(!de->hostname || !(de->hostname[0]) ||
-	(!egg_strcasecmp(de->hostname, ip)))) {
+	(!strcasecmp(de->hostname, ip)))) {
       /* Remove the event from the list here, to avoid conflicts if one of
        * the event handlers re-adds another event. */
       if (ode)
@@ -333,7 +333,7 @@ void call_ipbyhost(char *hostn, char *ip, int ok)
     nde = de->next;
     if ((de->lookup == RES_IPBYHOST) &&
 	(!de->hostname || !(de->hostname[0]) ||
-	 !egg_strcasecmp(de->hostname, hostn))) {
+	 !strcasecmp(de->hostname, hostn))) {
       /* Remove the event from the list here, to avoid conflicts if one of
        * the event handlers re-adds another event. */
       if (ode)
@@ -373,10 +373,10 @@ void dns_hostbyip(char *ip)
 
   if (!setjmp(alarmret)) {
     alarm(resolve_timeout);
-    if (egg_inet_aton(ip, &addr))
+    if (inet_aton(ip, &addr))
 	hp = gethostbyaddr((char *) &addr, sizeof addr, AF_INET);
 #ifdef IPV6
-    else if (egg_inet_pton(AF_INET6, ip, &addr6))
+    else if (inet_pton(AF_INET6, ip, &addr6))
 	hp = gethostbyaddr((char *) &addr6, sizeof addr6, AF_INET6);
 #endif
     else
@@ -402,13 +402,13 @@ void block_dns_ipbyhost(char *host)
 
   /* Check if someone passed us an IPv4 address as hostname
    * and return it straight away */
-  if (egg_inet_aton(host, &inaddr)) {
+  if (inet_aton(host, &inaddr)) {
     call_ipbyhost(host, host, 1);
     return;
   }
 #ifdef IPV6
   /* Check if someone passed us an IPv6 address as hostname... */
-  if (egg_inet_pton(AF_INET6, host, &in6addr)) {
+  if (inet_pton(AF_INET6, host, &in6addr)) {
     call_ipbyhost(host, host, 1);
     return;
   }
@@ -418,11 +418,11 @@ void block_dns_ipbyhost(char *host)
     char *p;
     int type;
 
-    if (!egg_strncasecmp("ipv6%", host, 5)) {
+    if (!strncasecmp("ipv6%", host, 5)) {
 	type = AF_INET6;
 	p = host + 5;
 debug1("|DNS| checking only AAAA record for %s", p);
-    } else if (!egg_strncasecmp("ipv4%", host, 5)) {
+    } else if (!strncasecmp("ipv4%", host, 5)) {
 	type = AF_INET;
 	p = host + 5;
 debug1("|DNS| checking only A record for %s", p);
@@ -443,7 +443,7 @@ debug1("|DNS| checking only A record for %s", p);
 
     if (hp) {
       char tmp[ADDRLEN];
-      egg_inet_ntop(hp->h_addrtype, hp->h_addr_list[0], tmp, ADDRLEN-1);
+      inet_ntop(hp->h_addrtype, hp->h_addr_list[0], tmp, ADDRLEN-1);
       call_ipbyhost(host, tmp, 1);
       return;
     }
@@ -466,9 +466,9 @@ static int script_dnslookup(char *iporhost, script_callback_t *callback)
   struct in6_addr inaddr6;
 #endif
 
-  if (egg_inet_aton(iporhost, &inaddr)
+  if (inet_aton(iporhost, &inaddr)
 #ifdef IPV6
-	|| egg_inet_pton(AF_INET6, iporhost, &inaddr6)
+	|| inet_pton(AF_INET6, iporhost, &inaddr6)
 #endif
       )
     script_dnshostbyip(iporhost, callback);
@@ -492,7 +492,7 @@ void dns_hostbyip(char *ip)
 #endif
     char *origname;
 
-    if (egg_inet_pton(AF_INET, ip, &in.sin_addr)) {
+    if (inet_pton(AF_INET, ip, &in.sin_addr)) {
 debug1("|DNS| adns_dns_hostbyip(\"%s\") (IPv4)", ip);
 	malloc_strcpy(origname, ip);
 	in.sin_family = AF_INET;
@@ -504,7 +504,7 @@ debug1("|DNS| adns_submit_reverse failed, errno: %d", r);
 	    call_hostbyip(ip, ip, 0);
 	}
 #ifdef IPV6
-    } else if (egg_inet_pton(AF_INET6, ip, &in6.sin6_addr)) {
+    } else if (inet_pton(AF_INET6, ip, &in6.sin6_addr)) {
 debug1("|DNS| adns_dns_hostbyip(\"%s\") (IPv6)", ip);
 	malloc_strcpy(origname, ip);
 	in6.sin6_family = AF_INET6;
@@ -532,9 +532,9 @@ void dns_ipbyhost(char *host)
     
 debug1("|DNS| adns_dns_ipbyhost(\"%s\");", host);
 
-    if (egg_inet_pton(AF_INET, host, &in.sin_addr)
+    if (inet_pton(AF_INET, host, &in.sin_addr)
 #ifdef IPV6
-	|| egg_inet_pton(AF_INET6, host, &in6.sin6_addr)
+	|| inet_pton(AF_INET6, host, &in6.sin6_addr)
 #endif
 	) {
 	/* It's an IP! */
@@ -544,7 +544,7 @@ debug1("|DNS| adns_dns_ipbyhost(\"%s\");", host);
 	char *origname;
 	int type, r;
 	malloc_strcpy(origname, host);
-	if (!egg_strncasecmp("ipv6%", host, 5)) {
+	if (!strncasecmp("ipv6%", host, 5)) {
 #ifdef IPV6
 	    type = adns_r_addr6;
 	    p = host + 5;
@@ -554,7 +554,7 @@ debug1("|DNS| compiled without IPv6 support, can't resolv %s", host);
 	    call_ipbyhost(host, "0.0.0.0", 0);
 	    return;
 #endif
-	} else if (!egg_strncasecmp("ipv4%", host, 5)) {
+	} else if (!strncasecmp("ipv4%", host, 5)) {
 	    type = adns_r_addr;
 	    p = host + 5;
 debug1("|DNS| checking only A record for %s", p);

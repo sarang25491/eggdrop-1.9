@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.47 2001/10/18 02:57:51 stdarg Exp $
+ * $Id: net.c,v 1.48 2001/10/19 01:55:05 tothwolf Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -109,7 +109,7 @@ struct in6_addr getmyip6()
 
   /* Could be pre-defined */
   if (myip6[0])
-    egg_inet_pton(AF_INET6, myip6, &ip);
+    inet_pton(AF_INET6, myip6, &ip);
   else {
     /* get system's default IPv6 ip -- FIXME!? */
     /* is there a know way?! - drummer */
@@ -354,11 +354,11 @@ static int proxy_connect(int sock, char *host, int port, int proxy)
     for (i = 0; i < MAXSOCKS; i++)
       if (!(socklist[i].flags & SOCK_UNUSED) && socklist[i].sock == sock)
 	socklist[i].flags |= SOCK_PROXYWAIT; /* drummer */
-    egg_snprintf(s, sizeof s, "\004\001%c%c%c%c%c%c%s", (port >> 8) % 256,
+    snprintf(s, sizeof s, "\004\001%c%c%c%c%c%c%s", (port >> 8) % 256,
 		 (port % 256), x[0], x[1], x[2], x[3], botuser);
     tputs(sock, s, strlen(botuser) + 9); /* drummer */
   } else if (proxy == PROXY_SUN) {
-    egg_snprintf(s, sizeof s, "%s %d\n", host, port);
+    snprintf(s, sizeof s, "%s %d\n", host, port);
     tputs(sock, s, strlen(s)); /* drummer */
   }
   return sock;
@@ -419,11 +419,11 @@ debug2("|NET| open_telnet_raw: %s %d", server, sport);
       
       alarm(resolve_timeout);
 
-      if (!egg_strncasecmp("ipv6%", host, 5)) {
+      if (!strncasecmp("ipv6%", host, 5)) {
 	type = AF_INET6;
 	p = host + 5;
 debug1("|NET| checking only AAAA record for %s", p);
-      } else if (!egg_strncasecmp("ipv4%", host, 5)) {
+      } else if (!strncasecmp("ipv4%", host, 5)) {
 	type = AF_INET;
 	p = host + 5;
 debug1("|NET| checking only A record for %s", p);
@@ -535,9 +535,9 @@ debug2("|NET| open_address_listen(\"%s\", %d)", addr, *port);
   name.sin6_port = htons(*port);	/* 0 = just assign us a port */
   if (!addr[0])
       name.sin6_addr = in6addr_any;
-  else if (!egg_inet_pton(AF_INET6, addr, &name.sin6_addr)) {
+  else if (!inet_pton(AF_INET6, addr, &name.sin6_addr)) {
       struct in_addr a4;
-      if (egg_inet_aton(addr, &a4))
+      if (inet_aton(addr, &a4))
           name.sin6_addr = ipv4to6(a4.s_addr);
       else
 	  name.sin6_addr = in6addr_any;
@@ -546,7 +546,7 @@ debug2("|NET| open_address_listen(\"%s\", %d)", addr, *port);
   name.sin_family = AF_INET;
   name.sin_port = htons(*port);	/* 0 = just assign us a port */
   if (addr[0])
-      egg_inet_aton(addr, &name.sin_addr);
+      inet_aton(addr, &name.sin_addr);
   else
       name.sin_addr.s_addr = INADDR_ANY;
 #endif
@@ -627,7 +627,7 @@ debug1("|NET| getsockname() failed for sock %d", sock);
 	sprintf(buf, "%lu", 
 		(unsigned long int) ntohl(((uint32_t *)&sa.sin6_addr)[3]));
     else
-	egg_inet_ntop(AF_INET6, &(sa.sin6_addr), buf, sizeof buf);
+	inet_ntop(AF_INET6, &(sa.sin6_addr), buf, sizeof buf);
 #else
     sprintf(buf, "%lu", (unsigned long int) ntohl(sa.sin_addr.s_addr));
 #endif
@@ -656,11 +656,11 @@ int answer(int sock, char *caller, char *ip, unsigned short *port,
   if (ip != NULL) {
 #ifdef IPV6
     if (IN6_IS_ADDR_V4MAPPED(&from.sin6_addr))
-	egg_inet_ntop(AF_INET, &(((uint32_t *)&from.sin6_addr)[3]), ip, ADDRMAX);
+	inet_ntop(AF_INET, &(((uint32_t *)&from.sin6_addr)[3]), ip, ADDRMAX);
     else
-	egg_inet_ntop(AF_INET6, &(from.sin6_addr), ip, ADDRMAX);
+	inet_ntop(AF_INET6, &(from.sin6_addr), ip, ADDRMAX);
 #else
-    egg_inet_ntop(AF_INET, &(from.sin_addr.s_addr), ip, ADDRMAX);
+    inet_ntop(AF_INET, &(from.sin_addr.s_addr), ip, ADDRMAX);
 #endif
     /* This is now done asynchronously. We now only provide the IP address.
      */
@@ -692,7 +692,7 @@ debug2("|NET| open_telnet_dcc: %s %s", server, port);
   if (server == NULL)
     return -3;
   /* fix the IPv4 IP format (ie: 167772161 -> 10.0.0.1) */
-  if (egg_inet_aton(server, &ia))
+  if (inet_aton(server, &ia))
     return open_telnet_raw(sock, inet_ntoa(ia), p);
   else
     return open_telnet_raw(sock, server, p);
@@ -724,18 +724,18 @@ debug2("|DNS| egg_dns_gotanswer: status=%d adns_answer=%x", status, (int)aw);
 	if ((aw->status == adns_s_ok) && (aw->nrrs > 0)) {
 	    adns_rr_addr *rrp = aw->rrs.untyped;
 	    if (rrp->addr.sa.sa_family == AF_INET) {
-		egg_inet_ntop(AF_INET, &(rrp->addr.inet.sin_addr), name, UHOSTLEN-1);
+		inet_ntop(AF_INET, &(rrp->addr.inet.sin_addr), name, UHOSTLEN-1);
 		status = 1;
 #ifdef IPV6
 	    } else if (rrp->addr.sa.sa_family == AF_INET6) {
-		egg_inet_ntop(AF_INET6, &(rrp->addr.inet6.sin6_addr), name, UHOSTLEN-1);
+		inet_ntop(AF_INET6, &(rrp->addr.inet6.sin6_addr), name, UHOSTLEN-1);
 		status = 1;
 #endif
 	    }
 #ifdef IPV6
 	} else if ((aw->type == adns_r_addr /* af_preferred */) &&
-		    egg_strncasecmp(origname, "ipv6%", 5) &&
-		    egg_strncasecmp(origname, "ipv4%", 5)) {
+		    strncasecmp(origname, "ipv6%", 5) &&
+		    strncasecmp(origname, "ipv4%", 5)) {
 	    adns_query q6;
 	    malloc_strcpy(orign2, origname);
 	    /* ...it may be AAAA */

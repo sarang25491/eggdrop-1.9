@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands direclty relating to channel interaction
  *
- * $Id: cmdsirc.c,v 1.28 2001/10/11 18:24:02 tothwolf Exp $
+ * $Id: cmdsirc.c,v 1.29 2001/10/19 01:55:08 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -60,8 +60,8 @@ static char *getnick(char *handle, struct chanset_t *chan)
   register memberlist	*m;
 
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-    egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
-    if ((u = get_user_by_host(s)) && !egg_strcasecmp(u->handle, handle))
+    snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
+    if ((u = get_user_by_host(s)) && !strcasecmp(u->handle, handle))
       return m->nick;
   }
   return NULL;
@@ -185,7 +185,7 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
     if (!m)
       dprintf(idx, "%s is not on %s\n", nick, chan->dname);
     else {
-      egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
+      snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
       u = get_user_by_host(s);
       get_user_flagrec(u, &victim, chan->dname);
       if ((chan_op(victim) || (glob_op(victim) && !chan_deop(victim))) &&
@@ -270,7 +270,7 @@ static void cmd_voice(struct userrec *u, int idx, char *par)
     dprintf(idx, "%s is not on %s.\n", nick, chan->dname);
     return;
   }
-  egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
+  snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
   add_mode(chan, '+', 'v', nick);
   dprintf(idx, "Gave voice to %s on %s\n", nick, chan->dname);
 }
@@ -305,7 +305,7 @@ static void cmd_devoice(struct userrec *u, int idx, char *par)
     dprintf(idx, "%s is not on %s.\n", nick, chan->dname);
     return;
   }
-  egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
+  snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
   add_mode(chan, '-', 'v', nick);
   dprintf(idx, "Devoiced %s on %s\n", nick, chan->dname);
 }
@@ -340,7 +340,7 @@ static void cmd_op(struct userrec *u, int idx, char *par)
     dprintf(idx, "%s is not on %s.\n", nick, chan->dname);
     return;
   }
-  egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
+  snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
   u = get_user_by_host(s);
   get_user_flagrec(u, &victim, chan->dname);
   if (chan_deop(victim) || (glob_deop(victim) && !glob_op(victim))) {
@@ -390,7 +390,7 @@ static void cmd_deop(struct userrec *u, int idx, char *par)
     dprintf(idx, "I'm not going to deop myself.\n");
     return;
   }
-  egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
+  snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
   u = get_user_by_host(s);
   get_user_flagrec(u, &victim, chan->dname);
   if ((chan_master(victim) || glob_master(victim)) &&
@@ -447,7 +447,7 @@ static void cmd_kick(struct userrec *u, int idx, char *par)
     dprintf(idx, "%s is not on %s\n", nick, chan->dname);
     return;
   }
-  egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
+  snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
   u = get_user_by_host(s);
   get_user_flagrec(u, &victim, chan->dname);
   if ((chan_op(victim) || (glob_op(victim) && !chan_deop(victim))) &&
@@ -527,11 +527,11 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
   }
   strncpyz(s, getchanmode(chan), sizeof s);
   if (channel_pending(chan))
-    egg_snprintf(s1, sizeof s1, "%s %s", _("Processing channel"), chan->dname);
+    snprintf(s1, sizeof s1, "%s %s", _("Processing channel"), chan->dname);
   else if (channel_active(chan))
-    egg_snprintf(s1, sizeof s1, "%s %s", _("Channel"), chan->dname);
+    snprintf(s1, sizeof s1, "%s %s", _("Channel"), chan->dname);
   else
-    egg_snprintf(s1, sizeof s1, "%s %s", _("Desiring channel"), chan->dname);
+    snprintf(s1, sizeof s1, "%s %s", _("Desiring channel"), chan->dname);
   dprintf(idx, "%s, %d member%s, mode %s:\n", s1, chan->channel.members,
 	  chan->channel.members == 1 ? "" : "s", s);
   if (chan->channel.topic)
@@ -547,13 +547,13 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       if (m->joined > 0) {
 	if ((now - (m->joined)) > 86400)
-	  egg_strftime(s, 6, "%d%b", localtime(&(m->joined)));
+	  strftime(s, 6, "%d%b", localtime(&(m->joined)));
 	else
-	  egg_strftime(s, 6, "%H:%M", localtime(&(m->joined)));
+	  strftime(s, 6, "%H:%M", localtime(&(m->joined)));
       } else
 	strncpyz(s, " --- ", sizeof s);
       if (m->user == NULL) {
-	egg_snprintf(s1, sizeof s1, "%s!%s", m->nick, m->userhost);
+	snprintf(s1, sizeof s1, "%s!%s", m->nick, m->userhost);
 	m->user = get_user_by_host(s1);
       }
       if (m->user == NULL) {
@@ -635,11 +635,11 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
       else {
 	/* Determine idle time */
 	if (now - (m->last) > 86400)
-	  egg_snprintf(s1, sizeof s1, "%2lud", ((now - (m->last)) / 86400));
+	  snprintf(s1, sizeof s1, "%2lud", ((now - (m->last)) / 86400));
 	else if (now - (m->last) > 3600)
-	  egg_snprintf(s1, sizeof s1, "%2luh", ((now - (m->last)) / 3600));
+	  snprintf(s1, sizeof s1, "%2luh", ((now - (m->last)) / 3600));
 	else if (now - (m->last) > 180)
-	  egg_snprintf(s1, sizeof s1, "%2lum", ((now - (m->last)) / 60));
+	  snprintf(s1, sizeof s1, "%2lum", ((now - (m->last)) / 60));
 	else
 	  strncpyz(s1, "   ", sizeof s1);
 	dprintf(idx, "%c%s%s %s%s %s %c %s  %s\n", chanflag, m->nick,
@@ -833,7 +833,7 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
   }
   if (strlen(hand) > HANDLEN)
     hand[HANDLEN] = 0;
-  egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
+  snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
   u = get_user_by_host(s);
   if (u) {
     dprintf(idx, "%s is already known as %s.\n", nick, u->handle);
@@ -841,7 +841,7 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
   }
   u = get_user_by_handle(userlist, hand);
   if (u && (u->flags & (USER_OWNER|USER_MASTER)) &&
-      !(atr & USER_OWNER) && egg_strcasecmp(dcc[idx].nick, hand)) {
+      !(atr & USER_OWNER) && strcasecmp(dcc[idx].nick, hand)) {
     dprintf(idx, "You can't add hostmasks to the bot owner/master.\n");
     return;
   }
@@ -899,7 +899,7 @@ static void cmd_deluser(struct userrec *u, int idx, char *par)
     return;
   }
   get_user_flagrec(u, &user, chan->dname);
-  egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
+  snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
   u = get_user_by_host(s);
   if (!u) {
     dprintf(idx, "%s is not a valid user.\n", nick);
@@ -913,7 +913,7 @@ static void cmd_deluser(struct userrec *u, int idx, char *par)
    * so deluser on a channel they're not on should work
    */
   /* Shouldn't allow people to remove permanent owners (guppy 9Jan1999) */
-  if ((glob_owner(victim) && egg_strcasecmp(dcc[idx].nick, nick)) ||
+  if ((glob_owner(victim) && strcasecmp(dcc[idx].nick, nick)) ||
       isowner(u->handle)) {
     dprintf(idx, "Can't remove the bot owner!\n");
   } else if (glob_botmast(victim) && !glob_owner(user)) {

@@ -4,7 +4,7 @@
  *
  * Rewritten by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: filedb3.c,v 1.23 2001/10/11 13:01:35 tothwolf Exp $
+ * $Id: filedb3.c,v 1.24 2001/10/19 01:55:07 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -944,7 +944,7 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
 	  if (fdbe->stat & FILE_HIDDEN)
 	    strcat(s2, " (hid)");
 	}
-	egg_strftime(t, 10, "%d%b%Y", localtime(&fdbe->uploaded));
+	strftime(t, 10, "%d%b%Y", localtime(&fdbe->uploaded));
 	if (fdbe->size < 1024)
 	  sprintf(s1, "%5d", fdbe->size);
 	else

@@ -87,7 +87,7 @@ static int get_timestamp(char *t)
 
 	now = time(NULL);
 	/* Calculate timestamp. */
-	if (timestamp_logs) egg_strftime(t, 32, "[%H:%M] ", localtime(&now));
+	if (timestamp_logs) strftime(t, 32, "[%H:%M] ", localtime(&now));
 	else *t = 0;
 }
 
@@ -136,7 +136,7 @@ static int logfile_cycle()
 		time_t now;
 
 		now = time(NULL);
-		egg_strftime(suffix, 32, logfile_suffix, localtime(&now));
+		strftime(suffix, 32, logfile_suffix, localtime(&now));
 	}
 
 	prev = NULL;
@@ -259,7 +259,7 @@ int putlog EGG_VARARGS_DEF(int, arg1)
 		if (chname[0] != '*' && log->chname[0] != '*' && irccmp(chname, log->chname)) continue;
 
 		/* If it's a repeat message, don't write it again. */
-		if (!egg_strcasecmp(out, log->last_msg)) {
+		if (!strcasecmp(out, log->last_msg)) {
 			log->repeats++;
 			continue;
 		}

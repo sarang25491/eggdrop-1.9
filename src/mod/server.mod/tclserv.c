@@ -1,7 +1,7 @@
 /*
  * tclserv.c -- part of server.mod
  *
- * $Id: tclserv.c,v 1.10 2001/10/10 10:44:07 tothwolf Exp $
+ * $Id: tclserv.c,v 1.11 2001/10/19 01:55:08 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -38,7 +38,7 @@ static int tcl_putquick STDVAR
 
   BADARGS(2, 3, " text ?options?");
   if ((argc == 3) &&
-      egg_strcasecmp(argv[2], "-next") && egg_strcasecmp(argv[2], "-normal")) {
+      strcasecmp(argv[2], "-next") && strcasecmp(argv[2], "-normal")) {
       Tcl_AppendResult(irp, "unknown putquick option: should be one of: ",
 		       "-normal -next", NULL);
     return TCL_ERROR;
@@ -51,7 +51,7 @@ static int tcl_putquick STDVAR
    p = strchr(s, '\r');
   if (p != NULL)
     *p = 0;
-  if (argc == 3 && !egg_strcasecmp(argv[2], "-next"))
+  if (argc == 3 && !strcasecmp(argv[2], "-next"))
     dprintf(DP_MODE_NEXT, "%s\n", s);
   else
     dprintf(DP_MODE, "%s\n", s);
@@ -64,7 +64,7 @@ static int tcl_putserv STDVAR
 
   BADARGS(2, 3, " text ?options?");
   if ((argc == 3) &&
-    egg_strcasecmp(argv[2], "-next") && egg_strcasecmp(argv[2], "-normal")) {
+    strcasecmp(argv[2], "-next") && strcasecmp(argv[2], "-normal")) {
     Tcl_AppendResult(irp, "unknown putserv option: should be one of: ",
 		     "-normal -next", NULL);
     return TCL_ERROR;
@@ -77,7 +77,7 @@ static int tcl_putserv STDVAR
    p = strchr(s, '\r');
   if (p != NULL)
     *p = 0;
-  if (argc == 3 && !egg_strcasecmp(argv[2], "-next"))
+  if (argc == 3 && !strcasecmp(argv[2], "-next"))
     dprintf(DP_SERVER_NEXT, "%s\n", s);
   else
     dprintf(DP_SERVER, "%s\n", s);
@@ -90,7 +90,7 @@ static int tcl_puthelp STDVAR
 
   BADARGS(2, 3, " text ?options?");
   if ((argc == 3) &&
-    egg_strcasecmp(argv[2], "-next") && egg_strcasecmp(argv[2], "-normal")) {
+    strcasecmp(argv[2], "-next") && strcasecmp(argv[2], "-normal")) {
     Tcl_AppendResult(irp, "unknown puthelp option: should be one of: ",
 		     "-normal -next", NULL);
     return TCL_ERROR;
@@ -103,7 +103,7 @@ static int tcl_puthelp STDVAR
    p = strchr(s, '\r');
   if (p != NULL)
     *p = 0;
-  if (argc == 3 && !egg_strcasecmp(argv[2], "-next"))
+  if (argc == 3 && !strcasecmp(argv[2], "-next"))
     dprintf(DP_HELP_NEXT, "%s\n", s);
   else
     dprintf(DP_HELP, "%s\n", s);

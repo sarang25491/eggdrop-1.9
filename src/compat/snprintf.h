@@ -1,8 +1,8 @@
 /*
  * snprintf.h
- *   header file for snprintf.c
+ *   prototypes for snprintf.c
  *
- * $Id: snprintf.h,v 1.7 2001/04/12 02:39:44 guppy Exp $
+ * $Id: snprintf.h,v 1.8 2001/10/19 01:55:06 tothwolf Exp $
  */
 /*
  * Copyright (C) 2000, 2001 Eggheads Development Team
@@ -21,33 +21,30 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+#ifndef _EGG_SNPRINTF_H
+#define _EGG_SNPRINTF_H
 
-#ifndef _EGG_COMPAT_SNPRINTF_H_
-#define _EGG_COMPAT_SNPRINTF_H_
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
 
-#include "src/main.h"
 #include <stdio.h>
+#include <stdarg.h>		/* FIXME: possible varargs.h conflicts */
 
-/* Use the system libraries version of vsnprintf() if available. Otherwise
- * use our own.
- */
-#ifndef HAVE_VSNPRINTF
-int egg_vsnprintf(char *str, size_t count, const char *fmt, va_list ap);
-#else
-#  define egg_vsnprintf	vsnprintf
+#if !defined(HAVE_VSNPRINTF) || !defined(HAVE_C99_VSNPRINTF)
+int vsnprintf(char *str, size_t count, const char *fmt, va_list args);
 #endif
 
-/* Use the system libraries version of snprintf() if available. Otherwise
- * use our own.
- */
-#ifndef HAVE_SNPRINTF
-#  ifdef __STDC__
-int egg_snprintf(char *str, size_t count, const char *fmt, ...);
-#  else
-int egg_snprintf();
-#  endif
-#else
-#  define egg_snprintf	snprintf
+#if !defined(HAVE_SNPRINTF) || !defined(HAVE_C99_VSNPRINTF)
+int snprintf(char *str, size_t count, const char *fmt, ...);
 #endif
 
-#endif	/* !_EGG_COMPAT_SNPRINTF_H_ */
+#ifndef HAVE_VASPRINTF
+int vasprintf(char **ptr, const char *format, va_list ap);
+#endif
+
+#ifndef HAVE_ASPRINTF
+int asprintf(char **ptr, const char *format, ...);
+#endif
+
+#endif				/* !_EGG_SNPRINTF_H */

@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.68 2001/10/18 02:57:51 stdarg Exp $
+ * $Id: module.h,v 1.69 2001/10/19 01:55:06 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -29,7 +29,7 @@
 #define MAKING_MODS
 
 /* Just include *all* the include files...it's slower but EASIER */
-#include "src/main.h"
+#include "src/main.h"		/* NOTE: when removing this, include config.h */
 #include "modvals.h"
 #include "src/tandem.h"
 #include "src/registry.h"
@@ -47,27 +47,10 @@
  * held responsible for mental break-downs caused by this file <G>
  */
 
-#undef feof
+/* #undef feof */
 #undef dprintf
 #undef Context
 #undef ContextNote
-
-/* Compability functions. */
-#ifdef egg_inet_aton
-#  undef egg_inet_aton
-#endif
-#ifdef egg_vsnprintf
-#  undef egg_vsnprintf
-#endif
-#ifdef egg_snprintf
-#  undef egg_snprintf
-#endif
-#ifdef egg_strcasecmp
-#  undef egg_strcasecmp
-#endif
-#ifdef egg_strncasecmp
-#  undef egg_strncasecmp
-#endif
 
 #if defined (__CYGWIN__) && !defined(STATIC)
 #  define EXPORT_SCOPE	__declspec(dllexport)
@@ -193,7 +176,9 @@
 #define open_telnet ((int (*) (char *, int))global[87])
 /* 88 - 91 */
 #define check_bind_event ((void * (*) (const char *))global[88])
-/* 89: my_memcpy / egg_memcpy -- UNUSED (Tothwolf) */
+#ifndef HAVE_MEMCPY
+# define memcpy ((void * (*) (void *, const void *, size_t))global[89])
+#endif
 /* #define my_atoul ((IP(*)(char *))global[90]) */
 #define my_strcpy ((int (*)(char *, const char *))global[91])
 /* 92 - 95 */
@@ -399,14 +384,26 @@
 #define sock_has_data ((int(*)(int, int))global[248])
 #define bots_in_subtree ((int (*)(tand_t *))global[249])
 #define users_in_subtree ((int (*)(tand_t *))global[250])
-#define egg_inet_aton ((int (*)(const char *cp, struct in_addr *addr))global[251])
+#ifndef HAVE_INET_ATON
+# define inet_aton ((int (*)(const char *cp, struct in_addr *addr))global[251])
+#endif
 /* 252 - 255 */
-#define egg_snprintf (global[252])
-#define egg_vsnprintf ((int (*)(char *, size_t, const char *, va_list))global[253])
-/* 254: egg_memset -- UNUSED (Tothwolf) */
-#define egg_strcasecmp ((int (*)(const char *, const char *))global[255])
+#ifndef HAVE_SNPRINTF
+# define snprintf (global[252])
+#endif
+#ifndef HAVE_VSNPRINTF
+# define vsnprintf ((int (*)(char *, size_t, const char *, va_list))global[253])
+#endif
+#ifndef HAVE_MEMSET
+# define memset ((void *(*)(void *, int, size_t))global[254])
+#endif
+#ifndef HAVE_STRCASECMP
+# define strcasecmp ((int (*)(const char *, const char *))global[255])
+#endif
 /* 256 - 259 */
-#define egg_strncasecmp ((int (*)(const char *, const char *, size_t))global[256])
+#ifndef HAVE_STRNCASECMP
+# define strncasecmp ((int (*)(const char *, const char *, size_t))global[256])
+#endif
 #define is_file ((int (*)(const char *))global[257])
 #define must_be_owner (*(int *)(global[258]))
 #define tandbot (*(tand_t **)(global[259]))
@@ -438,15 +435,31 @@
 #define kill_bot ((void (*)(char *, char *))global[273])
 #define quit_msg ((char *)(global[274]))
 #define add_bind_table2 ((bind_table_t *(*)(const char *, int, char *, int, int))global[275])
-/* 276 - 280 */
+/* 276 - 279 */
 #define del_bind_table2 ((void (*)(bind_table_t *))global[276])
 #define add_builtins2 ((void (*)(bind_table_t *, cmd_t *))global[277])
 #define rem_builtins2 ((void (*)(bind_table_t *, cmd_t *))global[278])
 #define find_bind_table2 ((bind_table_t *(*)(const char *))global[279])
+/* 280 - 283 */
 #define check_bind ((int (*)(bind_table_t *, const char *, struct flag_record *, ...))global[280])
-/* 281 - 285 */
 #define registry_lookup ((int (*)(const char *, const char *, Function *, void **))global[281])
 #define registry_add_simple_chains ((int (*)(registry_simple_chain_t *))global[282])
+#ifndef HAVE_STRFTIME
+# define strftime ((size_t (*)(char *, size_t, const char *, const struct tm *))global[283])
+#endif
+/* 284 - 287 */
+#ifndef HAVE_INET_NTOP
+# define inet_ntop ((const char (*)(int, const void *, char *, socklen_t size))global[284])
+#endif
+#ifndef HAVE_INET_PTON
+# define inet_pton ((int (*)(int, const char *, void *))global[285])
+#endif
+#ifndef HAVE_VASPRINTF
+# define vasprintf ((int (*)(char **, const char *, va_list))global[286])
+#endif
+#ifndef HAVE_ASPRINTF
+# define asprintf ((int (*)(char **, const char *, ...))global[287])
+#endif
 
 /* This is for blowfish module, couldnt be bothered making a whole new .h
  * file for it ;)

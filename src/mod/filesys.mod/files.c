@@ -2,7 +2,7 @@
  * files.c - part of filesys.mod
  *   handles all file system commands
  *
- * $Id: files.c,v 1.31 2001/10/11 13:01:35 tothwolf Exp $
+ * $Id: files.c,v 1.32 2001/10/19 01:55:07 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -476,7 +476,7 @@ static void cmd_reget_get(int idx, char *par, int resend)
 	/* This is a link to a file on another bot... */
 	bot = malloc(strlen(fdbe->sharelink) + 1);
 	splitc(bot, fdbe->sharelink, ':');
-	if (!egg_strcasecmp(bot, botnetnick)) {
+	if (!strcasecmp(bot, botnetnick)) {
 	  dprintf(idx, "Can't get that file, it's linked to this bot!\n");
 	} else if (!in_chain(bot)) {
 	  dprintf(idx, _("%s isnt available right now.\n"), fdbe->filename);
@@ -853,7 +853,7 @@ static void cmd_desc(int idx, char *par)
     if (!(fdbe->stat & FILE_HIDDEN)) {
       ok = 1;
       if ((!(dcc[idx].user->flags & USER_JANITOR)) &&
-	  (egg_strcasecmp(fdbe->uploader, dcc[idx].nick)))
+	  (strcasecmp(fdbe->uploader, dcc[idx].nick)))
 	dprintf(idx, _("You didnt upload %s\n"), fdbe->filename);
       else {
 	if (desc[0]) {
@@ -1412,7 +1412,7 @@ static int files_reget(int idx, char *fn, char *nick, int resend)
     /* This is a link to a file on another bot... */
     bot = malloc(strlen(fdbe->sharelink) + 1);
     splitc(bot, fdbe->sharelink, ':');
-    if (!egg_strcasecmp(bot, botnetnick)) {
+    if (!strcasecmp(bot, botnetnick)) {
       /* Linked to myself *duh* */
       filedb_close(fdb);
       free_null(what);

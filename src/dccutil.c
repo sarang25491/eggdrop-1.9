@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  *
- * $Id: dccutil.c,v 1.38 2001/10/11 11:34:19 tothwolf Exp $
+ * $Id: dccutil.c,v 1.39 2001/10/19 01:55:05 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -96,7 +96,7 @@ void dprintf EGG_VARARGS_DEF(int, arg1)
 
   idx = EGG_VARARGS_START(int, arg1, va);
   format = va_arg(va, char *);
-  egg_vsnprintf(buf, 1023, format, va);
+  vsnprintf(buf, 1023, format, va);
   va_end(va);
   /* We can not use the return value vsnprintf() to determine where
    * to null terminate. The C99 standard specifies that vsnprintf()
@@ -161,7 +161,7 @@ void chatout EGG_VARARGS_DEF(char *, arg1)
   va_list va;
 
   format = EGG_VARARGS_START(char *, arg1, va);
-  egg_vsnprintf(s, 511, format, va);
+  vsnprintf(s, 511, format, va);
   va_end(va);
   len = strlen(s);
   if (len > 511)
@@ -187,7 +187,7 @@ void chanout_but EGG_VARARGS_DEF(int, arg1)
   x = EGG_VARARGS_START(int, arg1, va);
   chan = va_arg(va, int);
   format = va_arg(va, char *);
-  egg_vsnprintf(s, 511, format, va);
+  vsnprintf(s, 511, format, va);
   va_end(va);
   len = strlen(s);
   if (len > 511)
@@ -460,7 +460,7 @@ int detect_dcc_flood(time_t * timer, struct chat_info *chat, int idx)
 	  (chat->channel >= 0)) {
 	char x[1024];
 
-	egg_snprintf(x, sizeof x, _("%s has been forcibly removed for flooding.\n"), dcc[idx].nick);
+	snprintf(x, sizeof x, _("%s has been forcibly removed for flooding.\n"), dcc[idx].nick);
 	chanout_but(idx, chat->channel, "*** %s", x);
 	if (chat->channel < 100000)
 	  botnet_send_part_idx(idx, x);
@@ -495,7 +495,7 @@ void do_boot(int idx, char *by, char *reason)
       (dcc[idx].u.chat->channel >= 0)) {
     char x[1024];
 
-    egg_snprintf(x, sizeof x, _("%s booted %s from the party line%s%s\n"), by, dcc[idx].nick,
+    snprintf(x, sizeof x, _("%s booted %s from the party line%s%s\n"), by, dcc[idx].nick,
 		 reason[0] ? ": " : "", reason);
     chanout_but(idx, dcc[idx].u.chat->channel, "*** %s.\n", x);
     if (dcc[idx].u.chat->channel < 100000)

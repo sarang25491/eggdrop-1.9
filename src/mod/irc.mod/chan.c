@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.77 2001/10/13 15:55:33 tothwolf Exp $
+ * $Id: chan.c,v 1.78 2001/10/19 01:55:08 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -208,7 +208,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
   /* Okay, make sure i'm not flood-checking myself */
   if (match_my_nick(floodnick))
     return 0;
-  if (!egg_strcasecmp(floodhost, botuserhost))
+  if (!strcasecmp(floodhost, botuserhost))
     return 0;
   /* My user@host (?) */
   if ((which == FLOOD_KICK) || (which == FLOOD_DEOP))
@@ -415,7 +415,7 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
 	do_mask(chan, chan->channel.ban, b->mask, 'b');
 	b->lastactive = now;
 	if (b->desc && b->desc[0] != '@')
-	  egg_snprintf(c, sizeof c, "%s%s", _("banned: "), b->desc);
+	  snprintf(c, sizeof c, "%s%s", _("banned: "), b->desc);
 	else
 	  c[0] = 0;
 	kick_all(chan, b->mask, c[0] ? c : _("You are banned"), 0);
@@ -1481,7 +1481,7 @@ static int gotjoin(char *from, char *ignore, char *chname)
     if (l_chname > (CHANNEL_ID_LEN + 1)) {
       ch_dname = malloc(l_chname + 1);
       if (ch_dname) {
-	egg_snprintf(ch_dname, l_chname + 2, "!%s",
+	snprintf(ch_dname, l_chname + 2, "!%s",
 		     chname + (CHANNEL_ID_LEN + 1));
 	chan = findchan_by_dname(ch_dname);
 	if (!chan) {
@@ -1533,7 +1533,7 @@ static int gotjoin(char *from, char *ignore, char *chname)
       reset_chan_info(chan);
     } else {
       m = ismember(chan, nick);
-      if (m && m->split && !egg_strcasecmp(m->userhost, uhost)) {
+      if (m && m->split && !strcasecmp(m->userhost, uhost)) {
 	check_tcl_rejn(nick, uhost, u, chan->dname);
 	/* The tcl binding might have deleted the current user. Recheck. */
 	u = get_user_by_host(from);

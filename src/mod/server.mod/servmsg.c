@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.78 2001/10/18 02:57:52 stdarg Exp $
+ * $Id: servmsg.c,v 1.79 2001/10/19 01:55:08 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -201,7 +201,7 @@ static int got001(char *from, char *ignore, char *msg)
 	        (chan->name[0]) ? chan->name : chan->dname,
 	        chan->channel.key[0] ? chan->channel.key : chan->key_prot);
     }
-  if (egg_strcasecmp(from, dcc[servidx].host)) {
+  if (strcasecmp(from, dcc[servidx].host)) {
     putlog(LOG_MISC, "*", "(%s claims to be %s; updating server list)",
 	   dcc[servidx].host, from);
     for (i = curserv; i > 0 && x != NULL; i--)
@@ -234,7 +234,7 @@ static int got442(char *from, char *ignore, char *msg)
 
   for (x = serverlist, i = 0; x; x = x->next, i++)
     if (i == curserv) {
-      if (egg_strcasecmp(from, x->realname ? x->realname : x->name))
+      if (strcasecmp(from, x->realname ? x->realname : x->name))
 	return 0;
       break;
     }
@@ -308,12 +308,12 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
   /* Okay, make sure i'm not flood-checking myself */
   if (match_my_nick(floodnick))
     return 0;
-  if (!egg_strcasecmp(floodhost, botuserhost))
+  if (!strcasecmp(floodhost, botuserhost))
     return 0;			/* My user@host (?) */
   p = strchr(floodhost, '@');
   if (p) {
     p++;
-    if (egg_strcasecmp(lastmsghost[which], p)) {	/* New */
+    if (strcasecmp(lastmsghost[which], p)) {	/* New */
       strcpy(lastmsghost[which], p);
       lastmsgtime[which] = now;
       lastmsgs[which] = 0;
@@ -428,7 +428,7 @@ static int gotmsg(char *from, char *ignore, char *msg)
 	    if (!ignoring || trigger_on_ignore) {
 	      if (!check_tcl_ctcp(nick, uhost, u, to, code, ctcp) &&
 		  !ignoring) {
-		if (!egg_strcasecmp(code, "DCC")) {
+		if (!strcasecmp(code, "DCC")) {
 		  /* If it gets this far unhandled, it means that
 		   * the user is totally unknown.
 		   */
@@ -627,7 +627,7 @@ static void minutely_checks()
     if (strncmp(botname, origbotname, strlen(botname))) {
       /* See if my nickname is in use and if if my nick is right.  */
 	alt = get_altbotnick();
-	if (alt[0] && egg_strcasecmp (botname, alt))
+	if (alt[0] && strcasecmp (botname, alt))
 	  dprintf(DP_SERVER, "ISON :%s %s %s\n", botname, origbotname, alt);
 	else
           dprintf(DP_SERVER, "ISON :%s %s\n", botname, origbotname);
@@ -828,7 +828,7 @@ static int gotnick(char *from, char *ignore, char *msg)
         putlog(LOG_MISC, "*", _("Switching back to nick %s"), origbotname);
         dprintf(DP_SERVER, "NICK %s\n", origbotname);
       } else if (alt[0] && !irccmp(nick, alt)
-		 && egg_strcasecmp(botname, origbotname)) {
+		 && strcasecmp(botname, origbotname)) {
         putlog(LOG_MISC, "*", _("Switching back to altnick %s"), alt);
         dprintf(DP_SERVER, "NICK %s\n", alt);
       }
@@ -840,7 +840,7 @@ static int gotnick(char *from, char *ignore, char *msg)
       putlog(LOG_MISC, "*", _("Switching back to nick %s"), origbotname);
       dprintf(DP_SERVER, "NICK %s\n", origbotname);
     } else if (alt[0] && !irccmp(nick, alt) &&
-	    egg_strcasecmp(botname, origbotname)) {
+	    strcasecmp(botname, origbotname)) {
       putlog(LOG_MISC, "*", _("Switching back to altnick %s"), altnick);
       dprintf(DP_SERVER, "NICK %s\n", altnick);
     }
@@ -1031,7 +1031,7 @@ static int got311(char *from, char *ignore, char *msg)
     return 0;
     
   if (match_my_nick(n2))
-    egg_snprintf(botuserhost, sizeof botuserhost, "%s@%s", u, h);
+    snprintf(botuserhost, sizeof botuserhost, "%s@%s", u, h);
   
   return 0;
 }

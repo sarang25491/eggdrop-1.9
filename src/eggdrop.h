@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.47 2001/10/18 09:06:43 stdarg Exp $
+ * $Id: eggdrop.h,v 1.48 2001/10/19 01:55:05 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -184,22 +184,23 @@ do {									\
 #  define ContextNote(note)	{}
 #endif
 
-/* 32 bit type */
-#if (SIZEOF_INT == 4)
-typedef unsigned int		u_32bit_t;
+/* 32 bit type
+ */
+#ifdef UNSIGNED_LONG32
+typedef unsigned long  u_32int_t;
 #else
-#  if (SIZEOF_LONG == 4)
-typedef unsigned long		u_32bit_t;
-#  else
-#    include "cant/find/32bit/type"
-#  endif
+# ifdef UNSIGNED_INT32
+typedef unsigned int   u_32int_t;
+# else
+typedef unsigned long  u_32int_t;
+# endif
 #endif
 
 typedef unsigned short int	u_16bit_t;
 typedef unsigned char		u_8bit_t;
 
 /* IP type */
-typedef u_32bit_t		IP;
+typedef u_32int_t		IP;
 
 #define debug0(x)		putlog(LOG_DEBUG,"*",x)
 #define debug1(x,a1)		putlog(LOG_DEBUG,"*",x,a1)

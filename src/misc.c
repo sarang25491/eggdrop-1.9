@@ -6,7 +6,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.50 2001/10/18 09:06:43 stdarg Exp $
+ * $Id: misc.c,v 1.51 2001/10/19 01:55:05 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -412,7 +412,7 @@ void daysago(time_t now, time_t then, char *out)
     sprintf(out, "%d day%s ago", days, (days == 1) ? "" : "s");
     return;
   }
-  egg_strftime(out, 6, "%H:%M", localtime(&then));
+  strftime(out, 6, "%H:%M", localtime(&then));
 }
 
 /* Convert an interval (in seconds) to one of:
@@ -426,7 +426,7 @@ void days(time_t now, time_t then, char *out)
     sprintf(out, "in %d day%s", days, (days == 1) ? "" : "s");
     return;
   }
-  egg_strftime(out, 9, "at %H:%M", localtime(&now));
+  strftime(out, 9, "at %H:%M", localtime(&now));
 }
 
 /* Convert an interval (in seconds) to one of:
@@ -624,7 +624,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
     case 'U':
 #ifdef HAVE_UNAME
       if (!uname(&uname_info)) {
-	egg_snprintf(sub, sizeof sub, "%s %s", uname_info.sysname,
+	snprintf(sub, sizeof sub, "%s %s", uname_info.sysname,
 		       uname_info.release);
 	towrite = sub;
       } else
@@ -644,7 +644,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
       towrite = admin;
       break;
     case 'T':
-      egg_strftime(sub, 6, "%H:%M", localtime(&now));
+      strftime(sub, 6, "%H:%M", localtime(&now));
       towrite = sub;
       break;
     case 'N':
@@ -681,7 +681,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
 	q += 2;
 	/* Now q is the string and p is where the rest of the fcn expects */
 	if (!strncmp(q, "help=", 5)) {
-	  if (topic && egg_strcasecmp(q + 5, topic))
+	  if (topic && strcasecmp(q + 5, topic))
 	    blind |= 2;
 	  else
 	    blind &= ~2;
@@ -697,7 +697,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
 	      blind &= ~1;
 	  } else if (q[0] == '-') {
 	    blind &= ~1;
-	  } else if (!egg_strcasecmp(q, "end")) {
+	  } else if (!strcasecmp(q, "end")) {
 	    blind &= ~1;
 	    subwidth = 70;
 	    if (cols) {
@@ -707,7 +707,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
 	      cols = 0;
 	      towrite = sub;
 	    }
-	  } else if (!egg_strcasecmp(q, "center"))
+	  } else if (!strcasecmp(q, "center"))
 	    center = 1;
 	  else if (!strncmp(q, "cols=", 5)) {
 	    char *r;
@@ -821,11 +821,11 @@ void add_help_reference(char *file)
   current->next = help_list;
   current->first = NULL;
   help_list = current;
-  egg_snprintf(s, sizeof s, "%smsg/%s", helpdir, file);
+  snprintf(s, sizeof s, "%smsg/%s", helpdir, file);
   scan_help_file(current, s, 0);
-  egg_snprintf(s, sizeof s, "%s%s", helpdir, file);
+  snprintf(s, sizeof s, "%s%s", helpdir, file);
   scan_help_file(current, s, 1);
-  egg_snprintf(s, sizeof s, "%sset/%s", helpdir, file);
+  snprintf(s, sizeof s, "%sset/%s", helpdir, file);
   scan_help_file(current, s, 2);
 }
 
@@ -900,14 +900,14 @@ FILE *resolve_help(int dcc, char *file)
       for (item = current->first; item; item = item->next)
 	if (!strcmp(item->name, file)) {
 	  if (!item->type && !dcc) {
-	    egg_snprintf(s, sizeof s, "%smsg/%s", helpdir, current->name);
+	    snprintf(s, sizeof s, "%smsg/%s", helpdir, current->name);
 	    if ((f = fopen(s, "r")))
 	      return f;
 	  } else if (dcc && item->type) {
 	    if (item->type == 1)
-	      egg_snprintf(s, sizeof s, "%s%s", helpdir, current->name);
+	      snprintf(s, sizeof s, "%s%s", helpdir, current->name);
 	    else
-	      egg_snprintf(s, sizeof s, "%sset/%s", helpdir, current->name);
+	      snprintf(s, sizeof s, "%sset/%s", helpdir, current->name);
 	    if ((f = fopen(s, "r")))
 	      return f;
 	  }
@@ -1004,9 +1004,9 @@ void tellwildhelp(int idx, char *match, struct flag_record *flags)
     for (item = current->first; item; item = item->next)
       if (wild_match(match, item->name) && item->type) {
 	if (item->type == 1)
-	  egg_snprintf(s, sizeof s, "%s%s", helpdir, current->name);
+	  snprintf(s, sizeof s, "%s%s", helpdir, current->name);
 	else
-	  egg_snprintf(s, sizeof s, "%sset/%s", helpdir, current->name);
+	  snprintf(s, sizeof s, "%sset/%s", helpdir, current->name);
 	if ((f = fopen(s, "r")))
 	  display_tellhelp(idx, item->name, f, flags);
       }
@@ -1029,9 +1029,9 @@ void tellallhelp(int idx, char *match, struct flag_record *flags)
       if (!strcmp(match, item->name) && item->type) {
 
 	if (item->type == 1)
-	  egg_snprintf(s, sizeof s, "%s%s", helpdir, current->name);
+	  snprintf(s, sizeof s, "%s%s", helpdir, current->name);
 	else
-	  egg_snprintf(s, sizeof s, "%sset/%s", helpdir, current->name);
+	  snprintf(s, sizeof s, "%sset/%s", helpdir, current->name);
 	if ((f = fopen(s, "r")))
 	  display_tellhelp(idx, item->name, f, flags);
       }

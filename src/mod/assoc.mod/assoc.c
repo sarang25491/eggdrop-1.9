@@ -2,7 +2,7 @@
  * assoc.c -- part of assoc.mod
  *   the assoc code, moved here mainly from botnet.c for module work
  *
- * $Id: assoc.c,v 1.25 2001/10/17 00:43:32 stdarg Exp $
+ * $Id: assoc.c,v 1.26 2001/10/19 01:55:06 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -65,7 +65,7 @@ static void link_assoc(char *bot, char *via)
 {
   char x[1024];
 
-  if (!egg_strcasecmp(via, botnetnick)) {
+  if (!strcasecmp(via, botnetnick)) {
     int idx = nextbot(bot);
     assoc_t *a;
 
@@ -113,7 +113,7 @@ static void add_assoc(char *name, int chan)
   assoc_t *a, *b, *old = NULL;
 
   for (a = assoc; a; a = a->next) {
-    if (name[0] != 0 && !egg_strcasecmp(a->name, name)) {
+    if (name[0] != 0 && !strcasecmp(a->name, name)) {
       kill_assoc(a->channel);
       add_assoc(name, chan);
       return;
@@ -153,7 +153,7 @@ static int get_assoc(char *name)
   assoc_t *a;
 
   for (a = assoc; a; a = a->next)
-    if (!egg_strcasecmp(a->name, name))
+    if (!strcasecmp(a->name, name))
       return a->channel;
   return -1;
 }
@@ -307,7 +307,7 @@ static void zapf_assoc(char *botnick, char *code, char *par)
   int linking = 0, chan;
 
   if ((idx >= 0) && !(bot_flags(dcc[idx].user) & BOT_ISOLATE)) {
-    if (!egg_strcasecmp(dcc[idx].nick, botnick))
+    if (!strcasecmp(dcc[idx].nick, botnick))
       linking = b_status(idx) & STAT_LINKING;
     s = newsplit(&par);
     chan = base64_to_int(s);

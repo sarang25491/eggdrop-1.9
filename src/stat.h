@@ -2,7 +2,7 @@
  * stat.h
  *  file attributes
  *
- * $Id: stat.h,v 1.2 2001/04/12 02:39:43 guppy Exp $
+ * $Id: stat.h,v 1.3 2001/10/19 01:55:05 tothwolf Exp $
  */
 /*
  * Copyright (C) 2000, 2001 Eggheads Development Team
@@ -21,24 +21,53 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 #ifndef _EGG_STAT_H
 #define _EGG_STAT_H
 
-#ifndef S_ISDIR
-#  ifndef S_IFMT
-#    define S_IFMT	0170000	    /* Bitmask for the file type bitfields */
-#  endif
-#  ifndef S_IFDIR
-#    define S_IFDIR	0040000	    /* Directory			   */
-#  endif
-#  define S_ISDIR(m)	(((m)&(S_IFMT)) == (S_IFDIR))
+#ifdef HAVE_CONFIG_H
+# include "config.h"
 #endif
-#ifndef S_IFREG
-#  define S_IFREG	0100000     /* Regular file			   */
-#endif
-#ifndef S_IFLNK
-#  define S_IFLNK   	0120000     /* Symbolic link			   */
-#endif
+
+#ifdef STAT_MACROS_BROKEN
+
+/* Undefine bits */
+# undef S_IFMT
+# undef S_IFSOCK
+# undef S_IFLNK
+# undef S_IFREG
+# undef S_IFBLK
+# undef S_IFDIR
+# undef S_IFCHR
+# undef S_IFIFO
+
+/* Undefine macros */
+# undef S_ISSOCK
+# undef S_ISLNK
+# undef S_ISREG
+# undef S_ISBLK
+# undef S_ISDIR
+# undef S_ISCHR
+# undef S_ISFIFO
+
+/* Define bits */
+# define S_IFMT		0170000	/* Bitmask for the file type bitfields */
+# define S_IFSOCK	0140000	/* Socket */
+# define S_IFLNK	0120000	/* Symbolic link */
+# define S_IFREG	0100000	/* Regular file */
+# define S_IFBLK	0060000	/* Block device */
+# define S_IFDIR	0040000	/* Directory */
+# define S_IFCHR	0020000	/* Character device */
+# define S_IFIFO	0010000	/* FIFO */
+
+/* Define macros */
+# define S_ISSOCK(mode)	(((mode) & (S_IFMT)) = (S_IFSOCK))
+# define S_ISLNK(mode)	(((mode) & (S_IFMT)) = (S_IFLNK))
+# define S_ISREG(mode)	(((mode) & (S_IFMT)) = (S_IFREG))
+# define S_ISBLK(mode)	(((mode) & (S_IFMT)) = (S_IFBLK))
+# define S_ISDIR(mode)	(((mode) & (S_IFMT)) = (S_IFDIR))
+# define S_ISCHR(mode)	(((mode) & (S_IFMT)) = (S_IFCHR))
+# define S_ISFIFO(mode)	(((mode) & (S_IFMT)) = (S_IFIFO))
+
+#endif			/* STAT_MACROS_BROKEN */
 
 #endif			/* _EGG_STAT_H */

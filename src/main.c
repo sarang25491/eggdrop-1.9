@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.90 2001/10/18 09:06:43 stdarg Exp $
+ * $Id: main.c,v 1.91 2001/10/19 01:55:05 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -383,7 +383,7 @@ void eggContext(const char *file, int line, const char *module)
   if (!module) {
     strncpyz(x, p ? p + 1 : file, sizeof x);
   } else
-    egg_snprintf(x, 31, "%s:%s", module, p ? p + 1 : file);
+    snprintf(x, 31, "%s:%s", module, p ? p + 1 : file);
   cx_ptr = ((cx_ptr + 1) & 15);
   strcpy(cx_file[cx_ptr], x);
   cx_line[cx_ptr] = line;
@@ -401,7 +401,7 @@ void eggContextNote(const char *file, int line, const char *module,
   if (!module) {
     strncpyz(x, p ? p + 1 : file, sizeof x);
   } else
-    egg_snprintf(x, 31, "%s:%s", module, p ? p + 1 : file);
+    snprintf(x, 31, "%s:%s", module, p ? p + 1 : file);
   cx_ptr = ((cx_ptr + 1) & 15);
   strcpy(cx_file[cx_ptr], x);
   cx_line[cx_ptr] = line;
@@ -465,7 +465,7 @@ void backup_userfile(void)
   char s[125];
 
   putlog(LOG_MISC, "*", _("Backing up user file..."));
-  egg_snprintf(s, sizeof s, "%s~bak", userfile);
+  snprintf(s, sizeof s, "%s~bak", userfile);
   copyfile(userfile, s);
 }
 
@@ -653,8 +653,8 @@ int main(int argc, char **argv)
   
 #include "patch.h"
   /* Version info! */
-  egg_snprintf(ver, sizeof ver, "eggdrop v%s", egg_version);
-  egg_snprintf(version, sizeof version, "Eggdrop v%s (C)1997 Robey Pointer (C)2001 Eggheads",
+  snprintf(ver, sizeof ver, "eggdrop v%s", egg_version);
+  snprintf(version, sizeof version, "Eggdrop v%s (C)1997 Robey Pointer (C)2001 Eggheads",
 	       egg_version);
   /* Now add on the patchlevel (for Tcl) */
   sprintf(&egg_version[strlen(egg_version)], " %u", egg_numver);
@@ -748,7 +748,7 @@ module, please consult the default config file for info.\n"));
 	 botnetnick, i, count_users(userlist));
   cache_miss = 0;
   cache_hit = 0;
-  egg_snprintf(pid_file, sizeof pid_file, "pid.%s", botnetnick);
+  snprintf(pid_file, sizeof pid_file, "pid.%s", botnetnick);
 
   /* Check for pre-existing eggdrop! */
   f = fopen(pid_file, "r");

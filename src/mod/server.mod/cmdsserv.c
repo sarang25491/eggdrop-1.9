@@ -2,7 +2,7 @@
  * cmdsserv.c -- part of server.mod
  *   handles commands from a user via dcc that cause server interaction
  *
- * $Id: cmdsserv.c,v 1.11 2001/08/10 23:51:21 ite Exp $
+ * $Id: cmdsserv.c,v 1.12 2001/10/19 01:55:08 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -36,11 +36,11 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
     dprintf(idx, "My server list:\n");
     i = 0;
     for (; x; x = x->next) {
-      egg_snprintf(s, sizeof s, "%14s %20.20s:%-10d",
+      snprintf(s, sizeof s, "%14s %20.20s:%-10d",
 		   (i == curserv) ? "I am here ->" : "", x->name,
 		   x->port ? x->port : default_port);
       if (x->realname)
-	egg_snprintf(s + 46, sizeof s - 46, " (%-.20s)", x->realname);
+	snprintf(s + 46, sizeof s - 46, " (%-.20s)", x->realname);
       dprintf(idx, "%s\n", s);
       i++;
     }
@@ -91,26 +91,26 @@ static void cmd_clearqueue(struct userrec *u, int idx, char *par)
     dprintf(idx, "Usage: clearqueue <mode|server|help|all>\n");
     return;
   }
-  if (!egg_strcasecmp(par, "all")) {
+  if (!strcasecmp(par, "all")) {
     msgs = modeq.tot + mq.tot + hq.tot;
     msgq_clear(&modeq);
     msgq_clear(&mq);
     msgq_clear(&hq);
     double_warned = burst = 0;
     dprintf(idx, "Removed %d msgs from all queues\n", msgs);
-  } else if (!egg_strcasecmp(par, "mode")) {
+  } else if (!strcasecmp(par, "mode")) {
     msgs = modeq.tot;
     msgq_clear(&modeq);
     if (mq.tot == 0)
       burst = 0;
     double_warned = 0;
     dprintf(idx, "Removed %d msgs from the %s queue\n", msgs, "mode");
-  } else if (!egg_strcasecmp(par, "help")) {
+  } else if (!strcasecmp(par, "help")) {
     msgs = hq.tot;
     msgq_clear(&hq);
     double_warned = 0;
     dprintf(idx, "Removed %d msgs from the %s queue\n", msgs, "help");
-  } else if (!egg_strcasecmp(par, "server")) {
+  } else if (!strcasecmp(par, "server")) {
     msgs = mq.tot;
     msgq_clear(&mq);
     if (modeq.tot == 0)

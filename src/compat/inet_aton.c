@@ -1,35 +1,9 @@
 /*
- * inet_aton.c -- provides inet_aton() if necessary.
+ * inet_aton.c
+ *   provides inet_aton()
  *
- * $Id: inet_aton.c,v 1.7 2001/10/10 10:44:04 tothwolf Exp $
+ * $Id: inet_aton.c,v 1.8 2001/10/19 01:55:06 tothwolf Exp $
  */
-/*
- * Poritions Copyright (C) 2000, 2001 Eggheads Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- */
-
-#include "../main.h"
-#include "inet_aton.h"
-
-#ifndef HAVE_ISASCII
-/* Let all checks succeed if we don't have isascii(). */
-#  define isascii(x)	1
-#endif
-
-#ifndef HAVE_INET_ATON
 /*
  * ++Copyright++ 1983, 1990, 1993
  * -
@@ -89,6 +63,15 @@ static char sccsid[] = "@(#)inet_addr.c	8.1 (Berkeley) 6/17/93";
 static char rcsid[] = "$-Id: inet_addr.c,v 1.11 1999/04/29 18:19:53 drepper Exp $";
 #endif /* LIBC_SCCS and not lint */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+#ifndef HAVE_ISASCII
+/* Let all checks succeed if we don't have isascii(). */
+# define isascii(x)	1
+#endif
+
 #include <sys/types.h>
 #include <sys/param.h>
 #include <ctype.h>
@@ -101,17 +84,17 @@ static char rcsid[] = "$-Id: inet_addr.c,v 1.11 1999/04/29 18:19:53 drepper Exp 
  * cannot distinguish between failure and a local broadcast address.
  */
 int
-egg_inet_aton(cp, addr)
+inet_aton(cp, addr)
 	const char *cp;
 	struct in_addr *addr;
 {
-	static const u_32bit_t max[4] = { 0xffffffff, 0xffffff, 0xffff, 0xff };
-	register u_32bit_t val;	/* changed from u_long --david */
+	static const u_32int_t max[4] = { 0xffffffff, 0xffffff, 0xffff, 0xff };
+	register u_32int_t val;	/* changed from u_long --david */
 	register int base;
 	register int n;
 	register char c;
-	u_32bit_t parts[4];
-	register u_32bit_t *pp = parts;
+	u_32int_t parts[4];
+	register u_32int_t *pp = parts;
 
 	memset(parts, 0, sizeof (parts));
 
@@ -183,4 +166,3 @@ egg_inet_aton(cp, addr)
 ret_0:
 	return (0);
 }
-#endif /* HAVE_INET_ATON */
