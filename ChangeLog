@@ -1,3 +1,13 @@
+2002-05-01 02:30  stdarg <stdarg@techmonkeys.org>
+
+	* doc/tcl-commands.doc, lib/eggdrop/script.c, lib/eggdrop/script.h,
+	src/tcldcc.c, src/tclhash.c, src/tclmisc.c:
+
+	
+	* Added some convenience functions for working with strings in
+	script_var_t's.  * 'binds' command now returns a list of bind tables
+	if you specify no arguments.  
+
 2002-04-28 07:37  stdarg <stdarg@techmonkeys.org>
 
 	* modules/perlscript/perlscript.c, modules/tclscript/tclscript.c,
