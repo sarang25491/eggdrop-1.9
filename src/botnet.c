@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.47 2001/10/31 04:02:51 tothwolf Exp $
+ * $Id: botnet.c,v 1.48 2001/12/29 21:31:07 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -445,8 +445,7 @@ char *lastbot(char *who)
 void answer_local_whom(int idx, int chan)
 {
   char c, idle[40], spaces2[33] = "                               ";
-  int i, len, len2;
-  int t, nicklen, botnicklen;
+  int i, len, len2, t, nicklen, botnicklen, total = 0;
 
   if (chan == (-1))
     dprintf(idx, "%s (+: %s, *: %s)\n", _("Users across the botnet"), _("Party line"),
@@ -508,6 +507,7 @@ void answer_local_whom(int idx, int chan)
 	  idle[0] = 0;
 	spaces[len = nicklen - strlen(dcc[i].nick)] = 0;
 	spaces2[len2 = botnicklen - strlen(botnetnick)] = 0;
+	total++;
 	dprintf(idx, "%c%s%s %c %s%s  %s%s\n", c, dcc[i].nick, spaces,
 		(dcc[i].u.chat->channel == 0) && (chan == (-1)) ? '+' :
 		(dcc[i].u.chat->channel > 100000) &&
@@ -542,6 +542,7 @@ void answer_local_whom(int idx, int chan)
 	idle[0] = 0;
       spaces[len = nicklen - strlen(party[i].nick)] = 0;
       spaces2[len2 = botnicklen - strlen(party[i].bot)] = 0;
+      total++;
       dprintf(idx, "%c%s%s %c %s%s  %s%s\n", c, party[i].nick, spaces,
 	      (party[i].chan == 0) && (chan == (-1)) ? '+' : ' ',
 	      party[i].bot, spaces2, party[i].from, idle);
@@ -552,6 +553,7 @@ void answer_local_whom(int idx, int chan)
 		party[i].away ? party[i].away : "");
     }
   }
+  dprintf(idx, "Total users: %d\n", total);
 }
 
 /* Show z a list of all bots connected
