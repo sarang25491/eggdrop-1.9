@@ -1,3 +1,10 @@
+2001-12-08 15:14  Federico Mennite <ite@techmonkeys.org>
+
+	* modules/channels/tclchan.c:
+
+	Bans weren't always applied correctly. Patch by Jeff Fisher
+	<guppy@techmonkeys.org> 
+
 2001-12-08 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
