@@ -139,6 +139,7 @@ static int logfile_cycle()
 		egg_strftime(suffix, 32, logfile_suffix, localtime(&now));
 	}
 
+	prev = NULL;
 	for (log = log_list_head; log; log = log->next) {
 		fclose(log->fp);
 

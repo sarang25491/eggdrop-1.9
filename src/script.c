@@ -91,7 +91,7 @@ int script_link_int_table(script_int_t *table)
 	script_int_t *intval;
 
 	for (intval = table; intval->class && intval->name; intval++) {
-		link_int(link_int_h, intval, 0, 0, 0);
+		link_int(link_int_h, intval, 0);
 	}
 	return(0);
 
