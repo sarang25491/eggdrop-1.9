@@ -2,7 +2,7 @@
  * blowfish.c -- part of blowfish.mod
  *   encryption and decryption of passwords
  *
- * $Id: blowfish.c,v 1.3 2002/03/22 16:01:16 ite Exp $
+ * $Id: blowfish.c,v 1.4 2002/05/05 04:12:18 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -376,46 +376,20 @@ static char *decrypt_string(char *key, char *str)
   return dest;
 }
 
-static int tcl_encrypt STDVAR
+static char *script_encpass(char *pass)
 {
-  char *p;
+	char *buf;
 
-  BADARGS(3, 3, " key string");
-  p = encrypt_string(argv[1], argv[2]);
-  Tcl_AppendResult(irp, p, NULL);
-  free(p);
-  return TCL_OK;
+	buf = (char *)malloc(17);
+	blowfish_encrypt_pass(pass, buf);
+	return(buf);
 }
 
-static int tcl_decrypt STDVAR
-{
-  char *p;
-
-  BADARGS(3, 3, " key string");
-  p = decrypt_string(argv[1], argv[2]);
-  Tcl_AppendResult(irp, p, NULL);
-  free(p);
-  return TCL_OK;
-}
-
-static int tcl_encpass STDVAR
-{
-  BADARGS(2, 2, " string");
-  if (strlen(argv[1]) > 0) {
-    char p[16];
-    blowfish_encrypt_pass(argv[1], p);
-    Tcl_AppendResult(irp, p, NULL);
-  } else
-    Tcl_AppendResult(irp, "", NULL);
-  return TCL_OK;
-}
-
-static tcl_cmds mytcls[] =
-{
-  {"encrypt",	tcl_encrypt},
-  {"decrypt",	tcl_decrypt},
-  {"encpass",	tcl_encpass},
-  {NULL,	NULL}
+static script_command_t blowfish_script_cmds[] = {
+	{"", "encpass", (Function) script_encpass, NULL, 1, "s", "string", SCRIPT_STRING | SCRIPT_FREE, 0},
+	{"", "encrypt", (Function) encrypt_string, NULL, 2, "ss", "key string", SCRIPT_STRING | SCRIPT_FREE, 0},
+	{"", "decrypt", (Function) decrypt_string, NULL, 2, "ss", "key string", SCRIPT_STRING | SCRIPT_FREE, 0},
+	{0}
 };
 
 /* You CANT -module an encryption module , so -module just resets it.
@@ -469,7 +443,7 @@ char *start(eggdrop_t *eggdrop)
     add_hook(HOOK_ENCRYPT_STRING, (Function) encrypt_string);
     add_hook(HOOK_DECRYPT_STRING, (Function) decrypt_string);
   }
-  add_tcl_commands(mytcls);
+  script_create_cmd_table(blowfish_script_cmds);
   return NULL;
 }
 
