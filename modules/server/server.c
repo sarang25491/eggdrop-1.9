@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: server.c,v 1.55 2003/12/20 00:34:37 stdarg Exp $";
+static const char rcsid[] = "$Id: server.c,v 1.56 2004/01/11 10:54:32 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -110,6 +110,14 @@ static int server_status(partymember_t *p, const char *text)
 			else partymember_printf(p, _("   Online as %s (still waiting for WHOIS result)."), current_server.nick);
 		}
 		else partymember_printf(p, _("   Still logging in."));
+
+		/* Some traffic stats. */
+		if (details) {
+			sockbuf_stats_t *stats;
+
+			sockbuf_get_stats(current_server.idx, &stats);
+			partymember_printf(p, "   Server traffic: %lld in / %lld out (raw), %lld in / %lld out (filtered)", stats->raw_bytes_in, stats->raw_bytes_out, stats->bytes_in, stats->bytes_out);
+		}
 	}
 	partymember_printf(p, "");
 	return(0);

@@ -20,6 +20,12 @@ sockbuf_handler_t
 	connections.
 	See sockbuf.txt for more information.
 
+sockbuf_stats_t
+	This structure stores statistics for each sockbuf. Fields cover areas
+	such as times for last input/output, bytes transferred (raw and
+	filtered), and average speeds.
+	See sockbuf.txt for more information.
+
 FUNCTIONS
 
 int egg_dns_lookup(const char *host, int timeout, dns_callback_t callback, void *client_data)
