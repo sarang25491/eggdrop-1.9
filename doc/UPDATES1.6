@@ -1,10 +1,35 @@
-$Id: UPDATES1.6,v 1.199 2002/02/27 05:34:00 guppy Exp $
+$Id: UPDATES1.6,v 1.200 2002/03/20 13:11:44 wcc Exp $
 
 Changes in Eggdrop: (since v1.6.0)
 ----------------------------------
 
-1.6.9
+1.6.10
 Found by  Fixed by  What...
+MC_8      Wcc       more tcl-commands.doc fixes
+MC_8      Wcc       added some missing command options to tcl-commands.doc
+          Uwe       cd_cmd_table was missing a null entry at the end of the list
+
+1.6.9 (10 March 2002)
+Found by  Fixed by  What...
+          BarkerJr/ "Detected loop: two bots exist named bot2: disconnecting
+          Wcc       bot3" sounds better than "Detected loop: disconnecting
+                    (bot2): Disconnected bot3".
+          Wcc/      Added a few channels to the README and readme.html
+          SiDEWiNDR and made references to other docs in the html files
+                    links to their respective html files.
+various   Eule      modes-per-line is limited to a max of 6 modes per line
+          Wcc       more doc fixes
+          Wcc       removed an extra space from the "Writing channel
+                    file..." message
+          Amir      fixed a problem with uff not adding entries properly
+          Boing     made cmd_channel, cmd_dccstat, cmd_who, cmd_whois, cmd_match handlen
+                    friendly
+          Amir      botlink() now safely copies the linker string
+various   Eule      fixed crashes relating to flushmodes
+Wanderer| dw	    tcl command modules missing in doc/tcl-commands.doc
+          guppy     users with only +x can now only login via dcc chat, they cannot use
+                    telnet
+          Wcc       more documentation updates
           Eule/     changed how protectops and protectfriends works a bit:
           guppy       if the user has either glob +d or chan +d then no protection
                       protectfriends now only protects +f users
