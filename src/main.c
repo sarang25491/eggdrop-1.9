@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.162 2003/12/18 07:18:48 wcc Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.163 2003/12/18 07:20:04 wcc Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -179,7 +179,7 @@ static void print_version(void)
 	printf("%s\n", version);
 }
 
-static void print_help(const *char *argv)
+static void print_help(char *const *argv)
 {
 	print_version();
 	printf(_("\nUsage: %s [OPTIONS]... [FILE]\n"), argv[0]);
