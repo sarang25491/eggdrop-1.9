@@ -1,3 +1,19 @@
+2002-09-20 20:28  stdarg <stdarg@techmonkeys.org>
+
+	* modules/server/binds.c:
+
+	[no log message] 
+
+2002-09-20 20:18  stdarg <stdarg@techmonkeys.org>
+
+	* configure.ac, lib/compat/poll.c, lib/compat/poll.h,
+	lib/eggdrop/eggdns.c, lib/eggdrop/module.h,
+	lib/eggdrop/my_socket.c, modules/Makefile.am,
+	modules/server/binds.h:
+
+	
+	* compat entries for poll, and a server module file I forgot 
+
 2002-09-20 02:10  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/: my_socket.c, my_socket.h, sockbuf.c, sockbuf.h:
