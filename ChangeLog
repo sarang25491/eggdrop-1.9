@@ -1,3 +1,15 @@
+2002-05-18 07:41  stdarg <stdarg@techmonkeys.org>
+
+	* configure.ac, lib/adns/internal.h, lib/adns/setup.c,
+	lib/compat/Makefile.am, lib/compat/compat.h,
+	lib/compat/inet_aton.c, lib/compat/inet_aton.h,
+	modules/filesys/filesys.c, modules/server/server.c, src/dns.c,
+	src/net.c:
+
+	
+	* Changed inet_aton(...) to inet_pton(AF_INET, ...) and removed
+	inet_aton from lib/compat -- why have both? 
+
 2002-05-17 07:29  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/module.h, modules/channels/channels.c,
