@@ -388,13 +388,8 @@ date_Dateerror(s)
 
 int date_timezone(time_t time)
 {
-	struct tm *tm = localtime(&time);
-	int timezone = -(tm->tm_gmtoff/60);
-
-	/* Adjust for daylight savings. */
-	if (tm->tm_isdst) timezone += 60;
-
-	return(timezone);
+	localtime(0);
+	return(timezone/60);
 }
 
 static time_t
