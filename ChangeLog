@@ -1,3 +1,15 @@
+2002-01-17 01:13  Federico Mennite <ite@techmonkeys.org>
+
+	* src/net.c:
+
+	* Hopefully fixed SIGBUS crashes on 64bit archs (synch 1.6)\n 
+
+2002-01-17 01:05  Federico Mennite <ite@techmonkeys.org>
+
+	* src/userrec.c:
+
+	* Fixed a memleak in adduser (synch 1.6)\n 
+
 2002-01-17 00:52  Federico Mennite <ite@techmonkeys.org>
 
 	* src/dcc.c:
