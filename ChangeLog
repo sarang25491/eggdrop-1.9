@@ -1,3 +1,26 @@
+2001-12-19 06:28  Jeff Fisher <guppy@techmonkeys.org>
+
+	* doc/UPDATES1.6, modules/irc/chan.c, modules/irc/mode.c,
+	src/patch.h:
+
+	added Eule's small-fixes patch from eggdrop1.6 
+
+2001-12-19 06:25  Jeff Fisher <guppy@techmonkeys.org>
+
+	* doc/UPDATES1.6, lib/eggdrop/module.h, modules/irc/chan.c,
+	modules/irc/cmdsirc.c, modules/irc/msgcmds.c, src/chan.h,
+	src/cmds.c, src/modules.c, src/patch.h, src/proto.h, src/userrec.c:
+
+	added Eule's membercheck 2 and 3 patches from eggdrop1.6 (Eule can
+	you please check these over as the diff seemed to fail alot and I
+	had to manually patch it) 
+
+2001-12-19 06:03  Jeff Fisher <guppy@techmonkeys.org>
+
+	* doc/UPDATES1.6, modules/irc/tclirc.c, src/patch.h:
+
+	added speedyhand2nick.diff from eggdrop1.6 
+
 2001-12-19 03:00  Jeff Fisher <guppy@techmonkeys.org>
 
 	* doc/UPDATES1.6:
