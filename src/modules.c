@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.67 2001/10/12 15:50:26 tothwolf Exp $
+ * $Id: modules.c,v 1.68 2001/10/13 15:55:33 tothwolf Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -328,7 +328,7 @@ Function global_table[] =
   /* 136 - 139 */
   (Function) ismember,
   (Function) newsplit,
-  (Function) splitnick,
+  (Function) 0,
   (Function) splitc,
   /* 140 - 143 */
   (Function) addignore,

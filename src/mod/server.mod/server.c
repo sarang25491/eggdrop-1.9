@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.87 2001/10/12 17:40:46 tothwolf Exp $
+ * $Id: server.c,v 1.88 2001/10/13 15:55:34 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -237,7 +237,7 @@ static void deq_msg()
 
 static int calc_penalty(char * msg)
 {
-  char *cmd, *par1, *par2;
+  char *cmd, *par1, *par2, *par3;
   register int penalty, i, ii;
 
   if (!use_penalties &&
@@ -259,14 +259,17 @@ static int calc_penalty(char * msg)
   if (!egg_strcasecmp(cmd, "KICK")) {
     par1 = newsplit(&msg); /* channel */
     par2 = newsplit(&msg); /* victim(s) */
-    strtok(par2, ",");
-    penalty++;
-    while (strtok(NULL, ",") != NULL)
+    par3 = strtok(par2, ",");
+    while (par3) {
       penalty++;
+      par3 = strtok(NULL, ",");
+    }
     ii = penalty;
-    strtok(par1, " ");
-    while (strtok(NULL, ",") != NULL)
+    par3 = strtok(par1, " ");
+    while (par3) {
       penalty += ii;
+      par3 = strtok(NULL, ",");
+    }
   } else if (!egg_strcasecmp(cmd, "MODE")) {
     i = 0;
     par1 = newsplit(&msg); /* channel */
@@ -285,11 +288,10 @@ static int calc_penalty(char * msg)
       i += 2;
     }
     ii = 0;
-    if (strlen(par1)) {
-      strtok(par1, ",");
+    par3 = strtok(par1, ",");
+    while (par3) {
       ii++;
-      while (strtok(NULL, ",") != NULL)
-        ii++;
+      par3 = strtok(NULL, ",");
     }
     penalty += (ii * i);
   } else if (!egg_strcasecmp(cmd, "TOPIC")) {
@@ -297,35 +299,30 @@ static int calc_penalty(char * msg)
     par1 = newsplit(&msg); /* channel */
     par2 = newsplit(&msg); /* topic */
     if (strlen(par2) > 0) {  /* topic manipulation => 2 penalty points */
-      strtok(par1, ",");
-      penalty += 2;
-      while (strtok(NULL, ",") != NULL)
+      par3 = strtok(par1, ",");
+      while (par3) {
         penalty += 2;
+        strtok(NULL, ",");
+      }
     }
   } else if (!egg_strcasecmp(cmd, "PRIVMSG") ||
 	     !egg_strcasecmp(cmd, "NOTICE")) {
     par1 = newsplit(&msg); /* channel(s)/nick(s) */
     /* Add one sec penalty for each recipient */
-    if (strlen(par1)) {
-      strtok(par1, ",");
+    par3 = strtok(par1, ",");
+    while (par3) {
       penalty++;
-      while (strtok(NULL, ",") != NULL)
-        penalty++;
+      par3 = strtok(NULL, ",");
     }
   } else if (!egg_strcasecmp(cmd, "WHO")) {
     par1 = newsplit(&msg); /* masks */
-    if (strlen(par1)) {
-      par2 = strtok(par1, ",");
+    par2 = strtok(par1, ",");
+    while (par2) {
       if (strlen(par2) > 4)   /* long WHO-masks receive less penalty */
 	penalty += 3;
       else
 	penalty += 5;
-      while ((par2 = strtok(NULL, ",")) != NULL) {
-	if (strlen(par2) > 4)   /* long WHO-masks receive less penalty */
-	  penalty += 3;
-	else
-	  penalty += 5;
-      }
+      par2 = strtok(NULL, ",");
     }
   } else if (!egg_strcasecmp(cmd, "AWAY")) {
     if (strlen(msg) > 0)

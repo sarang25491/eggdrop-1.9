@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.76 2001/10/11 18:24:02 tothwolf Exp $
+ * $Id: chan.c,v 1.77 2001/10/13 15:55:33 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1324,16 +1324,18 @@ static int got475(char *from, char *ignore, char *msg)
  */
 static int gotinvite(char *from, char *ignore, char *msg)
 {
-  char *nick;
+  char buf[UHOSTLEN], *nick, *uhost;
   struct chanset_t *chan;
 
   newsplit(&msg);
   fixcolon(msg);
-  nick = splitnick(&from);
+  strncpyz(buf, from, sizeof buf);
+  nick = strtok(buf, "!");
+  uhost = strtok(NULL, "!");
   if (!irccmp(last_invchan, msg))
     if (now - last_invtime < 30)
       return 0;		/* Two invites to the same channel in 30 seconds? */
-  putlog(LOG_MISC, "*", "%s!%s invited me to %s", nick, from, msg);
+  putlog(LOG_MISC, "*", "%s!%s invited me to %s", nick, uhost, msg);
   strncpy(last_invchan, msg, 299);
   last_invchan[299] = 0;
   last_invtime = now;
@@ -1341,7 +1343,6 @@ static int gotinvite(char *from, char *ignore, char *msg)
   if (!chan)
     /* Might be a short-name */
     chan = findchan_by_dname(msg);
-
   if (chan && (channel_pending(chan) || channel_active(chan)))
     dprintf(DP_HELP, "NOTICE %s :I'm already here.\n", nick);
   else if (chan && !channel_inactive(chan))
@@ -1367,7 +1368,7 @@ static void set_topic(struct chanset_t *chan, char *k)
  */
 static int gottopic(char *from, char *ignore, char *msg)
 {
-  char *nick, *chname;
+  char buf[UHOSTLEN], *nick, *uhost, *chname;
   memberlist *m;
   struct chanset_t *chan;
   struct userrec *u;
@@ -1375,16 +1376,18 @@ static int gottopic(char *from, char *ignore, char *msg)
   chname = newsplit(&msg);
   fixcolon(msg);
   u = get_user_by_host(from);
-  nick = splitnick(&from);
+  strncpyz(buf, from, sizeof buf);
+  nick = strtok(buf, "!");
+  uhost = strtok(NULL, "!");
   chan = findchan(chname);
   if (chan) {
     putlog(LOG_JOIN, chan->dname, "Topic changed on %s by %s!%s: %s",
-           chan->dname, nick, from, msg);
+	   chan->dname, nick, uhost, msg);
     m = ismember(chan, nick);
     if (m != NULL)
       m->last = now;
     set_topic(chan, msg);
-    check_tcl_topc(nick, from, u, chan->dname, msg);
+    check_tcl_topc(nick, uhost, u, chan->dname, msg);
   }
   return 0;
 }
@@ -1458,7 +1461,7 @@ static void set_delay(struct chanset_t *chan, char *nick)
  */
 static int gotjoin(char *from, char *ignore, char *chname)
 {
-  char *nick, *p, buf[UHOSTLEN], *uhost = buf;
+  char buf[UHOSTLEN], *nick, *uhost, *p;
   char *ch_dname = NULL;
   struct chanset_t *chan;
   memberlist *m;
@@ -1513,8 +1516,9 @@ static int gotjoin(char *from, char *ignore, char *chname)
     dprintf(DP_MODE, "PART %s\n", chname);
   } else if (!channel_pending(chan)) {
     chan->status &= ~CHAN_STOP_CYCLE;
-    strcpy(uhost, from);
-    nick = splitnick(&uhost);
+    strncpyz(buf, from, sizeof buf);
+    nick = strtok(buf, "!");
+    uhost = strtok(NULL, "!");
     detect_chan_flood(nick, uhost, from, chan, FLOOD_JOIN, NULL);
     /* Grab last time joined before we update it */
     u = get_user_by_host(from);
@@ -1709,7 +1713,7 @@ exit:
  */
 static int gotpart(char *from, char *ignore, char *msg)
 {
-  char *nick, *chname;
+  char buf[UHOSTLEN], *nick, *uhost, *chname;
   struct chanset_t *chan;
   struct userrec *u;
 
@@ -1722,8 +1726,6 @@ static int gotpart(char *from, char *ignore, char *msg)
     return 0;
   }
   if (chan && !channel_pending(chan)) {
-    u = get_user_by_host(from);
-    nick = splitnick(&from);
     if (!channel_active(chan)) {
       /* whoa! */
       putlog(LOG_MISC, chan->dname,
@@ -1732,15 +1734,19 @@ static int gotpart(char *from, char *ignore, char *msg)
       chan->status &= ~CHAN_PEND;
       reset_chan_info(chan);
     }
+    u = get_user_by_host(from);
     set_handle_laston(chan->dname, u, now);
-    check_tcl_part(nick, from, u, chan->dname, msg); /* This must be directly above the killmember, in case
+    strncpyz(buf, from, sizeof buf);
+    nick = strtok(buf, "!");
+    uhost = strtok(NULL, "!");
+    check_tcl_part(nick, uhost, u, chan->dname, msg); /* This must be directly above the killmember, in case
     							we're doing anything to the record that would affect
 							the above */
     killmember(chan, nick);
     if (msg[0])
-      putlog(LOG_JOIN, chan->dname, "%s (%s) left %s (%s).", nick, from, chan->dname, msg);
+      putlog(LOG_JOIN, chan->dname, "%s (%s) left %s (%s).", nick, uhost, chan->dname, msg);
     else
-      putlog(LOG_JOIN, chan->dname, "%s (%s) left %s.", nick, from, chan->dname);
+      putlog(LOG_JOIN, chan->dname, "%s (%s) left %s.", nick, uhost, chan->dname);
     /* If it was me, all hell breaks loose... */
     if (match_my_nick(nick)) {
       clear_channel(chan, 1);
@@ -1759,33 +1765,33 @@ static int gotpart(char *from, char *ignore, char *msg)
  */
 static int gotkick(char *from, char *ignore, char *origmsg)
 {
-  char *nick, *whodid, *chname, s1[UHOSTLEN], buf[UHOSTLEN], *uhost = buf;
+  char buf[UHOSTLEN], *nick, *uhost, *kicked, *chname, s1[UHOSTLEN];
   char buf2[511], *msg;
   memberlist *m;
   struct chanset_t *chan;
   struct userrec *u;
   struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
-  strncpy(buf2, origmsg, 510);
-  buf2[510] = 0;
+  strncpyz(buf2, origmsg, sizeof buf2);
   msg = buf2;
   chname = newsplit(&msg);
   chan = findchan(chname);
   if (chan && channel_active(chan)) {
-    nick = newsplit(&msg);
+    kicked = newsplit(&msg);
     fixcolon(msg);
     u = get_user_by_host(from);
-    strcpy(uhost, from);
-    whodid = splitnick(&uhost);
-    detect_chan_flood(whodid, uhost, from, chan, FLOOD_KICK, nick);
-    m = ismember(chan, whodid);
+    strncpyz(buf, from, sizeof buf);
+    nick = strtok(buf, "!");
+    uhost = strtok(NULL, "!");
+    detect_chan_flood(nick, uhost, from, chan, FLOOD_KICK, kicked);
+    m = ismember(chan, nick);
     if (m)
       m->last = now;
     /* This _needs_ to use chan->dname <cybah> */
     get_user_flagrec(u, &fr, chan->dname);
     set_handle_laston(chan->dname, u, now);
-    check_tcl_kick(whodid, uhost, u, chan->dname, nick, msg);
-    m = ismember(chan, nick);
+    check_tcl_kick(nick, uhost, u, chan->dname, kicked, msg);
+    m = ismember(chan, kicked);
     if (m) {
       struct userrec *u2;
 
@@ -1797,14 +1803,14 @@ static int gotkick(char *from, char *ignore, char *origmsg)
     putlog(LOG_MODES, chan->dname, "%s kicked from %s by %s: %s", s1,
 	   chan->dname, from, msg);
     /* Kicked ME?!? the sods! */
-    if (match_my_nick(nick)) {
+    if (match_my_nick(kicked)) {
       chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
       dprintf(DP_MODE, "JOIN %s %s\n",
               (chan->name[0]) ? chan->name : chan->dname,
               chan->channel.key[0] ? chan->channel.key : chan->key_prot);
       clear_channel(chan, 1);
     } else {
-      killmember(chan, nick);
+      killmember(chan, kicked);
       check_lonely_channel(chan);
     }
   }
@@ -1815,14 +1821,15 @@ static int gotkick(char *from, char *ignore, char *origmsg)
  */
 static int gotnick(char *from, char *ignore, char *msg)
 {
-  char *nick, s1[UHOSTLEN], buf[UHOSTLEN], *uhost = buf;
+  char buf[UHOSTLEN], *nick, *uhost, s1[UHOSTLEN];
   memberlist *m, *mm;
   struct chanset_t *chan;
   struct userrec *u;
 
-  strcpy(uhost, from);
-  nick = splitnick(&uhost);
   fixcolon(msg);
+  strncpyz(buf, from, sizeof buf);
+  nick = strtok(buf, "!");
+  uhost = strtok(NULL, "!");
   for (chan = chanset; chan; chan = chan->next) { 
     m = ismember(chan, nick);
     if (m) {
@@ -1873,17 +1880,16 @@ static int gotnick(char *from, char *ignore, char *msg)
  */
 static int gotquit(char *from, char *ignore, char *msg)
 {
-  char *nick, *p, *alt;
-  char from2[NICKMAX + UHOSTMAX +1];
+  char buf[UHOSTLEN], *nick, *uhost, *p, *alt;
   int split = 0;
   memberlist *m;
   struct chanset_t *chan;
   struct userrec *u;
 
-  strcpy(from2,from);
-  u = get_user_by_host(from2);
-  nick = splitnick(&from);
   fixcolon(msg);
+  strncpyz(buf, from, sizeof buf);
+  nick = strtok(from, "!");
+  uhost = strtok(NULL, "!");
   /* Fred1: Instead of expensive wild_match on signoff, quicker method.
    *        Determine if signoff string matches "%.% %.%", and only one
    *        space.
@@ -1907,7 +1913,7 @@ static int gotquit(char *from, char *ignore, char *msg)
   for (chan = chanset; chan; chan = chan->next) {
     m = ismember(chan, nick);
     if (m) {
-      u = get_user_by_host(from2);
+      u = get_user_by_host(from);
       if (u) {
         set_handle_laston(chan->dname, u, now); /* If you remove this, the bot will crash when the user record in question
 						   is removed/modified during the tcl binds below, and the users was on more
@@ -1915,13 +1921,13 @@ static int gotquit(char *from, char *ignore, char *msg)
       }
       if (split) {
 	m->split = now;
-	check_tcl_splt(nick, from, u, chan->dname);
+	check_tcl_splt(nick, uhost, u, chan->dname);
 	putlog(LOG_JOIN, chan->dname, "%s (%s) got netsplit.", nick,
-	       from);
+	       uhost);
       } else {
-	check_tcl_sign(nick, from, u, chan->dname, msg);
+	check_tcl_sign(nick, uhost, u, chan->dname, msg);
 	putlog(LOG_JOIN, chan->dname, "%s (%s) left irc: %s", nick,
-	       from, msg);
+	       uhost, msg);
 	killmember(chan, nick);
 	check_lonely_channel(chan);
       }
@@ -1949,8 +1955,8 @@ static int gotquit(char *from, char *ignore, char *msg)
  */
 static int gotmsg(char *from, char *ignore, char *msg)
 {
-  char *to, *realto, buf[UHOSTLEN], *nick, buf2[512], *uhost = buf;
-  char *p, *p1, *code, *ctcp;
+  char buf[UHOSTLEN], *nick, *uhost, *to, *realto, buf2[512], *p, *p1;
+  char *code, *ctcp;
   int ctcp_count = 0;
   struct chanset_t *chan;
   int ignoring;
@@ -1967,8 +1973,9 @@ static int gotmsg(char *from, char *ignore, char *msg)
   if (!chan)
     return 0;			/* Private msg to an unknown channel?? */
   fixcolon(msg);
-  strcpy(uhost, from);
-  nick = splitnick(&uhost);
+  strncpyz(buf, from, sizeof buf);
+  nick = strtok(buf, "!");
+  uhost = strtok(NULL, "!");
   /* Only check if flood-ctcp is active */
   if (flud_ctcp_thr && detect_avalanche(msg)) {
     u = get_user_by_host(from);
@@ -1998,6 +2005,7 @@ static int gotmsg(char *from, char *ignore, char *msg)
     if (!ignoring) {
       putlog(LOG_MODES, "*", "Avalanche from %s!%s in %s - ignoring",
 	     nick, uhost, chan->dname);
+      /* FIXME: get rid of this mess */
       p = strchr(uhost, '@');
       if (p)
 	p++;
@@ -2087,7 +2095,7 @@ static int gotmsg(char *from, char *ignore, char *msg)
  */
 static int gotnotice(char *from, char *ignore, char *msg)
 {
-  char *to, *realto, *nick, buf2[512], *p, *p1, buf[512], *uhost = buf;
+  char buf[UHOSTLEN], *nick, *uhost, *to, *realto, buf2[512], *p, *p1;
   char *ctcp, *code;
   struct userrec *u;
   memberlist *m;
@@ -2104,8 +2112,9 @@ static int gotnotice(char *from, char *ignore, char *msg)
   if (!chan)
     return 0;			/* Notice to an unknown channel?? */
   fixcolon(msg);
-  strcpy(uhost, from);
-  nick = splitnick(&uhost);
+  strncpyz(buf, from, sizeof buf);
+  nick = strtok(buf, "!");
+  uhost = strtok(NULL, "!");
   u = get_user_by_host(from);
   if (flud_ctcp_thr && detect_avalanche(msg)) {
     get_user_flagrec(u, &fr, chan->dname);

@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.63 2001/10/12 15:50:26 tothwolf Exp $
+ * $Id: module.h,v 1.64 2001/10/13 15:55:33 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -253,7 +253,7 @@
 /* 136 - 139 */
 #define ismember ((memberlist * (*) (struct chanset_t *, char *))global[136])
 #define newsplit ((char *(*)(char **))global[137])
-#define splitnick ((char *(*)(char **))global[138])
+/* 138: splitnick -- UNUSED (Tothwolf) */
 #define splitc ((void (*)(char *,char *,char))global[139])
 /* 140 - 143 */
 #define addignore ((void (*) (char *, char *, char *,time_t))global[140])

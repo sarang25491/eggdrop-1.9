@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.71 2001/10/12 17:40:46 tothwolf Exp $
+ * $Id: servmsg.c,v 1.72 2001/10/13 15:55:34 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -367,8 +367,8 @@ static int detect_avalanche(char *msg)
  */
 static int gotmsg(char *from, char *ignore, char *msg)
 {
-  char *to, buf[UHOSTLEN], *nick, ctcpbuf[512], *uhost = buf, *ctcp;
-  char *p, *p1, *code;
+  char *to, buf[UHOSTLEN], *nick, *uhost, ctcpbuf[512], *ctcp, *p, *p1;
+  char *code;
   struct userrec *u;
   int ctcp_count = 0;
   int ignoring;
@@ -379,12 +379,14 @@ static int gotmsg(char *from, char *ignore, char *msg)
   ignoring = match_ignore(from);
   to = newsplit(&msg);
   fixcolon(msg);
+  strncpyz(buf, from, sizeof buf);
+  nick = strtok(buf, "!");
+  uhost = strtok(NULL, "!");
   /* Only check if flood-ctcp is active */
-  strcpy(uhost, from);
-  nick = splitnick(&uhost);
   if (flud_ctcp_thr && detect_avalanche(msg)) {
     if (!ignoring) {
       putlog(LOG_MODES, "*", "Avalanche from %s - ignoring", from);
+      /* FIXME: get rid of this mess */
       p = strchr(uhost, '@');
       if (p != NULL)
 	p++;
@@ -505,7 +507,8 @@ static int gotmsg(char *from, char *ignore, char *msg)
  */
 static int gotnotice(char *from, char *ignore, char *msg)
 {
-  char *to, *nick, ctcpbuf[512], *p, *p1, buf[512], *uhost = buf, *ctcp;
+  char *to, buf[UHOSTLEN], *nick, *uhost, ctcpbuf[512], *ctcp, *p, *p1;
+  char *code;
   struct userrec *u;
   int ignoring;
 
@@ -515,8 +518,9 @@ static int gotnotice(char *from, char *ignore, char *msg)
   ignoring = match_ignore(from);
   to = newsplit(&msg);
   fixcolon(msg);
-  strcpy(uhost, from);
-  nick = splitnick(&uhost);
+  strncpyz(buf, from, sizeof buf);
+  nick = strtok(buf, "!");
+  uhost = strtok(NULL, "!");
   if (flud_ctcp_thr && detect_avalanche(msg)) {
     /* Discard -- kick user if it was to the channel */
     if (!ignoring)
@@ -538,8 +542,7 @@ static int gotnotice(char *from, char *ignore, char *msg)
 	detect_flood(nick, uhost, from, FLOOD_CTCP);
       p = strchr(msg, 1);
       if (ctcp[0] != ' ') {
-	char *code = newsplit(&ctcp);
-
+	code = newsplit(&ctcp);
 	if ((to[0] == '$') || strchr(to, '.')) {
 	  if (!ignoring)
 	    putlog(LOG_PUBLIC, "*",
@@ -587,17 +590,18 @@ static int gotnotice(char *from, char *ignore, char *msg)
  */
 static int gotwall(char *from, char *ignore, char *msg)
 {
-  char *nick;
-  char *p;
+  char *p, buf[UHOSTLEN], *nick, *uhost;
   int r;
 
   fixcolon(msg);
   p = strchr(from, '!');
   if (p && (p == strrchr(from, '!'))) {
-    nick = splitnick(&from);
+    strncpyz(buf, from, sizeof buf);
+    nick = strtok(buf, "!");
+    uhost = strtok(NULL, "!");
     r = check_tcl_wall(nick, msg);
     if (r == 0)
-      putlog(LOG_WALL, "*", "!%s(%s)! %s", nick, from, msg);
+      putlog(LOG_WALL, "*", "!%s(%s)! %s", nick, uhost, msg);
   } else {
     r = check_tcl_wall(from, msg);
     if (r == 0)
@@ -800,9 +804,9 @@ static int gotnick(char *from, char *ignore, char *msg)
   char *nick, *alt = get_altbotnick();
   struct userrec *u;
 
-  u = get_user_by_host(from);
-  nick = splitnick(&from);
   fixcolon(msg);
+  u = get_user_by_host(from);
+  nick = strtok(from, "!");
   if (match_my_nick(nick)) {
     /* Regained nick! */
     strncpyz(botname, msg, NICKLEN);

@@ -1,7 +1,7 @@
 /*
  * userchan.c -- part of channels.mod
  *
- * $Id: userchan.c,v 1.28 2001/10/11 18:24:02 tothwolf Exp $
+ * $Id: userchan.c,v 1.29 2001/10/13 15:55:33 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -778,26 +778,25 @@ static void tell_bans(int idx, int show_inact, char *match)
   }
   if (chan->status & CHAN_ACTIVE) {
     masklist *b;
-    char s[UHOSTLEN], *s1, *s2, fill[256];
+    /* FIXME: possible buffer overflow in fill[] */
+    char buf[UHOSTLEN], *nick, *uhost, fill[UHOSTLEN * 2];
     int min, sec;
 
     for (b = chan->channel.ban; b && b->mask[0]; b = b->next) {    
       if ((!u_equals_mask(global_bans, b->mask)) &&
 	  (!u_equals_mask(chan->bans, b->mask))) {
-	strcpy(s, b->who);
-	s2 = s;
-	s1 = splitnick(&s2);
-	if (s1[0])
-	  sprintf(fill, "%s (%s!%s)", b->mask, s1, s2);
-	else if (!egg_strcasecmp(s, "existant"))
-	  sprintf(fill, "%s (%s)", b->mask, s2);
+	strncpyz(buf, b->who, sizeof buf);
+	nick = strtok(buf, "!");
+	uhost = strtok(NULL, "!");
+	if (nick[0])
+	  sprintf(fill, "%s (%s!%s)", b->mask, nick, uhost);
 	else
-	  sprintf(fill, "%s (server %s)", b->mask, s2);
+	  sprintf(fill, "%s (server %s)", b->mask, uhost);
 	if (b->timer != 0) {
 	  min = (now - b->timer) / 60;
 	  sec = (now - b->timer) - (min * 60);
-	  sprintf(s, " (active %02d:%02d)", min, sec);
-	  strcat(fill, s);
+	  sprintf(buf, " (active %02d:%02d)", min, sec);
+	  strcat(fill, buf);
 	}
 	if ((!match[0]) || (wild_match(match, b->mask)))
 	  dprintf(idx, "* [%3d] %s\n", k, fill);
@@ -869,26 +868,25 @@ static void tell_exempts(int idx, int show_inact, char *match)
   }
   if (chan->status & CHAN_ACTIVE) {
     masklist *e;
-    char s[UHOSTLEN], *s1, *s2,fill[256];
+    /* FIXME: possible buffer overflow in fill[] */
+    char buf[UHOSTLEN], *nick, *uhost, fill[UHOSTLEN * 2];
     int min, sec;
 
     for (e = chan->channel.exempt; e && e->mask[0]; e = e->next) {
       if ((!u_equals_mask(global_exempts,e->mask)) &&
 	  (!u_equals_mask(chan->exempts, e->mask))) {
-	strcpy(s, e->who);
-	s2 = s;
-	s1 = splitnick(&s2);
-	if (s1[0])
-	  sprintf(fill, "%s (%s!%s)", e->mask, s1, s2);
-	else if (!egg_strcasecmp(s, "existant"))
-	  sprintf(fill, "%s (%s)", e->mask, s2);
+	strncpyz(buf, e->who, sizeof buf);
+	nick = strtok(buf, "!");
+	uhost = strtok(NULL, "!");
+	if (nick[0])
+	  sprintf(fill, "%s (%s!%s)", e->mask, nick, uhost);
 	else
-	  sprintf(fill, "%s (server %s)", e->mask, s2);
+	  sprintf(fill, "%s (server %s)", e->mask, uhost);
 	if (e->timer != 0) {
 	  min = (now - e->timer) / 60;
 	  sec = (now - e->timer) - (min * 60);
-	  sprintf(s, " (active %02d:%02d)", min, sec);
-	  strcat(fill, s);
+	  sprintf(buf, " (active %02d:%02d)", min, sec);
+	  strcat(fill, buf);
 	}
 	if ((!match[0]) || (wild_match(match, e->mask)))
 	  dprintf(idx, "* [%3d] %s\n", k, fill);
@@ -960,26 +958,25 @@ static void tell_invites(int idx, int show_inact, char *match)
   }
   if (chan->status & CHAN_ACTIVE) {
     masklist *i;
-    char s[UHOSTLEN], *s1, *s2,fill[256];
+    /* FIXME: possible buffer overflow in fill[] */
+    char buf[UHOSTLEN], *nick, *uhost, fill[UHOSTLEN * 2];
     int min, sec;
 
     for (i = chan->channel.invite; i && i->mask[0]; i = i->next) {
       if ((!u_equals_mask(global_invites,i->mask)) &&
 	  (!u_equals_mask(chan->invites, i->mask))) {
-	strcpy(s, i->who);
-	s2 = s;
-	s1 = splitnick(&s2);
-	if (s1[0])
-	  sprintf(fill, "%s (%s!%s)", i->mask, s1, s2);
-	else if (!egg_strcasecmp(s, "existant"))
-	  sprintf(fill, "%s (%s)", i->mask, s2);
+	strncpyz(buf, i->who, sizeof buf);
+	nick = strtok(buf, "!");
+	uhost = strtok(NULL, "!");
+	if (nick[0])
+	  sprintf(fill, "%s (%s!%s)", i->mask, nick, uhost);
 	else
-	  sprintf(fill, "%s (server %s)", i->mask, s2);
+	  sprintf(fill, "%s (server %s)", i->mask, uhost);
 	if (i->timer != 0) {
 	  min = (now - i->timer) / 60;
 	  sec = (now - i->timer) - (min * 60);
-	  sprintf(s, " (active %02d:%02d)", min, sec);
-	  strcat(fill, s);
+	  sprintf(buf, " (active %02d:%02d)", min, sec);
+	  strcat(fill, buf);
 	}
 	if ((!match[0]) || (wild_match(match, i->mask)))
 	  dprintf(idx, "* [%3d] %s\n", k, fill);
@@ -1206,25 +1203,25 @@ static void channels_writeuserfile(void)
  */
 static int expired_mask(struct chanset_t *chan, char *who)
 {
-  memberlist		*m, *m2;
-  char			 buf[UHOSTLEN], *snick, *sfrom;
-  struct userrec	*u;
+  char buf[UHOSTLEN], *nick, *uhost;
+  struct userrec *u;
+  memberlist *m, *m2;
 
   /* Always expire masks, regardless of who set it? */
   if (force_expire)
     return 1;
 
-  strcpy(buf, who);
-  sfrom = buf;
-  snick = splitnick(&sfrom);
+  strncpyz(buf, who, sizeof buf);
+  nick = strtok(buf, "!");
+  uhost = strtok(NULL, "!");
 
-  if (!snick[0])
+  if (!nick[0])
     return 1;
 
-  m = ismember(chan, snick);
+  m = ismember(chan, nick);
   if (!m)
     for (m2 = chan->channel.member; m2 && m2->nick[0]; m2 = m2->next)
-      if (!egg_strcasecmp(sfrom, m2->userhost)) {
+      if (!egg_strcasecmp(uhost, m2->userhost)) {
 	m = m2;
 	break;
       }

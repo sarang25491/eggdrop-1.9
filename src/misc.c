@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.48 2001/10/11 18:24:01 tothwolf Exp $
+ * $Id: misc.c,v 1.49 2001/10/13 15:55:33 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -223,18 +223,6 @@ void splitcn(char *first, char *rest, char divider, size_t max)
      *  guaranteed to be at least 2 bytes higher in memory than dest. <Cybah>
      */
     strcpy(rest, p + 1);
-}
-
-char *splitnick(char **blah)
-{
-  char *p = strchr(*blah, '!'), *q = *blah;
-
-  if (p) {
-    *p = 0;
-    *blah = p + 1;
-    return q;
-  }
-  return "";
 }
 
 char *newsplit(char **rest)

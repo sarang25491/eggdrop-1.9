@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.68 2001/10/11 18:24:02 tothwolf Exp $
+ * $Id: irc.c,v 1.69 2001/10/13 15:55:33 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -225,12 +225,15 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
     add_mode(chan, '-', 'o', badnick);
   /* Ban. Should be done before kicking. */
   if (chan->revenge_mode > 2) {
-    char s[UHOSTLEN], s1[UHOSTLEN];
+    char *baduhost, s[UHOSTLEN], s1[UHOSTLEN], s2[UHOSTLEN];
 
-    splitnick(&whobad);
-    maskhost(whobad, s1);
-    simple_sprintf(s, "(%s) %s", ct, reason);
-    u_addban(chan, s1, origbotname, s, now + (60 * ban_time), 0);
+    /* FIXME: clean this mess up */
+    strncpyz(s, whobad, sizeof s);
+    strtok(s, "!");
+    baduhost = strtok(NULL, "!");
+    maskhost(baduhost, s1);
+    simple_sprintf(s2, "(%s) %s", ct, reason);
+    u_addban(chan, s1, origbotname, s2, now + (60 * ban_time), 0);
     if (!mevictim && me_op(chan)) {
       add_mode(chan, '+', 'b', s1);
       flush_mode(chan, QUICK);
@@ -256,7 +259,7 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
 static void maybe_revenge(struct chanset_t *chan, char *whobad,
 			  char *whovictim, int type)
 {
-  char *badnick, *victim;
+  char buf[UHOSTLEN], buf2[UHOSTLEN], *badnick, *victim;
   int mevictim;
   struct userrec *u, *u2;
 
@@ -265,11 +268,13 @@ static void maybe_revenge(struct chanset_t *chan, char *whobad,
 
   /* Get info about offender */
   u = get_user_by_host(whobad);
-  badnick = splitnick(&whobad);
+  strncpyz(buf, whobad, sizeof buf);
+  badnick = strtok(buf, "!");
 
   /* Get info about victim */
   u2 = get_user_by_host(whovictim);
-  victim = splitnick(&whovictim);
+  strncpyz(buf2, whovictim, sizeof buf2);
+  victim = strtok(buf2, "!");
   mevictim = match_my_nick(victim);
 
   /* Do we want to revenge? */

@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.55 2001/10/12 15:50:26 tothwolf Exp $
+ * $Id: proto.h,v 1.56 2001/10/13 15:55:33 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -178,7 +178,6 @@ char *stristr(char *, char *);
 void splitc(char *, char *, char);
 void splitcn(char *, char *, char, size_t);
 char *newsplit(char **);
-char *splitnick(char **);
 void stridx(char *, char *, int);
 void dumplots(int, const char *, char *);
 void daysago(time_t, time_t, char *);
