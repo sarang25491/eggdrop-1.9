@@ -1,3 +1,15 @@
+2002-05-12 15:35  Federico Mennite <ite@techmonkeys.org>
+
+	* configure.ac, acconfig/acinclude.m4, src/bg.c, src/main.c,
+	src/users.h:
+
+	* Now always preforking 
+	* More minor configure macros cleanup 
+	* Let's try to detect JS_NewObject() instead of JS_Now() for
+	javascript library detection.  
+	* Js headers to be corectly detected when --with-jsinc isn't passed
+	to ./configure 
+
 2002-05-12 07:58  stdarg <stdarg@techmonkeys.org>
 
 	* src/patch.h:
