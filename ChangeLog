@@ -1,3 +1,10 @@
+2001-10-14 14:33  Federico Mennite <ite@techmonkeys.org>
+
+	* bootstrap:
+
+	Reverted a change on bootstrap script, accidentally broken in a
+	previous commit 
+
 2001-10-14 14:16  Federico Mennite <ite@techmonkeys.org>
 
 	* configure.ac, configure.in:
