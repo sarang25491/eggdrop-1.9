@@ -1,10 +1,9 @@
 /*
- * main.c -- handles:
- *   core event handling
- *   signal handling
- *   command line arguments
+ * main.c --
  *
- * $Id: main.c,v 1.116 2002/05/05 15:19:11 wingman Exp $
+ *	core event handling
+ *	signal handling
+ *	command line arguments
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -26,9 +25,13 @@
  */
 /*
  * The author (Robey Pointer) can be reached at:  robey@netcom.com
- * NOTE: Robey is no long working on this code, there is a discussion
+ * NOTE: Robey is no longer working on this code, there is a discussion
  * list available at eggheads@eggheads.org.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: main.c,v 1.117 2002/05/05 16:40:38 tothwolf Exp $";
+#endif
 
 #include "main.h"
 #include <fcntl.h>

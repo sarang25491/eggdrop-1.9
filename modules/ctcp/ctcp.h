@@ -1,8 +1,7 @@
 /*
- * ctcp.h -- part of ctcp.mod
- *   all the defines for ctcp.c
+ * ctcp.h --
  *
- * $Id: ctcp.h,v 1.2 2002/02/07 22:19:02 wcc Exp $
+ *	all the defines for ctcp.c
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -22,6 +21,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/*
+ * $Id: ctcp.h,v 1.3 2002/05/05 16:40:34 tothwolf Exp $
+ */
 
 #ifndef _EGG_MOD_CTCP_CTCP_H
 #define _EGG_MOD_CTCP_CTCP_H
@@ -40,4 +42,4 @@
 #define CLIENTINFO_PING "PING returns the arguments it receives"
 #define CLIENTINFO_ECHO "ECHO returns the arguments it receives"
 
-#endif				/* _EGG_MOD_CTCP_CTCP_H */
+#endif				/* !_EGG_MOD_CTCP_CTCP_H */

@@ -1,15 +1,18 @@
 /* 
- * $Id: uptime.c,v 1.8 2002/03/22 16:01:19 ite Exp $
+ * uptime.c --
  *
- * This module reports uptime information about your bot to http://uptime.eggheads.org. The
- * purpose for this is to see how your bot rates against many others (including EnergyMechs 
- * and Eggdrops) -- It is a fun little project, jointly run by Eggheads.org and EnergyMech.net.
+ *	This module reports uptime information about your bot to
+ * 	http://uptime.eggheads.org. The purpose for this is to see how
+ *	your bot rates against many others (including EnergyMechs and
+ *	Eggdrops) -- It is a fun little project, jointly run by Eggheads.org
+ *	and EnergyMech.net.
  *
- * If you don't like being a part of it please just unload this module.
+ *	If you don't like being a part of it, simply don't load this module.
  *
- * Also for bot developers feel free to modify this code to make it a part of your bot and 
- * e-mail webmaster@eggheads.org for more information on registering your bot type. See how
- * your bot's stability rates against ours and ours against yours <g>.
+ *	Also for bot developers feel free to modify this code to make it a
+ *	part of your bot and e-mail webmaster@eggheads.org for more
+ *	information on registering your bot type. See how your bot's
+ *	stability rates against ours and ours against yours <g>.
  */
 /*
  * Copyright (C) 2001 proton
@@ -29,6 +32,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: uptime.c,v 1.9 2002/05/05 16:40:37 tothwolf Exp $";
+#endif
 
 #define MODULE_NAME "uptime"
 #define MAKING_UPTIME

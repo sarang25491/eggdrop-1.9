@@ -1,14 +1,13 @@
 /*
- * dns.c -- handles:
- *   DNS resolve calls and events
- *   provides the code used by the bot if the DNS module is not loaded
- *   DNS script commands
+ * dns.c --
  *
- * $Id: dns.c,v 1.37 2002/05/05 15:19:11 wingman Exp $
+ *	DNS resolve calls and events
+ *	provides the code used by the bot if the DNS module is not loaded
+ *	DNS script commands
+ *
+ * Written by Fabian Knittel <fknittel@gmx.de>
  */
 /*
- * Written by Fabian Knittel <fknittel@gmx.de>
- *
  * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
@@ -25,6 +24,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: dns.c,v 1.38 2002/05/05 16:40:38 tothwolf Exp $";
+#endif
 
 #include "main.h"
 #include <netdb.h>

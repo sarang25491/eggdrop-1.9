@@ -1,8 +1,7 @@
 /*
- * egglib.h
- *   libegg header file
+ * egglib.h --
  *
- * $Id: egglib.h,v 1.3 2002/03/22 16:01:16 ite Exp $
+ *	libegg header file
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
@@ -21,6 +20,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/*
+ * $Id: egglib.h,v 1.4 2002/05/05 16:40:33 tothwolf Exp $
+ */
 
 #ifndef _EGGLIB_H
 #define _EGGLIB_H
@@ -34,4 +36,4 @@
 #include "msprintf.h"
 #include "hash_table.h"
 
-#endif				/* _EGGLIB_H */
+#endif				/* !_EGGLIB_H */

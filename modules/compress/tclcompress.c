@@ -1,10 +1,9 @@
 /*
- * tclcompress.c -- part of compress.mod
- *   contains all tcl functions
+ * tclcompress.c --
+ *
+ *	contains all tcl functions
  *
  * Written by Fabian Knittel <fknittel@gmx.de>
- *
- * $Id: tclcompress.c,v 1.2 2002/02/07 22:19:02 wcc Exp $
  */
 /*
  * Copyright (C) 2000, 2001, 2002 Eggheads Development Team
@@ -24,6 +23,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+/* FIXME: #include mess
+#ifndef lint
+static const char rcsid[] = "$Id: tclcompress.c,v 1.3 2002/05/05 16:40:34 tothwolf Exp $";
+#endif
+*/
 
 #define NEXT_ARG	{ curr_arg++; argc--; }
 

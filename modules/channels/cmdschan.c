@@ -1,8 +1,7 @@
 /*
- * cmdschan.c -- part of channels.mod
- *   commands from a user via dcc that cause server interaction
+ * cmdschan.c --
  *
- * $Id: cmdschan.c,v 1.11 2002/05/04 09:18:48 eule Exp $
+ *	commands from a user via dcc that cause server interaction
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -22,6 +21,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+/* FIXME: #include mess
+#ifndef lint
+static const char rcsid[] = "$Id: cmdschan.c,v 1.12 2002/05/05 16:40:33 tothwolf Exp $";
+#endif
+*/
 
 #include <ctype.h>
 

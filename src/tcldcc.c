@@ -1,8 +1,7 @@
 /*
- * tcldcc.c -- handles:
- *   Tcl stubs for the dcc commands
+ * tcldcc.c --
  *
- * $Id: tcldcc.c,v 1.60 2002/05/05 15:19:11 wingman Exp $
+ *	Tcl stubs for the dcc commands
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -22,6 +21,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: tcldcc.c,v 1.61 2002/05/05 16:40:38 tothwolf Exp $";
+#endif
 
 #include "main.h"
 #include "tandem.h"

@@ -1,8 +1,7 @@
 /*
- * common.h
- *   contains general purporse commonly used macros
+ * common.h --
  *
- * $Id: common.h,v 1.4 2002/04/01 13:33:31 ite Exp $
+ *	contains general purporse commonly used macros
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
@@ -20,6 +19,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/*
+ * $Id: common.h,v 1.5 2002/05/05 16:40:32 tothwolf Exp $
  */
 
 #ifndef _EGG_COMMON_H
@@ -55,4 +57,4 @@
 
 typedef int (*Function) ();
 
-#endif				/* _EGG_COMMON_H */
+#endif				/* !_EGG_COMMON_H */

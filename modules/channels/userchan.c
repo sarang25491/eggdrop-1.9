@@ -1,7 +1,5 @@
 /*
- * userchan.c -- part of channels.mod
- *
- * $Id: userchan.c,v 1.9 2002/04/26 09:29:51 stdarg Exp $
+ * userchan.c --
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -21,6 +19,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+/* FIXME: #include mess
+#ifndef lint
+static const char rcsid[] = "$Id: userchan.c,v 1.10 2002/05/05 16:40:34 tothwolf Exp $";
+#endif
+*/
 
 struct chanuserrec *get_chanrec(struct userrec *u, char *chname)
 {

@@ -1,8 +1,7 @@
 /*
- * userent.c -- handles:
- *   user-entry handling, new stylem more versatile.
+ * userent.c --
  *
- * $Id: userent.c,v 1.31 2002/05/05 15:19:12 wingman Exp $
+ *	user-entry handling, new stylem more versatile.
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -22,6 +21,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: userent.c,v 1.32 2002/05/05 16:40:39 tothwolf Exp $";
+#endif
 
 #include "main.h"
 #include "users.h"

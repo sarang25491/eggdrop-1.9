@@ -1,8 +1,7 @@
 /*
- * irccmp.c
- *   heavily based on code from src/match.c in ircd-hybrid
+ * irccmp.c --
  *
- * $Id: irccmp.c,v 1.4 2002/02/07 22:19:05 wcc Exp $
+ *	heavily based on code from src/match.c in ircd-hybrid
  */
 /*
  * Copyright (C) 1990 Jarkko Oikarinen
@@ -40,6 +39,10 @@
  *
  * --+ Dagmar
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: irccmp.c,v 1.5 2002/05/05 16:40:38 tothwolf Exp $";
+#endif
 
 /* prototypes */
 #include "irccmp.h"

@@ -1,10 +1,9 @@
 /*
- * userrec.c -- handles:
- *   add_q() del_q() str2flags() flags2str() str2chflags() chflags2str()
- *   a bunch of functions to find and change user records
- *   change and check user (and channel-specific) flags
+ * userrec.c --
  *
- * $Id: userrec.c,v 1.47 2002/05/05 15:19:12 wingman Exp $
+ *	add_q() del_q() str2flags() flags2str() str2chflags() chflags2str()
+ *	a bunch of functions to find and change user records
+ *	change and check user (and channel-specific) flags
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -24,6 +23,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: userrec.c,v 1.48 2002/05/05 16:40:39 tothwolf Exp $";
+#endif
 
 #include <sys/stat.h>
 #include "main.h"

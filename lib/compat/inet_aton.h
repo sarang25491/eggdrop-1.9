@@ -1,8 +1,7 @@
 /*
- * inet_aton.h
- *   prototypes for inet_aton.c
+ * inet_aton.h --
  *
- * $Id: inet_aton.h,v 1.2 2002/02/07 22:18:59 wcc Exp $
+ *	prototypes for inet_aton.c
  */
 /*
  * Copyright (C) 2000, 2001, 2002 Eggheads Development Team
@@ -21,6 +20,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/*
+ * $Id: inet_aton.h,v 1.3 2002/05/05 16:40:32 tothwolf Exp $
+ */
+
 #ifndef _EGG_INET_ATON_H
 #define _EGG_INET_ATON_H
 

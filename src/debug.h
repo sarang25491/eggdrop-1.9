@@ -1,6 +1,7 @@
 /*
- * debug.h
- *   assert debugging
+ * debug.h --
+ *
+ *	assert debugging
  */
 /*
  * Copyright (C) 2001, 2002 Eggheads Development Team
@@ -19,6 +20,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/*
+ * $Id: debug.h,v 1.3 2002/05/05 16:40:38 tothwolf Exp $
+ */
+
 #ifndef _EGG_DEBUG_H
 #define _EGG_DEBUG_H
 

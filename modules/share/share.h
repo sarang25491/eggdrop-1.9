@@ -1,7 +1,5 @@
 /*
- * share.h -- part of share.mod
- *
- * $Id: share.h,v 1.2 2002/02/07 22:19:03 wcc Exp $
+ * share.h --
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
@@ -19,6 +17,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/*
+ * $Id: share.h,v 1.3 2002/05/05 16:40:36 tothwolf Exp $
  */
 
 #ifndef _EGG_MOD_SHARE_SHARE_H
@@ -63,4 +64,4 @@ typedef struct {
 /* 8 - 11 */
 #endif				/* !MAKING_SHARE */
 
-#endif				/* _EGG_MOD_SHARE_SHARE_H */
+#endif				/* !_EGG_MOD_SHARE_SHARE_H */

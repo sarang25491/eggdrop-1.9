@@ -1,10 +1,9 @@
 /*
- * tcl.c -- handles:
- *   the code for every command eggdrop adds to Tcl
- *   Tcl initialization
- *   getting and setting Tcl/eggdrop variables
+ * tcl.c --
  *
- * $Id: tcl.c,v 1.79 2002/05/05 15:19:11 wingman Exp $
+ *	the code for every command eggdrop adds to Tcl
+ *	Tcl initialization
+ *	getting and setting Tcl/eggdrop variables
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -24,6 +23,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: tcl.c,v 1.80 2002/05/05 16:40:38 tothwolf Exp $";
+#endif
 
 #include <stdlib.h>		/* getenv()				*/
 #include <locale.h>		/* setlocale()				*/

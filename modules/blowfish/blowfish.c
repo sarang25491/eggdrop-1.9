@@ -1,8 +1,7 @@
 /*
- * blowfish.c -- part of blowfish.mod
- *   encryption and decryption of passwords
+ * blowfish.c --
  *
- * $Id: blowfish.c,v 1.4 2002/05/05 04:12:18 stdarg Exp $
+ *	encryption and decryption of passwords
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -25,6 +24,10 @@
 /*
  * This code was originally in the public domain.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: blowfish.c,v 1.5 2002/05/05 16:40:33 tothwolf Exp $";
+#endif
 
 #define MODULE_NAME "encryption"
 #define MAKING_ENCRYPTION

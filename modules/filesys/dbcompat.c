@@ -1,10 +1,9 @@
 /*
- * dbcompat.c -- part of filesys.mod
- *   Compability functions to convert older DBs to the newest version.
+ * dbcompat.c --
+ *
+ *	Compability functions to convert older DBs to the newest version.
  *
  * Written for filedb3 by Fabian Knittel <fknittel@gmx.de>
- *
- * $Id: dbcompat.c,v 1.2 2002/02/07 22:19:02 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -24,6 +23,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+/* FIXME: #include mess
+#ifndef lint
+static const char rcsid[] = "$Id: dbcompat.c,v 1.3 2002/05/05 16:40:35 tothwolf Exp $";
+#endif
+*/
+
 
 /* Convert '.files' db to newest db. Returns 1 if a valid file is
  * found and could be converted, 0 in all other cases.

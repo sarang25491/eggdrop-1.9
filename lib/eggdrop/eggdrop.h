@@ -1,8 +1,7 @@
 /*
- * eggdrop.h
- *   libeggdrop header file
+ * eggdrop.h --
  *
- * $Id: eggdrop.h,v 1.7 2002/04/01 13:33:31 ite Exp $
+ *	libeggdrop header file
  */
 /*
  * Copyright (C) 2001, 2002 Eggheads Development Team
@@ -20,6 +19,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/*
+ * $Id: eggdrop.h,v 1.8 2002/05/05 16:40:32 tothwolf Exp $
  */
 
 #ifndef _EGGDROP_H
@@ -45,4 +47,4 @@ extern eggdrop_t *eggdrop_delete(eggdrop_t *);
 
 END_C_DECLS
 
-#endif				/* _EGGDROP_H */
+#endif				/* !_EGGDROP_H */

@@ -1,12 +1,11 @@
 /*
- * dccutil.c -- handles:
- *   lots of little functions to send formatted text to
- *   varying types of connections
- *   '.who', '.whom', and '.dccstat' code
- *   memory management for dcc structures
- *   timeout checking for dcc connections
+ * dccutil.c --
  *
- * $Id: dccutil.c,v 1.50 2002/05/05 15:19:11 wingman Exp $
+ *	lots of little functions to send formatted text to
+ *	varying types of connections
+ *	'.who', '.whom', and '.dccstat' code
+ *	memory management for dcc structures
+ *	timeout checking for dcc connections
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -26,6 +25,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: dccutil.c,v 1.51 2002/05/05 16:40:38 tothwolf Exp $";
+#endif
 
 #include <sys/stat.h>
 #include "main.h"

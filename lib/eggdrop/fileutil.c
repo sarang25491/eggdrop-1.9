@@ -1,8 +1,7 @@
 /*
- * fileutil.c
- *   convenience utilities to deal with common file operations
+ * fileutil.c --
  *
- * $Id: fileutil.c,v 1.2 2002/02/07 22:18:59 wcc Exp $
+ *	convenience utilities to deal with common file operations
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
@@ -21,6 +20,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: fileutil.c,v 1.3 2002/05/05 16:40:32 tothwolf Exp $";
+#endif
 
 #if HAVE_CONFIG_H
 #  include <config.h>

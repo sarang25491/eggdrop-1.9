@@ -1,8 +1,7 @@
 /*
- * snprintf.c
- *   provides snprintf, vsnprintf, vasprintf, and asprintf if needed
+ * snprintf.c --
  *
- * $Id: snprintf.c,v 1.1 2001/10/28 13:30:32 ite Exp $
+ *	provides snprintf, vsnprintf, vasprintf, and asprintf if needed
  */
 /*
  * Copyright Patrick Powell 1995
@@ -60,6 +59,10 @@
  *    added C99 semantics
  *
  **************************************************************/
+
+#ifndef lint
+static const char rcsid[] = "$Id: snprintf.c,v 1.2 2002/05/05 16:40:32 tothwolf Exp $";
+#endif
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"

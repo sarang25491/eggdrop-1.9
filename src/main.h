@@ -1,8 +1,7 @@
 /*
- * main.h
- *   include file to include most other include files
+ * main.h --
  *
- * $Id: main.h,v 1.28 2002/05/05 15:19:11 wingman Exp $
+ *	include file to include most other include files
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -21,6 +20,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/*
+ * $Id: main.h,v 1.29 2002/05/05 16:40:38 tothwolf Exp $
  */
 
 #ifndef _EGG_MAIN_H
@@ -41,4 +43,4 @@ extern eggdrop_t *egg;
 void fatal(const char *, int);
 void patch(const char *);
 
-#endif				/* _EGG_MAIN_H */
+#endif				/* !_EGG_MAIN_H */

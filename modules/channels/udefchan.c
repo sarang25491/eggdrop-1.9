@@ -1,8 +1,7 @@
 /*
- * udefchan.c -- part of channels.mod
- *   user definable channel flags/settings
+ * udefchan.c --
  *
- * $Id: udefchan.c,v 1.3 2002/02/07 22:19:01 wcc Exp $
+ *	user definable channel flags/settings
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
@@ -21,6 +20,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+/* FIXME: #include mess
+#ifndef lint
+static const char rcsid[] = "$Id: udefchan.c,v 1.4 2002/05/05 16:40:34 tothwolf Exp $";
+#endif
+*/
 
 static int getudef(struct udef_chans *ul, char *name)
 {

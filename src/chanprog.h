@@ -1,7 +1,5 @@
 /*
- * chanprog.h
- *
- * $Id: chanprog.h,v 1.1 2002/05/05 15:21:30 wingman Exp $
+ * chanprog.h --
  */
 /*
  * Copyright (C) 2000, 2001, 2002 Eggheads Development Team
@@ -19,6 +17,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/*
+ * $Id: chanprog.h,v 1.2 2002/05/05 16:40:37 tothwolf Exp $
  */
 
 #ifndef _EGG_CHANPROG_H
@@ -40,4 +41,4 @@ void set_chanlist(const char *host, struct userrec *rec);
 void clear_chanlist(void);
 void clear_chanlist_member(const char *nick);
 
-#endif	/* _EGG_CHANPROG_H	*/
+#endif				/* _EGG_CHANPROG_H */

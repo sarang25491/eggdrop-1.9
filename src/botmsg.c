@@ -1,11 +1,10 @@
 /*
- * botmsg.c -- handles:
- *   formatting of messages to be sent on the botnet
- *   sending differnet messages to different versioned bots
+ * botmsg.c --
+ *
+ *	formatting of messages to be sent on the botnet
+ *	sending differnet messages to different versioned bots
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
- *
- * $Id: botmsg.c,v 1.33 2002/05/05 15:19:11 wingman Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -25,6 +24,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: botmsg.c,v 1.34 2002/05/05 16:40:37 tothwolf Exp $";
+#endif
 
 #include "main.h"
 #include "tandem.h"

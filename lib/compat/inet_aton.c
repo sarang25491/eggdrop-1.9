@@ -1,8 +1,7 @@
 /*
- * inet_aton.c
- *   provides inet_aton()
+ * inet_aton.c --
  *
- * $Id: inet_aton.c,v 1.1 2001/10/28 13:30:32 ite Exp $
+ *	provides inet_aton()
  */
 /*
  * ++Copyright++ 1983, 1990, 1993
@@ -57,6 +56,10 @@
  * SOFTWARE.
  * --Copyright--
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: inet_aton.c,v 1.2 2002/05/05 16:40:32 tothwolf Exp $";
+#endif
 
 #if defined(LIBC_SCCS) && !defined(lint)
 static char sccsid[] = "@(#)inet_addr.c	8.1 (Berkeley) 6/17/93";

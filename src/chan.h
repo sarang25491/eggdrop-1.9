@@ -1,9 +1,8 @@
 /*
- * chan.h
- *   stuff common to chan.c and mode.c
- *   users.h needs to be loaded too
+ * chan.h --
  *
- * $Id: chan.h,v 1.29 2002/04/16 23:08:28 ite Exp $
+ *	stuff common to chan.c and mode.c
+ *	users.h needs to be loaded too
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -22,6 +21,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/*
+ * $Id: chan.h,v 1.30 2002/05/05 16:40:37 tothwolf Exp $
  */
 
 #ifndef _EGG_CHAN_H
@@ -278,4 +280,4 @@ struct msgq {
   char *msg;
 };
 
-#endif				/* _EGG_CHAN_H */
+#endif				/* !_EGG_CHAN_H */

@@ -1,9 +1,8 @@
 /*
- * bg.c
- *   Handles moving the process to the background and forking,
- *   while keeping threads happy.
+ * bg.c --
  *
- * $Id: bg.c,v 1.9 2002/05/04 16:17:47 ite Exp $
+ *	Handles moving the process to the background and forking,
+ *	while keeping threads happy.
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -23,6 +22,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: bg.c,v 1.10 2002/05/05 16:40:37 tothwolf Exp $";
+#endif
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

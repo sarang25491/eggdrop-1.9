@@ -1,7 +1,5 @@
 /*
- * tclhash.h
- *
- * $Id: tclhash.h,v 1.28 2002/05/05 15:21:30 wingman Exp $
+ * tclhash.h --
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -20,6 +18,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/*
+ * $Id: tclhash.h,v 1.29 2002/05/05 16:40:39 tothwolf Exp $
  */
 
 #ifndef _EGG_TCLHASH_H
@@ -112,6 +113,6 @@ void add_builtins2(bind_table_t *table, cmd_t *cmds);
 
 void rem_builtins2(bind_table_t *table, cmd_t *cmds);
 
-#endif
+#endif				/* !MAKING_MODS */
 
-#endif				/* _EGG_TCLHASH_H */
+#endif				/* !_EGG_TCLHASH_H */

@@ -1,10 +1,9 @@
 /*
- * filedb3.c -- part of filesys.mod
- *   low level functions for file db handling
+ * filedb3.c --
+ *
+ *	low level functions for file db handling
  *
  * Rewritten by Fabian Knittel <fknittel@gmx.de>
- *
- * $Id: filedb3.c,v 1.5 2002/02/13 16:44:57 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -24,6 +23,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+/* FIXME: #include mess
+#ifndef lint
+static const char rcsid[] = "$Id: filedb3.c,v 1.6 2002/05/05 16:40:35 tothwolf Exp $";
+#endif
+*/
 
 /*  filedb structure:
  *

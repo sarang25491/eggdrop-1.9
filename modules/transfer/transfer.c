@@ -1,7 +1,5 @@
 /*
- * transfer.c -- part of transfer.mod
- *
- * $Id: transfer.c,v 1.13 2002/05/01 03:56:11 stdarg Exp $
+ * transfer.c --
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -25,6 +23,10 @@
  * Small code snippets related to REGET/RESEND support were taken from
  * BitchX, copyright by panasync.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: transfer.c,v 1.14 2002/05/05 16:40:37 tothwolf Exp $";
+#endif
 
 #define MODULE_NAME "transfer"
 #define MAKING_TRANSFER

@@ -1,7 +1,5 @@
 /*
- * botcmd.h
- *
- * $Id: botcmd.h,v 1.1 2002/05/05 15:21:30 wingman Exp $
+ * botcmd.h --
  */
 /*
  * Copyright (C) 2000, 2001, 2002 Eggheads Development Team
@@ -20,10 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/*
+ * $Id: botcmd.h,v 1.2 2002/05/05 16:40:37 tothwolf Exp $
+ */
 
 #ifndef _EGG_BOTCMD_H
 #define _EGG_BOTCMD_H
 
 void bot_share(int, char *);
 
-#endif	/* _EGG_BOTCMD_H	*/
+#endif				/* !_EGG_BOTCMD_H */

@@ -1,8 +1,7 @@
 /*
- * bf_tab.h -- part of blowfish.mod
- *   Blowfish P-box and S-box tables
+ * bf_tab.h --
  *
- * $Id: bf_tab.h,v 1.2 2002/02/07 22:19:01 wcc Exp $
+ *	Blowfish P-box and S-box tables
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
@@ -20,6 +19,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/*
+ * $Id: bf_tab.h,v 1.3 2002/05/05 16:40:33 tothwolf Exp $
  */
 
 #ifndef _EGG_MOD_BLOWFISH_BF_TAB_H
@@ -297,4 +299,4 @@ static u_32int_t initbf_S[4][256] =
     0xb74e6132, 0xce77e25b, 0x578fdfe3, 0x3ac372e6}
 };
 
-#endif				/* _EGG_MOD_BLOWFISH_BF_TAB_H */
+#endif				/* !_EGG_MOD_BLOWFISH_BF_TAB_H */

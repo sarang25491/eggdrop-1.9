@@ -1,7 +1,5 @@
 /*
- * tclchan.c -- part of channels.mod
- *
- * $Id: tclchan.c,v 1.14 2002/04/26 09:29:51 stdarg Exp $
+ * tclchan.c --
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -21,6 +19,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+/* FIXME: #include mess
+#ifndef lint
+static const char rcsid[] = "$Id: tclchan.c,v 1.15 2002/05/05 16:40:33 tothwolf Exp $";
+#endif
+*/
 
 /* flagmaps.c defines flag name to flag value structures. */
 #include "flagmaps.c"

@@ -1,8 +1,7 @@
 /*
- * script.c
- *   stuff needed for scripting modules
+ * script.c --
  *
- * $Id: script.c,v 1.3 2002/05/01 02:30:55 stdarg Exp $
+ *	stuff needed for scripting modules
  */
 /*
  * Copyright (C) 2001, 2002 Eggheads Development Team
@@ -21,6 +20,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: script.c,v 1.4 2002/05/05 16:40:32 tothwolf Exp $";
+#endif
 
 #if HAVE_CONFIG_H
 #  include <config.h>

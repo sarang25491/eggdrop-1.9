@@ -1,7 +1,5 @@
 /*
- * server.h -- part of server.mod
- *
- * $Id: server.h,v 1.5 2002/05/05 15:21:30 wingman Exp $
+ * server.h --
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -20,6 +18,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/*
+ * $Id: server.h,v 1.6 2002/05/05 16:40:36 tothwolf Exp $
  */
 
 #ifndef _EGG_MOD_SERVER_SERVER_H
@@ -90,4 +91,4 @@ struct server_list {
   char			*realname;
 };
 
-#endif		/* _EGG_MOD_SERVER_SERVER_H */
+#endif				/* !_EGG_MOD_SERVER_SERVER_H */

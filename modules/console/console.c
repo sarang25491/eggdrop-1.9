@@ -1,9 +1,8 @@
 /*
- * console.c -- part of console.mod
- *   saved console settings based on console.tcl
- *   by cmwagner/billyjoe/D. Senso
+ * console.c --
  *
- * $Id: console.c,v 1.7 2002/05/01 03:56:10 stdarg Exp $
+ *	saved console settings based on console.tcl
+ *	by cmwagner/billyjoe/D. Senso
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
@@ -22,6 +21,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: console.c,v 1.8 2002/05/05 16:40:34 tothwolf Exp $";
+#endif
 
 #define MODULE_NAME "console"
 #define MAKING_CONSOLE

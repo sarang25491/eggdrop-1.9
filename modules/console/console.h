@@ -1,7 +1,5 @@
 /*
- * console.h -- part of console.mod
- *
- * $Id: console.h,v 1.2 2002/02/07 22:19:02 wcc Exp $
+ * console.h --
  */
 /*
  * Copyright (C) 2000, 2001, 2002 Eggheads Development Team
@@ -20,8 +18,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/*
+ * $Id: console.h,v 1.3 2002/05/05 16:40:34 tothwolf Exp $
+ */
 
 #ifndef _EGG_MOD_CONSOLE_CONSOLE_H
 #define _EGG_MOD_CONSOLE_CONSOLE_H
 
-#endif				/* _EGG_MOD_CONSOLE_CONSOLE_H */
+#endif				/* !_EGG_MOD_CONSOLE_CONSOLE_H */

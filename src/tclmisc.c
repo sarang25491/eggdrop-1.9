@@ -1,8 +1,7 @@
 /*
- * tclmisc.c -- handles:
- *   Tcl stubs for everything else
+ * tclmisc.c --
  *
- * $Id: tclmisc.c,v 1.52 2002/05/05 15:19:12 wingman Exp $
+ *	Tcl stubs for everything else
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -22,6 +21,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: tclmisc.c,v 1.53 2002/05/05 16:40:39 tothwolf Exp $";
+#endif
 
 #include <sys/stat.h>
 #include "main.h"

@@ -1,8 +1,7 @@
 /*
- * server.c -- part of server.mod
- *   basic irc server support
+ * server.c --
  *
- * $Id: server.c,v 1.16 2002/05/01 03:56:11 stdarg Exp $
+ *	basic irc server support
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -22,6 +21,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: server.c,v 1.17 2002/05/05 16:40:36 tothwolf Exp $";
+#endif
 
 #define MODULE_NAME "server"
 #define MAKING_SERVER

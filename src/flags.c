@@ -1,8 +1,7 @@
 /*
- * flags.c -- handles:
- *   all the flag matching/conversion functions in one neat package :)
+ * flags.c --
  *
- * $Id: flags.c,v 1.30 2002/05/05 15:19:11 wingman Exp $
+ *	all the flag matching/conversion functions in one neat package :)
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -22,6 +21,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: flags.c,v 1.31 2002/05/05 16:40:38 tothwolf Exp $";
+#endif
 
 #include <ctype.h>
 #include "main.h"

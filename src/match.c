@@ -1,8 +1,7 @@
 /*
- * match.c
- *   wildcard matching functions
+ * match.c --
  *
- * $Id: match.c,v 1.9 2001/10/12 07:45:48 tothwolf Exp $
+ *	wildcard matching functions
  */
 /*
  * Once this code was working, I added support for % so that I could
@@ -22,6 +21,10 @@
  *
  * I hereby release this code into the public domain
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: match.c,v 1.10 2002/05/05 16:40:38 tothwolf Exp $";
+#endif
 
 /* prototypes */
 #include "match.h"

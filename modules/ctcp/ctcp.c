@@ -1,8 +1,7 @@
 /*
- * ctcp.c -- part of ctcp.mod
- *   all the ctcp handling (except DCC, it's special ;)
+ * ctcp.c --
  *
- * $Id: ctcp.c,v 1.5 2002/03/22 16:01:17 ite Exp $
+ *	all the ctcp handling (except DCC, it's special ;)
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -22,6 +21,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: ctcp.c,v 1.6 2002/05/05 16:40:34 tothwolf Exp $";
+#endif
 
 #define MODULE_NAME "ctcp"
 #define MAKING_CTCP

@@ -1,9 +1,8 @@
 /*
- * botcmd.c -- handles:
- *   commands that comes across the botnet
- *   userfile transfer and update commands from sharebots
+ * botcmd.c --
  *
- * $Id: botcmd.c,v 1.36 2002/05/05 15:19:11 wingman Exp $
+ *	commands that comes across the botnet
+ *	userfile transfer and update commands from sharebots
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -23,6 +22,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: botcmd.c,v 1.37 2002/05/05 16:40:37 tothwolf Exp $";
+#endif
 
 #include "main.h"
 #include "tandem.h"

@@ -1,8 +1,7 @@
 /*
- * script.h
- *   stuff needed for scripting modules
+ * script.h --
  *
- * $Id: script.h,v 1.3 2002/05/01 02:30:55 stdarg Exp $
+ *	stuff needed for scripting modules
  */
 /*
  * Copyright (C) 2001, 2002 Eggheads Development Team
@@ -20,6 +19,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/*
+ * $Id: script.h,v 1.4 2002/05/05 16:40:32 tothwolf Exp $
  */
 
 #ifndef _EGG_SCRIPT_H
@@ -177,4 +179,4 @@ extern int script_list_append(script_var_t *list, script_var_t *item);
 
 END_C_DECLS
 
-#endif /* _EGG_SCRIPT_H */
+#endif				/* !_EGG_SCRIPT_H */

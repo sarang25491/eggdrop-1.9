@@ -1,8 +1,7 @@
 /*
- * tclegg.h
- *   stuff used by tcl.c and tclhash.c
+ * tclegg.h --
  *
- * $Id: tclegg.h,v 1.17 2002/05/05 15:19:12 wingman Exp $
+ *	stuff used by tcl.c and tclhash.c
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -21,6 +20,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/*
+ * $Id: tclegg.h,v 1.18 2002/05/05 16:40:38 tothwolf Exp $
  */
 
 #ifndef _EGG_TCLEGG_H
@@ -102,4 +104,4 @@ void rem_tcl_coups(tcl_coups *);
 void add_tcl_ints(tcl_ints *);
 void rem_tcl_ints(tcl_ints *);
 
-#endif				/* _EGG_TCLEGG_H */
+#endif				/* !_EGG_TCLEGG_H */

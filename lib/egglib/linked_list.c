@@ -1,13 +1,12 @@
 /*
- * linked_list.h
- *   linked_list implementation
+ * linked_list.c --
  *
- *   wishlist:
- *     * it would be nice if you can specifiy the sort
- *       direction of a list (e.g. ascendand or descendand)
- *       (not just by supplying your own comparator)
+ *	linked_list implementation
  *
- * $Id: linked_list.c,v 1.4 2002/05/04 17:01:36 wingman Exp $
+ *	wishlist:
+ *	  * it would be nice if you can specifiy the sort
+ *	    direction of a list (e.g. ascendand or descendand)
+ *	    (not just by supplying your own comparator)
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
@@ -26,6 +25,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: linked_list.c,v 1.5 2002/05/05 16:40:33 tothwolf Exp $";
+#endif
+
 #include <malloc.h>		/* malloc	*/
 #include <string.h>		/* strcmp	*/
 

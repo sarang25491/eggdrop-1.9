@@ -1,8 +1,7 @@
 /*
- * compress.h -- part of src/mod/compress.mod
- *   header file for the zlib compression module
+ * compress.h --
  *
- * $Id: compress.h,v 1.2 2002/02/07 22:19:02 wcc Exp $
+ *	header file for the zlib compression module
  */
 /*
  * Copyright (C) 2000, 2001, 2002 Eggheads Development Team
@@ -20,6 +19,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/*
+ * $Id: compress.h,v 1.3 2002/05/05 16:40:34 tothwolf Exp $
  */
 
 #ifndef _EGG_MOD_COMPRESS_COMPRESS_H
@@ -47,6 +49,6 @@ typedef enum {
 # define uncompress_file    ((int (*)(char *))(uncompress_funcs[7]))
 /* 8 - 11 */
 # define is_compressedfile  ((int (*)(char *))(uncompress_funcs[8]))
-#endif /* !MAKING_COMPRESS */
+#endif				/* !MAKING_COMPRESS */
 
-#endif /* !_EGG_MOD_COMPRESS_COMPRESS_H */
+#endif				/* !_EGG_MOD_COMPRESS_COMPRESS_H */

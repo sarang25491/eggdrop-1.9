@@ -1,8 +1,7 @@
 /*
- * botnetutil.h
- *   utility functions for the botnet protocol
+ * botnetutil.h --
  *
- * $Id: botnetutil.h,v 1.2 2002/02/07 22:18:59 wcc Exp $
+ *	utility functions for the botnet protocol
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -22,6 +21,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/*
+ * $Id: botnetutil.h,v 1.3 2002/05/05 16:40:32 tothwolf Exp $
+ */
 
 #ifndef _EGG_BOTNETUTIL_H
 #define _EGG_BOTNETUTIL_H
@@ -38,4 +40,4 @@ extern int simple_sprintf EGG_VARARGS(char *, arg1);
 
 END_C_DECLS
 
-#endif
+#endif				/* !_EGG_BOTNETUTIL_H */

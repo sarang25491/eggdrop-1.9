@@ -1,8 +1,7 @@
 /*
- * strcasecmp.c
- *   provides strcasecmp()
+ * strcasecmp.c --
  *
- * $Id: strcasecmp.c,v 1.2 2002/02/07 22:18:59 wcc Exp $
+ *	provides strcasecmp()
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -22,6 +21,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: strcasecmp.c,v 1.3 2002/05/05 16:40:32 tothwolf Exp $";
+#endif
 
 #include <ctype.h>
 

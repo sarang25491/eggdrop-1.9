@@ -1,8 +1,7 @@
 /*
- * files.c - part of filesys.mod
- *   handles all file system commands
+ * files.c --
  *
- * $Id: files.c,v 1.5 2002/05/05 15:19:12 wingman Exp $
+ *	handles all file system commands
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -22,6 +21,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+/* FIXME: #include mess
+#ifndef lint
+static const char rcsid[] = "$Id: files.c,v 1.6 2002/05/05 16:40:35 tothwolf Exp $";
+#endif
+*/
 
 #if HAVE_DIRENT_H
 # include <dirent.h>

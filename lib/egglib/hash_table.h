@@ -1,5 +1,29 @@
-#ifndef _HASH_TABLE_H_
-#define _HASH_TABLE_H_
+/*
+ * hash_table.h --
+ */
+/*
+ * Copyright (C) 2002 Eggheads Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/*
+ * $Id: hash_table.h,v 1.3 2002/05/05 16:40:33 tothwolf Exp $
+ */
+
+#ifndef _EGG_HASH_TABLE_H
+#define _EGG_HASH_TABLE_H
 
 #define HASH_TABLE_STRINGS 1
 #define HASH_TABLE_INTS    2
@@ -36,4 +60,4 @@ int hash_table_replace(hash_table_t *ht, void *key, void *data);
 int hash_table_find(hash_table_t *ht, void *key, void *dataptr);
 int hash_table_delete(hash_table_t *ht, void *key);
 
-#endif /* _HASH_TABLE_H_ */
+#endif				/* _EGG_HASH_TABLE_H */

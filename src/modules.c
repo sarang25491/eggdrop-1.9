@@ -1,12 +1,11 @@
 /* 
- * modules.c -- handles:
- *   support for modules in eggdrop
+ * modules.c --
+ *
+ *	support for modules in eggdrop
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
- * 
- * $Id: modules.c,v 1.108 2002/05/05 15:19:11 wingman Exp $
  */
-/* 
+/*
  * Copyright (C) 1997 Robey Pointer
  * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
  * 
@@ -24,6 +23,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: modules.c,v 1.109 2002/05/05 16:40:38 tothwolf Exp $";
+#endif
 
 #include "main.h"		/* NOTE: when removing this, include config.h */
 #include "modules.h"

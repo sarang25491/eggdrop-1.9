@@ -1,11 +1,10 @@
 /*
- * dbcompat.h -- part of filesys.mod
- *   this header file contains old db formats which are
- *   needed or converting old dbs to the new format.
+ * dbcompat.h --
+ *
+ *	this header file contains old db formats which are
+ *	needed or converting old dbs to the new format.
  *
  * Written for filedb3 by Fabian Knittel <fknittel@gmx.de>
- *
- * $Id: dbcompat.h,v 1.2 2002/02/07 22:19:02 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
@@ -23,6 +22,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/*
+ * $Id: dbcompat.h,v 1.3 2002/05/05 16:40:35 tothwolf Exp $
  */
 
 #ifndef _EGG_MOD_FILESYS_DBCOMPAT_H
@@ -86,4 +88,4 @@ typedef struct {
 static int convert_old_db(FILE **fdb, char *s);
 static int convert_old_files(char *npath, char *s);
 
-#endif				/* _EGG_MOD_FILESYS_DBCOMPAT.H */
+#endif				/* !_EGG_MOD_FILESYS_DBCOMPAT.H */

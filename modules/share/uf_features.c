@@ -1,7 +1,5 @@
 /*
- * uf_features.c -- part of share.mod
- *
- * $Id: uf_features.c,v 1.3 2002/04/17 21:27:22 ite Exp $
+ * uf_features.c --
  */
 /*
  * Copyright (C) 2000, 2001, 2002 Eggheads Development Team
@@ -21,6 +19,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+/* FIXME: #include mess
+#ifndef lint
+static const char rcsid[] = "$Id: uf_features.c,v 1.4 2002/05/05 16:40:36 tothwolf Exp $";
+#endif
+*/
+
 /*
  * Userfile feature protocol description:
  *

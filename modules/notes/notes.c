@@ -1,11 +1,10 @@
 /*
- * notes.c -- part of notes.mod
- *   reading and sending notes
- *   killing old notes and changing the destinations
- *   note cmds
- *   note ignores
+ * notes.c --
  *
- * $Id: notes.c,v 1.12 2002/05/01 03:56:11 stdarg Exp $
+ *	reading and sending notes
+ *	killing old notes and changing the destinations
+ *	note cmds
+ *	note ignores
  */
 /*
  * Copyright (C) 1997 Robey Pointer

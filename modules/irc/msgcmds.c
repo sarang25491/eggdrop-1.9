@@ -1,8 +1,7 @@
 /*
- * msgcmds.c -- part of irc.mod
- *   all commands entered via /MSG
+ * msgcmds.c --
  *
- * $Id: msgcmds.c,v 1.6 2002/04/01 13:33:32 ite Exp $
+ *	all commands entered via /MSG
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -22,6 +21,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+/* FIXME: #include mess
+#ifndef lint
+static const char rcsid[] = "$Id: msgcmds.c,v 1.7 2002/05/05 16:40:35 tothwolf Exp $";
+#endif
+*/
 
 static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
 {

@@ -1,7 +1,7 @@
 /*
- * tclirc.c -- part of irc.mod
+ * tclirc.c --
  *
- * $Id: tclirc.c,v 1.10 2002/02/07 22:19:03 wcc Exp $
+ * Streamlined by answer.
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -22,8 +22,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-/* Streamlined by answer.
- */
+/* FIXME: #include mess
+#ifndef lint
+static const char rcsid[] = "$Id: tclirc.c,v 1.11 2002/05/05 16:40:35 tothwolf Exp $";
+#endif
+*/
+
 static int tcl_chanlist STDVAR
 {
   int f;

@@ -1,8 +1,7 @@
 /*
- * logfile.h
- *   logging stuff
+ * logfile.h --
  *
- * $Id: logfile.h,v 1.2 2002/02/07 22:19:05 wcc Exp $
+ *	logging stuff
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -21,6 +20,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/*
+ * $Id: logfile.h,v 1.3 2002/05/05 16:40:38 tothwolf Exp $
  */
 
 #ifndef _EGG_LOGILE_H
@@ -61,6 +63,6 @@ extern int logfile_del(char *);
 extern int putlog EGG_VARARGS(int, arg1);
 extern void flushlogs(); 
 
-#endif /* MAKING_MODS */
+#endif				/* !MAKING_MODS */
 
-#endif /* _EGG_LOGFILE_H */
+#endif				/* !_EGG_LOGFILE_H */

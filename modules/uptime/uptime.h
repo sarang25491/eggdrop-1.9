@@ -1,7 +1,5 @@
 /* 
- * uptime.h - part of the uptime module
- *
- * $Id: uptime.h,v 1.4 2002/02/07 22:19:04 wcc Exp $
+ * uptime.h --
  */
 /* 
  * Copyright (C) 2001 proton
@@ -21,6 +19,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/*
+ * $Id: uptime.h,v 1.5 2002/05/05 16:40:37 tothwolf Exp $
+ */
 
 #ifndef _EGG_MOD_UPTIME_UPTIME_H
 #define _EGG_MOD_UPTIME_UPTIME_H
@@ -28,4 +29,4 @@
 #define UPTIME_EGGDROP 2
 #define UPTIME_HOST "uptime.eggheads.org"
 
-#endif /* _EGG_MOD_UPTIME_UPTIME_H */
+#endif				/* !_EGG_MOD_UPTIME_UPTIME_H */

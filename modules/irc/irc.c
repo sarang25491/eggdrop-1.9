@@ -1,8 +1,7 @@
 /*
- * irc.c -- part of irc.mod
- *   support for channels within the bot
+ * irc.c --
  *
- * $Id: irc.c,v 1.15 2002/05/01 03:56:10 stdarg Exp $
+ *	support for channels within the bot
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -22,6 +21,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: irc.c,v 1.16 2002/05/05 16:40:35 tothwolf Exp $";
+#endif
 
 #define MODULE_NAME "irc"
 #define MAKING_IRC

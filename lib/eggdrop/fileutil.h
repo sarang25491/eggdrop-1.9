@@ -1,8 +1,7 @@
 /*
- * fileutil.h
- *   convenience utilities to deal with common file operations
+ * fileutil.h --
  *
- * $Id: fileutil.h,v 1.3 2002/02/07 22:18:59 wcc Exp $
+ *	convenience utilities to deal with common file operations
  */
 /*
  * Copyright (C) 2000, 2001, 2002 Eggheads Development Team
@@ -21,6 +20,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/*
+ * $Id: fileutil.h,v 1.4 2002/05/05 16:40:32 tothwolf Exp $
+ */
 
 #ifndef _EGG_FILEUTIL_H
 #define _EGG_FILEUTIL_H
@@ -35,4 +37,4 @@ extern int is_file(const char *);
 
 END_C_DECLS
 
-#endif				/* _EGG_FILEUTIL_H */
+#endif				/* !_EGG_FILEUTIL_H */

@@ -1,11 +1,10 @@
 /*
- * woobie.c -- part of woobie.mod
- *   nonsensical command to exemplify module programming
+ * woobie.c --
+ *
+ *	nonsensical command to exemplify module programming
  *
  * Originally written by ButchBub	  15 July     1997
  * Comments by Fabian Knittel		  29 December 1999
- *
- * $Id: woobie.c,v 1.4 2002/03/22 16:01:19 ite Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
@@ -24,6 +23,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: woobie.c,v 1.5 2002/05/05 16:40:37 tothwolf Exp $";
+#endif
 
 #define MODULE_NAME "woobie"
 #define MAKING_WOOBIE

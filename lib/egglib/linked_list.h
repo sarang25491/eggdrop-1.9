@@ -1,13 +1,12 @@
 /*
- * linked_list.h
- *   linked_list implementation
+ * linked_list.h --
  *
- *   wishlist:
- *     * it would be nice if you can specifiy the sort
- *       direction of a list (e.g. ascendand or descendand)
- *       (not just by supplying your own comparator)
+ *	linked_list implementation
  *
- * $Id: linked_list.h,v 1.2 2002/05/04 17:01:36 wingman Exp $
+ *	wishlist:
+ *	  * it would be nice if you can specifiy the sort
+ *	    direction of a list (e.g. ascendand or descendand)
+ *	    (not just by supplying your own comparator)
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
@@ -26,8 +25,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-#ifndef _EGG_LINKED_LIST_H_
-#define _EGG_LINKED_LIST_H_
+/*
+ * $Id: linked_list.h,v 1.3 2002/05/05 16:40:33 tothwolf Exp $
+ */
+
+#ifndef _EGG_LINKED_LIST_H
+#define _EGG_LINKED_LIST_H
 
 /*
  * sort types
@@ -237,4 +240,4 @@ int linked_list_int_cmp(const void *left, const void *right);
  */
 int linked_list_char_cmp(const void *left, const void *right);
 
-#endif
+#endif				/* !_EGG_LINKED_LIST_H */

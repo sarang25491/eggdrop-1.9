@@ -1,9 +1,8 @@
 /*
- * cmds.c -- handles:
- *   commands from a user via dcc
- *   (split in 2, this portion contains no-irc commands)
+ * cmds.c --
  *
- * $Id: cmds.c,v 1.101 2002/05/05 15:19:11 wingman Exp $
+ *	commands from a user via dcc
+ *	(split in 2, this portion contains no-irc commands)
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -23,6 +22,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: cmds.c,v 1.102 2002/05/05 16:40:37 tothwolf Exp $";
+#endif
 
 #include "main.h"
 #include "tandem.h"

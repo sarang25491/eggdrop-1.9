@@ -1,8 +1,7 @@
 /*
- * tclfiles.c -- part of filesys.mod
- *   Tcl stubs for file system commands moved here to support modules
+ * tclfiles.c --
  *
- * $Id: tclfiles.c,v 1.2 2002/02/07 22:19:02 wcc Exp $
+ *	Tcl stubs for file system commands moved here to support modules
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -22,6 +21,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+/* FIXME: #include mess
+#ifndef lint
+static const char rcsid[] = "$Id: tclfiles.c,v 1.3 2002/05/05 16:40:35 tothwolf Exp $";
+#endif
+*/
 
 static int tcl_getdesc STDVAR
 {

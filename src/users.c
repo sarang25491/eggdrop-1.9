@@ -1,16 +1,15 @@
 /*
- * users.c -- handles:
- *   testing and enforcing ignores
- *   adding and removing ignores
- *   listing ignores
- *   auto-linking bots
- *   sending and receiving a userfile from a bot
- *   listing users ('.whois' and '.match')
- *   reading the user file
+ * users.c --
+ *
+ *	testing and enforcing ignores
+ *	adding and removing ignores
+ *	listing ignores
+ *	auto-linking bots
+ *	sending and receiving a userfile from a bot
+ *	listing users ('.whois' and '.match')
+ *	reading the user file
  *
  * dprintf'ized, 9nov1995
- *
- * $Id: users.c,v 1.39 2002/05/05 15:19:12 wingman Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -30,6 +29,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: users.c,v 1.40 2002/05/05 16:40:39 tothwolf Exp $";
+#endif
 
 #include "main.h"
 #include "users.h"

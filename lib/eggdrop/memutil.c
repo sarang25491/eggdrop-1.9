@@ -1,9 +1,8 @@
 /*
- * memutil.c
- *   some macros and functions for common operations with strings and memory
- *   in general.
+ * memutil.c --
  *
- * $Id: memutil.c,v 1.6 2002/04/01 13:33:31 ite Exp $
+ *	some macros and functions for common operations with strings and
+ *	memory in general.
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
@@ -22,6 +21,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: memutil.c,v 1.7 2002/05/05 16:40:32 tothwolf Exp $";
+#endif
 
 #include <stdio.h>
 #include <ctype.h>

@@ -1,13 +1,12 @@
 /*
- * tclhash.c -- handles:
- *   bind and unbind
- *   checking and triggering the various in-bot bindings
- *   listing current bindings
- *   adding/removing new binding tables
- *   (non-Tcl) procedure lookups for msg/dcc/file commands
- *   (Tcl) binding internal procedures to msg/dcc/file commands
+ * tclhash.c --
  *
- * $Id: tclhash.c,v 1.65 2002/05/05 15:19:12 wingman Exp $
+ *	bind and unbind
+ *	checking and triggering the various in-bot bindings
+ *	listing current bindings
+ *	adding/removing new binding tables
+ *	(non-Tcl) procedure lookups for msg/dcc/file commands
+ *	(Tcl) binding internal procedures to msg/dcc/file commands
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -27,6 +26,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: tclhash.c,v 1.66 2002/05/05 16:40:38 tothwolf Exp $";
+#endif
 
 #include "main.h"
 #include "chan.h"

@@ -1,8 +1,7 @@
 /*
- * inet_ntop.c
- *   provides inet_ntop()
+ * inet_ntop.c --
  *
- * $Id: inet_ntop.c,v 1.1 2001/10/28 13:30:32 ite Exp $
+ *	provides inet_ntop()
  */
 /*
  * Copyright (c) 1996-1999 by Internet Software Consortium.
@@ -20,6 +19,10 @@
  * ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
  * SOFTWARE.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: inet_ntop.c,v 1.2 2002/05/05 16:40:32 tothwolf Exp $";
+#endif
 
 #if defined(LIBC_SCCS) && !defined(lint)
 static const char rcsid[] = "$BINDId: inet_ntop.c,v 1.8 1999/10/13 16:39:28 vixie Exp $";

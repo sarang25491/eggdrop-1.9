@@ -1,13 +1,16 @@
 /* 
- * net.c -- handles:
- *   all raw network i/o
- * 
- * $Id: net.c,v 1.58 2002/05/05 15:21:30 wingman Exp $
+ * net.c --
+ *
+ *	all raw network i/o
  */
-/* 
- * This is hereby released into the public domain.
+/*
+ * This [code] is hereby released into the public domain.
  * Robey Pointer, robey@netcom.com
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: net.c,v 1.59 2002/05/05 16:40:38 tothwolf Exp $";
+#endif
 
 #include <fcntl.h>
 #include "main.h"

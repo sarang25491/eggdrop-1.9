@@ -1,8 +1,7 @@
 /*
- * dns.h
- *   stuff used by dns.c
+ * dns.h --
  *
- * $Id: dns.h,v 1.10 2002/02/07 22:19:05 wcc Exp $
+ *	stuff used by dns.c
  */
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -22,6 +21,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/*
+ * $Id: dns.h,v 1.11 2002/05/05 16:40:38 tothwolf Exp $
  */
 
 #ifndef _EGG_DNS_H
@@ -43,4 +45,4 @@ void dcc_dnsipbyhost(char *);
 
 #endif /* MAKING_MODS */
 
-#endif	/* _EGG_DNS_H */
+#endif				/* !_EGG_DNS_H */

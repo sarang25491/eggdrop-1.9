@@ -1,8 +1,7 @@
 /*
- * cmdsserv.c -- part of server.mod
- *   handles commands from a user via dcc that cause server interaction
+ * cmdsserv.c --
  *
- * $Id: cmdsserv.c,v 1.7 2002/04/14 23:10:38 ite Exp $
+ *	handles commands from a user via dcc that cause server interaction
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -22,6 +21,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+/* FIXME: #include mess
+#ifndef lint
+static const char rcsid[] = "$Id: cmdsserv.c,v 1.8 2002/05/05 16:40:36 tothwolf Exp $";
+#endif
+*/
 
 static void cmd_servers(struct userrec *u, int idx, char *par)
 {

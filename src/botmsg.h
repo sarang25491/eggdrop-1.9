@@ -1,7 +1,5 @@
 /*
- * botmsg.h
- *
- * $Id: botmsg.h,v 1.1 2002/05/05 15:21:30 wingman Exp $
+ * botmsg.h --
  */
 /*
  * Copyright (C) 2000, 2001, 2002 Eggheads Development Team
@@ -20,6 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/*
+ * $Id: botmsg.h,v 1.2 2002/05/05 16:40:37 tothwolf Exp $
+ */
 
 #ifndef _EGG_BOTMSG_H
 #define _EGG_BOTMSG_H
@@ -27,4 +28,4 @@
 int add_note(char *, char *, char *, int, int);
 void tandout_but EGG_VARARGS(int, arg1);
 
-#endif	/* _EGG_BOTMSG_H	*/
+#endif				/* !_EGG_BOTMSG_H */

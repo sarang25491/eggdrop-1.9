@@ -1,10 +1,8 @@
 /*
- * mode.c -- part of irc.mod
- *   queuing and flushing mode changes made by the bot
- *   channel mode changes and the bot's reaction to them
- *   setting and getting the current wanted channel modes
- *
- * $Id: mode.c,v 1.13 2002/04/17 21:16:55 ite Exp $
+ * mode.c --
+ *	queuing and flushing mode changes made by the bot
+ *	channel mode changes and the bot's reaction to them
+ *	setting and getting the current wanted channel modes
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -24,6 +22,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+/* FIXME: #include mess
+#ifndef lint
+static const char rcsid[] = "$Id: mode.c,v 1.14 2002/05/05 16:40:35 tothwolf Exp $";
+#endif
+*/
 
 /* Reversing this mode? */
 static int reversing = 0;

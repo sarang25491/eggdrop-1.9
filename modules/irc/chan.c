@@ -1,12 +1,11 @@
 /*
- * chan.c -- part of irc.mod
- *   almost everything to do with channel manipulation
- *   telling channel status
- *   'who' response
- *   user kickban, kick, op, deop
- *   idle kicking
+ * chan.c --
  *
- * $Id: chan.c,v 1.20 2002/04/01 17:34:55 eule Exp $
+ *	almost everything to do with channel manipulation
+ *	telling channel status
+ *	'who' response
+ *	user kickban, kick, op, deop
+ *	idle kicking
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -26,6 +25,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+/* FIXME: #include mess
+#ifndef lint
+static const char rcsid[] = "$Id: chan.c,v 1.21 2002/05/05 16:40:35 tothwolf Exp $";
+#endif
+*/
 
 static time_t last_ctcp = (time_t) 0L;
 static int    count_ctcp = 0;

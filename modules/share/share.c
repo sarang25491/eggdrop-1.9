@@ -1,7 +1,5 @@
 /*
- * share.c -- part of share.mod
- *
- * $Id: share.c,v 1.14 2002/04/01 17:34:55 eule Exp $
+ * share.c --
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -21,6 +19,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: share.c,v 1.15 2002/05/05 16:40:36 tothwolf Exp $";
+#endif
 
 #define MODULE_NAME "share"
 #define MAKING_SHARE

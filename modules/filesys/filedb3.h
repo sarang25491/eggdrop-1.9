@@ -1,10 +1,9 @@
 /*
- * filedb3.h -- part of filesys.mod
- *   filedb header file
+ * filedb3.h --
+ *
+ *	filedb header file
  *
  * Written by Fabian Knittel <fknittel@gmx.de>
- *
- * $Id: filedb3.h,v 1.2 2002/02/07 22:19:02 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
@@ -22,6 +21,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/*
+ * $Id: filedb3.h,v 1.3 2002/05/05 16:40:35 tothwolf Exp $
  */
 
 #ifndef _EGG_MOD_FILESYS_FILEDB3_H
@@ -156,4 +158,4 @@ static filedb_entry *_filedb_getfile(FILE *, long, int, char *, int);
 static filedb_entry *_filedb_matchfile(FILE *, long, char *, char *, int);
 static filedb_entry *filedb_getentry(char *, char *);
 
-#endif				/* _EGG_MOD_FILESYS_FILEDB3_H */
+#endif				/* !_EGG_MOD_FILESYS_FILEDB3_H */

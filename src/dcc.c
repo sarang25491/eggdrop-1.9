@@ -1,10 +1,9 @@
 /*
- * dcc.c -- handles:
- *   activity on a dcc socket
- *   disconnect on a dcc socket
- *   ...and that's it!  (but it's a LOT)
+ * dcc.c --
  *
- * $Id: dcc.c,v 1.84 2002/05/05 15:19:11 wingman Exp $
+ *	activity on a dcc socket
+ *	disconnect on a dcc socket
+ *	...and that's it!  (but it's a LOT)
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -24,6 +23,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: dcc.c,v 1.85 2002/05/05 16:40:38 tothwolf Exp $";
+#endif
 
 #include "main.h"
 #include <ctype.h>

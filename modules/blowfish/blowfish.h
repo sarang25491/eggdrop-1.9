@@ -1,7 +1,5 @@
 /*
- * blowfish.h -- part of blowfish.mod
- *
- * $Id: blowfish.h,v 1.2 2002/02/07 22:19:01 wcc Exp $
+ * blowfish.h --
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -20,6 +18,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/*
+ * $Id: blowfish.h,v 1.3 2002/05/05 16:40:33 tothwolf Exp $
  */
 
 #ifndef _EGG_MOD_BLOWFISH_BLOWFISH_H
@@ -49,4 +50,4 @@ union aword {
   } w;
 };
 
-#endif				/* _EGG_MOD_BLOWFISH_BLOWFISH_H */
+#endif				/* !_EGG_MOD_BLOWFISH_BLOWFISH_H */

@@ -1,12 +1,11 @@
 /*
- * botnet.c -- handles:
- *   keeping track of which bot's connected where in the chain
- *   dumping a list of bots or a bot tree to a user
- *   rejecting a bot
- *   linking, unlinking, and relaying to another bot
- *   pinging the bots periodically and checking leaf status
+ * botnet.c --
  *
- * $Id: botnet.c,v 1.58 2002/05/05 15:19:11 wingman Exp $
+ *	keeping track of which bot's connected where in the chain
+ *	dumping a list of bots or a bot tree to a user
+ *	rejecting a bot
+ *	linking, unlinking, and relaying to another bot
+ *	pinging the bots periodically and checking leaf status
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -26,6 +25,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: botnet.c,v 1.59 2002/05/05 16:40:37 tothwolf Exp $";
+#endif
 
 #include "main.h"
 #include "tandem.h"

@@ -1,7 +1,5 @@
 /*
- * dcc.h
- *
- * $Id: dcc.h,v 1.1 2002/05/05 15:21:30 wingman Exp $
+ * dcc.h --
  */
 /*
  * Copyright (C) 2000, 2001, 2002 Eggheads Development Team
@@ -20,6 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/*
+ * $Id: dcc.h,v 1.2 2002/05/05 16:40:38 tothwolf Exp $
+ */
 
 #ifndef _EGG_DCC_H
 #define _EGG_DCC_H
@@ -27,4 +28,4 @@
 void failed_link(int);
 void dupwait_notify(char *);
 
-#endif	/* _EGG_DCC_H	*/
+#endif				/* !_EGG_DCC_H */

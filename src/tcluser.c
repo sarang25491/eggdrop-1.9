@@ -1,8 +1,7 @@
 /*
- * tcluser.c -- handles:
- *   Tcl stubs for the user-record-oriented commands
+ * tcluser.c --
  *
- * $Id: tcluser.c,v 1.41 2002/05/05 15:19:12 wingman Exp $
+ *	Tcl stubs for the user-record-oriented commands
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -22,6 +21,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: tcluser.c,v 1.42 2002/05/05 16:40:39 tothwolf Exp $";
+#endif
 
 #include "main.h"
 #include "users.h"

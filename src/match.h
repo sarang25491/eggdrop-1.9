@@ -1,9 +1,12 @@
 /*
- * match.h
- *   prototypes for match.c
+ * match.h --
  *
- * $Id: match.h,v 1.2 2001/10/31 04:02:51 tothwolf Exp $
+ *	prototypes for match.c
  */
+/*
+ * $Id: match.h,v 1.3 2002/05/05 16:40:38 tothwolf Exp $
+ */
+
 #ifndef _EGG_MATCH_H
 #define _EGG_MATCH_H
 

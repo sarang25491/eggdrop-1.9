@@ -1,10 +1,9 @@
 /*
- * modules.h
- *   support for modules in eggdrop
+ * modules.h --
+ *
+ *	support for modules in eggdrop
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
- *
- * $Id: modules.h,v 1.15 2002/05/05 15:21:30 wingman Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -23,6 +22,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/*
+ * $Id: modules.h,v 1.16 2002/05/05 16:40:38 tothwolf Exp $
  */
 
 #ifndef _EGG_MODULE_H
@@ -82,4 +84,4 @@ typedef struct _dependancy {
 } dependancy;
 extern dependancy *dependancy_list;
 
-#endif				/* _EGG_MODULE_H */
+#endif				/* !_EGG_MODULE_H */

@@ -1,7 +1,5 @@
 /*
- * bg.h
- *
- * $Id: bg.h,v 1.4 2002/02/07 22:19:04 wcc Exp $
+ * bg.h --
  */
 /*
  * Copyright (C) 2000, 2001, 2002 Eggheads Development Team
@@ -20,6 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/*
+ * $Id: bg.h,v 1.5 2002/05/05 16:40:37 tothwolf Exp $
+ */
 
 #ifndef _EGG_BG_H
 #define _EGG_BG_H
@@ -37,4 +38,4 @@ void bg_prepare_split(void);
 void bg_send_quit(bg_quit_t);
 void bg_do_split(void);
 
-#endif			/* _EGG_BG_H */
+#endif				/* !_EGG_BG_H */

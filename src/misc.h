@@ -1,12 +1,11 @@
 /*
- * misc.h
- *   maskhost() dumplots() daysago() days() daysdur()
- *   queueing output for the bot (msg and help)
- *   resync buffers for sharebots
- *   help system
- *   motd display and %var substitution
+ * misc.h --
  *
- * $Id: misc.h,v 1.3 2002/05/05 15:21:30 wingman Exp $
+ *	maskhost() dumplots() daysago() days() daysdur()
+ *	queueing output for the bot (msg and help)
+ *	resync buffers for sharebots
+ *	help system
+ *	motd display and %var substitution
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -25,6 +24,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/*
+ * $Id: misc.h,v 1.4 2002/05/05 16:40:38 tothwolf Exp $
  */
 
 #ifndef _EGG_MISC_H
@@ -63,6 +65,6 @@ extern void str_nutf8tounicode(char *str, int len);
 #endif
 extern void kill_bot(char *, char *);
 
-#endif /* MAKING_MODS */
+#endif				/* !MAKING_MODS */
 
-#endif /* _EGG_MISC_H */
+#endif				/* !_EGG_MISC_H */

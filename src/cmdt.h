@@ -1,8 +1,7 @@
 /*
- * cmdt.h
- *   stuff for builtin commands
+ * cmdt.h --
  *
- * $Id: cmdt.h,v 1.5 2002/02/07 22:19:04 wcc Exp $
+ *	stuff for builtin commands
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -22,6 +21,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/*
+ * $Id: cmdt.h,v 1.6 2002/05/05 16:40:38 tothwolf Exp $
+ */
 
 #ifndef _EGG_CMDT_H
 #define _EGG_CMDT_H
@@ -39,4 +41,4 @@ typedef struct {
   Function func;
 } botcmd_t;
 
-#endif				/* _EGG_CMDT_H */
+#endif				/* !_EGG_CMDT_H */

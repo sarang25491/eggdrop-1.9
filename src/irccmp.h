@@ -1,8 +1,7 @@
 /*
- * irccmp.h
- *   prototypes and macros for irccmp.c
+ * irccmp.h --
  *
- * $Id: irccmp.h,v 1.4 2002/02/07 22:19:05 wcc Exp $
+ *	prototypes and macros for irccmp.
  */
 /*
  * Copyright (C) 1990 Jarkko Oikarinen
@@ -22,6 +21,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/*
+ * $Id: irccmp.h,v 1.5 2002/05/05 16:40:38 tothwolf Exp $
+ */
+
 #ifndef _EGG_IRCCMP_H
 #define _EGG_IRCCMP_H
 

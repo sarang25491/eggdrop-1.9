@@ -1,8 +1,7 @@
 /*
- * chancmds.c -- part of irc.mod
- *   handles commands directly relating to channel interaction
+ * chancmds.c --
  *
- * $Id: cmdsirc.c,v 1.9 2002/04/01 17:34:55 eule Exp $
+ *	handles commands directly relating to channel interaction
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -22,6 +21,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+/* FIXME: #include mess
+#ifndef lint
+static const char rcsid[] = "$Id: cmdsirc.c,v 1.10 2002/05/05 16:40:35 tothwolf Exp $";
+#endif
+*/
 
 /* Do we have any flags that will allow us ops on a channel?
  */

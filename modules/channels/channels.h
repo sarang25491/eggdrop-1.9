@@ -1,7 +1,5 @@
 /*
- * channels.h -- part of channels.mod
- *
- * $Id: channels.h,v 1.7 2002/04/26 09:29:51 stdarg Exp $
+ * channels.h --
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -20,6 +18,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/*
+ * $Id: channels.h,v 1.8 2002/05/05 16:40:33 tothwolf Exp $
  */
 
 #ifndef _EGG_MOD_CHANNELS_CHANNELS_H
@@ -183,4 +184,4 @@ inline static int chanset_unlink(struct chanset_t *chan);
 				      (u_match_mask(global_exempts, user) && \
 				       (chan->ircnet_status & CHAN_HONORGLOBALEXEMPTS)))
 
-#endif				/* _EGG_MOD_CHANNELS_CHANNELS_H */
+#endif				/* !_EGG_MOD_CHANNELS_CHANNELS_H */

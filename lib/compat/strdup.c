@@ -1,9 +1,12 @@
 /*
- * strdup.c
- *   provides strdup()
+ * strdup.c --
  *
- * $Id: strdup.c,v 1.1 2002/01/16 22:09:40 ite Exp $
+ *	provides strdup()
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: strdup.c,v 1.2 2002/05/05 16:40:32 tothwolf Exp $";
+#endif
 
 static char *strdup(const char *entry)
 {

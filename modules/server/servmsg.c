@@ -1,7 +1,5 @@
 /*
- * servmsg.c -- part of server.mod
- *
- * $Id: servmsg.c,v 1.12 2002/04/01 13:33:32 ite Exp $
+ * servmsg.c --
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -22,6 +20,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+/* FIXME: #include mess
+#ifndef lint
+static const char rcsid[] = "$Id: servmsg.c,v 1.13 2002/05/05 16:40:36 tothwolf Exp $";
+#endif
+*/
 
 static time_t last_ctcp    = (time_t) 0L;
 static int    count_ctcp   = 0;

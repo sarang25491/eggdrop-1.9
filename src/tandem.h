@@ -1,7 +1,5 @@
 /*
- * tandem.h
- *
- * $Id: tandem.h,v 1.9 2002/02/07 22:19:05 wcc Exp $
+ * tandem.h --
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -20,6 +18,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/*
+ * $Id: tandem.h,v 1.10 2002/05/05 16:40:38 tothwolf Exp $
  */
 
 #ifndef _EGG_TANDEM_H
@@ -104,4 +105,4 @@ int users_in_subtree(tand_t *);
 #define b_linker(a)	(dcc[a].u.bot->linker)
 #define b_numver(a)	(dcc[a].u.bot->numver)
 
-#endif				/* _EGG_TANDEM_H */
+#endif				/* !_EGG_TANDEM_H */

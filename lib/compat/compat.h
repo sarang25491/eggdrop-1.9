@@ -1,8 +1,7 @@
 /*
- * compat.h
- *   prototypes for compability functions
+ * compat.h --
  *
- * $Id: compat.h,v 1.6 2002/05/03 01:21:16 ite Exp $
+ *	prototypes for compability functions
  */
 /*
  * Copyright (C) 2000, 2001, 2002 Eggheads Development Team
@@ -21,6 +20,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/*
+ * $Id: compat.h,v 1.7 2002/05/05 16:40:31 tothwolf Exp $
+ */
+
 #ifndef _EGG_COMPAT_H
 #define _EGG_COMPAT_H
 

@@ -1,7 +1,5 @@
 /*
- * irc.h -- part of irc.mod
- *
- * $Id: irc.h,v 1.5 2002/05/05 15:21:30 wingman Exp $
+ * irc.h --
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -20,6 +18,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/*
+ * $Id: irc.h,v 1.6 2002/05/05 16:40:35 tothwolf Exp $
  */
 
 #ifndef _EGG_MOD_IRC_IRC_H
@@ -108,4 +109,4 @@ static int gotmode(char *, char *, char *);
 
 #endif				/* MAKING_IRC */
 
-#endif				/* _EGG_MOD_IRC_IRC_H */
+#endif				/* !_EGG_MOD_IRC_IRC_H */

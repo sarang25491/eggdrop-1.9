@@ -1,8 +1,7 @@
 /*
- * filesys.c -- part of filesys.mod
- *   main file of the filesys eggdrop module
+ * filesys.c --
  *
- * $Id: filesys.c,v 1.10 2002/05/05 15:19:12 wingman Exp $
+ *	main file of the filesys eggdrop module
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -22,6 +21,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: filesys.c,v 1.11 2002/05/05 16:40:35 tothwolf Exp $";
+#endif
 
 #include <fcntl.h>
 #include <sys/stat.h>

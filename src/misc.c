@@ -1,12 +1,11 @@
 /*
- * misc.c
- *   maskhost() dumplots() daysago() days() daysdur()
- *   queueing output for the bot (msg and help)
- *   resync buffers for sharebots
- *   help system
- *   motd display and %var substitution
+ * misc.c --
  *
- * $Id: misc.c,v 1.63 2002/05/05 15:19:11 wingman Exp $
+ *	maskhost() dumplots() daysago() days() daysdur()
+ *	queueing output for the bot (msg and help)
+ *	resync buffers for sharebots
+ *	help system
+ *	motd display and %var substitution
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -26,6 +25,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: misc.c,v 1.64 2002/05/05 16:40:38 tothwolf Exp $";
+#endif
 
 #include "main.h"
 #include "misc.h"

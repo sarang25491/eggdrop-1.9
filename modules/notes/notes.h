@@ -1,7 +1,5 @@
 /*
- * notes.h -- part of notes.mod
- *
- * $Id: notes.h,v 1.2 2002/02/07 22:19:03 wcc Exp $
+ * notes.h --
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -21,6 +19,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/*
+ * $Id: notes.h,v 1.3 2002/05/05 16:40:35 tothwolf Exp $
+ */
 
 #ifndef _EGG_MOD_NOTES_NOTES_H
 #define _EGG_MOD_NOTES_NOTES_H
@@ -37,5 +38,4 @@ static void notes_del(char *, char *, char *, int);
 static void fwd_display(int, struct user_entry *);
 #endif				/* MAKING_NOTES */
 
-#endif				/* _EGG_MOD_NOTES_H */
-
+#endif				/* !_EGG_MOD_NOTES_NOTES_H */

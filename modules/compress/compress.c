@@ -1,12 +1,11 @@
 /*
- * compress.c -- part of compress.mod
- *   uses the compression library libz to compress and uncompress the
- *   userfiles during the sharing process
+ * compress.c --
  *
- * Written by Fabian Knittel <fknittel@gmx.de>. Based on zlib examples
- * by Jean-loup Gailly and Miguel Albrecht.
+ *	uses the compression library libz to compress and uncompress the
+ *	userfiles during the sharing process
  *
- * $Id: compress.c,v 1.6 2002/05/01 03:56:10 stdarg Exp $
+ * Written by Fabian Knittel <fknittel@gmx.de>.
+ * Based on zlib examples by Jean-loup Gailly and Miguel Albrecht.
  */
 /*
  * Copyright (C) 2000, 2001, 2002 Eggheads Development Team
@@ -25,6 +24,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: compress.c,v 1.7 2002/05/05 16:40:34 tothwolf Exp $";
+#endif
 
 #define MODULE_NAME "compress"
 #define MAKING_COMPRESS

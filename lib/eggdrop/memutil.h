@@ -1,9 +1,8 @@
 /*
- * memutil.h
- *   some macros and functions for common operations with strings and memory
- *   in general.
+ * memutil.h --
  *
- * $Id: memutil.h,v 1.7 2002/04/01 13:33:31 ite Exp $
+ *	some macros and functions for common operations with strings and
+ *	memory in general.
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
@@ -21,6 +20,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/*
+ * $Id: memutil.h,v 1.8 2002/05/05 16:40:32 tothwolf Exp $
  */
 
 #ifndef _EGG_MEMUTIL_H
@@ -66,4 +68,4 @@ extern void rmspace(char *);
 
 END_C_DECLS
 
-#endif /* _EGG_MEMUTIL_H */
+#endif				/* !_EGG_MEMUTIL_H */

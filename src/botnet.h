@@ -1,7 +1,5 @@
 /*
- * botnet.h
- *
- * $Id: botnet.h,v 1.1 2002/05/05 15:21:30 wingman Exp $
+ * botnet.h --
  */
 /*
  * Copyright (C) 2000, 2001, 2002 Eggheads Development Team
@@ -19,6 +17,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/*
+ * $Id: botnet.h,v 1.2 2002/05/05 16:40:37 tothwolf Exp $
  */
 
 #ifndef _EGG_BOTNET_H
@@ -51,5 +52,4 @@ void zapfbot(int);
 void tandem_relay(int, char *, int);
 int getparty(char *, int);
 
-
-#endif	/* _EGG_BOTNET_H	*/
+#endif				/* !_EGG_BOTNET_H */

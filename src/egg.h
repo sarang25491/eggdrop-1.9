@@ -1,10 +1,9 @@
 /*
- * egg.h
- *   Eggdrop compile-time settings
+ * egg.h --
  *
- *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
+ *	Eggdrop compile-time settings
  *
- * $Id: egg.h,v 1.6 2002/03/22 16:01:20 ite Exp $
+ *	IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -24,9 +23,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/*
+ * $Id: egg.h,v 1.7 2002/05/05 16:40:38 tothwolf Exp $
+ */
 
-#ifndef _EGG_EGGDROP_H
-#define _EGG_EGGDROP_H
+#ifndef _EGG_EGG_H
+#define _EGG_EGG_H
 
 /*
  * If you're *only* going to link to new version bots (1.3.0 or higher)
@@ -36,16 +38,16 @@
 
 /*
  * HANDLEN note:
- *       HANDLEN defines the maximum length a handle on the bot can be.
- *       Standard (and minimum) is 9 characters long.
+ *	 HANDLEN defines the maximum length a handle on the bot can be.
+ *	 Standard (and minimum) is 9 characters long.
  *
- *       Beware that using lengths over 9 chars is 'non-standard' and if
- *       you wish to link to other bots, they _must_ both have the same
- *       maximum handle length.
+ *	 Beware that using lengths over 9 chars is 'non-standard' and if
+ *	 you wish to link to other bots, they _must_ both have the same
+ *	 maximum handle length.
  *
  * NICKMAX note:
- *       You should leave this at 32 characters and modify nick-len in the
- *       configuration file instead.
+ *	 You should leave this at 32 characters and modify nick-len in the
+ *	 configuration file instead.
  */
 
 #define HANDLEN		  9	/* valid values 9->NICKMAX		*/
@@ -465,4 +467,4 @@ enum {
 #define TLN_ECHO	1		/* Echo			*/
 #define TLN_ECHO_C	"\001"
 
-#endif				/* _EGG_EGGDROP_H */
+#endif				/* !_EGG_EGG_H */

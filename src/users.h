@@ -1,8 +1,7 @@
 /*
- * users.h
- *   structures and definitions used by users.c and userrec.c
+ * users.h --
  *
- * $Id: users.h,v 1.11 2002/05/05 15:19:12 wingman Exp $
+ *	structures and definitions used by users.c and userrec.c
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -21,6 +20,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/*
+ * $Id: users.h,v 1.12 2002/05/05 16:40:39 tothwolf Exp $
  */
 
 #ifndef _EGG_USERS_H
@@ -205,4 +207,4 @@ void def_display(int idx, struct user_entry *e);
 int def_dupuser(struct userrec *new, struct userrec *old,
 		struct user_entry *e);
 
-#endif				/* _EGG_USERS_H */
+#endif				/* !_EGG_USERS_H */

@@ -1,10 +1,9 @@
 /*
- * filelist.h -- part of filesys.mod
- *   header file for filelist.c
+ * filelist.h --
+ *
+ *	header file for filelist.c
  *
  * Written by Fabian Knittel <fknittel@gmx.de>
- *
- * $Id: filelist.h,v 1.2 2002/02/07 22:19:02 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
@@ -22,6 +21,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/*
+ * $Id: filelist.h,v 1.3 2002/05/05 16:40:35 tothwolf Exp $
  */
 
 #ifndef _EGG_MOD_FILESYS_FILELIST_H
@@ -47,4 +49,4 @@ static inline void filelist_addout(filelist_t *, char *);
 static inline void filelist_idxshow(filelist_t *, int);
 static void filelist_sort(filelist_t *);
 
-#endif				/* _EGG_MOD_FILESYS_FILELIST_H */
+#endif				/* !_EGG_MOD_FILESYS_FILELIST_H */

@@ -1,7 +1,5 @@
 /*
- * dccutil.h
- *
- * $Id: dccutil.h,v 1.1 2002/05/05 15:21:30 wingman Exp $
+ * dccutil.h --
  */
 /*
  * Copyright (C) 2000, 2001, 2002 Eggheads Development Team
@@ -20,6 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/*
+ * $Id: dccutil.h,v 1.2 2002/05/05 16:40:38 tothwolf Exp $
+ */
 
 #ifndef _EGG_DCCUTIL_H
 #define _EGG_DCCUTIL_H
@@ -29,8 +30,11 @@
  *   so all occurences of dprintf in eggdrop has been
  *   redefnied as dprintf_eggdrop)
  */
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #ifdef HAVE_DPRINTF
-#	define dprintf dprintf_eggdrop
+# define dprintf dprintf_eggdrop
 #endif
 
 void dprintf EGG_VARARGS(int, arg1);
@@ -54,4 +58,4 @@ void changeover_dcc(int, struct dcc_table *, int);
 void do_boot(int, char *, char *);
 int detect_dcc_flood(time_t *, struct chat_info *, int);
 
-#endif	/* _EGG_DCCUTIL_H	*/
+#endif				/* !_EGG_DCCUTIL_H */

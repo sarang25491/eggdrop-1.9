@@ -1,7 +1,5 @@
 /*
- * scriptcmds.c -- part of server.mod
- *
- * $Id: scriptcmds.c,v 1.2 2002/05/01 05:31:04 stdarg Exp $
+ * scriptcmds.c --
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -21,6 +19,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+/* FIXME: #include mess
+#ifndef lint
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.3 2002/05/05 16:40:36 tothwolf Exp $";
+#endif
+*/
 
 #include <eggdrop/eggdrop.h> /* Eggdrop API */
 

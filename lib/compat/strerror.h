@@ -1,8 +1,7 @@
 /*
- * strerror.h
- *   prototypes for strerror.c
+ * strerror.h --
  *
- * $Id: strerror.h,v 1.1 2002/04/01 23:39:35 ite Exp $
+ *	prototypes for strerror.c
  */
 /*
  * Copyright (C) 2002 Eggheads Development Team
@@ -21,6 +20,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/*
+ * $Id: strerror.h,v 1.2 2002/05/05 16:40:32 tothwolf Exp $
+ */
+
 #ifndef _EGG_STRERROR_H
 #define _EGG_STRERROR_H
 

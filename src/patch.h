@@ -1,6 +1,7 @@
 /*
- * patch.h
- *   header file for adding patches to Eggdrop's version string
+ * patch.h --
+ *
+ *	header file for adding patches to Eggdrop's version string
  *
  * PLACE YOUR PATCHES HERE...
  *
@@ -9,8 +10,6 @@
  * replace a  *** PATCH GOES HERE *** line with a patch("patchname");
  * statement, leave the rest of the file alone, this allows better
  * overlapping patches.
- *
- * $Id: patch.h,v 1.584 2002/05/04 09:18:48 eule Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -30,6 +29,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/*
+ * $Id: patch.h,v 1.585 2002/05/05 16:40:38 tothwolf Exp $
+ */
+
 #ifndef _EGG_PATCH_H
 #define _EGG_PATCH_H
 /*
@@ -197,4 +200,4 @@ patch("cmd-clean-up");
  *
  */
 /* if that's not enough, maybe you should release a new version :) */
-#endif				/* _EGG_PATCH_H */
+#endif				/* !_EGG_PATCH_H */
