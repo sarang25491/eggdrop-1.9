@@ -1,3 +1,15 @@
+2001-10-18 11:29  stdarg <stdarg@techmonkeys.org>
+
+	* src/registry.c:
+
+	Removed some old debugging info I had in registry.c.  
+
+2001-10-18 11:18  stdarg <stdarg@techmonkeys.org>
+
+	* src/: logfile.c, script.c:
+
+	Forgot to initialize a variable in logfile_cycle().  
+
 2001-10-18 09:37  stdarg <stdarg@techmonkeys.org>
 
 	* src/logfile.c:
