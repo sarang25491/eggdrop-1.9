@@ -1,0 +1,13 @@
+#!/bin/sh
+
+files=`find . -name "config*.m4" | \
+        sed 's#\(.*/config\)\(.*\).m4#\20 \1\2.m4#' | \
+        sort | \
+        sed 's#.* ##'`
+                                                                                
+for file in $files; do
+    if [ -r $file ]; then
+        echo "sinclude($file)"
+    fi
+done
+
