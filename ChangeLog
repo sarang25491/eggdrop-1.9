@@ -1,3 +1,23 @@
+2002-04-26 09:29  stdarg <stdarg@techmonkeys.org>
+
+	* modules/: channels/channels.c, channels/channels.h,
+	channels/tclchan.c, channels/userchan.c, perlscript/perlscript.c:
+
+	I combined a lot of code for bans, invites, exempts. The new syntax
+	for the commands is like: 
+	
+	newban channel ban creator comment ?lifetime? ?sticky? 
+		use "" for channel if you want a global ban 
+	
+	killban ?channel? ban 
+		if channel isn't given, or is "", use the global ban list 
+	
+	isban ?channel? ban isbansticky ?channel? ban ispermban ?channel?
+	ban matchban ?channel? ban stickban ?channel? ban unstickban
+	?channel? ban 
+	
+	And the same for invites and exempts 
+
 2002-04-26 00:25  stdarg <stdarg@techmonkeys.org>
 
 	* modules/perlscript/perlscript.c:
