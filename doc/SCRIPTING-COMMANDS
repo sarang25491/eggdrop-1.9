@@ -326,6 +326,13 @@ accurate for Eggdrop v1.7.0.
 
 *** NETWORK COMMANDS ***
 
+  net_listen <port>
+    Description: Opens a listening port. If <port> is in use, it will try up to
+      20 higher ports until a free one is found.
+    Returns: A list of 2 items: The new idx, and the real port being used.
+    Notes: When an incoming connection is accepted, the "newclient" event will
+      execute.
+
   net_open <host> <port> [timeout]
     Description: Opens an async connection to the given host and port. If
       'host' is not an ip address, a dns lookup is performed without blocking.
