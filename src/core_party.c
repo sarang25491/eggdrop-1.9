@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.28 2004/06/15 11:54:33 wingman Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.29 2004/06/15 19:19:16 wingman Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -550,29 +550,29 @@ static int party_unloadmod(partymember_t *p, const char *nick, user_t *u, const 
 }
 
 static bind_list_t core_party_binds[] = {
-	{NULL, "join", party_join},
-	{NULL, "whisper", party_whisper},
-	{NULL, "newpass", party_newpass},
-	{NULL, "help", party_help},
-	{NULL, "part", party_part},
-	{NULL, "quit", party_quit},
-	{NULL, "who", party_who},
-	{NULL, "whois", party_whois},
-	{"n", "addlog", party_addlog},
-	{"n", "get", party_get},
-	{"n", "set", party_set},
-	{"n", "unset", party_unset},
-	{"n", "status", party_status},
-	{"n", "save", party_save},
-	{"n", "die", party_die},
-	{"n", "+user", party_plus_user},
-	{"n", "-user", party_minus_user},
-	{"n", "chattr", party_chattr},
-	{"n", "modules", party_modules},
-	{"n", "loadmod", party_loadmod},
-	{"n", "unloadmod", party_unloadmod},
-	{"m", "+host", party_plus_host},
-	{"m", "-host", party_minus_host},
+	{NULL, "join", party_join},		/* DDD	*/
+	{NULL, "whisper", party_whisper},	/* DDD	*/
+	{NULL, "newpass", party_newpass},	/* DDD	*/
+	{NULL, "help", party_help},		/* DDD	*/
+	{NULL, "part", party_part},		/* DDD	*/
+	{NULL, "quit", party_quit},		/* DDD	*/
+	{NULL, "who", party_who},		/* DDD	*/
+	{NULL, "whois", party_whois},		/* DDD	*/
+	{"n", "addlog", party_addlog},		/* DDD	*/
+	{"n", "get", party_get},		/* DDD	*/
+	{"n", "set", party_set},		/* DDD	*/
+	{"n", "unset", party_unset},		/* DDD	*/
+	{"n", "status", party_status},		/* DDD	*/
+	{"n", "save", party_save},		/* DDD	*/
+	{"n", "die", party_die},		/* DDD	*/
+	{"n", "+user", party_plus_user},	/* DDD	*/
+	{"n", "-user", party_minus_user},	/* DDD	*/
+	{"n", "chattr", party_chattr},		/* DDD	*/
+	{"n", "modules", party_modules},	/* DDD	*/
+	{"n", "loadmod", party_loadmod},	/* DDD	*/
+	{"n", "unloadmod", party_unloadmod},	/* DDD	*/
+	{"m", "+host", party_plus_host},	/* DDD	*/
+	{"m", "-host", party_minus_host},	/* DDD	*/
 	{0}
 };
 

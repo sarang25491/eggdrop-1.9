@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xmlread.c,v 1.8 2004/01/11 14:30:23 stdarg Exp $";
+static const char rcsid[] = "$Id: xmlread.c,v 1.9 2004/06/15 19:19:16 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -184,7 +184,7 @@ int xml_decode_text(char *text, int inlen)
 /* Parse a string of attributes. */
 static void read_attributes(xml_node_t *node, char **data)
 {
-	xml_attribute_t attr;
+	xml_attr_t attr;
 
 	for (;;) {
 		/* Skip over any leading whitespace. */
@@ -207,7 +207,7 @@ static void read_attributes(xml_node_t *node, char **data)
 
 		read_value(data, &attr.value);
 
-		xml_attribute_add(node, &attr);
+		xml_node_append_attr (node, &attr);
 	}
 }
 
@@ -222,6 +222,7 @@ int xml_read_node(xml_node_t *parent, char **data)
 	xml_node_t node, *ptr;
 	int n;
 	char *end;
+	
 
 	/* Read in any excess data and save it with the parent. */
 	read_text(parent, data);
@@ -243,7 +244,7 @@ int xml_read_node(xml_node_t *parent, char **data)
 		we read it like a normal tag, but set the 'decl' member. */
 	if (**data == '?') {
 		(*data)++;
-		node.type = 1;
+		node.type = XML_PROCESSING_INSTRUCTION;
 	}
 	else if (**data == '!') {
 		(*data)++;
@@ -258,16 +259,18 @@ int xml_read_node(xml_node_t *parent, char **data)
 			memcpy(node.text, *data, len);
 			node.text[len] = 0;
 			node.len = len;
-			node.type = 2;
+			node.type = XML_COMMENT;
 			xml_node_add(parent, &node);
 			*data = end+3;
 			return(0); /* Skip past '-->' part. */
 		}
+	} else {
+		node.type = XML_ELEMENT;
 	}
 
 	/* Read in the tag name. */
 	read_name(data, &node.name);
-
+	
 	/* Now that we have a name, go ahead and add the node to the tree. */
 	ptr = xml_node_add(parent, &node);
 
@@ -331,6 +334,8 @@ int xml_read(xml_node_t *root, const char *fname)
 	data[size] = 0;
 	fclose(fp);
 
+	memset (root, 0, sizeof (xml_node_t));
+	
 	dataptr = data;
 	while (!xml_read_node(root, &dataptr)) {
 		; /* empty */

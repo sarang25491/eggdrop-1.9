@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptmisc.c,v 1.13 2003/12/18 07:34:09 wcc Exp $";
+static const char rcsid[] = "$Id: scriptmisc.c,v 1.14 2004/06/15 19:19:16 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -171,15 +171,15 @@ int script_export(char *name, char *syntax, script_callback_t *callback)
 }
 
 script_command_t script_misc_cmds[] = {
-	{"", "duration", (Function) script_duration, NULL, 1, "u", "seconds", SCRIPT_STRING | SCRIPT_FREE, 0},
-	{"", "unixtime", (Function) script_unixtime, NULL, 0, "", "", SCRIPT_UNSIGNED, 0},
-	{"", "ctime", (Function) script_ctime, NULL, 1, "u", "seconds", SCRIPT_STRING, 0},
-	{"", "strftime", (Function) script_strftime, NULL, 1, "su", "format ?seconds?", SCRIPT_STRING | SCRIPT_FREE, SCRIPT_PASS_COUNT | SCRIPT_VAR_ARGS},
-	{"", "rand", (Function) script_rand, NULL, 1, "ii", "?min? max", SCRIPT_INTEGER, SCRIPT_PASS_COUNT | SCRIPT_VAR_ARGS},
-	{"", "die", (Function) script_die, NULL, 0, "s", "?reason?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
-	{"", "unames", (Function) script_unames, NULL, 0, "", "", SCRIPT_STRING | SCRIPT_FREE, 0},
-	{"", "md5", (Function) script_md5, NULL, 1, "s", "data", SCRIPT_STRING | SCRIPT_FREE, 0},
-	{"", "eggdrop_event", (Function) eggdrop_event, NULL, 1, "s", "event", SCRIPT_INTEGER, 0},
-	{"", "script_export", script_export, NULL, 3, "ssc", "export-name syntax callback", SCRIPT_INTEGER, 0},
+	{"", "duration", (Function) script_duration, NULL, 1, "u", "seconds", SCRIPT_STRING | SCRIPT_FREE, 0}, /* DDD */
+	{"", "unixtime", (Function) script_unixtime, NULL, 0, "", "", SCRIPT_UNSIGNED, 0}, /* DDD */
+	{"", "ctime", (Function) script_ctime, NULL, 1, "u", "seconds", SCRIPT_STRING, 0}, /* DDD */
+	{"", "strftime", (Function) script_strftime, NULL, 1, "su", "format ?seconds?", SCRIPT_STRING | SCRIPT_FREE, SCRIPT_PASS_COUNT | SCRIPT_VAR_ARGS}, /* DDD */
+	{"", "rand", (Function) script_rand, NULL, 1, "ii", "?min? max", SCRIPT_INTEGER, SCRIPT_PASS_COUNT | SCRIPT_VAR_ARGS}, /* DDD */
+	{"", "die", (Function) script_die, NULL, 0, "s", "?reason?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS}, /* DDD */
+	{"", "unames", (Function) script_unames, NULL, 0, "", "", SCRIPT_STRING | SCRIPT_FREE, 0}, /* DDD */
+	{"", "md5", (Function) script_md5, NULL, 1, "s", "data", SCRIPT_STRING | SCRIPT_FREE, 0}, /* DDD */
+	{"", "eggdrop_event", (Function) eggdrop_event, NULL, 1, "s", "event", SCRIPT_INTEGER, 0}, /* DDD */
+	{"", "script_export", script_export, NULL, 3, "ssc", "export-name syntax callback", SCRIPT_INTEGER, 0}, /* DDD */
 	{0}
 };

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptbind.c,v 1.9 2004/06/14 23:57:59 wingman Exp $";
+static const char rcsid[] = "$Id: scriptbind.c,v 1.10 2004/06/15 19:19:16 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -112,8 +112,8 @@ static int script_rebind(char *table_name, char *flags, char *mask, char *comman
 */
 
 script_command_t script_bind_cmds[] = {
-	{"", "bind", script_bind, NULL, 4, "sssc", "table flags mask command", SCRIPT_INTEGER, 0},
-	{"", "unbind", script_unbind, NULL, 3, "sss", "table mask command", SCRIPT_INTEGER, 0},
+	{"", "bind", script_bind, NULL, 4, "sssc", "table flags mask command", SCRIPT_INTEGER, 0},	/* DDD	*/
+	{"", "unbind", script_unbind, NULL, 3, "sss", "table mask command", SCRIPT_INTEGER, 0},		/* DDD	*/
 /*	{"", "rebind", script_rebind, NULL, 6, "ssssss", "table flags mask command newflags newmask", SCRIPT_INTEGER, 0},*/
 	{0}
 };

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: party_commands.c,v 1.8 2004/06/07 23:14:48 stdarg Exp $";
+static const char rcsid[] = "$Id: party_commands.c,v 1.9 2004/06/15 19:19:16 wingman Exp $";
 #endif
 
 #include "server.h"
@@ -167,13 +167,13 @@ static int party_act(partymember_t *p, const char *nick, user_t *u, const char *
 }
 
 bind_list_t server_party_commands[] = {
-	{"", "servers", party_servers},
-	{"m", "+server", party_plus_server},
-	{"m", "-server", party_minus_server},
-	{"m", "dump", party_dump},
-	{"m", "jump", party_jump},
-	{"m", "msg", party_msg},
-	{"m", "say", party_msg},
-	{"m", "act", party_act},
+	{"", "servers", party_servers},			/* DDD	*/
+	{"m", "+server", party_plus_server},		/* DDD	*/
+	{"m", "-server", party_minus_server},		/* DDD	*/
+	{"m", "dump", party_dump},			/* DDD	*/
+	{"m", "jump", party_jump},			/* DDD	*/
+	{"m", "msg", party_msg},			/* DDD	*/
+	{"m", "say", party_msg},			/* DDD	*/
+	{"m", "act", party_act},			/* DDD 	*/
 	{0}
 };

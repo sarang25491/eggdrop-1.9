@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: ircparty.c,v 1.8 2003/12/19 01:50:50 stdarg Exp $";
+static const char rcsid[] = "$Id: ircparty.c,v 1.9 2004/06/15 19:19:16 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -89,7 +89,7 @@ static sockbuf_handler_t client_handler = {
 
 int irc_init()
 {
-	BT_ircparty = bind_table_add("ircparty", 5, "PisiS", MATCH_MASK, BIND_STACKABLE);
+	BT_ircparty = bind_table_add("ircparty", 5, "PisiS", MATCH_MASK, BIND_STACKABLE);	/* DDD */
 	bind_add_list("ircparty", ircparty_binds);
 	/* Open our listening socket. */
 	irc_idx = egg_server(irc_config.vhost, irc_config.port, &irc_port);

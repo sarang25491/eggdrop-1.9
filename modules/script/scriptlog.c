@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptlog.c,v 1.3 2003/12/18 06:50:47 wcc Exp $";
+static const char rcsid[] = "$Id: scriptlog.c,v 1.4 2004/06/15 19:19:16 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -34,7 +34,7 @@ static int script_putloglev(char *level, char *chan, char *text)
 }
 
 script_command_t script_log_cmds[] = {
-	{"", "putlog", script_putlog, NULL, 1, "s", "text", SCRIPT_INTEGER, 0},
-	{"", "putloglev", script_putloglev, NULL, 3, "sss", "level channel text", SCRIPT_INTEGER, 0},
+	{"", "putlog", script_putlog, NULL, 1, "s", "text", SCRIPT_INTEGER, 0}, /* DDD */
+	{"", "putloglev", script_putloglev, NULL, 3, "sss", "level channel text", SCRIPT_INTEGER, 0}, /* DDD */
 	{0}
 };

@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: logfile.c,v 1.39 2004/06/15 11:54:33 wingman Exp $";
+static const char rcsid[] = "$Id: logfile.c,v 1.40 2004/06/15 19:19:16 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -58,7 +58,7 @@ static void flushlog(log_t *log, char *timestamp);
 static int on_putlog(int flags, const char *chan, const char *text, int len);
 
 static script_command_t log_script_cmds[] = {
-	{"", "logfile", logfile_add, NULL, 3, "sss", "modes chan filename", SCRIPT_STRING, 0},
+	{"", "logfile", logfile_add, NULL, 3, "sss", "modes chan filename", SCRIPT_STRING, 0},	/* DDD	*/
 	{0}
 };
 
@@ -68,8 +68,8 @@ static bind_list_t log_binds[] = {
 };
 
 static bind_list_t log_events[] = {
-	{NULL, "minutely", logfile_minutely},
-	{NULL, "5minutely", logfile_5minutely},
+	{NULL, "minutely", logfile_minutely},		/* DDD	*/
+	{NULL, "5minutely", logfile_5minutely},		/* DDD	*/
 	{0}
 };
 

@@ -25,11 +25,11 @@ static bind_table_t *BT_time = NULL,
 
 void core_binds_init()
 {
-	BT_init = bind_table_add ("init", 0, "", MATCH_NONE, BIND_STACKABLE);
-	BT_shutdown = bind_table_add ("shutdown", 0, "", MATCH_NONE, BIND_STACKABLE);
-	BT_time = bind_table_add("time", 5, "iiiii", MATCH_MASK, BIND_STACKABLE);
-	BT_secondly = bind_table_add("secondly", 0, "", MATCH_NONE, BIND_STACKABLE);
-	BT_status = bind_table_add("status", 2, "Ps", MATCH_NONE, BIND_STACKABLE);
+	BT_init = bind_table_add ("init", 0, "", MATCH_NONE, BIND_STACKABLE);		/* DDD	*/
+	BT_shutdown = bind_table_add ("shutdown", 0, "", MATCH_NONE, BIND_STACKABLE);	/* DDD	*/
+	BT_time = bind_table_add("time", 5, "iiiii", MATCH_MASK, BIND_STACKABLE);	/* DDD	*/
+	BT_secondly = bind_table_add("secondly", 0, "", MATCH_NONE, BIND_STACKABLE);	/* DDD	*/
+	BT_status = bind_table_add("status", 2, "Ps", MATCH_NONE, BIND_STACKABLE);	/* DDD	*/
 }
 
 void check_bind_init(void)

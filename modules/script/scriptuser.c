@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptuser.c,v 1.6 2003/12/18 06:50:47 wcc Exp $";
+static const char rcsid[] = "$Id: scriptuser.c,v 1.7 2004/06/15 19:19:16 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -160,25 +160,25 @@ static int script_matchflags(void *client_data, user_t *u, char *chan, char *fla
 }
 
 script_command_t script_new_user_cmds[] = {
-	{"", "user_uid_to_handle", script_uid_to_handle, NULL, 1, "i", "uid", SCRIPT_STRING, 0},
-	{"", "user_handle_to_uid", script_handle_to_uid, NULL, 1, "U", "handle", SCRIPT_INTEGER, 0},
-	{"", "user_validhandle", script_validhandle, NULL, 1, "s", "handle", SCRIPT_INTEGER, 0},
-	{"", "user_validuid", script_validuid, NULL, 1, "i", "uid", SCRIPT_INTEGER, 0},
-	{"", "user_add", script_adduser, NULL, 1, "s", "handle", SCRIPT_INTEGER, 0},
-	{"", "user_addmask", user_add_ircmask, NULL, 2, "Us", "user ircmask", SCRIPT_INTEGER, 0},
-	{"", "user_getmasks", script_get_ircmasks, NULL, 1, "U", "user", 0, SCRIPT_PASS_RETVAL},
-	{"", "user_delmask", user_del_ircmask, NULL, 2, "Us", "user ircmask", SCRIPT_INTEGER, 0},
-	{"", "user_find", script_user_find, NULL, 1, "s", "irchost", SCRIPT_STRING, 0},
-	{"", "user_get", script_user_get, NULL, 2, "Uss", "user ?channel? setting", SCRIPT_STRING, SCRIPT_VAR_ARGS | SCRIPT_PASS_COUNT},
-	{"", "user_set", script_user_set, NULL, 3, "Usss", "user ?channel? setting value", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_PASS_COUNT},
-	{"", "user_getflags", script_getflags, NULL, 1, "Us", "user ?chan?", SCRIPT_STRING | SCRIPT_FREE, SCRIPT_VAR_ARGS},
-	{"", "user_setflags", script_setflags, NULL, 2, "Uss", "user ?chan? flags", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
-	{"", "user_matchflags", script_matchflags, 0, 2, "Uss", "user ?chan? flags", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_PASS_CDATA},
-	{"", "user_matchflags_or", script_matchflags, (void *)1, 2, "Uss", "user ?chan? flags", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_PASS_CDATA},
-	{"", "user_load", user_save, NULL, 0, "s", "?fname?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
-	{"", "user_save", script_user_save, NULL, 0, "s", "?fname?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
-	{"", "user_haspass", user_has_pass, NULL, 1, "U", "user", SCRIPT_INTEGER, 0},
-	{"", "user_checkpass", user_check_pass, NULL, 2, "Us", "user pass", SCRIPT_INTEGER, 0},
-	{"", "user_setpass", user_set_pass, NULL, 2, "Us", "user pass", SCRIPT_INTEGER, 0},
+	{"", "user_uid_to_handle", script_uid_to_handle, NULL, 1, "i", "uid", SCRIPT_STRING, 0},	/* DDD */
+	{"", "user_handle_to_uid", script_handle_to_uid, NULL, 1, "U", "handle", SCRIPT_INTEGER, 0},	/* DDD */
+	{"", "user_validhandle", script_validhandle, NULL, 1, "s", "handle", SCRIPT_INTEGER, 0},	/* DDD */
+	{"", "user_validuid", script_validuid, NULL, 1, "i", "uid", SCRIPT_INTEGER, 0},			/* DDD */
+	{"", "user_add", script_adduser, NULL, 1, "s", "handle", SCRIPT_INTEGER, 0},			/* DDD */
+	{"", "user_addmask", user_add_ircmask, NULL, 2, "Us", "user ircmask", SCRIPT_INTEGER, 0},	/* DDD */
+	{"", "user_getmasks", script_get_ircmasks, NULL, 1, "U", "user", 0, SCRIPT_PASS_RETVAL},	/* DDD */
+	{"", "user_delmask", user_del_ircmask, NULL, 2, "Us", "user ircmask", SCRIPT_INTEGER, 0},	/* DDD */
+	{"", "user_find", script_user_find, NULL, 1, "s", "irchost", SCRIPT_STRING, 0},			/* DDD */
+	{"", "user_get", script_user_get, NULL, 2, "Uss", "user ?channel? setting", SCRIPT_STRING, SCRIPT_VAR_ARGS | SCRIPT_PASS_COUNT},	/* DDD */
+	{"", "user_set", script_user_set, NULL, 3, "Usss", "user ?channel? setting value", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_PASS_COUNT},	/* DDD */
+	{"", "user_getflags", script_getflags, NULL, 1, "Us", "user ?chan?", SCRIPT_STRING | SCRIPT_FREE, SCRIPT_VAR_ARGS},	/* DDD */
+	{"", "user_setflags", script_setflags, NULL, 2, "Uss", "user ?chan? flags", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},	/* DDD */
+	{"", "user_matchflags", script_matchflags, 0, 2, "Uss", "user ?chan? flags", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_PASS_CDATA},	/* DDD */
+	{"", "user_matchflags_or", script_matchflags, (void *)1, 2, "Uss", "user ?chan? flags", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_PASS_CDATA},	/* DDD */
+	{"", "user_load", user_save, NULL, 0, "s", "?fname?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},	/* DDD */
+	{"", "user_save", script_user_save, NULL, 0, "s", "?fname?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},	/* DDD */
+	{"", "user_haspass", user_has_pass, NULL, 1, "U", "user", SCRIPT_INTEGER, 0},	/* DDD */
+	{"", "user_checkpass", user_check_pass, NULL, 2, "Us", "user pass", SCRIPT_INTEGER, 0},	/* DDD */
+	{"", "user_setpass", user_set_pass, NULL, 2, "Us", "user pass", SCRIPT_INTEGER, 0},	/* DDD */
 	{0}
 };

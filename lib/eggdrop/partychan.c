@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partychan.c,v 1.10 2004/06/15 11:24:46 wingman Exp $";
+static const char rcsid[] = "$Id: partychan.c,v 1.11 2004/06/15 19:19:16 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -47,9 +47,9 @@ int partychan_init()
 
 	/* The first 3 args for each bind are:
 	 * channel name, channel id, partier */
-	BT_partyjoin = bind_table_add("partyjoin", 3, "siP", MATCH_NONE, BIND_STACKABLE);
-	BT_partypart = bind_table_add("partypart", 5, "siPsi", MATCH_NONE, BIND_STACKABLE);
-	BT_partypub = bind_table_add("partypub", 5, "siPsi", MATCH_NONE, BIND_STACKABLE);
+	BT_partyjoin = bind_table_add("partyjoin", 3, "siP", MATCH_NONE, BIND_STACKABLE);	/* DDD	*/
+	BT_partypart = bind_table_add("partypart", 5, "siPsi", MATCH_NONE, BIND_STACKABLE);	/* DDD	*/
+	BT_partypub = bind_table_add("partypub", 5, "siPsi", MATCH_NONE, BIND_STACKABLE);	/* DDD	*/
 	return(0);
 }
 

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: oldbotnet.c,v 1.6 2003/12/18 23:10:41 stdarg Exp $";
+static const char rcsid[] = "$Id: oldbotnet.c,v 1.7 2004/06/15 19:19:16 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -51,25 +51,25 @@ static int oldbotnet_on_eof(void *client_data, int idx, int err, const char *err
 static int oldbotnet_on_delete(void *client_data, int idx);
 
 static bind_list_t party_binds[] = {
-	{"n", "+obot", party_plusobot},
-	{"n", "olink", party_olink},
+	{"n", "+obot", party_plusobot},		/* DDD	*/
+	{"n", "olink", party_olink},		/* DDD	*/
 	{0}
 };
 
 static bind_list_t obot_binds[] = {
-	{NULL, "error", got_error},
-	{NULL, "passreq", got_passreq},
-	{NULL, "badpass", got_badpass},
-	{NULL, "handshake", got_handshake},
-	{NULL, "h", got_handshake},
-	{NULL, "version", got_version},
-	{NULL, "v", got_version},
-	{NULL, "ping", got_ping},
-	{NULL, "pi", got_ping},
-	{NULL, "join", got_join},
-	{NULL, "j", got_join},
-	{NULL, "chat", got_chat},
-	{NULL, "c", got_chat},
+	{NULL, "error", got_error},		/* DDD	*/
+	{NULL, "passreq", got_passreq},		/* DDD	*/
+	{NULL, "badpass", got_badpass},		/* DDD	*/
+	{NULL, "handshake", got_handshake},	/* DDD	*/
+	{NULL, "h", got_handshake},		/* DDD	*/
+	{NULL, "version", got_version},		/* DDD	*/
+	{NULL, "v", got_version},		/* DDD	*/
+	{NULL, "ping", got_ping},		/* DDD	*/
+	{NULL, "pi", got_ping},			/* DDD	*/
+	{NULL, "join", got_join},		/* DDD	*/
+	{NULL, "j", got_join},			/* DDD	*/
+	{NULL, "chat", got_chat},		/* DDD	*/
+	{NULL, "c", got_chat},			/* DDD */
 	{0}
 };
 
@@ -90,7 +90,7 @@ oldbotnet_t oldbotnet = {0};
 
 int oldbotnet_init()
 {
-	BT_obot = bind_table_add("obot", 2, "ss", MATCH_MASK, BIND_STACKABLE);
+	BT_obot = bind_table_add("obot", 2, "ss", MATCH_MASK, BIND_STACKABLE);	/* DDD */
 	bind_add_list("obot", obot_binds);
 	bind_add_list("party", party_binds);
 	oldbotnet_events_init();

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: egglog.c,v 1.5 2003/12/17 07:52:14 wcc Exp $";
+static const char rcsid[] = "$Id: egglog.c,v 1.6 2004/06/15 19:19:16 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -29,7 +29,7 @@ static bind_table_t *BT_log = NULL;
 
 void egglog_init()
 {
-	BT_log = bind_table_add("log", 4, "issi", MATCH_NONE, BIND_STACKABLE);
+	BT_log = bind_table_add("log", 4, "issi", MATCH_NONE, BIND_STACKABLE);	/* DDD	*/
 }
 
 int putlog(int flags, const char *chan, const char *format, ...)
