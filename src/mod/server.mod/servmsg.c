@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.74 2001/10/14 10:37:32 tothwolf Exp $
+ * $Id: servmsg.c,v 1.75 2001/10/14 10:55:24 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -569,7 +569,7 @@ static int gotnotice(char *from, char *ignore, char *msg)
 	     nick, uhost, to, msg);
     } else {
       /* Server notice? */
-      if ((nick[0] == 0) || (uhost[0] == 0)) {
+      if (!nick || !uhost) {
 	/* Hidden `250' connection count message from server */
 	if (strncmp(msg, "Highest connection count:", 25))
 	  putlog(LOG_SERV, "*", "-NOTICE- %s", msg);
