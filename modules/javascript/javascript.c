@@ -1,7 +1,5 @@
-/*
- * javascript.c --
- */
-/*
+/* javascript.c: javascript scripting support
+ *
  * Copyright (C) 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
@@ -20,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: javascript.c,v 1.21 2003/12/18 02:23:39 wcc Exp $";
+static const char rcsid[] = "$Id: javascript.c,v 1.22 2003/12/18 06:50:47 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>

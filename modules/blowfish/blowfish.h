@@ -1,4 +1,4 @@
-/* blowfish.h: header for blowfish.h
+/* blowfish.h: header for blowfish.c
  *
  * Copyright (C) 1997 Robey Pointer
  * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: blowfish.h,v 1.7 2003/12/18 03:54:45 wcc Exp $
+ * $Id: blowfish.h,v 1.8 2003/12/18 06:50:47 wcc Exp $
  */
 
 #ifndef _EGG_MOD_BLOWFISH_BLOWFISH_H_

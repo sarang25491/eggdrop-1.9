@@ -1,13 +1,13 @@
-# $Id: Makefile.am,v 1.8 2003/05/13 07:16:18 stdarg Exp $
+# $Id: Makefile.am,v 1.9 2003/12/18 06:50:47 wcc Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 pkglibdir		= $(exec_prefix)/modules
 
 # FIXME: test if there's dependency on gnu make. It shouldn't.
 if EGG_TCLSCRIPT
-  EGG_TCL = tclscript.la
+	EGG_TCL = tclscript.la
 else
-  EGG_TCL =
+	EGG_TCL =
 endif
     
 pkglib_LTLIBRARIES	= $(EGG_TCL)
@@ -18,8 +18,10 @@ tclscript_la_LIBADD	= @TCL_LIBS@ @TCL_LIB_SPEC@ @LIBS@ \
 
 MAINTAINERCLEANFILES	= Makefile.in
 
-INCLUDES		= -I$(top_builddir) -I$(top_srcdir) @INCLTDL@ \
-			-I$(top_builddir)/intl -I$(top_srcdir)/intl \
+INCLUDES		= -I$(top_builddir) \
+			-I$(top_srcdir) @INCLTDL@ \
+			-I$(top_builddir)/intl \
+			-I$(top_srcdir)/intl \
 			-I$(top_builddir)/lib \
 			-I$(top_srcdir)/lib \
 			-I@TCL_PREFIX@/include

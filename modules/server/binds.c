@@ -1,32 +1,51 @@
-/*
- * binds.c -- init/destroy bind tables
+/* binds.c: server bind tables
+ *
+ * Copyright (C) 2002, 2003, 2004 Eggheads Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#define MAKING_SERVER
-#include <stdio.h>
+#ifndef lint
+static const char rcsid[] = "$Id: binds.c,v 1.14 2003/12/18 06:50:47 wcc Exp $";
+#endif
+
 #include <eggdrop/eggdrop.h>
+#include <stdio.h>
+
 #include "dcc.h"
 
 bind_table_t *BT_wall = NULL,
-	*BT_raw = NULL,
-	*BT_server_input = NULL,
-	*BT_server_output = NULL,
-	*BT_notice = NULL,
-	*BT_msg = NULL,
-	*BT_msgm = NULL,
-	*BT_pub = NULL,
-	*BT_pubm = NULL,
-	*BT_ctcp = NULL,
-	*BT_ctcr = NULL,
-	*BT_dcc_chat = NULL,
-	*BT_dcc_recv = NULL,
-	*BT_nick = NULL,
-	*BT_join = NULL,
-	*BT_part = NULL,
-	*BT_quit = NULL,
-	*BT_kick = NULL,
-	*BT_leave = NULL,
-	*BT_mode = NULL;
+             *BT_raw = NULL,
+             *BT_server_input = NULL,
+             *BT_server_output = NULL,
+             *BT_notice = NULL,
+             *BT_msg = NULL,
+             *BT_msgm = NULL,
+             *BT_pub = NULL,
+             *BT_pubm = NULL,
+             *BT_ctcp = NULL,
+             *BT_ctcr = NULL,
+             *BT_dcc_chat = NULL,
+             *BT_dcc_recv = NULL,
+             *BT_nick = NULL,
+             *BT_join = NULL,
+             *BT_part = NULL,
+             *BT_quit = NULL,
+             *BT_kick = NULL,
+             *BT_leave = NULL,
+             *BT_mode = NULL;
 
 void server_binds_destroy()
 {

@@ -1,15 +1,33 @@
+/* nicklist.c: manages the bot's list of nicks
+ *
+ * Copyright (C) 2002, 2003, 2004 Eggheads Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+#ifndef lint
+static const char rcsid[] = "$Id: nicklist.c,v 1.6 2003/12/18 06:50:47 wcc Exp $";
+#endif
+
+#include <eggdrop/eggdrop.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include <eggdrop/eggdrop.h>
 #include "egg_server_api.h"
 #include "nicklist.h"
 #include "output.h"
-
-/*
- * serverlist.c maintains the connection of servers and gets the next entry
- * when we want to connect.
- */
 
 char **nick_list = NULL;
 int nick_list_index = -1;
@@ -40,7 +58,7 @@ void nick_list_on_connect()
 	nick_list_cycled = 0;
 }
 
-/* Get the next server from the list. */
+/* Get the next nick from the list. */
 const char *nick_get_next()
 {
 	if (nick_list_len <= 0) return(NULL);
@@ -54,7 +72,7 @@ const char *nick_get_next()
 	return(nick_list[nick_list_index]);
 }
 
-/* Add a server to the server list. */
+/* Add a nick to the nick list. */
 int nick_add(const char *nick)
 {
 	nick_list = realloc(nick_list, sizeof(char *) * (nick_list_len+1));
@@ -63,7 +81,7 @@ int nick_add(const char *nick)
 	return(0);
 }
 
-/* Remove a server from the server list based on its index. */
+/* Remove a nick from the nick list based on its index. */
 int nick_del(int num)
 {
 	if (num >= 0 && num < nick_list_len) {
@@ -76,7 +94,7 @@ int nick_del(int num)
 	return(0);
 }
 
-/* Clear out the server list. */
+/* Clear out the nick list. */
 int nick_clear()
 {
 	int i;

@@ -1,12 +1,31 @@
-/*
- * scriptmisc.c --
+/* scriptmisc.c: misc scripting commands
  *
- *	Misc script commands
+ * Copyright (C) 2003, 2004 Eggheads Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: scriptmisc.c,v 1.11 2003/12/18 06:50:47 wcc Exp $";
+#endif
 
 #include <eggdrop/eggdrop.h>
 #include <string.h>
 #include <stdlib.h>
+#include <sys/stat.h>
+#include <eggdrop/stat.h>
 
 #ifdef TIME_WITH_SYS_TIME
 #  include <sys/time.h>
@@ -19,49 +38,47 @@
 #  endif
 #endif
 
-#include <sys/stat.h>
-
 #ifdef HAVE_UNAME
 #  include <sys/utsname.h>
 #endif
 
 static char *script_duration(unsigned int sec)
 {
-  char s[70];
-  int tmp;
+	char s[70];
+	int tmp;
 
-  s[0] = 0;
-  if (sec >= 31536000) {
-    tmp = (sec / 31536000);
-    sprintf(s, "%d year%s ", tmp, (tmp == 1) ? "" : "s");
-    sec -= (tmp * 31536000);
-  }
-  if (sec >= 604800) {
-    tmp = (sec / 604800);
-    sprintf(&s[strlen(s)], "%d week%s ", tmp, (tmp == 1) ? "" : "s");
-    sec -= (tmp * 604800);
-  }
-  if (sec >= 86400) {
-    tmp = (sec / 86400);
-    sprintf(&s[strlen(s)], "%d day%s ", tmp, (tmp == 1) ? "" : "s");
-    sec -= (tmp * 86400);
-  }
-  if (sec >= 3600) {
-    tmp = (sec / 3600);
-    sprintf(&s[strlen(s)], "%d hour%s ", tmp, (tmp == 1) ? "" : "s");
-    sec -= (tmp * 3600);
-  }
-  if (sec >= 60) {
-    tmp = (sec / 60);
-    sprintf(&s[strlen(s)], "%d minute%s ", tmp, (tmp == 1) ? "" : "s");
-    sec -= (tmp * 60);
-  }
-  if (sec > 0 || !s[0]) {
-    tmp = (sec);
-    sprintf(&s[strlen(s)], "%d second%s", tmp, (tmp == 1) ? "" : "s");
-  }
-  if (strlen(s) > 0 && s[strlen(s)-1] == ' ') s[strlen(s)-1] = 0;
-  return strdup(s);
+	s[0] = 0;
+	if (sec >= 31536000) {
+		tmp = (sec / 31536000);
+		sprintf(s, "%d year%s ", tmp, (tmp == 1) ? "" : "s");
+		sec -= (tmp * 31536000);
+	}
+	if (sec >= 604800) {
+		tmp = (sec / 604800);
+		sprintf(&s[strlen(s)], "%d week%s ", tmp, (tmp == 1) ? "" : "s");
+		sec -= (tmp * 604800);
+	}
+	if (sec >= 86400) {
+		tmp = (sec / 86400);
+		sprintf(&s[strlen(s)], "%d day%s ", tmp, (tmp == 1) ? "" : "s");
+		sec -= (tmp * 86400);
+	}
+	if (sec >= 3600) {
+		tmp = (sec / 3600);
+		sprintf(&s[strlen(s)], "%d hour%s ", tmp, (tmp == 1) ? "" : "s");
+		sec -= (tmp * 3600);
+	}
+	if (sec >= 60) {
+		tmp = (sec / 60);
+		sprintf(&s[strlen(s)], "%d minute%s ", tmp, (tmp == 1) ? "" : "s");
+		sec -= (tmp * 60);
+	}
+	if (sec > 0 || !s[0]) {
+		tmp = sec;
+		sprintf(&s[strlen(s)], "%d second%s", tmp, (tmp == 1) ? "" : "s");
+	}
+	if (strlen(s) > 0 && s[strlen(s)-1] == ' ') s[strlen(s)-1] = 0;
+	return(strdup(s));
 }
 
 static unsigned int script_unixtime()
@@ -82,16 +99,16 @@ static char *script_ctime(unsigned int sec)
 
 static char *script_strftime(int nargs, char *format, unsigned int sec)
 {
-  char buf[512];
-  struct tm *tm1;
-  time_t t;
+	char buf[512];
+	struct tm *tm1;
+	time_t t;
 
-  if (nargs > 1) t = sec;
-  else t = time(NULL);
+	if (nargs > 1) t = sec;
+	else t = time(NULL);
 
-  tm1 = localtime(&t);
-  if (strftime(buf, sizeof(buf), format, tm1)) return strdup(buf);
-  return strdup("error with strftime");
+	tm1 = localtime(&t);
+	if (strftime(buf, sizeof(buf), format, tm1)) return(strdup(buf));
+	return(strdup("error with strftime"));
 }
 
 static int script_rand(int nargs, int min, int max)
@@ -127,16 +144,16 @@ static char *script_unames()
 
 static char *script_md5(char *data)
 {
-  MD5_CTX md5context;
-  char *hex;
-  unsigned char digest[16];
+	MD5_CTX md5context;
+	char *hex;
+	unsigned char digest[16];
 
-  MD5_Init(&md5context);
-  MD5_Update(&md5context, data, strlen(data));
-  MD5_Final(digest, &md5context);
-  hex = malloc(33);
-  MD5_Hex(digest, hex);
-  return(hex);
+	MD5_Init(&md5context);
+	MD5_Update(&md5context, data, strlen(data));
+	MD5_Final(digest, &md5context);
+	hex = malloc(33);
+	MD5_Hex(digest, hex);
+	return(hex);
 }
 
 int script_export(char *name, char *syntax, script_callback_t *callback)

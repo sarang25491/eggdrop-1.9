@@ -1,9 +1,30 @@
-#ifndef _CHANNELS_H_
-#define _CHANNELS_H_
+/* channels.h: header for channels.c
+ *
+ * Copyright (C) 2002, 2003, 2004 Eggheads Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id: channels.h,v 1.10 2003/12/18 06:50:47 wcc Exp $
+ */
+
+#ifndef _EGG_MOD_SERVER_CHANNELS_H_
+#define _EGG_MOD_SERVER_CHANNELS_H_
 
 /* Status bits for channels. */
-#define CHANNEL_WHOLIST	1
-#define CHANNEL_BANLIST	2
+#define CHANNEL_WHOLIST		1
+#define CHANNEL_BANLIST		2
 #define CHANNEL_NAMESLIST	4
 
 typedef struct {
@@ -34,11 +55,11 @@ typedef struct channel {
 	char *name;
 
 	char *topic, *topic_nick;	/* Topic and who set it. */
-	int topic_time;	/* When it was set. */
+	int topic_time;			/* When it was set. */
 
-	flags_t mode;	/* Mode bits. */
-	int limit;	/* Channel limit. */
-	char *key;	/* Channel key. */
+	flags_t mode;			/* Mode bits. */
+	int limit;			/* Channel limit. */
+	char *key;			/* Channel key. */
 
 	channel_mask_t *ban_head;	/* Ban list. */
 	int nbans;
@@ -73,4 +94,4 @@ extern channel_member_t *channel_add_member(const char *chan_name, const char *n
 extern int channel_list(const char ***chans);
 extern int channel_list_members(const char *chan, const char ***members);
 
-#endif
+#endif /* !_EGG_MOD_SERVER_CHANNELS_H_ */

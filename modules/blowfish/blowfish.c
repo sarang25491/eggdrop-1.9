@@ -21,39 +21,37 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: blowfish.c,v 1.15 2003/12/18 03:54:45 wcc Exp $";
+static const char rcsid[] = "$Id: blowfish.c,v 1.16 2003/12/18 06:50:47 wcc Exp $";
 #endif
-
-#define MODULE_NAME "encryption"
-#define MAKING_ENCRYPTION
 
 #include <eggdrop/eggdrop.h>
 #include <sys/types.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "blowfish.h"
-#include "bf_tab.h"		/* P-box P-array, S-box */
+#include "bf_tab.h" /* P-box P-array, S-box */
 
 #define start blowfish_LTX_start
 
 /* Each box takes up 4k so be very careful here */
 #define BOXES 3
 
-/* #define S(x,i) (bf_S[i][x.w.byte##i]) */
-#define S0(x) (bf_S[0][x.w.byte0])
-#define S1(x) (bf_S[1][x.w.byte1])
-#define S2(x) (bf_S[2][x.w.byte2])
-#define S3(x) (bf_S[3][x.w.byte3])
-#define bf_F(x) (((S0(x) + S1(x)) ^ S2(x)) + S3(x))
-#define ROUND(a,b,n) (a.word ^= bf_F(b) ^ bf_P[n])
+/* #define S(x,i)	(bf_S[i][x.w.byte##i]) */
+#define S0(x)		(bf_S[0][x.w.byte0])
+#define S1(x)		(bf_S[1][x.w.byte1])
+#define S2(x)		(bf_S[2][x.w.byte2])
+#define S3(x)		(bf_S[3][x.w.byte3])
+#define bf_F(x)		(((S0(x) + S1(x)) ^ S2(x)) + S3(x))
+#define ROUND(a,b,n)	(a.word ^= bf_F(b) ^ bf_P[n])
 
 /* Keep a set of rotating P & S boxes */
 static struct box_t {
-  u_int32_t *P;
-  u_int32_t **S;
-  char key[81];
-  char keybytes;
-  int lastuse;
+	u_int32_t *P;
+	u_int32_t **S;
+	char key[81];
+	char keybytes;
+	int lastuse;
 } box[BOXES];
 
 /* static u_int32_t bf_P[bf_N+2]; */

@@ -1,9 +1,6 @@
-/*
- * scriptcmds.c --
- */
-/*
- * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
+/* scriptcmds.c: server scripting commands
+ *
+ * Copyright (C) 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,9 +17,14 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#ifndef lint
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.35 2003/12/18 06:50:47 wcc Exp $";
+#endif
+
 #include <eggdrop/eggdrop.h>
 #include <string.h>
 #include <stdlib.h>
+
 #include "egg_server_api.h"
 #include "server.h"
 #include "serverlist.h"
@@ -314,6 +316,21 @@ static int script_queue_insert(char *qname, char *next, int num, char *msg)
 	return(0);
 }
 
+int server_script_init()
+{
+	script_create_commands(server_script_cmds);
+	script_link_vars(server_script_vars);
+	return(0);
+}
+
+int server_script_destroy()
+{
+	script_delete_commands(server_script_cmds);
+	script_unlink_vars(server_script_vars);
+	return(0);
+}
+
+
 static script_linked_var_t server_script_vars[] = {
 	{"", "servidx", &current_server.idx, SCRIPT_INTEGER | SCRIPT_READONLY, NULL},
 	{"", "server", &server_list_index, SCRIPT_INTEGER | SCRIPT_READONLY, NULL},
@@ -367,17 +384,3 @@ static script_command_t server_script_cmds[] = {
 
         {0}
 };
-
-int server_script_init()
-{
-	script_create_commands(server_script_cmds);
-	script_link_vars(server_script_vars);
-	return(0);
-}
-
-int server_script_destroy()
-{
-	script_delete_commands(server_script_cmds);
-	script_unlink_vars(server_script_vars);
-	return(0);
-}

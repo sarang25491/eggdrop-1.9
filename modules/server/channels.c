@@ -1,21 +1,43 @@
-/* Some channel-specific stuff. */
+/* channels.c: channel support
+ *
+ * Copyright (C) 2002, 2003, 2004 Eggheads Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+#ifndef lint
+static const char rcsid[] = "$Id: channels.c,v 1.15 2003/12/18 06:50:47 wcc Exp $";
+#endif
 
 #include <eggdrop/eggdrop.h>
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
+
 #include "egg_server_api.h"
 #include "server.h"
 #include "binds.h"
 #include "channels.h"
 #include "output.h"
 
-#define UHOST_CACHE_SIZE	47
+#define UHOST_CACHE_SIZE 47
 
 channel_t *channel_head = NULL;
-int nchannels = 0;
-
 hash_table_t *uhost_cache_ht = NULL;
+
+int nchannels = 0;
 
 static bind_list_t channel_raw_binds[];
 

@@ -1,8 +1,6 @@
-/*
- * perlscript.c --
- */
-/*
- * Copyright (C) 2002, 2003, 2004 Eggheads Development Team
+/* perlscript.c: perl scripting support
+ *
+ * Copyright (C) 2001, 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,21 +18,19 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: perlscript.c,v 1.26 2003/12/11 00:49:11 wcc Exp $";
+static const char rcsid[] = "$Id: perlscript.c,v 1.27 2003/12/18 06:50:47 wcc Exp $";
 #endif
-
-#include <stdio.h>
-#include <stdlib.h>
 
 #ifdef DEBUG
-#undef DEBUG
+#  undef DEBUG
 #endif
 
+#include <eggdrop/eggdrop.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <EXTERN.h>
 #include <perl.h>
 #include <XSUB.h>
-
-#include <eggdrop/eggdrop.h>
 
 static PerlInterpreter *ginterp; /* Our global interpreter. */
 

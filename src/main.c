@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.160 2003/12/18 03:54:46 wcc Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.161 2003/12/18 06:50:47 wcc Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -41,6 +41,8 @@ static const char rcsid[] = "$Id: main.c,v 1.160 2003/12/18 03:54:46 wcc Exp $";
 #include <ctype.h>
 #include <ltdl.h>
 
+#include <eggdrop/stat.h>
+
 #ifdef TIME_WITH_SYS_TIME
 #  include <sys/time.h>
 #  include <time.h>
@@ -51,7 +53,6 @@ static const char rcsid[] = "$Id: main.c,v 1.160 2003/12/18 03:54:46 wcc Exp $";
 #    include <time.h>
 #  endif
 #endif
-
 
 #include "lib/compat/compat.h"
 #include "main.h"

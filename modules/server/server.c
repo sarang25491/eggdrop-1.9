@@ -1,11 +1,30 @@
-/*
- * server.c implements the eggdrop module interface
+/* server.c: irc server support
+ *
+ * Copyright (C) 2001, 2002, 2003, 2004 Eggheads Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#define MAKING_SERVER
+#ifndef lint
+static const char rcsid[] = "$Id: server.c,v 1.53 2003/12/18 06:50:47 wcc Exp $";
+#endif
+
 #include <eggdrop/eggdrop.h>
 #include <string.h>
 #include <stdlib.h>
+
 #include "server.h"
 #include "servsock.h"
 #include "serverlist.h"
@@ -42,9 +61,7 @@ char *server_support(const char *name)
 	int i;
 
 	for (i = 0; i < current_server.nsupport; i++) {
-		if (!strcasecmp(name, current_server.support[i].name)) {
-			return(current_server.support[i].value);
-		}
+		if (!strcasecmp(name, current_server.support[i].name)) return(current_server.support[i].value);
 	}
 	return(NULL);
 }

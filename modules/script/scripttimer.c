@@ -1,24 +1,34 @@
-/*
- * scripttimer.c - script interface for timer functions
+/* scripttimer.c: timer-related scripting commands
+ *
+ * Copyright (C) 2002, 2003, 2004 Eggheads Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#ifndef lint
+static const char rcsid[] = "$Id: scripttimer.c,v 1.4 2003/12/18 06:50:47 wcc Exp $";
+#endif
+
+#include <eggdrop/eggdrop.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <eggdrop/eggdrop.h>
 
 static int script_single_timer(int nargs, int sec, int usec, script_callback_t *callback);
 static int script_repeat_timer(int nargs, int sec, int usec, script_callback_t *callback);
 static int script_timers(script_var_t *retval);
 static int script_timer_info(script_var_t *retval, int timer_id);
-
-script_command_t script_timer_cmds[] = {
-	{"", "timer", script_single_timer, NULL, 2, "iic", "seconds ?microseconds? callback", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT | SCRIPT_PASS_COUNT},
-	{"", "rtimer", script_repeat_timer, NULL, 2, "iic", "seconds ?microseconds? callback", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT | SCRIPT_PASS_COUNT},
-	{"", "killtimer", timer_destroy, NULL, 1, "i", "timer-id", SCRIPT_INTEGER, 0},
-	{"", "timers", script_timers, NULL, 0, "", "", 0, SCRIPT_PASS_RETVAL},
-	{"", "timer_info", script_timer_info, NULL, 1, "i", "timer-id", 0, SCRIPT_PASS_RETVAL},
-	{0}
-};
 
 static int script_timer(int sec, int usec, script_callback_t *callback, int flags)
 {
@@ -105,3 +115,12 @@ static int script_timer_info(script_var_t *retval, int timer_id)
 
 	return(0);
 }
+
+script_command_t script_timer_cmds[] = {
+	{"", "timer", script_single_timer, NULL, 2, "iic", "seconds ?microseconds? callback", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT | SCRIPT_PASS_COUNT},
+	{"", "rtimer", script_repeat_timer, NULL, 2, "iic", "seconds ?microseconds? callback", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT | SCRIPT_PASS_COUNT},
+	{"", "killtimer", timer_destroy, NULL, 1, "i", "timer-id", SCRIPT_INTEGER, 0},
+	{"", "timers", script_timers, NULL, 0, "", "", 0, SCRIPT_PASS_RETVAL},
+	{"", "timer_info", script_timer_info, NULL, 1, "i", "timer-id", 0, SCRIPT_PASS_RETVAL},
+	{0}
+};

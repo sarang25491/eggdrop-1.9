@@ -1,7 +1,25 @@
-/*
- * scriptnet.c -- script support for network functions
+/* scriptnet.c: networking-related scripting commands
  *
+ * Copyright (C) 2002, 2003, 2004 Eggheads Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+#ifndef lint
+static const char rcsid[] = "$Id: scriptnet.c,v 1.4 2003/12/18 06:50:47 wcc Exp $";
+#endif
 
 #include <eggdrop/eggdrop.h>
 #include <stdio.h>
@@ -43,23 +61,6 @@ static int script_net_handler(int idx, const char *event, script_callback_t *han
 static int script_net_info(script_var_t *retval, int idx, char *what);
 static int script_net_throttle(int idx, int speedin, int speedout);
 static int script_net_throttle_set(void *client_data, int idx, int speed);
-
-script_command_t script_net_cmds[] = {
-	{"", "net_takeover", script_net_takeover, NULL, 1, "i", "idx", SCRIPT_INTEGER, 0},
-	{"", "net_listen", script_net_listen, NULL, 1, "i", "port", 0, SCRIPT_PASS_RETVAL},
-	{"", "net_open", script_net_open, NULL, 2, "sii", "host port ?timeout?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
-	{"", "net_close", script_net_close, NULL, 1, "i", "idx", SCRIPT_INTEGER, 0},
-	{"", "net_write", script_net_write, NULL, 2, "isi", "idx text ?len?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
-	{"", "net_handler", script_net_handler, NULL, 2, "isc", "idx event callback", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
-	{"", "net_linemode", script_net_linemode, NULL, 2, "ii", "idx on-off", SCRIPT_INTEGER, 0},
-	{"", "net_info", script_net_info, NULL, 2, "is", "idx what", 0, SCRIPT_PASS_RETVAL},
-	{"", "net_throttle", script_net_throttle, NULL, 3, "iii", "idx speed-in speed-out", SCRIPT_INTEGER, 0},
-	{"", "net_throttle_in", script_net_throttle_set, (void *)0, 2, "ii", "idx speed", SCRIPT_INTEGER, SCRIPT_PASS_CDATA},
-	{"", "net_throttle_out", script_net_throttle_set, (void *)1, 2, "ii", "idx speed", SCRIPT_INTEGER, SCRIPT_PASS_CDATA},
-	{"", "net_throttle_off", throttle_off, NULL, 1, "i", "idx", SCRIPT_INTEGER, 0},
-	{0}
-};
-
 
 /* Sockbuf handler prototypes. */
 static int on_connect(void *client_data, int idx, const char *peer_ip, int peer_port);
@@ -310,3 +311,19 @@ static int on_delete(void *client_data, int idx)
 	free(info);
 	return(0);
 }
+
+script_command_t script_net_cmds[] = {
+	{"", "net_takeover", script_net_takeover, NULL, 1, "i", "idx", SCRIPT_INTEGER, 0},
+	{"", "net_listen", script_net_listen, NULL, 1, "i", "port", 0, SCRIPT_PASS_RETVAL},
+	{"", "net_open", script_net_open, NULL, 2, "sii", "host port ?timeout?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
+	{"", "net_close", script_net_close, NULL, 1, "i", "idx", SCRIPT_INTEGER, 0},
+	{"", "net_write", script_net_write, NULL, 2, "isi", "idx text ?len?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
+	{"", "net_handler", script_net_handler, NULL, 2, "isc", "idx event callback", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
+	{"", "net_linemode", script_net_linemode, NULL, 2, "ii", "idx on-off", SCRIPT_INTEGER, 0},
+	{"", "net_info", script_net_info, NULL, 2, "is", "idx what", 0, SCRIPT_PASS_RETVAL},
+	{"", "net_throttle", script_net_throttle, NULL, 3, "iii", "idx speed-in speed-out", SCRIPT_INTEGER, 0},
+	{"", "net_throttle_in", script_net_throttle_set, (void *)0, 2, "ii", "idx speed", SCRIPT_INTEGER, SCRIPT_PASS_CDATA},
+	{"", "net_throttle_out", script_net_throttle_set, (void *)1, 2, "ii", "idx speed", SCRIPT_INTEGER, SCRIPT_PASS_CDATA},
+	{"", "net_throttle_off", throttle_off, NULL, 1, "i", "idx", SCRIPT_INTEGER, 0},
+	{0}
+};

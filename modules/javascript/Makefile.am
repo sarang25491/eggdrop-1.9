@@ -1,13 +1,13 @@
-# $Id: Makefile.am,v 1.1 2002/05/09 21:23:30 ite Exp $
+# $Id: Makefile.am,v 1.2 2003/12/18 06:50:47 wcc Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 pkglibdir		= $(exec_prefix)/modules
 
 # FIXME: test if there's dependency on gnu make. It shouldn't.
 if EGG_JAVASCRIPT
-  EGG_JS = javascript.la
+	EGG_JS = javascript.la
 else
-  EGG_JS =
+	EGG_JS =
 endif
     
 pkglib_LTLIBRARIES	= $(EGG_JS)
@@ -18,8 +18,10 @@ javascript_la_LIBADD	= @JSLIBS@ @LIBS@ \
 
 MAINTAINERCLEANFILES	= Makefile.in
 
-INCLUDES		= -I$(top_builddir) -I$(top_srcdir) @INCLTDL@ \
-			-I$(top_builddir)/intl -I$(top_srcdir)/intl \
+INCLUDES		= -I$(top_builddir) \
+			-I$(top_srcdir) @INCLTDL@ \
+			-I$(top_builddir)/intl \
+			-I$(top_srcdir)/intl \
 			-I$(top_builddir)/lib \
 			-I$(top_srcdir)/lib @JSINCL@
 
