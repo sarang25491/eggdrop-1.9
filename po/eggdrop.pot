@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2001-11-26 04:00-0600\n"
+"POT-Creation-Date: 2001-11-27 04:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Transfer-Encoding: ENCODING\n"
 
 #. Kill bot incase a botchk is run from crond.
-#: src/bg.c:125 src/bg.c:133 src/main.c:785 src/main.c:791
+#: src/bg.c:125 src/bg.c:133 src/main.c:787 src/main.c:793
 #, c-format
 msgid "* Warning!  Could not write %s file!\n"
 msgstr ""
@@ -1030,29 +1030,29 @@ msgstr ""
 msgid "Backing up user file..."
 msgstr ""
 
-#: src/main.c:713
+#: src/main.c:715
 msgid "ERROR: Eggdrop will not run as root!"
 msgstr ""
 
-#: src/main.c:737
+#: src/main.c:739
 msgid ""
 "You have installed modules but have not selected an encryption\n"
 "module, please consult the default config file for info.\n"
 msgstr ""
 
-#: src/main.c:761
+#: src/main.c:763
 #, c-format
 msgid "I detect %s already running from this directory.\n"
 msgstr ""
 
-#: src/main.c:762
+#: src/main.c:764
 #, c-format
 msgid "If this is incorrect, erase the %s\n"
 msgstr ""
 
 #. Should be only 2 modules now - blowfish (or some other
 #. encryption module) and eggdrop.
-#: src/main.c:1001
+#: src/main.c:1003
 msgid "Stagnant module; there WILL be memory leaks!"
 msgstr ""
 
