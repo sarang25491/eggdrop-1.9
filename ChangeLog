@@ -1,3 +1,9 @@
+2002-03-10 01:35  stdarg <stdarg@techmonkeys.org>
+
+	* modules/notes/notes.c:
+
+	* dcc checks 
+
 2002-03-09 19:42  Axel Franke <eule@berlin.snafu.de>
 
 	* modules/: channels/channels.c, channels/channels.h,
