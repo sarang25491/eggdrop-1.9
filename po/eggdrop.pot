@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-01-14 12:15-0600\n"
+"POT-Creation-Date: 2004-01-14 18:15-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -444,6 +444,7 @@ msgid "    Using Tcl version %d.%d (by header).\n"
 msgstr ""
 
 #: modules/tclscript/tclscript.c:708
+#, c-format
 msgid ""
 "return \"    Library: [info library]\\n    Reported version: [info "
 "tclversion]\\n    Reported patchlevel: [info patchlevel]\""
@@ -658,6 +659,7 @@ msgid ""
 msgstr ""
 
 #: src/main.c:184
+#, c-format
 msgid ""
 "\n"
 "  -h, --help                 Print help and exit\n"
