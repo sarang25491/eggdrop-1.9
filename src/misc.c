@@ -26,7 +26,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: misc.c,v 1.76 2003/02/15 05:04:58 wcc Exp $";
+static const char rcsid[] = "$Id: misc.c,v 1.77 2003/02/18 10:37:18 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -38,7 +38,6 @@ static const char rcsid[] = "$Id: misc.c,v 1.76 2003/02/15 05:04:58 wcc Exp $";
 #include "logfile.h"
 #include "dccutil.h"		/* dprintf_eggdrop, chatout		*/
 #include "userrec.h"		/* write_userfile			*/
-#include "match.h"		/* wild_match				*/
 
 #ifdef HAVE_UNAME
 #  include <sys/utsname.h>

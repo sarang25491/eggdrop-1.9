@@ -30,7 +30,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.137 2003/02/18 10:13:17 stdarg Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.138 2003/02/18 10:37:18 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -55,8 +55,6 @@ static const char rcsid[] = "$Id: main.c,v 1.137 2003/02/18 10:13:17 stdarg Exp 
 					   get_user_by_handle		*/
 #include "chanprog.h"			/* tell_verbose_status, 
 					   chanprog, rehash		*/
-#include "net.h"			/* killsock, setsock, 
-					   dequeue_sockets, sockgets	*/
 #include "userrec.h"			/* write_userfile, count_users	*/
 #include <locale.h>
 
@@ -150,36 +148,13 @@ egg_timeval_t egg_timeval_now;	/* Same thing, but seconds and microseconds. */
 
 void fatal(const char *s, int recoverable)
 {
-  int i;
-
   putlog(LOG_MISC, "*", "* %s", s);
   flushlogs();
-  for (i = 0; i < dcc_total; i++)
-    if (dcc[i].sock >= 0)
-      killsock(dcc[i].sock);
   unlink(pid_file);
   if (!recoverable) {
     bg_send_quit(BG_ABORT);
     exit(1);
   }
-}
-
-static void check_expired_dcc()
-{
-  int i;
-
-  for (i = 0; i < dcc_total; i++)
-    if (dcc[i].type && dcc[i].type->timeout_val &&
-	((now - dcc[i].timeval) > *(dcc[i].type->timeout_val))) {
-      if (dcc[i].type->timeout)
-	dcc[i].type->timeout(i);
-      else if (dcc[i].type->eof)
-	dcc[i].type->eof(i);
-      else
-	continue;
-      /* Only timeout 1 socket per cycle, too risky for more */
-      return;
-    }
 }
 
 static void got_bus(int z)
@@ -373,7 +348,6 @@ static void core_secondly()
   cnt++;
   if (cnt >= 10) {		/* Every 10 seconds */
     cnt = 0;
-    check_expired_dcc();
     if (con_chan && !backgrd) {
       dprintf(DP_STDOUT, "\033[2J\033[1;1H");
       //tell_verbose_status(DP_STDOUT);
@@ -488,7 +462,7 @@ static inline void garbage_collect(void)
 int main(int argc, char **argv)
 {
   int xx, i;
-  char buf[520], s[25];
+  char s[25];
   FILE *f;
   struct sigaction sv;
   struct chanset_t *chan;
@@ -596,9 +570,7 @@ int main(int argc, char **argv)
   dns_init();
   egg_dns_init();
   core_binds_init();
-  dcc_init();
   init_userent();
-  init_net();
   traffic_init();
 
   if (backgrd)
@@ -695,28 +667,6 @@ int main(int argc, char **argv)
 #endif
   }
 
-  /* Terminal emulating dcc chat */
-  if (!backgrd && term_z) {
-    int n = new_dcc(&DCC_CHAT, sizeof(struct chat_info));
-
-    dcc[n].addr[0] = '\0';
-    dcc[n].sock = STDOUT;
-    dcc[n].timeval = now;
-    dcc[n].u.chat->con_flags = conmask;
-    dcc[n].status = STAT_ECHO;
-    strcpy(dcc[n].nick, "HQ");
-    strcpy(dcc[n].host, "llama@console");
-    dcc[n].user = get_user_by_handle(userlist, dcc[n].nick);
-    /* Make sure there's an innocuous HQ user if needed */
-    if (!dcc[n].user) {
-      userlist = adduser(userlist, dcc[n].nick, "none", "-", USER_PARTY);
-      dcc[n].user = get_user_by_handle(userlist, dcc[n].nick);
-    }
-    setsock(STDOUT, 0);		/* Entry in net table */
-    dprintf(n, "\n### ENTERING DCC CHAT SIMULATION ###\n\n");
-    dcc_chatter(n);
-  }
-
   online_since = now;
   add_help_reference("cmds1.help");
   add_help_reference("cmds2.help");
@@ -739,8 +689,6 @@ int main(int argc, char **argv)
 
   debug0("main: entering loop");
   while (1) {
-    int socket_cleanup = 0;
-
 #if !defined(HAVE_PRE7_5_TCL)
     /* Process a single tcl event */
     Tcl_DoOneEvent(TCL_ALL_EVENTS | TCL_DONT_WAIT);
@@ -754,18 +702,6 @@ int main(int argc, char **argv)
     random();			/* Woop, lets really jumble things */
     timer_run();
 
-    /* Only do this every so often. */
-    if (!socket_cleanup) {
-      socket_cleanup = 5;
-
-      /* Remove dead dcc entries. */
-      dcc_remove_lost();
-
-      /* Check for server or dcc activity. */
-      dequeue_sockets();
-    } else
-      socket_cleanup--;
-
     /* Free unused structures. */
     /* garbage_collect(); */
 
@@ -777,65 +713,7 @@ int main(int argc, char **argv)
 	}
 	sockbuf_update_all(timeout);
 
-    xx = sockgets(buf, &i);
-    timer_update_now(&egg_timeval_now);
-    if (xx >= 0) {		/* Non-error */
-      int idx;
-
-      for (idx = 0; idx < dcc_total; idx++)
-	if (dcc[idx].sock == xx) {
-	  if (dcc[idx].type && dcc[idx].type->activity) {
-
-	    /* update traffic stats */
-	    traffic_update_in(dcc[idx].type, (strlen(buf) + 1));
-
-	    dcc[idx].type->activity(idx, buf, i);
-	  } else
-	    putlog(LOG_MISC, "*",
-		   "!!! untrapped dcc activity: type %s, sock %d",
-		   dcc[idx].type->name, dcc[idx].sock);
-	  break;
-	}
-    } else if (xx == -1) {	/* EOF from someone */
-      int idx;
-
-      if (i == STDOUT && !backgrd)
-	fatal("END OF FILE ON TERMINAL", 0);
-      for (idx = 0; idx < dcc_total; idx++)
-	if (dcc[idx].sock == i) {
-	  if (dcc[idx].type && dcc[idx].type->eof)
-	    dcc[idx].type->eof(idx);
-	  else {
-	    putlog(LOG_MISC, "*",
-		   "*** ATTENTION: DEAD SOCKET (%d) OF TYPE %s UNTRAPPED",
-		   i, dcc[idx].type ? dcc[idx].type->name : "*UNKNOWN*");
-	    killsock(i);
-	    lostdcc(idx);
-	  }
-	  idx = dcc_total + 1;
-	}
-      if (idx == dcc_total) {
-	putlog(LOG_MISC, "*",
-	       "(@) EOF socket %d, not a dcc socket, not anything.", i);
-	close(i);
-	killsock(i);
-      }
-    } else if (xx == -2 && errno != EINTR) {	/* select() error */
-      putlog(LOG_MISC, "*", "* Socket error #%d; recovering.", errno);
-      for (i = 0; i < dcc_total; i++) {
-	if ((fcntl(dcc[i].sock, F_GETFD, 0) == -1) && (errno == EBADF)) {
-	  putlog(LOG_MISC, "*",
-		 "DCC socket %d (type %d, name '%s') expired -- pfft",
-		 dcc[i].sock, dcc[i].type, dcc[i].nick);
-	  killsock(dcc[i].sock);
-	  lostdcc(i);
-	  i--;
-	}
-      }
-    } else if (xx == -3) {
-      call_hook(HOOK_IDLE);
-      socket_cleanup = 0;	/* If we've been idle, cleanup & flush */
-    }
+	timer_update_now(&egg_timeval_now);
 
     if (do_restart) {
       if (do_restart == -2)

@@ -12,7 +12,6 @@
 #include "flags.h"		/* USER_*				*/
 #include "dccutil.h"		/* dprintf_eggdrop			*/
 #include "userrec.h"		/* addhost_by_handle			*/
-#include "match.h"		/* wild_match				*/
 #include "userent.h"		/* prototypes				*/
 
 extern struct userrec	*userlist;

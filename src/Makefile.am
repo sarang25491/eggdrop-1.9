@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.36 2003/02/17 10:22:30 stdarg Exp $
+# $Id: Makefile.am,v 1.37 2003/02/18 10:37:18 stdarg Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 bindir			= $(exec_prefix)
@@ -47,7 +47,6 @@ eggdrop_SOURCES		= bg.c \
 			patch.h \
 			tcl.c \
 			tcl.h \
-			tcldcc.c tcldcc.h \
 			tclegg.h \
 			telnet.c \
 			traffic.c \

@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: modules.c,v 1.130 2003/02/17 10:22:30 stdarg Exp $";
+static const char rcsid[] = "$Id: modules.c,v 1.131 2003/02/18 10:37:18 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -58,7 +58,6 @@ static const char rcsid[] = "$Id: modules.c,v 1.130 2003/02/17 10:22:30 stdarg E
 				   write_user, change_handle,
 				   write_userfile, u_pass_match, deluser,
 				   addhost_by_handle, delhost_by_handle	*/
-#include "match.h"		/* wild_match				*/
 
 
 #include <ctype.h>

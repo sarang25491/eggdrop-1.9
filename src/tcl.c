@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tcl.c,v 1.98 2003/02/16 11:15:06 stdarg Exp $";
+static const char rcsid[] = "$Id: tcl.c,v 1.99 2003/02/18 10:37:18 stdarg Exp $";
 #endif
 
 #include <stdlib.h>		/* getenv()				*/
@@ -63,8 +63,6 @@ extern char botuser[], motdfile[], admin[], userfile[], firewall[], helpdir[],
             textdir[], myip6[], pid_file[];
 	
 extern struct dcc_t *dcc;
-
-extern script_command_t script_dcc_cmds[];
 
 int protect_readonly = 0; /* turn on/off readonly protection */
 char whois_fields[1025] = ""; /* fields to display in a .whois */
@@ -380,7 +378,6 @@ void init_tcl(int argc, char **argv)
 
   /* Initialize traces */
   init_traces();
-  script_create_commands(script_dcc_cmds);
 }
 
 void do_tcl(char *whatzit, char *script)

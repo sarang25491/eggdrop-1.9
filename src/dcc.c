@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dcc.c,v 1.97 2003/02/03 11:41:34 wcc Exp $";
+static const char rcsid[] = "$Id: dcc.c,v 1.98 2003/02/18 10:37:18 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -47,9 +47,7 @@ static const char rcsid[] = "$Id: dcc.c,v 1.97 2003/02/03 11:41:34 wcc Exp $";
 			   answer, neterror, sockoptions, open_telnet	*/
 #include "userrec.h"	/* u_pass_match, correct_handle, write_userfile,
 			   deluser					*/
-#include "match.h"	/* wild_match					*/
 #include "dcc.h"	/* prototypes					*/
-#include "core_binds.h"
 
 extern struct userrec	*userlist;
 extern struct chanset_t	*chanset;
@@ -414,7 +412,7 @@ static void dcc_chat(int idx, char *buf, int i)
 	if (iscommand) buf++;
 	v = newsplit(&buf);
 	rmspace(buf);
-	check_bind_dcc(v, idx, buf);
+	//check_bind_dcc(v, idx, buf);
     }
     else if (buf[0] == ',') {
 	int me = 0;
