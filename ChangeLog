@@ -1,3 +1,12 @@
+2001-12-08 19:17  Federico Mennite <ite@techmonkeys.org>
+
+	* lib/eggdrop/modvals.h, modules/irc/chan.c, modules/irc/cmdsirc.c,
+	modules/irc/irc.c, modules/irc/irc.h, modules/irc/msgcmds.c,
+	src/cmds.c, src/misc.c:
+
+	Added a missing channel membercheck in a few commands. Patch by Axel
+	Franke <eule@berlin.snafu.de> 
+
 2001-12-08 18:17  Jeff Fisher <guppy@techmonkeys.org>
 
 	* eggdrop.complete.conf, src/patch.h:
