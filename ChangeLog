@@ -1,3 +1,13 @@
+2001-09-30 04:27  stdarg
+
+	* src/: tclhash.c, tclhash.h, mod/server.mod/server.c,
+	mod/server.mod/servmsg.c:
+
+	The new bind tables seem to be working pretty well. This patch
+	mainly creates a new dcc bind table and moves the core built-ins to
+	that table.  The behavior of the new table is a little different
+	than the old one (for now).  
+
 2001-09-28 03:15  stdarg
 
 	* src/: botcmd.c, botnet.c, dcc.c, dccutil.c, main.c, modules.c,
