@@ -1,3 +1,11 @@
+2002-10-10 07:48  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/: eggconfig.c, eggconfig.h:
+
+	
+	* Beginning of config system. Right now it's based on xml but it
+	should be easy to replace it later or add a module backend system.  
+
 2002-10-10 05:50  Will Buckner <wcc@techmonkeys.org>
 
 	* configure.ac, eggdrop.complete.conf, doc/UPDATES1.6,
