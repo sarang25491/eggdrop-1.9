@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partyline.c,v 1.20 2004/06/21 01:14:06 stdarg Exp $";
+static const char rcsid[] = "$Id: partyline.c,v 1.21 2004/06/21 10:59:39 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -223,29 +223,21 @@ int partyline_idx_privmsg(int idx, partymember_t *dest, partymember_t *src, cons
 
 int partyline_idx_nick(int idx, partymember_t *src, const char *oldnick, const char *newnick)
 {
-	const char *ts;
-
-	timer_get_timestamp(&ts);
-
-	egg_iprintf(idx, "* %s*** %s is now known as %s.\n", ts, oldnick, newnick);
+	egg_iprintf(idx, "* %s*** %s is now known as %s.\n", timer_get_timestamp(), oldnick, newnick);
 	return 0;
 }
 
 int partyline_idx_quit(int idx, partymember_t *src, const char *text, int len)
 {
-	const char *ts;
-
-	timer_get_timestamp(&ts);
-
-	egg_iprintf(idx, "* %s*** %s (%s@%s) has quit: %s\n", ts, src->nick, src->ident, src->host, text);
+	egg_iprintf(idx, "* %s*** %s (%s@%s) has quit: %s\n", timer_get_timestamp(), src->nick, src->ident, src->host, text);
 	return 0;
 }
 
 int partyline_idx_chanmsg(int idx, partychan_t *chan, partymember_t *src, const char *text, int len)
 {
-	const char *ts;
+	char *ts;
 
-	timer_get_timestamp(&ts);
+	ts = timer_get_timestamp();
 
 	if (src) egg_iprintf(idx, "%s %s<%s> %s\r\n", chan->name, ts, src->nick, text);
 	else egg_iprintf(idx, "%s %s%s\r\n", chan->name, ts, text);
@@ -254,21 +246,13 @@ int partyline_idx_chanmsg(int idx, partychan_t *chan, partymember_t *src, const 
 
 int partyline_idx_join(int idx, partychan_t *chan, partymember_t *src)
 {
-	const char *ts;
-
-	timer_get_timestamp(&ts);
-
-	egg_iprintf(idx, "%s %s*** %s (%s@%s) has joined the channel.\r\n", chan->name, ts, src->nick, src->ident, src->host);
+	egg_iprintf(idx, "%s %s*** %s (%s@%s) has joined the channel.\r\n", chan->name, timer_get_timestamp(), src->nick, src->ident, src->host);
 	return 0;
 }
 
 int partyline_idx_part(int idx, partychan_t *chan, partymember_t *src, const char *text, int len)
 {
-	const char *ts;
-
-	timer_get_timestamp(&ts);
-	
-	egg_iprintf(idx, "%s %s*** (%s@%s) has left %s: %s\r\n", chan->name, ts, src->nick, src->ident, src->host, chan->name, text);
+	egg_iprintf(idx, "%s %s*** (%s@%s) has left %s: %s\r\n", chan->name, timer_get_timestamp(), src->nick, src->ident, src->host, chan->name, text);
 	return 0;
 }
 

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggdrop.c,v 1.14 2004/06/20 13:33:48 wingman Exp $";
+static const char rcsid[] = "$Id: eggdrop.c,v 1.15 2004/06/21 10:59:39 wingman Exp $";
 #endif
 
 #include <stdlib.h>
@@ -30,6 +30,7 @@ static bind_table_t *BT_event = NULL;
 int eggdrop_init(void)
 {
 	config_init();
+	timer_init();
 	egg_net_init();
 	egglog_init();
 	user_init();
@@ -52,6 +53,7 @@ int eggdrop_shutdown(void)
 	/* XXX: user_shutdown(); */
 	egglog_shutdown();
 	/* XXX: egg_net_shutdown(); */
+	timer_shutdown();
 	/* XXX: config_shutdown(); */
 	
 	return 1;

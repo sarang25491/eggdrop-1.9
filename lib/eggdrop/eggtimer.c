@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggtimer.c,v 1.11 2004/06/21 10:34:07 wingman Exp $";
+static const char rcsid[] = "$Id: eggtimer.c,v 1.12 2004/06/21 10:59:39 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -51,12 +51,14 @@ static int timer_next_id = 1;
 int timer_init()
 {
 	timestamp_len = 32;
+	timestamp_format = strdup("[%H:%M] ");
 	timestamp = malloc(timestamp_len);
 	return(0);
 }
 
 int timer_shutdown()
 {
+	if (timestamp_format) free(timestamp_format);
 	if (timestamp) free(timestamp);
 	timestamp = NULL;
 	timestamp_len = 0;
@@ -288,7 +290,7 @@ int timer_set_timestamp(char *format)
 	return(0);
 }
 
-int timer_get_timestamp(const char **buf)
+char *timer_get_timestamp(void)
 {
         time_t now_secs = (time_t)now.sec;
 	int len;
@@ -311,6 +313,5 @@ int timer_get_timestamp(const char **buf)
 		}
 	}
 
-	*buf = timestamp;
-        return(0);
+	return timestamp;
 }

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: eggtimer.h,v 1.11 2004/06/21 10:34:07 wingman Exp $
+ * $Id: eggtimer.h,v 1.12 2004/06/21 10:59:39 wingman Exp $
  */
 
 #ifndef _EGG_EGGTIMER_H_
@@ -49,6 +49,6 @@ extern int timer_get_shortest(egg_timeval_t *howlong);
 extern int timer_run();
 extern int timer_list(int **ids);
 extern int timer_info(int id, char **name, egg_timeval_t *initial_len, egg_timeval_t *trigger_time);
-extern int timer_get_timestamp(const char **buf);
+extern char *timer_get_timestamp(void);
 
 #endif /* !_EGG_EGGTIMER_H_ */

@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: logfile.c,v 1.43 2004/06/20 13:33:48 wingman Exp $";
+static const char rcsid[] = "$Id: logfile.c,v 1.44 2004/06/21 10:59:39 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -181,7 +181,6 @@ char *logfile_add(char *modes, char *chan, char *fname)
 int logfile_del(char *filename)
 {
 	log_t *log, *prev;
-	char timestamp[32];
 
 	prev = NULL;
 	for (log = log_list_head; log; log = log->next) {
@@ -192,8 +191,7 @@ int logfile_del(char *filename)
 	if (prev) prev->next = log->next;
 	else log_list_head = log->next;
 	if (log->fp) {
-		timer_get_timestamp(timestamp, sizeof (timestamp));
-		flushlog(log, timestamp);
+		flushlog(log, timer_get_timestamp());
 		fclose(log->fp);
 	}
 	free(log->last_msg);
@@ -205,9 +203,9 @@ int logfile_del(char *filename)
 static int on_putlog(int flags, const char *chan, const char *text, int len)
 {
 	log_t *log;
-	char timestamp[32];
+	char *ts;
 
-	timer_get_timestamp(timestamp, sizeof (timestamp));
+	ts = timer_get_timestamp();
 	for (log = log_list_head; log; log = log->next) {
 		/* If this log doesn't match, skip it. */
 		if (!(log->mask & flags)) continue;
@@ -222,7 +220,7 @@ static int on_putlog(int flags, const char *chan, const char *text, int len)
 
 		/* If there was a repeated message, write the count. */
 		if (log->repeats) {
-			fprintf(log->fp, "%s", timestamp);
+			fprintf(log->fp, "%s", ts);
 			fprintf(log->fp, _("Last message repeated %d time(s).\n"), log->repeats);
 			log->repeats = 0;
 		}
@@ -231,7 +229,7 @@ static int on_putlog(int flags, const char *chan, const char *text, int len)
 		str_redup(&log->last_msg, text);
 
 		/* Now output to the file. */
-		fprintf(log->fp, "%s%s\n", timestamp, text);
+		fprintf(log->fp, "%s%s\n", ts, text);
 	}
 
 	if (!backgrd || use_stderr) {
@@ -249,7 +247,7 @@ static int on_putlog(int flags, const char *chan, const char *text, int len)
 
 		}
 		
-		fprintf (stdout, "%s %s%s\n", chan, timestamp, text);
+		fprintf (stdout, "%s %s%s\n", chan, ts, text);
 	}
 		
 	return(0);
@@ -293,11 +291,11 @@ static void flushlog(log_t *log, char *timestamp)
  */
 void flushlogs()
 {
-	char timestamp[32];
+	char *ts;
 	log_t *log;
 
-	timer_get_timestamp(timestamp, sizeof (timestamp));
+	ts = timer_get_timestamp();
 	for (log = log_list_head; log; log = log->next) {
-		flushlog(log, timestamp);
+		flushlog(log, ts);
 	}
 }
