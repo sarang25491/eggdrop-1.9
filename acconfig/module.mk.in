@@ -14,7 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
-# $Id: module.mk.in,v 1.3 2004/06/22 10:54:42 wingman Exp $
+# $Id: module.mk.in,v 1.4 2004/08/29 07:34:11 takeda Exp $
                                                                                                                      
 # FIXME: optionally allow a system wide install by ignoring the line below.
 pkglibdir               = $(exec_prefix)/modules
@@ -28,7 +28,8 @@ INCLUDES                = -I$(top_builddir) \
                         -I$(top_builddir)/intl \
                         -I$(top_srcdir)/intl \
                         -I$(top_builddir)/lib \
-                        -I$(top_srcdir)/lib
+                        -I$(top_srcdir)/lib \
+                        @TCL_INCLUDE_SPEC@
 
 # Hook for installing help files
 install-data-am:
