@@ -1,3 +1,11 @@
+2002-03-09 19:42  Axel Franke <eule@berlin.snafu.de>
+
+	* modules/: channels/channels.c, channels/channels.h,
+	channels/cmdschan.c, channels/tclchan.c, channels/userchan.c,
+	share/share.c:
+
+	move u_delban, u_delexempt and u_delinvite into u_delmask 
+
 2002-03-05 19:53  stdarg <stdarg@techmonkeys.org>
 
 	* configure.ac, src/net.c:
