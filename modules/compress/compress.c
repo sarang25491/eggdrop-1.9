@@ -6,7 +6,7 @@
  * Written by Fabian Knittel <fknittel@gmx.de>. Based on zlib examples
  * by Jean-loup Gailly and Miguel Albrecht.
  *
- * $Id: compress.c,v 1.3 2002/02/07 22:19:02 wcc Exp $
+ * $Id: compress.c,v 1.4 2002/02/13 16:44:57 ite Exp $
  */
 /*
  * Copyright (C) 2000, 2001, 2002 Eggheads Development Team
@@ -378,10 +378,12 @@ static tcl_ints my_tcl_ints[] = {
 
 static int compress_report(int idx, int details)
 {
-  /* FIXME PLURAL: do it in the proper way. */
-  if (details)
-    dprintf(idx, "    Compressed %u file(s), uncompressed %u file(s).\n",
-	    compressed_files, uncompressed_files);
+  if (details) {
+    dprintf(idx, P_("    Compressed %u file,", "    Compressed %u files,",
+                    compressed_files), compressed_files);
+    dprintf(idx, P_(" uncompressed %u file.\n", " uncompressed %u files.\n",
+                    uncompressed_files), uncompressed_files);
+  }
   return 0;
 }
 

@@ -3,6 +3,8 @@
 #
 #  GNOME PO Update Utility
 #
+#  $Id: update.pl,v 1.2 2002/02/13 16:44:57 ite Exp $
+#
 #  Copyright (C) 2000 Free Software Foundation.
 #
 #  This script is free software; you can redistribute it and/or
@@ -293,7 +295,7 @@ sub GeneratePot{
     close INFILE;
 
     $GETTEXT ="xgettext --default-domain\=$PACKAGE --directory\=\.\."
-             ." --add-comments --keyword\=\_ --keyword\=N\_"
+             ." --add-comments --keyword\=\_ --keyword\=N\_ --keyword\=P\_:1,2"
              ." --files-from\=\.\/POTFILES\.in ";  
     $GTEST   ="test \! -f $PACKAGE\.po \|\| \( rm -f \.\/$PACKAGE\.pot "
              ."&& mv $PACKAGE\.po \.\/$PACKAGE\.pot \)";

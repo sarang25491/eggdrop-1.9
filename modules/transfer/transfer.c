@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.10 2002/02/07 22:19:03 wcc Exp $
+ * $Id: transfer.c,v 1.11 2002/02/13 16:44:57 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -491,8 +491,8 @@ static void fileq_cancel(int idx, char *par)
   if (!matches)
     dprintf(idx, "No matches.\n");
   else
-    /* FIXME PLURAL: handle this correctly with gettext */
-    dprintf(idx, "Cancelled %d file%s.\n", matches, (matches != 1) ? "s" : "");
+    dprintf(idx, P_("Cancelled %d file.\n", "Cancelled %d files.\n", matches),
+            matches);
   for (i = 0; i < atot; i++)
     if (!at_limit(dcc[idx].nick))
       send_next_file(dcc[idx].nick);

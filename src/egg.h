@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: egg.h,v 1.4 2002/02/07 22:19:05 wcc Exp $
+ * $Id: egg.h,v 1.5 2002/02/13 16:44:58 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -74,10 +74,12 @@
 #ifdef ENABLE_NLS
 #  include <libintl.h>
 #  define _(x) gettext(x)
-#  define N_(x) gettext_noop (x)
+#  define N_(x) gettext_noop(x)
+#  define P_(x1, x2, n) ngettext(x1, x2, n)
 #else
-#  define N_(x) (x)
 #  define _(x) (x)
+#  define N_(x) (x)
+#  define P_(x1, x2, n) ( ((n)!=1) ? (x2) : (x1) )
 #endif
 
 #ifdef HAVE_UNISTD_H

@@ -3,7 +3,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.43 2002/02/07 22:19:04 wcc Exp $
+ * $Id: chanprog.c,v 1.44 2002/02/13 16:44:58 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -208,27 +208,26 @@ void tell_verbose_status(int idx)
 #endif
 
   i = count_users(userlist);
-  /* FIXME PLURAL: handle it properly */
-  dprintf(idx, _("I am %1$s, running %2$s:  %3$d user%4$s\n"),
-	  botnetnick, ver, i, i == 1 ? "" : "s");
+  dprintf(idx, _("I am %1$s, running %2$s:  "), botnetnick, ver);
+  dprintf(idx, P_("%d user\n", "%d users\n", i), i);
   dprintf(idx, _("Running on %1$s %2$s\n"), uni_t, vers_t);
   if (admin[0])
     dprintf(idx, _("Admin: %s\n"), admin);
   now2 = now - online_since;
   s[0] = 0;
+
   if (now2 > 86400) {
-    /* days */
-    /* FIXME PLURAL: handle it properly */
-    sprintf(s, _("%d day"), (int) (now2 / 86400));
-    if ((int) (now2 / 86400) >= 2)
-      strcat(s, "s");
+    int days = (int) (now2 / 86400);
+    
+    snprintf(s, sizeof(s), P_("%d day", "%d days", days), days);
     strcat(s, ", ");
-    now2 -= (((int) (now2 / 86400)) * 86400);
+    now2 -= days * 86400;
   }
   hr = (time_t) ((int) now2 / 3600);
   now2 -= (hr * 3600);
   min = (time_t) ((int) now2 / 60);
-  sprintf(&s[strlen(s)], "%02d:%02d", (int) hr, (int) min);
+  snprintf(&s[strlen(s)], sizeof(s) - strlen(s), "%02d:%02d", (int) hr,
+           (int) min);
   s1[0] = 0;
   if (backgrd)
     strcpy(s1, _("background"));
@@ -301,7 +300,7 @@ void tell_settings(int idx)
 	  _("notify"), notify_new);
   /* FIXME PLURAL: handle it properly */
   if (owner[0])
-    dprintf(idx, "%s: %s\n", _("Permanent owner(s)"), owner);
+    dprintf(idx, _("Permanent owner(s): %s\n"), owner);
   dprintf(idx, _("Ignores last %d mins\n"), ignore_time);
 }
 
