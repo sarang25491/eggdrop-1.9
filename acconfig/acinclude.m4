@@ -17,7 +17,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: acinclude.m4,v 1.38 2004/06/16 06:33:44 wcc Exp $
+dnl $Id: acinclude.m4,v 1.39 2004/06/21 10:34:07 wingman Exp $
 dnl
 
 
@@ -710,7 +710,10 @@ AC_DEFUN([EGG_DEBUG_OPTIONS],
 
 dnl EGG_CHECK_MODULES()
 dnl
-AC_DEFUN([EGG_CHECK_MODULES], [esyscmd(./acconfig/config.stubs ./modules/)])
+AC_DEFUN([EGG_CHECK_MODULES],
+[
+	esyscmd(./acconfig/config.stubs ./modules/)
+])
 
 
 dnl EGG_MODULE_START(NAME, HELP, ENABLED)

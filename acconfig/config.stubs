@@ -15,7 +15,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
-# $Id: config.stubs,v 1.2 2004/06/17 20:52:34 wingman Exp $
+# $Id: config.stubs,v 1.3 2004/06/21 10:34:07 wingman Exp $
 
 files=`find . -name "config*.m4" | \
         sed 's#\(.*/config\)\(.*\).m4#\20 \1\2.m4#' | \
@@ -24,7 +24,18 @@ files=`find . -name "config*.m4" | \
                                                                                 
 for file in $files; do
     if [ -r $file ]; then
-        echo "sinclude($file)"
+
+	if [ "$1" = "--bootstrap" ]; then
+		dir=`echo $file | awk '{ len = split($0, tok, "/"); printf substr($0, 0, length($0) - length(tok[len]) - 1); }'`
+		makefiles="$dir/Makefile $makefiles"
+	else
+		echo "m4_include($file)"
+	fi
+
     fi
 done
 
+if [ "$1" = "--bootstrap" ]; then
+	echo "Generating module Makefile.in's..."
+	$2 $makefiles
+fi;

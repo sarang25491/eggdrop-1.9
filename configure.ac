@@ -1,11 +1,11 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 dnl
-dnl $Id: configure.ac,v 1.53 2004/06/20 21:33:27 wingman Exp $
+dnl $Id: configure.ac,v 1.54 2004/06/21 10:34:07 wingman Exp $
 
 AC_PREREQ(2.57)
 AC_INIT([Eggdrop], [1.9.0], [bugs@eggheads.org])
 AC_COPYRIGHT([Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team])
-AC_REVISION($Revision: 1.53 $)
+AC_REVISION($Revision: 1.54 $)
 AC_CONFIG_AUX_DIR(acconfig)
 AM_CONFIG_HEADER(config.h)
 AC_CONFIG_FILES([Makefile lib/Makefile lib/compat/Makefile lib/eggdrop/Makefile m4/Makefile po/Makefile.in src/Makefile modules/Makefile acconfig/module.mk])
@@ -130,22 +130,19 @@ EGG_DEBUG_OPTIONS
 # Defines version num
 EGG_DEFINE_VERSION_NUM
 
-
 # Save now since modules may fail due to a missing requirement
 AC_CACHE_SAVE
 
-
 # Check for modules
 EGG_CHECK_MODULES
-
 
 # Export list of enabled modules
 AC_SUBST(EGG_MODULES_ENABLED)
 
 
 # Export auxiliary dir (./acconfig/) 
-
 AC_SUBST(ac_aux_dir)
+
 
 # Export list of preloaded shared objects
 AC_SUBST(LIBEGGDROP_PRELOAD)
@@ -153,7 +150,6 @@ AC_SUBST(LIBEGGDROP_PRELOAD)
 
 # ldl support
 AC_CONFIG_SUBDIRS(libltdl intl)
-
 
 AC_OUTPUT
 EGG_MSG_CONFIGURE_END

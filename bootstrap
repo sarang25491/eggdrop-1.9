@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# $Id: bootstrap,v 1.18 2004/06/20 21:33:27 wingman Exp $
+# $Id: bootstrap,v 1.19 2004/06/21 10:34:07 wingman Exp $
 #
 # Recommended development tools versions:
 #   autoconf 2.59
@@ -60,7 +60,10 @@ autoconf
 autoheader
 
 # Generate Makefile.in from Makefile.am
-$AUTOMAKE --add-missing --copy
+$AUTOMAKE --add-missing --copy 
+
+# Generate module Makefile.ins
+acconfig/config.stubs --bootstrap $AUTOMAKE
 
 # Remove previous config.cache
 if test -f config.cache

@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.51 2004/06/20 13:33:48 wingman Exp $
+# $Id: Makefile.am,v 1.52 2004/06/21 10:34:07 wingman Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 bindir			= $(exec_prefix)
@@ -17,7 +17,7 @@ eggdrop_SOURCES		= bg.c bg.h \
 			debug.h \
 			logfile.c logfile.h \
 			main.c main.h
-eggdrop_CPPFLAGS	= -I$(top_builddir) -I$(top_srcdir) @INCLTDL@ \
+eggdrop_CFLAGS		= -I$(top_builddir) -I$(top_srcdir) @INCLTDL@ \
 			-I$(top_builddir)/intl -I$(top_srcdir)/intl \
 			-I$(top_builddir)/lib \
 			-I$(top_srcdir)/lib

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggtimer.c,v 1.10 2004/06/21 01:14:05 stdarg Exp $";
+static const char rcsid[] = "$Id: eggtimer.c,v 1.11 2004/06/21 10:34:07 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -290,7 +290,7 @@ int timer_set_timestamp(char *format)
 
 int timer_get_timestamp(const char **buf)
 {
-        time_t now_secs = (time_t)now.secs;
+        time_t now_secs = (time_t)now.sec;
 	int len;
 
 	while (1) {
