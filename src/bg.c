@@ -3,7 +3,7 @@
  *   Handles moving the process to the background and forking,
  *   while keeping threads happy.
  *
- * $Id: bg.c,v 1.8 2002/02/07 22:19:04 wcc Exp $
+ * $Id: bg.c,v 1.9 2002/05/04 16:17:47 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -41,13 +41,9 @@
 #include "bg.h"                /* bg_quit_t, prototypes                */
 
 
-#ifdef HAVE_TCL_THREADS
-# define SUPPORT_THREADS
-#endif
-
 extern char	pid_file[];
 
-#ifdef SUPPORT_THREADS
+#ifdef ENABLE_PREFORKING
 
 /* When threads are started during eggdrop's init phase, we can't simply
  * fork() later on, because that only copies the VM space over and
@@ -118,7 +114,7 @@ typedef struct {
 
 static bg_t	bg = { 0 };
 
-#endif /* SUPPORT_THREADS */
+#endif /* ENABLE_PREFORKING */
 
 
 /* Do everything we normally do after we have split off a new
@@ -154,7 +150,7 @@ static void bg_do_detach(pid_t p)
 
 void bg_prepare_split(void)
 {
-#ifdef SUPPORT_THREADS
+#ifdef ENABLE_PREFORKING
   /* Create a pipe between parent and split process, fork to create a
      parent and a split process and wait for messages on the pipe. */
   pid_t		p;
@@ -208,7 +204,7 @@ error:
 #endif
 }
 
-#ifdef SUPPORT_THREADS
+#ifdef ENABLE_PREFORKING
 /* Transfer contents of pid_file to parent process. This is necessary,
  * as the pid_file[] buffer has changed in this fork by now, but the
  * parent needs an up-to-date version.
@@ -234,7 +230,7 @@ error:
 
 void bg_send_quit(bg_quit_t q)
 {
-#ifdef SUPPORT_THREADS
+#ifdef ENABLE_PREFORKING
   if (bg.state == BG_PARENT) {
     kill(bg.child_pid, SIGKILL);
   } else if (bg.state == BG_SPLIT) {
@@ -254,7 +250,7 @@ void bg_send_quit(bg_quit_t q)
 
 void bg_do_split(void)
 {
-#ifdef SUPPORT_THREADS
+#ifdef ENABLE_PREFORKING
   /* Tell our parent process to go away now, as we don't need it anymore. */
   bg_send_quit(BG_QUIT);
 #else

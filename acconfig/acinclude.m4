@@ -1,7 +1,7 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.16 2002/05/04 14:14:14 ite Exp $
+dnl $Id: acinclude.m4,v 1.17 2002/05/04 16:17:47 ite Exp $
 dnl
 
 
@@ -868,20 +868,36 @@ fi
 ])
 
 
-dnl  EGG_TCL_THREADS_OPTIONS()
+dnl  EGG_PREFORKING()
 dnl
-AC_DEFUN(EGG_TCL_THREADS_OPTIONS, [dnl
-AC_ARG_ENABLE(tcl-threads,
-              AC_HELP_STRING([--disable-tcl-threads],
-                             [disable threaded tcl support if detected (ignore this option unless you know what you are doing)]),
-              enable_tcl_threads="$enableval",
-              enable_tcl_threads=yes)
+AC_DEFUN(EGG_PREFORKING, [dnl
+AC_ARG_ENABLE(preforking,
+              AC_HELP_STRING([--disable-preforking],
+                             [prevent preforking (ignore this option unless you know what you are doing)]),
+              enable_preforking="$enableval",
+              enable_preforking=yes)
+
+  if test "$enable_preforking" = "no"
+  then
+    AC_MSG_WARN([
+
+  You have disabled process preforking. Libraries and modules creating threads
+  may not function properly.
+
+])
+  else
+    AC_DEFINE(ENABLE_PREFORKING, 1,
+              [Define if preforking is wanted])
+  fi
+
 ])
 
 
 dnl  EGG_TCL_CHECK_THREADS()
 dnl
 AC_DEFUN(EGG_TCL_CHECK_THREADS, [dnl
+AC_REQUIRE([EGG_PREFORKING])
+
 if test "$egg_tcl_changed" = "yes"
 then
   EGG_CACHE_UNSET(egg_cv_var_tcl_threaded)
@@ -892,17 +908,14 @@ AC_CHECK_LIB($TCL_TEST_LIB, TclpFinalizeThreadData, egg_cv_var_tcl_threaded=yes,
 
 if test "$egg_cv_var_tcl_threaded" = "yes"
 then
-  if test "$enable_tcl_threads" = "no"
+  if test "$enable_preforking" = "no"
   then
     AC_MSG_WARN([
 
-  You have disabled threads support on a system with a threaded Tcl library.
+  You have disabled process preforking on a system with a threaded Tcl library.
   Tcl features that rely on scheduled events may not function properly.
 
 ])
-  else
-    AC_DEFINE(HAVE_TCL_THREADS, 1,
-              [Define for Tcl that has threads])
   fi
 
   # Add pthread library to $LIBS if we need it

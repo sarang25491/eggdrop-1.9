@@ -104,6 +104,9 @@ EGG_REPLACE_SNPRINTF
 EGG_IPV6_SUPPORTED
 EGG_IPV6_OPTIONS
 
+# Check if we should not prefork background process
+EGG_PREFORKING
+
 # Where is tcl?  Is it here?
 # ---------- begin robey's tcl thingies
 # (well, what used to be robey's tcl thingies...)
@@ -151,7 +154,6 @@ EGG_TCL_CHECK_PRE70
 EGG_TCL_CHECK_PRE75
 EGG_TCL_TESTLIBS
 EGG_TCL_CHECK_FREE
-EGG_TCL_THREADS_OPTIONS
 EGG_TCL_CHECK_THREADS
 EGG_TCL_LIB_REQS
 EGG_TCL_LUSH
