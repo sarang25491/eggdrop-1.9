@@ -1,3 +1,22 @@
+2002-05-01 03:56  stdarg <stdarg@techmonkeys.org>
+
+	* eggdrop.complete.conf, eggdrop.simple.conf,
+	modules/channels/channels.c, modules/compress/compress.c,
+	modules/console/console.c, modules/filesys/filesys.c,
+	modules/irc/irc.c, modules/notes/notes.c, modules/server/server.c,
+	modules/transfer/transfer.c, nettype/custom.irc.conf,
+	nettype/custom.server.conf, nettype/dalnet.irc.conf,
+	nettype/dalnet.server.conf, nettype/efnet.irc.conf,
+	nettype/efnet.server.conf, nettype/hybridefnet.irc.conf,
+	nettype/hybridefnet.server.conf, nettype/ircnet.irc.conf,
+	nettype/ircnet.server.conf, nettype/undernet.irc.conf,
+	nettype/undernet.server.conf, scripts/compat.tcl,
+	scripts/userinfo.tcl, src/logfile.c, src/tcl.c:
+
+	I changed a lot of variable names (- became _). I may have missed
+	some so keep your eyes open and if your scripts stop working, this
+	may be why. I also added 'puthelp' and 'putquick' to compat.tcl.  
+
 2002-05-01 02:30  stdarg <stdarg@techmonkeys.org>
 
 	* doc/tcl-commands.doc, lib/eggdrop/script.c, lib/eggdrop/script.h,
