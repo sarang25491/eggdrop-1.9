@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2002-01-21 04:00-0600\n"
+"POT-Creation-Date: 2002-01-22 04:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -56,7 +56,7 @@ msgstr ""
 msgid "Disconnected from:"
 msgstr ""
 
-#: src/botcmd.c:342 src/botcmd.c:520 src/cmds.c:275
+#: src/botcmd.c:342 src/botcmd.c:521 src/cmds.c:275
 msgid "no channels"
 msgstr ""
 
@@ -80,12 +80,12 @@ msgstr ""
 msgid "People on channel"
 msgstr ""
 
-#: src/botcmd.c:380 src/botcmd.c:383 src/botcmd.c:386 src/botcmd.c:420
-#: src/botcmd.c:422
+#: src/botcmd.c:380 src/botcmd.c:383 src/botcmd.c:386 src/botcmd.c:421
+#: src/botcmd.c:423
 msgid "idle"
 msgstr ""
 
-#: src/botcmd.c:391 src/botcmd.c:427 src/botnet.c:555
+#: src/botcmd.c:391 src/botcmd.c:428 src/botnet.c:555
 msgid "AWAY"
 msgstr ""
 
@@ -97,178 +97,178 @@ msgstr ""
 msgid "Other people on the bot"
 msgstr ""
 
-#: src/botcmd.c:556
+#: src/botcmd.c:557
 msgid "Attempting to link"
 msgstr ""
 
-#: src/botcmd.c:559
+#: src/botcmd.c:560
 msgid "Cant link there"
 msgstr ""
 
-#: src/botcmd.c:606 src/botcmd.c:863
+#: src/botcmd.c:607 src/botcmd.c:864
 msgid "Cant unlink"
 msgstr ""
 
-#: src/botcmd.c:657
+#: src/botcmd.c:658
 #, c-format
 msgid "Invalid eggnet protocol from %s (zapfing)"
 msgstr ""
 
-#: src/botcmd.c:659 src/botcmd.c:666 src/botcmd.c:682 src/botcmd.c:692
-#: src/botcmd.c:871 src/botcmd.c:931
+#: src/botcmd.c:660 src/botcmd.c:667 src/botcmd.c:683 src/botcmd.c:693
+#: src/botcmd.c:872 src/botcmd.c:932
 msgid "Disconnected"
 msgstr ""
 
-#: src/botcmd.c:660
+#: src/botcmd.c:661
 msgid "invalid bot"
 msgstr ""
 
-#: src/botcmd.c:665
+#: src/botcmd.c:666
 msgid "Loop detected"
 msgstr ""
 
-#: src/botcmd.c:666
+#: src/botcmd.c:667
 msgid "Detected loop: disconnecting"
 msgstr ""
 
-#: src/botcmd.c:679 src/botcmd.c:681 src/botcmd.c:684
+#: src/botcmd.c:680 src/botcmd.c:682 src/botcmd.c:685
 msgid "Bogus link notice from"
 msgstr ""
 
-#: src/botcmd.c:688
+#: src/botcmd.c:689
 msgid "Disconnected left"
 msgstr ""
 
-#: src/botcmd.c:689 src/botcmd.c:716 src/botmsg.c:283
+#: src/botcmd.c:690 src/botcmd.c:717 src/botmsg.c:283
 msgid "Linked to"
 msgstr ""
 
-#: src/botcmd.c:691 src/botcmd.c:698
+#: src/botcmd.c:692 src/botcmd.c:699
 msgid "Illegal link by leaf"
 msgstr ""
 
-#: src/botcmd.c:693
+#: src/botcmd.c:694
 msgid "You are supposed to be a leaf!"
 msgstr ""
 
 #. we're directly connected to the offending bot?! (shudder!)
-#: src/botcmd.c:724 src/users.c:1051 src/users.c:1054
+#: src/botcmd.c:725 src/users.c:1051 src/users.c:1054
 msgid "Rejecting bot"
 msgstr ""
 
-#: src/botcmd.c:725
+#: src/botcmd.c:726
 msgid "from"
 msgstr ""
 
-#: src/botcmd.c:737
+#: src/botcmd.c:738
 msgid "Older bot detected (unsupported)"
 msgstr ""
 
-#: src/botcmd.c:740
+#: src/botcmd.c:741
 #, c-format
 msgid "Disconnected %s (outdated) (lost %d bot%s and %d user%s"
 msgstr ""
 
-#: src/botcmd.c:823 src/botcmd.c:825
+#: src/botcmd.c:824 src/botcmd.c:826
 msgid "Trace result"
 msgstr ""
 
-#: src/botcmd.c:863
+#: src/botcmd.c:864
 msgid "doesnt exist"
 msgstr ""
 
 #. I'm the connection to the rejected bot
-#: src/botcmd.c:868 src/botcmd.c:869 src/botcmd.c:872 src/botcmd.c:1090
+#: src/botcmd.c:869 src/botcmd.c:870 src/botcmd.c:873 src/botcmd.c:1091
 #: src/users.c:1048
 msgid "rejected"
 msgstr ""
 
-#: src/botcmd.c:900
+#: src/botcmd.c:901
 msgid "Remote boots are not allowed."
 msgstr ""
 
-#: src/botcmd.c:908
+#: src/botcmd.c:909
 msgid "Cant boot the bot owner."
 msgstr ""
 
-#: src/botcmd.c:929
+#: src/botcmd.c:930
 #, c-format
 msgid "Wrong bot--wanted %s, got %s"
 msgstr ""
 
-#: src/botcmd.c:930 src/botcmd.c:932
+#: src/botcmd.c:931 src/botcmd.c:933
 msgid "imposter"
 msgstr ""
 
-#: src/botcmd.c:1038
+#: src/botcmd.c:1039
 msgid "MOTD file:"
 msgstr ""
 
-#: src/botcmd.c:1054
+#: src/botcmd.c:1055
 msgid "No MOTD file."
 msgstr ""
 
-#: src/botcmd.c:1085
+#: src/botcmd.c:1086
 msgid "FILE TRANSFER REJECTED"
 msgstr ""
 
-#: src/botcmd.c:1114
+#: src/botcmd.c:1115
 msgid "Filesys module not loaded."
 msgstr ""
 
-#: src/botcmd.c:1276 src/botcmd.c:1328 src/botcmd.c:1332 src/botmsg.c:515
-#: src/botmsg.c:548
+#: src/botcmd.c:1277 src/botcmd.c:1329 src/botcmd.c:1333 src/botmsg.c:516
+#: src/botmsg.c:549
 msgid "has left the"
 msgstr ""
 
-#: src/botcmd.c:1281 src/botmsg.c:510 src/botmsg.c:541
+#: src/botcmd.c:1282 src/botmsg.c:511 src/botmsg.c:542
 msgid "has joined the"
 msgstr ""
 
-#: src/botcmd.c:1382 src/botmsg.c:472
+#: src/botcmd.c:1383 src/botmsg.c:472
 msgid "is now away"
 msgstr ""
 
-#: src/botcmd.c:1386 src/botmsg.c:479 src/botmsg.c:486
+#: src/botcmd.c:1387 src/botmsg.c:479 src/botmsg.c:486
 msgid "is no longer away"
 msgstr ""
 
-#: src/botcmd.c:1430
+#: src/botcmd.c:1431
 msgid "User file rejected by"
 msgstr ""
 
-#: src/botcmd.c:1438
+#: src/botcmd.c:1439
 msgid "Old style share request by"
 msgstr ""
 
-#: src/botcmd.c:1439
+#: src/botcmd.c:1440
 msgid "Antiquated sharing request"
 msgstr ""
 
-#: src/botmsg.c:616 src/botmsg.c:638
+#: src/botmsg.c:618 src/botmsg.c:640
 msgid "Nick Change:"
 msgstr ""
 
-#: src/botmsg.c:679
+#: src/botmsg.c:681
 msgid "That bot isnt here.\n"
 msgstr ""
 
-#: src/botmsg.c:710
+#: src/botmsg.c:712
 msgid "I dont know anyone by that name.\n"
 msgstr ""
 
-#: src/botmsg.c:715
+#: src/botmsg.c:717
 msgid "Thats a bot.  You cant leave notes for a bot.\n"
 msgstr ""
 
-#: src/botmsg.c:738
+#: src/botmsg.c:740
 msgid "is away"
 msgstr ""
 
 #. User is away in all sessions -- just notify the user that a
 #. * message arrived and was stored. (only oldest session is notified.)
 #.
-#: src/botmsg.c:781
+#: src/botmsg.c:783
 msgid "Note arrived for you"
 msgstr ""
 
@@ -691,7 +691,7 @@ msgstr ""
 msgid "Rehashing."
 msgstr ""
 
-#: modules/irc/msgcmds.c:862 src/cmds.c:1078 src/tcldcc.c:759
+#: modules/irc/msgcmds.c:862 src/cmds.c:1078 src/tcldcc.c:761
 msgid "Rehashing..."
 msgstr ""
 
@@ -2608,15 +2608,15 @@ msgstr ""
 msgid "No such module.\n"
 msgstr ""
 
-#: src/tcldcc.c:564
+#: src/tcldcc.c:566
 msgid "No free sockets available."
 msgstr ""
 
-#: src/tcldcc.c:755 src/tcldcc.c:768
+#: src/tcldcc.c:757 src/tcldcc.c:770
 msgid "Userfile creation not necessary--skipping"
 msgstr ""
 
-#: src/tcldcc.c:772
+#: src/tcldcc.c:774
 msgid "Restarting..."
 msgstr ""
 
