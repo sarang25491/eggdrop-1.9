@@ -86,7 +86,7 @@ static int my_perl_callbacker(script_callback_t *me, ...)
 
 		msg = SvPV(ERRSV, len);
 		retval = POPi;
-		putlog(LOG_MISC, "*", "Perl error: $s", msg);
+		putlog(LOG_MISC, "*", "Perl error: %s", msg);
 	}
 	if (count > 0) {
 		retval = POPi;
@@ -135,6 +135,40 @@ static SV *my_resolve_variable(script_var_t *v)
 {
 	SV *result;
 
+	if (v->type & SCRIPT_ARRAY) {
+		AV *array;
+		SV *element;
+		int i;
+
+		array = newAV();
+		if ((v->type & SCRIPT_TYPE_MASK) == SCRIPT_VAR) {
+			script_var_t **v_list;
+
+			v_list = (script_var_t **)v->value;
+			for (i = 0; i < v->len; i++) {
+				element = my_resolve_variable(v_list[i]);
+				av_push(array, element);
+			}
+		}
+		else {
+			script_var_t v_sub;
+			void **values;
+
+			v_sub.type = v->type & (~SCRIPT_ARRAY);
+			values = (void **)v->value;
+			for (i = 0; i < v->len; i++) {
+				v_sub.value = values[i];
+				v_sub.len = -1;
+				element = my_resolve_var(&v_sub);
+				av_push(array, element);
+			}
+		}
+		if (v->type & SCRIPT_FREE) free(v->value);
+		if (v->type & SCRIPT_FREE_VAR) free(v);
+		result = newRV_noinc((SV *)array);
+		return(result);
+	}
+
 	switch (v->type & SCRIPT_TYPE_MASK) {
 		case SCRIPT_INTEGER:
 			result = newSViv((int) v->value);
@@ -145,23 +179,6 @@ static SV *my_resolve_variable(script_var_t *v)
 			result = newSVpv((char *)v->value, v->len);
 			if (v->type & SCRIPT_FREE) free(v->value);
 			break;
-
-/* Save for later when we do arrays again
-	else if (v->type & (SCRIPTING_ARRAY | SCRIPTING_VARRAY)) {
-		AV *array;
-		int i;
-
-		array = newAV();
-		for (i = 0; i < v->len; i++) {
-			SV *item;
-
-			if (v->type & SCRIPTING_ARRAY) item = my_resolve_variable(v->ptrarray[i]);
-			else item = my_resolve_variable(&v->varray[i]);
-			av_push(array, item);
-		}
-		result = newRV_noinc((SV *)array);
-	}
-end of array code */
 		case SCRIPT_POINTER: {
 			char str[32];
 			int str_len;
@@ -347,8 +364,6 @@ static int dcc_cmd_perl(struct userrec *u, int idx, char *text)
 	int len;
 
 	if (must_be_owner && !(isowner(dcc[idx].nick))) return(0);
-
-	len = strlen(text);
 
 	result = eval_pv(text, FALSE);
 	if (SvTRUE(ERRSV)) {
