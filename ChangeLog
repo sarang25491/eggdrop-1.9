@@ -1,3 +1,12 @@
+2002-05-27 04:19  stdarg <stdarg@techmonkeys.org>
+
+	* modules/channels/tclchan.c:
+
+	
+	* channel_info now returns a list of all channel setting names, not
+	values.  
+	* channel_get returns a single setting for a single channel.  
+
 2002-05-26 08:34  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/module.h, modules/console/console.c,
