@@ -1,3 +1,9 @@
+2001-12-19 06:31  Jeff Fisher <guppy@techmonkeys.org>
+
+	* doc/UPDATES1.6, modules/irc/tclirc.c, src/patch.h:
+
+	applied my morespeedyness.diff from eggdrop1.6 
+
 2001-12-19 06:28  Jeff Fisher <guppy@techmonkeys.org>
 
 	* doc/UPDATES1.6, modules/irc/chan.c, modules/irc/mode.c,
