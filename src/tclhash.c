@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.29 2001/08/10 23:51:20 ite Exp $
+ * $Id: tclhash.c,v 1.30 2001/08/24 01:07:26 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -250,6 +250,24 @@ void kill_bind(void)
   bind_table_list = NULL;
 }
 
+bind_table_t *add_bind_table2(const char *name, int flags)
+{
+	bind_table_t *table;
+
+	for (table = bind_table_list_start; table; table = table->next) {
+		/* If it already exists, and isn't marked for deletion, return it. */
+		if (!strcmp(table->name, name)) return(table);
+	}
+	/* Nope, we have to create a new one. */
+	table = (bind_table_t *)nmalloc(sizeof(*table));
+	table->chains = NULL;
+	table->name = (char *)strdup(name);
+	table->flags = flags;
+	table->next = bind_table_list_start;
+	bind_table_list_start = table;
+	return(table);
+}
+
 tcl_bind_list_t *add_bind_table(const char *nme, int flg, Function func)
 {
   tcl_bind_list_t	*tl, *tl_prev;
@@ -286,6 +304,35 @@ tcl_bind_list_t *add_bind_table(const char *nme, int flg, Function func)
   return tl;
 }
 
+void del_bind_table2(bind_table_t *table)
+{
+	bind_table_t *cur, *prev;
+	bind_chain_t *chain, *next_chain;
+	bind_entry_t *entry, *next_entry;
+
+	for (prev = NULL, cur = bind_table_list_head; cur; prev = cur, cur = cur->next) {
+		if (!strcmp(table->name, cur->name)) break;
+	}
+
+	/* If it's found, remove it from the list. */
+	if (cur) {
+		if (prev) prev->next = cur->next;
+		else bind_table_list_head = cur->next;
+	}
+
+	/* Now delete it. */
+	free(table->name); /* Got this from strdup(), so use free(). */
+	for (chain = table->chains; chain; chain = next_chain) {
+		next_chain = chain->next;
+		for (entry = chain->entries; entry; entry = next_entry) {
+			next_entry = entry->next;
+			free(entry->function_name);
+			free(entry);
+		}
+		nfree(chain);
+	}
+}
+
 void del_bind_table(tcl_bind_list_t *tl_which)
 {
   tcl_bind_list_t	*tl;
@@ -300,6 +347,16 @@ void del_bind_table(tcl_bind_list_t *tl_which)
     }
   }
   putlog(LOG_DEBUG, "*", "??? Tried to delete not listed bind table ???");
+}
+
+bind_table_t *find_bind_table2(const char *name)
+{
+	bind_table_t *table;
+
+	for (table = bind_table_list_head; table; table = table->next) {
+		if (!strcmp(table->name, name)) return(table);
+	}
+	return(NULL);
 }
 
 tcl_bind_list_t *find_bind_table(const char *nme)
@@ -319,6 +376,15 @@ tcl_bind_list_t *find_bind_table(const char *nme)
   return NULL;
 }
 
+static void dump_bind_tables2(Tcl_Interp *irp)
+{
+	bind_table_t *table;
+
+	for (table = bind_table_list_head; table; table = table->next) {
+		Tcl_AppendResult(irp, table->name, " ", NULL);
+	}
+}
+
 static void dump_bind_tables(Tcl_Interp *irp)
 {
   tcl_bind_list_t	*tl;
@@ -333,6 +399,19 @@ static void dump_bind_tables(Tcl_Interp *irp)
       i = 1;
     Tcl_AppendResult(irp, tl->name, NULL);
   }
+}
+
+static int del_bind_entry(bind_table_t *table, const char *flags, const char *mask, const char *function_name)
+{
+	bind_chain_t *chain;
+	bind_entry_t *entry;
+
+	for (chain = table->chains; chain; chain = chain->next) {
+		if (!strcmp(chain->mask, mask)) break;
+	}
+	if (!chain) return(1);
+	/* Not done yet, stopping for now :) */
+	return(0);
 }
 
 static int unbind_bind_entry(tcl_bind_list_t *tl, const char *flags,

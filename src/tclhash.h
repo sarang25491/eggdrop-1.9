@@ -1,7 +1,7 @@
 /*
  * tclhash.h
  *
- * $Id: tclhash.h,v 1.9 2001/08/23 23:15:34 stdarg Exp $
+ * $Id: tclhash.h,v 1.10 2001/08/24 01:07:26 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -29,6 +29,8 @@
 #define TC_DELETED	0x0001	/* This command/trigger was deleted.	*/
 
 /* Will replace tcl_cmd_t */
+/* This holds the final information for a function listening on a bind
+   table. */
 typedef struct bind_entry_b {
 	struct bind_entry_b *next;
 	struct flag_record user_flags;
@@ -53,6 +55,9 @@ typedef struct tcl_cmd_b {
 #define TBM_DELETED	0x0001	/* This mask was deleted.		*/
 
 /* Will replace tcl_bind_mask_t */
+/* This is the list of bind masks in a given table.
+   For instance, in the "msg" table you might have "pass", "op",
+   and "invite". */
 typedef struct bind_chain_b {
 	bind_chain_b *next;
 	bind_entry_t *entries;
@@ -76,6 +81,8 @@ typedef struct tcl_bind_mask_b {
 				   Do not use it anymore.		*/
 
 /* Will replace tcl_bind_list_b */
+/* This is the highest-level structure. It's like the "msg" table
+   or the "pubm" table. */
 typedef struct bind_table_b {
 	bind_table_b *next;
 	bind_chain_t *chains;
