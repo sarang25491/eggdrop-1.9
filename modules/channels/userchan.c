@@ -1,7 +1,7 @@
 /*
  * userchan.c -- part of channels.mod
  *
- * $Id: userchan.c,v 1.8 2002/04/01 17:34:55 eule Exp $
+ * $Id: userchan.c,v 1.9 2002/04/26 09:29:51 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -165,10 +165,29 @@ static int u_sticky_mask(maskrec *u, char *uhost)
 
 /* Set sticky attribute for a mask.
  */
-static int u_setsticky_mask(struct chanset_t *chan, maskrec *u, char *uhost,
-			    int sticky, char *botcmd)
+static int u_setsticky_mask(int type, struct chanset_t *chan, char *uhost,
+			    int sticky)
 {
   int j;
+  maskrec *u;
+  char *botcmd;
+
+  if (type == 'b') {
+    if (chan) u = chan->bans;
+    else u = global_bans;
+    botcmd = "s";
+  }
+  else if (type == 'I') {
+    if (chan) u = chan->invites;
+    else u = global_invites;
+    botcmd = "sInv";
+  }
+  else if (type == 'e') {
+    if (chan) u = chan->exempts;
+    else u = global_exempts;
+    botcmd = "se";
+  }
+  else return(-1);
 
   j = atoi(uhost);
   if (!j)
@@ -301,7 +320,9 @@ static int u_addmask(char type, struct chanset_t *chan, char *who, char *from,
   if (type == 'I')
     u = chan ? &chan->invites : &global_invites;
 
-  strcpy(host, who);
+  strncpy(host, who, 256);
+  host[256] = 0;
+
   /* Choke check: fix broken bans (must have '!' and '@') */
   if ((strchr(host, '!') == NULL) && (strchr(host, '@') == NULL))
     strcat(host, "!*@*");

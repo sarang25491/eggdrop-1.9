@@ -1,7 +1,7 @@
 /*
  * channels.h -- part of channels.mod
  *
- * $Id: channels.h,v 1.6 2002/04/01 17:34:54 eule Exp $
+ * $Id: channels.h,v 1.7 2002/04/26 09:29:51 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -68,8 +68,8 @@ static void set_handle_chaninfo(struct userrec *bu, char *handle,
 				char *chname, char *info);
 static void set_handle_laston(char *chan, struct userrec *u, time_t n);
 static int u_sticky_mask(maskrec *u, char *uhost);
-static int u_setsticky_mask(struct chanset_t *chan, maskrec *m, char *uhost,
-			    int sticky, char *botcmd);
+static int u_setsticky_mask(int type, struct chanset_t *chan, char *uhost,
+			    int sticky);
 
 static int u_equals_mask(maskrec *u, char *uhost);
 static int u_match_mask(struct maskrec *rec, char *mask);
@@ -109,7 +109,7 @@ inline static int chanset_unlink(struct chanset_t *chan);
 #else
 
 /* 4 - 7 */
-#define u_setsticky_mask ((int (*)(struct chanset_t *, maskrec *, char *, int, char *))channels_funcs[4])
+#define u_setsticky_mask ((int (*)(int, struct chanset_t *, char *, int))channels_funcs[4])
 #define u_delmask ((int (*)(char, struct chanset_t *, char *, int))channels_funcs[5])
 #define u_addmask ((int (*)(char, struct chanset_t *, char *, char *, char *, time_t, int))channels_funcs[6])
 #define write_bans ((int (*)(FILE *, int))channels_funcs[7])
@@ -175,9 +175,9 @@ inline static int chanset_unlink(struct chanset_t *chan);
 #define ischanexempt(chan, user) ismodeline((chan)->channel.exempt, user)
 #define ischaninvite(chan, user) ismodeline((chan)->channel.invite, user)
 
-#define u_setsticky_ban(chan, host, sticky)     u_setsticky_mask(chan, ((struct chanset_t *)chan) ? ((struct chanset_t *)chan)->bans : global_bans, host, sticky, "s")
-#define u_setsticky_exempt(chan, host, sticky)  u_setsticky_mask(chan, ((struct chanset_t *)chan) ? ((struct chanset_t *)chan)->exempts : global_exempts, host, sticky, "se")
-#define u_setsticky_invite(chan, host, sticky)  u_setsticky_mask(chan, ((struct chanset_t *)chan) ? ((struct chanset_t *)chan)->invites : global_invites, host, sticky, "sInv")
+#define u_setsticky_ban(chan, host, sticky)     u_setsticky_mask('b', chan, host, sticky)
+#define u_setsticky_exempt(chan, host, sticky)  u_setsticky_mask('e', chan, host, sticky)
+#define u_setsticky_invite(chan, host, sticky)  u_setsticky_mask('I', chan, host, sticky)
 
 #define is_perm_exempted(chan, user) (u_match_mask(chan->exempts, user) || \
 				      (u_match_mask(global_exempts, user) && \

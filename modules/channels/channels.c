@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.9 2002/04/17 21:40:39 ite Exp $
+ * $Id: channels.c,v 1.10 2002/04/26 09:29:51 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -735,6 +735,7 @@ static char *channels_close()
   free_udef(udef);
   if (BT_chon) rem_builtins2(BT_chon, my_chon);
   if (BT_dcc) rem_builtins2(BT_dcc, C_dcc_irc);
+  script_delete_cmd_table(channel_script_cmds);
   rem_tcl_commands(channels_cmds);
   rem_tcl_strings(my_tcl_strings);
   rem_tcl_ints(my_tcl_ints);
@@ -874,6 +875,7 @@ char *start(eggdrop_t *eggdrop)
   if (BT_chon) add_builtins2(BT_chon, my_chon);
   BT_dcc = find_bind_table2("dcc");
   if (BT_dcc) add_builtins2(BT_dcc, C_dcc_irc);
+  script_create_cmd_table(channel_script_cmds);
   add_tcl_commands(channels_cmds);
   add_tcl_strings(my_tcl_strings);
   add_help_reference("channels.help");
