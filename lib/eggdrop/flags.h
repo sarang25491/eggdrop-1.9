@@ -16,15 +16,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: flags.h,v 1.6 2003/12/17 07:39:14 wcc Exp $
+ * $Id: flags.h,v 1.7 2004/07/04 23:55:36 darko Exp $
  */
 
 #ifndef _EGG_FLAGS_H_
 #define _EGG_FLAGS_H_
 
 typedef struct {
-	int builtin;
-	int udef;
+	unsigned long builtin;
+	unsigned long udef;
 } flags_t;
 
 /* str should be at least 26+26+1 = 53 bytes. */
@@ -34,5 +34,8 @@ int flag_from_str(flags_t *flags, const char *str);
 int flag_match_subset(flags_t *left, flags_t *right);
 int flag_match_exact(flags_t *left, flags_t *right);
 int flag_match_partial(flags_t *left, flags_t *right);
+void init_flag_map();
+void global_sanity_check(flags_t *flags);
+void channel_sanity_check(flags_t *flags);
 
 #endif /* !_EGG_FLAGS_H_ */

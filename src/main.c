@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.181 2004/06/30 17:07:20 wingman Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.182 2004/07/04 23:55:35 darko Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -459,6 +459,8 @@ int main(int argc, char **argv)
 		fprintf(stderr, "\tEggdrop will not run as root!\n\n");
 		return -1;
 	}
+
+	init_flag_map();
 
 	/* config file may not be world read/writeable */
 	if (file_check(configfile)) {

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.36 2004/06/28 20:44:37 darko Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.37 2004/07/04 23:55:36 darko Exp $";
 #endif
 
 #include <stdio.h>
@@ -534,6 +534,10 @@ int user_set_flags(user_t *u, const char *chan, flags_t *flags)
 	if (check_flag_change(u, chan, oldflags, &newflags)) return(0);
 	oldflags->builtin = newflags.builtin;
 	oldflags->udef = newflags.udef;
+	if (chan)
+		channel_sanity_check(oldflags);
+	else
+		global_sanity_check(oldflags);
 	return(0);
 }
 
@@ -548,6 +552,10 @@ int user_set_flags_str(user_t *u, const char *chan, const char *flags)
 	if (check_flag_change(u, chan, oldflags, &newflags)) return(0);
 	oldflags->builtin = newflags.builtin;
 	oldflags->udef = newflags.udef;
+	if (chan)
+		channel_sanity_check(oldflags);
+	else
+		global_sanity_check(oldflags);
 	return(0);
 }
 
