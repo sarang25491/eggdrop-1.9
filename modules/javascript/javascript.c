@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: javascript.c,v 1.6 2002/05/09 21:23:30 ite Exp $";
+static const char rcsid[] = "$Id: javascript.c,v 1.7 2002/05/11 01:08:43 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -108,8 +108,10 @@ static JSClass global_class = {"global", JSCLASS_HAS_PRIVATE,
 /* Load a JS script. */
 static int my_load_script(registry_entry_t *entry, char *fname)
 {
-	int result;
+	FILE *fp;
 	int len;
+	jsval rval;
+	char *script;
 
 	/* Check the filename and make sure it ends in .tcl */
 	len = strlen(fname);
@@ -118,7 +120,22 @@ static int my_load_script(registry_entry_t *entry, char *fname)
 		return(0);
 	}
 
-	/* result = Tcl_EvalFile(ginterp, fname); */
+	fp = fopen(fname, "r");
+	if (!fp) return(0);
+
+	fseek(fp, 0, SEEK_END);
+	len = ftell(fp);
+	fseek(fp, 0, SEEK_SET);
+	script = (char *)malloc(len+1);
+	fread(script, len, 1, fp);
+	fclose(fp);
+	script[len] = 0;
+	JS_EvaluateScript(global_js_context, global_js_object,
+		script, len,
+		fname, 1,
+		&rval);
+	free(script);
+
 	return(0);
 }
 
