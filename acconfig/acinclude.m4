@@ -1,7 +1,7 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.36 2004/06/13 23:31:37 takeda Exp $
+dnl $Id: acinclude.m4,v 1.37 2004/06/14 14:45:53 wingman Exp $
 dnl
 
 
@@ -19,19 +19,18 @@ make your compile work without much twiddling.
 dnl  EGG_MSG_CONFIGURE_END()
 dnl
 AC_DEFUN([EGG_MSG_CONFIGURE_END], [dnl
+
 AC_MSG_RESULT([
 ------------------------------------------------------------------------
 Configuration:
 
-  Source code location:       $srcdir
-  Compiler:                   $CC
-  Compiler flags:             $CFLAGS
-  Host System Type:           $host
-  Install path:               $prefix
-  Compress module:            $egg_compress
-  Tcl module:                 $egg_tclscript
-  Perl module:                $egg_perlscript
-  Javascript module:          $egg_javascript
+  Source code location : $srcdir
+  Compiler             : $CC
+  Compiler flags       : $CFLAGS
+  Host System Type     : $host
+  Install path         : $prefix
+  Enabled Modules      : $EGG_MODULES_ENABLED
+  Disabled Modules     : $EGG_MODULES_DISABLED
 
 See config.h for further configuration information.
 ------------------------------------------------------------------------
@@ -646,189 +645,43 @@ EGG_WITH_EFENCE
 
 ])
 
-
-dnl  EGG_COMPRESS_MODULE
 dnl
-AC_DEFUN([EGG_COMPRESS_MODULE], [dnl
-
-egg_compress=no
-
-AC_CHECK_LIB(z, gzopen, ZLIB="-lz")
-AC_CHECK_HEADER(zlib.h)
-
-# Disable the module if either the header file or the library
-# are missing.
-if test "${ZLIB+set}" != set
-then
-  AC_MSG_WARN([
-
-  Your system does not provide a working zlib compression library. The
-  compress module will therefore be disabled.
-
+dnl EGG_CHECK_MODULES()
+dnl
+AC_DEFUN([EGG_CHECK_MODULES],[
+  esyscmd(./acconfig/config.stubs ./modules/)
 ])
-else
-  if test "$ac_cv_header_zlib_h" != yes
-  then
-  AC_MSG_WARN([
 
-  Your system does not provide the necessary zlib header files. The
-  compress module will therefore be disabled.
+dnl
+dnl EGG_MODULE_START(name, help, enabled)
+dnl
+AC_DEFUN([EGG_MODULE_START],[
+  EGG_MOD_NAME=$1
+  EGG_MOD_DIR=modules/$1/
 
+  AC_ARG_ENABLE([$1], AC_HELP_STRING(
+    [--disable-$1], [disable $2]),
+    [
+      EGG_MOD_ENABLED="$enableval"
+    ], [
+      EGG_MOD_ENABLED=$3
+  ])
+
+  AC_CONFIG_FILES(modules/$1/Makefile)
+
+  if test "$EGG_MOD_ENABLED" = "yes"; then
+    AC_MSG_NOTICE([Configuring module $EGG_MOD_NAME...])
 ])
-  else
-    egg_compress=yes
-    AC_FUNC_MMAP
-    AC_SUBST(ZLIB)
+
+dnl
+dnl EGG_MODULE_END()
+dnl
+AC_DEFUN([EGG_MODULE_END],[
   fi
-fi
 
-AM_CONDITIONAL(EGG_COMPRESS, test "$egg_compress" = yes)
-])
-
-# FIXME: is it worth to make this macro more anal? Yes it is!
-dnl  EGG_PERLSCRIPT_MODULE
-dnl
-AC_DEFUN([EGG_PERLSCRIPT_MODULE], [dnl
-
-AC_ARG_WITH(perlscript,
-            AC_HELP_STRING([--without-perlscript],
-                           [build without the perl module]),
-                           egg_with_perlscript="$withval", egg_with_perlscript=yes)
-egg_perlscript=no
-
-if test "$egg_with_perlscript" = yes
-then
-
-AC_PATH_PROG(perlcmd, perl)
-PERL_LDFLAGS=`$perlcmd -MExtUtils::Embed -e ldopts 2>/dev/null`
-if test "${PERL_LDFLAGS+set}" != set
-then
-  AC_MSG_WARN([
-
-  Your system does not provide a working perl environment. The
-  perlscript module will therefore be disabled.
-  
-])
-else
-  PERL_CCFLAGS=`$perlcmd -MExtUtils::Embed -e ccopts 2>/dev/null`
-  egg_perlscript=yes
-  AC_SUBST(PERL_LDFLAGS)
-  AC_SUBST(PERL_CCFLAGS)
-fi
-
-fi
-AM_CONDITIONAL(EGG_PERLSCRIPT, test "$egg_perlscript" = yes)
-])
-
-dnl  EGG_TCLSCRIPT_MODULE
-dnl
-AC_DEFUN([EGG_TCLSCRIPT_MODULE], [dnl
-
-egg_tclscript=no
-
-SC_PATH_TCLCONFIG
-if test x"${no_tcl}" = x ; then
-	SC_LOAD_TCLCONFIG
-
-	# We only support version 8
-	if test "$TCL_MAJOR_VERSION" = 8
-	then
-		if test x"${TCL_INCLUDE_SPEC}" = x ; then
-			if test -d ${TCL_PREFIX}/include/tcl${TCL_VERSION} ; then
-				TCL_INCLUDE_SPEC=-I${TCL_PREFIX}/include/tcl${TCL_VERSION}
-			else
-				TCL_INCLUDE_SPEC=-I${TCL_PREFIX}/include
-			fi
-		fi
-
-		AC_SUBST(TCL_INCLUDE_SPEC)
-		AC_SUBST(TCL_LIBS)
-		egg_tclscript=yes
-	else
-		AC_MSG_WARN([
-
-  Your system does not seem to provide tcl 8.0 or later. The
-  tclscript module will therefore be disabled.
-
-  To manually specify tcl's location, re-run configure using
-    --with-tcl=/path/to/tcl
-  where the path is the directory containing tclConfig.sh.
-
-])
-	fi
-fi
-
-AM_CONDITIONAL(EGG_TCLSCRIPT, test "$egg_tclscript" = yes)
-])
-
-dnl  EGG_JAVASCRIPT_MODULE
-dnl
-AC_DEFUN([EGG_JAVASCRIPT_MODULE], [dnl
-
-egg_javascript=no
-
-AC_ARG_WITH(jslib, 
-            AC_HELP_STRING([--with-jslib=PATH],
-                           [path to javascript library directory]),
-            jslibname="$withval")
-AC_ARG_WITH(jsinc,
-            AC_HELP_STRING([--with-jsinc=PATH],
-                           [path to javascript headers directory]),
-            jsincname="$withval")
-
-CPPFLAGS_save="$CPPFLAGS"
-LDFLAGS_save="$LDFLAGS"
-
-CPPFLAGS="$CPPFLAGS -DXP_UNIX"
-if test "${jsincname+set}" = set
-then
-  CPPFLAGS="$CPPFLAGS -I$jsincname"
-fi
-if test "${jslibname+set}" = set
-then
-  LDFLAGS="$LDFLAGS -L$jslibname"
-fi
-
-AC_CHECK_LIB(js, JS_NewObject, JSLIBS="-ljs")
-AC_CHECK_HEADER(jsapi.h)
-
-# Disable the module if either the header file or the library
-# are missing.
-if test "${JSLIBS+set}" != set
-then
-  AC_MSG_WARN([
-
-  Your system does not provide a working javascript library. The
-  javascript module will therefore be disabled.
-
-])
-else
-  if test "$ac_cv_header_jsapi_h" != yes
-  then
-    AC_MSG_WARN([
-
-  Your system does not provide the necessary javascript header files. The
-  javascript module will therefore be disabled.
-
-])
+  if test "$EGG_MOD_ENABLED" = "yes"; then
+    EGG_MODULES_ENABLED="$EGG_MOD_NAME $EGG_MODULES_ENABLED"
   else
-    egg_javascript=yes
-    AC_SUBST(JSLIBS)
-    if test "${jslibname+set}" = set
-    then
-      JSLDFLAGS="-L$jslibname"
-    fi
-    AC_SUBST(JSLDFLAGS)
-    if test "${jsincname+set}" = set
-    then
-      JSINCL="-I$jsincname"
-    fi   
-    AC_SUBST(JSINCL)
+    EGG_MODULES_DISABLED="$EGG_MOD_NAME $EGG_MODULES_DISABLED"
   fi
-fi
-
-CPPFLAGS="${CPPFLAGS_save}" 
-LDFLAGS="${LDFLAGS_save}"
-
-AM_CONDITIONAL(EGG_JAVASCRIPT, test "$egg_javascript" = yes)
 ])

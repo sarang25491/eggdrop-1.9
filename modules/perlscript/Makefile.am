@@ -1,16 +1,9 @@
-# $Id: Makefile.am,v 1.8 2003/12/18 07:10:03 wcc Exp $
+# $Id: Makefile.am,v 1.9 2004/06/14 14:45:53 wingman Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 pkglibdir = $(exec_prefix)/modules
 
-# FIXME: test if there's dependency on gnu make. It shouldn't.
-if EGG_PERLSCRIPT
-  EGG_PRL = perlscript.la
-else
-  EGG_PRL =
-endif
-
-pkglib_LTLIBRARIES  = $(EGG_PRL)
+pkglib_LTLIBRARIES    = perlscript.la
 perlscript_la_SOURCES = perlscript.c mod_iface.c
 perlscript_la_LDFLAGS = -module -avoid-version -no-undefined
 perlscript_la_LIBADD  = @PERL_LDFLAGS@ @LIBS@ \

@@ -1,16 +1,9 @@
-# $Id: Makefile.am,v 1.11 2004/06/13 23:31:37 takeda Exp $
+# $Id: Makefile.am,v 1.12 2004/06/14 14:45:53 wingman Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 pkglibdir		= $(exec_prefix)/modules
 
-# FIXME: test if there's dependency on gnu make. It shouldn't.
-if EGG_TCLSCRIPT
-  EGG_TCL = tclscript.la
-else
-  EGG_TCL =
-endif
-    
-pkglib_LTLIBRARIES	= $(EGG_TCL)
+pkglib_LTLIBRARIES	= tclscript.la 
 tclscript_la_SOURCES	= tclscript.c
 tclscript_la_LDFLAGS	= -module -avoid-version -no-undefined
 tclscript_la_LIBADD	= @TCL_LIBS@ @TCL_LIB_SPEC@ @LIBS@ \

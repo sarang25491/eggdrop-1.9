@@ -4,8 +4,7 @@ AC_PREREQ(2.53)
 AC_CONFIG_AUX_DIR(acconfig)
 AM_CONFIG_HEADER(config.h)
 
-# FIXME: make module Makefile list dynamic
-AC_CONFIG_FILES([Makefile lib/Makefile lib/compat/Makefile lib/eggdrop/Makefile m4/Makefile modules/Makefile modules/blowfish/Makefile modules/dccparty/Makefile modules/ircparty/Makefile modules/javascript/Makefile modules/oldbotnet/Makefile modules/perlscript/Makefile modules/proxy/Makefile modules/script/Makefile modules/server/Makefile modules/tclscript/Makefile modules/telnetparty/Makefile po/Makefile.in src/Makefile])
+AC_CONFIG_FILES([Makefile lib/Makefile lib/compat/Makefile lib/eggdrop/Makefile m4/Makefile po/Makefile.in src/Makefile modules/Makefile])
 
 EGG_MSG_CONFIGURE_START
 AM_INIT_AUTOMAKE(eggdrop, 1.7.0)
@@ -108,18 +107,30 @@ EGG_REPLACE_SNPRINTF
 EGG_IPV6_SUPPORTED
 EGG_IPV6_OPTIONS
 
+# Checks for debug options
 EGG_DEBUG_OPTIONS
 
+# Defines version num
 EGG_DEFINE_VERSION_NUM
 
-EGG_COMPRESS_MODULE
-EGG_PERLSCRIPT_MODULE
-EGG_TCLSCRIPT_MODULE
-EGG_JAVASCRIPT_MODULE
+# Save now since modules may fail due to a missing
+# requirement (like tcl.h not found...)
+AC_CACHE_SAVE
 
-AC_CONFIG_SUBDIRS(libltdl intl)
+# Check for modules
+EGG_CHECK_MODULES
 
+# Export list of enabled modules
+AC_SUBST(EGG_MODULES_ENABLED)
+
+# XXX: for what is this?
 AC_SUBST(ac_aux_dir)
+
+# Export list of preloaded shared objects
+AC_SUBST(LIBEGGDROP_PRELOAD)
+
+# ldl support
+AC_CONFIG_SUBDIRS(libltdl intl)
 
 AC_OUTPUT
 
