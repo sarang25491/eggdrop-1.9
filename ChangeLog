@@ -1,3 +1,16 @@
+2002-02-14 01:39  Federico Mennite <ite@techmonkeys.org>
+
+	* acconfig/: config.guess, config.sub:
+
+	Upgraded to latest config.guess and config.sub 
+
+2002-02-14 01:36  Federico Mennite <ite@techmonkeys.org>
+
+	* acconfig/acinclude.m4:
+
+	If ngettext isn't available in the eventual gettext library
+	available on the system, switch to our own.  
+
 2002-02-14 00:55  Federico Mennite <ite@techmonkeys.org>
 
 	* acconfig/acinclude.m4, src/chanprog.c, src/modules.c, src/tcl.c:
