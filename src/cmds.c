@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.78 2001/12/08 15:59:26 ite Exp $
+ * $Id: cmds.c,v 1.79 2001/12/08 19:17:44 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1611,12 +1611,11 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
 	      chan->dname, work);
     else
       dprintf(idx, "No flags for %s on %s.\n", hand, chan->dname);
-    if (chg && (me = module_find("irc", 0, 0))) {
-      Function *func = me->funcs;
-
-      if (chan)
-	(func[IRC_RECHECK_CHANNEL]) (chan, 0);
-    }
+  }
+  if (chg && (me = module_find("irc", 0, 0))) {
+    Function *func = me->funcs;
+    
+    (func[IRC_CHECK_THIS_USER]) (hand);
   }
   if (tmpchg)
     free(tmpchg);
@@ -2471,6 +2470,7 @@ static void cmd_pls_host(struct userrec *u, int idx, char *par)
   struct userrec *u2;
   struct list_type *q;
   struct flag_record fr = {FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
+  module_entry *me;
 
   if (!par[0]) {
     dprintf(idx, "Usage: +host [handle] <newhostmask>\n");
@@ -2527,6 +2527,11 @@ static void cmd_pls_host(struct userrec *u, int idx, char *par)
   putlog(LOG_CMDS, "*", "#%s# +host %s %s", dcc[idx].nick, handle, host);
   addhost_by_handle(handle, host);
   dprintf(idx, "Added '%s' to %s\n", host, handle);
+  if ((me = module_find("irc", 0, 0))) {
+    Function *func = me->funcs;
+
+    (func[IRC_CHECK_THIS_USER]) (handle);
+  }
 }
 
 static void cmd_mns_host(struct userrec *u, int idx, char *par)

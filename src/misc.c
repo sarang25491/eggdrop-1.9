@@ -6,7 +6,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.53 2001/12/08 16:16:39 ite Exp $
+ * $Id: misc.c,v 1.54 2001/12/08 19:17:44 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -638,7 +638,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
     case 'A':
       towrite = admin;
       break;
-    case 'n';
+    case 'n':
       towrite = network;
       break;
     case 'T':

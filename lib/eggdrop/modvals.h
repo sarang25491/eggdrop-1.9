@@ -1,7 +1,7 @@
 /*
  * modvals.h
  *
- * $Id: modvals.h,v 1.1 2001/10/27 16:34:47 ite Exp $
+ * $Id: modvals.h,v 1.2 2001/12/08 19:17:43 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -79,6 +79,7 @@
 #define IRC_RECHECK_CHANNEL_MODES 6
 #define IRC_DO_CHANNEL_PART	  7
 #define IRC_CHECK_THIS_BAN	  8
+#define IRC_CHECK_THIS_USER	  9
 /* Notes */
 #define NOTES_CMD_NOTE		  4
 /* Console */

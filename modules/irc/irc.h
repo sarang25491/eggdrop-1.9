@@ -1,7 +1,7 @@
 /*
  * irc.h -- part of irc.mod
  *
- * $Id: irc.h,v 1.1 2001/10/27 16:34:50 ite Exp $
+ * $Id: irc.h,v 1.2 2001/12/08 19:17:43 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -94,6 +94,7 @@ static int gotmode(char *, char *, char *);
 
 /* 8-11 */
 #define check_this_ban ((void(*)(struct chanset_t *,char *,int))irc_funcs[8])
+#define check_this_user ((void(*)(char *hand))irc_funcs[8])
 
 #endif				/* MAKING_IRC */
 
