@@ -25,43 +25,45 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: mode.c,v 1.22 2003/03/04 01:56:25 tothwolf Exp $";
+static const char rcsid[] = "$Id: mode.c,v 1.23 2003/03/06 07:55:57 tothwolf Exp $";
 #endif
 */
 
 /* Reversing this mode? */
 static int reversing = 0;
 
-#define PLUS    0x01
-#define MINUS   0x02
-#define CHOP    0x04
-#define BAN     0x08
-#define VOICE   0x10
-#define EXEMPT  0x20
-#define INVITE  0x40
+#define MODE_PLUS    0x01
+#define MODE_MINUS   0x02
+#define MODE_OP      0x04
+#define MODE_VOICE   0x08
+#define MODE_BAN     0x10
+#define MODE_EXEMPT  0x20
+#define MODE_INVITE  0x40
 
 static struct flag_record user   = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 static struct flag_record victim = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
-/* FIXME: adapt this function to strlcat() so we can get rid of egg_strcatn() */
 static void flush_mode(struct chanset_t *chan, int pri)
 {
-  char		*p, out[512], post[512];
-  size_t	postsize = sizeof(post);
-  int		i, plus = 2;		/* 0 = '-', 1 = '+', 2 = none */
+  char *p, out[512], post[512];
+  int i, plus = 2;		/* 0 = '-', 1 = '+', 2 = none */
+  size_t postsize = sizeof(post);
 
   p = out;
-  post[0] = 0, postsize--;
+  post[0] = 0;
+  postsize--;	/* Leave room for the terminating NULL. */
 
   if (chan->mns[0]) {
-    *p++ = '-', plus = 0;
+    *p++ = '-';
+    plus = 0;
     for (i = 0; i < strlen(chan->mns); i++)
       *p++ = chan->mns[i];
     chan->mns[0] = 0;
   }
 
   if (chan->pls[0]) {
-    *p++ = '+', plus = 1;
+    *p++ = '+';
+    plus = 1;
     for (i = 0; i < strlen(chan->pls); i++)
       *p++ = chan->pls[i];
     chan->pls[0] = 0;
@@ -73,28 +75,32 @@ static void flush_mode(struct chanset_t *chan, int pri)
   /* +k or +l ? */
   if (chan->key) {
     if (plus != 1) {
-      *p++ = '+', plus = 1;
+      *p++ = '+';
+      plus = 1;
     }
     *p++ = 'k';
 
-    postsize -= egg_strcatn(post, chan->key, sizeof(post));
-    postsize -= egg_strcatn(post, " ", sizeof(post));
+    strlcat(post, chan->key, sizeof(post));
+    strlcat(post, " ", sizeof(post));
 
-    free(chan->key), chan->key = NULL;
+    free(chan->key);
+    chan->key = NULL;
   }
 
-  /* max +l is signed 2^32 on ircnet at least... so makesure we've got at least
-   * a 13 char buffer for '-2147483647 \0'. We'll be overwriting the existing
-   * terminating null in 'post', so makesure postsize >= 12.
+  /* max +l is signed 2^32 on ircnet at least... so make sure we've got at
+   * least a 13 char buffer for '-2147483647 \0'. We'll be overwriting the
+   * existing terminating null in 'post', so make sure there are at least
+   * 12 bytes available in post.
    */
-  if (chan->limit != 0 && postsize >= 12) {
+  if (chan->limit != 0 && (postsize - strlen(post)) >= 12) {
     if (plus != 1) {
-      *p++ = '+', plus = 1;
+      *p++ = '+';
+      plus = 1;
     }
     *p++ = 'l';
 
     /* 'sizeof(post) - 1' is used because we want to overwrite the old null */
-    postsize -= sprintf(&post[(sizeof(post) - 1) - postsize], "%d ", chan->limit);
+    sprintf(&post[postsize - strlen(post)], "%d ", chan->limit);
 
     chan->limit = 0;
   }
@@ -102,54 +108,60 @@ static void flush_mode(struct chanset_t *chan, int pri)
   /* -k ? */
   if (chan->rmkey) {
     if (plus) {
-      *p++ = '-', plus = 0;
+      *p++ = '-';
+      plus = 0;
     }
     *p++ = 'k';
 
-    postsize -= egg_strcatn(post, chan->rmkey, sizeof(post));
-    postsize -= egg_strcatn(post, " ", sizeof(post));
+    strlcat(post, chan->rmkey, sizeof(post));
+    strlcat(post, " ", sizeof(post));
 
-    free(chan->rmkey), chan->rmkey = NULL;
+    free(chan->rmkey);
+    chan->rmkey = NULL;
   }
 
   /* Do -{b,e,I} before +{b,e,I} to avoid the server ignoring overlaps */
   for (i = 0; i < modesperline; i++) {
-    if ((chan->cmode[i].type & MINUS) &&
-        postsize > strlen(chan->cmode[i].op)) {
+    if ((chan->cmode[i].type & MODE_MINUS) &&
+        ((postsize - strlen(post)) > strlen(chan->cmode[i].op))) {
       if (plus) {
-        *p++ = '-', plus = 0;
+        *p++ = '-';
+        plus = 0;
       }
 
-      *p++ = ((chan->cmode[i].type & BAN) ? 'b' :
-              ((chan->cmode[i].type & CHOP) ? 'o' :
-               ((chan->cmode[i].type & EXEMPT) ? 'e' :
-                ((chan->cmode[i].type & INVITE) ? 'I' : 'v'))));
+      *p++ = ((chan->cmode[i].type & MODE_OP) ? 'o' :
+              ((chan->cmode[i].type & MODE_VOICE) ? 'v' :
+               ((chan->cmode[i].type & MODE_BAN) ? 'b' :
+                ((chan->cmode[i].type & MODE_EXEMPT) ? 'e' : 'I'))));
 
-      postsize -= egg_strcatn(post, chan->cmode[i].op, sizeof(post));
-      postsize -= egg_strcatn(post, " ", sizeof(post));
+      strlcat(post, chan->cmode[i].op, sizeof(post));
+      strlcat(post, " ", sizeof(post));
 
-      free(chan->cmode[i].op), chan->cmode[i].op = NULL;
+      free(chan->cmode[i].op);
+      chan->cmode[i].op = NULL;
       chan->cmode[i].type = 0;
     }
   }
 
   /* now do all the + modes... */
   for (i = 0; i < modesperline; i++) {
-    if ((chan->cmode[i].type & PLUS) &&
-        postsize > strlen(chan->cmode[i].op)) {
+    if ((chan->cmode[i].type & MODE_PLUS) &&
+	((postsize - strlen(post)) > strlen(chan->cmode[i].op))) {
       if (plus != 1) {
-        *p++ = '+', plus = 1;
+        *p++ = '+';
+        plus = 1;
       }
 
-      *p++ = ((chan->cmode[i].type & BAN) ? 'b' :
-              ((chan->cmode[i].type & CHOP) ? 'o' :
-               ((chan->cmode[i].type & EXEMPT) ? 'e' :
-                ((chan->cmode[i].type & INVITE) ? 'I' : 'v'))));
+      *p++ = ((chan->cmode[i].type & MODE_OP) ? 'o' :
+              ((chan->cmode[i].type & MODE_VOICE) ? 'v' :
+               ((chan->cmode[i].type & MODE_BAN) ? 'b' :
+                ((chan->cmode[i].type & MODE_EXEMPT) ? 'e' : 'I'))));
 
-      postsize -= egg_strcatn(post, chan->cmode[i].op, sizeof(post));
-      postsize -= egg_strcatn(post, " ", sizeof(post));
+      strlcat(post, chan->cmode[i].op, sizeof(post));
+      strlcat(post, " ", sizeof(post));
 
-      free(chan->cmode[i].op), chan->cmode[i].op = NULL;
+      free(chan->cmode[i].op);
+      chan->cmode[i].op = NULL;
       chan->cmode[i].type = 0;
     }
   }
@@ -159,12 +171,13 @@ static void flush_mode(struct chanset_t *chan, int pri)
 
   if (post[0]) {
     /* remove the trailing space... */
-    size_t index = (sizeof(post) - 1) - postsize;
+    size_t index = (postsize - strlen(post));
+
     if (index > 0 && post[index - 1] == ' ')
       post[index - 1] = 0;
 
-    egg_strcatn(out, " ", sizeof(out));
-    egg_strcatn(out, post, sizeof(out));
+    strlcat(out, " ", sizeof(out));
+    strlcat(out, post, sizeof(out));
   }
   if (out[0]) {
     if (pri == QUICK)
@@ -226,11 +239,11 @@ static void real_add_mode(struct chanset_t *chan,
     flush_mode(chan, NORMAL);
 
   if (mode == 'o' || mode == 'b' || mode == 'v' || mode == 'e' || mode == 'I') {
-    type = (plus == '+' ? PLUS : MINUS) |
-	   (mode == 'o' ? CHOP :
-	    (mode == 'b' ? BAN :
-	     (mode == 'v' ? VOICE :
-	      (mode == 'e' ? EXEMPT : INVITE))));
+    type = (plus == '+' ? MODE_PLUS : MODE_MINUS) |
+	   (mode == 'o' ? MODE_OP :
+	    (mode == 'b' ? MODE_BAN :
+	     (mode == 'v' ? MODE_VOICE :
+	      (mode == 'e' ? MODE_EXEMPT : MODE_INVITE))));
 
     /*
      * FIXME: Some networks remove overlapped bans, IrcNet does not
