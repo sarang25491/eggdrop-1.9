@@ -3,7 +3,7 @@
  *   commands that comes across the botnet
  *   userfile transfer and update commands from sharebots
  *
- * $Id: botcmd.c,v 1.25 2001/10/19 01:55:04 tothwolf Exp $
+ * $Id: botcmd.c,v 1.26 2001/12/10 01:35:14 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -263,11 +263,11 @@ static void bot_priv(int idx, char *par)
 	  break;
 	case NOTE_FWD:
 	  botnet_send_priv(idx, botnetnick, from, NULL,
-			   "%s %s", "Not online; note forwarded to:", to);
+			   "%s %s", _("Not online; note forwarded to:"), to);
 	  break;
 	case NOTE_REJECT:
 	  botnet_send_priv(idx, botnetnick, from, NULL,
-			   "%s %s", to, "rejected your note.");
+			   "%s %s", to, _("rejected your note."));
           break;
 	case NOTE_TCL:
 	  break;		/* Do nothing */
@@ -632,7 +632,7 @@ static void bot_nlinked(int idx, char *par)
   next = newsplit(&par);
   s[0] = 0;
   if (!next[0]) {
-    putlog(LOG_BOTS, "*", "Invalid eggnet protocol from %s (zapfing)",
+    putlog(LOG_BOTS, "*", _("Invalid eggnet protocol from %s (zapfing)"),
 	   dcc[idx].nick);
     simple_sprintf(s, "%s %s (%s)", _("Disconnected"), dcc[idx].nick,
 		   _("invalid bot"));
@@ -713,8 +713,10 @@ static void bot_linked(int idx, char *par)
   bots = bots_in_subtree(findbot(dcc[idx].nick));
   users = users_in_subtree(findbot(dcc[idx].nick));
   putlog(LOG_BOTS, "*", "%s", _("Older bot detected (unsupported)"));
-  simple_sprintf(s, "%s %s (%s) (lost %d bot%s and %d user%s",
-  		 _("Disconnected"), dcc[idx].nick, _("outdated"),
+  /* FIXME PLURAL: handle it properly */
+  simple_sprintf(s,
+		 _("Disconnected %s (outdated) (lost %d bot%s and %d user%s"),
+  		 dcc[idx].nick,
 		 bots, (bots != 1) ? "s" : "", users,
 		 (users != 1) ? "s" : "");
   chatout("*** %s\n", s);

@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.63 2001/10/24 10:08:03 stdarg Exp $
+ * $Id: dcc.c,v 1.64 2001/12/10 01:35:14 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -323,7 +323,7 @@ static void dcc_bot_digest(int idx, char *challenge, char *password)
   for (i = 0; i < 16; i++)
     sprintf(digest_string + (i*2), "%.2x", digest[i]);
   dprintf(idx, "digest %s\n", digest_string);
-  putlog(LOG_BOTS, "*", "Received challenge from %s... sending response ...",
+  putlog(LOG_BOTS, "*", _("Received challenge from %s... sending response ..."),
 	 dcc[idx].nick);
 }
 
@@ -536,7 +536,7 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
 
   if (!strcmp(digest_string, remote_digest))
     return 1;
-  putlog(LOG_BOTS, "*", "Response (password hash) from %s incorrect",
+  putlog(LOG_BOTS, "*", _("Response (password hash) from %s incorrect"),
 	 dcc[idx].nick);
   return 0;
 }
@@ -1101,7 +1101,7 @@ debug2("|DCC| dcc_telnet_hostresolved: idx: %d host: %s", i, dcc[i].host);
        break;
     }
   if (dcc_total == idx) {
-    putlog(LOG_BOTS, "*", "Lost listening socket while resolving %s",
+    putlog(LOG_BOTS, "*", _("Lost listening socket while resolving %s"),
 	   dcc[i].host);
     killsock(dcc[i].sock);
     lostdcc(i);
@@ -1421,7 +1421,7 @@ static void dcc_telnet_pass(int idx, int atr)
      * authentication will not be correct - you've been warned ;)
      * <Cybah>
      */
-    putlog(LOG_BOTS, "*", "Challenging %s...", dcc[idx].nick);
+    putlog(LOG_BOTS, "*", _("Challenging %s..."), dcc[idx].nick);
     dprintf(idx, "passreq <%x%x@%s>\n", getpid(), dcc[idx].timeval, botnetnick);
   } else {
     /* NOTE: The MD5 digest used above to prevent cleartext passwords being
@@ -1525,15 +1525,15 @@ static void dcc_telnet_new(int idx, char *buf, int x)
     check_dcc_attrs(dcc[idx].user, USER_PARTY | default_flags);
     dcc[idx].type = &DCC_TELNET_PW;
     if (make_userfile) {
-      dprintf(idx, "\nYOU ARE THE MASTER/OWNER ON THIS BOT NOW\n");
+      dprintf(idx, _("\nYOU ARE THE MASTER/OWNER ON THIS BOT NOW\n"));
       dprintf(idx, _("From now on, you dont need to use the -m option to start the bot.\nEnjoy !!"));
       putlog(LOG_MISC, "*", _("Bot installation complete, first master is %s"), buf);
       make_userfile = 0;
       write_userfile(-1);
-      add_note(buf, botnetnick, "Welcome to eggdrop! :)", -1, 0);
+      add_note(buf, botnetnick, _("Welcome to eggdrop! :)"), -1, 0);
     }
-    dprintf(idx, "\nOkay, now choose and enter a password:\n");
-    dprintf(idx, "(Only the first 15 letters are significant.)\n");
+    dprintf(idx, _("\nOkay, now choose and enter a password:\n"));
+    dprintf(idx, _("(Only the first 15 letters are significant.)\n"));
   }
 }
 
