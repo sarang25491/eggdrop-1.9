@@ -1,3 +1,17 @@
+2001-12-02 12:48  Federico Mennite <ite@techmonkeys.org>
+
+	* INSTALL, doc/text-substitutions.doc:
+
+	More spelling fixes in docs and MOTD. Patch by Wcc
+	<will@centerofnowhere.com> 
+
+2001-12-02 12:36  Federico Mennite <ite@techmonkeys.org>
+
+	* modules/uptime/uptime.c:
+
+	Made uptime module to server. Patch by Matthew Hallacy
+	<poptix@techmonkeys.org> 
+
 2001-12-02 12:22  Federico Mennite <ite@techmonkeys.org>
 
 	* modules/irc/tclirc.c:
