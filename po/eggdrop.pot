@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-12-20 00:15-0600\n"
+"POT-Creation-Date: 2003-12-20 06:15-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -100,37 +100,37 @@ msgstr ""
 msgid "Don't create your own eggvars!"
 msgstr ""
 
-#: modules/javascript/javascript.c:531
+#: modules/javascript/javascript.c:538
 #, c-format
 msgid "User not found: %s"
 msgstr ""
 
-#: modules/javascript/javascript.c:539
+#: modules/javascript/javascript.c:546
 #, c-format
 msgid "Converting unknown! '%c'"
 msgstr ""
 
-#: modules/javascript/javascript.c:542
+#: modules/javascript/javascript.c:549
 #, c-format
 msgid "Cannot convert JS object to unknown variable type '%s'."
 msgstr ""
 
-#: modules/javascript/javascript.c:632 modules/tclscript/tclscript.c:600
+#: modules/javascript/javascript.c:639 modules/tclscript/tclscript.c:605
 msgid ""
 "You must be a permanent owner (defined in the config file) to use this "
 "command.\n"
 msgstr ""
 
-#: modules/javascript/javascript.c:637
+#: modules/javascript/javascript.c:644
 msgid "JS Error: unknown for now\n"
 msgstr ""
 
-#: modules/javascript/javascript.c:658
+#: modules/javascript/javascript.c:665
 #, c-format
 msgid "Using JavaScript version %s.\n"
 msgstr ""
 
-#: modules/javascript/javascript.c:662
+#: modules/javascript/javascript.c:669
 #, c-format
 msgid "    Using JavaScript version %s.\n"
 msgstr ""
@@ -411,39 +411,39 @@ msgstr ""
 msgid "Error opening Tcl error log (%s)!"
 msgstr ""
 
-#: modules/tclscript/tclscript.c:543
+#: modules/tclscript/tclscript.c:548
 msgid "Cannot convert Tcl object to unknown variable type '"
 msgstr ""
 
-#: modules/tclscript/tclscript.c:605
+#: modules/tclscript/tclscript.c:610
 msgid "Syntax: .tcl <tclexpression>"
 msgstr ""
 
-#: modules/tclscript/tclscript.c:612
+#: modules/tclscript/tclscript.c:617
 #, c-format
 msgid ""
 "Tcl error: %s\n"
 "\n"
 msgstr ""
 
-#: modules/tclscript/tclscript.c:616
+#: modules/tclscript/tclscript.c:621
 #, c-format
 msgid ""
 "Tcl: %s\n"
 "\n"
 msgstr ""
 
-#: modules/tclscript/tclscript.c:698
+#: modules/tclscript/tclscript.c:703
 #, c-format
 msgid "Using Tcl version %d.%d (by header).\n"
 msgstr ""
 
-#: modules/tclscript/tclscript.c:702
+#: modules/tclscript/tclscript.c:707
 #, c-format
 msgid "    Using Tcl version %d.%d (by header).\n"
 msgstr ""
 
-#: modules/tclscript/tclscript.c:703
+#: modules/tclscript/tclscript.c:708
 msgid ""
 "return \"    Library: [info library]\\n    Reported version: [info "
 "tclversion]\\n    Reported patchlevel: [info patchlevel]\""
