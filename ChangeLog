@@ -1,3 +1,10 @@
+2001-12-02 14:26  Federico Mennite <ite@techmonkeys.org>
+
+	* modules/filesys/: files.c, help/filesys.help:
+
+	Renamed .optimise to .optimize. Patch by Wcc
+	<will@centerofnowhere.com> 
+
 2001-12-02 13:36  Federico Mennite <ite@techmonkeys.org>
 
 	* scripts/alltools.tcl:
