@@ -21,10 +21,13 @@ static int server_on_eof(void *client_data, int idx, int err, const char *errmsg
 
 static int server_on_read(void *client_data, int idx, char *text, int len);
 
+static int server_on_delete(void *client_data, int idx);
+
 static sockbuf_handler_t server_handler = {
 	"server",
 	server_on_connect, server_on_eof, NULL,
-	server_on_read, NULL
+	server_on_read, NULL,
+	server_on_delete
 };
 
 /**********************************************************************
@@ -157,5 +160,10 @@ static int server_on_read(void *client_data, int idx, char *text, int len)
 	text[-1] = 0;
 	check_bind(BT_raw, msg.cmd, NULL, prefix, msg.cmd, text);
 	free(prefix);
+	return(0);
+}
+
+static int server_on_delete(void *client_data, int idx)
+{
 	return(0);
 }

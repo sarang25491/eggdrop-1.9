@@ -100,7 +100,6 @@ static int sockbuf_real_write(int idx, const char *data, int len)
 	/* If it's not blocked already, write as much as we can. */
 	if (!(sbuf->flags & SOCKBUF_BLOCK)) {
 		nbytes = write(sbuf->sock, data, len);
-		if (nbytes == len) return(nbytes);
 		if (nbytes < 0) {
 			if (errno != EAGAIN) {
 				sockbuf_got_eof(idx, errno);
@@ -108,6 +107,8 @@ static int sockbuf_real_write(int idx, const char *data, int len)
 			}
 			nbytes = 0;
 		}
+		sockbuf_on_written(idx, SOCKBUF_LEVEL_INTERNAL, nbytes, 0);
+		if (nbytes == len) return(nbytes);
 		sockbuf_block(idx);
 		data += nbytes;
 		len -= nbytes;
@@ -260,7 +261,7 @@ static void sockbuf_got_writable_client(int idx)
 	}
 
 	sbuf->flags &= ~SOCKBUF_CLIENT;
-	sockbuf_unblock(idx);
+	if (!sbuf->len) sockbuf_unblock(idx);
 	socket_get_peer_name(sbuf->sock, &peer_ip, &peer_port);
 
 	sockbuf_on_connect(idx, SOCKBUF_LEVEL_INTERNAL, peer_ip, peer_port);
@@ -444,6 +445,8 @@ int sockbuf_delete(int idx)
 			sbuf->filters[i]->on_delete(sbuf->filter_client_data[i], idx);
 		}
 	}
+
+	if (sbuf->handler->on_delete) sbuf->handler->on_delete(sbuf->client_data, idx);
 
 	/* Close the file descriptor. */
 	if (sbuf->sock >= 0) close(sbuf->sock);

@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: perlscript.c,v 1.21 2002/09/20 02:06:25 stdarg Exp $";
+static const char rcsid[] = "$Id: perlscript.c,v 1.22 2002/09/21 07:40:16 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -335,14 +335,21 @@ static SV *c_to_perl_var(script_var_t *v)
 		case SCRIPT_UNSIGNED:
 			result = newSViv((int) v->value);
 			break;
-		case SCRIPT_STRING:
-		case SCRIPT_BYTES: {
+		case SCRIPT_STRING: {
 			char *str = v->value;
 
 			if (!str) str = "";
 			if (v->len == -1) v->len = strlen(str);
 			result = newSVpv(str, v->len);
 			if (v->value && v->type & SCRIPT_FREE) free(v->value);
+			break;
+		}
+		case SCRIPT_BYTES: {
+			byte_array_t *bytes = v->value;
+
+			result = newSVpv(bytes->bytes, bytes->len);
+			if (bytes->do_free) free(bytes->bytes);
+			if (v->type & SCRIPT_FREE) free(bytes);
 			break;
 		}
 		case SCRIPT_POINTER: {

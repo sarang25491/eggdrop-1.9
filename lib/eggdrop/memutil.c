@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: memutil.c,v 1.9 2002/09/20 02:06:25 stdarg Exp $";
+static const char rcsid[] = "$Id: memutil.c,v 1.10 2002/09/21 07:40:16 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -263,7 +263,7 @@ void rmspace(char *s)
   }
 }
 
-void str_redup(char **str, char *newstr)
+void str_redup(char **str, const char *newstr)
 {
 	int len;
 

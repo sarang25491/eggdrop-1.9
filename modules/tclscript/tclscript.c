@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tclscript.c,v 1.20 2002/09/20 02:06:25 stdarg Exp $";
+static const char rcsid[] = "$Id: tclscript.c,v 1.21 2002/09/21 07:40:16 stdarg Exp $";
 #endif
 
 #include "lib/eggdrop/module.h"
@@ -370,8 +370,7 @@ static Tcl_Obj *c_to_tcl_var(Tcl_Interp *myinterp, script_var_t *v)
 		case SCRIPT_UNSIGNED:
 			result = Tcl_NewIntObj((int) v->value);
 			break;
-		case SCRIPT_STRING:
-		case SCRIPT_BYTES: {
+		case SCRIPT_STRING: {
 			char *str = v->value;
 
 			if (!str) str = "";
@@ -382,6 +381,17 @@ static Tcl_Obj *c_to_tcl_var(Tcl_Interp *myinterp, script_var_t *v)
 			result = Tcl_NewStringObj(str, v->len);
 			#endif
 			if (v->value && v->type & SCRIPT_FREE) free(v->value);
+			break;
+		}
+		case SCRIPT_BYTES: {
+			byte_array_t *bytes = v->value;
+			#ifdef USE_BYTE_ARRAYS
+			result = Tcl_NewByteArrayObj(bytes->bytes, bytes->len);
+			#else
+			result = Tcl_NewStringObj(bytes->bytes, bytes->len);
+			#endif
+			if (bytes->do_free) free(bytes->bytes);
+			if (v->type & SCRIPT_FREE) free(bytes);
 			break;
 		}
 		case SCRIPT_POINTER: {

@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: script.h,v 1.7 2002/09/20 02:06:25 stdarg Exp $
+ * $Id: script.h,v 1.8 2002/09/21 07:40:16 stdarg Exp $
  */
 
 #ifndef _EGG_SCRIPT_H
@@ -46,6 +46,7 @@ enum {
 typedef struct byte_array_b {
 	unsigned char *bytes;
 	int len;
+	int do_free;
 } byte_array_t;
 
 /* Flags for commands. */

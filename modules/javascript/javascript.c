@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: javascript.c,v 1.11 2002/09/20 02:06:25 stdarg Exp $";
+static const char rcsid[] = "$Id: javascript.c,v 1.12 2002/09/21 07:40:16 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -423,8 +423,7 @@ static int c_to_js_var(JSContext *cx, script_var_t *v, jsval *result)
 		case SCRIPT_UNSIGNED:
 			*result = INT_TO_JSVAL(((int) v->value));
 			break;
-		case SCRIPT_STRING:
-		case SCRIPT_BYTES: {
+		case SCRIPT_STRING: {
 			char *str = v->value;
 
 			if (!str) str = "";
@@ -432,6 +431,14 @@ static int c_to_js_var(JSContext *cx, script_var_t *v, jsval *result)
 			*result = STRING_TO_JSVAL(JS_NewStringCopyN(cx, str, v->len));
 
 			if (v->value && v->type & SCRIPT_FREE) free((char *)v->value);
+			break;
+		}
+		case SCRIPT_BYTES: {
+			byte_array_t *bytes = v->value;
+
+			*result = STRING_TO_JSVAL(JS_NewStringCopyN(cx, bytes->bytes, bytes->len));
+			if (bytes->do_free) free(bytes->bytes);
+			if (v->type & SCRIPT_FREE) free(bytes);
 			break;
 		}
 		case SCRIPT_POINTER: {

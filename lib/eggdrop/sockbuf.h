@@ -55,6 +55,9 @@ typedef struct {
 	/* Data-level events. */
 	int (*on_read)(void *client_data, int idx, char *data, int len);
 	int (*on_written)(void *client_data, int idx, int len, int remaining);
+
+	/* Command-level events. */
+	int (*on_delete)(void *client_data, int idx);
 } sockbuf_handler_t;
 
 int sockbuf_write(int idx, const char *data, int len);

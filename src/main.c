@@ -30,7 +30,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.122 2002/09/20 21:41:49 stdarg Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.123 2002/09/21 07:40:16 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -452,6 +452,7 @@ extern module_entry *module_list;
 
 int init_userent(), init_net(),
  init_tcl(int, char **);
+void script_net_init();
 void dns_init();
 void binds_init();
 void dcc_init();
@@ -574,6 +575,7 @@ int main(int argc, char **argv)
 
   egg = eggdrop_new();
   script_init();
+  script_net_init();
   binds_init();
   modules_init();
   logfile_init();
