@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: users.h,v 1.10 2004/06/19 10:30:41 wingman Exp $
+ * $Id: users.h,v 1.11 2004/06/22 20:12:37 wingman Exp $
  */
 
 #ifndef _EGG_USERS_H_
@@ -66,7 +66,9 @@ typedef struct user {
 	int flags;
 } user_t;
 
-int user_init();
+int user_init(void);
+int user_shutdown(void);
+
 int user_load(const char *fname);
 int user_save(const char *fname);
 user_t *user_new(const char *handle);

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: socket.c,v 1.2 2004/06/22 10:54:42 wingman Exp $";
+static const char rcsid[] = "$Id: socket.c,v 1.3 2004/06/22 20:12:37 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -256,6 +256,10 @@ int socket_create(const char *dest_ip, int dest_port, const char *src_ip, int sr
 
 int socket_close(int sock)
 {
+	/* don't close stdin or stdout */
+	if (sock == fileno(stdin) || sock == fileno(stdout))
+		return (0);
+
 	shutdown(sock, SHUT_RDWR);
 	close(sock);
 	return(0);

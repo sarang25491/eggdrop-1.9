@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.24 2004/06/22 19:08:15 wingman Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.25 2004/06/22 20:12:37 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -66,7 +66,7 @@ static int cache_check_add(const void *key, void *dataptr, void *client_data);
 static int cache_check_del(const void *key, void *dataptr, void *client_data);
 static int cache_user_del(user_t *u, const char *ircmask);
 
-int user_init()
+int user_init(void)
 {
 
 	/* Create hash tables. */
@@ -80,6 +80,22 @@ int user_init()
 	BT_udelete = bind_table_add(BTN_USER_DELETE, 1, "U", MATCH_NONE, BIND_STACKABLE);	/* DDD	*/
 	return(0);
 }
+
+int user_shutdown(void)
+{
+	ircmask_list_clear(&ircmask_list);
+
+	bind_table_del(BT_udelete);
+	bind_table_del(BT_uset);
+	bind_table_del(BT_uflags);
+	
+	hash_table_destroy(irchost_cache_ht);
+	hash_table_destroy(uid_ht);
+	hash_table_destroy(handle_ht);
+
+	return (0);
+}
+
 
 int user_load(const char *fname)
 {

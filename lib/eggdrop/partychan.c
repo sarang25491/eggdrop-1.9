@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partychan.c,v 1.13 2004/06/21 11:33:40 wingman Exp $";
+static const char rcsid[] = "$Id: partychan.c,v 1.14 2004/06/22 20:12:37 wingman Exp $";
 #endif
 
 #include <stdarg.h>
@@ -41,7 +41,7 @@ static bind_table_t *BT_partyjoin = NULL,
 	*BT_partypart = NULL,
 	*BT_partypub = NULL;;
 
-int partychan_init()
+int partychan_init(void)
 {
 	cid_ht = hash_table_create(NULL, NULL, 13, HASH_TABLE_INTS);
 
@@ -51,6 +51,17 @@ int partychan_init()
 	BT_partypart = bind_table_add(BTN_PARTYLINE_PART, 5, "siPsi", MATCH_NONE, BIND_STACKABLE);	/* DDD	*/
 	BT_partypub = bind_table_add(BTN_PARTYLINE_PUBLIC, 5, "siPsi", MATCH_NONE, BIND_STACKABLE);	/* DDD	*/
 	return(0);
+}
+
+int partychan_shutdown(void)
+{
+	bind_table_del(BT_partypub);
+	bind_table_del(BT_partypart);
+	bind_table_del(BT_partyjoin);
+	
+	hash_table_destroy(cid_ht);
+
+	return (0);
 }
 
 int partychan_get_cid()

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: module.c,v 1.2 2004/06/22 10:54:42 wingman Exp $";
+static const char rcsid[] = "$Id: module.c,v 1.3 2004/06/22 20:12:37 wingman Exp $";
 #endif
 
 #include <ltdl.h>
@@ -48,11 +48,22 @@ static module_list_t *find_module(const char *name)
 	return(NULL);
 }
 
-int module_init()
+int module_init(void)
 {
 	BT_load = bind_table_add(BTN_LOAD_MODULE, 1, "s", MATCH_MASK, 0);		/* DDD	*/
 	BT_unload = bind_table_add(BTN_UNLOAD_MODULE, 1, "s", MATCH_MASK, 0);		/* DDD	*/
 	return(0);
+}
+
+int module_shutdown(void)
+{
+	if (module_list_head) {
+		free(module_list_head); module_list_head = NULL;
+	}
+	bind_table_del(BT_load);
+	bind_table_del(BT_unload);
+
+	return (0);
 }
 
 int module_add_dir(const char *moddir)

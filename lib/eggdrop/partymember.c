@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partymember.c,v 1.12 2004/06/21 11:33:40 wingman Exp $";
+static const char rcsid[] = "$Id: partymember.c,v 1.13 2004/06/22 20:12:37 wingman Exp $";
 #endif
 
 #include <stdarg.h>
@@ -41,11 +41,18 @@ static bind_list_t partymember_udelete_binds[] = {
 	{0}
 };
 
-int partymember_init()
+int partymember_init(void)
 {
 	pid_ht = hash_table_create(NULL, NULL, 13, HASH_TABLE_INTS);
-	bind_add_list("udelete", partymember_udelete_binds);
+	bind_add_list(BTN_USER_DELETE, partymember_udelete_binds);
 	return(0);
+}
+
+int partymember_shutdown(void)
+{
+	bind_rem_list(BTN_USER_DELETE, partymember_udelete_binds);
+	hash_table_destroy(pid_ht);
+	return (0);
 }
 
 static void partymember_really_delete(partymember_t *p)

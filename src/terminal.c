@@ -18,11 +18,13 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: terminal.c,v 1.2 2004/06/21 01:14:06 stdarg Exp $";
+static const char rcsid[] = "$Id: terminal.c,v 1.3 2004/06/22 20:12:37 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>			/* partyline_*		*/
 #include "terminal.h"				/* protoypes		*/
+
+extern int terminal_enabled; /* from logfile.c */
 
 static int on_privmsg(void *client_data, partymember_t *dest, partymember_t *src, const char *text, int len);
 static int on_nick(void *client_data, partymember_t *src, const char *oldnick, const char *newnick);
@@ -54,14 +56,12 @@ static partyline_event_t terminal_party_handler = {
 struct {
 	int in_idx, out_idx;
 	partymember_t *party;
-} terminal_session;
+} terminal_session = { 0, 0, NULL };
 
 static user_t *terminal_user = NULL;
 
-void terminal_init(void)
+int terminal_init(void)
 {
-	putlog(LOG_MISC, "*", "Entering terminal mode.");
-
 	if (terminal_user == NULL) {
 		terminal_user = user_lookup_by_handle(TERMINAL_HANDLE);
 		if (terminal_user == NULL) {
@@ -80,12 +80,43 @@ void terminal_init(void)
 	terminal_session.out_idx = sockbuf_new();
 	sockbuf_set_sock(terminal_session.out_idx, fileno(stdout), SOCKBUF_NOREAD);
 
+	putlog(LOG_MISC, "*", _("Entering terminal mode."));
+
 	terminal_session.party = partymember_new(-1,
 		terminal_user, TERMINAL_NICK, TERMINAL_USER,
 			TERMINAL_HOST, &terminal_party_handler, NULL);
 
 	/* Put them on the main channel. */
 	partychan_join_name("*", terminal_session.party);	
+
+	return (0);
+}
+
+int terminal_shutdown(void)
+{
+	if (terminal_session.in_idx != 0)
+		sockbuf_delete(terminal_session.in_idx);
+	terminal_session.in_idx = 0;
+
+	if (terminal_session.out_idx != 0)
+		sockbuf_delete(terminal_session.out_idx);
+	terminal_session.out_idx = 0;
+
+	if (terminal_session.party)
+		partymember_delete(terminal_session.party, _("Shutdown"));
+	terminal_session.party = NULL;
+
+	if (terminal_user)
+		 user_delete(terminal_user);
+	terminal_user = NULL;
+
+	/* let logfile.c know that there's no longer the faked
+	 * stdout sockbuf of our HQ partymember */
+	terminal_enabled = 0;
+
+	putlog(LOG_MISC, "*", _("Leaving terminal mode."));
+
+	return (0);
 }
 
 static int on_read(void *client_data, int idx, char *data, int len)

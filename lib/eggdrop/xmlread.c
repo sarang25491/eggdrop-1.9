@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xmlread.c,v 1.13 2004/06/22 19:08:15 wingman Exp $";
+static const char rcsid[] = "$Id: xmlread.c,v 1.14 2004/06/22 20:12:37 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -263,7 +263,6 @@ static int xml_read_node(xml_node_t *parent, char **data)
 			node.text = (char *)malloc(len+1);
 			memcpy(node.text, *data, len);
 			node.text[len] = 0;
-			node.value = node.text;
 			node.len = len;
 			node.type = XML_COMMENT;
 	
@@ -291,7 +290,6 @@ static int xml_read_node(xml_node_t *parent, char **data)
 		node.text = malloc(len + 1);
 		memcpy(node.text, *data, len - 1);
 		node.text[len] = 0;
-		node.value = node.text;
 
 		/* set type */
 		node.type = XML_CDATA_SECTION;

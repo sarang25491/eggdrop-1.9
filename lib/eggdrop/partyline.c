@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partyline.c,v 1.22 2004/06/21 11:33:40 wingman Exp $";
+static const char rcsid[] = "$Id: partyline.c,v 1.23 2004/06/22 20:12:37 wingman Exp $";
 #endif
 
 #include <ctype.h>
@@ -33,15 +33,19 @@ static bind_table_t *BT_cmd = NULL; /* Commands. */
 static bind_table_t *BT_party_out = NULL; /* Text sent to a user. */
 
 static int on_putlog(int flags, const char *chan, const char *text, int len);
-extern int partychan_init();
-extern int partymember_init();
+
+extern int partychan_init(void);
+extern int partychan_shutdown(void);
+
+extern int partymember_init(void);
+extern int partymember_shutdown(void);
 
 static bind_list_t log_binds[] = {
 	{NULL, NULL, on_putlog},
 	{0}
 };
 
-int partyline_init()
+int partyline_init(void)
 {
 	partychan_init();
 	partymember_init();
@@ -50,6 +54,22 @@ int partyline_init()
 	BT_party_out = bind_table_add(BTN_PARTYLINE_OUT, 5, "isUsi", MATCH_NONE, 0);		/* DDD	*/
 	bind_add_list(BTN_LOG, log_binds);
 	return(0);
+}
+
+int partyline_shutdown(void)
+{
+	bind_rem_list(BTN_LOG, log_binds);
+	bind_table_del(BT_party_out);
+	bind_table_del(BT_cmd);
+
+	if (partyline_command_chars) 
+		free(partyline_command_chars);
+	partyline_command_chars = NULL;
+
+	partymember_shutdown();
+	partychan_shutdown();
+
+	return (0);
 }
 
 /* 1 if the text starts with a recognized command character or 0 if not */

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: ircmasks.h,v 1.3 2003/12/17 07:39:14 wcc Exp $
+ * $Id: ircmasks.h,v 1.4 2004/06/22 20:12:37 wingman Exp $
  */
 
 #ifndef _EGG_IRCMASKS_H_
@@ -36,5 +36,6 @@ typedef struct {
 int ircmask_list_add(ircmask_list_t *list, const char *ircmask, void *data);
 int ircmask_list_del(ircmask_list_t *list, const char *ircmask, void *data);
 int ircmask_list_find(ircmask_list_t *list, const char *irchost, void *dataptr);
+int ircmask_list_clear(ircmask_list_t *list);
 
 #endif /* _EGG_IRCMASKS_H_ */

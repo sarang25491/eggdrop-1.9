@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: binds.h,v 1.8 2004/06/19 18:07:01 wingman Exp $
+ * $Id: binds.h,v 1.9 2004/06/22 20:12:37 wingman Exp $
  */
 
 #ifndef _EGG_BINDS_H_
@@ -93,7 +93,10 @@ int bind_entry_modify(bind_table_t *table, int id, const char *mask, const char 
 int bind_entry_overwrite(bind_table_t *table, int id, const char *mask, const char *function_name, Function callback, void *client_data);
 void bind_add_list(const char *table_name, bind_list_t *cmds);
 void bind_add_simple(const char *table_name, const char *flags, const char *mask, Function callback);
+
+/* XXX: why bind_rem_list and not bind_del_list? */
 void bind_rem_list(const char *table_name, bind_list_t *cmds);
+/* XXX: why bind_rem_simple and not bind_del_simple? */
 void bind_rem_simple(const char *table_name, const char *flags, const char *mask, Function callback);
 bind_table_t *bind_table_list(void);
 

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: module.h,v 1.46 2004/06/21 20:35:11 wingman Exp $
+ * $Id: module.h,v 1.47 2004/06/22 20:12:37 wingman Exp $
  */
 
 #ifndef _EGG_MODULE_H_
@@ -51,7 +51,9 @@ struct egg_module {
 	void *module_api;
 };
 
-int module_init();
+int module_init(void);
+int module_shutdown(void);
+
 int module_add_dir(const char *moddir);
 int module_load(const char *name);
 int module_loaded(const char *name);

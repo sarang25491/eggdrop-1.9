@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: match.c,v 1.4 2003/12/17 07:39:14 wcc Exp $";
+static const char rcsid[] = "$Id: match.c,v 1.5 2004/06/22 20:12:37 wingman Exp $";
 #endif
 
 #include <ctype.h>
@@ -156,5 +156,8 @@ int wild_match(const char *wild, const char *matchtext) {
             matchtext++;
     }
   }
+  while (*wild && *wild == '*') /* Allow for trailing *'s */
+    wild++;
+
   return (!match || *wild || *matchtext)?0:(count+saved+1);
 }

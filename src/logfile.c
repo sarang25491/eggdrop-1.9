@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: logfile.c,v 1.45 2004/06/22 10:54:42 wingman Exp $";
+static const char rcsid[] = "$Id: logfile.c,v 1.46 2004/06/22 20:12:37 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -43,7 +43,7 @@ typedef struct log_b {
 } log_t;
 
 extern int backgrd, use_stderr, terminal_mode;
-static int terminal_enabled = 0;
+int terminal_enabled = 0;
 extern time_t now;
 
 static log_t *log_list_head = NULL; /* Linked list of logfiles. */

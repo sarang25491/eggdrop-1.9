@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: memory.c,v 1.3 2004/06/22 19:08:15 wingman Exp $";
+static const char rcsid[] = "$Id: memory.c,v 1.4 2004/06/22 20:12:37 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -113,37 +113,6 @@ char *mem_dbg_strdup(const char *str, const char *file, int line, const char *fu
 	return ptr;
 }
 
-void *mem_dbg_realloc(void *ptr, size_t size, const char *file, int line, const char *func)
-{
-	void *newptr;
-	
-	/* specifing NULL is valid */
-	if (ptr == NULL)
-		return mem_dbg_alloc(size, file, line, func);
-									
-	/* invalid size */
-	if (size <= 0) {
-		fprintf(stderr, "*** Failed realloc call at %s in line %i (%s): negative (%i) size requested.\n",
-				file, line, func, size);
-		return NULL;
-	}
-
-	newptr = realloc(ptr, size);
-
-	if (!mem_dbg_trace_realloc(newptr, ptr, size, file, line, func))
-		/*return NULL*/;
-
-
-	/* failed to allocate bytes */
-	if (newptr == NULL) {
-		fprintf(stderr, "*** Failed realloc call at %s in line %i (%s): NULL returned.\n",
-				file, line, func);
-		return NULL;
-	}
-
-	return newptr;
-}
-
 void mem_dbg_free(void *ptr, const char *file, int line, const char *func)
 {
 	/* There are rumors that free(NULL) is invalid on some OS, but we
@@ -155,6 +124,42 @@ void mem_dbg_free(void *ptr, const char *file, int line, const char *func)
 		/*return*/;
 
 	free(ptr);
+}
+
+void *mem_dbg_realloc(void *ptr, size_t size, const char *file, int line, const char *func)
+{
+	void *newptr;
+	
+	/* if ptr is NULL realloc is equivalent to malloc */
+	if (ptr == NULL)
+		return mem_dbg_alloc(size, file, line, func);
+									
+	/* if size is 0 realloc is equivalent to free */
+	if (size == 0) {
+		mem_dbg_free(ptr, file, line, func);
+		return NULL;
+	}
+
+	/* invalid size */
+	if (size < 0) {
+		fprintf(stderr, "*** Failed realloc call at %s in line %i (%s): negative (%i) size requested.\n",
+				file, line, func, size);
+		return NULL;
+	}
+
+	newptr = realloc(ptr, size);
+
+	if (!mem_dbg_trace_realloc(newptr, ptr, size, file, line, func))
+		/*return NULL*/;
+
+	/* failed to allocate bytes */
+	if (newptr == NULL) {
+		fprintf(stderr, "*** Failed realloc call at %s in line %i (%s): NULL returned.\n",
+				file, line, func);
+		return NULL;
+	}
+
+	return newptr;
 }
 
 static int mem_dbg_trace_alloc(void *ptr, size_t size, const char *file, int line, const char *func)

@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.174 2004/06/22 10:54:42 wingman Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.175 2004/06/22 20:12:37 wingman Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -156,13 +156,13 @@ static void print_help(char *const *argv)
 	print_version();
 	printf(_("\nUsage: %s [OPTIONS]... [FILE]\n"), argv[0]);
 	printf(_("\n\
-  -h, --help                 Print help and exit\n\
-  -v, --version              Print version and exit\n\
-  -n, --foreground           Don't go into the background (default=off)\n\
-  -c  --channel-stats        (with -n) Display channel stats every 10 seconds\n\
-  -t  --terminal             (with -n) Use terminal to simulate dcc-chat\n\
-  -m  --make-userfile        Userfile creation mode\n\
-  -d  --debug                Do a debugging dry-run\n\
+  -h, --help		   Print help and exit\n\
+  -v, --version		Print version and exit\n\
+  -n, --foreground	    Don't go into the background (default=off)\n\
+  -c  --channel-stats	 (with -n) Display channel stats every 10 seconds\n\
+  -t  --terminal		(with -n) Use terminal to simulate dcc-chat\n\
+  -m  --make-userfile	 Userfile creation mode\n\
+  -d  --debug		  Do a debugging dry-run\n\
   FILE  optional config filename (default 'config.xml')\n"));
 	printf("\n");
 }
@@ -305,7 +305,7 @@ static int create_userfile(void)
 		fflush(stdout);
 		fgets(handle, sizeof(handle), stdin);
 		for (len = 0; handle[len]; len++) {
-		        if (!ispunct(handle[len]) && !isalnum(handle[len])) break;
+			 if (!ispunct(handle[len]) && !isalnum(handle[len])) break;
 		}
 		if (len == 0) printf("Come on, enter a real handle.\n\n");
 	} while (len <= 0);
@@ -376,6 +376,13 @@ static void core_shutdown_or_restart()
 	putlog(LOG_MISC, "*", _("Saving config file..."));
 	core_config_save();
 	
+	/* destroy terminal */
+	if (terminal_mode && runmode != RUNMODE_RESTART)
+		terminal_shutdown();
+
+	/* unload core help */
+	help_unload_by_module("core");
+
 	/* shutdown logging */ 
 	logfile_shutdown();
 	
@@ -464,13 +471,14 @@ int main(int argc, char **argv)
 	online_since = now;
 	
 	do {
+		int tid;
 		egg_timeval_t howlong;
 		
 		/* default select timeout is 1 sec */
 		howlong.sec  = 1;
 		howlong.usec = 0;
 
-		timer_create_repeater(&howlong, "main loop", core_secondly);
+		tid = timer_create_repeater(&howlong, "main loop", core_secondly);
 
 		/* init core */
 		core_init();
@@ -499,6 +507,9 @@ int main(int argc, char **argv)
 			/* Run any scheduled cleanups. */
 			garbage_run();
 		}
+
+		/* shutdown secondly timer */
+		timer_destroy(tid);
 
 		/* Save user file, config file, ... */
 		core_shutdown_or_restart();					

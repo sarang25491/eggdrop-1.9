@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xml.c,v 1.11 2004/06/22 10:54:42 wingman Exp $";
+static const char rcsid[] = "$Id: xml.c,v 1.12 2004/06/22 20:12:37 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -74,13 +74,8 @@ void xml_node_destroy (xml_node_t *node)
 		}
 		parent->nchildren--;
 	}
+	if (node->text) free(node->text);
 	if (node->name) free(node->name);
-	if (node->value) free(node->value);
-
-	/* Note: we do not free node->text since that's just an alias
-  	 * for node->value. But since node->text may be modified the pointer
-	 * the the allocated memory for "text"/"value" may be wrong */
-
 	for (i = 0; i < node->nattributes; i++) {
 		if (node->attributes[i].name) free(node->attributes[i].name);
 		if (node->attributes[i].value) free(node->attributes[i].value);
@@ -307,6 +302,7 @@ int xml_node_set_str(const char *str, xml_node_t *node, ...)
 		node->text = NULL;
 		node->len = -1;
 	}
+
 	return(0);
 }
 
