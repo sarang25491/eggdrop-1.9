@@ -1,3 +1,27 @@
+2002-01-16 18:12  stdarg <stdarg@techmonkeys.org>
+
+	* modules/tclscript/tclscript.c:
+
+	
+	* Added support for SCRIPT_UNSIGNED (works like SCRIPT_INTEGER for
+	now).  
+
+2002-01-16 18:11  stdarg <stdarg@techmonkeys.org>
+
+	* modules/perlscript/perlscript.c:
+
+	
+	* Added support for SCRIPT_UNSIGNED (works like SCRIPT_INTEGER for
+	now) 
+
+2002-01-16 18:09  stdarg <stdarg@techmonkeys.org>
+
+	* src/: script_api.h, tcl.c, tclmisc.c:
+
+	
+	* Converted some commands in tclmisc.c.  
+	* Added SCRIPT_UNSIGNED type to script_api.h 
+
 2002-01-16 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
