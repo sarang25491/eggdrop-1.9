@@ -1,0 +1,132 @@
+PORTING TCL SCRIPTS TO EGGDROP 1.7
+
+I. All Versions
+
+No matter what version you are porting from, you will probably need to make
+some of the following changes to your scripts.
+
+1. Global Variables
+Instead of listing every change here, I'll summarize by saying,
+
+	***Dashes have become underscores in variable names***
+
+For instance, 'bot-nick' is now 'bot_nick'. This was done to make variables
+easier to deal with (no more ${bot-nick}) and because some scripting languages
+have a very hard time dealing with embedded dashes.
+
+2. Server Output
+If you used:
+	'putserv "blah" -next' - 'Putserv' now accepts '-next' as the *first*
+		argument, not the second. It's still optional, of course.
+		Old code: putserv "JOIN #chan mykey" -next
+		New code: putserv -next "JOIN #chan mykey"
+
+	'puthelp' - 'Puthelp' has been merged into 'putserv'. To access the
+		help queue, simply add '-help' as the first argument.
+		Old code: puthelp "NOTICE $nick :Hello there."
+		New code: putserv -help "NOTICE $nick :Hello there."
+
+	'putquick' - 'Putquick' has been merged into 'putserv'. To access the
+		mode queue, simply add '-quick' as the first argument.
+		Old code: putquick "NOTICE $nick :Hello there."
+		New code: putserv -quick "NOTICE $nick :Hello there."
+
+3. Binds
+** under construction **
+
+4. Timers
+If you used:
+	'timer' - The old 'timer' command let you set a timer for a given
+		number of minutes. The new 'timer' command only deals with
+		seconds and microseconds. All you have to do is multiply your
+		timeout value by 60.
+		Old code: timer 5 5minute_ad
+		New code: timer 300 5minute_ad
+
+	'utimer' - The old 'utimer' command let you set a timer for a given
+		number of seconds. You will want to change this to the new
+		'timer' command, which takes a 'seconds' parameter now instead
+		of 'minutes'.
+		Old code: utimer 30 trivia_question_timeout
+		New code: timer 30 trivia_question_timeout
+
+	'timers' - One popular method of determining whether a timer was already
+		running in the older Eggdrops was to use this code construct:
+			if {[string match "*my_proc_name*" [timers]]} {
+				# it's running
+			} else {
+				# it's not running
+			}
+		That won't work in Eggdrop 1.7 because the 'timers' command
+		only returns a list of numeric timer-ids, not the name of the
+		procedure being called. It's easy to replace that construct
+		with another.
+
+		If you want to make sure your timer isn't run twice on .rehash
+		then it's as simple as this:
+			if {[info exists my_timer_id]} {
+				killtimer $my_timer_id
+			}
+			set my_timer_id [timer 30 blah]
+		The key to using the new interface is to *keep track* of your
+		timer-ids. The timer-id is required to get information about
+		a timer ('timer_info') and to stop a timer ('killtimer').
+
+	'killutimer' - Just rename it 'killtimer' and you should be fine.
+		'Killtimer' now works for all timers, including repeating
+		timers. There is no more 'killutimer'.
+
+
+	The script interface to timers has changed dramatically. 'Utimer' and
+	'timer' have been combined and extended. The 'timers' command now
+	returns a list of timer-ids without names. There is a new 'timer_info'
+	command that returns a detailed list of information about a given
+	timer.
+
+
+
+
+
+
+
+
+
+II. Porting from Eggdrop 1.6
+
+There have only been a few changes specific to the 1.6 series.
+
+1. Binds
+If you used:
+	'bind evnt' - The new name of the 'evnt' bind table is 'event'.
+		Old code: bind evnt - "init-server" blah
+		New code: bind event - "init-server" blah
+
+
+
+
+
+
+
+
+
+III. Porting from Eggdrop 1.3/1.4
+** I don't have much experience with 1.3/1.4 scripting, so I'll leave this
+mostly blank for now **
+
+Porting from Eggdrop 1.3/1.4 to Eggdrop 1.7 is much like porting to Eggdrop 1.6.
+The main things that changed (and that cause lots of errors in scripts) are
+the arguments to the 'part' and 'notc' binds. Of course, all of the items listed
+under "All Versions" also apply.
+
+1. Binds
+If you used:
+	'bind part' - Callback procedures for the 'part' table now take an
+		additional argument: the part message.
+		Old code: proc part_handler {nick uhost hand chan} { ... }
+		New code: proc part_handler {nick uhost hand chan msg} { ... }
+
+	'bind notc' - Callback procedures for the 'notc' table now take an
+		additional argument: the actual destination of the notice, since
+		it could be a channel notice or a private notice.
+		Old code: proc on_notc {nick uhost hand chan text} { ... }
+		New code: proc on_notc {nick uhost hand chan text dest} { ... }
