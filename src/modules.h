@@ -4,7 +4,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: modules.h,v 1.13 2002/02/07 22:19:05 wcc Exp $
+ * $Id: modules.h,v 1.14 2002/03/22 16:01:20 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -37,19 +37,19 @@
 /* Modules specific functions and functions called by eggdrop
  */
 
-void do_module_report(int, int, char *);
-
-int module_register(char *name, Function * funcs,
+extern void modules_init();
+extern void do_module_report(int, int, char *);
+extern int module_register(char *name, Function * funcs,
 		    int major, int minor);
-const char *module_load(char *module_name);
-char *module_unload(char *module_name, char *nick);
-module_entry *module_find(char *name, int, int);
-Function *module_depend(char *, char *, int major, int minor);
-int module_undepend(char *);
-void add_hook(int hook_num, Function func);
-void del_hook(int hook_num, Function func);
-void *get_next_hook(int hook_num, void *func);
-extern struct hook_entry {
+extern const char *module_load(char *module_name);
+extern char *module_unload(char *module_name, char *nick);
+extern module_entry *module_find(char *name, int, int);
+extern Function *module_depend(char *, char *, int major, int minor);
+extern int module_undepend(char *);
+extern void add_hook(int hook_num, Function func);
+extern void del_hook(int hook_num, Function func);
+extern void *get_next_hook(int hook_num, void *func);
+struct hook_entry {
   struct hook_entry *next;
   int (*func) ();
 } *hook_list[REAL_HOOKS];
@@ -62,7 +62,7 @@ extern struct hook_entry {
 		p->func();					\
 	}							\
 } while (0)
-int call_hook_cccc(int, char *, char *, char *, char *);
+extern int call_hook_cccc(int, char *, char *, char *, char *);
 
 #endif
 

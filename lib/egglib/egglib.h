@@ -2,7 +2,7 @@
  * egglib.h
  *   libegg header file
  *
- * $Id: egglib.h,v 1.2 2002/02/07 22:19:00 wcc Exp $
+ * $Id: egglib.h,v 1.3 2002/03/22 16:01:16 ite Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
@@ -32,5 +32,6 @@
 #include "../compat/compat.h"
 #include "mstack.h"
 #include "msprintf.h"
+#include "hash_table.h"
 
 #endif				/* _EGGLIB_H */

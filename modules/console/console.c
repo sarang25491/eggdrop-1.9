@@ -3,7 +3,7 @@
  *   saved console settings based on console.tcl
  *   by cmwagner/billyjoe/D. Senso
  *
- * $Id: console.c,v 1.5 2002/02/20 02:37:18 guppy Exp $
+ * $Id: console.c,v 1.6 2002/03/22 16:01:17 ite Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
@@ -31,7 +31,7 @@
 
 #define start console_LTX_start
 
-static Function *global = NULL;
+static eggdrop_t *egg = NULL;
 static int console_autosave = 0;
 static int force_channel = 0;
 static int info_party = 0;
@@ -360,9 +360,9 @@ static Function console_table[] =
   (Function) console_dostore,
 };
 
-char *start(Function * global_funcs)
+char *start(eggdrop_t *eggdrop)
 {
-  global = global_funcs;
+  egg = eggdrop;
 
   module_register(MODULE_NAME, console_table, 1, 1);
   if (!module_depend(MODULE_NAME, "eggdrop", 107, 0)) {

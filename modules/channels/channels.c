@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.6 2002/03/09 19:42:10 eule Exp $
+ * $Id: channels.c,v 1.7 2002/03/22 16:01:16 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -30,7 +30,7 @@
 
 #define start channels_LTX_start
 
-static Function *global		= NULL;
+static eggdrop_t *egg = NULL;
 
 static int  setstatic;
 static int  use_info;
@@ -819,9 +819,9 @@ static Function channels_table[] =
   (Function) remove_channel,
 };
 
-char *start(Function * global_funcs)
+char *start(eggdrop_t *eggdrop)
 {
-  global = global_funcs;
+  egg = eggdrop;
 
   gfld_chan_thr = 10;
   gfld_chan_time = 60;

@@ -4,7 +4,7 @@
  *   signal handling
  *   command line arguments
  *
- * $Id: main.c,v 1.108 2002/02/25 02:59:50 stdarg Exp $
+ * $Id: main.c,v 1.109 2002/03/22 16:01:20 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -56,6 +56,7 @@
 #include "core_binds.h"
 #include "logfile.h"
 #include "misc.h"
+#include "script.h"
 
 #include "lib/adns/adns.h"
 
@@ -85,6 +86,8 @@ extern jmp_buf		 alarmret;
 
 char	egg_version[1024] = VERSION;
 int	egg_numver = VERSION_NUM;
+
+eggdrop_t *egg = NULL;		/* Eggdrop's context */
 
 char	notify_new[121] = "";	/* Person to send a note to for new users */
 int	default_flags = 0;	/* Default user flags and */
@@ -431,12 +434,9 @@ extern module_entry *module_list;
 void restart_chons();
 
 int init_userent(), init_net(),
- init_modules(), init_tcl(int, char **);
-void timer_init();
-void logfile_init();
+ init_tcl(int, char **);
 void botnet_init();
 void dns_init();
-void script_init();
 void binds_init();
 void dcc_init();
 
@@ -556,9 +556,10 @@ int main(int argc, char **argv)
   if (((int) getuid() == 0) || ((int) geteuid() == 0))
     fatal(_("ERROR: Eggdrop will not run as root!"), 0);
 
-  script_init();
+  egg = eggdrop_new();
+  script_init(egg);
   binds_init();
-  init_modules();
+  modules_init();
   logfile_init();
   timer_init();
   dns_init();

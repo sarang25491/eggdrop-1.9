@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.11 2002/02/13 16:44:57 ite Exp $
+ * $Id: transfer.c,v 1.12 2002/03/22 16:01:19 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -43,7 +43,7 @@
 
 #define start transfer_LTX_start
 
-static Function *global = NULL;
+static eggdrop_t *egg = NULL;
 
 static int copy_to_tmp = 1;	/* Copy files to /tmp before transmitting? */
 static int wait_dcc_xfer = 300;	/* Timeout time on DCC xfers */
@@ -1869,9 +1869,9 @@ static Function transfer_table[] =
   (Function) raw_dcc_resend,
 };
 
-char *start(Function *global_funcs)
+char *start(eggdrop_t *eggdrop)
 {
-  global = global_funcs;
+  egg = eggdrop;
 
   fileq = NULL;
   module_register(MODULE_NAME, transfer_table, 2, 2);

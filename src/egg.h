@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: egg.h,v 1.5 2002/02/13 16:44:58 ite Exp $
+ * $Id: egg.h,v 1.6 2002/03/22 16:01:20 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -171,9 +171,6 @@ typedef u_32int_t		IP;
 #define debug4(x,a1,a2,a3,a4)	putlog(LOG_DEBUG,"*",x,a1,a2,a3,a4)
 
 /***********************************************************************/
-
-/* It's used in so many places, let's put it here */
-typedef int (*Function) ();
 
 /* Public structure for the listening port map */
 struct portmap {

@@ -1,8 +1,8 @@
 /*
- * eggdrop.h
- *   libeggdrop header file
+ * eggdrop.c
+ *   libeggdrop 
  *
- * $Id: eggdrop.h,v 1.5 2002/03/22 16:01:16 ite Exp $
+ * $Id: eggdrop.c,v 1.1 2002/03/22 16:01:16 ite Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
@@ -22,32 +22,23 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#ifndef _EGGDROP_H
-#define _EGGDROP_H
+#include <stdlib.h>
+#include <string.h>
+#include "eggdrop.h"
 
-#ifdef HAVE_CONFIG_H
-#  include "config.h"
-#endif
+eggdrop_t *eggdrop_new(void)
+{
+  eggdrop_t *egg;
 
-#include "../compat/compat.h"
-#include "../egglib/egglib.h"
-#include <eggdrop/common.h>
-#include <eggdrop/botnetutil.h>
-#include <eggdrop/memutil.h>
-#include <eggdrop/fileutil.h>
-#include <eggdrop/registry.h>
+  egg = (eggdrop_t *) malloc(sizeof(eggdrop_t));
+  memset(egg, 0, sizeof(eggdrop_t));
 
-BEGIN_C_DECLS
+  return egg;
+}
 
-typedef struct eggdrop {
-  Function *global;		/* FIXME: this field will be removed once the
-				   global_funcs mess is cleaned up */
-  hash_table_t *registry_table;
-} eggdrop_t;
+eggdrop_t *eggdrop_delete(eggdrop_t * egg)
+{
+  free_null(egg);
 
-extern eggdrop_t *eggdrop_new(void);
-extern eggdrop_t *eggdrop_delete(eggdrop_t *);
-
-END_C_DECLS
-
-#endif				/* _EGGDROP_H */
+  return NULL;
+}

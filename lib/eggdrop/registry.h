@@ -1,0 +1,76 @@
+/*
+ * registry.h
+ *   eggdrop registry.
+ *
+ * $Id: registry.h,v 1.1 2002/03/22 16:01:16 ite Exp $
+ */
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+#ifndef _EGG_REGISTRY_H
+#define _EGG_REGISTRY_H
+
+#include <eggdrop/common.h>
+
+BEGIN_C_DECLS
+
+struct eggdrop;
+
+#define REGISTRY_DONT_CREATE	1
+#define REGISTRY_PREPEND	2
+#define REGISTRY_CHAIN		4
+#define REGISTRY_MAIN		8
+#define REGISTRY_DEFAULT	8
+
+#define REGISTRY_TEMP_LISTENER	1
+
+#define REGISTRY_HALT		1
+#define REGISTRY_SKIP_MAIN	2
+
+typedef struct registry_entry_b {
+  char *aclass;
+  char *name;
+  Function callback;
+  void *client_data;
+  int nargs;
+  int flags;
+  int action;
+  void *return_value;
+} registry_entry_t;
+
+typedef struct registry_simple_chain_b {
+  char *name;
+  Function callback;
+  int nargs;
+} registry_simple_chain_t;
+
+extern int registry_add(struct eggdrop *, registry_entry_t *);
+extern int registry_add_table(struct eggdrop *, registry_entry_t *);
+extern int registry_add_simple_chains(struct eggdrop *,
+				      registry_simple_chain_t *);
+extern int registry_remove(struct eggdrop *, registry_entry_t *);
+extern int registry_remove_table(struct eggdrop *, registry_entry_t *);
+extern int registry_lookup(struct eggdrop *, const char *, const char *,
+			   Function *, void **);
+extern int registry_unlookup(struct eggdrop *, const char *, const char *,
+			     Function *, void **);
+
+END_C_DECLS
+
+#endif				/* _EGG_REGISTRY_H */

@@ -2,8 +2,7 @@
 #include <string.h> /* strlen() */
 #include <stdlib.h> /* calloc(), malloc() */
 
-typedef int (*Function)();
-#include "registry.h"
+#include <eggdrop/eggdrop.h>
 #include "script_api.h"
 #include "script.h"
 #include "lib/egglib/mstack.h"
@@ -83,17 +82,17 @@ static registry_simple_chain_t my_functions[] = {
 	{0}
 };
 
-int script_init()
+int script_init(eggdrop_t *egg)
 {
 	script_events = mstack_new(0);
-	registry_add_simple_chains(my_functions);
-	registry_lookup("script", "load script", &load_script, &load_script_h);
-	registry_lookup("script", "link int", &link_int, &link_int_h);
-	registry_lookup("script", "unlink int", &unlink_int, &unlink_int_h);
-	registry_lookup("script", "link str", &link_str, &link_str_h);
-	registry_lookup("script", "unlink str", &unlink_str, &unlink_str_h);
-	registry_lookup("script", "create cmd", &create_cmd, &create_cmd_h);
-	registry_lookup("script", "delete cmd", &delete_cmd, &delete_cmd_h);
+	registry_add_simple_chains(egg, my_functions);
+	registry_lookup(egg, "script", "load script", &load_script, &load_script_h);
+	registry_lookup(egg, "script", "link int", &link_int, &link_int_h);
+	registry_lookup(egg, "script", "unlink int", &unlink_int, &unlink_int_h);
+	registry_lookup(egg, "script", "link str", &link_str, &link_str_h);
+	registry_lookup(egg, "script", "unlink str", &unlink_str, &unlink_str_h);
+	registry_lookup(egg, "script", "create cmd", &create_cmd, &create_cmd_h);
+	registry_lookup(egg, "script", "delete cmd", &delete_cmd, &delete_cmd_h);
 
 	script_create_cmd_table(my_script_cmds);
 

@@ -2,7 +2,7 @@
  * blowfish.c -- part of blowfish.mod
  *   encryption and decryption of passwords
  *
- * $Id: blowfish.c,v 1.2 2002/02/07 22:19:01 wcc Exp $
+ * $Id: blowfish.c,v 1.3 2002/03/22 16:01:16 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -35,8 +35,7 @@
 
 #define start blowfish_LTX_start
 
-#undef global
-static Function *global = NULL;
+static eggdrop_t *egg = NULL;
 
 /* Each box takes up 4k so be very careful here */
 #define BOXES 3
@@ -426,7 +425,7 @@ static char *blowfish_close()
   return _("You can't unload an encryption module");
 }
 
-EXPORT_SCOPE char *start(Function *);
+EXPORT_SCOPE char *start(eggdrop_t *);
 
 static Function blowfish_table[] =
 {
@@ -440,7 +439,7 @@ static Function blowfish_table[] =
   (Function) decrypt_string,
 };
 
-char *start(Function *global_funcs)
+char *start(eggdrop_t *eggdrop)
 {
   int i;
 
@@ -449,8 +448,8 @@ char *start(Function *global_funcs)
    * As the encryption module is never unloaded, only initialise stuff
    * that got reset during restart, e.g. the tcl bindings.
    */
-  if (global_funcs) {
-    global = global_funcs;
+  if (eggdrop) {
+    egg = eggdrop;
 
     if (!module_rename("blowfish", MODULE_NAME))
       return _("Already loaded.");
@@ -473,3 +472,4 @@ char *start(Function *global_funcs)
   add_tcl_commands(mytcls);
   return NULL;
 }
+

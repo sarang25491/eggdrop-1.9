@@ -5,7 +5,7 @@
  * Originally written by ButchBub	  15 July     1997
  * Comments by Fabian Knittel		  29 December 1999
  *
- * $Id: woobie.c,v 1.3 2002/02/07 22:19:04 wcc Exp $
+ * $Id: woobie.c,v 1.4 2002/03/22 16:01:19 ite Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
@@ -32,11 +32,10 @@
 
 #define start woobie_LTX_start
 
-#undef global
 /* Pointer to the eggdrop core function table. Gets initialized in
  * woobie_start().
  */
-static Function *global = NULL;
+static eggdrop_t *egg = NULL;
 
 /* Bind table for dcc commands. We import it using find_bind_table(). */
 static bind_table_t *BT_dcc;
@@ -99,12 +98,12 @@ static Function woobie_table[] =
   (Function) woobie_report,
 };
 
-char *woobie_start(Function *global_funcs)
+char *woobie_start(eggdrop_t *eggdrop)
 {
   /* Assign the core function table. After this point you use all normal
    * functions defined in src/mod/modules.h
    */
-  global = global_funcs;
+  egg = eggdrop;
 
   /* Register the module. */
   module_register(MODULE_NAME, woobie_table, 2, 0);

@@ -1,5 +1,5 @@
-#ifndef _EGG_TIMER_H_
-#define _EGG_TIMER_H_
+#ifndef _EGG_TIMER_H
+#define _EGG_TIMER_H
 
 typedef struct egg_timeval_b {
 	int sec;
@@ -14,12 +14,13 @@ typedef struct egg_timeval_b {
 /* Create a simple timer with no client data, but it repeats. */
 #define timer_create_repeater(howlong,callback) timer_create_complex(howlong, callback, NULL, TIMER_REPEAT)
 
-int timer_get_time(egg_timeval_t *curtime);
-int timer_diff(egg_timeval_t *from_time, egg_timeval_t *to_time, egg_timeval_t *diff);
-int timer_create_complex(egg_timeval_t *howlong, Function callback, void *client_data, int flags);
-int timer_destroy(int timer_id);
-int timer_destroy_all();
-int timer_get_shortest(egg_timeval_t *howlong);
-int timer_run();
+extern void timer_init();
+extern int timer_get_time(egg_timeval_t *curtime);
+extern int timer_diff(egg_timeval_t *from_time, egg_timeval_t *to_time, egg_timeval_t *diff);
+extern int timer_create_complex(egg_timeval_t *howlong, Function callback, void *client_data, int flags);
+extern int timer_destroy(int timer_id);
+extern int timer_destroy_all();
+extern int timer_get_shortest(egg_timeval_t *howlong);
+extern int timer_run();
 
-#endif /* _EGG_TIMER_H_ */
+#endif /* _EGG_TIMER_H */

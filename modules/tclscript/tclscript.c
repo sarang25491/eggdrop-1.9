@@ -5,7 +5,7 @@
 
 #define MODULE_NAME "tclscript"
 
-static Function *global = NULL;
+static eggdrop_t *egg = NULL;
 
 #if (TCL_MAJOR_VERSION > 8) || (TCL_MAJOR_VERSION == 8 && TCL_MINOR_VERSION > 1)
 	#define USE_BYTE_ARRAYS
@@ -587,11 +587,11 @@ static Function tclscript_table[] = {
 	(Function) tclscript_report
 };
 
-char *tclscript_LTX_start(Function *global_funcs)
+char *tclscript_LTX_start(eggdrop_t *eggdrop)
 {
 	bind_table_t *dcc_table;
 
-	global = global_funcs;
+	egg = eggdrop;
 
 	/* When tcl is gone from the core, this will be uncommented. */
 	/* ginterp = Tcl_CreateInterp(); */
@@ -606,8 +606,8 @@ char *tclscript_LTX_start(Function *global_funcs)
 	error_logfile = strdup("logs/tcl_errors.log");
 	Tcl_LinkVar(ginterp, "error_logfile", (char *)&error_logfile, TCL_LINK_STRING);
 
-	registry_add_simple_chains(my_functions);
-	registry_lookup("script", "playback", &journal_playback, &journal_playback_h);
+	registry_add_simple_chains(egg, my_functions);
+	registry_lookup(egg, "script", "playback", &journal_playback, &journal_playback_h);
 	if (journal_playback) journal_playback(journal_playback_h, journal_table);
 
 	dcc_table = find_bind_table2("dcc");

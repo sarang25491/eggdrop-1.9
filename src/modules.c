@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.104 2002/03/04 02:32:38 stdarg Exp $
+ * $Id: modules.c,v 1.105 2002/03/22 16:01:20 ite Exp $
  */
 /* 
  * Copyright (C) 1997 Robey Pointer
@@ -28,7 +28,6 @@
 #include "main.h"		/* NOTE: when removing this, include config.h */
 #include "modules.h"
 #include "tandem.h"
-#include "registry.h"
 #include "core_binds.h"
 #include "logfile.h"
 #include "misc.h"
@@ -498,8 +497,8 @@ Function global_table[] =
   (Function) find_bind_table2,
   /* 280 - 283 */
   (Function) check_bind,
-  (Function) registry_lookup,
-  (Function) registry_add_simple_chains,
+  (Function) 0,
+  (Function) 0,
   (Function) 0,			/* strftime				*/
   /* 284 - 287 */
   (Function) 0,			/* inet_ntop				*/
@@ -510,10 +509,13 @@ Function global_table[] =
 
 static bind_table_t *BT_load, *BT_unload;
 
-void init_modules(void)
+void modules_init()
 {
   int i;
   char wbuf[1024];
+
+  /* FIXME: keep this hack until the global table mess is gone */
+  egg->global = global_table;
 
   BT_load = add_bind_table2("load", 1, "s", MATCH_MASK, 0);
   BT_unload = add_bind_table2("unload", 1, "s", MATCH_MASK, 0);
@@ -589,7 +591,7 @@ const char *module_load(char *name)
   p->funcs = 0;
   p->next = module_list;
   module_list = p;
-  e = (((char *(*)()) f) (global_table));
+  e = (((char *(*)()) f) (egg));
   if (e) {
     module_list = module_list->next;
     free(p->name);

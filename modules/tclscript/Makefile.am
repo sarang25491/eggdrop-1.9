@@ -1,10 +1,10 @@
-# $Id: Makefile.am,v 1.5 2002/02/17 18:34:14 ite Exp $
+# $Id: Makefile.am,v 1.6 2002/03/22 16:01:19 ite Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 pkglibdir		= $(exec_prefix)/modules
 
 # FIXME: test if there's dependency on gnu make. It shouldn't.
-if EGG_PERLSCRIPT
+if EGG_TCLSCRIPT
   EGG_TCL = tclscript.la
 else
   EGG_TCL =

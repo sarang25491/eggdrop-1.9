@@ -6,7 +6,7 @@
  * Written by Fabian Knittel <fknittel@gmx.de>. Based on zlib examples
  * by Jean-loup Gailly and Miguel Albrecht.
  *
- * $Id: compress.c,v 1.4 2002/02/13 16:44:57 ite Exp $
+ * $Id: compress.c,v 1.5 2002/03/22 16:01:17 ite Exp $
  */
 /*
  * Copyright (C) 2000, 2001, 2002 Eggheads Development Team
@@ -48,8 +48,8 @@
 #define BUFLEN	512
 
 
-static Function *global = NULL,
-		*share_funcs = NULL;
+static eggdrop_t *egg = NULL;
+static Function *share_funcs = NULL;
 
 static unsigned int compressed_files;	/* Number of files compressed.      */
 static unsigned int uncompressed_files;	/* Number of files uncompressed.    */
@@ -416,9 +416,9 @@ static Function compress_table[] =
   (Function) is_compressedfile,
 };
 
-char *start(Function *global_funcs)
+char *start(eggdrop_t *eggdrop)
 {
-  global = global_funcs;
+  egg = eggdrop;
   compressed_files	= 0;
   uncompressed_files	= 0;
   share_compressed	= 0;

@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.11 2002/03/09 19:42:11 eule Exp $
+ * $Id: share.c,v 1.12 2002/03/22 16:01:19 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -45,7 +45,8 @@ static const int min_exemptinvite	= 1032800;
 /* Minimum version that supports userfile features. */
 static const int min_uffeature		= 1050200;
 
-static Function *global = NULL, *transfer_funcs = NULL, *channels_funcs = NULL;
+static Function *transfer_funcs = NULL, *channels_funcs = NULL;
+static eggdrop_t *egg = NULL;
 
 static int private_global = 0;
 static int private_user = 0;
@@ -2161,10 +2162,10 @@ static Function share_table[] =
   /* 8 - 11 */
 };
 
-char *start(Function *global_funcs)
+char *start(eggdrop_t *eggdrop)
 {
 
-  global = global_funcs;
+  egg = eggdrop;
 
   module_register(MODULE_NAME, share_table, 2, 3);
   if (!module_depend(MODULE_NAME, "eggdrop", 107, 0)) {

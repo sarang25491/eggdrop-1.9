@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.11 2002/02/20 02:37:18 guppy Exp $
+ * $Id: irc.c,v 1.12 2002/03/22 16:01:18 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -41,7 +41,8 @@ static bind_table_t *BT_dcc, *BT_raw, *BT_msg, *BT_ctcp, *BT_ctcr;
 /* We also create a few. */
 static bind_table_t *BT_topic, *BT_split, *BT_rejoin, *BT_quit, *BT_join, *BT_part, *BT_kick, *BT_nick, *BT_mode, *BT_need, *BT_pub, *BT_pubm;
 
-static Function *global = NULL, *channels_funcs = NULL, *server_funcs = NULL;
+static eggdrop_t *egg = NULL;
+static Function *channels_funcs = NULL, *server_funcs = NULL;
 
 static int ctcp_mode;
 static int strict_host;
@@ -913,11 +914,11 @@ static Function irc_table[] =
   (Function) check_this_user,
 };
 
-char *start(Function * global_funcs)
+char *start(eggdrop_t *eggdrop)
 {
   struct chanset_t *chan;
 
-  global = global_funcs;
+  egg = eggdrop;
 
   module_register(MODULE_NAME, irc_table, 1, 3);
   if (!module_depend(MODULE_NAME, "eggdrop", 107, 0)) {

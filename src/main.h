@@ -2,7 +2,7 @@
  * main.h
  *   include file to include most other include files
  *
- * $Id: main.h,v 1.25 2002/02/07 22:19:05 wcc Exp $
+ * $Id: main.h,v 1.26 2002/03/22 16:01:20 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -87,5 +87,6 @@ extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
 
 #endif				/* BORGUBES */
 
+extern eggdrop_t *egg;
 
 #endif				/* _EGG_MAIN_H */

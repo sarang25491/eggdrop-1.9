@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.9 2002/03/10 01:35:02 stdarg Exp $
+ * $Id: notes.c,v 1.10 2002/03/22 16:01:18 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -32,7 +32,6 @@
 #include <sys/stat.h> /* chmod(..) */
 #include "lib/eggdrop/module.h"
 #include "src/tandem.h"
-#undef global
 #include "notes.h"
 
 #define start notes_LTX_start
@@ -45,7 +44,7 @@ static int allow_fwd = 0;	/* Allow note forwarding */
 static int notify_users = 0;	/* Notify users they have notes every hour? */
 static int notify_onjoin = 1;   /* Notify users they have notes on join?
 				   drummer */
-static Function *global = NULL;	/* DAMN fcntl.h */
+static eggdrop_t *egg = NULL;
 
 static bind_table_t *BT_dcc, *BT_load, *BT_away, *BT_nkch, *BT_chon;
 
@@ -1225,10 +1224,10 @@ static Function notes_table[] =
   (Function) cmd_note,
 };
 
-char *start(Function * global_funcs)
+char *start(eggdrop_t *eggdrop)
 {
 
-  global = global_funcs;
+  egg = eggdrop;
 
   notefile[0] = 0;
   module_register(MODULE_NAME, notes_table, 2, 1);

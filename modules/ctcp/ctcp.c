@@ -2,7 +2,7 @@
  * ctcp.c -- part of ctcp.mod
  *   all the ctcp handling (except DCC, it's special ;)
  *
- * $Id: ctcp.c,v 1.4 2002/02/07 22:19:02 wcc Exp $
+ * $Id: ctcp.c,v 1.5 2002/03/22 16:01:17 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -36,7 +36,8 @@
 /* Import this bind table from server.mod */
 static bind_table_t *BT_ctcp;
 
-static Function *global = NULL, *server_funcs = NULL;
+static eggdrop_t *egg = NULL;
+static Function *server_funcs = NULL;
 
 static char ctcp_version[121];
 static char ctcp_finger[121];
@@ -220,9 +221,9 @@ static Function ctcp_table[] =
   (Function) NULL,
 };
 
-char *start(Function * global_funcs)
+char *start(eggdrop_t *eggdrop)
 {
-  global = global_funcs;
+  egg = eggdrop;
 
   module_register(MODULE_NAME, ctcp_table, 1, 0);
   if (!module_depend(MODULE_NAME, "eggdrop", 107, 0)) {

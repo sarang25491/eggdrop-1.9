@@ -1,5 +1,5 @@
 /* 
- * $Id: uptime.c,v 1.7 2002/02/07 22:19:04 wcc Exp $
+ * $Id: uptime.c,v 1.8 2002/03/22 16:01:19 ite Exp $
  *
  * This module reports uptime information about your bot to http://uptime.eggheads.org. The
  * purpose for this is to see how your bot rates against many others (including EnergyMechs 
@@ -65,7 +65,8 @@ typedef struct PackUp
 PackUp upPack;
 
 static bind_table_t *BT_dcc;
-static Function *global = NULL, *server_funcs = NULL;
+static Function *server_funcs = NULL;
+static eggdrop_t *egg = NULL;
 
 char *uptime_host = NULL;
 int uptimeport = 9969;
@@ -224,9 +225,9 @@ static Function uptime_table[] =
         (Function) uptime_report,
     };
 
-char *start(Function * global_funcs)
+char *start(eggdrop_t *eggdrop)
 {
-	global = global_funcs;
+	egg = eggdrop;
 
 	if (!module_depend(MODULE_NAME, "eggdrop", 107, 0)) {
 		module_undepend(MODULE_NAME);

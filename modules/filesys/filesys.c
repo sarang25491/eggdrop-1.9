@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.5 2002/02/07 22:19:02 wcc Exp $
+ * $Id: filesys.c,v 1.6 2002/03/22 16:01:17 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -60,9 +60,7 @@
 static bind_table_t *BT_dcc, *BT_load, *BT_file;
 static Function *transfer_funcs = NULL;
 
-/* fcntl.h sets this :/ */
-#undef global
-static Function *global = NULL;
+static eggdrop_t *egg = NULL;
 
 /* Root dcc directory */
 static char dccdir[121] = "";
@@ -919,9 +917,9 @@ static Function filesys_table[] =
   (Function) is_valid,
 };
 
-char *start(Function * global_funcs)
+char *start(eggdrop_t *eggdrop)
 {
-  global = global_funcs;
+  egg = eggdrop;
 
   module_register(MODULE_NAME, filesys_table, 2, 0);
   if (!module_depend(MODULE_NAME, "eggdrop", 107, 0)) {

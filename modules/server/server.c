@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.12 2002/02/24 08:14:35 guppy Exp $
+ * $Id: server.c,v 1.13 2002/03/22 16:01:18 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -30,7 +30,7 @@
 
 #define start server_LTX_start
 
-static Function *global = NULL;
+static eggdrop_t *egg = NULL;
 
 static int ctcp_mode;
 static int serv;		/* sock # of server currently */
@@ -1616,11 +1616,11 @@ static Function server_table[] =
   (Function) check_tcl_notc
 };
 
-char *start(Function *global_funcs)
+char *start(eggdrop_t *eggdrop)
 {
   char *s;
 
-  global = global_funcs;
+  egg = eggdrop;
 
   /*
    * Init of all the variables *must* be done in _start rather than

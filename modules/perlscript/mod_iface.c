@@ -5,7 +5,7 @@
 
 #define MODULE_NAME "perlscript"
 
-static Function *global = NULL;
+static eggdrop_t *egg = NULL;
 
 /* Functions from perlscript.c. */
 int perlscript_init();
@@ -89,11 +89,11 @@ static Function perlscript_table[] = {
 	(Function) 0
 };
 
-char *perlscript_LTX_start(Function *global_funcs)
+char *perlscript_LTX_start(eggdrop_t *eggdrop)
 {
 	bind_table_t *BT_dcc;
 
-	global = global_funcs;
+	egg = eggdrop;
 
 	module_register("perlscript", perlscript_table, 1, 2);
 	if (!module_depend("perlscript", "eggdrop", 107, 0)) {
@@ -104,8 +104,8 @@ char *perlscript_LTX_start(Function *global_funcs)
 	/* Initialize interpreter. */
 	perlscript_init();
 
-	registry_add_simple_chains(my_functions);
-        registry_lookup("script", "playback", &journal_playback, &journal_playback_h);
+	registry_add_simple_chains(egg, my_functions);
+        registry_lookup(egg, "script", "playback", &journal_playback, &journal_playback_h);
         if (journal_playback) journal_playback(journal_playback_h, journal_table);
 
 	BT_dcc = find_bind_table2("dcc");
@@ -124,3 +124,4 @@ static char *perlscript_close()
 	module_undepend("perlscript");
 	return(NULL);
 }
+

@@ -2,7 +2,7 @@
  * common.h
  *   contains general purporse commonly used macros
  *
- * $Id: common.h,v 1.2 2002/02/07 22:18:59 wcc Exp $
+ * $Id: common.h,v 1.3 2002/03/22 16:01:16 ite Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
@@ -50,5 +50,7 @@
 #  define EGG_VARARGS_DEF(type, name) (va_alist) va_dcl
 #  define EGG_VARARGS_START(type, name, list) (va_start(list), va_arg(list,type))
 #endif
+
+typedef int (*Function) ();
 
 #endif				/* _EGG_COMMON_H */

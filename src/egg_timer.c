@@ -3,7 +3,7 @@
 #include <stdlib.h> /* malloc(), free() */
 #include <sys/time.h> /* gettimeofday() */
 
-typedef int (*Function)();
+#include <eggdrop/eggdrop.h>
 #include "egg_timer.h"
 #include "script_api.h"
 #include "script.h"
@@ -161,7 +161,6 @@ int timer_destroy_all()
 int timer_get_shortest(egg_timeval_t *howlong)
 {
 	egg_timer_t *timer = timer_list_head;
-	int sec, usec;
 
 	/* No timers? Boo. */
 	if (!timer) return(1);
