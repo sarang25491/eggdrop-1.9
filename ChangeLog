@@ -1,3 +1,9 @@
+2003-03-07 08:16  Tothwolf <tothwolf@techmonkeys.org>
+
+	* acconfig/: config.guess, config.sub:
+
+	* Upgraded to latest config.guess and config.sub.  
+
 2003-03-06 13:49  Tothwolf <tothwolf@techmonkeys.org>
 
 	* configure.ac, acconfig/acinclude.m4, lib/compat/Makefile.am:
