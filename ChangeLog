@@ -1,3 +1,10 @@
+2001-10-17 03:28  stdarg <stdarg@techmonkeys.org>
+
+	* src/: chanprog.c, dns.c, main.c, tcl.c, tclegg.h, tclhash.c,
+	tclmisc.c:
+
+	Removed old timer code.  Updated dns.c to use new script interface.  
+
 2001-10-17 02:01  Matthew Hallacy <poptix@techmonkeys.org>
 
 	* src/: patch.h, tcluser.c:
