@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.47 2001/10/11 11:34:19 tothwolf Exp $
+ * $Id: misc.c,v 1.48 2001/10/11 18:24:01 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -540,7 +540,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
     for (i = 0; i < max_logs; i++) {
       if ((logs[i].filename != NULL) && (logs[i].mask & type) &&
 	  ((chname[0] == '*') || (logs[i].chname[0] == '*') ||
-	   (!rfc_casecmp(chname, logs[i].chname)))) {
+	   (!irccmp(chname, logs[i].chname)))) {
 	if (logs[i].f == NULL) {
 	  /* Open this logfile */
 	  if (keep_all_logs) {
@@ -587,7 +587,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_CHAT) && (dcc[i].u.chat->con_flags & type)) {
       if ((chname[0] == '*') || (dcc[i].u.chat->con_chan[0] == '*') ||
-	  (!rfc_casecmp(chname, dcc[i].u.chat->con_chan)))
+	  (!irccmp(chname, dcc[i].u.chat->con_chan)))
 	dprintf(i, "%s", out);
     }
   if ((!backgrd) && (!con_chan) && (!term_z))

@@ -2,7 +2,7 @@
  * userent.c -- handles:
  *   user-entry handling, new stylem more versatile.
  *
- * $Id: userent.c,v 1.23 2001/10/11 11:34:19 tothwolf Exp $
+ * $Id: userent.c,v 1.24 2001/10/11 18:24:01 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -349,7 +349,7 @@ static int laston_tcl_get(Tcl_Interp * irp, struct userrec *u,
   BADARGS(3, 4, " handle LASTON ?channel?");
   if (argc == 4) {
     for (cr = u->chanrec; cr; cr = cr->next)
-      if (!rfc_casecmp(cr->channel, argv[3])) {
+      if (!irccmp(cr->channel, argv[3])) {
 	Tcl_AppendResult(irp, int_to_base10(cr->laston), NULL);
 	break;
       }
@@ -373,7 +373,7 @@ static int laston_tcl_set(Tcl_Interp * irp, struct userrec *u,
   if ((argc == 5) && argv[4][0] && strchr(CHANMETA, argv[4][0])) {
     /* Search for matching channel */
     for (cr = u->chanrec; cr; cr = cr->next)
-      if (!rfc_casecmp(cr->channel, argv[4])) {
+      if (!irccmp(cr->channel, argv[4])) {
 	cr->laston = atoi(argv[3]);
 	break;
       }

@@ -1,7 +1,7 @@
 /*
  * modvals.h
  *
- * $Id: modvals.h,v 1.23 2001/10/10 10:44:05 tothwolf Exp $
+ * $Id: modvals.h,v 1.24 2001/10/11 18:24:02 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -48,7 +48,7 @@
 #define HOOK_QSERV		108
 #define HOOK_ADD_MODE		109
 #define HOOK_MATCH_NOTEREJ	110
-#define HOOK_RFC_CASECMP	111
+#define HOOK_IRCCMP		111
 #define HOOK_DNS_HOSTBYIP	112
 #define HOOK_DNS_IPBYHOST	113
 #define HOOK_ENCRYPT_STRING     114

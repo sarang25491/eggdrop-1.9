@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.61 2001/10/10 18:37:54 stdarg Exp $
+ * $Id: module.h,v 1.62 2001/10/11 18:24:02 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -354,8 +354,8 @@
 /* 216 - 219 */
 /* 216: min_dcc_port -- UNUSED (guppy) */
 /* 217: max_dcc_port -- UNUSED (guppy) */
-#define rfc_casecmp ((int(*)(char *, char *))(*(Function**)(global[218])))
-#define rfc_ncasecmp ((int(*)(char *, char *, int *))(*(Function**)(global[219])))
+#define irccmp ((int(*)(char *, char *))(*(Function**)(global[218])))
+#define ircncmp ((int(*)(char *, char *, int *))(*(Function**)(global[219])))
 /* 220 - 223 */
 #define global_exempts (*(maskrec **)(global[220]))
 #define global_invites (*(maskrec **)(global[221]))

@@ -2,7 +2,7 @@
  * flags.c -- handles:
  *   all the flag matching/conversion functions in one neat package :)
  *
- * $Id: flags.c,v 1.21 2001/10/11 11:34:19 tothwolf Exp $
+ * $Id: flags.c,v 1.22 2001/10/11 18:24:01 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -630,7 +630,7 @@ void set_user_flagrec(struct userrec *u, struct flag_record *fr,
   /* Don't share bot attrs */
   if ((oldflags & FR_CHAN) && chname) {
     for (cr = u->chanrec; cr; cr = cr->next)
-      if (!rfc_casecmp(chname, cr->channel))
+      if (!irccmp(chname, cr->channel))
 	break;
     ch = findchan_by_dname(chname);
     if (!cr && ch) {
@@ -686,7 +686,7 @@ void get_user_flagrec(struct userrec *u, struct flag_record *fr,
     } else {
       if (chname)
 	for (cr = u->chanrec; cr; cr = cr->next)
-	  if (!rfc_casecmp(chname, cr->channel))
+	  if (!irccmp(chname, cr->channel))
 	    break;
       if (cr) {
 	fr->chan = cr->flags;

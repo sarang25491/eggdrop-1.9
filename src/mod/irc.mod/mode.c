@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.52 2001/10/11 11:34:20 tothwolf Exp $
+ * $Id: mode.c,v 1.53 2001/10/11 18:24:02 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -275,7 +275,7 @@ static void real_add_mode(struct chanset_t *chan,
     /* op-type mode change */
     for (i = 0; i < modesperline; i++)
       if (chan->cmode[i].type == type && chan->cmode[i].op != NULL &&
-	  !rfc_casecmp(chan->cmode[i].op, op))
+	  !irccmp(chan->cmode[i].op, op))
 	return;			/* Already in there :- duplicate */
     l = strlen(op) + 1;
     if (chan->bytes + l > mode_buf_len)
@@ -503,7 +503,7 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
     else if (chan_op(victim) || chan_friend(victim))
       ok = 0;
     if (!ok && !match_my_nick(nick) &&
-       rfc_casecmp(who, nick) && had_op &&
+       irccmp(who, nick) && had_op &&
 	!match_my_nick(who)) {	/* added 25mar1996, robey */
       /* Do we want to reop? */
       /* Is the deopper NOT a master or bot? */
@@ -677,7 +677,7 @@ static void got_unban(struct chanset_t *chan, char *nick, char *from,
   masklist *b, *old;
 
   old = NULL;
-  for (b = chan->channel.ban; b->mask[0] && rfc_casecmp(b->mask, who);
+  for (b = chan->channel.ban; b->mask[0] && irccmp(b->mask, who);
        old = b, b = b->next)
     ;
   if (b->mask[0]) {
@@ -742,7 +742,7 @@ static void got_unexempt(struct chanset_t *chan, char *nick, char *from,
   masklist *b ;
   int match = 0;
 
-  while (e && e->mask[0] && rfc_casecmp(e->mask, who)) {
+  while (e && e->mask[0] && irccmp(e->mask, who)) {
     old = e;
     e = e->next;
   }
@@ -818,7 +818,7 @@ static void got_uninvite(struct chanset_t *chan, char *nick, char *from,
 {
   masklist *inv = chan->channel.invite, *old = NULL;
 
-  while (inv->mask[0] && rfc_casecmp(inv->mask, who)) {
+  while (inv->mask[0] && irccmp(inv->mask, who)) {
     old = inv;
     inv = inv->next;
   }

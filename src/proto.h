@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.52 2001/10/10 10:44:04 tothwolf Exp $
+ * $Id: proto.h,v 1.53 2001/10/11 18:24:01 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -34,6 +34,9 @@
 #include "lush.h"
 #include "misc_file.h"
 
+#include "irccmp.h"
+#include "match.h"
+
 #ifdef HAVE_DPRINTF
 #define dprintf dprintf_eggdrop
 #endif
@@ -50,11 +53,9 @@ struct tand_t_struct;
 extern void (*encrypt_pass) (char *, char *);
 extern char *(*encrypt_string) (char *, char *);
 extern char *(*decrypt_string) (char *, char *);
-extern int (*rfc_casecmp) (const char *, const char *);
-extern int (*rfc_ncasecmp) (const char *, const char *, int);
-extern int (*rfc_toupper) (int);
-extern int (*rfc_tolower) (int);
 extern int (*match_noterej) (struct userrec *, char *);
+extern int (*irccmp)(const char *, const char *);
+extern int (*ircncmp)(const char *, const char *, int);
 #endif
 
 /* botcmd.c */
@@ -169,10 +170,6 @@ void eggContextNote(const char *, int, const char *, const char *);
 void eggAssert(const char *, int, const char *);
 void backup_userfile(void);
 
-/* match.c */
-int wild_match(register unsigned char *, register unsigned char *);
-int wild_match_per(register unsigned char *, register unsigned char *);
-
 /* misc.c */
 int egg_strcatn(char *dst, const char *src, size_t max);
 int my_strcpy(char *, char *);
@@ -283,11 +280,5 @@ void tell_file_stats(int, char *);
 void tell_user_ident(int, char *, int);
 void tell_users_match(int, char *, int, int, int, char *);
 int readuserfile(char *, struct userrec **);
-
-/* rfc1459.c */
-int _rfc_casecmp(const char *, const char *);
-int _rfc_ncasecmp(const char *, const char *, int);
-int _rfc_toupper(int);
-int _rfc_tolower(int);
 
 #endif				/* _EGG_PROTO_H */

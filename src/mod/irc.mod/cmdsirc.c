@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands direclty relating to channel interaction
  *
- * $Id: cmdsirc.c,v 1.27 2001/09/28 02:52:12 poptix Exp $
+ * $Id: cmdsirc.c,v 1.28 2001/10/11 18:24:02 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -629,7 +629,7 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
 	dprintf(idx, "%c%s%s %s%s %s %c     <- netsplit, %lus\n", chanflag,
 		m->nick, spaces, handle, spaces2, s, atrflag,
 		now - (m->split));
-      else if (!rfc_casecmp(m->nick, botname))
+      else if (!irccmp(m->nick, botname))
 	dprintf(idx, "%c%s%s %s%s %s %c     <- it's me!\n", chanflag, m->nick,
 		spaces, handle, spaces2, s, atrflag);
       else {

@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.69 2001/10/11 11:34:21 tothwolf Exp $
+ * $Id: servmsg.c,v 1.70 2001/10/11 18:24:03 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -50,7 +50,7 @@ static int gotfake433(char *from)
   if (altnick_char == 0) {
     char *alt = get_altbotnick();
 
-    if (alt[0] && (rfc_casecmp(alt, botname)))
+    if (alt[0] && (irccmp(alt, botname)))
       /* Alternate nickname defined. Let's try that first. */
       strcpy(botname, alt);
     else {
@@ -169,7 +169,7 @@ static int check_tcl_flud(char *nick, char *uhost, struct userrec *u,
 
 static int match_my_nick(char *nick)
 {
-  if (!rfc_casecmp(nick, botname))
+  if (!irccmp(nick, botname))
     return 1;
   return 0;
 }
@@ -661,18 +661,18 @@ static void got303(char *from, char *ignore, char *msg)
   fixcolon(msg);
   alt = get_altbotnick();
   tmp = newsplit(&msg);
-  if (tmp[0] && !rfc_casecmp(botname, tmp)) {
+  if (tmp[0] && !irccmp(botname, tmp)) {
     while ((tmp = newsplit(&msg))[0]) { /* no, it's NOT == */
-      if (!rfc_casecmp(tmp, origbotname))
+      if (!irccmp(tmp, origbotname))
         ison_orig = 1;
-      else if (alt[0] && !rfc_casecmp(tmp, alt))
+      else if (alt[0] && !irccmp(tmp, alt))
         ison_alt = 1;
     }
     if (!ison_orig) {
       if (!nick_juped)
         putlog(LOG_MISC, "*", _("Switching back to nick %s"), origbotname);
       dprintf(DP_SERVER, "NICK %s\n", origbotname);
-    } else if (alt[0] && !ison_alt && rfc_casecmp(botname, alt)) {
+    } else if (alt[0] && !ison_alt && irccmp(botname, alt)) {
       putlog(LOG_MISC, "*", _("Switching back to altnick %s"), alt);
       dprintf(DP_SERVER, "NICK %s\n", alt);
     }
@@ -745,7 +745,7 @@ static int got437(char *from, char *ignore, char *msg)
   } else if (server_online) {
     if (!nick_juped)
       putlog(LOG_MISC, "*", "NICK IS JUPED: %s (keeping '%s').", s, botname);
-    if (!rfc_casecmp(s, origbotname))
+    if (!irccmp(s, origbotname))
       nick_juped = 1;
   } else {
     putlog(LOG_MISC, "*", "%s: %s", _("Nickname has been juped"), s);
@@ -817,22 +817,22 @@ static int gotnick(char *from, char *ignore, char *msg)
 	     msg);
     else if (keepnick && strcmp(nick, msg)) {
       putlog(LOG_SERV | LOG_MISC, "*", "Nickname changed to '%s'???", msg);
-      if (!rfc_casecmp(nick, origbotname)) {
+      if (!irccmp(nick, origbotname)) {
         putlog(LOG_MISC, "*", _("Switching back to nick %s"), origbotname);
         dprintf(DP_SERVER, "NICK %s\n", origbotname);
-      } else if (alt[0] && !rfc_casecmp(nick, alt)
+      } else if (alt[0] && !irccmp(nick, alt)
 		 && egg_strcasecmp(botname, origbotname)) {
         putlog(LOG_MISC, "*", _("Switching back to altnick %s"), alt);
         dprintf(DP_SERVER, "NICK %s\n", alt);
       }
     } else
       putlog(LOG_SERV | LOG_MISC, "*", "Nickname changed to '%s'???", msg);
-  } else if ((keepnick) && (rfc_casecmp(nick, msg))) {
+  } else if ((keepnick) && (irccmp(nick, msg))) {
     /* Only do the below if there was actual nick change, case doesn't count */
-    if (!rfc_casecmp(nick, origbotname)) {
+    if (!irccmp(nick, origbotname)) {
       putlog(LOG_MISC, "*", _("Switching back to nick %s"), origbotname);
       dprintf(DP_SERVER, "NICK %s\n", origbotname);
-    } else if (alt[0] && !rfc_casecmp(nick, alt) &&
+    } else if (alt[0] && !irccmp(nick, alt) &&
 	    egg_strcasecmp(botname, origbotname)) {
       putlog(LOG_MISC, "*", _("Switching back to altnick %s"), altnick);
       dprintf(DP_SERVER, "NICK %s\n", altnick);
@@ -970,7 +970,7 @@ static int gotkick(char *from, char *ignore, char *msg)
   char *nick;
 
   nick = from;
-  if (rfc_casecmp(nick, botname))
+  if (irccmp(nick, botname))
     /* Not my kick, I don't need to bother about it. */
     return 0;
   if (use_penalties) {

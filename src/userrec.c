@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  *
- * $Id: userrec.c,v 1.34 2001/10/10 10:44:04 tothwolf Exp $
+ * $Id: userrec.c,v 1.35 2001/10/11 18:24:01 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -253,7 +253,7 @@ struct userrec *get_user_by_equal_host(char *host)
 
   for (u = userlist; u; u = u->next)
     for (q = get_user(&USERENTRY_HOSTS, u); q; q = q->next)
-      if (!rfc_casecmp(q->extra, host))
+      if (!irccmp(q->extra, host))
 	return u;
   return NULL;
 }
@@ -640,7 +640,7 @@ int delhost_by_handle(char *handle, char *host)
   q = get_user(&USERENTRY_HOSTS, u);
   qprev = q;
   if (q) {
-    if (!rfc_casecmp(q->extra, host)) {
+    if (!irccmp(q->extra, host)) {
       e = find_user_entry(&USERENTRY_HOSTS, u);
       e->u.extra = q->next;
       free(q->extra);
@@ -652,7 +652,7 @@ int delhost_by_handle(char *handle, char *host)
       q = q->next;
     while (q) {
       qnext = q->next;
-      if (!rfc_casecmp(q->extra, host)) {
+      if (!irccmp(q->extra, host)) {
 	if (qprev)
 	  qprev->next = q->next;
 	else if (e) {
@@ -727,7 +727,7 @@ struct userrec *get_user_by_nick(char *nick)
 
   for (chan = chanset; chan; chan = chan->next) {
     for (m = chan->channel.member; m && m->nick[0] ;m = m->next) {
-      if (!rfc_casecmp(nick, m->nick)) {
+      if (!irccmp(nick, m->nick)) {
   	char word[512];
 
 	egg_snprintf(word, sizeof word, "%s!%s", m->nick, m->userhost);
@@ -749,7 +749,7 @@ void user_del_chan(char *dname)
     ch = u->chanrec;
     och = NULL;
     while (ch) {
-      if (!rfc_casecmp(dname, ch->channel)) {
+      if (!irccmp(dname, ch->channel)) {
 	if (och)
 	  och->next = ch->next;
 	else

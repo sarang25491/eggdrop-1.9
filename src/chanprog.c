@@ -5,7 +5,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.29 2001/10/10 10:44:03 tothwolf Exp $
+ * $Id: chanprog.c,v 1.30 2001/10/11 18:24:01 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -87,7 +87,7 @@ memberlist *ismember(struct chanset_t *chan, char *nick)
   register memberlist	*x;
 
   for (x = chan->channel.member; x && x->nick[0]; x = x->next)
-    if (!rfc_casecmp(x->nick, nick))
+    if (!irccmp(x->nick, nick))
       return x;
   return NULL;
 }
@@ -99,7 +99,7 @@ struct chanset_t *findchan(const char *name)
   register struct chanset_t	*chan;
 
   for (chan = chanset; chan; chan = chan->next)
-    if (!rfc_casecmp(chan->name, name))
+    if (!irccmp(chan->name, name))
       return chan;
   return NULL;
 }
@@ -111,7 +111,7 @@ struct chanset_t *findchan_by_dname(const char *name)
   register struct chanset_t	*chan;
 
   for (chan = chanset; chan; chan = chan->next)
-    if (!rfc_casecmp(chan->dname, name))
+    if (!irccmp(chan->dname, name))
       return chan;
   return NULL;
 }
@@ -134,7 +134,7 @@ struct userrec *check_chanlist(const char *host)
   nick = splitnick(&uhost);
   for (chan = chanset; chan; chan = chan->next)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next)
-      if (!rfc_casecmp(nick, m->nick) && !egg_strcasecmp(uhost, m->userhost))
+      if (!irccmp(nick, m->nick) && !egg_strcasecmp(uhost, m->userhost))
 	return m->user;
   return NULL;
 }
@@ -180,7 +180,7 @@ void clear_chanlist_member(const char *nick)
 
   for (chan = chanset; chan; chan = chan->next)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next)
-      if (!rfc_casecmp(m->nick, nick)) {
+      if (!irccmp(m->nick, nick)) {
 	m->user = NULL;
 	break;
       }
@@ -199,7 +199,7 @@ void set_chanlist(const char *host, struct userrec *rec)
   nick = splitnick(&uhost);
   for (chan = chanset; chan; chan = chan->next)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next)
-      if (!rfc_casecmp(nick, m->nick) && !egg_strcasecmp(uhost, m->userhost))
+      if (!irccmp(nick, m->nick) && !egg_strcasecmp(uhost, m->userhost))
 	m->user = rec;
 }
 

@@ -10,7 +10,7 @@
  *
  * dprintf'ized, 9nov1995
  *
- * $Id: users.c,v 1.29 2001/10/10 10:44:04 tothwolf Exp $
+ * $Id: users.c,v 1.30 2001/10/11 18:24:02 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -73,7 +73,7 @@ int equals_ignore(char *uhost)
   struct igrec *u = global_ign;
 
   for (; u; u = u->next)
-    if (!rfc_casecmp(u->igmask, uhost)) {
+    if (!irccmp(u->igmask, uhost)) {
       if (u->flags & IGREC_PERM)
 	return 2;
       else
@@ -98,7 +98,7 @@ int delignore(char *ign)
   } else {
     /* find the matching host, if there is one */
     for (u = &global_ign; *u && !i; u = &((*u)->next))
-      if (!rfc_casecmp(ign, (*u)->igmask)) {
+      if (!irccmp(ign, (*u)->igmask)) {
 	i = 1;
 	break;
       }
@@ -749,7 +749,7 @@ int readuserfile(char *file, struct userrec **ret)
 	    break_down_flags(fl, &fr, 0);
 	    if (findchan_by_dname(chname)) {
 	      for (cr = u->chanrec; cr; cr = cr->next)
-		if (!rfc_casecmp(cr->channel, chname))
+		if (!irccmp(cr->channel, chname))
 		  break;
 	      if (!cr) {
 		cr = (struct chanuserrec *)
@@ -876,16 +876,16 @@ int readuserfile(char *file, struct userrec **ret)
 	      list_insert((&u->entries), ue);
 	    }
 	  }
-	} else if (!rfc_casecmp(code, BAN_NAME)) {
+	} else if (!irccmp(code, BAN_NAME)) {
 	  strcpy(lasthand, code);
 	  u = NULL;
-	} else if (!rfc_casecmp(code, IGNORE_NAME)) {
+	} else if (!irccmp(code, IGNORE_NAME)) {
 	  strcpy(lasthand, code);
 	  u = NULL;
-	} else if (!rfc_casecmp(code, EXEMPT_NAME)) {
+	} else if (!irccmp(code, EXEMPT_NAME)) {
 	  strcpy(lasthand, code);
 	  u = NULL;
-	} else if (!rfc_casecmp(code, INVITE_NAME)) {
+	} else if (!irccmp(code, INVITE_NAME)) {
 	  strcpy(lasthand, code);
 	  u = NULL;
 	} else if (code[0] == '*') {

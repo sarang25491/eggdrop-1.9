@@ -1,7 +1,7 @@
 /*
  * userchan.c -- part of channels.mod
  *
- * $Id: userchan.c,v 1.27 2001/10/10 10:44:05 tothwolf Exp $
+ * $Id: userchan.c,v 1.28 2001/10/11 18:24:02 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -27,7 +27,7 @@ struct chanuserrec *get_chanrec(struct userrec *u, char *chname)
   struct chanuserrec *ch;
 
   for (ch = u->chanrec; ch; ch = ch->next) 
-    if (!rfc_casecmp(ch->channel, chname))
+    if (!irccmp(ch->channel, chname))
       return ch;
   return NULL;
 }
@@ -123,7 +123,7 @@ static void del_chanrec(struct userrec *u, char *chname)
   struct chanuserrec *ch = u->chanrec, *lst = NULL;
 
   while (ch) {
-    if (!rfc_casecmp(chname, ch->channel)) {
+    if (!irccmp(chname, ch->channel)) {
       if (lst == NULL)
 	u->chanrec = ch->next;
       else
@@ -158,7 +158,7 @@ static void set_handle_laston(char *chan, struct userrec *u, time_t n)
 static int u_sticky_mask(maskrec *u, char *uhost)
 {
   for (; u; u = u->next)
-    if (!rfc_casecmp(u->mask, uhost))
+    if (!irccmp(u->mask, uhost))
       return (u->flags & MASKREC_STICKY);
   return 0;
 }
@@ -177,7 +177,7 @@ static int u_setsticky_mask(struct chanset_t *chan, maskrec *u, char *uhost,
     if (j >= 0)
       j--;
 
-    if (!j || ((j < 0) && !rfc_casecmp(u->mask, uhost))) {
+    if (!j || ((j < 0) && !irccmp(u->mask, uhost))) {
       if (sticky > 0)
 	u->flags |= MASKREC_STICKY;
       else if (!sticky)
@@ -211,7 +211,7 @@ static int u_setsticky_mask(struct chanset_t *chan, maskrec *u, char *uhost,
 static int u_equals_mask(maskrec *u, char *mask)
 {
   for (; u; u = u->next)
-    if (!rfc_casecmp(u->mask, mask)) {
+    if (!irccmp(u->mask, mask)) {
       if (u->flags & MASKREC_PERM)
         return 2;
       else
@@ -245,7 +245,7 @@ static int u_delban(struct chanset_t *c, char *who, int doit)
   } else {
     /* Find matching host, if there is one */
     for (; *u && !i; u = &((*u)->next))
-      if (!rfc_casecmp((*u)->mask, who)) {
+      if (!irccmp((*u)->mask, who)) {
 	i = 1;
 	break;
       }
@@ -296,7 +296,7 @@ static int u_delexempt (struct chanset_t * c, char * who, int doit)
   } else {
     /* Find matching host, if there is one */
     for (;*u && !i;u=&((*u)->next))
-      if (!rfc_casecmp((*u)->mask,who)) {
+      if (!irccmp((*u)->mask,who)) {
 	i = 1;
 	break;
       }
@@ -347,7 +347,7 @@ static int u_delinvite(struct chanset_t *c, char *who, int doit)
   } else {
     /* Find matching host, if there is one */
     for (;*u && !i; u = &((*u)->next))
-      if (!rfc_casecmp((*u)->mask,who)) {
+      if (!irccmp((*u)->mask,who)) {
 	i = 1;
 	break;
       }
@@ -1229,7 +1229,7 @@ static int expired_mask(struct chanset_t *chan, char *who)
 	break;
       }
 
-  if (!m || !chan_hasop(m) || !rfc_casecmp(m->nick, botname))
+  if (!m || !chan_hasop(m) || !irccmp(m->nick, botname))
     return 1;
 
   /* At this point we know the person/bot who set the mask is currently
@@ -1264,7 +1264,7 @@ static void check_expired_bans(void)
 	     u->mask, _("expired"));
       for (chan = chanset; chan; chan = chan->next)
 	for (b = chan->channel.ban; b->mask[0]; b = b->next)
-	  if (!rfc_casecmp(b->mask, u->mask) &&
+	  if (!irccmp(b->mask, u->mask) &&
 	      expired_mask(chan, b->who) && b->timer != now) {
 	    add_mode(chan, '-', 'b', u->mask);
 	    b->timer = now;
@@ -1280,7 +1280,7 @@ static void check_expired_bans(void)
 	putlog(LOG_MISC, "*", "%s %s %s %s (%s)", _("No longer banning"),
 	       u->mask, _("on"), chan->dname, _("expired"));
 	for (b = chan->channel.ban; b->mask[0]; b = b->next)
-	  if (!rfc_casecmp(b->mask, u->mask) &&
+	  if (!irccmp(b->mask, u->mask) &&
 	      expired_mask(chan, b->who) && b->timer != now) {
 	    add_mode(chan, '-', 'b', u->mask);
 	    b->timer = now;
@@ -1323,7 +1323,7 @@ static void check_expired_exempts(void)
             chan->dname);
 	else
 	  for (e = chan->channel.exempt; e->mask[0]; e = e->next)
-	    if (!rfc_casecmp(e->mask, u->mask) &&
+	    if (!irccmp(e->mask, u->mask) &&
 		expired_mask(chan, e->who) && e->timer != now) {
 	      add_mode(chan, '-', 'e', u->mask);
 	      e->timer = now;
@@ -1354,7 +1354,7 @@ static void check_expired_exempts(void)
           putlog(LOG_MISC, "*", "%s %s %s %s (%s)", _("No longer ban exempting"),
 		 u->mask, _("on"), chan->dname, _("expired"));
 	  for (e = chan->channel.exempt; e->mask[0]; e = e->next)
-	    if (!rfc_casecmp(e->mask, u->mask) &&
+	    if (!irccmp(e->mask, u->mask) &&
 		expired_mask(chan, e->who) && e->timer != now) {
 	      add_mode(chan, '-', 'e', u->mask);
 	      e->timer = now;
@@ -1384,7 +1384,7 @@ static void check_expired_invites(void)
       for (chan = chanset; chan; chan = chan->next)
 	if (!(chan->channel.mode & CHANINV))
 	  for (b = chan->channel.invite; b->mask[0]; b = b->next)
-	    if (!rfc_casecmp(b->mask, u->mask) &&
+	    if (!irccmp(b->mask, u->mask) &&
 		expired_mask(chan, b->who) && b->timer != now) {
 	      add_mode(chan, '-', 'I', u->mask);
 	      b->timer = now;
@@ -1401,7 +1401,7 @@ static void check_expired_invites(void)
 	       u->mask, _("on"), chan->dname, _("expired"));
 	if (!(chan->channel.mode & CHANINV))
 	  for (b = chan->channel.invite; b->mask[0]; b = b->next)
-	    if (!rfc_casecmp(b->mask, u->mask) &&
+	    if (!irccmp(b->mask, u->mask) &&
 		expired_mask(chan, b->who) && b->timer != now) {
 	      add_mode(chan, '-', 'I', u->mask);
 	      b->timer = now;

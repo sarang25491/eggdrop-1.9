@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.67 2001/10/11 11:34:20 tothwolf Exp $
+ * $Id: irc.c,v 1.68 2001/10/11 18:24:02 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -102,7 +102,7 @@ static int want_to_revenge(struct chanset_t *chan, struct userrec *u,
   /* Kickee is not a friend? */
   if (!chan_friend(fr) && !glob_friend(fr) &&
       /* ... and they didn't kick themself? */
-      rfc_casecmp(badnick, victim)) {
+      irccmp(badnick, victim)) {
     /* They kicked me? */
     if (mevictim) {
       /* ... and I'm allowed to take revenge? <snicker> */
@@ -311,7 +311,7 @@ static int hand_on_chan(struct chanset_t *chan, struct userrec *u)
  */
 static void newmask(masklist *m, char *s, char *who)
 {
-  for (; m && m->mask[0] && rfc_casecmp(m->mask, s); m = m->next);
+  for (; m && m->mask[0] && irccmp(m->mask, s); m = m->next);
   if (m->mask[0])
     return;			/* Already existent mask */
 
@@ -335,7 +335,7 @@ static int killmember(struct chanset_t *chan, char *nick)
 
   old = NULL;
   for (x = chan->channel.member; x && x->nick[0]; old = x, x = x->next)
-    if (!rfc_casecmp(x->nick, nick))
+    if (!irccmp(x->nick, nick))
       break;
   if (!x || !x->nick[0]) {
     if (!channel_pending(chan))
@@ -902,8 +902,8 @@ static void do_nettype()
   default:
     break;
   }
-  /* Update all rfc_ function pointers */
-  add_hook(HOOK_RFC_CASECMP, (Function) rfc_compliant);
+  /* Update irccmp function pointers */
+  add_hook(HOOK_IRCCMP, (Function) rfc_compliant);
 }
 
 static char *traced_nettype(ClientData cdata, Tcl_Interp *irp, char *name1,
@@ -916,11 +916,11 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp *irp, char *name1,
 static char *traced_rfccompliant(ClientData cdata, Tcl_Interp *irp,
 				 char *name1, char *name2, int flags)
 {
-  /* This hook forces eggdrop core to change the rfc_ match function
-   * links to point to the rfc compliant versions if rfc_compliant
-   * is 1, or to the normal version if it's 0.
+  /* This hook forces eggdrop core to change the irccmp match
+   * function links to point to the rfc compliant versions if
+   * rfc_compliant is 1, or to the normal version if it's 0.
    */
-  add_hook(HOOK_RFC_CASECMP, (Function) rfc_compliant);
+  add_hook(HOOK_IRCCMP, (Function) rfc_compliant);
   return NULL;
 }
 

@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  *
- * $Id: msgcmds.c,v 1.29 2001/10/10 10:44:07 tothwolf Exp $
+ * $Id: msgcmds.c,v 1.30 2001/10/11 18:24:02 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -194,7 +194,7 @@ static int msg_ident(char *nick, char *host, struct userrec *u, char *par)
     if (u && !quiet_reject) {
       dprintf(DP_HELP, _("NOTICE %s :Youre not %s, youre %s.\n"), nick, nick, u->handle);
     }
-  } else if (rfc_casecmp(who, origbotname) && !(u2->flags & USER_BOT)) {
+  } else if (irccmp(who, origbotname) && !(u2->flags & USER_BOT)) {
     /* This could be used as detection... */
     if (u_pass_match(u2, "-")) {
       putlog(LOG_CMDS, "*", "(%s!%s) !*! IDENT %s", nick, host, who);
@@ -258,7 +258,7 @@ static int msg_addhost(char *nick, char *host, struct userrec *u, char *par)
   if (!par[0]) {
     if (!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :You must supply a hostmask\n", nick);
-  } else if (rfc_casecmp(u->handle, origbotname)) {
+  } else if (irccmp(u->handle, origbotname)) {
     /* This could be used as detection... */
     if (u_pass_match(u, "-")) {
       if (!quiet_reject)

@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.63 2001/10/10 18:37:55 stdarg Exp $
+ * $Id: channels.c,v 1.64 2001/10/11 18:24:02 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -221,7 +221,7 @@ static void get_mode_protect(struct chanset_t *chan, char *s)
 static int ismodeline(masklist *m, char *user)
 {
   for (; m && m->mask[0]; m = m->next)  
-    if (!rfc_casecmp(m->mask, user))
+    if (!irccmp(m->mask, user))
       return 1;
   return 0;
 }

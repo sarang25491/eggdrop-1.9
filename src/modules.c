@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.64 2001/10/10 18:37:54 stdarg Exp $
+ * $Id: modules.c,v 1.65 2001/10/11 18:24:01 tothwolf Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -136,10 +136,10 @@ void (*sharein) (int, char *) = null_share;
 void (*qserver) (int, char *, int) = (void (*)(int, char *, int)) null_func;
 void (*add_mode) () = null_func;
 int (*match_noterej) (struct userrec *, char *) = (int (*)(struct userrec *, char *)) false_func;
-int (*rfc_casecmp) (const char *, const char *) = _rfc_casecmp;
-int (*rfc_ncasecmp) (const char *, const char *, int) = _rfc_ncasecmp;
-int (*rfc_toupper) (int) = _rfc_toupper;
-int (*rfc_tolower) (int) = _rfc_tolower;
+int (*irccmp) (const char *, const char *) = _irccmp;
+int (*ircncmp) (const char *, const char *, int) = _ircncmp;
+int (*irctolower) (int) = _irctolower;
+int (*irctoupper) (int) = _irctoupper;
 
 module_entry *module_list;
 dependancy *dependancy_list = NULL;
@@ -428,8 +428,8 @@ Function global_table[] =
   /* 216 - 219 */
   (Function) 0,			/* min_dcc_port -- UNUSED! (guppy)	*/
   (Function) 0,			/* max_dcc_port -- UNUSED! (guppy)	*/
-  (Function) & rfc_casecmp,	/* Function *				*/
-  (Function) & rfc_ncasecmp,	/* Function *				*/
+  (Function) & irccmp,		/* Function *				*/
+  (Function) & ircncmp,		/* Function *				*/
   /* 220 - 223 */
   (Function) & global_exempts,	/* struct exemptrec *			*/
   (Function) & global_invites,	/* struct inviterec *			*/
@@ -789,17 +789,18 @@ void add_hook(int hook_num, Function func)
 	add_mode = (void (*)()) func;
       break;
     /* special hook <drummer> */
-    case HOOK_RFC_CASECMP:
+    case HOOK_IRCCMP:
       if (func == NULL) {
-	rfc_casecmp = egg_strcasecmp;
-	rfc_ncasecmp = (int (*)(const char *, const char *, int)) egg_strncasecmp;
-	rfc_tolower = tolower;
-	rfc_toupper = toupper;
+	irccmp = egg_strcasecmp;
+	ircncmp = (int (*)(const char *, const char *, int)) egg_strncasecmp;
+	irctolower = tolower;
+	irctoupper = toupper;
       } else {
-	rfc_casecmp = _rfc_casecmp;
-	rfc_ncasecmp = _rfc_ncasecmp;
-	rfc_tolower = _rfc_tolower;
-	rfc_toupper = _rfc_toupper;
+	irccmp = _irccmp;
+	ircncmp = _ircncmp;
+	irctolower = _irctolower;
+	irctoupper = _irctoupper;
+
       }
       break;
     case HOOK_MATCH_NOTEREJ:

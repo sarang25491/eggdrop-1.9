@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.54 2001/10/11 13:01:35 tothwolf Exp $
+ * $Id: cmdschan.c,v 1.55 2001/10/11 18:24:02 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -475,7 +475,7 @@ static void cmd_mns_ban(struct userrec *u, int idx, char *par)
 	return;
       }
       for (b = chan->channel.ban; b && b->mask && b->mask[0]; b = b->next) {
-	if (!rfc_casecmp(b->mask, ban)) {
+	if (!irccmp(b->mask, ban)) {
 	  add_mode(chan, '-', 'b', b->mask);
 	  dprintf(idx, "%s '%s' on %s.\n",
 		  _("Removed ban"), b->mask, chan->dname);
@@ -564,7 +564,7 @@ static void cmd_mns_exempt (struct userrec *u, int idx, char *par)
 	return;
       }
       for (e = chan->channel.exempt; e && e->mask && e->mask[0]; e = e->next) {
-	if (!rfc_casecmp(e->mask, exempt)) {
+	if (!irccmp(e->mask, exempt)) {
 	  add_mode(chan, '-', 'e', e->mask);
 	  dprintf(idx, "%s '%s' on %s.\n",
 		  _("Removed exempt"), e->mask, chan->dname);
@@ -655,7 +655,7 @@ static void cmd_mns_invite (struct userrec *u, int idx, char *par)
       }
       for (inv = chan->channel.invite; inv && inv->mask && inv->mask[0];
 	   inv = inv->next) {
-	if (!rfc_casecmp(inv->mask, invite)) {
+	if (!irccmp(inv->mask, invite)) {
 	  add_mode(chan, '-', 'I', inv->mask);
 	  dprintf(idx, "%s '%s' on %s.\n",
 		  _("Removed invite"), inv->mask, chan->dname);
@@ -1134,7 +1134,7 @@ static void cmd_mns_chan(struct userrec *u, int idx, char *par)
   putlog(LOG_CMDS, "*", "#%s# -chan %s", dcc[idx].nick, chname);
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type->flags & DCT_CHAT) &&
-	!rfc_casecmp(dcc[i].u.chat->con_chan, chan->dname)) {
+	!irccmp(dcc[i].u.chat->con_chan, chan->dname)) {
       dprintf(i, "%s is no longer a valid channel, changing your console to '*'\n",
 	      chname);
       strcpy(dcc[i].u.chat->con_chan, "*");

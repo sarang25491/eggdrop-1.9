@@ -1,35 +1,31 @@
-/* 
+/*
  * match.c
  *   wildcard matching functions
- *   (rename to reg.c for ircII)
- * 
- * $Id: match.c,v 1.6 2001/10/10 10:44:04 tothwolf Exp $
+ *
+ * $Id: match.c,v 1.7 2001/10/11 18:24:01 tothwolf Exp $
  */
-/* 
+/*
  * Once this code was working, I added support for % so that I could
  * use the same code both in Eggdrop and in my IrcII client.
  * Pleased with this, I added the option of a fourth wildcard, ~,
  * which matches varying amounts of whitespace (at LEAST one space,
  * though, for sanity reasons).
- * 
+ *
  * This code would not have been possible without the prior work and
  * suggestions of various sources.  Special thanks to Robey for
  * all his time/help tracking down bugs and his ever-helpful advice.
- * 
+ *
  * 04/09:  Fixed the "*\*" against "*a" bug (caused an endless loop)
- * 
+ *
  *   Chris Fuller  (aka Fred1@IRC & Fwitz@IRC)
  *     crf@cfox.bchs.uh.edu
- * 
+ *
  * I hereby release this code into the public domain
  */
 
-#ifdef HAVE_CONFIG_H
-#  include <config.h>
-#endif
-
-/* needed for prototypes ... this is ugly */
-#include "main.h"
+/* prototypes */
+#include "match.h"
+#include "irccmp.h"	/* irctoupper() */
 
 
 /* The quoting character -- what overrides wildcards */
@@ -55,14 +51,14 @@
 #define MATCH_PER (match+saved+sofar)
 
 
-/* 
+/*
  * wild_match(char *ma, char *na)
- * 
+ *
  * Features:  Backwards, case-insensitive, ?, *
  * Best use:  Matching of hostmasks (since they are likely to begin
  *            with a * rather than end with one).
  */
-/* 
+/*
  * sofar's high bit is used as a flag of whether or not we are quoting.
  * The other matchers don't need this because when you're going forward,
  * you just skip over the quote char.
@@ -106,7 +102,7 @@ int wild_match(register unsigned char *m, register unsigned char *n)
       sofar &= UNQUOTED;	/* Remember not quoted */
     } else
       sofar |= QUOTED;		/* Remember quoted */
-    if (rfc_toupper(*m) == rfc_toupper(*n)) {	/* If matching char */
+    if (irctoupper(*m) == irctoupper(*n)) {	/* If matching char */
       m--;
       n--;
       sofar++;			/* Tally the match */
@@ -130,9 +126,9 @@ int wild_match(register unsigned char *m, register unsigned char *n)
 }
 
 
-/* 
+/*
  * wild_match_per(char *m, char *n)
- * 
+ *
  * Features:  Forward, case-insensitive, ?, *, %, ~(optional)
  * Best use:  Generic string matching, such as in IrcII-esque bindings
  */
@@ -208,7 +204,7 @@ int wild_match_per(register unsigned char *m, register unsigned char *n)
       case QUOTE:
 	m++;			/* Handle quoting */
       }
-      if (rfc_toupper(*m) == rfc_toupper(*n)) {		/* If matching */
+      if (irctoupper(*m) == irctoupper(*n)) {		/* If matching */
 	m++;
 	n++;
 	sofar++;

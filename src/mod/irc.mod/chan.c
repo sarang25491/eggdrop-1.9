@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.75 2001/10/11 11:34:20 tothwolf Exp $
+ * $Id: chan.c,v 1.76 2001/10/11 18:24:02 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -134,7 +134,7 @@ static void check_exemptlist(struct chanset_t *chan, char *from)
 static void do_mask(struct chanset_t *chan, masklist *m, char *mask, char Mode)
 {
   for (; m && m->mask[0]; m = m->next)
-    if (wild_match(mask, m->mask) && rfc_casecmp(mask, m->mask))
+    if (wild_match(mask, m->mask) && irccmp(mask, m->mask))
       add_mode(chan, '-', Mode, m->mask);
   add_mode(chan, '+', Mode, mask);
   flush_mode(chan, QUICK);
@@ -221,7 +221,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     if (!p)
       return 0;
   }
-  if (rfc_casecmp(chan->floodwho[which], p)) {	/* new */
+  if (irccmp(chan->floodwho[which], p)) {	/* new */
     strncpy(chan->floodwho[which], p, 81);
     chan->floodwho[which][81] = 0;
     chan->floodtime[which] = now;
@@ -236,7 +236,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
   }
   /* Deop'n the same person, sillyness ;) - so just ignore it */
   if (which == FLOOD_DEOP) {
-    if (!rfc_casecmp(chan->deopd, victim))
+    if (!irccmp(chan->deopd, victim))
       return 0;
     else
       strcpy(chan->deopd, victim);
@@ -669,7 +669,7 @@ static void recheck_channel_modes(struct chanset_t *chan)
     } else if ((mns & CHANLIMIT) && (chan->channel.maxmembers != 0))
       add_mode(chan, '-', 'l', "");
     if (chan->key_prot[0]) {
-      if (rfc_casecmp(chan->channel.key, chan->key_prot) != 0) {
+      if (irccmp(chan->channel.key, chan->key_prot) != 0) {
         if (chan->channel.key[0])
 	  add_mode(chan, '-', 'k', chan->channel.key);
         add_mode(chan, '+', 'k', chan->key_prot);
@@ -1330,7 +1330,7 @@ static int gotinvite(char *from, char *ignore, char *msg)
   newsplit(&msg);
   fixcolon(msg);
   nick = splitnick(&from);
-  if (!rfc_casecmp(last_invchan, msg))
+  if (!irccmp(last_invchan, msg))
     if (now - last_invtime < 30)
       return 0;		/* Two invites to the same channel in 30 seconds? */
   putlog(LOG_MISC, "*", "%s!%s invited me to %s", nick, from, msg);
@@ -1828,7 +1828,7 @@ static int gotnick(char *from, char *ignore, char *msg)
     if (m) {
       putlog(LOG_JOIN, chan->dname, "Nick change: %s -> %s", nick, msg);
       m->last = now;
-      if (rfc_casecmp(nick, msg)) {
+      if (irccmp(nick, msg)) {
 	/* Not just a capitalization change */
 	mm = ismember(chan, msg);
 	if (mm) {
@@ -1932,11 +1932,11 @@ static int gotquit(char *from, char *ignore, char *msg)
    */
   if (keepnick) {
     alt = get_altbotnick();
-    if (!rfc_casecmp(nick, origbotname)) {
+    if (!irccmp(nick, origbotname)) {
       putlog(LOG_MISC, "*", _("Switching back to nick %s"), origbotname);
       dprintf(DP_SERVER, "NICK %s\n", origbotname);
     } else if (alt[0]) {
-      if (!rfc_casecmp(nick, alt) && strcmp(botname, origbotname)) {
+      if (!irccmp(nick, alt) && strcmp(botname, origbotname)) {
 	putlog(LOG_MISC, "*", _("Switching back to altnick %s"), alt);
 	dprintf(DP_SERVER, "NICK %s\n", alt);
       }

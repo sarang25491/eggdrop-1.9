@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.84 2001/10/11 11:34:20 tothwolf Exp $
+ * $Id: server.c,v 1.85 2001/10/11 18:24:03 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1131,7 +1131,7 @@ static char *nick_change(ClientData cdata, Tcl_Interp *irp, char *name1,
         	   TCL_TRACE_UNSETS, nick_change, cdata);
   } else {			/* writes */
     new = Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
-    if (rfc_casecmp(origbotname, new)) {
+    if (irccmp(origbotname, new)) {
       if (origbotname[0]) {
 	putlog(LOG_MISC, "*", "* IRC NICK CHANGE: %s -> %s",
 	       origbotname, new);
@@ -1548,8 +1548,8 @@ static void server_postrehash()
     fatal("NO BOT NAME.", 0);
   if (serverlist == NULL)
     fatal("NO SERVER.", 0);
-    if (oldnick[0] && !rfc_casecmp(oldnick, botname)
-       && !rfc_casecmp(oldnick, get_altbotnick())) {
+    if (oldnick[0] && !irccmp(oldnick, botname)
+       && !irccmp(oldnick, get_altbotnick())) {
     /* Change botname back, don't be premature. */
     strcpy(botname, oldnick);
     dprintf(DP_SERVER, "NICK %s\n", origbotname);
