@@ -380,7 +380,7 @@ int adns_processreadable(adns_state ads, int fd, const struct timeval *now) {
     abort();
   }
   if (fd == ads->udpsocket) {
-    for (;;) {
+    do {
       udpaddrlen= sizeof(udpaddr);
       r= recvfrom(ads->udpsocket,udpbuf,sizeof(udpbuf),0,
 		  (struct sockaddr*)&udpaddr,&udpaddrlen);
@@ -417,7 +417,11 @@ int adns_processreadable(adns_state ads, int fd, const struct timeval *now) {
 	continue;
       }
       adns__procdgram(ads,udpbuf,r,serv,0,*now);
-    }
+#ifdef CYGWIN_HACKS
+    } while (0);
+#else
+    } while (1);
+#endif
   }
   r= 0;
 xit:
