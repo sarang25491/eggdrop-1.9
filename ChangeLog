@@ -1,3 +1,10 @@
+2001-08-25 07:47  stdarg
+
+	* src/tclhash.c:
+
+	Progress getting rid of tcl dependencies. Should build fine, with a
+	couple warnings.  
+
 2001-08-25 02:43  Federico Mennite <ite@techmonkeys.org>
 
 	* src/Makefile.in:
