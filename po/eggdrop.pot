@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2002-02-17 04:00-0600\n"
+"POT-Creation-Date: 2002-02-18 04:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -819,8 +819,8 @@ msgid "Changed.\n"
 msgstr ""
 
 #: modules/filesys/files.c:988 modules/filesys/files.c:1084
-#: modules/irc/cmdsirc.c:938 src/cmds.c:876 src/cmds.c:907 src/cmds.c:2471
-#: src/cmds.c:2605
+#: modules/irc/cmdsirc.c:938 src/cmds.c:876 src/cmds.c:907 src/cmds.c:2472
+#: src/cmds.c:2606
 msgid "Failed.\n"
 msgstr ""
 
@@ -839,7 +839,7 @@ msgstr ""
 
 #: modules/channels/cmdschan.c:807 modules/channels/cmdschan.c:1010
 #: modules/channels/cmdschan.c:1056 src/cmds.c:923 src/cmds.c:2084
-#: src/cmds.c:2498
+#: src/cmds.c:2499
 msgid "No such user.\n"
 msgstr ""
 
@@ -879,7 +879,7 @@ msgstr ""
 msgid "Changed bot's address.\n"
 msgstr ""
 
-#: src/cmds.c:1037 src/cmds.c:1458 src/cmds.c:2432
+#: src/cmds.c:1037 src/cmds.c:1458 src/cmds.c:2433
 msgid "No such user!\n"
 msgstr ""
 
@@ -943,7 +943,7 @@ msgstr ""
 msgid "No such user on the party line.\n"
 msgstr ""
 
-#: src/cmds.c:1166 src/cmds.c:2627
+#: src/cmds.c:1166 src/cmds.c:2628
 msgid "No such bot online.\n"
 msgstr ""
 
@@ -1181,7 +1181,7 @@ msgstr ""
 #: modules/notes/cmdsnote.c:73 modules/notes/cmdsnote.c:153
 #: modules/notes/cmdsnote.c:187 modules/notes/cmdsnote.c:221
 #: modules/notes/notes.c:742 modules/notes/notes.c:778 src/cmds.c:2263
-#: src/cmds.c:2285 src/cmds.c:2552
+#: src/cmds.c:2285 src/cmds.c:2553
 msgid "Usage"
 msgstr ""
 
@@ -1220,111 +1220,120 @@ msgstr ""
 msgid "You can't start a nick with '%c'.\n"
 msgstr ""
 
-#: src/cmds.c:2436
+#: src/cmds.c:2414
+#, c-format
+msgid "Added %1$s (%2$s) with no password and no flags.\n"
+msgstr ""
+
+#: src/cmds.c:2415
+msgid "no host"
+msgstr ""
+
+#: src/cmds.c:2437
 msgid "Can't remove the permanent bot owner!\n"
 msgstr ""
 
-#: src/cmds.c:2440
+#: src/cmds.c:2441
 msgid "Can't remove the bot owner!\n"
 msgstr ""
 
-#: src/cmds.c:2445
+#: src/cmds.c:2446
 msgid "You can't remove shared bots.\n"
 msgstr ""
 
-#: src/cmds.c:2453
+#: src/cmds.c:2454
 msgid "You can't remove a directly linked bot.\n"
 msgstr ""
 
-#: src/cmds.c:2459
+#: src/cmds.c:2460
 msgid "Can't remove users who aren't bots!\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:935 src/cmds.c:2469
+#: modules/irc/cmdsirc.c:935 src/cmds.c:2470
 #, c-format
 msgid "Deleted %s.\n"
 msgstr ""
 
-#: src/cmds.c:2505
+#: src/cmds.c:2506
 msgid "You can't add hostmasks to non-bots.\n"
 msgstr ""
 
-#: src/cmds.c:2510
+#: src/cmds.c:2511
 msgid "You can't add hostmasks to share-bots.\n"
 msgstr ""
 
-#: src/cmds.c:2515
+#: src/cmds.c:2516
 msgid "Can't add hostmasks to the bot owner/master.\n"
 msgstr ""
 
-#: src/cmds.c:2519 src/cmds.c:2592
+#: src/cmds.c:2520 src/cmds.c:2593
 msgid "Permission denied.\n"
 msgstr ""
 
-#: src/cmds.c:2525
+#: src/cmds.c:2526
 msgid "You cannot add a host matching another user!\n"
 msgstr ""
 
-#: src/cmds.c:2531
+#: src/cmds.c:2532
 msgid "That hostmask is already there.\n"
 msgstr ""
 
-#: src/cmds.c:2552
+#: src/cmds.c:2553
 msgid "handle"
 msgstr ""
 
-#: src/cmds.c:2553
+#: src/cmds.c:2554
 msgid "hostmask"
 msgstr ""
 
-#: modules/notes/cmdsnote.c:159 src/cmds.c:2566
+#: modules/notes/cmdsnote.c:159 src/cmds.c:2567
 msgid "No such user."
 msgstr ""
 
-#: src/cmds.c:2574
+#: src/cmds.c:2575
 msgid "You can't remove hosts while having the +d or +k flag."
 msgstr ""
 
-#: src/cmds.c:2581
+#: src/cmds.c:2582
 msgid "You can't remove hostmasks from non-bots.\n"
 msgstr ""
 
-#: src/cmds.c:2585
+#: src/cmds.c:2586
 msgid "You can't remove hostmask from a shared bot.\n"
 msgstr ""
 
-#: src/cmds.c:2589
+#: src/cmds.c:2590
 msgid "You can't remove hostmasks from the bot owner/master.\n"
 msgstr ""
 
-#: src/cmds.c:2598
+#: src/cmds.c:2599
 #, c-format
 msgid "Removed '%1$s' from %2$s\n"
 msgstr ""
 
-#: src/cmds.c:2617
+#: src/cmds.c:2618
 msgid "Modules loaded:\n"
 msgstr ""
 
-#: src/cmds.c:2620
+#: src/cmds.c:2621
 msgid "End of modules list.\n"
 msgstr ""
 
-#: src/cmds.c:2730
+#: src/cmds.c:2731
 #, c-format
 msgid "You are %s@%s\n"
 msgstr ""
 
-#: src/cmds.c:2740
+#: src/cmds.c:2741
 msgid "*** Ja mata!\n"
 msgstr ""
 
-#: src/cmds.c:2742
+#: src/cmds.c:2743
 #, c-format
 msgid "DCC connection closed (%s!%s)"
 msgstr ""
 
-#: src/cmds.c:2755
+#: src/cmds.c:2756
 #, c-format
 msgid "Returning to real nick %s!\n"
 msgstr ""
@@ -1522,7 +1531,7 @@ msgstr ""
 #. *       <Cybah>
 #.
 #. Turn off remote telnet echo (send IAC WILL ECHO).
-#: modules/filesys/filesys.c:831 modules/server/server.c:1421 src/dcc.c:1414
+#: modules/filesys/filesys.c:831 modules/server/server.c:1375 src/dcc.c:1414
 msgid "Enter your password."
 msgstr ""
 
@@ -2567,30 +2576,30 @@ msgid "Moved"
 msgstr ""
 
 #: modules/filesys/filesys.c:604 modules/filesys/filesys.c:803
-#: modules/server/server.c:1360 modules/server/server.c:1404
+#: modules/server/server.c:1314 modules/server/server.c:1358
 #: modules/transfer/transfer.c:664
 msgid "Failed to connect"
 msgstr ""
 
-#: modules/filesys/filesys.c:782 modules/server/server.c:1345
+#: modules/filesys/filesys.c:782 modules/server/server.c:1299
 #, c-format
 msgid "DCC connections full: %s %s (%s!%s)"
 msgstr ""
 
-#: modules/filesys/filesys.c:787 modules/server/server.c:1350
+#: modules/filesys/filesys.c:787 modules/server/server.c:1304
 msgid "No access"
 msgstr ""
 
-#: modules/filesys/filesys.c:788 modules/server/server.c:1351
+#: modules/filesys/filesys.c:788 modules/server/server.c:1305
 #: modules/server/servmsg.c:409
 msgid "Refused DCC chat (no access)"
 msgstr ""
 
-#: modules/filesys/filesys.c:791 modules/server/server.c:1354
+#: modules/filesys/filesys.c:791 modules/server/server.c:1308
 msgid "You must have a password set."
 msgstr ""
 
-#: modules/filesys/filesys.c:792 modules/server/server.c:1355
+#: modules/filesys/filesys.c:792 modules/server/server.c:1309
 msgid "Refused DCC chat (no password)"
 msgstr ""
 
@@ -2598,7 +2607,7 @@ msgstr ""
 msgid "Refused DCC chat (+x but no file area)"
 msgstr ""
 
-#: modules/filesys/filesys.c:804 modules/server/server.c:1405
+#: modules/filesys/filesys.c:804 modules/server/server.c:1359
 #: modules/transfer/transfer.c:665
 msgid "DCC connection failed"
 msgstr ""
@@ -3008,31 +3017,31 @@ msgstr ""
 msgid "Resetting channel info for all channels...\n"
 msgstr ""
 
-#: modules/irc/irc.c:149
+#: modules/irc/irc.c:148
 msgid "dont kick my friends, bud"
 msgstr ""
 
-#: modules/irc/irc.c:154
+#: modules/irc/irc.c:153
 msgid "dont deop my friends, bud"
 msgstr ""
 
-#: modules/irc/irc.c:824
+#: modules/irc/irc.c:822
 msgid "juped"
 msgstr ""
 
-#: modules/irc/irc.c:826
+#: modules/irc/irc.c:824
 msgid "trying"
 msgstr ""
 
-#: modules/irc/irc.c:828
+#: modules/irc/irc.c:826
 msgid "pending"
 msgstr ""
 
-#: modules/irc/irc.c:830
+#: modules/irc/irc.c:828
 msgid "opless"
 msgstr ""
 
-#: modules/irc/irc.c:832
+#: modules/irc/irc.c:830
 msgid "want ops!"
 msgstr ""
 
@@ -3521,31 +3530,31 @@ msgstr ""
 msgid "Removed %1$d msgs from the %2$s queue\n"
 msgstr ""
 
-#: modules/server/server.c:1344
+#: modules/server/server.c:1298
 msgid "Sorry, too many DCC connections."
 msgstr ""
 
-#: modules/server/server.c:1361
+#: modules/server/server.c:1315
 msgid "DCC invalid port"
 msgstr ""
 
-#: modules/server/server.c:1451
+#: modules/server/server.c:1405
 msgid "Server got stoned; jumping..."
 msgstr ""
 
-#: modules/server/server.c:1525
+#: modules/server/server.c:1479
 msgid "No server currently."
 msgstr ""
 
-#: modules/server/server.c:1527
+#: modules/server/server.c:1481
 msgid "Mode queue is at"
 msgstr ""
 
-#: modules/server/server.c:1531
+#: modules/server/server.c:1485
 msgid "Server queue is at"
 msgstr ""
 
-#: modules/server/server.c:1534
+#: modules/server/server.c:1488
 msgid "Help queue is at"
 msgstr ""
 
