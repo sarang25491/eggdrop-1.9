@@ -1,3 +1,9 @@
+2001-10-11 19:38  Tothwolf <tothwolf@techmonkeys.org>
+
+	* src/patch.h:
+
+	* Update patch.h 
+
 2001-10-11 18:24  Tothwolf <tothwolf@techmonkeys.org>
 
 	* src/: Makefile.am, chanprog.c, flags.c, irccmp.c, irccmp.h,
