@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: net.h,v 1.1 2004/06/21 20:35:11 wingman Exp $
+ * $Id: net.h,v 1.2 2004/06/22 18:47:28 wingman Exp $
  */
 
 #ifndef _EGG_NET_H_
@@ -28,7 +28,9 @@ typedef struct {
 	int (*reconnect)(int idx, const char *host, int port);
 } egg_proxy_t;
 
-int egg_net_init();
+int egg_net_init(void);
+int egg_net_shutdown(void);
+
 int egg_iprintf(int idx, const char *format, ...);
 int egg_server(const char *vip, int port, int *real_port);
 int egg_client(int idx, const char *host, int port, const char *vip, int vport, int timeout);

@@ -16,13 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: xml.h,v 1.11 2004/06/22 11:10:19 wingman Exp $
+ * $Id: xml.h,v 1.12 2004/06/22 18:47:28 wingman Exp $
  */
 
 #ifndef _EGG_XML_H_
 #define _EGG_XML_H_
 
-#include <stdarg.h>/* va_list*/
+#include <stdarg.h>			/* va_list		*/
 
 typedef struct xml_node xml_node_t;
 

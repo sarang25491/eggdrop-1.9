@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: net.c,v 1.1 2004/06/21 20:35:11 wingman Exp $";
+static const char rcsid[] = "$Id: net.c,v 1.2 2004/06/22 18:47:27 wingman Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -57,9 +57,14 @@ static sockbuf_filter_t net_connect_filter = {
 static char *default_proxy_name = NULL;
 static int default_timeout = 30;
 
-int egg_net_init()
+int egg_net_init(void)
 {
 	return egg_dns_init();
+}
+
+int egg_net_shutdown(void)
+{
+	return egg_dns_shutdown();
 }
 
 /* Print to an idx, using printf notation. */

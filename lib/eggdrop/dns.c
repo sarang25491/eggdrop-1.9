@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dns.c,v 1.3 2004/06/22 05:37:46 guppy Exp $";
+static const char rcsid[] = "$Id: dns.c,v 1.4 2004/06/22 18:47:27 wingman Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -314,6 +314,30 @@ int egg_dns_init()
 	read_hosts("/etc/hosts");
 	read_hosts(".hosts");
 	return(0);
+}
+
+int egg_dns_shutdown(void)
+{
+	int i;
+
+	if (nservers > 0) {
+		for (i = 0; i < nservers; i++) {
+			if (servers[i].ip) free(servers[i].ip);
+		}
+		free(servers); servers = NULL;
+		nservers = 0;
+	}
+	
+	if (nhosts > 0) {
+		for (i = 0; i < nhosts; i++) {
+			if (hosts[i].host) free(hosts[i].host);
+			if (hosts[i].ip) free(hosts[i].ip);
+		}
+		free(hosts); hosts = NULL;
+		nhosts = 0;
+	}
+
+	return (0);
 }
 
 static const char *dns_next_server()

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: hash_table.c,v 1.8 2004/06/22 10:54:42 wingman Exp $";
+static const char rcsid[] = "$Id: hash_table.c,v 1.9 2004/06/22 18:47:27 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -197,13 +197,15 @@ int hash_table_delete(hash_table_t *ht, const void *key, void *dataptr)
 int hash_table_walk(hash_table_t *ht, hash_table_node_func callback, void *param)
 {
 	hash_table_row_t *row;
-	hash_table_entry_t *entry;
+	hash_table_entry_t *entry, *next;
 	int i;
 
 	for (i = 0; i < ht->max_rows; i++) {
 		row = ht->rows+i;
-		for (entry = row->head; entry; entry = entry->next) {
+		for (entry = row->head; entry;) {
+			next = entry->next;
 			callback(entry->key, &entry->data, param);
+			entry = next;
 		}
 	}
 	return(0);

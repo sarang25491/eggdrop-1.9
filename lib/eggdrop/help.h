@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: help.h,v 1.2 2004/06/17 13:32:43 wingman Exp $
+ * $Id: help.h,v 1.3 2004/06/22 18:47:27 wingman Exp $
  */
 
 #ifndef _EGG_HELP_H_
@@ -67,21 +67,21 @@ struct help_entry
 	} ext;
 };
 
-int	 	 help_init		(void);
-int	 	 help_shutdown		(void);
+int help_init(void);
+int help_shutdown(void);
 
-int		 help_count_sections	(void);
-int		 help_count_entries	(void);
+int help_count_sections(void);
+int help_count_entries(void);
 
-int	 	 help_load		(const char *filename);
-int		 help_unload		(const char *filename);
+int help_load(const char *filename);
+int help_unload(const char *filename);
 
-int		 help_load_by_module	(const char *name);
-int		 help_unload_by_module	(const char *name);
+int help_load_by_module(const char *name);
+int help_unload_by_module(const char *name);
 
-help_entry_t	*help_lookup_entry	(const char *name);
-help_section_t	*help_lookup_section	(const char *name);
+help_entry_t *help_lookup_entry(const char *name);
+help_section_t *help_lookup_section(const char *name);
 
-int	 	 help_print_party	(partymember_t *member, const char *args);
+int help_print_party(partymember_t *member, const char *args);
 
 #endif /* !_EGG_HELP_H_ */

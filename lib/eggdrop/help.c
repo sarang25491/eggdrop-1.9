@@ -24,7 +24,7 @@
  */
  
 #ifndef lint
-static const char rcsid[] = "$Id: help.c,v 1.7 2004/06/22 10:54:42 wingman Exp $";
+static const char rcsid[] = "$Id: help.c,v 1.8 2004/06/22 18:47:27 wingman Exp $";
 #endif
 
 #include <sys/types.h>
@@ -57,7 +57,6 @@ static void help_delete_section(help_section_t *section);
 static int help_load_internal(const char *module, const char *filename);
 static int help_unload_internal(const char *module, const char *filename);
 
-
 typedef struct
 {
 	partymember_t	*member;
@@ -71,8 +70,12 @@ typedef struct
 	const char	*module;
 } help_unload_t;
 
+static void unload_entry(const char *name, help_entry_t **e, help_unload_t *ul);
+
 int help_init(void)
 {
+	/* unload all helps */
+
 	entries = hash_table_create(NULL, NULL, HELP_HASH_SIZE, 
 			HASH_TABLE_STRINGS);
 	sections = hash_table_create(NULL, NULL, HELP_HASH_SIZE,
@@ -86,6 +89,14 @@ int help_init(void)
 
 int help_shutdown(void)
 {
+        help_unload_t unload;
+
+        unload.module = NULL;
+        unload.filename = NULL;
+
+        hash_table_walk(entries,
+                (hash_table_node_func)unload_entry, &unload);
+
 	bind_rem_simple(BTN_LOAD_MODULE, NULL, "*", (Function)help_load_by_module);
 	bind_rem_simple(BTN_UNLOAD_MODULE, NULL, "*", (Function)help_unload_by_module);
 
@@ -110,8 +121,6 @@ int help_load_by_module(const char *mod)
 	char buf[255];
 	int ret[3];
 
-	return 0;
-
 	snprintf(buf, sizeof(buf), "%s.xml", mod);
 	ret[0] = help_load_internal(mod, buf);
 	
@@ -131,8 +140,6 @@ int help_unload_by_module(const char *mod)
 {
 	char buf[255];
 	int ret[3];
-
-	return 0;
 
 	snprintf(buf, sizeof(buf), "%s.xml", mod);
 	ret[0] = help_unload_internal(mod, buf);
@@ -338,6 +345,7 @@ static void help_delete_section(help_section_t *section)
         if (section->desc.lines) free(section->desc.lines);
 
 	free(section->name);
+	free(section);
 	
 	nsections--;	
 }
@@ -494,14 +502,16 @@ static void unload_entry(const char *name, help_entry_t **e, help_unload_t *ul)
 	help_section_t *section = entry->section;
 	int i;
 	
-	if (0 != strcmp(entry->module, ul->module)
-		&& 0 != strcmp(entry->filename, ul->filename))
-	{
-		return;
+	if (ul->module != NULL || ul->filename != NULL) {
+		if (0 != strcmp(entry->module, ul->module)
+			&& 0 != strcmp(entry->filename, ul->filename))
+		{
+			return;
+		}
 	}
 	
 	/* Remove it from hash table */
-	hash_table_delete(entries, name, entry);
+	hash_table_delete(entries, name, e);
 	
 	/* Remove it from section */
 	if (section->nentries > 1) {
@@ -512,6 +522,7 @@ static void unload_entry(const char *name, help_entry_t **e, help_unload_t *ul)
 			if (i == section->nentries - 1)
 				continue;
 				
+			
 			memmove(section->entries + i, section->entries + i + 1,
 					sizeof(help_section_t *) * 
 						(section->nentries - i - 1));
@@ -541,7 +552,7 @@ static int help_unload_internal(const char *module, const char *filename)
 	unload.module = module;
 	unload.filename = filename;
 	
-	hash_table_walk(sections, 
+	hash_table_walk(entries, 
 		(hash_table_node_func)unload_entry, &unload);
 			
 	return 1;
