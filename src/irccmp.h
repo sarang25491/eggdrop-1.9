@@ -2,11 +2,11 @@
  * irccmp.h
  *   prototypes and macros for irccmp.c
  *
- * $Id: irccmp.h,v 1.3 2001/10/31 04:02:51 tothwolf Exp $
+ * $Id: irccmp.h,v 1.4 2002/02/07 22:19:05 wcc Exp $
  */
 /*
  * Copyright (C) 1990 Jarkko Oikarinen
- * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

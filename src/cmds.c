@@ -3,11 +3,11 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.89 2002/01/27 14:59:35 ite Exp $
+ * $Id: cmds.c,v 1.90 2002/02/07 22:19:04 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

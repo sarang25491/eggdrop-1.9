@@ -2,10 +2,10 @@
  * compress.h -- part of src/mod/compress.mod
  *   header file for the zlib compression module
  *
- * $Id: compress.h,v 1.1 2001/10/27 16:34:48 ite Exp $
+ * $Id: compress.h,v 1.2 2002/02/07 22:19:02 wcc Exp $
  */
 /*
- * Copyright (C) 2000, 2001 Eggheads Development Team
+ * Copyright (C) 2000, 2001, 2002 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

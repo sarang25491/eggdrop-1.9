@@ -1,11 +1,11 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.5 2002/01/16 22:09:40 ite Exp $
+ * $Id: tclchan.c,v 1.6 2002/02/07 22:19:01 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

@@ -2,10 +2,10 @@
  * fileutil.h
  *   convenience utilities to deal with common file operations
  *
- * $Id: fileutil.h,v 1.2 2002/01/14 02:23:26 ite Exp $
+ * $Id: fileutil.h,v 1.3 2002/02/07 22:18:59 wcc Exp $
  */
 /*
- * Copyright (C) 2000, 2001 Eggheads Development Team
+ * Copyright (C) 2000, 2001, 2002 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

@@ -2,10 +2,10 @@
  * eggdrop.h
  *   libeggdrop header file
  *
- * $Id: eggdrop.h,v 1.3 2002/01/19 20:08:57 ite Exp $
+ * $Id: eggdrop.h,v 1.4 2002/02/07 22:18:59 wcc Exp $
  */
 /*
- * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

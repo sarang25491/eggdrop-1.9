@@ -3,10 +3,10 @@
  *   some macros and functions for common operations with strings and memory
  *   in general.
  *
- * $Id: memutil.h,v 1.5 2002/01/23 22:18:14 ite Exp $
+ * $Id: memutil.h,v 1.6 2002/02/07 22:19:00 wcc Exp $
  */
 /*
- * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

@@ -29,7 +29,7 @@ do \
 done; \
 exec tclsh$lastver "$0" "$@"
 #
-# AutoBotchk, (C)2001 Jeff Fisher (guppy@eggheads.org)
+# AutoBotchk, (C)2001, 2002 Jeff Fisher (guppy@eggheads.org)
 #
 # updates
 # -------
@@ -47,7 +47,7 @@ exec tclsh$lastver "$0" "$@"
 #           better
 #  27Sep01: added new pidfile setting
 #
-# $Id: autobotchk,v 1.6 2001/10/19 05:26:32 guppy Exp $
+# $Id: autobotchk,v 1.7 2002/02/07 22:19:04 wcc Exp $
 #
 # how to use
 # ----------
@@ -72,7 +72,7 @@ if {$argc == 0} {
  puts " -30      (30 minute checks)\n\n"
  exit
 } {
- puts "\nAutoBotchk 1.09, (C)2001 Jeff Fisher (guppy@eggheads.org)"
+ puts "\nAutoBotchk 1.09, (C)2001, 2002 Jeff Fisher (guppy@eggheads.org)"
  puts "----------------------------------------------------------"
 
  set x [join [lindex [split $argv] 0]]
@@ -170,7 +170,7 @@ if {$argc == 0} {
 # botchk
 #
 # Created on: [clock format [clock seconds] -format "%B %d, %Y @ %I:%M%p"]
-# Created by: AutoBotchk 1.09 (C)2001 Jeff Fisher
+# Created by: AutoBotchk 1.09 (C)2001, 2002 Jeff Fisher
 #
 # This is a script suitable for use in a crontab.  It checks to make sure
 # your bot is running.  YOU NEED A SEPARATE CRON JOB FOR EACH BOT.  If your

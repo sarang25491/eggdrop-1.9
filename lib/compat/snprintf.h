@@ -2,10 +2,10 @@
  * snprintf.h
  *   prototypes for snprintf.c
  *
- * $Id: snprintf.h,v 1.1 2001/10/28 13:30:32 ite Exp $
+ * $Id: snprintf.h,v 1.2 2002/02/07 22:18:59 wcc Exp $
  */
 /*
- * Copyright (C) 2000, 2001 Eggheads Development Team
+ * Copyright (C) 2000, 2001, 2002 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

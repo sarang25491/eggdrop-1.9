@@ -3,11 +3,11 @@
  *   Handles moving the process to the background and forking,
  *   while keeping threads happy.
  *
- * $Id: bg.c,v 1.7 2002/01/14 02:23:27 ite Exp $
+ * $Id: bg.c,v 1.8 2002/02/07 22:19:04 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
