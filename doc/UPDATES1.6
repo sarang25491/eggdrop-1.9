@@ -1,10 +1,47 @@
-$Id: UPDATES1.6,v 1.193 2001/12/29 21:43:53 guppy Exp $
+$Id: UPDATES1.6,v 1.194 2002/02/04 07:32:04 wcc Exp $
 
-Changes in eggdrop: (since v1.6.0)
+Changes in Eggdrop: (since v1.6.0)
 ----------------------------------
 
-1.6.8
+1.6.9
 Found by  Fixed by  What...
+SiD3WiNDR Wcc       MISC_USERFCREATE1 should use origbotname instead of botnetnick
+          Wcc       added a warning about allow-resync in the config file
+          TaKeDa    prevent botnet flooding when adding ignores which already exist
+          Wcc       some docs were not getting installed correctly
+          Wcc       [pass] should be <pass> in usage notices
+          Wcc       more cosmetic changes
+          Wcc       a bunch of little cosmetic changes
+          Wcc       more doc updates
+blaster^  Eule      fixed a memleak when adding users
+          ITE       more 64bit arch fixes
+          BarkerJr  lets log remote botinfo calls
+          blaster^  
+          BarkerJr  update a bot's laston info when the bot links
+jedis     guppy     some more remote boot fixes 
+|^Raven^| stdarg/   hand2nick, nick2hand, handonchan, and chanlist might not always return
+          guppy     that a user is known even if we know they are -- this has been fixed
+
+1.6.8 (2 January 2002)
+Found by  Fixed by  What...
+PPSlim    guppy     removed a legacy tcl hack that probably no one but old eggdrop users
+                    knew about <g>
+          Tothwolf  more copyright updates and documentation changes
+          blaster^  raised the kick reason length to 307 for dalnet
+          Wcc       fixed some cosmetic bugs relating to either 1 user or X users, stuff
+                    like that
+          Wcc       updated slennox's sentinel.tcl to the latest version
+          Wcc       updated the html docs to be in sync with the text ones
+          Wcc       updated the copyright info for 2002
+          guppy     removed the checks for ips with 0 or 255 in them
+various   guppy     when a leaf is thinking that uses a different HANDLEN then ours log
+                    it and then drop the connection instead of just silently dropping
+                    the connection
+          guppy     changed checkmodule to loadmodule in the configs (checkmodule still
+                    works for backwards compat)
+          guppy     renamed nick-len to nicklen (nick-len still exists for backwards
+                    compat) to follow the standard that handlen uses
+          Wcc       updated doc/BOTNET and added doc/first_script.txt
           Wcc       removed some old debugging information
 various   zip       prevent the bot from loosing channel flags when allow-resync is set
           Wcc       some small cosmetic changes
