@@ -4,7 +4,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.37 2001/10/31 04:02:51 tothwolf Exp $
+ * $Id: chanprog.c,v 1.38 2001/12/09 14:14:47 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -218,7 +218,7 @@ void tell_verbose_status(int idx)
   if (!uname(&un) < 0) {
 #endif
     vers_t = " ";
-    uni_t = "*unknown*";
+    uni_t = _("*unknown*");
 #ifdef HAVE_UNAME
   } else {
     vers_t = un.release;
@@ -227,16 +227,18 @@ void tell_verbose_status(int idx)
 #endif
 
   i = count_users(userlist);
-  dprintf(idx, "I am %s, running %s:  %d user%s\n",
+  /* FIXME PLURAL: handle it properly */
+  dprintf(idx, _("I am %1$s, running %2$s:  %3$d user%4$s\n"),
 	  botnetnick, ver, i, i == 1 ? "" : "s");
-  dprintf(idx, "Running on %s %s\n", uni_t, vers_t);
+  dprintf(idx, _("Running on %1$s %2$s\n"), uni_t, vers_t);
   if (admin[0])
-    dprintf(idx, "Admin: %s\n", admin);
+    dprintf(idx, _("Admin: %s\n"), admin);
   now2 = now - online_since;
   s[0] = 0;
   if (now2 > 86400) {
     /* days */
-    sprintf(s, "%d day", (int) (now2 / 86400));
+    /* FIXME PLURAL: handle it properly */
+    sprintf(s, _("%d day"), (int) (now2 / 86400));
     if ((int) (now2 / 86400) >= 2)
       strcat(s, "s");
     strcat(s, ", ");
@@ -279,17 +281,17 @@ void tell_verbose_status(int idx)
   /* info library */
   dprintf(idx, "%s %s\n", _("Tcl library:"),
 	  ((interp) && (Tcl_Eval(interp, "info library") == TCL_OK)) ?
-	  interp->result : "*unknown*");
+	  interp->result : _("*unknown*"));
 
   /* info tclversion/patchlevel */
   dprintf(idx, "%s %s (%s %s)\n", _("Tcl version:"),
 	  ((interp) && (Tcl_Eval(interp, "info patchlevel") == TCL_OK)) ?
 	  interp->result : (Tcl_Eval(interp, "info tclversion") == TCL_OK) ?
-	  interp->result : "*unknown*", _("header version"),
-	  TCL_PATCH_LEVEL ? TCL_PATCH_LEVEL : "*unknown*");
+	  interp->result : _("*unknown*"), _("header version"),
+	  TCL_PATCH_LEVEL ? TCL_PATCH_LEVEL : _("*unknown*"));
 
 #if HAVE_TCL_THREADS
-  dprintf(idx, "Tcl is threaded\n");
+  dprintf(idx, _("Tcl is threaded\n"));
 #endif  
 	  
 }
@@ -301,24 +303,25 @@ void tell_settings(int idx)
   char s[1024];
   struct flag_record fr = {FR_GLOBAL, 0, 0, 0, 0, 0};
 
-  dprintf(idx, "Botnet Nickname: %s\n", botnetnick);
+  dprintf(idx, _("Botnet Nickname: %s\n"), botnetnick);
   if (firewall[0])
-    dprintf(idx, "Firewall: %s, port %d\n", firewall, firewallport);
-  dprintf(idx, "Userfile: %s   Motd: %s\n", userfile, motdfile);
-  dprintf(idx, "Directories:\n");
-  dprintf(idx, "  Help    : %s\n", helpdir);
-  dprintf(idx, "  Temp    : %s\n", tempdir);
+    dprintf(idx, _("Firewall: %1$s, port %2$d\n"), firewall, firewallport);
+  dprintf(idx, _("Userfile: %1$s   Motd: %2$s\n"), userfile, motdfile);
+  dprintf(idx, _("Directories:\n"));
+  dprintf(idx, _("  Help    : %s\n"), helpdir);
+  dprintf(idx, _("  Temp    : %s\n"), tempdir);
 #ifndef STATIC
-  dprintf(idx, "  Modules : %s\n", moddir);
+  dprintf(idx, _("  Modules : %s\n"), moddir);
 #endif
   fr.global = default_flags;
 
   build_flags(s, &fr, NULL);
   dprintf(idx, "%s [%s], %s: %s\n", _("New users get flags"), s,
 	  _("notify"), notify_new);
+  /* FIXME PLURAL: handle it properly */
   if (owner[0])
     dprintf(idx, "%s: %s\n", _("Permanent owner(s)"), owner);
-  dprintf(idx, "Ignores last %d mins\n", ignore_time);
+  dprintf(idx, _("Ignores last %d mins\n"), ignore_time);
 }
 
 void reaffirm_owners()
@@ -390,7 +393,7 @@ Telnet to the bot and enter 'NEW' as your nickname.\n"));
     strncpyz(botnetnick, origbotname, HANDLEN + 1);
   }
   if (!botnetnick[0])
-    fatal("I don't have a botnet nick!!\n", 0);
+    fatal(_("I don't have a botnet nick!!\n"), 0);
   /* Test tempdir: it's vital */
   {
     FILE *f;
