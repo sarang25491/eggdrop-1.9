@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.43 2001/12/09 21:46:03 guppy Exp $
+ * $Id: tcldcc.c,v 1.44 2001/12/29 21:26:56 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -760,7 +760,7 @@ static int script_boot(char *user_bot, char *reason)
     else if (remote_boots > 0) {
       i = nextbot(who);
       if (i < 0) return(0);
-      botnet_send_reject(i, botnetnick, NULL, whonick, who, reason);
+      botnet_send_reject(i, botnetnick, NULL, whonick, who, reason ? reason : "");
     }
     else return(0);
   }
