@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include <eggdrop/eggdrop.h>
+#include "egg_server_api.h"
 #include "nicklist.h"
 #include "output.h"
 

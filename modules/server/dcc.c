@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <eggdrop/eggdrop.h>
+#include "egg_server_api.h"
 #include "server.h"
 #include "output.h"
 #include "binds.h"

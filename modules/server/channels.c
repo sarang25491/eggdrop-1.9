@@ -2,6 +2,7 @@
 
 #include <eggdrop/eggdrop.h>
 #include <ctype.h>
+#include "egg_server_api.h"
 #include "server.h"
 #include "binds.h"
 #include "channels.h"
@@ -198,6 +199,7 @@ channel_member_t *channel_add_member(const char *chan_name, const char *nick, co
 
 	m->next = chan->member_head;
 	chan->member_head = m;
+	chan->nmembers++;
 	return(m);
 }
 
@@ -244,8 +246,8 @@ static void real_channel_leave(channel_t *chan, const char *nick, const char *uh
 
 		if (prev) prev->next = m->next;
 		else chan->member_head = m->next;
-
 		free_member(m);
+		chan->nmembers--;
 	}
 
 	bind_check(BT_leave, u ? &u->settings[0].flags : NULL, chan_name, nick, uhost, u, chan_name);
@@ -311,18 +313,40 @@ void channel_on_nick(const char *old_nick, const char *new_nick)
 	}
 }
 
-void channel_list(char ***chans, int *nchans)
+int channel_list(const char ***chans)
 {
 	channel_t *chan;
 	int i;
 
-	*chans = calloc(nchannels+1, sizeof(char **));
-	*nchans = nchannels;
+	*chans = calloc(nchannels+1, sizeof(*chans));
 	i = 0;
 	for (chan = channel_head; chan; chan = chan->next) {
 		(*chans)[i] = chan->name;
 		i++;
 	}
+	(*chans)[i] = NULL;
+	return(i);
+}
+
+int channel_list_members(const char *chan, const char ***members)
+{
+	channel_t *chanptr;
+	channel_member_t *m;
+	int i;
+
+	channel_lookup(chan, 0, &chanptr, NULL);
+	if (!chanptr) {
+		*members = NULL;
+		return(-1);
+	}
+
+	*members = calloc(chanptr->nmembers+1, sizeof(*members));
+	i = 0;
+	for (m = chanptr->member_head; m; m = m->next) {
+		(*members)[i] = m->nick;
+		i++;
+	}
+	return(i);
 }
 
 /* :server 352 <ournick> <chan> <user> <host> <server> <nick> <H|G>[*][@|+] :<hops> <name> */

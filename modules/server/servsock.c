@@ -1,5 +1,6 @@
 #include <eggdrop/eggdrop.h>
 
+#include "egg_server_api.h"
 #include "server.h"
 #include "servsock.h"
 #include "input.h"

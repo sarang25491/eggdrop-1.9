@@ -121,6 +121,19 @@ egg_module_t *module_lookup(const char *name)
 	return(NULL);
 }
 
+void *module_get_api(const char *name)
+{
+	module_list_t *entry;
+
+	entry = find_module(name);
+	if (!entry) return(NULL);
+	return entry->modinfo.module_api;
+}
+
+void *module_release_api(const char *name)
+{
+}
+
 int module_addref(const char *name)
 {
 	module_list_t *entry;

@@ -32,6 +32,26 @@ static int party_quit(partymember_t *p, const char *nick, user_t *u, const char 
 
 static int party_whisper(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
+	char *who;
+	const char *next;
+	partymember_t *dest;
+
+	egg_get_word(text, &next, &who);
+	if (next) while (isspace(*next)) next++;
+	if (!who || !next || !*who || !*next) {
+		partymember_printf(p, "Syntax: whisper <partylineuser> <msg>");
+		goto done;
+	}
+
+	dest = partymember_lookup_nick(who);
+	if (!dest) {
+		partymember_printf(p, "No such user '%s'.", who);
+		goto done;
+	}
+
+	partymember_msg(dest, p, next, -1);
+done:
+	if (who) free(who);
 	return(0);
 }
 

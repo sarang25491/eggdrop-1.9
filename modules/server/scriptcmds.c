@@ -22,6 +22,7 @@
 
 #include <eggdrop/eggdrop.h>
 
+#include "egg_server_api.h"
 #include "server.h"
 #include "serverlist.h"
 #include "nicklist.h"

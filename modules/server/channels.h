@@ -70,6 +70,7 @@ extern void channel_on_join(const char *chan_name, const char *nick, const char 
 extern channel_member_t *channel_add_member(const char *chan_name, const char *nick, const char *uhost);
 
 /* Functions for others (scripts/modules) to access channel data. */
-extern void channel_list(char ***chans, int *nchans);
+extern int channel_list(const char ***chans);
+extern int channel_list_members(const char *chan, const char ***members);
 
 #endif

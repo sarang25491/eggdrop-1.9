@@ -1,4 +1,5 @@
 #include <eggdrop/eggdrop.h>
+#include "egg_server_api.h"
 #include "server.h"
 #include "channels.h"
 #include "output.h"

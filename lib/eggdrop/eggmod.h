@@ -20,6 +20,7 @@ struct egg_module {
 
 	egg_close_func_t close_func;
 	void *module_data;
+	void *module_api;
 };
 
 int module_init();
@@ -27,6 +28,7 @@ int module_add_dir(const char *moddir);
 int module_load(const char *name);
 int module_unload(const char *name, int why);
 egg_module_t *module_lookup(const char *name);
+void *module_get_api(const char *name);
 int module_addref(const char *name);
 int module_decref(const char *name);
 int get_module_list(char ***);
