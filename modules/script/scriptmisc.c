@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptmisc.c,v 1.11 2003/12/18 06:50:47 wcc Exp $";
+static const char rcsid[] = "$Id: scriptmisc.c,v 1.12 2003/12/18 07:10:03 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -139,7 +139,7 @@ static char *script_unames()
 #else
 	snprintf(buf, sizeof buf, "unknown");
 #endif
-	return strdup(buf);
+	return(strdup(buf));
 }
 
 static char *script_md5(char *data)

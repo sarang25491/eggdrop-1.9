@@ -1,13 +1,13 @@
-# $Id: Makefile.am,v 1.7 2003/12/18 06:50:47 wcc Exp $
+# $Id: Makefile.am,v 1.8 2003/12/18 07:10:03 wcc Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 pkglibdir = $(exec_prefix)/modules
 
 # FIXME: test if there's dependency on gnu make. It shouldn't.
 if EGG_PERLSCRIPT
-	EGG_PRL = perlscript.la
+  EGG_PRL = perlscript.la
 else
-	EGG_PRL =
+  EGG_PRL =
 endif
 
 pkglib_LTLIBRARIES  = $(EGG_PRL)
