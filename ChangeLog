@@ -1,3 +1,13 @@
+2002-04-01 17:34  Axel Franke <eule@berlin.snafu.de>
+
+	* modules/channels/channels.c, modules/channels/channels.h,
+	modules/channels/cmdschan.c, modules/channels/tclchan.c,
+	modules/channels/userchan.c, modules/irc/chan.c,
+	modules/irc/cmdsirc.c, modules/irc/irc.c, modules/share/share.c,
+	src/patch.h:
+
+	move u_addban, u_addexempt and u_addinvite into u_addmask 
+
 2002-04-01 13:33  Federico Mennite <ite@techmonkeys.org>
 
 	* configure.ac, acconfig/acinclude.m4, lib/compat/Makefile.am,
