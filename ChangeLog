@@ -1,3 +1,18 @@
+2002-06-01 13:28  wingman
+
+	* src/traffic.c:
+
+	
+	  * new file: traffic.  
+
+2002-06-01 13:27  wingman
+
+	* src/: main.c, net.c, traffic.h:
+
+	
+		* moved traffic commands to traffic.[c|h] and cleaned 
+		  up net.c/main.c 
+
 2002-06-01 08:13  stdarg <stdarg@techmonkeys.org>
 
 	* modules/channels/tclchan.c:
