@@ -369,6 +369,7 @@ set reserved-portrange 2010:2020
     here.
 
 
+
 set dupwait-timeout 5
     If your eggdrop rejects bots that actually have already disconnected from
     another hub, but the disconnect information has not yet spread over the
@@ -387,6 +388,14 @@ set console "mkcobxs"
     (the one you defined first in config file)
     Masters can change their console channel and modes with the '.console' command
 
+set debug-output 0
+    Enables certain console/logging flags which can be used to see all
+    information sent to and from the server, also botnet and share traffic.
+    NOTE: This is a large security hole, allowing people to see passwords and
+    other information they shouldn't otherwise really see. These flags are
+    restricted to +n users only. Please choose your owners carefully when you
+    enable this option.
+    Valid settings are 0 for OFF and 1 ON.
 
 
 ##### COMMON STUFF #####

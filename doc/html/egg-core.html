@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: egg-core.html,v 1.17 2001/10/19 06:01:20 guppy Exp $ -->
+<!-- $Id: egg-core.html,v 1.18 2001/10/20 07:29:09 guppy Exp $ -->
 
 <html>
   <head>
@@ -600,6 +600,20 @@
           <p>If you want all your dcc file transfers bound to a particular portrange,
           either because your behind a firewall, or for other security reasons, set it
           here.</p>
+        </dd>
+
+	<dt><strong><em>set debug-output 0</em></strong></dt>
+
+	<dd>
+	  <p>Enables certain console/logging flags which can be used to see all         
+          information sent to and from the server, also botnet and share traffic.</p>    
+
+	  <p>NOTE: This is a large security hole, allowing people to see passwords and
+          other information they shouldn't otherwise really see. These flags are   
+          restricted to +n users only. Please choose your owners carefully when you
+          enable this option.</p>
+
+          <p>Valid settings are 0 and 1.</p>
         </dd>
 
         <dt><strong><em>set dupwait-timeout 5</em></strong></dt>

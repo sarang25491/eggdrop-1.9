@@ -1,15 +1,3 @@
 BUG REPORTS:
 === =======
 (i.e. things that are broke, but aren't getting fixed anytime soon)
-
-* Solve to non-working alarm(10) in linux (calls to gethostbyaddr/name()
-  have blocked for long periods when bind/named doesn't resolve quickly,
-  and the alarm does not interrupt it).
-* High-bit characters are being filtered from channel names.   This is
-  a fault of the TCL interpreter, and not eggdrop.  The TCL interpreter
-  filters the characters when it reads a file for interpreting. Update
-  your TCL version 8.1 or higher
-* Since version 8.1 TCL support unicode characters, like for example è.
-  If those characters are handled in a script as text, you run into
-  errors, eggdrop can't handle those at the moment.
-
