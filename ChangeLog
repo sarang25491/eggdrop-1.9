@@ -1,3 +1,12 @@
+2003-05-12 14:11  wingman
+
+	* lib/eggdrop/binds.c, lib/eggdrop/eggdns.c, lib/eggdrop/modvals.h,
+	lib/eggdrop/partyline.c, lib/eggdrop/users.c, lib/eggdrop/xml.h,
+	lib/eggdrop/xmlread.c, src/modules.c:
+
+	yet another post-it on my monitor..."do not use // for comments..."
+	;-) 
+
 2003-05-12 11:54  wingman
 
 	* lib/eggdrop/eggdns.c, lib/eggdrop/eggmod.c, lib/eggdrop/eggnet.c,
