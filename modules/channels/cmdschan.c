@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: cmdschan.c,v 1.16 2003/02/03 10:43:36 wcc Exp $";
+static const char rcsid[] = "$Id: cmdschan.c,v 1.17 2003/02/12 08:42:22 wcc Exp $";
 #endif
 */
 
@@ -823,11 +823,7 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
 	    channel_static(chan) ? "static" : "dynamic", chan->dname);
     get_mode_protect(chan, work);
     dprintf(idx, "Protect modes (chanmode): %s\n", work[0] ? work : "None");
-    if (chan->stopnethack_mode)
-      dprintf(idx, "stopnethack_mode: %d\n", chan->stopnethack_mode);
-    else
-      dprintf(idx, "stopnethack: DON'T!\n");
-      dprintf(idx, "aop_delay: %d:%d\n", chan->aop_min, chan->aop_max);
+    dprintf(idx, "aop_delay: %d:%d\n", chan->aop_min, chan->aop_max);
     if (chan->ban_time)
       dprintf(idx, "ban_time: %d\n", chan->ban_time);
     else
@@ -851,28 +847,20 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
 	    (chan->status & CHAN_GREET) ? '+' : '-',
 	    (chan->status & CHAN_CYCLE) ? '+' : '-',
 	    (chan->status & CHAN_DONTKICKOPS) ? '+' : '-');
-    dprintf(idx, "     %cprotectops     %cprotectfriends %cbitch          %cautoop\n",
-	    (chan->status & CHAN_PROTECTOPS) ? '+' : '-',
-            (chan->status & CHAN_PROTECTFRIENDS) ? '+' : '-',
-            (chan->status & CHAN_BITCH) ? '+' : '-',
-            (chan->status & CHAN_OPONJOIN) ? '+' : '-');
     dprintf(idx, "     %cautovoice      %cnodesynch      %cenforcebans    %cdynamicbans\n",
 	    (chan->status & CHAN_AUTOVOICE) ? '+' : '-',
 	    (chan->status & CHAN_NODESYNCH) ? '+' : '-',
             (chan->status & CHAN_ENFORCEBANS) ? '+' : '-',
 	    (chan->status & CHAN_DYNAMICBANS) ? '+' : '-');
-    dprintf(idx, "     %cuserbans\n",
-	    (!(chan->status & CHAN_USERBANS)) ? '-' : '+');
-    dprintf(idx, "     %cdynamicexempts %cuserexempts    %cdynamicinvites %cuserinvites\n",
+    dprintf(idx, "     %cdynamicexempts                 %cdynamicinvites\n",
 	    (chan->ircnet_status & CHAN_DYNAMICEXEMPTS) ? '+' : '-',
-	    (!(chan->ircnet_status & CHAN_USEREXEMPTS)) ? '-' : '+',
-	    (chan->ircnet_status & CHAN_DYNAMICINVITES) ? '+' : '-',
-	    (!(chan->ircnet_status & CHAN_USERINVITES)) ? '-' : '+');
+	    (chan->ircnet_status & CHAN_DYNAMICINVITES) ? '+' : '-');
     dprintf(idx, "     %chonor-global-bans              %chonor-global-exempts\n",
 	    (chan->status & CHAN_HONORGLOBALBANS) ? '+' : '-',
 	    (chan->ircnet_status & CHAN_HONORGLOBALEXEMPTS) ? '+' : '-');
-    dprintf(idx, "     %chonor-global-invites\n",
-	    (chan->ircnet_status & CHAN_HONORGLOBALINVITES) ? '+' : '-');
+    dprintf(idx, "     %chonor-global-invites           %cautoop\n",
+	    (chan->ircnet_status & CHAN_HONORGLOBALINVITES) ? '+' : '-',
+            (chan->status & CHAN_OPONJOIN) ? '+' : '-');
 
     ii = 1;
     tmp = 0;

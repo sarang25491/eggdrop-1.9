@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: cmdsirc.c,v 1.16 2003/02/03 10:43:36 wcc Exp $";
+static const char rcsid[] = "$Id: cmdsirc.c,v 1.17 2003/02/12 08:42:22 wcc Exp $";
 #endif
 */
 
@@ -349,10 +349,6 @@ static void cmd_op(struct userrec *u, int idx, char *par)
   snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
   u = get_user_by_host(s);
   get_user_flagrec(u, &victim, chan->dname);
-  if (channel_bitch(chan) && !(chan_op(victim) || glob_op(victim))) {
-    dprintf(idx, _("%s is not a registered op.\n"), m->nick);
-    return;
-  }
   add_mode(chan, '+', 'o', nick);
   dprintf(idx, _("Gave op to %1$s on %2$s\n"), nick, chan->dname);
 }

@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: tclchan.c,v 1.28 2003/02/03 10:43:36 wcc Exp $";
+static const char rcsid[] = "$Id: tclchan.c,v 1.29 2003/02/12 08:42:22 wcc Exp $";
 #endif
 */
 
@@ -249,7 +249,6 @@ static int script_channel_get(script_var_t *retval, char *channel_name, char *se
 
 #define CHECK(x) !strcmp(setting, x)
 	if (CHECK("chanmode")) get_mode_protect(chan, s);
-	else if (CHECK("stop_net_hack")) sprintf(s, "%d", chan->stopnethack_mode);
 	else if (CHECK("aop_delay")) sprintf(s, "%d %d", chan->aop_min, chan->aop_max);
 	else if (CHECK("ban_time"))  sprintf(s, "%d", chan->ban_time);
 	else if (CHECK("exempt_time"))  sprintf(s, "%d", chan->exempt_time);
@@ -363,14 +362,6 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
       strncpy(s, item[i], 120);
       s[120] = 0;
       set_mode_protect(chan, s);
-    } else if (!strcmp(item[i], "stopnethack_mode")) {
-      i++;
-      if (i >= items) {
-	if (irp)
-	  Tcl_AppendResult(irp, "channel stopnethack_mode needs argument", NULL);
-	return TCL_ERROR;
-      }
-      chan->stopnethack_mode = atoi(item[i]);
     } else if (!strcmp(item[i], "ban_time")) {
       i++;
       if (i >= items) {
@@ -511,7 +502,7 @@ check_for_udef_flags:
 					   chan->channel.key : chan->key_prot);
     }
     if ((old_status ^ chan->status) &
-	(CHAN_ENFORCEBANS | CHAN_OPONJOIN | CHAN_BITCH | CHAN_AUTOVOICE)) {
+	(CHAN_ENFORCEBANS | CHAN_OPONJOIN | CHAN_AUTOVOICE)) {
       if ((me = module_find("irc", 0, 0)))
 	(me->funcs[IRC_RECHECK_CHANNEL])(chan, 1);
     } else if (old_mode_pls_prot != chan->mode_pls_prot ||
@@ -773,7 +764,6 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
     chan->limit_prot = 0;
     chan->limit = 0;
 
-    chan->stopnethack_mode = global_stopnethack_mode;
     chan->ban_time = global_ban_time;
     chan->exempt_time = global_exempt_time;
     chan->invite_time = global_invite_time;

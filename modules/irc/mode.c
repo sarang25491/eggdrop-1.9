@@ -25,7 +25,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: mode.c,v 1.19 2003/02/10 00:09:08 wcc Exp $";
+static const char rcsid[] = "$Id: mode.c,v 1.20 2003/02/12 08:42:22 wcc Exp $";
 #endif
 */
 
@@ -374,7 +374,6 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
   char s[UHOSTLEN];
   struct userrec *u;
   int check_chan = 0;
-  int snm = chan->stopnethack_mode;
 
   m = ismember(chan, who);
   if (!m) {
@@ -412,37 +411,8 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
   if (channel_pending(chan))
     return;
 
-  if (me_op(chan) && !match_my_nick(who) && nick[0]) {
-    /* Channis is +bitch, and the opper isn't a global master or a bot */
-    if (channel_bitch(chan) && !(glob_master(*opper) || glob_bot(*opper)) &&
-	!chan_master(*opper) && !(glob_op(victim) || glob_bot(victim)) &&
-        !chan_op(victim))
-      add_mode(chan, '-', 'o', who);
-  } else if (me_op(chan) && reversing && !match_my_nick(who))
+  if (me_op(chan) && reversing && !match_my_nick(who))
     add_mode(chan, '-', 'o', who);
-  if (!nick[0] && me_op(chan) && !match_my_nick(who)) {
-    if (snm > 0 && snm < 7 && !((channel_autoop(chan) || glob_autoop(victim) ||
-	       chan_autoop(victim)) && (chan_op(victim) || glob_op(victim))) &&
-               !glob_exempt(victim) && !chan_exempt(victim)) {
-      if (snm == 5) snm = channel_bitch(chan) ? 1 : 3;
-      if (snm == 6) snm = channel_bitch(chan) ? 4 : 2;
-      if (chan_wasoptest(victim) || glob_wasoptest(victim) ||
-      snm == 2) {
-        if (!chan_wasop(m)) {
-          m->flags |= FAKEOP;
-          add_mode(chan, '-', 'o', who);
-        }
-      } else if (!(chan_op(victim) || glob_op(victim))) {
-        if (snm == 1 || snm == 4 || (snm == 3 && !chan_wasop(m))) {
-          add_mode(chan, '-', 'o', who);
-          m->flags |= FAKEOP;
-        }
-      } else if (snm == 4 && !chan_wasop(m)) {
-        add_mode(chan, '-', 'o', who);
-        m->flags |= FAKEOP;
-      }
-    }
-  }
   m->flags |= WASOP;
   if (check_chan)
     recheck_channel(chan, 1);
@@ -481,24 +451,6 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
 
   if (channel_pending(chan))
     return;
-
-  /* Deop'd someone on my oplist? */
-  if (me_op(chan)) {
-    int ok = 1;
-
-    if (channel_protectops(chan) && (glob_master(victim) || chan_master(victim) ||
-        glob_op(victim) || chan_op(victim)))
-      ok = 0;
-    else if (channel_protectfriends(chan) && (glob_friend(victim) ||
-             chan_friend(victim)))
-      ok = 0;
-
-    if ((reversing || !ok) && had_op && !match_my_nick(nick) &&
-        irccmp(who, nick) && !match_my_nick(who) && !glob_master(user) &&
-        !chan_master(user) && !glob_bot(user) && ((chan_op(victim) ||
-        glob_op(victim)) || !channel_bitch(chan)))
-      add_mode(chan, '+', 'o', who);
-  }
 
   if (!nick[0])
     putlog(LOG_MODES, chan->dname, "TS resync (%s): %s deopped by %s",
@@ -546,11 +498,6 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from, char *who)
   }
 
   if (!match_my_nick(nick)) {
-    if (channel_nouserbans(chan) && nick[0] && !glob_bot(user) &&
-        !glob_master(user) && !chan_master(user)) {
-      add_mode(chan, '-', 'b', who);
-      return;
-    }
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       egg_snprintf(s1, sizeof s1, "%s!%s", m->nick, m->userhost);
       if (wild_match(who, s1)) {
@@ -638,19 +585,11 @@ static void got_exempt(struct chanset_t *chan, char *nick, char *from,
   if (channel_pending(chan))
     return;
 
-  if (!match_my_nick(nick)) {	/* It's not my exemption */
-    if (channel_nouserexempts(chan) && nick[0] && !glob_bot(user) &&
-	!glob_master(user) && !chan_master(user)) {
-      /* No exempts made by users */
-      add_mode(chan, '-', 'e', who);
-      return;
-    }
-    if (!nick[0] && bounce_modes)
-      reversing = 1;
-  }
+  if (!match_my_nick(nick) && !nick[0] && bounce_modes)
+    reversing = 1;
   if (reversing || (bounce_exempts && !nick[0] &&
-		   (!u_equals_mask(global_exempts, who) ||
-		    !u_equals_mask(chan->exempts, who))))
+      (!u_equals_mask(global_exempts, who) ||
+      !u_equals_mask(chan->exempts, who))))
     add_mode(chan, '-', 'e', who);
 }
 
@@ -716,19 +655,11 @@ static void got_invite(struct chanset_t *chan, char *nick, char *from,
   if (channel_pending(chan))
     return;
 
-  if (!match_my_nick(nick)) {	/* It's not my invitation */
-    if (channel_nouserinvites(chan) && nick[0] && !glob_bot(user) &&
-	!glob_master(user) && !chan_master(user)) {
-      /* No exempts made by users */
-      add_mode(chan, '-', 'I', who);
-      return;
-    }
-    if ((!nick[0]) && (bounce_modes))
-      reversing = 1;
-  }
+  if (!match_my_nick(nick) && !nick[0] && bounce_modes)
+    reversing = 1;
   if (reversing || (bounce_invites && (!nick[0])  &&
-		    (!u_equals_mask(global_invites, who) ||
-		     !u_equals_mask(chan->invites, who))))
+      (!u_equals_mask(global_invites, who) ||
+      u_equals_mask(chan->invites, who))))
     add_mode(chan, '-', 'I', who);
 }
 

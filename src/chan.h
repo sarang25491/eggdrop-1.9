@@ -23,7 +23,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: chan.h,v 1.35 2003/02/03 10:43:36 wcc Exp $
+ * $Id: chan.h,v 1.36 2003/02/12 08:42:22 wcc Exp $
  */
 
 #ifndef _EGG_CHAN_H
@@ -139,7 +139,6 @@ struct chanset_t {
   int aop_max;
   int status;
   int ircnet_status;
-  int stopnethack_mode;
   int ban_time;
   int invite_time;
   int exempt_time;
@@ -169,19 +168,19 @@ struct chanset_t {
 /* behavior modes for the channel */
 #define CHAN_ENFORCEBANS     0x0001
 #define CHAN_DYNAMICBANS     0x0002
-#define CHAN_USERBANS        0x0004
+/*			     0x0004 */
 #define CHAN_OPONJOIN        0x0008
-#define CHAN_BITCH           0x0010
+/*			     0x0010 */
 #define CHAN_GREET           0x0020
-#define CHAN_PROTECTOPS      0x0040
+/*			     0x0040 */
 #define CHAN_LOGSTATUS       0x0080
-/*			     0x100 */
+/*			     0x0100 */
 #define CHAN_SECRET          0x0200
 #define CHAN_AUTOVOICE       0x0400
 #define CHAN_CYCLE           0x0800
 #define CHAN_DONTKICKOPS     0x1000
 #define CHAN_INACTIVE        0x2000
-#define CHAN_PROTECTFRIENDS  0x4000
+/*			     0x4000 */
 #define CHAN_SHARED          0x8000
 /*			     0x10000 */
 /*			     0x20000 */
@@ -202,9 +201,9 @@ struct chanset_t {
 #define CHAN_ASKED_INVITED       0x0002
 
 #define CHAN_DYNAMICEXEMPTS      0x0004
-#define CHAN_USEREXEMPTS         0x0008
+/*			         0x0008 */
 #define CHAN_DYNAMICINVITES      0x0010
-#define CHAN_USERINVITES         0x0020
+/*			         0x0020 */
 #define CHAN_HONORGLOBALEXEMPTS  0x0040
 #define CHAN_HONORGLOBALINVITES  0x0080
 
@@ -220,7 +219,6 @@ struct chanset_t *findchan_by_dname(const char *name);
 
 #define channel_active(chan)  (chan->status & CHAN_ACTIVE)
 #define channel_pending(chan)  (chan->status & CHAN_PEND)
-#define channel_bitch(chan) (chan->status & CHAN_BITCH)
 #define channel_nodesynch(chan) (chan->status & CHAN_NODESYNCH)
 #define channel_autoop(chan) (chan->status & CHAN_OPONJOIN)
 #define channel_autovoice(chan) (chan->status & CHAN_AUTOVOICE)
@@ -228,9 +226,6 @@ struct chanset_t *findchan_by_dname(const char *name);
 #define channel_logstatus(chan) (chan->status & CHAN_LOGSTATUS)
 #define channel_enforcebans(chan) (chan->status & CHAN_ENFORCEBANS)
 #define channel_dynamicbans(chan) (chan->status & CHAN_DYNAMICBANS)
-#define channel_nouserbans(chan) (!(chan->status & CHAN_USERBANS))
-#define channel_protectops(chan) (chan->status & CHAN_PROTECTOPS)
-#define channel_protectfriends(chan) (chan->status & CHAN_PROTECTFRIENDS)
 #define channel_dontkickops(chan) (chan->status & CHAN_DONTKICKOPS)
 #define channel_secret(chan) (chan->status & CHAN_SECRET)
 #define channel_shared(chan) (chan->status & CHAN_SHARED)
@@ -238,9 +233,7 @@ struct chanset_t *findchan_by_dname(const char *name);
 #define channel_cycle(chan) (chan->status & CHAN_CYCLE)
 #define channel_inactive(chan) (chan->status & CHAN_INACTIVE)
 #define channel_dynamicexempts(chan) (chan->ircnet_status & CHAN_DYNAMICEXEMPTS)
-#define channel_nouserexempts(chan) (!(chan->ircnet_status & CHAN_USEREXEMPTS))
 #define channel_dynamicinvites(chan) (chan->ircnet_status & CHAN_DYNAMICINVITES)
-#define channel_nouserinvites(chan) (!(chan->ircnet_status & CHAN_USERINVITES))
 #define channel_juped(chan) (chan->status & CHAN_JUPED)
 #define channel_stop_cycle(chan) (chan->status & CHAN_STOP_CYCLE)
 #define channel_honor_global_bans(chan) (chan->status & CHAN_HONORGLOBALBANS)

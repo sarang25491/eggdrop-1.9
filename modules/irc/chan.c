@@ -27,7 +27,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: chan.c,v 1.32 2003/02/10 00:09:08 wcc Exp $";
+static const char rcsid[] = "$Id: chan.c,v 1.33 2003/02/12 08:42:22 wcc Exp $";
 #endif
 */
 
@@ -522,8 +522,6 @@ static void check_this_member(struct chanset_t *chan, char *nick, struct flag_re
   if (!m || match_my_nick(nick) || !me_op(chan))
     return;
 
-  if (chan_hasop(m) && channel_bitch(chan) && (!chan_op(*fr) && !glob_op(*fr)))
-    add_mode(chan, '-', 'o', m->nick);
   if (!chan_hasop(m) && (chan_op(*fr) || glob_op(*fr)) &&
       (channel_autoop(chan) || glob_autoop(*fr) || chan_autoop(*fr))) {
     if (!chan->aop_min)
@@ -601,22 +599,15 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
     check_this_member(chan, m->nick, &fr);
   }
   if (dobans) {
-    if (channel_nouserbans(chan) && !stop_reset)
-      resetbans(chan);
-    else
-      recheck_bans(chan);
+    recheck_bans(chan);
     if (use_invites) {
       if (channel_nouserinvites(chan) && !stop_reset)
 	resetinvites(chan);
       else
 	recheck_invites(chan);
     }
-    if (use_exempts) {
-      if (channel_nouserexempts(chan) && !stop_reset)
-	resetexempts(chan);
-      else
-	recheck_exempts(chan);
-    }
+    if (use_exempts)
+      recheck_exempts(chan);
     if (channel_enforcebans(chan))
       enforce_bans(chan);
     if ((chan->status & CHAN_ASKEDMODES) &&
