@@ -1,3 +1,23 @@
+2003-06-11 08:37  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/Makefile.am, lib/eggdrop/eggdrop.c,
+	lib/eggdrop/eggdrop.h, lib/eggdrop/garbage.h,
+	lib/eggdrop/ircparse.c, lib/eggdrop/ircparse.h,
+	lib/eggdrop/partychan.c, lib/eggdrop/partyline.h,
+	lib/eggdrop/partymember.c, lib/eggdrop/users.c,
+	lib/eggdrop/users.h, modules/server/Makefile.am,
+	modules/server/dcc.c, modules/server/input.c,
+	modules/server/output.c, modules/server/output.h,
+	modules/server/parse.c, modules/server/parse.h,
+	modules/tclscript/tclscript.c, modules/telnetparty/events.c,
+	src/core_config.c, src/core_party.c, src/logfile.c, src/main.c:
+
+	
+	* guppy needed something to read on the bathroom 
+	* new approach to create the initial user -- we prompt for the
+	  owner's handle when the bot starts with -m, and then generate a
+	  random password and print it out.  
+
 2003-06-10 04:43  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/eggdns.c, lib/eggdrop/partyline.h,
