@@ -1,11 +1,29 @@
-/*
- * eggdrop.h --
+/* eggdrop.h: header for eggdrop.c
+ *
+ * Copyright (C) 2002, 2003, 2004 Eggheads Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Id: eggdrop.h,v 1.25 2003/12/17 07:39:14 wcc Exp $
  */
 
-#ifndef _EGGDROP_H
-#define _EGGDROP_H
+#ifndef _EGG_EGGDROP_H_
+#define _EGG_EGGDROP_H_
 
 #include "../egglib/egglib.h"
+
 #include <eggdrop/common.h>
 #include <eggdrop/flags.h>
 #include <eggdrop/ircmasks.h>
@@ -40,14 +58,14 @@
 
 /* Gettext macros */
 #ifdef ENABLE_NLS
-#include <libintl.h>
-#define _(x) gettext(x)
-#define N_(x) gettext_noop(x)
-#define P_(x1, x2, n) ngettext(x1, x2, n)
+#  include <libintl.h>
+#  define _(x)		gettext(x)
+#  define N_(x)		gettext_noop(x)
+#  define P_(x1, x2, n)	ngettext(x1, x2, n)
 #else
-#define _(x) (x)
-#define N_(x) (x)
-#define P_(x1, x2, n) ( ((n) == 1) ? (x1) : (x2) )
+#  define _(x)		(x)
+#  define N_(x)		(x)
+#  define P_(x1, x2, n)	( ((n) == 1) ? (x1) : (x2) )
 #endif
 
 BEGIN_C_DECLS
@@ -64,4 +82,4 @@ extern eggdrop_t *eggdrop_delete(eggdrop_t *);
 
 END_C_DECLS
 
-#endif				/* !_EGGDROP_H */
+#endif /* !_EGG_EGGDROP_H_ */

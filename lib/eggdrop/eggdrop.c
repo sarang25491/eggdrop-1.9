@@ -1,9 +1,5 @@
-/*
- * eggdrop.c --
+/* eggdrop.c: libeggdrop
  *
- *	libeggdrop 
- */
-/*
  * Copyright (C) 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
@@ -22,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggdrop.c,v 1.8 2003/12/11 00:49:10 wcc Exp $";
+static const char rcsid[] = "$Id: eggdrop.c,v 1.9 2003/12/17 07:39:14 wcc Exp $";
 #endif
 
 #include <stdlib.h>
@@ -51,18 +47,16 @@ int eggdrop_event(const char *event)
 
 eggdrop_t *eggdrop_new(void)
 {
-  eggdrop_t *egg;
+	eggdrop_t *egg;
 
-  egg = (eggdrop_t *) malloc(sizeof(eggdrop_t));
-  memset(egg, 0, sizeof(eggdrop_t));
-
-  return egg;
+	egg = (eggdrop_t *) malloc(sizeof(eggdrop_t));
+	memset(egg, 0, sizeof(eggdrop_t));
+	return(egg);
 }
 
 eggdrop_t *eggdrop_delete(eggdrop_t * egg)
 {
-  free_null(egg);
-
-  return NULL;
+	free_null(egg);
+	return(NULL);
 }
 

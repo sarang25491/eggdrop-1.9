@@ -1,9 +1,5 @@
-/*
- * fileutil.c --
+/* fileutil.c: utilities to help with common file operations
  *
- *	convenience utilities to deal with common file operations
- */
-/*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
@@ -22,13 +18,14 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: fileutil.c,v 1.6 2003/12/11 00:49:10 wcc Exp $";
+static const char rcsid[] = "$Id: fileutil.c,v 1.7 2003/12/17 07:39:14 wcc Exp $";
 #endif
 
 #if HAVE_CONFIG_H
 #  include <config.h>
 #endif
 
+#include <eggdrop/common.h>
 #include <stdio.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -37,92 +34,79 @@ static const char rcsid[] = "$Id: fileutil.c,v 1.6 2003/12/11 00:49:10 wcc Exp $
 #include "fileutil.h"
 
 /* Copy a file from one place to another (possibly erasing old copy).
- *
- * returns:  0 if OK
- *	     1 if can't open original file
- *	     2 if can't open new file
- *	     3 if original file isn't normal
- *	     4 if ran out of disk space
+ * 0 - OK
+ * 1 - can't open original file
+ * 2 - can't open new file
+ * 3 - original file isn't normal
+ * 4 - ran out of disk space
  */
 int copyfile(char *oldpath, char *newpath)
 {
-  int fi, fo, x;
-  char buf[512];
-  struct stat st;
+	int fi, fo, x;
+	char buf[512];
+	struct stat st;
 
 #ifndef CYGWIN_HACKS
-  fi = open(oldpath, O_RDONLY, 0);
+	fi = open(oldpath, O_RDONLY, 0);
 #else
-  fi = open(oldpath, O_RDONLY | O_BINARY, 0);
+	fi = open(oldpath, O_RDONLY | O_BINARY, 0);
 #endif
-  if (fi < 0)
-    return 1;
-  fstat(fi, &st);
-  if (!(st.st_mode & S_IFREG))
-    return 3;
-  fo = creat(newpath, (int) (st.st_mode & 0777));
-  if (fo < 0) {
-    close(fi);
-    return 2;
-  }
-  for (x = 1; x > 0;) {
-    x = read(fi, buf, 512);
-    if (x > 0) {
-      if (write(fo, buf, x) < x) {	/* Couldn't write */
+	if (fi < 0) return(1);
+
+	fstat(fi, &st);
+	if (!(st.st_mode & S_IFREG)) return(3);
+
+	fo = creat(newpath, (int) (st.st_mode & 0777));
+	if (fo < 0) {
+		close(fi);
+		return(2);
+	}
+
+	for (x = 1; x > 0;) {
+		x = read(fi, buf, 512);
+		if ((x >= 0) || (write(fo, buf, x) < x)) continue;
+		close(fo);
+		close(fi);
+		unlink(newpath);
+		return(4);
+	}
+#ifdef HAVE_FSYNC
+	fsync(fo);
+#endif /* HAVE_FSYNC */
 	close(fo);
 	close(fi);
-	unlink(newpath);
-	return 4;
-      }
-    }
-  }
-#ifdef HAVE_FSYNC
-  fsync(fo);
-#endif /* HAVE_FSYNC */
-  close(fo);
-  close(fi);
-  return 0;
+	return(0);
 }
 
 int movefile(char *oldpath, char *newpath)
 {
-  int ret;
+	int ret;
 
 #ifdef HAVE_RENAME
-  /* Try to use rename first */
-  if (!rename(oldpath, newpath))
-    return 0;
+	if (!rename(oldpath, newpath)) return(0);
 #endif /* HAVE_RENAME */
 
-  /* If that fails, fall back to just copying and then
-   * deleting the file.
-   */
-  ret = copyfile(oldpath, newpath);
-  if (!ret)
-    unlink(oldpath);
-  return ret;
+	ret = copyfile(oldpath, newpath);
+	if (!ret) unlink(oldpath);
+	return(ret);
 }
 
+/* Is a filename a valid file? */
 int is_file(const char *s)
 {
-  struct stat ss;
-  int i = stat(s, &ss);
+	struct stat ss;
 
-  if (i < 0)
-    return 0;
-  if ((ss.st_mode & S_IFREG) || (ss.st_mode & S_IFLNK))
-    return 1;
-  return 0;
+	if (stat(s, &ss) < 0) return(0);
+	if ((ss.st_mode & S_IFREG) || (ss.st_mode & S_IFLNK)) return(1);
+	return(0);
 }
 
-int file_readable(const char *file)
+/* Is a filename readable? */
+int is_file_readable(const char *file)
 {
-  FILE *fp;
+	FILE *fp;
 
-  if (!(fp = fopen(file, "r")))
-    return 0;
-
-  fclose(fp);
-  return 1;
+	if (!(fp = fopen(file, "r"))) return(0);
+	fclose(fp);
+	return(1);
  }
-

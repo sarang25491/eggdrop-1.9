@@ -1,9 +1,5 @@
-/*
- * irccmp.h --
+/* match.h: header for match.c
  *
- *	prototypes and macros for irccmp.
- */
-/*
  * Copyright (C) 1990 Jarkko Oikarinen
  * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
  *
@@ -20,18 +16,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- */
-/*
- * $Id: irccmp.h,v 1.2 2003/12/11 00:49:10 wcc Exp $
+ *
+ * $Id: irccmp.h,v 1.3 2003/12/17 07:39:14 wcc Exp $
  */
 
-#ifndef _IRCCMP_H_
-#define _IRCCMP_H_
+#ifndef _EGG_IRCCMP_H_
+#define _EGG_IRCCMP_H_
 
-/*
- * Prototypes
- */
+#define ToUpper(c) (ToUpperTab[(unsigned)c])
+#define ToLower(c) (ToLowerTab[(unsigned)c])
+
 extern int irccmp(const char *, const char *);
 extern int ircncmp(const char *, const char *, int);
 
-#endif				/* !_EGG_IRCCMP_H */
+#endif /* !_EGG_IRCCMP_H */

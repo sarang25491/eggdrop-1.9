@@ -1,5 +1,26 @@
-#ifndef _SOCKBUF_H_
-#define _SOCKBUF_H_
+/* sockbuf.h: header for sockbuf.c
+ *
+ * Copyright (C) 2002, 2003, 2004 Eggheads Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Id: sockbuf.h,v 1.5 2003/12/17 07:39:14 wcc Exp $
+ */
+
+#ifndef _EGG_SOCKBUF_H_
+#define _EGG_SOCKBUF_H_
 
 /* Flags for sockbuf_t structure. */
 #define SOCKBUF_BLOCK	1
@@ -7,13 +28,14 @@
 #define SOCKBUF_CLIENT	4
 #define SOCKBUF_DELETE	8
 #define SOCKBUF_NOREAD	16
+/* The difference between SOCKBUF_AVAIL and SOCKBUF_DELETED is that DELETED
+ * means it's invalid but not available for use yet. That happens when you
+ * delete a sockbuf from within sockbuf_update_all(). Otherwise, when you
+ * create a new sockbuf after you delete one, you could get the same idx,
+ * and sockbuf_update_all() might trigger invalid events for it.
+ */
 #define SOCKBUF_AVAIL	32
 #define SOCKBUF_DELETED	64
-/* The difference between SOCKBUF_AVAIL and SOCKBUF_DELETED is that DELETED
-	means it's invalid but not available for use yet. That happens when you
-	delete a sockbuf from within sockbuf_update_all(). Otherwise, when you
-	create a new sockbuf after you delete one, you could get the same idx,
-	and sockbuf_update_all() might trigger invalid events for it. */
 
 
 /* Levels for filters. */
@@ -87,4 +109,4 @@ int sockbuf_on_read(int idx, int level, char *data, int len);
 int sockbuf_on_write(int idx, int level, const char *data, int len);
 int sockbuf_on_written(int idx, int level, int len, int remaining);
 
-#endif /* _SOCKBUF_H_ */
+#endif /* !_EGG_SOCKBUF_H_ */

@@ -1,9 +1,5 @@
-/*
- * script.h --
+/* script.h: header for script.c
  *
- *	stuff needed for scripting modules
- */
-/*
  * Copyright (C) 2001, 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
@@ -19,15 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- */
-/*
- * $Id: script.h,v 1.12 2003/12/11 00:49:10 wcc Exp $
+ *
+ * $Id: script.h,v 1.13 2003/12/17 07:39:14 wcc Exp $
  */
 
-#ifndef _EGG_SCRIPT_H
-#define _EGG_SCRIPT_H
-
-#include <eggdrop/common.h>
+#ifndef _EGG_SCRIPT_H_
+#define _EGG_SCRIPT_H_
 
 BEGIN_C_DECLS
 
@@ -42,7 +35,7 @@ enum {
 };
 
 /* Byte-arrays are simply strings with their length given explicitly, so it
-	can have embedded NULLs. */
+ * can have embedded NULLs. */
 typedef struct byte_array_b {
 	unsigned char *bytes;
 	int len;
@@ -51,47 +44,47 @@ typedef struct byte_array_b {
 
 /* Flags for commands. */
 /* SCRIPT_PASS_CDATA means your callback wants its (void *)client_data passed
-   as its *first* arg.
-
-   SCRIPT_PASS_RETVAL will pass a (script_var_t *)retval so that you can return
-   complex types.
-
-   SCRIPT_PASS_COUNT will pass the number of script arguments you're getting.
-
-   SCRIPT_PASS_ARRAY will pass the arguments as an array, with argc and argv.
-
-   SCRIPT_VAR_ARGS means you accept variable number of args. The nargs field
-   of the command struct is the minimum number required, and the strlen of your
-   syntax field is the max number. Arguments that weren't given will be filled
-   in with 0.
-
-   SCRIPT_VAR_FRONT means the variable args come from the front instead of the
-   back. This is useful for flags and stuff.
-*/
+ * as its *first* arg.
+ *
+ * SCRIPT_PASS_RETVAL will pass a (script_var_t *)retval so that you can return
+ * complex types.
+ *
+ * SCRIPT_PASS_COUNT will pass the number of script arguments you're getting.
+ *
+ * SCRIPT_PASS_ARRAY will pass the arguments as an array, with argc and argv.
+ *
+ * SCRIPT_VAR_ARGS means you accept variable number of args. The nargs field
+ * of the command struct is the minimum number required, and the strlen of your
+ * syntax field is the max number. Arguments that weren't given will be filled
+ * in with 0.
+ *
+ * SCRIPT_VAR_FRONT means the variable args come from the front instead of the
+ * back. This is useful for flags and stuff.
+ */
 #define SCRIPT_PASS_CDATA	1
 #define SCRIPT_PASS_RETVAL	2
 #define SCRIPT_PASS_COUNT	4
 #define SCRIPT_PASS_ARRAY	8
-#define SCRIPT_VAR_ARGS	16
+#define SCRIPT_VAR_ARGS		16
 #define SCRIPT_VAR_FRONT	32
 
 /* Flags for callbacks. */
 /* SCRIPT_CALLBACK_ONCE means the callback will be automatically deleted after
-   its first use.
-*/
-#define SCRIPT_CALLBACK_ONCE	1
+ *  its first use.
+ */
+#define SCRIPT_CALLBACK_ONCE 1
 
 /* Flags for variables. */
 /* SCRIPT_FREE means we will call free(retval->value) (i.e. free a malloc'd
-   string or array base ptr.)
-   SCRIPT_FREE_VAR means we will call free(retval) (you may need this if you
-   build a complex list structure of (script_var_t *)'s).
-   SCRIPT_ARRAY means we interpret retval->value as an array of length
-   retval->len, of whatever basic type is specified in retval->type (flags
-   are ignored).
-   SCRIPT_ERROR means the interpreter will raise an error exception if it knows
-   how, with retval->value as the error information. Otherwise, it is ignored.
-*/
+ * string or array base ptr.)
+ * SCRIPT_FREE_VAR means we will call free(retval) (you may need this if you
+ * build a complex list structure of (script_var_t *)'s).
+ * SCRIPT_ARRAY means we interpret retval->value as an array of length
+ * retval->len, of whatever basic type is specified in retval->type (flags
+ * are ignored).
+ * SCRIPT_ERROR means the interpreter will raise an error exception if it knows
+ * how, with retval->value as the error information. Otherwise, it is ignored.
+ */
 #define SCRIPT_FREE	256
 #define SCRIPT_FREE_VAR	512
 #define SCRIPT_ARRAY	1024
@@ -99,16 +92,16 @@ typedef struct byte_array_b {
 #define SCRIPT_READONLY	4096
 
 /* Types for variables. */
-#define SCRIPT_STRING	((int)'s')
-#define SCRIPT_STRING_LIST ((int)'S')
-#define SCRIPT_INTEGER	((int)'i')
-#define SCRIPT_UNSIGNED	((int)'u')
-#define SCRIPT_POINTER	((int)'p')
-#define SCRIPT_CALLBACK	((int)'c')
-#define SCRIPT_USER	((int)'U')
-#define SCRIPT_PARTIER	((int)'P')
-#define SCRIPT_BYTES	((int)'b')
-#define SCRIPT_VAR	((int)'v')
+#define SCRIPT_STRING		((int)'s')
+#define SCRIPT_STRING_LIST	((int)'S')
+#define SCRIPT_INTEGER		((int)'i')
+#define SCRIPT_UNSIGNED		((int)'u')
+#define SCRIPT_POINTER		((int)'p')
+#define SCRIPT_CALLBACK		((int)'c')
+#define SCRIPT_USER		((int)'U')
+#define SCRIPT_PARTIER		((int)'P')
+#define SCRIPT_BYTES		((int)'b')
+#define SCRIPT_VAR		((int)'v')
 #define SCRIPT_TYPE_MASK	255
 
 typedef struct script_callback_b {
@@ -209,4 +202,4 @@ extern int script_linked_var_on_write(script_linked_var_t *var, script_var_t *ne
 
 END_C_DECLS
 
-#endif				/* !_EGG_SCRIPT_H */
+#endif /* !_EGG_SCRIPT_H_ */

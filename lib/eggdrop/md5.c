@@ -15,9 +15,12 @@
  * and avoid compile-time configuration.
  */
 
-#include <string.h>
-#include <stdio.h>	/* sprintf	*/
+#ifndef lint
+static const char rcsid[] = "$Id: md5.c,v 1.4 2003/12/17 07:39:14 wcc Exp $";
+#endif
 
+#include <string.h>
+#include <stdio.h>
 #include "md5.h"
 
 /*

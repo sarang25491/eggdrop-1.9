@@ -1,7 +1,26 @@
-#ifndef _XML_H_
-#define _XML_H_
+/* xml.h: header for xml.c
+ *
+ * Copyright (C) 2002, 2003, 2004 Eggheads Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Id: xml.h,v 1.5 2003/12/17 07:39:14 wcc Exp $
+ */
 
-#include <stdarg.h>
+#ifndef _EGG_XML_H_
+#define _EGG_XML_H_
 
 typedef struct {
 	char *name;
@@ -52,10 +71,8 @@ xml_attribute_t *xml_attribute_get(xml_node_t *node, char *name);
 int xml_attribute_set(xml_node_t *node, xml_attribute_t *attr);
 int xml_attr_get_int(xml_node_t *node, const char *name);
 char *xml_attr_get_str(xml_node_t *node, const char *name);
-
 int xml_write_node(FILE *fp, xml_node_t *node, int indent);
 int xml_read_node(xml_node_t *parent, char **data);
 int xml_read(xml_node_t *root, const char *fname);
 
-/* _XML_H_ */
-#endif
+#endif /* !_EGG_XML_H_ */

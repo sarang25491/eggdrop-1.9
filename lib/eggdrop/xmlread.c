@@ -1,3 +1,26 @@
+/* xmlread.c: xml parser
+ *
+ * Copyright (C) 2002, 2003, 2004 Eggheads Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+#ifndef lint
+static const char rcsid[] = "$Id: xmlread.c,v 1.5 2003/12/17 07:39:14 wcc Exp $";
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,11 +32,12 @@ extern xml_amp_conversion_t builtin_conversions[];
 static const char *spaces = " \t\n\r\v";
 static const char *name_terminators = "= \t\n\r\v?/>";
 
+extern int putlog();
+
 /*
  * Skip over whitespace.
  * Return number of bytes we used up.
  */
-
 int skip_whitespace(char **data)
 {
 	int n;
@@ -301,7 +325,6 @@ int xml_read_node(xml_node_t *parent, char **data)
 	return(1);
 }
 
-extern int putlog();
 int xml_read(xml_node_t *root, const char *fname)
 {
 	FILE *fp;

@@ -1,3 +1,26 @@
+/* my_socket.c
+ *
+ * Copyright (C) 2002, 2003, 2004 Eggheads Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+#ifndef lint
+static const char rcsid[] = "$Id: my_socket.c,v 1.8 2003/12/17 07:39:14 wcc Exp $";
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -8,16 +31,15 @@
 #include <arpa/inet.h>
 #include <fcntl.h>
 #include <errno.h>
-
 #include "my_socket.h"
 
 /* Apparently SHUT_RDWR is not defined on some systems. */
 #ifndef SHUT_RDWR
-#define SHUT_RDWR 2
+#  define SHUT_RDWR 2
 #endif
 
 #ifdef AF_INET6
-#define DO_IPV6
+#  define DO_IPV6
 #endif
 #define DO_IPV4
 
@@ -26,12 +48,12 @@ typedef struct {
 	int family;
 	union {
 		struct sockaddr addr;
-		#ifdef DO_IPV4
+#ifdef DO_IPV4
 		struct sockaddr_in ipv4;
-		#endif
-		#ifdef DO_IPV6
+#endif
+#ifdef DO_IPV6
 		struct sockaddr_in6 ipv6;
-		#endif
+#endif
 	} u;
 } sockname_t;
 
@@ -39,7 +61,7 @@ static int socket_name(sockname_t *name, const char *ipaddr, int port)
 {
 	memset(name, 0, sizeof(*name));
 
-	#ifdef DO_IPV4
+#ifdef DO_IPV4
 	if (inet_pton(AF_INET, ipaddr, &name->u.ipv4.sin_addr) > 0) {
 		name->len = sizeof(name->u.ipv4);
 		name->family = PF_INET;
@@ -47,9 +69,9 @@ static int socket_name(sockname_t *name, const char *ipaddr, int port)
 		name->u.ipv4.sin_family = AF_INET;
 		return(0);
 	}
-	#endif
+#endif
 
-	#ifdef DO_IPV6
+#ifdef DO_IPV6
 	if (inet_pton(AF_INET6, ipaddr, &name->u.ipv6.sin6_addr) > 0) {
 		name->len = sizeof(name->u.ipv6);
 		name->family = PF_INET6;
@@ -57,7 +79,7 @@ static int socket_name(sockname_t *name, const char *ipaddr, int port)
 		name->u.ipv6.sin6_family = AF_INET6;
 		return(0);
 	}
-	#endif
+#endif
 
 	/* Invalid name? Then use passive. */
 	name->len = sizeof(name->u.ipv4);
@@ -75,28 +97,28 @@ int socket_get_name(int sock, char **ip, int *port)
 	if (ip) *ip = NULL;
 	if (port) *port = 0;
 
-	#ifdef DO_IPV4
+#ifdef DO_IPV4
 	namelen = sizeof(name.u.ipv4);
 	if (!getsockname(sock, &name.u.addr, &namelen) && namelen == sizeof(name.u.ipv4)) {
 		if (ip) {
-			*ip = (char *)malloc(32);
+			*ip = (char *) malloc(32);
 			inet_ntop(AF_INET, &name.u.ipv4.sin_addr, *ip, 32);
 		}
 		if (port) *port = ntohs(name.u.ipv4.sin_port);
 		return(0);
 	}
-	#endif
-	#ifdef DO_IPV6
+#endif
+#ifdef DO_IPV6
 	namelen = sizeof(name.u.ipv6);
 	if (!getsockname(sock, &name.u.addr, &namelen) && namelen == sizeof(name.u.ipv6)) {
 		if (ip) {
-			*ip = (char *)malloc(128);
+			*ip = (char *) malloc(128);
 			inet_ntop(AF_INET6, &name.u.ipv6.sin6_addr, *ip, 128);
 		}
 		if (port) *port = ntohs(name.u.ipv6.sin6_port);
 		return(0);
 	}
-	#endif
+#endif
 
 	return(-1);
 }
@@ -109,28 +131,28 @@ int socket_get_peer_name(int sock, char **peer_ip, int *peer_port)
 	if (peer_ip) *peer_ip = NULL;
 	if (peer_port) *peer_port = 0;
 
-	#ifdef DO_IPV4
+#ifdef DO_IPV4
 	namelen = sizeof(name.u.ipv4);
 	if (!getpeername(sock, &name.u.addr, &namelen) && namelen == sizeof(name.u.ipv4)) {
 		if (peer_ip) {
-			*peer_ip = (char *)malloc(32);
+			*peer_ip = (char *) malloc(32);
 			inet_ntop(AF_INET, &name.u.ipv4.sin_addr, *peer_ip, 32);
 		}
 		if (peer_port) *peer_port = ntohs(name.u.ipv4.sin_port);
 		return(0);
 	}
-	#endif
-	#ifdef DO_IPV6
+#endif
+#ifdef DO_IPV6
 	namelen = sizeof(name.u.ipv6);
 	if (!getpeername(sock, &name.u.addr, &namelen) && namelen == sizeof(name.u.ipv6)) {
 		if (peer_ip) {
-			*peer_ip = (char *)malloc(128);
+			*peer_ip = (char *) malloc(128);
 			inet_ntop(AF_INET6, &name.u.ipv6.sin6_addr, *peer_ip, 128);
 		}
 		if (peer_port) *peer_port = ntohs(name.u.ipv6.sin6_port);
 		return(0);
 	}
-	#endif
+#endif
 
 	return(-1);
 }
@@ -155,28 +177,28 @@ int socket_accept(int sock, char **peer_ip, int *peer_port)
 	memset(&name, 0, sizeof(name));
 	len = sizeof(name.u);
 	newsock = accept(sock, &name.u.addr, &len);
-	#ifdef DO_IPV4
+#ifdef DO_IPV4
 	if (len == sizeof(name.u.ipv4)) {
-		*peer_ip = (char *)malloc(32);
+		*peer_ip = (char *) malloc(32);
 		*peer_port = ntohs(name.u.ipv4.sin_port);
 		inet_ntop(AF_INET, &name.u.ipv4.sin_addr, *peer_ip, 32);
 	}
-	#endif
-	#ifdef DO_IPV6
+#endif
+#ifdef DO_IPV6
 	if (len == sizeof(name.u.ipv6)) {
-		*peer_ip = (char *)malloc(128);
+		*peer_ip = (char *) malloc(128);
 		*peer_port = ntohs(name.u.ipv6.sin6_port);
 		inet_ntop(AF_INET6, &name.u.ipv6.sin6_addr, *peer_ip, 128);
 	}
-	#endif
+#endif
 	return(newsock);
 }
 
-/* Return values: */
-/* -1: invalid ip address */
-/* -2: socket() failure */
-/* -3: bind() failure */
-/* -4: connect() failure */
+/* -1: invalid ip address
+ * -2: socket() failure
+ * -3: bind() failure
+ * -4: connect() failure
+ */
 int socket_create(const char *dest_ip, int dest_port, const char *src_ip, int src_port, int flags)
 {
 	char *passive[] = {"::", "0.0.0.0"};

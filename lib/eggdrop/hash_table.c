@@ -1,8 +1,6 @@
-/*
- * hash_table.c --
- */
-/*
- * Copyright (C) 2002, 2003, 2004 Eggheads Development Team
+/* hash_table.c: hash table implementation
+ *
+ * Copyright (C) 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,13 +18,12 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: hash_table.c,v 1.5 2003/12/11 00:49:10 wcc Exp $";
+static const char rcsid[] = "$Id: hash_table.c,v 1.6 2003/12/17 07:39:14 wcc Exp $";
 #endif
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
 #include "hash_table.h"
 
 static unsigned int my_string_hash(const void *key);

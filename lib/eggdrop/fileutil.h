@@ -1,9 +1,5 @@
-/*
- * fileutil.h --
+/* fileutil.h: header for fileutil.c
  *
- *	convenience utilities to deal with common file operations
- */
-/*
  * Copyright (C) 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
@@ -19,23 +15,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Id: fileutil.h,v 1.8 2003/12/17 07:39:14 wcc Exp $
  */
-/*
- * $Id: fileutil.h,v 1.7 2003/12/11 00:49:10 wcc Exp $
- */
 
-#ifndef _EGG_FILEUTIL_H
-#define _EGG_FILEUTIL_H
-
-#include <eggdrop/common.h>
-
-BEGIN_C_DECLS
+#ifndef _EGG_FILEUTIL_H_
+#define _EGG_FILEUTIL_H_
 
 extern int copyfile(char *, char *);
 extern int movefile(char *, char *);
 extern int is_file(const char *);
-extern int file_readable(const char *);
+extern int is_file_readable(const char *);
 
-END_C_DECLS
-
-#endif				/* !_EGG_FILEUTIL_H */
+#endif /* !_EGG_FILEUTIL_H_ */

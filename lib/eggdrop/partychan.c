@@ -1,15 +1,38 @@
+/* partychan.c: partyline channels
+ *
+ * Copyright (C) 2003, 2004 Eggheads Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+#ifndef lint
+static const char rcsid[] = "$Id: partychan.c,v 1.8 2003/12/17 07:39:14 wcc Exp $";
+#endif
+
 #include <stdarg.h>
 #include <eggdrop/eggdrop.h>
 
 /* When does cid wrap around? This lets cids get up to 99999. */
-#define CID_WRAPAROUND	100000
+#define CID_WRAPAROUND 100000
 
 /* Flags for partyline members. */
-#define PARTY_DELETED	1
+#define PARTY_DELETED 1
 
 static hash_table_t *cid_ht = NULL;
 static partychan_t *partychan_head = NULL;
-static int g_cid = 0;	/* Keep track of next available cid. */
+static int g_cid = 0; /* Keep track of next available cid. */
 
 /* Some bind tables for partyline channels. */
 static bind_table_t *BT_partyjoin = NULL,

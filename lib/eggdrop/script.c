@@ -1,9 +1,5 @@
-/*
- * script.c --
+/* script.c: functions for scripting modules
  *
- *	stuff needed for scripting modules
- */
-/*
  * Copyright (C) 2001, 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
@@ -22,23 +18,20 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: script.c,v 1.12 2003/12/11 00:49:10 wcc Exp $";
+static const char rcsid[] = "$Id: script.c,v 1.13 2003/12/17 07:39:14 wcc Exp $";
 #endif
 
 #if HAVE_CONFIG_H
 #  include <config.h>
 #endif
 
+#include <eggdrop/eggdrop.h>
 #include <stdio.h>
-#include <string.h> /* strlen() */
-#include <stdlib.h> /* calloc(), malloc() */
+#include <string.h>
+#include <stdlib.h>
 
-#include "lib/egglib/mstack.h"
-#include "eggdrop.h"
-#include "script.h"
-
-#define EVENT_VAR	1
-#define EVENT_CMD	2
+#define EVENT_VAR 1
+#define EVENT_CMD 2
 
 typedef struct {
 	int event;

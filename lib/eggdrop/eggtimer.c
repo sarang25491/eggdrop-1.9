@@ -1,8 +1,5 @@
-/*
- * egg_timer.c --
+/* eggtimer.c: timer functions
  *
- */
-/*
  * Copyright (C) 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
@@ -21,14 +18,13 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggtimer.c,v 1.7 2003/12/11 00:49:10 wcc Exp $";
+static const char rcsid[] = "$Id: eggtimer.c,v 1.8 2003/12/17 07:39:14 wcc Exp $";
 #endif
 
-#include <stdio.h> /* NULL */
-#include <string.h> /* memcpy() */
-#include <stdlib.h> /* malloc(), free() */
-#include <sys/time.h> /* gettimeofday() */
-
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <sys/time.h>
 #include <eggdrop/eggdrop.h>
 
 static egg_timeval_t now;

@@ -1,9 +1,5 @@
-/*
- * match.c
- *   new wildcard matching functions updated for speed.
- *     --Ian.
- */
-/*
+/* match.c: new string matching functions designed for speed
+ *
  * Copyright (C) 2001, 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
@@ -21,13 +17,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#define QUOTE '\\'		/* quoting character... for matching "*" etc. */
-#define WILDS '*'		/* matches any number of characters */
-#define WILDP '%'		/* matches any nunber of non-space characters */
-#define WILDQ '?'		/* matches exactly one character */
-#define WILDT '~'		/* matches any number of spaces */
+#ifndef lint
+static const char rcsid[] = "$Id: match.c,v 1.4 2003/12/17 07:39:14 wcc Exp $";
+#endif
 
 #include <ctype.h>
+#include "match.h"
+
 #define irctoupper toupper
 
 /* matching for binds */
