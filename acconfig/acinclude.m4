@@ -1,7 +1,7 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.35 2004/06/10 23:59:16 takeda Exp $
+dnl $Id: acinclude.m4,v 1.36 2004/06/13 23:31:37 takeda Exp $
 dnl
 
 
@@ -733,7 +733,15 @@ if test x"${no_tcl}" = x ; then
 	# We only support version 8
 	if test "$TCL_MAJOR_VERSION" = 8
 	then
-		AC_SUBST(TCL_PREFIX)
+		if test x"${TCL_INCLUDE_SPEC}" = x ; then
+			if test -d ${TCL_PREFIX}/include/tcl${TCL_VERSION} ; then
+				TCL_INCLUDE_SPEC=-I${TCL_PREFIX}/include/tcl${TCL_VERSION}
+			else
+				TCL_INCLUDE_SPEC=-I${TCL_PREFIX}/include
+			fi
+		fi
+
+		AC_SUBST(TCL_INCLUDE_SPEC)
 		AC_SUBST(TCL_LIBS)
 		egg_tclscript=yes
 	else

@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.10 2003/12/18 07:10:03 wcc Exp $
+# $Id: Makefile.am,v 1.11 2004/06/13 23:31:37 takeda Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 pkglibdir		= $(exec_prefix)/modules
@@ -24,6 +24,6 @@ INCLUDES		= -I$(top_builddir) \
 			-I$(top_srcdir)/intl \
 			-I$(top_builddir)/lib \
 			-I$(top_srcdir)/lib \
-			-I@TCL_PREFIX@/include
+			@TCL_INCLUDE_SPEC@
 
 DEFS			= $(EGG_DEBUG) @DEFS@
