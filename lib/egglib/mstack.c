@@ -11,7 +11,7 @@ mstack_t *mstack_new(int initial_size)
 	mstack_t *m;
 
 	if (initial_size <= 0) initial_size = 10;
-	m = (mstack_t *)malloc(sizeof(mstack_t) + sizeof(int) * initial_size);
+	m = (mstack_t *)calloc(1, sizeof(mstack_t) + sizeof(int) * initial_size);
 	m->len = 0;
 	m->max = initial_size;
 	m->stack = ((int *)m)+3;
@@ -50,7 +50,10 @@ int mstack_grow(mstack_t *m, int nsteps)
 		memcpy(newstack, m->stack, sizeof(int) * m->max);
 		m->stack = newstack;
 	}
-	else m->stack = (int *)realloc(m->stack, sizeof(int) * (m->max + nsteps));
+	else {
+		m->stack = (int *)realloc(m->stack, sizeof(int) * (m->max + nsteps));
+		memset(m->stack+m->max, 0, sizeof(int) * nsteps);
+	}
 
 	m->max += nsteps;
 	return(0);
