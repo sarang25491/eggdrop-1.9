@@ -126,11 +126,6 @@ logfile <logflags> <channel> "logs/logfile"
     from #lamest
 
 
-set log-time 1
-    Use this feature to timestamp entries in the log file.
-    Valid settings are 0 for OFF and 1 ON.
-
-
 set keep-all-logs 0
     If you want to keep your logfiles forever turn this setting on. All
     logfiles will get suffix ".[day, 2 digits][month, 3 letters][year, 4 digits]"

@@ -26,7 +26,6 @@ extern int con_chan;
 extern int dcc_total;
 extern struct dcc_t *dcc;
 
-static int timestamp_logs = 1; /* Add timestamp to log entries? */
 static int cycle_at = 300; /* Military time where we cycle logfiles. */
 static int keep_all_logs = 0; /* Keep all logs? */
 static int max_logsize = 0; /* Max log size in kilobytes. */
@@ -66,7 +65,6 @@ static script_str_t log_script_strings[] = {
 };
 
 static script_int_t log_script_ints[] = {
-	{"", "log-time", &timestamp_logs},
 	{"", "max-logsize", &max_logsize},
 	{"", "switch-logfiles-at", &cycle_at},
 	{"", "keep-all-logs", &keep_all_logs},
@@ -90,8 +88,7 @@ static int get_timestamp(char *t)
 
 	now = time(NULL);
 	/* Calculate timestamp. */
-	if (timestamp_logs) strftime(t, 32, "[%H:%M] ", localtime(&now));
-	else *t = 0;
+	strftime(t, 32, "[%H:%M] ", localtime(&now));
 	return(0);
 }
 

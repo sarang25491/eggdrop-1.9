@@ -115,7 +115,6 @@ save-users-at
 switch-logfiles-at
 connect-timeout
 reserved-portrange
-log-time
 require-p
 keep-all-logs
 open-telnets

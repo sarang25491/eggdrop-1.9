@@ -86,9 +86,6 @@ see also: set firewall
    obviously this has no effect if you have %b'learn-users'%b and
    %b'open-telnets'%b turned off.
    for a list of the flags, see %b'whois'%b.
-%{help=set log-time}%{+n}
-###  %bset log-time%b <0/1>
-   specifies whether or not to time-stamp all log entries.
 %{help=set numversion}%{+n}
 ###  %bset numversion%b
    This read-only variable returns the current version in numeric
