@@ -1,3 +1,11 @@
+2002-01-03 07:33  stdarg <stdarg@techmonkeys.org>
+
+	* src/tcldcc.c:
+
+	
+	* Converted tcl_whom to script_whom. Arg to whom is optional. No arg 
+	means 'list all users' just like previous '*' meant.  
+
 2002-01-02 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
