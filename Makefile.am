@@ -1,9 +1,9 @@
-# $Id: Makefile.am,v 1.1 2001/10/10 01:20:08 ite Exp $
+# $Id: Makefile.am,v 1.2 2001/10/14 10:22:49 tothwolf Exp $
 
 AUX_DIST                = $(ac_aux_dir)/install-sh \
 			$(ac_aux_dir)/ltmain.sh \
 			$(ac_aux_dir)/missing \
-                        $(ac_aux_dir)/mkinstalldirs \
+			$(ac_aux_dir)/mkinstalldirs \
 			$(ac_aux_dir)/depcomp 
 AUX_DIST_EXTRA		= $(ac_aux_dir)/codeset.m4 \
 			$(ac_aux_dir)/gettext.m4 \
@@ -20,7 +20,7 @@ SUBDIRS                 = intl libltdl scripts src @POSUB@
 DISTCLEANFILES		= lush.h
 MAINTAINERCLEANFILES    = Makefile.in aclocal.m4 configure config-h.in \
 			config.cache config.log config.status \
-                        config.h.in stamp-h.in $(AUX_DIST)
+			config.h.in stamp-h.in $(AUX_DIST)
 			 
 ACLOCAL                 = aclocal -I $(ac_aux_dir)
 

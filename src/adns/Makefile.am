@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.1 2001/10/10 01:20:10 ite Exp $
+# $Id: Makefile.am,v 1.2 2001/10/14 10:22:50 tothwolf Exp $
 
 ## libcompat is built as convenience library
 
@@ -9,7 +9,7 @@ INCLUDES		= -I$(top_builddir) -I$(top_srcdir) \
 
 noinst_LTLIBRARIES = libadns.la
 libadns_la_SOURCES = adns.h \
-                  check.c \
+		  check.c \
 		  dlist.h \
 		  event.c \
 		  general.c \

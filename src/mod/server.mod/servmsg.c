@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.72 2001/10/13 15:55:34 tothwolf Exp $
+ * $Id: servmsg.c,v 1.73 2001/10/14 10:22:50 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -568,14 +568,14 @@ static int gotnotice(char *from, char *ignore, char *msg)
       putlog(LOG_MSGS | LOG_SERV, "*", "-%s (%s) to %s- %s",
 	     nick, uhost, to, msg);
     } else {
-      detect_flood(nick, uhost, from, FLOOD_NOTICE);
-      u = get_user_by_host(from);
       /* Server notice? */
       if ((from[0] == 0) || (nick[0] == 0)) {
 	/* Hidden `250' connection count message from server */
 	if (strncmp(msg, "Highest connection count:", 25))
 	  putlog(LOG_SERV, "*", "-NOTICE- %s", msg);
       } else {
+        detect_flood(nick, uhost, from, FLOOD_NOTICE);
+        u = get_user_by_host(from);
         if (!ignoring || trigger_on_ignore)
           check_tcl_notc(nick, uhost, u, botname, msg);
         if (!ignoring)
