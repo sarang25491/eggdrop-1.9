@@ -24,7 +24,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: cmds.c,v 1.104 2002/05/26 08:34:13 stdarg Exp $";
+static const char rcsid[] = "$Id: cmds.c,v 1.105 2002/06/17 06:04:36 guppy Exp $";
 #endif
 
 #include "main.h"
@@ -453,16 +453,6 @@ static int cmd_help(struct userrec *u, int idx, char *par)
     else
       tellhelp(idx, "helpparty", &fr, 0);
   }
-  return(1);
-}
-
-static int cmd_addlog(struct userrec *u, int idx, char *par)
-{
-  if (!par[0]) {
-    dprintf(idx, "Usage: addlog <message>\n");
-    return(0);
-  }
-  dprintf(idx, _("Placed entry in the log file.\n"));
   return(1);
 }
 
@@ -1100,17 +1090,6 @@ void cmd_die(struct userrec *u, int idx, char *par)
   kill_bot(s1, s2);
 }
 
-static int cmd_debug(struct userrec *u, int idx, char *par)
-{
-  if (!strcasecmp(par, "help")) {
-    debug_help(idx);
-  } else {
-    dprintf(idx, "Eggdrop no longer has built-in memory debugging.\n");
-    tell_netdebug(idx);
-  }
-  return(1);
-}
-
 static int cmd_simul(struct userrec *u, int idx, char *par)
 {
   char *nick;
@@ -1237,24 +1216,6 @@ static int cmd_trace(struct userrec *u, int idx, char *par)
   simple_sprintf(x, "%d:%s@%s", dcc[idx].sock, dcc[idx].nick, botnetnick);
   simple_sprintf(y, ":%d", now);
   botnet_send_trace(i, x, par, y);
-  return(1);
-}
-
-static int cmd_banner(struct userrec *u, int idx, char *par)
-{
-  char s[1024];
-  int i;
-
-  if (!par[0]) {
-    dprintf(idx, "Usage: banner <message>\n");
-    return(0);
-  }
-  simple_sprintf(s, "\007### Botwide: [%s] %s\n", dcc[idx].nick, par);
-  for (i = 0; i < dcc_total; i++) {
-    if (dcc[i].type && dcc[i].type->flags & DCT_MASTER) {
-      dprintf(i, "%s", s);
-    }
-  }
   return(1);
 }
 
@@ -2714,11 +2675,9 @@ cmd_t C_dcc[] =
   {"-host",		"",	(Function) cmd_mns_host,	NULL},
   {"-ignore",		"m",	(Function) cmd_mns_ignore,	NULL},
   {"-user",		"m",	(Function) cmd_mns_user,	NULL},
-  {"addlog",		"to|o",	(Function) cmd_addlog,		NULL},
   {"away",		"",	(Function) cmd_away,		NULL},
   {"back",		"",	(Function) cmd_back,		NULL},
   {"backup",		"m|m",	(Function) cmd_backup,		NULL},
-  {"banner",		"t",	(Function) cmd_banner,		NULL},
   {"boot",		"t",	(Function) cmd_boot,		NULL},
   {"botattr",		"t",	(Function) cmd_botattr,		NULL},
   {"botinfo",		"",	(Function) cmd_botinfo,		NULL},
@@ -2733,7 +2692,6 @@ cmd_t C_dcc[] =
   {"comment",		"m",	(Function) cmd_comment,		NULL},
   {"console",		"to|o",	(Function) cmd_console,		NULL},
   {"dccstat",		"t",	(Function) cmd_dccstat,		NULL},
-  {"debug",		"m",	(Function) cmd_debug,		NULL},
   {"die",		"n",	(Function) cmd_die,		NULL},
   {"echo",		"",	(Function) cmd_echo,		NULL},
   {"fixcodes",		"",	(Function) cmd_fixcodes,	NULL},

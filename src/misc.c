@@ -27,7 +27,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: misc.c,v 1.66 2002/05/31 04:11:37 stdarg Exp $";
+static const char rcsid[] = "$Id: misc.c,v 1.67 2002/06/17 06:04:36 guppy Exp $";
 #endif
 
 #include "main.h"
@@ -696,20 +696,6 @@ void reload_help_data(void)
     next = current->next;
     free(current);
     current = next;
-  }
-}
-
-void debug_help(int idx)
-{
-  struct help_ref *current;
-  struct help_list_t *item;
-
-  for (current = help_list; current; current = current->next) {
-    dprintf(idx, "HELP FILE(S): %s\n", current->name);
-    for (item = current->first; item; item = item->next) {
-      dprintf(idx, "   %s (%s)\n", item->name, (item->type == 0) ? "msg/" :
-	      (item->type == 1) ? "" : "set/");
-    }
   }
 }
 

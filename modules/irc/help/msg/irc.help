@@ -9,7 +9,6 @@
 %{help=help}
 %bMSG%b commands for %b%B%b:
 %{cols=4/50}%{-}
-ADDHOST
 INFO
 WHO
 IDENT
@@ -39,12 +38,6 @@ available via dcc chat.
 %{-}
 Admin: %A
 There may also be additional commands provided by other modules.
-%{help=addhost}
-%b/MSG%b %B %bADDHOST%b <password> <hostmask>
-   This lets me recognize you from a new hostmask.  You must
-   use your password (the one you set with PASS) so I know
-   it's really you. The hostmask you tell me must not match
-   any existing ones.
 %{help=ident}
 %b/MSG%b %B %bIDENT%b <password> [nickname]
    This lets me recognize you from a new address.  You must

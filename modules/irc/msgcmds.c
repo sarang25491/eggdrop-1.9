@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: msgcmds.c,v 1.7 2002/05/05 16:40:35 tothwolf Exp $";
+static const char rcsid[] = "$Id: msgcmds.c,v 1.8 2002/06/17 06:04:36 guppy Exp $";
 #endif
 */
 
@@ -226,46 +226,6 @@ static int msg_ident(char *nick, char *host, struct userrec *u, char *par)
     }
   }
   putlog(LOG_CMDS, "*", "(%s!%s) !*! failed IDENT %s", nick, host, who);
-  return 1;
-}
-
-static int msg_addhost(char *nick, char *host, struct userrec *u, char *par)
-{
-  char *pass;
-
-  if (match_my_nick(nick))
-    return 1;
-  if (!u || (u->flags & USER_BOT))
-    return 1;
-  if (u->flags & USER_COMMON) {
-    if (!quiet_reject)
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("Youre at a common site; you cant IDENT."));
-    return 1;
-  }
-  pass = newsplit(&par);
-  if (!par[0]) {
-    if (!quiet_reject)
-      dprintf(DP_HELP, "NOTICE %s :You must supply a hostmask\n", nick);
-  } else if (irccmp(u->handle, origbotname)) {
-    /* This could be used as detection... */
-    if (u_pass_match(u, "-")) {
-      if (!quiet_reject)
-	dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("You dont have a password set."));
-    } else if (!u_pass_match(u, pass)) {
-      if (!quiet_reject)
-	dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("Access denied."));
-    } else if (get_user_by_host(par)) {
-      if (!quiet_reject)
-	dprintf(DP_HELP, "NOTICE %s :That hostmask clashes with another already in use.\n", nick);
-    } else {
-      putlog(LOG_CMDS, "*", "(%s!%s) !*! ADDHOST %s", nick, host, par);
-      dprintf(DP_HELP, "NOTICE %s :%s: %s\n", nick, _("Added hostmask"), par);
-      addhost_by_handle(u->handle, par);
-      check_this_user(u->handle, 0, NULL);
-      return 1;
-    }
-  }
-  putlog(LOG_CMDS, "*", "(%s!%s) !*! failed ADDHOST %s", nick, host, par);
   return 1;
 }
 
@@ -972,7 +932,6 @@ static int msg_jump(char *nick, char *host, struct userrec *u, char *par)
  */
 static cmd_t C_msg[] =
 {
-  {"addhost",		"",	(Function) msg_addhost,		NULL},
   {"die",		"n",	(Function) msg_die,		NULL},
   {"hello",		"",	(Function) msg_hello,		NULL},
   {"help",		"",	(Function) msg_help,		NULL},

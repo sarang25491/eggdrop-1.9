@@ -436,7 +436,7 @@ see also: match
    showing every internal setting as specified in the config file.
    it should be self-explanatory to anyone who needs to use it.
 
-see also: set, channel, debug
+see also: set, channel
 %{help=uptime}%{+m|m}
 ###  %buptime%b
    displays the bot's current uptime like .status would show.

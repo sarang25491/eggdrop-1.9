@@ -58,11 +58,6 @@ See also: +ignore, ignores
    Erases the user record for the nickname given.
 
 See also:  +user, +bot, -bot
-%{help=addlog}%{+to|o}
-###  %baddlog%b <text>
-   Writes your comment into the bot's log file.  Bot masters can go
-   back later and review the log, and will see your comment (with your
-   handle attached).  This is useful for explaining confusing activity.
 %{help=away}
 ###  %baway%b [away-message]
    Marks you as "away" on the party line.  Your away message will
@@ -74,10 +69,6 @@ See also:  +user, +bot, -bot
 %{help=back}
 ###  %bback%b
    This marks you un-away on the party line.
-%{help=banner}%{+t}
-###  %bbanner%b <text>
-   Displays a message to everyone currently using the bot's party line
-   or file area -- useful for announcing that the bot will go down, etc.
 %{help=binds}%{+m}
 ###  %bbinds%b [type/match]
    Shows the Tcl bindings in effect, in a list similar to this:
@@ -321,11 +312,6 @@ See also: whois
       I     bot is currently in the 'linking' stage
       A     bot is being agressively shared with
    for 'chat' users, the party-line channel is also listed.
-%{help=debug}%{+m}
-###  %bdebug%b
-   will display a dump of memory allocation, assuming the bot was
-   compiled with DEBUG defined.  it's useless to anyone but program-
-   mers hacking on the bot and trying to find memory leaks.
 %{help=echo}
 ###  %becho%b <on/off>
    sets whether you want your messages echoed back to you.  if it's

@@ -26,7 +26,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: misc.h,v 1.5 2002/05/12 06:12:07 stdarg Exp $
+ * $Id: misc.h,v 1.6 2002/06/17 06:04:36 guppy Exp $
  */
 
 #ifndef _EGG_MISC_H
@@ -54,7 +54,6 @@ extern void tellallhelp(int, char *, struct flag_record *);
 extern void showhelp(char *, char *, struct flag_record *, int);
 extern void rem_help_reference(char *file);
 extern void add_help_reference(char *file);
-extern void debug_help(int);
 extern void reload_help_data(void);
 extern char *extracthostname(char *);
 extern void show_telnet_banner(int i);
