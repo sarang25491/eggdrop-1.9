@@ -1,10 +1,9 @@
 /*
  * chanprog.c -- handles:
- *   rmspace()
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.40 2002/01/19 20:08:58 ite Exp $
+ * $Id: chanprog.c,v 1.41 2002/01/23 22:18:15 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -55,26 +54,6 @@ char		  admin[121] = "";	/* Admin info			*/
 char		  origbotname[NICKLEN + 1];
 char		  botname[NICKLEN + 1];	/* Primary botname		*/
 
-
-/* Remove space characters from beginning and end of string
- * (more efficent by Fred1)
- */
-void rmspace(char *s)
-{
-#define whitespace(c) (((c) == 32) || ((c) == 9) || ((c) == 13) || ((c) == 10))
-  char *p;
-
-  if (*s == '\0')
-	return;
-
-  /* Wipe end of string */
-  for (p = s + strlen(s) - 1; ((whitespace(*p)) && (p >= s)); p--);
-  if (p != s + strlen(s) - 1)
-    *(p + 1) = 0;
-  for (p = s; ((whitespace(*p)) && (*p)); p++);
-  if (p != s)
-    strcpy(s, p);
-}
 
 /* Returns memberfields if the nick is in the member list.
  */

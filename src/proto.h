@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.65 2002/01/19 20:08:58 ite Exp $
+ * $Id: proto.h,v 1.66 2002/01/23 22:18:15 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -103,8 +103,6 @@ void reload();
 void chanprog();
 void check_timers();
 void check_utimers();
-void rmspace(char *s);
-void check_timers();
 void set_chanlist(const char *host, struct userrec *rec);
 void clear_chanlist(void);
 void clear_chanlist_member(const char *nick);
@@ -177,8 +175,6 @@ int sockoptions(int sock, int operation, int sock_options);
 int flush_inbuf(int idx);
 
 /* tcl.c */
-void protect_tcl();
-void unprotect_tcl();
 void do_tcl(char *, char *);
 int readtclprog(char *fname);
 int findidx(int);

@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.99 2002/01/19 20:08:58 ite Exp $
+ * $Id: modules.c,v 1.100 2002/01/23 22:18:15 ite Exp $
  */
 /* 
  * Copyright (C) 1997 Robey Pointer
@@ -343,7 +343,7 @@ Function global_table[] =
   /* 160 - 163 */
   (Function) touch_laston,
   (Function) & add_mode,	/* Function *				*/
-  (Function) rmspace,
+  (Function) 0,
   (Function) in_chain,
   /* 164 - 167 */
   (Function) add_note,
@@ -469,7 +469,7 @@ Function global_table[] =
   (Function) & party,		/* party_t *				*/
   (Function) open_address_listen,
   (Function) 0,
-  (Function) strchr_unescape,
+  (Function) 0,
   /* 264 - 267 */
   (Function) 0,
   (Function) 0,

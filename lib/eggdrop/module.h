@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.13 2002/01/22 01:17:15 ite Exp $
+ * $Id: module.h,v 1.14 2002/01/23 22:18:14 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -262,7 +262,7 @@
 /* 160 - 163 */
 #define touch_laston ((void (*)(struct userrec *,char *,time_t))global[160])
 #define add_mode ((void (*)(struct chanset_t *,char,char,char *))(*(Function**)(global[161])))
-#define rmspace ((void (*)(char *))global[162])
+/* #define rmspace ((void (*)(char *))global[162]) */
 #define in_chain ((int (*)(char *))global[163])
 /* 164 - 167 */
 #define add_note ((int (*)(char *,char*,char*,int,int))global[164])

@@ -3,7 +3,7 @@
  *   some macros and functions for common operations with strings and memory
  *   in general.
  *
- * $Id: memutil.h,v 1.4 2002/01/16 22:09:40 ite Exp $
+ * $Id: memutil.h,v 1.5 2002/01/23 22:18:14 ite Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -69,6 +69,8 @@ extern char *newsplit(char **);
 extern char *str_escape(const char *, const char, const char);
 extern char *strchr_unescape(char *, const char, register const char);
 #define str_unescape(str, esc_char) strchr_unescape(str, 0, esc_char)
+
+extern void rmspace(char *);
 
 END_C_DECLS
 

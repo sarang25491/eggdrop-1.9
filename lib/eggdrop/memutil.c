@@ -3,7 +3,7 @@
  *   some macros and functions for common operations with strings and memory
  *   in general.
  *
- * $Id: memutil.c,v 1.1 2002/01/06 06:21:08 ite Exp $
+ * $Id: memutil.c,v 1.2 2002/01/23 22:18:14 ite Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -231,3 +231,24 @@ char *strchr_unescape(char *str, const char div, register const char esc_char)
   *p = 0;
   return NULL;
 }
+
+/* Remove space characters from beginning and end of string 
+ * (more efficent by Fred1)
+ */
+void rmspace(char *s)    
+{                        
+#define whitespace(c) (((c) == 32) || ((c) == 9) || ((c) == 13) || ((c) == 10))
+  char *p;               
+
+  if (*s == '\0')
+        return;
+
+  /* Wipe end of string */
+  for (p = s + strlen(s) - 1; ((whitespace(*p)) && (p >= s)); p--);
+    if (p != s + strlen(s) - 1)
+      *(p + 1) = 0;
+  for (p = s; ((whitespace(*p)) && (*p)); p++);
+    if (p != s)
+      strcpy(s, p);
+}
+
