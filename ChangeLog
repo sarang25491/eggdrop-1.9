@@ -1,3 +1,36 @@
+2001-12-09 21:49  Jeff Fisher <guppy@techmonkeys.org>
+
+	* eggdrop.complete.conf, doc/html/mod-server.html,
+	doc/settings/mod.server, modules/server/server.c,
+	modules/server/servmsg.c, modules/server/help/set/server.help:
+
+	serverror-quit has been removed as a config setting 
+
+2001-12-09 21:46  Jeff Fisher <guppy@techmonkeys.org>
+
+	* eggdrop.complete.conf, doc/html/egg-core.html,
+	doc/settings/core.settings, help/core.help, help/set/cmds2.help,
+	src/tcl.c, src/tcldcc.c:
+
+	enable-simul has been removed as a config setting 
+
+2001-12-09 21:43  Jeff Fisher <guppy@techmonkeys.org>
+
+	* eggdrop.complete.conf, doc/html/egg-core.html,
+	doc/settings/core.settings, help/core.help, help/set/cmds2.help,
+	src/logfile.c:
+
+	log-time has been removed as a config setting 
+
+2001-12-09 21:38  Jeff Fisher <guppy@techmonkeys.org>
+
+	* eggdrop.complete.conf, doc/html/egg-core.html,
+	doc/settings/core.settings, lib/eggdrop/module.h,
+	modules/perlscript/perlscript.c, modules/server/cmdsserv.c,
+	src/cmds.c, src/modules.c, src/tcl.c:
+
+	must-be-owner has been removed as a config setting 
+
 2001-12-09 14:14  Federico Mennite <ite@techmonkeys.org>
 
 	* acconfig/acinclude.m4, src/chanprog.c:
