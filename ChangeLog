@@ -1,3 +1,10 @@
+2003-04-04 20:30  stdarg <stdarg@techmonkeys.org>
+
+	* doc/SCRIPTING-COMMANDS, modules/server/scriptcmds.c:
+
+	
+	* Doc updates for server mod 
+
 2003-04-04 18:18  stdarg <stdarg@techmonkeys.org>
 
 	* modules/server/scriptcmds.c:
