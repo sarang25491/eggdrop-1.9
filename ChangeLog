@@ -1,3 +1,15 @@
+2002-05-03 01:21  Federico Mennite <ite@techmonkeys.org>
+
+	* configure.ac, acconfig/acinclude.m4, lib/compat/Makefile.am,
+	lib/compat/compat.h, lib/compat/getopt.c, lib/compat/getopt.h,
+	lib/compat/getopt1.c, src/main.c:
+
+	* Now using getopt_long() for command line processing. Might not be
+	defnitive.  
+	* Workarounded an issue on cygwin which prevented binmode.o to be
+	linked in.  
+	* Minor configure macros cleanup 
+
 2002-05-02 03:21  stdarg <stdarg@techmonkeys.org>
 
 	* doc/howto/porting.txt:
