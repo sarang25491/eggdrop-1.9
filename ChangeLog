@@ -1,3 +1,10 @@
+2001-12-09 14:14  Federico Mennite <ite@techmonkeys.org>
+
+	* acconfig/acinclude.m4, src/chanprog.c:
+
+	* Fixed a typo in acconfig/acinclude.m4.  
+	* src/chanprog.c gettextification.  
+
 2001-12-09 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
