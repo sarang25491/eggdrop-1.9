@@ -1,3 +1,9 @@
+2002-01-04 10:00  Automatic CVS Scripts
+
+	* po/eggdrop.pot:
+
+	Pots 
+
 2002-01-04 04:49  Federico Mennite <ite@techmonkeys.org>
 
 	* lib/egglib/base64.c, lib/egglib/hash_table.c,
