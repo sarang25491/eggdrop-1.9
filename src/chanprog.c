@@ -3,7 +3,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.44 2002/02/13 16:44:58 ite Exp $
+ * $Id: chanprog.c,v 1.45 2002/02/14 00:55:11 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -290,9 +290,7 @@ void tell_settings(int idx)
   dprintf(idx, _("Directories:\n"));
   dprintf(idx, _("  Help    : %s\n"), helpdir);
   dprintf(idx, _("  Temp    : %s\n"), tempdir);
-#ifndef STATIC
   dprintf(idx, _("  Modules : %s\n"), moddir);
-#endif
   fr.global = default_flags;
 
   build_flags(s, &fr, NULL);

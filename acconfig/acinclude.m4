@@ -1,7 +1,7 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.6 2001/12/09 14:14:47 ite Exp $
+dnl $Id: acinclude.m4,v 1.7 2002/02/14 00:55:11 ite Exp $
 dnl
 
 
@@ -1181,7 +1181,6 @@ AM_PROG_LIBTOOL
 
 if test "x$enable_shared" = "xno"
 then
-  AC_DEFINE_UNQUOTED(STATIC, 1, [Define if build is static])
   egg_static_build=yes
 else
   egg_static_build=no

@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.101 2002/02/07 22:19:05 wcc Exp $
+ * $Id: modules.c,v 1.102 2002/02/14 00:55:11 ite Exp $
  */
 /* 
  * Copyright (C) 1997 Robey Pointer
@@ -69,12 +69,10 @@ int xtra_unpack();
 static int module_rename(char *name, char *newname);
 
 
-#ifndef STATIC
-
 /* Directory to look for modules */
+/* FIXME: the default should be the value of $pkglibdir in configure. */
+/* FIXME: support multiple entries. */
 char moddir[121] = "modules/";
-
-#endif
 
 
 /* The null functions */
@@ -525,6 +523,8 @@ void init_modules(void)
   module_list->major = (egg_numver) / 10000;
   module_list->minor = ((egg_numver) / 100) % 100;
   module_list->hand = NULL;
+  module_list->next = NULL;
+  module_list->funcs = NULL;
   
   LTDL_SET_PRELOADED_SYMBOLS();
   if (lt_dlinit() != 0) {
@@ -533,9 +533,15 @@ void init_modules(void)
 		    lt_dlerror());
     fatal(wbuf, 0);
   }
+  
+  if (moddir[0] != '/') {
+    if (getcwd(wbuf, sizeof(wbuf)) == NULL)
+      fatal(_("Cant determine current directory."), 0);
+    sprintf(&(wbuf[strlen(wbuf)]), "/%s", moddir);
+    if (lt_dladdsearchdir(wbuf)) fatal(_("Invalid module's search path."), 0);
+  } else 
+    if (lt_dladdsearchdir(moddir)) fatal(_("Invalid module's search path."), 0);
 
-  module_list->next = NULL;
-  module_list->funcs = NULL;
   for (i = 0; i < REAL_HOOKS; i++)
     hook_list[i] = NULL;
 }
@@ -560,24 +566,11 @@ const char *module_load(char *name)
   module_entry *p;
   char *e;
   Function f;
-#ifndef STATIC
-  char workbuf[1024];
-#endif
   lt_dlhandle hand;
 
   if (module_find(name, 0, 0) != NULL)
     return _("Already loaded.");
-#ifndef STATIC
-  if (moddir[0] != '/') {
-    if (getcwd(workbuf, 1024) == NULL)
-      return _("Cant determine current directory.");
-    sprintf(&(workbuf[strlen(workbuf)]), "/%s%s", moddir, name);
-  } else
-    sprintf(workbuf, "%s%s", moddir, name);
-  hand = lt_dlopenext(workbuf);
-#else
   hand = lt_dlopenext(name);
-#endif
   if (!hand)
     return lt_dlerror();
 
