@@ -1,3 +1,12 @@
+2001-08-25 20:42  stdarg
+
+	* doc/tcl-commands.doc:
+
+	I added the documentation for user-defined string settings and the
+	channel get command. And I created a howto/ directory so we can put
+	in proper programming examples. I'm not sure it's showing up in this
+	commit though.  
+
 2001-08-25 07:47  stdarg
 
 	* src/tclhash.c:
