@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: server.h,v 1.20 2004/07/23 21:58:55 darko Exp $
+ * $Id: server.h,v 1.21 2004/10/01 15:31:18 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_SERVER_SERVER_H_
@@ -95,6 +95,7 @@ typedef struct {
 #include "servsock.h"
 #include "nicklist.h"
 #include "serverlist.h"
+#include "schan.h"
 
 extern server_config_t server_config;
 extern current_server_t current_server;

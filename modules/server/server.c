@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: server.c,v 1.60 2004/09/26 09:42:09 stdarg Exp $";
+static const char rcsid[] = "$Id: server.c,v 1.61 2004/10/01 15:31:18 stdarg Exp $";
 #endif
 
 #include "server.h"
@@ -151,6 +151,10 @@ static int server_config_save(const char *handle)
 	for (i = 0; i < nick_list_len; i++) {
 		config_set_str(nick_list[i], list, "nick", i, NULL);
 	}
+
+	/* Save the channel file. */
+	putlog(LOG_MISC, "*", "Saving channels file...");
+	schan_save(server_config.chanfile);
 	return(0);
 }
 
@@ -172,6 +176,8 @@ static int server_close(int why)
 	server_binds_destroy();
 
 	server_channel_destroy();
+
+	server_schan_destroy();
 
 	server_script_destroy();
 
@@ -278,10 +284,10 @@ int server_start(egg_module_t *modinfo)
 
 	/* Initialize channels. */
 	server_channel_init();
+	server_schan_init();
 
 	/* Initialize script interface. */
 	server_script_init();
-	printf("hello there\n");
 
 	return(0);
 }

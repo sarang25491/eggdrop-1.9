@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.44 2004/08/13 20:49:57 darko Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.45 2004/10/01 15:31:18 stdarg Exp $";
 #endif
 
 #include "server.h"
@@ -238,6 +238,26 @@ static int script_channel_limit(char *chan_name)
 	return(-1);
 }
 
+/* Schan commands. */
+
+static char *script_schan_get(char *chan_name, char *setting)
+{
+	schan_t *chan = schan_lookup(chan_name, 0);
+	char *value;
+
+	if (!chan) return(NULL);
+	schan_get(chan, &value, setting, 0, NULL);
+	return(value);
+}
+
+static int script_schan_set(char *chan_name, char *setting, char *value)
+{
+	schan_t *chan = schan_lookup(chan_name, 1);
+
+	if (!chan) return(-1);
+	return schan_set(chan, value, setting, 0, NULL);
+}
+
 /* Output queue commands. */
 
 static int script_queue_len(char *qname, char *next)
@@ -396,6 +416,10 @@ static script_command_t server_script_cmds[] = {
 	{"", "channel_mode_arg", script_channel_mode_arg, NULL, 2, "ss", "channel mode", SCRIPT_STRING, 0},	/* DDC */
 	{"", "channel_key", script_channel_key, NULL, 1, "s", "channel", SCRIPT_STRING, 0},					/* DDC */
 	{"", "channel_limit", script_channel_limit, NULL, 1, "s", "channel", SCRIPT_INTEGER, 0},				/* DDC */
+
+	/* Schan commands. */
+	{"", "channel_get", script_schan_get, NULL, 2, "ss", "channel setting", SCRIPT_STRING, 0},
+	{"", "channel_set", script_schan_set, NULL, 3, "sss", "channel setting value", SCRIPT_INTEGER, 0},
 
 	/* Input / Output commands. */
 	{"", "server_fake_input", server_parse_input, NULL, 1, "s", "text", SCRIPT_INTEGER, 0},						/* DDC */

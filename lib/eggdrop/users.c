@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.41 2004/09/26 09:42:09 stdarg Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.42 2004/10/01 15:31:18 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -75,6 +75,7 @@ static int user_get_uid();
 static int cache_check_add(const void *key, void *dataptr, void *client_data);
 static int cache_check_del(const void *key, void *dataptr, void *client_data);
 static int cache_user_del(user_t *u, const char *ircmask);
+static void append_setting(user_t *u, const char *chan, const char *flag_str, xml_node_t *extended);
 
 int user_init(void)
 {
@@ -112,42 +113,34 @@ int user_shutdown(void)
 
 int user_load(const char *fname)
 {
-	int j, k, uid;
-	xml_node_t *doc, *root, *user_node, *setting_node;
-	user_setting_t *setting;
-	char *handle, *ircmask, *chan, *name, *value, *flag_str;
+	int uid;
+	xml_node_t *root, *user_node, *ircmask_node, *setting_node, *extended_node;
+	char *handle, *ircmask, *chan, *flag_str;
 	user_t *u;
 
-	if (!(doc = xml_parse_file(fname))) {
+	if (!(root = xml_parse_file(fname))) {
 		putlog(LOG_MISC, "*", _("Failed to load userfile '%s': %s"), fname, xml_last_error());
 		return -1;
 	}
 
-	root = xml_root_element(doc);
-
-	if (xml_node_get_int(&uid, root, "next_uid", 0, 0)) {
-		putlog(LOG_MISC, "*", _("Failed to load userfile '%s': Missing next_uid attribute."), fname);
-		xml_node_delete(root);
-		return -1;
-	}
-
+	xml_node_get_vars(root, "ii", "next_uid", &uid, "uid_wraparound", &uid_wraparound);
 	g_uid = uid;
-	xml_node_get_int(&uid_wraparound, root, "uid_wraparound", 0, 0);
+
 	user_node = xml_node_lookup(root, 0, "user", 0, 0);
 	for (; user_node; user_node = user_node->next_sibling) {
 		/* The only required user fields are 'handle' and 'uid'. */
-		xml_node_get_str(&handle, user_node, "handle", 0, 0);
-		xml_node_get_int(&uid, user_node, "uid", 0, 0);
-		if (!handle || !uid) break;
+		xml_node_get_vars(user_node, "sinn", "handle", &handle, "uid", &uid, "ircmask", &ircmask_node, "setting", &setting_node);
+
+		if (!handle || !uid) continue;
 		u = real_user_new(handle, uid);
 
 		/* User already exists? */
 		if (!u) continue;
 
 		/* Irc masks. */
-		for (j = 0; ; j++) {
-			xml_node_get_str(&ircmask, user_node, "ircmask", j, 0);
-			if (!ircmask) break;
+		for (; ircmask_node; ircmask_node = ircmask_node->next_sibling) {
+			ircmask = xml_node_str(ircmask_node, NULL);
+			if (!ircmask) continue;
 			u->ircmasks = realloc(u->ircmasks, sizeof(char *) * (u->nircmasks+1));
 			u->ircmasks[u->nircmasks] = strdup(ircmask);
 			u->nircmasks++;
@@ -155,43 +148,17 @@ int user_load(const char *fname)
 		}
 
 		/* Settings. */
-		for (j = 0; ; j++) {
-			setting_node = xml_node_lookup(user_node, 0, "setting", j, 0);
-			if (!setting_node) break;
-			u->settings = realloc(u->settings, sizeof(*u->settings) * (j+1));
-			u->nsettings++;
-			setting = u->settings+j;
-			xml_node_get_str(&flag_str, setting_node, "flags", 0, 0);
-			if (flag_str) flag_from_str(&setting->flags, flag_str);
-			else memset(&setting->flags, 0, sizeof(setting->flags));
-
-			setting->nextended = 0;
-			setting->extended = NULL;
-			xml_node_get_str(&chan, setting_node, "chan", 0, 0);
-
-			if (chan) setting->chan = strdup(chan);
-			else if (j) continue;
-			else setting->chan = NULL;
-
-			for (k = 0; ; k++) {
-				xml_node_get_str(&name, setting_node, "extended", k, "name", 0, 0);
-				xml_node_get_str(&value, setting_node, "extended", k, "value", 0, 0);
-				if (!name || !value) break;
-				setting->extended = realloc(setting->extended, sizeof(*setting->extended) * (k+1));
-				setting->nextended++;
-				setting->extended[k].name = strdup(name);
-				setting->extended[k].value = strdup(value);
-			}
-		}
 		/* They have to have at least 1 setting, the global one. */
-		if (!j) {
-			u->settings = calloc(1, sizeof(u->settings));
-			u->nsettings = 1;
+		if (!setting_node) append_setting(u, NULL, NULL, NULL);
+		for (; setting_node; setting_node = setting_node->next_sibling) {
+			xml_node_get_vars(setting_node, "ssn", "chan", &chan, "flags", &flag_str, "extended", &extended_node);
+			append_setting(u, chan, flag_str, extended_node);
 		}
 	}
-	xml_node_delete(doc);
+	xml_doc_delete(root);
 
-	putlog(LOG_MISC, "*", _("Loaded %i user(s)"), nusers);
+	if (nusers == 1) putlog(LOG_MISC, "*", _("Loaded 1 user"));
+	else putlog(LOG_MISC, "*", _("Loaded %d users"), nusers);
 
 	return(0);
 }
@@ -201,8 +168,8 @@ static int save_walker(const void *key, void *dataptr, void *param)
 	xml_node_t *root = param;
 	user_t *u = *(user_t **)dataptr;
 	user_setting_t *setting;
-	xml_node_t *user_node;
-	int i, j;
+	xml_node_t *user_node, *setting_node;
+	int i;
 	char flag_str[128];
 
 	user_node = xml_node_new();
@@ -212,15 +179,26 @@ static int save_walker(const void *key, void *dataptr, void *param)
 	for (i = 0; i < u->nircmasks; i++) xml_node_set_str(u->ircmasks[i], user_node, "ircmask", i, 0);
 	for (i = 0; i < u->nsettings; i++) {
 		setting = u->settings+i;
-		if (setting->chan) xml_node_set_str(setting->chan, user_node, "setting", i, "chan", 0, 0);
+		setting_node = xml_node_new();
+		setting_node->name = strdup("setting");
+		if (setting->chan) xml_node_set_str(setting->chan, setting_node, "chan", 0, 0);
 		flag_to_str(&u->settings[i].flags, flag_str);
-		xml_node_set_str(flag_str, user_node, "setting", i, "flags", 0, 0);
-		for (j = 0; j < setting->nextended; j++) {
-			xml_node_set_str(setting->extended[j].name, user_node, "setting", i, "extended", j, "name", 0, 0);
-			xml_node_set_str(setting->extended[j].value, user_node, "setting", i, "extended", j, "value", 0, 0);
-		}
+		xml_node_set_str(flag_str, setting_node, "flags", 0, 0);
+		xml_node_append(setting_node, u->settings[i].extended);
+		xml_node_append(user_node, setting_node);
 	}
 	xml_node_append(root, user_node);
+	return(0);
+}
+
+static int unlink_walker(const void *key, void *dataptr, void *param)
+{
+	user_t *u = *(user_t **)dataptr;
+	int i;
+
+	for (i = 0; i < u->nsettings; i++) {
+		xml_node_unlink(u->settings[i].extended);
+	}
 	return(0);
 }
 
@@ -236,6 +214,8 @@ int user_save(const char *fname)
 	hash_table_walk(uid_ht, save_walker, root);
 
 	xml_save_file((fname) ? fname : "users.xml", root, XML_INDENT);
+
+	hash_table_walk(uid_ht, unlink_walker, NULL);
 
 	xml_node_delete(root);
 	return(0);
@@ -292,13 +272,15 @@ user_t *user_new(const char *handle)
 	/* All users have the global setting by default. */
 	u->settings = calloc(1, sizeof(*u->settings));
 	u->nsettings = 1;
+	u->settings[0].extended = xml_node_new();
+	u->settings[0].extended->name = strdup("extended");
 
 	return(u);
 }
 
 static int user_really_delete(void *client_data)
 {
-	int i, j;
+	int i;
 	user_t *u = client_data;
 	user_setting_t *setting;
 
@@ -309,11 +291,7 @@ static int user_really_delete(void *client_data)
 	/* And all of the settings. */
 	for (i = 0; i < u->nsettings; i++) {
 		setting = u->settings+i;
-		for (j = 0; j < setting->nextended; j++) {
-			if (setting->extended[j].name) free(setting->extended[j].name);
-			if (setting->extended[j].value) free(setting->extended[j].value);
-		}
-		if (setting->extended) free(setting->extended);
+		xml_node_delete(setting->extended);
 		if (setting->chan) free(setting->chan);
 	}
 	if (u->settings) free(u->settings);
@@ -567,76 +545,62 @@ int user_set_flags_str(user_t *u, const char *chan, const char *flags)
 	return(0);
 }
 
-static int find_setting(user_t *u, const char *chan, const char *name, int *row, int *col)
+static void append_setting(user_t *u, const char *chan, const char *flag_str, xml_node_t *extended)
+{
+	user_setting_t *setting;
+	u->settings = realloc(u->settings, sizeof(*u->settings) * (u->nsettings+1));
+	setting = u->settings + u->nsettings;
+	u->nsettings++;
+	memset(setting, 0, sizeof(*setting));
+	if (chan) setting->chan = strdup(chan);
+	if (flag_str) flag_from_str(&setting->flags, flag_str);
+	if (extended) {
+		xml_node_unlink(extended);
+		setting->extended = extended;
+	}
+	else {
+		setting->extended = xml_node_new();
+		setting->extended->name = strdup("extended");
+	}
+}
+
+static xml_node_t *find_setting(user_t *u, const char *chan, const char *name, int create)
 {
 	user_setting_t *setting;
 	int i = 0;
 
-	*row = -1;
-	*col = -1;
 	if (chan) for (i = 1; i < u->nsettings; i++) {
 		if (!strcasecmp(chan, u->settings[i].chan)) break;
 	}
-	if (i >= u->nsettings) return(-1);
-	*row = i;
-	setting = u->settings+i;
-	for (i = 0; i < setting->nextended; i++) {
-		if (!strcasecmp(name, setting->extended[i].name)) {
-			*col = i;
-			return(i);
-		}
+	if (i >= u->nsettings) {
+		if (!create) return(NULL);
+		append_setting(u, chan, NULL, NULL);
 	}
-	return(-1);
+	setting = u->settings+i;
+	return xml_node_lookup(setting->extended, create, name, 0, NULL);
 }
 
 int user_get_setting(user_t *u, const char *chan, const char *setting, char **valueptr)
 {
-	int i, j;
+	xml_node_t *node = find_setting(u, chan, setting, 0);
 
-	if (find_setting(u, chan, setting, &i, &j) < 0) {
-		*valueptr = NULL;
-		return(-1);
-	}
-	*valueptr = u->settings[i].extended[j].value;
-	return(0);
+	return xml_node_get_str(valueptr, node, NULL);
 }
 
-int user_set_setting(user_t *u, const char *chan, const char *setting, const char *newvalue)
+int user_set_setting(user_t *u, const char *chan, const char *setting, const char *value)
 {
-	int i, j, r;
-	char **value, *change;
-	user_setting_t *setptr;
+	int r;
+	char *change, buf[64];
+	xml_node_t *node;
 
-	change = egg_msprintf(NULL, 0, NULL, "%s %s", chan ? chan : "", setting);
-	r = bind_check(BT_uset, NULL, change, u->handle, chan, setting, newvalue);
-	free(change);
+	change = egg_msprintf(buf, sizeof(buf), NULL, "%s %s", chan ? chan : "", setting);
+	r = bind_check(BT_uset, NULL, change, u->handle, chan, setting, value);
+	if (change != buf) free(change);
 
 	if (r & BIND_RET_BREAK) return(0);
 
-	if (find_setting(u, chan, setting, &i, &j) < 0) {
-		/* See if we need to add the channel. */
-		if (i < 0) {
-			u->settings = realloc(u->settings, sizeof(*u->settings) * (u->nsettings+1));
-			i = u->nsettings;
-			u->nsettings++;
-			memset(u->settings+i, 0, sizeof(*u->settings));
-			u->settings[i].chan = strdup(chan);
-		}
-		setptr = u->settings+i;
-
-		/* And then the setting. */
-		if (j < 0) {
-			setptr->extended = realloc(setptr->extended, sizeof(*setptr->extended) * (setptr->nextended+1));
-			j = setptr->nextended;
-			setptr->nextended++;
-			setptr->extended[j].name = strdup(setting);
-			setptr->extended[j].value = NULL;
-		}
-	}
-	value = &(u->settings[i].extended[j].value);
-	if (*value) free(*value);
-	*value = strdup(newvalue);
-	return(0);
+	node = find_setting(u, chan, setting, 1);
+	return xml_node_set_str(value, node, NULL);
 }
 
 int user_has_pass(user_t *u)
@@ -714,8 +678,7 @@ int user_rand_pass(char *buf, int bufsize)
 	return(0);
 }
 
-int
-user_check_flags (user_t *u, const char *chan, flags_t *flags)
+int user_check_flags(user_t *u, const char *chan, flags_t *flags)
 {
 	flags_t f;
 
@@ -724,8 +687,7 @@ user_check_flags (user_t *u, const char *chan, flags_t *flags)
 	return flag_match_subset (flags, &f);
 }
 
-int
-user_check_flags_str (user_t *u, const char *chan, const char *flags)
+int user_check_flags_str(user_t *u, const char *chan, const char *flags)
 {
 	flags_t f;
 
@@ -749,8 +711,7 @@ int user_change_handle(user_t *u, const char *newhandle)
 	return(0);
 }
 
-static int
-ircmask_matches_user(user_t *u, const char *wild)
+static int ircmask_matches_user(user_t *u, const char *wild)
 {
 	int i;
 

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: xml.h,v 1.21 2004/09/29 18:03:53 stdarg Exp $
+ * $Id: xml.h,v 1.22 2004/10/01 15:31:18 stdarg Exp $
  */
 
 #ifndef _EGG_XML_H_
@@ -95,6 +95,7 @@ void xml_node_free(xml_node_t *node);
 void xml_node_unlink(xml_node_t *node);
 void xml_node_delete(xml_node_t *node);
 void xml_node_delete_callbacked(xml_node_t *node, void (*callback)(void *));
+void xml_doc_delete(xml_node_t *root);
 void xml_node_append(xml_node_t *parent, xml_node_t *child);
 
 xml_node_t *xml_root_element(xml_node_t *node);

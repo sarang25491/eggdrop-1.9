@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: users.h,v 1.14 2004/09/26 09:42:09 stdarg Exp $
+ * $Id: users.h,v 1.15 2004/10/01 15:31:18 stdarg Exp $
  */
 
 #ifndef _EGG_USERS_H_
@@ -25,6 +25,7 @@
 #define USER_HASH_SIZE	50
 #define HOST_HASH_SIZE	50
 
+/* User structure flags. */
 #define USER_DELETED 1
 
 /* Bind table names for user events */
@@ -33,20 +34,14 @@
 #define BTN_USER_DELETE			"udelete"
 
 typedef struct {
-	char *name;
-	char *value;
-} extended_setting_t;
-
-typedef struct {
-	/* The channel these settings apply to, or NULL for global. */
+	/* The virtual channel these settings apply to, or NULL for global. */
 	char *chan;
 
 	/* Builtin flags and user defined flags. */
 	flags_t flags;
 
 	/* Extended settings done by modules/scripts. */
-	extended_setting_t *extended;
-	int nextended;
+	xml_node_t *extended;
 } user_setting_t;
 
 typedef struct user {

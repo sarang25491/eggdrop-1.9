@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xml.c,v 1.22 2004/09/29 18:03:53 stdarg Exp $";
+static const char rcsid[] = "$Id: xml.c,v 1.23 2004/10/01 15:31:18 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -114,6 +114,12 @@ void xml_node_delete_callbacked(xml_node_t *node, void (*callback)(void *))
 
 	/* Free memory taken by node. */
 	xml_node_free(node);
+}
+
+void xml_doc_delete(xml_node_t *root)
+{
+	while (root->parent) root = root->parent;
+	xml_node_delete(root);
 }
 
 xml_node_t *xml_node_vlookup(xml_node_t *root, va_list args, int create)
