@@ -1,3 +1,11 @@
+2001-08-18 18:56  Dobos Lorant <drummer@buli.sk>
+
+	* src/mod/: irc.mod/msgcmds.c, server.mod/server.c,
+	server.mod/servmsg.c:
+
+	Show only valid information in .status 'Online as' field, same for .
+	To get the valid user@host bot does WHOIS botnick after 001 
+
 2001-08-17 05:35  Jeff Fisher <guppy@techmonkeys.org>
 
 	* src/: dcc.c, tclmisc.c, md5/Makefile.in, md5/md5.h, md5/md5c.c,
