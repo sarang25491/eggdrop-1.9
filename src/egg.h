@@ -24,17 +24,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: egg.h,v 1.10 2002/10/11 00:49:20 wcc Exp $
+ * $Id: egg.h,v 1.11 2002/10/11 23:59:35 wcc Exp $
  */
 
 #ifndef _EGG_EGG_H
 #define _EGG_EGG_H
-
-/*
- * If you're *only* going to link to new version bots (1.3.0 or higher)
- * then you can safely define this.
- */
-#undef NO_OLD_BOTNET
 
 /*
  * HANDLEN note:
