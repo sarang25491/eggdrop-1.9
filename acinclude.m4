@@ -1,7 +1,7 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.8 2001/10/19 01:55:04 tothwolf Exp $
+dnl $Id: acinclude.m4,v 1.9 2001/10/19 14:10:55 tothwolf Exp $
 dnl
 
 
@@ -282,7 +282,8 @@ if test "$egg_cv_have_c99_vsnprintf" = "yes"
 then
   AC_DEFINE(HAVE_C99_VSNPRINTF, 1,
             [Define if vsnprintf is C99 compliant])
-  egg_replace_snprintf=yes
+else
+  egg_replace_snprintf="yes"
 fi
 ])
 
@@ -1172,7 +1173,7 @@ if test "x$enable_shared" = "xno"
 then
   AC_DEFINE_UNQUOTED(STATIC, 1, Define if build is static)
 fi
-])dnl
+])
 
 
 dnl  EGG_DEBUG_OPTIONS
