@@ -1,3 +1,71 @@
+2003-12-17 08:43  Will Buckner <wcc@techmonkeys.org>
+
+	* help/: cmds1.help, cmds2.help, core.help, set/cmds1.help:
+
+	* Bye bye notes.mod.  
+
+2003-12-17 08:39  Will Buckner <wcc@techmonkeys.org>
+
+	* lib/eggdrop/eggdrop.c, lib/eggdrop/eggdrop.h,
+	modules/javascript/javascript.c, modules/perlscript/mod_iface.c,
+	modules/script/scriptmod.c, modules/server/binds.c,
+	modules/server/server.c, modules/tclscript/tclscript.c,
+	modules/telnetparty/telnetparty.c, src/main.c, src/main.h:
+
+	* Removed eggdrop_t stuff since global table is gone.  
+	* Few updates to javascript module.  
+	* More cleanups.  
+
+2003-12-17 08:12  Will Buckner <wcc@techmonkeys.org>
+
+	* modules/server/dcc.c, modules/server/party_commands.c,
+	src/core_config.c, src/core_party.c, src/logfile.c, src/main.c:
+
+	* Should do it..  
+
+2003-12-17 08:06  Will Buckner <wcc@techmonkeys.org>
+
+	* modules/: blowfish/blowfish.c, dccparty/dccparty.c,
+	dccparty/events.c, ircparty/events.c, ircparty/ircparty.c,
+	oldbotnet/events.c, oldbotnet/oldbotnet.c, script/scriptbind.c,
+	script/scriptconfig.c, script/scriptmisc.c, script/scriptnet.c,
+	script/scripttimer.c, script/scriptuser.c, server/channels.c,
+	server/input.c, server/output.c, server/scriptcmds.c,
+	server/server.c, server/servsock.c:
+
+	* More header stuff.  
+
+2003-12-17 07:52  Will Buckner <wcc@techmonkeys.org>
+
+	* lib/eggdrop/: binds.c, egglog.c, eggmod.c, eggowner.c, irccmp.c,
+	partychan.c, partyline.c, partymember.c, xmlread.c:
+
+	* More from last commit.  
+
+2003-12-17 07:39  Will Buckner <wcc@techmonkeys.org>
+
+	* lib/eggdrop/: base64.c, base64.h, binds.c, binds.h, botnetutil.c,
+	botnetutil.h, common.h, eggconfig.c, eggconfig.h, eggdns.c,
+	eggdns.h, eggdrop.c, eggdrop.h, eggident.c, eggident.h, egglog.c,
+	egglog.h, eggmod.c, eggmod.h, eggnet.c, eggnet.h, eggowner.c,
+	eggowner.h, eggstring.c, eggstring.h, eggtimer.c, eggtimer.h,
+	fileutil.c, fileutil.h, flags.c, flags.h, garbage.c, garbage.h,
+	hash_table.c, hash_table.h, irccmp.c, irccmp.h, ircmasks.c,
+	ircmasks.h, ircparse.c, ircparse.h, linemode.c, linemode.h,
+	match.c, match.h, md5.c, md5.h, memutil.c, memutil.h, my_socket.c,
+	my_socket.h, partychan.c, partyline.c, partyline.h, partymember.c,
+	script.c, script.h, sockbuf.c, sockbuf.h, stat.h, throttle.c,
+	throttle.h, users.c, users.h, xml.c, xml.h, xmlread.c, xmlwrite.c:
+
+	* GPL headers and rcsid's on newly added files (part 1).  
+	* More cleanups/etc.  
+
+2003-12-17 06:15  Automatic CVS Scripts
+
+	* po/eggdrop.pot:
+
+	Pots 
+
 2003-12-17 03:01  Federico Mennite <ite@techmonkeys.org>
 
 	* m4/.cvsignore, modules/dccparty/.cvsignore,
@@ -257,14 +325,12 @@
 	modules/filesys/files.c, modules/filesys/files.h,
 	modules/filesys/filesys.c, modules/filesys/filesys.h,
 	modules/filesys/tclfiles.c, modules/javascript/javascript.c,
-	modules/notes/cmdsnote.c, modules/notes/notes.c,
-	modules/notes/notes.h, modules/perlscript/perlscript.c,
-	modules/server/scriptcmds.c, modules/uptime/uptime.c,
-	modules/uptime/uptime.h, src/bg.c, src/bg.h, src/cmds.c,
-	src/cmds.h, src/cmdt.h, src/debug.h, src/flags.c, src/flags.h,
-	src/logfile.h, src/main.c, src/main.h, src/misc.c, src/misc.h,
-	src/traffic.c, src/traffic.h, testcode/match.c, text/CONTENTS,
-	text/banner:
+	modules/perlscript/perlscript.c, modules/server/scriptcmds.c,
+	modules/uptime/uptime.c, modules/uptime/uptime.h, src/bg.c,
+	src/bg.h, src/cmds.c, src/cmds.h, src/cmdt.h, src/debug.h,
+	src/flags.c, src/flags.h, src/logfile.h, src/main.c, src/main.h,
+	src/misc.c, src/misc.h, src/traffic.c, src/traffic.h,
+	testcode/match.c, text/CONTENTS, text/banner:
 
 	* 2004 copyright.  
 
@@ -863,9 +929,9 @@
 
 	* modules/blowfish/blowfish.c, modules/channels/tclchan.c,
 	modules/channels/userchan.c, modules/filesys/files.c,
-	modules/filesys/filesys.c, modules/notes/notes.c,
-	modules/server/dcc.c, modules/server/input.c, src/cmds.c,
-	src/misc.c, src/modules.c, src/userent.c, src/users.c:
+	modules/filesys/filesys.c, modules/server/dcc.c,
+	modules/server/input.c, src/cmds.c, src/misc.c, src/modules.c,
+	src/userent.c, src/users.c:
 
 	* Converted most strncpy() usage to strlcpy().  
 	  + See: http://www.courtesan.com/todd/papers/strlcpy.html 
@@ -1328,10 +1394,10 @@
 
 	* eggdrop.conf, lib/eggdrop/module.h, modules/channels/channels.c,
 	modules/channels/userchan.c, modules/filesys/filedb3.c,
-	modules/filesys/files.c, modules/notes/notes.c,
-	modules/uptime/uptime.c, src/chanprog.c, src/cmds.c, src/dcc.c,
-	src/dccutil.c, src/main.c, src/misc.c, src/modules.c, src/tcl.c,
-	src/tcldcc.c, src/tcluser.c, src/userrec.c, src/users.c:
+	modules/filesys/files.c, modules/uptime/uptime.c, src/chanprog.c,
+	src/cmds.c, src/dcc.c, src/dccutil.c, src/main.c, src/misc.c,
+	src/modules.c, src/tcl.c, src/tcldcc.c, src/tcluser.c,
+	src/userrec.c, src/users.c:
 
 	* More botnet removal.  
 
@@ -1399,8 +1465,8 @@
 2003-01-30 08:20  Will Buckner <wcc@techmonkeys.org>
 
 	* modules/channels/tclchan.c, modules/compress/tclcompress.c,
-	modules/filesys/tclfiles.c, modules/notes/notes.c,
-	modules/transfer/transfer.c, src/tclegg.h:
+	modules/filesys/tclfiles.c, modules/transfer/transfer.c,
+	src/tclegg.h:
 
 	* Removed STDVAR macro.  
 
@@ -1505,14 +1571,13 @@
 	modules/filesys/files.c, modules/filesys/files.h,
 	modules/filesys/filesys.c, modules/filesys/filesys.h,
 	modules/filesys/tclfiles.c, modules/javascript/javascript.c,
-	modules/notes/cmdsnote.c, modules/notes/notes.c,
-	modules/notes/notes.h, modules/perlscript/mod_iface.c,
-	modules/perlscript/perlscript.c, modules/server/scriptcmds.c,
-	modules/tclscript/tclscript.c, modules/transfer/transfer.c,
-	modules/transfer/transfer.h, modules/uptime/uptime.c,
-	modules/uptime/uptime.h, scripts/ques5.tcl, src/bg.c, src/bg.h,
-	src/chan.h, src/chanprog.c, src/chanprog.h, src/cmds.c, src/cmds.h,
-	src/cmdt.h, src/core_binds.h, src/dcc.c, src/dcc.h, src/dccutil.c,
+	modules/perlscript/mod_iface.c, modules/perlscript/perlscript.c,
+	modules/server/scriptcmds.c, modules/tclscript/tclscript.c,
+	modules/transfer/transfer.c, modules/transfer/transfer.h,
+	modules/uptime/uptime.c, modules/uptime/uptime.h,
+	scripts/ques5.tcl, src/bg.c, src/bg.h, src/chan.h, src/chanprog.c,
+	src/chanprog.h, src/cmds.c, src/cmds.h, src/cmdt.h,
+	src/core_binds.h, src/dcc.c, src/dcc.h, src/dccutil.c,
 	src/dccutil.h, src/debug.h, src/dns.c, src/dns.h, src/egg.h,
 	src/flags.c, src/flags.h, src/irccmp.c, src/irccmp.h,
 	src/logfile.c, src/logfile.h, src/main.c, src/main.h, src/misc.c,
@@ -1985,8 +2050,7 @@
 
 2002-06-17 06:14  Jeff Fisher <guppy@techmonkeys.org>
 
-	* help/cmds2.help, help/core.help, modules/notes/notes.c,
-	src/flags.c, src/flags.h:
+	* help/cmds2.help, help/core.help, src/flags.c, src/flags.h:
 
 	removed the common user access flag sice this is a throw back to the
 	earlier days of IRC -- common accounts are almost non-existant on
@@ -2165,9 +2229,9 @@
 
 2002-05-28 20:36  stdarg <stdarg@techmonkeys.org>
 
-	* modules/filesys/tclfiles.c, modules/notes/notes.c,
-	modules/server/server.c, modules/server/server.h,
-	modules/server/servmsg.c, modules/uptime/uptime.c, src/botmsg.c:
+	* modules/filesys/tclfiles.c, modules/server/server.c,
+	modules/server/server.h, modules/server/servmsg.c,
+	modules/uptime/uptime.c, src/botmsg.c:
 
 	
 	* Got rid of a bit of findanyidx() usage 
@@ -2282,11 +2346,10 @@
 
 	* lib/eggdrop/module.h, modules/channels/channels.c,
 	modules/filesys/filesys.c, modules/javascript/javascript.c,
-	modules/notes/notes.c, modules/perlscript/mod_iface.c,
-	modules/server/server.c, modules/tclscript/tclscript.c,
-	modules/transfer/transfer.c, modules/uptime/uptime.c, src/botnet.c,
-	src/core_binds.c, src/modules.c, src/tcl.c, src/tclhash.c,
-	src/tclhash.h:
+	modules/perlscript/mod_iface.c, modules/server/server.c,
+	modules/tclscript/tclscript.c, modules/transfer/transfer.c,
+	modules/uptime/uptime.c, src/botnet.c, src/core_binds.c,
+	src/modules.c, src/tcl.c, src/tclhash.c, src/tclhash.h:
 
 	
 	* Bind table cleanups, especially renaming bind table functions and
@@ -2514,28 +2577,26 @@
 	modules/filesys/filelist.c, modules/filesys/filelist.h,
 	modules/filesys/files.c, modules/filesys/files.h,
 	modules/filesys/filesys.c, modules/filesys/filesys.h,
-	modules/filesys/tclfiles.c, modules/notes/cmdsnote.c,
-	modules/notes/notes.c, modules/notes/notes.h,
-	modules/perlscript/mod_iface.c, modules/perlscript/perlscript.c,
-	modules/server/cmdsserv.c, modules/server/scriptcmds.c,
-	modules/server/server.c, modules/server/server.h,
-	modules/server/servmsg.c, modules/tclscript/tclscript.c,
-	modules/transfer/transfer.c, modules/transfer/transfer.h,
-	modules/uptime/uptime.c, modules/uptime/uptime.h, src/bg.c,
-	src/bg.h, src/botcmd.c, src/botcmd.h, src/botmsg.c, src/botmsg.h,
-	src/botnet.c, src/botnet.h, src/chan.h, src/chanprog.c,
-	src/chanprog.h, src/cmds.c, src/cmds.h, src/cmdt.h,
-	src/core_binds.c, src/core_binds.h, src/dcc.c, src/dcc.h,
-	src/dccutil.c, src/dccutil.h, src/debug.h, src/dns.c, src/dns.h,
-	src/egg.h, src/egg_timer.c, src/egg_timer.h, src/flags.c,
-	src/flags.h, src/irccmp.c, src/irccmp.h, src/logfile.c,
-	src/logfile.h, src/main.c, src/main.h, src/match.c, src/match.h,
-	src/misc.c, src/misc.h, src/modules.c, src/modules.h, src/net.c,
-	src/net.h, src/patch.h, src/tandem.h, src/tcl.c, src/tcl.h,
-	src/tcldcc.c, src/tclegg.h, src/tclhash.c, src/tclhash.h,
-	src/tclmisc.c, src/tcluser.c, src/traffic.h, src/userent.c,
-	src/userent.h, src/userrec.c, src/userrec.h, src/users.c,
-	src/users.h:
+	modules/filesys/tclfiles.c, modules/perlscript/mod_iface.c,
+	modules/perlscript/perlscript.c, modules/server/cmdsserv.c,
+	modules/server/scriptcmds.c, modules/server/server.c,
+	modules/server/server.h, modules/server/servmsg.c,
+	modules/tclscript/tclscript.c, modules/transfer/transfer.c,
+	modules/transfer/transfer.h, modules/uptime/uptime.c,
+	modules/uptime/uptime.h, src/bg.c, src/bg.h, src/botcmd.c,
+	src/botcmd.h, src/botmsg.c, src/botmsg.h, src/botnet.c,
+	src/botnet.h, src/chan.h, src/chanprog.c, src/chanprog.h,
+	src/cmds.c, src/cmds.h, src/cmdt.h, src/core_binds.c,
+	src/core_binds.h, src/dcc.c, src/dcc.h, src/dccutil.c,
+	src/dccutil.h, src/debug.h, src/dns.c, src/dns.h, src/egg.h,
+	src/egg_timer.c, src/egg_timer.h, src/flags.c, src/flags.h,
+	src/irccmp.c, src/irccmp.h, src/logfile.c, src/logfile.h,
+	src/main.c, src/main.h, src/match.c, src/match.h, src/misc.c,
+	src/misc.h, src/modules.c, src/modules.h, src/net.c, src/net.h,
+	src/patch.h, src/tandem.h, src/tcl.c, src/tcl.h, src/tcldcc.c,
+	src/tclegg.h, src/tclhash.c, src/tclhash.h, src/tclmisc.c,
+	src/tcluser.c, src/traffic.h, src/userent.c, src/userent.h,
+	src/userrec.c, src/userrec.h, src/users.c, src/users.h:
 
 	Grafted GPL header onto newer files.  Storing rcsid in binary files
 	now.  
@@ -2708,9 +2769,9 @@
 
 	* eggdrop.complete.conf, eggdrop.simple.conf,
 	modules/channels/channels.c, modules/compress/compress.c,
-	modules/filesys/filesys.c, modules/notes/notes.c,
-	modules/server/server.c, modules/transfer/transfer.c,
-	scripts/compat.tcl, scripts/userinfo.tcl, src/logfile.c, src/tcl.c:
+	modules/filesys/filesys.c, modules/server/server.c,
+	modules/transfer/transfer.c, scripts/compat.tcl,
+	scripts/userinfo.tcl, src/logfile.c, src/tcl.c:
 
 	I changed a lot of variable names (- became _). I may have missed
 	some so keep your eyes open and if your scripts stop working, this
@@ -2861,7 +2922,7 @@
 
 2002-04-25 17:34  stdarg <stdarg@techmonkeys.org>
 
-	* modules/: notes/notes.c, server/server.c:
+	* modules/server/server.c:
 
 	
 	* Fixed compiler warning in storenote 
@@ -3052,13 +3113,13 @@
 	lib/eggdrop/registry.c, lib/eggdrop/registry.h,
 	lib/egglib/egglib.h, modules/blowfish/blowfish.c,
 	modules/channels/channels.c, modules/compress/compress.c,
-	modules/filesys/filesys.c, modules/notes/notes.c,
-	modules/perlscript/mod_iface.c, modules/server/server.c,
-	modules/tclscript/Makefile.am, modules/tclscript/tclscript.c,
-	modules/transfer/transfer.c, modules/uptime/uptime.c,
-	src/Makefile.am, src/egg.h, src/egg_timer.c, src/egg_timer.h,
-	src/main.c, src/main.h, src/modules.c, src/modules.h,
-	src/registry.c, src/registry.h, src/script.c, src/script.h:
+	modules/filesys/filesys.c, modules/perlscript/mod_iface.c,
+	modules/server/server.c, modules/tclscript/Makefile.am,
+	modules/tclscript/tclscript.c, modules/transfer/transfer.c,
+	modules/uptime/uptime.c, src/Makefile.am, src/egg.h,
+	src/egg_timer.c, src/egg_timer.h, src/main.c, src/main.h,
+	src/modules.c, src/modules.h, src/registry.c, src/registry.h,
+	src/script.c, src/script.h:
 
 	* Created eggdrop's library context.  
 	* Moved registry stuff to libeggdrop.  
@@ -3094,12 +3155,6 @@
 	* Converted/cleaned some tcl stuff 
 	* More dcc fixes 
 
-2002-03-10 01:35  stdarg <stdarg@techmonkeys.org>
-
-	* modules/notes/notes.c:
-
-	* dcc checks 
-
 2002-03-09 19:42  Axel Franke <eule@berlin.snafu.de>
 
 	* modules/channels/: channels.c, channels.h, cmdschan.c, tclchan.c,
@@ -3131,8 +3186,7 @@
 
 2002-03-04 02:32  stdarg <stdarg@techmonkeys.org>
 
-	* lib/eggdrop/modvals.h, modules/notes/notes.c, src/botmsg.c,
-	src/modules.c, src/proto.h:
+	* lib/eggdrop/modvals.h, src/botmsg.c, src/modules.c, src/proto.h:
 
 	
 	* Removed Tcl dependency from storenote.  
@@ -3398,8 +3452,8 @@
 2002-02-13 16:44  Federico Mennite <ite@techmonkeys.org>
 
 	* modules/compress/compress.c, modules/filesys/filedb3.c,
-	modules/notes/notes.c, modules/transfer/transfer.c, po/update.pl,
-	src/chanprog.c, src/egg.h:
+	modules/transfer/transfer.c, po/update.pl, src/chanprog.c,
+	src/egg.h:
 
 	gettext plurals are now supported with the P_() macro 
 
@@ -3477,23 +3531,21 @@
 	modules/filesys/filelist.c, modules/filesys/filelist.h,
 	modules/filesys/files.c, modules/filesys/files.h,
 	modules/filesys/filesys.c, modules/filesys/filesys.h,
-	modules/filesys/tclfiles.c, modules/notes/cmdsnote.c,
-	modules/notes/notes.c, modules/notes/notes.h,
-	modules/server/cmdsserv.c, modules/server/server.c,
-	modules/server/server.h, modules/server/servmsg.c,
-	modules/server/tclserv.c, modules/transfer/transfer.c,
-	modules/transfer/transfer.h, modules/uptime/uptime.c,
-	modules/uptime/uptime.h, scripts/autobotchk, scripts/ques5.tcl,
-	src/bg.c, src/bg.h, src/botcmd.c, src/botmsg.c, src/botnet.c,
-	src/chan.h, src/chanprog.c, src/cmds.c, src/cmdt.h, src/dcc.c,
-	src/dccutil.c, src/debug.h, src/dns.c, src/dns.h, src/egg.h,
-	src/flags.c, src/flags.h, src/irccmp.c, src/irccmp.h,
-	src/logfile.h, src/main.c, src/main.h, src/misc.c, src/misc.h,
-	src/modules.c, src/modules.h, src/patch.h, src/proto.h,
-	src/tandem.h, src/tcl.c, src/tcldcc.c, src/tclegg.h, src/tclhash.c,
-	src/tclhash.h, src/tclmisc.c, src/tcluser.c, src/userent.c,
-	src/userrec.c, src/users.c, src/users.h, FEATURES, INSTALL, NEWS,
-	README:
+	modules/filesys/tclfiles.c, modules/server/cmdsserv.c,
+	modules/server/server.c, modules/server/server.h,
+	modules/server/servmsg.c, modules/server/tclserv.c,
+	modules/transfer/transfer.c, modules/transfer/transfer.h,
+	modules/uptime/uptime.c, modules/uptime/uptime.h,
+	scripts/autobotchk, scripts/ques5.tcl, src/bg.c, src/bg.h,
+	src/botcmd.c, src/botmsg.c, src/botnet.c, src/chan.h,
+	src/chanprog.c, src/cmds.c, src/cmdt.h, src/dcc.c, src/dccutil.c,
+	src/debug.h, src/dns.c, src/dns.h, src/egg.h, src/flags.c,
+	src/flags.h, src/irccmp.c, src/irccmp.h, src/logfile.h, src/main.c,
+	src/main.h, src/misc.c, src/misc.h, src/modules.c, src/modules.h,
+	src/patch.h, src/proto.h, src/tandem.h, src/tcl.c, src/tcldcc.c,
+	src/tclegg.h, src/tclhash.c, src/tclhash.h, src/tclmisc.c,
+	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c,
+	src/users.h, FEATURES, INSTALL, NEWS, README:
 
 	Updated copyright info for 2002 
 
@@ -3622,8 +3674,8 @@
 
 2002-01-26 13:18  Federico Mennite <ite@techmonkeys.org>
 
-	* modules/filesys/filedb3.c, modules/notes/notes.c,
-	modules/transfer/transfer.c, src/botnet.c:
+	* modules/filesys/filedb3.c, modules/transfer/transfer.c,
+	src/botnet.c:
 
 	Cosmetic changes for plurals (synch 1.6) 
 
@@ -3691,13 +3743,6 @@
 	* po/eggdrop.pot:
 
 	Pots 
-
-2002-01-22 21:45  Will Buckner <wcc@techmonkeys.org>
-
-	* modules/notes/notes.c:
-
-	A password is required to use the NOTES msg command, therefore
-	[pass] should be <pass> in usage notices.  
 
 2002-01-22 10:00  Automatic CVS Scripts
 
@@ -3912,13 +3957,12 @@
 	modules/channels/cmdschan.c, modules/channels/tclchan.c,
 	modules/channels/udefchan.c, modules/channels/userchan.c,
 	modules/filesys/filedb3.c, modules/filesys/filelist.c,
-	modules/notes/notes.c, modules/perlscript/perlscript.c,
-	modules/server/server.c, modules/server/servmsg.c,
-	modules/tclscript/tclscript.c, modules/transfer/transfer.c,
-	modules/uptime/uptime.c, src/botnet.c, src/cmds.c, src/dcc.c,
-	src/dccutil.c, src/dns.c, src/egg.h, src/logfile.c, src/misc.c,
-	src/modules.c, src/net.c, src/tclhash.c, src/tcluser.c,
-	src/userent.c, src/userrec.c, src/users.c:
+	modules/perlscript/perlscript.c, modules/server/server.c,
+	modules/server/servmsg.c, modules/tclscript/tclscript.c,
+	modules/transfer/transfer.c, modules/uptime/uptime.c, src/botnet.c,
+	src/cmds.c, src/dcc.c, src/dccutil.c, src/dns.c, src/egg.h,
+	src/logfile.c, src/misc.c, src/modules.c, src/net.c, src/tclhash.c,
+	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c:
 
 	Removed our malloc_strcpy macro sincw it had the same functionality
 	of strdup (provided the respective fallback function) 
@@ -4175,11 +4219,11 @@
 	lib/eggdrop/module.h, lib/egglib/Makefile.am, lib/egglib/egglib.h,
 	modules/blowfish/Makefile.am, modules/channels/Makefile.am,
 	modules/compress/Makefile.am, modules/filesys/Makefile.am,
-	modules/notes/Makefile.am, modules/perlscript/Makefile.am,
-	modules/server/Makefile.am, modules/tclscript/Makefile.am,
-	modules/transfer/Makefile.am, modules/uptime/Makefile.am,
-	src/Makefile.am, src/egg.h, src/eggdrop.h, src/logfile.c,
-	src/main.h, src/modules.c, src/modules.h, src/proto.h:
+	modules/perlscript/Makefile.am, modules/server/Makefile.am,
+	modules/tclscript/Makefile.am, modules/transfer/Makefile.am,
+	modules/uptime/Makefile.am, src/Makefile.am, src/egg.h,
+	src/eggdrop.h, src/logfile.c, src/main.h, src/modules.c,
+	src/modules.h, src/proto.h:
 
 	* Moved some botnet utility functions from the core to libeggdrop.  
 	* Moved some common macros to libeggdrop.  
@@ -4430,13 +4474,6 @@
 
 	applied jumpfix from eggdrop1.6 and changed rfc_casecmp to irccmp in
 	tclirc.c 
-
-2001-12-20 01:08  Jeff Fisher <guppy@techmonkeys.org>
-
-	* modules/notes/notes.c:
-
-	fixed join_notes to have the proper arguments and also return if the
-	user isn't known (thanks stdarg) 
 
 2001-12-20 00:42  stdarg <stdarg@techmonkeys.org>
 
@@ -4973,10 +5010,9 @@
 
 	* modules/blowfish/Makefile.am, modules/channels/Makefile.am,
 	modules/compress/Makefile.am, modules/filesys/Makefile.am,
-	modules/notes/Makefile.am, modules/perlscript/Makefile.am,
-	modules/server/Makefile.am, modules/tclscript/Makefile.am,
-	modules/transfer/Makefile.am, modules/uptime/Makefile.am,
-	src/eggdrop.h:
+	modules/perlscript/Makefile.am, modules/server/Makefile.am,
+	modules/tclscript/Makefile.am, modules/transfer/Makefile.am,
+	modules/uptime/Makefile.am, src/eggdrop.h:
 
 	Added mssing stuff in Makefile.am's that prevented compilation in
 	some environments.  
@@ -5202,10 +5238,9 @@
 	* lib/eggdrop/Makefile.am, lib/eggdrop/module.h,
 	modules/blowfish/Makefile.am, modules/channels/Makefile.am,
 	modules/compress/Makefile.am, modules/filesys/Makefile.am,
-	modules/notes/Makefile.am, modules/perlscript/Makefile.am,
-	modules/server/Makefile.am, modules/tclscript/Makefile.am,
-	modules/transfer/Makefile.am, modules/uptime/Makefile.am,
-	src/Makefile.am, src/modules.c:
+	modules/perlscript/Makefile.am, modules/server/Makefile.am,
+	modules/tclscript/Makefile.am, modules/transfer/Makefile.am,
+	modules/uptime/Makefile.am, src/Makefile.am, src/modules.c:
 
 	Created libeggdrop: libadns, libegg and libcompat are now linked in
 	it. Cleaned up some unneeded function exports :) 
@@ -5303,18 +5338,13 @@
 	modules/filesys/filesys.c, modules/filesys/filesys.h,
 	modules/filesys/modinfo, modules/filesys/tclfiles.c,
 	modules/filesys/help/filesys.help,
-	modules/filesys/help/set/filesys.help, modules/notes/.cvsignore,
-	modules/notes/Makefile.am, modules/notes/cmdsnote.c,
-	modules/notes/modinfo, modules/notes/notes.c,
-	modules/notes/notes.h, modules/notes/help/notes.help,
-	modules/notes/help/msg/notes.help,
-	modules/notes/help/set/notes.help, modules/perlscript/.cvsignore,
-	modules/perlscript/Makefile.am, modules/perlscript/perlscript.c,
-	modules/server/.cvsignore, modules/server/Makefile.am,
-	modules/server/cmdsserv.c, modules/server/modinfo,
-	modules/server/server.c, modules/server/server.h,
-	modules/server/servmsg.c, modules/server/tclserv.c,
-	modules/server/help/server.help,
+	modules/filesys/help/set/filesys.help,
+	modules/perlscript/.cvsignore, modules/perlscript/Makefile.am,
+	modules/perlscript/perlscript.c, modules/server/.cvsignore,
+	modules/server/Makefile.am, modules/server/cmdsserv.c,
+	modules/server/modinfo, modules/server/server.c,
+	modules/server/server.h, modules/server/servmsg.c,
+	modules/server/tclserv.c, modules/server/help/server.help,
 	modules/server/help/set/server.help, modules/tclscript/.cvsignore,
 	modules/tclscript/Makefile.am, modules/tclscript/tclscript.c,
 	modules/transfer/.cvsignore, modules/transfer/Makefile.am,
