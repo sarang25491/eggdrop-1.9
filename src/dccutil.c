@@ -27,7 +27,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dccutil.c,v 1.52 2002/05/12 06:12:07 stdarg Exp $";
+static const char rcsid[] = "$Id: dccutil.c,v 1.53 2002/05/16 22:56:41 stdarg Exp $";
 #endif
 
 #include <sys/stat.h>
@@ -210,7 +210,7 @@ void dcc_chatter(int idx)
   dcc[idx].u.chat->channel = 234567;
   j = dcc[idx].sock;
   strcpy(dcc[idx].u.chat->con_chan, "***");
-  check_tcl_chon(dcc[idx].nick, dcc[idx].sock);
+  check_tcl_chon(dcc[idx].nick, idx);
   /* Still there? */
   if ((idx >= dcc_total) || (dcc[idx].sock != j))
     return;			/* Nope */

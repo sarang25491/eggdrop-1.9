@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dcc.c,v 1.87 2002/05/12 05:59:52 stdarg Exp $";
+static const char rcsid[] = "$Id: dcc.c,v 1.88 2002/05/16 22:56:41 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -889,7 +889,7 @@ static void eof_dcc_chat(int idx)
     check_tcl_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock,
 		   dcc[idx].u.chat->channel);
   }
-  check_tcl_chof(dcc[idx].nick, dcc[idx].sock);
+  check_tcl_chof(dcc[idx].nick, idx);
   killsock(dcc[idx].sock);
   lostdcc(idx);
 }
@@ -1724,7 +1724,7 @@ static void dcc_script(int idx, char *buf, int len)
 	check_tcl_chjn(botnetnick, dcc[idx].nick, dcc[idx].u.chat->channel,
 		       geticon(dcc[idx].user), dcc[idx].sock, dcc[idx].host);
       }
-      check_tcl_chon(dcc[idx].nick, dcc[idx].sock);
+      check_tcl_chon(dcc[idx].nick, idx);
     }
   }
 }
