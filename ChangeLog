@@ -1,3 +1,16 @@
+2002-01-20 14:29  Federico Mennite <ite@techmonkeys.org>
+
+	* modules/irc/chan.c:
+
+	fixed a bug that prevented MODE from being sent when we get ops on a
+	channel to retrieve the proper channel key (synch 1.6) 
+
+2002-01-20 14:22  Federico Mennite <ite@techmonkeys.org>
+
+	* modules/server/server.c, src/tcl.c:
+
+	changed nick-len and hand-len to nicklen and handlen respectively 
+
 2002-01-20 12:55  Federico Mennite <ite@techmonkeys.org>
 
 	* modules/channels/userchan.c:
