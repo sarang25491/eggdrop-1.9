@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2002-01-26 04:00-0600\n"
+"POT-Creation-Date: 2002-01-27 04:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -52,7 +52,7 @@ msgstr ""
 msgid "Note sent to"
 msgstr ""
 
-#: src/botcmd.c:303 src/botnet.c:1652 src/botnet.c:1659
+#: src/botcmd.c:303 src/botnet.c:1654 src/botnet.c:1661
 msgid "Disconnected from:"
 msgstr ""
 
@@ -320,182 +320,182 @@ msgstr ""
 msgid "Breaking link with"
 msgstr ""
 
-#: src/botnet.c:939 src/botnet.c:945
+#: src/botnet.c:940 src/botnet.c:947
 msgid "Unlinked from:"
 msgstr ""
 
-#: src/botnet.c:959
+#: src/botnet.c:961
 msgid "Not connected to that bot."
 msgstr ""
 
-#: src/botnet.c:982
+#: src/botnet.c:984
 msgid "Smooshing bot tables and assocs..."
 msgstr ""
 
-#: src/botnet.c:1013
+#: src/botnet.c:1015
 #, c-format
 msgid "%s is not a known bot.\n"
 msgstr ""
 
-#: src/botnet.c:1016
+#: src/botnet.c:1018
 msgid "Link to myself?  Oh boy, Freud would have a field day.\n"
 msgstr ""
 
-#: src/botnet.c:1019
+#: src/botnet.c:1021
 msgid "That bot is already connected up.\n"
 msgstr ""
 
-#: src/botnet.c:1026
+#: src/botnet.c:1028
 msgid "Already linking to that bot.\n"
 msgstr ""
 
-#: src/botnet.c:1033 src/botnet.c:1160
+#: src/botnet.c:1035 src/botnet.c:1162
 #, c-format
 msgid "Invalid telnet address:port stored for '%s'.\n"
 msgstr ""
 
-#: src/botnet.c:1034 src/botnet.c:1161
+#: src/botnet.c:1036 src/botnet.c:1163
 #, c-format
 msgid "Use: .chaddr %s <address>:<port#>[/<relay-port#>]\n"
 msgstr ""
 
-#: src/botnet.c:1039 src/botnet.c:1168
+#: src/botnet.c:1041 src/botnet.c:1170
 msgid "Sorry, too many DCC connections.\n"
 msgstr ""
 
-#: src/botnet.c:1044
+#: src/botnet.c:1046
 #, c-format
 msgid "Linking to %s at %s:%d ..."
 msgstr ""
 
-#: src/botnet.c:1072 src/dcc.c:245
+#: src/botnet.c:1074 src/dcc.c:245
 #, c-format
 msgid "Failed link to %s."
 msgstr ""
 
-#: src/botnet.c:1106 src/botnet.c:1358
+#: src/botnet.c:1108 src/botnet.c:1360
 msgid "Cant find user for relay!"
 msgstr ""
 
-#: src/botnet.c:1115
+#: src/botnet.c:1117
 msgid "Could not link to"
 msgstr ""
 
-#: src/botnet.c:1150
+#: src/botnet.c:1152
 msgid "is not a known bot."
 msgstr ""
 
-#: src/botnet.c:1154
+#: src/botnet.c:1156
 msgid "Relay to myself?  What on EARTH would be the point?!"
 msgstr ""
 
-#: src/botnet.c:1175
+#: src/botnet.c:1177
 msgid "No free sockets available.\n"
 msgstr ""
 
-#: src/botnet.c:1186
+#: src/botnet.c:1188
 msgid "(Type *BYE* on a line by itself to abort.)\n"
 msgstr ""
 
-#: src/botnet.c:1216 src/botnet.c:1277 src/botnet.c:1323
+#: src/botnet.c:1218 src/botnet.c:1279 src/botnet.c:1325
 #, c-format
 msgid "Cant find user for relay!  %d -> %d"
 msgstr ""
 
-#: src/botnet.c:1223
+#: src/botnet.c:1225
 #, c-format
 msgid "Could not link to %s.\n"
 msgstr ""
 
-#: src/botnet.c:1287
+#: src/botnet.c:1289
 #, c-format
 msgid "Aborting relay attempt to %s.\n"
 msgstr ""
 
-#: src/botnet.c:1288
+#: src/botnet.c:1290
 #, c-format
 msgid ""
 "You are now back on %s.\n"
 "\n"
 msgstr ""
 
-#: src/botnet.c:1289
+#: src/botnet.c:1291
 #, c-format
 msgid "Relay aborted: %s -> %s"
 msgstr ""
 
-#: src/botnet.c:1329
+#: src/botnet.c:1331
 #, c-format
 msgid "Lost dcc connection to [%s]%s/%d"
 msgstr ""
 
-#: src/botnet.c:1331
+#: src/botnet.c:1333
 #, c-format
 msgid "(Dropping relay attempt to %s)"
 msgstr ""
 
-#: src/botnet.c:1367
+#: src/botnet.c:1369
 msgid ""
 "Success!\n"
 "\n"
 "NOW CONNECTED TO RELAY BOT"
 msgstr ""
 
-#: src/botnet.c:1368
+#: src/botnet.c:1370
 msgid "(You can type *BYE* to prematurely close the connection.)"
 msgstr ""
 
-#: src/botnet.c:1369
+#: src/botnet.c:1371
 msgid "Relay link:"
 msgstr ""
 
-#: src/botnet.c:1376
+#: src/botnet.c:1378
 msgid "left the party line."
 msgstr ""
 
-#: src/botnet.c:1404
+#: src/botnet.c:1406
 msgid "Ended relay link"
 msgstr ""
 
-#: src/botnet.c:1406
+#: src/botnet.c:1408
 msgid ""
 "RELAY CONNECTION DROPPED.\n"
 "You are now back on"
 msgstr ""
 
-#: src/botnet.c:1413
+#: src/botnet.c:1415
 msgid "rejoined the party line."
 msgstr ""
 
-#: src/botnet.c:1428
+#: src/botnet.c:1430
 msgid "Lost dcc connection to"
 msgstr ""
 
-#: src/botnet.c:1433
+#: src/botnet.c:1435
 msgid "Dropping relay link to"
 msgstr ""
 
-#: src/botnet.c:1498
+#: src/botnet.c:1500
 msgid "Breaking connection to"
 msgstr ""
 
-#: src/botnet.c:1499
+#: src/botnet.c:1501
 msgid "You are now back on"
 msgstr ""
 
-#: src/botnet.c:1500
+#: src/botnet.c:1502
 msgid "Relay broken"
 msgstr ""
 
-#: src/botnet.c:1625 src/botnet.c:1629
+#: src/botnet.c:1627 src/botnet.c:1631
 msgid "Ping timeout"
 msgstr ""
 
-#: src/botnet.c:1653 src/botnet.c:1654 src/botnet.c:1659
+#: src/botnet.c:1655 src/botnet.c:1656 src/botnet.c:1661
 msgid "unleaflike behavior"
 msgstr ""
 
-#: src/botnet.c:1686
+#: src/botnet.c:1688
 msgid "Dropped bot"
 msgstr ""
 
@@ -729,7 +729,7 @@ msgstr ""
 #: modules/irc/msgcmds.c:717 modules/notes/cmdsnote.c:31
 #: modules/notes/cmdsnote.c:73 modules/notes/cmdsnote.c:153
 #: modules/notes/cmdsnote.c:187 modules/notes/cmdsnote.c:221
-#: modules/notes/notes.c:738 modules/notes/notes.c:774 src/cmds.c:2261
+#: modules/notes/notes.c:739 modules/notes/notes.c:775 src/cmds.c:2261
 #: src/cmds.c:2283 src/cmds.c:2550
 msgid "Usage"
 msgstr ""
@@ -1597,27 +1597,27 @@ msgstr ""
 msgid "No matching files.\n"
 msgstr ""
 
-#: modules/filesys/filedb3.c:1038
+#: modules/filesys/filedb3.c:1039
 msgid "Directory does not exist"
 msgstr ""
 
-#: modules/filesys/filedb3.c:1044
+#: modules/filesys/filedb3.c:1045
 msgid "File does not exist"
 msgstr ""
 
-#: modules/filesys/filedb3.c:1048
+#: modules/filesys/filedb3.c:1049
 msgid "File is not shared"
 msgstr ""
 
-#: modules/filesys/filedb3.c:1059
+#: modules/filesys/filedb3.c:1060
 msgid "(remote)"
 msgstr ""
 
-#: modules/filesys/filedb3.c:1062
+#: modules/filesys/filedb3.c:1063
 msgid "Error trying to send file"
 msgstr ""
 
-#: modules/filesys/filedb3.c:1086
+#: modules/filesys/filedb3.c:1087
 #, c-format
 msgid "Remote request for /%s%s%s (sending)"
 msgstr ""
@@ -1721,7 +1721,7 @@ msgid "Blanked"
 msgstr ""
 
 #: modules/filesys/files.c:921 modules/filesys/files.c:933
-#: modules/notes/notes.c:656 modules/notes/notes.c:659
+#: modules/notes/notes.c:657 modules/notes/notes.c:660
 msgid "Erased"
 msgstr ""
 
@@ -1778,7 +1778,7 @@ msgstr ""
 
 #: modules/filesys/filesys.c:604 modules/filesys/filesys.c:803
 #: modules/server/server.c:1360 modules/server/server.c:1404
-#: modules/transfer/transfer.c:663
+#: modules/transfer/transfer.c:664
 msgid "Failed to connect"
 msgstr ""
 
@@ -1809,7 +1809,7 @@ msgid "Refused DCC chat (+x but no file area)"
 msgstr ""
 
 #: modules/filesys/filesys.c:804 modules/server/server.c:1405
-#: modules/transfer/transfer.c:664
+#: modules/transfer/transfer.c:665
 msgid "DCC connection failed"
 msgstr ""
 
@@ -2309,7 +2309,7 @@ msgstr ""
 msgid "Changed notes forwarding for %s to: %s\n"
 msgstr ""
 
-#: modules/notes/cmdsnote.c:190 modules/notes/notes.c:742
+#: modules/notes/cmdsnote.c:190 modules/notes/notes.c:743
 msgid "# may be numbers and/or intervals separated by ;"
 msgstr ""
 
@@ -2337,7 +2337,7 @@ msgstr ""
 msgid "Not online; forwarded to %s.\n"
 msgstr ""
 
-#: modules/notes/notes.c:292 modules/notes/notes.c:804
+#: modules/notes/notes.c:292 modules/notes/notes.c:805
 msgid "Notes are not supported by this bot."
 msgstr ""
 
@@ -2345,11 +2345,11 @@ msgstr ""
 msgid "Sorry, that user has too many notes already."
 msgstr ""
 
-#: modules/notes/notes.c:302 modules/notes/notes.c:811
+#: modules/notes/notes.c:302 modules/notes/notes.c:812
 msgid "Cant create notefile.  Sorry."
 msgstr ""
 
-#: modules/notes/notes.c:303 modules/notes/notes.c:812
+#: modules/notes/notes.c:303 modules/notes/notes.c:813
 msgid "Notefile unreachable!"
 msgstr ""
 
@@ -2385,7 +2385,7 @@ msgstr ""
 msgid "You dont have that many messages"
 msgstr ""
 
-#: modules/notes/notes.c:558 modules/notes/notes.c:822
+#: modules/notes/notes.c:558 modules/notes/notes.c:823
 msgid "Use .notes read to read them."
 msgstr ""
 
@@ -2397,44 +2397,44 @@ msgstr ""
 msgid "Erased all notes"
 msgstr ""
 
-#: modules/notes/notes.c:657 modules/notes/notes.c:660
+#: modules/notes/notes.c:658 modules/notes/notes.c:661
 msgid "left"
 msgstr ""
 
-#: modules/notes/notes.c:779
+#: modules/notes/notes.c:780
 msgid "I don't know anyone by that name.\n"
 msgstr ""
 
-#: modules/notes/notes.c:782
+#: modules/notes/notes.c:783
 msgid "Thats a bot.  You cant leave notes for a bot."
 msgstr ""
 
-#: modules/notes/notes.c:797
+#: modules/notes/notes.c:798
 msgid "Outside note"
 msgstr ""
 
-#: modules/notes/notes.c:798 modules/notes/notes.c:818
+#: modules/notes/notes.c:799 modules/notes/notes.c:819
 msgid "Note delivered."
 msgstr ""
 
-#: modules/notes/notes.c:855 modules/notes/notes.c:915
+#: modules/notes/notes.c:856 modules/notes/notes.c:916
 msgid "For a list:"
 msgstr ""
 
-#: modules/notes/notes.c:863
+#: modules/notes/notes.c:864
 #, c-format
 msgid "### You have %d note%s waiting.\n"
 msgstr ""
 
-#: modules/notes/notes.c:864
+#: modules/notes/notes.c:865
 msgid "### Use '.notes read' to read them.\n"
 msgstr ""
 
-#: modules/notes/notes.c:877
+#: modules/notes/notes.c:878
 msgid "Notes will be stored."
 msgstr ""
 
-#: modules/notes/notes.c:912
+#: modules/notes/notes.c:913
 #, c-format
 msgid "NOTICE %s :You have %d note%s waiting on %s.\n"
 msgstr ""
@@ -2553,7 +2553,7 @@ msgstr ""
 msgid "Cant send userfile to you (internal error)"
 msgstr ""
 
-#: modules/transfer/transfer.c:657
+#: modules/transfer/transfer.c:658
 msgid "Failed connection; aborted userfile transfer."
 msgstr ""
 
