@@ -39,6 +39,7 @@ void core_config_init()
 	core_config.logfile_suffix = strdup(".%d%b%Y");
 
 	config_root = config_load("config.xml");
+	config_set_root("eggdrop", config_root);
 	config_get_table(core_config_vars, config_root, "eggdrop", 0, NULL);
 }
 

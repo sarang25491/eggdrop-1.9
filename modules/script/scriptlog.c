@@ -2,12 +2,12 @@
 
 static int script_putlog(char *text)
 {
-	return putlog("m", "*", "%s", text);
+	return putlog(-1, "*", "%s", text);
 }
 
 static int script_putloglev(char *level, char *chan, char *text)
 {
-	return putlog(level, chan, "%s", text);
+	return putlog(-1, chan, "%s", text);
 }
 
 script_command_t script_log_cmds[] = {

@@ -7,6 +7,7 @@
 
 #include "../egglib/egglib.h"
 #include <eggdrop/common.h>
+#include <eggdrop/eggconfig.h>
 #include <eggdrop/md5.h>
 #include <eggdrop/base64.h>
 #include <eggdrop/match.h>

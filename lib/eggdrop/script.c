@@ -22,7 +22,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: script.c,v 1.9 2003/01/02 21:33:13 wcc Exp $";
+static const char rcsid[] = "$Id: script.c,v 1.10 2003/02/14 07:06:19 stdarg Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -319,6 +319,34 @@ int script_unlink_vars(script_linked_var_t *table)
 		journal_del(EVENT_VAR, table, table);
 		for (i = 0; i < nscript_modules; i++) {
 			script_modules[i]->unlink_var(script_modules[i]->client_data, table);
+		}
+		table++;
+	}
+	return(0);
+}
+
+int script_create_raw_commands(script_raw_command_t *table)
+{
+	int i;
+
+	while (table->class && table->name) {
+		journal_add(EVENT_CMD, table, table);
+		for (i = 0; i < nscript_modules; i++) {
+			script_modules[i]->create_command(script_modules[i]->client_data, table);
+		}
+		table++;
+	}
+	return(0);
+}
+
+int script_delete_raw_commands(script_raw_command_t *table)
+{
+	int i;
+
+	while (table->class && table->name) {
+		journal_del(EVENT_CMD, table, table);
+		for (i = 0; i < nscript_modules; i++) {
+			script_modules[i]->delete_command(script_modules[i]->client_data, table);
 		}
 		table++;
 	}

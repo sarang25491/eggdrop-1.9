@@ -6,9 +6,50 @@
 #include "xml.h"
 #include "eggconfig.h"
 
+typedef struct {
+	char *handle;
+	void *root;
+} config_handle_t;
+
+static config_handle_t *roots = NULL;
+int nroots = 0;
+
 int config_init()
 {
 	return(0);
+}
+
+void *config_get_root(const char *handle)
+{
+	int i;
+
+	for (i = 0; i < nroots; i++) {
+		if (!strcasecmp(handle, roots[i].handle)) return(roots[i].root);
+	}
+	return(NULL);
+}
+
+int config_set_root(const char *handle, void *config_root)
+{
+	roots = realloc(roots, sizeof(*roots) * (nroots+1));
+	roots[nroots].handle = strdup(handle);
+	roots[nroots].root = config_root;
+	nroots++;
+	return(0);
+}
+
+int config_delete_root(const char *handle)
+{
+	int i;
+
+	for (i = 0; i < nroots; i++) {
+		if (!strcasecmp(handle, roots[i].handle)) {
+			memmove(roots+i, roots+i+1, sizeof(*roots) * (nroots-i-1));
+			nroots--;
+			return(0);
+		}
+	}
+	return(-1);
 }
 
 void *config_load(const char *fname)
@@ -40,6 +81,18 @@ int config_destroy(void *config_root)
 	xml_node_destroy(root);
 	free(root);
 	return(0);
+}
+
+void *config_lookup_section(void *config_root, ...)
+{
+	va_list args;
+	xml_node_t *root = config_root;
+
+	va_start(args, config_root);
+	root = xml_node_vlookup(root, args, 1);
+	va_end(args);
+
+	return(root);
 }
 
 int config_get_int(int *intptr, void *config_root, ...)
@@ -138,8 +191,8 @@ int config_set_table(config_var_t *table, void *config_root, ...)
 	if (!root) return(-1);
 
 	while (table->name) {
-		if (table->type == CONFIG_INT) config_set_int(*(char **)table->ptr, root, table->name, 0, NULL);
-		else if (table->type == CONFIG_STRING) config_set_str(*(int *)table->ptr, root, table->name, 0, NULL);
+		if (table->type == CONFIG_INT) config_set_int(*(int *)table->ptr, root, table->name, 0, NULL);
+		else if (table->type == CONFIG_STRING) config_set_str(*(char **)table->ptr, root, table->name, 0, NULL);
 		table++;
 	}
 	return(0);

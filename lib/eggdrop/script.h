@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: script.h,v 1.9 2003/01/02 21:33:13 wcc Exp $
+ * $Id: script.h,v 1.10 2003/02/14 07:06:19 stdarg Exp $
  */
 
 #ifndef _EGG_SCRIPT_H
@@ -174,6 +174,8 @@ extern int script_init();
 extern int script_load(char *filename);
 extern int script_link_vars(script_linked_var_t *table);
 extern int script_unlink_vars(script_linked_var_t *table);
+extern int script_create_raw_commands(script_raw_command_t *table);
+extern int script_delete_raw_commands(script_raw_command_t *table);
 extern int script_create_commands(script_command_t *table);
 extern int script_delete_commands(script_command_t *table);
 extern int script_get_arg(script_args_t *args, int num, script_var_t *var, int type);
