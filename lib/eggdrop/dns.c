@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dns.c,v 1.9 2004/12/10 19:00:45 lordares Exp $";
+static const char rcsid[] = "$Id: dns.c,v 1.10 2004/12/20 22:18:51 lordares Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -370,6 +370,7 @@ void expire_queries()
 	for (cache_id = 0; cache_id < ncache; cache_id++) {
 		if (cache_expired(cache_id)) {
 			cache_del(cache_id);
+			if (cache_id == ncache)  break;
 			cache_id--;
 		}
 	}
