@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.25 2004/07/29 19:48:12 darko Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.26 2004/08/05 00:17:58 darko Exp $";
  #endif
 
 #include "server.h"
@@ -36,6 +36,9 @@ int nchannels = 0;
 static bind_list_t channel_raw_binds[];
 
 static const char *channel_builtin_bools[32];
+static const char *channel_builtin_ints[];
+static const char *channel_builtin_coupplets[];
+static const char *channel_builtin_strings[];
 
 static channel_t chanset_defaults = {0};
 
@@ -143,6 +146,8 @@ static void free_all_online_stuff()
 int destroy_channel_record(const char *chan_name)
 {
 	channel_t *chan, *prev;
+	coupplet_t *cplt, *tmpcplt;
+	chanstring_t *cstr, *tmpcstr;
 
 	channel_lookup(chan_name, 0, &chan, &prev);
 	if (!chan)
@@ -160,7 +165,25 @@ int destroy_channel_record(const char *chan_name)
 	free(chan->name);
 	free_channel_online_stuff(chan);
 
-/* FIXME - Free non IRC related structures, but we don't have any at this time */
+	for (cplt = chan->builtin_ints; cplt; cplt = tmpcplt) {
+		tmpcplt = cplt->next;
+		free(cplt->name);
+		free(cplt);
+	}
+
+	for (cplt = chan->builtin_coupplets; cplt; cplt = tmpcplt) {
+		tmpcplt = cplt->next;
+		free(cplt->name);
+		free(cplt);
+	}
+
+	for (cstr = chan->builtin_strings; cstr; cstr = tmpcstr) {
+		tmpcstr = cstr->next;
+		free(cstr->name);
+		free(cstr->data);
+		free(cstr);
+	}
+
 	free(chan);
 	return 0;
 }
@@ -224,6 +247,7 @@ int channel_lookup(const char *chan_name, int create, channel_t **chanptr, chann
 	}
 
 	chan->builtin_bools = chanset_defaults.builtin_bools;
+/* FIXME - set other members to their respective default values (if any) */
 	chan->next = channel_head;
 	channel_head = chan;
 	*chanptr = chan;
@@ -1040,18 +1064,145 @@ static int channel_set_bool(channel_t *chanptr, const char *setting)
 	return 1;
 }
 
+static int channel_set_coupplet(coupplet_t *cplt, const char *value)
+{
+	unsigned long left, right;
+	char *endptr = NULL;
+	char *r, *l;
+
+	l = strdup(value);
+	if ((r = strchr(l, ':')) == NULL) {
+		free(l);
+		return 0;
+	}
+	*r++ = '\0';
+
+	left = strtoul(l, &endptr, 10);
+
+	if (!*l || *endptr) {
+		free(l);
+		return 0;
+	}
+
+	right = strtoul (r, &endptr, 10);
+
+	if (!*r || *endptr) {
+		free(l);
+		return 0;
+	}
+
+	cplt->left = left;
+	cplt->right = right;
+	free(l);
+	return 1;
+}
+
+static int channel_set_int(coupplet_t *cplt, const char *value)
+{
+	char *endptr = NULL;
+	unsigned long left;
+
+	left = strtoul(value, &endptr, 10);
+
+	if (*value && !*endptr) {
+		cplt->left = left;
+		return 1;
+	}
+
+	return 0;
+}
+
 int channel_set(channel_t *chanptr, const char *setting, const char *value)
 {
+	coupplet_t *cplt;
+	chanstring_t *cstr = NULL;
+	int i;
+
+	/* Is it one of the flags? (boolean, on|off) */
 	if (*setting == '+' || *setting == '-')
 		return channel_set_bool(chanptr, setting);
-	else
-		return 0;
+
+	/* It isn't, so let's check if it's a numeric setting of some sort. An int? */
+	for (cplt = chanptr->builtin_ints; cplt; cplt = cplt->next)
+		if (strcasecmp(cplt->name, setting) == 0)
+			return channel_set_int(cplt, value);
+
+	/* Or an int that is being set for the first time? */
+	for (i = 0; channel_builtin_ints[i]; i++)
+		if (strcasecmp(channel_builtin_ints[i], setting) == 0) {
+			/* Ok, it is - add record for it */
+			cplt = malloc(sizeof *cplt);
+			if (!channel_set_int(cplt, value)) {
+				free(cplt);
+				return 0;
+			}
+			cplt->name = strdup(channel_builtin_ints[i]);
+			if (chanptr->builtin_ints)
+				cplt->next = chanptr->builtin_ints;
+			else
+				cplt->next = NULL;
+			chanptr->builtin_ints = cplt;
+			return 1;
+		}
+
+	/* Maybe it's a coupplet: <setting> X:Y */
+	for (cplt = chanptr->builtin_coupplets; cplt; cplt = cplt->next)
+		if (strcasecmp(cplt->name, setting) == 0)
+			return channel_set_coupplet(cplt, value);
+
+	/* No luck for now. Is it a valid coupplet at all? */
+	for (i = 0; channel_builtin_coupplets[i]; i++)
+		if (strcasecmp(channel_builtin_coupplets[i], setting) == 0) {
+			/* Ah, it is - add record for it */
+			cplt = malloc(sizeof *cplt);
+			if (!channel_set_coupplet(cplt, value)) {
+				free(cplt);
+				return 0;
+			}
+			cplt->name = strdup(channel_builtin_coupplets[i]);
+			if (chanptr->builtin_coupplets)
+				cplt->next = chanptr->builtin_coupplets;
+			else
+				cplt->next = NULL;
+			chanptr->builtin_coupplets = cplt;
+			return 1;
+		}
+
+	/* Well, maybe it's one of the 'string' settings? */
+	for (cstr = chanptr->builtin_strings; cstr; cstr = cstr->next)
+		if (strcasecmp(cstr->name, setting) == 0) {
+			free(cstr->data);
+			cstr->data = strdup(value);
+			return 1;
+		}
+
+	/* Or one of the 'string' settings that just wasn't used till now? */
+	for (i = 0; channel_builtin_strings[i]; i++)
+		if (strcasecmp(channel_builtin_strings[i], setting) == 0) {
+			/* It was - add record for it */
+			cstr = malloc(sizeof *cstr);
+			cstr->data = strdup(value);
+			cstr->name = strdup(channel_builtin_strings[i]);
+			if (chanptr->builtin_strings)
+				cstr->next = chanptr->builtin_strings;
+			else
+				cstr->next = NULL;
+			chanptr->builtin_strings = cstr;
+			return 1;
+		}
+
+	/* Lastly, it can be one of user defined settings */
+/* FIXME - will be done in the next commit */
+
+	return 0;
 }
 
 int channel_info(partymember_t *p, const char *channame)
 {
+	static char hack_gettext[64]; /* Seems like gettext() messes %lu foramt */
 	channel_t *chan;
 	int i;
+	const int hgl = sizeof(hack_gettext) - 1;
 
 	if (channel_lookup(channame, 0, &chan, NULL) == -1) {
 		partymember_printf(p, _("Error: Invalid channel '%s'"), channame);
@@ -1060,11 +1211,40 @@ int channel_info(partymember_t *p, const char *channame)
 
 	partymember_printf(p, _("Information for channel '%s'"), channame);
 
-	partymember_printf(p, _("  Flags:"));
+	if (chan->builtin_bools) {
+		partymember_printf(p, _("  Flags:"));
+		for (i = 0; i < 32; i++)
+			if (chan->builtin_bools & (1 << i))
+				partymember_printf(p, _("    +%s"), channel_builtin_bools[i]);
+	}
 
-	for (i = 0; i < 32; i++)
-		if (chan->builtin_bools & (1 << i))
-			partymember_printf(p, _("    +%s"), channel_builtin_bools[i]);
+	if (chan->builtin_ints) {
+		coupplet_t *cplt;
+		partymember_printf(p, _("  Settings:"));
+		for (cplt = chan->builtin_ints; cplt; cplt = cplt->next) {
+			snprintf(hack_gettext, hgl, "%lu", cplt->left);
+			hack_gettext[hgl] = '\0';
+			partymember_printf(p, _("    %s:\t%s"), cplt->name, hack_gettext);
+		}
+	}
+	if (chan->builtin_coupplets) {
+		coupplet_t *cplt;
+		if (!chan->builtin_ints)
+			partymember_printf(p, _("  Settings:"));
+		for (cplt = chan->builtin_coupplets; cplt; cplt = cplt->next) {
+			snprintf(hack_gettext, hgl, "%lu:%lu", cplt->left, cplt->right);
+			hack_gettext[hgl] = '\0';
+			partymember_printf(p, _("    %s:\t%s"), cplt->name, hack_gettext);
+		}
+	}
+
+	if (chan->builtin_strings) {
+		chanstring_t *cstr;
+		if (!chan->builtin_coupplets && !chan->builtin_ints)
+			partymember_printf(p, _("  Settings:"));
+		for (cstr = chan->builtin_strings; cstr; cstr = cstr->next)
+			partymember_printf(p, _("    %s:\t%s"), cstr->name, cstr->data);
+	}
 
 	return BIND_RET_LOG;
 }
@@ -1072,6 +1252,10 @@ int channel_info(partymember_t *p, const char *channame)
 static int chanfile_save_channel(xml_node_t *root, channel_t *chan)
 {
 	xml_node_t *chan_node;
+	coupplet_t *cplt;
+	chanstring_t *cstr;
+	static char gettext_hack[64];
+	const int hgl = sizeof(gettext_hack) - 1;
 
 	int i, j;
 
@@ -1088,7 +1272,27 @@ static int chanfile_save_channel(xml_node_t *root, channel_t *chan)
 		if (*channel_builtin_bools == '\0')
 			continue;
 		if (chan->builtin_bools & (1 << i))
-			xml_node_set_str(channel_builtin_bools[i], chan_node, "flags", j++, 0);
+			xml_node_set_str(channel_builtin_bools[i], chan_node, "flag", j++, 0);
+	}
+
+	i = 0;
+	for (cplt = chan->builtin_ints; cplt ; cplt = cplt->next) {
+		xml_node_set_str(cplt->name, chan_node, "setting", i, "name", 0, 0);
+		snprintf(gettext_hack, sizeof gettext_hack, "%lu", cplt->left);
+		gettext_hack[hgl] = '\0';
+		xml_node_set_str(gettext_hack, chan_node, "setting", i++, "data", 0, 0);
+	}
+
+	for (cplt = chan->builtin_coupplets; cplt ; cplt = cplt->next) {
+		xml_node_set_str(cplt->name, chan_node, "setting", i, "name", 0, 0);
+		snprintf(gettext_hack, sizeof gettext_hack, "%lu:%lu", cplt->left, cplt->right);
+		gettext_hack[hgl] = '\0';
+		xml_node_set_str(gettext_hack, chan_node, "setting", i++, "data", 0, 0);
+	}
+
+	for (cstr = chan->builtin_strings; cstr ; cstr = cstr->next) {
+		xml_node_set_str(cstr->name, chan_node, "setting", i, "name", 0, 0);
+		xml_node_set_str(cstr->data, chan_node, "setting", i++, "data", 0, 0);
 	}
 
 	xml_node_append(root, chan_node);
@@ -1125,9 +1329,9 @@ int chanfile_save(const char *fname)
 static int chanfile_load(const char *fname)
 {
 	int i;
-	xml_node_t *doc, *root, *chan_node;
+	xml_node_t *doc, *root, *chan_node, *setting_node;
 	channel_t *chan = NULL;
-	char *tmpptr;
+	char *tmpptr, *tmp2ptr;
 
 	if (xml_load_file(fname?fname:"channels.xml", &doc, XML_TRIM_TEXT) != 0) {
 		putlog(LOG_MISC, "*", _("Failed to load channel file '%s': %s"), fname, xml_last_error());
@@ -1157,7 +1361,7 @@ static int chanfile_load(const char *fname)
 			continue;
 
 		j = 0;
-		while (xml_node_get_str(&tmpptr, chan_node, "flags", j++, 0) != -1) {
+		while (xml_node_get_str(&tmpptr, chan_node, "flag", j++, 0) != -1) {
 			int k;
 			if (j > 31)
 				continue;
@@ -1167,10 +1371,20 @@ static int chanfile_load(const char *fname)
 					break;
 				}
 		}
+
+		j = 0;
+		while ((setting_node = xml_node_lookup(chan_node, 0, "setting", j++, 0))) {
+			if (xml_node_get_str(&tmpptr, setting_node, "name", 0, 0) == -1)
+				continue;
+			if (xml_node_get_str(&tmp2ptr, setting_node, "data", 0, 0) == -1)
+				continue;
+			channel_set(chan, tmpptr, tmp2ptr);
+		}
 	}
 	return 0;
 }
 
+/* Updates info about various channel aspects, once we recive such info */
 void update_channel_structures()
 {
 	channel_t *chan;
@@ -1205,12 +1419,13 @@ static int channels_minutely()
 		return 0;
 
 	for (chan = channel_head; chan; chan = chan->next) {
-		if (chan->status & CHANNEL_JOINED &&
-		   chan->nmembers == 1 &&
-		   !chanptr_member_has_flag(current_server.nick, chan, 'o') &&
-		   !chanptr_member_has_flag(current_server.nick, chan, 'h') &&
-		   !(chan->builtin_bools & CHAN_INACTIVE) &&
-		   chan->builtin_bools & CHAN_CYCLE
+		/* +cycle */
+		if (chan->status & CHANNEL_JOINED && /* If we actaully are on channel */
+		   !(chan->builtin_bools & CHAN_INACTIVE) && /* and channel is not inactive */
+		   chan->builtin_bools & CHAN_CYCLE &&/* and channel is +cycle */
+		   chan->nmembers == 1 && /* and we are alone */
+		   !chanptr_member_has_flag(current_server.nick, chan, 'o') && /* and without */
+		   !chanptr_member_has_flag(current_server.nick, chan, 'h') /* (half)op status */
 		   ) {
 			putlog(LOG_MISC, "*", _("Cycling channel '%s' for ops."), chan->name);
 			printserv(SERVER_NORMAL, "PART %s\r\n", chan->name);
@@ -1221,6 +1436,7 @@ static int channels_minutely()
 	return 0;
 }
 
+/* Check if user has a given flag on channel pointed to by channel_t pointer */
 static int chanptr_member_has_flag(const char *nick, channel_t *chan, unsigned char c)
 {
 	channel_member_t *m;
@@ -1235,6 +1451,7 @@ static int chanptr_member_has_flag(const char *nick, channel_t *chan, unsigned c
 	return 0;
 }
 
+/* Check if user has a given flag on channel with given name */
 int channame_member_has_flag(const char *nick, const char *channame, unsigned char c)
 {
 	channel_t *chan = NULL;
@@ -1278,7 +1495,7 @@ static bind_list_t channel_raw_binds[] = {
    Do not remove setting, simply change it to empty string ""
    Do not add, there can only be 32 such settings */
 
-static const char *channel_builtin_bools[32] = {
+static const char *channel_builtin_bools[32] = { /* DDD */
 	"inactive", "cycle", "", "",
 	"", "", "", "",
 	"", "", "", "",
@@ -1288,3 +1505,26 @@ static const char *channel_builtin_bools[32] = {
 	"", "", "", "",
 	"", "", "", ""
 	};
+
+/* TBIL = To Be Implemented Later */
+
+static const char *channel_builtin_ints[] = {
+	"idle-kick", /* TBIL */
+	"ban-time", /* TBIL */
+	"invite-time", /* TBIL */
+	"exempt-time", /* TBIL */
+	NULL
+};
+
+static const char *channel_builtin_coupplets[] = {
+	"automode-delay", /* TBIL */
+	NULL
+};
+
+static const char *channel_builtin_strings[] = {
+	"need-op", /* TBIL */
+	"need-unban", /* TBIL */
+	"need-key", /* TBIL */
+	"need-invite", /* TBIL */
+	NULL
+};

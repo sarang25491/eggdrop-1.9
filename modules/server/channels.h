@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: channels.h,v 1.14 2004/07/29 19:48:12 darko Exp $
+ * $Id: channels.h,v 1.15 2004/08/05 00:17:58 darko Exp $
  */
 
 #ifndef _EGG_MOD_SERVER_CHANNELS_H_
@@ -27,6 +27,18 @@
 #define CHANNEL_BANLIST		0x2
 #define CHANNEL_NAMESLIST	0x4
 #define CHANNEL_JOINED		0x8
+
+typedef struct coupplet {
+	struct coupplet *next;
+	const char *name;
+	unsigned long left, right;
+} coupplet_t;
+
+typedef struct chanstring {
+	struct chanstring *next;
+	const char *name;
+	char *data;
+} chanstring_t;
 
 typedef struct {
 	char *nick;
@@ -85,7 +97,10 @@ typedef struct channel {
 	channel_member_t *member_head;	/* Member list. */
 	int nmembers;
 
-	unsigned long builtin_bools;	/* Channel settings (inactive, autovoice, etc..) */
+	unsigned long builtin_bools;	/* Channel flags (inactive, autovoice, etc..) */
+	coupplet_t *builtin_ints;	/* Channel settings of the form: <setting> X */
+	coupplet_t *builtin_coupplets;	/* Channel settings of the form: <setting> X:Y */
+	chanstring_t *builtin_strings;	/* Channel settings of the form: <setting> <anything> */
 } channel_t;
 
 extern channel_t *channel_head;
