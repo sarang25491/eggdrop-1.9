@@ -24,7 +24,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: cmds.c,v 1.103 2002/05/11 01:08:43 stdarg Exp $";
+static const char rcsid[] = "$Id: cmds.c,v 1.104 2002/05/26 08:34:13 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -33,8 +33,8 @@ static const char rcsid[] = "$Id: cmds.c,v 1.103 2002/05/11 01:08:43 stdarg Exp 
 #include "logfile.h"
 #include "misc.h"
 #include "cmdt.h"		/* cmd_t				*/
-#include "tclhash.h"		/* check_tcl_act, check_tcl_chpt, 
-				   check_tcl_chjn, check_tcl_chof	*/
+#include "core_binds.h"		/* check_bind_act, check_bind_chpt, 
+				   check_bind_chjn, check_bind_chof	*/
 #include "users.h"		/* get_user_by_host, set_user,
 				   USERENTRY_PASS			*/
 #include "botnet.h"		/* answer_local_whom, nextbot, tell_bots
@@ -336,7 +336,7 @@ static int cmd_me(struct userrec *u, int idx, char *par)
       dprintf(i, "* %s %s\n", dcc[idx].nick, par);
   botnet_send_act(idx, botnetnick, dcc[idx].nick,
 		  dcc[idx].u.chat->channel, par);
-  check_tcl_act(dcc[idx].nick, dcc[idx].u.chat->channel, par);
+  check_bind_act(dcc[idx].nick, dcc[idx].u.chat->channel, par);
   return(0);
 }
 
@@ -1766,7 +1766,7 @@ static int cmd_chat(struct userrec *u, int idx, char *par)
       return(0);
     } else {
       dprintf(idx, _("Leaving chat mode...\n"));
-      check_tcl_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock,
+      check_bind_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock,
 		     dcc[idx].u.chat->channel);
       chanout_but(-1, dcc[idx].u.chat->channel,
 		  "*** %s left the party line.\n",
@@ -1828,7 +1828,7 @@ static int cmd_chat(struct userrec *u, int idx, char *par)
     } else {
       oldchan = dcc[idx].u.chat->channel;
       if (oldchan >= 0)
-	check_tcl_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock, oldchan);
+	check_bind_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock, oldchan);
       if (!oldchan) {
 	chanout_but(-1, 0, "*** %s left the party line.\n", dcc[idx].nick);
       } else if (oldchan > 0) {
@@ -1842,7 +1842,7 @@ static int cmd_chat(struct userrec *u, int idx, char *par)
 	dprintf(idx, _("Joining channel '%s'...\n"), arg);
 	chanout_but(-1, newchan, "*** %s joined the channel.\n", dcc[idx].nick);
       }
-      check_tcl_chjn(botnetnick, dcc[idx].nick, newchan, geticon(dcc[idx].user),
+      check_bind_chjn(botnetnick, dcc[idx].nick, newchan, geticon(dcc[idx].user),
 		     dcc[idx].sock, dcc[idx].host);
       if (newchan < 100000)
 	botnet_send_join_idx(idx, oldchan);
@@ -2663,9 +2663,9 @@ static int cmd_whoami(struct userrec *u, int idx, char *par)
 static int cmd_quit(struct userrec *u, int idx, char *text)
 {
   if (dcc[idx].u.chat->channel >= 0 && dcc[idx].u.chat->channel < GLOBAL_CHANS)
-    check_tcl_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock,
+    check_bind_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock,
 		   dcc[idx].u.chat->channel);
-  check_tcl_chof(dcc[idx].nick, dcc[idx].sock);
+  check_bind_chof(dcc[idx].nick, dcc[idx].sock);
   dprintf(idx, _("*** Ja mata!\n"));
   flush_lines(idx, dcc[idx].u.chat);
   putlog(LOG_MISC, "*", _("DCC connection closed (%s!%s)"), dcc[idx].nick,

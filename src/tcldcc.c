@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tcldcc.c,v 1.64 2002/05/12 06:23:39 stdarg Exp $";
+static const char rcsid[] = "$Id: tcldcc.c,v 1.65 2002/05/26 08:34:13 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -32,8 +32,8 @@ static const char rcsid[] = "$Id: tcldcc.c,v 1.64 2002/05/12 06:23:39 stdarg Exp
 #include "logfile.h"
 #include "misc.h"
 #include "cmdt.h"		/* cmd_t				*/
-#include "tclhash.h"		/* check_tcl_chpt, check_tcl_chjn,
-				   check_tcl_bcst, check_tcl_chof	*/
+#include "core_binds.h"		/* check_bind_chpt, check_bind_chjn,
+				   check_bind_bcst, check_bind_chof	*/
 #include "botnet.h"		/* nextbot, botlink, botunlink, lastbot	*/
 #include "chanprog.h"		/* masktype, logmodes			*/
 #include "cmds.h"		/* stripmasktype, stripmodes		*/
@@ -164,11 +164,11 @@ static int script_setchan(int idx, int chan)
 
   if (oldchan >= 0) {
     if ((chan >= GLOBAL_CHANS) && (oldchan < GLOBAL_CHANS)) botnet_send_part_idx(idx, "*script*");
-    check_tcl_chpt(botnetnick, dcc[idx].nick, idx, oldchan);
+    check_bind_chpt(botnetnick, dcc[idx].nick, idx, oldchan);
   }
   dcc[idx].u.chat->channel = chan;
   if (chan < GLOBAL_CHANS) botnet_send_join_idx(idx, oldchan);
-  check_tcl_chjn(botnetnick, dcc[idx].nick, chan, geticon(dcc[idx].user),
+  check_bind_chjn(botnetnick, dcc[idx].nick, chan, geticon(dcc[idx].user),
 	   idx, dcc[idx].host);
   return(0);
 }
@@ -178,7 +178,7 @@ static int script_dccputchan(int chan, char *msg)
   if ((chan < 0) || (chan > 199999)) return(1);
   chanout_but(-1, chan, "*** %s\n", msg);
   botnet_send_chan(-1, botnetnick, NULL, chan, msg);
-  check_tcl_bcst(botnetnick, chan, msg);
+  check_bind_bcst(botnetnick, chan, msg);
   return(0);
 }
 
@@ -307,11 +307,11 @@ static int script_control(int idx, script_callback_t *callback)
     if (dcc[idx].u.chat->channel >= 0) {
       chanout_but(idx, dcc[idx].u.chat->channel, "*** %s has gone.\n",
 		  dcc[idx].nick);
-      check_tcl_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock,
+      check_bind_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock,
 		     dcc[idx].u.chat->channel);
       botnet_send_part_idx(idx, "gone");
     }
-    check_tcl_chof(dcc[idx].nick, dcc[idx].sock);
+    check_bind_chof(dcc[idx].nick, dcc[idx].sock);
   }
 
 	if (dcc[idx].type == &DCC_SCRIPT) {
@@ -364,9 +364,9 @@ static int script_killdcc(int idx, char *reason)
 		reason ? ": " : "", reason ? reason : "");
     botnet_send_part_idx(idx, reason ? reason : "");
     if ((dcc[idx].u.chat->channel >= 0) && (dcc[idx].u.chat->channel < GLOBAL_CHANS)) {
-      check_tcl_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock, dcc[idx].u.chat->channel);
+      check_bind_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock, dcc[idx].u.chat->channel);
     }
-    check_tcl_chof(dcc[idx].nick, dcc[idx].sock);
+    check_bind_chof(dcc[idx].nick, dcc[idx].sock);
     /* Notice is sent to the party line, the script can add a reason. */
   }
   killsock(dcc[idx].sock);

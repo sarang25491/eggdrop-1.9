@@ -27,7 +27,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: botnet.c,v 1.61 2002/05/17 07:29:25 stdarg Exp $";
+static const char rcsid[] = "$Id: botnet.c,v 1.62 2002/05/26 08:34:13 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -37,10 +37,10 @@ static const char rcsid[] = "$Id: botnet.c,v 1.61 2002/05/17 07:29:25 stdarg Exp
 #include "misc.h"
 #include "dns.h"
 #include "cmdt.h"		/* cmd_t				*/
-#include "tclhash.h"		/* find_bind_table2, add_builtins2,
-				   check_tcl_disc, check_tcl_chpt,
-				   check_tcl_chof, check_tcl_chon,
-				   check_tcl_chjn			*/
+#include "tclhash.h"		/* add_builtins2	*/
+#include "core_binds.h"		/* check_bind_disc, check_bind_chpt,
+				   check_bind_chof, check_bind_chon,
+				   check_bind_chjn			*/
 #include "users.h"		/* getuser, get_user_by_handle, is_bot  */
 #include "botmsg.h"		/* tandout_bot				*/
 #include "botnet.h"		/* bot_idle, bot_away, bot_join		*/ 
@@ -353,7 +353,7 @@ void rembot(char *who)
   if (!*ptr)
     /* May have just .unlink *'d */
     return;
-  check_tcl_disc(who);
+  check_bind_disc(who);
 
   u = get_user_by_handle(userlist, who);
   if (u != NULL)
@@ -402,7 +402,7 @@ void rempartybot(char *bot)
   for (i = 0; i < parties; i++)
     if (!strcasecmp(party[i].bot, bot)) {
       if (party[i].chan >= 0) {
-        check_tcl_chpt(bot, party[i].nick, party[i].sock, party[i].chan);
+        check_bind_chpt(bot, party[i].nick, party[i].sock, party[i].chan);
       }
       remparty(bot, party[i].sock);
       i--;
@@ -1005,7 +1005,7 @@ int botunlink(int idx, char *nick, char *reason)
       parties--;
       /* assert? */
       if (party[i].chan >= 0) {
-        check_tcl_chpt(party[i].bot, party[i].nick, party[i].sock,
+        check_bind_chpt(party[i].bot, party[i].nick, party[i].sock,
 		       party[i].chan);
       }
     }
@@ -1393,10 +1393,10 @@ static void cont_tandem_relay(int idx, char *buf, register int i)
 		dcc[uidx].nick, _("left the party line."));
     if (dcc[uidx].u.chat->channel < 100000)
       botnet_send_part_idx(uidx, NULL);
-    check_tcl_chpt(botnetnick, dcc[uidx].nick, dcc[uidx].sock,
+    check_bind_chpt(botnetnick, dcc[uidx].nick, dcc[uidx].sock,
 		   dcc[uidx].u.chat->channel);
   }
-  check_tcl_chof(dcc[uidx].nick, uidx);
+  check_bind_chof(dcc[uidx].nick, uidx);
   dcc[uidx].type = &DCC_RELAYING;
   dcc[uidx].u.relay = ri;
 }
@@ -1431,8 +1431,8 @@ static void eof_dcc_relay(int idx)
     if (dcc[j].u.chat->channel < 100000)
       botnet_send_join_idx(j, -1);
   }
-  check_tcl_chon(dcc[j].nick, j);
-  check_tcl_chjn(botnetnick, dcc[j].nick, dcc[j].u.chat->channel,
+  check_bind_chon(dcc[j].nick, j);
+  check_bind_chjn(botnetnick, dcc[j].nick, dcc[j].u.chat->channel,
 		 geticon(dcc[j].user), dcc[j].sock, dcc[j].host);
   killsock(dcc[idx].sock);
   lostdcc(idx);
@@ -1526,9 +1526,9 @@ static void dcc_relaying(int idx, char *buf, int j)
   free(dcc[idx].u.relay);
   dcc[idx].u.chat = ci;
   dcc[idx].type = &DCC_CHAT;
-  check_tcl_chon(dcc[idx].nick, idx);
+  check_bind_chon(dcc[idx].nick, idx);
   if (dcc[idx].u.chat->channel >= 0) {
-    check_tcl_chjn(botnetnick, dcc[idx].nick, dcc[idx].u.chat->channel,
+    check_bind_chjn(botnetnick, dcc[idx].nick, dcc[idx].u.chat->channel,
 		   geticon(dcc[idx].user), dcc[idx].sock, dcc[idx].host);
   }
   killsock(dcc[j].sock);
@@ -1716,13 +1716,13 @@ void restart_chons()
   /* Dump party line members */
   for (i = 0; i < dcc_total; i++) {
     if (dcc[i].type == &DCC_CHAT) {
-      check_tcl_chon(dcc[i].nick, i);
-      check_tcl_chjn(botnetnick, dcc[i].nick, dcc[i].u.chat->channel,
+      check_bind_chon(dcc[i].nick, i);
+      check_bind_chjn(botnetnick, dcc[i].nick, dcc[i].u.chat->channel,
 		     geticon(dcc[i].user), dcc[i].sock, dcc[i].host);
     }
   }
   for (i = 0; i < parties; i++) {
-    check_tcl_chjn(party[i].bot, party[i].nick, party[i].chan,
+    check_bind_chjn(party[i].bot, party[i].nick, party[i].chan,
 		   party[i].flag, party[i].sock, party[i].from);
   }
 }

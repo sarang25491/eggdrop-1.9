@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: filesys.c,v 1.14 2002/05/19 04:41:31 stdarg Exp $";
+static const char rcsid[] = "$Id: filesys.c,v 1.15 2002/05/26 08:34:13 stdarg Exp $";
 #endif
 
 #include <fcntl.h>
@@ -193,7 +193,7 @@ static int got_files_cmd(int idx, char *msg)
 {
   char *code;
 
-  strcpy(msg, check_tcl_filt(idx, msg));
+  strcpy(msg, check_bind_filt(idx, msg));
   if (!msg[0])
     return 1;
   if (msg[0] == '.')
@@ -208,7 +208,7 @@ static void dcc_files(int idx, char *buf, int i)
       detect_dcc_flood(&dcc[idx].timeval, dcc[idx].u.file->chat, idx))
     return;
   dcc[idx].timeval = now;
-  strcpy(buf, check_tcl_filt(idx, buf));
+  strcpy(buf, check_bind_filt(idx, buf));
   if (!buf[0])
     return;
   touch_laston(dcc[idx].user, "filearea", now);

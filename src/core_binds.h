@@ -19,14 +19,31 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: core_binds.h,v 1.2 2002/05/05 16:40:38 tothwolf Exp $
+ * $Id: core_binds.h,v 1.3 2002/05/26 08:34:13 stdarg Exp $
  */
 
-#ifndef _EGG_CORE_BINDS_H
-#define _EGG_CORE_BINDS_H
+#ifndef _CORE_BINDS_H_
+#define _CORE_BINDS_H_
 
 void core_binds_init();
 void check_bind_time(struct tm *tm);
 void check_bind_event(char *event);
+void check_bind_dcc(const char *, int, const char *);
+void check_bind_chjn(const char *, const char *, int, char, int, const char *);
+void check_bind_chpt(const char *, const char *, int, int);
+void check_bind_bot(const char *, const char *, const char *);
+void check_bind_link(const char *, const char *);
+void check_bind_disc(const char *);
+const char *check_bind_filt(int, const char *);
+int check_bind_note(const char *, const char *, const char *);
+void check_bind_listen(const char *, int);
+void check_bind_time(struct tm *);
+void check_bind_nkch(const char *, const char *);
+void check_bind_away(const char *, int, const char *);
+int check_bind_chat(const char *, int, const char *);
+void check_bind_act(const char *, int, const char *);
+void check_bind_bcst(const char *, int, const char *);
+void check_bind_chon(char *, int);
+void check_bind_chof(char *, int);
 
-#endif				/* !_EGG_CORE_BINDS_H */
+#endif				/* !_CORE_BINDS_H_ */

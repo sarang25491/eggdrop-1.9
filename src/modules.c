@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: modules.c,v 1.112 2002/05/26 02:49:29 stdarg Exp $";
+static const char rcsid[] = "$Id: modules.c,v 1.113 2002/05/26 08:34:13 stdarg Exp $";
 #endif
 
 #include "main.h"		/* NOTE: when removing this, include config.h */
@@ -36,11 +36,8 @@ static const char rcsid[] = "$Id: modules.c,v 1.112 2002/05/26 02:49:29 stdarg E
 #include "misc.h"
 #include "dns.h"
 #include "cmdt.h"		/* cmd_t				*/
-#include "tclhash.h"		/* add_builtins2, rem_builtins2,
-				   find_bind_table2, check_bind,
-				   BT_load, BT_unload, add_bind_table2,
-				   check_tcl_filt, check_tcl_chjn,
-				   check_tcl_chon, del_bind_table2	*/
+#include "tclhash.h"
+#include "core_binds.h"
 #include "botnet.h"		/* updatebot, nextbot, zapfbot,
 				   in_chain				*/
 #include "botmsg.h"		/* add_note				*/
@@ -390,7 +387,7 @@ Function global_table[] =
   (Function) 0,
   (Function) 0,
   (Function) & do_restart,	/* int					*/
-  (Function) check_tcl_filt,
+  (Function) check_bind_filt,
   /* 172 - 175 */
   (Function) add_hook,
   (Function) del_hook,
@@ -443,7 +440,7 @@ Function global_table[] =
   (Function) botname,
   /* 212 - 215 */
   (Function) 0,			/* remove_gunk() -- UNUSED! (drummer)	*/
-  (Function) check_tcl_chjn,
+  (Function) check_bind_chjn,
   (Function) 0,
   (Function) isowner,
   /* 216 - 219 */

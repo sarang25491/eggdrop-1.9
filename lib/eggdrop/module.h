@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: module.h,v 1.23 2002/05/26 02:49:28 stdarg Exp $
+ * $Id: module.h,v 1.24 2002/05/26 08:34:13 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_MODULE_H
@@ -106,7 +106,7 @@
 /* #define add_bind_table ((p_tcl_bind_list(*)(const char *,int,Function))egg->global[8]) */
 /* #define del_bind_table ((void (*) (p_tcl_bind_list))egg->global[9]) */
 /* #define find_bind_table ((p_tcl_bind_list(*)(const char *))egg->global[10]) */
-/* #define check_tcl_bind ((int (*) (p_tcl_bind_list,const char *,struct flag_record *,const char *, int))egg->global[11]) */
+/* #define check_bind_bind ((int (*) (p_tcl_bind_list,const char *,struct flag_record *,const char *, int))egg->global[11]) */
 /* 12 - 15 */
 /* #define add_builtins ((int (*) (p_tcl_bind_list, cmd_t *))egg->global[12]) */
 /* #define rem_builtins ((int (*) (p_tcl_bind_list, cmd_t *))egg->global[13]) */
@@ -306,7 +306,7 @@
 /* 168: expected_memory -- UNUSED (Tothwolf) */
 /* 169: tell_mem_status -- UNUSED (Tothwolf) */
 #define do_restart (*(int *)(egg->global[170]))
-#define check_tcl_filt ((const char *(*)(int, const char *))egg->global[171])
+#define check_bind_filt ((const char *(*)(int, const char *))egg->global[171])
 /* 172 - 175 */
 #define add_hook(a,b) (((void (*) (int, Function))egg->global[172])(a,b))
 #define del_hook(a,b) (((void (*) (int, Function))egg->global[173])(a,b))
@@ -359,7 +359,7 @@
 #define botname ((char *)(egg->global[211]))
 /* 212 - 215 */
 /* 212: remove_gunk() -- UNUSED (drummer) */
-#define check_tcl_chjn ((void (*) (const char *,const char *,int,char,int,const char *))egg->global[213])
+#define check_bind_chjn ((void (*) (const char *,const char *,int,char,int,const char *))egg->global[213])
 /* 214: sanitycheck_dcc() -- UNUSED (guppy) */
 #define isowner ((int (*)(char *))egg->global[215])
 /* 216 - 219 */

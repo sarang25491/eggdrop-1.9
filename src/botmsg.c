@@ -26,7 +26,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: botmsg.c,v 1.36 2002/05/12 06:24:46 stdarg Exp $";
+static const char rcsid[] = "$Id: botmsg.c,v 1.37 2002/05/26 08:34:13 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -34,7 +34,7 @@ static const char rcsid[] = "$Id: botmsg.c,v 1.36 2002/05/12 06:24:46 stdarg Exp
 #include "misc.h"
 #include "modules.h"	/* match_noterej, storenote			*/
 #include "cmdt.h"	/* cmd_t					*/
-#include "tclhash.h"	/* check_tcl_note				*/
+#include "core_binds.h"	/* check_bind_note				*/
 #include "users.h"	/* bot_flags, get_user_by_handle, is_bot	*/
 #include "botnet.h"	/* lastbot, getparty, nextbot			*/
 #include "botcmd.h"	/* add_note					*/
@@ -708,7 +708,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
     sock = atoi(ss);
   /* Don't process if there's a note binding for it */
   if (idx != (-2)) {		/* Notes from bots don't trigger it */
-    if (check_tcl_note(from, to, msg)) {
+    if (check_bind_note(from, to, msg)) {
       if ((idx >= 0) && (echo))
 	dprintf(idx, "-> %s: %s\n", to, msg);
       return NOTE_TCL;

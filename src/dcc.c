@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dcc.c,v 1.88 2002/05/16 22:56:41 stdarg Exp $";
+static const char rcsid[] = "$Id: dcc.c,v 1.89 2002/05/26 08:34:13 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -37,10 +37,11 @@ static const char rcsid[] = "$Id: dcc.c,v 1.88 2002/05/16 22:56:41 stdarg Exp $"
 #include "dns.h"
 #include "misc.h"
 #include "cmdt.h"	/* cmd_t				*/
-#include "tclhash.h"	/* check_tcl_chof, check_tcl_filt, 
-			   check_tcl_dcc, check_tcl_chat, 
-			   check_tcl_chjn, check_tcl_chon,
-			   check_tcl_listen				*/
+#include "tclhash.h"	/* BIND_RET_BREAK	*/
+#include "core_binds.h"	/* check_bind_chof, check_bind_filt, 
+			   check_bind_dcc, check_bind_chat, 
+			   check_bind_chjn, check_bind_chon,
+			   check_bind_listen				*/
 #include "users.h"	/* match_ignore, addignore, get_user_by_host	*/
 #include "chanprog.h"	/* reaffirm_owners				*/
 #include "botnet.h"	/* in_chain, dump_links, addbot, nextbot, 
@@ -277,7 +278,7 @@ dprintf(idx, "error Non-matching handle length: mine %d, yours 9\n",
   dcc[idx].type = &DCC_BOT;
   addbot(dcc[idx].nick, dcc[idx].nick, botnetnick, '-',
 	 dcc[idx].u.bot->numver);
-  check_tcl_link(dcc[idx].nick, botnetnick);
+  check_bind_link(dcc[idx].nick, botnetnick);
   snprintf(x, sizeof x, "v %d", dcc[idx].u.bot->numver);
   bot_share(idx, x);
   dprintf(idx, "el\n");
@@ -886,10 +887,10 @@ static void eof_dcc_chat(int idx)
 		dcc[idx].nick);
     if (dcc[idx].u.chat->channel < 100000)
       botnet_send_part_idx(idx, "lost dcc link");
-    check_tcl_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock,
+    check_bind_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock,
 		   dcc[idx].u.chat->channel);
   }
-  check_tcl_chof(dcc[idx].nick, idx);
+  check_bind_chof(dcc[idx].nick, idx);
   killsock(dcc[idx].sock);
   lostdcc(idx);
 }
@@ -909,7 +910,7 @@ static void dcc_chat(int idx, char *buf, int i)
 
   dcc[idx].timeval = now;
 
-  strcpy(buf, check_tcl_filt(idx, buf));
+  strcpy(buf, check_bind_filt(idx, buf));
 
     /* Check for beeps and cancel annoying ones */
     v = buf;
@@ -953,7 +954,7 @@ static void dcc_chat(int idx, char *buf, int i)
 	if (iscommand) buf++;
 	v = newsplit(&buf);
 	rmspace(buf);
-	check_tcl_dcc(v, idx, buf);
+	check_bind_dcc(v, idx, buf);
     }
     else if (buf[0] == ',') {
 	int me = 0;
@@ -995,7 +996,7 @@ static void dcc_chat(int idx, char *buf, int i)
     } else {
 	int r;
 
-	r = check_tcl_chat(dcc[idx].nick, dcc[idx].u.chat->channel, buf);
+	r = check_bind_chat(dcc[idx].nick, dcc[idx].u.chat->channel, buf);
 	if (r & BIND_RET_BREAK) return;
 
 	if (dcc[idx].u.chat->away != NULL)
@@ -1721,10 +1722,10 @@ static void dcc_script(int idx, char *buf, int len)
 	chanout_but(-1, dcc[idx].u.chat->channel, _("*** %s has joined the party line.\n"), dcc[idx].nick);
 	if (dcc[idx].u.chat->channel < 10000)
 	  botnet_send_join_idx(idx, -1);
-	check_tcl_chjn(botnetnick, dcc[idx].nick, dcc[idx].u.chat->channel,
+	check_bind_chjn(botnetnick, dcc[idx].nick, dcc[idx].u.chat->channel,
 		       geticon(dcc[idx].user), dcc[idx].sock, dcc[idx].host);
       }
-      check_tcl_chon(dcc[idx].nick, idx);
+      check_bind_chon(dcc[idx].nick, idx);
     }
   }
 }
@@ -1998,7 +1999,7 @@ void dcc_telnet_got_ident(int i, char *host)
     dcc[i].type = &DCC_SOCKET;
     dcc[i].u.other = NULL;
     strcpy(dcc[i].nick, "*");
-    check_tcl_listen(dcc[idx].host, dcc[i].sock);
+    check_bind_listen(dcc[idx].host, dcc[i].sock);
     return;
   }
   /* Do not buffer data anymore. All received and stored data is passed

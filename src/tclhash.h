@@ -20,11 +20,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: tclhash.h,v 1.31 2002/05/26 02:49:29 stdarg Exp $
+ * $Id: tclhash.h,v 1.32 2002/05/26 08:34:13 stdarg Exp $
  */
 
-#ifndef _EGG_TCLHASH_H
-#define _EGG_TCLHASH_H
+#ifndef _TCLHASH_H_
+#define _TCLHASH_H_
 
 #include "flags.h"		/* flag_record		*/
 
@@ -48,7 +48,7 @@
 #define BIND_RET_LOG 1
 #define BIND_RET_BREAK 2
 
-/* This holds the information of a bind entry. */
+/* This holds the information for a bind entry. */
 typedef struct bind_entry_b {
 	struct bind_entry_b *next, *prev;
 	struct flag_record user_flags;
@@ -77,25 +77,6 @@ typedef struct bind_table_b {
 
 void kill_binds(void);
 
-void check_tcl_dcc(const char *, int, const char *);
-void check_tcl_chjn(const char *, const char *, int, char, int, const char *);
-void check_tcl_chpt(const char *, const char *, int, int);
-void check_tcl_bot(const char *, const char *, const char *);
-void check_tcl_link(const char *, const char *);
-void check_tcl_disc(const char *);
-const char *check_tcl_filt(int, const char *);
-int check_tcl_note(const char *, const char *, const char *);
-void check_tcl_listen(const char *, int);
-void check_tcl_time(struct tm *);
-void check_tcl_nkch(const char *, const char *);
-void check_tcl_away(const char *, int, const char *);
-void check_tcl_event(const char *);
-int check_tcl_chat(const char *, int, const char *);
-void check_tcl_act(const char *, int, const char *);
-void check_tcl_bcst(const char *, int, const char *);
-void check_tcl_chon(char *, int);
-void check_tcl_chof(char *, int);
-
 int check_bind(bind_table_t *table, const char *match, struct flag_record *_flags, ...);
 
 bind_table_t *bind_table_add(const char *name, int nargs, const char *syntax, int match_type, int flags);
@@ -116,4 +97,4 @@ void rem_builtins(const char *table_name, cmd_t *cmds);
 
 #endif				/* !MAKING_MODS */
 
-#endif				/* !_EGG_TCLHASH_H */
+#endif				/* !_TCLHASH_H_ */

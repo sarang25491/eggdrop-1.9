@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: console.c,v 1.9 2002/05/17 07:29:23 stdarg Exp $";
+static const char rcsid[] = "$Id: console.c,v 1.10 2002/05/26 08:34:13 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "console"
@@ -258,7 +258,7 @@ static int console_chon(char *handle, int idx)
     if ((dcc[idx].u.chat->channel >= 0) &&
 	(dcc[idx].u.chat->channel < GLOBAL_CHANS)) {
       botnet_send_join_idx(idx, -1);
-      check_tcl_chjn(botnetnick, dcc[idx].nick, dcc[idx].u.chat->channel,
+      check_bind_chjn(botnetnick, dcc[idx].nick, dcc[idx].u.chat->channel,
 		     geticon(dcc[idx].user), dcc[idx].sock, dcc[idx].host);
     }
     if (info_party) {

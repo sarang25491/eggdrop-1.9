@@ -27,7 +27,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dccutil.c,v 1.53 2002/05/16 22:56:41 stdarg Exp $";
+static const char rcsid[] = "$Id: dccutil.c,v 1.54 2002/05/26 08:34:13 stdarg Exp $";
 #endif
 
 #include <sys/stat.h>
@@ -40,8 +40,8 @@ static const char rcsid[] = "$Id: dccutil.c,v 1.53 2002/05/16 22:56:41 stdarg Ex
 #include "misc.h"
 #include "cmdt.h"		/* cmd_t				*/
 #include "net.h"		/* tputs, killsock			*/
-#include "tclhash.h"		/* check_tcl_chon, check_tcl_chjn,
-				   check_tcl_chof, check_tcl_away	*/
+#include "core_binds.h"		/* check_bind_chon, check_bind_chjn,
+				   check_bind_chof, check_bind_away	*/
 #include "dccutil.h"		/* prototypes				*/
 
 extern struct dcc_t	*dcc;
@@ -210,7 +210,7 @@ void dcc_chatter(int idx)
   dcc[idx].u.chat->channel = 234567;
   j = dcc[idx].sock;
   strcpy(dcc[idx].u.chat->con_chan, "***");
-  check_tcl_chon(dcc[idx].nick, idx);
+  check_bind_chon(dcc[idx].nick, idx);
   /* Still there? */
   if ((idx >= dcc_total) || (dcc[idx].sock != j))
     return;			/* Nope */
@@ -231,7 +231,7 @@ void dcc_chatter(int idx)
 	  botnet_send_join_idx(idx, -1);
 	}
       }
-      check_tcl_chjn(botnetnick, dcc[idx].nick, dcc[idx].u.chat->channel,
+      check_bind_chjn(botnetnick, dcc[idx].nick, dcc[idx].u.chat->channel,
 		     geticon(dcc[idx].user), dcc[idx].sock, dcc[idx].host);
     }
     /* But *do* bother with sending it locally */
@@ -350,7 +350,7 @@ void not_away(int idx)
   }
   dprintf(idx, "You're not away any more.\n");
   free_null(dcc[idx].u.chat->away);
-  check_tcl_away(botnetnick, dcc[idx].sock, NULL);
+  check_bind_away(botnetnick, dcc[idx].sock, NULL);
 }
 
 void set_away(int idx, char *s)
@@ -374,7 +374,7 @@ void set_away(int idx, char *s)
     }
   }
   dprintf(idx, "You are now away.\n");
-  check_tcl_away(botnetnick, dcc[idx].sock, s);
+  check_bind_away(botnetnick, dcc[idx].sock, s);
 }
 
 /* Make a password, 10-15 random letters and digits
@@ -471,7 +471,7 @@ int detect_dcc_flood(time_t * timer, struct chat_info *chat, int idx)
 	if (chat->channel < 100000)
 	  botnet_send_part_idx(idx, x);
       }
-      check_tcl_chof(dcc[idx].nick, dcc[idx].sock);
+      check_bind_chof(dcc[idx].nick, dcc[idx].sock);
       if ((dcc[idx].sock != STDOUT) || backgrd) {
 	killsock(dcc[idx].sock);
 	lostdcc(idx);
@@ -507,7 +507,7 @@ void do_boot(int idx, char *by, char *reason)
     if (dcc[idx].u.chat->channel < 100000)
       botnet_send_part_idx(idx, x);
   }
-  check_tcl_chof(dcc[idx].nick, dcc[idx].sock);
+  check_bind_chof(dcc[idx].nick, dcc[idx].sock);
   if ((dcc[idx].sock != STDOUT) || backgrd) {
     killsock(dcc[idx].sock);
     lostdcc(idx);
