@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dns.c,v 1.7 2004/12/09 04:53:30 lordares Exp $";
+static const char rcsid[] = "$Id: dns.c,v 1.8 2004/12/09 06:43:32 lordares Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -67,7 +67,9 @@ typedef struct dns_server {
 
 /* Entries from hosts */
 typedef struct {
-	char *host, *ip;
+	char *host;
+	char *ip;
+	time_t expiretime;
 } dns_host_t;
 
 static int query_id = 1;
@@ -84,6 +86,7 @@ static char separators[] = " ,\t\r\n";
 static int dns_idx = -1;
 static const char *dns_ip = NULL;
 
+static void del_host(int id);
 static int make_header(char *buf, int id);
 static int cut_host(const char *host, char *query);
 static int reverse_ip(const char *host, char *reverse);
@@ -296,6 +299,21 @@ static int dns_on_eof(void *client_data, int idx, int err, const char *errmsg)
 }
 
 
+void expire_queries()
+{
+	int i = 0, now = 0;
+
+	now = timer_get_now_sec(NULL);
+
+	for (i = 0; i < nhosts; i++) {
+		if (hosts[i].expiretime && (now >= hosts[i].expiretime)) {
+			del_host(i);
+			i--;
+		}
+	}
+}
+
+
 /* Read in .hosts and /etc/hosts and .resolv.conf and /etc/resolv.conf */
 int egg_dns_init()
 {
@@ -304,6 +322,7 @@ int egg_dns_init()
 	read_resolv(".resolv.conf");
 	read_hosts("/etc/hosts");
 	read_hosts(".hosts");
+	timer_create_secs(1, "dns_check_expires", (Function) expire_queries);
 	return(0);
 }
 
@@ -346,13 +365,31 @@ static void add_server(char *ip)
 	nservers++;
 }
 
-static void add_host(char *host, char *ip)
+static void add_host(char *host, char *ip, int ttl)
 {
 	hosts = realloc(hosts, (nhosts+1)*sizeof(*hosts));
 	hosts[nhosts].host = strdup(host);
 	hosts[nhosts].ip = strdup(ip);
+	hosts[nhosts].expiretime = timer_get_now_sec(NULL) + ttl;
 	nhosts++;
 }
+
+static void del_host(int id)
+{
+  free(hosts[id].host);
+  free(hosts[id].ip);
+  hosts[id].expiretime = 0;
+
+  nhosts--;
+
+  if (id < nhosts)
+    memcpy(&hosts[id], &hosts[nhosts], sizeof(dns_host_t));
+  else
+    memset(&hosts[id], 0, sizeof(dns_host_t));
+
+  hosts = (dns_host_t *) realloc(hosts, (nhosts+1)*sizeof(*hosts));
+}
+
 
 static int read_thing(char *buf, char *ip)
 {
@@ -396,7 +433,7 @@ static void read_hosts(char *fname)
 		if (!strlen(ip)) continue;
 		while ((n = read_thing(buf+skip, host))) {
 			skip += n;
-			if (strlen(host)) add_host(host, ip);
+			if (strlen(host)) add_host(host, ip, 0);
 		}
 	}
 	fclose(fp);
@@ -536,11 +573,13 @@ static void parse_reply(char *response, int nbytes)
 			/*fprintf(fp, "ipv4 reply\n");*/
 			inet_ntop(AF_INET, ptr, result, 512);
 			answer_add(&q->answer, result);
+			add_host(q->query, result, reply.ttl);
 		}
 		else if (reply.type == 28) {
 			/*fprintf(fp, "ipv6 reply\n");*/
 			inet_ntop(AF_INET6, ptr, result, 512);
 			answer_add(&q->answer, result);
+			add_host(q->query, result, reply.ttl);
 			return;
 		}
 		else if (reply.type == 12) {
@@ -567,6 +606,7 @@ static void parse_reply(char *response, int nbytes)
 			if (strlen(result)) {
 				result[strlen(result)-1] = 0;
 				answer_add(&q->answer, result);
+				add_host(result, q->query, reply.ttl);
 			}
 			ptr = placeholder;
 		}

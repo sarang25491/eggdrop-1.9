@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: timer.c,v 1.7 2004/10/17 05:14:06 stdarg Exp $";
+static const char rcsid[] = "$Id: timer.c,v 1.8 2004/12/09 06:43:32 lordares Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -133,6 +133,16 @@ static int timer_add_to_list(egg_timer_t *timer)
 		timer_list_head = timer;
 	}
 	return(0);
+}
+
+int timer_create_secs(int secs, const char *name, Function callback)
+{
+        egg_timeval_t howlong;
+
+        howlong.sec = secs;
+        howlong.usec = 0;
+
+        return timer_create_repeater(&howlong, name, callback);
 }
 
 int timer_create_complex(egg_timeval_t *howlong, const char *name, Function callback, void *client_data, int flags)
