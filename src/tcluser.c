@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  *
- * $Id: tcluser.c,v 1.39 2002/04/01 13:33:33 ite Exp $
+ * $Id: tcluser.c,v 1.40 2002/05/01 05:39:11 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -141,7 +141,7 @@ static int script_matchattr(struct userrec *u, char *flags, char *chan)
 	if (chan) user.match |= FR_CHAN;
 	get_user_flagrec(u, &user, chan);
 	plus.match = user.match;
-	break_down_flags(chan, &plus, &minus);
+	break_down_flags(flags, &plus, &minus);
 	has_minus_flags = (minus.global || minus.udef_global || minus.chan || minus.udef_chan || minus.bot);
 	if (flagrec_eq(&plus, &user)) {
 		if (!has_minus_flags) return(1);
