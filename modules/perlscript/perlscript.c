@@ -21,10 +21,10 @@ static PerlInterpreter *ginterp; /* Our global interpreter. */
 static XS(my_command_handler);
 static SV *my_resolve_variable(script_var_t *v);
 
-/* Functions from module_interface.c */
-void *fake_get_user_by_handle(char *handle);
-char *fake_get_handle(void *user_record);
-int log_error(char *msg);
+/* Functions from mod_iface.c */
+extern void *fake_get_user_by_handle(char *handle);
+extern char *fake_get_handle(void *user_record);
+extern int log_error(char *msg);
 
 int my_load_script(void *ignore, char *fname)
 {
