@@ -1,3 +1,27 @@
+2001-10-21 06:15  stdarg <stdarg@techmonkeys.org>
+
+	* eggdrop.complete.conf:
+
+	* Added config setting for dcc_command_chars 
+
+2001-10-21 06:04  stdarg <stdarg@techmonkeys.org>
+
+	* scripts/action.fix.tcl:
+
+	Updated action.fix.tcl to use new filt_string.  
+
+2001-10-21 06:02  stdarg <stdarg@techmonkeys.org>
+
+	* doc/tcl-commands.doc, src/dcc.c, src/main.c, src/tclhash.c,
+	src/mod/tclscript.mod/tclscript.c:
+
+	* Changed the FILT bind to use a global variable instead of
+	returning a string.  This will make it easier for multiple callbacks
+	to act on one string.  
+	* Made a new config variable called "dcc_command_chars" that lets
+	you change which chars represent a command on the console. Default
+	is "./".  
+
 2001-10-21 03:49  stdarg <stdarg@techmonkeys.org>
 
 	* src/tclhash.c:
