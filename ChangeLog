@@ -1,3 +1,9 @@
+2002-01-22 10:00  Automatic CVS Scripts
+
+	* po/eggdrop.pot:
+
+	Pots 
+
 2002-01-22 01:17  Federico Mennite <ite@techmonkeys.org>
 
 	* lib/eggdrop/module.h, modules/console/console.c, src/botcmd.c,
