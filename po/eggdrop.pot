@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2002-01-20 04:00-0600\n"
+"POT-Creation-Date: 2002-01-21 04:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -56,7 +56,7 @@ msgstr ""
 msgid "Disconnected from:"
 msgstr ""
 
-#: src/botcmd.c:342 src/botcmd.c:512 src/cmds.c:275
+#: src/botcmd.c:342 src/botcmd.c:520 src/cmds.c:275
 msgid "no channels"
 msgstr ""
 
@@ -97,151 +97,151 @@ msgstr ""
 msgid "Other people on the bot"
 msgstr ""
 
-#: src/botcmd.c:548
+#: src/botcmd.c:556
 msgid "Attempting to link"
 msgstr ""
 
-#: src/botcmd.c:551
+#: src/botcmd.c:559
 msgid "Cant link there"
 msgstr ""
 
-#: src/botcmd.c:598 src/botcmd.c:855
+#: src/botcmd.c:606 src/botcmd.c:863
 msgid "Cant unlink"
 msgstr ""
 
-#: src/botcmd.c:649
+#: src/botcmd.c:657
 #, c-format
 msgid "Invalid eggnet protocol from %s (zapfing)"
 msgstr ""
 
-#: src/botcmd.c:651 src/botcmd.c:658 src/botcmd.c:674 src/botcmd.c:684
-#: src/botcmd.c:863 src/botcmd.c:923
+#: src/botcmd.c:659 src/botcmd.c:666 src/botcmd.c:682 src/botcmd.c:692
+#: src/botcmd.c:871 src/botcmd.c:931
 msgid "Disconnected"
 msgstr ""
 
-#: src/botcmd.c:652
+#: src/botcmd.c:660
 msgid "invalid bot"
 msgstr ""
 
-#: src/botcmd.c:657
+#: src/botcmd.c:665
 msgid "Loop detected"
 msgstr ""
 
-#: src/botcmd.c:658
+#: src/botcmd.c:666
 msgid "Detected loop: disconnecting"
 msgstr ""
 
-#: src/botcmd.c:671 src/botcmd.c:673 src/botcmd.c:676
+#: src/botcmd.c:679 src/botcmd.c:681 src/botcmd.c:684
 msgid "Bogus link notice from"
 msgstr ""
 
-#: src/botcmd.c:680
+#: src/botcmd.c:688
 msgid "Disconnected left"
 msgstr ""
 
-#: src/botcmd.c:681 src/botcmd.c:708 src/botmsg.c:283
+#: src/botcmd.c:689 src/botcmd.c:716 src/botmsg.c:283
 msgid "Linked to"
 msgstr ""
 
-#: src/botcmd.c:683 src/botcmd.c:690
+#: src/botcmd.c:691 src/botcmd.c:698
 msgid "Illegal link by leaf"
 msgstr ""
 
-#: src/botcmd.c:685
+#: src/botcmd.c:693
 msgid "You are supposed to be a leaf!"
 msgstr ""
 
 #. we're directly connected to the offending bot?! (shudder!)
-#: src/botcmd.c:716 src/users.c:1051 src/users.c:1054
+#: src/botcmd.c:724 src/users.c:1051 src/users.c:1054
 msgid "Rejecting bot"
 msgstr ""
 
-#: src/botcmd.c:717
+#: src/botcmd.c:725
 msgid "from"
 msgstr ""
 
-#: src/botcmd.c:729
+#: src/botcmd.c:737
 msgid "Older bot detected (unsupported)"
 msgstr ""
 
-#: src/botcmd.c:732
+#: src/botcmd.c:740
 #, c-format
 msgid "Disconnected %s (outdated) (lost %d bot%s and %d user%s"
 msgstr ""
 
-#: src/botcmd.c:815 src/botcmd.c:817
+#: src/botcmd.c:823 src/botcmd.c:825
 msgid "Trace result"
 msgstr ""
 
-#: src/botcmd.c:855
+#: src/botcmd.c:863
 msgid "doesnt exist"
 msgstr ""
 
 #. I'm the connection to the rejected bot
-#: src/botcmd.c:860 src/botcmd.c:861 src/botcmd.c:864 src/botcmd.c:1082
+#: src/botcmd.c:868 src/botcmd.c:869 src/botcmd.c:872 src/botcmd.c:1090
 #: src/users.c:1048
 msgid "rejected"
 msgstr ""
 
-#: src/botcmd.c:892
+#: src/botcmd.c:900
 msgid "Remote boots are not allowed."
 msgstr ""
 
-#: src/botcmd.c:900
+#: src/botcmd.c:908
 msgid "Cant boot the bot owner."
 msgstr ""
 
-#: src/botcmd.c:921
+#: src/botcmd.c:929
 #, c-format
 msgid "Wrong bot--wanted %s, got %s"
 msgstr ""
 
-#: src/botcmd.c:922 src/botcmd.c:924
+#: src/botcmd.c:930 src/botcmd.c:932
 msgid "imposter"
 msgstr ""
 
-#: src/botcmd.c:1030
+#: src/botcmd.c:1038
 msgid "MOTD file:"
 msgstr ""
 
-#: src/botcmd.c:1046
+#: src/botcmd.c:1054
 msgid "No MOTD file."
 msgstr ""
 
-#: src/botcmd.c:1077
+#: src/botcmd.c:1085
 msgid "FILE TRANSFER REJECTED"
 msgstr ""
 
-#: src/botcmd.c:1106
+#: src/botcmd.c:1114
 msgid "Filesys module not loaded."
 msgstr ""
 
-#: src/botcmd.c:1268 src/botcmd.c:1320 src/botcmd.c:1324 src/botmsg.c:515
+#: src/botcmd.c:1276 src/botcmd.c:1328 src/botcmd.c:1332 src/botmsg.c:515
 #: src/botmsg.c:548
 msgid "has left the"
 msgstr ""
 
-#: src/botcmd.c:1273 src/botmsg.c:510 src/botmsg.c:541
+#: src/botcmd.c:1281 src/botmsg.c:510 src/botmsg.c:541
 msgid "has joined the"
 msgstr ""
 
-#: src/botcmd.c:1374 src/botmsg.c:472
+#: src/botcmd.c:1382 src/botmsg.c:472
 msgid "is now away"
 msgstr ""
 
-#: src/botcmd.c:1378 src/botmsg.c:479 src/botmsg.c:486
+#: src/botcmd.c:1386 src/botmsg.c:479 src/botmsg.c:486
 msgid "is no longer away"
 msgstr ""
 
-#: src/botcmd.c:1422
+#: src/botcmd.c:1430
 msgid "User file rejected by"
 msgstr ""
 
-#: src/botcmd.c:1430
+#: src/botcmd.c:1438
 msgid "Old style share request by"
 msgstr ""
 
-#: src/botcmd.c:1431
+#: src/botcmd.c:1439
 msgid "Antiquated sharing request"
 msgstr ""
 
@@ -691,7 +691,7 @@ msgstr ""
 msgid "Rehashing."
 msgstr ""
 
-#: modules/irc/msgcmds.c:862 src/cmds.c:1078 src/tcldcc.c:757
+#: modules/irc/msgcmds.c:862 src/cmds.c:1078 src/tcldcc.c:759
 msgid "Rehashing..."
 msgstr ""
 
@@ -1003,7 +1003,7 @@ msgstr ""
 #. *       <Cybah>
 #.
 #. Turn off remote telnet echo (send IAC WILL ECHO).
-#: modules/filesys/filesys.c:831 modules/server/server.c:1419 src/dcc.c:1414
+#: modules/filesys/filesys.c:831 modules/server/server.c:1421 src/dcc.c:1414
 msgid "Enter your password."
 msgstr ""
 
@@ -1301,7 +1301,7 @@ msgstr ""
 msgid "You can't unload an encryption module"
 msgstr ""
 
-#: modules/blowfish/blowfish.c:456 src/modules.c:569 src/tclmisc.c:209
+#: modules/blowfish/blowfish.c:456 src/modules.c:569 src/tclmisc.c:208
 msgid "Already loaded."
 msgstr ""
 
@@ -1328,118 +1328,118 @@ msgstr ""
 msgid "Wanted to ban myself--deflected."
 msgstr ""
 
-#: modules/channels/userchan.c:591 modules/channels/userchan.c:639
-#: modules/channels/userchan.c:687
+#: modules/channels/userchan.c:622 modules/channels/userchan.c:670
+#: modules/channels/userchan.c:718
 msgid "Created"
 msgstr ""
 
-#: modules/channels/userchan.c:594 modules/channels/userchan.c:642
-#: modules/channels/userchan.c:690
+#: modules/channels/userchan.c:625 modules/channels/userchan.c:673
+#: modules/channels/userchan.c:721
 msgid "last used"
 msgstr ""
 
-#: modules/channels/userchan.c:621 modules/channels/userchan.c:669
-#: modules/channels/userchan.c:717
+#: modules/channels/userchan.c:652 modules/channels/userchan.c:700
+#: modules/channels/userchan.c:748
 msgid "inactive"
 msgstr ""
 
-#: modules/channels/userchan.c:740 modules/channels/userchan.c:933
+#: modules/channels/userchan.c:771 modules/channels/userchan.c:964
 msgid "No such channel defined"
 msgstr ""
 
-#: modules/channels/userchan.c:755 modules/channels/userchan.c:758
+#: modules/channels/userchan.c:786 modules/channels/userchan.c:789
 msgid "Global bans"
 msgstr ""
 
-#: modules/channels/userchan.c:756 modules/channels/userchan.c:851
-#: modules/channels/userchan.c:949
+#: modules/channels/userchan.c:787 modules/channels/userchan.c:882
+#: modules/channels/userchan.c:980
 msgid "not active on"
 msgstr ""
 
-#: modules/channels/userchan.c:771
+#: modules/channels/userchan.c:802
 #, c-format
 msgid "Channel bans for %s:   (! = not active, * = not placed by bot)\n"
 msgstr ""
 
-#: modules/channels/userchan.c:774
+#: modules/channels/userchan.c:805
 #, c-format
 msgid "Channel bans for %s:  (* = not placed by bot)\n"
 msgstr ""
 
-#: modules/channels/userchan.c:816
+#: modules/channels/userchan.c:847
 msgid "(There are no bans, permanent or otherwise.)\n"
 msgstr ""
 
-#: modules/channels/userchan.c:818
+#: modules/channels/userchan.c:849
 msgid "Use .bans all to see the total list.\n"
 msgstr ""
 
-#: modules/channels/userchan.c:835
+#: modules/channels/userchan.c:866
 msgid "No such channel defined.\n"
 msgstr ""
 
-#: modules/channels/userchan.c:850
+#: modules/channels/userchan.c:881
 msgid "Global exempts"
 msgstr ""
 
-#: modules/channels/userchan.c:853
+#: modules/channels/userchan.c:884
 msgid "Global exempts:\n"
 msgstr ""
 
-#: modules/channels/userchan.c:867 modules/channels/userchan.c:872
+#: modules/channels/userchan.c:898 modules/channels/userchan.c:903
 msgid "Channel exempts for"
 msgstr ""
 
-#: modules/channels/userchan.c:868 modules/channels/userchan.c:966
+#: modules/channels/userchan.c:899 modules/channels/userchan.c:997
 msgid "not active"
 msgstr ""
 
-#: modules/channels/userchan.c:869 modules/channels/userchan.c:873
-#: modules/channels/userchan.c:967 modules/channels/userchan.c:971
+#: modules/channels/userchan.c:900 modules/channels/userchan.c:904
+#: modules/channels/userchan.c:998 modules/channels/userchan.c:1002
 msgid "not placed by bot"
 msgstr ""
 
-#: modules/channels/userchan.c:916
+#: modules/channels/userchan.c:947
 msgid "Use .exempts all to see the total list"
 msgstr ""
 
-#: modules/channels/userchan.c:948 modules/channels/userchan.c:951
+#: modules/channels/userchan.c:979 modules/channels/userchan.c:982
 msgid "Global invites"
 msgstr ""
 
-#: modules/channels/userchan.c:965 modules/channels/userchan.c:970
+#: modules/channels/userchan.c:996 modules/channels/userchan.c:1001
 msgid "Channel invites for"
 msgstr ""
 
-#: modules/channels/userchan.c:1014
+#: modules/channels/userchan.c:1045
 msgid "Use .invites all to see the total list"
 msgstr ""
 
-#: modules/channels/userchan.c:1214 src/userrec.c:429 src/userrec.c:444
+#: modules/channels/userchan.c:1245 src/userrec.c:429 src/userrec.c:444
 msgid "ERROR writing user file."
 msgstr ""
 
-#: modules/channels/userchan.c:1284 modules/channels/userchan.c:1301
+#: modules/channels/userchan.c:1315 modules/channels/userchan.c:1332
 msgid "No longer banning"
 msgstr ""
 
-#: modules/channels/userchan.c:1285 modules/channels/userchan.c:1302
-#: modules/channels/userchan.c:1330 modules/channels/userchan.c:1376
-#: modules/channels/userchan.c:1404 modules/channels/userchan.c:1422
+#: modules/channels/userchan.c:1316 modules/channels/userchan.c:1333
+#: modules/channels/userchan.c:1361 modules/channels/userchan.c:1407
+#: modules/channels/userchan.c:1435 modules/channels/userchan.c:1453
 #: src/users.c:219
 msgid "expired"
 msgstr ""
 
-#: modules/channels/userchan.c:1302 modules/channels/userchan.c:1376
-#: modules/channels/userchan.c:1422
+#: modules/channels/userchan.c:1333 modules/channels/userchan.c:1407
+#: modules/channels/userchan.c:1453
 msgid "on"
 msgstr ""
 
-#: modules/channels/userchan.c:1329 modules/channels/userchan.c:1375
+#: modules/channels/userchan.c:1360 modules/channels/userchan.c:1406
 msgid "No longer ban exempting"
 msgstr ""
 
-#: modules/channels/userchan.c:1403 modules/channels/userchan.c:1421
+#: modules/channels/userchan.c:1434 modules/channels/userchan.c:1452
 msgid "No longer inviteing"
 msgstr ""
 
@@ -1777,30 +1777,30 @@ msgid "Moved"
 msgstr ""
 
 #: modules/filesys/filesys.c:604 modules/filesys/filesys.c:803
-#: modules/server/server.c:1358 modules/server/server.c:1402
+#: modules/server/server.c:1360 modules/server/server.c:1404
 #: modules/transfer/transfer.c:670
 msgid "Failed to connect"
 msgstr ""
 
-#: modules/filesys/filesys.c:782 modules/server/server.c:1343
+#: modules/filesys/filesys.c:782 modules/server/server.c:1345
 #, c-format
 msgid "DCC connections full: %s %s (%s!%s)"
 msgstr ""
 
-#: modules/filesys/filesys.c:787 modules/server/server.c:1348
+#: modules/filesys/filesys.c:787 modules/server/server.c:1350
 msgid "No access"
 msgstr ""
 
-#: modules/filesys/filesys.c:788 modules/server/server.c:1349
+#: modules/filesys/filesys.c:788 modules/server/server.c:1351
 #: modules/server/servmsg.c:409
 msgid "Refused DCC chat (no access)"
 msgstr ""
 
-#: modules/filesys/filesys.c:791 modules/server/server.c:1352
+#: modules/filesys/filesys.c:791 modules/server/server.c:1354
 msgid "You must have a password set."
 msgstr ""
 
-#: modules/filesys/filesys.c:792 modules/server/server.c:1353
+#: modules/filesys/filesys.c:792 modules/server/server.c:1355
 msgid "Refused DCC chat (no password)"
 msgstr ""
 
@@ -1808,7 +1808,7 @@ msgstr ""
 msgid "Refused DCC chat (+x but no file area)"
 msgstr ""
 
-#: modules/filesys/filesys.c:804 modules/server/server.c:1403
+#: modules/filesys/filesys.c:804 modules/server/server.c:1405
 #: modules/transfer/transfer.c:671
 msgid "DCC connection failed"
 msgstr ""
@@ -2439,31 +2439,31 @@ msgstr ""
 msgid "NOTICE %s :You have %d note%s waiting on %s.\n"
 msgstr ""
 
-#: modules/server/server.c:1342
+#: modules/server/server.c:1344
 msgid "Sorry, too many DCC connections."
 msgstr ""
 
-#: modules/server/server.c:1359
+#: modules/server/server.c:1361
 msgid "DCC invalid port"
 msgstr ""
 
-#: modules/server/server.c:1449
+#: modules/server/server.c:1451
 msgid "Server got stoned; jumping..."
 msgstr ""
 
-#: modules/server/server.c:1523
+#: modules/server/server.c:1525
 msgid "No server currently."
 msgstr ""
 
-#: modules/server/server.c:1525
+#: modules/server/server.c:1527
 msgid "Mode queue is at"
 msgstr ""
 
-#: modules/server/server.c:1529
+#: modules/server/server.c:1531
 msgid "Server queue is at"
 msgstr ""
 
-#: modules/server/server.c:1532
+#: modules/server/server.c:1534
 msgid "Help queue is at"
 msgstr ""
 
@@ -2608,19 +2608,19 @@ msgstr ""
 msgid "No such module.\n"
 msgstr ""
 
-#: src/tcldcc.c:562
+#: src/tcldcc.c:564
 msgid "No free sockets available."
 msgstr ""
 
-#: src/tcldcc.c:753 src/tcldcc.c:766
+#: src/tcldcc.c:755 src/tcldcc.c:768
 msgid "Userfile creation not necessary--skipping"
 msgstr ""
 
-#: src/tcldcc.c:770
+#: src/tcldcc.c:772
 msgid "Restarting..."
 msgstr ""
 
-#: src/tclmisc.c:210
+#: src/tclmisc.c:209
 msgid "Cant load modules"
 msgstr ""
 
