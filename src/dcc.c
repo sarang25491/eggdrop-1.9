@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dcc.c,v 1.98 2003/02/18 10:37:18 stdarg Exp $";
+static const char rcsid[] = "$Id: dcc.c,v 1.99 2003/02/25 06:52:19 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -53,7 +53,7 @@ extern struct userrec	*userlist;
 extern struct chanset_t	*chanset;
 extern time_t now;
 extern int egg_numver, connect_timeout, conmask, backgrd, make_userfile,
-           default_flags, raw_log, ignore_time, par_telnet_flood;
+           default_flags, raw_log, ignore_time;
 extern char myname[], ver[], origbotname[], notify_new[];
 
 #ifndef MAKING_MODS
@@ -112,7 +112,6 @@ static script_linked_var_t dcc_script_vars[] = {
 	{"", "dupwait_timeout", &dupwait_timeout, SCRIPT_INTEGER, NULL},
 	{"", "ident_timeout", &ident_timeout, SCRIPT_INTEGER, NULL},
 	{"", "resolve_timeout", &resolve_timeout, SCRIPT_INTEGER, NULL},
-	{"", "paranoid_telnet_flood", &par_telnet_flood, SCRIPT_INTEGER, NULL},
 	{0}
 };
 
@@ -507,7 +506,7 @@ static int detect_telnet_flood(char *floodhost)
   struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
 
   get_user_flagrec(get_user_by_host(floodhost), &fr, NULL);
-  if (!flood_telnet_thr || (glob_friend(fr) && !par_telnet_flood))
+  if (!flood_telnet_thr || glob_friend(fr))
     return 0;			/* No flood protection */
   if (strcasecmp(lasttelnethost, floodhost)) {	/* New... */
     strcpy(lasttelnethost, floodhost);

@@ -31,7 +31,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.51 2003/02/18 10:37:18 stdarg Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.52 2003/02/25 06:52:19 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -58,7 +58,6 @@ extern struct userrec *userlist, *lastuser;
 extern struct chanset_t *chanset;
 extern int dcc_total;
 extern char myname[];
-extern Tcl_Interp *interp;
 extern time_t now;
 extern int userfile_perm;
 
@@ -476,10 +475,7 @@ void tell_user(int idx, struct userrec *u, int master)
   fr.global = u->flags;
   fr.udef_global = u->flags_udef;
   build_flags(s, &fr, NULL);
-  Tcl_SetVar(interp, "user", u->handle, 0);
   n = 0;
-  if (Tcl_VarEval(interp, "notes ", "$user", NULL) == TCL_OK)
-    n = atoi(interp->result);
   li = get_user(&USERENTRY_LASTON, u);
   if (!li || !li->laston)
     strcpy(s1, "never");

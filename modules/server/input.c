@@ -399,6 +399,7 @@ static int gotquit(char *from_nick, char *from_uhost, user_t *u, char *cmd, int 
 	char *text = args[0];
 
 	bind_check(BT_quit, from_nick, from_nick, from_uhost, u, text);
+
 	return(0);
 }
 
@@ -411,6 +412,7 @@ static int gotnick(char *from_nick, char *from_uhost, user_t *u, char *cmd, int 
 
 	/* Is it our nick that's changing? */
 	if (match_my_nick(from_nick)) str_redup(&current_server.nick, newnick);
+
 	return(0);
 }
 

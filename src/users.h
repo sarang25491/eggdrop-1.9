@@ -22,13 +22,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: users.h,v 1.18 2003/02/15 05:04:58 wcc Exp $
+ * $Id: users.h,v 1.19 2003/02/25 06:52:19 stdarg Exp $
  */
 
 #ifndef _EGG_USERS_H
 #define _EGG_USERS_H
-
-#include "tclegg.h"		/* Tcl_Interp		*/
 
 /* List functions :) , next *must* be the 1st item in the struct */
 struct list_type {
@@ -59,10 +57,8 @@ struct user_entry_type {
   int (*kill) (struct user_entry *);
   void *(*get) (struct userrec *, struct user_entry *);
   int (*set) (struct userrec *, struct user_entry *, void *);
-  int (*tcl_get) (Tcl_Interp *, struct userrec *, struct user_entry *,
-		  int, char **);
-  int (*tcl_set) (Tcl_Interp *, struct userrec *, struct user_entry *,
-		  int, char **);
+  void *ignore1;
+  void *ignore2;
   void (*display) (int idx, struct user_entry *);
   char *name;
 };
@@ -199,10 +195,6 @@ void *def_get(struct userrec *u, struct user_entry *e);
 int def_set(struct userrec *u, struct user_entry *e, void *buf);
 int def_gotshare(struct userrec *u, struct user_entry *e,
 		 char *data, int idx);
-int def_tcl_get(Tcl_Interp *interp, struct userrec *u,
-		struct user_entry *e, int argc, char **argv);
-int def_tcl_set(Tcl_Interp *irp, struct userrec *u,
-		struct user_entry *e, int argc, char **argv);
 void def_display(int idx, struct user_entry *e);
 int def_dupuser(struct userrec *new, struct userrec *old,
 		struct user_entry *e);

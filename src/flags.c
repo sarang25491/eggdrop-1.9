@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: flags.c,v 1.39 2003/02/17 10:22:30 stdarg Exp $";
+static const char rcsid[] = "$Id: flags.c,v 1.40 2003/02/25 06:52:19 stdarg Exp $";
 #endif
 
 #include <ctype.h>
@@ -607,32 +607,6 @@ static int botfl_set(struct userrec *u, struct user_entry *e, void *buf)
   return 1;
 }
 
-static int botfl_tcl_get(Tcl_Interp *interp, struct userrec *u,
-			 struct user_entry *e, int argc, char **argv)
-{
-  char x[100];
-  struct flag_record fr = {FR_BOT, 0, 0, 0, 0, 0};
-
-  fr.bot = e->u.ulong;
-  build_flags(x, &fr, NULL);
-  Tcl_AppendResult(interp, x, NULL);
-  return TCL_OK;
-}
-
-static int botfl_tcl_set(Tcl_Interp *irp, struct userrec *u,
-			 struct user_entry *e, int argc, char **argv)
-{
-  struct flag_record fr = {FR_BOT, 0, 0, 0, 0, 0};
-
-  BADARGS(4, 4, " handle BOTFL flags");
-  if (u->flags & USER_BOT) {
-    /* Silently ignore for users */
-    break_down_flags(argv[3], &fr, NULL);
-    botfl_set(u, e, (void *) fr.bot);
-  }
-  return TCL_OK;
-}
-
 static void botfl_display(int idx, struct user_entry *e)
 {
   struct flag_record fr = {FR_BOT, 0, 0, 0, 0, 0};
@@ -654,8 +628,8 @@ struct user_entry_type USERENTRY_BOTFL =
   botfl_kill,
   def_get,
   botfl_set,
-  botfl_tcl_get,
-  botfl_tcl_set,
+  NULL,
+  NULL,
   botfl_display,
   "BOTFL"
 };

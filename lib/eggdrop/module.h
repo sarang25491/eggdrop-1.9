@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: module.h,v 1.42 2003/02/18 10:13:17 stdarg Exp $
+ * $Id: module.h,v 1.43 2003/02/25 06:52:19 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_MODULE_H
@@ -50,8 +50,6 @@
 #include "src/misc.h"
 #include "src/modules.h"
 #include "src/net.h"
-#include "src/tclegg.h"
-#include "src/tcl.h"
 #include "src/traffic.h"
 #include "src/userent.h"
 #include "src/userrec.h"
@@ -95,13 +93,6 @@
 #define module_depend ((Function *(*)(char *,char *,int,int))egg->global[6])
 #define module_undepend ((int(*)(char *))egg->global[7])
 /* 8 - 11 */
-#define add_tcl_commands ((void (*) (tcl_cmds *))egg->global[14])
-#define rem_tcl_commands ((void (*) (tcl_cmds *))egg->global[15])
-/* 16 - 19 */
-#define add_tcl_ints ((void (*) (tcl_ints *))egg->global[16])
-#define rem_tcl_ints ((void (*) (tcl_ints *))egg->global[17])
-#define add_tcl_strings ((void (*) (tcl_strings *))egg->global[18])
-#define rem_tcl_strings ((void (*) (tcl_strings *))egg->global[19])
 #define u_pass_match ((int (*)(struct userrec *,char *))egg->global[38])
 #define get_user ((void *(*)(struct user_entry_type *,struct userrec *))egg->global[40])
 #define set_user ((int(*)(struct user_entry_type *,struct userrec *,void *))egg->global[41])
@@ -209,7 +200,6 @@
 #define DCC_LOST (*(struct dcc_table *)(egg->global[126]))
 #define DCC_CHAT (*(struct dcc_table *)(egg->global[127]))
 /* 128 - 131 */
-#define interp (*(Tcl_Interp **)(egg->global[128]))
 #define now (*(time_t*)egg->global[129])
 #define findanyidx ((int (*)(int))egg->global[130])
 #define findchan ((struct chanset_t *(*)(char *))egg->global[131])
@@ -234,8 +224,6 @@
 /* #define movefile ((int (*) (char *, char *))egg->global[146]) */
 /* #define copyfile ((int (*) (char *, char *))egg->global[147]) */
 /* 148 - 151 */
-#define do_tcl ((void (*)(char *, char *))egg->global[148])
-#define readtclprog ((int (*)(const char *))egg->global[149])
 /* 150: get_language() -- UNUSED */
 #define def_get ((void *(*)(struct userrec *, struct user_entry *))egg->global[151])
 /* 152 - 155 */
@@ -291,8 +279,6 @@
 #define check_dcc_attrs ((int (*)(struct userrec *,int))egg->global[207])
 /* 208 - 211 */
 #define check_dcc_chanattrs ((int (*)(struct userrec *,char *,int,int))egg->global[208])
-#define add_tcl_coups ((void (*) (tcl_coups *))egg->global[209])
-#define rem_tcl_coups ((void (*) (tcl_coups *))egg->global[210])
 #define botname (*(char **)(egg->global[211]))
 /* 212 - 215 */
 /* 212: remove_gunk() -- UNUSED (drummer) */

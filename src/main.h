@@ -22,7 +22,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: main.h,v 1.30 2003/01/02 21:33:16 wcc Exp $
+ * $Id: main.h,v 1.31 2003/02/25 06:52:19 stdarg Exp $
  */
 
 #ifndef _EGG_MAIN_H
@@ -35,7 +35,6 @@
 #include "debug.h"
 #include "egg.h"
 #include <eggdrop/eggdrop.h>
-#include "tclegg.h"
 #include "lib/compat/compat.h"
 
 extern eggdrop_t *egg;

@@ -3,7 +3,6 @@
 
 typedef struct {
 	char *nick;
-	char *uhost;
 	char *modes;
 	int imode;
 } channel_member_t;

@@ -1,6 +1,7 @@
 #ifndef _EGGNET_H_
 #define _EGGNET_H_
 
+int egg_net_init();
 int egg_iprintf(int idx, const char *format, ...);
 int egg_server(const char *vip, int port, int *real_port);
 int egg_client(const char *ip, int port, const char *vip, int vport);

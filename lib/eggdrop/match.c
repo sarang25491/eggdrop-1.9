@@ -1,235 +1,164 @@
 /*
- * match.c --
- *
- *	wildcard matching functions
+ * match.c
+ *   new wildcard matching functions updated for speed.
+ *     --Ian.
  */
 /*
- * Once this code was working, I added support for % so that I could
- * use the same code both in Eggdrop and in my IrcII client.
- * Pleased with this, I added the option of a fourth wildcard, ~,
- * which matches varying amounts of whitespace (at LEAST one space,
- * though, for sanity reasons).
+ * Copyright (C) 2001, 2002, 2003 Eggheads Development Team
  *
- * This code would not have been possible without the prior work and
- * suggestions of various sources.  Special thanks to Robey for
- * all his time/help tracking down bugs and his ever-helpful advice.
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
  *
- * 04/09:  Fixed the "*\*" against "*a" bug (caused an endless loop)
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *   Chris Fuller  (aka Fred1@IRC & Fwitz@IRC)
- *     crf@cfox.bchs.uh.edu
- *
- * I hereby release this code into the public domain
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#ifndef lint
-static const char rcsid[] = "$Id: match.c,v 1.1 2002/10/07 22:33:54 stdarg Exp $";
-#endif
+#define QUOTE '\\'		/* quoting character... for matching "*" etc. */
+#define WILDS '*'		/* matches any number of characters */
+#define WILDP '%'		/* matches any nunber of non-space characters */
+#define WILDQ '?'		/* matches exactly one character */
+#define WILDT '~'		/* matches any number of spaces */
 
-/* prototypes */
 #include <ctype.h>
+#define irctoupper toupper
 
-/* The quoting character -- what overrides wildcards */
-#define QUOTE '\\'
+/* matching for binds */
+int wild_match_per(const char *wild, const char *matchtext) {
+  const char *fallback=0;
+  int match = 0, saved = 0, count = 0, wildcard = 0;
 
-/* The "matches ANYTHING" wildcard */
-#define WILDS '*'
+  /* If either string is NULL, they can't match */
+  if (!matchtext || !wild)
+    return 0;
 
-/* The "matches ANY NUMBER OF NON-SPACE CHARS" wildcard */
-#define WILDP '%'
-
-/* The "matches EXACTLY ONE CHARACTER" wildcard */
-#define WILDQ '?'
-
-/* The "matches AT LEAST ONE SPACE" wildcard */
-#define WILDT '~'
-
-/* Changing these is probably counter-productive :) */
-#define UNQUOTED (0x7FFF)
-#define QUOTED   (0x8000)
-#define NOMATCH 0
-#define MATCH ((match+sofar)&UNQUOTED)
-#define MATCH_PER (match+saved+sofar)
-
-
-/*
- * wild_match(char *ma, char *na)
- *
- * Features:  Backwards, case-insensitive, ?, *
- * Best use:  Matching of hostmasks (since they are likely to begin
- *            with a * rather than end with one).
- */
-/*
- * sofar's high bit is used as a flag of whether or not we are quoting.
- * The other matchers don't need this because when you're going forward,
- * you just skip over the quote char.
- * No "saved" is used to track "%" and no special quoting ability is
- * needed, so we just have (match+sofar) as the result.
- */
-int wild_match(const unsigned char *m, const unsigned char *n)
-{
-  const unsigned char *ma = m, *na = n, *lsm = 0, *lsn = 0;
-  int match = 1;
-  int sofar = 0;
-
-  /* take care of null strings (should never match) */
-  if ((ma == 0) || (na == 0) || (!*ma) || (!*na))
-    return NOMATCH;
-  /* find the end of each string */
-  while (*(++m));
-    m--;
-  while (*(++n));
-    n--;
-
-  while (n >= na) {
-    if ((m <= ma) || (m[-1] != QUOTE)) {	/* Only look if no quote */
-      switch (*m) {
-      case WILDS:		/* Matches anything */
-	do
-	  m--;			/* Zap redundant wilds */
-	while ((m >= ma) && ((*m == WILDS) || (*m == WILDP)));
-	if ((m >= ma) && (*m == '\\'))
-	  m++;			/* Keep quoted wildcard! */
-	lsm = m;
-	lsn = n;
-	match += sofar;
-	sofar = 0;		/* Update fallback pos */
-	continue;		/* Next char, please */
-      case WILDQ:
-	m--;
-	n--;
-	continue;		/* '?' always matches */
-      }
-      sofar &= UNQUOTED;	/* Remember not quoted */
-    } else
-      sofar |= QUOTED;		/* Remember quoted */
-    if (toupper(*m) == toupper(*n)) {	/* If matching char */
-      m--;
-      n--;
-      sofar++;			/* Tally the match */
-      if (sofar & QUOTED)
-	m--;			/* Skip the quote char */
-      continue;			/* Next char, please */
+  while(*matchtext && *wild) {
+    switch (*wild) {
+      case WILDP :
+          fallback = wild++;			/* setup fallback */
+          match = 1;
+          while((*(wild++)==WILDP));		/* get rid of redundant %s ... %%%% */
+          if (*wild==QUOTE)			/* is the match char quoted? */
+            wild++;
+          while(*matchtext && (irctoupper(*wild) != irctoupper(*matchtext)))
+            if (*matchtext==' ') {
+              match=0;				/* loop until we find the next char... or don't */
+              break;
+            } else
+              matchtext++;
+          break;
+      case WILDQ :				/* inc both... let the while() check for errors */
+          wild++;
+          matchtext++;
+          break;
+      case WILDT :
+          wild++;
+          if (*matchtext!=' '){			/* need at least one space */
+            count = saved;
+            if (!fallback)			/* no match and no fallback? die */
+              return 0;
+            wild = fallback-1;			/* fall back */
+            break;
+          }
+          while ((*(matchtext++)==' '));	/* loop through spaces */
+          count++;
+          break;
+      case WILDS :
+          if (!*++wild)
+            return (count+saved+1);
+          wildcard = 1;
+          break;
+      default :
+          if (*wild==QUOTE)			/* is it quoted? */
+            wild++;
+          if (wildcard) {
+            saved = count;
+            match = count = 0;
+            fallback = wild;			/* setup fallback in case we hit a false positive */
+            while(*matchtext && (irctoupper(*wild) != irctoupper(*matchtext)))
+              matchtext++;
+            if (!*matchtext) {
+              match=1;
+              break;
+            }
+          }
+          if (irctoupper(*wild) != irctoupper(*matchtext)) {
+            if (!fallback)		/* no match and no fallback? die */
+              return 0;
+            count = saved;
+            wild = fallback-1;		/* fall back */
+            break;
+          }
+          count++;
+          wildcard = 0;
+          match=1;
+          if (*wild)
+            wild++;
+          if (*matchtext)
+            matchtext++;
     }
-    if (lsm) {			/* To to fallback on '*' */
-      n = --lsn;
-      m = lsm;
-      if (n < na)
-	lsm = 0;		/* Rewind to saved pos */
-      sofar = 0;
-      continue;			/* Next char, please */
-    }
-    return NOMATCH;		/* No fallback=No match */
   }
-  while ((m >= ma) && ((*m == WILDS) || (*m == WILDP)))
-    m--;			/* Zap leftover %s & *s */
-  return (m >= ma) ? NOMATCH : MATCH;	/* Start of both = match */
+  return (!match || *wild || *matchtext)?0:(count+saved+1);
 }
 
+/* generic hostmask matching... */
+int wild_match(const char *wild, const char *matchtext) {
+  const char *fallback=0;
+  int match = 0, count = 0, saved = 0, wildcard = 0;
 
-/*
- * wild_match_per(char *m, char *n)
- *
- * Features:  Forward, case-insensitive, ?, *, %, ~(optional)
- * Best use:  Generic string matching, such as in IrcII-esque bindings
- */
-int wild_match_per(const unsigned char *m, const unsigned char *n)
-{
-  const unsigned char *ma = m, *lsm = 0, *lsn = 0, *lpm = 0, *lpn = 0;
-  int match = 1, saved = 0, space;
-  unsigned int sofar = 0;
+  /* If either string is NULL, they can't match */
+  if (!matchtext || !wild)
+    return 0;
 
-  /* take care of null strings (should never match) */
-  if ((m == 0) || (n == 0) || (!*n))
-    return NOMATCH;
-  /* (!*m) test used to be here, too, but I got rid of it.  After all,
-   * If (!*n) was false, there must be a character in the name (the
-   * second string), so if the mask is empty it is a non-match.  Since
-   * the algorithm handles this correctly without testing for it here
-   * and this shouldn't be called with null masks anyway, it should be
-   * a bit faster this way */
-
-  while (*n) {
-    /* Used to test for (!*m) here, but this scheme seems to work better */
-    if (*m == WILDT) {		/* Match >=1 space */
-      space = 0;		/* Don't need any spaces */
-      do {
-	m++;
-	space++;
-      }				/* Tally 1 more space ... */
-      while ((*m == WILDT) || (*m == ' '));	/*  for each space or ~ */
-      sofar += space;		/* Each counts as exact */
-      while (*n == ' ') {
-	n++;
-	space--;
-      }				/* Do we have enough? */
-      if (space <= 0)
-	continue;		/* Had enough spaces! */
+  while(*matchtext && *wild) {
+    switch (*wild) {
+      case WILDQ :				/* inc both... let the while() check for errors */
+          wild++;
+          matchtext++;
+          break;
+          while ((*(matchtext++)==' '));	/* loop through spaces */
+          break;
+      case WILDS :
+          if (!*++wild)
+            return (count+saved+1);
+          wildcard = 1;
+          break;
+      default :
+          if (*wild==QUOTE)			/* is it quoted? */
+            wild++;
+          if (wildcard) {
+            saved = count;
+            match = count = 0;
+            fallback = wild;			/* setup fallback in case we hit a false positive */
+            while(*matchtext && (irctoupper(*wild) != irctoupper(*matchtext)))
+              matchtext++;
+            if (!*matchtext) {
+              match=1;
+              break;
+            }
+          }
+          if (irctoupper(*wild) != irctoupper(*matchtext)) {
+            if (!fallback)		/* no match and no fallback? die */
+              return 0;
+            count = saved;
+            wild = fallback-1;		/* fall back */
+            break;
+          }
+          wildcard = 0;
+          count++;
+          match=1;
+          if (*wild)
+            wild++;
+          if (*matchtext)
+            matchtext++;
     }
-    /* Do the fallback       */
-    else {
-      switch (*m) {
-      case 0:
-	do
-	  m--;			/* Search backwards */
-	while ((m > ma) && (*m == '?'));	/* For first non-? char */
-	if ((m > ma) ? ((*m == '*') && (m[-1] != QUOTE)) : (*m == '*'))
-	  return MATCH_PER;		/* nonquoted * = match */
-	break;
-      case WILDP:
-	while (*(++m) == WILDP);	/* Zap redundant %s */
-	if (*m != WILDS) {	/* Don't both if next=* */
-	  if (*n != ' ') {	/* WILDS can't match ' ' */
-	    lpm = m;
-	    lpn = n;		/* Save '%' fallback spot */
-	    saved += sofar;
-	    sofar = 0;		/* And save tally count */
-	  }
-	  continue;		/* Done with '%' */
-	}
-	/* FALL THROUGH */
-      case WILDS:
-	do
-	  m++;			/* Zap redundant wilds */
-	while ((*m == WILDS) || (*m == WILDP));
-	lsm = m;
-	lsn = n;
-	lpm = 0;		/* Save '*' fallback spot */
-	match += (saved + sofar);	/* Save tally count */
-	saved = sofar = 0;
-	continue;		/* Done with '*' */
-      case WILDQ:
-	m++;
-	n++;
-	continue;		/* Match one char */
-      case QUOTE:
-	m++;			/* Handle quoting */
-      }
-      if (toupper(*m) == toupper(*n)) {		/* If matching */
-	m++;
-	n++;
-	sofar++;
-	continue;		/* Tally the match */
-      }
-    }
-    if (lpm) {			/* Try to fallback on '%' */
-      n = ++lpn;
-      m = lpm;
-      sofar = 0;		/* Restore position */
-      if ((*n | 32) == 32)
-	lpm = 0;		/* Can't match 0 or ' ' */
-      continue;			/* Next char, please */
-    }
-    if (lsm) {			/* Try to fallback on '*' */
-      n = ++lsn;
-      m = lsm;			/* Restore position */
-      /* Used to test for (!*n) here but it wasn't necessary so it's gone */
-      saved = sofar = 0;
-      continue;			/* Next char, please */
-    }
-    return NOMATCH;		/* No fallbacks=No match */
   }
-  while ((*m == WILDS) || (*m == WILDP))
-    m++;			/* Zap leftover %s & *s */
-  return (*m) ? NOMATCH : MATCH_PER;	/* End of both = match */
+  return (!match || *wild || *matchtext)?0:(count+saved+1);
 }

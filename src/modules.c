@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: modules.c,v 1.131 2003/02/18 10:37:18 stdarg Exp $";
+static const char rcsid[] = "$Id: modules.c,v 1.132 2003/02/25 06:52:19 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -50,7 +50,6 @@ static const char rcsid[] = "$Id: modules.c,v 1.131 2003/02/18 10:37:18 stdarg E
 				   open_telnet, open_telnet_dcc,
 				   killsock, open_listen, getsock,
 				   tputs, neterror, getmyip, answer	*/
-#include "tcl.h"		/* do_tcl, readtclprog	*/
 #include "users.h"		/* list_type				*/
 #include "userent.h"		/* list_type_kill, xtra_set		*/
 #include "userrec.h"		/* fixfrom, user_del_chan, touch_laston,
@@ -65,9 +64,8 @@ static const char rcsid[] = "$Id: modules.c,v 1.131 2003/02/18 10:37:18 stdarg E
 
 extern struct dcc_t	*dcc;
 
-extern Tcl_Interp	*interp;
 extern struct userrec	*userlist, *lastuser;
-extern char tempdir[], myname[], *botname, natip[], origbotname[], botuser[],
+extern char myname[], *botname, natip[], origbotname[], botuser[],
             admin[], userfile[], ver[], notify_new[], helpdir[], version[],
             quit_msg[];
 extern int dcc_total, egg_numver, userfile_perm, ignore_time, learn_users,
@@ -159,13 +157,13 @@ Function global_table[] =
   /* 12 - 15 */
   (Function) 0,
   (Function) 0,
-  (Function) add_tcl_commands,
-  (Function) rem_tcl_commands,
+  (Function) 0,
+  (Function) 0,
   /* 16 - 19 */
-  (Function) add_tcl_ints,
-  (Function) rem_tcl_ints,
-  (Function) add_tcl_strings,
-  (Function) rem_tcl_strings,
+  (Function) 0,
+  (Function) 0,
+  (Function) 0,
+  (Function) 0,
   /* 20 - 23 */
   0,
   0,
@@ -282,7 +280,7 @@ Function global_table[] =
   (Function) & default_flags,	 /* int					*/
   (Function) & dcc_total,	 /* int					*/
   /* 112 - 115 */
-  (Function) tempdir,		 /* char *				*/
+  0,		 /* char *				*/
   (Function) natip,		 /* char *				*/
   (Function) & learn_users,	 /* int *				*/
   (Function) origbotname,	 /* char *				*/
@@ -302,7 +300,7 @@ Function global_table[] =
   (Function) & DCC_LOST,	 /* struct dcc_table *			*/
   (Function) & DCC_CHAT,	 /* struct dcc_table *			*/
   /* 128 - 131 */
-  (Function) & interp,		 /* Tcl_Interp *			*/
+  (Function) 0,		 /* Tcl_Interp *			*/
   (Function) & now,		 /* time_t				*/
   (Function) 0,
   (Function) findchan,
@@ -327,8 +325,8 @@ Function global_table[] =
   (Function) 0,
   (Function) 0,
   /* 148 - 151 */
-  (Function) do_tcl,
-  (Function) readtclprog,
+  (Function) 0,
+  (Function) 0,
   (Function) 0,
   (Function) def_get,
   /* 152 - 155 */
@@ -403,8 +401,8 @@ Function global_table[] =
   (Function) 0,
   /* 208 - 211 */
   (Function) 0,
-  (Function) add_tcl_coups,
-  (Function) rem_tcl_coups,
+  (Function) 0,
+  (Function) 0,
   (Function) &botname,
   /* 212 - 215 */
   (Function) 0,			/* remove_gunk() -- UNUSED! (drummer)	*/
@@ -423,9 +421,9 @@ Function global_table[] =
   (Function) 0, /* gexempt_total -- UNUSED! (Eule)			*/
   /* 224 - 227 */
   (Function) 0,			/* p_tcl_bind_list *			*/
-  (Function) & use_exempts,	/* int					*/
-  (Function) & use_invites,	/* int					*/
-  (Function) & force_expire,	/* int					*/
+  (Function) 0,	/* int					*/
+  (Function) 0,	/* int					*/
+  (Function) 0,	/* int					*/
   /* 228 - 231 */
   (Function) 0,
   (Function) 0,
@@ -447,7 +445,7 @@ Function global_table[] =
   (Function) changeover_dcc,
   (Function) make_rand_str,
   /* 244 - 247 */
-  (Function) & protect_readonly, /* int					*/
+  (Function) 0, /* int					*/
   (Function) findchan_by_dname,
   (Function) 0,
   (Function) & userfile_perm,	 /* int					*/
@@ -502,8 +500,8 @@ Function global_table[] =
   (Function) killtransfer,
   /* 280 - 283 */
   (Function) write_ignores,
-  (Function) &copy_to_tmp, /* int */
-  (Function) &quiet_reject, /* int */
+  (Function) 0, /* int */
+  (Function) 0, /* int */
 };
 
 static bind_table_t *BT_load, *BT_unload;

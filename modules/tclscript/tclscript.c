@@ -20,9 +20,10 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tclscript.c,v 1.26 2003/02/18 10:13:17 stdarg Exp $";
+static const char rcsid[] = "$Id: tclscript.c,v 1.27 2003/02/25 06:52:19 stdarg Exp $";
 #endif
 
+#include <tcl.h>
 #include "lib/eggdrop/module.h"
 #include <eggdrop/eggdrop.h>
 
@@ -126,13 +127,13 @@ static void set_linked_var(script_linked_var_t *var, script_var_t *val)
 		val = &script_var;
 	}
 
-	obj = c_to_tcl_var(interp, val);
+	obj = c_to_tcl_var(ginterp, val);
 
 	if (var->class && strlen(var->class)) {
-		Tcl_SetVar2Ex(interp, var->class, var->name, obj, TCL_GLOBAL_ONLY);
+		Tcl_SetVar2Ex(ginterp, var->class, var->name, obj, TCL_GLOBAL_ONLY);
 	}
 	else {
-		Tcl_SetVar2Ex(interp, var->name, NULL, obj, TCL_GLOBAL_ONLY);
+		Tcl_SetVar2Ex(ginterp, var->name, NULL, obj, TCL_GLOBAL_ONLY);
 	}
 }
 
@@ -178,7 +179,7 @@ static int my_link_var(void *ignore, script_linked_var_t *var)
 	else varname = strdup(var->name);
 
 	set_linked_var(var, NULL);
-	Tcl_TraceVar(interp, varname, TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS, my_trace_callback, var);
+	Tcl_TraceVar(ginterp, varname, TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS, my_trace_callback, var);
 
 	free(varname);
 	return(0);
@@ -192,7 +193,7 @@ static int my_unlink_var(void *ignore, script_linked_var_t *var)
 	if (var->class && strlen(var->class)) varname = egg_mprintf("%s(%s)", var->class, var->name);
 	else varname = strdup(var->name);
 
-	Tcl_UntraceVar(interp, varname, TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS, my_trace_callback, var);
+	Tcl_UntraceVar(ginterp, varname, TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS, my_trace_callback, var);
 
 	free(varname);
 	return(0);
@@ -297,7 +298,7 @@ static int my_create_command(void *ignore, script_raw_command_t *info)
 	else {
 		cmdname = strdup(info->name);
 	}
-	Tcl_CreateObjCommand(interp, cmdname, my_command_handler, (ClientData) info, NULL);
+	Tcl_CreateObjCommand(ginterp, cmdname, my_command_handler, (ClientData) info, NULL);
 	free(cmdname);
 
 	return(0);
@@ -314,7 +315,7 @@ static int my_delete_command(void *ignore, script_raw_command_t *info)
 	else {
 		cmdname = strdup(info->name);
 	}
-	Tcl_DeleteCommand(interp, cmdname);
+	Tcl_DeleteCommand(ginterp, cmdname);
 	free(cmdname);
 
 	return(0);
@@ -620,6 +621,12 @@ static void tclscript_report(int idx, int details)
 	dprintf(idx, "%s\n", reported);
 }
 
+static int hook_secondly()
+{
+	Tcl_DoOneEvent(TCL_ALL_EVENTS | TCL_DONT_WAIT);
+	return(0);
+}
+
 static bind_list_t dcc_commands[] = {
 	{"tcl", (Function) cmd_tcl},
 	{0}
@@ -644,9 +651,7 @@ char *tclscript_LTX_start(eggdrop_t *eggdrop)
 {
 	egg = eggdrop;
 
-	/* When tcl is gone from the core, this will be uncommented. */
-	/* ginterp = Tcl_CreateInterp(); */
-	ginterp = interp;
+	ginterp = Tcl_CreateInterp();
 
 	module_register("tclscript", tclscript_table, 1, 2);
 	if (!module_depend("tclscript", "eggdrop", 107, 0)) {
@@ -663,13 +668,13 @@ char *tclscript_LTX_start(eggdrop_t *eggdrop)
 	bind_add_list("dcc", dcc_commands);
 	bind_add_list("party", party_commands);
 
+	add_hook(HOOK_SECONDLY, hook_secondly);
 	return(NULL);
 }
 
 static char *tclscript_close()
 {
-	/* When tcl is gone from the core, this will be uncommented. */
-	/* Tcl_DeleteInterp(ginterp); */
+	Tcl_DeleteInterp(ginterp);
 
 	bind_rem_list("dcc", dcc_commands);
 	bind_rem_list("party", party_commands);

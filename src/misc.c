@@ -26,7 +26,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: misc.c,v 1.77 2003/02/18 10:37:18 stdarg Exp $";
+static const char rcsid[] = "$Id: misc.c,v 1.78 2003/02/25 06:52:19 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -49,7 +49,6 @@ extern char helpdir[], version[], *botname, admin[], network[], motdfile[],
             ver[], myname[], bannerfile[], textdir[];
 extern int strict_host;
 extern time_t now;
-extern Tcl_Interp *interp;
 
 int conmask = LOG_MODES | LOG_CMDS | LOG_MISC; /* Console mask */
 int raw_log = 0;	/* Disply output to server to LOG_SERVEROUT */

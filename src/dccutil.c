@@ -27,7 +27,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dccutil.c,v 1.61 2003/02/10 00:09:08 wcc Exp $";
+static const char rcsid[] = "$Id: dccutil.c,v 1.62 2003/02/25 06:52:19 stdarg Exp $";
 #endif
 
 #include <sys/stat.h>
@@ -45,7 +45,7 @@ static const char rcsid[] = "$Id: dccutil.c,v 1.61 2003/02/10 00:09:08 wcc Exp $
 extern struct dcc_t   *dcc;
 extern struct userrec *userlist;
 
-extern int  dcc_total, max_dcc, dcc_flood_thr, backgrd, copy_to_tmp, MAXSOCKS;
+extern int  dcc_total, max_dcc, dcc_flood_thr, backgrd, MAXSOCKS;
 extern char spaces[], version[];
 
 extern time_t now;
@@ -248,16 +248,6 @@ void killtransfer(int n)
 		if (dcc[n].u.xfer->f) {
 			fclose(dcc[n].u.xfer->f);
 			dcc[n].u.xfer->f = NULL;
-		}
-		if (dcc[n].u.xfer->filename && copy_to_tmp) {
-			for (i = 0; i < dcc_total; i++) {
-				if ((i != n) && (dcc[i].type->flags & DCT_FILETRAN) && (dcc[i].u.xfer->filename) && (!strcmp(dcc[i].u.xfer->filename, dcc[n].u.xfer->filename))) {
-					ok = 0;
-					break;
-				}
-			}
-			if (ok)
-			unlink(dcc[n].u.xfer->filename);
 		}
 	}
  }

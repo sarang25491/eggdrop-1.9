@@ -30,7 +30,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.138 2003/02/18 10:37:18 stdarg Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.139 2003/02/25 06:52:19 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -339,7 +339,7 @@ static struct tm	nowtm;
 
 /* Called once a second.
  */
-static void core_secondly()
+static int core_secondly()
 {
   static int cnt = 0;
   int miltime;
@@ -388,6 +388,7 @@ static void core_secondly()
     if (nowtm.tm_min == notify_users_at)
       call_hook(HOOK_HOURLY);
   }
+  return(0);
 }
 
 static void core_minutely()
@@ -425,16 +426,14 @@ static void event_loaded()
   check_bind_event("loaded");
 }
 
-void kill_tcl();
 extern module_entry *module_list;
 
-int init_userent(), init_net(), init_tcl(int, char **);
+int init_userent(), init_net();
 void core_party_init();
 void core_config_init();
 void telnet_init();
 void dns_init();
 void binds_init();
-void dcc_init();
 
 void patch(const char *str)
 {
@@ -465,7 +464,6 @@ int main(int argc, char **argv)
   char s[25];
   FILE *f;
   struct sigaction sv;
-  struct chanset_t *chan;
   egg_timeval_t howlong;
   int timeout;
   void *config_root, *entry;
@@ -568,15 +566,13 @@ int main(int argc, char **argv)
   telnet_init();
   modules_init();
   dns_init();
-  egg_dns_init();
+  egg_net_init();
   core_binds_init();
   init_userent();
   traffic_init();
 
   if (backgrd)
     bg_prepare_split();
-
-  init_tcl(argc, argv);
 
   strlcpy(s, ctime(&now), sizeof s);
   strcpy(&s[11], &s[20]);
@@ -596,16 +592,11 @@ int main(int argc, char **argv)
 	}
 
 
-  i = 0;
-  for (chan = chanset; chan; chan = chan->next)
-    i++;
-  putlog(LOG_MISC, "*", "=== %s: %d channels, %d users.", core_config.botname, i,
-         count_users(userlist));
   cache_miss = 0;
   cache_hit = 0;
 
   if (!pid_file[0])
-    snprintf(pid_file, sizeof pid_file, "pid.%s", myname);
+    snprintf(pid_file, sizeof pid_file, "pid.%s", core_config.botname);
 
   /* Check for pre-existing eggdrop! */
   f = fopen(pid_file, "r");
@@ -615,7 +606,7 @@ int main(int argc, char **argv)
     kill(xx, SIGCHLD);		/* Meaningless kill to determine if pid
 				   is used */
     if (errno != ESRCH) {
-      printf(_("I detect %s already running from this directory.\n"), myname);
+      printf(_("I detect %s already running from this directory.\n"), core_config.botname);
       printf(_("If this is incorrect, erase the %s\n"), pid_file);
       bg_send_quit(BG_ABORT);
       exit(1);
@@ -673,7 +664,7 @@ int main(int argc, char **argv)
   add_help_reference("core.help");
   howlong.sec = 1;
   howlong.usec = 0;
-  timer_create_repeater(&howlong, (Function) core_secondly);
+  timer_create_repeater(&howlong, core_secondly);
 
   /* init time'd hooks */
   add_hook(HOOK_MINUTELY, (Function) core_minutely);
@@ -688,87 +679,18 @@ int main(int argc, char **argv)
   call_hook(HOOK_LOADED);
 
   debug0("main: entering loop");
-  while (1) {
-#if !defined(HAVE_PRE7_5_TCL)
-    /* Process a single tcl event */
-    Tcl_DoOneEvent(TCL_ALL_EVENTS | TCL_DONT_WAIT);
-#endif
+	while (1) {
+		timer_update_now(&egg_timeval_now);
+		now = egg_timeval_now.sec;
+		random(); /* Woop, lets really jumble things */
+		timer_run();
 
-    /* Lets move some of this here, reducing the numer of actual
-     * calls to periodic_timers
-     */
-    timer_get_time(&egg_timeval_now);
-    now = egg_timeval_now.sec;
-    random();			/* Woop, lets really jumble things */
-    timer_run();
-
-    /* Free unused structures. */
-    /* garbage_collect(); */
-
-	if (timer_get_shortest(&howlong)) {
-		timeout = 1000;
+		if (timer_get_shortest(&howlong)) {
+			timeout = 1000;
+		}
+		else {
+			timeout = howlong.sec * 1000 + howlong.usec / 1000;
+		}
+		sockbuf_update_all(timeout);
 	}
-	else {
-		timeout = howlong.sec * 1000 + howlong.usec / 1000;
-	}
-	sockbuf_update_all(timeout);
-
-	timer_update_now(&egg_timeval_now);
-
-    if (do_restart) {
-      if (do_restart == -2)
-	rehash();
-      else {
-	/* Unload as many modules as possible */
-	int f = 1;
-	module_entry *p;
-	Function x;
-	char xx[256];
-
- 	/* oops, I guess we should call this event before tcl is restarted */
-	check_bind_event("prerestart");
-
-	while (f) {
-	  f = 0;
-	  for (p = module_list; p != NULL; p = p->next) {
-	    dependancy *d = dependancy_list;
-	    int ok = 1;
-
-	    while (ok && d) {
-	      if (d->needed == p)
-		ok = 0;
-	      d = d->next;
-	    }
-	    if (ok) {
-	      strcpy(xx, p->name);
-	      if (module_unload(xx, myname) == NULL) {
-		f = 1;
-		break;
-	      }
-	    }
-	  }
-	}
-	p = module_list;
-	if (p && p->next && p->next->next)
-	  /* Should be only 2 modules now - blowfish (or some other
-	     encryption module) and eggdrop. */
-	  putlog(LOG_MISC, "*", _("Stagnant module; there WILL be memory leaks!"));
-	flushlogs();
-	kill_tcl();
-	timer_destroy_all(); /* Destroy all timers. */
-	init_tcl(argc, argv);
-	/* We expect the encryption module as the current module pointed
-	 * to by `module_list'.
-	 */
-	x = p->funcs[MODCALL_START];
-	/* `NULL' indicates that we just recently restarted. The module
-	 * is expected to re-initialise as needed.
-	 */
-	x(NULL);
-	rehash();
-	call_hook(HOOK_LOADED);
-      }
-      do_restart = 0;
-    }
-  }
 }

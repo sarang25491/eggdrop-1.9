@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.12 2003/02/15 05:04:57 wcc Exp $
+# $Id: Makefile.am,v 1.13 2003/02/25 06:52:19 stdarg Exp $
 
 AUX_DIST		= $(ac_aux_dir)/install-sh \
 			$(ac_aux_dir)/ltmain.sh \
@@ -20,7 +20,7 @@ AUX_DIST_EXTRA		= $(ac_aux_dir)/codeset.m4 \
 
 EXTRA_DIST		= bootstrap
 
-SUBDIRS			= intl libltdl lib modules src scripts nettype @POSUB@
+SUBDIRS			= intl libltdl lib modules src scripts nettype po
 DISTCLEANFILES		= lush.h
 MAINTAINERCLEANFILES	= Makefile.in aclocal.m4 configure config-h.in \
 			config.cache config.log config.status \

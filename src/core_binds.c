@@ -21,20 +21,3 @@ void check_bind_event(char *event)
 {
 	bind_check(BT_event, event, NULL, event);
 }
-
-void check_bind_listen(const char *cmd, int idx)
-{
-	putlog(LOG_MISC, "*", "check_bind_listen: unsupported right now");
-
-/*
-	char s[11];
-	int x;
-
-	snprintf(s, sizeof s, "%d", idx);
-	Tcl_SetVar(interp, "_n", (char *) s, 0);
-	x = Tcl_VarEval(interp, cmd, " $_n", NULL);
-	if (x == TCL_ERROR)
-		putlog(LOG_MISC, "*", "error on listen: %s", interp->result);
-*/
-
-}

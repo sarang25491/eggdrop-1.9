@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: chanprog.c,v 1.60 2003/02/17 10:22:30 stdarg Exp $";
+static const char rcsid[] = "$Id: chanprog.c,v 1.61 2003/02/25 06:52:19 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -47,7 +47,7 @@ static const char rcsid[] = "$Id: chanprog.c,v 1.60 2003/02/17 10:22:30 stdarg E
 
 extern struct userrec	*userlist;
 extern char ver[], firewall[], motdfile[], userfile[], helpdir[],
-            tempdir[], moddir[], notify_new[], owner[], configfile[];
+            moddir[], notify_new[], owner[], configfile[];
 extern time_t now, online_since;
 extern int backgrd, term_z, con_chan, cache_hit, cache_miss, firewallport,
            default_flags, conmask, protect_readonly, make_userfile,
@@ -277,7 +277,6 @@ void tell_settings(int idx)
   dprintf(idx, _("Userfile: %1$s   Motd: %2$s\n"), userfile, motdfile);
   dprintf(idx, _("Directories:\n"));
   dprintf(idx, _("  Help    : %s\n"), helpdir);
-  dprintf(idx, _("  Temp    : %s\n"), tempdir);
   dprintf(idx, _("  Modules : %s\n"), moddir);
   fr.global = default_flags;
 
@@ -320,7 +319,6 @@ void chanprog()
 {
   admin[0] = 0;
   helpdir[0] = 0;
-  tempdir[0] = 0;
   conmask = 0;
   call_hook(HOOK_REHASH);
   if (!core_config.botname)
@@ -347,28 +345,6 @@ Telnet to the bot and enter 'NEW' as your nickname.\n"));
   if (helpdir[0])
     if (helpdir[strlen(helpdir) - 1] != '/')
       strcat(helpdir, "/");
-  if (tempdir[0])
-    if (tempdir[strlen(tempdir) - 1] != '/')
-      strcat(tempdir, "/");
-  /* Test tempdir: it's vital */
-  {
-    FILE *f;
-    char s[161], rands[8];
-
-    /* Possible file race condition solved by using a random string
-     * and the process id in the filename.
-     * FIXME: This race is only partitially fixed. We could still be
-     *        overwriting an existing file / following a malicious
-     *        link.
-     */
-    make_rand_str(rands, 7); /* create random string */
-    sprintf(s, "%s.test-%u-%s", tempdir, getpid(), rands);
-    f = fopen(s, "w");
-    if (f == NULL)
-      fatal(_("CANT WRITE TO TEMP DIR"), 0);
-    fclose(f);
-    unlink(s);
-  }
   reaffirm_owners();
 }
 
