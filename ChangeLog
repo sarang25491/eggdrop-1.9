@@ -1,3 +1,9 @@
+2001-10-17 00:43  stdarg <stdarg@techmonkeys.org>
+
+	* src/mod/assoc.mod/assoc.c:
+
+	add_builtins -> add_builtins2 
+
 2001-10-17 00:19  stdarg <stdarg@techmonkeys.org>
 
 	* src/: modules.c, tclhash.c, tclhash.h, mod/module.h,
