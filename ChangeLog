@@ -1,3 +1,19 @@
+2001-10-21 16:05  Tothwolf <tothwolf@techmonkeys.org>
+
+	* Makefile.am, scripts/Makefile.am, src/Makefile.am,
+	src/adns/Makefile.am, src/compat/Makefile.am,
+	src/egglib/Makefile.am, src/mod/Makefile.am,
+	src/mod/assoc.mod/Makefile.am, src/mod/blowfish.mod/Makefile.am,
+	src/mod/channels.mod/Makefile.am, src/mod/compress.mod/Makefile.am,
+	src/mod/console.mod/Makefile.am, src/mod/ctcp.mod/Makefile.am,
+	src/mod/filesys.mod/Makefile.am, src/mod/irc.mod/Makefile.am,
+	src/mod/notes.mod/Makefile.am, src/mod/server.mod/Makefile.am,
+	src/mod/share.mod/Makefile.am, src/mod/tclscript.mod/Makefile.am,
+	src/mod/transfer.mod/Makefile.am, src/mod/uptime.mod/Makefile.am,
+	src/mod/woobie.mod/Makefile.am:
+
+	* cleanups in Makefile.am files 
+
 2001-10-21 14:51  Tothwolf <tothwolf@techmonkeys.org>
 
 	* Makefile.am, bootstrap, acconfig/config.guess,
