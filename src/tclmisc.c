@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.50 2002/05/01 02:30:55 stdarg Exp $
+ * $Id: tclmisc.c,v 1.51 2002/05/05 04:59:34 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -284,13 +284,14 @@ static int script_callevent(char *event)
 static char *script_md5(char *data)
 {
   MD5_CTX md5context;
-  static char digest_string[33];
+  char *digest_string;
   unsigned char digest[16];
   int i;
 
   MD5_Init(&md5context);
   MD5_Update(&md5context, data, strlen(data));
   MD5_Final(digest, &md5context);
+  digest_string = (char *)malloc(33);
   for (i = 0; i < 16; i++) sprintf(digest_string + (i*2), "%.2x", digest[i]);
   digest_string[32] = 0;
   return(digest_string);
@@ -316,7 +317,7 @@ script_command_t script_misc_cmds[] = {
 	{"", "reloadhelp", (Function) script_reloadhelp, NULL, 0, "", "", SCRIPT_INTEGER, 0},
 	{"", "loadmodule", (Function) script_loadmodule, NULL, 1, "s", "module-name", SCRIPT_STRING, 0},
 	{"", "unloadmodule", (Function) script_unloadmodule, NULL, 1, "s", "module-name", SCRIPT_STRING, 0},
-	{"", "md5", (Function) script_md5, NULL, 1, "s", "data", SCRIPT_STRING, 0},
+	{"", "md5", (Function) script_md5, NULL, 1, "s", "data", SCRIPT_STRING | SCRIPT_FREE, 0},
 	{"", "callevent", (Function) script_callevent, NULL, 1, "s", "event", SCRIPT_INTEGER, 0},
 	{0}
 };
