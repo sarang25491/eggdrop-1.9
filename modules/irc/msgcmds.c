@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: msgcmds.c,v 1.18 2003/03/06 12:08:15 tothwolf Exp $";
+static const char rcsid[] = "$Id: msgcmds.c,v 1.19 2003/05/12 11:54:53 wingman Exp $";
 #endif
 */
 
@@ -85,24 +85,9 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
   if (strlen(nick) > HANDLEN)
     /* Notify the user that his/her handle was truncated. */
     dprintf(DP_HELP, _("NOTICE %s :Your nick was too long and therefore it was truncated to %s.\n"), nick, handle);
-  if (notify_new[0]) {
-    snprintf(s, sizeof s, _("introduced to %s from %s"), nick, host);
-    strcpy(s1, notify_new);
-    while (s1[0]) {
-      p1 = strchr(s1, ',');
-      if (p1 != NULL) {
-	*p1 = 0;
-	p1++;
-	rmspace(p1);
-      }
-      rmspace(s1);
-      add_note(s1, myname, s, -1, 0);
-      if (p1 == NULL)
-	s1[0] = 0;
-      else
-	strcpy(s1, p1);
-    }
-  }
+
+  /* @@TODO: readd notify-on-new user stuff */
+
   return 1;
 }
 

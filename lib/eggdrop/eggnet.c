@@ -38,7 +38,7 @@ static sockbuf_filter_t eggnet_connect_filter = {
 
 int egg_net_init()
 {
-	egg_dns_init();
+	return egg_dns_init();
 }
 
 /* Print to an idx, using printf notation. */

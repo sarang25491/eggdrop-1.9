@@ -16,6 +16,7 @@
  */
 
 #include <string.h>
+#include <stdio.h>	/* sprintf	*/
 
 #include "md5.h"
 

@@ -90,7 +90,9 @@ int module_unload(const char *name, int why)
 	module_list_t *entry, *prev;
 	int retval;
 
-	for (entry = module_list_head; entry; entry = entry->next) {
+	for (entry = module_list_head, prev = NULL;
+		 entry; 
+			prev = entry, entry = entry->next) {
 		if (!strcasecmp(entry->modinfo.name, name)) break;
 	}
 	if (!entry) return(-1);
@@ -101,6 +103,7 @@ int module_unload(const char *name, int why)
 	}
 
 	lt_dlclose(entry->hand);
+
 	if (prev) prev->next = entry->next;
 	else module_list_head = entry->next;
 	free(entry);

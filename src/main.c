@@ -30,7 +30,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.148 2003/05/11 02:33:32 stdarg Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.149 2003/05/12 11:54:53 wingman Exp $";
 #endif
 
 #include <unistd.h>
@@ -83,7 +83,6 @@ int	egg_numver = VERSION_NUM;
 
 eggdrop_t *egg = NULL;		/* Eggdrop's context */
 
-char	notify_new[121] = "";	/* Person to send a note to for new users */
 int	default_flags = 0;	/* Default user flags and */
 int	default_uflags = 0;	/* Default userdefinied flags for people
 				   who say 'hello' or for .adduser */
@@ -103,8 +102,6 @@ char	pid_file[120];		/* Name of the file for the pid to be
 				   stored in */
 int	save_users_at = 0;	/* How many minutes past the hour to
 				   save the userfile? */
-int	notify_users_at = 0;	/* How many minutes past the hour to
-				   notify users of notes? */
 char	version[81];		/* Version info (long form) */
 char	ver[41];		/* Version info (short form) */
 int	use_stderr = 1;		/* Send stuff to stderr instead of logfiles? */
@@ -332,7 +329,6 @@ static int core_secondly()
 	check_bind_event("daily");
       }
     }
-    if (nowtm.tm_min == notify_users_at) check_bind_event("hourly");
   }
   return(0);
 }

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>	/* memset	*/
 #include "xml.h"
 
 int xml_write_node(FILE *fp, xml_node_t *node, int indent)

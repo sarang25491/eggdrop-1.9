@@ -350,7 +350,11 @@ static int dns_make_query(const char *host, int type, char **buf, int *query_len
 		if (type == DNS_IPV4) ns_type = 1; /* IPv4 */
 		else if (type == DNS_IPV6) ns_type = 28; /* IPv6 */
 		else return(-1);
-		newhost = host;
+
+		// hmm, casting const to char * doesn't seem to
+  		// be a good idea ;-) shouldn't the funciton be changed
+		// (i.e. removing the const identifier?)
+		newhost = (char *)host;
 	}
 
 	*buf = (char *)malloc(strlen(newhost) + 512);

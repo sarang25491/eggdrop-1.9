@@ -1,3 +1,4 @@
+#include <ctype.h>		/* isalnum	*/
 #include <eggdrop/eggdrop.h>
 
 static char **owner = NULL;

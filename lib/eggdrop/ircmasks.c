@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include "match.h"
+#include "egglog.h"
 #include "ircmasks.h"
 
 int ircmask_list_add(ircmask_list_t *list, const char *ircmask, void *data)
@@ -37,6 +38,11 @@ int ircmask_list_add(ircmask_list_t *list, const char *ircmask, void *data)
 
 int ircmask_list_del(ircmask_list_t *list, const char *ircmask, void *data)
 {
+	putlog(LOG_DEBUG, "*", "implement me %s:%i, ircmask_list_del()", 
+			__FILE__, 
+			__LINE__
+	);
+	return (-1);
 }
 
 int ircmask_list_find(ircmask_list_t *list, const char *irchost, void *dataptr)
