@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: cmdschan.c,v 1.14 2003/01/02 21:33:14 wcc Exp $";
+static const char rcsid[] = "$Id: cmdschan.c,v 1.15 2003/01/30 01:04:36 wcc Exp $";
 #endif
 */
 
@@ -824,30 +824,30 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
     get_mode_protect(chan, work);
     dprintf(idx, "Protect modes (chanmode): %s\n", work[0] ? work : "None");
     if (chan->idle_kick)
-      dprintf(idx, "Idle Kick after (idle-kick): %d\n", chan->idle_kick);
+      dprintf(idx, "Idle Kick after (idle_kick): %d\n", chan->idle_kick);
     else
-      dprintf(idx, "Idle Kick after (idle-kick): DON'T!\n");
+      dprintf(idx, "Idle Kick after (idle_kick): DON'T!\n");
     if (chan->stopnethack_mode)
-      dprintf(idx, "stopnethack-mode: %d\n", chan->stopnethack_mode);
+      dprintf(idx, "stopnethack_mode: %d\n", chan->stopnethack_mode);
     else
       dprintf(idx, "stopnethack: DON'T!\n");
-      dprintf(idx, "aop-delay: %d:%d\n", chan->aop_min, chan->aop_max);
+      dprintf(idx, "aop_delay: %d:%d\n", chan->aop_min, chan->aop_max);
     if (chan->revenge_mode)
-      dprintf(idx, "revenge-mode: %d\n", chan->revenge_mode);
+      dprintf(idx, "revenge_mode: %d\n", chan->revenge_mode);
     else
-      dprintf(idx, "revenge-mode: 0\n");
+      dprintf(idx, "revenge_mode: 0\n");
     if (chan->ban_time)
-      dprintf(idx, "ban-time: %d\n", chan->ban_time);
+      dprintf(idx, "ban_time: %d\n", chan->ban_time);
     else
-      dprintf(idx, "ban-time: 0\n");
+      dprintf(idx, "ban_time: 0\n");
     if (chan->exempt_time)
-      dprintf(idx, "exempt-time: %d\n", chan->exempt_time);
+      dprintf(idx, "exempt_time: %d\n", chan->exempt_time);
     else
-      dprintf(idx, "exempt-time: 0\n");
+      dprintf(idx, "exempt_time: 0\n");
     if (chan->invite_time)
-      dprintf(idx, "invite-time: %d\n", chan->invite_time);
+      dprintf(idx, "invite_time: %d\n", chan->invite_time);
     else
-      dprintf(idx, "invite-time: 0\n");
+      dprintf(idx, "invite_time: 0\n");
 
     dprintf(idx, "Other modes:\n");
     dprintf(idx, "     %cinactive       %cstatuslog      %csecret         %cshared\n",
@@ -1014,8 +1014,7 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
       list[0] = newsplit(&par);
       answers[0] = 0;
       while (list[0][0]) {
-	if (list[0][0] == '+' || list[0][0] == '-' ||
-	    (!strcmp(list[0], "dont-idle-kick"))) {
+	if (list[0][0] == '+' || list[0][0] == '-') {
 	  if (tcl_channel_modify(0, chan, 1, list) == TCL_OK) {
 	    strcat(answers, list[0]);
 	    strcat(answers, " ");

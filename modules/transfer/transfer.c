@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: transfer.c,v 1.20 2003/01/29 07:42:50 wcc Exp $";
+static const char rcsid[] = "$Id: transfer.c,v 1.21 2003/01/30 01:04:36 wcc Exp $";
 #endif
 
 #define MODULE_NAME "transfer"
@@ -1452,7 +1452,7 @@ static int raw_dcc_send(char *filename, char *nick, char *from,
 
 static tcl_ints myints[] =
 {
-  {"max_dloads",	&dcc_limit},
+  {"dcc_limit", 	&dcc_limit},
   {"dcc_block",		&dcc_block},
   {"xfer_timeout",	&wait_dcc_xfer},
   {NULL,		NULL}

@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: tclchan.c,v 1.23 2003/01/02 21:33:14 wcc Exp $";
+static const char rcsid[] = "$Id: tclchan.c,v 1.24 2003/01/30 01:04:36 wcc Exp $";
 #endif
 */
 
@@ -32,16 +32,16 @@ static const char rcsid[] = "$Id: tclchan.c,v 1.23 2003/01/02 21:33:14 wcc Exp $
 /* Names of channel info members. */
 char *channel_info_names[] = {
 	"chanmode",
-	"idle-kick",
-	"stop-net-hack",
-	"revenge-mode",
-	"flood-pub",
-	"flood-ctcp",
-	"flood-join",
-	"flood-kick",
-	"flood-deop",
-	"flood-nick",
-	"aop-delay",
+	"idle_kick",
+	"stop_net_hack",
+	"revenge_mode",
+	"flood_pub",
+	"flood_ctcp",
+	"flood_join",
+	"flood_kick",
+	"flood_deop",
+	"flood_nick",
+	"aop_delay",
 	NULL
 };
 
@@ -257,19 +257,19 @@ static int script_channel_get(script_var_t *retval, char *channel_name, char *se
 
 #define CHECK(x) !strcmp(setting, x)
 	if (CHECK("chanmode")) get_mode_protect(chan, s);
-	else if (CHECK("idle-kick")) sprintf(s, "%d", chan->idle_kick);
-	else if (CHECK("stop-net-hack")) sprintf(s, "%d", chan->stopnethack_mode);
-	else if (CHECK("revenge-mode")) sprintf(s, "%d", chan->revenge_mode);
-	else if (CHECK("flood-pub")) sprintf(s, "%d %d", chan->flood_pub_thr, chan->flood_pub_time);
-	else if (CHECK("flood-ctcp")) sprintf(s, "%d %d", chan->flood_ctcp_thr, chan->flood_ctcp_time);
-	else if (CHECK("flood-join")) sprintf(s, "%d %d", chan->flood_join_thr, chan->flood_join_time);
-	else if (CHECK("flood-kick")) sprintf(s, "%d %d", chan->flood_kick_thr, chan->flood_kick_time);
-	else if (CHECK("flood-deop")) sprintf(s, "%d %d", chan->flood_deop_thr, chan->flood_deop_time);
-	else if (CHECK("flood-nick")) sprintf(s, "%d %d", chan->flood_nick_thr, chan->flood_nick_time);
-	else if (CHECK("aop-delay")) sprintf(s, "%d %d", chan->aop_min, chan->aop_max);
-	else if (CHECK("ban-time"))  sprintf(s, "%d", chan->ban_time);
-	else if (CHECK("exempt-time"))  sprintf(s, "%d", chan->exempt_time);
-	else if (CHECK("invite-time"))  sprintf(s, "%d", chan->invite_time);
+	else if (CHECK("idle_kick")) sprintf(s, "%d", chan->idle_kick);
+	else if (CHECK("stop_net_hack")) sprintf(s, "%d", chan->stopnethack_mode);
+	else if (CHECK("revenge_mode")) sprintf(s, "%d", chan->revenge_mode);
+	else if (CHECK("flood_pub")) sprintf(s, "%d %d", chan->flood_pub_thr, chan->flood_pub_time);
+	else if (CHECK("flood_ctcp")) sprintf(s, "%d %d", chan->flood_ctcp_thr, chan->flood_ctcp_time);
+	else if (CHECK("flood_join")) sprintf(s, "%d %d", chan->flood_join_thr, chan->flood_join_time);
+	else if (CHECK("flood_kick")) sprintf(s, "%d %d", chan->flood_kick_thr, chan->flood_kick_time);
+	else if (CHECK("flood_deop")) sprintf(s, "%d %d", chan->flood_deop_thr, chan->flood_deop_time);
+	else if (CHECK("flood_nick")) sprintf(s, "%d %d", chan->flood_nick_thr, chan->flood_nick_time);
+	else if (CHECK("aop_delay")) sprintf(s, "%d %d", chan->aop_min, chan->aop_max);
+	else if (CHECK("ban_time"))  sprintf(s, "%d", chan->ban_time);
+	else if (CHECK("exempt_time"))  sprintf(s, "%d", chan->exempt_time);
+	else if (CHECK("invite_time"))  sprintf(s, "%d", chan->invite_time);
 
 	else if (lookup_flag_by_name(normal_flag_map, setting, &flagval)) sprintf(s, "%d", chan->status & flagval);
 	else if (lookup_flag_by_name(stupid_ircnet_flag_map, setting, &flagval)) sprintf(s, "%d", chan->ircnet_status & flagval);
@@ -379,53 +379,51 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
       strncpy(s, item[i], 120);
       s[120] = 0;
       set_mode_protect(chan, s);
-    } else if (!strcmp(item[i], "idle-kick")) {
+    } else if (!strcmp(item[i], "idle_kick")) {
       i++;
       if (i >= items) {
 	if (irp)
-	  Tcl_AppendResult(irp, "channel idle-kick needs argument", NULL);
+	  Tcl_AppendResult(irp, "channel idle_kick needs argument", NULL);
 	return TCL_ERROR;
       }
       chan->idle_kick = atoi(item[i]);
-    } else if (!strcmp(item[i], "dont-idle-kick"))
-      chan->idle_kick = 0;
-    else if (!strcmp(item[i], "stopnethack-mode")) {
+    } else if (!strcmp(item[i], "stopnethack_mode")) {
       i++;
       if (i >= items) {
 	if (irp)
-	  Tcl_AppendResult(irp, "channel stopnethack-mode needs argument", NULL);
+	  Tcl_AppendResult(irp, "channel stopnethack_mode needs argument", NULL);
 	return TCL_ERROR;
       }
       chan->stopnethack_mode = atoi(item[i]);
-    } else if (!strcmp(item[i], "revenge-mode")) {
+    } else if (!strcmp(item[i], "revenge_mode")) {
       i++;
       if (i >= items) {
         if (irp)
-          Tcl_AppendResult(irp, "channel revenge-mode needs argument", NULL);
+          Tcl_AppendResult(irp, "channel revenge_mode needs argument", NULL);
         return TCL_ERROR;
       }
       chan->revenge_mode = atoi(item[i]);
-    } else if (!strcmp(item[i], "ban-time")) {
+    } else if (!strcmp(item[i], "ban_time")) {
       i++;
       if (i >= items) {
         if (irp)
-          Tcl_AppendResult(irp, "channel ban-time needs argument", NULL);
+          Tcl_AppendResult(irp, "channel ban_time needs argument", NULL);
         return TCL_ERROR;
       }
       chan->ban_time = atoi(item[i]);
-    } else if (!strcmp(item[i], "exempt-time")) {
+    } else if (!strcmp(item[i], "exempt_time")) {
       i++;
       if (i >= items) {
         if (irp)
-          Tcl_AppendResult(irp, "channel exempt-time needs argument", NULL);
+          Tcl_AppendResult(irp, "channel exempt_time needs argument", NULL);
         return TCL_ERROR;
       }
       chan->exempt_time = atoi(item[i]);
-    } else if (!strcmp(item[i], "invite-time")) {
+    } else if (!strcmp(item[i], "invite_time")) {
       i++;
       if (i >= items) {
         if (irp)
-          Tcl_AppendResult(irp, "channel invite-time needs argument", NULL);
+          Tcl_AppendResult(irp, "channel invite_time needs argument", NULL);
         return TCL_ERROR;
       }
       chan->invite_time = atoi(item[i]);
@@ -446,7 +444,7 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
         goto check_for_udef_flags;
       }
     }
-    else if (!strncmp(item[i], "flood-", 6)) {
+    else if (!strncmp(item[i], "flood_", 6)) {
       int *pthr = 0, *ptime;
       char *p;
 
@@ -489,7 +487,7 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
 	*pthr = atoi(item[i]);
 	*ptime = 1;
       }
-    } else if (!strncmp(item[i], "aop-delay", 9)) {
+    } else if (!strncmp(item[i], "aop_delay", 9)) {
       char *p;
       i++;
       if (i >= items) {

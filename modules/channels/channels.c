@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.21 2003/01/29 07:42:49 wcc Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.22 2003/01/30 01:04:36 wcc Exp $";
 #endif
 
 #define MODULE_NAME "channels"
@@ -44,7 +44,7 @@ static char glob_chanmode[64];		/* Default chanmode (drummer,990731) */
 static struct udef_struct *udef;
 static int global_stopnethack_mode;
 static int global_revenge_mode;
-static int global_idle_kick;		/* Default idle-kick setting. */
+static int global_idle_kick;		/* Default idle_kick setting. */
 static int global_aop_min;
 static int global_aop_max;
 static int global_ban_time;
@@ -379,10 +379,10 @@ static void write_channels()
     convert_element(chan->dname, name);
     get_mode_protect(chan, w);
     convert_element(w, w2);
-    fprintf(f, "channel %s %s%schanmode %s idle-kick %d stopnethack-mode %d \
-revenge-mode %d flood-chan %d:%d flood-ctcp %d:%d flood-join %d:%d \
-flood-kick %d:%d flood-deop %d:%d flood-nick %d:%d aop-delay %d:%d \
-ban-time %d exempt-time %d invite-time %d \
+    fprintf(f, "channel %s %s%schanmode %s idle_kick %d stopnethack_mode %d \
+revenge_mode %d flood_chan %d:%d flood_ctcp %d:%d flood_join %d:%d \
+flood_kick %d:%d flood_deop %d:%d flood_nick %d:%d aop_delay %d:%d \
+ban_time %d exempt_time %d invite_time %d \
 %cenforcebans %cdynamicbans %cuserbans %cautoop %cbitch \
 %cgreet %cprotectops %cprotectfriends %cdontkickops \
 %cstatuslog %crevenge %crevengebot %cautovoice %csecret \
@@ -393,7 +393,7 @@ ban-time %d exempt-time %d invite-time %d \
 	name,
 	channel_static(chan) ? " " : " { ",
 	w2,
-	chan->idle_kick, /* idle-kick 0 is same as dont-idle-kick (less code)*/
+	chan->idle_kick,
 	chan->stopnethack_mode,
 	chan->revenge_mode,
 	chan->flood_pub_thr, chan->flood_pub_time,
@@ -643,10 +643,10 @@ static void channels_report(int idx, int details)
 	  dprintf(idx, "      Kicking idle users after %d min\n",
 		  chan->idle_kick);
 	if (chan->stopnethack_mode)
-	  dprintf(idx, "      stopnethack-mode %d\n",
+	  dprintf(idx, "      stopnethack_mode %d\n",
 		  chan->stopnethack_mode);
 	if (chan->revenge_mode)
-	  dprintf(idx, "      revenge-mode %d\n",
+	  dprintf(idx, "      revenge_mode %d\n",
                   chan->revenge_mode);
 	if (details) {
 		dprintf(idx, "    Bans last %d mins.\n", chan->ban_time);
