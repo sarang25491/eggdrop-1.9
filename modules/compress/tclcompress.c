@@ -25,13 +25,14 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: tclcompress.c,v 1.4 2003/01/02 21:33:14 wcc Exp $";
+static const char rcsid[] = "$Id: tclcompress.c,v 1.5 2003/01/30 08:20:20 wcc Exp $";
 #endif
 */
 
 #define NEXT_ARG	{ curr_arg++; argc--; }
 
-static int tcl_compress_file STDVAR
+static int tcl_compress_file(ClientData cd, Tcl_Interp *irp, int argc,
+                             char *argv[])
 {
   int	 mode_num = compress_level, result, curr_arg = 1;
   char	*fn_src = NULL, *fn_target = NULL;
@@ -79,7 +80,8 @@ static int tcl_compress_file STDVAR
   return TCL_OK;
 }
 
-static int tcl_uncompress_file STDVAR
+static int tcl_uncompress_file(ClientData cd, Tcl_Interp *irp, int argc,
+                               char *argv[])
 {
   int	 result;
 
@@ -96,7 +98,8 @@ static int tcl_uncompress_file STDVAR
   return TCL_OK;
 }
 
-static int tcl_iscompressed STDVAR
+static int tcl_iscompressed(ClientData cd, Tcl_Interp *irp, int argc,
+                            char *argv[])
 {
   int	 result;
 

@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: tclchan.c,v 1.25 2003/01/30 01:15:49 wcc Exp $";
+static const char rcsid[] = "$Id: tclchan.c,v 1.26 2003/01/30 08:20:20 wcc Exp $";
 #endif
 */
 
@@ -303,7 +303,7 @@ static int script_channel_get(script_var_t *retval, char *channel_name, char *se
 	return(0);
 }
 
-static int tcl_channel STDVAR
+static int tcl_channel(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 {
   struct chanset_t *chan;
 
@@ -645,7 +645,8 @@ static int script_listmask(void *type, script_var_t *retval, char *channel_name)
 }
 
 /* Should be removed when the new config system is in place. */
-static int tcl_savechannels STDVAR
+static int tcl_savechannels(ClientData cd, Tcl_Interp *irp, int argc,
+                            char *argv[])
 {
   BADARGS(1, 1, "");
   if (!chanfile[0]) {
@@ -657,7 +658,8 @@ static int tcl_savechannels STDVAR
 }
 
 /* Should be removed when the new config system is in place. */
-static int tcl_loadchannels STDVAR
+static int tcl_loadchannels(ClientData cd, Tcl_Interp *irp, int argc,
+                            char *argv[])
 {
   BADARGS(1, 1, "");
   if (!chanfile[0]) {
@@ -675,7 +677,8 @@ static int script_channel_valid(char *channel_name)
 }
 
 /* Should be removed when the new config system is in place. */
-static int tcl_isdynamic STDVAR
+static int tcl_isdynamic(ClientData cd, Tcl_Interp *irp, int argc,
+                         char *argv[])
 {
   struct chanset_t *chan;
 
@@ -897,7 +900,7 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
   return ret;
 }
 
-static int tcl_setudef STDVAR
+static int tcl_setudef(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 {
   int type;
 
@@ -917,7 +920,7 @@ static int tcl_setudef STDVAR
   return TCL_OK;
 }
 
-static int tcl_renudef STDVAR
+static int tcl_renudef(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 {
   struct udef_struct *ul;
   int type, found = 0;
@@ -948,7 +951,7 @@ static int tcl_renudef STDVAR
     return TCL_OK;
 }
 
-static int tcl_deludef STDVAR
+static int tcl_deludef(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 {
   struct udef_struct *ul, *ull;
   int type, found = 0;

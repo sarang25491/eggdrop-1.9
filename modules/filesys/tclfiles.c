@@ -24,11 +24,11 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: tclfiles.c,v 1.5 2003/01/02 21:33:14 wcc Exp $";
+static const char rcsid[] = "$Id: tclfiles.c,v 1.6 2003/01/30 08:20:20 wcc Exp $";
 #endif
 */
 
-static int tcl_getdesc STDVAR
+static int tcl_getdesc(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 {
   char *s = NULL;
 
@@ -44,14 +44,14 @@ static int tcl_getdesc STDVAR
   }
 }
 
-static int tcl_setdesc STDVAR
+static int tcl_setdesc(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 {
   BADARGS(4, 4, " dir file desc");
   filedb_setdesc(argv[1], argv[2], argv[3]);
   return TCL_OK;
 }
 
-static int tcl_getowner STDVAR
+static int tcl_getowner(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 {
   char *s = NULL;
 
@@ -67,14 +67,14 @@ static int tcl_getowner STDVAR
   }
 }
 
-static int tcl_setowner STDVAR
+static int tcl_setowner(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 {
   BADARGS(4, 4, " dir file owner");
   filedb_setowner(argv[1], argv[2], argv[3]);
   return TCL_OK;
 }
 
-static int tcl_getgots STDVAR
+static int tcl_getgots(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 {
   int i;
   char s[10];
@@ -86,14 +86,14 @@ static int tcl_getgots STDVAR
   return TCL_OK;
 }
 
-static int tcl_setlink STDVAR
+static int tcl_setlink(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 {
   BADARGS(4, 4, " dir file link");
   filedb_setlink(argv[1], argv[2], argv[3]);
   return TCL_OK;
 }
 
-static int tcl_getlink STDVAR
+static int tcl_getlink(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 {
   char *s = NULL;
 
@@ -108,7 +108,7 @@ static int tcl_getlink STDVAR
   }
 }
 
-static int tcl_setpwd STDVAR
+static int tcl_setpwd(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 {
   int idx;
 
@@ -123,7 +123,7 @@ static int tcl_setpwd STDVAR
   return TCL_OK;
 }
 
-static int tcl_getpwd STDVAR
+static int tcl_getpwd(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 {
   int idx;
 
@@ -138,49 +138,49 @@ static int tcl_getpwd STDVAR
   return TCL_OK;
 }
 
-static int tcl_getfiles STDVAR
+static int tcl_getfiles(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 {
   BADARGS(2, 2, " dir");
   filedb_getfiles(irp, argv[1]);
   return TCL_OK;
 }
 
-static int tcl_getdirs STDVAR
+static int tcl_getdirs(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 {
   BADARGS(2, 2, " dir");
   filedb_getdirs(irp, argv[1]);
   return TCL_OK;
 }
 
-static int tcl_hide STDVAR
+static int tcl_hide(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 {
   BADARGS(3, 3, " dir file");
   filedb_change(argv[1], argv[2], FILEDB_HIDE);
   return TCL_OK;
 }
 
-static int tcl_unhide STDVAR
+static int tcl_unhide(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 {
   BADARGS(3, 3, " dir file");
   filedb_change(argv[1], argv[2], FILEDB_UNHIDE);
   return TCL_OK;
 }
 
-static int tcl_share STDVAR
+static int tcl_share(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 {
   BADARGS(3, 3, " dir file");
   filedb_change(argv[1], argv[2], FILEDB_SHARE);
   return TCL_OK;
 }
 
-static int tcl_unshare STDVAR
+static int tcl_unshare(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 {
   BADARGS(3, 3, " dir file");
   filedb_change(argv[1], argv[2], FILEDB_UNSHARE);
   return TCL_OK;
 }
 
-static int tcl_setflags STDVAR
+static int tcl_setflags(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 {
   FILE *fdb;
   filedb_entry *fdbe;
@@ -238,7 +238,7 @@ static int tcl_setflags STDVAR
   return TCL_OK;
 }
 
-static int tcl_getflags STDVAR
+static int tcl_getflags(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 {
   filedb_entry *fdbe;
   char *s = NULL, *p, *d;
@@ -280,7 +280,7 @@ static int tcl_getflags STDVAR
   return TCL_OK;
 }
 
-static int tcl_mkdir STDVAR
+static int tcl_mkdir(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 {
   FILE *fdb;
   filedb_entry *fdbe;
@@ -355,7 +355,7 @@ static int tcl_mkdir STDVAR
   return TCL_OK;
 }
 
-static int tcl_rmdir STDVAR
+static int tcl_rmdir(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 {
   FILE *fdb;
   filedb_entry *fdbe;
@@ -604,12 +604,12 @@ static int tcl_mv_cp(Tcl_Interp * irp, int argc, char **argv, int copy)
   return TCL_OK;
 }
 
-static int tcl_mv STDVAR
+static int tcl_mv(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 {
   return tcl_mv_cp(irp, argc, argv, 0);
 }
 
-static int tcl_cp STDVAR
+static int tcl_cp(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 {
   return tcl_mv_cp(irp, argc, argv, 1);
 }
@@ -635,12 +635,13 @@ static int tcl_fileresend_send(ClientData cd, Tcl_Interp *irp, int argc,
   return TCL_OK;
 }
 
-static int tcl_fileresend STDVAR
+static int tcl_fileresend(ClientData cd, Tcl_Interp *irp, int argc,
+                          char *argv[])
 {
   return tcl_fileresend_send(cd, irp, argc, argv, 1);
 }
 
-static int tcl_filesend STDVAR
+static int tcl_filesend(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 {
   return tcl_fileresend_send(cd, irp, argc, argv, 0);
 }

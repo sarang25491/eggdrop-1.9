@@ -22,7 +22,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: tclegg.h,v 1.20 2003/01/02 21:33:16 wcc Exp $
+ * $Id: tclegg.h,v 1.21 2003/01/30 08:20:20 wcc Exp $
  */
 
 #ifndef _EGG_TCLEGG_H
@@ -33,11 +33,6 @@
 /* Used for stub functions:
  */
 
-#define STDVAR		(cd, irp, argc, argv)				\
-	ClientData cd;							\
-	Tcl_Interp *irp;						\
-	int argc;							\
-	char *argv[];
 #define BADARGS(nl, nh, example)	do {				\
 	if ((argc < (nl)) || (argc > (nh))) {				\
 		Tcl_AppendResult(irp, "wrong # args: should be \"",	\

@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: transfer.c,v 1.21 2003/01/30 01:04:36 wcc Exp $";
+static const char rcsid[] = "$Id: transfer.c,v 1.22 2003/01/30 08:20:20 wcc Exp $";
 #endif
 
 #define MODULE_NAME "transfer"
@@ -496,7 +496,7 @@ static void fileq_cancel(int idx, char *par)
       send_next_file(dcc[idx].nick);
 }
 
-static int tcl_getfileq STDVAR
+static int tcl_getfileq(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 {
   char *s = NULL;
   fileq_t *q;
@@ -522,7 +522,7 @@ static int tcl_getfileq STDVAR
  *    Misc Tcl functions
  */
 
-static int tcl_dccsend STDVAR
+static int tcl_dccsend(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 {
   char s[10], *sys, *nfn;
   int i;
@@ -578,7 +578,8 @@ static int tcl_dccsend STDVAR
   return TCL_OK;
 }
 
-static int tcl_getfilesendtime STDVAR
+static int tcl_getfilesendtime(ClientData cd, Tcl_Interp *irp, int argc,
+                               char *argv[])
 {
   int	sock, i;
   char	s[15];

@@ -318,7 +318,8 @@ static int storenote(char *argv1, char *argv2, char *argv3, int idx, char *who, 
   return(0);
 }
 
-static int tcl_storenote STDVAR
+static int tcl_storenote(ClientData cd, Tcl_Interp *irp, int argc,
+                         char *argv[])
 {
   int idx;
   char who[512];
@@ -378,7 +379,8 @@ static int notes_in(int dl[], int in)
   return 0;
 }
 
-static int tcl_erasenotes STDVAR
+static int tcl_erasenotes(ClientData cd, Tcl_Interp *irp, int argc,
+                          char *argv[])
 {
   FILE *f, *g;
   char s[601], *to, *s1;
@@ -442,7 +444,8 @@ static int tcl_erasenotes STDVAR
   return TCL_OK;
 }
 
-static int tcl_listnotes STDVAR
+static int tcl_listnotes(ClientData cd, Tcl_Interp *irp, int argc,
+                         char *argv[])
 {
   int i, numnotes;
   int ln[128];			/* Is it enough? */
@@ -672,7 +675,7 @@ static void notes_del(char *hand, char *nick, char *sdl, int idx)
   }
 }
 
-static int tcl_notes STDVAR
+static int tcl_notes(ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
 {
   FILE *f;
   char s[601], *to, *from, *dt, *s1;
