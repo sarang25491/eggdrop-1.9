@@ -92,6 +92,7 @@ static int get_timestamp(char *t)
 	/* Calculate timestamp. */
 	if (timestamp_logs) strftime(t, 32, "[%H:%M] ", localtime(&now));
 	else *t = 0;
+	return(0);
 }
 
 static int logfile_minutely()

@@ -17,4 +17,10 @@ int script_create_cmd_table(script_command_t *table);
 int script_delete_cmd_table(script_command_t *table);
 int script_create_simple_cmd_table(script_simple_command_t *table);
 
+script_var_t *script_string(char *str, int len);
+script_var_t *script_int(int val);
+script_var_t *script_list(int nitems, ...);
+int script_list_append(script_var_t *list, script_var_t *item);
+
+
 #endif /* _SCRIPT_H_ */

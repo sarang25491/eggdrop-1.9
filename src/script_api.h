@@ -19,7 +19,7 @@ enum {
 
 /* Flags for commands. */
 /* SCRIPT_PASS_CDATA means your callback wants its (void *)client_data passed
-   as it's *first* arg.
+   as its *first* arg.
    SCRIPT_PASS_RETVAL will pass a (scriptvar_t *)retval so that you can return
    complex types.
    SCRIPT_PASS_ARRAY will pass all the args from the script in an array. It
@@ -49,7 +49,7 @@ enum {
 
 /* Flags for variables. */
 /* SCRIPT_FREE means we will call free(retval->value) (i.e. free a malloc'd
-   string or array base ptr.
+   string or array base ptr.)
    SCRIPT_FREE_VAR means we will call free(retval) (you may need this if you
    build a complex list structure of (script_var_t *)'s).
    SCRIPT_ARRAY means we interpret retval->value as an array of length

@@ -194,3 +194,44 @@ int script_create_simple_cmd_table(script_simple_command_t *table)
 	}
 	return(0);
 }
+
+script_var_t *script_string(char *str, int len)
+{
+	script_var_t *var = (script_var_t *)malloc(sizeof(*var));
+	var->type = SCRIPT_STRING | SCRIPT_FREE_VAR;
+	var->value = (void *)str;
+	if (len < 0) len = strlen(str);
+	var->len = len;
+	return(var);
+}
+
+script_var_t *script_int(int val)
+{
+	script_var_t *var = (script_var_t *)malloc(sizeof(*var));
+	var->type = SCRIPT_INTEGER | SCRIPT_FREE_VAR;
+	var->value = (void *)val;
+	return(var);
+}
+
+script_var_t *script_list(int nitems, ...)
+{
+	script_var_t *list;
+
+	list = (script_var_t *)malloc(sizeof(*list));
+	list->type = SCRIPT_ARRAY | SCRIPT_FREE | SCRIPT_VAR | SCRIPT_FREE_VAR;
+	list->len = nitems;
+	if (nitems > 0) {
+		list->value = malloc(nitems * sizeof(script_var_t *));
+		memmove(list->value, &nitems + 1, nitems * sizeof(script_var_t *));
+	}
+	else list->value = NULL;
+	return(list);
+}
+
+int script_list_append(script_var_t *list, script_var_t *item)
+{
+	list->value = realloc(list->value, sizeof(item) * (list->len+1));
+	((script_var_t **)list->value)[list->len] = item;
+	list->len++;
+	return(0);
+}

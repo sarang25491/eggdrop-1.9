@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.41 2001/11/05 03:47:36 stdarg Exp $
+ * $Id: tcldcc.c,v 1.42 2001/11/13 04:50:40 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -346,126 +346,102 @@ static int tcl_killdcc STDVAR
   return TCL_OK;
 }
 
-static int tcl_putbot STDVAR
-{
-  int i;
-  char msg[401];
-
-  BADARGS(3, 3, " botnick message");
-  i = nextbot(argv[1]);
-  if (i < 0) {
-    Tcl_AppendResult(irp, "bot is not in the botnet", NULL);
-    return TCL_ERROR;
-  }
-  strncpyz(msg, argv[2], sizeof msg);
-  botnet_send_zapf(i, botnetnick, argv[1], msg);
-  return TCL_OK;
-}
-
-static int tcl_putallbots STDVAR
-{
-  char msg[401];
-
-  BADARGS(2, 2, " message");
-  strncpyz(msg, argv[1], sizeof msg);
-  botnet_send_zapf_broad(-1, botnetnick, NULL, msg);
-  return TCL_OK;
-}
-
-static int tcl_idx2hand STDVAR
-{
-  int idx;
-
-  BADARGS(2, 2, " idx");
-  idx = findidx(atoi(argv[1]));
-  if (idx < 0) {
-    Tcl_AppendResult(irp, "invalid idx", NULL);
-    return TCL_ERROR;
-  }
-  Tcl_AppendResult(irp, dcc[idx].nick, NULL);
-  return TCL_OK;
-}
-
-static int tcl_islinked STDVAR
+static int script_putbot(char *target, char *text)
 {
   int i;
 
-  BADARGS(2, 2, " bot");
-  i = nextbot(argv[1]);
-  if (i < 0)
-     Tcl_AppendResult(irp, "0", NULL);
-  else
-     Tcl_AppendResult(irp, "1", NULL);
-   return TCL_OK;
+  i = nextbot(target);
+  if (i < 0) return(1);
+  botnet_send_zapf(i, botnetnick, target, text);
+  return(0);
 }
 
-static int tcl_bots STDVAR
+static int script_putallbots(char *text)
 {
-  tand_t *bot;
-
-  BADARGS(1, 1, "");
-  for (bot = tandbot; bot; bot = bot->next)
-     Tcl_AppendElement(irp, bot->bot);
-   return TCL_OK;
+	botnet_send_zapf_broad(-1, botnetnick, NULL, text);
+	return(0);
 }
 
-static int tcl_botlist STDVAR
+static char *script_idx2hand(int idx)
 {
-  tand_t *bot;
-  char *list[4], *p;
-  char sh[2], string[20];
+	if (idx < 0 || idx >= dcc_total || !(dcc[idx].type) || !(dcc[idx].nick)) return("");
+	return(dcc[idx].nick);
+}
 
-  BADARGS(1, 1, "");
-  sh[1] = 0;
-  list[3] = sh;
-  list[2] = string;
-  for (bot = tandbot; bot; bot = bot->next) {
-    list[0] = bot->bot;
-    list[1] = (bot->uplink == (tand_t *) 1) ? botnetnick : bot->uplink->bot;
-    strncpyz(string, int_to_base10(bot->ver), sizeof string);
-    sh[0] = bot->share;
-    p = Tcl_Merge(4, list);
-    Tcl_AppendElement(irp, p);
-    Tcl_Free((char *) p);
-  }
-  return TCL_OK;
+static int script_islinked(char *bot)
+{
+	return nextbot(bot);
+}
+
+static int script_bots(script_var_t *retval)
+{
+	char **botlist = NULL;
+	int nbots = 0;
+	tand_t *bot;
+
+	for (bot = tandbot; bot; bot = bot->next) {
+		nbots++;
+		botlist = (char **)realloc(botlist, sizeof(char *) * nbots);
+		botlist[nbots-1] = strdup(bot->bot);
+	}
+	retval->type = SCRIPT_ARRAY | SCRIPT_FREE | SCRIPT_STRING;
+	retval->value = (void *)botlist;
+	retval->len = nbots;
+	return(0);
+}
+
+static int script_botlist(script_var_t *retval)
+{
+	tand_t *bot;
+	script_var_t *sublist, *nick, *uplink, *version, *share;
+	char sharestr[2];
+
+	retval->type = SCRIPT_ARRAY | SCRIPT_FREE | SCRIPT_VAR;
+	retval->len = 0;
+	retval->value = NULL;
+	sharestr[1] = 0;
+	for (bot = tandbot; bot; bot = bot->next) {
+		nick = script_string(bot->bot, -1);
+		uplink = script_string((bot->uplink == (tand_t *)1) ? botnetnick : bot->uplink->bot, -1);
+		version = script_int(bot->ver);
+		sharestr[0] = bot->share;
+		share = script_string(strdup(sharestr), -1);
+
+		sublist = script_list(4, nick, uplink, version, share);
+		script_list_append(retval, sublist);
+	}
+	return(0);
 }
 
 /* list of { idx nick host type {other}  timestamp}
  */
-static int tcl_dcclist STDVAR
+static int script_dcclist(script_var_t *retval, char *match)
 {
-  int i;
-  char idxstr[10];
-  char timestamp[11];
-  char *list[6], *p;
-  char other[160];
+	int i;
+	script_var_t *sublist, *idx, *nick, *host, *type, *othervar, *timestamp;
+	char other[160];
 
-  BADARGS(1, 2, " ?type?");
-  for (i = 0; i < dcc_total; i++) {
-    if (argc == 1 ||
-	(dcc[i].type && !strcasecmp(dcc[i].type->name, argv[1]))) {
-      snprintf(idxstr, sizeof idxstr, "%ld", dcc[i].sock);
-      snprintf(timestamp, sizeof timestamp, "%ld", dcc[i].timeval);
-      if (dcc[i].type && dcc[i].type->display)
-	dcc[i].type->display(i, other);
-      else {
-	snprintf(other, sizeof other, "?:%lX  !! ERROR !!",
-		     (long) dcc[i].type);
-	break;
-      }
-      list[0] = idxstr;
-      list[1] = dcc[i].nick;
-      list[2] = dcc[i].host;
-      list[3] = dcc[i].type ? dcc[i].type->name : "*UNKNOWN*";
-      list[4] = other;
-      list[5] = timestamp;
-      p = Tcl_Merge(6, list);
-      Tcl_AppendElement(irp, p);
-      Tcl_Free((char *) p);
-    }
-  }
-  return TCL_OK;
+	retval->type = SCRIPT_ARRAY | SCRIPT_FREE | SCRIPT_VAR;
+	retval->len = 0;
+	retval->value = NULL;
+	for (i = 0; i < dcc_total; i++) {
+		if (!(dcc[i].type)) continue;
+		if (match && strcasecmp(dcc[i].type->name, match)) continue;
+
+		idx = script_int(i);
+		nick = script_string(dcc[i].nick, -1);
+		host = script_string(dcc[i].host, -1);
+		type = script_string(dcc[i].type->name, -1);
+		if (dcc[i].type->display) dcc[i].type->display(i, other);
+		else sprintf(other, "?:%X !! ERROR !!", (int) dcc[i].type);
+		othervar = script_string(strdup(other), -1);
+		othervar->type |= SCRIPT_FREE;
+		timestamp = script_int(dcc[i].timeval);
+
+		sublist = script_list(6, idx, nick, host, type, othervar, timestamp);
+		script_list_append(retval, sublist);
+	}
+	return(0);
 }
 
 /* list of { nick bot host flag idletime awaymsg [channel]}
@@ -542,113 +518,61 @@ static int tcl_whom STDVAR
   return TCL_OK;
 }
 
-static int tcl_dccused STDVAR
+static int script_dccused()
 {
-  char s[20];
-
-  BADARGS(1, 1, "");
-  snprintf(s, sizeof s, "%d", dcc_total);
-  Tcl_AppendResult(irp, s, NULL);
-  return TCL_OK;
+	return(dcc_total);
 }
 
-static int tcl_getdccidle STDVAR
+static int script_getdccidle(int idx)
 {
-  int  x, idx;
-  char s[21];
-
-  BADARGS(2, 2, " idx");
-  idx = findidx(atoi(argv[1]));
-  if (idx < 0) {
-    Tcl_AppendResult(irp, "invalid idx", NULL);
-    return TCL_ERROR;
-  }
-  x = (now - dcc[idx].timeval);
-  snprintf(s, sizeof s, "%d", x);
-  Tcl_AppendElement(irp, s);
-  return TCL_OK;
+	if (idx < 0 || idx >= dcc_total || !(dcc->type)) return(-1);
+	return(now - dcc[idx].timeval);
 }
 
-static int tcl_getdccaway STDVAR
+static char *script_getdccaway(int idx)
 {
-  int idx;
-
-  BADARGS(2, 2, " idx");
-  idx = findidx(atol(argv[1]));
-  if (idx < 0 || dcc[idx].type != &DCC_CHAT) {
-    Tcl_AppendResult(irp, "invalid idx", NULL);
-    return TCL_ERROR;
-  }
-  if (dcc[idx].u.chat->away == NULL)
-    return TCL_OK;
-  Tcl_AppendResult(irp, dcc[idx].u.chat->away, NULL);
-  return TCL_OK;
+	if (idx < 0 || idx >= dcc_total || !(dcc[idx].type) || dcc[idx].type != &DCC_CHAT) return("");
+	if (dcc[idx].u.chat->away == NULL) return("");
+	return(dcc[idx].u.chat->away);
 }
 
-static int tcl_setdccaway STDVAR
+static int script_setdccaway(int idx, char *text)
 {
-  int idx;
-
-  BADARGS(3, 3, " idx message");
-  idx = findidx(atol(argv[1]));
-  if (idx < 0 || dcc[idx].type != &DCC_CHAT) {
-    Tcl_AppendResult(irp, "invalid idx", NULL);
-    return TCL_ERROR;
-  }
-  if (!argv[2][0]) {
-    /* un-away */
-    if (dcc[idx].u.chat->away != NULL)
-      not_away(idx);
-    return TCL_OK;
-  }
-  /* away */
-  set_away(idx, argv[2]);
-  return TCL_OK;
+	if (idx < 0 || idx >= dcc_total || !(dcc[idx].type) || dcc[idx].type != &DCC_CHAT) return(1);
+	if (!text || !text[0]) {
+		/* un-away */
+		if (dcc[idx].u.chat->away != NULL) not_away(idx);
+	}
+	else set_away(idx, text);
+	return(0);
 }
 
-static int tcl_link STDVAR
+static int script_link(char *via, char *target)
 {
-  int x, i;
-  char bot[HANDLEN + 1], bot2[HANDLEN + 1];
+	int x, i;
 
-  BADARGS(2, 3, " ?via-bot? bot");
-  strncpyz(bot, argv[1], sizeof bot);
-  if (argc == 2)
-     x = botlink("", -2, bot);
-  else {
-    x = 1;
-    strncpyz(bot2, argv[2], sizeof bot2);
-    i = nextbot(bot);
-    if (i < 0)
-      x = 0;
-    else
-      botnet_send_link(i, botnetnick, bot, bot2);
-  }
-  snprintf(bot, sizeof bot, "%d", x);
-  Tcl_AppendResult(irp, bot, NULL);
-  return TCL_OK;
+	if (!via) x = botlink("", -2, target);
+	else {
+		x = 1;
+		i = nextbot(via);
+		if (i < 0) x = 0;
+		else botnet_send_link(i, botnetnick, via, target);
+	}
+	return(x);
 }
 
-static int tcl_unlink STDVAR
+static int script_unlink(char *bot, char *comment)
 {
-  int i, x;
-  char bot[HANDLEN + 1];
+	int i, x;
 
-  BADARGS(2, 3, " bot ?comment?");
-  strncpyz(bot, argv[1], sizeof bot);
-  i = nextbot(bot);
-  if (i < 0)
-     x = 0;
-  else {
-    x = 1;
-    if (!strcasecmp(bot, dcc[i].nick))
-      x = botunlink(-2, bot, argv[2]);
-    else
-      botnet_send_unlink(i, botnetnick, lastbot(bot), bot, argv[2]);
-  }
-  snprintf(bot, sizeof bot, "%d", x);
-  Tcl_AppendResult(irp, bot, NULL);
-  return TCL_OK;
+	i = nextbot(bot);
+	if (i < 0) return(0);
+	if (!strcasecmp(bot, dcc[i].nick)) x = botunlink(-2, bot, comment);
+	else {
+		x = 1;
+		botnet_send_unlink(i, botnetnick, lastbot(bot), bot, comment);
+	}
+	return(x);
 }
 
 static int tcl_connect STDVAR
@@ -822,13 +746,12 @@ static int tcl_listen STDVAR
   return TCL_OK;
 }
 
-static int tcl_boot STDVAR
+static int script_boot(char *user_bot, char *reason)
 {
   char who[NOTENAMELEN + 1];
-  int i, ok = 0;
+  int i;
 
-  BADARGS(2, 3, " user@bot ?reason?");
-  strncpyz(who, argv[1], sizeof who);
+  strncpyz(who, user_bot, sizeof who);
   if (strchr(who, '@') != NULL) {
     char whonick[HANDLEN + 1];
 
@@ -838,25 +761,22 @@ static int tcl_boot STDVAR
        strncpyz(who, whonick, sizeof who);
     else if (remote_boots > 0) {
       i = nextbot(who);
-      if (i < 0)
-	return TCL_OK;
-      botnet_send_reject(i, botnetnick, NULL, whonick, who, argv[2]);
-    } else {
-      return TCL_OK;
+      if (i < 0) return(0);
+      botnet_send_reject(i, botnetnick, NULL, whonick, who, reason);
     }
+    else return(0);
   }
   for (i = 0; i < dcc_total; i++)
-    if (!ok && (dcc[i].type->flags & DCT_CANBOOT) &&
+    if ((dcc[i].type) && (dcc[i].type->flags & DCT_CANBOOT) &&
         !strcasecmp(dcc[i].nick, who)) {
-      do_boot(i, botnetnick, argv[2] ? argv[2] : "");
-      ok = 1;
+      do_boot(i, botnetnick, reason ? reason : "");
+      break;
     }
-  return TCL_OK;
+  return(0);
 }
 
-static int tcl_rehash STDVAR
+static int script_rehash()
 {
-  BADARGS(1, 1, " ");
   if (make_userfile) {
     putlog(LOG_MISC, "*", _("Userfile creation not necessary--skipping"));
     make_userfile = 0;
@@ -864,16 +784,12 @@ static int tcl_rehash STDVAR
   write_userfile(-1);
   putlog(LOG_MISC, "*", _("Rehashing..."));
   do_restart = -2;
-  return TCL_OK;
+  return(0);
 }
 
-static int tcl_restart STDVAR
+static int script_restart()
 {
-  BADARGS(1, 1, " ");
-  if (!backgrd) {
-    Tcl_AppendResult(interp, "You can't restart a -n bot", NULL);
-    return TCL_ERROR;
-  }
+  if (!backgrd) return(1);
   if (make_userfile) {
     putlog(LOG_MISC, "*", _("Userfile creation not necessary--skipping"));
     make_userfile = 0;
@@ -881,7 +797,7 @@ static int tcl_restart STDVAR
   write_userfile(-1);
   putlog(LOG_MISC, "*", _("Restarting..."));
   do_restart = -1;
-  return TCL_OK;
+  return(0);
 }
 
 script_simple_command_t script_dcc_cmds[] = {
@@ -895,6 +811,18 @@ script_simple_command_t script_dcc_cmds[] = {
 	{"setchan", script_setchan, "ii", "idx chan", SCRIPT_INTEGER},
 	{"dccputchan", script_dccputchan, "is", "chan text", SCRIPT_INTEGER},
 	{"valididx", script_valididx, "i", "idx", SCRIPT_INTEGER},
+	{"putbot", script_putbot, "ss", "bot text", SCRIPT_INTEGER},
+	{"putallbots", script_putallbots, "s", "text", SCRIPT_INTEGER},
+	{"idx2hand", (Function) script_idx2hand, "i", "idx", SCRIPT_INTEGER},
+	{"islinked", script_islinked, "s", "bot", SCRIPT_INTEGER},
+	{"dccused", script_dccused, "", "", SCRIPT_INTEGER},
+	{"getdccidle", script_getdccidle, "i", "idx", SCRIPT_INTEGER},
+	{"getdccaway", (Function) script_getdccaway, "i", "idx", SCRIPT_STRING},
+	{"setdccaway", script_setdccaway, "is", "idx msg", SCRIPT_INTEGER},
+	{"unlink", script_unlink, "ss", "bot comment", SCRIPT_INTEGER},
+	{"boot", script_boot, "ss", "user@bot reason", SCRIPT_INTEGER},
+	{"rehash", script_rehash, "", "", SCRIPT_INTEGER},
+	{"restart", script_restart, "", "", SCRIPT_INTEGER},
 	{0}
 };
 
@@ -903,6 +831,10 @@ script_command_t script_full_dcc_cmds[] = {
 	{"", "strip", script_strip, NULL, 1, "is", "idx ?change?", 0, SCRIPT_PASS_RETVAL|SCRIPT_PASS_COUNT|SCRIPT_VAR_ARGS},
 	{"", "echo", script_echo, NULL, 1, "ii", "idx ?status?", SCRIPT_INTEGER, SCRIPT_PASS_COUNT|SCRIPT_VAR_ARGS},
 	{"", "page", script_page, NULL, 1, "ii", "idx ?status?", SCRIPT_INTEGER, SCRIPT_PASS_COUNT|SCRIPT_VAR_ARGS},
+	{"", "bots", script_bots, NULL, 0, "", "", 0, SCRIPT_PASS_RETVAL},
+	{"", "botlist", script_botlist, NULL, 0, "", "", 0, SCRIPT_PASS_RETVAL},
+	{"", "dcclist", script_dcclist, NULL, 0, "s", "?match?", 0, SCRIPT_PASS_RETVAL|SCRIPT_VAR_ARGS},
+	{"", "link", script_link, NULL, 1, "ss", "?via-bot? target-bot", 0, SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT},
 	{0}
 };
 
@@ -910,24 +842,8 @@ tcl_cmds tcldcc_cmds[] =
 {
   {"control",		tcl_control},
   {"killdcc",		tcl_killdcc},
-  {"putbot",		tcl_putbot},
-  {"putallbots",	tcl_putallbots},
-  {"idx2hand",		tcl_idx2hand},
-  {"bots",		tcl_bots},
-  {"botlist",		tcl_botlist},
-  {"dcclist",		tcl_dcclist},
   {"whom",		tcl_whom},
-  {"dccused",		tcl_dccused},
-  {"getdccidle",	tcl_getdccidle},
-  {"getdccaway",	tcl_getdccaway},
-  {"setdccaway",	tcl_setdccaway},
-  {"islinked",		tcl_islinked},
-  {"link",		tcl_link},
-  {"unlink",		tcl_unlink},
   {"connect",		tcl_connect},
   {"listen",		tcl_listen},
-  {"boot",		tcl_boot},
-  {"rehash",		tcl_rehash},
-  {"restart",		tcl_restart},
   {NULL,		NULL}
 };
