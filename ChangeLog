@@ -1,3 +1,17 @@
+2001-09-28 03:15  stdarg
+
+	* src/: botcmd.c, botnet.c, dcc.c, dccutil.c, main.c, modules.c,
+	tcldcc.c, tclhash.c, tclhash.h, mod/module.h, mod/irc.mod/chan.c,
+	mod/irc.mod/irc.c, mod/server.mod/server.c,
+	mod/server.mod/servmsg.c:
+
+	
+	
+	This is a big patch! Created several new bind tables (raw, msg,
+	msgm, pub, pubm) to see how it would work. Seems to work well so
+	far, although there could be bugs.  Added most of the new important
+	bind table functions to the global table.  
+
 2001-09-28 02:52  Matthew Hallacy <poptix@techmonkeys.org>
 
 	* src/: patch.h, mod/irc.mod/cmdsirc.c:
