@@ -1,3 +1,12 @@
+2002-05-31 02:01  stdarg <stdarg@techmonkeys.org>
+
+	* modules/server/: server.c, servmsg.c:
+
+	
+	* Fixed a bug which was corrupting MODE binds 
+	* disconnect_server() was resetting servidx before removing it from
+	the dcc table 
+
 2002-05-28 20:36  stdarg <stdarg@techmonkeys.org>
 
 	* modules/filesys/tclfiles.c, modules/notes/notes.c,
