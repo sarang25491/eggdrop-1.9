@@ -25,12 +25,11 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: modules.c,v 1.118 2002/09/20 02:06:25 stdarg Exp $";
+static const char rcsid[] = "$Id: modules.c,v 1.119 2002/09/20 21:41:49 stdarg Exp $";
 #endif
 
 #include "main.h"		/* NOTE: when removing this, include config.h */
 #include "modules.h"
-#include "tandem.h"
 #include "core_binds.h"
 #include "logfile.h"
 #include "misc.h"
@@ -38,9 +37,6 @@ static const char rcsid[] = "$Id: modules.c,v 1.118 2002/09/20 02:06:25 stdarg E
 #include "cmdt.h"		/* cmd_t				*/
 #include "tclhash.h"
 #include "core_binds.h"
-#include "botnet.h"		/* updatebot, nextbot, zapfbot,
-				   in_chain				*/
-#include "botmsg.h"		/* add_note				*/
 #include "chanprog.h"		/* clear_chanlist, reaffirm_owners, 
 				   logmodes, masktype, isowner, 
 				   clear_chanlist_member		*/
@@ -87,12 +83,10 @@ extern int	 noshare, dcc_total, egg_numver, userfile_perm,
 extern time_t now, online_since;
 extern egg_timeval_t egg_timeval_now;
 extern struct chanset_t *chanset;
-extern tand_t *tandbot;
-extern party_t *party;
 extern sock_list        *socklist;
 
 #ifndef MAKING_MODS
-extern struct dcc_table DCC_CHAT_PASS, DCC_BOT, DCC_LOST, DCC_DNSWAIT,
+extern struct dcc_table DCC_CHAT_PASS, DCC_LOST, DCC_DNSWAIT,
 			DCC_CHAT; 
 #endif /* MAKING_MODS   */
 
@@ -203,22 +197,22 @@ Function global_table[] =
   0,
   0,
   /* 24 - 27 */
-  (Function) botnet_send_zapf,
-  (Function) botnet_send_zapf_broad,
-  (Function) botnet_send_unlinked,
-  (Function) botnet_send_bye,
+  (Function) 0, /* botnet_send_zapf, */
+  (Function) 0, /* botnet_send_zapf_broad, */
+  (Function) 0, /* botnet_send_unlinked, */
+  (Function) 0, /* botnet_send_bye, */
   /* 28 - 31 */
-  (Function) botnet_send_chat,
-  (Function) botnet_send_filereject,
-  (Function) botnet_send_filesend,
-  (Function) botnet_send_filereq,
+  (Function) 0, /* botnet_send_chat, */
+  (Function) 0, /* botnet_send_filereject, */
+  (Function) 0, /* botnet_send_filesend, */
+  (Function) 0, /* botnet_send_filereq, */
   /* 32 - 35 */
-  (Function) botnet_send_join_idx,
-  (Function) botnet_send_part_idx,
-  (Function) updatebot,
-  (Function) nextbot,
+  (Function) 0, /* botnet_send_join_idx, */
+  (Function) 0, /* botnet_send_part_idx, */
+  (Function) 0, /* updatebot, */
+  (Function) 0, /* nextbot, */
   /* 36 - 39 */
-  (Function) zapfbot,
+  (Function) 0, /* zapfbot, */
   (Function) 0,
   (Function) u_pass_match,
   (Function) 0,
@@ -258,7 +252,7 @@ Function global_table[] =
   (Function) flagrec_eq,
   (Function) flagrec_ok,
   /* 68 - 71 */
-  (Function) & shareout,
+  (Function) 0, /* & shareout, */
   (Function) dprintf,
   (Function) chatout,
   (Function) chanout_but,
@@ -329,7 +323,7 @@ Function global_table[] =
   (Function) botnetnick,	 /* char *				*/
   /* 124 - 127 */
   (Function) & DCC_CHAT_PASS,	 /* struct dcc_table *			*/
-  (Function) & DCC_BOT,		 /* struct dcc_table *			*/
+  (Function) 0, /* & DCC_BOT,		 / struct dcc_table *			*/
   (Function) & DCC_LOST,	 /* struct dcc_table *			*/
   (Function) & DCC_CHAT,	 /* struct dcc_table *			*/
   /* 128 - 131 */
@@ -376,7 +370,7 @@ Function global_table[] =
   (Function) touch_laston,
   (Function) & add_mode,	/* Function *				*/
   (Function) 0,
-  (Function) in_chain,
+  (Function) 0, /* in_chain, */
   /* 164 - 167 */
   (Function) add_note,
   (Function) 0,
@@ -420,7 +414,7 @@ Function global_table[] =
   /* 196 - 199 */
   (Function) & USERENTRY_LASTON,	/* struct user_entry_type *	*/
   (Function) putlog,
-  (Function) botnet_send_chan,
+  (Function) 0, /* botnet_send_chan, */
   (Function) list_type_kill,
   /* 200 - 203 */
   (Function) logmodes,
@@ -484,8 +478,8 @@ Function global_table[] =
   (Function) & userfile_perm,	 /* int					*/
   /* 248 - 251 */
   (Function) sock_has_data,
-  (Function) bots_in_subtree,
-  (Function) users_in_subtree,
+  (Function) 0, /* bots_in_subtree, */
+  (Function) 0, /* users_in_subtree, */
   (Function) 0,			/* inet_aton				*/
   /* 252 - 255 */
   (Function) 0,			/* snprintf				*/
@@ -496,9 +490,9 @@ Function global_table[] =
   (Function) fixfrom,
   (Function) 0,
   (Function) 0,
-  (Function) & tandbot,		/* tand_t *				*/
+  (Function) 0, /* & tandbot,		/ tand_t *				*/
   /* 260 - 263 */
-  (Function) & party,		/* party_t *				*/
+  (Function) 0, /* & party,		/ party_t *				*/
   (Function) open_address_listen,
   (Function) 0,
   (Function) 0,
@@ -778,12 +772,6 @@ void add_hook(int hook_num, Function func)
     case HOOK_DECRYPT_STRING:
       decrypt_string = (char *(*)(char *, char *)) func;
       break; 
-    case HOOK_SHAREOUT:
-      shareout = (void (*)()) func;
-      break;
-    case HOOK_SHAREIN:
-      sharein = (void (*)(int, char *)) func;
-      break;
     case HOOK_QSERV:
       if (qserver == (void (*)(int, char *, int)) null_func)
 	qserver = (void (*)(int, char *, int)) func;

@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: module.h,v 1.29 2002/09/20 20:18:22 stdarg Exp $
+ * $Id: module.h,v 1.30 2002/09/20 21:41:49 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_MODULE_H
@@ -36,9 +36,6 @@
    validating if they aren't needed */
 #include "src/users.h"
 #include "src/bg.h"
-#include "src/botcmd.h"
-#include "src/botmsg.h"
-#include "src/botnet.h"
 #include "src/chan.h"
 #include "src/chanprog.h"
 #include "src/cmds.h"
@@ -57,7 +54,6 @@
 #include "src/misc.h"
 #include "src/modules.h"
 #include "src/net.h"
-#include "src/tandem.h"
 #include "src/tclegg.h"
 #include "src/tcl.h"
 #include "src/tclhash.h"
@@ -121,22 +117,22 @@
 /* #define int_to_base10 ((char * (*) (int))egg->global[22]) */
 /* #define simple_sprintf ((int (*)())egg->global[23]) */
 /* 24 - 27 */
-#define botnet_send_zapf ((void (*)(int, char *, char *, char *))egg->global[24])
-#define botnet_send_zapf_broad ((void (*)(int, char *, char *, char *))egg->global[25])
-#define botnet_send_unlinked ((void (*)(int, char *, char *))egg->global[26])
-#define botnet_send_bye ((void(*)(void))egg->global[27])
+/* #define botnet_send_zapf ((void (*)(int, char *, char *, char *))egg->global[24]) */
+/* #define botnet_send_zapf_broad ((void (*)(int, char *, char *, char *))egg->global[25]) */
+/* #define botnet_send_unlinked ((void (*)(int, char *, char *))egg->global[26]) */
+/* #define botnet_send_bye ((void(*)(void))egg->global[27]) */
 /* 28 - 31 */
-#define botnet_send_chat ((void(*)(int,char*,char*))egg->global[28])
-#define botnet_send_filereject ((void(*)(int,char*,char*,char*))egg->global[29])
-#define botnet_send_filesend ((void(*)(int,char*,char*,char*))egg->global[30])
-#define botnet_send_filereq ((void(*)(int,char*,char*,char*))egg->global[31])
+/* #define botnet_send_chat ((void(*)(int,char*,char*))egg->global[28]) */
+/* #define botnet_send_filereject ((void(*)(int,char*,char*,char*))egg->global[29]) */
+/* #define botnet_send_filesend ((void(*)(int,char*,char*,char*))egg->global[30]) */
+/* #define botnet_send_filereq ((void(*)(int,char*,char*,char*))egg->global[31]) */
 /* 32 - 35 */
-#define botnet_send_join_idx ((void(*)(int,int))egg->global[32])
-#define botnet_send_part_idx ((void(*)(int,char *))egg->global[33])
-#define updatebot ((void(*)(int,char*,char,int))egg->global[34])
-#define nextbot ((int (*)(char *))egg->global[35])
+/* #define botnet_send_join_idx ((void(*)(int,int))egg->global[32]) */
+/* #define botnet_send_part_idx ((void(*)(int,char *))egg->global[33]) */
+/* #define updatebot ((void(*)(int,char*,char,int))egg->global[34]) */
+/* #define nextbot ((int (*)(char *))egg->global[35]) */
 /* 36 - 39 */
-#define zapfbot ((void (*)(int))egg->global[36])
+/* #define zapfbot ((void (*)(int))egg->global[36]) */
 /* 37: n_free -- UNUSED (Tothwolf) */
 #define u_pass_match ((int (*)(struct userrec *,char *))egg->global[38])
 /* 39: user_malloc -- UNUSED (Tothwolf) */

@@ -30,7 +30,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.121 2002/09/20 02:06:25 stdarg Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.122 2002/09/20 21:41:49 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -41,7 +41,6 @@ static const char rcsid[] = "$Id: main.c,v 1.121 2002/09/20 02:06:25 stdarg Exp 
 #include <netdb.h>
 #include <setjmp.h>
 #include "users.h"			/* check_expired_ignores, 
-					   autolink_cycle,
 					   get_user_by_handle		*/
 #include "chanprog.h"			/* tell_verbose_status, 
 					   chanprog, rehash		*/
@@ -60,7 +59,6 @@ static const char rcsid[] = "$Id: main.c,v 1.121 2002/09/20 02:06:25 stdarg Exp 
 
 #include "chan.h"
 #include "modules.h"
-#include "tandem.h"
 #include "bg.h"
 #include "core_binds.h"
 #include "logfile.h"
@@ -387,7 +385,6 @@ static void core_secondly()
     lastmin = (lastmin + 1) % 60;
     call_hook(HOOK_MINUTELY);
     check_expired_ignores();
-    autolink_cycle(NULL);	/* Attempt autolinks */
     /* In case for some reason more than 1 min has passed: */
     while (nowtm.tm_min != lastmin) {
       /* Timer drift, dammit */
@@ -452,11 +449,9 @@ static void event_loaded()
 
 void kill_tcl();
 extern module_entry *module_list;
-void restart_chons();
 
 int init_userent(), init_net(),
  init_tcl(int, char **);
-void botnet_init();
 void dns_init();
 void binds_init();
 void dcc_init();
@@ -589,7 +584,6 @@ int main(int argc, char **argv)
   dcc_init();
   user_init();
   init_userent();
-  botnet_init();
   init_net();
   traffic_init();
 
@@ -704,7 +698,6 @@ module, please consult the default config file for info.\n"));
   }
 
   online_since = now;
-  autolink_cycle(NULL);		/* Hurry and connect to tandem bots */
   add_help_reference("cmds1.help");
   add_help_reference("cmds2.help");
   add_help_reference("core.help");
@@ -868,7 +861,6 @@ module, please consult the default config file for info.\n"));
 	 */
 	x(NULL);
 	rehash();
-	restart_chons();
 	call_hook(HOOK_LOADED);
       }
       do_restart = 0;

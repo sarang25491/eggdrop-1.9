@@ -22,7 +22,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: users.h,v 1.14 2002/09/20 02:06:25 stdarg Exp $
+ * $Id: users.h,v 1.15 2002/09/20 21:41:49 stdarg Exp $
  */
 
 #ifndef _EGG_USERS_H
@@ -125,7 +125,6 @@ int delignore(char *);
 void tell_ignores(int, char *);
 int match_ignore(char *);
 void check_expired_ignores();
-void autolink_cycle(char *);
 void tell_file_stats(int, char *);
 void tell_user_ident(int, char *, int);
 void tell_users_match(int, char *, int, int, int, char *);

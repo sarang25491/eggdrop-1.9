@@ -23,15 +23,13 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tcluser.c,v 1.42 2002/05/05 16:40:39 tothwolf Exp $";
+static const char rcsid[] = "$Id: tcluser.c,v 1.43 2002/09/20 21:41:49 stdarg Exp $";
 #endif
 
 #include "main.h"
 #include "users.h"
 #include "chan.h"
-#include "tandem.h"
 #include "flags.h"		/* FR_*, FLAGS_*, flags_*, :-P		*/
-#include "botnet.h"		/* nextbot				*/
 #include "chanprog.h"		/* reload				*/
 #include "userrec.h"		/* count_users, u_pass_match, deluser,
 				   delhost_by_handle, write_userfile,
@@ -292,23 +290,11 @@ static int script_chhandle(struct userrec *u, char *desired_handle)
     if (strchr(BADHANDCHARS, newhand[0]) != NULL) return(0);
     if (strlen(newhand) < 1) return(0);
     if (get_user_by_handle(userlist, newhand)) return(0);
-    if (!strcasecmp(botnetnick, newhand) &&
-             (!(u->flags & USER_BOT) || nextbot(desired_handle) != -1)) return(0);
+    if (!strcasecmp(botnetnick, newhand) && (!(u->flags & USER_BOT)))
+      return(0);
     if (newhand[0] == '*') return(0);
 
 	return change_handle(u, newhand);
-}
-
-static int script_getting_users()
-{
-  int i;
-
-  for (i = 0; i < dcc_total; i++) {
-    if (dcc[i].type == &DCC_BOT && dcc[i].status & STAT_GETTING) {
-	return(1);
-    }
-  }
-  return(0);
 }
 
 static int script_isignore(char *nick_user_host)
@@ -443,7 +429,6 @@ script_command_t script_user_cmds[] = {
 	{"", "save", (Function) script_save, NULL, 0, "", "", SCRIPT_INTEGER, 0},
 	{"", "reload", (Function) script_reload, NULL, 0, "", "", SCRIPT_INTEGER, 0},
 	{"", "chhandle", (Function) script_chhandle, NULL, 2, "Us", "handle new-handle", SCRIPT_INTEGER, 0},
-	{"", "getting_users", (Function) script_getting_users, NULL, 0, "", "", SCRIPT_INTEGER, 0},
 	{"", "isignore", (Function) script_isignore, NULL, 1, "s", "nick!user@host", SCRIPT_INTEGER, 0},
 	{"", "newignore", (Function) script_newignore, NULL, 3, "sssi", "hostmask creator comment ?minutes?", SCRIPT_INTEGER, SCRIPT_PASS_COUNT | SCRIPT_VAR_ARGS},
 	{"", "killignore", (Function) script_killignore, NULL, 1, "s", "hostmask", SCRIPT_INTEGER, 0},

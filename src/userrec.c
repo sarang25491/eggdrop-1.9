@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: userrec.c,v 1.51 2002/09/20 02:06:25 stdarg Exp $";
+static const char rcsid[] = "$Id: userrec.c,v 1.52 2002/09/20 21:41:49 stdarg Exp $";
 #endif
 
 #include <sys/stat.h>
@@ -33,7 +33,6 @@ static const char rcsid[] = "$Id: userrec.c,v 1.51 2002/09/20 02:06:25 stdarg Ex
 #include "users.h"
 #include "chan.h"
 #include "modules.h"
-#include "tandem.h"
 #include "logfile.h"
 #include "modules.h"		/* encrypt_pass				*/
 #include "cmdt.h"		/* cmd_t				*/
@@ -53,7 +52,7 @@ extern char		 userfile[], ver[], botnetnick[];
 extern time_t		 now;
 
 #ifndef MAKING_MODS
-extern struct dcc_table DCC_CHAT, DCC_BOT;
+extern struct dcc_table DCC_CHAT;
 #endif /* MAKING_MODS   */
 
 int		 noshare = 1;		/* don't send out to sharebots	    */
@@ -409,13 +408,11 @@ int change_handle(struct userrec *u, char *newh)
   strlcpy(s, u->handle, sizeof s);
   strlcpy(u->handle, newh, sizeof u->handle);
   for (i = 0; i < dcc_total; i++)
-    if (dcc[i].type && dcc[i].type != &DCC_BOT && !strcasecmp(dcc[i].nick, s)) {
+    if (!strcasecmp(dcc[i].nick, s)) {
       strlcpy(dcc[i].nick, newh, sizeof dcc[i].nick);
       if (dcc[i].type == &DCC_CHAT && dcc[i].u.chat->channel >= 0) {
 	chanout_but(-1, dcc[i].u.chat->channel,
 		    "*** Handle change: %s -> %s\n", s, newh);
-	if (dcc[i].u.chat->channel < 100000)
-	  botnet_send_nkch(i, s);
       }
     }
   return 1;

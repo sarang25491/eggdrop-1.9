@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.27 2002/09/20 02:06:25 stdarg Exp $
+# $Id: Makefile.am,v 1.28 2002/09/20 21:41:49 stdarg Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 bindir			= $(exec_prefix)
@@ -22,12 +22,6 @@ DEFS			= -DLOCALEDIR=\"\$(localedir)\" $(EGG_DEBUG) @DEFS@
 bin_PROGRAMS		= eggdrop
 eggdrop_SOURCES		= bg.c \
 			bg.h \
-			botcmd.c \
-			botcmd.h \
-			botmsg.c \
-			botmsg.h \
-			botnet.c \
-			botnet.h \
 			chan.h \
 			chanprog.c \
 			chanprog.h \
@@ -64,7 +58,6 @@ eggdrop_SOURCES		= bg.c \
 			net.c \
 			net.h \
 			patch.h \
-			tandem.h \
 			tcl.c \
 			tcl.h \
 			tcldcc.c \
@@ -106,19 +99,9 @@ endif
 #        by ./configure
 eggdrop_LDADD		= @LIBLTDL@ \
 			-dlopen ../modules/blowfish/blowfish.la \
-			-dlopen ../modules/channels/channels.la \
-			$(EGG_CMP) \
-			-dlopen ../modules/console/console.la \
-			-dlopen ../modules/ctcp/ctcp.la \
-			-dlopen ../modules/filesys/filesys.la \
-			-dlopen ../modules/irc/irc.la \
-			-dlopen ../modules/notes/notes.la \
 			$(EGG_PRL) \
 			-dlopen ../modules/server/server.la \
-			-dlopen ../modules/share/share.la \
 			$(EGG_TCL) \
-			-dlopen ../modules/transfer/transfer.la \
-			-dlopen ../modules/uptime/uptime.la \
 			$(top_builddir)/lib/eggdrop/libeggdrop.la \
 			$(XLIBS)
 

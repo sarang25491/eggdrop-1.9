@@ -23,18 +23,18 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tclmisc.c,v 1.55 2002/05/12 05:59:52 stdarg Exp $";
+static const char rcsid[] = "$Id: tclmisc.c,v 1.56 2002/09/20 21:41:49 stdarg Exp $";
 #endif
 
 #include <sys/stat.h>
 #include "main.h"
 #include "modules.h"
 #include "core_binds.h"
-#include "tandem.h"
+//#include "tandem.h"
 #include "md5.h"
 #include "logfile.h"
 #include "misc.h"
-#include "botmsg.h"		/* add_note				*/
+#include "dccutil.h"		/* add_note				*/
 #include "net.h"		/* getmyip				*/
 #include "users.h"		/* get_user_by_nick, get_user_by_handle	*/
 #ifdef HAVE_UNAME

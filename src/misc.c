@@ -27,7 +27,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: misc.c,v 1.68 2002/06/18 06:12:32 guppy Exp $";
+static const char rcsid[] = "$Id: misc.c,v 1.69 2002/09/20 21:41:49 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -35,7 +35,6 @@ static const char rcsid[] = "$Id: misc.c,v 1.68 2002/06/18 06:12:32 guppy Exp $"
 #include <unistd.h>
 #include <fcntl.h>
 #include "chan.h"
-#include "tandem.h"
 #include "modules.h"
 #include "logfile.h"
 #include "dccutil.h"		/* dprintf_eggdrop, chatout		*/
@@ -978,8 +977,6 @@ void kill_bot(char *s1, char *s2)
 {
   call_hook(HOOK_DIE);
   chatout("*** %s\n", s1);
-  botnet_send_chat(-1, botnetnick, s1);
-  botnet_send_bye();
   write_userfile(-1);
   fatal(s2, 0);
 }

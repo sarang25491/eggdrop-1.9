@@ -31,17 +31,15 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.41 2002/05/12 05:59:52 stdarg Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.42 2002/09/20 21:41:49 stdarg Exp $";
 #endif
 
 #include "main.h"
 #include "users.h"
 #include "chan.h"
 #include "modules.h"
-#include "tandem.h"
 #include "logfile.h"
 #include "misc.h"
-#include "botnet.h"		/* in_chain, nextbot, rembot, botlink	*/
 #include "chanprog.h"		/* clear_chanlist			*/
 #include "dccutil.h"		/* shareout, dprintf_eggdrop, chatout,
 				   lostdcc				*/
@@ -989,123 +987,4 @@ int readuserfile(char *file, struct userrec **ret)
   noshare = noxtra = 0;
   /* process the user data *now* */
   return 1;
-}
-
-/* New methodology - cycle through list 3 times
- * 1st time scan for +sh bots and link if none connected
- * 2nd time scan for +h bots
- * 3rd time scan for +a/+h bots */
-void autolink_cycle(char *start)
-{
-  struct userrec *u = userlist, *autc = NULL;
-  static int cycle = 0;
-  int got_hub = 0, got_alt = 0, got_shared = 0, linked, ready = 0, i,
-   bfl;
-
-  /* don't start a new cycle if some links are still pending */
-  if (!start) {
-    for (i = 0; i < dcc_total; i++) {
-      if (dcc[i].type == &DCC_BOT_NEW)
-	return;
-      if (dcc[i].type == &DCC_FORK_BOT)
-	return;
-      if ((dcc[i].type == &DCC_DNSWAIT) &&
-	  (dcc[i].u.dns && (dcc[i].u.dns->type == &DCC_FORK_BOT)))
-	return;
-    }
-  }
-  if (!start) {
-    ready = 1;
-    cycle = 0;
-  }				/* new run through the user list */
-  while (u && !autc) {
-    while (u && !autc) {
-      if (u->flags & USER_BOT) {
-	bfl = bot_flags(u);
-	if (bfl & (BOT_HUB | BOT_ALT)) {
-	  linked = 0;
-	  for (i = 0; i < dcc_total; i++) {
-	    if (dcc[i].user == u) {
-	      if (dcc[i].type == &DCC_BOT)
-		linked = 1;
-	      if (dcc[i].type == &DCC_BOT_NEW)
-		linked = 1;
-	      if (dcc[i].type == &DCC_FORK_BOT)
-		linked = 1;
-	    }
-	  }
-	  if ((bfl & BOT_HUB) && (bfl & BOT_SHARE)) {
-	    if (linked)
-	      got_shared = 1;
-	    else if (!cycle && ready && !autc)
-	      autc = u;
-	  } else if ((bfl & BOT_HUB) && cycle > 0) {
-	    if (linked)
-	      got_hub = 1;
-	    else if ((cycle == 1) && ready && !autc)
-	      autc = u;
-	  } else if ((bfl & BOT_ALT) && (cycle == 2)) {
-	    if (linked)
-	      got_alt = 1;
-	    else if (!in_chain(u->handle) && ready && !autc)
-	      autc = u;
-	  }
-	  /* did we make it where we're supposed to start?  yay! */
-	  if (!ready)
-	    if (!strcasecmp(u->handle, start)) {
-	      ready = 1;
-	      autc = NULL;
-	      /* if starting point is a +h bot, must be in 2nd cycle */
-	      if ((bfl & BOT_HUB) && !(bfl & BOT_SHARE)) {
-		cycle = 1;
-	      }
-	      /* if starting point is a +a bot, must be in 3rd cycle */
-	      if (bfl & BOT_ALT) {
-		cycle = 2;
-	      }
-	    }
-	}
-	if (!cycle && (bfl & BOT_REJECT) && in_chain(u->handle)) {
-	  /* get rid of nasty reject bot */
-	  int i;
-
-	  i = nextbot(u->handle);
-	  if ((i >= 0) && !strcasecmp(dcc[i].nick, u->handle)) {
-	    char *p = _("rejected");
-
-	    /* we're directly connected to the offending bot?! (shudder!) */
-	    putlog(LOG_BOTS, "*", "%s %s", _("Rejecting bot"), dcc[i].nick);
-	    chatout("*** %s bot %s\n", p, dcc[i].nick);
-	    botnet_send_unlinked(i, dcc[i].nick, p);
-	    dprintf(i, "bye %s\n", _("Rejecting bot"));
-	    killsock(dcc[i].sock);
-	    lostdcc(i);
-	  } else if ((i < 0) && strcasecmp(botnetnick, u->handle)) {
-	    /* The bot is not connected, but listed in our tandem list! */
-	    putlog(LOG_BOTS, "*", "(!) BUG: rejecting not connected bot %s!",
-		   u->handle);
-	    rembot(u->handle);
-	  }
-	}
-      }
-      u = u->next;
-    }
-    if (!autc) {
-      if (!cycle && !got_shared) {
-	cycle++;
-	u = userlist;
-      } else if ((cycle == 1) && !(got_shared || got_hub)) {
-	cycle++;
-	u = userlist;
-      }
-    }
-  }
-  if (got_shared && !cycle)
-    autc = NULL;
-  else if ((got_shared || got_hub) && (cycle == 1))
-    autc = NULL;
-  else if ((got_shared || got_hub || got_alt) && (cycle == 2))
-    autc = NULL;
-  if (autc)
-    botlink("", -3, autc->handle);	/* try autoconnect */
 }

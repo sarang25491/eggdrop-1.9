@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: dccutil.h,v 1.2 2002/05/05 16:40:38 tothwolf Exp $
+ * $Id: dccutil.h,v 1.3 2002/09/20 21:41:49 stdarg Exp $
  */
 
 #ifndef _EGG_DCCUTIL_H
@@ -57,5 +57,8 @@ char *add_cr(char *);
 void changeover_dcc(int, struct dcc_table *, int);
 void do_boot(int, char *, char *);
 int detect_dcc_flood(time_t *, struct chat_info *, int);
+
+/* Moved there since there is no botnet */
+int add_note(char *to, char *from, char *msg, int idx, int echo);
 
 #endif				/* !_EGG_DCCUTIL_H */

@@ -27,7 +27,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dccutil.c,v 1.54 2002/05/26 08:34:13 stdarg Exp $";
+static const char rcsid[] = "$Id: dccutil.c,v 1.55 2002/09/20 21:41:49 stdarg Exp $";
 #endif
 
 #include <sys/stat.h>
@@ -35,7 +35,6 @@ static const char rcsid[] = "$Id: dccutil.c,v 1.54 2002/05/26 08:34:13 stdarg Ex
 #include <errno.h>
 #include "chan.h"
 #include "modules.h"
-#include "tandem.h"
 #include "logfile.h"
 #include "misc.h"
 #include "cmdt.h"		/* cmd_t				*/
@@ -43,10 +42,12 @@ static const char rcsid[] = "$Id: dccutil.c,v 1.54 2002/05/26 08:34:13 stdarg Ex
 #include "core_binds.h"		/* check_bind_chon, check_bind_chjn,
 				   check_bind_chof, check_bind_away	*/
 #include "dccutil.h"		/* prototypes				*/
+#include "users.h" /* get_user_by_handle */
 
 extern struct dcc_t	*dcc;
+extern struct userrec *userlist;
 extern int		 dcc_total, max_dcc, dcc_flood_thr, backgrd, MAXSOCKS;
-extern char		 botnetnick[], spaces[], version[];
+extern char		 spaces[], version[];
 extern time_t		 now;
 extern sock_list	*socklist;
 
@@ -54,6 +55,7 @@ extern sock_list	*socklist;
 extern struct dcc_table	DCC_CHAT, DCC_LOST;
 #endif /* MAKING_MODS   */
 
+char botnetnick[HANDLEN + 1] = "";
 char	motdfile[121] = "text/motd";	/* File where the motd is stored */
 int	connect_timeout = 15;		/* How long to wait before a telnet
 					   connection times out */
@@ -226,11 +228,6 @@ void dcc_chatter(int idx)
       if (i == -2)
 	i = 0;
       dcc[idx].u.chat->channel = i;
-      if (dcc[idx].u.chat->channel >= 0) {
-	if (dcc[idx].u.chat->channel < 100000) {
-	  botnet_send_join_idx(idx, -1);
-	}
-      }
       check_bind_chjn(botnetnick, dcc[idx].nick, dcc[idx].u.chat->channel,
 		     geticon(dcc[idx].user), dcc[idx].sock, dcc[idx].host);
     }
@@ -344,9 +341,6 @@ void not_away(int idx)
   if (dcc[idx].u.chat->channel >= 0) {
     chanout_but(-1, dcc[idx].u.chat->channel,
 		"*** %s is no longer away.\n", dcc[idx].nick);
-    if (dcc[idx].u.chat->channel < 100000) {
-      botnet_send_away(-1, botnetnick, dcc[idx].sock, NULL, idx);
-    }
   }
   dprintf(idx, "You're not away any more.\n");
   free_null(dcc[idx].u.chat->away);
@@ -369,9 +363,6 @@ void set_away(int idx, char *s)
   if (dcc[idx].u.chat->channel >= 0) {
     chanout_but(-1, dcc[idx].u.chat->channel,
 		"*** %s is now away: %s\n", dcc[idx].nick, s);
-    if (dcc[idx].u.chat->channel < 100000) {
-      botnet_send_away(-1, botnetnick, dcc[idx].sock, s, idx);
-    }
   }
   dprintf(idx, "You are now away.\n");
   check_bind_away(botnetnick, dcc[idx].sock, s);
@@ -468,8 +459,6 @@ int detect_dcc_flood(time_t * timer, struct chat_info *chat, int idx)
 
 	snprintf(x, sizeof x, _("%s has been forcibly removed for flooding.\n"), dcc[idx].nick);
 	chanout_but(idx, chat->channel, "*** %s", x);
-	if (chat->channel < 100000)
-	  botnet_send_part_idx(idx, x);
       }
       check_bind_chof(dcc[idx].nick, dcc[idx].sock);
       if ((dcc[idx].sock != STDOUT) || backgrd) {
@@ -504,8 +493,6 @@ void do_boot(int idx, char *by, char *reason)
     snprintf(x, sizeof x, _("%s booted %s from the party line%s%s\n"), by, dcc[idx].nick,
 		 reason[0] ? ": " : "", reason);
     chanout_but(idx, dcc[idx].u.chat->channel, "*** %s.\n", x);
-    if (dcc[idx].u.chat->channel < 100000)
-      botnet_send_part_idx(idx, x);
   }
   check_bind_chof(dcc[idx].nick, dcc[idx].sock);
   if ((dcc[idx].sock != STDOUT) || backgrd) {
@@ -517,4 +504,101 @@ void do_boot(int idx, char *by, char *reason)
     dcc_chatter(idx);
   }
   return;
+}
+
+int add_note(char *to, char *from, char *msg, int idx, int echo)
+{
+  int status, i, iaway, sock;
+  char ss[81], ssf[81];
+  struct userrec *u;
+
+  if (strlen(msg) > 450)
+    msg[450] = 0;		/* Notes have a limit */
+  /* note length + PRIVMSG header + nickname + date  must be <512  */
+  /* Might be form "sock:nick" */
+  splitc(ssf, from, ':');
+  rmspace(ssf);
+  splitc(ss, to, ':');
+  rmspace(ss);
+  if (!ss[0])
+    sock = (-1);
+  else
+    sock = atoi(ss);
+  /* Don't process if there's a note binding for it */
+  if (idx != (-2)) {		/* Notes from bots don't trigger it */
+    if (check_bind_note(from, to, msg)) {
+      if ((idx >= 0) && (echo))
+	dprintf(idx, "-> %s: %s\n", to, msg);
+      return NOTE_TCL;
+    }
+  }
+  if (!(u = get_user_by_handle(userlist, to))) {
+    if (idx >= 0)
+      dprintf(idx, _("I dont know anyone by that name.\n"));
+    return NOTE_ERROR;
+  }
+  if (is_bot(u)) {
+    if (idx >= 0)
+      dprintf(idx, _("Thats a bot.  You cant leave notes for a bot.\n"));
+    return NOTE_ERROR;
+  }
+  if (match_noterej(u, from)) {
+    if (idx >= 0)
+       dprintf(idx, "%s %s\n", u->handle, "rejected your note.");
+    return NOTE_REJECT;
+  }
+  status = NOTE_STORED;
+  iaway = 0;
+  /* Online right now? */
+  for (i = 0; i < dcc_total; i++) {
+    if (dcc[i].type && (dcc[i].type->flags & DCT_GETNOTES) &&
+	((sock == (-1)) || (sock == dcc[i].sock)) &&
+	(!strcasecmp(dcc[i].nick, to))) {
+      int aok = 1;
+
+      if (dcc[i].type == &DCC_CHAT)
+	if ((dcc[i].u.chat->away != NULL) &&
+	    (idx != (-2))) {
+	  /* Only check away if it's not from a bot */
+	  aok = 0;
+	  if (idx >= 0)
+	    dprintf(idx, "%s %s: %s\n", dcc[i].nick, _("is away"),
+		    dcc[i].u.chat->away);
+	  if (!iaway)
+	    iaway = i;
+	  status = NOTE_AWAY;
+	}
+      if (aok) {
+	char *p, *fr = from;
+	int l = 0;
+	char work[1024];
+
+	while ((*msg == '<') || (*msg == '>')) {
+	  p = newsplit(&msg);
+	  if (*p == '<')
+	    l += simple_sprintf(work + l, "via %s, ", p + 1);
+	  else if (*from == '@')
+	    fr = p + 1;
+	}
+	if (idx == -2 || (!strcasecmp(from, botnetnick)))
+	  dprintf(i, "*** [%s] %s%s\n", fr, l ? work : "", msg);
+	else
+	  dprintf(i, "%cNote [%s]: %s%s\n", 7, fr, l ? work : "", msg);
+	if ((idx >= 0) && (echo))
+	  dprintf(idx, "-> %s: %s\n", to, msg);
+	return NOTE_OK;
+      }
+    }
+  }
+  if (idx == (-2))
+    return NOTE_OK;		/* Error msg from a tandembot: don't store */
+  status = storenote(from, to, msg, idx, NULL, 0);
+  if (status < 0) status = NOTE_ERROR;
+  else if (status == NOTE_AWAY) {
+      /* User is away in all sessions -- just notify the user that a
+       * message arrived and was stored. (only oldest session is notified.)
+       */
+      dprintf(iaway, "*** %s.\n", _("Note arrived for you"));
+  }
+  return(status);
 }

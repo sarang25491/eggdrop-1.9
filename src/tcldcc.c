@@ -23,18 +23,16 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tcldcc.c,v 1.66 2002/06/18 06:12:32 guppy Exp $";
+static const char rcsid[] = "$Id: tcldcc.c,v 1.67 2002/09/20 21:41:49 stdarg Exp $";
 #endif
 
 #include "main.h"
-#include "tandem.h"
 #include "modules.h"
 #include "logfile.h"
 #include "misc.h"
 #include "cmdt.h"		/* cmd_t				*/
 #include "core_binds.h"		/* check_bind_chpt, check_bind_chjn,
 				   check_bind_bcst, check_bind_chof	*/
-#include "botnet.h"		/* nextbot, botlink, botunlink, lastbot	*/
 #include "chanprog.h"		/* masktype, logmodes			*/
 #include "dccutil.h"		/* chatout, chanout_but, lostdcc
 				   not_away, set_away, new_dcc		*/
@@ -48,8 +46,6 @@ extern struct dcc_t	*dcc;
 extern int		 dcc_total, backgrd, parties, make_userfile,
 			 do_restart, remote_boots, max_dcc;
 extern char		 botnetnick[];
-extern party_t		*party;
-extern tand_t		*tandbot;
 extern time_t		 now;
 
 /* Traffic stuff. */
@@ -113,7 +109,6 @@ static int script_dccsimul(int idx, char *cmd)
 static int script_dccbroadcast(char *msg)
 {
   chatout("*** %s\n", msg);
-  botnet_send_chat(-1, botnetnick, msg);
   return(0);
 }
 
@@ -128,57 +123,6 @@ static int script_hand2idx(char *nick)
     }
   }
   return(-1);
-}
-
-static int script_getchan(int idx)
-{
-  if (idx < 0 || !(dcc[idx].type) ||
-      (dcc[idx].type != &DCC_CHAT && dcc[idx].type != &DCC_SCRIPT)) {
-    return(-2);
-  }
-  if (dcc[idx].type == &DCC_SCRIPT)
-    return(dcc[idx].u.script->u.chat->channel);
-  else
-    return(dcc[idx].u.chat->channel);
-}
-
-static int script_setchan(int idx, int chan)
-{
-  int oldchan;
-
-  if (idx < 0 || !(dcc[idx].type) ||
-      (dcc[idx].type != &DCC_CHAT && dcc[idx].type != &DCC_SCRIPT)) {
-    return(1);
-  }
-
-  if ((chan < -1) || (chan > 199999)) {
-    return(1);
-  }
-  if (dcc[idx].type == &DCC_SCRIPT) {
-    dcc[idx].u.script->u.chat->channel = chan;
-    return(0);
-  }
-
-  oldchan = dcc[idx].u.chat->channel;
-
-  if (oldchan >= 0) {
-    if ((chan >= GLOBAL_CHANS) && (oldchan < GLOBAL_CHANS)) botnet_send_part_idx(idx, "*script*");
-    check_bind_chpt(botnetnick, dcc[idx].nick, idx, oldchan);
-  }
-  dcc[idx].u.chat->channel = chan;
-  if (chan < GLOBAL_CHANS) botnet_send_join_idx(idx, oldchan);
-  check_bind_chjn(botnetnick, dcc[idx].nick, chan, geticon(dcc[idx].user),
-	   idx, dcc[idx].host);
-  return(0);
-}
-
-static int script_dccputchan(int chan, char *msg)
-{
-  if ((chan < 0) || (chan > 199999)) return(1);
-  chanout_but(-1, chan, "*** %s\n", msg);
-  botnet_send_chan(-1, botnetnick, NULL, chan, msg);
-  check_bind_bcst(botnetnick, chan, msg);
-  return(0);
 }
 
 static int script_console(script_var_t *retval, int nargs, int idx, char *what)
@@ -271,7 +215,6 @@ static int script_control(int idx, script_callback_t *callback)
 		  dcc[idx].nick);
       check_bind_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock,
 		     dcc[idx].u.chat->channel);
-      botnet_send_part_idx(idx, "gone");
     }
     check_bind_chof(dcc[idx].nick, dcc[idx].sock);
   }
@@ -324,10 +267,6 @@ static int script_killdcc(int idx, char *reason)
     chanout_but(idx, dcc[idx].u.chat->channel, "*** %s has left the %s%s%s\n",
 		dcc[idx].nick, dcc[idx].u.chat ? "channel" : "partyline",
 		reason ? ": " : "", reason ? reason : "");
-    botnet_send_part_idx(idx, reason ? reason : "");
-    if ((dcc[idx].u.chat->channel >= 0) && (dcc[idx].u.chat->channel < GLOBAL_CHANS)) {
-      check_bind_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock, dcc[idx].u.chat->channel);
-    }
     check_bind_chof(dcc[idx].nick, dcc[idx].sock);
     /* Notice is sent to the party line, the script can add a reason. */
   }
@@ -336,71 +275,10 @@ static int script_killdcc(int idx, char *reason)
   return TCL_OK;
 }
 
-static int script_putbot(char *target, char *text)
-{
-  int i;
-
-  i = nextbot(target);
-  if (i < 0) return(1);
-  botnet_send_zapf(i, botnetnick, target, text);
-  return(0);
-}
-
-static int script_putallbots(char *text)
-{
-	botnet_send_zapf_broad(-1, botnetnick, NULL, text);
-	return(0);
-}
-
 static char *script_idx2hand(int idx)
 {
 	if (idx < 0 || idx >= dcc_total || !(dcc[idx].type) || !(dcc[idx].nick)) return("");
 	return(dcc[idx].nick);
-}
-
-static int script_islinked(char *bot)
-{
-	return nextbot(bot);
-}
-
-static int script_bots(script_var_t *retval)
-{
-	char **botlist = NULL;
-	int nbots = 0;
-	tand_t *bot;
-
-	for (bot = tandbot; bot; bot = bot->next) {
-		nbots++;
-		botlist = (char **)realloc(botlist, sizeof(char *) * nbots);
-		botlist[nbots-1] = strdup(bot->bot);
-	}
-	retval->type = SCRIPT_ARRAY | SCRIPT_FREE | SCRIPT_STRING;
-	retval->value = (void *)botlist;
-	retval->len = nbots;
-	return(0);
-}
-
-static int script_botlist(script_var_t *retval)
-{
-	tand_t *bot;
-	script_var_t *sublist, *nick, *uplink, *version, *share;
-	char sharestr[2];
-
-	retval->type = SCRIPT_ARRAY | SCRIPT_FREE | SCRIPT_VAR;
-	retval->len = 0;
-	retval->value = NULL;
-	sharestr[1] = 0;
-	for (bot = tandbot; bot; bot = bot->next) {
-		nick = script_string(bot->bot, -1);
-		uplink = script_string((bot->uplink == (tand_t *)1) ? botnetnick : bot->uplink->bot, -1);
-		version = script_int(bot->ver);
-		sharestr[0] = bot->share;
-		share = script_copy_string(sharestr, -1);
-
-		sublist = script_list(4, nick, uplink, version, share);
-		script_list_append(retval, sublist);
-	}
-	return(0);
 }
 
 /* list of { idx nick host type {other}  timestamp}
@@ -434,53 +312,6 @@ static int script_dcclist(script_var_t *retval, char *match)
 	return(0);
 }
 
-static void whom_entry(script_var_t *retval, char *nick, char *bot, char *host ,char icon, int idletime, char *away, int chan)
-{
-	script_var_t *sublist, *vnick, *vbot, *vhost, *vflag, *vidle, *vaway, *vchan;
-	char flag[2];
-
-	vnick = script_string(nick, -1);
-	vbot = script_string(bot, -1);
-	vhost = script_string(host, -1);
-
-	flag[0] = icon;
-	flag[1] = 0;
-	vflag = script_copy_string(flag, 1);
-
-	vidle = script_int((now - idletime) / 60);
-	vaway = script_string(away ? away : "", -1);
-	vchan = script_int(chan);
-
-	sublist = script_list(7, vnick, vbot, vhost, vflag, vidle, vaway, vchan);
-	script_list_append(retval, sublist);
-}
-
-/* list of {nick bot host flag idletime awaymsg channel}
- */
-static int script_whom(script_var_t *retval, int nargs, int which_chan)
-{
-	int i;
-
-	retval->type = SCRIPT_ARRAY | SCRIPT_FREE | SCRIPT_VAR;
-	retval->len = 0;
-	retval->value = NULL;
-
-	if (nargs == 0) which_chan = -1;
-
-	for (i = 0; i < dcc_total; i++) {
-		if (dcc[i].type != &DCC_CHAT) continue;
-		if (which_chan != -1 && dcc[i].u.chat->channel != which_chan) continue;
-		whom_entry(retval, dcc[i].nick, botnetnick, dcc[i].host,
-		geticon(dcc[i].user), dcc[i].timeval, dcc[i].u.chat->away,
-		dcc[i].u.chat->channel);
-	}
-	for (i = 0; i < parties; i++) {
-		if (which_chan != -1 && party[i].chan != which_chan) continue;
-		whom_entry(retval, party[i].nick, party[i].bot, party[i].from, party[i].flag, party[i].timer, party[i].status & PLSTAT_AWAY ? party[i].away : "", party[i].chan);
-	}
-	return(0);
-}
-
 static int script_dccused()
 {
 	return(dcc_total);
@@ -508,34 +339,6 @@ static int script_setdccaway(int idx, char *text)
 	}
 	else set_away(idx, text);
 	return(0);
-}
-
-static int script_link(char *via, char *target)
-{
-	int x, i;
-
-	if (!via) x = botlink("", -2, target);
-	else {
-		x = 1;
-		i = nextbot(via);
-		if (i < 0) x = 0;
-		else botnet_send_link(i, botnetnick, via, target);
-	}
-	return(x);
-}
-
-static int script_unlink(char *bot, char *comment)
-{
-	int i, x;
-
-	i = nextbot(bot);
-	if (i < 0) return(0);
-	if (!strcasecmp(bot, dcc[i].nick)) x = botunlink(-2, bot, comment);
-	else {
-		x = 1;
-		botnet_send_unlink(i, botnetnick, lastbot(bot), bot, comment);
-	}
-	return(x);
 }
 
 static int script_connect(char *hostname, int port)
@@ -679,12 +482,8 @@ static int script_boot(char *user_bot, char *reason)
     whonick[HANDLEN] = 0;
     if (!strcasecmp(who, botnetnick))
        strlcpy(who, whonick, sizeof who);
-    else if (remote_boots > 0) {
-      i = nextbot(who);
-      if (i < 0) return(0);
-      botnet_send_reject(i, botnetnick, NULL, whonick, who, reason ? reason : "");
-    }
-    else return(0);
+    else
+        return(0);
   }
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type) && (dcc[i].type->flags & DCT_CANBOOT) &&
@@ -736,14 +535,14 @@ static int script_traffic(script_var_t *retval)
 		script_int(traffic.out_today.irc),
 		script_int(traffic.out_today.irc + traffic.out_total.irc));
 	script_list_append(retval, sublist);
-
+/*
 	sublist = script_list(5, script_string("botnet", -1),
 		script_int(traffic.in_today.bn),
 		script_int(traffic.in_today.bn + traffic.in_total.bn),
 		script_int(traffic.out_today.bn),
 		script_int(traffic.out_today.bn + traffic.out_total.bn));
 	script_list_append(retval, sublist);
-
+*/
 	sublist = script_list(5, script_string("dcc", -1),
 		script_int(traffic.in_today.dcc),
 		script_int(traffic.in_today.dcc + traffic.in_total.dcc),
@@ -797,30 +596,19 @@ script_command_t script_dcc_cmds[] = {
 	{"", "dccsimul", script_dccsimul, NULL, 2, "is", "idx command", SCRIPT_INTEGER, 0},
 	{"", "dccbroadcast", script_dccbroadcast, NULL, 1, "s", "text", SCRIPT_INTEGER, 0},
 	{"", "hand2idx", script_hand2idx, NULL, 1, "s", "handle", SCRIPT_INTEGER, 0},
-	{"", "getchan", script_getchan, NULL, 2, "i", "idx", SCRIPT_INTEGER, 0},
-	{"", "setchan", script_setchan, NULL, 2, "ii", "idx chan", SCRIPT_INTEGER, 0},
-	{"", "dccputchan", script_dccputchan, NULL, 2, "is", "chan text", SCRIPT_INTEGER, 0},
 	{"", "valididx", script_valididx, NULL, 1, "i", "idx", SCRIPT_INTEGER, 0},
-	{"", "putbot", script_putbot, NULL, 2, "ss", "bot text", SCRIPT_INTEGER, 0},
-	{"", "putallbots", script_putallbots, NULL, 1, "s", "text", SCRIPT_INTEGER, 0},
 	{"", "idx2hand", script_idx2hand, NULL, 1, "i", "idx", SCRIPT_INTEGER, 0},
-	{"", "islinked", script_islinked, NULL, 1, "s", "bot", SCRIPT_INTEGER, 0},
 	{"", "dccused", script_dccused, NULL, 0, "", "", SCRIPT_INTEGER, 0},
 	{"", "getdccidle", script_getdccidle, NULL, 1, "i", "idx", SCRIPT_INTEGER, 0},
 	{"", "getdccaway", script_getdccaway, NULL, 1, "i", "idx", SCRIPT_STRING, 0},
 	{"", "setdccaway", script_setdccaway, NULL, 2, "is", "idx msg", SCRIPT_INTEGER, 0},
-	{"", "unlink", script_unlink, NULL, 2, "ss", "bot comment", SCRIPT_INTEGER, 0},
 	{"", "boot", script_boot, NULL, 2,"ss", "user@bot reason", SCRIPT_INTEGER, 0},
 	{"", "rehash", script_rehash, NULL, 0,"", "", SCRIPT_INTEGER, 0},
 	{"", "restart", script_restart, NULL, 0, "", "", SCRIPT_INTEGER, 0},
 	{"", "console", script_console, NULL, 1, "is", "idx ?changes?", 0, SCRIPT_PASS_RETVAL|SCRIPT_PASS_COUNT|SCRIPT_VAR_ARGS},
 	{"", "echo", script_echo, NULL, 1, "ii", "idx ?status?", SCRIPT_INTEGER, SCRIPT_PASS_COUNT|SCRIPT_VAR_ARGS},
 	{"", "page", script_page, NULL, 1, "ii", "idx ?status?", SCRIPT_INTEGER, SCRIPT_PASS_COUNT|SCRIPT_VAR_ARGS},
-	{"", "bots", script_bots, NULL, 0, "", "", 0, SCRIPT_PASS_RETVAL},
-	{"", "botlist", script_botlist, NULL, 0, "", "", 0, SCRIPT_PASS_RETVAL},
 	{"", "dcclist", script_dcclist, NULL, 0, "s", "?match?", 0, SCRIPT_PASS_RETVAL|SCRIPT_VAR_ARGS},
-	{"", "link", script_link, NULL, 1, "ss", "?via-bot? target-bot", 0, SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT},
-	{"", "whom", script_whom, NULL, 0, "i", "?channel?", 0, SCRIPT_PASS_RETVAL|SCRIPT_PASS_COUNT|SCRIPT_VAR_ARGS},
 	{"", "control", script_control, NULL, 1, "ic", "idx ?callback?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
 	{"", "killdcc", script_killdcc, NULL, 1, "i", "idx", SCRIPT_INTEGER, 0},
 	{"", "connect", script_connect, NULL, 2, "si", "host port", SCRIPT_INTEGER, 0},
