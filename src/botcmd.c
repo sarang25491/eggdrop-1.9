@@ -3,7 +3,7 @@
  *   commands that comes across the botnet
  *   userfile transfer and update commands from sharebots
  *
- * $Id: botcmd.c,v 1.33 2002/03/03 19:03:46 stdarg Exp $
+ * $Id: botcmd.c,v 1.34 2002/03/03 20:17:54 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -37,7 +37,6 @@ extern int		 dcc_total, remote_boots, noshare;
 extern struct dcc_t	*dcc;
 extern struct chanset_t	*chanset;
 extern struct userrec	*userlist;
-extern Tcl_Interp	*interp;
 extern time_t		 now, online_since;
 extern party_t		*party;
 extern module_entry	*module_list;

@@ -533,6 +533,31 @@ static Function journal_table[] = {
 static Function journal_playback;
 static void *journal_playback_h;
 
+static int cmd_tcl(struct userrec *u, int idx, char *text)
+{
+	char *str;
+
+	if (!isowner(dcc[idx].nick)) {
+		dprintf(idx, _("You must be a permanent owner (defined in the config file) to use this command.\n"));
+		return(BIND_RET_LOG);
+	}
+
+	if (Tcl_GlobalEval(ginterp, text) != TCL_OK) {
+		str = Tcl_GetVar(ginterp, "errorInfo", TCL_GLOBAL_ONLY);
+		dprintf(idx, "Tcl error: %s\n", str);
+	}
+	else {
+		str = Tcl_GetStringResult(ginterp);
+		dprintf(idx, "Tcl: %s\n", str);
+	}
+	return(0);
+}
+
+static cmd_t dcc_commands[] = {
+	{"tcl", 	"n", 	(Function) cmd_tcl,	NULL},
+	{0}
+};
+
 EXPORT_SCOPE char *tclscript_LTX_start();
 static char *tclscript_close();
 
@@ -545,11 +570,19 @@ static Function tclscript_table[] = {
 
 char *tclscript_LTX_start(Function *global_funcs)
 {
+	bind_table_t *dcc_table;
+
 	global = global_funcs;
 
 	/* When tcl is gone from the core, this will be uncommented. */
-	/* interp = Tcl_CreateInterp(); */
+	/* ginterp = Tcl_CreateInterp(); */
 	ginterp = interp;
+
+	module_register("tclscript", tclscript_table, 1, 2);
+	if (!module_depend("tclscript", "eggdrop", 107, 0)) {
+		module_undepend("tclscript");
+		return "This module requires eggdrop1.7.0 or later";
+	}
 
 	error_logfile = strdup("logs/tcl_errors.log");
 	Tcl_LinkVar(ginterp, "error_logfile", (char *)&error_logfile, TCL_LINK_STRING);
@@ -558,19 +591,22 @@ char *tclscript_LTX_start(Function *global_funcs)
 	registry_lookup("script", "playback", &journal_playback, &journal_playback_h);
 	if (journal_playback) journal_playback(journal_playback_h, journal_table);
 
-	module_register("tclscript", tclscript_table, 1, 2);
-	if (!module_depend("tclscript", "eggdrop", 107, 0)) {
-		module_undepend("tclscript");
-		return "This module requires eggdrop1.7.0 or later";
-	}
+	dcc_table = find_bind_table2("dcc");
+	if (dcc_table) add_builtins2(dcc_table, dcc_commands);
 
 	return(NULL);
 }
 
 static char *tclscript_close()
 {
+	bind_table_t *dcc_table;
+
 	/* When tcl is gone from the core, this will be uncommented. */
-	/* Tcl_DeleteInterp(interp); */
+	/* Tcl_DeleteInterp(ginterp); */
+
+	dcc_table = find_bind_table2("dcc");
+	if (dcc_table) rem_builtins2(dcc_table, dcc_commands);
+
 	module_undepend("tclscript");
 	return(NULL);
 }

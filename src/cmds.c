@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.93 2002/03/03 19:03:46 stdarg Exp $
+ * $Id: cmds.c,v 1.94 2002/03/03 20:17:54 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -2170,24 +2170,6 @@ static void cmd_page(struct userrec *u, int idx, char *par)
   }
 }
 
-/* Evaluate a Tcl command, send output to a dcc user.
- */
-static void cmd_tcl(struct userrec *u, int idx, char *msg)
-{
-  int code;
-
-  if (!isowner(dcc[idx].nick)) {
-    dprintf(idx, _("What?  You need .help\n"));
-    return;
-  }
-  debug1("tcl: evaluate (.tcl): %s", msg);
-  code = Tcl_GlobalEval(interp, msg);
-  if (code == TCL_OK)
-    dumplots(idx, "Tcl: ", interp->result);
-  else
-    dumplots(idx, "Tcl error: ", interp->result);
-}
-
 /* Perform a 'set' command
  */
 static void cmd_set(struct userrec *u, int idx, char *msg)
@@ -2806,7 +2788,6 @@ cmd_t C_dcc[] =
   {"status",		"m|m",	(Function) cmd_status,		NULL},
   {"strip",		"",	(Function) cmd_strip,		NULL},
   {"su",		"",	(Function) cmd_su,		NULL},
-  {"tcl",		"n",	(Function) cmd_tcl,		NULL},
   {"trace",		"",	(Function) cmd_trace,		NULL},
   {"unlink",		"t",	(Function) cmd_unlink,		NULL},
   {"unloadmod",		"n",	(Function) cmd_unloadmod,	NULL},

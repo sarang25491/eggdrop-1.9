@@ -6,7 +6,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.55 2002/03/03 19:03:46 stdarg Exp $
+ * $Id: botnet.c,v 1.56 2002/03/03 20:17:54 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -40,7 +40,6 @@ extern int		 dcc_total, backgrd, connect_timeout, max_dcc,
 extern struct userrec	*userlist;
 extern struct dcc_t	*dcc;
 extern time_t		 now;
-extern Tcl_Interp	*interp;
 
 tand_t		*tandbot;		/* Keep track of tandem bots on the
 					   botnet */
