@@ -31,7 +31,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.46 2003/02/15 05:04:58 wcc Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.47 2003/02/15 09:07:15 wcc Exp $";
 #endif
 
 #include "main.h"
@@ -112,18 +112,20 @@ int delignore(char *ign)
   int i, j;
   struct igrec **u;
   struct igrec *t;
+  char temp[256];
 
   i = 0;
   if (!strchr(ign, '!') && (j = atoi(ign))) {
     for (u = &global_ign, j--; *u && j; u = &((*u)->next), j--);
     if (*u) {
-      strcpy(ign, (*u)->igmask);
+      strncpyz(temp, (*u)->mask, sizeof temp);
       i = 1;
     }
   } else {
     /* find the matching host, if there is one */
     for (u = &global_ign; *u && !i; u = &((*u)->next))
       if (!irccmp(ign, (*u)->igmask)) {
+        strncpyz(temp, ign, sizeof temp);
 	i = 1;
 	break;
       }

@@ -24,7 +24,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: cmds.c,v 1.115 2003/02/15 05:04:58 wcc Exp $";
+static const char rcsid[] = "$Id: cmds.c,v 1.116 2003/02/15 09:07:15 wcc Exp $";
 #endif
 
 #include "main.h"
@@ -730,11 +730,11 @@ static int cmd_chaddr(user_t *u, int idx, char *par)
   user_t *u1;
   int addrlen;
 
+  handle = newsplit(&par);
   if (!par[0]) {
     dprintf(idx, "Usage: chaddr <botname> <address[:telnet-port[/relay-port]]>\n");
     return(0);
   }
-  handle = newsplit(&par);
   addr = newsplit(&par);
   if (strlen(addr) > UHOSTMAX)
     addr[UHOSTMAX] = 0;
@@ -793,11 +793,11 @@ static int cmd_comment(user_t *u, int idx, char *par)
   char *handle;
   user_t *u1;
 
+  handle = newsplit(&par);
   if (!par[0]) {
     dprintf(idx, "Usage: comment <handle> <newcomment>\n");
     return(0);
   }
-  handle = newsplit(&par);
   u1 = get_user_by_handle(userlist, handle);
   if (!u1) {
     dprintf(idx, _("No such user!\n"));
