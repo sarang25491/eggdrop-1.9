@@ -64,16 +64,12 @@ static registry_simple_chain_t my_functions[] = {
 
 static Function journal_table[] = {
         (Function)1, /* Version */
-        (Function)SCRIPT_EVENT_MAX, /* Our length */
+        (Function)5, /* Number of functions */
         my_load_script,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
+	NULL, /* my_link_var */
+	NULL, /* my_unlink_var */
         my_create_cmd,
-	NULL
+	NULL /* my_delete_cmd */
 };
 
 static Function journal_playback;

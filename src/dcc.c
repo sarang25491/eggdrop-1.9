@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.77 2002/04/16 22:52:39 ite Exp $
+ * $Id: dcc.c,v 1.78 2002/04/25 04:06:40 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -72,15 +72,15 @@ static void dcc_telnet_pass(int, int);
 
 extern void init_dcc_max();
 
-static script_str_t dcc_script_strings[] = {
-	{"", "dcc_command_chars", &dcc_command_chars},
+static script_linked_var_t dcc_script_vars[] = {
+	{"", "dcc_command_chars", &dcc_command_chars, SCRIPT_STRING, NULL},
 	{0}
 };
 
 void dcc_init()
 {
 	dcc_command_chars = strdup("./");
-	script_link_str_table(dcc_script_strings);
+	script_link_var_table(dcc_script_vars);
 	init_dcc_max();
 }
 

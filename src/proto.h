@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.68 2002/03/04 02:32:38 stdarg Exp $
+ * $Id: proto.h,v 1.69 2002/04/25 04:06:40 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -178,7 +178,6 @@ int flush_inbuf(int idx);
 /* tcl.c */
 void do_tcl(char *, char *);
 int readtclprog(char *fname);
-int findidx(int);
 int findanyidx(int);
 
 /* userent.c */

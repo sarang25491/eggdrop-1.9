@@ -54,16 +54,12 @@ static script_command_t log_script_cmds[] = {
 	{0}
 };
 
-static script_str_t log_script_strings[] = {
-	{"", "logfile-suffix", &logfile_suffix},
-	{0}
-};
-
-static script_int_t log_script_ints[] = {
-	{"", "max-logsize", &max_logsize},
-	{"", "switch-logfiles-at", &cycle_at},
-	{"", "keep-all-logs", &keep_all_logs},
-	{"", "quick-logs", &quick_logs},
+static script_linked_var_t log_script_vars[] = {
+	{"", "logfile-suffix", &logfile_suffix, SCRIPT_STRING, NULL},
+	{"", "max-logsize", &max_logsize, SCRIPT_INTEGER, NULL},
+	{"", "switch-logfiles-at", &cycle_at, SCRIPT_INTEGER, NULL},
+	{"", "keep-all-logs", &keep_all_logs, SCRIPT_INTEGER, NULL},
+	{"", "quick-logs", &quick_logs, SCRIPT_INTEGER, NULL},
 	{0}
 };
 
@@ -71,8 +67,7 @@ void logfile_init()
 {
 	logfile_suffix = strdup(".%d%b%Y");
 	script_create_cmd_table(log_script_cmds);
-	script_link_int_table(log_script_ints);
-	script_link_str_table(log_script_strings);
+	script_link_var_table(log_script_vars);
 	add_hook(HOOK_MINUTELY, logfile_minutely);
 	add_hook(HOOK_5MINUTELY, logfile_5minutely);
 }

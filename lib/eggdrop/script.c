@@ -2,7 +2,7 @@
  * script.c
  *   stuff needed for scripting modules
  *
- * $Id: script.c,v 1.1 2002/03/26 01:06:22 ite Exp $
+ * $Id: script.c,v 1.2 2002/04/25 04:06:39 stdarg Exp $
  */
 /*
  * Copyright (C) 2001, 2002 Eggheads Development Team
@@ -34,8 +34,8 @@
 #include "eggdrop.h"
 #include "script.h"
 
-static Function load_script, link_int, unlink_int, link_str, unlink_str, create_cmd, delete_cmd;
-static void *load_script_h, *link_int_h, *unlink_int_h, *link_str_h, *unlink_str_h, *create_cmd_h, *delete_cmd_h;
+static Function load_script, link_var, unlink_var, create_cmd, delete_cmd;
+static void *load_script_h, *link_var_h, *unlink_var_h, *create_cmd_h, *delete_cmd_h;
 
 static mstack_t *script_events;
 
@@ -49,10 +49,10 @@ static script_command_t my_script_cmds[] = {
 
 typedef struct {
 	int type;
-	int arg1, arg2, arg3;
+	void *arg1, *arg2, *arg3;
 } script_event_t;
 
-static void add_event(int type, int arg1, int arg2, int arg3)
+static void add_event(int type, void *arg1, void *arg2, void *arg3)
 {
 	script_event_t *event = (script_event_t *)malloc(sizeof(*event));
 	event->type = type;
@@ -64,19 +64,25 @@ static void add_event(int type, int arg1, int arg2, int arg3)
 
 static int my_create_cmd(void *ignore, script_command_t *info)
 {
-	add_event(SCRIPT_EVENT_CREATE_CMD, (int) info, 0, 0);
+	add_event(SCRIPT_EVENT_CREATE_CMD, info, 0, 0);
 	return(0);
 }
 
-static int my_link_int(void *ignore, script_int_t *i, int flags)
+static int my_delete_cmd(void *ignore, script_command_t *info)
 {
-	add_event(SCRIPT_EVENT_LINK_INT, (int) i, flags, 0);
+	add_event(SCRIPT_EVENT_DELETE_CMD, info, 0, 0);
 	return(0);
 }
 
-static int my_link_str(void *ignore, script_str_t *str, int flags)
+static int my_link_var(void *ignore, script_linked_var_t *var)
 {
-	add_event(SCRIPT_EVENT_LINK_STR, (int) str, flags, 0);
+	add_event(SCRIPT_EVENT_LINK_VAR, var, 0, 0);
+	return(0);
+}
+
+static int my_unlink_var(void *ignore, script_linked_var_t *var)
+{
+	add_event(SCRIPT_EVENT_UNLINK_VAR, var, 0, 0);
 	return(0);
 }
 
@@ -103,8 +109,9 @@ static int my_playback(void *ignore, Function *table)
 static registry_simple_chain_t my_functions[] = {
 	{"script", NULL, 0},
 	{"create cmd", my_create_cmd, 2},
-	{"link int", my_link_int, 3},
-	{"link str", my_link_str, 3},
+	{"delete cmd", my_delete_cmd, 2},
+	{"link var", my_link_var, 2},
+	{"unlink var", my_unlink_var, 2},
 	{"playback", my_playback, 2},
 	{0}
 };
@@ -114,10 +121,8 @@ int script_init()
 	script_events = mstack_new(0);
 	registry_add_simple_chains(my_functions);
 	registry_lookup("script", "load script", &load_script, &load_script_h);
-	registry_lookup("script", "link int", &link_int, &link_int_h);
-	registry_lookup("script", "unlink int", &unlink_int, &unlink_int_h);
-	registry_lookup("script", "link str", &link_str, &link_str_h);
-	registry_lookup("script", "unlink str", &unlink_str, &unlink_str_h);
+	registry_lookup("script", "link var", &link_var, &link_var_h);
+	registry_lookup("script", "unlink var", &unlink_var, &unlink_var_h);
 	registry_lookup("script", "create cmd", &create_cmd, &create_cmd_h);
 	registry_lookup("script", "delete cmd", &delete_cmd, &delete_cmd_h);
 
@@ -132,48 +137,22 @@ int script_load(char *fname)
 	return(0);
 }
 
-int script_link_int_table(script_int_t *table)
+int script_link_var_table(script_linked_var_t *table)
 {
-	script_int_t *intval;
-
-	for (intval = table; intval->class && intval->name; intval++) {
-		link_int(link_int_h, intval, 0);
+	while (table->class && table->name) {
+		link_var(link_var_h, table);
+		table++;
 	}
 	return(0);
-
 }
 
-int script_unlink_int_table(script_int_t *table)
+int script_unlink_var_table(script_linked_var_t *table)
 {
-	script_int_t *intval;
-
-	for (intval = table; intval->class && intval->name; intval++) {
-		unlink_int(unlink_int_h, intval);
+	while (table->class && table->name) {
+		unlink_var(unlink_var_h, table);
+		table++;
 	}
 	return(0);
-
-}
-
-int script_link_str_table(script_str_t *table)
-{
-	script_str_t *str;
-
-	for (str = table; str->class && str->name; str++) {
-		link_str(link_str_h, str, 0);
-	}
-	return(0);
-
-}
-
-int script_unlink_str_table(script_str_t *table)
-{
-	script_str_t *str;
-
-	for (str = table; str->class && str->name; str++) {
-		unlink_str(unlink_str_h, str);
-	}
-	return(0);
-
 }
 
 int script_create_cmd_table(script_command_t *table)

@@ -2,7 +2,7 @@
  * script.h
  *   stuff needed for scripting modules
  *
- * $Id: script.h,v 1.1 2002/03/26 01:06:22 ite Exp $
+ * $Id: script.h,v 1.2 2002/04/25 04:06:39 stdarg Exp $
  */
 /*
  * Copyright (C) 2001, 2002 Eggheads Development Team
@@ -32,28 +32,36 @@ BEGIN_C_DECLS
 /* Script events that get recorded in the script journal. */
 enum {
 	SCRIPT_EVENT_LOAD_SCRIPT = 0,
-	SCRIPT_EVENT_SET_INT,
-	SCRIPT_EVENT_SET_STR,
-	SCRIPT_EVENT_LINK_INT,
-	SCRIPT_EVENT_UNLINK_INT,
-	SCRIPT_EVENT_LINK_STR,
-	SCRIPT_EVENT_UNLINK_STR,
+	SCRIPT_EVENT_LINK_VAR,
+	SCRIPT_EVENT_UNLINK_VAR,
 	SCRIPT_EVENT_CREATE_CMD,
 	SCRIPT_EVENT_DELETE_CMD,
 	SCRIPT_EVENT_MAX
 };
 
+/* Byte-arrays are simply strings with their length given explicitly, so it
+	can have embedded NULLs. */
+typedef struct byte_array_b {
+	unsigned char *bytes;
+	int len;
+} byte_array_t;
+
 /* Flags for commands. */
 /* SCRIPT_PASS_CDATA means your callback wants its (void *)client_data passed
    as its *first* arg.
+
    SCRIPT_PASS_RETVAL will pass a (scriptvar_t *)retval so that you can return
    complex types.
+
    SCRIPT_PASS_ARRAY will pass all the args from the script in an array. It
    actually causes 2 arguments: int argc and void *argv[].
+
    SCRIPT_PASS_COUNT will pass the number of script arguments you're getting.
+
    SCRIPT_VAR_ARGS means you accept variable number of args. The nargs field
    of the command struct is the minimum number required, and the strlen of your
    syntax field is the max number (unless it ends in * of course).
+
    SCRIPT_VAR_FRONT means the variable args come from the front instead of the
    back. This is useful for flags and stuff.
 */
@@ -116,17 +124,21 @@ typedef struct script_var_b {
 	int len;	/* Length of string or array (when appropriate). */
 } script_var_t;
 
-typedef struct script_int_b {
-	char *class;
-	char *name;
-	int *ptr;
-} script_int_t;
+struct script_linked_var_b;
 
-typedef struct script_str_b {
+typedef struct script_var_callbacks_b {
+	int (*on_read)(struct script_linked_var_b *linked_var);
+	int (*on_write)(struct script_linked_var_b *linked_var, script_var_t *newvalue);
+	void *client_data;
+} script_var_callbacks_t;
+
+typedef struct script_linked_var_b {
 	char *class;
 	char *name;
-	char **ptr;
-} script_str_t;
+	void *value;
+	int type;
+	script_var_callbacks_t *callbacks;
+} script_linked_var_t;
 
 typedef struct script_command_b {
 	char *class;
@@ -150,10 +162,8 @@ typedef struct {
 
 extern int script_init();
 
-extern int script_link_int_table(script_int_t *table);
-extern int script_unlink_int_table(script_int_t *table);
-extern int script_link_str_table(script_str_t *table);
-extern int script_unlink_str_table(script_str_t *table);
+extern int script_link_var_table(script_linked_var_t *table);
+extern int script_unlink_var_table(script_linked_var_t *table);
 extern int script_create_cmd_table(script_command_t *table);
 extern int script_delete_cmd_table(script_command_t *table);
 extern int script_create_simple_cmd_table(script_simple_command_t *table);

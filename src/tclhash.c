@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.61 2002/03/26 01:06:22 ite Exp $
+ * $Id: tclhash.c,v 1.62 2002/04/25 04:06:41 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -47,8 +47,8 @@ static bind_table_t *BT_bot, *BT_nkch, *BT_chon, *BT_chof;
 static bind_table_t *BT_chpt, *BT_chjn, *BT_filt;
 
 static char *global_filt_string; /* String for FILT binds to modify. */
-static script_str_t tclhash_script_strings[] = {
-	{"", "filt_string", &global_filt_string},
+static script_linked_var_t tclhash_script_vars[] = {
+	{"", "filt_string", &global_filt_string, SCRIPT_STRING, NULL},
 	{0}
 };
 
@@ -72,7 +72,7 @@ void binds_init(void)
 {
 	bind_table_list_head = NULL;
 	global_filt_string = strdup("");
-	script_link_str_table(tclhash_script_strings);
+	script_link_var_table(tclhash_script_vars);
 	script_create_cmd_table(tclhash_script_cmds);
 	BT_link = add_bind_table2("link", 2, "ss", MATCH_MASK, BIND_STACKABLE);
 	BT_nkch = add_bind_table2("nkch", 2, "ss", MATCH_MASK, BIND_STACKABLE);

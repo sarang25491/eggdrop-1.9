@@ -15,27 +15,20 @@ static eggdrop_t *egg = NULL;
 typedef struct {
 	Tcl_Interp *myinterp;
 	Tcl_Obj *command;
+	char *name;
 } my_callback_cd_t;
 
 static int my_command_handler(ClientData client_data, Tcl_Interp *myinterp, int objc, Tcl_Obj *CONST objv[]);
-static Tcl_Obj *my_resolve_var(Tcl_Interp *myinterp, script_var_t *v);
+static Tcl_Obj *c_to_tcl_var(Tcl_Interp *myinterp, script_var_t *v);
+static int tcl_to_c_var(Tcl_Interp *myinterp, Tcl_Obj *obj, script_var_t *var, int type);
+static int my_link_var(void *ignore, script_linked_var_t *var);
 
 static Tcl_Interp *ginterp; /* Our global interpreter. */
 
 static char *error_logfile = NULL;
 
 #if (TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION < 2)
-static Tcl_Obj *Tcl_GetVar2Ex(Tcl_Interp *myinterp, const char *name1, const char *name2, int flags) {
-	Tcl_Obj *part1, *part2, *obj;
-
-	part1 = Tcl_NewStringObj((char *)name1, -1);
-	part2 = Tcl_NewStringObj((char *)name2, -1);
-	obj = Tcl_ObjGetVar2(myinterp, part1, part2, flags);
-	Tcl_DecrRefCount(part1);
-	Tcl_DecrRefCount(part2);
-	return(obj);
-}
-
+/* We emulate the Tcl_SetVar2Ex and Tcl_GetVar2Ex functions for 8.0 and 8.1. */
 static Tcl_Obj *Tcl_SetVar2Ex(Tcl_Interp *myinterp, const char *name1, const char *name2, Tcl_Obj *newval, int flags) {
 	Tcl_Obj *part1, *part2, *obj;
 
@@ -46,8 +39,20 @@ static Tcl_Obj *Tcl_SetVar2Ex(Tcl_Interp *myinterp, const char *name1, const cha
 	Tcl_DecrRefCount(part2);
 	return(obj);
 }
+
+static Tcl_Obj *Tcl_GetVar2Ex(Tcl_Interp *myinterp, const char *name1, const char *name2, int flags) {
+	Tcl_Obj *part1, *part2, *obj;
+
+	part1 = Tcl_NewStringObj((char *)name1, -1);
+	part2 = Tcl_NewStringObj((char *)name2, -1);
+	obj = Tcl_ObjGetVar2(myinterp, part1, part2, flags);
+	Tcl_DecrRefCount(part1);
+	Tcl_DecrRefCount(part2);
+	return(obj);
+}
 #endif
 
+/* Load a tcl script. */
 static int my_load_script(registry_entry_t *entry, char *fname)
 {
 	int result;
@@ -64,76 +69,147 @@ static int my_load_script(registry_entry_t *entry, char *fname)
 	return(0);
 }
 
-static int my_set_int(void *ignore, script_int_t *i)
+/* This updates the value of a linked variable (c to tcl). */
+static void set_linked_var(script_linked_var_t *var)
 {
-	Tcl_Obj *obj = Tcl_GetVar2Ex(ginterp, i->class, i->name, TCL_GLOBAL_ONLY);
+	Tcl_Obj *obj;
+	script_var_t script_var;
 
-	if (!obj) {
-		obj = Tcl_NewIntObj(*(i->ptr));
-		Tcl_SetVar2Ex(interp, i->class, i->name, obj, TCL_GLOBAL_ONLY);
-	} else {
-		Tcl_SetIntObj(obj, (*i->ptr));
+	script_var.type = var->type & SCRIPT_TYPE_MASK;
+	script_var.len = -1;
+	script_var.value = *(void **)var->value;
+
+	obj = c_to_tcl_var(interp, &script_var);
+
+	if (var->class && strlen(var->class)) {
+		Tcl_SetVar2Ex(interp, var->class, var->name, obj, TCL_GLOBAL_ONLY);
 	}
-	return(0);
-}
-
-static int my_set_str(void *ignore, script_str_t *str)
-{
-	Tcl_Obj *obj = Tcl_GetVar2Ex(interp, str->class, str->name, TCL_GLOBAL_ONLY);
-
-	if (!obj) {
-		obj = Tcl_NewStringObj(*(str->ptr), -1);
-		Tcl_SetVar2Ex(interp, str->class, str->name, obj, TCL_GLOBAL_ONLY);
-	} else {
-		Tcl_SetStringObj(obj, *(str->ptr), -1);
+	else {
+		Tcl_SetVar2Ex(interp, var->name, NULL, obj, TCL_GLOBAL_ONLY);
 	}
-	return(0);
 }
 
-static int my_link_int(void *ignore, script_int_t *i, int flags)
+/* This function handles trace callbacks from Tcl. */
+static char *my_trace_callback(ClientData client_data, Tcl_Interp *irp, char *name1, char *name2, int flags)
 {
-	int f = TCL_LINK_INT;
-	char *newname;
+	script_linked_var_t *linked_var = (script_linked_var_t *)client_data;
 
-	if (flags & SCRIPT_READ_ONLY) f |= TCL_LINK_READ_ONLY;
-	if (i->class && strlen(i->class)) newname = msprintf("%s(%s)", i->class, i->name);
-	else newname = msprintf("%s", i->name);
-	Tcl_LinkVar(interp, newname, (char *)i->ptr, f);
-	free(newname);
-	return(0);
+	if (flags & TCL_INTERP_DESTROYED) return(NULL);
+
+	if (flags & TCL_TRACE_READS) {
+		if (linked_var->callbacks && linked_var->callbacks->on_read) {
+			int r = (linked_var->callbacks->on_read)(linked_var);
+			if (r) return(NULL);
+		}
+		set_linked_var(linked_var);
+	}
+	else if (flags & TCL_TRACE_WRITES) {
+		Tcl_Obj *obj;
+		script_var_t newvalue = {0};
+
+		obj = Tcl_GetVar2Ex(irp, name1, name2, 0);
+		if (!obj) return("Error setting variable");
+
+		tcl_to_c_var(irp, obj, &newvalue, linked_var->type);
+
+		/* If they give a callback, then let them handle it. Otherwise, we
+			do some default handling for strings and ints. */
+		if (linked_var->callbacks && linked_var->callbacks->on_write) {
+			int r;
+
+			r = (linked_var->callbacks->on_write)(linked_var, &newvalue);
+			if (r) return("Error setting variable");
+		}
+		else switch (linked_var->type & SCRIPT_TYPE_MASK) {
+			case SCRIPT_UNSIGNED:
+			case SCRIPT_INTEGER:
+				/* linked_var->value is a pointer to an int/uint */
+				*(int *)(linked_var->value) = (int) newvalue.value;
+				break;
+			case SCRIPT_STRING: {
+				/* linked_var->value is a pointer to a (char *) */
+				char **charptr = (char **)(linked_var->value);
+
+				/* Free the old value. */
+				if (*charptr) free(*charptr);
+
+				/* If we copied the string (> 8.0) then just use the copy. */
+				if (newvalue.type & SCRIPT_FREE) *charptr = newvalue.value;
+				else *charptr = strdup(newvalue.value);
+				break;
+			}
+			default:
+				return("Error setting variable (unsupported type)");
+		}
+	}
+	else if (flags & TCL_TRACE_UNSETS) {
+		/* If someone unsets a variable, we'll just reset it. */
+		if (flags & TCL_TRACE_DESTROYED) my_link_var(NULL, linked_var);
+		else set_linked_var(linked_var);
+	}
+	return(NULL);
 }
 
-static int my_link_str(void *ignore, script_str_t *str, int flags)
+/* This function creates the Tcl <-> C variable linkage on reads, writes, and unsets. */
+static int my_link_var(void *ignore, script_linked_var_t *var)
 {
-	int f = TCL_LINK_STRING;
-	char *newname;
+	char *varname;
 
-	if (flags & SCRIPT_READ_ONLY) f |= TCL_LINK_READ_ONLY;
-	if (str->class && strlen(str->class)) newname = msprintf("%s(%s)", str->class, str->name);
-	else newname = msprintf("%s", str->name);
-	Tcl_LinkVar(interp, newname, (char *)str->ptr, TCL_LINK_STRING);
-	free(newname);
+	if (var->class && strlen(var->class)) varname = msprintf("%s(%s)", var->class, var->name);
+	else varname = strdup(var->name);
+
+	set_linked_var(var);
+	Tcl_TraceVar(interp, varname, TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS, my_trace_callback, var);
+
+	free(varname);
 	return(0);
 }
 
-/* For unlinking, strings and ints are the same in Tcl. */
-static int my_unlink_var(void *ignore, script_str_t *str)
+/* This function deletes Tcl <-> C variable links. */
+static int my_unlink_var(void *ignore, script_linked_var_t *var)
 {
-	char *newname;
+	char *varname;
 
-	if (str->class && strlen(str->class)) newname = msprintf("%s(%s)", str->class, str->name);
-	else newname = msprintf("%s", str->name);
-	Tcl_UnlinkVar(interp, newname);
-	free(newname);
+	if (var->class && strlen(var->class)) varname = msprintf("%s(%s)", var->class, var->name);
+	else varname = strdup(var->name);
+
+	Tcl_UntraceVar(interp, varname, TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS, my_trace_callback, var);
+
+	free(varname);
 	return(0);
 }
 
+static void log_error_message(Tcl_Interp *myinterp)
+{
+	FILE *fp;
+	char *errmsg;
+	time_t timenow;
+
+	errmsg = Tcl_GetStringResult(myinterp);
+	putlog(LOG_MISC, "*", "Tcl Error: %s", errmsg);
+
+	if (!error_logfile || !error_logfile[0]) return;
+
+	timenow = time(NULL);
+	fp = fopen(error_logfile, "a");
+	if (!fp) putlog(LOG_MISC, "*", "Error opening Tcl error log (%s)!", error_logfile);
+	else {
+		errmsg = Tcl_GetVar(myinterp, "errorInfo", TCL_GLOBAL_ONLY);
+		fprintf(fp, "%s", asctime(localtime(&timenow)));
+		fprintf(fp, "%s\n\n", errmsg);
+		fclose(fp);
+	}
+}
+
+/* When you use a script_callback_t's callback() function, this gets executed.
+	It converts the C variables to Tcl variables and executes the Tcl script. */
 static int my_tcl_callbacker(script_callback_t *me, ...)
 {
 	Tcl_Obj *arg, *final_command, *result;
 	script_var_t var;
 	my_callback_cd_t *cd; /* My callback client data */
-	int i, n, retval, *al;
+	int i, n, retval;
+	void **al;
 
 	/* This struct contains the interp and the obj command. */
 	cd = (my_callback_cd_t *)me->callback_data;
@@ -141,15 +217,15 @@ static int my_tcl_callbacker(script_callback_t *me, ...)
 	/* Get a copy of the command, then append args. */
 	final_command = Tcl_DuplicateObj(cd->command);
 
-	al = (int *)&me;
+	al = (void **)&me;
 	al++;
 	if (me->syntax) n = strlen(me->syntax);
 	else n = 0;
 	for (i = 0; i < n; i++) {
 		var.type = me->syntax[i];
-		var.value = (void *)al[i];
+		var.value = al[i];
 		var.len = -1;
-		arg = my_resolve_var(cd->myinterp, &var);
+		arg = c_to_tcl_var(cd->myinterp, &var);
 		Tcl_ListObjAppendElement(cd->myinterp, final_command, arg);
 	}
 
@@ -164,25 +240,8 @@ static int my_tcl_callbacker(script_callback_t *me, ...)
 		Tcl_GetIntFromObj(NULL, result, &retval);
 	}
 	else {
-		FILE *fp;
-		char *errmsg;
-
-		errmsg = Tcl_GetStringResult(cd->myinterp);
-		putlog(LOG_MISC, "*", "TCL Error: %s", errmsg);
-
-		if (error_logfile && error_logfile[0]) {
-			time_t timenow = time(NULL);
-			fp = fopen(error_logfile, "a");
-			if (fp) {
-				errmsg = Tcl_GetVar(cd->myinterp, "errorInfo", TCL_GLOBAL_ONLY);
-				fprintf(fp, "%s", asctime(localtime(&timenow)));
-				fprintf(fp, "%s\n\n", errmsg);
-				fclose(fp);
-			}
-			else {
-				putlog(LOG_MISC, "*", "Error opening TCL error log (%s)!", error_logfile);
-			}
-		}
+		log_error_message(cd->myinterp);
+		Tcl_BackgroundError(cd->myinterp);
 	}
 
 	/* Clear any errors or stray messages. */
@@ -194,18 +253,21 @@ static int my_tcl_callbacker(script_callback_t *me, ...)
 	return(retval);
 }
 
+/* This implements the delete() member of Tcl script callbacks. */
 static int my_tcl_cb_delete(script_callback_t *me)
 {
 	my_callback_cd_t *cd;
 
 	cd = (my_callback_cd_t *)me->callback_data;
 	Tcl_DecrRefCount(cd->command);
+	free(cd->name);
 	if (me->syntax) free(me->syntax);
 	free(cd);
 	free(me);
 	return(0);
 }
 
+/* Create Tcl commands with a C callback. */
 static int my_create_cmd(void *ignore, script_command_t *info)
 {
 	char *cmdname;
@@ -222,36 +284,47 @@ static int my_create_cmd(void *ignore, script_command_t *info)
 	return(0);
 }
 
+/* Delete Tcl commands. */
 static int my_delete_cmd(void *ignore, script_command_t *info)
 {
 	char *cmdname;
 
-	cmdname = msprintf("%s_%s", info->class, info->name);
+	if (info->class && strlen(info->class)) {
+		cmdname = msprintf("%s_%s", info->class, info->name);
+	}
+	else {
+		cmdname = strdup(info->name);
+	}
 	Tcl_DeleteCommand(interp, cmdname);
 	free(cmdname);
+
 	return(0);
 }
 
-static Tcl_Obj *my_resolve_var(Tcl_Interp *myinterp, script_var_t *v)
+/* Convert a C variable to a Tcl variable. */
+static Tcl_Obj *c_to_tcl_var(Tcl_Interp *myinterp, script_var_t *v)
 {
 	Tcl_Obj *result;
 
 	result = NULL;
+	/* If it's an array, we call ourselves recursively. */
 	if (v->type & SCRIPT_ARRAY) {
 		Tcl_Obj *element;
 		int i;
 
 		result = Tcl_NewListObj(0, NULL);
+		/* If it's an array of script_var_t's, then it's easy. */
 		if ((v->type & SCRIPT_TYPE_MASK) == SCRIPT_VAR) {
 			script_var_t **v_list;
 
 			v_list = (script_var_t **)v->value;
 			for (i = 0; i < v->len; i++) {
-				element = my_resolve_var(myinterp, v_list[i]);
+				element = c_to_tcl_var(myinterp, v_list[i]);
 				Tcl_ListObjAppendElement(myinterp, result, element);
 			}
 		}
 		else {
+			/* Otherwise, we have to turn them into fake script_var_t's. */
 			script_var_t v_sub;
 			void **values;
 
@@ -260,7 +333,7 @@ static Tcl_Obj *my_resolve_var(Tcl_Interp *myinterp, script_var_t *v)
 			values = (void **)v->value;
 			for (i = 0; i < v->len; i++) {
 				v_sub.value = values[i];
-				element = my_resolve_var(myinterp, &v_sub);
+				element = c_to_tcl_var(myinterp, &v_sub);
 				Tcl_ListObjAppendElement(myinterp, result, element);
 			}
 		}
@@ -269,6 +342,8 @@ static Tcl_Obj *my_resolve_var(Tcl_Interp *myinterp, script_var_t *v)
 		if (v->type & SCRIPT_FREE_VAR) free(v);
 		return(result);
 	}
+
+	/* Here is where we handle the basic types. */
 	switch (v->type & SCRIPT_TYPE_MASK) {
 		case SCRIPT_INTEGER:
 		case SCRIPT_UNSIGNED:
@@ -309,38 +384,141 @@ static Tcl_Obj *my_resolve_var(Tcl_Interp *myinterp, script_var_t *v)
 	return(result);
 }
 
-static int my_argument_cleanup(mstack_t *args, mstack_t *bufs, mstack_t *cbacks)
+/* Here we convert Tcl variables into C variables.
+	When we return, var->type may have the SCRIPT_FREE bit set, in which case
+	you should free(var->value) when you're done with it. */
+static int tcl_to_c_var(Tcl_Interp *myinterp, Tcl_Obj *obj, script_var_t *var, int type)
+{
+	int err = TCL_OK;
+
+	var->type = type;
+	var->len = -1;
+	var->value = NULL;
+
+	switch (type) {
+		case SCRIPT_STRING: {
+			char *str;
+			int len;
+
+			#ifdef USE_BYTE_ARRAYS
+				char *bytes;
+
+				bytes = Tcl_GetByteArrayFromObj(obj, &len);
+				str = (char *)malloc(len+1);
+				memcpy(str, bytes, len);
+				str[len] = 0;
+				var->type |= SCRIPT_FREE;
+			#else
+				str = Tcl_GetStringFromObj(obj, &len);
+			#endif
+			var->value = str;
+			var->len = len;
+			break;
+		}
+		case SCRIPT_BYTES: {
+			byte_array_t *byte_array;
+
+			byte_array = (byte_array_t *)malloc(sizeof(*byte_array));
+
+			#ifdef USE_BYTE_ARRAYS
+			byte_array->bytes = Tcl_GetByteArrayFromObj(obj, &byte_array->len);
+			#else
+			byte_array->bytes = Tcl_GetStringFromObj(obj, &byte_array->len);
+			#endif
+
+			var->value = byte_array;
+			var->type |= SCRIPT_FREE;
+			break;
+		}
+		case SCRIPT_UNSIGNED:
+		case SCRIPT_INTEGER: {
+			int intval = 0;
+
+			err = Tcl_GetIntFromObj(myinterp, obj, &intval);
+			var->value = (void *)intval;
+			break;
+		}
+		case SCRIPT_CALLBACK: {
+			script_callback_t *cback; /* Callback struct */
+			my_callback_cd_t *cdata; /* Our client data */
+
+			cback = (script_callback_t *)calloc(1, sizeof(*cback));
+			cdata = (my_callback_cd_t *)calloc(1, sizeof(*cdata));
+			cback->callback = (Function) my_tcl_callbacker;
+			cback->callback_data = (void *)cdata;
+			cback->del = (Function) my_tcl_cb_delete;
+			cback->name = strdup((char *)Tcl_GetStringFromObj(obj, NULL));
+			cdata->myinterp = myinterp;
+			cdata->command = obj;
+			Tcl_IncrRefCount(obj);
+
+			var->value = cback;
+			break;
+		}
+		case SCRIPT_USER: {
+			struct userrec *u;
+			script_var_t handle;
+
+			/* Call ourselves recursively to get the handle as a string. */
+			tcl_to_c_var(myinterp, obj, &handle, SCRIPT_STRING);
+			u = get_user_by_handle(userlist, (char *)handle.value);
+			if (handle.type & SCRIPT_FREE) free(handle.value);
+			var->value = u;
+			if (!u) {
+				Tcl_AppendResult(myinterp, "User not found", NULL);
+				err++;
+			}
+			break;
+		}
+		default: {
+			char vartype[2];
+
+			vartype[0] = type;
+			vartype[1] = 0;
+			Tcl_AppendResult(myinterp, "Cannot convert Tcl object to unknown variable type '", vartype, "'", NULL);
+			err++;
+		}
+	}
+
+	return(err);
+}
+
+/* This function cleans up temporary buffers we used when calling
+	a C command. */
+static int my_argument_cleanup(mstack_t *args, mstack_t *bufs, mstack_t *cbacks, int err)
 {
 	int i;
 
 	for (i = 0; i < bufs->len; i++) {
 		free((void *)bufs->stack[i]);
 	}
-	if (cbacks) {
+	if (err) {
 		for (i = 0; i < cbacks->len; i++) {
 			script_callback_t *cback;
 
 			cback = (script_callback_t *)cbacks->stack[i];
 			cback->del(cback);
 		}
-		mstack_destroy(cbacks);
 	}
+	mstack_destroy(cbacks);
 	mstack_destroy(bufs);
 	mstack_destroy(args);
 	return(0);
 }
 
+/* This handles all the Tcl commands we create. It converts the Tcl arguments
+	to C variables, calls the C callback function, then converts
+	the return value to a Tcl variable. */
 static int my_command_handler(ClientData client_data, Tcl_Interp *myinterp, int objc, Tcl_Obj *CONST objv[])
 {
 	script_command_t *cmd = (script_command_t *)client_data;
-	script_var_t retval;
-	Tcl_Obj *tcl_retval = NULL, *objptr;
+	script_var_t retval, var;
+	Tcl_Obj *tcl_retval = NULL;
 	mstack_t *args, *bufs, *cbacks;
-	int *al; /* Argument list to pass to the callback*/
+	void **al; /* Argument list to pass to the callback*/
 	int nopts; /* Number of optional args we're passing. */
 	int simple_retval; /* Return value for simple commands. */
-	int i, len, err = TCL_OK;
-	int skip;
+	int i, err, skip;
 	char *syntax;
 
 	/* Check for proper number of args. */
@@ -376,84 +554,19 @@ static int my_command_handler(ClientData client_data, Tcl_Interp *myinterp, int 
 	}
 	else skip = 0;
 
+	err = TCL_OK;
 	for (i = 1; i < objc; i++) {
-		objptr = objv[i];
+		err = tcl_to_c_var(myinterp, objv[i], &var, *syntax);
 
-		switch (*syntax++) {
-		case SCRIPT_STRING: { /* Null-terminated string. */
-			char *nullterm;
+		if (var.type & SCRIPT_FREE) mstack_push(bufs, var.value);
+		else if (*syntax == SCRIPT_CALLBACK) mstack_push(cbacks, var.value);
 
-			#ifdef USE_BYTE_ARRAYS
-				char *orig;
-				orig = Tcl_GetByteArrayFromObj(objptr, &len);
-				nullterm = (char *)malloc(len+1);
-				memcpy(nullterm, orig, len);
-				nullterm[len] = 0;
-				mstack_push(bufs, nullterm);
-			#else
-				nullterm = Tcl_GetStringFromObj(objptr, &len);
-			#endif
-			mstack_push(args, nullterm);
-			break;
-		}
-		case SCRIPT_BYTES: { /* Byte-array (string + length). */
-			void *bytes;
-			#ifdef USE_BYTE_ARRAYS
-			bytes = (void *)Tcl_GetByteArrayFromObj(objptr, &len);
-			#else
-			bytes = (void *)Tcl_GetStringFromObj(objptr, &len);
-			#endif
-			mstack_push(args, bytes);
-			break;
-		}
-		case SCRIPT_UNSIGNED:
-		case SCRIPT_INTEGER: { /* Integer. */
-			int intval;
-			err = Tcl_GetIntFromObj(myinterp, objptr, &intval);
-			mstack_push(args, (void *)intval);
-			break;
-		}
-		case SCRIPT_CALLBACK: { /* Callback. */
-			script_callback_t *cback; /* Callback struct */
-			my_callback_cd_t *cdata; /* Our client data */
-
-			cback = (script_callback_t *)calloc(1, sizeof(*cback));
-			cdata = (my_callback_cd_t *)calloc(1, sizeof(*cdata));
-			cback->callback = (Function) my_tcl_callbacker;
-			cback->callback_data = (void *)cdata;
-			cback->del = (Function) my_tcl_cb_delete;
-			cback->name = (char *)Tcl_GetStringFromObj(objptr, &len);
-			cdata->myinterp = myinterp;
-			cdata->command = objptr;
-			Tcl_IncrRefCount(objptr);
-
-			mstack_push(args, cback);
-			mstack_push(cbacks, cback);
-			break;
-		}
-		case SCRIPT_USER: { /* User. */
-			struct userrec *u;
-			char *handle;
-
-			handle = Tcl_GetStringFromObj(objptr, NULL);
-			if (handle) u = get_user_by_handle(userlist, handle);
-			else u = NULL;
-			mstack_push(args, u);
-			break;
-		}
-		case 'l': /* Length of previous string/byte-array. */
-			mstack_push(args, (void *)len);
-			i--; /* Doesn't take up a tcl object. */
-			break;
-		default:
-			err = TCL_ERROR;
-		} /* End of switch */
-
-		if (err != TCL_OK) break;
+		mstack_push(args, var.value);
+		syntax++;
 	}
 
 	if (err != TCL_OK) {
-		my_argument_cleanup(args, bufs, cbacks);
+		my_argument_cleanup(args, bufs, cbacks, 1);
 		Tcl_WrongNumArgs(myinterp, 0, NULL, cmd->syntax_error);
 		return(TCL_ERROR);
 	}
@@ -463,15 +576,15 @@ static int my_command_handler(ClientData client_data, Tcl_Interp *myinterp, int 
 	al = args->stack; /* Argument list shortcut name. */
 	nopts = 0;
 	if (cmd->flags & SCRIPT_PASS_COUNT) {
-		al[2-nopts] = args->len - 3 - skip;
+		al[2-nopts] = (void *)(args->len - 3 - skip);
 		nopts++;
 	}
 	if (cmd->flags & SCRIPT_PASS_RETVAL) {
-		al[2-nopts] = (int)&retval;
+		al[2-nopts] = &retval;
 		nopts++;
 	}
 	if (cmd->flags & SCRIPT_PASS_CDATA) {
-		al[2-nopts] = (int)cmd->client_data;
+		al[2-nopts] = cmd->client_data;
 		nopts++;
 	}
 	al += (3-nopts);
@@ -491,12 +604,12 @@ static int my_command_handler(ClientData client_data, Tcl_Interp *myinterp, int 
 	}
 
 	err = retval.type & SCRIPT_ERROR;
-	tcl_retval = my_resolve_var(myinterp, &retval);
+	tcl_retval = c_to_tcl_var(myinterp, &retval);
 
 	if (tcl_retval) Tcl_SetObjResult(myinterp, tcl_retval);
 	else Tcl_ResetResult(myinterp);
 
-	my_argument_cleanup(args, bufs, NULL);
+	my_argument_cleanup(args, bufs, cbacks, 0);
 
 	if (err) return TCL_ERROR;
 	return TCL_OK;
@@ -505,26 +618,18 @@ static int my_command_handler(ClientData client_data, Tcl_Interp *myinterp, int 
 static registry_simple_chain_t my_functions[] = {
 	{"script", NULL, 0}, /* First arg gives our class */
 	{"load script", my_load_script, 2}, /* name, ptr, nargs */
-	{"set int", my_set_int, 2},
-	{"set str", my_set_str, 2},
-	{"link int", my_link_int, 3},
-	{"unlink int", my_unlink_var, 2},
-	{"link str", my_link_str, 3},
-	{"unlink str", my_unlink_var, 2},
+	{"link var", my_link_var, 2},
+	{"unlink var", my_unlink_var, 2},
 	{"create cmd", my_create_cmd, 2},
 	{"delete cmd", my_delete_cmd, 2},
 	{0}
 };
 
 static Function journal_table[] = {
-	(Function)1,
-	(Function)SCRIPT_EVENT_MAX,
+	(Function)1,	/* Version */
+	(Function)5,	/* Number of functions */
 	my_load_script,
-	my_set_int,
-	my_set_str,
-	my_link_int,
-	my_unlink_var,
-	my_link_str,
+	my_link_var,
 	my_unlink_var,
 	my_create_cmd,
 	my_delete_cmd
@@ -533,6 +638,7 @@ static Function journal_table[] = {
 static Function journal_playback;
 static void *journal_playback_h;
 
+/* Here we process the dcc console .tcl command. */
 static int cmd_tcl(struct userrec *u, int idx, char *text)
 {
 	char *str;
@@ -544,6 +650,7 @@ static int cmd_tcl(struct userrec *u, int idx, char *text)
 
 	if (Tcl_GlobalEval(ginterp, text) != TCL_OK) {
 		str = Tcl_GetVar(ginterp, "errorInfo", TCL_GLOBAL_ONLY);
+		if (!str) str = Tcl_GetStringResult(ginterp);
 		dprintf(idx, "Tcl error: %s\n", str);
 	}
 	else {
@@ -558,14 +665,12 @@ static void tclscript_report(int idx, int details)
 	char script[512];
 	char *reported;
 
-	if (details) {
-		dprintf(idx, "    Using Tcl version %d.%d (by header)\n", TCL_MAJOR_VERSION, TCL_MINOR_VERSION);
-	}
-	else {
+	if (!details) {
 		dprintf(idx, "Using Tcl version %d.%d (by header)\n", TCL_MAJOR_VERSION, TCL_MINOR_VERSION);
 		return;
 	}
 
+	dprintf(idx, "    Using Tcl version %d.%d (by header)\n", TCL_MAJOR_VERSION, TCL_MINOR_VERSION);
 	sprintf(script, "return \"    Library: [info library]\\n    Reported version: [info tclversion]\\n    Reported patchlevel: [info patchlevel]\"");
 	Tcl_GlobalEval(ginterp, script);
 	reported = Tcl_GetStringResult(ginterp);

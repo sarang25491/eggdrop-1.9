@@ -413,7 +413,7 @@ int sockbuf_detach_filter(int idx, sockbuf_event_t filter, void *client_data)
 		return(0);
 	}
 
-	*(void **)client_data = sbuf->filter_client_data[i];
+	if (client_data) *(void **)client_data = sbuf->filter_client_data[i];
 	memmove(sbuf->filter_client_data+i, sbuf->filter_client_data+i+1, sizeof(void *) * sbuf->nfilters-i-1);
 	memmove(sbuf->filters+i, sbuf->filters+i+1, sizeof(void *) * (sbuf->nfilters-i-1));
 	sbuf->nfilters--;

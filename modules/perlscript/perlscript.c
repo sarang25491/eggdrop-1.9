@@ -16,7 +16,7 @@
 static PerlInterpreter *ginterp; /* Our global interpreter. */
 
 static XS(my_command_handler);
-static SV *my_resolve_variable(script_var_t *v);
+static SV *c_to_perl_var(script_var_t *v);
 
 /* Functions from mod_iface.c */
 extern void *fake_get_user_by_handle(char *handle);
@@ -77,7 +77,7 @@ static int my_perl_callbacker(script_callback_t *me, ...)
 		var.type = me->syntax[i];
 		var.value = (void *)al[i];
 		var.len = -1;
-		arg = my_resolve_variable(&var);
+		arg = c_to_perl_var(&var);
 		XPUSHs(sv_2mortal(arg));
 	}
 	PUTBACK;
@@ -137,7 +137,7 @@ int my_create_cmd(void *ignore, script_command_t *info)
 	return (0);
 }
 
-static SV *my_resolve_variable(script_var_t *v)
+static SV *c_to_perl_var(script_var_t *v)
 {
 	SV *result;
 
@@ -152,7 +152,7 @@ static SV *my_resolve_variable(script_var_t *v)
 
 			v_list = (script_var_t **)v->value;
 			for (i = 0; i < v->len; i++) {
-				element = my_resolve_variable(v_list[i]);
+				element = c_to_perl_var(v_list[i]);
 				av_push(array, element);
 			}
 		}
@@ -165,7 +165,7 @@ static SV *my_resolve_variable(script_var_t *v)
 			for (i = 0; i < v->len; i++) {
 				v_sub.value = values[i];
 				v_sub.len = -1;
-				element = my_resolve_variable(&v_sub);
+				element = c_to_perl_var(&v_sub);
 				av_push(array, element);
 			}
 		}
@@ -211,6 +211,54 @@ static SV *my_resolve_variable(script_var_t *v)
 	return(result);
 }
 
+static int perl_to_c_var(SV *sv, script_var_t *var, int type)
+{
+	int len;
+
+	var->type = type;
+	var->len = -1;
+	var->value = NULL;
+
+	switch (type) {
+		case SCRIPT_BYTES: /* Byte-array. */
+		case SCRIPT_STRING: { /* String. */
+			var->value = SvPV(sv, len);
+			break;
+		}
+		case SCRIPT_UNSIGNED:
+		case SCRIPT_INTEGER: { /* Integer. */
+			var->value = (void *)SvIV(sv);
+			break;
+		}
+		case SCRIPT_CALLBACK: { /* Callback. */
+			script_callback_t *cback;
+			char *name;
+
+			cback = (script_callback_t *)calloc(1, sizeof(*cback));
+			cback->callback = (Function) my_perl_callbacker;
+			cback->del = (Function) my_perl_cb_delete;
+			name = SvPV(sv, len);
+			cback->name = strdup(name);
+			cback->callback_data = newSVsv(sv);
+			var->value = cback;
+			break;
+		}
+		case SCRIPT_USER: { /* User. */
+			void *user_record;
+			char *handle;
+
+			handle = SvPV(sv, len);
+			if (handle) user_record = fake_get_user_by_handle(handle);
+			else user_record = NULL;
+			var->value = user_record;
+			break;
+		}
+		default:
+			return(1); /* Error */
+	}
+	return(0); /* No error */
+}
+
 static XS(my_command_handler)
 {
 	dXSARGS;
@@ -219,13 +267,16 @@ static XS(my_command_handler)
 	/* Now we have an "items" variable for number of args and also an XSANY.any_i32 variable for client data. This isn't what you would call a "well documented" feature of perl heh. */
 
 	script_command_t *cmd = (script_command_t *) XSANY.any_i32;
-	script_var_t retval;
+	script_var_t var, retval;
 	SV *result = NULL;
 	mstack_t *args, *cbacks;
-	int i, len, my_err, simple_retval;
+	int i, my_err, simple_retval;
 	int skip, nopts;
 	char *syntax;
 	void **al;
+
+	/* Get rid of a compiler warning */
+	if (ix) {}
 
 	/* Check for proper number of args. */
 	/* -1 means "any number" and implies pass_array. */
@@ -256,54 +307,13 @@ static XS(my_command_handler)
 	else skip = 0;
 
 	for (i = 0; i < items; i++) {
-		switch (*syntax++) {
-			case SCRIPT_BYTES: /* Byte-array. */
-			case SCRIPT_STRING: { /* String. */
-				char *val;
-				val = SvPV(ST(i), len);
-				mstack_push(args, (void *)val);
-				break;
-			}
-			case SCRIPT_UNSIGNED:
-			case SCRIPT_INTEGER: { /* Integer. */
-				int val;
-				val = SvIV(ST(i));
-				mstack_push(args, (void *)val);
-				break;
-			}
-			case SCRIPT_CALLBACK: { /* Callback. */
-				script_callback_t *cback;
-				char *name;
+		my_err = perl_to_c_var(ST(i), &var, *syntax);
 
-				cback = (script_callback_t *)calloc(1, sizeof(*cback));
-				cback->callback = (Function) my_perl_callbacker;
-				cback->del = (Function) my_perl_cb_delete;
-				name = SvPV(ST(i), len);
-				cback->name = strdup(name);
-				cback->callback_data = (void *)newSVsv(ST(i));
-				mstack_push(args, cback);
-				break;
-			}
-			case SCRIPT_USER: { /* User. */
-				void *user_record;
-				char *handle;
+		if (*syntax == SCRIPT_CALLBACK) mstack_push(cbacks, var.value);
 
-				handle = SvPV(ST(i), len);
-				if (handle) user_record = fake_get_user_by_handle(handle);
-				else user_record = NULL;
-				mstack_push(args, user_record);
-				break;
-			}
-			case 'l':
-				/* Length of previous string or byte-array. */
-				mstack_push(args, (void *)len);
-				/* Doesn't take up a perl object. */
-				i--;
-				break;
-			default:
-				goto argerror;
-		} /* End of switch. */
-	} /* End of for loop. */
+		mstack_push(args, var.value);
+		if (my_err) goto argerror;
+	}
 
 	/* Ok, now we have our args. */
 
@@ -340,7 +350,7 @@ static XS(my_command_handler)
 	}
 
 	my_err = retval.type & SCRIPT_ERROR;
-	result = my_resolve_variable(&retval);
+	result = c_to_perl_var(&retval);
 
 	mstack_destroy(args);
 

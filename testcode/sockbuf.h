@@ -31,6 +31,7 @@ int sockbuf_write_filter(int idx, int level, unsigned char *data, int len);
 int sockbuf_new(int sock, int flags);
 int sockbuf_delete(int idx);
 int sockbuf_set_handler(int idx, sockbuf_event_t handler, void *client_data);
+int sockbuf_set_sock(int idx, int sock, int flags);
 int sockbuf_attach_listener(int fd);
 int sockbuf_detach_listener(int fd);
 int sockbuf_attach_filter(int idx, sockbuf_event_t filter, void *client_data);

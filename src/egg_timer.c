@@ -47,9 +47,8 @@ void timer_init()
 int timer_get_time(egg_timeval_t *curtime)
 {
 	struct timeval tv;
-	struct timezone tz;
 
-	(void) gettimeofday(&tv, &tz);
+	(void) gettimeofday(&tv, NULL);
 	curtime->sec = tv.tv_sec;
 	curtime->usec = tv.tv_usec;
 	return(0);
