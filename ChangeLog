@@ -1,3 +1,9 @@
+2001-12-08 18:17  Jeff Fisher <guppy@techmonkeys.org>
+
+	* eggdrop.complete.conf, src/patch.h:
+
+	Updated the uptime url. Patch by BarkerJr (barkjr@home.com) 
+
 2001-12-08 16:58  Federico Mennite <ite@techmonkeys.org>
 
 	* scripts/action.fix.tcl:
