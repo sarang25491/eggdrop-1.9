@@ -1,3 +1,18 @@
+2003-08-02 05:59  Tothwolf <tothwolf@techmonkeys.org>
+
+	* src/: Makefile.am, dccutil.c, dccutil.h:
+
+	* I don't think these were supposed to be removed...  
+
+2003-08-02 05:56  Tothwolf <tothwolf@techmonkeys.org>
+
+	* modules/irc/chan.c, modules/irc/mode.c, modules/irc/msgcmds.c,
+	src/cmds.c:
+
+	* Removed unnecessary quiet_reject checks in msg_ident() that have
+	been present since 1.3.0+bel17.  
+	* Fixed some leftover language defines.  
+
 2003-07-06 07:17  stdarg <stdarg@techmonkeys.org>
 
 	* config.xml, lib/eggdrop/xmlwrite.c, modules/server/channels.c,
