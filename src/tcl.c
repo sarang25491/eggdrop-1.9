@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tcl.c,v 1.90 2003/01/29 21:39:35 wcc Exp $";
+static const char rcsid[] = "$Id: tcl.c,v 1.91 2003/01/30 03:05:18 wcc Exp $";
 #endif
 
 #include <stdlib.h>		/* getenv()				*/
@@ -49,36 +49,32 @@ typedef struct {
 } intinfo;
 
 
-extern time_t	online_since;
-extern int	flood_telnet_thr, flood_telnet_time;
-extern int	learn_users;
-extern int	default_flags, conmask;
-extern int	firewallport, notify_users_at, ignore_time;
-extern int	reserved_port_min, reserved_port_max;
-extern char	botuser[], motdfile[], admin[], userfile[],
-		firewall[], helpdir[], notify_new[], myip[],
-		moddir[], tempdir[], owner[], network[], botnetnick[],
-		bannerfile[], egg_version[], natip[], configfile[],
-		textdir[], myip6[], pid_file[];
-extern int	die_on_sighup, die_on_sigterm, dcc_total, raw_log,
-		identtimeout, egg_numver,
-		userfile_perm, default_uflags, strict_host;
-extern struct dcc_t	*dcc;
+extern time_t online_since;
 
-int	    protect_readonly = 0;	/* turn on/off readonly protection */
-char	    whois_fields[1025] = "";	/* fields to display in a .whois */
-Tcl_Interp *interp;			/* eggdrop always uses the same
-					   interpreter */
-int	    use_invites = 0;		/* Jason/drummer */
-int	    use_exempts = 0;		/* Jason/drummer */
-int	    force_expire = 0;		/* Rufus */
-int	    copy_to_tmp = 0;
-int	    remote_boots = 2;
-int	    allow_dk_cmds = 1;
-int	    par_telnet_flood = 1;       /* trigger telnet flood for +f
-					   ppl? - dw			      */
-int	    quiet_save = 0;             /* quiet-save patch by Lucas	      */
-int     handlen = HANDLEN;
+extern int flood_telnet_thr, flood_telnet_time, learn_users, default_flags,
+           conmask; firewallport, notify_users_at, ignore_time,
+           reserved_port_min, reserved_port_max, die_on_sighup, die_on_sigterm,
+           dcc_total, raw_log, identtimeout, egg_numver, userfile_perm,
+           default_uflags, strict_host;
+
+extern char botuser[], motdfile[], admin[], userfile[], firewall[], helpdir[],
+            notify_new[], myip[], moddir[], tempdir[], owner[], network[],
+            botnetnick[], bannerfile[], egg_version[], natip[], configfile[],
+            textdir[], myip6[], pid_file[];
+	
+extern struct dcc_t *dcc;
+
+int protect_readonly = 0; /* turn on/off readonly protection */
+char whois_fields[1025] = ""; /* fields to display in a .whois */
+Tcl_Interp *interp; /* eggdrop always uses the same interpreter */
+int use_invites = 0;
+int use_exempts = 0;
+int force_expire = 0;
+int copy_to_tmp = 0;
+int remote_boots = 2;
+int allow_dk_cmds = 1;
+int par_telnet_flood = 1;
+int handlen = HANDLEN;
 
 /* Prototypes for tcl */
 Tcl_Interp *Tcl_CreateInterp();
@@ -302,14 +298,13 @@ static tcl_ints def_tcl_ints[] =
   {"remote_boots",		&remote_boots,		1},
   {"raw_log",			&raw_log,		1},
   {"allow_dk_cmds",		&allow_dk_cmds,		0},
-  {"use_exempts",		&use_exempts,		0},			/* Jason/drummer */
-  {"use_invites",		&use_invites,		0},			/* Jason/drummer */
-  {"quiet_save",		&quiet_save,		0},			/* Lucas */
-  {"force_expire",		&force_expire,		0},			/* Rufus */
-  {"strict_host",		&strict_host,		0}, 			/* drummer */
+  {"use_exempts",		&use_exempts,		0},
+  {"use_invites",		&use_invites,		0},
+  {"force_expire",		&force_expire,		0},
+  {"strict_host",		&strict_host,		0},
   {"userfile_perm",		&userfile_perm,		0},
   {"copy-to-tmp",		&copy_to_tmp,		0},
-  {NULL,			NULL,			0}	/* arthur2 */
+  {NULL,			NULL,			0}
 };
 
 static tcl_coups def_tcl_coups[] =

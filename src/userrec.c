@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: userrec.c,v 1.55 2003/01/29 07:42:50 wcc Exp $";
+static const char rcsid[] = "$Id: userrec.c,v 1.56 2003/01/30 03:05:18 wcc Exp $";
 #endif
 
 #include <sys/stat.h>
@@ -43,29 +43,24 @@ static const char rcsid[] = "$Id: userrec.c,v 1.55 2003/01/29 07:42:50 wcc Exp $
 #include "match.h"		/* wild_match				*/
 #include "userrec.h"		/* prototypes				*/
 
-extern struct dcc_t	*dcc;
-extern struct chanset_t	*chanset;
-extern int		 default_flags, default_uflags, quiet_save,
-			 dcc_total, share_greet;
-extern char		 userfile[], ver[], botnetnick[];
-extern time_t		 now;
+extern struct dcc_t *dcc;
+extern struct chanset_t *chanset;
+extern int default_flags, default_uflags, dcc_total, share_greet;
+extern char userfile[], ver[], botnetnick[];
+extern time_t now;
 
 #ifndef MAKING_MODS
 extern struct dcc_table DCC_CHAT;
 #endif /* MAKING_MODS   */
 
-int		 noshare = 1;		/* don't send out to sharebots	    */
-struct userrec	*userlist = NULL;	/* user records are stored here	    */
-struct userrec	*lastuser = NULL;	/* last accessed user record	    */
-maskrec		*global_bans = NULL,
-		*global_exempts = NULL,
-		*global_invites = NULL;
-struct igrec	*global_ign = NULL;
-int		cache_hit = 0,
-		cache_miss = 0;		/* temporary cache accounting	    */
-int		strict_host = 0;
-int		userfile_perm = 0600;	/* Userfile permissions,
-					   default rw-------		    */
+int noshare = 1; /* don't send out to sharebots	    */
+struct userrec	*userlist = NULL; /* user records are stored here	    */
+struct userrec	*lastuser = NULL; /* last accessed user record	    */
+maskrec *global_bans = NULL, *global_exempts = NULL, *global_invites = NULL;
+struct igrec *global_ign = NULL;
+int cache_hit = 0, cache_miss = 0;
+int strict_host = 0;
+int userfile_perm = 0600;
 
 int count_users(struct userrec *bu)
 {
@@ -393,8 +388,6 @@ void write_userfile(int idx)
     free(new_userfile);
     return;
   }
-  if (!quiet_save)
-    putlog(LOG_MISC, "*", _("Writing user file..."));
   tt = now;
   strcpy(s1, ctime(&tt));
   fprintf(f, "#4v: %s -- %s -- written %s", ver, botnetnick, s1);

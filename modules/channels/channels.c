@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.23 2003/01/30 01:15:49 wcc Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.24 2003/01/30 03:05:18 wcc Exp $";
 #endif
 
 #define MODULE_NAME "channels"
@@ -35,38 +35,17 @@ static const char rcsid[] = "$Id: channels.c,v 1.23 2003/01/30 01:15:49 wcc Exp 
 
 static eggdrop_t *egg = NULL;
 
-static int  setstatic;
-static int  use_info;
-static char chanfile[121];
-static int  chan_hack;
-static int  quiet_save;
-static char glob_chanmode[64];		/* Default chanmode (drummer,990731) */
+static int setstatic, use_info, chan_hack, global_stopnethack_mode,
+           global_revenge_mode, global_idle_kick, global_aop_min,
+           global_aop_max, global_ban_time, global_exempt_time,
+           global_invite_time, gfld_chan_thr, gfld_chan_time, gfld_deop_thr,
+           gfld_deop_time, gfld_kick_thr, gfld_kick_time, gfld_join_thr,
+           gfld_join_time, gfld_ctcp_thr, gfld_ctcp_time, gfld_nick_thr,
+           gfld_nick_time;
+
+static char chanfile[121], glob_chanmode[64], glob_chanset[512];
+
 static struct udef_struct *udef;
-static int global_stopnethack_mode;
-static int global_revenge_mode;
-static int global_idle_kick;		/* Default idle_kick setting. */
-static int global_aop_min;
-static int global_aop_max;
-static int global_ban_time;
-static int global_exempt_time;
-static int global_invite_time;
-
-/* Global channel settings (drummer/dw) */
-static char glob_chanset[512];
-
-/* Global flood settings */
-static int gfld_chan_thr;
-static int gfld_chan_time;
-static int gfld_deop_thr;
-static int gfld_deop_time;
-static int gfld_kick_thr;
-static int gfld_kick_time;
-static int gfld_join_thr;
-static int gfld_join_time;
-static int gfld_ctcp_thr;
-static int gfld_ctcp_time;
-static int gfld_nick_thr;
-static int gfld_nick_time;
 
 #include "channels.h"
 #include "cmdschan.c"
@@ -371,8 +350,6 @@ static void write_channels()
     putlog(LOG_MISC, "*", "ERROR writing channel file.");
     return;
   }
-  if (!quiet_save)
-    putlog(LOG_MISC, "*", "Writing channel file...");
   fprintf(f, "#Dynamic Channel File for %s (%s) -- written %s\n",
 	  botnetnick, ver, ctime(&now));
   for (chan = chanset; chan; chan = chan->next) {
@@ -702,7 +679,6 @@ static tcl_ints my_tcl_ints[] =
 {
   {"share_greet",		NULL,				0},
   {"use_info",			&use_info,			0},
-  {"quiet_save",		&quiet_save,			0},
   {"global_stopnethack_mode",	&global_stopnethack_mode,	0},
   {"global_revenge_mode",       &global_revenge_mode,           0},
   {"global_idle_kick",		&global_idle_kick,		0},
@@ -847,7 +823,6 @@ char *start(eggdrop_t *eggdrop)
   use_info = 1;
   strcpy(chanfile, "chanfile");
   chan_hack = 0;
-  quiet_save = 0;
   strcpy(glob_chanmode, "nt");
   udef = NULL;
   global_stopnethack_mode = 0;
