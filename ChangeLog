@@ -1,3 +1,9 @@
+2001-08-26 03:52  stdarg
+
+	* src/: tclhash.c, tclhash.h:
+
+	Continuing with new check_bind function.  
+
 2001-08-26 03:16  stdarg
 
 	* src/flags.c:
