@@ -1,7 +1,7 @@
 
 # Getops 2.3b
 
-# $Id: getops.tcl,v 1.13 2001/08/11 07:29:26 guppy Exp $
+# $Id: getops.tcl,v 1.14 2003/05/12 23:32:40 wcc Exp $
 
 # This script is used for bots to request and give ops to each other.
 # For this to work, you'll need:
@@ -21,6 +21,10 @@
 # hostmasks up-to-date).
 
 # -----------------------------------------------------------------------------
+
+# 2.3c by PPSlim <ppslim@ntlworld.com>
+#  - Small fix on timer hanlding.
+#    Not list formatted, allowing command parsing of channel name
 
 # 2.3b by gregul <unknown>
 #  - small fix in getbot
@@ -91,7 +95,7 @@
 
 # Previously by The_O, dtM.
 
-# Originial incarnation by poptix (poptix@poptix.net)
+# Original incarnation by poptix (poptix@poptix.net)
 
 # -----------------------------------------------------------------------------
 
@@ -357,11 +361,11 @@ proc requestop { chan } {
 
 proc gop_join { nick uhost hand chan } {
  if {[isbotnick $nick]} {
- utimer 3 "requestop $chan"
+ utimer 3 [list requestop $chan]
  }
  return 0
 }
 
 set getops_loaded 1
 
-putlog "GetOps v2.3a loaded."
+putlog "GetOps v2.3c loaded."

@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: files.c,v 1.12 2003/03/06 12:08:15 tothwolf Exp $";
+static const char rcsid[] = "$Id: files.c,v 1.13 2003/05/12 23:32:40 wcc Exp $";
 #endif
 */
 
@@ -304,9 +304,10 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
       }
       free_fdbe(&fdbe);
       realloc_strcpy(s, *real);
-      if (s[0])
-	if (s[strlen(s) - 1] != '/')
-	  strcat(s, "/");
+      if (s[0] && s[strlen(s) - 1] != '/') {
+        s = nrealloc(s, strlen(s) + 2);
+        strcat(s, "/");
+      }
       work = malloc(strlen(s) + strlen(elem) + 1);
       sprintf(work, "%s%s", s, elem);
       realloc_strcpy(*real, work);

@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: cmdsirc.c,v 1.18 2003/03/11 03:53:37 wcc Exp $";
+static const char rcsid[] = "$Id: cmdsirc.c,v 1.19 2003/05/12 23:32:40 wcc Exp $";
 #endif
 */
 
@@ -273,12 +273,8 @@ static void cmd_voice(struct userrec *u, int idx, char *par)
     return;
   }
   get_user_flagrec(dcc[idx].user, &user, chan->dname);
-  if (!chan_op(user) && !glob_op(user)) {
-    dprintf(idx, _("You are not a channel op on %s.\n"), chan->dname);
-    return;
-  }
   m = ismember(chan, nick);
-  if (m) {
+  if (m && !chan_op(user)  && !glob_op(user)) {
     snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
     u2 = m->user ? m->user : get_user_by_host(s);
 
@@ -326,12 +322,8 @@ static void cmd_devoice(struct userrec *u, int idx, char *par)
     return;
   }
   get_user_flagrec(dcc[idx].user, &user, chan->dname);
-  if (!chan_op(user) && !glob_op(user)) {
-    dprintf(idx, _("You are not a channel op on %s.\n"), chan->dname);
-    return;
-  }
   m = ismember(chan, nick);
-  if (m) {
+  if (m && !chan_op(user)  && !glob_op(user)) {
     snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
     u2 = m->user ? m->user : get_user_by_host(s);
 

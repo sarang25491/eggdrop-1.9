@@ -1,10 +1,38 @@
-$Id: UPDATES1.6,v 1.212 2003/03/11 03:53:37 wcc Exp $
+$Id: UPDATES1.6,v 1.213 2003/05/12 23:32:39 wcc Exp $
 
 Changes in Eggdrop: (since v1.6.0)
 ----------------------------------
 
-1.6.14
+1.6.16
 Found by  Fixed by  What...
+Wanderer| Wcc       fixed output of tcl_duration to not return extra spaces
+paladinz  Wcc       don't compile inet_ntop compatability code unless USE_IPV6
+                    is defined
+KuNgFo0   Wcc       typedef socklen_t to int if non-existant
+various   TaKeDa    fixed an uninitialized variable in putlog()
+
+1.6.15 (04 May 2003)
+Found by  Fixed by  What...
+MORA      Wcc       fixed a patch.h compile error
+
+1.6.14 (04 May 2003)
+Found by  Fixed by  What...
+          poptix/   added support for the IPv6 protocol
+	  Wcc
+          guppy     fixed a couple of bugs in autobotchk and made the output
+	            cleaner
+          PPSlim    updated the logic of .fixcodes
+          KuNgFo0   added a missing cast in tcl_rand
+          PPSlim    fixed getops timer handling
+Paladin   Wcc       fixed access checking in -ban, -exempt, and -invite
+          TaKeDa    fixed a Tcl_Merge memleak
+          M. Koszik fixed a crash related to the cd command in filesys.mod
+          Eule      channel keys are now handled correctly in flush_mode()
+          Sven      locking a channel key/limit now enforces it from being
+                    changed as well as unset
+          Sven      don't bounce our own modes
+          Sven      q|q users can no longer obtain a channel voice, regardless
+                    of +autovoice
           Eule      users with appropriate flags can now halfop and voice
                     themselves
           Sven      -ban <number> now works for channel bans
@@ -23,7 +51,7 @@ Shane0    Wcc       fixed a compile error on Tru64 UNIX
           Sven      the WASHALFOP flag now works correctly
 fbs       Wcc       kill a transfer connection after sending a
                     TRANSFER_DCC_IGNORED notice to a user
-          ppslim    flood-pub should be flood-chan when using 'channel get'
+          PPSlim    flood-pub should be flood-chan when using 'channel get'
           BarkerJr  '~' and '&' are now correctly recognized as a meaning a
                     user has ops on a channel
           winkey    fixed uhost buffer length
@@ -189,7 +217,7 @@ guppy     Wcc       added support for +r on Undernet's ircu 2.10.11
 Found by  Fixed by  What...
 (^Baron^) Eule      protect(ops|friends) works with +bitch now
           guppy     reverted the handlen friendly patches
-MaSsKilla dw	    fixed a crash when trying to add an invalid chan using .+chan
+MaSsKilla dw        fixed a crash when trying to add an invalid chan using .+chan
 various   guppy     nick2hand didn't return "" on a nick that wasn't in the channel
 slennox   Wcc       fixed a few config file problems
 Paladin   Wcc       chattr's description in tcl-commands.doc was unclear relating to
@@ -218,7 +246,7 @@ various   Eule      modes-per-line is limited to a max of 6 modes per line
                     friendly
           Amir      botlink() now safely copies the linker string
 various   Eule      fixed crashes relating to flushmodes
-Wanderer| dw	    tcl command modules missing in doc/tcl-commands.doc
+Wanderer| dw        tcl command modules missing in doc/tcl-commands.doc
           guppy     users with only +x can now only login via dcc chat, they cannot use
                     telnet
           Wcc       more documentation updates
@@ -260,8 +288,8 @@ Paladinz  guppy     ircu2.10.11 properly formats PART messages; however, eggdrop
           Wcc       fixed a couple of cosmetic problems in cmd_pls_user
           Wcc       do not eval init-server on rehash since this variable is used for
                     performing tcl commands on a succesful server connection
-MaSsKilla dw	    Couldn't introduce new users through telnet if a
-		      handle named "new" existed.
+MaSsKilla dw        Couldn't introduce new users through telnet if a
+                      handle named "new" existed.
 SiD3WiNDR Wcc       MISC_USERFCREATE1 should use origbotname instead of botnetnick
           Wcc       added a warning about allow-resync in the config file
           TaKeDa    prevent botnet flooding when adding ignores which already exist
@@ -383,7 +411,7 @@ TaKeDa    stdarg    fixed a small crash in notes.mod
           TaKeDa    fix 'setuser <hand> PASS' from crashing
 boro      bhab      stop_nethack_mode 4 oddity when a +a bot returns from a
                     split getting a -o+o (double negating mode)
-	  poptix    Testing some better socket code (++)++
+          poptix    Testing some better socket code (++)++
           Wcc       more typo fixing in the config files
           BarkerJr  more typo fixes
           Wcc       fixed several tons of spelling errors (really)
@@ -447,7 +475,7 @@ various   guppy     the documentation for the need bind was slightly screwy
           Kirben    check whether cygwin requires -mwin32 to support
                     old versions of cygwin
           Kirben    check for bind in /usr/local/bind when using cygwin
-NeoN-	  dw	    a banreason wasn't used in some cases.
+NeoN-     dw        a banreason wasn't used in some cases.
 Noyga     Sup       Bot sent a useless TOPIC command to the server
                     when it joined a channel.
           SuperS    added QNX support
