@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.17 2002/03/22 16:01:16 ite Exp $
+ * $Id: module.h,v 1.18 2002/04/28 02:21:07 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -366,7 +366,7 @@
 /* 244 - 247 */
 #define protect_readonly (*(int *)(egg->global[244]))
 #define findchan_by_dname ((struct chanset_t *(*)(char *))egg->global[245])
-#define removedcc ((void (*) (int))egg->global[246])
+/* #define removedcc ((void (*) (int))egg->global[246]) */
 #define userfile_perm (*(int *)egg->global[247])
 /* 248 - 251 */
 #define sock_has_data ((int(*)(int, int))egg->global[248])

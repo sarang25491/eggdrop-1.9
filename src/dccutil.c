@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  *
- * $Id: dccutil.c,v 1.48 2002/04/27 18:34:09 stdarg Exp $
+ * $Id: dccutil.c,v 1.49 2002/04/28 02:21:07 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -269,12 +269,15 @@ void lostdcc(int n)
  * Note: The entry will be deconstructed if it was not deconstructed
  *       already. This case should normally not occur.
  */
-void removedcc(int n)
+static void removedcc(int n)
 {
   if (dcc[n].type && dcc[n].type->kill)
     dcc[n].type->kill(n, dcc[n].u.other);
   else if (dcc[n].u.other)
     free(dcc[n].u.other);
+
+  /* if we are removing the last entry let's decrease dcc_total */
+  if(n + 1 == dcc_total) dcc_total--;
 
   memset(&dcc[n], 0, sizeof(struct dcc_t)); /* drummer */
 }
@@ -285,11 +288,11 @@ void dcc_remove_lost(void)
 {
   int i;
 
-  for (i = 0; i < dcc_total; i++) {
+  
+  for (i = dcc_total; i > 0; --i) {
     if (dcc[i].type == &DCC_LOST) {
       dcc[i].type = NULL;
       removedcc(i);
-      i--;
     }
   }
 }

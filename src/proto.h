@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.69 2002/04/25 04:06:40 stdarg Exp $
+ * $Id: proto.h,v 1.70 2002/04/28 02:21:07 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -126,7 +126,6 @@ extern void (*sharein) (int, char *);
 void chanout_but EGG_VARARGS(int, arg1);
 void dcc_chatter(int);
 void lostdcc(int);
-void removedcc(int);
 void makepass(char *);
 void tell_dcc(int);
 void not_away(int);

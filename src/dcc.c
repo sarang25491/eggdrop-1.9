@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.81 2002/04/27 18:34:09 stdarg Exp $
+ * $Id: dcc.c,v 1.82 2002/04/28 02:21:07 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -94,7 +94,7 @@ void dcc_init()
 {
 	dcc_command_chars = strdup("./");
 	script_link_var_table(dcc_script_vars);
-	init_dcc_max(20);
+	init_dcc_max(50);
 }
 
 static void strip_telnet(int sock, char *buf, int *len)
@@ -1994,7 +1994,7 @@ int dcc_write_max_dcc(script_linked_var_t *linked_var, script_var_t *newvalue)
 
 	/* If they're shrinking it, determine the most we can shrink. */
 	if (newval < dcc_total) {
-		for (i = dcc_total-1; i >= 0; i--) {
+		for (i = dcc_total; i > 0; --i) {
 			if (dcc[i].type) break;
 		}
 		if (newval < i+1) newval = i+1;

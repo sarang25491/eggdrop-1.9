@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.106 2002/04/01 13:33:33 ite Exp $
+ * $Id: modules.c,v 1.107 2002/04/28 02:21:07 ite Exp $
  */
 /* 
  * Copyright (C) 1997 Robey Pointer
@@ -443,7 +443,7 @@ Function global_table[] =
   /* 244 - 247 */
   (Function) & protect_readonly, /* int					*/
   (Function) findchan_by_dname,
-  (Function) removedcc,
+  (Function) 0,
   (Function) & userfile_perm,	 /* int					*/
   /* 248 - 251 */
   (Function) sock_has_data,
