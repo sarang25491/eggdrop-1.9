@@ -1,25 +1,25 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.3 2001/10/25 20:10:05 ite Exp $
+dnl $Id: acinclude.m4,v 1.4 2001/10/27 13:34:17 ite Exp $
 dnl
 
 
 dnl  EGG_MSG_CONFIGURE_START()
 dnl
 AC_DEFUN(EGG_MSG_CONFIGURE_START, [dnl
-AC_MSG_RESULT()
-AC_MSG_RESULT(This is eggdrop's GNU configure script.)
-AC_MSG_RESULT(It's going to run a bunch of strange tests to hopefully)
-AC_MSG_RESULT(make your compile work without much twiddling.)
-AC_MSG_RESULT()
+AC_MSG_NOTICE()
+AC_MSG_NOTICE(This is eggdrop's GNU configure script.)
+AC_MSG_NOTICE(It's going to run a bunch of strange tests to hopefully)
+AC_MSG_NOTICE(make your compile work without much twiddling.)
+AC_MSG_NOTICE()
 ])
 
 
 dnl  EGG_MSG_CONFIGURE_END()
 dnl
 AC_DEFUN(EGG_MSG_CONFIGURE_END, [dnl
-AC_MSG_RESULT()
+AC_MSG_NOTICE()
 cat << EOF
 ------------------------------------------------------------------------
 Configuration:
@@ -35,11 +35,11 @@ Configuration:
 See config.h for further configuration information.
 ------------------------------------------------------------------------
 EOF
-AC_MSG_RESULT()
-AC_MSG_RESULT(Configure is done.)
-AC_MSG_RESULT()
-AC_MSG_RESULT([Type 'make' to create the bot.])
-AC_MSG_RESULT()
+AC_MSG_NOTICE()
+AC_MSG_NOTICE(Configure is done.)
+AC_MSG_NOTICE()
+AC_MSG_NOTICE([Type 'make' to create the bot.])
+AC_MSG_NOTICE()
 ])
 
 
@@ -109,17 +109,6 @@ fi
 ])
 							
 
-dnl  EGG_PROG_STRIP()
-dnl
-AC_DEFUN(EGG_PROG_STRIP, [dnl
-AC_CHECK_PROG(STRIP, strip, strip)
-if test "${STRIP-x}" = "x"
-then
-  STRIP=touch
-fi
-])
-
-
 dnl  EGG_PROG_AWK()
 dnl
 AC_DEFUN(EGG_PROG_AWK, [dnl
@@ -168,13 +157,13 @@ AC_DEFUN(EGG_CHECK_OS, [dnl
 AC_REQUIRE([AC_CANONICAL_HOST])
 
 IRIX=no
-DEFAULT_MAKE=static
 
 AC_CACHE_CHECK(system type, egg_cv_var_system_type, egg_cv_var_system_type=`$EGG_UNAME -s`)
 AC_CACHE_CHECK(system release, egg_cv_var_system_release, egg_cv_var_system_release=`$EGG_UNAME -r`)
 
 case $host_os in
   cygwin)
+    AC_DEFINE(CYGWIN_HACKS, 1, [Define if running under cygwin])
     case "`echo $egg_cv_var_system_release | cut -c 1-3`" in
       1.*)
 	AC_PROG_CC_WIN32
@@ -340,19 +329,6 @@ else
     AC_DEFINE(UNSIGNED_LONG32, 1,
               [Define this if an unsigned long is 32 bits])
   fi
-fi
-])
-
-
-dnl  EGG_CYGWIN()
-dnl
-dnl  Check for Cygwin support.
-AC_DEFUN(EGG_CYGWIN, [dnl
-AC_CYGWIN
-if test "$ac_cv_cygwin" = "yes"
-then
-  AC_DEFINE(CYGWIN_HACKS, 1,
-            [Define if running under cygwin])
 fi
 ])
 
@@ -911,6 +887,8 @@ fi
 dnl  EGG_TCL_LIB_REQS()
 dnl
 AC_DEFUN(EGG_TCL_LIB_REQS, [dnl
+AC_REQUIRE([EGG_LIBTOOL])
+
 if test "$ac_cv_cygwin" = "yes"
 then
   TCL_REQS="$TCLLIB/lib$TCLLIBFN"
@@ -921,20 +899,16 @@ then
   TCL_REQS="$TCLLIB/lib$TCLLIBFN"
   TCL_LIBS="-L$TCLLIB -l$TCLLIBFNS $EGG_MATH_LIB"
 else
-## FIXME: this needs to be changed so that it will error and exit saying
-##        you have to run ./configure --disable-shared
-  # Set default make as static for unshared Tcl library
-  if test ! "$DEFAULT_MAKE" = "static"
+  # Error and ask for a static build for unshared Tcl library
+  if test "$egg_static_build" = "no"
   then
-    cat << 'EOF' >&2
-configure: warning:
+    AC_MSG_ERROR([
 
   Your Tcl library is not a shared lib.
-  configure will now set default make type to static...
+  You have to run configure with the --disable-shared parameter to force a
+  static build.
 
-EOF
-    DEFAULT_MAKE=static
-    AC_SUBST(DEFAULT_MAKE)
+])
   fi
 
   # Are we using a pre 7.4 Tcl version ?
@@ -1196,7 +1170,10 @@ AM_PROG_LIBTOOL
 
 if test "x$enable_shared" = "xno"
 then
-  AC_DEFINE_UNQUOTED(STATIC, 1, Define if build is static)
+  AC_DEFINE_UNQUOTED(STATIC, 1, [Define if build is static])
+  egg_static_build=yes
+else
+  egg_static_build=no
 fi
 
 # HACK: This is needed for libltdl's configure script

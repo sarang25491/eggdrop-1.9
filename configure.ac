@@ -1,5 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(src/eggdrop.h)
+AC_PREREQ(2.52)
 AC_CONFIG_AUX_DIR(acconfig)
 AM_CONFIG_HEADER(config.h)
 EGG_MSG_CONFIGURE_START
@@ -45,7 +46,6 @@ EGG_CHECK_CFLAGS_WALL
 
 # Checks for programs
 AC_PROG_LN_S
-EGG_PROG_STRIP
 EGG_PROG_AWK
 EGG_PROG_BASENAME
 AC_CHECK_PROG(EGG_UNAME,uname,uname)
@@ -90,9 +90,6 @@ EGG_FUNC_C99_VSNPRINTF
 
 # Check if we need to compile all or part of snprintf.c
 EGG_REPLACE_SNPRINTF
-
-# Checks for cygwin
-EGG_CYGWIN
 
 # Checks for IPV6
 EGG_IPV6_SUPPORTED
