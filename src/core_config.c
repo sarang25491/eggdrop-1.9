@@ -19,12 +19,6 @@ static config_var_t core_config_vars[] = {
 	{"text_path", &core_config.text_path, CONFIG_STRING},
 	{"module_path", &core_config.module_path, CONFIG_STRING},
 
-	/* Telnet stuff. */
-	{"telnet_vhost", &core_config.telnet_vhost, CONFIG_STRING},
-	{"telnet_port", &core_config.telnet_port, CONFIG_INT},
-	{"telnet_stealth", &core_config.telnet_stealth, CONFIG_INT},
-	{"telnet_max_retries", &core_config.telnet_max_retries, CONFIG_INT},
-
 	/* Logfile. */
 	{"logfile_suffix", &core_config.logfile_suffix, CONFIG_STRING},
 	{"max_logsize", &core_config.max_logsize, CONFIG_INT},
@@ -45,10 +39,6 @@ void core_config_init(const char *fname)
 
 	core_config.botname = strdup("eggdrop");
 	core_config.userfile = strdup("users.xml");
-
-	core_config.telnet_port = 3141;
-	core_config.telnet_stealth = 0;
-	core_config.telnet_max_retries = 3;
 
 	core_config.logfile_suffix = strdup(".%d%b%Y");
 

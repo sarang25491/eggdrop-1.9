@@ -24,7 +24,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: cmds.c,v 1.118 2003/05/12 23:32:40 wcc Exp $";
+static const char rcsid[] = "$Id: cmds.c,v 1.119 2003/06/09 02:21:53 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -1437,7 +1437,7 @@ static int cmd_fixcodes(user_t *u, int idx, char *par)
   } else {
     dcc[idx].status |= STAT_TELNET;
     dcc[idx].status &= ~STAT_ECHO;
-    dprintf(idx, _("Turned on telnet codes.\n)");
+    dprintf(idx, _("Turned on telnet codes.\n"));
     putlog(LOG_CMDS, "*", "#%s# fixcodes (telnet on)", dcc[idx].nick);
   }
   return(1);

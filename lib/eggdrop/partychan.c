@@ -8,7 +8,7 @@
 #define PARTY_DELETED	1
 
 static hash_table_t *cid_ht = NULL;
-static partychan_t *channel_head = NULL;
+static partychan_t *partychan_head = NULL;
 static int g_cid = 0;	/* Keep track of next available cid. */
 
 int partychan_init()
@@ -38,10 +38,44 @@ partychan_t *partychan_new(int cid, const char *name)
 	if (cid == -1) cid = partychan_get_cid();
 	chan->cid = cid;
 	chan->name = strdup(name);
-	chan->next = channel_head;
-	if (channel_head) channel_head->prev = chan;
-	channel_head = chan;
+	chan->next = partychan_head;
+	if (partychan_head) partychan_head->prev = chan;
+	partychan_head = chan;
 	return(chan);
+}
+
+int partychan_delete(partychan_t *chan)
+{
+	return(0);
+}
+
+static int partychan_cleanup(partychan_t *chan)
+{
+	int i;
+	int dirty = 0;
+
+	for (i = 0; i < chan->nmembers; i++) {
+		if (chan->members[i].flags & PARTY_DELETED) {
+			memcpy(chan->members+i, chan->members+i+1, sizeof(*chan->members) * (chan->nmembers-i-1));
+			chan->nmembers--;
+			dirty++;
+			i--;
+		}
+	}
+	if (dirty) chan->members = realloc(chan->members, sizeof(*chan->members) * chan->nmembers);
+
+	dirty = 0;
+	for (i = 0; i < chan->nhandlers; i++) {
+		if (chan->handlers[i].flags & PARTY_DELETED) {
+			memcpy(chan->handlers+i, chan->handlers+i+1, sizeof(*chan->handlers) * (chan->nhandlers-i-1));
+			chan->nhandlers--;
+			dirty++;
+			i--;
+		}
+	}
+	if (dirty) chan->handlers = realloc(chan->handlers, sizeof(*chan->handlers) * chan->nhandlers);
+
+	return(0);
 }
 
 partychan_t *partychan_lookup_cid(int cid)
@@ -57,11 +91,17 @@ partychan_t *partychan_lookup_name(const char *name)
 {
 	partychan_t *chan = NULL;
 
-	for (chan = channel_head; chan; chan = chan->next) {
+	for (chan = partychan_head; chan; chan = chan->next) {
 		if (chan->flags & PARTY_DELETED) continue;
 		if (!strcasecmp(name, chan->name)) break;
 	}
 	return(chan);
+}
+
+partychan_t *partychan_get_default(partymember_t *p)
+{
+	if (p->nchannels > 0) return(p->channels[p->nchannels-1]);
+	return(NULL);
 }
 
 int partychan_join_name(const char *chan, partymember_t *p)
@@ -145,14 +185,17 @@ int partychan_part(partychan_t *chan, partymember_t *p, const char *text)
 		}
 	}
 
-	/* Remove the member from the channel. */
+	/* Mark the member to be deleted. */
 	for (i = 0; i < chan->nmembers; i++) {
 		if (chan->members[i].flags & PARTY_DELETED) continue;
 		if (chan->members[i].p == p) {
 			chan->members[i].flags |= PARTY_DELETED;
+			garbage_add((garbage_proc_t)partychan_cleanup, chan, GARBAGE_ONCE);
 			break;
 		}
 	}
+
+	len = strlen(text);
 
 	/* Send out the part event to the members. */
 	for (i = 0; i < chan->nmembers; i++) {
@@ -177,6 +220,7 @@ int partychan_join_handler(partychan_t *chan, partyline_event_t *handler, void *
 	chan->handlers[chan->nhandlers].client_data = client_data;
 	chan->handlers[chan->nhandlers].flags = 0;
 	chan->nhandlers++;
+	return(0);
 }
 
 int partychan_part_handler(partychan_t *chan, partyline_event_t *handler, void *client_data)

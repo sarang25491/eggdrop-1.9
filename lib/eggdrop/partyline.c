@@ -1,20 +1,12 @@
 #include <stdarg.h>
 #include <eggdrop/eggdrop.h>
 
-/* When does pid wrap around? This lets pids get up to 99999. */
-#define PID_WRAPAROUND	100000
-
-/* Flags for partyline members. */
-#define PARTY_ECHO	1
-#define PARTY_DELETED	2
-
 static char *partyline_command_chars = NULL;
 
 static bind_table_t *BT_cmd = NULL;	/* Commands. */
 static bind_table_t *BT_party_out = NULL;	/* Text sent to a user. */
 
 static int on_putlog(int flags, const char *chan, const char *text, int len);
-static int partymember_cleanup(void *client_data);
 
 extern int partychan_init();
 extern int partymember_init();
@@ -47,7 +39,7 @@ int partyline_is_command(const char *text)
 int partyline_on_input(partychan_t *chan, partymember_t *p, const char *text, int len)
 {
 	if (!p || p->flags & PARTY_DELETED || !len) return(0);
-	if (!chan) chan = p->channels[0];
+	if (!chan) chan = partychan_get_default(p);
 
 	/* See if we should interpret it as a command. */
 	if (strchr(partyline_command_chars, *text)) {
@@ -66,11 +58,11 @@ int partyline_on_input(partychan_t *chan, partymember_t *p, const char *text, in
 				cmd = malloc(len+1);
 				memcpy(cmd, text, len);
 				cmd[len] = 0;
-				partyline_on_command(chan, p, cmd, space+1);
+				partyline_on_command(p, cmd, space+1);
 				free(cmd);
 			}
 			else {
-				partyline_on_command(chan, p, text, NULL);
+				partyline_on_command(p, text, NULL);
 			}
 			return(0);
 		}
@@ -82,11 +74,11 @@ int partyline_on_input(partychan_t *chan, partymember_t *p, const char *text, in
 
 /* Processes input as a command. The first word is the command, and the rest
  * is the argument. */
-int partyline_on_command(partychan_t *chan, partymember_t *p, const char *cmd, const char *text)
+int partyline_on_command(partymember_t *p, const char *cmd, const char *text)
 {
 	int r;
 
-	if (!chan || !p) return(-1);
+	if (!p) return(-1);
 
 	r = bind_check(BT_cmd, cmd, p, p->nick, p->user, cmd, text);
 	return(r);
