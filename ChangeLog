@@ -959,10 +959,7 @@
 
 2002-03-03 19:03  stdarg <stdarg@techmonkeys.org>
 
-	* configure.ac, modules/Makefile.am, modules/assoc/.cvsignore,
-	modules/assoc/Makefile.am, modules/assoc/assoc.c,
-	modules/assoc/assoc.h, modules/assoc/modinfo,
-	modules/assoc/help/assoc.help, src/Makefile.am, src/botcmd.c,
+	* configure.ac, modules/Makefile.am, src/Makefile.am, src/botcmd.c,
 	src/botnet.c, src/cmds.c, src/tcldcc.c:
 
 	
@@ -1334,42 +1331,41 @@
 	lib/eggdrop/common.h, lib/eggdrop/eggdrop.h,
 	lib/eggdrop/fileutil.c, lib/eggdrop/fileutil.h,
 	lib/eggdrop/memutil.c, lib/eggdrop/memutil.h, lib/eggdrop/module.h,
-	lib/eggdrop/modvals.h, lib/egglib/egglib.h, modules/assoc/assoc.c,
-	modules/assoc/assoc.h, modules/blowfish/bf_tab.h,
-	modules/blowfish/blowfish.c, modules/blowfish/blowfish.h,
-	modules/channels/channels.c, modules/channels/channels.h,
-	modules/channels/cmdschan.c, modules/channels/tclchan.c,
-	modules/channels/udefchan.c, modules/channels/userchan.c,
-	modules/compress/compress.c, modules/compress/compress.h,
-	modules/compress/tclcompress.c, modules/console/console.c,
-	modules/console/console.h, modules/ctcp/ctcp.c,
-	modules/ctcp/ctcp.h, modules/filesys/dbcompat.c,
-	modules/filesys/dbcompat.h, modules/filesys/filedb3.c,
-	modules/filesys/filedb3.h, modules/filesys/filelist.c,
-	modules/filesys/filelist.h, modules/filesys/files.c,
-	modules/filesys/files.h, modules/filesys/filesys.c,
-	modules/filesys/filesys.h, modules/filesys/tclfiles.c,
-	modules/irc/chan.c, modules/irc/cmdsirc.c, modules/irc/irc.c,
-	modules/irc/irc.h, modules/irc/mode.c, modules/irc/msgcmds.c,
-	modules/irc/tclirc.c, modules/notes/cmdsnote.c,
-	modules/notes/notes.c, modules/notes/notes.h,
-	modules/server/cmdsserv.c, modules/server/server.c,
-	modules/server/server.h, modules/server/servmsg.c,
-	modules/server/tclserv.c, modules/share/share.c,
-	modules/share/share.h, modules/share/uf_features.c,
-	modules/transfer/transfer.c, modules/transfer/transfer.h,
-	modules/uptime/uptime.c, modules/uptime/uptime.h,
-	modules/woobie/woobie.c, scripts/autobotchk, scripts/ques5.tcl,
-	src/bg.c, src/bg.h, src/botcmd.c, src/botmsg.c, src/botnet.c,
-	src/chan.h, src/chanprog.c, src/cmds.c, src/cmdt.h, src/dcc.c,
-	src/dccutil.c, src/debug.h, src/dns.c, src/dns.h, src/egg.h,
-	src/flags.c, src/flags.h, src/irccmp.c, src/irccmp.h,
-	src/logfile.h, src/main.c, src/main.h, src/misc.c, src/misc.h,
-	src/modules.c, src/modules.h, src/patch.h, src/proto.h,
-	src/tandem.h, src/tcl.c, src/tcldcc.c, src/tclegg.h, src/tclhash.c,
-	src/tclhash.h, src/tclmisc.c, src/tcluser.c, src/userent.c,
-	src/userrec.c, src/users.c, src/users.h, FEATURES, INSTALL, NEWS,
-	README:
+	lib/eggdrop/modvals.h, lib/egglib/egglib.h,
+	modules/blowfish/bf_tab.h, modules/blowfish/blowfish.c,
+	modules/blowfish/blowfish.h, modules/channels/channels.c,
+	modules/channels/channels.h, modules/channels/cmdschan.c,
+	modules/channels/tclchan.c, modules/channels/udefchan.c,
+	modules/channels/userchan.c, modules/compress/compress.c,
+	modules/compress/compress.h, modules/compress/tclcompress.c,
+	modules/console/console.c, modules/console/console.h,
+	modules/ctcp/ctcp.c, modules/ctcp/ctcp.h,
+	modules/filesys/dbcompat.c, modules/filesys/dbcompat.h,
+	modules/filesys/filedb3.c, modules/filesys/filedb3.h,
+	modules/filesys/filelist.c, modules/filesys/filelist.h,
+	modules/filesys/files.c, modules/filesys/files.h,
+	modules/filesys/filesys.c, modules/filesys/filesys.h,
+	modules/filesys/tclfiles.c, modules/irc/chan.c,
+	modules/irc/cmdsirc.c, modules/irc/irc.c, modules/irc/irc.h,
+	modules/irc/mode.c, modules/irc/msgcmds.c, modules/irc/tclirc.c,
+	modules/notes/cmdsnote.c, modules/notes/notes.c,
+	modules/notes/notes.h, modules/server/cmdsserv.c,
+	modules/server/server.c, modules/server/server.h,
+	modules/server/servmsg.c, modules/server/tclserv.c,
+	modules/share/share.c, modules/share/share.h,
+	modules/share/uf_features.c, modules/transfer/transfer.c,
+	modules/transfer/transfer.h, modules/uptime/uptime.c,
+	modules/uptime/uptime.h, modules/woobie/woobie.c,
+	scripts/autobotchk, scripts/ques5.tcl, src/bg.c, src/bg.h,
+	src/botcmd.c, src/botmsg.c, src/botnet.c, src/chan.h,
+	src/chanprog.c, src/cmds.c, src/cmdt.h, src/dcc.c, src/dccutil.c,
+	src/debug.h, src/dns.c, src/dns.h, src/egg.h, src/flags.c,
+	src/flags.h, src/irccmp.c, src/irccmp.h, src/logfile.h, src/main.c,
+	src/main.h, src/misc.c, src/misc.h, src/modules.c, src/modules.h,
+	src/patch.h, src/proto.h, src/tandem.h, src/tcl.c, src/tcldcc.c,
+	src/tclegg.h, src/tclhash.c, src/tclhash.h, src/tclmisc.c,
+	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c,
+	src/users.h, FEATURES, INSTALL, NEWS, README:
 
 	Updated copyright info for 2002 
 
@@ -2071,16 +2067,16 @@
 	lib/eggdrop/botnetutil.c, lib/eggdrop/botnetutil.h,
 	lib/eggdrop/common.h, lib/eggdrop/eggdrop.h, lib/eggdrop/memutil.h,
 	lib/eggdrop/module.h, lib/egglib/Makefile.am, lib/egglib/egglib.h,
-	modules/assoc/Makefile.am, modules/blowfish/Makefile.am,
-	modules/channels/Makefile.am, modules/compress/Makefile.am,
-	modules/console/Makefile.am, modules/ctcp/Makefile.am,
-	modules/filesys/Makefile.am, modules/irc/Makefile.am,
-	modules/notes/Makefile.am, modules/perlscript/Makefile.am,
-	modules/server/Makefile.am, modules/share/Makefile.am,
-	modules/tclscript/Makefile.am, modules/transfer/Makefile.am,
-	modules/uptime/Makefile.am, modules/woobie/Makefile.am,
-	src/Makefile.am, src/egg.h, src/eggdrop.h, src/logfile.c,
-	src/main.h, src/modules.c, src/modules.h, src/proto.h:
+	modules/blowfish/Makefile.am, modules/channels/Makefile.am,
+	modules/compress/Makefile.am, modules/console/Makefile.am,
+	modules/ctcp/Makefile.am, modules/filesys/Makefile.am,
+	modules/irc/Makefile.am, modules/notes/Makefile.am,
+	modules/perlscript/Makefile.am, modules/server/Makefile.am,
+	modules/share/Makefile.am, modules/tclscript/Makefile.am,
+	modules/transfer/Makefile.am, modules/uptime/Makefile.am,
+	modules/woobie/Makefile.am, src/Makefile.am, src/egg.h,
+	src/eggdrop.h, src/logfile.c, src/main.h, src/modules.c,
+	src/modules.h, src/proto.h:
 
 	* Moved some botnet utility functions from the core to libeggdrop.  
 	* Moved some common macros to libeggdrop.  
@@ -2969,15 +2965,14 @@
 
 2001-11-24 20:42  Federico Mennite <ite@techmonkeys.org>
 
-	* modules/assoc/Makefile.am, modules/blowfish/Makefile.am,
-	modules/channels/Makefile.am, modules/compress/Makefile.am,
-	modules/console/Makefile.am, modules/ctcp/Makefile.am,
-	modules/filesys/Makefile.am, modules/irc/Makefile.am,
-	modules/notes/Makefile.am, modules/perlscript/Makefile.am,
-	modules/server/Makefile.am, modules/share/Makefile.am,
-	modules/tclscript/Makefile.am, modules/transfer/Makefile.am,
-	modules/uptime/Makefile.am, modules/woobie/Makefile.am,
-	src/eggdrop.h:
+	* modules/blowfish/Makefile.am, modules/channels/Makefile.am,
+	modules/compress/Makefile.am, modules/console/Makefile.am,
+	modules/ctcp/Makefile.am, modules/filesys/Makefile.am,
+	modules/irc/Makefile.am, modules/notes/Makefile.am,
+	modules/perlscript/Makefile.am, modules/server/Makefile.am,
+	modules/share/Makefile.am, modules/tclscript/Makefile.am,
+	modules/transfer/Makefile.am, modules/uptime/Makefile.am,
+	modules/woobie/Makefile.am, src/eggdrop.h:
 
 	Added mssing stuff in Makefile.am's that prevented compilation in
 	some environments.  
@@ -3201,15 +3196,14 @@
 2001-10-29 23:01  Federico Mennite <ite@techmonkeys.org>
 
 	* lib/eggdrop/Makefile.am, lib/eggdrop/module.h,
-	modules/assoc/Makefile.am, modules/blowfish/Makefile.am,
-	modules/channels/Makefile.am, modules/compress/Makefile.am,
-	modules/console/Makefile.am, modules/ctcp/Makefile.am,
-	modules/filesys/Makefile.am, modules/irc/Makefile.am,
-	modules/notes/Makefile.am, modules/perlscript/Makefile.am,
-	modules/server/Makefile.am, modules/share/Makefile.am,
-	modules/tclscript/Makefile.am, modules/transfer/Makefile.am,
-	modules/uptime/Makefile.am, modules/woobie/Makefile.am,
-	src/Makefile.am, src/modules.c:
+	modules/blowfish/Makefile.am, modules/channels/Makefile.am,
+	modules/compress/Makefile.am, modules/console/Makefile.am,
+	modules/ctcp/Makefile.am, modules/filesys/Makefile.am,
+	modules/irc/Makefile.am, modules/notes/Makefile.am,
+	modules/perlscript/Makefile.am, modules/server/Makefile.am,
+	modules/share/Makefile.am, modules/tclscript/Makefile.am,
+	modules/transfer/Makefile.am, modules/uptime/Makefile.am,
+	modules/woobie/Makefile.am, src/Makefile.am, src/modules.c:
 
 	Created libeggdrop: libadns, libegg and libcompat are now linked in
 	it. Cleaned up some unneeded function exports :) 
@@ -3254,14 +3248,7 @@
 	lib/egglib/msprintf.h, lib/egglib/mstack.c, lib/egglib/mstack.h,
 	modules/perlscript/perlscript.c, modules/tclscript/tclscript.c,
 	src/Makefile.am, src/dns.c, src/logfile.c, src/main.c, src/main.h,
-	src/modules.c, src/net.c, src/registry.c, src/script.c,
-	src/egglib/.cvsignore, src/egglib/Makefile.am, src/egglib/avl.c,
-	src/egglib/avl.h, src/egglib/hash_table.c, src/egglib/hash_table.h,
-	src/egglib/hash_table_test.c, src/egglib/linked_list.c,
-	src/egglib/linked_list.h, src/egglib/linked_list_test.c,
-	src/egglib/mempool.c, src/egglib/mempool.h,
-	src/egglib/mempool_test.c, src/egglib/msprintf.c,
-	src/egglib/msprintf.h, src/egglib/mstack.c, src/egglib/mstack.h:
+	src/modules.c, src/net.c, src/registry.c, src/script.c:
 
 	Renamed src/adns, src/compat, src/egglib to lib/adns, lib/compat,
 	lib/egglib respectively.  
@@ -3297,10 +3284,7 @@
 	* Makefile.am, configure.ac, lib/Makefile.am,
 	lib/eggdrop/.cvsignore, lib/eggdrop/Makefile.am,
 	lib/eggdrop/module.h, lib/eggdrop/modvals.h, modules/.cvsignore,
-	modules/Makefile.am, modules/assoc/.cvsignore,
-	modules/assoc/Makefile.am, modules/assoc/assoc.c,
-	modules/assoc/assoc.h, modules/assoc/modinfo,
-	modules/assoc/help/assoc.help, modules/blowfish/.cvsignore,
+	modules/Makefile.am, modules/blowfish/.cvsignore,
 	modules/blowfish/Makefile.am, modules/blowfish/bf_tab.h,
 	modules/blowfish/blowfish.c, modules/blowfish/blowfish.h,
 	modules/blowfish/modinfo, modules/channels/.cvsignore,
@@ -3446,7 +3430,7 @@
 
 2001-10-22 01:49  stdarg <stdarg@techmonkeys.org>
 
-	* src/: modules.c, egglib/msprintf.h, egglib/mstack.h:
+	* src/modules.c:
 
 	* Moved msprintf and mstack to the function table (boo this is
 	temporary I hope) 
@@ -3480,8 +3464,7 @@
 
 2001-10-21 16:05  Tothwolf <tothwolf@techmonkeys.org>
 
-	* Makefile.am, scripts/Makefile.am, src/Makefile.am,
-	src/egglib/Makefile.am:
+	* Makefile.am, scripts/Makefile.am, src/Makefile.am:
 
 	* cleanups in Makefile.am files 
 
@@ -3763,8 +3746,7 @@
 2001-10-18 09:06  stdarg <stdarg@techmonkeys.org>
 
 	* src/: Makefile.am, chanprog.c, eggdrop.h, logfile.c, main.c,
-	misc.c, proto.h, script.c, script_api.h, tcl.c, tclmisc.c,
-	egglib/msprintf.c:
+	misc.c, proto.h, script.c, script_api.h, tcl.c, tclmisc.c:
 
 	Fixed a bug in msprintf.  Added SCRIPT_FREE_VAR flag, to
 	automatically free a script_var_t.  Added first config variables
@@ -3935,8 +3917,7 @@
 
 	* configure.in, src/Makefile.am, src/main.c, src/modules.c,
 	src/registry.c, src/registry.h, src/script.c, src/script_api.h,
-	src/tcl.c, src/egglib/Makefile.am, src/egglib/msprintf.c,
-	src/egglib/msprintf.h, src/egglib/mstack.c, src/egglib/mstack.h:
+	src/tcl.c:
 
 	Added code for tclscript.mod Made it compile correctly with
 	configure et al (hopefully...) Removed stuff for encodings from
@@ -4044,8 +4025,7 @@
 2001-10-11 11:34  Tothwolf <tothwolf@techmonkeys.org>
 
 	* src/: botnet.c, cmds.c, dcc.c, dccutil.c, dns.c, eggdrop.h,
-	flags.c, misc.c, tcldcc.c, tclhash.c, userent.c,
-	egglib/hash_table.c:
+	flags.c, misc.c, tcldcc.c, tclhash.c, userent.c:
 
 	* Use calloc() instead of malloc_memset macro 
 
@@ -4055,17 +4035,10 @@
 
 	Got rid of the last remnants of H_dcc.  
 
-2001-10-10 17:07  stdarg <stdarg@techmonkeys.org>
-
-	* src/egglib/linked_list.c:
-
-	Need to initialize cursors even when the pointer is passed in.  
-
 2001-10-10 14:50  Tothwolf <tothwolf@techmonkeys.org>
 
 	* acinclude.m4, configure.in, src/Makefile.am, src/dcc.c,
-	src/md5.c, src/md5.h, src/tclmisc.c, src/md5/.cvsignore,
-	src/md5/Makefile.am, src/md5/md5.h, src/md5/md5c.c:
+	src/md5.c, src/md5.h, src/tclmisc.c:
 
 	moved md5.c and md5.h from src/md5/ to src/ added header files in
 	src/ to src/Makefile.am removed redundant egglib/libegg.la entry for
@@ -4102,8 +4075,7 @@
 	src/match.c, src/mem.c, src/misc.c, src/modules.c, src/modules.h,
 	src/net.c, src/proto.h, src/tcl.c, src/tcldcc.c, src/tclhash.c,
 	src/tclhash.h, src/tcluser.c, src/userent.c, src/userrec.c,
-	src/users.c, src/users.h, src/egglib/hash_table.c,
-	src/egglib/linked_list.c:
+	src/users.c, src/users.h:
 
 	all expmem functions and support removed all memory status/debugging
 	code removed all #ifdef DEBUG_MEM code removed 
@@ -4167,13 +4139,9 @@
 	intl/loadmsgcat.c, intl/localcharset.c, intl/locale.alias,
 	intl/localealias.c, intl/ngettext.c, intl/plural.c, intl/plural.y,
 	intl/ref-add.sin, intl/ref-del.sin, intl/textdomain.c,
-	misc/config.guess, misc/config.sub, misc/install-sh,
-	misc/mkinstalldirs, misc/modconfig, po/Makefile.in.in,
-	po/eggdrop.pot, scripts/.cvsignore, scripts/Makefile.am,
-	scripts/Makefile.in, src/.cvsignore, src/Makefile.am,
-	src/Makefile.in, src/eggdrop.h, src/modules.c,
-	src/egglib/.cvsignore, src/egglib/Makefile.am, src/md5/.cvsignore,
-	src/md5/Makefile.am, src/md5/Makefile.in:
+	po/Makefile.in.in, po/eggdrop.pot, scripts/.cvsignore,
+	scripts/Makefile.am, scripts/Makefile.in, src/.cvsignore,
+	src/Makefile.am, src/Makefile.in, src/eggdrop.h, src/modules.c:
 
 	* Refactored the tree (especially src/modules.c) to use the libltdl 
 	  wrapper. Modules are configured to be lt_dlopened or dl_preopened
@@ -4430,9 +4398,8 @@
 2001-08-21 00:21  Federico Mennite <ite@techmonkeys.org>
 
 	* .cvsignore, Makefile.in, acconfig.h, aclocal.m4, bootstrap,
-	configure.in, misc/config.guess, misc/config.sub, po/.cvsignore,
-	po/POTFILES.in, po/eggdrop.pot, po/update.pl, src/Makefile.in,
-	src/eggdrop.h, src/main.c:
+	configure.in, po/.cvsignore, po/POTFILES.in, po/eggdrop.pot,
+	po/update.pl, src/Makefile.in, src/eggdrop.h, src/main.c:
 
 	Gettext phase 2: 
 	* Replced dummy _() define with the real one and added language
@@ -4505,7 +4472,7 @@
 
 2001-08-17 05:35  Jeff Fisher <guppy@techmonkeys.org>
 
-	* src/: dcc.c, tclmisc.c, md5/Makefile.in, md5/md5.h, md5/md5c.c:
+	* src/: dcc.c, tclmisc.c:
 
 	Small change to how we send USER again -- since hostname/servername
 	are ignored, send dots in their place as do most other clients ..
@@ -4549,14 +4516,6 @@
 	when people move between series and do not upgrade their motd/banner
 	.. I am one of these people.  
 
-2001-08-14 16:39  Jeff Fisher <guppy@techmonkeys.org>
-
-	* misc/cvs2cl.pl:
-
-	removed cvs2cl.pl since we have automatic changelogs setup now.
-	every 30 minutes the ChangeLog will be regenerated if anything has
-	been changed. Thanks to the irssi people for their little script.  
-
 2001-08-13 23:38  Federico Mennite <ite@techmonkeys.org>
 
 	* bootstrap:
@@ -4571,8 +4530,7 @@
 
 2001-08-13 22:51  Federico Mennite <ite@techmonkeys.org>
 
-	* .cvsignore, doc/.cvsignore, scripts/.cvsignore, src/.cvsignore,
-	src/egglib/.cvsignore, src/md5/.cvsignore:
+	* .cvsignore, doc/.cvsignore, scripts/.cvsignore, src/.cvsignore:
 
 	Added .cvsignore files to ease committer's life.  
 
@@ -4607,7 +4565,7 @@
 	doc/settings/CONTENTS, doc/settings/contents,
 	doc/settings/core.settings, help/core.help, src/Makefile.in,
 	src/eggdrop.h, src/lang.h, src/language.c, src/main.c, src/main.h,
-	src/mem.c, src/modules.c, src/proto.h, src/md5/Makefile.in:
+	src/mem.c, src/modules.c, src/proto.h:
 
 	Good bye language.c, lang.h, we knew you so well yet hated you 
 
@@ -4804,13 +4762,6 @@
 
 	byteorder problem 
 
-2001-08-07 14:16  Matthew Hallacy <poptix@techmonkeys.org>
-
-	* misc/cvs2cl.pl:
-
-	This script parses cvs logs and creates the Changelog file, you
-	should make sure it ignores changes to the file 'Changelog' =) 
-
 2001-08-07 13:57  Matthew Hallacy <poptix@techmonkeys.org>
 
 	* src/patch.h:
@@ -4905,15 +4856,6 @@
 	src/tclegg.h, src/tclmisc.c:
 
 	sync'd the lastest 1.6 cvs w/ 1.7 
-
-2001-07-25 20:32  stdarg <stdarg@techmonkeys.org>
-
-	* src/egglib/: avl.c, avl.h, hash_table.c, hash_table.h,
-	hash_table_test.c, libegg.so, linked_list.c, linked_list.h,
-	linked_list_test.c, mempool.c, mempool.h, mempool_test.c,
-	libegg.so:
-
-	[no log message] 
 
 2001-07-25 04:21  Jeff Fisher <guppy@techmonkeys.org>
 
@@ -5071,7 +5013,7 @@
 
 2001-07-09 15:57  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, misc/modconfig:
+	* doc/UPDATES1.6:
 
 	applied Fabian's modconfig patch ... should I release 1.6.5
 	tomorrow? all signs point to yes 
@@ -5643,17 +5585,16 @@
 2001-04-12 02:39  Jeff Fisher <guppy@techmonkeys.org>
 
 	* FEATURES, INSTALL, NEWS, README, doc/AUTHORS, doc/UPDATES1.6,
-	doc/html/readme.html, doc/man1/eggdrop.1, misc/modconfig,
-	scripts/ques5.tcl, src/bg.c, src/bg.h, src/botcmd.c, src/botmsg.c,
-	src/botnet.c, src/chan.h, src/chanprog.c, src/cmds.c, src/cmdt.h,
-	src/dcc.c, src/dccutil.c, src/dns.c, src/dns.h, src/eggdrop.h,
-	src/flags.c, src/flags.h, src/lang.h, src/language.c, src/main.c,
-	src/main.h, src/mem.c, src/misc.c, src/misc_file.c,
-	src/misc_file.h, src/modules.h, src/patch.h, src/proto.h,
-	src/stat.h, src/tandem.h, src/tcl.c, src/tcldcc.c, src/tclegg.h,
-	src/tclhash.c, src/tclhash.h, src/tclmisc.c, src/tcluser.c,
-	src/userent.c, src/userrec.c, src/users.c, src/users.h,
-	text/banner, text/motd:
+	doc/html/readme.html, doc/man1/eggdrop.1, scripts/ques5.tcl,
+	src/bg.c, src/bg.h, src/botcmd.c, src/botmsg.c, src/botnet.c,
+	src/chan.h, src/chanprog.c, src/cmds.c, src/cmdt.h, src/dcc.c,
+	src/dccutil.c, src/dns.c, src/dns.h, src/eggdrop.h, src/flags.c,
+	src/flags.h, src/lang.h, src/language.c, src/main.c, src/main.h,
+	src/mem.c, src/misc.c, src/misc_file.c, src/misc_file.h,
+	src/modules.h, src/patch.h, src/proto.h, src/stat.h, src/tandem.h,
+	src/tcl.c, src/tcldcc.c, src/tclegg.h, src/tclhash.c,
+	src/tclhash.h, src/tclmisc.c, src/tcluser.c, src/userent.c,
+	src/userrec.c, src/users.c, src/users.h, text/banner, text/motd:
 
 	lets update the copyright info for 2001 k? :P~ 
 
@@ -6832,12 +6773,6 @@
 
 	fabian: applied udef_inactivechan_fix patch 
 
-2000-09-13 19:44  Fabian Knittel <fknittel@gmx.de>
-
-	* src/md5/global.h:
-
-	fabian: forgot to remove md5/global.h 
-
 2000-09-12 15:29  Fabian Knittel <fknittel@gmx.de>
 
 	* eggdrop.advanced.conf, eggdrop.complete.conf, doc/UPDATES1.5,
@@ -6856,7 +6791,7 @@
 
 	* config.h.in, configure, configure.in, doc/UPDATES1.5,
 	src/Makefile.in, src/cmds.c, src/main.h, src/misc.c, src/patch.h,
-	src/tclmisc.c, src/users.c, src/md5/Makefile.in:
+	src/tclmisc.c, src/users.c:
 
 	fabian: strftime_compat patch 
 
@@ -6900,8 +6835,7 @@
 
 	* configure.in, doc/UPDATES1.5, src/Makefile.in, src/botnet.c,
 	src/dcc.c, src/dns.c, src/dns.h, src/eggdrop.h, src/main.h,
-	src/net.c, src/patch.h, src/tcldcc.c, src/tclmisc.c, src/userent.c,
-	src/md5/Makefile.in, src/md5/md5.h, src/md5/md5c.c:
+	src/net.c, src/patch.h, src/tcldcc.c, src/tclmisc.c, src/userent.c:
 
 	fabian: cleanup_types patch 
 
@@ -7131,7 +7065,7 @@
 
 2000-08-18 01:06  Fabian Knittel <fknittel@gmx.de>
 
-	* disabled_modules, doc/UPDATES1.5, misc/modconfig, src/patch.h:
+	* disabled_modules, doc/UPDATES1.5, src/patch.h:
 
 	Tothwolf's fixspaces patch 
 
@@ -7336,8 +7270,7 @@
 2000-07-23 20:47  Fabian Knittel <fknittel@gmx.de>
 
 	* Makefile.in, aclocal.m4, doc/Makefile.in, doc/UPDATES1.4,
-	scripts/Makefile.in, src/Makefile.in, src/patch.h,
-	src/md5/Makefile.in:
+	scripts/Makefile.in, src/Makefile.in, src/patch.h:
 
 	1.4 resync, autoconf_shell_fix patch 
 
@@ -7760,7 +7693,7 @@
 2000-04-25 20:49  Fabian Knittel <fknittel@gmx.de>
 
 	* Makefile.in, configure, configure.in, doc/UPDATES1.5,
-	misc/modconfig, src/patch.h:
+	src/patch.h:
 
 	conf_make_fix9 patch 
 
@@ -7837,39 +7770,13 @@
 	html/mod-irc.html, html/mod-notes.html, html/mod-server.html,
 	html/mod-share.html, html/mod-wire.html, html/news.html,
 	html/party.html, html/readme.html, html/sharing.html,
-	html/starting.html, html/users.html, web_docs/about.html,
-	web_docs/app-botnet.html, web_docs/app-probs.html,
-	web_docs/app-textsub.html, web_docs/app-tricks.html,
-	web_docs/app-weird.html, web_docs/bans.html, web_docs/botnet.html,
-	web_docs/compiling.html, web_docs/egg-core.html,
-	web_docs/faq1.html, web_docs/faqs.html, web_docs/features.html,
-	web_docs/flags.html, web_docs/index.html, web_docs/install.html,
-	web_docs/mod-assoc.html, web_docs/mod-blowfish.html,
-	web_docs/mod-channels.html, web_docs/mod-compress.html,
-	web_docs/mod-dns.html, web_docs/mod-filesys.html,
-	web_docs/mod-irc.html, web_docs/mod-notes.html,
-	web_docs/mod-server.html, web_docs/mod-share.html,
-	web_docs/mod-wire.html, web_docs/news.html, web_docs/party.html,
-	web_docs/readme.html, web_docs/sharing.html,
-	web_docs/starting.html, web_docs/users.html:
+	html/starting.html, html/users.html:
 
 	renaming of web_docs to html 
 
-2000-04-13 09:52  jason
-
-	* doc/web_docs/: install.html, readme.html:
-
-	[no log message] 
-
-2000-04-12 15:25  jason
-
-	* doc/web_docs/faq1.html:
-
-	addition of faq 
-
 2000-04-11 08:58  jason
 
-	* doc/: UPDATES1.5, web_docs/app-textsub.html, web_docs/index.html:
+	* doc/UPDATES1.5:
 
 	toth's addition of textfile substituion to webdocs 
 
@@ -7885,38 +7792,9 @@
 
 	This patch adds the ghost bug to the KNOWN-PROBLEMS file..Johoho 
 
-2000-04-10 14:35  jason
-
-	* doc/web_docs/: mod-share.html, mod-wire.html:
-
-	silly mistakes to web_docs 
-
-2000-04-10 14:26  jason
-
-	* doc/web_docs/: app-tcl-commands.html, faqs.html:
-
-	changes to webdocs 
-
-2000-04-10 14:24  jason
-
-	* doc/web_docs/egg-core.html:
-
-	[no log message] 
-
 2000-04-10 14:22  jason
 
-	* doc/: UPDATES1.5, web_docs/about.html, web_docs/app-botnet.html,
-	web_docs/app-probs.html, web_docs/app-tricks.html,
-	web_docs/app-weird.html, web_docs/bans.html, web_docs/botnet.html,
-	web_docs/compiling.html, web_docs/features.html,
-	web_docs/flags.html, web_docs/index.html, web_docs/install.html,
-	web_docs/mod-assoc.html, web_docs/mod-blowfish.html,
-	web_docs/mod-channels.html, web_docs/mod-compress.html,
-	web_docs/mod-dns.html, web_docs/mod-filesys.html,
-	web_docs/mod-irc.html, web_docs/mod-notes.html,
-	web_docs/mod-server.html, web_docs/news.html, web_docs/party.html,
-	web_docs/readme.html, web_docs/sharing.html,
-	web_docs/starting.html, web_docs/users.html:
+	* doc/UPDATES1.5:
 
 	doc/web_docs changes 
 
@@ -8010,8 +7888,7 @@
 	* doc/CONTENTS, doc/MODULES, doc/Makefile.in, doc/UPDATES1.4,
 	doc/UPDATES1.5, doc/motd.settings, doc/readme,
 	doc/text-substitutions.doc, doc/settings/contents,
-	doc/settings/mod.woobie, doc/settings/tricks,
-	doc/web_docs/readme.html, src/patch.h:
+	doc/settings/mod.woobie, doc/settings/tricks, src/patch.h:
 
 	Wiktor's miscdoc patch 
 
@@ -8024,8 +7901,7 @@
 
 2000-03-24 23:00  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/Makefile.in, src/patch.h,
-	src/md5/Makefile.in:
+	* doc/UPDATES1.5, src/Makefile.in, src/patch.h:
 
 	conf_make_fix7 patch 
 
@@ -8037,8 +7913,7 @@
 	src/dccutil.c, src/dns.c, src/eggdrop.h, src/flags.c, src/main.c,
 	src/main.h, src/mem.c, src/misc.c, src/modules.c, src/net.c,
 	src/patch.h, src/proto.h, src/tcl.c, src/tcldcc.c, src/tclhash.c,
-	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c,
-	src/md5/Makefile.in, src/md5/md5c.c:
+	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c:
 
 	conf_make_fix6 patch 
 
@@ -8059,24 +7934,17 @@
 
 	* Makefile.in, acconfig.h, aclocal.m4, config.h.in, configure,
 	configure.in, doc/Makefile.in, doc/UPDATES1.4, doc/UPDATES1.5,
-	misc/modconfig, scripts/Makefile.in, src/Makefile.in, src/botmsg.c,
-	src/dcc.c, src/dccutil.c, src/dns.c, src/main.h, src/misc.c,
-	src/misc_file.c, src/misc_file.h, src/modules.c, src/patch.h,
-	src/proto.h, src/tclegg.h, src/md5/Makefile.in:
+	scripts/Makefile.in, src/Makefile.in, src/botmsg.c, src/dcc.c,
+	src/dccutil.c, src/dns.c, src/main.h, src/misc.c, src/misc_file.c,
+	src/misc_file.h, src/modules.c, src/patch.h, src/proto.h,
+	src/tclegg.h:
 
 	configure_makefile_fix3 patch 
 
 2000-03-22 00:38  Fabian Knittel <fknittel@gmx.de>
 
 	* FEATURES, INSTALL, NEWS, README, doc/UPDATES1.5,
-	doc/compiling.FAQ, doc/web_docs/app-botnet.html,
-	doc/web_docs/app-tcl-commands.html, doc/web_docs/compiling.html,
-	doc/web_docs/features.html, doc/web_docs/index.html,
-	doc/web_docs/mod-channels.html, doc/web_docs/mod-compress.html,
-	doc/web_docs/mod-dns.html, doc/web_docs/mod-filesys.html,
-	doc/web_docs/mod-irc.html, doc/web_docs/mod-notes.html,
-	doc/web_docs/mod-server.html, doc/web_docs/news.html,
-	doc/web_docs/readme.html, src/patch.h:
+	doc/compiling.FAQ, src/patch.h:
 
 	Jason's webdocs patch for 1.5 
 
@@ -8124,19 +7992,7 @@
 2000-03-19 23:32  Fabian Knittel <fknittel@gmx.de>
 
 	* aclocal.m4, configure, doc/UPDATES1.4, doc/compiling.FAQ,
-	doc/web_docs/about.html, doc/web_docs/app-botnet.html,
-	doc/web_docs/app-probs.html, doc/web_docs/app-tcl-commands.html,
-	doc/web_docs/app-tricks.html, doc/web_docs/app-weird.html,
-	doc/web_docs/bans.html, doc/web_docs/botnet.html,
-	doc/web_docs/compiling.html, doc/web_docs/features.html,
-	doc/web_docs/flags.html, doc/web_docs/index.html,
-	doc/web_docs/install.html, doc/web_docs/mod-assoc.html,
-	doc/web_docs/mod-blowfish.html, doc/web_docs/mod-channels.html,
-	doc/web_docs/mod-filesys.html, doc/web_docs/mod-irc.html,
-	doc/web_docs/mod-notes.html, doc/web_docs/mod-server.html,
-	doc/web_docs/news.html, doc/web_docs/party.html,
-	doc/web_docs/readme.html, doc/web_docs/sharing.html,
-	doc/web_docs/starting.html, doc/web_docs/users.html, src/patch.h:
+	src/patch.h:
 
 	1.4 resync, Mar20 
 
@@ -8150,8 +8006,7 @@
 2000-03-06 18:54  Fabian Knittel <fknittel@gmx.de>
 
 	* Makefile.in, aclocal.m4, configure, configure.in, lush.h.in,
-	doc/Makefile.in, doc/UPDATES1.5, misc/modconfig,
-	scripts/Makefile.in, src/patch.h:
+	doc/Makefile.in, doc/UPDATES1.5, scripts/Makefile.in, src/patch.h:
 
 	configure_fix2,3 patches 
 
@@ -8164,8 +8019,8 @@
 2000-03-05 23:22  Fabian Knittel <fknittel@gmx.de>
 
 	* Makefile.in, aclocal.m4, configure, configure.in, install-sh,
-	mkinstalldirs, doc/UPDATES1.4, doc/UPDATES1.5, misc/install-sh,
-	misc/mkinstalldirs, misc/modconfig, src/main.c, src/patch.h:
+	mkinstalldirs, doc/UPDATES1.4, doc/UPDATES1.5, src/main.c,
+	src/patch.h:
 
 	configure_fix patch 
 
@@ -8600,8 +8455,7 @@
 2000-01-06 19:45  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.4, src/main.c, src/misc.c, src/modules.c,
-	src/modules.h, src/net.c, src/patch.h, src/tclegg.h, src/userrec.c,
-	src/md5/global.h:
+	src/modules.h, src/net.c, src/patch.h, src/tclegg.h, src/userrec.c:
 
 	errors_fix, simialer to 1.4 
 
@@ -8621,7 +8475,7 @@
 2000-01-01 19:42  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.5, src/dns.c, src/main.c, src/modules.c,
-	src/patch.h, src/proto.h, src/md5/md5c.c:
+	src/patch.h, src/proto.h:
 
 	bzero_memset patch 
 
@@ -8883,8 +8737,7 @@
 	src/proto.h, src/rfc1459.c, src/tandem.h, src/tcl.c, src/tcldcc.c,
 	src/tclegg.h, src/tclhash.c, src/tclhash.h, src/tclmisc.c,
 	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c,
-	src/users.h, src/md5/Makefile.in, src/md5/global.h, src/md5/md5.h,
-	src/md5/md5c.c:
+	src/users.h:
 
 	Tothwolf's id-header 
 
@@ -8955,7 +8808,7 @@
 1999-12-12 22:14  Fabian Knittel <fknittel@gmx.de>
 
 	* config.h.in, configure, configure.in, doc/UPDATES1.5,
-	src/eggdrop.h, src/md5/global.h, src/md5/md5c.c, src/patch.h:
+	src/eggdrop.h, src/patch.h:
 
 	32 bit usage made consistent - patch :) 
 
@@ -9193,7 +9046,7 @@
 	src/chanprog.c, src/cmds.c, src/dcc.c, src/dccutil.c, src/main.c,
 	src/main.h, src/mem.c, src/modules.c, src/patch.h, src/proto.h,
 	src/tcl.c, src/tcldcc.c, src/tclegg.h, src/tclhash.c,
-	src/tclmisc.c, src/tcluser.c, src/userent.c, src/md5/Makefile.in:
+	src/tclmisc.c, src/tcluser.c, src/userent.c:
 
 	Resync with 1.4 
 
@@ -9283,8 +9136,7 @@
 	src/dns.c, src/eggdrop.h, src/main.c, src/main.h, src/mem.c,
 	src/misc.c, src/modules.c, src/net.c, src/patch.h, src/proto.h,
 	src/tandem.h, src/tcl.c, src/tcldcc.c, src/tcluser.c,
-	src/userent.c, src/userrec.c, src/users.c, src/md5/Makefile,
-	src/md5/Makefile.in:
+	src/userent.c, src/userrec.c, src/users.c:
 
 	resync with 1.3 tree, 939863113-940380771 
 
@@ -9425,8 +9277,7 @@
 	src/net.c, src/patch.h, src/proto.h, src/rfc1459.c, src/rfc1459.h,
 	src/tandem.h, src/tcl.c, src/tcldcc.c, src/tclegg.h, src/tclhash.c,
 	src/tclhash.h, src/tclmisc.c, src/tcluser.c, src/userent.c,
-	src/userrec.c, src/users.c, src/users.h, src/md5/Makefile,
-	src/md5/global.h, src/md5/md5.h, src/md5/md5c.c:
+	src/userrec.c, src/users.c, src/users.h:
 
 	Initial commit based off of .29 cvs 
 
