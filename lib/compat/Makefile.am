@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.8 2003/03/06 12:40:46 tothwolf Exp $
+# $Id: Makefile.am,v 1.9 2003/03/06 13:49:53 tothwolf Exp $
 
 ## libcompat is built as convenience library
 
@@ -9,7 +9,7 @@ INCLUDES		= -I$(top_builddir) -I$(top_srcdir)
 noinst_LTLIBRARIES	= libcompat.la
 
 # LIBOBJS files are automatically added to the 'make dist' tarball
-libcompat_la_LIBADD	= @LIBOBJS@ $(SNPRINTF_LIBS)
+libcompat_la_LIBADD	= @LTLIBOBJS@ $(SNPRINTF_LIBS)
 
 libcompat_la_SOURCES	= compat.h \
 			getopt.h \
