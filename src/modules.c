@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: modules.c,v 1.109 2002/05/05 16:40:38 tothwolf Exp $";
+static const char rcsid[] = "$Id: modules.c,v 1.110 2002/05/12 06:12:07 stdarg Exp $";
 #endif
 
 #include "main.h"		/* NOTE: when removing this, include config.h */
@@ -510,11 +510,7 @@ Function global_table[] =
   (Function) 0,
   (Function) 0,
   (Function) clear_chanlist_member,
-#if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
-  (Function) str_nutf8tounicode,
-#else
   (Function) 0,
-#endif
   /* 268 - 271 */
   (Function) & socklist,              /* sock_list *                      */
   (Function) sockoptions,

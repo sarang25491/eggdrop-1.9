@@ -27,7 +27,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: misc.c,v 1.64 2002/05/05 16:40:38 tothwolf Exp $";
+static const char rcsid[] = "$Id: misc.c,v 1.65 2002/05/12 06:12:07 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -175,38 +175,6 @@ void maskhost(const char *s, char *nw)
     }
   }
 }
-
-#if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
-/* Converts an UTF-8 string to unicode safe string
- */
-void str_nutf8tounicode(char *str, int len)
-{
-  Tcl_DString       ds_conversion;
-  Tcl_SavedResult   sr_oldresult;
-
-  /* Don't call this before calling init_tcl() */
-  if (interp) {
-    Tcl_DStringInit(&ds_conversion);
-
-    /* save our old result */
-    Tcl_SaveResult(interp, &sr_oldresult);
-
-    /* clear any previous interp->result */
-    Tcl_ResetResult(interp);
-
-    /* convert UTF-8 to unicode */
-    Tcl_UtfToExternalDString(NULL, str, -1, &ds_conversion);
-    Tcl_DStringResult(interp, &ds_conversion);
-    strlcpy(str, interp->result, len);
-
-    /* restore our old result */
-    Tcl_RestoreResult(interp, &sr_oldresult);
-
-    /* free our DString buffers */
-    Tcl_DStringFree(&ds_conversion);
-  }
-}
-#endif
 
 /* Dump a potentially super-long string of text.
  */

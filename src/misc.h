@@ -26,7 +26,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: misc.h,v 1.4 2002/05/05 16:40:38 tothwolf Exp $
+ * $Id: misc.h,v 1.5 2002/05/12 06:12:07 stdarg Exp $
  */
 
 #ifndef _EGG_MISC_H
@@ -60,9 +60,6 @@ extern char *extracthostname(char *);
 extern void show_telnet_banner(int i);
 extern void make_rand_str(char *, int);
 extern int oatoi(const char *);
-#if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
-extern void str_nutf8tounicode(char *str, int len);
-#endif
 extern void kill_bot(char *, char *);
 
 #endif				/* !MAKING_MODS */

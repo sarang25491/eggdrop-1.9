@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: module.h,v 1.20 2002/05/05 16:40:32 tothwolf Exp $
+ * $Id: module.h,v 1.21 2002/05/12 06:12:07 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_MODULE_H
@@ -426,9 +426,6 @@
 /* #define str_unescape ((void (*)(char *, register const char))egg->global[264]) */
 /* #define egg_strcatn ((int (*)(char *dst, const char *src, size_t max))egg->global[265]) */
 #define clear_chanlist_member ((void (*)(const char *nick))egg->global[266])
-#if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
-#define str_nutf8tounicode ((int (*)(char *str, int len))egg->global[267])
-#endif
 /* 268 - 271 */
 /* Please don't modify socklist directly, unless there's no other way.
  * Its structure might be changed, or it might be completely removed,

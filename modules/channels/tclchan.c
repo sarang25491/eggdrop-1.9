@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: tclchan.c,v 1.15 2002/05/05 16:40:33 tothwolf Exp $";
+static const char rcsid[] = "$Id: tclchan.c,v 1.16 2002/05/12 06:12:07 stdarg Exp $";
 #endif
 */
 
@@ -958,11 +958,6 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
   strncat(buf, glob_chanset, 2047 - strlen(buf));
   strncat(buf, options, 2047 - strlen(buf));
   buf[2047] = 0;
-#if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
-  str_nutf8tounicode(newname, strlen(newname) + 1);
-  str_nutf8tounicode(buf2, sizeof buf2);
-  str_nutf8tounicode(buf, sizeof buf);
-#endif
 
   if (Tcl_SplitList(NULL, buf, &items, &item) != TCL_OK)
     return TCL_ERROR;

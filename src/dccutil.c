@@ -27,7 +27,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dccutil.c,v 1.51 2002/05/05 16:40:38 tothwolf Exp $";
+static const char rcsid[] = "$Id: dccutil.c,v 1.52 2002/05/12 06:12:07 stdarg Exp $";
 #endif
 
 #include <sys/stat.h>
@@ -106,22 +106,10 @@ void dprintf EGG_VARARGS_DEF(int, arg1)
 
   idx = EGG_VARARGS_START(int, arg1, va);
   format = va_arg(va, char *);
-  vsnprintf(buf, 1023, format, va);
+  len = vsnprintf(buf, 1023, format, va);
   va_end(va);
-  /* We can not use the return value vsnprintf() to determine where
-   * to null terminate. The C99 standard specifies that vsnprintf()
-   * shall return the number of bytes that would be written if the
-   * buffer had been large enough, rather then -1.
-   */
-  /* We actually can, since if it's < 0 or >= sizeof(buf), we know it wrote
-   * sizeof(buf) bytes. But we're not doing that anyway.
-  */
-  buf[sizeof(buf)-1] = 0;
-
-#if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
-  str_nutf8tounicode(buf, sizeof buf);
-#endif
-  len = strlen(buf);
+  if (len < 0 || len >= sizeof(buf)) len = sizeof(buf)-1;
+  buf[len] = 0;
 
   if (idx < 0) {
     tputs(-idx, buf, len);

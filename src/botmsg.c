@@ -26,7 +26,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: botmsg.c,v 1.34 2002/05/05 16:40:37 tothwolf Exp $";
+static const char rcsid[] = "$Id: botmsg.c,v 1.35 2002/05/12 06:12:07 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -67,13 +67,11 @@ void tandout_but EGG_VARARGS_DEF(int, arg1)
 
   x = EGG_VARARGS_START(int, arg1, va);
   format = va_arg(va, char *);
-  vsnprintf(s, 511, format, va);
+  len = vsnprintf(s, 511, format, va);
   va_end(va);
-  s[sizeof(s)-1] = 0;
+  if (len < 0 || len >= sizeof(s)) len = sizeof(s)-1;
+  s[len] = 0;
 
-#if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
-  str_nutf8tounicode(s, sizeof s);
-#endif
   len = strlen(s);
 
   for (i = 0; i < dcc_total; i++)
@@ -196,10 +194,6 @@ void botnet_send_priv EGG_VARARGS_DEF(int, arg1)
   vsnprintf(tbuf, 450, format, va);
   va_end(va);
   tbuf[sizeof(tbuf)-1] = 0;
-
-#if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
-  str_nutf8tounicode(tbuf, sizeof tbuf);
-#endif
 
   if (tobot) {
 #ifndef NO_OLD_BOTNET
