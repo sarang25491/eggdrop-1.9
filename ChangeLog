@@ -1,3 +1,13 @@
+2003-08-19 18:20  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/Makefile.am, lib/eggdrop/eggdrop.h,
+	lib/eggdrop/eggstring.c, lib/eggdrop/eggstring.h,
+	modules/server/dcc.c, modules/server/dcc.h,
+	modules/server/dcc_commands.c, modules/server/scriptcmds.c,
+	src/Makefile.am, src/core_party.c:
+
+	[no log message] 
+
 2003-08-13 06:27  stdarg <stdarg@techmonkeys.org>
 
 	* doc/internals/network.txt, doc/internals/timers.txt,
