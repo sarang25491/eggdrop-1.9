@@ -1,3 +1,9 @@
+2001-12-01 14:39  Federico Mennite <ite@techmonkeys.org>
+
+	* src/tcluser.c:
+
+	chattr hand crashed. Patch by stdarg <stdarg@techmonkeys.org> 
+
 2001-12-01 14:27  Federico Mennite <ite@techmonkeys.org>
 
 	* modules/irc/mode.c:
