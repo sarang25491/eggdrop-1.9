@@ -1,7 +1,7 @@
 /*
  * tclhash.h
  *
- * $Id: tclhash.h,v 1.16 2001/10/07 04:02:54 stdarg Exp $
+ * $Id: tclhash.h,v 1.17 2001/10/09 12:42:13 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -131,7 +131,9 @@ typedef struct tcl_bind_list_b {
 inline void garbage_collect_tclhash(void);
 
 void init_bind(void);
+void init_bind2(void);
 void kill_bind(void);
+void kill_bind2(void);
 int expmem_tclhash(void);
 
 tcl_bind_list_t *add_bind_table(const char *nme, int flg, Function func);
