@@ -14,7 +14,15 @@ int server_err(int idx, int err, void *client_data)
 
 int server_connect(int idx, void *client_data)
 {
-	printf("Connected to server!\n");
+	static int baa = 0;
+
+	if (!baa) {
+		printf("Connected to server!\n");
+		sslmode_on(idx);
+		zipmode_on(idx);
+		linemode_on(idx);
+		baa++;
+	}
 	return(0);
 }
 
@@ -49,7 +57,8 @@ int stdin_read(int idx, sockbuf_iobuf_t *data, void *client_data)
 
 int stdin_eof(int idx, void *client_data)
 {
-	exit(0);
+	sockbuf_delete(idx);
+	return(0);
 }
 
 static sockbuf_event_t stdin_event = {
@@ -64,15 +73,24 @@ static sockbuf_event_t stdin_event = {
 main (int argc, char *argv[])
 {
 	int sock, port, stdin_idx;
+	char *host;
 
+	srand(time(0));
 	if (argc < 2) {
-		printf("syntax: %s <server> [port]\n", argv[0]);
-		return(0);
+		host = "127.0.0.1";
+		port = 12345;
 	}
-	if (argc < 3) port = 7000;
-	else port = atoi(argv[2]);
+	else if (argc == 2) {
+		host = argv[1];
+		port = 12345;
+	}
+	else {
+		host = argv[1];
+		port = atoi(argv[2]);
+	}
 
-	sock = socket_create(argv[1], port, SOCKET_CLIENT);
+	printf("Connecting to %s %d\n", host, port);
+	sock = socket_create(host, port, SOCKET_CLIENT);
 	if (sock < 0) {
 		perror("socket_create");
 		return(0);
@@ -81,8 +99,9 @@ main (int argc, char *argv[])
 	socket_set_nonblock(0, 1);
 	server_idx = sockbuf_new(sock, SOCKBUF_CLIENT);
 	sockbuf_set_handler(server_idx, server_event, NULL);
-	zipmode_on(server_idx);
-	linemode_on(server_idx);
+	//zipmode_on(server_idx);
+	//linemode_on(server_idx);
+	sslmode_init();
 
 	stdin_idx = sockbuf_new(0, 0);
 	sockbuf_set_handler(stdin_idx, stdin_event, NULL);

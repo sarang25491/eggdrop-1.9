@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <signal.h>
 #include "my_socket.h"
 #include "sockbuf.h"
 
@@ -10,8 +11,10 @@ static int client_read(int idx, sockbuf_iobuf_t *iobuf, void *client_data)
 	char buf[128];
 	int i, buflen;
 
+	//printf("read %d from %d\n", iobuf->len, idx);
 	iobuf->data[iobuf->len] = 0;
 	snprintf(buf, 128, "<%d> %s\n", idx, iobuf->data);
+	//printf("%s", buf);
 	buflen = strlen(buf);
 	iobuf->data[iobuf->len++] = '\n';
 	for (i = 0; i < array_len; i++) {
@@ -27,6 +30,7 @@ static int client_eof(int idx, void *ignore, void *client_data)
 	char buf[128];
 	int i, buflen;
 
+	printf("eof from %d\n", idx);
 	for (i = 0; i < array_len; i++) {
 		if (idx_array[i] == idx) break;
 	}
@@ -60,6 +64,7 @@ static int server_read(int idx, int serversock, void *client_data)
 
 	socket_set_nonblock(newsock, 1);
 	newidx = sockbuf_new(newsock, 0);
+	sslmode_on(newidx);
 	zipmode_on(newidx);
 	linemode_on(newidx);
 	sockbuf_set_handler(newidx, client_handler, NULL);
@@ -86,6 +91,9 @@ main ()
 {
 	int sock, idx;
 
+	signal(SIGPIPE, SIG_IGN);
+	srand(time(0));
+	sslmode_init();
 	sock = socket_create(NULL, 12345, SOCKET_SERVER);
 	if (sock < 0) {
 		perror("socket_create");

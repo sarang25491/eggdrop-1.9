@@ -48,16 +48,30 @@ int sockbuf_filter(int idx, int event, int level, void *arg)
 	sockbuf_t *sbuf = &sockbufs[idx];
 
 	/* Search for the first filter that handles this event. */
-	for (found = 0; level < sbuf->nfilters; level++) {
-		if ((int) (sbuf->filters[level][0]) <= event) continue;
-		if ((callback = sbuf->filters[level][event+2])) {
-			found = 1;
-			break;
+	/* SOCKBUF_WRITE needs to be processed backwards. */
+	if (event == SOCKBUF_WRITE) {
+		level--;
+		for (found = 0; level >= 0; level--) {
+			if ((int) (sbuf->filters[level][0]) <= event) continue;
+			if ((callback = sbuf->filters[level][event+2])) {
+				found = 1;
+				break;
+			}
+		}
+	}
+	else {
+		level++;
+		for (found = 0; level < sbuf->nfilters; level++) {
+			if ((int) (sbuf->filters[level][0]) <= event) continue;
+			if ((callback = sbuf->filters[level][event+2])) {
+				found = 1;
+				break;
+			}
 		}
 	}
 
-	if (found) {
-		retval = callback(idx, event, level+1, arg, sbuf->filter_client_data[level]);
+	if (found > 0) {
+		retval = callback(idx, event, level, arg, sbuf->filter_client_data[level]);
 	}
 	else if ((int) sbuf->on[0] > event) {
 		callback = sockbufs[idx].on[event+2];
@@ -72,6 +86,16 @@ int sockbuf_filter(int idx, int event, int level, void *arg)
 	}
 
 	return(retval);
+}
+
+int sockbuf_write_filter(int idx, int level, unsigned char *data, int len)
+{
+	sockbuf_iobuf_t my_iobuf;
+
+	my_iobuf.data = data;
+	my_iobuf.len = len;
+	my_iobuf.max = len;
+	return sockbuf_filter(idx, SOCKBUF_WRITE, level, &my_iobuf);
 }
 
 /* Mark a sockbuf as blocked and put it on the POLLOUT list. */
@@ -100,14 +124,14 @@ static int sockbuf_unblock(int idx)
 			break;
 		}
 	}
-	sockbuf_filter(idx, SOCKBUF_EMPTY, 0, NULL);
+	sockbuf_filter(idx, SOCKBUF_EMPTY, -1, NULL);
 	return(0);
 }
 
 /* Eof occurs on a socket. */
 static int sockbuf_eof(int idx)
 {
-	sockbuf_filter(idx, SOCKBUF_EOF, 0, NULL);
+	sockbuf_filter(idx, SOCKBUF_EOF, -1, NULL);
 	return(0);
 }
 
@@ -120,7 +144,7 @@ static int sockbuf_err(int idx, int err)
 		if (!err) return(0);
 	}
 
-	sockbuf_filter(idx, SOCKBUF_ERR, 0, NULL);
+	sockbuf_filter(idx, SOCKBUF_ERR, -1, NULL);
 	return(err);
 }
 
@@ -133,7 +157,7 @@ int sockbuf_write(int idx, unsigned char *data, int len)
 	iobuf.len = len;
 	iobuf.max = len;
 
-	return sockbuf_filter(idx, SOCKBUF_WRITE, 0, &iobuf);
+	return sockbuf_filter(idx, SOCKBUF_WRITE, sockbufs[idx].nfilters, &iobuf);
 }
 
 static int sockbuf_real_write(int idx, sockbuf_iobuf_t *iobuf)
@@ -210,7 +234,7 @@ static int sockbuf_read(int idx)
 
 	/* If it's a server socket, this means there is a connection waiting. */
 	if (sbuf->flags & SOCKBUF_SERVER) {
-		sockbuf_filter(idx, SOCKBUF_READ, 0, (void *)sbuf->sock);
+		sockbuf_filter(idx, SOCKBUF_READ, -1, (void *)sbuf->sock);
 		return(0);
 	}
 
@@ -219,7 +243,7 @@ static int sockbuf_read(int idx)
 		iobuf.data = buf;
 		iobuf.len = nbytes;
 		iobuf.max = 4096;
-		sockbuf_filter(idx, SOCKBUF_READ, 0, &iobuf);
+		sockbuf_filter(idx, SOCKBUF_READ, -1, &iobuf);
 	}
 	else if (nbytes < 0) {
 		sockbuf_err(idx, errno);
@@ -277,6 +301,9 @@ int sockbuf_delete(int idx)
 {
 	sockbuf_t *sbuf = &sockbufs[idx];
 	int i;
+
+	/* Close the file descriptor. */
+	close(sbuf->sock);
 
 	/* Free its output buffer. */
 	if (sbuf->outbuf.data) free(sbuf->outbuf.data);
@@ -420,8 +447,8 @@ int sockbuf_update_all(int timeout)
 		/* Common case: no activity. */
 		if (!pollfds[i].revents) continue;
 
-		if (pollfds[i].revents & POLLIN) sockbuf_read(idx_array[i]);
-		if (i < nsocks && pollfds[i].revents & POLLOUT) sockbuf_flush(idx_array[i]);
+		if (pollfds[i].revents & POLLOUT) sockbuf_flush(idx_array[i]);
+		if (i < nsocks && pollfds[i].revents & POLLIN) sockbuf_read(idx_array[i]);
 		if (i < nsocks && pollfds[i].revents & POLLHUP) sockbuf_eof(idx_array[i]);
 		if (i < nsocks && pollfds[i].revents & (POLLERR|POLLNVAL)) sockbuf_err(idx_array[i], -1);
 		n--;

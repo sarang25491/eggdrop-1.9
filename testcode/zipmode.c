@@ -46,6 +46,8 @@ static int zipmode_eof_and_err(int idx, int event, int level, void *ignore, zipm
 		iobuf.max = sizeof(buf);
 		sockbuf_filter(idx, SOCKBUF_READ, level, &iobuf);
 	}
+	printf("zip stats: input %d compressed / %d uncompressed\n", zip->instream.total_in, zip->instream.total_out);
+	printf("zip stats: output %d compressed / %d uncompressed\n", zip->outstream.total_out, zip->outstream.total_in);
 	/* And now continue the EOF/ERR event chain. */
 	sockbuf_filter(idx, event, level, ignore);
 	return(0);
