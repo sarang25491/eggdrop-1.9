@@ -22,12 +22,28 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: tclchan.c,v 1.16 2002/05/12 06:12:07 stdarg Exp $";
+static const char rcsid[] = "$Id: tclchan.c,v 1.17 2002/05/27 04:19:32 stdarg Exp $";
 #endif
 */
 
 /* flagmaps.c defines flag name to flag value structures. */
 #include "flagmaps.c"
+
+/* Names of channel info members. */
+char *channel_info_names[] = {
+	"chanmode",
+	"idle-kick",
+	"stop-net-hack",
+	"revenge-mode",
+	"flood-pub",
+	"flood-ctcp",
+	"flood-join",
+	"flood-kick",
+	"flood-deop",
+	"flood-nick",
+	"aop-delay",
+	NULL
+};
 
 static int lookup_flag_by_name(channel_flag_map_t *map, char *name, int *flagval);
 
@@ -191,85 +207,51 @@ static int script_newsomething(void *type, char *chan_name, char *mask, char *cr
 	return(0);
 }
 
-static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
+static int script_channel_info(script_var_t *retval)
 {
-  char s[121];
-  struct udef_struct *ul;
-  channel_flag_map_t *flag_map;
+	int i;
+	channel_flag_map_t *flag_map;
+	struct udef_struct *ul;
 
-  get_mode_protect(chan, s);
-  Tcl_AppendElement(irp, s);
-  simple_sprintf(s, "%d", chan->idle_kick);
-  Tcl_AppendElement(irp, s);
-  simple_sprintf(s, "%d", chan->stopnethack_mode);
-  Tcl_AppendElement(irp, s);
-  simple_sprintf(s, "%d", chan->revenge_mode);
-  Tcl_AppendElement(irp, s);
-  simple_sprintf(s, "%d:%d", chan->flood_pub_thr, chan->flood_pub_time);
-  Tcl_AppendElement(irp, s);
-  simple_sprintf(s, "%d:%d", chan->flood_ctcp_thr, chan->flood_ctcp_time);
-  Tcl_AppendElement(irp, s);
-  simple_sprintf(s, "%d:%d", chan->flood_join_thr, chan->flood_join_time);
-  Tcl_AppendElement(irp, s);
-  simple_sprintf(s, "%d:%d", chan->flood_kick_thr, chan->flood_kick_time);
-  Tcl_AppendElement(irp, s);
-  simple_sprintf(s, "%d:%d", chan->flood_deop_thr, chan->flood_deop_time);
-  Tcl_AppendElement(irp, s);
-  simple_sprintf(s, "%d:%d", chan->flood_nick_thr, chan->flood_nick_time);
-  Tcl_AppendElement(irp, s);
-  simple_sprintf(s, "%d:%d", chan->aop_min, chan->aop_max);
-  Tcl_AppendElement(irp, s);
-  for (flag_map = normal_flag_map; flag_map->name; flag_map++) {
-    char buf[50], dir;
-    if (chan->status & flag_map->flagval) dir = '+';
-    else dir = '-';
-    sprintf(buf, "%c%s", dir, flag_map->name);
-    Tcl_AppendElement(irp, buf);
-  }
-  for (flag_map = stupid_ircnet_flag_map; flag_map->name; flag_map++) {
-    char buf[50], dir;
-    if (chan->status & flag_map->flagval) dir = '+';
-    else dir = '-';
-    sprintf(buf, "%c%s", dir, flag_map->name);
-    Tcl_AppendElement(irp, buf);
-  }
-  for (ul = udef; ul; ul = ul->next) {
-      /* If it's undefined, skip it. */
-      if (!ul->defined || !ul->name) continue;
+	retval->type = SCRIPT_ARRAY | SCRIPT_VAR | SCRIPT_FREE;
+	retval->len = 0;
 
-      if (ul->type == UDEF_FLAG) {
-        simple_sprintf(s, "%c%s", getudef(ul->values, chan->dname) ? '+' : '-',
-		       ul->name);
-        Tcl_AppendElement(irp, s);
-      } else if (ul->type == UDEF_INT) {
-        simple_sprintf(s, "%s %d", ul->name, getudef(ul->values, chan->dname));
-        Tcl_AppendElement(irp, s);
-	} else if (ul->type == UDEF_STR) {
-		char *p;
-		char *buf;
+	for (i = 0; channel_info_names[i]; i++) {
+		script_list_append(retval, script_string(channel_info_names[i], -1));
+	}
 
-		p = (char *)getudef(ul->values, chan->dname);
-		if (!p) p = "{}";
-		buf = malloc(strlen(ul->name) + strlen(p) + 2);
-		simple_sprintf(buf, "%s %s", ul->name, p);
-		Tcl_AppendElement(irp, buf);
-		free(buf);
-      } else
-        debug1("UDEF-ERROR: unknown type %d", ul->type);
-    }
-  return TCL_OK;
+	for (flag_map = normal_flag_map; flag_map->name; flag_map++) {
+		script_list_append(retval, script_string(flag_map->name, -1));
+	}
+
+	for (flag_map = stupid_ircnet_flag_map; flag_map->name; flag_map++) {
+		script_list_append(retval, script_string(flag_map->name, -1));
+	}
+
+	for (ul = udef; ul; ul = ul->next) {
+		/* If it's undefined, skip it. */
+		if (!ul->defined || !ul->name) continue;
+		script_list_append(retval, script_string(ul->name, -1));
+	}
+
+	return(0);
 }
 
-static int tcl_channel_get(Tcl_Interp * irp, struct chanset_t *chan, char *setting)
+static int script_channel_get(script_var_t *retval, char *channel_name, char *setting)
 {
 	char s[121];
+	struct chanset_t *chan;
 	struct udef_struct *ul;
 	int flagval;
 
+	retval->type = SCRIPT_STRING;
+	retval->len = -1;
+
+	chan = findchan_by_dname(channel_name);
+	if (!chan) return(-1);
+
 #define CHECK(x) !strcmp(setting, x)
-	if (CHECK("chanmode")) {
-		get_mode_protect(chan, s);
-	}
+	if (CHECK("chanmode")) get_mode_protect(chan, s);
 	else if (CHECK("idle-kick")) simple_sprintf(s, "%d", chan->idle_kick);
 	else if (CHECK("stop-net-hack")) simple_sprintf(s, "%d", chan->stopnethack_mode);
 	else if (CHECK("revenge-mode")) simple_sprintf(s, "%d", chan->revenge_mode);
@@ -289,35 +271,27 @@ static int tcl_channel_get(Tcl_Interp * irp, struct chanset_t *chan, char *setti
 		}
 		if (!ul || !ul->name) {
 			/* Error if it wasn't found. */
-			Tcl_AppendResult(irp, "Unknown channel setting.", NULL);
-			return(TCL_ERROR);
+			return(-1);
 		}
 		if (ul->type == UDEF_STR) {
-			char **elms = NULL, *result, *value;
-			int nelms = 0;
+			char *value;
 
 			/* If it's unset then give them an empty string. */
 			value = (char *)getudef(ul->values, chan->dname);
 			if (!value) value = "";
 
-			Tcl_SplitList(irp, (char *)value, &nelms, &elms);
-			if (nelms < 1) result = "";
-			else result = elms[0];
-
-			Tcl_AppendResult(irp, result, NULL);
-			if (elms) Tcl_Free((char *)elms);
-			return(TCL_OK);
+			retval->value = value;
+			return(0);
 		}
 		else {
 			/* Flag or int, all the same. */
 			simple_sprintf(s, "%d", getudef(ul->values, chan->dname));
-			Tcl_AppendResult(irp, s, NULL);
-			return(TCL_OK);
 		}
 	}
 	/* Ok, if we make it this far, the result is "s". */
-	Tcl_AppendResult(irp, s, NULL);
-	return(TCL_OK);
+	retval->value = strdup(s);
+	retval->type |= SCRIPT_FREE;
+	return(0);
 }
 
 static int tcl_channel STDVAR
@@ -343,24 +317,6 @@ static int tcl_channel STDVAR
       return TCL_ERROR;
     }
     return tcl_channel_modify(irp, chan, argc - 3, &argv[3]);
-  }
-  if (!strcmp(argv[1], "get")) {
-    BADARGS(4, 4, " get channel-name setting-name");
-    chan = findchan_by_dname(argv[2]);
-    if (chan == NULL) {
-      Tcl_AppendResult(irp, "no such channel record", NULL);
-      return TCL_ERROR;
-    }
-    return(tcl_channel_get(irp, chan, argv[3]));
-  }
-  if (!strcmp(argv[1], "info")) {
-    BADARGS(3, 3, " info channel-name");
-    chan = findchan_by_dname(argv[2]);
-    if (chan == NULL) {
-      Tcl_AppendResult(irp, "no such channel record", NULL);
-      return TCL_ERROR;
-    }
-    return tcl_channel_info(irp, chan);
   }
   if (!strcmp(argv[1], "remove")) {
     BADARGS(3, 3, " remove channel-name");
@@ -1145,6 +1101,9 @@ static script_command_t channel_script_cmds[] = {
 	{"", "unstickban", script_sticksomething, (void *)('b'+256), 1, "ss", "?channel? mask", SCRIPT_INTEGER, SCRIPT_PASS_CDATA | SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT},
 	{"", "unstickinvite", script_sticksomething, (void *)('I'+256), 1, "ss", "?channel? mask", SCRIPT_INTEGER, SCRIPT_PASS_CDATA | SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT},
 	{"", "unstickexempt", script_sticksomething, (void *)('e'+256), 1, "ss", "?channel? mask", SCRIPT_INTEGER, SCRIPT_PASS_CDATA | SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT},
+
+	{"", "channel_get", script_channel_get, NULL, 2, "ss", "channel setting", 0, SCRIPT_PASS_RETVAL},
+	{"", "channel_info", script_channel_info, NULL, 0, "", "", 0, SCRIPT_PASS_RETVAL},
 
 	{0}
 };
