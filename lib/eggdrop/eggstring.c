@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggstring.c,v 1.6 2003/12/23 23:21:51 stdarg Exp $";
+static const char rcsid[] = "$Id: eggstring.c,v 1.7 2004/01/20 22:47:56 stdarg Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -66,6 +66,11 @@ int egg_get_arg(const unsigned char *text, const char **next, char **arg)
 		return(-1);
 	}
 	while (isspace(*text)) text++;
+	if (!*text) {
+		if (next) *next = NULL;
+		*arg = NULL;
+		return(-1);
+	}
 	*arg = malloc(max+10);
 
 	done = 0;

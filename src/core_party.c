@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.24 2004/01/11 12:16:08 wcc Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.25 2004/01/20 22:47:56 stdarg Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -274,7 +274,7 @@ static int party_whois(partymember_t *p, const char *nick, user_t *u, const char
 			}
 		}
 		else {
-			if (setting = strchr(item, '.')) {
+			if ((setting = strchr(item, '.'))) {
 				chan = item;
 				*setting = 0;
 				setting++;
@@ -348,11 +348,81 @@ static int party_minus_user(partymember_t *p, const char *nick, user_t *u, const
 
 static int party_plus_host(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
+	user_t *who;
+	char *target, *newhost;
+
+	egg_get_args(text, NULL, &target, &newhost, NULL);
+	if (!target) {
+		partymember_printf(p, _("Syntax: +host [handle] <host>"));
+		return(0);
+	}
+	if (!newhost) {
+		newhost = target;
+		target = NULL;
+	}
+	if (target) {
+		who = user_lookup_by_handle(target);
+		if (!who) {
+			partymember_printf(p, _("User '%s' not found."), target);
+			goto done;
+		}
+	}
+	else {
+		who = u;
+		if (!who) {
+			partymember_printf(p, _("Only valid users can add hosts."));
+			goto done;
+		}
+	}
+	user_add_ircmask(who, newhost);
+	partymember_printf(p, _("Added '%1$s' to user '%2$s'."), newhost, who->handle);
+
+done:
+	if (target) free(target);
+	free(newhost);
+
 	return(0);
 }
 
 static int party_minus_host(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
+	user_t *who;
+	char *target, *host;
+
+	egg_get_args(text, NULL, &target, &host, NULL);
+	if (!target) {
+		partymember_printf(p, _("Syntax: -host [handle] <host>"));
+		return(0);
+	}
+	if (!host) {
+		host = target;
+		target = NULL;
+	}
+	if (target) {
+		who = user_lookup_by_handle(target);
+		if (!who) {
+			partymember_printf(p, _("User '%s' not found."), target);
+			goto done;
+		}
+	}
+	else {
+		who = u;
+		if (!who) {
+			partymember_printf(p, _("Only valid users can remove hosts."));
+			goto done;
+		}
+	}
+	if (user_del_ircmask(who, host)) {
+		partymember_printf(p, _("Mask '%1$s' not found for user '%2$s'."), host, who->handle);
+	}
+	else {
+		partymember_printf(p, _("Removed '%1$s' from user '%2$s'."), host, who->handle);
+	}
+
+done:
+	if (target) free(target);
+	free(host);
+
 	return(0);
 }
 
@@ -405,7 +475,6 @@ static int party_modules(partymember_t *p, const char *nick, user_t *u, const ch
 static int party_help(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	help_t *h;
-	int i;
 
 	if (!text || !*text) {
 		partymember_printf(p, _("Syntax: help <section>"));
