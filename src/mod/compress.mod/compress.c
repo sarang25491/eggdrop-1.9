@@ -6,7 +6,7 @@
  * Written by Fabian Knittel <fknittel@gmx.de>. Based on zlib examples
  * by Jean-loup Gailly and Miguel Albrecht.
  *
- * $Id: compress.c,v 1.14 2001/10/10 10:44:06 tothwolf Exp $
+ * $Id: compress.c,v 1.15 2001/10/14 23:32:01 ite Exp $
  */
 /*
  * Copyright (C) 2000, 2001 Eggheads Development Team
@@ -126,20 +126,20 @@ static int uncompress_to_file(char *f_src, char *f_target)
   FILE *fin, *fout;
 
   if (!is_file(f_src)) {
-    putlog(LOG_MISC, "*", "Failed to uncompress file `%s': not a file.",
+    putlog(LOG_MISC, "*", _("Failed to uncompress file `%s': not a file."),
 	   f_src);
     return COMPF_ERROR;
   }
   fin = gzopen(f_src, "rb");
   if (!fin) {
-    putlog(LOG_MISC, "*", "Failed to uncompress file `%s': gzopen failed.",
+    putlog(LOG_MISC, "*", _("Failed to uncompress file `%s': gzopen failed."),
 	   f_src);
     return COMPF_ERROR;
   }
 
   fout = fopen(f_target, "wb");
   if (!fout) {
-    putlog(LOG_MISC, "*", "Failed to uncompress file `%s': open failed: %s.",
+    putlog(LOG_MISC, "*", _("Failed to uncompress file `%1$s': open failed: %2$s."),
 	   f_src, strerror(errno));
     return COMPF_ERROR;
   }
@@ -147,25 +147,25 @@ static int uncompress_to_file(char *f_src, char *f_target)
   while (1) {
     len = gzread(fin, buf, sizeof(buf));
     if (len < 0) {
-      putlog(LOG_MISC, "*", "Failed to uncompress file `%s': gzread failed.",
+      putlog(LOG_MISC, "*", _("Failed to uncompress file `%s': gzread failed."),
 	     f_src);
       return COMPF_ERROR;
     }
     if (!len)
       break;
     if ((int) fwrite(buf, 1, (unsigned int) len, fout) != len) {
-      putlog(LOG_MISC, "*", "Failed to uncompress file `%s': fwrite failed: %s.",
+      putlog(LOG_MISC, "*", _("Failed to uncompress file `%1$s': fwrite failed: %2$s."),
 	     f_src, strerror(errno));
       return COMPF_ERROR;
     }
   }
   if (fclose(fout)) {
-    putlog(LOG_MISC, "*", "Failed to uncompress file `%s': fclose failed: %s.",
+    putlog(LOG_MISC, "*", _("Failed to uncompress file `%1$s': fclose failed: %2$s."),
 	   f_src, strerror(errno));
     return COMPF_ERROR;
   }
   if (gzclose(fin) != Z_OK) {
-    putlog(LOG_MISC, "*", "Failed to uncompress file `%s': gzclose failed.",
+    putlog(LOG_MISC, "*", _("Failed to uncompress file `%s': gzclose failed."),
 	   f_src);
     return COMPF_ERROR;
   }
@@ -228,20 +228,20 @@ static int compress_to_file(char *f_src, char *f_target, int mode_num)
   egg_snprintf(mode, sizeof mode, "wb%d", mode_num);
 
   if (!is_file(f_src)) {
-    putlog(LOG_MISC, "*", "Failed to compress file `%s': not a file.",
+    putlog(LOG_MISC, "*", _("Failed to compress file `%s': not a file."),
 	   f_src);
     return COMPF_ERROR;
   }
   fin = fopen(f_src, "rb");
   if (!fin) {
-    putlog(LOG_MISC, "*", "Failed to compress file `%s': open failed: %s.",
+    putlog(LOG_MISC, "*", _("Failed to compress file `%1$s': open failed: %2$s."),
 	   f_src, strerror(errno));
     return COMPF_ERROR;
   }
 
   fout = gzopen(f_target, mode);
   if (!fout) {
-    putlog(LOG_MISC, "*", "Failed to compress file `%s': gzopen failed.",
+    putlog(LOG_MISC, "*", _("Failed to compress file `%s': gzopen failed."),
 	   f_src);
     return COMPF_ERROR;
   }
@@ -262,21 +262,21 @@ static int compress_to_file(char *f_src, char *f_target, int mode_num)
   while (1) {
     len = fread(buf, 1, sizeof(buf), fin);
     if (ferror(fin)) {
-      putlog(LOG_MISC, "*", "Failed to compress file `%s': fread failed: %s",
+      putlog(LOG_MISC, "*", _("Failed to compress file `%1$s': fread failed: %2$s"),
 	     f_src, strerror(errno));
       return COMPF_ERROR;
     }
     if (!len)
       break;
     if (gzwrite(fout, buf, (unsigned int) len) != len) {
-      putlog(LOG_MISC, "*", "Failed to compress file `%s': gzwrite failed.",
+      putlog(LOG_MISC, "*", _("Failed to compress file `%s': gzwrite failed."),
 	     f_src);
       return COMPF_ERROR;
     }
   }
   fclose(fin);
   if (gzclose(fout) != Z_OK) {
-    putlog(LOG_MISC, "*", "Failed to compress file `%s': gzclose failed.",
+    putlog(LOG_MISC, "*", _("Failed to compress file `%s': gzclose failed."),
 	   f_src);
     return COMPF_ERROR;
   }
@@ -378,6 +378,7 @@ static tcl_ints my_tcl_ints[] = {
 
 static int compress_report(int idx, int details)
 {
+  /* FIXME PLURAL: do it in the proper way. */
   if (details)
     dprintf(idx, "    Compressed %u file(s), uncompressed %u file(s).\n",
 	    compressed_files, uncompressed_files);
@@ -424,12 +425,12 @@ char *start(Function *global_funcs)
   module_register(MODULE_NAME, compress_table, 1, 1);
   if (!module_depend(MODULE_NAME, "eggdrop", 107, 0)) {
     module_undepend(MODULE_NAME);
-    return "This module needs eggdrop1.7.0 or later";
+    return _("This module needs eggdrop1.7.0 or later");
   }
   share_funcs = module_depend(MODULE_NAME, "share", 2, 3);
   if (!share_funcs) {
     module_undepend(MODULE_NAME);
-    return "You need share module version 2.3 to use the compress module.";
+    return _("You need share module version 2.3 to use the compress module.");
   }
 
   uff_addtable(compress_uff_table);
