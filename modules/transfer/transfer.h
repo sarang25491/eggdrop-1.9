@@ -1,7 +1,7 @@
 /*
  * transfer.h -- part of transfer.mod
  *
- * $Id: transfer.h,v 1.1 2001/10/27 16:34:53 ite Exp $
+ * $Id: transfer.h,v 1.2 2001/11/24 15:31:04 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -24,6 +24,22 @@
 
 #ifndef _EGG_MOD_TRANSFER_TRANSFER_H
 #define _EGG_MOD_TRANSFER_TRANSFER_H
+
+enum {                    /* transfer connection handling a ...   */
+  XFER_SEND,              /*  ... normal file-send to s.o.        */
+  XFER_RESEND,            /*  ... file-resend to s.o.             */
+  XFER_RESEND_PEND,       /*  ... (as above) and waiting for info */
+  XFER_RESUME,            /*  ... file-send-resume to s.o.        */
+  XFER_RESUME_PEND,       /*  ... (as above) and waiting for conn */
+  XFER_GET                /*  ... file-get from s.o.              */
+};
+
+enum {
+  XFER_ACK_UNKNOWN,       /* We don't know how blocks are acked.  */
+  XFER_ACK_WITH_OFFSET,   /* Skipped data is also counted as
+                             received.                            */
+  XFER_ACK_WITHOUT_OFFSET /* Skipped data is NOT counted in ack.  */
+};
 
 enum dccsend_types {
   DCCSEND_OK = 0,

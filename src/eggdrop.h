@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.48 2001/10/19 01:55:05 tothwolf Exp $
+ * $Id: eggdrop.h,v 1.49 2001/11/24 15:31:04 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -301,22 +301,6 @@ struct xfer_info {
   unsigned long block_pending;	/* bytes of this DCC block which weren't
 				   sent yet.				   */
   time_t start_time;		/* Time when a xfer was started.	   */
-};
-
-enum {				/* transfer connection handling a ...	*/
-	XFER_SEND,		/*  ... normal file-send to s.o.	*/
-	XFER_RESEND,		/*  ... file-resend to s.o.		*/
-	XFER_RESEND_PEND,	/*  ... (as above) and waiting for info	*/
-	XFER_RESUME,		/*  ... file-send-resume to s.o.	*/
-	XFER_RESUME_PEND,	/*  ... (as above) and waiting for conn */
-	XFER_GET		/*  ... file-get from s.o.		*/
-};
-
-enum {
-	XFER_ACK_UNKNOWN,	/* We don't know how blocks are acked.	*/
-	XFER_ACK_WITH_OFFSET,	/* Skipped data is also counted as
-				   received.				*/
-	XFER_ACK_WITHOUT_OFFSET	/* Skipped data is NOT counted in ack.	*/
 };
 
 struct bot_info {
