@@ -1,3 +1,18 @@
+2002-05-09 03:26  stdarg <stdarg@techmonkeys.org>
+
+	* modules/irc/: irc.c, scriptcmds.c, tclirc.c:
+
+	
+	* Added patch by Guillaume Leclanche <mo-ize@nul-en.info> to convert
+	functions in the irc module to language-independent form.  
+
+2002-05-09 03:11  stdarg <stdarg@techmonkeys.org>
+
+	* src/egg_timer.c:
+
+	
+	* Changed a static int array to dynamic.  
+
 2002-05-07 22:09  stdarg <stdarg@techmonkeys.org>
 
 	* modules/javascript/javascript.c:
