@@ -1,3 +1,11 @@
+2002-05-05 04:12  stdarg <stdarg@techmonkeys.org>
+
+	* modules/blowfish/: Makefile.am, blowfish.c:
+
+	
+	* Applied a modified version of a blowfish.mod patch by Mo-Ize
+	<mo-ize@nul-en.info> to convert blowfish scripting functions.  
+
 2002-05-04 17:01  wingman
 
 	* lib/egglib/: linked_list.c, linked_list.h, linked_list_test.c:
