@@ -1,3 +1,12 @@
+2002-05-31 08:02  stdarg <stdarg@techmonkeys.org>
+
+	* modules/server/servmsg.c:
+
+	
+	* Beginning of a new model for the raw server bind. It will do more
+	parsing so that other places don't have to. We can also add an SFILT
+	bind so that scripts/modules can modify server input text.  
+
 2002-05-31 05:29  stdarg <stdarg@techmonkeys.org>
 
 	* modules/server/: scriptcmds.c, server.c:
