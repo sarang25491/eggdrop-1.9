@@ -1,3 +1,11 @@
+2002-03-04 02:32  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/modvals.h, modules/notes/notes.c, src/botmsg.c,
+	src/modules.c, src/proto.h:
+
+	
+	* Removed Tcl dependency from storenote.  
+
 2002-03-03 20:17  stdarg <stdarg@techmonkeys.org>
 
 	* modules/tclscript/tclscript.c, src/botcmd.c, src/botnet.c,
