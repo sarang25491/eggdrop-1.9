@@ -1,7 +1,7 @@
 /*
  * server.h -- part of server.mod
  *
- * $Id: server.h,v 1.4 2002/02/17 12:40:44 ite Exp $
+ * $Id: server.h,v 1.5 2002/05/05 15:21:30 wingman Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -27,6 +27,13 @@
 
 #define check_tcl_ctcp(a,b,c,d,e,f) check_tcl_ctcpr(a,b,c,d,e,f,BT_ctcp)
 #define check_tcl_ctcr(a,b,c,d,e,f) check_tcl_ctcpr(a,b,c,d,e,f,BT_ctcr)
+
+#define fixcolon(x)             do {                                    \
+        if ((x)[0] == ':')                                              \
+                (x)++;                                                  \
+        else                                                            \
+                (x) = newsplit(&(x));                                   \
+} while (0)
 
 #ifndef MAKING_SERVER
 /* 4 - 7 */

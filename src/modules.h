@@ -4,7 +4,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: modules.h,v 1.14 2002/03/22 16:01:20 ite Exp $
+ * $Id: modules.h,v 1.15 2002/05/05 15:21:30 wingman Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -32,11 +32,18 @@
  */
 #include <eggdrop/modvals.h>
 
+#ifndef MAKING_MODS
+extern void (*encrypt_pass) (char *, char *);
+extern char *(*encrypt_string) (char *, char *);
+extern char *(*decrypt_string) (char *, char *);
+extern int (*match_noterej) (struct userrec *, char *);
+extern int (*storenote)(char *from, char *to, char *msg, int idx, char *who, int bufsize);
+#endif /* MAKING_MODS	*/
+
 #ifndef MAKING_NUMMODS
 
 /* Modules specific functions and functions called by eggdrop
  */
-
 extern void modules_init();
 extern void do_module_report(int, int, char *);
 extern int module_register(char *name, Function * funcs,

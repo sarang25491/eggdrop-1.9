@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.57 2002/05/03 07:57:12 stdarg Exp $
+ * $Id: net.c,v 1.58 2002/05/05 15:21:30 wingman Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -30,6 +30,9 @@
 #include "egg_timer.h"
 #include "logfile.h"
 #include "dns.h"
+#include "dccutil.h"			/* dprintf_eggdrop		*/
+#include "tcl.h"			/* findanyidx			*/
+#include "net.h"			/* prototypes			*/
 
 #include "traffic.h" /* egg_traffic_t */
 

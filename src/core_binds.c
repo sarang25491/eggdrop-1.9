@@ -1,4 +1,7 @@
 #include "main.h"
+#include "cmdt.h"		/* cmd_t				*/
+#include "tclhash.h"		/* BT_time, BT_event, add_bind_table2,
+				   check_bind				*/
 
 static bind_table_t *BT_time, *BT_event;
 

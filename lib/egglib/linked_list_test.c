@@ -2,7 +2,7 @@
  * linked_list_test.c
  *   examples for usage of linked_list
  *
- * $Id: linked_list_test.c,v 1.2 2002/05/04 17:01:36 wingman Exp $
+ * $Id: linked_list_test.c,v 1.3 2002/05/05 15:21:30 wingman Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
@@ -46,7 +46,7 @@ int test_list_char() {
   char *data;
 
   // create a new list
-  list = linked_list_new(
+  list = linked_list_create(
            NULL,                 /* original list               */
            linked_list_char_cmp, /* default char comparator     */
            LINKED_LIST_SORTED    /* sort list                   */
@@ -60,7 +60,7 @@ int test_list_char() {
   }
 
   // create a cursor for cycling/searching
-  cursor = linked_list_cursor_new(NULL, list);
+  cursor = linked_list_cursor_create(NULL, list);
 
   // walk trough listh
   for (LINKED_LIST_FORLOOP(cursor, &data))
@@ -98,7 +98,7 @@ int test_list_int() {
   int i, data;
 
   // create a new list
-  list = linked_list_new(
+  list = linked_list_create(
 	   NULL,		 /* original list		*/
 	   linked_list_int_cmp,	 /* default int comparator	*/
 	   LINKED_LIST_SORTED	 /* sort list			*/
@@ -110,7 +110,7 @@ int test_list_int() {
   } 
 
   // create a cursor for cycling/searching
-  cursor = linked_list_cursor_new(NULL, list);
+  cursor = linked_list_cursor_create(NULL, list);
 
   // walk trough listh
   for (LINKED_LIST_FORLOOP(cursor, &data)) {

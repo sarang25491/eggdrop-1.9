@@ -6,7 +6,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.h,v 1.2 2002/02/07 22:19:05 wcc Exp $
+ * $Id: misc.h,v 1.3 2002/05/05 15:21:30 wingman Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -29,6 +29,8 @@
 
 #ifndef _EGG_MISC_H
 #define _EGG_MISC_H
+
+#include "flags.h"		/* flag_record		*/
 
 #define HELP_DCC        1
 #define HELP_TEXT       2

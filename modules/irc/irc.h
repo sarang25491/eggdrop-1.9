@@ -1,7 +1,7 @@
 /*
  * irc.h -- part of irc.mod
  *
- * $Id: irc.h,v 1.4 2002/02/07 22:19:03 wcc Exp $
+ * $Id: irc.h,v 1.5 2002/05/05 15:21:30 wingman Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -39,6 +39,13 @@
 
 #define REVENGE_KICK 1		/* Kicked victim	*/
 #define REVENGE_DEOP 2		/* Took op		*/
+
+#define fixcolon(x)             do {                                    \
+	if ((x)[0] == ':')                                              \
+		(x)++;                                                  \
+	else                                                            \
+		(x) = newsplit(&(x));                                   \
+} while (0)
 
 #ifdef MAKING_IRC
 static void check_tcl_need(char *, char *);
