@@ -1649,17 +1649,6 @@ users to read later
     idx == -1 for no notify).
     return 0 on success non-0 on failure
 
-***### ASSOC MODULE COMMANDS ###***
-
-  assoc <chan> [name]
-    sets the name associated with a botnet channel, if you specify one
-    returns: current name for that channel, if any
-
-  killassoc <chan>
-    removes the name associated with a botnet channel, if any exists,
-    use 'killassoc &' to kill all assocs.
-    returns: nothing
-
 ***### COMPRESS MODULE COMMANDS ###***
 
   compressfile [-level <level>] <src-file> [target-file]
