@@ -265,28 +265,26 @@ accurate for Eggdrop v1.7.0.
 
 *** SERVER MODULE COMMANDS ***
 
-  putserv [-serv|-help|-quick|-noqueue] [-next] <text>
+  putserv [noqueue|quick|normal|slow] [next] <text>
     Description: sends text to the server through the specified queue. The
-      default queue is the server queue (-serv). You can specify the -next
+      default queue is the normal queue. You can specify the "next"
       option even if you are using other options.
     Options:
-      -serv:    use the server queue to send the specified message
-      -help:    use the help queue to send the specified message
-      -quick:   use the mode queue to send the message
-      -noqueue: use the mode queue to send the message
-      -next:    push messages to the front of the queue
+      noqueue: send the message without waiting
+      quick: high priority queue
+      normal: default queue
+      slow: low priority queue
     Returns: nothing
 
+  server_fake_input <text>
+    Description: Causes the server module to interpret the given text as if
+      the server had sent it.
+    Returns: Nothing
 
-  queuesize [queue]
-    Returns: the number of messages in all queues. If a queue is specified,
-      only the size of this queue is returned. Valid queues are: mode,
-      server, help.
-
-  clearqueue <queue>
-    Description: removes all messages from a queue. Valid arguments are:
-      mode, server, help, or all.
-    Returns: the number of deleted lines from the specified queue.
+  server_support <field>
+    Description: Provides an interface to the 005 numeric.
+    Returns: The value of the field (parsed from fieldname=fieldvalue) or
+      the string "true" for items with no value.
 
   channel_list
     Returns: the list of channels that the bot is currently on
@@ -294,11 +292,66 @@ accurate for Eggdrop v1.7.0.
   channel_members <chan>
     Returns: the list of nicks on the given channel
 
+  channel_get_uhost <nick>
+    Returns: the uhost for the given nick, or "" if unknown
+
   channel_topic <chan>
     Returns: the topic, nick that set the topic, time topic was set
 
-  channel_get_uhost <nick>
-    Returns: the uhost for the given nick, or "" if unknown
+  channel_mode <chan> [nick]
+    Returns: Either the mode of the channel, with no arguments (such as key),
+      or the mode of the nick on that channel (if given).
+
+  channel_key <chan>
+    Returns: The key of the given channel.
+
+  channel_limit <chan>
+    Returns: The limit of the given channel.
+ 
+  channel_bans <chan>
+    Returns: The list of bans in the channel. Each item of the list is itself
+      a list of the form {banmask, who_set_it, when_it_was_set}
+
+  server_queue_len <queue> [next]
+    Returns: Number of messages in the given queue
+
+  server_queue_get [queue] [next] <msgnum>
+    Description: Allows scripts to read the server's output queues. Messages
+      start at number 0. If [queue] isn't given, the normal queue is assumed.
+    Returns: The text of the desired message
+
+  server_queue_set [queue] [next] <msgnum> <msg>
+    Description: Allows scripts to overwrite messages in the server's output
+      queues. If [queue] isn't given, the normal queue is assumed.
+    Returns: Nothing
+
+  server_queue_insert [queue] [next] <msgnum> <msg>
+    Description: Inserts messages into the given output queue. To add a message
+      to the end, make <msgnum> larger than the current queue length. Or use
+      putserv :)
+    Returns: Nothing
+
+  dcc_chat <nick> [timeout]
+    Description: Starts a dcc chat with the given nick.
+    Returns: An unconnected idx.
+
+  dcc_send <nick> <filename> [timeout]
+    Description: Starts a dcc send with the given nick. Resumes are handled
+      automatically.
+    Returns: An unconnected idx.
+
+  dcc_send_info <idx> <stat-type>
+    Description: Returns information about a dcc send.
+    Options for stat-type:
+      bytes_left: number of bytes remaining to be sent
+      bytes_sent: number of bytes already sent
+      total_cps: average cps since the send began
+      snapshot_cps: average cps over the last several seconds
+    Returns: The requested information
+
+  dcc_accept_send <nick> <localfile> <remotefile> <size> <resume> <ip> <port> [timeout]
+    Description: Accepts a dcc send, as triggered by the dcc_recv bind.
+    Returns: An unconnected idx
 
   <FINISH ME>
 

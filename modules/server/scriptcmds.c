@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.24 2003/04/04 18:18:48 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.25 2003/04/04 20:30:03 stdarg Exp $";
 #endif
 */
 
@@ -334,7 +334,7 @@ static script_command_t server_script_cmds[] = {
 
 	/* Server commands. */
 	{"", "server_support", server_support, NULL, 1, "s", "name", SCRIPT_STRING, 0},
-        {"", "putserv", script_putserv, NULL, 1, "sss", "?-queuetype? ?-next? text", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT},
+        {"", "putserv", script_putserv, NULL, 1, "sss", "?queue? ?next? text", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT},
 
 	/* DCC commands. */
 	{"", "dcc_chat", dcc_start_chat, NULL, 1, "si", "nick ?timeout?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
