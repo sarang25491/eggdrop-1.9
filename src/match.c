@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: match.c,v 1.10 2002/05/05 16:40:38 tothwolf Exp $";
+static const char rcsid[] = "$Id: match.c,v 1.11 2002/05/05 20:04:33 stdarg Exp $";
 #endif
 
 /* prototypes */
@@ -68,11 +68,11 @@ static const char rcsid[] = "$Id: match.c,v 1.10 2002/05/05 16:40:38 tothwolf Ex
  * No "saved" is used to track "%" and no special quoting ability is
  * needed, so we just have (match+sofar) as the result.
  */
-int wild_match(register unsigned char *m, register unsigned char *n)
+int wild_match(const unsigned char *m, const unsigned char *n)
 {
-  unsigned char *ma = m, *na = n, *lsm = 0, *lsn = 0;
+  const unsigned char *ma = m, *na = n, *lsm = 0, *lsn = 0;
   int match = 1;
-  register int sofar = 0;
+  int sofar = 0;
 
   /* take care of null strings (should never match) */
   if ((ma == 0) || (na == 0) || (!*ma) || (!*na))
@@ -135,11 +135,11 @@ int wild_match(register unsigned char *m, register unsigned char *n)
  * Features:  Forward, case-insensitive, ?, *, %, ~(optional)
  * Best use:  Generic string matching, such as in IrcII-esque bindings
  */
-int wild_match_per(register unsigned char *m, register unsigned char *n)
+int wild_match_per(const unsigned char *m, const unsigned char *n)
 {
-  unsigned char *ma = m, *lsm = 0, *lsn = 0, *lpm = 0, *lpn = 0;
+  const unsigned char *ma = m, *lsm = 0, *lsn = 0, *lpm = 0, *lpn = 0;
   int match = 1, saved = 0, space;
-  register unsigned int sofar = 0;
+  unsigned int sofar = 0;
 
   /* take care of null strings (should never match) */
   if ((m == 0) || (n == 0) || (!*n))
