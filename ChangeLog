@@ -1,3 +1,17 @@
+2001-12-08 16:58  Federico Mennite <ite@techmonkeys.org>
+
+	* scripts/action.fix.tcl:
+
+	Handle irssi (and some others) 'correct' messages for DCC CTCP.
+	Patch by Matthew Hallacy <poptix@techmonkeys.org> 
+
+2001-12-08 16:39  Federico Mennite <ite@techmonkeys.org>
+
+	* modules/share/share.c:
+
+	Unknown stuff will now be logged as debug info . Patch by Jeff
+	Fisher <guppy@techmonkeys.org> 
+
 2001-12-08 16:28  Federico Mennite <ite@techmonkeys.org>
 
 	* modules/channels/tclchan.c:
