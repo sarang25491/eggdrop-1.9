@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# $Id: bootstrap,v 1.10 2001/10/21 17:38:24 ite Exp $
+# $Id: bootstrap,v 1.11 2002/02/13 16:38:58 ite Exp $
 #
 # Recommended development tools versions:
 #   autoconf 2.52
@@ -8,9 +8,15 @@
 #   libtool 1.4.2
 #
 # NOTE:
-#   A patch needs to be applied to libtool 1.4.2.
-#   It is avaliable here:
-#   http://www.techmonkeys.org/~tothwolf/libtool/libtool-1.4.2-auxdir.patch
+#   There are a couple of known bugs in libtool that will be fixed with the
+#   1.4.3 release. Meanwhile you have two options to address the problem:
+#   - create these symlinks in the top dir:
+#       ln -s acconfig/mkinstalldirs ./
+#       ln -s configure.ac configure.in
+#    OR
+#   - apply to libtool 1.4.2.
+#     It is avaliable here:
+#     http://www.techmonkeys.org/~tothwolf/libtool/libtool-1.4.2-auxdir.patch
 #
 # Please note that it may happen that the bootstrap process reports errors.
 # This doesn't necessarily mean that something went wrong. Try if ./configure
@@ -18,7 +24,8 @@
 # course make sure you have the tool's versions above installed before
 # bootstrapping the package. If you don't have them, you can alternatively
 # download the prepackaged and already bootstrapped current CVS snapshot (
-# daily resynched) from ftp.eggheads.org.
+# daily resynched) at:
+# ftp://ftp.eggheads.org/pub/eggdrop/source/snapshot/eggdrop1.7-snapshot.tar.gz
 #
 # ITE
 
