@@ -1,3 +1,14 @@
+2001-10-21 14:51  Tothwolf <tothwolf@techmonkeys.org>
+
+	* Makefile.am, bootstrap, acconfig/config.guess,
+	acconfig/config.sub:
+
+	* added latest version of config.guess and config.sub to acconfig
+	dir 
+	* don't remove config.guess and config.sub with maintainer-clean
+	rule 
+	* keep libtoolize from overwriting config.guess and config.sub 
+
 2001-10-21 12:20  Federico Mennite <ite@techmonkeys.org>
 
 	* po/POTFILES.in:
