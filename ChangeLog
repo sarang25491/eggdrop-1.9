@@ -1,3 +1,18 @@
+2003-02-25 06:52  stdarg <stdarg@techmonkeys.org>
+
+	* Makefile.am, lib/eggdrop/eggnet.c, lib/eggdrop/eggnet.h,
+	lib/eggdrop/match.c, lib/eggdrop/match.h, lib/eggdrop/module.h,
+	modules/server/channels.h, modules/server/input.c,
+	modules/tclscript/tclscript.c, src/Makefile.am, src/chanprog.c,
+	src/core_binds.c, src/dcc.c, src/dccutil.c, src/flags.c,
+	src/main.c, src/main.h, src/misc.c, src/modules.c, src/tcl.c,
+	src/tcl.h, src/tcldcc.c, src/tclegg.h, src/tclmisc.c,
+	src/tcluser.c, src/userent.c, src/users.c, src/users.h:
+
+	
+	* Well, I think Tcl is finally removed from the core (except for
+	detection/configuration).  
+
 2003-02-24 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
