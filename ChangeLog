@@ -1,3 +1,10 @@
+2001-12-02 15:15  Federico Mennite <ite@techmonkeys.org>
+
+	* modules/server/servmsg.c:
+
+	More suitable quit message when the server says we aren't
+	registered. Patch by guppy <guppy@techmonkeys.org> 
+
 2001-12-02 14:26  Federico Mennite <ite@techmonkeys.org>
 
 	* modules/filesys/: files.c, help/filesys.help:
