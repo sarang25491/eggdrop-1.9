@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
+# Copyright (C) 2004 Eggheads Development Team
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -16,7 +16,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
-# $Id: install-help.sh,v 1.1 2004/06/17 13:32:43 wingman Exp $
+# $Id: install-help.sh,v 1.2 2004/06/17 20:52:34 wingman Exp $
 #
 
 if [ "$2" = "" ];
