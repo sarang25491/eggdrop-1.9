@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: servmsg.c,v 1.21 2002/06/02 08:56:27 stdarg Exp $";
+static const char rcsid[] = "$Id: servmsg.c,v 1.22 2002/06/02 18:06:02 stdarg Exp $";
 #endif
 */
 
@@ -141,7 +141,7 @@ static int match_my_nick(char *nick)
 
 /* 001: welcome to IRC (use it to fix the server name)
  */
-static int got001(struct userrec *u, char *from_nick, char *from_uhost, char *cmd, int nargs, char *args[])
+static int got001(char *from_nick, char *from_uhost, struct userrec *u, char *cmd, int nargs, char *args[])
 {
 	/* Ok... first arg is what server decided our nick is. */
 	server_online = now;
@@ -172,7 +172,7 @@ static int got001(struct userrec *u, char *from_nick, char *from_uhost, char *cm
 /* Got 442: not on channel
 	:server 442 nick #chan :You're not on that channel
  */
-static int got442(struct userrec *u, char *from_nick, char *from_uhost, char *cmd, int nargs, char *args[])
+static int got442(char *from_nick, char *from_uhost, struct userrec *u, char *cmd, int nargs, char *args[])
 {
 	struct chanset_t *chan;
 	char *chname = args[1];
@@ -279,18 +279,26 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
   return 0;
 }
 
-static void handle_ctcp_ctcr(int which, int to_channel, struct userrec *u, char *nick, char *uhost, char *dest, char *text)
+static int check_ctcp_ctcr(int which, int to_channel, struct userrec *u, char *nick, char *uhost, char *dest, char *trailing)
 {
 	struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
-	char *cmd, *space, *logdest;
+	char *cmd, *space, *logdest, *text, *ctcptype;
 	bind_table_t *table;
-	int r, flags;
+	int r, len, flags;
 
-	space = strchr(text, ' ');
-	if (!space) return;
+	len = strlen(trailing);
+	if ((len < 2) || (trailing[0] != 1) || (trailing[len-1] != 1)) {
+		/* Not a ctcp/ctcr. */
+		return(0);
+	}
+
+	space = strchr(trailing, ' ');
+	if (!space) return(1);
 
 	*space = 0;
-	cmd = text;
+
+	trailing[len-1] = 0;
+	cmd = trailing+1;	/* Skip over the \001 */
 	text = space+1;
 
 	if (which == 0) table = BT_ctcp;
@@ -300,10 +308,12 @@ static void handle_ctcp_ctcr(int which, int to_channel, struct userrec *u, char 
 
 	r = check_bind(table, cmd, &fr, nick, uhost, u, dest, cmd, text);
 
-	if (r & BIND_RET_BREAK) return;
+	trailing[len-1] = 1;
 
-	if (which == 1) return;
+	if (r & BIND_RET_BREAK) return(1);
 
+	if (which == 0) ctcptype = "";
+	else ctcptype = " reply";
 	/* This should probably go in the partyline module later. */
 	if (to_channel) {
 		flags = LOG_PUBLIC;
@@ -314,44 +324,49 @@ static void handle_ctcp_ctcr(int which, int to_channel, struct userrec *u, char 
 		logdest = "*";
 	}
 	if (!strcasecmp(cmd, "ACTION")) putlog(flags, logdest, "Action: %s %s", nick, text);
-	else putlog(flags, logdest, "CTCP %s: %s from %s (%s)", cmd, text, nick, dest);
+	else putlog(flags, logdest, "CTCP%s %s: %s from %s (%s)", ctcptype, cmd, text, nick, dest);
+
+	return(1);
+}
+
+static int check_global_notice(char *from_nick, char *from_uhost, char *dest, char *trailing)
+{
+	if (*dest == '$') {
+		putlog(LOG_MSGS | LOG_SERV, "*", "[%s!%s to %s] %s", from_nick, from_uhost, dest, trailing);
+		return(1);
+	}
+	return(0);
 }
 
 /* Got a private (or public) message.
 	:nick!uhost PRIVMSG dest :msg
  */
-static int gotmsg(struct userrec *u, char *from_nick, char *from_uhost, char *cmd, int nargs, char *args[])
+static int gotmsg(char *from_nick, char *from_uhost, struct userrec *u, char *cmd, int nargs, char *args[])
 {
-	char *dest, *space, *first, *trailing, *text;
+	char *dest, *trailing, *first, *space, *text;
 	struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
-	int len;	/* Length of message. */
 	int to_channel;	/* Is it going to a channel? */
-	int r;	/* Return value of check_bind() */
+	int r;
 
 	dest = args[0];
 	trailing = args[1];
 
-	/* If it's a global message from an oper, just log it. */
-	if (*dest == '$') {
-		putlog(LOG_MSGS | LOG_SERV, "*", "[%s!%s to %s] %s", from_nick, from_uhost, dest, trailing);
-		return(0);
-	}
+	/* Check if it's a global message. */
+	r = check_global_notice(from_nick, from_uhost, dest, trailing);
+	if (r) return(0);
 
+	/* Check if it's an op/voice message. */
 	if ((*dest == '@' || *dest == '+') && strchr(CHANMETA, *(dest+1))) {
 		to_channel = 1;
 		dest++;
 	}
+	else if (strchr(CHANMETA, *dest)) to_channel = 1;
 	else to_channel = 0;
 
 	/* Check if it's a ctcp. */
-	len = strlen(trailing);
-	if ((len > 1) && (trailing[0] == 1) && (trailing[len-1] == 1)) {
-		/* Yes it is. */
-		trailing[len-1] = 0;
-		handle_ctcp_ctcr(0, to_channel, u, from_nick, from_uhost, dest, trailing+1);
-		trailing[len-1] = 1;
-		return(0);
-	}
+	r = check_ctcp_ctcr(0, to_channel, u, from_nick, from_uhost, dest, trailing);
+	if (r) return(0);
+
 
 	/* If it's a message, it goes to msg/msgm or pub/pubm. */
 	/* Get the first word so we can do msg or pub. */
@@ -377,10 +392,11 @@ static int gotmsg(struct userrec *u, char *from_nick, char *from_uhost, char *cm
 		}
 	}
 
-	if (r & BIND_RET_BREAK) return(BIND_RET_BREAK);
+	if (space) *space = ' ';
+
+	if (r & BIND_RET_BREAK) return(0);
 
 	/* And now the stackable version. */
-	if (space) *space = ' ';
 	if (to_channel) {
 		r = check_bind(BT_pubm, trailing, &fr, from_nick, from_uhost, u, dest, trailing);
 	}
@@ -388,94 +404,63 @@ static int gotmsg(struct userrec *u, char *from_nick, char *from_uhost, char *cm
 		r = check_bind(BT_msg, trailing, &fr, from_nick, from_uhost, u, trailing);
 	}
 
-	if (r & BIND_RET_BREAK) return(BIND_RET_BREAK);
-
-	/* This should probably go in the partyline module later. */
-	if (to_channel) {
-		putlog(LOG_PUBLIC, dest, "<%s> %s", from_nick, trailing);
-	}
-	else {
-		putlog(LOG_MSGS, "*", "[%s] %s", from_nick, trailing);
+	if (!(r & BIND_RET_BREAK)) {
+		/* This should probably go in the partyline module later. */
+		if (to_channel) {
+			putlog(LOG_PUBLIC, dest, "<%s> %s", from_nick, trailing);
+		}
+		else {
+			putlog(LOG_MSGS, "*", "[%s (%s)] %s", from_nick, from_uhost, trailing);
+		}
 	}
 	return(0);
 }
 
 /* Got a private notice.
  */
-static int gotnotice(char *from, char *ignore, char *msg)
+static int gotnotice(char *from_nick, char *from_uhost, struct userrec *u, char *cmd, int nargs, char *args[])
 {
-  char *to, buf[UHOSTLEN], *nick, *uhost, ctcpbuf[512], *ctcp, *p, *p1;
-  char *code;
-  struct userrec *u;
-  int ignoring;
+	char *dest, *trailing;
+	struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+	int r, to_channel;
 
-  if (msg[0] && ((strchr(CHANMETA, *msg) != NULL) ||
-      (*msg == '@')))           /* Notice to a channel, not handled here */
-    return 0;
-  ignoring = match_ignore(from);
-  to = newsplit(&msg);
-  fixcolon(msg);
-  strlcpy(buf, from, sizeof buf);
-  nick = strtok(buf, "!");
-  uhost = strtok(NULL, "!");
+	dest = args[0];
+	trailing = args[1];
 
-  /* Check for CTCP: */
-  p = strchr(msg, 1);
-  while ((p != NULL) && (*p)) {
-    p++;
-    p1 = p;
-    while ((*p != 1) && (*p != 0))
-      p++;
-    if (*p == 1) {
-      *p = 0;
-      ctcp = strcpy(ctcpbuf, p1);
-      strcpy(p1 - 1, p + 1);
-      if (!ignoring)
-	detect_flood(nick, uhost, from, FLOOD_CTCP);
-      p = strchr(msg, 1);
-      if (ctcp[0] != ' ') {
-	code = newsplit(&ctcp);
-	if ((to[0] == '$') || strchr(to, '.')) {
-	  if (!ignoring)
-	    putlog(LOG_PUBLIC, "*",
-		   "CTCP reply %s: %s from %s (%s) to %s", code, ctcp,
-		   nick, uhost, to);
-	} else {
-	  u = get_user_by_host(from);
-	  if (!ignoring || trigger_on_ignore) {
-	    check_tcl_ctcr(nick, uhost, u, to, code, ctcp);
-	    if (!ignoring)
-	      /* Who cares? */
-	      putlog(LOG_MSGS, "*",
-		     "CTCP reply %s: %s from %s (%s) to %s",
-		     code, ctcp, nick, uhost, to);
-	  }
+	/* See if it's a server notice. */
+	if (!from_uhost) {
+		putlog(LOG_SERV, "*", "-NOTICE- %s", trailing);
+		return(0);
 	}
-      }
-    }
-  }
-  if (msg[0]) {
-    if (((to[0] == '$') || strchr(to, '.')) && !ignoring) {
-      detect_flood(nick, uhost, from, FLOOD_NOTICE);
-      putlog(LOG_MSGS | LOG_SERV, "*", "-%s (%s) to %s- %s",
-	     nick, uhost, to, msg);
-    } else {
-      /* Server notice? */
-      if (!nick || !uhost) {
-	/* Hidden `250' connection count message from server */
-	if (strncmp(msg, "Highest connection count:", 25))
-	  putlog(LOG_SERV, "*", "-NOTICE- %s", msg);
-      } else {
-        detect_flood(nick, uhost, from, FLOOD_NOTICE);
-        u = get_user_by_host(from);
-        if (!ignoring || trigger_on_ignore)
-          check_tcl_notc(nick, uhost, u, botname, msg);
-        if (!ignoring)
-  	      putlog(LOG_MSGS, "*", "-%s (%s)- %s", nick, uhost, msg);
-      }
-    }
-  }
-  return 0;
+
+	/* Check if it's a global notice. */
+	r = check_global_notice(from_nick, from_uhost, dest, trailing);
+	if (r) return(0);
+
+	if ((*dest == '@' || *dest == '+') && strchr(CHANMETA, *(dest+1))) {
+		to_channel = 1;
+		dest++;
+	}
+	else if (strchr(CHANMETA, *dest)) to_channel = 1;
+	else to_channel = 0;
+
+	/* Check if it's a ctcp. */
+	r = check_ctcp_ctcr(1, to_channel, u, from_nick, from_uhost, dest, trailing);
+	if (r) return(0);
+
+	get_user_flagrec(u, &fr, NULL);
+	r = check_bind(BT_notice, trailing, &fr, from_nick, from_uhost, u, dest, trailing);
+
+	if (!(r & BIND_RET_BREAK)) {
+		/* This should probably go in the partyline module later. */
+		if (to_channel) {
+			putlog(LOG_PUBLIC, dest, "-%s:%s- %s", from_nick, dest, trailing);
+		}
+		else {
+			putlog(LOG_MSGS, "*", "-%s (%s)- %s", from_nick, from_uhost, trailing);
+		}
+	}
+	return(0);
 }
 
 /* WALLOPS: oper's nuisance
@@ -910,7 +895,7 @@ done_parsing:
 		}
 	}
 
-	check_bind(BT_new_raw, cmd, NULL, u, from_nick, from_uhost, cmd, nargs, args);
+	check_bind(BT_new_raw, cmd, NULL, from_nick, from_uhost, u, cmd, nargs, args);
 
 	if (args != static_args) free(args);
 
@@ -993,12 +978,12 @@ static int got311(char *from, char *ignore, char *msg)
 static cmd_t my_new_raw_binds[] = {
 	{"001", "", (Function) got001, NULL},
 	{"PRIVMSG", "", (Function) gotmsg, NULL},
+	{"NOTICE", "", (Function) gotnotice, NULL},
 	{0}
 };
 
 static cmd_t my_raw_binds[] =
 {
-  {"NOTICE",	"",	(Function) gotnotice,		NULL},
   {"MODE",	"",	(Function) gotmode,		NULL},
   {"PING",	"",	(Function) gotping,		NULL},
   {"PONG",	"",	(Function) gotpong,		NULL},

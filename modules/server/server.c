@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: server.c,v 1.32 2002/06/02 08:52:19 stdarg Exp $";
+static const char rcsid[] = "$Id: server.c,v 1.33 2002/06/02 18:06:02 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "server"
@@ -1563,7 +1563,7 @@ char *start(eggdrop_t *eggdrop)
 	/* Create our own bind tables. */
 	BT_wall = bind_table_add("wall", 2, "ss", MATCH_MASK, BIND_STACKABLE);
 	BT_raw = bind_table_add("raw", 3, "sss", MATCH_MASK, BIND_STACKABLE);
-	BT_new_raw = bind_table_add("newraw", 6, "UsssiS", MATCH_MASK, BIND_STACKABLE);
+	BT_new_raw = bind_table_add("newraw", 6, "ssUsiS", MATCH_MASK, BIND_STACKABLE);
 	BT_notice = bind_table_add("notice", 5, "ssUss", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
 	BT_msg = bind_table_add("msg", 4, "ssUs", 0, BIND_USE_ATTR);
 	BT_msgm = bind_table_add("msgm", 4, "ssUs", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);

@@ -28,7 +28,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: chan.c,v 1.22 2002/06/02 08:52:18 stdarg Exp $";
+static const char rcsid[] = "$Id: chan.c,v 1.23 2002/06/02 18:06:01 stdarg Exp $";
 #endif
 */
 
@@ -2050,84 +2050,6 @@ static int gotquit(char *from, char *ignore, char *msg)
   return 0;
 }
 
-/* Got a private notice.
- */
-static int gotnotice(char *from, char *ignore, char *msg)
-{
-  char buf[UHOSTLEN], *nick, *uhost, *to, *realto, buf2[512], *p, *p1;
-  char *ctcp, *code;
-  struct userrec *u;
-  struct chanset_t *chan;
-  int ignoring;
-
-  if (!strchr(CHANMETA "@", *msg))
-    return 0;
-  ignoring = match_ignore(from);
-  to = newsplit(&msg);
-  realto = (*to == '@') ? to + 1 : to;
-  chan = findchan(realto);
-  if (!chan)
-    return 0;			/* Notice to an unknown channel?? */
-  fixcolon(msg);
-  strlcpy(buf, from, sizeof buf);
-  nick = strtok(buf, "!");
-  uhost = strtok(NULL, "!");
-  u = get_user_by_host(from);
-
-  /* Check for CTCP: */
-  p = strchr(msg, 1);
-  while (p && *p) {
-    p++;
-    p1 = p;
-    while ((*p != 1) && *p)
-      p++;
-    if (*p == 1) {
-      *p = 0;
-      ctcp = buf2;
-      strcpy(ctcp, p1);
-      strcpy(p1 - 1, p + 1);
-      p = strchr(msg, 1);
-      detect_chan_flood(nick, uhost, from, chan,
-			strncmp(ctcp, "ACTION ", 7) ?
-			FLOOD_CTCP : FLOOD_PRIVMSG, NULL);
-      chan = findchan(realto); 
-      if (!chan)
-	return 0;
-      if (ctcp[0] != ' ') {
-	code = newsplit(&ctcp);
-	if (!ignoring || trigger_on_ignore) {
-	  check_tcl_ctcr(nick, uhost, u, chan->dname, code, msg);
-	  chan = findchan(realto); 
-	  if (!chan)
-	    return 0;
-	  if (!ignoring) {
-	    putlog(LOG_PUBLIC, chan->dname, "CTCP reply %s: %s from %s (%s) to %s",
-		   code, msg, nick, from, chan->dname);
-	    update_idle(chan->dname, nick);
-	  }
-	}
-      }
-    }
-  }
-  if (msg[0]) {
-    /* Check even if we're ignoring the host. (modified by Eule 17.7.99) */
-    detect_chan_flood(nick, uhost, from, chan, FLOOD_NOTICE, NULL);
-    chan = findchan(realto); 
-    if (!chan)
-      return 0;
-    if (!ignoring || trigger_on_ignore) {
-      check_tcl_notc(nick, uhost, u, to, msg);
-      chan = findchan(realto); 
-      if (!chan)
-	return 0;
-    }
-    if (!ignoring)
-      putlog(LOG_PUBLIC, chan->dname, "-%s:%s- %s", nick, to, msg);
-    update_idle(chan->dname, nick);
-  }
-  return 0;
-}
-
 static cmd_t irc_raw[] =
 {
   {"324",	"",	(Function) got324,	"irc:324"},
@@ -2151,7 +2073,6 @@ static cmd_t irc_raw[] =
   {"KICK",	"",	(Function) gotkick,	"irc:kick"},
   {"NICK",	"",	(Function) gotnick,	"irc:nick"},
   {"QUIT",	"",	(Function) gotquit,	"irc:quit"},
-  {"NOTICE",	"",	(Function) gotnotice,	"irc:notice"},
   {"MODE",	"",	(Function) gotmode,	"irc:mode"},
   {"346",	"",	(Function) got346,	"irc:346"},
   {"347",	"",	(Function) got347,	"irc:347"},
