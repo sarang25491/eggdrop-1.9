@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.1 2001/10/27 16:34:48 ite Exp $
+ * $Id: tclchan.c,v 1.2 2001/12/08 15:14:01 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -502,6 +502,7 @@ static int tcl_newchanban STDVAR
   struct chanset_t *chan;
   char ban[161], cmt[MASKREASON_LEN], from[HANDLEN + 1];
   int sticky = 0;
+  module_entry *me;
 
   BADARGS(5, 7, " channel ban creator comment ?lifetime? ?options?");
   chan = findchan_by_dname(argv[1]);
@@ -531,8 +532,8 @@ static int tcl_newchanban STDVAR
       expire_time = now + (atoi(argv[5]) * 60);
   }
   if (u_addban(chan, ban, from, cmt, expire_time, sticky))
-    if (sticky || !channel_dynamicbans(chan))
-    add_mode(chan, '+', 'b', ban);
+    if ((me = module_find("irc", 0, 0)))
+      (me->funcs[IRC_CHECK_THIS_BAN])(chan, ban, sticky);
   return TCL_OK;
 }
 
@@ -542,6 +543,7 @@ static int tcl_newban STDVAR
   struct chanset_t *chan;
   char ban[UHOSTLEN], cmt[MASKREASON_LEN], from[HANDLEN + 1];
   int sticky = 0;
+  module_entry *me;
 
   BADARGS(4, 6, " ban creator comment ?lifetime? ?options?");
   if (argc == 6) {
@@ -566,12 +568,10 @@ static int tcl_newban STDVAR
       expire_time = now + (atoi(argv[4]) * 60);
   }
   u_addban(NULL, ban, from, cmt, expire_time, sticky);
-  chan = chanset;
-  while (chan != NULL) {
-    if (sticky || !channel_dynamicbans(chan))
-    add_mode(chan, '+', 'b', ban);
-    chan = chan->next;
-  }
+  for (chan = chanset; chan; chan = chan->next)
+    if ((me = module_find("irc", 0, 0)))
+      for (chan = chanset; chan != NULL; chan = chan->next)
+	(me->funcs[IRC_CHECK_THIS_BAN])(chan, ban, sticky);
   return TCL_OK;
 }
 
@@ -610,7 +610,6 @@ static int tcl_newchanexempt STDVAR
       expire_time = now + (atoi(argv[5]) * 60);
   }
   if (u_addexempt(chan, exempt, from, cmt, expire_time,sticky))
-    if (sticky || !channel_dynamicexempts(chan))
     add_mode(chan, '+', 'e', exempt);
   return TCL_OK;
 }
@@ -645,12 +644,8 @@ static int tcl_newexempt STDVAR
       expire_time = now + (atoi(argv[4]) * 60);
   }
   u_addexempt(NULL,exempt, from, cmt, expire_time,sticky);
-  chan = chanset;
-  while (chan != NULL) {
-    if (sticky || !channel_dynamicexempts(chan))
+  for (chan = chanset; chan; chan = chan->next)
     add_mode(chan, '+', 'e', exempt);
-    chan = chan->next;
-  }
   return TCL_OK;
 }
 
@@ -689,7 +684,6 @@ static int tcl_newchaninvite STDVAR
       expire_time = now + (atoi(argv[5]) * 60);
   }
   if (u_addinvite(chan, invite, from, cmt, expire_time,sticky))
-    if (sticky || !channel_dynamicinvites(chan))
     add_mode(chan, '+', 'I', invite);
   return TCL_OK;
 }
@@ -724,12 +718,8 @@ static int tcl_newinvite STDVAR
       expire_time = now + (atoi(argv[4]) * 60);
   }
   u_addinvite(NULL,invite, from, cmt, expire_time,sticky);
-  chan = chanset;
-  while (chan != NULL) {
-    if (sticky || !channel_dynamicinvites(chan))
-     add_mode(chan, '+', 'I', invite);
-     chan = chan->next;
-  }
+  for (chan = chanset; chan; chan = chan->next)
+    add_mode(chan, '+', 'I', invite);
   return TCL_OK;
 }
 
