@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: my_socket.c,v 1.8 2003/12/17 07:39:14 wcc Exp $";
+static const char rcsid[] = "$Id: socket.c,v 1.1 2004/06/15 19:36:53 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -31,7 +31,7 @@ static const char rcsid[] = "$Id: my_socket.c,v 1.8 2003/12/17 07:39:14 wcc Exp 
 #include <arpa/inet.h>
 #include <fcntl.h>
 #include <errno.h>
-#include "my_socket.h"
+#include "socket.h"
 
 /* Apparently SHUT_RDWR is not defined on some systems. */
 #ifndef SHUT_RDWR

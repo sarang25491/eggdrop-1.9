@@ -1,4 +1,4 @@
-/* my_socket.h: header for my_socket.c
+/* socket.h: header for socket.c
  *
  * Copyright (C) 2002, 2003, 2004 Eggheads Development Team
  *
@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: my_socket.h,v 1.5 2003/12/17 07:39:14 wcc Exp $
+ * $Id: socket.h,v 1.1 2004/06/15 19:36:53 wingman Exp $
  */
 
 #ifndef _EGG_MY_SOCKET_H_

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: eggdrop.h,v 1.30 2004/06/15 11:54:33 wingman Exp $
+ * $Id: eggdrop.h,v 1.31 2004/06/15 19:36:52 wingman Exp $
  */
 
 #ifndef _EGG_EGGDROP_H_
@@ -49,7 +49,7 @@
 #include <eggdrop/match.h>
 #include <eggdrop/md5.h>
 #include <eggdrop/memutil.h>
-#include <eggdrop/my_socket.h>
+#include <eggdrop/socket.h>
 #include <eggdrop/partyline.h>
 #include <eggdrop/help.h>
 #include <eggdrop/sockbuf.h>

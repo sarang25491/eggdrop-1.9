@@ -4,7 +4,7 @@ FILES
 	eggident.c, eggident.h
 	eggnet.c, eggnet.h
 	linemode.c, linemode.h
-	my_socket.c, my_socket.h
+	socket.c, socket.h
 	sockbuf.c, sockbuf.h
 	throttle.c, throttle.h
 	all in lib/eggdrop
