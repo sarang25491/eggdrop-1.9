@@ -70,7 +70,7 @@ static int handle_negotiation(int idx, int level, unsigned char *data, int len, 
 			else sslinfo->negotiating = 'c';
 		}
 		else {
-			SSL_set_accept_state(sslinfo->ssl);
+			r = SSL_accept(sslinfo->ssl);
 			if (r > 0) sslinfo->negotiating = 0;
 			else sslinfo->negotiating = 's';
 		}
