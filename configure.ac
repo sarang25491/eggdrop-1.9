@@ -49,6 +49,7 @@ EGG_CHECK_CFLAGS_WALL
 
 # Checks for programs
 AC_PROG_LN_S
+AC_PROG_LIBTOOL
 EGG_PROG_AWK
 EGG_PROG_BASENAME
 AC_CHECK_PROG(EGG_UNAME,uname,uname)
@@ -106,56 +107,6 @@ EGG_REPLACE_SNPRINTF
 # Checks for IPV6
 EGG_IPV6_SUPPORTED
 EGG_IPV6_OPTIONS
-
-# Where is tcl?  Is it here?
-# ---------- begin robey's tcl thingies
-# (well, what used to be robey's tcl thingies...)
-
-# Latest tested Tcl version to recommend if Tcl isn't found
-tclrecommendver="8.3.4"
-
-# Site recommended to download Tcl from
-tclrecommendsite="ftp://tcl.activestate.com/pub/tcl/"
-
-# Tcl library filename prefixes (also used for Tcl header dir on FreeBSD)
-tcllibnames="tcl tcl8.4 tcl84 tcl8.3 tcl83 tcl8.2 tcl82 tcl8.1 tcl81 \
-	tcl8.0 tcl80 tcl7.6 tcl76 tcl7.5 tcl75 tcl7.4 tcl74 \
-	tcl7.3 tcl73 tcl7.2 tcl72 tcl7.1 tcl71 tcl7.0 tcl70"
-
-# Tcl library filename suffixes
-tcllibextensions=".so .so.1 .so.1.0 .so.1.2 .a .sl .dll .dynlib"
-
-# Tcl library search paths
-tcllibpaths="/usr/local/lib /usr/local/pkgs/tcl/lib \
-	/usr/lib /lib /usr/i486-linuxaout/lib \
-	/beos/system/lib /sys/lib \
-	$HOME/lib $HOME/tcl/lib $HOME"
-
-# Tcl header filenames
-tclheadernames="tcl.h"
-
-# Tcl header search paths
-tclheaderpaths="/usr/local/include /usr/local/pkgs/tcl/include \
-	/usr/include /beos/system/include /beos/devel/include \
-	/sys/include $HOME/include $HOME/tcl/include $HOME"
-
-EGG_TCL_WITH_OPTIONS
-EGG_TCL_ENV
-EGG_TCL_WITH_TCLLIB
-EGG_TCL_WITH_TCLINC
-EGG_TCL_FIND_LIBRARY
-EGG_TCL_FIND_HEADER
-EGG_TCL_CHECK_LIBRARY
-EGG_TCL_CHECK_HEADER
-EGG_TCL_DETECT_CHANGE
-
-EGG_TCL_CHECK_VERSION
-EGG_TCL_CHECK_PRE80
-EGG_TCL_TESTLIBS
-EGG_TCL_CHECK_THREADS
-EGG_TCL_LIB_REQS
-EGG_TCL_LUSH
-# ---------- end of (what used to be) robey's tcl thingies
 
 EGG_DEBUG_OPTIONS
 

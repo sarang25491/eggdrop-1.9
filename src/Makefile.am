@@ -1,13 +1,7 @@
-# $Id: Makefile.am,v 1.41 2003/04/15 08:18:03 stdarg Exp $
+# $Id: Makefile.am,v 1.42 2003/05/11 02:30:54 stdarg Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 bindir			= $(exec_prefix)
-
-# stuff for Tcl
-XREQS			= @TCL_REQS@
-XLIBS			= @TCL_LIBS@ @LIBS@
-TCLLIB			= @TCLLIB@
-TCLLIBFN		= @TCLLIBFN@
 
 MAINTAINERCLEANFILES	= Makefile.in
 
@@ -58,11 +52,4 @@ eggdrop_LDADD		= @LIBLTDL@ \
 			-dlopen ../modules/server/server.la \
 			$(EGG_TCL) \
 			$(top_builddir)/lib/eggdrop/libeggdrop.la \
-			$(XLIBS)
-
-libtcle.a: $(TCLLIB)/lib$(TCLLIBFN)
-	echo "[ Fixing lib$(TCLLIBFN) -> libtcle.a ]"
-	cp $(TCLLIB)/lib$(TCLLIBFN) libtcle.a
-	chmod u+rw libtcle.a
-	ar d libtcle.a tclMain.o
-	$(RANLIB) libtcle.a
+			$(LIBS)
