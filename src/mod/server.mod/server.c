@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.81 2001/10/07 04:02:55 stdarg Exp $
+ * $Id: server.c,v 1.82 2001/10/10 01:20:13 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -27,6 +27,8 @@
 #define MAKING_SERVER
 #include "src/mod/module.h"
 #include "server.h"
+
+#define start server_LTX_start
 
 static Function *global = NULL;
 
@@ -1725,11 +1727,11 @@ static char *server_close()
   return NULL;
 }
 
-EXPORT_SCOPE char *server_start();
+EXPORT_SCOPE char *start();
 
 static Function server_table[] =
 {
-  (Function) server_start,
+  (Function) start,
   (Function) server_close,
   (Function) server_expmem,
   (Function) server_report,
@@ -1779,7 +1781,7 @@ static Function server_table[] =
   (Function) check_tcl_notc
 };
 
-char *server_start(Function *global_funcs)
+char *start(Function *global_funcs)
 {
   char *s;
 

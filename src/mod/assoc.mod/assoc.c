@@ -2,7 +2,7 @@
  * assoc.c -- part of assoc.mod
  *   the assoc code, moved here mainly from botnet.c for module work
  *
- * $Id: assoc.c,v 1.19 2001/08/10 23:51:20 ite Exp $
+ * $Id: assoc.c,v 1.20 2001/10/10 01:20:11 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -29,6 +29,8 @@
 #include "src/tandem.h"
 #include <stdlib.h>
 #include "assoc.h"
+
+#define start assoc_LTX_start
 
 #undef global
 static Function *global = NULL;
@@ -393,17 +395,17 @@ static char *assoc_close()
   return NULL;
 }
 
-EXPORT_SCOPE char *assoc_start();
+EXPORT_SCOPE char *start();
 
 static Function assoc_table[] =
 {
-  (Function) assoc_start,
+  (Function) start,
   (Function) assoc_close,
   (Function) assoc_expmem,
   (Function) assoc_report,
 };
 
-char *assoc_start(Function * global_funcs)
+char *start(Function * global_funcs)
 {
   global = global_funcs;
 

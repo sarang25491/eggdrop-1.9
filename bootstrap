@@ -1,12 +1,37 @@
 #! /bin/sh
+#
+# $Id: bootstrap,v 1.5 2001/10/10 01:20:08 ite Exp $
+#
+# Recommended development tools versions:
+#   autoconf 2.52
+#   automake 1.5
+#   libtool 1.4.2
+# Please note that it may happen that the bootstrap process reports errors.
+# This doesn't necessarily mean that something went wrong. Try if ./configure
+# and make run without any unexpected errors before reporting bugs. And of
+# course make sure you have the tool's versions above installed before
+# bootstrapping the package. If you don't have them, you can alternatively
+# download the prepackaged and already bootstrapped current CVS snapshot (
+# daily resynched) from ftp.eggheads.org.
+#
+# ITE
 
 set -x
 
 # Bring gettext files
-gettextize --copy --force
+#gettextize --copy --force
+
+# Generate aclocal.m4 from misc/*.m4 files
+aclocal -I .
+
+# Bring in libtool with libtdl abstraction
+libtoolize --force --copy --ltdl
 
 # Generate config.h.in from acconfig.h and configure.in
 autoheader
+
+# Generate Makefile.in from Makefile.am
+automake --add-missing --copy
 
 # Generate configure script
 autoconf
@@ -16,28 +41,4 @@ if [ -f config.cache ]; then
   rm -f config.cache
 fi
 
-
-## The part below will be necessary until we cleanup the actual mess in
-## module's build system
-## <MESS>
-
-set +x
-
-# Generate MODULE_config.h.in from configure.in
-for MODULEPATH in src/mod/*.mod; do
-	if [ -f $MODULEPATH/configure.in ]; then
-		set -x
-		cd $MODULEPATH
-		autoheader
-		cd ../../..
-		set +x
-	fi
-done
-
 set -x
-
-# Generate configure scripts for modules
-misc/modconfig --top_srcdir=. eggautoconf
-
-##</MESS>
-

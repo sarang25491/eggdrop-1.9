@@ -1,7 +1,7 @@
 /*
  * memcpy.c -- provides memcpy() if necessary.
  *
- * $Id: memcpy.c,v 1.2 2001/04/12 02:39:44 guppy Exp $
+ * $Id: memcpy.c,v 1.3 2001/10/10 01:20:10 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -22,7 +22,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "main.h"
+#include "../main.h"
 #include "memcpy.h"
 
 #ifndef HAVE_MEMCPY

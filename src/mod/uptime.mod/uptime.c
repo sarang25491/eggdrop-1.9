@@ -1,6 +1,6 @@
 /* Original Copyright (c) 2000-2001 proton
  * 
- * $Id: uptime.c,v 1.12 2001/10/03 16:00:06 poptix Exp $
+ * $Id: uptime.c,v 1.13 2001/10/10 01:20:14 ite Exp $
  * Borrowed from Emech, reports to http://uptime.energymech.net, feel free to opt out if you
  * dont like it by not loading the module.
  * 
@@ -39,6 +39,8 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
+
+#define start uptime_LTX_start
 
 typedef struct PackUp
 {
@@ -218,17 +220,17 @@ static char *uptime_close()
 	return NULL;
 }
 
-EXPORT_SCOPE char *uptime_start();
+EXPORT_SCOPE char *start();
 
 static Function uptime_table[] =
     {
-        (Function) uptime_start,
+        (Function) start,
         (Function) uptime_close,
         (Function) uptime_expmem,
         (Function) uptime_report,
     };
 
-char *uptime_start(Function * global_funcs)
+char *start(Function * global_funcs)
 {
 	global = global_funcs;
 

@@ -1,7 +1,7 @@
 /*
  * snprintf.c - a portable implementation of snprintf and vsnprintf
  *
- * $Id: snprintf.c,v 1.4 2001/04/12 02:39:44 guppy Exp $
+ * $Id: snprintf.c,v 1.5 2001/10/10 01:20:10 ite Exp $
  */
 /*
  * Portions Copyright (C) 2000, 2001 Eggheads Development Team
@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "main.h"
+#include "../main.h"
 #include "snprintf.h"
 
 

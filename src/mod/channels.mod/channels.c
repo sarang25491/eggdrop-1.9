@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.60 2001/08/23 04:06:10 stdarg Exp $
+ * $Id: channels.c,v 1.61 2001/10/10 01:20:11 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -27,6 +27,8 @@
 #define MAKING_CHANNELS
 #include <sys/stat.h>
 #include "src/mod/module.h"
+
+#define start channels_LTX_start
 
 static Function *global		= NULL;
 
@@ -791,12 +793,12 @@ static char *channels_close()
   return NULL;
 }
 
-EXPORT_SCOPE char *channels_start();
+EXPORT_SCOPE char *start();
 
 static Function channels_table[] =
 {
   /* 0 - 3 */
-  (Function) channels_start,
+  (Function) start,
   (Function) channels_close,
   (Function) channels_expmem,
   (Function) channels_report,
@@ -855,7 +857,7 @@ static Function channels_table[] =
   (Function) remove_channel,
 };
 
-char *channels_start(Function * global_funcs)
+char *start(Function * global_funcs)
 {
   global = global_funcs;
 

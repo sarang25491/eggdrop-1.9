@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.58 2001/08/10 23:51:22 ite Exp $
+ * $Id: share.c,v 1.59 2001/10/10 01:20:13 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -33,8 +33,10 @@
 
 #include "src/chan.h"
 #include "src/users.h"
-#include "transfer.mod/transfer.h"
-#include "channels.mod/channels.h"
+#include "src/mod/transfer.mod/transfer.h"
+#include "src/mod/channels.mod/channels.h"
+
+#define start share_LTX_start
 
 /* Minimum version I will share with. */
 static const int min_share		= 1029900;
@@ -2177,12 +2179,12 @@ static void share_report(int idx, int details)
   }
 }
 
-EXPORT_SCOPE char *share_start();
+EXPORT_SCOPE char *start();
 
 static Function share_table[] =
 {
   /* 0 - 3 */
-  (Function) share_start,
+  (Function) start,
   (Function) share_close,
   (Function) share_expmem,
   (Function) share_report,
@@ -2194,7 +2196,7 @@ static Function share_table[] =
   /* 8 - 11 */
 };
 
-char *share_start(Function *global_funcs)
+char *start(Function *global_funcs)
 {
 
   global = global_funcs;

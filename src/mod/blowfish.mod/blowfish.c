@@ -2,7 +2,7 @@
  * blowfish.c -- part of blowfish.mod
  *   encryption and decryption of passwords
  *
- * $Id: blowfish.c,v 1.21 2001/07/25 04:21:07 guppy Exp $
+ * $Id: blowfish.c,v 1.22 2001/10/10 01:20:11 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -32,6 +32,9 @@
 #include "src/mod/module.h"
 #include "blowfish.h"
 #include "bf_tab.h"		/* P-box P-array, S-box */
+
+#define start blowfish_LTX_start
+
 #undef global
 static Function *global = NULL;
 
@@ -436,12 +439,12 @@ static char *blowfish_close()
   return "You can't unload an encryption module";
 }
 
-EXPORT_SCOPE char *blowfish_start(Function *);
+EXPORT_SCOPE char *start(Function *);
 
 static Function blowfish_table[] =
 {
   /* 0 - 3 */
-  (Function) blowfish_start,
+  (Function) start,
   (Function) blowfish_close,
   (Function) blowfish_expmem,
   (Function) blowfish_report,
@@ -450,7 +453,7 @@ static Function blowfish_table[] =
   (Function) decrypt_string,
 };
 
-char *blowfish_start(Function *global_funcs)
+char *start(Function *global_funcs)
 {
   int i;
 

@@ -6,7 +6,7 @@
  * Written by Fabian Knittel <fknittel@gmx.de>. Based on zlib examples
  * by Jean-loup Gailly and Miguel Albrecht.
  *
- * $Id: compress.c,v 1.12 2001/07/25 04:21:07 guppy Exp $
+ * $Id: compress.c,v 1.13 2001/10/10 01:20:12 ite Exp $
  */
 /*
  * Copyright (C) 2000, 2001 Eggheads Development Team
@@ -34,15 +34,16 @@
 #include <zlib.h>
 
 #include "src/mod/module.h"
-#include "share.mod/share.h"
+#include "src/mod/share.mod/share.h"
 
-#include "compress_config.h"
 #ifdef HAVE_MMAP
 #  include <sys/types.h>
 #  include <sys/mman.h>
 #  include <sys/stat.h>
 #endif /* HAVE_MMAP */
 #include "compress.h"
+
+#define start compress_LTX_start
 
 #define BUFLEN	512
 
@@ -399,12 +400,12 @@ static char *compress_close()
   return NULL;
 }
 
-EXPORT_SCOPE char *compress_start();
+EXPORT_SCOPE char *start();
 
 static Function compress_table[] =
 {
   /* 0 - 3 */
-  (Function) compress_start,
+  (Function) start,
   (Function) compress_close,
   (Function) compress_expmem,
   (Function) compress_report,
@@ -417,7 +418,7 @@ static Function compress_table[] =
   (Function) is_compressedfile,
 };
 
-char *compress_start(Function *global_funcs)
+char *start(Function *global_funcs)
 {
   global = global_funcs;
   compressed_files	= 0;

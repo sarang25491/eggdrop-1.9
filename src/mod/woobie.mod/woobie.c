@@ -5,7 +5,7 @@
  * Originally written by ButchBub	  15 July     1997
  * Comments by Fabian Knittel		  29 December 1999
  *
- * $Id: woobie.c,v 1.16 2001/07/25 04:21:10 guppy Exp $
+ * $Id: woobie.c,v 1.17 2001/10/10 01:20:14 ite Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -29,6 +29,8 @@
 #define MAKING_WOOBIE
 #include "src/mod/module.h"
 #include <stdlib.h>
+
+#define start woobie_LTX_start
 
 #undef global
 /* Pointer to the eggdrop core function table. Gets initialized in

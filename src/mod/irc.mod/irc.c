@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.63 2001/10/07 04:02:55 stdarg Exp $
+ * $Id: irc.c,v 1.64 2001/10/10 01:20:13 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -26,12 +26,14 @@
 #define MODULE_NAME "irc"
 #define MAKING_IRC
 #include "src/mod/module.h"
-#include "server.mod/server.h"
+#include "src/mod/server.mod/server.h"
 #include "irc.h"
-#include "channels.mod/channels.h"
+#include "src/mod/channels.mod/channels.h"
 #ifdef HAVE_UNAME
 #include <sys/utsname.h>
 #endif
+
+#define start irc_LTX_start
 
 /* We import some bind tables from server.mod */
 static bind_table_t *BT_dcc, *BT_raw, *BT_msg, *BT_ctcp, *BT_ctcr;
@@ -970,12 +972,12 @@ static char *irc_close()
   return NULL;
 }
 
-EXPORT_SCOPE char *irc_start();
+EXPORT_SCOPE char *start();
 
 static Function irc_table[] =
 {
   /* 0 - 3 */
-  (Function) irc_start,
+  (Function) start,
   (Function) irc_close,
   (Function) irc_expmem,
   (Function) irc_report,
@@ -988,7 +990,7 @@ static Function irc_table[] =
   (Function) check_this_ban
 };
 
-char *irc_start(Function * global_funcs)
+char *start(Function * global_funcs)
 {
   struct chanset_t *chan;
 

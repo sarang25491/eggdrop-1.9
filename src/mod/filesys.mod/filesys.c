@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.48 2001/08/13 14:51:12 guppy Exp $
+ * $Id: filesys.c,v 1.49 2001/10/10 01:20:12 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -54,6 +54,8 @@
 #include "files.h"
 #include "dbcompat.h"
 #include "filelist.h"
+
+#define start filesys_LTX_start
 
 static p_tcl_bind_list H_fil;
 static Function *transfer_funcs = NULL;
@@ -957,12 +959,12 @@ static char *filesys_close()
   return NULL;
 }
 
-EXPORT_SCOPE char *filesys_start();
+EXPORT_SCOPE char *start();
 
 static Function filesys_table[] =
 {
   /* 0 - 3 */
-  (Function) filesys_start,
+  (Function) start,
   (Function) filesys_close,
   (Function) filesys_expmem,
   (Function) filesys_report,
@@ -975,7 +977,7 @@ static Function filesys_table[] =
   (Function) & H_fil,
 };
 
-char *filesys_start(Function * global_funcs)
+char *start(Function * global_funcs)
 {
   global = global_funcs;
 

@@ -3,7 +3,7 @@
  *   saved console settings based on console.tcl
  *   by cmwagner/billyjoe/D. Senso
  *
- * $Id: console.c,v 1.23 2001/08/10 23:51:20 ite Exp $
+ * $Id: console.c,v 1.24 2001/10/10 01:20:12 ite Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -28,6 +28,8 @@
 #include "src/mod/module.h"
 #include <stdlib.h>
 #include "console.h"
+
+#define start console_LTX_start
 
 static Function *global = NULL;
 static int console_autosave = 0;
@@ -362,18 +364,18 @@ static char *console_close()
   return NULL;
 }
 
-EXPORT_SCOPE char *console_start();
+EXPORT_SCOPE char *start();
 
 static Function console_table[] =
 {
-  (Function) console_start,
+  (Function) start,
   (Function) console_close,
   (Function) NULL,
   (Function) NULL,
   (Function) console_dostore,
 };
 
-char *console_start(Function * global_funcs)
+char *start(Function * global_funcs)
 {
   global = global_funcs;
 

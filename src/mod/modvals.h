@@ -1,7 +1,7 @@
 /*
  * modvals.h
  *
- * $Id: modvals.h,v 1.21 2001/10/07 04:02:54 stdarg Exp $
+ * $Id: modvals.h,v 1.22 2001/10/10 01:20:11 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -84,9 +84,7 @@
 /* Console */
 #define CONSOLE_DOSTORE		  4
 
-#ifdef HPUX_HACKS
-#  include <dl.h>
-#endif
+#include <ltdl.h>
 
 typedef struct _module_entry {
   struct _module_entry	*next;
@@ -94,11 +92,7 @@ typedef struct _module_entry {
   int			 major;	/* Major version number MUST match	*/
   int			 minor;	/* Minor version number MUST be >=	*/
 #ifndef STATIC
-#  ifdef HPUX_HACKS
-  shl_t			 hand;
-#  else		/* !HPUX_HACKS */
-  void			*hand;	/* Module handle			*/
-#  endif	/* !HPUX_HACKS */
+  lt_dlhandle		hand;
 #endif		/* STATIC */
   Function		*funcs;
 #  ifdef DEBUG_MEM

@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.41 2001/08/21 00:21:17 ite Exp $
+ * $Id: eggdrop.h,v 1.42 2001/10/10 01:20:10 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -97,12 +97,6 @@
 #endif
 
 #define ADDRLEN (ADDRMAX + 1)
-
-#ifndef STATIC
-#  if (!defined(MODULES_OK) || !defined(HAVE_DLOPEN)) && !defined(HPUX_HACKS)
-#    include "you_can't_compile_with_module_support_on_this_system_try_make_static"
-#  endif
-#endif
 
 #if !defined(STDC_HEADERS)
 #  include "you_need_to_upgrade_your_compiler_to_a_standard_c_one_mate!"

@@ -1,18 +1,12 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(src/eggdrop.h)
-AC_CONFIG_AUX_DIR(misc)
-
-PACKAGE=eggdrop
-VERSION=1.7.0
-AC_DEFINE_UNQUOTED(PACKAGE, "$PACKAGE")
-AC_DEFINE_UNQUOTED(VERSION, "$VERSION")
-AC_SUBST(PACKAGE)
-AC_SUBST(VERSION)
-
-AC_PREFIX_DEFAULT([\${HOME}/eggdrop])
-AC_CONFIG_HEADER(config.h)
+AC_CONFIG_AUX_DIR(.)
+AM_CONFIG_HEADER(config.h)
 EGG_MSG_CONFIGURE_START
-EGG_SAVE_PARAMETERS
+AM_INIT_AUTOMAKE(eggdrop, 1.7.0)
+
+# FIXME: optionally allow a system wide install by bypassing the macro below.
+AC_PREFIX_DEFAULT([\${HOME}/eggdrop])
 
 # Setup build environment
 AC_PROG_CC
@@ -26,18 +20,25 @@ AC_MINIX
 # Gettext support
 EGG_GNU_GETTEXT
 
+# Libtool support
+AC_DISABLE_FAST_INSTALL
+AC_DISABLE_STATIC
+AC_LIBTOOL_WIN32_DLL
+AC_LIBLTDL_CONVENIENCE
+AC_SUBST(INCLTDL)
+AC_SUBST(LIBLTDL)
+AC_LIBTOOL_DLOPEN
+AM_PROG_LIBTOOL
+
 # Speedup compile
 EGG_CHECK_CCPIPE
 
 # Checks for programs
-AC_PROG_MAKE_SET
-AC_PROG_RANLIB
-AC_PROG_INSTALL
 AC_PROG_LN_S
 EGG_PROG_STRIP
 EGG_PROG_AWK
 EGG_PROG_BASENAME
-AC_CHECK_PROG(UNAME,uname,uname)
+AC_CHECK_PROG(EGG_UNAME,uname,uname)
 AC_CHECK_PROG(AR,ar,ar)
 
 # Test the os and set the module linking settings
@@ -71,12 +72,8 @@ EGG_CHECK_FUNC_VSPRINTF
 # Make sure we have stdc headers, since we can't compile without them
 EGG_HEADER_STDC
 
-# Make sure we are using the correct result from a broken libsafe sscanf
-EGG_CHECK_LIBSAFE_SSCANF
-
 # Checks for cygwin
 EGG_CYGWIN
-EGG_EXEEXT
 
 EGG_IPV6_SUPPORTED
 EGG_ENABLE_IPV6
@@ -134,12 +131,18 @@ EGG_TCL_LIB_REQS
 EGG_TCL_LUSH
 # ---------- end of (what used to be) robey's tcl thingies
 
-EGG_FUNC_DLOPEN
+EGG_DEBUG_OPTIONS
 
 EGG_DEFINE_VERSION_NUM
-EGG_SUBST_MOD_UPDIR
-EGG_CATCH_MAKEFILE_REBUILD
 
-AC_OUTPUT([Makefile doc/Makefile scripts/Makefile src/Makefile src/md5/Makefile src/compat/Makefile src/mod/Makefile src/adns/Makefile intl/Makefile po/Makefile.in])
+EGG_COMPRESS_MODULE
+
+AC_CONFIG_SUBDIRS(libltdl)
+
+AC_SUBST(ac_aux_dir)
+
+# FIXME: module's Makefiles list will prolly become dynamic
+AC_OUTPUT([Makefile doc/Makefile scripts/Makefile src/Makefile src/md5/Makefile src/compat/Makefile src/egglib/Makefile src/mod/Makefile src/adns/Makefile src/mod/Makefile intl/Makefile po/Makefile.in src/mod/assoc.mod/Makefile src/mod/blowfish.mod/Makefile src/mod/channels.mod/Makefile src/mod/compress.mod/Makefile src/mod/console.mod/Makefile src/mod/ctcp.mod/Makefile src/mod/filesys.mod/Makefile src/mod/irc.mod/Makefile src/mod/notes.mod/Makefile src/mod/server.mod/Makefile src/mod/share.mod/Makefile src/mod/transfer.mod/Makefile src/mod/uptime.mod/Makefile src/mod/woobie.mod/Makefile])
 
 EGG_MSG_CONFIGURE_END
+

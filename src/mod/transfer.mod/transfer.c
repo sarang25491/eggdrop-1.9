@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.43 2001/08/10 23:51:22 ite Exp $
+ * $Id: transfer.c,v 1.44 2001/10/10 01:20:14 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -41,6 +41,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#define start transfer_LTX_start
 
 static Function *global = NULL;
 
@@ -1939,11 +1940,11 @@ static void transfer_report(int idx, int details)
   }
 }
 
-EXPORT_SCOPE char *transfer_start();
+EXPORT_SCOPE char *start();
 
 static Function transfer_table[] =
 {
-  (Function) transfer_start,
+  (Function) start,
   (Function) transfer_close,
   (Function) transfer_expmem,
   (Function) transfer_report,
@@ -1971,7 +1972,7 @@ static Function transfer_table[] =
   (Function) & H_tout,			/* p_tcl_bind_list		*/
 };
 
-char *transfer_start(Function *global_funcs)
+char *start(Function *global_funcs)
 {
   global = global_funcs;
 

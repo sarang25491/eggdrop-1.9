@@ -1,6 +1,14 @@
+Makefile
+Makefile.in
+.deps
+.libs
+*.o
+*.lo
+*.la
+*.obj
 *_config.h
 *_config.h.in
 configure
 config.log
 config.status
-Makefile
+

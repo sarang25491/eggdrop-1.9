@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.58 2001/09/28 03:15:34 stdarg Exp $
+ * $Id: module.h,v 1.59 2001/10/10 01:20:11 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -24,6 +24,9 @@
 
 #ifndef _EGG_MOD_MODULE_H
 #define _EGG_MOD_MODULE_H
+
+/* FIXME: remove this ugliness ASAP! */
+#define MAKING_MODS
 
 /* Just include *all* the include files...it's slower but EASIER */
 #include "src/main.h"

@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.34 2001/08/10 23:51:21 ite Exp $
+ * $Id: notes.c,v 1.35 2001/10/10 01:20:13 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -34,6 +34,8 @@
 #include "src/tandem.h"
 #undef global
 #include "notes.h"
+
+#define start notes_LTX_start
 
 static int maxnotes = 50;	/* Maximum number of notes to allow stored
 				 * for each user */
@@ -1202,18 +1204,18 @@ static void notes_report(int idx, int details)
   }
 }
 
-EXPORT_SCOPE char *notes_start();
+EXPORT_SCOPE char *start();
 
 static Function notes_table[] =
 {
-  (Function) notes_start,
+  (Function) start,
   (Function) notes_close,
   (Function) notes_expmem,
   (Function) notes_report,
   (Function) cmd_note,
 };
 
-char *notes_start(Function * global_funcs)
+char *start(Function * global_funcs)
 {
 
   global = global_funcs;

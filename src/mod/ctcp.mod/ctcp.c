@@ -2,7 +2,7 @@
  * ctcp.c -- part of ctcp.mod
  *   all the ctcp handling (except DCC, it's special ;)
  *
- * $Id: ctcp.c,v 1.18 2001/10/07 04:02:55 stdarg Exp $
+ * $Id: ctcp.c,v 1.19 2001/10/10 01:20:12 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -27,9 +27,11 @@
 #define MAKING_CTCP
 #include "ctcp.h"
 #include "src/mod/module.h"
-#include "server.mod/server.h"
+#include "src/mod/server.mod/server.h"
 #include <netinet/in.h>
 #include <arpa/inet.h>
+
+#define start ctcp_LTX_start
 
 /* Import this bind table from server.mod */
 static bind_table_t *BT_ctcp;
@@ -205,17 +207,17 @@ static char *ctcp_close()
   return NULL;
 }
 
-EXPORT_SCOPE char *ctcp_start();
+EXPORT_SCOPE char *start();
 
 static Function ctcp_table[] =
 {
-  (Function) ctcp_start,
+  (Function) start,
   (Function) ctcp_close,
   (Function) NULL,
   (Function) NULL,
 };
 
-char *ctcp_start(Function * global_funcs)
+char *start(Function * global_funcs)
 {
   global = global_funcs;
 

@@ -5,7 +5,7 @@
  * acconfig.h
  *   template file autoheader uses when building config.h.in
  * 
- * $Id: acconfig.h,v 1.10 2001/08/21 00:21:17 ite Exp $
+ * $Id: acconfig.h,v 1.11 2001/10/10 01:20:08 ite Exp $
  */
 
 /* Define package name */
@@ -20,9 +20,6 @@
 /* Define locale's resources path */
 #undef LOCALEDIR
 
-/* Define if modules will work on your system  */
-#undef MODULES_OK
-
 /* Define if running on hpux that supports dynamic linking  */
 #undef HPUX_HACKS
 
@@ -30,25 +27,13 @@
 #undef HPUX10_HACKS
 
 /* Define if running on OSF/1 platform.  */
-#undef OSF1_HACKS
-
-/* Define if running on OSF/1 platform.  */
 #undef STOP_UAC
-
-/* Define if running on sunos 4.0 *sigh*  */
-#undef DLOPEN_1
 
 /* Define if running on NeXT Step  */
 #undef BORGCUBES
 
 /* Define if running under cygwin  */
 #undef CYGWIN_HACKS
-
-/* Define if you have a version of libsafe with a broken sscanf */
-#undef LIBSAFE_HACKS
-
-/* Define if we need dlopen (for module support)  */
-#undef HAVE_DLOPEN
 
 /* Define for pre Tcl 7.5 compat  */
 #undef HAVE_PRE7_5_TCL
@@ -59,9 +44,6 @@
 /* Define for Tcl that has threads  */
 #undef HAVE_TCL_THREADS
 
-/* Defines extension of eggdrop modules  */
-#undef EGG_MOD_EXT
-
 /* Define if you want IPv6 support */
 #undef IPV6
 
@@ -70,6 +52,12 @@
 
 /* Define if we want to include rpc/types.h.  Crap BSDs put INADDR_LOOPBACK there. */
 #undef HAVEUSE_RPCTYPES_H
+
+#undef HAVE_GETTEXT
+#undef HAVE_LC_MESSAGES
+#undef HAVE_CATGETS
+#undef ENABLE_NLS
+#undef HAVE_STPCPY
 
 @BOTTOM@
 

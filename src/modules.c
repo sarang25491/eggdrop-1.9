@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.61 2001/09/28 03:15:34 stdarg Exp $
+ * $Id: modules.c,v 1.62 2001/10/10 01:20:10 ite Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -29,36 +29,8 @@
 #include "modules.h"
 #include "tandem.h"
 #include <ctype.h>
-#ifndef STATIC
-#  ifdef HPUX_HACKS
-#    include <dl.h>
-#  else
-#    ifdef OSF1_HACKS
-#      include <loader.h>
-#    else
-#      ifdef DLOPEN_1
-char *dlerror();
-void *dlopen(const char *, int);
-int dlclose(void *);
-void *dlsym(void *, char *);
-#        define DLFLAGS 1
-#      else
-#        include <dlfcn.h>
-#        ifndef RTLD_GLOBAL
-#          define RTLD_GLOBAL 0
-#        endif
-#        ifndef RTLD_NOW
-#          define RTLD_NOW 1
-#        endif
-#        ifdef RTLD_LAZY
-#          define DLFLAGS RTLD_LAZY|RTLD_GLOBAL
-#        else
-#          define DLFLAGS RTLD_NOW|RTLD_GLOBAL
-#        endif
-#      endif			/* DLOPEN_1 */
-#    endif			/* OSF1_HACKS */
-#  endif			/* HPUX_HACKS */
-#endif				/* STATIC */
+
+#include <ltdl.h>
 
 extern struct dcc_t	*dcc;
 
@@ -556,6 +528,7 @@ Function global_table[] =
 void init_modules(void)
 {
   int i;
+  char wbuf[1024];
 
   module_list = nmalloc(sizeof(module_entry));
   module_list->name = nmalloc(8);
@@ -564,6 +537,14 @@ void init_modules(void)
   module_list->minor = ((egg_numver) / 100) % 100;
 #ifndef STATIC
   module_list->hand = NULL;
+  
+  LTDL_SET_PRELOADED_SYMBOLS();
+  if (lt_dlinit() != 0) {
+    egg_snprintf(wbuf, sizeof(wbuf),
+		    _("error during libtdl initialization: %s\n"),
+		    lt_dlerror());
+    fatal(wbuf, 0);
+  }
 #endif
   module_list->next = NULL;
   module_list->funcs = NULL;
@@ -627,15 +608,7 @@ const char *module_load(char *name)
   Function f;
 #ifndef STATIC
   char workbuf[1024];
-#  ifdef HPUX_HACKS
-  shl_t hand;
-#  else
-#    ifdef OSF1_HACKS
-  ldr_module_t hand;
-#    else
-  void *hand;
-#    endif
-#  endif
+  lt_dlhandle hand;
 #else
   struct static_list *sl;
 #endif
@@ -646,63 +619,19 @@ const char *module_load(char *name)
   if (moddir[0] != '/') {
     if (getcwd(workbuf, 1024) == NULL)
       return _("Cant determine current directory.");
-    sprintf(&(workbuf[strlen(workbuf)]), "/%s%s." EGG_MOD_EXT, moddir, name);
+    sprintf(&(workbuf[strlen(workbuf)]), "/%s%s", moddir, name);
   } else
-    sprintf(workbuf, "%s%s." EGG_MOD_EXT, moddir, name);
-#  ifdef HPUX_HACKS
-  hand = shl_load(workbuf, BIND_IMMEDIATE, 0L);
+    sprintf(workbuf, "%s%s", moddir, name);
+  hand = lt_dlopenext(workbuf);
   if (!hand)
-    return "Can't load module.";
-#  else
-#    ifdef OSF1_HACKS
-#      ifndef HAVE_PRE7_5_TCL
-  hand = (Tcl_PackageInitProc *) load(workbuf, LDR_NOFLAGS);
-  if (hand == LDR_NULL_MODULE)
-    return "Can't load module.";
-#      endif
-#    else
-  hand = dlopen(workbuf, DLFLAGS);
-  if (!hand)
-    return dlerror();
-#    endif
-#  endif
+    return lt_dlerror();
 
-  sprintf(workbuf, "%s_start", name);
-#  ifdef HPUX_HACKS
-  if (shl_findsym(&hand, workbuf, (short) TYPE_PROCEDURE, (void *) &f))
-    f = NULL;
-#  else
-#    ifdef OSF1_HACKS
-  f = (Function) ldr_lookup_package(hand, workbuf);
-#    else
-  f = (Function) dlsym(hand, workbuf);
-#    endif
-#  endif
-  if (f == NULL) {		/* some OS's need the _ */
-    sprintf(workbuf, "_%s_start", name);
-#  ifdef HPUX_HACKS
-    if (shl_findsym(&hand, workbuf, (short) TYPE_PROCEDURE, (void *) &f))
-      f = NULL;
-#  else
-#    ifdef OSF1_HACKS
-    f = (Function) ldr_lookup_package(hand, workbuf);
-#    else
-    f = (Function) dlsym(hand, workbuf);
-#    endif
-#  endif
+  f = (Function) lt_dlsym(hand, "start");
     if (f == NULL) {
-#  ifdef HPUX_HACKS
-      shl_unload(hand);
-#  else
-#    ifdef OSF1_HACKS
-#    else
-      dlclose(hand);
-#    endif
-#  endif
+    lt_dlclose(hand);
       return _("No start function defined.");
     }
-  }
-#  else
+#else
   for (sl = static_modules; sl && egg_strcasecmp(sl->name, name); sl = sl->next);
   if (!sl)
     return "Unknown module.";
@@ -756,14 +685,7 @@ char *module_unload(char *name, char *user)
 	if (e != NULL)
 	  return e;
 #ifndef STATIC
-#  ifdef HPUX_HACKS
-	shl_unload(p->hand);
-#  else
-#    ifdef OSF1_HACKS
-#    else
-	dlclose(p->hand);
-#    endif
-#  endif
+	lt_dlclose(p->hand);
 #endif				/* STATIC */
       }
       nfree(p->name);
