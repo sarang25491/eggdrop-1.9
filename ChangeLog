@@ -1,3 +1,20 @@
+2001-10-10 18:47  stdarg <stdarg@techmonkeys.org>
+
+	* src/mod/: assoc.mod/assoc.c, filesys.mod/filesys.c,
+	uptime.mod/uptime.c:
+
+	Yeah, better declare BT_dcc before I use it heh.  
+
+2001-10-10 18:37  stdarg <stdarg@techmonkeys.org>
+
+	* src/: modules.c, tclhash.c, tclhash.h, mod/module.h,
+	mod/assoc.mod/assoc.c, mod/channels.mod/channels.c,
+	mod/console.mod/console.c, mod/filesys.mod/filesys.c,
+	mod/notes.mod/notes.c, mod/share.mod/share.c,
+	mod/uptime.mod/uptime.c, mod/woobie.mod/woobie.c:
+
+	Got rid of the last remnants of H_dcc.  
+
 2001-10-10 17:07  stdarg <stdarg@techmonkeys.org>
 
 	* src/egglib/linked_list.c:
