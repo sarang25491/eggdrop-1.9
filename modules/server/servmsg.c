@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: servmsg.c,v 1.20 2002/06/02 08:52:19 stdarg Exp $";
+static const char rcsid[] = "$Id: servmsg.c,v 1.21 2002/06/02 08:56:27 stdarg Exp $";
 #endif
 */
 
@@ -172,7 +172,7 @@ static int got001(struct userrec *u, char *from_nick, char *from_uhost, char *cm
 /* Got 442: not on channel
 	:server 442 nick #chan :You're not on that channel
  */
-static int got442(struct userrec *u, char *from_nick, char *from_uhost, int nargs, char *args[], char *ignore, char *msg)
+static int got442(struct userrec *u, char *from_nick, char *from_uhost, char *cmd, int nargs, char *args[])
 {
 	struct chanset_t *chan;
 	char *chname = args[1];
