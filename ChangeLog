@@ -1,3 +1,11 @@
+2001-10-15 09:54  stdarg <stdarg@techmonkeys.org>
+
+	* src/: main.c, script.c, mod/tclscript.mod/tclscript.c:
+
+	script.c: Forgot to push the script event on the event stack.  
+	main.c: timer_destroy_all() was being called in the wrong place.  
+	tclscript.c: Documentation error in a comment.  
+
 2001-10-15 09:27  stdarg <stdarg@techmonkeys.org>
 
 	* src/: cmds.c, egg_timer.c, egg_timer.h, main.c, script.c,
