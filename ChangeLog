@@ -1,3 +1,11 @@
+2002-05-07 10:02  stdarg <stdarg@techmonkeys.org>
+
+	* modules/javascript/javascript.c:
+
+	
+	* Stuff is starting to work. You can use .js putlog("blah blah") for
+	instance.  
+
 2002-05-06 10:41  stdarg <stdarg@techmonkeys.org>
 
 	* modules/javascript/javascript.c:
