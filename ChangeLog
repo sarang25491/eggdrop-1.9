@@ -1,3 +1,11 @@
+2003-01-18 22:36  Will Buckner <wcc@techmonkeys.org>
+
+	* doc/UPDATES1.6, lib/eggdrop/module.h, modules/irc/chan.c,
+	src/dccutil.c, src/dccutil.h, src/logfile.c, src/modules.c,
+	src/patch.h, src/tcldcc.c, src/tclmisc.c:
+
+	* Synch 1.6: nickbind, unixtime_incr, transfer-close, logblocking.  
+
 2003-01-02 21:33  Will Buckner <wcc@techmonkeys.org>
 
 	* AUTHORS, FEATURES, INSTALL, NEWS, README, doc/compiling.FAQ,
