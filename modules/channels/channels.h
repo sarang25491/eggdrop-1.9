@@ -1,7 +1,7 @@
 /*
  * channels.h -- part of channels.mod
  *
- * $Id: channels.h,v 1.1 2001/10/27 16:34:48 ite Exp $
+ * $Id: channels.h,v 1.2 2002/01/26 13:34:18 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -30,7 +30,7 @@
 #define UDEF_INT 2
 #define UDEF_STR 3
 
-#define MASKREASON_MAX	160	/* Max length of ban/invite/exempt/etc.
+#define MASKREASON_MAX	307	/* Max length of ban/invite/exempt/etc.
 				   reasons.				*/
 #define MASKREASON_LEN	(MASKREASON_MAX + 1)
 
