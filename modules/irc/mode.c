@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.3 2001/12/01 17:35:06 ite Exp $
+ * $Id: mode.c,v 1.4 2001/12/02 11:43:30 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -651,6 +651,7 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from,
     register maskrec *b;
     int cycle;
     char resn[512]="";
+
     for (cycle = 0; cycle < 2; cycle++) {
       for (b = cycle ? chan->bans : global_bans; b; b = b->next) {
 	if (wild_match(b->mask, who)) {
@@ -661,7 +662,7 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from,
 	}
       }
     }
-      kick_all(chan, who, resn[0] ? resn : _("Banned"), match_my_nick(nick) ? 0 : 1);
+    kick_all(chan, who, resn[0] ? resn : _("Banned"), match_my_nick(nick) ? 0 : 1);
   }
   /* Is it a server ban from nowhere? */
   if (reversing ||
