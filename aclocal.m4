@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.47 2001/07/29 19:43:05 drummer Exp $
+dnl $Id: aclocal.m4,v 1.48 2001/08/01 19:00:13 drummer Exp $
 dnl
 
 
@@ -1352,9 +1352,12 @@ AC_DEFUN(EGG_IPV6_SUPPORTED, [dnl
 AC_MSG_CHECKING(for kernel IPv6 support)
 AC_CACHE_VAL(egg_cv_ipv6_supported,[
  AC_TRY_RUN_NATIVE([
+#include <fcntl.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <errno.h>
+#include <stdio.h>
 
 int main()
 {
