@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tclscript.c,v 1.29 2003/02/27 02:44:10 wcc Exp $";
+static const char rcsid[] = "$Id: tclscript.c,v 1.30 2003/03/01 08:25:58 wcc Exp $";
 #endif
 
 #include <tcl.h>
@@ -31,8 +31,8 @@ static const char rcsid[] = "$Id: tclscript.c,v 1.29 2003/02/27 02:44:10 wcc Exp
 
 static eggdrop_t *egg = NULL;
 
-#if (TCL_MAJOR_VERSION > 8) || ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION > 1))
-# define USE_BYTE_ARRAYS
+#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 1)) || (TCL_MAJOR_VERSION > 8))
+#  define USE_TCL_BYTE_ARRAYS
 #endif
 
 /* Data we need for a tcl callback. */
@@ -249,7 +249,7 @@ static int my_tcl_callbacker(script_callback_t *me, ...)
 		Tcl_ListObjAppendElement(cd->myinterp, final_command, arg);
 	}
 
-#ifdef USE_BYTE_ARRAYS
+#ifdef USE_TCL_BYTE_ARRAYS
 	n = Tcl_EvalObjEx(cd->myinterp, final_command, TCL_EVAL_GLOBAL);
 #else
 	n = Tcl_GlobalEvalObj(cd->myinterp, final_command);
@@ -374,7 +374,7 @@ static Tcl_Obj *c_to_tcl_var(Tcl_Interp *myinterp, script_var_t *v)
 
 			if (!str) str = "";
 			if (v->len == -1) v->len = strlen(str);
-			#ifdef USE_BYTE_ARRAYS
+			#ifdef USE_TCL_BYTE_ARRAYS
 			result = Tcl_NewByteArrayObj(str, v->len);
 			#else
 			result = Tcl_NewStringObj(str, v->len);
@@ -384,7 +384,7 @@ static Tcl_Obj *c_to_tcl_var(Tcl_Interp *myinterp, script_var_t *v)
 		}
 		case SCRIPT_BYTES: {
 			byte_array_t *bytes = v->value;
-			#ifdef USE_BYTE_ARRAYS
+			#ifdef USE_TCL_BYTE_ARRAYS
 			result = Tcl_NewByteArrayObj(bytes->bytes, bytes->len);
 			#else
 			result = Tcl_NewStringObj(bytes->bytes, bytes->len);
@@ -434,7 +434,7 @@ static int tcl_to_c_var(Tcl_Interp *myinterp, Tcl_Obj *obj, script_var_t *var, i
 			char *str;
 			int len;
 
-			#ifdef USE_BYTE_ARRAYS
+			#ifdef USE_TCL_BYTE_ARRAYS
 				char *bytes;
 
 				bytes = Tcl_GetByteArrayFromObj(obj, &len);
@@ -454,7 +454,7 @@ static int tcl_to_c_var(Tcl_Interp *myinterp, Tcl_Obj *obj, script_var_t *var, i
 
 			byte_array = (byte_array_t *)malloc(sizeof(*byte_array));
 
-			#ifdef USE_BYTE_ARRAYS
+			#ifdef USE_TCL_BYTE_ARRAYS
 			byte_array->bytes = Tcl_GetByteArrayFromObj(obj, &byte_array->len);
 			#else
 			byte_array->bytes = Tcl_GetStringFromObj(obj, &byte_array->len);

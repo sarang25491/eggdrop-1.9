@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: tclchan.c,v 1.30 2003/02/15 05:04:57 wcc Exp $";
+static const char rcsid[] = "$Id: tclchan.c,v 1.31 2003/03/01 08:25:58 wcc Exp $";
 #endif
 */
 
@@ -915,7 +915,6 @@ static script_command_t channel_script_cmds[] = {
 	{"", "ispermban", script_ispermsomething, (void *)'b', 1, "ss", "?channel? mask", SCRIPT_INTEGER, SCRIPT_PASS_CDATA | SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT},
 	{"", "isperminvite", script_ispermsomething, (void *)'I', 1, "ss", "?channel? mask", SCRIPT_INTEGER, SCRIPT_PASS_CDATA | SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT},
 	{"", "ispermexempt", script_ispermsomething, (void *)'e', 1, "ss", "?channel? mask", SCRIPT_INTEGER, SCRIPT_PASS_CDATA | SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT},
-
 
 	{"", "isbansticky", script_isstickysomething, (void *)'b', 1, "ss", "?channel? mask", SCRIPT_INTEGER, SCRIPT_PASS_CDATA | SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT},
 	{"", "isinvitesticky", script_isstickysomething, (void *)'I', 1, "ss", "?channel? mask", SCRIPT_INTEGER, SCRIPT_PASS_CDATA | SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT},

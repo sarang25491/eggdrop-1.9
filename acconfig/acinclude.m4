@@ -1,7 +1,7 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.19 2002/05/12 15:35:44 ite Exp $
+dnl $Id: acinclude.m4,v 1.20 2003/03/01 08:25:58 wcc Exp $
 dnl
 
 
@@ -794,12 +794,12 @@ fi
 ])
 
 
-dnl  EGG_TCL_CHECK_PRE70()
+dnl  EGG_TCL_CHECK_PRE80()
 dnl
-AC_DEFUN(EGG_TCL_CHECK_PRE70, [dnl
+AC_DEFUN(EGG_TCL_CHECK_PRE80, [dnl
 # Is this version of Tcl too old for us to use ?
-TCL_VER_PRE70=`echo $egg_cv_var_tcl_version | $AWK '{split([$]1, i, "."); if (i[[1]] < 7) print "yes"; else print "no"}'`
-if test "$TCL_VER_PRE70" = "yes"
+TCL_VER_PRE80=`echo $egg_cv_var_tcl_version | $AWK '{split([$]1, i, "."); if (i[[1]] < 8) print "yes"; else print "no"}'`
+if test "$TCL_VER_PRE80" = "yes"
 then
   AC_MSG_ERROR([
 
@@ -809,19 +809,6 @@ then
   can be downloaded from $tclrecommendsite
 
 ])
-fi
-])
-
-
-dnl  EGG_TCL_CHECK_PRE75()
-dnl
-AC_DEFUN(EGG_TCL_CHECK_PRE75, [dnl
-# Are we using a pre 7.5 Tcl version ?
-TCL_VER_PRE75=`echo $egg_cv_var_tcl_version | $AWK '{split([$]1, i, "."); if (((i[[1]] == 7) && (i[[2]] < 5)) || (i[[1]] < 7)) print "yes"; else print "no"}'`
-if test "$TCL_VER_PRE75" = "yes"
-then
-  AC_DEFINE(HAVE_PRE7_5_TCL, 1,
-            [Define for pre Tcl 7.5 compatibility])
 fi
 ])
 
@@ -907,31 +894,6 @@ else
   static build.
 
 ])
-  fi
-
-  # Are we using a pre 7.4 Tcl version ?
-  TCL_VER_PRE74=`echo $egg_cv_var_tcl_version | $AWK '{split([$]1, i, "."); if (((i[[1]] == 7) && (i[[2]] < 4)) || (i[[1]] < 7)) print "yes"; else print "no"}'`
-  if test "$TCL_VER_PRE74" = "no"
-  then
-
-    # Was the --with-tcllib option given ?
-    if test ! "${tcllibname-x}" = "x"
-    then
-      TCL_REQS="$TCLLIB/lib$TCLLIBFN"
-      TCL_LIBS="$TCLLIB/lib$TCLLIBFN $EGG_MATH_LIB"
-    else
-      TCL_REQS="$TCLLIB/lib$TCLLIBFN"
-      TCL_LIBS="-L$TCLLIB -l$TCLLIBFNS $EGG_MATH_LIB"
-    fi
-  else
-  AC_MSG_WARN([
-
-  Your Tcl version ($egg_cv_var_tcl_version) is older then 7.4.
-  There are known problems, but we will attempt to work around them.
-
-])
-    TCL_REQS="libtcle.a"
-    TCL_LIBS="-L`pwd` -ltcle $EGG_MATH_LIB"
   fi
 fi
 fi

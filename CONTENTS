@@ -1,49 +1,77 @@
-One (1) eggdrop bot (n.)  Functional on many UNIX platforms. README is
-   included for you (human) to read (please). Helpful stuff.
+Directory Contents - /
+Last revised: March  01, 2003
+     _________________________________________________________________
 
-"What are all these files for?"
+                           Directory Contents - /
 
-COPYING
-   legal stuff
+  acconfig/
+    This directory contains autotools configuration data.
 
-FEATURES
-   just tells you what eggdrop can do -- a kind of advertisement
+  doc/
+    Lots of IMPORTANT DOCUMENTATION that you MUST READ is in this directory.
 
-Makefile
-Makefile.in
-   help with automated making of bot
+  help/
+    All of the bot's help files are stored here.
 
-NEWS
-   lists significant differences with previous versions, if you're used
-   to using a previous version, or upgrading READ IT.
+  intl/
+    This contains code related to GNU gettext support.
 
-README
-   what you should read before trying to compile eggdrop -- contains
-   tips on compiling, and an explanation of what eggdrop does
+  lib/
+    This contains the libadns, libcompat, libeggdrop, and egglib libraries.
 
-config*
-   scripts/files for automatic configure of the bot
+  logs/
+    This is a good place for eggdrop to store log files.
 
-doc/
-   lots of IMPORTANT DOCUMENTATION that you must read!
+  misc/
+    These are misc. source/script files.
 
-eggdrop.simple.conf
-   a simple configuration file for your bot
+  modules/
+    Eggdrop modules are stored here.
 
-eggdrop.complete.conf
-   a configuration file including all options for your bot
+  nettype/
+    Network-specific configuration data is stored here.
 
-filesys/
-   sample filesystem
+  po/
+    This contains translation information.
 
-help/
-   the online help files for the bot
+  scripts/
+    Tcl scripts included with Eggdrop are contained in this directory.
 
-motd
-   sample "message of the day" displayed to party-line users as they join
+  src/
+    This is the Eggdrop source.
 
-scripts/
-   some tcl scripts that you might want to use
+  testcode/
+    This contains Eggdrop test code.
 
-src/
-   the eggdrop source
+  text/
+    This contains the motd and banner files.
+
+  bootstrap
+    This script generates several files needed for the configure process.
+
+  ChangeLog
+    Contains CVS commit logs from each change made to Eggdrop in CVS.
+
+  config.tcl
+    This is a sample Tcl configuration file.
+
+  config.xml
+    This is a sample XML configuration file.
+
+  configure.ac
+    This file is used to generate the configure script.
+
+  COPYING
+    Eggdrop legal information is contained in this file.
+
+  INSTALL
+    Information on installing your Eggdrop.
+
+  Makefile.am
+    This helps with the automated compiling of the bot.
+
+  NEWS
+    This lists significant differences with previous versions.
+
+  README
+    You should read this file before even trying to compile Eggdrop.

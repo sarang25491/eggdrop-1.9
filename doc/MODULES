@@ -1,5 +1,5 @@
 Eggdrop Module Information
-Last revised: February  23, 2003
+Last revised: March 01, 2003
      _________________________________________________________________
 
                         Eggdrop Module Information
@@ -82,15 +82,21 @@ IV. Modules included with eggdrop
 
   irc         This module provides basic IRC support for your bot. You have
               to load this if you want your bot to come on IRC.
+  
+  javascript  This module provides JaveScript scripting support.
 
   notes       This module provides support for storing of notes for users
               from each other. Note sending between currently online users
               is supported in the core, this is only for storing the notes
               for later retrieval.
 
+  perlscript  This module provides Perl scripting support.
+
   server      This module provides the core server support. You have to load
               this if you want your bot to come on IRC. Not loading this is
               equivalent to the old NO_IRC define.
+
+  tclscript   This module provides Tcl scripting support.
 
   uptime      This module reports uptime statistics to http://uptime.eggheads.org.
               Go look and see what your uptime is! It takes about 9 hours to
