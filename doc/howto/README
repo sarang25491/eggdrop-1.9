@@ -1,0 +1,5 @@
+This directory contains files to help you with eggdrop scripting.
+
+first_script.txt - Contains a very simple, profusely commented script
+setudef.txt - How to use user-defined int, flag, and string channel settings
+timers.txt - How to use timers in eggdrop (timer, rtimer, killtimer)

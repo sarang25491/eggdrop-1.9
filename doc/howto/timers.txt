@@ -1,0 +1,65 @@
+CREATING TIMERS
+
+Creating a timer in eggdrop is easy. There are three basic commands you need to
+know: timer, rtimer, and killtimer.
+
+timer <seconds> <microseconds> <command>
+rtimer <seconds> <microseconds> <command>
+killtimer <timer-id>
+
+The timer and rtimer commands both create timers. They return a timer-id, which
+you can either ignore, or use to kill the timer later. The only difference
+between the two commands is that 'timer' creates a one-time timer, and 'rtimer'
+creates a repeating timer. The repeating timer will execute until you stop it
+with 'killtimer' or restart the bot.
+
+Why the <seconds> and <microseconds> fields you ask? A microsecond is
+1/1000000 of a second. So you can use the microsecond field to specify a
+fraction of a second. Like if you want your script to execute after 3.5 seconds
+you would do:
+
+	timer 3 500000 yourscript
+
+3 seconds + 500000 microseconds = 3.5 seconds, which is what you wanted. If you
+try to do 'timer 3.5 0 yourscript' it will not work.
+
+The killtimer command lets you stop a timer before it runs. You just pass it
+the timer-id of the timer you want to stop.
+
+Ok, let's have an example. This is a basic script that uses 'rtimer' and
+'killtimer' to display a simple ad on all your channels.
+
+# Example script -- a periodic ftp ad
+set ad_freq 100 ;# Seconds between ads
+set ad_text "Hey come check out my cool ftp site! You can see my vacation photos. ftp://pictures.of.sheep.com"
+
+# This part creates our repeating timer -- if it doesn't exit.
+if {![info exists ad_timer]} {
+	# This code will be executed every time the bot starts, because
+	# the ad_timer variable won't exist until after we set it here.
+	#
+	# We want a repeating timer that executes every $ad_freq seconds.
+	#                    <sec>     <usec>   <cmd>
+	set ad_timer [rtimer $ad_freq  0        ad_display]
+} else {
+	# If it already exists, check if the frequency has changed.
+	if {$ad_freq != $last_ad_freq} {
+		# Yup, kill the old timer and restart it.
+		killtimer $ad_timer
+		set ad_timer [rtimer $ad_freq 0 ad_display]
+	}
+}
+
+# Save the current timer frequency in "last_ad_freq"
+set last_ad_freq $ad_freq
+
+# Actual display procedure that gets called by the timer.
+proc ad_display {} {
+	global ad_text
+	foreach chan [chanlist] {
+		puthelp "privmsg $chan :$ad_text"
+	}
+	return 0
+}
+
+# The end!

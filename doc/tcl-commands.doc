@@ -841,30 +841,18 @@ specific commands, see later.
     returns: hostmask for the string given ("n!u@1.2.3.4" -> "*!u@1.2.3.*",
       "n!u@lame.com" -> "*!u@lame.com", "n!u@a.b.edu" -> "*!u@*.b.edu")
 
-  timer <minutes> <tcl-command>
-    executes the tcl command after a certain number of minutes have passed
+  timer <seconds> <microseconds> <script>
+    executes the script after the specified time
     returns: a timerID
 
-  utimer <seconds> <tcl-command>
-    executes the tcl command after a certain number of seconds have passed
+  rtimer <seconds> <microseconds> <script>
+    creates a repeating timer that executes the script once per interval
+    until cancelled
     returns: a timerID
-
-  timers
-    returns: list of active minutely timers; each entry in the list contains
-      the number of minutes left till activation, the command that will be
-      executed, and the timerID
-
-  utimers
-    returns: list of active secondly timers, identical in format to the
-      output from 'timers'
 
   killtimer <timerID>
-    removes a minutely timer from the list
-    returns: nothing
-
-  killutimer <timerID>
-    removes a secondly timer from the list
-    returns: nothing
+    cancels a normal or repeating timer based on its id
+    returns: 0 if successful, 1 if the timerID is invalid
 
   unixtime
     returns: a long integer which is the current time according to unix
