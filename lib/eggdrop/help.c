@@ -24,7 +24,7 @@
  */
  
 #ifndef lint
-static const char rcsid[] = "$Id: help.c,v 1.15 2004/07/05 22:12:22 darko Exp $";
+static const char rcsid[] = "$Id: help.c,v 1.16 2004/07/11 13:54:46 darko Exp $";
 #endif
 
 #include <sys/types.h>
@@ -198,7 +198,7 @@ static void help_load_description(help_desc_t *desc, xml_node_t *parent)
 		}
 
 		if (ptr == NULL)
-			break;	
+			break;
 
 		text +=(size_t)(ptr - text) + 1;
 		if (text [-1] == '\r' && text[0] == '\n')
@@ -502,7 +502,7 @@ static void unload_entry(const char *name, help_entry_t **e, help_unload_t *ul)
 	help_entry_t *entry = *e;
 	help_section_t *section = entry->section;
 	int i;
-	
+
 	if (ul->module != NULL || ul->filename != NULL) {
 		if (0 != strcmp(entry->module, ul->module)
 			&& 0 != strcmp(entry->filename, ul->filename))
@@ -540,7 +540,7 @@ static void unload_entry(const char *name, help_entry_t **e, help_unload_t *ul)
 	 
 	/* Delete entry */
 	help_delete_entry(entry);
-	
+
 	/* Remove empty sections */
 	if (section->nentries == 0)
 		help_delete_section(section);		
@@ -552,10 +552,10 @@ static int help_unload_internal(const char *module, const char *filename)
 	
 	unload.module = module;
 	unload.filename = filename;
-	
-	hash_table_walk(entries, 
+
+	hash_table_walk(entries,
 		(hash_table_node_func)unload_entry, &unload);
-			
+
 	return 1;
 }
 
@@ -572,12 +572,12 @@ static void print_entry(const char *name, help_entry_t *entry, partymember_t *me
 	/* Command */
 	if (0 == strcmp(entry->type, "Command")) {
 		partymember_printf(member, "%s: %s %s", entry->type, entry->name,
-			entry->ext.command.syntax);	
-			
+			entry->ext.command.syntax);
+
 	/* Variable */
 	} else if (0 == strcmp(entry->type, "Variable")) {
 		partymember_printf(member, "%s: %s(%s)", entry->type, entry->name,
-			entry->ext.variable.path);		
+			entry->ext.variable.path);
 		partymember_printf(member, ("  Type: %s"), entry->ext.variable.type);
 	}
 
@@ -587,8 +587,8 @@ static void print_entry(const char *name, help_entry_t *entry, partymember_t *me
 	for (i = 0; i < entry->desc.nlines; i++) {
 		partymember_printf(member, "    %s", entry->desc.lines[i]);
 	}
-	for (i = 0; i < entry->nseealso; i++) { 
-		partymember_printf(member, _("See also: %s"), entry->seealso[i]);
+	for (i = 0; i < entry->nseealso; i++) {
+		partymember_printf(member, _("  See also: %s"), entry->seealso[i]);
 	}
 }
 
@@ -598,41 +598,35 @@ static void print_section(const char *name, help_section_t **s, partymember_t *m
 	help_section_t *section = *s;
 	help_entry_t *entry;
 	char *names[4];
-	
+
 	partymember_printf(member, _("%s:"), name);
 	for (i = 0; i < section->desc.nlines; i++) {
 		partymember_printf(member, "  %s", section->desc.lines[i]);
-	}	
+	}
 
 	/* we want 4 entries in one row */
 	for (i = 0; i < section->nentries; ) {
 		names[0] = names[1] = names[2] = names[3] = "";
 
 		for (j = 0; j < 4 && i < section->nentries; ) {
-			entry = section->entries[i++]; 
-
-		        /* check if user is allowed to see this entry */
-			if (entry->flags && !user_check_flags_str(member->user, NULL, entry->flags))
-				continue;
-
+			entry = section->entries[i++];
 			names[j++] = entry->name;
 		}
 
-		partymember_printf(member, 
+		partymember_printf(member,
 			"    %-16s %-16s %-16s %-16s",
 				names[0], names[1], names[2], names[3]);
 	}
 	partymember_printf(member, _(""));
 }
- 
+
 static void search_entries(const char *name, help_entry_t **entry, help_search_t *search)
 {
 	if (wild_match(search->text, name) > 0) {
 		print_entry(name, *entry, search->member);
-		/* check if user is allowed to see this entry */
 		if ((*entry)->flags && *(*entry)->flags &&
-			!user_check_flags_str(search->member->user, NULL, (*entry)->flags));
-			partymember_printf(search->member, _("NOTE: You do NOT have access to this command!"));
+			!user_check_flags_str(search->member->user, NULL, (*entry)->flags))
+			partymember_printf(search->member, _("  NOTE: You do NOT have access to this command!\n"));
 		search->hits++;
 	}
 	else {
@@ -642,10 +636,9 @@ static void search_entries(const char *name, help_entry_t **entry, help_search_t
 		for (i = 0; i <(*entry)->desc.nlines; i++) {
 			if (wild_match(search->text, (*entry)->desc.lines[i]) > 0) {
 				print_entry(name, *entry, search->member);
-				/* check if user is allowed to see this entry */
 				if ((*entry)->flags && *(*entry)->flags &&
-					!user_check_flags_str(search->member->user, NULL, (*entry)->flags));
-				partymember_printf(search->member, _("NOTE: You do NOT have access to this command!"));
+					!user_check_flags_str(search->member->user, NULL, (*entry)->flags))
+				partymember_printf(search->member, _("  NOTE: You do NOT have access to this command!\n"));
 				search->hits++;
 				return;
 			}
@@ -657,7 +650,7 @@ static int help_search(partymember_t *member, const char *text)
 {
 	help_search_t search;
 
-	search.member = member;	
+	search.member = member;
 	search.text = text;
 	search.hits = 0;
 
@@ -670,7 +663,7 @@ int help_print_party(partymember_t *member, const char *args)
 {
 	help_entry_t *entry;
 	help_section_t *section;
-		 
+
 	if (nentries == 0) {
 		partymember_printf(member, _("No help entries loaded."));
 		return BIND_RET_LOG;
@@ -678,7 +671,7 @@ int help_print_party(partymember_t *member, const char *args)
 
 	/* if no args given just print out full help */
 	if (args == NULL || 0 == strcmp(args, "all")) {
-		hash_table_walk(sections, 
+		hash_table_walk(sections,
 			(hash_table_node_func)print_section, member);
 		partymember_printf(member, _("You can get help on individual command or variable: '.help <entry>'."));
 		partymember_printf(member, _("If you only remember a part of the entrie's name you are"));
@@ -686,17 +679,16 @@ int help_print_party(partymember_t *member, const char *args)
 		partymember_printf(member, _("all matching help texts will be displayed."));
 		return BIND_RET_LOG;
 	}
-	
+
 	/* may be either a section or a entry, whatever comes first */
 	entry = help_lookup_entry(args);
 	if (entry != NULL) {
 		print_entry(entry->name, entry, member);
-	        /* check if user is allowed to see this entry */
         	if (entry->flags && *entry->flags && !user_check_flags_str(member->user, NULL, entry->flags))
-			partymember_printf(member, _("NOTE: You do NOT have access to this command!"));
+			partymember_printf(member, _("  NOTE: You do NOT have access to this command!"));
 		return BIND_RET_LOG;
 	}
-		
+
 	section = help_lookup_section(args);
 	if (section != NULL) {
 		print_section(section->name, &section, member);
@@ -709,6 +701,6 @@ int help_print_party(partymember_t *member, const char *args)
 			args);
 		return BIND_RET_BREAK;
 	}
-		
+
 	return BIND_RET_LOG;
 }

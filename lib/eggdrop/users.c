@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.38 2004/07/05 22:12:22 darko Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.39 2004/07/11 13:54:46 darko Exp $";
 #endif
 
 #include <stdio.h>
@@ -717,8 +717,7 @@ user_check_flags (user_t *u, const char *chan, flags_t *flags)
 
 	user_get_flags (u, chan, &f);
 
-	/* XXX: this is wrong. */
-	return flag_match_partial (flags, &f);
+	return flag_match_subset (flags, &f);
 }
 
 int

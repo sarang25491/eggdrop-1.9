@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: memory.c,v 1.7 2004/06/25 17:44:03 darko Exp $";
+static const char rcsid[] = "$Id: memory.c,v 1.8 2004/07/11 13:54:46 darko Exp $";
 #endif
 
 #include <stdio.h>
@@ -119,7 +119,7 @@ char *mem_dbg_strdup(const char *str, const char *file, int line, const char *fu
 	size_t size;
 	void *ptr;
 
-	if (file == NULL || !*str)
+	if (file == NULL)
 		return NULL;
 
 	size = strlen(str) + 1;
