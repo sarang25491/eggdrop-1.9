@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: tclchan.c,v 1.18 2002/05/28 05:13:12 stdarg Exp $";
+static const char rcsid[] = "$Id: tclchan.c,v 1.19 2002/06/01 08:13:26 stdarg Exp $";
 #endif
 */
 
@@ -674,95 +674,35 @@ static int script_channel_setinfo(struct userrec *u, char *channel_name, char *i
 	return(0);
 }
 
-static int tcl_setlaston STDVAR
+static int script_setlaston(struct userrec *u, int when, char *chan)
 {
-  time_t t = now;
-  struct userrec *u;
+	if (!when) when = now;
 
-  BADARGS(2, 4, " handle ?channel? ?timestamp?");
-  u = get_user_by_handle(userlist, argv[1]);
-  if (!u) {
-    Tcl_AppendResult(irp, "No such user: ", argv[1], NULL);
-    return TCL_ERROR;
-  }
-  if (argc == 4)
-    t = (time_t) atoi(argv[3]);
-  if (argc == 3 && ((argv[2][0] != '#') && (argv[2][0] != '&')))
-    t = (time_t) atoi(argv[2]);
-  if (argc == 2 || (argc == 3 && ((argv[2][0] != '#') && (argv[2][0] != '&'))))
-    set_handle_laston("*", u, t);
-  else
-    set_handle_laston(argv[2], u, t);
-  return TCL_OK;
+	if (!chan || !findchan_by_dname(chan)) chan = "*";
+	set_handle_laston(chan, u, when);
+	return(0);
 }
 
-static int tcl_addchanrec STDVAR
+static int script_chanrec_add(struct userrec *u, char *chan)
 {
-  struct userrec *u;
-
-  BADARGS(3, 3, " handle channel");
-  u = get_user_by_handle(userlist, argv[1]);
-  if (!u) {
-    Tcl_AppendResult(irp, "0", NULL);
-    return TCL_OK;
-  }
-  if (!findchan_by_dname(argv[2])) {
-    Tcl_AppendResult(irp, "0", NULL);
-    return TCL_OK;
-  }
-  if (get_chanrec(u, argv[2]) != NULL) {
-    Tcl_AppendResult(irp, "0", NULL);
-    return TCL_OK;
-  }
-  add_chanrec(u, argv[2]);
-  Tcl_AppendResult(irp, "1", NULL);
-  return TCL_OK;
+	if (!findchan_by_dname(chan)) return(-1);
+	if (get_chanrec(u, chan) != NULL) return(-1);
+	add_chanrec(u, chan);
+	return(0);
 }
 
-static int tcl_delchanrec STDVAR
+static int script_chanrec_del(struct userrec *u, char *chan)
 {
-  struct userrec *u;
-
-  BADARGS(3, 3, " handle channel");
-  u = get_user_by_handle(userlist, argv[1]);
-  if (!u) {
-    Tcl_AppendResult(irp, "0", NULL);
-    return TCL_OK;
-  }
-  if (get_chanrec(u, argv[2]) == NULL) {
-    Tcl_AppendResult(irp, "0", NULL);
-    return TCL_OK;
-  }
-  del_chanrec(u, argv[2]);
-  Tcl_AppendResult(irp, "1", NULL);
-  return TCL_OK;
+	if (get_chanrec(u, chan) != NULL) return(-1);
+	del_chanrec(u, chan);
+	return(0);
 }
 
-static int tcl_haschanrec STDVAR
+static int script_chanrec_exists(struct userrec *u, char *chan)
 {
-  struct userrec *u;
-  struct chanset_t *chan;
-  struct chanuserrec *chanrec;
-
-  BADARGS(3, 3, " handle channel");
-
-  chan = findchan_by_dname(argv[2]);
-  if (chan == NULL) {
-    Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
-    return TCL_ERROR;
-  }
-  u = get_user_by_handle(userlist, argv[1]);
-  if (!u) {
-    Tcl_AppendResult(irp, "No such user: ", argv[1], NULL);
-    return TCL_ERROR;
-  }
-  chanrec = get_chanrec(u, chan->dname);
-  if (chanrec) {
-    Tcl_AppendResult(irp, "1", NULL);
-    return TCL_OK;
-  }
-  Tcl_AppendResult(irp, "0", NULL);
-  return TCL_OK;
+	if (!findchan_by_dname(chan)) return(0);
+	if (get_chanrec(u, chan) != NULL) return(1);
+	return(0);
 }
 
 static void init_masklist(masklist *m)
@@ -866,6 +806,8 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
     chan = calloc(1, sizeof(struct chanset_t));
     chan->limit_prot = 0;
     chan->limit = 0;
+
+    /* Anyone know why all this crap isn't in a struct so we can memcpy it? */
     chan->flood_pub_thr = gfld_chan_thr;
     chan->flood_pub_time = gfld_chan_time;
     chan->flood_ctcp_thr = gfld_ctcp_thr;
@@ -1055,6 +997,12 @@ static script_command_t channel_script_cmds[] = {
 	{"", "channel_getinfo", script_channel_getinfo, NULL, 2, "Us", "handle channel", SCRIPT_STRING, 0},
 	{"", "channels", script_channels, NULL, 0, "", "", 0, SCRIPT_PASS_RETVAL},
 
+	{"", "chanrec_add", script_chanrec_add, NULL, 2, "Us", "handle channel", SCRIPT_INTEGER, 0},
+	{"", "chanrec_del", script_chanrec_del, NULL, 2, "Us", "handle channel", SCRIPT_INTEGER, 0},
+	{"", "chanrec_exists", script_chanrec_exists, NULL, 2, "Us", "handle channel", SCRIPT_INTEGER, 0},
+
+	{"", "setlaston", script_setlaston, NULL, 2, "Uis", "handle when ?channel?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
+
 	{0}
 };
 
@@ -1064,12 +1012,8 @@ static tcl_cmds channels_cmds[] =
   {"savechannels",	tcl_savechannels},
   {"loadchannels",	tcl_loadchannels},
   {"isdynamic",		tcl_isdynamic},
-  {"setlaston",		tcl_setlaston},
-  {"addchanrec",	tcl_addchanrec},
-  {"delchanrec",	tcl_delchanrec},
   {"setudef",		tcl_setudef},
   {"renudef",		tcl_renudef},
   {"deludef",		tcl_deludef},
-  {"haschanrec",	tcl_haschanrec},
   {NULL,		NULL}
 };
