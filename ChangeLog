@@ -1,3 +1,16 @@
+2001-08-24 19:54  stdarg
+
+	* src/tclhash.c:
+
+	Ahh, some more fixes, should be fine now except for "defined but not
+	used" errors.  
+
+2001-08-24 19:46  stdarg
+
+	* src/: tclhash.c, tclhash.h:
+
+	Fixed some stuff and added some more.  
+
 2001-08-24 01:07  stdarg
 
 	* src/: tclhash.c, tclhash.h:
