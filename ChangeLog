@@ -1,3 +1,25 @@
+2003-12-23 23:21  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/: eggstring.c, eggstring.h:
+
+	
+	* Use unsigned chars (for isspace) 
+
+2003-12-23 22:23  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/eggstring.c, lib/eggdrop/eggstring.h,
+	modules/server/party_commands.c, src/core_party.c:
+
+	
+	* egg_get_arg() retrieves an arg from a string and understands
+	quotes single quotes, and escape sequences in a bash-like manner.  
+
+2003-12-23 18:15  Automatic CVS Scripts
+
+	* po/eggdrop.pot:
+
+	Pots 
+
 2003-12-23 12:15  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
