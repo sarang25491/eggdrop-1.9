@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.8 2002/03/04 02:32:38 stdarg Exp $
+ * $Id: notes.c,v 1.9 2002/03/10 01:35:02 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -797,7 +797,7 @@ static int msg_notes(char *nick, char *host, struct userrec *u, char *par)
       return 1;
     }
     for (i = 0; i < dcc_total; i++) {
-      if ((!strcasecmp(dcc[i].nick, to)) &&
+      if ((!strcasecmp(dcc[i].nick, to)) && dcc[i].type &&
 	  (dcc[i].type->flags & DCT_GETNOTES)) {
 	int aok = 1;
 
@@ -857,7 +857,7 @@ static void notes_hourly()
 	if (u) {
 	  k = num_notes(u->handle);
 	  for (l = 0; l < dcc_total; l++)
-	    if ((dcc[l].type->flags & DCT_CHAT) &&
+	    if (dcc[l].type && (dcc[l].type->flags & DCT_CHAT) &&
 		!strcasecmp(dcc[l].nick, u->handle)) {
 	      k = 0;		/* They already know they have notes */
 	      break;
@@ -910,7 +910,7 @@ static void join_notes(char *nick, char *uhost, struct userrec *u, char *par)
 
   if (notify_onjoin) { /* drummer */
     for (j = 0; j < dcc_total; j++)
-      if ((dcc[j].type->flags & DCT_CHAT)
+      if (dcc[j].type && (dcc[j].type->flags & DCT_CHAT)
 	  && (!strcasecmp(dcc[j].nick, u->handle))) {
 	return;			/* They already know they have notes */
       }
