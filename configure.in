@@ -8,6 +8,11 @@ AM_INIT_AUTOMAKE(eggdrop, 1.7.0)
 # FIXME: optionally allow a system wide install by bypassing the macro below.
 AC_PREFIX_DEFAULT([\${HOME}/eggdrop])
 
+# config.h stuff
+AH_TOP([#ifndef _EGG_CONFIG_H
+#define _EGG_CONFIG_H])
+AH_BOTTOM([#endif /* !_EGG_CONFIG_H */])
+
 # Setup build environment
 AC_PROG_CC
 EGG_CHECK_CC
@@ -76,7 +81,7 @@ EGG_HEADER_STDC
 EGG_CYGWIN
 
 EGG_IPV6_SUPPORTED
-EGG_ENABLE_IPV6
+EGG_IPV6_OPTIONS
 
 # Where is tcl?  Is it here?
 # ---------- begin robey's tcl thingies
@@ -110,7 +115,7 @@ tclheaderpaths="/usr/local/include /usr/local/pkgs/tcl/include \
 	/usr/include /beos/system/include /beos/devel/include \
        /sys/include $HOME/include $HOME/tcl/include $HOME"
 
-EGG_TCL_ARG_WITH
+EGG_TCL_WITH_OPTIONS
 EGG_TCL_ENV
 EGG_TCL_WITH_TCLLIB
 EGG_TCL_WITH_TCLINC
@@ -125,7 +130,7 @@ EGG_TCL_CHECK_PRE70
 EGG_TCL_CHECK_PRE75
 EGG_TCL_TESTLIBS
 EGG_TCL_CHECK_FREE
-EGG_TCL_ENABLE_THREADS
+EGG_TCL_THREADS_OPTIONS
 EGG_TCL_CHECK_THREADS
 EGG_TCL_LIB_REQS
 EGG_TCL_LUSH
@@ -145,4 +150,3 @@ AC_SUBST(ac_aux_dir)
 AC_OUTPUT([Makefile doc/Makefile scripts/Makefile src/Makefile src/compat/Makefile src/egglib/Makefile src/mod/Makefile src/adns/Makefile src/mod/Makefile intl/Makefile po/Makefile.in src/mod/assoc.mod/Makefile src/mod/blowfish.mod/Makefile src/mod/channels.mod/Makefile src/mod/compress.mod/Makefile src/mod/console.mod/Makefile src/mod/ctcp.mod/Makefile src/mod/filesys.mod/Makefile src/mod/irc.mod/Makefile src/mod/notes.mod/Makefile src/mod/server.mod/Makefile src/mod/share.mod/Makefile src/mod/transfer.mod/Makefile src/mod/uptime.mod/Makefile src/mod/woobie.mod/Makefile])
 
 EGG_MSG_CONFIGURE_END
-

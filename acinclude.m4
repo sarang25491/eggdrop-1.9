@@ -1,7 +1,7 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.4 2001/10/12 15:50:25 tothwolf Exp $
+dnl $Id: acinclude.m4,v 1.5 2001/10/13 21:36:58 tothwolf Exp $
 dnl
 
 
@@ -13,15 +13,15 @@ AC_MSG_RESULT(This is eggdrop's GNU configure script.)
 AC_MSG_RESULT(It's going to run a bunch of strange tests to hopefully)
 AC_MSG_RESULT(make your compile work without much twiddling.)
 AC_MSG_RESULT()
-])dnl
+])
 
 
 dnl  EGG_MSG_CONFIGURE_END()
 dnl
 AC_DEFUN(EGG_MSG_CONFIGURE_END, [dnl
 AC_MSG_RESULT()
-echo \
-"------------------------------------------------------------------------
+cat << EOF
+------------------------------------------------------------------------
 Configuration:
 
   Source code location:       ${srcdir}
@@ -31,13 +31,14 @@ Configuration:
   Install path:               ${prefix}
 
 See config.h for further configuration information.
-------------------------------------------------------------------------"
+------------------------------------------------------------------------
+EOF
 AC_MSG_RESULT()
 AC_MSG_RESULT(Configure is done.)
 AC_MSG_RESULT()
 AC_MSG_RESULT([Type 'make' to create the bot.])
 AC_MSG_RESULT()
-])dnl
+])
 
 
 dnl  EGG_CHECK_CC()
@@ -56,7 +57,7 @@ configure: error:
 EOF
   exit 1
 fi
-])dnl
+])
 
 
 dnl  EGG_CHECK_CCPIPE()
@@ -71,7 +72,7 @@ then
     AC_CACHE_CHECK(whether the compiler understands -pipe, egg_cv_var_ccpipe, [dnl
       ac_old_CC="$CC"
       CC="$CC -pipe"
-      AC_TRY_COMPILE(,, egg_cv_var_ccpipe="yes", egg_cv_var_ccpipe="no")
+      AC_TRY_COMPILE(,, egg_cv_var_ccpipe=yes, egg_cv_var_ccpipe=no)
       CC="$ac_old_CC"
     ])
     if test "$egg_cv_var_ccpipe" = "yes"
@@ -80,7 +81,7 @@ then
     fi
   fi
 fi
-])dnl
+])
 
 
 dnl  EGG_PROG_STRIP()
@@ -91,7 +92,7 @@ if test "${STRIP-x}" = "x"
 then
   STRIP=touch
 fi
-])dnl
+])
 
 
 dnl  EGG_PROG_AWK()
@@ -110,7 +111,7 @@ configure: error:
 EOF
   exit 1
 fi
-])dnl
+])
 
 
 dnl  EGG_PROG_BASENAME()
@@ -129,7 +130,7 @@ configure: error:
 EOF
   exit 1
 fi
-])dnl
+])
 
 
 dnl  EGG_CHECK_OS()
@@ -169,10 +170,12 @@ case $host_os in
     esac
   ;;
   hpux*)
-    AC_DEFINE(HPUX_HACKS)dnl
+    AC_DEFINE(HPUX_HACKS, 1,
+              [Define if running on hpux that supports dynamic linking])
     case $host_os in
     hpux10)
-      AC_DEFINE(HPUX10_HACKS)dnl
+      AC_DEFINE(HPUX10_HACKS, 1,
+                [Define if running on hpux 10.x])
     ;;
     esac
   ;;
@@ -183,14 +186,16 @@ case $host_os in
     SHELL=/bin/sh5
   ;;
   osf*)
-    AC_DEFINE(STOP_UAC)dnl
+    AC_DEFINE(STOP_UAC, 1,
+              [Define if running on OSF/1 platform])
   ;;
   mach*)
-    AC_DEFINE(BORGCUBES)dnl
+    AC_DEFINE(BORGCUBES, 1,
+              [Define if running on NeXT Step])
   ;;
 esac
 
-])dnl
+])
 
 
 dnl  EGG_CHECK_LIBS()
@@ -220,7 +225,7 @@ else
         ac_cv_lib_pthread=""],
         ac_cv_lib_pthread_pthread_mutex_init=no)])])])
 fi
-])dnl
+])
 
 
 dnl  EGG_CHECK_FUNC_VSPRINTF()
@@ -238,7 +243,7 @@ configure: error:
 EOF
   exit 1
 fi
-])dnl
+])
 
 
 dnl  EGG_HEADER_STDC()
@@ -254,7 +259,7 @@ configure: error:
 EOF
   exit 1
 fi
-])dnl
+])
 
 
 dnl  EGG_CYGWIN()
@@ -264,17 +269,24 @@ AC_DEFUN(EGG_CYGWIN, [dnl
 AC_CYGWIN
 if test "$ac_cv_cygwin" = "yes"
 then
-  AC_DEFINE(CYGWIN_HACKS)dnl
+  AC_DEFINE(CYGWIN_HACKS, 1,
+            [Define if running under cygwin])
 fi
-])dnl
+])
 
 
-dnl  EGG_TCL_ARG_WITH()
+dnl  EGG_TCL_WITH_OPTIONS()
 dnl
-AC_DEFUN(EGG_TCL_ARG_WITH, [dnl
+AC_DEFUN(EGG_TCL_WITH_OPTIONS, [dnl
 # oohh new configure --variables for those with multiple tcl libs
-AC_ARG_WITH(tcllib, [  --with-tcllib=PATH      full path to tcl library], tcllibname="$withval")
-AC_ARG_WITH(tclinc, [  --with-tclinc=PATH      full path to tcl header], tclincname="$withval")
+AC_ARG_WITH(tcllib, 
+            AC_HELP_STRING([--with-tcllib=PATH],
+                           [full path to tcl library]),
+            tcllibname="$withval")
+AC_ARG_WITH(tclinc,
+            AC_HELP_STRING([--with-tclinc=PATH],
+                           [full path to tcl header]),
+            tclincname="$withval")
 
 WARN=0
 # Make sure either both or neither $tcllibname and $tclincname are set
@@ -306,7 +318,7 @@ configure: warning:
 
 EOF
 fi
-])dnl
+])
 
 
 dnl  EGG_TCL_ENV()
@@ -343,7 +355,7 @@ configure: warning:
 
 EOF
 fi
-])dnl
+])
 
 
 dnl  EGG_TCL_WITH_TCLLIB()
@@ -374,7 +386,7 @@ EOF
     TCLINCFN=""
   fi
 fi
-])dnl
+])
 
 
 dnl  EGG_TCL_WITH_TCLINC()
@@ -403,7 +415,7 @@ EOF
     TCLINCFN=""
   fi
 fi
-])dnl
+])
 
 
 dnl  EGG_TCL_FIND_LIBRARY()
@@ -447,7 +459,7 @@ EOF
     fi
   fi
 fi
-])dnl
+])
 
 
 dnl  EGG_TCL_FIND_HEADER()
@@ -486,7 +498,7 @@ EOF
     fi
   fi
 fi
-])dnl
+])
 
 
 dnl  EGG_TCL_CHECK_LIBRARY()
@@ -524,9 +536,9 @@ if test "${TCLLIBFN-x}" = "x"
 then
   AC_MSG_RESULT(not found)
 fi
-AC_SUBST(TCLLIB)dnl
-AC_SUBST(TCLLIBFN)dnl
-])dnl
+AC_SUBST(TCLLIB)
+AC_SUBST(TCLLIBFN)
+])
 
 
 dnl  EGG_TCL_CHECK_HEADER()
@@ -579,9 +591,9 @@ if test "${TCLINCFN-x}" = "x"
 then
   AC_MSG_RESULT(not found)
 fi
-AC_SUBST(TCLINC)dnl
-AC_SUBST(TCLINCFN)dnl
-])dnl
+AC_SUBST(TCLINC)
+AC_SUBST(TCLINCFN)
+])
 
 
 dnl  EGG_CACHE_UNSET(CACHE-ID)
@@ -696,7 +708,7 @@ configure: error:
 EOF
   exit 1
 fi
-])dnl
+])
 
 
 dnl  EGG_TCL_CHECK_PRE70()
@@ -717,7 +729,7 @@ configure: error:
 EOF
   exit 1
 fi
-])dnl
+])
 
 
 dnl  EGG_TCL_CHECK_PRE75()
@@ -727,9 +739,10 @@ AC_DEFUN(EGG_TCL_CHECK_PRE75, [dnl
 TCL_VER_PRE75=`echo $egg_cv_var_tcl_version | $AWK '{split([$]1, i, "."); if (((i[[1]] == 7) && (i[[2]] < 5)) || (i[[1]] < 7)) print "yes"; else print "no"}'`
 if test "$TCL_VER_PRE75" = "yes"
 then
-  AC_DEFINE(HAVE_PRE7_5_TCL)dnl
+  AC_DEFINE(HAVE_PRE7_5_TCL, 1,
+            [Define for pre Tcl 7.5 compatibility])
 fi
-])dnl
+])
 
 
 dnl  EGG_TCL_TESTLIBS()
@@ -743,7 +756,7 @@ if test ! "${ac_cv_lib_pthread-x}" = "x"
 then
   TCL_TEST_OTHERLIBS="$TCL_TEST_OTHERLIBS $ac_cv_lib_pthread"
 fi
-])dnl
+])
 
 
 dnl  EGG_TCL_CHECK_FREE()
@@ -755,24 +768,25 @@ then
 fi
 
 # Check for Tcl_Free()
-AC_CHECK_LIB($TCL_TEST_LIB, Tcl_Free, egg_cv_var_tcl_free="yes", egg_cv_var_tcl_free="no", $TCL_TEST_OTHERLIBS)
+AC_CHECK_LIB($TCL_TEST_LIB, Tcl_Free, egg_cv_var_tcl_free=yes, egg_cv_var_tcl_free=no, $TCL_TEST_OTHERLIBS)
 
 if test "$egg_cv_var_tcl_free" = "yes"
 then
-  AC_DEFINE(HAVE_TCL_FREE)dnl
+  AC_DEFINE(HAVE_TCL_FREE, 1,
+            [Define for Tcl that has Tcl_Free() (7.5p1 and later)])
 fi
-])dnl
+])
 
 
-dnl  EGG_TCL_ENABLE_THREADS()
+dnl  EGG_TCL_THREADS_OPTIONS()
 dnl
-AC_DEFUN(EGG_TCL_ENABLE_THREADS, [dnl
+AC_DEFUN(EGG_TCL_THREADS_OPTIONS, [dnl
 AC_ARG_ENABLE(tcl-threads,
-[  --disable-tcl-threads   Disable threaded tcl support if detected. (Ignore this
-                          option unless you know what you are doing)],
-enable_tcl_threads="$enableval",
-enable_tcl_threads=yes)
-])dnl
+              AC_HELP_STRING([--disable-tcl-threads],
+                             [disable threaded tcl support if detected (ignore this option unless you know what you are doing)]),
+              enable_tcl_threads="$enableval",
+              enable_tcl_threads=yes)
+])
 
 
 dnl  EGG_TCL_CHECK_THREADS()
@@ -784,7 +798,7 @@ then
 fi
 
 # Check for TclpFinalizeThreadData()
-AC_CHECK_LIB($TCL_TEST_LIB, TclpFinalizeThreadData, egg_cv_var_tcl_threaded="yes", egg_cv_var_tcl_threaded="no", $TCL_TEST_OTHERLIBS)
+AC_CHECK_LIB($TCL_TEST_LIB, TclpFinalizeThreadData, egg_cv_var_tcl_threaded=yes, egg_cv_var_tcl_threaded=no, $TCL_TEST_OTHERLIBS)
 
 if test "$egg_cv_var_tcl_threaded" = "yes"
 then
@@ -799,7 +813,8 @@ configure: warning:
 
 EOF
   else
-    AC_DEFINE(HAVE_TCL_THREADS)dnl
+    AC_DEFINE(HAVE_TCL_THREADS, 1,
+              [Define for Tcl that has threads])
   fi
 
   # Add pthread library to $LIBS if we need it
@@ -808,7 +823,7 @@ EOF
     LIBS="$ac_cv_lib_pthread $LIBS"
   fi
 fi
-])dnl
+])
 
 
 dnl  EGG_TCL_LIB_REQS()
@@ -837,7 +852,7 @@ configure: warning:
 
 EOF
     DEFAULT_MAKE=static
-    AC_SUBST(DEFAULT_MAKE)dnl
+    AC_SUBST(DEFAULT_MAKE)
   fi
 
   # Are we using a pre 7.4 Tcl version ?
@@ -867,9 +882,9 @@ EOF
   fi
 fi
 fi
-AC_SUBST(TCL_REQS)dnl
-AC_SUBST(TCL_LIBS)dnl
-])dnl
+AC_SUBST(TCL_REQS)
+AC_SUBST(TCL_LIBS)
+])
 
 
 dnl  EGG_REPLACE_IF_CHANGED(FILE-NAME, CONTENTS-CMDS, INIT-CMDS)
@@ -889,8 +904,8 @@ then
 else
   mv conftest.out $egg_replace_file
 fi
-rm -f conftest.out], [$3])dnl
-])dnl
+rm -f conftest.out], [$3])
+])
 
 
 dnl  EGG_TCL_LUSH()
@@ -903,10 +918,12 @@ cat > conftest.out << EGGEOF
 #include "$egg_tclinc/$egg_tclincfn"
 EGGEOF], [
     egg_tclinc="$TCLINC"
-    egg_tclincfn="$TCLINCFN"])dnl
-])dnl
+    egg_tclincfn="$TCLINCFN"])
+])
 
 
+dnl  AC_PROG_CC_WIN32()
+dnl
 AC_DEFUN([AC_PROG_CC_WIN32], [
 AC_MSG_CHECKING([how to access the Win32 API])
 WIN32FLAGS=
@@ -942,35 +959,40 @@ CC="$save_CC"
 AC_MSG_RESULT([not found])
 ])
 ])
-
 ])
-dnl
 
 
-dnl  EGG_ENABLE_IPV6()
+dnl  EGG_IPV6_OPTIONS()
 dnl
-AC_DEFUN(EGG_ENABLE_IPV6, [dnl
+AC_DEFUN(EGG_IPV6_OPTIONS, [dnl
 AC_MSG_CHECKING(whether you enabled IPv6 support)
+dnl dummy option for help string, next option is the real one
 AC_ARG_ENABLE(ipv6,
-[  --enable-ipv6           Enable IPV6 support.
-  --disable-ipv6          Disable IPV6 support. ],
-[ ac_cv_ipv6=$enableval
+              AC_HELP_STRING([--enable-ipv6],
+                             [enable IPV6 support]),,)
+AC_ARG_ENABLE(ipv6,
+              AC_HELP_STRING([--disable-ipv6],
+                             [disable IPV6 support]),
+[ ac_cv_ipv6="$enableval"
   AC_MSG_RESULT($ac_cv_ipv6)
 ], [
-  if test "x$egg_cv_ipv6_supported" = "xyes"; then
-    ac_cv_ipv6='yes'
+  if test "$egg_cv_ipv6_supported" = "yes"
+  then
+    ac_cv_ipv6=yes
   else
-    ac_cv_ipv6='no'
+    ac_cv_ipv6=no
   fi
   AC_MSG_RESULT((default) $ac_cv_ipv6)
 ])
-if test "$ac_cv_ipv6" = "yes" ; then
-        AC_DEFINE(IPV6)
+if test "$ac_cv_ipv6" = "yes"
+then
+  AC_DEFINE(IPV6, 1,
+            [Define if you want IPv6 support])
 fi
-])dnl
+])
 
 
-dnl EGG_TYPE_SOCKLEN_T
+dnl  EGG_TYPE_SOCKLEN_T
 dnl
 AC_DEFUN(EGG_TYPE_SOCKLEN_T, [dnl
 AC_CACHE_CHECK(for socklen_t, egg_cv_var_socklen_t, [
@@ -980,16 +1002,17 @@ AC_TRY_COMPILE([#include <sys/param.h>
 ], [
 socklen_t x;
 x = 0;
-], egg_cv_var_socklen_t="yes", egg_cv_var_socklen_t="no")
+], egg_cv_var_socklen_t=yes, egg_cv_var_socklen_t=no)
 ])
 if test "$egg_cv_var_socklen_t" = "no"
 then
-  AC_DEFINE(socklen_t, unsigned)dnl
+  AC_DEFINE(socklen_t, unsigned,
+            [Define to `unsigned' if something else doesn't define])
 fi
-])dnl
+])
 
 
-dnl EGG_INADDR_LOOPBACK
+dnl  EGG_INADDR_LOOPBACK
 dnl
 AC_DEFUN(EGG_INADDR_LOOPBACK, [dnl
 AC_MSG_CHECKING(for INADDR_LOOPBACK)
@@ -1003,19 +1026,22 @@ AC_CACHE_VAL(adns_cv_decl_inaddrloopback,[
  ],
  adns_cv_decl_inaddrloopback=yes,
  adns_cv_decl_inaddrloopback=no)])
-if test "$adns_cv_decl_inaddrloopback" = yes; then
+if test "$adns_cv_decl_inaddrloopback" = "yes"
+then
  AC_MSG_RESULT(found)
 else
  AC_MSG_RESULT([not in standard headers, urgh...])
  AC_CHECK_HEADER(rpc/types.h,[
-  AC_DEFINE(HAVEUSE_RPCTYPES_H)
+  AC_DEFINE(HAVEUSE_RPCTYPES_H, 1,
+            [Define if we want to include rpc/types.h.  Crap BSDs put INADDR_LOOPBACK there.])
  ],[
   AC_MSG_ERROR([cannot find INADDR_LOOPBACK or rpc/types.h])
  ])
 fi
-])dnl
+])
 
-dnl EGG_IPV6_SUPPORTED
+
+dnl  EGG_IPV6_SUPPORTED
 dnl
 AC_DEFUN(EGG_IPV6_SUPPORTED, [dnl
 AC_MSG_CHECKING(for kernel IPv6 support)
@@ -1039,56 +1065,70 @@ int main()
 }
 ], egg_cv_ipv6_supported=yes, egg_cv_ipv6_supported=no,
 egg_cv_ipv6_supported=no)])
-if test "$egg_cv_ipv6_supported" = yes; then
- AC_MSG_RESULT(yes)
+if test "$egg_cv_ipv6_supported" = "yes"
+then
+  AC_MSG_RESULT(yes)
 else
- AC_MSG_RESULT(no)
+  AC_MSG_RESULT(no)
 fi
-])dnl
+])
 
-dnl EGG_DEFINE_VERSION_NUM
+
+dnl  EGG_DEFINE_VERSION_NUM
 dnl
 AC_DEFUN(EGG_DEFINE_VERSION_NUM, [dnl
 egg_version_num=`echo $VERSION | $AWK 'BEGIN {FS = "."} {printf("%d%02d%02d00", [$]1, [$]2, [$]3)}'`
-AC_DEFINE_UNQUOTED(VERSION_NUM, $egg_version_num)
-])dnl
+AC_DEFINE_UNQUOTED(VERSION_NUM, $egg_version_num,
+                   [Define version number])
+])
 
-dnl EGG_GNU_GETTEXT
+
+dnl  EGG_GNU_GETTEXT
 dnl
 AC_DEFUN(EGG_GNU_GETTEXT, [dnl
 AC_MSG_CHECKING(for avaible translations)
 ALL_LINGUAS=""
 cd po   
-for LOC in `ls *.po 2> /dev/null`; do
-  ALL_LINGUAS="$ALL_LINGUAS `echo $LOC | awk 'BEGIN {FS = "."} {printf("%s", [$]1)}'`"
+for LOC in `ls *.po 2> /dev/null`
+do
+  ALL_LINGUAS="$ALL_LINGUAS `echo $LOC | $AWK 'BEGIN {FS = "."} {printf("%s", [$]1)}'`"
 done
 cd ..
 AC_MSG_RESULT($ALL_LINGUAS)
 
 AM_GNU_GETTEXT
-])dnl
+])
 
-# FIXME: make it optional
-dnl EGG_DEBUG_OPTIONS
+
+dnl  EGG_DEBUG_OPTIONS
 dnl
 AC_DEFUN(EGG_DEBUG_OPTIONS, [dnl
-EGG_DEBUG="-DDEBUG"
+AC_ARG_ENABLE(debug,
+              AC_HELP_STRING([--disable-debug],
+                             [disable debug support]),
+                             debug="$enableval", debug=yes)
+if test "$debug" = "yes"
+then
+  EGG_DEBUG="-DDEBUG"
+fi
 AC_SUBST(EGG_DEBUG)
-])dnl
+])
 
-dnl EGG_COMPRESS_MODULE
+
+dnl  EGG_COMPRESS_MODULE
 dnl
 AC_DEFUN(EGG_COMPRESS_MODULE, [dnl
 
-egg_compress=false
+egg_compress=no
 
 AC_CHECK_LIB(z, gzopen, ZLIB="-lz", )
 AC_CHECK_HEADER(zlib.h)
 
 # Disable the module if either the header file or the library
 # are missing.
-if test "x${ZLIB}" = x; then
-  cat >&2 <<EOF
+if test "${ZLIB-x}" = "x"
+then
+  cat << 'EOF' >&2
 configure: warning:
 
   Your system does not provide a working zlib compression library. The
@@ -1096,8 +1136,9 @@ configure: warning:
 
 EOF
 else
-  if test "${ac_cv_header_zlib_h}" != yes; then
-    cat >&2 <<EOF
+  if test ! "${ac_cv_header_zlib_h}" = "yes"
+  then
+    cat << 'EOF' >&2
 configure: warning:
 
   Your system does not provide the necessary zlib header files. The
@@ -1105,13 +1146,11 @@ configure: warning:
 
 EOF
   else
-    egg_compress=true
+    egg_compress=yes
     AC_FUNC_MMAP
     AC_SUBST(ZLIB)
   fi
 fi
 
-AM_CONDITIONAL(EGG_COMPRESS, test x$egg_compress = xtrue)
-
+AM_CONDITIONAL(EGG_COMPRESS, test "$egg_compress" = "yes")
 ])
-

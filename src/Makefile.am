@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.6 2001/10/13 12:00:22 stdarg Exp $
+# $Id: Makefile.am,v 1.7 2001/10/13 21:36:59 tothwolf Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 bindir    = $(exec_prefix)
@@ -16,7 +16,7 @@ INCLUDES		= -I$(top_builddir) -I$(top_srcdir) @INCLTDL@ \
 			-I$(top_builddir)/intl -I$(top_srcdir)/intl
 
 localedir		= $(datadir)/locale
-DEFS			= -DLOCALEDIR=\"\$(localedir)\" @EGG_DEBUG@ @DEFS@
+DEFS			= -DLOCALEDIR=\"\$(localedir)\" $(EGG_DEBUG) @DEFS@
 
 bin_PROGRAMS	= eggdrop
 eggdrop_SOURCES = bg.c \

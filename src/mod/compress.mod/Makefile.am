@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.1 2001/10/10 01:20:12 ite Exp $
+# $Id: Makefile.am,v 1.2 2001/10/13 21:36:59 tothwolf Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 pkglibdir = $(exec_prefix)/modules
@@ -18,5 +18,5 @@ MAINTAINERCLEANFILES    = Makefile.in configure config.h.in stamp-h.in
 
 INCLUDES                = -I$(top_builddir) -I$(top_srcdir)
 
-DEFS = @EGG_DEBUG@ @DEFS@
+DEFS = $(EGG_DEBUG) @DEFS@
 
