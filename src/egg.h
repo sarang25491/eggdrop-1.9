@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: egg.h,v 1.7 2002/05/05 16:40:38 tothwolf Exp $
+ * $Id: egg.h,v 1.8 2002/05/09 07:37:49 stdarg Exp $
  */
 
 #ifndef _EGG_EGG_H
@@ -279,6 +279,8 @@ struct relay_info {
   int old_status;
 };
 
+struct script_callback_b;
+
 struct script_info {
   struct dcc_table *type;
   union {
@@ -286,7 +288,7 @@ struct script_info {
     struct file_info *file;
     void *other;
   } u;
-  char command[121];
+  struct script_callback_b *callback;
 };
 
 struct dns_info {

@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tclmisc.c,v 1.53 2002/05/05 16:40:39 tothwolf Exp $";
+static const char rcsid[] = "$Id: tclmisc.c,v 1.54 2002/05/09 07:37:49 stdarg Exp $";
 #endif
 
 #include <sys/stat.h>
@@ -303,6 +303,21 @@ static char *script_md5(char *data)
   return(digest_string);
 }
 
+int script_export(char *name, char *syntax, script_callback_t *callback)
+{
+	script_command_t new_command = {
+		"", strdup(name), callback->callback, callback, strlen(syntax), strdup(syntax), strdup(syntax), SCRIPT_INTEGER, SCRIPT_PASS_CDATA
+	};
+	script_command_t *copy;
+
+	callback->syntax = strdup(syntax);
+	copy = malloc(2 * sizeof(*copy));
+	memcpy(copy, &new_command, sizeof(new_command));
+	memset(&(copy[1]), 0, sizeof(copy[1]));
+	script_create_cmd_table(copy);
+	return(0);
+}
+
 script_command_t script_misc_cmds[] = {
 	{"", "duration", (Function) script_duration, NULL, 1, "u", "seconds", SCRIPT_STRING|SCRIPT_FREE, 0},
 	{"", "unixtime", (Function) script_unixtime, NULL, 0, "", "", SCRIPT_UNSIGNED, 0},
@@ -325,5 +340,6 @@ script_command_t script_misc_cmds[] = {
 	{"", "unloadmodule", (Function) script_unloadmodule, NULL, 1, "s", "module-name", SCRIPT_STRING, 0},
 	{"", "md5", (Function) script_md5, NULL, 1, "s", "data", SCRIPT_STRING | SCRIPT_FREE, 0},
 	{"", "callevent", (Function) script_callevent, NULL, 1, "s", "event", SCRIPT_INTEGER, 0},
+	{"", "script_export", script_export, NULL, 3, "ssc", "export-name syntax callback", SCRIPT_INTEGER, 0},
 	{0}
 };

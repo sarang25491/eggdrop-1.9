@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tcldcc.c,v 1.61 2002/05/05 16:40:38 tothwolf Exp $";
+static const char rcsid[] = "$Id: tcldcc.c,v 1.62 2002/05/09 07:37:49 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -59,9 +59,6 @@ extern egg_traffic_t traffic;
 #ifndef MAKING_MODS
 extern struct dcc_table	DCC_CHAT, DCC_SCRIPT, DCC_TELNET, DCC_SOCKET; 
 #endif /* MAKING_MODS   */
-
-static struct portmap	*root = NULL;
-
 
 /***********************************************************************/
 
@@ -296,17 +293,16 @@ static int script_page(int nargs, int idx, int status)
 	return(0);
 }
 
-static int tcl_control STDVAR
+static int script_control(int idx, script_callback_t *callback)
 {
-  int idx;
   void *hold;
 
-  BADARGS(3, 3, " idx command");
-  idx = atoi(argv[1]);
-  if (idx < 0) {
-    Tcl_AppendResult(irp, "invalid idx", NULL);
-    return TCL_ERROR;
-  }
+  if (idx < 0 || idx >= max_dcc) {
+	callback->syntax = strdup("");
+	callback->del(callback);
+		return(-1);
+	}
+
   if (dcc[idx].type && dcc[idx].type->flags & DCT_CHAT) {
     if (dcc[idx].u.chat->channel >= 0) {
       chanout_but(idx, dcc[idx].u.chat->channel, "*** %s has gone.\n",
@@ -317,16 +313,31 @@ static int tcl_control STDVAR
     }
     check_tcl_chof(dcc[idx].nick, dcc[idx].sock);
   }
-  hold = dcc[idx].u.other;
-  dcc[idx].u.script = calloc(1, sizeof(struct script_info));
-  dcc[idx].u.script->u.other = hold;
-  dcc[idx].u.script->type = dcc[idx].type;
-  dcc[idx].type = &DCC_SCRIPT;
-  /* Do not buffer data anymore. All received and stored data is passed
-     over to the dcc functions from now on.  */
-  sockoptions(dcc[idx].sock, EGG_OPTION_UNSET, SOCK_BUFFER);
-  strlcpy(dcc[idx].u.script->command, argv[2], 120);
-  return TCL_OK;
+
+	if (dcc[idx].type == &DCC_SCRIPT) {
+		script_callback_t *old_callback;
+
+		/* If it's already controlled, overwrite the old handler. */
+		old_callback = dcc[idx].u.script->callback;
+		if (old_callback) old_callback->del(old_callback);
+		dcc[idx].u.script->callback = callback;
+	}
+	else {
+		/* Otherwise we have to save the old handler. */
+		hold = dcc[idx].u.other;
+		dcc[idx].u.script = calloc(1, sizeof(struct script_info));
+		dcc[idx].u.script->u.other = hold;
+		dcc[idx].u.script->type = dcc[idx].type;
+		dcc[idx].u.script->callback = callback;
+		dcc[idx].type = &DCC_SCRIPT;
+
+		/* Do not buffer data anymore. All received and stored data
+			is passed over to the dcc functions from now on.  */
+		sockoptions(dcc[idx].sock, EGG_OPTION_UNSET, SOCK_BUFFER);
+	}
+
+	callback->syntax = strdup("is");
+	return(0);
 }
 
 static int script_valididx(int idx)
@@ -335,25 +346,23 @@ static int script_valididx(int idx)
 	return(1);
 }
 
-static int tcl_killdcc STDVAR
+/*
+	idx - idx to kill
+	reason - optional message to send with the kill
+*/
+static int script_killdcc(int idx, char *reason)
 {
-  int idx;
+	if (idx < 0 || idx >= dcc_total || !dcc[idx].type || !(dcc[idx].type->flags & DCT_VALIDIDX)) return(-1);
 
-  BADARGS(2, 3, " idx ?reason?");
-  idx = atoi(argv[1]);
-  if (idx < 0) {
-    Tcl_AppendResult(irp, "invalid idx", NULL);
-    return TCL_ERROR;
-  }
   /* Don't kill terminal socket */
-  if ((dcc[idx].sock == STDOUT) && !backgrd)
-    return TCL_OK;
+  if ((dcc[idx].sock == STDOUT) && !backgrd) return(0);
+
   /* Make sure 'whom' info is updated for other bots */
   if (dcc[idx].type->flags & DCT_CHAT) {
     chanout_but(idx, dcc[idx].u.chat->channel, "*** %s has left the %s%s%s\n",
 		dcc[idx].nick, dcc[idx].u.chat ? "channel" : "partyline",
-		argc == 3 ? ": " : "", argc == 3 ? argv[2] : "");
-    botnet_send_part_idx(idx, argc == 3 ? argv[2] : "");
+		reason ? ": " : "", reason ? reason : "");
+    botnet_send_part_idx(idx, reason ? reason : "");
     if ((dcc[idx].u.chat->channel >= 0) && (dcc[idx].u.chat->channel < GLOBAL_CHANS)) {
       check_tcl_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock, dcc[idx].u.chat->channel);
     }
@@ -567,40 +576,25 @@ static int script_unlink(char *bot, char *comment)
 	return(x);
 }
 
-static int tcl_connect STDVAR
+static int script_connect(char *hostname, int port)
 {
   int i, z, sock;
-  char s[81];
 
-  BADARGS(3, 3, " hostname port");
-  if (dcc_total == max_dcc) {
-    Tcl_AppendResult(irp, "out of dcc table space", NULL);
-    return TCL_ERROR;
-  }
   sock = getsock(0);
-  if (sock < 0) {
-    Tcl_AppendResult(irp, _("No free sockets available."), NULL);
-    return TCL_ERROR;
-  }
-  z = open_telnet_raw(sock, argv[1], atoi(argv[2]));
+  if (sock < 0) return(-1);
+  z = open_telnet_raw(sock, hostname, port);
   if (z < 0) {
     killsock(sock);
-    if (z == (-2))
-      strlcpy(s, "DNS lookup failed", sizeof s);
-    else
-      neterror(s);
-    Tcl_AppendResult(irp, s, NULL);
-    return TCL_ERROR;
+    return(-1);
   }
+
   /* Well well well... it worked! */
   i = new_dcc(&DCC_SOCKET, 0);
   dcc[i].sock = sock;
-  dcc[i].port = atoi(argv[2]);
+  dcc[i].port = port;
   strcpy(dcc[i].nick, "*");
-  strlcpy(dcc[i].host, argv[1], UHOSTMAX);
-  snprintf(s, sizeof s, "%d", i);
-  Tcl_AppendResult(irp, s, NULL);
-  return TCL_OK;
+  strlcpy(dcc[i].host, hostname, UHOSTMAX);
+  return(i);
 }
 
 /* Create a new listening port (or destroy one)
@@ -609,133 +603,105 @@ static int tcl_connect STDVAR
  * listen <port> script <proc> [flag]
  * listen <port> off
  */
-static int tcl_listen STDVAR
+/* These multi-purpose commands are silly. Let's break it up. */
+
+static int find_idx_by_port(int port)
 {
-  int i, j, idx = (-1), port, realport;
-  char s[11];
-  struct portmap *pmap = NULL, *pold = NULL;
-  int af = AF_INET /* af_preferred */;
+	int idx;
+	for (idx = 0; idx < dcc_total; idx++) {
+		if ((dcc[idx].type == &DCC_TELNET) && (dcc[idx].port == port)) break;
+	}
+	if (idx == dcc_total) return(-1);
+	return(idx);
+}
 
-  BADARGS(3, 6, " ?-4/-6? port type ?mask?/?proc ?flag??");
-  if (!strcmp(argv[1], "-4") || !strcmp(argv[1], "-6")) {
-      if (argv[1][1] == '4')
-          af = AF_INET;
-      else
-	  af = AF_INET6;
-      argv[1] = argv[0]; /* UGLY! */
-      argv++;
-      argc--;
-  }
-  BADARGS(3, 6, " ?-4/-6? port type ?mask?/?proc ?flag??");
+static int script_listen_off(int port)
+{
+	int idx;
 
-  port = realport = atoi(argv[1]);
-  for (pmap = root; pmap; pold = pmap, pmap = pmap->next)
-    if (pmap->realport == port) {
-      port = pmap->mappedto;
-      break;
-    }
-  for (i = 0; i < dcc_total; i++)
-    if ((dcc[i].type == &DCC_TELNET) && (dcc[i].port == port))
-      idx = i;
-  if (!strcasecmp(argv[2], "off")) {
-    if (pmap) {
-      if (pold)
-	pold->next = pmap->next;
-      else
-	root = pmap->next;
-      free(pmap);
-    }
-    /* Remove */
-    if (idx < 0) {
-      Tcl_AppendResult(irp, "no such listen port is open", NULL);
-      return TCL_ERROR;
-    }
-    killsock(dcc[idx].sock);
-    lostdcc(idx);
-    return TCL_OK;
-  }
-  if (idx < 0) {
-    /* Make new one */
-    if (dcc_total >= max_dcc) {
-      Tcl_AppendResult(irp, "no more DCC slots available", NULL);
-      return TCL_ERROR;
-    }
-    /* Try to grab port */
-    j = port + 20;
-    i = (-1);
-    while (port < j && i < 0) {
-      i = open_listen(&port, af);
-      if (i == -1)
-	port++;
-      else if (i == -2)
-        break;
-    }
-    if (i == -1) {
-      Tcl_AppendResult(irp, "Couldn't grab nearby port", NULL);
-      return TCL_ERROR;
-    } else if (i == -2) {
-      Tcl_AppendResult(irp, "Couldn't assign the requested IP. Please make sure 'my-ip' and/or 'my-ip6' is set properly.", NULL);
-      return TCL_ERROR;
-    }
-    idx = new_dcc(&DCC_TELNET, 0);
-    strcpy(dcc[idx].addr, "*"); /* who cares? */
-    dcc[idx].port = port;
-    dcc[idx].sock = i;
-    dcc[idx].timeval = now;
-  }
-  /* script? */
-  if (!strcmp(argv[2], "script")) {
-    strcpy(dcc[idx].nick, "(script)");
-    if (argc < 4) {
-      Tcl_AppendResult(irp, "must give proc name for script listen", NULL);
-      killsock(dcc[idx].sock);
-      lostdcc(idx);
-      return TCL_ERROR;
-    }
-    if (argc == 5) {
-      if (strcmp(argv[4], "pub")) {
-	Tcl_AppendResult(irp, "unknown flag: ", argv[4], ". allowed flags: pub",
-		         NULL);
+	idx = find_idx_by_port(port);
+	if (idx < 0) return(-1);
 	killsock(dcc[idx].sock);
 	lostdcc(idx);
-	return TCL_ERROR;
-      }
-      dcc[idx].status = LSTN_PUBLIC;
-    }
-    strlcpy(dcc[idx].host, argv[3], UHOSTMAX);
-    snprintf(s, sizeof s, "%d", port);
-    Tcl_AppendResult(irp, s, NULL);
-    return TCL_OK;
-  }
-  /* bots/users/all */
-  if (!strcmp(argv[2], "bots"))
-    strcpy(dcc[idx].nick, "(bots)");
-  else if (!strcmp(argv[2], "users"))
-    strcpy(dcc[idx].nick, "(users)");
-  else if (!strcmp(argv[2], "all"))
-    strcpy(dcc[idx].nick, "(telnet)");
-  if (!dcc[idx].nick[0]) {
-    Tcl_AppendResult(irp, "illegal listen type: must be one of ",
-		     "bots, users, all, off, script", NULL);
-    killsock(dcc[idx].sock);
-    lostdcc(idx);
-    return TCL_ERROR;
-  }
-  if (argc == 4) {
-    strlcpy(dcc[idx].host, argv[3], UHOSTMAX);
-  } else
-    strcpy(dcc[idx].host, "*");
-  snprintf(s, sizeof s, "%d", port);
-  Tcl_AppendResult(irp, s, NULL);
-  if (!pmap) {
-    pmap = malloc(sizeof(struct portmap));
-    pmap->next = root;
-    root = pmap;
-  }
-  pmap->realport = realport;
-  pmap->mappedto = port;
-  putlog(LOG_MISC, "*", "Listening at telnet port %d (%s)", port, argv[2]);
-  return TCL_OK;
+	return(0);
+}
+
+static int get_listen_dcc(char *port)
+{
+	int af = AF_INET;
+	int portnum;
+	int sock;
+	int idx;
+
+	if (!strncasecmp(port, "ipv6%", 5)) {
+		#ifdef AF_INET6
+			port += 5;
+			af = AF_INET6;
+		#else
+			return(-1);
+		#endif
+	}
+	else if (!strncasecmp(port, "ipv4%", 5)) {
+		port += 5;
+	}
+
+	portnum = atoi(port);
+
+	idx = find_idx_by_port(portnum);
+
+	if (idx == -1) {
+		sock = open_listen(&portnum, af);
+		if (sock == -1) {
+			putlog(LOG_MISC, "*", "Requested port is in use.");
+			return(-1);
+		}
+		else if (sock == -2) {
+			putlog(LOG_MISC, "*", "Couldn't assign the requested IP. Please make sure 'my_ip' and/or 'my_ip6' are set properly.");
+			return(-1);
+		}
+
+		idx = new_dcc(&DCC_TELNET, 0);
+		strcpy(dcc[idx].addr, "*"); /* who cares? */
+		dcc[idx].port = portnum;
+		dcc[idx].sock = sock;
+		dcc[idx].timeval = now;
+	}
+	return(idx);
+}
+
+static int script_listen_script(char *port, script_callback_t *callback, char *flags)
+{
+	int idx;
+
+	if (flags && strcasecmp(flags, "pub")) return(-1);
+
+	idx = get_listen_dcc(port);
+	if (idx < 0) return(idx);
+
+	strcpy(dcc[idx].nick, "(script)");
+	if (flags) dcc[idx].status = LSTN_PUBLIC;
+	strlcpy(dcc[idx].host, callback->name, UHOSTMAX);
+
+	return(dcc[idx].port);
+}
+
+static int script_listen(char *port, char *type, char *mask)
+{
+	int idx;
+
+	if (strcmp(type, "bots") && strcmp(type, "users") && strcmp(type, "all")) return(-1);
+
+	idx = get_listen_dcc(port);
+	if (idx < 0) return(idx);
+
+	/* bots/users/all */
+	sprintf(dcc[idx].nick, "(%s)", type);
+
+	if (mask) strlcpy(dcc[idx].host, mask, UHOSTMAX);
+	else strcpy(dcc[idx].host, "*");
+
+	putlog(LOG_MISC, "*", "Listening at telnet port %d (%s)", dcc[idx].port, type);
+	return(dcc[idx].port);
 }
 
 static int script_boot(char *user_bot, char *reason)
@@ -879,15 +845,17 @@ script_command_t script_full_dcc_cmds[] = {
 	{"", "dcclist", script_dcclist, NULL, 0, "s", "?match?", 0, SCRIPT_PASS_RETVAL|SCRIPT_VAR_ARGS},
 	{"", "link", script_link, NULL, 1, "ss", "?via-bot? target-bot", 0, SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT},
 	{"", "whom", script_whom, NULL, 0, "i", "?channel?", 0, SCRIPT_PASS_RETVAL|SCRIPT_PASS_COUNT|SCRIPT_VAR_ARGS},
+	{"", "control", script_control, NULL, 1, "ic", "idx ?callback?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
+	{"", "killdcc", script_killdcc, NULL, 1, "i", "idx", SCRIPT_INTEGER, 0},
+	{"", "connect", script_connect, NULL, 2, "si", "host port", SCRIPT_INTEGER, 0},
+	{"", "listen_off", script_listen_off, NULL, 1, "i", "port", SCRIPT_INTEGER, 0},
+	{"", "listen_script", script_listen_script, NULL, 2, "scs", "port callback ?flags?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
+	{"", "listen", script_listen, NULL, 2, "sss", "port type ?mask?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
 	{0}
 };
 
 tcl_cmds tcldcc_cmds[] =
 {
-  {"control",		tcl_control},
-  {"killdcc",		tcl_killdcc},
-  {"connect",		tcl_connect},
-  {"listen",		tcl_listen},
   {"traffic",		tcl_traffic},
   {NULL,		NULL}
 };

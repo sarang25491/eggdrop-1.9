@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dcc.c,v 1.85 2002/05/05 16:40:38 tothwolf Exp $";
+static const char rcsid[] = "$Id: dcc.c,v 1.86 2002/05/09 07:37:49 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -1680,31 +1680,21 @@ struct dcc_table DCC_TELNET_PW =
   out_dcc_general
 };
 
-static int call_tcl_func(char *name, int idx, char *args)
-{
-  char s[11];
-
-  sprintf(s, "%d", idx);
-  Tcl_SetVar(interp, "_n", s, 0);
-  Tcl_SetVar(interp, "_a", args, 0);
-  if (Tcl_VarEval(interp, name, " $_n $_a", NULL) == TCL_ERROR) {
-    putlog(LOG_MISC, "*", _("Tcl error [%s]: %s"), name, interp->result);
-    return -1;
-  }
-  return (atoi(interp->result));
-}
-
 static void dcc_script(int idx, char *buf, int len)
 {
   long oldsock;
+  script_callback_t *callback;
 
   strip_telnet(dcc[idx].sock, buf, &len);
   if (!len)
     return;
 
+  callback = dcc[idx].u.script->callback;
   dcc[idx].timeval = now;
   oldsock = dcc[idx].sock;	/* Remember the socket number.	*/
-  if (call_tcl_func(dcc[idx].u.script->command, idx, buf)) {
+
+  /* Execute the script callback. */
+  if (callback->callback(callback, idx, buf)) {
     void *old_other = NULL;
 
     /* Check whether the socket and dcc entry are still valid. They
@@ -1722,6 +1712,10 @@ static void dcc_script(int idx, char *buf, int len)
       lostdcc(idx);
       return;
     }
+
+    /* If we're not closing the idx, we have to delete the callback manually. */
+    callback->del(callback);
+
     if (dcc[idx].type == &DCC_CHAT) {
       if (dcc[idx].u.chat->channel >= 0) {
 	chanout_but(-1, dcc[idx].u.chat->channel, _("*** %s has joined the party line.\n"), dcc[idx].nick);
@@ -1739,14 +1733,19 @@ static void eof_dcc_script(int idx)
 {
   void *old;
   int oldflags;
+  script_callback_t *callback;
 
   /* This will stop a killdcc from working, incase the script tries
    * to kill it's controlling socket while handling an EOF <cybah>
    */
   oldflags = dcc[idx].type->flags;
   dcc[idx].type->flags &= ~(DCT_VALIDIDX);
+
   /* Tell the script they're gone: */
-  call_tcl_func(dcc[idx].u.script->command, idx, "");
+  callback = dcc[idx].u.script->callback;
+  callback->callback(callback, idx, "");
+  callback->del(callback);
+
   /* Restore the flags */
   dcc[idx].type->flags = oldflags;
   old = dcc[idx].u.script->u.other;
@@ -1766,13 +1765,16 @@ static void eof_dcc_script(int idx)
 
 static void display_dcc_script(int idx, char *buf)
 {
-  sprintf(buf, "scri  %s", dcc[idx].u.script->command);
+  sprintf(buf, "scri  %s", dcc[idx].u.script->callback->name);
 }
 
 static void kill_dcc_script(int idx, void *x)
 {
-  register struct script_info *p = (struct script_info *) x;
+  script_callback_t *callback;
+  struct script_info *p = (struct script_info *) x;
 
+  callback = p->callback;
+  callback->del(callback);
   if (p->type && p->u.other)
     p->type->kill(idx, p->u.other);
   free(p);
@@ -1780,7 +1782,7 @@ static void kill_dcc_script(int idx, void *x)
 
 static void out_dcc_script(int idx, char *buf, void *x)
 {
-  register struct script_info *p = (struct script_info *) x;
+  struct script_info *p = (struct script_info *) x;
 
   if (p && p->type && p->u.other)
     p->type->output(idx, buf, p->u.other);
