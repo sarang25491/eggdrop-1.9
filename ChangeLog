@@ -1,3 +1,9 @@
+2002-02-09 18:37  Axel Franke <eule@berlin.snafu.de>
+
+	* doc/tcl-commands.doc, modules/channels/tclchan.c:
+
+	modify some tcl-commands for the new honor-global-sets 
+
 2002-02-09 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
