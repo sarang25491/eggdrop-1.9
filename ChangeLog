@@ -1,3 +1,9 @@
+2002-03-02 23:08  Axel Franke <eule@berlin.snafu.de>
+
+	* modules/share/share.c:
+
+	fixed hopefully the crashes in share.c 
+
 2002-03-02 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
