@@ -1,3 +1,13 @@
+2001-10-20 07:46  Jeff Fisher <guppy@techmonkeys.org>
+
+	* src/mod/uptime.mod/: uptime.c, uptime.h:
+
+	
+	* included a bit more information about uptime.mod within uptime.c 
+	* changed the hostname to uptime.eggheads.org instead of
+	egg-uptime.energymech.net 
+	* planted the seeds for total world domination by Canada 
+
 2001-10-20 07:29  Jeff Fisher <guppy@techmonkeys.org>
 
 	* eggdrop.complete.conf, doc/KNOWN-PROBLEMS,
