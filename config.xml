@@ -4,7 +4,10 @@
 		<help>The identity of the bot as seen by users.</help>
 	</botname>
 	<owner>
-		<help>The owner of the bot gets special privileges and protection. You can specify multiple owners using a comma separated list, e.g. "owner1, owner2, owner3".</help>
+		--yourhandle--
+		<help>
+			The owner of the bot gets special privileges and protection. You can specify multiple owners using a comma separated list, e.g. "owner1, owner2, owner3".
+		</help>
 	</owner>
 	<userfile>users.xml</userfile>
 	<telnet_vhost />
@@ -18,10 +21,35 @@
 	<quick_logs>0</quick_logs>
 	<module_path>modules/</module_path>
 	<autoload>
-		<module>blowfish</module>
 		<module>tclscript</module>
 		<module>script</module>
 		<module>server</module>
 		<script>config.tcl</script>
 	</autoload>
+	<admin />
+	<help_path />
+	<temp_path />
+	<text_path />
 </eggdrop>
+<server>
+	<user>user</user>
+	<realname>real name</realname>
+	<connect_timeout>30</connect_timeout>
+	<ping_timeout>30</ping_timeout>
+	<dcc_timeout>30</dcc_timeout>
+	<trigger_on_ignore>0</trigger_on_ignore>
+	<keepnick>0</keepnick>
+	<cycle_delay>10</cycle_delay>
+	<default_port>6667</default_port>
+	<fake005 />
+	<raw_log>0</raw_log>
+	<ip_lookup>0</ip_lookup>
+	<server>
+		<host>some.host.com</host>
+		<port>6667</port>
+	</server>
+	<server>
+		<host>another.host.com</host>
+		<port>6667</port>
+	</server>
+</server>
