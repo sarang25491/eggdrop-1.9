@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands directly relating to channel interaction
  *
- * $Id: cmdsirc.c,v 1.8 2002/04/01 13:33:32 ite Exp $
+ * $Id: cmdsirc.c,v 1.9 2002/04/01 17:34:55 eule Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -236,7 +236,7 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
 	par = _("requested");
       dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick, par);
       m->flags |= SENTKICK;
-      u_addban(chan, s1, dcc[idx].nick, par, now + (60 * ban_time), 0);
+      u_addmask('b', chan, s1, dcc[idx].nick, par, now + (60 * ban_time), 0);
       dprintf(idx, _("Okay, done.\n"));
     }
   }

@@ -1,7 +1,7 @@
 /*
  * userchan.c -- part of channels.mod
  *
- * $Id: userchan.c,v 1.7 2002/04/01 13:33:32 ite Exp $
+ * $Id: userchan.c,v 1.8 2002/04/01 17:34:55 eule Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -285,16 +285,23 @@ static int u_delmask(char type, struct chanset_t *c, char *who, int doit)
   return i;
 }
 
-/* Note: If first char of note is '*' it's a sticky ban.
+/* Note: If first char of note is '*' it's a sticky mask.
  */
-static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
-		    time_t expire_time, int flags)
+static int u_addmask(char type, struct chanset_t *chan, char *who, char *from,
+		     char *note, time_t expire_time, int flags)
 {
   char host[1024], s[1024];
-  maskrec *p = NULL, *l, **u = chan ? &chan->bans : &global_bans;
+  maskrec *p = NULL, *l, **u = NULL;
   module_entry *me;
 
-  strcpy(host, ban);
+  if (type == 'b')
+    u = chan ? &chan->bans : &global_bans;
+  if (type == 'e')
+    u = chan ? &chan->exempts : &global_exempts;
+  if (type == 'I')
+    u = chan ? &chan->invites : &global_invites;
+
+  strcpy(host, who);
   /* Choke check: fix broken bans (must have '!' and '@') */
   if ((strchr(host, '!') == NULL) && (strchr(host, '@') == NULL))
     strcat(host, "!*@*");
@@ -313,7 +320,7 @@ static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
 		   me->funcs[SERVER_BOTUSERHOST]);
   else
     s[0] = 0;
-  if (s[0] && wild_match(host, s)) {
+  if (s[0] && type == 'b' && wild_match(host, s)) {
     putlog(LOG_MISC, "*", _("Wanted to ban myself--deflected."));
     return 0;
   }
@@ -357,157 +364,17 @@ static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
 
     if (mask) {
       if (!chan)
-	shareout(NULL, "+b %s %lu %s%s %s %s\n", mask, expire_time - now,
+	shareout(NULL, "+%s %s %lu %s%s %s %s\n",
+		 type == 'b' ? "b" : type == 'e' ? "e" : "inv",
+		 mask, expire_time - now,
 		 (flags & MASKREC_STICKY) ? "s" : "",
 		 (flags & MASKREC_PERM) ? "p" : "-", from, note);
       else
-	shareout(chan, "+bc %s %lu %s %s%s %s %s\n", mask, expire_time - now,
+	shareout(chan, "+%s %s %lu %s %s%s %s %s\n",
+		 type == 'b' ? "bc" : type == 'e' ? "ec" : "invc",	
+		 mask, expire_time - now,
 		 chan->dname, (flags & MASKREC_STICKY) ? "s" : "",
 		 (flags & MASKREC_PERM) ? "p" : "-", from, note);
-      free(mask);
-    }
-  }
-  return 1;
-}
-
-/* Note: If first char of note is '*' it's a sticky invite.
- */
-static int u_addinvite(struct chanset_t *chan, char *invite, char *from,
-		       char *note, time_t expire_time, int flags)
-{
-  char host[1024], s[1024];
-  maskrec *p = NULL, *l, **u = chan ? &chan->invites : &global_invites;
-
-  strcpy(host, invite);
-  /* Choke check: fix broken invites (must have '!' and '@') */
-  if ((strchr(host, '!') == NULL) && (strchr(host, '@') == NULL))
-    strcat(host, "!*@*");
-  else if (strchr(host, '@') == NULL)
-    strcat(host, "@*");
-  else if (strchr(host, '!') == NULL) {
-    char * i = strchr(host, '@');
-    strcpy(s, i);
-    *i = 0;
-    strcat(host, "!*");
-    strcat(host, s);
-  }
-
-  for (l = *u; l; l = l->next)
-    if (!irccmp(l->mask, host)) {
-      p = l;
-      break;
-    }  
-
-  /* It shouldn't expire and be sticky also */
-  if (note[0] == '*') {
-    flags |= MASKREC_STICKY;
-    note++;
-  }
-  if ((expire_time == 0L) || (flags & MASKREC_PERM)) {
-    flags |= MASKREC_PERM;
-    expire_time = 0L;
-  }
-
-  if (p == NULL) {
-    p = malloc(sizeof(maskrec));
-    p->next = *u;
-    *u = p;
-  } else {
-    free( p->mask );
-    free( p->user );
-    free( p->desc );
-  }
-  p->expire = expire_time;
-  p->added = now;
-  p->lastactive = 0;
-  p->flags = flags;
-  p->mask = strdup(host);
-  p->user = strdup(from);
-  p->desc = strdup(note);
-  if (!noshare) {
-    char *mask = str_escape(host, ':', '\\');
-
-    if (mask) {
-      if (!chan)
-	shareout(NULL, "+inv %s %lu %s%s %s %s\n", mask, expire_time - now,
-		 (flags & MASKREC_STICKY) ? "s" : "",
-		 (flags & MASKREC_PERM) ? "p": "-", from, note);
-      else
-	shareout(chan, "+invc %s %lu %s %s%s %s %s\n", mask, expire_time - now,
-		 chan->dname, (flags & MASKREC_STICKY) ? "s" : "",
-		 (flags & MASKREC_PERM) ? "p": "-", from, note);
-      free(mask);
-    }
-  }
-  return 1;
-}
-
-/* Note: If first char of note is '*' it's a sticky exempt.
- */
-static int u_addexempt(struct chanset_t *chan, char *exempt, char *from,
-		       char *note, time_t expire_time, int flags)
-{
-  char host[1024], s[1024];
-  maskrec *p = NULL, *l, **u = chan ? &chan->exempts : &global_exempts;
-
-  strcpy(host, exempt);
-  /* Choke check: fix broken exempts (must have '!' and '@') */
-  if ((strchr(host, '!') == NULL) && (strchr(host, '@') == NULL))
-    strcat(host, "!*@*");
-  else if (strchr(host, '@') == NULL)
-    strcat(host, "@*");
-  else if (strchr(host, '!') == NULL) {
-    char * i = strchr(host, '@');
-    strcpy(s, i);
-    *i = 0;
-    strcat(host, "!*");
-    strcat(host, s);
-  }
-
-  for (l = *u; l; l = l->next)
-    if (!irccmp(l->mask, host)) {
-      p = l;
-      break;
-    }  
-
-  /* It shouldn't expire and be sticky also */
-  if (note[0] == '*') {
-    flags |= MASKREC_STICKY;
-    note++;
-  }
-  if ((expire_time == 0L) || (flags & MASKREC_PERM)) {
-    flags |= MASKREC_PERM;
-    expire_time = 0L;
-  }
-
-  if (p == NULL) {
-    p = malloc(sizeof(maskrec));
-    p->next = *u;
-    *u = p;
-  } else {
-    free(p->mask);
-    free(p->user);
-    free(p->desc);
-  }
-  p->expire = expire_time;
-  p->added = now;
-  p->lastactive = 0;
-  p->flags = flags;
-  p->mask = strdup(host);
-  p->user = strdup(from);
-  p->desc = strdup(note);
-  if (!noshare) {
-    char *mask = str_escape(host, ':', '\\');
-
-    if (mask) {
-      if (!chan)
-	shareout(NULL, "+e %s %lu %s%s %s %s\n", mask, expire_time - now,
-		 (flags & MASKREC_STICKY) ? "s" : "",
-		 (flags & MASKREC_PERM) ? "p": "-", from, note);
-      else
-	shareout(chan, "+ec %s %lu %s %s%s %s %s\n", mask, expire_time - now,
-		 chan->dname, (flags & MASKREC_STICKY) ? "s" : "",
-		 (flags & MASKREC_PERM) ? "p": "-", from, note);
       free(mask);
     }
   }

@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.7 2002/03/22 16:01:16 ite Exp $
+ * $Id: channels.c,v 1.8 2002/04/01 17:34:54 eule Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -767,7 +767,7 @@ static Function channels_table[] =
   /* 4 - 7 */
   (Function) u_setsticky_mask,
   (Function) u_delmask,
-  (Function) u_addban,
+  (Function) u_addmask,
   (Function) write_bans,
   /* 8 - 11 */
   (Function) get_chanrec,
@@ -797,7 +797,7 @@ static Function channels_table[] =
   /* 28 - 31 */
   (Function) NULL, /* [28] used to be u_setsticky_exempt() <cybah> */
   (Function) NULL,
-  (Function) u_addexempt,
+  (Function) NULL,
   (Function) NULL,
   /* 32 - 35 */
   (Function) NULL,/* [32] used to be u_sticky_exempt() <cybah> */
@@ -805,7 +805,7 @@ static Function channels_table[] =
   (Function) NULL,	/* [34] used to be killchanset().	*/
   (Function) NULL,
   /* 36 - 39 */
-  (Function) u_addinvite,
+  (Function) NULL,
   (Function) tcl_channel_add,
   (Function) tcl_channel_modify,
   (Function) write_exempts,

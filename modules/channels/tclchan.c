@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.11 2002/04/01 13:33:32 ite Exp $
+ * $Id: tclchan.c,v 1.12 2002/04/01 17:34:55 eule Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -488,7 +488,7 @@ static int tcl_newchanban STDVAR
     else
       expire_time = now + (atoi(argv[5]) * 60);
   }
-  if (u_addban(chan, ban, from, cmt, expire_time, sticky))
+  if (u_addmask('b', chan, ban, from, cmt, expire_time, sticky))
     if ((me = module_find("irc", 0, 0)))
       (me->funcs[IRC_CHECK_THIS_BAN])(chan, ban, sticky);
   return TCL_OK;
@@ -524,7 +524,7 @@ static int tcl_newban STDVAR
     else
       expire_time = now + (atoi(argv[4]) * 60);
   }
-  if(u_addban(NULL, ban, from, cmt, expire_time, sticky))
+  if(u_addmask('b', NULL, ban, from, cmt, expire_time, sticky))
     if ((me = module_find("irc", 0, 0)))
       for (chan = chanset; chan != NULL; chan = chan->next)
         (me->funcs[IRC_CHECK_THIS_BAN])(chan, ban, sticky);
@@ -565,7 +565,7 @@ static int tcl_newchanexempt STDVAR
     else
       expire_time = now + (atoi(argv[5]) * 60);
   }
-  if (u_addexempt(chan, exempt, from, cmt, expire_time,sticky))
+  if (u_addmask('e', chan, exempt, from, cmt, expire_time, sticky))
     add_mode(chan, '+', 'e', exempt);
   return TCL_OK;
 }
@@ -599,7 +599,7 @@ static int tcl_newexempt STDVAR
     else
       expire_time = now + (atoi(argv[4]) * 60);
   }
-  u_addexempt(NULL,exempt, from, cmt, expire_time,sticky);
+  u_addmask('e', NULL, exempt, from, cmt, expire_time, sticky);
   for (chan = chanset; chan; chan = chan->next)
     add_mode(chan, '+', 'e', exempt);
   return TCL_OK;
@@ -639,7 +639,7 @@ static int tcl_newchaninvite STDVAR
     else
       expire_time = now + (atoi(argv[5]) * 60);
   }
-  if (u_addinvite(chan, invite, from, cmt, expire_time,sticky))
+  if (u_addmask('I', chan, invite, from, cmt, expire_time, sticky))
     add_mode(chan, '+', 'I', invite);
   return TCL_OK;
 }
@@ -673,7 +673,7 @@ static int tcl_newinvite STDVAR
     else
       expire_time = now + (atoi(argv[4]) * 60);
   }
-  u_addinvite(NULL,invite, from, cmt, expire_time,sticky);
+  u_addmask('I', NULL, invite, from, cmt, expire_time, sticky);
   for (chan = chanset; chan; chan = chan->next)
     add_mode(chan, '+', 'I', invite);
   return TCL_OK;

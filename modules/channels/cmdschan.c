@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.8 2002/04/01 13:33:32 ite Exp $
+ * $Id: cmdschan.c,v 1.9 2002/04/01 17:34:54 eule Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -123,8 +123,8 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
 	s[70] = 0;
       }
       if (chan) {
-	u_addban(chan, s, dcc[idx].nick, par,
-		 expire_time ? now + expire_time : 0, 0);
+	u_addmask('b', chan, s, dcc[idx].nick, par,
+		  expire_time ? now + expire_time : 0, 0);
 	if (par[0] == '*') {
 	  sticky = 1;
 	  par++;
@@ -142,8 +142,8 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
 	if ((me = module_find("irc", 0, 0)))
 	  (me->funcs[IRC_CHECK_THIS_BAN])(chan, s, sticky);
       } else {
-	u_addban(NULL, s, dcc[idx].nick, par,
-		 expire_time ? now + expire_time : 0, 0);
+	u_addmask('b', NULL, s, dcc[idx].nick, par,
+		  expire_time ? now + expire_time : 0, 0);
 	if (par[0] == '*') {
 	  sticky = 1;
 	  par++;
@@ -253,8 +253,8 @@ static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
       s[70] = 0;
     }
     if (chan) {
-      u_addexempt(chan, s, dcc[idx].nick, par,
-		  expire_time ? now + expire_time : 0, 0);
+      u_addmask('e', chan, s, dcc[idx].nick, par,
+		expire_time ? now + expire_time : 0, 0);
       if (par[0] == '*') {
 	par++;
 	putlog(LOG_CMDS, "*", "#%s# (%s) +exempt %s %s (%s) (sticky)",
@@ -267,8 +267,8 @@ static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
       }
       add_mode(chan, '+', 'e', s);
     } else {
-      u_addexempt(NULL, s, dcc[idx].nick, par,
-		  expire_time ? now + expire_time : 0, 0);
+      u_addmask('e', NULL, s, dcc[idx].nick, par,
+		expire_time ? now + expire_time : 0, 0);
       if (par[0] == '*') {
 	par++;
 	putlog(LOG_CMDS, "*", "#%s# (GLOBAL) +exempt %s (%s) (sticky)",
@@ -376,8 +376,8 @@ static void cmd_pls_invite(struct userrec *u, int idx, char *par)
       s[70] = 0;
     }
     if (chan) {
-      u_addinvite(chan, s, dcc[idx].nick, par,
-		  expire_time ? now + expire_time : 0, 0);
+      u_addmask('I', chan, s, dcc[idx].nick, par,
+		expire_time ? now + expire_time : 0, 0);
       if (par[0] == '*') {
 	par++;
 	putlog(LOG_CMDS, "*", "#%s# (%s) +invite %s %s (%s) (sticky)",
@@ -390,8 +390,8 @@ static void cmd_pls_invite(struct userrec *u, int idx, char *par)
       }
       add_mode(chan, '+', 'I', s);
     } else {
-      u_addinvite(NULL, s, dcc[idx].nick, par,
-		  expire_time ? now + expire_time : 0, 0);
+      u_addmask('I', NULL, s, dcc[idx].nick, par,
+		expire_time ? now + expire_time : 0, 0);
       if (par[0] == '*') {
 	par++;
 	putlog(LOG_CMDS, "*", "#%s# (GLOBAL) +invite %s (%s) (sticky)",

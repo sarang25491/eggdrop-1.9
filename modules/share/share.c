@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.13 2002/04/01 13:33:33 ite Exp $
+ * $Id: share.c,v 1.14 2002/04/01 17:34:55 eule Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -822,7 +822,7 @@ static void share_pls_ban(int idx, char *par)
     expire_time = (time_t) atoi(tm);
     if (expire_time != 0L)
       expire_time += now;
-    u_addban(NULL, ban, from, par, expire_time, flags);
+    u_addmask('b', NULL, ban, from, par, expire_time, flags);
     putlog(LOG_CMDS, "*", "%s: global ban %s (%s:%s)", dcc[idx].nick, ban,
 	   from, par);
     noshare = 0;
@@ -863,7 +863,7 @@ static void share_pls_banchan(int idx, char *par)
       expire_time = (time_t) atoi(tm);
       if (expire_time != 0L)
 	expire_time += now;
-      u_addban(chan, ban, from, par, expire_time, flags);
+      u_addmask('b', chan, ban, from, par, expire_time, flags);
       noshare = 0;
     }
   }
@@ -892,7 +892,7 @@ static void share_pls_exempt(int idx, char *par)
     expire_time = (time_t) atoi(tm);
     if (expire_time != 0L)
       expire_time += now;
-    u_addexempt(NULL,exempt, from, par, expire_time,flags);
+    u_addmask('e', NULL, exempt, from, par, expire_time, flags);
     putlog(LOG_CMDS, "*", "%s: global exempt %s (%s:%s)", dcc[idx].nick, exempt,
 	   from, par);
     noshare = 0;
@@ -935,7 +935,7 @@ static void share_pls_exemptchan(int idx, char *par)
       expire_time = (time_t) atoi(tm);
       if (expire_time != 0L)
 	expire_time += now;
-      u_addexempt(chan, exempt, from, par, expire_time,flags);
+      u_addmask('e', chan, exempt, from, par, expire_time, flags);
       noshare = 0;
     }
   }
@@ -964,7 +964,7 @@ static void share_pls_invite(int idx, char *par)
     expire_time = (time_t) atoi(tm);
     if (expire_time != 0L)
       expire_time += now;
-    u_addinvite(NULL,invite, from, par, expire_time,flags);
+    u_addmask('I', NULL, invite, from, par, expire_time, flags);
     putlog(LOG_CMDS, "*", "%s: global invite %s (%s:%s)", dcc[idx].nick,
 	   invite, from, par);
     noshare = 0;
@@ -1007,7 +1007,7 @@ static void share_pls_invitechan(int idx, char *par)
       expire_time = (time_t) atoi(tm);
       if (expire_time != 0L)
 	expire_time += now;
-      u_addinvite(chan, invite, from, par, expire_time,flags);
+      u_addmask('I', chan, invite, from, par, expire_time, flags);
       noshare = 0;
     }
   }
