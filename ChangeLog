@@ -1,3 +1,13 @@
+2003-08-06 18:00  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/binds.c, lib/eggdrop/binds.h,
+	modules/script/scriptbind.c, modules/server/dcc_commands.c,
+	modules/server/input.c, modules/server/scriptcmds.c,
+	modules/server/server.c, modules/server/serverlist.h,
+	src/Makefile.am, src/dccutil.c, src/dccutil.h:
+
+	[no log message] 
+
 2003-08-02 05:59  Tothwolf <tothwolf@techmonkeys.org>
 
 	* src/: Makefile.am, dccutil.c, dccutil.h:
