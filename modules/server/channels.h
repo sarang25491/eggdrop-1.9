@@ -16,16 +16,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: channels.h,v 1.12 2004/06/26 19:49:49 stdarg Exp $
+ * $Id: channels.h,v 1.13 2004/07/23 21:58:55 darko Exp $
  */
 
 #ifndef _EGG_MOD_SERVER_CHANNELS_H_
 #define _EGG_MOD_SERVER_CHANNELS_H_
 
 /* Status bits for channels. */
-#define CHANNEL_WHOLIST		1
-#define CHANNEL_BANLIST		2
-#define CHANNEL_NAMESLIST	4
+#define CHANNEL_WHOLIST		0x1
+#define CHANNEL_BANLIST		0x2
+#define CHANNEL_NAMESLIST	0x4
+#define CHANNEL_JOINED		0x8
 
 typedef struct {
 	char *nick;
@@ -83,6 +84,8 @@ typedef struct channel {
 
 	channel_member_t *member_head;	/* Member list. */
 	int nmembers;
+
+	unsigned long builtin_bools;	/* Channel settings (inactive, autovoice, etc..) */
 } channel_t;
 
 extern channel_t *channel_head;
@@ -92,8 +95,13 @@ extern hash_table_t *uhost_cache_ht;
 
 extern void server_channel_init();
 extern void server_channel_destroy();
+extern void update_channel_structures();
+extern int destroy_channel_record(const char *chan_name);
+extern int channel_set(channel_t *chanptr, const char *setting, const char *value);
+extern int chanfile_save(const char *fname);
+extern int channel_info(partymember_t *p, const char *channame);
 
-extern void channel_lookup(const char *chan_name, int create, channel_t **chanptr, channel_t **prevptr);
+extern int channel_lookup(const char *chan_name, int create, channel_t **chanptr, channel_t **prevptr);
 extern char *uhost_cache_lookup(const char *nick);
 extern void uhost_cache_fillin(const char *nick, const char *uhost, int addref);
 extern int channel_mode(const char *chan_name, const char *nick, char *buf);

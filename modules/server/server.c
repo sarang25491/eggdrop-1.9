@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: server.c,v 1.58 2004/06/07 23:14:48 stdarg Exp $";
+static const char rcsid[] = "$Id: server.c,v 1.59 2004/07/23 21:58:55 darko Exp $";
 #endif
 
 #include "server.h"
@@ -179,6 +179,7 @@ static int server_close(int why)
 }
 
 static config_var_t server_config_vars[] = {
+	{"chanfile", &server_config.chanfile, CONFIG_STRING},
 	/* Registration information. */
 	{"user", &server_config.user, CONFIG_STRING},
 	{"realname", &server_config.realname, CONFIG_STRING},
@@ -210,6 +211,7 @@ static void server_config_init()
 	void *config_root, *server, *nick, *list;
 
 	/* Set default values. */
+	server_config.chanfile = strdup("channels.xml");
 	server_config.user = strdup("user");
 	server_config.realname = strdup("real name");
 	server_config.connect_timeout = 30;

@@ -4,19 +4,109 @@
 		<description>
 			All commands around IRC support.
 		</description>
-		
+
 		<command name="+server" flags="m">
-	               <args>
-	                       <arg type="string">hostname</arg>
-	                       <arg type="int" optional="yes">port</arg>
-	                       <arg type="string" optional="yes">password</arg>
-	               </args>
-	               <description>
-	                       Adds a server to our server list.
-	               </description>
-	               <seealso>jump</seealso>
-	       </command>
-	       
+			<args>
+				<arg type="string">hostname</arg>
+				<arg type="int" optional="yes">port</arg>
+				<arg type="string" optional="yes">password</arg>
+			</args>
+			<description>
+				Adds a server to our server list.
+			</description>
+			<seealso>jump</seealso>
+		</command>
+		<command name="+chan" flags="n">
+			<args>
+				<arg type="string">name</arg>
+				<arg type="string" optional="yes">settings</arg>
+			</args>
+			<description>
+				Creates record for the channel with given name.
+				It will be possible (but not yet supported) to specify
+				channel settings to be set for the new channel.
+				Otherwise, default settings are used.
+
+				Note, however, that channel is created as +inactive,
+				regardless of any implicit or explicit arguments
+				that might be passed to +chan. This is done so to allow
+				full configuration of the channel before bot joins it.
+				Upon finishing, you should issue .chanset #chan -inactive
+
+			</description>
+			<seealso>-chan</seealso>
+			<seealso>chanset</seealso>
+		</command>
+		<command name="-chan" flags="n">
+			<args>
+				<arg type="string">name</arg>
+			</args>
+			<description>
+				Completely removes all records about given channel.
+			</description>
+			<seealso>+chan</seealso>
+		</command>
+		<command name="chaninfo" flags="m">
+			<args>
+				<arg type="string">name</arg>
+			</args>
+			<description>
+				Displays information about given channel.
+				Here is a list of supported settings:
+
+				  1) Flags (boolean kind, +/-setting)
+
+				     inactive        Marks channel as inactive, effectivly
+				                     preventing bot from joining channel.
+
+				  2) Numeric Settings (name value)
+				     to be implemented later
+
+				  3) Coupplets (pairs of values X:Y)
+				     to be implemented later
+
+				  4) String Settings (name value)
+				     to be implemented later
+
+				  5) User defined settings (name value)
+				     to be implemented later
+
+			         Examples:
+				   .chanset #lamest +inactive  Mark #lamest as inactive.
+				                               (bot will part channel)
+
+				   .chanset * -inactive        Mark all channels as active.
+				                               (bot will join all nonjoined channels)
+			</description>
+			<seealso>chanset</seealso>
+		</command>
+		<command name="chansave" flags="n">
+			<args>
+				<arg type="string" optional="yes">name</arg>
+			</args>
+			<description>
+				Saves channel information. If there is no explicit
+				file name given, then 'chanfile' setting from the
+				configuration file is used.
+			</description>
+		</command>
+		<command name="chanset" flags="n">
+			<args>
+				<arg type="string">name</arg>
+				<arg type="string">setting</arg>
+				<arg type="string" optional="yes">data</arg>
+			</args>
+			<description>
+				Modifies channel record. If 'name' is asterix '*', then
+				change is affected on all known channels.
+
+				If 'setting' begins with '+' or '-' then it refers to
+				channel flag to be switched ON or OFF.
+				Otherwise, appropriate setting is set to whatever value
+				is passed in 'data'.
+
+			</description>
+			<seealso>chaninfo</seealso>
+		</command>
 	</section>
-	
 </commands>

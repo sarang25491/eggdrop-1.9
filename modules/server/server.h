@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: server.h,v 1.19 2004/06/23 11:19:52 wingman Exp $
+ * $Id: server.h,v 1.20 2004/07/23 21:58:55 darko Exp $
  */
 
 #ifndef _EGG_MOD_SERVER_SERVER_H_
@@ -44,6 +44,7 @@ typedef struct {
 	int dcc_timeout;
 	char *user;
 	char *realname;
+	char *chanfile;
 	int max_line_len;
 
 	/* Override the 005 sent by the server. */

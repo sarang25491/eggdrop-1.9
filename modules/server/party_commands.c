@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: party_commands.c,v 1.10 2004/06/30 21:07:02 stdarg Exp $";
+static const char rcsid[] = "$Id: party_commands.c,v 1.11 2004/07/23 21:58:55 darko Exp $";
 #endif
 
 #include "server.h"
@@ -165,14 +165,147 @@ static int party_act(partymember_t *p, const char *nick, user_t *u, const char *
 	return(0);
 }
 
-bind_list_t server_party_commands[] = {
+/* +chan <name> [settings] */
+static int party_pls_chan(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	const char *settings = NULL, *tmp;
+	char *channame = NULL;
+	channel_t *chanptr = NULL;
+
+	egg_get_arg(text, &settings, &channame);
+
+	if (!channame) {
+		partymember_printf(p, _("Syntax: +chan <name> [settings]"));
+		return 0;
+	}
+
+	if (server_support("CHANTYPES", &tmp) == -1)
+		tmp = "#&";
+
+	if (!strchr(tmp, *channame)) {
+		partymember_printf(p, _("Error: '%c' is not a valid channel prefix."), *channame);
+		partymember_printf(p, _("       This server supports '%s'"), tmp);
+		free(channame);
+		return 0;
+	}
+
+	if (channel_lookup(channame, 1, &chanptr, NULL) == -1) {
+		partymember_printf(p, _("Error: Channel '%s' already exists!"), channame);
+		free(channame);
+		return 0;
+	}
+
+/* FIXME - At this early stage just create channel with given name, with no settings considered. */
+
+	partymember_printf(p, _("Channel '%s' has been created but marked +inactive to give you a chance"), channame);
+	partymember_printf(p, _("  to finish configuring channel settings. When you are ready, type:"));
+	partymember_printf(p, _("    .chanset %s -inactive"), channame);
+	partymember_printf(p, _("  to let the bot join %s"), channame);
+	channel_set(chanptr, "+inactive", NULL);
+
+	free(channame);
+	return BIND_RET_LOG;
+}
+
+/* -chan <name> */
+static int party_mns_chan(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	if (text)
+		while (isspace(*text))
+			text++;
+
+	if (!text || !*text) {
+		partymember_printf(p, _("Syntax: -chan <name>"));
+		return 0;
+	}
+
+	if (destroy_channel_record(text) == 0)
+		partymember_printf(p, _("Removed channel '%s'"), text);
+	else
+		partymember_printf(p, _("Error: Invalid channel '%s'"), text);
+
+	return BIND_RET_LOG;
+}
+
+/* chanset <channel / *> <setting> [data] */
+static int party_chanset(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	const char *args = NULL;
+	char *channame = NULL, *setting = NULL;
+	channel_t *chanptr = NULL;
+	int allchans;
+
+	egg_get_args(text, &args, &channame, &setting, NULL);
+
+	if (!channame || !setting) {
+		partymember_printf(p, _("Syntax: chanset <channel/*> <setting> [value]"));
+		free(channame);
+		return 0;
+	}
+
+	allchans = !strcasecmp("*", channame);
+	if (!allchans && channel_lookup(channame, 0, &chanptr, NULL) == -1) {
+		partymember_printf(p, _("Error: Invalid channel '%s'"), channame);
+		free(channame);
+		free(setting);
+		return 0;
+	}
+
+	if (!args && *setting != '+' && *setting != '-') {
+		partymember_printf(p, _("Error: Setting '%s' requires another argument"), setting);
+		free(channame);
+		free(setting);
+		return 0;
+	}
+
+	if (channel_set(allchans?NULL:chanptr, setting, args))
+		partymember_printf(p, _("Ok, set"));
+	else
+		partymember_printf(p, _("Error: Invalid setting or value"));
+
+	free(channame);
+	free(setting);
+	return BIND_RET_LOG;
+}
+
+/* chaninfo <channel> */
+static int party_chaninfo(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	if (text)
+		while (isspace(*text))
+			text++;
+	if (!text || !*text) {
+		partymember_printf(p, _("Syntax: chaninfo <channel>"));
+		return 0;
+	}
+
+	return channel_info(p, text);
+}
+
+/* chansave [filename] */
+static int party_chansave(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	if (text)
+		while (isspace(*text))
+			text++;
+	chanfile_save(text && *text ? text : NULL);
+
+	return BIND_RET_LOG;
+}
+
+bind_list_t server_party_commands[] = {					/* Old flag requirements */
 	{"", "servers", party_servers},			/* DDD	*/
-	{"m", "+server", party_plus_server},		/* DDD	*/
+	{"m", "+server", party_plus_server},		/* DDC	*/
 	{"m", "-server", party_minus_server},		/* DDD	*/
 	{"m", "dump", party_dump},			/* DDD	*/
 	{"m", "jump", party_jump},			/* DDD	*/
 	{"m", "msg", party_msg},			/* DDD	*/
 	{"m", "say", party_msg},			/* DDD	*/
-	{"m", "act", party_act},			/* DDD 	*/
+	{"m", "act", party_act},			/* DDD	*/
+	{"n", "+chan", party_pls_chan},			/* DDC	*/	/* n */
+	{"n", "-chan", party_mns_chan},			/* DDC	*/	/* n */
+	{"n", "chanset", party_chanset},		/* DDC	*/	/* n|n */
+	{"m", "chaninfo", party_chaninfo},		/* DDC	*/	/* m|m */
+	{"n", "chansave", party_chansave},		/* DDC	*/	/* n|n */
 	{0}
 };

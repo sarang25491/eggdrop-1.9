@@ -37,6 +37,7 @@
 		</logfiles>
 	</logging>
 	<server>
+		<chanfile>channels.xml</chanfile>
 		<user>user</user>
 		<realname>real name</realname>
 		<nicklist>
