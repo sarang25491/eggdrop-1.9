@@ -3,7 +3,7 @@
  *   commands that comes across the botnet
  *   userfile transfer and update commands from sharebots
  *
- * $Id: botcmd.c,v 1.34 2002/03/03 20:17:54 stdarg Exp $
+ * $Id: botcmd.c,v 1.35 2002/04/17 23:03:57 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -648,15 +648,12 @@ static void bot_nlinked(int idx, char *par)
   if (!next[0]) {
     putlog(LOG_BOTS, "*", _("Invalid eggnet protocol from %s (zapfing)"),
 	   dcc[idx].nick);
-    simple_sprintf(s, "%s %s (%s)", _("Disconnected"), dcc[idx].nick,
-		   _("invalid bot"));
+    simple_sprintf(s, _("Disconnected %s (invalid bot)"), dcc[idx].nick);
     dprintf(idx, "error invalid eggnet protocol for 'nlinked'\n");
   } else if ((in_chain(newbot)) || (!strcasecmp(newbot, botnetnick))) {
     /* Loop! */
-    putlog(LOG_BOTS, "*", "%s %s (mutual: %s)",
-	   _("Loop detected"), dcc[idx].nick, newbot);
-    simple_sprintf(s, "%s (%s): %s %s", _("Detected loop: disconnecting"), newbot, _("Disconnected"),
-		   dcc[idx].nick);
+    putlog(LOG_BOTS, "*", _("Loop detected %1$s (mutual: %2$s)"), dcc[idx].nick, newbot);
+    simple_sprintf(s, _("Detected loop: two bots exist named %1$s: disconnecting %2$s"), newbot, dcc[idx].nick);
     dprintf(idx, "error Loop (%s)\n", newbot);
   }
   if (!s[0]) {
@@ -670,18 +667,15 @@ static void bot_nlinked(int idx, char *par)
   if (bogus) {
     putlog(LOG_BOTS, "*", "%s %s!  (%s -> %s)", _("Bogus link notice from"), dcc[idx].nick,
 	   next, newbot);
-    simple_sprintf(s, "%s: %s %s", _("Bogus link notice from"), dcc[idx].nick,
-		   _("Disconnected"));
+    simple_sprintf(s, _("Bogus link notice from: %s Disconnected"), dcc[idx].nick);
     dprintf(idx, "error %s (%s -> %s)\n",
 	    _("Bogus link notice from"), next, newbot);
   }
   if (bot_flags(dcc[idx].user) & BOT_LEAF) {
-    putlog(LOG_BOTS, "*", "%s %s  (%s %s)",
-	   _("Disconnected left"), dcc[idx].nick, newbot,
-	   _("Linked to"));
-    simple_sprintf(s, "%s %s (to %s): %s",
-		   _("Illegal link by leaf"), dcc[idx].nick, newbot,
-		   _("Disconnected"));
+    putlog(LOG_BOTS, "*", _("Disconnected left %1$s (Linked to %2$s)"),
+           dcc[idx].nick, newbot);
+    simple_sprintf(s, _("Illegal link by leaf %1$s (to %2$s): Disconnected"),
+		   dcc[idx].nick, newbot);
     dprintf(idx, "error %s\n", _("You are supposed to be a leaf!"));
   }
   if (s[0]) {
@@ -713,8 +707,8 @@ static void bot_nlinked(int idx, char *par)
   u = get_user_by_handle(userlist, newbot);
   if (bot_flags(u) & BOT_REJECT) {
     botnet_send_reject(idx, botnetnick, NULL, newbot, NULL, NULL);
-    putlog(LOG_BOTS, "*", "%s %s %s %s", _("Rejecting bot"),
-	   newbot, _("from"), dcc[idx].nick);
+    putlog(LOG_BOTS, "*", _("Rejecting bot %1$s from %2$s"), newbot,
+           dcc[idx].nick);
   }
 }
 
@@ -726,7 +720,7 @@ static void bot_linked(int idx, char *par)
 
   bots = bots_in_subtree(findbot(dcc[idx].nick));
   users = users_in_subtree(findbot(dcc[idx].nick));
-  putlog(LOG_BOTS, "*", "%s", _("Older bot detected (unsupported)"));
+  putlog(LOG_BOTS, "*", _("Older bot detected (unsupported)"));
   /* FIXME PLURAL: handle it properly */
   simple_sprintf(s,
 		 _("Disconnected %s (outdated) (lost %d bot%s and %d user%s"),
