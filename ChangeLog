@@ -1,3 +1,265 @@
+2003-12-16 22:36  Will Buckner <wcc@techmonkeys.org>
+
+	* modules/blowfish/blowfish.c, po/POTFILES.in, po/eggdrop.pot,
+	src/bg.c, src/core_party.c, src/logfile.c, src/main.c:
+
+	* src/ gettextification.  
+	* More cleanups.  
+
+2003-12-16 21:45  Will Buckner <wcc@techmonkeys.org>
+
+	* src/: bg.c, bg.h, cmds.h, cmdt.h, core_binds.c, core_binds.h,
+	core_config.c, core_config.h, core_party.c, cryptapi.h, debug.h,
+	flags.c, flags.h, logfile.c, logfile.h, main.c, main.h, misc.h,
+	traffic.c, traffic.h:
+
+	* src/ cleanups.  
+
+2003-12-16 05:59  stdarg <stdarg@techmonkeys.org>
+
+	* modules/script/scriptmisc.c:
+
+	
+	* start of "die" event 
+
+2003-12-16 05:57  Will Buckner <wcc@techmonkeys.org>
+
+	* modules/script/scriptmisc.c:
+
+	[no log message] 
+
+2003-12-16 05:47  Will Buckner <wcc@techmonkeys.org>
+
+	* lib/eggdrop/eggmod.c, modules/script/scriptmisc.c:
+
+	* Fixes from last commit.  
+
+2003-12-16 03:26  Will Buckner <wcc@techmonkeys.org>
+
+	* lib/eggdrop/partyline.c, src/main.c:
+
+	* Fixes from last commit.  
+
+2003-12-16 03:13  Will Buckner <wcc@techmonkeys.org>
+
+	* config.tcl, config.xml, modules/script/scriptmisc.c,
+	modules/server/Makefile.am, modules/server/dcc_commands.c,
+	modules/server/party_commands.c, src/bg.c, src/cmds.c,
+	src/core_config.c, src/core_config.h, src/core_party.c, src/main.c,
+	src/misc.c:
+
+	* main.c cleanups.  
+	* Added pidfile and die_on_sigterm to config.  
+	* Added 'act' party command.  
+	* Started a 'status' party command.  
+	* Removed config.tcl.  
+	* General cleanups.  
+
+2003-12-15 23:52  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/eggmod.c, lib/eggdrop/eggmod.h,
+	modules/server/Makefile.am, modules/server/channels.c,
+	modules/server/channels.h, modules/server/dcc.c,
+	modules/server/dcc_commands.c, modules/server/egg_server_api.h,
+	modules/server/input.c, modules/server/nicklist.c,
+	modules/server/output.c, modules/server/output.h,
+	modules/server/scriptcmds.c, modules/server/servsock.c,
+	src/core_party.c:
+
+	
+	* Whisper command for partyline messages (better name than .note?) 
+	* egg_server_api.h contains the server module's api (as a test.. not
+	done) 
+
+2003-12-15 21:48  Will Buckner <wcc@techmonkeys.org>
+
+	* modules/server/dcc_commands.c:
+
+	* Fix from last commit.  
+
+2003-12-15 21:41  Will Buckner <wcc@techmonkeys.org>
+
+	* lib/eggdrop/eggmod.c, lib/eggdrop/eggmod.h,
+	lib/eggdrop/partyline.c, modules/server/dcc_commands.c,
+	src/core_party.c:
+
+	* Party commands.  
+
+2003-12-15 09:48  stdarg <stdarg@techmonkeys.org>
+
+	* modules/ircparty/events.c:
+
+	[no log message] 
+
+2003-12-15 09:45  stdarg <stdarg@techmonkeys.org>
+
+	* modules/: ircparty/events.c, ircparty/ircparty.c,
+	script/scriptuser.c, tclscript/tclscript.c:
+
+	
+	* ircparty module forces unique nicks 
+
+2003-12-15 05:10  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/eggconfig.c, lib/eggdrop/eggconfig.h,
+	lib/eggdrop/xml.c, lib/eggdrop/xml.h, lib/eggdrop/xmlread.c,
+	src/core_party.c:
+
+	
+	* Partyline .get and .set commands 
+
+2003-12-14 19:38  stdarg <stdarg@techmonkeys.org>
+
+	* config.xml, configure.ac, lib/compat/fixstrtod.c,
+	lib/compat/tclLoadAix.c, src/cmds.c, testcode/chat.c:
+
+	
+	* More fixes for make dist.. now works on techmonkeys 
+
+2003-12-14 08:51  stdarg <stdarg@techmonkeys.org>
+
+	* Makefile.am, configure.ac, lib/eggdrop/eggdrop.h,
+	modules/blowfish/Makefile.am, modules/dccparty/Makefile.am,
+	modules/ircparty/Makefile.am, modules/oldbotnet/Makefile.am,
+	modules/server/Makefile.am, modules/telnetparty/Makefile.am,
+	po/POTFILES.in, po/eggdrop.pot, src/Makefile.am:
+
+	* 'make dist' works again (dunno if I did it right though) 
+
+2003-12-14 03:01  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/eggstring.c, lib/eggdrop/eggstring.h,
+	lib/eggdrop/partychan.c, lib/eggdrop/partyline.h,
+	lib/eggdrop/partymember.c, lib/eggdrop/sockbuf.c,
+	modules/ircparty/events.c, modules/ircparty/ircparty.c,
+	modules/oldbotnet/events.c, modules/oldbotnet/oldbotnet.c,
+	modules/oldbotnet/oldbotnet.h, modules/server/binds.c,
+	modules/telnetparty/telnetparty.c:
+
+	
+	* Partyline improvements 
+
+2003-12-12 19:45  stdarg <stdarg@techmonkeys.org>
+
+	* configure.ac, lib/eggdrop/md5.c, lib/eggdrop/partychan.c,
+	modules/Makefile.am, modules/ircparty/ircparty.c,
+	modules/oldbotnet/Makefile.am, modules/oldbotnet/PROTOCOL,
+	modules/oldbotnet/events.c, modules/oldbotnet/oldbotnet.c,
+	modules/oldbotnet/oldbotnet.h, modules/script/scriptconfig.c,
+	modules/script/scriptmisc.c, modules/script/scriptmod.c,
+	modules/telnetparty/telnetparty.c, src/core_party.c:
+
+	
+	* Added 'oldbotnet' module, which lets us link with 1.6 bots (not
+	done) 
+	* Added some binds for the partyline 
+	* Fixed some compile warnings 
+
+2003-12-11 01:21  Will Buckner <wcc@techmonkeys.org>
+
+	* CONTENTS, INSTALL, NEWS, README:
+
+	* Docs.  
+
+2003-12-11 00:49  Will Buckner <wcc@techmonkeys.org>
+
+	* AUTHORS, INSTALL, NEWS, README, doc/MODULES, doc/USERS,
+	doc/howto/PATCHING, doc/settings/CORE, lib/compat/compat.h,
+	lib/compat/inet_ntop.h, lib/compat/inet_pton.h,
+	lib/compat/memcpy.c, lib/compat/memcpy.h, lib/compat/memset.c,
+	lib/compat/memset.h, lib/compat/snprintf.h,
+	lib/compat/strcasecmp.c, lib/compat/strcasecmp.h,
+	lib/compat/strdup.h, lib/compat/strerror.h, lib/compat/strftime.h,
+	lib/compat/strlcat.h, lib/compat/strlcpy.h,
+	lib/compat/strncasecmp.c, lib/compat/strncasecmp.h,
+	lib/eggdrop/botnetutil.c, lib/eggdrop/botnetutil.h,
+	lib/eggdrop/common.h, lib/eggdrop/eggdrop.c,
+	lib/eggdrop/eggtimer.c, lib/eggdrop/eggtimer.h,
+	lib/eggdrop/fileutil.c, lib/eggdrop/fileutil.h,
+	lib/eggdrop/hash_table.c, lib/eggdrop/irccmp.c,
+	lib/eggdrop/irccmp.h, lib/eggdrop/match.c, lib/eggdrop/memutil.c,
+	lib/eggdrop/memutil.h, lib/eggdrop/script.c, lib/eggdrop/script.h,
+	lib/eggdrop/stat.h, lib/egglib/egglib.h, lib/egglib/hash_table.c,
+	lib/egglib/hash_table.h, lib/egglib/hash_table_test.c,
+	lib/egglib/linked_list.c, lib/egglib/linked_list.h,
+	lib/egglib/linked_list_test.c, lib/egglib/mempool.c,
+	lib/egglib/mempool.h, lib/egglib/mempool_test.c,
+	lib/egglib/msprintf.c, lib/egglib/msprintf.h, lib/egglib/mstack.c,
+	lib/egglib/mstack.h, modules/blowfish/bf_tab.h,
+	modules/blowfish/blowfish.c, modules/blowfish/blowfish.h,
+	modules/channels/channels.c, modules/channels/channels.h,
+	modules/channels/cmdschan.c, modules/channels/flagmaps.c,
+	modules/channels/tclchan.c, modules/channels/udefchan.c,
+	modules/channels/userchan.c, modules/compress/compress.c,
+	modules/compress/compress.h, modules/compress/tclcompress.c,
+	modules/filesys/dbcompat.c, modules/filesys/dbcompat.h,
+	modules/filesys/filedb3.c, modules/filesys/filedb3.h,
+	modules/filesys/filelist.c, modules/filesys/filelist.h,
+	modules/filesys/files.c, modules/filesys/files.h,
+	modules/filesys/filesys.c, modules/filesys/filesys.h,
+	modules/filesys/tclfiles.c, modules/irc/chan.c,
+	modules/irc/cmdsirc.c, modules/irc/irc.c, modules/irc/irc.h,
+	modules/irc/mode.c, modules/irc/msgcmds.c,
+	modules/irc/scriptcmds.c, modules/javascript/javascript.c,
+	modules/notes/cmdsnote.c, modules/notes/notes.c,
+	modules/notes/notes.h, modules/perlscript/perlscript.c,
+	modules/server/scriptcmds.c, modules/uptime/uptime.c,
+	modules/uptime/uptime.h, src/bg.c, src/bg.h, src/cmds.c,
+	src/cmds.h, src/cmdt.h, src/debug.h, src/flags.c, src/flags.h,
+	src/logfile.h, src/main.c, src/main.h, src/misc.c, src/misc.h,
+	src/traffic.c, src/traffic.h, testcode/match.c, text/CONTENTS,
+	text/banner:
+
+	* 2004 copyright.  
+
+2003-12-06 23:46  stdarg <stdarg@techmonkeys.org>
+
+	* configure.ac, lib/eggdrop/eggmod.h, lib/eggdrop/eggstring.c,
+	lib/eggdrop/eggstring.h, modules/Makefile.am,
+	modules/dccparty/Makefile.am, modules/dccparty/dccparty.c,
+	modules/dccparty/dccparty.h, modules/dccparty/events.c,
+	modules/ircparty/Makefile.am, modules/ircparty/events.c,
+	modules/ircparty/ircparty.c, modules/ircparty/ircparty.h,
+	modules/server/output.c, modules/server/output.h,
+	modules/server/server.c, modules/server/server.h,
+	modules/server/serverlist.c, modules/telnetparty/telnetparty.c:
+
+	
+	* Added files for ircparty and dccparty modules 
+
+2003-12-05 01:31  stdarg <stdarg@techmonkeys.org>
+
+	* config.xml:
+
+	
+	* Load ircparty module in config file 
+
+2003-12-05 01:29  stdarg <stdarg@techmonkeys.org>
+
+	* config.xml, configure.ac, lib/eggdrop/partychan.c,
+	lib/eggdrop/partyline.h, modules/Makefile.am,
+	modules/telnetparty/telnetparty.c,
+	modules/telnetparty/telnetparty.h:
+
+	
+	* mirc/ansi color conversion for telnet 
+	* irc partyline module, allows users to connect to partyline like an
+	irc server 
+
+2003-12-02 03:34  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/partychan.c, modules/channels/channels.c,
+	modules/server/channels.c, modules/server/scriptcmds.c,
+	modules/telnetparty/telnetparty.c:
+
+	[no log message] 
+
+2003-12-01 01:31  Will Buckner <wcc@techmonkeys.org>
+
+	* modules/server/dcc_commands.c, src/logfile.c:
+
+	* Fixed 2 warnings.  
+
 2003-08-19 18:20  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/Makefile.am, lib/eggdrop/eggdrop.h,
@@ -547,10 +809,9 @@
 2003-03-06 12:08  Tothwolf <tothwolf@techmonkeys.org>
 
 	* modules/blowfish/blowfish.c, modules/channels/tclchan.c,
-	modules/channels/userchan.c, modules/console/console.c,
-	modules/filesys/files.c, modules/filesys/filesys.c,
-	modules/irc/chan.c, modules/irc/mode.c, modules/irc/msgcmds.c,
-	modules/notes/notes.c, modules/server/dcc.c,
+	modules/channels/userchan.c, modules/filesys/files.c,
+	modules/filesys/filesys.c, modules/irc/chan.c, modules/irc/mode.c,
+	modules/irc/msgcmds.c, modules/notes/notes.c, modules/server/dcc.c,
 	modules/server/input.c, src/cmds.c, src/misc.c, src/modules.c,
 	src/userent.c, src/users.c:
 
@@ -891,17 +1152,16 @@
 	modules/channels/cmdschan.c, modules/channels/flagmaps.c,
 	modules/channels/modinfo, modules/channels/tclchan.c,
 	modules/channels/userchan.c, modules/compress/compress.c,
-	modules/compress/modinfo, modules/console/console.c,
-	modules/filesys/dbcompat.c, modules/filesys/dbcompat.h,
-	modules/filesys/filedb3.c, modules/filesys/filedb3.h,
-	modules/filesys/files.c, modules/filesys/filesys.c,
-	modules/filesys/filesys.h, modules/filesys/tclfiles.c,
-	modules/irc/mode.c, modules/irc/msgcmds.c, po/POTFILES.in,
-	po/eggdrop.pot, scripts/CONTENTS, src/chan.h, src/chanprog.c,
-	src/cmds.c, src/dccutil.h, src/egg.h, src/flags.c, src/flags.h,
-	src/logfile.h, src/main.c, src/misc.c, src/misc.h, src/modules.c,
-	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c,
-	src/users.h:
+	modules/compress/modinfo, modules/filesys/dbcompat.c,
+	modules/filesys/dbcompat.h, modules/filesys/filedb3.c,
+	modules/filesys/filedb3.h, modules/filesys/files.c,
+	modules/filesys/filesys.c, modules/filesys/filesys.h,
+	modules/filesys/tclfiles.c, modules/irc/mode.c,
+	modules/irc/msgcmds.c, po/POTFILES.in, po/eggdrop.pot,
+	scripts/CONTENTS, src/chan.h, src/chanprog.c, src/cmds.c,
+	src/dccutil.h, src/egg.h, src/flags.c, src/flags.h, src/logfile.h,
+	src/main.c, src/misc.c, src/misc.h, src/modules.c, src/tcluser.c,
+	src/userent.c, src/userrec.c, src/users.c, src/users.h:
 
 	* Removed share.mod (will be part of the new botnet module).  
 	* More transfer removal.  
@@ -912,9 +1172,7 @@
 
 2003-02-15 00:23  Will Buckner <wcc@techmonkeys.org>
 
-	* config.tcl, modules/ctcp/Makefile.am, modules/ctcp/ctcp.c,
-	modules/ctcp/ctcp.h, modules/ctcp/modinfo,
-	modules/filesys/filedb3.c, modules/filesys/filedb3.h,
+	* config.tcl, modules/filesys/filedb3.c, modules/filesys/filedb3.h,
 	modules/filesys/files.c, modules/filesys/filesys.c,
 	modules/script/scriptmisc.c, modules/transfer/Makefile.am,
 	modules/transfer/modinfo, modules/transfer/transfer.c,
@@ -1034,12 +1292,12 @@
 2003-02-03 11:41  Will Buckner <wcc@techmonkeys.org>
 
 	* eggdrop.conf, lib/eggdrop/module.h, modules/channels/channels.c,
-	modules/channels/userchan.c, modules/console/console.c,
-	modules/filesys/filedb3.c, modules/filesys/files.c,
-	modules/irc/msgcmds.c, modules/notes/notes.c,
-	modules/uptime/uptime.c, src/chanprog.c, src/cmds.c, src/dcc.c,
-	src/dccutil.c, src/main.c, src/misc.c, src/modules.c, src/tcl.c,
-	src/tcldcc.c, src/tcluser.c, src/userrec.c, src/users.c:
+	modules/channels/userchan.c, modules/filesys/filedb3.c,
+	modules/filesys/files.c, modules/irc/msgcmds.c,
+	modules/notes/notes.c, modules/uptime/uptime.c, src/chanprog.c,
+	src/cmds.c, src/dcc.c, src/dccutil.c, src/main.c, src/misc.c,
+	src/modules.c, src/tcl.c, src/tcldcc.c, src/tcluser.c,
+	src/userrec.c, src/users.c:
 
 	* More botnet removal.  
 
@@ -1216,8 +1474,6 @@
 	modules/channels/tclchan.c, modules/channels/udefchan.c,
 	modules/channels/userchan.c, modules/compress/compress.c,
 	modules/compress/compress.h, modules/compress/tclcompress.c,
-	modules/console/console.c, modules/console/console.h,
-	modules/ctcp/ctcp.c, modules/ctcp/ctcp.h,
 	modules/filesys/dbcompat.c, modules/filesys/dbcompat.h,
 	modules/filesys/filedb3.c, modules/filesys/filedb3.h,
 	modules/filesys/filelist.c, modules/filesys/filelist.h,
@@ -1676,11 +1932,10 @@
 
 	* configure.ac, eggdrop.complete.conf, help/cmds2.help,
 	help/core.help, lib/eggdrop/module.h, modules/Makefile.am,
-	modules/console/console.c, modules/irc/chan.c,
-	modules/irc/cmdsirc.c, modules/server/servmsg.c, src/Makefile.am,
-	src/botcmd.c, src/cmds.c, src/cmds.h, src/dcc.c, src/egg.h,
-	src/flags.c, src/flags.h, src/main.c, src/misc.c, src/modules.c,
-	src/tcldcc.c:
+	modules/irc/chan.c, modules/irc/cmdsirc.c,
+	modules/server/servmsg.c, src/Makefile.am, src/botcmd.c,
+	src/cmds.c, src/cmds.h, src/dcc.c, src/egg.h, src/flags.c,
+	src/flags.h, src/main.c, src/misc.c, src/modules.c, src/tcldcc.c:
 
 	
 	
@@ -1922,11 +2177,10 @@
 
 2002-05-26 08:34  stdarg <stdarg@techmonkeys.org>
 
-	* lib/eggdrop/module.h, modules/console/console.c,
-	modules/filesys/filesys.c, src/botcmd.c, src/botmsg.c,
-	src/botnet.c, src/cmds.c, src/core_binds.c, src/core_binds.h,
-	src/dcc.c, src/dccutil.c, src/modules.c, src/tcldcc.c,
-	src/tclhash.c, src/tclhash.h, src/userrec.c:
+	* lib/eggdrop/module.h, modules/filesys/filesys.c, src/botcmd.c,
+	src/botmsg.c, src/botnet.c, src/cmds.c, src/core_binds.c,
+	src/core_binds.h, src/dcc.c, src/dccutil.c, src/modules.c,
+	src/tcldcc.c, src/tclhash.c, src/tclhash.h, src/userrec.c:
 
 	
 	* Moved creation and maintenance of core binds from tclhash.c to
@@ -2014,7 +2268,6 @@
 2002-05-17 07:29  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/module.h, modules/channels/channels.c,
-	modules/console/console.c, modules/ctcp/ctcp.c,
 	modules/filesys/filesys.c, modules/irc/irc.c,
 	modules/javascript/javascript.c, modules/notes/notes.c,
 	modules/perlscript/mod_iface.c, modules/server/server.c,
@@ -2032,12 +2285,6 @@
 
 	
 	* check_tcl_chon wasn't being called with the real idx 
-
-2002-05-13 17:40  stdarg <stdarg@techmonkeys.org>
-
-	* modules/ctcp/ctcp.c:
-
-	* (telnet) to (all) 
 
 2002-05-13 08:38  stdarg <stdarg@techmonkeys.org>
 
@@ -2257,8 +2504,6 @@
 	modules/channels/tclchan.c, modules/channels/udefchan.c,
 	modules/channels/userchan.c, modules/compress/compress.c,
 	modules/compress/compress.h, modules/compress/tclcompress.c,
-	modules/console/console.c, modules/console/console.h,
-	modules/ctcp/ctcp.c, modules/ctcp/ctcp.h,
 	modules/filesys/dbcompat.c, modules/filesys/dbcompat.h,
 	modules/filesys/filedb3.c, modules/filesys/filedb3.h,
 	modules/filesys/filelist.c, modules/filesys/filelist.h,
@@ -2461,8 +2706,8 @@
 
 	* eggdrop.complete.conf, eggdrop.simple.conf,
 	modules/channels/channels.c, modules/compress/compress.c,
-	modules/console/console.c, modules/filesys/filesys.c,
-	modules/irc/irc.c, modules/notes/notes.c, modules/server/server.c,
+	modules/filesys/filesys.c, modules/irc/irc.c,
+	modules/notes/notes.c, modules/server/server.c,
 	modules/transfer/transfer.c, nettype/custom.irc.conf,
 	nettype/custom.server.conf, nettype/dalnet.irc.conf,
 	nettype/dalnet.server.conf, nettype/efnet.irc.conf,
@@ -2821,7 +3066,6 @@
 	lib/eggdrop/registry.c, lib/eggdrop/registry.h,
 	lib/egglib/egglib.h, modules/blowfish/blowfish.c,
 	modules/channels/channels.c, modules/compress/compress.c,
-	modules/console/console.c, modules/ctcp/ctcp.c,
 	modules/filesys/filesys.c, modules/irc/irc.c,
 	modules/notes/notes.c, modules/perlscript/mod_iface.c,
 	modules/server/server.c, modules/tclscript/Makefile.am,
@@ -3080,8 +3324,8 @@
 
 2002-02-20 02:37  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, modules/console/console.c, modules/irc/chan.c,
-	modules/irc/irc.c, src/patch.h:
+	* doc/UPDATES1.6, modules/irc/chan.c, modules/irc/irc.c,
+	src/patch.h:
 
 	added a few patches to sync with 1.6 
 
@@ -3284,8 +3528,6 @@
 	modules/channels/tclchan.c, modules/channels/udefchan.c,
 	modules/channels/userchan.c, modules/compress/compress.c,
 	modules/compress/compress.h, modules/compress/tclcompress.c,
-	modules/console/console.c, modules/console/console.h,
-	modules/ctcp/ctcp.c, modules/ctcp/ctcp.h,
 	modules/filesys/dbcompat.c, modules/filesys/dbcompat.h,
 	modules/filesys/filedb3.c, modules/filesys/filedb3.h,
 	modules/filesys/filelist.c, modules/filesys/filelist.h,
@@ -3530,9 +3772,9 @@
 
 2002-01-22 01:17  Federico Mennite <ite@techmonkeys.org>
 
-	* lib/eggdrop/module.h, modules/console/console.c, src/botcmd.c,
-	src/botmsg.c, src/botnet.c, src/cmds.c, src/dcc.c, src/dccutil.c,
-	src/flags.c, src/flags.h, src/tcldcc.c:
+	* lib/eggdrop/module.h, src/botcmd.c, src/botmsg.c, src/botnet.c,
+	src/cmds.c, src/dcc.c, src/dccutil.c, src/flags.c, src/flags.h,
+	src/tcldcc.c:
 
 	geticon() didn't really need to care about dcc table 
 
@@ -3742,14 +3984,14 @@
 	lib/compat/strdup.c, lib/compat/strdup.h, lib/eggdrop/memutil.h,
 	modules/channels/cmdschan.c, modules/channels/tclchan.c,
 	modules/channels/udefchan.c, modules/channels/userchan.c,
-	modules/console/console.c, modules/filesys/filedb3.c,
-	modules/filesys/filelist.c, modules/notes/notes.c,
-	modules/perlscript/perlscript.c, modules/server/server.c,
-	modules/server/servmsg.c, modules/tclscript/tclscript.c,
-	modules/transfer/transfer.c, modules/uptime/uptime.c, src/botnet.c,
-	src/cmds.c, src/dcc.c, src/dccutil.c, src/dns.c, src/egg.h,
-	src/logfile.c, src/misc.c, src/modules.c, src/net.c, src/tclhash.c,
-	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c:
+	modules/filesys/filedb3.c, modules/filesys/filelist.c,
+	modules/notes/notes.c, modules/perlscript/perlscript.c,
+	modules/server/server.c, modules/server/servmsg.c,
+	modules/tclscript/tclscript.c, modules/transfer/transfer.c,
+	modules/uptime/uptime.c, src/botnet.c, src/cmds.c, src/dcc.c,
+	src/dccutil.c, src/dns.c, src/egg.h, src/logfile.c, src/misc.c,
+	src/modules.c, src/net.c, src/tclhash.c, src/tcluser.c,
+	src/userent.c, src/userrec.c, src/users.c:
 
 	Removed our malloc_strcpy macro sincw it had the same functionality
 	of strdup (provided the respective fallback function) 
@@ -4005,8 +4247,7 @@
 	lib/eggdrop/common.h, lib/eggdrop/eggdrop.h, lib/eggdrop/memutil.h,
 	lib/eggdrop/module.h, lib/egglib/Makefile.am, lib/egglib/egglib.h,
 	modules/blowfish/Makefile.am, modules/channels/Makefile.am,
-	modules/compress/Makefile.am, modules/console/Makefile.am,
-	modules/ctcp/Makefile.am, modules/filesys/Makefile.am,
+	modules/compress/Makefile.am, modules/filesys/Makefile.am,
 	modules/irc/Makefile.am, modules/notes/Makefile.am,
 	modules/perlscript/Makefile.am, modules/server/Makefile.am,
 	modules/tclscript/Makefile.am, modules/transfer/Makefile.am,
@@ -4133,7 +4374,7 @@
 
 2001-12-29 21:08  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, modules/ctcp/ctcp.c, src/patch.h:
+	* doc/UPDATES1.6, src/patch.h:
 
 	added my nopass patch from 1.6 
 
@@ -4435,9 +4676,8 @@
 
 	* eggdrop.complete.conf, doc/settings/core.settings,
 	help/core.help, help/set/cmds2.help, lib/eggdrop/module.h,
-	modules/ctcp/ctcp.c, modules/filesys/filesys.c,
-	modules/server/server.c, src/cmds.c, src/dcc.c, src/flags.c,
-	src/modules.c, src/tcl.c:
+	modules/filesys/filesys.c, modules/server/server.c, src/cmds.c,
+	src/dcc.c, src/flags.c, src/modules.c, src/tcl.c:
 
 	require-p is now gone as a config setting 
 
@@ -4632,9 +4872,9 @@
 2001-12-04 01:30  Federico Mennite <ite@techmonkeys.org>
 
 	* modules/: channels/help/chaninfo.help,
-	channels/help/channels.help, console/help/console.help,
-	irc/help/irc.help, server/server.c, server/help/server.help,
-	server/help/set/server.help, transfer/transfer.c:
+	channels/help/channels.help, irc/help/irc.help, server/server.c,
+	server/help/server.help, server/help/set/server.help,
+	transfer/transfer.c:
 
 	More spelling fixes here and there. Patch by Wcc
 	<will@dawg.dynu.com> 
@@ -4864,8 +5104,7 @@
 2001-11-24 20:42  Federico Mennite <ite@techmonkeys.org>
 
 	* modules/blowfish/Makefile.am, modules/channels/Makefile.am,
-	modules/compress/Makefile.am, modules/console/Makefile.am,
-	modules/ctcp/Makefile.am, modules/filesys/Makefile.am,
+	modules/compress/Makefile.am, modules/filesys/Makefile.am,
 	modules/irc/Makefile.am, modules/notes/Makefile.am,
 	modules/perlscript/Makefile.am, modules/server/Makefile.am,
 	modules/tclscript/Makefile.am, modules/transfer/Makefile.am,
@@ -5094,8 +5333,7 @@
 
 	* lib/eggdrop/Makefile.am, lib/eggdrop/module.h,
 	modules/blowfish/Makefile.am, modules/channels/Makefile.am,
-	modules/compress/Makefile.am, modules/console/Makefile.am,
-	modules/ctcp/Makefile.am, modules/filesys/Makefile.am,
+	modules/compress/Makefile.am, modules/filesys/Makefile.am,
 	modules/irc/Makefile.am, modules/notes/Makefile.am,
 	modules/perlscript/Makefile.am, modules/server/Makefile.am,
 	modules/tclscript/Makefile.am, modules/transfer/Makefile.am,
@@ -5195,19 +5433,14 @@
 	modules/compress/compress.c, modules/compress/compress.h,
 	modules/compress/modinfo, modules/compress/tclcompress.c,
 	modules/compress/help/set/compress.help,
-	modules/console/.cvsignore, modules/console/Makefile.am,
-	modules/console/console.c, modules/console/console.h,
-	modules/console/modinfo, modules/console/help/console.help,
-	modules/console/help/set/console.help, modules/ctcp/.cvsignore,
-	modules/ctcp/Makefile.am, modules/ctcp/ctcp.c, modules/ctcp/ctcp.h,
-	modules/ctcp/modinfo, modules/filesys/.cvsignore,
-	modules/filesys/Makefile.am, modules/filesys/dbcompat.c,
-	modules/filesys/dbcompat.h, modules/filesys/filedb3.c,
-	modules/filesys/filedb3.h, modules/filesys/filelist.c,
-	modules/filesys/filelist.h, modules/filesys/files.c,
-	modules/filesys/files.h, modules/filesys/filesys.c,
-	modules/filesys/filesys.h, modules/filesys/modinfo,
-	modules/filesys/tclfiles.c, modules/filesys/help/filesys.help,
+	modules/filesys/.cvsignore, modules/filesys/Makefile.am,
+	modules/filesys/dbcompat.c, modules/filesys/dbcompat.h,
+	modules/filesys/filedb3.c, modules/filesys/filedb3.h,
+	modules/filesys/filelist.c, modules/filesys/filelist.h,
+	modules/filesys/files.c, modules/filesys/files.h,
+	modules/filesys/filesys.c, modules/filesys/filesys.h,
+	modules/filesys/modinfo, modules/filesys/tclfiles.c,
+	modules/filesys/help/filesys.help,
 	modules/filesys/help/set/filesys.help, modules/irc/Makefile.am,
 	modules/irc/chan.c, modules/irc/cmdsirc.c, modules/irc/irc.c,
 	modules/irc/irc.h, modules/irc/mode.c, modules/irc/modinfo,
