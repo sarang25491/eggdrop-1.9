@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.90 2002/02/07 22:19:04 wcc Exp $
+ * $Id: cmds.c,v 1.91 2002/02/18 00:07:16 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -2395,7 +2395,7 @@ static void cmd_pls_user(struct userrec *u, int idx, char *par)
   char *handle, *host;
 
   if (!par[0]) {
-    dprintf(idx, "Usage: +user <handle> <hostmask>\n");
+    dprintf(idx, "Usage: +user <handle> [hostmask]\n");
     return;
   }
   handle = newsplit(&par);
@@ -2411,7 +2411,8 @@ static void cmd_pls_user(struct userrec *u, int idx, char *par)
   else {
     putlog(LOG_CMDS, "*", "#%s# +user %s %s", dcc[idx].nick, handle, host);
     userlist = adduser(userlist, handle, host, "-", 0);
-    dprintf(idx, "Added %s (%s) with no password and no flags.\n", handle, host);
+    dprintf(idx, _("Added %1$s (%2$s) with no password and no flags.\n"),
+            handle, host[0] ? host : _("no host"));
   }
 }
 
