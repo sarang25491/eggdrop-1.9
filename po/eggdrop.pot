@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2002-01-25 04:00-0600\n"
+"POT-Creation-Date: 2002-01-26 04:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1778,7 +1778,7 @@ msgstr ""
 
 #: modules/filesys/filesys.c:604 modules/filesys/filesys.c:803
 #: modules/server/server.c:1360 modules/server/server.c:1404
-#: modules/transfer/transfer.c:670
+#: modules/transfer/transfer.c:663
 msgid "Failed to connect"
 msgstr ""
 
@@ -1809,7 +1809,7 @@ msgid "Refused DCC chat (+x but no file area)"
 msgstr ""
 
 #: modules/filesys/filesys.c:804 modules/server/server.c:1405
-#: modules/transfer/transfer.c:671
+#: modules/transfer/transfer.c:664
 msgid "DCC connection failed"
 msgstr ""
 
@@ -2553,7 +2553,7 @@ msgstr ""
 msgid "Cant send userfile to you (internal error)"
 msgstr ""
 
-#: modules/transfer/transfer.c:664
+#: modules/transfer/transfer.c:657
 msgid "Failed connection; aborted userfile transfer."
 msgstr ""
 
