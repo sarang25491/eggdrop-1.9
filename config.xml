@@ -60,3 +60,8 @@
 	<stealth>0</stealth>
 	<max_retries>3</max_retries>
 </telnetparty>
+<ircparty>
+	<vhost />
+	<port>6667</port>
+	<stealth>0</stealth>
+</ircparty>

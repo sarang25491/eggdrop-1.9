@@ -19,10 +19,10 @@
 #define TELNET_ECHO_OFF	"\377\373\001"
 #define TELNET_ECHO_ON	"\377\374\001"
 
-#define TFLAG_ECHO	1
-
 /* Flags for sessions. */
 #define STEALTH_LOGIN	1
+#define TFLAG_ECHO	2
+#define TFLAG_PASSWORD	4
 
 typedef struct {
 	/* Pointer to our entry in the partyline. */

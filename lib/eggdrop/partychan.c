@@ -93,6 +93,27 @@ partychan_t *partychan_get_default(partymember_t *p)
 	return(NULL);
 }
 
+int partychan_ison_name(const char *chan, partymember_t *p)
+{
+	partychan_t *chanptr;
+
+	if (!chan) return(0);
+	chanptr = partychan_lookup_name(chan);
+	if (!chanptr) return(0);
+	return partychan_ison(chanptr, p);
+}
+
+int partychan_ison(partychan_t *chan, partymember_t *p)
+{
+	int i;
+
+	for (i = 0; i < chan->nmembers; i++) {
+		if (chan->members[i].flags & PARTY_DELETED) continue;
+		if (chan->members[i].p == p) return(1);
+	}
+	return(0);
+}
+
 int partychan_join_name(const char *chan, partymember_t *p)
 {
 	partychan_t *chanptr;
@@ -117,6 +138,12 @@ int partychan_join(partychan_t *chan, partymember_t *p)
 	int i;
 
 	if (!chan || !p) return(-1);
+
+	/* Check to see if he's already on. */
+	for (i = 0; i < chan->nmembers; i++) {
+		if (chan->members[i].flags & PARTY_DELETED) continue;
+		if (chan->members[i].p == p) return(-1);
+	}
 
 	/* Add the member. */
 	chan->members = realloc(chan->members, sizeof(*chan->members) * (chan->nmembers+1));

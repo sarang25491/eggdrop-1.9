@@ -73,11 +73,108 @@ void telnet_code(int idx, int cmd, int what)
 	sockbuf_on_write(idx, TELNET_FILTER_LEVEL, temp, 3);
 }
 
-void convert_ansi_to_mirc(const char **src, char **dest, int *cur, int *max)
+void convert_ansi_code_to_mirc(int *tokens, int ntokens, char **dest, int *cur, int *max)
+{
+	int ansi_to_mirc_colors[] = {1, 4, 3, 8, 2, 5, 10, 0};
+	int i, in_bold, in_uline, in_reverse, fg, bg;
+	char *newline;
+
+	/* User inserted some color stuff... */
+	in_bold = in_uline = in_reverse = 0;
+	fg = bg = -1;
+	for (i = 0; i < ntokens; i++) {
+		if (tokens[i] == 0) in_bold = in_uline = in_reverse = 0;
+		else if (tokens[i] == 1) in_bold = 1;
+		else if (tokens[i] == 4) in_uline = 1;
+		else if (tokens[i] == 7) in_reverse = 1;
+		else if (tokens[i] == 8) fg = bg = 99;
+		else if (tokens[i] >= 30 && tokens[i] <= 37) {
+			fg = ansi_to_mirc_colors[tokens[i] - 30];
+		}
+		else if (tokens[i] >= 40 && tokens[i] <= 47) {
+			bg = ansi_to_mirc_colors[tokens[i] - 40];
+		}
+	}
+	if (*max - *cur < 10) {
+		*dest = realloc(*dest, *max + 10);
+		*max += 10;
+	}
+	newline = *dest;
+	if (in_bold) newline[(*cur)++] = '\002';
+	if (in_uline) newline[(*cur)++] = '\037';
+	if (in_reverse) newline[(*cur)++] = '\026';
+	if (fg != -1 || bg != -1) {
+		newline[(*cur)++] = '\003';
+		if (fg == -1) fg = 99;
+		sprintf(newline+*cur, "%02d", fg);
+		*cur += 2;
+		if (bg != -1) {
+			sprintf(newline+*cur, ",%02d", bg);
+			*cur += 3;
+		}
+	}
+}
+
+int get_2(const char *data, int len, int *val)
+{
+	if (isdigit(*data)) {
+		*val = *data++ - '0';
+		if (len > 1 && isdigit(*data)) {
+			*val *= 10;
+			*val += *data - '0';
+			return(2);
+		}
+		return(1);
+	}
+	return(0);
+}
+
+int convert_mirc_color_to_ansi(const char *data, int len, char *newline, int *cur)
+{
+	const char *orig;
+	char add[64], temp[64];
+	int mirc_to_ansi[] = {7, 0, 4, 2, 1, 1, 5, 1, 3, 2, 6, 6, 4, 5, 0, 0};
+	int c1, c2, n;
+
+	orig = data;
+	c1 = c2 = -1;
+	n = get_2(data, len, &c1);
+	if (n) {
+		data += n; len -= n;
+		if (len && *data == ',') {
+			len--;
+			data++;
+			n = get_2(data, len, &c2);
+			data += n;
+			len -= n;
+		}
+	}
+	strcpy(add, "\033[");
+	if (c1 != -1) {
+		if (c1 != 99) {
+			c1 %= 16;
+			sprintf(temp, "%d", 30+mirc_to_ansi[c1]);
+			strcat(add, temp);
+		}
+		if (c2 != -1 && c2 != 99) {
+			c2 %= 16;
+			sprintf(temp, "%d", 40+mirc_to_ansi[c2]);
+			if (c1 != 99) strcat(add, ";");
+			strcat(add, temp);
+		}
+		strcat(add, "m");
+	}
+	else strcat(add, "0m");
+	n = strlen(add);
+	memcpy(newline+*cur, add, n);
+	*cur += n;
+	return data - orig;
+}
+
+void handle_ansi_code(const char **src, char **dest, int *cur, int *max)
 {
 	const char *line = *src;
-	char *newline = *dest;
-	int i, in_bold, in_reverse, in_uline, fg, bg, token, ntokens, *tokens;
+	int token, ntokens, *tokens;
 
 	if (*line++ != 27) return;
 	*src = line;
@@ -104,52 +201,16 @@ void convert_ansi_to_mirc(const char **src, char **dest, int *cur, int *max)
 		line++;
 	}
 
-	/* We only handle the 'm' escape sequence. */
 	if (*line == 'm') {
-		int ansi_to_mirc_colors[] = {1, 4, 3, 8, 2, 5, 10, 0};
-
-		/* Set graphics stuff. */
-		in_bold = in_uline = in_reverse = 0;
-		fg = bg = -1;
-		for (i = 0; i < ntokens; i++) {
-			if (tokens[i] == 0) in_bold = in_uline = in_reverse = 0;
-			else if (tokens[i] == 1) in_bold = 1;
-			else if (tokens[i] == 4) in_uline = 1;
-			else if (tokens[i] == 7) in_reverse = 1;
-			else if (tokens[i] == 8) fg = bg = 99;
-			else if (tokens[i] >= 30 && tokens[i] <= 37) {
-				fg = ansi_to_mirc_colors[tokens[i] - 30];
-			}
-			else if (tokens[i] >= 40 && tokens[i] <= 47) {
-				bg = ansi_to_mirc_colors[tokens[i] - 40];
-			}
-
-		}
-		if (*max - *cur < 10) {
-			*dest = realloc(*dest, *max + 10);
-			newline = *dest;
-			*max += 10;
-		}
-		if (in_bold) newline[(*cur)++] = '\002';
-		if (in_uline) newline[(*cur)++] = '\037';
-		if (in_reverse) newline[(*cur)++] = '\026';
-		if (fg != -1 || bg != -1) {
-			newline[(*cur)++] = '\003';
-			if (fg == -1) fg = 99;
-			sprintf(newline+*cur, "%02d", fg);
-			*cur += 2;
-			if (bg != -1) {
-				sprintf(newline+*cur, ",%02d", bg);
-				*cur += 3;
-			}
-		}
+		/* Graphic rendition (color, underline, etc)... */
+		convert_ansi_code_to_mirc(tokens, ntokens, dest, cur, max);
 		*src = line+1;
 	}
 
 	if (tokens) free(tokens);
-	return;
 }
 
+/* Returns a newly allocated line with all proper substitutions made. */
 char *telnet_fix_line(const char *line)
 {
 	char *newline;
@@ -158,9 +219,10 @@ char *telnet_fix_line(const char *line)
 	cur = 0;
 	max = 128;
 	newline = malloc(max+1);
+
 	while (*line) {
 		switch (*line) {
-			case 6:
+			case 7:
 				/* Get rid of beeps. */
 				line++;
 				break;
@@ -170,9 +232,8 @@ char *telnet_fix_line(const char *line)
 				line++;
 				break;
 			case 27:
-				/* Convert escape sequences to mirc codes if
-				 * possible. */
-				convert_ansi_to_mirc(&line, &newline, &cur, &max);
+				/* Handle ansi escape sequences if possible. */
+				handle_ansi_code(&line, &newline, &cur, &max);
 				break;
 			default:
 				if (cur >= max) {
@@ -183,6 +244,7 @@ char *telnet_fix_line(const char *line)
 		}
 	}
 	newline[cur] = 0;
+
 	return(newline);
 }
 
@@ -198,7 +260,6 @@ static void kill_session(telnet_session_t *session)
 static int telnet_on_newclient(void *client_data, int idx, int newidx, const char *peer_ip, int peer_port)
 {
 	telnet_session_t *session;
-	int *flags;
 
 	session = calloc(1, sizeof(*session));
 	session->ip = strdup(peer_ip);
@@ -206,17 +267,17 @@ static int telnet_on_newclient(void *client_data, int idx, int newidx, const cha
 	session->idx = newidx;
 
 	sockbuf_set_handler(newidx, &client_handler, session);
-	flags = calloc(1, sizeof(*flags));
-	sockbuf_attach_filter(newidx, &telnet_filter, flags);
+	sockbuf_attach_filter(newidx, &telnet_filter, session);
 	linemode_on(newidx);
 
-	egg_iprintf(newidx, "Hello %s/%d!\r\n", peer_ip, peer_port);
 	/* Stealth logins are where we don't say anything until we know they
 	 * are a valid user. */
 	if (telnet_config.stealth) {
 		session->state = STATE_RESOLVE;
+		session->flags |= STEALTH_LOGIN;
 	}
 	else {
+		egg_iprintf(newidx, "Hello %s/%d!\r\n", peer_ip, peer_port);
 		sockbuf_write(newidx, "\r\nPlease enter your nickname.\r\n", -1);
 		session->state = STATE_NICKNAME;
 		session->count = 0;
@@ -282,16 +343,20 @@ static int telnet_on_read(void *client_data, int idx, char *data, int len)
 	switch (session->state) {
 		case STATE_PARTYLINE:
 			newline = telnet_fix_line(data);
-			partyline_on_input(NULL, session->party, newline, strlen(newline));
-			free(newline);
+			if (newline) {
+				partyline_on_input(NULL, session->party, newline, strlen(newline));
+				free(newline);
+			}
 			break;
 		case STATE_NICKNAME:
 			session->nick = strdup(data);
 			session->state = STATE_PASSWORD;
+			session->flags |= TFLAG_PASSWORD;
 			telnet_code(session->idx, TELNET_WILL, TELNET_ECHO);
 			sockbuf_write(session->idx, "Please enter your password.\r\n", -1);
 			break;
 		case STATE_PASSWORD:
+			session->flags &= ~TFLAG_PASSWORD;
 			telnet_code(session->idx, TELNET_WONT, TELNET_ECHO);
 			session->user = user_lookup_authed(session->nick, data);
 			if (!session->user) {
@@ -349,9 +414,9 @@ static int telnet_on_delete(void *client_data, int idx)
 static int telnet_filter_read(void *client_data, int idx, char *data, int len)
 {
 	unsigned char *cmd;
-	int type, arg, remove, flags;
+	int type, arg, remove;
+	telnet_session_t *session = client_data;
 
-	flags = *(int *)client_data;
 	cmd = data;
 	while ((cmd = memchr(cmd, TELNET_CMD, len))) {
 		type = *(cmd+1);
@@ -367,9 +432,9 @@ static int telnet_filter_read(void *client_data, int idx, char *data, int len)
 			case TELNET_DO:
 				arg = *(cmd+2);
 				if (arg == TELNET_ECHO) {
-					if (!(flags & TFLAG_ECHO)) {
+					if (!(session->flags & TFLAG_ECHO)) {
 						telnet_code(idx, TELNET_WILL, arg);
-						flags |= TFLAG_ECHO;
+						session->flags |= TFLAG_ECHO;
 					}
 				}
 				else telnet_code(idx, TELNET_WONT, arg);
@@ -378,9 +443,9 @@ static int telnet_filter_read(void *client_data, int idx, char *data, int len)
 			case TELNET_DONT:
 				arg = *(cmd+2);
 				if (arg == TELNET_ECHO) {
-					if (flags & TFLAG_ECHO) {
+					if (session->flags & TFLAG_ECHO) {
 						telnet_code(idx, TELNET_WONT, arg);
-						flags &= ~TFLAG_ECHO;
+						session->flags &= ~TFLAG_ECHO;
 					}
 				}
 				remove = 3;
@@ -398,11 +463,8 @@ static int telnet_filter_read(void *client_data, int idx, char *data, int len)
 		len -= remove;
 	}
 
-	/* Save the flags, they might have been modified. */
-	*(int *)client_data = flags;
-
 	if (len) {
-		if (flags & TFLAG_ECHO) sockbuf_on_write(idx, TELNET_FILTER_LEVEL, data, len);
+		if (session->flags & TFLAG_ECHO && !(session->flags & TFLAG_PASSWORD)) sockbuf_on_write(idx, TELNET_FILTER_LEVEL, data, len);
 		sockbuf_on_read(idx, TELNET_FILTER_LEVEL, data, len);
 	}
 	return(0);
@@ -411,42 +473,99 @@ static int telnet_filter_read(void *client_data, int idx, char *data, int len)
 /* We replace \n with \r\n and \255 with \255\255. */
 static int telnet_filter_write(void *client_data, int idx, const char *data, int len)
 {
-	const char *newline;
-	int left, linelen, r, r2;
+	char *newline;
+	const char *add = NULL;
+	char temp[2];
+	int cur, max, addlen, n, code;
 
-	newline = data;
-	r = 0;
-	left = len;
-	while ((newline = memchr(newline, '\n', left))) {
-		linelen = newline - data;
-		if (linelen > 0  && newline[-1] == '\r') {
-			newline++;
-			left = len - linelen - 1;
-			continue;
+	cur = 0;
+	max = 128;
+	newline = malloc(max+1);
+
+	temp[1] = 0;
+	add = NULL;
+	addlen = 0;
+	code = 0;
+	while (len > 0) {
+		switch (*data) {
+			case '\002':
+				add = "\033[1m"; addlen = 4;
+				code = 1;
+				break;
+			case '\003':
+				code = 1;
+				data++; len--;
+				n = convert_mirc_color_to_ansi(data, len, newline, &cur);
+				data += n;
+				len -= n;
+				add = NULL;
+				break;
+			case '\007':
+				data++; len--;
+				break;
+			case '\017':
+				code = 1;
+				add = "\033[0m"; addlen = 4;
+				break;
+			case '\026':
+				code = 1;
+				add = "\033[7m"; addlen = 4;
+				break;
+			case '\037':
+				code = 1;
+				add = "\033[4m"; addlen = 4;
+				break;
+			case '\r':
+			case '\n':
+				if (code) {
+					strcpy(newline+cur, "\033[0m");
+					cur += 4;
+					code = 0;
+				}
+				if (*data == '\r') {
+					data++;
+					len--;
+					break;
+				}
+				else {
+					add = "\r\n";
+					addlen = 2;
+				}
+				break;
+			case '\255':
+				add = "\255\255"; addlen = 2;
+				break;
+			default:
+				temp[0] = *data;
+				add = temp;
+				addlen = 1;
 		}
 
-		r2 = sockbuf_on_write(idx, TELNET_FILTER_LEVEL, data, linelen);
-		if (r2 < 0) return(r2);
-		r += r2;
-		r2 = sockbuf_on_write(idx, TELNET_FILTER_LEVEL, "\r\n", 2);
-		if (r2 < 0) return(r2);
-		r += r2;
-		data = newline+1;
-		newline = data;
-		len -= linelen+1;
-		left = len;
+		if (add) {
+			memcpy(newline+cur, add, addlen);
+			cur += addlen;
+			add = NULL;
+			data++; len--;
+		}
+
+		if (max - cur < 10) {
+			max = max + 128;
+			newline = realloc(newline, max+1);
+		}
 	}
-	if (len > 0) {
-		r2 = sockbuf_on_write(idx, TELNET_FILTER_LEVEL, data, len);
-		if (r2 < 0) return(r2);
-		r += r2;
+	newline[cur] = 0;
+	if (cur > 0) {
+		n = sockbuf_on_write(idx, TELNET_FILTER_LEVEL, newline, cur);
 	}
-	return(r);
+	else n = 0;
+	free(newline);
+	return(n);
 }
 
 static int telnet_filter_delete(void *client_data, int idx)
 {
-	free(client_data);
+	/* The client data is a telnet_session_t, which will be freed
+	 * by telnet_on_delete. So we do nothing. */
 	return(0);
 }
 

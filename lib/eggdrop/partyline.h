@@ -69,6 +69,8 @@ partychan_t *partychan_new(int cid, const char *name);
 partychan_t *partychan_lookup_cid(int cid);
 partychan_t *partychan_lookup_name(const char *name);
 partychan_t *partychan_get_default(partymember_t *p);
+int partychan_ison_name(const char *chan, partymember_t *p);
+int partychan_ison(partychan_t *chan, partymember_t *p);
 int partychan_join_name(const char *chan, partymember_t *p);
 int partychan_join_cid(int cid, partymember_t *p);
 int partychan_join(partychan_t *chan, partymember_t *p);

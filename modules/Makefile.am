@@ -1,6 +1,6 @@
-# $Id: Makefile.am,v 1.10 2003/06/08 03:21:23 stdarg Exp $
+# $Id: Makefile.am,v 1.11 2003/12/05 01:29:36 stdarg Exp $
 
 # FIXME: list will prolly become dynamic
-SUBDIRS			= blowfish javascript perlscript script server tclscript telnetparty
+SUBDIRS			= blowfish ircparty javascript perlscript script server tclscript telnetparty
 
 MAINTAINERCLEANFILES	= Makefile.in
