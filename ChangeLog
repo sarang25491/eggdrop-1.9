@@ -1,3 +1,14 @@
+2001-10-12 15:50  Tothwolf <tothwolf@techmonkeys.org>
+
+	* acinclude.m4, src/Makefile.am, src/botnet.c, src/cmds.c,
+	src/dcc.c, src/debug.h, src/eggdrop.h, src/irccmp.c, src/main.c,
+	src/main.h, src/modules.c, src/net.c, src/proto.h, src/tcl.c,
+	src/tclhash.c, src/mod/module.h, src/mod/modvals.h:
+
+	* DEBUG_ASSERT renamed to DEBUG 
+	* Assert macro removed, replaced with ANSI assert support 
+	* Removed more kludge code 
+
 2001-10-12 13:43  Tothwolf <tothwolf@techmonkeys.org>
 
 	* src/mod/server.mod/server.c:
