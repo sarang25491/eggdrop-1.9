@@ -425,7 +425,7 @@ static int got435(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 
 	banned_nick = args[1];
 	chan = args[2];
-	putlog(LOG_MISC, "*", _("Cannot change to banned nickname (%s on %s).)", banned_nick, chan);
+	putlog(LOG_MISC, "*", _("Cannot change to banned nickname (%s on %s)."), banned_nick, chan);
 	return(0);
 }
 
