@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dccparty.c,v 1.6 2004/06/23 11:19:52 wingman Exp $";
+static const char rcsid[] = "$Id: dccparty.c,v 1.7 2004/06/23 22:25:06 darko Exp $";
 #endif
 
 #include <ctype.h>
@@ -147,7 +147,7 @@ static int dns_result(void *client_data, const char *ip, char **hosts)
 
 static int process_results(dcc_session_t *session)
 {
-	char *fakehost;
+	char fakehost[512];
 
 	if (!session->ident || !session->host) return(0);
 
