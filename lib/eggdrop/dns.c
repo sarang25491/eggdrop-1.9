@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dns.c,v 1.2 2004/06/22 02:46:49 guppy Exp $";
+static const char rcsid[] = "$Id: dns.c,v 1.3 2004/06/22 05:37:46 guppy Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -242,7 +242,7 @@ int egg_dns_reverse(const char *ip, int timeout, dns_callback_t callback, void *
 
 	/* Ok, see if we have it in our host cache. */
 	for (i = 0; i < nhosts; i++) {
-		if (!strcmp(hosts[i].ip, ip)) {
+		if (!strcasecmp(hosts[i].ip, ip)) {
 			dns_answer_t answer;
 
 			answer_init(&answer);
