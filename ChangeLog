@@ -1,3 +1,19 @@
+2002-01-26 02:57  stdarg <stdarg@techmonkeys.org>
+
+	* modules/perlscript/: Makefile.am, mod_iface.c,
+	module_interface.c, perlscript.c:
+
+	
+	* Renamed module_interface.c to mod_iface.c to meet filename length
+	requirements 
+
+2002-01-26 02:47  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/memutil.c:
+
+	
+	* Cleaned up rmspace() a bit 
+
 2002-01-25 21:25  Federico Mennite <ite@techmonkeys.org>
 
 	* lib/eggdrop/memutil.c:
