@@ -1,7 +1,7 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.27 2003/03/06 13:49:53 tothwolf Exp $
+dnl $Id: acinclude.m4,v 1.28 2003/03/08 07:17:29 tothwolf Exp $
 dnl
 
 
@@ -23,15 +23,15 @@ AC_MSG_RESULT([
 ------------------------------------------------------------------------
 Configuration:
 
-  Source code location:       ${srcdir}
-  Compiler:                   ${CC}
-  Compiler flags:             ${CFLAGS}
-  Host System Type:           ${host}
-  Install path:               ${prefix}
-  Compress module:            ${egg_compress}
-  Tcl module:                 ${egg_tclscript}
-  Perl module:                ${egg_perlscript}
-  Javascript module:          ${egg_javascript}
+  Source code location:       $srcdir
+  Compiler:                   $CC
+  Compiler flags:             $CFLAGS
+  Host System Type:           $host
+  Install path:               $prefix
+  Compress module:            $egg_compress
+  Tcl module:                 $egg_tclscript
+  Perl module:                $egg_perlscript
+  Javascript module:          $egg_javascript
 
 See config.h for further configuration information.
 ------------------------------------------------------------------------
@@ -50,7 +50,7 @@ dnl
 dnl  FIXME: make a better test
 dnl
 AC_DEFUN(EGG_CHECK_CC, [dnl
-if test "${cross_compiling-x}" = "x"
+if test "${cross_compiling+set}" != set
 then
   AC_MSG_ERROR([
 
@@ -77,7 +77,7 @@ then
       AC_TRY_COMPILE(,, egg_cv_var_ccpipe=yes, egg_cv_var_ccpipe=no)
       CC="$ac_old_CC"
     ])
-    if test "$egg_cv_var_ccpipe" = "yes"
+    if test "$egg_cv_var_ccpipe" = yes
     then
       CC="$CC -pipe"
     fi
@@ -100,7 +100,7 @@ then
       AC_TRY_COMPILE(,, egg_cv_var_ccwall=yes, egg_cv_var_ccwall=no)
       CFLAGS="$ac_old_CFLAGS"
     ])
-    if test "$egg_cv_var_ccwall" = "yes"
+    if test "$egg_cv_var_ccwall" = yes
     then
       CFLAGS="$CFLAGS -Wall"
     fi
@@ -114,7 +114,7 @@ dnl
 AC_DEFUN(EGG_PROG_AWK, [dnl
 # awk is needed for Tcl library and header checks, and eggdrop version subst
 AC_PROG_AWK
-if test "${AWK-x}" = "x"
+if test "${AWK+set}" != set
 then
   AC_MSG_ERROR([
 
@@ -131,7 +131,7 @@ dnl
 AC_DEFUN(EGG_PROG_BASENAME, [dnl
 # basename is needed for Tcl library and header checks
 AC_CHECK_PROG(BASENAME, basename, basename)
-if test "${BASENAME-x}" = "x"
+if test "${BASENAME+set}" != set
 then
   cat << 'EOF' >&2
 configure: error:
@@ -224,7 +224,7 @@ dnl  EGG_CHECK_LIBS()
 dnl
 AC_DEFUN(EGG_CHECK_LIBS, [dnl
 # FIXME: this needs to be fixed so that it works on IRIX
-if test "$IRIX" = "yes"
+if test "$IRIX" = yes
 then
   AC_MSG_WARN(Skipping library tests because they CONFUSE Irix.)
 else
@@ -263,10 +263,10 @@ int main() {
 	exit(((x / 1000000) == 1000000) ? 0: 1);
 }
 ],
-egg_cv_have_long_long="yes",
-egg_cv_have_long_long="no",
-egg_cv_have_long_long="cross")])
-if test "$egg_cv_have_long_long" = "yes"
+egg_cv_have_long_long=yes,
+egg_cv_have_long_long=no,
+egg_cv_have_long_long=cross)])
+if test "$egg_cv_have_long_long" = yes
 then
   AC_DEFINE(HAVE_LONG_LONG, 1,
 	    [Define if system supports long long.])
@@ -300,10 +300,10 @@ int main(){
 	foo("hello");
 }
 ],
-egg_cv_have_c99_vsnprintf="yes",
-egg_cv_have_c99_vsnprintf="no",
-egg_cv_have_c99_vsnprintf="cross")])
-if test "$egg_cv_have_c99_vsnprintf" = "yes"
+egg_cv_have_c99_vsnprintf=yes,
+egg_cv_have_c99_vsnprintf=no,
+egg_cv_have_c99_vsnprintf=cross)])
+if test "$egg_cv_have_c99_vsnprintf" = yes
 then
   AC_DEFINE(HAVE_C99_VSNPRINTF, 1,
             [Define if vsnprintf is C99 compliant.])
@@ -325,7 +325,7 @@ AC_CHECK_FUNCS(getopt_long , ,
 dnl  EGG_REPLACE_SNPRINTF
 dnl
 AC_DEFUN(EGG_REPLACE_SNPRINTF, [dnl
-if test "${egg_replace_snprintf-x}" = "yes"
+if test "$egg_replace_snprintf" = yes
 then
   AC_LIBOBJ(snprintf)
   SNPRINTF_LIBS="-lm"
@@ -361,7 +361,7 @@ egg_cv_var_sys_errlist,
 [AC_TRY_LINK([int *p;], [extern int sys_errlist; p = &sys_errlist;],
 	    egg_cv_var_sys_errlist=yes, egg_cv_var_sys_errlist=no)
 ])
-if test x"$egg_cv_var_sys_errlist" = xyes; then
+if test "$egg_cv_var_sys_errlist" = yes; then
   AC_DEFINE([HAVE_SYS_ERRLIST], 1,
            [Define if your system libraries have a sys_errlist variable.])
 fi
@@ -383,9 +383,9 @@ AC_ARG_WITH(tclinc,
 
 WARN=0
 # Make sure either both or neither $tcllibname and $tclincname are set
-if test ! "${tcllibname-x}" = "x"
+if test "${tcllibname+set}" = set
 then
-  if test "${tclincname-x}" = "x"
+  if test "${tclincname+set}" != set
   then
     WARN=1
     tcllibname=""
@@ -393,7 +393,7 @@ then
     TCLINC=""
   fi
 else
-  if test ! "${tclincname-x}" = "x"
+  if test "${tclincname+set}" = set
   then
     WARN=1
     tclincname=""
@@ -418,9 +418,9 @@ dnl
 AC_DEFUN(EGG_TCL_ENV, [dnl
 WARN=0
 # Make sure either both or neither $TCLLIB and $TCLINC are set
-if test ! "${TCLLIB-x}" = "x"
+if test "${TCLLIB+set}" = set
 then
-  if test "${TCLINC-x}" = "x"
+  if test "${TCLINC+set}" != set
   then
     WARN=1
     WVAR1=TCLLIB
@@ -428,7 +428,7 @@ then
     TCLLIB=""
   fi
 else
-  if test ! "${TCLINC-x}" = "x"
+  if test "${TCLINC+set}" = set
   then
     WARN=1
     WVAR1=TCLINC
@@ -453,7 +453,7 @@ dnl  EGG_TCL_WITH_TCLLIB()
 dnl
 AC_DEFUN(EGG_TCL_WITH_TCLLIB, [dnl
 # Look for Tcl library: if $tcllibname is set, check there first
-if test ! "${tcllibname-x}" = "x"
+if test "${tcllibname+set}" = set
 then
   if test -f "$tcllibname" && test -r "$tcllibname"
   then
@@ -483,7 +483,7 @@ dnl  EGG_TCL_WITH_TCLINC()
 dnl
 AC_DEFUN(EGG_TCL_WITH_TCLINC, [dnl
 # Look for Tcl header: if $tclincname is set, check there first
-if test ! "${tclincname-x}" = "x"
+if test "${tclincname+set}" = set
 then
   if test -f "$tclincname" && test -r "$tclincname"
   then
@@ -511,9 +511,9 @@ dnl  EGG_TCL_FIND_LIBRARY()
 dnl
 AC_DEFUN(EGG_TCL_FIND_LIBRARY, [dnl
 # Look for Tcl library: if $TCLLIB is set, check there first
-if test "${TCLLIBFN-x}" = "x"
+if test "${TCLLIBFN+set}" != set
 then
-  if test ! "${TCLLIB-x}" = "x"
+  if test "${TCLLIB+set}" = set
   then
     if test -d "$TCLLIB"
     then
@@ -531,7 +531,7 @@ then
         done
       done
     fi
-    if test "${TCLLIBFN-x}" = "x"
+    if test "${TCLLIBFN+set}" != set
     then
       AC_MSG_WARN([
 
@@ -554,9 +554,9 @@ dnl  EGG_TCL_FIND_HEADER()
 dnl
 AC_DEFUN(EGG_TCL_FIND_HEADER, [dnl
 # Look for Tcl header: if $TCLINC is set, check there first
-if test "${TCLINCFN-x}" = "x"
+if test "${TCLINCFN+set}" != set
 then
-  if test ! "${TCLINC-x}" = "x"
+  if test "${TCLINC+set}" = set
   then
     if test -d "$TCLINC"
     then
@@ -569,7 +569,7 @@ then
         fi
       done
     fi
-    if test "${TCLINCFN-x}" = "x"
+    if test "${TCLINCFN+set}" != set
     then
       AC_MSG_WARN([
 
@@ -594,7 +594,7 @@ AC_DEFUN(EGG_TCL_CHECK_LIBRARY, [dnl
 AC_MSG_CHECKING(for Tcl library)
 
 # Attempt autodetect for $TCLLIBFN if it's not set
-if test ! "${TCLLIBFN-x}" = "x"
+if test "${TCLLIBFN+set}" = set
 then
   AC_MSG_RESULT(using $TCLLIB/lib$TCLLIBFN)
 else
@@ -619,7 +619,7 @@ else
 fi
 
 # Show if $TCLLIBFN wasn't found
-if test "${TCLLIBFN-x}" = "x"
+if test "${TCLLIBFN+set}" != set
 then
   AC_MSG_RESULT(not found)
 fi
@@ -634,7 +634,7 @@ AC_DEFUN(EGG_TCL_CHECK_HEADER, [dnl
 AC_MSG_CHECKING(for Tcl header)
 
 # Attempt autodetect for $TCLINCFN if it's not set
-if test ! "${TCLINCFN-x}" = "x"
+if test "${TCLINCFN+set}" = set
 then
   AC_MSG_RESULT(using $TCLINC/$TCLINCFN)
 else
@@ -652,7 +652,7 @@ else
     done
   done
   # FreeBSD hack ...
-  if test "${TCLINCFN-x}" = "x"
+  if test "${TCLINCFN+set}" != set
   then
     for tcllibfns in $tcllibnames
     do
@@ -674,7 +674,7 @@ else
 fi
 
 # Show if $TCLINCFN wasn't found
-if test "${TCLINCFN-x}" = "x"
+if test "${TCLINCFN+set}" != set
 then
   AC_MSG_RESULT(not found)
 fi
@@ -703,16 +703,16 @@ AC_DEFUN(EGG_TCL_DETECT_CHANGE, [dnl
   AC_MSG_CHECKING(whether the tcl system has changed)
   egg_tcl_changed=yes
   egg_tcl_id="$TCLLIB:$TCLLIBFN:$TCLINC:$TCLINCFN"
-  if test ! "$egg_tcl_id" = ":::"
+  if test "$egg_tcl_id" != :::
   then
     egg_tcl_cached=yes
     AC_CACHE_VAL(egg_cv_var_tcl_id, [dnl
       egg_cv_var_tcl_id="$egg_tcl_id"
       egg_tcl_cached=no
     ])
-    if test "$egg_tcl_cached" = "yes"
+    if test "$egg_tcl_cached" = yes
     then
-      if test "${egg_cv_var_tcl_id-x}" = "${egg_tcl_id-x}"
+      if test "$egg_cv_var_tcl_id" = "$egg_tcl_id"
       then
         egg_tcl_changed=no
       else
@@ -720,7 +720,7 @@ AC_DEFUN(EGG_TCL_DETECT_CHANGE, [dnl
       fi
     fi
   fi
-  if test "$egg_tcl_changed" = "yes"
+  if test "$egg_tcl_changed" = yes
   then
     AC_MSG_RESULT(yes)
   else
@@ -734,12 +734,12 @@ dnl
 AC_DEFUN(EGG_TCL_CHECK_VERSION, [dnl
 # Both TCLLIBFN & TCLINCFN must be set, or we bail
 TCL_FOUND=0
-if test ! "${TCLLIBFN-x}" = "x" && test ! "${TCLINCFN-x}" = "x"
+if test "${TCLLIBFN+set}" = set && test "${TCLINCFN+set}" = set
 then
   TCL_FOUND=1
 
   # Check Tcl's version
-  if test "$egg_tcl_changed" = "yes"
+  if test "$egg_tcl_changed" = yes
   then
     EGG_CACHE_UNSET(egg_cv_var_tcl_version)
   fi
@@ -748,7 +748,7 @@ then
     egg_cv_var_tcl_version=`grep TCL_VERSION $TCLINC/$TCLINCFN | head -1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`
   ])
 
-  if test ! "${egg_cv_var_tcl_version-x}" = "x"
+  if test "${egg_cv_var_tcl_version+set}" = set
   then
     AC_MSG_RESULT($egg_cv_var_tcl_version)
   else
@@ -757,7 +757,7 @@ then
   fi
 
   # Check Tcl's patch level (if avaliable)
-  if test "$egg_tcl_changed" = "yes"
+  if test "$egg_tcl_changed" = yes
   then
     EGG_CACHE_UNSET(egg_cv_var_tcl_patch_level)
   fi
@@ -766,11 +766,11 @@ then
     eval "egg_cv_var_tcl_patch_level=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | head -1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`"
   ])
 
-  if test ! "${egg_cv_var_tcl_patch_level-x}" = "x"
+  if test "${egg_cv_var_tcl_patch_level+set}" = set
   then
     AC_MSG_RESULT($egg_cv_var_tcl_patch_level)
   else
-    egg_cv_var_tcl_patch_level="unknown"
+    egg_cv_var_tcl_patch_level=unknown
     AC_MSG_RESULT(unknown)
   fi
 fi
@@ -801,7 +801,7 @@ dnl
 AC_DEFUN(EGG_TCL_CHECK_PRE80, [dnl
 # Is this version of Tcl too old for us to use ?
 TCL_VER_PRE80=`echo $egg_cv_var_tcl_version | $AWK '{split([$]1, i, "."); if (i[[1]] < 8) print "yes"; else print "no"}'`
-if test "$TCL_VER_PRE80" = "yes"
+if test "$TCL_VER_PRE80" = yes
 then
   AC_MSG_ERROR([
 
@@ -822,7 +822,7 @@ AC_DEFUN(EGG_TCL_TESTLIBS, [dnl
 TCL_TEST_LIB="$TCLLIBFNS"
 TCL_TEST_OTHERLIBS="-L$TCLLIB $EGG_MATH_LIB"
 
-if test ! "${ac_cv_lib_pthread-x}" = "x"
+if test "${ac_cv_lib_pthread+set}" = set
 then
   TCL_TEST_OTHERLIBS="$TCL_TEST_OTHERLIBS $ac_cv_lib_pthread"
 fi
@@ -832,7 +832,7 @@ dnl  EGG_TCL_CHECK_THREADS()
 dnl
 AC_DEFUN(EGG_TCL_CHECK_THREADS, [dnl
 
-if test "$egg_tcl_changed" = "yes"
+if test "$egg_tcl_changed" = yes
 then
   EGG_CACHE_UNSET(egg_cv_var_tcl_threaded)
 fi
@@ -840,10 +840,10 @@ fi
 # Check for TclpFinalizeThreadData()
 AC_CHECK_LIB($TCL_TEST_LIB, TclpFinalizeThreadData, egg_cv_var_tcl_threaded=yes, egg_cv_var_tcl_threaded=no, $TCL_TEST_OTHERLIBS)
 
-if test "$egg_cv_var_tcl_threaded" = "yes"
+if test "$egg_cv_var_tcl_threaded" = yes
 then
   # Add pthread library to $LIBS if we need it
-  if test ! "${ac_cv_lib_pthread-x}" = "x"
+  if test "${ac_cv_lib_pthread+set}" = set
   then
     LIBS="$ac_cv_lib_pthread $LIBS"
   fi
@@ -856,7 +856,7 @@ dnl
 AC_DEFUN(EGG_TCL_LIB_REQS, [dnl
 AC_REQUIRE([EGG_LIBTOOL])
 
-if test "$EGG_CYGWIN" = "yes"
+if test "$EGG_CYGWIN" = yes
 then
   TCL_REQS="$TCLLIB/lib$TCLLIBFN"
   TCL_LIBS="-L$TCLLIB -l$TCLLIBFNS $EGG_MATH_LIB"
@@ -867,7 +867,7 @@ then
   TCL_LIBS="-L$TCLLIB -l$TCLLIBFNS $EGG_MATH_LIB"
 else
   # Error and ask for a static build for unshared Tcl library
-  if test "$egg_static_build" = "no"
+  if test "$egg_static_build" = no
   then
     AC_MSG_ERROR([
 
@@ -891,7 +891,7 @@ dnl  file contents.  Otherwise, leave the file allone.  This avoids needless
 dnl  recompiles.
 dnl
 define(EGG_REPLACE_IF_CHANGED, [dnl
-  AC_OUTPUT_COMMANDS([
+  AC_CONFIG_COMMANDS([$1], [
 egg_replace_file="$1"
 echo "creating $1"
 $2
@@ -921,9 +921,11 @@ EGGEOF], [
 
 dnl  AC_PROG_CC_WIN32()
 dnl
+dnl  FIXME: is this supposed to be checking for "windows.h"?
+dnl
 AC_DEFUN([AC_PROG_CC_WIN32], [
 AC_MSG_CHECKING([how to access the Win32 API])
-WIN32FLAGS=
+WIN32FLAGS=""
 AC_TRY_COMPILE(,[
 #ifndef WIN32
 # ifndef _WIN32
@@ -973,7 +975,7 @@ AC_ARG_ENABLE(ipv6,
 [ ac_cv_ipv6="$enableval"
   AC_MSG_RESULT($ac_cv_ipv6)
 ], [
-  if test "$egg_cv_ipv6_supported" = "yes"
+  if test "$egg_cv_ipv6_supported" = yes
   then
     ac_cv_ipv6=yes
   else
@@ -981,7 +983,7 @@ AC_ARG_ENABLE(ipv6,
   fi
   AC_MSG_RESULT((default) $ac_cv_ipv6)
 ])
-if test "$ac_cv_ipv6" = "yes"
+if test "$ac_cv_ipv6" = yes
 then
   AC_DEFINE(IPV6, 1,
             [Define if you want to enable IPv6 support.])
@@ -1001,7 +1003,7 @@ socklen_t x;
 x = 0;
 ], egg_cv_var_socklen_t=yes, egg_cv_var_socklen_t=no)
 ])
-if test "$egg_cv_var_socklen_t" = "no"
+if test "$egg_cv_var_socklen_t" = no
 then
   AC_DEFINE(socklen_t, unsigned,
             [Define to `unsigned' if something else doesn't define.])
@@ -1023,7 +1025,7 @@ AC_CACHE_VAL(adns_cv_decl_inaddrloopback,[
  ],
  adns_cv_decl_inaddrloopback=yes,
  adns_cv_decl_inaddrloopback=no)])
-if test "$adns_cv_decl_inaddrloopback" = "yes"
+if test "$adns_cv_decl_inaddrloopback" = yes
 then
  AC_MSG_RESULT(found)
 else
@@ -1062,7 +1064,7 @@ int main()
 }
 ], egg_cv_ipv6_supported=yes, egg_cv_ipv6_supported=no,
 egg_cv_ipv6_supported=no)])
-if test "$egg_cv_ipv6_supported" = "yes"
+if test "$egg_cv_ipv6_supported" = yes
 then
   AC_MSG_RESULT(yes)
 else
@@ -1107,9 +1109,9 @@ AC_LIBLTDL_CONVENIENCE
 AC_SUBST(INCLTDL)
 AC_SUBST(LIBLTDL)
 AC_LIBTOOL_DLOPEN
-AM_PROG_LIBTOOL
+AC_PROG_LIBTOOL
 
-if test "x$enable_shared" = "xno"
+if test "$enable_shared" = no
 then
   egg_static_build=yes
 else
@@ -1153,7 +1155,7 @@ AC_ARG_ENABLE(debug,
               AC_HELP_STRING([--disable-debug],
                              [disable debug support]),
                              debug="$enableval", debug=yes)
-if test "$debug" = "yes"
+if test "$debug" = yes
 then
   EGG_DEBUG="-DDEBUG"
   CFLAGS="$CFLAGS -g3"
@@ -1178,18 +1180,19 @@ AC_CONFIG_COMMANDS_PRE(
                AC_SUBST(LTLIBOBJS)])
 ])
 
+
 dnl  EGG_COMPRESS_MODULE
 dnl
 AC_DEFUN(EGG_COMPRESS_MODULE, [dnl
 
 egg_compress=no
 
-AC_CHECK_LIB(z, gzopen, ZLIB="-lz", )
+AC_CHECK_LIB(z, gzopen, ZLIB="-lz")
 AC_CHECK_HEADER(zlib.h)
 
 # Disable the module if either the header file or the library
 # are missing.
-if test "${ZLIB-x}" = "x"
+if test "${ZLIB+set}" != set
 then
   AC_MSG_WARN([
 
@@ -1198,7 +1201,7 @@ then
 
 ])
 else
-  if test ! "${ac_cv_header_zlib_h}" = "yes"
+  if test "$ac_cv_header_zlib_h" != yes
   then
   AC_MSG_WARN([
 
@@ -1213,7 +1216,7 @@ else
   fi
 fi
 
-AM_CONDITIONAL(EGG_COMPRESS, test "$egg_compress" = "yes")
+AM_CONDITIONAL(EGG_COMPRESS, test "$egg_compress" = yes)
 ])
 
 # FIXME: is it worth to make this macro more anal? Yes it is!
@@ -1232,7 +1235,7 @@ then
 
 AC_PATH_PROG(perlcmd, perl)
 PERL_LDFLAGS=`$perlcmd -MExtUtils::Embed -e ldopts 2>/dev/null`
-if test "x$PERL_LDFLAGS" = x
+if test "${PERL_LDFLAGS+set} != set
 then
   AC_MSG_WARN([
 
@@ -1248,7 +1251,7 @@ else
 fi
 
 fi
-AM_CONDITIONAL(EGG_PERLSCRIPT, test "$egg_perlscript" = "yes")
+AM_CONDITIONAL(EGG_PERLSCRIPT, test "$egg_perlscript" = yes)
 ])
 
 dnl  EGG_TCLSCRIPT_MODULE
@@ -1259,7 +1262,7 @@ egg_tclscript=no
 
 # Is this version of Tcl too old for tclscript to use ?
 TCL_VER_PRE80=`echo $egg_cv_var_tcl_version | $AWK '{split([$]1, i, "."); if (i[[1]] < 8) print "yes"; else print "no"}'`
-if test "$TCL_VER_PRE80" = "yes"
+if test "$TCL_VER_PRE80" = yes
 then
   AC_MSG_WARN([
 
@@ -1271,7 +1274,7 @@ else
   egg_tclscript=yes
 fi
 
-AM_CONDITIONAL(EGG_TCLSCRIPT, test "$egg_tclscript" = "yes")
+AM_CONDITIONAL(EGG_TCLSCRIPT, test "$egg_tclscript" = yes)
 ])
 
 dnl  EGG_JAVASCRIPT_MODULE
@@ -1293,11 +1296,11 @@ CPPFLAGS_save="$CPPFLAGS"
 LDFLAGS_save="$LDFLAGS"
 
 CPPFLAGS="$CPPFLAGS -DXP_UNIX"
-if test ! x"$jsincname" = "x"
+if test "${jsincname+set}" = set
 then
   CPPFLAGS="$CPPFLAGS -I$jsincname"
 fi
-if test ! x"$jslibname" = "x"
+if test "${jslibname+set}" = set
 then
   LDFLAGS="$LDFLAGS -L$jslibname"
 fi
@@ -1307,7 +1310,7 @@ AC_CHECK_HEADER(jsapi.h)
 
 # Disable the module if either the header file or the library
 # are missing.
-if test x"${JSLIBS}" = "x"
+if test "${JSLIBS+set}" != set
 then
   AC_MSG_WARN([
 
@@ -1316,7 +1319,7 @@ then
 
 ])
 else
-  if test ! "${ac_cv_header_jsapi_h}" = "yes"
+  if test "$ac_cv_header_jsapi_h" != yes
   then
     AC_MSG_WARN([
 
@@ -1327,12 +1330,12 @@ else
   else
     egg_javascript=yes
     AC_SUBST(JSLIBS)
-    if test ! x"$jslibname" = "x"
+    if test "${jslibname+set}" = set
     then
       JSLDFLAGS="-L$jslibname"
     fi
     AC_SUBST(JSLDFLAGS)
-    if test ! x"$jsincname" = "x"
+    if test "${jsincname+set}" = set
     then
       JSINCL="-I$jsincname"
     fi   
@@ -1343,5 +1346,5 @@ fi
 CPPFLAGS="${CPPFLAGS_save}" 
 LDFLAGS="${LDFLAGS_save}"
 
-AM_CONDITIONAL(EGG_JAVASCRIPT, test "$egg_javascript" = "yes")
+AM_CONDITIONAL(EGG_JAVASCRIPT, test "$egg_javascript" = yes)
 ])
