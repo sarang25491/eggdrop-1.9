@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  *
- * $Id: tcluser.c,v 1.32 2001/12/01 17:35:06 ite Exp $
+ * $Id: tcluser.c,v 1.33 2002/01/09 12:11:14 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -27,6 +27,7 @@
 #include "users.h"
 #include "chan.h"
 #include "tandem.h"
+#include "script_api.h"
 
 extern Tcl_Interp	*interp;
 extern struct userrec	*userlist;
@@ -36,190 +37,100 @@ extern char		 origbotname[], botnetnick[];
 extern time_t		 now;
 
 
-static int tcl_countusers STDVAR
+static int script_countusers()
 {
-  BADARGS(1, 1, "");
-  Tcl_AppendResult(irp, int_to_base10(count_users(userlist)), NULL);
-  return TCL_OK;
+	return count_users(userlist);
 }
 
-static int tcl_validuser STDVAR
+static int script_validuser(struct userrec *u)
 {
-  BADARGS(2, 2, " handle");
-  Tcl_AppendResult(irp, get_user_by_handle(userlist, argv[1]) ? "1" : "0",
-		   NULL);
-  return TCL_OK;
+	if (u) return(1);
+	return(0);
 }
 
-static int tcl_finduser STDVAR
+static struct userrec *script_finduser(char *nick_user_host)
 {
-  struct userrec *u;
-
-  BADARGS(2, 2, " nick!user@host");
-  u = get_user_by_host(argv[1]);
-  Tcl_AppendResult(irp, u ? u->handle : "*", NULL);
-  return TCL_OK;
+	return get_user_by_host(nick_user_host);
 }
 
-static int tcl_passwdOk STDVAR
+static int script_passwd_ok(struct userrec *u, char *trypass)
 {
-  struct userrec *u;
-
-  BADARGS(3, 3, " handle passwd");
-  Tcl_AppendResult(irp, ((u = get_user_by_handle(userlist, argv[1])) &&
-			 u_pass_match(u, argv[2])) ? "1" : "0", NULL);
-  return TCL_OK;
+	if (u && u_pass_match(u, trypass)) return(1);
+	return(0);
 }
 
-static int tcl_chattr STDVAR
+/* client_data will be NULL for chattr, non-NULL for botattr. */
+/* I combined them since there are only minor differences. */
+static char *script_chattr_botattr(void *client_data, struct userrec *u, char *changes, char *chan)
 {
-  char *chan, *chg, work[100];
-  struct flag_record pls, mns, user;
-  struct userrec *u;
+	static char work[128]; /* Static so it can be a return value. */
+	struct flag_record pls, mns, user;
+	int desired_flags;
 
-  BADARGS(2, 4, " handle ?changes? ?channel?");
-  if ((argv[1][0] == '*') || !(u = get_user_by_handle(userlist, argv[1]))) {
-    Tcl_AppendResult(irp, "*", NULL);
-    return TCL_OK;
-  }
-  if (argc == 4) {
-    user.match = FR_GLOBAL | FR_CHAN;
-    chan = argv[3];
-    chg = argv[2];
-  } else if (argc == 3 && argv[2][0] &&
-             strchr(CHANMETA, argv[2][0]) != NULL) {
-    /* We need todo extra checking here to stop us mixing up +channel's
-     * with flags. <cybah>
-     */
-    if (!findchan_by_dname(argv[2]) && argv[2][0] != '+') {
-      /* Channel doesnt exist, and it cant possibly be flags as there
-       * is no + at the start of the string.
-       */
-      Tcl_AppendResult(irp, "no such channel", NULL);
-      return TCL_ERROR;
-    } else if(findchan_by_dname(argv[2])) {
-      /* Channel exists */
-      user.match = FR_GLOBAL | FR_CHAN;
-      chan = argv[2];
-      chg = NULL;
-    } else {
-      /* 3rd possibility... channel doesnt exist, does start with a +.
-       * In this case we assume the string is flags.
-       */
-      user.match = FR_GLOBAL;
-      chan = NULL;
-      chg = argv[2];
-    }
-  } else {
-    user.match = FR_GLOBAL;
-    chan = NULL;
-    chg = NULL;
-  }
-  if (chan && !findchan_by_dname(chan)) {
-    Tcl_AppendResult(irp, "no such channel", NULL);
-    return TCL_ERROR;
-  }
-  get_user_flagrec(u, &user, chan);
-  /* Make changes */
-  if (chg) {
-    pls.match = user.match;
-    break_down_flags(chg, &pls, &mns);
-    /* No-one can change these flags on-the-fly */
-    pls.global &=~(USER_BOT);
-    mns.global &=~(USER_BOT);
-    if (chan) {
-      pls.chan &= ~(BOT_SHARE);
-      mns.chan &= ~(BOT_SHARE);
-    }
-    user.global = sanity_check((user.global |pls.global) &~mns.global);
-    user.udef_global = (user.udef_global | pls.udef_global)
-      & ~mns.udef_global;
-    if (chan) {
-      user.chan = chan_sanity_check((user.chan | pls.chan) & ~mns.chan,
-				    user.global);
-      user.udef_chan = (user.udef_chan | pls.udef_chan) & ~mns.udef_chan;
-    }
-    set_user_flagrec(u, &user, chan);
-  }
-  /* Retrieve current flags and return them */
-  build_flags(work, &user, NULL);
-  Tcl_AppendResult(irp, work, NULL);
-  return TCL_OK;
-}
+	if (!u || (client_data && !(u->flags & USER_BOT))) return("*");
 
-static int tcl_botattr STDVAR
-{
-  char *chan, *chg, work[100];
-  struct flag_record pls, mns, user;
-  struct userrec *u;
+	if (client_data) desired_flags = FR_BOT;
+	else desired_flags = FR_GLOBAL;
 
-  BADARGS(2, 4, " bot-handle ?changes? ?channel?");
-  u = get_user_by_handle(userlist, argv[1]);
-  if ((argv[1][0] == '*') || !u || !(u->flags & USER_BOT)) {
-    Tcl_AppendResult(irp, "*", NULL);
-    return TCL_OK;
-  }
-  if (argc == 4) {
-    user.match = FR_BOT | FR_CHAN;
-    chan = argv[3];
-    chg = argv[2];
-  } else if (argc == 3 && argv[2][0] &&
-             strchr(CHANMETA, argv[2][0]) != NULL) {
-    /* We need todo extra checking here to stop us mixing up +channel's
-     * with flags. <cybah>
-     */
-    if (!findchan_by_dname(argv[2]) && argv[2][0] != '+') {
-      /* Channel doesnt exist, and it cant possibly be flags as there
-       * is no + at the start of the string.
-       */
-      Tcl_AppendResult(irp, "no such channel", NULL);
-      return TCL_ERROR;
-    } else if(findchan_by_dname(argv[2])) {
-      /* Channel exists */
-      user.match = FR_BOT | FR_CHAN;
-      chan = argv[2];
-      chg = NULL;
-    } else {
-      /* 3rd possibility... channel doesnt exist, does start with a +.
-       * In this case we assume the string is flags.
-       */
-      user.match = FR_BOT;
-      chan = NULL;
-      chg = argv[2];
-    }
-  } else {
-    user.match = FR_BOT;
-    chan = NULL;
-    if (argc < 3)
-      chg = NULL;
-    else
-      chg = argv[2];
-  }
-  if (chan && !findchan_by_dname(chan)) {
-    Tcl_AppendResult(irp, "no such channel", NULL);
-    return TCL_ERROR;
-  }
-  get_user_flagrec(u, &user, chan);
-  /* Make changes */
-  if (chg) {
-    pls.match = user.match;
-    break_down_flags(chg, &pls, &mns);
-    /* No-one can change these flags on-the-fly */
-    if (chan) {
-      pls.chan &= BOT_SHARE;
-      mns.chan &= BOT_SHARE;
-    }
-    user.bot = sanity_check((user.bot | pls.bot) & ~mns.bot);
-    if (chan) {
-      user.chan = (user.chan | pls.chan) & ~mns.chan;
-      user.udef_chan = (user.udef_chan | pls.udef_chan) & ~mns.udef_chan;
-    }
-    set_user_flagrec(u, &user, chan);
-  }
-  /* Retrieve current flags and return them */
-  build_flags(work, &user, NULL);
-  Tcl_AppendResult(irp, work, NULL);
-  return TCL_OK;
+	if (chan) {
+		user.match = desired_flags | FR_CHAN;
+	}
+	else if (changes) {
+		if ((strchr(CHANMETA, changes[0]) != NULL)) {
+			/* Determine if 'changes' is actually a channel name. */
+			if (findchan_by_dname(changes)) {
+				/* Yup. */
+				chan = changes;
+				changes = NULL;
+				user.match = desired_flags | FR_CHAN;
+			}
+			else if (changes[0] != '+' && changes[1] != '-') {
+				/* Invalid channel. */
+				return("*");
+			}
+			else {
+				/* Nope, they really are changes. */
+				user.match = desired_flags;
+			}
+		}
+		else {
+			/* Ditto... */
+			user.match = desired_flags;
+		}
+	}
+	else {
+		/* And again... */
+		user.match = desired_flags;
+	}
+	if (chan && !findchan_by_dname(chan)) {
+		return("*");
+	}
+	get_user_flagrec(u, &user, chan);
+	/* Make changes */
+	if (changes) {
+		pls.match = user.match;
+		break_down_flags(changes, &pls, &mns);
+		/* Nobody can change these flags on-the-fly */
+		pls.global &= ~(USER_BOT);
+		mns.global &= ~(USER_BOT);
+		if (chan) {
+			pls.chan &= ~(BOT_SHARE);
+			mns.chan &= ~(BOT_SHARE);
+		}
+		user.global = sanity_check((user.global|pls.global) & (~mns.global));
+		user.bot = sanity_check((user.bot|pls.bot) & (~mns.bot));
+		user.udef_global = (user.udef_global | pls.udef_global) & (~mns.udef_global);
+		if (chan) {
+			if (client_data) user.chan = (user.chan | pls.chan) & (~mns.chan);
+			else user.chan = chan_sanity_check((user.chan | pls.chan) & (~mns.chan), user.global);
+
+			user.udef_chan = (user.udef_chan | pls.udef_chan) & (~mns.udef_chan);
+		}
+		set_user_flagrec(u, &user, chan);
+	}
+	/* Retrieve current flags and return them */
+	build_flags(work, &user, NULL);
+	return(work);
 }
 
 static int tcl_matchattr STDVAR
@@ -557,14 +468,18 @@ static int tcl_setuser STDVAR
   return r;
 }
 
+script_command_t script_user_cmds[] = {
+	{"", "countusers", script_countusers, NULL, 0, "", "", SCRIPT_INTEGER, 0},
+	{"", "validuser", script_validuser, NULL, 1, "U", "handle", SCRIPT_INTEGER, 0},
+	{"", "finduser", (Function) script_finduser, NULL, 1, "s", "nick!user@host", SCRIPT_USER, 0},
+	{"", "passwdok", script_passwd_ok, NULL, 2, "Us", "handle password", SCRIPT_INTEGER, 0},
+	{"", "chattr", (Function) script_chattr_botattr, NULL, 1, "Uss", "handle ?changes ?channel??", SCRIPT_STRING, SCRIPT_PASS_CDATA|SCRIPT_VAR_ARGS},
+	{"", "botattr", (Function) script_chattr_botattr, (void *)1, 1, "Uss", "bot ?changes ?channel??", SCRIPT_STRING, SCRIPT_PASS_CDATA|SCRIPT_VAR_ARGS},
+	{0}
+};
+
 tcl_cmds tcluser_cmds[] =
 {
-  {"countusers",	tcl_countusers},
-  {"validuser",		tcl_validuser},
-  {"finduser",		tcl_finduser},
-  {"passwdok",		tcl_passwdOk},
-  {"chattr",		tcl_chattr},
-  {"botattr",		tcl_botattr},
   {"matchattr",		tcl_matchattr},
   {"adduser",		tcl_adduser},
   {"addbot",		tcl_addbot},

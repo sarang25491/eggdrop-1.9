@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.62 2001/12/29 21:33:58 guppy Exp $
+ * $Id: tcl.c,v 1.63 2002/01/09 12:11:14 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -393,6 +393,7 @@ void kill_tcl()
 extern tcl_cmds tcluser_cmds[], tcldcc_cmds[], tclmisc_cmds[], tclmisc_objcmds[];
 extern script_simple_command_t script_dcc_cmds[];
 extern script_command_t script_full_dcc_cmds[];
+extern script_command_t script_user_cmds[];
 
 /* Not going through Tcl's crazy main() system (what on earth was he
  * smoking?!) so we gotta initialize the Tcl interpreter
@@ -449,6 +450,7 @@ void init_tcl(int argc, char **argv)
   add_tcl_objcommands(tclmisc_objcmds);
   script_create_simple_cmd_table(script_dcc_cmds);
   script_create_cmd_table(script_full_dcc_cmds);
+  script_create_cmd_table(script_user_cmds);
 }
 
 void do_tcl(char *whatzit, char *script)
