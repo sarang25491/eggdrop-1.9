@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.51 2002/01/16 22:09:43 ite Exp $
+ * $Id: net.c,v 1.52 2002/01/17 01:13:07 ite Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -801,7 +801,7 @@ void egg_dns_checkall()
 static int sockread(char *s, int *len)
 {
   fd_set fd, fdw, fde;
-  int fds, i, x;
+  int fds, i, x, fdtmp;
   struct timeval t, tnow;
   struct timeval *pt = &t;
   int grab = 511;
@@ -828,9 +828,19 @@ static int sockread(char *s, int *len)
   for (i = 0; i < MAXSOCKS; i++)
     if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_VIRTUAL))) {
       if ((socklist[i].sock == STDOUT) && !backgrd)
-	FD_SET(STDIN, &fd);
+	fdtmp = STDIN;
       else
-	FD_SET(socklist[i].sock, &fd);
+	fdtmp = socklist[i].sock;
+      /* 
+       * Looks like that having more than a call, in the same
+       * program, to the FD_SET macro, triggers a bug in gcc.
+       * SIGBUS crashing binaries used to be produced on a number
+       * (prolly all?) of 64 bits architectures.
+       * Make your best to avoid to make it happen again.
+       *
+       * ITE
+       */
+      FD_SET(fdtmp , &fd);
     }
   tnow.tv_sec = time(NULL);
   tnow.tv_usec = 0;
