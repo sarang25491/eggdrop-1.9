@@ -50,7 +50,7 @@ experienced users.
 
      make install
      This will install the eggdrop in your home directory in a directory
-     called eggdrop (ie. /home/user/eggdrop).
+     called eggdrop (i.e. /home/user/eggdrop).
 
      If you want to install to a different directory make sure you have run
      './configure --prefix=<directory>' before the make process.
