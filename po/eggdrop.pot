@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2002-02-24 04:00-0600\n"
+"POT-Creation-Date: 2002-02-25 04:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #. Kill bot incase a botchk is run from crond.
-#: src/bg.c:139 src/bg.c:147 src/main.c:628 src/main.c:634
+#: src/bg.c:139 src/bg.c:147 src/main.c:629 src/main.c:635
 #, c-format
 msgid "* Warning!  Could not write %s file!\n"
 msgstr ""
@@ -1660,7 +1660,7 @@ msgstr ""
 msgid "%s booted %s from the party line%s%s\n"
 msgstr ""
 
-#: src/main.c:289
+#: src/main.c:290
 msgid ""
 "Command line arguments:\n"
 "  -h   help\n"
@@ -1672,33 +1672,33 @@ msgid ""
 "  optional config filename (default 'eggdrop.conf')\n"
 msgstr ""
 
-#: src/main.c:310
+#: src/main.c:311
 msgid "Backing up user file..."
 msgstr ""
 
-#: src/main.c:556
+#: src/main.c:557
 msgid "ERROR: Eggdrop will not run as root!"
 msgstr ""
 
-#: src/main.c:580
+#: src/main.c:581
 msgid ""
 "You have installed modules but have not selected an encryption\n"
 "module, please consult the default config file for info.\n"
 msgstr ""
 
-#: src/main.c:604
+#: src/main.c:605
 #, c-format
 msgid "I detect %s already running from this directory.\n"
 msgstr ""
 
-#: src/main.c:605
+#: src/main.c:606
 #, c-format
 msgid "If this is incorrect, erase the %s\n"
 msgstr ""
 
 #. Should be only 2 modules now - blowfish (or some other
 #. encryption module) and eggdrop.
-#: src/main.c:844
+#: src/main.c:842
 msgid "Stagnant module; there WILL be memory leaks!"
 msgstr ""
 
@@ -1710,17 +1710,17 @@ msgstr ""
 msgid "No help available on that.\n"
 msgstr ""
 
-#: src/logfile.c:127
+#: src/logfile.c:122
 msgid "Cycling logfiles"
 msgstr ""
 
-#: src/logfile.c:266 src/logfile.c:321
+#: src/logfile.c:258 src/logfile.c:313
 #, c-format
 msgid "Last message repeated %d time(s).\n"
 msgstr ""
 
 #. It's too big.
-#: src/logfile.c:306
+#: src/logfile.c:298
 #, c-format
 msgid "Cycling logfile %s, over max-logsize (%d kilobytes)"
 msgstr ""
