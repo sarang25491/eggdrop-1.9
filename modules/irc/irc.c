@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.9 2002/02/07 22:19:02 wcc Exp $
+ * $Id: irc.c,v 1.10 2002/02/17 12:40:44 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -44,7 +44,6 @@ static bind_table_t *BT_topic, *BT_split, *BT_rejoin, *BT_quit, *BT_join, *BT_pa
 static Function *global = NULL, *channels_funcs = NULL, *server_funcs = NULL;
 
 static int ctcp_mode;
-static int net_type;
 static int strict_host;
 static int wait_split = 300;		/* Time to wait for user to return from
 					   net-split. */
@@ -69,7 +68,7 @@ static int kick_method = 1;		/* How many kicks does the irc network
 					       (Ernst 18/3/1998) */
 static int keepnick = 1;		/* Keep nick */
 static int prevent_mixing = 1;		/* To prevent mixing old/new modes */
-static int rfc_compliant = 1;		/* net-type changing modifies this */
+static int rfc_compliant = 1;
 
 static int include_lk = 1;		/* For correct calculation
 					   in real_add_mode. */
@@ -769,7 +768,6 @@ static tcl_ints myints[] =
   {"max-exempts",		&max_exempts,		0},
   {"max-invites",		&max_invites,		0},
   {"max-modes",			&max_modes,		0},
-  {"net-type",			&net_type,		0},
   {"strict-host",		&strict_host,		0},
   {"ctcp-mode",			&ctcp_mode,		0},
   {"keep-nick",			&keepnick,		0},
@@ -847,78 +845,6 @@ static void irc_report(int idx, int details)
   }
 }
 
-static void do_nettype()
-{
-  switch (net_type) {
-  case 0:		/* Efnet */
-    kick_method = 1;
-    modesperline = 4;
-    use_354 = 0;
-    use_exempts = 0;
-    use_invites = 0;
-    max_bans = 20;
-    max_modes = 20;
-    rfc_compliant = 1;
-    include_lk = 0;
-    break;
-  case 1:		/* Ircnet */
-    kick_method = 4;
-    modesperline = 3;
-    use_354 = 0;
-    use_exempts = 1;
-    use_invites = 1;
-    max_bans = 30;
-    max_modes = 30;
-    rfc_compliant = 1;
-    include_lk = 1;
-    break;
-  case 2:		/* Undernet */
-    kick_method = 1;
-    modesperline = 6;
-    use_354 = 1;
-    use_exempts = 0;
-    use_invites = 0;
-    max_bans = 30;
-    max_modes = 30;
-    rfc_compliant = 1;
-    include_lk = 1;
-    break;
-  case 3:		/* Dalnet */
-    kick_method = 1;
-    modesperline = 6;
-    use_354 = 0;
-    use_exempts = 0;
-    use_invites = 0;
-    max_bans = 100;
-    max_modes = 100;
-    rfc_compliant = 0;
-    include_lk = 1;
-    break;
-  case 4:		/* hybrid-6+ */
-    kick_method = 1;
-    modesperline = 4;
-    use_354 = 0;
-    use_exempts = 1;
-    use_invites = 0;
-    max_bans = 20;
-    max_modes = 20;
-    rfc_compliant = 1;
-    include_lk = 0;
-    break;
-  default:
-    break;
-  }
-  /* Update irccmp function pointers */
-  add_hook(HOOK_IRCCMP, (Function) rfc_compliant);
-}
-
-static char *traced_nettype(ClientData cdata, Tcl_Interp *irp, char *name1,
-			    char *name2, int flags)
-{
-  do_nettype();
-  return NULL;
-}
-
 static char *traced_rfccompliant(ClientData cdata, Tcl_Interp *irp,
 				 char *name1, char *name2, int flags)
 {
@@ -964,9 +890,6 @@ static char *irc_close()
   Tcl_UntraceVar(interp, "rfc-compliant",
 		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		 traced_rfccompliant, NULL);
-  Tcl_UntraceVar(interp, "net-type",
-		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
-		 traced_nettype, NULL);
   module_undepend(MODULE_NAME);
   return NULL;
 }
@@ -1020,9 +943,6 @@ char *start(Function * global_funcs)
   add_hook(HOOK_5MINUTELY, (Function) status_log);
   add_hook(HOOK_ADD_MODE, (Function) real_add_mode);
   add_hook(HOOK_IDLE, (Function) flush_modes);
-  Tcl_TraceVar(interp, "net-type",
-	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
-	       traced_nettype, NULL);
   Tcl_TraceVar(interp, "rfc-compliant",
 	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 	       traced_rfccompliant, NULL);
@@ -1059,6 +979,9 @@ char *start(Function * global_funcs)
 
   add_tcl_commands(tclchan_cmds);
   add_help_reference("irc.help");
-  do_nettype();
+
+  /* Update all rfc_ function pointers */
+  add_hook(HOOK_IRCCMP, (Function) rfc_compliant);  
+  
   return NULL;
 }

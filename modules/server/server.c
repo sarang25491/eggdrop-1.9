@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.10 2002/02/07 22:19:03 wcc Exp $
+ * $Id: server.c,v 1.11 2002/02/17 12:40:44 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -72,7 +72,6 @@ static char oldnick[NICKLEN];	/* previous nickname *before* rehash */
 static int trigger_on_ignore;	/* trigger bindings if user is ignored ? */
 static int answer_ctcp;		/* answer how many stacked ctcp's ? */
 static int check_mode_r;	/* check for IRCNET +r modes */
-static int net_type;
 static int resolvserv;		/* in the process of resolving a server host */
 static int double_mode;		/* allow a msgs to be twice in a queue? */
 static int double_server;
@@ -239,9 +238,8 @@ static int calc_penalty(char * msg)
   char *cmd, *par1, *par2, *par3;
   register int penalty, i, ii;
 
-  if (!use_penalties &&
-      net_type != NETT_UNDERNET && net_type != NETT_HYBRID_EFNET)
-    return 0;
+  if (use_penalties != 1 && use_penalties != 2)
+	  return 0;
   if (msg[strlen(msg) - 1] == '\n')
     msg[strlen(msg) - 1] = '\0';
   cmd = newsplit(&msg);
@@ -250,7 +248,7 @@ static int calc_penalty(char * msg)
   else
     i = strlen(cmd);
   last_time -= 2; /* undo eggdrop standard flood prot */
-  if (net_type == NETT_UNDERNET || net_type == NETT_HYBRID_EFNET) {
+  if (use_penalties == 2) {
     last_time += (2 + i / 120);
     return 0;
   }
@@ -1136,49 +1134,6 @@ static char *traced_botname(ClientData cdata, Tcl_Interp *irp, char *name1,
   return NULL;
 }
 
-static void do_nettype(void)
-{
-  switch (net_type) {
-  case NETT_EFNET:
-    check_mode_r = 0;
-    nick_len = 9;
-    break;
-  case NETT_IRCNET:
-    check_mode_r = 1;
-    use_penalties = 1;
-    use_fastdeq = 3;
-    nick_len = 9;
-    simple_sprintf(stackablecmds, "INVITE AWAY VERSION NICK");
-    kick_method = 4;
-    break;
-  case NETT_UNDERNET:
-    check_mode_r = 0;
-    use_fastdeq = 2;
-    nick_len = 9;
-    simple_sprintf(stackablecmds, "PRIVMSG NOTICE TOPIC PART WHOIS USERHOST USERIP ISON");
-    simple_sprintf(stackable2cmds, "USERHOST USERIP ISON");
-    break;
-  case NETT_DALNET:
-    check_mode_r = 0;
-    use_fastdeq = 2;
-    nick_len = 32;
-    simple_sprintf(stackablecmds, "PRIVMSG NOTICE PART WHOIS WHOWAS USERHOST ISON WATCH DCCALLOW");
-    simple_sprintf(stackable2cmds, "USERHOST ISON WATCH");
-    break;
-  case NETT_HYBRID_EFNET:
-    check_mode_r = 0;
-    nick_len = 9;
-    break;
-  }
-}
-
-static char *traced_nettype(ClientData cdata, Tcl_Interp *irp, char *name1,
-			    char *name2, int flags)
-{
-  do_nettype();
-  return NULL;
-}
-
 static char *traced_nicklen(ClientData cdata, Tcl_Interp *irp, char *name1,
 			    char *name2, int flags)
 {
@@ -1233,7 +1188,6 @@ static tcl_ints my_tcl_ints[] =
   {"server-cycle-wait",		(int *) &server_cycle_wait,	0},
   {"default-port",		&default_port,			0},
   {"check-mode-r",		&check_mode_r,			0},
-  {"net-type",			&net_type,			0},
   {"ctcp-mode",			&ctcp_mode,			0},
   {"double-mode",		&double_mode,			0},/* G`Quann */
   {"double-server",		&double_server,			0},
@@ -1592,9 +1546,6 @@ static char *server_close()
   Tcl_UntraceVar(interp, "server",
 		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		 traced_server, NULL);
-  Tcl_UntraceVar(interp, "net-type",
-		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
-		 traced_nettype, NULL);
   Tcl_UntraceVar(interp, "nick-len",
 		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		 traced_nicklen, NULL);
@@ -1705,7 +1656,6 @@ char *start(Function *global_funcs)
   check_mode_r = 0;
   maxqmsg = 300;
   burst = 0;
-  net_type = NETT_EFNET;
   double_mode = 0;
   double_server = 0;
   double_help = 0;
@@ -1744,9 +1694,6 @@ char *start(Function *global_funcs)
   Tcl_TraceVar(interp, "server",
 	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 	       traced_server, NULL);
-  Tcl_TraceVar(interp, "net-type",
-	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
-	       traced_nettype, NULL);
   Tcl_TraceVar(interp, "nick-len",
 	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 	       traced_nicklen, NULL);
@@ -1789,6 +1736,5 @@ char *start(Function *global_funcs)
   newserver[0] = 0;
   newserverport = 0;
   curserv = 999;
-  do_nettype();
   return NULL;
 }

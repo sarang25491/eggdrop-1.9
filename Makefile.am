@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.7 2001/10/27 16:34:46 ite Exp $
+# $Id: Makefile.am,v 1.8 2002/02/17 12:40:43 ite Exp $
 
 AUX_DIST		= $(ac_aux_dir)/install-sh \
 			$(ac_aux_dir)/ltmain.sh \
@@ -12,6 +12,7 @@ AUX_DIST_EXTRA		= $(ac_aux_dir)/codeset.m4 \
 			$(ac_aux_dir)/iconv.m4 \
 			$(ac_aux_dir)/isc-posix.m4 \
 			$(ac_aux_dir)/lcmessage.m4 \
+			$(ac_aux_dir)/mpatrol.m4 \
 			$(ac_aux_dir)/progtest.m4 \
 			$(ac_aux_dir)/acinclude.m4 \
 			$(ac_aux_dir)/config.guess \
@@ -19,7 +20,7 @@ AUX_DIST_EXTRA		= $(ac_aux_dir)/codeset.m4 \
 
 EXTRA_DIST		= bootstrap
 
-SUBDIRS			= intl libltdl lib modules src scripts @POSUB@
+SUBDIRS			= intl libltdl lib modules src scripts nettype @POSUB@
 DISTCLEANFILES		= lush.h
 MAINTAINERCLEANFILES	= Makefile.in aclocal.m4 configure config-h.in \
 			config.cache config.log config.status \
