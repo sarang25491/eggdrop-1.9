@@ -30,7 +30,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: patch.h,v 1.585 2002/05/05 16:40:38 tothwolf Exp $
+ * $Id: patch.h,v 1.586 2002/05/12 07:58:30 stdarg Exp $
  */
 
 #ifndef _EGG_PATCH_H
@@ -44,17 +44,17 @@ patch("CVS");			/* CVS version */
  *
  *
  */
-patch("1020502316");		/* current unixtime */
+patch("1021190215");		/* current unixtime */
 /*
  *
  *
  */
-patch("cmd-clean-up");
+patch("no-more-registry");
 /*
  *
  *
  */
-patch("cmd-clean-up");
+patch("no-more-registry");
 /*
  *
  *
