@@ -7,7 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2003-12-17 21:21-0500\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2003-12-18 00:15-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -74,144 +75,25 @@ msgstr ""
 msgid "%s: option `-W %s' doesn't allow an argument\n"
 msgstr ""
 
-#: modules/dccparty/dccparty.c:64
+#: modules/dccparty/dccparty.c:87
 #, c-format
 msgid "Ignoring chat request from %s (user unknown)."
 msgstr ""
 
-#: modules/dccparty/dccparty.c:88
-#, c-format
-msgid ""
-"Hello %s/%d!\r\n"
-"\r\n"
-msgstr ""
-
-#: modules/dccparty/dccparty.c:89 modules/dccparty/dccparty.c:169
-#: modules/telnetparty/telnetparty.c:377
-msgid "Please enter your nickname.\r\n"
-msgstr ""
-
-#: modules/dccparty/dccparty.c:139 modules/telnetparty/telnetparty.c:287
-#: modules/telnetparty/telnetparty.c:338
-msgid ""
-"\r\n"
-"Please enter your nickname.\r\n"
-msgstr ""
-
-#: modules/dccparty/dccparty.c:156 modules/telnetparty/telnetparty.c:362
-msgid "Please enter your password.\r\n"
-msgstr ""
-
-#: modules/dccparty/dccparty.c:161 modules/telnetparty/telnetparty.c:369
-msgid ""
-"Invalid username/password.\r\n"
-"\r\n"
-msgstr ""
-
-#: modules/dccparty/dccparty.c:175
+#: modules/dccparty/dccparty.c:198
 msgid ""
 "\r\n"
 "Welcome to the dcc partyline interface!\r\n"
 msgstr ""
 
-#: modules/dccparty/dccparty.c:176 modules/telnetparty/telnetparty.c:384
+#: modules/dccparty/dccparty.c:199
 #, c-format
 msgid "Your ident is: %s\r\n"
 msgstr ""
 
-#: modules/dccparty/dccparty.c:177 modules/telnetparty/telnetparty.c:385
+#: modules/dccparty/dccparty.c:200
 #, c-format
 msgid "Your hostname is: %s\r\n"
-msgstr ""
-
-#: modules/dccparty/dccparty.c:205
-msgid "Deleted!"
-msgstr ""
-
-#: modules/dccparty/events.c:34 modules/telnetparty/events.c:33
-#, c-format
-msgid "%s is now known as %s.\n"
-msgstr ""
-
-#: modules/dccparty/events.c:42 modules/telnetparty/events.c:41
-#, c-format
-msgid "%s (%s@%s) has quit: %s\n"
-msgstr ""
-
-#: modules/dccparty/events.c:61 modules/telnetparty/events.c:60
-#, c-format
-msgid "%s %s (%s@%s) has joined the channel.\r\n"
-msgstr ""
-
-#: modules/dccparty/events.c:69 modules/telnetparty/events.c:68
-#, c-format
-msgid "%s %s (%s@%s) has left the channel: %s\r\n"
-msgstr ""
-
-#: modules/ircparty/ircparty.c:107
-#, c-format
-msgid ":eggdrop.bot NOTICE AUTH :*** Hello %s/%d!\r\n"
-msgstr ""
-
-#: modules/ircparty/ircparty.c:108
-msgid ""
-":eggdrop.bot NOTICE AUTH :*** Don't forget to use the /PASS command to send "
-"your password in addition to normal registration!\r\n"
-msgstr ""
-
-#: modules/ircparty/ircparty.c:158
-msgid ""
-"NOTICE *** Don't forget to use the /PASS command to send your password in "
-"addition to normal registration!\r\n"
-msgstr ""
-
-#: modules/ircparty/ircparty.c:166
-#, c-format
-msgid ":eggdrop.bot 001 %s :Welcome to the Eggdrop Partyline!\r\n"
-msgstr ""
-
-#: modules/ircparty/ircparty.c:167
-#, c-format
-msgid ":eggdrop.bot 375 %s :Message of the Day\r\n"
-msgstr ""
-
-#: modules/ircparty/ircparty.c:168
-#, c-format
-msgid ":eggdrop.bot 372 %s :There isn't one.\r\n"
-msgstr ""
-
-#: modules/ircparty/ircparty.c:169
-#, c-format
-msgid ":eggdrop.bot 376 %s :End of /MOTD command.\r\n"
-msgstr ""
-
-#: modules/ircparty/ircparty.c:174
-#, c-format
-msgid ":eggdrop.bot 461 %s JOIN :Not enough parameters.\r\n"
-msgstr ""
-
-#: modules/ircparty/ircparty.c:181
-#, c-format
-msgid ":eggdrop.bot 461 %s PART :Not enough parameters.\r\n"
-msgstr ""
-
-#: modules/ircparty/ircparty.c:197
-#, c-format
-msgid ":eggdrop.bot 461 %s PRIVMSG :Not enough parameters.\r\n"
-msgstr ""
-
-#: modules/ircparty/ircparty.c:203 modules/ircparty/ircparty.c:208
-#, c-format
-msgid ":eggdrop.bot 401 %s %s :No such nick/channel\r\n"
-msgstr ""
-
-#: modules/ircparty/ircparty.c:233
-#, c-format
-msgid ":eggdrop.bot 315 %s %s :End of /WHO list.\r\n"
-msgstr ""
-
-#: modules/ircparty/ircparty.c:271
-msgid "NOTICE *** Invalid username/password.\r\n"
 msgstr ""
 
 #: modules/javascript/javascript.c:179
@@ -354,7 +236,7 @@ msgstr ""
 
 #: modules/server/input.c:428
 #, c-format
-msgid "Cannot change to banned nickname (%s on %s).)"
+msgid "Cannot change to banned nickname (%s on %s)."
 msgstr ""
 
 #: modules/server/input.c:438
@@ -567,59 +449,8 @@ msgid ""
 "tclversion]\\n    Reported patchlevel: [info patchlevel]\""
 msgstr ""
 
-#: modules/telnetparty/telnetparty.c:286
-#, c-format
-msgid "Hello %s/%d!\r\n"
-msgstr ""
-
-#: modules/telnetparty/telnetparty.c:383
-msgid ""
-"\r\n"
-"Welcome to the telnet partyline interface!\r\n"
-msgstr ""
-
-#. Kill bot incase a botchk is run from crond.
-#: src/bg.c:126
-#, c-format
-msgid "Fatal: Could not write pid file '%s'.\n"
-msgstr ""
-
-#. Let the bot live since this doesn't appear to be a botchk
-#: src/bg.c:133 src/main.c:510 src/main.c:516
-#, c-format
-msgid "WARNING: Could not write pid file '%s'.\n"
-msgstr ""
-
-#: src/bg.c:134 src/main.c:518
-#, c-format
-msgid ""
-"Launched into the background (pid: %d).\n"
-"\n"
-msgstr ""
-
-#: src/bg.c:152
-msgid "CANNOT OPEN PIPE."
-msgstr ""
-
-#: src/bg.c:160
-msgid "CANNOT FORK PROCESS."
-msgstr ""
-
-#. We only reach this point in case of an error.
-#: src/bg.c:192 src/bg.c:214 src/bg.c:231
-msgid "COMMUNICATION THROUGH PIPE BROKE."
-msgstr ""
-
 #: src/core_party.c:45
 msgid "Syntax: join <channel>"
-msgstr ""
-
-#: src/core_party.c:64
-msgid "Goodbye!"
-msgstr ""
-
-#: src/core_party.c:65
-msgid "Quit"
 msgstr ""
 
 #: src/core_party.c:79
@@ -777,23 +608,6 @@ msgstr ""
 msgid "Cycling logfile %s: over max-logsize (%d kilobytes)."
 msgstr ""
 
-#: src/main.c:103
-#, c-format
-msgid "Fatal: %s"
-msgstr ""
-
-#: src/main.c:114
-msgid "BUS ERROR."
-msgstr ""
-
-#: src/main.c:125
-msgid "SEGMENT VIOLATION."
-msgstr ""
-
-#: src/main.c:136
-msgid "FLOATING POINT ERROR."
-msgstr ""
-
 #: src/main.c:147
 msgid "Bot shutting down: received TERMINATE signal."
 msgstr ""
@@ -843,88 +657,4 @@ msgstr ""
 #: src/main.c:286
 #, c-format
 msgid "Warning: timer drift (%d minutes)."
-msgstr ""
-
-#: src/main.c:346
-#, c-format
-msgid "Fatal error initializing ltdl: %s\n"
-msgstr ""
-
-#: src/main.c:404
-msgid ""
-"WARNING: Do NOT run this DEVELOPMENT version for any purpose other than "
-"testing.\n"
-"\n"
-msgstr ""
-
-#: src/main.c:406
-msgid "Eggdrop will not run as root!"
-msgstr ""
-
-#: src/main.c:410
-msgid ""
-"ERROR\n"
-"\n"
-"Check file permissions on your config file!\n"
-"Make sure other groups and users cannot read/write it.\n"
-msgstr ""
-
-#: src/main.c:427
-#, c-format
-msgid ""
-"\n"
-"\n"
-"\n"
-"You are trying to create a new userfile, but the old one still exists (%s)!\n"
-"\n"
-"Please remove the userfile, or do not pass the -m option.\n"
-"\n"
-msgstr ""
-
-#: src/main.c:431
-msgid ""
-"\n"
-"\n"
-"\n"
-"Hello! I see you are creating a new userfile.\n"
-"\n"
-msgstr ""
-
-#: src/main.c:432
-msgid ""
-"Let's create the owner account.\n"
-"\n"
-msgstr ""
-
-#: src/main.c:434
-msgid "Enter the owner handle: "
-msgstr ""
-
-#: src/main.c:440
-msgid ""
-"Come on, enter a real handle.\n"
-"\n"
-msgstr ""
-
-#: src/main.c:445
-msgid ""
-"Failed to create user record! Out of memory?\n"
-"\n"
-msgstr ""
-
-#: src/main.c:451
-#, c-format
-msgid ""
-"Your owner handle is '%s' and your password is '%s' (without the quotes).\n"
-"\n"
-msgstr ""
-
-#: src/main.c:471
-#, c-format
-msgid "I detect %s already running from this directory.\n"
-msgstr ""
-
-#: src/main.c:472
-#, c-format
-msgid "If this is incorrect, please erase '%s'.\n"
 msgstr ""
