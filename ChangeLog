@@ -4,7 +4,7 @@
 
 	Pots 
 
-2002-02-20 03:29  wcc
+2002-02-20 03:29  Will Buckner <wcc@techmonkeys.org>
 
 	* doc/UPDATES1.6, src/cmds.c:
 
@@ -195,7 +195,7 @@
 
 	Pots 
 
-2002-02-07 22:18  wcc
+2002-02-07 22:18  Will Buckner <wcc@techmonkeys.org>
 
 	* doc/compiling.FAQ, doc/text-substitutions.doc,
 	doc/html/about.html, doc/html/app-problems.html,
@@ -292,13 +292,13 @@
 
 	Pots 
 
-2002-02-04 07:32  wcc
+2002-02-04 07:32  Will Buckner <wcc@techmonkeys.org>
 
 	* doc/UPDATES1.6:
 
 	Sync'd doc/UPDATES1.6 with 1.6.  
 
-2002-02-04 07:27  wcc
+2002-02-04 07:27  Will Buckner <wcc@techmonkeys.org>
 
 	* src/: chanprog.c, patch.h:
 
@@ -464,7 +464,7 @@
 
 	Pots 
 
-2002-01-22 21:45  wcc
+2002-01-22 21:45  Will Buckner <wcc@techmonkeys.org>
 
 	* modules/notes/notes.c:
 
@@ -529,7 +529,7 @@
 
 	Pots 
 
-2002-01-19 22:52  wcc
+2002-01-19 22:52  Will Buckner <wcc@techmonkeys.org>
 
 	* doc/html/authors.html:
 
