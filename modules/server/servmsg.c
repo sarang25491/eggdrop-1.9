@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.3 2001/12/09 21:49:41 guppy Exp $
+ * $Id: servmsg.c,v 1.4 2001/12/10 02:50:55 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -346,23 +346,6 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
   return 0;
 }
 
-/* Check for more than 8 control characters in a line.
- * This could indicate: beep flood CTCP avalanche.
- */
-static int detect_avalanche(char *msg)
-{
-  int count = 0;
-  unsigned char *p;
-
-  for (p = (unsigned char *) msg; (*p) && (count < 8); p++)
-    if ((*p == 7) || (*p == 1))
-      count++;
-  if (count >= 8)
-    return 1;
-  else
-    return 0;
-}
-
 /* Got a private message.
  */
 static int gotmsg(char *from, char *ignore, char *msg)
@@ -382,21 +365,7 @@ static int gotmsg(char *from, char *ignore, char *msg)
   strncpyz(buf, from, sizeof buf);
   nick = strtok(buf, "!");
   uhost = strtok(NULL, "!");
-  /* Only check if flood-ctcp is active */
-  if (flud_ctcp_thr && detect_avalanche(msg)) {
-    if (!ignoring) {
-      putlog(LOG_MODES, "*", "Avalanche from %s - ignoring", from);
-      /* FIXME: get rid of this mess */
-      p = strchr(uhost, '@');
-      if (p != NULL)
-	p++;
-      else
-	p = uhost;
-      simple_sprintf(ctcpbuf, "*!*@%s", p);
-      addignore(ctcpbuf, origbotname, "ctcp avalanche",
-		now + (60 * ignore_time));
-    }
-  }
+
   /* Check for CTCP: */
   ctcp_reply[0] = 0;
   p = strchr(msg, 1);
@@ -521,12 +490,7 @@ static int gotnotice(char *from, char *ignore, char *msg)
   strncpyz(buf, from, sizeof buf);
   nick = strtok(buf, "!");
   uhost = strtok(NULL, "!");
-  if (flud_ctcp_thr && detect_avalanche(msg)) {
-    /* Discard -- kick user if it was to the channel */
-    if (!ignoring)
-      putlog(LOG_MODES, "*", "Avalanche from %s", from);
-    return 0;
-  }
+
   /* Check for CTCP: */
   p = strchr(msg, 1);
   while ((p != NULL) && (*p)) {

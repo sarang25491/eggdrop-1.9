@@ -31,20 +31,6 @@ set max-bans 20
     is reached.
 
 
-set kick-fun 0
-    Set this to 1 if you want the bot to kick for control character/ctcp
-    avalanches to a channel. Remember that if it does, as it won't ban
-    them, it can be at the origin of a nice kick-flood.
-    Valid settings are 0 for OFF and 1 ON.
-
-
-set ban-fun 0
-    Set this to 1 if you want the bot to ban for control character/ctcp
-    avalanches to a channel. Can prevent the above described kick-flood,
-    but can also fill the banlist.
-    Valid settings are 0 for OFF and 1 ON.
-
-
 set learn-users 0
     If you want people to introduce themself to eggdrop via 'hello',
     set this to 1.

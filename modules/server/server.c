@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.3 2001/12/09 21:49:41 guppy Exp $
+ * $Id: server.c,v 1.4 2001/12/10 02:50:55 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1696,7 +1696,7 @@ static Function server_table[] =
   /* 16 - 19 */
   (Function) & trigger_on_ignore, /* int				*/
   (Function) check_tcl_ctcpr,
-  (Function) detect_avalanche,
+  (Function) 0,
   (Function) nuke_server,
   /* 20 - 23 */
   (Function) newserver,		/* char *				*/
