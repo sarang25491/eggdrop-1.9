@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.13 2002/05/12 05:59:51 stdarg Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.14 2002/05/12 06:25:25 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "channels"
@@ -738,7 +738,7 @@ static char *channels_close()
   free_udef(udef);
   if (BT_chon) rem_builtins2(BT_chon, my_chon);
   if (BT_dcc) rem_builtins2(BT_dcc, C_dcc_irc);
-  script_delete_cmd_table(channel_script_cmds);
+  script_delete_commands(channel_script_cmds);
   rem_tcl_commands(channels_cmds);
   rem_tcl_strings(my_tcl_strings);
   rem_tcl_ints(my_tcl_ints);
