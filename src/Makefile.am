@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.45 2003/08/06 18:01:00 stdarg Exp $
+# $Id: Makefile.am,v 1.46 2003/08/19 18:20:04 stdarg Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 bindir			= $(exec_prefix)
@@ -15,7 +15,6 @@ DEFS			= -DLOCALEDIR=\"\$(localedir)\" $(EGG_DEBUG) @DEFS@
 
 bin_PROGRAMS		= eggdrop
 eggdrop_SOURCES		= bg.c bg.h \
-			cmdt.h \
 			core_binds.c core_binds.h \
 			core_config.c core_config.h \
 			core_party.c \

@@ -448,6 +448,18 @@ int dcc_send_info(int idx, int field, void *valueptr)
 			else n = 0;
 			*(int *)valueptr = n;
 			break;
+		case DCC_SEND_ACKS:
+			*(int *)valueptr = send->acks;
+			break;
+		case DCC_SEND_BYTES_ACKED:
+			*(int *)valueptr = send->bytes_acked;
+			break;
+		case DCC_SEND_REQUEST_TIME:
+			*(int *)valueptr = send->request_time;
+			break;
+		case DCC_SEND_CONNECT_TIME:
+			*(int *)valueptr = send->connect_time;
+			break;
 		default:
 			return(-1);
 	}

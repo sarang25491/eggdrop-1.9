@@ -10,7 +10,7 @@ static int party_servers(partymember_t *p, const char *nick, user_t *u, const ch
 	server_t *s;
 
 	if (server_list_len <= 0) partymember_printf(p, "The server list is empty.");
-	else partymember_printf(p, "%d server%s:", server_list_len, (server_list_len == 1) ? "s" : "");
+	else partymember_printf(p, "%d server%s:", server_list_len, (server_list_len != 1) ? "s" : "");
 	for (s = server_list; s; s = s->next) {
 		if (s->port) partymember_printf(p, "   %s (port %d)%s", s->host, s->port, s->pass ? " (password set)" : "");
 		else partymember_printf(p, "   %s (default port)%s", s->host, s->pass ? " (password set)" : "");
@@ -93,10 +93,32 @@ static int party_dump(partymember_t *p, const char *nick, user_t *u, const char 
 	return(BIND_RET_LOG);
 }
 
+static int party_jump(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	char *host, *pass;
+	int port, num;
+
+	if (text && *text) {
+		parse_server(text, &host, &port, &pass);
+		num = server_find(host, port, pass);
+		if (num < 0) {
+			server_add(host, port, pass);
+			partymember_printf(p, "Added %s:%d\n", host, port ? port : server_config.default_port);
+			num = 0;
+		}
+		free(host);
+	}
+	else num = server_list_index+1;
+	server_set_next(num);
+	kill_server("changing servers");
+	return(0);
+}
+
 bind_list_t server_party_commands[] = {
 	{"", "servers", party_servers},
 	{"m", "+server", party_plus_server},
 	{"m", "-server", party_minus_server},
 	{"m", "dump", party_dump},
+	{"m", "jump", party_jump},
 	{0}
 };

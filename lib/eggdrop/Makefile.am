@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.23 2003/06/18 04:10:22 stdarg Exp $
+# $Id: Makefile.am,v 1.24 2003/08/19 18:20:04 stdarg Exp $
 
 MAINTAINERCLEANFILES	= Makefile.in
 
@@ -16,6 +16,7 @@ libeggdrop_la_SOURCES	= base64.c base64.h \
 			eggmod.c eggmod.h \
 			eggnet.c eggnet.h \
 			eggowner.c eggowner.h \
+			eggstring.c eggstring.h \
 			eggtimer.c eggtimer.h \
 			fileutil.c fileutil.h \
 			flags.c flags.h \

@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.29 2003/08/06 18:01:00 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.30 2003/08/19 18:20:04 stdarg Exp $";
 #endif
 */
 
@@ -120,6 +120,11 @@ static int script_dcc_send_info(int idx, char *what)
 	else if (!strcasecmp(what, "bytes_sent")) field = DCC_SEND_SENT;
 	else if (!strcasecmp(what, "total_cps")) field = DCC_SEND_CPS_TOTAL;
 	else if (!strcasecmp(what, "snapshot_cps")) field = DCC_SEND_CPS_SNAPSHOT;
+	else if (!strcasecmp(what, "acks")) field = DCC_SEND_ACKS;
+	else if (!strcasecmp(what, "bytes_acked")) field = DCC_SEND_BYTES_ACKED;
+	else if (!strcasecmp(what, "resumed_at")) field = DCC_SEND_RESUMED_AT;
+	else if (!strcasecmp(what, "request_time")) field = DCC_SEND_REQUEST_TIME;
+	else if (!strcasecmp(what, "connect_time")) field = DCC_SEND_CONNECT_TIME;
 	else return(-1);
 
 	if (dcc_send_info(idx, field, &value) < 0) return(-1);

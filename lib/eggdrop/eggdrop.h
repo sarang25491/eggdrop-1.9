@@ -21,6 +21,7 @@
 #include <eggdrop/eggmod.h>
 #include <eggdrop/eggnet.h>
 #include <eggdrop/eggowner.h>
+#include <eggdrop/eggstring.h>
 #include <eggdrop/eggtimer.h>
 #include <eggdrop/fileutil.h>
 #include <eggdrop/garbage.h>

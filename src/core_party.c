@@ -123,6 +123,45 @@ static int party_plus_host(partymember_t *p, const char *nick, user_t *u, const 
 	return(0);
 }
 
+static int party_minus_host(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	return(0);
+}
+
+static int party_chattr(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	const char *next;
+	char *who, *flags, *chan;
+	user_t *dest;
+	flags_t flagstruct;
+	char flagstr[64];
+	int n;
+
+	n = egg_get_words(text, &next, &who, &chan, &flags, NULL);
+	if (!chan) {
+		partymember_printf(p, "Syntax: chattr <user> [channel] <+/-flags>");
+		return(0);
+	}
+	if (!flags) {
+		flags = chan;
+		chan = NULL;
+	}
+	dest = user_lookup_by_handle(who);
+	if (dest) {
+		user_set_flag_str(dest, chan, flags);
+		user_get_flags(dest, chan, &flagstruct);
+		flag_to_str(&flagstruct, flagstr);
+		partymember_printf(p, "Flags for %s are now '%s'", who, flagstr);
+	}
+	else {
+		partymember_printf(p, "'%s' is not a valid user", who);
+	}
+	free(who);
+	free(flags);
+	if (chan) free(chan);
+	return(0);
+}
+
 static bind_list_t core_party_binds[] = {
 	{NULL, "join", party_join},
 	{NULL, "msg", party_msg},
@@ -135,6 +174,7 @@ static bind_list_t core_party_binds[] = {
 	{"n", "die", party_die},
 	{"n", "+user", party_plus_user},
 	{"n", "-user", party_minus_user},
+	{"n", "chattr", party_chattr},
 	{0}
 };
 

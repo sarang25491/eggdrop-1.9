@@ -6,6 +6,11 @@
 #define DCC_SEND_LEFT	2
 #define DCC_SEND_CPS_TOTAL	3
 #define DCC_SEND_CPS_SNAPSHOT	4
+#define DCC_SEND_ACKS	5
+#define DCC_SEND_BYTES_ACKED	6
+#define DCC_SEND_RESUMED_AT	7
+#define DCC_SEND_REQUEST_TIME	8
+#define DCC_SEND_CONNECT_TIME	9
 
 int dcc_dns_set(const char *host);
 int dcc_start_chat(const char *nick, int timeout);
