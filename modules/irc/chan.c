@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.1 2001/10/27 16:34:50 ite Exp $
+ * $Id: chan.c,v 1.2 2001/12/01 16:49:31 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1522,7 +1522,7 @@ static int gotjoin(char *from, char *ignore, char *chname)
     detect_chan_flood(nick, uhost, from, chan, FLOOD_JOIN, NULL);
     /* Grab last time joined before we update it */
     u = get_user_by_host(from);
-    get_user_flagrec(u, &fr, chname);
+    get_user_flagrec(u, &fr, chan->dname); /* Lam: fix to work with !channels */
     if (!channel_active(chan) && !match_my_nick(nick)) {
       /* uh, what?!  i'm on the channel?! */
       putlog(LOG_MISC, chan->dname,
