@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.10 2002/04/26 09:29:51 stdarg Exp $
+ * $Id: channels.c,v 1.11 2002/05/01 03:56:10 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -698,34 +698,34 @@ static char *traced_globchanset(ClientData cdata, Tcl_Interp * irp,
 
 static tcl_ints my_tcl_ints[] =
 {
-  {"share-greet",		NULL,				0},
-  {"use-info",			&use_info,			0},
-  {"ban-time",			&ban_time,			0},
-  {"exempt-time",		&exempt_time,			0},
-  {"invite-time",		&invite_time,			0},
-  {"quiet-save",		&quiet_save,			0},
-  {"global-stopnethack-mode",	&global_stopnethack_mode,	0},
-  {"global-revenge-mode",       &global_revenge_mode,           0},
-  {"global-idle-kick",		&global_idle_kick,		0},
+  {"share_greet",		NULL,				0},
+  {"use_info",			&use_info,			0},
+  {"ban_time",			&ban_time,			0},
+  {"exempt_time",		&exempt_time,			0},
+  {"invite_time",		&invite_time,			0},
+  {"quiet_save",		&quiet_save,			0},
+  {"global_stopnethack_mode",	&global_stopnethack_mode,	0},
+  {"global_revenge_mode",       &global_revenge_mode,           0},
+  {"global_idle_kick",		&global_idle_kick,		0},
   {NULL,			NULL,				0}
 };
 
 static tcl_coups mychan_tcl_coups[] =
 {
-  {"global-flood-chan",		&gfld_chan_thr,		&gfld_chan_time},
-  {"global-flood-deop",		&gfld_deop_thr,		&gfld_deop_time},
-  {"global-flood-kick",		&gfld_kick_thr,		&gfld_kick_time},
-  {"global-flood-join",		&gfld_join_thr,		&gfld_join_time},
-  {"global-flood-ctcp",		&gfld_ctcp_thr,		&gfld_ctcp_time},
-  {"global-flood-nick",		&gfld_nick_thr, 	&gfld_nick_time},
-  {"global-aop-delay",		&global_aop_min,	&global_aop_max},
+  {"global_flood_chan",		&gfld_chan_thr,		&gfld_chan_time},
+  {"global_flood_deop",		&gfld_deop_thr,		&gfld_deop_time},
+  {"global_flood_kick",		&gfld_kick_thr,		&gfld_kick_time},
+  {"global_flood_join",		&gfld_join_thr,		&gfld_join_time},
+  {"global_flood_ctcp",		&gfld_ctcp_thr,		&gfld_ctcp_time},
+  {"global_flood_nick",		&gfld_nick_thr, 	&gfld_nick_time},
+  {"global_aop_delay",		&global_aop_min,	&global_aop_max},
   {NULL,			NULL,			NULL}
 };
 
 static tcl_strings my_tcl_strings[] =
 {
   {"chanfile",		chanfile,	120,	STR_PROTECT},
-  {"global-chanmode",	glob_chanmode,	64,	0},
+  {"global_chanmode",	glob_chanmode,	64,	0},
   {NULL,		NULL,		0,	0}
 };
 

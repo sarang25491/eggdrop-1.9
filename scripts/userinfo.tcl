@@ -1,7 +1,7 @@
 # userinfo.tcl v1.06 for Eggdrop 1.4.3 and higher
 #           Scott G. Taylor -- ButchBub!staylor@mrynet.com
 #
-# $Id: userinfo.tcl,v 1.4 2001/10/10 13:15:59 tothwolf Exp $
+# $Id: userinfo.tcl,v 1.5 2002/05/01 03:56:11 stdarg Exp $
 #
 # v1.00      ButchBub     14 July      1997 -Original release.  Based on
 #                                            whois.tcl "URL" commands.
@@ -22,6 +22,7 @@
 # v1.07      TaKeDa       20 August    2001 -now script works also on bots,
 #                                            which didn't have server module loaded
 #                                           -added new fields PHONE & ICQ
+# v1.08      stdarg       30 April     2002 - whois-fields is now whois_fields
 #
 # TO USE:  o    Set the desired userinfo field keywords to the
 #               `userinfo-fields' line below where indicated.
@@ -31,15 +32,15 @@
 #               the IRC command: /MSG <botnick> irl Joe Blow.
 #          o    See the new information now appear with the whois command.
 #
-# This script enhances the `whois' output utilising the `whois-fields'
+# This script enhances the `whois' output utilising the `whois_fields'
 # option of eggdrop 1.1-grant and later versions.  It adds the functionality
 # of whois.tcl used in pre-1.1-grant versions.
 #
 # The fields desired to be maintained in the userfile `xtra' information
 # should be put in `userinfo-fields'.  This is different than the Eggdrop
-# configuration variable `whois-fields' in that this script will add the
+# configuration variable `whois_fields' in that this script will add the
 # commands to change these fields.   It will also add these desired fields
-# to the `whois-fields' itself, so do not define them there as well.  The
+# to the `whois_fields' itself, so do not define them there as well.  The
 # fields added in `userinfo-fields' will be converted to upper case for
 # aesthetics in the `whois' command output.
 #
@@ -86,13 +87,13 @@ if {![info exists numversion] || ($numversion < 1040300)} {
 
 # Make sure we don't bail because whois and/or userinfo-fields aren't set.
 
-if { ![info exists whois-fields]} { set whois-fields "" }
+if { ![info exists whois_fields]} { set whois_fields "" }
 if { ![info exists userinfo-fields]} { set userinfo-fields "" }
 
-# Add only the userinfo-fields not already in the whois-fields list.
+# Add only the userinfo-fields not already in the whois_fields list.
 
 foreach field [string tolower ${userinfo-fields}] {
- if { [lsearch -exact [string tolower ${whois-fields}] $field] == -1 } { append whois-fields " " [string toupper $field] }
+ if { [lsearch -exact [string tolower ${whois_fields}] $field] == -1 } { append whois_fields " " [string toupper $field] }
 }
 
 # If olduserinfo-fields doesn't exist, create it.
@@ -100,12 +101,12 @@ foreach field [string tolower ${userinfo-fields}] {
 if { ![info exists olduserinfo-fields] } { set olduserinfo-fields ${userinfo-fields} }
 
 # Delete only the userinfo-fields that have been removed but are still
-# listed in the whois-fields list.
+# listed in the whois_fields list.
 
 foreach field [string tolower ${olduserinfo-fields}] {
- if { [lsearch -exact [string tolower ${whois-fields}] $field] >= 0 && [lsearch -exact [string tolower ${userinfo-fields}] $field] == -1 } {
-  set fieldtmp [lsearch -exact [string tolower ${whois-fields}] $field]
-  set whois-fields [lreplace ${whois-fields} $fieldtmp $fieldtmp]
+ if { [lsearch -exact [string tolower $whois_fields] $field] >= 0 && [lsearch -exact [string tolower ${userinfo-fields}] $field] == -1 } {
+  set fieldtmp [lsearch -exact [string tolower $whois_fields] $field]
+  set whois_fields [lreplace $whois_fields $fieldtmp $fieldtmp]
  }
 }
 

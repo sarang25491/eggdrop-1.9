@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.15 2002/04/25 17:34:19 stdarg Exp $
+ * $Id: server.c,v 1.16 2002/05/01 03:56:11 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1163,44 +1163,44 @@ static tcl_strings my_tcl_strings[] =
   {"botnick",			NULL,		0,		STR_PROTECT},
   {"altnick",			altnick,	NICKMAX,	0},
   {"realname",			botrealname,	80,		0},
-  {"stackable-commands",	stackablecmds,	510,		0},
-  {"stackable2-commands",	stackable2cmds,	510,		0},
+  {"stackable_commands",	stackablecmds,	510,		0},
+  {"stackable2_commands",	stackable2cmds,	510,		0},
   {NULL,			NULL,		0,		0}
 };
 
 static tcl_coups my_tcl_coups[] =
 {
-  {"flood-msg",		&flud_thr,		&flud_time},
-  {"flood-ctcp",	&flud_ctcp_thr, 	&flud_ctcp_time},
+  {"flood_msg",		&flud_thr,		&flud_time},
+  {"flood_ctcp",	&flud_ctcp_thr, 	&flud_ctcp_time},
   {NULL,		NULL,			NULL}
 };
 
 static tcl_ints my_tcl_ints[] =
 {
-  {"server-timeout",		&server_timeout,		0},
-  {"server-online",		(int *) &server_online,		2},
-  {"keep-nick",			&keepnick,			0},
-  {"check-stoned",		&check_stoned,			0},
-  {"quiet-reject",		&quiet_reject,			0},
-  {"max-queue-msg",		&maxqmsg,			0},
-  {"trigger-on-ignore",		&trigger_on_ignore,		0},
-  {"answer-ctcp",		&answer_ctcp,			0},
-  {"server-cycle-wait",		(int *) &server_cycle_wait,	0},
-  {"default-port",		&default_port,			0},
-  {"check-mode-r",		&check_mode_r,			0},
-  {"ctcp-mode",			&ctcp_mode,			0},
-  {"double-mode",		&double_mode,			0},/* G`Quann */
-  {"double-server",		&double_server,			0},
-  {"double-help",		&double_help,			0},
-  {"use-penalties",		&use_penalties,			0},
-  {"use-fastdeq",		&use_fastdeq,			0},
+  {"server_timeout",		&server_timeout,		0},
+  {"server_online",		(int *) &server_online,		2},
+  {"keep_nick",			&keepnick,			0},
+  {"check_stoned",		&check_stoned,			0},
+  {"quiet_reject",		&quiet_reject,			0},
+  {"max_queue_msg",		&maxqmsg,			0},
+  {"trigger_on_ignore",		&trigger_on_ignore,		0},
+  {"answer_ctcp",		&answer_ctcp,			0},
+  {"server_cycle_wait",		(int *) &server_cycle_wait,	0},
+  {"default_port",		&default_port,			0},
+  {"check_mode_r",		&check_mode_r,			0},
+  {"ctcp_mode",			&ctcp_mode,			0},
+  {"double_mode",		&double_mode,			0},/* G`Quann */
+  {"double_server",		&double_server,			0},
+  {"double_help",		&double_help,			0},
+  {"use_penalties",		&use_penalties,			0},
+  {"use_fastdeq",		&use_fastdeq,			0},
   {"nicklen",                   &nick_len,                      0},
   /* FIXME: remove this later ... before first stable release */
   {"nick-len",			&nick_len,			0},
-  {"optimize-kicks",		&optimize_kicks,		0},
+  {"optimize_kicks",		&optimize_kicks,		0},
   {"isjuped",			&nick_juped,			0},
   {NULL,			NULL,				0}
-};
+}; 
 
 
 /*

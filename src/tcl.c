@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.76 2002/04/28 07:37:12 stdarg Exp $
+ * $Id: tcl.c,v 1.77 2002/05/01 03:56:12 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -264,27 +264,27 @@ void rem_tcl_commands(tcl_cmds *tab)
 /* Strings */
 static tcl_strings def_tcl_strings[] =
 {
-  {"botnet-nick",	botnetnick,	HANDLEN,	0},
+  {"botnet_nick",	botnetnick,	HANDLEN,	0},
   {"userfile",		userfile,	120,		STR_PROTECT},
   {"motd",		motdfile,	120,		STR_PROTECT},
   {"admin",		admin,		120,		0},
-  {"help-path",		helpdir,	120,		STR_DIR | STR_PROTECT},
-  {"temp-path",		tempdir,	120,		STR_DIR | STR_PROTECT},
-  {"text-path",		textdir,	120,		STR_DIR | STR_PROTECT},
+  {"help_path",		helpdir,	120,		STR_DIR | STR_PROTECT},
+  {"temp_path",		tempdir,	120,		STR_DIR | STR_PROTECT},
+  {"text_path",		textdir,	120,		STR_DIR | STR_PROTECT},
   {"mod-path",		moddir,		120,		STR_DIR | STR_PROTECT},
-  {"notify-newusers",	notify_new,	120,		0},
+  {"notify_newusers",	notify_new,	120,		0},
   {"owner",		owner,		120,		STR_PROTECT},
-  {"my-ip",		myip,		120,		0},
-  {"my-ip6",		myip6,		120,		0},
+  {"my_ip",		myip,		120,		0},
+  {"my_ip6",		myip6,		120,		0},
   {"network",		network,	40,		0},
-  {"whois-fields",	whois_fields,	1024,		0},
-  {"nat-ip",		natip,		120,		0},
+  {"whois_fields",	whois_fields,	1024,		0},
+  {"nat_ip",		natip,		120,		0},
   {"username",		botuser,	10,		0},
   {"version",		egg_version,	0,		0},
   {"firewall",		firewall,	120,		0},
 /* confvar patch by aaronwl */
   {"config",		configfile,	0,		0},
-  {"telnet-banner",	bannerfile,	120,		STR_PROTECT},
+  {"telnet_banner",	bannerfile,	120,		STR_PROTECT},
   {"pidfile",		pid_file,	120,		STR_PROTECT},
   {NULL,		NULL,		0,		0}
 };
@@ -292,36 +292,36 @@ static tcl_strings def_tcl_strings[] =
 /* Ints */
 static tcl_ints def_tcl_ints[] =
 {
-  {"ignore-time",		&ignore_time,		0},
+  {"ignore_time",		&ignore_time,		0},
   {"handlen",                   &handlen,               2},
   /* FIXME: remove this later ... before first stable release */
-  {"hand-len",			&handlen,		2},
-  {"hourly-updates",		&notify_users_at,	0},
-  {"learn-users",		&learn_users,		0},
+  {"hand_len",			&handlen,		2},
+  {"hourly_updates",		&notify_users_at,	0},
+  {"learn_users",		&learn_users,		0},
   {"uptime",			(int *) &online_since,	2},
   {"console",			&conmask,		0},
-  {"default-flags",		&default_flags,		0},
+  {"default_flags",		&default_flags,		0},
   {"numversion",		&egg_numver,		2},
-  {"die-on-sighup",		&die_on_sighup,		1},
-  {"die-on-sigterm",		&die_on_sigterm,	1},
-  {"remote-boots",		&remote_boots,		1},
-  {"debug-output",		&debug_output,		1},
-  {"sort-users",		&sort_users,		0},
-  {"share-unlinks",		&share_unlinks,		0},
-  {"allow-dk-cmds",		&allow_dk_cmds,		0},
-  {"use-exempts",		&use_exempts,		0},			/* Jason/drummer */
-  {"use-invites",		&use_invites,		0},			/* Jason/drummer */
-  {"quiet-save",		&quiet_save,		0},			/* Lucas */
-  {"force-expire",		&force_expire,		0},			/* Rufus */
-  {"strict-host",		&strict_host,		0}, 			/* drummer */
-  {"userfile-perm",		&userfile_perm,		0},
+  {"die_on_sighup",		&die_on_sighup,		1},
+  {"die_on_sigterm",		&die_on_sigterm,	1},
+  {"remote_boots",		&remote_boots,		1},
+  {"debug_output",		&debug_output,		1},
+  {"sort_users",		&sort_users,		0},
+  {"share_unlinks",		&share_unlinks,		0},
+  {"allow_dk_cmds",		&allow_dk_cmds,		0},
+  {"use_exempts",		&use_exempts,		0},			/* Jason/drummer */
+  {"use_invites",		&use_invites,		0},			/* Jason/drummer */
+  {"quiet_save",		&quiet_save,		0},			/* Lucas */
+  {"force_expire",		&force_expire,		0},			/* Rufus */
+  {"strict_host",		&strict_host,		0}, 			/* drummer */
+  {"userfile_perm",		&userfile_perm,		0},
   {NULL,			NULL,			0}	/* arthur2 */
 };
 
 static tcl_coups def_tcl_coups[] =
 {
-  {"telnet-flood",	&flood_telnet_thr,	&flood_telnet_time},
-  {"reserved-portrange", &reserved_port_min, &reserved_port_max},
+  {"telnet_flood",	&flood_telnet_thr,	&flood_telnet_time},
+  {"reserved_portrange", &reserved_port_min, &reserved_port_max},
   {NULL,		NULL,			NULL}
 };
 

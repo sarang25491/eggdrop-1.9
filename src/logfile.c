@@ -55,11 +55,11 @@ static script_command_t log_script_cmds[] = {
 };
 
 static script_linked_var_t log_script_vars[] = {
-	{"", "logfile-suffix", &logfile_suffix, SCRIPT_STRING, NULL},
-	{"", "max-logsize", &max_logsize, SCRIPT_INTEGER, NULL},
-	{"", "switch-logfiles-at", &cycle_at, SCRIPT_INTEGER, NULL},
-	{"", "keep-all-logs", &keep_all_logs, SCRIPT_INTEGER, NULL},
-	{"", "quick-logs", &quick_logs, SCRIPT_INTEGER, NULL},
+	{"", "logfile_suffix", &logfile_suffix, SCRIPT_STRING, NULL},
+	{"", "max_logsize", &max_logsize, SCRIPT_INTEGER, NULL},
+	{"", "switch_logfiles_at", &cycle_at, SCRIPT_INTEGER, NULL},
+	{"", "keep_all_logs", &keep_all_logs, SCRIPT_INTEGER, NULL},
+	{"", "quick_logs", &quick_logs, SCRIPT_INTEGER, NULL},
 	{0}
 };
 

@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.12 2002/03/22 16:01:19 ite Exp $
+ * $Id: transfer.c,v 1.13 2002/05/01 03:56:11 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1448,10 +1448,10 @@ static int raw_dcc_send(char *filename, char *nick, char *from,
 
 static tcl_ints myints[] =
 {
-  {"max-dloads",	&dcc_limit},
-  {"dcc-block",		&dcc_block},
-  {"copy-to-tmp",	&copy_to_tmp},
-  {"xfer-timeout",	&wait_dcc_xfer},
+  {"max_dloads",	&dcc_limit},
+  {"dcc_block",		&dcc_block},
+  {"copy_to_tmp",	&copy_to_tmp},
+  {"xfer_timeout",	&wait_dcc_xfer},
   {NULL,		NULL}
 };
 

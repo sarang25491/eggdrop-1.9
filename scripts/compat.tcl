@@ -9,7 +9,7 @@
 # Tothwolf  06Oct1999: optimized
 # rtc       10Oct1999: added [set|get][dn|up]loads functions
 #
-# $Id: compat.tcl,v 1.7 2001/10/10 13:15:59 tothwolf Exp $
+# $Id: compat.tcl,v 1.8 2002/05/01 03:56:11 stdarg Exp $
 
 proc gethosts {hand} {
   getuser $hand HOSTS
@@ -104,6 +104,22 @@ proc getuploads {hand} {
 
 proc matchchanattr {hand flags chan} {
   matchattr $hand |$flags $chan
+}
+
+proc puthelp {text {next ""}} {
+	if {[string length $next]} {
+		putserv -help -next $text
+	} else {
+		putserv -help $text
+	}
+}
+
+proc putquick {text {next ""} {
+	if {[string length $next]} {
+		putserv -quick -next $text
+	} else {
+		putserv -quick $text
+	}
 }
 
 # as you can see it takes a lot of effort to simulate all the old commands

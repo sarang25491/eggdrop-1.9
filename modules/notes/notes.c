@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.11 2002/04/25 17:34:18 stdarg Exp $
+ * $Id: notes.c,v 1.12 2002/05/01 03:56:11 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1132,11 +1132,11 @@ static cmd_t notes_msgs[] =
 
 static tcl_ints notes_ints[] =
 {
-  {"note-life",		&note_life},
-  {"max-notes",		&maxnotes},
-  {"allow-fwd",		&allow_fwd},
-  {"notify-users",	&notify_users},
-  {"notify-onjoin",	&notify_onjoin},
+  {"note_life",		&note_life},
+  {"max_notes",		&maxnotes},
+  {"allow_fwd",		&allow_fwd},
+  {"notify_users",	&notify_users},
+  {"notify_onjoin",	&notify_onjoin},
   {NULL,		NULL}
 };
 

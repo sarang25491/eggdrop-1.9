@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.14 2002/04/01 17:34:55 eule Exp $
+ * $Id: irc.c,v 1.15 2002/05/01 03:56:10 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -753,28 +753,28 @@ static void check_tcl_need(char *chname, char *type)
 
 static tcl_ints myints[] =
 {
-  {"wait-split",		&wait_split,		0},
-  {"wait-info",			&wait_info,		0},
-  {"bounce-bans",		&bounce_bans,		0},
-  {"bounce-exempts",		&bounce_exempts,	0},
-  {"bounce-invites",		&bounce_invites,	0},
-  {"bounce-modes",		&bounce_modes,		0},
-  {"modes-per-line",		&modesperline,		0},
-  {"mode-buf-length",		&mode_buf_len,		0},
-  {"use-354",			&use_354,		0},
-  {"kick-method",		&kick_method,		0},
-  {"invite-key",		&invite_key,		0},
-  {"no-chanrec-info",		&no_chanrec_info,	0},
-  {"max-bans",			&max_bans,		0},
-  {"max-exempts",		&max_exempts,		0},
-  {"max-invites",		&max_invites,		0},
-  {"max-modes",			&max_modes,		0},
-  {"strict-host",		&strict_host,		0},
-  {"ctcp-mode",			&ctcp_mode,		0},
-  {"keep-nick",			&keepnick,		0},
-  {"prevent-mixing",		&prevent_mixing,	0},
-  {"rfc-compliant",		&rfc_compliant,		0},
-  {"include-lk",		&include_lk,		0},
+  {"wait_split",		&wait_split,		0},
+  {"wait_info",			&wait_info,		0},
+  {"bounce_bans",		&bounce_bans,		0},
+  {"bounce_exempts",		&bounce_exempts,	0},
+  {"bounce_invites",		&bounce_invites,	0},
+  {"bounce_modes",		&bounce_modes,		0},
+  {"modes_per_line",		&modesperline,		0},
+  {"mode_buf_length",		&mode_buf_len,		0},
+  {"use_354",			&use_354,		0},
+  {"kick_method",		&kick_method,		0},
+  {"invite_key",		&invite_key,		0},
+  {"no_chanrec_info",		&no_chanrec_info,	0},
+  {"max_bans",			&max_bans,		0},
+  {"max_exempts",		&max_exempts,		0},
+  {"max_invites",		&max_invites,		0},
+  {"max_modes",			&max_modes,		0},
+  {"strict_host",		&strict_host,		0},
+  {"ctcp_mode",			&ctcp_mode,		0},
+  {"keep_nick",			&keepnick,		0},
+  {"prevent_mixing",		&prevent_mixing,	0},
+  {"rfc_compliant",		&rfc_compliant,		0},
+  {"include_lk",		&include_lk,		0},
   {NULL,			NULL,			0}
 };
 

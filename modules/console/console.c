@@ -3,7 +3,7 @@
  *   saved console settings based on console.tcl
  *   by cmwagner/billyjoe/D. Senso
  *
- * $Id: console.c,v 1.6 2002/03/22 16:01:17 ite Exp $
+ * $Id: console.c,v 1.7 2002/05/01 03:56:10 stdarg Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
@@ -320,9 +320,9 @@ static int console_dostore(int idx)
 
 static tcl_ints myints[] =
 {
-  {"console-autosave",	&console_autosave,	0},
-  {"force-channel",	&force_channel,		0},
-  {"info-party",	&info_party,		0},
+  {"console_autosave",	&console_autosave,	0},
+  {"force_channel",	&force_channel,		0},
+  {"info_party",	&info_party,		0},
   {NULL,		NULL,			0}
 };
 

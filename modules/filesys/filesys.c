@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.8 2002/04/14 23:10:38 ite Exp $
+ * $Id: filesys.c,v 1.9 2002/05/01 03:56:10 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -539,17 +539,17 @@ static cmd_t mydcc[] =
 
 static tcl_strings mystrings[] =
 {
-  {"files-path",	dccdir,		120,	STR_DIR | STR_PROTECT},
-  {"incoming-path",	dccin,		120,	STR_DIR | STR_PROTECT},
-  {"filedb-path",	filedb_path,	120,	STR_DIR | STR_PROTECT},
+  {"files_path",	dccdir,		120,	STR_DIR | STR_PROTECT},
+  {"incoming_path",	dccin,		120,	STR_DIR | STR_PROTECT},
+  {"filedb_path",	filedb_path,	120,	STR_DIR | STR_PROTECT},
   {NULL,		NULL,		0,	0}
 };
 
 static tcl_ints myints[] =
 {
-  {"max-filesize",	&dcc_maxsize},
-  {"max-file-users",	&dcc_users},
-  {"upload-to-pwd",	&upload_to_cd},
+  {"max_filesize",	&dcc_maxsize},
+  {"max_file_users",	&dcc_users},
+  {"upload_to_pwd",	&upload_to_cd},
   {NULL,		NULL}
 };
 
