@@ -3,7 +3,7 @@
  *   commands that comes across the botnet
  *   userfile transfer and update commands from sharebots
  *
- * $Id: botcmd.c,v 1.23 2001/09/28 03:15:34 stdarg Exp $
+ * $Id: botcmd.c,v 1.24 2001/10/07 04:02:54 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1252,13 +1252,11 @@ static void bot_join(int idx, char *par)
 	chanout_but(-1, i, "*** (%s) %s %s %s.\n", bot, nick, _("has left the"),
 		    i ? "channel" : "party line");
       check_tcl_chpt(bot, nick, sock, i);
-      check_chpt(bot, nick, sock, i);
     }
     if ((b_numver(idx) >= NEAT_BOTNET) && !linking)
       chanout_but(-1, chan, "*** (%s) %s %s %s.\n", bot, nick, _("has joined the"),
 		  chan ? "channel" : "party line");
     check_tcl_chjn(bot, nick, chan, y[0], sock, par);
-    check_chjn(bot, nick, chan, y[0], sock, par);
   }
 }
 
@@ -1297,7 +1295,6 @@ static void bot_part(int idx, char *par)
   if ((partyidx = getparty(bot, sock)) != -1) {
     if (party[partyidx].chan >= 0) {
       check_tcl_chpt(bot, nick, sock, party[partyidx].chan);
-      check_chpt(bot, nick, sock, party[partyidx].chan);
     }
     if ((b_numver(idx) >= NEAT_BOTNET) && !silent) {
       register int chan = party[partyidx].chan;

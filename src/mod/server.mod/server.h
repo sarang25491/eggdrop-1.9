@@ -1,7 +1,7 @@
 /*
  * server.h -- part of server.mod
  *
- * $Id: server.h,v 1.13 2001/08/13 03:58:30 guppy Exp $
+ * $Id: server.h,v 1.14 2001/10/07 04:02:55 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -25,8 +25,8 @@
 #ifndef _EGG_MOD_SERVER_SERVER_H
 #define _EGG_MOD_SERVER_SERVER_H
 
-#define check_tcl_ctcp(a,b,c,d,e,f) check_tcl_ctcpr(a,b,c,d,e,f,H_ctcp)
-#define check_tcl_ctcr(a,b,c,d,e,f) check_tcl_ctcpr(a,b,c,d,e,f,H_ctcr)
+#define check_tcl_ctcp(a,b,c,d,e,f) check_tcl_ctcpr(a,b,c,d,e,f,BT_ctcp)
+#define check_tcl_ctcr(a,b,c,d,e,f) check_tcl_ctcpr(a,b,c,d,e,f,BT_ctcr)
 
 #ifndef MAKING_SERVER
 /* 4 - 7 */
@@ -45,7 +45,7 @@
 #define answer_ctcp (*(int *)(server_funcs[15]))
 /* 16 - 19 */
 #define trigger_on_ignore (*(int *)(server_funcs[16]))
-#define check_tcl_ctcpr ((int(*)(char*,char*,struct userrec*,char*,char*,char*,p_tcl_bind_list))server_funcs[17])
+#define check_tcl_ctcpr ((int(*)(char*,char*,struct userrec*,char*,char*,char*,bind_table_t *))server_funcs[17])
 #define detect_avalanche ((int(*)(char *))server_funcs[18])
 #define nuke_server ((void(*)(char *))server_funcs[19])
 /* 20 - 22 */

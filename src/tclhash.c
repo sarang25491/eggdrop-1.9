@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.38 2001/10/04 21:37:45 stdarg Exp $
+ * $Id: tclhash.c,v 1.39 2001/10/07 04:02:54 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -235,7 +235,7 @@ void init_bind2(void)
 	BT_disc = add_bind_table2("disc", 1, "s", MATCH_MASK, BIND_STACKABLE);
 	BT_away = add_bind_table2("away", 3, "sis", MATCH_MASK, BIND_STACKABLE);
 	BT_time = add_bind_table2("time", 5, "iiiii", MATCH_MASK, BIND_STACKABLE);
-	BT_dcc = add_bind_table2("dcc", 3, "sis", MATCH_MASK, BIND_USE_ATTR);
+	BT_dcc = add_bind_table2("dcc", 3, "Uis", MATCH_MASK, BIND_USE_ATTR);
 	add_builtins2(BT_dcc, C_dcc);
 }
 
@@ -418,22 +418,6 @@ tcl_bind_list_t *find_bind_table(const char *nme)
   return NULL;
 }
 
-static void dump_bind_tables(Tcl_Interp *irp)
-{
-  tcl_bind_list_t	*tl;
-  u_8bit_t		 i;
-
-  for (tl = bind_table_list, i = 0; tl; tl = tl->next) {
-    if (tl->flags & HT_DELETED)
-      continue;
-    if (i)
-      Tcl_AppendResult(irp, ", ", NULL);
-    else
-      i = 1;
-    Tcl_AppendResult(irp, tl->name, NULL);
-  }
-}
-
 int del_bind_entry(bind_table_t *table, const char *flags, const char *mask, const char *function_name)
 {
 	bind_chain_t *chain;
@@ -458,6 +442,25 @@ int del_bind_entry(bind_table_t *table, const char *flags, const char *mask, con
 	nfree(entry);
 
 	return(0);
+}
+
+static void *get_bind_cdata(bind_table_t *table , const char *flags, const char *mask, const char *function_name)
+{
+	bind_chain_t *chain;
+	bind_entry_t *entry;
+
+	/* Find the correct mask entry. */
+	for (chain = table->chains; chain; chain = chain->next) {
+		if (!strcmp(chain->mask, mask)) break;
+	}
+	if (!chain) return(NULL);
+
+	/* Now find the function name in this mask entry. */
+	for (entry = chain->entries; entry; entry = entry->next) {
+		if (!strcmp(entry->function_name, function_name)) break;
+	}
+	if (!entry) return(NULL);
+	else return(entry->client_data);
 }
 
 static int unbind_bind_entry(tcl_bind_list_t *tl, const char *flags,
@@ -631,17 +634,53 @@ static int tcl_getbinds(tcl_bind_list_t *tl_kind, const char *name)
   return TCL_OK;
 }
 
-/* Only needs to work for "event" right now */
-static int my_tcl_bind_callback(char *cmd, char *event)
+/* Works with string, int, and user type. */
+static int my_tcl_bind_callback(tcl_cmd_cdata *cdata, ...)
 {
-	Tcl_VarEval(interp, cmd, " ", event, NULL);
-	return(0);
+	Tcl_DString final;
+	int *arg;
+	char *syntax, *str, buf[32];
+	int retval;
+
+	arg = (int *)&cdata;
+	arg++;
+	Tcl_DStringInit(&final);
+	Tcl_DStringAppend(&final, cdata->cmd, -1);
+	for (syntax = cdata->syntax; *syntax; syntax++) {
+		switch (*syntax) {
+			case 's':
+				str = (char *)(*arg);
+				break;
+			case 'i': {
+				sprintf(buf, "%d", *arg);
+				str = buf;
+				break;
+			}
+			case 'U': {
+				struct userrec *u;
+				u = (struct userrec *)(*arg);
+				if (u) str = u->handle;
+				else str = "*";
+				break;
+			}
+			default:
+				str = "(unsupported argument type)";
+		}
+		if (!str) str = "(null)";
+		Tcl_DStringAppendElement(&final, str);
+		arg++;
+	}
+	Tcl_Eval(cdata->irp, Tcl_DStringValue(&final));
+	Tcl_DStringGetResult(cdata->irp, &final);
+	retval = atoi(Tcl_DStringValue(&final));
+	Tcl_DStringFree(&final);
+	return(retval);
 }
 
 static int tcl_bind2 STDVAR
 {
+	tcl_cmd_cdata *cdata;
 	bind_table_t *table;
-	char *cmd;
 
 	BADARGS(5, 5, " type flags cmd/mask procname");
 
@@ -651,9 +690,11 @@ static int tcl_bind2 STDVAR
 		return(TCL_ERROR);
 	}
 
-	/* We pass the callback cmd as our client data */
-	cmd = my_strdup(argv[4]);
-	add_bind_entry(table, argv[2], argv[3], argv[4], BIND_WANTS_CD, my_tcl_bind_callback, cmd);
+	cdata = (tcl_cmd_cdata *)nmalloc(sizeof(*cdata));
+	cdata->irp = irp;
+	cdata->syntax = my_strdup(table->syntax);
+	cdata->cmd = my_strdup(argv[4]);
+	add_bind_entry(table, argv[2], argv[3], argv[4], BIND_WANTS_CD, (Function) my_tcl_bind_callback, cdata);
 	Tcl_AppendResult(irp, "moooo", NULL);
 	return(TCL_OK);
 }
@@ -661,6 +702,7 @@ static int tcl_bind2 STDVAR
 static int tcl_unbind2 STDVAR
 {
 	bind_table_t *table;
+	tcl_cmd_cdata *cdata;
 
 	BADARGS(5, 5, " type flags cmd/mask procname");
 	table = find_bind_table2(argv[1]);
@@ -668,7 +710,13 @@ static int tcl_unbind2 STDVAR
 		Tcl_AppendResult(irp, "invalid table type", NULL);
 		return(TCL_ERROR);
 	}
-	del_bind_entry(table, argv[2], argv[3], argv[4]);
+	cdata = get_bind_cdata(table, argv[2], argv[3], argv[4]);
+	if (cdata) {
+		nfree(cdata->cmd);
+		nfree(cdata->syntax);
+		nfree(cdata);
+		del_bind_entry(table, argv[2], argv[3], argv[4]);
+	}
 	Tcl_AppendResult(irp, "mooooo", NULL);
 	return(TCL_OK);
 }
@@ -676,6 +724,7 @@ static int tcl_unbind2 STDVAR
 static int tcl_bind STDVAR
 {
   tcl_bind_list_t	*tl;
+  bind_table_t *table;
 
   /* Note: `cd' defines what tcl_bind is supposed do: 0 stands for
            bind and 1 stands for unbind. */
@@ -684,11 +733,15 @@ static int tcl_bind STDVAR
   else
     BADARGS(4, 5, " type flags cmd/mask ?procname?");
 
+  table = find_bind_table2(argv[1]);
+  if (table) {
+    if ((int) cd == 0) return tcl_bind2(cd, irp, argc, argv);
+    else return tcl_unbind2(cd, irp, argc, argv);
+  }
   tl = find_bind_table(argv[1]);
   if (!tl) {
-    Tcl_AppendResult(irp, "bad type, should be one of: ", NULL);
-    dump_bind_tables(irp);
-    return TCL_ERROR;
+    Tcl_AppendResult(irp, "bad table type", NULL);
+    return TCL_OK;
   }
 
   if ((long int) cd == 1) {
@@ -986,9 +1039,8 @@ int check_bind(bind_table_t *table, const char *match, struct flag_record *_flag
 			if (entry->bind_flags & BIND_WANTS_CD) table->nargs--;
 			else al--;
 
-			if (table->flags & BIND_BREAKABLE & r) break;
+			if ((table->flags & BIND_BREAKABLE) && (r & BIND_RET_BREAK)) return(r);
 		}
-		if (table->flags & BIND_BREAKABLE & r) break;
 	}
 	return(r);
 }
@@ -1147,7 +1199,10 @@ int check_tcl_dcc(const char *cmd, int idx, const char *args)
   }
   if (x == BIND_NOMATCH) {
     /* Check the new bind table. */
-    check_bind(BT_dcc, cmd, &fr, dcc[idx].user, idx, args);
+    x = check_bind(BT_dcc, cmd, &fr, dcc[idx].user, idx, args);
+    if (x & BIND_RET_LOG) {
+      putlog(LOG_CMDS, "*", "#%s# %s %s", dcc[idx].nick, cmd, args);
+    }
     return 0;
   }
   if (x == BIND_EXEC_BRK)

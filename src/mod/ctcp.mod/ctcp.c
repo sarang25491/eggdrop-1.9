@@ -2,7 +2,7 @@
  * ctcp.c -- part of ctcp.mod
  *   all the ctcp handling (except DCC, it's special ;)
  *
- * $Id: ctcp.c,v 1.17 2001/07/26 17:04:33 drummer Exp $
+ * $Id: ctcp.c,v 1.18 2001/10/07 04:02:55 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -31,6 +31,9 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+/* Import this bind table from server.mod */
+static bind_table_t *BT_ctcp;
+
 static Function *global = NULL, *server_funcs = NULL;
 
 static char ctcp_version[121];
@@ -39,7 +42,7 @@ static char ctcp_userinfo[121];
 static int ctcp_mode = 0;
 
 
-static int ctcp_FINGER(char *nick, char *uhost, char *handle,
+static int ctcp_FINGER(char *nick, char *uhost, struct userrec *u,
 		       char *object, char *keyword, char *text)
 {
   if (ctcp_mode != 1 && ctcp_finger[0])
@@ -47,7 +50,7 @@ static int ctcp_FINGER(char *nick, char *uhost, char *handle,
   return 1;
 }
 
-static int ctcp_ECHOERR(char *nick, char *uhost, char *handle,
+static int ctcp_ECHOERR(char *nick, char *uhost, struct userrec *u,
 			char *object, char *keyword, char *text)
 {
   if (ctcp_mode != 1 && strlen(text) <= 80)
@@ -55,10 +58,9 @@ static int ctcp_ECHOERR(char *nick, char *uhost, char *handle,
   return 1;
 }
 
-static int ctcp_PING(char *nick, char *uhost, char *handle,
+static int ctcp_PING(char *nick, char *uhost, struct userrec *u,
 		     char *object, char *keyword, char *text)
 {
-  struct userrec *u = get_user_by_handle(userlist, handle);
   int atr = u ? u->flags : 0;
 
   if ((ctcp_mode != 1 || (atr & USER_OP)) && strlen(text) <= 80)
@@ -66,7 +68,7 @@ static int ctcp_PING(char *nick, char *uhost, char *handle,
   return 1;
 }
 
-static int ctcp_VERSION(char *nick, char *uhost, char *handle,
+static int ctcp_VERSION(char *nick, char *uhost, struct userrec *u,
 			char *object, char *keyword, char *text)
 {
   if (ctcp_mode != 1 && ctcp_version[0])
@@ -75,7 +77,7 @@ static int ctcp_VERSION(char *nick, char *uhost, char *handle,
   return 1;
 }
 
-static int ctcp_USERINFO(char *nick, char *uhost, char *handle,
+static int ctcp_USERINFO(char *nick, char *uhost, struct userrec *u,
 			 char *object, char *keyword, char *text)
 {
   if (ctcp_mode != 1 && ctcp_userinfo[0])
@@ -84,7 +86,7 @@ static int ctcp_USERINFO(char *nick, char *uhost, char *handle,
   return 1;
 }
 
-static int ctcp_CLIENTINFO(char *nick, char *uhosr, char *handle,
+static int ctcp_CLIENTINFO(char *nick, char *uhosr, struct userrec *u,
 			   char *object, char *keyword, char *msg)
 {
   char *p = NULL;
@@ -126,7 +128,7 @@ static int ctcp_CLIENTINFO(char *nick, char *uhosr, char *handle,
   return 1;
 }
 
-static int ctcp_TIME(char *nick, char *uhost, char *handle, char *object,
+static int ctcp_TIME(char *nick, char *uhost, struct userrec *u, char *object,
 		     char *keyword, char *text)
 {
   char tms[25];
@@ -139,10 +141,9 @@ static int ctcp_TIME(char *nick, char *uhost, char *handle, char *object,
   return 1;
 }
 
-static int ctcp_CHAT(char *nick, char *uhost, char *handle, char *object,
+static int ctcp_CHAT(char *nick, char *uhost, struct userrec *u, char *object,
 		     char *keyword, char *text)
 {
-  struct userrec *u = get_user_by_handle(userlist, handle);
   int atr = u ? u->flags : 0, i;
 
   if ((atr & (USER_PARTY | USER_XFER)) ||
@@ -198,7 +199,7 @@ static char *ctcp_close()
 {
   rem_tcl_strings(mystrings);
   rem_tcl_ints(myints);
-  rem_builtins(H_ctcp, myctcp);
+  if (BT_ctcp) rem_builtins2(BT_ctcp, myctcp);
   rem_help_reference("ctcp.help");
   module_undepend(MODULE_NAME);
   return NULL;
@@ -229,7 +230,8 @@ char *ctcp_start(Function * global_funcs)
   }
   add_tcl_strings(mystrings);
   add_tcl_ints(myints);
-  add_builtins(H_ctcp, myctcp);
+  BT_ctcp = find_bind_table2("ctcp");
+  if (BT_ctcp) add_builtins2(BT_ctcp, myctcp);
   add_help_reference("ctcp.help");
   if (!ctcp_version[0]) {
     strncpy(ctcp_version, ver, 120);

@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.62 2001/09/28 03:15:35 stdarg Exp $
+ * $Id: irc.c,v 1.63 2001/10/07 04:02:55 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -26,21 +26,19 @@
 #define MODULE_NAME "irc"
 #define MAKING_IRC
 #include "src/mod/module.h"
-#include "irc.h"
 #include "server.mod/server.h"
+#include "irc.h"
 #include "channels.mod/channels.h"
 #ifdef HAVE_UNAME
 #include <sys/utsname.h>
 #endif
 
 /* We import some bind tables from server.mod */
-static bind_table_t *BT_raw, *BT_msg;
+static bind_table_t *BT_dcc, *BT_raw, *BT_msg, *BT_ctcp, *BT_ctcr;
 
 /* We also create a few. */
-static bind_table_t *BT_pub, *BT_pubm;
+static bind_table_t *BT_topic, *BT_split, *BT_rejoin, *BT_quit, *BT_join, *BT_part, *BT_kick, *BT_nick, *BT_mode, *BT_need, *BT_pub, *BT_pubm;
 
-static p_tcl_bind_list H_topc, H_splt, H_sign, H_rejn, H_part, H_pub, H_pubm;
-static p_tcl_bind_list H_nick, H_mode, H_kick, H_join, H_need;
 static Function *global = NULL, *channels_funcs = NULL, *server_funcs = NULL;
 
 static int ctcp_mode;
@@ -519,7 +517,6 @@ static void status_log()
 static void check_lonely_channel(struct chanset_t *chan)
 {
   memberlist *m;
-  char s[UHOSTLEN];
   int i = 0;
 
   if (channel_pending(chan) || !channel_active(chan) || me_op(chan) ||
@@ -649,62 +646,16 @@ static void check_expired_chanstuff()
   }
 }
 
-static int channels_6char STDVAR
-{
-  Function F = (Function) cd;
-  char x[20];
-
-  BADARGS(7, 7, " nick user@host handle desto/chan keyword/nick text");
-  CHECKVALIDITY(channels_6char);
-  sprintf(x, "%d", F(argv[1], argv[2], argv[3], argv[4], argv[5], argv[6]));
-  Tcl_AppendResult(irp, x, NULL);
-  return TCL_OK;
-}
-
-static int channels_5char STDVAR
-{
-  Function F = (Function) cd;
-
-  BADARGS(6, 6, " nick user@host handle channel text");
-  CHECKVALIDITY(channels_5char);
-  F(argv[1], argv[2], argv[3], argv[4], argv[5]);
-  return TCL_OK;
-}
-
-static int channels_4char STDVAR
-{
-  Function F = (Function) cd;
-
-  BADARGS(5, 5, " nick uhost hand chan/param");
-  CHECKVALIDITY(channels_4char);
-  F(argv[1], argv[2], argv[3], argv[4]);
-  return TCL_OK;
-}
-
-static int channels_2char STDVAR
-{
-  Function F = (Function) cd;
-
-  BADARGS(3, 3, " channel type");
-  CHECKVALIDITY(channels_2char);
-  F(argv[1], argv[2]);
-  return TCL_OK;
-}
-
 static void check_tcl_joinspltrejn(char *nick, char *uhost, struct userrec *u,
-			       char *chname, p_tcl_bind_list table)
+			       char *chname, bind_table_t *table)
 {
   struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
   char args[1024];
 
   simple_sprintf(args, "%s %s!%s", chname, nick, uhost);
   get_user_flagrec(u, &fr, chname);
-  Tcl_SetVar(interp, "_jp1", nick, 0);
-  Tcl_SetVar(interp, "_jp2", uhost, 0);
-  Tcl_SetVar(interp, "_jp3", u ? u->handle : "*", 0);
-  Tcl_SetVar(interp, "_jp4", chname, 0);
-  check_tcl_bind(table, args, &fr, " $_jp1 $_jp2 $_jp3 $_jp4",
-		 MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
+
+  check_bind(table, args, &fr, nick, uhost, u, chname);
 }
 
 /* we handle part messages now *sigh* (guppy 27Jan2000) */
@@ -717,86 +668,66 @@ static void check_tcl_part(char *nick, char *uhost, struct userrec *u,
 
   simple_sprintf(args, "%s %s!%s", chname, nick, uhost);
   get_user_flagrec(u, &fr, chname);
-  Tcl_SetVar(interp, "_p1", nick, 0);
-  Tcl_SetVar(interp, "_p2", uhost, 0);
-  Tcl_SetVar(interp, "_p3", u ? u->handle : "*", 0);
-  Tcl_SetVar(interp, "_p4", chname, 0);
-  Tcl_SetVar(interp, "_p5", text ? text : "", 0);
-  check_tcl_bind(H_part, args, &fr, " $_p1 $_p2 $_p3 $_p4 $_p5",
-		 MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
+
+  check_bind(BT_part, args, &fr, nick, uhost, u, chname, text);
 }
 
 static void check_tcl_signtopcnick(char *nick, char *uhost, struct userrec *u,
 				   char *chname, char *reason,
-				   p_tcl_bind_list table)
+				   bind_table_t *table)
 {
   struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
   char args[1024];
 
-  if (table == H_sign)
+  if (table == BT_quit) {
     simple_sprintf(args, "%s %s!%s", chname, nick, uhost);
-  else
+  }
+  else {
     simple_sprintf(args, "%s %s", chname, reason);
+  }
   get_user_flagrec(u, &fr, chname);
-  Tcl_SetVar(interp, "_stnm1", nick, 0);
-  Tcl_SetVar(interp, "_stnm2", uhost, 0);
-  Tcl_SetVar(interp, "_stnm3", u ? u->handle : "*", 0);
-  Tcl_SetVar(interp, "_stnm4", chname, 0);
-  Tcl_SetVar(interp, "_stnm5", reason, 0);
-  check_tcl_bind(table, args, &fr, " $_stnm1 $_stnm2 $_stnm3 $_stnm4 $_stnm5",
-		 MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
+  check_bind(table, args, &fr, nick, uhost, u, chname, reason);
 }
 
 static void check_tcl_kickmode(char *nick, char *uhost, struct userrec *u,
 			       char *chname, char *dest, char *reason,
-			       p_tcl_bind_list table)
+			       bind_table_t *table)
 {
   struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
-  char args[512];
+  char args[1024];
 
   get_user_flagrec(u, &fr, chname);
-  if (table == H_mode)
+  if (table == BT_mode) {
     simple_sprintf(args, "%s %s", chname, dest);
-  else
+  }
+  else {
     simple_sprintf(args, "%s %s %s", chname, dest, reason);
-  Tcl_SetVar(interp, "_kick1", nick, 0);
-  Tcl_SetVar(interp, "_kick2", uhost, 0);
-  Tcl_SetVar(interp, "_kick3", u ? u->handle : "*", 0);
-  Tcl_SetVar(interp, "_kick4", chname, 0);
-  Tcl_SetVar(interp, "_kick5", dest, 0);
-  Tcl_SetVar(interp, "_kick6", reason, 0);
-  check_tcl_bind(table, args, &fr, " $_kick1 $_kick2 $_kick3 $_kick4 $_kick5 $_kick6",
-		 MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
+  }
+  check_bind(table, args, &fr, nick, uhost, u, chname, dest, reason);
 }
 
 static int check_tcl_pub(char *nick, char *from, char *chname, char *msg)
 {
   struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
   int x;
-  char buf[512], *args = buf, *cmd, host[161], *hand;
+  char *cmd, *text, host[161];
   struct userrec *u;
 
-  strcpy(args, msg);
-  cmd = newsplit(&args);
+  text = msg;
+  cmd = newsplit(&text);
   simple_sprintf(host, "%s!%s", nick, from);
   u = get_user_by_host(host);
-  hand = u ? u->handle : "*";
   get_user_flagrec(u, &fr, chname);
 
-  check_bind(BT_pub, cmd, &fr, nick, from, hand, chname, args);
+  x = check_bind(BT_pub, cmd, &fr, nick, from, u, chname, text);
 
-  Tcl_SetVar(interp, "_pub1", nick, 0);
-  Tcl_SetVar(interp, "_pub2", from, 0);
-  Tcl_SetVar(interp, "_pub3", hand, 0);
-  Tcl_SetVar(interp, "_pub4", chname, 0);
-  Tcl_SetVar(interp, "_pub5", args, 0);
-  x = check_tcl_bind(H_pub, cmd, &fr, " $_pub1 $_pub2 $_pub3 $_pub4 $_pub5",
-		     MATCH_EXACT | BIND_USE_ATTR | BIND_HAS_BUILTINS);
-  if (x == BIND_NOMATCH)
-    return 0;
-  if (x == BIND_EXEC_LOG)
-    putlog(LOG_CMDS, chname, "<<%s>> !%s! %s %s", nick, hand, cmd, args);
-  return 1;
+  if (x & BIND_RET_LOG) {
+    putlog(LOG_CMDS, chname, "<<%s>> !%s! %s %s", nick, u ? u->handle : "*", cmd, text);
+  }
+  /* This should work.. undoes the "newsplit" */
+  if (text > cmd) *(text-1) = ' ';
+  if (x & BIND_RET_BREAK) return(1);
+  return(0);
 }
 
 static void check_tcl_pubm(char *nick, char *from, char *chname, char *msg)
@@ -804,24 +735,13 @@ static void check_tcl_pubm(char *nick, char *from, char *chname, char *msg)
   struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
   char buf[1024], host[161];
   struct userrec *u;
-  char *hand;
 
   simple_sprintf(buf, "%s %s", chname, msg);
   simple_sprintf(host, "%s!%s", nick, from);
   u = get_user_by_host(host);
   get_user_flagrec(u, &fr, chname);
-  if (u) hand = u->handle;
-  else hand = "*";
 
-  check_bind(BT_pubm, buf, &fr, nick, from, hand, chname, msg);
-
-  Tcl_SetVar(interp, "_pubm1", nick, 0);
-  Tcl_SetVar(interp, "_pubm2", from, 0);
-  Tcl_SetVar(interp, "_pubm3", hand, 0);
-  Tcl_SetVar(interp, "_pubm4", chname, 0);
-  Tcl_SetVar(interp, "_pubm5", msg, 0);
-  check_tcl_bind(H_pubm, buf, &fr, " $_pubm1 $_pubm2 $_pubm3 $_pubm4 $_pubm5",
-		 MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
+  check_bind(BT_pubm, buf, &fr, nick, from, u, chname, msg);
 }
 
 static void check_tcl_need(char *chname, char *type)
@@ -829,9 +749,7 @@ static void check_tcl_need(char *chname, char *type)
   char buf[1024];
 
   simple_sprintf(buf, "%s %s", chname, type);
-  Tcl_SetVar(interp, "_need1", chname, 0);
-  Tcl_SetVar(interp, "_need2", type, 0);
-  check_tcl_bind(H_need, buf, 0, " $_need1 $_need2", MATCH_MASK | BIND_STACKABLE);
+  check_bind(BT_need, buf, NULL, chname, type);
 }
 
 static tcl_ints myints[] =
@@ -1018,23 +936,21 @@ static char *irc_close()
   dprintf(DP_MODE, "JOIN 0\n");
   for (chan = chanset; chan; chan = chan->next)
     clear_channel(chan, 1);
-  del_bind_table(H_topc);
-  del_bind_table(H_splt);
-  del_bind_table(H_sign);
-  del_bind_table(H_rejn);
-  del_bind_table(H_part);
-  del_bind_table(H_nick);
-  del_bind_table(H_mode);
-  del_bind_table(H_kick);
-  del_bind_table(H_join);
-  del_bind_table(H_pubm);
-  del_bind_table(H_pub);
-  del_bind_table(H_need);
+  del_bind_table2(BT_topic);
+  del_bind_table2(BT_split);
+  del_bind_table2(BT_quit);
+  del_bind_table2(BT_rejoin);
+  del_bind_table2(BT_part);
+  del_bind_table2(BT_nick);
+  del_bind_table2(BT_mode);
+  del_bind_table2(BT_kick);
+  del_bind_table2(BT_join);
+  del_bind_table2(BT_pubm);
+  del_bind_table2(BT_pub);
+  del_bind_table2(BT_need);
   rem_tcl_ints(myints);
-  rem_builtins(H_dcc, irc_dcc);
-  rem_builtins(H_msg, C_msg);
 
-  /* rem_builtins(H_raw, irc_raw); */
+  if (BT_dcc) rem_builtins2(BT_dcc, irc_dcc);
   if (BT_raw) rem_builtins2(BT_raw, irc_raw);
   if (BT_msg) rem_builtins2(BT_msg, C_msg);
 
@@ -1064,27 +980,12 @@ static Function irc_table[] =
   (Function) irc_expmem,
   (Function) irc_report,
   /* 4 - 7 */
-  (Function) & H_splt,		/* p_tcl_bind_list		*/
-  (Function) & H_rejn,		/* p_tcl_bind_list		*/
-  (Function) & H_nick,		/* p_tcl_bind_list		*/
-  (Function) & H_sign,		/* p_tcl_bind_list		*/
-  /* 8 - 11 */
-  (Function) & H_join,		/* p_tcl_bind_list		*/
-  (Function) & H_part,		/* p_tcl_bind_list		*/
-  (Function) & H_mode,		/* p_tcl_bind_list		*/
-  (Function) & H_kick,		/* p_tcl_bind_list		*/
-  /* 12 - 15 */
-  (Function) & H_pubm,		/* p_tcl_bind_list		*/
-  (Function) & H_pub,		/* p_tcl_bind_list		*/
-  (Function) & H_topc,		/* p_tcl_bind_list		*/
   (Function) recheck_channel,
-  /* 16 - 19 */
   (Function) me_op,
   (Function) recheck_channel_modes,
-  (Function) & H_need,		/* p_tcl_bind_list		*/
   (Function) do_channel_part,
-  /* 20 - 23 */
-  (Function) check_this_ban,
+  /* 8 - 11 */
+  (Function) check_this_ban
 };
 
 char *irc_start(Function * global_funcs)
@@ -1124,37 +1025,37 @@ char *irc_start(Function * global_funcs)
 	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 	       traced_rfccompliant, NULL);
   add_tcl_ints(myints);
-  add_builtins(H_dcc, irc_dcc);
-
-/*
-  add_builtins(H_msg, C_msg);
-  add_builtins(H_raw, irc_raw);
-*/
 
   /* Import bind tables from other places. */
+  BT_dcc = find_bind_table2("dcc");
   BT_raw = find_bind_table2("raw");
   BT_msg = find_bind_table2("msg");
+  BT_ctcp = find_bind_table2("ctcp");
+  BT_ctcr = find_bind_table2("ctcr");
+
+  /* Add our commands to the imported tables. */
+  if (BT_dcc) add_builtins2(BT_dcc, irc_dcc);
+  else putlog(LOG_MISC, "*", "Couldn't load dcc bind table!");
   if (BT_raw) add_builtins2(BT_raw, irc_raw);
+  else putlog(LOG_MISC, "*", "Couldn't load raw bind table!");
   if (BT_msg) add_builtins2(BT_msg, C_msg);
+  else putlog(LOG_MISC, "*", "Couldn't load msg bind table!");
 
   /* Create our own bind tables. */
-  BT_pub = add_bind_table2("pub", 5, "sssss", MATCH_MASK, BIND_USE_ATTR);
-  BT_pubm = add_bind_table2("pubm", 5, "sssss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
+  BT_topic = add_bind_table2("topic", 5, "ssUss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
+  BT_split = add_bind_table2("split", 4, "ssUs", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
+  BT_rejoin = add_bind_table2("rejoin", 4, "ssUs", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
+  BT_quit = add_bind_table2("sign", 5, "ssUss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
+  BT_join = add_bind_table2("join", 4, "ssUs", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
+  BT_part = add_bind_table2("part", 5, "ssUss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
+  BT_nick = add_bind_table2("nick", 5, "ssUss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
+  BT_mode = add_bind_table2("mode", 6, "ssUsss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
+  BT_need = add_bind_table2("need", 2, "ss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
+  BT_pub = add_bind_table2("pub", 5, "ssUss", 0, BIND_USE_ATTR);
+  BT_pubm = add_bind_table2("pubm", 5, "ssUss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
 
   add_tcl_commands(tclchan_cmds);
   add_help_reference("irc.help");
-  H_topc = add_bind_table("topc", HT_STACKABLE, channels_5char);
-  H_splt = add_bind_table("splt", HT_STACKABLE, channels_4char);
-  H_sign = add_bind_table("sign", HT_STACKABLE, channels_5char);
-  H_rejn = add_bind_table("rejn", HT_STACKABLE, channels_4char);
-  H_part = add_bind_table("part", HT_STACKABLE, channels_5char);
-  H_nick = add_bind_table("nick", HT_STACKABLE, channels_5char);
-  H_mode = add_bind_table("mode", HT_STACKABLE, channels_6char);
-  H_kick = add_bind_table("kick", HT_STACKABLE, channels_6char);
-  H_join = add_bind_table("join", HT_STACKABLE, channels_4char);
-  H_pubm = add_bind_table("pubm", HT_STACKABLE, channels_5char);
-  H_pub = add_bind_table("pub", 0, channels_5char);
-  H_need = add_bind_table("need", HT_STACKABLE, channels_2char);
   do_nettype();
   return NULL;
 }

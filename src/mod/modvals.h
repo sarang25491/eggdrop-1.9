@@ -1,7 +1,7 @@
 /*
  * modvals.h
  *
- * $Id: modvals.h,v 1.20 2001/07/31 16:40:41 guppy Exp $
+ * $Id: modvals.h,v 1.21 2001/10/07 04:02:54 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -75,10 +75,10 @@
 #define SERVER_BOTUSERHOST	  5
 #define SERVER_NICKLEN		 38
 /* IRC */
-#define IRC_RECHECK_CHANNEL	  15
-#define IRC_RECHECK_CHANNEL_MODES 17
-#define IRC_DO_CHANNEL_PART	  19
-#define IRC_CHECK_THIS_BAN	  20
+#define IRC_RECHECK_CHANNEL	  4
+#define IRC_RECHECK_CHANNEL_MODES 6
+#define IRC_DO_CHANNEL_PART	  7
+#define IRC_CHECK_THIS_BAN	  8
 /* Notes */
 #define NOTES_CMD_NOTE		  4
 /* Console */

@@ -1,7 +1,7 @@
 /*
  * tclhash.h
  *
- * $Id: tclhash.h,v 1.15 2001/09/30 04:27:38 stdarg Exp $
+ * $Id: tclhash.h,v 1.16 2001/10/07 04:02:54 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -35,6 +35,17 @@
 /* Flags for bind tables */
 #define BIND_STRICT_ATTR 0x80
 #define BIND_BREAKABLE 0x100
+
+/* Flags for return values from bind callbacks */
+#define BIND_RET_LOG 1
+#define BIND_RET_BREAK 2
+
+/* Callback clientdata for a tcl bind */
+typedef struct tcl_cmd_cdata_b {
+	Tcl_Interp *irp;
+	char *cmd;
+	char *syntax;
+} tcl_cmd_cdata;
 
 /* Will replace tcl_cmd_t */
 /* This holds the final information for a function listening on a bind

@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.66 2001/09/30 04:27:38 stdarg Exp $
+ * $Id: servmsg.c,v 1.67 2001/10/07 04:02:55 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -102,45 +102,24 @@ static int check_tcl_msg(char *cmd, char *nick, char *uhost,
 
   get_user_flagrec(u, &fr, NULL);
 
-  check_bind(BT_msg, cmd, &fr, cmd, nick, uhost, hand, args);
-
-  Tcl_SetVar(interp, "_msg1", nick, 0);
-  Tcl_SetVar(interp, "_msg2", uhost, 0);
-  Tcl_SetVar(interp, "_msg3", hand, 0);
-  Tcl_SetVar(interp, "_msg4", args, 0);
-  x = check_tcl_bind(H_msg, cmd, &fr, " $_msg1 $_msg2 $_msg3 $_msg4",
-		     MATCH_EXACT | BIND_HAS_BUILTINS | BIND_USE_ATTR);
-  if (x == BIND_EXEC_LOG)
-    putlog(LOG_CMDS, "*", "(%s!%s) !%s! %s %s", nick, uhost, hand,
-	   cmd, args);
-  return ((x == BIND_MATCHED) || (x == BIND_EXECUTED) || (x == BIND_EXEC_LOG));
+  x = check_bind(BT_msg, cmd, &fr, nick, uhost, u, args);
+  if (x & BIND_RET_LOG) putlog(LOG_CMDS, "*", "(%s!%s) !%s! %s %s", nick, uhost, hand, args);
+  if (x) return(1);
+  else return(0);
 }
 
 static void check_tcl_notc(char *nick, char *uhost, struct userrec *u,
 	       		   char *dest, char *arg)
 {
   struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
-  char *hand;
 
   get_user_flagrec(u, &fr, NULL);
-  if (u) hand = u->handle;
-  else hand = "*";
-
-  check_bind(BT_notice, arg, &fr, nick, uhost, hand, arg, dest);
-
-  Tcl_SetVar(interp, "_notc1", nick, 0);
-  Tcl_SetVar(interp, "_notc2", uhost, 0);
-  Tcl_SetVar(interp, "_notc3", hand, 0);
-  Tcl_SetVar(interp, "_notc4", arg, 0);
-  Tcl_SetVar(interp, "_notc5", dest, 0);
-  check_tcl_bind(H_notc, arg, &fr, " $_notc1 $_notc2 $_notc3 $_notc4 $_notc5",
-		 MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
+  check_bind(BT_notice, arg, &fr, nick, uhost, u, arg, dest);
 }
 
 static void check_tcl_msgm(char *nick, char *uhost, struct userrec *u, char *arg)
 {
   struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
-  char *hand;
 
 /*
   if (arg[0])
@@ -150,103 +129,42 @@ static void check_tcl_msgm(char *nick, char *uhost, struct userrec *u, char *arg
 */
 
   get_user_flagrec(u, &fr, NULL);
-  if (u) hand = u->handle;
-  else hand = "*";
-
-  check_bind(BT_msgm, arg, &fr, nick, uhost, hand, arg);
-
-  Tcl_SetVar(interp, "_msgm1", nick, 0);
-  Tcl_SetVar(interp, "_msgm2", uhost, 0);
-  Tcl_SetVar(interp, "_msgm3", hand, 0);
-  Tcl_SetVar(interp, "_msgm4", arg, 0);
-  check_tcl_bind(H_msgm, arg, &fr, " $_msgm1 $_msgm2 $_msgm3 $_msgm4",
-		 MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
+  check_bind(BT_msgm, arg, &fr, nick, uhost, u, arg);
 }
 
 /* Return 1 if processed.
  */
 static int check_tcl_raw(char *from, char *code, char *msg)
 {
-  int x;
-
-  check_bind(BT_raw, code, NULL, from, code, msg);
-
-  Tcl_SetVar(interp, "_raw1", from, 0);
-  Tcl_SetVar(interp, "_raw2", code, 0);
-  Tcl_SetVar(interp, "_raw3", msg, 0);
-  x = check_tcl_bind(H_raw, code, 0, " $_raw1 $_raw2 $_raw3",
-		     MATCH_EXACT | BIND_STACKABLE | BIND_WANTRET);
-  return (x == BIND_EXEC_LOG);
+  return check_bind(BT_raw, code, NULL, from, code, msg);
 }
 
 static int check_tcl_ctcpr(char *nick, char *uhost, struct userrec *u,
 			   char *dest, char *keyword, char *args,
-			   p_tcl_bind_list table)
+			   bind_table_t *table)
 {
-  bind_table_t *bt_table;
   struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
-  int x;
-  char *hand;
-
   get_user_flagrec(u, &fr, NULL);
-  if (u) hand = u->handle;
-  else hand = "*";
 
-  if (table == H_ctcp) bt_table = BT_ctcp;
-  else bt_table = BT_ctcr;
-
-  check_bind(bt_table, keyword, &fr, nick, uhost, hand, dest, keyword, args);
-
-  Tcl_SetVar(interp, "_ctcpr1", nick, 0);
-  Tcl_SetVar(interp, "_ctcpr2", uhost, 0);
-  Tcl_SetVar(interp, "_ctcpr3", hand, 0);
-  Tcl_SetVar(interp, "_ctcpr4", dest, 0);
-  Tcl_SetVar(interp, "_ctcpr5", keyword, 0);
-  Tcl_SetVar(interp, "_ctcpr6", args, 0);
-  x = check_tcl_bind(table, keyword, &fr,
-		     " $_ctcpr1 $_ctcpr2 $_ctcpr3 $_ctcpr4 $_ctcpr5 $_ctcpr6",
-		      MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE |
-		     ((table == H_ctcp) ? BIND_WANTRET : 0));
-  return (x == BIND_EXEC_LOG) || (table == H_ctcr);
+  return check_bind(table, keyword, &fr, nick, uhost, u, dest, keyword, args);
 }
 
 static int check_tcl_wall(char *from, char *msg)
 {
   int x;
 
-  check_bind(BT_wall, msg, NULL, from, msg);
-
-  Tcl_SetVar(interp, "_wall1", from, 0);
-  Tcl_SetVar(interp, "_wall2", msg, 0);
-  x = check_tcl_bind(H_wall, msg, 0, " $_wall1 $_wall2",
-		     MATCH_MASK | BIND_STACKABLE);
-  if (x == BIND_EXEC_LOG) {
+  x = check_bind(BT_wall, msg, NULL, from, msg);
+  if (x & BIND_RET_LOG) {
     putlog(LOG_WALL, "*", "!%s! %s", from, msg);
     return 1;
-  } else
-    return 0;
+  }
+  else return 0;
 }
 
 static int check_tcl_flud(char *nick, char *uhost, struct userrec *u,
 			  char *ftype, char *chname)
 {
-  int x;
-  char *hand;
-
-  if (u) hand = u->handle;
-  else hand = "*";
-
-  check_bind(BT_flood, ftype, NULL, nick, uhost, hand, ftype, chname);
-
-  Tcl_SetVar(interp, "_flud1", nick, 0);
-  Tcl_SetVar(interp, "_flud2", uhost, 0);
-  Tcl_SetVar(interp, "_flud3", hand, 0);
-  Tcl_SetVar(interp, "_flud4", ftype, 0);
-  Tcl_SetVar(interp, "_flud5", chname, 0);
-  x = check_tcl_bind(H_flud, ftype, 0,
-		     " $_flud1 $_flud2 $_flud3 $_flud4 $_flud5",
-		     MATCH_MASK | BIND_STACKABLE | BIND_WANTRET);
-  return (x == BIND_EXEC_LOG);
+  return check_bind(BT_flood, ftype, NULL, nick, uhost, u, ftype, chname);
 }
 
 static int match_my_nick(char *nick)

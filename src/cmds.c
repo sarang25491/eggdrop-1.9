@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.68 2001/10/05 04:28:48 guppy Exp $
+ * $Id: cmds.c,v 1.69 2001/10/07 04:02:54 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -2728,7 +2728,7 @@ static void cmd_quit(struct userrec *u, int idx, char *text)
 	flush_lines(idx, dcc[idx].u.chat);
 	putlog(LOG_MISC, "*", _("DCC connection closed (%s!%s)"), dcc[idx].nick, dcc[idx].host);
 	if (dcc[idx].u.chat->channel >= 0) {
-		chanout_but(-1, dcc[idx].u.chat->channel, "*** %s left the party line%s%s\n", dcc[idx].nick, text[0] ? ": " : ".", buf);
+		chanout_but(-1, dcc[idx].u.chat->channel, "*** %s left the party line%s%s\n", dcc[idx].nick, text[0] ? ": " : ".", text);
 		if (dcc[idx].u.chat->channel < 100000) {
 			botnet_send_part_idx(idx, text);
 		}
