@@ -1,3 +1,12 @@
+2002-02-14 00:55  Federico Mennite <ite@techmonkeys.org>
+
+	* acconfig/acinclude.m4, src/chanprog.c, src/modules.c, src/tcl.c:
+
+	* Got rid of STATIC and the related code. We don't need to care if
+	we have a static build these days.  
+	* Let's tell libtdl about the module's search path with
+	lt_dladdsearchdir() 
+
 2002-02-13 23:56  Axel Franke <eule@berlin.snafu.de>
 
 	* doc/tcl-commands.doc, modules/channels/tclchan.c:
