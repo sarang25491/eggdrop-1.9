@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2001-10-26 04:00-0500\n"
+"POT-Creation-Date: 2001-10-27 04:00-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Transfer-Encoding: ENCODING\n"
 
 #. Kill bot incase a botchk is run from crond.
-#: src/bg.c:125 src/bg.c:133 src/main.c:789 src/main.c:795
+#: src/bg.c:125 src/bg.c:133 src/main.c:787 src/main.c:793
 #, c-format
 msgid "* Warning!  Could not write %s file!\n"
 msgstr ""
@@ -48,7 +48,7 @@ msgstr ""
 msgid "Disconnected from:"
 msgstr ""
 
-#: src/botcmd.c:328 src/botcmd.c:498 src/cmds.c:274
+#: src/botcmd.c:328 src/botcmd.c:498 src/cmds.c:273
 msgid "no channels"
 msgstr ""
 
@@ -485,72 +485,72 @@ msgstr ""
 msgid "Dropped bot"
 msgstr ""
 
-#: src/chanprog.c:256 src/cmds.c:558
+#: src/chanprog.c:251 src/cmds.c:557
 msgid "background"
 msgstr ""
 
-#: src/chanprog.c:259 src/cmds.c:558
+#: src/chanprog.c:254 src/cmds.c:557
 msgid "terminal mode"
 msgstr ""
 
-#: src/chanprog.c:261 src/cmds.c:559
+#: src/chanprog.c:256 src/cmds.c:558
 msgid "status mode"
 msgstr ""
 
-#: src/chanprog.c:263 src/cmds.c:559
+#: src/chanprog.c:258 src/cmds.c:558
 msgid "log dump mode"
 msgstr ""
 
-#: src/chanprog.c:280 src/cmds.c:557
+#: src/chanprog.c:275 src/cmds.c:556
 msgid "Online for"
 msgstr ""
 
-#: src/chanprog.c:281
+#: src/chanprog.c:276
 msgid "cache hit"
 msgstr ""
 
 #. info library
-#: src/chanprog.c:285
+#: src/chanprog.c:280
 msgid "Tcl library:"
 msgstr ""
 
 #. info tclversion/patchlevel
-#: src/chanprog.c:290
+#: src/chanprog.c:285
 msgid "Tcl version:"
 msgstr ""
 
-#: src/chanprog.c:293
+#: src/chanprog.c:288
 msgid "header version"
 msgstr ""
 
-#: src/chanprog.c:323
+#: src/chanprog.c:318
 msgid "New users get flags"
 msgstr ""
 
-#: src/chanprog.c:324
+#: src/chanprog.c:319
 msgid "notify"
 msgstr ""
 
-#: src/chanprog.c:326
+#: src/chanprog.c:321
 msgid "Permanent owner(s)"
 msgstr ""
 
-#: src/chanprog.c:368
+#: src/chanprog.c:363
 msgid "CONFIG FILE NOT LOADED (NOT FOUND, OR ERROR)"
 msgstr ""
 
-#: src/chanprog.c:373
+#: src/chanprog.c:368
 msgid ""
 "STARTING BOT IN USERFILE CREATION MODE.\n"
 "Telnet to the bot and enter 'NEW' as your nickname."
 msgstr ""
 
-#: src/chanprog.c:379
+#: src/chanprog.c:374
 #, c-format
 msgid "USER FILE NOT FOUND!  (try ./eggdrop -m %s to make one)\n"
 msgstr ""
 
-#: src/chanprog.c:382
+#: src/chanprog.c:377
 msgid ""
 "\n"
 "\n"
@@ -558,85 +558,85 @@ msgid ""
 "Telnet to the bot and enter 'NEW' as your nickname.\n"
 msgstr ""
 
-#: src/chanprog.c:385
+#: src/chanprog.c:380
 #, c-format
 msgid "OR Go to IRC and:  /msg %s hello\n"
 msgstr ""
 
-#: src/chanprog.c:386
+#: src/chanprog.c:381
 msgid ""
 "This will make the bot recognize you as the master.\n"
 "\n"
 msgstr ""
 
-#: src/chanprog.c:389
+#: src/chanprog.c:384
 msgid "USERFILE ALREADY EXISTS (drop the -m)\n"
 msgstr ""
 
-#: src/chanprog.c:417
+#: src/chanprog.c:412
 msgid "CANT WRITE TO TEMP DIR"
 msgstr ""
 
-#: src/chanprog.c:432
+#: src/chanprog.c:427
 msgid "Cant reload user file!"
 msgstr ""
 
-#: src/chanprog.c:441
+#: src/chanprog.c:436
 msgid "User file is missing!"
 msgstr ""
 
-#: src/cmds.c:75
+#: src/cmds.c:74
 #, c-format
 msgid "(Can't add hostmask for %1$s because it matches %2$s)\n"
 msgstr ""
 
-#: src/cmds.c:83
+#: src/cmds.c:82
 #, c-format
 msgid "(Added hostmask for %1$s from %2$s)\n"
 msgstr ""
 
-#: src/cmds.c:1061
+#: src/cmds.c:1058
 msgid "You can not .restart a bot when running -n (due to tcl)"
 msgstr ""
 
-#: src/cmds.c:1068
+#: src/cmds.c:1065
 msgid "Restarting ..."
 msgstr ""
 
-#: src/cmds.c:1075
+#: src/cmds.c:1072
 msgid "Rehashing."
 msgstr ""
 
-#: src/cmds.c:1079 src/mod/irc.mod/msgcmds.c:878 src/tcldcc.c:929
+#: src/cmds.c:1076 src/mod/irc.mod/msgcmds.c:878 src/tcldcc.c:927
 msgid "Rehashing..."
 msgstr ""
 
-#: src/cmds.c:1086
+#: src/cmds.c:1083
 msgid "Reloading user file..."
 msgstr ""
 
-#: src/cmds.c:1096 src/cmds.c:1102
+#: src/cmds.c:1093 src/cmds.c:1099
 msgid "BOT SHUTDOWN"
 msgstr ""
 
-#: src/cmds.c:1098 src/cmds.c:1104
+#: src/cmds.c:1095 src/cmds.c:1101
 msgid "DIE BY"
 msgstr ""
 
-#: src/cmds.c:1102
+#: src/cmds.c:1099
 msgid "Authorized by"
 msgstr ""
 
-#: src/cmds.c:1105
+#: src/cmds.c:1102
 msgid "requested"
 msgstr ""
 
-#: src/cmds.c:2216 src/cmds.c:2235 src/cmds.c:2268 src/cmds.c:2290
+#: src/cmds.c:2207 src/cmds.c:2226 src/cmds.c:2259 src/cmds.c:2281
 #: src/mod/server.mod/cmdsserv.c:53
 msgid "What?  You need .help\n"
 msgstr ""
 
-#: src/cmds.c:2272 src/cmds.c:2294 src/cmds.c:2548
+#: src/cmds.c:2263 src/cmds.c:2285 src/cmds.c:2539
 #: src/mod/filesys.mod/files.c:325 src/mod/filesys.mod/files.c:337
 #: src/mod/filesys.mod/files.c:434 src/mod/filesys.mod/files.c:556
 #: src/mod/filesys.mod/files.c:598 src/mod/filesys.mod/files.c:640
@@ -651,83 +651,83 @@ msgstr ""
 msgid "Usage"
 msgstr ""
 
-#: src/cmds.c:2276
+#: src/cmds.c:2267
 msgid "Error loading module:"
 msgstr ""
 
-#: src/cmds.c:2279 src/modules.c:666
+#: src/cmds.c:2270 src/modules.c:666
 #, c-format
 msgid "Module loaded: %-16s"
 msgstr ""
 
-#: src/cmds.c:2298
+#: src/cmds.c:2289
 msgid "Error unloading module:"
 msgstr ""
 
-#: src/cmds.c:2301
+#: src/cmds.c:2292
 msgid "Module unloaded:"
 msgstr ""
 
-#: src/cmds.c:2548
+#: src/cmds.c:2539
 msgid "handle"
 msgstr ""
 
-#: src/cmds.c:2549
+#: src/cmds.c:2540
 msgid "hostmask"
 msgstr ""
 
-#: src/cmds.c:2562 src/mod/notes.mod/cmdsnote.c:159
+#: src/cmds.c:2553 src/mod/notes.mod/cmdsnote.c:159
 msgid "No such user."
 msgstr ""
 
-#: src/cmds.c:2570
+#: src/cmds.c:2561
 msgid "You can't remove hosts while having the +d or +k flag."
 msgstr ""
 
-#: src/cmds.c:2577
+#: src/cmds.c:2568
 msgid "You can't remove hostmasks from non-bots.\n"
 msgstr ""
 
-#: src/cmds.c:2581
+#: src/cmds.c:2572
 msgid "You can't remove hostmask from a shared bot.\n"
 msgstr ""
 
-#: src/cmds.c:2585
+#: src/cmds.c:2576
 msgid "Can't remove hostmasks from the bot owner/master.\n"
 msgstr ""
 
-#: src/cmds.c:2588
+#: src/cmds.c:2579
 msgid "Permission denied.\n"
 msgstr ""
 
-#: src/cmds.c:2594
+#: src/cmds.c:2585
 #, c-format
 msgid "Removed '%1$s' from %2$s\n"
 msgstr ""
 
-#: src/cmds.c:2596 src/mod/filesys.mod/files.c:990
+#: src/cmds.c:2587 src/mod/filesys.mod/files.c:990
 #: src/mod/filesys.mod/files.c:1086
 msgid "Failed.\n"
 msgstr ""
 
-#: src/cmds.c:2604
+#: src/cmds.c:2595
 msgid "Usage: modules <bot>\n"
 msgstr ""
 
-#: src/cmds.c:2611
+#: src/cmds.c:2602
 msgid "No such bot online.\n"
 msgstr ""
 
-#: src/cmds.c:2714
+#: src/cmds.c:2705
 #, c-format
 msgid "You are %s@%s\n"
 msgstr ""
 
-#: src/cmds.c:2724
+#: src/cmds.c:2715
 msgid "*** Ja mata!\n"
 msgstr ""
 
-#: src/cmds.c:2726
+#: src/cmds.c:2717
 #, c-format
 msgid "DCC connection closed (%s!%s)"
 msgstr ""
@@ -900,7 +900,7 @@ msgstr ""
 #. *       <Cybah>
 #.
 #. Turn off remote telnet echo (send IAC WILL ECHO).
-#: src/dcc.c:1436 src/mod/filesys.mod/filesys.c:867
+#: src/dcc.c:1436 src/mod/filesys.mod/filesys.c:831
 #: src/mod/server.mod/server.c:1483
 msgid "Enter your password."
 msgstr ""
@@ -1002,7 +1002,7 @@ msgstr ""
 msgid "%s has been forcibly removed for flooding.\n"
 msgstr ""
 
-#: src/dccutil.c:493 src/mod/filesys.mod/filesys.c:919
+#: src/dccutil.c:493 src/mod/filesys.mod/filesys.c:883
 msgid "-=- poof -=-\n"
 msgstr ""
 
@@ -1016,7 +1016,7 @@ msgstr ""
 msgid "%s booted %s from the party line%s%s\n"
 msgstr ""
 
-#: src/main.c:446
+#: src/main.c:444
 msgid ""
 "Command line arguments:\n"
 "  -h   help\n"
@@ -1028,33 +1028,33 @@ msgid ""
 "  optional config filename (default 'eggdrop.conf')\n"
 msgstr ""
 
-#: src/main.c:467
+#: src/main.c:465
 msgid "Backing up user file..."
 msgstr ""
 
-#: src/main.c:716
+#: src/main.c:714
 msgid "ERROR: Eggdrop will not run as root!"
 msgstr ""
 
-#: src/main.c:741
+#: src/main.c:739
 msgid ""
 "You have installed modules but have not selected an encryption\n"
 "module, please consult the default config file for info.\n"
 msgstr ""
 
-#: src/main.c:765
+#: src/main.c:763
 #, c-format
 msgid "I detect %s already running from this directory.\n"
 msgstr ""
 
-#: src/main.c:766
+#: src/main.c:764
 #, c-format
 msgid "If this is incorrect, erase the %s\n"
 msgstr ""
 
 #. Should be only 2 modules now - blowfish (or some other
 #. encryption module) and eggdrop.
-#: src/main.c:1005
+#: src/main.c:1003
 msgid "Stagnant module; there WILL be memory leaks!"
 msgstr ""
 
@@ -1660,48 +1660,48 @@ msgstr ""
 msgid "Moved"
 msgstr ""
 
-#: src/mod/filesys.mod/filesys.c:640 src/mod/filesys.mod/filesys.c:839
+#: src/mod/filesys.mod/filesys.c:604 src/mod/filesys.mod/filesys.c:803
 #: src/mod/server.mod/server.c:1422 src/mod/server.mod/server.c:1466
-#: src/mod/transfer.mod/transfer.c:710
+#: src/mod/transfer.mod/transfer.c:672
 msgid "Failed to connect"
 msgstr ""
 
-#: src/mod/filesys.mod/filesys.c:818 src/mod/server.mod/server.c:1407
+#: src/mod/filesys.mod/filesys.c:782 src/mod/server.mod/server.c:1407
 #, c-format
 msgid "DCC connections full: %s %s (%s!%s)"
 msgstr ""
 
-#: src/mod/filesys.mod/filesys.c:823 src/mod/server.mod/server.c:1412
+#: src/mod/filesys.mod/filesys.c:787 src/mod/server.mod/server.c:1412
 msgid "No access"
 msgstr ""
 
-#: src/mod/filesys.mod/filesys.c:824 src/mod/server.mod/server.c:1413
+#: src/mod/filesys.mod/filesys.c:788 src/mod/server.mod/server.c:1413
 #: src/mod/server.mod/servmsg.c:446
 msgid "Refused DCC chat (no access)"
 msgstr ""
 
-#: src/mod/filesys.mod/filesys.c:827 src/mod/server.mod/server.c:1416
+#: src/mod/filesys.mod/filesys.c:791 src/mod/server.mod/server.c:1416
 msgid "You must have a password set."
 msgstr ""
 
-#: src/mod/filesys.mod/filesys.c:828 src/mod/server.mod/server.c:1417
+#: src/mod/filesys.mod/filesys.c:792 src/mod/server.mod/server.c:1417
 msgid "Refused DCC chat (no password)"
 msgstr ""
 
-#: src/mod/filesys.mod/filesys.c:830
+#: src/mod/filesys.mod/filesys.c:794
 msgid "Refused DCC chat (+x but no file area)"
 msgstr ""
 
-#: src/mod/filesys.mod/filesys.c:840 src/mod/server.mod/server.c:1467
-#: src/mod/transfer.mod/transfer.c:711
+#: src/mod/filesys.mod/filesys.c:804 src/mod/server.mod/server.c:1467
+#: src/mod/transfer.mod/transfer.c:673
 msgid "DCC connection failed"
 msgstr ""
 
-#: src/mod/filesys.mod/filesys.c:848
+#: src/mod/filesys.mod/filesys.c:812
 msgid "Failed to connect (invalid port)\n"
 msgstr ""
 
-#: src/mod/filesys.mod/filesys.c:849
+#: src/mod/filesys.mod/filesys.c:813
 msgid "Refused DCC chat (invalid port)"
 msgstr ""
 
@@ -2444,7 +2444,7 @@ msgstr ""
 msgid "Cant send userfile to you (internal error)"
 msgstr ""
 
-#: src/mod/transfer.mod/transfer.c:704
+#: src/mod/transfer.mod/transfer.c:666
 msgid "Failed connection; aborted userfile transfer."
 msgstr ""
 
@@ -2499,20 +2499,16 @@ msgstr ""
 msgid "No such module.\n"
 msgstr ""
 
-#: src/tcldcc.c:730
+#: src/tcldcc.c:728
 msgid "No free sockets available."
 msgstr ""
 
-#: src/tcldcc.c:925 src/tcldcc.c:942
+#: src/tcldcc.c:923 src/tcldcc.c:940
 msgid "Userfile creation not necessary--skipping"
 msgstr ""
 
-#: src/tcldcc.c:946
+#: src/tcldcc.c:944
 msgid "Restarting..."
-msgstr ""
-
-#: src/tclhash.c:1033
-msgid "Command bindings:\n"
 msgstr ""
 
 #: src/tclmisc.c:285
