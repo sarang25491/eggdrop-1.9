@@ -1,3 +1,10 @@
+2001-12-02 13:22  Federico Mennite <ite@techmonkeys.org>
+
+	* eggdrop.complete.conf:
+
+	More spelling fixes in eggdrop.complete.conf. Patch by Wcc
+	<will@centerofnowhere.com> 
+
 2001-12-02 12:48  Federico Mennite <ite@techmonkeys.org>
 
 	* INSTALL, doc/text-substitutions.doc:
