@@ -6986,13 +6986,39 @@
 	html/mod-irc.html, html/mod-notes.html, html/mod-server.html,
 	html/mod-share.html, html/mod-wire.html, html/news.html,
 	html/party.html, html/readme.html, html/sharing.html,
-	html/starting.html, html/users.html:
+	html/starting.html, html/users.html, web_docs/about.html,
+	web_docs/app-botnet.html, web_docs/app-probs.html,
+	web_docs/app-textsub.html, web_docs/app-tricks.html,
+	web_docs/app-weird.html, web_docs/bans.html, web_docs/botnet.html,
+	web_docs/compiling.html, web_docs/egg-core.html,
+	web_docs/faq1.html, web_docs/faqs.html, web_docs/features.html,
+	web_docs/flags.html, web_docs/index.html, web_docs/install.html,
+	web_docs/mod-assoc.html, web_docs/mod-blowfish.html,
+	web_docs/mod-channels.html, web_docs/mod-compress.html,
+	web_docs/mod-dns.html, web_docs/mod-filesys.html,
+	web_docs/mod-irc.html, web_docs/mod-notes.html,
+	web_docs/mod-server.html, web_docs/mod-share.html,
+	web_docs/mod-wire.html, web_docs/news.html, web_docs/party.html,
+	web_docs/readme.html, web_docs/sharing.html,
+	web_docs/starting.html, web_docs/users.html:
 
 	renaming of web_docs to html 
 
+2000-04-13 09:52  jason
+
+	* doc/web_docs/: install.html, readme.html:
+
+	[no log message] 
+
+2000-04-12 15:25  jason
+
+	* doc/web_docs/faq1.html:
+
+	addition of faq 
+
 2000-04-11 08:58  jason
 
-	* doc/UPDATES1.5:
+	* doc/: UPDATES1.5, web_docs/app-textsub.html, web_docs/index.html:
 
 	toth's addition of textfile substituion to webdocs 
 
@@ -7008,9 +7034,38 @@
 
 	This patch adds the ghost bug to the KNOWN-PROBLEMS file..Johoho 
 
+2000-04-10 14:35  jason
+
+	* doc/web_docs/: mod-share.html, mod-wire.html:
+
+	silly mistakes to web_docs 
+
+2000-04-10 14:26  jason
+
+	* doc/web_docs/: app-tcl-commands.html, faqs.html:
+
+	changes to webdocs 
+
+2000-04-10 14:24  jason
+
+	* doc/web_docs/egg-core.html:
+
+	[no log message] 
+
 2000-04-10 14:22  jason
 
-	* doc/UPDATES1.5:
+	* doc/: UPDATES1.5, web_docs/about.html, web_docs/app-botnet.html,
+	web_docs/app-probs.html, web_docs/app-tricks.html,
+	web_docs/app-weird.html, web_docs/bans.html, web_docs/botnet.html,
+	web_docs/compiling.html, web_docs/features.html,
+	web_docs/flags.html, web_docs/index.html, web_docs/install.html,
+	web_docs/mod-assoc.html, web_docs/mod-blowfish.html,
+	web_docs/mod-channels.html, web_docs/mod-compress.html,
+	web_docs/mod-dns.html, web_docs/mod-filesys.html,
+	web_docs/mod-irc.html, web_docs/mod-notes.html,
+	web_docs/mod-server.html, web_docs/news.html, web_docs/party.html,
+	web_docs/readme.html, web_docs/sharing.html,
+	web_docs/starting.html, web_docs/users.html:
 
 	doc/web_docs changes 
 
@@ -7104,7 +7159,8 @@
 	* doc/CONTENTS, doc/MODULES, doc/Makefile.in, doc/UPDATES1.4,
 	doc/UPDATES1.5, doc/motd.settings, doc/readme,
 	doc/text-substitutions.doc, doc/settings/contents,
-	doc/settings/mod.woobie, doc/settings/tricks, src/patch.h:
+	doc/settings/mod.woobie, doc/settings/tricks,
+	doc/web_docs/readme.html, src/patch.h:
 
 	Wiktor's miscdoc patch 
 
@@ -7160,7 +7216,14 @@
 2000-03-22 00:38  Fabian Knittel <fknittel@gmx.de>
 
 	* FEATURES, INSTALL, NEWS, README, doc/UPDATES1.5,
-	doc/compiling.FAQ, src/patch.h:
+	doc/compiling.FAQ, doc/web_docs/app-botnet.html,
+	doc/web_docs/app-tcl-commands.html, doc/web_docs/compiling.html,
+	doc/web_docs/features.html, doc/web_docs/index.html,
+	doc/web_docs/mod-channels.html, doc/web_docs/mod-compress.html,
+	doc/web_docs/mod-dns.html, doc/web_docs/mod-filesys.html,
+	doc/web_docs/mod-irc.html, doc/web_docs/mod-notes.html,
+	doc/web_docs/mod-server.html, doc/web_docs/news.html,
+	doc/web_docs/readme.html, src/patch.h:
 
 	Jason's webdocs patch for 1.5 
 
@@ -7208,7 +7271,19 @@
 2000-03-19 23:32  Fabian Knittel <fknittel@gmx.de>
 
 	* aclocal.m4, configure, doc/UPDATES1.4, doc/compiling.FAQ,
-	src/patch.h:
+	doc/web_docs/about.html, doc/web_docs/app-botnet.html,
+	doc/web_docs/app-probs.html, doc/web_docs/app-tcl-commands.html,
+	doc/web_docs/app-tricks.html, doc/web_docs/app-weird.html,
+	doc/web_docs/bans.html, doc/web_docs/botnet.html,
+	doc/web_docs/compiling.html, doc/web_docs/features.html,
+	doc/web_docs/flags.html, doc/web_docs/index.html,
+	doc/web_docs/install.html, doc/web_docs/mod-assoc.html,
+	doc/web_docs/mod-blowfish.html, doc/web_docs/mod-channels.html,
+	doc/web_docs/mod-filesys.html, doc/web_docs/mod-irc.html,
+	doc/web_docs/mod-notes.html, doc/web_docs/mod-server.html,
+	doc/web_docs/news.html, doc/web_docs/party.html,
+	doc/web_docs/readme.html, doc/web_docs/sharing.html,
+	doc/web_docs/starting.html, doc/web_docs/users.html, src/patch.h:
 
 	1.4 resync, Mar20 
 
