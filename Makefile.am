@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.22 2004/06/19 10:30:41 wingman Exp $
+# $Id: Makefile.am,v 1.23 2004/06/19 13:18:48 wingman Exp $
 
 AUX_DIST		= $(ac_aux_dir)/install-sh \
 			$(ac_aux_dir)/ltmain.sh \
@@ -38,6 +38,9 @@ install-data-hook:
 	$(top_srcdir)/$(ac_aux_dir)/install-help.sh "$(prefix)" .
 
 install-data-local:
+#	@if test ! -f $(srcdir)/config.default.xml; then \
+#		$(ac_aux_dir)/gen-config.py 1.0.0 . config.default.xml; \
+#	fi;
 	@if test ! -f $(prefix)/config.xml; then \
 		$(INSTALL_DATA) $(srcdir)/config.xml $(prefix)/config.xml; \
 		chmod 0600 $(prefix)/config.xml; \

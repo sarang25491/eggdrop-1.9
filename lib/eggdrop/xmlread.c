@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xmlread.c,v 1.10 2004/06/17 13:32:43 wingman Exp $";
+static const char rcsid[] = "$Id: xmlread.c,v 1.11 2004/06/19 13:18:48 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -268,6 +268,38 @@ int xml_read_node(xml_node_t *parent, char **data)
 			*data = end+3;
 			return(0); /* Skip past '-->' part. */
 		}
+	}
+	else if (**data == '[') {
+		char *ptr;
+		size_t len;
+
+		/* we're likely to be a CDATA section, check it */
+		if (strncmp (*data, "[DATA[", 6) != 0)
+			return -1;
+		*data += 6;
+
+		/* search for ending ]]> */
+		ptr = strstr(*data, "]]>");
+		if (ptr == NULL)
+			return -1;
+		len = (size_t)(ptr - *data);
+
+		/* copy text */
+		node.text = malloc(len + 1);
+		memcpy(node.text, *data, len - 1);
+		node.text[len] = 0;
+
+		/* set type */
+		node.type = XML_CDATA_SECTION;
+
+		/* add to parent */
+		xml_node_add (parent, &node);
+
+		/* skip text + ]]> */
+		*data += len + 3;
+
+		return 0;
+
 	} else {
 		node.type = XML_ELEMENT;
 	}

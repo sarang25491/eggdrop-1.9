@@ -2,17 +2,35 @@
 <variables module="core">
 
 	<section name="Common">
-		<variable name="botname" type="string" path="eggdrop.botname" flags="n">
+		<variable name="botname" type="string" path="botname" flags="n">
+			<default>Lamestbot</default>
 			<description>
 				Current bot name.
 			</description>
 		</variable>	
 		
-		<variable name="userfile" type="string" path="eggdrop.userfile" flags="n">
+		<variable name="userfile" type="string" path="userfile" flags="n">
+			<default>users.xml</default>
 			<description>
 				Filename of our userlist.
 			</description>
 		</variable>
+		
+		<variable name="autoload" type="list" path="autoload">
+			<default>
+			<![CDATA[
+				<module>blowfish</module>
+				<module>script</module>
+				<module>telnetparty</module>
+				<!-- <script>example.tcl</script> -->
+				<!-- <script>example.js</script> -->				
+			]]>
+			</default>
+			<description>
+				List of module or script which are automatically loaded on startup.
+			</description>
+		</variable>
+		
 	</section>
 	
 </variables>
