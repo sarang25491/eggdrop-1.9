@@ -21,7 +21,7 @@ dnl MA 02111-1307, USA.
 dnl Automake macro to build with the mpatrol library
 
 
-dnl $Id: mpatrol.m4,v 1.2 2003/03/07 12:12:10 tothwolf Exp $
+dnl $Id: mpatrol.m4,v 1.3 2004/06/10 23:59:16 takeda Exp $
 
 
 # serial 1
@@ -34,7 +34,7 @@ dnl $Id: mpatrol.m4,v 1.2 2003/03/07 12:12:10 tothwolf Exp $
 # If `DEFAULT' is `threads' then the threadsafe version of the mpatrol
 # library will be used.
 
-AC_DEFUN(AM_WITH_MPATROL, [
+AC_DEFUN([AM_WITH_MPATROL], [
   # Firstly, determine if the mpatrol library should be used.
 
   AC_MSG_CHECKING(if mpatrol should be used)

@@ -1,13 +1,13 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.34 2004/06/08 00:51:58 stdarg Exp $
+dnl $Id: acinclude.m4,v 1.35 2004/06/10 23:59:16 takeda Exp $
 dnl
 
 
 dnl  EGG_MSG_CONFIGURE_START()
 dnl
-AC_DEFUN(EGG_MSG_CONFIGURE_START, [dnl
+AC_DEFUN([EGG_MSG_CONFIGURE_START], [dnl
 AC_MSG_RESULT([
 This is Eggdrop's GNU configure script.
 It's going to run a bunch of strange tests to hopefully
@@ -18,7 +18,7 @@ make your compile work without much twiddling.
 
 dnl  EGG_MSG_CONFIGURE_END()
 dnl
-AC_DEFUN(EGG_MSG_CONFIGURE_END, [dnl
+AC_DEFUN([EGG_MSG_CONFIGURE_END], [dnl
 AC_MSG_RESULT([
 ------------------------------------------------------------------------
 Configuration:
@@ -49,7 +49,7 @@ dnl  EGG_CHECK_CC()
 dnl
 dnl  FIXME: make a better test
 dnl
-AC_DEFUN(EGG_CHECK_CC, [dnl
+AC_DEFUN([EGG_CHECK_CC], [dnl
 if test "${cross_compiling+set}" != set
 then
   AC_MSG_ERROR([
@@ -66,7 +66,7 @@ dnl  EGG_CHECK_CCPIPE()
 dnl
 dnl  Checks whether the compiler supports the `-pipe' flag, which
 dnl  speeds up the compilation.
-AC_DEFUN(EGG_CHECK_CCPIPE, [dnl
+AC_DEFUN([EGG_CHECK_CCPIPE], [dnl
 if test -z "$no_pipe"
 then
   if test -n "$GCC"
@@ -89,7 +89,7 @@ fi
 dnl  EGG_CHECK_CFLAGS_WALL()
 dnl
 dnl  Checks whether the compiler supports the `-WAll' flag.
-AC_DEFUN(EGG_CHECK_CFLAGS_WALL, [dnl
+AC_DEFUN([EGG_CHECK_CFLAGS_WALL], [dnl
 if test -z "$no_wall"
 then
   if test -n "$GCC"
@@ -111,7 +111,7 @@ fi
 
 dnl  EGG_PROG_AWK()
 dnl
-AC_DEFUN(EGG_PROG_AWK, [dnl
+AC_DEFUN([EGG_PROG_AWK], [dnl
 # awk is needed for Tcl library and header checks, and eggdrop version subst
 AC_PROG_AWK
 if test "${AWK+set}" != set
@@ -128,7 +128,7 @@ fi
 
 dnl  EGG_PROG_BASENAME()
 dnl
-AC_DEFUN(EGG_PROG_BASENAME, [dnl
+AC_DEFUN([EGG_PROG_BASENAME], [dnl
 # basename is needed for Tcl library and header checks
 AC_CHECK_PROG(BASENAME, basename, basename)
 if test "${BASENAME+set}" != set
@@ -149,7 +149,7 @@ dnl  EGG_DISABLE_CC_OPTIMIZATION()
 dnl
 dnl check if user requested to remove -O2 cflag 
 dnl would be usefull on some weird *nix
-AC_DEFUN(EGG_DISABLE_CC_OPTIMIZATION, [dnl
+AC_DEFUN([EGG_DISABLE_CC_OPTIMIZATION], [dnl
   AC_ARG_ENABLE(cc-optimization,
                 AC_HELP_STRING([--disable-cc-optimization], [disable -O2 cflag]),  
     CFLAGS=`echo $CFLAGS | sed 's/\-O2//'`)
@@ -162,7 +162,7 @@ dnl  FIXME/NOTICE:
 dnl    This function is obsolete. Any NEW code/checks should be written
 dnl    as individual tests that will be checked on ALL operating systems.
 dnl
-AC_DEFUN(EGG_CHECK_OS, [dnl
+AC_DEFUN([EGG_CHECK_OS], [dnl
 AC_REQUIRE([AC_CANONICAL_HOST])
 
 IRIX=no
@@ -222,7 +222,7 @@ esac
 
 dnl  EGG_CHECK_LIBS()
 dnl
-AC_DEFUN(EGG_CHECK_LIBS, [dnl
+AC_DEFUN([EGG_CHECK_LIBS], [dnl
 # FIXME: this needs to be fixed so that it works on IRIX
 if test "$IRIX" = yes
 then
@@ -252,7 +252,7 @@ fi
 
 dnl  EGG_C_LONG_LONG
 dnl
-AC_DEFUN(EGG_C_LONG_LONG, [dnl
+AC_DEFUN([EGG_C_LONG_LONG], [dnl
 # Code borrowed from Samba
 AC_CACHE_CHECK([for long long], egg_cv_have_long_long, [
 AC_TRY_RUN([
@@ -276,7 +276,7 @@ fi
 
 dnl  EGG_FUNC_C99_VSNPRINTF
 dnl
-AC_DEFUN(EGG_FUNC_C99_VSNPRINTF, [dnl
+AC_DEFUN([EGG_FUNC_C99_VSNPRINTF], [dnl
 # Code borrowed from Samba
 AC_CACHE_CHECK([for C99 vsnprintf], egg_cv_have_c99_vsnprintf, [
 AC_TRY_RUN([
@@ -315,7 +315,7 @@ fi
 
 dnl  EGG_FUNC_GETOPT_LONG
 dnl
-AC_DEFUN(EGG_FUNC_GETOPT_LONG, [dnl
+AC_DEFUN([EGG_FUNC_GETOPT_LONG], [dnl
 AC_CHECK_FUNCS(getopt_long , ,
              [AC_LIBOBJ(getopt)
               AC_LIBOBJ(getopt1)])
@@ -324,7 +324,7 @@ AC_CHECK_FUNCS(getopt_long , ,
 
 dnl  EGG_REPLACE_SNPRINTF
 dnl
-AC_DEFUN(EGG_REPLACE_SNPRINTF, [dnl
+AC_DEFUN([EGG_REPLACE_SNPRINTF], [dnl
 if test "$egg_replace_snprintf" = yes
 then
   AC_LIBOBJ(snprintf)
@@ -336,7 +336,7 @@ AC_SUBST(SNPRINTF_LIBS)
 
 dnl  EGG_TYPE_32BIT()
 dnl
-AC_DEFUN(EGG_TYPE_32BIT, [dnl
+AC_DEFUN([EGG_TYPE_32BIT], [dnl
 AC_CHECK_SIZEOF(unsigned int, 4)
 if test "$ac_cv_sizeof_unsigned_int" = 4
 then
@@ -372,7 +372,7 @@ dnl  EGG_CACHE_UNSET(CACHE-ID)
 dnl
 dnl  Unsets a certain cache item. Typically called before using
 dnl  the AC_CACHE_*() macros.
-AC_DEFUN(EGG_CACHE_UNSET, [dnl
+AC_DEFUN([EGG_CACHE_UNSET], [dnl
   unset $1
 ])
 
@@ -442,7 +442,7 @@ AC_MSG_RESULT([not found])
 
 dnl  EGG_IPV6_OPTIONS()
 dnl
-AC_DEFUN(EGG_IPV6_OPTIONS, [dnl
+AC_DEFUN([EGG_IPV6_OPTIONS], [dnl
 AC_MSG_CHECKING(whether you enabled IPv6 support)
 dnl dummy option for help string, next option is the real one
 AC_ARG_ENABLE(ipv6,
@@ -472,7 +472,7 @@ fi
 
 dnl  EGG_TYPE_SOCKLEN_T
 dnl
-AC_DEFUN(EGG_TYPE_SOCKLEN_T, [dnl
+AC_DEFUN([EGG_TYPE_SOCKLEN_T], [dnl
 AC_CACHE_CHECK(for socklen_t, egg_cv_var_socklen_t, [
 AC_TRY_COMPILE([#include <sys/param.h>
 #include <sys/socket.h>
@@ -492,7 +492,7 @@ fi
 
 dnl  EGG_INADDR_LOOPBACK
 dnl
-AC_DEFUN(EGG_INADDR_LOOPBACK, [dnl
+AC_DEFUN([EGG_INADDR_LOOPBACK], [dnl
 AC_MSG_CHECKING(for INADDR_LOOPBACK)
 AC_CACHE_VAL(adns_cv_decl_inaddrloopback,[
  AC_TRY_COMPILE([
@@ -521,7 +521,7 @@ fi
 
 dnl  EGG_IPV6_SUPPORTED
 dnl
-AC_DEFUN(EGG_IPV6_SUPPORTED, [dnl
+AC_DEFUN([EGG_IPV6_SUPPORTED], [dnl
 AC_MSG_CHECKING(for kernel IPv6 support)
 AC_CACHE_VAL(egg_cv_ipv6_supported,[
  AC_TRY_RUN([
@@ -554,7 +554,7 @@ fi
 
 dnl  EGG_DEFINE_VERSION_NUM
 dnl
-AC_DEFUN(EGG_DEFINE_VERSION_NUM, [dnl
+AC_DEFUN([EGG_DEFINE_VERSION_NUM], [dnl
 egg_version_num=`echo $VERSION | $AWK 'BEGIN {FS = "."} {printf("%d%02d%02d00", [$]1, [$]2, [$]3)}'`
 AC_DEFINE_UNQUOTED(VERSION_NUM, $egg_version_num,
                    [Define version number.])
@@ -563,7 +563,7 @@ AC_DEFINE_UNQUOTED(VERSION_NUM, $egg_version_num,
 
 dnl  EGG_GNU_GETTEXT
 dnl
-AC_DEFUN(EGG_GNU_GETTEXT, [dnl
+AC_DEFUN([EGG_GNU_GETTEXT], [dnl
 AC_MSG_CHECKING(for avaible translations)
 ALL_LINGUAS=""
 cd po   
@@ -580,7 +580,7 @@ AM_GNU_GETTEXT(, need-ngettext)
 
 dnl  EGG_LIBTOOL
 dnl
-AC_DEFUN(EGG_LIBTOOL, [dnl
+AC_DEFUN([EGG_LIBTOOL], [dnl
 
 AC_LIBTOOL_WIN32_DLL
 AC_LIBLTDL_CONVENIENCE(libltdl)
@@ -605,7 +605,7 @@ ac_configure_args="$ac_configure_args --with-auxdir=$egg_aux_dir"
 
 dnl EGG_WITH_EFENCE
 dnl
-AC_DEFUN(EGG_WITH_EFENCE, [dnl
+AC_DEFUN([EGG_WITH_EFENCE], [dnl
 AC_REQUIRE([AM_WITH_MPATROL])
 
 AC_ARG_WITH(efence,
@@ -629,7 +629,7 @@ fi
 
 dnl  EGG_DEBUG_OPTIONS
 dnl
-AC_DEFUN(EGG_DEBUG_OPTIONS, [dnl
+AC_DEFUN([EGG_DEBUG_OPTIONS], [dnl
 AC_ARG_ENABLE(debug,
               AC_HELP_STRING([--disable-debug],
                              [disable debug support]),
@@ -649,7 +649,7 @@ EGG_WITH_EFENCE
 
 dnl  EGG_COMPRESS_MODULE
 dnl
-AC_DEFUN(EGG_COMPRESS_MODULE, [dnl
+AC_DEFUN([EGG_COMPRESS_MODULE], [dnl
 
 egg_compress=no
 
@@ -688,7 +688,7 @@ AM_CONDITIONAL(EGG_COMPRESS, test "$egg_compress" = yes)
 # FIXME: is it worth to make this macro more anal? Yes it is!
 dnl  EGG_PERLSCRIPT_MODULE
 dnl
-AC_DEFUN(EGG_PERLSCRIPT_MODULE, [dnl
+AC_DEFUN([EGG_PERLSCRIPT_MODULE], [dnl
 
 AC_ARG_WITH(perlscript,
             AC_HELP_STRING([--without-perlscript],
@@ -722,7 +722,7 @@ AM_CONDITIONAL(EGG_PERLSCRIPT, test "$egg_perlscript" = yes)
 
 dnl  EGG_TCLSCRIPT_MODULE
 dnl
-AC_DEFUN(EGG_TCLSCRIPT_MODULE, [dnl
+AC_DEFUN([EGG_TCLSCRIPT_MODULE], [dnl
 
 egg_tclscript=no
 
@@ -755,7 +755,7 @@ AM_CONDITIONAL(EGG_TCLSCRIPT, test "$egg_tclscript" = yes)
 
 dnl  EGG_JAVASCRIPT_MODULE
 dnl
-AC_DEFUN(EGG_JAVASCRIPT_MODULE, [dnl
+AC_DEFUN([EGG_JAVASCRIPT_MODULE], [dnl
 
 egg_javascript=no
 

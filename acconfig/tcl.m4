@@ -17,7 +17,7 @@
 #				the tclConfig.sh file
 #------------------------------------------------------------------------
 
-AC_DEFUN(SC_PATH_TCLCONFIG, [
+AC_DEFUN([SC_PATH_TCLCONFIG], [
     #
     # Ok, lets find the tcl configuration
     # First, look for one uninstalled.
@@ -112,7 +112,7 @@ AC_DEFUN(SC_PATH_TCLCONFIG, [
 #				the tkConfig.sh file
 #------------------------------------------------------------------------
 
-AC_DEFUN(SC_PATH_TKCONFIG, [
+AC_DEFUN([SC_PATH_TKCONFIG], [
     #
     # Ok, lets find the tk configuration
     # First, look for one uninstalled.
@@ -207,7 +207,7 @@ AC_DEFUN(SC_PATH_TKCONFIG, [
 #
 #------------------------------------------------------------------------
 
-AC_DEFUN(SC_LOAD_TCLCONFIG, [
+AC_DEFUN([SC_LOAD_TCLCONFIG], [
     AC_MSG_CHECKING([for existence of $TCL_BIN_DIR/tclConfig.sh])
 
     if test -f "$TCL_BIN_DIR/tclConfig.sh" ; then
@@ -273,7 +273,7 @@ AC_DEFUN(SC_LOAD_TCLCONFIG, [
 #		TK_BIN_DIR
 #------------------------------------------------------------------------
 
-AC_DEFUN(SC_LOAD_TKCONFIG, [
+AC_DEFUN([SC_LOAD_TKCONFIG], [
     AC_MSG_CHECKING([for existence of $TK_BIN_DIR/tkConfig.sh])
 
     if test -f "$TK_BIN_DIR/tkConfig.sh" ; then
@@ -310,7 +310,7 @@ AC_DEFUN(SC_LOAD_TKCONFIG, [
 #		SHARED_BUILD	Value of 1 or 0
 #------------------------------------------------------------------------
 
-AC_DEFUN(SC_ENABLE_SHARED, [
+AC_DEFUN([SC_ENABLE_SHARED], [
     AC_MSG_CHECKING([how to build libraries])
     AC_ARG_ENABLE(shared,
 	[  --enable-shared         build and link with shared libraries [--enable-shared]],
@@ -350,7 +350,7 @@ AC_DEFUN(SC_ENABLE_SHARED, [
 #		FRAMEWORK_BUILD	Value of 1 or 0
 #------------------------------------------------------------------------
 
-AC_DEFUN(SC_ENABLE_FRAMEWORK, [
+AC_DEFUN([SC_ENABLE_FRAMEWORK], [
     AC_MSG_CHECKING([how to package libraries])
     AC_ARG_ENABLE(framework,
 	[  --enable-framework      package shared libraries in frameworks [--disable-framework]],
@@ -399,7 +399,7 @@ AC_DEFUN(SC_ENABLE_FRAMEWORK, [
 #
 #------------------------------------------------------------------------
 
-AC_DEFUN(SC_ENABLE_THREADS, [
+AC_DEFUN([SC_ENABLE_THREADS], [
     AC_MSG_CHECKING(for building with threads)
     AC_ARG_ENABLE(threads, [  --enable-threads        build with threads],
 	[tcl_ok=$enableval], [tcl_ok=no])
@@ -491,7 +491,7 @@ AC_DEFUN(SC_ENABLE_THREADS, [
 #
 #------------------------------------------------------------------------
 
-AC_DEFUN(SC_ENABLE_SYMBOLS, [
+AC_DEFUN([SC_ENABLE_SYMBOLS], [
     AC_MSG_CHECKING([for build with symbols])
     AC_ARG_ENABLE(symbols, [  --enable-symbols        build with debugging symbols [--disable-symbols]],    [tcl_ok=$enableval], [tcl_ok=no])
 # FIXME: Currently, LDFLAGS_DEFAULT is not used, it should work like CFLAGS_DEFAULT.
@@ -548,7 +548,7 @@ AC_DEFUN(SC_ENABLE_SYMBOLS, [
 #
 #------------------------------------------------------------------------
 
-AC_DEFUN(SC_ENABLE_LANGINFO, [
+AC_DEFUN([SC_ENABLE_LANGINFO], [
     AC_ARG_ENABLE(langinfo,
 	[  --enable-langinfo	  use nl_langinfo if possible to determine
 			  encoding at startup, otherwise use old heuristic],
@@ -595,7 +595,7 @@ AC_DEFUN(SC_ENABLE_LANGINFO, [
 #				according to the user's selection.
 #
 #--------------------------------------------------------------------
-AC_DEFUN(SC_CONFIG_MANPAGES, [
+AC_DEFUN([SC_CONFIG_MANPAGES], [
 
 	AC_MSG_CHECKING([whether to use symlinks for manpages])
 	AC_ARG_ENABLE(man-symlinks,
@@ -638,7 +638,7 @@ AC_DEFUN(SC_CONFIG_MANPAGES, [
 #
 #--------------------------------------------------------------------
 
-AC_DEFUN(SC_SERIAL_PORT, [
+AC_DEFUN([SC_SERIAL_PORT], [
     AC_CHECK_HEADERS(sys/modem.h)
     AC_MSG_CHECKING([termios vs. termio vs. sgtty])
     AC_CACHE_VAL(tcl_cv_api_serial, [
@@ -767,7 +767,7 @@ int main() {
 #
 #--------------------------------------------------------------------
 
-AC_DEFUN(SC_MISSING_POSIX_HEADERS, [
+AC_DEFUN([SC_MISSING_POSIX_HEADERS], [
     AC_MSG_CHECKING(dirent.h)
     AC_TRY_LINK([#include <sys/types.h>
 #include <dirent.h>], [
@@ -847,7 +847,7 @@ closedir(d);
 #
 #--------------------------------------------------------------------
 
-AC_DEFUN(SC_PATH_X, [
+AC_DEFUN([SC_PATH_X], [
     AC_PATH_X
     not_really_there=""
     if test "$no_x" = ""; then
@@ -932,7 +932,7 @@ AC_DEFUN(SC_PATH_X, [
 #
 #--------------------------------------------------------------------
 
-AC_DEFUN(SC_BLOCKING_STYLE, [
+AC_DEFUN([SC_BLOCKING_STYLE], [
     AC_CHECK_HEADERS(sys/ioctl.h)
     AC_CHECK_HEADERS(sys/filio.h)
     AC_MSG_CHECKING([FIONBIO vs. O_NONBLOCK for nonblocking I/O])
@@ -997,7 +997,7 @@ AC_DEFUN(SC_BLOCKING_STYLE, [
 #
 #--------------------------------------------------------------------
 
-AC_DEFUN(SC_TIME_HANDLER, [
+AC_DEFUN([SC_TIME_HANDLER], [
     AC_CHECK_HEADERS(sys/time.h)
     AC_HEADER_TIME
     AC_STRUCT_TIMEZONE
@@ -1081,7 +1081,7 @@ AC_DEFUN(SC_TIME_HANDLER, [
 #
 #--------------------------------------------------------------------
 
-AC_DEFUN(SC_TCL_LINK_LIBS, [
+AC_DEFUN([SC_TCL_LINK_LIBS], [
     #--------------------------------------------------------------------
     # On a few very rare systems, all of the libm.a stuff is
     # already in libc.a.  Set compiler flags accordingly.
@@ -1157,7 +1157,7 @@ AC_DEFUN(SC_TCL_LINK_LIBS, [
 #
 #--------------------------------------------------------------------
 
-AC_DEFUN(SC_TCL_EARLY_FLAG,[
+AC_DEFUN([SC_TCL_EARLY_FLAG],[
     AC_CACHE_VAL([tcl_cv_flag_]translit($1,[A-Z],[a-z]),
 	AC_TRY_COMPILE([$2], $3, [tcl_cv_flag_]translit($1,[A-Z],[a-z])=no,
 	    AC_TRY_COMPILE([[#define ]$1[ 1
@@ -1169,7 +1169,7 @@ AC_DEFUN(SC_TCL_EARLY_FLAG,[
 	tcl_flags="$tcl_flags $1"
     fi])
 
-AC_DEFUN(SC_TCL_EARLY_FLAGS,[
+AC_DEFUN([SC_TCL_EARLY_FLAGS],[
     AC_MSG_CHECKING([for required early compiler flags])
     tcl_flags=""
     SC_TCL_EARLY_FLAG(_ISOC99_SOURCE,[#include <stdlib.h>],
@@ -1201,7 +1201,7 @@ AC_DEFUN(SC_TCL_EARLY_FLAGS,[
 #
 #--------------------------------------------------------------------
 
-AC_DEFUN(SC_TCL_64BIT_FLAGS, [
+AC_DEFUN([SC_TCL_64BIT_FLAGS], [
     AC_MSG_CHECKING([for 64-bit integer type])
     AC_CACHE_VAL(tcl_cv_type_64bit,[
 	tcl_cv_type_64bit=none
