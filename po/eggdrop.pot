@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2003-02-17 04:00-0600\n"
+"POT-Creation-Date: 2003-02-18 04:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,7 +32,7 @@ msgstr ""
 msgid "You can't unload an encryption module"
 msgstr ""
 
-#: modules/blowfish/blowfish.c:429 src/modules.c:580
+#: modules/blowfish/blowfish.c:429 src/modules.c:574
 msgid "Already loaded."
 msgstr ""
 
@@ -385,7 +385,7 @@ msgstr ""
 msgid "Use .invites all to see the total list"
 msgstr ""
 
-#: modules/channels/userchan.c:920 src/userrec.c:374 src/userrec.c:386
+#: modules/channels/userchan.c:920 src/userrec.c:373 src/userrec.c:385
 msgid "ERROR writing user file."
 msgstr ""
 
@@ -396,7 +396,7 @@ msgstr ""
 #: modules/channels/userchan.c:991 modules/channels/userchan.c:1008
 #: modules/channels/userchan.c:1036 modules/channels/userchan.c:1082
 #: modules/channels/userchan.c:1110 modules/channels/userchan.c:1128
-#: src/users.c:227
+#: src/users.c:226
 msgid "expired"
 msgstr ""
 
@@ -1728,12 +1728,12 @@ msgstr ""
 msgid "NOTICE %s :You have %d note%s waiting on %s.\n"
 msgstr ""
 
-#: modules/server/input.c:52
+#: modules/server/input.c:77
 #, c-format
 msgid "Server says Im not on channel: %s"
 msgstr ""
 
-#: modules/server/input.c:332
+#: modules/server/input.c:353
 msgid "Nick change was too fast."
 msgstr ""
 
@@ -1741,7 +1741,7 @@ msgstr ""
 #. * or this is a non-standard server, so we log it and kill the socket
 #. * hoping the next server will work :) -poptix
 #.
-#: modules/server/input.c:342
+#: modules/server/input.c:363
 #, c-format
 msgid "%s says I'm not registered, trying next one."
 msgstr ""
@@ -1756,132 +1756,132 @@ msgstr ""
 msgid "* Warning!  Could not write %s file!\n"
 msgstr ""
 
-#: src/chanprog.c:207
+#: src/chanprog.c:206
 msgid "*unknown*"
 msgstr ""
 
-#: src/chanprog.c:216
+#: src/chanprog.c:215
 #, c-format
 msgid "I am %1$s, running %2$s:  "
 msgstr ""
 
-#: src/chanprog.c:217
+#: src/chanprog.c:216
 #, c-format
 msgid "%d user\n"
 msgid_plural "%d users\n"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/chanprog.c:224
+#: src/chanprog.c:223
 #, c-format
 msgid "%d day"
 msgid_plural "%d days"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/chanprog.c:235 src/cmds.c:347
+#: src/chanprog.c:234 src/cmds.c:347
 msgid "background"
 msgstr ""
 
-#: src/chanprog.c:238 src/cmds.c:347
+#: src/chanprog.c:237 src/cmds.c:347
 msgid "terminal mode"
 msgstr ""
 
-#: src/chanprog.c:240 src/cmds.c:348
+#: src/chanprog.c:239 src/cmds.c:348
 msgid "status mode"
 msgstr ""
 
-#: src/chanprog.c:242 src/cmds.c:348
+#: src/chanprog.c:241 src/cmds.c:348
 msgid "log dump mode"
 msgstr ""
 
-#: src/chanprog.c:259 src/cmds.c:346
+#: src/chanprog.c:258 src/cmds.c:346
 msgid "Online for"
 msgstr ""
 
-#: src/chanprog.c:260
+#: src/chanprog.c:259
 msgid "cache hit"
 msgstr ""
 
-#: src/chanprog.c:263
+#: src/chanprog.c:262
 #, c-format
 msgid "Admin: %s\n"
 msgstr ""
 
-#: src/chanprog.c:264
+#: src/chanprog.c:263
 #, c-format
 msgid "Config file: %s\n"
 msgstr ""
 
-#: src/chanprog.c:265
+#: src/chanprog.c:264
 #, c-format
 msgid "OS: %1$s %2$s\n"
 msgstr ""
 
-#: src/chanprog.c:275
+#: src/chanprog.c:274
 #, c-format
 msgid "My name: %s\n"
 msgstr ""
 
-#: src/chanprog.c:277
+#: src/chanprog.c:276
 #, c-format
 msgid "Firewall: %1$s, port %2$d\n"
 msgstr ""
 
-#: src/chanprog.c:278
+#: src/chanprog.c:277
 #, c-format
 msgid "Userfile: %1$s   Motd: %2$s\n"
 msgstr ""
 
-#: src/chanprog.c:279
+#: src/chanprog.c:278
 msgid "Directories:\n"
 msgstr ""
 
-#: src/chanprog.c:280
+#: src/chanprog.c:279
 #, c-format
 msgid "  Help    : %s\n"
 msgstr ""
 
-#: src/chanprog.c:281
+#: src/chanprog.c:280
 #, c-format
 msgid "  Temp    : %s\n"
 msgstr ""
 
-#: src/chanprog.c:282
+#: src/chanprog.c:281
 #, c-format
 msgid "  Modules : %s\n"
 msgstr ""
 
-#: src/chanprog.c:286
+#: src/chanprog.c:285
 msgid "New users get flags"
 msgstr ""
 
-#: src/chanprog.c:287
+#: src/chanprog.c:286
 msgid "notify"
 msgstr ""
 
-#: src/chanprog.c:290
+#: src/chanprog.c:289
 #, c-format
 msgid "Permanent owner(s): %s\n"
 msgstr ""
 
-#: src/chanprog.c:291
+#: src/chanprog.c:290
 #, c-format
 msgid "Ignores last %d mins\n"
 msgstr ""
 
-#: src/chanprog.c:330
+#: src/chanprog.c:329
 msgid ""
 "STARTING BOT IN USERFILE CREATION MODE.\n"
 "Telnet to the bot and enter 'NEW' as your nickname."
 msgstr ""
 
-#: src/chanprog.c:336
+#: src/chanprog.c:335
 #, c-format
 msgid "USER FILE NOT FOUND!  (try ./eggdrop -m %s to make one)\n"
 msgstr ""
 
-#: src/chanprog.c:339
+#: src/chanprog.c:338
 msgid ""
 "\n"
 "\n"
@@ -1889,30 +1889,30 @@ msgid ""
 "Telnet to the bot and enter 'NEW' as your nickname.\n"
 msgstr ""
 
-#: src/chanprog.c:342
+#: src/chanprog.c:341
 #, c-format
 msgid "OR go to IRC and type:  /msg %s hello\n"
 msgstr ""
 
-#: src/chanprog.c:343
+#: src/chanprog.c:342
 msgid ""
 "This will make the bot recognize you as the master.\n"
 "\n"
 msgstr ""
 
-#: src/chanprog.c:346
+#: src/chanprog.c:345
 msgid "USERFILE ALREADY EXISTS (drop the -m)\n"
 msgstr ""
 
-#: src/chanprog.c:369
+#: src/chanprog.c:368
 msgid "CANT WRITE TO TEMP DIR"
 msgstr ""
 
-#: src/chanprog.c:381
+#: src/chanprog.c:380
 msgid "Cant reload user file!"
 msgstr ""
 
-#: src/chanprog.c:388
+#: src/chanprog.c:387
 msgid "User file is missing!"
 msgstr ""
 
@@ -2294,7 +2294,7 @@ msgstr ""
 msgid "Error loading module:"
 msgstr ""
 
-#: src/cmds.c:1511 src/modules.c:611
+#: src/cmds.c:1511 src/modules.c:605
 #, c-format
 msgid "Module loaded: %-16s"
 msgstr ""
@@ -2636,17 +2636,17 @@ msgstr ""
 msgid "Note arrived for you"
 msgstr ""
 
-#: src/logfile.c:111
+#: src/logfile.c:110
 msgid "Cycling logfiles"
 msgstr ""
 
-#: src/logfile.c:211 src/logfile.c:262
+#: src/logfile.c:210 src/logfile.c:261
 #, c-format
 msgid "Last message repeated %d time(s).\n"
 msgstr ""
 
 #. It's too big.
-#: src/logfile.c:248
+#: src/logfile.c:247
 #, c-format
 msgid "Cycling logfile %s, over max-logsize (%d kilobytes)"
 msgstr ""
@@ -2692,49 +2692,49 @@ msgstr ""
 msgid "No help available on that.\n"
 msgstr ""
 
-#: src/modules.c:540
+#: src/modules.c:534
 #, c-format
 msgid "error during libtdl initialization: %s\n"
 msgstr ""
 
-#: src/modules.c:547
+#: src/modules.c:541
 msgid "Cant determine current directory."
 msgstr ""
 
-#: src/modules.c:549 src/modules.c:551
+#: src/modules.c:543 src/modules.c:545
 msgid "Invalid module's search path."
 msgstr ""
 
-#: src/modules.c:591
+#: src/modules.c:585
 msgid "No start function defined."
 msgstr ""
 
-#: src/modules.c:595
+#: src/modules.c:589
 msgid "Malloc error"
 msgstr ""
 
-#: src/modules.c:627
+#: src/modules.c:621
 msgid "Needed by another module"
 msgstr ""
 
-#: src/modules.c:631
+#: src/modules.c:625
 msgid "No close function"
 msgstr ""
 
-#: src/modules.c:646
+#: src/modules.c:640
 #, c-format
 msgid "Module unloaded: %s"
 msgstr ""
 
-#: src/modules.c:652
+#: src/modules.c:646
 msgid "No such module"
 msgstr ""
 
-#: src/modules.c:864
+#: src/modules.c:844
 msgid "MODULES LOADED:\n"
 msgstr ""
 
-#: src/modules.c:889
+#: src/modules.c:869
 msgid "No such module.\n"
 msgstr ""
 
@@ -2746,64 +2746,64 @@ msgstr ""
 msgid "Restarting..."
 msgstr ""
 
-#: src/users.c:189
+#: src/users.c:188
 msgid "placed by"
 msgstr ""
 
-#: src/users.c:204
+#: src/users.c:203
 msgid "Currently ignoring"
 msgstr ""
 
-#: src/users.c:226
+#: src/users.c:225
 msgid "No longer ignoring"
 msgstr ""
 
-#: src/users.c:540
+#: src/users.c:539
 msgid "Cant find anyone matching that"
 msgstr ""
 
-#: src/users.c:560
+#: src/users.c:559
 msgid "Matching"
 msgstr ""
 
-#: src/users.c:566
+#: src/users.c:565
 msgid "skipping first"
 msgstr ""
 
-#: src/users.c:594 src/users.c:602 src/users.c:613
+#: src/users.c:593 src/users.c:601 src/users.c:612
 #, c-format
 msgid "(more than %d matches; list truncated)\n"
 msgstr ""
 
-#: src/users.c:618
+#: src/users.c:617
 #, c-format
 msgid "--- Found %d match%s.\n"
 msgstr ""
 
-#: src/users.c:625
+#: src/users.c:624
 msgid "Backing up user file..."
 msgstr ""
 
-#: src/users.c:693
+#: src/users.c:692
 msgid "Old userfile, use tclsh scripts/weed <userfile> c to convert"
 msgstr ""
 
-#: src/users.c:696
+#: src/users.c:695
 msgid "Invalid userfile format."
 msgstr ""
 
-#: src/users.c:900
+#: src/users.c:899
 msgid "Corrupt user record"
 msgstr ""
 
-#: src/users.c:905
+#: src/users.c:904
 msgid "Duplicate user record"
 msgstr ""
 
-#: src/users.c:916
+#: src/users.c:915
 msgid "Corrupted password reset for"
 msgstr ""
 
-#: src/users.c:937
+#: src/users.c:936
 msgid "Ignored masks for channel(s):"
 msgstr ""
