@@ -1,3 +1,10 @@
+2002-04-17 21:40  Federico Mennite <ite@techmonkeys.org>
+
+	* modules/channels/channels.c:
+
+	removed an extra space from the 'Writing channel file...' message
+	(synch 1.6) 
+
 2002-04-17 21:27  Federico Mennite <ite@techmonkeys.org>
 
 	* modules/share/uf_features.c:
