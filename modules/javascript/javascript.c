@@ -20,12 +20,14 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: javascript.c,v 1.1 2002/05/06 09:39:50 stdarg Exp $";
+static const char rcsid[] = "$Id: javascript.c,v 1.2 2002/05/06 10:33:09 stdarg Exp $";
 #endif
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#define XP_UNIX
 
 #include "jsapi.h"
 
@@ -40,13 +42,16 @@ static eggdrop_t *egg = NULL;
 
 /* Data we need for a tcl callback. */
 typedef struct {
-	JSContext *cx;
-	JSObject *obj;
+	JSContext *mycx;
+	JSObject *myobj;
 	JSFunction *command;
 	char *name;
 } my_callback_cd_t;
 
+static int my_command_handler(JSContext *cx, JSObject *obj, int argc, jsval *argv, jsval *rval);
+
 static jsval c_to_js_var(JSContext *cx, script_var_t *v);
+
 static int js_to_c_var(JSContext *cx, JSObject *obj, jsval val, script_var_t *var, int type);
 
 static JSRuntime *global_js_runtime;
@@ -75,11 +80,13 @@ static int my_load_script(registry_entry_t *entry, char *fname)
 /* This function handles trace callbacks from Tcl. */
 static int my_linked_var_get()
 {
+	return(0);
 }
 
 static int my_linked_var_set()
 {
-	script_linked_var_t *linked_var = (script_linked_var_t *)client_data;
+	script_linked_var_t *linked_var;
+	script_var_t newvalue;
 
 	//tcl_to_c_var(irp, obj, &newvalue, linked_var->type);
 
@@ -123,10 +130,10 @@ static int my_link_var(void *ignore, script_linked_var_t *var)
 	if (var->class && strlen(var->class)) varname = msprintf("%s(%s)", var->class, var->name);
 	else varname = strdup(var->name);
 
-	set_linked_var(var);
-	obj = JS_DefineObject(global_js_context, global_js_object,
-		varname, NULL, NULL, JSPROP_PERMANENT | JSPROP_EXPORTED);
-	JS_SetPrivate(global_js_context, obj, var);
+	//set_linked_var(var);
+	//obj = JS_DefineObject(global_js_context, global_js_object,
+		//varname, NULL, NULL, JSPROP_PERMANENT | JSPROP_EXPORTED);
+	//JS_SetPrivate(global_js_context, obj, var);
 
 	free(varname);
 	return(0);
@@ -199,7 +206,7 @@ static int my_js_callbacker(script_callback_t *me, ...)
 	if (n) {
 		int32 intval;
 
-		if (JS_ValueToInt32(cx, val, &intval)) retval = intval;
+		if (JS_ValueToInt32(cd->mycx, result, &intval)) retval = intval;
 	}
 
 	/* If it's a one-time callback, delete it. */
@@ -209,7 +216,7 @@ static int my_js_callbacker(script_callback_t *me, ...)
 }
 
 /* This implements the delete() member of JS script callbacks. */
-static int my_tcl_cb_delete(script_callback_t *me)
+static int my_js_cb_delete(script_callback_t *me)
 {
 	my_callback_cd_t *cd;
 
@@ -234,8 +241,10 @@ static int my_create_cmd(void *ignore, script_command_t *info)
 	else {
 		cmdname = strdup(info->name);
 	}
+
 	func = JS_NewFunction(global_js_context, my_command_handler, 0, 0, NULL, cmdname);
-	free(cmdname);
+
+	//free(cmdname);
 
 	obj = JS_GetFunctionObject(func);
 	JS_SetPrivate(global_js_context, obj, info);
@@ -265,7 +274,7 @@ static jsval c_to_js_var(JSContext *cx, script_var_t *v)
 {
 	jsval result;
 
-	result = JS_VOID;
+	result = JSVAL_VOID;
 
 	/* If it's an array, we call ourselves recursively. */
 	if (v->type & SCRIPT_ARRAY) {
@@ -434,7 +443,7 @@ static int js_to_c_var(JSContext *cx, JSObject *obj, jsval val, script_var_t *va
 
 			vartype[0] = type;
 			vartype[1] = 0;
-			JS_ReportError(myinterp, "Cannot convert JS object to unknown variable type '%s'", vartype);
+			JS_ReportError(cx, "Cannot convert JS object to unknown variable type '%s'", vartype);
 			err = 1;
 		}
 	}
@@ -483,8 +492,8 @@ static int my_command_handler(JSContext *cx, JSObject *obj, int argc, jsval *arg
 	cmd = (script_command_t *)JS_GetPrivate(cx, obj);
 
 	/* Check for proper number of args. */
-	if (cmd->flags & SCRIPT_VAR_ARGS) i = (cmd->nargs <= (objc-1));
-	else i = (cmd->nargs < 0 || cmd->nargs == (objc-1));
+	if (cmd->flags & SCRIPT_VAR_ARGS) i = (cmd->nargs <= argc);
+	else i = (cmd->nargs < 0 || cmd->nargs == argc);
 
 	if (!i) {
 		JS_ReportError(cx, "Wrong number of arguments: %s", cmd->syntax_error);
@@ -492,7 +501,7 @@ static int my_command_handler(JSContext *cx, JSObject *obj, int argc, jsval *arg
 	}
 
 	/* We want space for at least 10 args. */
-	args = mstack_new(2*objc+10);
+	args = mstack_new(2*argc+10);
 
 	/* Reserve space for 3 optional args. */
 	mstack_push(args, NULL);
@@ -500,23 +509,23 @@ static int my_command_handler(JSContext *cx, JSObject *obj, int argc, jsval *arg
 	mstack_push(args, NULL);
 
 	/* Have some space for buffers too. */
-	bufs = mstack_new(objc);
+	bufs = mstack_new(argc);
 
 	/* And callbacks. */
-	cbacks = mstack_new(objc);
+	cbacks = mstack_new(argc);
 
 	/* Parse arguments. */
 	syntax = cmd->syntax;
 	if (cmd->flags & SCRIPT_VAR_FRONT) {
 		/* See how many args to skip. */
-		skip = strlen(syntax) - (objc-1);
+		skip = strlen(syntax) - (argc-1);
 		if (skip < 0) skip = 0;
 		for (i = 0; i < skip; i++) mstack_push(args, NULL);
 		syntax += skip;
 	}
 	else skip = 0;
 
-	err = TCL_OK;
+	err = 0;
 	for (i = 0; i < argc; i++) {
 		err = js_to_c_var(cx, obj, argv[i], &var, *syntax);
 
@@ -568,7 +577,7 @@ static int my_command_handler(JSContext *cx, JSObject *obj, int argc, jsval *arg
 	}
 
 	err = retval.type & SCRIPT_ERROR;
-	*rval = c_to_tcl_var(myinterp, &retval);
+	*rval = c_to_js_var(cx, &retval);
 
 	my_argument_cleanup(args, bufs, cbacks, 0);
 
@@ -595,7 +604,7 @@ static int javascript_init()
 	if (!global_js_context) return(1);
 
 	/* Create the global object here */
-	globl_js_object = JS_NewObject(global_js_context, &global_class, NULL, NULL);
+	global_js_object = JS_NewObject(global_js_context, &global_class, NULL, NULL);
 
 	/* Initialize the built-in JS objects and the global object */
 	builtins = JS_InitStandardClasses(global_js_context, global_js_object);
@@ -629,6 +638,8 @@ static int cmd_js(struct userrec *u, int idx, char *text)
 {
 	char *str;
 	static int curline = 1;
+	int retval;
+	jsval js_rval;
 
 	if (!isowner(dcc[idx].nick)) {
 		dprintf(idx, _("You must be a permanent owner (defined in the config file) to use this command.\n"));
@@ -636,7 +647,7 @@ static int cmd_js(struct userrec *u, int idx, char *text)
 	}
 
 	retval = JS_EvaluateScript(global_js_context, global_js_object,
-			text, strlen(text), "console", curline++);
+			text, strlen(text), "console", curline++, &js_rval);
 	if (retval) {
 		dprintf(idx, "JS Error: unknown for now\n");
 	}
