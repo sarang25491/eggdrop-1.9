@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: memory.c,v 1.6 2004/06/22 23:20:23 wingman Exp $";
+static const char rcsid[] = "$Id: memory.c,v 1.7 2004/06/25 17:44:03 darko Exp $";
 #endif
 
 #include <stdio.h>
@@ -299,7 +299,7 @@ void mem_dbg_stats()
 			|| 0 == strcmp(block->func, "xml_node_set_str")
 			|| 0 == strcmp(block->func, "xml_node_set_int")
 			|| 0 == strcmp(block->func, "str_redup")) {
-			data = (char *)block->ptr;
+			data = block->ptr;
 		} else if (0 == strcmp(block->func, "bind_table_add") && block->line == 82) {
 			data = ((bind_table_t *)block->ptr)->name;
 		} else if (0 == strcmp(block->func, "xml_node_new")) {

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: ircparse.c,v 1.2 2003/12/17 07:39:14 wcc Exp $";
+static const char rcsid[] = "$Id: ircparse.c,v 1.3 2004/06/25 17:44:03 darko Exp $";
 #endif
 
 #include <stdlib.h>
@@ -30,10 +30,10 @@ static void add_arg(irc_msg_t *msg, char *text)
 {
 	if (msg->nargs >= IRC_MSG_NSTATIC_ARGS) {
 		if (msg->nargs > IRC_MSG_NSTATIC_ARGS) {
-			msg->args = (char **)realloc(msg->args, sizeof(char *) * (msg->nargs+1));
+			msg->args = realloc(msg->args, sizeof(char *) * (msg->nargs+1));
 		}
 		else {
-			msg->args = (char **)malloc(sizeof(char *) * (IRC_MSG_NSTATIC_ARGS+1));
+			msg->args = malloc(sizeof(char *) * (IRC_MSG_NSTATIC_ARGS+1));
 			memcpy(msg->args, msg->static_args, sizeof(char *) * IRC_MSG_NSTATIC_ARGS);
 		}
 	}

@@ -16,7 +16,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: md5.c,v 1.5 2004/06/15 11:54:33 wingman Exp $";
+static const char rcsid[] = "$Id: md5.c,v 1.6 2004/06/25 17:44:03 darko Exp $";
 #endif
 
 #include <string.h>
@@ -208,7 +208,7 @@ void MD5_Update(MD5_CTX *ctx, const void *data, unsigned long size)
 		}
 
 		memcpy(&ctx->buffer[used], data, free);
-		data = (const void *)(((unsigned char *)data) + free);
+		data += free;
 		size -= free;
 		body(ctx, ctx->buffer, 64);
 	}

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: linemode.c,v 1.5 2004/06/21 11:33:40 wingman Exp $";
+static const char rcsid[] = "$Id: linemode.c,v 1.6 2004/06/25 17:44:03 darko Exp $";
 #endif
 
 #include <stdio.h>
@@ -64,7 +64,7 @@ static int linemode_on_read(void *client_data, int idx, char *data, int len)
 		/* If there is buffered data, concat it all. */
 		if (old_data->len) {
 			/* Expand the buffer. */
-			old_data->data = (char *)realloc(old_data->data, old_data->len + linelen + 1);
+			old_data->data = realloc(old_data->data, old_data->len + linelen + 1);
 			memcpy(old_data->data+old_data->len, data, linelen + 1);
 
 			line = old_data->data;
@@ -87,7 +87,7 @@ static int linemode_on_read(void *client_data, int idx, char *data, int len)
 	}
 
 	/* No cr/lf, so we save the remaining data for next time. */
-	old_data->data = (char *)realloc(old_data->data, savelen + old_data->len + 1);
+	old_data->data = realloc(old_data->data, savelen + old_data->len + 1);
 	memcpy(old_data->data + old_data->len, save, savelen);
 	old_data->len += savelen;
 	return(0);
@@ -128,7 +128,7 @@ int linemode_on(int idx)
 {
 	linemode_t *old_data;
 
-	old_data = (linemode_t *)calloc(1, sizeof(*old_data));
+	old_data = calloc(1, sizeof(*old_data));
 	sockbuf_attach_filter(idx, &linemode_filter, old_data);
 	return(0);
 }

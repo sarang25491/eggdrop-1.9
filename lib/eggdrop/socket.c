@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: socket.c,v 1.4 2004/06/23 21:12:57 stdarg Exp $";
+static const char rcsid[] = "$Id: socket.c,v 1.5 2004/06/25 17:44:04 darko Exp $";
 #endif
 
 #include <stdio.h>
@@ -103,7 +103,7 @@ int socket_get_name(int sock, char **ip, int *port)
 	namelen = sizeof(name.u.ipv4);
 	if (!getsockname(sock, &name.u.addr, &namelen) && namelen == sizeof(name.u.ipv4)) {
 		if (ip) {
-			*ip = (char *) malloc(32);
+			*ip = malloc(32);
 			inet_ntop(AF_INET, &name.u.ipv4.sin_addr, *ip, 32);
 		}
 		if (port) *port = ntohs(name.u.ipv4.sin_port);
@@ -114,7 +114,7 @@ int socket_get_name(int sock, char **ip, int *port)
 	namelen = sizeof(name.u.ipv6);
 	if (!getsockname(sock, &name.u.addr, &namelen) && namelen == sizeof(name.u.ipv6)) {
 		if (ip) {
-			*ip = (char *) malloc(128);
+			*ip = malloc(128);
 			inet_ntop(AF_INET6, &name.u.ipv6.sin6_addr, *ip, 128);
 		}
 		if (port) *port = ntohs(name.u.ipv6.sin6_port);
@@ -137,7 +137,7 @@ int socket_get_peer_name(int sock, char **peer_ip, int *peer_port)
 	namelen = sizeof(name.u.ipv4);
 	if (!getpeername(sock, &name.u.addr, &namelen) && namelen == sizeof(name.u.ipv4)) {
 		if (peer_ip) {
-			*peer_ip = (char *) malloc(32);
+			*peer_ip = malloc(32);
 			inet_ntop(AF_INET, &name.u.ipv4.sin_addr, *peer_ip, 32);
 		}
 		if (peer_port) *peer_port = ntohs(name.u.ipv4.sin_port);
@@ -148,7 +148,7 @@ int socket_get_peer_name(int sock, char **peer_ip, int *peer_port)
 	namelen = sizeof(name.u.ipv6);
 	if (!getpeername(sock, &name.u.addr, &namelen) && namelen == sizeof(name.u.ipv6)) {
 		if (peer_ip) {
-			*peer_ip = (char *) malloc(128);
+			*peer_ip = malloc(128);
 			inet_ntop(AF_INET6, &name.u.ipv6.sin6_addr, *peer_ip, 128);
 		}
 		if (peer_port) *peer_port = ntohs(name.u.ipv6.sin6_port);
@@ -181,14 +181,14 @@ int socket_accept(int sock, char **peer_ip, int *peer_port)
 	newsock = accept(sock, &name.u.addr, &len);
 #ifdef DO_IPV4
 	if (len == sizeof(name.u.ipv4)) {
-		*peer_ip = (char *) malloc(32);
+		*peer_ip = malloc(32);
 		*peer_port = ntohs(name.u.ipv4.sin_port);
 		inet_ntop(AF_INET, &name.u.ipv4.sin_addr, *peer_ip, 32);
 	}
 #endif
 #ifdef DO_IPV6
 	if (len == sizeof(name.u.ipv6)) {
-		*peer_ip = (char *) malloc(128);
+		*peer_ip = malloc(128);
 		*peer_port = ntohs(name.u.ipv6.sin6_port);
 		inet_ntop(AF_INET6, &name.u.ipv6.sin6_addr, *peer_ip, 128);
 	}

@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: memutil.c,v 1.17 2004/06/22 10:54:42 wingman Exp $";
+static const char rcsid[] = "$Id: memutil.c,v 1.18 2004/06/25 17:44:03 darko Exp $";
 #endif
 
 #include <stdio.h>
@@ -41,7 +41,7 @@ void str_redup(char **str, const char *newstr)
 		return;
 	}
 	len = strlen(newstr) + 1;
-	*str = (char *) realloc(*str, len);
+	*str = realloc(*str, len);
 	memcpy(*str, newstr, len);
 }
 
@@ -74,7 +74,7 @@ char *egg_mvsprintf(char *buf, int len, int *final_len, const char *format, va_l
 
 	if (buf && len > 10) output = buf;
 	else {
-		output = (char *) malloc(512);
+		output = malloc(512);
 		len = 512;
 	}
 	while (1) {
@@ -84,8 +84,8 @@ char *egg_mvsprintf(char *buf, int len, int *final_len, const char *format, va_l
 		if (n > len) len = n+1;
 		else len *= 2;
 		len += 10;
-		if (output == buf) output = (char *) malloc(len);
-		else output = (char *) realloc(output, len);
+		if (output == buf) output = malloc(len);
+		else output = realloc(output, len);
 		if (!output) return(NULL);
 	}
 	if (final_len) {

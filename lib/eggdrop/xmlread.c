@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xmlread.c,v 1.15 2004/06/23 17:24:43 wingman Exp $";
+static const char rcsid[] = "$Id: xmlread.c,v 1.16 2004/06/25 17:44:04 darko Exp $";
 #endif
 
 #include <stdio.h>
@@ -60,7 +60,7 @@ static void read_name(char **data, char **name)
 		*name = NULL;
 		return;
 	}
-	*name = (char *)malloc(n+1);
+	*name = malloc(n+1);
 	memcpy(*name, *data, n);
 	(*name)[n] = 0;
 
@@ -89,7 +89,7 @@ static void read_value(char **data, char **value)
 	(*data)++;
 
 	n = strcspn(*data, terminator);
-	*value = (char *)malloc(n+1);
+	*value = malloc(n+1);
 	memcpy(*value, *data, n);
 	(*value)[n] = 0;
 
@@ -112,7 +112,7 @@ static void read_text(xml_node_t *node, char **data)
 	len = end - *data;
 
 	/* Add it to the node's current text value. */
-	text = (char *)realloc(node->text, len + node->len + 1);
+	text = realloc(node->text, len + node->len + 1);
 	memcpy(text + node->len, *data, len);
 	node->text = text;
 	node->len += len;
@@ -261,7 +261,7 @@ static int xml_read_node(xml_node_t *parent, char **data)
 			len = end - *data;
 
 			node = xml_node_new();
-			node->text = (char *)malloc(len+1);
+			node->text = malloc(len+1);
 			memcpy(node->text, *data, len);
 			node->text[len] = 0;
 			node->len = len;

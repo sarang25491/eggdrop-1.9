@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: script.c,v 1.18 2004/06/22 23:20:23 wingman Exp $";
+static const char rcsid[] = "$Id: script.c,v 1.19 2004/06/25 17:44:03 darko Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -92,7 +92,7 @@ int script_shutdown(void)
 /* Called by scripting modules to register themselves. */
 int script_register_module(script_module_t *module)
 {
-	script_modules = (script_module_t **)realloc(script_modules, sizeof(*script_modules) * (nscript_modules+1));
+	script_modules = realloc(script_modules, sizeof(*script_modules) * (nscript_modules+1));
 	script_modules[nscript_modules] = module;
 	nscript_modules++;
 	return(0);
@@ -134,7 +134,7 @@ int script_playback(script_module_t *module)
 /* Add an event to our internal journal. */
 static void journal_add(int event, void *data, void *key)
 {
-	journal_events = (journal_event_t *)realloc(journal_events, sizeof(*journal_events) * (njournal_events+1));
+	journal_events = realloc(journal_events, sizeof(*journal_events) * (njournal_events+1));
 	journal_events[njournal_events].event = event;
 	journal_events[njournal_events].data = data;
 	journal_events[njournal_events].key = key;
@@ -193,7 +193,7 @@ int script_linked_var_on_write(script_linked_var_t *var, script_var_t *newval)
 
 static int my_command_handler(void *client_data, script_args_t *args, script_var_t *retval)
 {
-	script_command_t *cmd = (script_command_t *)client_data;
+	script_command_t *cmd = client_data;
 	void *static_argstack[20], *static_free_args[20];
 	void **argstack, **free_args;
 	script_callback_t **callbacks, *static_callbacks[20];
@@ -216,9 +216,9 @@ static int my_command_handler(void *client_data, script_args_t *args, script_var
 	/* Get space for the argument conversion.
 		We'll try to use stack space instead of a calloc(). */
 	if (args->len+3 > 20) {
-		argstack = (void **)calloc(args->len+3, sizeof(void *));
-		free_args = (void **)calloc(args->len, sizeof(void *));
-		callbacks = (script_callback_t **)calloc(args->len, sizeof(*callbacks));
+		argstack = calloc(args->len+3, sizeof(void *));
+		free_args = calloc(args->len, sizeof(void *));
+		callbacks = calloc(args->len, sizeof(*callbacks));
 	}
 	else {
 		memset(static_argstack, 0, sizeof(static_argstack));
@@ -419,7 +419,7 @@ int script_create_commands(script_command_t *table)
 	script_raw_command_t *cmd;
 
 	while (table->class && table->name) {
-		cmd = (script_raw_command_t *)malloc(sizeof(*cmd));
+		cmd = malloc(sizeof(*cmd));
 		cmd->class = table->class;
 		cmd->name = table->name;
 		cmd->callback = my_command_handler;
@@ -463,7 +463,7 @@ int script_get_arg(script_args_t *args, int num, script_var_t *var, int type)
 
 script_var_t *script_string(char *str, int len)
 {
-	script_var_t *var = (script_var_t *)malloc(sizeof(*var));
+	script_var_t *var = malloc(sizeof(*var));
 
 	var->type = SCRIPT_STRING | SCRIPT_FREE_VAR;
 	if (!str) {
@@ -471,7 +471,7 @@ script_var_t *script_string(char *str, int len)
 		len = 0;
 	}
 	else if (len < 0) len = strlen(str);
-	var->value = (void *)str;
+	var->value = str;
 	var->len = len;
 	return(var);
 }
@@ -491,7 +491,7 @@ script_var_t *script_copy_string(char *str, int len)
 		len = 0;
 	}
 	else if (len < 0) len = strlen(str);
-	copy = (char *)malloc(len+1);
+	copy = malloc(len+1);
 	memcpy(copy, str, len);
 	copy[len] = 0;
 	return script_dynamic_string(copy, len);
@@ -499,7 +499,7 @@ script_var_t *script_copy_string(char *str, int len)
 
 script_var_t *script_int(int val)
 {
-	script_var_t *var = (script_var_t *)malloc(sizeof(*var));
+	script_var_t *var = malloc(sizeof(*var));
 	var->type = SCRIPT_INTEGER | SCRIPT_FREE_VAR;
 	var->value = (void *)val;
 	return(var);
@@ -509,7 +509,7 @@ script_var_t *script_list(int nitems, ...)
 {
 	script_var_t *list;
 
-	list = (script_var_t *)malloc(sizeof(*list));
+	list = malloc(sizeof(*list));
 	list->type = SCRIPT_ARRAY | SCRIPT_FREE | SCRIPT_VAR | SCRIPT_FREE_VAR;
 	list->len = nitems;
 	if (nitems > 0) {

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: sockbuf.c,v 1.14 2004/06/23 21:12:57 stdarg Exp $";
+static const char rcsid[] = "$Id: sockbuf.c,v 1.15 2004/06/25 17:44:04 darko Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -188,7 +188,7 @@ static int sockbuf_real_write(int idx, const char *data, int len)
 	}
 
 	/* Add the remaining data to the buffer. */
-	sbuf->data = (char *)realloc(sbuf->data, sbuf->len + len);
+	sbuf->data = realloc(sbuf->data, sbuf->len + len);
 	memcpy(sbuf->data + sbuf->len, data, len);
 	sbuf->len += len;
 	return(nbytes);
@@ -423,7 +423,7 @@ int sockbuf_new()
 	if (idx == nsockbufs) {
 		int i;
 
-		sockbufs = (sockbuf_t *)realloc(sockbufs, (nsockbufs+5) * sizeof(*sockbufs));
+		sockbufs = realloc(sockbufs, (nsockbufs+5) * sizeof(*sockbufs));
 		memset(sockbufs+nsockbufs, 0, 5 * sizeof(*sockbufs));
 		for (i = 0; i < 5; i++) {
 			sockbufs[nsockbufs+i].sock = -1;
@@ -480,11 +480,11 @@ int sockbuf_set_sock(int idx, int sock, int flags)
 	/* Add it to the end if it's not found. */
 	if (i == npollfds) {
 		/* Add the new idx to the idx_array. */
-		idx_array = (int *)realloc(idx_array, sizeof(int) * (i+1));
+		idx_array = realloc(idx_array, sizeof(int) * (i+1));
 		idx_array[i] = idx;
 
 		/* Add corresponding pollfd to pollfds. */
-		pollfds = (struct pollfd *)realloc(pollfds, sizeof(*pollfds) * (i+nlisteners+1));
+		pollfds = realloc(pollfds, sizeof(*pollfds) * (i+nlisteners+1));
 		memmove(pollfds+i+1, pollfds+i, sizeof(*pollfds) * nlisteners);
 
 		npollfds++;
@@ -656,7 +656,7 @@ int sockbuf_set_handler(int idx, sockbuf_handler_t *handler, void *client_data)
 */
 int sockbuf_attach_listener(int fd)
 {
-	pollfds = (struct pollfd *)realloc(pollfds, sizeof(*pollfds) * (npollfds + nlisteners + 1));
+	pollfds = realloc(pollfds, sizeof(*pollfds) * (npollfds + nlisteners + 1));
 	pollfds[npollfds+nlisteners].fd = fd;
 	pollfds[npollfds+nlisteners].events = POLLIN;
 	pollfds[npollfds+nlisteners].revents = 0;
@@ -694,9 +694,9 @@ int sockbuf_attach_filter(int idx, sockbuf_filter_t *filter, void *client_data)
 	if (!sockbuf_isvalid(idx)) return(-1);
 	sbuf = &sockbufs[idx];
 
-	sbuf->filters = (sockbuf_filter_t **)realloc(sbuf->filters, sizeof(filter) * (sbuf->nfilters+1));
+	sbuf->filters = realloc(sbuf->filters, sizeof(filter) * (sbuf->nfilters+1));
 
-	sbuf->filter_client_data = (void **)realloc(sbuf->filter_client_data, sizeof(void *) * (sbuf->nfilters+1));
+	sbuf->filter_client_data = realloc(sbuf->filter_client_data, sizeof(void *) * (sbuf->nfilters+1));
 
 	/* Filters are ordered according to levels. The lower the level, the
 		earlier the filter comes. This allows filters to be stacked
@@ -747,7 +747,7 @@ int sockbuf_detach_filter(int idx, sockbuf_filter_t *filter, void *client_data_p
 
 	for (i = 0; i < sbuf->nfilters; i++) if (sbuf->filters[i] == filter) break;
 	if (i == sbuf->nfilters) {
-		if (client_data_ptr) *(void **)client_data_ptr = NULL;
+		if (client_data_ptr) client_data_ptr = NULL;
 		return(0);
 	}
 

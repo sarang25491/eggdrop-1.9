@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: hash_table.c,v 1.11 2004/06/24 22:43:15 wingman Exp $";
+static const char rcsid[] = "$Id: hash_table.c,v 1.12 2004/06/25 17:44:03 darko Exp $";
 #endif
 
 #include <stdio.h>
@@ -221,12 +221,12 @@ static int my_int_cmp(const void *left, const void *right)
 static unsigned int my_string_hash(const void *key)
 {
 	int hash, loop, keylen;
-	unsigned char *k;
+	const unsigned char *k;
 
 #define HASHC hash = *k++ + 65599 * hash
 	hash = 0;
-	k = (unsigned char *)key;
-	keylen = strlen((char *)key);
+	k = key;
+	keylen = strlen(key);
 
 	if (!keylen) return(0);
 
@@ -261,10 +261,10 @@ static unsigned int my_int_hash(const void *key)
 
 static unsigned int my_mixed_hash (const void *key)
 {
-	unsigned char *k;
+	const unsigned char *k;
 	unsigned int hash;
 
-        k = (unsigned char *)key;
+        k = key;
 	hash = 0;
 	while (*k) {
 		hash *= 16777619;

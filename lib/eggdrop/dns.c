@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dns.c,v 1.4 2004/06/22 18:47:27 wingman Exp $";
+static const char rcsid[] = "$Id: dns.c,v 1.5 2004/06/25 17:44:03 darko Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -350,14 +350,14 @@ static const char *dns_next_server()
 
 static void add_server(char *ip)
 {
-	servers = (dns_server_t *)realloc(servers, (nservers+1)*sizeof(*servers));
+	servers = realloc(servers, (nservers+1)*sizeof(*servers));
 	servers[nservers].ip = strdup(ip);
 	nservers++;
 }
 
 static void add_host(char *host, char *ip)
 {
-	hosts = (dns_host_t *)realloc(hosts, (nhosts+1)*sizeof(*hosts));
+	hosts = realloc(hosts, (nhosts+1)*sizeof(*hosts));
 	hosts[nhosts].host = strdup(host);
 	hosts[nhosts].ip = strdup(ip);
 	nhosts++;

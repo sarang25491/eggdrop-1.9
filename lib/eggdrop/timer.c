@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: timer.c,v 1.4 2004/06/23 21:12:57 stdarg Exp $";
+static const char rcsid[] = "$Id: timer.c,v 1.5 2004/06/25 17:44:04 darko Exp $";
 #endif
 
 #include <stdio.h>
@@ -156,7 +156,7 @@ int timer_create_complex(egg_timeval_t *howlong, const char *name, Function call
 	egg_timer_t *timer;
 
 	/* Fill out a new timer. */
-	timer = (egg_timer_t *)malloc(sizeof(*timer));
+	timer = malloc(sizeof(*timer));
 	timer->id = timer_next_id++;
 	if (name) timer->name = strdup(name);
 	else timer->name = NULL;

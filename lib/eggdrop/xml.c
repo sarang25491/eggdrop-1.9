@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xml.c,v 1.15 2004/06/23 17:24:43 wingman Exp $";
+static const char rcsid[] = "$Id: xml.c,v 1.16 2004/06/25 17:44:04 darko Exp $";
 #endif
 
 #include <stdio.h>
@@ -57,7 +57,7 @@ xml_node_t *xml_node_new(void)
 {
 	xml_node_t *node;
 
-	node = (xml_node_t *)malloc(sizeof(xml_node_t));
+	node = malloc(sizeof(xml_node_t));
 	if (node == NULL)
 		return NULL;
 	memset(node, 0, sizeof(xml_node_t));
@@ -434,7 +434,8 @@ void xml_node_append(xml_node_t *parent, xml_node_t *child)
 	if (child->parent)
 		xml_node_remove(child->parent, child);
 
-	parent->children = realloc(parent->children, sizeof(xml_node_t *) * (parent->nchildren + 1));
+	parent->children = realloc(parent->children, sizeof(xml_node_t *) *
+				 (parent->nchildren + 1));
 	parent->children[parent->nchildren] = child;
 
 	if (parent->nchildren > 0)
@@ -452,8 +453,8 @@ void xml_node_append_attr (xml_node_t *node, xml_attr_t *attr)
 	
 	a = xml_node_lookup_attr (node, attr->name);
 	if (a == NULL) {
-		node->attributes = (xml_attr_t *)realloc(
-			node->attributes, sizeof(xml_attr_t) * (node->nattributes+1));
+		node->attributes = realloc(node->attributes,
+				sizeof(xml_attr_t) * (node->nattributes+1));
 		a = &node->attributes[node->nattributes++];
 	}
 	a->name = attr->name;
@@ -484,8 +485,8 @@ static xml_attr_t *xml_node_create_attr(xml_node_t *node, const char *name)
 {
 	xml_attr_t *attr;
 	
-	node->attributes = (xml_attr_t *)realloc(
-		node->attributes, sizeof(xml_attr_t) * (node->nattributes+1));
+	node->attributes = realloc(node->attributes,
+				sizeof(xml_attr_t) * (node->nattributes+1));
 	attr = &node->attributes[node->nattributes++];
 	
 	attr->name = strdup(name);

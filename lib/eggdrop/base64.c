@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: base64.c,v 1.2 2003/12/17 07:39:14 wcc Exp $";
+static const char rcsid[] = "$Id: base64.c,v 1.3 2004/06/25 17:44:03 darko Exp $";
 #endif
 
 #include <stdlib.h>
@@ -30,7 +30,7 @@ char *b64enc(const unsigned char *data, int len)
 {
 	char *dest;
 
-	dest = (char *)malloc(4 * len / 3 + 4);
+	dest = malloc(4 * len / 3 + 4);
 	b64enc_buf(data, len, dest);
 	return(dest);
 }
@@ -70,7 +70,7 @@ char *b64dec(const unsigned char *data, int len)
 {
 	char *dest;
 
-	dest = (char *)malloc(len+1);
+	dest = malloc(len+1);
 	b64dec_buf(data, len, dest);
 	return(dest);
 }

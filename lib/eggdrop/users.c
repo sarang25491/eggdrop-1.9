@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.33 2004/06/24 22:43:15 wingman Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.34 2004/06/25 17:44:04 darko Exp $";
 #endif
 
 #include <stdio.h>
@@ -191,7 +191,7 @@ int user_load(const char *fname)
 static int save_walker(const void *key, void *dataptr, void *param)
 {
 	xml_node_t *root = param;
-	user_t *u = *(void **)dataptr;
+	user_t *u = dataptr;
 	user_setting_t *setting;
 	xml_node_t *user_node;
 	int i, j;

@@ -24,7 +24,7 @@
  */
  
 #ifndef lint
-static const char rcsid[] = "$Id: help.c,v 1.12 2004/06/23 20:19:45 wingman Exp $";
+static const char rcsid[] = "$Id: help.c,v 1.13 2004/06/25 17:44:03 darko Exp $";
 #endif
 
 #include <sys/types.h>
@@ -431,11 +431,11 @@ static FILE *help_open_localized(char *buf, size_t size, const char *filename)
 	if (lang != NULL) {
 		pos = strchr(lang, '.');
 		if (pos == NULL)
-			lang =(char *)help_lang_default;
+			lang = help_lang_default;
 		else
 			lang[(pos - lang)] = '\0';
 	} else {
-		lang =(char *)help_lang_default;
+		lang = help_lang_default;
 	}
 
 
