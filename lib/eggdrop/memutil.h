@@ -1,8 +1,9 @@
 /*
  * memutil.h
- *   some macros for common operations with strings and memory in general
+ *   some macros and functions for common operations with strings and memory
+ *   in general.
  *
- * $Id: memutil.h,v 1.1 2002/01/04 02:56:22 ite Exp $
+ * $Id: memutil.h,v 1.2 2002/01/06 06:21:08 ite Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -27,6 +28,9 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <eggdrop/common.h>
+
+BEGIN_C_DECLS
 
 #define free_null(ptr)                                                  \
   if (ptr) {                                                            \
@@ -60,5 +64,18 @@ do {                                                                    \
 	strncpy((_target), (_source), (_len) - 1);                      \
 	(_target)[(_len) - 1] = 0;                                      \
 } while (0)
+
+int egg_strcatn(char *, const char *, size_t);
+int my_strcpy(register char *, register char *);
+
+void splitc(char *, char *, char);
+void splitcn(char *, char *, char, size_t);
+char *newsplit(char **);
+
+char *str_escape(const char *, const char, const char);
+char *strchr_unescape(char *, const char, register const char);
+#define str_unescape(str, esc_char) strchr_unescape(str, 0, esc_char)
+
+END_C_DECLS
 
 #endif /* _EGG_MEMUTIL_H */

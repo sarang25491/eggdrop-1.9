@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.62 2002/01/04 03:36:11 ite Exp $
+ * $Id: proto.h,v 1.63 2002/01/06 06:21:09 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -161,16 +161,11 @@ void patch(const char *);
 void backup_userfile(void);
 
 /* misc.c */
-int egg_strcatn(char *dst, const char *src, size_t max);
-int my_strcpy(char *, char *);
 int putlog EGG_VARARGS(int, arg1);
 void flushlogs();
 void check_logsize();
 void maskhost(const char *, char *);
 char *stristr(char *, char *);
-void splitc(char *, char *, char);
-void splitcn(char *, char *, char, size_t);
-char *newsplit(char **);
 void stridx(char *, char *, int);
 void dumplots(int, const char *, char *);
 void daysago(time_t, time_t, char *);
@@ -193,9 +188,6 @@ void make_rand_str(char *, int);
 int oatoi(const char *);
 int is_file(const char *);
 void logsuffix_change(char *);
-char *str_escape(const char *str, const char div, const char mask);
-char *strchr_unescape(char *str, const char div, register const char esc_char);
-void str_unescape(char *str, register const char esc_char);
 #if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
 void str_nutf8tounicode(char *str, int len);
 #endif

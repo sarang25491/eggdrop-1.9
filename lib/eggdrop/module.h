@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.9 2002/01/04 02:56:22 ite Exp $
+ * $Id: module.h,v 1.10 2002/01/06 06:21:08 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -171,7 +171,7 @@
 #define check_bind_event ((void * (*) (const char *))global[88])
 /* #define memcpy ((void * (*) (void *, const void *, size_t))global[89]) */
 /* #define my_atoul ((IP(*)(char *))global[90]) */
-#define my_strcpy ((int (*)(char *, const char *))global[91])
+/* #define my_strcpy ((int (*)(char *, const char *))global[91]) */
 /* 92 - 95 */
 #define dcc (*(struct dcc_t **)global[92])
 #define chanset (*(struct chanset_t **)(global[93]))
@@ -229,9 +229,9 @@
 #define daysdur ((void (*)(time_t,time_t,char *))global[135])
 /* 136 - 139 */
 #define ismember ((memberlist * (*) (struct chanset_t *, char *))global[136])
-#define newsplit ((char *(*)(char **))global[137])
+/* #define newsplit ((char *(*)(char **))global[137]) */
 /* 138: splitnick -- UNUSED (Tothwolf) */
-#define splitc ((void (*)(char *,char *,char))global[139])
+/* #define splitc ((void (*)(char *,char *,char))global[139]) */
 /* 140 - 143 */
 #define addignore ((void (*) (char *, char *, char *,time_t))global[140])
 #define match_ignore ((int (*)(char *))global[141])
@@ -385,11 +385,11 @@
 /* 260 - 263 */
 #define party (*(party_t **)(global[260]))
 #define open_address_listen ((int (*)(char *addr, int *port))global[261])
-#define str_escape ((char *(*)(const char *, const char, const char))global[262])
-#define strchr_unescape ((char *(*)(char *, const char, register const char))global[263])
+/* #define str_escape ((char *(*)(const char *, const char, const char))global[262]) */
+/* #define strchr_unescape ((char *(*)(char *, const char, register const char))global[263]) */
 /* 264 - 267 */
-#define str_unescape ((void (*)(char *, register const char))global[264])
-#define egg_strcatn ((int (*)(char *dst, const char *src, size_t max))global[265])
+/* #define str_unescape ((void (*)(char *, register const char))global[264]) */
+/* #define egg_strcatn ((int (*)(char *dst, const char *src, size_t max))global[265]) */
 #define clear_chanlist_member ((void (*)(const char *nick))global[266])
 #if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
 #define str_nutf8tounicode ((int (*)(char *str, int len))global[267])

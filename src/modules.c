@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.94 2002/01/04 02:56:25 ite Exp $
+ * $Id: modules.c,v 1.95 2002/01/06 06:21:09 ite Exp $
  */
 /* 
  * Copyright (C) 1997 Robey Pointer
@@ -251,7 +251,7 @@ Function global_table[] =
   (Function) check_bind_event,
   (Function) 0,			/* memcpy				*/
   (Function) 0,
-  (Function) my_strcpy,
+  (Function) 0,
   /* 92 - 95 */
   (Function) & dcc,		 /* struct dcc_t *			*/
   (Function) & chanset,		 /* struct chanset_t *			*/
@@ -309,9 +309,9 @@ Function global_table[] =
   (Function) daysdur,
   /* 136 - 139 */
   (Function) ismember,
-  (Function) newsplit,
   (Function) 0,
-  (Function) splitc,
+  (Function) 0,
+  (Function) 0,
   /* 140 - 143 */
   (Function) addignore,
   (Function) match_ignore,
@@ -465,11 +465,11 @@ Function global_table[] =
   /* 260 - 263 */
   (Function) & party,		/* party_t *				*/
   (Function) open_address_listen,
-  (Function) str_escape,
+  (Function) 0,
   (Function) strchr_unescape,
   /* 264 - 267 */
-  (Function) str_unescape,
-  (Function) egg_strcatn,
+  (Function) 0,
+  (Function) 0,
   (Function) clear_chanlist_member,
 #if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
   (Function) str_nutf8tounicode,
