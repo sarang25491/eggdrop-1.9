@@ -4,7 +4,7 @@
  *   signal handling
  *   command line arguments
  *
- * $Id: main.c,v 1.107 2002/02/13 22:57:37 ite Exp $
+ * $Id: main.c,v 1.108 2002/02/25 02:59:50 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -119,6 +119,7 @@ int	die_on_sigterm = 1;	/* die if bot receives SIGTERM */
 int	resolve_timeout = 15;	/* hostname/address lookup timeout */
 char	quit_msg[1024];		/* quit message */
 time_t	now;			/* duh, now :) */
+egg_timeval_t egg_timeval_now;	/* Same thing, but seconds and microseconds. */
 
 /* Traffic stats
  */
@@ -314,7 +315,6 @@ void backup_userfile(void)
 
 /* Timer info */
 static int		lastmin = 99;
-static time_t		then;
 static struct tm	nowtm;
 
 /* Called once a second.
@@ -540,7 +540,8 @@ int main(int argc, char **argv)
   sigaction(SIGALRM, &sv, NULL);
 
   /* Initialize variables and stuff */
-  now = time(NULL);
+  timer_get_time(&egg_timeval_now);
+  now = egg_timeval_now.sec;
   chanset = NULL;
   memcpy(&nowtm, localtime(&now), sizeof(struct tm));
   lastmin = nowtm.tm_min;
@@ -676,7 +677,6 @@ module, please consult the default config file for info.\n"));
     dcc_chatter(n);
   }
 
-  then = now;
   online_since = now;
   autolink_cycle(NULL);		/* Hurry and connect to tandem bots */
   add_help_reference("cmds1.help");
@@ -709,13 +709,10 @@ module, please consult the default config file for info.\n"));
     /* Lets move some of this here, reducing the numer of actual
      * calls to periodic_timers
      */
-    now = time(NULL);
+    timer_get_time(&egg_timeval_now);
+    now = egg_timeval_now.sec;
     random();			/* Woop, lets really jumble things */
     timer_run();
-    if (now != then) {		/* Once a second */
-      /* call_hook(HOOK_SECONDLY); */
-      then = now;
-    }
 
     /* Only do this every so often. */
     if (!socket_cleanup) {
@@ -733,6 +730,7 @@ module, please consult the default config file for info.\n"));
     /* garbage_collect(); */
 
     xx = sockgets(buf, &i);
+    timer_get_time(&egg_timeval_now);
     if (xx >= 0) {		/* Non-error */
       int idx;
 

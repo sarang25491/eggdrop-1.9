@@ -23,6 +23,7 @@ extern int use_stderr; /* From main.c, while we're starting eggdrop. */
 extern int term_z;
 extern int backgrd;
 extern int con_chan;
+extern time_t now;
 
 extern int dcc_total;
 extern struct dcc_t *dcc;
@@ -80,9 +81,6 @@ void logfile_init()
 
 static int get_timestamp(char *t)
 {
-	time_t now;
-
-	now = time(NULL);
 	/* Calculate timestamp. */
 	strftime(t, 32, "[%H:%M] ", localtime(&now));
 	return(0);
@@ -90,12 +88,9 @@ static int get_timestamp(char *t)
 
 static int logfile_minutely()
 {
-	time_t now;
 	struct tm *nowtm;
 	int miltime;
 
-	now = time(NULL);
-	
 	if (quick_logs) {
 		flushlogs();
 		check_logsizes();
@@ -129,9 +124,6 @@ static int logfile_cycle()
 
 	/* Determine suffix for cycled logfiles. */
 	if (keep_all_logs) {
-		time_t now;
-
-		now = time(NULL);
 		strftime(suffix, 32, logfile_suffix, localtime(&now));
 	}
 
