@@ -1,3 +1,19 @@
+2002-04-26 17:46  stdarg <stdarg@techmonkeys.org>
+
+	* src/dccutil.c:
+
+	
+	* Applied a patch that ITE <ite@freesurf.ch> sent in, which restores
+	the behavior of max-dcc 
+
+2002-04-26 17:33  stdarg <stdarg@techmonkeys.org>
+
+	* modules/perlscript/perlscript.c, src/dcc.c:
+
+	
+	* On perl error, don't try to get return value off the perl stack 
+	* Some NULL checking for dcc.c 
+
 2002-04-26 09:29  stdarg <stdarg@techmonkeys.org>
 
 	* modules/: channels/channels.c, channels/channels.h,
