@@ -267,6 +267,7 @@ static Tcl_Obj *my_resolve_var(Tcl_Interp *myinterp, script_var_t *v)
 	}
 	switch (v->type & SCRIPT_TYPE_MASK) {
 		case SCRIPT_INTEGER:
+		case SCRIPT_UNSIGNED:
 			result = Tcl_NewIntObj((int) v->value);
 			break;
 		case SCRIPT_STRING:
@@ -399,6 +400,7 @@ static int my_command_handler(ClientData client_data, Tcl_Interp *myinterp, int 
 			mstack_push(args, bytes);
 			break;
 		}
+		case SCRIPT_UNSIGNED:
 		case SCRIPT_INTEGER: { /* Integer. */
 			int intval;
 			err = Tcl_GetIntFromObj(myinterp, objptr, &intval);
