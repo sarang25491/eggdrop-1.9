@@ -612,6 +612,13 @@ static int gotmode(char *from_nick, char *from_uhost, user_t *u, char *cmd, int 
 	/* Is it a user mode? */
 	if (!strchr(current_server.chantypes, *dest)) {
 		while (*change) {
+			/* Direction? */
+			if (*change == '+' || *change == '-') {
+				changestr[0] = *change;
+				change++;
+				continue;
+			}
+
 			changestr[1] = *change;
 			bind_check(BT_mode, changestr, from_nick, from_uhost, u, dest, changestr, NULL);
 			change++;

@@ -324,3 +324,81 @@ accurate for Eggdrop v1.7.0.
 
   <WRITE ME>
 
+*** NETWORK COMMANDS ***
+
+  net_open <host> <port> [timeout]
+    Description: Opens an async connection to the given host and port. If
+      'host' is not an ip address, a dns lookup is performed without blocking.
+      The 'timeout' optional parameter lets you specify a connection timeout
+      in milliseconds. If not given, or if the value is 0, then eggdrop's
+      default timeout value is used. If given as -1, no timeout is used.
+    Returns: A valid idx in an unconnected state.
+    Notes: When the connection is established, the "connect" event will
+      execute. If there is a dns error, a connection error, or the timeout
+      elapses, the "eof" event will execute with the appropriate error code.
+      Use the net_handler command to set handlers for these events.
+
+  net_close <idx>
+    Description: Close the given idx.
+    Returns: 0 for success, -1 if the idx is invalid or already closed.
+
+  net_write <idx> <text> [len]
+    Description: Writes data to an idx.
+    Returns: The number of bytes written to the actual network interface, or
+      -1 upon error.
+    Notes: Any unwritten data is buffered and will be written as soon as
+      possible. Use the 'len' parameter if you are writing binary data which
+      contains embedded NULL's, otherwise the C strlen() function is used to
+      determined the number of bytes to write.
+
+  net_handler <idx> <event> [callback]
+    Description: Sets or unsets a callback for a particular event on an idx.
+      The syntax of the callback varies with the event:
+      connect_callback <idx> <peer_ip> <peer_port>
+        Called when the idx establishes an outgoing connection.
+      newclient_callback <idx> <newidx> <peer_ip> <peer_port>
+        Called when an incoming connection is established.
+      eof_callback <idx> <err> <errmsg>
+        Called when eof is detected or there is an error, such as when the
+        connection times out or is refused by the host.
+      read_callback <idx> <data> <len>
+        Called when data is ready on the idx, after any filtering has been
+        performed. (For more information, see net_linemode.)
+      written_callback <idx> <len> <remaining_len>
+        Called when buffered data has been written in the background.
+      delete_callback <idx>
+        Called when the idx is deleted.
+    Returns: 0 for success, -1 for an invalid idx, -2 for an invalid event type.
+    Notes: To unset a handler, leave off the 'callback' parameter.
+
+  net_info <idx> <what>
+    Description: Provides statistics on a given idx. Possible values for 'what'
+      are:
+      bytesleft - number of buffered bytes remaining to be written
+
+  net_linemode <idx> <on-off>
+    Description: Sets line buffering to either on (1) or off (0) for an idx.
+      When linemode is on, data is buffered until a full line is read. If more
+      than one line is read, the "read" event is triggered for each individual
+      line. The line is passed to the read handler with the end-of-line (either
+      CR, LF, or CRLF) stripped from the data.
+    Returns: Nothing.
+
+  net_throttle <idx> <speed-in> <speed-out>
+    Description: Turn on speed throttling. The values given are in bytes per
+      second.
+    Returns: Nothing.
+    Notes: A speed parameter of <= 0 will disable throttling for that direction.
+
+  net_throttle_in <idx> <speed-in>
+    Description: Modify the 'speed-in' parameter of an already-throttled idx.
+    Returns: Nothing.
+    Notes: A 'speed-in' of <= 0 will disable input throttling.
+
+  net_throttle_out <idx> <speed-out>
+    Description: Modify the 'speed-out' parameter of an already-throttled idx.
+    Returns: Nothing.
+    Notes: A 'speed-out' of <= 0 will disable output throttling.
+
+  net_throttle_off <idx>
+    Description: Removes throttling from an idx.

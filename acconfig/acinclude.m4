@@ -1,7 +1,7 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.29 2003/03/08 07:32:49 tothwolf Exp $
+dnl $Id: acinclude.m4,v 1.30 2003/03/25 19:20:31 stdarg Exp $
 dnl
 
 
@@ -1106,10 +1106,10 @@ AC_DISABLE_FAST_INSTALL
 AC_DISABLE_STATIC
 AC_LIBTOOL_WIN32_DLL
 AC_LIBLTDL_CONVENIENCE
-AC_SUBST(INCLTDL)
-AC_SUBST(LIBLTDL)
 AC_LIBTOOL_DLOPEN
 AC_PROG_LIBTOOL
+AC_SUBST(INCLTDL)
+AC_SUBST(LIBLTDL)
 
 if test "$enable_shared" = no
 then

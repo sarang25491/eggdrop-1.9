@@ -32,25 +32,29 @@ static void script_net_info_remove(script_net_info_t *info);
 
 /* Script interface prototypes. */
 static int script_net_takeover(int idx);
+static int script_net_listen(script_var_t *retval, int port);
 static int script_net_open(const char *host, int port, int timeout);
 static int script_net_close(int idx);
 static int script_net_write(int idx, const char *text, int len);
 static int script_net_linemode(int idx, int onoff);
 static int script_net_handler(int idx, const char *event, script_callback_t *handler);
 static int script_net_info(script_var_t *retval, int idx, char *what);
+static int script_net_throttle(int idx, int speedin, int speedout);
 static int script_net_throttle_set(void *client_data, int idx, int speed);
 
 script_command_t script_net_cmds[] = {
 	{"", "net_takeover", script_net_takeover, NULL, 1, "i", "idx", SCRIPT_INTEGER, 0},
+	{"", "net_listen", script_net_listen, NULL, 1, "i", "port", 0, SCRIPT_PASS_RETVAL},
 	{"", "net_open", script_net_open, NULL, 2, "sii", "host port ?timeout?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
 	{"", "net_close", script_net_close, NULL, 1, "i", "idx", SCRIPT_INTEGER, 0},
 	{"", "net_write", script_net_write, NULL, 2, "isi", "idx text ?len?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
 	{"", "net_handler", script_net_handler, NULL, 2, "isc", "idx event callback", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
 	{"", "net_linemode", script_net_linemode, NULL, 2, "ii", "idx on-off", SCRIPT_INTEGER, 0},
 	{"", "net_info", script_net_info, NULL, 2, "is", "idx what", 0, SCRIPT_PASS_RETVAL},
-	{"", "net_throttle", throttle_on, NULL, 1, "i", "idx", SCRIPT_INTEGER, 0},
+	{"", "net_throttle", script_net_throttle, NULL, 3, "iii", "idx speed-in speed-out", SCRIPT_INTEGER, 0},
 	{"", "net_throttle_in", script_net_throttle_set, (void *)0, 2, "ii", "idx speed", SCRIPT_INTEGER, SCRIPT_PASS_CDATA},
 	{"", "net_throttle_out", script_net_throttle_set, (void *)1, 2, "ii", "idx speed", SCRIPT_INTEGER, SCRIPT_PASS_CDATA},
+	{"", "net_throttle_off", throttle_off, NULL, 1, "i", "idx", SCRIPT_INTEGER, 0},
 	{0}
 };
 
@@ -110,6 +114,20 @@ static void script_net_info_remove(script_net_info_t *info)
 }
 
 /* Script interface functions. */
+static int script_net_listen(script_var_t *retval, int port)
+{
+	int idx, real_port;
+
+	retval->type = SCRIPT_ARRAY | SCRIPT_FREE | SCRIPT_VAR;
+	retval->len = 0;
+
+	idx = egg_listen(port, &real_port);
+	script_net_takeover(idx);
+	script_list_append(retval, script_int(idx));
+	script_list_append(retval, script_int(real_port));
+	return(0);
+}
+
 static int script_net_open(const char *host, int port, int timeout)
 {
 	int idx;
@@ -196,6 +214,14 @@ static int script_net_info(script_var_t *retval, int idx, char *what)
 	if (!info) return(0);
 
 	if (!strcasecmp(what, "bytesleft")) retval->value = (void *)info->bytes_left;
+	return(0);
+}
+
+static int script_net_throttle(int idx, int speedin, int speedout)
+{
+	throttle_on(idx);
+	if (speedin) throttle_set(idx, 0, speedin);
+	if (speedout) throttle_set(idx, 1, speedout);
 	return(0);
 }
 

@@ -179,38 +179,39 @@ static int check_ctcp_ctcr(int which, int to_channel, user_t *u, char *nick, cha
 		return(0);
 	}
 
-	space = strchr(trailing, ' ');
-	if (!space) return(1);
-
-	*space = 0;
-
-	trailing[len-1] = 0;
 	cmd = trailing+1;	/* Skip over the \001 */
-	text = space+1;
+	trailing[len-1] = 0;
+
+	space = strchr(trailing, ' ');
+	if (space) {
+		*space = 0;
+		text = space+1;
+	}
+	else text = NULL;
 
 	if (which == 0) table = BT_ctcp;
 	else table = BT_ctcr;
 
 	r = bind_check(table, cmd, nick, uhost, u, dest, cmd, text);
 
+	if (!(r & BIND_RET_BREAK)) {
+		if (which == 0) ctcptype = "";
+		else ctcptype = " reply";
+
+		if (to_channel) {
+			flags = LOG_PUBLIC;
+			logdest = dest;
+		}
+		else {
+			flags = LOG_MSGS;
+			logdest = "*";
+		}
+		if (!strcasecmp(cmd, "ACTION")) putlog(flags, logdest, "Action: %s %s", nick, text);
+		else putlog(flags, logdest, "CTCP%s %s%s%s from %s (to %s)", ctcptype, cmd, text ? ": " : "", text ? text : "", nick, dest);
+	}
+
 	trailing[len-1] = 1;
-
-	if (r & BIND_RET_BREAK) return(1);
-
-	if (which == 0) ctcptype = "";
-	else ctcptype = " reply";
-
-	/* This should probably go in the partyline module later. */
-	if (to_channel) {
-		flags = LOG_PUBLIC;
-		logdest = dest;
-	}
-	else {
-		flags = LOG_MSGS;
-		logdest = "*";
-	}
-	if (!strcasecmp(cmd, "ACTION")) putlog(flags, logdest, "Action: %s %s", nick, text);
-	else putlog(flags, logdest, "CTCP%s %s: %s from %s (%s)", ctcptype, cmd, text, nick, dest);
+	if (space) *space = ' ';
 
 	return(1);
 }
@@ -241,10 +242,10 @@ static int gotmsg(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 	if (r) return(0);
 
 	/* Skip any mode prefix to the destination (e.g. PRIVMSG @#trivia :blah). */
-	if (strchr(current_server.whoprefix, *dest)) destname = dest+1;
+	if (current_server.whoprefix && strchr(current_server.whoprefix, *dest)) destname = dest+1;
 	else destname = dest;
 
-	if (strchr(current_server.chantypes, *destname)) to_channel = 1;
+	if (current_server.chantypes && strchr(current_server.chantypes, *destname)) to_channel = 1;
 	else to_channel = 0;
 
 	/* Check if it's a ctcp. */
