@@ -1,3 +1,9 @@
+2001-10-31 10:00  Automatic CVS Scripts
+
+	* po/eggdrop.pot:
+
+	Pots 
+
 2001-10-31 04:02  Tothwolf <tothwolf@techmonkeys.org>
 
 	* configure.ac, lib/egglib/hash_table.c, lib/egglib/linked_list.c,
