@@ -1,3 +1,15 @@
+2001-12-14 05:48  Jeff Fisher <guppy@techmonkeys.org>
+
+	* doc/MODULES, doc/UPDATES1.6, src/patch.h:
+
+	applied BarkerJr's patch to update doc/MODULES from 1.6 
+
+2001-12-14 05:35  Jeff Fisher <guppy@techmonkeys.org>
+
+	* doc/UPDATES1.6, src/patch.h, src/userent.c:
+
+	Applied Wcc's whois_ports patch from 1.6 
+
 2001-12-13 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
