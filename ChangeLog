@@ -1,3 +1,14 @@
+2001-10-20 08:04  Jeff Fisher <guppy@techmonkeys.org>
+
+	* src/main.c:
+
+	
+	* Okay, after talking to various #eggdrop people and seeing x+1
+	people running eggdrop1.7 as production bots -- I added a small
+	warning to the output of ./eggdrop for 1.7 that tells them this is a
+	development version and that they shouldn't run it unless they are
+	testing it. Sound good? It better :P~ hehe 
+
 2001-10-20 07:46  Jeff Fisher <guppy@techmonkeys.org>
 
 	* src/mod/uptime.mod/: uptime.c, uptime.h:
