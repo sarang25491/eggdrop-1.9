@@ -103,12 +103,11 @@ Instructions:
 
 4.7) Other comments?
 
-4.8) If you compiled the bot using the debug or sdebug options and it 
-     dumped a 'core' file when it crashed, it would be *very* useful 
-     if you could paste gdb's output during the following steps:
-     First call gdb
+4.8) If your bot dumped a 'core' file when it crashed, it would be *very*
+     useful  if you could paste gdb's output during the following steps:
+       First call gdb
          $ gdb eggdrop -c core
-     and then enter 'bt' on gdb's command line:
+       and then enter 'bt' on gdb's command line:
          (gdb) bt
      Keep your core file for at least one week, so that the dev team
      can ask for further information if needed. However, don't send

@@ -1,55 +1,43 @@
-Contents of the doc/ directory:
+Directory Contents - doc/
+Last revised: February 23, 2003
+     _________________________________________________________________
 
-settings/
-   documentation for all config file settings
+                          Directory Contents - doc/
 
-man1/
-   unix man pages
 
-html/
-   all doc files in html
+  settings/
+    This directory contains documentation for all config file and module
+    settings.
 
-AUTHORS
-   a list of eggdrop developers and contributors
+  howto/
+    This contains several tutorials and documents explaining how to preform
+    certian tasks.
 
-BOTNET
-   a guide to flags and bot user file sharing
+  BUG-REPORT
+    Fill out this form and e-mail it to bugs@eggheads.org if you find a bug
+    in Eggdrop.
 
-BUG-REPORT
-   a guide how to send bug-reports
+  first_script.txt
+    This document will help get you started with Tcl scripting for Eggdrop.
 
-CONTENTS
-   this file
+  KNOWN-PROBLEMS
+    See this file for a list of things that are broken but aren't getting
+    fixed anytime soon
 
-KNOWN-PROBLEMS
-   i.e. things that are broken, but aren't getting fixed anytime soon
+  MODULES
+    Information on writing Eggdrop modules can be found in this document.
 
-MODULES
-   module information (not finished yet, but getting there).
+  tcl-commands.doc
+    Documentation on Eggdrop Tcl commands available to scripters can be found
+    here.
 
-UPDATES1.7
-   a list of what has changed in the 1.7 series
+  text-substitutions.doc
+    This contains documentation on %-variables that can be used in help, MOTD,
+    and BANNER files.
 
-UPDATES1.6
-   a list of what has changed in the 1.6 series
+  tricks
+    Some advanced tips on making Eggdrop do what you want it to do can be found
+    here. It also contains tweaking tips for your config file.
 
-compiling.FAQ
-   if you have troubles compiling your eggdrop, take a look
-   into this file
-
-eggdrop.doc
-   the primary documentation on running an eggdrop bot -- to be used
-   AFTER you get it compiled  (unfinished, but a good starter course)
-
-patch.howto
-   a how-to on applying and making patches to eggdrop
-   (patches are a popular way to fix bugs in programs)
-
-text-substitutions.doc
-   documentation for the motd file
-
-tcl-commands.doc
-   documentation for eggdrop/Tcl script programmers
-
-tricks
-   some advanced tips on making eggdrop do what you want it to do
+  UPDATES1.6
+    This is a complete list of changes made to Eggdrop 1.6.

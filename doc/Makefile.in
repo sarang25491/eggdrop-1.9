@@ -1,5 +1,5 @@
 # Makefile for doc/
-# $Id: Makefile.in,v 1.17 2001/08/13 20:47:51 guppy Exp $
+# $Id: Makefile.in,v 1.18 2003/02/23 09:52:46 wcc Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -12,15 +12,12 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 
-DOCS = BOTNET BUG-REPORT CONTENTS KNOWN-PROBLEMS MODULES \
-UPDATES1.6 compiling.FAQ eggdrop.doc patch.howto \
-tcl-commands.doc tricks text-substitutions.doc
+DOCS = BUG-REPORT CONTENTS MODULES UPDATES1.6 tcl-commands.doc tricks \
+text-substitutions.doc
 
-MAN1 = man1/eggdrop.1
+HOWTO_DOCS = CONTENTS FIRST-SCRIPT PATCHING PORTING README TIMERS UDEF
 
-WEB_DOCS = $(srcdir)/html/*.html
-SETTING_DOCS = core.settings tricks CONTENTS
-SETTING_MOD_DOCS = $(srcdir)/settings/mod.*
+SETTING_DOCS = CONTENTS CORE
 
 doofus:
 	@echo ""
@@ -28,44 +25,32 @@ doofus:
 	@echo ""
 	@cd .. && $(MAKE)
 
-all: $(DOCS) $(MAN1)
+all: $(DOCS)
 
 clean:
 	@rm -f *~
 
 install:
 	@if test ! -d $(DEST)/doc; then \
-		echo "Creating a doc subdirectory."; \
+		echo "Creating doc/ subdirectory."; \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/doc; \
 	fi
-	@if test ! -d $(DEST)/doc/man1; then \
-		$(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/man1; \
-	fi
-	@if test ! -d $(DEST)/doc/html; then \
-		$(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/html; \
+	@if test ! -d $(DEST)/doc/howto; then \
+		$(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/howto; \
 	fi
 	@if test ! -d $(DEST)/doc/settings; then \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/settings; \
 	fi
+
 	@echo "Copying docs."
 	@for i in $(DOCS); do \
 		$(INSTALL_DATA) $(srcdir)/$$i $(DEST)/doc/; \
 	done
-	@for i in $(MAN1); do \
-		$(INSTALL_DATA) $(srcdir)/$$i $(DEST)/doc/man1/; \
-	done
 	@for i in $(SETTING_DOCS); do \
 		$(INSTALL_DATA) $(srcdir)/settings/$$i $(DEST)/doc/settings/; \
 	done
-	@if test "x`echo $(SETTING_MOD_DOCS)`" != "x$(SETTING_MOD_DOCS)"; then \
-		for i in `echo $(SETTING_MOD_DOCS)`; do \
-			$(INSTALL_DATA) $$i $(DEST)/doc/settings/; \
-		done; \
-	fi
-	@if test "x`echo $(WEB_DOCS)`" != "x$(WEB_DOCS)"; then \
-		for i in `echo $(WEB_DOCS)`; do \
-			$(INSTALL_DATA) $$i $(DEST)/doc/html/; \
-		done; \
-	fi
+	@for i in $(HOWTO_DOCS); do \
+		$(INSTALL_DATA) $(srcdir)/howto/$$i $(DEST)/doc/howto/; \
+	done
 
 #safety hash
