@@ -1,3 +1,16 @@
+2003-02-03 11:41  Will Buckner <wcc@techmonkeys.org>
+
+	* eggdrop.conf, lib/eggdrop/module.h, modules/channels/channels.c,
+	modules/channels/userchan.c, modules/console/console.c,
+	modules/filesys/filedb3.c, modules/filesys/files.c,
+	modules/irc/msgcmds.c, modules/notes/notes.c,
+	modules/share/share.c, modules/uptime/uptime.c, src/chanprog.c,
+	src/cmds.c, src/dcc.c, src/dccutil.c, src/main.c, src/misc.c,
+	src/modules.c, src/tcl.c, src/tcldcc.c, src/tcluser.c,
+	src/userrec.c, src/users.c:
+
+	* More botnet removal.  
+
 2003-02-03 10:43  Will Buckner <wcc@techmonkeys.org>
 
 	* eggdrop.conf, modules/channels/channels.c,
