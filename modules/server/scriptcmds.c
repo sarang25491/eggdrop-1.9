@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.40 2004/06/15 19:19:16 wingman Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.41 2004/06/22 20:47:38 wcc Exp $";
 #endif
 
 #include "server.h"
@@ -91,10 +91,10 @@ static int script_putserv(char *queue, char *next, char *text)
 static int script_jump(int nargs, int num)
 {
   	if (nargs) server_set_next(num);
-  
+
 	cycle_delay = server_config.cycle_delay;
 	kill_server("changing servers");
-	
+
 	return(0);
 }
 
@@ -339,21 +339,22 @@ static script_linked_var_t server_script_vars[] = {
 };
 
 static script_command_t server_script_cmds[] = {
-        {"", "jump", script_jump, NULL, 0, "i", "num", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_PASS_COUNT},	/* DDD	*/
-        {"", "isbotnick", script_isbotnick, NULL, 1, "s", "nick", SCRIPT_INTEGER, 0},				/* DDD	*/
+	{"", "isbotnick", script_isbotnick, NULL, 1, "s", "nick", SCRIPT_INTEGER, 0},				/* DDD	*/
 	{"", "irccmp", script_irccmp, NULL, 2, "ss", "str1 str2", SCRIPT_INTEGER, 0},				/* DDD	*/
 	{"", "get_uhost", uhost_cache_lookup, NULL, 1, "s", "nick", SCRIPT_STRING, 0},				/* DDD	*/
-	{"", "server_add", server_add, NULL, 1, "sis", "host ?port? ?pass?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},	/* DDD	*/
-	{"", "server_del", server_del, NULL, 1, "i", "server-num", SCRIPT_INTEGER, 0},				/* DDD	*/
-	{"", "server_clear", server_clear, NULL, 0, "", "", SCRIPT_INTEGER, 0},					/* DDD	*/
 	{"", "nick_add", nick_add, NULL, 1, "s", "nick", SCRIPT_INTEGER, 0},					/* DDD 	*/
 	{"", "nick_del", nick_del, NULL, 1, "i", "nick-num", SCRIPT_INTEGER, 0},				/* DDD	*/
 	{"", "nick_clear", nick_clear, NULL, 0, "", "", SCRIPT_INTEGER, 0},					/* DDD	*/
 
 	/* Server commands. */
+	{"", "jump", script_jump, NULL, 0, "i", "num", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_PASS_COUNT},	/* DDD	*/
+	{"", "server_add", server_add, NULL, 1, "sis", "host ?port? ?pass?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},	/* DDD	*/
+	{"", "server_del", server_del, NULL, 1, "i", "server-num", SCRIPT_INTEGER, 0},				/* DDD	*/
+	{"", "server_clear", server_clear, NULL, 0, "", "", SCRIPT_INTEGER, 0},					/* DDD	*/
+	{"", "server_find", server_find, NULL, 1, "sis", "host ?port? ?pass?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},/* DDD	*/
 	{"", "server_supports", script_supports, NULL, 1, "s", "name", SCRIPT_INTEGER, 0},			/* DDD	*/
 	{"", "server_support_val", script_support_val, NULL, 1, "s", "name", SCRIPT_STRING, 0},			/* DDD	*/
-        {"", "putserv", script_putserv, NULL, 1, "sss", "?queue? ?next? text", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT},	/* DDD */
+	{"", "putserv", script_putserv, NULL, 1, "sss", "?queue? ?next? text", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT},	/* DDD */
 
 	/* DCC commands. */
 	{"", "dcc_chat", dcc_start_chat, NULL, 1, "si", "nick ?timeout?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},	/* DDD	*/

@@ -1,5 +1,5 @@
 Eggdrop Scripting Commands
-Last revised: March 01, 2003
+Last revised: July 21, 2004
      _________________________________________________________________
 
 This is an exhaustive list of all of the scripting commands added to Eggdrop.
@@ -7,6 +7,8 @@ All of the normal built-in commands specific to the scripting module you are
 using are still there, of course, but you can also use these to manipulate
 features of the bot. They are listed according to category. This list is
 accurate for Eggdrop v1.9.0.
+
+Unless otherwise specified, commands return 0.
 
 *** CORE COMMANDS ***
 
@@ -23,239 +25,64 @@ accurate for Eggdrop v1.9.0.
 
   <FINISH ME>
 
-*** BLOWFISH/ENCRYPTION MODULE COMMANDS ***
 
-  <WRITE ME>
+*** SERVER MODULE COMMANDS ***
 
+  get_uhost <nick>
+    Returns:
+      The uhost for the given nick, or "" if unknown.
 
-*** CHANNELS MODULE COMMANDS ***
-  
-  setlaston <handle> <when> [channel]
-    Description: updates a user's laston information with the information
-      provided.
-    Returns: nothing
-    Module: channels
+  irccmp <str1> <str2>
+    Description:
+      Compares str1 and str2 case independently, as specified by the current
+      server's method of string comparison. Typical uses are comparing nicks
+      and channel names.
+    Returns:
+      < 0 if str1 < str2
+      = 0 if str1 = str2
+      > 0 if str1 > str2
 
-  newban [channel] <ban> <creator> <comment> [lifetime] [options]
-    Description: adds a ban to the global ban list (which takes effect on
-      all channels); creator is given credit for the ban in the ban list.
-      lifetime is specified in minutes. If lifetime is not specified,
-      global-ban-time (usually 60) is used. Setting the lifetime to 0 makes
-      it a permanent ban.
-    Options:
-      sticky: forces the ban to be always active on a channel, even
-              with dynamicbans on
-      none:   no effect
-    Returns: nothing
-    Module: channels
+  isbotnick <nick>
+    Returns:
+      1 if the specified nick matches the bot's current nick; 0 otherwise.
 
-  newexempt [channel] <exempt> <creator> <comment> [lifetime] [options]
-    Description: adds a exempt to the global exempt list (which takes effect
-      on all channels); creator is given credit for the exempt in the exempt
-      list. lifetime is specified in minutes. If lifetime is not specified,
-      exempt-time (usually 60) is used. Setting the lifetime to 0 makes it a
-      permanent exempt. The exempt will not be removed until the
-      corresponding ban has been removed.
-    Options:
-      sticky: forces the exempt to be always active on a channel, even
-              with dynamicexempts on
-      none:   no effect
-    Returns: nothing
-    Module: channels
+  jump [server number]
+    Description:
+      Jumps the bot to the server corresponding to the given server number.
+      If no server number is specified, the next server in the list will be
+      used.
 
-  newinvite [channel] <invite> <creator> <comment> [lifetime] [options]
-    Description: adds a invite to the global invite list (which takes effect
-      on all channels); creator is given credit for the invite in the invite
-      list. lifetime is specified in minutes. If lifetime is not specified,
-      invite-time (usually 60) is used. Setting the lifetime to 0 makes it
-      a permanent invite. The invite will not be removed until the channel
-      has gone -i.
-    Options:
-      sticky: forces the invite to be always active on a channel, even
-              with dynamicinvites on
-      none:   no effect
-    Returns: nothing
-    Module: channels
+  putserv [queue] [next] <text>
+    Description:
+      Sends text to the IRC server.
 
-  stickban [channel] <banmask>
-    Description: makes a ban sticky, or, if a channel is specified, then it
-      is set sticky on that channel only.
-    Returns: 1 on success; 0 otherwise
-    Module: channels
+      Queue may be one of:
+        normal  - Messages are sent at a normal rate.
+        fast    - Messages are sent at a rate faster than "normal".
+        slow    - Messages are sent at a rate slower than "normal".
+        noqueue - Messages are not queued. They are sent out to the server
+                  immediatly. WARNING: The bot can flood off easily when
+                  using this mode.
 
-  unstickban [channel] <banmask>
-    Description: makes a ban no longer sticky, or, if a channel is
-      specified, then it is unstuck on that channel only.
-    Returns: 1 on success; 0 otherwise
-    Module: channels
+      If "next" is specified, the message will be moved to the front of the
+      queue.
 
-  stickexempt [channel] <exemptmask>
-    Description: makes an exempt sticky, or, if a channel is specified,
-      then it is set sticky on that channel only.
-    Returns: 1 on success; 0 otherwise
-    Module: channels
+  server_add <host> [port] [password]
+    Description:
+      Adds a server to the server list.
 
-  unstickexempt [channel] <exemptmask>
-    Description: makes an exempt no longer sticky, or, if a channel is
-      specified, then it is unstuck on that channel only.
-    Returns: 1 on success; 0 otherwise
-    Module: channels
+  server_del <server number>
+    Description:
+      Removes a server from the server list.
+    Returns:
+      0 for success; -1 otherwise.
 
-  stickinvite [channel] <invitemask>
-    Description: makes an invite sticky, or, if a channel is specified,
-      then it is set sticky on that channel only.
-    Returns: 1 on success; 0 otherwise
-    Module: channels
+  server_clear
+    Description:
+      Clears the server list.
 
-  unstickinvite [channel] <invitemask>
-    Description: makes an invite no longer sticky, or, if a channel is
-      specified, then it is unstuck on that channel only.
-    Returns: 1 on success; 0 otherwise
-    Module: channels
+  DXX: Write server module scripting docs.
 
-  killban [channel] <ban>
-    Description: removes a ban from the global ban list
-    Returns: 1 on success; 0 otherwise
-    Module: channels
-
-  killexempt [channel] <exempt>
-    Description: removes an exempt from the global exempt list
-    Returns: 1 on success; 0 otherwise
-    Module: channels
-
-  killinvite [channel] <invite>
-    Description: removes an invite from the global invite list
-    Returns: 1 on success; 0 otherwise
-    Module: channels
-
-  ischanjuped [channel]
-    Returns: 1 if the channel is juped, and the bot is unable to join; 0
-      otherwise
-    Module: channels
-
-  isban [channel] <ban>
-    Returns: 1 if the specified ban is in the global ban list; 0 otherwise.
-      If a channel is specified, that channel's ban list is checked as well.
-    Module: channels
-
-  ispermban [channel] <ban>
-    Returns: 1 if the specified ban is in the global ban list AND is marked
-      as permanent; 0 otherwise. If a channel is specified, that channel's
-      ban list is checked as well.
-    Module: channels
-
-  isexempt [channel] <exempt>
-    Returns: 1 if the specified exempt is in the global exempt list; 0
-      otherwise. If a channel is specified, that channel's exempt list is
-      checked as well.
-    Module: channels
-
-  ispermexempt [channel] <exempt>
-    Returns: 1 if the specified exempt is in the global exempt list AND is
-      marked as permanent; 0 otherwise. If a channel is specified, that
-      channel's exempt list is checked as well.
-    Module: channels
-
-  isinvite [channel] <invite>
-    Returns: 1 if the specified invite is in the global invite list; 0
-      otherwise. If a channel is specified, that channel's invite list is
-      checked as well.
-    Module: channels
-
-  isperminvite [channel] <invite>
-    Returns: 1 if the specified invite is in the global invite list AND is
-      marked as permanent; 0 otherwise. If a channel is specified, that
-      channel's invite list is checked as well.
-    Module: channels
-
-  isbansticky [channel] <ban>
-    Returns: 1 if the specified ban is marked as sticky in the global ban
-      list; 0 otherwise. If a channel is specified, that channel's ban list
-      is checked as well.
-    Module: channels
-
-  isexemptsticky [channel] <exempt>
-    Returns: 1 if the specified exempt is marked as sticky in the global
-      exempt list; 0 otherwise. If a channel is specified, that channel's
-      exempt list is checked as well.
-    Module: channels
-
-  isinvitesticky [channel] <invite>
-    Returns: 1 if the specified invite is marked as sticky in the global
-      invite list; 0 otherwise. If a channel is specified, that channel's
-      invite list is checked as well.
-    Module: channels
-
-  matchban [channel] <nick!user@host>
-    Returns: 1 if the specified nick!user@host matches a ban in the global
-      ban list; 0 otherwise. If a channel is specified, that channel's ban
-      list is checked as well.
-    Module: channels
-
-  matchexempt [channel] <nick!user@host>
-    Returns: 1 if the specified nick!user@host matches an exempt in the
-      global exempt list; 0 otherwise. If a channel is specified, that
-      channel's exempt list is checked as well.
-    Module: channels
-
-  matchinvite [channel] <nick!user@host>
-    Returns: 1 if the specified nick!user@host matches an invite in the
-      global invite list; 0 otherwise. If a channel is specified, that
-      channel's invite list is checked as well.
-    Module: channels
-
-  listbans [channel]
-    Returns: a list of global bans, or, if a channel is specified, a
-      list of channel-specific bans. Each entry is a sublist containing:
-      hostmask, comment, expiration timestamp, time added, last time
-      active, and creator. The three timestamps are in unixtime format.
-    Module: channels
-
-  listexempts [channel]
-    Returns: a list of global exempts, or, if a channel is specified, a
-      list of channel-specific exempts. Each entry is a sublist containing:
-      hostmask, comment, expiration timestamp, time added, last time
-      active, and creator. The three timestamps are in unixtime format.
-    Module: channels
-
-  listinvites [channel]
-    Returns: a list of global invites, or, if a channel is specified, a
-      list of channel-specific invites. Each entry is a sublist containing:
-      hostmask, comment, expiration timestamp, time added, last time
-      active, and creator. The three timestamps are in unixtime format.
-    Module: channels
-
-  <FINISH ME>
-
-
-*** COMPRESS MODULE COMMANDS ***
-
-  <WRITE ME>
-
-
-*** CONSOLE MODULE COMMANDS ***
-
-  <WRITE ME>
-
-
-*** FILESYS MODULE COMMANDS ***
-
-  <WRITE ME>
-
-
-*** IRC MODULE COMMANDS ***
-
-  putkick <channel> <nick,nick,...> [reason]
-    Description: sends kicks to the server and tries to put as many nicks
-      into one kick command as possible.
-    Returns: nothing
-
-  <FINISH ME>
-
-
-*** NOTES MODULE COMMANDS ***
-
-  <WRITE ME>
 
 
 *** SCRIPT MODULE COMMANDS ***
@@ -265,20 +92,12 @@ accurate for Eggdrop v1.9.0.
 
 *** SERVER MODULE COMMANDS ***
 
-  irccmp <str1> <str2>
-    Description: Compare str1 and str2 case independently, as specified by
-      the current server. Typical uses are comparing nicks and channel names.
-    Returns: < 0 if str1 < str2
-             = 0 if str1 = str2
-	     > 0 if str1 > str2
 
-  get_uhost <nick>
-    Returns: the uhost for the given nick, or "" if unknown
 
   putserv [noqueue|quick|normal|slow] [next] <text>
     Description: sends text to the server through the specified queue. The
       default queue is the normal queue. You can specify the "next"
-      option even if you are using other options.
+      option even if you are using others options.
     Options:
       noqueue: send the message without waiting
       quick: high priority queue
@@ -314,7 +133,7 @@ accurate for Eggdrop v1.9.0.
 
   channel_limit <chan>
     Returns: The limit of the given channel.
- 
+
   channel_bans <chan>
     Returns: The list of bans in the channel. Each item of the list is itself
       a list of the form {banmask, who_set_it, when_it_was_set}

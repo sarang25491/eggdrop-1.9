@@ -1,5 +1,5 @@
 Directory Contents - doc/
-Last revised: March  03, 2003
+Last revised: June 21, 2004
      _________________________________________________________________
 
                           Directory Contents - doc/
@@ -16,10 +16,6 @@ Last revised: March  03, 2003
   BUG-REPORT
     Fill out this form and e-mail it to bugs@eggheads.org if you find a bug
     in Eggdrop.
-
-  KNOWN-PROBLEMS
-    See this file for a list of things that are broken but aren't getting
-    fixed anytime soon
 
   MODULES
     Information on writing Eggdrop modules can be found in this document.
