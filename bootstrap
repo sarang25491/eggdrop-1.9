@@ -1,10 +1,10 @@
 #! /bin/sh
 #
-# $Id: bootstrap,v 1.11 2002/02/13 16:38:58 ite Exp $
+# $Id: bootstrap,v 1.12 2003/12/17 02:24:42 ite Exp $
 #
 # Recommended development tools versions:
-#   autoconf 2.52
-#   automake 1.5
+#   autoconf 2.53
+#   automake 1.6.3
 #   libtool 1.4.2
 #
 # NOTE:
@@ -35,7 +35,7 @@ set -x
 #gettextize --copy --force
 
 # Generate aclocal.m4 from acconfig/*.m4 files
-aclocal -I acconfig
+aclocal-1.6 -I acconfig
 
 # Bring in libtool with libtdl abstraction
 libtoolize --copy --ltdl
@@ -44,7 +44,7 @@ libtoolize --copy --ltdl
 autoheader
 
 # Generate Makefile.in from Makefile.am
-automake --add-missing --copy
+automake-1.6 --add-missing --copy
 
 # Generate configure script
 autoconf
