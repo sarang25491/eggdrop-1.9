@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: binds.c,v 1.16 2004/06/21 19:04:51 stdarg Exp $";
+static const char rcsid[] = "$Id: binds.c,v 1.17 2004/06/22 20:32:18 wingman Exp $";
 #endif
 
 #include <string.h>
@@ -95,26 +95,34 @@ bind_table_t *bind_table_add(const char *name, int nargs, const char *syntax, in
 
 void bind_table_del(bind_table_t *table)
 {
-	bind_table_t *cur, *prev;
+	bind_table_t *cur;
 
-	for (prev = NULL, cur = bind_table_list_head; cur; prev = cur, cur = cur->next) {
+	for (cur = bind_table_list_head; cur; cur = cur->next) {
 		if (!strcmp(table->name, cur->name)) break;
 	}
 
-	/* If it's found, remove it from the list. */
-	if (cur) {
-		if (prev) prev->next = cur->next;
-		else bind_table_list_head = cur->next;
-	}
+	egg_assert(cur != NULL);
 
-	/* Now delete it. */
+	/* Now mark it as deleted. */
 	table->flags |= BIND_DELETED;
 	schedule_bind_cleanup();
 }
 
 static void bind_table_really_del(bind_table_t *table)
 {
+	bind_table_t *cur, *prev;
 	bind_entry_t *entry, *next;
+
+	for (prev = NULL, cur = bind_table_list_head; cur; prev = cur, cur = cur->next) {
+		if (cur == table)
+			break;
+	}
+
+	egg_assert(cur != NULL);
+
+	/* unlink it from list */
+	if (prev == NULL) bind_table_list_head = table->next;
+	else prev->next = table->next;
 
 	free(table->name);
 	for (entry = table->entries; entry; entry = next) {
@@ -172,7 +180,11 @@ int bind_entry_del(bind_table_t *table, int id, const char *mask, const char *fu
 	bind_entry_t *entry;
 
 	entry = bind_entry_lookup(table, id, mask, function_name, callback);
-	if (!entry) return(-1);
+	
+	/* better to issue a warning message than silently ignoring 
+	 * that this entry is not found...at least for now */
+	egg_assert_val(entry != NULL, -1);
+	/*if (!entry) return(-1);*/
 
 	if (cdataptr) *(void **)cdataptr = entry->client_data;
 
