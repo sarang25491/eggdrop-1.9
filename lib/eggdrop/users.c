@@ -102,6 +102,8 @@ int user_load(const char *fname)
 			setting = u->settings+j;
 			xml_node_get_str(&flag_str, setting_node, "flags", 0, 0);
 			if (flag_str) flag_from_str(&setting->flags, flag_str);
+			else memset(&setting->flags, 0, sizeof(setting->flags));
+
 			setting->nextended = 0;
 			setting->extended = NULL;
 			xml_node_get_str(&chan, setting_node, "chan", 0, 0);

@@ -51,7 +51,11 @@ void connect_to_next_server() {
 	if (serv->port) current_server.port = serv->port;
 	else current_server.port = server_config.default_port;
 
+	putlog(LOG_SERV, "*", "Connecting to %s (%d)", current_server.server_host, current_server.port);
 	current_server.idx = egg_connect(current_server.server_host, current_server.port, server_config.connect_timeout);
+	if (current_server.idx < 0) {
+		putlog(LOG_SERV, "*", "Error connecting to server");
+	}
 	sockbuf_set_handler(current_server.idx, &server_handler, NULL);
 }
 
