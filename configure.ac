@@ -167,8 +167,6 @@ AC_CONFIG_SUBDIRS(libltdl)
 
 AC_SUBST(ac_aux_dir)
 
-EGG_LTLIBOBJS
-
 # FIXME: module Makefile list will HOPEFULLY become dynamic
 AC_OUTPUT([Makefile doc/Makefile intl/Makefile lib/Makefile lib/compat/Makefile lib/eggdrop/Makefile lib/egglib/Makefile modules/Makefile modules/blowfish/Makefile modules/javascript/Makefile modules/perlscript/Makefile modules/script/Makefile modules/server/Makefile modules/tclscript/Makefile po/Makefile.in scripts/Makefile nettype/Makefile src/Makefile])
 
