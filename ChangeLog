@@ -1,3 +1,12 @@
+2001-12-01 17:35  Federico Mennite <ite@techmonkeys.org>
+
+	* modules/channels/channels.c, modules/irc/chan.c,
+	modules/irc/mode.c, src/chan.h, src/tcluser.c:
+
+	* Added DalNet's +M support. Patch by Wcc
+	<will@centerofnowhere.com>* Fixed a stupid typo of mine in
+	tcl_botattr, which prevented a successful build.  
+
 2001-12-01 16:49  Federico Mennite <ite@techmonkeys.org>
 
 	* modules/irc/chan.c:
