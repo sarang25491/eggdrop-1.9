@@ -1,5 +1,5 @@
 /* 
- * $Id: uptime.c,v 1.3 2001/10/30 01:35:19 poptix Exp $
+ * $Id: uptime.c,v 1.4 2001/12/02 12:36:38 ite Exp $
  *
  * This module reports uptime information about your bot to http://uptime.eggheads.org. The
  * purpose for this is to see how your bot rates against many others (including EnergyMechs 
@@ -142,8 +142,8 @@ int send_uptime(void)
 	struct  sockaddr_in sai;
 	struct  stat st;
 	PackUp  *mem;
-	int     len;
-        char    s[10]="server";
+	int     len, servidx = findanyidx(serv);
+	
 	uptimecookie = (uptimecookie + 1) * 18457;
 	upPack.cookie = htonl(uptimecookie);
 	upPack.now2 = htonl(time(NULL));
@@ -159,16 +159,15 @@ int send_uptime(void)
 		if (uptimeip == -1)
 			return -2;
 	}
-	len = sizeof(upPack) + strlen(botnetnick) + strlen(s) + strlen(uptime_version);
+	len = sizeof(upPack) + strlen(botnetnick) + strlen(dcc[servidx].host) + strlen(uptime_version);
 	mem = (PackUp*)malloc(len);
 	memcpy(mem,&upPack,sizeof(upPack));
-	sprintf(mem->string,"%s %s %s",botnetnick,s,uptime_version);
+	sprintf(mem->string,"%s %s %s",botnetnick,dcc[servidx].host,uptime_version);
 	memset(&sai,0,sizeof(sai));
 	sai.sin_family = AF_INET;
 	sai.sin_addr.s_addr = uptimeip;
 	sai.sin_port = htons(uptimeport);
 	len = sendto(uptimesock,(void*)mem,len,0,(struct sockaddr*)&sai,sizeof(sai));
-	putlog(LOG_DEBUG, "*", "len = %d",len);
 	free(mem);
 	return len;
 }
