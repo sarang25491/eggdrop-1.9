@@ -1,3 +1,22 @@
+2004-06-14 04:34  stdarg <stdarg@techmonkeys.org>
+
+	* configure.ac, lib/Makefile.am:
+
+	* Remove egglib from build (hopefully) 
+
+2004-06-13 23:31  Dariusz Kulinski <takeda@takeda.tk>
+
+	* acconfig/acinclude.m4, acconfig/tcl.m4,
+	modules/tclscript/Makefile.am:
+
+	* fixing problems with compiling tclscript module on FreeBSD 
+
+2004-06-13 23:15  Automatic CVS Scripts
+
+	* po/eggdrop.pot:
+
+	Pots 
+
 2004-06-13 17:15  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
