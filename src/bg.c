@@ -3,7 +3,7 @@
  *   moving the process to the background, i.e. forking, while keeping threads
  *   happy.
  *
- * $Id: bg.c,v 1.3 2001/04/12 02:39:43 guppy Exp $
+ * $Id: bg.c,v 1.4 2001/08/10 23:51:20 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -122,7 +122,7 @@ static void bg_do_detach(pid_t p)
     fprintf(fp, "%u\n", p);
     if (fflush(fp)) {
       /* Kill bot incase a botchk is run from crond. */
-      printf(EGG_NOWRITE, pid_file);
+      printf(_("* Warning!  Could not write %s file!\n"), pid_file);
       printf("  Try freeing some disk space\n");
       fclose(fp);
       unlink(pid_file);
@@ -130,7 +130,7 @@ static void bg_do_detach(pid_t p)
     }
     fclose(fp);
   } else
-    printf(EGG_NOWRITE, pid_file);
+    printf(_("* Warning!  Could not write %s file!\n"), pid_file);
   printf("Launched into the background  (pid: %d)\n\n", p);
 #if HAVE_SETPGID
   setpgid(p, p);

@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  *
- * $Id: dccutil.c,v 1.33 2001/07/26 17:04:33 drummer Exp $
+ * $Id: dccutil.c,v 1.34 2001/08/10 23:51:20 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -493,13 +493,13 @@ int detect_dcc_flood(time_t * timer, struct chat_info *chat, int idx)
     chat->msgs_per_sec++;
     if (chat->msgs_per_sec > dcc_flood_thr) {
       /* FLOOD */
-      dprintf(idx, "*** FLOOD: %s.\n", IRC_GOODBYE);
+      dprintf(idx, "*** FLOOD: %s.\n", _("Goodbye"));
       /* Evil assumption here that flags&DCT_CHAT implies chat type */
       if ((dcc[idx].type->flags & DCT_CHAT) && chat &&
 	  (chat->channel >= 0)) {
 	char x[1024];
 
-	egg_snprintf(x, sizeof x, DCC_FLOODBOOT, dcc[idx].nick);
+	egg_snprintf(x, sizeof x, _("%s has been forcibly removed for flooding.\n"), dcc[idx].nick);
 	chanout_but(idx, chat->channel, "*** %s", x);
 	if (chat->channel < 100000)
 	  botnet_send_part_idx(idx, x);
@@ -524,8 +524,8 @@ void do_boot(int idx, char *by, char *reason)
 {
   int files = (dcc[idx].type != &DCC_CHAT);
 
-  dprintf(idx, DCC_BOOTED1);
-  dprintf(idx, DCC_BOOTED2, files ? "file section" : "bot",
+  dprintf(idx, _("-=- poof -=-\n"));
+  dprintf(idx, _("Youve been booted from the %s by %s%s%s\n"), files ? "file section" : "bot",
           by, reason[0] ? ": " : ".", reason);
   /* If it's a partyliner (chatterer :) */
   /* Horrible assumption that DCT_CHAT using structure uses same format
@@ -534,7 +534,7 @@ void do_boot(int idx, char *by, char *reason)
       (dcc[idx].u.chat->channel >= 0)) {
     char x[1024];
 
-    egg_snprintf(x, sizeof x, DCC_BOOTED3, by, dcc[idx].nick,
+    egg_snprintf(x, sizeof x, _("%s booted %s from the party line%s%s\n"), by, dcc[idx].nick,
 		 reason[0] ? ": " : "", reason);
     chanout_but(idx, dcc[idx].u.chat->channel, "*** %s.\n", x);
     if (dcc[idx].u.chat->channel < 100000)

@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.45 2001/06/28 19:21:55 guppy Exp $
+ * $Id: cmdschan.c,v 1.46 2001/08/10 23:51:20 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -443,7 +443,7 @@ static void cmd_mns_ban(struct userrec *u, int idx, char *par)
   i = u_delban(NULL, s, (u->flags & USER_MASTER));
   if (i > 0) {
     putlog(LOG_CMDS, "*", "#%s# -ban %s", dcc[idx].nick, s);
-    dprintf(idx, "%s: %s\n", IRC_REMOVEDBAN, s);
+    dprintf(idx, "%s: %s\n", _("Removed ban"), s);
     for (chan = chanset; chan != NULL; chan = chan->next)
       add_mode(chan, '-', 'b', s);
     return;
@@ -469,7 +469,7 @@ static void cmd_mns_ban(struct userrec *u, int idx, char *par)
 	  i++;
 	  if (i == -j) {
 	    add_mode(chan, '-', 'b', b->mask);
-	    dprintf(idx, "%s '%s' on %s.\n", IRC_REMOVEDBAN,
+	    dprintf(idx, "%s '%s' on %s.\n", _("Removed ban"),
 		    b->mask, chan->dname);
 	    putlog(LOG_CMDS, "*", "#%s# (%s) -ban %s [on channel]",
 		   dcc[idx].nick, dcc[idx].u.chat->con_chan, ban);
@@ -490,7 +490,7 @@ static void cmd_mns_ban(struct userrec *u, int idx, char *par)
 	if (!rfc_casecmp(b->mask, ban)) {
 	  add_mode(chan, '-', 'b', b->mask);
 	  dprintf(idx, "%s '%s' on %s.\n",
-		  IRC_REMOVEDBAN, b->mask, chan->dname);
+		  _("Removed ban"), b->mask, chan->dname);
 	  putlog(LOG_CMDS, "*", "#%s# (%s) -ban %s [on channel]",
 		 dcc[idx].nick, dcc[idx].u.chat->con_chan, ban);
 	  return;
@@ -532,7 +532,7 @@ static void cmd_mns_exempt (struct userrec *u, int idx, char *par)
   i = u_delexempt(NULL, s, (u->flags & USER_MASTER));
   if (i > 0) {
     putlog(LOG_CMDS, "*", "#%s# -exempt %s", dcc[idx].nick, s);
-    dprintf(idx, "%s: %s\n", IRC_REMOVEDEXEMPT, s);
+    dprintf(idx, "%s: %s\n", _("Removed exempt"), s);
     for (chan = chanset; chan != NULL; chan = chan->next)
       add_mode(chan, '-', 'e', s);
     return;
@@ -558,7 +558,7 @@ static void cmd_mns_exempt (struct userrec *u, int idx, char *par)
 	  i++;
 	  if (i == -j) {
 	    add_mode(chan, '-', 'e', e->mask);
-	    dprintf(idx, "%s '%s' on %s.\n", IRC_REMOVEDEXEMPT,
+	    dprintf(idx, "%s '%s' on %s.\n", _("Removed exempt"),
 		    e->mask, chan->dname);
 	    putlog(LOG_CMDS, "*", "#%s# (%s) -exempt %s [on channel]",
 		   dcc[idx].nick, dcc[idx].u.chat->con_chan, exempt);
@@ -579,7 +579,7 @@ static void cmd_mns_exempt (struct userrec *u, int idx, char *par)
 	if (!rfc_casecmp(e->mask, exempt)) {
 	  add_mode(chan, '-', 'e', e->mask);
 	  dprintf(idx, "%s '%s' on %s.\n",
-		  IRC_REMOVEDEXEMPT, e->mask, chan->dname);
+		  _("Removed exempt"), e->mask, chan->dname);
 	  putlog(LOG_CMDS, "*", "#%s# (%s) -exempt %s [on channel]",
 		 dcc[idx].nick, dcc[idx].u.chat->con_chan, exempt);
 	  return;
@@ -621,7 +621,7 @@ static void cmd_mns_invite (struct userrec *u, int idx, char *par)
   i = u_delinvite(NULL, s, (u->flags & USER_MASTER));
   if (i > 0) {
     putlog(LOG_CMDS, "*", "#%s# -invite %s", dcc[idx].nick, s);
-    dprintf(idx, "%s: %s\n", IRC_REMOVEDINVITE, s);
+    dprintf(idx, "%s: %s\n", _("Removed invite"), s);
     for (chan = chanset; chan != NULL; chan = chan->next)
       add_mode(chan, '-', 'I', s);
     return;
@@ -648,7 +648,7 @@ static void cmd_mns_invite (struct userrec *u, int idx, char *par)
 	  i++;
 	  if (i == -j) {
 	    add_mode(chan, '-', 'I', inv->mask);
-	    dprintf(idx, "%s '%s' on %s.\n", IRC_REMOVEDINVITE,
+	    dprintf(idx, "%s '%s' on %s.\n", _("Removed invite"),
 		    inv->mask, chan->dname);
 	    putlog(LOG_CMDS, "*", "#%s# (%s) -invite %s [on channel]",
 		   dcc[idx].nick, dcc[idx].u.chat->con_chan, invite);
@@ -670,7 +670,7 @@ static void cmd_mns_invite (struct userrec *u, int idx, char *par)
 	if (!rfc_casecmp(inv->mask, invite)) {
 	  add_mode(chan, '-', 'I', inv->mask);
 	  dprintf(idx, "%s '%s' on %s.\n",
-		  IRC_REMOVEDINVITE, inv->mask, chan->dname);
+		  _("Removed invite"), inv->mask, chan->dname);
 	  putlog(LOG_CMDS, "*", "#%s# (%s) -invite %s [on channel]",
 		 dcc[idx].nick, dcc[idx].u.chat->con_chan, invite);
 	  return;

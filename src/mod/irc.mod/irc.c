@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.56 2001/07/25 04:21:08 guppy Exp $
+ * $Id: irc.c,v 1.57 2001/08/10 23:51:21 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -143,12 +143,12 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
   reason[0] = 0;
   switch (type) {
   case REVENGE_KICK:
-    kick_msg = IRC_KICK_PROTECT;
+    kick_msg = _("dont kick my friends, bud");
     simple_sprintf(reason, "kicked %s off %s", victim, chan->dname);
     break;
   case REVENGE_DEOP:
     simple_sprintf(reason, "deopped %s on %s", victim, chan->dname);
-    kick_msg = IRC_DEOP_PROTECT;
+    kick_msg = _("dont deop my friends, bud");
     break;
   default:
     kick_msg = "revenge!";
@@ -935,13 +935,13 @@ static void irc_report(int idx, int details)
       p = NULL;
       if (!channel_inactive(chan)) {
 	if (chan->status & CHAN_JUPED)
-	  p = MISC_JUPED;
+	  p = _("juped");
 	else if (!(chan->status & CHAN_ACTIVE))
-	  p = MISC_TRYING;
+	  p = _("trying");
 	else if (chan->status & CHAN_PEND)
-	  p = MISC_PENDING;
+	  p = _("pending");
 	else if (!me_op(chan))
-	  p = MISC_WANTOPS;
+	  p = _("want ops!");
       }
       l = simple_sprintf(ch, "%s%s%s%s, ", chan->dname, p ? "(" : "",
 			 p ? p : "", p ? ")" : "");

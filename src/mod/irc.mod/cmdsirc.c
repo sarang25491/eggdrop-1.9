@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands direclty relating to channel interaction
  *
- * $Id: cmdsirc.c,v 1.25 2001/07/02 16:39:11 guppy Exp $
+ * $Id: cmdsirc.c,v 1.26 2001/08/10 23:51:21 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -522,20 +522,20 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
   else
     chan = findchan_by_dname(chname);
   if (chan == NULL) {
-    dprintf(idx, "%s %s\n", IRC_NOTACTIVECHAN, chname);
+    dprintf(idx, "%s %s\n", _("Not active on channel"), chname);
     return;
   }
   strncpyz(s, getchanmode(chan), sizeof s);
   if (channel_pending(chan))
-    egg_snprintf(s1, sizeof s1, "%s %s", IRC_PROCESSINGCHAN, chan->dname);
+    egg_snprintf(s1, sizeof s1, "%s %s", _("Processing channel"), chan->dname);
   else if (channel_active(chan))
-    egg_snprintf(s1, sizeof s1, "%s %s", IRC_CHANNEL, chan->dname);
+    egg_snprintf(s1, sizeof s1, "%s %s", _("Channel"), chan->dname);
   else
-    egg_snprintf(s1, sizeof s1, "%s %s", IRC_DESIRINGCHAN, chan->dname);
+    egg_snprintf(s1, sizeof s1, "%s %s", _("Desiring channel"), chan->dname);
   dprintf(idx, "%s, %d member%s, mode %s:\n", s1, chan->channel.members,
 	  chan->channel.members == 1 ? "" : "s", s);
   if (chan->channel.topic)
-    dprintf(idx, "%s: %s\n", IRC_CHANNELTOPIC, chan->channel.topic);
+    dprintf(idx, "%s: %s\n", _("Channel Topic"), chan->channel.topic);
   if (channel_active(chan)) {
     dprintf(idx, "(n = owner, m = master, o = op, d = deop, b = bot)\n");
     spaces[nick_len - 9] = 0;
@@ -648,16 +648,16 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
       spaces[len] = ' ';
       spaces2[len2] = ' ';
       if (chan_fakeop(m))
-	dprintf(idx, "    (%s)\n", IRC_FAKECHANOP);
+	dprintf(idx, "    (%s)\n", _("FAKE CHANOP GIVEN BY SERVER"));
       if (chan_sentop(m))
-	dprintf(idx, "    (%s)\n", IRC_PENDINGOP);
+	dprintf(idx, "    (%s)\n", _("pending +o -- Im lagged"));
       if (chan_sentdeop(m))
-	dprintf(idx, "    (%s)\n", IRC_PENDINGDEOP);
+	dprintf(idx, "    (%s)\n", _("pending -o -- Im lagged"));
       if (chan_sentkick(m))
-	dprintf(idx, "    (%s)\n", IRC_PENDINGKICK);
+	dprintf(idx, "    (%s)\n", _("pending kick"));
     }
   }
-  dprintf(idx, "%s\n", IRC_ENDCHANINFO);
+  dprintf(idx, "%s\n", _("End of channel info."));
 }
 
 static void cmd_topic(struct userrec *u, int idx, char *par)
@@ -945,7 +945,7 @@ static void cmd_reset(struct userrec *u, int idx, char *par)
   if (par[0]) {
     chan = findchan_by_dname(par);
     if (!chan)
-      dprintf(idx, "%s\n", IRC_NOMONITOR);
+      dprintf(idx, "%s\n", _("I dont monitor that channel."));
     else {
       get_user_flagrec(u, &user, par);
       if (!glob_master(user) && !chan_master(user)) {

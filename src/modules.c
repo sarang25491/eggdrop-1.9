@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.55 2001/07/31 16:40:40 guppy Exp $
+ * $Id: modules.c,v 1.56 2001/08/10 23:51:20 ite Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -635,11 +635,11 @@ const char *module_load(char *name)
 #endif
 
   if (module_find(name, 0, 0) != NULL)
-    return MOD_ALREADYLOAD;
+    return _("Already loaded.");
 #ifndef STATIC
   if (moddir[0] != '/') {
     if (getcwd(workbuf, 1024) == NULL)
-      return MOD_BADCWD;
+      return _("Cant determine current directory.");
     sprintf(&(workbuf[strlen(workbuf)]), "/%s%s." EGG_MOD_EXT, moddir, name);
   } else
     sprintf(workbuf, "%s%s." EGG_MOD_EXT, moddir, name);
@@ -693,7 +693,7 @@ const char *module_load(char *name)
       dlclose(hand);
 #    endif
 #  endif
-      return MOD_NOSTARTDEF;
+      return _("No start function defined.");
     }
   }
 #  else
@@ -724,9 +724,9 @@ const char *module_load(char *name)
   }
   check_tcl_load(name);
   if (exist_lang_section(name))
-    putlog(LOG_MISC, "*", MOD_LOADED_WITH_LANG, name);
+    putlog(LOG_MISC, "*", _("Module loaded: %-16s (with lang support)"), name);
   else
-    putlog(LOG_MISC, "*", MOD_LOADED, name);
+    putlog(LOG_MISC, "*", _("Module loaded: %-16s"), name);
   return NULL;
 }
 
@@ -742,11 +742,11 @@ char *module_unload(char *name, char *user)
 
       for (d = dependancy_list; d; d = d->next)  
 	if (d->needed == p)
-	  return MOD_NEEDED;
+	  return _("Needed by another module");
 
       f = p->funcs;
       if (f && !f[MODCALL_CLOSE])
-	return MOD_NOCLOSEDEF;
+	return _("No close function");
       if (f) {
 	check_tcl_unld(name);
 	e = (((char *(*)()) f[MODCALL_CLOSE]) (user));
@@ -770,13 +770,13 @@ char *module_unload(char *name, char *user)
 	o->next = p->next;
       }
       nfree(p);
-      putlog(LOG_MISC, "*", "%s %s", MOD_UNLOADED, name);
+      putlog(LOG_MISC, "*", "%s %s", _("Module unloaded:"), name);
       return NULL;
     }
     o = p;
     p = p->next;
   }
-  return MOD_NOSUCH;
+  return _("No such module");
 }
 
 module_entry *module_find(char *name, int major, int minor)

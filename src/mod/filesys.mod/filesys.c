@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.45 2001/07/26 17:04:34 drummer Exp $
+ * $Id: filesys.c,v 1.46 2001/08/10 23:51:21 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -649,7 +649,7 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
     if ((atoi(prt) < min_dcc_port) || (atoi(prt) > max_dcc_port)) {
       /* Invalid port range. */
       dprintf(DP_HELP, "NOTICE %s :%s (invalid port)\n", nick,
-	      DCC_CONNECTFAILED1);
+	      _("Failed to connect"));
       putlog(LOG_FILES, "*", "Refused dcc send %s (%s): invalid port", param,
 	     nick);
     } else if (atoi(msg) == 0) {
@@ -842,19 +842,19 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
   get_user_flagrec(u, &fr, 0);
   param = newsplit(&msg);
   if (dcc_total == max_dcc) {
-    putlog(LOG_MISC, "*", DCC_TOOMANYDCCS2, "CHAT(file)", param, nick, from);
+    putlog(LOG_MISC, "*", _("DCC connections full: %s %s (%s!%s)"), "CHAT(file)", param, nick, from);
   } else if (glob_party(fr) || (!require_p && chan_op(fr)))
     return 0;			/* Allow ctcp.so to pick up the chat */
   else if (!glob_xfer(fr)) {
     if (!quiet_reject)
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, DCC_REFUSED2);
-    putlog(LOG_MISC, "*", "%s: %s!%s", DCC_REFUSED, nick, from);
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("No access"));
+    putlog(LOG_MISC, "*", "%s: %s!%s", _("Refused DCC chat (no access)"), nick, from);
   } else if (u_pass_match(u, "-")) {
     if (!quiet_reject)
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, DCC_REFUSED3);
-    putlog(LOG_MISC, "*", "%s: %s!%s", DCC_REFUSED4, nick, from);
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("You must have a password set."));
+    putlog(LOG_MISC, "*", "%s: %s!%s", _("Refused DCC chat (no password)"), nick, from);
   } else if (!dccdir[0]) {
-    putlog(LOG_MISC, "*", "%s: %s!%s", DCC_REFUSED5, nick, from);
+    putlog(LOG_MISC, "*", "%s: %s!%s", _("Refused DCC chat (+x but no file area)"), nick, from);
   } else {
     ip = newsplit(&msg);
     prt = newsplit(&msg);
@@ -863,17 +863,17 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
       neterror(buf);
       if (!quiet_reject)
         dprintf(DP_HELP, "NOTICE %s :%s (%s)\n", nick,
-	        DCC_CONNECTFAILED1, buf);
-      putlog(LOG_MISC, "*", "%s: CHAT(file) (%s!%s)", DCC_CONNECTFAILED2,
+	        _("Failed to connect"), buf);
+      putlog(LOG_MISC, "*", "%s: CHAT(file) (%s!%s)", _("DCC connection failed"),
 	     nick, from);
       putlog(LOG_MISC, "*", "    (%s)", buf);
       killsock(sock);
     } else if ((atoi(prt) < min_dcc_port) || (atoi(prt) > max_dcc_port)) {
       /* Invalid port range. */
       if (!quiet_reject)
-        dprintf(DP_HELP, "NOTICE %s :%s (invalid port)\n", nick,
-	        DCC_CONNECTFAILED1);
-      putlog(LOG_FILES, "*", "%s: %s!%s", DCC_REFUSED7, nick, from);
+        dprintf(DP_HELP, "NOTICE %s :%s", nick,
+	        _("Failed to connect (invalid port)\n"));
+      putlog(LOG_FILES, "*", "%s: %s!%s", _("Refused DCC chat (invalid port)"), nick, from);
 
     } else {
       i = new_dcc(&DCC_FILES_PASS, sizeof(struct file_info));
@@ -890,7 +890,7 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
       strcpy(dcc[i].u.file->chat->con_chan, "*");
       dcc[i].user = u;
       putlog(LOG_MISC, "*", "DCC connection: CHAT(file) (%s!%s)", nick, from);
-      dprintf(i, "%s\n", DCC_ENTERPASS);
+      dprintf(i, "%s\n", _("Enter your password."));
     }
   }
   return 1;
@@ -947,7 +947,7 @@ static char *filesys_close()
   putlog(LOG_MISC, "*", "Unloading filesystem, killing all filesystem connections..");
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].type == &DCC_FILES) {
-      dprintf(i, DCC_BOOTED1);
+      dprintf(i, _("-=- poof -=-\n"));
       dprintf(i,
 	 "You have been booted from the filesystem, module unloaded.\n");
       killsock(dcc[i].sock);
@@ -967,7 +967,6 @@ static char *filesys_close()
     rem_builtins(H_ctcp, myctcp);
   del_bind_table(H_fil);
   del_entry_type(&USERENTRY_DCCDIR);
-  del_lang_section("filesys");
   module_undepend(MODULE_NAME);
   return NULL;
 }
@@ -1018,7 +1017,6 @@ char *filesys_start(Function * global_funcs)
   USERENTRY_DCCDIR.got_share = 0;	/* We dont want it shared tho */
   add_entry_type(&USERENTRY_DCCDIR);
   DCC_FILES_PASS.timeout_val = &password_timeout;
-  add_lang_section("filesys");
   return NULL;
 }
 

@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.67 2001/06/30 06:29:56 guppy Exp $
+ * $Id: chan.c,v 1.68 2001/08/10 23:51:21 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -258,9 +258,9 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     case FLOOD_CTCP:
       /* Flooding chan! either by public or notice */
       if (me_op(chan) && !chan_sentkick(m)) {
-	putlog(LOG_MODES, chan->dname, IRC_FLOODKICK, floodnick);
+	putlog(LOG_MODES, chan->dname, _("Channel flood from %s -- kicking"), floodnick);
 	dprintf(DP_MODE, "KICK %s %s :%s\n", chan->name, floodnick,
-		CHAN_FLOOD);
+		_("flood"));
 	m->flags |= SENTKICK;
       }
       return 1;
@@ -279,9 +279,9 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
 	  || (u_match_mask(chan->bans, from)))
 	return 1;		/* Already banned */
       if (which == FLOOD_JOIN)
-	putlog(LOG_MISC | LOG_JOIN, chan->dname, IRC_FLOODIGNORE3, p);
+	putlog(LOG_MISC | LOG_JOIN, chan->dname, _("JOIN flood from @%s!  Banning."), p);
       else
-	putlog(LOG_MISC | LOG_JOIN, chan->dname, IRC_FLOODIGNORE4, p);
+	putlog(LOG_MISC | LOG_JOIN, chan->dname, _("NICK flood from @%s!  Banning."), p);
       strcpy(ftype + 4, " flood");
       u_addban(chan, h, origbotname, ftype, now + (60 * ban_time), 0);
       if (!channel_enforcebans(chan) && me_op(chan)) {
@@ -294,10 +294,10 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
 	      m->flags |= SENTKICK;
 	      if (which == FLOOD_JOIN)
 	      dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick,
-		      IRC_JOIN_FLOOD);
+		      _("join flood"));
 	      else
 	        dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick,
-		      IRC_NICK_FLOOD);
+		      _("nick flood"));
 	    }
 	  }
 	}
@@ -306,16 +306,16 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
       if (me_op(chan) && !chan_sentkick(m)) {
 	putlog(LOG_MODES, chan->dname, "Kicking %s, for mass kick.", floodnick);
 	dprintf(DP_MODE, "KICK %s %s :%s\n", chan->name, floodnick,
-		IRC_MASSKICK);
+		_("mass kick, go sit in a corner"));
 	m->flags |= SENTKICK;
       }
     return 1;
     case FLOOD_DEOP:
       if (me_op(chan) && !chan_sentkick(m)) {
 	putlog(LOG_MODES, chan->dname,
-	       CHAN_MASSDEOP, chan->dname, from);
+	       _("Mass deop on %s by %s"), chan->dname, from);
 	dprintf(DP_MODE, "KICK %s %s :%s\n",
-		chan->name, floodnick, CHAN_MASSDEOP_KICK);
+		chan->name, floodnick, _("Mass deop.  Go sit in a corner."));
 	m->flags |= SENTKICK;
       }
       return 1;
@@ -415,10 +415,10 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
 	do_mask(chan, chan->channel.ban, b->mask, 'b');
 	b->lastactive = now;
 	if (b->desc && b->desc[0] != '@')
-	  egg_snprintf(c, sizeof c, "%s%s", IRC_PREBANNED, b->desc);
+	  egg_snprintf(c, sizeof c, "%s%s", _("banned: "), b->desc);
 	else
 	  c[0] = 0;
-	kick_all(chan, b->mask, c[0] ? c : IRC_YOUREBANNED, 0);
+	kick_all(chan, b->mask, c[0] ? c : _("You are banned"), 0);
 	return;					/* Drop out on 1st ban.	*/
       }
     }
@@ -487,7 +487,7 @@ static void enforce_bans(struct chanset_t *chan)
   for (b = chan->channel.ban; b && b->mask[0]; b = b->next) {
     if (!wild_match(b->mask, me))
       if (!isexempted(chan, b->mask))
-	kick_all(chan, b->mask, IRC_YOUREBANNED, 1);
+	kick_all(chan, b->mask, _("You are banned"), 1);
   }
 }
 
@@ -744,7 +744,7 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
 	  quickban(chan, m->userhost);
 	  p = get_user(&USERENTRY_COMMENT, m->user);
 	  dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick,
-		  p ? p : IRC_POLITEKICK);
+		  p ? p : _("...and thank you for playing."));
 	  m->flags |= SENTKICK;
 	}
       }
@@ -813,7 +813,7 @@ static int got324(char *from, char *msg)
   chname = newsplit(&msg);
   chan = findchan(chname);
   if (!chan) {
-    putlog(LOG_MISC, "*", "%s: %s", IRC_UNEXPECTEDMODE, chname);
+    putlog(LOG_MISC, "*", "%s: %s", _("Hmm, mode info from a channel Im not on"), chname);
     dprintf(DP_SERVER, "PART %s\n", chname);
     return 0;
   }
@@ -1163,7 +1163,7 @@ static int got405(char *from, char *msg)
 
   newsplit(&msg);
   chname = newsplit(&msg);
-  putlog(LOG_MISC, "*", IRC_TOOMANYCHANS, chname);
+  putlog(LOG_MISC, "*", _("Im on too many channels--cant join: %s"), chname);
   return 0;
 }
 
@@ -1227,12 +1227,12 @@ static int got471(char *from, char *msg)
    */
   chan = findchan_by_dname(chname);
   if (chan) {
-    putlog(LOG_JOIN, chan->dname, IRC_CHANFULL, chan->dname);
+    putlog(LOG_JOIN, chan->dname, _("Channel full--cant join: %s"), chan->dname);
     check_tcl_need(chan->dname, "limit");
     if (chan->need_limit[0])
       do_tcl("need-limit", chan->need_limit);
   } else
-    putlog(LOG_JOIN, chname, IRC_CHANFULL, chname);
+    putlog(LOG_JOIN, chname, _("Channel full--cant join: %s"), chname);
   return 0;
 }
 
@@ -1257,12 +1257,12 @@ static int got473(char *from, char *msg)
    */
   chan = findchan_by_dname(chname);
   if (chan) {
-    putlog(LOG_JOIN, chan->dname, IRC_CHANINVITEONLY, chan->dname);
+    putlog(LOG_JOIN, chan->dname, _("Channel invite only--cant join: %s"), chan->dname);
     check_tcl_need(chan->dname, "invite");
     if (chan->need_invite[0])
       do_tcl("need-invite", chan->need_invite);
   } else
-    putlog(LOG_JOIN, chname, IRC_CHANINVITEONLY, chname);
+    putlog(LOG_JOIN, chname, _("Channel invite only--cant join: %s"), chname);
   return 0;
 }
 
@@ -1287,12 +1287,12 @@ static int got474(char *from, char *msg)
    */
   chan = findchan_by_dname(chname);
   if (chan) {
-    putlog(LOG_JOIN, chan->dname, IRC_BANNEDFROMCHAN, chan->dname);
+    putlog(LOG_JOIN, chan->dname, _("Banned from channel--can't join: %s"), chan->dname);
     check_tcl_need(chan->dname, "unban");
     if (chan->need_unban[0])
       do_tcl("need-unban", chan->need_unban);
   } else
-    putlog(LOG_JOIN, chname, IRC_BANNEDFROMCHAN, chname);
+    putlog(LOG_JOIN, chname, _("Banned from channel--can't join: %s"), chname);
   return 0;
 }
 
@@ -1317,7 +1317,7 @@ static int got475(char *from, char *msg)
    */
   chan = findchan_by_dname(chname);
   if (chan) {
-    putlog(LOG_JOIN, chan->dname, IRC_BADCHANKEY, chan->dname);
+    putlog(LOG_JOIN, chan->dname, _("Bad key--cant join: %s"), chan->dname);
     if (chan->channel.key[0]) {
       nfree(chan->channel.key);
       chan->channel.key = (char *) channel_malloc(1);
@@ -1329,7 +1329,7 @@ static int got475(char *from, char *msg)
 	do_tcl("need-key", chan->need_key);
     }
   } else
-    putlog(LOG_JOIN, chname, IRC_BADCHANKEY, chname);
+    putlog(LOG_JOIN, chname, _("Bad key--cant join: %s"), chname);
   return 0;
 }
 
@@ -1667,7 +1667,7 @@ static int gotjoin(char *from, char *chname)
             for (b = chan->channel.ban; b->mask[0]; b = b->next) {
               if (wild_match(b->mask, from)) {
                 dprintf(DP_SERVER, "KICK %s %s :%s\n", chname, m->nick,
-                        IRC_YOUREBANNED);
+                        _("You are banned"));
                 m->flags |= SENTKICK;
                 goto exit;
               }
@@ -1683,7 +1683,7 @@ static int gotjoin(char *from, char *chname)
 	    quickban(chan, from);
 	    p = get_user(&USERENTRY_COMMENT, m->user);
 	    dprintf(DP_MODE, "KICK %s %s :%s\n", chname, nick,
-		    (p && (p[0] != '@')) ? p : IRC_COMMENTKICK);
+		    (p && (p[0] != '@')) ? p : _("...and dont come back."));
 	    m->flags |= SENTKICK;
 	  }
 	}
@@ -1943,11 +1943,11 @@ static int gotquit(char *from, char *msg)
   if (keepnick) {
     alt = get_altbotnick();
     if (!rfc_casecmp(nick, origbotname)) {
-      putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
+      putlog(LOG_MISC, "*", _("Switching back to nick %s"), origbotname);
       dprintf(DP_SERVER, "NICK %s\n", origbotname);
     } else if (alt[0]) {
       if (!rfc_casecmp(nick, alt) && strcmp(botname, origbotname)) {
-	putlog(LOG_MISC, "*", IRC_GETALTNICK, alt);
+	putlog(LOG_MISC, "*", _("Switching back to altnick %s"), alt);
 	dprintf(DP_SERVER, "NICK %s\n", alt);
       }
     }
@@ -1996,12 +1996,12 @@ static int gotmsg(char *from, char *msg)
       if (ban_fun) {
 	check_exemptlist(chan, from);
 	u_addban(chan, quickban(chan, uhost), origbotname,
-		IRC_FUNKICK, now + (60 * ban_time), 0);
+		_("that was fun, lets do it again!"), now + (60 * ban_time), 0);
       }
       if (kick_fun) {
 	/* This can induce kickflood - arthur2 */
 	dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, nick,
-		IRC_FUNKICK);
+		_("that was fun, lets do it again!"));
 	m->flags |= SENTKICK;
       }
     }
@@ -2132,12 +2132,12 @@ static int gotnotice(char *from, char *msg)
       if (ban_fun) {
 	check_exemptlist(chan, from);
 	u_addban(chan, quickban(chan, uhost), origbotname,
-		IRC_FUNKICK, now + (60 * ban_time), 0);
+		_("that was fun, lets do it again!"), now + (60 * ban_time), 0);
       }
       if (kick_fun) {
 	/* This can induce kickflood - arthur2 */
 	dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, nick,
-		IRC_FUNKICK);
+		_("that was fun, lets do it again!"));
 	m->flags |= SENTKICK;
       }
     }

@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.42 2001/07/26 17:04:34 drummer Exp $
+ * $Id: transfer.c,v 1.43 2001/08/10 23:51:22 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -714,14 +714,14 @@ static void eof_dcc_fork_send(int idx)
       debug0("(!) Could not find bot responsible for sending us the userfile "
 	     "for which the transfer failed.");
     }
-    putlog(LOG_BOTS, "*", USERF_FAILEDXFER);
+    putlog(LOG_BOTS, "*", _("Failed connection; aborted userfile transfer."));
     unlink(dcc[idx].u.xfer->filename);
   } else {
     neterror(s1);
     if (!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :%s (%s)\n", dcc[idx].nick,
-	      DCC_CONNECTFAILED1, s1);
-    putlog(LOG_MISC, "*", "%s: SEND %s (%s!%s)", DCC_CONNECTFAILED2,
+	      _("Failed to connect"), s1);
+    putlog(LOG_MISC, "*", "%s: SEND %s (%s!%s)", _("DCC connection failed"),
 	   dcc[idx].u.xfer->origname, dcc[idx].nick, dcc[idx].host);
     putlog(LOG_MISC, "*", "    (%s)", s1);
     s2 = nmalloc(strlen(tempdir) + strlen(dcc[idx].u.xfer->filename) + 1);

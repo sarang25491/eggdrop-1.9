@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.72 2001/07/31 16:40:40 guppy Exp $
+ * $Id: main.c,v 1.73 2001/08/10 23:51:20 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -484,7 +484,14 @@ static void do_arg(char *s)
  	  break; /* this should never be reached */
 	case 'h':
 	printf("\n%s\n\n", version);
-	printf(EGG_USAGE);
+	printf(_("Command line arguments:\n\
+  -h   help\n\
+  -v   print version and exit\n\
+  -n   don't go into the background\n\
+  -c   (with -n) display channel stats every 10 seconds\n\
+  -t   (with -n) use terminal to simulate dcc-chat\n\
+  -m   userfile creation mode\n\
+  optional config filename (default 'eggdrop.conf')\n"));
 	printf("\n");
 	bg_send_quit(BG_ABORT);
 	exit(0);
@@ -498,7 +505,7 @@ void backup_userfile(void)
 {
   char s[125];
 
-  putlog(LOG_MISC, "*", USERF_BACKUP);
+  putlog(LOG_MISC, "*", _("Backing up user file..."));
   egg_snprintf(s, sizeof s, "%s~bak", userfile);
   copyfile(userfile, s);
 }
@@ -580,7 +587,7 @@ static void core_secondly()
     if (miltime == switch_logfiles_at) {
       call_hook(HOOK_DAILY);
       if (!keep_all_logs) {
-	putlog(LOG_MISC, "*", MISC_LOGSWITCH);
+	putlog(LOG_MISC, "*", _("Switching logfiles..."));
 	for (i = 0; i < max_logs; i++)
 	  if (logs[i].filename) {
 	    char s[1024];
@@ -799,7 +806,8 @@ int main(int argc, char **argv)
   putlog(LOG_ALL, "*", "--- Loading %s (%s)", ver, s);
   chanprog();
   if (!encrypt_pass) {
-    printf(MOD_NOCRYPT);
+    printf(_("You have installed modules but have not selected an encryption\n\
+module, please consult the default config file for info.\n"));
     bg_send_quit(BG_ABORT);
     exit(1);
   }
@@ -820,8 +828,8 @@ int main(int argc, char **argv)
     kill(xx, SIGCHLD);		/* Meaningless kill to determine if pid
 				   is used */
     if (errno != ESRCH) {
-      printf(EGG_RUNNING1, origbotname);
-      printf(EGG_RUNNING2, pid_file);
+      printf(_("I detect %s already running from this directory.\n"), origbotname);
+      printf(_("If this is incorrect, erase the %s\n"), pid_file);
       bg_send_quit(BG_ABORT);
       exit(1);
     }
@@ -844,13 +852,13 @@ int main(int argc, char **argv)
         fprintf(fp, "%u\n", xx);
         if (fflush(fp)) {
 	  /* Let the bot live since this doesn't appear to be a botchk */
-	  printf(EGG_NOWRITE, pid_file);
+	  printf(_("* Warning!  Could not write %s file!\n"), pid_file);
 	  fclose(fp);
 	  unlink(pid_file);
         } else
  	  fclose(fp);
       } else
-        printf(EGG_NOWRITE, pid_file);
+        printf(_("* Warning!  Could not write %s file!\n"), pid_file);
 #ifdef CYGWIN_HACKS
       printf("Launched into the background  (pid: %d)\n\n", xx);
 #endif
@@ -1057,7 +1065,7 @@ int main(int argc, char **argv)
 	if (p && p->next && p->next->next)
 	  /* Should be only 2 modules now - blowfish (or some other
 	     encryption module) and eggdrop. */
-	  putlog(LOG_MISC, "*", MOD_STAGNANT);
+	  putlog(LOG_MISC, "*", _("Stagnant module; there WILL be memory leaks!"));
 	flushlogs();
 	kill_tcl();
 	init_tcl(argc, argv);

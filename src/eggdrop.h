@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.38 2001/07/26 17:04:33 drummer Exp $
+ * $Id: eggdrop.h,v 1.39 2001/08/10 23:51:20 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -86,6 +86,10 @@
 #define LOGLINELEN	LOGLINEMAX + 1
 #define NOTENAMELEN     ((HANDLEN * 2) + 1)
 #define BADNICKCHARS	"-,+*=:!.@#;$%&"
+
+
+/* Gettext stuff */
+#define _(String) (String)
 
 
 /* Have to use a weird way to make the compiler error out cos not all

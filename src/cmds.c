@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.62 2001/07/31 16:40:40 guppy Exp $
+ * $Id: cmds.c,v 1.63 2001/08/10 23:51:20 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -275,7 +275,7 @@ static void cmd_botinfo(struct userrec *u, int idx, char *par)
 	      ver, network, s, s2);
     } else
       dprintf(idx, "*** [%s] %s <%s> (%s) [UP %s]\n", botnetnick,
-	      ver, network, BOT_NOCHANNELS, s2);
+	      ver, network, _("no channels"), s2);
   } else
     dprintf(idx, "*** [%s] %s <NO_IRC> [UP %s]\n", botnetnick, ver, s2);
 }
@@ -2204,7 +2204,7 @@ static void cmd_tcl(struct userrec *u, int idx, char *msg)
   int code;
 
   if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
-    dprintf(idx, MISC_NOSUCHCMD);
+    dprintf(idx, _("What?  You need .help\n"));
     return;
   }
   debug1("tcl: evaluate (.tcl): %s", msg);
@@ -2223,7 +2223,7 @@ static void cmd_set(struct userrec *u, int idx, char *msg)
   char s[512];
 
   if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
-    dprintf(idx, MISC_NOSUCHCMD);
+    dprintf(idx, _("What?  You need .help\n"));
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# set %s", dcc[idx].nick, msg);
@@ -2256,18 +2256,18 @@ static void cmd_loadmod(struct userrec *u, int idx, char *par)
   const char *p;
 
      if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
-         dprintf(idx, MISC_NOSUCHCMD);
+         dprintf(idx, _("What?  You need .help\n"));
          return;
      }
   if (!par[0]) {
-    dprintf(idx, "%s: loadmod <module>\n", MISC_USAGE);
+    dprintf(idx, "%s: loadmod <module>\n", _("Usage"));
   } else {
     p = module_load(par);
     if (p)
-      dprintf(idx, "%s: %s %s\n", par, MOD_LOADERROR, p);
+      dprintf(idx, "%s: %s %s\n", par, _("Error loading module:"), p);
     else {
       putlog(LOG_CMDS, "*", "#%s# loadmod %s", dcc[idx].nick, par);
-      dprintf(idx, MOD_LOADED, par);
+      dprintf(idx, _("Module loaded: %-16s"), par);
       dprintf(idx, "\n");
     }
   }
@@ -2278,18 +2278,18 @@ static void cmd_unloadmod(struct userrec *u, int idx, char *par)
   char *p;
 
      if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
-         dprintf(idx, MISC_NOSUCHCMD);
+         dprintf(idx, _("What?  You need .help\n"));
          return;
      }
   if (!par[0]) {
-    dprintf(idx, "%s: unloadmod <module>\n", MISC_USAGE);
+    dprintf(idx, "%s: unloadmod <module>\n", _("Usage"));
   } else {
     p = module_unload(par, dcc[idx].nick);
     if (p)
-      dprintf(idx, "%s %s: %s\n", MOD_UNLOADERROR, par, p);
+      dprintf(idx, "%s %s: %s\n", _("Error unloading module:"), par, p);
     else {
       putlog(LOG_CMDS, "*", "#%s# unloadmod %s", dcc[idx].nick, par);
-      dprintf(idx, "%s %s\n", MOD_UNLOADED, par);
+      dprintf(idx, "%s %s\n", _("Module unloaded:"), par);
     }
   }
 }

@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  *
- * $Id: msgcmds.c,v 1.23 2001/07/06 04:48:08 guppy Exp $
+ * $Id: msgcmds.c,v 1.24 2001/08/10 23:51:21 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -39,7 +39,7 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
   if (u)
     atr = u->flags;
   if (u && !(atr & USER_COMMON)) {
-    dprintf(DP_HELP, "NOTICE %s :%s, %s.\n", nick, IRC_HI, u->handle);
+    dprintf(DP_HELP, "NOTICE %s :%s, %s.\n", nick, _("Hi"), u->handle);
     return 1;
   }
   strncpyz(handle, nick, sizeof handle);
@@ -47,13 +47,13 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
     struct flag_record fr = {FR_GLOBAL, 0, 0, 0, 0, 0};
     fr.global = atr;
 
-    dprintf(DP_HELP, IRC_BADHOST1, nick);
-    dprintf(DP_HELP, IRC_BADHOST2, nick, botname);
+    dprintf(DP_HELP, _("NOTICE %s :I dont recognize you from that host.\n"), nick);
+    dprintf(DP_HELP, _("NOTICE %s :Either you are using someone elses nickname or you need to type: /MSG %s IDENT (password)\n"), nick, botname);
     return 1;
   }
   egg_snprintf(s, sizeof s, "%s!%s", nick, h);
   if (u_match_mask(global_bans, s)) {
-    dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, IRC_BANNED2);
+    dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, _("You're banned, goober."));
     return 1;
   }
   if (atr & USER_COMMON) {
@@ -62,7 +62,7 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
     egg_snprintf(host, sizeof host, "%s!%s", nick, s + 2);
     userlist = adduser(userlist, handle, host, "-", USER_DEFAULT);
     putlog(LOG_MISC, "*", "%s %s (%s) -- %s",
-	   IRC_INTRODUCED, nick, host, IRC_COMMONSITE);
+	   _("Introduced to"), nick, host, _("common site"));
     common = 1;
   } else {
     maskhost(s, host);
@@ -74,37 +74,37 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
     } else
       userlist = adduser(userlist, handle, host, "-",
 			 sanity_check(default_flags));
-    putlog(LOG_MISC, "*", "%s %s (%s)", IRC_INTRODUCED, nick, host);
+    putlog(LOG_MISC, "*", "%s %s (%s)", _("Introduced to"), nick, host);
   }
   for (chan = chanset; chan; chan = chan->next)
     if (ismember(chan, handle))
       add_chanrec_by_handle(userlist, handle, chan->dname);
-  dprintf(DP_HELP, IRC_SALUT1, nick, nick, botname);
-  dprintf(DP_HELP, IRC_SALUT2, nick, host);
+  dprintf(DP_HELP, _("NOTICE %s :Hi %s!  Im %s, an eggdrop bot.\n"), nick, nick, botname);
+  dprintf(DP_HELP, _("NOTICE %s :Ill recognize you by hostmask %s from now on.\n"), nick, host);
   if (common) {
-    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_SALUT2A);
-    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_SALUT2B);
+    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("Since you come from a common irc site, this means you should"));
+    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("always use this nickname when talking to me"));
   }
   if (make_userfile) {
     fr.global = sanity_check(default_flags | USER_OWNER);
 
-    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_INITOWNER1);
-    dprintf(DP_HELP, IRC_NEWBOT1, nick, botname);
-    dprintf(DP_HELP, IRC_NEWBOT2, nick);
-    putlog(LOG_MISC, "*", IRC_INIT1, handle);
+    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("YOU ARE THE OWNER ON THIS BOT NOW"));
+    dprintf(DP_HELP, _("NOTICE %s :As master you really need to set a password: with /MSG %s pass <your-chosen-password>.\n"), nick, botname);
+    dprintf(DP_HELP, _("NOTICE %s :All major commands are used from DCC chat. From now on, you dont need to use the -m option when starting the bot.  Enjoy !!!\n"), nick);
+    putlog(LOG_MISC, "*", _("Bot installation complete, first master is %s"), handle);
     make_userfile = 0;
     write_userfile(-1);
-    add_note(handle, origbotname, IRC_INITNOTE, -1, 0);
+    add_note(handle, origbotname, _("Welcome to Eggdrop! =]"), -1, 0);
   } else {
     fr.global = default_flags;
 
-    dprintf(DP_HELP, IRC_INTRO1, nick, botname);
+    dprintf(DP_HELP, _("NOTICE %s :All commands are done via /MSG. For the complete list, /MSG %s help   Cya!\n"), nick, botname);
   }
   if (strlen(nick) > HANDLEN)
     /* Notify the user that his/her handle was truncated. */
-    dprintf(DP_HELP, IRC_NICKTOOLONG, nick, handle);
+    dprintf(DP_HELP, _("NOTICE %s :Your nick was too long and therefore it was truncated to %s.\n"), nick, handle);
   if (notify_new[0]) {
-    egg_snprintf(s, sizeof s, IRC_INITINTRO, nick, host);
+    egg_snprintf(s, sizeof s, _("introduced to %s from %s"), nick, host);
     strcpy(s1, notify_new);
     while (s1[0]) {
       p1 = strchr(s1, ',');
@@ -136,18 +136,18 @@ static int msg_pass(char *nick, char *host, struct userrec *u, char *par)
     return 1;
   if (!par[0]) {
     dprintf(DP_HELP, "NOTICE %s :%s\n", nick,
-	    u_pass_match(u, "-") ? IRC_NOPASS : IRC_PASS);
+	    u_pass_match(u, "-") ? _("You dont have a password set.") : _("You have a password set."));
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! PASS?", nick, host, u->handle);
     return 1;
   }
   old = newsplit(&par);
   if (!u_pass_match(u, "-") && !par[0]) {
-    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_EXISTPASS);
+    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("You already have a password set."));
     return 1;
   }
   if (par[0]) {
     if (!u_pass_match(u, old)) {
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_FAILPASS);
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("Incorrect password."));
       return 1;
     }
     new = newsplit(&par);
@@ -158,12 +158,12 @@ static int msg_pass(char *nick, char *host, struct userrec *u, char *par)
   if (strlen(new) > 15)
     new[15] = 0;
   if (strlen(new) < 6) {
-    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_PASSFORMAT);
+    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("Please use at least 6 characters."));
     return 0;
   }
   set_user(&USERENTRY_PASS, u, new);
   dprintf(DP_HELP, "NOTICE %s :%s '%s'.\n", nick,
-	  new == old ? IRC_SETPASS : IRC_CHANGEPASS, new);
+	  new == old ? _("Password set to:") : _("Password changed to:"), new);
   return 1;
 }
 
@@ -179,7 +179,7 @@ static int msg_ident(char *nick, char *host, struct userrec *u, char *par)
     return 1;
   if (u && (u->flags & USER_COMMON)) {
     if (!quiet_reject)
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_FAILCOMMON);
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("Youre at a common site; you cant IDENT."));
     return 1;
   }
   pass = newsplit(&par);
@@ -192,24 +192,24 @@ static int msg_ident(char *nick, char *host, struct userrec *u, char *par)
   u2 = get_user_by_handle(userlist, who);
   if (!u2) {
     if (u && !quiet_reject) {
-      dprintf(DP_HELP, IRC_MISIDENT, nick, nick, u->handle);
+      dprintf(DP_HELP, _("NOTICE %s :Youre not %s, youre %s.\n"), nick, nick, u->handle);
     }
   } else if (rfc_casecmp(who, origbotname) && !(u2->flags & USER_BOT)) {
     /* This could be used as detection... */
     if (u_pass_match(u2, "-")) {
       putlog(LOG_CMDS, "*", "(%s!%s) !*! IDENT %s", nick, host, who);
       if (!quiet_reject)
-	dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_NOPASS);
+	dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("You dont have a password set."));
     } else if (!u_pass_match(u2, pass)) {
       if (!quiet_reject)
-	dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_DENYACCESS);
+	dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("Access denied."));
     } else if (u == u2) {
       if (!quiet_reject)
-	dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_RECOGNIZED);
+	dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("I recognize you there."));
       return 1;
     } else if (u) {
       if (!quiet_reject)
-	dprintf(DP_HELP, IRC_MISIDENT, nick, who, u->handle);
+	dprintf(DP_HELP, _("NOTICE %s :Youre not %s, youre %s.\n"), nick, who, u->handle);
       return 1;
     } else {
       struct chanset_t *chan;
@@ -218,7 +218,7 @@ static int msg_ident(char *nick, char *host, struct userrec *u, char *par)
       putlog(LOG_CMDS, "*", "(%s!%s) !*! IDENT %s", nick, host, who);
       egg_snprintf(s, sizeof s, "%s!%s", nick, host);
       maskhost(s, s1);
-      dprintf(DP_HELP, "NOTICE %s :%s: %s\n", nick, IRC_ADDHOSTMASK, s1);
+      dprintf(DP_HELP, "NOTICE %s :%s: %s\n", nick, _("Added hostmask"), s1);
       addhost_by_handle(who, s1);
       for (chan = chanset; chan; chan = chan->next) {
 	get_user_flagrec(u2, &fr, chan->dname);
@@ -251,7 +251,7 @@ static int msg_addhost(char *nick, char *host, struct userrec *u, char *par)
     return 1;
   if (u->flags & USER_COMMON) {
     if (!quiet_reject)
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_FAILCOMMON);
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("Youre at a common site; you cant IDENT."));
     return 1;
   }
   pass = newsplit(&par);
@@ -262,16 +262,16 @@ static int msg_addhost(char *nick, char *host, struct userrec *u, char *par)
     /* This could be used as detection... */
     if (u_pass_match(u, "-")) {
       if (!quiet_reject)
-	dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_NOPASS);
+	dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("You dont have a password set."));
     } else if (!u_pass_match(u, pass)) {
       if (!quiet_reject)
-	dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_DENYACCESS);
+	dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("Access denied."));
     } else if (get_user_by_host(par)) {
       if (!quiet_reject)
 	dprintf(DP_HELP, "NOTICE %s :That hostmask clashes with another already in use.\n", nick);
     } else {
       putlog(LOG_CMDS, "*", "(%s!%s) !*! ADDHOST %s", nick, host, par);
-      dprintf(DP_HELP, "NOTICE %s :%s: %s\n", nick, IRC_ADDHOSTMASK, par);
+      dprintf(DP_HELP, "NOTICE %s :%s: %s\n", nick, _("Added hostmask"), par);
       addhost_by_handle(u->handle, par);
       return 1;
     }
@@ -302,12 +302,12 @@ static int msg_info(char *nick, char *host, struct userrec *u, char *par)
   } else {
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed INFO", nick, host, u->handle);
     if (!quiet_reject)
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_NOPASS);
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("You dont have a password set."));
     return 1;
   }
   if (par[0] && (strchr(CHANMETA, par[0]) != NULL)) {
     if (!findchan_by_dname(chname = newsplit(&par))) {
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_NOMONITOR);
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("I dont monitor that channel."));
       return 1;
     }
   } else
@@ -322,26 +322,26 @@ static int msg_info(char *nick, char *host, struct userrec *u, char *par)
 	locked = 1;
     }
     if (locked) {
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_INFOLOCKED);
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("Your info line is locked"));
       return 1;
     }
     if (!egg_strcasecmp(par, "none")) {
       par[0] = 0;
       if (chname) {
 	set_handle_chaninfo(userlist, u->handle, chname, NULL);
-	dprintf(DP_HELP, "NOTICE %s :%s %s.\n", nick, IRC_REMINFOON, chname);
+	dprintf(DP_HELP, "NOTICE %s :%s %s.\n", nick, _("Removed your info line on"), chname);
 	putlog(LOG_CMDS, "*", "(%s!%s) !%s! INFO %s NONE", nick, host,
 	       u->handle, chname);
       } else {
 	set_user(&USERENTRY_INFO, u, NULL);
-	dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_REMINFO);
+	dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("Removed your info line."));
 	putlog(LOG_CMDS, "*", "(%s!%s) !%s! INFO NONE", nick, host, u->handle);
       }
       return 1;
     }
     if (par[0] == '@')
       par++;
-    dprintf(DP_HELP, "NOTICE %s :%s %s\n", nick, IRC_FIELDCHANGED, par);
+    dprintf(DP_HELP, "NOTICE %s :%s %s\n", nick, _("Now:"), par);
     if (chname) {
       set_handle_chaninfo(userlist, u->handle, chname, par);
       putlog(LOG_CMDS, "*", "(%s!%s) !%s! INFO %s ...", nick, host, u->handle,
@@ -362,15 +362,15 @@ static int msg_info(char *nick, char *host, struct userrec *u, char *par)
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! INFO?", nick, host, u->handle);
   }
   if (p && p[0]) {
-    dprintf(DP_HELP, "NOTICE %s :%s %s\n", nick, IRC_FIELDCURRENT, p);
+    dprintf(DP_HELP, "NOTICE %s :%s %s\n", nick, _("Currently:"), p);
     dprintf(DP_HELP, "NOTICE %s :%s /msg %s info <pass>%s%s none\n",
-	    nick, IRC_FIELDTOREMOVE, botname, chname ? " " : "", chname
+	    nick, _("To remove it:"), botname, chname ? " " : "", chname
 	    ? chname : "");
   } else {
     if (chname)
-      dprintf(DP_HELP, "NOTICE %s :%s %s.\n", nick, IRC_NOINFOON, chname);
+      dprintf(DP_HELP, "NOTICE %s :%s %s.\n", nick, _("You have no info set on"), chname);
     else
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_NOINFO);
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("You have no info set."));
   }
   return 1;
 }
@@ -391,19 +391,19 @@ static int msg_who(char *nick, char *host, struct userrec *u, char *par)
     return 1;
   if (!par[0]) {
     dprintf(DP_HELP, "NOTICE %s :%s: /msg %s who <channel>\n", nick,
-	    MISC_USAGE, botname);
+	    _("Usage"), botname);
     return 0;
   }
   chan = findchan_by_dname(par);
   if (!chan) {
-    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_NOMONITOR);
+    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("I dont monitor that channel."));
     return 0;
   }
   get_user_flagrec(u, &fr, par);
   if (channel_hidden(chan) && !hand_on_chan(chan, u) &&
       !glob_op(fr) && !glob_friend(fr) &&
       !chan_op(fr) && !chan_friend(fr)) {
-    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_CHANHIDDEN);
+    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("Channel is currently hidden."));
     return 1;
   }
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! WHO", nick, host, u->handle);
@@ -496,7 +496,7 @@ static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
       }
     }
     if (!ok) {
-      dprintf(DP_HELP, "NOTICE %s :[%s] %s\n", nick, par, USERF_NOUSERREC);
+      dprintf(DP_HELP, "NOTICE %s :[%s] %s\n", nick, par, _("No user record."));
       return 1;
     }
   }
@@ -513,7 +513,7 @@ static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
   for (chan = chanset; chan; chan = chan->next) {
     if (hand_on_chan(chan, u2)) {
       egg_snprintf(s1, sizeof s1, "NOTICE %s :[%s] %s %s.", nick, u2->handle,
-		   IRC_ONCHANNOW, chan->dname);
+		   _("Now on channel"), chan->dname);
       ok = 1;
     } else {
       get_user_flagrec(u, &fr, chan->dname);
@@ -527,18 +527,18 @@ static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
 	egg_strftime(s, 14, "%b %d %H:%M", localtime(&tt));
 	ok = 1;
 	egg_snprintf(s1, sizeof s1, "NOTICE %s :[%s] %s %s on %s", nick, u2->handle,
-		     IRC_LASTSEENAT, s, chan->dname);
+		     _("Last seen at"), s, chan->dname);
       }
     }
   }
   if (!ok)
-    egg_snprintf(s1, sizeof s1, "NOTICE %s :[%s] %s", nick, u2->handle, IRC_NEVERJOINED);
+    egg_snprintf(s1, sizeof s1, "NOTICE %s :[%s] %s", nick, u2->handle, _("Never joined one of my channels."));
   if (u2->flags & USER_OP)
-    strcat(s1, USER_ISGLOBALOP);
+    strcat(s1, _("  (is a global op)"));
   if (u2->flags & USER_BOT)
-    strcat(s1, USER_ISBOT);
+    strcat(s1, _("  (is a bot)"));
   if (u2->flags & USER_MASTER)
-    strcat(s1, USER_ISMASTER);
+    strcat(s1, _("  (is a master)"));
   dprintf(DP_HELP, "%s\n", s1);
   return 1;
 }
@@ -551,7 +551,7 @@ static int msg_help(char *nick, char *host, struct userrec *u, char *par)
     return 1;
   if (!u) {
     if (!quiet_reject) {
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_DONTKNOWYOU);
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("I dont know you; please introduce yourself first."));
       dprintf(DP_HELP, "NOTICE %s :/MSG %s hello\n", nick, botname);
     }
     return 0;
@@ -569,7 +569,7 @@ static int msg_help(char *nick, char *host, struct userrec *u, char *par)
       showhelp(nick, par, &fr, 0);
     }
   } else
-    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_NOHELP);
+    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("No help."));
   return 1;
 }
 
@@ -628,11 +628,11 @@ static int msg_key(char *nick, char *host, struct userrec *u, char *par)
     if (!u_pass_match(u, "-")) {
       if (!(chan = findchan_by_dname(par))) {
 	dprintf(DP_HELP, "NOTICE %s :%s: /MSG %s key <pass> <channel>\n",
-		nick, MISC_USAGE, botname);
+		nick, _("Usage"), botname);
 	return 1;
       }
       if (!channel_active(chan)) {
-	dprintf(DP_HELP, "NOTICE %s :%s: %s\n", nick, par, IRC_NOTONCHAN);
+	dprintf(DP_HELP, "NOTICE %s :%s: %s\n", nick, par, _("Not on that channel right now."));
 	return 1;
       }
       chan = findchan_by_dname(par);
@@ -730,11 +730,11 @@ static int msg_invite(char *nick, char *host, struct userrec *u, char *par)
     }
     if (!(chan = findchan_by_dname(par))) {
       dprintf(DP_HELP, "NOTICE %s :%s: /MSG %s invite <pass> <channel>\n",
-	      nick, MISC_USAGE, botname);
+	      nick, _("Usage"), botname);
       return 1;
     }
     if (!channel_active(chan)) {
-      dprintf(DP_HELP, "NOTICE %s :%s: %s\n", nick, par, IRC_NOTONCHAN);
+      dprintf(DP_HELP, "NOTICE %s :%s: %s\n", nick, par, _("Not on that channel right now."));
       return 1;
     }
     /* We need to check access here also (dw 991002) */
@@ -784,7 +784,7 @@ static int msg_status(char *nick, char *host, struct userrec *u, char *par)
   } else {
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed STATUS", nick, host, u->handle);
     if (!quiet_reject)
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_NOPASS);
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("You dont have a password set."));
     return 1;
   }
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! STATUS", nick, host, u->handle);
@@ -845,7 +845,7 @@ static int msg_memory(char *nick, char *host, struct userrec *u, char *par)
   } else {
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed MEMORY", nick, host, u->handle);
     if (!quiet_reject)
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_NOPASS);
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("You dont have a password set."));
     return 1;
   }
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! MEMORY", nick, host, u->handle);
@@ -869,11 +869,11 @@ static int msg_die(char *nick, char *host, struct userrec *u, char *par)
   } else {
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed DIE", nick, host, u->handle);
     if (!quiet_reject)
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_NOPASS);
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("You dont have a password set."));
     return 1;
   }
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! DIE", nick, host, u->handle);
-  dprintf(-serv, "NOTICE %s :%s\n", nick, BOT_MSGDIE);
+  dprintf(-serv, "NOTICE %s :%s\n", nick, _("Bot shut down beginning...."));
   if (!par[0])
     egg_snprintf(s, sizeof s, "BOT SHUTDOWN (authorized by %s)", u->handle);
   else
@@ -898,7 +898,7 @@ static int msg_rehash(char *nick, char *host, struct userrec *u, char *par)
     return 1;
   if (u_pass_match(u, par)) {
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! REHASH", nick, host, u->handle);
-    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, USERF_REHASHING);
+    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("Rehashing..."));
     if (make_userfile)
       make_userfile = 0;
     write_userfile(-1);
@@ -940,22 +940,22 @@ static int msg_reset(char *nick, char *host, struct userrec *u, char *par)
   } else {
     putlog(LOG_CMDS, "*", "(%s!%s) !*! failed RESET", nick, host);
     if (!quiet_reject)
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_NOPASS);
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("You dont have a password set."));
     return 1;
   }
   if (par[0]) {
     chan = findchan_by_dname(par);
     if (!chan) {
-      dprintf(DP_HELP, "NOTICE %s :%s: %s\n", nick, par, IRC_NOMONITOR);
+      dprintf(DP_HELP, "NOTICE %s :%s: %s\n", nick, par, _("I dont monitor that channel."));
       return 0;
     }
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! RESET %s", nick, host, u->handle, par);
-    dprintf(DP_HELP, "NOTICE %s :%s: %s\n", nick, par, IRC_RESETCHAN);
+    dprintf(DP_HELP, "NOTICE %s :%s: %s\n", nick, par, _("Resetting channel info."));
     reset_chan_info(chan);
     return 1;
   }
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! RESET ALL", nick, host, u->handle);
-  dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_RESETCHAN);
+  dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("Resetting channel info."));
   for (chan = chanset; chan; chan = chan->next)
     reset_chan_info(chan);
   return 1;
@@ -1030,7 +1030,7 @@ static int msg_jump(char *nick, char *host, struct userrec *u, char *par)
   if (u_pass_match(u, "-")) {
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed JUMP", nick, host, u->handle);
     if (!quiet_reject)
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_NOPASS);
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("You dont have a password set."));
     return 1;
   }
   s = newsplit(&par);		/* Password */
@@ -1047,7 +1047,7 @@ static int msg_jump(char *nick, char *host, struct userrec *u, char *par)
       strcpy(newserverpass, par);
     } else
       putlog(LOG_CMDS, "*", "(%s!%s) !%s! JUMP", nick, host, u->handle);
-    dprintf(-serv, "NOTICE %s :%s\n", nick, IRC_JUMP);
+    dprintf(-serv, "NOTICE %s :%s\n", nick, _("Jumping servers..."));
     cycle_time = 0;
     nuke_server("changing servers");
   } else

@@ -3,7 +3,7 @@
  *   saved console settings based on console.tcl
  *   by cmwagner/billyjoe/D. Senso
  *
- * $Id: console.c,v 1.22 2001/07/25 04:21:08 guppy Exp $
+ * $Id: console.c,v 1.23 2001/08/10 23:51:20 ite Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -198,14 +198,14 @@ static void console_display(int idx, struct user_entry *e)
   struct console_info *i = e->u.extra;
 
   if (dcc[idx].user && (dcc[idx].user->flags & USER_MASTER)) {
-    dprintf(idx, "  %s\n", CONSOLE_SAVED_SETTINGS);
-    dprintf(idx, "    %s %s\n", CONSOLE_CHANNEL, i->channel);
-    dprintf(idx, "    %s %s, %s %s, %s %s\n", CONSOLE_FLAGS,
-    	masktype(i->conflags), CONSOLE_STRIPFLAGS,
-	    stripmasktype(i->stripflags), CONSOLE_ECHO,
-	    i->echoflags ? CONSOLE_YES : CONSOLE_NO);
-    dprintf(idx, "    %s %d, %s %s%d\n", CONSOLE_PAGE_SETTING, i->page,
-            CONSOLE_CHANNEL2, (i->conchan < 100000) ? "" : "*",
+    dprintf(idx, "  %s\n", _("Saved Console Settings:"));
+    dprintf(idx, "    %s %s\n", _("Channel:"), i->channel);
+    dprintf(idx, "    %s %s, %s %s, %s %s\n", _("Console flags:"),
+    	masktype(i->conflags), _("Strip flags:"),
+	    stripmasktype(i->stripflags), _("Echo:"),
+	    i->echoflags ? _("yes") : _("no"));
+    dprintf(idx, "    %s %d, %s %s%d\n", _("Page setting:"), i->page,
+            _("Console channel:"), (i->conchan < 100000) ? "" : "*",
             i->conchan % 100000);
   }
 }
@@ -310,14 +310,14 @@ static int console_store(struct userrec *u, int idx, char *par)
     i->page = 0;
   i->conchan = dcc[idx].u.chat->channel;
   if (par) {
-    dprintf(idx, "%s\n", CONSOLE_SAVED_SETTINGS2);
-    dprintf(idx, "  %s %s\n", i->channel, CONSOLE_CHANNEL);
-    dprintf(idx, "  %s %s, %s %s, %s %s\n", CONSOLE_FLAGS,
-	    masktype(i->conflags), CONSOLE_STRIPFLAGS,
-	    stripmasktype(i->stripflags), CONSOLE_ECHO,
-	    i->echoflags ? CONSOLE_YES : CONSOLE_NO);
-    dprintf(idx, "  %s %d, %s %d\n", CONSOLE_PAGE_SETTING, i->page,
-            CONSOLE_CHANNEL2, i->conchan);
+    dprintf(idx, "%s\n", _("Saved your Console Settings:"));
+    dprintf(idx, "  %s %s\n", i->channel, _("Channel:"));
+    dprintf(idx, "  %s %s, %s %s, %s %s\n", _("Console flags:"),
+	    masktype(i->conflags), _("Strip flags:"),
+	    stripmasktype(i->stripflags), _("Echo:"),
+	    i->echoflags ? _("yes") : _("no"));
+    dprintf(idx, "  %s %d, %s %d\n", _("Page setting:"), i->page,
+            _("Console channel:"), i->conchan);
   }
   set_user(&USERENTRY_CONSOLE, u, i);
   return 0;
@@ -358,7 +358,6 @@ static char *console_close()
   rem_tcl_ints(myints);
   rem_help_reference("console.help");
   del_entry_type(&USERENTRY_CONSOLE);
-  del_lang_section("console");
   module_undepend(MODULE_NAME);
   return NULL;
 }
@@ -389,6 +388,5 @@ char *console_start(Function * global_funcs)
   add_help_reference("console.help");
   USERENTRY_CONSOLE.get = def_get;
   add_entry_type(&USERENTRY_CONSOLE);
-  add_lang_section("console");
   return NULL;
 }

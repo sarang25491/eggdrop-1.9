@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.29 2001/07/26 17:04:33 drummer Exp $
+ * $Id: tcldcc.c,v 1.30 2001/08/10 23:51:20 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -813,7 +813,7 @@ static int tcl_connect STDVAR
   }
   sock = getsock(0);
   if (sock < 0) {
-    Tcl_AppendResult(irp, MISC_NOFREESOCK, NULL);
+    Tcl_AppendResult(irp, _("No free sockets available."), NULL);
     return TCL_ERROR;
   }
   z = open_telnet_raw(sock, argv[1], atoi(argv[2]));
@@ -1008,11 +1008,11 @@ static int tcl_rehash STDVAR
 {
   BADARGS(1, 1, " ");
   if (make_userfile) {
-    putlog(LOG_MISC, "*", USERF_NONEEDNEW);
+    putlog(LOG_MISC, "*", _("Userfile creation not necessary--skipping"));
     make_userfile = 0;
   }
   write_userfile(-1);
-  putlog(LOG_MISC, "*", USERF_REHASHING);
+  putlog(LOG_MISC, "*", _("Rehashing..."));
   do_restart = -2;
   return TCL_OK;
 }
@@ -1025,11 +1025,11 @@ static int tcl_restart STDVAR
     return TCL_ERROR;
   }
   if (make_userfile) {
-    putlog(LOG_MISC, "*", USERF_NONEEDNEW);
+    putlog(LOG_MISC, "*", _("Userfile creation not necessary--skipping"));
     make_userfile = 0;
   }
   write_userfile(-1);
-  putlog(LOG_MISC, "*", MISC_RESTARTING);
+  putlog(LOG_MISC, "*", _("Restarting..."));
   wipe_timers(interp, &utimer);
   wipe_timers(interp, &timer);
   do_restart = -1;

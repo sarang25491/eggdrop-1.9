@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.43 2001/07/31 16:40:40 guppy Exp $
+ * $Id: misc.c,v 1.44 2001/08/10 23:51:20 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -584,10 +584,10 @@ void putlog EGG_VARARGS_DEF(int, arg1)
 	       */
 	      if (t) {
 		fprintf(logs[i].f, "[%2.2d:%2.2d] ", t->tm_hour, t->tm_min);
-		fprintf(logs[i].f, MISC_LOGREPEAT, logs[i].repeats);
+		fprintf(logs[i].f, _("Last message repeated %d time(s).\n"), logs[i].repeats);
 	      } else {
 		fprintf(logs[i].f, "[??:??] ");
-		fprintf(logs[i].f, MISC_LOGREPEAT, logs[i].repeats);
+		fprintf(logs[i].f, _("Last message repeated %d time(s).\n"), logs[i].repeats);
 	      }
 	      logs[i].repeats = 0;
 	      /* No need to reset logs[i].szlast here
@@ -657,7 +657,7 @@ void check_logsize()
 	if ((ss.st_size >> 10) > max_logsize) {
 	  if (logs[i].f) {
 	    /* write to the log before closing it huh.. */
-	    putlog(LOG_MISC, "*", MISC_CLOGS, logs[i].filename, ss.st_size);
+	    putlog(LOG_MISC, "*", _("Cycling logfile %s, over max-logsize (%d)"), logs[i].filename, ss.st_size);
 	    fflush(logs[i].f);
 	    fclose(logs[i].f);
 	    logs[i].f = NULL;
@@ -695,10 +695,10 @@ void flushlogs()
 	  */
 	if (t) {
 	  fprintf(logs[i].f, "[%2.2d:%2.2d] ", t->tm_hour, t->tm_min);
-	  fprintf(logs[i].f, MISC_LOGREPEAT, logs[i].repeats);
+	  fprintf(logs[i].f, _("Last message repeated %d time(s).\n"), logs[i].repeats);
 	} else {
 	  fprintf(logs[i].f, "[??:??] ");
-	  fprintf(logs[i].f, MISC_LOGREPEAT, logs[i].repeats);
+	  fprintf(logs[i].f, _("Last message repeated %d time(s).\n"), logs[i].repeats);
 	}
 	/* Reset repeats */
 	logs[i].repeats = 0;
@@ -1211,7 +1211,7 @@ void showhelp(char *who, char *file, struct flag_record *flags, int fl)
     fclose(f);
   }
   if (!lines && !(fl & HELP_TEXT))
-    dprintf(DP_HELP, "NOTICE %s :%s\n", who, IRC_NOHELP2);
+    dprintf(DP_HELP, "NOTICE %s :%s\n", who, _("No help available on that."));
 }
 
 static int display_tellhelp(int idx, char *file, FILE *f,
@@ -1250,7 +1250,7 @@ void tellhelp(int idx, char *file, struct flag_record *flags, int fl)
   if (f)
     lines = display_tellhelp(idx, file, f, flags);
   if (!lines && !(fl & HELP_TEXT))
-    dprintf(idx, "%s\n", IRC_NOHELP2);
+    dprintf(idx, "%s\n", _("No help available on that."));
 }
 
 /* Same as tellallhelp, just using wild_match instead of strcmp
@@ -1274,7 +1274,7 @@ void tellwildhelp(int idx, char *match, struct flag_record *flags)
 	  display_tellhelp(idx, item->name, f, flags);
       }
   if (!s[0])
-    dprintf(idx, "%s\n", IRC_NOHELP2);
+    dprintf(idx, _("No help available on that.\n"));
 }
 
 /* Same as tellwildhelp, just using strcmp instead of wild_match
@@ -1299,7 +1299,7 @@ void tellallhelp(int idx, char *match, struct flag_record *flags)
 	  display_tellhelp(idx, item->name, f, flags);
       }
   if (!s[0])
-    dprintf(idx, "%s\n", IRC_NOHELP2);
+    dprintf(idx, _("No help available on that.\n"));
 }
 
 /* Substitute vars in a lang text to dcc chatter
@@ -1335,7 +1335,7 @@ void show_motd(int idx)
   if (vv != NULL) {
     if (!is_file(motdfile)) {
       fclose(vv);
-      dprintf(idx, "### MOTD %s\n", IRC_NOTNORMFILE);
+      dprintf(idx, "### MOTD %s\n", _("is not a normal file!"));
       return;
     }
     dprintf(idx, "\n");

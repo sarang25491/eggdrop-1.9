@@ -2,7 +2,7 @@
  * cmdsnote.c -- part of notes.mod
  *   handles all notes interaction over the party line
  *
- * $Id: cmdsnote.c,v 1.12 2001/04/12 02:44:23 guppy Exp $
+ * $Id: cmdsnote.c,v 1.13 2001/08/10 23:51:21 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -28,7 +28,7 @@ static void cmd_pls_noteign(struct userrec *u, int idx, char *par)
   struct userrec *u2;
   char *handle, *mask, *buf, *p;
   if (!par[0]) {
-    dprintf(idx, "%s: +noteign [handle] <ignoremask>\n", NOTES_USAGE);
+    dprintf(idx, "%s: +noteign [handle] <ignoremask>\n", _("Usage"));
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# +noteign %s", dcc[idx].nick, par);
@@ -43,13 +43,13 @@ static void cmd_pls_noteign(struct userrec *u, int idx, char *par)
       struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
       get_user_flagrec(u, &fr, dcc[idx].u.chat->con_chan);
       if (!(glob_master(fr) || glob_owner(fr))) {
-	dprintf(idx, NOTES_IGN_OTHERS, handle);
+	dprintf(idx, _("You are not allowed to change note ignores for %s\n"), handle);
 	nfree(buf);
         return;
       }
     }
     if (!u2) {
-      dprintf(idx, NOTES_UNKNOWN_USER, handle);
+      dprintf(idx, _("User %s does not exist.\n"), handle);
       nfree(buf);
       return;
     }
@@ -58,9 +58,9 @@ static void cmd_pls_noteign(struct userrec *u, int idx, char *par)
     mask = handle;
   }
   if (add_note_ignore(u2, mask))
-    dprintf(idx, NOTES_IGN_NEW, mask);
+    dprintf(idx, _("Now ignoring notes from %s\n"), mask);
   else
-    dprintf(idx, NOTES_IGN_ALREADY, mask);
+    dprintf(idx, _("Already ignoring %s\n"), mask);
   nfree(buf);
   return;
 }
@@ -70,7 +70,7 @@ static void cmd_mns_noteign(struct userrec *u, int idx, char *par)
   struct userrec *u2;
   char *handle, *mask, *buf, *p;
   if (!par[0]) {
-    dprintf(idx, "%s: -noteign [handle] <ignoremask>\n", NOTES_USAGE);
+    dprintf(idx, "%s: -noteign [handle] <ignoremask>\n", _("Usage"));
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# -noteign %s", dcc[idx].nick, par);
@@ -84,13 +84,13 @@ static void cmd_mns_noteign(struct userrec *u, int idx, char *par)
       struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
       get_user_flagrec(u, &fr, dcc[idx].u.chat->con_chan);
       if (!(glob_master(fr) || glob_owner(fr))) {
-	dprintf(idx, NOTES_IGN_OTHERS, handle);
+	dprintf(idx, _("You are not allowed to change note ignores for %s\n"), handle);
 	nfree(buf);
         return;
       }
     }
     if (!u2) {
-      dprintf(idx, NOTES_UNKNOWN_USER, handle);
+      dprintf(idx, _("User %s does not exist.\n"), handle);
       nfree(buf);
       return;
     }
@@ -100,9 +100,9 @@ static void cmd_mns_noteign(struct userrec *u, int idx, char *par)
   }
 
   if (del_note_ignore(u2, mask))
-    dprintf(idx, NOTES_IGN_REM, mask);
+    dprintf(idx, _("No longer ignoring notes from %s\n"), mask);
   else
-    dprintf(idx, NOTES_IGN_NOTFOUND, mask);
+    dprintf(idx, _("Note ignore %s not found in list.\n"), mask);
   nfree(buf);
   return;
 }
@@ -119,12 +119,12 @@ static void cmd_noteigns(struct userrec *u, int idx, char *par)
       struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
       get_user_flagrec(u, &fr, dcc[idx].u.chat->con_chan);
       if (!(glob_master(fr) || glob_owner(fr))) {
-	dprintf(idx, NOTES_IGN_OTHERS, par);
+	dprintf(idx, _("You are not allowed to change note ignores for %s\n"), par);
         return;
       }
     }
     if (!u2) {
-      dprintf(idx, NOTES_UNKNOWN_USER, par);
+      dprintf(idx, _("User %s does not exist.\n"), par);
       return;
     }
   } else
@@ -132,11 +132,11 @@ static void cmd_noteigns(struct userrec *u, int idx, char *par)
 
   ignoresn = get_note_ignores(u2, &ignores);
   if (!ignoresn) {
-    dprintf(idx, "%s", NOTES_IGN_NONE);
+    dprintf(idx, "%s", _("No note ignores present.\n"));
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# noteigns %s", dcc[idx].nick, par);
-  dprintf(idx, NOTES_IGN_FOR, u2->handle);
+  dprintf(idx, _("Note ignores for %s:\n"), u2->handle);
   for (i = 0; i < ignoresn; i++)
     dprintf(idx, " %s", ignores[i]);
   dprintf(idx, "\n");
@@ -150,32 +150,32 @@ static void cmd_fwd(struct userrec *u, int idx, char *par)
   struct userrec *u1;
 
   if (!par[0]) {
-    dprintf(idx, "%s: fwd <handle> [user@bot]\n", NOTES_USAGE);
+    dprintf(idx, "%s: fwd <handle> [user@bot]\n", _("Usage"));
     return;
   }
   handle = newsplit(&par);
   u1 = get_user_by_handle(userlist, handle);
   if (!u1) {
-    dprintf(idx, "%s\n", NOTES_NO_SUCH_USER);
+    dprintf(idx, "%s\n", _("No such user."));
     return;
   }
   if ((u1->flags & USER_OWNER) && egg_strcasecmp(handle, dcc[idx].nick)) {
-    dprintf(idx, "%s\n", NOTES_FWD_OWNER);
+    dprintf(idx, "%s\n", _("Cant change notes forwarding of the bot owner.\n"));
     return;
   }
   if (!par[0]) {
     putlog(LOG_CMDS, "*", "#%s# fwd %s", dcc[idx].nick, handle);
-    dprintf(idx, NOTES_FWD_FOR, handle);
+    dprintf(idx, _("Wiped notes forwarding for %s\n"), handle);
     set_user(&USERENTRY_FWD, u1, NULL);
     return;
   }
   /* Thanks to vertex & dw */
   if (strchr(par, '@') == NULL) {
-    dprintf(idx, "%s\n", NOTES_FWD_BOTNAME);
+    dprintf(idx, "%s\n", _("You must supply a botname to forward to."));
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# fwd %s %s", dcc[idx].nick, handle, par);
-  dprintf(idx, NOTES_FWD_CHANGED, handle, par);
+  dprintf(idx, _("Changed notes forwarding for %s to: %s\n"), handle, par);
   set_user(&USERENTRY_FWD, u1, par);
 }
 
@@ -184,10 +184,10 @@ static void cmd_notes(struct userrec *u, int idx, char *par)
   char *fcn;
 
   if (!par[0]) {
-    dprintf(idx, "%s: notes index\n", NOTES_USAGE);
+    dprintf(idx, "%s: notes index\n", _("Usage"));
     dprintf(idx, "       notes read <# or ALL>\n");
     dprintf(idx, "       notes erase <# or ALL>\n");
-    dprintf(idx, "       %s\n", NOTES_MAYBE);
+    dprintf(idx, "       %s\n", _("# may be numbers and/or intervals separated by ;"));
     dprintf(idx, "       ex: notes erase 2-4;8;16-\n");
     return;
   }
@@ -205,7 +205,7 @@ static void cmd_notes(struct userrec *u, int idx, char *par)
     else
       notes_del(dcc[idx].nick, "", par, idx);
   } else {
-    dprintf(idx, "%s\n", NOTES_MUSTBE);
+    dprintf(idx, "%s\n", _("Function must be one of INDEX, READ, or ERASE."));
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# notes %s %s", dcc[idx].nick, fcn, par);
@@ -218,7 +218,7 @@ static void cmd_note(struct userrec *u, int idx, char *par)
 
   p = newsplit(&par);
   if (!par[0]) {
-    dprintf(idx, "%s: note <to-whom> <message>\n", NOTES_USAGE);
+    dprintf(idx, "%s: note <to-whom> <message>\n", _("Usage"));
     return;
   }
   while ((*par == ' ') || (*par == '<') || (*par == '>'))

@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.57 2001/07/26 17:04:34 drummer Exp $
+ * $Id: share.c,v 1.58 2001/08/10 23:51:22 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1604,7 +1604,7 @@ static int write_tmp_userfile(char *fn, struct userrec *bu, int idx)
   int ok = 0;
 
   if (!(f = fopen(fn, "wb")))
-    putlog(LOG_MISC, "*", USERF_ERRWRITE2);
+    putlog(LOG_MISC, "*", _("ERROR writing user file to transfer."));
   else {
     chmod(fn, 0600);		/* make it -rw------- */
     fprintf(f, "#4v: %s -- %s -- transmit\n", ver, origbotname);
@@ -1629,7 +1629,7 @@ static int write_tmp_userfile(char *fn, struct userrec *bu, int idx)
              dcc[idx].nick);
     fclose(f);
     if (!ok)
-      putlog(LOG_MISC, "*", USERF_ERRWRITE2);
+      putlog(LOG_MISC, "*", _("ERROR writing user file to transfer."));
   }
   return ok;
 }
@@ -1782,7 +1782,7 @@ static void finish_share(int idx)
    * the bot entries in non-override mode.
    */
   if (!readuserfile(dcc[idx].u.xfer->filename, &u)) {
-    putlog(LOG_MISC, "*", "%s", USERF_CANTREAD);
+    putlog(LOG_MISC, "*", "%s", _("CANT READ NEW USERFILE"));
     clear_userlist(u);		/* Clear new, obsolete, user list.	*/
     clear_chanlist();		/* Remove all user references from the
 				   channel lists.			*/
@@ -1792,7 +1792,7 @@ static void finish_share(int idx)
     lastuser = NULL;		/* Reset last accessed user ptr.	*/
     return;
   }
-  putlog(LOG_BOTS, "*", "%s.", USERF_XFERDONE);
+  putlog(LOG_BOTS, "*", "%s.", _("Userlist transfer complete; switched over"));
 
   clear_chanlist();		/* Remove all user references from the
 				   channel lists.			*/
@@ -1912,7 +1912,7 @@ static void start_sending_users(int idx)
   if ((i = raw_dcc_send(share_file, "*users", "(users)",
 			share_file, getlocaladdr(dcc[idx].sock))) > 0) {
     unlink(share_file);
-    dprintf(idx, "s e %s\n", USERF_CANTSEND);
+    dprintf(idx, "s e %s\n", _("Cant send userfile to you (internal error)"));
     putlog(LOG_BOTS, "*", "%s -- can't send userfile",
 	   i == DCCSEND_FULL   ? "NO MORE DCC CONNECTIONS" :
 	   i == DCCSEND_NOSOCK ? "CAN'T OPEN A LISTENING SOCKET" :

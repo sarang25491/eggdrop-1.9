@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.72 2001/08/07 13:48:57 poptix Exp $
+ * $Id: server.c,v 1.73 2001/08/10 23:51:21 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1431,24 +1431,24 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
   get_user_flagrec(u, &fr, 0);
   if (dcc_total == max_dcc) {
     if (!quiet_reject)
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, DCC_TOOMANYDCCS1);
-    putlog(LOG_MISC, "*", DCC_TOOMANYDCCS2, "CHAT", param, nick, from);
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("Sorry, too many DCC connections."));
+    putlog(LOG_MISC, "*", _("DCC connections full: %s %s (%s!%s)"), "CHAT", param, nick, from);
   } else if (!(glob_party(fr) || (!require_p && chan_op(fr)))) {
     if (glob_xfer(fr))
       return 0;			/* Allow filesys to pick up the chat */
     if (!quiet_reject)
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, DCC_REFUSED2);
-    putlog(LOG_MISC, "*", "%s: %s!%s", DCC_REFUSED, nick, from);
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("No access"));
+    putlog(LOG_MISC, "*", "%s: %s!%s", _("Refused DCC chat (no access)"), nick, from);
   } else if (u_pass_match(u, "-")) {
     if (!quiet_reject)
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, DCC_REFUSED3);
-    putlog(LOG_MISC, "*", "%s: %s!%s", DCC_REFUSED4, nick, from);
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("You must have a password set."));
+    putlog(LOG_MISC, "*", "%s: %s!%s", _("Refused DCC chat (no password)"), nick, from);
   } else if ((atoi(prt) < min_dcc_port) || (atoi(prt) > max_dcc_port)) {
     /* Invalid port range. */
     if (!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :%s (invalid port)\n", nick,
-	      DCC_CONNECTFAILED1);
-    putlog(LOG_MISC, "*", "%s: CHAT (%s!%s)", DCC_CONNECTFAILED3,
+	      _("Failed to connect"));
+    putlog(LOG_MISC, "*", "%s: CHAT (%s!%s)", _("DCC invalid port"),
 	   nick, from);
   } else {
 /*
@@ -1502,8 +1502,8 @@ static void dcc_chat_hostresolved(int i)
     neterror(buf);
     if(!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :%s (%s)\n", dcc[i].nick,
-	      DCC_CONNECTFAILED1, buf);
-    putlog(LOG_MISC, "*", "%s: CHAT (%s!%s)", DCC_CONNECTFAILED2,
+	      _("Failed to connect"), buf);
+    putlog(LOG_MISC, "*", "%s: CHAT (%s!%s)", _("DCC connection failed"),
 	   dcc[i].nick, dcc[i].host);
     putlog(LOG_MISC, "*", "    (%s)", buf);
     killsock(dcc[i].sock);
@@ -1519,7 +1519,7 @@ static void dcc_chat_hostresolved(int i)
     /* Ok, we're satisfied with them now: attempt the connect */
     putlog(LOG_MISC, "*", "DCC connection: CHAT (%s!%s)", dcc[i].nick,
 	   dcc[i].host);
-    dprintf(i, "%s\n", DCC_ENTERPASS);
+    dprintf(i, "%s\n", _("Enter your password."));
   }
   return;
 }
@@ -1549,7 +1549,7 @@ static void server_5minutely()
 
       disconnect_server(servidx);
       lostdcc(servidx);
-      putlog(LOG_SERV, "*", IRC_SERVERSTONED);
+      putlog(LOG_SERV, "*", _("Server got stoned; jumping..."));
     } else if (!trying_server) {
       /* Check for server being stoned. */
       dprintf(DP_MODE, "PING :%lu\n", (unsigned long) now);
@@ -1621,16 +1621,16 @@ static void server_report(int idx, int details)
     dprintf(idx, "    Server %s %d %s\n", dcc[servidx].host, dcc[servidx].port,
 	    trying_server ? "(trying)" : s);
   } else
-    dprintf(idx, "    %s\n", IRC_NOSERVER);
+    dprintf(idx, "    %s\n", _("No server currently."));
   if (modeq.tot)
-    dprintf(idx, "    %s %d%%, %d msgs\n", IRC_MODEQUEUE,
+    dprintf(idx, "    %s %d%%, %d msgs\n", _("Mode queue is at"),
             (int) ((float) (modeq.tot * 100.0) / (float) maxqmsg),
 	    (int) modeq.tot);
   if (mq.tot)
-    dprintf(idx, "    %s %d%%, %d msgs\n", IRC_SERVERQUEUE,
+    dprintf(idx, "    %s %d%%, %d msgs\n", _("Server queue is at"),
            (int) ((float) (mq.tot * 100.0) / (float) maxqmsg), (int) mq.tot);
   if (hq.tot)
-    dprintf(idx, "    %s %d%%, %d msgs\n", IRC_HELPQUEUE,
+    dprintf(idx, "    %s %d%%, %d msgs\n", _("Help queue is at"),
            (int) ((float) (hq.tot * 100.0) / (float) maxqmsg), (int) hq.tot);
   if (details) {
     if (min_servs)

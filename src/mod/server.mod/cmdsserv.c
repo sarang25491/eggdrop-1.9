@@ -2,7 +2,7 @@
  * cmdsserv.c -- part of server.mod
  *   handles commands from a user via dcc that cause server interaction
  *
- * $Id: cmdsserv.c,v 1.10 2001/07/31 16:40:41 guppy Exp $
+ * $Id: cmdsserv.c,v 1.11 2001/08/10 23:51:21 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -50,7 +50,7 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
 static void cmd_dump(struct userrec *u, int idx, char *par)
 {
   if (!(isowner(dcc[idx].nick)) && (must_be_owner == 2)) {
-    dprintf(idx, MISC_NOSUCHCMD);
+    dprintf(idx, _("What?  You need .help\n"));
     return;
   }
   if (!par[0]) {
@@ -78,7 +78,7 @@ static void cmd_jump(struct userrec *u, int idx, char *par)
     strncpyz(newserverpass, par, sizeof newserverpass);
   } else
     putlog(LOG_CMDS, "*", "#%s# jump", dcc[idx].nick);
-  dprintf(idx, "%s...\n", IRC_JUMP);
+  dprintf(idx, "%s...\n", _("Jumping servers..."));
   cycle_time = 0;
   nuke_server("changing servers");
 }

@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.28 2001/07/24 14:09:27 guppy Exp $
+ * $Id: tclhash.c,v 1.29 2001/08/10 23:51:20 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -838,11 +838,11 @@ int check_tcl_dcc(const char *cmd, int idx, const char *args)
   x = check_tcl_bind(H_dcc, cmd, &fr, " $_dcc1 $_dcc2 $_dcc3",
 		     MATCH_PARTIAL | BIND_USE_ATTR | BIND_HAS_BUILTINS);
   if (x == BIND_AMBIGUOUS) {
-    dprintf(idx, MISC_AMBIGUOUS);
+    dprintf(idx, _("Ambiguous command.\n"));
     return 0;
   }
   if (x == BIND_NOMATCH) {
-    dprintf(idx, MISC_NOSUCHCMD);
+    dprintf(idx, _("What?  You need .help\n"));
     return 0;
   }
   if (x == BIND_EXEC_BRK)
@@ -1076,7 +1076,7 @@ void tell_binds(int idx, char *par)
   if (tl_kind == NULL && name && name[0] && egg_strcasecmp(name, "all"))
     patmatc = 1;
 
-  dprintf(idx, MISC_CMDBINDS);
+  dprintf(idx, _("Command bindings:\n"));
   dprintf(idx, "  TYPE FLGS     COMMAND              HITS BINDING (TCL)\n");
 
   for (tl = tl_kind ? tl_kind : bind_table_list; tl;

@@ -10,7 +10,7 @@
  *
  * dprintf'ized, 9nov1995
  *
- * $Id: users.c,v 1.27 2001/07/16 14:59:42 guppy Exp $
+ * $Id: users.c,v 1.28 2001/08/10 23:51:20 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -179,7 +179,7 @@ void display_ignore(int idx, int number, struct igrec *ignore)
   if (ignore->msg && ignore->msg[0])
     dprintf(idx, "        %s: %s\n", ignore->user, ignore->msg);
   else
-    dprintf(idx, "        %s %s\n", MODES_PLACEDBY, ignore->user);
+    dprintf(idx, "        %s %s\n", _("placed by"), ignore->user);
   if (dates[0])
     dprintf(idx, "        %s\n", dates);
 }
@@ -194,7 +194,7 @@ void tell_ignores(int idx, char *match)
     dprintf(idx, "No ignores.\n");
     return;
   }
-  dprintf(idx, "%s:\n", IGN_CURRENT);
+  dprintf(idx, "%s:\n", _("Currently ignoring"));
   for (; u; u = u->next) {
     if (match[0]) {
       if (wild_match(match, u->igmask) ||
@@ -216,8 +216,8 @@ void check_expired_ignores()
     return;
   while (*u) {
     if (!((*u)->flags & IGREC_PERM) && (now >= (*u)->expire)) {
-      putlog(LOG_MISC, "*", "%s %s (%s)", IGN_NOLONGER, (*u)->igmask,
-	     MISC_EXPIRED);
+      putlog(LOG_MISC, "*", "%s %s (%s)", _("No longer ignoring"), (*u)->igmask,
+	     _("expired"));
       delignore((*u)->igmask);
     } else {
       u = &((*u)->next);
@@ -536,7 +536,7 @@ void tell_user_ident(int idx, char *id, int master)
   if (u == NULL)
     u = get_user_by_host(id);
   if (u == NULL) {
-    dprintf(idx, "%s.\n", USERF_NOMATCH);
+    dprintf(idx, "%s.\n", _("Cant find anyone matching that"));
     return;
   }
   spaces[HANDLEN - 6] = 0;
@@ -556,13 +556,13 @@ void tell_users_match(int idx, char *mtch, int start, int limit,
   struct list_type *q;
   struct flag_record user, pls, mns;
 
-  dprintf(idx, "*** %s '%s':\n", MISC_MATCHING, mtch);
+  dprintf(idx, "*** %s '%s':\n", _("Matching"), mtch);
   cnt = 0;
   spaces[HANDLEN - 6] = 0;
   dprintf(idx, "HANDLE%s PASS NOTES FLAGS           LAST\n", spaces);
   spaces[HANDLEN - 6] = ' ';
   if (start > 1)
-    dprintf(idx, "(%s %d)\n", MISC_SKIPPING, start - 1);
+    dprintf(idx, "(%s %d)\n", _("skipping first"), start - 1);
   if (strchr("+-&|", *mtch)) {
     user.match = pls.match = FR_GLOBAL | FR_BOT | FR_CHAN;
     break_down_flags(mtch, &pls, &mns);
@@ -590,7 +590,7 @@ void tell_users_match(int idx, char *mtch, int start, int limit,
 	  if ((cnt <= limit) && (cnt >= start))
 	    tell_user(idx, u, master);
 	  if (cnt == limit + 1)
-	    dprintf(idx, MISC_TRUNCATED, limit);
+	    dprintf(idx, _("(more than %d matches; list truncated)\n"), limit);
 	}
       }
     } else if (wild_match(mtch, u->handle)) {
@@ -598,7 +598,7 @@ void tell_users_match(int idx, char *mtch, int start, int limit,
       if ((cnt <= limit) && (cnt >= start))
 	tell_user(idx, u, master);
       if (cnt == limit + 1)
-	dprintf(idx, MISC_TRUNCATED, limit);
+	dprintf(idx, _("(more than %d matches; list truncated)\n"), limit);
     } else {
       fnd = 0;
       for (q = get_user(&USERENTRY_HOSTS, u); q; q = q->next) {
@@ -609,12 +609,12 @@ void tell_users_match(int idx, char *mtch, int start, int limit,
 	    tell_user(idx, u, master);
 	  }
 	  if (cnt == limit + 1)
-	    dprintf(idx, MISC_TRUNCATED, limit);
+	    dprintf(idx, _("(more than %d matches; list truncated)\n"), limit);
 	}
       }
     }
   }
-  dprintf(idx, MISC_FOUNDMATCH, cnt, cnt == 1 ? "" : "es");
+  dprintf(idx, _("--- Found %d match%s.\n"), cnt, cnt == 1 ? "" : "es");
 }
 
 /*
@@ -680,10 +680,10 @@ int readuserfile(char *file, struct userrec **ret)
   s = buf;
   fgets(s, 180, f);
   if (s[1] < '4') {
-    fatal(USERF_OLDFMT, 0);
+    fatal(_("Old userfile, use tclsh scripts/weed <userfile> c to convert"), 0);
   }
   if (s[1] > '4')
-    fatal(USERF_INVALID, 0);
+    fatal(_("Invalid userfile format."), 0);
   gban_total = 0;
   gexempt_total = 0;
   ginvite_total = 0;
@@ -908,12 +908,12 @@ int readuserfile(char *file, struct userrec **ret)
 	  attr = newsplit(&s);
 	  rmspace(s);
 	  if (!attr[0] || !pass[0]) {
-	    putlog(LOG_MISC, "*", "* %s '%s'!", USERF_CORRUPT, code);
+	    putlog(LOG_MISC, "*", "* %s '%s'!", _("Corrupt user record"), code);
 	    lasthand[0] = 0;
 	  } else {
 	    u = get_user_by_handle(bu, code);
 	    if (u && !(u->flags & USER_UNSHARED)) {
-	      putlog(LOG_MISC, "*", "* %s '%s'!", USERF_DUPE, code);
+	      putlog(LOG_MISC, "*", "* %s '%s'!", _("Duplicate user record"), code);
 	      lasthand[0] = 0;
 	      u = NULL;
 	    } else if (u) {
@@ -927,7 +927,7 @@ int readuserfile(char *file, struct userrec **ret)
 	      if (strlen(code) > HANDLEN)
 		code[HANDLEN] = 0;
 	      if (strlen(pass) > 20) {
-		putlog(LOG_MISC, "*", "* %s '%s'", USERF_BROKEPASS, code);
+		putlog(LOG_MISC, "*", "* %s '%s'", _("Corrupted password reset for"), code);
 		strcpy(pass, "-");
 	      }
 	      bu = adduser(bu, code, 0, pass,
@@ -948,7 +948,7 @@ int readuserfile(char *file, struct userrec **ret)
   fclose(f);
   (*ret) = bu;
   if (ignored[0]) {
-    putlog(LOG_MISC, "*", "%s %s", USERF_IGNBANS, ignored);
+    putlog(LOG_MISC, "*", "%s %s", _("Ignored masks for channel(s):"), ignored);
   }
   putlog(LOG_MISC, "*", "Userfile loaded, unpacking...");
   for (u = bu; u; u = u->next) {
@@ -1056,13 +1056,13 @@ void autolink_cycle(char *start)
 
 	  i = nextbot(u->handle);
 	  if ((i >= 0) && !egg_strcasecmp(dcc[i].nick, u->handle)) {
-	    char *p = MISC_REJECTED;
+	    char *p = _("rejected");
 
 	    /* we're directly connected to the offending bot?! (shudder!) */
-	    putlog(LOG_BOTS, "*", "%s %s", BOT_REJECTING, dcc[i].nick);
+	    putlog(LOG_BOTS, "*", "%s %s", _("Rejecting bot"), dcc[i].nick);
 	    chatout("*** %s bot %s\n", p, dcc[i].nick);
 	    botnet_send_unlinked(i, dcc[i].nick, p);
-	    dprintf(i, "bye %s\n", BOT_REJECTING);
+	    dprintf(i, "bye %s\n", _("Rejecting bot"));
 	    killsock(dcc[i].sock);
 	    lostdcc(i);
 	  } else if ((i < 0) && egg_strcasecmp(botnetnick, u->handle)) {

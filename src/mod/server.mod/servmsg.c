@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.57 2001/07/26 17:04:34 drummer Exp $
+ * $Id: servmsg.c,v 1.58 2001/08/10 23:51:21 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -84,7 +84,7 @@ static int gotfake433(char *from)
     }
     botname[l] = altnick_char;
   }
-  putlog(LOG_MISC, "*", IRC_BOTNICKINUSE, botname);
+  putlog(LOG_MISC, "*", _("NICK IN USE: Trying %s"), botname);
   dprintf(DP_MODE, "NICK %s\n", botname);
   return 0;
 }
@@ -297,7 +297,7 @@ static int got442(char *from, char *msg)
     if (!channel_inactive(chan)) {
       module_entry	*me = module_find("channels", 0, 0);
 
-      putlog(LOG_MISC, chname, IRC_SERVNOTONCHAN, chname);
+      putlog(LOG_MISC, chname, _("Server says Im not on channel: %s"), chname);
       if (me && me->funcs)
 	(me->funcs[CHANNEL_CLEAR])(chan, 1);
       chan->status &= ~CHAN_ACTIVE;
@@ -391,7 +391,7 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
       return 0;
     /* Private msg */
     simple_sprintf(h, "*!*@%s", p);
-    putlog(LOG_MISC, "*", IRC_FLOODIGNORE1, p);
+    putlog(LOG_MISC, "*", _("Flood from @%s!  Placing on ignore!"), p);
     addignore(h, origbotname, (which == FLOOD_CTCP) ? "CTCP flood" :
 	      "MSG/NOTICE flood", now + (60 * ignore_time));
   }
@@ -491,10 +491,10 @@ static int gotmsg(char *from, char *msg)
 				"I'm not accepting call at the moment.");
 		      else
 			dprintf(DP_HELP, "NOTICE %s :%s\n",
-				nick, DCC_NOSTRANGERS);
+				nick, _("I dont accept DCC chats from strangers."));
 		    }
 		    putlog(LOG_MISC, "*", "%s: %s",
-			   DCC_REFUSED, from);
+			   _("Refused DCC chat (no access)"), from);
 		  } else
 		    putlog(LOG_MISC, "*", "Refused DCC %s: %s",
 			   code, from);
@@ -659,8 +659,8 @@ static int got251(char *from, char *msg)
 				 * stuff in here :/ */
   i = atoi(servs);
   if (i < min_servs) {
-    putlog(LOG_SERV, "*", IRC_AUTOJUMP, min_servs, i);
-    nuke_server(IRC_CHANGINGSERV);
+    putlog(LOG_SERV, "*", _("Jumping servers (need %d servers, only have %d)"), min_servs, i);
+    nuke_server(_("changing servers"));
   }
   return 0;
 }
@@ -769,10 +769,10 @@ static void got303(char *from, char *msg)
     }
     if (!ison_orig) {
       if (!nick_juped)
-        putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
+        putlog(LOG_MISC, "*", _("Switching back to nick %s"), origbotname);
       dprintf(DP_SERVER, "NICK %s\n", origbotname);
     } else if (alt[0] && !ison_alt && rfc_casecmp(botname, alt)) {
-      putlog(LOG_MISC, "*", IRC_GETALTNICK, alt);
+      putlog(LOG_MISC, "*", _("Switching back to altnick %s"), alt);
       dprintf(DP_SERVER, "NICK %s\n", alt);
     }
   }
@@ -790,7 +790,7 @@ static int got432(char *from, char *msg)
     putlog(LOG_MISC, "*", "NICK IS INVALID: %s (keeping '%s').", erroneus,
 	   botname);
   else {
-    putlog(LOG_MISC, "*", IRC_BADBOTNICK);
+    putlog(LOG_MISC, "*", _("Server says my nickname is invalid."));
     if (!keepnick) {
       makepass(erroneus);
       erroneus[NICKMAX] = 0;
@@ -833,10 +833,10 @@ static int got437(char *from, char *msg)
     chan = findchan(s);
     if (chan) {
       if (chan->status & CHAN_ACTIVE) {
-	putlog(LOG_MISC, "*", IRC_CANTCHANGENICK, s);
+	putlog(LOG_MISC, "*", _("Cant change nickname on %s.  Is my nickname banned?"), s);
       } else {
 	if (!channel_juped(chan)) {
-	  putlog(LOG_MISC, "*", IRC_CHANNELJUPED, s);
+	  putlog(LOG_MISC, "*", _("Channel %s is juped. :("), s);
 	  chan->status |= CHAN_JUPED;
 	}
       }
@@ -847,7 +847,7 @@ static int got437(char *from, char *msg)
     if (!rfc_casecmp(s, origbotname))
       nick_juped = 1;
   } else {
-    putlog(LOG_MISC, "*", "%s: %s", IRC_BOTNICKJUPED, s);
+    putlog(LOG_MISC, "*", "%s: %s", _("Nickname has been juped"), s);
     gotfake433(from);
   }
   return 0;
@@ -874,8 +874,8 @@ static int got451(char *from, char *msg)
    * (minutely) sending of joins occurs before the bot does its ping reply.
    * Probably should do something about it some time - beldin
    */
-  putlog(LOG_MISC, "*", IRC_NOTREGISTERED1, from);
-  nuke_server(IRC_NOTREGISTERED2);
+  putlog(LOG_MISC, "*", _("%s says Im not registered, trying next one."), from);
+  nuke_server(_("You have a fucked up server."));
   return 0;
 }
 
@@ -917,11 +917,11 @@ static int gotnick(char *from, char *msg)
     else if (keepnick && strcmp(nick, msg)) {
       putlog(LOG_SERV | LOG_MISC, "*", "Nickname changed to '%s'???", msg);
       if (!rfc_casecmp(nick, origbotname)) {
-        putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
+        putlog(LOG_MISC, "*", _("Switching back to nick %s"), origbotname);
         dprintf(DP_SERVER, "NICK %s\n", origbotname);
       } else if (alt[0] && !rfc_casecmp(nick, alt)
 		 && egg_strcasecmp(botname, origbotname)) {
-        putlog(LOG_MISC, "*", IRC_GETALTNICK, alt);
+        putlog(LOG_MISC, "*", _("Switching back to altnick %s"), alt);
         dprintf(DP_SERVER, "NICK %s\n", alt);
       }
     } else
@@ -929,11 +929,11 @@ static int gotnick(char *from, char *msg)
   } else if ((keepnick) && (rfc_casecmp(nick, msg))) {
     /* Only do the below if there was actual nick change, case doesn't count */
     if (!rfc_casecmp(nick, origbotname)) {
-      putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
+      putlog(LOG_MISC, "*", _("Switching back to nick %s"), origbotname);
       dprintf(DP_SERVER, "NICK %s\n", origbotname);
     } else if (alt[0] && !rfc_casecmp(nick, alt) &&
 	    egg_strcasecmp(botname, origbotname)) {
-      putlog(LOG_MISC, "*", IRC_GETALTNICK, altnick);
+      putlog(LOG_MISC, "*", _("Switching back to altnick %s"), altnick);
       dprintf(DP_SERVER, "NICK %s\n", altnick);
     }
   }
@@ -975,7 +975,7 @@ static void disconnect_server(int idx)
 
 static void eof_server(int idx)
 {
-  putlog(LOG_SERV, "*", "%s %s", IRC_DISCONNECTED, dcc[idx].host);
+  putlog(LOG_SERV, "*", "%s %s", _("Disconnected from"), dcc[idx].host);
   disconnect_server(idx);
   lostdcc(idx);
 }
@@ -1184,7 +1184,7 @@ static void connect_server(void)
       do_tcl("connect-server", connectserver);
     check_tcl_event("connect-server");
     next_server(&curserv, botserver, &botserverport, pass);
-    putlog(LOG_SERV, "*", "%s %s %d", IRC_SERVERTRY, botserver, botserverport);
+    putlog(LOG_SERV, "*", "%s %s %d", _("Trying server"), botserver, botserverport);
 
     dcc[servidx].port = botserverport;
     strcpy(dcc[servidx].nick, "(server)");
@@ -1224,8 +1224,8 @@ static void server_resolve_failure(int servidx)
 {
   serv = -1;
   resolvserv = 0;
-  putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, dcc[servidx].host,
-	 IRC_DNSFAILED);
+  putlog(LOG_SERV, "*", "%s %s (%s)", _("Failed connect to"), dcc[servidx].host,
+	 _("DNS lookup failed"));
   lostdcc(servidx);
 }
 
@@ -1242,7 +1242,7 @@ static void server_resolve_success(int servidx)
   serv = open_telnet(dcc[servidx].addr, dcc[servidx].port);
   if (serv < 0) {
     neterror(s);
-    putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, dcc[servidx].host,
+    putlog(LOG_SERV, "*", "%s %s (%s)", _("Failed connect to"), dcc[servidx].host,
 	   s);
     lostdcc(servidx);
     if (oldserv == curserv && !never_give_up)

@@ -2,7 +2,7 @@
 #  This is the Makefile for EGGDROP (the irc bot)
 #  You should never need to edit this.
 #
-# $Id: Makefile.in,v 1.29 2001/07/29 19:43:05 drummer Exp $
+# $Id: Makefile.in,v 1.30 2001/08/10 23:51:19 ite Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -68,7 +68,7 @@ DEBCFLAGS = -DDEBUG_ASSERT -DDEBUG_MEM
 
 modconf = $(top_srcdir)/misc/modconfig --top_srcdir=$(top_srcdir)
 
-egg_test_run =  EGG_LANGDIR=$(top_srcdir)/language ./$(EGGEXEC) -v
+egg_test_run =  ./$(EGGEXEC) -v
 
 post_config  =  echo "" && \
 		echo "You can now compile the bot, using \"make\"." && \

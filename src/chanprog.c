@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.25 2001/07/14 12:37:08 poptix Exp $
+ * $Id: chanprog.c,v 1.26 2001/08/10 23:51:20 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -242,16 +242,16 @@ void tell_verbose_uptime(int idx)
   sprintf(&s[strlen(s)], "%02d:%02d", (int) hr, (int) min);
   s1[0] = 0;
   if (backgrd)
-    strcpy(s1, MISC_BACKGROUND);
+    strcpy(s1, _("background"));
   else {
     if (term_z)
-      strcpy(s1, MISC_TERMMODE);
+      strcpy(s1, _("terminal mode"));
     else if (con_chan)
-      strcpy(s1, MISC_STATMODE);
+      strcpy(s1, _("status mode"));
     else
-      strcpy(s1, MISC_LOGMODE);
+      strcpy(s1, _("log dump mode"));
   }
-  dprintf(idx, "%s %s  (%s)\n", MISC_ONLINEFOR, s, s1);
+  dprintf(idx, "%s %s  (%s)\n", _("Online for"), s, s1);
 }
 
 /* Dump status info out to dcc
@@ -306,14 +306,14 @@ void tell_verbose_status(int idx)
   sprintf(&s[strlen(s)], "%02d:%02d", (int) hr, (int) min);
   s1[0] = 0;
   if (backgrd)
-    strcpy(s1, MISC_BACKGROUND);
+    strcpy(s1, _("background"));
   else {
     if (term_z)
-      strcpy(s1, MISC_TERMMODE);
+      strcpy(s1, _("terminal mode"));
     else if (con_chan)
-      strcpy(s1, MISC_STATMODE);
+      strcpy(s1, _("status mode"));
     else
-      strcpy(s1, MISC_LOGMODE);
+      strcpy(s1, _("log dump mode"));
   }
 #if HAVE_GETRUSAGE
   getrusage(RUSAGE_SELF, &ru);
@@ -330,24 +330,24 @@ void tell_verbose_status(int idx)
   sprintf(s2, "CPU ???");
 # endif
 #endif
-  dprintf(idx, "%s %s  (%s)  %s  %s %4.1f%%\n", MISC_ONLINEFOR,
-	  s, s1, s2, MISC_CACHEHIT,
+  dprintf(idx, "%s %s  (%s)  %s  %s %4.1f%%\n", _("Online for"),
+	  s, s1, s2, _("cache hit"),
 	  100.0 * ((float) cache_hit) / ((float) (cache_hit + cache_miss)));
 
   /* info library */
-  dprintf(idx, "%s %s\n", MISC_TCLLIBRARY,
+  dprintf(idx, "%s %s\n", _("Using Tcl library:"),
 	  ((interp) && (Tcl_Eval(interp, "info library") == TCL_OK)) ?
 	  interp->result : "*unknown*");
 
   /* info tclversion */
-  dprintf(idx, "%s %s (%s %s)\n", MISC_TCLVERSION,
+  dprintf(idx, "%s %s (%s %s)\n", _("Tcl version:"),
 	  ((interp) && (Tcl_Eval(interp, "info tclversion") == TCL_OK)) ?
-	  interp->result : "*unknown*", MISC_TCLHVERSION, TCL_VERSION);
+	  interp->result : "*unknown*", _("header version"), TCL_VERSION);
 
   /* info patchlevel */
-  dprintf(idx, "%s %s (%s %s)\n", MISC_TCLPATCHLEVEL,
+  dprintf(idx, "%s %s (%s %s)\n", _("Tcl patchlevel:"),
 	  ((interp) && (Tcl_Eval(interp, "info patchlevel") == TCL_OK)) ?
-	  interp->result : "*unknown*", MISC_TCLHPATCHLEVEL,
+	  interp->result : "*unknown*", _("header patchlevel"),
 	  TCL_PATCH_LEVEL ? TCL_PATCH_LEVEL : "*unknown*");
 
 #if HAVE_TCL_THREADS
@@ -379,10 +379,10 @@ void tell_settings(int idx)
   fr.global = default_flags;
 
   build_flags(s, &fr, NULL);
-  dprintf(idx, "%s [%s], %s: %s\n", MISC_NEWUSERFLAGS, s,
-	  MISC_NOTIFY, notify_new);
+  dprintf(idx, "%s [%s], %s: %s\n", _("New users get flags"), s,
+	  _("notify"), notify_new);
   if (owner[0])
-    dprintf(idx, "%s: %s\n", MISC_PERMOWNER, owner);
+    dprintf(idx, "%s: %s\n", _("Permanent owner(s)"), owner);
   for (i = 0; i < max_logs; i++)
     if (logs[i].filename != NULL) {
       dprintf(idx, "Logfile #%d: %s on %s (%s: %s)\n", i + 1,
@@ -432,7 +432,7 @@ void chanprog()
   protect_readonly = 0;
   /* Now read it */
   if (!readtclprog(configfile))
-    fatal(MISC_NOCONFIGFILE, 0);
+    fatal(_("CONFIG FILE NOT LOADED (NOT FOUND, OR ERROR)"), 0);
   for (i = 0; i < max_logs; i++) {
     if (logs[i].flags & LF_EXPIRING) {
       if (logs[i].filename != NULL) {
@@ -455,21 +455,23 @@ void chanprog()
   call_hook(HOOK_REHASH);
   protect_readonly = 1;
   if (!userfile[0])
-    fatal(MISC_NOUSERFILE2, 0);
+    fatal(_("STARTING BOT IN USERFILE CREATION MODE.\n\
+Telnet to the bot and enter 'NEW' as your nickname."), 0);
   if (!readuserfile(userfile, &userlist)) {
     if (!make_userfile) {
       char tmp[178];
 
-      egg_snprintf(tmp, sizeof tmp, MISC_NOUSERFILE, configfile);
+      egg_snprintf(tmp, sizeof tmp, _("USER FILE NOT FOUND!  (try ./eggdrop -m %s to make one)\n"), configfile);
       fatal(tmp, 0);
     }
-    printf("\n\n%s\n", MISC_NOUSERFILE2);
+    printf(_("\n\nSTARTING BOT IN USERFILE CREATION MODE.\n\
+Telnet to the bot and enter 'NEW' as your nickname.\n"));
     if (module_find("server", 0, 0))
-      printf(MISC_USERFCREATE1, origbotname);
-    printf("%s\n\n", MISC_USERFCREATE2);
+      printf(_("OR Go to IRC and:  /msg %s hello\n"), origbotname);
+    printf(_("This will make the bot recognize you as the master.\n\n"));
   } else if (make_userfile) {
      make_userfile = 0;
-     printf("%s\n", MISC_USERFEXISTS);
+     printf(_("USERFILE ALREADY EXISTS (drop the -m)\n"));
   }
   if (helpdir[0])
     if (helpdir[strlen(helpdir) - 1] != '/')
@@ -497,7 +499,7 @@ void chanprog()
     sprintf(s, "%s.test-%u-%s", tempdir, getpid(), rands);
     f = fopen(s, "w");
     if (f == NULL)
-      fatal(MISC_CANTWRITETEMP, 0);
+      fatal(_("CANT WRITE TO TEMP DIR"), 0);
     fclose(f);
     unlink(s);
   }
@@ -512,7 +514,7 @@ void reload()
 
   f = fopen(userfile, "r");
   if (f == NULL) {
-    putlog(LOG_MISC, "*", MISC_CANTRELOADUSER);
+    putlog(LOG_MISC, "*", _("Cant reload user file!"));
     return;
   }
   fclose(f);
@@ -521,7 +523,7 @@ void reload()
   noshare = 0;
   userlist = NULL;
   if (!readuserfile(userfile, &userlist))
-    fatal(MISC_MISSINGUSERF, 0);
+    fatal(_("User file is missing!"), 0);
   reaffirm_owners();
   call_hook(HOOK_READ_USERFILE);
 }

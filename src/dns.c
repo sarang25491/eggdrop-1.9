@@ -4,7 +4,7 @@
  *   provides the code used by the bot if the DNS module is not loaded
  *   DNS Tcl commands
  *
- * $Id: dns.c,v 1.23 2001/07/26 17:04:33 drummer Exp $
+ * $Id: dns.c,v 1.24 2001/08/10 23:51:20 ite Exp $
  */
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -251,7 +251,7 @@ static void dns_tcl_iporhostres(char *ip, char *hostn, int ok, void *other)
 
   if (Tcl_VarEval(interp, tclinfo->proc, " ", ip, " ",
 		  hostn, ok ? " 1" : " 0", tclinfo->paras, NULL) == TCL_ERROR)
-    putlog(LOG_MISC, "*", DCC_TCLERROR, tclinfo->proc, interp->result);
+    putlog(LOG_MISC, "*", _("Tcl error [%s]: %s"), tclinfo->proc, interp->result);
 
   /* Free the memory. It will be unused after this event call. */
   nfree(tclinfo->proc);

@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  *
- * $Id: userrec.c,v 1.32 2001/07/16 05:14:33 guppy Exp $
+ * $Id: userrec.c,v 1.33 2001/08/10 23:51:20 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -531,12 +531,12 @@ void write_userfile(int idx)
   f = fopen(new_userfile, "w");
   chmod(new_userfile, userfile_perm);
   if (f == NULL) {
-    putlog(LOG_MISC, "*", USERF_ERRWRITE);
+    putlog(LOG_MISC, "*", _("ERROR writing user file."));
     nfree(new_userfile);
     return;
   }
   if (!quiet_save)
-    putlog(LOG_MISC, "*", USERF_WRITING);
+    putlog(LOG_MISC, "*", _("Writing user file..."));
   if (sort_users)
     sort_userlist();
   tt = now;
@@ -546,7 +546,7 @@ void write_userfile(int idx)
   for (u = userlist; u && ok; u = u->next)
     ok = write_user(u, f, idx);
   if (!ok || fflush(f)) {
-    putlog(LOG_MISC, "*", "%s (%s)", USERF_ERRWRITE, strerror(ferror(f)));
+    putlog(LOG_MISC, "*", "%s (%s)", _("ERROR writing user file."), strerror(ferror(f)));
     fclose(f);
     nfree(new_userfile);
     return;

@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.47 2001/07/26 17:04:34 drummer Exp $
+ * $Id: mode.c,v 1.48 2001/08/10 23:51:21 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -373,7 +373,7 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
   if (!m) {
     if (channel_pending(chan))
       return;
-    putlog(LOG_MISC, chan->dname, CHAN_BADCHANMODE, chan->dname, who);
+    putlog(LOG_MISC, chan->dname, _("* Mode change on %s for nonexistant %s!"), chan->dname, who);
     dprintf(DP_MODE, "WHO %s\n", who);
     return;
   }
@@ -470,7 +470,7 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
   if (!m) {
     if (channel_pending(chan))
       return;
-    putlog(LOG_MISC, chan->dname, CHAN_BADCHANMODE, chan->dname, who);
+    putlog(LOG_MISC, chan->dname, _("* Mode change on %s for nonexistant %s!"), chan->dname, who);
     dprintf(DP_MODE, "WHO %s\n", who);
     return;
   }
@@ -656,13 +656,13 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from,
       for (b = cycle ? chan->bans : global_bans; b; b = b->next) {
 	if (wild_match(b->mask, who)) {
 	  if (b->desc && b->desc[0] != '@')
-	    egg_snprintf(resn, sizeof resn, "%s%s", IRC_PREBANNED, b->desc);
+	    egg_snprintf(resn, sizeof resn, "%s%s", _("banned: "), b->desc);
 	  else
 	    resn[0] = 0;
 	}
       }
     }
-      kick_all(chan, who, resn[0] ? resn : IRC_BANNED, match_my_nick(nick) ? 0 : 1);
+      kick_all(chan, who, resn[0] ? resn : _("Banned"), match_my_nick(nick) ? 0 : 1);
   }
   /* Is it a server ban from nowhere? */
   if (reversing ||
@@ -875,7 +875,7 @@ static int gotmode(char *from, char *origmsg)
     reversing = 0;
     chan = findchan(ch);
     if (!chan) {
-      putlog(LOG_MISC, "*", CHAN_FORCEJOIN, ch);
+      putlog(LOG_MISC, "*", _("Oops.   Someone made me join %s... leaving..."), ch);
       dprintf(DP_SERVER, "PART %s\n", ch);
     } else if (channel_active(chan) || channel_pending(chan)) {
       z = strlen(msg);
@@ -894,15 +894,15 @@ static int gotmode(char *from, char *origmsg)
 	    (channel_dontkickops(chan) &&
 	     (chan_op(user) || (glob_op(user) && !chan_deop(user)))))) {
 	if (chan_fakeop(m)) {
-	  putlog(LOG_MODES, ch, CHAN_FAKEMODE, ch);
+	  putlog(LOG_MODES, ch, _("Mode change by fake op on %s!  Reversing..."), ch);
 	  dprintf(DP_MODE, "KICK %s %s :%s\n", ch, nick,
-		  CHAN_FAKEMODE_KICK);
+		  _("Abusing ill-gained server ops"));
 	  m->flags |= SENTKICK;
 	  reversing = 1;
 	} else if (!chan_hasop(m) && !channel_nodesynch(chan)) {
-	  putlog(LOG_MODES, ch, CHAN_DESYNCMODE, ch);
+	  putlog(LOG_MODES, ch, _("Mode change by non-chanop on %s!  Reversing..."), ch);
 	  dprintf(DP_MODE, "KICK %s %s :%s\n", ch, nick,
-		  CHAN_DESYNCMODE_KICK);
+		  _("Abusing desync"));
 	  m->flags |= SENTKICK;
 	  reversing = 1;
 	}
@@ -1051,7 +1051,7 @@ static int gotmode(char *from, char *origmsg)
 	    if (channel_pending(chan))
 	      break;
 	    putlog(LOG_MISC, chan->dname,
-		   CHAN_BADCHANMODE, chan->dname, op);
+		   _("* Mode change on %s for nonexistant %s!"), chan->dname, op);
 	    dprintf(DP_MODE, "WHO %s\n", op);
 	  } else {
 	    simple_sprintf(s, "%s!%s", m->nick, m->userhost);
