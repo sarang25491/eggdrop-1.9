@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: tclhash.h,v 1.30 2002/05/17 07:29:25 stdarg Exp $
+ * $Id: tclhash.h,v 1.31 2002/05/26 02:49:29 stdarg Exp $
  */
 
 #ifndef _EGG_TCLHASH_H
@@ -28,45 +28,44 @@
 
 #include "flags.h"		/* flag_record		*/
 
-/* Flags for bind entries */
+/* Match type flags for bind tables. */
+#define MATCH_PARTIAL       1
+#define MATCH_EXACT         2
+#define MATCH_MASK          4
+#define MATCH_CASE          8
+
+/* Flags for binds. */
 /* Does the callback want their client_data inserted as the first argument? */
 #define BIND_WANTS_CD 1
 
-/* Flags for bind tables */
-#define BIND_STRICT_ATTR 0x80
-#define BIND_BREAKABLE 0x100
+#define BIND_USE_ATTR	2
+#define BIND_STRICT_ATTR	4
+#define BIND_BREAKABLE	8
+#define BIND_STACKABLE	16
+#define BIND_DELETED	32
 
 /* Flags for return values from bind callbacks */
 #define BIND_RET_LOG 1
 #define BIND_RET_BREAK 2
 
-/* This holds the final information for a function listening on a bind
-   table. */
+/* This holds the information of a bind entry. */
 typedef struct bind_entry_b {
-	struct bind_entry_b *next;
+	struct bind_entry_b *next, *prev;
 	struct flag_record user_flags;
+	char *mask;
 	char *function_name;
 	Function callback;
 	void *client_data;
-	int hits;
-	int bind_flags;
-} bind_entry_t;
-
-/* This is the list of bind masks in a given table.
-   For instance, in the "msg" table you might have "pass", "op",
-   and "invite". */
-typedef struct bind_chain_b {
-	struct bind_chain_b *next;
-	bind_entry_t *entries;
-	char *mask;
+	int nhits;
 	int flags;
-} bind_chain_t;
+	int id;
+} bind_entry_t;
 
 /* This is the highest-level structure. It's like the "msg" table
    or the "pubm" table. */
 typedef struct bind_table_b {
 	struct bind_table_b *next;
-	bind_chain_t *chains;
+	bind_entry_t *entries;
 	char *name;
 	char *syntax;
 	int nargs;
@@ -103,11 +102,13 @@ bind_table_t *bind_table_add(const char *name, int nargs, const char *syntax, in
 
 void bind_table_del(bind_table_t *table);
 
-bind_table_t *bind_table_find(const char *name);
+bind_table_t *bind_table_lookup(const char *name);
 
 int bind_entry_add(bind_table_t *table, const char *flags, const char *mask, const char *function_name, int bind_flags, Function callback, void *client_data);
 
-int bind_entry_del(bind_table_t *table, const char *flags, const char *mask, const char *function_name, void *cdata);
+int bind_entry_del(bind_table_t *table, int id, const char *mask, const char *function_name, void *cdata);
+
+int bind_entry_modify(bind_table_t *table, int id, const char *mask, const char *function_name, const char *newflags, const char *newmask);
 
 void add_builtins(const char *table_name, cmd_t *cmds);
 

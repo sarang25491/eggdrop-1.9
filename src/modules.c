@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: modules.c,v 1.111 2002/05/17 07:29:25 stdarg Exp $";
+static const char rcsid[] = "$Id: modules.c,v 1.112 2002/05/26 02:49:29 stdarg Exp $";
 #endif
 
 #include "main.h"		/* NOTE: when removing this, include config.h */
@@ -529,7 +529,7 @@ Function global_table[] =
   (Function) bind_table_del,
   (Function) add_builtins,
   (Function) rem_builtins,
-  (Function) bind_table_find,
+  (Function) bind_table_lookup,
   /* 280 - 283 */
   (Function) check_bind,
   (Function) 0,

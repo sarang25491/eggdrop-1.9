@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: module.h,v 1.22 2002/05/17 07:29:22 stdarg Exp $
+ * $Id: module.h,v 1.23 2002/05/26 02:49:28 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_MODULE_H
@@ -446,7 +446,7 @@
 #define bind_table_del ((void (*)(bind_table_t *))egg->global[276])
 #define add_builtins ((void (*)(const char *, cmd_t *))egg->global[277])
 #define rem_builtins ((void (*)(const char *, cmd_t *))egg->global[278])
-#define bind_table_find ((bind_table_t *(*)(const char *))egg->global[279]) 
+#define bind_table_lookup ((bind_table_t *(*)(const char *))egg->global[279]) 
 /* 280 - 283 */
 #define check_bind ((int (*)(bind_table_t *, const char *, struct flag_record *, ...))egg->global[280])
 /* #define registry_lookup ((int (*)(const char *, const char *, Function *, void **))egg->global[281]) */

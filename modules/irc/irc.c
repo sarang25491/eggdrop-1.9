@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: irc.c,v 1.20 2002/05/17 07:29:23 stdarg Exp $";
+static const char rcsid[] = "$Id: irc.c,v 1.21 2002/05/26 02:49:29 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "irc"
@@ -958,8 +958,8 @@ char *start(eggdrop_t *eggdrop)
   add_builtins("msg", C_msg);
 
   /* Import tables. */
-  BT_ctcp = bind_table_find("ctcp");
-  BT_ctcr = bind_table_find("ctcr");
+  BT_ctcp = bind_table_lookup("ctcp");
+  BT_ctcr = bind_table_lookup("ctcr");
 
   /* Create our own bind tables. */
   BT_topic = bind_table_add("topic", 5, "ssUss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
