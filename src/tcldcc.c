@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.50 2002/02/07 22:19:05 wcc Exp $
+ * $Id: tcldcc.c,v 1.51 2002/03/03 19:03:46 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -477,7 +477,6 @@ static int script_whom(script_var_t *retval, int nargs, int which_chan)
 	retval->len = 0;
 	retval->value = NULL;
 
-	/* FIXME: Add non-tcl assoc.mod support for channel */
 	if (nargs == 0) which_chan = -1;
 
 	for (i = 0; i < dcc_total; i++) {

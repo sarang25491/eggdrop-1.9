@@ -2,12 +2,11 @@
  * botnet.c -- handles:
  *   keeping track of which bot's connected where in the chain
  *   dumping a list of bots or a bot tree to a user
- *   channel name associations on the party line
  *   rejecting a bot
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.54 2002/02/24 08:14:36 guppy Exp $
+ * $Id: botnet.c,v 1.55 2002/03/03 19:03:46 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -459,13 +458,7 @@ void answer_local_whom(int idx, int chan)
     dprintf(idx, "%s (+: %s, *: %s)\n", _("Users across the botnet"), _("Party line"),
 	    _("Local channel"));
   else if (chan > 0) {
-    simple_sprintf(idle, "assoc %d", chan);
-    if ((Tcl_Eval(interp, idle) != TCL_OK) || !interp->result[0])
-      dprintf(idx, "%s %s%d:\n", _("Users on channel"),
-	      (chan < 100000) ? "" : "*", chan % 100000);
-    else
-      dprintf(idx, "%s '%s%s' (%s%d):\n", _("Users on channel"),
-	      (chan < 100000) ? "" : "*", interp->result,
+    dprintf(idx, "%s %s%d:\n", _("Users on channel"),
 	      (chan < 100000) ? "" : "*", chan % 100000);
   }
   /* Find longest nick and botnick */
@@ -898,7 +891,6 @@ int users_in_subtree(tand_t *bot)
  */
 int botunlink(int idx, char *nick, char *reason)
 {
-  char s[20];
   register int i;
   int bots, users;
   tand_t *bot;
@@ -986,7 +978,7 @@ int botunlink(int idx, char *nick, char *reason)
     }
   }
   if (nick[0] == '*') {
-    dprintf(idx, "%s\n", _("Smooshing bot tables and assocs..."));
+    dprintf(idx, "%s\n", _("Smooshing bot tables..."));
     while (tandbot)
       rembot(tandbot->bot);
     while (parties) {
@@ -997,8 +989,6 @@ int botunlink(int idx, char *nick, char *reason)
 		       party[i].chan);
       }
     }
-    strcpy(s, "killassoc &");
-    Tcl_Eval(interp, s);
   }
   return 0;
 }

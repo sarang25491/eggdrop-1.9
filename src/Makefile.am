@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.20 2002/02/17 18:34:14 ite Exp $
+# $Id: Makefile.am,v 1.21 2002/03/03 19:03:46 stdarg Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 bindir			= $(exec_prefix)
@@ -98,7 +98,6 @@ endif
 # FIXME: dlopened/preopened module's list is going to be dynamically defined
 #        by ./configure
 eggdrop_LDADD		= @LIBLTDL@ \
-			-dlopen ../modules/assoc/assoc.la \
 			-dlopen ../modules/blowfish/blowfish.la \
 			-dlopen ../modules/channels/channels.la \
 			$(EGG_CMP) \

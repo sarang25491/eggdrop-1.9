@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.92 2002/02/20 03:29:43 wcc Exp $
+ * $Id: cmds.c,v 1.93 2002/03/03 19:03:46 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -97,15 +97,9 @@ static void tell_who(struct userrec *u, int idx, int chan)
   if (!chan)
     dprintf(idx, "Party line members:  (* = owner, + = master, @ = op)\n");
   else {
-    simple_sprintf(s, "assoc %d", chan);
-    if ((Tcl_Eval(interp, s) != TCL_OK) || !interp->result[0])
-      dprintf(idx,
+    dprintf(idx,
 	    "People on channel %s%d:  (* = owner, + = master, @ = op)\n",
 	      (chan < 100000) ? "" : "*", chan % 100000);
-    else
-      dprintf(idx,
-      "People on channel '%s' (%s%d):  (* = owner, + = master, @ = op)\n",
-	      interp->result, (chan < 100000) ? "" : "*", chan % 100000);
   }
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].type == &DCC_CHAT)
@@ -293,18 +287,7 @@ static void cmd_whom(struct userrec *u, int idx, char *par)
   } else {
     int chan = -1;
 
-    if ((par[0] < '0') || (par[0] > '9')) {
-      Tcl_SetVar(interp, "chan", par, 0);
-      if ((Tcl_VarEval(interp, "assoc ", "$chan", NULL) == TCL_OK) &&
-	  interp->result[0]) {
-	chan = atoi(interp->result);
-      }
-      if (chan <= 0) {
-	dprintf(idx, _("No such channel.\n"));
-	return;
-      }
-    } else
-      chan = atoi(par);
+    chan = atoi(par);
     if ((chan < 0) || (chan > 99999)) {
       dprintf(idx, "Channel number out of range: must be between 0 and 99999.\n");
       return;
@@ -1796,11 +1779,6 @@ static void cmd_chat(struct userrec *u, int idx, char *par)
 	if (!arg[1])
 	  newchan = 0;
 	else {
-	  Tcl_SetVar(interp, "chan", arg, 0);
-	  if ((Tcl_VarEval(interp, "assoc ", "$chan", NULL) == TCL_OK) &&
-	      interp->result[0])
-	    newchan = atoi(interp->result);
-	  else
 	    newchan = -1;
 	}
 	if (newchan < 0) {
@@ -1818,11 +1796,6 @@ static void cmd_chat(struct userrec *u, int idx, char *par)
 	if (!strcasecmp(arg, "on"))
 	  newchan = 0;
 	else {
-	  Tcl_SetVar(interp, "chan", arg, 0);
-	  if ((Tcl_VarEval(interp, "assoc ", "$chan", NULL) == TCL_OK) &&
-	      interp->result[0])
-	    newchan = atoi(interp->result);
-	  else
 	    newchan = -1;
 	}
 	if (newchan < 0) {
