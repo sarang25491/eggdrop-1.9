@@ -1,3 +1,9 @@
+2003-01-30 07:47  Will Buckner <wcc@techmonkeys.org>
+
+	* src/: net.c, tcl.c, tclmisc.c, userrec.c:
+
+	* Fixed a few compiler errors/warnings (found by Eule).  
+
 2003-01-30 03:05  Will Buckner <wcc@techmonkeys.org>
 
 	* eggdrop.conf, modules/channels/channels.c, src/tcl.c,
