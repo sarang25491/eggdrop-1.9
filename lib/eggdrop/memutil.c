@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: memutil.c,v 1.12 2003/01/29 07:42:49 wcc Exp $";
+static const char rcsid[] = "$Id: memutil.c,v 1.13 2003/02/03 01:01:07 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -275,6 +275,17 @@ void str_redup(char **str, const char *newstr)
 	len = strlen(newstr)+1;
 	*str = (char *)realloc(*str, len);
 	memcpy(*str, newstr, len);
+}
+
+char *egg_mprintf(const char *format, ...)
+{
+	va_list args;
+	char *ptr;
+
+	va_start(args, format);
+	ptr = egg_mvsprintf(NULL, 0, NULL, format, args);
+	va_end(args);
+	return(ptr);
 }
 
 char *egg_msprintf(char *buf, int len, int *final_len, const char *format, ...)

@@ -2,10 +2,11 @@
 #define _BINDS_H_
 
 /* Match type flags for bind tables. */
-#define MATCH_PARTIAL       1
-#define MATCH_EXACT         2
-#define MATCH_MASK          4
-#define MATCH_CASE          8
+#define MATCH_PARTIAL	1
+#define MATCH_EXACT	2
+#define MATCH_MASK	4
+#define MATCH_CASE	8
+#define MATCH_NONE	16
 
 /* Flags for binds. */
 /* Does the callback want their client_data inserted as the first argument? */

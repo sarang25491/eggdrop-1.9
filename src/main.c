@@ -30,7 +30,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.129 2003/01/29 07:42:50 wcc Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.130 2003/02/03 01:01:07 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -460,8 +460,9 @@ static void event_loaded()
 void kill_tcl();
 extern module_entry *module_list;
 
-int init_userent(), init_net(),
- init_tcl(int, char **);
+int init_userent(), init_net(), init_tcl(int, char **);
+void core_party_init();
+void telnet_init();
 void dns_init();
 void binds_init();
 void dcc_init();
@@ -583,11 +584,14 @@ int main(int argc, char **argv)
     fatal(_("ERROR: Eggdrop will not run as root!"), 0);
 
   egg = eggdrop_new();
+  egglog_init();
+  logfile_init();
   script_init();
   binds_init();
   user_init();
   user_load("users.xml");
   partyline_init();
+  core_party_init();
   telnet_init();
   modules_init();
   logfile_init();
@@ -595,7 +599,6 @@ int main(int argc, char **argv)
   egg_dns_init();
   core_binds_init();
   dcc_init();
-  old_user_init();
   init_userent();
   init_net();
   traffic_init();

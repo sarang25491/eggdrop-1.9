@@ -64,7 +64,8 @@ static int check_ctcp_ctcr(int which, int to_channel, user_t *u, char *nick, cha
 {
 	char *cmd, *space, *logdest, *text, *ctcptype;
 	bind_table_t *table;
-	int r, len, flags;
+	int r, len;
+	const char *flags;
 
 	len = strlen(trailing);
 	if ((len < 2) || (trailing[0] != 1) || (trailing[len-1] != 1)) {
@@ -111,7 +112,7 @@ static int check_ctcp_ctcr(int which, int to_channel, user_t *u, char *nick, cha
 static int check_global_notice(char *from_nick, char *from_uhost, char *dest, char *trailing)
 {
 	if (*dest == '$') {
-		putlog(LOG_MSGS | LOG_SERV, "*", "[%s!%s to %s] %s", from_nick, from_uhost, dest, trailing);
+		putlog("ms", "*", "[%s!%s to %s] %s", from_nick, from_uhost, dest, trailing);
 		return(1);
 	}
 	return(0);
@@ -157,7 +158,7 @@ static int gotmsg(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 	}
 	else text = "";
 
-	get_user_flagrec(u, &fr, dest);
+	//get_user_flagrec(u, &fr, dest);
 	if (to_channel) {
 		r = bind_check(BT_pub, first, from_nick, from_uhost, u, dest, text);
 		if (r & BIND_RET_LOG) {
@@ -228,7 +229,7 @@ static int gotnotice(char *from_nick, char *from_uhost, user_t *u, char *cmd, in
 	r = check_ctcp_ctcr(1, to_channel, u, from_nick, from_uhost, dest, trailing);
 	if (r) return(0);
 
-	get_user_flagrec(u, &fr, NULL);
+	//get_user_flagrec(u, &fr, NULL);
 	r = bind_check(BT_notice, trailing, from_nick, from_uhost, u, dest, trailing);
 
 	if (!(r & BIND_RET_BREAK)) {
@@ -346,7 +347,7 @@ static int got451(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 /* Got error */
 static int goterror(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
-  putlog(LOG_SERV | LOG_MSGS, "*", "-ERROR from server- %s", args[0]);
+  putlog("ms", "*", "-ERROR from server- %s", args[0]);
   putlog(LOG_SERV, "*", "Disconnecting from server.");
   kill_server("disconnecting due to error");
   return 1;

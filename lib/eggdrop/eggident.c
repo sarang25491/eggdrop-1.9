@@ -5,8 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "sockbuf.h"
-#include "eggnet.h"
+#include <eggdrop/eggdrop.h>
+#include <ctype.h>
 
 typedef struct _ident_info {
 	struct _ident_info *next;
@@ -95,23 +95,39 @@ static int ident_on_read(void *client_data, int idx, char *data, int len)
 	int i;
 
 	colon = strchr(data, ':');
-	if (!colon || strncasecmp(colon+1, "USERID", 6) || *(colon+7) != ':') {
-		ident_result(client_data, NULL);
-		return(0);
-	}
-	colon = strchr(colon+8, ':');
-	if (!colon) {
-		ident_result(client_data, NULL);
-		return(0);
-	}
-	ident = colon+1;
+	if (!colon) goto ident_error;
+
+	/* See if it's a successful lookup. */
+	colon++;
+	while (isspace(*colon)) colon++;
+	if (strncasecmp(colon, "USERID", 6)) goto ident_error;
+
+	/* Go to the OS identifier. */
+	colon = strchr(colon, ':');
+	if (!colon) goto ident_error;
+	colon++;
+
+	/* Go to the user id. */
+	ident = strchr(colon, ':');
+	if (!ident) goto ident_error;
+	ident++;
+	while (isspace(*ident)) ident++;
+
 	/* Replace bad chars. */
 	len = strlen(ident);
 	for (i = 0; i < len; i++) {
-		if (ident[i] < 'A' || ident[i] > 'z') ident[i] = 'x';
+		if (ident[i] == '\r' || ident[i] == '\n') {
+			ident[i] = 0;
+			break;
+		}
+		if (!isalnum(ident[i]) && ident[i] != '_') ident[i] = 'x';
 	}
 	if (len > 20) ident[20] = 0;
 	ident_result(client_data, ident);
+	return(0);
+
+ident_error:
+	ident_result(client_data, NULL);
 	return(0);
 }
 

@@ -5,7 +5,8 @@
 
 static eggdrop_t *egg = NULL;
 extern script_command_t script_bind_cmds[], script_net_cmds[],
-	script_new_user_cmds[], script_party_cmds[], script_timer_cmds[];
+	script_new_user_cmds[], script_party_cmds[], script_timer_cmds[],
+	script_log_cmds[];
 
 static void script_report(int idx, int details)
 {
@@ -31,6 +32,7 @@ char *script_LTX_start(eggdrop_t *eggdrop)
 		return "This module requires eggdrop1.7.0 or later";
 	}
 
+	script_create_commands(script_log_cmds);
 	script_create_commands(script_bind_cmds);
 	script_create_commands(script_net_cmds);
 	script_create_commands(script_new_user_cmds);

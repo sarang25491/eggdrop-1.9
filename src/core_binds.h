@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-/*
- * $Id: core_binds.h,v 1.4 2003/01/02 21:33:16 wcc Exp $
- */
 
 #ifndef _CORE_BINDS_H_
 #define _CORE_BINDS_H_

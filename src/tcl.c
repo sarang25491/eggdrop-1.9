@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tcl.c,v 1.92 2003/01/30 07:47:17 wcc Exp $";
+static const char rcsid[] = "$Id: tcl.c,v 1.93 2003/02/03 01:01:07 stdarg Exp $";
 #endif
 
 #include <stdlib.h>		/* getenv()				*/
@@ -165,7 +165,7 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp, char *name1,
 	if (s[0])
 	  conmask = logmodes(s);
 	else
-	  conmask = LOG_MODES | LOG_MISC | LOG_CMDS;
+	  conmask = 0x7fffffff;
       } else if ((int *) ii->var == &default_flags) {
 	struct flag_record fr = {FR_GLOBAL, 0, 0, 0, 0, 0};
 

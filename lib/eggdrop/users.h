@@ -52,6 +52,8 @@ int user_set_setting(user_t *u, const char *chan, const char *setting, const cha
 int user_get_flags(user_t *u, const char *chan, flags_t *flags);
 int user_set_flags(user_t *u, const char *chan, flags_t *flags);
 int user_set_flag_str(user_t *u, const char *chan, const char *flags);
+int user_match_flags(user_t *u, flags_t *flags);
+int user_match_flag_str(user_t *u, const char *flags);
 int user_has_pass(user_t *u);
 int user_check_pass(user_t *u, const char *pass);
 int user_set_pass(user_t *u, const char *pass);

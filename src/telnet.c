@@ -128,14 +128,14 @@ static int telnet_on_newclient(void *client_data, int idx, int newidx, const cha
 		session->state = STATE_RESOLVE;
 	}
 	else {
-		sockbuf_write(newidx, "Please enter your nickname.\r\n", -1);
+		sockbuf_write(newidx, "\r\nPlease enter your nickname.\r\n", -1);
 		session->state = STATE_NICKNAME;
 		session->count = 0;
 	}
 
 	/* Start lookups. */
 	egg_ident_lookup(peer_ip, peer_port, telnet_config.port, -1, ident_result, session);
-	egg_dns_lookup(peer_ip, -1, dns_result, session);
+	egg_dns_reverse(peer_ip, -1, dns_result, session);
 
 	return(0);
 }
@@ -150,7 +150,7 @@ static int ident_result(void *client_data, const char *ip, int port, const char 
 	return(0);
 }
 
-static int dns_result(void *client_data, const char *host, const char *ip)
+static int dns_result(void *client_data, const char *ip, const char *host)
 {
 	telnet_session_t *session = client_data;
 
@@ -175,7 +175,7 @@ static int process_results(telnet_session_t *session)
 			kill_session(session);
 			return(0);
 		}
-		sockbuf_write(session->idx, "Please enter your nickname.\r\n", -1);
+		sockbuf_write(session->idx, "\r\nPlease enter your nickname.\r\n", -1);
 		session->state = STATE_NICKNAME;
 	}
 	return(0);
@@ -211,8 +211,11 @@ static int telnet_on_read(void *client_data, int idx, char *data, int len)
 				session->state = STATE_NICKNAME;
 			}
 			else {
-				session->pid = partyline_on_connect(session->idx, session->user, session->nick, session->ident ? session->ident : "~telnet", session->host ? session->host : session->ip);
+				session->pid = partyline_connect(session->idx, -1, session->user, session->nick, session->ident ? session->ident : "~telnet", session->host ? session->host : session->ip);
 				session->state = STATE_PARTYLINE;
+				egg_iprintf(idx, "\r\nWelcome to the telnet partyline interface!\r\n");
+				if (session->ident) egg_iprintf(idx, "Your ident is: %s\r\n", session->ident);
+				if (session->host) egg_iprintf(idx, "Your hostname is: %s\r\n", session->host);
 			}
 			break;
 	}
@@ -223,6 +226,7 @@ static int telnet_on_eof(void *client_data, int idx, int err, const char *errmsg
 {
 	telnet_session_t *session = client_data;
 
+	if (session->state == STATE_PARTYLINE) partyline_disconnect(session->pid, err ? errmsg : NULL);
 	kill_session(session);
 	return(0);
 }
@@ -267,14 +271,16 @@ static int telnet_filter_read(void *client_data, int idx, char *data, int len)
 static int telnet_filter_write(void *client_data, int idx, const char *data, int len)
 {
 	const char *newline;
-	int linelen, r, r2;
+	int left, linelen, r, r2;
 
 	newline = data;
 	r = 0;
-	while ((newline = memchr(newline, '\n', len))) {
+	left = len;
+	while ((newline = memchr(newline, '\n', left))) {
 		linelen = newline - data;
 		if (linelen > 0  && newline[-1] == '\r') {
 			newline++;
+			left = len - linelen - 1;
 			continue;
 		}
 
@@ -287,6 +293,7 @@ static int telnet_filter_write(void *client_data, int idx, const char *data, int
 		data = newline+1;
 		newline = data;
 		len -= linelen+1;
+		left = len;
 	}
 	if (len > 0) {
 		r2 = sockbuf_on_write(idx, TELNET_FILTER_LEVEL, data, len);

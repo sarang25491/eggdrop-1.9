@@ -10,5 +10,8 @@ typedef struct {
 int flag_to_str(flags_t *flags, char *str);
 int flag_merge_str(flags_t *flags, const char *str);
 int flag_from_str(flags_t *flags, const char *str);
+int flag_match_subset(flags_t *left, flags_t *right);
+int flag_match_exact(flags_t *left, flags_t *right);
+int flag_match_partial(flags_t *left, flags_t *right);
 
 #endif

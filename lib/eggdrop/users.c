@@ -2,18 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "eggdrop.h"
-/*
-#include "binds.h"
-#include "flags.h"
-#include "users.h"
-#include "ircmasks.h"
-#include "hash_table.h"
-#include "xml.h"
-#include "match.h"
-#include "md5.h"
-#include "base64.h"
-*/
+#include <eggdrop/eggdrop.h>
 
 //static FILE *fp = NULL;
 
@@ -73,7 +62,7 @@ int user_load(const char *fname)
 	int i, j, k, uid;
 	xml_node_t root, *user_node, *setting_node;
 	user_setting_t *setting;
-	char *handle, *ircmask, *chan, *name, *value;
+	char *handle, *ircmask, *chan, *name, *value, *flag_str;
 	user_t *u;
 
 	memset(&root, 0, sizeof(root));
@@ -111,8 +100,8 @@ int user_load(const char *fname)
 			u->settings = realloc(u->settings, sizeof(*u->settings) * (j+1));
 			u->nsettings++;
 			setting = u->settings+j;
-			xml_node_get_int(&setting->flags.builtin, setting_node, "builtin_flags", 0, 0);
-			xml_node_get_int(&setting->flags.udef, setting_node, "udef_flags", 0, 0);
+			xml_node_get_str(&flag_str, setting_node, "flags", 0, 0);
+			if (flag_str) flag_from_str(&setting->flags, flag_str);
 			setting->nextended = 0;
 			setting->extended = NULL;
 			xml_node_get_str(&chan, setting_node, "chan", 0, 0);
@@ -132,7 +121,7 @@ int user_load(const char *fname)
 			}
 		}
 		/* They have to have at least 1 setting, the global one. */
-		if (j < 0) {
+		if (!j) {
 			u->settings = calloc(1, sizeof(u->settings));
 			u->nsettings = 1;
 		}
@@ -148,6 +137,7 @@ static int save_walker(const void *key, void *dataptr, void *param)
 	user_setting_t *setting;
 	xml_node_t *user_node;
 	int i, j;
+	char flag_str[128];
 
 	user_node = xml_node_new();
 	user_node->name = strdup("user");
@@ -159,8 +149,8 @@ static int save_walker(const void *key, void *dataptr, void *param)
 	for (i = 0; i < u->nsettings; i++) {
 		setting = u->settings+i;
 		if (setting->chan) xml_node_set_str(setting->chan, user_node, "setting", i, "chan", 0, 0);
-		xml_node_set_int(u->settings[i].flags.builtin, user_node, "setting", i, "builtin_flags", 0, 0);
-		xml_node_set_int(u->settings[i].flags.udef, user_node, "setting", i, "udef_flags", 0, 0);
+		flag_to_str(&u->settings[i].flags, flag_str);
+		xml_node_set_str(flag_str, user_node, "setting", i, "flags", 0, 0);
 		for (j = 0; j < setting->nextended; j++) {
 			xml_node_set_str(setting->extended[j].name, user_node, "setting", i, "extended", j, "name", 0, 0);
 			xml_node_set_str(setting->extended[j].value, user_node, "setting", i, "extended", j, "value", 0, 0);
@@ -496,6 +486,11 @@ int user_set_flag_str(user_t *u, const char *chan, const char *flags)
 	if (check_flag_change(u, chan, oldflags, &newflags)) return(0);
 	oldflags->builtin = newflags.builtin;
 	oldflags->udef = newflags.udef;
+	return(0);
+}
+
+int user_check_flag_str(user_t *u, const char *flags, const char *chan, int method)
+{
 	return(0);
 }
 

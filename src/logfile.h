@@ -22,7 +22,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: logfile.h,v 1.4 2003/01/02 21:33:16 wcc Exp $
+ * $Id: logfile.h,v 1.5 2003/02/03 01:01:07 stdarg Exp $
  */
 
 #ifndef _EGG_LOGILE_H
@@ -53,14 +53,13 @@
 #define LOG_SRVOUT   0x100000   /* v   server output                    */
 #define LOG_BOTNET   0x200000   /* t   botnet traffic                   */
 #define LOG_BOTSHARE 0x400000   /* h   share traffic                    */
-#define LOG_ALL      0x7fffff   /* (dump to all logfiles)               */
+#define LOG_ALL      0xFFFFFF   /* (dump to all logfiles)               */
 
 #ifndef MAKING_MODS
 
 extern void logfile_init(); 
 extern char *logfile_add(char *, char *, char *);
 extern int logfile_del(char *);
-extern int putlog EGG_VARARGS(int, arg1);
 extern void flushlogs(); 
 
 #endif				/* !MAKING_MODS */

@@ -53,3 +53,33 @@ int flag_from_str(flags_t *flags, const char *str)
 	return flag_merge_str(flags, str);
 }
 
+
+/* Are all on-bits in left also on in right? */
+int flag_match_subset(flags_t *left, flags_t *right)
+{
+	int builtin, udef;
+
+	builtin = (left->builtin & right->builtin) == left->builtin;
+	udef = (left->udef & right->udef) == left->udef;
+	return builtin && udef;
+}
+
+/* Are all on-bits in left also on in right, and all off-bits also off? */
+int flag_match_exact(flags_t *left, flags_t *right)
+{
+	int builtin, udef;
+
+	builtin = left->builtin ^ right->builtin;
+	udef = left->udef ^ right->udef;
+	return !(builtin || udef);
+}
+
+/* Is at least 1 on-bit in left also on in right? */
+int flag_match_partial(flags_t *left, flags_t *right)
+{
+	int builtin, udef;
+
+	builtin = left->builtin & right->builtin;
+	udef = left->udef & right->udef;
+	return builtin || udef;
+}

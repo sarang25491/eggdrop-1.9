@@ -331,6 +331,9 @@ int bind_check(bind_table_t *table, const char *match, ...)
 		if (table->match_type & MATCH_MASK) {
 			cmp = !wild_match_per((unsigned char *)entry->mask, (unsigned char *)match);
 		}
+		else if (table->match_type & MATCH_NONE) {
+			cmp = 0;
+		}
 		else {
 			if (table->match_type & MATCH_CASE) cmp = strcmp(entry->mask, match);
 			else cmp = strcasecmp(entry->mask, match);

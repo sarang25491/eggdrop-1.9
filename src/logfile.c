@@ -2,35 +2,14 @@
  * logfile.c --
  *
  */
-/*
- * Copyright (C) 2002, 2003 Eggheads Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- */
-
-#ifndef lint
-static const char rcsid[] = "$Id: logfile.c,v 1.25 2003/01/18 22:36:52 wcc Exp $";
-#endif
 
 #include "main.h"
-//#include "chanprog.h"			/* logmodes			*/
 #include "modules.h" 			/* add_hook() 			*/
-#include "lib/egglib/msprintf.h"
 #include "logfile.h"			/* prototypes			*/
 #include "dccutil.h"			/* dprintf_eggdrop		*/
 #include "irccmp.h"			/* irccmp			*/
+#include "chanprog.h"	/* logmodes */
+#include <eggdrop/eggdrop.h>
 
 typedef struct log_b {
 	struct log_b *next;
@@ -71,18 +50,12 @@ static void check_logsizes();
 static void flushlog(log_t *log, char *timestamp);
 
 /* Functions for accessing the logfiles via scripts. */
-static int script_putlog(void *cdata, char *text);
+static int script_putlog(char *text);
 static int script_putloglev(char *level, char *chan, char *text);
 
-static script_command_t log_script_cmds[] = {
-	{"", "putlog", script_putlog, (void *)LOG_MISC, 1, "s", "text", SCRIPT_INTEGER, SCRIPT_PASS_CDATA},
-	{"", "putcmdlog", script_putlog, (void *)LOG_CMDS, 1, "s", "text", SCRIPT_INTEGER, SCRIPT_PASS_CDATA},
-	{"", "putxferlog", script_putlog, (void *)LOG_FILES, 1, "s", "text", SCRIPT_INTEGER, SCRIPT_PASS_CDATA},
-	{"", "putloglev", script_putloglev, NULL, 3, "sss", "level channel text", SCRIPT_INTEGER, 0},
-	{"", "logfile", (Function) logfile_add, NULL, 3, "sss", "modes channel filename", SCRIPT_STRING, 0},
-	{"", "stoplog", logfile_del, NULL, 1, "s", "filename", SCRIPT_INTEGER, 0},
-	{0}
-};
+/* Bind for the log table. The core does logging to files and the partyline, but
+ * modules may implement sql logging or whatever. */
+static int on_putlog(int flags, const char *chan, const char *text, int len);
 
 static script_linked_var_t log_script_vars[] = {
 	{"", "logfile_suffix", &logfile_suffix, SCRIPT_STRING, NULL},
@@ -93,13 +66,18 @@ static script_linked_var_t log_script_vars[] = {
 	{0}
 };
 
+static bind_list_t log_binds[] = {
+	{"", on_putlog},
+	{0}
+};
+
 void logfile_init()
 {
 	logfile_suffix = strdup(".%d%b%Y");
-	script_create_commands(log_script_cmds);
 	script_link_vars(log_script_vars);
 	add_hook(HOOK_MINUTELY, logfile_minutely);
 	add_hook(HOOK_5MINUTELY, logfile_5minutely);
+	bind_add_list("log", log_binds);
 }
 
 static int get_timestamp(char *t)
@@ -156,8 +134,8 @@ static int logfile_cycle()
 	for (log = log_list_head; log; log = log->next) {
 		fclose(log->fp);
 
-		if (keep_all_logs) newfname = msprintf("%s%s", log->filename, suffix);
-		else newfname = msprintf("%s.yesterday", log->filename);
+		if (keep_all_logs) newfname = egg_mprintf("%s%s", log->filename, suffix);
+		else newfname = egg_mprintf("%s.yesterday", log->filename);
 
 		unlink(newfname);
 		movefile(log->filename, newfname);
@@ -172,21 +150,6 @@ static int logfile_cycle()
 		else prev = log;
 	}
 	return(0);
-}
-
-static int script_putlog(void *cdata, char *text)
-{
-	return putlog((int) cdata, "*", "%s", text);
-}
-
-static int script_putloglev(char *level, char *chan, char *text)
-{
-	int lev = 0;
-
-	//lev = logmodes(level);
-	//if (!lev) return(-1);
-	lev = LOG_MISC;
-	return putlog(lev, chan, "%s", text);
 }
 
 char *logfile_add(char *modes, char *chan, char *fname)
@@ -205,8 +168,7 @@ char *logfile_add(char *modes, char *chan, char *fname)
 	log->filename = strdup(fname);
 	log->chname = strdup(chan);
 	log->last_msg = strdup("");
-	log->mask = LOG_MISC;
-	//log->mask = logmodes(modes);
+	log->mask = logmodes(modes);
 	log->fp = fp;
 
 	log->next = log_list_head;
@@ -239,42 +201,20 @@ int logfile_del(char *filename)
 	return(0);
 }
 
-/* Log something
- * putlog(level,channel_name,format,...);
- */
-int putlog EGG_VARARGS_DEF(int, arg1)
+static int on_putlog(int flags, const char *chan, const char *text, int len)
 {
-  int i, type, len;
-  log_t *log;
-  char *format, *chname, *out;
-  char timestamp[32];
-  va_list va;
-
-
-	len = 128;
-	out = (char *)malloc(len);
-	while (1) {
-		type = EGG_VARARGS_START(int, arg1, va);
-		chname = va_arg(va, char *);
-		format = va_arg(va, char *);
-		i = vsnprintf(out, len, format, va);
-		if (i > -1 && i < len) break; /* Done. */
-		if (i > len) len = i+1; /* Exact amount. */
-		else len *= 2; /* Just guessing. */
-		out = (char *)realloc(out, len);
-	}
-	len = i;
-
-  va_end(va);
+	log_t *log;
+	char timestamp[32];
+	int i;
 
 	get_timestamp(timestamp);
 	for (log = log_list_head; log; log = log->next) {
 		/* If this log doesn't match, skip it. */
-		if (!(log->mask & type)) continue;
-		if (chname[0] != '*' && log->chname[0] != '*' && irccmp(chname, log->chname)) continue;
+		if (!(log->mask & flags)) continue;
+		if (chan[0] != '*' && log->chname[0] != '*' && irccmp(chan, log->chname)) continue;
 
 		/* If it's a repeat message, don't write it again. */
-		if (!strcasecmp(out, log->last_msg)) {
+		if (!strcasecmp(text, log->last_msg)) {
 			log->repeats++;
 			continue;
 		}
@@ -287,26 +227,23 @@ int putlog EGG_VARARGS_DEF(int, arg1)
 		}
 
 		/* Save this msg to check for repeats next time. */
-		realloc_strcpy(log->last_msg, out);
+		str_redup(&log->last_msg, text);
 
 		/* Now output to the file. */
-		fprintf(log->fp, "%s%s\n", timestamp, out);
+		fprintf(log->fp, "%s%s\n", timestamp, text);
 	}
 
   for (i = 0; i < dcc_total; i++)
-    if ((dcc[i].type == &DCC_CHAT) && (dcc[i].u.chat->con_flags & type)) {
-      if ((chname[0] == '*') || (dcc[i].u.chat->con_chan[0] == '*') ||
-	  (!irccmp(chname, dcc[i].u.chat->con_chan)))
-	dprintf(i, "%s%s\n", timestamp, out);
+    if ((dcc[i].type == &DCC_CHAT)) {
+	dprintf(i, "%s%s\n", timestamp, text);
     }
   if ((!backgrd) && (!con_chan) && (!term_z))
-    dprintf(DP_STDOUT, "%s%s\n", timestamp, out);
-  else if ((type & LOG_MISC) && use_stderr) {
-    dprintf(DP_STDERR, "%s%s\n", timestamp, out);
+    dprintf(DP_STDOUT, "%s%s\n", timestamp, text);
+  else if (use_stderr) {
+    dprintf(DP_STDERR, "%s%s\n", timestamp, text);
   }
 
-  free(out);
-  return(len);
+  return(0);
 }
 
 static void check_logsizes()
@@ -323,10 +260,9 @@ static void check_logsizes()
 
 		/* It's too big. */
 		putlog(LOG_MISC, "*", _("Cycling logfile %s, over max-logsize (%d kilobytes)"), log->filename, size);
-		fflush(log->fp);
 		fclose(log->fp);
 
-		newfname = msprintf("%s.yesterday", log->filename);
+		newfname = egg_mprintf("%s.yesterday", log->filename);
 		unlink(newfname);
 		movefile(log->filename, newfname);
 		free(newfname);

@@ -245,7 +245,7 @@ static void read_hosts(char *fname)
 		if (!strlen(ip)) continue;
 		while ((n = read_thing(buf+skip, host))) {
 			skip += n;
-			if (strlen(host)) add_host(ip, host);
+			if (strlen(host)) add_host(host, ip);
 		}
 	}
 	fclose(fp);
@@ -334,7 +334,7 @@ static int dns_make_query(const char *host, int type, char **buf, int *query_len
 		/* First see if it's in our host cache. */
 		for (i = 0; i < nhosts; i++) {
 			if (!strcasecmp(host, hosts[i].host)) {
-				callback(client_data, host, hosts[i].host);
+				callback(client_data, host, hosts[i].ip);
 				return(-1);
 			}
 		}

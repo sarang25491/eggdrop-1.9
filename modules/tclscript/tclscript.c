@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tclscript.c,v 1.24 2003/01/02 21:33:15 wcc Exp $";
+static const char rcsid[] = "$Id: tclscript.c,v 1.25 2003/02/03 01:01:07 stdarg Exp $";
 #endif
 
 #include "lib/eggdrop/module.h"
@@ -584,6 +584,27 @@ static int cmd_tcl(struct userrec *u, int idx, char *text)
 	return(0);
 }
 
+static int party_tcl(int pid, char *nick, user_t *u, char *cmd, char *text)
+{
+	char *str;
+
+	if (!isowner(nick)) {
+		partyline_write(pid, _("You must be a permanent owner (defined in the config file) to use this command.\n"));
+		return(BIND_RET_LOG);
+	}
+
+	if (Tcl_GlobalEval(ginterp, text) != TCL_OK) {
+		str = Tcl_GetVar(ginterp, "errorInfo", TCL_GLOBAL_ONLY);
+		if (!str) str = Tcl_GetStringResult(ginterp);
+		partyline_printf(pid, "Tcl error: %s\n\n", str);
+	}
+	else {
+		str = Tcl_GetStringResult(ginterp);
+		partyline_printf(pid, "Tcl: %s\n\n", str);
+	}
+	return(0);
+}
+
 static void tclscript_report(int idx, int details)
 {
 	char script[512];
@@ -603,6 +624,11 @@ static void tclscript_report(int idx, int details)
 
 static bind_list_t dcc_commands[] = {
 	{"tcl", (Function) cmd_tcl},
+	{0}
+};
+
+static bind_list_t party_commands[] = {
+	{"tcl", (Function) party_tcl},
 	{0}
 };
 
@@ -637,6 +663,7 @@ char *tclscript_LTX_start(eggdrop_t *eggdrop)
 	script_playback(&my_script_interface);
 
 	bind_add_list("dcc", dcc_commands);
+	bind_add_list("party", party_commands);
 
 	return(NULL);
 }
@@ -647,6 +674,7 @@ static char *tclscript_close()
 	/* Tcl_DeleteInterp(ginterp); */
 
 	bind_rem_list("dcc", dcc_commands);
+	bind_rem_list("party", party_commands);
 
 	module_undepend("tclscript");
 	script_unregister_module(&my_script_interface);

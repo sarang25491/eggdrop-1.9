@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: flags.c,v 1.35 2003/01/29 21:39:35 wcc Exp $";
+static const char rcsid[] = "$Id: flags.c,v 1.36 2003/02/03 01:01:07 stdarg Exp $";
 #endif
 
 #include <ctype.h>
@@ -45,6 +45,7 @@ typedef struct {
 } logmode_mapping_t;
 
 static logmode_mapping_t logmode_mappings[] = {
+	/*
 	{LOG_MSGS, 'm', "msgs"},
 	{LOG_PUBLIC, 'p', "public"},
 	{LOG_JOIN, 'j', "joins"},
@@ -68,6 +69,7 @@ static logmode_mapping_t logmode_mappings[] = {
 	{LOG_LEV6, '6', "level 6"},
 	{LOG_LEV7, '7', "level 7"},
 	{LOG_LEV8, '8', "level 8"},
+	*/
 	{0}
 };
 
@@ -78,6 +80,8 @@ int logmodes(char *s)
 	logmode_mapping_t *mapping;
 	int modes = 0;
 
+	return(0x7fffffff);
+	/*
 	while (*s) {
 		if (*s == '*') return(LOG_ALL);
 		for (mapping = logmode_mappings; mapping->type; mapping++) {
@@ -87,11 +91,14 @@ int logmodes(char *s)
 		s++;
 	}
 	return(modes);
+	*/
 }
 
 char *masktype(int x)
 {
-	static char s[24];	/* Change this if you change the levels */
+	static char s[30] = "abcdefghijklmnopqrstuvwxyz";
+	return(s);
+	/*
 	char *p = s;
 	logmode_mapping_t *mapping;
 
@@ -104,11 +111,15 @@ char *masktype(int x)
 	if (p == s) *p++ = '-';
 	*p = 0;
 	return(s);
+	*/
 }
 
 char *maskname(int x)
 {
 	static char s[207];	/* Change this if you change the levels */
+	s[0] = 0;
+	return(s);
+	/*
 	logmode_mapping_t *mapping;
 	int len;
 
@@ -124,6 +135,7 @@ char *maskname(int x)
 	if (len) s[len-2] = 0;
 	else strcpy(s, "none");
 	return(s);
+	*/
 }
 
 /* Some flags are mutually exclusive -- this roots them out

@@ -22,7 +22,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: memutil.h,v 1.12 2003/01/02 21:33:13 wcc Exp $
+ * $Id: memutil.h,v 1.13 2003/02/03 01:01:07 stdarg Exp $
  */
 
 #ifndef _EGG_MEMUTIL_H
@@ -68,6 +68,7 @@ extern void rmspace(char *);
 
 extern void str_redup(char **str, const char *newstr);
 
+extern char *egg_mprintf(const char *format, ...);
 extern char *egg_msprintf(char *buf, int len, int *final_len, const char *format, ...);
 extern char *egg_mvsprintf(char *buf, int len, int *final_len, const char *format, va_list args);
 
