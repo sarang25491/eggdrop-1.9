@@ -1,3 +1,10 @@
+2002-01-05 14:18  stdarg <stdarg@techmonkeys.org>
+
+	* modules/tclscript/tclscript.c:
+
+	
+	* Added 2 compatibility functions for Tcl 8.0 
+
 2002-01-05 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
