@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.58 2002/01/16 22:09:43 ite Exp $
+ * $Id: tclhash.c,v 1.59 2002/01/19 20:08:58 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -33,6 +33,7 @@
 #include "users.h"
 #include "script_api.h"
 #include "script.h"
+#include "logfile.h"
 
 extern Tcl_Interp	*interp;
 extern struct dcc_t	*dcc;

@@ -1,7 +1,7 @@
 /*
  * irc.h -- part of irc.mod
  *
- * $Id: irc.h,v 1.2 2001/12/08 19:17:43 ite Exp $
+ * $Id: irc.h,v 1.3 2002/01/19 20:08:57 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -24,6 +24,9 @@
 
 #ifndef _EGG_MOD_IRC_IRC_H
 #define _EGG_MOD_IRC_IRC_H
+
+#define NORMAL 0
+#define QUICK  1
 
 #define check_tcl_join(a,b,c,d) check_tcl_joinspltrejn(a,b,c,d,BT_join)
 #define check_tcl_splt(a,b,c,d) check_tcl_joinspltrejn(a,b,c,d,BT_split)

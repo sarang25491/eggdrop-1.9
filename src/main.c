@@ -4,7 +4,7 @@
  *   signal handling
  *   command line arguments
  *
- * $Id: main.c,v 1.104 2002/01/14 02:23:27 ite Exp $
+ * $Id: main.c,v 1.105 2002/01/19 20:08:58 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -54,6 +54,8 @@
 #include "bg.h"
 #include "egg_timer.h"
 #include "core_binds.h"
+#include "logfile.h"
+#include "misc.h"
 
 #include "lib/adns/adns.h"
 

@@ -2,7 +2,7 @@
  * userent.c -- handles:
  *   user-entry handling, new stylem more versatile.
  *
- * $Id: userent.c,v 1.27 2002/01/16 22:09:43 ite Exp $
+ * $Id: userent.c,v 1.28 2002/01/19 20:08:58 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -25,6 +25,7 @@
 
 #include "main.h"
 #include "users.h"
+#include "logfile.h"
 
 extern int		 noshare;
 extern struct userrec	*userlist;

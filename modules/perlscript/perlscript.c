@@ -168,7 +168,7 @@ static SV *my_resolve_variable(script_var_t *v)
 			for (i = 0; i < v->len; i++) {
 				v_sub.value = values[i];
 				v_sub.len = -1;
-				element = my_resolve_var(&v_sub);
+				element = my_resolve_variable(&v_sub);
 				av_push(array, element);
 			}
 		}

@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.52 2002/01/17 01:13:07 ite Exp $
+ * $Id: net.c,v 1.53 2002/01/19 20:08:58 ite Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -28,6 +28,8 @@
 
 #include "lib/adns/adns.h"
 #include "egg_timer.h"
+#include "logfile.h"
+#include "dns.h"
 
 #if !HAVE_GETDTABLESIZE
 #  ifdef FD_SETSIZE

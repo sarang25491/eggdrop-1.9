@@ -4,7 +4,7 @@
  *   provides the code used by the bot if the DNS module is not loaded
  *   DNS script commands
  *
- * $Id: dns.c,v 1.32 2002/01/16 22:09:43 ite Exp $
+ * $Id: dns.c,v 1.33 2002/01/19 20:08:58 ite Exp $
  */
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -37,6 +37,20 @@
 #include "lib/adns/adns.h"
 #include "script_api.h"
 #include "script.h"
+#include "logfile.h"
+
+typedef struct {
+  char *name;
+  void (*event)(char *, char *, int, void *);
+} devent_type;
+
+typedef struct devent_str {
+  struct devent_str *next;      /* Pointer to next dns_event      */
+  devent_type   *type;
+  u_8bit_t      lookup;         /* RES_IPBYHOST or RES_HOSTBYIP   */
+  char  *hostname;              /* Hostname or IP address (as string) */
+  void          *other;         /* Data specific to the event type */
+} devent_t;
 
 extern struct dcc_t	*dcc;
 extern int		 dcc_total;
@@ -44,7 +58,7 @@ extern int		 resolve_timeout;
 extern time_t		 now;
 extern jmp_buf		 alarmret;
 
-devent_t		*dns_events = NULL;
+static devent_t		*dns_events = NULL;
 
 extern adns_state	 ads;
 extern int		 af_preferred;

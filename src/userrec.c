@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  *
- * $Id: userrec.c,v 1.41 2002/01/17 01:05:37 ite Exp $
+ * $Id: userrec.c,v 1.42 2002/01/19 20:08:58 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -31,6 +31,7 @@
 #include "chan.h"
 #include "modules.h"
 #include "tandem.h"
+#include "logfile.h"
 
 extern struct dcc_t	*dcc;
 extern struct chanset_t	*chanset;

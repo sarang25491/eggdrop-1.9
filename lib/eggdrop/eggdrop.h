@@ -2,7 +2,7 @@
  * eggdrop.h
  *   libeggdrop header file
  *
- * $Id: eggdrop.h,v 1.2 2002/01/13 19:13:22 ite Exp $
+ * $Id: eggdrop.h,v 1.3 2002/01/19 20:08:57 ite Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -31,8 +31,8 @@
 
 #include "../compat/compat.h"
 #include "../egglib/egglib.h"
-#include "botnetutil.h"
-#include "memutil.h"
-#include "fileutil.h"
+#include <eggdrop/botnetutil.h>
+#include <eggdrop/memutil.h>
+#include <eggdrop/fileutil.h>
 
 #endif				/* _EGGDROP_H */

@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.86 2002/01/16 22:40:57 ite Exp $
+ * $Id: cmds.c,v 1.87 2002/01/19 20:08:58 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -27,6 +27,8 @@
 #include "main.h"
 #include "tandem.h"
 #include "modules.h"
+#include "logfile.h"
+#include "misc.h"
 #include <ctype.h>
 
 extern struct chanset_t	*chanset;

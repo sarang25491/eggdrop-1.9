@@ -6,6 +6,8 @@
 #include "script_api.h"
 #include "script.h"
 
+#include "logfile.h"
+
 typedef struct log_b {
 	struct log_b *next;
 	char *filename;
@@ -33,16 +35,11 @@ static char *logfile_suffix = NULL; /* Suffix for old logfiles. */
 
 static log_t *log_list_head = NULL; /* Linked list of logfiles. */
 
-void logfile_init();
 static int logfile_minutely();
 static int logfile_5minutely();
 static int logfile_cycle();
-char *logfile_add(char *modes, char *chan, char *fname);
-int logfile_del(char *filename);
-int putlog EGG_VARARGS_DEF(int, arg1);
 static void check_logsizes();
 static void flushlog(log_t *log, char *timestamp);
-void flushlogs();
 
 /* Functions for accessing the logfiles via scripts. */
 static int script_putlog(void *cdata, char *text);

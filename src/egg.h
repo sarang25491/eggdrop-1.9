@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: egg.h,v 1.2 2002/01/16 22:09:43 ite Exp $
+ * $Id: egg.h,v 1.3 2002/01/19 20:08:58 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -56,8 +56,6 @@
 
 #define ADDRMAX		 45
 #define UHOSTMAX	160	/* reasonable, i think?			*/
-#define DIRMAX		256	/* paranoia				*/
-#define LOGLINEMAX	767	/* for misc.c/putlog() <cybah>		*/
 #define BADHANDCHARS	"-,+*=:!.@#;$%&"
 
 
@@ -68,8 +66,6 @@
 
 #define NICKLEN         NICKMAX + 1
 #define UHOSTLEN        UHOSTMAX + 1
-#define DIRLEN          DIRMAX + 1
-#define LOGLINELEN	LOGLINEMAX + 1
 #define NOTENAMELEN     ((HANDLEN * 2) + 1)
 #define BADNICKCHARS	"-,+*=:!.@#;$%&"
 
@@ -305,11 +301,6 @@ struct dns_info {
 				   lookup for				   */
 };
 
-/* Flags for dns_type
- */
-#define RES_HOSTBYIP  1		/* hostname to IP address		*/
-#define RES_IPBYHOST  2		/* IP address to hostname		*/
-
 struct dupwait_info {
   int atr;			/* the bots attributes			*/
   struct chat_info *chat;	/* holds current chat data		*/
@@ -391,38 +382,6 @@ struct dupwait_info {
 #define STDOUT     1
 #define STDERR     2
 
-/* Logfile display flags
- */
-#define LOG_MSGS     0x000001	/* m   msgs/notice/ctcps		*/
-#define LOG_PUBLIC   0x000002	/* p   public msg/notice/ctcps		*/
-#define LOG_JOIN     0x000004	/* j   channel joins/parts/etc		*/
-#define LOG_MODES    0x000008	/* k   mode changes/kicks/bans		*/
-#define LOG_CMDS     0x000010	/* c   user dcc or msg commands		*/
-#define LOG_MISC     0x000020	/* o   other misc bot things		*/
-#define LOG_BOTS     0x000040	/* b   bot notices			*/
-#define LOG_RAW      0x000080	/* r   raw server stuff coming in	*/
-#define LOG_FILES    0x000100	/* x   file transfer commands and stats	*/
-#define LOG_LEV1     0x000200	/* 1   user log level			*/
-#define LOG_LEV2     0x000400	/* 2   user log level			*/
-#define LOG_LEV3     0x000800	/* 3   user log level			*/
-#define LOG_LEV4     0x001000	/* 4   user log level			*/
-#define LOG_LEV5     0x002000	/* 5   user log level			*/
-#define LOG_LEV6     0x004000	/* 6   user log level			*/
-#define LOG_LEV7     0x008000	/* 7   user log level			*/
-#define LOG_LEV8     0x010000	/* 8   user log level			*/
-#define LOG_SERV     0x020000	/* s   server information		*/
-#define LOG_DEBUG    0x040000	/* d   debug				*/
-#define LOG_WALL     0x080000	/* w   wallops				*/
-#define LOG_SRVOUT   0x100000	/* v   server output			*/
-#define LOG_BOTNET   0x200000	/* t   botnet traffic			*/
-#define LOG_BOTSHARE 0x400000	/* h   share traffic			*/
-#define LOG_ALL      0x7fffff	/* (dump to all logfiles)		*/
-
-#define FILEDB_HIDE     1
-#define FILEDB_UNHIDE   2
-#define FILEDB_SHARE    3
-#define FILEDB_UNSHARE  4
-
 /* Socket flags:
  */
 #define SOCK_UNUSED     0x0001	/* empty socket				*/
@@ -457,9 +416,6 @@ enum {
 #define DP_SERVER_NEXT  0x7FF8
 #define DP_HELP_NEXT    0x7FF9
 
-#define NORMAL          0
-#define QUICK           1
-
 /* Return codes for add_note */
 #define NOTE_ERROR      0	/* error			*/
 #define NOTE_OK         1	/* success			*/
@@ -472,10 +428,6 @@ enum {
 
 #define STR_PROTECT     2
 #define STR_DIR         1
-
-#define HELP_DCC        1
-#define HELP_TEXT       2
-#define HELP_IRC        16
 
 /* This is used by the net module to keep track of sockets and what's
  * queued on them

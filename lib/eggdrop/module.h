@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.11 2002/01/13 19:13:23 ite Exp $
+ * $Id: module.h,v 1.12 2002/01/19 20:08:57 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -33,6 +33,8 @@
 #include "modvals.h"
 #include "src/tandem.h"
 #include "src/registry.h"
+#include "src/logfile.h"
+#include "src/dns.h"
 
 /*
  * This file contains all the orrible stuff required to do the lookup

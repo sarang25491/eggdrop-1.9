@@ -4,7 +4,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.39 2001/12/29 21:21:18 guppy Exp $
+ * $Id: chanprog.c,v 1.40 2002/01/19 20:08:58 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -36,6 +36,8 @@
 #include <sys/utsname.h>
 #endif
 #include "modules.h"
+#include "logfile.h"
+#include "misc.h"
 
 extern struct userrec	*userlist;
 extern Tcl_Interp	*interp;

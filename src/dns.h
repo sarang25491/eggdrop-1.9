@@ -2,7 +2,7 @@
  * dns.h
  *   stuff used by dns.c
  *
- * $Id: dns.h,v 1.8 2001/10/10 10:44:04 tothwolf Exp $
+ * $Id: dns.h,v 1.9 2002/01/19 20:08:58 ite Exp $
  */
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -27,26 +27,20 @@
 #ifndef _EGG_DNS_H
 #define _EGG_DNS_H
 
-typedef struct {
-  char *name;
-  void (*event)(char *, char *, int, void *);
-} devent_type;
+/* Flags for dns_type
+ */
+#define RES_HOSTBYIP  1         /* hostname to IP address               */
+#define RES_IPBYHOST  2         /* IP address to hostname               */
 
-typedef struct {
-  char *proc;			/* Tcl proc			  */
-  char *paras;			/* Additional parameters	  */
-} devent_tclinfo_t;
+#ifndef MAKING_MODS
 
-typedef struct devent_str {
-  struct devent_str *next;	/* Pointer to next dns_event	  */
-  devent_type	*type;
-  u_8bit_t	lookup;		/* RES_IPBYHOST or RES_HOSTBYIP	  */
-  char	*hostname;		/* Hostname or IP address (as string) */
-  void		*other;		/* Data specific to the event type */
-} devent_t;
+void dns_hostbyip(char *);
+void dns_ipbyhost(char *);
+void call_hostbyip(char *, char *, int);
+void call_ipbyhost(char *, char *, int);
+void dcc_dnshostbyip(char *);
+void dcc_dnsipbyhost(char *);
 
-#define DNS_CHECK_IPV4 1
-#define DNS_CHECK_IPV6 2
-#define DNS_CHECK_BOTH 3
+#endif /* MAKING_MODS */
 
 #endif	/* _EGG_DNS_H */

@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.69 2002/01/17 00:52:20 ite Exp $
+ * $Id: dcc.c,v 1.70 2002/01/19 20:08:58 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -32,6 +32,9 @@
 #include "tandem.h"
 #include "script_api.h"
 #include "script.h"
+#include "logfile.h"
+#include "dns.h"
+#include "misc.h"
 
 /* Includes for botnet md5 challenge/response code <cybah> */
 #include "md5.h"

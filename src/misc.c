@@ -1,12 +1,12 @@
 /*
- * misc.c -- handles:
- *   split() maskhost() dumplots() daysago() days() daysdur()
+ * misc.c
+ *   maskhost() dumplots() daysago() days() daysdur()
  *   queueing output for the bot (msg and help)
  *   resync buffers for sharebots
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.59 2002/01/16 22:09:43 ite Exp $
+ * $Id: misc.c,v 1.60 2002/01/19 20:08:58 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -28,11 +28,13 @@
  */
 
 #include "main.h"
+#include "misc.h"
 #include <unistd.h>
 #include <fcntl.h>
 #include "chan.h"
 #include "tandem.h"
 #include "modules.h"
+#include "logfile.h"
 #ifdef HAVE_UNAME
 #  include <sys/utsname.h>
 #endif

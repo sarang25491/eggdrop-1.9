@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.49 2002/01/16 22:09:42 ite Exp $
+ * $Id: botnet.c,v 1.50 2002/01/19 20:08:57 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -31,6 +31,9 @@
 #include "main.h"
 #include "tandem.h"
 #include "modules.h"
+#include "logfile.h"
+#include "misc.h"
+#include "dns.h"
 
 extern char		 spaces[], spaces2[];
 extern int		 dcc_total, backgrd, connect_timeout, max_dcc,

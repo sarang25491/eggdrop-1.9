@@ -3,7 +3,7 @@
  *   commands that comes across the botnet
  *   userfile transfer and update commands from sharebots
  *
- * $Id: botcmd.c,v 1.28 2001/12/29 20:59:49 guppy Exp $
+ * $Id: botcmd.c,v 1.29 2002/01/19 20:08:57 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -29,6 +29,8 @@
 #include "users.h"
 #include "chan.h"
 #include "modules.h"
+#include "logfile.h"
+#include "misc.h"
 
 extern char		 botnetnick[], ver[], admin[], network[], motdfile[];
 extern int		 dcc_total, remote_boots, noshare;

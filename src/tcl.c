@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.65 2002/01/16 18:09:22 stdarg Exp $
+ * $Id: tcl.c,v 1.66 2002/01/19 20:08:58 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -30,6 +30,8 @@
 #include "main.h"
 #include "script_api.h"
 #include "script.h"
+#include "logfile.h"
+#include "misc.h"
 
 /* Used for read/write to internal strings */
 typedef struct {

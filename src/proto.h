@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.64 2002/01/13 19:13:23 ite Exp $
+ * $Id: proto.h,v 1.65 2002/01/19 20:08:58 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -141,14 +141,6 @@ void del_dcc(int);
 char *add_cr(char *);
 void changeover_dcc(int, struct dcc_table *, int);
 
-/* dns.c */
-void dns_hostbyip(char *);
-void dns_ipbyhost(char *);
-void call_hostbyip(char *, char *, int);
-void call_ipbyhost(char *, char *, int);
-void dcc_dnshostbyip(char *);
-void dcc_dnsipbyhost(char *);
-
 /* gotdcc.c */
 void gotdcc(char *, char *, struct userrec *, char *);
 void do_boot(int, char *, char *);
@@ -158,38 +150,6 @@ int detect_dcc_flood(time_t *, struct chat_info *, int);
 void fatal(const char *, int);
 void patch(const char *);
 void backup_userfile(void);
-
-/* misc.c */
-int putlog EGG_VARARGS(int, arg1);
-void flushlogs();
-void check_logsize();
-void maskhost(const char *, char *);
-char *stristr(char *, char *);
-void stridx(char *, char *, int);
-void dumplots(int, const char *, char *);
-void daysago(time_t, time_t, char *);
-void days(time_t, time_t, char *);
-void daysdur(time_t, time_t, char *);
-void help_subst(char *, char *, struct flag_record *, int, char *);
-void sub_lang(int, char *);
-void show_motd(int);
-void tellhelp(int, char *, struct flag_record *, int);
-void tellwildhelp(int, char *, struct flag_record *);
-void tellallhelp(int, char *, struct flag_record *);
-void showhelp(char *, char *, struct flag_record *, int);
-void rem_help_reference(char *file);
-void add_help_reference(char *file);
-void debug_help(int);
-void reload_help_data(void);
-char *extracthostname(char *);
-void show_telnet_banner(int i);
-void make_rand_str(char *, int);
-int oatoi(const char *);
-void logsuffix_change(char *);
-#if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
-void str_nutf8tounicode(char *str, int len);
-#endif
-void kill_bot(char *, char *);
 
 /* net.c */
 unsigned long iptolong(IP);

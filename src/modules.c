@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.98 2002/01/16 22:09:43 ite Exp $
+ * $Id: modules.c,v 1.99 2002/01/19 20:08:58 ite Exp $
  */
 /* 
  * Copyright (C) 1997 Robey Pointer
@@ -30,6 +30,9 @@
 #include "tandem.h"
 #include "registry.h"
 #include "core_binds.h"
+#include "logfile.h"
+#include "misc.h"
+#include "dns.h"
 #include <ctype.h>
 #include "lib/egglib/msprintf.h"
 #include "lib/egglib/mstack.h"

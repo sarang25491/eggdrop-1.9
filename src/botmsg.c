@@ -5,7 +5,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: botmsg.c,v 1.27 2002/01/04 03:36:11 ite Exp $
+ * $Id: botmsg.c,v 1.28 2002/01/19 20:08:57 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -28,6 +28,7 @@
 
 #include "main.h"
 #include "tandem.h"
+#include "misc.h"
 
 extern struct dcc_t	*dcc;
 extern int		 dcc_total, tands;
