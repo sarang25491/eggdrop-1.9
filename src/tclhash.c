@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.52 2001/10/21 03:44:30 stdarg Exp $
+ * $Id: tclhash.c,v 1.53 2001/10/21 03:49:33 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -170,7 +170,7 @@ void binds_init(void)
 	BT_away = add_bind_table2("away", 3, "sis", MATCH_MASK, BIND_STACKABLE);
 	BT_dcc = add_bind_table2("dcc", 3, "Uis", MATCH_MASK, BIND_USE_ATTR);
 	add_builtins2(BT_dcc, C_dcc);
-	BT_chat = add_bind_table2("chat", 3, "Uis", MATCH_MASK, BIND_STACKABLE | BIND_BREAKABLE);
+	BT_chat = add_bind_table2("chat", 3, "sis", MATCH_MASK, BIND_STACKABLE | BIND_BREAKABLE);
 	BT_act = add_bind_table2("act", 3, "sis", MATCH_MASK, BIND_STACKABLE);
 	BT_bcst = add_bind_table2("bcst", 3, "sis", MATCH_MASK, BIND_STACKABLE);
 	BT_note = add_bind_table2("note", 3 , "sss", MATCH_EXACT, 0);
