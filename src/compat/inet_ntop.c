@@ -1,7 +1,7 @@
 /*
  * inet_ntop.c -- provides inet_ntop() if necessary.
  *
- * $Id: inet_ntop.c,v 1.2 2001/07/29 19:43:05 drummer Exp $
+ * $Id: inet_ntop.c,v 1.3 2001/08/10 14:33:11 drummer Exp $
  */
 /*
  * Copyright (c) 1996-1999 by Internet Software Consortium.
@@ -32,7 +32,6 @@ static const char rcsid[] = "$BINDId: inet_ntop.c,v 1.8 1999/10/13 16:39:28 vixi
 
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <arpa/nameser.h>
 
 #include <errno.h>
 #include <stdio.h>

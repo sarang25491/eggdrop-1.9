@@ -540,6 +540,8 @@ int adns_init(adns_state *ads_r, adns_initflags flags, FILE *diagfile) {
 
   readconfig(ads,"/etc/resolv.conf",1);
   readconfig(ads,"/etc/resolv-adns.conf",0);
+  /* checking in the current dir for cygwin */
+  readconfig(ads,"resolv.conf",0);
   readconfigenv(ads,"RES_CONF");
   readconfigenv(ads,"ADNS_RES_CONF");
 
