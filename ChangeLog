@@ -1,3 +1,9 @@
+2002-02-17 19:49  Federico Mennite <ite@techmonkeys.org>
+
+	* nettype/dalnet.server.conf:
+
+	changed kick-method from 1 to 4 in DALnet's server config template 
+
 2002-02-17 18:34  Federico Mennite <ite@techmonkeys.org>
 
 	* configure.ac, acconfig/acinclude.m4,
