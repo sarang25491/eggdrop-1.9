@@ -2,7 +2,7 @@
  * assoc.c -- part of assoc.mod
  *   the assoc code, moved here mainly from botnet.c for module work
  *
- * $Id: assoc.c,v 1.24 2001/10/14 20:04:34 ite Exp $
+ * $Id: assoc.c,v 1.25 2001/10/17 00:43:32 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -407,7 +407,7 @@ char *start(Function * global_funcs)
   }
   assoc = NULL;
   BT_dcc = find_bind_table2("dcc");
-  if (BT_dcc) add_builtins(BT_dcc, mydcc);
+  if (BT_dcc) add_builtins2(BT_dcc, mydcc);
   add_builtins(H_bot, mybot);
   add_builtins(H_link, mylink);
   add_tcl_commands(mytcl);
