@@ -1,3 +1,12 @@
+2002-05-28 20:36  stdarg <stdarg@techmonkeys.org>
+
+	* modules/filesys/tclfiles.c, modules/notes/notes.c,
+	modules/server/server.c, modules/server/server.h,
+	modules/server/servmsg.c, modules/uptime/uptime.c, src/botmsg.c:
+
+	
+	* Got rid of a bit of findanyidx() usage 
+
 2002-05-28 05:13  stdarg <stdarg@techmonkeys.org>
 
 	* modules/channels/tclchan.c:
