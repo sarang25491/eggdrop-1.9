@@ -2,9 +2,20 @@
 
 lib/compat/getopt.c
 modules/blowfish/blowfish.c
+modules/dccparty/dccparty.c
+modules/dccparty/events.c
+modules/ircparty/ircparty.c
 modules/javascript/javascript.c
+modules/oldbotnet/oldbotnet.c
+modules/perlscript/mod_iface.c
 modules/server/input.c
+modules/server/nicklist.c
+modules/server/party_commands.c
+modules/server/server.c
+modules/server/servsock.c
 modules/tclscript/tclscript.c
+modules/telnetparty/events.c
+modules/telnetparty/telnetparty.c
 src/bg.c
 src/core_party.c
 src/logfile.c

@@ -1,14 +1,13 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Eggheads Development Team
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# eggdrop.pot
+# Copyright (C) 2004 Eggheads Development Team
+# This file is distributed under the same license as the Eggdrop package.
+
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-12-17 18:15-0600\n"
+"POT-Creation-Date: 2003-12-17 21:21-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -75,10 +74,292 @@ msgstr ""
 msgid "%s: option `-W %s' doesn't allow an argument\n"
 msgstr ""
 
-#: modules/javascript/javascript.c:634
+#: modules/dccparty/dccparty.c:64
+#, c-format
+msgid "Ignoring chat request from %s (user unknown)."
+msgstr ""
+
+#: modules/dccparty/dccparty.c:88
+#, c-format
+msgid ""
+"Hello %s/%d!\r\n"
+"\r\n"
+msgstr ""
+
+#: modules/dccparty/dccparty.c:89 modules/dccparty/dccparty.c:169
+#: modules/telnetparty/telnetparty.c:377
+msgid "Please enter your nickname.\r\n"
+msgstr ""
+
+#: modules/dccparty/dccparty.c:139 modules/telnetparty/telnetparty.c:287
+#: modules/telnetparty/telnetparty.c:338
+msgid ""
+"\r\n"
+"Please enter your nickname.\r\n"
+msgstr ""
+
+#: modules/dccparty/dccparty.c:156 modules/telnetparty/telnetparty.c:362
+msgid "Please enter your password.\r\n"
+msgstr ""
+
+#: modules/dccparty/dccparty.c:161 modules/telnetparty/telnetparty.c:369
+msgid ""
+"Invalid username/password.\r\n"
+"\r\n"
+msgstr ""
+
+#: modules/dccparty/dccparty.c:175
+msgid ""
+"\r\n"
+"Welcome to the dcc partyline interface!\r\n"
+msgstr ""
+
+#: modules/dccparty/dccparty.c:176 modules/telnetparty/telnetparty.c:384
+#, c-format
+msgid "Your ident is: %s\r\n"
+msgstr ""
+
+#: modules/dccparty/dccparty.c:177 modules/telnetparty/telnetparty.c:385
+#, c-format
+msgid "Your hostname is: %s\r\n"
+msgstr ""
+
+#: modules/dccparty/dccparty.c:205
+msgid "Deleted!"
+msgstr ""
+
+#: modules/dccparty/events.c:34 modules/telnetparty/events.c:33
+#, c-format
+msgid "%s is now known as %s.\n"
+msgstr ""
+
+#: modules/dccparty/events.c:42 modules/telnetparty/events.c:41
+#, c-format
+msgid "%s (%s@%s) has quit: %s\n"
+msgstr ""
+
+#: modules/dccparty/events.c:61 modules/telnetparty/events.c:60
+#, c-format
+msgid "%s %s (%s@%s) has joined the channel.\r\n"
+msgstr ""
+
+#: modules/dccparty/events.c:69 modules/telnetparty/events.c:68
+#, c-format
+msgid "%s %s (%s@%s) has left the channel: %s\r\n"
+msgstr ""
+
+#: modules/ircparty/ircparty.c:107
+#, c-format
+msgid ":eggdrop.bot NOTICE AUTH :*** Hello %s/%d!\r\n"
+msgstr ""
+
+#: modules/ircparty/ircparty.c:108
+msgid ""
+":eggdrop.bot NOTICE AUTH :*** Don't forget to use the /PASS command to send "
+"your password in addition to normal registration!\r\n"
+msgstr ""
+
+#: modules/ircparty/ircparty.c:158
+msgid ""
+"NOTICE *** Don't forget to use the /PASS command to send your password in "
+"addition to normal registration!\r\n"
+msgstr ""
+
+#: modules/ircparty/ircparty.c:166
+#, c-format
+msgid ":eggdrop.bot 001 %s :Welcome to the Eggdrop Partyline!\r\n"
+msgstr ""
+
+#: modules/ircparty/ircparty.c:167
+#, c-format
+msgid ":eggdrop.bot 375 %s :Message of the Day\r\n"
+msgstr ""
+
+#: modules/ircparty/ircparty.c:168
+#, c-format
+msgid ":eggdrop.bot 372 %s :There isn't one.\r\n"
+msgstr ""
+
+#: modules/ircparty/ircparty.c:169
+#, c-format
+msgid ":eggdrop.bot 376 %s :End of /MOTD command.\r\n"
+msgstr ""
+
+#: modules/ircparty/ircparty.c:174
+#, c-format
+msgid ":eggdrop.bot 461 %s JOIN :Not enough parameters.\r\n"
+msgstr ""
+
+#: modules/ircparty/ircparty.c:181
+#, c-format
+msgid ":eggdrop.bot 461 %s PART :Not enough parameters.\r\n"
+msgstr ""
+
+#: modules/ircparty/ircparty.c:197
+#, c-format
+msgid ":eggdrop.bot 461 %s PRIVMSG :Not enough parameters.\r\n"
+msgstr ""
+
+#: modules/ircparty/ircparty.c:203 modules/ircparty/ircparty.c:208
+#, c-format
+msgid ":eggdrop.bot 401 %s %s :No such nick/channel\r\n"
+msgstr ""
+
+#: modules/ircparty/ircparty.c:233
+#, c-format
+msgid ":eggdrop.bot 315 %s %s :End of /WHO list.\r\n"
+msgstr ""
+
+#: modules/ircparty/ircparty.c:271
+msgid "NOTICE *** Invalid username/password.\r\n"
+msgstr ""
+
+#: modules/javascript/javascript.c:179
+msgid "Don't create your own eggvars!"
+msgstr ""
+
+#: modules/javascript/javascript.c:533
+#, c-format
+msgid "User not found: %s"
+msgstr ""
+
+#: modules/javascript/javascript.c:541
+#, c-format
+msgid "Converting unknown! '%c'"
+msgstr ""
+
+#: modules/javascript/javascript.c:544
+#, c-format
+msgid "Cannot convert JS object to unknown variable type '%s'."
+msgstr ""
+
+#: modules/javascript/javascript.c:634 modules/tclscript/tclscript.c:581
 msgid ""
 "You must be a permanent owner (defined in the config file) to use this "
 "command.\n"
+msgstr ""
+
+#: modules/javascript/javascript.c:639
+msgid "JS Error: unknown for now\n"
+msgstr ""
+
+#: modules/javascript/javascript.c:660
+#, c-format
+msgid "Using JavaScript version %s.\n"
+msgstr ""
+
+#: modules/javascript/javascript.c:664
+#, c-format
+msgid "    Using JavaScript version %s.\n"
+msgstr ""
+
+#: modules/oldbotnet/oldbotnet.c:83
+msgid "*** Disconnecting"
+msgstr ""
+
+#: modules/oldbotnet/oldbotnet.c:139
+msgid "Syntax: <obot> <host> <port> [username] [password]"
+msgstr ""
+
+#: modules/oldbotnet/oldbotnet.c:148
+msgid "Could not get local botname; please specify a username to log in as."
+msgstr ""
+
+#: modules/oldbotnet/oldbotnet.c:151
+#, c-format
+msgid "No username specified, using '%s' by default."
+msgstr ""
+
+#: modules/oldbotnet/oldbotnet.c:157
+#, c-format
+msgid "Could not create obot '%s'."
+msgstr ""
+
+#: modules/oldbotnet/oldbotnet.c:183
+msgid "Syntax: olink <obot>"
+msgstr ""
+
+#: modules/oldbotnet/oldbotnet.c:192
+#, c-format
+msgid "Error: '%s' is not an obot."
+msgstr ""
+
+#: modules/oldbotnet/oldbotnet.c:208
+#, c-format
+msgid "Linking to %s (%s %d) on idx %d as %s."
+msgstr ""
+
+#: modules/oldbotnet/oldbotnet.c:223
+#, c-format
+msgid "oldbotnet error: password on %s needs to be reset."
+msgstr ""
+
+#: modules/oldbotnet/oldbotnet.c:232
+#, c-format
+msgid "Calculating md5 of '%s' + '%s'."
+msgstr ""
+
+#: modules/oldbotnet/oldbotnet.c:240
+#, c-format
+msgid "Result: '%s'"
+msgstr ""
+
+#: modules/oldbotnet/oldbotnet.c:252
+msgid "oldbotnet error: password was rejected."
+msgstr ""
+
+#: modules/oldbotnet/oldbotnet.c:383
+#, c-format
+msgid "eof from %s (%s)."
+msgstr ""
+
+#: modules/perlscript/mod_iface.c:18
+#, c-format
+msgid "Perl error: %s"
+msgstr ""
+
+#: modules/perlscript/mod_iface.c:29
+msgid "Sorry, you must be a permanent owner to use this command."
+msgstr ""
+
+#: modules/perlscript/mod_iface.c:34
+msgid "Syntax: .perl <perlexpression>"
+msgstr ""
+
+#: modules/server/input.c:226
+#, c-format
+msgid "Action: %s %s"
+msgstr ""
+
+#: modules/server/input.c:393
+#, c-format
+msgid "NICK IS INVALID: %s (keeping '%s')."
+msgstr ""
+
+#: modules/server/input.c:396
+#, c-format
+msgid "Server says my nickname ('%s') is invalid, trying new random nick."
+msgstr ""
+
+#. We are online and have a nickname, we'll keep it
+#: modules/server/input.c:412
+#, c-format
+msgid "Nick is in use: '%s' (keeping '%s')."
+msgstr ""
+
+#: modules/server/input.c:415
+#, c-format
+msgid "Nick is in use: '%s' (trying next one)."
+msgstr ""
+
+#: modules/server/input.c:428
+#, c-format
+msgid "Cannot change to banned nickname (%s on %s).)"
+msgstr ""
+
+#: modules/server/input.c:438
+#, c-format
+msgid "Can't change nickname to %s. Is my nickname banned?"
 msgstr ""
 
 #: modules/server/input.c:451
@@ -92,6 +373,209 @@ msgstr ""
 #: modules/server/input.c:461
 #, c-format
 msgid "%s says I'm not registered, trying next one."
+msgstr ""
+
+#: modules/server/input.c:462
+msgid "The server says I'm not registered, trying next one."
+msgstr ""
+
+#: modules/server/input.c:484
+msgid "Disconnecting from server."
+msgstr ""
+
+#: modules/server/input.c:485
+msgid "disconnecting due to error"
+msgstr ""
+
+#: modules/server/nicklist.c:25
+#, c-format
+msgid "try_next_nick: using random nick because %s."
+msgstr ""
+
+#: modules/server/nicklist.c:25
+msgid "none of the defined nicks are valid"
+msgstr ""
+
+#: modules/server/nicklist.c:25
+msgid "there are no nicks defined"
+msgstr ""
+
+#: modules/server/party_commands.c:15
+msgid "The server list is empty."
+msgstr ""
+
+#: modules/server/party_commands.c:16
+#, c-format
+msgid "%d server%s:"
+msgstr ""
+
+#: modules/server/party_commands.c:18
+#, c-format
+msgid "   %s (port %d)%s"
+msgstr ""
+
+#: modules/server/party_commands.c:18 modules/server/party_commands.c:19
+msgid " (password set)"
+msgstr ""
+
+#: modules/server/party_commands.c:19
+#, c-format
+msgid "   %s (default port)%s"
+msgstr ""
+
+#: modules/server/party_commands.c:53
+msgid "Syntax: +server <host> [port] [pass]"
+msgstr ""
+
+#: modules/server/party_commands.c:58
+msgid "Please specify a valid host."
+msgstr ""
+
+#: modules/server/party_commands.c:63 modules/server/party_commands.c:109
+#, c-format
+msgid "Added %s:%d.\n"
+msgstr ""
+
+#: modules/server/party_commands.c:74
+msgid "Syntax: -server <host> [port] [pass]"
+msgstr ""
+
+#: modules/server/party_commands.c:81
+msgid "No matching servers."
+msgstr ""
+
+#: modules/server/party_commands.c:84
+#, c-format
+msgid "Deleted server %d."
+msgstr ""
+
+#: modules/server/party_commands.c:92
+msgid "Syntax: dump <server stuff>"
+msgstr ""
+
+#: modules/server/party_commands.c:127
+#, c-format
+msgid "Syntax: %s <nick/chan> <message>"
+msgstr ""
+
+#: modules/server/party_commands.c:133
+#, c-format
+msgid "Msg to %s: %s"
+msgstr ""
+
+#: modules/server/party_commands.c:145
+msgid "Syntax: act <nick/chan> <action>"
+msgstr ""
+
+#: modules/server/party_commands.c:151
+#, c-format
+msgid "Action to %s: %s"
+msgstr ""
+
+#: modules/server/server.c:77
+#, c-format
+msgid "   Connecting to server %s:%d."
+msgstr ""
+
+#: modules/server/server.c:78
+#, c-format
+msgid "   Connecting to next server in %d seconds."
+msgstr ""
+
+#. First line, who we've connected to.
+#: modules/server/server.c:82
+#, c-format
+msgid "   Connected to %s:%d."
+msgstr ""
+
+#: modules/server/server.c:86
+#, c-format
+msgid "    Online as %s!%s@%s (%s)."
+msgstr ""
+
+#: modules/server/server.c:87
+#, c-format
+msgid "    Online as %s (still waiting for WHOIS result)."
+msgstr ""
+
+#: modules/server/server.c:89
+msgid "   Still logging in."
+msgstr ""
+
+#: modules/server/server.c:100
+msgid "server module unloading"
+msgstr ""
+
+#: modules/server/servsock.c:43
+msgid "Error connecting to next server: no servers are defined!"
+msgstr ""
+
+#: modules/server/servsock.c:56
+#, c-format
+msgid "Connecting to %s (%d)."
+msgstr ""
+
+#: modules/server/servsock.c:59
+msgid "Error connecting to server."
+msgstr ""
+
+#: modules/server/servsock.c:130
+#, c-format
+msgid "Connected to %s, logging in."
+msgstr ""
+
+#: modules/tclscript/tclscript.c:194
+#, c-format
+msgid "Error opening Tcl error log (%s)!"
+msgstr ""
+
+#: modules/tclscript/tclscript.c:524
+msgid "Cannot convert Tcl object to unknown variable type '"
+msgstr ""
+
+#: modules/tclscript/tclscript.c:586
+msgid "Syntax: .tcl <tclexpression>"
+msgstr ""
+
+#: modules/tclscript/tclscript.c:593
+#, c-format
+msgid ""
+"Tcl error: %s\n"
+"\n"
+msgstr ""
+
+#: modules/tclscript/tclscript.c:597
+#, c-format
+msgid ""
+"Tcl: %s\n"
+"\n"
+msgstr ""
+
+#: modules/tclscript/tclscript.c:679
+#, c-format
+msgid "Using Tcl version %d.%d (by header).\n"
+msgstr ""
+
+#: modules/tclscript/tclscript.c:683
+#, c-format
+msgid "    Using Tcl version %d.%d (by header).\n"
+msgstr ""
+
+#: modules/tclscript/tclscript.c:684
+msgid ""
+"return \"    Library: [info library]\\n    Reported version: [info "
+"tclversion]\\n    Reported patchlevel: [info patchlevel]\""
+msgstr ""
+
+#: modules/telnetparty/telnetparty.c:286
+#, c-format
+msgid "Hello %s/%d!\r\n"
+msgstr ""
+
+#: modules/telnetparty/telnetparty.c:383
+msgid ""
+"\r\n"
+"Welcome to the telnet partyline interface!\r\n"
 msgstr ""
 
 #. Kill bot incase a botchk is run from crond.

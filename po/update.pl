@@ -3,7 +3,7 @@
 #
 #  GNOME PO Update Utility
 #
-#  $Id: update.pl,v 1.3 2003/02/26 01:51:13 wcc Exp $
+#  $Id: update.pl,v 1.4 2003/12/18 02:23:39 wcc Exp $
 #
 #  Copyright (C) 2000 Free Software Foundation.
 #
@@ -300,9 +300,16 @@ sub GeneratePot{
              ." --copyright-holder=\"Eggheads Development Team\"";  
     $GTEST   ="test \! -f $PACKAGE\.po \|\| \( rm -f \.\/$PACKAGE\.pot "
              ."&& mv $PACKAGE\.po \.\/$PACKAGE\.pot \)";
+    $SED     ="cat $PACKAGE\.pot \| "
+             ."sed -e \'s/# SOME DESCRIPTIVE TITLE./# $PACKAGE\.pot/g\' "
+             ."-e \'s/# Copyright (C) YEAR Eggheads Development Team/# Copyright (C) 2004 Eggheads Development Team/g\' "
+             ."-e \'s/# This file is distributed under the same license as the PACKAGE package\./# This file is distributed under the same license as the Eggdrop package\./g\' "
+             ."-e \'s/# FIRST AUTHOR <EMAIL\@ADDRESS>, YEAR\.//g\' "
+             ."> $PACKAGE\.pot_ && mv $PACKAGE\.pot_ $PACKAGE\.pot";
 
     system($GETTEXT);
     system($GTEST);
+    system($SED);
     print "Wrote $PACKAGE.pot\n";
     system("mv POTFILES.in.old POTFILES.in");
 

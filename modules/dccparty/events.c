@@ -31,7 +31,7 @@ static int on_nick(void *client_data, partymember_t *src, const char *oldnick, c
 {
 	dcc_session_t *session = client_data;
 
-	egg_iprintf(session->idx, "%s is now known as %s\n", oldnick, newnick);
+	egg_iprintf(session->idx, _("%s is now known as %s.\n"), oldnick, newnick);
 	return(0);
 }
 
@@ -39,7 +39,7 @@ static int on_quit(void *client_data, partymember_t *src, const char *text, int 
 {
 	dcc_session_t *session = client_data;
 
-	egg_iprintf(session->idx, "%s (%s@%s) has quit: %s\n", src->nick, src->ident, src->host, text);
+	egg_iprintf(session->idx, _("%s (%s@%s) has quit: %s\n"), src->nick, src->ident, src->host, text);
 	if (src == session->party) sockbuf_delete(session->idx);
 
 	return(0);
@@ -58,7 +58,7 @@ static int on_join(void *client_data, partychan_t *chan, partymember_t *src)
 {
 	dcc_session_t *session = client_data;
 
-	egg_iprintf(session->idx, "%s %s (%s@%s) has joined the channel\r\n", chan->name, src->nick, src->ident, src->host);
+	egg_iprintf(session->idx, _("%s %s (%s@%s) has joined the channel.\r\n"), chan->name, src->nick, src->ident, src->host);
 	return(0);
 }
 
@@ -66,6 +66,6 @@ static int on_part(void *client_data, partychan_t *chan, partymember_t *src, con
 {
 	dcc_session_t *session = client_data;
 
-	egg_iprintf(session->idx, "%s %s (%s@%s) has left the channel: %s\r\n", chan->name, src->nick, src->ident, src->host, text);
+	egg_iprintf(session->idx, _("%s %s (%s@%s) has left the channel: %s\r\n"), chan->name, src->nick, src->ident, src->host, text);
 	return(0);
 }

@@ -15,7 +15,7 @@ extern char *real_perl_cmd(char *text);
 /* Log an error message. */
 int log_error(char *msg)
 {
-	putlog(LOG_MISC, "*", "Perl error: %s", msg);
+	putlog(LOG_MISC, "*", _("Perl error: %s"), msg);
 	return(0);
 }
 
@@ -26,12 +26,12 @@ static int party_perl(partymember_t *p, char *nick, user_t *u, char *cmd, char *
 
 	/* You must be owner to use this command. */
 	if (!u || !egg_isowner(u->handle)) {
-		partymember_write(p, "Sorry, you must be a permanent owner to use this command.", -1);
+		partymember_write(p, _("Sorry, you must be a permanent owner to use this command."), -1);
 		return(BIND_RET_LOG);
 	}
 
 	if (!text) {
-		partymember_write(p, "Syntax: .perl perlexpression", -1);
+		partymember_write(p, _("Syntax: .perl <perlexpression>"), -1);
 		return(0);
 	}
 
@@ -64,7 +64,7 @@ int perlscript_LTX_start(egg_module_t *modinfo)
 {
 	modinfo->name = "perlscript";
 	modinfo->author = "eggdev";
-	modinfo->version = "1.7.0";
+	modinfo->version = "1.0.0";
 	modinfo->description = "provides perl scripting support";
 	modinfo->close_func = perlscript_close;
 

@@ -74,29 +74,19 @@ static int server_secondly()
 static void server_status(partymember_t *p, int details)
 {
 	if (!current_server.connected) {
-		if (current_server.idx >= 0) {
-			partymember_printf(p, "   Connecting to server %s:%d", current_server.server_host, current_server.port);
-		}
-		else {
-			partymember_printf(p, "   Connecting to next server in %d seconds", cycle_delay);
-		}
+		if (current_server.idx >= 0) partymember_printf(p, _("   Connecting to server %s:%d."), current_server.server_host, current_server.port);
+		else partymember_printf(p, _("   Connecting to next server in %d seconds."), cycle_delay);
 	}
 	else {
 		/* First line, who we've connected to. */
-		partymember_printf(p, "   Connected to %s:%d", current_server.server_self ? current_server.server_self : current_server.server_host, current_server.port);
+		partymember_printf(p, _("   Connected to %s:%d."), current_server.server_self ? current_server.server_self : current_server.server_host, current_server.port);
 
 		/* Second line, who we're connected as. */
 		if (current_server.registered) {
-			if (current_server.user) {
-				partymember_printf(p, "    Online as %s!%s@%s (%s)", current_server.nick, current_server.user, current_server.host, current_server.real_name);
-			}
-			else {
-				partymember_printf(p, "    Online as %s (still waiting for WHOIS result)", current_server.nick);
-			}
+			if (current_server.user) partymember_printf(p, _("    Online as %s!%s@%s (%s)."), current_server.nick, current_server.user, current_server.host, current_server.real_name);
+			else partymember_printf(p, _("    Online as %s (still waiting for WHOIS result)."), current_server.nick);
 		}
-		else {
-			partymember_printf(p, "   Still logging in");
-		}
+		else partymember_printf(p, _("   Still logging in."));
 	}
 }
 
@@ -107,7 +97,7 @@ static bind_list_t server_secondly_binds[] = {
 
 static int server_close(int why)
 {
-	kill_server("Server module unloading");
+	kill_server(_("server module unloading"));
 	cycle_delay = 100;
 
 	bind_rem_list("raw", server_raw_binds);
@@ -196,7 +186,7 @@ int start(egg_module_t *modinfo)
 {
 	modinfo->name = "server";
 	modinfo->author = "eggdev";
-	modinfo->version = "1.7.0";
+	modinfo->version = "1.0.0";
 	modinfo->description = "normal irc server support";
 	modinfo->close_func = server_close;
 

@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: javascript.c,v 1.20 2003/12/18 01:00:35 wcc Exp $";
+static const char rcsid[] = "$Id: javascript.c,v 1.21 2003/12/18 02:23:39 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -176,7 +176,7 @@ static int my_eggvar_set(JSContext *cx, JSObject *obj, int argc, jsval *argv, js
 
 	linked_var = JS_GetPrivate(cx, obj);
 	if (!linked_var) {
-		putlog(LOG_MISC, "*", "don't create your own eggvars!");
+		putlog(LOG_MISC, "*", _("Don't create your own eggvars!"));
 		return JS_FALSE;
 	}
 
@@ -263,8 +263,8 @@ static void log_error_message(Tcl_Interp *myinterp)
 */
 
 /* When you use a script_callback_t's callback() function, this gets executed.
-	It converts the C variables to JS variables and executes the JS script.
-*/
+ * It converts the C variables to JS variables and executes the JS script.
+ */
 static int my_js_callbacker(script_callback_t *me, ...)
 {
 	jsval *argv, result = 0;
@@ -530,7 +530,7 @@ static int js_to_c_var(JSContext *cx, JSObject *obj, jsval val, script_var_t *va
 			u = user_lookup_by_handle(handle);
 			var->value = u;
 			if (!u) {
-				JS_ReportError(cx, "User not found: %s", handle);
+				JS_ReportError(cx, _("User not found: %s"), handle);
 				err = 1;
 			}
 			break;
@@ -538,10 +538,10 @@ static int js_to_c_var(JSContext *cx, JSObject *obj, jsval val, script_var_t *va
 		default: {
 			char vartype[2];
 
-			putlog(LOG_MISC, "*", "converting unknown! '%c'", type);
+			putlog(LOG_MISC, "*", _("Converting unknown! '%c'"), type);
 			vartype[0] = type;
 			vartype[1] = 0;
-			JS_ReportError(cx, "Cannot convert JS object to unknown variable type '%s'", vartype);
+			JS_ReportError(cx, _("Cannot convert JS object to unknown variable type '%s'."), vartype);
 			err = 1;
 		}
 	}
@@ -636,7 +636,7 @@ static int party_js(int pid, char *nick, user_t *u, char *cmd, char *text)
 	}
 
 	retval = JS_EvaluateScript(global_js_context, global_js_object, text, strlen(text), "console", curline++, &js_rval);
-	if (!retval) partyline_printf(pid, "JS Error: unknown for now\n");
+	if (!retval) partyline_printf(pid, _("JS Error: unknown for now\n"));
 	else {
 		JSString *str;
 
@@ -657,11 +657,11 @@ static void javascript_report(int idx, int details)
 	version_str = JS_VersionToString(version);
 
 	if (!details) {
-		dprintf(idx, "Using JavaScript version %s\n", version_str);
+		dprintf(idx, _("Using JavaScript version %s.\n"), version_str);
 		return;
 	}
 
-	dprintf(idx, "    Using JavaScript version %s\n", version_str);
+	dprintf(idx, _("    Using JavaScript version %s.\n"), version_str);
 }
 #endif
 
@@ -677,7 +677,7 @@ int javascript_LTX_start(egg_module_t *modinfo)
 {
 	modinfo->name = "javascript";
 	modinfo->author = "eggdev";
-	modinfo->version = "1.7.0";
+	modinfo->version = "1.0.0";
 	modinfo->description = "provides javascript scripting support";
 	modinfo->close_func = javascript_close;
 	javascript_init();

@@ -12,11 +12,11 @@ static int party_servers(partymember_t *p, const char *nick, user_t *u, const ch
 {
 	server_t *s;
 
-	if (server_list_len <= 0) partymember_printf(p, "The server list is empty.");
-	else partymember_printf(p, "%d server%s:", server_list_len, (server_list_len != 1) ? "s" : "");
+	if (server_list_len <= 0) partymember_printf(p, _("The server list is empty."));
+	else partymember_printf(p, _("%d server%s:"), server_list_len, (server_list_len != 1) ? "s" : "");
 	for (s = server_list; s; s = s->next) {
-		if (s->port) partymember_printf(p, "   %s (port %d)%s", s->host, s->port, s->pass ? " (password set)" : "");
-		else partymember_printf(p, "   %s (default port)%s", s->host, s->pass ? " (password set)" : "");
+		if (s->port) partymember_printf(p, _("   %s (port %d)%s"), s->host, s->port, s->pass ? _(" (password set)") : "");
+		else partymember_printf(p, _("   %s (default port)%s"), s->host, s->pass ? _(" (password set)") : "");
 	}
 	return(0);
 }
@@ -50,17 +50,17 @@ static int party_plus_server(partymember_t *p, const char *nick, user_t *u, cons
 	int port;
 
 	if (!text || !*text) {
-		partymember_printf(p, "Syntax: +server <host> [port] [pass]");
+		partymember_printf(p, _("Syntax: +server <host> [port] [pass]"));
 		return(0);
 	}
 	parse_server(text, &host, &port, &pass);
 	if (!strlen(host)) {
-		partymember_printf(p, "Please specify a valid host.");
+		partymember_printf(p, _("Please specify a valid host."));
 		free(host);
 		return(0);
 	}
 	server_add(host, port, pass);
-	partymember_printf(p, "Added %s:%d.\n", host, port ? port : server_config.default_port);
+	partymember_printf(p, _("Added %s:%d.\n"), host, port ? port : server_config.default_port);
 	free(host);
 	return(0);
 }
@@ -71,17 +71,17 @@ static int party_minus_server(partymember_t *p, const char *nick, user_t *u, con
 	int port, i;
 
 	if (!text || !*text) {
-		partymember_printf(p, "Syntax: -server <host> [port] [pass]");
+		partymember_printf(p, _("Syntax: -server <host> [port] [pass]"));
 		return(0);
 	}
 
 	parse_server(text, &host, &port, &pass);
 	i = server_find(host, port, pass);
 	free(host);
-	if (i < 0) partymember_printf(p, "No matching servers.");
+	if (i < 0) partymember_printf(p, _("No matching servers."));
 	else {
 		server_del(i);
-		partymember_printf(p, "Deleted server %d.", i+1);
+		partymember_printf(p, _("Deleted server %d."), i+1);
 	}
 	return(0);
 }
@@ -89,7 +89,7 @@ static int party_minus_server(partymember_t *p, const char *nick, user_t *u, con
 static int party_dump(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	if (!text || !*text) {
-		partymember_printf(p, "Syntax: dump <server stuff>");
+		partymember_printf(p, _("Syntax: dump <server stuff>"));
 		return(0);
 	}
 	printserv(SERVER_NORMAL, "%s\r\n", text);
@@ -106,7 +106,7 @@ static int party_jump(partymember_t *p, const char *nick, user_t *u, const char 
 		num = server_find(host, port, pass);
 		if (num < 0) {
 			server_add(host, port, pass);
-			partymember_printf(p, "Added %s:%d.\n", host, port ? port : server_config.default_port);
+			partymember_printf(p, _("Added %s:%d.\n"), host, port ? port : server_config.default_port);
 			num = 0;
 		}
 		free(host);
@@ -124,13 +124,13 @@ static int party_msg(partymember_t *p, const char *nick, user_t *u, const char *
 
 	egg_get_word(text, &next, &dest);
 	if (!next || !*next || !dest || !*dest) {
-		partymember_printf(p, "Syntax: %s <nick/chan> <message>", cmd);
+		partymember_printf(p, _("Syntax: %s <nick/chan> <message>"), cmd);
 		if (dest) free(dest);
 		return(0);
 	}
 	while (isspace(*next)) next++;
 	printserv(SERVER_NORMAL, "PRIVMSG %s :%s\r\n", dest, next);
-	partymember_printf(p, "Msg to %s: %s", dest, next);
+	partymember_printf(p, _("Msg to %s: %s"), dest, next);
 	free(dest);
 	return(0);
 }
@@ -142,13 +142,13 @@ static int party_act(partymember_t *p, const char *nick, user_t *u, const char *
 
 	egg_get_word(text, &next, &dest);
 	if (!next || !*next || !dest || !*dest) {
-		partymember_printf(p, "Syntax: act <nick/chan> <action>");
+		partymember_printf(p, _("Syntax: act <nick/chan> <action>"));
 		if (dest) free(dest);
 		return(0);
 	}
 	while (isspace(*next)) next++;
 	printserv(SERVER_NORMAL, "PRIVMSG %s :\001ACTION %s\001\r\n", dest, next);
-	partymember_printf(p, "Action to %s: %s", dest, next);
+	partymember_printf(p, _("Action to %s: %s"), dest, next);
 	free(dest);
 	return(0);
 }

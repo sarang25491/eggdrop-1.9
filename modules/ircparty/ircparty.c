@@ -104,8 +104,8 @@ static int irc_on_newclient(void *client_data, int idx, int newidx, const char *
 		session->flags |= STEALTH_LOGIN;
 	}
 	else {
-		egg_iprintf(newidx, ":eggdrop.bot NOTICE AUTH :*** Hello %s/%d!\r\n", peer_ip, peer_port);
-		sockbuf_write(newidx, ":eggdrop.bot NOTICE AUTH :*** Don't forget to use the /PASS command to send your password in addition to normal registration!\r\n", -1);
+		egg_iprintf(newidx, _(":eggdrop.bot NOTICE AUTH :*** Hello %s/%d!\r\n"), peer_ip, peer_port);
+		sockbuf_write(newidx, _(":eggdrop.bot NOTICE AUTH :*** Don't forget to use the /PASS command to send your password in addition to normal registration!\r\n"), -1);
 		session->state = STATE_UNREGISTERED;
 	}
 
@@ -155,7 +155,7 @@ static int process_results(irc_session_t *session)
 			sockbuf_delete(session->idx);
 			return(0);
 		}
-		sockbuf_write(session->idx, "NOTICE *** Don't forget to use the /PASS command to send your password in addition to normal registration!\r\n", -1);
+		sockbuf_write(session->idx, _("NOTICE *** Don't forget to use the /PASS command to send your password in addition to normal registration!\r\n"), -1);
 		session->state = STATE_UNREGISTERED;
 	}
 	return(0);
@@ -163,22 +163,22 @@ static int process_results(irc_session_t *session)
 
 static void irc_greet(irc_session_t *session)
 {
-	egg_iprintf(session->idx, ":eggdrop.bot 001 %s :Welcome to the Eggdrop Partyline!\r\n", session->nick);
-	egg_iprintf(session->idx, ":eggdrop.bot 375 %s :Message of the Day\r\n", session->nick);
-	egg_iprintf(session->idx, ":eggdrop.bot 372 %s :There isn't one.\r\n", session->nick);
-	egg_iprintf(session->idx, ":eggdrop.bot 376 %s :End of /MOTD command.\r\n", session->nick);
+	egg_iprintf(session->idx, _(":eggdrop.bot 001 %s :Welcome to the Eggdrop Partyline!\r\n"), session->nick);
+	egg_iprintf(session->idx, _(":eggdrop.bot 375 %s :Message of the Day\r\n"), session->nick);
+	egg_iprintf(session->idx, _(":eggdrop.bot 372 %s :There isn't one.\r\n"), session->nick);
+	egg_iprintf(session->idx, _(":eggdrop.bot 376 %s :End of /MOTD command.\r\n"), session->nick);
 }
 
 static int got_join(partymember_t *p, int idx, char *cmd, int nargs, char *args[])
 {
-	if (nargs != 1 || strlen(args[0]) < 2) egg_iprintf(idx, ":eggdrop.bot 461 %s JOIN :Not enough parameters.\r\n", p->nick);
+	if (nargs != 1 || strlen(args[0]) < 2) egg_iprintf(idx, _(":eggdrop.bot 461 %s JOIN :Not enough parameters.\r\n"), p->nick);
 	else partychan_join_name(args[0]+1, p);
 	return(0);
 }
 
 static int got_part(partymember_t *p, int idx, char *cmd, int nargs, char *args[])
 {
-	if (nargs != 1 || strlen(args[0]) < 2) egg_iprintf(idx, ":eggdrop.bot 461 %s PART :Not enough parameters.\r\n", p->nick);
+	if (nargs != 1 || strlen(args[0]) < 2) egg_iprintf(idx, _(":eggdrop.bot 461 %s PART :Not enough parameters.\r\n"), p->nick);
 	else partychan_part_name(args[0]+1, p, args[1]);
 	return(0);
 }
@@ -194,18 +194,18 @@ static int got_mode(partymember_t *p, int idx, char *cmd, int nargs, char *args[
 static int got_privmsg(partymember_t *p, int idx, char *cmd, int nargs, char *args[])
 {
 	if (nargs != 2) {
-		egg_iprintf(idx, ":eggdrop.bot 461 %s PRIVMSG :Not enough parameters.\r\n", p->nick);
+		egg_iprintf(idx, _(":eggdrop.bot 461 %s PRIVMSG :Not enough parameters.\r\n"), p->nick);
 		return(0);
 	}
 
 	if (*args[0] == '#') {
 		partychan_t *chan = partychan_lookup_name(args[0]+1);
-		if (!chan) egg_iprintf(idx, ":eggdrop.bot 401 %s %s :No such nick/channel\r\n", p->nick, args[0]);
+		if (!chan) egg_iprintf(idx, _(":eggdrop.bot 401 %s %s :No such nick/channel\r\n"), p->nick, args[0]);
 		else partyline_on_input(partychan_lookup_name(args[0]+1), p, args[1], -1);
 	}
 	else {
 		partymember_t *dest = partymember_lookup_nick(args[0]);
-		if (!dest) egg_iprintf(idx, ":eggdrop.bot 401 %s %s :No such nick/channel\r\n", p->nick, args[0]);
+		if (!dest) egg_iprintf(idx, _(":eggdrop.bot 401 %s %s :No such nick/channel\r\n"), p->nick, args[0]);
 		else partymember_msg(dest, p, args[1], -1);
 	}
 	return(0);
@@ -230,7 +230,7 @@ static int got_who(partymember_t *p, int idx, char *cmd, int nargs, char *args[]
 		putlog(LOG_MISC, "ircpartylog", ":eggdrop.bot 352 %s %s %s %s eggdrop.bot %s H :0 real name\r\n", p->nick, args[0], q->ident, q->host, q->nick);
 	}
 
-	egg_iprintf(idx, ":eggdrop.bot 315 %s %s :End of /WHO list.\r\n", p->nick, args[0]);
+	egg_iprintf(idx, _(":eggdrop.bot 315 %s %s :End of /WHO list.\r\n"), p->nick, args[0]);
 	return(0);
 }
 
@@ -268,7 +268,7 @@ static int irc_on_read(void *client_data, int idx, char *data, int len)
 			if (session->nick && session->pass) {
 				session->user = user_lookup_authed(session->nick, session->pass);
 				if (!session->user) {
-					sockbuf_write(session->idx, "NOTICE *** Invalid username/password.\r\n", -1);
+					sockbuf_write(session->idx, _("NOTICE *** Invalid username/password.\r\n"), -1);
 					sockbuf_delete(session->idx);
 					break;
 				}

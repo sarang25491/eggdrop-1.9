@@ -223,7 +223,7 @@ static int check_ctcp_ctcr(int which, int to_channel, user_t *u, char *nick, cha
 			flags = LOG_MSGS;
 			logdest = "*";
 		}
-		if (!strcasecmp(cmd, "ACTION")) putlog(flags, logdest, "Action: %s %s", nick, text);
+		if (!strcasecmp(cmd, "ACTION")) putlog(flags, logdest, _("Action: %s %s"), nick, text);
 		else putlog(flags, logdest, "CTCP%s %s%s%s from %s (to %s)", ctcptype, cmd, text ? ": " : "", text ? text : "", nick, dest);
 	}
 
@@ -390,10 +390,10 @@ static int got432(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 
 	badnick = args[1];
 	if (current_server.registered) {
-		putlog(LOG_MISC, "*", "NICK IS INVALID: %s (keeping '%s').", badnick, current_server.nick);
+		putlog(LOG_MISC, "*", _("NICK IS INVALID: %s (keeping '%s')."), badnick, current_server.nick);
 	}
 	else {
-		putlog(LOG_MISC, "*", "Server says my nickname ('%s') is invalid, trying new random nick.", badnick);
+		putlog(LOG_MISC, "*", _("Server says my nickname ('%s') is invalid, trying new random nick."), badnick);
 		try_random_nick();
 	}
 	return(0);
@@ -409,10 +409,10 @@ static int got433(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 	badnick = args[1];
 	if (current_server.registered) {
 		/* We are online and have a nickname, we'll keep it */
-		putlog(LOG_MISC, "*", "Nick is in use: '%s' (keeping '%s')", badnick, current_server.nick);
+		putlog(LOG_MISC, "*", _("Nick is in use: '%s' (keeping '%s')."), badnick, current_server.nick);
 	}
 	else {
-		putlog(LOG_MISC, "*", "Nick is in use: '%s' (trying next one)", badnick, current_server.nick);
+		putlog(LOG_MISC, "*", _("Nick is in use: '%s' (trying next one)."), badnick, current_server.nick);
 		try_next_nick();
 	}
 	return(0);
@@ -425,7 +425,7 @@ static int got435(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 
 	banned_nick = args[1];
 	chan = args[2];
-	putlog(LOG_MISC, "*", "Cannot change to banned nickname (%s on %s)", banned_nick, chan);
+	putlog(LOG_MISC, "*", _("Cannot change to banned nickname (%s on %s).)", banned_nick, chan);
 	return(0);
 }
 
@@ -435,7 +435,7 @@ static int got437(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 	char *chan;
 
 	chan = args[1];
-	putlog(LOG_MISC, "*", "Can't change nickname to %s. Is my nickname banned?", chan);
+	putlog(LOG_MISC, "*", _("Can't change nickname to %s. Is my nickname banned?"), chan);
 
 	/* If we aren't registered yet, try another nick. Otherwise just keep
 	 * our current nick (no action). */
@@ -459,7 +459,7 @@ static int got451(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 	* hoping the next server will work :) -poptix
 	*/
 	putlog(LOG_MISC, "*", _("%s says I'm not registered, trying next one."), from_nick);
-	kill_server("The server says I'm not registered, trying next one.");
+	kill_server(_("The server says I'm not registered, trying next one."));
 	return 0;
 }
 
@@ -481,8 +481,8 @@ static int goterror(char *from_nick, char *from_uhost, user_t *u, char *cmd, int
 	}
 
 	putlog(LOG_MSGS | LOG_SERV, "*", "-ERROR from server- %s", args[0]);
-	putlog(LOG_SERV, "*", "Disconnecting from server.");
-	kill_server("disconnecting due to error");
+	putlog(LOG_SERV, "*", _("Disconnecting from server."));
+	kill_server(_("disconnecting due to error"));
 	return(0);
 }
 

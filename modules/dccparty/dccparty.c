@@ -61,7 +61,7 @@ static int got_chat_request(char *nick, char *uhost, user_t *u, char *type, char
 
 	/* Ignore chats from unknown users. */
 	if (!u) {
-		putlog(LOG_MISC, "*", "Ignoring chat request from %s (user unknown).", nick);
+		putlog(LOG_MISC, "*", _("Ignoring chat request from %s (user unknown)."), nick);
 		return(0);
 	}
 
@@ -85,8 +85,8 @@ static int dcc_on_connect(void *client_data, int idx, const char *peer_ip, int p
 	socket_get_name(sock, NULL, &our_port);
 	session->ip = strdup(peer_ip);
 	session->port = peer_port;
-	egg_iprintf(idx, "Hello %s/%d!\r\n\r\n", peer_ip, peer_port);
-	egg_iprintf(idx, "Please enter your nickname.\r\n");
+	egg_iprintf(idx, _("Hello %s/%d!\r\n\r\n"), peer_ip, peer_port);
+	egg_iprintf(idx, _("Please enter your nickname.\r\n"));
 	session->state = STATE_NICKNAME;
 	session->count = 0;
 
@@ -136,7 +136,7 @@ static int process_results(dcc_session_t *session)
 			sockbuf_delete(session->idx);
 			return(0);
 		}
-		egg_iprintf(session->idx, "\r\nPlease enter your nickname.\r\n");
+		egg_iprintf(session->idx, _("\r\nPlease enter your nickname.\r\n"));
 		session->state = STATE_NICKNAME;
 	}
 	return(0);
@@ -153,12 +153,12 @@ static int dcc_on_read(void *client_data, int idx, char *data, int len)
 		case STATE_NICKNAME:
 			session->nick = strdup(data);
 			session->state = STATE_PASSWORD;
-			sockbuf_write(session->idx, "Please enter your password.\r\n", -1);
+			sockbuf_write(session->idx, _("Please enter your password.\r\n"), -1);
 			break;
 		case STATE_PASSWORD:
 			session->user = user_lookup_authed(session->nick, data);
 			if (!session->user) {
-				sockbuf_write(session->idx, "Invalid username/password.\r\n\r\n", -1);
+				sockbuf_write(session->idx, _("Invalid username/password.\r\n\r\n"), -1);
 				session->count++;
 				if (session->count > dcc_config.max_retries) {
 					sockbuf_delete(session->idx);
@@ -166,15 +166,15 @@ static int dcc_on_read(void *client_data, int idx, char *data, int len)
 				}
 				free(session->nick);
 				session->nick = NULL;
-				sockbuf_write(session->idx, "Please enter your nickname.\r\n", -1);
+				sockbuf_write(session->idx, _("Please enter your nickname.\r\n"), -1);
 				session->state = STATE_NICKNAME;
 			}
 			else {
 				session->party = partymember_new(-1, session->user, session->nick, session->ident ? session->ident : "~dcc", session->host ? session->host : session->ip, &dcc_party_handler, session);
 				session->state = STATE_PARTYLINE;
-				egg_iprintf(idx, "\r\nWelcome to the dcc partyline interface!\r\n");
-				if (session->ident) egg_iprintf(idx, "Your ident is: %s\r\n", session->ident);
-				if (session->host) egg_iprintf(idx, "Your hostname is: %s\r\n", session->host);
+				egg_iprintf(idx, _("\r\nWelcome to the dcc partyline interface!\r\n"));
+				if (session->ident) egg_iprintf(idx, _("Your ident is: %s\r\n"), session->ident);
+				if (session->host) egg_iprintf(idx, _("Your hostname is: %s\r\n"), session->host);
 				/* Put them on the main channel. */
 				partychan_join_name("*", session->party);
 			}
@@ -202,7 +202,7 @@ static int dcc_on_delete(void *client_data, int idx)
 	dcc_session_t *session = client_data;
 
 	if (session->party) {
-		partymember_delete(session->party, "Deleted!");
+		partymember_delete(session->party, _("Deleted!"));
 		session->party = NULL;
 	}
 	kill_session(session);

@@ -80,7 +80,7 @@ void oldbotnet_reset()
 {
 	if (oldbotnet.idx != -1) {
 		int idx = oldbotnet.idx;
-		putlog(LOG_MISC, "oldbotnet", "*** Disconnecting");
+		putlog(LOG_MISC, "oldbotnet", _("*** Disconnecting"));
 		oldbotnet.idx = -1;
 		sockbuf_delete(idx);
 	}
@@ -136,7 +136,7 @@ static int party_plusobot(partymember_t *p, char *nick, user_t *u, char *cmd, ch
 
 	egg_get_words(text, NULL, &name, &host, &port, &username, &password, NULL);
 	if (!port) {
-		partymember_printf(p, "Syntax: <obot> <host> <port> [username] [password]");
+		partymember_printf(p, _("Syntax: <obot> <host> <port> [username] [password]"));
 		goto done;
 	}
 
@@ -145,16 +145,16 @@ static int party_plusobot(partymember_t *p, char *nick, user_t *u, char *cmd, ch
 		void *config_root = config_get_root("eggdrop");
 		config_get_str(&username, config_root, "botname");
 		if (!username) {
-			partymember_printf(p, "Could not get local botname, please specify a username to log in as.");
+			partymember_printf(p, _("Could not get local botname; please specify a username to log in as."));
 			goto done;
 		}
-		partymember_printf(p, "No username specified, using '%s' by default.", username);
+		partymember_printf(p, _("No username specified, using '%s' by default."), username);
 		freeusername = 0;
 	}
 
 	obot = user_new(name);
 	if (!obot) {
-		partymember_printf(p, "Could not create obot '%s'", name);
+		partymember_printf(p, _("Could not create obot '%s'."), name);
 		goto done;
 	}
 
@@ -180,7 +180,7 @@ static int party_olink(partymember_t *p, char *nick, user_t *u, char *cmd, char 
 
 	if (text) obot = user_lookup_by_handle(text);
 	if (!obot) {
-		partymember_printf(p, "Syntax: olink <obot>");
+		partymember_printf(p, _("Syntax: olink <obot>"));
 		return(0);
 	}
 
@@ -189,7 +189,7 @@ static int party_olink(partymember_t *p, char *nick, user_t *u, char *cmd, char 
 	user_get_setting(obot, "oldbotnet", "username", &username);
 	user_get_setting(obot, "oldbotnet", "password", &password);
 	if (!host || !port || !username) {
-		partymember_printf(p, "Error: '%s' is not an obot", text);
+		partymember_printf(p, _("Error: '%s' is not an obot."), text);
 		return(0);
 	}
 
@@ -205,7 +205,7 @@ static int party_olink(partymember_t *p, char *nick, user_t *u, char *cmd, char 
 	sockbuf_set_handler(oldbotnet.idx, &oldbotnet_handler, NULL);
 	linemode_on(oldbotnet.idx);
 
-	partymember_printf(p, "Linking to %s (%s %d) on idx %d as %s", obot->handle, oldbotnet.host, oldbotnet.port, oldbotnet.idx, oldbotnet.name);
+	partymember_printf(p, _("Linking to %s (%s %d) on idx %d as %s."), obot->handle, oldbotnet.host, oldbotnet.port, oldbotnet.idx, oldbotnet.name);
 	return(0);
 }
 
@@ -220,7 +220,7 @@ static int got_passreq(char *cmd, char *next)
 	if (oldbotnet.connected) return(0);
 
 	if (!oldbotnet.password) {
-		putlog(LOG_MISC, "*", "oldbotnet error: password on %s needs to be reset", oldbotnet.obot->handle);
+		putlog(LOG_MISC, "*", _("oldbotnet error: password on %s needs to be reset."), oldbotnet.obot->handle);
 		return(0);
 	}
 
@@ -229,7 +229,7 @@ static int got_passreq(char *cmd, char *next)
 		char hash[16], hex[64];
 		int i;
 
-		putlog(LOG_MISC, "*", "Calculating md5 of '%s' + '%s'", next, oldbotnet.password);
+		putlog(LOG_MISC, "*", _("Calculating md5 of '%s' + '%s'."), next, oldbotnet.password);
 
 		MD5_Init(&md5);
 		MD5_Update(&md5, next, strlen(next));
@@ -237,7 +237,7 @@ static int got_passreq(char *cmd, char *next)
 		MD5_Final(hash, &md5);
 		for (i = 0; i < 16; i++) sprintf(hex+2*i, "%.2x", (unsigned char) hash[i]);
 		hex[33] = 0;
-		putlog(LOG_MISC, "*", "Result: '%s'", hex);
+		putlog(LOG_MISC, "*", _("Result: '%s'"), hex);
 		egg_iprintf(oldbotnet.idx, "digest %s\n", hex);
 	}
 	else {
@@ -249,7 +249,7 @@ static int got_passreq(char *cmd, char *next)
 
 static int got_badpass(char *cmd, char *next)
 {
-	putlog(LOG_MISC, "*", "oldbotnet error: password was rejected");
+	putlog(LOG_MISC, "*", _("oldbotnet error: password was rejected."));
 	return(0);
 }
 
@@ -380,7 +380,7 @@ static int oldbotnet_on_read(void *client_data, int idx, char *data, int len)
 
 static int oldbotnet_on_eof(void *client_data, int idx, int err, const char *errmsg)
 {
-	putlog(LOG_MISC, "oldbotnet", "eof from %s (%s).", oldbotnet.obot->handle, errmsg ? errmsg : "no error");
+	putlog(LOG_MISC, "oldbotnet", _("eof from %s (%s)."), oldbotnet.obot->handle, errmsg ? errmsg : "no error");
 	sockbuf_delete(idx);
 	return(0);
 }

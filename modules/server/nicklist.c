@@ -22,7 +22,7 @@ void try_next_nick()
 
 	nick = nick_get_next();
 	if (!nick) {
-		putlog(LOG_MISC, "*", "try_next_nick: using random nick because %s.", nick_list_len ? "none of the defined nicks are valid" : "there are no nicks defined");
+		putlog(LOG_MISC, "*", _("try_next_nick: using random nick because %s."), nick_list_len ? _("none of the defined nicks are valid") : _("there are no nicks defined"));
 		try_random_nick();
 		return;
 	}
@@ -81,9 +81,7 @@ int nick_clear()
 {
 	int i;
 
-	for (i = 0; i < nick_list_len; i++) {
-		free(nick_list[i]);
-	}
+	for (i = 0; i < nick_list_len; i++) free(nick_list[i]);
 	if (nick_list) free(nick_list);
 	return(0);
 }

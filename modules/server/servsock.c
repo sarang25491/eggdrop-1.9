@@ -40,7 +40,7 @@ void connect_to_next_server() {
 
 	serv = server_get_next();
 	if (!serv) {
-		putlog(LOG_MISC, "*", "Error connecting to next server: no servers are defined!");
+		putlog(LOG_MISC, "*", _("Error connecting to next server: no servers are defined!"));
 		return;
 	}
 
@@ -53,10 +53,10 @@ void connect_to_next_server() {
 	if (serv->port) current_server.port = serv->port;
 	else current_server.port = server_config.default_port;
 
-	putlog(LOG_SERV, "*", "Connecting to %s (%d)", current_server.server_host, current_server.port);
+	putlog(LOG_SERV, "*", _("Connecting to %s (%d)."), current_server.server_host, current_server.port);
 	current_server.idx = egg_connect(current_server.server_host, current_server.port, server_config.connect_timeout);
 	if (current_server.idx < 0) {
-		putlog(LOG_SERV, "*", "Error connecting to server");
+		putlog(LOG_SERV, "*", _("Error connecting to server."));
 	}
 	sockbuf_set_handler(current_server.idx, &server_handler, NULL);
 }
@@ -96,15 +96,6 @@ static void disconnect_server()
 }
 
 
-
-
-
-
-
-
-
-
-
 /****************************************************************
  * Sockbuf handlers
  */
@@ -136,7 +127,7 @@ static int server_on_connect(void *client_data, int idx, const char *peer_ip, in
 
 	current_server.connected = 1;
 	nick_list_on_connect();
-	putlog(LOG_SERV, "*", "Connected to %s, logging in.", current_server.server_host);
+	putlog(LOG_SERV, "*", _("Connected to %s, logging in."), current_server.server_host);
 	eggdrop_event("connect-server");
 	if (!current_server.connected) return(0);
 

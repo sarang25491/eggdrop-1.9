@@ -191,7 +191,7 @@ static void log_error_message(Tcl_Interp *myinterp)
 
 	timenow = time(NULL);
 	fp = fopen(error_logfile, "a");
-	if (!fp) putlog(LOG_MISC, "*", "Error opening Tcl error log (%s)!", error_logfile);
+	if (!fp) putlog(LOG_MISC, "*", _("Error opening Tcl error log (%s)!"), error_logfile);
 	else {
 		errmsg = Tcl_GetVar(myinterp, "errorInfo", TCL_GLOBAL_ONLY);
 		fprintf(fp, "%s", asctime(localtime(&timenow)));
@@ -521,7 +521,7 @@ static int tcl_to_c_var(Tcl_Interp *myinterp, Tcl_Obj *obj, script_var_t *var, i
 
 			vartype[0] = type;
 			vartype[1] = 0;
-			Tcl_AppendResult(myinterp, "Cannot convert Tcl object to unknown variable type '", vartype, "'", NULL);
+			Tcl_AppendResult(myinterp, _("Cannot convert Tcl object to unknown variable type '"), vartype, "'.", NULL);
 			err++;
 		}
 	}
@@ -578,23 +578,23 @@ static int party_tcl(partymember_t *p, char *nick, user_t *u, char *cmd, char *t
 	char *str;
 
 	if (!u || !egg_isowner(u->handle)) {
-		partymember_write(p, "You must be a permanent owner (defined in the config file) to use this command.\n", -1);
+		partymember_write(p, _("You must be a permanent owner (defined in the config file) to use this command.\n"), -1);
 		return(BIND_RET_LOG);
 	}
 
 	if (!text) {
-		partymember_write(p, "Syntax: .tcl tclexpression", -1);
+		partymember_write(p, _("Syntax: .tcl <tclexpression>"), -1);
 		return(0);
 	}
 
 	if (Tcl_GlobalEval(ginterp, text) != TCL_OK) {
 		str = Tcl_GetVar(ginterp, "errorInfo", TCL_GLOBAL_ONLY);
 		if (!str) str = Tcl_GetStringResult(ginterp);
-		partymember_printf(p, "Tcl error: %s\n\n", str);
+		partymember_printf(p, _("Tcl error: %s\n\n"), str);
 	}
 	else {
 		str = Tcl_GetStringResult(ginterp);
-		partymember_printf(p, "Tcl: %s\n\n", str);
+		partymember_printf(p, _("Tcl: %s\n\n"), str);
 	}
 	return(0);
 }
@@ -676,12 +676,12 @@ static void tclscript_report(int idx, int details)
 	char *reported;
 
 	if (!details) {
-		dprintf(idx, "Using Tcl version %d.%d (by header)\n", TCL_MAJOR_VERSION, TCL_MINOR_VERSION);
+		dprintf(idx, _("Using Tcl version %d.%d (by header).\n"), TCL_MAJOR_VERSION, TCL_MINOR_VERSION);
 		return;
 	}
 
-	dprintf(idx, "    Using Tcl version %d.%d (by header)\n", TCL_MAJOR_VERSION, TCL_MINOR_VERSION);
-	sprintf(script, "return \"    Library: [info library]\\n    Reported version: [info tclversion]\\n    Reported patchlevel: [info patchlevel]\"");
+	dprintf(idx, _("    Using Tcl version %d.%d (by header).\n"), TCL_MAJOR_VERSION, TCL_MINOR_VERSION);
+	sprintf(script, _("return \"    Library: [info library]\\n    Reported version: [info tclversion]\\n    Reported patchlevel: [info patchlevel]\""));
 	Tcl_GlobalEval(ginterp, script);
 	reported = Tcl_GetStringResult(ginterp);
 	dprintf(idx, "%s\n", reported);
@@ -715,7 +715,7 @@ int tclscript_LTX_start(egg_module_t *modinfo)
 {
 	modinfo->name = "tclscript";
 	modinfo->author = "eggdev";
-	modinfo->version = "1.7.0";
+	modinfo->version = "1.0.0";
 	modinfo->description = "provides tcl scripting support";
 	modinfo->close_func = tclscript_close;
 
