@@ -2,12 +2,13 @@
 #include "main.h"
 #include "logfile.h"
 
-static bind_table_t *BT_time, *BT_event;
+static bind_table_t *BT_time = NULL, *BT_event = NULL, *BT_secondly = NULL;
 
 void core_binds_init()
 {
 	BT_time = bind_table_add("time", 5, "iiiii", MATCH_MASK, BIND_STACKABLE);
 	BT_event = bind_table_add("event", 1, "s", MATCH_MASK, BIND_STACKABLE);
+	BT_secondly = bind_table_add("secondly", 0, "", MATCH_NONE, BIND_STACKABLE);
 }
 
 void check_bind_time(struct tm *tm)
@@ -20,4 +21,9 @@ void check_bind_time(struct tm *tm)
 void check_bind_event(char *event)
 {
 	bind_check(BT_event, event, NULL, event);
+}
+
+void check_bind_secondly()
+{
+	bind_check(BT_secondly, NULL);
 }

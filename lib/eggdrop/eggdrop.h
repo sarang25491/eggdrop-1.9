@@ -18,7 +18,9 @@
 #include <eggdrop/script.h>
 #include <eggdrop/my_socket.h>
 #include <eggdrop/sockbuf.h>
+#include <eggdrop/eggmod.h>
 #include <eggdrop/eggnet.h>
+#include <eggdrop/eggowner.h>
 #include <eggdrop/eggdns.h>
 #include <eggdrop/eggident.h>
 #include <eggdrop/linemode.h>
@@ -32,6 +34,18 @@
 #include <eggdrop/partyline.h>
 #include <eggdrop/egglog.h>
 #include <eggdrop/irccmp.h>
+
+/* Gettext macros */
+#ifdef ENABLE_NLS
+#include <libintl.h>
+#define _(x) gettext(x)
+#define N_(x) gettext_noop(x)
+#define P_(x1, x2, n) ngettext(x1, x2, n)
+#else
+#define _(x) (x)
+#define N_(x) (x)
+#define P_(x1, x2, n) ( ((n) == 1) ? (x1) : (x2) )
+#endif
 
 BEGIN_C_DECLS
 

@@ -1,7 +1,6 @@
 /* Some channel-specific stuff. */
 
 #include <eggdrop/eggdrop.h>
-#include <eggdrop/module.h>
 #include <ctype.h>
 #include "server.h"
 #include "binds.h"
@@ -181,7 +180,7 @@ channel_member_t *channel_add_member(const char *chan_name, const char *nick, co
 	m = calloc(1, sizeof(*m));
 	m->nick = strdup(nick);
 	m->uhost = strdup(uhost);
-	m->join_time = egg_timeval_now.sec;
+	timer_get_now_sec(&m->join_time);
 
 	m->next = chan->member_head;
 	chan->member_head = m;
@@ -384,7 +383,7 @@ static int gottopic(char *from_nick, char *from_uhost, user_t *u, char *cmd, int
 	if (chan->topic_nick) free(chan->topic_nick);
 	if (from_uhost) chan->topic_nick = egg_mprintf("%s!%s", from_nick, from_uhost);
 	else chan->topic_nick = strdup(from_nick);
-	chan->topic_time = egg_timeval_now.sec;
+	timer_get_now_sec(&chan->topic_time);
 
 	return(0);
 }
@@ -683,7 +682,7 @@ static int gotmode(char *from_nick, char *from_uhost, user_t *u, char *cmd, int 
 		else if (changestr[0] == '+') {
 			switch (*change) {
 				case 'b':
-					add_ban(chan, arg, set_by, egg_timeval_now.sec);
+					add_ban(chan, arg, set_by, timer_get_now_sec(NULL));
 					break;
 				case 'k':
 					str_redup(&chan->key, arg);

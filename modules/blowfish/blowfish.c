@@ -26,19 +26,18 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: blowfish.c,v 1.10 2003/03/06 12:08:14 tothwolf Exp $";
+static const char rcsid[] = "$Id: blowfish.c,v 1.11 2003/04/15 08:18:03 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "encryption"
 #define MAKING_ENCRYPTION
 
-#include "lib/eggdrop/module.h"
+#include <sys/types.h>
+#include <eggdrop/eggdrop.h>
 #include "blowfish.h"
 #include "bf_tab.h"		/* P-box P-array, S-box */
 
 #define start blowfish_LTX_start
-
-static eggdrop_t *egg = NULL;
 
 /* Each box takes up 4k so be very careful here */
 #define BOXES 3
@@ -53,19 +52,19 @@ static eggdrop_t *egg = NULL;
 
 /* Keep a set of rotating P & S boxes */
 static struct box_t {
-  u_32int_t *P;
-  u_32int_t **S;
+  u_int32_t *P;
+  u_int32_t **S;
   char key[81];
   char keybytes;
-  time_t lastuse;
+  int lastuse;
 } box[BOXES];
 
-/* static u_32int_t bf_P[bf_N+2]; */
-/* static u_32int_t bf_S[4][256]; */
-static u_32int_t *bf_P;
-static u_32int_t **bf_S;
+/* static u_int32_t bf_P[bf_N+2]; */
+/* static u_int32_t bf_S[4][256]; */
+static u_int32_t *bf_P;
+static u_int32_t **bf_S;
 
-static void blowfish_encipher(u_32int_t * xl, u_32int_t * xr)
+static void blowfish_encipher(u_int32_t * xl, u_int32_t * xr)
 {
   union aword Xl;
   union aword Xr;
@@ -96,7 +95,7 @@ static void blowfish_encipher(u_32int_t * xl, u_32int_t * xr)
   *xl = Xr.word;
 }
 
-static void blowfish_decipher(u_32int_t * xl, u_32int_t * xr)
+static void blowfish_decipher(u_int32_t * xl, u_int32_t * xr)
 {
   union aword Xl;
   union aword Xr;
@@ -132,13 +131,13 @@ static void blowfish_report(int idx, int details)
 {
 }
 
-static void blowfish_init(u_8bit_t * key, int keybytes)
+static void blowfish_init(u_int8_t * key, int keybytes)
 {
   int i, j, bx;
-  time_t lowest = 0;
-  u_32int_t data;
-  u_32int_t datal;
-  u_32int_t datar;
+  int lowest = 0;
+  u_int32_t data;
+  u_int32_t datal;
+  u_int32_t datar;
   union aword temp;
 
   /* drummer: Fixes crash if key is longer than 80 char. This may cause the key
@@ -153,7 +152,7 @@ static void blowfish_init(u_8bit_t * key, int keybytes)
       if ((box[i].keybytes == keybytes) &&
 	  (!strncmp((char *) (box[i].key), (char *) key, keybytes))) {
 	/* Match! */
-	box[i].lastuse = egg_timeval_now.sec;
+	timer_get_now_sec(&box[i].lastuse);
 	bf_P = box[i].P;
 	bf_S = box[i].S;
 	return;
@@ -170,7 +169,7 @@ static void blowfish_init(u_8bit_t * key, int keybytes)
   }
   if (bx < 0) {
     /* Find oldest */
-    lowest = egg_timeval_now.sec;
+    timer_get_now_sec(&lowest);
     for (i = 0; i < BOXES; i++)
       if (box[i].lastuse <= lowest) {
 	lowest = box[i].lastuse;
@@ -183,15 +182,15 @@ static void blowfish_init(u_8bit_t * key, int keybytes)
   }
   /* Initialize new buffer */
   /* uh... this is over 4k */
-  box[bx].P = (u_32int_t *) malloc((bf_N + 2) * sizeof(u_32int_t));
-  box[bx].S = (u_32int_t **) malloc(4 * sizeof(u_32int_t *));
+  box[bx].P = (u_int32_t *) malloc((bf_N + 2) * sizeof(u_int32_t));
+  box[bx].S = (u_int32_t **) malloc(4 * sizeof(u_int32_t *));
   for (i = 0; i < 4; i++)
-    box[bx].S[i] = (u_32int_t *) malloc(256 * sizeof(u_32int_t));
+    box[bx].S[i] = (u_int32_t *) malloc(256 * sizeof(u_int32_t));
   bf_P = box[bx].P;
   bf_S = box[bx].S;
   box[bx].keybytes = keybytes;
   strlcpy(box[bx].key, key, keybytes + 1);	/* + 1 for NULL */
-  box[bx].lastuse = egg_timeval_now.sec;
+  timer_get_now_sec(&box[bx].lastuse);
   /* Robey: Reset blowfish boxes to initial state
    * (I guess normally it just keeps scrambling them, but here it's
    * important to get the same encrypted result each time)
@@ -249,7 +248,7 @@ static int base64dec(char c)
 
 static void blowfish_encrypt_pass(char *text, char *new)
 {
-  u_32int_t left, right;
+  u_int32_t left, right;
   int n;
   char *p;
 
@@ -278,7 +277,7 @@ static void blowfish_encrypt_pass(char *text, char *new)
  */
 static char *encrypt_string(char *key, char *str)
 {
-  u_32int_t left, right;
+  u_int32_t left, right;
   unsigned char *p;
   char *s, *dest, *d;
   int i;
@@ -325,7 +324,7 @@ static char *encrypt_string(char *key, char *str)
  */
 static char *decrypt_string(char *key, char *str)
 {
-  u_32int_t left, right;
+  u_int32_t left, right;
   char *p, *s, *dest, *d;
   int i;
 
@@ -377,58 +376,31 @@ static script_command_t blowfish_script_cmds[] = {
 	{0}
 };
 
-/* You CANT -module an encryption module , so -module just resets it.
- */
-static char *blowfish_close()
+static int blowfish_close(int why)
 {
-  return _("You can't unload an encryption module");
+	return(-1);
 }
 
-EXPORT_SCOPE char *start(eggdrop_t *);
+EXPORT_SCOPE int start(egg_module_t *modinfo);
 
-static Function blowfish_table[] =
-{
-  /* 0 - 3 */
-  (Function) start,
-  (Function) blowfish_close,
-  (Function) 0,
-  (Function) blowfish_report,
-  /* 4 - 7 */
-  (Function) encrypt_string,
-  (Function) decrypt_string,
-};
-
-char *start(eggdrop_t *eggdrop)
+int start(egg_module_t *modinfo)
 {
   int i;
 
-  /* `global_funcs' is NULL if eggdrop is recovering from a restart.
-   *
-   * As the encryption module is never unloaded, only initialise stuff
-   * that got reset during restart, e.g. the tcl bindings.
-   */
-  if (eggdrop) {
-    egg = eggdrop;
+  modinfo->name = "blowfish";
+  modinfo->author = "eggdev";
+  modinfo->version = "1.7.0";
+  modinfo->description = "provides blowfish encryption/decryption";
+  modinfo->close_func = blowfish_close;
 
-    if (!module_rename("blowfish", MODULE_NAME))
-      return _("Already loaded.");
-    /* Initialize buffered boxes */
-    for (i = 0; i < BOXES; i++) {
-      box[i].P = NULL;
-      box[i].S = NULL;
-      box[i].key[0] = 0;
-      box[i].lastuse = 0L;
-    }
-    module_register(MODULE_NAME, blowfish_table, 2, 1);
-    if (!module_depend(MODULE_NAME, "eggdrop", 107, 0)) {
-      module_undepend(MODULE_NAME);
-      return _("This module requires eggdrop1.7.0 or later");
-    }
-    add_hook(HOOK_ENCRYPT_PASS, (Function) blowfish_encrypt_pass);
-    add_hook(HOOK_ENCRYPT_STRING, (Function) encrypt_string);
-    add_hook(HOOK_DECRYPT_STRING, (Function) decrypt_string);
+  /* Initialize buffered boxes */
+  for (i = 0; i < BOXES; i++) {
+    box[i].P = NULL;
+    box[i].S = NULL;
+    box[i].key[0] = 0;
+    box[i].lastuse = 0L;
   }
   script_create_commands(blowfish_script_cmds);
-  return NULL;
+  return(0);
 }
 

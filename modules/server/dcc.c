@@ -2,7 +2,9 @@
  * dcc.c -- take care of dcc stuff
  */
 
-#include "lib/eggdrop/module.h"
+#include <stdio.h>
+#include <unistd.h>
+#include <eggdrop/eggdrop.h>
 #include "server.h"
 #include "output.h"
 #include "parse.h"
@@ -12,8 +14,6 @@
 #include <stdio.h>
 
 #include "dcc.h"
-
-#define now egg_timeval_now.sec
 
 typedef struct dcc_listen {
 	int serv, client;
@@ -269,7 +269,7 @@ int dcc_start_send(const char *nick, const char *fname, int timeout)
 	send->size = size;
 	send->bytes_sent = 0;
 	send->bytes_left = size;
-	send->request_time = now;
+	timer_get_now_sec(&send->request_time);
 	send->fname = strdup(fname);
 	send->nick = strdup(nick);
 
@@ -317,7 +317,7 @@ static int dcc_send_connect(void *client_data, int idx, const char *peer_ip, int
 	dcc_send_t *send = client_data;
 	int n;
 
-	send->connect_time = now;
+	timer_get_now_sec(&send->connect_time);
 	send->serv = -1;
 	send->ip = strdup(peer_ip);
 	sockbuf_on_connect(idx, DCC_FILTER_LEVEL, peer_ip, peer_port);
@@ -412,13 +412,14 @@ static int dcc_send_done(dcc_send_t *send)
 int dcc_send_info(int idx, int field, void *valueptr)
 {
 	dcc_send_t *send;
-	int i, n;
+	int i, n, now;
 
 	if (!valueptr) return(-1);
 	if (sockbuf_get_filter_data(idx, &dcc_send_filter, &send) < 0) {
 		if (sockbuf_get_filter_data(idx, &dcc_recv_filter, &send) < 0) return(-1);
 	}
 
+	timer_get_now_sec(&now);
 	switch (field) {
 		case DCC_SEND_SENT:
 			*(int *)valueptr = send->bytes_sent;
@@ -483,7 +484,7 @@ int dcc_accept_send(char *nick, char *localfname, char *fname, int size, int res
 	send->size = size;
 	send->bytes_sent = 0;
 	send->bytes_left = size;
-	send->request_time = now;
+	timer_get_now_sec(&send->request_time);
 
 	if (resume < 0) {
 		send->fd = open(localfname, O_RDWR | O_CREAT, 0640);
@@ -529,7 +530,7 @@ static int dcc_recv_connect(void *client_data, int idx, const char *peer_ip, int
 
 	/* send->connect_time holds our connect timer if there was one */
 	if (send->timer_id >= 0) timer_destroy(send->timer_id);
-	send->connect_time = now;
+	timer_get_now_sec(&send->connect_time);
 	sockbuf_on_connect(idx, DCC_FILTER_LEVEL, peer_ip, peer_port);
 	return(0);
 }
@@ -583,8 +584,8 @@ static void update_snapshot(dcc_send_t *send, int len)
 	int i;
 
 	/* Get time diff. */
-	diff = now - send->last_snapshot;
-	send->last_snapshot = now;
+	diff = timer_get_now_sec(NULL) - send->last_snapshot;
+	timer_get_now_sec(&send->last_snapshot);
 	if (diff > 5) diff = 5;
 
 	/* Reset counter for seconds that were skipped. */

@@ -22,11 +22,11 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.27 2003/04/07 07:20:11 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.28 2003/04/15 08:18:03 stdarg Exp $";
 #endif
 */
 
-#include "lib/eggdrop/module.h"
+#include <eggdrop/eggdrop.h>
 
 #include "server.h"
 #include "serverlist.h"

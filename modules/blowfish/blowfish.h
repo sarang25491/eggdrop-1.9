@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: blowfish.h,v 1.4 2003/01/02 21:33:14 wcc Exp $
+ * $Id: blowfish.h,v 1.5 2003/04/15 08:18:03 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_BLOWFISH_BLOWFISH_H
@@ -33,8 +33,8 @@
 #define KEYBYTES	 8
 
 union aword {
-  u_32int_t word;
-  u_8bit_t byte[4];
+  u_int32_t word;
+  u_int8_t byte[4];
   struct {
 #ifdef WORDS_BIGENDIAN
     unsigned int byte0:8;

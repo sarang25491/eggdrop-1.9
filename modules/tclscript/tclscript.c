@@ -1,35 +1,11 @@
 /*
  * tclscript.c --
  */
-/*
- * Copyright (C) 2002, 2003 Eggheads Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- */
-
-#ifndef lint
-static const char rcsid[] = "$Id: tclscript.c,v 1.31 2003/03/08 09:20:35 stdarg Exp $";
-#endif
 
 #include <tcl.h>
-#include "lib/eggdrop/module.h"
 #include <eggdrop/eggdrop.h>
 
 #define MODULE_NAME "tclscript"
-
-static eggdrop_t *egg = NULL;
 
 #if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 1)) || (TCL_MAJOR_VERSION > 8))
 #  define USE_TCL_BYTE_ARRAYS
@@ -581,8 +557,8 @@ static int party_tcl(int pid, char *nick, user_t *u, char *cmd, char *text)
 {
 	char *str;
 
-	if (!u || owner_check(u->handle)) {
-		partyline_write(pid, _("You must be a permanent owner (defined in the config file) to use this command.\n"));
+	if (!u || !egg_isowner(u->handle)) {
+		partyline_write(pid, "You must be a permanent owner (defined in the config file) to use this command.\n");
 		return(BIND_RET_LOG);
 	}
 
@@ -617,7 +593,7 @@ static void tclscript_report(int idx, int details)
 	*/
 }
 
-static int hook_secondly()
+static int tclscript_secondly()
 {
 	Tcl_DoOneEvent(TCL_ALL_EVENTS | TCL_DONT_WAIT);
 	return(0);
@@ -628,27 +604,33 @@ static bind_list_t party_commands[] = {
 	{0}
 };
 
-EXPORT_SCOPE char *tclscript_LTX_start();
-static char *tclscript_close();
-
-static Function tclscript_table[] = {
-	(Function) tclscript_LTX_start,
-	(Function) tclscript_close,
-	(Function) 0,
-	(Function) tclscript_report
+static bind_list_t secondly_binds[] = {
+	{NULL, tclscript_secondly},
+	{0}
 };
 
-char *tclscript_LTX_start(eggdrop_t *eggdrop)
+static int tclscript_close(int why)
 {
-	egg = eggdrop;
+	Tcl_DeleteInterp(ginterp);
+
+	bind_rem_list("party", party_commands);
+	bind_add_list("secondly", secondly_binds);
+
+	script_unregister_module(&my_script_interface);
+	return(0);
+}
+
+EXPORT_SCOPE int tclscript_LTX_start(egg_module_t *modinfo);
+
+int tclscript_LTX_start(egg_module_t *modinfo)
+{
+	modinfo->name = "tclscript";
+	modinfo->author = "eggdev";
+	modinfo->version = "1.7.0";
+	modinfo->description = "provides tcl scripting support";
+	modinfo->close_func = tclscript_close;
 
 	ginterp = Tcl_CreateInterp();
-
-	module_register("tclscript", tclscript_table, 1, 2);
-	if (!module_depend("tclscript", "eggdrop", 107, 0)) {
-		module_undepend("tclscript");
-		return "This module requires eggdrop1.7.0 or later";
-	}
 
 	error_logfile = strdup("logs/tcl_errors.log");
 	Tcl_LinkVar(ginterp, "error_logfile", (char *)&error_logfile, TCL_LINK_STRING);
@@ -657,18 +639,7 @@ char *tclscript_LTX_start(eggdrop_t *eggdrop)
 	script_playback(&my_script_interface);
 
 	bind_add_list("party", party_commands);
-
-	add_hook(HOOK_SECONDLY, hook_secondly);
-	return(NULL);
+	bind_add_list("secondly", secondly_binds);
+	return(0);
 }
 
-static char *tclscript_close()
-{
-	Tcl_DeleteInterp(ginterp);
-
-	bind_rem_list("party", party_commands);
-
-	module_undepend("tclscript");
-	script_unregister_module(&my_script_interface);
-	return(NULL);
-}

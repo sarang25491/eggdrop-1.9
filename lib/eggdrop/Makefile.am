@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.19 2003/04/04 04:04:46 stdarg Exp $
+# $Id: Makefile.am,v 1.20 2003/04/15 08:18:03 stdarg Exp $
 
 MAINTAINERCLEANFILES	= Makefile.in
 
@@ -13,7 +13,9 @@ libeggdrop_la_SOURCES	= base64.c base64.h \
 			eggdrop.c eggdrop.h \
 			eggdns.c eggdns.h \
 			eggident.c eggident.h \
-			eggnet.h eggnet.c \
+			eggmod.c eggmod.h \
+			eggnet.c eggnet.h \
+			eggowner.c eggowner.h \
 			eggtimer.c eggtimer.h \
 			fileutil.c fileutil.h \
 			flags.c flags.h \
@@ -35,6 +37,7 @@ libeggdrop_la_SOURCES	= base64.c base64.h \
 			users.c users.h \
 			xml.c xmlread.c xmlwrite.c xml.h
 
-libeggdrop_la_LIBADD	= $(top_builddir)/lib/compat/libcompat.la \
+libeggdrop_la_LIBADD	= @LIBLTDL@ \
+			$(top_builddir)/lib/compat/libcompat.la \
 		   	$(top_builddir)/lib/egglib/libegg.la
 

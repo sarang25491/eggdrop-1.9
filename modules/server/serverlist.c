@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "lib/eggdrop/module.h"
 #include "serverlist.h"
 
 /*

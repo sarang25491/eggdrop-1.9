@@ -1,4 +1,3 @@
-#include "lib/eggdrop/module.h"
 #include <eggdrop/eggdrop.h>
 
 #define MODULE_NAME "script"
@@ -12,25 +11,14 @@ static void script_report(int idx, int details)
 {
 }
 
-EXPORT_SCOPE char *script_LTX_start();
-static char *script_close();
+EXPORT_SCOPE int script_LTX_start(egg_module_t *modinfo);
 
-static Function script_table[] = {
-	(Function) script_LTX_start,
-	(Function) script_close,
-	(Function) 0,
-	(Function) script_report
-};
-
-char *script_LTX_start(eggdrop_t *eggdrop)
+int script_LTX_start(egg_module_t *modinfo)
 {
-	egg = eggdrop;
-
-	module_register("script", script_table, 1, 2);
-	if (!module_depend("script", "eggdrop", 107, 0)) {
-		module_undepend("script");
-		return "This module requires eggdrop1.7.0 or later";
-	}
+	modinfo->name = "script";
+	modinfo->author = "eggdev";
+	modinfo->version = "1.7.0";
+	modinfo->description = "provides core scripting functions";
 
 	script_create_commands(script_config_cmds);
 	script_create_commands(script_log_cmds);
@@ -41,11 +29,5 @@ char *script_LTX_start(eggdrop_t *eggdrop)
 	script_create_commands(script_timer_cmds);
 	script_create_commands(script_misc_cmds);
 
-	return(NULL);
-}
-
-static char *script_close()
-{
-	module_undepend("script");
 	return(NULL);
 }

@@ -30,9 +30,10 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.144 2003/04/04 04:04:46 stdarg Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.145 2003/04/15 08:18:03 stdarg Exp $";
 #endif
 
+#include <unistd.h>
 #include <eggdrop/eggdrop.h>
 #include "main.h"
 #include "core_config.h"
@@ -54,6 +55,7 @@ static const char rcsid[] = "$Id: main.c,v 1.144 2003/04/04 04:04:46 stdarg Exp 
 #include <setjmp.h>
 #include <locale.h>
 #include <ctype.h>
+#include <ltdl.h>
 
 #ifdef STOP_UAC				/* osf/1 complains a lot */
 #include <sys/sysinfo.h>
@@ -63,13 +65,9 @@ static const char rcsid[] = "$Id: main.c,v 1.144 2003/04/04 04:04:46 stdarg Exp 
  * decide it's not bsd compatable.  Oh well.
  */
 
-#include "chan.h"
-#include "modules.h"
 #include "bg.h"
 #include "core_binds.h"
 #include "logfile.h"
-#include "misc.h"
-#include "traffic.h"
 
 #ifdef CYGWIN_HACKS
 #include <windows.h>
@@ -79,14 +77,6 @@ static const char rcsid[] = "$Id: main.c,v 1.144 2003/04/04 04:04:46 stdarg Exp 
 /* Solaris needs this */
 #define _POSIX_SOURCE 1
 #endif
-
-extern int conmask;
-extern struct dcc_t *dcc;
-extern struct userrec *userlist;
-
-#ifndef MAKING_MODS
-extern struct dcc_table DCC_CHAT;
-#endif /* MAKING_MODS   */
 
 char	egg_version[1024] = VERSION;
 int	egg_numver = VERSION_NUM;
@@ -109,7 +99,6 @@ char	textdir[121] = "text/";	/* Directory for text files that get dumped */
 time_t	online_since;		/* Unix-time that the bot loaded up */
 int	make_userfile = 0;	/* Using bot in make-userfile mode? (first
 				   user to 'hello' becomes master) */
-char	owner[121] = "";	/* Permanent owner(s) of the bot */
 char	pid_file[120];		/* Name of the file for the pid to be
 				   stored in */
 int	save_users_at = 0;	/* How many minutes past the hour to
@@ -310,7 +299,7 @@ static int core_secondly()
   static int cnt = 0;
   int miltime;
 
-  call_hook(HOOK_SECONDLY);	/* Will be removed later */
+  check_bind_secondly();
   cnt++;
   memcpy(&nowtm, localtime(&now), sizeof(struct tm));
   if (nowtm.tm_min != lastmin) {
@@ -318,7 +307,8 @@ static int core_secondly()
 
     /* Once a minute */
     lastmin = (lastmin + 1) % 60;
-    call_hook(HOOK_MINUTELY);
+    check_bind_event("minutely");
+    check_bind_time(&nowtm);
     /* In case for some reason more than 1 min has passed: */
     while (nowtm.tm_min != lastmin) {
       /* Timer drift, dammit */
@@ -326,80 +316,30 @@ static int core_secondly()
              nowtm.tm_min);
       i++;
       lastmin = (lastmin + 1) % 60;
-      call_hook(HOOK_MINUTELY);
+      check_bind_event("minutely");
     }
     if (i > 1)
       putlog(LOG_MISC, "*", "(!) timer drift -- spun %d minutes", i);
     miltime = (nowtm.tm_hour * 100) + (nowtm.tm_min);
     if (((int) (nowtm.tm_min / 5) * 5) == (nowtm.tm_min)) {	/* 5 min */
-      call_hook(HOOK_5MINUTELY);
+	    check_bind_event("5minutely");
       if (!miltime) {	/* At midnight */
 	char s[25];
 
 	strlcpy(s, ctime(&now), sizeof s);
 	putlog(LOG_ALL, "*", "--- %.11s%s", s, s + 20);
-	call_hook(HOOK_BACKUP);
-	call_hook(HOOK_DAILY);
+	check_bind_event("backup");
+	check_bind_event("daily");
       }
     }
-    if (nowtm.tm_min == notify_users_at)
-      call_hook(HOOK_HOURLY);
+    if (nowtm.tm_min == notify_users_at) check_bind_event("hourly");
   }
   return(0);
 }
 
-static void core_minutely()
-{
-  check_bind_time(&nowtm);
-}
-
-static void core_hourly()
-{
-}
-
-static void event_rehash()
-{
-  check_bind_event("rehash");
-}
-
-static void event_prerehash()
-{
-  check_bind_event("prerehash");
-}
-
-static void event_save()
-{
-  check_bind_event("save");
-}
-
-static void event_logfile()
-{
-  check_bind_event("logfile");
-}
-
-static void event_loaded()
-{
-  check_bind_event("loaded");
-}
-
-extern module_entry *module_list;
-
 void core_party_init();
 void core_config_init();
 void telnet_init();
-void binds_init();
-
-/*
-static inline void garbage_collect(void)
-{
-  static u_8bit_t	run_cnt = 0;
-
-  if (run_cnt == 3)
-    garbage_collect_tclhash();
-  else
-    run_cnt++;
-}
-*/
 
 int owner_check(const char *handle)
 {
@@ -464,6 +404,13 @@ int main(int argc, char **argv)
   bindtextdomain(PACKAGE, LOCALEDIR);
   textdomain(PACKAGE);
 #endif
+
+	/* Initialize ltdl. */
+	LTDL_SET_PRELOADED_SYMBOLS();
+	if (lt_dlinit()) {
+		printf("Fatal error initializing ltdl: %s\n", lt_dlerror());
+		return(-1);
+	}
 
   /* Version info! */
   snprintf(ver, sizeof ver, "%s v%s", PACKAGE, egg_version);
@@ -541,7 +488,7 @@ int main(int argc, char **argv)
   partyline_init();
   core_party_init();
   telnet_init();
-  modules_init();
+  module_init();
   egg_net_init();
   core_binds_init();
 
@@ -551,6 +498,9 @@ int main(int argc, char **argv)
   strlcpy(s, ctime(&now), sizeof s);
   strcpy(&s[11], &s[20]);
   putlog(LOG_ALL, "*", "--- Loading %s (%s)", ver, s);
+
+	/* Put the module directory in the ltdl search path. */
+	if (core_config.module_path) module_add_dir(core_config.module_path);
 
 	/* Scan the autoload section of config. */
 	config_root = config_get_root("eggdrop");
@@ -634,17 +584,6 @@ int main(int argc, char **argv)
   howlong.sec = 1;
   howlong.usec = 0;
   timer_create_repeater(&howlong, "main loop", core_secondly);
-
-  /* init time'd hooks */
-  add_hook(HOOK_MINUTELY, (Function) core_minutely);
-  add_hook(HOOK_HOURLY, (Function) core_hourly);
-  add_hook(HOOK_REHASH, (Function) event_rehash);
-  add_hook(HOOK_PRE_REHASH, (Function) event_prerehash);
-  add_hook(HOOK_USERFILE, (Function) event_save);
-  add_hook(HOOK_DAILY, (Function) event_logfile);
-  add_hook(HOOK_LOADED, (Function) event_loaded);
-
-  call_hook(HOOK_LOADED);
 
   putlog(LOG_DEBUG, "*", "main: entering loop");
 	while (1) {

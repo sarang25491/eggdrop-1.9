@@ -3,11 +3,10 @@
  *
  */
 
+#include <unistd.h>
 #include "main.h"
 #include "core_config.h"
-#include "modules.h" 			/* add_hook() 			*/
 #include "logfile.h"			/* prototypes			*/
-#include "chanprog.h"	/* logmodes */
 #include <eggdrop/eggdrop.h>
 #include <stdio.h>
 
@@ -50,12 +49,17 @@ static bind_list_t log_binds[] = {
 	{0}
 };
 
+static bind_list_t log_events[] = {
+	{"minutely", logfile_minutely},
+	{"5minutely", logfile_5minutely},
+	{0}
+};
+
 void logfile_init()
 {
 	script_create_commands(log_script_cmds);
-	add_hook(HOOK_MINUTELY, logfile_minutely);
-	add_hook(HOOK_5MINUTELY, logfile_5minutely);
 	bind_add_list("log", log_binds);
+	bind_add_list("event", log_events);
 }
 
 static int get_timestamp(char *t)

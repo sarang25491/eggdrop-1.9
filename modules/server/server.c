@@ -4,7 +4,7 @@
 
 #define MODULE_NAME "server"
 #define MAKING_SERVER
-#include "lib/eggdrop/module.h"
+#include <eggdrop/eggdrop.h>
 #include "server.h"
 #include "servsock.h"
 #include "serverlist.h"
@@ -54,7 +54,7 @@ char *server_support(const char *name)
  * 1. See if we're ready to connect to the next server (cycle_delay == 0)
  * 2. Dequeue some messages if we're connected. */
 
-static void server_secondly()
+static int server_secondly()
 {
 	if (current_server.idx < 0 && cycle_delay >= 0) {
 		/* If there's no idx, see if it's time to jump to the next
@@ -64,11 +64,12 @@ static void server_secondly()
 			cycle_delay = -1;
 			connect_to_next_server();
 		}
-		return;
+		return(0);
 	}
 
 	/* Try to dequeue some stuff. */
 	dequeue_messages();
+	return(0);
 }
 
 /* A report on the module status.  */
@@ -101,12 +102,19 @@ static void server_report(int idx, int details)
 	}
 }
 
-static char *server_close()
+static bind_list_t server_secondly_binds[] = {
+	{NULL, server_secondly},
+	{0}
+};
+
+static int server_close(int why)
 {
 	kill_server("Server module unloading");
 	cycle_delay = 100;
 
 	bind_rem_list("raw", server_raw_binds);
+	bind_rem_list("party", server_party_commands);
+	bind_rem_list("secondly", server_secondly_binds);
 
 	server_binds_destroy();
 
@@ -114,19 +122,8 @@ static char *server_close()
 
 	server_script_destroy();
 
-	del_hook(HOOK_SECONDLY, (Function) server_secondly);
-	return(NULL);
+	return(0);
 }
-
-EXPORT_SCOPE char *start();
-
-static Function server_table[] =
-{
-  (Function) start,
-  (Function) server_close,
-  (Function) 0,
-  (Function) server_report,
-};
 
 static config_var_t server_config_vars[] = {
 	/* Registration information. */
@@ -193,19 +190,19 @@ static void server_config_init()
 	}
 }
 
-char *start(eggdrop_t *eggdrop)
+EXPORT_SCOPE int start(egg_module_t *modinfo);
+
+int start(egg_module_t *modinfo)
 {
-	egg = eggdrop;
+	modinfo->name = "server";
+	modinfo->author = "eggdev";
+	modinfo->version = "1.7.0";
+	modinfo->description = "normal irc server support";
+	modinfo->close_func = server_close;
 
 	memset(&current_server, 0, sizeof(current_server));
 	current_server.idx = -1;
 	cycle_delay = 0;
-
-	module_register(MODULE_NAME, server_table, 1, 2);
-	if (!module_depend(MODULE_NAME, "eggdrop", 107, 0)) {
-		module_undepend(MODULE_NAME);
-		return "This module requires eggdrop1.7.0 or later";
-	}
 
 	server_config_init();
 
@@ -213,6 +210,7 @@ char *start(eggdrop_t *eggdrop)
 	server_binds_init();
 	bind_add_list("raw", server_raw_binds);
 	bind_add_list("party", server_party_commands);
+	bind_add_list("secondly", server_secondly_binds);
 
 	/* Initialize channels. */
 	server_channel_init();
@@ -220,7 +218,5 @@ char *start(eggdrop_t *eggdrop)
 	/* Initialize script interface. */
 	server_script_init();
 
-	add_hook(HOOK_SECONDLY, (Function) server_secondly);
-
-	return(NULL);
+	return(0);
 }

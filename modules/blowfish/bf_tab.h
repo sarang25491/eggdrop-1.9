@@ -21,13 +21,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: bf_tab.h,v 1.4 2003/01/02 21:33:14 wcc Exp $
+ * $Id: bf_tab.h,v 1.5 2003/04/15 08:18:03 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_BLOWFISH_BF_TAB_H
 #define _EGG_MOD_BLOWFISH_BF_TAB_H
 
-static u_32int_t initbf_P[bf_N + 2] =
+static u_int32_t initbf_P[bf_N + 2] =
 {
   0x243f6a88, 0x85a308d3, 0x13198a2e, 0x03707344,
   0xa4093822, 0x299f31d0, 0x082efa98, 0xec4e6c89,
@@ -35,7 +35,7 @@ static u_32int_t initbf_P[bf_N + 2] =
   0xc0ac29b7, 0xc97c50dd, 0x3f84d5b5, 0xb5470917,
   0x9216d5d9, 0x8979fb1b,
 };
-static u_32int_t initbf_S[4][256] =
+static u_int32_t initbf_S[4][256] =
 {
   {
     0xd1310ba6, 0x98dfb5ac, 0x2ffd72db, 0xd01adfb7,

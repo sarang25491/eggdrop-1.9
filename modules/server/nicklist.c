@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "lib/eggdrop/module.h"
+#include <eggdrop/eggdrop.h>
 #include "nicklist.h"
 #include "output.h"
 

@@ -22,7 +22,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggdrop.c,v 1.4 2003/01/02 21:33:13 wcc Exp $";
+static const char rcsid[] = "$Id: eggdrop.c,v 1.5 2003/04/15 08:18:03 stdarg Exp $";
 #endif
 
 #include <stdlib.h>
@@ -45,3 +45,4 @@ eggdrop_t *eggdrop_delete(eggdrop_t * egg)
 
   return NULL;
 }
+

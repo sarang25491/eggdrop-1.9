@@ -1,5 +1,4 @@
 #include <eggdrop/eggdrop.h>
-#include <eggdrop/eggconfig.h>
 #include "core_config.h"
 
 core_config_t core_config = {0};
@@ -40,6 +39,9 @@ void core_config_init(const char *fname)
 {
 	/* Set default vals. */
 	memset(&core_config, 0, sizeof(core_config));
+
+	/* Hook the owner variable into libeggdrop. */
+	egg_setowner(&core_config.owner);
 
 	core_config.botname = strdup("eggdrop");
 	core_config.userfile = strdup("users.xml");

@@ -3,7 +3,6 @@
  */
 
 #include <eggdrop/eggdrop.h>
-#include "lib/eggdrop/module.h"
 #include "server.h"
 #include "parse.h"
 #include "channels.h"

@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggtimer.c,v 1.5 2003/04/04 04:04:46 stdarg Exp $";
+static const char rcsid[] = "$Id: eggtimer.c,v 1.6 2003/04/15 08:18:03 stdarg Exp $";
 #endif
 
 #include <stdio.h> /* NULL */
@@ -74,6 +74,12 @@ void timer_get_now(egg_timeval_t *_now)
 {
 	_now->sec = now.sec;
 	_now->usec = now.usec;
+}
+
+int timer_get_now_sec(int *sec)
+{
+	if (sec) *sec = now.sec;
+	return(now.sec);
 }
 
 /* Find difference between two timers. */

@@ -1,5 +1,4 @@
-#include "lib/eggdrop/module.h"
-#include "lib/eggdrop/eggdrop.h"
+#include <eggdrop/eggdrop.h>
 
 #include "server.h"
 #include "servsock.h"
