@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: tclchan.c,v 1.26 2003/01/30 08:20:20 wcc Exp $";
+static const char rcsid[] = "$Id: tclchan.c,v 1.27 2003/02/02 08:41:42 wcc Exp $";
 #endif
 */
 
@@ -546,7 +546,7 @@ check_for_udef_flags:
 		char *val;
 		i++;
 		if (i >= items) {
-			if (irp) Tcl_AppendResult(irp, "this setting needs an aargument", NULL);
+			if (irp) Tcl_AppendResult(irp, "this setting needs an argument", NULL);
 			return TCL_ERROR;
 		}
 		val = (char *)getudef(ul->values, chan->dname);
