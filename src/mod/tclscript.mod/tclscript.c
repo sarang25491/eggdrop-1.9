@@ -27,7 +27,6 @@ static int my_command_handler(ClientData client_data, Tcl_Interp *myinterp, int 
 static Tcl_Obj *my_resolve_var(Tcl_Interp *myinterp, script_var_t *v);
 
 static Tcl_Interp *ginterp; /* Our global interpreter. */
-static char *my_syntax_error = "syntax error";
 
 static char *error_logfile = NULL;
 
@@ -265,7 +264,7 @@ static Tcl_Obj *my_resolve_var(Tcl_Interp *myinterp, script_var_t *v)
 		case SCRIPT_POINTER: {
 			char str[32];
 
-			sprintf(str, "#%u", v->value);
+			sprintf(str, "#%u", (unsigned int) v->value);
 			result = Tcl_NewStringObj(str, -1);
 			break;
 		}
@@ -386,7 +385,6 @@ static int my_argument_parser(Tcl_Interp *myinterp, int objc, Tcl_Obj *CONST obj
 
 static int my_argument_cleanup(script_argstack_t *argstack)
 {
-	void *ptr;
 	int i;
 
 	for (i = 0; i < argstack->bufs->len; i++) {
@@ -472,7 +470,7 @@ static registry_simple_chain_t my_functions[] = {
 	{"unlink str", my_unlink_var, 2},
 	{"create cmd", my_create_cmd, 2},
 	{"delete cmd", my_delete_cmd, 2},
-	0
+	{0}
 };
 
 static Function journal_table[] = {

@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.81 2001/10/21 03:44:30 stdarg Exp $
+ * $Id: modules.c,v 1.82 2001/10/22 01:49:24 stdarg Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -31,6 +31,8 @@
 #include "registry.h"
 #include "core_binds.h"
 #include <ctype.h>
+#include "egglib/msprintf.h"
+#include "egglib/mstack.h"
 
 #include <ltdl.h>
 
@@ -555,10 +557,16 @@ Function global_table[] =
   (Function) 0,
 #endif
 #ifndef HAVE_ASPRINTF
-  (Function) asprintf
+  (Function) asprintf,
 #else
-  (Function) 0
+  (Function) 0,
 #endif
+
+	/* 288 - 291 -- egglib stuff */
+	(Function) msprintf,
+	(Function) mstack_new,
+	(Function) mstack_push,
+	(Function) mstack_destroy
 };
 
 static bind_table_t *BT_load, *BT_unload;

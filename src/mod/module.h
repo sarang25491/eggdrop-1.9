@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.73 2001/10/21 03:44:30 stdarg Exp $
+ * $Id: module.h,v 1.74 2001/10/22 01:49:25 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -460,6 +460,12 @@
 #ifndef HAVE_ASPRINTF
 # define asprintf ((int (*)(char **, const char *, ...))global[287])
 #endif
+
+/* 288 - 291 */
+#define msprintf ((char *(*)())global[288])
+#define mstack_new ((mstack_t *(*)())global[289])
+#define mstack_push ((void *(*)())global[290])
+#define mstack_destroy ((void *(*)())global[291])
 
 /* This is for blowfish module, couldnt be bothered making a whole new .h
  * file for it ;)

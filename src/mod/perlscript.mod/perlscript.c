@@ -15,6 +15,7 @@ static Function *global = NULL;
 static PerlInterpreter *ginterp; /* Our global interpreter. */
 
 static XS(my_command_handler);
+static SV *my_resolve_variable(script_var_t *v);
 
 static int my_load_script(registry_entry_t * entry, char *fname)
 {
@@ -48,7 +49,7 @@ static int my_perl_callbacker(script_callback_t *me, ...)
 	int retval, i, n, count;
 	script_var_t var;
 	SV *arg;
-	void **al;
+	int *al;
 	dSP;
 
 	ENTER;
@@ -148,7 +149,7 @@ end of array code */
 			char str[32];
 			int str_len;
 
-			sprintf(str, "#%u", v->value);
+			sprintf(str, "#%u", (unsigned int) v->value);
 			str_len = strlen(str);
 			result = newSVpv(str, str_len);
 			break;
@@ -325,7 +326,7 @@ static Function perlscript_table[] = {
 	(Function) 0
 };
 
-char *perlmodule_LTX_start(Function *global_funcs)
+char *perlscript_LTX_start(Function *global_funcs)
 {
 	char *embedding[] = {"", "-e", "0"};
 
@@ -337,7 +338,8 @@ char *perlmodule_LTX_start(Function *global_funcs)
         registry_lookup("script", "playback", &journal_playback, &journal_playback_h);
         if (journal_playback) journal_playback(journal_playback_h, journal_table);
 
-	if (module_register("perlscript", perlscript_table, 107, 0)) {
+	module_register("perlscript", perlscript_table, 1, 2);
+	if (!module_depend("perlscript", "eggdrop", 107, 0)) {
 		module_undepend("perlscript");
 		return "This module requires eggdrop1.7.0 of later";
 	}
