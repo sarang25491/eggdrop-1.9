@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.13 2003/02/25 06:52:19 stdarg Exp $
+# $Id: Makefile.am,v 1.14 2003/03/07 11:30:33 tothwolf Exp $
 
 AUX_DIST		= $(ac_aux_dir)/install-sh \
 			$(ac_aux_dir)/ltmain.sh \
@@ -6,21 +6,15 @@ AUX_DIST		= $(ac_aux_dir)/install-sh \
 			$(ac_aux_dir)/mkinstalldirs \
 			$(ac_aux_dir)/depcomp
 
-AUX_DIST_EXTRA		= $(ac_aux_dir)/codeset.m4 \
-			$(ac_aux_dir)/gettext.m4 \
-			$(ac_aux_dir)/glibc21.m4 \
-			$(ac_aux_dir)/iconv.m4 \
-			$(ac_aux_dir)/isc-posix.m4 \
-			$(ac_aux_dir)/lcmessage.m4 \
+AUX_DIST_EXTRA		= $(ac_aux_dir)/acinclude.m4 \
 			$(ac_aux_dir)/mpatrol.m4 \
-			$(ac_aux_dir)/progtest.m4 \
-			$(ac_aux_dir)/acinclude.m4 \
 			$(ac_aux_dir)/config.guess \
-			$(ac_aux_dir)/config.sub
+			$(ac_aux_dir)/config.sub \
+			$(ac_aux_dir)/config.rpath
 
 EXTRA_DIST		= bootstrap
 
-SUBDIRS			= intl libltdl lib modules src scripts nettype po
+SUBDIRS			= intl libltdl lib m4 modules src scripts nettype po
 DISTCLEANFILES		= lush.h
 MAINTAINERCLEANFILES	= Makefile.in aclocal.m4 configure config-h.in \
 			config.cache config.log config.status \
@@ -28,6 +22,7 @@ MAINTAINERCLEANFILES	= Makefile.in aclocal.m4 configure config-h.in \
 DISTCLEANLOCAL		= autom4te.cache
 MAINTAINERCLEANLOCAL	= libltdl
 
+ACLOCAL_AMFLAGS		= -I m4
 ACLOCAL			= aclocal -I $(ac_aux_dir)
 
 dist-hook:
