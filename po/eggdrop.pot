@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2001-12-28 04:00-0600\n"
+"POT-Creation-Date: 2001-12-29 04:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -796,24 +796,20 @@ msgstr ""
 msgid "Failed.\n"
 msgstr ""
 
-#: src/cmds.c:2609
-msgid "Usage: modules <bot>\n"
-msgstr ""
-
-#: src/cmds.c:2616
+#: src/cmds.c:2623
 msgid "No such bot online.\n"
 msgstr ""
 
-#: src/cmds.c:2719
+#: src/cmds.c:2726
 #, c-format
 msgid "You are %s@%s\n"
 msgstr ""
 
-#: src/cmds.c:2729
+#: src/cmds.c:2736
 msgid "*** Ja mata!\n"
 msgstr ""
 
-#: src/cmds.c:2731
+#: src/cmds.c:2738
 #, c-format
 msgid "DCC connection closed (%s!%s)"
 msgstr ""
@@ -2259,7 +2255,7 @@ msgstr ""
 msgid "Resetting channel info."
 msgstr ""
 
-#: modules/irc/msgcmds.c:952 modules/server/cmdsserv.c:77
+#: modules/irc/msgcmds.c:952 modules/server/cmdsserv.c:81
 msgid "Jumping servers..."
 msgstr ""
 
