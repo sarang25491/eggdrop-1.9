@@ -1,3 +1,9 @@
+2001-10-14 20:31  Federico Mennite <ite@techmonkeys.org>
+
+	* src/mod/blowfish.mod/blowfish.c:
+
+	Finished gettextification in blowfish.mod.  
+
 2001-10-14 20:04  Federico Mennite <ite@techmonkeys.org>
 
 	* src/mod/assoc.mod/assoc.c:
