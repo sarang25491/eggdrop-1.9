@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.16 2002/02/20 02:37:18 guppy Exp $
+ * $Id: chan.c,v 1.17 2002/02/22 02:43:43 eule Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1918,7 +1918,7 @@ static int gotquit(char *from, char *ignore, char *msg)
 
   fixcolon(msg);
   strncpyz(buf, from, sizeof buf);
-  nick = strtok(from, "!");
+  nick = strtok(buf, "!");
   uhost = strtok(NULL, "!");
   /* Fred1: Instead of expensive wild_match on signoff, quicker method.
    *        Determine if signoff string matches "%.% %.%", and only one
