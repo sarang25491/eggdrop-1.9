@@ -221,11 +221,11 @@ static Tcl_Obj *my_resolve_var(Tcl_Interp *myinterp, script_var_t *v)
 
 		result = Tcl_NewListObj(0, NULL);
 		if ((v->type & SCRIPT_TYPE_MASK) == SCRIPT_VAR) {
-			script_var_t *v_list;
+			script_var_t **v_list;
 
-			v_list = (script_var_t *)v->value;
+			v_list = (script_var_t **)v->value;
 			for (i = 0; i < v->len; i++) {
-				element = my_resolve_var(myinterp, v_list+i);
+				element = my_resolve_var(myinterp, v_list[i]);
 				Tcl_ListObjAppendElement(myinterp, result, element);
 			}
 		}
