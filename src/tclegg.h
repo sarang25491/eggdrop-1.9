@@ -2,7 +2,7 @@
  * tclegg.h
  *   stuff used by tcl.c and tclhash.c
  *
- * $Id: tclegg.h,v 1.16 2002/02/07 22:19:05 wcc Exp $
+ * $Id: tclegg.h,v 1.17 2002/05/05 15:19:12 wingman Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -28,10 +28,6 @@
 
 #include "lush.h"		/* Include this here, since it's needed
 				   in this file */
-#ifndef MAKING_MODS
-#  include "proto.h"		/* This file needs this */
-#endif
-
 /* Match types for check_tcl_bind
  */
 #define MATCH_PARTIAL       0

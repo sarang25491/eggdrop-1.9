@@ -2,7 +2,7 @@
  * flags.c -- handles:
  *   all the flag matching/conversion functions in one neat package :)
  *
- * $Id: flags.c,v 1.29 2002/04/01 13:33:33 ite Exp $
+ * $Id: flags.c,v 1.30 2002/05/05 15:19:11 wingman Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -26,6 +26,12 @@
 #include <ctype.h>
 #include "main.h"
 #include "logfile.h"
+#include "chan.h"		/* findchan_by_dname, channel_shared	*/
+#include "users.h"		/* USERENTRY_BOTFL, get_user		*/
+#include "dccutil.h"		/* shareout, dprintf_eggdrop		*/
+#include "userent.h"		/* list_type_kill			*/
+#include "irccmp.h"		/* irccmp				*/
+#include "flags.h"		/* prototypes				*/
 
 extern int		 debug_output, noshare, allow_dk_cmds;
 

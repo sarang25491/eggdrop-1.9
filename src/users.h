@@ -2,7 +2,7 @@
  * users.h
  *   structures and definitions used by users.c and userrec.c
  *
- * $Id: users.h,v 1.10 2002/02/07 22:19:05 wcc Exp $
+ * $Id: users.h,v 1.11 2002/05/05 15:19:12 wingman Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -25,6 +25,8 @@
 
 #ifndef _EGG_USERS_H
 #define _EGG_USERS_H
+
+#include "tclegg.h"		/* Tcl_Interp		*/
 
 /* List functions :) , next *must* be the 1st item in the struct */
 struct list_type {
@@ -114,6 +116,18 @@ struct user_entry_type *find_entry_type(char *);
 struct user_entry *find_user_entry(struct user_entry_type *, struct userrec *);
 void *get_user(struct user_entry_type *, struct userrec *);
 int set_user(struct user_entry_type *, struct userrec *, void *);
+
+void addignore(char *, char *, char *, time_t);
+int delignore(char *);
+void tell_ignores(int, char *);
+int match_ignore(char *);
+void check_expired_ignores();
+void autolink_cycle(char *);
+void tell_file_stats(int, char *);
+void tell_user_ident(int, char *, int);
+void tell_users_match(int, char *, int, int, int, char *);
+int readuserfile(char *, struct userrec **);
+void backup_userfile(void);
 
 #define bot_flags(u)	((long)get_user(&USERENTRY_BOTFL, (u)))
 #define is_bot(u)	((u) && ((u)->flags & USER_BOT))

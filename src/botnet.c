@@ -6,7 +6,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.57 2002/04/17 21:09:05 ite Exp $
+ * $Id: botnet.c,v 1.58 2002/05/05 15:19:11 wingman Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -33,6 +33,21 @@
 #include "logfile.h"
 #include "misc.h"
 #include "dns.h"
+#include "cmdt.h"		/* cmd_t				*/
+#include "tclhash.h"		/* find_bind_table2, add_builtins2,
+				   check_tcl_disc, check_tcl_chpt,
+				   check_tcl_chof, check_tcl_chon,
+				   check_tcl_chjn			*/
+#include "users.h"		/* getuser, get_user_by_handle, is_bot  */
+#include "botmsg.h"		/* tandout_bot				*/
+#include "botnet.h"		/* bot_idle, bot_away, bot_join		*/ 
+#include "dcc.h"		/* dupwait_notify, failed_link		*/
+#include "dccutil.h"		/* dprintf_eggdrop, lostdcc, chatout,
+				   new_dcc, changeover_dcc		*/
+#include "net.h"		/* tputs, killsock, getsock, 
+				   open_telnet_raw			*/
+#include "userrec.h"		/* touch_laston, correct_handle		*/
+#include "botnet.h"		/* prototypes				*/
 
 extern char		 spaces[], spaces2[];
 extern int		 dcc_total, backgrd, connect_timeout, max_dcc,
@@ -55,6 +70,12 @@ int		 share_unlinks = 0;	/* Allow remote unlinks of my
 /* From main.c */
 extern int die_on_sigterm;
 extern int die_on_sighup;
+
+#ifndef MAKING_MODS
+extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_PRE_RELAY, DCC_FORK_RELAY,
+			DCC_RELAYING, DCC_DNSWAIT, DCC_FORK_BOT, DCC_BOT_NEW,
+			DCC_RELAY;
+#endif /* MAKING_MODS   */
 
 static void botnet_sigterm(char *);
 static void botnet_sighup(char *);

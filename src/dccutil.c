@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  *
- * $Id: dccutil.c,v 1.49 2002/04/28 02:21:07 ite Exp $
+ * $Id: dccutil.c,v 1.50 2002/05/05 15:19:11 wingman Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -35,12 +35,21 @@
 #include "tandem.h"
 #include "logfile.h"
 #include "misc.h"
+#include "cmdt.h"		/* cmd_t				*/
+#include "net.h"		/* tputs, killsock			*/
+#include "tclhash.h"		/* check_tcl_chon, check_tcl_chjn,
+				   check_tcl_chof, check_tcl_away	*/
+#include "dccutil.h"		/* prototypes				*/
 
 extern struct dcc_t	*dcc;
 extern int		 dcc_total, max_dcc, dcc_flood_thr, backgrd, MAXSOCKS;
 extern char		 botnetnick[], spaces[], version[];
 extern time_t		 now;
 extern sock_list	*socklist;
+
+#ifndef MAKING_MODS
+extern struct dcc_table	DCC_CHAT, DCC_LOST;
+#endif /* MAKING_MODS   */
 
 char	motdfile[121] = "text/motd";	/* File where the motd is stored */
 int	connect_timeout = 15;		/* How long to wait before a telnet

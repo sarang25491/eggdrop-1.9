@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  *
- * $Id: tcluser.c,v 1.40 2002/05/01 05:39:11 stdarg Exp $
+ * $Id: tcluser.c,v 1.41 2002/05/05 15:19:12 wingman Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -27,6 +27,12 @@
 #include "users.h"
 #include "chan.h"
 #include "tandem.h"
+#include "flags.h"		/* FR_*, FLAGS_*, flags_*, :-P		*/
+#include "botnet.h"		/* nextbot				*/
+#include "chanprog.h"		/* reload				*/
+#include "userrec.h"		/* count_users, u_pass_match, deluser,
+				   delhost_by_handle, write_userfile,
+				   change_handle			*/
 
 extern struct userrec	*userlist;
 extern int		 default_flags, dcc_total, ignore_time;
@@ -34,6 +40,9 @@ extern struct dcc_t	*dcc;
 extern char		 botnetnick[];
 extern time_t		 now;
 
+#ifndef MAKING_MODS
+extern struct dcc_table DCC_BOT;
+#endif /* MAKING_MODS   */
 
 static int script_countusers()
 {

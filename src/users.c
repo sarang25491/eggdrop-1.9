@@ -10,7 +10,7 @@
  *
  * dprintf'ized, 9nov1995
  *
- * $Id: users.c,v 1.38 2002/04/27 18:15:12 stdarg Exp $
+ * $Id: users.c,v 1.39 2002/05/05 15:19:12 wingman Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -38,6 +38,16 @@
 #include "tandem.h"
 #include "logfile.h"
 #include "misc.h"
+#include "botnet.h"		/* in_chain, nextbot, rembot, botlink	*/
+#include "chanprog.h"		/* clear_chanlist			*/
+#include "dccutil.h"		/* shareout, dprintf_eggdrop, chatout,
+				   lostdcc				*/
+#include "net.h"		/* killsock				*/
+#include "userrec.h"		/* clear_masks				*/
+#include "match.h"		/* wild_match				*/
+#include "irccmp.h"		/* irccmp				*/
+#include "users.h"		/* prototypes				*/
+
 char natip[121] = "";
 
 #include <netinet/in.h>
@@ -53,6 +63,10 @@ extern char botnetnick[];
 extern Tcl_Interp *interp;
 extern time_t now;
 extern int userfile_perm;
+
+#ifndef MAKING_MODS
+extern struct dcc_table DCC_BOT, DCC_BOT_NEW, DCC_FORK_BOT, DCC_DNSWAIT;
+#endif /* MAKING_MODS   */
 
 char userfile[121] = "";	/* where the user records are stored */
 int ignore_time = 10;		/* how many minutes will ignores last? */
@@ -617,6 +631,15 @@ void tell_users_match(int idx, char *mtch, int start, int limit,
     }
   }
   dprintf(idx, _("--- Found %d match%s.\n"), cnt, cnt == 1 ? "" : "es");
+}
+
+void backup_userfile(void)
+{
+  char s[125];
+
+  putlog(LOG_MISC, "*", _("Backing up user file..."));
+  snprintf(s, sizeof s, "%s~bak", userfile);
+  copyfile(userfile, s);
 }
 
 /*

@@ -2,7 +2,7 @@
  * userent.c -- handles:
  *   user-entry handling, new stylem more versatile.
  *
- * $Id: userent.c,v 1.30 2002/04/01 13:33:33 ite Exp $
+ * $Id: userent.c,v 1.31 2002/05/05 15:19:12 wingman Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -26,6 +26,14 @@
 #include "main.h"
 #include "users.h"
 #include "logfile.h"
+#include "modules.h"		/* encrypt_pass				*/
+#include "tcl.h"		/* Tcl_Free				*/
+#include "flags.h"		/* USER_*				*/
+#include "dccutil.h"		/* shareout, dprintf_eggdrop		*/
+#include "userrec.h"		/* addhost_by_handle			*/
+#include "irccmp.h"		/* irccmp				*/
+#include "match.h"		/* wild_match				*/
+#include "userent.h"		/* prototypes				*/
 
 extern int		 noshare;
 extern struct userrec	*userlist;

@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.78 2002/05/03 07:57:12 stdarg Exp $
+ * $Id: tcl.c,v 1.79 2002/05/05 15:19:11 wingman Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -30,6 +30,9 @@
 #include "main.h"
 #include "logfile.h"
 #include "misc.h"
+#include "cmdt.h"		/* cmd_t				*/
+#include "tclhash.h"		/* kill_bind2				*/
+#include "chanprog.h"		/* masktype				*/
 
 /* Used for read/write to internal strings */
 typedef struct {

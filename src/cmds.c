@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.100 2002/05/03 07:57:12 stdarg Exp $
+ * $Id: cmds.c,v 1.101 2002/05/05 15:19:11 wingman Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -29,6 +29,27 @@
 #include "modules.h"
 #include "logfile.h"
 #include "misc.h"
+#include "cmdt.h"		/* cmd_t				*/
+#include "tclhash.h"		/* check_tcl_act, check_tcl_chpt, 
+				   check_tcl_chjn, check_tcl_chof	*/
+#include "users.h"		/* get_user_by_host, set_user,
+				   USERENTRY_PASS			*/
+#include "botnet.h"		/* answer_local_whom, nextbot, tell_bots
+				   tell_bottree, botlink, botunlink,
+				   lastbot, tandem_relay		*/
+#include "chanprog.h"		/* masktype, tell_verbose_status, 
+				   tell_settings, maskname, logmodes
+				   isowner, reload			*/
+#include "dccutil.h"		/* dprintf_eggdrop, not_away, set_away
+				   tell_dcc, do_boot, chanout_but,
+				   dcc_chatter, flush_lines		*/
+#include "net.h"		/* tell_netdebug, killsock		*/
+#include "userrec.h"		/* addhost_by_handle, change_handle,
+				   write_userfile, correct_handle,
+				   u_pass_match, deluser,
+				   delhost_by_handle			*/
+#include "cmds.h"		/* prototypes				*/
+
 #include <ctype.h>
 #include "traffic.h" /* egg_traffic_t */
 
@@ -43,6 +64,11 @@ extern char		 botnetnick[], ver[], network[],
 			 owner[], spaces[], quit_msg[];
 extern time_t		 now, online_since;
 extern module_entry *module_list;
+
+#ifndef MAKING_MODS
+extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_RELAY, DCC_FORK_BOT,
+			DCC_CHAT_PASS; 
+#endif /* MAKING_MODS   */
 
 static char	*btos(unsigned long);
 

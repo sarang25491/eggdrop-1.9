@@ -3,7 +3,7 @@
  *   commands that comes across the botnet
  *   userfile transfer and update commands from sharebots
  *
- * $Id: botcmd.c,v 1.35 2002/04/17 23:03:57 ite Exp $
+ * $Id: botcmd.c,v 1.36 2002/05/05 15:19:11 wingman Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -31,6 +31,20 @@
 #include "modules.h"
 #include "logfile.h"
 #include "misc.h"
+#include "cmdt.h"		/* cmd_t				*/
+#include "botmsg.h"		/* add_note				*/
+#include "botnet.h"		/* botlink, botunlink, in_chain,
+				   updatebot, addbot, lastbot, unvia, 
+				   rembot				*/
+#include "dccutil.h"		/* dprintf_eggdrop, lostdcc, chatout	
+				   new_dcc, changeover_dcc, chanout_but	*/
+#include "net.h"		/* killsock				*/
+#include "tclhash.h"		/* check_tcl_chat, check_tcl_bcst, 
+				   check_tcl_act, check_tcl_link,
+				   check_tcl_bot, check_tcl_chpt,
+				   check_tcl_chjn, check_tcl_away	*/
+#include "botcmd.h"		/* prototypes				*/
+#include "userrec.h"		/* change_handle, touch_laston		*/
 
 extern char		 botnetnick[], ver[], admin[], network[], motdfile[];
 extern int		 dcc_total, remote_boots, noshare;
@@ -40,6 +54,10 @@ extern struct userrec	*userlist;
 extern time_t		 now, online_since;
 extern party_t		*party;
 extern module_entry	*module_list;
+
+#ifndef MAKING_MODS
+extern struct dcc_table DCC_BOT;
+#endif /* MAKING_MODS 	*/
 
 static char TBUF[1024];		/* Static buffer for goofy bot stuff */
 

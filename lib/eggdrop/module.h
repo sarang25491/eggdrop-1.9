@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.18 2002/04/28 02:21:07 ite Exp $
+ * $Id: module.h,v 1.19 2002/05/05 15:19:12 wingman Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -28,9 +28,42 @@
 /* FIXME: remove this ugliness ASAP! */
 #define MAKING_MODS
 
-/* Just include *all* the include files...it's slower but EASIER */
 #include "src/main.h"		/* NOTE: when removing this, include config.h */
-#include "modvals.h"
+
+/* FIXME: filter out files which are not needed (it was easier after removing
+   proto.h and cleaning up main.h to just include all .h files here w/o
+   validating if they aren't needed */
+#include "src/bg.h"
+#include "src/botcmd.h"
+#include "src/botmsg.h"
+#include "src/botnet.h"
+#include "src/chan.h"
+#include "src/chanprog.h"
+#include "src/cmds.h"
+#include "src/cmdt.h"
+#include "src/core_binds.h"
+#include "src/dcc.h"
+#include "src/dccutil.h"
+#include "src/debug.h"
+#include "src/dns.h"
+#include "src/egg.h"
+#include "src/egg_timer.h"
+#include "src/flags.h"
+#include "src/irccmp.h"
+#include "src/logfile.h"
+#include "src/match.h"
+#include "src/md5.h"
+#include "src/misc.h"
+#include "src/modules.h"
+#include "src/net.h"
+#include "src/tandem.h"
+#include "src/tclegg.h"
+#include "src/tcl.h"
+#include "src/tclhash.h"
+#include "src/traffic.h"
+#include "src/userent.h"
+#include "src/userrec.h"
+#include "src/users.h"
 #include "src/tandem.h"
 #include "src/logfile.h"
 #include "src/dns.h"

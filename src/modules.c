@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.107 2002/04/28 02:21:07 ite Exp $
+ * $Id: modules.c,v 1.108 2002/05/05 15:19:11 wingman Exp $
  */
 /* 
  * Copyright (C) 1997 Robey Pointer
@@ -32,13 +32,47 @@
 #include "logfile.h"
 #include "misc.h"
 #include "dns.h"
-#include <ctype.h>
+#include "cmdt.h"		/* cmd_t				*/
+#include "tclhash.h"		/* add_builtins2, rem_builtins2,
+				   find_bind_table2, check_bind,
+				   BT_load, BT_unload, add_bind_table2,
+				   check_tcl_filt, check_tcl_chjn,
+				   check_tcl_chon, del_bind_table2	*/
+#include "botnet.h"		/* updatebot, nextbot, zapfbot,
+				   in_chain				*/
+#include "botmsg.h"		/* add_note				*/
+#include "chanprog.h"		/* clear_chanlist, reaffirm_owners, 
+				   logmodes, masktype, isowner, 
+				   clear_chanlist_member		*/
+#include "cmds.h"		/* stripmodes, stripmasktype,
+				   check_dcc_attrs, check_dcc_chanattrs	*/
+#include "dccutil.h"		/* chatout, chanout_but, new_dcc,
+				   lostdcc, makepass, flush_lines, 
+				   changeover_dcc			*/
+#include "net.h"		/* getlocaladdr, flush_inbuf, 
+				   sockoptions, open_address_listen,
+				   sock_has_data, iptostr, allocsock,
+				   open_telnet, open_telnet_dcc, 
+				   killsock, open_listen, getsock,
+				   tputs, neterror, getmyip, answer	*/
+#include "tcl.h"		/* findanyidx, do_tcl, readtclprog	*/
+#include "users.h"		/* list_type				*/
+#include "userent.h"		/* list_type_kill, xtra_set		*/
+#include "userrec.h"		/* fixfrom, user_del_chan, touch_laston,
+				   count_users, clear_userlist,
+				   write_user, change_handle, 
+				   write_userfile, u_pass_match, deluser,
+				   addhost_by_handle, delhost_by_handle	*/
+#include "irccmp.h"		/* _irccmp, _ircncmp, _irctolower, 
+				   _irctoupper				*/
+#include "match.h"		/* wild_match				*/
+				   
 
+
+#include <ctype.h>
 #include <ltdl.h>
 
 extern struct dcc_t	*dcc;
-
-#include "users.h"
 
 extern Tcl_Interp	*interp;
 extern struct userrec	*userlist, *lastuser;
@@ -58,6 +92,10 @@ extern tand_t *tandbot;
 extern party_t *party;
 extern sock_list        *socklist;
 
+#ifndef MAKING_MODS
+extern struct dcc_table DCC_CHAT_PASS, DCC_BOT, DCC_LOST, DCC_DNSWAIT,
+			DCC_CHAT; 
+#endif /* MAKING_MODS   */
 
 int cmd_die();
 int xtra_kill();

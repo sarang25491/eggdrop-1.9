@@ -1,10 +1,10 @@
 #include "main.h"
-
-#include "modules.h" /* add_hook() */
-
+#include "chanprog.h"			/* logmodes			*/
+#include "modules.h" 			/* add_hook() 			*/
 #include "lib/egglib/msprintf.h"
-
-#include "logfile.h"
+#include "logfile.h"			/* prototypes			*/
+#include "dccutil.h"			/* dprintf_eggdrop		*/
+#include "irccmp.h"			/* irccmp			*/
 
 typedef struct log_b {
 	struct log_b *next;
@@ -25,6 +25,10 @@ extern time_t now;
 
 extern int dcc_total;
 extern struct dcc_t *dcc;
+
+#ifndef MAKING_MODS
+extern struct dcc_table DCC_CHAT;
+#endif /* MAKING_MODS   */
 
 static int cycle_at = 300; /* Military time where we cycle logfiles. */
 static int keep_all_logs = 0; /* Keep all logs? */

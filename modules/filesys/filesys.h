@@ -2,7 +2,7 @@
  * filesysc.h -- part of filesys.mod
  *   header file for the filesys2 eggdrop module
  *
- * $Id: filesys.h,v 1.3 2002/02/07 22:19:02 wcc Exp $
+ * $Id: filesys.h,v 1.4 2002/05/05 15:19:12 wingman Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -53,7 +53,7 @@ static void filedb_getlink(char *, char *, char **);
 static void filedb_getfiles(Tcl_Interp *, char *);
 static void filedb_getdirs(Tcl_Interp *, char *);
 static void filedb_change(char *, char *, int);
-static void tell_file_stats(int, char *);
+static void my_tell_file_stats(int, char *);
 static int do_dcc_send(int, char *, char *, char *, int);
 static int files_reget(int, char *, char *, int);
 static void files_setpwd(int, char *);

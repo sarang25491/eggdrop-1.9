@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.9 2002/05/01 03:56:10 stdarg Exp $
+ * $Id: filesys.c,v 1.10 2002/05/05 15:19:12 wingman Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -251,7 +251,7 @@ static void dcc_files(int idx, char *buf, int i)
     flush_lines(idx, dcc[idx].u.file->chat);
 }
 
-static void tell_file_stats(int idx, char *hand)
+static void my_tell_file_stats(int idx, char *hand)
 {
   struct userrec *u;
   struct filesys_stats *fs;

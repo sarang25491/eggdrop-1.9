@@ -4,7 +4,7 @@
  *   signal handling
  *   command line arguments
  *
- * $Id: main.c,v 1.115 2002/05/03 07:57:12 stdarg Exp $
+ * $Id: main.c,v 1.116 2002/05/05 15:19:11 wingman Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -37,7 +37,14 @@
 #include <signal.h>
 #include <netdb.h>
 #include <setjmp.h>
-
+#include "users.h"			/* check_expired_ignores, 
+					   autolink_cycle,
+					   get_user_by_handle		*/
+#include "chanprog.h"			/* tell_verbose_status, 
+					   chanprog, rehash		*/
+#include "net.h"			/* killsock, setsock, 
+					   dequeue_sockets, sockgets	*/
+#include "userrec.h"			/* write_userfile, count_users	*/
 #include <locale.h>
 
 #ifdef STOP_UAC				/* osf/1 complains a lot */
@@ -56,6 +63,9 @@
 #include "core_binds.h"
 #include "logfile.h"
 #include "misc.h"
+#include "dccutil.h"			/* dprintf_eggdrop, new_dcc, 
+					   dcc_chatter, dcc_remove_lost,
+					   lostdcc			*/
 
 #include "lib/adns/adns.h"
 
@@ -75,6 +85,9 @@ extern struct userrec	*userlist;
 extern struct chanset_t	*chanset;
 extern jmp_buf		 alarmret;
 
+#ifndef MAKING_MODS
+extern struct dcc_table DCC_CHAT;
+#endif /* MAKING_MODS   */
 
 /*
  * Please use the PATCH macro instead of directly altering the version
@@ -343,15 +356,6 @@ static void do_args(int argc, char * const *argv)
   }
   if (optind < argc)
     strlcpy(configfile, argv[optind], sizeof configfile);
-}
-
-void backup_userfile(void)
-{
-  char s[125];
-
-  putlog(LOG_MISC, "*", _("Backing up user file..."));
-  snprintf(s, sizeof s, "%s~bak", userfile);
-  copyfile(userfile, s);
 }
 
 /* Timer info */

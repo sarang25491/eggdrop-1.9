@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.51 2002/05/05 04:59:34 stdarg Exp $
+ * $Id: tclmisc.c,v 1.52 2002/05/05 15:19:12 wingman Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -31,6 +31,9 @@
 #include "md5.h"
 #include "logfile.h"
 #include "misc.h"
+#include "botmsg.h"		/* add_note				*/
+#include "net.h"		/* getmyip				*/
+#include "users.h"		/* get_user_by_nick, get_user_by_handle	*/
 #ifdef HAVE_UNAME
 #include <sys/utsname.h>
 #endif

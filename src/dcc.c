@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.83 2002/04/28 07:37:12 stdarg Exp $
+ * $Id: dcc.c,v 1.84 2002/05/05 15:19:11 wingman Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -33,6 +33,28 @@
 #include "logfile.h"
 #include "dns.h"
 #include "misc.h"
+#include "cmdt.h"	/* cmd_t				*/
+#include "tclhash.h"	/* check_tcl_chof, check_tcl_filt, 
+			   check_tcl_dcc, check_tcl_chat, 
+			   check_tcl_chjn, check_tcl_chon,
+			   check_tcl_listen				*/
+#include "users.h"	/* match_ignore, addignore, get_user_by_host	*/
+#include "chanprog.h"	/* reaffirm_owners				*/
+#include "botnet.h"	/* in_chain, dump_links, addbot, nextbot, 
+			   findbot					*/
+#include "botmsg.h"	/* add_note					*/
+#include "botcmd.h"	/* bot_share					*/	
+#include "cmds.h"	/* check_dcc_attrs				*/
+#include "dccutil.h"	/* dprintf_eggdrop, lostdcc, chatout, 
+			   dcc_chatter, chanout_but, add_cr, not_away
+			   not_away, flush_lines, new_dcc,
+			   changeover_dcc, makepass			*/
+#include "net.h"	/* killsock, getsock, open_telnet_raw, tputs,
+			   answer, neterror, sockoptions, open_telnet	*/
+#include "userrec.h"	/* u_pass_match, correct_handle, write_userfile,
+			   deluser					*/
+#include "match.h"	/* wild_match					*/
+#include "dcc.h"	/* prototypes					*/
 
 /* Includes for botnet md5 challenge/response code <cybah> */
 #include "md5.h"
@@ -45,6 +67,13 @@ extern int		 egg_numver, connect_timeout, conmask, backgrd,
 			 make_userfile, default_flags, debug_output,
 			 ignore_time, par_telnet_flood;
 extern char		 botnetnick[], ver[], origbotname[], notify_new[];
+
+#ifndef MAKING_MODS
+extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_PRE_RELAY, DCC_FORK_RELAY,
+                        DCC_RELAYING, DCC_DNSWAIT, DCC_FORK_BOT, DCC_BOT_NEW,
+                        DCC_RELAY, DCC_IDENTWAIT, DCC_IDENT, DCC_SOCKET,
+			DCC_TELNET, DCC_TELNET_NEW, DCC_TELNET_PW;
+#endif /* MAKING_MODS   */
 
 
 struct dcc_t *dcc = NULL;	/* DCC list				   */

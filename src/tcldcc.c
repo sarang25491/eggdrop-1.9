@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.59 2002/05/03 07:57:12 stdarg Exp $
+ * $Id: tcldcc.c,v 1.60 2002/05/05 15:19:11 wingman Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -28,7 +28,19 @@
 #include "modules.h"
 #include "logfile.h"
 #include "misc.h"
-#include "traffic.h" /* egg_traffic_t */
+#include "cmdt.h"		/* cmd_t				*/
+#include "tclhash.h"		/* check_tcl_chpt, check_tcl_chjn,
+				   check_tcl_bcst, check_tcl_chof	*/
+#include "botnet.h"		/* nextbot, botlink, botunlink, lastbot	*/
+#include "chanprog.h"		/* masktype, logmodes			*/
+#include "cmds.h"		/* stripmasktype, stripmodes		*/
+#include "dccutil.h"		/* chatout, chanout_but, lostdcc
+				   not_away, set_away, new_dcc		*/
+#include "net.h"		/* tputs, sockoptions, killsock,
+				   getsock, open_telnet_raw, neterror,
+				   open_listen				*/
+#include "userrec.h"		/* write_userfile			*/
+#include "traffic.h" 		/* egg_traffic_t			*/
 
 extern struct dcc_t	*dcc;
 extern int		 dcc_total, backgrd, parties, make_userfile,
@@ -40,6 +52,10 @@ extern time_t		 now;
 
 /* Traffic stuff. */
 extern egg_traffic_t traffic;
+
+#ifndef MAKING_MODS
+extern struct dcc_table	DCC_CHAT, DCC_SCRIPT, DCC_TELNET, DCC_SOCKET; 
+#endif /* MAKING_MODS   */
 
 static struct portmap	*root = NULL;
 

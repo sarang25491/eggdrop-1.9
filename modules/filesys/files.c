@@ -2,7 +2,7 @@
  * files.c - part of filesys.mod
  *   handles all file system commands
  *
- * $Id: files.c,v 1.4 2002/02/07 22:19:02 wcc Exp $
+ * $Id: files.c,v 1.5 2002/05/05 15:19:12 wingman Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1279,7 +1279,7 @@ static void cmd_cp(int idx, char *par)
 static int cmd_stats(int idx, char *par)
 {
   putlog(LOG_FILES, "*", "#%s# stats", dcc[idx].nick);
-  tell_file_stats(idx, dcc[idx].nick);
+  my_tell_file_stats(idx, dcc[idx].nick);
   return 0;
 }
 
@@ -1295,7 +1295,7 @@ static int cmd_filestats(int idx, char *par)
   nick = newsplit(&par);
   putlog(LOG_FILES, "*", "#%s# filestats %s", dcc[idx].nick, nick);
   if (nick[0] == 0)
-    tell_file_stats(idx, dcc[idx].nick);
+    my_tell_file_stats(idx, dcc[idx].nick);
   else if (!(u = get_user_by_handle(userlist, nick)))
     dprintf(idx, "No such user.\n");
   else if (!strcmp(par, "clear") && dcc[idx].user &&
@@ -1303,7 +1303,7 @@ static int cmd_filestats(int idx, char *par)
     set_user (&USERENTRY_FSTAT, u, NULL);
     dprintf(idx, "Cleared filestats for %s.\n", nick);
   } else
-    tell_file_stats(idx, nick);
+    my_tell_file_stats(idx, nick);
   return 0;
 }
 

@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  *
- * $Id: userrec.c,v 1.46 2002/04/25 23:18:03 stdarg Exp $
+ * $Id: userrec.c,v 1.47 2002/05/05 15:19:12 wingman Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -32,6 +32,14 @@
 #include "modules.h"
 #include "tandem.h"
 #include "logfile.h"
+#include "modules.h"		/* encrypt_pass				*/
+#include "cmdt.h"		/* cmd_t				*/
+#include "chanprog.h"		/* clear_chanlist, set_chanlist		*/
+#include "dccutil.h"		/* shareout, chanout_but		*/
+#include "irccmp.h"		/* irccmp				*/
+#include "tclhash.h"		/* check_tcl_nkch			*/
+#include "match.h"		/* wild_match				*/
+#include "userrec.h"		/* prototypes				*/
 
 extern struct dcc_t	*dcc;
 extern struct chanset_t	*chanset;
@@ -39,6 +47,10 @@ extern int		 default_flags, default_uflags, quiet_save,
 			 dcc_total, share_greet;
 extern char		 userfile[], ver[], botnetnick[];
 extern time_t		 now;
+
+#ifndef MAKING_MODS
+extern struct dcc_table DCC_CHAT, DCC_BOT;
+#endif /* MAKING_MODS   */
 
 int		 noshare = 1;		/* don't send out to sharebots	    */
 int		 sort_users = 0;	/* sort the userlist when saving    */

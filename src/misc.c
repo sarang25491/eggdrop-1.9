@@ -6,7 +6,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.62 2002/04/01 13:33:33 ite Exp $
+ * $Id: misc.c,v 1.63 2002/05/05 15:19:11 wingman Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -35,6 +35,10 @@
 #include "tandem.h"
 #include "modules.h"
 #include "logfile.h"
+#include "dccutil.h"		/* dprintf_eggdrop, chatout		*/
+#include "userrec.h"		/* write_userfile			*/
+#include "match.h"		/* wild_match				*/
+
 #ifdef HAVE_UNAME
 #  include <sys/utsname.h>
 #endif

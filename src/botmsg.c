@@ -5,7 +5,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: botmsg.c,v 1.32 2002/03/11 20:16:29 stdarg Exp $
+ * $Id: botmsg.c,v 1.33 2002/05/05 15:19:11 wingman Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -29,6 +29,15 @@
 #include "main.h"
 #include "tandem.h"
 #include "misc.h"
+#include "modules.h"	/* match_noterej, storenote			*/
+#include "cmdt.h"	/* cmd_t					*/
+#include "tclhash.h"	/* check_tcl_note				*/
+#include "users.h"	/* bot_flags, get_user_by_handle, is_bot	*/
+#include "botnet.h"	/* lastbot, getparty, nextbot			*/
+#include "botcmd.h"	/* add_note					*/
+#include "net.h"	/* tputs					*/
+#include "dccutil.h"	/* dprintf_eggdrop				*/
+#include "botmsg.h"	/* prototypes					*/
 
 extern struct dcc_t	*dcc;
 extern int		 dcc_total, tands;
@@ -37,6 +46,10 @@ extern party_t		*party;
 extern struct userrec	*userlist;
 
 static char	OBUF[1024];
+
+#ifndef MAKING_MODS
+extern struct dcc_table DCC_BOT, DCC_CHAT;
+#endif /* MAKING_MODS   */
 
 
 #ifndef NO_OLD_BOTNET

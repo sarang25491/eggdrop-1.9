@@ -3,7 +3,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.47 2002/04/01 13:33:33 ite Exp $
+ * $Id: chanprog.c,v 1.48 2002/05/05 15:19:11 wingman Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -37,6 +37,11 @@
 #include "modules.h"
 #include "logfile.h"
 #include "misc.h"
+#include "users.h"		/* get_user_by_handle, readuserfile	*/
+#include "dccutil.h"		/* dprintf_eggdrop			*/
+#include "tcl.h"		/* readtclprog				*/
+#include "userrec.h"		/* count_users, clear_userlist		*/
+#include "irccmp.h"		/* irccmp				*/
 
 extern struct userrec	*userlist;
 extern char		 ver[], botnetnick[], firewall[],

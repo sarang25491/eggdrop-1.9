@@ -4,7 +4,7 @@
  *   provides the code used by the bot if the DNS module is not loaded
  *   DNS script commands
  *
- * $Id: dns.c,v 1.36 2002/04/01 13:33:33 ite Exp $
+ * $Id: dns.c,v 1.37 2002/05/05 15:19:11 wingman Exp $
  */
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -36,6 +36,9 @@
 #include "dns.h"
 #include "lib/adns/adns.h"
 #include "logfile.h"
+#include "net.h"		/* killsock				*/
+#include "dccutil.h"		/* lostdcc				*/
+#include "dns.h"		/* prototypes				*/
 
 typedef struct {
   char *name;
