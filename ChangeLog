@@ -1,3 +1,13 @@
+2002-10-11 06:56  stdarg <stdarg@techmonkeys.org>
+
+	* lib/compat/compat.h, lib/compat/strdup.h,
+	lib/eggdrop/Makefile.am, lib/eggdrop/flags.h, lib/eggdrop/users.c,
+	lib/eggdrop/users.h, src/scriptuser.c:
+
+	
+	* Made 'uset' bind to intercept user settings, and 'uflag' bind for
+	user flags. Next comes 'uhost' I guess.  
+
 2002-10-11 02:46  Will Buckner <wcc@techmonkeys.org>
 
 	* Makefile.am:
