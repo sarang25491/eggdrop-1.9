@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.1 2001/10/10 01:20:09 ite Exp $
+# $Id: Makefile.am,v 1.2 2001/10/21 16:05:52 tothwolf Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 pkglibdir = $(prefix)
@@ -21,8 +21,8 @@ SCRIPTS_DIST_EXTRA	= action.fix.tcl \
 			help/userinfo.help \
 			help/msg/userinfo.help
 
-SUBDIRS                 = 
-MAINTAINERCLEANFILES    = Makefile.in
+SUBDIRS			= 
+MAINTAINERCLEANFILES	= Makefile.in
 
 dist-hook:
 	(cd $(distdir) && mkdir scripts && mkdir scripts/help && \
@@ -38,4 +38,3 @@ install-data-local:
 	for file in $(SCRIPTS_DIST_EXTRA); do \
 	  $(INSTALL_DATA) $$file $(pkglibdir)/scripts/$$file; \
 	done
-

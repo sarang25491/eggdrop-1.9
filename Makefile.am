@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.5 2001/10/21 14:51:34 tothwolf Exp $
+# $Id: Makefile.am,v 1.6 2001/10/21 16:05:51 tothwolf Exp $
 
 AUX_DIST		= $(ac_aux_dir)/install-sh \
 			$(ac_aux_dir)/ltmain.sh \
@@ -19,7 +19,7 @@ AUX_DIST_EXTRA		= $(ac_aux_dir)/codeset.m4 \
 
 EXTRA_DIST		= bootstrap
 
-SUBDIRS			= intl libltdl scripts src @POSUB@
+SUBDIRS			= intl libltdl src scripts @POSUB@
 DISTCLEANFILES		= lush.h
 MAINTAINERCLEANFILES	= Makefile.in aclocal.m4 configure config-h.in \
 			config.cache config.log config.status \
