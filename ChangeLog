@@ -1,3 +1,9 @@
+2001-08-23 23:15  stdarg
+
+	* src/tclhash.h:
+
+	Making way for tcl-less bind tables.  
+
 2001-08-23 04:06  stdarg
 
 	* src/mod/channels.mod/: channels.c, channels.h, cmdschan.c,
