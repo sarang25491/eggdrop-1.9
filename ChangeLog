@@ -1,3 +1,18 @@
+2003-03-06 09:15  stdarg <stdarg@techmonkeys.org>
+
+	* modules/server/: binds.c, binds.h, channels.c, channels.h,
+	input.c, input.h, scriptcmds.c, server.c, server.h, servsock.c:
+
+	
+	* server_parse_input() allows us to generate "fake" server messages 
+	* 005 support for channel modes 
+	* new fake005 config setting so that people on servers with
+	invalid/missing 005 replies can add their own (largely replaces
+	nettype/*) 
+	* server_support "name" function to return values from 005, e.g.
+	server_support("chantypes") returns "#&" (or whatever). Works from
+	scripts too.  
+
 2003-03-06 07:56  Tothwolf <tothwolf@techmonkeys.org>
 
 	* lib/eggdrop/: memutil.c, memutil.h:
