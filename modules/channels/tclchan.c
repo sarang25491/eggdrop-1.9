@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.9 2002/02/24 08:14:35 guppy Exp $
+ * $Id: tclchan.c,v 1.10 2002/03/09 19:42:11 eule Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -32,7 +32,7 @@ static int tcl_killban STDVAR
   struct chanset_t *chan;
 
   BADARGS(2, 2, " ban");
-  if (u_delban(NULL, argv[1], 1) > 0) {
+  if (u_delmask('b', NULL, argv[1], 1) > 0) {
     chan = chanset;
     while (chan != NULL) {
       add_mode(chan, '-', 'b', argv[1]);
@@ -54,7 +54,7 @@ static int tcl_killchanban STDVAR
     Tcl_AppendResult(irp, "invalid channel: ", argv[1], NULL);
     return TCL_ERROR;
   }
-  if (u_delban(chan, argv[2], 1) > 0) {
+  if (u_delmask('b', chan, argv[2], 1) > 0) {
     add_mode(chan, '-', 'b', argv[2]);
     Tcl_AppendResult(irp, "1", NULL);
   } else
@@ -67,7 +67,7 @@ static int tcl_killexempt STDVAR
   struct chanset_t *chan;
 
   BADARGS(2, 2, " exempt");
-  if (u_delexempt(NULL,argv[1],1) > 0) {
+  if (u_delmask('e', NULL, argv[1], 1) > 0) {
     chan = chanset;
     while (chan != NULL) {
       add_mode(chan, '-', 'e', argv[1]);
@@ -89,7 +89,7 @@ static int tcl_killchanexempt STDVAR
     Tcl_AppendResult(irp, "invalid channel: ", argv[1], NULL);
     return TCL_ERROR;
   }
-  if (u_delexempt(chan, argv[2],1) > 0) {
+  if (u_delmask('I', chan, argv[2], 1) > 0) {
     add_mode(chan, '-', 'e', argv[2]);
     Tcl_AppendResult(irp, "1", NULL);
   } else
@@ -102,7 +102,7 @@ static int tcl_killinvite STDVAR
   struct chanset_t *chan;
 
   BADARGS(2, 2, " invite");
-  if (u_delinvite(NULL,argv[1],1) > 0) {
+  if (u_delmask('I', NULL, argv[1], 1) > 0) {
     chan = chanset;
     while (chan != NULL) {
       add_mode(chan, '-', 'I', argv[1]);
@@ -124,7 +124,7 @@ static int tcl_killchaninvite STDVAR
     Tcl_AppendResult(irp, "invalid channel: ", argv[1], NULL);
     return TCL_ERROR;
   }
-  if (u_delinvite(chan, argv[2],1) > 0) {
+  if (u_delmask('I', chan, argv[2], 1) > 0) {
     add_mode(chan, '-', 'I', argv[2]);
     Tcl_AppendResult(irp, "1", NULL);
    } else

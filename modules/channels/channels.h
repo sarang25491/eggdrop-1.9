@@ -1,7 +1,7 @@
 /*
  * channels.h -- part of channels.mod
  *
- * $Id: channels.h,v 1.4 2002/02/07 22:19:01 wcc Exp $
+ * $Id: channels.h,v 1.5 2002/03/09 19:42:10 eule Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -73,13 +73,11 @@ static int u_setsticky_mask(struct chanset_t *chan, maskrec *m, char *uhost,
 
 static int u_equals_mask(maskrec *u, char *uhost);
 static int u_match_mask(struct maskrec *rec, char *mask);
-static int u_delexempt (struct chanset_t * c, char * who, int doit);
 static int u_addexempt (struct chanset_t * chan, char * exempt, char * from,
  			char * note,  time_t expire_time, int flags);
-static int u_delinvite (struct chanset_t * c, char * who, int doit);
 static int u_addinvite (struct chanset_t * chan, char * invite, char * from,
  			char * note,  time_t expire_time, int flags);
-static int u_delban(struct chanset_t *c, char *who, int doit);
+static int u_delmask(char type, struct chanset_t *c, char *who, int doit);
 static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
 		    time_t expire_time, int flags);
 static void tell_bans(int idx, int show_inact, char *match);
@@ -116,7 +114,7 @@ inline static int chanset_unlink(struct chanset_t *chan);
 
 /* 4 - 7 */
 #define u_setsticky_mask ((int (*)(struct chanset_t *, maskrec *, char *, int, char *))channels_funcs[4])
-#define u_delban ((int (*)(struct chanset_t *, char *, int))channels_funcs[5])
+#define u_delmask ((int (*)(char, struct chanset_t *, char *, int))channels_funcs[5])
 #define u_addban ((int (*)(struct chanset_t *, char *, char *, char *, time_t, int))channels_funcs[6])
 #define write_bans ((int (*)(FILE *, int))channels_funcs[7])
 /* 8 - 11 */
@@ -146,14 +144,14 @@ inline static int chanset_unlink(struct chanset_t *chan);
 /* *HOLE* channels_funcs[27] used to be u_match_exempt() by arthur2 <cybah> */
 /* 28 - 31 */
 /* *HOLE* channels_funcs[28] used to be u_setsticky_exempt() <cybah> */
-#define u_delexempt ((int (*)(struct chanset_t *, char *, int))channels_funcs[29])
+/* *HOLE* channels_funcs[29] */
 #define u_addexempt ((int (*)(struct chanset_t *, char *, char *, char *, time_t, int))channels_funcs[30])
 /* *HOLE* channels_funcs[31] used to be u_equals_exempt() <cybah> */
 /* 32 - 35 */
 /* *HOLE* channels_funcs[32] used to be u_sticky_exempt() <cybah> */
 /* *HOLE* channels_funcs[33] used to be u_match_invite() <cybah> */
 /* *HOLE* channels_funcs[34] used to be killchanset().			*/
-#define u_delinvite ((int (*)(struct chanset_t *, char *, int))channels_funcs[35])
+/* *HOLE* channels_funcs[35] */
 /* 36 - 39 */
 #define u_addinvite ((int (*)(struct chanset_t *, char *, char *, char *, time_t, int))channels_funcs[36])
 #define tcl_channel_add ((int (*)(Tcl_Interp *, char *, char *))channels_funcs[37])

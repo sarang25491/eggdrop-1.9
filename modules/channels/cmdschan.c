@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.6 2002/02/07 22:19:01 wcc Exp $
+ * $Id: cmdschan.c,v 1.7 2002/03/09 19:42:10 eule Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -432,7 +432,7 @@ static void cmd_mns_ban(struct userrec *u, int idx, char *par)
       return;
   }
   strncpyz(s, ban, sizeof s);
-  i = u_delban(NULL, s, (u->flags & USER_MASTER));
+  i = u_delmask('b', NULL, s, (u->flags & USER_MASTER));
   if (i > 0) {
     putlog(LOG_CMDS, "*", "#%s# -ban %s", dcc[idx].nick, s);
     dprintf(idx, "%s: %s\n", _("Removed ban"), s);
@@ -446,7 +446,7 @@ static void cmd_mns_ban(struct userrec *u, int idx, char *par)
   if (chan) {
     if (atoi(ban) > 0) {
       snprintf(s, sizeof s, "%d", -i);
-      j = u_delban(chan, s, 1);
+      j = u_delmask('b', chan, s, 1);
       if (j > 0) {
 	putlog(LOG_CMDS, "*", "#%s# (%s) -ban %s", dcc[idx].nick,
 	       chan->dname, s);
@@ -470,7 +470,7 @@ static void cmd_mns_ban(struct userrec *u, int idx, char *par)
 	}
       }
     } else {
-      j = u_delban(chan, ban, 1);
+      j = u_delmask('b', chan, ban, 1);
       if (j > 0) {
 	putlog(LOG_CMDS, "*", "#%s# (%s) -ban %s", dcc[idx].nick,
 	       dcc[idx].u.chat->con_chan, ban);
@@ -522,7 +522,7 @@ static void cmd_mns_exempt (struct userrec *u, int idx, char *par)
       return;
   }
   strncpyz(s, exempt, sizeof s);
-  i = u_delexempt(NULL, s, (u->flags & USER_MASTER));
+  i = u_delmask('e', NULL, s, (u->flags & USER_MASTER));
   if (i > 0) {
     putlog(LOG_CMDS, "*", "#%s# -exempt %s", dcc[idx].nick, s);
     dprintf(idx, "%s: %s\n", _("Removed exempt"), s);
@@ -536,7 +536,7 @@ static void cmd_mns_exempt (struct userrec *u, int idx, char *par)
   if (chan) {
     if (atoi(exempt) > 0) {
       snprintf(s, sizeof s, "%d", -i);
-      j = u_delexempt(chan, s, 1);
+      j = u_delmask('e', chan, s, 1);
       if (j > 0) {
 	putlog(LOG_CMDS, "*", "#%s# (%s) -exempt %s", dcc[idx].nick,
 	       chan->dname, s);
@@ -560,7 +560,7 @@ static void cmd_mns_exempt (struct userrec *u, int idx, char *par)
 	}
       }
     } else {
-      j = u_delexempt(chan, exempt, 1);
+      j = u_delmask('e', chan, exempt, 1);
       if (j > 0) {
 	putlog(LOG_CMDS, "*", "#%s# (%s) -exempt %s", dcc[idx].nick,
 	       dcc[idx].u.chat->con_chan, exempt);
@@ -612,7 +612,7 @@ static void cmd_mns_invite (struct userrec *u, int idx, char *par)
       return;
   }
   strncpyz(s, invite, sizeof s);
-  i = u_delinvite(NULL, s, (u->flags & USER_MASTER));
+  i = u_delmask('I', NULL, s, (u->flags & USER_MASTER));
   if (i > 0) {
     putlog(LOG_CMDS, "*", "#%s# -invite %s", dcc[idx].nick, s);
     dprintf(idx, "%s: %s\n", _("Removed invite"), s);
@@ -626,7 +626,7 @@ static void cmd_mns_invite (struct userrec *u, int idx, char *par)
   if (chan) {
     if (atoi(invite) > 0) {
       snprintf(s, sizeof s, "%d", -i);
-      j = u_delinvite(chan, s, 1);
+      j = u_delmask('I', chan, s, 1);
       if (j > 0) {
 	putlog(LOG_CMDS, "*", "#%s# (%s) -invite %s", dcc[idx].nick,
 	       chan->dname, s);
@@ -651,7 +651,7 @@ static void cmd_mns_invite (struct userrec *u, int idx, char *par)
 	}
       }
     } else {
-      j = u_delinvite(chan, invite, 1);
+      j = u_delmask('I', chan, invite, 1);
       if (j > 0) {
 	putlog(LOG_CMDS, "*", "#%s# (%s) -invite %s", dcc[idx].nick,
 	       dcc[idx].u.chat->con_chan, invite);

@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.10 2002/03/02 23:08:13 eule Exp $
+ * $Id: share.c,v 1.11 2002/03/09 19:42:11 eule Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -662,7 +662,7 @@ static void share_mns_ban(int idx, char *par)
     putlog(LOG_CMDS, "*", "%s: cancel ban %s", dcc[idx].nick, par);
     str_unescape(par, '\\');
     noshare = 1;
-    if (u_delban(NULL, par, 1) > 0) {
+    if (u_delmask('b', NULL, par, 1) > 0) {
       for (chan = chanset; chan; chan = chan->next)
 	add_delay(chan, '-', 'b', par);
     }
@@ -679,7 +679,7 @@ static void share_mns_exempt(int idx, char *par)
     putlog(LOG_CMDS, "*", "%s: cancel exempt %s", dcc[idx].nick, par);
     str_unescape(par, '\\');
     noshare = 1;
-    if (u_delexempt(NULL, par, 1) > 0) {
+    if (u_delmask('e', NULL, par, 1) > 0) {
       for (chan = chanset; chan; chan = chan->next)
 	add_delay(chan, '-', 'e', par);
     }
@@ -696,7 +696,7 @@ static void share_mns_invite(int idx, char *par)
     putlog(LOG_CMDS, "*", "%s: cancel invite %s", dcc[idx].nick, par);
     str_unescape(par, '\\');
     noshare = 1;
-    if (u_delinvite(NULL, par, 1) > 0) {
+    if (u_delmask('I', NULL, par, 1) > 0) {
       for (chan = chanset; chan; chan = chan->next)
 	add_delay(chan, '-', 'I', par);
     }
@@ -725,7 +725,7 @@ static void share_mns_banchan(int idx, char *par)
 	     par, chname);
       str_unescape(par, '\\');
       noshare = 1;
-      if (u_delban(chan, par, 1) > 0)
+      if (u_delmask('b', chan, par, 1) > 0)
 	add_delay(chan, '-', 'b', par);
       noshare = 0;
     }
@@ -753,7 +753,7 @@ static void share_mns_exemptchan(int idx, char *par)
 	     par, chname);
       str_unescape(par, '\\');
       noshare = 1;
-      if (u_delexempt(chan, par, 1) > 0)
+      if (u_delmask('e', chan, par, 1) > 0)
 	add_delay(chan, '-', 'e', par);
       noshare = 0;
     }
@@ -781,7 +781,7 @@ static void share_mns_invitechan (int idx, char *par)
 	     par, chname);
       str_unescape(par, '\\');
       noshare = 1;
-      if (u_delinvite(chan, par, 1) > 0)
+      if (u_delmask('I', chan, par, 1) > 0)
 	add_delay(chan, '-', 'I', par);
       noshare = 0;
     }
@@ -1727,23 +1727,23 @@ static void finish_share(int idx)
   noshare = 1;
   fr.match = (FR_CHAN | FR_BOT);
   while (global_bans)
-    u_delban(NULL, global_bans->mask, 1);
+    u_delmask('b', NULL, global_bans->mask, 1);
   while (global_ign)
     delignore(global_ign->igmask);
   while (global_invites)
-    u_delinvite(NULL, global_invites->mask, 1);
+    u_delmask('I', NULL, global_invites->mask, 1);
   while (global_exempts)
-    u_delexempt(NULL, global_exempts->mask, 1);
+    u_delmask('e', NULL, global_exempts->mask, 1);
   for (chan = chanset; chan; chan = chan->next)
     if (channel_shared(chan)) {
       get_user_flagrec(dcc[j].user, &fr, chan->dname);
       if (bot_chan(fr) || bot_global(fr)) {
 	while (chan->bans)
-	  u_delban(chan, chan->bans->mask, 1);
+	  u_delmask('b', chan, chan->bans->mask, 1);
 	while (chan->exempts)
-	  u_delexempt(chan, chan->exempts->mask, 1);
+	  u_delmask('e', chan, chan->exempts->mask, 1);
 	while (chan->invites)
-	  u_delinvite(chan, chan->invites->mask, 1);
+	  u_delmask('I', chan, chan->invites->mask, 1);
       }
     }
   noshare = 0;

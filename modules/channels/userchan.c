@@ -1,7 +1,7 @@
 /*
  * userchan.c -- part of channels.mod
  *
- * $Id: userchan.c,v 1.5 2002/02/24 08:14:35 guppy Exp $
+ * $Id: userchan.c,v 1.6 2002/03/09 19:42:11 eule Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -228,11 +228,17 @@ static int u_match_mask(maskrec *rec, char *mask)
   return 0;
 }
 
-static int u_delban(struct chanset_t *c, char *who, int doit)
+static int u_delmask(char type, struct chanset_t *c, char *who, int doit)
 {
   int j, i = 0;
-  maskrec *t;
-  maskrec **u = (c) ? &c->bans : &global_bans;
+  maskrec **u = NULL, *t;
+
+  if (type == 'b')
+    u = c ? &c->bans : &global_bans;
+  if (type == 'e')
+    u = c ? &c->exempts : &global_exempts;
+  if (type == 'I')
+    u = c ? &c->invites : &global_invites;
 
   if (!strchr(who, '!') && (j = atoi(who))) {
     j--;
@@ -259,107 +265,11 @@ static int u_delban(struct chanset_t *c, char *who, int doit)
       if (mask) {
 	/* Distribute chan bans differently */
 	if (c)
-	  shareout(c, "-bc %s %s\n", c->dname, mask);
+	  shareout(c, "-%s %s %s\n",
+		   type == 'b' ? "bc" : type == 'e' ? "ec" : "invc", c->dname, mask);
 	else
-	  shareout(NULL, "-b %s\n", mask);
-	free(mask);
-      }
-    }
-    free((*u)->mask);
-    if ((*u)->desc)
-      free((*u)->desc);
-    if ((*u)->user)
-      free((*u)->user);
-    t = *u;
-    *u = (*u)->next;
-    free(t);
-  }
-  return i;
-}
-
-static int u_delexempt (struct chanset_t * c, char * who, int doit)
-{
-  int j, i = 0;
-  maskrec *t;
-  maskrec **u = c ? &(c->exempts) : &global_exempts;
-
-  if (!strchr(who,'!') && (j = atoi(who))) {
-    j--;
-    for (;(*u) && j;u=&((*u)->next),j--);
-    if (*u) {
-      strcpy(who, (*u)->mask);
-      i = 1;
-    } else
-      return -j-1;
-  } else {
-    /* Find matching host, if there is one */
-    for (;*u && !i;u=&((*u)->next))
-      if (!irccmp((*u)->mask,who)) {
-	i = 1;
-	break;
-      }
-    if (!*u)
-      return 0;
-  }
-  if (i && doit) {
-    if (!noshare) {
-      char *mask = str_escape(who, ':', '\\');
-
-      if (mask) {
-	/* Distribute chan exempts differently */
-	if (c)
-	  shareout(c, "-ec %s %s\n", c->dname, mask);
-	else
-	  shareout(NULL, "-e %s\n", mask);
-	free(mask);
-      }
-    }
-    free((*u)->mask);
-    if ((*u)->desc)
-      free((*u)->desc);
-    if ((*u)->user)
-      free((*u)->user);
-    t = *u;
-    *u = (*u)->next;
-    free(t);
-  }
-  return i;
-}
-
-static int u_delinvite(struct chanset_t *c, char *who, int doit)
-{
-  int j, i = 0;
-  maskrec *t;
-  maskrec **u = c ? &(c->invites) : &global_invites;
-
-  if (!strchr(who,'!') && (j = atoi(who))) {
-    j--;
-    for (;(*u) && j;u=&((*u)->next),j--);
-    if (*u) {
-      strcpy(who, (*u)->mask);
-      i = 1;
-    } else
-      return -j-1;
-  } else {
-    /* Find matching host, if there is one */
-    for (;*u && !i; u = &((*u)->next))
-      if (!irccmp((*u)->mask,who)) {
-	i = 1;
-	break;
-      }
-    if (!*u)
-      return 0;
-  }
-  if (i && doit) {
-    if (!noshare) {
-      char *mask = str_escape(who, ':', '\\');
-
-      if (mask) {
-	/* Distribute chan invites differently */
-	if (c)
-	  shareout(c, "-invc %s %s\n", c->dname, mask);
-	else
-	  shareout(NULL, "-inv %s\n", mask);
+	  shareout(NULL, "-%s %s\n",
+		   type == 'b' ? "b" : type == 'e' ? "e" : "inv", mask);
 	free(mask);
       }
     }
@@ -1315,7 +1225,7 @@ static void check_expired_bans(void)
 	    add_mode(chan, '-', 'b', u->mask);
 	    b->timer = now;
 	  }
-      u_delban(NULL, u->mask, 1);
+      u_delmask('b', NULL, u->mask, 1);
     }
   }
   /* Check for specific channel-domain bans expiring */
@@ -1331,7 +1241,7 @@ static void check_expired_bans(void)
 	    add_mode(chan, '-', 'b', u->mask);
 	    b->timer = now;
 	  }
-	u_delban(chan, u->mask, 1);
+	u_delmask('b', chan, u->mask, 1);
       }
     }
   }
@@ -1375,7 +1285,7 @@ static void check_expired_exempts(void)
 	      e->timer = now;
 	    }
       }
-      u_delexempt(NULL, u->mask,1);
+      u_delmask('e', NULL, u->mask,1);
     }
   }
   /* Check for specific channel-domain exempts expiring */
@@ -1405,7 +1315,7 @@ static void check_expired_exempts(void)
 	      add_mode(chan, '-', 'e', u->mask);
 	      e->timer = now;
 	    }
-          u_delexempt(chan, u->mask, 1);
+          u_delmask('e', chan, u->mask, 1);
         }
       }
     }
@@ -1435,7 +1345,7 @@ static void check_expired_invites(void)
 	      add_mode(chan, '-', 'I', u->mask);
 	      b->timer = now;
 	    }
-      u_delinvite(NULL, u->mask,1);
+      u_delmask('I', NULL, u->mask,1);
     }
   }
   /* Check for specific channel-domain invites expiring */
@@ -1452,7 +1362,7 @@ static void check_expired_invites(void)
 	      add_mode(chan, '-', 'I', u->mask);
 	      b->timer = now;
 	    }
-	u_delinvite(chan, u->mask, 1);
+	u_delmask('I', chan, u->mask, 1);
       }
     }
   }

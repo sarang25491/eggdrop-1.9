@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.5 2002/02/07 22:19:01 wcc Exp $
+ * $Id: channels.c,v 1.6 2002/03/09 19:42:10 eule Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -280,13 +280,13 @@ static void remove_channel(struct chanset_t *chan)
    noshare = 1;
    /* Remove channel-bans */
    while (chan->bans)
-     u_delban(chan, chan->bans->mask, 1);
+     u_delmask('b', chan, chan->bans->mask, 1);
    /* Remove channel-exempts */
    while (chan->exempts)
-     u_delexempt(chan, chan->exempts->mask, 1);
+     u_delmask('e', chan, chan->exempts->mask, 1);
    /* Remove channel-invites */
    while (chan->invites)
-     u_delinvite(chan, chan->invites->mask, 1);
+     u_delmask('I', chan, chan->invites->mask, 1);
    /* Remove channel specific user flags */
    user_del_chan(chan->dname);
    noshare = 0;
@@ -766,7 +766,7 @@ static Function channels_table[] =
   (Function) channels_report,
   /* 4 - 7 */
   (Function) u_setsticky_mask,
-  (Function) u_delban,
+  (Function) u_delmask,
   (Function) u_addban,
   (Function) write_bans,
   /* 8 - 11 */
@@ -796,14 +796,14 @@ static Function channels_table[] =
   (Function) NULL,
   /* 28 - 31 */
   (Function) NULL, /* [28] used to be u_setsticky_exempt() <cybah> */
-  (Function) u_delexempt,
+  (Function) NULL,
   (Function) u_addexempt,
   (Function) NULL,
   /* 32 - 35 */
   (Function) NULL,/* [32] used to be u_sticky_exempt() <cybah> */
   (Function) NULL,
   (Function) NULL,	/* [34] used to be killchanset().	*/
-  (Function) u_delinvite,
+  (Function) NULL,
   /* 36 - 39 */
   (Function) u_addinvite,
   (Function) tcl_channel_add,
