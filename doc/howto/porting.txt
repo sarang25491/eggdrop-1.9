@@ -10,9 +10,9 @@ Instead of listing every change here, I'll summarize by saying,
 
 	***Dashes have become underscores in variable names***
 
-For instance, 'bot-nick' is now 'bot_nick'. This was done to make variables
-easier to deal with (no more ${bot-nick}) and because some scripting languages
-have a very hard time dealing with embedded dashes.
+For instance, 'botnet-nick' is now 'botnet_nick'. This was done to make
+variables easier to deal with (no more ${botnet-nick}) and because some
+scripting languages have a hard time dealing with embedded dashes.
 
 2. Server Output
 If you used:
