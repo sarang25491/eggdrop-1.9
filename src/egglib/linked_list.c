@@ -54,10 +54,9 @@ linked_list_cursor_t *linked_list_cursor_create(linked_list_cursor_t *cursor, li
 {
 	linked_list_cursor_t *c;
 
-	if (cursor)
-		c = cursor;
-	else
-		malloc_memset(c, 0, sizeof(*c));
+	if (cursor) c = cursor;
+	else c = (linked_list_cursor_t *)malloc(sizeof(*c));
+	memset(c, 0, sizeof(*c));
 
 	c->list = list;
 	c->node = list->head;
