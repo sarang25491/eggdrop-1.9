@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: binds.c,v 1.19 2004/06/25 17:44:03 darko Exp $";
+static const char rcsid[] = "$Id: binds.c,v 1.20 2004/09/26 09:42:09 stdarg Exp $";
 #endif
 
 #include <string.h>
@@ -29,7 +29,7 @@ static const char rcsid[] = "$Id: binds.c,v 1.19 2004/06/25 17:44:03 darko Exp $
 static bind_table_t *bind_table_list_head = NULL;
 
 /* main routine for bind checks */
-static int bind_vcheck_hits (bind_table_t *table, flags_t *user_flags, const char *match, int *hits, va_list args);
+static int bind_vcheck_hits(bind_table_t *table, flags_t *user_flags, const char *match, int *hits, va_list args);
 
 /* Garbage collection stuff. */
 static void bind_table_really_del(bind_table_t *table);
@@ -337,9 +337,9 @@ int bind_check(bind_table_t *table, flags_t *user_flags, const char *match, ...)
 	va_list args;
 	int ret;
 
-	va_start (args, match);
-	ret = bind_vcheck_hits (table, user_flags, match, NULL, args);	
-	va_end (args);
+	va_start(args, match);
+	ret = bind_vcheck_hits(table, user_flags, match, NULL, args);	
+	va_end(args);
 
 	return ret;
 }
@@ -349,14 +349,14 @@ int bind_check_hits(bind_table_t *table, flags_t *user_flags, const char *match,
 	va_list args;
 	int ret;
 
-	va_start (args, hits);
-	ret = bind_vcheck_hits (table, user_flags, match, hits, args);
-	va_end (args);
+	va_start(args, hits);
+	ret = bind_vcheck_hits(table, user_flags, match, hits, args);
+	va_end(args);
 
 	return ret;
 }
 
-static int bind_vcheck_hits (bind_table_t *table, flags_t *user_flags, const char *match, int *hits, va_list ap)
+static int bind_vcheck_hits(bind_table_t *table, flags_t *user_flags, const char *match, int *hits, va_list ap)
 {
 	void *args[11];
 	bind_entry_t *entry, *next, *winner = NULL;

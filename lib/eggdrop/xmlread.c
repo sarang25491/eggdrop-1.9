@@ -1,468 +1,336 @@
-/* xmlread.c: xml parser
- *
- * Copyright (C) 2002, 2003, 2004 Eggheads Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- */
-
-#ifndef lint
-static const char rcsid[] = "$Id: xmlread.c,v 1.17 2004/06/28 17:36:34 wingman Exp $";
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+#include <errno.h>
 
-#include <eggdrop/memutil.h>
-#include <eggdrop/memory.h>
-#include <eggdrop/xml.h>
+#include <eggdrop/eggdrop.h>
 
-extern xml_amp_conversion_t builtin_conversions[];	/* from xml.c		*/
-extern char *last_error;				/* from xml.c		*/
+static const char *name_terminators = "= \t\n\r?/>";
 
-static int read_options = XML_NONE;
+int xml_parse_children(xml_node_t *parent, char **bufptr);
 
-/* These are pretty much in 'most common' order. */
-static const char *spaces = " \t\n\r\v";
-static const char *name_terminators = "= \t\n\r\v?/>";
+static xml_entity_t entities[] = {
+	{"lt", "<"},
+	{"gt", ">"},
+	{"amp", "&"},
+	{"apos", "'"},
+	{"quot", "\""}
+};
+static int nentities = 5;
 
-/*
- * Skip over whitespace.
- * Return number of bytes we used up.
- */
-int skip_whitespace(char **data)
+static int skip_space(char **bufptr)
 {
-	int n;
+	char *start, *ptr;
 
-	n = strspn(*data, spaces);
-	*data += n;
-	return(n);
+	start = ptr = *bufptr;
+	while (isspace(*ptr)) ptr++;
+	*bufptr = ptr;
+	return(ptr - start);
 }
 
-/*
- * Read in data up to a space, =, >, or ?
- */
-static void read_name(char **data, char **name)
+static void copy_text(char **ptr, int *ptrlen, int *ptrmax, char *str, int len)
 {
-	int n;
-
-	n = strcspn(*data, name_terminators);
-	if (!n) {
-		*name = NULL;
-		return;
+	if (*ptrlen + len + 1 > *ptrmax) {
+		*ptrmax = *ptrlen + len + 64;
+		*ptr = realloc(*ptr, *ptrmax);
 	}
-	*name = (char *)malloc(n+1);
-	memcpy(*name, *data, n);
-	(*name)[n] = 0;
-
-	*data += n;
+	memcpy(*ptr + *ptrlen, str, len);
+	*ptrlen += len;
 }
 
-/*
- * Read in an attribute value.
- */
-static void read_value(char **data, char **value)
+char *xml_entity_lookup(const char *name)
 {
-	const char *terminator;
-	int n;
+	int i, num;
+	static char numcode[2] = {0, 0};
 
-	/* It's supposed to startwith ' or ", but we'll take no ' or " to mean
-		it's a one word value. */
+	/* See if it's a hex code. */
+	if (*name == '#') {
+		name++;
+		if (*name == 'x') num = strtol(name+1, NULL, 16);
+		else num = strtol(name, NULL, 10);
+		numcode[0] = num;
+		return(numcode);
+	}
 
-	if (**data == '\'') terminator = "'";
-	else if (**data == '"') terminator = "\"";
+	for (i = 0; i < nentities; i++) {
+		if (!strcasecmp(entities[i].name, name)) return(entities[i].value);
+	}
+	return(NULL);
+}
+
+int xml_decode_text(char *text, int len, char **outtext, int *outlen)
+{
+	char *amp, *colon, *entity;
+	int outmax, amplen;
+
+	*outlen = 0;
+	outmax = len+1;
+	*outtext = malloc(outmax);
+
+	len -= skip_space(&text);
+
+	while ((amp = memchr(text, '&', len))) {
+		amplen = amp - text;
+		colon = memchr(amp, ';', len - amplen);
+		if (!colon) break;
+		copy_text(outtext, outlen, &outmax, text, amplen);
+		len -= (colon+1 - text);
+		text = colon+1;
+		*colon = 0;
+		entity = xml_entity_lookup(amp+1);
+		if (entity) copy_text(outtext, outlen, &outmax, entity, strlen(entity));
+	}
+	while (len > 0 && isspace(text[len-1])) len--;
+	copy_text(outtext, outlen, &outmax, text, len);
+	return(0);
+}
+
+static void append_text(xml_node_t *node, char *text, int len, int decode)
+{
+	char *finaltext;
+	int finallen;
+
+	if (decode) xml_decode_text(text, len, &finaltext, &finallen);
 	else {
-		terminator = name_terminators;
-		(*data)--;
+		finaltext = text;
+		finallen = len;
 	}
 
-	/* Skip past first ' or " so we can find the ending one. */
-	(*data)++;
+	node->text = realloc(node->text, node->len + finallen + 1);
+	memcpy(node->text + node->len, finaltext, finallen);
+	node->len += finallen;
+	node->text[node->len] = 0;
 
-	n = strcspn(*data, terminator);
-	*value = (char *)malloc(n+1);
-	memcpy(*value, *data, n);
-	(*value)[n] = 0;
-
-	/* Skip past closing ' or ". */
-	if (terminator != name_terminators) n++;
-	*data += n;
+	if (finaltext != text) free(finaltext);
 }
 
-static void read_text(xml_node_t *node, char **data)
+static char *read_name(char **bufptr)
 {
-	char *end;
-	char *text;
-	int len, node_len;
-
-	/* Find end-point. */
-	end = strchr(*data, '<');
-	if (!end) end = *data + strlen(*data);
-
-	/* Get length of text. */
-	len = end - *data;
-	node_len = (node->data.value.s_val) ? strlen(node->data.value.s_val) : 0;
-
-	/* Add it to the node's current text value. */
-	text = (char *)realloc(node->data.value.s_val, len + node_len + 1);
-	memcpy(text + node_len, *data, len);
-	node->data.value.s_val = text;
-	node_len += len;
-	text[node_len] = 0;
-
-	/* Update data to point to < (or \0). */
-	*data = end;
-}
-
-/* Decoded result is guaranteed <= original. */
-int xml_decode_text(char *text)
-{
-	char *end, *result, *orig;
 	int n;
-	/* Some variables for &char; conversion. */
-	char *amp, *colon, *next;
-	int i, inlen;
+	char *name;
 
-	inlen = (text) ? strlen(text) : 0;
-	if (!(read_options & XML_TRIM_TEXT))
-		return inlen;
-		
-	/* text = input, result = output */
-	orig = result = text;
-	end = text + inlen;
-
-	/* Can't start with a space. */
-	skip_whitespace(&text);
-
-	while (text < end) {
-		/* Get count of non-spaces. */
-		n = strcspn(text, spaces);
-
-		/* If we're supporting &char; notation, here's where it
-			happens. If we can't find the &char; in the conversions
-			table, then we leave the '&' for it by default. The
-			conversion table is defined in xml.c. */
-
-		next = text+n;
-		while (n > 0 && (amp = memchr(text, '&', n))) {
-			memmove(result, text, (amp-text));
-			result += (amp-text);
-			n -= (amp-text);
-			colon = memchr(amp, ';', n);
-			if (!colon) break;
-			*colon = 0;
-			text = colon+1;
-			n -= (colon-amp);
-			amp++; /* Skip past &. */
-			for (i = 0; builtin_conversions[i].key; i++) {
-				if (!strcasecmp(amp, builtin_conversions[i].key)) {
-					*result++ = builtin_conversions[i].value;
-					break;
-				}
-			}
-		}
-		memmove(result, text, n);
-		result += n;
-		text = next;
-
-		/* Skip over whitespace. */
-		n = skip_whitespace(&text);
-
-		/* If there was any, and it's not the end, replace it all with
-			a single space. */
-		if (n && text < end) {
-			*result++ = ' ';
-		}
-	}
-
-	*result = 0;
-
-	return(result - orig);
+	n = strcspn(*bufptr, name_terminators);
+	if (!n) return NULL;
+	name = malloc(n+1);
+	memcpy(name, *bufptr, n);
+	name[n] = 0;
+	*bufptr += n;
+	return(name);
 }
 
-/* Parse a string of attributes. */
-static void read_attributes(xml_node_t *node, char **data)
+static char *read_value(char **bufptr)
 {
-	xml_attr_t attr;
+	const char *term;
+	char *value;
+	int n;
 
-	for (;;) {
-		memset(&attr, 0, sizeof(xml_attr_t));
+	if (**bufptr == '\'') term = "'";
+	else if (**bufptr == '"') term = "\"";
+	else {
+		term = name_terminators;
+		(*bufptr)--;
+	}
 
-		/* Skip over any leading whitespace. */
-		skip_whitespace(data);
+	/* Skip past first quote. */
+	(*bufptr)++;
+	n = strcspn(*bufptr, term);
+	value = malloc(n+1);
+	memcpy(value, *bufptr, n);
+	value[n] = 0;
 
-		/* Read in the attribute name. */
-		read_name(data, &attr.name);
-		if (!attr.name) return;
+	if (term != name_terminators) n++;
+	*bufptr += n;
+	return(value);
+}
 
-		skip_whitespace(data);
+static void read_attributes(xml_node_t *node, char **bufptr)
+{
+	xml_attr_t *attr;
+	char *name, *value;
 
-		/* Check for '=' sign. */
-		if (**data != '=') {
-			free(attr.name);
+	while (1) {
+		skip_space(bufptr);
+		name = read_name(bufptr);
+		if (!name || **bufptr != '=') {
+			if (name) free(name);
 			return;
 		}
-		(*data)++;
-
-		skip_whitespace(data);
-
-		read_value(data, &attr.data.value.s_val);
-
-		xml_node_append_attr (node, &attr);
+		(*bufptr)++;
+		value = read_value(bufptr);
+		attr = xml_attr_new(name, value);
+		xml_node_append_attr(node, attr);
 	}
 }
 
-/*
- * Read an entire node and all its children.
- * 0 - read the node successfully
- * 1 - reached end of input
- * 2 - reached end of node
- */
-static int xml_read_node(xml_node_t *parent, char **data)
+/* Parse a node. */
+int xml_parse_node(xml_node_t *parent, char **bufptr)
 {
 	xml_node_t *node;
-	int n;
-	char *end;
-	
-	/* Read in any excess data and save it with the parent. */
-	read_text(parent, data);
+	char *ptr, *buf = *bufptr;
 
-	/* If read_text() doesn't make us point to an <, we're at the end. */
-	if (**data != '<') return(1);
+	if (*buf++ != '<') return(-1);
+	skip_space(&buf);
 
-	/* Skip over the < and any whitespace. */
-	(*data)++;
-	skip_whitespace(data);
+	/* Is it a closing tag? (returns 0) */
+	if (*buf == '/') {
+		char *name;
 
-	/* If this is a closing tag like </blah> then we're done. */
-	if (**data == '/') return(2);
+		if (!parent->name) return(-1);
 
-	/* If this is the start of the xml declaration, <?xml version=...?> then
-		we read it like a normal tag, but set the 'decl' member. */
-	if (**data == '?') {
-		(*data)++;
-	
+		buf++;
+		name = read_name(&buf);
+		if (strcasecmp(name, parent->name)) {
+			free(name);
+			xml_set_error("closing tag doesn't match opening tag");
+			return(-1);
+		}
+		free(name);
+
+		ptr = strchr(buf, '>');
+		if (!ptr) return(-1);
+		*bufptr = ptr+1;
+		return(0);
+	}
+
+	/* Figure out what type of node this is. */
+	if (!strncmp(buf, "!--", 3)) {
+		/* A comment. */
+		buf += 3;
+		ptr = strstr(buf, "-->");
+		if (!ptr) {
+			xml_set_error("comment has no end");
+			return(-1);
+		}
+
+		node = xml_node_new();
+		node->type = XML_COMMENT;
+		append_text(node, buf, ptr-buf, 1);
+		xml_node_append(parent, node);
+		*bufptr = ptr+3;
+		return(1);
+	}
+	else if (!strncasecmp(buf, "![CDATA[", 8)) {
+		/* CDATA section. */
+		buf += 7;
+		ptr = strstr(buf, "]]>");
+		if (!ptr) {
+			xml_set_error("CDATA has no end");
+			return(-1);
+		}
+
+		append_text(parent, buf, ptr-buf, 0);
+		*bufptr = ptr+3;
+		return(1);
+	}
+	else if (!strncasecmp(buf, "!DOCTYPE", 8)) {
+		/* XXX Incorrect doctype parsing, fix later. */
+		buf += 8;
+		ptr = strchr(buf, '>');
+		if (!ptr) return(-1);
+		*bufptr = ptr+1;
+		return(1);
+	}
+	else if (*buf == '?') {
+		/* Processing instruction. */
+		buf++;
+		skip_space(&buf);
 		node = xml_node_new();
 		node->type = XML_PROCESSING_INSTRUCTION;
 	}
-	else if (**data == '!') {
-		(*data)++;
-		if (**data == '-') {
-			/* Comment <!-- ... --> */
-			int len;
-
-			*data += 2; /* Skip past '--' part. */
-			end = strstr(*data, "-->");
-			len = end - *data;
-
-			node = xml_node_new();
-			node->data.value.s_val = (char *)malloc(len+1);
-			memcpy(node->data.value.s_val, *data, len);
-			node->data.value.s_val[len] = 0;
-
-			node->type = XML_COMMENT;
-	
-			xml_node_append(parent, node);
-			*data = end+3;
-			return(0); /* Skip past '-->' part. */
-		} else {
-			/* set error */
-			str_redup(&last_error, "Invalid comment declaration, expected character '-' not found.");
-
-			/* invalid tag start */
-			return (-1);
-		}
-	}
-	else if (**data == '[') {
-		char *ptr;
-		size_t len;
-
-		/* we're likely to be a CDATA section, check it */
-		if (strncmp (*data, "[DATA[", 6) != 0)
-			return -1;
-		*data += 6;
-
-		/* search for ending ]]> */
-		ptr = strstr(*data, "]]>");
-		if (ptr == NULL)
-			return -1;
-		len = (size_t)(ptr - *data);
-
-		/* copy text */
-		node = xml_node_new();
-		node->data.value.s_val = malloc(len + 1);
-		memcpy(node->data.value.s_val, *data, len - 1);
-		node->data.value.s_val[len] = 0;
-
-		/* set type */
-		node->type = XML_CDATA_SECTION;
-
-		/* add to parent */
-		xml_node_append(parent, node);
-
-		/* skip text + ]]> */
-		*data += len + 3;
-
-		return 0;
-
-	} else {
+	else {
+		/* Otherwise, try it as a normal node. */
 		node = xml_node_new();
 		node->type = XML_ELEMENT;
 	}
 
-	/* Read in the tag name. */
-	read_name(data, &node->name);
-	
-	/* sanity check for more than one document element */
-	if (parent->type == XML_DOCUMENT) {
-		int i, count = 0;
-
-		/* sanity check */
-		for (i = 0; i < parent->nchildren; i++) {
-			if (parent->children[i]->type == XML_ELEMENT)
-				count++;
-		}		
-
-		if (count > 0) {
-			str_redup(&last_error, "Only one root element allowed.");
-			return (-1);
+	node->name = read_name(&buf);
+	read_attributes(node, &buf);
+	if (node->type == XML_PROCESSING_INSTRUCTION) {
+		if (strncmp(buf, "?>", 2)) {
+			xml_node_free(node);
+			xml_set_error("invalid processing instruction");
+			return(-1);
 		}
+		xml_node_append(parent, node);
+		*bufptr = buf+2;
+		return(1);
 	}
 
-	/* Now that we have a name, go ahead and add the node to the tree. */
-	xml_node_append(parent, node);
-
-	/* Read in the attributes. */
-	read_attributes(node, data);
-
-	/* Now we should be pointing at ?, /, or >. */
-
-	/* '?' and '/' are empty tags with no children or text value. */
-	if (**data == '/' || **data == '?') {
-		end = strchr(*data, '>');
-		if (!end) return(1); /* End of input. */
-		*data = end + 1;
-		return(0);
+	/* Is it an empty tag? */
+	if (!strncmp(buf, "/>", 2)) {
+		xml_node_append(parent, node);
+		*bufptr = buf+2;
+		return(1);
+	}
+	else if (*buf != '>') {
+		xml_set_error("invalid tag");
+		return(-1);
 	}
 
-	/* Skip over closing '>' after attributes. */
-	(*data)++;
+	/* Move past the '>'. */
+	buf++;
+	if (xml_parse_children(node, &buf) != -1) {
+		*bufptr = buf;
+		xml_node_append(parent, node);
+		return(1);
+	}
 
-	/* Parse children and text value. */
+	/* Error reading children. */
+	xml_node_free(node);
+	return(-1);
+}
+
+/* Parse all child nodes and attach them to the parent. */
+int xml_parse_children(xml_node_t *parent, char **bufptr)
+{
+	char *ptr, *buf = *bufptr;
+	int ret;
+
 	do {
-		if ((n = xml_read_node(node, data)) == -1)
-			return -1;
-	} while (n == 0);
+		ptr = strchr(buf, '<');
+		if (!ptr) {
+			append_text(parent, buf, strlen(buf), 1);
+			return(0);
+		}
 
-	/* Ok, the recursive xml_read_node() has read in all the text value for
-		this node, so decode it now. */
-	xml_decode_text(node->data.value.s_val);
+		/* Append the intervening text to the parent. */
+		append_text(parent, buf, ptr - buf, 1);
+		buf = ptr;
 
-	/* Ok, now 1 means we reached end-of-input. */
-	/* 2 means we reached end-of-node. */
-	if (n == 2) {
-		/* We don't validate to make sure the start tag and end tag
-			matches. */
-		end = strchr(*data, '>');
-		if (!end) return(1);
-
-		*data = end+1;
-		return(0);
-		/* End of our node. */
-	}
-
-	/* Otherwise, end-of-input. */
-	return(1);
+		ret = xml_parse_node(parent, &buf);
+		*bufptr = buf;
+	} while (ret == 1);
+	return(ret);
 }
 
-int xml_load(FILE *fd, xml_node_t **node, int options)
+xml_node_t *xml_parse_file(const char *fname)
 {
-	size_t size, read;
-	char *data;
-	int ret;
-
-	/* seek to begin */
-	fseek(fd, 0l, SEEK_SET);
-
-	/* seek to end */
-	fseek(fd, 0l, SEEK_END);
-	size = ftell(fd) * sizeof(char);
-	fseek(fd, 0l, SEEK_SET);
-
-	data = malloc(size + (1 * sizeof(char)));
-	read = fread(data, sizeof(char), size, fd);
-	data[read] = 0;
-
-	ret = xml_load_str(data, node, options);
-
-	free(data);
-
-	return ret;
-}
-
-int xml_load_file(const char *file, xml_node_t **node, int options)
-{
-	FILE *fd;
-	int ret;
-
-	fd = fopen (file, "r");
-	if (fd == NULL) {
-		str_redup(&last_error, "unable to open file.");
-		return -1;
-	}
-	ret = xml_load(fd, node, options);
-	fclose (fd);
-
-	return ret;
-}
-
-int xml_load_str(char *str, xml_node_t **node, int options)
-{
-	int ret;
+	FILE *fp;
 	xml_node_t *root;
+	char *buf, *ptr;
+	int len;
 
-	(*node) = NULL;
-
+	fp = fopen(fname, "r");
+	if (!fp) {
+		xml_set_error(strerror(errno));
+		return(NULL);
+	}
+	fseek(fp, 0l, SEEK_END);
+	len = ftell(fp);
+	fseek(fp, 0l, SEEK_SET);
+	buf = malloc(len+1);
+	if (!buf) {
+		fclose(fp);
+		xml_set_error("out of memory");
+		return(NULL);
+	}
+	fread(buf, 1, len, fp);
+	fclose(fp);
 	root = xml_node_new();
 	root->type = XML_DOCUMENT;
-
-	/* clear last error */
-	last_error = NULL;
-
-	read_options = options;
-	do { 
-		if ((ret = xml_read_node(root, &str)) == -1)
-			break;
-	} while (ret == 0);
-	read_options = XML_NONE;
-
-	/* empty file will produce no errors so we check here for any
-	 * root element */
-	if (ret == -1 || xml_root_element(root) == NULL) {
-
-		/* emtpy file? heh... */
-		if (last_error == NULL)
-			str_redup(&last_error, "No elements found.");
-		xml_node_delete(root);
-
-		return (-1);
-	}
-
-	xml_decode_text(root->data.value.s_val);
-
-	(*node) = root;
-
-	return 0;
+	ptr = buf;
+	xml_parse_children(root, &ptr);
+	free(buf);
+	return xml_root_element(root);
 }

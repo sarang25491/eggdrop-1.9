@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: memory.h,v 1.2 2004/06/22 21:55:32 wingman Exp $
+ * $Id: memory.h,v 1.3 2004/09/26 09:42:09 stdarg Exp $
  */
 #ifndef _EGG_MEMORY_H
 #define _EGG_MEMORY_H
@@ -27,7 +27,7 @@
 #define MEM_DEBUG_PRINT_EACH_CALL	(1 << 1)
 #define MEM_DEBUG_PRINT_ERRORS		(1 << 2)
 
-#ifdef DEBUG
+#if 0
 
 /* calloc */
 #	ifdef calloc

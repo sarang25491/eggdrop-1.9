@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.39 2004/07/17 20:59:38 darko Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.40 2004/09/26 09:42:09 stdarg Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -196,8 +196,7 @@ static int party_status(partymember_t *p, const char *nick, user_t *u, const cha
 	if (!uname(&un)) partymember_printf(p, _("OS: %1$s %2$s"), un.sysname, un.release);
 #endif
 	partymember_printf(p, _("Help path: %s (%d entries, %d sections)"),
-			core_config.help_path, help_count_entries(),
-			help_count_sections());
+			core_config.help_path, 0, 0);
 	partymember_printf(p, "");
 	check_bind_status(p, text);
 	return(0);
@@ -471,7 +470,7 @@ static int party_chattr(partymember_t *p, const char *nick, user_t *u, const cha
 
 static int party_help(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
-	return help_print_party(p, text);
+	return 0;
 }
 
 static int party_addlog(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
@@ -569,31 +568,37 @@ static int party_restart(partymember_t *p, const char *nick, user_t *u, const ch
 /* Syntax: chhandle <old_handle> <new_handle> */
 static int party_chhandle(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
-	char *old = NULL, *new = NULL;
+	char *old = NULL, *newh = NULL;
 	user_t *dest;
 
-	egg_get_args(text, NULL, &old, &new, NULL);
-	if (!old || !new || !*old || !*new) {
+	egg_get_args(text, NULL, &old, &newh, NULL);
+	if (!old || !newh || !*old || !*newh) {
+		if (old) free(old);
+		if (newh) free(newh);
 		partymember_printf(p, _("Syntax: chhandle <old_handle> <new_handle>"));
 		goto chhandleend;
 	}
 
 	dest = user_lookup_by_handle(old);
 	if (!dest) {
+		free(old);
+		free(newh);
 		partymember_printf(p, _("Error: User '%s' does not exist."), old);
 		goto chhandleend;
 	}
 
-	if (user_lookup_by_handle(new)) {
-		partymember_printf(p, _("Error: User '%s' already exists."), new);
-		goto chhandleend;
+	if (user_lookup_by_handle(newh)) {
+		free(old);
+		free(newh);
+		partymember_printf(p, _("Error: User '%s' already exists."), newh);
+		return 0;
 	}
 
-	if (user_change_handle(dest, old, new))
+	if (!user_change_handle(dest, newh))
 		partymember_printf(p, _("Ok, changed."));
 
 chhandleend:
-	free(new);
+	free(newh);
 	free(old);
 
 	return BIND_RET_LOG;

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: users.h,v 1.13 2004/07/17 20:59:38 darko Exp $
+ * $Id: users.h,v 1.14 2004/09/26 09:42:09 stdarg Exp $
  */
 
 #ifndef _EGG_USERS_H_
@@ -95,7 +95,7 @@ int user_check_pass(user_t *u, const char *pass);
 int user_set_pass(user_t *u, const char *pass);
 int user_count();
 int user_rand_pass(char *buf, int bufsize);
-int user_change_handle(user_t *u, const char *old, const char *new);
+int user_change_handle(user_t *u, const char *newhandle);
 int partyline_cmd_match_ircmask(void *p, const char *mask, long start, long limit);
 int partyline_cmd_match_attr(void *p, const char *attr, const char *chan, long start, long limit);
 

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: module.c,v 1.4 2004/06/23 21:12:57 stdarg Exp $";
+static const char rcsid[] = "$Id: module.c,v 1.5 2004/09/26 09:42:09 stdarg Exp $";
 #endif
 
 #include <ltdl.h>
@@ -101,8 +101,15 @@ int module_load(const char *name)
 
 	startfunc = (egg_start_func_t)lt_dlsym(hand, "start");
 	if (!startfunc) {
-		lt_dlclose(hand);
-		return(-3);
+		char *startname;
+
+		startname = egg_mprintf("%s_LTX_start", name);
+		startfunc = (egg_start_func_t)lt_dlsym(hand, startname);
+		free(startname);
+		if (!startfunc) {
+			lt_dlclose(hand);
+			return(-3);
+		}
 	}
 
 	/* Create an entry for it. */
@@ -160,7 +167,7 @@ int module_loaded(const char *name)
 {
 	if (name == NULL) return 0;
 
-	return (find_module (name) != NULL);
+	return (find_module(name) != NULL);
 }
 
 void *module_get_api(const char *name, int major, int minor)

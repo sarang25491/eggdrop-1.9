@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_config.c,v 1.21 2004/06/28 17:36:34 wingman Exp $";
+static const char rcsid[] = "$Id: core_config.c,v 1.22 2004/09/26 09:42:09 stdarg Exp $";
 #endif
 
 #include <string.h>
@@ -31,55 +31,34 @@ void *config_root = NULL;
 
 static config_var_t core_config_vars[] = {
 	/* General bot stuff. */
-	{"botname", &core_config.botname, CONFIG_STRING},		/* DDC	*/
-	{"userfile", &core_config.userfile, CONFIG_STRING},		/* DDC	*/
-	{"lockfile", &core_config.lockfile, CONFIG_STRING},		/* DDC	*/
+	{"botname", &core_config.botname, CONFIG_STRING},	/* DDC	*/
+	{"userfile", &core_config.userfile, CONFIG_STRING},	/* DDC	*/
+	{"lockfile", &core_config.lockfile, CONFIG_STRING},	/* DDC	*/
 
 	/* The owner. */
-	{"owner", &core_config.owner, CONFIG_STRING},			/* DDC	*/
-	{"admin", &core_config.admin, CONFIG_STRING},			/* DDC	*/
+	{"owner", &core_config.owner, CONFIG_STRING},		/* DDC	*/
+	{"admin", &core_config.admin, CONFIG_STRING},		/* DDC	*/
 
 	/* Paths. */
-	{"help_path", &core_config.help_path, CONFIG_STRING},		/* DDD	*/
-	{"temp_path", &core_config.temp_path, CONFIG_STRING},		/* DDD	*/
-	{"text_path", &core_config.text_path, CONFIG_STRING},		/* DDD	*/
-	{"module_path", &core_config.module_path, CONFIG_STRING},	/* DDD	*/
+	{"help_path", &core_config.help_path, CONFIG_STRING},	/* DDD	*/
+	{"temp_path", &core_config.temp_path, CONFIG_STRING},	/* DDD	*/
+	{"text_path", &core_config.text_path, CONFIG_STRING},	/* DDD	*/
+	{"module_path", &core_config.module_path, CONFIG_STRING},/* DDD	*/
 
 	/* Whois. */
-	{"whois_items", &core_config.whois_items, CONFIG_STRING},	/* DDD	*/
+	{"whois_items", &core_config.whois_items, CONFIG_STRING},/* DDD	*/
+
+	/* Logging. */
+	{"logging.keep_all", &core_config.logging.keep_all, CONFIG_INT},
+	{"logging.quick", &core_config.logging.quick, CONFIG_INT},
+	{"logging.max_size", &core_config.logging.max_size, CONFIG_INT},
+	{"logging.switch_at", &core_config.logging.switch_at, CONFIG_INT},
 
 	/* Other. */
-	{"die_on_sigterm", &core_config.die_on_sigterm, CONFIG_INT},	/* DDD	*/
+	{"die_on_sigterm", &core_config.die_on_sigterm, CONFIG_INT},/* DDD*/
 	{0}
 };
 
-config_variable_t loglevel_vars[] = {
-	{ "LOG_MISC",   LOG_MISC,   NULL },
-	{ "LOG_PUBLIC", LOG_PUBLIC, NULL }, 
-	{ "LOG_MSGS",   LOG_MSGS,   NULL },
-	{ "LOG_JOIN",   LOG_JOIN,   NULL },
-	{ 0, 0, 0 }
-};
-config_type_t loglevel_type = { "level", sizeof(int), loglevel_vars };
-
-config_variable_t logfile_vars[] = {
-	{ "@filename", CONFIG_NONE, &CONFIG_TYPE_STRING },
-	{ "@channel",  CONFIG_NONE, &CONFIG_TYPE_STRING },
-	{ NULL,        CONFIG_ENUM, &loglevel_type      },
-	{ 0, 0, 0 }
-};
-config_type_t logfile_type = { "logfile", sizeof(logfile_t), logfile_vars };
-
-config_variable_t logging_vars[] = {
-	{ "@keep_all",  CONFIG_NONE,  &CONFIG_TYPE_BOOL   },
-	{ "@quick",     CONFIG_NONE,  &CONFIG_TYPE_BOOL   },
-	{ "@max_size",  CONFIG_NONE,  &CONFIG_TYPE_INT    },
-	{ "@switch_at", CONFIG_NONE,  &CONFIG_TYPE_INT    },
-	{ "@suffix",    CONFIG_NONE,  &CONFIG_TYPE_STRING },
-	{ "logfiles",   CONFIG_ARRAY, &logfile_type       },	
-	{ 0, 0, 0 }
-};
-config_type_t logging_type = { "logging", sizeof(logging_t), logging_vars };
 
 int core_config_init(const char *fname)
 {
@@ -90,8 +69,7 @@ int core_config_init(const char *fname)
 	egg_setowner(&core_config.owner);
 
 	config_root = config_load(fname);
-	if (config_root == NULL)
-		return -1;
+	if (config_root == NULL) return -1;
 
 	config_set_root("eggdrop", config_root);
 	config_link_table(core_config_vars, config_root, "eggdrop", 0, NULL);
@@ -102,16 +80,12 @@ int core_config_init(const char *fname)
 
 	config_update_table(core_config_vars, config_root, "eggdrop", 0, NULL);
 
-	config2_link(0, &logging_type, &core_config.logging);
-
 	return (0);
 }
 
 int core_config_save(void)
 {
 	config_update_table(core_config_vars, config_root, "eggdrop", 0, NULL);
-
-	config2_sync(0, &logging_type, &core_config.logging);
 
 	config_save("eggdrop", configfile);
 

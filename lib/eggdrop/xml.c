@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xml.c,v 1.19 2004/06/30 21:07:02 stdarg Exp $";
+static const char rcsid[] = "$Id: xml.c,v 1.20 2004/09/26 09:42:09 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -27,26 +27,23 @@ static const char rcsid[] = "$Id: xml.c,v 1.19 2004/06/30 21:07:02 stdarg Exp $"
 #include <stdarg.h>
 #include <ctype.h>			/* isdigit		*/
 
+#include <eggdrop/eggdrop.h>
+
 #include "xml.h"			/* prototypes		*/
 
 #define XML_PATH_SEPARATOR '/'
 
-xml_amp_conversion_t builtin_conversions[] =
-{
-	{"quot",	'"'  },
-	{"lt",		'<'  },
-	{"gt",		'>'  },
-	{"amp",		'&'  },
-	{"apos",	'\'' },
-	{"nbsp",	' '  },
-	{0}
-};
 
-char *last_error = NULL;
+static char *last_error = NULL;
 
 const char *xml_last_error(void)
 {
 	return last_error;
+}
+
+void xml_set_error(const char *err)
+{
+	str_redup(&last_error, err);
 }
 
 /* Get a new, blank node. */
@@ -54,44 +51,24 @@ xml_node_t *xml_node_new(void)
 {
 	xml_node_t *node;
 
-	node = (xml_node_t *)malloc(sizeof(xml_node_t));
-	if (node == NULL)
-		return NULL;
-	memset(node, 0, sizeof(xml_node_t));
-
-	/* default value is STRING NULL */
-	node->data.value.s_val = NULL;
-	node->data.type = VARIANT_STRING;
-
-	/* default type is element */	
-	node->type = XML_ELEMENT;
+	node = calloc(sizeof(*node), 1);
 	
 	return node;
 }
 
-xml_node_t *xml_create_element(const char *name)
-{
-	xml_node_t *node;
-	
-	node = xml_node_new();
-	node->name = (name) ? strdup(name) : NULL;
-	
-	return node;
-}
-
-xml_node_t *xml_create_attribute(const char *name)
+/* Free all memory associated with a node. */
+void xml_node_free(xml_node_t *node)
 {
 	xml_attr_t *attr;
-	
-	attr = malloc(sizeof(xml_attr_t));
-	if (attr == NULL)
-		return NULL;
-	memset(attr, 0, sizeof(xml_attr_t));
-	
-	attr->type = XML_ATTRIBUTE;
-	attr->name = (name) ? strdup(name) : NULL;
-	
-	return (xml_node_t *)attr;
+	int i;
+
+	if (node->name) free(node->name);
+	if (node->text) free(node->text);
+	for (i = 0; i < node->nattributes; i++) {
+		attr = node->attributes[i];
+		xml_attr_free(attr);
+	}
+	if (node->attributes) free(node->attributes);
 }
 
 void xml_node_delete(xml_node_t *node)
@@ -101,61 +78,36 @@ void xml_node_delete(xml_node_t *node)
 
 void xml_node_delete_callbacked(xml_node_t *node, void (*callback)(void *))
 {
-	int i;
+	xml_node_t *child;
 
-	if (node->client_data && callback)
-		callback(node->client_data);
+	if (node->client_data && callback) callback(node->client_data);
 
 	if (node->parent) {
 		xml_node_t *parent = node->parent;
-		for (i = 0; i < parent->nchildren; i++) {
-			if (parent->children[i] == node) break;
-		}
-		if (parent->nchildren == 1) {
-			free(parent->children);	parent->children = NULL;
-		} else {
-			memmove(parent->children+i, parent->children+i+1, sizeof(node) * (parent->nchildren-i-1));
-		}
+
 		parent->nchildren--;
+		if (parent->children == node) parent->children = node->next;
+		if (parent->last_child == node) parent->last_child = node->prev;
+
+		node->parent = NULL;
 	}
 
-	/* free attributes */
-	for (i = 0; i < node->nattributes; i++) {
-		if (node->attributes[i].name) free(node->attributes[i].name);
-		if (node->attributes[i].data.type == VARIANT_STRING) {
-			if (node->attributes[i].data.value.s_val)
-				free(node->attributes[i].data.value.s_val);
-		}
-	}
-	if (node->attributes) free(node->attributes);
+	/* Unlink from node list. */
+	if (node->prev) node->prev->next = node->next;
+	if (node->next) node->next->prev = node->prev;
 
-	/* free children */
-	for (i = 0; i < node->nchildren; i++) {
-		node->children[i]->parent = NULL;
-		xml_node_delete_callbacked(node->children[i], callback);
-	}
-	if (node->children) free(node->children);
+	/* Unlink from sibling list. */
+	if (node->prev_sibling) node->prev_sibling->next_sibling = node->next_sibling;
+	if (node->next_sibling) node->next_sibling->prev_sibling = node->prev_sibling;
 
-	/* only string needs to be free'd */
-	if (node->data.type == VARIANT_STRING)
-		free(node->data.value.s_val);
-
-	free(node->name);
-	free(node);
-}
-
-const char *xml_node_type(xml_node_t *node)
-{
-	switch (node->type) {
-		case (XML_DOCUMENT): return "XML_DOCUMENT";
-		case (XML_ELEMENT): return "XML_ELEMENT";
-		case (XML_CDATA_SECTION): return "XML_CDATA_SECTION";
-		case (XML_PROCESSING_INSTRUCTION): return "XML_PROCESSING_INSTRUCTION";
-		case (XML_COMMENT): return "XML_COMMENT";
-		case (XML_ATTRIBUTE): return "XML_ATTRIBUTE";
+	/* Delete children. */
+	for (child = node->children; child; child = child->next) {
+		child->parent = NULL;
+		xml_node_delete_callbacked(child, callback);
 	}
 
-	return "unknown";
+	/* Free memory taken by node. */
+	xml_node_free(node);
 }
 
 xml_node_t *xml_node_vlookup(xml_node_t *root, va_list args, int create)
@@ -185,8 +137,8 @@ xml_node_t *xml_node_lookup(xml_node_t *root, int create, ...)
 
 xml_node_t *xml_node_path_lookup(xml_node_t *root, const char *path, int index, int create)
 {
-	int i, thisindex, len;
-	xml_node_t *child, *newchild;
+	int thisindex, len;
+	xml_node_t *child;
 	const char *next;
 	char *name, *sep, buf[512];
 
@@ -228,52 +180,26 @@ xml_node_t *xml_node_path_lookup(xml_node_t *root, const char *path, int index, 
 		/* If it's the last path element, add the index param. */
 		if (!next) thisindex += index;
 
-		child = NULL;
-		if (name[0] == '@') {
-			for (i = 0; i < root->nattributes; i++) {
-				if (strcasecmp(root->attributes[i].name, name + 1) == 0) {
-					child = (xml_node_t *)&root->attributes[i];
-					break;
-				}
-			}
+		for (child = root->children; child; child = child->next) {
+			if (child->name && !strcasecmp(child->name, name)) break;
 		}
-		else {
-			for (i = 0; i < root->nchildren; i++) {			
-				if (root->children[i]->name && !strcasecmp(root->children[i]->name, name)) {
-					if (thisindex-- > 0) continue;
-					child = root->children[i];
-					break;
-				}
-			}
+
+		while (child && thisindex > 0) {
+			thisindex--;
+			child = child->next_sibling;
 		}
 
 		if (!child && create) {
-			if (0 == strcmp(name, "."))
-				return NULL;
-				
 			do {		
-				if (name[0] == '@') {
-					root->attributes = realloc(root->attributes,
-						(root->nattributes + 1) * sizeof(xml_attr_t));
-					newchild = (xml_node_t *)&root->attributes[root->nattributes++];
-					memset(newchild, 0, sizeof(xml_attr_t));
-					newchild->name = strdup(name + 1);
-					newchild->type = XML_ATTRIBUTE;
-				} else {		
-					newchild = xml_create_element(name);
-					xml_node_append(root, newchild);
-				}									
-				
-				child = newchild;
+				child = xml_node_new();
+				child->type = XML_ELEMENT;
+				child->name = strdup(name);
+				xml_node_append(root, child);
 			} while (thisindex-- > 0);
 		}
-		
+		if (name != buf) free(name);
+
 		root = child;
-		if (root && root->type == XML_ATTRIBUTE)
-			break;
-			
-		if (name != buf)
-			free(name);
 	}
 	return(root);
 }
@@ -312,12 +238,23 @@ int xml_node_get_int(int *value, xml_node_t *node, ...)
 	va_start(args, node);
 	node = xml_node_vlookup(node, args, 0);
 	va_end(args);
-	if (node) {
-		*value = variant_get_int(&node->data, 0);
+	if (node && node->text) {
+		*value = strtol(node->text, NULL, 0);
 		return(0);
 	}
 	*value = 0;
 	return(-1);
+}
+
+int xml_node_int(xml_node_t *node, int def)
+{
+	int value;
+	char *ptr;
+
+	if (!node || !node->text) return(def);
+	value = strtol(node->text, &ptr, 0);
+	if (!ptr || *ptr) return(def);
+	else return(value);
 }
 
 int xml_node_get_str(char **str, xml_node_t *node, ...)
@@ -328,15 +265,22 @@ int xml_node_get_str(char **str, xml_node_t *node, ...)
 	node = xml_node_vlookup(node, args, 0);
 	va_end(args);
 	if (node) {
-		*str = (char *)variant_get_str(&node->data, NULL);
+		*str = node->text;
 		return(0);
 	}
 	*str = NULL;
 	return(-1);
 }
 
+char *xml_node_str(xml_node_t *node, char *def)
+{
+	if (!node || !node->text) return(def);
+	else return(node->text);
+}
+
 int xml_node_set_int(int value, xml_node_t *node, ...)
 {
+	char buf[32];
 	va_list args;
 
 	va_start(args, node);
@@ -344,7 +288,8 @@ int xml_node_set_int(int value, xml_node_t *node, ...)
 	va_end(args);
 	if (!node) return(-1);
 
-	variant_set_int(&node->data, value);
+	snprintf(buf, sizeof(buf), "%d", value);
+	str_redup(&node->text, buf);
 
 	return(0);
 }
@@ -358,213 +303,95 @@ int xml_node_set_str(const char *str, xml_node_t *node, ...)
 	va_end(args);
 	if (!node) return(-1);
 
-	variant_set_str(&node->data, str);
+	str_redup(&node->text, str);
 
 	return(0);
 }
 
 xml_node_t *xml_root_element(xml_node_t *node)
 {
-	 int i;
+	 if (node == NULL) return NULL;
 
-	 if (node == NULL)
-		  return NULL;
+	 /* Zoom up to the document. */
+	 while (node && node->parent) node = node->parent;
 
-	 while (node && node->parent)
-		  node = node->parent;
-
-	 for (i = 0; i < node->nchildren; i++)
-		if (node->children[i]->type == XML_ELEMENT)
-			return node->children[i];
-	 return NULL;
-}
-
-xml_attr_t *xml_node_lookup_attr(xml_node_t *node, const char *name)
-{
-	int i;
-
-	for (i = 0; i < node->nattributes; i++) {
-		if (strcasecmp(node->attributes[i].name, name) == 0)
-			return &node->attributes[i];
-	}
-
-	return NULL;
-}
-
-void xml_node_remove(xml_node_t *parent, xml_node_t *child)
-{
-	int i;
-
-	for (i = 0; i < parent->nchildren; i++) {
-		if (parent->children[i] != child)
-			continue;
-
-		if (parent->nchildren == 1) {
-			free(parent->children); parent->children = NULL;
-		} else {
-			memmove(parent->children + i,
-				parent->children + i + 1,
-					parent->nchildren -i - 1);
-			parent->children = realloc(parent->children, (parent->nchildren - 1) * sizeof(xml_node_t *));
-		}
-		parent->nchildren--;
-
-		child->prev = NULL;
-		child->parent = NULL;
-		child->next = NULL;
-		return;
-	}
+	 /* Find first element. */
+	 node = node->children;
+	 while (node && node->type != XML_ELEMENT) node = node->next;
+	 return node;
 }
 
 void xml_node_append(xml_node_t *parent, xml_node_t *child)
 {	
-	if (child->type == XML_ATTRIBUTE) {
-		xml_node_append_attr(parent, (xml_attr_t *)child);
-		return;		
-	}
-	
-	/* remove from previous parent */
-	if (child->parent)
-		xml_node_remove(child->parent, child);
+	xml_node_t *node;
 
-	parent->children = realloc(parent->children, sizeof(xml_node_t *) * (parent->nchildren + 1));
-	parent->children[parent->nchildren] = child;
-
-	if (parent->nchildren > 0)
-		parent->children[parent->nchildren - 1]->next = child;
-
-	/* set new parent */
 	child->parent = parent;
-
 	parent->nchildren++;
-}
 
-void xml_node_append_attr (xml_node_t *node, xml_attr_t *attr)
-{
-	xml_attr_t *a;
-		
-	a = xml_node_lookup_attr (node, attr->name);
-	if (a == NULL) {
-		node->attributes = (xml_attr_t *)realloc(
-			node->attributes, sizeof(xml_attr_t) * (node->nattributes+1));
-		a = &node->attributes[node->nattributes++];
+	if (!parent->children) {
+		parent->children = child;
 	}
-	
-	a->type = XML_ATTRIBUTE;
-	a->name = attr->name;
-	
-	memcpy(&a->data, &attr->data, sizeof(attr->data));
-}
+	else {
+		parent->last_child->next = child;
+		child->prev = parent->last_child;
+	}
 
-void xml_node_remove_attr (xml_node_t *node, xml_attr_t *attr)
-{
-	int i;
+	parent->last_child = child;
 
-	for (i = 0; i < node->nattributes; i++) {
-		if (strcasecmp(node->attributes[i].name, attr->name) == 0) {
-			if (node->nattributes == 1) {
-				free (node->attributes); node->attributes = NULL;
-			} else {
-				memmove (node->attributes + i,
-					node->attributes + i + 1,
-						sizeof (xml_attr_t) * 
-							node->nattributes - i - 1);
-			}
-			node->nattributes--;
-			return;
+	for (node = child->prev; node; node = node->prev) {
+		if (!strcasecmp(node->name, child->name)) {
+			node->next_sibling = child;
+			child->prev_sibling = node;
+			break;
 		}
 	}
 }
 
-static xml_attr_t *xml_node_create_attr(xml_node_t *node, const char *name)
+xml_attr_t *xml_attr_new(char *name, char *value)
 {
 	xml_attr_t *attr;
-	
-	node->attributes = (xml_attr_t *)realloc(
-		node->attributes, sizeof(xml_attr_t) * (node->nattributes+1));
-	attr = &node->attributes[node->nattributes++];
-	memset(attr, 0, sizeof(xml_attr_t));
-		
-	attr->name = strdup(name);
-	
-	return attr;
+
+	attr = malloc(sizeof(*attr));
+	attr->name = name;
+	attr->value = value;
+	attr->len = strlen(value);
+	return(attr);
 }
 
-
-#define XML_DEFINE_GET_AND_SET(name, type) \
-	void xml_set_text_## name(xml_node_t *node, type value) \
-	{ \
-		if (node == NULL) return; \
-		variant_set_## name(&node->data, value); \
-	} \
-	\
-	type xml_get_text_## name(xml_node_t *node, type nil) \
-	{ \
-		if (node == NULL) return nil; \
-		return variant_get_## name(&node->data, nil); \
-	} \
-	type xml_get_attr_## name(xml_node_t *node, const char *n, type nil) \
-	{ \
-		xml_attr_t *attr; \
-		attr = xml_node_lookup_attr(node, n); \
-		if (attr == NULL) return nil; \
-		return variant_get_## name(&attr->data, nil); \
-	} \
-	void xml_set_attr_## name(xml_node_t *node, const char *n, type value) \
-	{ \
-		xml_attr_t *attr; \
-		attr = xml_node_lookup_attr(node, n); \
-		if (attr == NULL) attr = xml_node_create_attr(node, n); \
-		variant_set_## name(&attr->data, value); \
-	}
-
-XML_DEFINE_GET_AND_SET(str, const char *)
-XML_DEFINE_GET_AND_SET(int, int)
-XML_DEFINE_GET_AND_SET(bool, int)
-XML_DEFINE_GET_AND_SET(ts, time_t)
-
-void xml_dump_data(variant_t *data)
+void xml_attr_free(xml_attr_t *attr)
 {
-	switch (data->type) {
-
-		case (VARIANT_STRING):
-			printf("%s (STRING)\n", data->value.s_val);
-			break;
-
-		case (VARIANT_INT):
-			printf("%i (INT)\n", data->value.i_val);
-			break;
-
-		case (VARIANT_BOOL):
-			printf("%s (BOOL)\n", (data->value.b_val) ? "yes" : "no");
-			break;
-
-		case (VARIANT_TIMESTAMP):
-			printf("%li (TIMESTAMP)\n", data->value.ts_val);
-			break;
-	}
+	if (attr->name) free(attr->name);
+	if (attr->value) free(attr->value);
+	free(attr);
 }
 
-void xml_dump(xml_node_t *node)
+int xml_node_append_attr(xml_node_t *node, xml_attr_t *attr)
+{
+	node->attributes = realloc(node->attributes, sizeof(*node->attributes) * (node->nattributes+1));
+	node->attributes[node->nattributes++] = attr;
+	return(0);
+}
+
+xml_attr_t *xml_attr_lookup(xml_node_t *node, const char *name)
 {
 	int i;
 
-	printf("%s %s\n", node->name, xml_node_type(node));
 	for (i = 0; i < node->nattributes; i++) {
-		printf("\t%s: ", node->attributes[i].name);
-		xml_dump_data(&node->attributes[i].data);	
+		if (!strcasecmp(node->attributes[i]->name, name)) return(node->attributes[i]);
 	}
-	for (i = 0; i < node->nchildren; i++) {
-		xml_dump(node->children[i]);
-	}
+	return(NULL);
 }
 
-void xml_node_remove_by_name(xml_node_t *parent, const char *name)
+int xml_attr_int(xml_node_t *node, const char *name, int def)
 {
-	int i;
+	xml_attr_t *attr = xml_attr_lookup(node, name);
+	if (attr && attr->value) return atoi(attr->value);
+	else return(def);
+}
 
-	for (i = parent->nchildren - 1; i >= 0; i--) {
-		if (0 == strcmp(parent->children[i]->name, name))
-			xml_node_remove(parent, parent->children[i]);
-	}
+char *xml_attr_str(xml_node_t *node, const char *name, char *def)
+{
+	xml_attr_t *attr = xml_attr_lookup(node, name);
+	if (attr && attr->value) return(attr->value);
+	else return(def);
 }

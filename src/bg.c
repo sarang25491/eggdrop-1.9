@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: bg.c,v 1.20 2004/06/23 21:12:57 stdarg Exp $";
+static const char rcsid[] = "$Id: bg.c,v 1.21 2004/09/26 09:42:09 stdarg Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -57,19 +57,17 @@ static const char rcsid[] = "$Id: bg.c,v 1.20 2004/06/23 21:12:57 stdarg Exp $";
 
 /* The child has to keep the parent's pid so it can send it a signal when it's
  * time to exit. */
-static pid_t parent_pid = -1, child_pid = -1;
-
-void wait_for_child(int sig)
-{
-	printf("Eggdrop launched successfully into the background, pid = %d.\n", child_pid);
-	exit(0);
-}
+static int pipefd[2];
 
 void bg_begin_split()
 {
+	pid_t parent_pid = -1, child_pid = -1;
 	int result;
+	char temp = 0;
 
 	parent_pid = getpid();
+
+	pipe(pipefd);
 
 	child_pid = fork();
 	if (child_pid == -1) fatal("CANNOT FORK PROCESS.");
@@ -79,24 +77,28 @@ void bg_begin_split()
 		/* Yes. Continue as normal. */
 		return;
 	}
-
 	/* We are the parent. Just hang around until the child is done. When
 	 * the child wants us to exit, it will send us the signal and trigger
 	 * wait_for_child. */
-	signal(SIGUSR1, wait_for_child);
-	waitpid(child_pid, &result, 0);
+	close(pipefd[1]);
+	result = read(pipefd[0], &temp, 1);
 
-	/* If we reach this point, that means the child process exited, so
-	 * there was an error. */
-	printf("Eggdrop exited abnormally!\n");
-	exit(1);
+	if (result <= 0) {
+		printf("Eggdrop exited abnormally!\n");
+		exit(1);
+	}
+	else {
+		printf("Eggdrop launched successfully into the background, pid = %d.\n", child_pid);
+		exit(0);
+	}
 }
 
 void bg_finish_split()
 {
-	/* Send parent the USR1 signal, which tells it to print a message
-	 * and exit. */
-	kill(parent_pid, SIGUSR1);
+	char temp = 0;
+	write(pipefd[1], &temp, 1);
+	close(pipefd[1]);
+	close(pipefd[0]);
 
 #if HAVE_SETPGID && !defined(CYGWIN_HACKS)
 	setpgid(0, 0);

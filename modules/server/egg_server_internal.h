@@ -30,7 +30,6 @@
 #define server_channel_init server_LTX_server_channel_init
 #define server_channel_destroy server_LTX_server_channel_destroy
 #define free_all_online_stuff server_LTX_free_all_online_stuff
-#define server_channel_init server_LTX_server_channel_init
 #define channel_lookup server_LTX_channel_lookup
 #define uhost_cache_lookup server_LTX_uhost_cache_lookup
 #define uhost_cache_addref server_LTX_uhost_cache_addref

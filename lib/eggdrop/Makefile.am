@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.36 2004/08/26 18:32:07 darko Exp $
+# $Id: Makefile.am,v 1.37 2004/09/26 09:42:08 stdarg Exp $
 
 MAINTAINERCLEANFILES	= Makefile.in
 
@@ -26,13 +26,11 @@ libeggdrop_la_SOURCES	= base64.c base64.h \
 			net.c net.h \
 			owner.c owner.h \
 			string.c string.h \
-			memory.h memory.c \
 			timer.c timer.h \
 			fileutil.c fileutil.h \
 			flags.c flags.h \
 			garbage.c garbage.h \
 			hash_table.c hash_table.h \
-			help.c help.h \
 			irccmp.c irccmp.h \
 			ircmasks.c ircmasks.h \
 			ircparse.c ircparse.h \
@@ -52,7 +50,6 @@ libeggdrop_la_SOURCES	= base64.c base64.h \
 			users.c users.h \
 			xml.c xml.h \
 			xmlread.c xmlwrite.c \
-			variant.c variant.h \
 			timeutil.c timeutil.h
 
 libeggdrop_la_LIBADD	= @LIBLTDL@ \

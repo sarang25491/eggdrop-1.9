@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.40 2004/07/17 20:59:38 darko Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.41 2004/09/26 09:42:09 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -112,13 +112,13 @@ int user_shutdown(void)
 
 int user_load(const char *fname)
 {
-	int i, j, k, uid;
+	int j, k, uid;
 	xml_node_t *doc, *root, *user_node, *setting_node;
 	user_setting_t *setting;
 	char *handle, *ircmask, *chan, *name, *value, *flag_str;
 	user_t *u;
 
-	if (xml_load_file(fname, &doc, XML_TRIM_TEXT) != 0) {
+	if (!(doc = xml_parse_file(fname))) {
 		putlog(LOG_MISC, "*", _("Failed to load userfile '%s': %s"), fname, xml_last_error());
 		return -1;
 	}
@@ -133,10 +133,8 @@ int user_load(const char *fname)
 
 	g_uid = uid;
 	xml_node_get_int(&uid_wraparound, root, "uid_wraparound", 0, 0);
-	for (i = 0; i < root->nchildren; i++) {
-		user_node = root->children[i];
-		if (strcasecmp(user_node->name, "user")) continue;
-
+	user_node = xml_node_lookup(root, 0, "user", 0, 0);
+	for (; user_node; user_node = user_node->next_sibling) {
 		/* The only required user fields are 'handle' and 'uid'. */
 		xml_node_get_str(&handle, user_node, "handle", 0, 0);
 		xml_node_get_int(&uid, user_node, "uid", 0, 0);
@@ -672,16 +670,12 @@ int user_set_pass(user_t *u, const char *pass)
 {
 	char hash[16], hashhex[33], *salt, new_salt[33];
 	MD5_CTX ctx;
-	int i;
 
 	user_get_setting(u, NULL, "salt", &salt);
 	if (!salt) {
 		salt = new_salt;
-		for (i = 0; i < 32; i++) {
-			new_salt[i] = random() % 26 + 'A';
-		}
-		new_salt[i] = 0;
-		user_set_setting(u, NULL, "salt", new_salt);
+		user_rand_pass(salt, sizeof(new_salt));
+		user_set_setting(u, NULL, "salt", salt);
 	}
 
 	if (!pass || !*pass) {
@@ -708,7 +702,7 @@ int user_rand_pass(char *buf, int bufsize)
 	int i, c;
 
 	bufsize--;
-	if (!buf || bufsize < 0) return(-1);
+	if (!buf || bufsize <= 0) return(-1);
 	for (i = 0; i < bufsize; i++) {
 		c = (random() + (random() >> 16) + (random() >> 24)) % 62;
 		if (c < 10) c += 48;	/* Digits. */
@@ -740,20 +734,19 @@ user_check_flags_str (user_t *u, const char *chan, const char *flags)
 	return user_check_flags (u, chan, &f);
 }
 
-int
-user_change_handle(user_t *u, const char *old, const char *new)
+int user_change_handle(user_t *u, const char *newhandle)
 {
-	partymember_t *p;
+	partymember_t *p = NULL;
 
-	hash_table_remove(handle_ht, old, NULL);
+	p = partymember_lookup_nick(u->handle);
+	hash_table_remove(handle_ht, u->handle, NULL);
 	free(u->handle);
-	u->handle = strdup(new);
-	hash_table_insert(handle_ht, new, u);
-	if ((p = partymember_lookup_nick(old))) { /* Is person online? */
-		partymember_set_nick(p, new);
-		return 0;
+	u->handle = strdup(newhandle);
+	hash_table_insert(handle_ht, u->handle, u);
+	if (p) { /* Is person online? */
+		partymember_set_nick(p, u->handle);
 	}
-	return 1;
+	return(0);
 }
 
 static int

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: server.c,v 1.59 2004/07/23 21:58:55 darko Exp $";
+static const char rcsid[] = "$Id: server.c,v 1.60 2004/09/26 09:42:09 stdarg Exp $";
 #endif
 
 #include "server.h"
@@ -160,7 +160,7 @@ static int server_close(int why)
 	cycle_delay = 100;
 
 	bind_rem_list("raw", server_raw_binds);
-	bind_rem_list("party", server_party_commands);
+	//bind_rem_list("party", server_party_commands);
 	bind_rem_simple("secondly", NULL, NULL, server_secondly);
 	bind_rem_simple("status", NULL, NULL, server_status);
 	bind_rem_simple("config_save", NULL, "eggdrop", server_config_save);
@@ -281,6 +281,7 @@ int server_start(egg_module_t *modinfo)
 
 	/* Initialize script interface. */
 	server_script_init();
+	printf("hello there\n");
 
 	return(0);
 }

@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: logfile.c,v 1.47 2004/06/28 17:36:34 wingman Exp $";
+static const char rcsid[] = "$Id: logfile.c,v 1.48 2004/09/26 09:42:09 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -30,6 +30,10 @@ static const char rcsid[] = "$Id: logfile.c,v 1.47 2004/06/28 17:36:34 wingman E
 #include "core_config.h"
 #include "terminal.h"					/* TERMINAL_NICK	*/
 #include "logfile.h"
+
+
+static logfile_t *logfiles = NULL;
+static int nlogfiles = 0;
 
 extern int backgrd, use_stderr, terminal_mode;
 int terminal_enabled = 0;
@@ -50,31 +54,47 @@ static script_command_t log_script_cmds[] = {
 	{0}
 };
 
-static bind_list_t log_binds[] = {
-	{NULL, NULL, on_putlog},
-	{0}
-};
-
-static bind_list_t log_events[] = {
-	{NULL, "minutely", logfile_minutely},		/* DDD	*/
-	{NULL, "5minutely", logfile_5minutely},		/* DDD	*/
-	{0}
-};
-
 void logfile_init(void)
 {
+	void *root, *node;
+	char *filename, *chname, *mask;
+	int i;
+
 	script_create_commands(log_script_cmds);
-	bind_add_list("log", log_binds);
-	bind_add_list("event", log_events);
+	bind_add_simple("log", NULL, NULL, on_putlog);
+	bind_add_simple("event", NULL, "minutely", logfile_minutely);
+	bind_add_simple("event", NULL, "5minutely", logfile_5minutely);
+
+	root = config_get_root("eggdrop");
+	node = config_lookup_section(root, "eggdrop.logging.logfiles", 0, NULL);
+	for (i = 0; ; i++) {
+		config_get_str(&filename, node, "logfile", i, "filename", 0, NULL);
+		config_get_str(&chname, node, "logfile", i, "channel", 0, NULL);
+		config_get_str(&mask, node, "logfile", i, "mask", 0, NULL);
+		if (!filename || !chname || !mask) break;
+		logfile_add(mask, chname, filename);
+	}
 }
 
 void logfile_shutdown(void)
 {
+	void *root, *node;
+	int i;
+
 	flushlogs();
 	
+	root = config_get_root("eggdrop");
+	node = config_lookup_section(root, "eggdrop.logging.logfiles", 0, NULL);
+	for (i = 0; i < nlogfiles; i++) {
+		config_set_str(logfiles[i].filename, node, "logfile", i, "filename", 0, NULL);
+		config_set_str(logfiles[i].chname, node, "logfile", i, "channel", 0, NULL);
+		config_set_str("*", node, "logfile", i, "mask", 0, NULL);
+	}
+
+	bind_rem_simple("log", NULL, NULL, on_putlog);
+	bind_rem_simple("event", NULL, "minutely", logfile_minutely);
+	bind_rem_simple("event", NULL, "5minutely", logfile_5minutely);
 	script_delete_commands(log_script_cmds);
-	bind_rem_list("log", log_binds);
-	bind_rem_list("event", log_events);
 }
 
 static int logfile_minutely()
@@ -119,8 +139,8 @@ static int logfile_cycle()
 		strftime(suffix, 32, core_config.logging.suffix, localtime(&now));
 	}
 
-	for (i = core_config.logging.nlogfiles - 1; i >= 0; i--) {
-		log = &core_config.logging.logfiles[i];
+	for (i = nlogfiles - 1; i >= 0; i--) {
+		log = &logfiles[i];
 
 		fclose(log->fp);
 
@@ -132,8 +152,7 @@ static int logfile_cycle()
 		free(newfname);
 
 		log->fp = fopen(log->filename, "a");
-		if (!log->fp)
-			logfile_del(log->filename);
+		if (!log->fp) logfile_del(log->filename);
 	}
 	
 	return(0);
@@ -151,10 +170,9 @@ char *logfile_add(char *modes, char *chan, char *fname)
 	fp = fopen(fname, "a");
 	if (!fp) return("");
 	
-	core_config.logging.logfiles = realloc(core_config.logging.logfiles,
-			(core_config.logging.nlogfiles + 1) * sizeof(logfile_t));
+	logfiles = realloc(logfiles, (nlogfiles + 1) * sizeof(*logfiles));
 			
-	log = &core_config.logging.logfiles[core_config.logging.nlogfiles++];
+	log = &logfiles[nlogfiles++];
 	log->filename = strdup(fname);
 	log->chname = strdup(chan);
 	log->last_msg = strdup("");
@@ -170,15 +188,13 @@ int logfile_del(char *filename)
 	int i;
 
 	log = NULL;
-	for (i = 0; i < core_config.logging.nlogfiles; i++) {
-		log = &core_config.logging.logfiles[i];
-		if (0 == strcmp(log->filename, filename))
-			break;
+	for (i = 0; i < nlogfiles; i++) {
+		log = &logfiles[i];
+		if (!strcmp(log->filename, filename)) break;
 		log = NULL;
 	}
 
-	if (log == NULL)
-		return (-1);
+	if (log == NULL) return(-1);
 		
 	if (log->fp) {
 		flushlog(log, timer_get_timestamp());
@@ -188,19 +204,15 @@ int logfile_del(char *filename)
 	if (log->last_msg) free(log->last_msg);
 	if (log->filename) free(log->filename);
 
-	if (core_config.logging.nlogfiles == 1) {
-		free(core_config.logging.logfiles);
-		core_config.logging.logfiles = NULL;
+	if (nlogfiles == 1) {
+		free(logfiles);
+		logfiles = NULL;
 	} else {		
-		memmove(core_config.logging.logfiles + i,
-			core_config.logging.logfiles + i + 1,
-			(core_config.logging.nlogfiles - i - 1) * sizeof(logfile_t));
-		core_config.logging.logfiles = realloc(
-			core_config.logging.logfiles, 
-				(core_config.logging.nlogfiles - 1) * sizeof(logfile_t));
+		memmove(logfiles + i, logfiles + i + 1, (nlogfiles - i - 1) * sizeof(logfile_t));
+		logfiles = realloc(logfiles, (nlogfiles - 1) * sizeof(logfile_t));
 	}
 
-	core_config.logging.nlogfiles--;
+	nlogfiles--;
 
 	return(0);
 }
@@ -211,8 +223,8 @@ static int on_putlog(int flags, const char *chan, const char *text, int len)
 	int i;
 
 	ts = timer_get_timestamp();
-	for (i = core_config.logging.nlogfiles - 1; i >= 0; i--) {
-		logfile_t *log = &core_config.logging.logfiles[i];
+	for (i = nlogfiles - 1; i >= 0; i--) {
+		logfile_t *log = &logfiles[i];
 		
 		/* If this log is disabled, skip it */
 		if (log->state != LOG_STATE_ENABLED)
@@ -223,8 +235,7 @@ static int on_putlog(int flags, const char *chan, const char *text, int len)
 			continue;
 		}
 
-		if (chan[0] != '*' && log->chname[0] != '*' && irccmp(chan, log->chname))
-			continue;
+		if (chan[0] != '*' && log->chname[0] != '*' && irccmp(chan, log->chname)) continue;
 		
 		/* If it's a repeat message, don't write it again. */
 		if (log->last_msg && !strcasecmp(text, log->last_msg)) {
@@ -294,8 +305,8 @@ static void check_logsizes()
 
 	if (core_config.logging.keep_all || core_config.logging.max_size <= 0) return;
 
-	for (i = 0; i < core_config.logging.nlogfiles; i++) {
-		logfile_t *log = &core_config.logging.logfiles[i];
+	for (i = 0; i < nlogfiles; i++) {
+		logfile_t *log = &logfiles[i];
 		
 		size = ftell(log->fp) / 1024; /* Size in kilobytes. */
 		if (size < core_config.logging.max_size) continue;
@@ -330,7 +341,7 @@ void flushlogs()
 	int i;
 
 	ts = timer_get_timestamp();
-	for (i = 0; i < core_config.logging.nlogfiles; i++) {
-		flushlog(&core_config.logging.logfiles[i], ts);
+	for (i = 0; i < nlogfiles; i++) {
+		flushlog(&logfiles[i], ts);
 	}
 }

@@ -18,15 +18,14 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: hash_table.c,v 1.12 2004/06/25 17:44:03 darko Exp $";
+static const char rcsid[] = "$Id: hash_table.c,v 1.13 2004/09/26 09:42:09 stdarg Exp $";
 #endif
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
-#include <eggdrop/memory.h>
-#include <eggdrop/hash_table.h>
+#include <eggdrop/eggdrop.h>
 
 static unsigned int my_string_hash(const void *key);
 static unsigned int my_int_hash(const void *key);

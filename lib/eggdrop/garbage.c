@@ -18,13 +18,12 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: garbage.c,v 1.3 2004/06/22 10:54:42 wingman Exp $";
+static const char rcsid[] = "$Id: garbage.c,v 1.4 2004/09/26 09:42:09 stdarg Exp $";
 #endif
 
 #include <stdlib.h>
 
-#include <eggdrop/memory.h>
-#include <eggdrop/garbage.h>
+#include <eggdrop/eggdrop.h>
 
 typedef struct garbage_list {
 	struct garbage_list *next;

@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.183 2004/08/19 18:39:36 darko Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.184 2004/09/26 09:42:09 stdarg Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -363,6 +363,9 @@ static void init_signals(void)
 
 	sv.sa_handler = SIG_IGN;
 	sigaction(SIGPIPE, &sv, NULL);
+
+	sv.sa_handler = SIG_IGN;
+	sigaction(SIGUSR1, &sv, NULL);
 }
 
 static void core_shutdown_or_restart()
@@ -373,21 +376,21 @@ static void core_shutdown_or_restart()
 	putlog(LOG_MISC, "*", _("Saving user file..."));
 	user_save(core_config.userfile);
 
-	putlog(LOG_MISC, "*", _("Saving config file..."));
-	core_config_save();
-	
 	/* destroy terminal */
 	if (terminal_mode && runmode != RUNMODE_RESTART)
 		terminal_shutdown();
 
 	/* unload core help */
-	help_unload_by_module("core");
+	//help_unload_by_module("core");
 
 	/* shutdown core binds */
 	core_binds_shutdown();
 
 	/* shutdown logging */ 
 	logfile_shutdown();
+	
+	putlog(LOG_MISC, "*", _("Saving config file..."));
+	core_config_save();
 	
 	/* shutdown libeggdrop */
 	eggdrop_shutdown();
@@ -526,9 +529,6 @@ int main(int argc, char **argv)
 		   we have a restart */
 	} while (runmode == RUNMODE_RESTART);
 
-	if (debug_run)
-		mem_dbg_stats();
-
 	return 0;
 }
 
@@ -594,7 +594,7 @@ int core_init()
 	core_party_init();
 
 	/* Load core help */
-	help_load_by_module ("core");
+	//help_load_by_module ("core");
 
 	/* Put the module directory in the ltdl search path. */
 	if (core_config.module_path)

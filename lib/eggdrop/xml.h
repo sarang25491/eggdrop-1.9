@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: xml.h,v 1.18 2004/06/30 17:07:20 wingman Exp $
+ * $Id: xml.h,v 1.19 2004/09/26 09:42:09 stdarg Exp $
  */
 
 #ifndef _EGG_XML_H_
@@ -24,9 +24,6 @@
 
 #include <stdio.h>			/* FILE			*/
 #include <stdarg.h>			/* va_list		*/
-#include <eggdrop/variant.h>		/* variant_t		*/
-
-typedef struct xml_node xml_node_t;
 
 #define XML_NONE	(1 << 0)
 #define XML_INDENT	(1 << 1)
@@ -44,35 +41,38 @@ typedef enum {
 } xml_node_type_t;
 
 typedef struct {
-	xml_node_type_t type;
 	char *name;
-	variant_t data;	
-	void *client_data;	
+	char *value;
+	int len;
 } xml_attr_t;
 
 typedef struct {
-	char *key;
-	char value;
-} xml_amp_conversion_t;
+	char *name;
+	char *value;
+} xml_entity_t;
 
-struct xml_node
-{
+typedef struct xml_node {
 	xml_node_type_t type;
 	char *name;
-	variant_t data;
+
+	char *text;
+	int len;
+
 	void *client_data;
 	
-	xml_node_t *next;
-	xml_node_t *prev;
-	xml_node_t *parent;
-	xml_node_t **children;
+	struct xml_node *next, *prev;
+	struct xml_node *next_sibling, *prev_sibling;
+	struct xml_node *parent, *children, *last_child;
 	int nchildren;
 
-	int whitespace;
-
-	xml_attr_t *attributes;
+	xml_attr_t **attributes;
 	int nattributes;	
-};
+} xml_node_t;
+
+typedef struct {
+	char *filename;
+	xml_node_t *root;
+} xml_document_t;
 
 xml_node_t *xml_node_vlookup(xml_node_t *root, va_list args, int create);
 xml_node_t *xml_node_lookup(xml_node_t *root, int create, ...);
@@ -81,65 +81,28 @@ xml_node_t *xml_node_path_lookup(xml_node_t *root, const char *path, int index, 
 char *xml_node_fullname(xml_node_t *node);
 
 int xml_node_get_str(char **str, xml_node_t *node, ...);
+char *xml_node_str(xml_node_t *node, char *def);
 int xml_node_set_str(const char *str, xml_node_t *node, ...);
 
 int xml_node_get_int(int *value, xml_node_t *node, ...);
+int xml_node_int(xml_node_t *node, int def);
 int xml_node_set_int(int value, xml_node_t *node, ...);
 
-void xml_dump(xml_node_t *node);
-
 xml_node_t *xml_node_new(void);
+void xml_node_free(xml_node_t *node);
 void xml_node_delete(xml_node_t *node);
 void xml_node_delete_callbacked(xml_node_t *node, void (*callback)(void *));
-
-xml_node_t *xml_create_element(const char *name);
-xml_node_t *xml_create_attribute(const char *name);
-
-const char *xml_last_error(void);
-const char *xml_node_type(xml_node_t *node);
+void xml_node_append(xml_node_t *parent, xml_node_t *child);
 
 xml_node_t *xml_root_element(xml_node_t *node);
 
-void xml_node_append(xml_node_t *parent, xml_node_t *child);
-void xml_node_remove(xml_node_t *parent, xml_node_t *child);
-void xml_node_remove_by_name(xml_node_t *parent, const char *name);
+xml_attr_t *xml_attr_new(char *name, char *value);
+void xml_attr_free(xml_attr_t *attr);
+int xml_node_append_attr(xml_node_t *node, xml_attr_t *attr);
 
-void xml_set_text_int(xml_node_t *node, int value);
-int xml_get_text_int(xml_node_t *node, int nil);
-
-void xml_set_text_str(xml_node_t *node, const char *value);
-const char *xml_get_text_str(xml_node_t *node, const char *nil);
-
-time_t xml_get_text_ts(xml_node_t *node, time_t nil);
-void xml_set_text_ts(xml_node_t *node, time_t value);
-
-int xml_get_text_bool(xml_node_t *node, int nil);
-void xml_set_text_bool(xml_node_t *node, int value);
-
-xml_attr_t *xml_node_lookup_attr(xml_node_t *node, const char *name);
-void xml_node_append_attr(xml_node_t *parent, xml_attr_t *attr);
-void xml_node_remove_attr(xml_node_t *parent, xml_attr_t *attr);
-
-void xml_set_attr_int(xml_node_t *node, const char *name, int value);
-int xml_get_attr_int(xml_node_t *node, const char *name, int nil);
-
-void xml_set_attr_str(xml_node_t *node, const char *name, const char *value);
-const char *xml_get_attr_str(xml_node_t *node, const char *name, const char *nil);
-
-time_t xml_get_attr_ts(xml_node_t *node, const char *name, time_t nil);
-void xml_set_attr_ts(xml_node_t *node, const char *name, time_t value); 
-
-int xml_get_attr_bool(xml_node_t *node, const char *name, int nil);
-void xml_set_attr_bool(xml_node_t *node, const char *name, int value);
-
-/* load */
-int xml_load(FILE *fd, xml_node_t **node, int options);
-int xml_load_file(const char *file, xml_node_t **node, int options);
-int xml_load_str(char *str, xml_node_t **node, int options);
-
-/* save */
-int xml_save(FILE *fd, xml_node_t *node, int options);
+xml_node_t *xml_parse_file(const char *fname);
 int xml_save_file(const char *file, xml_node_t *node, int options);
-int xml_save_str(char **str, xml_node_t *node, int options);
+void xml_set_error(const char *err);
+const char *xml_last_error(void);
 
 #endif /* !_EGG_XML_H_ */

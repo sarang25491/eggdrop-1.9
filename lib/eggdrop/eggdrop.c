@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggdrop.c,v 1.21 2004/06/23 21:12:57 stdarg Exp $";
+static const char rcsid[] = "$Id: eggdrop.c,v 1.22 2004/09/26 09:42:09 stdarg Exp $";
 #endif
 
 #include <stdlib.h>
@@ -39,7 +39,6 @@ int eggdrop_init(void)
 	egg_net_init();
 	logging_init();
 	user_init();
-	help_init();
 	script_init();
 	partyline_init();
 	module_init();
@@ -54,7 +53,6 @@ int eggdrop_shutdown(void)
 	module_shutdown();
 	partyline_shutdown();
 	script_shutdown();
-	help_shutdown();
 	user_shutdown();
 	logging_shutdown();
 	egg_net_shutdown();
@@ -69,6 +67,7 @@ int eggdrop_event(const char *event)
 	return bind_check(BT_event, NULL, event, event);
 }
 
+/* Set command line parameters. */
 int eggdrop_set_params(const char **params, int nparams)
 {
 	eggparams = params;
@@ -76,6 +75,7 @@ int eggdrop_set_params(const char **params, int nparams)
 	return(0);
 }
 
+/* Look up a command line parameter. */
 const char *eggdrop_get_param(const char *key)
 {
 	int i, nparams;

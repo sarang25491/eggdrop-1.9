@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: logfile.h,v 1.11 2004/06/28 17:36:34 wingman Exp $
+ * $Id: logfile.h,v 1.12 2004/09/26 09:42:09 stdarg Exp $
  */
 
 #ifndef _EGG_LOGILE_H
@@ -49,9 +49,6 @@ typedef struct
 	int max_size;
 	int switch_at;
 	char *suffix;
-
-	logfile_t *logfiles;
-	int nlogfiles;
 } logging_t;
 
 extern void logfile_init(void); 
