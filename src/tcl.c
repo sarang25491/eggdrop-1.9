@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tcl.c,v 1.82 2002/05/17 07:29:25 stdarg Exp $";
+static const char rcsid[] = "$Id: tcl.c,v 1.83 2002/06/17 16:39:38 guppy Exp $";
 #endif
 
 #include <stdlib.h>		/* getenv()				*/
@@ -62,11 +62,9 @@ extern char	botuser[], motdfile[], admin[], userfile[],
 		moddir[], tempdir[], owner[], network[], botnetnick[],
 		bannerfile[], egg_version[], natip[], configfile[],
 		textdir[], myip6[], pid_file[];
-extern int	die_on_sighup, die_on_sigterm,
-		dcc_total, debug_output, identtimeout,
-		egg_numver, share_unlinks,
-		sort_users, tands, userfile_perm,
-		default_uflags, strict_host;
+extern int	die_on_sighup, die_on_sigterm, dcc_total, debug_output,
+		identtimeout, egg_numver, share_unlinks, tands,
+		userfile_perm, default_uflags, strict_host;
 extern struct dcc_t	*dcc;
 
 int	    protect_readonly = 0;	/* turn on/off readonly protection */
@@ -312,7 +310,6 @@ static tcl_ints def_tcl_ints[] =
   {"die_on_sigterm",		&die_on_sigterm,	1},
   {"remote_boots",		&remote_boots,		1},
   {"debug_output",		&debug_output,		1},
-  {"sort_users",		&sort_users,		0},
   {"share_unlinks",		&share_unlinks,		0},
   {"allow_dk_cmds",		&allow_dk_cmds,		0},
   {"use_exempts",		&use_exempts,		0},			/* Jason/drummer */

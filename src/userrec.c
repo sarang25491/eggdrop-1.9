@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: userrec.c,v 1.49 2002/05/26 08:34:14 stdarg Exp $";
+static const char rcsid[] = "$Id: userrec.c,v 1.50 2002/06/17 16:39:38 guppy Exp $";
 #endif
 
 #include <sys/stat.h>
@@ -57,7 +57,6 @@ extern struct dcc_table DCC_CHAT, DCC_BOT;
 #endif /* MAKING_MODS   */
 
 int		 noshare = 1;		/* don't send out to sharebots	    */
-int		 sort_users = 0;	/* sort the userlist when saving    */
 struct userrec	*userlist = NULL;	/* user records are stored here	    */
 struct userrec	*lastuser = NULL;	/* last accessed user record	    */
 maskrec		*global_bans = NULL,
@@ -351,77 +350,6 @@ int write_user(struct userrec *u, FILE * f, int idx)
   return 1;
 }
 
-int sort_compare(struct userrec *a, struct userrec *b)
-{
-  /* Order by flags, then alphabetically
-   * first bots: +h / +a / +l / other bots
-   * then users: +n / +m / +o / other users
-   * return true if (a > b)
-   */
-  if (a->flags & b->flags & USER_BOT) {
-    if (~bot_flags(a) & bot_flags(b) & BOT_HUB)
-      return 1;
-    if (bot_flags(a) & ~bot_flags(b) & BOT_HUB)
-      return 0;
-    if (~bot_flags(a) & bot_flags(b) & BOT_ALT)
-      return 1;
-    if (bot_flags(a) & ~bot_flags(b) & BOT_ALT)
-      return 0;
-    if (~bot_flags(a) & bot_flags(b) & BOT_LEAF)
-      return 1;
-    if (bot_flags(a) & ~bot_flags(b) & BOT_LEAF)
-      return 0;
-  } else {
-    if (~a->flags & b->flags & USER_BOT)
-      return 1;
-    if (a->flags & ~b->flags & USER_BOT)
-      return 0;
-    if (~a->flags & b->flags & USER_OWNER)
-      return 1;
-    if (a->flags & ~b->flags & USER_OWNER)
-      return 0;
-    if (~a->flags & b->flags & USER_MASTER)
-      return 1;
-    if (a->flags & ~b->flags & USER_MASTER)
-      return 0;
-    if (~a->flags & b->flags & USER_OP)
-      return 1;
-    if (a->flags & ~b->flags & USER_OP)
-      return 0;
-  }
-  return (strcasecmp(a->handle, b->handle) > 0);
-}
-
-void sort_userlist()
-{
-  int again;
-  struct userrec *last, *p, *c, *n;
-
-  again = 1;
-  last = NULL;
-  while ((userlist != last) && (again)) {
-    p = NULL;
-    c = userlist;
-    n = c->next;
-    again = 0;
-    while (n != last) {
-      if (sort_compare(c, n)) {
-	again = 1;
-	c->next = n->next;
-	n->next = c;
-	if (p == NULL)
-	  userlist = n;
-	else
-	  p->next = n;
-      }
-      p = c;
-      c = n;
-      n = n->next;
-    }
-    last = c;
-  }
-}
-
 /* Rewrite the entire user file. Call USERFILE hook as well, probably
  * causing the channel file to be rewritten as well.
  */
@@ -449,8 +377,6 @@ void write_userfile(int idx)
   }
   if (!quiet_save)
     putlog(LOG_MISC, "*", _("Writing user file..."));
-  if (sort_users)
-    sort_userlist();
   tt = now;
   strcpy(s1, ctime(&tt));
   fprintf(f, "#4v: %s -- %s -- written %s", ver, botnetnick, s1);

@@ -164,11 +164,6 @@ set userfile "LamestBot.user"
 set pidfile "pid.LamestBot"
     Specify here what filename eggdrop will save its pid under
 
-set sort-users 0
-    If  you want your userfile to be sorted on save, turn this feature on.
-    Note that this takes a bit more cpu
-    Valid settings are 0 for OFF and 1 ON.
-
 
 set help-path "help/"
     Specify here where eggdrop should look for help files.
