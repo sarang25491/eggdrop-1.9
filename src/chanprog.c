@@ -3,7 +3,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.45 2002/02/14 00:55:11 ite Exp $
+ * $Id: chanprog.c,v 1.46 2002/03/04 03:55:28 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -39,7 +39,6 @@
 #include "misc.h"
 
 extern struct userrec	*userlist;
-extern Tcl_Interp	*interp;
 extern char		 ver[], botnetnick[], firewall[],
 			 motdfile[], userfile[], helpdir[], tempdir[],
 			 moddir[], notify_new[], owner[], configfile[];
@@ -257,23 +256,6 @@ void tell_verbose_status(int idx)
   dprintf(idx, "%s %s  (%s)  %s  %s %4.1f%%\n", _("Online for"),
 	  s, s1, s2, _("cache hit"),
 	  100.0 * ((float) cache_hit) / ((float) (cache_hit + cache_miss)));
-
-  /* info library */
-  dprintf(idx, "%s %s\n", _("Tcl library:"),
-	  ((interp) && (Tcl_Eval(interp, "info library") == TCL_OK)) ?
-	  interp->result : _("*unknown*"));
-
-  /* info tclversion/patchlevel */
-  dprintf(idx, "%s %s (%s %s)\n", _("Tcl version:"),
-	  ((interp) && (Tcl_Eval(interp, "info patchlevel") == TCL_OK)) ?
-	  interp->result : (Tcl_Eval(interp, "info tclversion") == TCL_OK) ?
-	  interp->result : _("*unknown*"), _("header version"),
-	  TCL_PATCH_LEVEL ? TCL_PATCH_LEVEL : _("*unknown*"));
-
-#if HAVE_TCL_THREADS
-  dprintf(idx, _("Tcl is threaded\n"));
-#endif  
-	  
 }
 
 /* Show all internal state variables

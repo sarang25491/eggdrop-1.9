@@ -553,6 +553,25 @@ static int cmd_tcl(struct userrec *u, int idx, char *text)
 	return(0);
 }
 
+static void tclscript_report(int idx, int details)
+{
+	char script[512];
+	char *reported;
+
+	if (details) {
+		dprintf(idx, "    Using Tcl version %d.%d (by header)\n", TCL_MAJOR_VERSION, TCL_MINOR_VERSION);
+	}
+	else {
+		dprintf(idx, "Using Tcl version %d.%d (by header)\n", TCL_MAJOR_VERSION, TCL_MINOR_VERSION);
+		return;
+	}
+
+	sprintf(script, "return \"    Library: [info library]\\n    Reported version: [info tclversion]\\n    Reported patchlevel: [info patchlevel]\"");
+	Tcl_GlobalEval(ginterp, script);
+	reported = Tcl_GetStringResult(ginterp);
+	dprintf(idx, "%s\n", reported);
+}
+
 static cmd_t dcc_commands[] = {
 	{"tcl", 	"n", 	(Function) cmd_tcl,	NULL},
 	{0}
@@ -565,7 +584,7 @@ static Function tclscript_table[] = {
 	(Function) tclscript_LTX_start,
 	(Function) tclscript_close,
 	(Function) 0,
-	(Function) 0
+	(Function) tclscript_report
 };
 
 char *tclscript_LTX_start(Function *global_funcs)

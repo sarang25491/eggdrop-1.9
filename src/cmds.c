@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.94 2002/03/03 20:17:54 stdarg Exp $
+ * $Id: cmds.c,v 1.95 2002/03/04 03:55:28 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -2170,36 +2170,6 @@ static void cmd_page(struct userrec *u, int idx, char *par)
   }
 }
 
-/* Perform a 'set' command
- */
-static void cmd_set(struct userrec *u, int idx, char *msg)
-{
-  int code;
-  char s[512];
-
-  if (!isowner(dcc[idx].nick)) {
-    dprintf(idx, _("What?  You need .help\n"));
-    return;
-  }
-  putlog(LOG_CMDS, "*", "#%s# set %s", dcc[idx].nick, msg);
-  strcpy(s, "set ");
-  if (!msg[0]) {
-    strcpy(s, "info globals");
-    Tcl_Eval(interp, s);
-    dumplots(idx, "global vars: ", interp->result);
-    return;
-  }
-  strcpy(s + 4, msg);
-  code = Tcl_Eval(interp, s);
-  if (code == TCL_OK) {
-    if (!strchr(msg, ' '))
-      dumplots(idx, "currently: ", interp->result);
-    else
-      dprintf(idx, "Ok, set.\n");
-  } else
-    dprintf(idx, "Error: %s\n", interp->result);
-}
-
 static void cmd_module(struct userrec *u, int idx, char *par)
 {
   putlog(LOG_CMDS, "*", "#%s# module %s", dcc[idx].nick, par);
@@ -2783,7 +2753,6 @@ cmd_t C_dcc[] =
   {"reload",		"m|m",	(Function) cmd_reload,		NULL},
   {"restart",		"m",	(Function) cmd_restart,		NULL},
   {"save",		"m|m",	(Function) cmd_save,		NULL},
-  {"set",		"n",	(Function) cmd_set,		NULL},
   {"simul",		"n",	(Function) cmd_simul,		NULL},
   {"status",		"m|m",	(Function) cmd_status,		NULL},
   {"strip",		"",	(Function) cmd_strip,		NULL},
