@@ -24,7 +24,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: chanprog.c,v 1.50 2002/05/31 04:11:37 stdarg Exp $";
+static const char rcsid[] = "$Id: chanprog.c,v 1.51 2002/08/10 09:31:19 poptix Exp $";
 #endif
 
 #include "main.h"
@@ -302,7 +302,7 @@ void reaffirm_owners()
     q = owner;
     p = strchr(q, ',');
     while (p) {
-      strlcpy(s, q, p - q);
+      strlcpy(s, q, (p - q) + 1);
       rmspace(s);
       u = get_user_by_handle(userlist, s);
       if (u)
