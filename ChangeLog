@@ -1,3 +1,10 @@
+2002-05-05 04:59  stdarg <stdarg@techmonkeys.org>
+
+	* src/tclmisc.c:
+
+	
+	* Got rid of a static buffer in script_md5 
+
 2002-05-05 04:12  stdarg <stdarg@techmonkeys.org>
 
 	* modules/blowfish/: Makefile.am, blowfish.c:
