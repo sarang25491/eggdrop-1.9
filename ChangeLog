@@ -1,3 +1,15 @@
+2001-08-17 05:35  Jeff Fisher <guppy@techmonkeys.org>
+
+	* src/: dcc.c, tclmisc.c, md5/Makefile.in, md5/md5.h, md5/md5c.c,
+	mod/server.mod/servmsg.c:
+
+	Small change to how we send USER again -- since hostname/servername
+	are ignored, send dots in their place as do most other clients ..
+	don't have to worry about them using this method to detect us
+	really. Also I changed our md5 routines from ones by RSA to ones by
+	Solar Designer -- they are smaller and more efficient -- and public
+	domain.  
+
 2001-08-16 13:27  Dobos Lorant <drummer@buli.sk>
 
 	* src/mem.c:
