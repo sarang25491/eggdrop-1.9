@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: ctcp.c,v 1.6 2002/05/05 16:40:34 tothwolf Exp $";
+static const char rcsid[] = "$Id: ctcp.c,v 1.7 2002/05/13 17:40:04 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "ctcp"
@@ -161,7 +161,7 @@ static int ctcp_CHAT(char *nick, char *uhost, struct userrec *u, char *object,
 
     for (i = 0; i < dcc_total; i++) {
       if ((dcc[i].type->flags & DCT_LISTEN) &&
-	  (!strcmp(dcc[i].nick, "(telnet)") ||
+	  (!strcmp(dcc[i].nick, "(all)") ||
 	   !strcmp(dcc[i].nick, "(users)"))) {
         /* Do me a favour and don't change this back to a CTCP reply,
          * CTCP replies are NOTICE's this has to be a PRIVMSG
