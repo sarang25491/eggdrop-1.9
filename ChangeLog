@@ -1,3 +1,15 @@
+2001-10-11 11:34  Tothwolf <tothwolf@techmonkeys.org>
+
+	* src/: botnet.c, cmds.c, dcc.c, dccutil.c, dns.c, eggdrop.h,
+	flags.c, misc.c, tcldcc.c, tclhash.c, userent.c,
+	egglib/hash_table.c, mod/channels.mod/tclchan.c,
+	mod/console.mod/console.c, mod/filesys.mod/filedb3.c,
+	mod/filesys.mod/filesys.c, mod/irc.mod/chan.c, mod/irc.mod/irc.c,
+	mod/irc.mod/mode.c, mod/server.mod/server.c,
+	mod/server.mod/servmsg.c, mod/transfer.mod/transfer.c:
+
+	* Use calloc() instead of malloc_memset macro 
+
 2001-10-10 18:47  stdarg <stdarg@techmonkeys.org>
 
 	* src/mod/: assoc.mod/assoc.c, filesys.mod/filesys.c,
