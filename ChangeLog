@@ -1,3 +1,12 @@
+2003-06-09 02:21  stdarg <stdarg@techmonkeys.org>
+
+	* Makefile.am, lib/eggdrop/partychan.c, lib/eggdrop/partyline.c,
+	lib/eggdrop/partyline.h, src/cmds.c, src/core_config.c,
+	src/core_config.h, src/core_party.c, src/proxyapi.h, src/telnet.c:
+
+	
+	* Cleanups and a bit of multi-channel partyline support 
+
 2003-06-08 03:23  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/: garbage.c, garbage.h:
