@@ -186,7 +186,6 @@ static int irc_on_read(void *client_data, int idx, char *data, int len)
 							if (chan->members[i].flags & PARTY_DELETED) continue;
 							p = m->p;
 							egg_iprintf(session->idx, ":eggdrop.bot 352 %s %s %s %s eggdrop.bot %s H :0 real name\r\n", session->nick, msg.args[0], p->ident, p->host, p->nick);
-							putlog(LOG_MISC, "*", ":eggdrop.bot 352 %s %s %s %s eggdrop.bot %s H :0 real name\r\n", session->nick, msg.args[0], p->ident, p->host, p->nick);
 						}
 						egg_iprintf(session->idx, ":eggdrop.bot 315 %s %s :End of /WHO list.\r\n", session->nick, msg.args[0]);
 					}

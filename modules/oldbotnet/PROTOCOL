@@ -1,0 +1,202 @@
+1.6 BOTNET PROTOCOL
+	(the parts we care about)
+
+Table of Contents
+
+1. Vital notes
+2. Connecting to an obot
+3. Maintaining a connection
+4. Channel commands
+
+1. Vital notes
+
+I use the term 'obot' to refer to a 1.6 bot that we are linking with.
+
+Whenever I use the term 'base64' I am referring to eggdrop's own, nonstandard
+base64. Take a look at botmsg.c for the original code.
+
+Honestly, the only confusing part of the botnet protocol is the connection
+process. The codepath in dcc.c is just terrible. The rest of the stuff you
+can easily figure out for yourself by looking at botmsg.c and botcmd.c.
+
+The other important note is obots are compiled with NO_OLD_BOTNET undefined,
+in other words, they *do* recognize the old botnet protocol.  This means that
+the long forms of commands (e.g. ping instead of pi) will work when you send
+them. However, if you connect to the obot and send a version command indicating
+that your bot's version is > NEAT_BOTNET (currently 1029900), the obot will
+only SEND you the short version. You will never get a "join" command from a 1.6
+bot, only a "j" command. Since 1.7's version is 1070000 or higher, this
+document only examines the new botnet protocol. The syntax has changed! So in
+the "j/join command" section, the "join" part is only there for human reference
+not as part of the protocol. The actual syntax of the "join" is different from
+the "j" command in this document.
+
+
+
+
+
+
+
+2. Connecting to an obot.
+
+2.1 Username/password
+
+Upon connection, the obot will print out its banner and prompt us for a
+username. We send it our bot's name. Now the obot realizes we are a bot, not
+a user, and if we have a password set it prompts us with the passreq command
+(an md5 hash of our password and some other stuff). We ignore it and send our
+password in plain text.
+
+If a password is not set, the obot doesn't prompt us for one, it lets us log
+in immediately.
+
+2.2 h/handshake command
+
+If a password is not set, the obot will send us this handshake command. The
+only argument is a randomly generated string that will serve as our password
+in the future. So we save it in the obot's user record for next time we
+connect.
+
+2.3 *hello! command
+
+Once we log in, the obot will send us "*hello!" to which we are supposed to
+reply "version numericver handlen stringver <network>". However, since 1.7
+does not have a fixed handlen, we do not send our version reply until we
+receive the obot's version.
+
+2.4 version command
+
+So, right after the obot sends "*hello!", it sends the version command talked
+about above. An example is:
+
+	version 1061603 32 eggdrop v1.6.16+somepatch <my.network>
+
+We parse it a little bit to extract the handlen, and then we reply
+with our own version information:
+
+	version 1070000 32 eggdrop v1.7 <alrighty.then>
+
+2.5 tb/thisbot command
+
+After we send our version reply, the obot should send us the thisbot command.
+The only parameter is the obot's name. It is a security measure to ensure that
+the bot we just connected to is the bot we really did want to connect to.
+Example:
+
+	tb obot
+
+2.6 j/join command
+
+The next thing the obot does is give us a list of all the users logged onto it.
+It does this via the join command. Basically it sends us a join command for
+each user, specifying the originating bot of the user and the channel he's on.
+The only difference between this and a normal join is that the obot's name is
+prefixed with "!". The format for such a message is:
+
+	j !botname user chan# (icon)sock user@host
+
+An example would be:
+
+	j !obot stdarg A *I dragon@localhost
+
+As you can see, (icon) doesn't really have parentheses around it. They are only
+there to separate it from sock, since there isn't any whitespace in the actual
+message. The icon given is the same as what appears on .who output, e.g.
+* = owner, + \ master, etc.
+
+Now is where we start to get into some really annoying stuff! In the 1.6 botnet
+protocol, integers are encoded in a nonstandard base64 format. That is why the
+"sock" parameter, which is an integer uniquely identifying the partyline
+connection on the obot, is sent as "I" instead of "8" in the example. The sock
+parameter is important since several other commands use it instead of the
+username. The chan#, normally 0 for the global partyline, is sent as A.
+
+2.7 i/idle command
+
+One such command is the idle command. The format is:
+
+	i botname sock idletime awaymsg
+
+An example would be:
+
+	i obot I BN
+
+Once again, the sock and idletime parameters, normally integers, are encoded.
+As you can see, the sock I in this command is the same as the sock I in the
+last join command example. This is no coincidence. Since a user may be logged
+on more than once, it is necessary to use a unique identifier (the sock) rather
+than a username (you wouldn't know which one to update if he were logged on
+twice). Note in the example, there is no away message.
+
+2.8 el command
+
+Once the data for all of the users has been transferred, we receive the el
+command, which signifies the end of linking. Now we can pass around other
+events, like channel chatter, joins, parts, etc, as they happen.
+
+
+
+
+
+
+
+3. Maintaining a connection
+
+This section is very simple. The only command you *need* to implement to
+maintain a connection is...
+
+3.1 pi/ping command
+
+When you get "pi", you should quickly respond "po". That is all.
+
+
+
+
+
+
+
+
+4. Channel commands
+
+This section deals with the commands related to partyline channels.
+
+4.1 j/join command
+
+This command is largely the same as the join command received while you are
+connecting. Format:
+
+	j botname user chan# (icon)sock user@host
+
+When you receive the join command, botname will be the obot's name. When you
+send the join command, botname will be your bot's name. Chan# and sock are
+in base64.
+
+4.2 pt/part command
+
+When a user leaves a channel, a part command is generated. Format:
+
+	pt botname user sock reason
+
+Botname is of course the originating bot. Sock will be encoded in base64. Reason
+is optional.
+
+4.3 c/chat command
+
+When somebody talks on a partyline channel, eggdrop uses this command. Format:
+
+	c user@botname chan# text
+
+Pretty self explanatory. Chan# is base64. Example:
+
+	c stdarg@dragonbot A asdf asdf asdf
+
+The other use of the chat command is for a bot message. When the bot wants
+to say something to the channel, it leaves off the user@ and does:
+
+	c botname chan# text
+
+
+
+
+
+That's all for now!

@@ -69,7 +69,7 @@ static int script_config_exists(char *handle, char *path)
 		if (!root) goto notfound;
 		work = period+1;
 	}
-	r = config_exists(root, work, 0, NULL);
+	r = (config_exists(root, work, 0, NULL) == NULL) ? 0 : 1;
 
 notfound:
 	free(save);

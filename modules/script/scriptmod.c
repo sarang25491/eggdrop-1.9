@@ -2,7 +2,6 @@
 
 #define MODULE_NAME "script"
 
-static eggdrop_t *egg = NULL;
 extern script_command_t script_bind_cmds[], script_net_cmds[],
 	script_new_user_cmds[], script_party_cmds[], script_timer_cmds[],
 	script_log_cmds[], script_config_cmds[], script_misc_cmds[];
@@ -42,5 +41,5 @@ int script_LTX_start(egg_module_t *modinfo)
 	script_create_commands(script_misc_cmds);
 	script_create_commands(script_mod_cmds);
 
-	return(NULL);
+	return(0);
 }

@@ -522,21 +522,20 @@ static int telnet_filter_write(void *client_data, int idx, const char *data, int
 					egg_append_str(&newline, &cur, &max, "\033[0m");
 					code = 0;
 				}
-				if (*data == '\r') {
+				if (*data != '\r') {
 					/* Skip \r and wait for \n, where we
 					 * add both (prevents stray \r's). */
-					data++;
-					len--;
-					break;
-				}
-				else {
 					egg_append_str(&newline, &cur, &max, "\r\n");
 				}
+				data++;
+				len--;
 				break;
 			case '\255':
 				/* This is the telnet command char, so we have
 				 * to escape it. */
 				egg_append_str(&newline, &cur, &max, "\255\255");
+				data++;
+				len--;
 				break;
 			default:
 				for (i = 0; i < sizeof(temp)-1 && i < len; i++) {

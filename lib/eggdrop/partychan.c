@@ -11,9 +11,20 @@ static hash_table_t *cid_ht = NULL;
 static partychan_t *partychan_head = NULL;
 static int g_cid = 0;	/* Keep track of next available cid. */
 
+/* Some bind tables for partyline channels. */
+static bind_table_t *BT_partyjoin = NULL,
+	*BT_partypart = NULL,
+	*BT_partypub = NULL;;
+
 int partychan_init()
 {
 	cid_ht = hash_table_create(NULL, NULL, 13, HASH_TABLE_INTS);
+
+	/* The first 3 args for each bind are:
+	 * channel name, channel id, partier */
+	BT_partyjoin = bind_table_add("partyjoin", 3, "siP", MATCH_NONE, BIND_STACKABLE);
+	BT_partypart = bind_table_add("partypart", 5, "siPsi", MATCH_NONE, BIND_STACKABLE);
+	BT_partypub = bind_table_add("partypub", 5, "siPsi", MATCH_NONE, BIND_STACKABLE);
 	return(0);
 }
 
@@ -139,7 +150,8 @@ int partychan_join(partychan_t *chan, partymember_t *p)
 
 	if (!chan || !p) return(-1);
 
-	/* Check to see if he's already on. */
+	/* Check to see if he's already on. We put this here just to save some
+	 * redundancy in partyline modules. */
 	for (i = 0; i < chan->nmembers; i++) {
 		if (chan->members[i].flags & PARTY_DELETED) continue;
 		if (chan->members[i].p == p) return(-1);
@@ -155,6 +167,9 @@ int partychan_join(partychan_t *chan, partymember_t *p)
 	p->channels = realloc(p->channels, sizeof(chan) * (p->nchannels+1));
 	p->channels[p->nchannels] = chan;
 	p->nchannels++;
+
+	/* Trigger the partyline channel join bind. */
+	bind_check(BT_partyjoin, NULL, NULL, chan->name, chan->cid, p);
 
 	/* Send out the join event to the members. */
 	for (i = 0; i < chan->nmembers; i++) {
@@ -215,6 +230,9 @@ int partychan_part(partychan_t *chan, partymember_t *p, const char *text)
 
 	len = strlen(text);
 
+	/* Trigger the partyline channel part bind. */
+	bind_check(BT_partypart, NULL, NULL, chan->name, chan->cid, p, text, len);
+
 	if (p->handler->on_part) (p->handler->on_part)(p->client_data, chan, p, text, len);
 
 	/* Send out the part event to the members. */
@@ -251,6 +269,9 @@ int partychan_msg(partychan_t *chan, partymember_t *src, const char *text, int l
 	if (!chan || chan->flags & PARTY_DELETED) return(-1);
 
 	if (len < 0) len = strlen(text);
+
+	/* Trigger the partyline channel pub bind. */
+	bind_check(BT_partypub, NULL, NULL, chan->name, chan->cid, src, text, len);
 
 	for (i = 0; i < chan->nmembers; i++) {
 		mem = chan->members+i;

@@ -139,6 +139,7 @@ static int party_chattr(partymember_t *p, const char *nick, user_t *u, const cha
 
 	n = egg_get_words(text, &next, &who, &chan, &flags, NULL);
 	if (!chan) {
+		if (who) free(who);
 		partymember_printf(p, "Syntax: chattr <user> [channel] <+/-flags>");
 		return(0);
 	}

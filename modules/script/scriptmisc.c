@@ -102,15 +102,11 @@ static int script_rand(int nargs, int min, int max)
 	return(random() % (max - min) + min);
 }
 
-static int script_die(char *reason)
+static int script_die(const char *reason)
 {
-  char *s1, *s2;
-
-  if (!reason) reason = "No reason.";
-  s1 = egg_mprintf("BOT SHUTDOWN (%s)", reason);
-  s2 = strdup(s1);
-  kill_bot(s1, s2);
-  return(0);
+	if (!reason) reason = "No reason given.";
+	putlog(LOG_MISC, "*", "Bot shutting down: %s", reason);
+	exit(0);
 }
 
 static char *script_unames()
@@ -131,12 +127,6 @@ static char *script_unames()
 #endif
   retval = msprintf("%s %s", unix_n, vers_n);
   return(retval);
-}
-
-static int script_backup()
-{
-	eggdrop_event("backup");
-	return(0);
 }
 
 static char *script_md5(char *data)
