@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: snprintf.h,v 1.6 2003/03/04 10:33:56 tothwolf Exp $
+ * $Id: snprintf.h,v 1.7 2003/03/04 11:31:49 tothwolf Exp $
  */
 
 #ifndef _EGG_SNPRINTF_H
@@ -33,16 +33,6 @@
 
 #include <stdio.h>
 #include <stdarg.h>		/* FIXME: possible varargs.h conflicts */
-
-/* Check for broken snprintf versions */
-#ifdef BROKEN_SNPRINTF
-#  ifdef HAVE_VSNPRINTF
-#    undef HAVE_VSNPRINTF
-#  endif
-#  ifdef HAVE_SNPRINTF
-#    undef HAVE_SNPRINTF
-#  endif
-#endif
 
 #if !defined(HAVE_VSNPRINTF) || !defined(HAVE_C99_VSNPRINTF)
 int vsnprintf(char *str, size_t count, const char *fmt, va_list args);
