@@ -1,3 +1,11 @@
+2002-06-17 16:39  Jeff Fisher <guppy@techmonkeys.org>
+
+	* eggdrop.complete.conf, doc/html/egg-core.html,
+	doc/settings/core.settings, src/tcl.c, src/userrec.c:
+
+	removed sort_users since any decent userfile backend should do this
+	on the fly -- i.e.. sql or our new user api that is being worked on 
+
 2002-06-17 06:14  Jeff Fisher <guppy@techmonkeys.org>
 
 	* help/cmds2.help, help/core.help, modules/irc/msgcmds.c,
