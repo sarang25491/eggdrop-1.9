@@ -16,7 +16,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
-# $Id: install-help.sh,v 1.2 2004/06/17 20:52:34 wingman Exp $
+# $Id: install-help.sh,v 1.3 2004/06/20 21:33:28 wingman Exp $
 #
 
 if [ "$2" = "" ];
@@ -31,7 +31,7 @@ HELPDIR=help
 HELPFILES="commands.xml variables.xml"
 MODULE=`pwd | awk '{ len = split ($0, tok, "/"); print tok[len]; }'`
 
-if [ "$MODULE" = "eggdrop1.7" ];
+if [ "$MODULE" = "eggdrop1.9" ];
 then
 	MODULE="core"
 fi

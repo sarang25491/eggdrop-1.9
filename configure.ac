@@ -1,11 +1,11 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 dnl
-dnl $Id: configure.ac,v 1.52 2004/06/17 13:32:43 wingman Exp $
+dnl $Id: configure.ac,v 1.53 2004/06/20 21:33:27 wingman Exp $
 
 AC_PREREQ(2.57)
-AC_INIT([Eggdrop], [1.7.0], [bugs@eggheads.org])
+AC_INIT([Eggdrop], [1.9.0], [bugs@eggheads.org])
 AC_COPYRIGHT([Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team])
-AC_REVISION($Revision: 1.52 $)
+AC_REVISION($Revision: 1.53 $)
 AC_CONFIG_AUX_DIR(acconfig)
 AM_CONFIG_HEADER(config.h)
 AC_CONFIG_FILES([Makefile lib/Makefile lib/compat/Makefile lib/eggdrop/Makefile m4/Makefile po/Makefile.in src/Makefile modules/Makefile acconfig/module.mk])
@@ -13,7 +13,7 @@ AC_CONFIG_FILES([Makefile lib/Makefile lib/compat/Makefile lib/eggdrop/Makefile 
 
 # Print start message
 EGG_MSG_CONFIGURE_START
-AM_INIT_AUTOMAKE(eggdrop, 1.7.0)
+AM_INIT_AUTOMAKE(eggdrop, 1.9.0)
 
 
 # FIXME: optionally allow a system wide install by bypassing the macro below.

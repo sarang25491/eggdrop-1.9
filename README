@@ -1,4 +1,4 @@
-$Id: README,v 1.25 2003/12/11 01:21:48 wcc Exp $
+$Id: README,v 1.26 2004/06/20 21:33:27 wingman Exp $
 
 Readme
 Last revised: December 10, 2003
@@ -32,7 +32,7 @@ Last revised: December 10, 2003
     TRUST COMPLETELY!!
     
     Remember that this is a DEVELOPMENT VERSION. Everything isn't guaranteed
-    to work. Eggdrop 1.7 should *NOT* be used in a production environment.
+    to work. Eggdrop 1.9 should *NOT* be used in a production environment.
 
 
   (1) WHAT IS EGGDROP?
@@ -79,12 +79,12 @@ Last revised: December 10, 2003
 
   (2) HOW TO GET EGGDROP
 
-    You can obtain the LATEST version of Eggdrop 1.7 by using CVS. CVS means
+    You can obtain the LATEST version of Eggdrop 1.9 by using CVS. CVS means
     'Concurrent Versions System' and is a tool for developers to always keep
     source code up to date. Try 'man cvs' on your shell for more information
     about CVS.
 
-    To obtain Eggdrop 1.7 via CVS, do as follows:
+    To obtain Eggdrop 1.9 via CVS, do as follows:
 
       1. Log into your shell.
 
@@ -95,10 +95,10 @@ Last revised: December 10, 2003
 
       4. Press <enter> when prompted for a password.
 
-      5. In your home dir, type 'cvs checkout eggdrop1.7'
+      5. In your home dir, type 'cvs checkout eggdrop1.9'
 
-      6. In ~/eggdrop1.7, you should have a copy of the latest CVS version
-         of Eggdrop 1.7.
+      6. In ~/eggdrop1.9, you should have a copy of the latest CVS version
+         of Eggdrop 1.9.
 
     Notes:
 
@@ -106,7 +106,7 @@ Last revised: December 10, 2003
 
       o You don't need to go through this whole process every time. If you
         want to get a CVS version of Eggdrop at a later time, you can just
-        'cd ~/eggdrop1.7' and type 'cvs update -CdAP'.
+        'cd ~/eggdrop1.9' and type 'cvs update -CdAP'.
 
       o If you experience errors when using 'export', you might be using tclsh
         as a shell. If so, try using the command 'setenv' instead of 'export':
@@ -184,7 +184,7 @@ Last revised: December 10, 2003
 
   (5) MAILING LIST
 
-    If you are interested in Eggdrop 1.7, and/or the development of Eggdrop,
+    If you are interested in Eggdrop 1.9, and/or the development of Eggdrop,
     the eggdev@eggheads.org mailing list focuses on these topics.
 
     To subscribe to the eggdev mailing list, send an e-mail to wcc@eggheads.org
@@ -219,7 +219,7 @@ Last revised: December 10, 2003
 
   (7) OBTAINING HELP
 
-    See 'MAILING LIST' (5). IRC support is NOT available for Eggdrop 1.7 at
+    See 'MAILING LIST' (5). IRC support is NOT available for Eggdrop 1.9 at
     this time.
 
   ________________________________________________________________________

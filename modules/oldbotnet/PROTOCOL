@@ -25,7 +25,7 @@ the long forms of commands (e.g. ping instead of pi) will work when you send
 them. However, if you connect to the obot and send a version command indicating
 that your bot's version is > NEAT_BOTNET (currently 1029900), the obot will
 only SEND you the short version. You will never get a "join" command from a 1.6
-bot, only a "j" command. Since 1.7's version is 1070000 or higher, this
+bot, only a "j" command. Since 1.9's version is 1090000 or higher, this
 document only examines the new botnet protocol. The syntax has changed! So in
 the "j/join command" section, the "join" part is only there for human reference
 not as part of the protocol. The actual syntax of the "join" is different from
@@ -60,7 +60,7 @@ connect.
 2.3 *hello! command
 
 Once we log in, the obot will send us "*hello!" to which we are supposed to
-reply "version numericver handlen stringver <network>". However, since 1.7
+reply "version numericver handlen stringver <network>". However, since 1.9
 does not have a fixed handlen, we do not send our version reply until we
 receive the obot's version.
 
@@ -74,7 +74,7 @@ about above. An example is:
 We parse it a little bit to extract the handlen, and then we reply
 with our own version information:
 
-	version 1070000 32 eggdrop v1.7 <alrighty.then>
+	version 1090000 32 eggdrop v1.9 <alrighty.then>
 
 2.5 tb/thisbot command
 

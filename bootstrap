@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# $Id: bootstrap,v 1.17 2004/06/20 09:40:22 wingman Exp $
+# $Id: bootstrap,v 1.18 2004/06/20 21:33:27 wingman Exp $
 #
 # Recommended development tools versions:
 #   autoconf 2.59
@@ -25,7 +25,7 @@
 # bootstrapping the package. If you don't have them, you can alternatively
 # download the prepackaged and already bootstrapped current CVS snapshot (
 # daily resynched) at:
-# ftp://ftp.eggheads.org/pub/eggdrop/source/snapshot/eggdrop1.7-snapshot.tar.gz
+# ftp://ftp.eggheads.org/pub/eggdrop/source/snapshot/eggdrop1.9-snapshot.tar.gz
 #
 # ITE
 

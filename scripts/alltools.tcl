@@ -19,9 +19,9 @@
 # Hanno     28Sep2001: fixed testip
 # guppy     03Mar2002: optimized
 # Souperman 05Nov2002: added ordnumber
-# Wcc       16Dec2003: works with 1.7 now
+# Wcc       16Dec2003: works with 1.9 now
 #
-# $Id: alltools.tcl,v 1.15 2003/12/17 00:58:02 wcc Exp $
+# $Id: alltools.tcl,v 1.16 2004/06/20 21:33:28 wingman Exp $
 #
 ########################################
 # Descriptions of available commands:

@@ -30,7 +30,7 @@ Last revised: March  04, 2003
     To apply a patch to an Eggdrop, you have to first obtain the Eggdrop
     sourcecode. You should always keep a tar.gz archive with the source of
     your current Eggdrop on your shell. In the next step, you have to change
-    to your source directory (i.e.: /home/user/eggdrop1.7.0/) and type
+    to your source directory (i.e.: /home/user/eggdrop1.9.0/) and type
     the following command:
 
       patch -p1 < ../path.to.the/patch
@@ -61,7 +61,7 @@ Last revised: March  04, 2003
 
       2. Run the following:
 
-           diff -urN eggdrop1.7.original eggdrop1.7.modified > patchname.patch
+           diff -urN eggdrop1.9.original eggdrop1.9.modified > patchname.patch
 
          DO NOT add any other diff options.
 
@@ -79,9 +79,9 @@ Last revised: March  04, 2003
 
   4. Downloading a patch
 
-    Many patches for eggdrop1.7.x can be found at the following location:
+    Many patches for eggdrop1.9.x can be found at the following location:
 
-      ftp://ftp.eggheads.org/pub/eggdrop/patches/1.7
+      ftp://ftp.eggheads.org/pub/eggdrop/patches/1.9
      _________________________________________________________________
 
    Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team

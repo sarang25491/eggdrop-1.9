@@ -1,4 +1,4 @@
-/* oldbotnet.c: support for linking with pre-1.7 bots
+/* oldbotnet.c: support for linking with pre-1.9 bots
  *
  * Copyright (C) 2003, 2004 Eggheads Development Team
  *
@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: oldbotnet.c,v 1.7 2004/06/15 19:19:16 wingman Exp $";
+static const char rcsid[] = "$Id: oldbotnet.c,v 1.8 2004/06/20 21:33:28 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -292,7 +292,7 @@ static int got_version(char *cmd, char *next)
 	sscanf(next, "%d %d", &oldbotnet.oversion, &oldbotnet.handlen);
 
 	/* Send back our version reply with their handlen. */
-	egg_iprintf(oldbotnet.idx, "version 1070000 %d eggdrop v1.7 <alrighty.then>\n", oldbotnet.handlen);
+	egg_iprintf(oldbotnet.idx, "version 1090000 %d eggdrop v1.9 <alrighty.then>\n", oldbotnet.handlen);
 
 	egg_iprintf(oldbotnet.idx, "el\n");
 

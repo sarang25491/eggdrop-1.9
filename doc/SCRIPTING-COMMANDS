@@ -6,7 +6,7 @@ This is an exhaustive list of all of the scripting commands added to Eggdrop.
 All of the normal built-in commands specific to the scripting module you are
 using are still there, of course, but you can also use these to manipulate
 features of the bot. They are listed according to category. This list is
-accurate for Eggdrop v1.7.0.
+accurate for Eggdrop v1.9.0.
 
 *** CORE COMMANDS ***
 

@@ -1,4 +1,4 @@
-$Id: NEWS,v 1.19 2003/12/11 01:21:48 wcc Exp $
+$Id: NEWS,v 1.20 2004/06/20 21:33:27 wingman Exp $
 
 News
 Last revised: December 10, 2003
@@ -15,7 +15,7 @@ Last revised: December 10, 2003
 
 <WILL BE COMPLETED AT A LATER TIME>
 
-  If you are upgrading from a pre-1.7 version of Eggdrop:
+  If you are upgrading from a pre-1.9 version of Eggdrop:
 
     1. Before you start the bot for the first time, BACKUP your userfile.
 

@@ -1,4 +1,4 @@
-PORTING TCL SCRIPTS TO EGGDROP 1.7
+PORTING TCL SCRIPTS TO EGGDROP 1.9
 
 I. All Versions
 
@@ -57,7 +57,7 @@ If you used:
 			} else {
 				# it's not running
 			}
-		That won't work in Eggdrop 1.7 because the 'timers' command
+		That won't work in Eggdrop 1.9 because the 'timers' command
 		only returns a list of numeric timer-ids, not the name of the
 		procedure being called. It's easy to replace that construct
 		with another.
@@ -113,7 +113,7 @@ III. Porting from Eggdrop 1.3/1.4
 ** I don't have much experience with 1.3/1.4 scripting, so I'll leave this
 mostly blank for now **
 
-Porting from Eggdrop 1.3/1.4 to Eggdrop 1.7 is much like porting to Eggdrop 1.6.
+Porting from Eggdrop 1.3/1.4 to Eggdrop 1.9 is much like porting to Eggdrop 1.6.
 The main things that changed (and that cause lots of errors in scripts) are
 the arguments to the 'part' and 'notc' binds. Of course, all of the items listed
 under "All Versions" also apply.

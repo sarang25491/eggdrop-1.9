@@ -127,7 +127,7 @@
 				
 				For example:
 					.set server.realname Mr. Egg Drop
-					Old value: '1.7 Test Bot'
+					Old value: 'Test Bot'
 					New value: 'Mr Egg Drop'
 				
 				If you don't specify a new value, then the setting will be

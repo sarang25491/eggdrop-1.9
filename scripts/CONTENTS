@@ -1,4 +1,4 @@
-$Id: CONTENTS,v 1.10 2003/12/17 00:58:02 wcc Exp $
+$Id: CONTENTS,v 1.11 2004/06/20 21:33:28 wingman Exp $
 
 Directory Contents - scripts/
 Last revised: December 16, 2003
@@ -10,7 +10,7 @@ Last revised: December 16, 2003
     Provides utility functions to Tcl scripters.
 
   autobotchk
-    Automatically generates botchk files automatically. Not currently '1.7
+    Automatically generates botchk files automatically. Not currently '1.9
     compatable'.
 
   botchk

@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: blowfish.c,v 1.16 2003/12/18 06:50:47 wcc Exp $";
+static const char rcsid[] = "$Id: blowfish.c,v 1.17 2004/06/20 21:33:28 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -380,7 +380,7 @@ int start(egg_module_t *modinfo)
 
   modinfo->name = "blowfish";
   modinfo->author = "eggdev";
-  modinfo->version = "1.7.0";
+  modinfo->version = "1.9.0";
   modinfo->description = "provides blowfish encryption/decryption";
   modinfo->close_func = blowfish_close;
 

@@ -1,4 +1,4 @@
-$Id: INSTALL,v 1.16 2003/12/11 01:21:48 wcc Exp $
+$Id: INSTALL,v 1.17 2004/06/20 21:33:27 wingman Exp $
 
 Compilation and Installation of Eggdrop
 Last revised: December 10, 2003
@@ -13,7 +13,7 @@ Last revised: December 10, 2003
 
   Contents:
     1. What is Eggdrop?
-    2. Compiling Eggdrop 1.7
+    2. Compiling Eggdrop 1.9
 
 
   (1) WHAT IS EGGDROP?
@@ -26,17 +26,17 @@ Last revised: December 10, 2003
     TO YOUR TERMINAL AND BEAT IT WITH A SMELLY SNEAKER! By the way, read the
     README file.
 
-  (2) COMPILING EGGDROP 1.7
+  (2) COMPILING EGGDROP 1.9
 
     The build process will be simplified at a later time. For now, the basic
-    steps to compiling Eggdrop 1.7 are as follows.
+    steps to compiling Eggdrop 1.9 are as follows.
 
       1. Install the following development tools on your system:
            autoconf 2.52
            automake 1.5
            libtool  1.4.2
 
-      2. Create the following symlinks in the Eggdrop 1.7 root directory:
+      2. Create the following symlinks in the Eggdrop 1.9 root directory:
            ln -s acconfig/mkinstalldirs ./
            ln -s configure.ac configure.in
 

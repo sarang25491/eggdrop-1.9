@@ -12,7 +12,7 @@ Last revised: March  03, 2003
     This is a guide to creating, applying and submitting Eggdrop patches.
 
   PORTING
-    Information about porting scripts from the 1.6 tree to the 1.7 tree can
+    Information about porting scripts from the 1.6 tree to the 1.9 tree can
     be found in this document.
 
   TIMERS
