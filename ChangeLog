@@ -1,3 +1,14 @@
+2002-10-11 09:00  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/eggdrop.h, modules/javascript/javascript.c,
+	modules/perlscript/mod_iface.c, modules/perlscript/perlscript.c,
+	modules/server/binds.c, modules/server/dcc.c,
+	modules/server/input.c, modules/server/servsock.c,
+	modules/tclscript/tclscript.c, src/scriptuser.c, src/users.h:
+
+	
+	* Started switching over user code to the new interface.  
+
 2002-10-11 07:27  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/flags.c:
