@@ -1,3 +1,26 @@
+2001-10-10 13:15  tothwolf
+
+	* INSTALL, README, eggdrop.complete.conf, doc/compiling.FAQ,
+	doc/eggdrop.doc, doc/text-substitutions.doc, doc/html/about.html,
+	doc/html/app-problems.html, doc/html/app-sharing.html,
+	doc/html/app-textsub.html, doc/html/app-tricks.html,
+	doc/html/app-weird.html, doc/html/authors.html, doc/html/bans.html,
+	doc/html/botnet.html, doc/html/compiling.html,
+	doc/html/egg-core.html, doc/html/faqs.html, doc/html/features.html,
+	doc/html/flags.html, doc/html/index.html, doc/html/install.html,
+	doc/html/mod-assoc.html, doc/html/mod-blowfish.html,
+	doc/html/mod-channels.html, doc/html/mod-compress.html,
+	doc/html/mod-dns.html, doc/html/mod-filesys.html,
+	doc/html/mod-irc.html, doc/html/mod-notes.html,
+	doc/html/mod-server.html, doc/html/mod-share.html,
+	doc/html/news.html, doc/html/party.html, doc/html/readme.html,
+	doc/html/sharing.html, doc/html/starting.html, doc/html/users.html,
+	help/cmds1.help, help/cmds2.help, help/core.help, scripts/CONTENTS,
+	scripts/compat.tcl, scripts/notes2.tcl, scripts/userinfo.tcl,
+	scripts/weed, scripts/help/userinfo.help:
+
+	documentation and misc updates from alpha tree 
+
 2001-10-10 10:44  tothwolf
 
 	* acinclude.m4, configure.in, src/Makefile.am, src/botnet.c,
