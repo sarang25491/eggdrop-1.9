@@ -1,3 +1,10 @@
+2002-01-18 22:28  stdarg <stdarg@techmonkeys.org>
+
+	* modules/channels/cmdschan.c:
+
+	
+	* Fixed 2 compiler warnings about type mismatches in sprintf 
+
 2002-01-18 21:42  stdarg <stdarg@techmonkeys.org>
 
 	* modules/tclscript/tclscript.c:
