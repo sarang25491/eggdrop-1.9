@@ -1,3 +1,19 @@
+2001-10-29 23:01  Federico Mennite <ite@techmonkeys.org>
+
+	* lib/eggdrop/Makefile.am, lib/eggdrop/module.h,
+	modules/assoc/Makefile.am, modules/blowfish/Makefile.am,
+	modules/channels/Makefile.am, modules/compress/Makefile.am,
+	modules/console/Makefile.am, modules/ctcp/Makefile.am,
+	modules/filesys/Makefile.am, modules/irc/Makefile.am,
+	modules/notes/Makefile.am, modules/perlscript/Makefile.am,
+	modules/server/Makefile.am, modules/share/Makefile.am,
+	modules/tclscript/Makefile.am, modules/transfer/Makefile.am,
+	modules/uptime/Makefile.am, modules/woobie/Makefile.am,
+	src/Makefile.am, src/modules.c:
+
+	Created libeggdrop: libadns, libegg and libcompat are now linked in
+	it. Cleaned up some unneeded function exports :) 
+
 2001-10-29 20:09  Jeff Fisher <guppy@techmonkeys.org>
 
 	* modules/uptime/: uptime.c, uptime.h:
