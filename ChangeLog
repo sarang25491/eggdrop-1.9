@@ -3222,7 +3222,7 @@
 
 	* doc/html/faq1.html:
 
-	Missing $Id: ChangeLog,v 1.5 2001/08/14 15:49:33 changelog Exp $ tag and newline at end of file 
+	Missing Id tag and newline at end of file 
 
 2000-07-11 17:03  tothwolf
 
