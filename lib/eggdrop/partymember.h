@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: partymember.h,v 1.1 2004/06/23 20:19:45 wingman Exp $
+ * $Id: partymember.h,v 1.2 2004/06/28 20:44:37 darko Exp $
  */
 
 #ifndef _EGG_PARTYMEMBER_H
@@ -51,6 +51,7 @@ int partymember_write(partymember_t *p, const char *text, int len);
 int partymember_msg(partymember_t *p, partymember_t *src, const char *text, int len);
 int partymember_printf_pid(int pid, const char *fmt, ...);
 int partymember_printf(partymember_t *p, const char *fmt, ...);
+int partymember_set_nick(partymember_t *p, const char *nick);
 
 #endif /* !_EGG_PARTYMEMBER_H */
 

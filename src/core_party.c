@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.36 2004/06/23 21:26:06 darko Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.37 2004/06/28 20:44:38 darko Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -71,7 +71,7 @@ static int party_quit(partymember_t *p, const char *nick, user_t *u, const char 
 		partymember_printf (p, "You can't leave the partyline in terminal mode.");
 		return -1;
 	}
-	
+
 	partymember_printf(p, "Goodbye!");
 	if (!text || !*text) partymember_delete(p, "Quit");
 	else partymember_delete(p, text);
@@ -312,7 +312,7 @@ static int party_whois(partymember_t *p, const char *nick, user_t *u, const char
 
 static int party_die(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
-	/* XXX: should we really enable hard shutdowns? 
+	/* XXX: should we really enable hard shutdowns?
 	if (*text && 0 == strcmp(text, "force")) {
 		return core_shutdown(SHUTDOWN_HARD, nick, text);
 	} else
@@ -562,7 +562,7 @@ static int party_binds(partymember_t *p, const char *nick, user_t *u, const char
 static int party_restart(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	core_restart (nick);
-	
+
 	return BIND_RET_LOG;
 }
 
@@ -594,6 +594,34 @@ static int party_chhandle(partymember_t *p, const char *nick, user_t *u, const c
 	return 0;
 }
 
+static int party_chpass(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	char *user = NULL, *pass = NULL;
+	user_t *dest;
+
+	egg_get_args(text, NULL, &user, &pass, NULL);
+
+	if (!user || !pass || !*user || !*pass) {
+		partymember_printf(p, _("Syntax: chpass <handle> <pass>"));
+		return 0;
+	}
+
+	dest = user_lookup_by_handle(user);
+	if (!dest) {
+		partymember_printf(p, _("Error: User '%s' does not exist."), user);
+		return 0;
+	}
+
+	if (strlen(pass) < 6) {
+		partymember_printf(p, _("Error: Please use at least 6 characters."));
+		return 0;
+	}
+
+	user_set_pass(dest, pass);
+	partymember_printf(p, _("Password for %s is now '%s'."), user, pass);
+	return 0;
+}
+
 static bind_list_t core_party_binds[] = {
 	{NULL, "join", party_join},		/* DDD	*/
 	{NULL, "whisper", party_whisper},	/* DDD	*/
@@ -621,6 +649,7 @@ static bind_list_t core_party_binds[] = {
 	{"m", "+host", party_plus_host},	/* DDC	*/
 	{"m", "-host", party_minus_host},	/* DDC	*/
 	{"t", "chhandle", party_chhandle},	/* DDD	*/
+	{"t", "chpass", party_chpass},		/* DDD	*/
 	{0}
 };
 
