@@ -1,3 +1,11 @@
+2002-04-27 18:15  stdarg <stdarg@techmonkeys.org>
+
+	* src/: dcc.c, main.c, tcl.c, users.c:
+
+	
+	* Changed some linked variables to new linking method 
+	* Made max_dcc shrinkable down to the last-used dcc slot.  
+
 2002-04-26 17:46  stdarg <stdarg@techmonkeys.org>
 
 	* src/dccutil.c:
