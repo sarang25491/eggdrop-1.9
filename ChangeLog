@@ -1,3 +1,22 @@
+2002-01-16 22:09  Federico Mennite <ite@techmonkeys.org>
+
+	* configure.ac, lib/compat/Makefile.am, lib/compat/compat.h,
+	lib/compat/strdup.c, lib/compat/strdup.h, lib/eggdrop/memutil.h,
+	modules/channels/cmdschan.c, modules/channels/tclchan.c,
+	modules/channels/udefchan.c, modules/channels/userchan.c,
+	modules/console/console.c, modules/filesys/filedb3.c,
+	modules/filesys/filelist.c, modules/notes/notes.c,
+	modules/perlscript/perlscript.c, modules/server/server.c,
+	modules/server/servmsg.c, modules/share/share.c,
+	modules/tclscript/tclscript.c, modules/transfer/transfer.c,
+	modules/uptime/uptime.c, src/botnet.c, src/cmds.c, src/dcc.c,
+	src/dccutil.c, src/dns.c, src/egg.h, src/logfile.c, src/misc.c,
+	src/modules.c, src/net.c, src/tclhash.c, src/tcluser.c,
+	src/userent.c, src/userrec.c, src/users.c:
+
+	Removed our malloc_strcpy macro sincw it had the same functionality
+	of strdup (provided the respective fallback function) 
+
 2002-01-16 20:46  stdarg <stdarg@techmonkeys.org>
 
 	* doc/tcl-commands.doc:
