@@ -1,4 +1,4 @@
-/* eggowner.c: functions for working with the 'owner' config file variable
+/* owner.h: header for owner.c
  *
  * Copyright (C) 2003, 2004 Eggheads Development Team
  *
@@ -15,43 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Id: owner.h,v 1.1 2004/06/21 20:35:11 wingman Exp $
  */
 
-#ifndef lint
-static const char rcsid[] = "$Id: eggowner.c,v 1.5 2004/06/21 11:33:40 wingman Exp $";
-#endif
+#ifndef _EGG_OWNER_H_
+#define _EGG_OWNER_H_
 
-#include <ctype.h>
-#include <string.h>
-#include <eggdrop/eggdrop.h>
+int egg_setowner(char **_owner);
+int egg_isowner(const char *handle);
 
-static char **owner = NULL;
-
-int egg_setowner(char **_owner)
-{
-	owner = _owner;
-	return(0);
-}
-
-int egg_isowner(const char *handle)
-{
-	int len;
-	char *powner;
-
-	if (!owner || !*owner) return(0);
-
-	len = strlen(handle);
-	if (!len) return(0);
-
-	powner = *owner;
-	while (*powner) {
-		while (*powner && !isalnum(*powner)) powner++;
-		if (!*powner) break;
-		if (!strncasecmp(powner, handle, len)) {
-			powner += len;
-			if (!*powner || !isalnum(*powner)) return(1);
-		}
-		while (*powner && isalnum(*powner)) powner++;
-	}
-	return(0);
-}
+#endif /* !_EGG_OWNER_H_ */

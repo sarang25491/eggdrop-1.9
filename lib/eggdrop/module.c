@@ -1,4 +1,4 @@
-/* eggmod.c: module utility functions
+/* module.c: module utility functions
  *
  * Copyright (C) 2003, 2004 Eggheads Development Team
  *
@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggmod.c,v 1.16 2004/06/21 11:33:40 wingman Exp $";
+static const char rcsid[] = "$Id: module.c,v 1.1 2004/06/21 20:35:11 wingman Exp $";
 #endif
 
 #include <ltdl.h>

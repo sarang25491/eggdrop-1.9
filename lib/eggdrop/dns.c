@@ -1,4 +1,4 @@
-/* eggdns.c: dns functions
+/* dns.c: dns functions
  *
  * Copyright (C) 2002, 2003, 2004 Eggheads Development Team
  *
@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggdns.c,v 1.10 2003/12/17 07:39:14 wcc Exp $";
+static const char rcsid[] = "$Id: dns.c,v 1.1 2004/06/21 20:35:11 wingman Exp $";
 #endif
 
 #if HAVE_CONFIG_H

@@ -1,4 +1,4 @@
-/* eggconfig.c: config file
+/* config.c: config file
  *
  * Copyright (C) 2002, 2003, 2004 Eggheads Development Team
  *
@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggconfig.c,v 1.14 2004/06/19 10:30:41 wingman Exp $";
+static const char rcsid[] = "$Id: config.c,v 1.1 2004/06/21 20:35:11 wingman Exp $";
 #endif
 
 #include <stdio.h>

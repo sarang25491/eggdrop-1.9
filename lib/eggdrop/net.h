@@ -1,4 +1,4 @@
-/* eggnet.h: header for eggnet.c
+/* net.h: header for net.c
  *
  * Copyright (C) 2001, 2002, 2003, 2004 Eggheads Development Team
  *
@@ -16,11 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: eggnet.h,v 1.7 2003/12/18 23:10:41 stdarg Exp $
+ * $Id: net.h,v 1.1 2004/06/21 20:35:11 wingman Exp $
  */
 
-#ifndef _EGGNET_H_
-#define _EGGNET_H_
+#ifndef _EGG_NET_H_
+#define _EGG_NET_H_
 
 typedef struct {
 	const char *name;
@@ -44,4 +44,4 @@ egg_proxy_t *egg_proxy_lookup(const char *name);
 int egg_proxy_set_default(const char *name);
 const char *egg_proxy_get_default();
 
-#endif /* _EGGNET_H_ */
+#endif /* _EGG_NET_H_ */

@@ -1,4 +1,4 @@
-/* eggstring.h: header for eggstring.c
+/* string.h: header for string.c
  *
  * Copyright (C) 2003, 2004 Eggheads Development Team
  *
@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: string.h,v 1.1 2004/06/21 18:44:20 wingman Exp $
+ * $Id: string.h,v 1.2 2004/06/21 20:35:11 wingman Exp $
  */
 
 #ifndef _EGG_STRING_H_

@@ -1,4 +1,4 @@
-/* eggconfig.h: header for eggconfig.c
+/* config.h: header for config.c
  *
  * Copyright (C) 2002, 2003, 2004 Eggheads Development Team
  *
@@ -16,11 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: eggconfig.h,v 1.10 2004/06/19 10:30:41 wingman Exp $
+ * $Id: config.h,v 1.1 2004/06/21 20:35:11 wingman Exp $
  */
 
-#ifndef _EGG_EGGCONFIG_H_
-#define _EGG_EGGCONFIG_H_
+#ifndef _EGG_CONFIG_H_
+#define _EGG_CONFIG_H_
 
 #define CONFIG_INT	1
 #define CONFIG_STRING	2
@@ -53,4 +53,4 @@ int config_link_table(config_var_t *table, void *config_root, ...);
 int config_update_table(config_var_t *table, void *config_root, ...);
 int config_unlink_table(config_var_t *table, void *config_root, ...);
 
-#endif /* !_EGG_EGGCONFIG_H_ */
+#endif /* !_EGG_CONFIG_H_ */

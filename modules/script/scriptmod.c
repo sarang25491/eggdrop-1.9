@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptmod.c,v 1.11 2004/06/15 19:19:16 wingman Exp $";
+static const char rcsid[] = "$Id: scriptmod.c,v 1.12 2004/06/21 20:35:11 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -28,7 +28,7 @@ extern script_command_t script_bind_cmds[], script_net_cmds[], script_new_user_c
 
 static int script_module_unload(char *name)
 {
-	return module_unload(name, EGGMOD_USER);
+	return module_unload(name, MODULE_USER);
 }
 
 static script_command_t script_mod_cmds[] = {

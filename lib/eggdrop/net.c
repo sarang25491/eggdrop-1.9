@@ -1,4 +1,4 @@
-/* eggnet.c: network functions
+/* net.c: network functions
  *
  * Copyright (C) 2002, 2003, 2004 Eggheads Development Team
  *
@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggnet.c,v 1.10 2004/01/11 10:54:32 stdarg Exp $";
+static const char rcsid[] = "$Id: net.c,v 1.1 2004/06/21 20:35:11 wingman Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -47,7 +47,7 @@ static int egg_on_delete(void *client_data, int idx);
 static connect_info_t *attach(int idx, const char *host, int port, int timeout);
 static int detach(void *client_data, int idx);
 
-static sockbuf_filter_t eggnet_connect_filter = {
+static sockbuf_filter_t net_connect_filter = {
 	"connect", EGGNET_LEVEL,
 	egg_on_connect, egg_on_eof, NULL,
 	NULL, NULL, NULL,
@@ -243,7 +243,7 @@ static connect_info_t *attach(int idx, const char *host, int port, int timeout)
 	connect_info->idx = idx;
 	connect_info->dns_id = -1;
 	connect_info->timer_id = -1;
-	sockbuf_attach_filter(connect_info->idx, &eggnet_connect_filter, connect_info);
+	sockbuf_attach_filter(connect_info->idx, &net_connect_filter, connect_info);
 	if (timeout == 0) timeout = default_timeout;
 	if (timeout > 0) {
 		char buf[128];
@@ -262,7 +262,7 @@ static int detach(void *client_data, int idx)
 	connect_info_t *connect_info = client_data;
 
 	if (connect_info->timer_id != -1) timer_destroy(connect_info->timer_id);
-	sockbuf_detach_filter(idx, &eggnet_connect_filter, NULL);
+	sockbuf_detach_filter(idx, &net_connect_filter, NULL);
 	free(connect_info);
 	return(0);
 }

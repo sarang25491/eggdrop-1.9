@@ -1,4 +1,4 @@
-/* eggtimer.c: timer functions
+/* timer.c: timer functions
  *
  * Copyright (C) 2002, 2003, 2004 Eggheads Development Team
  *
@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggtimer.c,v 1.12 2004/06/21 10:59:39 wingman Exp $";
+static const char rcsid[] = "$Id: timer.c,v 1.1 2004/06/21 20:35:11 wingman Exp $";
 #endif
 
 #include <stdio.h>

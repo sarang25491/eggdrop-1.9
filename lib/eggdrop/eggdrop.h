@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: eggdrop.h,v 1.37 2004/06/21 18:44:20 wingman Exp $
+ * $Id: eggdrop.h,v 1.38 2004/06/21 20:35:11 wingman Exp $
  */
 
 #ifndef _EGG_EGGDROP_H_
@@ -32,15 +32,15 @@
 #include <eggdrop/users.h>
 #include <eggdrop/base64.h>
 #include <eggdrop/binds.h>
-#include <eggdrop/eggconfig.h>
-#include <eggdrop/eggdns.h>
-#include <eggdrop/eggident.h>
+#include <eggdrop/config.h>
+#include <eggdrop/dns.h>
+#include <eggdrop/ident.h>
 #include <eggdrop/logging.h>
-#include <eggdrop/eggmod.h>
-#include <eggdrop/eggnet.h>
-#include <eggdrop/eggowner.h>
+#include <eggdrop/module.h>
+#include <eggdrop/net.h>
+#include <eggdrop/owner.h>
 #include <eggdrop/string.h>
-#include <eggdrop/eggtimer.h>
+#include <eggdrop/timer.h>
 #include <eggdrop/fileutil.h>
 #include <eggdrop/garbage.h>
 #include <eggdrop/hash_table.h>

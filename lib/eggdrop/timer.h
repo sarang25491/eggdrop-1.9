@@ -1,4 +1,4 @@
-/* eggtimer.h: header for eggtimer.c
+/* timer.h: header for timer.c
  *
  * Copyright (C) 2002, 2003, 2004 Eggheads Development Team
  *
@@ -16,11 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: eggtimer.h,v 1.12 2004/06/21 10:59:39 wingman Exp $
+ * $Id: timer.h,v 1.1 2004/06/21 20:35:11 wingman Exp $
  */
 
-#ifndef _EGG_EGGTIMER_H_
-#define _EGG_EGGTIMER_H_
+#ifndef _EGG_TIMER_H_
+#define _EGG_TIMER_H_
 
 typedef struct egg_timeval {
 	int sec;
@@ -51,4 +51,4 @@ extern int timer_list(int **ids);
 extern int timer_info(int id, char **name, egg_timeval_t *initial_len, egg_timeval_t *trigger_time);
 extern char *timer_get_timestamp(void);
 
-#endif /* !_EGG_EGGTIMER_H_ */
+#endif /* !_EGG_TIMER_H_ */

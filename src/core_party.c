@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.33 2004/06/20 13:33:48 wingman Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.34 2004/06/21 20:35:11 wingman Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -522,7 +522,7 @@ static int party_unloadmod(partymember_t *p, const char *nick, user_t *u, const 
 		partymember_printf(p, _("Syntax: unloadmod <module name>"));
 		return BIND_RET_BREAK;
 	}
-	switch (module_unload(text, EGGMOD_USER)) {
+	switch (module_unload(text, MODULE_USER)) {
 		case 0:
 			partymember_printf(p, _("Module '%s' unloaded successfully."), text);
 			break;
