@@ -1,3 +1,10 @@
+2002-05-26 03:02  stdarg <stdarg@techmonkeys.org>
+
+	* src/tclhash.c:
+
+	
+	* Made dcc a MATCH_PARTIAL table again.  
+
 2002-05-26 02:49  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/module.h, modules/irc/irc.c, src/modules.c,
