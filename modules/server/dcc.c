@@ -130,7 +130,7 @@ static dcc_listen_t *dcc_listen(int timeout)
 	if (timeout > 0) {
 		char buf[128];
 
-		snprintf(buf, "dcc listen port %d", port);
+		snprintf(buf, sizeof(buf), "dcc listen port %d", port);
 		howlong.sec = timeout;
 		howlong.usec = 0;
 		listen->timer_id = timer_create_complex(&howlong, buf, dcc_listen_timeout, listen, 0);
