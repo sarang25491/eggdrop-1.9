@@ -1,3 +1,10 @@
+2002-12-12 04:28  Will Buckner <wcc@techmonkeys.org>
+
+	* doc/UPDATES1.6, src/main.c, src/patch.h:
+
+	Fixed default setting for the help-path and text-path settings.
+	Patch by poptix.  
+
 2002-11-29 06:15  Will Buckner <wcc@techmonkeys.org>
 
 	* doc/UPDATES1.6, misc/addpatch, modules/irc/cmdsirc.c,
