@@ -5061,24 +5061,7 @@
 	modules/transfer/transfer.h, modules/uptime/.cvsignore,
 	modules/uptime/Makefile.am, modules/uptime/modinfo,
 	modules/uptime/uptime.c, modules/uptime/uptime.h, src/Makefile.am,
-	src/logfile.c, src/modules.h, src/mod/.cvsignore,
-	src/mod/Makefile.am, src/mod/module.h, src/mod/modvals.h,
-	src/mod/console.mod/.cvsignore, src/mod/console.mod/Makefile.am,
-	src/mod/console.mod/console.c, src/mod/console.mod/console.h,
-	src/mod/console.mod/modinfo, src/mod/console.mod/help/console.help,
-	src/mod/console.mod/help/set/console.help,
-	src/mod/ctcp.mod/.cvsignore, src/mod/ctcp.mod/Makefile.am,
-	src/mod/ctcp.mod/ctcp.c, src/mod/ctcp.mod/ctcp.h,
-	src/mod/ctcp.mod/modinfo, src/mod/ctcp.mod/help/set/ctcp.help,
-	src/mod/filesys.mod/.cvsignore, src/mod/filesys.mod/Makefile.am,
-	src/mod/filesys.mod/dbcompat.c, src/mod/filesys.mod/dbcompat.h,
-	src/mod/filesys.mod/filedb3.c, src/mod/filesys.mod/filedb3.h,
-	src/mod/filesys.mod/filelist.c, src/mod/filesys.mod/filelist.h,
-	src/mod/filesys.mod/files.c, src/mod/filesys.mod/files.h,
-	src/mod/filesys.mod/filesys.c, src/mod/filesys.mod/filesys.h,
-	src/mod/filesys.mod/modinfo, src/mod/filesys.mod/tclfiles.c,
-	src/mod/filesys.mod/help/filesys.help,
-	src/mod/filesys.mod/help/set/filesys.help:
+	src/logfile.c, src/modules.h:
 
 	* Renamed src/mod to modules.  
 	* Created lib as top dir for eggdrop's libraries.  
@@ -5098,8 +5081,7 @@
 2001-10-26 22:22  stdarg <stdarg@techmonkeys.org>
 
 	* src/: chanprog.c, cmds.c, main.c, modules.c, tcl.c, tcldcc.c,
-	tclegg.h, tclhash.c, tclhash.h, mod/module.h,
-	mod/filesys.mod/filesys.c:
+	tclegg.h, tclhash.c, tclhash.h:
 
 	
 	* Converted the last few bind tables (I think).  
@@ -5166,7 +5148,7 @@
 
 2001-10-22 01:49  stdarg <stdarg@techmonkeys.org>
 
-	* src/: modules.c, mod/module.h:
+	* src/modules.c:
 
 	* Moved msprintf and mstack to the function table (boo this is
 	temporary I hope) 
@@ -5190,7 +5172,7 @@
 2001-10-21 17:38  Federico Mennite <ite@techmonkeys.org>
 
 	* bootstrap, configure.ac, acconfig/.cvsignore,
-	acconfig/acinclude.m4, src/Makefile.am, src/mod/Makefile.am:
+	acconfig/acinclude.m4, src/Makefile.am:
 
 	* Added autoconf and automake support for perlscript.mod.  
 	* Removed old stuff from bootstrap and
@@ -5200,9 +5182,7 @@
 
 2001-10-21 16:05  Tothwolf <tothwolf@techmonkeys.org>
 
-	* Makefile.am, scripts/Makefile.am, src/Makefile.am,
-	src/mod/Makefile.am, src/mod/console.mod/Makefile.am,
-	src/mod/ctcp.mod/Makefile.am, src/mod/filesys.mod/Makefile.am:
+	* Makefile.am, scripts/Makefile.am, src/Makefile.am:
 
 	* cleanups in Makefile.am files 
 
@@ -5273,7 +5253,7 @@
 2001-10-21 03:44  stdarg <stdarg@techmonkeys.org>
 
 	* src/: botnet.c, cmds.c, logfile.c, modules.c, tcl.c, tclhash.c,
-	tclhash.h, mod/module.h, mod/console.mod/console.c:
+	tclhash.h:
 
 	* Applied Oskar Liljeblad's patch to convert more bind tables.  
 	* Fixed bug in putlog which causes an infinite loop.  
@@ -5283,7 +5263,7 @@
 
 2001-10-20 21:57  stdarg <stdarg@techmonkeys.org>
 
-	* src/: dcc.c, modules.c, tclhash.c, tclhash.h, mod/module.h:
+	* src/: dcc.c, modules.c, tclhash.c, tclhash.h:
 
 	* Added Oskar Liljeblad's patch to convert H_chat, H_act, and
 	H_bcst.  
@@ -5292,7 +5272,7 @@
 
 2001-10-20 10:22  stdarg <stdarg@techmonkeys.org>
 
-	* src/: modules.c, tclhash.c, tclhash.h, mod/module.h:
+	* src/: modules.c, tclhash.c, tclhash.h:
 
 	Applied patch by Oskar Liljeblad <oskar@osk.mine.nu>: Replaces
 	H_away bind with new BT_away bind.  
@@ -5363,8 +5343,7 @@
 2001-10-19 06:01  Jeff Fisher <guppy@techmonkeys.org>
 
 	* eggdrop.complete.conf, doc/settings/core.settings,
-	doc/settings/mod.server, src/flags.c, src/modules.c,
-	src/mod/module.h:
+	doc/settings/mod.server, src/flags.c, src/modules.c:
 
 	* removed use-console-r since we have debug-output 
 	* removed +r as a log option we tell people about since it used for
@@ -5396,9 +5375,7 @@
 	src/dns.c, src/eggdrop.h, src/logfile.c, src/main.c, src/misc.c,
 	src/modules.c, src/net.c, src/stat.h, src/tcl.c, src/tcldcc.c,
 	src/tclhash.c, src/tclmisc.c, src/tcluser.c, src/userent.c,
-	src/userrec.c, src/users.c, src/mod/module.h,
-	src/mod/ctcp.mod/ctcp.c, src/mod/filesys.mod/filedb3.c,
-	src/mod/filesys.mod/files.c, src/mod/filesys.mod/filesys.c:
+	src/userrec.c, src/users.c:
 
 	* removed obsolete EGG_CHECK_FUNC_VSPRINTF autoconf macro 
 	* removed obsolete EGG_HEADER_STDC autoconf macro 
@@ -5494,8 +5471,7 @@
 
 2001-10-18 02:57  stdarg <stdarg@techmonkeys.org>
 
-	* src/: modules.c, net.c, proto.h, mod/module.h,
-	mod/filesys.mod/filesys.c:
+	* src/: modules.c, net.c, proto.h:
 
 	Converted my_atoul to sscanf.  
 
@@ -5527,8 +5503,7 @@
 
 2001-10-17 00:19  stdarg <stdarg@techmonkeys.org>
 
-	* src/: modules.c, tclhash.c, tclhash.h, mod/module.h,
-	mod/filesys.mod/filesys.c:
+	* src/: modules.c, tclhash.c, tclhash.h:
 
 	Moved load and unload bind tables to modules.c.  Removed old ctcp
 	table.  
@@ -5580,7 +5555,7 @@
 2001-10-14 23:13  stdarg <stdarg@techmonkeys.org>
 
 	* src/: Makefile.am, core_binds.c, core_binds.h, main.c, modules.c,
-	script.h, tclhash.c, tclhash.h, tclmisc.c, mod/module.h:
+	script.h, tclhash.c, tclhash.h, tclmisc.c:
 
 	Updates to binds (event and time).  New file to handle core binds.  
 
@@ -5629,7 +5604,7 @@
 2001-10-14 14:09  Federico Mennite <ite@techmonkeys.org>
 
 	* INSTALL, README, acinclude.m4, bootstrap, configure.in,
-	po/eggdrop.pot, src/main.c, src/modules.c, src/mod/modvals.h:
+	po/eggdrop.pot, src/main.c, src/modules.c:
 
 	* STATIC is #defined again on static builds.  
 	* Removed code for old module loading emulation on static builds.  
@@ -5656,7 +5631,7 @@
 
 	* configure.in, src/Makefile.am, src/main.c, src/modules.c,
 	src/registry.c, src/registry.h, src/script.c, src/script_api.h,
-	src/tcl.c, src/mod/Makefile.am, src/mod/module.h:
+	src/tcl.c:
 
 	Added code for tclscript.mod Made it compile correctly with
 	configure et al (hopefully...) Removed stuff for encodings from
@@ -5667,9 +5642,7 @@
 
 2001-10-13 21:36  Tothwolf <tothwolf@techmonkeys.org>
 
-	* acconfig.h, acinclude.m4, configure.in, src/Makefile.am,
-	src/mod/console.mod/Makefile.am, src/mod/ctcp.mod/Makefile.am,
-	src/mod/filesys.mod/Makefile.am:
+	* acconfig.h, acinclude.m4, configure.in, src/Makefile.am:
 
 	* configure cleanups 
 	* updated many autoconf macros to new formats 
@@ -5679,7 +5652,7 @@
 
 2001-10-13 15:55  Tothwolf <tothwolf@techmonkeys.org>
 
-	* src/: chanprog.c, misc.c, modules.c, proto.h, mod/module.h:
+	* src/: chanprog.c, misc.c, modules.c, proto.h:
 
 	* splitnick() removed 
 	* cleanup where splitnicks() was removed 
@@ -5689,7 +5662,7 @@
 2001-10-13 12:00  stdarg <stdarg@techmonkeys.org>
 
 	* src/: Makefile.am, egg_timer.c, egg_timer.h, main.c, net.c,
-	tclmisc.c, mod/filesys.mod/filesys.c:
+	tclmisc.c:
 
 	Added code for C-based microsecond-precision timers.  Made utimer
 	and timer use the new timer stuff. (But utimers and timers don't
@@ -5716,7 +5689,7 @@
 	* acinclude.m4, src/Makefile.am, src/botnet.c, src/cmds.c,
 	src/dcc.c, src/debug.h, src/eggdrop.h, src/irccmp.c, src/main.c,
 	src/main.h, src/modules.c, src/net.c, src/proto.h, src/tcl.c,
-	src/tclhash.c, src/mod/module.h, src/mod/modvals.h:
+	src/tclhash.c:
 
 	* DEBUG_ASSERT renamed to DEBUG 
 	* Assert macro removed, replaced with ANSI assert support 
@@ -5748,7 +5721,7 @@
 
 	* src/: Makefile.am, chanprog.c, flags.c, irccmp.c, irccmp.h,
 	match.c, match.h, misc.c, modules.c, proto.h, rfc1459.c, userent.c,
-	userrec.c, users.c, mod/module.h, mod/modvals.h:
+	userrec.c, users.c:
 
 	* rfc1459.c cleaned up and renamed to irccmp.c 
 	* rfc_casecmp() renamed to irccmp() 
@@ -5759,40 +5732,22 @@
 
 2001-10-11 13:01  Tothwolf <tothwolf@techmonkeys.org>
 
-	* src/: dns.c, eggdrop.h, net.c, mod/filesys.mod/dbcompat.c,
-	mod/filesys.mod/filedb3.c, mod/filesys.mod/files.c,
-	mod/filesys.mod/filesys.c, mod/filesys.mod/tclfiles.c:
+	* src/: dns.c, eggdrop.h, net.c:
 
 	* malloc_strcpy/realloc_strcpy bugfixes 
 
 2001-10-11 11:34  Tothwolf <tothwolf@techmonkeys.org>
 
 	* src/: botnet.c, cmds.c, dcc.c, dccutil.c, dns.c, eggdrop.h,
-	flags.c, misc.c, tcldcc.c, tclhash.c, userent.c,
-	mod/console.mod/console.c, mod/filesys.mod/filedb3.c,
-	mod/filesys.mod/filesys.c:
+	flags.c, misc.c, tcldcc.c, tclhash.c, userent.c:
 
 	* Use calloc() instead of malloc_memset macro 
 
-2001-10-10 18:47  stdarg <stdarg@techmonkeys.org>
-
-	* src/mod/filesys.mod/filesys.c:
-
-	Yeah, better declare BT_dcc before I use it heh.  
-
 2001-10-10 18:37  stdarg <stdarg@techmonkeys.org>
 
-	* src/: modules.c, tclhash.c, tclhash.h, mod/module.h,
-	mod/console.mod/console.c, mod/filesys.mod/filesys.c:
+	* src/: modules.c, tclhash.c, tclhash.h:
 
 	Got rid of the last remnants of H_dcc.  
-
-2001-10-10 15:52  Tothwolf <tothwolf@techmonkeys.org>
-
-	* src/mod/: console.mod/help/console.help,
-	console.mod/help/set/console.help, filesys.mod/help/filesys.help:
-
-	more documentation updates from alpha tree 
 
 2001-10-10 14:50  Tothwolf <tothwolf@techmonkeys.org>
 
@@ -5821,11 +5776,7 @@
 	src/match.c, src/mem.c, src/misc.c, src/modules.c, src/modules.h,
 	src/net.c, src/proto.h, src/tcl.c, src/tcldcc.c, src/tclhash.c,
 	src/tclhash.h, src/tcluser.c, src/userent.c, src/userrec.c,
-	src/users.c, src/users.h, src/mod/module.h, src/mod/modvals.h,
-	src/mod/console.mod/console.c, src/mod/filesys.mod/dbcompat.c,
-	src/mod/filesys.mod/filedb3.c, src/mod/filesys.mod/filedb3.h,
-	src/mod/filesys.mod/filelist.c, src/mod/filesys.mod/files.c,
-	src/mod/filesys.mod/filesys.c, src/mod/filesys.mod/tclfiles.c:
+	src/users.c, src/users.h:
 
 	all expmem functions and support removed all memory status/debugging
 	code removed all #ifdef DEBUG_MEM code removed 
@@ -5891,17 +5842,7 @@
 	intl/ref-add.sin, intl/ref-del.sin, intl/textdomain.c,
 	po/Makefile.in.in, po/eggdrop.pot, scripts/.cvsignore,
 	scripts/Makefile.am, scripts/Makefile.in, src/.cvsignore,
-	src/Makefile.am, src/Makefile.in, src/eggdrop.h, src/modules.c,
-	src/mod/.cvsignore, src/mod/Makefile.am, src/mod/Makefile.in,
-	src/mod/eggautoconf, src/mod/eggmod.m4, src/mod/eggmod.sh,
-	src/mod/module.h, src/mod/modvals.h,
-	src/mod/console.mod/.cvsignore, src/mod/console.mod/Makefile,
-	src/mod/console.mod/Makefile.am, src/mod/console.mod/console.c,
-	src/mod/ctcp.mod/.cvsignore, src/mod/ctcp.mod/Makefile,
-	src/mod/ctcp.mod/Makefile.am, src/mod/ctcp.mod/ctcp.c,
-	src/mod/filesys.mod/.cvsignore, src/mod/filesys.mod/Makefile,
-	src/mod/filesys.mod/Makefile.am, src/mod/filesys.mod/filesys.c,
-	src/mod/filesys.mod/filesys.h:
+	src/Makefile.am, src/Makefile.in, src/eggdrop.h, src/modules.c:
 
 	* Refactored the tree (especially src/modules.c) to use the libltdl 
 	  wrapper. Modules are configured to be lt_dlopened or dl_preopened
@@ -5955,7 +5896,7 @@
 2001-10-07 04:02  stdarg <stdarg@techmonkeys.org>
 
 	* src/: botcmd.c, botnet.c, cmds.c, dccutil.c, tclhash.c,
-	tclhash.h, mod/modvals.h, mod/ctcp.mod/ctcp.c:
+	tclhash.h:
 
 	Got rid of bind tables in the exported irc function table. They're
 	not used anywhere in the core or other normal modules. Other people
@@ -6000,7 +5941,7 @@
 2001-09-28 03:15  stdarg <stdarg@techmonkeys.org>
 
 	* src/: botcmd.c, botnet.c, dcc.c, dccutil.c, main.c, modules.c,
-	tcldcc.c, tclhash.c, tclhash.h, mod/module.h:
+	tcldcc.c, tclhash.c, tclhash.h:
 
 	
 	
@@ -6159,8 +6100,7 @@
 
 	* .cvsignore, Makefile.in, acconfig.h, aclocal.m4, bootstrap,
 	configure.in, po/.cvsignore, po/POTFILES.in, po/eggdrop.pot,
-	po/update.pl, src/Makefile.in, src/eggdrop.h, src/main.c,
-	src/mod/module.h:
+	po/update.pl, src/Makefile.in, src/eggdrop.h, src/main.c:
 
 	Gettext phase 2: 
 	* Replced dummy _() define with the real one and added language
@@ -6220,7 +6160,7 @@
 	* eggdrop.complete.conf, doc/settings/core.settings,
 	doc/settings/mod.dns, help/core.help, help/set/cmds1.help,
 	scripts/help/cmd_resolve.help, src/modules.c, src/net.c, src/tcl.c,
-	src/tclmisc.c, src/mod/module.h:
+	src/tclmisc.c:
 
 	Removed my-hostname. Cache local ipv4 address. Updated docs. FIXME
 	for tcl_getmyip6(). Cleanups for channel.mod.  
@@ -6291,8 +6231,7 @@
 
 2001-08-13 22:51  Federico Mennite <ite@techmonkeys.org>
 
-	* .cvsignore, doc/.cvsignore, scripts/.cvsignore, src/.cvsignore,
-	src/mod/.cvsignore:
+	* .cvsignore, doc/.cvsignore, scripts/.cvsignore, src/.cvsignore:
 
 	Added .cvsignore files to ease committer's life.  
 
@@ -6326,10 +6265,7 @@
 	doc/tricks, doc/settings/CONTENTS, doc/settings/contents,
 	doc/settings/core.settings, help/core.help, src/Makefile.in,
 	src/eggdrop.h, src/lang.h, src/language.c, src/main.c, src/main.h,
-	src/mem.c, src/modules.c, src/proto.h, src/mod/Makefile.in,
-	src/mod/module.h, src/mod/console.mod/Makefile,
-	src/mod/ctcp.mod/Makefile, src/mod/filesys.mod/Makefile,
-	src/mod/filesys.mod/filesys.h:
+	src/mem.c, src/modules.c, src/proto.h:
 
 	Good bye language.c, lang.h, we knew you so well yet hated you 
 
@@ -6398,8 +6334,7 @@
 2001-08-13 14:51  Jeff Fisher <guppy@techmonkeys.org>
 
 	* eggdrop.complete.conf, doc/settings/core.settings, src/modules.c,
-	src/net.c, src/proto.h, src/tcl.c, src/mod/module.h,
-	src/mod/filesys.mod/filesys.c:
+	src/net.c, src/proto.h, src/tcl.c:
 
 	Removed dcc-sanitycheck since it was half commented out as "FIXME"
 	-- also, in the day and age of IRC bouncers and socks5 connections,
@@ -6414,8 +6349,7 @@
 2001-08-13 14:17  Jeff Fisher <guppy@techmonkeys.org>
 
 	* eggdrop.complete.conf, doc/settings/core.settings, src/dcc.c,
-	src/modules.c, src/tcl.c, src/mod/module.h,
-	src/mod/filesys.mod/filesys.c:
+	src/modules.c, src/tcl.c:
 
 	Removed dcc-portrange since it was a stupid setting (good idea of
 	course) and the values 1024 and 65535 are now hardcoded as the
@@ -6477,10 +6411,7 @@
 	src/chanprog.c, src/cmds.c, src/dcc.c, src/dccutil.c, src/dns.c,
 	src/eggdrop.h, src/lang.h, src/main.c, src/misc.c, src/modules.c,
 	src/tcldcc.c, src/tclhash.c, src/tclmisc.c, src/userrec.c,
-	src/users.c, src/mod/console.mod/console.c,
-	src/mod/console.mod/console.h, src/mod/filesys.mod/dbcompat.c,
-	src/mod/filesys.mod/filedb3.c, src/mod/filesys.mod/files.c,
-	src/mod/filesys.mod/files.h, src/mod/filesys.mod/filesys.c:
+	src/users.c:
 
 	Gettext phase 1: created a dummy _() macro, replaced old get_lang
 	#defines with the respective string entries in english.*.lang and
@@ -6555,8 +6486,7 @@
 2001-07-31 16:40  Jeff Fisher <guppy@techmonkeys.org>
 
 	* doc/UPDATES1.6, src/cmds.c, src/main.c, src/misc.c,
-	src/modules.c, src/patch.h, src/proto.h, src/tclmisc.c,
-	src/mod/module.h, src/mod/modvals.h:
+	src/modules.c, src/patch.h, src/proto.h, src/tclmisc.c:
 
 	sync'd 1.7 to the latest 1.6 
 
@@ -6601,9 +6531,7 @@
 
 	* src/: Makefile.in, botnet.c, cmds.c, dcc.c, dccutil.c, dns.c,
 	dns.h, eggdrop.h, main.c, modules.c, net.c, proto.h, tcl.c,
-	tcldcc.c, tclmisc.c, tcluser.c, userent.c, mod/module.h,
-	mod/ctcp.mod/ctcp.c, mod/filesys.mod/filedb3.c,
-	mod/filesys.mod/filesys.c:
+	tcldcc.c, tclmisc.c, tcluser.c, userent.c:
 
 	added adns dir 
 
@@ -6623,9 +6551,7 @@
 2001-07-25 04:21  Jeff Fisher <guppy@techmonkeys.org>
 
 	* disabled_modules, doc/CONTENTS, doc/Makefile.in,
-	doc/UPDATES.pre1.5, doc/UPDATES1.5, src/main.c, src/patch.h,
-	src/mod/console.mod/console.c, src/mod/ctcp.mod/ctcp.c,
-	src/mod/filesys.mod/filesys.c:
+	doc/UPDATES.pre1.5, doc/UPDATES1.5, src/main.c, src/patch.h:
 
 	what will the future hold fellow eggdevers! seen and wire are
 	disabled ... shall we remove them and replace in the future with
@@ -6683,7 +6609,7 @@
 
 	* doc/MODULES, doc/UPDATES1.6, doc/tcl-commands.doc,
 	help/cmds2.help, src/cmds.c, src/main.c, src/patch.h,
-	src/tclmisc.c, src/mod/modvals.h:
+	src/tclmisc.c:
 
 	I thought about doing this years ago .. glad someone did it :P~ 
 
@@ -6717,17 +6643,9 @@
 
 	applied Paladin's doc updates patch 
 
-2001-07-18 06:03  Tothwolf <tothwolf@techmonkeys.org>
-
-	* src/mod/module.h:
-
-	Autoindenting mess-up 
-
 2001-07-17 19:53  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h, src/mod/module.h,
-	src/mod/console.mod/console.c, src/mod/ctcp.mod/ctcp.c,
-	src/mod/filesys.mod/filesys.c:
+	* doc/UPDATES1.6, src/patch.h:
 
 	here is ITE's expore_define_fix 
 
@@ -6739,7 +6657,7 @@
 
 2001-07-16 14:54  Jeff Fisher <guppy@techmonkeys.org>
 
-	* src/: misc.c, modules.c, proto.h, mod/module.h:
+	* src/: misc.c, modules.c, proto.h:
 
 	oops, I should apply the patch too I guess 
 
@@ -6988,7 +6906,7 @@
 2001-06-24 20:49  Matthew Hallacy <poptix@techmonkeys.org>
 
 	* doc/UPDATES1.6, src/modules.c, src/net.c, src/patch.h,
-	src/proto.h, src/mod/module.h:
+	src/proto.h:
 
 	florian's 'netstuff' patch.  
 
@@ -7005,14 +6923,6 @@
 	
 	
 	jeff's tbuf patch 
-
-2001-06-24 18:29  Matthew Hallacy <poptix@techmonkeys.org>
-
-	* src/mod/ctcp.mod/ctcp.c:
-
-	
-	
-	nuh, my warning re-added =P 
 
 2001-06-22 05:52  Jeff Fisher <guppy@techmonkeys.org>
 
@@ -7076,9 +6986,7 @@
 
 2001-06-20 14:44  Matthew Hallacy <poptix@techmonkeys.org>
 
-	* aclocal.m4, doc/UPDATES1.6, src/main.c, src/patch.h,
-	src/mod/module.h, src/mod/console.mod/console.c,
-	src/mod/ctcp.mod/ctcp.c, src/mod/filesys.mod/filesys.c:
+	* aclocal.m4, doc/UPDATES1.6, src/main.c, src/patch.h:
 
 	Cygwin32 Fixes 
 
@@ -7143,8 +7051,7 @@
 
 2001-06-10 00:11  Matthew Hallacy <poptix@techmonkeys.org>
 
-	* doc/UPDATES1.6, doc/tcl-commands.doc, src/patch.h,
-	src/mod/filesys.mod/tclfiles.c:
+	* doc/UPDATES1.6, doc/tcl-commands.doc, src/patch.h:
 
 	filesys memleak fixed, setflags allows flags/channel now like it
 	claimed to.  
@@ -7214,8 +7121,7 @@
 
 2001-06-01 21:56  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, doc/tcl-commands.doc, src/main.c, src/patch.h,
-	src/mod/modvals.h:
+	* doc/UPDATES1.6, doc/tcl-commands.doc, src/main.c, src/patch.h:
 
 	new evnt: loaded 
 
@@ -7226,15 +7132,6 @@
 	
 	
 	Update for last 2 patches (mkdir, server var problems) 
-
-2001-05-25 11:06  Matthew Hallacy <poptix@techmonkeys.org>
-
-	* src/mod/filesys.mod/tclfiles.c:
-
-	
-	
-	It's been 3 days, guppy said wait 2, no bad comments on these two
-	patches.  
 
 2001-05-23 07:00  Matthew Hallacy <poptix@techmonkeys.org>
 
@@ -7301,7 +7198,7 @@
 
 2001-04-26 03:38  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h, src/mod/modvals.h:
+	* doc/UPDATES1.6, src/patch.h:
 
 	applied Eule's patch to save us some cpu 
 
@@ -7381,15 +7278,7 @@
 	src/stat.h, src/tandem.h, src/tcl.c, src/tcldcc.c, src/tclegg.h,
 	src/tclhash.c, src/tclhash.h, src/tclmisc.c, src/tcluser.c,
 	src/userent.c, src/userrec.c, src/users.c, src/users.h,
-	src/mod/eggautoconf, src/mod/module.h, src/mod/modvals.h,
-	src/mod/console.mod/console.c, src/mod/console.mod/console.h,
-	src/mod/ctcp.mod/ctcp.c, src/mod/ctcp.mod/ctcp.h,
-	src/mod/filesys.mod/dbcompat.c, src/mod/filesys.mod/dbcompat.h,
-	src/mod/filesys.mod/filedb3.c, src/mod/filesys.mod/filedb3.h,
-	src/mod/filesys.mod/filelist.c, src/mod/filesys.mod/filelist.h,
-	src/mod/filesys.mod/files.c, src/mod/filesys.mod/files.h,
-	src/mod/filesys.mod/filesys.c, src/mod/filesys.mod/filesys.h,
-	src/mod/filesys.mod/tclfiles.c, text/banner, text/motd:
+	text/banner, text/motd:
 
 	lets update the copyright info for 2001 k? :P~ 
 
@@ -7420,8 +7309,7 @@
 2001-04-06 22:28  Jeff Fisher <guppy@techmonkeys.org>
 
 	* doc/UPDATES1.6, src/botmsg.c, src/dccutil.c, src/misc.c,
-	src/modules.c, src/patch.h, src/proto.h, src/tcl.c,
-	src/mod/module.h:
+	src/modules.c, src/patch.h, src/proto.h, src/tcl.c:
 
 	applied Zart's patch to make the unicode shit handle tcl version > 9 
 
@@ -7446,8 +7334,7 @@
 
 2001-03-18 23:00  Jeff Fisher <guppy@techmonkeys.org>
 
-	* src/: botmsg.c, dccutil.c, misc.c, modules.c, patch.h, proto.h,
-	mod/module.h:
+	* src/: botmsg.c, dccutil.c, misc.c, modules.c, patch.h, proto.h:
 
 	here is wingman's bug fix, yay 
 
@@ -7472,7 +7359,7 @@
 
 2001-03-11 21:00  Jeff Fisher <guppy@techmonkeys.org>
 
-	* src/: modules.c, patch.h, proto.h, mod/module.h:
+	* src/: modules.c, patch.h, proto.h:
 
 	added a fix to Wingman's unicode patch 
 
@@ -7505,7 +7392,7 @@
 2001-03-10 06:36  Jeff Fisher <guppy@techmonkeys.org>
 
 	* doc/UPDATES1.6, src/botmsg.c, src/dccutil.c, src/misc.c,
-	src/modules.c, src/patch.h, src/proto.h, src/mod/module.h:
+	src/modules.c, src/patch.h, src/proto.h:
 
 	Wingman's utf8 fix ... please test this alot people :P~ 
 
@@ -7524,8 +7411,7 @@
 
 2001-02-27 03:18  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/modules.c, src/patch.h, src/mod/module.h,
-	src/mod/modvals.h:
+	* doc/UPDATES1.6, src/modules.c, src/patch.h:
 
 	lets make blowfish more friendly 
 
@@ -7661,7 +7547,7 @@
 	* eggdrop.complete.conf, doc/UPDATES1.6,
 	doc/settings/core.settings, help/core.help, help/set/cmds1.help,
 	help/set/cmds2.help, src/dccutil.c, src/modules.c, src/patch.h,
-	src/tcl.c, src/mod/module.h, src/mod/filesys.mod/filesys.c:
+	src/tcl.c:
 
 	applied reserved-portrange.diff (yay) 
 
@@ -7715,11 +7601,7 @@
 2001-01-16 17:13  Jeff Fisher <guppy@techmonkeys.org>
 
 	* doc/UPDATES1.6, src/botcmd.c, src/botmsg.c, src/botnet.c,
-	src/patch.h, src/mod/console.mod/console.c,
-	src/mod/ctcp.mod/ctcp.c, src/mod/filesys.mod/dbcompat.c,
-	src/mod/filesys.mod/filedb3.c, src/mod/filesys.mod/filelist.c,
-	src/mod/filesys.mod/files.c, src/mod/filesys.mod/filesys.c,
-	src/mod/filesys.mod/tclfiles.c:
+	src/patch.h:
 
 	Cleanup of Context(); and Assert(); usage in the core and modules is
 	completed Doing some testing lastnite, the size of the binary and
@@ -7781,8 +7663,7 @@
 
 2000-12-21 20:20  Jeff Fisher <guppy@techmonkeys.org>
 
-	* aclocal.m4, configure, configure.in, doc/UPDATES1.6, src/patch.h,
-	src/mod/Makefile.in:
+	* aclocal.m4, configure, configure.in, doc/UPDATES1.6, src/patch.h:
 
 	ITE's configure path fix patch 
 
@@ -7822,7 +7703,7 @@
 
 2000-12-17 21:48  Jeff Fisher <guppy@techmonkeys.org>
 
-	* src/: proto.h, tcl.c, mod/module.h:
+	* src/: proto.h, tcl.c:
 
 	Applying fabian's patch for unicode support (also by Wingman);
 	however, there was a warning in src/tcl.c 
@@ -8120,9 +8001,7 @@
 	eggdrop.complete.conf, eggdrop.simple.conf, doc/BOTNET,
 	doc/BUG-REPORT, doc/CONTENTS, doc/Makefile.in, doc/UPDATES1.5,
 	doc/patch.howto, doc/tcl-commands.doc, doc/text-substitutions.doc,
-	scripts/getops.tcl, src/main.c, src/patch.h,
-	src/mod/console.mod/console.c, src/mod/ctcp.mod/ctcp.c,
-	src/mod/filesys.mod/filesys.c, text/banner:
+	scripts/getops.tcl, src/main.c, src/patch.h, text/banner:
 
 	1.5 has now become 1.6 
 
@@ -8217,9 +8096,7 @@
 
 2000-10-27 19:39  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/filesys.mod/dbcompat.c,
-	src/mod/filesys.mod/filedb3.c, src/mod/filesys.mod/filedb3.h,
-	src/mod/filesys.mod/files.c:
+	* doc/UPDATES1.5, src/patch.h:
 
 	fabian: applied filesys_remote_ln patch 
 
@@ -8251,7 +8128,7 @@
 2000-10-27 19:34  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.5, src/botnet.c, src/dcc.c, src/lang.h, src/net.c,
-	src/patch.h, src/tcldcc.c, src/mod/filesys.mod/filesys.c:
+	src/patch.h, src/tcldcc.c:
 
 	fabian: applied net_sockfail_nonfatal patch 
 
@@ -8266,7 +8143,7 @@
 	* doc/UPDATES1.5, src/dcc.c, src/flags.c, src/flags.h, src/main.c,
 	src/mem.c, src/modules.c, src/modules.h, src/patch.h, src/proto.h,
 	src/tclhash.c, src/tclhash.h, src/tclmisc.c, src/userrec.c,
-	src/users.h, src/mod/module.h:
+	src/users.h:
 
 	fabian: applied tcl_hash_overhaul patch. (minor change: added
 	comments to end of check_tcl_bind().) 
@@ -8279,14 +8156,14 @@
 
 2000-10-27 19:29  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/modvals.h:
+	* doc/UPDATES1.5, src/patch.h:
 
 	fabian: applied channel_part_fix patch 
 
 2000-10-27 19:28  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.5, src/eggdrop.h, src/main.c, src/patch.h,
-	src/proto.h, src/mod/module.h:
+	src/proto.h:
 
 	fabian: applied the assert_fix patch 
 
@@ -8304,7 +8181,7 @@
 
 2000-10-27 19:24  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/filesys.mod/filesys.c:
+	* doc/UPDATES1.5, src/patch.h:
 
 	fabian: applied Sup's ctcp_dcc_fix patch 
 
@@ -8330,7 +8207,7 @@
 2000-10-19 16:32  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.5, src/chanprog.c, src/modules.c, src/patch.h,
-	src/proto.h, src/mod/module.h:
+	src/proto.h:
 
 	fabian: applied Eule's gotnick patch 
 
@@ -8427,7 +8304,7 @@
 
 2000-09-27 19:47  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/console.mod/Makefile:
+	* doc/UPDATES1.5, src/patch.h:
 
 	fabian: applied the plus_a_cycle patch 
 
@@ -8446,15 +8323,14 @@
 
 2000-09-27 19:40  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/main.c, src/patch.h, src/tcldcc.c,
-	src/mod/filesys.mod/filesys.c:
+	* doc/UPDATES1.5, src/main.c, src/patch.h, src/tcldcc.c:
 
 	fabian: applied new_dcc_fixes patch 
 
 2000-09-23 17:49  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.5, src/misc.c, src/modules.c, src/patch.h,
-	src/proto.h, src/mod/module.h:
+	src/proto.h:
 
 	fabian: applied Cybah's egg_strcatn patch 
 
@@ -8482,17 +8358,9 @@
 
 	fabian: applied flag_correct patch 
 
-2000-09-23 17:45  Fabian Knittel <fknittel@gmx.de>
-
-	* src/mod/console.mod/console.h:
-
-	fabian: phew.. that was close. almost forgot to add the new files
-	again.. (guppy's language-v2 patch) 
-
 2000-09-23 17:40  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/lang.h, src/patch.h,
-	src/mod/console.mod/console.c:
+	* doc/UPDATES1.5, src/lang.h, src/patch.h:
 
 	fabian: applied guppy's language-v2 patch 
 
@@ -8505,7 +8373,7 @@
 
 2000-09-18 20:03  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/ctcp.mod/ctcp.c:
+	* doc/UPDATES1.5, src/patch.h:
 
 	fabian: applied guppy's ctcp_mod_cleanup patch 
 
@@ -8518,7 +8386,7 @@
 2000-09-18 20:01  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.5, src/cmds.c, src/misc.c, src/modules.c,
-	src/patch.h, src/proto.h, src/users.c, src/mod/module.h:
+	src/patch.h, src/proto.h, src/users.c:
 
 	fabian: applied ipv6_masks patch, revision 3 
 
@@ -8552,9 +8420,7 @@
 
 	* config.h.in, configure, configure.in, doc/UPDATES1.5,
 	src/Makefile.in, src/cmds.c, src/main.h, src/misc.c, src/patch.h,
-	src/tclmisc.c, src/users.c, src/mod/console.mod/Makefile,
-	src/mod/ctcp.mod/Makefile, src/mod/filesys.mod/Makefile,
-	src/mod/filesys.mod/filedb3.c:
+	src/tclmisc.c, src/users.c:
 
 	fabian: strftime_compat patch 
 
@@ -8578,8 +8444,7 @@
 
 2000-09-09 17:29  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/botcmd.c, src/botmsg.c, src/patch.h,
-	src/mod/filesys.mod/filedb3.c:
+	* doc/UPDATES1.5, src/botcmd.c, src/botmsg.c, src/patch.h:
 
 	fabian: format_string_fixes patch 
 
@@ -8599,14 +8464,13 @@
 
 	* configure.in, doc/UPDATES1.5, src/Makefile.in, src/botnet.c,
 	src/dcc.c, src/dns.c, src/dns.h, src/eggdrop.h, src/main.h,
-	src/net.c, src/patch.h, src/tcldcc.c, src/tclmisc.c, src/userent.c,
-	src/mod/filesys.mod/filedb3.h, src/mod/filesys.mod/filesys.c:
+	src/net.c, src/patch.h, src/tcldcc.c, src/tclmisc.c, src/userent.c:
 
 	fabian: cleanup_types patch 
 
 2000-09-09 11:37  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/console.mod/console.c:
+	* doc/UPDATES1.5, src/patch.h:
 
 	fabian: fix_exporting patch 
 
@@ -8645,7 +8509,7 @@
 2000-09-02 19:45  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.5, src/botnet.c, src/dcc.c, src/eggdrop.h,
-	src/patch.h, src/mod/filesys.mod/filesys.c:
+	src/patch.h:
 
 	fabian: server_dns_recursion patch. Added minor modifications to
 	mod/dns.mod/dns.c.  
@@ -8683,8 +8547,7 @@
 
 2000-08-31 18:11  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/filesys.mod/filesys.c,
-	src/mod/filesys.mod/tclfiles.c:
+	* doc/UPDATES1.5, src/patch.h:
 
 	fabian: FirebaII's filesys_nicklen patch, with minor additions.  
 
@@ -8697,8 +8560,7 @@
 
 2000-08-31 18:08  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/tcldcc.c,
-	src/mod/filesys.mod/files.c, src/mod/filesys.mod/filesys.c:
+	* doc/UPDATES1.5, src/patch.h, src/tcldcc.c:
 
 	fabian: dccsimul_errmsg patch 
 
@@ -8851,7 +8713,7 @@
 2000-08-18 00:25  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.5, src/modules.c, src/net.c, src/patch.h,
-	src/proto.h, src/mod/module.h:
+	src/proto.h:
 
 	open_address_listen patch 
 
@@ -8887,7 +8749,7 @@
 
 2000-08-11 22:44  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/modules.c, src/patch.h, src/mod/module.h:
+	* doc/UPDATES1.5, src/modules.c, src/patch.h:
 
 	guppy's and Sup's tandbot_party patch 
 
@@ -8942,14 +8804,13 @@
 2000-08-06 14:51  Fabian Knittel <fknittel@gmx.de>
 
 	* config.h.in, configure, configure.in, doc/UPDATES1.5, src/cmds.c,
-	src/misc.c, src/patch.h, src/users.c,
-	src/mod/filesys.mod/filedb3.c:
+	src/misc.c, src/patch.h, src/users.c:
 
 	Tothwolf's strftime2 patch 
 
 2000-08-06 14:50  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/filesys.mod/filesys.c:
+	* doc/UPDATES1.5, src/patch.h:
 
 	Sup's dccrefused2 patch 
 
@@ -9031,8 +8892,7 @@
 2000-07-23 20:47  Fabian Knittel <fknittel@gmx.de>
 
 	* Makefile.in, aclocal.m4, doc/Makefile.in, doc/UPDATES1.4,
-	scripts/Makefile.in, src/Makefile.in, src/patch.h,
-	src/mod/Makefile.in:
+	scripts/Makefile.in, src/Makefile.in, src/patch.h:
 
 	1.4 resync, autoconf_shell_fix patch 
 
@@ -9063,8 +8923,7 @@
 2000-07-12 21:50  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.5, doc/tcl-commands.doc, src/eggdrop.h, src/patch.h,
-	src/tclegg.h, src/tclhash.c, src/tclhash.h,
-	src/mod/filesys.mod/files.c:
+	src/tclegg.h, src/tclhash.c, src/tclhash.h:
 
 	lost_tout_getfilesendtime patch 
 
@@ -9083,15 +8942,9 @@
 
 2000-07-11 20:47  Tothwolf <tothwolf@techmonkeys.org>
 
-	* doc/UPDATES1.5, src/mod/console.mod/Makefile:
+	* doc/UPDATES1.5:
 
 	Fixed remaining 'console..$(MOD_EXT)' typos 
-
-2000-07-11 17:03  Tothwolf <tothwolf@techmonkeys.org>
-
-	* src/mod/console.mod/Makefile:
-
-	Fixed 'console..$(MOD_EXT)' typo 
 
 2000-07-09 14:23  Fabian Knittel <fknittel@gmx.de>
 
@@ -9109,9 +8962,7 @@
 2000-07-09 14:10  Fabian Knittel <fknittel@gmx.de>
 
 	* Makefile.in, acconfig.h, aclocal.m4, config.h.in, doc/UPDATES1.5,
-	src/modules.c, src/patch.h, src/mod/Makefile.in,
-	src/mod/console.mod/Makefile, src/mod/ctcp.mod/Makefile,
-	src/mod/filesys.mod/Makefile:
+	src/modules.c, src/patch.h:
 
 	RebuM's modules_cygwin patch, together with my corrections 
 
@@ -9130,8 +8981,7 @@
 
 2000-06-21 22:28  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, src/cmds.c, src/lang.h, src/patch.h,
-	src/mod/filesys.mod/files.c:
+	* doc/UPDATES1.4, src/cmds.c, src/lang.h, src/patch.h:
 
 	1.4 resync Jun22, 961625558 
 
@@ -9144,7 +8994,7 @@
 
 2000-06-20 21:01  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/filesys.mod/filedb3.c:
+	* doc/UPDATES1.5, src/patch.h:
 
 	filesys_fixes3 patch 
 
@@ -9256,8 +9106,7 @@
 
 	* eggdrop.advanced.conf, eggdrop.complete.conf, doc/UPDATES1.5,
 	doc/tcl-commands.doc, doc/settings/mod.server, src/cmds.c,
-	src/modules.c, src/patch.h, src/tcl.c, src/users.c,
-	src/mod/module.h:
+	src/modules.c, src/patch.h, src/tcl.c, src/users.c:
 
 	channame2dname patch 
 
@@ -9317,8 +9166,7 @@
 2000-05-28 17:32  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.4, doc/tcl-commands.doc, scripts/userinfo1.0.tcl,
-	src/botnet.c, src/modules.c, src/patch.h, src/mod/module.h,
-	src/mod/modvals.h:
+	src/botnet.c, src/modules.c, src/patch.h:
 
 	Resync with egg1.4 CVS, May28 
 
@@ -9356,8 +9204,7 @@
 
 2000-05-13 20:20  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/main.c, src/misc_file.c, src/patch.h,
-	src/mod/filesys.mod/files.c:
+	* doc/UPDATES1.5, src/main.c, src/misc_file.c, src/patch.h:
 
 	Tothwolf's cygwin-fixes-07May2000 patch (with changes by Fabian) 
 
@@ -9395,7 +9242,7 @@
 2000-05-07 00:08  Fabian Knittel <fknittel@gmx.de>
 
 	* aclocal.m4, doc/BUG-REPORT, doc/UPDATES1.5, src/botnet.c,
-	src/patch.h, src/mod/filesys.mod/filesys.c:
+	src/patch.h:
 
 	SuperS' dell patch 
 
@@ -9454,21 +9301,21 @@
 
 2000-04-25 20:53  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/filesys.mod/files.c:
+	* doc/UPDATES1.5, src/patch.h:
 
 	filesys_ls_fix patch 
 
 2000-04-25 20:49  Fabian Knittel <fknittel@gmx.de>
 
 	* Makefile.in, configure, configure.in, doc/UPDATES1.5,
-	src/patch.h, src/mod/Makefile.in:
+	src/patch.h:
 
 	conf_make_fix9 patch 
 
 2000-04-25 20:46  Fabian Knittel <fknittel@gmx.de>
 
 	* eggdrop.advanced.conf, eggdrop.complete.conf, doc/UPDATES1.5,
-	src/patch.h, src/mod/filesys.mod/filesys.c:
+	src/patch.h:
 
 	max-filesize patch 
 
@@ -9541,7 +9388,7 @@
 
 2000-04-05 19:58  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/modules.c, src/patch.h, src/mod/module.h:
+	* doc/UPDATES1.5, src/modules.c, src/patch.h:
 
 	must_be_owner patch 
 
@@ -9555,7 +9402,7 @@
 2000-04-05 19:51  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.5, doc/tcl-commands.doc, src/misc.c, src/modules.c,
-	src/patch.h, src/proto.h, src/mod/module.h:
+	src/patch.h, src/proto.h:
 
 	compress_fix patch 
 
@@ -9614,8 +9461,7 @@
 
 2000-03-31 23:04  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/console.mod/Makefile,
-	src/mod/ctcp.mod/Makefile, src/mod/filesys.mod/Makefile:
+	* doc/UPDATES1.5, src/patch.h:
 
 	conf_make_fix8 patch 
 
@@ -9637,9 +9483,7 @@
 
 2000-03-24 23:00  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/Makefile.in, src/patch.h,
-	src/mod/Makefile.in, src/mod/console.mod/Makefile,
-	src/mod/ctcp.mod/Makefile, src/mod/filesys.mod/Makefile:
+	* doc/UPDATES1.5, src/Makefile.in, src/patch.h:
 
 	conf_make_fix7 patch 
 
@@ -9651,11 +9495,7 @@
 	src/dccutil.c, src/dns.c, src/eggdrop.h, src/flags.c, src/main.c,
 	src/main.h, src/mem.c, src/misc.c, src/modules.c, src/net.c,
 	src/patch.h, src/proto.h, src/tcl.c, src/tcldcc.c, src/tclhash.c,
-	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c,
-	src/mod/Makefile.in, src/mod/eggmod.m4, src/mod/module.h,
-	src/mod/console.mod/console.c, src/mod/ctcp.mod/ctcp.c,
-	src/mod/filesys.mod/filedb3.c, src/mod/filesys.mod/files.c,
-	src/mod/filesys.mod/filesys.c, src/mod/filesys.mod/filesys.h:
+	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c:
 
 	conf_make_fix6 patch 
 
@@ -9679,11 +9519,7 @@
 	scripts/Makefile.in, src/Makefile.in, src/botmsg.c, src/dcc.c,
 	src/dccutil.c, src/dns.c, src/main.h, src/misc.c, src/misc_file.c,
 	src/misc_file.h, src/modules.c, src/patch.h, src/proto.h,
-	src/tclegg.h, src/mod/Makefile.in, src/mod/eggmod.m4,
-	src/mod/module.h, src/mod/console.mod/Makefile,
-	src/mod/console.mod/console.c, src/mod/ctcp.mod/Makefile,
-	src/mod/ctcp.mod/ctcp.c, src/mod/filesys.mod/Makefile,
-	src/mod/filesys.mod/filesys.c:
+	src/tclegg.h:
 
 	configure_makefile_fix3 patch 
 
@@ -9752,8 +9588,7 @@
 2000-03-06 18:54  Fabian Knittel <fknittel@gmx.de>
 
 	* Makefile.in, aclocal.m4, configure, configure.in, lush.h.in,
-	doc/Makefile.in, doc/UPDATES1.5, scripts/Makefile.in, src/patch.h,
-	src/mod/eggautoconf:
+	doc/Makefile.in, doc/UPDATES1.5, scripts/Makefile.in, src/patch.h:
 
 	configure_fix2,3 patches 
 
@@ -9767,7 +9602,7 @@
 
 	* Makefile.in, aclocal.m4, configure, configure.in, install-sh,
 	mkinstalldirs, doc/UPDATES1.4, doc/UPDATES1.5, src/main.c,
-	src/patch.h, src/mod/Makefile.in, src/mod/eggmod.m4:
+	src/patch.h:
 
 	configure_fix patch 
 
@@ -9792,7 +9627,7 @@
 2000-03-04 20:49  Fabian Knittel <fknittel@gmx.de>
 
 	* eggdrop.conf.dist, doc/UPDATES1.5, src/eggdrop.h, src/main.c,
-	src/patch.h, src/mod/modvals.h:
+	src/patch.h:
 
 	share_compress patch 
 
@@ -9804,8 +9639,7 @@
 
 2000-03-04 20:38  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/filesys.mod/dbcompat.c,
-	src/mod/filesys.mod/filedb3.c, src/mod/filesys.mod/filedb3.h:
+	* doc/UPDATES1.5, src/patch.h:
 
 	filesys_minor_fixes patch 
 
@@ -9831,14 +9665,14 @@
 2000-03-01 17:54  Fabian Knittel <fknittel@gmx.de>
 
 	* eggdrop.conf.dist, doc/UPDATES1.5, doc/tcl-commands.doc,
-	src/patch.h, src/mod/modvals.h:
+	src/patch.h:
 
 	uff_compress2 patch 
 
 2000-02-29 20:29  Fabian Knittel <fknittel@gmx.de>
 
 	* aclocal.m4, configure, configure.in, doc/BUG-REPORT,
-	doc/UPDATES1.4, src/patch.h, src/mod/filesys.mod/filedb3.c:
+	doc/UPDATES1.4, src/patch.h:
 
 	resync with 1.4 
 
@@ -9862,22 +9696,20 @@
 
 2000-02-29 20:05  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/filesys.mod/filesys.c:
+	* doc/UPDATES1.5, src/patch.h:
 
 	filesys_info patch 
 
 2000-02-29 20:03  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/filesys.mod/files.c,
-	src/mod/filesys.mod/filesys.c:
+	* doc/UPDATES1.5, src/patch.h:
 
 	filesys_fixes patch 
 
 2000-02-29 19:57  Fabian Knittel <fknittel@gmx.de>
 
 	* Makefile.in, aclocal.m4, configure, configure.in, doc/UPDATES1.5,
-	src/patch.h, src/mod/Makefile.in, src/mod/eggmod.m4,
-	src/mod/modtool:
+	src/patch.h:
 
 	configure_makefile_fix2 patch 
 
@@ -9891,12 +9723,7 @@
 
 	* Makefile.in, README, aclocal.m4, configure, configure.in,
 	disabled_modules, doc/KNOWN-PROBLEMS, doc/MODULES, doc/UPDATES1.5,
-	doc/tricks, src/Makefile.in, src/patch.h, src/mod/Makefile.in,
-	src/mod/buildstatic, src/mod/eggautoconf, src/mod/eggmod.m4,
-	src/mod/eggmod.sh, src/mod/modtool, src/mod/console.mod/Makefile,
-	src/mod/console.mod/modinfo, src/mod/ctcp.mod/Makefile,
-	src/mod/ctcp.mod/modinfo, src/mod/filesys.mod/Makefile,
-	src/mod/filesys.mod/modinfo:
+	doc/tricks, src/Makefile.in, src/patch.h:
 
 	configure_module patch 
 
@@ -9908,7 +9735,7 @@
 
 2000-02-25 20:51  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, src/patch.h, src/mod/console.mod/console.c:
+	* doc/UPDATES1.4, src/patch.h:
 
 	resync with 1.4, Feb25 
 
@@ -9982,8 +9809,7 @@
 
 2000-02-01 20:36  Fabian Knittel <fknittel@gmx.de>
 
-	* src/: main.c, main.h, misc.c, mod/filesys.mod/Makefile,
-	mod/filesys.mod/files.c, mod/filesys.mod/filesys.c:
+	* src/: main.c, main.h, misc.c:
 
 	stat_fix patch 
 
@@ -9996,7 +9822,7 @@
 2000-01-31 23:02  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.5, src/botcmd.c, src/botnet.c, src/dcc.c,
-	src/patch.h, src/tandem.h, src/mod/module.h:
+	src/patch.h, src/tandem.h:
 
 	G`Quann's yaup patch 
 
@@ -10008,8 +9834,7 @@
 
 2000-01-31 22:49  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, src/patch.h,
-	src/mod/filesys.mod/help/filesys.help:
+	* doc/UPDATES1.4, src/patch.h:
 
 	resync with 1.4, Jan 31st 
 
@@ -10022,8 +9847,7 @@
 	src/misc.c, src/modules.c, src/modules.h, src/net.c, src/patch.h,
 	src/proto.h, src/tandem.h, src/tcl.c, src/tcldcc.c, src/tclegg.h,
 	src/tclhash.c, src/tclhash.h, src/tclmisc.c, src/tcluser.c,
-	src/userent.c, src/userrec.c, src/users.h, src/mod/module.h,
-	src/mod/modvals.h:
+	src/userent.c, src/userrec.c, src/users.h:
 
 	cleanup3 patch 
 
@@ -10111,7 +9935,7 @@
 2000-01-22 22:37  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.5, src/eggdrop.h, src/main.c, src/modules.c,
-	src/net.c, src/patch.h, src/proto.h, src/mod/module.h:
+	src/net.c, src/patch.h, src/proto.h:
 
 	uff and outdone_event patch 
 
@@ -10131,15 +9955,7 @@
 	src/patch.h, src/proto.h, src/tandem.h, src/tcl.c, src/tcldcc.c,
 	src/tclegg.h, src/tclhash.c, src/tclhash.h, src/tclmisc.c,
 	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c,
-	src/users.h, src/mod/module.h, src/mod/modvals.h,
-	src/mod/console.mod/console.c, src/mod/ctcp.mod/ctcp.c,
-	src/mod/ctcp.mod/ctcp.h, src/mod/filesys.mod/dbcompat.c,
-	src/mod/filesys.mod/dbcompat.h, src/mod/filesys.mod/filedb3.c,
-	src/mod/filesys.mod/filedb3.h, src/mod/filesys.mod/filelist.c,
-	src/mod/filesys.mod/filelist.h, src/mod/filesys.mod/files.c,
-	src/mod/filesys.mod/files.h, src/mod/filesys.mod/filesys.c,
-	src/mod/filesys.mod/filesys.h, src/mod/filesys.mod/tclfiles.c,
-	text/banner, text/motd:
+	src/users.h, text/banner, text/motd:
 
 	Eule's copyright patch, updated by him for 1.5 
 
@@ -10173,7 +9989,7 @@
 2000-01-09 16:34  Fabian Knittel <fknittel@gmx.de>
 
 	* acconfig.h, aclocal.m4, config.h.in, configure, doc/UPDATES1.4,
-	src/patch.h, src/mod/module.h:
+	src/patch.h:
 
 	forgot the version_export patch, during last 1.4 resync 
 
@@ -10187,8 +10003,7 @@
 
 	* aclocal.m4, configure, configure.in, doc/UPDATES1.4,
 	doc/UPDATES1.5, doc/compiling.FAQ, src/main.c, src/modules.c,
-	src/patch.h, src/mod/module.h, src/mod/filesys.mod/files.c,
-	src/mod/filesys.mod/filesys.c, src/mod/filesys.mod/filesys.h:
+	src/patch.h:
 
 	resync with 1.4, a few 1.5 specific additions 
 
@@ -10215,15 +10030,14 @@
 
 	* eggdrop.conf.dist, doc/UPDATES1.5, help/set/cmds2.help,
 	src/misc.c, src/modules.c, src/patch.h, src/proto.h, src/tcl.c,
-	src/userrec.c, src/mod/module.h:
+	src/userrec.c:
 
 	userfile_perm patch 
 
 2000-01-06 19:45  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.4, src/main.c, src/misc.c, src/modules.c,
-	src/modules.h, src/net.c, src/patch.h, src/tclegg.h, src/userrec.c,
-	src/mod/module.h:
+	src/modules.h, src/net.c, src/patch.h, src/tclegg.h, src/userrec.c:
 
 	errors_fix, simialer to 1.4 
 
@@ -10236,13 +10050,7 @@
 
 2000-01-02 02:42  Fabian Knittel <fknittel@gmx.de>
 
-	* src/: main.c, patch.h, mod/console.mod/console.c,
-	mod/ctcp.mod/ctcp.c, mod/filesys.mod/dbcompat.c,
-	mod/filesys.mod/dbcompat.h, mod/filesys.mod/filedb3.c,
-	mod/filesys.mod/filedb3.h, mod/filesys.mod/filelist.c,
-	mod/filesys.mod/filelist.h, mod/filesys.mod/files.c,
-	mod/filesys.mod/files.h, mod/filesys.mod/filesys.c,
-	mod/filesys.mod/tclfiles.c:
+	* src/: main.c, patch.h:
 
 	cleanup2 patch 
 
@@ -10287,7 +10095,7 @@
 
 2000-01-01 19:12  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/tclhash.c, src/mod/modvals.h:
+	* doc/UPDATES1.5, src/patch.h, src/tclhash.c:
 
 	cleanup patch 
 
@@ -10402,8 +10210,7 @@
 
 	* doc/UPDATES1.5, doc/tcl-commands.doc, src/Makefile.in,
 	src/botnet.c, src/dcc.c, src/dns.c, src/mem.c, src/modules.c,
-	src/patch.h, src/proto.h, src/tcl.c, src/mod/module.h,
-	src/mod/filesys.mod/filesys.c:
+	src/patch.h, src/proto.h, src/tcl.c:
 
 	tclasyncdns 
 
@@ -10434,8 +10241,7 @@
 1999-12-24 14:21  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.4, src/dccutil.c, src/main.c, src/modules.c,
-	src/patch.h, src/proto.h, src/mod/module.h,
-	src/mod/filesys.mod/filesys.c:
+	src/patch.h, src/proto.h:
 
 	dccremovelost 
 
@@ -10486,8 +10292,7 @@
 	* eggdrop.conf.dist, doc/UPDATES1.4, src/botcmd.c, src/botnet.c,
 	src/cmds.c, src/dcc.c, src/dccutil.c, src/eggdrop.h, src/lang.h,
 	src/main.c, src/modules.c, src/net.c, src/proto.h, src/tclhash.c,
-	src/users.c, src/mod/module.h, src/mod/modvals.h,
-	src/mod/filesys.mod/files.c:
+	src/users.c:
 
 	resync with 1.4.2, 1999/12/22 
 
@@ -10514,26 +10319,13 @@
 	src/proto.h, src/rfc1459.c, src/tandem.h, src/tcl.c, src/tcldcc.c,
 	src/tclegg.h, src/tclhash.c, src/tclhash.h, src/tclmisc.c,
 	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c,
-	src/users.h, src/mod/Makefile.in, src/mod/buildstatic,
-	src/mod/module.h, src/mod/modvals.h, src/mod/console.mod/Makefile,
-	src/mod/console.mod/console.c, src/mod/ctcp.mod/Makefile,
-	src/mod/ctcp.mod/ctcp.c, src/mod/ctcp.mod/ctcp.h,
-	src/mod/filesys.mod/Makefile, src/mod/filesys.mod/dbcompat.c,
-	src/mod/filesys.mod/dbcompat.h, src/mod/filesys.mod/filedb3.c,
-	src/mod/filesys.mod/filedb3.h, src/mod/filesys.mod/filelist.c,
-	src/mod/filesys.mod/filelist.h, src/mod/filesys.mod/files.c,
-	src/mod/filesys.mod/files.h, src/mod/filesys.mod/filesys.c,
-	src/mod/filesys.mod/filesys.h, src/mod/filesys.mod/tclfiles.c:
+	src/users.h:
 
 	Tothwolf's id-header 
 
 1999-12-21 17:32  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/filesys.mod/dbcompat.c,
-	src/mod/filesys.mod/filedb3.c, src/mod/filesys.mod/filedb3.h,
-	src/mod/filesys.mod/filelist.c, src/mod/filesys.mod/files.c,
-	src/mod/filesys.mod/filesys.c, src/mod/filesys.mod/tclfiles.c,
-	src/mod/filesys.mod/help/filesys.help:
+	* doc/UPDATES1.5, src/patch.h:
 
 	filesys_fixes2 
 
@@ -10551,15 +10343,14 @@
 
 1999-12-17 20:26  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/botnet.c, src/dcc.c, src/patch.h,
-	src/mod/filesys.mod/filesys.c:
+	* doc/UPDATES1.5, src/botnet.c, src/dcc.c, src/patch.h:
 
 	dns_reversefail 
 
 1999-12-17 18:40  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.4, src/cmds.c, src/flags.c, src/patch.h,
-	src/userent.c, src/mod/module.h, src/mod/console.mod/console.c:
+	src/userent.c:
 
 	tothwolf's assert-nulls patch 
 
@@ -10579,8 +10370,7 @@
 1999-12-14 22:39  Fabian Knittel <fknittel@gmx.de>
 
 	* Makefile.in, doc/UPDATES1.4, doc/UPDATES1.5, src/eggdrop.h,
-	src/main.c, src/modules.c, src/patch.h, src/proto.h,
-	src/mod/module.h:
+	src/main.c, src/modules.c, src/patch.h, src/proto.h:
 
 	toth's patch-assert 
 
@@ -10593,10 +10383,7 @@
 
 1999-12-13 23:39  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, doc/tcl-commands.doc, src/eggdrop.h, src/patch.h,
-	src/mod/modvals.h, src/mod/filesys.mod/files.c,
-	src/mod/filesys.mod/filesys.c, src/mod/filesys.mod/filesys.h,
-	src/mod/filesys.mod/tclfiles.c:
+	* doc/UPDATES1.5, doc/tcl-commands.doc, src/eggdrop.h, src/patch.h:
 
 	resume patch 
 
@@ -10626,12 +10413,7 @@
 	src/eggdrop.h, src/flags.c, src/language.c, src/main.c, src/mem.c,
 	src/misc.c, src/modules.c, src/net.c, src/patch.h, src/proto.h,
 	src/tcl.c, src/tcldcc.c, src/tclhash.c, src/tclmisc.c,
-	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c,
-	src/mod/module.h, src/mod/modvals.h, src/mod/console.mod/console.c,
-	src/mod/ctcp.mod/ctcp.c, src/mod/filesys.mod/dbcompat.c,
-	src/mod/filesys.mod/filedb3.c, src/mod/filesys.mod/filelist.c,
-	src/mod/filesys.mod/files.c, src/mod/filesys.mod/filesys.c,
-	src/mod/filesys.mod/tclfiles.c:
+	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c:
 
 	tothwolf's remove-context-bloat patch 
 
@@ -10681,15 +10463,14 @@
 
 1999-11-27 23:54  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/filesys.mod/files.c,
-	src/mod/filesys.mod/filesys.c:
+	* doc/UPDATES1.5, src/patch.h:
 
 	filesys_fixes patch 
 
 1999-11-27 23:53  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.5, src/cmds.c, src/flags.c, src/modules.c,
-	src/patch.h, src/proto.h, src/userrec.c, src/mod/module.h:
+	src/patch.h, src/proto.h, src/userrec.c:
 
 	complete_sharefix patch 
 
@@ -10714,8 +10495,7 @@
 
 1999-11-24 22:23  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, src/modules.c, src/patch.h, src/proto.h,
-	src/mod/module.h, src/mod/filesys.mod/filesys.c:
+	* doc/UPDATES1.4, src/modules.c, src/patch.h, src/proto.h:
 
 	guppy's tables patch 
 
@@ -10727,8 +10507,7 @@
 
 1999-11-22 19:31  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/filesys.mod/filedb3.c,
-	src/mod/filesys.mod/filelist.c, src/mod/filesys.mod/files.c:
+	* doc/UPDATES1.5, src/patch.h:
 
 	filedb3_fix2 patch 
 
@@ -10753,8 +10532,7 @@
 
 1999-11-20 15:56  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/filesys.mod/filedb3.c,
-	src/mod/filesys.mod/filedb3.h:
+	* doc/UPDATES1.5, src/patch.h:
 
 	filedb3_fix patch 
 
@@ -10779,34 +10557,26 @@
 	doc/eggdrop.doc, doc/patch.howto, doc/tcl-commands.doc,
 	logs/CONTENTS, scripts/userinfo1.0.tcl, src/cmds.c, src/dccutil.c,
 	src/main.c, src/main.h, src/match.c, src/mem.c, src/net.c,
-	src/patch.h, src/proto.h, src/mod/console.mod/console.c:
+	src/patch.h, src/proto.h:
 
 	Toth's sync-1.5-14Nov1999-1 
 
 1999-11-15 17:13  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, doc/tcl-commands.doc, src/dcc.c, src/patch.h,
-	src/mod/filesys.mod/filesys.c:
+	* doc/UPDATES1.5, doc/tcl-commands.doc, src/dcc.c, src/patch.h:
 
 	fastdeq_options patch (G`Quann), udef_doc patch (G`Quann), fixlisten
 	patch (Fabian), minorfilesys patch (Fabian) 
 
 1999-11-14 17:15  Fabian Knittel <fknittel@gmx.de>
 
-	* src/: patch.h, mod/filesys.mod/files.c:
+	* src/patch.h:
 
 	spelling mistake, reported by guppy 
 
 1999-11-14 13:06  Fabian Knittel <fknittel@gmx.de>
 
-	* NEWTO1.5.0, doc/UPDATES1.5, src/patch.h,
-	src/mod/filesys.mod/Makefile, src/mod/filesys.mod/dbcompat.c,
-	src/mod/filesys.mod/dbcompat.h, src/mod/filesys.mod/filedb.c,
-	src/mod/filesys.mod/filedb3.c, src/mod/filesys.mod/filedb3.h,
-	src/mod/filesys.mod/filelist.c, src/mod/filesys.mod/filelist.h,
-	src/mod/filesys.mod/files.c, src/mod/filesys.mod/files.h,
-	src/mod/filesys.mod/filesys.c, src/mod/filesys.mod/filesys.h,
-	src/mod/filesys.mod/tclfiles.c:
+	* NEWTO1.5.0, doc/UPDATES1.5, src/patch.h:
 
 	filedb3 patch 
 
@@ -10858,10 +10628,7 @@
 	src/cmds.c, src/dcc.c, src/dccutil.c, src/main.c, src/main.h,
 	src/mem.c, src/modules.c, src/patch.h, src/proto.h, src/tcl.c,
 	src/tcldcc.c, src/tclegg.h, src/tclhash.c, src/tclmisc.c,
-	src/tcluser.c, src/userent.c, src/mod/Makefile.in,
-	src/mod/module.h, src/mod/console.mod/Makefile,
-	src/mod/console.mod/console.c, src/mod/ctcp.mod/Makefile,
-	src/mod/filesys.mod/Makefile:
+	src/tcluser.c, src/userent.c:
 
 	Resync with 1.4 
 
@@ -10879,8 +10646,7 @@
 
 1999-11-10 00:06  segfault
 
-	* src/: main.c, mod/console.mod/console.c,
-	mod/filesys.mod/filesys.c:
+	* src/main.c:
 
 	Part 2 
 
@@ -10897,7 +10663,7 @@
 	* doc/UPDATES1.4, src/botcmd.c, src/chan.h, src/chanprog.c,
 	src/cmds.c, src/flags.c, src/lang.h, src/misc.c, src/modules.c,
 	src/patch.h, src/tcldcc.c, src/tcluser.c, src/userrec.c,
-	src/users.c, src/mod/module.h, src/mod/filesys.mod/files.c:
+	src/users.c:
 
 	Cybah's safechan patch 
 
@@ -10909,9 +10675,7 @@
 	scripts/botchk, scripts/compat.tcl, scripts/weed, src/Makefile.in,
 	src/botnet.c, src/chanprog.c, src/cmds.c, src/dcc.c, src/flags.c,
 	src/language.c, src/main.c, src/misc.c, src/modules.c, src/patch.h,
-	src/tcldcc.c, src/tcluser.c, src/userent.c, src/mod/module.h,
-	src/mod/console.mod/Makefile, src/mod/ctcp.mod/Makefile,
-	src/mod/filesys.mod/Makefile:
+	src/tcldcc.c, src/tcluser.c, src/userent.c:
 
 	resync 940380771-940924890 
 
@@ -10954,18 +10718,7 @@
 	src/main.c, src/main.h, src/mem.c, src/misc.c, src/modules.c,
 	src/net.c, src/patch.h, src/proto.h, src/tandem.h, src/tcl.c,
 	src/tcldcc.c, src/tcluser.c, src/userent.c, src/userrec.c,
-	src/users.c, src/mod/Makefile, src/mod/Makefile.generic,
-	src/mod/Makefile.in, src/mod/buildstatic,
-	src/mod/console.mod/Makefile,
-	src/mod/console.mod/help/console.help,
-	src/mod/console.mod/help/set/console.help,
-	src/mod/ctcp.mod/Makefile, src/mod/ctcp.mod/help/set/ctcp.help,
-	src/mod/filesys.mod/Makefile, src/mod/filesys.mod/files.c,
-	src/mod/filesys.mod/files.english.lang,
-	src/mod/filesys.mod/files.german.lang,
-	src/mod/filesys.mod/filesys.c,
-	src/mod/filesys.mod/help/filesys.help,
-	src/mod/filesys.mod/help/set/filesys.help:
+	src/users.c:
 
 	resync with 1.3 tree, 939863113-940380771 
 
@@ -10974,19 +10727,13 @@
 	* eggdrop.conf.dist, doc/UPDATES.pre1.4, doc/tcl-commands.doc,
 	scripts/compat.tcl, src/chan.h, src/chanprog.c, src/cmds.c,
 	src/eggdrop.h, src/flags.c, src/language.c, src/patch.h,
-	src/rfc1459.h, src/tcl.c, src/userent.c, src/users.c,
-	src/mod/console.mod/console.c, src/mod/filesys.mod/Makefile,
-	src/mod/filesys.mod/filedb.c, src/mod/filesys.mod/files.c,
-	src/mod/filesys.mod/files.german.lang,
-	src/mod/filesys.mod/filesys.c, src/mod/filesys.mod/filesys.h,
-	src/mod/filesys.mod/tclfiles.c:
+	src/rfc1459.h, src/tcl.c, src/userent.c, src/users.c:
 
 	resync 1.3: 939574072->939863113 
 
 1999-10-12 22:19  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, src/eggdrop.h, src/modules.c, src/patch.h,
-	src/mod/module.h, src/mod/filesys.mod/filesys.c:
+	* doc/UPDATES1.4, src/eggdrop.h, src/modules.c, src/patch.h:
 
 	the transfer patch 
 
@@ -11008,8 +10755,7 @@
 	telnet-banner, doc/UPDATES.pre1.4, doc/UPDATES1.4, help/cmds2.help,
 	logs/CONTENTS, src/botnet.c, src/cmds.c, src/dcc.c, src/dccutil.c,
 	src/dns.c, src/eggdrop.h, src/main.c, src/net.c, src/patch.h,
-	src/users.c, src/mod/filesys.mod/filesys.c, text/CONTENTS,
-	text/banner, text/motd:
+	src/users.c, text/CONTENTS, text/banner, text/motd:
 
 	dns patches, textdir patch, sync 939496415-939574072 
 
@@ -11049,8 +10795,7 @@
 	* Makefile.in, configure, configure.in, eggdrop.conf.dist,
 	doc/UPDATES1.4, src/Makefile, src/botnet.c, src/dcc.c,
 	src/dccutil.c, src/eggdrop.h, src/main.h, src/modules.c, src/net.c,
-	src/proto.h, src/mod/Makefile, src/mod/Makefile.generic,
-	src/mod/module.h, src/mod/modvals.h, src/mod/filesys.mod/filesys.c:
+	src/proto.h:
 
 	Fabian's asyncdns patch 
 
@@ -11072,10 +10817,7 @@
 	src/modules.c, src/modules.h, src/net.c, src/patch.h, src/proto.h,
 	src/rfc1459.c, src/tcl.c, src/tcldcc.c, src/tclhash.c,
 	src/tclhash.h, src/tclmisc.c, src/userent.c, src/userrec.c,
-	src/users.c, src/users.h, src/mod/module.h, src/mod/modvals.h,
-	src/mod/console.mod/console.c, src/mod/ctcp.mod/ctcp.c,
-	src/mod/filesys.mod/Makefile, src/mod/filesys.mod/filedb.c,
-	src/mod/filesys.mod/files.c, src/mod/filesys.mod/filesys.c:
+	src/users.c, src/users.h:
 
 	all changes to the 1.3 tree merged with 1.4 
 
@@ -11117,16 +10859,7 @@
 	src/net.c, src/patch.h, src/proto.h, src/rfc1459.c, src/rfc1459.h,
 	src/tandem.h, src/tcl.c, src/tcldcc.c, src/tclegg.h, src/tclhash.c,
 	src/tclhash.h, src/tclmisc.c, src/tcluser.c, src/userent.c,
-	src/userrec.c, src/users.c, src/users.h, src/mod/Makefile,
-	src/mod/Makefile.generic, src/mod/buildstatic, src/mod/module.h,
-	src/mod/modvals.h, src/mod/console.mod/Makefile,
-	src/mod/console.mod/console.c, src/mod/ctcp.mod/Makefile,
-	src/mod/ctcp.mod/ctcp.c, src/mod/ctcp.mod/ctcp.h,
-	src/mod/filesys.mod/Makefile, src/mod/filesys.mod/filedb.c,
-	src/mod/filesys.mod/files.c,
-	src/mod/filesys.mod/files.english.lang,
-	src/mod/filesys.mod/files.h, src/mod/filesys.mod/filesys.c,
-	src/mod/filesys.mod/filesys.h, src/mod/filesys.mod/tclfiles.c:
+	src/userrec.c, src/users.c, src/users.h:
 
 	Initial commit based off of .29 cvs 
 
