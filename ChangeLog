@@ -1,3 +1,34 @@
+2003-12-19 01:50  stdarg <stdarg@techmonkeys.org>
+
+	* modules/ircparty/ircparty.c:
+
+	
+	* Better NOTICE format for ircparty login 
+
+2003-12-19 01:08  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/eggmod.c, lib/eggdrop/eggmod.h, src/core_party.c:
+
+	
+	* Fix .die to show the proper die message 
+	* Remove auto-save of config on .die 
+	* Make module list use const 
+
+2003-12-19 00:51  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/eggconfig.c, modules/proxy/Makefile.am,
+	modules/proxy/http.c, modules/proxy/proxy.c, modules/proxy/proxy.h,
+	modules/proxy/socks5.c:
+
+	
+	* socks5 support 
+
+2003-12-19 00:15  Automatic CVS Scripts
+
+	* po/eggdrop.pot:
+
+	Pots 
+
 2003-12-18 23:11  stdarg <stdarg@techmonkeys.org>
 
 	* modules/proxy/: Makefile.am, http.c, proxy.c, proxy.h:
