@@ -2,7 +2,7 @@
  * tclfiles.c -- part of filesys.mod
  *   Tcl stubs for file system commands moved here to support modules
  *
- * $Id: tclfiles.c,v 1.15 2001/10/10 10:44:06 tothwolf Exp $
+ * $Id: tclfiles.c,v 1.16 2001/10/11 13:01:35 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -184,7 +184,7 @@ static int tcl_setflags STDVAR
   char *s = NULL, *p, *d;
 
   BADARGS(3, 4, " dir ?flags ?channel??");
-  malloc_strcpy(s, argv[1]);
+  realloc_strcpy(s, argv[1]);
   if (s[strlen(s) - 1] == '/')
      s[strlen(s) - 1] = 0;
   p = strrchr(s, '/');
@@ -221,12 +221,12 @@ static int tcl_setflags STDVAR
 
     break_down_flags(argv[2], &fr, NULL);
     build_flags(f, &fr, NULL);
-    malloc_strcpy(fdbe->flags_req, f);
+    realloc_strcpy(fdbe->flags_req, f);
   } else {
     free_null(fdbe->flags_req);
   }
   if (argc == 4)
-    malloc_strcpy(fdbe->chan, argv[3]);
+    realloc_strcpy(fdbe->chan, argv[3]);
 
   filedb_updatefile(fdb, fdbe->pos, fdbe, UPDATE_ALL);
   free_fdbe(&fdbe);
@@ -241,7 +241,7 @@ static int tcl_getflags STDVAR
   char *s = NULL, *p, *d;
 
   BADARGS(2, 2, " dir");
-  malloc_strcpy(s, argv[1]);
+  realloc_strcpy(s, argv[1]);
   if (s[strlen(s) - 1] == '/')
      s[strlen(s) - 1] = 0;
   p = strrchr(s, '/');
@@ -265,7 +265,7 @@ static int tcl_getflags STDVAR
     return TCL_OK;
   }
   if (fdbe->flags_req) {
-    malloc_strcpy(s, fdbe->flags_req);
+    realloc_strcpy(s, fdbe->flags_req);
     if (s[0] == '-')
       s[0] = 0;
   } else
@@ -285,7 +285,7 @@ static int tcl_mkdir STDVAR
   struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
   BADARGS(2, 4, " dir ?required-flags ?channel??");
-  malloc_strcpy(s, argv[1]);
+  realloc_strcpy(s, argv[1]);
   if (s[strlen(s) - 1] == '/')
      s[strlen(s) - 1] = 0;
   p = strrchr(s, '/');
@@ -319,7 +319,7 @@ static int tcl_mkdir STDVAR
     }
     fdbe = malloc_fdbe();
     fdbe->stat = FILE_DIR;
-    malloc_strcpy(fdbe->filename, argv[1]);
+    realloc_strcpy(fdbe->filename, argv[1]);
     fdbe->uploaded = now;
   } else if (!(fdbe->stat & FILE_DIR)) {
     Tcl_AppendResult(irp, "2", NULL);
@@ -333,12 +333,12 @@ static int tcl_mkdir STDVAR
 
     break_down_flags(argv[2], &fr, NULL);
     build_flags(f, &fr, NULL);
-    malloc_strcpy(fdbe->flags_req, f);
+    realloc_strcpy(fdbe->flags_req, f);
   } else if (fdbe->flags_req) {
     free_null(fdbe->flags_req);
   }
   if (argc == 4) {
-    malloc_strcpy(fdbe->chan, argv[3]);
+    realloc_strcpy(fdbe->chan, argv[3]);
   } else
     if (fdbe->chan)
       free_null(fdbe->chan);
@@ -359,7 +359,7 @@ static int tcl_rmdir STDVAR
   char *s = NULL, *t, *d, *p;
 
   BADARGS(2, 2, " dir");
-  malloc_strcpy(s, argv[1]);
+  realloc_strcpy(s, argv[1]);
   if (s[strlen(s) - 1] == '/')
      s[strlen(s) - 1] = 0;
   p = strrchr(s, '/');
@@ -427,11 +427,11 @@ static int tcl_mv_cp(Tcl_Interp * irp, int argc, char **argv, int copy)
   long where;
 
   BADARGS(3, 3, " oldfilepath newfilepath");
-  malloc_strcpy(fn, argv[1]);
+  realloc_strcpy(fn, argv[1]);
   p = strrchr(fn, '/');
   if (p != NULL) {
     *p = 0;
-    malloc_strcpy(s, fn);
+    realloc_strcpy(s, fn);
     strcpy(fn, p + 1);
     if (!resolve_dir("/", s, &oldpath, -1)) {
       /* Tcl can do * anything */
@@ -442,17 +442,17 @@ static int tcl_mv_cp(Tcl_Interp * irp, int argc, char **argv, int copy)
     }
     free_null(s);
   } else
-    malloc_strcpy(oldpath, "/");
-  malloc_strcpy(s, argv[2]);
+    realloc_strcpy(oldpath, "/");
+  realloc_strcpy(s, argv[2]);
   if (!resolve_dir("/", s, &newpath, -1)) {
     /* Destination is not just a directory */
     p = strrchr(s, '/');
     if (!p) {
-      malloc_strcpy(newfn, s);
+      realloc_strcpy(newfn, s);
       s[0] = 0;
     } else {
       *p = 0;
-      malloc_strcpy(newfn, p + 1);
+      realloc_strcpy(newfn, p + 1);
     }
     free_null(newpath);
     if (!resolve_dir("/", s, &newpath, -1)) {
@@ -463,7 +463,7 @@ static int tcl_mv_cp(Tcl_Interp * irp, int argc, char **argv, int copy)
       return TCL_OK;
     }
   } else
-    malloc_strcpy(newfn, "");
+    realloc_strcpy(newfn, "");
   free_null(s);
 
   /* Stupidness checks */
@@ -553,19 +553,19 @@ static int tcl_mv_cp(Tcl_Interp * irp, int argc, char **argv, int copy)
 	  fdbe_new = malloc_fdbe();
 	  fdbe_new->stat = fdbe_old->stat;
 	  /* We don't have to worry about any entries to be
-	   * NULL, because malloc_strcpy takes care of that.
+	   * NULL, because realloc_strcpy takes care of that.
 	   */
-	  malloc_strcpy(fdbe_new->flags_req, fdbe_old->flags_req);
-	  malloc_strcpy(fdbe_new->chan, fdbe_old->chan);
-	  malloc_strcpy(fdbe_new->filename, fdbe_old->filename);
-	  malloc_strcpy(fdbe_new->desc, fdbe_old->desc);
+	  realloc_strcpy(fdbe_new->flags_req, fdbe_old->flags_req);
+	  realloc_strcpy(fdbe_new->chan, fdbe_old->chan);
+	  realloc_strcpy(fdbe_new->filename, fdbe_old->filename);
+	  realloc_strcpy(fdbe_new->desc, fdbe_old->desc);
 	  if (newfn[0])
-	    malloc_strcpy(fdbe_new->filename, newfn);
-	  malloc_strcpy(fdbe_new->uploader, fdbe_old->uploader);
+	    realloc_strcpy(fdbe_new->filename, newfn);
+	  realloc_strcpy(fdbe_new->uploader, fdbe_old->uploader);
 	  fdbe_new->uploaded = fdbe_old->uploaded;
 	  fdbe_new->size = fdbe_old->size;
 	  fdbe_new->gots = fdbe_old->gots;
-	  malloc_strcpy(fdbe_new->sharelink, fdbe_old->sharelink);
+	  realloc_strcpy(fdbe_new->sharelink, fdbe_old->sharelink);
 	  filedb_addfile(fdb_new, fdbe_new);
 	  if (!copy) {
 	    unlink(s);

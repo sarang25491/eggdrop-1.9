@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.46 2001/10/11 11:34:21 tothwolf Exp $
+ * $Id: transfer.c,v 1.47 2001/10/11 13:01:36 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -187,7 +187,7 @@ static int at_limit(char *nick)
  */
 static char *replace_spaces(char *fn)
 {
-  register char *ret = NULL, *p;
+  register char *ret, *p;
 
   malloc_strcpy(ret, fn);
   p = ret;
@@ -315,7 +315,7 @@ static void flush_fileq(char *to)
 static void send_next_file(char *to)
 {
   fileq_t *q, *this = NULL;
-  char *s, *s1 = NULL;
+  char *s, *s1;
   int x;
 
   for (q = fileq; q; q = q->next)
@@ -561,7 +561,7 @@ static int tcl_getfileq STDVAR
 
 static int tcl_dccsend STDVAR
 {
-  char s[10], *sys = NULL, *nfn;
+  char s[10], *sys, *nfn;
   int i;
   FILE *f;
 

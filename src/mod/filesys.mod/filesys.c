@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.53 2001/10/11 11:34:20 tothwolf Exp $
+ * $Id: filesys.c,v 1.54 2001/10/11 13:01:35 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -401,7 +401,7 @@ static int _dcc_send(int idx, char *filename, char *nick, char *dir,
   if (strchr(nfn, ' ')) {
     char *p;
 
-    malloc_strcpy(buf, nfn);
+    realloc_strcpy(buf, nfn);
     p = nfn = buf;
     while ((p = strchr(p, ' ')) != NULL)
       *p = '_';
@@ -725,7 +725,7 @@ static void filesys_dcc_send_hostresolved(int i)
   int len = dcc[i].u.dns->ibuf, j;
 
   sprintf(prt, "%d", dcc[i].port);
-  malloc_strcpy(param, dcc[i].u.dns->cbuf);
+  realloc_strcpy(param, dcc[i].u.dns->cbuf);
 
   changeover_dcc(i, &DCC_FORK_SEND, sizeof(struct xfer_info));
   if (param[0] == '.')

@@ -4,7 +4,7 @@
  *
  * Rewritten by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: filedb3.c,v 1.22 2001/10/11 11:34:20 tothwolf Exp $
+ * $Id: filedb3.c,v 1.23 2001/10/11 13:01:35 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -648,7 +648,7 @@ static void filedb_update(char *path, FILE *fdb, int sort)
   }
   dd = readdir(dir);
   while (dd != NULL) {
-    malloc_strcpy(name, dd->d_name);
+    realloc_strcpy(name, dd->d_name);
     if (name[0] != '.') {
       s = malloc(strlen(path) + strlen(name) + 2);
       sprintf(s, "%s/%s", path, name);
@@ -659,8 +659,8 @@ static void filedb_update(char *path, FILE *fdb, int sort)
       if (!fdbe) {
 	/* new file! */
 	fdbe = malloc_fdbe();
-	malloc_strcpy(fdbe->filename, name);
-	malloc_strcpy(fdbe->uploader, botnetnick);
+	realloc_strcpy(fdbe->filename, name);
+	realloc_strcpy(fdbe->uploader, botnetnick);
 	fdbe->uploaded = now;
 	fdbe->size = st.st_size;
 	if (S_ISDIR(st.st_mode))
@@ -717,7 +717,7 @@ static char *make_point_path(char *path)
 {
     char *s2 = NULL, *p = NULL;
 
-    malloc_strcpy(s2, path);
+    realloc_strcpy(s2, path);
     if (s2[strlen(s2) - 1] == '/')
       s2[strlen(s2) - 1] = 0;		/* remove trailing '/' */
     p = s2;
@@ -852,7 +852,7 @@ static void filedb_add(FILE * fdb, char *filename, char *nick)
   if (!fdbe)
     return;
   free_null(fdbe->uploader);
-  malloc_strcpy(fdbe->uploader, nick);
+  realloc_strcpy(fdbe->uploader, nick);
   fdbe->uploaded = now;
   filedb_updatefile(fdb, fdbe->pos, fdbe, UPDATE_ALL);
   free_fdbe(&fdbe);
@@ -959,7 +959,7 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
 	  free_null(s3);
 	  /* Causes filename to be displayed on its own line */
 	} else
-	  malloc_strcpy(s3, fdbe->filename);
+	  realloc_strcpy(s3, fdbe->filename);
 	s4 = malloc(69 + strlen(s3 ? s3 : "") + strlen(s1) +
 		     strlen(fdbe->uploader) + strlen(t) + strlen(s2));
 	sprintf(s4, "%-30s %s  %-9s (%s)  %6d%s\n", s3 ? s3 : "", s1,
@@ -1024,14 +1024,14 @@ static void remote_filereq(int idx, char *from, char *file)
   int	i   = 0;
   filedb_entry *fdbe = NULL;
 
-  malloc_strcpy(what, file);
+  realloc_strcpy(what, file);
   p = strrchr(what, '/');
   if (p) {
     *p = 0;
-    malloc_strcpy(dir, what);
+    realloc_strcpy(dir, what);
     strcpy(what, p + 1);
   } else {
-    malloc_strcpy(dir, "");
+    realloc_strcpy(dir, "");
   }
   fdb = filedb_open(dir, 0);
   if (!fdb) {
@@ -1101,7 +1101,6 @@ static void filedb_getdesc(char *dir, char *fn, char **desc)
 
   fdbe = filedb_getentry(dir, fn);
   if (fdbe) {
-    *desc = NULL;
     malloc_strcpy(*desc, fdbe->desc);
     free_fdbe(&fdbe);
   } else
@@ -1114,7 +1113,6 @@ static void filedb_getowner(char *dir, char *fn, char **owner)
 
   fdbe = filedb_getentry(dir, fn);
   if (fdbe) {
-    *owner = NULL;
     malloc_strcpy(*owner, fdbe->uploader);
     free_fdbe(&fdbe);
   } else
@@ -1146,7 +1144,7 @@ static void filedb_setdesc(char *dir, char *fn, char *desc)
   fdbe = filedb_matchfile(fdb, ftell(fdb), fn);
   if (fdbe) {
     free_null(fdbe->desc);
-    malloc_strcpy(fdbe->desc, desc);
+    realloc_strcpy(fdbe->desc, desc);
     filedb_updatefile(fdb, fdbe->pos, fdbe, UPDATE_ALL);
     free_fdbe(&fdbe);
   }
@@ -1165,7 +1163,7 @@ static void filedb_setowner(char *dir, char *fn, char *owner)
   fdbe = filedb_matchfile(fdb, ftell(fdb), fn);
   if (fdbe) {
     free_null(fdbe->uploader);
-    malloc_strcpy(fdbe->uploader, owner);
+    realloc_strcpy(fdbe->uploader, owner);
     filedb_updatefile(fdb, fdbe->pos, fdbe, UPDATE_ALL);
     free_fdbe(&fdbe);
   }
@@ -1190,7 +1188,7 @@ static void filedb_setlink(char *dir, char *fn, char *link)
       filedb_delfile(fdb, fdbe->pos);
     else {
       free_null(fdbe->sharelink);
-      malloc_strcpy(fdbe->sharelink, link);
+      realloc_strcpy(fdbe->sharelink, link);
       filedb_updatefile(fdb, fdbe->pos, fdbe, UPDATE_ALL);
     }
     free_fdbe(&fdbe);
@@ -1198,9 +1196,9 @@ static void filedb_setlink(char *dir, char *fn, char *link)
   }
 
   fdbe = malloc_fdbe();
-  malloc_strcpy(fdbe->uploader, botnetnick);
-  malloc_strcpy(fdbe->filename, fn);
-  malloc_strcpy(fdbe->sharelink, link);
+  realloc_strcpy(fdbe->uploader, botnetnick);
+  realloc_strcpy(fdbe->filename, fn);
+  realloc_strcpy(fdbe->sharelink, link);
   fdbe->uploaded = now;
   filedb_addfile(fdb, fdbe);
   free_fdbe(&fdbe);
@@ -1213,7 +1211,6 @@ static void filedb_getlink(char *dir, char *fn, char **link)
 
   fdbe = filedb_getentry(dir, fn);
   if (fdbe && (!(fdbe->stat & FILE_DIR))) {
-    *link = NULL;
     malloc_strcpy(*link, fdbe->sharelink);
   } else
     *link = NULL;

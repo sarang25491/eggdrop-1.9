@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.44 2001/10/11 11:34:19 tothwolf Exp $
+ * $Id: eggdrop.h,v 1.45 2001/10/11 13:01:35 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -168,11 +168,17 @@
     ptr = NULL;								\
   }
 
+#define malloc_strcpy(target, entry)					\
+do {									\
+  (target) = malloc(strlen(entry) + 1);					\
+  strcpy((target), (entry));						\
+} while (0)
+
 /* Copy entry to target -- Uses dynamic memory allocation, which
  * means you'll eventually have to free the memory again. 'target'
  * will be overwritten.
  */
-#define malloc_strcpy(target, entry)					\
+#define realloc_strcpy(target, entry)					\
 do {									\
   if (entry) {								\
     (target) = realloc((target), strlen(entry) + 1);			\

@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.37 2001/10/10 18:37:55 stdarg Exp $
+ * $Id: notes.c,v 1.38 2001/10/11 13:01:36 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -941,7 +941,7 @@ static struct xtra_key *getnotesentry(struct userrec *u)
 int get_note_ignores(struct userrec *u, char ***ignores)
 {
   struct xtra_key *xk;
-  char *buf = NULL, *p;
+  char *buf, *p;
   int ignoresn;
 
   /* Hullo? sanity? */

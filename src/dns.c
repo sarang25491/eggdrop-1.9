@@ -4,7 +4,7 @@
  *   provides the code used by the bot if the DNS module is not loaded
  *   DNS Tcl commands
  *
- * $Id: dns.c,v 1.26 2001/10/11 11:34:19 tothwolf Exp $
+ * $Id: dns.c,v 1.27 2001/10/11 13:01:35 tothwolf Exp $
  */
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -528,7 +528,7 @@ void dns_hostbyip(char *ip)
 #ifdef IPV6
     struct sockaddr_in6 in6;
 #endif
-    char *origname = NULL;
+    char *origname;
 
     if (egg_inet_pton(AF_INET, ip, &in.sin_addr)) {
 debug1("|DNS| adns_dns_hostbyip(\"%s\") (IPv4)", ip);
@@ -579,7 +579,7 @@ debug1("|DNS| adns_dns_ipbyhost(\"%s\");", host);
 	call_ipbyhost(host, host, 1);
     } else {
 	char *p;
-	char *origname = NULL;
+	char *origname;
 	int type, r;
 	malloc_strcpy(origname, host);
 	if (!egg_strncasecmp("ipv6%", host, 5)) {

@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.42 2001/10/10 10:44:04 tothwolf Exp $
+ * $Id: net.c,v 1.43 2001/10/11 13:01:35 tothwolf Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -709,7 +709,7 @@ void egg_dns_gotanswer(int status, adns_answer *aw, char *origname)
 {
     char name[UHOSTLEN];
 #ifdef IPV6
-    char *orign2 = NULL;
+    char *orign2;
 #endif
 
     if (!aw) {

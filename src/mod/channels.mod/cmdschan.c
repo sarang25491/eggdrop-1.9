@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.53 2001/10/10 10:44:05 tothwolf Exp $
+ * $Id: cmdschan.c,v 1.54 2001/10/11 13:01:35 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1288,7 +1288,7 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
 
 static void cmd_chanset(struct userrec *u, int idx, char *par)
 {
-  char *chname = NULL, answers[512], *parcpy = NULL;
+  char *chname = NULL, answers[512], *parcpy;
   char *list[2], *bak, *buf;
   struct chanset_t *chan = NULL;
   int all = 0;

@@ -4,7 +4,7 @@
  *
  * Written for filedb3 by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: dbcompat.c,v 1.12 2001/10/10 10:44:06 tothwolf Exp $
+ * $Id: dbcompat.c,v 1.13 2001/10/11 13:01:35 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -101,8 +101,8 @@ static int convert_old_files(char *path, char *newfiledb)
 	  i = strlen(fn) - 1;
 	  if (fn[i] == '/')
 	    fn[i] = 0;
-	  malloc_strcpy(fdbe->filename, fn);
-	  malloc_strcpy(fdbe->uploader, nick);
+	  realloc_strcpy(fdbe->filename, fn);
+	  realloc_strcpy(fdbe->uploader, nick);
 	  fdbe->gots = atoi(s1);
 	  fdbe->uploaded = atoi(tm);
 	  sprintf(s, "%s/%s", path, fn);
@@ -118,7 +118,7 @@ static int convert_old_files(char *path, char *newfiledb)
 		break_down_flags(nick + 1, &fr, NULL);
 		build_flags(x, &fr, NULL);
 		/* We only want valid flags */
-		malloc_strcpy(fdbe->flags_req, x);
+		realloc_strcpy(fdbe->flags_req, x);
 	      }
 	    }
 	    fdbe->size = st.st_size;
@@ -160,18 +160,18 @@ static void convert_version1(FILE *fdb_s, FILE *fdb_t)
 
 	fdbe->stat = fdb1.stat;
 	if (fdb1.filename[0])
-	  malloc_strcpy(fdbe->filename, fdb1.filename);
+	  realloc_strcpy(fdbe->filename, fdb1.filename);
 	if (fdb1.desc[0])
-	  malloc_strcpy(fdbe->desc, fdb1.desc);
+	  realloc_strcpy(fdbe->desc, fdb1.desc);
 	if (fdb1.uploader[0])
-	  malloc_strcpy(fdbe->uploader, fdb1.uploader);
+	  realloc_strcpy(fdbe->uploader, fdb1.uploader);
 	if (fdb1.flags_req[0])
-	  malloc_strcpy(fdbe->flags_req, fdb1.flags_req);
+	  realloc_strcpy(fdbe->flags_req, fdb1.flags_req);
 	fdbe->uploaded = fdb1.uploaded;
 	fdbe->size = fdb1.size;
 	fdbe->gots = fdb1.gots;
 	if (fdb1.sharelink[0])
-	  malloc_strcpy(fdbe->sharelink, fdb1.sharelink);
+	  realloc_strcpy(fdbe->sharelink, fdb1.sharelink);
 	filedb_addfile(fdb_s, fdbe);
 	free_fdbe(&fdbe);
       }
@@ -197,20 +197,20 @@ static void convert_version2(FILE *fdb_s, FILE *fdb_t)
 
 	fdbe->stat = fdb2.stat;
 	if (fdb2.filename[0])
-	  malloc_strcpy(fdbe->filename, fdb2.filename);
+	  realloc_strcpy(fdbe->filename, fdb2.filename);
 	if (fdb2.desc[0])
-	  malloc_strcpy(fdbe->desc, fdb2.desc);
+	  realloc_strcpy(fdbe->desc, fdb2.desc);
 	if (fdb2.chname[0])
-	  malloc_strcpy(fdbe->chan, fdb2.chname);
+	  realloc_strcpy(fdbe->chan, fdb2.chname);
 	if (fdb2.uploader[0])
-	  malloc_strcpy(fdbe->uploader, fdb2.uploader);
+	  realloc_strcpy(fdbe->uploader, fdb2.uploader);
 	if (fdb2.flags_req[0])
-	  malloc_strcpy(fdbe->flags_req, fdb2.flags_req);
+	  realloc_strcpy(fdbe->flags_req, fdb2.flags_req);
 	fdbe->uploaded = fdb2.uploaded;
 	fdbe->size = fdb2.size;
 	fdbe->gots = fdb2.gots;
 	if (fdb2.sharelink[0])
-	  malloc_strcpy(fdbe->sharelink, fdb2.sharelink);
+	  realloc_strcpy(fdbe->sharelink, fdb2.sharelink);
 	filedb_addfile(fdb_t, fdbe);
 	free_fdbe(&fdbe);
       }
