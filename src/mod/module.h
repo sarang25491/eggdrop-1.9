@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.60 2001/10/10 10:44:05 tothwolf Exp $
+ * $Id: module.h,v 1.61 2001/10/10 18:37:54 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -299,7 +299,7 @@
 /* 172 - 175 */
 #define add_hook(a,b) (((void (*) (int, Function))global[172])(a,b))
 #define del_hook(a,b) (((void (*) (int, Function))global[173])(a,b))
-#define H_dcc (*(p_tcl_bind_list *)(global[174]))
+/* 174: H_dcc -- UNUSED (stdarg) */
 #define H_filt (*(p_tcl_bind_list *)(global[175]))
 /* 176 - 179 */
 #define H_chon (*(p_tcl_bind_list *)(global[176]))

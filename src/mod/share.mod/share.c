@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.60 2001/10/10 10:44:07 tothwolf Exp $
+ * $Id: share.c,v 1.61 2001/10/10 18:37:55 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -54,6 +54,8 @@ static int allow_resync = 0;
 static struct flag_record fr = {0, 0, 0, 0, 0, 0};
 static int resync_time = 900;
 static int overr_local_bots = 0;	/* Override local bots?		    */
+
+static bind_table_t *BT_dcc;
 
 
 struct delay_mode {
@@ -2085,7 +2087,7 @@ static char *share_close()
   delay_free_mem();
   rem_tcl_ints(my_ints);
   rem_tcl_strings(my_strings);
-  rem_builtins(H_dcc, my_cmds);
+  if (BT_dcc) rem_builtins2(BT_dcc, my_cmds);
   rem_help_reference("share.help");
   return NULL;
 }
@@ -2189,7 +2191,8 @@ char *start(Function *global_funcs)
   DCC_BOT.kill = cancel_user_xfer;
   add_tcl_ints(my_ints);
   add_tcl_strings(my_strings);
-  add_builtins(H_dcc, my_cmds);
+  BT_dcc = find_bind_table2("dcc");
+  if (BT_dcc) add_builtins2(BT_dcc, my_cmds);
   uff_init();
   uff_addtable(internal_uff_table);
   return NULL;

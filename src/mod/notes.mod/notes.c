@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.36 2001/10/10 10:44:07 tothwolf Exp $
+ * $Id: notes.c,v 1.37 2001/10/10 18:37:55 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -46,6 +46,8 @@ static int notify_users = 0;	/* Notify users they have notes every hour? */
 static int notify_onjoin = 1;   /* Notify users they have notes on join?
 				   drummer */
 static Function *global = NULL;	/* DAMN fcntl.h */
+
+static bind_table_t *BT_dcc;
 
 static struct user_entry_type USERENTRY_FWD =
 {
@@ -1172,7 +1174,7 @@ static char *notes_close()
     rem_builtins(H_temp, notes_msgs);
   if ((H_temp = find_bind_table("join")))
     rem_builtins(H_temp, notes_join);
-  rem_builtins(H_dcc, notes_cmds);
+  if (BT_dcc) rem_builtins2(BT_dcc, notes_cmds);
   rem_builtins(H_chon, notes_chon);
   rem_builtins(H_away, notes_away);
   rem_builtins(H_nkch, notes_nkch);
@@ -1222,7 +1224,10 @@ char *start(Function * global_funcs)
   add_tcl_ints(notes_ints);
   add_tcl_strings(notes_strings);
   add_tcl_commands(notes_tcls);
-  add_builtins(H_dcc, notes_cmds);
+
+  BT_dcc = find_bind_table2("dcc");
+  if (BT_dcc) add_builtins2(BT_dcc, notes_cmds);
+
   add_builtins(H_chon, notes_chon);
   add_builtins(H_away, notes_away);
   add_builtins(H_nkch, notes_nkch);

@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.40 2001/10/10 10:44:04 tothwolf Exp $
+ * $Id: tclhash.c,v 1.41 2001/10/10 18:37:54 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -49,7 +49,7 @@ static bind_table_t *BT_dcc;
 
 p_tcl_bind_list		bind_table_list;
 p_tcl_bind_list		H_chat, H_act, H_bcst, H_chon, H_chof,
-			H_load, H_unld, H_link, H_disc, H_dcc, H_chjn, H_chpt,
+			H_load, H_unld, H_link, H_disc, H_chjn, H_chpt,
 			H_bot, H_time, H_nkch, H_away, H_note, H_filt, H_event;
 
 static int builtin_2char();
@@ -182,7 +182,6 @@ void init_bind(void)
   H_link = add_bind_table("link", HT_STACKABLE, builtin_2char);
   H_filt = add_bind_table("filt", HT_STACKABLE, builtin_idxchar);
   H_disc = add_bind_table("disc", HT_STACKABLE, builtin_char);
-  H_dcc = add_bind_table("dcc", 0, builtin_dcc);
   H_chpt = add_bind_table("chpt", HT_STACKABLE, builtin_chpt);
   H_chon = add_bind_table("chon", HT_STACKABLE, builtin_charidx);
   H_chof = add_bind_table("chof", HT_STACKABLE, builtin_charidx);
@@ -193,7 +192,6 @@ void init_bind(void)
   H_away = add_bind_table("away", HT_STACKABLE, builtin_chat);
   H_act = add_bind_table("act", HT_STACKABLE, builtin_chat);
   H_event = add_bind_table("evnt", HT_STACKABLE, builtin_char);
-  /* add_builtins(H_dcc, C_dcc); */
   Context;
 }
 
@@ -206,7 +204,6 @@ void kill_bind(void)
 {
   tcl_bind_list_t	*tl, *tl_next;
 
-  /* rem_builtins(H_dcc, C_dcc); */
   rem_builtins2(BT_dcc, C_dcc);
 
   for (tl = bind_table_list; tl; tl = tl_next) {
@@ -1106,37 +1103,17 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
 /* Check for tcl-bound dcc command, return 1 if found
  * dcc: proc-name <handle> <sock> <args...>
  */
-int check_tcl_dcc(const char *cmd, int idx, const char *args)
+void check_tcl_dcc(const char *cmd, int idx, const char *args)
 {
-  struct flag_record	fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
-  int			x;
-  char			s[11];
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  int x;
 
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.chat->con_chan);
 
-  egg_snprintf(s, sizeof s, "%ld", dcc[idx].sock);
-  Tcl_SetVar(interp, "_dcc1", (char *) dcc[idx].nick, 0);
-  Tcl_SetVar(interp, "_dcc2", (char *) s, 0);
-  Tcl_SetVar(interp, "_dcc3", (char *) args, 0);
-  x = check_tcl_bind(H_dcc, cmd, &fr, " $_dcc1 $_dcc2 $_dcc3",
-		     MATCH_PARTIAL | BIND_USE_ATTR | BIND_HAS_BUILTINS);
-  if (x == BIND_AMBIGUOUS) {
-    dprintf(idx, _("Ambiguous command.\n"));
-    return 0;
-  }
-  if (x == BIND_NOMATCH) {
-    /* Check the new bind table. */
-    x = check_bind(BT_dcc, cmd, &fr, dcc[idx].user, idx, args);
-    if (x & BIND_RET_LOG) {
-      putlog(LOG_CMDS, "*", "#%s# %s %s", dcc[idx].nick, cmd, args);
-    }
-    return 0;
-  }
-  if (x == BIND_EXEC_BRK)
-    return 1;			/* quit */
-  if (x == BIND_EXEC_LOG)
+  x = check_bind(BT_dcc, cmd, &fr, dcc[idx].user, idx, args);
+  if (x & BIND_RET_LOG) {
     putlog(LOG_CMDS, "*", "#%s# %s %s", dcc[idx].nick, cmd, args);
-  return 0;
+  }
 }
 
 void check_tcl_bot(const char *nick, const char *code, const char *param)

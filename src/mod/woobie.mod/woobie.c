@@ -5,7 +5,7 @@
  * Originally written by ButchBub	  15 July     1997
  * Comments by Fabian Knittel		  29 December 1999
  *
- * $Id: woobie.c,v 1.18 2001/10/10 10:44:08 tothwolf Exp $
+ * $Id: woobie.c,v 1.19 2001/10/10 18:37:56 stdarg Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -37,6 +37,9 @@
  * woobie_start().
  */
 static Function *global = NULL;
+
+/* Bind table for dcc commands. We import it using find_bind_table(). */
+static bind_table_t *BT_dcc;
 
 static int cmd_woobie(struct userrec *u, int idx, char *par)
 {
@@ -70,9 +73,6 @@ static void woobie_report(int idx, int details)
  *       "woobie:woobie" it would be "*dcc:woobie:woobie" instead.
  *               ^----- command name   ^--- table name
  *        ^------------ module name
- *
- *       This is only useful for stackable binding tables (and H_dcc isn't
- *       stackable).
  */
 static cmd_t mydcc[] =
 {
@@ -84,7 +84,7 @@ static cmd_t mydcc[] =
 static char *woobie_close()
 {
   Context;
-  rem_builtins(H_dcc, mydcc);
+  if (BT_dcc) rem_builtins2(BT_dcc, mydcc);
   module_undepend(MODULE_NAME);
   return NULL;
 }
@@ -129,9 +129,10 @@ char *woobie_start(Function *global_funcs)
     return "This module requires eggdrop1.7.0 or later";
   }
 
-  /* Add command table to bind list H_dcc, responsible for dcc commands.
+  /* Add command table to bind list BT_dcc, responsible for dcc commands.
    * Currently we only add one command, `woobie'.
    */
-  add_builtins(H_dcc, mydcc);
+  BT_dcc = find_bind_table2("dcc");
+  if (BT_dcc) add_builtins2(BT_dcc, mydcc);
   return NULL;
 }

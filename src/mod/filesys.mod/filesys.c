@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.50 2001/10/10 10:44:06 tothwolf Exp $
+ * $Id: filesys.c,v 1.51 2001/10/10 18:37:55 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -924,7 +924,7 @@ static char *filesys_close()
   rem_tcl_commands(mytcls);
   rem_tcl_strings(mystrings);
   rem_tcl_ints(myints);
-  rem_builtins(H_dcc, mydcc);
+  if (BT_dcc) rem_builtins2(BT_dcc, mydcc);
   rem_builtins(H_load, myload);
   rem_builtins(H_fil, myfiles);
   rem_help_reference("filesys.help");
@@ -971,7 +971,8 @@ char *start(Function * global_funcs)
   add_tcl_strings(mystrings);
   add_tcl_ints(myints);
   H_fil = add_bind_table("fil", 0, builtin_fil);
-  add_builtins(H_dcc, mydcc);
+  BT_dcc = find_bind_table("dcc");
+  if (BT_dcc) add_builtins2(BT_dcc, mydcc);
   add_builtins(H_fil, myfiles);
   add_builtins(H_load, myload);
   add_help_reference("filesys.help");

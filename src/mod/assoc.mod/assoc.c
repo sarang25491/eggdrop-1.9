@@ -2,7 +2,7 @@
  * assoc.c -- part of assoc.mod
  *   the assoc code, moved here mainly from botnet.c for module work
  *
- * $Id: assoc.c,v 1.21 2001/10/10 10:44:05 tothwolf Exp $
+ * $Id: assoc.c,v 1.22 2001/10/10 18:37:54 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -376,7 +376,7 @@ static tcl_cmds mytcl[] =
 static char *assoc_close()
 {
   kill_all_assoc();
-  rem_builtins(H_dcc, mydcc);
+  if (BT_dcc) rem_builtins2(BT_dcc, mydcc);
   rem_builtins(H_bot, mybot);
   rem_builtins(H_link, mylink);
   rem_tcl_commands(mytcl);
@@ -404,7 +404,8 @@ char *start(Function * global_funcs)
     return "This module requires eggdrop1.7.0 or later";
   }
   assoc = NULL;
-  add_builtins(H_dcc, mydcc);
+  BT_dcc = find_bind_table2("dcc");
+  if (BT_dcc) add_builtins(BT_dcc, mydcc);
   add_builtins(H_bot, mybot);
   add_builtins(H_link, mylink);
   add_tcl_commands(mytcl);

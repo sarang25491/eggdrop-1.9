@@ -3,7 +3,7 @@
  *   saved console settings based on console.tcl
  *   by cmwagner/billyjoe/D. Senso
  *
- * $Id: console.c,v 1.25 2001/10/10 10:44:06 tothwolf Exp $
+ * $Id: console.c,v 1.26 2001/10/10 18:37:55 stdarg Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -35,6 +35,8 @@ static Function *global = NULL;
 static int console_autosave = 0;
 static int force_channel = 0;
 static int info_party = 0;
+
+static bind_table_t *BT_dcc;
 
 struct console_info {
   char *channel;
@@ -339,7 +341,7 @@ static cmd_t mydcc[] =
 static char *console_close()
 {
   rem_builtins(H_chon, mychon);
-  rem_builtins(H_dcc, mydcc);
+  if (BT_dcc) rem_builtins2(BT_dcc, mydcc);
   rem_tcl_ints(myints);
   rem_help_reference("console.help");
   del_entry_type(&USERENTRY_CONSOLE);
@@ -367,8 +369,11 @@ char *start(Function * global_funcs)
     module_undepend(MODULE_NAME);
     return "This module requires eggdrop1.7.0 or later";
   }
+
+  BT_dcc = find_bind_table2("dcc");
+
+  if (BT_dcc) add_builtins2(BT_dcc, mydcc);
   add_builtins(H_chon, mychon);
-  add_builtins(H_dcc, mydcc);
   add_tcl_ints(myints);
   add_help_reference("console.help");
   USERENTRY_CONSOLE.get = def_get;

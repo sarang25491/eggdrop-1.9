@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.62 2001/10/10 10:44:05 tothwolf Exp $
+ * $Id: channels.c,v 1.63 2001/10/10 18:37:55 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -66,6 +66,8 @@ static int gfld_ctcp_thr;
 static int gfld_ctcp_time;
 static int gfld_nick_thr;
 static int gfld_nick_time;
+
+static bind_table_t *BT_dcc;
 
 #include "channels.h"
 #include "cmdschan.c"
@@ -717,7 +719,7 @@ static char *channels_close()
   write_channels();
   free_udef(udef);
   rem_builtins(H_chon, my_chon);
-  rem_builtins(H_dcc, C_dcc_irc);
+  if (BT_dcc) rem_builtins2(BT_dcc, C_dcc_irc);
   rem_tcl_commands(channels_cmds);
   rem_tcl_strings(my_tcl_strings);
   rem_tcl_ints(my_tcl_ints);
@@ -853,7 +855,8 @@ char *start(Function * global_funcs)
 	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 	       traced_globchanset, NULL);
   add_builtins(H_chon, my_chon);
-  add_builtins(H_dcc, C_dcc_irc);
+  BT_dcc = find_bind_table2("dcc");
+  if (BT_dcc) add_builtins2(BT_dcc, C_dcc_irc);
   add_tcl_commands(channels_cmds);
   add_tcl_strings(my_tcl_strings);
   add_help_reference("channels.help");

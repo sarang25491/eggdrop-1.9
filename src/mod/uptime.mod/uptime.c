@@ -1,6 +1,6 @@
 /* Original Copyright (c) 2000-2001 proton
  * 
- * $Id: uptime.c,v 1.14 2001/10/10 10:44:08 tothwolf Exp $
+ * $Id: uptime.c,v 1.15 2001/10/10 18:37:56 stdarg Exp $
  * Borrowed from Emech, reports to http://uptime.energymech.net, feel free to opt out if you
  * dont like it by not loading the module.
  * 
@@ -202,7 +202,7 @@ static char *uptime_close()
 {
 	rem_tcl_strings(mystrings);
 	rem_tcl_ints(myints);
-	rem_builtins(H_dcc, mydcc);
+	if (BT_dcc) rem_builtins2(BT_dcc, mydcc);
 	free(uptime_host);
 	close(uptimesock);
 	del_hook(HOOK_HOURLY, (Function) check_hourly);
@@ -234,7 +234,8 @@ char *start(Function * global_funcs)
 	module_register(MODULE_NAME, uptime_table, 1, 1);
 	add_tcl_strings(mystrings);
 	add_tcl_ints(myints);
-	add_builtins(H_dcc, mydcc);
+	BT_dcc = find_bind_table2("dcc");
+	if (BT_dcc) add_builtins2(BT_dcc, mydcc);
 	add_hook(HOOK_HOURLY, (Function) check_hourly);
 	malloc_strcpy(uptime_host, UPTIME_HOST);
 	init_uptime();
