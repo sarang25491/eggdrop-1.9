@@ -80,3 +80,27 @@ int script_delete_cmd_table(script_command_t *table)
 	}
 	return(0);
 }
+
+int script_create_simple_cmd_table(script_simple_command_t *table)
+{
+	script_command_t *cmd;
+	char *class;
+
+	/* First entry gives the class. */
+	class = table->name;
+	table++;
+
+	while (table->name) {
+		cmd = (script_command_t *)calloc(1, sizeof(*cmd));
+		cmd->class = class;
+		cmd->name = table->name;
+		cmd->callback = table->callback;
+		cmd->nargs = strlen(table->syntax);
+		cmd->syntax = table->syntax;
+		cmd->syntax_error = table->syntax_error;
+		cmd->retval_type = table->retval_type;
+		create_cmd(create_cmd_h, cmd);
+		table++;
+	}
+	return(0);
+}

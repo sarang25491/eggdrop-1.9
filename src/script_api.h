@@ -9,6 +9,7 @@
 
 /* Flags for commands. */
 #define SCRIPT_WANTS_CD	1
+#define SCRIPT_COMPLEX	2
 
 /* Flags for linked variables. */
 #define SCRIPT_READ_ONLY	1
@@ -22,7 +23,12 @@
 #define SCRIPT_VARRAY	32
 #define SCRIPT_POINTER	64
 #define SCRIPT_CALLBACK	128
-#define SCRIPT_ERROR	256
+
+/* Eggdrop specific types. */
+#define SCRIPT_USER	256
+
+/* Error bit. */
+#define SCRIPT_ERROR	512
 
 typedef struct script_callback_b {
 	int (*callback)();
@@ -68,7 +74,16 @@ typedef struct script_command_b {
 	int pass_array; /* Want an array of stuff? */
 	char *syntax; /* Argument types. */
 	char *syntax_error; /* Error to print when called incorrectly. */
+	int retval_type; /* Limited return value type, for simple stuff. */
 	int flags;
 } script_command_t;
+
+typedef struct script_simple_command_b {
+	char *name;
+	Function callback;
+	char *syntax;
+	char *syntax_error;
+	int retval_type;
+} script_simple_command_t;
 
 #endif

@@ -209,6 +209,14 @@ static Tcl_Obj *my_resolve_var(Tcl_Interp *myinterp, script_var_t *v)
 		sprintf(str, "%#x", v->ptr);
 		result = Tcl_NewStringObj(str, -1);
 	}
+	else if (v->type & SCRIPT_USER) {
+		char *handle;
+		struct userrec *u = (struct userrec *)v->ptr;
+
+		if (u) handle = u->handle;
+		else handle = "*";
+		result = Tcl_NewStringObj(handle, -1);
+	}
 	else {
 		result = Tcl_NewStringObj("unsupported return type", -1);
 	}
@@ -268,6 +276,17 @@ static int my_argument_parser(Tcl_Interp *myinterp, int objc, Tcl_Obj *CONST obj
 			Tcl_IncrRefCount(objptr);
 
 			arg = (void *)cback;
+			break;
+		}
+		case 'U': { /* User. */
+			struct userrec *u;
+			char *handle;
+
+			handle = Tcl_GetStringFromObj(objptr, NULL);
+			if (handle) u = get_user_by_handle(userlist, handle);
+			else u = NULL;
+
+			arg = (void *)u;
 			break;
 		}
 		case 'l': { /* Length of previous string or byte-array. */
@@ -340,15 +359,24 @@ static int my_command_handler(ClientData client_data, Tcl_Interp *myinterp, int 
 
 	memset(&retval, 0, sizeof(retval));
 
+	al = (void **)argstack.args->stack; /* Argument list shortcut name. */
+
 	/* If they don't want their client data, bump the pointer. */
-	al = (void **)argstack.args->stack; /* Just a short cut name. */
 	if (!(cmd->flags & SCRIPT_WANTS_CD)) {
 		al++;
 		argstack.args->len--;
 	}
 
-	if (cmd->pass_array) cmd->callback(&retval, argstack.args->len, al);
-	else cmd->callback(&retval, al[0], al[1], al[2], al[3], al[4]);
+	if (cmd->flags & SCRIPT_COMPLEX) {
+		if (cmd->pass_array) cmd->callback(&retval, argstack.args->len, al);
+		else cmd->callback(&retval, al[0], al[1], al[2], al[3], al[4]);
+	}
+	else {
+		retval.type = cmd->retval_type;
+		retval.len = -1;
+		if (cmd->pass_array) retval.intval = cmd->callback(&retval, argstack.args->len, al);
+		else retval.intval = cmd->callback(al[0], al[1], al[2], al[3], al[4]);
+	}
 
 	my_err = retval.type & SCRIPT_ERROR;
 	retval.flags |= SCRIPT_STATIC; /* We don't want to segfault. */
