@@ -1,3 +1,20 @@
+2003-02-17 10:22  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/Makefile.am, lib/eggdrop/eggdrop.h,
+	lib/eggdrop/irccmp.c, lib/eggdrop/irccmp.h, lib/eggdrop/module.h,
+	lib/eggdrop/modvals.h, modules/server/binds.c,
+	modules/server/binds.h, modules/server/dcc.c,
+	modules/server/dcc_commands.c, modules/server/input.c,
+	modules/server/scriptcmds.c, modules/server/server.c,
+	modules/server/server.h, modules/server/servsock.c,
+	src/Makefile.am, src/chanprog.c, src/flags.c, src/irccmp.c,
+	src/irccmp.h, src/logfile.c, src/modules.c, src/userent.c,
+	src/userrec.c, src/users.c:
+
+	
+	* Moved irccmp to libeggdrop 
+	* Initial support for 005 numeric 
+
 2003-02-17 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
