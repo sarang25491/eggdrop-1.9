@@ -3,7 +3,7 @@
  *   saved console settings based on console.tcl
  *   by cmwagner/billyjoe/D. Senso
  *
- * $Id: console.c,v 1.4 2002/02/07 22:19:02 wcc Exp $
+ * $Id: console.c,v 1.5 2002/02/20 02:37:18 guppy Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
@@ -298,7 +298,7 @@ static int console_store(struct userrec *u, int idx, char *par)
   i->conchan = dcc[idx].u.chat->channel;
   if (par) {
     dprintf(idx, "%s\n", _("Saved your Console Settings:"));
-    dprintf(idx, "  %s %s\n", i->channel, _("Channel:"));
+    dprintf(idx, "  %s %s\n", _("Channel:"), i->channel);
     dprintf(idx, "  %s %s, %s %s, %s %s\n", _("Console flags:"),
 	    masktype(i->conflags), _("Strip flags:"),
 	    stripmasktype(i->stripflags), _("Echo:"),

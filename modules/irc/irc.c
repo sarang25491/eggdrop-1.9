@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.10 2002/02/17 12:40:44 ite Exp $
+ * $Id: irc.c,v 1.11 2002/02/20 02:37:18 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -238,7 +238,7 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
   /* Kick the offender */
   if ((chan->revenge_mode > 1) &&
       /* ... or don't we kick ops? */
-      (channel_dontkickops(chan) &&
+      (!channel_dontkickops(chan) ||
         !(chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))) &&
       /* ... or have we sent the kick already? */
       !chan_sentkick(m) &&
