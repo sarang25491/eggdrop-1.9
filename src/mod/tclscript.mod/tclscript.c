@@ -22,7 +22,7 @@ typedef struct {
 } my_callback_cd_t;
 
 static int my_command_handler(ClientData client_data, Tcl_Interp *myinterp, int objc, Tcl_Obj *CONST objv[]);
-static Tcl_Obj *my_resolve_var(Tcl_Interp *myinterp, script_var_t *v);
+static Tcl_Obj *my_resolve_one_var(Tcl_Interp *myinterp, script_var_t *v);
 
 static Tcl_Interp *ginterp; /* Our global interpreter. */
 static char *my_syntax_error = "syntax error";
@@ -105,12 +105,12 @@ static int my_unlink_var(void *ignore, script_str_t *str)
 	return(0);
 }
 
-static int my_tcl_callbacker(script_callback_t *me, int n, ...)
+static int my_tcl_callbacker(script_callback_t *me, ...)
 {
-	Tcl_Obj *arg, *final_command;
-	script_var_t *var;
+	Tcl_Obj *arg, *final_command, *result;
+	script_var_t var;
 	my_callback_cd_t *cd; /* My callback client data */
-	int i, *al;
+	int i, n, retval, *al;
 
 	/* This struct contains the interp and the obj command. */
 	cd = (my_callback_cd_t *)me->callback_data;
@@ -118,16 +118,23 @@ static int my_tcl_callbacker(script_callback_t *me, int n, ...)
 	/* Get a copy of the command, then append args. */
 	final_command = Tcl_DuplicateObj(cd->command);
 
-	al = &n;
-	for (i = 1; i <= n; i++) {
-		var = (script_var_t *)al[i];
-		arg = my_resolve_var(cd->myinterp, var);
+	al = (int *)&me;
+	al++;
+	if (me->syntax) n = strlen(me->syntax);
+	else n = 0;
+	for (i = 0; i < n; i++) {
+		var.type = me->syntax[i];
+		var.value = (void *)al[i];
+		var.len = -1;
+		arg = my_resolve_one_var(cd->myinterp, &var);
 		Tcl_ListObjAppendElement(cd->myinterp, final_command, arg);
 	}
 
 	Tcl_EvalObjEx(cd->myinterp, final_command, TCL_EVAL_GLOBAL);
+	result = Tcl_GetObjResult(cd->myinterp);
+	Tcl_GetIntFromObj(cd->myinterp, result, &retval);
 
-	return(0);
+	return(retval);
 }
 
 static int my_tcl_cb_delete(script_callback_t *me)
@@ -136,6 +143,8 @@ static int my_tcl_cb_delete(script_callback_t *me)
 
 	cd = (my_callback_cd_t *)me->callback_data;
 	Tcl_DecrRefCount(cd->command);
+	if (me->syntax) free(me->syntax);
+	if (me->name) free(me->name);
 	free(cd);
 	free(me);
 	return(0);
@@ -145,7 +154,12 @@ static int my_create_cmd(void *ignore, script_command_t *info)
 {
 	char *cmdname;
 
-	cmdname = msprintf("%s_%s", info->class, info->name);
+	if (info->class && strlen(info->class)) {
+		cmdname = msprintf("%s_%s", info->class, info->name);
+	}
+	else {
+		malloc_strcpy(cmdname, info->name);
+	}
 	Tcl_CreateObjCommand(interp, cmdname, my_command_handler, (ClientData) info, NULL);
 	free(cmdname);
 
@@ -162,58 +176,46 @@ static int my_delete_cmd(void *ignore, script_command_t *info)
 	return(0);
 }
 
-static Tcl_Obj *my_resolve_var(Tcl_Interp *myinterp, script_var_t *v)
+static Tcl_Obj *my_resolve_one_var(Tcl_Interp *myinterp, script_var_t *v)
 {
 	Tcl_Obj *result;
 
 	result = NULL;
-	if (v->type & SCRIPT_INTEGER) result = Tcl_NewIntObj((int) v->value);
-	else if (v->type & SCRIPT_STRING) {
-		/* A normal string. */
-
-		if (v->len == -1) v->len = strlen((char *)v->value);
-		#ifdef USE_BYTE_ARRAYS
+	switch (v->type & SCRIPT_TYPE_MASK) {
+		case SCRIPT_INTEGER:
+			result = Tcl_NewIntObj((int) v->value);
+			break;
+		case SCRIPT_STRING:
+		case SCRIPT_BYTES:
+			if (v->len == -1) v->len = strlen((char *)v->value);
+			#ifdef USE_BYTE_ARRAYS
 			result = Tcl_NewByteArrayObj((char *)v->value, v->len);
-		#else
+			#else
 			result = Tcl_NewStringObj((char *)v->value, v->len);
-		#endif
-		if (!(v->type & SCRIPT_STATIC)) free((char *)v->value);
-	}
-	else if (v->type & SCRIPT_ARRAY) {
-		/* An array of script_var_t's (not pointers, actual struct). */
-		script_var_t *vararray;
-		int i;
+			#endif
+			if (v->type & SCRIPT_FREE) free((char *)v->value);
+			break;
+		case SCRIPT_POINTER: {
+			char str[32];
 
-		vararray = (script_var_t *)v->value;
-		result = Tcl_NewListObj(0, NULL);
-		for (i = 0; i < v->len; i++) {
-			Tcl_Obj *item;
-
-			item = my_resolve_var(myinterp, &vararray[i]);
-			if (item) Tcl_ListObjAppendElement(myinterp, result, item);
+			sprintf(str, "#%u", v->value);
+			result = Tcl_NewStringObj(str, -1);
+			break;
 		}
-	}
-	else if (v->type & SCRIPT_POINTER) {
-		/* A pointer variable (will be represented as a decimal string). */
-		char str[32];
+		case SCRIPT_USER: {
+			/* An eggdrop user record (struct userrec *). */
+			char *handle;
+			struct userrec *u = (struct userrec *)v->value;
 
-		sprintf(str, "#%u", v->value);
-		result = Tcl_NewStringObj(str, -1);
+			if (u) handle = u->handle;
+			else handle = "*";
+			result = Tcl_NewStringObj(handle, -1);
+			break;
+		}
+		default:
+			/* Default: just pass a string with an error message. */
+			result = Tcl_NewStringObj("unsupported type", -1);
 	}
-	else if (v->type & SCRIPT_USER) {
-		/* An eggdrop user record (struct userrec *). */
-		char *handle;
-		struct userrec *u = (struct userrec *)v->value;
-
-		if (u) handle = u->handle;
-		else handle = "*";
-		result = Tcl_NewStringObj(handle, -1);
-	}
-	else {
-		/* Default: just pass a string with an error message. */
-		result = Tcl_NewStringObj("unsupported return type", -1);
-	}
-	if (!(v->flags & SCRIPT_STATIC)) free(v);
 	return(result);
 }
 
@@ -226,7 +228,7 @@ static int my_argument_parser(Tcl_Interp *myinterp, int objc, Tcl_Obj *CONST obj
 	for (i = 1; i < objc; i++) {
 		objptr = objv[i];
 		switch (*syntax++) {
-		case 's': { /* Null-terminated string. */
+		case SCRIPT_STRING: { /* Null-terminated string. */
 			char *nullterm;
 
 			#ifdef USE_BYTE_ARRAYS
@@ -243,27 +245,38 @@ static int my_argument_parser(Tcl_Interp *myinterp, int objc, Tcl_Obj *CONST obj
 			arg = (void *)nullterm;
 			break;
 		}
-		case 'b': { /* Byte-array (could be anything). */
+		case SCRIPT_BYTES: { /* Byte-array (could be anything). */
 			#ifdef USE_BYTE_ARRAYS
-				arg = (void *)Tcl_GetByteArrayFromObj(objptr, &len);
+			arg = (void *)Tcl_GetByteArrayFromObj(objptr, &len);
 			#else
-				arg = (void *)Tcl_GetStringFromObj(objptr, &len);
+			arg = (void *)Tcl_GetStringFromObj(objptr, &len);
 			#endif
 			break;
 		}
-		case 'i': { /* Integer. */
+		case SCRIPT_INTEGER: { /* Integer. */
 			err = Tcl_GetIntFromObj(myinterp, objptr, (int *)&arg);
 			break;
 		}
-		case 'c': { /* Callback. */
+		case SCRIPT_CALLBACK: { /* Callback. */
 			script_callback_t *cback; /* Callback struct */
 			my_callback_cd_t *cdata; /* Our client data */
+			char *name, *nullterm;
 
-			cback = (script_callback_t *)malloc(sizeof(*cback));
-			cdata = (my_callback_cd_t *)malloc(sizeof(*cdata));
+			cback = (script_callback_t *)calloc(1, sizeof(*cback));
+			cdata = (my_callback_cd_t *)calloc(1, sizeof(*cdata));
 			cback->callback = (Function) my_tcl_callbacker;
 			cback->callback_data = (void *)cdata;
 			cback->delete = (Function) my_tcl_cb_delete;
+			#ifdef USE_BYTE_ARRAYS
+			name = (void *)Tcl_GetByteArrayFromObj(objptr, &len);
+			nullterm = (char *)malloc(len+1);
+			memcpy(nullterm, name, len);
+			nullterm[len] = 0;
+			#else
+			name = (char *)Tcl_GetStringFromObj(objptr, &len);
+			malloc_strcpy(nullterm, name);
+			#endif
+			cback->name = nullterm;
 			cdata->myinterp = myinterp;
 			cdata->command = objptr;
 			Tcl_IncrRefCount(objptr);
@@ -271,7 +284,7 @@ static int my_argument_parser(Tcl_Interp *myinterp, int objc, Tcl_Obj *CONST obj
 			arg = (void *)cback;
 			break;
 		}
-		case 'U': { /* User. */
+		case SCRIPT_USER: { /* User. */
 			struct userrec *u;
 			char *handle;
 
@@ -368,8 +381,7 @@ static int my_command_handler(ClientData client_data, Tcl_Interp *myinterp, int 
 	}
 
 	my_err = retval.type & SCRIPT_ERROR;
-	retval.flags |= SCRIPT_STATIC; /* We don't want to segfault. */
-	tcl_retval = my_resolve_var(myinterp, &retval);
+	tcl_retval = my_resolve_one_var(myinterp, &retval);
 
 	if (tcl_retval) Tcl_SetObjResult(myinterp, tcl_retval);
 

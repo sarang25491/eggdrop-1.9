@@ -2,6 +2,7 @@
 typedef int (*Function)();
 #include "registry.h"
 #include "script_api.h"
+#include "script.h"
 #include "egglib/mstack.h"
 
 static Function link_int, unlink_int, link_str, unlink_str, create_cmd, delete_cmd;
@@ -44,7 +45,7 @@ static int my_playback(void *ignore, Function *table)
 	for (i = 0; i < script_events->len; i++) {
 		event = (script_event_t *)script_events->stack[i];
 		if (event->type < max && table[event->type]) {
-			(table[event->type])(event->arg1, event->arg2, event->arg3);
+			(table[event->type])(NULL, event->arg1, event->arg2, event->arg3);
 		}
 	}
 	return(0);

@@ -28,34 +28,33 @@ enum {
 /* Flags for linked variables. */
 #define SCRIPT_READ_ONLY	1
 
-/* Flags for variables (check out struct script_var_t) */
-#define SCRIPT_STATIC	1
-#define SCRIPT_STRING	2
-#define SCRIPT_INTEGER	4
-#define SCRIPT_LIST	8
-#define SCRIPT_ARRAY	16
-#define SCRIPT_VARRAY	32
-#define SCRIPT_POINTER	64
-#define SCRIPT_CALLBACK	128
+/* Flags for variables. */
+#define SCRIPT_FREE	256
+#define SCRIPT_ARRAY	512
+#define SCRIPT_ERROR	1024
 
-/* Eggdrop specific types. */
-#define SCRIPT_USER	256
-
-/* Error bit. */
-#define SCRIPT_ERROR	512
+/* Types for variables. */
+#define SCRIPT_STRING	((int)'s')
+#define SCRIPT_INTEGER	((int)'i')
+#define SCRIPT_POINTER	((int)'p')
+#define SCRIPT_CALLBACK	((int)'c')
+#define SCRIPT_USER	((int)'U')
+#define SCRIPT_BYTES	((int)'b')
+#define SCRIPT_TYPE_MASK	255
 
 typedef struct script_callback_b {
 	int (*callback)();
 	void *callback_data;
 	int (*delete)();
 	void *delete_data;
+	char *syntax;
+	char *name;
 } script_callback_t;
 
 typedef struct script_var_b {
 	int type;	/* Type of variable (int, str, etc). */
 	void *value;	/* Value (needs to be cast to right type). */
-	int len;	/* Length of string of array (when appropriate). */
-	int flags;	/* Not used right now. */
+	int len;	/* Length of string or array (when appropriate). */
 } script_var_t;
 
 typedef struct script_int_b {
@@ -82,13 +81,5 @@ typedef struct script_command_b {
 	int retval_type; /* Limited return value type, for simple stuff. */
 	int flags;
 } script_command_t;
-
-typedef struct script_simple_command_b {
-	char *name;
-	Function callback;
-	char *syntax;
-	char *syntax_error;
-	int retval_type;
-} script_simple_command_t;
 
 #endif

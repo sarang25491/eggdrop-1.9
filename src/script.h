@@ -1,5 +1,13 @@
-#ifndef _SCRIPT_HELPER_H_
-#define _SCRIPT_HELPER_H_
+#ifndef _SCRIPT_H_
+#define _SCRIPT_H_
+
+typedef struct {
+	char *name;
+	Function callback;
+	char *syntax;
+	char *syntax_error;
+	int retval_type;
+} script_simple_command_t;
 
 int script_link_int_table(script_int_t *table);
 int script_unlink_int_table(script_int_t *table);
