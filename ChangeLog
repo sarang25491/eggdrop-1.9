@@ -1,3 +1,10 @@
+2003-03-04 11:31  Tothwolf <tothwolf@techmonkeys.org>
+
+	* acconfig/acinclude.m4, lib/compat/snprintf.h:
+
+	Removed checking for broken snprintf/vsnprintf functions since we
+	already check for a C99 compliant vsnprintf.  
+
 2003-03-04 10:33  Tothwolf <tothwolf@techmonkeys.org>
 
 	* acconfig/acinclude.m4, lib/compat/snprintf.c,
