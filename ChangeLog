@@ -1,3 +1,15 @@
+2001-10-14 22:44  Federico Mennite <ite@techmonkeys.org>
+
+	* src/mod/uptime.mod/uptime.c:
+
+	Finished gettextification in uptime.mod.  
+
+2001-10-14 22:35  Federico Mennite <ite@techmonkeys.org>
+
+	* src/mod/blowfish.mod/blowfish.c:
+
+	Minor gettext's usage cleanup.  
+
 2001-10-14 21:01  Tothwolf <tothwolf@techmonkeys.org>
 
 	* src/mod/irc.mod/mode.c:
