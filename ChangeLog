@@ -1,3 +1,19 @@
+2003-02-14 20:55  stdarg <stdarg@techmonkeys.org>
+
+	* Makefile.am, config.tcl, config.xml, lib/eggdrop/egglog.c,
+	lib/eggdrop/partyline.c, modules/script/Makefile.am,
+	modules/script/scriptmisc.c, modules/script/scriptmod.c,
+	src/chanprog.c, src/core_config.c, src/main.c, src/modules.h,
+	src/tclmisc.c:
+
+	
+	* Added autoload section to xml config file and got rid of the -p
+	option (preload).  
+	* To load your old config file, rename it to blah.tcl and put
+	<script>blah.tcl</script> in the autoload section.  
+	* Added sample config.xml and config.tcl files.  
+	* Moved some more script functions to the script module.  
+
 2003-02-14 10:07  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/eggconfig.c, lib/eggdrop/eggconfig.h,
