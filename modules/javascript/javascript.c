@@ -20,9 +20,10 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: javascript.c,v 1.18 2003/12/11 00:49:11 wcc Exp $";
+static const char rcsid[] = "$Id: javascript.c,v 1.19 2003/12/17 08:39:48 wcc Exp $";
 #endif
 
+#include <eggdrop/eggdrop.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -32,11 +33,6 @@ static const char rcsid[] = "$Id: javascript.c,v 1.18 2003/12/11 00:49:11 wcc Ex
 #include <jsapi.h>
 
 #include "lib/eggdrop/module.h"
-#include <eggdrop/eggdrop.h>
-
-#define MODULE_NAME "javascript"
-
-static eggdrop_t *egg = NULL;
 
 /* Data we need for a JavaScript callback. */
 typedef struct {
@@ -47,9 +43,7 @@ typedef struct {
 } my_callback_cd_t;
 
 static int my_command_handler(JSContext *cx, JSObject *obj, int argc, jsval *argv, jsval *rval);
-
 static int c_to_js_var(JSContext *cx, script_var_t *v, jsval *result);
-
 static int js_to_c_var(JSContext *cx, JSObject *obj, jsval val, script_var_t *var, int type);
 
 /* Script module interface. */
@@ -135,7 +129,7 @@ static int my_load_script(void *ignore, char *fname)
 	jsval rval;
 	char *script;
 
-	/* Check the filename and make sure it ends in .tcl */
+	/* Check the filename and make sure it ends in .js */
 	len = strlen(fname);
 	if (len < 3 || fname[len-1] != 's' || fname[len-2] != 'j' || fname[len-3] != '.') {
 		/* Nope, let someone else load it. */
@@ -152,10 +146,7 @@ static int my_load_script(void *ignore, char *fname)
 	fread(script, len, 1, fp);
 	fclose(fp);
 	script[len] = 0;
-	JS_EvaluateScript(global_js_context, global_js_object,
-		script, len,
-		fname, 1,
-		&rval);
+	JS_EvaluateScript(global_js_context, global_js_object, script, len, fname, 1, &rval);
 	free(script);
 
 	return(0);
@@ -221,19 +212,15 @@ static int my_link_var(void *ignore, script_linked_var_t *var)
 	if (var->class && strlen(var->class)) varname = egg_mprintf("%s(%s)", var->class, var->name);
 	else varname = strdup(var->name);
 
-	obj = JS_DefineObject(global_js_context, global_js_object,
-		varname, &eggvar_class, NULL, JSPROP_ENUMERATE|JSPROP_EXPORTED|JSPROP_READONLY);
+	obj = JS_DefineObject(global_js_context, global_js_object, varname, &eggvar_class, NULL, JSPROP_ENUMERATE|JSPROP_EXPORTED|JSPROP_READONLY);
 	if (!obj) {
 		putlog(LOG_MISC, "*", "failed 1");
 		return(0);
 	}
 	JS_SetPrivate(global_js_context, obj, var);
-	JS_DefineFunction(global_js_context, obj,
-		"toString", (JSNative) my_eggvar_value_of, 0, 0);
-	JS_DefineFunction(global_js_context, obj,
-		"valueOf", (JSNative) my_eggvar_value_of, 0, 0);
-	JS_DefineFunction(global_js_context, obj,
-		"set", (JSNative) my_eggvar_set, 0, 0);
+	JS_DefineFunction(global_js_context, obj, "toString", (JSNative) my_eggvar_value_of, 0, 0);
+	JS_DefineFunction(global_js_context, obj, "valueOf", (JSNative) my_eggvar_value_of, 0, 0);
+	JS_DefineFunction(global_js_context, obj, "set", (JSNative) my_eggvar_set, 0, 0);
 	return(0);
 }
 
@@ -335,22 +322,13 @@ static int my_create_command(void *ignore, script_raw_command_t *info)
 	char *cmdname;
 	JSObject *obj;
 
-	if (info->class && strlen(info->class)) {
-		cmdname = egg_mprintf("%s_%s", info->class, info->name);
-	}
-	else {
-		cmdname = strdup(info->name);
-	}
+	if (info->class && strlen(info->class)) cmdname = egg_mprintf("%s_%s", info->class, info->name);
+	else cmdname = strdup(info->name);
 
-	obj = JS_DefineObject(global_js_context, global_js_object,
-		cmdname, &eggfunc_class, NULL, JSPROP_ENUMERATE|JSPROP_EXPORTED|JSPROP_READONLY);
-
+	obj = JS_DefineObject(global_js_context, global_js_object, cmdname, &eggfunc_class, NULL, JSPROP_ENUMERATE|JSPROP_EXPORTED|JSPROP_READONLY);
 	if (!obj) return(0);
-
 	free(cmdname);
-
 	JS_SetPrivate(global_js_context, obj, info);
-
 	return(0);
 }
 
@@ -359,19 +337,14 @@ static int my_delete_command(void *ignore, script_raw_command_t *info)
 {
 	char *cmdname;
 
-	if (info->class && strlen(info->class)) {
-		cmdname = egg_mprintf("%s_%s", info->class, info->name);
-	}
-	else {
-		cmdname = strdup(info->name);
-	}
+	if (info->class && strlen(info->class)) cmdname = egg_mprintf("%s_%s", info->class, info->name);
+	else cmdname = strdup(info->name);
 	JS_DeleteProperty(global_js_context, global_js_object, cmdname);
 	free(cmdname);
-
 	return(0);
 }
 
-/* Convert a C variable to a Tcl variable. */
+/* Convert a C variable to a JS variable. */
 static int c_to_js_var(JSContext *cx, script_var_t *v, jsval *result)
 {
 	*result = JSVAL_VOID;
@@ -642,14 +615,10 @@ static int javascript_init()
 	JS_InitStandardClasses(global_js_context, global_js_object);
 
 	/* Now initialize our eggvar class. */
-	JS_InitClass(global_js_context, global_js_object,
-		NULL, &eggvar_class, NULL, 0,
-		NULL, NULL, NULL, NULL);
+	JS_InitClass(global_js_context, global_js_object, NULL, &eggvar_class, NULL, 0, NULL, NULL, NULL, NULL);
 
 	/* And eggfunc as well. */
-	JS_InitClass(global_js_context, global_js_object,
-		NULL, &eggfunc_class, NULL, 0,
-		NULL, NULL, NULL, NULL);
+	JS_InitClass(global_js_context, global_js_object, NULL, &eggfunc_class, NULL, 0, NULL, NULL, NULL, NULL);
 
 	return(0);
 }
@@ -666,39 +635,16 @@ static int party_js(int pid, char *nick, user_t *u, char *cmd, char *text)
 		return(BIND_RET_LOG);
 	}
 
-	retval = JS_EvaluateScript(global_js_context, global_js_object,
-			text, strlen(text), "console", curline++, &js_rval);
-	if (!retval) {
-		partyline_printf(pid, "JS Error: unknown for now\n");
-	}
+	retval = JS_EvaluateScript(global_js_context, global_js_object, text, strlen(text), "console", curline++, &js_rval);
+	if (!retval) partyline_printf(pid, "JS Error: unknown for now\n");
 	else {
 		JSString *str;
 
 		str = JS_ValueToString(global_js_context, js_rval);
-		if (!str) {
-			partyline_printf(pid, "JS:\n");
-		}
-		else {
-			partyline_printf(pid, "JS: %s\n", JS_GetStringBytes(str));
-		}
+		if (!str) partyline_printf(pid, "JS:\n");
+		else partyline_printf(pid, "JS: %s\n", JS_GetStringBytes(str));
 	}
 	return(0);
-}
-
-static void javascript_report(int idx, int details)
-{
-	JSVersion version;
-	const char *version_str;
-
-	version = JS_GetVersion(global_js_context);
-	version_str = JS_VersionToString(version);
-
-	if (!details) {
-		dprintf(idx, "Using JavaScript version %s\n", version_str);
-		return;
-	}
-
-	dprintf(idx, "    Using JavaScript version %s\n", version_str);
 }
 
 static bind_list_t party_commands[] = {
@@ -706,27 +652,17 @@ static bind_list_t party_commands[] = {
 	{0}
 };
 
-EXPORT_SCOPE char *javascript_LTX_start();
+EXPORT_SCOPE int javascript_LTX_start(egg_module_t *modinfo);
 static char *javascript_close();
 
-static Function javascript_table[] = {
-	(Function) javascript_LTX_start,
-	(Function) javascript_close,
-	(Function) 0,
-	(Function) javascript_report
-};
-
-char *javascript_LTX_start(eggdrop_t *eggdrop)
+int javascript_LTX_start(egg_module_t *modinfo)
 {
-	egg = eggdrop;
-
+	modinfo->name = "javascript";
+	modinfo->author = "eggdev";
+	modinfo->version = "1.7.0";
+	modinfo->description = "provides javascript scripting support";
+	modinfo->close_func = javascript_close;
 	javascript_init();
-
-	module_register("javascript", javascript_table, 1, 2);
-	if (!module_depend("javascript", "eggdrop", 107, 0)) {
-		module_undepend("javascript");
-		return "This module requires eggdrop1.7.0 or later";
-	}
 
 	error_logfile = strdup("logs/javascript_errors.log");
 
@@ -734,19 +670,13 @@ char *javascript_LTX_start(eggdrop_t *eggdrop)
 	script_playback(&my_script_interface);
 
 	bind_add_list("party", party_commands);
-
-	return(NULL);
+	return(0);
 }
 
-static char *javascript_close()
+static int javascript_close()
 {
-	/* When tcl is gone from the core, this will be uncommented. */
-	/* Tcl_DeleteInterp(ginterp); */
-
 	script_unregister_module(&my_script_interface);
-
 	bind_rem_list("party", party_commands);
-
 	module_undepend("javascript");
-	return(NULL);
+	return(0);
 }

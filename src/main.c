@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.158 2003/12/17 08:12:43 wcc Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.159 2003/12/17 08:39:48 wcc Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -73,8 +73,6 @@ static const char rcsid[] = "$Id: main.c,v 1.158 2003/12/17 08:12:43 wcc Exp $";
 #ifndef _POSIX_SOURCE
 #  define _POSIX_SOURCE 1 /* Solaris needs this */
 #endif
-
-eggdrop_t *egg = NULL;	/* Eggdrop's context */
 
 int backgrd = 1;	/* Run in the background? */
 int con_chan = 0;	/* Foreground: constantly display channel stats? */
@@ -413,7 +411,6 @@ int main(int argc, char **argv)
 		exit(-1);
 	}
 
-	egg = eggdrop_new();
 	eggdrop_init();
 	core_config_init(configfile);
 	logfile_init();

@@ -17,13 +17,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: main.h,v 1.37 2003/12/16 21:45:35 wcc Exp $
+ * $Id: main.h,v 1.38 2003/12/17 08:39:48 wcc Exp $
  */
 
 #ifndef _EGG_MAIN_H
 #define _EGG_MAIN_H
-
-extern eggdrop_t *egg;
 
 void fatal(const char *, int);
 

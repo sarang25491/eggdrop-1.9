@@ -2,7 +2,6 @@
  * binds.c -- init/destroy bind tables
  */
 
-#define MODULE_NAME "server"
 #define MAKING_SERVER
 #include <stdio.h>
 #include <eggdrop/eggdrop.h>

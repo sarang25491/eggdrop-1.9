@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: eggdrop.h,v 1.25 2003/12/17 07:39:14 wcc Exp $
+ * $Id: eggdrop.h,v 1.26 2003/12/17 08:39:48 wcc Exp $
  */
 
 #ifndef _EGG_EGGDROP_H_
@@ -68,18 +68,7 @@
 #  define P_(x1, x2, n)	( ((n) == 1) ? (x1) : (x2) )
 #endif
 
-BEGIN_C_DECLS
-
-typedef struct eggdrop {
-  Function *global;		/* FIXME: this field will be removed once the
-				   global_funcs mess is cleaned up */
-} eggdrop_t;
-
 extern int eggdrop_init();
 extern int eggdrop_event(const char *event);
-extern eggdrop_t *eggdrop_new(void);
-extern eggdrop_t *eggdrop_delete(eggdrop_t *);
-
-END_C_DECLS
 
 #endif /* !_EGG_EGGDROP_H_ */

@@ -2,10 +2,10 @@
  * tclscript.c --
  */
 
-#include <tcl.h>
 #include <eggdrop/eggdrop.h>
-
-#define MODULE_NAME "tclscript"
+#include <tcl.h>
+#include <string.h>
+#include <stdlib.h>
 
 #if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 1)) || (TCL_MAJOR_VERSION > 8))
 #  define USE_TCL_BYTE_ARRAYS
@@ -353,11 +353,11 @@ static Tcl_Obj *c_to_tcl_var(Tcl_Interp *myinterp, script_var_t *v)
 
 			if (!str) str = "";
 			if (v->len == -1) v->len = strlen(str);
-			#ifdef USE_TCL_BYTE_ARRAYS
+#ifdef USE_TCL_BYTE_ARRAYS
 			result = Tcl_NewByteArrayObj(str, v->len);
-			#else
+#else
 			result = Tcl_NewStringObj(str, v->len);
-			#endif
+#endif
 			if (v->value && v->type & SCRIPT_FREE) free(v->value);
 			break;
 		}
@@ -367,11 +367,11 @@ static Tcl_Obj *c_to_tcl_var(Tcl_Interp *myinterp, script_var_t *v)
 
 			result = Tcl_NewListObj(0, NULL);
 			while (str && *str) {
-				#ifdef USE_TCL_BYTE_ARRAYS
+#ifdef USE_TCL_BYTE_ARRAYS
 				element = Tcl_NewByteArrayObj(*str, strlen(*str));
-				#else
+#else
 				element = Tcl_NewStringObj(*str, strlen(*str));
-				#endif
+#endif
 				Tcl_ListObjAppendElement(myinterp, result, element);
 				str++;
 			}
@@ -379,11 +379,11 @@ static Tcl_Obj *c_to_tcl_var(Tcl_Interp *myinterp, script_var_t *v)
 		}
 		case SCRIPT_BYTES: {
 			byte_array_t *bytes = v->value;
-			#ifdef USE_TCL_BYTE_ARRAYS
+#ifdef USE_TCL_BYTE_ARRAYS
 			result = Tcl_NewByteArrayObj(bytes->bytes, bytes->len);
-			#else
+#else
 			result = Tcl_NewStringObj(bytes->bytes, bytes->len);
-			#endif
+#endif
 			if (bytes->do_free) free(bytes->bytes);
 			if (v->type & SCRIPT_FREE) free(bytes);
 			break;
@@ -438,7 +438,7 @@ static int tcl_to_c_var(Tcl_Interp *myinterp, Tcl_Obj *obj, script_var_t *var, i
 			char *str;
 			int len;
 
-			#ifdef USE_TCL_BYTE_ARRAYS
+#ifdef USE_TCL_BYTE_ARRAYS
 				char *bytes;
 
 				bytes = Tcl_GetByteArrayFromObj(obj, &len);
@@ -446,9 +446,9 @@ static int tcl_to_c_var(Tcl_Interp *myinterp, Tcl_Obj *obj, script_var_t *var, i
 				memcpy(str, bytes, len);
 				str[len] = 0;
 				var->type |= SCRIPT_FREE;
-			#else
+#else
 				str = Tcl_GetStringFromObj(obj, &len);
-			#endif
+#endif
 			var->value = str;
 			var->len = len;
 			break;
@@ -458,11 +458,11 @@ static int tcl_to_c_var(Tcl_Interp *myinterp, Tcl_Obj *obj, script_var_t *var, i
 
 			byte_array = (byte_array_t *)malloc(sizeof(*byte_array));
 
-			#ifdef USE_TCL_BYTE_ARRAYS
+#ifdef USE_TCL_BYTE_ARRAYS
 			byte_array->bytes = Tcl_GetByteArrayFromObj(obj, &byte_array->len);
-			#else
+#else
 			byte_array->bytes = Tcl_GetStringFromObj(obj, &byte_array->len);
-			#endif
+#endif
 
 			var->value = byte_array;
 			var->type |= SCRIPT_FREE;
@@ -597,25 +597,6 @@ static int party_tcl(partymember_t *p, char *nick, user_t *u, char *cmd, char *t
 		partymember_printf(p, "Tcl: %s\n\n", str);
 	}
 	return(0);
-}
-
-static void tclscript_report(int idx, int details)
-{
-	/*
-	char script[512];
-	char *reported;
-
-	if (!details) {
-		dprintf(idx, "Using Tcl version %d.%d (by header)\n", TCL_MAJOR_VERSION, TCL_MINOR_VERSION);
-		return;
-	}
-
-	dprintf(idx, "    Using Tcl version %d.%d (by header)\n", TCL_MAJOR_VERSION, TCL_MINOR_VERSION);
-	sprintf(script, "return \"    Library: [info library]\\n    Reported version: [info tclversion]\\n    Reported patchlevel: [info patchlevel]\"");
-	Tcl_GlobalEval(ginterp, script);
-	reported = Tcl_GetStringResult(ginterp);
-	dprintf(idx, "%s\n", reported);
-	*/
 }
 
 typedef struct tcl_listener {

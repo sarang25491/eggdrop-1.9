@@ -2,7 +2,6 @@
  * server.c implements the eggdrop module interface
  */
 
-#define MODULE_NAME "server"
 #define MAKING_SERVER
 #include <eggdrop/eggdrop.h>
 #include <string.h>
@@ -15,8 +14,6 @@
 #include "channels.h"
 
 #define start server_LTX_start
-
-eggdrop_t *egg = NULL;
 
 current_server_t current_server = {0};
 server_config_t server_config = {0};

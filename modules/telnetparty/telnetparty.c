@@ -1,5 +1,7 @@
 #include <eggdrop/eggdrop.h>
 #include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
 #include "telnetparty.h"
 
 telnet_config_t telnet_config = {0};

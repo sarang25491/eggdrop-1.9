@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggdrop.c,v 1.9 2003/12/17 07:39:14 wcc Exp $";
+static const char rcsid[] = "$Id: eggdrop.c,v 1.10 2003/12/17 08:39:48 wcc Exp $";
 #endif
 
 #include <stdlib.h>
@@ -44,19 +44,3 @@ int eggdrop_event(const char *event)
 {
 	return bind_check(BT_event, NULL, event, event);
 }
-
-eggdrop_t *eggdrop_new(void)
-{
-	eggdrop_t *egg;
-
-	egg = (eggdrop_t *) malloc(sizeof(eggdrop_t));
-	memset(egg, 0, sizeof(eggdrop_t));
-	return(egg);
-}
-
-eggdrop_t *eggdrop_delete(eggdrop_t * egg)
-{
-	free_null(egg);
-	return(NULL);
-}
-

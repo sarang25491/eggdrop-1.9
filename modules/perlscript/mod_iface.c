@@ -6,8 +6,6 @@
 #include <stdlib.h>
 #include <eggdrop/eggdrop.h>
 
-#define MODULE_NAME "perlscript"
-
 /* Stuff from perlscript.c. */
 extern int perlscript_init();
 extern int perlscript_destroy();

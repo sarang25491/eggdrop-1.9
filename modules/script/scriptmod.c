@@ -1,7 +1,5 @@
 #include <eggdrop/eggdrop.h>
 
-#define MODULE_NAME "script"
-
 extern script_command_t script_bind_cmds[], script_net_cmds[],
 	script_new_user_cmds[], script_party_cmds[], script_timer_cmds[],
 	script_log_cmds[], script_config_cmds[], script_misc_cmds[];
@@ -17,10 +15,6 @@ static script_command_t script_mod_cmds[] = {
 	{"", "module_add_dir", (Function) module_add_dir, NULL, 1, "s", "dir", SCRIPT_INTEGER, 0},
 	{0}
 };
-
-static void script_report(int idx, int details)
-{
-}
 
 EXPORT_SCOPE int script_LTX_start(egg_module_t *modinfo);
 
