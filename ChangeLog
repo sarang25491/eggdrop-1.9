@@ -1,3 +1,36 @@
+2001-10-28 13:30  Federico Mennite <ite@techmonkeys.org>
+
+	* configure.ac, lib/Makefile.am, lib/adns/.cvsignore,
+	lib/adns/COPYING, lib/adns/GPL-vs-LGPL, lib/adns/Makefile.am,
+	lib/adns/README, lib/adns/README.eggdrop, lib/adns/README.ircd,
+	lib/adns/adns.h, lib/adns/check.c, lib/adns/dlist.h,
+	lib/adns/event.c, lib/adns/general.c, lib/adns/internal.h,
+	lib/adns/parse.c, lib/adns/query.c, lib/adns/reply.c,
+	lib/adns/setup.c, lib/adns/transmit.c, lib/adns/tvarith.h,
+	lib/adns/types.c, lib/compat/.cvsignore, lib/compat/Makefile.am,
+	lib/compat/compat.h, lib/compat/inet_aton.c,
+	lib/compat/inet_aton.h, lib/compat/inet_ntop.c,
+	lib/compat/inet_ntop.h, lib/compat/inet_pton.c,
+	lib/compat/inet_pton.h, lib/compat/memcpy.c, lib/compat/memcpy.h,
+	lib/compat/memset.c, lib/compat/memset.h, lib/compat/snprintf.c,
+	lib/compat/snprintf.h, lib/compat/strcasecmp.c,
+	lib/compat/strcasecmp.h, lib/compat/strftime.c,
+	lib/compat/strftime.h, lib/compat/strncasecmp.c,
+	lib/compat/strncasecmp.h, lib/egglib/.cvsignore,
+	lib/egglib/Makefile.am, lib/egglib/avl.c, lib/egglib/avl.h,
+	lib/egglib/hash_table.c, lib/egglib/hash_table.h,
+	lib/egglib/hash_table_test.c, lib/egglib/linked_list.c,
+	lib/egglib/linked_list.h, lib/egglib/linked_list_test.c,
+	lib/egglib/mempool.c, lib/egglib/mempool.h,
+	lib/egglib/mempool_test.c, lib/egglib/msprintf.c,
+	lib/egglib/msprintf.h, lib/egglib/mstack.c, lib/egglib/mstack.h,
+	modules/perlscript/perlscript.c, modules/tclscript/tclscript.c,
+	src/Makefile.am, src/dns.c, src/logfile.c, src/main.c, src/main.h,
+	src/modules.c, src/net.c, src/registry.c, src/script.c:
+
+	Renamed src/adns, src/compat, src/egglib to lib/adns, lib/compat,
+	lib/egglib respectively.  
+
 2001-10-28 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
@@ -178,7 +211,7 @@
 
 2001-10-22 01:49  stdarg <stdarg@techmonkeys.org>
 
-	* src/: modules.c, egglib/msprintf.h, egglib/mstack.h:
+	* src/modules.c:
 
 	* Moved msprintf and mstack to the function table (boo this is
 	temporary I hope) 
@@ -212,9 +245,7 @@
 
 2001-10-21 16:05  Tothwolf <tothwolf@techmonkeys.org>
 
-	* Makefile.am, scripts/Makefile.am, src/Makefile.am,
-	src/adns/Makefile.am, src/compat/Makefile.am,
-	src/egglib/Makefile.am:
+	* Makefile.am, scripts/Makefile.am, src/Makefile.am:
 
 	* cleanups in Makefile.am files 
 
@@ -404,12 +435,6 @@
 	* applied the pidfile patch from eggdrop1.6 
 	* added stdarg to AUTHORS (wish we had a realname <g>) 
 
-2001-10-19 02:01  Tothwolf <tothwolf@techmonkeys.org>
-
-	* src/compat/strftime.c:
-
-	* update strftime.c to version from glibc 2.2.4 
-
 2001-10-19 01:55  Tothwolf <tothwolf@techmonkeys.org>
 
 	* acinclude.m4, configure.ac, src/botcmd.c, src/botmsg.c,
@@ -417,17 +442,7 @@
 	src/dns.c, src/eggdrop.h, src/logfile.c, src/main.c, src/misc.c,
 	src/modules.c, src/net.c, src/stat.h, src/tcl.c, src/tcldcc.c,
 	src/tclhash.c, src/tclmisc.c, src/tcluser.c, src/userent.c,
-	src/userrec.c, src/users.c, src/adns/setup.c, src/adns/types.c,
-	src/compat/Makefile.am, src/compat/compat.h,
-	src/compat/gnu_strftime.c, src/compat/inet_aton.c,
-	src/compat/inet_aton.h, src/compat/inet_ntop.c,
-	src/compat/inet_ntop.h, src/compat/inet_pton.c,
-	src/compat/inet_pton.h, src/compat/memcpy.c, src/compat/memcpy.h,
-	src/compat/memset.c, src/compat/memset.h, src/compat/snprintf.c,
-	src/compat/snprintf.h, src/compat/strcasecmp.c,
-	src/compat/strcasecmp.h, src/compat/strftime.c,
-	src/compat/strftime.h, src/compat/strncasecmp.c,
-	src/compat/strncasecmp.h:
+	src/userrec.c, src/users.c:
 
 	* removed obsolete EGG_CHECK_FUNC_VSPRINTF autoconf macro 
 	* removed obsolete EGG_HEADER_STDC autoconf macro 
@@ -512,8 +527,7 @@
 2001-10-18 09:06  stdarg <stdarg@techmonkeys.org>
 
 	* src/: Makefile.am, chanprog.c, eggdrop.h, logfile.c, main.c,
-	misc.c, proto.h, script.c, script_api.h, tcl.c, tclmisc.c,
-	egglib/msprintf.c:
+	misc.c, proto.h, script.c, script_api.h, tcl.c, tclmisc.c:
 
 	Fixed a bug in msprintf.  Added SCRIPT_FREE_VAR flag, to
 	automatically free a script_var_t.  Added first config variables
@@ -673,8 +687,7 @@
 
 2001-10-14 10:22  Tothwolf <tothwolf@techmonkeys.org>
 
-	* Makefile.am, src/Makefile.am, src/adns/Makefile.am,
-	src/compat/Makefile.am:
+	* Makefile.am, src/Makefile.am:
 
 	* more minor Makefile.am cleanups 
 	* added .cvsignore for tclscript.mod 
@@ -685,8 +698,7 @@
 
 	* configure.in, src/Makefile.am, src/main.c, src/modules.c,
 	src/registry.c, src/registry.h, src/script.c, src/script_api.h,
-	src/tcl.c, src/egglib/Makefile.am, src/egglib/msprintf.c,
-	src/egglib/msprintf.h, src/egglib/mstack.c, src/egglib/mstack.h:
+	src/tcl.c:
 
 	Added code for tclscript.mod Made it compile correctly with
 	configure et al (hopefully...) Removed stuff for encodings from
@@ -794,8 +806,7 @@
 2001-10-11 11:34  Tothwolf <tothwolf@techmonkeys.org>
 
 	* src/: botnet.c, cmds.c, dcc.c, dccutil.c, dns.c, eggdrop.h,
-	flags.c, misc.c, tcldcc.c, tclhash.c, userent.c,
-	egglib/hash_table.c:
+	flags.c, misc.c, tcldcc.c, tclhash.c, userent.c:
 
 	* Use calloc() instead of malloc_memset macro 
 
@@ -804,12 +815,6 @@
 	* src/: modules.c, tclhash.c, tclhash.h:
 
 	Got rid of the last remnants of H_dcc.  
-
-2001-10-10 17:07  stdarg <stdarg@techmonkeys.org>
-
-	* src/egglib/linked_list.c:
-
-	Need to initialize cursors even when the pointer is passed in.  
 
 2001-10-10 14:50  Tothwolf <tothwolf@techmonkeys.org>
 
@@ -851,11 +856,7 @@
 	src/match.c, src/mem.c, src/misc.c, src/modules.c, src/modules.h,
 	src/net.c, src/proto.h, src/tcl.c, src/tcldcc.c, src/tclhash.c,
 	src/tclhash.h, src/tcluser.c, src/userent.c, src/userrec.c,
-	src/users.c, src/users.h, src/compat/Makefile.am,
-	src/compat/compat.h, src/compat/inet_aton.c, src/compat/memcpy.c,
-	src/compat/memcpy.h, src/compat/memset.c, src/compat/memset.h,
-	src/compat/strcasecmp.c, src/egglib/hash_table.c,
-	src/egglib/linked_list.c:
+	src/users.c, src/users.h:
 
 	all expmem functions and support removed all memory status/debugging
 	code removed all #ifdef DEBUG_MEM code removed 
@@ -921,13 +922,7 @@
 	intl/ref-add.sin, intl/ref-del.sin, intl/textdomain.c,
 	po/Makefile.in.in, po/eggdrop.pot, scripts/.cvsignore,
 	scripts/Makefile.am, scripts/Makefile.in, src/.cvsignore,
-	src/Makefile.am, src/Makefile.in, src/eggdrop.h, src/modules.c,
-	src/adns/.cvsignore, src/adns/Makefile.am, src/adns/Makefile.in,
-	src/adns/adns.make, src/compat/.cvsignore, src/compat/Makefile.am,
-	src/compat/Makefile.in, src/compat/inet_aton.c,
-	src/compat/memcpy.c, src/compat/memset.c, src/compat/snprintf.c,
-	src/compat/strcasecmp.c, src/egglib/.cvsignore,
-	src/egglib/Makefile.am:
+	src/Makefile.am, src/Makefile.in, src/eggdrop.h, src/modules.c:
 
 	* Refactored the tree (especially src/modules.c) to use the libltdl 
 	  wrapper. Modules are configured to be lt_dlopened or dl_preopened
@@ -1289,7 +1284,7 @@
 
 2001-08-15 06:13  Federico Mennite <ite@techmonkeys.org>
 
-	* .cvsignore, src/adns/.cvsignore:
+	* .cvsignore:
 
 	Added more entries in .cvsignore files.  
 
@@ -1316,8 +1311,7 @@
 
 2001-08-13 22:51  Federico Mennite <ite@techmonkeys.org>
 
-	* .cvsignore, doc/.cvsignore, scripts/.cvsignore, src/.cvsignore,
-	src/adns/.cvsignore, src/compat/.cvsignore, src/egglib/.cvsignore:
+	* .cvsignore, doc/.cvsignore, scripts/.cvsignore, src/.cvsignore:
 
 	Added .cvsignore files to ease committer's life.  
 
@@ -1352,7 +1346,7 @@
 	doc/settings/CONTENTS, doc/settings/contents,
 	doc/settings/core.settings, help/core.help, src/Makefile.in,
 	src/eggdrop.h, src/lang.h, src/language.c, src/main.c, src/main.h,
-	src/mem.c, src/modules.c, src/proto.h, src/compat/Makefile.in:
+	src/mem.c, src/modules.c, src/proto.h:
 
 	Good bye language.c, lang.h, we knew you so well yet hated you 
 
@@ -1513,26 +1507,6 @@
 	#defines with the respective string entries in english.*.lang and
 	removed them.  
 
-2001-08-10 14:50  Dobos Lorant <drummer@buli.sk>
-
-	* src/adns/: dlist.h, query.c, setup.c:
-
-	changed LIST_INIT to ADNS_LIST_INIT to avoid warning messages on
-	freebsd 
-
-2001-08-10 14:33  Dobos Lorant <drummer@buli.sk>
-
-	* src/: adns/setup.c, compat/inet_ntop.c:
-
-	cygwin: checking resolv.conf in the current dir, avoid
-	arpa/nameser.h 
-
-2001-08-09 13:44  Dobos Lorant <drummer@buli.sk>
-
-	* src/adns/event.c:
-
-	blocking recvfrom() on cygwin 
-
 2001-08-09 04:07  Jeff Fisher <guppy@techmonkeys.org>
 
 	* src/patch.h:
@@ -1602,32 +1576,21 @@
 2001-07-31 16:40  Jeff Fisher <guppy@techmonkeys.org>
 
 	* doc/UPDATES1.6, src/cmds.c, src/main.c, src/misc.c,
-	src/modules.c, src/patch.h, src/proto.h, src/tclmisc.c,
-	src/compat/inet_pton.c:
+	src/modules.c, src/patch.h, src/proto.h, src/tclmisc.c:
 
 	sync'd 1.7 to the latest 1.6 
-
-2001-07-29 20:00  Dobos Lorant <drummer@buli.sk>
-
-	* src/adns/check.c:
-
-	warning in adns/check.c 
 
 2001-07-29 19:43  Dobos Lorant <drummer@buli.sk>
 
 	* Makefile.in, aclocal.m4, configure, configure.in,
-	src/Makefile.in, src/compat/inet_ntop.c, src/compat/inet_ntop.h,
-	src/compat/inet_pton.c, src/compat/inet_pton.h:
+	src/Makefile.in:
 
 	autoconf, Makefile, compat/ changes 
 
 2001-07-27 00:46  Dobos Lorant <drummer@buli.sk>
 
 	* Makefile.in, aclocal.m4, config.h.in, configure, configure.in,
-	src/net.c, src/adns/Makefile.in, src/adns/README.eggdrop,
-	src/adns/acconfig.h, src/adns/aclocal.m4, src/adns/adns.h,
-	src/adns/config.h.in, src/adns/configure, src/adns/configure.in,
-	src/adns/event.c, src/adns/internal.h:
+	src/net.c:
 
 	adns and eggdrop configure merge 
 
@@ -1647,22 +1610,6 @@
 
 	Finished guppy's seen/wire cleanup.  
 
-2001-07-26 17:39  Dobos Lorant <drummer@buli.sk>
-
-	* src/compat/: inet_ntop.c, inet_ntop.h, inet_pton.c, inet_pton.h:
-
-	inet_pton, inet_ntop 
-
-2001-07-26 17:06  Dobos Lorant <drummer@buli.sk>
-
-	* src/adns/: COPYING, GPL-vs-LGPL, Makefile.in, README,
-	README.eggdrop, README.ircd, acconfig.h, aclocal.m4, adns.h,
-	adns.make, check.c, config.h.in, configure, configure.in, dlist.h,
-	event.c, general.c, internal.h, parse.c, query.c, reply.c, setup.c,
-	transmit.c, tvarith.h, types.c:
-
-	adns library 
-
 2001-07-26 17:05  Dobos Lorant <drummer@buli.sk>
 
 	* Makefile.in, aclocal.m4, config.h.in, configure, configure.in,
@@ -1674,8 +1621,7 @@
 
 	* src/: Makefile.in, botnet.c, cmds.c, dcc.c, dccutil.c, dns.c,
 	dns.h, eggdrop.h, main.c, modules.c, net.c, proto.h, tcl.c,
-	tcldcc.c, tclmisc.c, tcluser.c, userent.c, compat/Makefile.in,
-	compat/compat.h, compat/inet_aton.h:
+	tcldcc.c, tclmisc.c, tcluser.c, userent.c:
 
 	added adns dir 
 
@@ -1691,15 +1637,6 @@
 	src/tclegg.h, src/tclmisc.c:
 
 	sync'd the lastest 1.6 cvs w/ 1.7 
-
-2001-07-25 20:32  stdarg <stdarg@techmonkeys.org>
-
-	* src/egglib/: avl.c, avl.h, hash_table.c, hash_table.h,
-	hash_table_test.c, libegg.so, linked_list.c, linked_list.h,
-	linked_list_test.c, mempool.c, mempool.h, mempool_test.c,
-	libegg.so:
-
-	[no log message] 
 
 2001-07-25 04:21  Jeff Fisher <guppy@techmonkeys.org>
 
@@ -2438,12 +2375,7 @@
 	src/modules.h, src/patch.h, src/proto.h, src/stat.h, src/tandem.h,
 	src/tcl.c, src/tcldcc.c, src/tclegg.h, src/tclhash.c,
 	src/tclhash.h, src/tclmisc.c, src/tcluser.c, src/userent.c,
-	src/userrec.c, src/users.c, src/users.h, src/compat/compat.h,
-	src/compat/inet_aton.c, src/compat/inet_aton.h,
-	src/compat/memcpy.c, src/compat/memcpy.h, src/compat/memset.c,
-	src/compat/memset.h, src/compat/snprintf.c, src/compat/snprintf.h,
-	src/compat/strcasecmp.c, src/compat/strcasecmp.h,
-	src/compat/strftime.c, text/banner, text/motd:
+	src/userrec.c, src/users.c, src/users.h, text/banner, text/motd:
 
 	lets update the copyright info for 2001 k? :P~ 
 
@@ -3610,13 +3542,6 @@
 
 	fabian: applied ipv6_masks patch, revision 3 
 
-2000-09-18 10:06  Fabian Knittel <fknittel@gmx.de>
-
-	* src/compat/gnu_strftime.c:
-
-	fabian: thanks to Tothwolf, I remembered to finally complete
-	applying the strftime_compat patch. probably the third attempt. 8) 
-
 2000-09-15 20:08  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.5, src/patch.h:
@@ -3628,13 +3553,6 @@
 	* doc/UPDATES1.5, src/botmsg.c, src/patch.h:
 
 	fabian: applied udef_inactivechan_fix patch 
-
-2000-09-12 15:34  Fabian Knittel <fknittel@gmx.de>
-
-	* src/compat/: strftime.c, strftime.h:
-
-	forgot to add the new files strftime.c and strftime.h, belonging to
-	the strftime_compat patch.  
 
 2000-09-12 15:29  Fabian Knittel <fknittel@gmx.de>
 
@@ -3654,10 +3572,7 @@
 
 	* config.h.in, configure, configure.in, doc/UPDATES1.5,
 	src/Makefile.in, src/cmds.c, src/main.h, src/misc.c, src/patch.h,
-	src/tclmisc.c, src/users.c, src/compat/Makefile.in,
-	src/compat/compat.h, src/compat/inet_aton.h, src/compat/memcpy.h,
-	src/compat/memset.h, src/compat/snprintf.h,
-	src/compat/strcasecmp.h:
+	src/tclmisc.c, src/users.c:
 
 	fabian: strftime_compat patch 
 
@@ -3701,8 +3616,7 @@
 
 	* configure.in, doc/UPDATES1.5, src/Makefile.in, src/botnet.c,
 	src/dcc.c, src/dns.c, src/dns.h, src/eggdrop.h, src/main.h,
-	src/net.c, src/patch.h, src/tcldcc.c, src/tclmisc.c, src/userent.c,
-	src/compat/inet_aton.c, src/compat/memset.c:
+	src/net.c, src/patch.h, src/tcldcc.c, src/tclmisc.c, src/userent.c:
 
 	fabian: cleanup_types patch 
 
@@ -4137,8 +4051,7 @@
 2000-07-23 20:47  Fabian Knittel <fknittel@gmx.de>
 
 	* Makefile.in, aclocal.m4, doc/Makefile.in, doc/UPDATES1.4,
-	scripts/Makefile.in, src/Makefile.in, src/patch.h,
-	src/compat/Makefile.in:
+	scripts/Makefile.in, src/Makefile.in, src/patch.h:
 
 	1.4 resync, autoconf_shell_fix patch 
 
@@ -4445,7 +4358,7 @@
 
 2000-05-13 20:28  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/compat/snprintf.h:
+	* doc/UPDATES1.5, src/patch.h:
 
 	snprintf_fix2 patch 
 
@@ -4501,7 +4414,7 @@
 
 2000-05-07 00:07  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/compat/snprintf.h:
+	* doc/UPDATES1.5, src/patch.h:
 
 	SuperS' vafix patch 
 
@@ -4536,7 +4449,7 @@
 2000-05-06 22:00  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.5, src/botnet.c, src/cmds.c, src/dcc.c, src/dns.c,
-	src/patch.h, src/compat/snprintf.h:
+	src/patch.h:
 
 	misc_fix patch 
 
@@ -4707,8 +4620,7 @@
 
 2000-04-05 19:40  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/compat/README.snprintf,
-	src/compat/snprintf.c, src/compat/snprintf.h:
+	* doc/UPDATES1.5, src/patch.h:
 
 	snprintf_fix patch 
 
@@ -4770,8 +4682,7 @@
 
 2000-03-24 23:00  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/Makefile.in, src/patch.h,
-	src/compat/Makefile.in, src/compat/inet_aton.c:
+	* doc/UPDATES1.5, src/Makefile.in, src/patch.h:
 
 	conf_make_fix7 patch 
 
@@ -4783,11 +4694,7 @@
 	src/dccutil.c, src/dns.c, src/eggdrop.h, src/flags.c, src/main.c,
 	src/main.h, src/mem.c, src/misc.c, src/modules.c, src/net.c,
 	src/patch.h, src/proto.h, src/tcl.c, src/tcldcc.c, src/tclhash.c,
-	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c,
-	src/compat/Makefile.in, src/compat/inet_aton.c,
-	src/compat/snprintf.c, src/compat/compat.h, src/compat/memcpy.c,
-	src/compat/memcpy.h, src/compat/memset.c, src/compat/memset.h,
-	src/compat/strcasecmp.c, src/compat/strcasecmp.h:
+	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c:
 
 	conf_make_fix6 patch 
 
@@ -4811,9 +4718,7 @@
 	scripts/Makefile.in, src/Makefile.in, src/botmsg.c, src/dcc.c,
 	src/dccutil.c, src/dns.c, src/main.h, src/misc.c, src/misc_file.c,
 	src/misc_file.h, src/modules.c, src/patch.h, src/proto.h,
-	src/tclegg.h, src/compat/Makefile.in, src/compat/README.snprintf,
-	src/compat/inet_aton.c, src/compat/inet_aton.h,
-	src/compat/snprintf.c, src/compat/snprintf.h:
+	src/tclegg.h:
 
 	configure_makefile_fix3 patch 
 
