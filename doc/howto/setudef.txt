@@ -1,0 +1,52 @@
+CREATING USER-DEFINED CHANNEL SETTINGS
+
+User-defined channel settings (udefs from now on) are great. However, they
+can be tricky to implement correctly, so I thought a little HOWTO was in order.
+In this HOWTO, we'll implement a topic-scan script that uses udefs. It will use
+all three types of udefs (flags, integers, and strings), and show how to create
+them and get their values when we need them.
+
+# This first section takes care of creating the udefs.
+if {![info exists topicscan_loaded]} {
+	# This code will be executed every time the bot starts, because
+	# the topicscan_loaded variable won't exist until after we set it here.
+	# This is important, because you must re-create your udefs every time
+	# the bot loads, or the stored settings will be lost.
+	setudef flag topicscan
+	setudef int strikes
+	setudef str badwords
+
+	bind topic - * topicscan
+
+	set topicscan_loaded yup
+}
+
+proc topicscan {nick uhost hand chan topic} {
+	# We want to check the flag value of topicscan. Zero means disabled (-)
+	# and non-zero means enabled (+).
+	if {[channel get $chan topicscan] == 0} {return 0}
+
+	# Now we want to get the "strikes" setting. That tells how many bad
+	# words are allowed before we take action.
+	set strikes [channel get $chan strikes]
+
+	# And finally, the user-defined list of words that are considered bad.
+	set words [channel get $chan badwords]
+
+	# We want to convert the words from a string to a list.
+	set words [split $words]
+
+	# Now count the number of bad words in the topic.
+	set badwords 0
+	foreach word $words {
+		if {[string match "*$word*" $topic] == 1} { incr badwords }
+	}
+
+	# If they used too many bad words, take action.
+	if {$badwords >= $strikes} {
+		set regexpr [join $words |]
+		regsub -all $words $topic "flower" newtopic
+		putserv "TOPIC $chan :$newtopic"
+	}
+	return 0
+}
