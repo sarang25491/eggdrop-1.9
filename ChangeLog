@@ -1,3 +1,12 @@
+2001-10-17 00:19  stdarg <stdarg@techmonkeys.org>
+
+	* src/: modules.c, tclhash.c, tclhash.h, mod/module.h,
+	mod/filesys.mod/filesys.c, mod/notes.mod/notes.c,
+	mod/server.mod/server.h, mod/transfer.mod/transfer.c:
+
+	Moved load and unload bind tables to modules.c.  Removed old ctcp
+	table.  
+
 2001-10-16 11:42  Tothwolf <tothwolf@techmonkeys.org>
 
 	* src/mod/server.mod/: server.c, servmsg.c:
