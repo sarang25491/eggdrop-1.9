@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: ircparty.c,v 1.9 2004/06/15 19:19:16 wingman Exp $";
+static const char rcsid[] = "$Id: ircparty.c,v 1.10 2004/06/17 02:01:14 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -163,7 +163,7 @@ static int dns_result(void *client_data, const char *ip, char **hosts)
 
 static int process_results(irc_session_t *session)
 {
-	char *fakehost;
+	char fakehost[512];
 
 	if (!session->ident || !session->host) return(0);
 
@@ -172,7 +172,8 @@ static int process_results(irc_session_t *session)
 		return(0);
 	}
 	if (session->flags & STEALTH_LOGIN) {
-		fakehost = msprintf("-ircparty!%s@%s", session->ident, session->host);
+		snprintf(fakehost, sizeof(fakehost), "-ircparty!%s@%s", session->ident, session->host);
+		fakehost[sizeof(fakehost)-1] = 0;
 		if (!user_lookup_by_irchost(fakehost)) {
 			sockbuf_delete(session->idx);
 			return(0);

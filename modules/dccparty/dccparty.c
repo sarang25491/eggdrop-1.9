@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dccparty.c,v 1.4 2003/12/18 03:54:45 wcc Exp $";
+static const char rcsid[] = "$Id: dccparty.c,v 1.5 2004/06/17 02:01:13 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -154,7 +154,8 @@ static int process_results(dcc_session_t *session)
 		return(0);
 	}
 	if (session->flags & STEALTH_LOGIN) {
-		fakehost = msprintf("-dcc!%s@%s", session->ident, session->host);
+		snprintf(fakehost, sizeof(fakehost), "-dcc!%s@%s", session->ident, session->host);
+		fakehost[sizeof(fakehost)-1] = 0;
 		if (!user_lookup_by_irchost(fakehost)) {
 			sockbuf_delete(session->idx);
 			return(0);
