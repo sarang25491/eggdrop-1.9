@@ -1,3 +1,43 @@
+2002-04-25 04:25  stdarg <stdarg@techmonkeys.org>
+
+	* testcode/base64.h:
+
+	
+	* Forgot a file heh 
+
+2002-04-25 04:24  stdarg <stdarg@techmonkeys.org>
+
+	* testcode/dns.c:
+
+	
+	* Some simple dns resolution code 
+
+2002-04-25 04:19  stdarg <stdarg@techmonkeys.org>
+
+	* testcode/: Makefile, base64.c, chat.c, client.c, http.c, ipv6.c,
+	linemode.c, my_socket.c, my_socket.h, sclient.c, sockbuf.c,
+	sockbuf.h, socks4.c, socks5.c:
+
+	
+	* sclient.c - test program to telnet using a proxy 
+	* http.c/base64.c - http anonymous and authenticated proxies 
+	* socks5.c - socks5 proxy with support for username/password
+	authentication, ipv4, ipv6, and remote hostname resolution 
+	* socks4.c socks4 proxy (no authentication) 
+
+2002-04-25 04:06  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/script.c, lib/eggdrop/script.h, lib/egglib/mstack.c,
+	lib/egglib/mstack.h, modules/perlscript/mod_iface.c,
+	modules/perlscript/perlscript.c, modules/tclscript/tclscript.c,
+	src/dcc.c, src/egg_timer.c, src/logfile.c, src/proto.h, src/tcl.c,
+	src/tclhash.c, testcode/sockbuf.c, testcode/sockbuf.h:
+
+	
+	* Implemented string/int variable linking for the tcl module 
+	* Started working on linking variables in the perl module 
+	* Some minor fixes as I came across them 
+
 2002-04-17 23:10  Federico Mennite <ite@techmonkeys.org>
 
 	* modules/channels/tclchan.c:
