@@ -1,3 +1,16 @@
+2001-12-20 05:02  Jeff Fisher <guppy@techmonkeys.org>
+
+	* doc/UPDATES1.6:
+
+	forgot UPDATES1.6 
+
+2001-12-20 05:01  Jeff Fisher <guppy@techmonkeys.org>
+
+	* src/misc.c:
+
+	applied my patch from eggdrop1.6 that dealt with cleaning up
+	show_motd and a bug in show_banner that wasn't reseting help_subst 
+
 2001-12-20 04:57  Jeff Fisher <guppy@techmonkeys.org>
 
 	* doc/UPDATES1.6, modules/irc/tclirc.c, modules/server/tclserv.c,
