@@ -29,6 +29,8 @@ static Tcl_Obj *my_resolve_var(Tcl_Interp *myinterp, script_var_t *v);
 static Tcl_Interp *ginterp; /* Our global interpreter. */
 static char *my_syntax_error = "syntax error";
 
+static char *error_logfile = NULL;
+
 static int my_load_script(registry_entry_t *entry, char *fname)
 {
 	int result;
@@ -134,9 +136,35 @@ static int my_tcl_callbacker(script_callback_t *me, ...)
 		Tcl_ListObjAppendElement(cd->myinterp, final_command, arg);
 	}
 
-	Tcl_EvalObjEx(cd->myinterp, final_command, TCL_EVAL_GLOBAL);
-	result = Tcl_GetObjResult(cd->myinterp);
-	Tcl_GetIntFromObj(cd->myinterp, result, &retval);
+	n = Tcl_EvalObjEx(cd->myinterp, final_command, TCL_EVAL_GLOBAL | TCL_EVAL_DIRECT);
+	if (n == TCL_OK) {
+		result = Tcl_GetObjResult(cd->myinterp);
+		Tcl_GetIntFromObj(cd->myinterp, result, &retval);
+	}
+	else {
+		FILE *fp;
+		char *errmsg;
+
+		errmsg = Tcl_GetStringResult(cd->myinterp);
+		putlog(LOG_MISC, "*", "TCL Error: %s", errmsg);
+
+		if (error_logfile && error_logfile[0]) {
+			time_t timenow = time(NULL);
+			fp = fopen(error_logfile, "a");
+			if (fp) {
+				errmsg = Tcl_GetVar(cd->myinterp, "errorInfo", TCL_GLOBAL_ONLY);
+				fprintf(fp, "%s", asctime(localtime(&timenow)));
+				fprintf(fp, "%s\n\n", errmsg);
+				fclose(fp);
+			}
+			else {
+				putlog(LOG_MISC, "*", "Error opening TCL error log (%s)!", error_logfile);
+			}
+		}
+	}
+
+	/* Clear any errors or stray messages. */
+	Tcl_ResetResult(cd->myinterp);
 
 	/* If it's a one-time callback, delete it. */
 	if (me->flags & SCRIPT_CALLBACK_ONCE) me->delete(me);
@@ -481,6 +509,10 @@ char *tclscript_LTX_start(Function *global_funcs)
 	/* When tcl is gone from the core, this will be uncommented. */
 	/* interp = Tcl_CreateInterp(); */
 	ginterp = interp;
+
+	malloc_strcpy(error_logfile, "logs/tcl_errors.log");
+	Tcl_LinkVar(ginterp, "error_logfile", (char *)&error_logfile, TCL_LINK_STRING);
+
 	registry_add_simple_chains(my_functions);
 	registry_lookup("script", "playback", &journal_playback, &journal_playback_h);
 	if (journal_playback) journal_playback(journal_playback_h, journal_table);

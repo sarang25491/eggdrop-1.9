@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.80 2001/10/20 21:57:15 stdarg Exp $
+ * $Id: modules.c,v 1.81 2001/10/21 03:44:30 stdarg Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -362,22 +362,22 @@ Function global_table[] =
   (Function) add_hook,
   (Function) del_hook,
   (Function) 0,
-  (Function) & H_filt,		/* p_tcl_bind_list *			*/
+  (Function) 0,		/* p_tcl_bind_list *			*/
   /* 176 - 179 */
-  (Function) & H_chon,		/* p_tcl_bind_list *			*/
-  (Function) & H_chof,		/* p_tcl_bind_list *			*/
+  (Function) 0,		/* p_tcl_bind_list *			*/
+  (Function) 0,		/* p_tcl_bind_list *			*/
   (Function) 0,		/* p_tcl_bind_list *			*/
   (Function) 0,		/* p_tcl_bind_list *			*/
   /* 180 - 183 */
   (Function) 0,		/* p_tcl_bind_list *			*/
   (Function) 0,		/* p_tcl_bind_list *			*/
   (Function) 0,		/* p_tcl_bind_list *			*/
-  (Function) & H_bot,		/* p_tcl_bind_list *			*/
-  /* 184 - 187 */
-  (Function) & H_link,		/* p_tcl_bind_list *			*/
-  (Function) & H_disc,		/* p_tcl_bind_list *			*/
   (Function) 0,		/* p_tcl_bind_list *			*/
-  (Function) & H_nkch,		/* p_tcl_bind_list *			*/
+  /* 184 - 187 */
+  (Function) 0,		/* p_tcl_bind_list *			*/
+  (Function) 0,		/* p_tcl_bind_list *			*/
+  (Function) 0,		/* p_tcl_bind_list *			*/
+  (Function) 0,		/* p_tcl_bind_list *			*/
   /* 188 - 191 */
   (Function) & USERENTRY_BOTADDR,	/* struct user_entry_type *	*/
   (Function) & USERENTRY_BOTFL,		/* struct user_entry_type *	*/

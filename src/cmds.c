@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.74 2001/10/19 01:55:04 tothwolf Exp $
+ * $Id: cmds.c,v 1.75 2001/10/21 03:44:30 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -877,11 +877,13 @@ static void cmd_chhandle(struct userrec *u, int idx, char *par)
   }
 }
 
-static void cmd_handle(struct userrec *u, int idx, char *par)
+static int cmd_handle(struct userrec *u, int idx, char *par)
 {
   char oldhandle[HANDLEN + 1], newhandle[HANDLEN + 1];
   int i;
 
+  putlog(LOG_MISC, "*", "boogaboo!");
+  return(0);
   strncpyz(newhandle, newsplit(&par), sizeof newhandle);
 
   if (!newhandle[0]) {

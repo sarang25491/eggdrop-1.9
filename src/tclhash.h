@@ -1,7 +1,7 @@
 /*
  * tclhash.h
  *
- * $Id: tclhash.h,v 1.23 2001/10/20 21:57:15 stdarg Exp $
+ * $Id: tclhash.h,v 1.24 2001/10/21 03:44:30 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -156,22 +156,18 @@ void check_tcl_nkch(const char *, const char *);
 void check_tcl_away(const char *, int, const char *);
 void check_tcl_event(const char *);
 
-int check_tcl_chat(struct userrec *, int, const char *);
+int check_tcl_chat(const char *, int, const char *);
 void check_tcl_act(const char *, int, const char *);
 void check_tcl_bcst(const char *, int, const char *);
-void check_tcl_chonof(char *, int, tcl_bind_list_t *);
+void check_tcl_chon(char *, int);
+void check_tcl_chof(char *, int);
 
-#define check_tcl_chon(a, b) check_tcl_chonof(a, b, H_chon)
-#define check_tcl_chof(a, b) check_tcl_chonof(a, b, H_chof)
 void check_tcl_loadunld(const char *, tcl_bind_list_t *);
 
 void rem_builtins(tcl_bind_list_t *, cmd_t *);
 void add_builtins(tcl_bind_list_t *, cmd_t *);
 
 int check_validity(char *, Function);
-extern p_tcl_bind_list H_chon, H_chof;
-extern p_tcl_bind_list H_bot, H_link;
-extern p_tcl_bind_list H_nkch, H_filt, H_disc;
 
 int check_bind(bind_table_t *table, const char *match, struct flag_record *_flags, ...);
 

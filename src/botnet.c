@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.45 2001/10/19 01:55:04 tothwolf Exp $
+ * $Id: botnet.c,v 1.46 2001/10/21 03:44:30 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -55,9 +55,6 @@ int		 share_unlinks = 0;	/* Allow remote unlinks of my
 extern int die_on_sigterm;
 extern int die_on_sighup;
 
-/* The bind tables we create. */
-static bind_table_t *BT_chjn, *BT_chpt;
-
 static void botnet_sigterm(char *);
 static void botnet_sighup(char *);
 
@@ -75,10 +72,6 @@ void botnet_init()
 	bind_table_t *BT_event;
 
 	init_bots();
-
-	/* Create botnet bind tables. */
-	BT_chjn = add_bind_table2("chjn", 4, "ssdd", MATCH_MASK, BIND_STACKABLE);
-	BT_chpt = add_bind_table2("chpt", 4, "ssdd", MATCH_MASK, BIND_STACKABLE);
 
 	/* Add our event handlers */
 	add_hook(HOOK_5MINUTELY, (Function) check_botnet_pings);

@@ -2,7 +2,7 @@
  * assoc.c -- part of assoc.mod
  *   the assoc code, moved here mainly from botnet.c for module work
  *
- * $Id: assoc.c,v 1.26 2001/10/19 01:55:06 tothwolf Exp $
+ * $Id: assoc.c,v 1.27 2001/10/21 03:44:30 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -45,7 +45,7 @@ typedef struct assoc_t_ {
 /* Channel name-number associations */
 static assoc_t *assoc;
 
-static bind_table_t *BT_dcc;
+static bind_table_t *BT_dcc, *BT_bot, *BT_link;
 
 static void botnet_send_assoc(int idx, int chan, char *nick,
 			      char *buf)
@@ -379,8 +379,8 @@ static char *assoc_close()
 {
   kill_all_assoc();
   if (BT_dcc) rem_builtins2(BT_dcc, mydcc);
-  rem_builtins(H_bot, mybot);
-  rem_builtins(H_link, mylink);
+  if (BT_bot) rem_builtins2(BT_bot, mybot);
+  if (BT_link) rem_builtins2(BT_link, mylink);
   rem_tcl_commands(mytcl);
   module_undepend(MODULE_NAME);
   return NULL;
@@ -408,8 +408,10 @@ char *start(Function * global_funcs)
   assoc = NULL;
   BT_dcc = find_bind_table2("dcc");
   if (BT_dcc) add_builtins2(BT_dcc, mydcc);
-  add_builtins(H_bot, mybot);
-  add_builtins(H_link, mylink);
+  BT_bot = find_bind_table2("bot");
+  if (BT_bot) add_builtins2(BT_bot, mybot);
+  BT_link = find_bind_table2("link");
+  if (BT_link) add_builtins2(BT_link, mylink);
   add_tcl_commands(mytcl);
 
   return NULL;

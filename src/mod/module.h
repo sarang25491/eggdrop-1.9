@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.72 2001/10/20 21:57:15 stdarg Exp $
+ * $Id: module.h,v 1.73 2001/10/21 03:44:30 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -285,22 +285,22 @@
 #define add_hook(a,b) (((void (*) (int, Function))global[172])(a,b))
 #define del_hook(a,b) (((void (*) (int, Function))global[173])(a,b))
 /* 174: H_dcc -- UNUSED (stdarg) */
-#define H_filt (*(p_tcl_bind_list *)(global[175]))
+/* 175: H_filt -- UNUSED (oskar) */
 /* 176 - 179 */
-#define H_chon (*(p_tcl_bind_list *)(global[176]))
-#define H_chof (*(p_tcl_bind_list *)(global[177]))
+/* 176: H_chon -- UNUSED (oskar) */
+/* 177: H_chof -- UNUSED (oskar) */
 /*#define H_load (*(p_tcl_bind_list *)(global[178])) */
 /*#define H_unld (*(p_tcl_bind_list *)(global[179])) */
 /* 180 - 183 */
 /* 180: H_chat -- UNUSED (oskar) */
 /* 181: H_act -- UNUSED (oskar) */
 /* 182: H_bcst -- UNUSED (oskar) */
-#define H_bot (*(p_tcl_bind_list *)(global[183]))
+/* 183: H_bot -- UNUSED (oskar) */
 /* 184 - 187 */
-#define H_link (*(p_tcl_bind_list *)(global[184]))
-#define H_disc (*(p_tcl_bind_list *)(global[185]))
+/* 184: H_link -- UNUSED (oskar) */
+/* 185: H_disc -- UNUSED (oskar) */
 /* 186: H_away -- UNUSED (oskar) */
-#define H_nkch (*(p_tcl_bind_list *)(global[187]))
+/* 187: H_nkch -- UNUSED (oskar) */
 /* 188 - 191 */
 #define USERENTRY_BOTADDR (*(struct user_entry_type *)(global[188]))
 #define USERENTRY_BOTFL (*(struct user_entry_type *)(global[189]))

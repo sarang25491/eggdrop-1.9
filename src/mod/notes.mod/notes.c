@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.41 2001/10/20 10:22:14 stdarg Exp $
+ * $Id: notes.c,v 1.42 2001/10/21 03:44:31 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -47,7 +47,7 @@ static int notify_onjoin = 1;   /* Notify users they have notes on join?
 				   drummer */
 static Function *global = NULL;	/* DAMN fcntl.h */
 
-static bind_table_t *BT_dcc, *BT_load, *BT_away;
+static bind_table_t *BT_dcc, *BT_load, *BT_away, *BT_nkch, *BT_chon;
 
 static struct user_entry_type USERENTRY_FWD =
 {
@@ -1175,9 +1175,9 @@ static char *notes_close()
   if ((H_temp = find_bind_table("join")))
     rem_builtins(H_temp, notes_join);
   if (BT_dcc) rem_builtins2(BT_dcc, notes_cmds);
-  rem_builtins(H_chon, notes_chon);
+  if (BT_chon) rem_builtins2(BT_chon, notes_chon);
   if (BT_away) rem_builtins2(BT_away, notes_away);
-  rem_builtins(H_nkch, notes_nkch);
+  if (BT_nkch) rem_builtins2(BT_nkch, notes_nkch);
   if (BT_load) rem_builtins2(BT_load, notes_load);
   rem_help_reference("notes.help");
   del_hook(HOOK_MATCH_NOTEREJ, (Function) match_note_ignore);
@@ -1228,12 +1228,14 @@ char *start(Function * global_funcs)
   BT_dcc = find_bind_table2("dcc");
   BT_load = find_bind_table2("load");
   BT_away = find_bind_table2("away");
+  BT_nkch = find_bind_table2("nkch");
+  BT_chon = find_bind_table2("chon");
   if (BT_dcc) add_builtins2(BT_dcc, notes_cmds);
   if (BT_load) add_builtins2(BT_load, notes_load);
 
-  add_builtins(H_chon, notes_chon);
+  if (BT_chon) add_builtins2(BT_chon, notes_chon);
   if (BT_away) add_builtins2(BT_away, notes_away);
-  add_builtins(H_nkch, notes_nkch);
+  if (BT_nkch) add_builtins2(BT_nkch, notes_nkch);
   add_help_reference("notes.help");
   notes_server_setup(0);
   notes_irc_setup(0);

@@ -243,9 +243,9 @@ int putlog EGG_VARARGS_DEF(int, arg1)
 		chname = va_arg(va, char *);
 		format = va_arg(va, char *);
 		i = vsnprintf(out, len, format, va);
-		if (i > -1 && i < len) break;
-		if (i > len) i = len+1;
-		else len *= 2;
+		if (i > -1 && i < len) break; /* Done. */
+		if (i > len) len = i+1; /* Exact amount. */
+		else len *= 2; /* Just guessing. */
 		out = (char *)realloc(out, len);
 	}
 	len = i;

@@ -3,7 +3,7 @@
  *   saved console settings based on console.tcl
  *   by cmwagner/billyjoe/D. Senso
  *
- * $Id: console.c,v 1.27 2001/10/11 11:34:20 tothwolf Exp $
+ * $Id: console.c,v 1.28 2001/10/21 03:44:31 stdarg Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -36,7 +36,7 @@ static int console_autosave = 0;
 static int force_channel = 0;
 static int info_party = 0;
 
-static bind_table_t *BT_dcc;
+static bind_table_t *BT_dcc, *BT_chon;
 
 struct console_info {
   char *channel;
@@ -340,7 +340,7 @@ static cmd_t mydcc[] =
 
 static char *console_close()
 {
-  rem_builtins(H_chon, mychon);
+  if (BT_chon) rem_builtins2(BT_chon, mychon);
   if (BT_dcc) rem_builtins2(BT_dcc, mydcc);
   rem_tcl_ints(myints);
   rem_help_reference("console.help");
@@ -371,9 +371,10 @@ char *start(Function * global_funcs)
   }
 
   BT_dcc = find_bind_table2("dcc");
+  BT_chon = find_bind_table2("chon");
 
   if (BT_dcc) add_builtins2(BT_dcc, mydcc);
-  add_builtins(H_chon, mychon);
+  if (BT_chon) add_builtins2(BT_chon, mychon);
   add_tcl_ints(myints);
   add_help_reference("console.help");
   USERENTRY_CONSOLE.get = def_get;

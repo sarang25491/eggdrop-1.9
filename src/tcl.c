@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.50 2001/10/19 05:26:32 guppy Exp $
+ * $Id: tcl.c,v 1.51 2001/10/21 03:44:30 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -441,8 +441,7 @@ void init_tcl(int argc, char **argv)
   Tcl_PkgProvide(interp, "eggdrop", pver);
 #endif
 
-  /* Initialize old binds and traces */
-  init_old_binds();
+  /* Initialize traces */
   init_traces();
 
   /* Add new commands */

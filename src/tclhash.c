@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.51 2001/10/20 21:57:15 stdarg Exp $
+ * $Id: tclhash.c,v 1.52 2001/10/21 03:44:30 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -49,21 +49,19 @@ static bind_table_t *BT_dcc;
 static bind_table_t *BT_chat;
 static bind_table_t *BT_act;
 static bind_table_t *BT_bcst;
+static bind_table_t *BT_note;
+static bind_table_t *BT_bot;
+static bind_table_t *BT_nkch;
+static bind_table_t *BT_chon;
+static bind_table_t *BT_chof;
+static bind_table_t *BT_chpt;
+static bind_table_t *BT_chjn;
+static bind_table_t *BT_filt;
 
 p_tcl_bind_list		bind_table_list;
-p_tcl_bind_list		H_chon, H_chof,
-			H_link, H_disc, H_chjn, H_chpt,
-			H_bot, H_time, H_nkch, H_note, H_filt;
 
-static int builtin_2char();
-static int builtin_3char();
 static int builtin_5int();
-static int builtin_char();
-static int builtin_chpt();
-static int builtin_chjn();
-static int builtin_idxchar();
 static int builtin_charidx();
-static int builtin_dcc();
 
 /* Delete trigger/command.
  */
@@ -167,6 +165,7 @@ void binds_init(void)
 	bind_table_list_head = NULL;
 	script_create_simple_cmd_table(script_commands);
 	BT_link = add_bind_table2("link", 2, "ss", MATCH_MASK, BIND_STACKABLE);
+	BT_nkch = add_bind_table2("nkch", 2, "ss", MATCH_MASK, BIND_STACKABLE);
 	BT_disc = add_bind_table2("disc", 1, "s", MATCH_MASK, BIND_STACKABLE);
 	BT_away = add_bind_table2("away", 3, "sis", MATCH_MASK, BIND_STACKABLE);
 	BT_dcc = add_bind_table2("dcc", 3, "Uis", MATCH_MASK, BIND_USE_ATTR);
@@ -174,23 +173,13 @@ void binds_init(void)
 	BT_chat = add_bind_table2("chat", 3, "Uis", MATCH_MASK, BIND_STACKABLE | BIND_BREAKABLE);
 	BT_act = add_bind_table2("act", 3, "sis", MATCH_MASK, BIND_STACKABLE);
 	BT_bcst = add_bind_table2("bcst", 3, "sis", MATCH_MASK, BIND_STACKABLE);
-}
-
-void init_old_binds(void)
-{
-  bind_table_list = NULL;
-  Context;
-  H_note = add_bind_table("note", 0, builtin_3char);
-  H_nkch = add_bind_table("nkch", HT_STACKABLE, builtin_2char);
-  H_link = add_bind_table("link", HT_STACKABLE, builtin_2char);
-  H_filt = add_bind_table("filt", HT_STACKABLE, builtin_idxchar);
-  H_disc = add_bind_table("disc", HT_STACKABLE, builtin_char);
-  H_chpt = add_bind_table("chpt", HT_STACKABLE, builtin_chpt);
-  H_chon = add_bind_table("chon", HT_STACKABLE, builtin_charidx);
-  H_chof = add_bind_table("chof", HT_STACKABLE, builtin_charidx);
-  H_chjn = add_bind_table("chjn", HT_STACKABLE, builtin_chjn);
-  H_bot = add_bind_table("bot", 0, builtin_3char);
-  Context;
+	BT_note = add_bind_table2("note", 3 , "sss", MATCH_EXACT, 0);
+	BT_bot = add_bind_table2("bot", 3, "sss", MATCH_EXACT, 0);
+	BT_chon = add_bind_table2("chon", 2, "si", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE | BIND_WANTRET);
+	BT_chof = add_bind_table2("chof", 2, "si", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE | BIND_WANTRET);
+	BT_chpt = add_bind_table2("chpt", 4, "ssii", MATCH_MASK, BIND_STACKABLE);
+	BT_chjn = add_bind_table2("chjn", 6, "ssisis", MATCH_MASK, BIND_STACKABLE);
+	BT_filt = add_bind_table2("filt", 2, "is", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE | BIND_WANTRET | BIND_ALTER_ARGS);
 }
 
 void kill_bind2(void)
@@ -583,26 +572,6 @@ int check_validity(char *nme, Function func)
   return 1;
 }
 
-static int builtin_3char STDVAR
-{
-  Function F = (Function) cd;
-
-  BADARGS(4, 4, " from to args");
-  CHECKVALIDITY(builtin_3char);
-  F(argv[1], argv[2], argv[3]);
-  return TCL_OK;
-}
-
-static int builtin_2char STDVAR
-{
-  Function F = (Function) cd;
-
-  BADARGS(3, 3, " nick msg");
-  CHECKVALIDITY(builtin_2char);
-  F(argv[1], argv[2]);
-  return TCL_OK;
-}
-
 static int builtin_5int STDVAR
 {
   Function F = (Function) cd;
@@ -610,57 +579,6 @@ static int builtin_5int STDVAR
   BADARGS(6, 6, " min hrs dom mon year");
   CHECKVALIDITY(builtin_5int);
   F(atoi(argv[1]), atoi(argv[2]), atoi(argv[3]), atoi(argv[4]), atoi(argv[5]));
-  return TCL_OK;
-}
-
-static int builtin_char STDVAR
-{
-  Function F = (Function) cd;
-
-  BADARGS(2, 2, " handle");
-  CHECKVALIDITY(builtin_char);
-  F(argv[1]);
-  return TCL_OK;
-}
-
-static int builtin_chpt STDVAR
-{
-  Function F = (Function) cd;
-
-  BADARGS(3, 3, " bot nick sock");
-  CHECKVALIDITY(builtin_chpt);
-  F(argv[1], argv[2], atoi(argv[3]));
-  return TCL_OK;
-}
-
-static int builtin_chjn STDVAR
-{
-  Function F = (Function) cd;
-
-  BADARGS(6, 6, " bot nick chan# flag&sock host");
-  CHECKVALIDITY(builtin_chjn);
-  F(argv[1], argv[2], atoi(argv[3]), argv[4][0],
-    argv[4][0] ? atoi(argv[4] + 1) : 0, argv[5]);
-  return TCL_OK;
-}
-
-static int builtin_idxchar STDVAR
-{
-  Function F = (Function) cd;
-  int idx;
-  char *r;
-
-  BADARGS(3, 3, " idx args");
-  CHECKVALIDITY(builtin_idxchar);
-  idx = findidx(atoi(argv[1]));
-  if (idx < 0) {
-    Tcl_AppendResult(irp, "invalid idx", NULL);
-    return TCL_ERROR;
-  }
-  r = (((char *(*)()) F) (idx, argv[2]));
-
-  Tcl_ResetResult(irp);
-  Tcl_AppendResult(irp, r, NULL);
   return TCL_OK;
 }
 
@@ -766,8 +684,8 @@ int check_bind(bind_table_t *table, const char *match, struct flag_record *_flag
 		/* If it's not stackable, There Can Be Only One. */
 		for (entry = chain->entries; entry; entry = entry->next) {
 			/* Check flags. */
-			if (table->match_type & BIND_USE_ATTR) {
-				if (table->match_type & BIND_STRICT_ATTR) cmp = flagrec_eq(&entry->user_flags, flags);
+			if (table->flags & BIND_USE_ATTR) {
+				if (table->flags & BIND_STRICT_ATTR) cmp = flagrec_eq(&entry->user_flags, flags);
 				else cmp = flagrec_ok(&entry->user_flags, flags);
 				if (!cmp) continue;
 			}
@@ -956,31 +874,34 @@ void check_tcl_dcc(const char *cmd, int idx, const char *args)
 
 void check_tcl_bot(const char *nick, const char *code, const char *param)
 {
-  Tcl_SetVar(interp, "_bot1", (char *) nick, 0);
-  Tcl_SetVar(interp, "_bot2", (char *) code, 0);
-  Tcl_SetVar(interp, "_bot3", (char *) param, 0);
-  check_tcl_bind(H_bot, code, 0, " $_bot1 $_bot2 $_bot3", MATCH_EXACT);
+  check_bind(BT_bot, code, NULL, nick, code, param);
 }
 
-void check_tcl_chonof(char *hand, int sock, tcl_bind_list_t *tl)
+void check_tcl_chon(char *hand, int idx)
 {
   struct flag_record	 fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
-  char			 s[11];
   struct userrec	*u;
 
   u = get_user_by_handle(userlist, hand);
   touch_laston(u, "partyline", now);
   get_user_flagrec(u, &fr, NULL);
-  Tcl_SetVar(interp, "_chonof1", (char *) hand, 0);
-  snprintf(s, sizeof s, "%d", sock);
-  Tcl_SetVar(interp, "_chonof2", (char *) s, 0);
-  check_tcl_bind(tl, hand, &fr, " $_chonof1 $_chonof2", MATCH_MASK |
-		 BIND_USE_ATTR | BIND_STACKABLE | BIND_WANTRET);
+  check_bind(BT_chon, hand, &fr, hand, idx);
 }
 
-int check_tcl_chat(struct userrec *u, int chan, const char *text)
+void check_tcl_chof(char *hand, int idx)
 {
-  return check_bind(BT_chat, text, NULL, u, chan, text);
+  struct flag_record	 fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  struct userrec	*u;
+
+  u = get_user_by_handle(userlist, hand);
+  touch_laston(u, "partyline", now);
+  get_user_flagrec(u, &fr, NULL);
+  check_bind(BT_chof, hand, &fr, hand, idx);
+}
+
+int check_tcl_chat(const char *from, int chan, const char *text)
+{
+  return check_bind(BT_chat, text, NULL, from, chan, text);
 }
 
 void check_tcl_act(const char *from, int chan, const char *text)
@@ -995,43 +916,26 @@ void check_tcl_bcst(const char *from, int chan, const char *text)
 
 void check_tcl_nkch(const char *ohand, const char *nhand)
 {
-  Tcl_SetVar(interp, "_nkch1", (char *) ohand, 0);
-  Tcl_SetVar(interp, "_nkch2", (char *) nhand, 0);
-  check_tcl_bind(H_nkch, ohand, 0, " $_nkch1 $_nkch2",
-		 MATCH_MASK | BIND_STACKABLE);
+  check_bind(BT_nkch, ohand, NULL, ohand, nhand);
 }
 
 void check_tcl_link(const char *bot, const char *via)
 {
   check_bind(BT_link, bot, NULL, bot, via);
-
-  Tcl_SetVar(interp, "_link1", (char *) bot, 0);
-  Tcl_SetVar(interp, "_link2", (char *) via, 0);
-  check_tcl_bind(H_link, bot, 0, " $_link1 $_link2",
-		 MATCH_MASK | BIND_STACKABLE);
 }
 
 void check_tcl_disc(const char *bot)
 {
   check_bind(BT_disc, bot, NULL, bot);
-
-  Tcl_SetVar(interp, "_disc1", (char *) bot, 0);
-  check_tcl_bind(H_disc, bot, 0, " $_disc1", MATCH_MASK | BIND_STACKABLE);
 }
 
 const char *check_tcl_filt(int idx, const char *text)
 {
-  char			s[11];
   int			x;
   struct flag_record	fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
-  snprintf(s, sizeof s, "%ld", dcc[idx].sock);
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.chat->con_chan);
-  Tcl_SetVar(interp, "_filt1", (char *) s, 0);
-  Tcl_SetVar(interp, "_filt2", (char *) text, 0);
-  x = check_tcl_bind(H_filt, text, &fr, " $_filt1 $_filt2",
-		     MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE |
-		     BIND_WANTRET | BIND_ALTER_ARGS);
+  x = check_bind(BT_filt, text, &fr, dcc[idx].sock, text);
   if (x == BIND_EXECUTED || x == BIND_EXEC_LOG) {
     if (interp->result == NULL || !interp->result[0])
       return "";
@@ -1045,10 +949,7 @@ int check_tcl_note(const char *from, const char *to, const char *text)
 {
   int	x;
 
-  Tcl_SetVar(interp, "_note1", (char *) from, 0);
-  Tcl_SetVar(interp, "_note2", (char *) to, 0);
-  Tcl_SetVar(interp, "_note3", (char *) text, 0);
-  x = check_tcl_bind(H_note, to, 0, " $_note1 $_note2 $_note3", MATCH_EXACT);
+  check_bind(BT_note, to, NULL, from, to, text);
   return (x == BIND_MATCHED || x == BIND_EXECUTED || x == BIND_EXEC_LOG);
 }
 
@@ -1086,30 +987,15 @@ void check_tcl_chjn(const char *bot, const char *nick, int chan,
     fr.global = USER_BOTMAST;
   }
   snprintf(s, sizeof s, "%d", chan);
-  snprintf(u, sizeof u, "%d", sock);
-  Tcl_SetVar(interp, "_chjn1", (char *) bot, 0);
-  Tcl_SetVar(interp, "_chjn2", (char *) nick, 0);
-  Tcl_SetVar(interp, "_chjn3", (char *) s, 0);
-  Tcl_SetVar(interp, "_chjn4", (char *) t, 0);
-  Tcl_SetVar(interp, "_chjn5", (char *) u, 0);
-  Tcl_SetVar(interp, "_chjn6", (char *) host, 0);
-  check_tcl_bind(H_chjn, s, &fr,
-		 " $_chjn1 $_chjn2 $_chjn3 $_chjn4 $_chjn5 $_chjn6",
-		 MATCH_MASK | BIND_STACKABLE);
+  check_bind(BT_chjn, s, &fr, bot, nick, chan, t, sock, host);
 }
 
 void check_tcl_chpt(const char *bot, const char *hand, int sock, int chan)
 {
-  char	u[11], v[11];
+  char	v[11];
 
-  snprintf(u, sizeof u, "%d", sock);
   snprintf(v, sizeof v, "%d", chan);
-  Tcl_SetVar(interp, "_chpt1", (char *) bot, 0);
-  Tcl_SetVar(interp, "_chpt2", (char *) hand, 0);
-  Tcl_SetVar(interp, "_chpt3", (char *) u, 0);
-  Tcl_SetVar(interp, "_chpt4", (char *) v, 0);
-  check_tcl_bind(H_chpt, v, 0, " $_chpt1 $_chpt2 $_chpt3 $_chpt4",
-		 MATCH_MASK | BIND_STACKABLE);
+  check_bind(BT_chpt, v, NULL, bot, hand, sock, chan);
 }
 
 void check_tcl_away(const char *bot, int idx, const char *msg)
