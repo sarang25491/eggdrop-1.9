@@ -316,7 +316,6 @@ see also: whom
       f   global friend (user is not punished for doing bad things)
       v   global voice (user get +v automatically on +autovoice channels)
       a   global auto-op (always op this user on join)
-      h   high-light flag, user sees highlighting in text output
       w   wasop-test (needs wasop test for +stopnethack procedure)
       e   global exempted from stopnethack
       g   give auto-voice (works as +a but for voice instead)
