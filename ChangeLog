@@ -1,3 +1,15 @@
+2001-08-28 01:41  Federico Mennite <ite@techmonkeys.org>
+
+	* po/eggdrop.pot:
+
+	synched eggdrop.pot with latest string changes.  
+
+2001-08-28 01:33  Federico Mennite <ite@techmonkeys.org>
+
+	* src/cmds.c:
+
+	Some gettext's cleanups to strings in src/cmds.c 
+
 2001-08-27 23:33  Matthew Hallacy <poptix@techmonkeys.org>
 
 	* src/mod/channels.mod/: cmdschan.c, help/channels.help:
