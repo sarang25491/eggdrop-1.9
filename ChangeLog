@@ -655,12 +655,15 @@
 	modules/filesys/filedb3.c, modules/filesys/filedb3.h,
 	modules/filesys/files.c, modules/filesys/filesys.c,
 	modules/filesys/filesys.h, modules/filesys/tclfiles.c,
-	modules/irc/mode.c, modules/irc/msgcmds.c, po/POTFILES.in,
-	po/eggdrop.pot, scripts/CONTENTS, src/chan.h, src/chanprog.c,
-	src/cmds.c, src/dccutil.h, src/egg.h, src/flags.c, src/flags.h,
-	src/logfile.h, src/main.c, src/misc.c, src/misc.h, src/modules.c,
-	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c,
-	src/users.h:
+	modules/irc/mode.c, modules/irc/msgcmds.c,
+	modules/share/.cvsignore, modules/share/Makefile.am,
+	modules/share/modinfo, modules/share/share.c,
+	modules/share/share.h, modules/share/uf_features.c,
+	modules/share/help/share.help, po/POTFILES.in, po/eggdrop.pot,
+	scripts/CONTENTS, src/chan.h, src/chanprog.c, src/cmds.c,
+	src/dccutil.h, src/egg.h, src/flags.c, src/flags.h, src/logfile.h,
+	src/main.c, src/misc.c, src/misc.h, src/modules.c, src/tcluser.c,
+	src/userent.c, src/userrec.c, src/users.c, src/users.h:
 
 	* Removed share.mod (will be part of the new botnet module).  
 	* More transfer removal.  
@@ -677,8 +680,9 @@
 	modules/filesys/files.c, modules/filesys/filesys.c,
 	modules/script/scriptmisc.c, modules/transfer/Makefile.am,
 	modules/transfer/modinfo, modules/transfer/transfer.c,
-	modules/transfer/transfer.h, src/cmds.c, src/flags.h, src/tcldcc.c,
-	src/traffic.c:
+	modules/transfer/transfer.h,
+	modules/transfer/help/set/transfer.help, src/cmds.c, src/flags.h,
+	src/tcldcc.c, src/traffic.c:
 
 	* Removed transfer and ctcp. Their functionality is in server now.  
 
@@ -796,9 +800,10 @@
 	modules/channels/userchan.c, modules/console/console.c,
 	modules/filesys/filedb3.c, modules/filesys/files.c,
 	modules/irc/msgcmds.c, modules/notes/notes.c,
-	modules/uptime/uptime.c, src/chanprog.c, src/cmds.c, src/dcc.c,
-	src/dccutil.c, src/main.c, src/misc.c, src/modules.c, src/tcl.c,
-	src/tcldcc.c, src/tcluser.c, src/userrec.c, src/users.c:
+	modules/share/share.c, modules/uptime/uptime.c, src/chanprog.c,
+	src/cmds.c, src/dcc.c, src/dccutil.c, src/main.c, src/misc.c,
+	src/modules.c, src/tcl.c, src/tcldcc.c, src/tcluser.c,
+	src/userrec.c, src/users.c:
 
 	* More botnet removal.  
 
@@ -922,7 +927,7 @@
 	* lib/eggdrop/memutil.c, lib/eggdrop/module.h,
 	modules/channels/channels.c, modules/channels/userchan.c,
 	modules/filesys/dbcompat.c, modules/filesys/filedb3.h,
-	modules/irc/chan.c, modules/irc/msgcmds.c,
+	modules/irc/chan.c, modules/irc/msgcmds.c, modules/share/share.c,
 	modules/transfer/transfer.c, modules/transfer/transfer.h,
 	src/dccutil.c, src/egg.h, src/main.c, src/modules.c, src/patch.h,
 	src/tcl.c, src/tclmisc.c, src/userrec.c, src/userrec.h:
@@ -989,11 +994,13 @@
 	modules/notes/cmdsnote.c, modules/notes/notes.c,
 	modules/notes/notes.h, modules/perlscript/mod_iface.c,
 	modules/perlscript/perlscript.c, modules/server/scriptcmds.c,
-	modules/tclscript/tclscript.c, modules/transfer/transfer.c,
-	modules/transfer/transfer.h, modules/uptime/uptime.c,
-	modules/uptime/uptime.h, scripts/ques5.tcl, src/bg.c, src/bg.h,
-	src/chan.h, src/chanprog.c, src/chanprog.h, src/cmds.c, src/cmds.h,
-	src/cmdt.h, src/core_binds.h, src/dcc.c, src/dcc.h, src/dccutil.c,
+	modules/share/share.c, modules/share/share.h,
+	modules/share/uf_features.c, modules/tclscript/tclscript.c,
+	modules/transfer/transfer.c, modules/transfer/transfer.h,
+	modules/uptime/uptime.c, modules/uptime/uptime.h,
+	scripts/ques5.tcl, src/bg.c, src/bg.h, src/chan.h, src/chanprog.c,
+	src/chanprog.h, src/cmds.c, src/cmds.h, src/cmdt.h,
+	src/core_binds.h, src/dcc.c, src/dcc.h, src/dccutil.c,
 	src/dccutil.h, src/debug.h, src/dns.c, src/dns.h, src/egg.h,
 	src/flags.c, src/flags.h, src/irccmp.c, src/irccmp.h,
 	src/logfile.c, src/logfile.h, src/main.c, src/main.h, src/misc.c,
@@ -1164,7 +1171,7 @@
 	modules/channels/channels.h, modules/channels/cmdschan.c,
 	modules/channels/tclchan.c, modules/filesys/filesys.c,
 	modules/irc/chan.c, modules/irc/cmdsirc.c, modules/irc/irc.c,
-	modules/irc/mode.c, modules/irc/msgcmds.c,
+	modules/irc/mode.c, modules/irc/msgcmds.c, modules/share/share.c,
 	modules/transfer/transfer.c, scripts/alltools.tcl, src/chan.h,
 	src/chanprog.c, src/misc.c:
 
@@ -1430,6 +1437,12 @@
 	* help/cmds2.help:
 
 	forgot to remove a reference to highlight in a help file 
+
+2002-06-18 06:14  Jeff Fisher <guppy@techmonkeys.org>
+
+	* modules/woobie/: .cvsignore, Makefile.am, modinfo, woobie.c:
+
+	oops ... I should really remove woobie 
 
 2002-06-18 06:12  Jeff Fisher <guppy@techmonkeys.org>
 
@@ -1777,8 +1790,9 @@
 	modules/filesys/filesys.c, modules/irc/irc.c,
 	modules/javascript/javascript.c, modules/notes/notes.c,
 	modules/perlscript/mod_iface.c, modules/server/server.c,
-	modules/tclscript/tclscript.c, modules/transfer/transfer.c,
-	modules/uptime/uptime.c, src/botnet.c, src/core_binds.c,
+	modules/share/share.c, modules/tclscript/tclscript.c,
+	modules/transfer/transfer.c, modules/uptime/uptime.c,
+	modules/woobie/woobie.c, src/botnet.c, src/core_binds.c,
 	src/modules.c, src/tcl.c, src/tclhash.c, src/tclhash.h:
 
 	
@@ -2031,9 +2045,11 @@
 	modules/perlscript/perlscript.c, modules/server/cmdsserv.c,
 	modules/server/scriptcmds.c, modules/server/server.c,
 	modules/server/server.h, modules/server/servmsg.c,
-	modules/tclscript/tclscript.c, modules/transfer/transfer.c,
-	modules/transfer/transfer.h, modules/uptime/uptime.c,
-	modules/uptime/uptime.h, src/bg.c, src/bg.h, src/botcmd.c,
+	modules/share/share.c, modules/share/share.h,
+	modules/share/uf_features.c, modules/tclscript/tclscript.c,
+	modules/transfer/transfer.c, modules/transfer/transfer.h,
+	modules/uptime/uptime.c, modules/uptime/uptime.h,
+	modules/woobie/woobie.c, src/bg.c, src/bg.h, src/botcmd.c,
 	src/botcmd.h, src/botmsg.c, src/botmsg.h, src/botnet.c,
 	src/botnet.h, src/chan.h, src/chanprog.c, src/chanprog.h,
 	src/cmds.c, src/cmds.h, src/cmdt.h, src/core_binds.c,
@@ -2452,6 +2468,12 @@
 	removed an extra space from the 'Writing channel file...' message
 	(synch 1.6) 
 
+2002-04-17 21:27  Federico Mennite <ite@techmonkeys.org>
+
+	* modules/share/uf_features.c:
+
+	uff entries were not added properly (synch 1.6) 
+
 2002-04-17 21:16  Federico Mennite <ite@techmonkeys.org>
 
 	* modules/irc/mode.c:
@@ -2532,7 +2554,8 @@
 	* modules/channels/channels.c, modules/channels/channels.h,
 	modules/channels/cmdschan.c, modules/channels/tclchan.c,
 	modules/channels/userchan.c, modules/irc/chan.c,
-	modules/irc/cmdsirc.c, modules/irc/irc.c, src/patch.h:
+	modules/irc/cmdsirc.c, modules/irc/irc.c, modules/share/share.c,
+	src/patch.h:
 
 	move u_addban, u_addexempt and u_addinvite into u_addmask 
 
@@ -2548,10 +2571,10 @@
 	modules/irc/cmdsirc.c, modules/irc/irc.c, modules/irc/mode.c,
 	modules/irc/msgcmds.c, modules/server/cmdsserv.c,
 	modules/server/server.c, modules/server/servmsg.c,
-	modules/server/tclserv.c, src/chanprog.c, src/cmds.c, src/dcc.c,
-	src/dns.c, src/flags.c, src/main.c, src/misc.c, src/modules.c,
-	src/net.c, src/tcldcc.c, src/tclmisc.c, src/tcluser.c,
-	src/userent.c, src/userrec.c, src/users.c:
+	modules/server/tclserv.c, modules/share/share.c, src/chanprog.c,
+	src/cmds.c, src/dcc.c, src/dns.c, src/flags.c, src/main.c,
+	src/misc.c, src/modules.c, src/net.c, src/tcldcc.c, src/tclmisc.c,
+	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c:
 
 	* Got rid of strncpyz() in favour of BSD's strlcpy(). Fallback
 	function provided.  
@@ -2583,9 +2606,10 @@
 	modules/console/console.c, modules/ctcp/ctcp.c,
 	modules/filesys/filesys.c, modules/irc/irc.c,
 	modules/notes/notes.c, modules/perlscript/mod_iface.c,
-	modules/server/server.c, modules/tclscript/Makefile.am,
-	modules/tclscript/tclscript.c, modules/transfer/transfer.c,
-	modules/uptime/uptime.c, src/Makefile.am, src/egg.h,
+	modules/server/server.c, modules/share/share.c,
+	modules/tclscript/Makefile.am, modules/tclscript/tclscript.c,
+	modules/transfer/transfer.c, modules/uptime/uptime.c,
+	modules/woobie/woobie.c, src/Makefile.am, src/egg.h,
 	src/egg_timer.c, src/egg_timer.h, src/main.c, src/main.h,
 	src/modules.c, src/modules.h, src/registry.c, src/registry.h,
 	src/script.c, src/script.h:
@@ -2632,8 +2656,9 @@
 
 2002-03-09 19:42  Axel Franke <eule@berlin.snafu.de>
 
-	* modules/channels/: channels.c, channels.h, cmdschan.c, tclchan.c,
-	userchan.c:
+	* modules/: channels/channels.c, channels/channels.h,
+	channels/cmdschan.c, channels/tclchan.c, channels/userchan.c,
+	share/share.c:
 
 	move u_delban, u_delexempt and u_delinvite into u_delmask 
 
@@ -2702,6 +2727,12 @@
 	* po/eggdrop.pot:
 
 	Pots 
+
+2002-03-02 23:08  Axel Franke <eule@berlin.snafu.de>
+
+	* modules/share/share.c:
+
+	fixed hopefully the crashes in share.c 
 
 2002-03-02 10:00  Automatic CVS Scripts
 
@@ -3057,8 +3088,10 @@
 	modules/notes/notes.h, modules/server/cmdsserv.c,
 	modules/server/server.c, modules/server/server.h,
 	modules/server/servmsg.c, modules/server/tclserv.c,
-	modules/transfer/transfer.c, modules/transfer/transfer.h,
-	modules/uptime/uptime.c, modules/uptime/uptime.h,
+	modules/share/share.c, modules/share/share.h,
+	modules/share/uf_features.c, modules/transfer/transfer.c,
+	modules/transfer/transfer.h, modules/uptime/uptime.c,
+	modules/uptime/uptime.h, modules/woobie/woobie.c,
 	scripts/autobotchk, scripts/ques5.tcl, src/bg.c, src/bg.h,
 	src/botcmd.c, src/botmsg.c, src/botnet.c, src/chan.h,
 	src/chanprog.c, src/cmds.c, src/cmdt.h, src/dcc.c, src/dccutil.c,
@@ -3504,11 +3537,12 @@
 	modules/console/console.c, modules/filesys/filedb3.c,
 	modules/filesys/filelist.c, modules/notes/notes.c,
 	modules/perlscript/perlscript.c, modules/server/server.c,
-	modules/server/servmsg.c, modules/tclscript/tclscript.c,
-	modules/transfer/transfer.c, modules/uptime/uptime.c, src/botnet.c,
-	src/cmds.c, src/dcc.c, src/dccutil.c, src/dns.c, src/egg.h,
-	src/logfile.c, src/misc.c, src/modules.c, src/net.c, src/tclhash.c,
-	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c:
+	modules/server/servmsg.c, modules/share/share.c,
+	modules/tclscript/tclscript.c, modules/transfer/transfer.c,
+	modules/uptime/uptime.c, src/botnet.c, src/cmds.c, src/dcc.c,
+	src/dccutil.c, src/dns.c, src/egg.h, src/logfile.c, src/misc.c,
+	src/modules.c, src/net.c, src/tclhash.c, src/tcluser.c,
+	src/userent.c, src/userrec.c, src/users.c:
 
 	Removed our malloc_strcpy macro sincw it had the same functionality
 	of strdup (provided the respective fallback function) 
@@ -3768,8 +3802,9 @@
 	modules/ctcp/Makefile.am, modules/filesys/Makefile.am,
 	modules/irc/Makefile.am, modules/notes/Makefile.am,
 	modules/perlscript/Makefile.am, modules/server/Makefile.am,
-	modules/tclscript/Makefile.am, modules/transfer/Makefile.am,
-	modules/uptime/Makefile.am, src/Makefile.am, src/egg.h,
+	modules/share/Makefile.am, modules/tclscript/Makefile.am,
+	modules/transfer/Makefile.am, modules/uptime/Makefile.am,
+	modules/woobie/Makefile.am, src/Makefile.am, src/egg.h,
 	src/eggdrop.h, src/logfile.c, src/main.h, src/modules.c,
 	src/modules.h, src/proto.h:
 
@@ -3840,14 +3875,14 @@
 
 2001-12-29 21:40  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h:
+	* doc/UPDATES1.6, modules/share/share.c, src/patch.h:
 
 	Added Ian's capture_the_flag patch from 1.6 
 
 2001-12-29 21:39  Jeff Fisher <guppy@techmonkeys.org>
 
 	* doc/UPDATES1.6, modules/filesys/filesys.c, modules/irc/cmdsirc.c,
-	modules/irc/mode.c, src/patch.h:
+	modules/irc/mode.c, modules/share/share.c, src/patch.h:
 
 	added Wcc's mod_cosmetic patch from 1.6 
 
@@ -3880,7 +3915,7 @@
 
 	* doc/UPDATES1.6, modules/channels/channels.c, modules/irc/chan.c,
 	modules/irc/irc.c, modules/irc/msgcmds.c, modules/server/servmsg.c,
-	src/chanprog.c, src/main.c, src/patch.h:
+	modules/share/share.c, src/chanprog.c, src/main.c, src/patch.h:
 
 	added my correctname patch from 1.6 
 
@@ -4093,7 +4128,8 @@
 2001-12-18 07:04  Jeff Fisher <guppy@techmonkeys.org>
 
 	* doc/MODULES, lib/eggdrop/module.h, modules/uptime/uptime.c,
-	src/eggdrop.h, src/main.c, src/modules.c, src/net.c, src/proto.h:
+	modules/woobie/woobie.c, src/eggdrop.h, src/main.c, src/modules.c,
+	src/net.c, src/proto.h:
 
 	removed Context and ContextNote 
 
@@ -4315,6 +4351,13 @@
 	Handle irssi (and some others) 'correct' messages for DCC CTCP.
 	Patch by Matthew Hallacy <poptix@techmonkeys.org> 
 
+2001-12-08 16:39  Federico Mennite <ite@techmonkeys.org>
+
+	* modules/share/share.c:
+
+	Unknown stuff will now be logged as debug info . Patch by Jeff
+	Fisher <guppy@techmonkeys.org> 
+
 2001-12-08 16:28  Federico Mennite <ite@techmonkeys.org>
 
 	* modules/channels/tclchan.c:
@@ -4393,7 +4436,8 @@
 	* modules/: channels/help/chaninfo.help,
 	channels/help/channels.help, console/help/console.help,
 	irc/help/irc.help, server/server.c, server/help/server.help,
-	server/help/set/server.help, transfer/transfer.c:
+	server/help/set/server.help, share/share.c, share/help/share.help,
+	transfer/transfer.c, transfer/help/set/transfer.help:
 
 	More spelling fixes here and there. Patch by Wcc
 	<will@dawg.dynu.com> 
@@ -4457,6 +4501,13 @@
 	* modules/irc/tclirc.c:
 
 	wasop command wasn't working correctly. Patch by TaKeDa
+	<takeda@eggheads.w.pl> 
+
+2001-12-02 11:54  Federico Mennite <ite@techmonkeys.org>
+
+	* modules/share/share.c:
+
+	Fix in share module while resyncing userfile. Patch by TaKeDa
 	<takeda@eggheads.w.pl> 
 
 2001-12-02 11:43  Federico Mennite <ite@techmonkeys.org>
@@ -4627,8 +4678,9 @@
 	modules/ctcp/Makefile.am, modules/filesys/Makefile.am,
 	modules/irc/Makefile.am, modules/notes/Makefile.am,
 	modules/perlscript/Makefile.am, modules/server/Makefile.am,
-	modules/tclscript/Makefile.am, modules/transfer/Makefile.am,
-	modules/uptime/Makefile.am, src/eggdrop.h:
+	modules/share/Makefile.am, modules/tclscript/Makefile.am,
+	modules/transfer/Makefile.am, modules/uptime/Makefile.am,
+	modules/woobie/Makefile.am, src/eggdrop.h:
 
 	Added mssing stuff in Makefile.am's that prevented compilation in
 	some environments.  
@@ -4857,8 +4909,9 @@
 	modules/ctcp/Makefile.am, modules/filesys/Makefile.am,
 	modules/irc/Makefile.am, modules/notes/Makefile.am,
 	modules/perlscript/Makefile.am, modules/server/Makefile.am,
-	modules/tclscript/Makefile.am, modules/transfer/Makefile.am,
-	modules/uptime/Makefile.am, src/Makefile.am, src/modules.c:
+	modules/share/Makefile.am, modules/tclscript/Makefile.am,
+	modules/transfer/Makefile.am, modules/uptime/Makefile.am,
+	modules/woobie/Makefile.am, src/Makefile.am, src/modules.c:
 
 	Created libeggdrop: libadns, libegg and libcompat are now linked in
 	it. Cleaned up some unneeded function exports :) 
@@ -4984,13 +5037,19 @@
 	modules/server/server.c, modules/server/server.h,
 	modules/server/servmsg.c, modules/server/tclserv.c,
 	modules/server/help/server.help,
-	modules/server/help/set/server.help, modules/tclscript/.cvsignore,
-	modules/tclscript/Makefile.am, modules/tclscript/tclscript.c,
-	modules/transfer/.cvsignore, modules/transfer/Makefile.am,
-	modules/transfer/modinfo, modules/transfer/transfer.c,
-	modules/transfer/transfer.h, modules/uptime/.cvsignore,
+	modules/server/help/set/server.help, modules/share/.cvsignore,
+	modules/share/Makefile.am, modules/share/modinfo,
+	modules/share/share.c, modules/share/share.h,
+	modules/share/uf_features.c, modules/share/help/share.help,
+	modules/tclscript/.cvsignore, modules/tclscript/Makefile.am,
+	modules/tclscript/tclscript.c, modules/transfer/.cvsignore,
+	modules/transfer/Makefile.am, modules/transfer/modinfo,
+	modules/transfer/transfer.c, modules/transfer/transfer.h,
+	modules/transfer/help/set/transfer.help, modules/uptime/.cvsignore,
 	modules/uptime/Makefile.am, modules/uptime/modinfo,
-	modules/uptime/uptime.c, modules/uptime/uptime.h, src/Makefile.am,
+	modules/uptime/uptime.c, modules/uptime/uptime.h,
+	modules/woobie/.cvsignore, modules/woobie/Makefile.am,
+	modules/woobie/modinfo, modules/woobie/woobie.c, src/Makefile.am,
 	src/logfile.c, src/modules.h:
 
 	* Renamed src/mod to modules.  
