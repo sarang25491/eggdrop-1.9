@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.74 2001/10/10 10:44:06 tothwolf Exp $
+ * $Id: chan.c,v 1.75 2001/10/11 11:34:20 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -44,7 +44,7 @@ static memberlist *newmember(struct chanset_t *chan)
   memberlist *x;
 
   for (x = chan->channel.member; x && x->nick[0]; x = x->next); 
-  malloc_memset(x->next, 0, sizeof(memberlist));
+  x->next = calloc(1, sizeof(memberlist));
   x->next->next = NULL;
   x->next->nick[0] = 0;
   x->next->split = 0L;
@@ -1311,7 +1311,7 @@ static int got475(char *from, char *ignore, char *msg)
     putlog(LOG_JOIN, chan->dname, _("Bad key--cant join: %s"), chan->dname);
     if (chan->channel.key[0]) {
       free(chan->channel.key);
-      malloc_memset(chan->channel.key, 0, 1);
+      chan->channel.key = calloc(1, 1);
       dprintf(DP_MODE, "JOIN %s %s\n", chan->dname, chan->key_prot);
     } else
       check_tcl_need(chan->dname, "key");
@@ -1357,7 +1357,7 @@ static void set_topic(struct chanset_t *chan, char *k)
   if (chan->channel.topic)
     free(chan->channel.topic);
   if (k && k[0]) {
-    malloc_memset(chan->channel.topic, 0, strlen(k) + 1);
+    chan->channel.topic = calloc(1, strlen(k) + 1);
     strcpy(chan->channel.topic, k);
   } else
     chan->channel.topic = NULL;

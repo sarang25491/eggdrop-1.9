@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  *
- * $Id: dccutil.c,v 1.37 2001/10/10 10:44:04 tothwolf Exp $
+ * $Id: dccutil.c,v 1.38 2001/10/11 11:34:19 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -421,7 +421,7 @@ int new_dcc(struct dcc_table *type, int xtra_size)
 
   dcc[i].type = type;
   if (xtra_size)
-    malloc_memset(dcc[i].u.other, 0, xtra_size);
+    dcc[i].u.other = calloc(1, xtra_size);
   return i;
 }
 
@@ -437,7 +437,7 @@ void changeover_dcc(int i, struct dcc_table *type, int xtra_size)
 
   dcc[i].type = type;
   if (xtra_size)
-    malloc_memset(dcc[i].u.other, 0, xtra_size);
+    dcc[i].u.other = calloc(1, xtra_size);
 }
 
 int detect_dcc_flood(time_t * timer, struct chat_info *chat, int idx)

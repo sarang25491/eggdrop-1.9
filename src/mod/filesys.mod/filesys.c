@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.52 2001/10/10 18:47:42 stdarg Exp $
+ * $Id: filesys.c,v 1.53 2001/10/11 11:34:20 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -324,7 +324,7 @@ static int cmd_files(struct userrec *u, int idx, char *par)
 	  botnet_send_part_idx(idx, "file system");
       }
       ci = dcc[idx].u.chat;
-      malloc_memset(dcc[idx].u.file, 0, sizeof(struct file_info));
+      dcc[idx].u.file = calloc(1, sizeof(struct file_info));
       dcc[idx].u.file->chat = ci;
       dcc[idx].type = &DCC_FILES;
       dcc[idx].status |= STAT_CHAT;
@@ -671,11 +671,11 @@ debug1("|FILESYS| addr: (%s)", dcc[i].addr);
       dcc[i].user = u;
       strcpy(dcc[i].nick, nick);
       strcpy(dcc[i].host, from);
-      malloc_memset(dcc[i].u.dns->cbuf, 0, strlen(param) + 1);
+      dcc[i].u.dns->cbuf = calloc(1, strlen(param) + 1);
       strcpy(dcc[i].u.dns->cbuf, param);
       dcc[i].u.dns->ibuf = atoi(msg);
       
-      malloc_memset(dcc[i].u.dns->host, 0, strlen(dcc[i].addr) + 1);
+      dcc[i].u.dns->host = calloc(1, strlen(dcc[i].addr) + 1);
       strcpy(dcc[i].u.dns->host, dcc[i].addr);
 
       dcc[i].u.dns->dns_type = RES_HOSTBYIP;
@@ -731,10 +731,10 @@ static void filesys_dcc_send_hostresolved(int i)
   if (param[0] == '.')
     param[0] = '_';
   /* Save the original filename */
-  malloc_memset(dcc[i].u.xfer->origname, 0, strlen(param) + 1);
+  dcc[i].u.xfer->origname = calloc(1, strlen(param) + 1);
   strcpy(dcc[i].u.xfer->origname, param);
   tempf = mktempfile(param);
-  malloc_memset(dcc[i].u.xfer->filename, 0, strlen(tempf) + 1);
+  dcc[i].u.xfer->filename = calloc(1, strlen(tempf) + 1);
   strcpy(dcc[i].u.xfer->filename, tempf);
   /* We don't need the temporary buffers anymore */
   free_null(tempf);
@@ -857,7 +857,7 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
       strcpy(dcc[i].host, from);
       dcc[i].status = STAT_ECHO;
       dcc[i].timeval = now;
-      malloc_memset(dcc[i].u.file->chat, 0, sizeof(struct chat_info));
+      dcc[i].u.file->chat = calloc(1, sizeof(struct chat_info));
       strcpy(dcc[i].u.file->chat->con_chan, "*");
       dcc[i].user = u;
       putlog(LOG_MISC, "*", "DCC connection: CHAT(file) (%s!%s)", nick, from);

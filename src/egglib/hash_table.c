@@ -11,7 +11,7 @@ hash_table_t *hash_table_create(hash_table_hash_alg alg, hash_table_cmp_alg cmp,
 	if (nrows <= 0) nrows = 13; /* Give them a small table to start with. */
 
 	size = sizeof(*ht) + (nrows-1) * sizeof(hash_table_entry_t);
-	malloc_memset(ht, 0, size);
+	ht = calloc(1, size);
 
 	if (alg) ht->hash = alg;
 	else {

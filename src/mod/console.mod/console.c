@@ -3,7 +3,7 @@
  *   saved console settings based on console.tcl
  *   by cmwagner/billyjoe/D. Senso
  *
- * $Id: console.c,v 1.26 2001/10/10 18:37:55 stdarg Exp $
+ * $Id: console.c,v 1.27 2001/10/11 11:34:20 tothwolf Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -158,7 +158,7 @@ static int console_tcl_set(Tcl_Interp *irp, struct userrec *u,
 
   BADARGS(4, 9, " handle CONSOLE channel flags strip echo page conchan");
   if (!i)
-    malloc_memset(i, 0, sizeof(struct console_info));
+    i = calloc(1, sizeof(struct console_info));
   if (i->channel)
     free(i->channel);
   l = strlen(argv[3]);
@@ -284,7 +284,7 @@ static int console_store(struct userrec *u, int idx, char *par)
   struct console_info *i = get_user(&USERENTRY_CONSOLE, u);
 
   if (!i)
-    malloc_memset(i, 0, sizeof(struct console_info));
+    i = calloc(1, sizeof(struct console_info));
   if (i->channel)
     free(i->channel);
   malloc_strcpy(i->channel, dcc[idx].u.chat->con_chan);

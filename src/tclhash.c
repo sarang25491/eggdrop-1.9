@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.41 2001/10/10 18:37:54 stdarg Exp $
+ * $Id: tclhash.c,v 1.42 2001/10/11 11:34:19 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -255,7 +255,7 @@ tcl_bind_list_t *add_bind_table(const char *nme, int flg, Function func)
       break;		/* New. Insert at start of list.	*/
   }
 
-  malloc_memset(tl, 0, sizeof(tcl_bind_list_t));
+  tl = calloc(1, sizeof(tcl_bind_list_t));
   strcpy(tl->name, nme);
   tl->flags = flg;
   tl->func = func;
@@ -489,7 +489,7 @@ static int bind_bind_entry(tcl_bind_list_t *tl, const char *flags,
 
   /* Create bind if it doesn't exist yet. */
   if (!tm) {
-    malloc_memset(tm, 0, sizeof(tcl_bind_mask_t));
+    tm = calloc(1, sizeof(tcl_bind_mask_t));
     malloc_strcpy(tm->mask, cmd);
 
 #if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
@@ -525,7 +525,7 @@ static int bind_bind_entry(tcl_bind_list_t *tl, const char *flags,
     }
   }
 
-  malloc_memset(tc, 0, sizeof(tcl_cmd_t));
+  tc = calloc(1, sizeof(tcl_cmd_t));
   tc->flags.match = FR_GLOBAL | FR_CHAN;
   break_down_flags(flags, &(tc->flags), NULL);
   malloc_strcpy(tc->func_name, proc);

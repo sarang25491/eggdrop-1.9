@@ -2,7 +2,7 @@
  * flags.c -- handles:
  *   all the flag matching/conversion functions in one neat package :)
  *
- * $Id: flags.c,v 1.20 2001/10/10 10:44:04 tothwolf Exp $
+ * $Id: flags.c,v 1.21 2001/10/11 11:34:19 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -634,7 +634,7 @@ void set_user_flagrec(struct userrec *u, struct flag_record *fr,
 	break;
     ch = findchan_by_dname(chname);
     if (!cr && ch) {
-      malloc_memset(cr, 0, sizeof(struct chanuserrec));
+      cr = calloc(1, sizeof(struct chanuserrec));
       cr->next = u->chanrec;
       u->chanrec = cr;
       strncpyz(cr->channel, chname, sizeof cr->channel);

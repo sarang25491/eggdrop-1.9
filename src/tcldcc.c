@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.33 2001/10/10 10:44:04 tothwolf Exp $
+ * $Id: tcldcc.c,v 1.34 2001/10/11 11:34:19 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -430,7 +430,7 @@ static int tcl_control STDVAR
     check_tcl_chof(dcc[idx].nick, dcc[idx].sock);
   }
   hold = dcc[idx].u.other;
-  malloc_memset(dcc[idx].u.script, 0, sizeof(struct script_info));
+  dcc[idx].u.script = calloc(1, sizeof(struct script_info));
   dcc[idx].u.script->u.other = hold;
   dcc[idx].u.script->type = dcc[idx].type;
   dcc[idx].type = &DCC_SCRIPT;

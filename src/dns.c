@@ -4,7 +4,7 @@
  *   provides the code used by the bot if the DNS module is not loaded
  *   DNS Tcl commands
  *
- * $Id: dns.c,v 1.25 2001/10/10 10:44:04 tothwolf Exp $
+ * $Id: dns.c,v 1.26 2001/10/11 11:34:19 tothwolf Exp $
  */
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -114,7 +114,7 @@ static void dns_dcchostbyip(char *ip, char *hostn, int ok, void *other)
         (!egg_strcasecmp(dcc[idx].u.dns->host, ip))) {
 debug3("|DNS| idx: %d, dcchostbyip: %s is %s", idx, ip, hostn);
       free(dcc[idx].u.dns->host);
-      malloc_memset(dcc[idx].u.dns->host, 0, strlen(hostn) + 1);
+      dcc[idx].u.dns->host = calloc(1, strlen(hostn) + 1);
       strcpy(dcc[idx].u.dns->host, hostn);
       if (ok)
         dcc[idx].u.dns->dns_success(idx);
@@ -137,7 +137,7 @@ static void dns_dccipbyhost(char *ip, char *hostn, int ok, void *other)
         !egg_strcasecmp(dcc[idx].u.dns->host, hostn)) {
 debug3("|DNS| idx: %d, dccipbyhost: %s is %s", idx, ip, hostn);
       free(dcc[idx].u.dns->host);
-      malloc_memset(dcc[idx].u.dns->host, 0, strlen(ip) + 1);
+      dcc[idx].u.dns->host = calloc(1, strlen(ip) + 1);
       strcpy(dcc[idx].u.dns->host, ip);
       if (ok)
         dcc[idx].u.dns->dns_success(idx);
@@ -171,7 +171,7 @@ void dcc_dnsipbyhost(char *hostn)
     }
   }
 
-  malloc_memset(de, 0, sizeof(devent_t));
+  de = calloc(1, sizeof(devent_t));
 
   /* Link into list. */
   de->next = dns_events;
@@ -198,7 +198,7 @@ void dcc_dnshostbyip(char *ip)
     }
   }
 
-  malloc_memset(de, 0, sizeof(devent_t));
+  de = calloc(1, sizeof(devent_t));
 
   /* Link into list. */
   de->next = dns_events;
@@ -247,7 +247,7 @@ static void tcl_dnsipbyhost(char *hostn, char *proc, char *paras)
   devent_t *de;
   devent_tclinfo_t *tclinfo;
 
-  malloc_memset(de, 0, sizeof(devent_t));
+  de = calloc(1, sizeof(devent_t));
 
   /* Link into list. */
   de->next = dns_events;
@@ -275,7 +275,7 @@ static void tcl_dnshostbyip(char *ip, char *proc, char *paras)
   devent_t *de;
   devent_tclinfo_t *tclinfo;
 
-  malloc_memset(de, 0, sizeof(devent_t));
+  de = calloc(1, sizeof(devent_t));
 
   /* Link into list. */
   de->next = dns_events;
@@ -488,7 +488,7 @@ static int tcl_dnslookup STDVAR
     /* Create a string with a leading space out of all provided
      * additional parameters.
      */
-    malloc_memset(paras, 0, 1);
+    paras = calloc(1, 1);
     for (p = 3; p < argc; p++) {
       l += strlen(argv[p]) + 1;
       paras = realloc(paras, l + 1);

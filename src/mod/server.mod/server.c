@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.83 2001/10/10 10:44:07 tothwolf Exp $
+ * $Id: server.c,v 1.84 2001/10/11 11:34:20 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1457,7 +1457,7 @@ debug1("|SERVER| addr: (%s)", dcc[i].addr);
     strcpy(dcc[i].host, from);
     dcc[i].timeval = now;
     dcc[i].user = u;
-    malloc_memset(dcc[i].u.dns->host, 0, strlen(dcc[i].addr) + 1);
+    dcc[i].u.dns->host = calloc(1, strlen(dcc[i].addr) + 1);
     strcpy(dcc[i].u.dns->host, dcc[i].addr);
     dcc[i].u.dns->dns_type = RES_HOSTBYIP;
     dcc[i].u.dns->dns_success = dcc_chat_hostresolved;

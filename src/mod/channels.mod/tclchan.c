@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.55 2001/10/10 17:02:06 stdarg Exp $
+ * $Id: tclchan.c,v 1.56 2001/10/11 11:34:20 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1408,7 +1408,7 @@ static int tcl_haschanrec STDVAR
 
 static void init_masklist(masklist *m)
 {
-  malloc_memset(m->mask, 0, 1);
+  m->mask = calloc(1, 1);
   m->who = NULL;
   m->next = NULL;
 }
@@ -1421,7 +1421,7 @@ static void init_channel(struct chanset_t *chan, int reset)
   chan->channel.mode = 0;
   chan->channel.members = 0;
   if (!reset)
-    malloc_memset(chan->channel.key, 0, 1);
+    chan->channel.key = calloc(1, 1);
 
   chan->channel.ban = (masklist *) malloc(sizeof(masklist));
   init_masklist(chan->channel.ban);
@@ -1507,7 +1507,7 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
     /* Already existing channel, maybe a reload of the channel file */
     chan->status &= ~CHAN_FLAGGED;	/* don't delete me! :) */
   } else {
-    malloc_memset(chan, 0, sizeof(struct chanset_t));
+    chan = calloc(1, sizeof(struct chanset_t));
     chan->limit_prot = 0;
     chan->limit = 0;
     chan->flood_pub_thr = gfld_chan_thr;

@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.70 2001/10/10 10:44:03 tothwolf Exp $
+ * $Id: cmds.c,v 1.71 2001/10/11 11:34:19 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -2120,9 +2120,9 @@ static void cmd_su(struct userrec *u, int idx, char *par)
 	 */
 	if (dcc[idx].u.chat->away != NULL)
 	  free(dcc[idx].u.chat->away);
-	malloc_memset(dcc[idx].u.chat->away, 0, strlen(dcc[idx].nick) + 1);
+	dcc[idx].u.chat->away = calloc(1, strlen(dcc[idx].nick) + 1);
 	strcpy(dcc[idx].u.chat->away, dcc[idx].nick);
-	malloc_memset(dcc[idx].u.chat->su_nick, 0, strlen(dcc[idx].nick) + 1);
+	dcc[idx].u.chat->su_nick = calloc(1, strlen(dcc[idx].nick) + 1);
 	strcpy(dcc[idx].u.chat->su_nick, dcc[idx].nick);
 	dcc[idx].user = u;
 	strcpy(dcc[idx].nick, par);
@@ -2139,7 +2139,7 @@ static void cmd_su(struct userrec *u, int idx, char *par)
 	dprintf(idx, "Setting your username to %s.\n", par);
 	if (atr & USER_MASTER)
 	  dcc[idx].u.chat->con_flags = conmask;
-	malloc_memset(dcc[idx].u.chat->su_nick, 0, strlen(dcc[idx].nick) + 1);
+	dcc[idx].u.chat->su_nick = calloc(1, strlen(dcc[idx].nick) + 1);
 	strcpy(dcc[idx].u.chat->su_nick, dcc[idx].nick);
 	dcc[idx].user = u;
 	strcpy(dcc[idx].nick, par);

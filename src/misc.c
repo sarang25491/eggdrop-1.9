@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.46 2001/10/10 10:44:04 tothwolf Exp $
+ * $Id: misc.c,v 1.47 2001/10/11 11:34:19 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -735,7 +735,7 @@ static void subst_addcol(char *s, char *newcol)
     }
     strcat(s, q);
     free(colstr);
-    malloc_memset(colstr, 0, 1);
+    colstr = calloc(1, 1);
   }
 }
 
@@ -954,7 +954,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
 
 	    cols = atoi(q + 5);
 	    colsofar = 0;
-	    malloc_memset(colstr, 0, 1);
+	    colstr = calloc(1, 1);
 	    r = strchr(q + 5, '/');
 	    if (r != NULL)
 	      subwidth = atoi(r + 1);

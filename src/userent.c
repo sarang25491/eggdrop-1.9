@@ -2,7 +2,7 @@
  * userent.c -- handles:
  *   user-entry handling, new stylem more versatile.
  *
- * $Id: userent.c,v 1.22 2001/10/10 10:44:04 tothwolf Exp $
+ * $Id: userent.c,v 1.23 2001/10/11 11:34:19 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -384,7 +384,7 @@ static int laston_tcl_set(Tcl_Interp * irp, struct userrec *u,
   if (argc == 5)
     malloc_strcpy(li->lastonplace, argv[4]);
   else
-    malloc_memset(li->lastonplace, 0, 1);
+    li->lastonplace = calloc(1, 1);
 
   li->laston = atoi(argv[3]);
   set_user(&USERENTRY_LASTON, u, li);
@@ -428,7 +428,7 @@ static int botaddr_unpack(struct userrec *u, struct user_entry *e)
   char *p = NULL, *q;
   struct bot_addr *bi;
 
-  malloc_memset(bi, 0, sizeof(struct bot_addr));
+  bi = calloc(1, sizeof(struct bot_addr));
   q = (e->u.list->extra);
   malloc_strcpy(p, q);
   if (!(q = strchr_unescape(p, ':', '\\')))
@@ -535,7 +535,7 @@ static int botaddr_tcl_set(Tcl_Interp *irp, struct userrec *u,
   if (u->flags & USER_BOT) {
     /* Silently ignore for users */
     if (!bi) {
-      malloc_memset(bi, 0, sizeof(struct bot_addr));
+      bi = calloc(1, sizeof(struct bot_addr));
     } else {
       free(bi->address);
     }
@@ -567,7 +567,7 @@ static int botaddr_gotshare(struct userrec *u, struct user_entry *e,
   char *arg;
   struct bot_addr *bi;
 
-  malloc_memset(bi, 0, sizeof(struct bot_addr));
+  bi = calloc(1, sizeof(struct bot_addr));
   arg = newsplit(&buf);
   str_unescape(arg, '\\');
   malloc_strcpy(bi->address, arg);
@@ -670,7 +670,7 @@ static int xtra_tcl_set(Tcl_Interp * irp, struct userrec *u,
   int l;
 
   BADARGS(4, 5, " handle type key ?value?");
-  malloc_memset(xk, 0, sizeof(struct xtra_key));
+  xk = calloc(1, sizeof(struct xtra_key));
   l = strlen(argv[3]);
   if (l > 500)
     l = 500;
@@ -765,7 +765,7 @@ static int xtra_gotshare(struct userrec *u, struct user_entry *e,
   if (!arg[0])
     return 1;
 
-  malloc_memset(xk, 0, sizeof(struct xtra_key));
+  xk = calloc(1, sizeof(struct xtra_key));
   l = strlen(arg);
   if (l > 500)
     l = 500;

@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.41 2001/10/10 10:44:03 tothwolf Exp $
+ * $Id: botnet.c,v 1.42 2001/10/11 11:34:19 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1022,7 +1022,7 @@ int botlink(char *linker, int idx, char *nick)
       strcpy(dcc[i].host, bi->address);
       dcc[i].u.dns->ibuf = idx;
       dcc[i].u.dns->cptr = linker;
-      malloc_memset(dcc[i].u.dns->host, 0, strlen(dcc[i].host) + 1);
+      dcc[i].u.dns->host = calloc(1, strlen(dcc[i].host) + 1);
       strcpy(dcc[i].u.dns->host, dcc[i].host);
       dcc[i].u.dns->dns_success = botlink_resolve_success;
       dcc[i].u.dns->dns_failure = botlink_resolve_failure;
@@ -1156,13 +1156,13 @@ void tandem_relay(int idx, char *nick, register int i)
   dprintf(idx, _("(Type *BYE* on a line by itself to abort.)\n"));
   dcc[idx].type = &DCC_PRE_RELAY;
   ci = dcc[idx].u.chat;
-  malloc_memset(dcc[idx].u.relay, 0, sizeof(struct relay_info));
+  dcc[idx].u.relay = calloc(1, sizeof(struct relay_info));
   dcc[idx].u.relay->chat = ci;
   dcc[idx].u.relay->old_status = dcc[idx].status;
   dcc[idx].u.relay->sock = dcc[i].sock;
   dcc[i].timeval = now;
   dcc[i].u.dns->ibuf = dcc[idx].sock;
-  malloc_memset(dcc[i].u.dns->host, 0, strlen(bi->address) + 1);
+  dcc[i].u.dns->host = calloc(1, strlen(bi->address) + 1);
   strcpy(dcc[i].u.dns->host, bi->address);
   dcc[i].u.dns->dns_success = tandem_relay_resolve_success;
   dcc[i].u.dns->dns_failure = tandem_relay_resolve_failure;
@@ -1205,7 +1205,7 @@ static void tandem_relay_resolve_success(int i)
 
   strcpy(dcc[i].addr, dcc[i].u.dns->host);
   changeover_dcc(i, &DCC_FORK_RELAY, sizeof(struct relay_info));
-  malloc_memset(dcc[i].u.relay->chat, 0, sizeof(struct chat_info));
+  dcc[i].u.relay->chat = calloc(1, sizeof(struct chat_info));
 
   dcc[i].u.relay->sock = sock;
   dcc[i].u.relay->port = dcc[i].port;

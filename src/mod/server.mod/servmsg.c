@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.68 2001/10/10 10:44:07 tothwolf Exp $
+ * $Id: servmsg.c,v 1.69 2001/10/11 11:34:21 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1116,9 +1116,9 @@ static void connect_server(void)
 
     dcc[servidx].timeval = now;
     dcc[servidx].sock = -1;
-    malloc_memset(dcc[servidx].u.dns->host, 0, strlen(dcc[servidx].host) + 1);
+    dcc[servidx].u.dns->host = calloc(1, strlen(dcc[servidx].host) + 1);
     strcpy(dcc[servidx].u.dns->host, dcc[servidx].host);
-    malloc_memset(dcc[servidx].u.dns->cbuf, 0, strlen(pass) + 1);
+    dcc[servidx].u.dns->cbuf = calloc(1, strlen(pass) + 1);
     strcpy(dcc[servidx].u.dns->cbuf, pass);
     dcc[servidx].u.dns->dns_success = server_resolve_success;
     dcc[servidx].u.dns->dns_failure = server_resolve_failure;

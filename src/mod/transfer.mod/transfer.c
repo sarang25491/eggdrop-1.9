@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.45 2001/10/10 10:44:08 tothwolf Exp $
+ * $Id: transfer.c,v 1.46 2001/10/11 11:34:21 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1446,11 +1446,11 @@ debug1("|TRANSFER| raw_dcc_resend_send(... addr=\"%s\")", addr);
   dcc[i].port = port;
   strcpy(dcc[i].nick, nick);
   strcpy(dcc[i].host, "irc");
-  malloc_memset(dcc[i].u.xfer->filename, 0, strlen(filename) + 1);
+  dcc[i].u.xfer->filename = calloc(1, strlen(filename) + 1);
   strcpy(dcc[i].u.xfer->filename, filename);
   if (strchr(nfn, ' '))
     nfn = buf = replace_spaces(nfn);
-  malloc_memset(dcc[i].u.xfer->origname, 0, strlen(nfn) + 1);
+  dcc[i].u.xfer->origname = calloc(1, strlen(nfn) + 1);
   strcpy(dcc[i].u.xfer->origname, nfn);
   strcpy(dcc[i].u.xfer->from, from);
   strcpy(dcc[i].u.xfer->dir, dir);
@@ -1505,7 +1505,7 @@ static int fstat_unpack(struct userrec *u, struct user_entry *e)
   char *par, *arg;
   struct filesys_stats *fs;
 
-  malloc_memset(fs, 0, sizeof(struct filesys_stats));
+  fs = calloc(1, sizeof(struct filesys_stats));
   par = e->u.list->extra;
   arg = newsplit(&par);
   if (arg[0])
@@ -1671,7 +1671,7 @@ static int fstat_gotshare(struct userrec *u, struct user_entry *e,
     break;
   default:
     if (!(fs = e->u.extra))
-      malloc_memset(fs, 0, sizeof(struct filesys_stats));
+      fs = calloc(1, sizeof(struct filesys_stats));
     p = newsplit (&par);
     if (p[0])
       fs->uploads = atoi (p);
@@ -1713,7 +1713,7 @@ static void stats_add_dnload(struct userrec *u, unsigned long bytes)
   if (u) {
     if (!(ue = find_user_entry (&USERENTRY_FSTAT, u)) ||
         !(fs = ue->u.extra))
-      malloc_memset(fs, 0, sizeof(struct filesys_stats));
+      fs = calloc(1, sizeof(struct filesys_stats));
     fs->dnloads++;
     fs->dnload_ks += ((bytes + 512) / 1024);
     set_user(&USERENTRY_FSTAT, u, fs);
@@ -1729,7 +1729,7 @@ static void stats_add_upload(struct userrec *u, unsigned long bytes)
   if (u) {
     if (!(ue = find_user_entry (&USERENTRY_FSTAT, u)) ||
         !(fs = ue->u.extra))
-      malloc_memset(fs, 0, sizeof(struct filesys_stats));
+      fs = calloc(1, sizeof(struct filesys_stats));
     fs->uploads++;
     fs->upload_ks += ((bytes + 512) / 1024);
     set_user(&USERENTRY_FSTAT, u, fs);
@@ -1752,7 +1752,7 @@ static int fstat_tcl_set(Tcl_Interp *irp, struct userrec *u,
   case 'u':
   case 'd':
     if (!(fs = e->u.extra))
-      malloc_memset(fs, 0, sizeof(struct filesys_stats));
+      fs = calloc(1, sizeof(struct filesys_stats));
     switch (argv[3][0]) {
     case 'u':
       fs->uploads = f;

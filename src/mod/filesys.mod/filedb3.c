@@ -4,7 +4,7 @@
  *
  * Rewritten by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: filedb3.c,v 1.21 2001/10/10 10:44:06 tothwolf Exp $
+ * $Id: filedb3.c,v 1.22 2001/10/11 11:34:20 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -101,7 +101,7 @@ static filedb_entry *_malloc_fdbe(char *file, int line)
 {
   filedb_entry *fdbe = NULL;
 
-  malloc_memset(fdbe, 0, sizeof(filedb_entry));
+  fdbe = calloc(1, sizeof(filedb_entry));
 
   /* Mark as new, will be overwritten if necessary. */
   fdbe->_type = TYPE_NEW;

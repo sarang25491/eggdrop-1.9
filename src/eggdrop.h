@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.43 2001/10/10 10:44:04 tothwolf Exp $
+ * $Id: eggdrop.h,v 1.44 2001/10/11 11:34:19 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -167,14 +167,6 @@
     free(ptr);								\
     ptr = NULL;								\
   }
-
-/* Allocate memory and set it to byte
- */
-#define malloc_memset(ptr, byte, size)					\
-  do {									\
-    ptr = malloc(size);							\
-    memset(ptr, byte, size);						\
-  } while (0)
 
 /* Copy entry to target -- Uses dynamic memory allocation, which
  * means you'll eventually have to free the memory again. 'target'

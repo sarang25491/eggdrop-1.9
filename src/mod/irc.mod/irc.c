@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.66 2001/10/10 17:02:06 stdarg Exp $
+ * $Id: irc.c,v 1.67 2001/10/11 11:34:20 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -286,10 +286,10 @@ static void set_key(struct chanset_t *chan, char *k)
 {
   free(chan->channel.key);
   if (k == NULL) {
-    malloc_memset(chan->channel.key, 0, 1);
+    chan->channel.key = calloc(1, 1);
     return;
   }
-  malloc_memset(chan->channel.key, 0, strlen(k) + 1);
+  chan->channel.key = calloc(1, strlen(k) + 1);
   strcpy(chan->channel.key, k);
 }
 
@@ -315,14 +315,14 @@ static void newmask(masklist *m, char *s, char *who)
   if (m->mask[0])
     return;			/* Already existent mask */
 
-  malloc_memset(m->next, 0, sizeof(masklist));
+  m->next = calloc(1, sizeof(masklist));
   m->next->next = NULL;
-  malloc_memset(m->next->mask, 0, 1);
+  m->next->mask = calloc(1, 1);
   m->next->mask[0] = 0;
   free(m->mask);
-  malloc_memset(m->mask, 0, strlen(s) + 1);
+  m->mask = calloc(1, strlen(s) + 1);
   strcpy(m->mask, s);
-  malloc_memset(m->who, 0, strlen(who) + 1);
+  m->who = calloc(1, strlen(who) + 1);
   strcpy(m->who, who);
   m->timer = now;
 }
@@ -363,7 +363,7 @@ static int killmember(struct chanset_t *chan, char *nick)
   }
   if (!chan->channel.member) {
     putlog(LOG_MISC, "*", "(!) BUG: memberlist is NULL");
-    malloc_memset(chan->channel.member, 0, sizeof(memberlist));
+    chan->channel.member = calloc(1, sizeof(memberlist));
     chan->channel.member->nick[0] = 0;
     chan->channel.member->next = NULL;
   }
@@ -425,7 +425,7 @@ static void reset_chan_info(struct chanset_t *chan)
   }
   if (!channel_pending(chan)) {
     free(chan->channel.key);
-    malloc_memset(chan->channel.key, 0, 1);
+    chan->channel.key = calloc(1, 1);
     clear_channel(chan, 1);
     chan->status |= CHAN_PEND;
     chan->status &= ~(CHAN_ACTIVE | CHAN_ASKEDMODES);

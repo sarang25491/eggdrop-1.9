@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.57 2001/10/10 14:50:01 tothwolf Exp $
+ * $Id: dcc.c,v 1.58 2001/10/11 11:34:19 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -535,7 +535,7 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
     if(dcc_bot_check_digest(idx, buf+7)) {
       free(dcc[idx].u.chat);
       dcc[idx].type = &DCC_BOT_NEW;
-      malloc_memset(dcc[idx].u.bot, 0, sizeof(struct bot_info));
+      dcc[idx].u.bot = calloc(1, sizeof(struct bot_info));
       dcc[idx].status = STAT_CALLED;
       dprintf(idx, "*hello!\n");
       greet_new_bot(idx);
@@ -555,7 +555,7 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
     if (atr & USER_BOT) {
       free(dcc[idx].u.chat);
       dcc[idx].type = &DCC_BOT_NEW;
-      malloc_memset(dcc[idx].u.bot, 0, sizeof(struct bot_info));
+      dcc[idx].u.bot = calloc(1, sizeof(struct bot_info));
       dcc[idx].status = STAT_CALLED;
       dprintf(idx, "*hello!\n");
       greet_new_bot(idx);
@@ -743,9 +743,9 @@ static void append_line(int idx, char *line)
     else
       for (q = c->buffer; q->next; q = q->next);
 
-    malloc_memset(p, 0, sizeof(struct msgq));
+    p = calloc(1, sizeof(struct msgq));
     p->len = l;
-    malloc_memset(p->msg, 0, l + 1);
+    p->msg = calloc(1, l + 1);
     p->next = NULL;
     strcpy(p->msg, line);
     if (q == NULL)
@@ -1054,7 +1054,7 @@ static void dcc_telnet(int idx, char *buf, int i)
   dcc[i].port = port;
   dcc[i].timeval = now;
   strcpy(dcc[i].nick, "*");
-  malloc_memset(dcc[i].u.dns->host, 0, j + 1);
+  dcc[i].u.dns->host = calloc(1, j + 1);
   strcpy(dcc[i].u.dns->host, dcc[i].addr);
 debug3("|DCC| dcc_telnet: idx: %d addr: %s u.dns->host: %s", i, dcc[i].addr, dcc[i].u.dns->host);
   dcc[i].u.dns->dns_success = dcc_telnet_hostresolved;
@@ -1318,7 +1318,7 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
 
       ci = dcc[idx].u.chat;
       dcc[idx].type = &DCC_DUPWAIT;
-      malloc_memset(dcc[idx].u.dupwait, 0, sizeof(struct dupwait_info));
+      dcc[idx].u.dupwait = calloc(1, sizeof(struct dupwait_info));
       dcc[idx].u.dupwait->chat = ci;
       dcc[idx].u.dupwait->atr = atr;
       return;
@@ -1385,7 +1385,7 @@ static void dcc_telnet_pass(int idx, int atr)
     struct chat_info *ci;
 
     ci = dcc[idx].u.chat;
-    malloc_memset(dcc[idx].u.file, 0, sizeof(struct file_info));
+    dcc[idx].u.file = calloc(1, sizeof(struct file_info));
     dcc[idx].u.file->chat = ci;
   }
 
@@ -1958,7 +1958,7 @@ void dcc_telnet_got_ident(int i, char *host)
   sockoptions(dcc[i].sock, EGG_OPTION_UNSET, SOCK_BUFFER);
 
   dcc[i].type = &DCC_TELNET_ID;
-  malloc_memset(dcc[i].u.chat, 0, sizeof(struct chat_info));
+  dcc[i].u.chat = calloc(1, sizeof(struct chat_info));
 
   /* Copy acceptable-nick/host mask */
   dcc[i].status = STAT_TELNET | STAT_ECHO;
