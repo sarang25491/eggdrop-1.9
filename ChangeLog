@@ -1,3 +1,17 @@
+2003-03-08 07:17  Tothwolf <tothwolf@techmonkeys.org>
+
+	* acconfig/acinclude.m4:
+
+	* Update autoconf macro usage.  
+	* Simplify autoconf variables.  
+
+2003-03-08 07:12  stdarg <stdarg@techmonkeys.org>
+
+	* modules/server/: channels.c, channels.h, scriptcmds.c:
+
+	
+	* Almost done with channel support 
+
 2003-03-07 19:42  stdarg <stdarg@techmonkeys.org>
 
 	* modules/server/input.c:
