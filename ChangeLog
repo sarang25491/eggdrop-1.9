@@ -1,3 +1,13 @@
+2001-10-12 17:40  Tothwolf <tothwolf@techmonkeys.org>
+
+	* src/: irccmp.c, patch.h, mod/server.mod/server.c,
+	mod/server.mod/servmsg.c:
+
+	* splitnicks() removed 
+	* check_queues() removed 
+	* parse_q() removed 
+	* purge_kicks() removed 
+
 2001-10-12 15:50  Tothwolf <tothwolf@techmonkeys.org>
 
 	* acinclude.m4, src/Makefile.am, src/botnet.c, src/cmds.c,
