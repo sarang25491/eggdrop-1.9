@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.45 2002/01/03 07:33:04 stdarg Exp $
+ * $Id: tcldcc.c,v 1.46 2002/01/14 02:23:27 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -29,7 +29,6 @@
 #include "script_api.h"
 #include "script.h"
 
-extern Tcl_Interp	*interp;
 extern struct dcc_t	*dcc;
 extern int		 dcc_total, backgrd, parties, make_userfile,
 			 do_restart, remote_boots, max_dcc;

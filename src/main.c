@@ -4,7 +4,7 @@
  *   signal handling
  *   command line arguments
  *
- * $Id: main.c,v 1.103 2001/12/29 21:21:18 guppy Exp $
+ * $Id: main.c,v 1.104 2002/01/14 02:23:27 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -66,13 +66,11 @@
 #define _POSIX_SOURCE 1
 #endif
 
-extern char		 origbotname[], userfile[], botnetnick[];
-extern int		 dcc_total, conmask, cache_hit, cache_miss,
-			 max_logs, quick_logs;
+extern char		 userfile[], botnetnick[];
+extern int		 dcc_total, conmask, cache_hit, cache_miss;
 extern struct dcc_t	*dcc;
 extern struct userrec	*userlist;
 extern struct chanset_t	*chanset;
-extern Tcl_Interp	*interp;
 extern jmp_buf		 alarmret;
 
 

@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.63 2002/01/09 12:11:14 stdarg Exp $
+ * $Id: tcl.c,v 1.64 2002/01/14 02:23:27 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -46,13 +46,12 @@ typedef struct {
 
 
 extern time_t	online_since;
-extern int	backgrd, flood_telnet_thr, flood_telnet_time;
-extern int	shtime, share_greet;
+extern int	flood_telnet_thr, flood_telnet_time;
 extern int	learn_users;
 extern int	default_flags, conmask, connect_timeout;
-extern int	firewallport, notify_users_at, flood_thr, ignore_time;
+extern int	firewallport, notify_users_at, ignore_time;
 extern int	reserved_port_min, reserved_port_max;
-extern char	origbotname[], botuser[], motdfile[], admin[], userfile[],
+extern char	botuser[], motdfile[], admin[], userfile[],
 		firewall[], helpdir[], notify_new[], myip[],
 		moddir[], tempdir[], owner[], network[], botnetnick[],
 		bannerfile[], egg_version[], natip[], configfile[],

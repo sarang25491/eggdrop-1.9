@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  *
- * $Id: tcluser.c,v 1.34 2002/01/11 20:06:29 stdarg Exp $
+ * $Id: tcluser.c,v 1.35 2002/01/14 02:23:27 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -30,11 +30,10 @@
 #include "script_api.h"
 #include "script.h"
 
-extern Tcl_Interp	*interp;
 extern struct userrec	*userlist;
 extern int		 default_flags, dcc_total, ignore_time;
 extern struct dcc_t	*dcc;
-extern char		 origbotname[], botnetnick[];
+extern char		 botnetnick[];
 extern time_t		 now;
 
 

@@ -6,7 +6,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.57 2002/01/13 19:13:23 ite Exp $
+ * $Id: misc.c,v 1.58 2002/01/14 02:23:27 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -39,11 +39,10 @@
 
 extern struct dcc_t	*dcc;
 extern struct chanset_t	*chanset;
-extern char		 helpdir[], version[], origbotname[], botname[],
+extern char		 helpdir[], version[], botname[],
 			 admin[], network[], motdfile[], ver[], botnetnick[],
 			 bannerfile[], textdir[];
-extern int		 backgrd, con_chan, term_z, use_stderr, dcc_total,
-			 strict_host;
+extern int		 strict_host;
 extern time_t		 now;
 extern Tcl_Interp	*interp;
 

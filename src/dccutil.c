@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  *
- * $Id: dccutil.c,v 1.40 2001/10/21 20:59:49 stdarg Exp $
+ * $Id: dccutil.c,v 1.41 2002/01/14 02:23:27 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -39,7 +39,6 @@ extern int		 dcc_total, max_dcc, dcc_flood_thr, backgrd, MAXSOCKS;
 extern char		 botnetnick[], spaces[], version[];
 extern time_t		 now;
 extern sock_list	*socklist;
-extern Tcl_Interp	*interp;
 
 char	motdfile[121] = "text/motd";	/* File where the motd is stored */
 int	connect_timeout = 15;		/* How long to wait before a telnet

@@ -3,7 +3,7 @@
  *   Tcl stubs for file system commands
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.37 2002/01/04 04:49:49 ite Exp $
+ * $Id: tclmisc.c,v 1.38 2002/01/14 02:23:27 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -35,7 +35,7 @@
 #endif
 
 extern struct dcc_t	*dcc;
-extern char		 origbotname[], botnetnick[], quit_msg[];
+extern char		 origbotname[], quit_msg[];
 extern struct userrec	*userlist;
 extern time_t		 now;
 extern module_entry	*module_list;

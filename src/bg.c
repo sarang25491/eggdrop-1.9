@@ -3,7 +3,7 @@
  *   Handles moving the process to the background and forking,
  *   while keeping threads happy.
  *
- * $Id: bg.c,v 1.6 2001/12/26 05:03:02 tothwolf Exp $
+ * $Id: bg.c,v 1.7 2002/01/14 02:23:27 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -24,12 +24,25 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "main.h"
-#include <signal.h>
-#include "bg.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include <unistd.h>            /* fork(), pipe(), read(), setpgid(),
+                                  unlink(), write()                    */
+#include <stdio.h>             /* fflush(), fopen(), fprintf(),
+                                  printf()                             */
+#include <string.h>            /* strlen()                             */
+#include <stdlib.h>            /* exit()                               */
+#include <sys/types.h>         /* pid_t, kill()                        */
+#include <signal.h>            /* kill()                               */
+
+#include "main.h"              /* fatal()                              */
+#include "bg.h"                /* bg_quit_t, prototypes                */
+
 
 #ifdef HAVE_TCL_THREADS
-#  define SUPPORT_THREADS
+# define SUPPORT_THREADS
 #endif
 
 extern char	pid_file[];
@@ -70,7 +83,8 @@ extern char	pid_file[];
  */
 
 /* Format of messages sent from the newly forked process to the
-   original process, connected to the terminal. */
+ * original process, connected to the terminal.
+ */
 typedef struct {
 	enum {
 		BG_COMM_QUIT,		/* Quit original process. Write
@@ -132,7 +146,7 @@ static void bg_do_detach(pid_t p)
   } else
     printf(_("* Warning!  Could not write %s file!\n"), pid_file);
   printf("Launched into the background  (pid: %d)\n\n", p);
-#if HAVE_SETPGID
+#ifdef HAVE_SETPGID
   setpgid(p, p);
 #endif
   exit(0);
@@ -189,8 +203,7 @@ void bg_prepare_split(void)
   }
 
 error:
-  /* We only reach this point in case of an error.
-   */
+  /* We only reach this point in case of an error. */
   fatal("COMMUNICATION THROUGH PIPE BROKE.", 0);
 #endif
 }
@@ -242,12 +255,10 @@ void bg_send_quit(bg_quit_t q)
 void bg_do_split(void)
 {
 #ifdef SUPPORT_THREADS
-  /* Tell our parent process to go away now, as we don't need it
-     anymore. */
+  /* Tell our parent process to go away now, as we don't need it anymore. */
   bg_send_quit(BG_QUIT);
 #else
-  /* Split off a new process.
-   */
+  /* Split off a new process. */
   int	xx = fork();
 
   if (xx == -1)

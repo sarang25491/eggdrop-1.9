@@ -2,7 +2,7 @@
  * fileutil.h
  *   convenience utilities to deal with common file operations
  *
- * $Id: fileutil.h,v 1.1 2002/01/13 19:13:23 ite Exp $
+ * $Id: fileutil.h,v 1.2 2002/01/14 02:23:26 ite Exp $
  */
 /*
  * Copyright (C) 2000, 2001 Eggheads Development Team
@@ -29,9 +29,9 @@
 
 BEGIN_C_DECLS
 
-int copyfile(char *, char *);
-int movefile(char *, char *);
-int is_file(const char *);
+extern int copyfile(char *, char *);
+extern int movefile(char *, char *);
+extern int is_file(const char *);
 
 END_C_DECLS
 
