@@ -251,12 +251,14 @@ static XS(my_command_handler)
 	/* Parse arguments. */
 	syntax = cmd->syntax;
 	if (cmd->flags & SCRIPT_VAR_FRONT) {
-		skip = items - cmd->nargs;
+		skip = strlen(syntax) - items;
 		if (skip < 0) skip = 0;
+		for (i = 0; i < skip; i++) mstack_push(args, NULL);
 		syntax += skip;
 	}
 	else skip = 0;
-	for (i = skip; i < items; i++) {
+
+	for (i = 0; i < items; i++) {
 		switch (*syntax++) {
 			case SCRIPT_BYTES: /* Byte-array. */
 			case SCRIPT_STRING: { /* String. */
@@ -313,7 +315,7 @@ static XS(my_command_handler)
 	al = (void **)args->stack; /* Argument list shortcut name. */
 	nopts = 0;
 	if (cmd->flags & SCRIPT_PASS_COUNT) {
-		al[2-nopts] = (void *)(args->len - 3);
+		al[2-nopts] = (void *)(args->len - 3 - skip);
 		nopts++;
 	}
 	if (cmd->flags & SCRIPT_PASS_RETVAL) {
