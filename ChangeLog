@@ -1,3 +1,13 @@
+2002-01-31 13:35  Axel Franke <eule@berlin.snafu.de>
+
+	* eggdrop.complete.conf, eggdrop.simple.conf,
+	modules/channels/channels.c, modules/channels/channels.h,
+	modules/channels/cmdschan.c, modules/channels/flagmaps.c,
+	modules/irc/chan.c, modules/irc/cmdsirc.c, src/chan.h:
+
+	adding as channelset honor-global-bans, honor-global-exempts and
+	honor-global-invites 
+
 2002-01-31 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
