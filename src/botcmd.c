@@ -3,7 +3,7 @@
  *   commands that comes across the botnet
  *   userfile transfer and update commands from sharebots
  *
- * $Id: botcmd.c,v 1.26 2001/12/10 01:35:14 ite Exp $
+ * $Id: botcmd.c,v 1.27 2001/12/16 14:48:50 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -79,16 +79,22 @@ static int fakesock = 2300;
 
 static void fake_alert(int idx, char *item, char *extra)
 {
+  static unsigned long lastfake;	/* The last time fake_alert was used */
+
+  if (now - lastfake > 10) {	
+    /* Don't fake_alert more than once every 10secs */
 #ifndef NO_OLD_BOTNET
-  if (b_numver(idx) < NEAT_BOTNET)
-    dprintf(idx, "chat %s NOTICE: %s (%s != %s).\n",
-	    botnetnick, _("Fake message rejected"), item, extra);
-  else
+    if (b_numver(idx) < NEAT_BOTNET)
+      dprintf(idx, "chat %s NOTICE: %s (%s != %s).\n",
+	      botnetnick, _("Fake message rejected"), item, extra);
+    else
 #endif
-    dprintf(idx, "ct %s NOTICE: %s (%s != %s).\n",
-	    botnetnick, _("Fake message rejected"), item, extra);
-  putlog(LOG_BOTS, "*", "%s %s (%s != %s).", dcc[idx].nick, _("Fake message rejected"),
-	 item, extra);
+      dprintf(idx, "ct %s NOTICE: %s (%s != %s).\n",
+	      botnetnick, _("Fake message rejected"), item, extra);
+    putlog(LOG_BOTS, "*", "%s %s (%s != %s).", dcc[idx].nick, _("Fake message rejected"),
+	   item, extra);
+    lastfake = now;
+  }
 }
 
 /* chan <from> <chan> <text>
