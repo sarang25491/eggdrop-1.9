@@ -3,7 +3,7 @@
  *   Tcl stubs for file system commands
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.39 2002/01/16 18:09:22 stdarg Exp $
+ * $Id: tclmisc.c,v 1.40 2002/01/16 20:40:43 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -89,9 +89,14 @@ static unsigned int script_unixtime()
 static char *script_ctime(unsigned int sec)
 {
   time_t tt;
+  char *str;
 
   tt = (time_t) sec;
-  return ctime(&tt);
+
+  /* ctime() puts a '\n' on the end of the date string, let's remove it. */
+  str = ctime(&tt);
+  str[strlen(str)-1] = 0;
+  return(str);
 }
 
 static char *script_strftime(int nargs, char *format, unsigned int sec)
@@ -348,7 +353,7 @@ tcl_cmds tclmisc_objcmds[] =
 script_command_t script_misc_cmds[] = {
 	{"", "duration", (Function) script_duration, NULL, 1, "u", "seconds", SCRIPT_STRING|SCRIPT_FREE, 0},
 	{"", "unixtime", (Function) script_unixtime, NULL, 0, "", "", SCRIPT_UNSIGNED, 0},
-	{"", "ctime", (Function) script_ctime, NULL, 1, "u", "seconds", SCRIPT_STRING|SCRIPT_FREE, 0},
+	{"", "ctime", (Function) script_ctime, NULL, 1, "u", "seconds", SCRIPT_STRING, 0},
 	{"", "strftime", (Function) script_strftime, NULL, 1, "su", "format ?seconds?", SCRIPT_STRING|SCRIPT_FREE, SCRIPT_PASS_COUNT|SCRIPT_VAR_ARGS},
 	{"", "myip", (Function) script_myip, NULL, 0, "", "", SCRIPT_UNSIGNED, 0},
 	{"", "myip6", (Function) script_myip6, NULL, 0, "", "", SCRIPT_STRING|SCRIPT_FREE, 0},
