@@ -1,3 +1,9 @@
+2002-01-26 13:34  Federico Mennite <ite@techmonkeys.org>
+
+	* modules/channels/channels.h:
+
+	Changed kickreason max length to 307 (synch 1.6) 
+
 2002-01-26 13:26  Federico Mennite <ite@techmonkeys.org>
 
 	* scripts/sentinel.tcl:
