@@ -1,3 +1,18 @@
+2002-03-03 19:09  stdarg <stdarg@techmonkeys.org>
+
+	* eggdrop.complete.conf, doc/tcl-commands.doc:
+
+	
+	* Remove assoc.mod's tcl commands and entry in the config file.  
+
+2002-03-03 19:03  stdarg <stdarg@techmonkeys.org>
+
+	* configure.ac, modules/Makefile.am, src/Makefile.am, src/botcmd.c,
+	src/botnet.c, src/cmds.c, src/tcldcc.c:
+
+	
+	* Got rid of assoc.mod 
+
 2002-03-03 18:14  stdarg <stdarg@techmonkeys.org>
 
 	* testcode/: Makefile, chat.c, client.c, ipv6.c, my_socket.c,
@@ -364,42 +379,41 @@
 	lib/eggdrop/common.h, lib/eggdrop/eggdrop.h,
 	lib/eggdrop/fileutil.c, lib/eggdrop/fileutil.h,
 	lib/eggdrop/memutil.c, lib/eggdrop/memutil.h, lib/eggdrop/module.h,
-	lib/eggdrop/modvals.h, lib/egglib/egglib.h, modules/assoc/assoc.c,
-	modules/assoc/assoc.h, modules/blowfish/bf_tab.h,
-	modules/blowfish/blowfish.c, modules/blowfish/blowfish.h,
-	modules/channels/channels.c, modules/channels/channels.h,
-	modules/channels/cmdschan.c, modules/channels/tclchan.c,
-	modules/channels/udefchan.c, modules/channels/userchan.c,
-	modules/compress/compress.c, modules/compress/compress.h,
-	modules/compress/tclcompress.c, modules/console/console.c,
-	modules/console/console.h, modules/ctcp/ctcp.c,
-	modules/ctcp/ctcp.h, modules/filesys/dbcompat.c,
-	modules/filesys/dbcompat.h, modules/filesys/filedb3.c,
-	modules/filesys/filedb3.h, modules/filesys/filelist.c,
-	modules/filesys/filelist.h, modules/filesys/files.c,
-	modules/filesys/files.h, modules/filesys/filesys.c,
-	modules/filesys/filesys.h, modules/filesys/tclfiles.c,
-	modules/irc/chan.c, modules/irc/cmdsirc.c, modules/irc/irc.c,
-	modules/irc/irc.h, modules/irc/mode.c, modules/irc/msgcmds.c,
-	modules/irc/tclirc.c, modules/notes/cmdsnote.c,
-	modules/notes/notes.c, modules/notes/notes.h,
-	modules/server/cmdsserv.c, modules/server/server.c,
-	modules/server/server.h, modules/server/servmsg.c,
-	modules/server/tclserv.c, modules/share/share.c,
-	modules/share/share.h, modules/share/uf_features.c,
-	modules/transfer/transfer.c, modules/transfer/transfer.h,
-	modules/uptime/uptime.c, modules/uptime/uptime.h,
-	modules/woobie/woobie.c, scripts/autobotchk, scripts/ques5.tcl,
-	src/bg.c, src/bg.h, src/botcmd.c, src/botmsg.c, src/botnet.c,
-	src/chan.h, src/chanprog.c, src/cmds.c, src/cmdt.h, src/dcc.c,
-	src/dccutil.c, src/debug.h, src/dns.c, src/dns.h, src/egg.h,
-	src/flags.c, src/flags.h, src/irccmp.c, src/irccmp.h,
-	src/logfile.h, src/main.c, src/main.h, src/misc.c, src/misc.h,
-	src/modules.c, src/modules.h, src/patch.h, src/proto.h,
-	src/tandem.h, src/tcl.c, src/tcldcc.c, src/tclegg.h, src/tclhash.c,
-	src/tclhash.h, src/tclmisc.c, src/tcluser.c, src/userent.c,
-	src/userrec.c, src/users.c, src/users.h, FEATURES, INSTALL, NEWS,
-	README:
+	lib/eggdrop/modvals.h, lib/egglib/egglib.h,
+	modules/blowfish/bf_tab.h, modules/blowfish/blowfish.c,
+	modules/blowfish/blowfish.h, modules/channels/channels.c,
+	modules/channels/channels.h, modules/channels/cmdschan.c,
+	modules/channels/tclchan.c, modules/channels/udefchan.c,
+	modules/channels/userchan.c, modules/compress/compress.c,
+	modules/compress/compress.h, modules/compress/tclcompress.c,
+	modules/console/console.c, modules/console/console.h,
+	modules/ctcp/ctcp.c, modules/ctcp/ctcp.h,
+	modules/filesys/dbcompat.c, modules/filesys/dbcompat.h,
+	modules/filesys/filedb3.c, modules/filesys/filedb3.h,
+	modules/filesys/filelist.c, modules/filesys/filelist.h,
+	modules/filesys/files.c, modules/filesys/files.h,
+	modules/filesys/filesys.c, modules/filesys/filesys.h,
+	modules/filesys/tclfiles.c, modules/irc/chan.c,
+	modules/irc/cmdsirc.c, modules/irc/irc.c, modules/irc/irc.h,
+	modules/irc/mode.c, modules/irc/msgcmds.c, modules/irc/tclirc.c,
+	modules/notes/cmdsnote.c, modules/notes/notes.c,
+	modules/notes/notes.h, modules/server/cmdsserv.c,
+	modules/server/server.c, modules/server/server.h,
+	modules/server/servmsg.c, modules/server/tclserv.c,
+	modules/share/share.c, modules/share/share.h,
+	modules/share/uf_features.c, modules/transfer/transfer.c,
+	modules/transfer/transfer.h, modules/uptime/uptime.c,
+	modules/uptime/uptime.h, modules/woobie/woobie.c,
+	scripts/autobotchk, scripts/ques5.tcl, src/bg.c, src/bg.h,
+	src/botcmd.c, src/botmsg.c, src/botnet.c, src/chan.h,
+	src/chanprog.c, src/cmds.c, src/cmdt.h, src/dcc.c, src/dccutil.c,
+	src/debug.h, src/dns.c, src/dns.h, src/egg.h, src/flags.c,
+	src/flags.h, src/irccmp.c, src/irccmp.h, src/logfile.h, src/main.c,
+	src/main.h, src/misc.c, src/misc.h, src/modules.c, src/modules.h,
+	src/patch.h, src/proto.h, src/tandem.h, src/tcl.c, src/tcldcc.c,
+	src/tclegg.h, src/tclhash.c, src/tclhash.h, src/tclmisc.c,
+	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c,
+	src/users.h, FEATURES, INSTALL, NEWS, README:
 
 	Updated copyright info for 2002 
 
@@ -1101,16 +1115,16 @@
 	lib/eggdrop/botnetutil.c, lib/eggdrop/botnetutil.h,
 	lib/eggdrop/common.h, lib/eggdrop/eggdrop.h, lib/eggdrop/memutil.h,
 	lib/eggdrop/module.h, lib/egglib/Makefile.am, lib/egglib/egglib.h,
-	modules/assoc/Makefile.am, modules/blowfish/Makefile.am,
-	modules/channels/Makefile.am, modules/compress/Makefile.am,
-	modules/console/Makefile.am, modules/ctcp/Makefile.am,
-	modules/filesys/Makefile.am, modules/irc/Makefile.am,
-	modules/notes/Makefile.am, modules/perlscript/Makefile.am,
-	modules/server/Makefile.am, modules/share/Makefile.am,
-	modules/tclscript/Makefile.am, modules/transfer/Makefile.am,
-	modules/uptime/Makefile.am, modules/woobie/Makefile.am,
-	src/Makefile.am, src/egg.h, src/eggdrop.h, src/logfile.c,
-	src/main.h, src/modules.c, src/modules.h, src/proto.h:
+	modules/blowfish/Makefile.am, modules/channels/Makefile.am,
+	modules/compress/Makefile.am, modules/console/Makefile.am,
+	modules/ctcp/Makefile.am, modules/filesys/Makefile.am,
+	modules/irc/Makefile.am, modules/notes/Makefile.am,
+	modules/perlscript/Makefile.am, modules/server/Makefile.am,
+	modules/share/Makefile.am, modules/tclscript/Makefile.am,
+	modules/transfer/Makefile.am, modules/uptime/Makefile.am,
+	modules/woobie/Makefile.am, src/Makefile.am, src/egg.h,
+	src/eggdrop.h, src/logfile.c, src/main.h, src/modules.c,
+	src/modules.h, src/proto.h:
 
 	* Moved some botnet utility functions from the core to libeggdrop.  
 	* Moved some common macros to libeggdrop.  
@@ -1999,15 +2013,14 @@
 
 2001-11-24 20:42  Federico Mennite <ite@techmonkeys.org>
 
-	* modules/assoc/Makefile.am, modules/blowfish/Makefile.am,
-	modules/channels/Makefile.am, modules/compress/Makefile.am,
-	modules/console/Makefile.am, modules/ctcp/Makefile.am,
-	modules/filesys/Makefile.am, modules/irc/Makefile.am,
-	modules/notes/Makefile.am, modules/perlscript/Makefile.am,
-	modules/server/Makefile.am, modules/share/Makefile.am,
-	modules/tclscript/Makefile.am, modules/transfer/Makefile.am,
-	modules/uptime/Makefile.am, modules/woobie/Makefile.am,
-	src/eggdrop.h:
+	* modules/blowfish/Makefile.am, modules/channels/Makefile.am,
+	modules/compress/Makefile.am, modules/console/Makefile.am,
+	modules/ctcp/Makefile.am, modules/filesys/Makefile.am,
+	modules/irc/Makefile.am, modules/notes/Makefile.am,
+	modules/perlscript/Makefile.am, modules/server/Makefile.am,
+	modules/share/Makefile.am, modules/tclscript/Makefile.am,
+	modules/transfer/Makefile.am, modules/uptime/Makefile.am,
+	modules/woobie/Makefile.am, src/eggdrop.h:
 
 	Added mssing stuff in Makefile.am's that prevented compilation in
 	some environments.  
@@ -2231,15 +2244,14 @@
 2001-10-29 23:01  Federico Mennite <ite@techmonkeys.org>
 
 	* lib/eggdrop/Makefile.am, lib/eggdrop/module.h,
-	modules/assoc/Makefile.am, modules/blowfish/Makefile.am,
-	modules/channels/Makefile.am, modules/compress/Makefile.am,
-	modules/console/Makefile.am, modules/ctcp/Makefile.am,
-	modules/filesys/Makefile.am, modules/irc/Makefile.am,
-	modules/notes/Makefile.am, modules/perlscript/Makefile.am,
-	modules/server/Makefile.am, modules/share/Makefile.am,
-	modules/tclscript/Makefile.am, modules/transfer/Makefile.am,
-	modules/uptime/Makefile.am, modules/woobie/Makefile.am,
-	src/Makefile.am, src/modules.c:
+	modules/blowfish/Makefile.am, modules/channels/Makefile.am,
+	modules/compress/Makefile.am, modules/console/Makefile.am,
+	modules/ctcp/Makefile.am, modules/filesys/Makefile.am,
+	modules/irc/Makefile.am, modules/notes/Makefile.am,
+	modules/perlscript/Makefile.am, modules/server/Makefile.am,
+	modules/share/Makefile.am, modules/tclscript/Makefile.am,
+	modules/transfer/Makefile.am, modules/uptime/Makefile.am,
+	modules/woobie/Makefile.am, src/Makefile.am, src/modules.c:
 
 	Created libeggdrop: libadns, libegg and libcompat are now linked in
 	it. Cleaned up some unneeded function exports :) 
@@ -2320,10 +2332,7 @@
 	* Makefile.am, configure.ac, lib/Makefile.am,
 	lib/eggdrop/.cvsignore, lib/eggdrop/Makefile.am,
 	lib/eggdrop/module.h, lib/eggdrop/modvals.h, modules/.cvsignore,
-	modules/Makefile.am, modules/assoc/.cvsignore,
-	modules/assoc/Makefile.am, modules/assoc/assoc.c,
-	modules/assoc/assoc.h, modules/assoc/modinfo,
-	modules/assoc/help/assoc.help, modules/blowfish/.cvsignore,
+	modules/Makefile.am, modules/blowfish/.cvsignore,
 	modules/blowfish/Makefile.am, modules/blowfish/bf_tab.h,
 	modules/blowfish/blowfish.c, modules/blowfish/blowfish.h,
 	modules/blowfish/modinfo, modules/channels/.cvsignore,
