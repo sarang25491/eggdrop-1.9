@@ -4,6 +4,7 @@
  */
 
 #include "main.h"
+#include "core_config.h"
 #include "modules.h" 			/* add_hook() 			*/
 #include "logfile.h"			/* prototypes			*/
 #include "dccutil.h"			/* dprintf_eggdrop		*/
@@ -35,12 +36,6 @@ extern struct dcc_t *dcc;
 extern struct dcc_table DCC_CHAT;
 #endif /* MAKING_MODS   */
 
-static int cycle_at = 300; /* Military time where we cycle logfiles. */
-static int keep_all_logs = 0; /* Keep all logs? */
-static int max_logsize = 0; /* Max log size in kilobytes. */
-static int quick_logs = 0; /* Check size more often? */
-static char *logfile_suffix = NULL; /* Suffix for old logfiles. */
-
 static log_t *log_list_head = NULL; /* Linked list of logfiles. */
 
 static int logfile_minutely();
@@ -52,15 +47,6 @@ static void flushlog(log_t *log, char *timestamp);
 /* Bind for the log table. The core does logging to files and the partyline, but
  * modules may implement sql logging or whatever. */
 static int on_putlog(int flags, const char *chan, const char *text, int len);
-
-static script_linked_var_t log_script_vars[] = {
-	{"", "logfile_suffix", &logfile_suffix, SCRIPT_STRING, NULL},
-	{"", "max_logsize", &max_logsize, SCRIPT_INTEGER, NULL},
-	{"", "switch_logfiles_at", &cycle_at, SCRIPT_INTEGER, NULL},
-	{"", "keep_all_logs", &keep_all_logs, SCRIPT_INTEGER, NULL},
-	{"", "quick_logs", &quick_logs, SCRIPT_INTEGER, NULL},
-	{0}
-};
 
 static script_command_t log_script_cmds[] = {
 	{"", "logfile", logfile_add, NULL, 3, "sss", "modes chan filename", SCRIPT_STRING, 0},
@@ -74,8 +60,6 @@ static bind_list_t log_binds[] = {
 
 void logfile_init()
 {
-	logfile_suffix = strdup(".%d%b%Y");
-	script_link_vars(log_script_vars);
 	script_create_commands(log_script_cmds);
 	add_hook(HOOK_MINUTELY, logfile_minutely);
 	add_hook(HOOK_5MINUTELY, logfile_5minutely);
@@ -96,7 +80,7 @@ static int logfile_minutely()
 	struct tm *nowtm;
 	int miltime;
 
-	if (quick_logs) {
+	if (core_config.quick_logs) {
 		flushlogs();
 		check_logsizes();
 	}
@@ -104,14 +88,14 @@ static int logfile_minutely()
 	nowtm = localtime(&now);
 	miltime = 100 * nowtm->tm_hour + nowtm->tm_min;
 
-	if (miltime == cycle_at) logfile_cycle();
+	if (miltime == core_config.switch_logfiles_at) logfile_cycle();
 
 	return(0);
 }
 
 static int logfile_5minutely()
 {
-	if (!quick_logs) {
+	if (!core_config.quick_logs) {
 		flushlogs();
 		check_logsizes();
 	}
@@ -128,15 +112,15 @@ static int logfile_cycle()
 	flushlogs();
 
 	/* Determine suffix for cycled logfiles. */
-	if (keep_all_logs) {
-		strftime(suffix, 32, logfile_suffix, localtime(&now));
+	if (core_config.keep_all_logs) {
+		strftime(suffix, 32, core_config.logfile_suffix, localtime(&now));
 	}
 
 	prev = NULL;
 	for (log = log_list_head; log; log = log->next) {
 		fclose(log->fp);
 
-		if (keep_all_logs) newfname = egg_mprintf("%s%s", log->filename, suffix);
+		if (core_config.keep_all_logs) newfname = egg_mprintf("%s%s", log->filename, suffix);
 		else newfname = egg_mprintf("%s.yesterday", log->filename);
 
 		unlink(newfname);
@@ -254,11 +238,11 @@ static void check_logsizes()
 	char *newfname;
 	log_t *log;
 
-	if (keep_all_logs || max_logsize <= 0) return;
+	if (core_config.keep_all_logs || core_config.max_logsize <= 0) return;
 
 	for (log = log_list_head; log; log = log->next) {
 		size = ftell(log->fp) / 1024; /* Size in kilobytes. */
-		if (size < max_logsize) continue;
+		if (size < core_config.max_logsize) continue;
 
 		/* It's too big. */
 		putlog(LOG_MISC, "*", _("Cycling logfile %s, over max-logsize (%d kilobytes)"), log->filename, size);
