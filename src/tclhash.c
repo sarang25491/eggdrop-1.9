@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.62 2002/04/25 04:06:41 stdarg Exp $
+ * $Id: tclhash.c,v 1.63 2002/04/25 23:18:03 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -267,7 +267,7 @@ int findanyidx(register int z)
   register int j;
 
   for (j = 0; j < dcc_total; j++)
-    if (dcc[j].sock == z)
+    if (dcc[j].type && dcc[j].sock == z)
       return j;
   return -1;
 }

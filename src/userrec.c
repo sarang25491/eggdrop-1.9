@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  *
- * $Id: userrec.c,v 1.45 2002/04/01 13:33:33 ite Exp $
+ * $Id: userrec.c,v 1.46 2002/04/25 23:18:03 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -94,7 +94,7 @@ struct userrec *check_dcclist_hand(char *handle)
   int i;
 
   for (i = 0; i < dcc_total; i++)
-    if (!strcasecmp(dcc[i].nick, handle))
+    if (dcc[i].type && !strcasecmp(dcc[i].nick, handle))
       return dcc[i].user;
   return NULL;
 }
@@ -470,7 +470,7 @@ int change_handle(struct userrec *u, char *newh)
   strlcpy(s, u->handle, sizeof s);
   strlcpy(u->handle, newh, sizeof u->handle);
   for (i = 0; i < dcc_total; i++)
-    if (dcc[i].type != &DCC_BOT && !strcasecmp(dcc[i].nick, s)) {
+    if (dcc[i].type && dcc[i].type != &DCC_BOT && !strcasecmp(dcc[i].nick, s)) {
       strlcpy(dcc[i].nick, newh, sizeof dcc[i].nick);
       if (dcc[i].type == &DCC_CHAT && dcc[i].u.chat->channel >= 0) {
 	chanout_but(-1, dcc[i].u.chat->channel,
@@ -624,7 +624,7 @@ int deluser(char *handle)
   if (!noshare && (handle[0] != '*') && !(u->flags & USER_UNSHARED))
     shareout(NULL, "k %s\n", handle);
   for (fnd = 0; fnd < dcc_total; fnd++)
-    if (dcc[fnd].user == u)
+    if (dcc[fnd].type && dcc[fnd].user == u)
       dcc[fnd].user = 0;	/* Clear any dcc users for this entry,
 				 * null is safe-ish */
   clear_chanlist();

@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.9 2002/04/01 17:34:54 eule Exp $
+ * $Id: cmdschan.c,v 1.10 2002/04/25 23:18:02 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1147,7 +1147,7 @@ static void cmd_mns_chan(struct userrec *u, int idx, char *par)
   dprintf(idx, _("This includes any channel specific bans, invites, exemptions and user records that you set.\n"));
   putlog(LOG_CMDS, "*", "#%s# -chan %s", dcc[idx].nick, chname);
   for (i = 0; i < dcc_total; i++)
-    if ((dcc[i].type->flags & DCT_CHAT) &&
+    if (dcc[i].type && (dcc[i].type->flags & DCT_CHAT) &&
 	!irccmp(dcc[i].u.chat->con_chan, chan->dname)) {
       dprintf(i, _("%s is no longer a valid channel, changing your console to '*'\n"),
 	      chname);

@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.98 2002/04/14 23:10:38 ite Exp $
+ * $Id: cmds.c,v 1.99 2002/04/25 23:18:03 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -310,7 +310,7 @@ static void cmd_me(struct userrec *u, int idx, char *par)
   if (dcc[idx].u.chat->away != NULL)
     not_away(idx);
   for (i = 0; i < dcc_total; i++)
-    if ((dcc[i].type->flags & DCT_CHAT) &&
+    if (dcc[i].type && (dcc[i].type->flags & DCT_CHAT) &&
 	(dcc[i].u.chat->channel == dcc[idx].u.chat->channel) &&
 	((i != idx) || (dcc[i].status & STAT_ECHO)))
       dprintf(i, "* %s %s\n", dcc[idx].nick, par);
@@ -603,7 +603,7 @@ static void cmd_boot(struct userrec *u, int idx, char *par)
     return;
   }
   for (i = 0; i < dcc_total; i++)
-    if (!strcasecmp(dcc[i].nick, who)
+    if (dcc[i].type && !strcasecmp(dcc[i].nick, who)
         && !ok && (dcc[i].type->flags & DCT_CANBOOT)) {
       u2 = get_user_by_handle(userlist, dcc[i].nick);
       if (u2 && (u2->flags & USER_OWNER)
@@ -650,7 +650,7 @@ static void cmd_console(struct userrec *u, int idx, char *par)
    */
   if (nick[0] && !strchr(CHANMETA "+-*", nick[0]) && glob_master(fr)) {
     for (i = 0; i < dcc_total; i++)
-      if (!strcasecmp(nick, dcc[i].nick) &&
+      if (dcc[i].type && !strcasecmp(nick, dcc[i].nick) &&
 	  (dcc[i].type == &DCC_CHAT) && (!ok)) {
 	ok = 1;
 	dest = i;
@@ -1115,7 +1115,7 @@ static void cmd_simul(struct userrec *u, int idx, char *par)
     return;
   }
   for (i = 0; i < dcc_total; i++)
-    if (!strcasecmp(nick, dcc[i].nick) && !ok &&
+    if (dcc[i].type && !strcasecmp(nick, dcc[i].nick) && !ok &&
 	(dcc[i].type->flags & DCT_SIMUL)) {
       putlog(LOG_CMDS, "*", "#%s# simul %s %s", dcc[idx].nick, nick, par);
       if (dcc[i].type && dcc[i].type->activity) {
@@ -1241,7 +1241,7 @@ static void cmd_banner(struct userrec *u, int idx, char *par)
   }
   simple_sprintf(s, "\007### Botwide: [%s] %s\n", dcc[idx].nick, par);
   for (i = 0; i < dcc_total; i++)
-    if (dcc[i].type->flags & DCT_MASTER)
+    if (dcc[i].type && dcc[i].type->flags & DCT_MASTER)
       dprintf(i, "%s", s);
 }
 
@@ -1366,7 +1366,7 @@ int check_dcc_chanattrs(struct userrec *u, char *chname, int chflags,
   if (!u)
     return 0;
   for (i = 0; i < dcc_total; i++) {
-    if ((dcc[i].type->flags & DCT_MASTER) &&
+    if (dcc[i].type && (dcc[i].type->flags & DCT_MASTER) &&
 	!strcasecmp(u->handle, dcc[i].nick)) {
       if ((dcc[i].type == &DCC_CHAT) &&
 	  ((chflags & (USER_OP | USER_MASTER | USER_OWNER))
@@ -1624,7 +1624,7 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
     return;
   }
   for (idx2 = 0; idx2 < dcc_total; idx2++)
-    if (dcc[idx2].type != &DCC_RELAY && dcc[idx2].type != &DCC_FORK_BOT &&
+    if (dcc[idx2].type && dcc[idx2].type != &DCC_RELAY && dcc[idx2].type != &DCC_FORK_BOT &&
 	!strcasecmp(dcc[idx2].nick, hand))
       break;
   if (idx2 != dcc_total) {
@@ -1975,7 +1975,7 @@ static void cmd_strip(struct userrec *u, int idx, char *par)
   if ((nick[0] != '+') && (nick[0] != '-') && u &&
       (u->flags & USER_MASTER)) {
     for (i = 0; i < dcc_total; i++)
-      if (!strcasecmp(nick, dcc[i].nick) && dcc[i].type == &DCC_CHAT &&
+      if (dcc[i].type && !strcasecmp(nick, dcc[i].nick) && dcc[i].type == &DCC_CHAT &&
 	  !ok) {
 	ok = 1;
 	dest = i;
@@ -2372,7 +2372,7 @@ static void cmd_mns_user(struct userrec *u, int idx, char *par)
       return;
     }
     for (idx2 = 0; idx2 < dcc_total; idx2++)
-      if (dcc[idx2].type != &DCC_RELAY && dcc[idx2].type != &DCC_FORK_BOT &&
+      if (dcc[idx2].type && dcc[idx2].type != &DCC_RELAY && dcc[idx2].type != &DCC_FORK_BOT &&
           !strcasecmp(dcc[idx2].nick, handle))
         break;
     if (idx2 != dcc_total) {

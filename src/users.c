@@ -10,7 +10,7 @@
  *
  * dprintf'ized, 9nov1995
  *
- * $Id: users.c,v 1.36 2002/04/01 13:33:33 ite Exp $
+ * $Id: users.c,v 1.37 2002/04/25 23:18:03 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -913,7 +913,7 @@ int readuserfile(char *file, struct userrec **ret)
 
 	      u = get_user_by_handle(bu, code);
 	      for (i = 0; i < dcc_total; i++)
-		if (!strcasecmp(code, dcc[i].nick))
+		if (dcc[i].type && !strcasecmp(code, dcc[i].nick))
 		  dcc[i].user = u;
 	      u->flags_udef = fr.udef_global;
 	      /* if s starts with '/' it's got file info */

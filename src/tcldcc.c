@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.55 2002/04/01 13:33:33 ite Exp $
+ * $Id: tcldcc.c,v 1.56 2002/04/25 23:18:03 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -70,7 +70,7 @@ static int script_putdccraw(int idx, int len, char *text)
   if (idx == -1) {
     /* -1 means search for the server's idx. */
     for (i = 0; i < dcc_total; i++) {
-      if (!strcmp(dcc[i].nick, "(server)")) {
+      if (dcc[i].type && !strcmp(dcc[i].nick, "(server)")) {
         idx = i;
         break;
       }
