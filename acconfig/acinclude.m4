@@ -1,7 +1,7 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.12 2002/04/01 23:39:35 ite Exp $
+dnl $Id: acinclude.m4,v 1.13 2002/04/14 22:01:07 ite Exp $
 dnl
 
 
@@ -169,12 +169,14 @@ AC_DEFUN(EGG_CHECK_OS, [dnl
 AC_REQUIRE([AC_CANONICAL_HOST])
 
 IRIX=no
+EGG_CYGWIN=no
 
 AC_CACHE_CHECK(system type, egg_cv_var_system_type, egg_cv_var_system_type=`$EGG_UNAME -s`)
 AC_CACHE_CHECK(system release, egg_cv_var_system_release, egg_cv_var_system_release=`$EGG_UNAME -r`)
 
 case $host_os in
   cygwin)
+    EGG_CYGWIN=yes
     AC_DEFINE(CYGWIN_HACKS, 1, [Define if running under cygwin])
     case "`echo $egg_cv_var_system_release | cut -c 1-3`" in
       1.*)
@@ -916,7 +918,7 @@ dnl
 AC_DEFUN(EGG_TCL_LIB_REQS, [dnl
 AC_REQUIRE([EGG_LIBTOOL])
 
-if test "$ac_cv_cygwin" = "yes"
+if test "$EGG_CYGWIN" = "yes"
 then
   TCL_REQS="$TCLLIB/lib$TCLLIBFN"
   TCL_LIBS="-L$TCLLIB -l$TCLLIBFNS $EGG_MATH_LIB"
