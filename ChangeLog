@@ -1,3 +1,9 @@
+2003-03-10 09:46  stdarg <stdarg@techmonkeys.org>
+
+	* modules/server/output.c:
+
+	[no log message] 
+
 2003-03-10 09:11  stdarg <stdarg@techmonkeys.org>
 
 	* modules/server/: dcc.c, input.c, nicklist.c, output.c, output.h,
