@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.38 2004/07/05 22:12:22 darko Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.39 2004/07/17 20:59:38 darko Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -575,25 +575,31 @@ static int party_chhandle(partymember_t *p, const char *nick, user_t *u, const c
 	egg_get_args(text, NULL, &old, &new, NULL);
 	if (!old || !new || !*old || !*new) {
 		partymember_printf(p, _("Syntax: chhandle <old_handle> <new_handle>"));
-		return 0;
+		goto chhandleend;
 	}
 
 	dest = user_lookup_by_handle(old);
 	if (!dest) {
 		partymember_printf(p, _("Error: User '%s' does not exist."), old);
-		return 0;
+		goto chhandleend;
 	}
 
 	if (user_lookup_by_handle(new)) {
 		partymember_printf(p, _("Error: User '%s' already exists."), new);
-		return 0;
+		goto chhandleend;
 	}
 
 	if (user_change_handle(dest, old, new))
 		partymember_printf(p, _("Ok, changed."));
-	return 0;
+
+chhandleend:
+	free(new);
+	free(old);
+
+	return BIND_RET_LOG;
 }
 
+/* Syntax: chpass <handle> [new_pass] */
 static int party_chpass(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	char *user = NULL, *pass = NULL;
@@ -603,55 +609,183 @@ static int party_chpass(partymember_t *p, const char *nick, user_t *u, const cha
 
 	if (!user || !*user) {
 		partymember_printf(p, _("Syntax: chpass <handle> [pass]"));
-		return 0;
+		goto chpassend;
 	}
 
 	dest = user_lookup_by_handle(user);
 	if (!dest) {
 		partymember_printf(p, _("Error: User '%s' does not exist."), user);
-		return 0;
+		goto chpassend;
 	}
 
 	if (pass && *pass && strlen(pass) < 6) {
 		partymember_printf(p, _("Error: Please use at least 6 characters."));
-		return 0;
+		goto chpassend;
 	}
 
 	if (user_set_pass(dest, pass))
 		partymember_printf(p, _("Removed password for %s."), user);
 	else
 		partymember_printf(p, _("Password for %s is now '%s'."), user, pass);
+
+chpassend:
+	free(user);
+	free(pass);
+
+	return BIND_RET_LOG_COMMAND;
+}
+
+/* Makes sure 'start' and 'limit' arguments for .match are reasonable, or else sets them -1 */
+static int party_match_getbounds(const char *strstart, const char *strlimit, long *start, long *limit)
+{
+	char *tmpptr;
+
+	if (strstart) {
+		*start = strtol(strstart, &tmpptr, 10);
+		if (!*strstart || *tmpptr || *start < 1) { /* Invalid input*/
+			*start = -1;
+			return 0;
+		}
+
+		if (strlimit) { /* 'start' was really a start and this is now 'limit' */
+			*limit = strtol(strlimit, &tmpptr, 10);
+			if (!*strlimit || *tmpptr || *limit < 1) { /* Invalid input*/
+				*limit = -1;
+				return 0;
+			}
+		}
+		else { /* Ah, no, the only argument specified was the 'limit' */
+			*limit = *start;
+			*start = 0;
+		}
+	}
+	else {
+		*limit = 20;
+		*start = 0;
+	}
+
 	return 0;
 }
 
-static bind_list_t core_party_binds[] = {
+/* Handles case where .match was given mask to match against */
+static int party_matchwild(partymember_t *p, const char *mask, const char *rest)
+{
+	char *strstart = NULL, *strlimit = NULL;
+	long start, limit;
+
+	egg_get_args(rest, NULL, &strstart, &strlimit, NULL);
+
+	party_match_getbounds(strstart, strlimit, &start, &limit);
+	if (start == -1 || limit == -1)
+		partymember_printf(p, _("Error: 'start' and 'limit' must be positive integers"));
+	else
+		partyline_cmd_match_ircmask(p, mask, start, limit);
+
+	free(strstart);
+	free(strlimit);
+
+	return 0;
+}
+
+/* Handles case where .match was given attributes to match against */
+static int party_matchattr(partymember_t *p, const char *mask, const char *rest)
+{
+	char *channel = NULL, *strstart = NULL, *strlimit = NULL;
+	long start, limit;
+	int ischan = 0;
+
+	egg_get_args(rest, NULL, &channel, &strstart, &strlimit, NULL);
+
+	/* This is probably the easiest way to conclude if content of 'channel'
+	is *NOT* a number, and thus it is a candidate for a valid channel name */
+	if (channel && (*channel < '0' || *channel > '9'))
+		ischan = 1;
+
+
+	if (strlimit) /* .match <flags> <channel> <start> <limit> */
+		party_match_getbounds(strstart, strlimit, &start, &limit);
+	else if (strstart) /* .match <flags> <channel|start> <limit> */
+		party_match_getbounds(ischan?strstart:channel, ischan?NULL:strstart, &start, &limit);
+	else if (ischan) { /* .match <flags> <channel> */
+		start = 0;
+		limit = 20;
+	}
+	else /* .match <flags> [limit] */
+		party_match_getbounds(channel, NULL, &start, &limit);
+
+	free(strstart);
+	free(strlimit);
+
+	if (start == -1 || limit == -1)
+		partymember_printf(p, _("Error: 'start' and 'limit' must be positive integers"));
+	else
+		partyline_cmd_match_attr(p, mask, ischan?channel:NULL, start, limit);
+
+	free(channel);
+
+	return 0;
+}
+
+/* match <attr> [channel] [[start] limit] */
+/* match <mask> [[start] limit] */
+static int party_match(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+
+	char *attr = NULL;
+	const char *rest = NULL;
+
+/* FIXME - Check if user is allowed to see results.. if !chan && !glob_master && -> error
+	I have left it available to everyone because 'whois' was that way too.
+	We should update both or neither */
+
+	egg_get_args(text, &rest, &attr, NULL);
+
+	if (!attr) {
+		partymember_printf(p, _("Syntax: match <attr> [channel] [[start] limit]"));
+		partymember_printf(p, _("    or: match <mask> [[start] limit]"));
+		free(attr);
+		return 0;
+	}
+
+	if (*attr == '+' || *attr == '-' || *attr == '|')
+		party_matchattr(p, attr, rest);
+	else if (*attr != '&')
+		party_matchwild(p, attr, rest);
+
+	free(attr);
+
+	return BIND_RET_LOG;
+}
+
+static bind_list_t core_party_binds[] = {		/* Old flags requirement */
 	{NULL, "join", party_join},		/* DDD	*/
 	{NULL, "whisper", party_whisper},	/* DDD	*/
-	{NULL, "newpass", party_newpass},	/* DDC	*/
-	{NULL, "help", party_help},		/* DDC	*/
+	{NULL, "newpass", party_newpass},	/* DDC	*/ /* -|- */
+	{NULL, "help", party_help},		/* DDC	*/ /* -|- */
 	{NULL, "part", party_part},		/* DDD	*/
-	{NULL, "quit", party_quit},		/* DDD	*/
+	{NULL, "quit", party_quit},		/* DDD	*/ /* -|- */
 	{NULL, "who", party_who},		/* DDD	*/
-	{NULL, "whois", party_whois},		/* DDD	*/
-	{"n", "addlog", party_addlog},		/* DDD	*/
+	{NULL, "whois", party_whois},		/* DDC	*/ /* ot|o */
+	{NULL, "match", party_match},		/* DDC	*/ /* ot|o */
+	{"n", "addlog", party_addlog},		/* DDD	*/ /* ot|o */
 	{"n", "get", party_get},		/* DDC	*/
 	{"n", "set", party_set},		/* DDC	*/
 	{"n", "unset", party_unset},		/* DDC	*/
-	{"n", "status", party_status},		/* DDC	*/
-	{"n", "save", party_save},		/* DDD	*/
-	{"n", "die", party_die},		/* DDD	*/
-	{"n", "restart", party_restart},	/* DDD	*/
-	{"n", "+user", party_plus_user},	/* DDC	*/
-	{"n", "-user", party_minus_user},	/* DDC	*/
-	{"n", "chattr", party_chattr},		/* DDC	*/
-	{"n", "modules", party_modules},	/* DDD	*/
-	{"n", "loadmod", party_loadmod},	/* DDD	*/
-	{"n", "unloadmod", party_unloadmod},	/* DDD	*/
-	{"n", "binds", party_binds},		/* DDD 	*/
-	{"m", "+host", party_plus_host},	/* DDC	*/
-	{"m", "-host", party_minus_host},	/* DDC	*/
-	{"t", "chhandle", party_chhandle},	/* DDC	*/
-	{"t", "chpass", party_chpass},		/* DDC	*/
+	{"n", "status", party_status},		/* DDC	*/ /* m|m */
+	{"n", "save", party_save},		/* DDD	*/ /* m|m */
+	{"n", "die", party_die},		/* DDD	*/ /* n|- */
+	{"n", "restart", party_restart},	/* DDD	*/ /* m|- */
+	{"n", "+user", party_plus_user},	/* DDC	*/ /* m|- */
+	{"n", "-user", party_minus_user},	/* DDC	*/ /* m|- */
+	{"n", "chattr", party_chattr},		/* DDC	*/ /* m|m */
+	{"n", "modules", party_modules},	/* DDD	*/ /* n|- */
+	{"n", "loadmod", party_loadmod},	/* DDD	*/ /* n|- */
+	{"n", "unloadmod", party_unloadmod},	/* DDD	*/ /* n|- */
+	{"n", "binds", party_binds},		/* DDD 	*/ /* m|- */
+	{"m", "+host", party_plus_host},	/* DDC	*/ /* t|m */
+	{"m", "-host", party_minus_host},	/* DDC	*/ /* -|- */
+	{"t", "chhandle", party_chhandle},	/* DDC	*/ /* t|- */
+	{"t", "chpass", party_chpass},		/* DDC	*/ /* t|- */
 	{0}
 };
 
@@ -659,3 +793,4 @@ void core_party_init(void)
 {
 	bind_add_list("party", core_party_binds);
 }
+

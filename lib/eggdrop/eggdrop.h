@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: eggdrop.h,v 1.41 2004/06/30 17:07:20 wingman Exp $
+ * $Id: eggdrop.h,v 1.42 2004/07/17 20:59:38 darko Exp $
  */
 
 #ifndef _EGG_EGGDROP_H_
@@ -29,6 +29,7 @@
 #include <eggdrop/common.h>
 #include <eggdrop/flags.h>
 #include <eggdrop/ircmasks.h>
+#include <eggdrop/hash_table.h>
 #include <eggdrop/users.h>
 #include <eggdrop/base64.h>
 #include <eggdrop/binds.h>
@@ -43,7 +44,6 @@
 #include <eggdrop/timer.h>
 #include <eggdrop/fileutil.h>
 #include <eggdrop/garbage.h>
-#include <eggdrop/hash_table.h>
 #include <eggdrop/irccmp.h>
 #include <eggdrop/ircparse.h>
 #include <eggdrop/linemode.h>

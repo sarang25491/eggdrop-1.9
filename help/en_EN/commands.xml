@@ -10,16 +10,16 @@
 				Let's you search through our help database. Pattern
 				can either be a command or an entry name or a wildcard
 				pattern (?, *).
-				
+
 				For example:
 				
 					.help +user
 					.help User Commands
-					.help *bot*					
+					.help *bot*
 			</description>
 		</command>
 	</section>
-	
+
 	<section name="Administration">
 		<command name="status" flags="n">
 			<args />
@@ -32,11 +32,11 @@
 
 	<section name="User Management">
 
-		<command name="+host" flags="m">		
+		<command name="+host" flags="m">
 			<args>
 				<arg type="string" optional="yes">handle</arg>
 				<arg type="string">hostmask</arg>
-			</args>			
+			</args>
 			<description>
 				Adds a hostmask to a user's user record. Hostmask are used
 				to identify your username on IRC. If a username is not speicifed,
@@ -44,12 +44,12 @@
 			</description>
 			<seealso>-host</seealso>
 		</command>
-		
+
 		<command name="-host" flags="m">
 			<args>
 				<arg type="string" optional="yes">handle</arg>
 				<arg type="string">hostmask</arg>
-			</args>			
+			</args>
 			<description>
 				Removes a hostmask to a user's user record. Hostmask are used
 				to identify your username on IRC. If a username is not speicifed,
@@ -57,7 +57,7 @@
 			</description>
 			<seealso>+host</seealso>
 		</command>
-		
+
 		<command name="+user" flags="n">
 			<args>
 				<arg type="string">handle</arg>
@@ -67,7 +67,7 @@
 			</description>
 			<seealso>-user</seealso>
 		</comnand>
-		
+
 		<command name="-user" flags="n">
 			<args>
 				<arg type="string">handle</arg>
@@ -77,15 +77,15 @@
 			</description>
 			<seealso>-user</seealso>
 		</comnand>
-	
+
 		<command name="chattr" flags="n">
 			<args>
 				<arg type="string" optional="yes">channel</arg>
-				<arg type="string">flags</args>	
+				<arg type="string">flags</args>
 			</args>
 			<description>
 				This lets you change the flags for a user. If a channel is
-				specified, flags will be modified for that channel instead of	
+				specified, flags will be modified for that channel instead of
 				globally. The channel does not have to exist.
 			</description>
 			<seealso>+user</seealso>
@@ -95,7 +95,7 @@
 		<command name="chhandle" flags="t">
 			<args>
 				<arg type="string">old_handle</arg>
-				<arg type="string">new_handle</args>	
+				<arg type="string">new_handle</args>
 			</args>
 			<description>
 				This changes handle for a user.
@@ -105,7 +105,7 @@
 		<command name="chpass" flags="t">
 			<args>
 				<arg type="string">handle</arg>
-				<arg type="string" optional="yes">password</args>	
+				<arg type="string" optional="yes">password</args>
 			</args>
 			<description>
 				This will change user's password, or remove it if
@@ -123,14 +123,62 @@
 			</description>
 			<seealso>chpass</seealso>
 		</command>
-	</section>
-	
+
+		<command name="match" flags="">
+			<args>
+				<arg type="string">((+/-)globflags(&/|)[(+/-)chanflags #channel]) / mask</arg>
+				<arg type="string" optional="yes">[start] limit</arg>
+			</args>
+			<description>
+				Shows a list of users who satisfy given criteria.
+				
+				It can be used in two basic versions:
+				  1) match flags (possibly channel flags too)
+				  2) match nick or hostmask
+				
+				In either form it is possible to specify 'start' and/or 'limit'
+				arguments, which tell the bot to dispay only 'limit' results,
+				starting after sucessfully matched 'start' results.
+				Default values for start and limit are 0 and 20 respectivly,
+				which means 'display first 20 matches'
+				
+				When matching flags, it is possible to match against both
+				global and/or channel flags by using delimiters '&' or '|'
+				
+				When matching masks, query will be matched against user's handle
+				and his hostmasks. Wildcards are allowed.
+				
+				Examples:
+				
+				.match +o-m&+n #foo     Find global ops who are not global masters,
+				                        but *are* channel #foo owners.
+				
+				.match *!*@*.edu 30 10  Find users from edu domain but display only
+				                        results 31-40
+				
+				.match |-l #bar 5      Display first 5 halfops on #bar
+			</description>
+			<seealso>whois</seealso>
+		</command>
+
+		<command name="whois" flags="">
+			<args>
+				<arg type="string" optional="yes">handle</arg>
+			</args>
+			<description>
+				Displays information about a user, if specified.
+				Otherwise shows your own info.
+			</description>
+			<seealso>match</seealso>
+		</command>
+</section>
+
 	<section name="Settings">
-		
+
 		<command name="get" flags="n">
 			<args>
 				<arg type="string">path</arg>
-			</args>			
+			</args>
 			<description>
 				Shows the value of a configuration setting.
 				

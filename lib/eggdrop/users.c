@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.39 2004/07/11 13:54:46 darko Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.40 2004/07/17 20:59:38 darko Exp $";
 #endif
 
 #include <stdio.h>
@@ -34,6 +34,16 @@ typedef struct {
 	const char **entries;
 	int nentries;
 } walker_info_t;
+
+typedef struct {
+	long start;
+	long limit;
+	partymember_t *pmember;
+	const char *data;
+	const char *channel;
+	flags_t musthave[2];
+	flags_t mustnothave[2];
+} cmd_match_data_t;
 
 /* Keep track of the next available uid. Also keep track of when uid's wrap
  * around (probably won't happen), so that we know when we can trust g_uid. */
@@ -744,4 +754,178 @@ user_change_handle(user_t *u, const char *old, const char *new)
 		return 0;
 	}
 	return 1;
+}
+
+static int
+ircmask_matches_user(user_t *u, const char *wild)
+{
+	int i;
+
+	for (i = 0; i < u->nircmasks; i++)
+		if (wild_match(wild, u->ircmasks[i]))
+			return 1;
+	return 0;
+}
+
+static int
+attr_matches_user(user_t *u, cmd_match_data_t *mdata)
+{
+	int matched = 0, haschanflags = 0;
+	flags_t globflags, chanflags;
+
+	chanflags.builtin = chanflags.udef = 0;
+
+	if (user_get_flags(u, NULL, &globflags))
+		return 0;
+
+	if (mdata->channel) {
+		haschanflags = !user_get_flags(u, mdata->channel, &chanflags);
+		if (!haschanflags)
+			return 0;
+	}
+
+	if ((mdata->musthave[0].builtin | mdata->musthave[0].udef) && /* Non empty needed flags */
+		flag_match_subset(&mdata->musthave[0], &globflags) && /* ..AND they match */
+		(!(mdata->mustnothave[0].builtin | mdata->mustnothave[0].udef) || /* AND (empty forbiden flags */
+		!flag_match_partial(&globflags, &mdata->mustnothave[0])) /* OR forbiden flags don't match) */
+		)
+		matched = 1;
+
+	if (mdata->data) { /* mdata->data points to '|' or '&' if it existed,
+				which means channel flags are needed too */
+		int tmpyes = mdata->musthave[1].builtin | mdata->musthave[1].udef;
+		int tmpnot = mdata->mustnothave[1].builtin | mdata->mustnothave[1].udef;
+		if (*mdata->data == '|') {
+
+			return (matched || /* Either we already matched OR .. */
+				((tmpyes && flag_match_subset(&mdata->musthave[1], &chanflags)) && /*Non-empty needed
+												flags match, AND */
+				(!tmpnot || !flag_match_partial(&chanflags, &mdata->mustnothave[1]))) /* There are no
+													forbidden flags OR
+													they don't match */
+				);
+		}
+		else if (*mdata->data == '&')
+			return (matched && /* Global flags match AND .. */
+				((tmpyes && flag_match_subset(&mdata->musthave[1], &chanflags)) &&
+				(!tmpnot || !flag_match_partial(&chanflags, &mdata->mustnothave[1])))
+				);
+		else
+			return 0;
+	}
+
+	return matched;
+}
+
+/* Maybe we should come up with a way to tell hash_table_walk to stop traversing?
+   Callback functions already return an int - it's just a question of making sure
+   other code doesn't get broken.
+   As it is now, callback_match_attr will continue to be called even if no more
+   results are needed. No big deal usually, but some people are known to have
+   hundreds and even thousands of users.
+*/
+
+static int
+callback_match_attr(const char *key, char **data, cmd_match_data_t *mdata)
+{
+	user_t *u = user_lookup_by_handle(key);
+
+	if (!u)
+		return 0;
+
+	if (mdata->start && attr_matches_user(u, mdata)) {
+		mdata->start--;
+		return 0;
+	}
+
+	if (mdata->limit && attr_matches_user(u, mdata)) {
+		mdata->limit--;
+		partymember_printf(mdata->pmember, _("  %s"), key);
+	}
+
+	return 0;
+}
+
+static int
+callback_match_ircmask(const char *key, char **data, cmd_match_data_t *mdata)
+{
+	user_t *u = user_lookup_by_handle(key);
+
+	if (!u)
+		return 0;
+
+	if (mdata->start && (wild_match(mdata->data, key) || ircmask_matches_user(u, mdata->data))) {
+		mdata->start--;
+		return 0;
+	}
+
+	if (mdata->limit && (wild_match(mdata->data, key) || ircmask_matches_user(u, mdata->data))) {
+		mdata->limit--;
+		partymember_printf(mdata->pmember, _("  %s"), key);
+	}
+
+	return 0;
+}
+
+int
+partyline_cmd_match_ircmask(void *p, const char *mask, long start, long limit)
+{
+	cmd_match_data_t mdata;
+
+	mdata.start = start;
+	mdata.limit = limit;
+/* FIXME - Once we sort #includes, 'p' should be partymember_t in function declaration */
+	mdata.pmember = (partymember_t *)p;
+	mdata.data = mask;
+
+	hash_table_walk(handle_ht, (hash_table_node_func)callback_match_ircmask, &mdata);
+
+	return 0;
+}
+
+int
+partyline_cmd_match_attr(void *p, const char *attr, const char *chan, long start, long limit)
+{
+	cmd_match_data_t mdata;
+	int plsmns = 1, globchan = 0;
+	char flagshack[] = "+ "; /* Hack to allow us to use flag_merge_str */
+
+	mdata.start = start;
+	mdata.limit = limit;
+/* FIXME - Once we sort #includes, 'p' should be partymember_t in function declaration */
+	mdata.pmember = (partymember_t *)p;
+	mdata.data = NULL;
+	mdata.channel = chan;
+	mdata.musthave[0].builtin = mdata.musthave[0].udef = 0;
+	mdata.mustnothave[0].builtin = mdata.mustnothave[0].udef = 0;
+	mdata.musthave[1].builtin = mdata.musthave[1].udef = 0;
+	mdata.mustnothave[1].builtin = mdata.mustnothave[1].udef = 0;
+
+	while (*attr) {
+		switch (*attr) {
+			case '+':
+				plsmns = 1;
+				break;
+			case '-':
+				plsmns = 0;
+				break;
+			case '&':
+			case '|':
+				if (globchan == 0) { /* Consider only the first & or | */
+					globchan++;
+					mdata.data = attr;
+				}
+				break;
+			default:
+				flagshack[1] = *attr;
+				flag_merge_str(plsmns ? &mdata.musthave[globchan] :
+							&mdata.mustnothave[globchan], flagshack);
+				break;
+		}
+		attr++;
+	}
+
+	hash_table_walk(handle_ht, (hash_table_node_func)callback_match_attr, &mdata);
+
+	return 0;
 }
