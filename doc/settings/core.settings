@@ -437,11 +437,6 @@ set die-on-sigterm 0
     Valid settings are 0 for OFF and 1 ON.
 
 
-set enable-simul 1
-    Enable this setting, if you want to enable the 'dccsimul' tcl command
-    Valid settings are 0 for OFF and 1 ON.
-
-
 set allow-dk-cmds 1
     Enable this setting, if you want +d & +k users to use commands bound as -|-
     Valid settings are 0 for OFF and 1 ON.

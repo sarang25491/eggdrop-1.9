@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.57 2001/12/09 21:38:12 guppy Exp $
+ * $Id: tcl.c,v 1.58 2001/12/09 21:46:03 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -58,7 +58,7 @@ extern char	origbotname[], botuser[], motdfile[], admin[], userfile[],
 		bannerfile[], egg_version[], natip[], configfile[],
 		textdir[], myip6[], pid_file[];
 extern int	die_on_sighup, die_on_sigterm,
-		enable_simul, dcc_total, debug_output, identtimeout,
+		dcc_total, debug_output, identtimeout,
 		protect_telnet, dupwait_timeout, egg_numver, share_unlinks,
 		sort_users, tands, resolve_timeout, userfile_perm,
 		default_uflags, strict_host;
@@ -348,7 +348,6 @@ static tcl_ints def_tcl_ints[] =
   {"die-on-sigterm",		&die_on_sigterm,	1},
   {"remote-boots",		&remote_boots,		1},
   {"max-dcc",			&max_dcc,		0},
-  {"enable-simul",		&enable_simul,		1},
   {"debug-output",		&debug_output,		1},
   {"protect-telnet",		&protect_telnet,	0},
   {"sort-users",		&sort_users,		0},

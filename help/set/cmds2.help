@@ -116,11 +116,6 @@ see also: set firewall
    This sets the maximum number of log files you can have at any one
    time, this value can only ever be increase, and it always helps
    to have a few spare.
-%{help=set enable-simul}%{+n}
-###  %bset enable-simul%b 0/1
-   This questionable setting enables the dccsimul command which
-   allows tcl to simulate a user typing a command, some scripts
-   require it.
 %{help=set protect-telnet}%{+n}
 ###  %bset protect-telnet%b 0/1
    This setting, when enabled, only allows telnet connections from

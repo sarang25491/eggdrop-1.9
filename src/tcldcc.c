@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.42 2001/11/13 04:50:40 stdarg Exp $
+ * $Id: tcldcc.c,v 1.43 2001/12/09 21:46:03 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -39,7 +39,6 @@ extern tand_t		*tandbot;
 extern time_t		 now;
 
 
-int			 enable_simul = 0;
 static struct portmap	*root = NULL;
 
 
@@ -84,7 +83,6 @@ static int script_putdccraw(int idx, int len, char *text)
 static int script_dccsimul(int idx, char *cmd)
 {
   int len;
-  if (!enable_simul) return(1);
   if (idx < 0 || !dcc->type || !(dcc[idx].type->flags & DCT_SIMUL)
     || !(dcc[idx].type->activity)) return(1);
 

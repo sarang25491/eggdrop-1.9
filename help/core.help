@@ -96,7 +96,6 @@ die-on-sigterm
 remote-boots
 max-dcc
 max-logs
-enable-simul
 protect-telnet
 ident-timeout
 share-unlinks
