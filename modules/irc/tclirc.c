@@ -1,7 +1,7 @@
 /*
  * tclirc.c -- part of irc.mod
  *
- * $Id: tclirc.c,v 1.5 2001/12/19 06:31:45 guppy Exp $
+ * $Id: tclirc.c,v 1.6 2001/12/20 04:57:47 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -218,7 +218,7 @@ static int tcl_handonchan STDVAR
     return TCL_ERROR;
   }
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-    if (m->user && !rfc_casecmp(m->user->handle, argv[1])) {
+    if (m->user && !irccmp(m->user->handle, argv[1])) {
       Tcl_AppendResult(irp, "1", NULL);
       return TCL_OK;
     }
@@ -600,7 +600,7 @@ static int tcl_hand2nick STDVAR
 
   while (chan && (thechan == NULL || thechan == chan)) {
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-      if (m->user && !rfc_casecmp(m->user->handle, argv[1])) {
+      if (m->user && !irccmp(m->user->handle, argv[1])) {
 	  Tcl_AppendResult(irp, m->nick, NULL);
 	  return TCL_OK;
 	}
