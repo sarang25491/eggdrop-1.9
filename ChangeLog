@@ -1,3 +1,12 @@
+2003-05-12 11:54  wingman
+
+	* lib/eggdrop/eggdns.c, lib/eggdrop/eggmod.c, lib/eggdrop/eggnet.c,
+	lib/eggdrop/eggowner.c, lib/eggdrop/ircmasks.c, lib/eggdrop/md5.c,
+	lib/eggdrop/xmlwrite.c, modules/irc/msgcmds.c, src/main.c:
+
+	 * removed some compile warnings here and there 
+	 * removed some old notes code which was still in our core 
+
 2003-05-11 02:40  stdarg <stdarg@techmonkeys.org>
 
 	* src/: egg.h, userent.c, userent.h, userrec.c, userrec.h, users.c,
