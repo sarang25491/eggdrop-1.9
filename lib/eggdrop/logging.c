@@ -1,4 +1,4 @@
-/* egglog.c: logging functions
+/* logging.c: logging functions
  *
  * Copyright (C) 2003, 2004 Eggheads Development Team
  *
@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: egglog.c,v 1.9 2004/06/21 11:33:40 wingman Exp $";
+static const char rcsid[] = "$Id: logging.c,v 1.1 2004/06/21 18:44:20 wingman Exp $";
 #endif
 
 #include <stdlib.h>
@@ -27,12 +27,12 @@ static const char rcsid[] = "$Id: egglog.c,v 1.9 2004/06/21 11:33:40 wingman Exp
 
 static bind_table_t *BT_log = NULL;
 
-void egglog_init(void)
+void logging_init(void)
 {
 	BT_log = bind_table_add(BTN_LOG, 4, "issi", MATCH_NONE, BIND_STACKABLE);	/* DDD	*/
 }
 
-void egglog_shutdown(void)
+void logging_shutdown(void)
 {
 	/* XXX: bind_table_del(BT_LOG); */
 }

@@ -16,14 +16,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: eggstring.h,v 1.7 2004/06/17 13:32:43 wingman Exp $
+ * $Id: string.h,v 1.1 2004/06/21 18:44:20 wingman Exp $
  */
 
-#ifndef _EGG_EGGSTRING_H_
-#define _EGG_EGGSTRING_H_
+#ifndef _EGG_STRING_H_
+#define _EGG_STRING_H_
 
-int	str_ends_with	(const char *text, const char *str);
-int	str_starts_with	(const char *text, const char *str);
+int str_ends_with(const char *text, const char *str);
+int str_starts_with(const char *text, const char *str);
 
 int egg_get_word(const unsigned char *text, const char **next, char **word);
 int egg_get_arg(const unsigned char *text, const char **next, char **arg);
@@ -36,4 +36,4 @@ int egg_free_arg_array(char **args, int nargs);
 void egg_append_static_str(char **dest, int *remaining, const char *src);
 void egg_append_str(char **dest, int *cur, int *max, const char *src);
 
-#endif /* !_EGG_EGGSTRING_H_ */
+#endif /* !_EGG_STRING_H_ */

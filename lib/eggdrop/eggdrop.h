@@ -16,11 +16,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: eggdrop.h,v 1.36 2004/06/21 11:35:46 wingman Exp $
+ * $Id: eggdrop.h,v 1.37 2004/06/21 18:44:20 wingman Exp $
  */
 
 #ifndef _EGG_EGGDROP_H_
 #define _EGG_EGGDROP_H_
+
+#ifndef NULL
+#	define NULL 0
+#endif
 
 #include <eggdrop/common.h>
 #include <eggdrop/flags.h>
@@ -31,11 +35,11 @@
 #include <eggdrop/eggconfig.h>
 #include <eggdrop/eggdns.h>
 #include <eggdrop/eggident.h>
-#include <eggdrop/egglog.h>
+#include <eggdrop/logging.h>
 #include <eggdrop/eggmod.h>
 #include <eggdrop/eggnet.h>
 #include <eggdrop/eggowner.h>
-#include <eggdrop/eggstring.h>
+#include <eggdrop/string.h>
 #include <eggdrop/eggtimer.h>
 #include <eggdrop/fileutil.h>
 #include <eggdrop/garbage.h>

@@ -18,15 +18,15 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: ircmasks.c,v 1.5 2003/12/17 07:39:14 wcc Exp $";
+static const char rcsid[] = "$Id: ircmasks.c,v 1.6 2004/06/21 18:44:20 wingman Exp $";
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "match.h"
-#include "egglog.h"
-#include "ircmasks.h"
+#include <string.h>				/* strlen		*/
+#include <stdlib.h>				/* free			*/
+
+#include <eggdrop/logging.h>			/* putlog		*/
+#include <eggdrop/match.h>			/* wild_match		*/
+#include <eggdrop/ircmasks.h>			/* ircmask_t		*/
 
 int ircmask_list_add(ircmask_list_t *list, const char *ircmask, void *data)
 {

@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.30 2004/06/21 11:35:46 wingman Exp $
+# $Id: Makefile.am,v 1.31 2004/06/21 18:44:20 wingman Exp $
 
 MAINTAINERCLEANFILES	= Makefile.in
 
@@ -23,7 +23,7 @@ libeggdrop_la_SOURCES	= base64.c base64.h \
 			eggmod.c eggmod.h \
 			eggnet.c eggnet.h \
 			eggowner.c eggowner.h \
-			eggstring.c eggstring.h \
+			string.c string.h \
 			eggtimer.c eggtimer.h \
 			fileutil.c fileutil.h \
 			flags.c flags.h \
@@ -34,7 +34,7 @@ libeggdrop_la_SOURCES	= base64.c base64.h \
 			ircmasks.c ircmasks.h \
 			ircparse.c ircparse.h \
 			linemode.c linemode.h \
-			egglog.c egglog.h \
+			logging.c logging.h \
 			match.c match.h \
 			md5.c md5.h \
 			memutil.c memutil.h \

@@ -1,4 +1,4 @@
-/* eggstring.c: functions for string manipulation
+/* string.c: functions for string manipulation
  *
  * Copyright (C) 2003, 2004 Eggheads Development Team
  *
@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggstring.c,v 1.8 2004/06/17 13:32:43 wingman Exp $";
+static const char rcsid[] = "$Id: string.c,v 1.1 2004/06/21 18:44:20 wingman Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -29,8 +29,9 @@ static const char rcsid[] = "$Id: eggstring.c,v 1.8 2004/06/17 13:32:43 wingman 
 #include <stdarg.h>
 #include <string.h>
 #include <ctype.h>
-#include <eggdrop/eggdrop.h>
-#include <eggdrop/eggstring.h>
+
+#include <eggdrop/eggdrop.h>				/* egg_return_val_if_fail	*/
+#include <eggdrop/string.h>				/* prototypes			*/
 
 int egg_get_word(const unsigned char *text, const char **next, char **word)
 {
@@ -242,7 +243,7 @@ void egg_append_str(char **dest, int *cur, int *max, const char *src)
 }
 
 int
-str_ends_with   (const char *text, const char *str)
+str_ends_with(const char *text, const char *str)
 {
 	int len1, len2;
 
@@ -259,7 +260,7 @@ str_ends_with   (const char *text, const char *str)
 }
 
 int
-str_starts_with (const char *text, const char *str)
+str_starts_with(const char *text, const char *str)
 {
 	egg_return_val_if_fail (text != NULL, 0);
 	egg_return_val_if_fail (str != NULL, 0);

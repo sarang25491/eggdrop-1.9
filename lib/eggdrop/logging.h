@@ -1,4 +1,4 @@
-/* egglog.h: header for egglog.c
+/* logging.h: header for logging.c
  *
  * Copyright (C) 2003, 2004 Eggheads Development Team
  *
@@ -16,11 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: egglog.h,v 1.7 2004/06/20 13:33:48 wingman Exp $
+ * $Id: logging.h,v 1.1 2004/06/21 18:44:20 wingman Exp $
  */
 
-#ifndef _EGG_EGGLOG_H_
-#define _EGG_EGGLOG_H_
+#ifndef _EGG_LOGGING_H_
+#define _EGG_LOGGING_H_
 
 #define LOG_MSGS     0x000001   /* m   msgs/notice/ctcps                */
 #define LOG_PUBLIC   0x000002   /* p   public msg/notice/ctcps          */
@@ -49,9 +49,9 @@
 /* Bind table names for logging */
 #define BTN_LOG		"log"
 
-extern void egglog_init(void); 
-extern void egglog_shutdown(void);
+extern void logging_init(void); 
+extern void logging_shutdown(void);
 
 extern int putlog(int flags, const char *chan, const char *format, ...);
 
-#endif /* !_EGG_EGGLOG_H_ */
+#endif /* !_EGG_LOGGING_H_ */
