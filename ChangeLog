@@ -1,3 +1,10 @@
+2002-04-14 22:01  Federico Mennite <ite@techmonkeys.org>
+
+	* acconfig/acinclude.m4:
+
+	Shared tcl libraries wern't recognised properly on cygwin32 (synch
+	1.6).  
+
 2002-04-01 23:39  Federico Mennite <ite@techmonkeys.org>
 
 	* configure.ac, acconfig/acinclude.m4, lib/compat/Makefile.am,
