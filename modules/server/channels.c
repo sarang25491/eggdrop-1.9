@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.19 2004/06/07 23:14:48 stdarg Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.20 2004/06/15 11:54:33 wingman Exp $";
 #endif
 
 #include "server.h"
@@ -35,7 +35,6 @@ static bind_list_t channel_raw_binds[];
 /* Prototypes. */
 static int uhost_cache_delete(const void *key, void *data, void *param);
 static void clear_masklist(channel_mask_list_t *l);
-static void del_ban(channel_t *chan, const char *mask);
 static int got_list_item(void *client_data, char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[]);
 static int got_list_end(void *client_data, char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[]);
 void uhost_cache_decref(const char *nick);

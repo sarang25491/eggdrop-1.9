@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partyline.c,v 1.12 2003/12/17 07:52:14 wcc Exp $";
+static const char rcsid[] = "$Id: partyline.c,v 1.13 2004/06/15 11:54:33 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -31,6 +31,8 @@ static char *partyline_command_chars = NULL;
 
 static bind_table_t *BT_cmd = NULL; /* Commands. */
 static bind_table_t *BT_party_out = NULL; /* Text sent to a user. */
+
+int partyline_terminal_mode = 0;
 
 static int on_putlog(int flags, const char *chan, const char *text, int len);
 extern int partychan_init();

@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.167 2004/06/15 11:24:46 wingman Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.168 2004/06/15 11:54:33 wingman Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -78,7 +78,6 @@ static const char rcsid[] = "$Id: main.c,v 1.167 2004/06/15 11:24:46 wingman Exp
 
 int backgrd = 1;	/* Run in the background? */
 int con_chan = 0;	/* Foreground: constantly display channel stats? */
-int term_z = 0;		/* Foreground: use the terminal as a partyline? */
 int make_userfile = 0;	/* Start bot in make-userfile mode? */
 
 const char *configfile = NULL;	/* Name of the config file */
@@ -165,11 +164,13 @@ static void got_hup(int z)
 	return;
 }
 
+#if 0
 static void got_ill(int z)
 {
 	eggdrop_event("sigill");
 	putlog(LOG_MISC, "*", _("Received ILL signal (ignoring)."));
 }
+#endif
 
 
 static void print_version(void)
@@ -223,11 +224,11 @@ static void do_args(int argc, char *const *argv)
 				break;
 			case 'c':
 				con_chan = 1;
-				term_z = 0;
+				partyline_terminal_mode = 0;
 				break;
 			case 't':
 				con_chan = 0;
-				term_z = 1;
+				partyline_terminal_mode = 1;
 				break;
 			case 'm':
 				make_userfile = 1;
@@ -389,8 +390,11 @@ int main(int argc, char **argv)
 	sv.sa_handler = SIG_IGN;
 	sigaction(SIGPIPE, &sv, NULL);
 
-	/*sv.sa_handler = got_ill;
-	sigaction(SIGILL, &sv, NULL);*/
+/* XXX: why is this disabled? */
+#if 0
+	sv.sa_handler = got_ill;
+	sigaction(SIGILL, &sv, NULL);
+#endif
 
 	timer_update_now(&egg_timeval_now);
 	now = egg_timeval_now.sec;

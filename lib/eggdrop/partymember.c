@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partymember.c,v 1.10 2004/06/15 11:24:46 wingman Exp $";
+static const char rcsid[] = "$Id: partymember.c,v 1.11 2004/06/15 11:54:33 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -32,7 +32,6 @@ static const char rcsid[] = "$Id: partymember.c,v 1.10 2004/06/15 11:24:46 wingm
 static hash_table_t *pid_ht = NULL;
 static partymember_t *party_head = NULL;
 static int npartymembers = 0;
-static int g_pid = 0;	/* Keep track of next available pid. */
 
 static int partymember_cleanup(void *client_data);
 static int on_udelete(user_t *u);

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: telnetparty.c,v 1.12 2004/06/15 11:24:46 wingman Exp $";
+static const char rcsid[] = "$Id: telnetparty.c,v 1.13 2004/06/15 11:54:33 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -99,10 +99,14 @@ int telnet_init()
 	telnet_idx = egg_server(telnet_config.vhost, telnet_config.port, &telnet_port);
 	sockbuf_set_handler(telnet_idx, &server_handler, NULL);
 	
-	/* We don't go into terminal right now since not all modules might be
-    	 * loaded at this stage. So right before we enter our main loop we 
-  	 * enable our terminal. */
-	bind_add_simple ("init", NULL, NULL, (Function)terminal_mode);	
+	/* XXX: invent something for better access of command line args
+	 * XXX: in modules. */
+	if (partyline_terminal_mode) {
+		/* We don't go into terminal right now since not all modules might be
+	    	 * loaded at this stage. So right before we enter our main loop we 
+	  	 * enable our terminal. */
+		bind_add_simple ("init", NULL, NULL, (Function)terminal_mode);	
+	}
 	
 	return(0);
 }

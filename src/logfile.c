@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: logfile.c,v 1.38 2004/06/15 11:24:46 wingman Exp $";
+static const char rcsid[] = "$Id: logfile.c,v 1.39 2004/06/15 11:54:33 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -41,7 +41,7 @@ typedef struct log_b {
 	FILE *fp;
 } log_t;
 
-extern int backgrd, use_stderr, term_z;
+extern int backgrd, use_stderr;
 static int terminal_enabled = 0;
 extern time_t now;
 
@@ -235,7 +235,7 @@ static int on_putlog(int flags, const char *chan, const char *text, int len)
 
 	if (!backgrd || use_stderr) {
 	
-		if (term_z) {
+		if (partyline_terminal_mode) {
 			/* check if HQ is on console. If yes we disable
 			 * output to stdout since otherwise everything would
 			 * be printed out twice. */		

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tclscript.c,v 1.45 2004/06/14 23:57:59 wingman Exp $";
+static const char rcsid[] = "$Id: tclscript.c,v 1.46 2004/06/15 11:54:33 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -183,7 +183,7 @@ static int my_link_var(void *ignore, script_linked_var_t *var)
 	else varname = strdup(var->name);
 
 	set_linked_var(var, NULL);
-	Tcl_TraceVar(ginterp, varname, TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS, my_trace_callback, var);
+	Tcl_TraceVar(ginterp, varname, TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS, (Tcl_VarTraceProc *)my_trace_callback, var);
 
 	free(varname);
 	return(0);
@@ -197,7 +197,7 @@ static int my_unlink_var(void *ignore, script_linked_var_t *var)
 	if (var->class && strlen(var->class)) varname = egg_mprintf("%s(%s)", var->class, var->name);
 	else varname = strdup(var->name);
 
-	Tcl_UntraceVar(ginterp, varname, TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS, my_trace_callback, var);
+	Tcl_UntraceVar(ginterp, varname, TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS, (Tcl_VarTraceProc *)my_trace_callback, var);
 
 	free(varname);
 	return(0);
@@ -206,7 +206,7 @@ static int my_unlink_var(void *ignore, script_linked_var_t *var)
 static void log_error_message(Tcl_Interp *myinterp)
 {
 	FILE *fp;
-	char *errmsg;
+	const char *errmsg;
 	time_t timenow;
 
 	errmsg = Tcl_GetStringResult(myinterp);
@@ -234,7 +234,7 @@ static int my_tcl_callbacker(script_callback_t *me, ...)
 	script_var_t var;
 	my_callback_cd_t *cd; /* My callback client data */
 	int i, n, retval;
-	void **al;
+	script_callback_t **al;
 
 	/* This struct contains the interp and the obj command. */
 	cd = (my_callback_cd_t *)me->callback_data;
@@ -242,7 +242,7 @@ static int my_tcl_callbacker(script_callback_t *me, ...)
 	/* Get a copy of the command, then append args. */
 	final_command = Tcl_DuplicateObj(cd->command);
 
-	al = (void **)&me;
+	al = &me;
 	al++;
 	if (me->syntax) n = strlen(me->syntax);
 	else n = 0;
@@ -605,7 +605,7 @@ static int my_get_arg(void *ignore, script_args_t *args, int num, script_var_t *
 
 static int party_tcl(partymember_t *p, char *nick, user_t *u, char *cmd, char *text)
 {
-	char *str;
+	const char *str;
 
 	if (!u || !egg_isowner(u->handle)) {
 		partymember_write(p, _("You must be a permanent owner (defined in the config file) to use this command.\n"), -1);

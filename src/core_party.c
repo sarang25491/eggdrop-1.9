@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.27 2004/06/15 11:24:46 wingman Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.28 2004/06/15 11:54:33 wingman Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -41,7 +41,6 @@ static const char rcsid[] = "$Id: core_party.c,v 1.27 2004/06/15 11:24:46 wingma
 #include "logfile.h"
 
 /* from main.c */
-extern int term_z;
 extern char pid_file[];
 
 static int party_join(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
@@ -66,7 +65,7 @@ static int party_part(partymember_t *p, const char *nick, user_t *u, const char 
 
 static int party_quit(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
-	if (term_z && 0 == strcmp (p->nick, PARTY_TERMINAL_NICK)) {
+	if (partyline_terminal_mode && 0 == strcmp (p->nick, PARTY_TERMINAL_NICK)) {
 		partymember_printf (p, "You can't leave the partyline in terminal mode.");
 		return -1;
 	}
