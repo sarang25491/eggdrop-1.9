@@ -1,3 +1,10 @@
+2003-04-04 15:51  stdarg <stdarg@techmonkeys.org>
+
+	* modules/server/dcc.c:
+
+	
+	* snprintf error 
+
 2003-04-04 04:04  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/Makefile.am, lib/eggdrop/binds.c,
