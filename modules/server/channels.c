@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.15 2003/12/18 06:50:47 wcc Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.16 2004/01/13 15:56:02 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -241,6 +241,7 @@ void channel_on_join(const char *chan_name, const char *nick, const char *uhost)
 	if (create) {
 		chan->status |= CHANNEL_WHOLIST | CHANNEL_BANLIST;
 		printserv(SERVER_NORMAL, "WHO %s\r\n", chan_name);
+		printserv(SERVER_NORMAL, "MODE %s\r\n", chan_name);
 		printserv(SERVER_NORMAL, "MODE %s +b\r\n", chan_name);
 	}
 
@@ -690,45 +691,28 @@ int channel_mode(const char *chan_name, const char *nick, char *buf)
 	return(-2);
 }
 
-/* Got a mode change. */
-static int gotmode(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
+static void parse_chan_mode(char *from_nick, char *from_uhost, user_t *u, int nargs, char *args[], int trigger_bind)
 {
-	char *dest = args[0];
-	char *change = args[1];
-	char *arg;
-	char changestr[3];
 	int hasarg, curarg, modify_member, modify_channel;
-	channel_t *chan;
 	channel_member_t *m;
+	char changestr[3];
+	char *dest;
+	char *change;
+	channel_t *chan;
+	const char *arg;
+
+	if (nargs < 2) return;
+
+	dest = args[0];
+	change = args[1];
+
+	channel_lookup(dest, 0, &chan, NULL);
+	if (!chan) return;
 
 	changestr[0] = '+';
 	changestr[2] = 0;
 
-	/* Is it a user mode? */
-	if (!strchr(current_server.chantypes, *dest)) {
-		while (*change) {
-			/* Direction? */
-			if (*change == '+' || *change == '-') {
-				changestr[0] = *change;
-				change++;
-				continue;
-			}
-
-			changestr[1] = *change;
-			bind_check(BT_mode, u ? &u->settings[0].flags : NULL, changestr, from_nick, from_uhost, u, dest, changestr, NULL);
-			change++;
-		}
-		return(0);
-	}
-
-	/* Make sure it's a valid channel. */
-	channel_lookup(dest, 0, &chan, NULL);
-	if (!chan) return(0);
-
-	/* MODE #chan(0) +-modestr(1) arg1(2) ... */
-	/* The current argument for modes taking an argument (+o, +b, etc). */
 	curarg = 2;
-
 	while (*change) {
 		/* Direction? */
 		if (*change == '+' || *change == '-') {
@@ -737,7 +721,8 @@ static int gotmode(char *from_nick, char *from_uhost, user_t *u, char *cmd, int 
 			continue;
 		}
 
-		/* Figure out if it takes an argument. */
+		/* Figure out what kind of change it is and if it takes an
+		 * argument. */
 		modify_member = modify_channel = 0;
 		if (strchr(current_server.modeprefix, *change)) {
 			hasarg = 1;
@@ -806,9 +791,46 @@ static int gotmode(char *from_nick, char *from_uhost, user_t *u, char *cmd, int 
 		}
 
 		/* Now trigger the mode bind. */
-		bind_check(BT_mode, u ? &u->settings[0].flags : NULL, changestr, from_nick, from_uhost, u, dest, changestr, arg);
+		if (trigger_bind) bind_check(BT_mode, u ? &u->settings[0].flags : NULL, changestr, from_nick, from_uhost, u, dest, changestr, arg);
 		change++;
 	}
+}
+
+/* Got an absolute channel mode. */
+static int got324(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
+{
+	parse_chan_mode(from_nick, from_uhost, u, nargs-1, args+1, 0);
+	return(0);
+}
+
+/* Got a mode change. */
+static int gotmode(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
+{
+	char *dest = args[0];
+	char *change = args[1];
+	char changestr[3];
+
+	changestr[0] = '+';
+	changestr[2] = 0;
+
+	/* Is it a user mode? */
+	if (!strchr(current_server.chantypes, *dest)) {
+		while (*change) {
+			/* Direction? */
+			if (*change == '+' || *change == '-') {
+				changestr[0] = *change;
+				change++;
+				continue;
+			}
+
+			changestr[1] = *change;
+			bind_check(BT_mode, u ? &u->settings[0].flags : NULL, changestr, from_nick, from_uhost, u, dest, changestr, NULL);
+			change++;
+		}
+		return(0);
+	}
+
+	parse_chan_mode(from_nick, from_uhost, u, nargs, args, 1);
 	return(0);
 }
 
@@ -839,6 +861,7 @@ static bind_list_t channel_raw_binds[] = {
 	{NULL, "NICK", gotnick},
 
 	/* Mode. */
+	{NULL, "324", got324},
 	{NULL, "MODE", gotmode},
 
 	{NULL, NULL, NULL}

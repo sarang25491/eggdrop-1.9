@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.165 2004/01/11 12:16:08 wcc Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.166 2004/01/13 15:56:02 stdarg Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -80,10 +80,8 @@ int con_chan = 0;	/* Foreground: constantly display channel stats? */
 int term_z = 0;		/* Foreground: use the terminal as a partyline? */
 int make_userfile = 0;	/* Start bot in make-userfile mode? */
 
-char configfile[121] = "config.xml";	/* Name of the config file */
-char helpdir[121] = "help/";		/* Directory of help files (if used) */
-char textdir[121] = "text/";		/* Directory for text files that get dumped */
-char pid_file[512];			/* Name of Eggdrop's pid file */
+const char *configfile = NULL;	/* Name of the config file */
+char pid_file[512];		/* Name of Eggdrop's pid file */
 
 time_t online_since;		/* Time the bot was started */
 time_t now;			/* Current time */
@@ -256,7 +254,8 @@ static void do_args(int argc, char *const *argv)
 				break; /* this should never be reached */
 		}
 	}
-	if (optind < argc) strlcpy(configfile, argv[optind], sizeof configfile);
+	if (optind < argc) configfile = argv[optind];
+	else configfile = "config.xml";
 }
 
 /* Called once a second.
