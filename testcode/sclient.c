@@ -6,64 +6,52 @@
 
 int server_idx;
 
-int server_read(int idx, sockbuf_iobuf_t *data, void *client_data)
+int server_read(void *client_data, int idx, char *data, int len)
 {
-	data->data[data->len] = 0;
-	printf("%s\n", data->data);
+	printf("server: [%s]\n", data);
 	return(0);
 }
 
-int server_eof(int idx, void *ignore, void *client_data)
+int server_eof(void *client_data, int idx, int err, const char *errmsg)
 {
+	if (err && errmsg) printf("Error: %s\n", errmsg);
 	printf("Server closed connection!\n");
 	exit(0);
 }
 
-int server_err(int idx, void *err, void *client_data)
+int server_connect(void *client_data, int idx, const char *peer_ip, int peer_port)
 {
-	perror("server_err");
-	exit(0);
-}
-
-int server_connect(int idx, void *ignore, void *client_data)
-{
-	printf("Connected to server!\n");
+	printf("Connected to server (%s %d)!\n", peer_ip, peer_port);
 	//sslmode_on(idx, 0); /* 0 means client, 1 means server */
 	//zipmode_on(idx);
-	//linemode_on(idx);
+	linemode_on(idx);
 	return(0);
 }
 
-static sockbuf_event_t server_event = {
-	(Function) 5,
-	(Function) "server",
-	server_read,
-	NULL,
-	server_eof,
-	server_err,
-	server_connect
+static sockbuf_handler_t server_event = {
+	"server",
+	server_connect, server_eof, NULL,
+	server_read, NULL
 };
 
-int stdin_read(int idx, sockbuf_iobuf_t *data, void *client_data)
+int stdin_read(void *client_data, int idx, char *data, int len)
 {
-	data->data[data->len] = '\n';
-	sockbuf_write(server_idx, data->data, data->len+1);
+	printf("you said: [%s]\n", data);
+	data[len] = '\n';
+	sockbuf_write(server_idx, data, len+1);
 	return(0);
 }
 
-int stdin_eof(int idx, void *client_data)
+int stdin_eof(void *client_data, int idx, int err, const char *errmsg)
 {
 	sockbuf_delete(idx);
 	return(0);
 }
 
-static sockbuf_event_t stdin_event = {
-	(Function) 4,
-	(Function) "stdin",
-	stdin_read,
-	NULL,
-	stdin_eof,
-	NULL
+static sockbuf_handler_t stdin_event = {
+	"stdin",
+	NULL, stdin_eof, NULL,
+	stdin_read, NULL
 };
 
 main (int argc, char *argv[])
@@ -96,11 +84,12 @@ main (int argc, char *argv[])
 		return(0);
 	}
 
-	sockbuf_set_handler(server_idx, server_event, NULL);
-	sslmode_init();
+	sockbuf_set_handler(server_idx, &server_event, NULL);
+//	sslmode_init();
 
-	stdin_idx = sockbuf_new(0, 0);
-	sockbuf_set_handler(stdin_idx, stdin_event, NULL);
+	stdin_idx = sockbuf_new();
+	sockbuf_set_sock(stdin_idx, 0, 0);
+	sockbuf_set_handler(stdin_idx, &stdin_event, NULL);
 	linemode_on(stdin_idx);
 	while (1) {
 		sockbuf_update_all(-1);

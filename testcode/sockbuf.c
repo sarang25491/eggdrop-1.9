@@ -1,4 +1,4 @@
-#define DO_POLL
+#define HAVE_POLL
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,36 +7,31 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/time.h>
-#ifdef DO_POLL
+#ifdef HAVE_POLL
 	#include <sys/poll.h>
 #else
-	/* No poll()? Then we emulate it. */
-	#define POLLIN	1
-	#define POLLOUT	2
-	#define POLLERR	4
-	#define POLLNVAL	8
-	#define POLLHUP	16
-	struct pollfd {
-		int fd;
-		short events;
-		short revents;
-	};
+	#include "mypoll.h"
 #endif
+
 #include <errno.h>
 
 #include "sockbuf.h"
 
-typedef struct sockbuf_b {
+typedef struct {
 	int sock;	/* Underlying socket descriptor */
 	int flags;	/* Keep track of blocked status, client/server */
 
-	sockbuf_iobuf_t outbuf;	/* Output buffer. */
+	char *peer_ip;	/* Who we're connected to. */
+	int peer_port;
 
-	sockbuf_event_b *filters;	/* Line-mode, gzip, ssl... */
+	char *data;	/* Output buffer. */
+	int len;	/* Length of buffer. */
+
+	sockbuf_filter_t **filters;	/* Line-mode, gzip, ssl... */
 	void **filter_client_data;	/* Client data for filters */
 	int nfilters;	/* Number of filters */
 
-	sockbuf_event_b on;	/* User's event handlers */
+	sockbuf_handler_t *handler;	/* User's event handlers */
 	void *client_data;	/* User's client data */
 } sockbuf_t;
 
@@ -48,98 +43,37 @@ static int ndeleted_sockbufs = 0;
 static int *idx_array = NULL;
 static struct pollfd *pollfds = NULL;
 static int npollfds = 0;
+
+/* Listeners attach to the end of the pollfds array so that we can listen
+	for events on sockets that don't have sockbufs. */
 static int nlisteners = 0;
 
 /* An idle event handler that does nothing. */
-static sockbuf_event_t sockbuf_idler = {0, (Function) "idle"};
+static sockbuf_handler_t sockbuf_idler = {
+	"idle",
+	NULL, NULL, NULL,
+	NULL, NULL
+};
 
-static int sockbuf_real_write(int idx, sockbuf_iobuf_t *iobuf);
-
-/* Level is the level of the caller. For WRITE events, the callbacks are
-	processed backwards, so the initial level should be sbuf->nfilters, so
-	that when we -- it, it will point to the last filter. For all other
-	events, level should start at -1, so that when we ++ it, it will be 0
-	(first filter). */
-int sockbuf_filter(int idx, int event, int level, void *arg)
-{
-	int found;
-	int retval;
-	Function callback;
-	sockbuf_t *sbuf;
-
-	if (!sockbuf_isvalid(idx)) return(-1);
-	sbuf = &sockbufs[idx];
-
-	/* Search for the first filter that handles this event. */
-	/* SOCKBUF_WRITE needs to be processed backwards. */
-	found = 0;
-	if (event == SOCKBUF_WRITE) {
-		for (level--; level >= 0; level--) {
-			if ((int) (sbuf->filters[level][0]) <= event) continue;
-			if ((callback = sbuf->filters[level][event+2])) {
-				found = 1;
-				break;
-			}
-		}
-	}
-	else {
-		for (level++; level < sbuf->nfilters; level++) {
-			if ((int) (sbuf->filters[level][0]) <= event) continue;
-			if ((callback = sbuf->filters[level][event+2])) {
-				found = 1;
-				break;
-			}
-		}
-	}
-
-	if (found) {
-		retval = callback(idx, event, level, arg, sbuf->filter_client_data[level]);
-	}
-	else if ((int) sbuf->on[0] > event) {
-		callback = sockbufs[idx].on[event+2];
-		if (callback) retval = callback(idx, arg, sbuf->client_data);
-	}
-	else {
-		/* Here is where our default handlers go. */
-		switch (event) {
-			case SOCKBUF_WRITE:
-				retval = sockbuf_real_write(idx, arg);
-				break;
-		}
-	}
-
-	return(retval);
-}
-
-int sockbuf_write_filter(int idx, int level, unsigned char *data, int len)
-{
-	sockbuf_iobuf_t my_iobuf;
-
-	my_iobuf.data = data;
-	my_iobuf.len = len;
-	my_iobuf.max = len;
-	return sockbuf_filter(idx, SOCKBUF_WRITE, level, &my_iobuf);
-}
+static void sockbuf_got_eof(int idx, int err);
 
 /* Mark a sockbuf as blocked and put it on the POLLOUT list. */
-static int sockbuf_block(sockbuf_t *sbuf)
+static void sockbuf_block(int idx)
 {
 	int i;
-	sbuf->flags |= SOCKBUF_BLOCK;
+	sockbufs[idx].flags |= SOCKBUF_BLOCK;
 	for (i = 0; i < npollfds; i++) {
-		if (pollfds[i].fd == sbuf->sock) {
+		if (idx_array[i] == idx) {
 			pollfds[i].events |= POLLOUT;
 			break;
 		}
 	}
-	return(0);
 }
 
-/* Mark a sockbuf as unblocked and call its on->empty handler. */
-static int sockbuf_unblock(int idx)
+/* Mark a sockbuf as unblocked and remove it from the POLLOUT list. */
+static void sockbuf_unblock(int idx)
 {
 	int i;
-
 	sockbufs[idx].flags &= (~SOCKBUF_BLOCK);
 	for (i = 0; i < npollfds; i++) {
 		if (idx_array[i] == idx) {
@@ -147,145 +81,247 @@ static int sockbuf_unblock(int idx)
 			break;
 		}
 	}
-
-	/* If it's a client socket, this means it's connected. */
-	if (sockbufs[idx].flags & SOCKBUF_CLIENT) {
-		sockbufs[idx].flags &= (~SOCKBUF_CLIENT);
-		sockbuf_filter(idx, SOCKBUF_CONNECT, -1, NULL);
-		return(0);
-	}
-	/* Otherwise do the EMPTY event. */
-	sockbuf_filter(idx, SOCKBUF_EMPTY, -1, NULL);
-	return(0);
 }
 
-/* Eof occurs on a socket. */
-static int sockbuf_eof(int idx)
-{
-	sockbuf_filter(idx, SOCKBUF_EOF, -1, NULL);
-	return(0);
-}
-
-/* Error occurs on a socket. */
-static int sockbuf_err(int idx, int err)
-{
-	if (!err) {
-		int size = sizeof(int);
-		getsockopt(sockbufs[idx].sock, SOL_PACKET, SO_ERROR, &err, &size);
-		if (!err) return(0);
-	}
-
-	sockbuf_filter(idx, SOCKBUF_ERR, -1, (void *)err);
-	return(err);
-}
-
-/* Add a buffer to a sockbuf's output list, copying it first. */
-int sockbuf_write(int idx, unsigned char *data, int len)
-{
-	sockbuf_iobuf_t iobuf;
-
-	iobuf.data = data;
-	iobuf.len = len;
-	iobuf.max = len;
-
-	return sockbuf_filter(idx, SOCKBUF_WRITE, sockbufs[idx].nfilters, &iobuf);
-}
-
-static int sockbuf_real_write(int idx, sockbuf_iobuf_t *iobuf)
+/* Try to write data to the underlying socket. If we don't write it all,
+	save the data in the output buffer and start monitoring for POLLOUT. */
+static int sockbuf_real_write(int idx, const char *data, int len)
 {
 	int nbytes;
 	sockbuf_t *sbuf = &sockbufs[idx];
-	sockbuf_iobuf_t *outbuf;
-	char *data;
-	int len;
-
-	data = iobuf->data;
-	len = iobuf->len;
 
 	/* If it's not blocked already, write as much as we can. */
 	if (!(sbuf->flags & SOCKBUF_BLOCK)) {
-		int nbytes = write(sbuf->sock, data, len);
+		nbytes = write(sbuf->sock, data, len);
 		if (nbytes == len) return(nbytes);
 		if (nbytes < 0) {
 			if (errno != EAGAIN) {
-				sockbuf_err(idx, errno);
+				sockbuf_got_eof(idx, errno);
 				return(nbytes);
 			}
 			nbytes = 0;
 		}
-		sockbuf_block(sbuf);
+		sockbuf_block(idx);
 		data += nbytes;
 		len -= nbytes;
 	}
 
-	/* Check if we need to grow the buffer. */
-	outbuf = &sbuf->outbuf;
-	if (outbuf->max < (outbuf->len + len)) {
-		outbuf->max = outbuf->len + len + 512;
-		outbuf->data = realloc(outbuf->data, outbuf->max);
-	}
-
-	memcpy(outbuf->data+outbuf->len, data, len);
-	outbuf->len += len;
+	/* Add the remaining data to the buffer. */
+	sbuf->data = (char *)realloc(sbuf->data, sbuf->len + len);
+	memcpy(sbuf->data + sbuf->len, data, len);
+	sbuf->len += len;
 	return(nbytes);
 }
 
-/* Write as much data as we can. */
-static int sockbuf_on_writable(int idx)
+/* Eof occurs on a socket. */
+int sockbuf_on_eof(int idx, int level, int err, char *errmsg)
 {
-	int nbytes;
+	int i;
 	sockbuf_t *sbuf = &sockbufs[idx];
 
-	/* If it's a connecting socket, this means it's connected. */
-	if (sbuf->flags & SOCKBUF_CLIENT) {
-		if (sockbuf_err(idx, 0)) return(0);
-		sockbuf_unblock(idx);
-		/* If this sockbuf gets deleted in the callback, we're done. */
-		if (sbuf->sock == -1) return(0);
+	for (i = 0; i < sbuf->nfilters; i++) {
+		if (sbuf->filters[i]->on_eof && sbuf->filters[i]->level > level) {
+			return sbuf->filters[i]->on_eof(sbuf->filter_client_data[i], idx, err, errmsg);
+		}
 	}
 
-	/* Ok, try to write all the data. */
-	nbytes = write(sbuf->sock, sbuf->outbuf.data, sbuf->outbuf.len);
-	if (nbytes > 0) {
-		sbuf->outbuf.len -= nbytes;
-		if (!sbuf->outbuf.len) sockbuf_unblock(idx);
-		else memmove(sbuf->outbuf.data, sbuf->outbuf.data+nbytes, sbuf->outbuf.len);
+	/* If we didn't branch to a filter, try the user handler. */
+	if (sbuf->handler->on_eof) {
+		sbuf->handler->on_eof(sbuf->client_data, idx, err, errmsg);
 	}
-	else if (nbytes < 0) sockbuf_err(idx, errno);
-	return(nbytes);
-}
-
-static int sockbuf_on_readable(int idx)
-{
-	sockbuf_t *sbuf = &sockbufs[idx];
-	sockbuf_iobuf_t iobuf;
-	char buf[4096];
-	int nbytes;
-
-	/* If it's a server socket, this means there is a connection waiting. */
-	if (sbuf->flags & SOCKBUF_SERVER) {
-		sockbuf_filter(idx, SOCKBUF_READ, -1, (void *)sbuf->sock);
-		return(0);
-	}
-
-	nbytes = read(sbuf->sock, buf, sizeof(buf));
-	if (nbytes > 0) {
-		iobuf.data = buf;
-		iobuf.len = nbytes;
-		iobuf.max = sizeof(buf);
-		sockbuf_filter(idx, SOCKBUF_READ, -1, &iobuf);
-	}
-	else if (nbytes < 0) {
-		sockbuf_err(idx, errno);
-	}
-	else {
-		sockbuf_eof(idx);
-	}
-
 	return(0);
 }
 
-int sockbuf_new(int sock, int flags)
+/* This is called when a client sock connects successfully. */
+int sockbuf_on_connect(int idx, int level, const char *peer_ip, int peer_port)
+{
+	int i;
+	sockbuf_t *sbuf = &sockbufs[idx];
+
+	for (i = 0; i < sbuf->nfilters; i++) {
+		if (sbuf->filters[i]->on_connect && sbuf->filters[i]->level > level) {
+			return sbuf->filters[i]->on_connect(sbuf->filter_client_data[i], idx, sbuf->peer_ip, sbuf->peer_port);
+		}
+	}
+
+	sbuf->peer_ip = strdup(peer_ip);
+	sbuf->peer_port = peer_port;
+	if (sbuf->handler->on_connect) {
+		sbuf->handler->on_connect(sbuf->client_data, idx, peer_ip, peer_port);
+	}
+}
+
+/* When an incoming connection is accepted. */
+int sockbuf_on_newclient(int idx, int level, int newsock, const char *peer_ip, int peer_port)
+{
+	int i;
+	sockbuf_t *sbuf = &sockbufs[idx];
+
+	for (i = 0; i < sbuf->nfilters; i++) {
+		if (sbuf->filters[i]->on_connect && sbuf->filters[i]->level > level) {
+			return sbuf->filters[i]->on_newclient(sbuf->filter_client_data[i], idx, newsock, peer_ip, peer_port);
+		}
+	}
+
+	if (sbuf->handler->on_newclient) {
+		sbuf->handler->on_newclient(sbuf->client_data, idx, newsock, peer_ip, peer_port);
+	}
+	return(0);
+}
+
+/* We read some data from the sock. */
+int sockbuf_on_read(int idx, int level, char *data, int len)
+{
+	int i;
+	sockbuf_t *sbuf = &sockbufs[idx];
+
+	for (i = 0; i < sbuf->nfilters; i++) {
+		if (sbuf->filters[i]->on_read && sbuf->filters[i]->level > level) {
+			return sbuf->filters[i]->on_read(sbuf->filter_client_data[i], idx, data, len);
+		}
+	}
+
+	if (sbuf->handler->on_read ){
+		sbuf->handler->on_read(sbuf->client_data, idx, data, len);
+	}
+	return(0);
+}
+
+/* We're writing some data to the sock. */
+int sockbuf_on_write(int idx, int level, const char *data, int len)
+{
+	int i;
+	sockbuf_t *sbuf = &sockbufs[idx];
+
+	for (i = sbuf->nfilters-1; i >= 0; i--) {
+		if (sbuf->filters[i]->on_write && sbuf->filters[i]->level < level) {
+			return sbuf->filters[i]->on_write(sbuf->filter_client_data[i], idx, data, len);
+		}
+	}
+	/* There's no user handler for on_write (they wrote it). */
+	return sockbuf_real_write(idx, data, len);
+}
+
+/* We wrote some data to the sock. */
+int sockbuf_on_written(int idx, int level, int len, int remaining)
+{
+	int i;
+	sockbuf_t *sbuf = &sockbufs[idx];
+
+	for (i = 0; i < sbuf->nfilters; i++) {
+		if (sbuf->filters[i]->on_written && sbuf->filters[i]->level > level) {
+			return sbuf->filters[i]->on_written(sbuf->filter_client_data[i], idx, len, remaining);
+		}
+	}
+
+	if (sbuf->handler->on_written) {
+		sbuf->handler->on_written(sbuf->client_data, idx, len, remaining);
+	}
+	return(0);
+}
+
+/* When eof or an error is detected. */
+static void sockbuf_got_eof(int idx, int err)
+{
+	char *errmsg;
+	sockbuf_t *sbuf = &sockbufs[idx];
+
+	/* If there's no error given, check for a socket-level error. */
+	if (!err) err = socket_get_error(sbuf->sock);
+
+	/* Get the associated error message. */
+	errmsg = strerror(err);
+
+	close(sbuf->sock);
+	sockbuf_on_eof(idx, SOCKBUF_LEVEL_INTERNAL, err, errmsg);
+}
+
+/* When a client sock is writable, that means it's connected. Unless there's
+	a socket level error, anyway. So see if there's an error, then get
+	the peer we're connected to, then call the on_connect event. */
+static void sockbuf_got_writable_client(int idx)
+{
+	int err, peer_port;
+	char *peer_ip;
+	sockbuf_t *sbuf = &sockbufs[idx];
+
+	err = socket_get_error(sbuf->sock);
+	if (err) {
+		sockbuf_got_eof(idx, err);
+		return;
+	}
+
+	sbuf->flags &= ~SOCKBUF_CLIENT;
+	sockbuf_unblock(idx);
+	socket_get_peer_name(sbuf->sock, &peer_ip, &peer_port);
+
+	sockbuf_on_connect(idx, SOCKBUF_LEVEL_INTERNAL, peer_ip, peer_port);
+	if (peer_ip) free(peer_ip);
+}
+
+/* When a server sock is readable, that means there's a connection waiting
+	to be accepted. So we'll accept the sock, get the peer name, and
+	call the on_newclient event. */
+static void sockbuf_got_readable_server(int idx)
+{
+	int newsock, peer_port;
+	char *peer_ip = NULL;
+	sockbuf_t *sbuf = &sockbufs[idx];
+
+	newsock = socket_accept(sbuf->sock, &peer_ip, &peer_port);
+	if (newsock < 0) {
+		if (peer_ip) free(peer_ip);
+		return;
+	}
+
+	sockbuf_on_newclient(idx, SOCKBUF_LEVEL_INTERNAL, newsock, peer_ip, peer_port);
+}
+
+/* This is called when the POLLOUT condition is true for already-connected
+	socks. We write as much data as we can and call the on_written
+	event. */
+static void sockbuf_got_writable(int idx)
+{
+	int nbytes;
+	sockbuf_t *sbuf = &sockbufs[idx];
+
+	/* Try to write any buffered data. */
+	errno = 0;
+	nbytes = write(sbuf->sock, sbuf->data, sbuf->len);
+	if (nbytes > 0) {
+		sbuf->len -= nbytes;
+		if (!sbuf->len) sockbuf_unblock(idx);
+		else memmove(sbuf->data, sbuf->data+nbytes, sbuf->len);
+		sockbuf_on_written(idx, SOCKBUF_LEVEL_INTERNAL, nbytes, sbuf->len);
+	}
+	else if (nbytes < 0) {
+		/* If there's an error writing to a socket that's marked as
+			writable, then there's probably a socket-level error. */
+		sockbuf_got_eof(idx, errno);
+	}
+}
+
+/* When a sock is readable we read some from it and pass it to the on_read
+	handlers. We don't want to read more than once here, because fast
+	sockets on slow computers can get stuck in the read loop. */
+static void sockbuf_got_readable(int idx)
+{
+	sockbuf_t *sbuf = &sockbufs[idx];
+	char buf[4097];
+	int nbytes;
+
+	errno = 0;
+	nbytes = read(sbuf->sock, buf, sizeof(buf)-1);
+	if (nbytes > 0) {
+		buf[nbytes] = 0;
+		sockbuf_on_read(idx, SOCKBUF_LEVEL_INTERNAL, buf, nbytes);
+	}
+	else {
+		sockbuf_got_eof(idx, errno);
+	}
+}
+
+int sockbuf_new()
 {
 	sockbuf_t *sbuf;
 	int idx;
@@ -307,11 +343,9 @@ int sockbuf_new(int sock, int flags)
 
 	sbuf = &sockbufs[idx];
 	memset(sbuf, 0, sizeof(*sbuf));
-	sbuf->flags = (flags & ~(SOCKBUF_AVAIL|SOCKBUF_DELETED));
+	sbuf->flags = SOCKBUF_BLOCK;
 	sbuf->sock = -1;
-	sbuf->on = sockbuf_idler;
-
-	if (sock >= 0) sockbuf_set_sock(idx, sock, flags);
+	sbuf->handler = &sockbuf_idler;
 
 	return(idx);
 }
@@ -323,7 +357,8 @@ int sockbuf_set_sock(int idx, int sock, int flags)
 	if (!sockbuf_isvalid(idx)) return(-1);
 
 	sockbufs[idx].sock = sock;
-	sockbufs[idx].flags = flags;
+	sockbufs[idx].flags &= ~(SOCKBUF_CLIENT|SOCKBUF_SERVER|SOCKBUF_BLOCK);
+	sockbufs[idx].flags |= flags;
 
 	/* pollfds   = [socks][socks][socks][listeners][listeners][end] */
 	/* idx_array = [ idx ][ idx ][ idx ][end]*/
@@ -358,9 +393,9 @@ int sockbuf_set_sock(int idx, int sock, int flags)
 	}
 
 	pollfds[i].fd = sock;
-	if (flags & (SOCKBUF_NOREAD)) pollfds[i].events = 0;
-	else pollfds[i].events = POLLIN;
-	if (flags & (SOCKBUF_BLOCK | SOCKBUF_CLIENT)) pollfds[i].events |= POLLOUT;
+	pollfds[i].events = 0;
+	if (flags & (SOCKBUF_BLOCK|SOCKBUF_CLIENT)) pollfds[i].events |= POLLOUT;
+	if (!(flags & SOCKBUF_NOREAD)) pollfds[i].events |= POLLIN;
 
 	return(idx);
 }
@@ -368,6 +403,19 @@ int sockbuf_set_sock(int idx, int sock, int flags)
 int sockbuf_isvalid(int idx)
 {
 	if (idx >= 0 && idx < nsockbufs && !(sockbufs[idx].flags & (SOCKBUF_AVAIL | SOCKBUF_DELETED))) return(1);
+	return(0);
+}
+
+int sockbuf_close(int idx)
+{
+	sockbuf_t *sbuf;
+
+	if (!sockbuf_isvalid(idx)) return(-1);
+	sbuf = &sockbufs[idx];
+	if (sbuf->sock >= 0) {
+		close(sbuf->sock);
+		sockbuf_set_sock(idx, -1, 0);
+	}
 	return(0);
 }
 
@@ -379,11 +427,21 @@ int sockbuf_delete(int idx)
 	if (!sockbuf_isvalid(idx)) return(-1);
 	sbuf = &sockbufs[idx];
 
+	/* Call the on_delete handler for all filters. */
+	for (i = 0; i < sbuf->nfilters; i++) {
+		if (sbuf->filters[i]->on_delete) {
+			sbuf->filters[i]->on_delete(sbuf->filter_client_data[i], idx);
+		}
+	}
+
 	/* Close the file descriptor. */
 	if (sbuf->sock >= 0) close(sbuf->sock);
 
+	/* Free the peer ip. */
+	if (sbuf->peer_ip) free(sbuf->peer_ip);
+
 	/* Free its output buffer. */
-	if (sbuf->outbuf.data) free(sbuf->outbuf.data);
+	if (sbuf->data) free(sbuf->data);
 
 	/* Mark it as deleted. */
 	memset(sbuf, 0, sizeof(*sbuf));
@@ -402,10 +460,15 @@ int sockbuf_delete(int idx)
 	return(0);
 }
 
-int sockbuf_set_handler(int idx, sockbuf_event_t handler, void *client_data)
+int sockbuf_write(int idx, const char *data, int len)
+{
+	return sockbuf_on_write(idx, SOCKBUF_LEVEL_WRITE_INTERNAL, data, len);
+}
+
+int sockbuf_set_handler(int idx, sockbuf_handler_t *handler, void *client_data)
 {
 	if (!sockbuf_isvalid(idx)) return(-1);
-	sockbufs[idx].on = handler;
+	sockbufs[idx].handler = handler;
 	sockbufs[idx].client_data = client_data;
 
 	return(0);
@@ -449,24 +512,42 @@ int sockbuf_detach_listener(int fd)
 	like writing to the sockbuf (sockbuf_write) have to get called
 	backwards.
 */
-int sockbuf_attach_filter(int idx, sockbuf_event_t filter, void *client_data)
+int sockbuf_attach_filter(int idx, sockbuf_filter_t *filter, void *client_data)
 {
 	sockbuf_t *sbuf;
+	int i;
 
 	if (!sockbuf_isvalid(idx)) return(-1);
 	sbuf = &sockbufs[idx];
 
-	sbuf->filters = (sockbuf_event_b *)realloc(sbuf->filters, sizeof(*sbuf->filters) * (sbuf->nfilters+1));
-	sbuf->filters[sbuf->nfilters] = filter;
+	sbuf->filters = (sockbuf_filter_t **)realloc(sbuf->filters, sizeof(filter) * (sbuf->nfilters+1));
 
 	sbuf->filter_client_data = (void **)realloc(sbuf->filter_client_data, sizeof(void *) * (sbuf->nfilters+1));
-	sbuf->filter_client_data[sbuf->nfilters] = client_data;
+
+	/* Filters are ordered according to levels. The lower the level, the
+		earlier the filter comes. This allows filters to be stacked
+		in different orders but still function intelligently (e.g.
+		compression should always be above encryption).
+	*/
+	for (i = 0; i < sbuf->nfilters; i++) {
+		if (filter->level < sbuf->filters[i]->level) break;
+	}
+
+	/* Move up the higher-level filters. */
+	memmove(sbuf->filters+i+1, sbuf->filters+i, sizeof(filter) * (sbuf->nfilters-i));
+	memmove(sbuf->filter_client_data+i+1, sbuf->filter_client_data+i, sizeof(void *) * (sbuf->nfilters-i));
+
+	/* Put this filter in the empty spot. */
+	sbuf->filters[i] = filter;
+	sbuf->filter_client_data[i] = client_data;
 
 	sbuf->nfilters++;
-	return(sbuf->nfilters);
+	return(0);
 }
 
-int sockbuf_detach_filter(int idx, sockbuf_event_t filter, void *client_data)
+/* Detach the specified filter, and return the filter's client data in the
+	client_data pointer (it should be a pointer to a pointer). */
+int sockbuf_detach_filter(int idx, sockbuf_filter_t *filter, void *client_data)
 {
 	int i;
 	sockbuf_t *sbuf;
@@ -494,62 +575,14 @@ int sockbuf_detach_filter(int idx, sockbuf_event_t filter, void *client_data)
 */
 int sockbuf_update_all(int timeout)
 {
-	int i, n, revents, idx;
+	int i, n, flags, revents, idx;
 	static int depth = 0;
 
 	/* Increment the depth counter when we enter the proc. */
 	depth++;
 
-#ifdef DO_POLL
 	n = poll(pollfds, npollfds, timeout);
 	if (n < 0) n = 0;
-#else
-	fd_set reads, writes, excepts;
-	int highest = -1;
-	int events;
-
-	FD_ZERO(&reads); FD_ZERO(&writes); FD_ZERO(&excepts);
-	for (i = 0; i < npollfds; i++) {
-		if (pollfds[i].fd == -1) continue;
-		events = pollfds[i].events;
-		n = pollfds[i].fd;
-		if (events & POLLIN) FD_SET(n, &reads);
-		if (events & POLLOUT) FD_SET(n, &writes);
-		FD_SET(n, &excepts);
-		if (n > highest) highest = n;
-	}
-	if (timeout > -1) {
-		struct timeval tv;
-
-		tv.tv_sec = (timeout / 1000);
-		timeout -= 1000 * tv.tv_sec;
-		tv.tv_usec = timeout*1000;
-		events = select(highest+1, &reads, &writes, &excepts, &tv);
-	}
-	else events = select(highest+1, &reads, &writes, &excepts, NULL);
-	if (events < 0) {
-		char temp[1];
-		/* There is a bad file descriptor among us... find it! */
-		events = 0;
-		for (i = 0; i < npollfds; i++) {
-			errno = 0;
-			n = write(pollfds[i].fd, temp, 0);
-			if (n < 0 && errno != EINVAL) {
-				pollfds[i].revents = POLLNVAL;
-				events++;
-			}
-			else pollfds[i].revents = 0;
-		}
-	}
-	else for (i = 0; i < npollfds; i++) {
-		n = pollfds[i].fd;
-		pollfds[i].revents = 0;
-		if (FD_ISSET(n, &reads)) pollfds[i].revents |= POLLIN;
-		if (FD_ISSET(n, &writes)) pollfds[i].revents |= POLLOUT;
-		if (FD_ISSET(n, &excepts)) pollfds[i].revents |= POLLERR;
-	}
-	n = events;
-#endif
 
 	/* If a sockbuf gets deleted during its event handler, the pollfds array
 		gets shifted down and we will miss the events of the next
@@ -562,13 +595,16 @@ int sockbuf_update_all(int timeout)
 		if (!revents) continue;
 
 		idx = idx_array[i];
-		if (revents & POLLIN) sockbuf_on_readable(idx);
-		if (revents & POLLOUT) sockbuf_on_writable(idx);
-		if (revents & POLLHUP) sockbuf_eof(idx);
-		if (revents & (POLLERR|POLLNVAL)) {
-			/* Try socket-level error first, then generic error. */
-			if (!sockbuf_err(idx, 0)) sockbuf_err(idx, -1);
+		flags = sockbufs[idx].flags;
+		if (revents & POLLOUT) {
+			if (flags & SOCKBUF_CLIENT) sockbuf_got_writable_client(idx);
+			else sockbuf_got_writable(idx);
 		}
+		if (revents & POLLIN) {
+			if (flags & SOCKBUF_SERVER) sockbuf_got_readable_server(idx);
+			else sockbuf_got_readable(idx);
+		}
+		if (revents & (POLLHUP|POLLNVAL|POLLERR)) sockbuf_got_eof(idx, 0);
 		n--;
 	}
 

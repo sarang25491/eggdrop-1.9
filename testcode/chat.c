@@ -6,17 +6,17 @@
 static int *idx_array = NULL;
 static int array_len = 0;
 
-static int client_read(int idx, sockbuf_iobuf_t *iobuf, void *client_data)
+static int client_read(void *client_data, int idx, char *data, int len)
 {
-	char buf[128];
+	char buf[512];
 	int i, buflen;
 
 	//printf("read %d from %d\n", iobuf->len, idx);
-	iobuf->data[iobuf->len] = 0;
-	snprintf(buf, 128, "<%d> %s\n", idx, iobuf->data);
+	data[len] = 0;
+	snprintf(buf, sizeof(buf), "<%d> %s\n", idx, data);
+	buf[sizeof(buf)-1] = 0;
 	//printf("%s", buf);
 	buflen = strlen(buf);
-	iobuf->data[iobuf->len++] = '\n';
 	for (i = 0; i < array_len; i++) {
 		if (idx_array[i] != idx) {
 			sockbuf_write(idx_array[i], buf, buflen);
@@ -25,19 +25,19 @@ static int client_read(int idx, sockbuf_iobuf_t *iobuf, void *client_data)
 	return(0);
 }
 
-static int client_eof(int idx, void *ignore, void *client_data)
+static int client_eof(void *client_data, int idx, int err, const char *errmsg)
 {
 	char buf[128];
 	int i, buflen;
 
-	printf("eof from %d\n", idx);
+	printf("eof from %d (%s)\n", idx, errmsg);
 	for (i = 0; i < array_len; i++) {
 		if (idx_array[i] == idx) break;
 	}
 	array_len--;
 	memmove(idx_array+i, idx_array+i+1, sizeof(int) * (array_len-i));
 	sockbuf_delete(idx);
-	snprintf(buf, 128, "%d disconnected\n", idx);
+	sprintf(buf, "%d disconnected\n", idx);
 	buflen = strlen(buf);
 	for (i = 0; i < array_len; i++) {
 		sockbuf_write(idx_array[i], buf, buflen);
@@ -45,33 +45,28 @@ static int client_eof(int idx, void *ignore, void *client_data)
 	return(0);
 }
 
-static sockbuf_event_t client_handler = {
-	(Function) 4,
-	(Function) "client",
-	client_read,
-	NULL,
-	client_eof,
-	NULL
+static sockbuf_handler_t client_handler = {
+	"client",
+	NULL, client_eof, NULL,
+	client_read, NULL
 };
 
-static int server_read(int idx, int serversock, void *client_data)
+static int server_newclient(void *client_data, int idx, int newsock, const char *peer_ip, int peer_port)
 {
-	char buf[128];
-	int buflen, newsock, newidx, i;
-
-	newsock = accept(serversock, NULL, NULL);
-	if (newsock < 0) return(0);
+	char buf[512];
+	int buflen, newidx, i;
 
 	socket_set_nonblock(newsock, 1);
-	newidx = sockbuf_new(newsock, 0);
+	newidx = sockbuf_new();
+	sockbuf_set_sock(newidx, newsock, 0);
 	sslmode_on(newidx, 1);
 	zipmode_on(newidx);
 	linemode_on(newidx);
-	sockbuf_set_handler(newidx, client_handler, NULL);
+	sockbuf_set_handler(newidx, &client_handler, NULL);
 
 	sockbuf_write(newidx, "Hello!\n", 7);
 	printf("New connection %d\n", newidx);
-	snprintf(buf, 128, "New connection %d\n", newidx);
+	sprintf(buf, "New connection %d from %s %d\n", newidx, peer_ip, peer_port);
 	buflen = strlen(buf);
 	for (i = 0; i < array_len; i++) {
 		sockbuf_write(idx_array[i], buf, buflen);
@@ -82,10 +77,10 @@ static int server_read(int idx, int serversock, void *client_data)
 	return(0);
 }
 
-static sockbuf_event_t server_handler = {
-	(Function) 1,
-	(Function) "server",
-	server_read
+static sockbuf_handler_t server_handler = {
+	"server",
+	NULL, NULL, server_newclient,
+	NULL, NULL
 };
 
 main (int argc, char *argv[])
@@ -108,8 +103,9 @@ main (int argc, char *argv[])
 		perror("socket_create");
 		return(0);
 	}
-	idx = sockbuf_new(sock, SOCKBUF_SERVER);
-	sockbuf_set_handler(idx, server_handler, NULL);
+	idx = sockbuf_new();
+	sockbuf_set_sock(idx, sock, SOCKBUF_SERVER);
+	sockbuf_set_handler(idx, &server_handler, NULL);
 	while (1) {
 		sockbuf_update_all(-1);
 	}

@@ -1,5 +1,5 @@
 CFLAGS=-g
-PROGS=chat client sclient ipv6
+PROGS=chat client sclient
 
 all: $(PROGS)
 
@@ -11,9 +11,6 @@ client: client.o linemode.o zipmode.o my_socket.o sockbuf.o sslmode.o
 
 sclient: sclient.o socks5.o socks4.o http.o base64.o linemode.o zipmode.o my_socket.o sockbuf.o sslmode.o
 	gcc $(CFLAGS) sclient.o socks5.o socks4.o http.o base64.o linemode.o zipmode.o my_socket.o sockbuf.o sslmode.o -lz -lssl -lcrypto -o sclient
-
-ipv6: ipv6.o my_socket.o sockbuf.o linemode.o
-	gcc $(CFLAGS) ipv6.o my_socket.o sockbuf.o linemode.o -o ipv6
 
 clean:
 	rm -f *.o $(PROGS)

@@ -5,125 +5,119 @@
 
 #include "sockbuf.h"
 
-static int linemode_read(int idx, int event, int level, sockbuf_iobuf_t *new_data, sockbuf_iobuf_t *old_data)
-{
-	unsigned char *line, *stop, *save, *data;
-	int linelen, savelen, datalen;
-	sockbuf_iobuf_t my_iobuf;
+#define LINEMODE_LEVEL	SOCKBUF_LEVEL_TEXT_BUFFER
 
-	data = new_data->data;
-	datalen = new_data->len;
+typedef struct {
+	char *data;
+	int len;
+} linemode_t;
+
+static int linemode_on_read(void *client_data, int idx, char *data, int len)
+{
+	linemode_t *old_data = client_data;
+	char *line, *stop, *save;
+	int linelen, savelen;
 
 	while (1) {
 		/* If there's a cr or lf, we have a line. */
-		stop = memchr(data, '\n', datalen);
+		stop = memchr(data, '\n', len);
 		if (!stop) {
-			stop = memchr(data, '\r', datalen);
+			stop = memchr(data, '\r', len);
 			if (!stop) {
 				/* No line, save the whole thing. */
 				save = data;
-				savelen = datalen;
+				savelen = len;
 				break;
 			}
 		}
 
-		/* Terminate the line and get the length. */
-		*stop = 0;
-		linelen = stop - data;
+		/* Save the cursor position for the next iteration. */
 		save = stop+1;
-		savelen = data + datalen - save;
+		savelen = len - (save - data);
 
-		/* Check for crlf. */
-		if (stop > data && *(stop-1) == '\r') linelen--;
+		if (stop > data && *(stop-1) == '\r') stop--;
+		linelen = stop - data;
+		*stop = 0;
 
 		/* If there is buffered data, concat it all. */
 		if (old_data->len) {
-			int newmax = old_data->len + linelen + 1;
+			/* Expand the buffer. */
+			old_data->data = (char *)realloc(old_data->data, old_data->len + linelen + 1);
+			memcpy(old_data->data+old_data->len, data, linelen + 1);
 
-			if (newmax > old_data->max) {
-				/* Buffer is too small -- enlarge it. */
-				old_data->data = (unsigned char *)realloc(old_data->data, newmax);
-				old_data->max = newmax;
-			}
-
-			/* Add the new data to the end. */
-			memcpy(old_data->data+old_data->len, data, linelen+1);
-
-			/* Our line is: */
 			line = old_data->data;
 			linelen += old_data->len;
 
-			/* Reset stored data. */
+			/* All the old data is used. */
 			old_data->len = 0;
 		}
 		else {
 			line = data;
-			/* And linelen is still correct. */
 		}
 
-		my_iobuf.data = line;
-		my_iobuf.len = linelen;
-		my_iobuf.max = linelen;
-		line[linelen] = 0;
-		sockbuf_filter(idx, event, level, &my_iobuf);
+		sockbuf_on_read(idx, LINEMODE_LEVEL, line, linelen);
 
 		/* If we're out of data, we're done. */
 		if (savelen <= 0) return(0);
 		/* Otherwise, do this again to check for another line. */
 		data = save;
-		datalen = savelen;
+		len = savelen;
 	}
 
 	/* No cr/lf, so we save the remaining data for next time. */
-	if (savelen + old_data->len > old_data->max) {
-		/* Expand the buffer with room for next time. */
-		old_data->data = (unsigned char *)realloc(old_data->data, savelen + old_data->len + 512);
-		old_data->max = savelen + old_data->len + 512;
-	}
-	memmove(old_data->data + old_data->len, save, savelen);
+	old_data->data = (char *)realloc(old_data->data, savelen + old_data->len + 1);
+	memcpy(old_data->data + old_data->len, save, savelen);
 	old_data->len += savelen;
 	return(0);
 }
 
-static int linemode_eof_and_err(int idx, int event, int level, void *ignore, sockbuf_iobuf_t *old_data)
+static int linemode_on_eof(void *client_data, int idx, int err, const char *errmsg)
 {
+	linemode_t *old_data = client_data;
 	/* If there is any buffered data, do one more on->read callback. */
 	if (old_data->len) {
 		old_data->data[old_data->len] = 0;
-		sockbuf_filter(idx, SOCKBUF_READ, level, old_data);
+		sockbuf_on_read(idx, LINEMODE_LEVEL, old_data->data, old_data->len);
 	}
 
-	/* And now continue the EOF/ERR event chain. */
-	sockbuf_filter(idx, event, level, old_data);
+	/* And now continue the eof event chain. */
+	return sockbuf_on_eof(idx, LINEMODE_LEVEL, err, errmsg);
+}
+
+static int linemode_on_delete(void *client_data, int idx)
+{
+	linemode_t *old_data = client_data;
+	/* When the sockbuf is deleted, just kill the associated data. */
+	if (old_data->data) free(old_data->data);
+	free(old_data);
 	return(0);
 }
 
-static sockbuf_event_t linemode_filter = {
-	(Function) 4,
-	(Function) "line-mode",
-	linemode_read,
-	NULL,
-	linemode_eof_and_err,
-	linemode_eof_and_err
+static sockbuf_filter_t linemode_filter = {
+	"linemode",
+	LINEMODE_LEVEL,
+	NULL, linemode_on_eof, NULL,
+	linemode_on_read, NULL, NULL,
+	NULL, linemode_on_delete
 };
 
 int linemode_on(int idx)
 {
-	sockbuf_iobuf_t *iobuf;
+	linemode_t *old_data;
 
-	iobuf = (sockbuf_iobuf_t *)calloc(sizeof(*iobuf), 0);
-	sockbuf_attach_filter(idx, linemode_filter, iobuf);
+	old_data = (linemode_t *)calloc(1, sizeof(*old_data));
+	sockbuf_attach_filter(idx, &linemode_filter, old_data);
 	return(0);
 }
 
 int linemode_off(int idx)
 {
-	sockbuf_iobuf_t *iobuf;
+	linemode_t *old_data;
 
-	sockbuf_detach_filter(idx, linemode_filter, &iobuf);
-	if (iobuf) {
-		if (iobuf->data) free(iobuf->data);
-		free(iobuf);
+	sockbuf_detach_filter(idx, &linemode_filter, &old_data);
+	if (old_data) {
+		if (old_data->data) free(old_data->data);
+		free(old_data);
 	}
 	return(0);
 }

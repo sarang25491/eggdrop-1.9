@@ -6,6 +6,8 @@
 #include "my_socket.h"
 #include "sockbuf.h"
 
+#define SOCKS4_LEVEL	SOCKBUF_LEVEL_PROXY
+
 typedef struct {
 	unsigned char ver;
 	unsigned char cmd;
@@ -21,18 +23,14 @@ typedef struct {
 	int sock;
 } proxy_info_t;
 
-static int socks4_on_read(int idx, sockbuf_iobuf_t *data, proxy_info_t *info);
-static int socks4_on_eof_and_err(int idx, void *err, proxy_info_t *info);
-static int socks4_on_connect(int idx, void *ignore, proxy_info_t *info);
+static int socks4_on_read(void *client_data, int idx, char *data, int len);
+static int socks4_on_eof(void *client_data, int idx, int err, const char *errmsg);
+static int socks4_on_connect(void *client_data, int idx, const char *peer_ip, int peer_port);
 
-sockbuf_event_t socks4_events = {
-	(Function) 5,
-	(Function) "socks4 proxy",
-	socks4_on_read,
-	NULL,
-	socks4_on_eof_and_err,
-	socks4_on_eof_and_err,
-	socks4_on_connect
+static sockbuf_handler_t socks4_events = {
+	"socks4 proxy",
+	socks4_on_connect, socks4_on_eof, NULL,
+	socks4_on_read, NULL
 };
 
 static void socks4_free(proxy_info_t *info)
@@ -43,44 +41,42 @@ static void socks4_free(proxy_info_t *info)
 	free(info);
 }
 
-static void socks4_err(proxy_info_t *info, int err)
+static int socks4_on_eof(void *client_data, int idx, int err, const char *errmsg)
 {
-	errno = err;
-	sockbuf_filter(info->their_idx, SOCKBUF_ERR, -1, (void *)err);
+	proxy_info_t *info = client_data;
+
+	sockbuf_on_eof(info->their_idx, SOCKBUF_LEVEL_INTERNAL, err, errmsg);
 	socks4_free(info);
+	return(0);
 }
 
-static int socks4_on_read(int idx, sockbuf_iobuf_t *data, proxy_info_t *info)
+static int socks4_on_read(void *client_data, int idx, char *data, int len)
 {
+	proxy_info_t *info = client_data;
 	socks4_request_t reply;
 
-	if (data->len < sizeof(reply)) {
-		socks4_err(info, ECONNABORTED);
+	if (len < sizeof(reply)) {
+		socks4_on_eof(info, idx, ECONNABORTED, "Invalid reply from SOCKS4 server");
 		return(0);
 	}
 
-	memcpy(&reply, data->data, sizeof(reply));
+	memcpy(&reply, data, sizeof(reply));
 	if (reply.cmd != 90) {
-		socks4_err(info, ECONNREFUSED);
+		socks4_on_eof(info, idx, ECONNREFUSED, "SOCKS4 server refused to relay connection");
 		return(0);
 	}
 
 	/* Switch over the socket to their idx. */
 	sockbuf_set_sock(info->our_idx, -1, 0);
-	sockbuf_set_sock(info->their_idx, info->sock, SOCKBUF_CLIENT);
+	sockbuf_set_sock(info->their_idx, info->sock, 0);
+	sockbuf_on_connect(info->their_idx, SOCKBUF_LEVEL_INTERNAL, info->host, info->port);
 	socks4_free(info);
 	return(0);
 }
 
-static int socks4_on_eof_and_err(int idx, void *err, proxy_info_t *info)
+static int socks4_on_connect(void *client_data, int idx, const char *peer_ip, int peer_port)
 {
-	if (!err) err = (void *)ECONNREFUSED;
-	socks4_err(info, (int) err);
-	return(0);
-}
-
-static int socks4_on_connect(int idx, void *ignore, proxy_info_t *info)
-{
+	proxy_info_t *info = client_data;
 	char buf[512];
 	int len;
 	struct sockaddr_in addr;
@@ -122,13 +118,14 @@ int socks4_connect(int idx, char *proxy_host, int proxy_port, char *username, ch
 	if (!username) username = "";
 	info->username = strdup(username);
 
-	info->our_idx = sockbuf_new(sock, SOCKBUF_CLIENT);
+	info->our_idx = sockbuf_new();
+	sockbuf_set_sock(info->our_idx, sock, SOCKBUF_CLIENT);
 	if (idx >= 0) info->their_idx = idx;
-	else info->their_idx = sockbuf_new(-1, 0);
+	else info->their_idx = sockbuf_new();
 
 	info->sock = sock;
 
-	sockbuf_set_handler(info->our_idx, socks4_events, info);
+	sockbuf_set_handler(info->our_idx, &socks4_events, info);
 
 	return(info->their_idx);
 }

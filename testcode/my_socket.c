@@ -60,6 +60,55 @@ static int socket_name(sockname_t *name, char *ipaddr, int port)
 	return(-1);
 }
 
+int socket_get_peer_name(int sock, char **peer_ip, int *peer_port)
+{
+	sockname_t name;
+	int namelen;
+
+	*peer_ip = NULL;
+	*peer_port = 0;
+
+	#ifdef DO_IPV4
+	namelen = sizeof(name.u.ipv4);
+	if (!getpeername(sock, &name.u.addr, &namelen)) {
+		*peer_ip = (char *)malloc(32);
+		*peer_port = ntohs(name.u.ipv4.sin_port);
+		inet_ntop(AF_INET, &name.u.ipv4.sin_addr, *peer_ip, 32);
+		return(0);
+	}
+	#endif
+	#ifdef DO_IPV6
+	namelen = sizeof(name.u.ipv6.sin6_addr);
+	if (!getpeername(sock, &name.u.addr, &namelen)) {
+		*peer_ip = (char *)malloc(128);
+		*peer_port = ntohs(name.u.ipv6.sin6_port);
+		inet_ntop(AF_INET6, &name.u.ipv6.sin6_addr, *peer_ip, 128);
+		return(0);
+	}
+	#endif
+
+	return(-1);
+}
+
+int socket_get_error(int sock)
+{
+	int size, err;
+
+	size = sizeof(int);
+	err = 0;
+	getsockopt(sock, SOL_PACKET, SO_ERROR, &err, &size);
+	return(err);
+}
+
+int socket_accept(int sock, char **peer_ip, int *peer_port)
+{
+	int newsock;
+
+	newsock = accept(sock, NULL, NULL);
+	socket_get_peer_name(newsock, peer_ip, peer_port);
+	return(newsock);
+}
+
 /* Return values: */
 /* -1: invalid ip address */
 /* -2: socket() failure */
