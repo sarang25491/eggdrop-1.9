@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xmlread.c,v 1.12 2004/06/22 10:54:42 wingman Exp $";
+static const char rcsid[] = "$Id: xmlread.c,v 1.13 2004/06/22 19:08:15 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -28,8 +28,9 @@ static const char rcsid[] = "$Id: xmlread.c,v 1.12 2004/06/22 10:54:42 wingman E
 
 extern xml_amp_conversion_t builtin_conversions[];
 
+static int read_options = XML_NONE;
+
 /* These are pretty much in 'most common' order. */
-static int original_text = 0;
 static const char *spaces = " \t\n\r\v";
 static const char *name_terminators = "= \t\n\r\v?/>";
 
@@ -129,7 +130,7 @@ int xml_decode_text(char *text, int inlen)
 	char *amp, *colon, *next;
 	int i;
 
-	if (original_text)
+	if (!(read_options & XML_TRIM_TEXT))
 		return inlen;
 		
 	/* text = input, result = output */
@@ -221,7 +222,7 @@ static void read_attributes(xml_node_t *node, char **data)
  * 1 - reached end of input
  * 2 - reached end of node
  */
-int xml_read_node(xml_node_t *parent, char **data)
+static int xml_read_node(xml_node_t *parent, char **data)
 {
 	xml_node_t node, *ptr;
 	int n;
@@ -355,7 +356,7 @@ int xml_read_node(xml_node_t *parent, char **data)
 	return(1);
 }
 
-int xml_load (FILE *fd, xml_node_t **node)
+int xml_load(FILE *fd, xml_node_t **node, int options)
 {
 	size_t size, read;
 	char *data;
@@ -373,14 +374,14 @@ int xml_load (FILE *fd, xml_node_t **node)
 	read = fread(data, sizeof(char), size, fd);
 	data[read] = 0;
 
-	ret = xml_load_str(data, node);
+	ret = xml_load_str(data, node, options);
 
 	free(data);
 
 	return ret;
 }
 
-int xml_load_file (const char *file, xml_node_t **node)
+int xml_load_file(const char *file, xml_node_t **node, int options)
 {
 	FILE *fd;
 	int ret;
@@ -388,13 +389,13 @@ int xml_load_file (const char *file, xml_node_t **node)
 	fd = fopen (file, "r");
 	if (fd == NULL)
 		return -1;
-	ret = xml_load (fd, node);
+	ret = xml_load(fd, node, options);
 	fclose (fd);
 
 	return ret;
 }
 
-int xml_load_str (char *str, xml_node_t **node)
+int xml_load_str(char *str, xml_node_t **node, int options)
 {
 	xml_node_t *root;
 
@@ -405,11 +406,11 @@ int xml_load_str (char *str, xml_node_t **node)
 		return 0;
 	memset(root, 0, sizeof(xml_node_t));
 
-	original_text = 1; /* XXX: remove this hack */
+	read_options = options;
 	while (!xml_read_node(root, &str)) {
 		; /* empty */
 	}
-	original_text = 0; /* XXX: remove this hack */
+	read_options = XML_NONE;
 
 	if (root->nchildren == 0) {
 		free (root);
@@ -420,36 +421,4 @@ int xml_load_str (char *str, xml_node_t **node)
 	(*node) = root;
 
 	return 0;
-}
-
-int xml_read(xml_node_t *root, const char *fname)
-{
-	FILE *fp;
-	int size;
-	char *data, *dataptr;
-
-	fp = fopen(fname, "r");
-	if (!fp) return(-1);
-
-	fseek(fp, 0l, SEEK_END);
-	size = ftell(fp);
-	fseek(fp, 0l, SEEK_SET);
-
-	data = malloc(size+1);
-	fread(data, size, 1, fp);
-	data[size] = 0;
-	fclose(fp);
-
-	memset (root, 0, sizeof (xml_node_t));
-	
-	dataptr = data;
-	while (!xml_read_node(root, &dataptr)) {
-		; /* empty */
-	}
-	free(data);
-
-	/* Ok, the recursive xml_read_node() has read in all the text value for
-		this node, so decode it now. */
-	root->len = xml_decode_text(root->text, root->len);
-	return(0);
 }

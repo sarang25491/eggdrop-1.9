@@ -24,7 +24,7 @@
  */
  
 #ifndef lint
-static const char rcsid[] = "$Id: help.c,v 1.8 2004/06/22 18:47:27 wingman Exp $";
+static const char rcsid[] = "$Id: help.c,v 1.9 2004/06/22 19:08:15 wingman Exp $";
 #endif
 
 #include <sys/types.h>
@@ -465,7 +465,7 @@ static int help_load_internal(const char *module, const char *filename)
 	fd = help_open_localized(buf, sizeof(buf), filename); 
 	if (fd == NULL)
 		return 0;
-	if (xml_load(fd, &doc) != 0)
+	if (xml_load(fd, &doc, XML_NONE) != 0)
 		return 0;
 	fclose(fd);
 	
@@ -674,10 +674,10 @@ int help_print_party(partymember_t *member, const char *args)
 	if (args == NULL || 0 == strcmp(args, "all")) {
 		hash_table_walk(sections, 
 			(hash_table_node_func)print_section, member);
-		partymember_printf(member, ("You can get help on individual command or variable: '.help <entry>'."));
-		partymember_printf(member, ("If you only remember a part of the entrie's name you are"));
-		partymember_printf(member, ("searching for, just use wildcards(e.g. '.help *bot*') and"));
-		partymember_printf(member, ("all matching help texts will be displayed."));
+		partymember_printf(member, _("You can get help on individual command or variable: '.help <entry>'."));
+		partymember_printf(member, _("If you only remember a part of the entrie's name you are"));
+		partymember_printf(member, _("searching for, just use wildcards(e.g. '.help *bot*') and"));
+		partymember_printf(member, _("all matching help texts will be displayed."));
 		return BIND_RET_LOG;
 	}
 	

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: config.c,v 1.2 2004/06/22 10:54:42 wingman Exp $";
+static const char rcsid[] = "$Id: config.c,v 1.3 2004/06/22 19:08:15 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -111,8 +111,9 @@ void *config_load(const char *fname)
 {
 	xml_node_t *root;
 
-	root = xml_node_new();
-	xml_read(root, fname);
+	if (xml_load_file(fname, &root, XML_TRIM_TEXT) != 0)
+		return NULL;
+
 	return(root);
 }
 

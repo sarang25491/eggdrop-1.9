@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.23 2004/06/21 14:26:02 stdarg Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.24 2004/06/22 19:08:15 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -89,8 +89,9 @@ int user_load(const char *fname)
 	char *handle, *ircmask, *chan, *name, *value, *flag_str;
 	user_t *u;
 
-	root = xml_node_new();
-	xml_read(root, fname);
+	if (xml_load_file(fname, &root, XML_TRIM_TEXT) != 0)
+		return -1;
+
 	if (xml_node_get_int(&uid, root, "next_uid", 0, 0)) {
 		xml_node_destroy(root);
 		return(0);

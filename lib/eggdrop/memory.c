@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: memory.c,v 1.2 2004/06/22 18:47:27 wingman Exp $";
+static const char rcsid[] = "$Id: memory.c,v 1.3 2004/06/22 19:08:15 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -58,7 +58,7 @@ void *mem_dbg_calloc(size_t nmemb, size_t size, const char *file, int line, cons
 	ptr = calloc(nmemb, size);
 
 	if (!mem_dbg_trace_alloc(ptr, (size * nmemb), file, line, func))
-		return NULL;
+		/*return NULL*/;
 
 	/* failed to allocate bytes */
 	if (ptr == NULL) {
@@ -84,7 +84,7 @@ void *mem_dbg_alloc(size_t size, const char *file, int line, const char *func)
 	ptr = malloc(size);
 
 	if (!mem_dbg_trace_alloc(ptr, size, file, line, func))
-		return NULL;
+		/*return NULL*/;
 		
 	/* failed to allocate bytes */
 	if (ptr == NULL) {
@@ -131,7 +131,7 @@ void *mem_dbg_realloc(void *ptr, size_t size, const char *file, int line, const 
 	newptr = realloc(ptr, size);
 
 	if (!mem_dbg_trace_realloc(newptr, ptr, size, file, line, func))
-		return NULL;
+		/*return NULL*/;
 
 
 	/* failed to allocate bytes */
@@ -152,7 +152,7 @@ void mem_dbg_free(void *ptr, const char *file, int line, const char *func)
 		return;
 
 	if (!mem_dbg_trace_free(ptr, file, line, func))
-		return;
+		/*return*/;
 
 	free(ptr);
 }

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: xml.h,v 1.12 2004/06/22 18:47:28 wingman Exp $
+ * $Id: xml.h,v 1.13 2004/06/22 19:08:15 wingman Exp $
  */
 
 #ifndef _EGG_XML_H_
@@ -25,6 +25,10 @@
 #include <stdarg.h>			/* va_list		*/
 
 typedef struct xml_node xml_node_t;
+
+#define XML_NONE	(1 << 0)
+#define XML_INDENT	(1 << 1)
+#define XML_TRIM_TEXT	(1 << 2)
 
 typedef struct
 {
@@ -103,15 +107,13 @@ void xml_attr_set_str(xml_node_t *node, const char *name, const char *value);
 char *xml_attr_get_str(xml_node_t *node, const char *name);
 
 int xml_write_node(FILE *fp, xml_node_t *node, int indent);
-int xml_read_node(xml_node_t *parent, char **data);
-int xml_read(xml_node_t *root, const char *fname);
 
-int xml_load(FILE *fd, xml_node_t **node);
-int xml_load_file(const char *file, xml_node_t **node);
-int xml_load_str(char *str, xml_node_t **node);
+int xml_load(FILE *fd, xml_node_t **node, int options);
+int xml_load_file(const char *file, xml_node_t **node, int options);
+int xml_load_str(char *str, xml_node_t **node, int options);
 
-int xml_save(FILE *fd, xml_node_t *node, int indent);
-int xml_save_file(const char *file, xml_node_t *node, int indent);
-int xml_save_str(char **str, xml_node_t *node, int indent);
+int xml_save(FILE *fd, xml_node_t *node, int options);
+int xml_save_file(const char *file, xml_node_t *node, int options);
+int xml_save_str(char **str, xml_node_t *node, int options);
 
 #endif /* !_EGG_XML_H_ */

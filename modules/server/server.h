@@ -16,12 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: server.h,v 1.17 2004/06/07 23:14:48 stdarg Exp $
+ * $Id: server.h,v 1.18 2004/06/22 19:08:15 wingman Exp $
  */
 
 #ifndef _EGG_MOD_SERVER_SERVER_H_
 #define _EGG_MOD_SERVER_SERVER_H_
 
+#include <eggdrop/eggdrop.h>
 #include "egg_server_internal.h"
 
 #define match_my_nick(test) (!((current_server.strcmp)(current_server.nick, test)))
