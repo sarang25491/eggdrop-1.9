@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dns.c,v 1.6 2004/10/17 05:14:06 stdarg Exp $";
+static const char rcsid[] = "$Id: dns.c,v 1.7 2004/12/09 04:53:30 lordares Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -530,6 +530,7 @@ static void parse_reply(char *response, int nbytes)
 		memcpy(&reply, ptr, 10);
 		reply.type = ntohs(reply.type);
 		reply.rdlength = ntohs(reply.rdlength);
+		reply.ttl = ntohl(reply.ttl);
 		ptr += 10;
 		if (reply.type == 1) {
 			/*fprintf(fp, "ipv4 reply\n");*/
