@@ -108,7 +108,6 @@ static int logfile_minutely()
 		check_logsizes();
 	}
 
-	now = time(NULL);
 	nowtm = localtime(&now);
 	miltime = 100 * nowtm->tm_hour + nowtm->tm_min;
 

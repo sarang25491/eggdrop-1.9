@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.97 2001/10/31 04:02:51 tothwolf Exp $
+ * $Id: main.c,v 1.98 2001/11/14 01:57:50 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -713,16 +713,16 @@ int main(int argc, char **argv)
     fatal(_("ERROR: Eggdrop will not run as root!"), 0);
 
   script_init();
+  binds_init();
+  init_modules();
   logfile_init();
   timer_init();
   dns_init();
-  binds_init();
   core_binds_init();
   dcc_init();
   init_userent();
   botnet_init();
   init_net();
-  init_modules();
 
   if (backgrd)
     bg_prepare_split();
