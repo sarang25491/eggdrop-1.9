@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: sockbuf.h,v 1.7 2004/06/22 23:20:23 wingman Exp $
+ * $Id: sockbuf.h,v 1.8 2004/10/10 04:55:11 stdarg Exp $
  */
 
 #ifndef _EGG_SOCKBUF_H_
@@ -26,17 +26,17 @@
 #define SOCKBUF_BLOCK	1
 #define SOCKBUF_SERVER	2
 #define SOCKBUF_CLIENT	4
-#define SOCKBUF_DELETE	8
-#define SOCKBUF_NOREAD	16
+#define SOCKBUF_CONNECTING	8
+#define SOCKBUF_INBOUND	16
+#define SOCKBUF_DELETED	32
+#define SOCKBUF_NOREAD	64
 /* The difference between SOCKBUF_AVAIL and SOCKBUF_DELETED is that DELETED
  * means it's invalid but not available for use yet. That happens when you
  * delete a sockbuf from within sockbuf_update_all(). Otherwise, when you
  * create a new sockbuf after you delete one, you could get the same idx,
  * and sockbuf_update_all() might trigger invalid events for it.
  */
-#define SOCKBUF_AVAIL	32
-#define SOCKBUF_DELETED	64
-
+#define SOCKBUF_AVAIL	128
 
 /* Levels for filters. */
 #define SOCKBUF_LEVEL_INTERNAL	-1
@@ -104,9 +104,11 @@ int sockbuf_shutdown(void);
 int sockbuf_write(int idx, const char *data, int len);
 int sockbuf_new();
 int sockbuf_delete(int idx);
+int sockbuf_list(int **idx, int *len, int flags);
 int sockbuf_isvalid(int idx);
 int sockbuf_close(int idx);
 int sockbuf_flush(int idx);
+int sockbuf_get_handler(int idx, sockbuf_handler_t **handler, void *client_data_ptr);
 int sockbuf_set_handler(int idx, sockbuf_handler_t *handler, void *client_data);
 int sockbuf_get_sock(int idx);
 int sockbuf_set_sock(int idx, int sock, int flags);

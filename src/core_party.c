@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.43 2004/10/06 14:59:09 stdarg Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.44 2004/10/10 04:55:11 stdarg Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -630,6 +630,43 @@ static int party_timers(partymember_t *p, const char *nick, user_t *u, const cha
 	return(BIND_RET_LOG);
 }
 
+static int print_net(partymember_t *p, const char *header, int flags)
+{
+	int *idx, len;
+	int i, port, peer_port;
+	const char *host, *peer_host;
+	char *self_addr, *peer_addr;
+	sockbuf_handler_t *handler;
+
+	sockbuf_list(&idx, &len, flags);
+	partymember_printf(p, "%s", header);
+	partymember_printf(p, "   %3s %20s %20s   %s", _("Idx"), _("Local Address"), _("Foreign Address"), _("Description"));
+	for (i = 0; i < len; i++) {
+		sockbuf_get_self(idx[i], &host, &port);
+		sockbuf_get_peer(idx[i], &peer_host, &peer_port);
+		if (!host) host = "*";
+		if (!peer_host) peer_host = "*";
+		sockbuf_get_handler(idx[i], &handler, NULL);
+		if (port) self_addr = egg_mprintf("%s/%d", host, port);
+		else self_addr = egg_mprintf("%s/*", host);
+		if (peer_port) peer_addr = egg_mprintf("%s/%d", peer_host, peer_port);
+		else peer_addr = egg_mprintf("%s/*", peer_host);
+		partymember_printf(p, "   %3d %20s %20s   %s", idx[i], self_addr, peer_addr, handler->name);
+		free(self_addr);
+		free(peer_addr);
+	}
+	free(idx);
+	return(0);
+}
+
+static int party_netstats(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	print_net(p, "Server Sockets", SOCKBUF_SERVER);
+	print_net(p, "Incoming Connections", SOCKBUF_INBOUND);
+	print_net(p, "Outgoing Connections", SOCKBUF_CLIENT);
+	return(0);
+}
+
 static int party_restart(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	core_restart (nick);
@@ -861,6 +898,7 @@ static bind_list_t core_party_binds[] = {		/* Old flags requirement */
 	{"n", "unloadmod", party_unloadmod},	/* DDD	*/ /* n|- */
 	{"n", "binds", party_binds},		/* DDD 	*/ /* m|- */
 	{"n", "timers", party_timers},
+	{"n", "netstats", party_netstats},
 	{"m", "+host", party_plus_host},	/* DDC	*/ /* t|m */
 	{"m", "-host", party_minus_host},	/* DDC	*/ /* -|- */
 	{"t", "chhandle", party_chhandle},	/* DDC	*/ /* t|- */

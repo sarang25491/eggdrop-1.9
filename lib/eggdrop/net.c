@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: net.c,v 1.3 2004/06/22 23:20:23 wingman Exp $";
+static const char rcsid[] = "$Id: net.c,v 1.4 2004/10/10 04:55:11 stdarg Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -195,7 +195,7 @@ static int connect_host_resolved(void *client_data, const char *host, char **ips
 	/* Put this socket into the original sockbuf as a client. This allows
 	 * its connect event to trigger. We don't detach() from it yet, since
 	 * we provide the timeout services. */
-	sockbuf_set_sock(connect_info->idx, sock, SOCKBUF_CLIENT);
+	sockbuf_set_sock(connect_info->idx, sock, SOCKBUF_CLIENT|SOCKBUF_CONNECTING);
 	return(0);
 }
 

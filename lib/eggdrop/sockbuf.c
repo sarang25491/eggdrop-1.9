@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: sockbuf.c,v 1.15 2004/06/25 17:44:04 darko Exp $";
+static const char rcsid[] = "$Id: sockbuf.c,v 1.16 2004/10/10 04:55:11 stdarg Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -136,6 +136,20 @@ int sockbuf_shutdown(void)
 	return (0);
 }
 
+int sockbuf_list(int **idx, int *len, int flags)
+{
+	int i, j;
+
+	*idx = malloc(sizeof(int) * (nsockbufs+1));
+	j = 0;
+	for (i = 0; i < nsockbufs; i++) {
+		if (sockbufs[i].flags & (SOCKBUF_DELETED | SOCKBUF_AVAIL)) continue;
+		if (sockbufs[i].flags & flags) (*idx)[j++] = i;
+	}
+	*len = j;
+	return(0);
+}
+
 /* Mark a sockbuf as blocked and put it on the POLLOUT list. */
 static void sockbuf_block(int idx)
 {
@@ -228,6 +242,8 @@ int sockbuf_on_connect(int idx, int level, const char *peer_ip, int peer_port)
 	timer_get_now(&sbuf->stats->connected_at);
 	if (peer_ip) str_redup(&sbuf->peer_ip, peer_ip);
 	sbuf->peer_port = peer_port;
+	socket_get_name(sbuf->sock, &sbuf->my_ip, &sbuf->my_port);
+
 	if (sbuf->handler->on_connect) {
 		sbuf->handler->on_connect(sbuf->client_data, idx, peer_ip, peer_port);
 	}
@@ -239,12 +255,18 @@ int sockbuf_on_newclient(int idx, int level, int newidx, const char *peer_ip, in
 {
 	int i;
 	sockbuf_t *sbuf = &sockbufs[idx];
+	sockbuf_t *newsbuf = &sockbufs[newidx];
 
 	for (i = 0; i < sbuf->nfilters; i++) {
 		if (sbuf->filters[i]->on_connect && sbuf->filters[i]->level > level) {
 			return sbuf->filters[i]->on_newclient(sbuf->filter_client_data[i], idx, newidx, peer_ip, peer_port);
 		}
 	}
+
+	timer_get_now(&newsbuf->stats->connected_at);
+	if (peer_ip) str_redup(&newsbuf->peer_ip, peer_ip);
+	newsbuf->peer_port = peer_port;
+	socket_get_name(newsbuf->sock, &newsbuf->my_ip, &newsbuf->my_port);
 
 	if (sbuf->handler->on_newclient) {
 		sbuf->handler->on_newclient(sbuf->client_data, idx, newidx, peer_ip, peer_port);
@@ -335,7 +357,7 @@ static void sockbuf_got_writable_client(int idx)
 		return;
 	}
 
-	sbuf->flags &= ~SOCKBUF_CLIENT;
+	sbuf->flags &= ~SOCKBUF_CONNECTING;
 	if (!sbuf->len) sockbuf_unblock(idx);
 	socket_get_peer_name(sbuf->sock, &peer_ip, &peer_port);
 
@@ -361,7 +383,7 @@ static void sockbuf_got_readable_server(int idx)
 
 	newidx = sockbuf_new();
 	timer_get_now(&sockbufs[newidx].stats->connected_at);
-	sockbuf_set_sock(newidx, newsock, 0);
+	sockbuf_set_sock(newidx, newsock, SOCKBUF_INBOUND);
 	sockbuf_on_newclient(idx, SOCKBUF_LEVEL_INTERNAL, newidx, peer_ip, peer_port);
 }
 
@@ -455,8 +477,11 @@ int sockbuf_set_sock(int idx, int sock, int flags)
 	if (!sockbuf_isvalid(idx)) return(-1);
 
 	sockbufs[idx].sock = sock;
-	sockbufs[idx].flags &= ~(SOCKBUF_CLIENT|SOCKBUF_SERVER|SOCKBUF_BLOCK|SOCKBUF_NOREAD);
+	sockbufs[idx].flags &= ~(SOCKBUF_CONNECTING|SOCKBUF_CLIENT|SOCKBUF_SERVER|SOCKBUF_BLOCK|SOCKBUF_NOREAD);
 	sockbufs[idx].flags |= flags;
+	if (sockbufs[idx].flags & SOCKBUF_SERVER) {
+		socket_get_name(sockbufs[idx].sock, &sockbufs[idx].my_ip, &sockbufs[idx].my_port);
+	}
 
 	/* pollfds   = [socks][socks][socks][listeners][listeners][end] */
 	/* idx_array = [ idx ][ idx ][ idx ][end]*/
@@ -492,7 +517,7 @@ int sockbuf_set_sock(int idx, int sock, int flags)
 
 	pollfds[i].fd = sock;
 	pollfds[i].events = 0;
-	if (flags & (SOCKBUF_BLOCK|SOCKBUF_CLIENT)) pollfds[i].events |= POLLOUT;
+	if (flags & (SOCKBUF_BLOCK|SOCKBUF_CONNECTING)) pollfds[i].events |= POLLOUT;
 	if (!(flags & SOCKBUF_NOREAD)) pollfds[i].events |= POLLIN;
 
 	return(idx);
@@ -637,6 +662,15 @@ int sockbuf_write(int idx, const char *data, int len)
 	if (len < 0) len = strlen(data);
 	sockbufs[idx].stats->bytes_out += len;
 	return sockbuf_on_write(idx, SOCKBUF_LEVEL_WRITE_INTERNAL, data, len);
+}
+
+int sockbuf_get_handler(int idx, sockbuf_handler_t **handler, void *client_data_ptr)
+{
+	if (!sockbuf_isvalid(idx)) return(-1);
+	if (handler) *handler = sockbufs[idx].handler;
+	if (client_data_ptr) *(void **)client_data_ptr = sockbufs[idx].client_data;
+
+	return(0);
 }
 
 int sockbuf_set_handler(int idx, sockbuf_handler_t *handler, void *client_data)
@@ -787,7 +821,7 @@ int sockbuf_update_all(int timeout)
 		idx = idx_array[i];
 		flags = sockbufs[idx].flags;
 		if (revents & POLLOUT) {
-			if (flags & SOCKBUF_CLIENT) sockbuf_got_writable_client(idx);
+			if (flags & SOCKBUF_CONNECTING) sockbuf_got_writable_client(idx);
 			else sockbuf_got_writable(idx);
 		}
 		if (revents & POLLIN) {
