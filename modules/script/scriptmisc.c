@@ -110,8 +110,6 @@ static int script_die(const char *reason)
 	if (!reason) reason = "No reason given.";
 	putlog(LOG_MISC, "*", "Saving user file...");
 	user_save(core_config.userfile);
-	putlog(LOG_MISC, "*", "Saving config file...");
-	config_save(config_root, configfile);
 	putlog(LOG_MISC, "*", "Bot shutting down: %s", reason);
 	flushlogs();
 	/* FIXME: unlink the pidfile */
