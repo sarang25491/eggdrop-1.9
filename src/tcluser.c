@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  *
- * $Id: tcluser.c,v 1.33 2002/01/09 12:11:14 stdarg Exp $
+ * $Id: tcluser.c,v 1.34 2002/01/11 20:06:29 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -28,6 +28,7 @@
 #include "chan.h"
 #include "tandem.h"
 #include "script_api.h"
+#include "script.h"
 
 extern Tcl_Interp	*interp;
 extern struct userrec	*userlist;
@@ -133,274 +134,223 @@ static char *script_chattr_botattr(void *client_data, struct userrec *u, char *c
 	return(work);
 }
 
-static int tcl_matchattr STDVAR
+static int script_matchattr(struct userrec *u, char *flags, char *chan)
 {
-  struct userrec *u;
-  struct flag_record plus, minus, user;
-  int ok = 0, f;
+	struct flag_record plus, minus, user;
+	int has_minus_flags;
 
-  BADARGS(3, 4, " handle flags ?channel?");
-  if ((u = get_user_by_handle(userlist, argv[1]))) {
-    user.match = FR_GLOBAL | (argc == 4 ? FR_CHAN : 0) | FR_BOT;
-    get_user_flagrec(u, &user, argv[3]);
-    plus.match = user.match;
-    break_down_flags(argv[2], &plus, &minus);
-    f = (minus.global || minus.udef_global || minus.chan ||
-	 minus.udef_chan || minus.bot);
-    if (flagrec_eq(&plus, &user)) {
-      if (!f)
-	ok = 1;
-      else {
-	minus.match = plus.match ^ (FR_AND | FR_OR);
-	if (!flagrec_eq(&minus, &user))
-	  ok = 1;
-      }
-    }
-  }
-  Tcl_AppendResult(irp, ok ? "1" : "0", NULL);
-  return TCL_OK;
+	if (!u) return(0);
+	user.match = FR_GLOBAL | FR_BOT;
+	if (chan) user.match |= FR_CHAN;
+	get_user_flagrec(u, &user, chan);
+	plus.match = user.match;
+	break_down_flags(chan, &plus, &minus);
+	has_minus_flags = (minus.global || minus.udef_global || minus.chan || minus.udef_chan || minus.bot);
+	if (flagrec_eq(&plus, &user)) {
+		if (!has_minus_flags) return(1);
+		else {
+			minus.match = plus.match ^ (FR_AND | FR_OR);
+			if (!flagrec_eq(&minus, &user)) return(1);
+		}
+	}
+	return(0);
 }
 
-static int tcl_adduser STDVAR
+static int script_adduser(char *handle, char *hostmask)
 {
-  BADARGS(2, 3, " handle ?hostmask?");
-  if (strlen(argv[1]) > HANDLEN)
-    argv[1][HANDLEN] = 0;
-  if ((argv[1][0] == '*') || get_user_by_handle(userlist, argv[1]))
-    Tcl_AppendResult(irp, "0", NULL);
-  else {
-    userlist = adduser(userlist, argv[1], argv[2], "-", default_flags);
-    Tcl_AppendResult(irp, "1", NULL);
-  }
-  return TCL_OK;
+	char realhandle[HANDLEN];
+
+	strncpy(realhandle, handle, HANDLEN);
+	realhandle[HANDLEN-1] = 0;
+
+	if (realhandle[0] == '*' || get_user_by_handle(userlist, realhandle)) return(0);
+
+	userlist = adduser(userlist, handle, hostmask, "-", default_flags);
+	return(1);
 }
 
-static int tcl_addbot STDVAR
+static int script_addbot(char *handle, char *address)
 {
-  struct bot_addr *bi;
-  char *p, *q;
-  char *addr;
-  int addrlen;
+	struct bot_addr *bi;
+	char *p, *q;
+	char *orig, *addr, realhandle[HANDLEN];
+	int addrlen = 0;
 
-  BADARGS(3, 3, " handle address");
-  if (strlen(argv[1]) > HANDLEN)
-     argv[1][HANDLEN] = 0;
-  if (get_user_by_handle(userlist, argv[1]))
-     Tcl_AppendResult(irp, "0", NULL);
-  else if (argv[1][0] == '*')
-     Tcl_AppendResult(irp, "0", NULL);
-  else {
-    userlist = adduser(userlist, argv[1], "none", "-", USER_BOT);
-    bi = malloc(sizeof(struct bot_addr));
-    addr = argv[2];
-    if (*addr == '[') {
-	addr++;
-	if ((q = strchr(addr, ']'))) {
-          addrlen = q - addr;
-          q++;
-          if (*q != ':')
-            q = 0;
-        } else
-          addrlen = strlen(addr);
-    } else {
-        if ((q = strchr(addr, ':')))
-	  addrlen = q - addr;
-        else
-	  addrlen = strlen(addr);
-    }
-    if (!q) {
-      malloc_strcpy(bi->address, addr);
-      bi->telnet_port = 3333;
-      bi->relay_port = 3333;
-    } else {
-      bi->address = malloc(q - argv[2] + 1);
-      strncpyz(bi->address, addr, addrlen + 1);
-      p = q + 1;
-      bi->telnet_port = atoi(p);
-      q = strchr(p, '/');
-      if (!q)
-	bi->relay_port = bi->telnet_port;
-      else
-	bi->relay_port = atoi(q + 1);
-    }
-    set_user(&USERENTRY_BOTADDR, get_user_by_handle(userlist, argv[1]), bi);
-    Tcl_AppendResult(irp, "1", NULL);
-  }
-  return TCL_OK;
+	strncpy(realhandle, handle, HANDLEN);
+	realhandle[HANDLEN-1] = 0;
+	if (get_user_by_handle(userlist, realhandle)) return(0);
+  	if (realhandle[0] == '*') return(0);
+	userlist = adduser(userlist, realhandle, "none", "-", USER_BOT);
+
+	bi = (struct bot_addr *)malloc(sizeof(*bi));
+	addr = strdup(address);
+	orig = addr;
+	if (*addr == '[') {
+		addr++;
+		if ((q = strchr(addr, ']'))) {
+			addrlen = q - addr;
+			q++;
+			if (*q != ':') q = 0;
+			else addrlen = strlen(addr);
+		}
+	}
+	else if ((q = strchr(addr, ':'))) addrlen = q - addr;
+	else addrlen = strlen(addr);
+	if (!q) {
+		malloc_strcpy(bi->address, addr);
+		bi->telnet_port = 3333;
+		bi->relay_port = 3333;
+	}
+	else {
+		bi->address = malloc(q - addr + 1);
+		strncpyz(bi->address, addr, addrlen + 1);
+		p = q + 1;
+		bi->telnet_port = atoi(p);
+		q = strchr(p, '/');
+		if (!q) bi->relay_port = bi->telnet_port;
+		else bi->relay_port = atoi(q + 1);
+	}
+	free(orig);
+	set_user(&USERENTRY_BOTADDR, get_user_by_handle(userlist, realhandle), bi);
+	return(1);
 }
 
-static int tcl_deluser STDVAR
+static int script_deluser(struct userrec *u)
 {
-  BADARGS(2, 2, " handle");
-  Tcl_AppendResult(irp, (argv[1][0] == '*') ? "0" :
-		   int_to_base10(deluser(argv[1])), NULL);
-  return TCL_OK;
+	if (!u) return(0);
+	return deluser(u->handle);
 }
 
-static int tcl_delhost STDVAR
+static int script_delhost(char *handle, char *hostmask)
 {
-  BADARGS(3, 3, " handle hostmask");
-  if ((!get_user_by_handle(userlist, argv[1])) || (argv[1][0] == '*')) {
-    Tcl_AppendResult(irp, "non-existent user", NULL);
-    return TCL_ERROR;
-  }
-  Tcl_AppendResult(irp, delhost_by_handle(argv[1], argv[2]) ? "1" : "0",
-		   NULL);
-  return TCL_OK;
+	return delhost_by_handle(handle, hostmask);
 }
 
-static int tcl_userlist STDVAR
+static int script_userlist(script_var_t *retval, char *flags, char *chan)
 {
   struct userrec *u;
   struct flag_record user, plus, minus;
   int ok = 1, f = 0;
 
-  BADARGS(1, 3, " ?flags ?channel??");
-  if (argc == 3 && !findchan_by_dname(argv[2])) {
-    Tcl_AppendResult(irp, "Invalid channel: ", argv[2], NULL);
-    return TCL_ERROR;
-  }
-  if (argc >= 2) {
+	retval->type = SCRIPT_ARRAY | SCRIPT_VAR | SCRIPT_FREE;
+	retval->len = 0;
+	retval->value = NULL;
+
+  if (chan && !findchan_by_dname(chan)) return(0);
+  if (flags) {
     plus.match = FR_GLOBAL | FR_CHAN | FR_BOT;
-    break_down_flags(argv[1], &plus, &minus);
+    break_down_flags(flags, &plus, &minus);
     f = (minus.global || minus.udef_global || minus.chan ||
 	 minus.udef_chan || minus.bot);
   }
   minus.match = plus.match ^ (FR_AND | FR_OR);
   for (u = userlist; u; u = u->next) {
-    if (argc >= 2) {
-      user.match = FR_GLOBAL | FR_CHAN | FR_BOT | (argc == 3 ? 0 : FR_ANYWH);
-      if (argc == 3) 
-        get_user_flagrec(u, &user, argv[2]);
-      else 
-        get_user_flagrec(u, &user, NULL);
+    if (flags) {
+      user.match = FR_GLOBAL | FR_CHAN | FR_BOT | (chan ? 0 : FR_ANYWH);
+      get_user_flagrec(u, &user, chan);
       if (flagrec_eq(&plus, &user) && !(f && flagrec_eq(&minus, &user)))
 	ok = 1;
       else
 	ok = 0;
     }
-    if (ok)
-      Tcl_AppendElement(interp, u->handle);
+    if (ok) script_list_append(retval, script_string(u->handle, -1));
   }
-  return TCL_OK;
+  return(0);
 }
 
-static int tcl_save STDVAR
+static int script_save()
 {
   write_userfile(-1);
-  return TCL_OK;
+  return(0);
 }
 
-static int tcl_reload STDVAR
+static int script_reload()
 {
   reload();
-  return TCL_OK;
+  return(0);
 }
 
-static int tcl_chhandle STDVAR
+static int script_chhandle(struct userrec *u, char *desired_handle)
 {
-  struct userrec *u;
   char newhand[HANDLEN + 1];
-  int x = 1, i;
+  int i;
 
-  BADARGS(3, 3, " oldnick newnick");
-  u = get_user_by_handle(userlist, argv[1]);
-  if (!u)
-     x = 0;
-  else {
-    strncpyz(newhand, argv[2], sizeof newhand);
+	if (!u) return(0);
+	strncpyz(newhand, desired_handle, sizeof(newhand));
     for (i = 0; i < strlen(newhand); i++)
       if ((newhand[i] <= 32) || (newhand[i] >= 127) || (newhand[i] == '@'))
 	newhand[i] = '?';
-    if (strchr(BADHANDCHARS, newhand[0]) != NULL)
-      x = 0;
-    else if (strlen(newhand) < 1)
-      x = 0;
-    else if (get_user_by_handle(userlist, newhand))
-      x = 0;
-    else if (!strcasecmp(botnetnick, newhand) &&
-             (!(u->flags & USER_BOT) || nextbot (argv [1]) != -1))
-      x = 0;
-    else if (newhand[0] == '*')
-      x = 0;
-  }
-  if (x)
-     x = change_handle(u, newhand);
-  Tcl_AppendResult(irp, x ? "1" : "0", NULL);
-  return TCL_OK;
+    if (strchr(BADHANDCHARS, newhand[0]) != NULL) return(0);
+    if (strlen(newhand) < 1) return(0);
+    if (get_user_by_handle(userlist, newhand)) return(0);
+    if (!strcasecmp(botnetnick, newhand) &&
+             (!(u->flags & USER_BOT) || nextbot(desired_handle) != -1)) return(0);
+    if (newhand[0] == '*') return(0);
+
+	return change_handle(u, newhand);
 }
 
-static int tcl_getting_users STDVAR
+static int script_getting_users()
 {
   int i;
 
-  BADARGS(1, 1, "");
   for (i = 0; i < dcc_total; i++) {
     if (dcc[i].type == &DCC_BOT && dcc[i].status & STAT_GETTING) {
-      Tcl_AppendResult(irp, "1", NULL);
-      return TCL_OK;
+	return(1);
     }
   }
-  Tcl_AppendResult(irp, "0", NULL);
-  return TCL_OK;
+  return(0);
 }
 
-static int tcl_isignore STDVAR
+static int script_isignore(char *nick_user_host)
 {
-  BADARGS(2, 2, " nick!user@host");
-  Tcl_AppendResult(irp, match_ignore(argv[1]) ? "1" : "0", NULL);
-  return TCL_OK;
+  return match_ignore(nick_user_host);
 }
 
-static int tcl_newignore STDVAR
+static int script_newignore(int nargs, char *hostmask, char *creator, char *comment, int lifetime)
 {
   time_t expire_time;
   char ign[UHOSTLEN], cmt[66], from[HANDLEN + 1];
 
-  BADARGS(4, 5, " hostmask creator comment ?lifetime?");
-  strncpyz(ign, argv[1], sizeof ign);
-  strncpyz(from, argv[2], sizeof from);
-  strncpyz(cmt, argv[3], sizeof cmt);
-  if (argc == 4)
-     expire_time = now + (60 * ignore_time);
+  //BADARGS(4, 5, " hostmask creator comment ?lifetime?");
+  strncpyz(ign, hostmask, sizeof ign);
+  strncpyz(from, creator, sizeof from);
+  strncpyz(cmt, comment, sizeof cmt);
+  if (lifetime < 0) lifetime = 0;
+  if (nargs == 3) expire_time = now + (60 * ignore_time);
   else {
-    if (argc == 5 && atol(argv[4]) == 0)
-      expire_time = 0L;
-    else
-      expire_time = now + (60 * atol(argv[4])); /* This is a potential crash. FIXME  -poptix */
+    if (!lifetime) expire_time = 0L;
+    else expire_time = now + (60 * lifetime);
   }
   addignore(ign, from, cmt, expire_time);
   return TCL_OK;
 }
 
-static int tcl_killignore STDVAR
+static int script_killignore(char *hostmask)
 {
-  BADARGS(2, 2, " hostmask");
-  Tcl_AppendResult(irp, delignore(argv[1]) ? "1" : "0", NULL);
-  return TCL_OK;
+  return delignore(hostmask);
 }
 
 /* { hostmask note expire-time create-time creator }
  */
-static int tcl_ignorelist STDVAR
+static int script_ignorelist(script_var_t *retval)
 {
+  script_var_t *sublist;
   struct igrec *i;
-  char expire[11], added[11], *list[5], *p;
 
-  BADARGS(1, 1, "");
+	retval->type = SCRIPT_ARRAY | SCRIPT_VAR | SCRIPT_FREE;
+	retval->len = 0;
+	retval->value = NULL;
+
   for (i = global_ign; i; i = i->next) {
-    list[0] = i->igmask;
-    list[1] = i->msg;
-    snprintf(expire, sizeof expire, "%lu", i->expire);
-    list[2] = expire;
-    snprintf(added, sizeof added, "%lu", i->added);
-    list[3] = added;
-    list[4] = i->user;
-    p = Tcl_Merge(5, list);
-    Tcl_AppendElement(irp, p);
-    Tcl_Free((char *) p);
+	sublist = script_list(5, script_string(i->igmask, -1),
+		script_string(i->msg, -1),
+		script_int(i->expire),
+		script_int(i->added),
+		script_string(i->user, -1));
+	script_list_append(retval, sublist);
   }
-  return TCL_OK;
+  return(0);
 }
 
 static int tcl_getuser STDVAR
@@ -475,26 +425,25 @@ script_command_t script_user_cmds[] = {
 	{"", "passwdok", script_passwd_ok, NULL, 2, "Us", "handle password", SCRIPT_INTEGER, 0},
 	{"", "chattr", (Function) script_chattr_botattr, NULL, 1, "Uss", "handle ?changes ?channel??", SCRIPT_STRING, SCRIPT_PASS_CDATA|SCRIPT_VAR_ARGS},
 	{"", "botattr", (Function) script_chattr_botattr, (void *)1, 1, "Uss", "bot ?changes ?channel??", SCRIPT_STRING, SCRIPT_PASS_CDATA|SCRIPT_VAR_ARGS},
+	{"", "matchattr", (Function) script_matchattr, NULL, 2, "Uss", "handle flags ?channel?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
+	{"", "adduser", (Function) script_adduser, NULL, 1, "ss", "handle ?hostmask?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
+	{"", "addbot", (Function) script_addbot, NULL, 2, "ss", "handle address", SCRIPT_INTEGER, 0},
+	{"", "deluser", (Function) script_deluser, NULL, 1, "U", "handle", SCRIPT_INTEGER, 0},
+	{"", "delhost", (Function) script_delhost, NULL, 2, "ss", "handle hostmask", SCRIPT_INTEGER, 0},
+	{"", "userlist", (Function) script_userlist, NULL, 0, "ss", "?flags ?channel??", 0, SCRIPT_PASS_RETVAL | SCRIPT_VAR_ARGS},
+	{"", "save", (Function) script_save, NULL, 0, "", "", SCRIPT_INTEGER, 0},
+	{"", "reload", (Function) script_reload, NULL, 0, "", "", SCRIPT_INTEGER, 0},
+	{"", "chhandle", (Function) script_chhandle, NULL, 2, "Us", "handle new-handle", SCRIPT_INTEGER, 0},
+	{"", "getting_users", (Function) script_getting_users, NULL, 0, "", "", SCRIPT_INTEGER, 0},
+	{"", "isignore", (Function) script_isignore, NULL, 1, "s", "nick!user@host", SCRIPT_INTEGER, 0},
+	{"", "newignore", (Function) script_newignore, NULL, 3, "sssi", "hostmask creator comment ?minutes?", SCRIPT_INTEGER, SCRIPT_PASS_COUNT | SCRIPT_VAR_ARGS},
+	{"", "killignore", (Function) script_killignore, NULL, 1, "s", "hostmask", SCRIPT_INTEGER, 0},
+	{"", "ignorelist", (Function) script_ignorelist, NULL, 0, "", "", 0, SCRIPT_PASS_RETVAL},
 	{0}
 };
 
 tcl_cmds tcluser_cmds[] =
 {
-  {"matchattr",		tcl_matchattr},
-  {"adduser",		tcl_adduser},
-  {"addbot",		tcl_addbot},
-  {"deluser",		tcl_deluser},
-  {"delhost",		tcl_delhost},
-  {"userlist",		tcl_userlist},
-  {"save",		tcl_save},
-  {"reload",		tcl_reload},
-  {"chhandle",		tcl_chhandle},
-  {"chnick",		tcl_chhandle},
-  {"getting-users",	tcl_getting_users},
-  {"isignore",		tcl_isignore},
-  {"newignore",		tcl_newignore},
-  {"killignore",	tcl_killignore},
-  {"ignorelist",	tcl_ignorelist},
   {"getuser",		tcl_getuser},
   {"setuser",		tcl_setuser},
   {NULL,		NULL}
