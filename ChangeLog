@@ -1,3 +1,26 @@
+2002-01-04 02:56  Federico Mennite <ite@techmonkeys.org>
+
+	* configure.ac, lib/eggdrop/.cvsignore, lib/eggdrop/Makefile.am,
+	lib/eggdrop/botnetutil.c, lib/eggdrop/botnetutil.h,
+	lib/eggdrop/common.h, lib/eggdrop/eggdrop.h, lib/eggdrop/memutil.h,
+	lib/eggdrop/module.h, lib/egglib/Makefile.am, lib/egglib/egglib.h,
+	modules/assoc/Makefile.am, modules/blowfish/Makefile.am,
+	modules/channels/Makefile.am, modules/compress/Makefile.am,
+	modules/console/Makefile.am, modules/ctcp/Makefile.am,
+	modules/filesys/Makefile.am, modules/irc/Makefile.am,
+	modules/notes/Makefile.am, modules/perlscript/Makefile.am,
+	modules/server/Makefile.am, modules/share/Makefile.am,
+	modules/tclscript/Makefile.am, modules/transfer/Makefile.am,
+	modules/uptime/Makefile.am, modules/woobie/Makefile.am,
+	src/Makefile.am, src/egg.h, src/eggdrop.h, src/logfile.c,
+	src/main.h, src/modules.c, src/modules.h, src/proto.h:
+
+	* Moved some botnet utility functions from the core to libeggdrop.  
+	* Moved some common macros to libeggdrop.  
+	* Created lib/eggdrop/eggdrop.h and renamed src/eggdrop.h to
+	src/egg.h to avoid ambiguities.  
+	* Added a couple of macros to be c++ friendly 
+
 2002-01-03 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
