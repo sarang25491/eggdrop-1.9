@@ -1,3 +1,22 @@
+2001-10-21 03:49  stdarg <stdarg@techmonkeys.org>
+
+	* src/tclhash.c:
+
+	Changed BT_chat back to sis instead of Uis 
+
+2001-10-21 03:44  stdarg <stdarg@techmonkeys.org>
+
+	* src/: botnet.c, cmds.c, logfile.c, modules.c, tcl.c, tclhash.c,
+	tclhash.h, mod/module.h, mod/assoc.mod/assoc.c,
+	mod/channels.mod/channels.c, mod/console.mod/console.c,
+	mod/notes.mod/notes.c, mod/tclscript.mod/tclscript.c:
+
+	* Applied Oskar Liljeblad's patch to convert more bind tables.  
+	* Fixed bug in putlog which causes an infinite loop.  
+	* Added console error logging into tclscript.mod.  
+	* Added external error logging via "error_logfile" variable, for
+	more detailed information. Default filename is logs/tcl_errors.log.  
+
 2001-10-20 21:57  stdarg <stdarg@techmonkeys.org>
 
 	* src/: dcc.c, modules.c, tclhash.c, tclhash.h, mod/module.h:
