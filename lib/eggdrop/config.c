@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: config.c,v 1.7 2004/06/30 17:07:20 wingman Exp $";
+static const char rcsid[] = "$Id: config.c,v 1.8 2004/06/30 17:10:46 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -470,8 +470,6 @@ static int sync_node(xml_node_t *node, config_type_t *type, void *addr)
 					c = xml_create_element(var->type->name);
 					sync_node(c, var->type, cur);
 					xml_node_append(child, c);
-
-					printf("created list item %s for %p to %s\n", c->name, item, child->name);
 
 					item = next;
 				}				
