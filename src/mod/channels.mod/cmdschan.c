@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.49 2001/08/19 02:36:23 drummer Exp $
+ * $Id: cmdschan.c,v 1.50 2001/08/21 22:03:30 sup Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1426,7 +1426,7 @@ static cmd_t C_dcc_irc[] =
   {"invites",	"o|o",	(Function) cmd_invites,		NULL},
   {"chaninfo",	"m|m",	(Function) cmd_chaninfo,	NULL},
   {"chanload",	"n|n",	(Function) cmd_chanload,	NULL},
-  {"chanset",	"n|n",	(Function) cmd_chanset,		NULL},
+  {"chanset",	"m|m",	(Function) cmd_chanset,		NULL},
   {"chansave",	"n|n",	(Function) cmd_chansave,	NULL},
   {"chinfo",	"m|m",	(Function) cmd_chinfo,		NULL},
   {"info",	"",	(Function) cmd_info,		NULL},

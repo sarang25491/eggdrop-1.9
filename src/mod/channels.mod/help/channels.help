@@ -223,7 +223,7 @@ See also: -exempt, +exempt, console, set exempt-time, stick, unstick
      %b"chanfile"%b setting.  This allows you to return to
      a previous setting if you've really messed things up.
 See also: %{+n}+chan, -chan,%{+N} chanload, chanset, chaninfo
-%{help=chanset}%{+n|n}
+%{help=chanset}%{+m|m}
 ###  %bchanset%b <channel> <settings>
      Allows you to change the channel settings for a channel.
      (See %b'.help chaninfo'%b for the settings)
