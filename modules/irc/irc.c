@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: irc.c,v 1.16 2002/05/05 16:40:35 tothwolf Exp $";
+static const char rcsid[] = "$Id: irc.c,v 1.17 2002/05/09 03:26:39 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "irc"
@@ -81,7 +81,7 @@ static int include_lk = 1;		/* For correct calculation
 #include "mode.c"
 #include "cmdsirc.c"
 #include "msgcmds.c"
-#include "tclirc.c"
+#include "scriptcmds.c"
 
 
 /* Contains the logic to decide wether we want to punish someone. Returns
@@ -885,7 +885,7 @@ static char *irc_close()
   if (BT_raw) rem_builtins2(BT_raw, irc_raw);
   if (BT_msg) rem_builtins2(BT_msg, C_msg);
 
-  rem_tcl_commands(tclchan_cmds);
+  script_delete_cmd_table(irc_script_cmds);
   rem_help_reference("irc.help");
   del_hook(HOOK_MINUTELY, (Function) check_expired_chanstuff);
   del_hook(HOOK_5MINUTELY, (Function) status_log);
@@ -981,7 +981,7 @@ char *start(eggdrop_t *eggdrop)
   BT_pub = add_bind_table2("pub", 5, "ssUss", 0, BIND_USE_ATTR);
   BT_pubm = add_bind_table2("pubm", 5, "ssUss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
 
-  add_tcl_commands(tclchan_cmds);
+  script_create_cmd_table(irc_script_cmds);
   add_help_reference("irc.help");
 
   /* Update all rfc_ function pointers */
