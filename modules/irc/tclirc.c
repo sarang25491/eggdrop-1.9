@@ -1,7 +1,7 @@
 /*
  * tclirc.c -- part of irc.mod
  *
- * $Id: tclirc.c,v 1.8 2001/12/29 20:55:31 guppy Exp $
+ * $Id: tclirc.c,v 1.9 2001/12/29 20:59:49 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -163,7 +163,7 @@ static int tcl_botonchan STDVAR
 
 static int tcl_isop STDVAR
 {
-  struct chanset_t *chan. *thechan = NULL;
+  struct chanset_t *chan, *thechan = NULL;
   memberlist *mx;
 
   BADARGS(2, 3, " ?nick channel?");
@@ -278,7 +278,7 @@ static int tcl_handonchan STDVAR
 
   while (chan && (thechan == NULL || thechan == chan)) {
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-      if (m->user && !rfc_casecmp(m->user->handle, argv[1])) {
+      if (m->user && !irccmp(m->user->handle, argv[1])) {
 	Tcl_AppendResult(irp, "1", NULL);
 	return TCL_OK;
       }
