@@ -1,3 +1,16 @@
+2003-02-15 00:23  Will Buckner <wcc@techmonkeys.org>
+
+	* config.tcl, modules/ctcp/Makefile.am, modules/ctcp/ctcp.c,
+	modules/ctcp/ctcp.h, modules/ctcp/modinfo,
+	modules/filesys/filedb3.c, modules/filesys/filedb3.h,
+	modules/filesys/files.c, modules/filesys/filesys.c,
+	modules/script/scriptmisc.c, modules/transfer/Makefile.am,
+	modules/transfer/modinfo, modules/transfer/transfer.c,
+	modules/transfer/transfer.h, src/cmds.c, src/flags.h, src/tcldcc.c,
+	src/traffic.c:
+
+	* Removed transfer and ctcp. Their functionality is in server now.  
+
 2003-02-14 20:55  stdarg <stdarg@techmonkeys.org>
 
 	* Makefile.am, config.tcl, config.xml, lib/eggdrop/egglog.c,
@@ -3739,10 +3752,9 @@
 
 	* modules/: channels/help/chaninfo.help,
 	channels/help/channels.help, console/help/console.help,
-	ctcp/help/set/ctcp.help, irc/help/irc.help, server/server.c,
-	server/help/server.help, server/help/set/server.help,
-	share/share.c, share/help/share.help, transfer/transfer.c,
-	transfer/help/set/transfer.help:
+	irc/help/irc.help, server/server.c, server/help/server.help,
+	server/help/set/server.help, share/share.c, share/help/share.help,
+	transfer/transfer.c:
 
 	More spelling fixes here and there. Patch by Wcc
 	<will@dawg.dynu.com> 
@@ -4317,15 +4329,14 @@
 	modules/console/modinfo, modules/console/help/console.help,
 	modules/console/help/set/console.help, modules/ctcp/.cvsignore,
 	modules/ctcp/Makefile.am, modules/ctcp/ctcp.c, modules/ctcp/ctcp.h,
-	modules/ctcp/modinfo, modules/ctcp/help/set/ctcp.help,
-	modules/filesys/.cvsignore, modules/filesys/Makefile.am,
-	modules/filesys/dbcompat.c, modules/filesys/dbcompat.h,
-	modules/filesys/filedb3.c, modules/filesys/filedb3.h,
-	modules/filesys/filelist.c, modules/filesys/filelist.h,
-	modules/filesys/files.c, modules/filesys/files.h,
-	modules/filesys/filesys.c, modules/filesys/filesys.h,
-	modules/filesys/modinfo, modules/filesys/tclfiles.c,
-	modules/filesys/help/filesys.help,
+	modules/ctcp/modinfo, modules/filesys/.cvsignore,
+	modules/filesys/Makefile.am, modules/filesys/dbcompat.c,
+	modules/filesys/dbcompat.h, modules/filesys/filedb3.c,
+	modules/filesys/filedb3.h, modules/filesys/filelist.c,
+	modules/filesys/filelist.h, modules/filesys/files.c,
+	modules/filesys/files.h, modules/filesys/filesys.c,
+	modules/filesys/filesys.h, modules/filesys/modinfo,
+	modules/filesys/tclfiles.c, modules/filesys/help/filesys.help,
 	modules/filesys/help/set/filesys.help, modules/irc/Makefile.am,
 	modules/irc/chan.c, modules/irc/cmdsirc.c, modules/irc/irc.c,
 	modules/irc/irc.h, modules/irc/mode.c, modules/irc/modinfo,
@@ -4351,10 +4362,10 @@
 	modules/tclscript/tclscript.c, modules/transfer/.cvsignore,
 	modules/transfer/Makefile.am, modules/transfer/modinfo,
 	modules/transfer/transfer.c, modules/transfer/transfer.h,
-	modules/transfer/help/set/transfer.help, modules/uptime/.cvsignore,
-	modules/uptime/Makefile.am, modules/uptime/modinfo,
-	modules/uptime/uptime.c, modules/uptime/uptime.h, src/Makefile.am,
-	src/logfile.c, src/modules.h:
+	modules/uptime/.cvsignore, modules/uptime/Makefile.am,
+	modules/uptime/modinfo, modules/uptime/uptime.c,
+	modules/uptime/uptime.h, src/Makefile.am, src/logfile.c,
+	src/modules.h:
 
 	* Renamed src/mod to modules.  
 	* Created lib as top dir for eggdrop's libraries.  
