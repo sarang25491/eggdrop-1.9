@@ -1,3 +1,13 @@
+2001-10-11 13:01  Tothwolf <tothwolf@techmonkeys.org>
+
+	* src/: dns.c, eggdrop.h, net.c, mod/channels.mod/cmdschan.c,
+	mod/filesys.mod/dbcompat.c, mod/filesys.mod/filedb3.c,
+	mod/filesys.mod/files.c, mod/filesys.mod/filesys.c,
+	mod/filesys.mod/tclfiles.c, mod/notes.mod/notes.c,
+	mod/transfer.mod/transfer.c:
+
+	* malloc_strcpy/realloc_strcpy bugfixes 
+
 2001-10-11 11:34  Tothwolf <tothwolf@techmonkeys.org>
 
 	* src/: botnet.c, cmds.c, dcc.c, dccutil.c, dns.c, eggdrop.h,
