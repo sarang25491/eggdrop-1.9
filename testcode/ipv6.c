@@ -6,6 +6,19 @@
 
 int server_idx;
 
+int server_err(int idx, int err, void *client_data)
+{
+	perror("server_err");
+	exit(0);
+}
+
+int server_connect(int idx, void *client_data)
+{
+	printf("Connected to server!\n");
+	linemode_on(idx);
+	return(0);
+}
+
 int server_read(int idx, sockbuf_iobuf_t *data, void *client_data)
 {
 	printf("%s\n", data->data);
@@ -18,38 +31,14 @@ int server_eof(int idx, void *client_data)
 	exit(0);
 }
 
-int server_err(int idx, int err, void *client_data)
-{
-	perror("server_err");
-	exit(0);
-}
-
 static sockbuf_event_t server_event = {
-	(Function) 4,
+	(Function) 5,
 	(Function) "server",
 	server_read,
 	NULL,
 	server_eof,
-	server_err
-};
-
-int server_connect(int idx, void *client_data)
-{
-	printf("Connected to server!\n");
-	sockbuf_set_handler(idx, server_event, NULL);
-	sslmode_on(idx, 0); /* 0 means client, 1 means server */
-	zipmode_on(idx);
-	linemode_on(idx);
-	return(0);
-}
-
-static sockbuf_event_t server_connecting_event = {
-	(Function) 4,
-	(Function) "server",
-	NULL,
-	server_connect,
-	NULL,
-	server_err
+	server_err,
+	server_connect
 };
 
 int stdin_read(int idx, sockbuf_iobuf_t *data, void *client_data)
@@ -59,19 +48,18 @@ int stdin_read(int idx, sockbuf_iobuf_t *data, void *client_data)
 	return(0);
 }
 
+
 int stdin_eof(int idx, void *client_data)
 {
-	sockbuf_delete(idx);
-	return(0);
+	exit(0);
 }
 
 static sockbuf_event_t stdin_event = {
-	(Function) 4,
+	(Function) 3,
 	(Function) "stdin",
 	stdin_read,
 	NULL,
 	stdin_eof,
-	NULL
 };
 
 main (int argc, char *argv[])
@@ -81,7 +69,7 @@ main (int argc, char *argv[])
 
 	srand(time(0));
 	if (argc < 2) {
-		host = "127.0.0.1";
+		host = "::1";
 		port = 12345;
 	}
 	else if (argc == 2) {
@@ -102,8 +90,7 @@ main (int argc, char *argv[])
 	socket_set_nonblock(sock, 1);
 	socket_set_nonblock(0, 1);
 	server_idx = sockbuf_new(sock, SOCKBUF_CLIENT);
-	sockbuf_set_handler(server_idx, server_connecting_event, NULL);
-	sslmode_init();
+	sockbuf_set_handler(server_idx, server_event, NULL);
 
 	stdin_idx = sockbuf_new(0, 0);
 	sockbuf_set_handler(stdin_idx, stdin_event, NULL);

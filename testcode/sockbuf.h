@@ -10,7 +10,7 @@
 
 /* Event types. */
 enum {
-	SOCKBUF_READ, SOCKBUF_EMPTY, SOCKBUF_EOF, SOCKBUF_ERR,
+	SOCKBUF_READ, SOCKBUF_EMPTY, SOCKBUF_EOF, SOCKBUF_ERR, SOCKBUF_CONNECT,
 	SOCKBUF_WRITE,
 	SOCKBUF_NEVENTS	/* Marker for how many events are defined. */
 };
@@ -25,24 +25,9 @@ typedef int (*Function)();
 typedef Function sockbuf_event_t[];
 typedef Function *sockbuf_event_b;
 
-typedef struct sockbuf_b {
-	int sock;	/* Underlying socket descriptor */
-	int flags;	/* Keep track of blocked status, client/server */
-
-	int idx;	/* Self-referencing idx */
-
-	sockbuf_iobuf_t outbuf;	/* Output buffer. */
-
-	sockbuf_event_b *filters;	/* Line-mode, gzip, ssl... */
-	void **filter_client_data;	/* Client data for filters */
-	int nfilters;	/* Number of filters */
-
-	sockbuf_event_b on;	/* User's event handlers */
-	void *client_data;	/* User's client data */
-} sockbuf_t;
-
 int sockbuf_filter(int idx, int event, int level, void *arg);
 int sockbuf_write(int idx, unsigned char *data, int len);
+int sockbuf_write_filter(int idx, int level, unsigned char *data, int len);
 int sockbuf_new(int sock, int flags);
 int sockbuf_delete(int idx);
 int sockbuf_set_handler(int idx, sockbuf_event_t handler, void *client_data);

@@ -85,12 +85,13 @@ static int zipmode_write(int idx, int event, int level, sockbuf_iobuf_t *data, z
 }
 
 static sockbuf_event_t zipmode_filter = {
-	(Function) 5,
+	(Function) 6,
 	(Function) "zip-mode",
 	zipmode_read,
 	NULL,
 	zipmode_eof_and_err,
 	zipmode_eof_and_err,
+	NULL,
 	zipmode_write
 };
 

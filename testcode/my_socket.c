@@ -8,7 +8,7 @@
 
 #include "my_socket.h"
 
-//#define DO_IPV6
+#define DO_IPV6
 #define DO_IPV4
 
 /* Return values: */

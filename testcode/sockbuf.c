@@ -26,6 +26,20 @@
 
 #include "sockbuf.h"
 
+typedef struct sockbuf_b {
+	int sock;	/* Underlying socket descriptor */
+	int flags;	/* Keep track of blocked status, client/server */
+
+	sockbuf_iobuf_t outbuf;	/* Output buffer. */
+
+	sockbuf_event_b *filters;	/* Line-mode, gzip, ssl... */
+	void **filter_client_data;	/* Client data for filters */
+	int nfilters;	/* Number of filters */
+
+	sockbuf_event_b on;	/* User's event handlers */
+	void *client_data;	/* User's client data */
+} sockbuf_t;
+
 static sockbuf_t *sockbufs = NULL;
 static int nsockbufs = 0;
 
@@ -36,10 +50,15 @@ static int nsocks = 0;
 static int nlisteners = 0;
 
 /* An idle event handler that does nothing. */
-static sockbuf_event_t sockbuf_idler = {0};
+static sockbuf_event_t sockbuf_idler = {0, "idle"};
 
 static int sockbuf_real_write(int idx, sockbuf_iobuf_t *iobuf);
 
+/* Level is the level of the caller. For WRITE events, the callbacks are
+	processed backwards, so the initial level should be sbuf->nfilters, so
+	that when we -- it, it will point to the last filter. For all other
+	events, level should start at -1, so that when we ++ it, it will be 0
+	(first filter). */
 int sockbuf_filter(int idx, int event, int level, void *arg)
 {
 	int found;
@@ -49,9 +68,9 @@ int sockbuf_filter(int idx, int event, int level, void *arg)
 
 	/* Search for the first filter that handles this event. */
 	/* SOCKBUF_WRITE needs to be processed backwards. */
+	found = 0;
 	if (event == SOCKBUF_WRITE) {
-		level--;
-		for (found = 0; level >= 0; level--) {
+		for (level--; level >= 0; level--) {
 			if ((int) (sbuf->filters[level][0]) <= event) continue;
 			if ((callback = sbuf->filters[level][event+2])) {
 				found = 1;
@@ -60,8 +79,7 @@ int sockbuf_filter(int idx, int event, int level, void *arg)
 		}
 	}
 	else {
-		level++;
-		for (found = 0; level < sbuf->nfilters; level++) {
+		for (level++; level < sbuf->nfilters; level++) {
 			if ((int) (sbuf->filters[level][0]) <= event) continue;
 			if ((callback = sbuf->filters[level][event+2])) {
 				found = 1;
@@ -70,7 +88,7 @@ int sockbuf_filter(int idx, int event, int level, void *arg)
 		}
 	}
 
-	if (found > 0) {
+	if (found) {
 		retval = callback(idx, event, level, arg, sbuf->filter_client_data[level]);
 	}
 	else if ((int) sbuf->on[0] > event) {
@@ -78,6 +96,7 @@ int sockbuf_filter(int idx, int event, int level, void *arg)
 		if (callback) retval = callback(idx, arg, sbuf->client_data);
 	}
 	else {
+		/* Here is where our default handlers go. */
 		switch (event) {
 			case SOCKBUF_WRITE:
 				retval = sockbuf_real_write(idx, arg);
@@ -124,6 +143,14 @@ static int sockbuf_unblock(int idx)
 			break;
 		}
 	}
+
+	/* If it's a client socket, this means it's connected. */
+	if (sockbufs[idx].flags & SOCKBUF_CLIENT) {
+		sockbufs[idx].flags &= (~SOCKBUF_CLIENT);
+		sockbuf_filter(idx, SOCKBUF_CONNECT, -1, NULL);
+		return(0);
+	}
+	/* Otherwise do the EMPTY event. */
 	sockbuf_filter(idx, SOCKBUF_EMPTY, -1, NULL);
 	return(0);
 }
@@ -200,7 +227,7 @@ static int sockbuf_real_write(int idx, sockbuf_iobuf_t *iobuf)
 }
 
 /* Write as much data as we can. */
-static int sockbuf_flush(int idx)
+static int sockbuf_on_writable(int idx)
 {
 	int nbytes;
 	sockbuf_t *sbuf = &sockbufs[idx];
@@ -208,7 +235,6 @@ static int sockbuf_flush(int idx)
 	/* If it's a connecting socket, this means it's connected. */
 	if (sbuf->flags & SOCKBUF_CLIENT) {
 		if (sockbuf_err(idx, 0)) return(0);
-		sbuf->flags &= (~SOCKBUF_CLIENT);
 		sockbuf_unblock(idx);
 		/* If this sockbuf gets deleted in the callback, we're done. */
 		if (sbuf->sock == -1) return(0);
@@ -218,14 +244,14 @@ static int sockbuf_flush(int idx)
 	nbytes = write(sbuf->sock, sbuf->outbuf.data, sbuf->outbuf.len);
 	if (nbytes > 0) {
 		sbuf->outbuf.len -= nbytes;
-		memmove(sbuf->outbuf.data, sbuf->outbuf.data+nbytes, sbuf->outbuf.len);
 		if (!sbuf->outbuf.len) sockbuf_unblock(idx);
+		else memmove(sbuf->outbuf.data, sbuf->outbuf.data+nbytes, sbuf->outbuf.len);
 	}
 	else if (nbytes < 0) sockbuf_err(idx, errno);
 	return(nbytes);
 }
 
-static int sockbuf_read(int idx)
+static int sockbuf_on_readable(int idx)
 {
 	sockbuf_t *sbuf = &sockbufs[idx];
 	sockbuf_iobuf_t iobuf;
@@ -238,11 +264,11 @@ static int sockbuf_read(int idx)
 		return(0);
 	}
 
-	nbytes = read(sbuf->sock, buf, 4096);
+	nbytes = read(sbuf->sock, buf, sizeof(buf));
 	if (nbytes > 0) {
 		iobuf.data = buf;
 		iobuf.len = nbytes;
-		iobuf.max = 4096;
+		iobuf.max = sizeof(buf);
 		sockbuf_filter(idx, SOCKBUF_READ, -1, &iobuf);
 	}
 	else if (nbytes < 0) {
@@ -272,7 +298,6 @@ int sockbuf_new(int sock, int flags)
 
 	sbuf = &sockbufs[idx];
 	memset(sbuf, 0, sizeof(*sbuf));
-	sbuf->idx = idx;
 	sbuf->flags = flags;
 	sbuf->sock = sock;
 	sbuf->on = sockbuf_idler;
@@ -325,6 +350,12 @@ int sockbuf_set_handler(int idx, sockbuf_event_t handler, void *client_data)
 	sockbufs[idx].client_data = client_data;
 }
 
+/* Listeners are sockets that you want to be included in the event loop, but
+	do not have sockbufs associated with them. This is useful for stuff
+	like Tcl scripts who want to use async Tcl channels. All you have to
+	do is attach the channel's file descriptor with this function and it
+	will be monitored for activity (but not acted upon).
+*/
 int sockbuf_attach_listener(int fd)
 {
 	pollfds = (struct pollfd *)realloc(pollfds, sizeof(*pollfds) * (nsocks + nlisteners + 1));
@@ -350,6 +381,13 @@ int sockbuf_detach_listener(int fd)
 	return(0);
 }
 
+/* A filter is something you can write to intercept events that happen on/to
+	a sockbuf. When something happens, like data arrives on the socket,
+	we pass the event to the earliest filter in the chain. It chooses to
+	halt the event or continue it (maybe modifying it too). Some events,
+	like writing to the sockbuf (sockbuf_write) have to get called
+	backwards.
+*/
 int sockbuf_attach_filter(int idx, sockbuf_event_t filter, void *client_data)
 {
 	sockbuf_t *sbuf = &sockbufs[idx];
@@ -382,10 +420,14 @@ int sockbuf_detach_filter(int idx, sockbuf_event_t filter, void *client_data)
 	return(0);
 }
 
-/* Timeout is in milliseconds. */
+/* This bit waits for something to happen on one of the sockets, with an
+	optional timeout (pass -1 to wait forever). Then, all of the sockbufs
+	are processed, callbacks made, etc, before control returns to the
+	caller.
+*/
 int sockbuf_update_all(int timeout)
 {
-	int i, n;
+	int i, n, revents;
 
 #ifdef DO_POLL
 	n = poll(pollfds, nsocks, timeout);
@@ -409,7 +451,7 @@ int sockbuf_update_all(int timeout)
 		struct timeval tv;
 
 		tv.tv_sec = (timeout / 1000);
-		timeout -= tv.tv_sec;
+		timeout -= 1000 * tv.tv_sec;
 		tv.tv_usec = timeout*1000;
 		events = select(highest+1, &reads, &writes, &excepts, &tv);
 	}
@@ -447,8 +489,8 @@ int sockbuf_update_all(int timeout)
 		/* Common case: no activity. */
 		if (!pollfds[i].revents) continue;
 
-		if (pollfds[i].revents & POLLOUT) sockbuf_flush(idx_array[i]);
-		if (i < nsocks && pollfds[i].revents & POLLIN) sockbuf_read(idx_array[i]);
+		if (pollfds[i].revents & POLLIN) sockbuf_on_readable(idx_array[i]);
+		if (i < nsocks && pollfds[i].revents & POLLOUT) sockbuf_on_writable(idx_array[i]);
 		if (i < nsocks && pollfds[i].revents & POLLHUP) sockbuf_eof(idx_array[i]);
 		if (i < nsocks && pollfds[i].revents & (POLLERR|POLLNVAL)) sockbuf_err(idx_array[i], -1);
 		n--;

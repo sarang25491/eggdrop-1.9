@@ -89,12 +89,13 @@ static int sslmode_write(int idx, int event, int level, sockbuf_iobuf_t *data, s
 }
 
 static sockbuf_event_t sslmode_filter = {
-	(Function) 5,
+	(Function) 6,
 	(Function) "ssl-mode",
 	sslmode_read,
 	NULL,
 	sslmode_eof_and_err,
 	sslmode_eof_and_err,
+	NULL,
 	sslmode_write
 };
 
