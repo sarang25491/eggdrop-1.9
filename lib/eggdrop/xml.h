@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: xml.h,v 1.10 2004/06/22 10:54:42 wingman Exp $
+ * $Id: xml.h,v 1.11 2004/06/22 11:10:19 wingman Exp $
  */
 
 #ifndef _EGG_XML_H_
@@ -41,10 +41,10 @@ typedef struct
 
 typedef enum
 {
-	XML_ELEMENT = 0,/* <element /> */
-	XML_PROCESSING_INSTRUCTION,/* <?pi?>*/
-	XML_COMMENT,/* <!-- comment -->*/
-	XML_CDATA_SECTION/* <![CDATA[ ... ]]>*/
+	XML_ELEMENT = 0,		/* <element /> 		*/
+	XML_PROCESSING_INSTRUCTION,	/* <?pi?>		*/
+	XML_COMMENT,			/* <!-- comment -->	*/
+	XML_CDATA_SECTION		/* <![CDATA[ ... ]]>	*/
 } xml_node_type_t;
 
 struct xml_node
