@@ -1,3 +1,17 @@
+2002-01-16 20:46  stdarg <stdarg@techmonkeys.org>
+
+	* doc/tcl-commands.doc:
+
+	
+	* Updated documentation for rand command.  
+
+2002-01-16 20:40  stdarg <stdarg@techmonkeys.org>
+
+	* src/tclmisc.c:
+
+	
+	* Update to script_ctime() to trim newline 
+
 2002-01-16 20:29  stdarg <stdarg@techmonkeys.org>
 
 	* src/cmds.c:
