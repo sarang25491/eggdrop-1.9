@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.2 2001/10/31 04:02:51 tothwolf Exp $
+ * $Id: transfer.c,v 1.3 2001/12/04 01:30:35 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -618,7 +618,7 @@ static tcl_cmds mytcls[] =
  * In that case, we delay further sending until we receive the
  * dcc outdone event.
  *
- * Note: To optimise buffer sizes, we default to PMAX_SIZE, but
+ * Note: To optimize buffer sizes, we default to PMAX_SIZE, but
  *       allocate a smaller buffer for smaller pending_data sizes.
  */
 #define	PMAX_SIZE	4096

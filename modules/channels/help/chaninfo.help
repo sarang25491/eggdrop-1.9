@@ -28,7 +28,7 @@
                        0:0 no delay
                        x:x x sec delaytime
                        x:y random delay, minimum x sec, maximum y sec
-     The following can be set + or - (eg .chanset #channel -enforcebans)
+     The following can be set + or - (e.g. .chanset #channel -enforcebans)
         %benforcebans%b    kicks people who match channel bans?
         %bdynamicbans%b    only activate bans on channel when they are needed
         %buserbans%b       allow other users to place bans on the channel
@@ -44,9 +44,10 @@
         %bprotectfriends%b re-op a +f user who gets deopped?
         %bdontkickops%b    never kick +o flag people
         %binactive%b        never join this channel, or leave if already
-                        joined.
-                       Usefull as you can make the bot leave a channel without
-                       loosing it's settings or affecting any sharing.
+                            joined.
+                            Usefull as you can make the bot leave
+                             a channel without loosing it's settings or
+                             affecting any sharing.
         %bstatuslog%b      log the channel status every 5 minutes
         %bcycle%b          cycle the channel when it becomes op-less
         %brevenge%b         take revenge on anyone who deops or kicks friends
@@ -71,7 +72,7 @@
         %bflood-ctcp%b  this defines the flood level for ctcp's to the channel
                     (include PING & VERSION), except for ACTION's
         %bflood-join%b  this defines the number of joins from a give user@host
-                    that constituts a flood
+                    that constitutes a flood
         %bflood-kick%b   how many kicks in the given time are a flood
         %bflood-deop%b   deops in the given time
 %{+n|n}

@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.1 2001/10/27 16:34:52 ite Exp $
+ * $Id: server.c,v 1.2 2001/12/04 01:30:35 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -821,7 +821,7 @@ static void queue_server(int which, char *buf, int len)
     break;
 
   default:
-    putlog(LOG_MISC, "*", "!!! queueing unknown type to server!!");
+    putlog(LOG_MISC, "*", "!!! queuing unknown type to server!!");
     return;
   }
 
