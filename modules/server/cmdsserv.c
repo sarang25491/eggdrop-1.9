@@ -2,7 +2,7 @@
  * cmdsserv.c -- part of server.mod
  *   handles commands from a user via dcc that cause server interaction
  *
- * $Id: cmdsserv.c,v 1.3 2001/12/28 18:37:13 guppy Exp $
+ * $Id: cmdsserv.c,v 1.4 2002/01/27 14:59:35 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -31,9 +31,9 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
 
   putlog(LOG_CMDS, "*", "#%s# servers", dcc[idx].nick);
   if (!x) {
-    dprintf(idx, "No servers.\n");
+    dprintf(idx, _("There are no servers in the server list.\n"));
   } else {
-    dprintf(idx, "Server list:\n");
+    dprintf(idx, _("Server list:\n"));
     i = 0;
     for (; x; x = x->next) {
       if (x->realname)
@@ -47,7 +47,7 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
       dprintf(idx, "%s\n", s);
       i++;
     }
-    dprintf(idx, "End of server list.\n"); 
+    dprintf(idx, _("End of server list.\n")); 
   }
 }
 
@@ -80,7 +80,7 @@ static void cmd_jump(struct userrec *u, int idx, char *par)
     putlog(LOG_CMDS, "*", "#%s# jump", dcc[idx].nick);
   dprintf(idx, "%s...\n", _("Jumping servers..."));
   cycle_time = 0;
-  nuke_server("changing servers");
+  nuke_server(_("changing servers"));
 }
 
 static void cmd_clearqueue(struct userrec *u, int idx, char *par)
@@ -97,26 +97,26 @@ static void cmd_clearqueue(struct userrec *u, int idx, char *par)
     msgq_clear(&mq);
     msgq_clear(&hq);
     double_warned = burst = 0;
-    dprintf(idx, "Removed %d msgs from all queues\n", msgs);
+    dprintf(idx, _("Removed %d msgs from all queues\n"), msgs);
   } else if (!strcasecmp(par, "mode")) {
     msgs = modeq.tot;
     msgq_clear(&modeq);
     if (mq.tot == 0)
       burst = 0;
     double_warned = 0;
-    dprintf(idx, "Removed %d msgs from the %s queue\n", msgs, "mode");
+    dprintf(idx, _("Removed %1$d msgs from the %2$s queue\n"), msgs, "mode");
   } else if (!strcasecmp(par, "help")) {
     msgs = hq.tot;
     msgq_clear(&hq);
     double_warned = 0;
-    dprintf(idx, "Removed %d msgs from the %s queue\n", msgs, "help");
+    dprintf(idx, _("Removed %1$d msgs from the %2$s queue\n"), msgs, "help");
   } else if (!strcasecmp(par, "server")) {
     msgs = mq.tot;
     msgq_clear(&mq);
     if (modeq.tot == 0)
       burst = 0;
     double_warned = 0;
-    dprintf(idx, "Removed %d msgs from the %s queue\n", msgs, "server");
+    dprintf(idx, _("Removed %1$d msgs from the %2$s queue\n"), msgs, "server");
   } else {
     dprintf(idx, "Usage: clearqueue <mode|server|help|all>\n");
     return;

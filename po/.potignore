@@ -1,1 +1,2 @@
-src/compat/strftime.c
+lib/compat/strftime.c
+
