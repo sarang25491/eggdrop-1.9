@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-06-19 12:15-0500\n"
+"POT-Creation-Date: 2004-06-19 18:15-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -460,110 +460,102 @@ msgid ""
 "tclversion]\\n    Reported patchlevel: [info patchlevel]\""
 msgstr ""
 
-#: src/core_party.c:49
+#: src/core_party.c:50
 msgid "Syntax: join <channel>"
 msgstr ""
 
-#: src/core_party.c:87
+#: src/core_party.c:88
 msgid "Syntax: whisper <partylineuser> <msg>"
 msgstr ""
 
-#: src/core_party.c:93
+#: src/core_party.c:94
 #, c-format
 msgid "No such user '%s'."
 msgstr ""
 
-#: src/core_party.c:109
+#: src/core_party.c:110
 msgid "That setting does not exist."
 msgstr ""
 
-#: src/core_party.c:119
+#: src/core_party.c:120
 msgid "Syntax: get <path>"
 msgstr ""
 
-#: src/core_party.c:128
+#: src/core_party.c:129
 msgid "Current value: null (unset)"
 msgstr ""
 
-#: src/core_party.c:140
+#: src/core_party.c:141
 msgid "Syntax: set <path> [new value]"
 msgstr ""
 
-#: src/core_party.c:153 src/core_party.c:175
+#: src/core_party.c:154 src/core_party.c:176
 #, c-format
 msgid "Old value: '%s'"
 msgstr ""
 
-#: src/core_party.c:156 src/core_party.c:179
+#: src/core_party.c:157 src/core_party.c:180
 #, c-format
 msgid "New value: '%s'"
 msgstr ""
 
-#: src/core_party.c:157 src/core_party.c:180
+#: src/core_party.c:158 src/core_party.c:181
 msgid "New value: null (unset)"
 msgstr ""
 
-#: src/core_party.c:167
+#: src/core_party.c:168
 msgid "Syntax: unset <path>"
 msgstr ""
 
-#: src/core_party.c:176
+#: src/core_party.c:177
 msgid "Old value: null (unset)"
-msgstr ""
-
-#: src/core_party.c:190
-#, c-format
-msgid "I am %1$s, running Eggdrop %2$s."
 msgstr ""
 
 #: src/core_party.c:191
 #, c-format
-msgid "Owner: %s"
+msgid "I am %1$s, running Eggdrop %2$s."
 msgstr ""
 
 #: src/core_party.c:192
 #, c-format
+msgid "Owner: %s"
+msgstr ""
+
+#: src/core_party.c:193
+#, c-format
 msgid "Admin: %s"
 msgstr ""
 
-#: src/core_party.c:194
+#: src/core_party.c:195
 #, c-format
 msgid "OS: %1$s %2$s"
 msgstr ""
 
-#: src/core_party.c:196
+#: src/core_party.c:197
 #, c-format
 msgid "Help path: %s (%d entries, %d sections)"
 msgstr ""
 
-#: src/core_party.c:205 src/core_party.c:312 src/main.c:141
+#. XXX: move this to users.c
+#: src/core_party.c:206 src/main.c:141 src/main.c:585
 msgid "Saving user file..."
 msgstr ""
 
-#: src/core_party.c:207 src/main.c:143
+#: src/core_party.c:208 src/main.c:143
 msgid "Saving config file..."
 msgstr ""
 
-#: src/core_party.c:215
+#: src/core_party.c:216
 msgid "Please use at least 6 characters."
 msgstr ""
 
-#: src/core_party.c:219
+#: src/core_party.c:220
 #, c-format
 msgid "Changed password to '%s'."
 msgstr ""
 
-#: src/core_party.c:233
+#: src/core_party.c:234
 msgid "Partyline members:"
-msgstr ""
-
-#: src/core_party.c:314
-#, c-format
-msgid "Bot shutting down: %s"
-msgstr ""
-
-#: src/core_party.c:315
-msgid "Bot shutting down."
 msgstr ""
 
 #: src/core_party.c:326
@@ -700,6 +692,30 @@ msgstr ""
 msgid "Module '%s' refuses to be unloaded by you!"
 msgstr ""
 
+#: src/core_party.c:547
+msgid "TABLE"
+msgstr ""
+
+#: src/core_party.c:547
+msgid "SYNTAX"
+msgstr ""
+
+#: src/core_party.c:548
+msgid "FUNCTION"
+msgstr ""
+
+#: src/core_party.c:548
+msgid "MASK"
+msgstr ""
+
+#: src/core_party.c:548
+msgid "FLAGS"
+msgstr ""
+
+#: src/core_party.c:548
+msgid "HITS"
+msgstr ""
+
 #: src/logfile.c:116
 msgid "Cycling logfiles..."
 msgstr ""
@@ -757,12 +773,12 @@ msgid ""
 msgstr ""
 
 #. bug: option not considered.
-#: src/main.c:252
+#: src/main.c:246
 #, c-format
 msgid "%s: option unknown: %c\n"
 msgstr ""
 
-#: src/main.c:287
+#: src/main.c:281
 #, c-format
 msgid "Warning: timer drift (%d minutes)."
 msgstr ""
