@@ -1,7 +1,7 @@
 /*
  * tclhash.h
  *
- * $Id: tclhash.h,v 1.11 2001/08/24 19:46:54 stdarg Exp $
+ * $Id: tclhash.h,v 1.12 2001/08/26 03:52:32 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -27,6 +27,9 @@
 
 
 #define TC_DELETED	0x0001	/* This command/trigger was deleted.	*/
+
+/* Does the callback want their client_data inserted as the first argument? */
+#define BIND_WANTS_CD 1
 
 /* Will replace tcl_cmd_t */
 /* This holds the final information for a function listening on a bind

@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.33 2001/08/25 07:47:02 stdarg Exp $
+ * $Id: tclhash.c,v 1.34 2001/08/26 03:52:32 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -853,16 +853,17 @@ static int trigger_bind(const char *proc, const char *param)
   }
 }
 
-int check_bind(bind_table_t *table, const char *match, struct flag_record *flags, ...)
+int check_bind(bind_table_t *table, const char *match, struct flag_record *flags, int match_type, int nargs, ...)
 {
-	int *arglist;
+	int *al; /* Argument list */
 	bind_chain_t *chain;
 	bind_entry_t *entry;
-	int len, cmp;
+	int len, cmp, n_args, r;
+	Function cb;
 
 	/* Experimental way to not use va_list... */
-	arglist = (int *)&flags;
-	arglist++;
+	n_args = nargs;
+	al = (int *)&nargs;
 
 	/* Save the length for strncmp */
 	len = strlen(match);
@@ -870,20 +871,52 @@ int check_bind(bind_table_t *table, const char *match, struct flag_record *flags
 	/* For each chain in the table... */
 	for (chain = table->chains; chain; chain = chain->next) {
 		/* Test to see if it matches. */
-		if (table->flags & MATCH_PARTIAL) {
-			if (table->flags & MATCH_CASE) cmp = strncmp(match, chain->mask, len);
+		if (match_type & MATCH_PARTIAL) {
+			if (match_type & MATCH_CASE) cmp = strncmp(match, chain->mask, len);
 			else cmp = egg_strncasecmp(match, chain->mask, len);
 		}
-		else if (table->flags & MATCH_MASK) {
+		else if (match_type & MATCH_MASK) {
 			cmp = wild_match_per((unsigned char *)match, (unsigned char *)chain->mask);
 		}
 		else {
-			if (table->flags & MATCH_CASE) cmp = strcmp(match, chain->mask);
+			if (match_type & MATCH_CASE) cmp = strcmp(match, chain->mask);
 			else cmp = egg_strcasecmp(match, chain->mask);
 		}
 		if (cmp) continue; /* Doesn't match. */
-		/* Going to bed now... */
+
+		/* Ok, now call the entries for this chain. */
+		/* If it's not stackable, There Can Be Only One. */
+		for (entry = chain->entries; entry; entry = entry->next) {
+			/* Check flags. */
+			if (match_type & BIND_USE_ATTR) {
+				if (match_type & BIND_HAS_BUILTINS) cmp = flagrec_ok(&entry->user_flags, flags);
+				else cmp = flagrec_eq(&entry->user_flags, flags);
+				if (!cmp) continue;
+			}
+
+			/* It's all good, now do the callback. */
+			cb = entry->callback;
+			if (entry->bind_flags & BIND_WANTS_CD) {
+				al[0] = (int) entry->client_data;
+				n_args++;
+			}
+			else al++;
+			switch (n_args) {
+				case 0: r = cb(); break;
+				case 1: r = cb(al[0]); break;
+				case 2: r = cb(al[0], al[1]); break;
+				case 3: r = cb(al[0], al[1], al[2]); break;
+				case 4: r = cb(al[0], al[1], al[2], al[3]); break;
+				case 5: r = cb(al[0], al[1], al[2], al[3], al[4]); break;
+				default: r = cb(al[0], al[1], al[2], al[3], al[4], al[5]); break;
+			}
+			if (entry->bind_flags & BIND_WANTS_CD) n_args--;
+			else al--;
+
+			/* Another break */
+		}
 	}
+	return(0);
 }
 
 int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
