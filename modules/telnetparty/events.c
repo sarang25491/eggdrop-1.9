@@ -18,11 +18,10 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: events.c,v 1.8 2004/06/19 16:11:53 wingman Exp $";
+static const char rcsid[] = "$Id: events.c,v 1.9 2004/06/21 11:33:40 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
-
 #include "telnetparty.h"
 
 static int on_privmsg(void *client_data, partymember_t *dest, partymember_t *src, const char *text, int len);

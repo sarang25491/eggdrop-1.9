@@ -1,22 +1,15 @@
-# $Id: Makefile.am,v 1.28 2004/06/20 09:40:22 wingman Exp $
+# $Id: Makefile.am,v 1.29 2004/06/21 11:33:40 wingman Exp $
 
 MAINTAINERCLEANFILES	= Makefile.in
 
 lib_LTLIBRARIES 	= libeggdrop.la
 
-# Uncomment this line if we start removing the "egg" prefix from
-# files and/or functions. We need to overwrite the DEFAULT_INCLUDE
-# which contains -I. since #include <string.h> would actually include
+# We need to overwrite the DEFAULT_INCLUDES which contains "-I ."
+# since #include <string.h> would actually include
 # <lib/eggdrop/string.h> if -I. is supplied. By override the default
 # includes we can safely (and portable) use string.h or config.h for
-# our filenames (Already tested it).
-#
-# #include <config.h>		<- will include top src dir config.h
-# #include <eggdrop/config.h>	<- will include lib config.h
-# #include <string.h>		<- will include system string.h
-# #include <eggdrop/string.h> 	<- will include lib string.h
-#
-#DEFAULT_INCLUDE	= 
+# our filenames.
+DEFAULT_INCLUDES	= 
 
 # Do not use CPPFLAGS since it's not supported by automake-1.6
 libeggdrop_la_CFLAGS	= -I$(top_srcdir) -I$(top_srcdir)/lib $(INCLTDL)
@@ -32,6 +25,7 @@ libeggdrop_la_SOURCES	= base64.c base64.h \
 			eggowner.c eggowner.h \
 			eggstring.c eggstring.h \
 			eggtimer.c eggtimer.h \
+			memory.c memory.h \
 			fileutil.c fileutil.h \
 			flags.c flags.h \
 			garbage.c garbage.h \

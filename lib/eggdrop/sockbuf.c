@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: sockbuf.c,v 1.10 2004/06/21 01:14:06 stdarg Exp $";
+static const char rcsid[] = "$Id: sockbuf.c,v 1.11 2004/06/21 11:33:40 wingman Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -44,7 +44,7 @@ static const char rcsid[] = "$Id: sockbuf.c,v 1.10 2004/06/21 01:14:06 stdarg Ex
 #endif
 
 #include <errno.h>
-#include <eggdrop.h>
+#include <eggdrop/eggdrop.h>
 
 typedef struct {
 	int sock;	/* Underlying socket descriptor */

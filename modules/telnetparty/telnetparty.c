@@ -18,13 +18,14 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: telnetparty.c,v 1.16 2004/06/20 13:33:48 wingman Exp $";
+static const char rcsid[] = "$Id: telnetparty.c,v 1.17 2004/06/21 11:33:40 wingman Exp $";
 #endif
 
-#include <eggdrop/eggdrop.h>
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
+
+#include <eggdrop/eggdrop.h>
 
 #include "telnetparty.h"
 

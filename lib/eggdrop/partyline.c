@@ -18,14 +18,14 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partyline.c,v 1.21 2004/06/21 10:59:39 wingman Exp $";
+static const char rcsid[] = "$Id: partyline.c,v 1.22 2004/06/21 11:33:40 wingman Exp $";
 #endif
 
-#include <eggdrop/eggdrop.h>
 #include <ctype.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
+#include <eggdrop/eggdrop.h>
 
 static char *partyline_command_chars = NULL;
 
