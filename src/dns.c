@@ -2,9 +2,9 @@
  * dns.c -- handles:
  *   DNS resolve calls and events
  *   provides the code used by the bot if the DNS module is not loaded
- *   DNS Tcl commands
+ *   DNS script commands
  *
- * $Id: dns.c,v 1.27 2001/10/11 13:01:35 tothwolf Exp $
+ * $Id: dns.c,v 1.28 2001/10/17 03:28:16 stdarg Exp $
  */
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -35,13 +35,14 @@
 
 #include "dns.h"
 #include "adns/adns.h"
+#include "script_api.h"
+#include "script.h"
 
 extern struct dcc_t	*dcc;
 extern int		 dcc_total;
 extern int		 resolve_timeout;
 extern time_t		 now;
 extern jmp_buf		 alarmret;
-extern Tcl_Interp	*interp;
 
 devent_t		*dns_events = NULL;
 
@@ -51,6 +52,19 @@ extern int		 af_preferred;
 /*
  *   DCC functions
  */
+
+static int script_dnslookup(char *iporhost, script_callback_t *callback);
+
+static script_simple_command_t scriptdns_cmds[] = {
+	{"", NULL, NULL, NULL, 0},
+	{"dnslookup", script_dnslookup, "sc", "ip-address/hostname callback", SCRIPT_INTEGER},
+	0
+};
+
+void dns_init()
+{
+	script_create_simple_cmd_table(scriptdns_cmds);
+}
 
 void dcc_dnswait(int idx, char *buf, int len)
 {
@@ -214,38 +228,30 @@ void dcc_dnshostbyip(char *ip)
 
 
 /*
- *   Tcl events
+ *   Script events
  */
 
-static void dns_tcl_iporhostres(char *ip, char *hostn, int ok, void *other)
+static void dns_script_iporhostres(char *ip, char *hostn, int ok, void *other)
 {
-  devent_tclinfo_t *tclinfo = (devent_tclinfo_t *) other;
+  script_callback_t *callback = (script_callback_t *)other;
 
-  if (Tcl_VarEval(interp, tclinfo->proc, " ", ip, " ",
-		  hostn, ok ? " 1" : " 0", tclinfo->paras, NULL) == TCL_ERROR)
-    putlog(LOG_MISC, "*", _("Tcl error [%s]: %s"), tclinfo->proc, interp->result);
-
-  /* Free the memory. It will be unused after this event call. */
-  free(tclinfo->proc);
-  if (tclinfo->paras)
-    free(tclinfo->paras);
-  free(tclinfo);
+  callback->callback(callback, ip, hostn, ok);
+  callback->delete(callback);
 }
 
-devent_type DNS_TCLEVENT_HOSTBYIP = {
-  "TCLEVENT_HOSTBYIP",
-  dns_tcl_iporhostres
+devent_type DNS_SCRIPTEVENT_HOSTBYIP = {
+  "SCRIPTEVENT_HOSTBYIP",
+  dns_script_iporhostres
 };
 
-devent_type DNS_TCLEVENT_IPBYHOST = {
-  "TCLEVENT_IPBYHOST",
-  dns_tcl_iporhostres
+devent_type DNS_SCRIPTEVENT_IPBYHOST = {
+  "SCRIPTEVENT_IPBYHOST",
+  dns_script_iporhostres
 };
 
-static void tcl_dnsipbyhost(char *hostn, char *proc, char *paras)
+static void script_dnsipbyhost(char *hostn, script_callback_t *callback)
 {
   devent_t *de;
-  devent_tclinfo_t *tclinfo;
 
   de = calloc(1, sizeof(devent_t));
 
@@ -253,27 +259,19 @@ static void tcl_dnsipbyhost(char *hostn, char *proc, char *paras)
   de->next = dns_events;
   dns_events = de;
 
-  de->type = &DNS_TCLEVENT_IPBYHOST;
+  de->type = &DNS_SCRIPTEVENT_IPBYHOST;
   de->lookup = RES_IPBYHOST;
   malloc_strcpy(de->hostname, hostn);
-
-  /* Store additional data. */
-  tclinfo = malloc(sizeof(devent_tclinfo_t));
-  malloc_strcpy(tclinfo->proc, proc);
-  if (paras)
-    malloc_strcpy(tclinfo->paras, paras);
-  else
-    tclinfo->paras = NULL;
-  de->other = tclinfo;
+  malloc_strcpy(callback->syntax, "ssi");
+  de->other = callback;
 
   /* Send request. */
   dns_ipbyhost(hostn);
 }
 
-static void tcl_dnshostbyip(char *ip, char *proc, char *paras)
+static void script_dnshostbyip(char *ip, script_callback_t *callback)
 {
   devent_t *de;
-  devent_tclinfo_t *tclinfo;
 
   de = calloc(1, sizeof(devent_t));
 
@@ -281,18 +279,11 @@ static void tcl_dnshostbyip(char *ip, char *proc, char *paras)
   de->next = dns_events;
   dns_events = de;
 
-  de->type = &DNS_TCLEVENT_HOSTBYIP;
+  de->type = &DNS_SCRIPTEVENT_HOSTBYIP;
   de->lookup = RES_HOSTBYIP;
   malloc_strcpy(de->hostname, ip);
-
-  /* Store additional data. */
-  tclinfo = malloc(sizeof(devent_tclinfo_t));
-  malloc_strcpy(tclinfo->proc, proc);
-  if (paras)
-    malloc_strcpy(tclinfo->paras, paras);
-  else
-    tclinfo->paras = NULL;
-  de->other = tclinfo;
+  malloc_strcpy(callback->syntax, "ssi");
+  de->other = callback;
 
   /* Send request. */
   dns_hostbyip(ip);
@@ -464,57 +455,28 @@ debug1("|DNS| checking only A record for %s", p);
 #endif
 
 /*
- *   Tcl functions
+ *   Script functions
  */
 
 /* dnslookup <ip-address> <proc> */
-static int tcl_dnslookup STDVAR
+static int script_dnslookup(char *iporhost, script_callback_t *callback)
 {
   struct in_addr inaddr;
 #ifdef IPV6
   struct in6_addr inaddr6;
 #endif
-  char *paras = NULL;
 
-  if (argc < 3) {
-    Tcl_AppendResult(irp, "wrong # args: should be \"", argv[0],
-		     " ip-address/hostname proc ?args...?\"", NULL);
-    return TCL_ERROR;
-  }
-
-  if (argc > 3) {
-    int l = 0, p;
-
-    /* Create a string with a leading space out of all provided
-     * additional parameters.
-     */
-    paras = calloc(1, 1);
-    for (p = 3; p < argc; p++) {
-      l += strlen(argv[p]) + 1;
-      paras = realloc(paras, l + 1);
-      strcat(paras, " ");
-      strcat(paras, argv[p]);
-    }
-  }
-
-  if (egg_inet_aton(argv[1], &inaddr)
+  if (egg_inet_aton(iporhost, &inaddr)
 #ifdef IPV6
-	|| egg_inet_pton(AF_INET6, argv[1], &inaddr6)
+	|| egg_inet_pton(AF_INET6, iporhost, &inaddr6)
 #endif
       )
-    tcl_dnshostbyip(argv[1], argv[2], paras);
+    script_dnshostbyip(iporhost, callback);
   else
-    tcl_dnsipbyhost(argv[1], argv[2], paras);
-  if (paras)
-    free(paras);
-  return TCL_OK;
+    script_dnsipbyhost(iporhost, callback);
+  return(0);
 }
 
-tcl_cmds tcldns_cmds[] =
-{
-  {"dnslookup",	tcl_dnslookup},
-  {NULL,	NULL}
-};
 
 /*********** ADNS support ***********/
 

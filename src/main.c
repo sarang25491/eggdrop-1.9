@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.87 2001/10/15 09:54:01 stdarg Exp $
+ * $Id: main.c,v 1.88 2001/10/17 03:28:16 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -489,7 +489,6 @@ static void core_secondly()
   int miltime;
 
   call_hook(HOOK_SECONDLY);	/* Will be removed later */
-  do_check_timers(&utimer);	/* Secondly timers */
   cnt++;
   if (cnt >= 10) {		/* Every 10 seconds */
     cnt = 0;
@@ -633,6 +632,7 @@ void restart_chons();
 int init_dcc_max(), init_userent(), init_misc(), init_net(),
  init_modules(), init_tcl(int, char **);
 void botnet_init();
+void dns_init();
 void script_init();
 void binds_init();
 
@@ -751,6 +751,7 @@ int main(int argc, char **argv)
     fatal(_("ERROR: Eggdrop will not run as root!"), 0);
 
   script_init();
+  dns_init();
   binds_init();
   core_binds_init();
   init_dcc_max();

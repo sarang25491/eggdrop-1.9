@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.47 2001/10/17 00:19:16 stdarg Exp $
+ * $Id: tclhash.c,v 1.48 2001/10/17 03:28:16 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -532,27 +532,6 @@ static int bind_bind_entry(tcl_bind_list_t *tl, const char *flags,
   tm->first = tc;
 
   return 1;
-}
-
-static int tcl_getbinds(tcl_bind_list_t *tl_kind, const char *name)
-{
-  tcl_bind_mask_t	*tm;
-
-  for (tm = tl_kind->first; tm; tm = tm->next) {
-    if (tm->flags & TBM_DELETED)
-      continue;
-    if (!egg_strcasecmp(tm->mask, name)) {
-      tcl_cmd_t		*tc;
-
-      for (tc = tm->first; tc; tc = tc->next) {
-	if (tc->attributes & TC_DELETED)
-	  continue;
-	Tcl_AppendElement(interp, tc->func_name);
-      }
-      break;
-    }
-  }
-  return TCL_OK;
 }
 
 static int script_bind(char *table_name, char *flags, char *mask, script_callback_t *callback)
