@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: modules.c,v 1.114 2002/05/31 04:11:37 stdarg Exp $";
+static const char rcsid[] = "$Id: modules.c,v 1.115 2002/06/01 05:15:54 stdarg Exp $";
 #endif
 
 #include "main.h"		/* NOTE: when removing this, include config.h */
@@ -605,8 +605,11 @@ const char *module_load(char *name)
   if (module_find(name, 0, 0) != NULL)
     return _("Already loaded.");
   hand = lt_dlopenext(name);
-  if (!hand)
-    return lt_dlerror();
+  if (!hand) {
+    char *err = lt_dlerror();
+    putlog(LOG_MISC, "*", "Error loading module %s: %s", name, err);
+    return err;
+  }
 
   f = (Function) lt_dlsym(hand, "start");
     if (f == NULL) {

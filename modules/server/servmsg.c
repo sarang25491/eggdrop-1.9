@@ -22,9 +22,11 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: servmsg.c,v 1.17 2002/05/31 08:02:57 stdarg Exp $";
+static const char rcsid[] = "$Id: servmsg.c,v 1.18 2002/06/01 05:15:54 stdarg Exp $";
 #endif
 */
+
+#include "channels.h"
 
 static time_t last_ctcp    = (time_t) 0L;
 static int    count_ctcp   = 0;
@@ -173,45 +175,32 @@ static int match_my_nick(char *nick)
 
 /* 001: welcome to IRC (use it to fix the server name)
  */
-static int got001(char *from, char *ignore, char *msg)
+static int got001(char *from_nick, char *from_uhost, char *cmd, char *middle, char *trailing)
 {
-  struct server_list *x;
-  int i;
-  struct chanset_t *chan;
+	/* Ok... 'middle' is what server decided our nick is. */
+	server_online = now;
+	str_redup(&botname, middle);
 
-  /* Ok...param #1 of 001 = what server thinks my nick is */
-  server_online = now;
-  fixcolon(msg);
-  str_redup(&botname, msg);
-  altnick_char = 0;
-  dprintf(DP_SERVER, "WHOIS %s\n", botname); /* get user@host */
-  check_bind_event("init-server");
-  x = serverlist;
-  if (x == NULL)
-    return 0;			/* Uh, no server list */
-  /* Only join if the IRC module is loaded. */
-  if (module_find("irc", 0, 0))
-    for (chan = chanset; chan; chan = chan->next) {
-      chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
-      if (!channel_inactive(chan))
-	dprintf(DP_SERVER, "JOIN %s %s\n",
-	        (chan->name[0]) ? chan->name : chan->dname,
-	        chan->channel.key[0] ? chan->channel.key : chan->key_prot);
-    }
-  if (strcasecmp(from, dcc[servidx].host)) {
-    putlog(LOG_MISC, "*", "(%s claims to be %s; updating server list)",
-	   dcc[servidx].host, from);
-    for (i = curserv; i > 0 && x != NULL; i--)
-      x = x->next;
-    if (x == NULL) {
-      putlog(LOG_MISC, "*", "Invalid server list!");
-      return 0;
-    }
-    if (x->realname)
-      free(x->realname);
-    x->realname = strdup(from);
-  }
-  return 0;
+	check_bind_event("init-server");
+
+	/* If the init-server bind made us leave the server, stop processing. */
+	if (servidx == -1) return BIND_RET_BREAK;
+
+	/* Send a whois request so we can see our nick!user@host */
+	dprintf(DP_SERVER, "WHOIS %s\n", botname);
+
+	/* Join all our channels. */
+	channels_join_all();
+
+	if (strcasecmp(from_nick, dcc[servidx].host)) {
+		struct server_list *serv;
+
+		putlog(LOG_MISC, "*", "(%s claims to be %s; updating server list)", dcc[servidx].host, from_nick);
+		serv = server_get_current();
+		if (serv) str_redup(&serv->realname, from_nick);
+	}
+
+	return(0);
 }
 
 /* Got 442: not on channel
@@ -892,6 +881,7 @@ static void server_activity(int idx, char *msg, int len)
 {
 	/* The components of any irc message. */
 	char *prefix, *cmd = "", *middle = "", *trailing = "";
+	char *from_nick, *from_uhost;
 	char *remainder;
 
 	if (trying_server) {
@@ -941,13 +931,25 @@ static void server_activity(int idx, char *msg, int len)
 
 done_parsing:
 
+	from_nick = prefix;
+	from_uhost = strchr(prefix, '!');
+	if (!from_uhost) from_uhost = "";
+	else {
+		*from_uhost = 0;
+		from_uhost++;
+	}
+	check_bind(BT_new_raw, cmd, NULL, from_nick, from_uhost, cmd, middle, trailing);
+
 	/* For now, let's emulate the old style. */
+
+	if (strlen(from_nick) && strlen(from_uhost)) prefix = msprintf("%s!%s", from_nick, from_uhost);
+	else prefix = strdup(from_nick);
+
 	if (strlen(middle) && strlen(trailing)) remainder = msprintf("%s %s", middle, trailing);
 	else remainder = msprintf("%s%s", middle, trailing);
 
-	// putlog(LOG_MISC, "*", "(%s) (%s) (%s) (%s)\nremainder: (%s)\n", prefix, cmd, middle, trailing, remainder);
-
 	check_bind(BT_raw, cmd, NULL, prefix, cmd, remainder);
+	free(prefix);
 	free(remainder);
 }
 
@@ -1016,6 +1018,10 @@ static int got311(char *from, char *ignore, char *msg)
   return 0;
 }
 
+static cmd_t my_new_raw_binds[] = {
+	{"001",	"",	(Function) got001,		NULL},
+	{0}
+};
 
 static cmd_t my_raw_binds[] =
 {
@@ -1025,7 +1031,6 @@ static cmd_t my_raw_binds[] =
   {"PING",	"",	(Function) gotping,		NULL},
   {"PONG",	"",	(Function) gotpong,		NULL},
   {"WALLOPS",	"",	(Function) gotwall,		NULL},
-  {"001",	"",	(Function) got001,		NULL},
   {"303",	"",	(Function) got303,		NULL},
   {"432",	"",	(Function) got432,		NULL},
   {"433",	"",	(Function) got433,		NULL},

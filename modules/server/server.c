@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: server.c,v 1.30 2002/05/31 05:29:20 stdarg Exp $";
+static const char rcsid[] = "$Id: server.c,v 1.31 2002/06/01 05:15:54 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "server"
@@ -33,7 +33,7 @@ static const char rcsid[] = "$Id: server.c,v 1.30 2002/05/31 05:29:20 stdarg Exp
 
 #define start server_LTX_start
 
-static eggdrop_t *egg = NULL;
+eggdrop_t *egg = NULL;
 
 static int ctcp_mode;
 static int serv;		/* sock # of server currently */
@@ -105,8 +105,10 @@ static void purge_kicks(struct msgq_head *);
 static int deq_kick(int);
 static void msgq_clear(struct msgq_head *qh);
 
+struct server_list *server_get_current();
+
 /* New bind tables. */
-static bind_table_t *BT_wall, *BT_raw, *BT_notice, *BT_msg, *BT_msgm;
+static bind_table_t *BT_wall, *BT_new_raw, *BT_raw, *BT_notice, *BT_msg, *BT_msgm;
 static bind_table_t *BT_flood, *BT_ctcr, *BT_ctcp;
 
 #include "servmsg.c"
@@ -983,6 +985,18 @@ static int server_clear()
 	return(0);
 }
 
+struct server_list *server_get_current()
+{
+	struct server_list *serv;
+	int i;
+
+	serv = serverlist;
+	for (i = curserv; i > 0 && serv; i--) {
+		serv = serv->next;
+	}
+	return(serv);
+}
+
 /* Set botserver to the next available server.
  *
  * -> if (*ptr == -1) then jump to that particular server
@@ -1388,10 +1402,12 @@ static char *server_close()
 
   rem_builtins("dcc", C_dcc_serv);
   rem_builtins("raw", my_raw_binds);
+  rem_builtins("newraw", my_new_raw_binds);
   rem_builtins("ctcp", my_ctcps);
 
   bind_table_del(BT_wall);
   bind_table_del(BT_raw);
+  bind_table_del(BT_new_raw);
   bind_table_del(BT_notice);
   bind_table_del(BT_msgm);
   bind_table_del(BT_msg);
@@ -1545,6 +1561,7 @@ char *start(eggdrop_t *eggdrop)
 	/* Create our own bind tables. */
 	BT_wall = bind_table_add("wall", 2, "ss", MATCH_MASK, BIND_STACKABLE);
 	BT_raw = bind_table_add("raw", 3, "sss", MATCH_MASK, BIND_STACKABLE);
+	BT_new_raw = bind_table_add("newraw", 5, "sssss", MATCH_MASK, BIND_STACKABLE);
 	BT_notice = bind_table_add("notice", 5, "ssUss", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
 	BT_msg = bind_table_add("msg", 4, "ssUs", 0, BIND_USE_ATTR);
 	BT_msgm = bind_table_add("msgm", 4, "ssUs", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
@@ -1553,6 +1570,7 @@ char *start(eggdrop_t *eggdrop)
 	BT_ctcp = bind_table_add("ctcp", 6, "ssUsss", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
 
   add_builtins("raw", my_raw_binds);
+  add_builtins("newraw", my_new_raw_binds);
   add_builtins("ctcp", my_ctcps);
   add_builtins("dcc", C_dcc_serv);
 
