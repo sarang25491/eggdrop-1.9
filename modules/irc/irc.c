@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.2 2001/12/08 19:17:43 ite Exp $
+ * $Id: irc.c,v 1.3 2001/12/08 20:03:20 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -483,6 +483,9 @@ static void status_log()
   struct chanset_t *chan;
   char s[20], s2[20];
   int chops, voice, nonops, bans, invites, exempts;
+
+  if (!server_online)
+    return;
 
   for (chan = chanset; chan != NULL; chan = chan->next) {
     if (channel_active(chan) && channel_logstatus(chan) &&
