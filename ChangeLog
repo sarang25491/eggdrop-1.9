@@ -1,3 +1,9 @@
+2002-01-02 06:55  Tothwolf <tothwolf@techmonkeys.org>
+
+	* text/: banner, motd:
+
+	Fixed figlet text 
+
 2002-01-01 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
