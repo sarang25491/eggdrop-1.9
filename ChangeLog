@@ -1,3 +1,20 @@
+2002-06-02 08:56  stdarg <stdarg@techmonkeys.org>
+
+	* modules/server/servmsg.c:
+
+	
+	* Oops argument mixup 
+
+2002-06-02 08:52  stdarg <stdarg@techmonkeys.org>
+
+	* modules/: irc/chan.c, irc/irc.c, server/server.c,
+	server/servmsg.c:
+
+	
+	* Changed the raw bind syntax again: user nick uhost cmd nargs
+	args... maybe user should come after uhost, like in other binds? 
+	* Moved pub/pubm binds from irc module to server module 
+
 2002-06-01 17:57  stdarg <stdarg@techmonkeys.org>
 
 	* modules/server/: channels.c, channels.h, servmsg.c:
