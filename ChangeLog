@@ -1,3 +1,22 @@
+2003-02-04 04:54  Will Buckner <wcc@techmonkeys.org>
+
+	* eggdrop.conf, doc/settings/CONTENTS, doc/settings/core.settings,
+	doc/settings/mod.assoc, doc/settings/mod.blowfish,
+	doc/settings/mod.channel, doc/settings/mod.compress,
+	doc/settings/mod.console, doc/settings/mod.ctcp,
+	doc/settings/mod.filesys, doc/settings/mod.irc,
+	doc/settings/mod.notes, doc/settings/mod.server,
+	doc/settings/mod.share, doc/settings/mod.transfer,
+	doc/settings/mod.woobie, doc/settings/tricks,
+	modules/irc/msgcmds.c, scripts/alltools.tcl, src/tcl.c:
+
+	* More botnet removal.  
+	* More config updates.  
+	* alltools.tcl updates.  
+	* Started cleaning up docs before conversion to a more dynamic
+	  format. HTML docs removed for now (they will be dynamically
+	generated later).  
+
 2003-02-03 18:49  stdarg <stdarg@techmonkeys.org>
 
 	* src/flags.h:
@@ -163,21 +182,8 @@
 2003-01-02 21:33  Will Buckner <wcc@techmonkeys.org>
 
 	* AUTHORS, FEATURES, INSTALL, NEWS, README, doc/compiling.FAQ,
-	doc/text-substitutions.doc, doc/html/about.html,
-	doc/html/app-problems.html, doc/html/app-sharing.html,
-	doc/html/app-textsub.html, doc/html/app-tricks.html,
-	doc/html/app-weird.html, doc/html/authors.html, doc/html/bans.html,
-	doc/html/botnet.html, doc/html/compiling.html,
-	doc/html/egg-core.html, doc/html/faqs.html, doc/html/features.html,
-	doc/html/flags.html, doc/html/index.html, doc/html/install.html,
-	doc/html/mod-assoc.html, doc/html/mod-blowfish.html,
-	doc/html/mod-channels.html, doc/html/mod-compress.html,
-	doc/html/mod-dns.html, doc/html/mod-filesys.html,
-	doc/html/mod-irc.html, doc/html/mod-notes.html,
-	doc/html/mod-server.html, doc/html/mod-share.html,
-	doc/html/news.html, doc/html/party.html, doc/html/readme.html,
-	doc/html/sharing.html, doc/html/starting.html, doc/html/users.html,
-	doc/man1/eggdrop.1, lib/compat/compat.h, lib/compat/inet_ntop.h,
+	doc/text-substitutions.doc, doc/man1/eggdrop.1,
+	lib/compat/compat.h, lib/compat/inet_ntop.h,
 	lib/compat/inet_pton.h, lib/compat/memcpy.c, lib/compat/memcpy.h,
 	lib/compat/memset.c, lib/compat/memset.h, lib/compat/snprintf.h,
 	lib/compat/strcasecmp.c, lib/compat/strcasecmp.h,
@@ -684,9 +690,9 @@
 
 2002-06-18 04:40  Jeff Fisher <guppy@techmonkeys.org>
 
-	* eggdrop.complete.conf, doc/html/mod-server.html,
-	doc/settings/mod.server, modules/server/cmdsserv.c,
-	modules/server/scriptcmds.c, modules/server/server.c:
+	* eggdrop.complete.conf, doc/settings/mod.server,
+	modules/server/cmdsserv.c, modules/server/scriptcmds.c,
+	modules/server/server.c:
 
 	
 	
@@ -698,8 +704,8 @@
 
 2002-06-17 16:39  Jeff Fisher <guppy@techmonkeys.org>
 
-	* eggdrop.complete.conf, doc/html/egg-core.html,
-	doc/settings/core.settings, src/tcl.c, src/userrec.c:
+	* eggdrop.complete.conf, doc/settings/core.settings, src/tcl.c,
+	src/userrec.c:
 
 	removed sort_users since any decent userfile backend should do this
 	on the fly -- i.e.. sql or our new user api that is being worked on 
@@ -1726,7 +1732,7 @@
 
 2002-04-16 22:34  Federico Mennite <ite@techmonkeys.org>
 
-	* doc/: compiling.FAQ, html/compiling.html:
+	* doc/compiling.FAQ:
 
 	Added a referenece to LD_LIBRARY_PATH in compiling FAQ.  
 
@@ -2274,20 +2280,6 @@
 2002-02-07 22:18  Will Buckner <wcc@techmonkeys.org>
 
 	* doc/compiling.FAQ, doc/text-substitutions.doc,
-	doc/html/about.html, doc/html/app-problems.html,
-	doc/html/app-sharing.html, doc/html/app-textsub.html,
-	doc/html/app-tricks.html, doc/html/app-weird.html,
-	doc/html/authors.html, doc/html/bans.html, doc/html/botnet.html,
-	doc/html/compiling.html, doc/html/egg-core.html,
-	doc/html/faqs.html, doc/html/features.html, doc/html/flags.html,
-	doc/html/index.html, doc/html/install.html,
-	doc/html/mod-assoc.html, doc/html/mod-blowfish.html,
-	doc/html/mod-channels.html, doc/html/mod-compress.html,
-	doc/html/mod-dns.html, doc/html/mod-filesys.html,
-	doc/html/mod-irc.html, doc/html/mod-notes.html,
-	doc/html/mod-server.html, doc/html/mod-share.html,
-	doc/html/news.html, doc/html/party.html, doc/html/readme.html,
-	doc/html/sharing.html, doc/html/starting.html, doc/html/users.html,
 	doc/man1/eggdrop.1, lib/compat/compat.h, lib/compat/inet_aton.h,
 	lib/compat/inet_ntop.h, lib/compat/inet_pton.h,
 	lib/compat/memcpy.c, lib/compat/memcpy.h, lib/compat/memset.c,
@@ -2604,12 +2596,6 @@
 
 	Pots 
 
-2002-01-19 22:52  Will Buckner <wcc@techmonkeys.org>
-
-	* doc/html/authors.html:
-
-	Fixed a small authors.html error.  
-
 2002-01-19 20:08  Federico Mennite <ite@techmonkeys.org>
 
 	* lib/eggdrop/eggdrop.h, lib/eggdrop/module.h,
@@ -2640,37 +2626,37 @@
 
 2002-01-19 14:03  Tothwolf <tothwolf@techmonkeys.org>
 
-	* AUTHORS, doc/html/authors.html:
+	* AUTHORS:
 
 	Sync AUTHORS files with 1.6 
 
 2002-01-19 12:47  Tothwolf <tothwolf@techmonkeys.org>
 
-	* AUTHORS, doc/html/authors.html:
+	* AUTHORS:
 
 	Updated an AUTHORS entry 
 
 2002-01-19 11:54  Tothwolf <tothwolf@techmonkeys.org>
 
-	* AUTHORS, doc/html/authors.html:
+	* AUTHORS:
 
 	Updated an AUTHORS entry 
 
 2002-01-19 11:34  Tothwolf <tothwolf@techmonkeys.org>
 
-	* AUTHORS, doc/html/authors.html:
+	* AUTHORS:
 
 	Updated an AUTHORS entry 
 
 2002-01-19 11:24  Tothwolf <tothwolf@techmonkeys.org>
 
-	* AUTHORS, doc/html/authors.html:
+	* AUTHORS:
 
 	Updated an AUTHORS entry 
 
 2002-01-19 11:13  Tothwolf <tothwolf@techmonkeys.org>
 
-	* AUTHORS, doc/html/authors.html:
+	* AUTHORS:
 
 	Updated an AUTHORS entry 
 
@@ -2682,13 +2668,13 @@
 
 2002-01-19 09:22  Tothwolf <tothwolf@techmonkeys.org>
 
-	* AUTHORS, doc/html/authors.html:
+	* AUTHORS:
 
 	Updated an AUTHORS entry 
 
 2002-01-19 08:56  Tothwolf <tothwolf@techmonkeys.org>
 
-	* AUTHORS, doc/html/authors.html:
+	* AUTHORS:
 
 	Updated an AUTHORS entry 
 
@@ -3234,21 +3220,7 @@
 
 2001-12-26 05:03  Tothwolf <tothwolf@techmonkeys.org>
 
-	* doc/text-substitutions.doc, doc/html/about.html,
-	doc/html/app-problems.html, doc/html/app-sharing.html,
-	doc/html/app-textsub.html, doc/html/app-tricks.html,
-	doc/html/app-weird.html, doc/html/authors.html, doc/html/bans.html,
-	doc/html/botnet.html, doc/html/compiling.html,
-	doc/html/egg-core.html, doc/html/faqs.html, doc/html/features.html,
-	doc/html/flags.html, doc/html/index.html, doc/html/install.html,
-	doc/html/mod-assoc.html, doc/html/mod-blowfish.html,
-	doc/html/mod-channels.html, doc/html/mod-compress.html,
-	doc/html/mod-dns.html, doc/html/mod-filesys.html,
-	doc/html/mod-irc.html, doc/html/mod-notes.html,
-	doc/html/mod-server.html, doc/html/mod-share.html,
-	doc/html/news.html, doc/html/party.html, doc/html/readme.html,
-	doc/html/sharing.html, doc/html/starting.html, doc/html/users.html,
-	src/bg.c, src/main.c, src/modules.c:
+	* doc/text-substitutions.doc, src/bg.c, src/main.c, src/modules.c:
 
 	more copyright updates 
 
@@ -3385,10 +3357,9 @@
 
 2001-12-18 06:30  Jeff Fisher <guppy@techmonkeys.org>
 
-	* eggdrop.complete.conf, doc/html/mod-server.html,
-	doc/settings/mod.server, lib/eggdrop/module.h,
-	modules/server/server.c, modules/server/servmsg.c,
-	modules/server/help/set/server.help:
+	* eggdrop.complete.conf, doc/settings/mod.server,
+	lib/eggdrop/module.h, modules/server/server.c,
+	modules/server/servmsg.c, modules/server/help/set/server.help:
 
 	strict-servernames is gone, also I cleaned up a few leftovers from
 	the old bind code ... hopefully it was done right otherwise stdarg
@@ -3396,8 +3367,8 @@
 
 2001-12-18 05:49  Jeff Fisher <guppy@techmonkeys.org>
 
-	* eggdrop.complete.conf, doc/html/egg-core.html,
-	doc/settings/core.settings, src/dcc.c, src/tcl.c:
+	* eggdrop.complete.conf, doc/settings/core.settings, src/dcc.c,
+	src/tcl.c:
 
 	stealth-telnets has been removed, this could be changed using
 	gettext .. the setting changed one line to another line ... not
@@ -3405,9 +3376,9 @@
 
 2001-12-18 05:33  Jeff Fisher <guppy@techmonkeys.org>
 
-	* eggdrop.complete.conf, doc/html/mod-server.html,
-	doc/settings/mod.server, modules/server/server.c,
-	modules/server/servmsg.c, modules/server/help/set/server.help:
+	* eggdrop.complete.conf, doc/settings/mod.server,
+	modules/server/server.c, modules/server/servmsg.c,
+	modules/server/help/set/server.help:
 
 	removed never-give-up as a config setting 
 
@@ -3479,29 +3450,27 @@
 
 2001-12-10 03:22  Jeff Fisher <guppy@techmonkeys.org>
 
-	* eggdrop.complete.conf, doc/html/egg-core.html,
-	doc/settings/core.settings, help/core.help, help/set/cmds2.help,
-	lib/eggdrop/module.h, modules/ctcp/ctcp.c,
-	modules/filesys/filesys.c, modules/server/server.c, src/cmds.c,
-	src/dcc.c, src/flags.c, src/modules.c, src/tcl.c:
+	* eggdrop.complete.conf, doc/settings/core.settings,
+	help/core.help, help/set/cmds2.help, lib/eggdrop/module.h,
+	modules/ctcp/ctcp.c, modules/filesys/filesys.c,
+	modules/server/server.c, src/cmds.c, src/dcc.c, src/flags.c,
+	src/modules.c, src/tcl.c:
 
 	require-p is now gone as a config setting 
 
 2001-12-10 02:50  Jeff Fisher <guppy@techmonkeys.org>
 
-	* eggdrop.complete.conf, doc/html/mod-irc.html,
-	doc/settings/mod.irc, modules/irc/chan.c, modules/irc/irc.c,
-	modules/server/server.c, modules/server/server.h,
-	modules/server/servmsg.c:
+	* eggdrop.complete.conf, doc/settings/mod.irc, modules/irc/chan.c,
+	modules/irc/irc.c, modules/server/server.c,
+	modules/server/server.h, modules/server/servmsg.c:
 
 	kick-fun and ban-fun have been removed as settings 
 
 2001-12-10 02:38  Jeff Fisher <guppy@techmonkeys.org>
 
-	* eggdrop.complete.conf, doc/html/egg-core.html,
-	doc/settings/core.settings, help/core.help, help/set/cmds2.help,
-	lib/eggdrop/module.h, modules/irc/irc.c, src/dcc.c, src/modules.c,
-	src/tcl.c:
+	* eggdrop.complete.conf, doc/settings/core.settings,
+	help/core.help, help/set/cmds2.help, lib/eggdrop/module.h,
+	modules/irc/irc.c, src/dcc.c, src/modules.c, src/tcl.c:
 
 	open-telnets is no longer a config setting, learn-users handles both
 	irc and telnet 
@@ -3514,34 +3483,31 @@
 
 2001-12-09 21:49  Jeff Fisher <guppy@techmonkeys.org>
 
-	* eggdrop.complete.conf, doc/html/mod-server.html,
-	doc/settings/mod.server, modules/server/server.c,
-	modules/server/servmsg.c, modules/server/help/set/server.help:
+	* eggdrop.complete.conf, doc/settings/mod.server,
+	modules/server/server.c, modules/server/servmsg.c,
+	modules/server/help/set/server.help:
 
 	serverror-quit has been removed as a config setting 
 
 2001-12-09 21:46  Jeff Fisher <guppy@techmonkeys.org>
 
-	* eggdrop.complete.conf, doc/html/egg-core.html,
-	doc/settings/core.settings, help/core.help, help/set/cmds2.help,
-	src/tcl.c, src/tcldcc.c:
+	* eggdrop.complete.conf, doc/settings/core.settings,
+	help/core.help, help/set/cmds2.help, src/tcl.c, src/tcldcc.c:
 
 	enable-simul has been removed as a config setting 
 
 2001-12-09 21:43  Jeff Fisher <guppy@techmonkeys.org>
 
-	* eggdrop.complete.conf, doc/html/egg-core.html,
-	doc/settings/core.settings, help/core.help, help/set/cmds2.help,
-	src/logfile.c:
+	* eggdrop.complete.conf, doc/settings/core.settings,
+	help/core.help, help/set/cmds2.help, src/logfile.c:
 
 	log-time has been removed as a config setting 
 
 2001-12-09 21:38  Jeff Fisher <guppy@techmonkeys.org>
 
-	* eggdrop.complete.conf, doc/html/egg-core.html,
-	doc/settings/core.settings, lib/eggdrop/module.h,
-	modules/perlscript/perlscript.c, modules/server/cmdsserv.c,
-	src/cmds.c, src/modules.c, src/tcl.c:
+	* eggdrop.complete.conf, doc/settings/core.settings,
+	lib/eggdrop/module.h, modules/perlscript/perlscript.c,
+	modules/server/cmdsserv.c, src/cmds.c, src/modules.c, src/tcl.c:
 
 	must-be-owner has been removed as a config setting 
 
@@ -3622,8 +3588,7 @@
 
 2001-12-08 16:16  Federico Mennite <ite@techmonkeys.org>
 
-	* doc/text-substitutions.doc, doc/html/app-textsub.html,
-	help/set/cmds1.help, src/misc.c:
+	* doc/text-substitutions.doc, help/set/cmds1.help, src/misc.c:
 
 	Added %n for  to the list of motd text substitutions. Patch by
 	Benoit Timbert <Benoit.TIMBERT@free.fr> 
@@ -4537,7 +4502,6 @@
 2001-10-20 07:29  Jeff Fisher <guppy@techmonkeys.org>
 
 	* eggdrop.complete.conf, doc/KNOWN-PROBLEMS,
-	doc/html/egg-core.html, doc/html/mod-server.html,
 	doc/settings/core.settings, doc/settings/mod.server:
 
 	
@@ -4569,8 +4533,7 @@
 
 2001-10-19 23:07  Tothwolf <tothwolf@techmonkeys.org>
 
-	* AUTHORS, Makefile.am, config.guess, config.sub,
-	doc/html/authors.html:
+	* AUTHORS, Makefile.am, config.guess, config.sub:
 
 	* sync authors.html with AUTHORS 
 	* add config.guess and config.sub to AUX_DIST 
@@ -4590,8 +4553,7 @@
 
 2001-10-19 06:01  Jeff Fisher <guppy@techmonkeys.org>
 
-	* eggdrop.complete.conf, doc/html/egg-core.html,
-	doc/html/mod-server.html, doc/settings/core.settings,
+	* eggdrop.complete.conf, doc/settings/core.settings,
 	doc/settings/mod.server, src/flags.c, src/modules.c:
 
 	* removed use-console-r since we have debug-output 
@@ -4609,9 +4571,8 @@
 2001-10-19 05:26  Jeff Fisher <guppy@techmonkeys.org>
 
 	* AUTHORS, README, config.guess, config.sub, eggdrop.complete.conf,
-	doc/tcl-commands.doc, doc/html/egg-core.html,
-	doc/settings/core.settings, scripts/autobotchk, scripts/botchk,
-	src/main.c, src/tcl.c:
+	doc/tcl-commands.doc, doc/settings/core.settings,
+	scripts/autobotchk, scripts/botchk, src/main.c, src/tcl.c:
 
 	
 	* applied BarkerJr's small documentation patch 
@@ -5011,21 +4972,8 @@
 2001-10-10 13:15  Tothwolf <tothwolf@techmonkeys.org>
 
 	* INSTALL, README, eggdrop.complete.conf, doc/compiling.FAQ,
-	doc/eggdrop.doc, doc/text-substitutions.doc, doc/html/about.html,
-	doc/html/app-problems.html, doc/html/app-sharing.html,
-	doc/html/app-textsub.html, doc/html/app-tricks.html,
-	doc/html/app-weird.html, doc/html/authors.html, doc/html/bans.html,
-	doc/html/botnet.html, doc/html/compiling.html,
-	doc/html/egg-core.html, doc/html/faqs.html, doc/html/features.html,
-	doc/html/flags.html, doc/html/index.html, doc/html/install.html,
-	doc/html/mod-assoc.html, doc/html/mod-blowfish.html,
-	doc/html/mod-channels.html, doc/html/mod-compress.html,
-	doc/html/mod-dns.html, doc/html/mod-filesys.html,
-	doc/html/mod-irc.html, doc/html/mod-notes.html,
-	doc/html/mod-server.html, doc/html/mod-share.html,
-	doc/html/news.html, doc/html/party.html, doc/html/readme.html,
-	doc/html/sharing.html, doc/html/starting.html, doc/html/users.html,
-	help/cmds1.help, help/cmds2.help, help/core.help, scripts/CONTENTS,
+	doc/eggdrop.doc, doc/text-substitutions.doc, help/cmds1.help,
+	help/cmds2.help, help/core.help, scripts/CONTENTS,
 	scripts/compat.tcl, scripts/notes2.tcl, scripts/userinfo.tcl,
 	scripts/weed, scripts/help/userinfo.help:
 
@@ -5423,10 +5371,10 @@
 
 2001-08-19 02:36  Dobos Lorant <drummer@buli.sk>
 
-	* eggdrop.complete.conf, doc/html/egg-core.html,
-	doc/settings/core.settings, doc/settings/mod.dns, help/core.help,
-	help/set/cmds1.help, scripts/help/cmd_resolve.help, src/modules.c,
-	src/net.c, src/tcl.c, src/tclmisc.c:
+	* eggdrop.complete.conf, doc/settings/core.settings,
+	doc/settings/mod.dns, help/core.help, help/set/cmds1.help,
+	scripts/help/cmd_resolve.help, src/modules.c, src/net.c, src/tcl.c,
+	src/tclmisc.c:
 
 	Removed my-hostname. Cache local ipv4 address. Updated docs. FIXME
 	for tcl_getmyip6(). Cleanups for channel.mod.  
@@ -5536,11 +5484,10 @@
 
 	* CONTENTS, Makefile.in, aclocal.m4, configure,
 	eggdrop.complete.conf, doc/Makefile.in, doc/eggdrop.doc,
-	doc/tricks, doc/html/egg-core.html, doc/man1/eggdrop.1,
-	doc/settings/CONTENTS, doc/settings/contents,
-	doc/settings/core.settings, help/core.help, src/Makefile.in,
-	src/eggdrop.h, src/lang.h, src/language.c, src/main.c, src/main.h,
-	src/mem.c, src/modules.c, src/proto.h:
+	doc/tricks, doc/man1/eggdrop.1, doc/settings/CONTENTS,
+	doc/settings/contents, doc/settings/core.settings, help/core.help,
+	src/Makefile.in, src/eggdrop.h, src/lang.h, src/language.c,
+	src/main.c, src/main.h, src/mem.c, src/modules.c, src/proto.h:
 
 	Good bye language.c, lang.h, we knew you so well yet hated you 
 
@@ -5553,10 +5500,7 @@
 2001-08-13 19:12  Jeff Fisher <guppy@techmonkeys.org>
 
 	* FEATURES, INSTALL, eggdrop.complete.conf, eggdrop.simple.conf,
-	doc/MODULES, doc/html/egg-core.html, doc/html/features.html,
-	doc/html/index.html, doc/html/install.html,
-	doc/html/mod-channels.html, doc/html/mod-wire.html,
-	doc/settings/contents, doc/settings/core.settings,
+	doc/MODULES, doc/settings/contents, doc/settings/core.settings,
 	doc/settings/mod.channel, doc/settings/mod.woobie, help/core.help,
 	src/chan.h:
 
@@ -5565,8 +5509,7 @@
 2001-08-13 17:24  Jeff Fisher <guppy@techmonkeys.org>
 
 	* eggdrop.complete.conf, eggdrop.simple.conf,
-	doc/html/mod-blowfish.html, doc/settings/mod.blowfish,
-	src/tclmisc.c:
+	doc/settings/mod.blowfish, src/tclmisc.c:
 
 	removed checkmodule .. it the same as loadmodule basically,
 	loadmodule blowfish behaves the same as checkmodule blowfish on
@@ -5599,9 +5542,8 @@
 
 2001-08-13 16:21  Jeff Fisher <guppy@techmonkeys.org>
 
-	* eggdrop.complete.conf, doc/html/egg-core.html,
-	doc/settings/core.settings, src/dcc.c, src/misc.c, src/proto.h,
-	src/tcl.c:
+	* eggdrop.complete.conf, doc/settings/core.settings, src/dcc.c,
+	src/misc.c, src/proto.h, src/tcl.c:
 
 	removed use-telnet-banner (useless option), renamed show_banner to
 	show_telnet_banner, updated the docs a bit for telnet-banner, got
@@ -5613,9 +5555,8 @@
 
 2001-08-13 14:51  Jeff Fisher <guppy@techmonkeys.org>
 
-	* eggdrop.complete.conf, doc/html/egg-core.html,
-	doc/settings/core.settings, src/modules.c, src/net.c, src/proto.h,
-	src/tcl.c:
+	* eggdrop.complete.conf, doc/settings/core.settings, src/modules.c,
+	src/net.c, src/proto.h, src/tcl.c:
 
 	Removed dcc-sanitycheck since it was half commented out as "FIXME"
 	-- also, in the day and age of IRC bouncers and socks5 connections,
@@ -5629,8 +5570,8 @@
 
 2001-08-13 14:17  Jeff Fisher <guppy@techmonkeys.org>
 
-	* eggdrop.complete.conf, doc/html/egg-core.html,
-	doc/settings/core.settings, src/dcc.c, src/modules.c, src/tcl.c:
+	* eggdrop.complete.conf, doc/settings/core.settings, src/dcc.c,
+	src/modules.c, src/tcl.c:
 
 	Removed dcc-portrange since it was a stupid setting (good idea of
 	course) and the values 1024 and 65535 are now hardcoded as the
@@ -5641,8 +5582,7 @@
 
 2001-08-13 03:58  Jeff Fisher <guppy@techmonkeys.org>
 
-	* eggdrop.complete.conf, doc/html/mod-server.html,
-	doc/settings/mod.server:
+	* eggdrop.complete.conf, doc/settings/mod.server:
 
 	well, servlimit is now gone also .. this is another feature that was
 	made useless years ago and should have been removed years ago 
@@ -5658,10 +5598,8 @@
 
 	* CONTENTS, Makefile.in, NEWS, eggdrop.complete.conf,
 	eggdrop.simple.conf, doc/eggdrop.doc, doc/tcl-commands.doc,
-	doc/html/egg-core.html, doc/html/mod-channels.html,
-	doc/html/mod-server.html, doc/man1/eggdrop.1,
-	doc/settings/core.settings, doc/settings/mod.channel,
-	doc/settings/mod.server, src/chan.h:
+	doc/man1/eggdrop.1, doc/settings/core.settings,
+	doc/settings/mod.channel, doc/settings/mod.server, src/chan.h:
 
 	PATCH: clean_leftover_features About time these got removed since we
 	have better replacements for them ... scripters will hate us at
@@ -5899,8 +5837,8 @@
 2001-07-24 14:19  Jeff Fisher <guppy@techmonkeys.org>
 
 	* doc/MODULES, doc/UPDATES1.6, doc/tcl-commands.doc,
-	doc/html/egg-core.html, help/cmds2.help, src/cmds.c, src/main.c,
-	src/patch.h, src/tclmisc.c:
+	help/cmds2.help, src/cmds.c, src/main.c, src/patch.h,
+	src/tclmisc.c:
 
 	I thought about doing this years ago .. glad someone did it :P~ 
 
@@ -6087,8 +6025,7 @@
 
 2001-07-01 07:06  Jeff Fisher <guppy@techmonkeys.org>
 
-	* README, doc/UPDATES1.6, doc/html/readme.html,
-	doc/html/chat/efnet_eggfaq.chat, src/patch.h, text/motd:
+	* README, doc/UPDATES1.6, src/patch.h, text/motd:
 
 	added Sup's inactive patch 
 
@@ -6163,7 +6100,7 @@
 2001-06-28 19:01  Jeff Fisher <guppy@techmonkeys.org>
 
 	* eggdrop.advanced.conf, eggdrop.complete.conf, doc/UPDATES1.6,
-	doc/html/mod-server.html, doc/settings/mod.server, src/patch.h:
+	doc/settings/mod.server, src/patch.h:
 
 	Sup's channels fix patch 
 
@@ -6438,8 +6375,8 @@
 
 	* eggdrop.advanced.conf, eggdrop.complete.conf,
 	eggdrop.simple.conf, doc/BUG-REPORT, doc/UPDATES1.6,
-	doc/eggdrop.doc, doc/html/compiling.html, doc/man1/eggdrop.1,
-	src/cmds.c, src/main.c, src/patch.h:
+	doc/eggdrop.doc, doc/man1/eggdrop.1, src/cmds.c, src/main.c,
+	src/patch.h:
 
 	oops, after a few hours I finally remembered to commit this 
 
@@ -6460,7 +6397,7 @@
 2001-05-18 22:35  Jeff Fisher <guppy@techmonkeys.org>
 
 	* eggdrop.advanced.conf, eggdrop.complete.conf, doc/UPDATES1.6,
-	doc/html/mod-server.html, doc/settings/mod.server, src/patch.h:
+	doc/settings/mod.server, src/patch.h:
 
 	ooo legacy code 
 
@@ -6485,12 +6422,7 @@
 
 2001-04-26 03:41  Jeff Fisher <guppy@techmonkeys.org>
 
-	* README, doc/UPDATES1.6, doc/html/readme.html,
-	doc/html/chat/efnet_eggheads.chat,
-	doc/html/chat/efnet_egghelp.chat, doc/html/chat/efnet_eggtcl.chat,
-	doc/html/chat/ircnet_bothelp.chat,
-	doc/html/chat/ircnet_egghelp.chat,
-	doc/html/chat/undernet_eggheads.chat, src/patch.h, text/motd:
+	* README, doc/UPDATES1.6, src/patch.h, text/motd:
 
 	applied Sup's helpchans patch 
 
@@ -6567,17 +6499,16 @@
 2001-04-12 02:39  Jeff Fisher <guppy@techmonkeys.org>
 
 	* FEATURES, INSTALL, NEWS, README, doc/AUTHORS, doc/UPDATES1.6,
-	doc/html/readme.html, doc/man1/eggdrop.1, misc/modconfig,
-	scripts/ques5.tcl, src/bg.c, src/bg.h, src/botcmd.c, src/botmsg.c,
-	src/botnet.c, src/chan.h, src/chanprog.c, src/cmds.c, src/cmdt.h,
-	src/dcc.c, src/dccutil.c, src/dns.c, src/dns.h, src/eggdrop.h,
-	src/flags.c, src/flags.h, src/lang.h, src/language.c, src/main.c,
-	src/main.h, src/mem.c, src/misc.c, src/misc_file.c,
-	src/misc_file.h, src/modules.h, src/patch.h, src/proto.h,
-	src/stat.h, src/tandem.h, src/tcl.c, src/tcldcc.c, src/tclegg.h,
-	src/tclhash.c, src/tclhash.h, src/tclmisc.c, src/tcluser.c,
-	src/userent.c, src/userrec.c, src/users.c, src/users.h,
-	text/banner, text/motd:
+	doc/man1/eggdrop.1, misc/modconfig, scripts/ques5.tcl, src/bg.c,
+	src/bg.h, src/botcmd.c, src/botmsg.c, src/botnet.c, src/chan.h,
+	src/chanprog.c, src/cmds.c, src/cmdt.h, src/dcc.c, src/dccutil.c,
+	src/dns.c, src/dns.h, src/eggdrop.h, src/flags.c, src/flags.h,
+	src/lang.h, src/language.c, src/main.c, src/main.h, src/mem.c,
+	src/misc.c, src/misc_file.c, src/misc_file.h, src/modules.h,
+	src/patch.h, src/proto.h, src/stat.h, src/tandem.h, src/tcl.c,
+	src/tcldcc.c, src/tclegg.h, src/tclhash.c, src/tclhash.h,
+	src/tclmisc.c, src/tcluser.c, src/userent.c, src/userrec.c,
+	src/users.c, src/users.h, text/banner, text/motd:
 
 	lets update the copyright info for 2001 k? :P~ 
 
@@ -6824,7 +6755,7 @@
 
 2001-01-26 21:06  Jeff Fisher <guppy@techmonkeys.org>
 
-	* README, doc/UPDATES1.6, doc/html/readme.html, src/patch.h:
+	* README, doc/UPDATES1.6, src/patch.h:
 
 	applied sup's helpchans patch 
 
@@ -6843,7 +6774,7 @@
 
 2001-01-22 23:47  Jeff Fisher <guppy@techmonkeys.org>
 
-	* eggdrop.complete.conf, doc/UPDATES1.6, doc/html/egg-core.html,
+	* eggdrop.complete.conf, doc/UPDATES1.6,
 	doc/settings/core.settings, help/core.help, help/set/cmds1.help,
 	help/set/cmds2.help, src/dccutil.c, src/modules.c, src/patch.h,
 	src/tcl.c:
@@ -7185,8 +7116,7 @@
 
 2000-11-08 20:11  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, doc/html/mod-server.html,
-	doc/settings/mod.server, src/patch.h:
+	* doc/UPDATES1.6, doc/settings/mod.server, src/patch.h:
 
 	guppy: the lagcheck removal patch 
 
@@ -7271,12 +7201,6 @@
 	guppy: sup just told me his module patch from long ago was still not
 	applied, minor doc change 
 
-2000-11-06 14:27  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/html/authors.html:
-
-	guppy: and our authors html file 
-
 2000-11-06 14:26  Jeff Fisher <guppy@techmonkeys.org>
 
 	* doc/AUTHORS:
@@ -7307,10 +7231,7 @@
 	eggdrop.complete.conf, eggdrop.simple.conf, doc/BOTNET,
 	doc/BUG-REPORT, doc/CONTENTS, doc/Makefile.in, doc/UPDATES1.5,
 	doc/patch.howto, doc/tcl-commands.doc, doc/text-substitutions.doc,
-	doc/html/app-textsub.html, doc/html/egg-core.html,
-	doc/html/faq1.html, doc/html/features.html, doc/html/index.html,
-	doc/html/news.html, doc/html/readme.html, scripts/getops.tcl,
-	src/main.c, src/patch.h, text/banner:
+	scripts/getops.tcl, src/main.c, src/patch.h, text/banner:
 
 	1.5 has now become 1.6 
 
@@ -7535,8 +7456,8 @@
 2000-10-19 16:30  Fabian Knittel <fknittel@gmx.de>
 
 	* eggdrop.advanced.conf, eggdrop.complete.conf,
-	eggdrop.simple.conf, doc/UPDATES1.5, doc/html/mod-channels.html,
-	doc/settings/mod.channel, src/chan.h, src/patch.h:
+	eggdrop.simple.conf, doc/UPDATES1.5, doc/settings/mod.channel,
+	src/chan.h, src/patch.h:
 
 	fabian: applied Eule's clearmodes patch 
 
@@ -7546,43 +7467,9 @@
 
 	doc/Makefile.in still had a reference to doc/readme 
 
-2000-10-11 11:03  Tothwolf <tothwolf@techmonkeys.org>
-
-	* doc/html/: app-botnet.html, app-sharing.html, index.html:
-
-	renamed app-botnet.html to app-sharing.html 
-
-2000-10-11 10:27  Tothwolf <tothwolf@techmonkeys.org>
-
-	* doc/html/: about.html, app-botnet.html, app-problems.html,
-	app-textsub.html, app-tricks.html, app-weird.html, authors.html,
-	bans.html, botnet.html, compiling.html, egg-core.html, faq1.html,
-	faqs.html, features.html, flags.html, index.html, install.html,
-	mod-assoc.html, mod-blowfish.html, mod-channels.html,
-	mod-compress.html, mod-dns.html, mod-filesys.html, mod-irc.html,
-	mod-notes.html, mod-server.html, mod-share.html, mod-wire.html,
-	news.html, party.html, readme.html, sharing.html, starting.html,
-	users.html:
-
-	Changed copyright footer 
-
-2000-10-09 13:07  Tothwolf <tothwolf@techmonkeys.org>
-
-	* doc/html/: about.html, app-botnet.html, app-problems.html,
-	app-textsub.html, app-tricks.html, app-weird.html, authors.html,
-	bans.html, botnet.html, compiling.html, egg-core.html, faq1.html,
-	faqs.html, features.html, flags.html, index.html, install.html,
-	mod-assoc.html, mod-blowfish.html, mod-channels.html,
-	mod-compress.html, mod-dns.html, mod-filesys.html, mod-irc.html,
-	mod-notes.html, mod-server.html, mod-share.html, mod-wire.html,
-	news.html, party.html, readme.html, sharing.html, starting.html,
-	users.html:
-
-	fixed html doctype 
-
 2000-10-09 12:57  Tothwolf <tothwolf@techmonkeys.org>
 
-	* doc/: AUTHORS, html/authors.html:
+	* doc/AUTHORS:
 
 	Use table for authors file 
 
@@ -7599,12 +7486,7 @@
 	doc/MODULES, doc/UPDATES.pre1.3, doc/UPDATES1.3, doc/UPDATES1.4,
 	doc/UPDATES1.5, doc/compiling.FAQ, doc/eggdrop.doc,
 	doc/patch.howto, doc/readme, doc/tcl-commands.doc, doc/tricks,
-	doc/html/app-problems.html, doc/html/app-probs.html,
-	doc/html/app-textsub.html, doc/html/app-tricks.html,
-	doc/html/authors.html, doc/html/compiling.html, doc/html/faq1.html,
-	doc/html/features.html, doc/html/index.html, doc/html/install.html,
-	doc/html/readme.html, doc/settings/core.settings,
-	doc/settings/mod.channel:
+	doc/settings/core.settings, doc/settings/mod.channel:
 
 	Documentation updates 
 
@@ -7908,7 +7790,7 @@
 2000-08-31 18:10  Fabian Knittel <fknittel@gmx.de>
 
 	* eggdrop.advanced.conf, eggdrop.complete.conf, doc/UPDATES1.5,
-	doc/html/mod-server.html, doc/settings/mod.server, src/patch.h:
+	doc/settings/mod.server, src/patch.h:
 
 	fabian: G`Quann's finallagcheckfix patch.  
 
@@ -8189,9 +8071,8 @@
 2000-08-03 21:51  Fabian Knittel <fknittel@gmx.de>
 
 	* configure, eggdrop.advanced.conf, eggdrop.complete.conf,
-	doc/UPDATES1.4, doc/tcl-commands.doc, doc/html/mod-irc.html,
-	doc/settings/mod.irc, src/lang.h, src/patch.h, src/tcl.c,
-	src/tclhash.c, src/tclmisc.c:
+	doc/UPDATES1.4, doc/tcl-commands.doc, doc/settings/mod.irc,
+	src/lang.h, src/patch.h, src/tcl.c, src/tclhash.c, src/tclmisc.c:
 
 	resync with 1.4, Aug03 965337849 
 
@@ -8210,7 +8091,7 @@
 2000-07-25 19:42  johoho
 
 	* NEWS, TODO, doc/BUG-REPORT, doc/KNOWN-PROBLEMS, doc/MODULES,
-	doc/UPDATES1.5, doc/html/news.html, help/cmds2.help:
+	doc/UPDATES1.5, help/cmds2.help:
 
 	still some patches by sup...damn :-) 
 
@@ -8237,12 +8118,6 @@
 	* README:
 
 	fixes various typos in the docs and a small bug when 
-
-2000-07-25 19:15  johoho
-
-	* doc/html/readme.html:
-
-	README 
 
 2000-07-23 20:50  Fabian Knittel <fknittel@gmx.de>
 
@@ -8306,12 +8181,6 @@
 	* doc/UPDATES1.5:
 
 	Fixed remaining 'console..$(MOD_EXT)' typos 
-
-2000-07-11 17:06  Tothwolf <tothwolf@techmonkeys.org>
-
-	* doc/html/faq1.html:
-
-	Missing Id tag and newline at end of file 
 
 2000-07-09 14:23  Fabian Knittel <fknittel@gmx.de>
 
@@ -8472,9 +8341,8 @@
 2000-06-03 12:14  Fabian Knittel <fknittel@gmx.de>
 
 	* eggdrop.advanced.conf, eggdrop.complete.conf, doc/UPDATES1.5,
-	doc/tcl-commands.doc, doc/html/mod-server.html,
-	doc/settings/mod.server, src/cmds.c, src/modules.c, src/patch.h,
-	src/tcl.c, src/users.c:
+	doc/tcl-commands.doc, doc/settings/mod.server, src/cmds.c,
+	src/modules.c, src/patch.h, src/tcl.c, src/users.c:
 
 	channame2dname patch 
 
@@ -8706,28 +8574,6 @@
 
 	Eule's got442_2 patch, 1.4 
 
-2000-04-13 11:22  Tothwolf <tothwolf@techmonkeys.org>
-
-	* doc/html/app-textsub.html:
-
-	Fixed %{center} typo.  
-
-2000-04-13 11:21  Tothwolf <tothwolf@techmonkeys.org>
-
-	* doc/html/: about.html, app-botnet.html, app-probs.html,
-	app-textsub.html, app-tricks.html, app-weird.html, bans.html,
-	botnet.html, compiling.html, egg-core.html, faqs.html,
-	features.html, flags.html, index.html, install.html,
-	mod-assoc.html, mod-blowfish.html, mod-channels.html,
-	mod-compress.html, mod-dns.html, mod-filesys.html, mod-irc.html,
-	mod-notes.html, mod-server.html, mod-share.html, mod-wire.html,
-	news.html, party.html, readme.html, sharing.html, starting.html,
-	users.html, chat/efnet_eggheads.chat, chat/efnet_eggtcl.chat,
-	chat/ircnet_bothelp.chat, chat/ircnet_eggdrop.chat,
-	chat/ircnet_egghelp.chat, chat/undernet_eggdrop.chat:
-
-	Updated html docs, added html/chat dir and files for irc links.  
-
 2000-04-13 10:10  Tothwolf <tothwolf@techmonkeys.org>
 
 	* NEWS:
@@ -8742,18 +8588,7 @@
 
 2000-04-13 09:56  jason
 
-	* doc/: UPDATES1.5, html/about.html, html/app-botnet.html,
-	html/app-probs.html, html/app-textsub.html, html/app-tricks.html,
-	html/app-weird.html, html/bans.html, html/botnet.html,
-	html/compiling.html, html/egg-core.html, html/faq1.html,
-	html/faqs.html, html/features.html, html/flags.html,
-	html/index.html, html/install.html, html/mod-assoc.html,
-	html/mod-blowfish.html, html/mod-channels.html,
-	html/mod-compress.html, html/mod-dns.html, html/mod-filesys.html,
-	html/mod-irc.html, html/mod-notes.html, html/mod-server.html,
-	html/mod-share.html, html/mod-wire.html, html/news.html,
-	html/party.html, html/readme.html, html/sharing.html,
-	html/starting.html, html/users.html:
+	* doc/UPDATES1.5:
 
 	renaming of web_docs to html 
 
