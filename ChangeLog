@@ -1,3 +1,18 @@
+2001-11-24 20:42  Federico Mennite <ite@techmonkeys.org>
+
+	* modules/assoc/Makefile.am, modules/blowfish/Makefile.am,
+	modules/channels/Makefile.am, modules/compress/Makefile.am,
+	modules/console/Makefile.am, modules/ctcp/Makefile.am,
+	modules/filesys/Makefile.am, modules/irc/Makefile.am,
+	modules/notes/Makefile.am, modules/perlscript/Makefile.am,
+	modules/server/Makefile.am, modules/share/Makefile.am,
+	modules/tclscript/Makefile.am, modules/transfer/Makefile.am,
+	modules/uptime/Makefile.am, modules/woobie/Makefile.am,
+	src/eggdrop.h:
+
+	Added mssing stuff in Makefile.am's that prevented compilation in
+	some environments.  
+
 2001-11-24 15:31  Federico Mennite <ite@techmonkeys.org>
 
 	* modules/transfer/transfer.h, src/eggdrop.h:
