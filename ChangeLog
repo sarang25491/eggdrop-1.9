@@ -1,3 +1,12 @@
+2001-10-15 09:27  stdarg <stdarg@techmonkeys.org>
+
+	* src/: cmds.c, egg_timer.c, egg_timer.h, main.c, script.c,
+	script_api.h, tcldcc.c, mod/tclscript.mod/tclscript.c:
+
+	Updates to timer code.  Updates to tcl module.  Convenience
+	functions for scripting.  Script journal for late scripting modules.  
+	Got rid of anonymous union in script_var_t.  
+
 2001-10-15 07:56  Tothwolf <tothwolf@techmonkeys.org>
 
 	* src/modules.c:
