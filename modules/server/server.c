@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: server.c,v 1.23 2002/05/21 21:23:01 stdarg Exp $";
+static const char rcsid[] = "$Id: server.c,v 1.24 2002/05/21 21:28:31 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "server"
@@ -948,6 +948,7 @@ static int server_clear()
 		if (cur->pass) free(cur->pass);
 		free(cur);
 	}
+	serverlist = NULL;
 	return(0);
 }
 
