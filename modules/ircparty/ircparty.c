@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: ircparty.c,v 1.7 2003/12/18 03:54:45 wcc Exp $";
+static const char rcsid[] = "$Id: ircparty.c,v 1.8 2003/12/19 01:50:50 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -177,7 +177,7 @@ static int process_results(irc_session_t *session)
 			sockbuf_delete(session->idx);
 			return(0);
 		}
-		sockbuf_write(session->idx, "NOTICE *** Don't forget to use the /PASS command to send your password in addition to normal registration!\r\n", -1);
+		sockbuf_write(session->idx, ":eggdrop.bot NOTICE AUTH :*** Don't forget to use the /PASS command to send your password in addition to normal registration!\r\n", -1);
 		session->state = STATE_UNREGISTERED;
 	}
 	return(0);
@@ -290,7 +290,7 @@ static int irc_on_read(void *client_data, int idx, char *data, int len)
 			if (session->nick && session->pass) {
 				session->user = user_lookup_authed(session->nick, session->pass);
 				if (!session->user) {
-					sockbuf_write(session->idx, "NOTICE *** Invalid username/password.\r\n", -1);
+					sockbuf_write(session->idx, ":eggdrop.bot NOTICE AUTH :*** Invalid username/password.\r\n", -1);
 					sockbuf_delete(session->idx);
 					break;
 				}
