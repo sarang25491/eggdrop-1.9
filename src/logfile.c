@@ -124,7 +124,7 @@ static int logfile_5minutely()
 
 static int logfile_cycle()
 {
-	log_t *log;
+	log_t *log, *prev;
 	char suffix[32];
 	char *newfname;
 
@@ -148,6 +148,14 @@ static int logfile_cycle()
 		unlink(newfname);
 		movefile(log->filename, newfname);
 		free(newfname);
+
+		log->fp = fopen(log->filename, "a");
+		if (!log->fp) {
+			logfile_del(log->filename);
+			if (prev) log = prev;
+			else log = log_list_head;
+		}
+		else prev = log;
 	}
 	return(0);
 }
@@ -204,9 +212,11 @@ int logfile_del(char *filename)
 	if (!log) return(1);
 	if (prev) prev->next = log->next;
 	else log_list_head = log->next;
-	get_timestamp(timestamp);
-	flushlog(log, timestamp);
-	fclose(log->fp);
+	if (log->fp) {
+		get_timestamp(timestamp);
+		flushlog(log, timestamp);
+		fclose(log->fp);
+	}
 	free(log->last_msg);
 	free(log->filename);
 	free(log);
