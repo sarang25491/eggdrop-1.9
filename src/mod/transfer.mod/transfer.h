@@ -1,7 +1,7 @@
 /*
  * transfer.h -- part of transfer.mod
  *
- * $Id: transfer.h,v 1.13 2001/10/19 01:55:09 tothwolf Exp $
+ * $Id: transfer.h,v 1.14 2001/10/26 22:22:23 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -47,15 +47,10 @@ enum dccsend_types {
 /* 12 - 15 */
 #define wipe_tmp_filename(a,b) (((void (*) (char *,int))transfer_funcs[12])(a,b))
 #define DCC_GET (*(struct dcc_table *)(transfer_funcs[13]))
-#define H_rcvd (*(p_tcl_bind_list*)(transfer_funcs[14]))
-#define H_sent (*(p_tcl_bind_list*)(transfer_funcs[15]))
-/* 16 - 19 */
-#define USERENTRY_FSTAT (*(struct user_entry_type *)(transfer_funcs[16]))
-#define quiet_reject (*(int *)(transfer_funcs[17]))
-#define raw_dcc_resend(a,b,c,d,e) (((int (*) (char *,char *,char *,char *,char *))transfer_funcs[18])(a,b,c,d,e))
-#define H_lost (*(p_tcl_bind_list*)(transfer_funcs[19]))
-/* 20 - 23 */
-#define H_tout (*(p_tcl_bind_list*)(transfer_funcs[20]))
+#define USERENTRY_FSTAT (*(struct user_entry_type *)(transfer_funcs[14]))
+#define quiet_reject (*(int *)(transfer_funcs[15]))
+/* 16 */
+#define raw_dcc_resend(a,b,c,d,e) (((int (*) (char *,char *,char *,char *,char *))transfer_funcs[16])(a,b,c,d,e))
 
 #else	/* MAKING_TRANSFER */
 

@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.52 2001/10/24 10:08:03 stdarg Exp $
+ * $Id: tcl.c,v 1.53 2001/10/26 22:22:22 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -63,7 +63,6 @@ extern int	die_on_sighup, die_on_sigterm,
 		sort_users, tands, resolve_timeout, userfile_perm,
 		default_uflags, strict_host;
 extern struct dcc_t	*dcc;
-extern tcl_timer_t	*timer, *utimer;
 
 int	    protect_readonly = 0;	/* turn on/off readonly protection */
 char	    whois_fields[1025] = "";	/* fields to display in a .whois */

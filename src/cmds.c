@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.76 2001/10/23 08:47:51 stdarg Exp $
+ * $Id: cmds.c,v 1.77 2001/10/26 22:22:22 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -32,7 +32,6 @@
 extern struct chanset_t	*chanset;
 extern struct dcc_t	*dcc;
 extern struct userrec	*userlist;
-extern tcl_timer_t	*timer, *utimer;
 extern int		 dcc_total, remote_boots, backgrd, make_userfile,
 			 do_restart, conmask, require_p, must_be_owner,
 			 strict_host, term_z, con_chan;
@@ -882,13 +881,11 @@ static int cmd_handle(struct userrec *u, int idx, char *par)
   char oldhandle[HANDLEN + 1], newhandle[HANDLEN + 1];
   int i;
 
-  putlog(LOG_MISC, "*", "boogaboo!");
-  return(0);
   strncpyz(newhandle, newsplit(&par), sizeof newhandle);
 
   if (!newhandle[0]) {
     dprintf(idx, "Usage: handle <new-handle>\n");
-    return;
+    return(0);
   }
   for (i = 0; i < strlen(newhandle); i++)
     if ((newhandle[i] <= 32) || (newhandle[i] >= 127) || (newhandle[i] == '@'))
@@ -904,11 +901,11 @@ static int cmd_handle(struct userrec *u, int idx, char *par)
   } else {
     strncpyz(oldhandle, dcc[idx].nick, sizeof oldhandle);
     if (change_handle(u, newhandle)) {
-      putlog(LOG_CMDS, "*", "#%s# handle %s", oldhandle, newhandle);
       dprintf(idx, "Okay, changed.\n");
     } else
       dprintf(idx, "Failed.\n");
   }
+  return(1);
 }
 
 static void cmd_chpass(struct userrec *u, int idx, char *par)
@@ -1248,12 +1245,6 @@ static void cmd_trace(struct userrec *u, int idx, char *par)
   simple_sprintf(x, "%d:%s@%s", dcc[idx].sock, dcc[idx].nick, botnetnick);
   simple_sprintf(y, ":%d", now);
   botnet_send_trace(i, x, par, y);
-}
-
-static void cmd_binds(struct userrec *u, int idx, char *par)
-{
-  putlog(LOG_CMDS, "*", "#%s# binds %s", dcc[idx].nick, par);
-  tell_binds(idx, par);
 }
 
 static void cmd_banner(struct userrec *u, int idx, char *par)
@@ -2774,7 +2765,6 @@ cmd_t C_dcc[] =
   {"back",		"",	(Function) cmd_back,		NULL},
   {"backup",		"m|m",	(Function) cmd_backup,		NULL},
   {"banner",		"t",	(Function) cmd_banner,		NULL},
-  {"binds",		"m",	(Function) cmd_binds,		NULL},
   {"boot",		"t",	(Function) cmd_boot,		NULL},
   {"botattr",		"t",	(Function) cmd_botattr,		NULL},
   {"botinfo",		"t",	(Function) cmd_botinfo,		NULL},

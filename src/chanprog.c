@@ -1,11 +1,10 @@
 /*
  * chanprog.c -- handles:
  *   rmspace()
- *   timers, utimers
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.35 2001/10/19 01:55:04 tothwolf Exp $
+ * $Id: chanprog.c,v 1.36 2001/10/26 22:22:22 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -49,10 +48,6 @@ extern int		 backgrd, term_z, con_chan, cache_hit, cache_miss,
 			 protect_readonly, make_userfile, noshare,
 			 ignore_time;
 
-tcl_timer_t	 *timer = NULL;		/* Minutely timer		*/
-tcl_timer_t	 *utimer = NULL;	/* Secondly timer		*/
-unsigned long	  timer_id = 1;		/* Next timer of any sort will
-					   have this number		*/
 struct chanset_t *chanset = NULL;	/* Channel list			*/
 char		  admin[121] = "";	/* Admin info			*/
 char		  origbotname[NICKLEN + 1];

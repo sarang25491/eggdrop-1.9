@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.82 2001/10/22 01:49:24 stdarg Exp $
+ * $Id: modules.c,v 1.83 2001/10/26 22:22:22 stdarg Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -152,13 +152,13 @@ Function global_table[] =
   (Function) module_depend,
   (Function) module_undepend,
   /* 8 - 11 */
-  (Function) add_bind_table,
-  (Function) del_bind_table,
-  (Function) find_bind_table,
-  (Function) check_tcl_bind,
+  (Function) 0,
+  (Function) 0,
+  (Function) 0,
+  (Function) 0,
   /* 12 - 15 */
-  (Function) add_builtins,
-  (Function) rem_builtins,
+  (Function) 0,
+  (Function) 0,
   (Function) add_tcl_commands,
   (Function) rem_tcl_commands,
   /* 16 - 19 */

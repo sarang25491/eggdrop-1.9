@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.55 2001/10/24 10:08:03 stdarg Exp $
+ * $Id: tclhash.c,v 1.56 2001/10/26 22:22:22 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -65,9 +65,6 @@ static script_str_t tclhash_script_strings[] = {
 };
 
 p_tcl_bind_list		bind_table_list;
-
-static int builtin_5int();
-static int builtin_charidx();
 
 /* Delete trigger/command.
  */
@@ -183,11 +180,11 @@ void binds_init(void)
 	BT_bcst = add_bind_table2("bcst", 3, "sis", MATCH_MASK, BIND_STACKABLE);
 	BT_note = add_bind_table2("note", 3 , "sss", MATCH_EXACT, 0);
 	BT_bot = add_bind_table2("bot", 3, "sss", MATCH_EXACT, 0);
-	BT_chon = add_bind_table2("chon", 2, "si", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE | BIND_WANTRET);
-	BT_chof = add_bind_table2("chof", 2, "si", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE | BIND_WANTRET);
+	BT_chon = add_bind_table2("chon", 2, "si", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
+	BT_chof = add_bind_table2("chof", 2, "si", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
 	BT_chpt = add_bind_table2("chpt", 4, "ssii", MATCH_MASK, BIND_STACKABLE);
 	BT_chjn = add_bind_table2("chjn", 6, "ssisis", MATCH_MASK, BIND_STACKABLE);
-	BT_filt = add_bind_table2("filt", 2, "is", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE | BIND_WANTRET | BIND_ALTER_ARGS);
+	BT_filt = add_bind_table2("filt", 2, "is", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
 }
 
 void kill_bind2(void)
@@ -580,16 +577,6 @@ int check_validity(char *nme, Function func)
   return 1;
 }
 
-static int builtin_5int STDVAR
-{
-  Function F = (Function) cd;
-
-  BADARGS(6, 6, " min hrs dom mon year");
-  CHECKVALIDITY(builtin_5int);
-  F(atoi(argv[1]), atoi(argv[2]), atoi(argv[3]), atoi(argv[4]), atoi(argv[5]));
-  return TCL_OK;
-}
-
 int findanyidx(register int z)
 {
   register int j;
@@ -598,56 +585,6 @@ int findanyidx(register int z)
     if (dcc[j].sock == z)
       return j;
   return -1;
-}
-
-static int builtin_charidx STDVAR
-{
-  Function F = (Function) cd;
-  int idx;
-
-  BADARGS(3, 3, " handle idx");
-  CHECKVALIDITY(builtin_charidx);
-  idx = findanyidx(atoi(argv[2]));
-  if (idx < 0) {
-    Tcl_AppendResult(irp, "invalid idx", NULL);
-    return TCL_ERROR;
-  }
-  Tcl_AppendResult(irp, int_to_base10(F(argv[1], idx)), NULL);
-  return TCL_OK;
-}
-
-/* trigger (execute) a proc */
-static int trigger_bind(const char *proc, const char *param)
-{
-  int x;
-
-  /* We now try to debug the Tcl_VarEval() call below by remembering both
-   * the called proc name and it's parameters. This should render us a bit
-   * less helpless when we see context dumps.
-   */
-  {
-    const char *msg = "TCL proc: %s, param: %s";
-    char *buf;
-
-    Context;
-    buf = malloc(strlen(msg) + (proc ? strlen(proc) : 6)
-		  + (param ? strlen(param) : 6) + 1);
-    sprintf(buf, msg, proc ? proc : "<null>", param ? param : "<null>");
-    ContextNote(buf);
-    free(buf);
-  }
-  x = Tcl_VarEval(interp, proc, param, NULL);
-  Context;
-  if (x == TCL_ERROR) {
-    if (strlen(interp->result) > 400)
-      interp->result[400] = 0;
-    putlog(LOG_MISC, "*", "TCL error [%s]: %s", proc, interp->result);
-    return BIND_EXECUTED;
-  } else {
-    if (!strcmp(interp->result, "break"))
-      return BIND_EXEC_BRK;
-    return (atoi(interp->result) > 0) ? BIND_EXEC_LOG : BIND_EXECUTED;
-  }
 }
 
 int check_bind(bind_table_t *table, const char *match, struct flag_record *_flags, ...)
@@ -731,137 +668,6 @@ int check_bind(bind_table_t *table, const char *match, struct flag_record *_flag
 		}
 	}
 	return(r);
-}
-
-int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
-		   struct flag_record *atr, const char *param, int match_type)
-{
-  tcl_bind_mask_t	*tm, *tm_last = NULL, *tm_p = NULL;
-  int			 cnt = 0;
-  char			*proc = NULL, *fullmatch = NULL;
-  tcl_cmd_t		*tc, *htc = NULL;
-  int			 finish = 0, atrok, x, ok;
-
-  for (tm = tl->first; tm && !finish; tm_last = tm, tm = tm->next) {
-    if (tm->flags & TBM_DELETED)
-      continue;
-    /* Find out whether this bind matches the mask or provides
-       the the requested atcributes, depending on the specified
-       requirements. */
-    switch (match_type & 0x03) {
-    case MATCH_PARTIAL:
-      ok = !strncasecmp(match, tm->mask, strlen(match));
-      break;
-    case MATCH_EXACT:
-      ok = !strcasecmp(match, tm->mask);
-      break;
-    case MATCH_CASE:
-      ok = !strcmp(match, tm->mask);
-      break;
-    case MATCH_MASK:
-      ok = wild_match_per((unsigned char *) tm->mask, (unsigned char *) match);
-      break;
-    default:
-      ok = 0;
-    }
-    if (!ok)
-      continue;	/* This bind does not match. */
-
-    if (match_type & BIND_STACKABLE) {
-      /* Could be multiple commands/triggers. */
-      for (tc = tm->first; tc; tc = tc->next) {
-	if (match_type & BIND_USE_ATTR) {
-	  /* Check whether the provided flags suffice for
-	     this command/trigger. */
-	  if (match_type & BIND_HAS_BUILTINS)
-	    atrok = flagrec_ok(&tc->flags, atr);
-	  else
-	    atrok = flagrec_eq(&tc->flags, atr);
-	} else
-	  atrok = 1;
-
-	if (atrok) {
-	  cnt++;
-	  tc->hits++;
-	  tm_p = tm_last;
-	  Tcl_SetVar(interp, "lastbind", (char *) tm->mask, TCL_GLOBAL_ONLY);
-	  x = trigger_bind(tc->func_name, param);
-	  if (match_type & BIND_ALTER_ARGS) {
-	    if (interp->result == NULL || !interp->result[0])
-	      return x;
-	    /* This is such an amazingly ugly hack: */
-	    Tcl_SetVar(interp, "_a", (char *) interp->result, 0);
-	    /* Note: If someone knows what the above tries to
-	       achieve, please tell me! (Fabian, 2000-10-14) */
-	  } else if ((match_type & BIND_WANTRET) && x == BIND_EXEC_LOG)
-	    return x;
-	}
-      }
-
-      /* Apart from MATCH_MASK, currently no match type allows us to match
-         against more than one bind. So if this isn't MATCH_MASK then exit
-	 the loop now. */
-      /* This will suffice until we have stackable partials. */
-      if ((match_type & 3) != MATCH_MASK)
-	finish = 1;
-    } else {
-      /* Search for valid entry. */
-      for (tc = tm->first; tc; tc = tc->next)
-	if (!(tc->attributes & TC_DELETED))
-	  break;
-      if (tc) {
-        /* Check whether the provided flags suffice for this
-           command/trigger. */
-        if (match_type & BIND_USE_ATTR) {
-	  if (match_type & BIND_HAS_BUILTINS)
-	    atrok = flagrec_ok(&tc->flags, atr);
-	  else
-	    atrok = flagrec_eq(&tc->flags, atr);
-	} else
-	  atrok = 1;
-
-	if (atrok) {
-	  cnt++;
-	  /* Remember information about this bind and its only
-	     command/trigger. */
-	  proc = tc->func_name;
-	  fullmatch = tm->mask;
-	  htc = tc;
-	  tm_p = tm_last;
-
-	  /* Either this is a non-partial match, which means we
-	     only want to execute _one_ bind ... */
-	  if ((match_type & 3) != MATCH_PARTIAL ||
-	      /* ... or this is happens to be an exact match. */
-	      !strcasecmp(match, tm->mask))
-	    cnt = finish = 1;
-	}
-      }
-    }
-  }
-
-  if (!cnt)
-    return BIND_NOMATCH;
-  if ((match_type & 0x03) == MATCH_MASK ||
-      (match_type & 0x03) == MATCH_CASE)
-    return BIND_EXECUTED;
-
-  /* Now that we have found at least one bind, we can update the
-     preferred entries information. */
-  if (htc)
-    htc->hits++;
-  if (tm_p) {
-    /* Move mask to front of bind's mask list. */
-    tm = tm_p->next;
-    tm_p->next = tm->next;		/* Unlink mask from list.	*/
-    tm->next = tl->first;		/* Readd mask to front of list.	*/
-    tl->first = tm;
-  }
-
-  if (cnt > 1)
-    return BIND_AMBIGUOUS;
-  Tcl_SetVar(interp, "lastbind", (char *) fullmatch, TCL_GLOBAL_ONLY);
-  return trigger_bind(proc, param);
 }
 
 /* Check for tcl-bound dcc command, return 1 if found
@@ -1003,78 +809,6 @@ void check_tcl_away(const char *bot, int idx, const char *msg)
   check_bind(BT_away, bot, NULL, bot, idx, msg);
 }
 
-void tell_binds(int idx, char *par)
-{
-  tcl_bind_list_t	*tl, *tl_kind;
-  tcl_bind_mask_t	*tm;
-  int			 fnd = 0, showall = 0, patmatc = 0;
-  tcl_cmd_t		*tc;
-  char			*name, *proc, *s, flg[100];
-
-  if (par[0])
-    name = newsplit(&par);
-  else
-    name = NULL;
-  if (par[0])
-    s = newsplit(&par);
-  else
-    s = NULL;
-
-  if (name)
-    tl_kind = find_bind_table(name);
-  else
-    tl_kind = NULL;
-
-  if ((name && name[0] && !strcasecmp(name, "all")) || (s && s[0] && !strcasecmp(s, "all")))
-    showall = 1;
-  if (tl_kind == NULL && name && name[0] && strcasecmp(name, "all"))
-    patmatc = 1;
-
-  dprintf(idx, _("Command bindings:\n"));
-  dprintf(idx, "  TYPE FLGS     COMMAND              HITS BINDING (TCL)\n");
-
-  for (tl = tl_kind ? tl_kind : bind_table_list; tl;
-       tl = tl_kind ? 0 : tl->next) {
-    if (tl->flags & HT_DELETED)
-      continue;
-    for (tm = tl->first; tm; tm = tm->next) {
-      if (tm->flags & TBM_DELETED)
-	continue;
-      for (tc = tm->first; tc; tc = tc->next) {
-	if (tc->attributes & TC_DELETED)
-	  continue;
-	proc = tc->func_name;
-	build_flags(flg, &(tc->flags), NULL);
-	if (showall || proc[0] != '*') {
-	  int	ok = 0;
-
-          if (patmatc == 1) {
-            if (wild_match(name, tl->name) ||
-                wild_match(name, tm->mask) ||
-                wild_match(name, tc->func_name))
-	      ok = 1;
-          } else
-	    ok = 1;
-
-	  if (ok) {
-            dprintf(idx, "  %-4s %-8s %-20s %4d %s\n", tl->name, flg, tm->mask,
-		    tc->hits, tc->func_name);
-            fnd = 1;
-          }
-        }
-      }
-    }
-  }
-  if (!fnd) {
-    if (patmatc)
-      dprintf(idx, "No command bindings found that match %s\n", name);
-    else if (tl_kind)
-      dprintf(idx, "No command bindings for type: %s.\n", name);
-    else
-      dprintf(idx, "No command bindings exist.\n");
-  }
-}
-
 void add_builtins2(bind_table_t *table, cmd_t *cmds)
 {
 	char name[50];
@@ -1085,23 +819,6 @@ void add_builtins2(bind_table_t *table, cmd_t *cmds)
 	}
 }
 
-/* Bring the default msg/dcc/fil commands into the Tcl interpreter */
-void add_builtins(tcl_bind_list_t *tl, cmd_t *cc)
-{
-  int	k, i;
-  char	p[1024], *l;
-
-  for (i = 0; cc[i].name; i++) {
-    snprintf(p, sizeof p, "*%s:%s", tl->name,
-		   cc[i].funcname ? cc[i].funcname : cc[i].name);
-    l = (char *) malloc(Tcl_ScanElement(p, &k));
-    Tcl_ConvertElement(p, l, k | TCL_DONT_USE_BRACES);
-    Tcl_CreateCommand(interp, p, tl->func, (ClientData) cc[i].func, NULL);
-    bind_bind_entry(tl, cc[i].flags, cc[i].name, l);
-    free(l);
-  }
-}
-
 void rem_builtins2(bind_table_t *table, cmd_t *cmds)
 {
 	char name[50];
@@ -1110,21 +827,4 @@ void rem_builtins2(bind_table_t *table, cmd_t *cmds)
 		sprintf(name, "*%s:%s", table->name, cmds->funcname ? cmds->funcname : cmds->name);
 		del_bind_entry(table, cmds->flags, cmds->name, name);
 	}
-}
-
-/* Remove the default msg/dcc/fil commands from the Tcl interpreter */
-void rem_builtins(tcl_bind_list_t *table, cmd_t *cc)
-{
-  int	k, i;
-  char	p[1024], *l;
-
-  for (i = 0; cc[i].name; i++) {
-    snprintf(p, sizeof p, "*%s:%s", table->name,
-		   cc[i].funcname ? cc[i].funcname : cc[i].name);
-    l = (char *) malloc(Tcl_ScanElement(p, &k));
-    Tcl_ConvertElement(p, l, k | TCL_DONT_USE_BRACES);
-    Tcl_DeleteCommand(interp, p);
-    unbind_bind_entry(table, cc[i].flags, cc[i].name, l);
-    free(l);
-  }
 }

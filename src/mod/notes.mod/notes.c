@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.42 2001/10/21 03:44:31 stdarg Exp $
+ * $Id: notes.c,v 1.43 2001/10/26 22:22:23 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1140,19 +1140,19 @@ static tcl_cmds notes_tcls[] =
 
 static int notes_irc_setup(char *mod)
 {
-  p_tcl_bind_list H_temp;
+  bind_table_t *table;
 
-  if ((H_temp = find_bind_table("join")))
-    add_builtins(H_temp, notes_join);
+  if ((table = find_bind_table2("join")))
+    add_builtins2(table, notes_join);
   return 0;
 }
 
 static int notes_server_setup(char *mod)
 {
-  p_tcl_bind_list H_temp;
+  bind_table_t *table;
 
-  if ((H_temp = find_bind_table("msg")))
-    add_builtins(H_temp, notes_msgs);
+  if ((table = find_bind_table2("msg")))
+    add_builtins2(table, notes_msgs);
   return 0;
 }
 
@@ -1165,15 +1165,15 @@ static cmd_t notes_load[] =
 
 static char *notes_close()
 {
-  p_tcl_bind_list H_temp;
+  bind_table_t *table;
 
   rem_tcl_ints(notes_ints);
   rem_tcl_strings(notes_strings);
   rem_tcl_commands(notes_tcls);
-  if ((H_temp = find_bind_table("msg")))
-    rem_builtins(H_temp, notes_msgs);
-  if ((H_temp = find_bind_table("join")))
-    rem_builtins(H_temp, notes_join);
+  if ((table = find_bind_table2("msg")))
+    rem_builtins2(table, notes_msgs);
+  if ((table = find_bind_table2("join")))
+    rem_builtins2(table, notes_join);
   if (BT_dcc) rem_builtins2(BT_dcc, notes_cmds);
   if (BT_chon) rem_builtins2(BT_chon, notes_chon);
   if (BT_away) rem_builtins2(BT_away, notes_away);

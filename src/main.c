@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.94 2001/10/21 06:02:48 stdarg Exp $
+ * $Id: main.c,v 1.95 2001/10/26 22:22:22 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -74,8 +74,6 @@ extern struct dcc_t	*dcc;
 extern struct userrec	*userlist;
 extern struct chanset_t	*chanset;
 extern Tcl_Interp	*interp;
-extern tcl_timer_t	*timer,
-			*utimer;
 extern jmp_buf		 alarmret;
 
 

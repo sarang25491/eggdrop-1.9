@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.74 2001/10/22 01:49:25 stdarg Exp $
+ * $Id: module.h,v 1.75 2001/10/26 22:22:22 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -75,10 +75,10 @@
 #define module_depend ((Function *(*)(char *,char *,int,int))global[6])
 #define module_undepend ((int(*)(char *))global[7])
 /* 8 - 11 */
-#define add_bind_table ((p_tcl_bind_list(*)(const char *,int,Function))global[8])
-#define del_bind_table ((void (*) (p_tcl_bind_list))global[9])
-#define find_bind_table ((p_tcl_bind_list(*)(const char *))global[10])
-#define check_tcl_bind ((int (*) (p_tcl_bind_list,const char *,struct flag_record *,const char *, int))global[11])
+/* #define add_bind_table ((p_tcl_bind_list(*)(const char *,int,Function))global[8]) */
+/* #define del_bind_table ((void (*) (p_tcl_bind_list))global[9]) */
+/* #define find_bind_table ((p_tcl_bind_list(*)(const char *))global[10]) */
+/* #define check_tcl_bind ((int (*) (p_tcl_bind_list,const char *,struct flag_record *,const char *, int))global[11]) */
 /* 12 - 15 */
 #define add_builtins ((int (*) (p_tcl_bind_list, cmd_t *))global[12])
 #define rem_builtins ((int (*) (p_tcl_bind_list, cmd_t *))global[13])

@@ -1,7 +1,7 @@
 /*
  * tclhash.h
  *
- * $Id: tclhash.h,v 1.24 2001/10/21 03:44:30 stdarg Exp $
+ * $Id: tclhash.h,v 1.25 2001/10/26 22:22:22 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -140,7 +140,6 @@ void del_bind_table(tcl_bind_list_t *tl_which);
 
 tcl_bind_list_t *find_bind_table(const char *nme);
 
-int check_tcl_bind(tcl_bind_list_t *, const char *, struct flag_record *, const char *, int);
 void check_tcl_dcc(const char *, int, const char *);
 void check_tcl_chjn(const char *, const char *, int, char, int, const char *);
 void check_tcl_chpt(const char *, const char *, int, int);

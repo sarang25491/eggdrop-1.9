@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.58 2001/10/19 01:55:07 tothwolf Exp $
+ * $Id: filesys.c,v 1.59 2001/10/26 22:22:22 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -57,8 +57,7 @@
 
 #define start filesys_LTX_start
 
-static p_tcl_bind_list H_fil;
-static bind_table_t *BT_dcc, *BT_load;
+static bind_table_t *BT_dcc, *BT_load, *BT_file;
 static Function *transfer_funcs = NULL;
 
 /* fcntl.h sets this :/ */
@@ -135,31 +134,16 @@ static struct user_entry_type USERENTRY_DCCDIR =
 /* Check for tcl-bound file command, return 1 if found
  * fil: proc-name <handle> <dcc-handle> <args...>
  */
-static int check_tcl_fil(char *cmd, int idx, char *args)
+static int check_tcl_fil(char *cmd, int idx, char *text)
 {
-  int x;
-  char s[5];
   struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  int x;
 
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.file->chat->con_chan);
-  sprintf(s, "%ld", dcc[idx].sock);
-  Tcl_SetVar(interp, "_fil1", dcc[idx].nick, 0);
-  Tcl_SetVar(interp, "_fil2", s, 0);
-  Tcl_SetVar(interp, "_fil3", args, 0);
-  x = check_tcl_bind(H_fil, cmd, &fr, " $_fil1 $_fil2 $_fil3",
-		     MATCH_PARTIAL | BIND_USE_ATTR | BIND_HAS_BUILTINS);
-  if (x == BIND_AMBIGUOUS) {
-    dprintf(idx, "Ambigious command.\n");
-    return 0;
+  x = check_bind(BT_file, cmd, &fr, dcc[idx].nick, dcc[idx].sock, text);
+  if (x & BIND_RET_LOG) {
+    putlog(LOG_FILES, "*", "#%s# files: %s %s", dcc[idx].nick, cmd, text);
   }
-  if (x == BIND_NOMATCH) {
-    dprintf(idx, "What?  You need 'help'\n");
-    return 0;
-  }
-  if (x == BIND_EXEC_BRK)
-    return 1;
-  if (x == BIND_EXEC_LOG)
-    putlog(LOG_FILES, "*", "#%s# files: %s %s", dcc[idx].nick, cmd, args);
   return 0;
 }
 
@@ -493,26 +477,6 @@ static int do_dcc_send(int idx, char *dir, char *fn, char *nick, int resend)
   free_null(s);
   free_null(s1);
   return x;
-}
-
-static int builtin_fil STDVAR
-{
-  int idx;
-  Function F = (Function) cd;
-
-  BADARGS(4, 4, " hand idx param");
-  idx = findanyidx(atoi(argv[2]));
-  if (idx < 0 && dcc[idx].type != &DCC_FILES) {
-    Tcl_AppendResult(irp, "invalid idx", NULL);
-    return TCL_ERROR;
-  }
-  if (F == CMD_LEAVE) {
-    Tcl_AppendResult(irp, "break", NULL);
-    return TCL_OK;
-  }
-  (F)(idx, argv[3]);
-  Tcl_ResetResult(irp);
-  return TCL_OK;
 }
 
 static void tout_dcc_files_pass(int i)
@@ -930,11 +894,10 @@ static char *filesys_close()
   rem_tcl_ints(myints);
   if (BT_dcc) rem_builtins2(BT_dcc, mydcc);
   if (BT_load) rem_builtins2(BT_load, myload);
-  rem_builtins(H_fil, myfiles);
   rem_help_reference("filesys.help");
   if (BT_ctcp = find_bind_table2("ctcp"))
     rem_builtins2(BT_ctcp, myctcp);
-  del_bind_table(H_fil);
+  del_bind_table2(BT_file);
   del_entry_type(&USERENTRY_DCCDIR);
   module_undepend(MODULE_NAME);
   return NULL;
@@ -954,8 +917,6 @@ static Function filesys_table[] =
   (Function) add_file,
   (Function) incr_file_gots,
   (Function) is_valid,
-  /* 8 - 11 */
-  (Function) & H_fil,
 };
 
 char *start(Function * global_funcs)
@@ -974,12 +935,12 @@ char *start(Function * global_funcs)
   add_tcl_commands(mytcls);
   add_tcl_strings(mystrings);
   add_tcl_ints(myints);
-  H_fil = add_bind_table("fil", 0, builtin_fil);
+  BT_file = add_bind_table2("file", 3, "sis", MATCH_MASK, BIND_STACKABLE);
   BT_dcc = find_bind_table2("dcc");
   BT_load = find_bind_table2("load");
   if (BT_dcc) add_builtins2(BT_dcc, mydcc);
   if (BT_load) add_builtins2(BT_load, myload);
-  add_builtins(H_fil, myfiles);
+  add_builtins2(BT_file, myfiles);
   add_help_reference("filesys.help");
   init_server_ctcps(0);
   memcpy(&USERENTRY_DCCDIR, &USERENTRY_INFO,
