@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: egg_server_api.h,v 1.3 2004/06/07 23:14:48 stdarg Exp $
+ * $Id: egg_server_api.h,v 1.4 2004/10/01 16:13:31 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_SERVER_API_H_
@@ -46,7 +46,6 @@ typedef struct {
 	int len;
 	int next_id;
 } queue_t;
-
 
 /* API structure. */
 typedef struct {

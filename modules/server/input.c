@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: input.c,v 1.35 2004/09/26 09:42:09 stdarg Exp $";
+static const char rcsid[] = "$Id: input.c,v 1.36 2004/10/01 16:13:31 stdarg Exp $";
 #endif
 
 #include "server.h"
@@ -199,6 +199,8 @@ static int got376(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 		str_redup(&current_server.whoprefix, "@+");
 	}
 
+	/* Join all channels. */
+	schan_on_connect();
 	return(0);
 }
 

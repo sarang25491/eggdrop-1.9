@@ -17,6 +17,17 @@ void server_schan_destroy()
 	schan_save(server_config.chanfile);
 }
 
+/* We just finished connecting (got motd), join our channels. */
+void schan_on_connect()
+{
+	schan_t *chan;
+
+	for (chan = schan_head; chan; chan = chan->next) {
+		if (chan->key && strlen(chan->key)) printserv(SERVER_NORMAL, "JOIN %s %s", chan->name, chan->key);
+		else printserv(SERVER_NORMAL, "JOIN %s", chan->name);
+	}
+}
+
 /* Append a new channel. */
 static schan_t *schan_append(const char *chan_name, xml_node_t *settings)
 {
@@ -109,7 +120,8 @@ int schan_load(const char *fname)
 {
 	xml_node_t *root = xml_parse_file(fname);
 	xml_node_t *chan_node, *settings;
-	char *name;
+	schan_t *chan;
+	char *name, *key;
 
 	if (!root) {
 		putlog(LOG_MISC, "*", "Could not load channel file '%s': %s", fname, xml_last_error());
@@ -118,10 +130,11 @@ int schan_load(const char *fname)
 
 	chan_node = xml_node_lookup(root, 0, "channel", 0, 0);
 	for (; chan_node; chan_node = chan_node->next_sibling) {
-		xml_node_get_vars(chan_node, "sn", "name", &name, "settings", &settings);
+		xml_node_get_vars(chan_node, "ssn", "name", &name, "key", &key, "settings", &settings);
 		if (!name) continue;
 		if (settings) xml_node_unlink(settings);
-		schan_append(name, settings);
+		chan = schan_append(name, settings);
+		if (chan) str_redup(&chan->key, key);
 	}
 	return(0);
 }
@@ -138,6 +151,7 @@ int schan_save(const char *fname)
 		chan_node = xml_node_new();
 		chan_node->name = strdup("channel");
 		xml_node_set_str(chan->name, chan_node, "name", 0, 0);
+		xml_node_set_str(chan->key, chan_node, "key", 0, 0);
 		xml_node_append(chan_node, chan->settings);
 		xml_node_append(root, chan_node);
 	}

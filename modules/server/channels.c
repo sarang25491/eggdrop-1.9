@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.32 2004/09/26 09:42:09 stdarg Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.33 2004/10/01 16:13:31 stdarg Exp $";
  #endif
 
 #include "server.h"
@@ -71,8 +71,9 @@ static inline void free_member(channel_member_t *m)
 }
 
 /* Free online data like nicklist, banmasks, etc.. */
-static void free_channel_online(channel_t *chan)
+static void free_channel(channel_t *chan)
 {
+	channel_t *chanptr;
 	channel_member_t *m, *next_mem;
 
 	for (m = chan->member_head; m; m = next_mem) {
@@ -81,31 +82,28 @@ static void free_channel_online(channel_t *chan)
 		free_member(m);
 	}
 
+	if (chan->name) free(chan->name);
 	if (chan->topic) free(chan->topic);
 	if (chan->topic_nick) free(chan->topic_nick);
 	if (chan->key) free(chan->key);
-
 	clear_masklists(chan);
+	if (chan->args) free(chan->args);
 
-	free(chan->args);
-	chan->args = NULL;
-	chan->nargs = 0;
-}
-
-/* Free offline data like settings, etc. */
-static void free_channel_offline(channel_t *chan)
-{
-}
-
-/* Free online related settings for all cahnnels */
-static void free_all_online_stuff()
-{
-	channel_t *chan;
-
-	/* Clear out channel list. */
-	for (chan = channel_head; chan; chan = chan->next) {
-		free_channel_online(chan);
+	/* Unlink. */
+	if (channel_head == chan) channel_head = chan->next;
+	else for (chanptr = channel_head; chanptr && chanptr->next; chanptr = chanptr->next) {
+		if (chanptr->next == chan) {
+			chanptr->next = chan->next;
+			break;
+		}
 	}
+}
+
+/* Reset everything when we disconnect from the server. */
+void channel_reset()
+{
+	/* Clear out channel list. */
+	while (channel_head) free_channel(channel_head);
 
 	/* And the uhost cache. */
 	hash_table_walk(uhost_cache_ht, uhost_cache_delete, NULL);
@@ -319,18 +317,15 @@ void channel_on_leave(const char *chan_name, const char *nick, const char *uhost
 
 	bind_check(BT_leave, u ? &u->settings[0].flags : NULL, chan_name, nick, uhost, u, chan_name);
 
-	if (match_my_nick(nick)) free_channel_online(chan);
+	if (match_my_nick(nick)) free_channel(chan);
 }
 
 void channel_on_quit(const char *nick, const char *uhost, user_t *u)
 {
 	channel_t *chan;
 
-	if (match_my_nick(nick)) free_all_online_stuff();
-	else {
-		for (chan = channel_head; chan; chan = chan->next) {
-			channel_on_leave(chan->name, nick, uhost, u);
-		}
+	for (chan = channel_head; chan; chan = chan->next) {
+		channel_on_leave(chan->name, nick, uhost, u);
 	}
 }
 
