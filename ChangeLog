@@ -1,3 +1,10 @@
+2002-05-13 08:38  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/script.c:
+
+	
+	* Fixed some stuff I messed up while moving around code.  
+
 2002-05-12 15:35  Federico Mennite <ite@techmonkeys.org>
 
 	* configure.ac, acconfig/acinclude.m4, src/bg.c, src/main.c,
