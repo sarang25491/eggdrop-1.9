@@ -1,3 +1,9 @@
+2003-03-24 02:11  stdarg <stdarg@techmonkeys.org>
+
+	* modules/server/output.c, modules/server/scriptcmds.c, src/main.c:
+
+	[no log message] 
+
 2003-03-11 03:53  Will Buckner <wcc@techmonkeys.org>
 
 	* doc/UPDATES1.6, modules/channels/channels.c,
