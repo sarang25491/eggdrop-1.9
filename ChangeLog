@@ -1,3 +1,10 @@
+2003-03-25 19:36  stdarg <stdarg@techmonkeys.org>
+
+	* doc/SCRIPTING-COMMANDS:
+
+	
+	* Forgot net_listen 
+
 2003-03-25 19:20  stdarg <stdarg@techmonkeys.org>
 
 	* acconfig/acinclude.m4, doc/SCRIPTING-COMMANDS,
