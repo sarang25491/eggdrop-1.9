@@ -1,3 +1,12 @@
+2002-04-28 07:37  stdarg <stdarg@techmonkeys.org>
+
+	* modules/perlscript/perlscript.c, modules/tclscript/tclscript.c,
+	src/dcc.c, src/tcl.c, src/tclmisc.c:
+
+	
+	* Converted some more variables 
+	* Added null checking in tcl and perl modules for string conversions 
+
 2002-04-28 06:15  Federico Mennite <ite@techmonkeys.org>
 
 	* src/: tcl.c, tclmisc.c:
