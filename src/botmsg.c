@@ -26,7 +26,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: botmsg.c,v 1.35 2002/05/12 06:12:07 stdarg Exp $";
+static const char rcsid[] = "$Id: botmsg.c,v 1.36 2002/05/12 06:24:46 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -71,8 +71,6 @@ void tandout_but EGG_VARARGS_DEF(int, arg1)
   va_end(va);
   if (len < 0 || len >= sizeof(s)) len = sizeof(s)-1;
   s[len] = 0;
-
-  len = strlen(s);
 
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_BOT) && (i != x) &&
