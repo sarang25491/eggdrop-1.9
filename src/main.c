@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.164 2003/12/20 00:34:37 stdarg Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.165 2004/01/11 12:16:08 wcc Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -83,7 +83,7 @@ int make_userfile = 0;	/* Start bot in make-userfile mode? */
 char configfile[121] = "config.xml";	/* Name of the config file */
 char helpdir[121] = "help/";		/* Directory of help files (if used) */
 char textdir[121] = "text/";		/* Directory for text files that get dumped */
-char pid_file[120];			/* Name of Eggdrop's pid file */
+char pid_file[512];			/* Name of Eggdrop's pid file */
 
 time_t online_since;		/* Time the bot was started */
 time_t now;			/* Current time */
@@ -418,6 +418,7 @@ int main(int argc, char **argv)
 	if (core_config.userfile) user_load(core_config.userfile);
 	core_party_init();
 	core_binds_init();
+	if (help_load(core_config.help_path, "core_commands.xml") == -1) putlog(LOG_MISC, "*", _("Help file core_commands.xml could not be opened."));
 
 	if (make_userfile) {
 		user_t *owner;

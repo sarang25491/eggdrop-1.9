@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xmlread.c,v 1.6 2003/12/17 07:52:14 wcc Exp $";
+static const char rcsid[] = "$Id: xmlread.c,v 1.7 2004/01/11 12:16:08 wcc Exp $";
 #endif
 
 #include <stdio.h>
@@ -244,9 +244,7 @@ int xml_read_node(xml_node_t *parent, char **data)
 	skip_whitespace(data);
 
 	/* If this is a closing tag like </blah> then we're done. */
-	if (**data == '/') {
-		return(2);
-	}
+	if (**data == '/') return(2);
 
 	/* Initialize the node. */
 	memset(&node, 0, sizeof(node));
@@ -275,7 +273,7 @@ int xml_read_node(xml_node_t *parent, char **data)
 			*data = end+3;
 			return(0); /* Skip past '-->' part. */
 		}
-		printf("Unsupported <! type\n");
+		printf("Unsupported <! type.\n");
 	}
 
 	/* Read in the tag name. */

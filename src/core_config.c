@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_config.c,v 1.13 2004/01/11 12:02:38 stdarg Exp $";
+static const char rcsid[] = "$Id: core_config.c,v 1.14 2004/01/11 12:16:08 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -69,6 +69,7 @@ void core_config_init(const char *fname)
 
 	core_config.botname = strdup("eggdrop");
 	core_config.userfile = strdup("users.xml");
+	core_config.help_path = strdup("help/");
 
 	core_config.logfile_suffix = strdup(".%d%b%Y");
 

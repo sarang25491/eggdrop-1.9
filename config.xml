@@ -27,7 +27,7 @@
 		<module>server</module>
 	</autoload>
 	<admin />
-	<help_path />
+	<help_path>help/</help_path>
 	<temp_path />
 	<text_path />
 </eggdrop>

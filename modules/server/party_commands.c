@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: party_commands.c,v 1.6 2003/12/23 22:23:04 stdarg Exp $";
+static const char rcsid[] = "$Id: party_commands.c,v 1.7 2004/01/11 12:16:08 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -153,7 +153,7 @@ static int party_msg(partymember_t *p, const char *nick, user_t *u, const char *
 		return(0);
 	}
 	printserv(SERVER_NORMAL, "PRIVMSG %s :%s\r\n", dest, next);
-	partymember_printf(p, _("Msg to %s: %s"), dest, next);
+	partymember_printf(p, _("Msg to %1$s: %2$s"), dest, next);
 	free(dest);
 	return(0);
 }

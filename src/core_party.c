@@ -18,25 +18,27 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.23 2004/01/11 12:02:38 stdarg Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.24 2004/01/11 12:16:08 wcc Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
 
-#include <eggdrop/eggdrop.h>
 #include <ctype.h>
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
-#include "core_config.h"
-#include "core_binds.h"
-#include "logfile.h"
 
 #ifdef HAVE_UNAME
 #  include <sys/utsname.h>
 #endif
+
+#include <eggdrop/eggdrop.h>
+
+#include "core_config.h"
+#include "core_binds.h"
+#include "logfile.h"
 
 extern char pid_file[];
 
@@ -116,12 +118,8 @@ static int party_get(partymember_t *p, const char *nick, user_t *u, const char *
 	if (!root) return(0);
 
 	config_get_str(&str, root, NULL);
-	if (str) {
-		partymember_printf(p, "Current value: '%s'", str);
-	}
-	else {
-		partymember_printf(p, _("Current value: null (unset)"));
-	}
+	if (str) partymember_printf(p, "Current value: '%s'", str);
+	else partymember_printf(p, _("Current value: null (unset)"));
 	return(0);
 }
 
@@ -189,6 +187,7 @@ static int party_status(partymember_t *p, const char *nick, user_t *u, const cha
 #ifdef HAVE_UNAME
 	if (!uname(&un)) partymember_printf(p, _("OS: %1$s %2$s"), un.sysname, un.release);
 #endif
+	partymember_printf(p, _("Help path: %s (%d help entries loaded)"), core_config.help_path, help_count());
 	partymember_printf(p, "");
 	check_bind_status(p, text);
 	return(0);
@@ -370,7 +369,7 @@ static int party_chattr(partymember_t *p, const char *nick, user_t *u, const cha
 	n = egg_get_args(text, &next, &who, &chan, &flags, NULL);
 	if (!chan || !*chan) {
 		if (who) free(who);
-		partymember_printf(p, _("Syntax: chattr <user> [channel] <+/-flags>"));
+		partymember_printf(p, _("Syntax: chattr <handle> [channel] <+/-flags>"));
 		return(0);
 	}
 	if (!flags || !*flags) {
@@ -384,9 +383,7 @@ static int party_chattr(partymember_t *p, const char *nick, user_t *u, const cha
 		flag_to_str(&flagstruct, flagstr);
 		partymember_printf(p, _("Flags for %s are now '%s'."), who, flagstr);
 	}
-	else {
-		partymember_printf(p, _("'%s' is not a valid user."), who);
-	}
+	else partymember_printf(p, _("'%s' is not a valid user."), who);
 	free(who);
 	free(flags);
 	if (chan) free(chan);
@@ -405,10 +402,31 @@ static int party_modules(partymember_t *p, const char *nick, user_t *u, const ch
 	return(0);
 }
 
+static int party_help(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	help_t *h;
+	int i;
+
+	if (!text || !*text) {
+		partymember_printf(p, _("Syntax: help <section>"));
+		return(0);
+	}
+
+	h = help_lookup_by_name(text);
+	if (!h) {
+		partymember_printf(p, _("No help found for '%s'."), text);
+		return(0);
+	}
+
+	help_print_party(p, h);
+	return(0);
+}
+
 static bind_list_t core_party_binds[] = {
 	{NULL, "join", party_join},
 	{NULL, "whisper", party_whisper},
 	{NULL, "newpass", party_newpass},
+	{NULL, "help", party_help},
 	{NULL, "part", party_part},
 	{NULL, "quit", party_quit},
 	{NULL, "who", party_who},
@@ -421,8 +439,6 @@ static bind_list_t core_party_binds[] = {
 	{"n", "die", party_die},
 	{"n", "+user", party_plus_user},
 	{"n", "-user", party_minus_user},
-	{"n", "+host", party_plus_host},
-	{"n", "-host", party_minus_host},
 	{"n", "chattr", party_chattr},
 	{"n", "modules", party_modules},
 	{"m", "+host", party_plus_host},

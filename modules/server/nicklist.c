@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: nicklist.c,v 1.7 2003/12/20 00:34:37 stdarg Exp $";
+static const char rcsid[] = "$Id: nicklist.c,v 1.8 2004/01/11 12:16:08 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -40,7 +40,7 @@ void try_next_nick()
 
 	nick = nick_get_next();
 	if (!nick) {
-		putlog(LOG_MISC, "*", _("try_next_nick: using random nick because %s."), nick_list_len ? _("none of the defined nicks are valid") : _("there are no nicks defined"));
+		putlog(LOG_MISC, "*", _("Using random nick because %s."), nick_list_len ? _("none of the defined nicks are valid") : _("there are no nicks defined"));
 		try_random_nick();
 		return;
 	}

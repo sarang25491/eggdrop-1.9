@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: eggdrop.h,v 1.26 2003/12/17 08:39:48 wcc Exp $
+ * $Id: eggdrop.h,v 1.27 2004/01/11 12:16:08 wcc Exp $
  */
 
 #ifndef _EGG_EGGDROP_H_
@@ -51,6 +51,7 @@
 #include <eggdrop/memutil.h>
 #include <eggdrop/my_socket.h>
 #include <eggdrop/partyline.h>
+#include <eggdrop/help.h>
 #include <eggdrop/sockbuf.h>
 #include <eggdrop/script.h>
 #include <eggdrop/throttle.h>

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggdrop.c,v 1.10 2003/12/17 08:39:48 wcc Exp $";
+static const char rcsid[] = "$Id: eggdrop.c,v 1.11 2004/01/11 12:16:08 wcc Exp $";
 #endif
 
 #include <stdlib.h>
@@ -33,6 +33,7 @@ int eggdrop_init()
 	egg_net_init();
 	egglog_init();
 	user_init();
+	help_init();
 	script_init();
 	partyline_init();
 	module_init();

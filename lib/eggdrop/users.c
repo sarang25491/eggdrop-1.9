@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.17 2003/12/17 07:39:14 wcc Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.18 2004/01/11 12:16:08 wcc Exp $";
 #endif
 
 #include <stdio.h>
@@ -169,9 +169,7 @@ static int save_walker(const void *key, void *dataptr, void *param)
 	user_node->name = strdup("user");
 	xml_node_set_str(u->handle, user_node, "handle", 0, 0);
 	xml_node_set_int(u->uid, user_node, "uid", 0, 0);
-	for (i = 0; i < u->nircmasks; i++) {
-		xml_node_set_str(u->ircmasks[i], user_node, "ircmask", i, 0);
-	}
+	for (i = 0; i < u->nircmasks; i++) xml_node_set_str(u->ircmasks[i], user_node, "ircmask", i, 0);
 	for (i = 0; i < u->nsettings; i++) {
 		setting = u->settings+i;
 		if (setting->chan) xml_node_set_str(setting->chan, user_node, "setting", i, "chan", 0, 0);
