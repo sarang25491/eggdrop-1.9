@@ -30,7 +30,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.126 2002/11/03 23:16:09 stdarg Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.127 2002/12/12 04:28:22 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -115,8 +115,8 @@ int	term_z = 0;		/* Foreground: use the terminal as a party
 				   line? */
 char	configfile[121] = "eggdrop.conf"; /* Name of the config file */
 static char preload_module[121] = ""; /* Name of the module to preload */
-char	helpdir[121];		/* Directory of help files (if used) */
-char	textdir[121] = "";	/* Directory for text files that get dumped */
+char	helpdir[121] = "help/";	/* Directory of help files (if used) */
+char	textdir[121] = "text/";	/* Directory for text files that get dumped */
 time_t	online_since;		/* Unix-time that the bot loaded up */
 int	make_userfile = 0;	/* Using bot in make-userfile mode? (first
 				   user to 'hello' becomes master) */
