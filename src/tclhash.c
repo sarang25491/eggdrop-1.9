@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.32 2001/08/24 19:54:49 stdarg Exp $
+ * $Id: tclhash.c,v 1.33 2001/08/25 07:47:02 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -496,10 +496,35 @@ static int add_bind_entry(bind_table_t *table, const char *flags, const char *ma
 		table->chains = chain;
 	}
 
-	/* Search for specific entry. */
-	for (prev = NULL, entry = chain->entries; chain; prev = entry, entry = entry->next) {
-		if (!strcmp(entry->function_name, function_name)) break;
+	/* If it's stackable */
+	if (chain->flags & BIND_STACKABLE) {
+		/* Search for specific entry. */
+		for (prev = NULL, entry = chain->entries; chain; prev = entry, entry = entry->next) {
+			if (!strcmp(entry->function_name, function_name)) break;
+		}
 	}
+	else {
+		/* Nope, just use first entry. */
+		entry = chain->entries;
+	}
+
+	/* If we have an old entry, re-use it. */
+	/* Otherwise, create a new entry. */
+	if (entry) nfree(entry->function_name);
+	else {
+		entry = (bind_entry_t *)nmalloc(sizeof(*entry));
+		entry->next = chain->entries;
+	}
+
+	entry->function_name = my_strdup(function_name);
+	entry->callback = callback;
+	entry->client_data = client_data;
+	entry->hits = 0;
+	entry->bind_flags = 0;
+
+	entry->user_flags.match = FR_GLOBAL | FR_CHAN;
+	break_down_flags(flags, &(entry->user_flags), NULL);
+
 	return(0);
 }
 
@@ -826,6 +851,39 @@ static int trigger_bind(const char *proc, const char *param)
       return BIND_EXEC_BRK;
     return (atoi(interp->result) > 0) ? BIND_EXEC_LOG : BIND_EXECUTED;
   }
+}
+
+int check_bind(bind_table_t *table, const char *match, struct flag_record *flags, ...)
+{
+	int *arglist;
+	bind_chain_t *chain;
+	bind_entry_t *entry;
+	int len, cmp;
+
+	/* Experimental way to not use va_list... */
+	arglist = (int *)&flags;
+	arglist++;
+
+	/* Save the length for strncmp */
+	len = strlen(match);
+
+	/* For each chain in the table... */
+	for (chain = table->chains; chain; chain = chain->next) {
+		/* Test to see if it matches. */
+		if (table->flags & MATCH_PARTIAL) {
+			if (table->flags & MATCH_CASE) cmp = strncmp(match, chain->mask, len);
+			else cmp = egg_strncasecmp(match, chain->mask, len);
+		}
+		else if (table->flags & MATCH_MASK) {
+			cmp = wild_match_per((unsigned char *)match, (unsigned char *)chain->mask);
+		}
+		else {
+			if (table->flags & MATCH_CASE) cmp = strcmp(match, chain->mask);
+			else cmp = egg_strcasecmp(match, chain->mask);
+		}
+		if (cmp) continue; /* Doesn't match. */
+		/* Going to bed now... */
+	}
 }
 
 int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
