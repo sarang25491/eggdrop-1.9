@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.1 2001/10/27 16:34:48 ite Exp $
+ * $Id: channels.c,v 1.2 2001/12/01 17:35:05 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -112,6 +112,9 @@ static void set_mode_protect(struct chanset_t *chan, char *set)
     case 'R':
       i = CHANREGON;
       break;
+    case 'M':
+      i = CHANMODR;
+      break;
     case 't':
       i = CHANTOPIC;
       break;
@@ -199,6 +202,8 @@ static void get_mode_protect(struct chanset_t *chan, char *s)
       *p++ = 'c';
     if (tst & CHANREGON)
       *p++ = 'R';
+    if (tst & CHANMODR)
+      *p++ = 'M';
     if (tst & CHANTOPIC)
       *p++ = 't';
     if (tst & CHANNOMSG)

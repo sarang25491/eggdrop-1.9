@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.2 2001/12/01 14:27:01 ite Exp $
+ * $Id: mode.c,v 1.3 2001/12/01 17:35:06 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -946,6 +946,11 @@ static int gotmode(char *from, char *ignore, char *origmsg)
 	  break;
 	case 'R':
 	  todo = CHANREGON;
+	  if (!nick && bounce_modes)
+	    reversing = 1;
+	  break;
+	case 'M':
+	  todo = CHANMODR;
 	  if (!nick && bounce_modes)
 	    reversing = 1;
 	  break;
