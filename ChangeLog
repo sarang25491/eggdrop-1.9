@@ -1,3 +1,21 @@
+2002-01-10 16:44  stdarg <stdarg@techmonkeys.org>
+
+	* testcode/sslmode.c:
+
+	
+	* Oops, forgot the ssl filter 
+
+2002-01-10 16:43  stdarg <stdarg@techmonkeys.org>
+
+	* testcode/: Makefile, chat.c, client.c, sockbuf.c, zipmode.c,
+	private/Makefile:
+
+	
+	* Initial ssl code (doesn't work perfectly) 
+	* Example of using ssl, zip, and linemode filters stacked 
+	* Makefile to generate DSA key/certificate pair (you can use RSA
+	too) 
+
 2002-01-10 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
