@@ -1,3 +1,9 @@
+2003-03-07 13:00  Tothwolf <tothwolf@techmonkeys.org>
+
+	* configure.ac:
+
+	* Fixed a small typo.  
+
 2003-03-07 12:58  Tothwolf <tothwolf@techmonkeys.org>
 
 	* Makefile.am, configure.ac:
