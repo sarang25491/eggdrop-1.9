@@ -3,7 +3,7 @@
  *   Tcl stubs for file system commands
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.28 2001/08/19 02:36:23 drummer Exp $
+ * $Id: tclmisc.c,v 1.29 2001/10/10 14:50:01 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -28,7 +28,7 @@
 #include "main.h"
 #include "modules.h"
 #include "tandem.h"
-#include "md5/md5.h"
+#include "md5.h"
 #ifdef HAVE_UNAME
 #include <sys/utsname.h>
 #endif

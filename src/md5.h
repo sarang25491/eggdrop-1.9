@@ -3,7 +3,7 @@
  * Inc. MD5 Message-Digest Algorithm.
  *
  * Written by Solar Designer <solar@openwall.com> in 2001, and placed in
- * the public domain.  See md5c.c for more information.
+ * the public domain.  See md5.c for more information.
  */
 
 #ifndef _MD5_H
@@ -23,4 +23,4 @@ extern void MD5_Init(MD5_CTX *ctx);
 extern void MD5_Update(MD5_CTX *ctx, void *data, unsigned long size);
 extern void MD5_Final(unsigned char *result, MD5_CTX *ctx);
 
-#endif
+#endif				/* !_MD5_H */

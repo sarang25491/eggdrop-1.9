@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.2 2001/10/10 10:44:03 tothwolf Exp $
+# $Id: Makefile.am,v 1.3 2001/10/10 14:50:01 tothwolf Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 bindir    = $(exec_prefix)
@@ -9,7 +9,7 @@ XLIBS = @TCL_LIBS@ @LIBS@
 TCLLIB = @TCLLIB@
 TCLLIBFN = @TCLLIBFN@
 
-SUBDIRS			= compat egglib md5 adns mod
+SUBDIRS			= compat egglib adns mod
 MAINTAINERCLEANFILES	= Makefile.in
 
 INCLUDES		= -I$(top_builddir) -I$(top_srcdir) @INCLTDL@ \
@@ -20,30 +20,49 @@ DEFS			= -DLOCALEDIR=\"\$(localedir)\" @EGG_DEBUG@ @DEFS@
 
 bin_PROGRAMS	= eggdrop
 eggdrop_SOURCES = bg.c \
-		chanprog.c \
-		dns.c \
-		net.c \
-		tclhash.c \
-		userrec.c \
+		bg.h \
 		botcmd.c \
-		cmds.c \
-		flags.c \
-		match.c \
-		misc.c \
-		rfc1459.c \
-		tclmisc.c \
-		users.c \
 		botmsg.c \
-		dcc.c \
-		main.c \
-		misc_file.c \
-		tcl.c \
-		tcluser.c \
 		botnet.c \
+		chan.h \
+		chanprog.c \
+		cmds.c \
+		cmdt.h \
+		dcc.c \
 		dccutil.c \
+		dns.c \
+		dns.h \
+		eggdrop.h \
+		flags.c \
+		flags.h \
+		main.c \
+		main.h \
+		match.c \
+		md5.c \
+		md5.h \
+		misc.c \
+		misc_file.c \
+		misc_file.h \
 		modules.c \
+		modules.h \
+		net.c \
+		patch.h \
+		proto.h \
+		rfc1459.c \
+		stat.h \
+		tandem.h \
+		tcl.c \
 		tcldcc.c \
-		userent.c
+		tclegg.h \
+		tclhash.c \
+		tclhash.h \
+		tclmisc.c \
+		tcluser.c \
+		userent.c \
+		userrec.c \
+		users.c \
+		users.h
+
 eggdrop_LDFLAGS = -no-undefined
 # FIXME: dlopened/preopened module's list is going to be dynamically defined
 #        by ./configure
@@ -65,8 +84,6 @@ eggdrop_LDADD 	= @LIBLTDL@ \
 		"-dlopen" mod/woobie.mod/woobie.la \
                 compat/libcompat.la \
                 adns/libadns.la \
-                egglib/libegg.la \
-                md5/libmd5.la \
                 egglib/libegg.la \
                 $(XLIBS)
 eggdrop_DEPENDENCIES= $(XREQS)

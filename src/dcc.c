@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.56 2001/10/10 10:44:03 tothwolf Exp $
+ * $Id: dcc.c,v 1.57 2001/10/10 14:50:01 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -32,7 +32,7 @@
 #include "tandem.h"
 
 /* Includes for botnet md5 challenge/response code <cybah> */
-#include "md5/md5.h"
+#include "md5.h"
 
 extern struct userrec	*userlist;
 extern struct chanset_t	*chanset;
