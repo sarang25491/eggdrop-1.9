@@ -3,7 +3,7 @@
  *   stuff common to chan.c and mode.c
  *   users.h needs to be loaded too
  *
- * $Id: chan.h,v 1.23 2001/08/13 19:12:28 guppy Exp $
+ * $Id: chan.h,v 1.24 2001/08/23 03:19:45 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -177,7 +177,7 @@ struct chanset_t {
 /* behavior modes for the channel */
 #define CHAN_ENFORCEBANS    0x0001	/* kick people who match channel bans */
 #define CHAN_DYNAMICBANS    0x0002	/* only activate bans when needed     */
-#define CHAN_NOUSERBANS     0x0004	/* don't let non-bots place bans      */
+#define CHAN_USERBANS     0x0004	/* don't let non-bots place bans      */
 #define CHAN_OPONJOIN       0x0008	/* op +o people as soon as they join  */
 #define CHAN_BITCH          0x0010	/* be a tightwad with ops	      */
 #define CHAN_GREET          0x0020	/* greet people with their info line  */
@@ -213,9 +213,9 @@ struct chanset_t {
 #define CHAN_ASKED_INVITED  0x0002
 
 #define CHAN_DYNAMICEXEMPTS 0x0004
-#define CHAN_NOUSEREXEMPTS  0x0008
+#define CHAN_USEREXEMPTS  0x0008
 #define CHAN_DYNAMICINVITES 0x0010
-#define CHAN_NOUSERINVITES  0x0020
+#define CHAN_USERINVITES  0x0020
 
 /* prototypes */
 memberlist *ismember(struct chanset_t *, char *);
@@ -238,7 +238,7 @@ struct chanset_t *findchan_by_dname(const char *name);
 #define channel_enforcebans(chan) (chan->status & CHAN_ENFORCEBANS)
 #define channel_revenge(chan) (chan->status & CHAN_REVENGE)
 #define channel_dynamicbans(chan) (chan->status & CHAN_DYNAMICBANS)
-#define channel_nouserbans(chan) (chan->status & CHAN_NOUSERBANS)
+#define channel_nouserbans(chan) (!(chan->status & CHAN_USERBANS))
 #define channel_protectops(chan) (chan->status & CHAN_PROTECTOPS)
 #define channel_protectfriends(chan) (chan->status & CHAN_PROTECTFRIENDS)
 #define channel_dontkickops(chan) (chan->status & CHAN_DONTKICKOPS)
@@ -249,9 +249,9 @@ struct chanset_t *findchan_by_dname(const char *name);
 #define channel_inactive(chan) (chan->status & CHAN_INACTIVE)
 #define channel_revengebot(chan) (chan->status & CHAN_REVENGEBOT)
 #define channel_dynamicexempts(chan) (chan->ircnet_status & CHAN_DYNAMICEXEMPTS)
-#define channel_nouserexempts(chan) (chan->ircnet_status & CHAN_NOUSEREXEMPTS)
+#define channel_nouserexempts(chan) (!(chan->ircnet_status & CHAN_USEREXEMPTS))
 #define channel_dynamicinvites(chan) (chan->ircnet_status & CHAN_DYNAMICINVITES)
-#define channel_nouserinvites(chan) (chan->ircnet_status & CHAN_NOUSERINVITES)
+#define channel_nouserinvites(chan) (!(chan->ircnet_status & CHAN_USERINVITES))
 #define channel_juped(chan) (chan->status & CHAN_JUPED)
 #define channel_stop_cycle(chan) (chan->status & CHAN_STOP_CYCLE)
 
