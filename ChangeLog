@@ -1,3 +1,16 @@
+2002-04-28 05:58  Federico Mennite <ite@techmonkeys.org>
+
+	* eggdrop.complete.conf, eggdrop.simple.conf:
+
+	Don't load tclscript in the traditional way since we load it through
+	command line.  
+
+2002-04-28 05:53  Federico Mennite <ite@techmonkeys.org>
+
+	* eggdrop.complete.conf, eggdrop.simple.conf, src/main.c:
+
+	Allow to preload a module from the command line.  
+
 2002-04-28 03:13  Federico Mennite <ite@techmonkeys.org>
 
 	* src/tcldcc.c:
