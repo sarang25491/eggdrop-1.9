@@ -4,7 +4,7 @@
  *	stuff needed for scripting modules
  */
 /*
- * Copyright (C) 2001, 2002, 2003 Eggheads Development Team
+ * Copyright (C) 2001, 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,7 +22,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: script.c,v 1.11 2003/02/18 10:13:17 stdarg Exp $";
+static const char rcsid[] = "$Id: script.c,v 1.12 2003/12/11 00:49:10 wcc Exp $";
 #endif
 
 #if HAVE_CONFIG_H

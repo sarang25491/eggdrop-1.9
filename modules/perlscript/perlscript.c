@@ -2,7 +2,7 @@
  * perlscript.c --
  */
 /*
- * Copyright (C) 2002, 2003 Eggheads Development Team
+ * Copyright (C) 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: perlscript.c,v 1.25 2003/06/08 03:21:23 stdarg Exp $";
+static const char rcsid[] = "$Id: perlscript.c,v 1.26 2003/12/11 00:49:11 wcc Exp $";
 #endif
 
 #include <stdio.h>

@@ -2,7 +2,7 @@
  * javascript.c --
  */
 /*
- * Copyright (C) 2002, 2003 Eggheads Development Team
+ * Copyright (C) 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: javascript.c,v 1.17 2003/03/08 09:20:35 stdarg Exp $";
+static const char rcsid[] = "$Id: javascript.c,v 1.18 2003/12/11 00:49:11 wcc Exp $";
 #endif
 
 #include <stdio.h>

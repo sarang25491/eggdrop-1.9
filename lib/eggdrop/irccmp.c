@@ -5,7 +5,7 @@
  */
 /*
  * Copyright (C) 1990 Jarkko Oikarinen
- * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
+ * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -41,7 +41,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: irccmp.c,v 1.1 2003/02/17 10:22:30 stdarg Exp $";
+static const char rcsid[] = "$Id: irccmp.c,v 1.2 2003/12/11 00:49:10 wcc Exp $";
 #endif
 
 static const unsigned char ToLowerTab[] = {

@@ -4,7 +4,7 @@
  *	prototypes for inet_ntop.c
  */
 /*
- * Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
+ * Copyright (C) 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: inet_ntop.h,v 1.5 2003/03/07 18:50:17 stdarg Exp $
+ * $Id: inet_ntop.h,v 1.6 2003/12/11 00:49:10 wcc Exp $
  */
 
 #ifndef _EGG_INET_NTOP_H

@@ -7,7 +7,7 @@
  * Written for filedb3 by Fabian Knittel <fknittel@gmx.de>
  */
 /*
- * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
+ * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: dbcompat.h,v 1.5 2003/02/15 05:04:57 wcc Exp $
+ * $Id: dbcompat.h,v 1.6 2003/12/11 00:49:10 wcc Exp $
  */
 
 #ifndef _EGG_MOD_FILESYS_DBCOMPAT_H

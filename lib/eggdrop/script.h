@@ -4,7 +4,7 @@
  *	stuff needed for scripting modules
  */
 /*
- * Copyright (C) 2001, 2002, 2003 Eggheads Development Team
+ * Copyright (C) 2001, 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: script.h,v 1.11 2003/06/08 03:21:23 stdarg Exp $
+ * $Id: script.h,v 1.12 2003/12/11 00:49:10 wcc Exp $
  */
 
 #ifndef _EGG_SCRIPT_H

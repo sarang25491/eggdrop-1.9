@@ -8,7 +8,7 @@
  * Based on zlib examples by Jean-loup Gailly and Miguel Albrecht.
  */
 /*
- * Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
+ * Copyright (C) 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,7 +26,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: compress.c,v 1.9 2003/02/15 05:04:57 wcc Exp $";
+static const char rcsid[] = "$Id: compress.c,v 1.10 2003/12/11 00:49:10 wcc Exp $";
 #endif
 
 #define MODULE_NAME "compress"

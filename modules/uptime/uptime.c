@@ -16,7 +16,7 @@
  */
 /*
  * Copyright (C) 2001 proton
- * Copyright (C) 2001, 2002, 2003 Eggheads Development Team
+ * Copyright (C) 2001, 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,7 +34,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: uptime.c,v 1.13 2003/02/03 11:41:34 wcc Exp $";
+static const char rcsid[] = "$Id: uptime.c,v 1.14 2003/12/11 00:49:11 wcc Exp $";
 #endif
 
 #define MODULE_NAME "uptime"

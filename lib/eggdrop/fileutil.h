@@ -4,7 +4,7 @@
  *	convenience utilities to deal with common file operations
  */
 /*
- * Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
+ * Copyright (C) 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: fileutil.h,v 1.6 2003/02/10 00:09:08 wcc Exp $
+ * $Id: fileutil.h,v 1.7 2003/12/11 00:49:10 wcc Exp $
  */
 
 #ifndef _EGG_FILEUTIL_H

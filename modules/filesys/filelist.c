@@ -6,7 +6,7 @@
  * Written by Fabian Knittel <fknittel@gmx.de>
  */
 /*
- * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
+ * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,7 +25,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: filelist.c,v 1.5 2003/01/02 21:33:14 wcc Exp $";
+static const char rcsid[] = "$Id: filelist.c,v 1.6 2003/12/11 00:49:10 wcc Exp $";
 #endif
 */
 

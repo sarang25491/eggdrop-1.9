@@ -6,7 +6,7 @@
  * Written by Fabian Knittel <fknittel@gmx.de>
  */
 /*
- * Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
+ * Copyright (C) 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,7 +25,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: tclcompress.c,v 1.5 2003/01/30 08:20:20 wcc Exp $";
+static const char rcsid[] = "$Id: tclcompress.c,v 1.6 2003/12/11 00:49:10 wcc Exp $";
 #endif
 */
 

@@ -4,7 +4,7 @@
  *	convenience utilities to deal with common file operations
  */
 /*
- * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
+ * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,7 +22,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: fileutil.c,v 1.5 2003/02/10 00:09:08 wcc Exp $";
+static const char rcsid[] = "$Id: fileutil.c,v 1.6 2003/12/11 00:49:10 wcc Exp $";
 #endif
 
 #if HAVE_CONFIG_H
