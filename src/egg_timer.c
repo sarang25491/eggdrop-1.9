@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: egg_timer.c,v 1.11 2002/05/05 16:40:38 tothwolf Exp $";
+static const char rcsid[] = "$Id: egg_timer.c,v 1.12 2002/05/09 03:11:54 stdarg Exp $";
 #endif
 
 #include <stdio.h> /* NULL */
@@ -289,7 +289,7 @@ static int script_timers(script_var_t *retval)
 static int script_timer_info(script_var_t *retval, int timer_id)
 {
 	egg_timer_t *timer;
-	static int timer_info[11];
+	int *timer_info;
 	egg_timeval_t start_time, diff;
 
 	for (timer = timer_list_head; timer; timer = timer->next) {
@@ -300,6 +300,9 @@ static int script_timer_info(script_var_t *retval, int timer_id)
 		retval->value = "Timer not found";
 		return(0);
 	}
+
+	/* We have 11 fields. */
+	timer_info = (int *)malloc(sizeof(int) * 11);
 
 	/* Timer id, when it started, initial timer length,
 		how long it's run already, how long until it triggers,
@@ -325,7 +328,7 @@ static int script_timer_info(script_var_t *retval, int timer_id)
 	timer_info[10] = timer->trigger_time.usec;
 
 	/* A malloc'd array of ints. */
-	retval->type = SCRIPT_ARRAY | SCRIPT_INTEGER;
+	retval->type = SCRIPT_FREE | SCRIPT_ARRAY | SCRIPT_INTEGER;
 	retval->value = timer_info;
 	retval->len = 11;
 
