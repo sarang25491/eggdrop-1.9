@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.32 2004/06/23 21:59:43 darko Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.33 2004/06/24 22:43:15 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -334,7 +334,7 @@ int user_delete(user_t *u)
 user_t *user_lookup_by_handle(const char *handle)
 {
 	user_t *u = NULL;
-
+	if (handle == NULL) return NULL;
 	hash_table_find(handle_ht, handle, &u);
 	return(u);
 }

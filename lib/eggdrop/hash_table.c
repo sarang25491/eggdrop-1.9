@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: hash_table.c,v 1.10 2004/06/23 20:19:45 wingman Exp $";
+static const char rcsid[] = "$Id: hash_table.c,v 1.11 2004/06/24 22:43:15 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -151,6 +151,8 @@ int hash_table_find(hash_table_t *ht, const void *key, void *dataptr)
 	unsigned int hash;
 	hash_table_entry_t *entry;
 	hash_table_row_t *row;
+
+	if (key == NULL) return (-1);
 
 	hash = ht->hash(key);
 	idx = hash % ht->max_rows;
