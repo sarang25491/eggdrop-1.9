@@ -1,3 +1,11 @@
+2003-03-04 09:16  Will Buckner <wcc@techmonkeys.org>
+
+	* configure.ac, acconfig/acinclude.m4, doc/howto/PATCHING,
+	lib/compat/snprintf.c, lib/compat/snprintf.h, src/patch.h:
+
+	* Sync 1.6: Tru64 (both) 
+	* More Tcl-related autotools cleanups.  
+
 2003-03-04 03:12  Will Buckner <wcc@techmonkeys.org>
 
 	* AUTHORS, CONTENTS, doc/AUTHORS, doc/CONTENTS, doc/Makefile.in,
