@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: channels.h,v 1.17 2004/08/13 20:49:57 darko Exp $
+ * $Id: channels.h,v 1.18 2004/08/19 18:39:36 darko Exp $
  */
 
 #ifndef _EGG_MOD_SERVER_CHANNELS_H_
@@ -68,6 +68,7 @@ typedef struct channel_mask {
 	char *comment;
 /* FIXME - these should be long, not int. (EGGTIMEVALT) */
 	int time;
+	int last_used;
 	int expire;
 	int sticky;
 } channel_mask_t;
@@ -146,7 +147,7 @@ extern int channel_list_members(const char *chan, const char ***members);
 extern channel_mask_list_t *channel_get_mask_list(channel_t *chan, char type);
 extern void channel_add_mask(channel_t *chan, char type, const char *mask, const char *set_by, int time);
 extern int channel_notirc_add_mask(channel_t *chan, char type, const char *mask, const char *creator,
-						const char *comment, int expire, int sticky, int console);
+					const char *comment, int expire, int lastused, int sticky, int console);
 extern int channel_del_mask(channel_t *chan, char type, const char *mask, int remove);
 extern void channel_clear_masks(channel_t *chan, char type);
 extern int channel_list_masks(channel_mask_t ***cm, char type, channel_t *chanptr, const char *mask);

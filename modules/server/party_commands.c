@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: party_commands.c,v 1.13 2004/08/13 20:49:57 darko Exp $";
+static const char rcsid[] = "$Id: party_commands.c,v 1.14 2004/08/19 18:39:36 darko Exp $";
 #endif
 
 #include "server.h"
@@ -364,11 +364,12 @@ static int party_plus_mask(partymember_t *p, const char *nick, user_t *u, const 
 		}
 	}
 
-	/* FIXME - do the duration calculus. For now send 123 :-) */
 	if (comment && *comment == '@')
-		tmpint = channel_notirc_add_mask(chanptr, typechar, mask, u->handle, &comment[1],123, 1, 1);
+		tmpint = channel_notirc_add_mask(chanptr, typechar, mask, u->handle, &comment[1],
+							parse_expire_string(duration), 0, 1, 1);
 	else
-		tmpint = channel_notirc_add_mask(chanptr, typechar, mask, u->handle, comment, 123, 0, 1);
+		tmpint = channel_notirc_add_mask(chanptr, typechar, mask, u->handle, comment,
+							parse_expire_string(duration), 0, 0, 1);
 
 	if (tmpint == 2)
 		partymember_printf(p, _("Error: Entry already exists!"));
@@ -449,11 +450,17 @@ static int party_list_masks(partymember_t *p, const char *nick, user_t *u, const
 			if (cm[j]->creator)
 				partymember_printf(p, _("    Created by:\t%s"), cm[j]->creator);
 			if (cm[j]->set_by)
-				partymember_printf(p, _("    Active:\tset by %s at %d"),
-						cm[j]->set_by, cm[j]->time);
+				partymember_printf(p, _("    Active:\tset by %s on %s"),
+						cm[j]->set_by, ctime((time_t *)&cm[j]->time));
 			if (cm[j]->creator)
 				partymember_printf(p, _("    Expires:\t%s"),
-				cm[j]->expire?"11/08/2004, 20:38":"never");
+				cm[j]->expire?ctime((time_t *)&cm[j]->expire):"never");
+			if (cm[j]->last_used) {
+				int daysago; /* FIXME - grr, another forced-to-declare int */
+				timer_get_now_sec(&daysago);
+				daysago -= cm[j]->last_used;
+				partymember_printf(p, _("    Last used:\t%s ago"), duration_to_string(daysago));
+			}
 			if (cm[j]->comment)
 				partymember_printf(p, _("    Comment:\t%s"), cm[j]->comment);
 		}

@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.182 2004/07/04 23:55:35 darko Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.183 2004/08/19 18:39:36 darko Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -224,7 +224,7 @@ static void do_args(int argc, char **argv)
 	}
 	if (optind < argc) {
 		configfile = argv[optind++];
-		eggdrop_set_params(argv+optind, argc-optind);
+		eggdrop_set_params((const char **)&argv[optind], argc-optind);
 	}
 	else configfile = "config.xml";
 }

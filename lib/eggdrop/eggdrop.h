@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: eggdrop.h,v 1.42 2004/07/17 20:59:38 darko Exp $
+ * $Id: eggdrop.h,v 1.43 2004/08/19 18:39:36 darko Exp $
  */
 
 #ifndef _EGG_EGGDROP_H_
@@ -58,6 +58,7 @@
 #include <eggdrop/throttle.h>
 #include <eggdrop/xml.h>
 #include <eggdrop/memory.h>
+#include <eggdrop/timeutil.h>
 
 /* Gettext macros */
 #ifdef ENABLE_NLS

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.28 2004/08/13 20:49:57 darko Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.29 2004/08/19 18:39:36 darko Exp $";
  #endif
 
 #include "server.h"
@@ -701,13 +701,14 @@ void channel_irc_add_mask(channel_t *chan, char type, const char *mask, const ch
 	}
 	if (set_by) m->set_by = strdup(set_by);
 	m->time = time;
+	m->last_used = time;
 }
 
 /* FIXME - int expire should be long expire (EGGTIMEVALT) */
 /* Creates or updates an entry in the mask list, as a result of console command, script, other.. */
 /* It *WILL* create a new list type if need be */
 int channel_notirc_add_mask(channel_t *chan, char type, const char *mask, const char *creator,
-					const char *comment, int expire, int sticky, int console)
+				const char *comment, int expire, int lastused, int sticky, int console)
 {
 	channel_mask_list_t *l;
 	channel_mask_t *m;
@@ -751,6 +752,7 @@ int channel_notirc_add_mask(channel_t *chan, char type, const char *mask, const 
 	m->creator = strdup(creator);
 	m->comment = strdup(comment?comment:"");
 	m->expire = expire;
+	m->last_used = lastused;
 	m->sticky = sticky;
 	m->next = l->head;
 	l->head = m;
@@ -1509,6 +1511,7 @@ static int chanfile_save_channel(xml_node_t *root, channel_t *chan)
 			xml_node_set_str(m->comment, chan_node, "chanmask", j, "comment", 0, 0);
 			/* FIXME - This should be long integer */
 			xml_node_set_int(m->expire, chan_node, "chanmask", j, "expire", 0, 0);
+			xml_node_set_int(m->last_used, chan_node, "chanmask", j, "lastused", 0, 0);
 			xml_node_set_int(m->sticky, chan_node, "chanmask", j++, "sticky", 0, 0);
 		}
 	}
@@ -1603,7 +1606,7 @@ static int chanfile_load(const char *fname)
 		while ((setting_node = xml_node_lookup(chan_node, 0, "chanmask", j++, 0))) {
 			char *type, *mask, *creator, *comment;
 			/* FIXME - 'expire' should be long */
-			int expire, sticky;
+			int expire, lastused, sticky;
 			if (xml_node_get_str(&type, setting_node, "type", 0, 0) == -1)
 				continue;
 			if (xml_node_get_str(&mask, setting_node, "mask", 0, 0) == -1)
@@ -1614,9 +1617,11 @@ static int chanfile_load(const char *fname)
 				continue;
 			if (xml_node_get_int(&expire, setting_node, "expire", 0, 0) == -1)
 				continue;
+			if (xml_node_get_int(&lastused, setting_node, "lastused", 0, 0) == -1)
+				continue;
 			if (xml_node_get_int(&sticky, setting_node, "sticky", 0, 0) == -1)
 				continue;
-			channel_notirc_add_mask(chan, *type, mask, creator, comment, expire, sticky, 0);
+			channel_notirc_add_mask(chan, *type, mask, creator, comment, expire, lastused, sticky, 0);
 		}
 	}
 
