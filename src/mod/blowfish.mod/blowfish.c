@@ -2,7 +2,7 @@
  * blowfish.c -- part of blowfish.mod
  *   encryption and decryption of passwords
  *
- * $Id: blowfish.c,v 1.23 2001/10/10 10:44:05 tothwolf Exp $
+ * $Id: blowfish.c,v 1.24 2001/10/14 20:31:44 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -134,11 +134,12 @@ static void blowfish_report(int idx, int details)
     for (i = 0; i < BOXES; i++)
       if (box[i].P != NULL)
 	tot++;
-    dprintf(idx, "    Blowfish encryption module:\n");
-    dprintf(idx, "    %d of %d boxes in use: ", tot, BOXES);
+    dprintf(idx, "    %s\n", _("Blowfish encryption module:"));
+    dprintf(idx, "    ");
+    dprintf(idx, _("%d of %d boxes in use:"), tot, BOXES);
     for (i = 0; i < BOXES; i++)
       if (box[i].P != NULL) {
-	dprintf(idx, "(age: %d) ", now - box[i].lastuse);
+	dprintf(idx, " (%s: %d)", _("age"), now - box[i].lastuse);
       }
     dprintf(idx, "\n");
   }
@@ -423,7 +424,7 @@ static tcl_cmds mytcls[] =
  */
 static char *blowfish_close()
 {
-  return "You can't unload an encryption module";
+  return _("You can't unload an encryption module");
 }
 
 EXPORT_SCOPE char *start(Function *);
@@ -453,7 +454,7 @@ char *start(Function *global_funcs)
     global = global_funcs;
 
     if (!module_rename("blowfish", MODULE_NAME))
-      return "Already loaded.";
+      return _("Already loaded.");
     /* Initialize buffered boxes */
     for (i = 0; i < BOXES; i++) {
       box[i].P = NULL;
@@ -464,7 +465,7 @@ char *start(Function *global_funcs)
     module_register(MODULE_NAME, blowfish_table, 2, 1);
     if (!module_depend(MODULE_NAME, "eggdrop", 107, 0)) {
       module_undepend(MODULE_NAME);
-      return "This module requires eggdrop1.7.0 or later";
+      return _("This module requires eggdrop1.7.0 or later");
     }
     add_hook(HOOK_ENCRYPT_PASS, (Function) blowfish_encrypt_pass);
     add_hook(HOOK_ENCRYPT_STRING, (Function) encrypt_string);
