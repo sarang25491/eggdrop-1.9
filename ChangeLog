@@ -1,3 +1,21 @@
+2002-06-17 06:14  Jeff Fisher <guppy@techmonkeys.org>
+
+	* help/cmds2.help, help/core.help, modules/irc/msgcmds.c,
+	modules/notes/notes.c, src/flags.c, src/flags.h:
+
+	removed the common user access flag sice this is a throw back to the
+	earlier days of IRC -- common accounts are almost non-existant on
+	IRC these days.  
+
+2002-06-17 06:04  Jeff Fisher <guppy@techmonkeys.org>
+
+	* eggdrop.complete.conf, help/cmds1.help, help/cmds2.help,
+	help/core.help, modules/irc/msgcmds.c,
+	modules/irc/help/msg/irc.help, src/cmds.c, src/misc.c, src/misc.h:
+
+	removed some legacy commands that are fairly non-useful and addhost
+	which is just wrong.  
+
 2002-06-08 07:21  stdarg <stdarg@techmonkeys.org>
 
 	* modules/server/servmsg.c:
