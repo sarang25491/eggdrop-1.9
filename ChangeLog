@@ -1,3 +1,22 @@
+2001-10-18 09:26  stdarg <stdarg@techmonkeys.org>
+
+	* src/script.c:
+
+	Fixed bug where the config vars were being linked as read-only.  
+
+2001-10-18 09:06  stdarg <stdarg@techmonkeys.org>
+
+	* src/: Makefile.am, chanprog.c, eggdrop.h, logfile.c, main.c,
+	misc.c, proto.h, script.c, script_api.h, tcl.c, tclmisc.c,
+	egglib/msprintf.c, mod/tclscript.mod/tclscript.c:
+
+	Fixed a bug in msprintf.  Added SCRIPT_FREE_VAR flag, to
+	automatically free a script_var_t.  Added first config variables
+	(for logging) via tclscript.mod.  Separated the logging stuff into
+	logfile.c.  Added a command, "stoplog", which lets you close a
+	logfile.  Removed "max-logs" since the logfiles are in a linked list
+	(it was kind of pointless).  
+
 2001-10-18 02:57  stdarg <stdarg@techmonkeys.org>
 
 	* src/: modules.c, net.c, proto.h, mod/module.h,
