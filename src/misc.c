@@ -6,7 +6,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.54 2001/12/08 19:17:44 ite Exp $
+ * $Id: misc.c,v 1.55 2001/12/20 05:01:06 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1067,11 +1067,14 @@ void show_motd(int idx)
 
   if (!is_file(motdfile))
     return;
+
   vv = fopen(motdfile, "r");
   if (!vv)
     return;
+
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.chat->con_chan);
   dprintf(idx, "\n");
+  /* reset the help_subst variables to their defaults */
   help_subst(NULL, NULL, 0,
 	     (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC, NULL);
   while (!feof(vv)) {
@@ -1099,10 +1102,14 @@ void show_telnet_banner(int idx) {
 
   if (!is_file(bannerfile))
     return;
+
   vv = fopen(bannerfile, "r");
   if (!vv)
     return;
+
   get_user_flagrec(dcc[idx].user, &fr,dcc[idx].u.chat->con_chan);
+  /* reset the help_subst variables to their defaults */
+  help_subst(NULL, NULL, 0, 0, NULL);
   while(!feof(vv)) {
     fgets(s, 120, vv);
     if (!feof(vv)) {
