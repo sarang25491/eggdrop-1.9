@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.42 2004/09/29 18:03:53 stdarg Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.43 2004/10/06 14:59:09 stdarg Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -616,6 +616,20 @@ static int party_binds(partymember_t *p, const char *nick, user_t *u, const char
 	return BIND_RET_LOG;
 }
 
+static int party_timers(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	egg_timer_t *timer;
+	int remain, now;
+
+	now = timer_get_now_sec(NULL);
+	partymember_printf(p, "ID    SEC LEFT    NAME");
+	for (timer = timer_list(); timer; timer = timer->next) {
+		remain = timer->trigger_time.sec - now;
+		partymember_printf(p, "%-5d %-8d    %s", timer->id, remain, timer->name);
+	}
+	return(BIND_RET_LOG);
+}
+
 static int party_restart(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	core_restart (nick);
@@ -846,6 +860,7 @@ static bind_list_t core_party_binds[] = {		/* Old flags requirement */
 	{"n", "loadmod", party_loadmod},	/* DDD	*/ /* n|- */
 	{"n", "unloadmod", party_unloadmod},	/* DDD	*/ /* n|- */
 	{"n", "binds", party_binds},		/* DDD 	*/ /* m|- */
+	{"n", "timers", party_timers},
 	{"m", "+host", party_plus_host},	/* DDC	*/ /* t|m */
 	{"m", "-host", party_minus_host},	/* DDC	*/ /* -|- */
 	{"t", "chhandle", party_chhandle},	/* DDC	*/ /* t|- */

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: timer.h,v 1.1 2004/06/21 20:35:11 wingman Exp $
+ * $Id: timer.h,v 1.2 2004/10/06 14:59:09 stdarg Exp $
  */
 
 #ifndef _EGG_TIMER_H_
@@ -26,6 +26,17 @@ typedef struct egg_timeval {
 	int sec;
 	int usec;
 } egg_timeval_t;
+
+typedef struct egg_timer {
+	struct egg_timer *next;
+	int id;
+	char *name;
+	Function callback;
+	void *client_data;
+	egg_timeval_t howlong;
+	egg_timeval_t trigger_time;
+	int flags;
+} egg_timer_t;
 
 #define TIMER_REPEAT	1
 
@@ -47,8 +58,8 @@ extern int timer_destroy(int timer_id);
 extern int timer_destroy_all();
 extern int timer_get_shortest(egg_timeval_t *howlong);
 extern int timer_run();
-extern int timer_list(int **ids);
-extern int timer_info(int id, char **name, egg_timeval_t *initial_len, egg_timeval_t *trigger_time);
+extern egg_timer_t *timer_list();
+extern egg_timer_t *timer_find(int id);
 extern char *timer_get_timestamp(void);
 
 #endif /* !_EGG_TIMER_H_ */

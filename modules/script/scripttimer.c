@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scripttimer.c,v 1.6 2004/06/23 11:19:52 wingman Exp $";
+static const char rcsid[] = "$Id: scripttimer.c,v 1.7 2004/10/06 14:59:09 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -67,9 +67,15 @@ static int script_repeat_timer(int nargs, int sec, int usec, script_callback_t *
 
 static int script_timers(script_var_t *retval)
 {
-	int *timers, ntimers;
+	egg_timer_t *timer;
+	int ntimers, *timers;
 
-	ntimers = timer_list(&timers);
+	ntimers = 0;
+	for (timer = timer_list(); timer; timer = timer->next) {
+		timers = realloc(timers, sizeof(*timers) * (ntimers+1));
+		timers[ntimers] = timer->id;
+		ntimers++;
+	}
 
 	/* A malloc'd array of ints. */
 	retval->type = SCRIPT_ARRAY | SCRIPT_FREE | SCRIPT_INTEGER;
@@ -81,12 +87,14 @@ static int script_timers(script_var_t *retval)
 static int script_timer_info(script_var_t *retval, int timer_id)
 {
 	egg_timeval_t howlong, trigger_time, start_time, diff, now;
+	egg_timer_t *timer;
 	char *name;
 
 	retval->type = SCRIPT_VAR | SCRIPT_FREE | SCRIPT_ARRAY;
 	retval->len = 0;
 
-	if (timer_info(timer_id, &name, &howlong, &trigger_time)) return(0);
+	timer = timer_find(timer_id);
+	if (!timer) return(0);
 
 	timer_get_now(&now);
 
@@ -96,7 +104,7 @@ static int script_timer_info(script_var_t *retval, int timer_id)
 
 	script_list_append(retval, script_string(name, -1));
 
-	timer_diff(&howlong, &trigger_time, &start_time);
+	timer_diff(&timer->howlong, &timer->trigger_time, &start_time);
 	script_list_append(retval, script_int(start_time.sec));
 	script_list_append(retval, script_int(start_time.usec));
 
@@ -107,7 +115,7 @@ static int script_timer_info(script_var_t *retval, int timer_id)
 	script_list_append(retval, script_int(diff.sec));
 	script_list_append(retval, script_int(diff.usec));
 
-	timer_diff(&now, &trigger_time, &diff);
+	timer_diff(&now, &timer->trigger_time, &diff);
 	script_list_append(retval, script_int(diff.sec));
 	script_list_append(retval, script_int(diff.usec));
 

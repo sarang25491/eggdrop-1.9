@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: timer.c,v 1.5 2004/06/25 17:44:04 darko Exp $";
+static const char rcsid[] = "$Id: timer.c,v 1.6 2004/10/06 14:59:09 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -31,18 +31,6 @@ static egg_timeval_t now;
 static char *timestamp_format = NULL;
 static char *timestamp = NULL;
 static int timestamp_len = 0;
-
-/* Internal use only. */
-typedef struct egg_timer_b {
-	struct egg_timer_b *next;
-	int id;
-	char *name;
-	Function callback;
-	void *client_data;
-	egg_timeval_t howlong;
-	egg_timeval_t trigger_time;
-	int flags;
-} egg_timer_t;
 
 /* We keep a sorted list of active timers. */
 static egg_timer_t *timer_list_head = NULL;
@@ -258,36 +246,19 @@ int timer_run()
 	return(0);
 }
 
-int timer_list(int **ids)
+egg_timer_t *timer_list()
 {
-	egg_timer_t *timer;
-	int ntimers;
-
-	/* Count timers. */
-	ntimers = 0;
-	for (timer = timer_list_head; timer; timer = timer->next) ntimers++;
-
-	/* Fill in array. */
-	*ids = malloc(sizeof(int) * (ntimers+1));
-	ntimers = 0;
-	for (timer = timer_list_head; timer; timer = timer->next) {
-		(*ids)[ntimers++] = timer->id;
-	}
-	return(ntimers);
+	return(timer_list_head);
 }
 
-int timer_info(int id, char **name, egg_timeval_t *initial_len, egg_timeval_t *trigger_time)
+egg_timer_t *timer_find(int id)
 {
 	egg_timer_t *timer;
 
 	for (timer = timer_list_head; timer; timer = timer->next) {
-		if (timer->id == id) break;
+		if (timer->id == id) return(timer);
 	}
-	if (!timer) return(-1);
-	if (name) *name = timer->name;
-	if (initial_len) memcpy(initial_len, &timer->howlong, sizeof(*initial_len));
-	if (trigger_time) memcpy(trigger_time, &timer->trigger_time, sizeof(*trigger_time));
-	return(0);
+	return(NULL);
 }
 
 int timer_set_timestamp(char *format)
