@@ -69,7 +69,7 @@ static int my_perl_callbacker(script_callback_t *me, ...)
 	}
 	PUTBACK;
 
-	count = call_pv(me->name, G_SCALAR);
+	count = call_sv((SV *)me->callback_data, G_SCALAR);
 
 	SPAGAIN;
 
@@ -92,6 +92,7 @@ static int my_perl_cb_delete(script_callback_t *me)
 {
 	if (me->syntax) free(me->syntax);
 	if (me->name) free(me->name);
+	sv_2mortal((SV *)me->callback_data);
 	free(me);
 	return(0);
 }
@@ -154,6 +155,19 @@ end of array code */
 			result = newSVpv(str, str_len);
 			break;
 		}
+		case SCRIPT_USER: {
+			char *handle;
+			struct userrec *u;
+			int str_len;
+
+			u = (struct userrec *)v->value;
+			if (u && u->handle) handle = u->handle;
+			else handle = "*";
+
+			str_len = strlen(handle);
+			result = newSVpv(handle, str_len);
+			break;
+		}
 		default:
 			result = &PL_sv_undef;
 	}
@@ -213,7 +227,7 @@ static XS(my_command_handler)
 				cback->delete = (Function) my_perl_cb_delete;
 				name = SvPV(ST(i), len);
 				malloc_strcpy(cback->name, name);
-				cback->callback_data = name;
+				cback->callback_data = (void *)newSVsv(ST(i));
 				mstack_push(args, cback);
 				break;
 			}

@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.75 2001/10/21 03:44:30 stdarg Exp $
+ * $Id: cmds.c,v 1.76 2001/10/23 08:47:51 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1285,7 +1285,7 @@ int check_dcc_attrs(struct userrec *u, int oatr)
     u->flags = sanity_check(u->flags | USER_OWNER);
   }
   for (i = 0; i < dcc_total; i++) {
-    if ((dcc[i].type->flags & DCT_MASTER) &&
+    if (dcc[i].type && (dcc[i].type->flags & DCT_MASTER) &&
 	(!strcasecmp(u->handle, dcc[i].nick))) {
       stat = dcc[i].status;
       if ((dcc[i].type == &DCC_CHAT) &&

@@ -5,7 +5,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: botmsg.c,v 1.25 2001/10/19 01:55:04 tothwolf Exp $
+ * $Id: botmsg.c,v 1.26 2001/10/23 08:47:51 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -848,7 +848,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
   iaway = 0;
   /* Online right now? */
   for (i = 0; i < dcc_total; i++) {
-    if ((dcc[i].type->flags & DCT_GETNOTES) &&
+    if (dcc[i].type && (dcc[i].type->flags & DCT_GETNOTES) &&
 	((sock == (-1)) || (sock == dcc[i].sock)) &&
 	(!strcasecmp(dcc[i].nick, to))) {
       int aok = 1;

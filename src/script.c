@@ -5,10 +5,18 @@ typedef int (*Function)();
 #include "script.h"
 #include "egglib/mstack.h"
 
-static Function link_int, unlink_int, link_str, unlink_str, create_cmd, delete_cmd;
-static void *link_int_h, *unlink_int_h, *link_str_h, *unlink_str_h, *create_cmd_h, *delete_cmd_h;
+static Function load_script, link_int, unlink_int, link_str, unlink_str, create_cmd, delete_cmd;
+static void *load_script_h, *link_int_h, *unlink_int_h, *link_str_h, *unlink_str_h, *create_cmd_h, *delete_cmd_h;
 
 static mstack_t *script_events;
+
+int script_load(char *fname);
+int script_create_cmd_table(script_command_t *table);
+
+static script_command_t my_script_cmds[] = {
+	{"", "loadscript", script_load, NULL, 1, 0, "s", "filename", SCRIPT_INTEGER, 0},
+	{0}
+};
 
 typedef struct {
 	int type;
@@ -76,6 +84,7 @@ int script_init()
 {
 	script_events = mstack_new(0);
 	registry_add_simple_chains(my_functions);
+	registry_lookup("script", "load script", &load_script, &load_script_h);
 	registry_lookup("script", "link int", &link_int, &link_int_h);
 	registry_lookup("script", "unlink int", &unlink_int, &unlink_int_h);
 	registry_lookup("script", "link str", &link_str, &link_str_h);
@@ -83,6 +92,14 @@ int script_init()
 	registry_lookup("script", "create cmd", &create_cmd, &create_cmd_h);
 	registry_lookup("script", "delete cmd", &delete_cmd, &delete_cmd_h);
 
+	script_create_cmd_table(&my_script_cmds);
+
+	return(0);
+}
+
+int script_load(char *fname)
+{
+	load_script(load_script_h, fname);
 	return(0);
 }
 
