@@ -125,6 +125,8 @@ int user_set_flag_str(user_t *u, const char *chan, const char *flags)
 int user_has_pass(user_t *u)
 int user_check_pass(user_t *u, const char *pass)
 int user_set_pass(user_t *u, const char *pass)
+	Returns 1 if password was set to 'none' (in effect removed),
+	or 0 if new password is set.
 int user_rand_pass(char *buf, int bufsize)
 	These functions deal with user passwords. User_rand_pass generates
 	a random password from digits, uppercase letters, and lowercase letters.
@@ -135,3 +137,8 @@ int user_rand_pass(char *buf, int bufsize)
 
 int user_count()
 	Returns: the number of users eggdrop has in its user database
+int user_change_handle(user_t *u, const char *old, const char *new);
+	Changes user's handle and in case said user is on partyline, advertizes
+	the change.
+	Returns 0 or 1 if user is on or off line respectivly.
+	

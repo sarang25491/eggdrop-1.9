@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.37 2004/07/04 23:55:36 darko Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.38 2004/07/05 22:12:22 darko Exp $";
 #endif
 
 #include <stdio.h>
@@ -88,7 +88,7 @@ int user_shutdown(void)
 	bind_table_del(BT_udelete);
 	bind_table_del(BT_uset);
 	bind_table_del(BT_uflags);
-	
+
 	/* flush any pending user delete events */
 	garbage_run();
 
@@ -637,7 +637,7 @@ int user_has_pass(user_t *u)
 
 	user_get_setting(u, NULL, "pass", &hash);
 	user_get_setting(u, NULL, "salt", &salt);
-	if (hash && salt) return(1);
+	if (hash && salt && strcmp(hash, "none")) return(1);
 	return(0);
 }
 
@@ -648,7 +648,7 @@ int user_check_pass(user_t *u, const char *pass)
 
 	user_get_setting(u, NULL, "pass", &hash);
 	user_get_setting(u, NULL, "salt", &salt);
-	if (!hash || !salt) return(0);
+	if (!hash || !salt || !strcmp(hash, "none")) return(0);
 
 	MD5_Init(&ctx);
 	MD5_Update(&ctx, salt, strlen(salt));
@@ -674,6 +674,10 @@ int user_set_pass(user_t *u, const char *pass)
 		user_set_setting(u, NULL, "salt", new_salt);
 	}
 
+	if (!pass || !*pass) {
+		user_set_setting(u, NULL, "pass", "none");
+		return(1);
+	}
 	MD5_Init(&ctx);
 	MD5_Update(&ctx, salt, strlen(salt));
 	MD5_Update(&ctx, pass, strlen(pass));

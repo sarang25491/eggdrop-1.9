@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.37 2004/06/28 20:44:38 darko Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.38 2004/07/05 22:12:22 darko Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -601,8 +601,8 @@ static int party_chpass(partymember_t *p, const char *nick, user_t *u, const cha
 
 	egg_get_args(text, NULL, &user, &pass, NULL);
 
-	if (!user || !pass || !*user || !*pass) {
-		partymember_printf(p, _("Syntax: chpass <handle> <pass>"));
+	if (!user || !*user) {
+		partymember_printf(p, _("Syntax: chpass <handle> [pass]"));
 		return 0;
 	}
 
@@ -612,20 +612,22 @@ static int party_chpass(partymember_t *p, const char *nick, user_t *u, const cha
 		return 0;
 	}
 
-	if (strlen(pass) < 6) {
+	if (pass && *pass && strlen(pass) < 6) {
 		partymember_printf(p, _("Error: Please use at least 6 characters."));
 		return 0;
 	}
 
-	user_set_pass(dest, pass);
-	partymember_printf(p, _("Password for %s is now '%s'."), user, pass);
+	if (user_set_pass(dest, pass))
+		partymember_printf(p, _("Removed password for %s."), user);
+	else
+		partymember_printf(p, _("Password for %s is now '%s'."), user, pass);
 	return 0;
 }
 
 static bind_list_t core_party_binds[] = {
 	{NULL, "join", party_join},		/* DDD	*/
 	{NULL, "whisper", party_whisper},	/* DDD	*/
-	{NULL, "newpass", party_newpass},	/* DDD	*/
+	{NULL, "newpass", party_newpass},	/* DDC	*/
 	{NULL, "help", party_help},		/* DDC	*/
 	{NULL, "part", party_part},		/* DDD	*/
 	{NULL, "quit", party_quit},		/* DDD	*/
@@ -648,8 +650,8 @@ static bind_list_t core_party_binds[] = {
 	{"n", "binds", party_binds},		/* DDD 	*/
 	{"m", "+host", party_plus_host},	/* DDC	*/
 	{"m", "-host", party_minus_host},	/* DDC	*/
-	{"t", "chhandle", party_chhandle},	/* DDD	*/
-	{"t", "chpass", party_chpass},		/* DDD	*/
+	{"t", "chhandle", party_chhandle},	/* DDC	*/
+	{"t", "chpass", party_chpass},		/* DDC	*/
 	{0}
 };
 

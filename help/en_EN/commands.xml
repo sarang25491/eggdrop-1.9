@@ -91,6 +91,38 @@
 			<seealso>+user</seealso>
 			<seealso>-user</seealso>
 		</command>
+
+		<command name="chhandle" flags="t">
+			<args>
+				<arg type="string">old_handle</arg>
+				<arg type="string">new_handle</args>	
+			</args>
+			<description>
+				This changes handle for a user.
+			</description>
+		</command>
+
+		<command name="chpass" flags="t">
+			<args>
+				<arg type="string">handle</arg>
+				<arg type="string" optional="yes">password</args>	
+			</args>
+			<description>
+				This will change user's password, or remove it if
+				no password is supplied.
+			</description>
+			<seealso>newpass</seealso>
+		</command>
+
+		<command name="newpass" flags="">
+			<args>
+				<arg type="string">password</arg>
+			</args>
+			<description>
+				This will change your password.
+			</description>
+			<seealso>chpass</seealso>
+		</command>
 	</section>
 	
 	<section name="Settings">

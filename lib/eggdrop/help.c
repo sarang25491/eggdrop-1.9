@@ -24,7 +24,7 @@
  */
  
 #ifndef lint
-static const char rcsid[] = "$Id: help.c,v 1.14 2004/06/28 17:36:34 wingman Exp $";
+static const char rcsid[] = "$Id: help.c,v 1.15 2004/07/05 22:12:22 darko Exp $";
 #endif
 
 #include <sys/types.h>
@@ -627,20 +627,25 @@ static void print_section(const char *name, help_section_t **s, partymember_t *m
  
 static void search_entries(const char *name, help_entry_t **entry, help_search_t *search)
 {
-	/* check if user is allowed to see this entry */
-	if ((*entry)->flags && !user_check_flags_str(search->member->user, NULL, (*entry)->flags))
-		return;
-
 	if (wild_match(search->text, name) > 0) {
 		print_entry(name, *entry, search->member);
+		/* check if user is allowed to see this entry */
+		if ((*entry)->flags && *(*entry)->flags &&
+			!user_check_flags_str(search->member->user, NULL, (*entry)->flags));
+			partymember_printf(search->member, _("NOTE: You do NOT have access to this command!"));
 		search->hits++;
-	} else {
+	}
+	else {
 		int i;
 
 		/* do a fulltext search */
 		for (i = 0; i <(*entry)->desc.nlines; i++) {
 			if (wild_match(search->text, (*entry)->desc.lines[i]) > 0) {
 				print_entry(name, *entry, search->member);
+				/* check if user is allowed to see this entry */
+				if ((*entry)->flags && *(*entry)->flags &&
+					!user_check_flags_str(search->member->user, NULL, (*entry)->flags));
+				partymember_printf(search->member, _("NOTE: You do NOT have access to this command!"));
 				search->hits++;
 				return;
 			}
@@ -685,11 +690,11 @@ int help_print_party(partymember_t *member, const char *args)
 	/* may be either a section or a entry, whatever comes first */
 	entry = help_lookup_entry(args);
 	if (entry != NULL) {
+		print_entry(entry->name, entry, member);
 	        /* check if user is allowed to see this entry */
-        	if (!entry->flags || user_check_flags_str(member->user, NULL, entry->flags)) {
-			print_entry(entry->name, entry, member);
-			return BIND_RET_LOG;
-		}
+        	if (entry->flags && *entry->flags && !user_check_flags_str(member->user, NULL, entry->flags))
+			partymember_printf(member, _("NOTE: You do NOT have access to this command!"));
+		return BIND_RET_LOG;
 	}
 		
 	section = help_lookup_section(args);
