@@ -4,7 +4,7 @@
  *   signal handling
  *   command line arguments
  *
- * $Id: main.c,v 1.112 2002/04/27 18:15:11 stdarg Exp $
+ * $Id: main.c,v 1.113 2002/04/28 05:53:33 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -99,6 +99,7 @@ int	con_chan = 0;		/* Foreground: constantly display channel
 int	term_z = 0;		/* Foreground: use the terminal as a party
 				   line? */
 char	configfile[121] = "eggdrop.conf"; /* Name of the config file */
+static char preload_module[121] = ""; /* Name of the module to preload */
 char	helpdir[121];		/* Directory of help files (if used) */
 char	textdir[121] = "";	/* Directory for text files that get dumped */
 time_t	online_since;		/* Unix-time that the bot loaded up */
@@ -277,6 +278,10 @@ static void do_arg(char *s)
 	case 'm':
 	make_userfile = 1;
 	  break;
+	case 'p':
+	  if (*(s+2))
+	    strlcpy(preload_module, s+2, sizeof preload_module);
+	  break;
 	case 'v':
 	  strlcpy(x, egg_version, sizeof x);
 	newsplit(&z);
@@ -296,6 +301,7 @@ static void do_arg(char *s)
   -c   (with -n) display channel stats every 10 seconds\n\
   -t   (with -n) use terminal to simulate dcc-chat\n\
   -m   userfile creation mode\n\
+  -p   preloads the module with the given name (to choose the config parser)\n\
   optional config filename (default 'eggdrop.conf')\n"));
 	printf("\n");
 	bg_send_quit(BG_ABORT);
@@ -578,6 +584,8 @@ int main(int argc, char **argv)
   strlcpy(s, ctime(&now), sizeof s);
   strcpy(&s[11], &s[20]);
   putlog(LOG_ALL, "*", "--- Loading %s (%s)", ver, s);
+  if (preload_module[0])
+    module_load(preload_module);
   chanprog();
   if (!encrypt_pass) {
     printf(_("You have installed modules but have not selected an encryption\n\
