@@ -1,3 +1,14 @@
+2002-05-04 17:01  wingman
+
+	* lib/egglib/: linked_list.c, linked_list.h, linked_list_test.c:
+
+	egglib: 
+	
+	  *) commented linked_list.[c|h] 
+	  *) added a char comparator 
+	  *) fixed a segfault with uninitialised cursor 
+	  *) update test code and added a char'd linked_list 
+
 2002-05-04 16:17  Federico Mennite <ite@techmonkeys.org>
 
 	* configure.ac, acconfig/acinclude.m4, src/bg.c:
