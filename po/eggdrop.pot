@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2002-02-18 04:00-0600\n"
+"POT-Creation-Date: 2002-02-19 04:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2705,13 +2705,13 @@ msgstr ""
 msgid "...and dont come back."
 msgstr ""
 
-#: modules/irc/chan.c:1968 modules/server/servmsg.c:638
+#: modules/irc/chan.c:1969 modules/server/servmsg.c:638
 #: modules/server/servmsg.c:784 modules/server/servmsg.c:796
 #, c-format
 msgid "Switching back to nick %s"
 msgstr ""
 
-#: modules/irc/chan.c:1972 modules/server/servmsg.c:641
+#: modules/irc/chan.c:1973 modules/server/servmsg.c:641
 #: modules/server/servmsg.c:788 modules/server/servmsg.c:800
 #, c-format
 msgid "Switching back to altnick %s"
