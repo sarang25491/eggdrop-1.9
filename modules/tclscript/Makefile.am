@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.7 2003/05/11 02:30:54 stdarg Exp $
+# $Id: Makefile.am,v 1.8 2003/05/13 07:16:18 stdarg Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 pkglibdir		= $(exec_prefix)/modules
@@ -13,7 +13,7 @@ endif
 pkglib_LTLIBRARIES	= $(EGG_TCL)
 tclscript_la_SOURCES	= tclscript.c
 tclscript_la_LDFLAGS	= -module -avoid-version -no-undefined
-tclscript_la_LIBADD	= @TCL_LIB_SPEC@ @LIBS@ \
+tclscript_la_LIBADD	= @TCL_LIBS@ @TCL_LIB_SPEC@ @LIBS@ \
 			$(top_builddir)/lib/eggdrop/libeggdrop.la
 
 MAINTAINERCLEANFILES	= Makefile.in
@@ -22,6 +22,6 @@ INCLUDES		= -I$(top_builddir) -I$(top_srcdir) @INCLTDL@ \
 			-I$(top_builddir)/intl -I$(top_srcdir)/intl \
 			-I$(top_builddir)/lib \
 			-I$(top_srcdir)/lib \
-			-I$(TCL_PREFIX)/include
+			-I@TCL_PREFIX@/include
 
 DEFS			= $(EGG_DEBUG) @DEFS@

@@ -1,7 +1,7 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.31 2003/05/11 02:30:54 stdarg Exp $
+dnl $Id: acinclude.m4,v 1.32 2003/05/13 07:16:18 stdarg Exp $
 dnl
 
 
@@ -740,20 +740,27 @@ AC_DEFUN(EGG_TCLSCRIPT_MODULE, [dnl
 egg_tclscript=no
 
 SC_PATH_TCLCONFIG
-SC_LOAD_TCLCONFIG
+if test x"${no_tcl}" = x ; then
+	SC_LOAD_TCLCONFIG
 
-# We only support version 8
-if test "$TCL_MAJOR_VERSION" = 8
-then
-  AC_SUBST(TCL_PREFIX)
-  egg_tclscript=yes
-else
-  AC_MSG_WARN([
+	# We only support version 8
+	if test "$TCL_MAJOR_VERSION" = 8
+	then
+		AC_SUBST(TCL_PREFIX)
+		AC_SUBST(TCL_LIBS)
+		egg_tclscript=yes
+	else
+		AC_MSG_WARN([
 
-  Your system does not provide tcl 8.0 or later. The
+  Your system does not seem to provide tcl 8.0 or later. The
   tclscript module will therefore be disabled.
 
+  To manually specify tcl's location, re-run configure using
+    --with-tcl=/path/to/tcl
+  where the path is the directory containing tclConfig.sh.
+
 ])
+	fi
 fi
 
 AM_CONDITIONAL(EGG_TCLSCRIPT, test "$egg_tclscript" = yes)
