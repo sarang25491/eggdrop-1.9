@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: string.c,v 1.3 2004/10/17 05:14:06 stdarg Exp $";
+static const char rcsid[] = "$Id: string.c,v 1.4 2004/12/23 00:12:34 lordares Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>				/* egg_return_val_if_fail	*/
@@ -268,3 +268,18 @@ void str_tolower(char *str)
 		str++;
 	}
 }
+
+/* Arrange the N elements of ARRAY in random order. */
+void shuffleArray(char *array[], size_t n)
+{
+	size_t j = 0, i = 0;
+	char *temp = NULL;
+
+	for (i = 0; i < n; i++) {
+		j = i + random() / (RAND_MAX / (n - i) + 1);
+		temp = array[j];
+		array[j] = array[i];
+		array[i] = temp;
+	}
+}
+

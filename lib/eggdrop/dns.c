@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dns.c,v 1.12 2004/12/22 19:03:08 lordares Exp $";
+static const char rcsid[] = "$Id: dns.c,v 1.13 2004/12/23 00:12:34 lordares Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -184,6 +184,7 @@ int egg_dns_lookup(const char *host, int timeout, dns_callback_t callback, void 
 	/* Search our cache for the same query */
 	cache_id = cache_find(host);
 	if (cache_id >= 0) {
+		shuffleArray(cache[cache_id].answer.list, cache[cache_id].answer.len);
 	        callback(client_data, host, cache[cache_id].answer.list);
 	        return(-1);
 	}
@@ -265,6 +266,7 @@ int egg_dns_reverse(const char *ip, int timeout, dns_callback_t callback, void *
 	/* Search our cache for the same query */
 	cache_id = cache_find(ip);
 	if (cache_id >= 0) {
+		shuffleArray(cache[cache_id].answer.list, cache[cache_id].answer.len);
         	callback(client_data, ip, cache[cache_id].answer.list);
 	        return(-1);
 	}

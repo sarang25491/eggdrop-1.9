@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: string.h,v 1.3 2004/10/04 15:48:29 stdarg Exp $
+ * $Id: string.h,v 1.4 2004/12/23 00:12:34 lordares Exp $
  */
 
 #ifndef _EGG_STRING_H_
@@ -36,5 +36,7 @@ int egg_free_word_array(char **words, int nwords);
 int egg_free_arg_array(char **args, int nargs);
 void egg_append_static_str(char **dest, int *remaining, const char *src);
 void egg_append_str(char **dest, int *cur, int *max, const char *src);
+
+void shuffleArray(char **array, size_t n);
 
 #endif /* !_EGG_STRING_H_ */
