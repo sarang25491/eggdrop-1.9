@@ -1,11 +1,17 @@
 #! /bin/sh
 #
-# $Id: bootstrap,v 1.7 2001/10/14 14:33:48 ite Exp $
+# $Id: bootstrap,v 1.8 2001/10/20 01:19:41 tothwolf Exp $
 #
 # Recommended development tools versions:
 #   autoconf 2.52
 #   automake 1.5
 #   libtool 1.4.2
+#
+# NOTE:
+#   A patch needs to be applied to libtool 1.4.2.
+#   It is avaliable here:
+#   http://www.techmonkeys.org/~tothwolf/libtool/libtool-1.4.2-auxdir.patch
+#
 # Please note that it may happen that the bootstrap process reports errors.
 # This doesn't necessarily mean that something went wrong. Try if ./configure
 # and make run without any unexpected errors before reporting bugs. And of
@@ -21,8 +27,8 @@ set -x
 # Bring gettext files
 #gettextize --copy --force
 
-# Generate aclocal.m4 from misc/*.m4 files
-aclocal -I .
+# Generate aclocal.m4 from acconfig/*.m4 files
+aclocal -I . -I acconfig
 
 # Bring in libtool with libtdl abstraction
 libtoolize --force --copy --ltdl
@@ -37,7 +43,7 @@ automake --add-missing --copy
 autoconf
 
 # Remove previous config.cache
-if [ -f config.cache ]; then
+if [ -f config.cache ]
+then
   rm -f config.cache
 fi
-

@@ -1,7 +1,7 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.9 2001/10/19 14:10:55 tothwolf Exp $
+dnl $Id: acinclude.m4,v 1.1 2001/10/20 01:19:42 tothwolf Exp $
 dnl
 
 
@@ -1173,6 +1173,10 @@ if test "x$enable_shared" = "xno"
 then
   AC_DEFINE_UNQUOTED(STATIC, 1, Define if build is static)
 fi
+
+# HACK: This is needed for libltdl's configure script
+egg_aux_dir=`CDPATH=:; cd $ac_aux_dir && pwd`
+ac_configure_args="$ac_configure_args --with-auxdir=$egg_aux_dir"
 ])
 
 

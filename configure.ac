@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(src/eggdrop.h)
-AC_CONFIG_AUX_DIR(.)
+AC_CONFIG_AUX_DIR(acconfig)
 AM_CONFIG_HEADER(config.h)
 EGG_MSG_CONFIGURE_START
 AM_INIT_AUTOMAKE(eggdrop, 1.7.0)
