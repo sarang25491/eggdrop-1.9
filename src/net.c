@@ -9,7 +9,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: net.c,v 1.64 2002/10/10 04:41:59 stdarg Exp $";
+static const char rcsid[] = "$Id: net.c,v 1.65 2002/10/11 00:49:20 wcc Exp $";
 #endif
 
 #include <fcntl.h>
@@ -88,7 +88,8 @@ void init_net()
   
   gethostname(s, sizeof s);
   if ((hp = gethostbyname(s)) == NULL)
-    fatal("Hostname self-lookup failed.", 0);
+    fatal("Hostname self-lookup failed. Please set 'my-ip' in the config "
+          "file.", 0);
   localipv4addr = *((IP*) (hp->h_addr_list[0]));
 
   /* init ADNS */

@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: irc.c,v 1.23 2002/10/10 05:50:12 wcc Exp $";
+static const char rcsid[] = "$Id: irc.c,v 1.24 2002/10/11 00:49:20 wcc Exp $";
 #endif
 
 #define MODULE_NAME "irc"
@@ -750,8 +750,8 @@ static void flush_modes()
   struct chanset_t *chan;
   memberlist *m;
 
-  if (modesperline > 6)
-    modesperline = 6;
+  if (modesperline > MODES_PER_LINE_MAX)
+    modesperline = MODES_PER_LINE_MAX; 
   for (chan = chanset; chan; chan = chan->next) {
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       if (m->delay && m->delay <= now) {
@@ -794,7 +794,7 @@ static void irc_report(int idx, int details)
 	  p = _("pending");
         else if (!any_ops(chan))
           p = _("opless");
-	else if (!me_op(chan))
+	else if ((chan->dname[0] != '+') && !me_op(chan))
 	  p = _("want ops!");
       }
       l = simple_sprintf(ch, "%s%s%s%s, ", chan->dname, p ? "(" : "",

@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: cmdsirc.c,v 1.12 2002/10/10 05:50:12 wcc Exp $";
+static const char rcsid[] = "$Id: cmdsirc.c,v 1.13 2002/10/11 00:49:20 wcc Exp $";
 #endif
 */
 
@@ -269,8 +269,8 @@ static void cmd_voice(struct userrec *u, int idx, char *par)
 	    chan->dname);
     return;
   }
-  putlog(LOG_CMDS, "*", "#%s# (%s) voice %s %s", dcc[idx].nick,
-	 dcc[idx].u.chat->con_chan, nick, par);
+  putlog(LOG_CMDS, "*", "#%s# (%s) voice %s", dcc[idx].nick,
+	 chan->dname, nick);
   m = ismember(chan, nick);
   if (!m) {
     dprintf(idx, _("%1$s is not on %2$s.\n"), nick, chan->dname);
@@ -304,8 +304,8 @@ static void cmd_devoice(struct userrec *u, int idx, char *par)
 	    chan->dname);
     return;
   }
-  putlog(LOG_CMDS, "*", "#%s# (%s) devoice %s %s", dcc[idx].nick,
-	 dcc[idx].u.chat->con_chan, nick, par);
+  putlog(LOG_CMDS, "*", "#%s# (%s) devoice %s", dcc[idx].nick,
+	 chan->dname, nick);
   m = ismember(chan, nick);
   if (!m) {
     dprintf(idx, _("%1$s is not on %2$s.\n"), nick, chan->dname);
@@ -339,8 +339,8 @@ static void cmd_op(struct userrec *u, int idx, char *par)
 	    chan->dname);
     return;
   }
-  putlog(LOG_CMDS, "*", "#%s# (%s) op %s %s", dcc[idx].nick,
-	 dcc[idx].u.chat->con_chan, nick, par);
+  putlog(LOG_CMDS, "*", "#%s# (%s) op %s", dcc[idx].nick,
+	 chan->dname, nick);
   m = ismember(chan, nick);
   if (!m) {
     dprintf(idx, _("%1$s is not on %2$s.\n"), nick, chan->dname);
@@ -385,8 +385,8 @@ static void cmd_deop(struct userrec *u, int idx, char *par)
 	    chan->dname);
     return;
   }
-  putlog(LOG_CMDS, "*", "#%s# (%s) deop %s %s", dcc[idx].nick,
-	 dcc[idx].u.chat->con_chan, nick, par);
+  putlog(LOG_CMDS, "*", "#%s# (%s) deop %s", dcc[idx].nick,
+	 chan->dname, nick);
   m = ismember(chan, nick);
   if (!m) {
     dprintf(idx, _("%1$s is not on %2$s.\n"), nick, chan->dname);
@@ -523,8 +523,8 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
   if (!has_op(idx, par))
     return;
   chname = newsplit(&par);
-  putlog(LOG_CMDS, "*", "#%s# (%s) channel %s", dcc[idx].nick,
-	 dcc[idx].u.chat->con_chan, chname);
+  putlog(LOG_CMDS, "*", "#%s# (%s) channel", dcc[idx].nick,
+	 !chname[0] ? dcc[idx].u.chat->con_chan : chname);
   if (!chname[0])
     chan = findchan_by_dname(dcc[idx].u.chat->con_chan);
   else
@@ -917,15 +917,15 @@ static void cmd_deluser(struct userrec *u, int idx, char *par)
   /* Shouldn't allow people to remove permanent owners (guppy 9Jan1999) */
   if ((glob_owner(victim) && strcasecmp(dcc[idx].nick, nick)) ||
       isowner(u->handle)) {
-    dprintf(idx, _("You can't remove the bot owner!\n"));
+    dprintf(idx, _("You can't remove a bot owner!\n"));
   } else if (glob_botmast(victim) && !glob_owner(user)) {
-    dprintf(idx, _("You can't delete a master!\n"));
+    dprintf(idx, _("You can't remove a bot master!\n"));
   } else if (chan_owner(victim) && !glob_owner(user)) {
     dprintf(idx, _("You can't remove a channel owner!\n"));
   } else if (chan_master(victim) && !(glob_owner(user) || chan_owner(user))) {
-    dprintf(idx, _("You can't delete a channel master!\n"));
+    dprintf(idx, _("You can't remove a channel master!\n"));
   } else if (glob_bot(victim) && !glob_owner(user)) {
-    dprintf(idx, _("You can't delete a bot!\n"));
+    dprintf(idx, _("You can't remove a bot!\n"));
   } else {
     char buf[HANDLEN + 1];
 

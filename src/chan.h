@@ -23,7 +23,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: chan.h,v 1.31 2002/10/10 05:50:12 wcc Exp $
+ * $Id: chan.h,v 1.32 2002/10/11 00:49:20 wcc Exp $
  */
 
 #ifndef _EGG_CHAN_H
@@ -125,6 +125,8 @@ struct chan_t {
 #define CHANREGON  0x0800	/* +R -- bahamut			*/
 #define CHANMODR   0x1000	/* +M -- bahamut			*/
 
+#define MODES_PER_LINE_MAX 6
+
 /* For every channel i'm supposed to be active on */
 struct chanset_t {
   struct chanset_t *next;
@@ -174,7 +176,7 @@ struct chanset_t {
   struct {
     char *op;
     int type;
-  } cmode[6];			/* parameter-type mode changes -	*/
+  } cmode[MODES_PER_LINE_MAX];  /* parameter-type mode changes -	*/
   /* detect floods */
   char floodwho[FLOOD_CHAN_MAX][81];
   time_t floodtime[FLOOD_CHAN_MAX];

@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: transfer.c,v 1.16 2002/10/10 05:50:12 wcc Exp $";
+static const char rcsid[] = "$Id: transfer.c,v 1.17 2002/10/11 00:49:20 wcc Exp $";
 #endif
 
 #define MODULE_NAME "transfer"
@@ -1418,8 +1418,8 @@ debug1("|TRANSFER| raw_dcc_resend_send(... addr=\"%s\")", addr);
     nfn = buf = replace_spaces(nfn);
   dcc[i].u.xfer->origname = calloc(1, strlen(nfn) + 1);
   strcpy(dcc[i].u.xfer->origname, nfn);
-  strcpy(dcc[i].u.xfer->from, from);
-  strcpy(dcc[i].u.xfer->dir, dir);
+  strlcpy(dcc[i].u.xfer->from, from, NICKLEN);
+  strlcpy(dcc[i].u.xfer->dir, dir, DIRLEN);
   dcc[i].u.xfer->length = dccfilesize;
   dcc[i].timeval = now;
   dcc[i].u.xfer->f = f;

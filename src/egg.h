@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: egg.h,v 1.9 2002/06/18 06:12:32 guppy Exp $
+ * $Id: egg.h,v 1.10 2002/10/11 00:49:20 wcc Exp $
  */
 
 #ifndef _EGG_EGG_H
@@ -58,6 +58,7 @@
 
 #define ADDRMAX		 45
 #define UHOSTMAX	160	/* reasonable, i think?			*/
+#define DIRMAX		512
 #define BADHANDCHARS	"-,+*=:!.@#;$%&"
 
 
@@ -68,6 +69,7 @@
 
 #define NICKLEN         NICKMAX + 1
 #define UHOSTLEN        UHOSTMAX + 1
+#define DIRLEN          DIRMAX + 1
 #define NOTENAMELEN     ((HANDLEN * 2) + 1)
 #define BADNICKCHARS	"-,+*=:!.@#;$%&"
 
@@ -247,7 +249,7 @@ struct file_info {
 struct xfer_info {
   char *filename;
   char *origname;
-  char dir[121];		/* used when uploads go to the current dir */
+  char dir[DIRLEN];		/* used when uploads go to the current dir */
   unsigned long length;
   unsigned long acked;
   char buf[4];			/* you only need 5 bytes!		   */

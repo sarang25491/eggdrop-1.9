@@ -24,7 +24,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: cmds.c,v 1.108 2002/10/07 22:36:36 stdarg Exp $";
+static const char rcsid[] = "$Id: cmds.c,v 1.109 2002/10/11 00:49:20 wcc Exp $";
 #endif
 
 #include "main.h"
@@ -1742,7 +1742,8 @@ static int cmd_pls_host(user_t *u, int idx, char *par)
   user_t *u2;
   struct list_type *q;
   struct flag_record fr = {FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
-  module_entry *me;
+  struct flag_record fr2 = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0},
+                     fr  = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
 
   if (!par[0]) {
     dprintf(idx, "Usage: +host [handle] <newhostmask>\n");
@@ -1763,33 +1764,34 @@ static int cmd_pls_host(user_t *u, int idx, char *par)
     dprintf(idx, _("No such user.\n"));
     return(0);
   }
+  get_user_flagrec(u, &fr, NULL);
   if (strcasecmp(handle, dcc[idx].nick)) {
-    get_user_flagrec(u, &fr, NULL);
-    if ((u->flags & USER_BOTMAST) && !(u->flags & USER_MASTER) &&
-	!(u2->flags & USER_BOT) && !chan_master(fr)) {
+    get_user_flagrec(u2, &fr2, NULL);
+    if (!glob_master(fr) && !glob_bot(fr2) && !chan_master(fr)) {
       dprintf(idx, _("You can't add hostmasks to non-bots.\n"));
       return(0);
     }
-    if (!(u->flags & USER_OWNER) && (u2->flags & USER_BOT) &&
-	(bot_flags(u2) & BOT_SHARE)) {
+    if (!glob_owner(fr) && glob_bot(fr2) && (bot_flags(u2) & BOT_SHARE)) {
       dprintf(idx, _("You can't add hostmasks to share bots.\n"));
       return(0);
     }
-    if ((u2->flags & (USER_OWNER|USER_MASTER)) &&
-	!(u->flags & USER_OWNER) && strcasecmp(handle, dcc[idx].nick)) {
+    if ((glob_owner(fr2) || glob_master(fr2)) && !glob_owner(fr)) {
       dprintf(idx, _("You can't add hostmasks to the bot owner/master.\n"));
       return(0);
     }
-    if (!(u->flags & USER_BOTMAST) && !chan_master(fr)) {
-      dprintf(idx, _("Permission denied.\n"));
+    if ((chan_owner(fr2) || chan_master(fr2)) && !glob_master(fr) &&
+        !glob_owner(fr) && !chan_owner(fr)) {
+      dprintf(idx, "You can't add hostmasks to a channel owner/master.\n");
+      return(0);
+    }
+    if (!glob_botmast(fr) && !glob_master(fr) && !chan_master(fr)) {
+      dprintf(idx, "Permission denied.\n");
       return(0);
     }
   }
-  if (!(u->flags & USER_BOTMAST) && !chan_master(fr)) {
-    if (get_user_by_host(host)) {
-      dprintf(idx, _("You cannot add a host matching another user!\n"));
-      return(0);
-    }
+  if (!glob_botmast(fr) && !chan_master(fr) && get_user_by_host(host)) {
+    dprintf(idx, "You cannot add a host matching another user!\n");
+    return(0);
   }
   for (q = get_user(&USERENTRY_HOSTS, u); q; q = q->next)
     if (!strcasecmp(q->extra, host)) {
@@ -1810,7 +1812,8 @@ static int cmd_mns_host(user_t *u, int idx, char *par)
 {
   char *handle, *host;
   user_t *u2;
-  struct flag_record fr = {FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
+  struct flag_record fr2 = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0},
+                     fr  = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
   module_entry *me;
 
   if (!par[0]) {
@@ -1833,26 +1836,32 @@ static int cmd_mns_host(user_t *u, int idx, char *par)
   }
 
   get_user_flagrec(u, &fr, NULL);
+  get_user_flagrec(u2, &fr2, NULL);
   /* check to see if user is +d or +k and don't let them remove hosts */
-  if ((u->flags & USER_DEOP) || chan_deop(fr)) {
-    dprintf(idx, "%s\n", _("You can't remove hosts while having the +d flag."));
+  if (glob_deop(fr) || glob_kick(fr) || chan_deop(fr) || chan_kick (fr)) {
+    dprintf(idx, _("You can't remove hostmasks while having the +d or +k "
+            "flag.\n"));
     return(0);
   }
-
   if (strcasecmp(handle, dcc[idx].nick)) {
-    if (!(u2->flags & USER_BOT) && !(u->flags & USER_MASTER) &&
-	!chan_master(fr)) {
+    if (!glob_master(fr) && !glob_bot(fr2) && !chan_master(fr)) {
       dprintf(idx, _("You can't remove hostmasks from non-bots.\n"));
       return(0);
-    } else if ((u2->flags & USER_BOT) && (bot_flags(u2) & BOT_SHARE) &&
-	       !(u->flags & USER_OWNER)) {
+    }
+    if (glob_bot(fr2) && (bot_flags(u2) & BOT_SHARE) && !glob_owner(fr)) {
       dprintf(idx, _("You can't remove hostmasks from a share bot.\n"));
       return(0);
-    } else if ((u2->flags & (USER_OWNER|USER_MASTER)) &&
-	       !(u->flags & USER_OWNER) && (u2 != u)) {
+    }
+    if ((glob_owner(fr2) || glob_master(fr2)) && !glob_owner(fr)) {
       dprintf(idx, _("You can't remove hostmasks from a bot owner/master.\n"));
       return(0);
-    } else if (!(u->flags & USER_BOTMAST) && !chan_master(fr)) {
+    }
+    if ((chan_owner(fr2) || chan_master(fr2)) && !glob_master(fr) &&
+        !glob_owner(fr) && !chan_owner(fr)) {
+      dprintf(idx, "You can't remove hostmasks from a channel owner/master.\n");
+      return(0);
+    }
+    if (!glob_botmast(fr) && !glob_master(fr) && !chan_master(fr)) {
       dprintf(idx, _("Permission denied.\n"));
       return(0);
     }

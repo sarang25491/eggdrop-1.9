@@ -28,7 +28,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: chan.c,v 1.25 2002/10/10 05:50:12 wcc Exp $";
+static const char rcsid[] = "$Id: chan.c,v 1.26 2002/10/11 00:49:20 wcc Exp $";
 #endif
 */
 
@@ -710,52 +710,51 @@ static void check_this_member(struct chanset_t *chan, char *nick, struct flag_re
   if (!m || match_my_nick(nick) || !me_op(chan))
     return;
 
-  sprintf(s, "%s!%s", m->nick, m->userhost);
-  /* if channel user is current a chanop */
-  if (chan_hasop(m)) {
-  /* if user is channel deop */
-    if (chan_deop(*fr) ||
-	/* OR global deop and NOT channel op */
-	(glob_deop(*fr) && !chan_op(*fr))) {
-      /* de-op! */
-      add_mode(chan, '-', 'o', m->nick);
-      /* if channel mode is bitch */
-    } else if (channel_bitch(chan) &&
-	       /* AND the user isnt a channel op */
-	       (!chan_op(*fr) &&
-		/* AND the user isnt a global op, (or IS a chan deop) */
-		!(glob_op(*fr) && !chan_deop(*fr)))) {
-      /* de-op! mmmbop! */
-      add_mode(chan, '-', 'o', m->nick);
+  if (chan_hasop(m) && ((chan_deop(*fr) || (glob_deop(*fr) &&
+      !chan_op(*fr))) || (channel_bitch(chan) && (!chan_op(*fr) &&
+      !(glob_op(*fr) && !chan_deop(*fr))))))
+    add_mode(chan, '-', 'o', m->nick);
+  if (!chan_hasop(m) && (chan_op(*fr) || (glob_op(*fr) &&
+      !chan_deop(*fr))) && (channel_autoop(chan) || glob_autoop(*fr) ||
+      chan_autoop(*fr))) {
+    if (!chan->aop_min)
+      add_mode(chan, '+', 'o', m->nick);
+    else {
+      set_delay(chan, m->nick);
+      m->flags |= SENTOP;
     }
   }
-  /* check vs invites */
-  refresh_invite(chan, s);
-  /* don't kickban if permanent exempted */
-  if (!(use_exempts && is_perm_exempted(chan, s))) {
-    /* permanent banned? */
-    refresh_ban_kick(chan, s, m->nick);
-  }
-  /* now lets look at de-op'd ppl */
-  if (!chan_hasop(m) &&
-      /* if they're an op, channel or global (without channel +d) */
-      (chan_op(*fr) || (glob_op(*fr) && !chan_deop(*fr))) &&
-      /* and the channel is op on join, or they are auto-opped */
-      (channel_autoop(chan) || (glob_autoop(*fr) || chan_autoop(*fr)))) {
-    /* op them! */
-    add_mode(chan, '+', 'o', m->nick);
-    /* otherwise, lets check +v stuff if the llamas want it */
-  } else if (!chan_hasvoice(m) && !chan_hasop(m)) {
-    if ((channel_autovoice(chan) && !chan_quiet(*fr) &&
-	 (chan_voice(*fr) || glob_voice(*fr))) ||
-	  (!chan_quiet(*fr) && (glob_gvoice(*fr) || chan_gvoice(*fr)))) {
+
+  if (chan_hasvoice(m) && (chan_quiet(*fr) || (glob_quiet(*fr) &&
+     !chan_voice(*fr))))
+    add_mode(chan, '-', 'v', m->nick);
+  if (!chan_hasvoice(m) && !chan_hasop(m) && (chan_voice(*fr) ||
+      (glob_voice(*fr) && !chan_quiet(*fr))) && (channel_autovoice(chan) ||
+      glob_gvoice(*fr) || chan_gvoice(*fr))) {
+    if (!chan->aop_min)
       add_mode(chan, '+', 'v', m->nick);
+    else {
+      set_delay(chan, m->nick);
+      m->flags |= SENTVOICE;
     }
-    /* do they have a voice on the channel */
-    if (chan_hasvoice(m) &&
-	/* do they have the +q & no +v */
-	(chan_quiet(*fr) || (glob_quiet(*fr) && !chan_voice(*fr)))) {
-      add_mode(chan, '-', 'v', m->nick);
+  }
+
+  sprintf(s, "%s!%s", m->nick, m->userhost);
+  if (use_invites && (u_match_mask(global_invites,s) ||
+      u_match_mask(chan->invites, s)))
+    refresh_invite(chan, s);
+  if (!(use_exempts && (u_match_mask(global_exempts ,s) ||
+      u_match_mask(chan->exempts, s)))) {
+    if (u_match_mask(global_bans, s) || u_match_mask(chan->bans, s))
+      refresh_ban_kick(chan, s, m->nick);
+    if (!chan_sentkick(m) && (chan_kick(*fr) || glob_kick(*fr)) &&
+	me_op(chan)) {
+      check_exemptlist(chan, s);
+      quickban(chan, m->userhost);
+      p = get_user(&USERENTRY_COMMENT, m->user);
+      dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick,
+	      p ? p : IRC_POLITEKICK);
+      m->flags |= SENTKICK;
     }
   }
 }

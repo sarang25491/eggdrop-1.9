@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.16 2002/10/10 05:50:11 wcc Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.17 2002/10/11 00:49:20 wcc Exp $";
 #endif
 
 #define MODULE_NAME "channels"
@@ -383,6 +383,7 @@ static void write_channels()
     fprintf(f, "channel %s %s%schanmode %s idle-kick %d stopnethack-mode %d \
 revenge-mode %d flood-chan %d:%d flood-ctcp %d:%d flood-join %d:%d \
 flood-kick %d:%d flood-deop %d:%d flood-nick %d:%d aop-delay %d:%d \
+ban-time %d exempt-time %d invite-time %d \
 %cenforcebans %cdynamicbans %cuserbans %cautoop %cbitch \
 %cgreet %cprotectops %cprotectfriends %cdontkickops \
 %cstatuslog %crevenge %crevengebot %cautovoice %csecret \
@@ -403,6 +404,9 @@ flood-kick %d:%d flood-deop %d:%d flood-nick %d:%d aop-delay %d:%d \
 	chan->flood_deop_thr, chan->flood_deop_time,
 	chan->flood_nick_thr, chan->flood_nick_time,
 	chan->aop_min, chan->aop_max,
+	chan->ban_time,
+	chan->exempt_time,
+	chan->invite_time,
 	PLSMNS(channel_enforcebans(chan)),
 	PLSMNS(channel_dynamicbans(chan)),
 	PLSMNS(!channel_nouserbans(chan)),
