@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.10 2002/03/22 16:01:18 ite Exp $
+ * $Id: notes.c,v 1.11 2002/04/25 17:34:18 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -319,6 +319,7 @@ static int storenote(char *argv1, char *argv2, char *argv3, int idx, char *who, 
       }
     }
   }
+  return(0);
 }
 
 static int tcl_storenote STDVAR

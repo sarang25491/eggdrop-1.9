@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.14 2002/04/01 13:33:32 ite Exp $
+ * $Id: server.c,v 1.15 2002/04/25 17:34:19 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -124,7 +124,7 @@ static struct msgq_head mq, hq, modeq;
 static int burst;
 
 #include "cmdsserv.c"
-#include "tclserv.c"
+#include "scriptcmds.c"
 
 
 /*
@@ -1534,7 +1534,7 @@ static char *server_close()
   rem_tcl_strings(my_tcl_strings);
   rem_tcl_ints(my_tcl_ints);
   rem_help_reference("server.help");
-  rem_tcl_commands(my_tcl_cmds);
+  script_delete_cmd_table(server_script_cmds);
   Tcl_UntraceVar(interp, "nick",
 		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		 nick_change, NULL);
@@ -1719,7 +1719,7 @@ char *start(eggdrop_t *eggdrop)
   my_tcl_strings[0].buf = botname;
   add_tcl_strings(my_tcl_strings);
   add_tcl_ints(my_tcl_ints);
-  add_tcl_commands(my_tcl_cmds);
+  script_create_cmd_table(server_script_cmds);
   add_tcl_coups(my_tcl_coups);
   add_hook(HOOK_SECONDLY, (Function) server_secondly);
   add_hook(HOOK_5MINUTELY, (Function) server_5minutely);
