@@ -3,6 +3,8 @@
 #include "src/egglib/msprintf.h"
 #include "src/script_api.h"
 
+#define MODULE_NAME "tclscript"
+
 static Function *global = NULL;
 
 #if (TCL_MAJOR_VERSION > 8) || (TCL_MAJOR_VERSION == 8 && TCL_MINOR_VERSION > 1)
@@ -32,15 +34,14 @@ static int my_load_script(registry_entry_t *entry, char *fname)
 	int result;
 	int len;
 
-	/* Check the filename and make sure it ends in tcl */
+	/* Check the filename and make sure it ends in .tcl */
 	len = strlen(fname);
-	if (len < 3 || fname[len-1] != 'l' || fname[len-2] != 'c' || fname[len-3] != 't') {
+	if (len < 4 || fname[len-1] != 'l' || fname[len-2] != 'c' || fname[len-3] != 't' || fname[len-4] != '.') {
 		/* Nope, let someone else load it. */
 		return(0);
 	}
 
 	result = Tcl_EvalFile(ginterp, fname);
-	entry->action = REGISTRY_HALT;
 	return(0);
 }
 
@@ -376,7 +377,7 @@ static int my_command_handler(ClientData client_data, Tcl_Interp *myinterp, int 
 	else {
 		retval.type = cmd->retval_type;
 		retval.len = -1;
-		if (cmd->pass_array) retval.value = (void *)cmd->callback(&retval, argstack.args->len, al);
+		if (cmd->pass_array) retval.value = (void *)cmd->callback(argstack.args->len, al);
 		else retval.value = (void *)cmd->callback(al[0], al[1], al[2], al[3], al[4]);
 	}
 
