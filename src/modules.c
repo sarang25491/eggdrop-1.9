@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: modules.c,v 1.115 2002/06/01 05:15:54 stdarg Exp $";
+static const char rcsid[] = "$Id: modules.c,v 1.116 2002/06/03 03:35:32 stdarg Exp $";
 #endif
 
 #include "main.h"		/* NOTE: when removing this, include config.h */
@@ -66,6 +66,7 @@ static const char rcsid[] = "$Id: modules.c,v 1.115 2002/06/01 05:15:54 stdarg E
 #include "irccmp.h"		/* _irccmp, _ircncmp, _irctolower, 
 				   _irctoupper				*/
 #include "match.h"		/* wild_match				*/
+#include "egg_timer.h"		/* egg_timeval_now			*/
 				   
 
 
@@ -87,6 +88,7 @@ extern int	 noshare, dcc_total, egg_numver, userfile_perm,
 			 use_invites, use_exempts, force_expire, do_restart,
 			 protect_readonly, reserved_port_min, reserved_port_max;
 extern time_t now, online_since;
+extern egg_timeval_t egg_timeval_now;
 extern struct chanset_t *chanset;
 extern tand_t *tandbot;
 extern party_t *party;
@@ -529,14 +531,8 @@ Function global_table[] =
   (Function) bind_table_lookup,
   /* 280 - 283 */
   (Function) check_bind,
-  (Function) 0,
-  (Function) 0,
-  (Function) 0,			/* strftime				*/
-  /* 284 - 287 */
-  (Function) 0,			/* inet_ntop				*/
-  (Function) 0,			/* inet_pton				*/
-  (Function) 0,			/* vasprintf				*/
-  (Function) 0			/* asprintf				*/
+  (Function) &egg_timeval_now,
+  0,
 };
 
 static bind_table_t *BT_load, *BT_unload;
@@ -606,7 +602,7 @@ const char *module_load(char *name)
     return _("Already loaded.");
   hand = lt_dlopenext(name);
   if (!hand) {
-    char *err = lt_dlerror();
+    const char *err = lt_dlerror();
     putlog(LOG_MISC, "*", "Error loading module %s: %s", name, err);
     return err;
   }

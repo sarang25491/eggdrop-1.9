@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: servmsg.c,v 1.22 2002/06/02 18:06:02 stdarg Exp $";
+static const char rcsid[] = "$Id: servmsg.c,v 1.23 2002/06/03 03:35:32 stdarg Exp $";
 #endif
 */
 
@@ -417,6 +417,7 @@ static int gotmsg(char *from_nick, char *from_uhost, struct userrec *u, char *cm
 }
 
 /* Got a private notice.
+	:nick!uhost NOTICE dest :hello there
  */
 static int gotnotice(char *from_nick, char *from_uhost, struct userrec *u, char *cmd, int nargs, char *args[])
 {
@@ -464,27 +465,20 @@ static int gotnotice(char *from_nick, char *from_uhost, struct userrec *u, char 
 }
 
 /* WALLOPS: oper's nuisance
+	:csd.bu.edu WALLOPS :Connect '*.uiuc.edu 6667' from Joshua
  */
-static int gotwall(char *from, char *ignore, char *msg)
+static int gotwall(char *from_nick, char *from_uhost, struct userrec *u, char *cmd, int nargs, char *args[])
 {
-  char *p, buf[UHOSTLEN], *nick, *uhost;
-  int r;
+	char *msg;
+	int r;
 
-  fixcolon(msg);
-  p = strchr(from, '!');
-  if (p && (p == strrchr(from, '!'))) {
-    strlcpy(buf, from, sizeof buf);
-    nick = strtok(buf, "!");
-    uhost = strtok(NULL, "!");
-    r = check_tcl_wall(nick, msg);
-    if (r == 0)
-      putlog(LOG_WALL, "*", "!%s(%s)! %s", nick, uhost, msg);
-  } else {
-    r = check_tcl_wall(from, msg);
-    if (r == 0)
-      putlog(LOG_WALL, "*", "!%s! %s", from, msg);
-  }
-  return 0;
+	msg = args[1];
+	r = check_bind(BT_wall, msg, NULL, from_nick, msg);
+	if (!(r & BIND_RET_BREAK)) {
+		if (from_uhost) putlog(LOG_WALL, "*", "!%s (%s)! %s", from_nick, from_uhost, msg);
+		else putlog(LOG_WALL, "*", "!%s! %s", from_nick, msg);
+	}
+	return 0;
 }
 
 /* Called once a minute... but if we're the only one on the
@@ -513,20 +507,18 @@ static void minutely_checks()
 }
 
 /* Pong from server.
+	:liberty.nj.us.dal.net PONG liberty.nj.us.dal.net :12345 67890
  */
-static int gotpong(char *from, char *ignore, char *msg)
+static int gotpong(char *from_nick, char *from_uhost, struct userrec *u, char *cmd, int nargs, char *args[])
 {
-  unsigned int arg;
+	unsigned int sec, usec;
 
-  newsplit(&msg);
-  fixcolon(msg);		/* Scrap server name */
-  sscanf(msg, "%u", &arg);
-  server_lag = now - arg;
-  if (server_lag > 99999) {
-    /* IRCnet lagmeter support by drummer */
-    server_lag = now - lastpingtime;
-  }
-  return 0;
+	if (sscanf(args[1], "%u %u", &sec, &usec) != 2) return(0);
+
+	server_lag.sec = egg_timeval_now.sec - sec;
+	server_lag.usec = egg_timeval_now.usec - usec;
+
+	return(0);
 }
 
 /* This is a reply on ISON :<current> <orig> [<alt>]
@@ -772,8 +764,8 @@ static void eof_server(int idx)
 
 static void display_server(int idx, char *buf)
 {
-  sprintf(buf, "%s  (lag: %d)", trying_server ? "conn" : "serv",
-	  server_lag);
+  sprintf(buf, "%s  (lag: %d.%02d)", trying_server ? "conn" : "serv",
+	  server_lag.sec, server_lag.usec / 10000);
 }
 
 static void connect_server(void);
@@ -979,6 +971,8 @@ static cmd_t my_new_raw_binds[] = {
 	{"001", "", (Function) got001, NULL},
 	{"PRIVMSG", "", (Function) gotmsg, NULL},
 	{"NOTICE", "", (Function) gotnotice, NULL},
+	{"WALLOPS", "", (Function) gotwall, NULL},
+	{"PONG", "", (Function) gotpong, NULL},
 	{0}
 };
 
@@ -986,8 +980,6 @@ static cmd_t my_raw_binds[] =
 {
   {"MODE",	"",	(Function) gotmode,		NULL},
   {"PING",	"",	(Function) gotping,		NULL},
-  {"PONG",	"",	(Function) gotpong,		NULL},
-  {"WALLOPS",	"",	(Function) gotwall,		NULL},
   {"303",	"",	(Function) got303,		NULL},
   {"432",	"",	(Function) got432,		NULL},
   {"433",	"",	(Function) got433,		NULL},

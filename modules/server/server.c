@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: server.c,v 1.33 2002/06/02 18:06:02 stdarg Exp $";
+static const char rcsid[] = "$Id: server.c,v 1.34 2002/06/03 03:35:32 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "server"
@@ -43,7 +43,7 @@ static char newserver[121];	/* new server? */
 static int newserverport;	/* new server port? */
 static char newserverpass[121];	/* new server password? */
 static time_t trying_server;	/* trying to connect to a server right now? */
-static int server_lag;		/* how lagged (in seconds) is the server? */
+static egg_timeval_t server_lag = {0}; /* how lagged is the server? */
 static char *altnick = NULL;	/* possible alternate nickname to use */
 static char *raltnick = NULL;	/* random nick created from altnick */
 static int curserv;		/* current position in server list: */
@@ -1288,9 +1288,9 @@ static void server_5minutely()
       disconnect_server();
       putlog(LOG_SERV, "*", _("Server got stoned; jumping..."));
     } else if (!trying_server) {
-      /* Check for server being stoned. */
-      dprintf(DP_MODE, "PING :%lu\n", (unsigned long) now);
-      waiting_for_awake = 1;
+	/* Check for server being stoned. */
+	dprintf(DP_MODE, "PING :%u %u\n", (egg_timeval_now).sec, (egg_timeval_now).usec);
+	waiting_for_awake = 1;
     }
   }
 }
@@ -1345,11 +1345,8 @@ static void server_report(int idx, int details)
 
     daysdur(now, server_online, s1);
     snprintf(s, sizeof s, "(connected %s)", s1);
-    if ((server_lag) && !(waiting_for_awake)) {
-	if (server_lag == (-1))
-	    snprintf(s1, sizeof s1, " (bad pong replies)");
-	else
-	    snprintf(s1, sizeof s1, " (lag: %ds)", server_lag);
+    if (!(waiting_for_awake)) {
+	sprintf(s1, "(lag: %d.%02d sec)", server_lag.sec, server_lag.usec/10000);
 	strcat(s, s1);
     }
   }
@@ -1506,7 +1503,7 @@ char *start(eggdrop_t *eggdrop)
   strict_host = 1;
   botname = strdup("");
   trying_server = 0L;
-  server_lag = 0;
+  memset(&server_lag, 0, sizeof(server_lag));
   altnick = strdup("egg??????");
   raltnick = NULL;
   curserv = 0;

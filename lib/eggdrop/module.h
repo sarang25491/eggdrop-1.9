@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: module.h,v 1.25 2002/05/31 04:11:36 stdarg Exp $
+ * $Id: module.h,v 1.26 2002/06/03 03:35:32 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_MODULE_H
@@ -449,14 +449,7 @@
 #define bind_table_lookup ((bind_table_t *(*)(const char *))egg->global[279]) 
 /* 280 - 283 */
 #define check_bind ((int (*)(bind_table_t *, const char *, struct flag_record *, ...))egg->global[280])
-/* #define registry_lookup ((int (*)(const char *, const char *, Function *, void **))egg->global[281]) */
-/* #define registry_add_simple_chains ((int (*)(registry_simple_chain_t *))egg->global[282]) */
-/* #define strftime ((size_t (*)(char *, size_t, const char *, const struct tm *))egg->global[283]) */
-/* 284 - 287 */
-/* #define inet_ntop ((const char (*)(int, const void *, char *, socklen_t size))egg->global[284]) */
-/* #define inet_pton ((int (*)(int, const char *, void *))egg->global[285]) */
-/* #define vasprintf ((int (*)(char **, const char *, va_list))egg->global[286]) */
-/* #define asprintf ((int (*)(char **, const char *, ...))egg->global[287]) */
+#define egg_timeval_now (*(egg_timeval_t *)egg->global[281])
 
 /* This is for blowfish module, couldnt be bothered making a whole new .h
  * file for it ;)
