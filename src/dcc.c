@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.80 2002/04/27 18:15:11 stdarg Exp $
+ * $Id: dcc.c,v 1.81 2002/04/27 18:34:09 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -42,14 +42,14 @@ extern struct chanset_t	*chanset;
 extern Tcl_Interp	*interp;
 extern time_t		 now;
 extern int		 egg_numver, connect_timeout, conmask, backgrd,
-			 max_dcc, make_userfile, default_flags, debug_output,
+			 make_userfile, default_flags, debug_output,
 			 ignore_time, par_telnet_flood;
 extern char		 botnetnick[], ver[], origbotname[], notify_new[];
 
 
 struct dcc_t *dcc = NULL;	/* DCC list				   */
 int	dcc_total = 0;		/* Total dcc's				   */
-int	max_dcc = 20;		/* Max number of dcc's			   */
+int	max_dcc = 0;		/* Max number of dcc's			   */
 char	tempdir[121] = "";	/* Temporary directory
 				   (default: current directory)		   */
 int	learn_users = 0;	/* Allow people to introduce themselves    */
@@ -76,7 +76,7 @@ static void dcc_telnet_pass(int, int);
 static int dcc_write_max_dcc(script_linked_var_t *linked_var, script_var_t *newvalue);
 
 
-extern void init_dcc_max();
+extern void init_dcc_max(int newmax);
 
 static script_var_callbacks_t max_dcc_callback = {
 	NULL,
@@ -94,7 +94,7 @@ void dcc_init()
 {
 	dcc_command_chars = strdup("./");
 	script_link_var_table(dcc_script_vars);
-	init_dcc_max();
+	init_dcc_max(20);
 }
 
 static void strip_telnet(int sock, char *buf, int *len)
@@ -2001,12 +2001,8 @@ int dcc_write_max_dcc(script_linked_var_t *linked_var, script_var_t *newvalue)
 		dcc_total = newval;
 	}
 
-	/* Reallocate the array. */
-	dcc = (struct dcc_t *)realloc(dcc, sizeof(*dcc) * newval);
-	if (newval > max_dcc) memset(dcc+max_dcc, 0, (newval-max_dcc) * sizeof(*dcc));
-	max_dcc = newval;
-
-	putlog(LOG_MISC, "*", "max_dcc set to %d", max_dcc);
+	/* Use init_dcc_max to resize the array. */
+	init_dcc_max(newval);
 
 	return(0);
 }

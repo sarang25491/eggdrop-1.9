@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  *
- * $Id: dccutil.c,v 1.47 2002/04/26 17:46:39 stdarg Exp $
+ * $Id: dccutil.c,v 1.48 2002/04/27 18:34:09 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -49,25 +49,22 @@ int	connect_timeout = 15;		/* How long to wait before a telnet
 int reserved_port_min = 0;
 int reserved_port_max = 0;
 
-void init_dcc_max()
+void init_dcc_max(int newmax)
 {
   int osock = MAXSOCKS;
 
-  if (max_dcc < 1)
-    max_dcc = 1;
-  if (dcc)
-    dcc = realloc(dcc, sizeof(struct dcc_t) * max_dcc);
-  else
-    dcc = malloc(sizeof(struct dcc_t) * max_dcc);
+  if (newmax < 1) newmax = 1;
+  dcc = realloc(dcc, sizeof(struct dcc_t) * newmax);
+  if (newmax > max_dcc) memset(dcc+max_dcc, 0, (newmax-max_dcc) * sizeof(*dcc));
 
-  MAXSOCKS = max_dcc + 10;
-  if (socklist)
-    socklist = (sock_list *) realloc((void *) socklist,
-				      sizeof(sock_list) * MAXSOCKS);
-  else
-    socklist = (sock_list *) malloc(sizeof(sock_list) * MAXSOCKS);
+  MAXSOCKS = newmax + 10;
+  socklist = (sock_list *)realloc(socklist, sizeof(sock_list) * MAXSOCKS);
+  if (newmax > max_dcc) memset(socklist+max_dcc+10, 0, (newmax-max_dcc) * sizeof(*socklist));
+
   for (; osock < MAXSOCKS; osock++)
     socklist[osock].flags = SOCK_UNUSED;
+
+  max_dcc = newmax;
 }
 
 

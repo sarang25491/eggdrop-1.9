@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.73 2002/04/27 18:15:12 stdarg Exp $
+ * $Id: tcl.c,v 1.74 2002/04/27 18:34:09 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -102,8 +102,6 @@ static void botnet_change(char *new)
 /*
  *     Vars, traces, misc
  */
-
-int init_dcc_max();
 
 /* Used for read/write to integer couplets */
 typedef struct {
