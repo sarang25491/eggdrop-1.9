@@ -1,12 +1,35 @@
-#include <eggdrop/eggdrop.h>
-#include <ctype.h>
+/* core_party.c: core partyline commands
+ *
+ * Copyright (C) 2003, 2004 Eggheads Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
 
-#include "core_config.h"
-#include "logfile.h"
+#ifndef lint
+static const char rcsid[] = "$Id: core_party.c,v 1.15 2003/12/16 21:45:35 wcc Exp $";
+#endif
 
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
+
+#include <eggdrop/eggdrop.h>
+#include <ctype.h>
+#include <unistd.h>
+#include "core_config.h"
+#include "logfile.h"
 
 #ifdef HAVE_UNAME
 #  include <sys/utsname.h>
@@ -203,7 +226,7 @@ static int party_die(partymember_t *p, const char *nick, user_t *u, const char *
 	char *reason;
 
 	if (!text || !*text) reason = "No reason given.";
-	else reason = text;
+	else reason = (char *) text;
 	putlog(LOG_MISC, "*", "Saving user file...");
 	user_save(core_config.userfile);
 	putlog(LOG_MISC, "*", "Saving config file...");

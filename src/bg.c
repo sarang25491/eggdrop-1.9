@@ -1,10 +1,6 @@
-/*
- * bg.c --
+/* bg.c: handles moving the process to the background and forking, while
+ *       keeping threads happy.
  *
- *	Handles moving the process to the background and forking,
- *	while keeping threads happy.
- */
-/*
  * Copyright (C) 1997 Robey Pointer
  * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
  *
@@ -24,24 +20,22 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: bg.c,v 1.14 2003/12/16 03:13:51 wcc Exp $";
+static const char rcsid[] = "$Id: bg.c,v 1.15 2003/12/16 21:45:35 wcc Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+#  include <config.h>
 #endif
 
-#include <unistd.h>            /* fork(), pipe(), read(), setpgid(),
-                                  unlink(), write()                    */
-#include <stdio.h>             /* fflush(), fopen(), fprintf(),
-                                  printf()                             */
-#include <string.h>            /* strlen()                             */
-#include <stdlib.h>            /* exit()                               */
-#include <sys/types.h>         /* pid_t, kill()                        */
-#include <signal.h>            /* kill()                               */
-
-#include "main.h"              /* fatal()                              */
-#include "bg.h"                /* bg_quit_t, prototypes                */
+#include <eggdrop/eggdrop.h>
+#include <unistd.h>	/* fork(), pipe(), read(), setpgid(), unlink(), write() */
+#include <stdio.h>	/* fflush(), fopen(), fprintf(), printf()               */
+#include <string.h>	/* strlen()                                             */
+#include <stdlib.h>	/* exit()                                               */
+#include <sys/types.h>	/* pid_t, kill()                                        */
+#include <signal.h>	/* kill()                                               */
+#include "main.h"	/* fatal()                                              */
+#include "bg.h"
 
 extern char pid_file[];
 

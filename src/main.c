@@ -1,11 +1,5 @@
-/*
- * main.c --
+/* main.c
  *
- *	core event handling
- *	signal handling
- *	command line arguments
- */
-/*
  * Copyright (C) 1997 Robey Pointer
  * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
  *
@@ -23,25 +17,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-/*
- * The author (Robey Pointer) can be reached at:  robey@netcom.com
- * NOTE: Robey is no longer working on this code, there is a discussion
- * list available at eggheads@eggheads.org.
- */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.155 2003/12/16 03:26:42 wcc Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.156 2003/12/16 21:45:35 wcc Exp $";
+#endif
+
+#if HAVE_CONFIG_H
+#  include <config.h>
 #endif
 
 #include <ctype.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <eggdrop/eggdrop.h>
+#include "lib/compat/compat.h"
 #include "main.h"
+#include "debug.h"
 #include "core_config.h"
 #include "bg.h"
 #include "core_binds.h"
 #include "logfile.h"
-#include <fcntl.h>
 
 #ifdef TIME_WITH_SYS_TIME
 #  include <sys/time.h>
@@ -197,7 +192,7 @@ static void print_help(const char **argv)
 	printf("\n");
 }
 
-static void do_args(int argc, const char **argv)
+static void do_args(int argc, char *const *argv)
 {
 	int c;
 

@@ -1,9 +1,5 @@
-/*
- * main.h --
+/* main.h: header for main.c
  *
- *	include file to include most other include files
- */
-/*
  * Copyright (C) 1997 Robey Pointer
  * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
  *
@@ -20,24 +16,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- */
-/*
- * $Id: main.h,v 1.36 2003/12/11 00:49:11 wcc Exp $
+ *
+ * $Id: main.h,v 1.37 2003/12/16 21:45:35 wcc Exp $
  */
 
 #ifndef _EGG_MAIN_H
 #define _EGG_MAIN_H
 
-#if HAVE_CONFIG_H
-#  include <config.h>
-#endif
-
-#include "debug.h"
-#include <eggdrop/eggdrop.h>
-#include "lib/compat/compat.h"
-
 extern eggdrop_t *egg;
 
 void fatal(const char *, int);
 
-#endif				/* !_EGG_MAIN_H */
+#endif /* !_EGG_MAIN_H */

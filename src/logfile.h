@@ -1,11 +1,6 @@
-/*
- * logfile.h --
+/* logfile.h: header for logfile.c
  *
- *	logging stuff
- */
-/*
- * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
+ * Copyright (C) 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,21 +15,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- */
-/*
- * $Id: logfile.h,v 1.8 2003/12/11 00:49:11 wcc Exp $
+ *
+ * $Id: logfile.h,v 1.9 2003/12/16 21:45:35 wcc Exp $
  */
 
 #ifndef _EGG_LOGILE_H
 #define _EGG_LOGILE_H
-
-#ifndef MAKING_MODS
 
 extern void logfile_init(); 
 extern char *logfile_add(char *, char *, char *);
 extern int logfile_del(char *);
 extern void flushlogs(); 
 
-#endif				/* !MAKING_MODS */
-
-#endif				/* !_EGG_LOGFILE_H */
+#endif /* !_EGG_LOGFILE_H */

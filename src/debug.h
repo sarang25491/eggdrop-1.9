@@ -1,9 +1,5 @@
-/*
- * debug.h --
+/* debug.h: assert debugging
  *
- *	assert debugging
- */
-/*
  * Copyright (C) 2001, 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
@@ -19,25 +15,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- */
-/*
- * $Id: debug.h,v 1.5 2003/12/11 00:49:11 wcc Exp $
+ *
+ * $Id: debug.h,v 1.6 2003/12/16 21:45:35 wcc Exp $
  */
 
 #ifndef _EGG_DEBUG_H
 #define _EGG_DEBUG_H
 
 #ifdef DEBUG
-# undef NDEBUG
+#  undef NDEBUG
 /*
  * Some pre-ANSI implementations (e.g. SunOS 4)
  * need stderr defined if assertion checking is enabled.
  */
-# include <stdio.h>		
-# include <assert.h>
-#else				/* !DEBUG */
-# undef assert
-# define assert(e)
-#endif				/* DEBUG */
+#  include <stdio.h>		
+#  include <assert.h>
+#else /* !DEBUG */
+#  undef assert
+#  define assert(e)
+#endif /* DEBUG */
 
-#endif				/* !_EGG_DEBUG_H */
+#endif /* !_EGG_DEBUG_H */

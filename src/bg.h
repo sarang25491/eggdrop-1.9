@@ -1,7 +1,5 @@
-/*
- * bg.h --
- */
-/*
+/* bg.h: header file for bg.c
+ *
  * Copyright (C) 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
@@ -17,9 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- */
-/*
- * $Id: bg.h,v 1.7 2003/12/11 00:49:11 wcc Exp $
+ *
+ * $Id: bg.h,v 1.8 2003/12/16 21:45:35 wcc Exp $
  */
 
 #ifndef _EGG_BG_H
