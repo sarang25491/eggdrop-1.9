@@ -1,3 +1,12 @@
+2003-08-13 06:27  stdarg <stdarg@techmonkeys.org>
+
+	* doc/internals/network.txt, doc/internals/timers.txt,
+	doc/internals/users.txt, lib/eggdrop/eggdns.c,
+	lib/eggdrop/eggtimer.h, lib/eggdrop/users.h,
+	modules/server/dcc_commands.c:
+
+	[no log message] 
+
 2003-08-06 18:00  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/binds.c, lib/eggdrop/binds.h,
