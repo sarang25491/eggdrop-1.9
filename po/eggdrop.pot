@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2001-12-08 04:00-0600\n"
+"POT-Creation-Date: 2001-12-09 04:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Transfer-Encoding: ENCODING\n"
 
 #. Kill bot incase a botchk is run from crond.
-#: src/bg.c:125 src/bg.c:133 src/main.c:787 src/main.c:793
+#: src/bg.c:125 src/bg.c:133 src/main.c:789 src/main.c:795
 #, c-format
 msgid "* Warning!  Could not write %s file!\n"
 msgstr ""
@@ -607,7 +607,7 @@ msgstr ""
 msgid "Rehashing."
 msgstr ""
 
-#: modules/irc/msgcmds.c:878 src/cmds.c:1076 src/tcldcc.c:785
+#: modules/irc/msgcmds.c:862 src/cmds.c:1076 src/tcldcc.c:785
 msgid "Rehashing..."
 msgstr ""
 
@@ -631,8 +631,8 @@ msgstr ""
 msgid "requested"
 msgstr ""
 
-#: modules/server/cmdsserv.c:53 src/cmds.c:2207 src/cmds.c:2226
-#: src/cmds.c:2259 src/cmds.c:2281
+#: modules/server/cmdsserv.c:53 src/cmds.c:2206 src/cmds.c:2225
+#: src/cmds.c:2258 src/cmds.c:2280
 msgid "What?  You need .help\n"
 msgstr ""
 
@@ -642,91 +642,91 @@ msgstr ""
 #: modules/filesys/files.c:682 modules/filesys/files.c:731
 #: modules/filesys/files.c:797 modules/filesys/files.c:899
 #: modules/filesys/files.c:948 modules/filesys/files.c:1106
-#: modules/irc/msgcmds.c:394 modules/irc/msgcmds.c:631
-#: modules/irc/msgcmds.c:733 modules/notes/cmdsnote.c:31
+#: modules/irc/msgcmds.c:378 modules/irc/msgcmds.c:615
+#: modules/irc/msgcmds.c:717 modules/notes/cmdsnote.c:31
 #: modules/notes/cmdsnote.c:73 modules/notes/cmdsnote.c:153
 #: modules/notes/cmdsnote.c:187 modules/notes/cmdsnote.c:221
-#: modules/notes/notes.c:738 modules/notes/notes.c:774 src/cmds.c:2263
-#: src/cmds.c:2285 src/cmds.c:2539
+#: modules/notes/notes.c:738 modules/notes/notes.c:774 src/cmds.c:2262
+#: src/cmds.c:2284 src/cmds.c:2544
 msgid "Usage"
 msgstr ""
 
-#: src/cmds.c:2267
+#: src/cmds.c:2266
 msgid "Error loading module:"
 msgstr ""
 
-#: src/cmds.c:2270 src/modules.c:612
+#: src/cmds.c:2269 src/modules.c:612
 #, c-format
 msgid "Module loaded: %-16s"
 msgstr ""
 
-#: src/cmds.c:2289
+#: src/cmds.c:2288
 msgid "Error unloading module:"
 msgstr ""
 
-#: src/cmds.c:2292
+#: src/cmds.c:2291
 msgid "Module unloaded:"
 msgstr ""
 
-#: src/cmds.c:2539
+#: src/cmds.c:2544
 msgid "handle"
 msgstr ""
 
-#: src/cmds.c:2540
+#: src/cmds.c:2545
 msgid "hostmask"
 msgstr ""
 
-#: modules/notes/cmdsnote.c:159 src/cmds.c:2553
+#: modules/notes/cmdsnote.c:159 src/cmds.c:2558
 msgid "No such user."
 msgstr ""
 
-#: src/cmds.c:2561
+#: src/cmds.c:2566
 msgid "You can't remove hosts while having the +d or +k flag."
 msgstr ""
 
-#: src/cmds.c:2568
+#: src/cmds.c:2573
 msgid "You can't remove hostmasks from non-bots.\n"
 msgstr ""
 
-#: src/cmds.c:2572
+#: src/cmds.c:2577
 msgid "You can't remove hostmask from a shared bot.\n"
 msgstr ""
 
-#: src/cmds.c:2576
+#: src/cmds.c:2581
 msgid "Can't remove hostmasks from the bot owner/master.\n"
 msgstr ""
 
-#: src/cmds.c:2579
+#: src/cmds.c:2584
 msgid "Permission denied.\n"
 msgstr ""
 
-#: src/cmds.c:2585
+#: src/cmds.c:2590
 #, c-format
 msgid "Removed '%1$s' from %2$s\n"
 msgstr ""
 
-#: modules/filesys/files.c:990 modules/filesys/files.c:1086 src/cmds.c:2587
+#: modules/filesys/files.c:990 modules/filesys/files.c:1086 src/cmds.c:2592
 msgid "Failed.\n"
 msgstr ""
 
-#: src/cmds.c:2595
+#: src/cmds.c:2600
 msgid "Usage: modules <bot>\n"
 msgstr ""
 
-#: src/cmds.c:2602
+#: src/cmds.c:2607
 msgid "No such bot online.\n"
 msgstr ""
 
-#: src/cmds.c:2705
+#: src/cmds.c:2710
 #, c-format
 msgid "You are %s@%s\n"
 msgstr ""
 
-#: src/cmds.c:2715
+#: src/cmds.c:2720
 msgid "*** Ja mata!\n"
 msgstr ""
 
-#: src/cmds.c:2717
+#: src/cmds.c:2722
 #, c-format
 msgid "DCC connection closed (%s!%s)"
 msgstr ""
@@ -1030,37 +1030,37 @@ msgstr ""
 msgid "Backing up user file..."
 msgstr ""
 
-#: src/main.c:715
+#: src/main.c:717
 msgid "ERROR: Eggdrop will not run as root!"
 msgstr ""
 
-#: src/main.c:739
+#: src/main.c:741
 msgid ""
 "You have installed modules but have not selected an encryption\n"
 "module, please consult the default config file for info.\n"
 msgstr ""
 
-#: src/main.c:763
+#: src/main.c:765
 #, c-format
 msgid "I detect %s already running from this directory.\n"
 msgstr ""
 
-#: src/main.c:764
+#: src/main.c:766
 #, c-format
 msgid "If this is incorrect, erase the %s\n"
 msgstr ""
 
 #. Should be only 2 modules now - blowfish (or some other
 #. encryption module) and eggdrop.
-#: src/main.c:1003
+#: src/main.c:1005
 msgid "Stagnant module; there WILL be memory leaks!"
 msgstr ""
 
-#: src/misc.c:945 src/misc.c:984
+#: src/misc.c:949 src/misc.c:988
 msgid "No help available on that."
 msgstr ""
 
-#: src/misc.c:1008 src/misc.c:1033
+#: src/misc.c:1012 src/misc.c:1037
 msgid "No help available on that.\n"
 msgstr ""
 
@@ -1183,7 +1183,7 @@ msgstr ""
 msgid "You can't unload an encryption module"
 msgstr ""
 
-#: modules/blowfish/blowfish.c:456 src/modules.c:574 src/tclmisc.c:284
+#: modules/blowfish/blowfish.c:456 src/modules.c:574 src/tclmisc.c:237
 msgid "Already loaded."
 msgstr ""
 
@@ -1747,61 +1747,61 @@ msgstr ""
 msgid "banned: "
 msgstr ""
 
-#: modules/irc/chan.c:423 modules/irc/chan.c:492 modules/irc/chan.c:1669
+#: modules/irc/chan.c:423 modules/irc/chan.c:492 modules/irc/chan.c:1696
 msgid "You are banned"
 msgstr ""
 
-#: modules/irc/chan.c:753
+#: modules/irc/chan.c:738
 msgid "...and thank you for playing."
 msgstr ""
 
-#: modules/irc/chan.c:822
+#: modules/irc/chan.c:849
 msgid "Hmm, mode info from a channel Im not on"
 msgstr ""
 
-#: modules/irc/chan.c:1171
+#: modules/irc/chan.c:1198
 #, c-format
 msgid "Im on too many channels--cant join: %s"
 msgstr ""
 
-#: modules/irc/chan.c:1235 modules/irc/chan.c:1238
+#: modules/irc/chan.c:1262 modules/irc/chan.c:1265
 #, c-format
 msgid "Channel full--cant join: %s"
 msgstr ""
 
-#: modules/irc/chan.c:1263 modules/irc/chan.c:1266
+#: modules/irc/chan.c:1290 modules/irc/chan.c:1293
 #, c-format
 msgid "Channel invite only--cant join: %s"
 msgstr ""
 
-#: modules/irc/chan.c:1291 modules/irc/chan.c:1294
+#: modules/irc/chan.c:1318 modules/irc/chan.c:1321
 #, c-format
 msgid "Banned from channel--can't join: %s"
 msgstr ""
 
-#: modules/irc/chan.c:1319 modules/irc/chan.c:1327
+#: modules/irc/chan.c:1346 modules/irc/chan.c:1354
 #, c-format
 msgid "Bad key--cant join: %s"
 msgstr ""
 
-#: modules/irc/chan.c:1685
+#: modules/irc/chan.c:1712
 msgid "...and dont come back."
 msgstr ""
 
-#: modules/irc/chan.c:1950 modules/server/servmsg.c:680
+#: modules/irc/chan.c:1977 modules/server/servmsg.c:680
 #: modules/server/servmsg.c:828 modules/server/servmsg.c:840
 #, c-format
 msgid "Switching back to nick %s"
 msgstr ""
 
-#: modules/irc/chan.c:1954 modules/server/servmsg.c:683
+#: modules/irc/chan.c:1981 modules/server/servmsg.c:683
 #: modules/server/servmsg.c:832 modules/server/servmsg.c:844
 #, c-format
 msgid "Switching back to altnick %s"
 msgstr ""
 
-#: modules/irc/chan.c:2004 modules/irc/chan.c:2009 modules/irc/chan.c:2142
-#: modules/irc/chan.c:2147
+#: modules/irc/chan.c:2031 modules/irc/chan.c:2036 modules/irc/chan.c:2169
+#: modules/irc/chan.c:2174
 msgid "that was fun, lets do it again!"
 msgstr ""
 
@@ -1845,8 +1845,8 @@ msgstr ""
 msgid "End of channel info."
 msgstr ""
 
-#: modules/irc/cmdsirc.c:948 modules/irc/msgcmds.c:310
-#: modules/irc/msgcmds.c:399 modules/irc/msgcmds.c:926
+#: modules/irc/cmdsirc.c:946 modules/irc/msgcmds.c:294
+#: modules/irc/msgcmds.c:383 modules/irc/msgcmds.c:910
 msgid "I dont monitor that channel."
 msgstr ""
 
@@ -1858,23 +1858,23 @@ msgstr ""
 msgid "dont deop my friends, bud"
 msgstr ""
 
-#: modules/irc/irc.c:833
+#: modules/irc/irc.c:836
 msgid "juped"
 msgstr ""
 
-#: modules/irc/irc.c:835
+#: modules/irc/irc.c:838
 msgid "trying"
 msgstr ""
 
-#: modules/irc/irc.c:837
+#: modules/irc/irc.c:840
 msgid "pending"
 msgstr ""
 
-#: modules/irc/irc.c:839
+#: modules/irc/irc.c:842
 msgid "opless"
 msgstr ""
 
-#: modules/irc/irc.c:841
+#: modules/irc/irc.c:844
 msgid "want ops!"
 msgstr ""
 
@@ -1997,10 +1997,10 @@ msgstr ""
 msgid "introduced to %s from %s"
 msgstr ""
 
-#: modules/irc/msgcmds.c:139 modules/irc/msgcmds.c:202
-#: modules/irc/msgcmds.c:265 modules/irc/msgcmds.c:305
-#: modules/irc/msgcmds.c:787 modules/irc/msgcmds.c:849
-#: modules/irc/msgcmds.c:920 modules/irc/msgcmds.c:951
+#: modules/irc/msgcmds.c:139 modules/irc/msgcmds.c:201
+#: modules/irc/msgcmds.c:248 modules/irc/msgcmds.c:289
+#: modules/irc/msgcmds.c:771 modules/irc/msgcmds.c:833
+#: modules/irc/msgcmds.c:904 modules/irc/msgcmds.c:935
 msgid "You dont have a password set."
 msgstr ""
 
@@ -2028,112 +2028,112 @@ msgstr ""
 msgid "Password changed to:"
 msgstr ""
 
-#: modules/irc/msgcmds.c:182 modules/irc/msgcmds.c:254
+#: modules/irc/msgcmds.c:181 modules/irc/msgcmds.c:237
 msgid "Youre at a common site; you cant IDENT."
 msgstr ""
 
-#: modules/irc/msgcmds.c:195 modules/irc/msgcmds.c:212
+#: modules/irc/msgcmds.c:194 modules/irc/msgcmds.c:211
 #, c-format
 msgid "NOTICE %s :Youre not %s, youre %s.\n"
 msgstr ""
 
-#: modules/irc/msgcmds.c:205 modules/irc/msgcmds.c:268
+#: modules/irc/msgcmds.c:204 modules/irc/msgcmds.c:251
 msgid "Access denied."
 msgstr ""
 
-#: modules/irc/msgcmds.c:208
+#: modules/irc/msgcmds.c:207
 msgid "I recognize you there."
 msgstr ""
 
-#: modules/irc/msgcmds.c:221 modules/irc/msgcmds.c:274
+#: modules/irc/msgcmds.c:217 modules/irc/msgcmds.c:257
 msgid "Added hostmask"
 msgstr ""
 
-#: modules/irc/msgcmds.c:325
+#: modules/irc/msgcmds.c:309
 msgid "Your info line is locked"
 msgstr ""
 
-#: modules/irc/msgcmds.c:332
+#: modules/irc/msgcmds.c:316
 msgid "Removed your info line on"
 msgstr ""
 
-#: modules/irc/msgcmds.c:337
+#: modules/irc/msgcmds.c:321
 msgid "Removed your info line."
 msgstr ""
 
-#: modules/irc/msgcmds.c:344
+#: modules/irc/msgcmds.c:328
 msgid "Now:"
 msgstr ""
 
-#: modules/irc/msgcmds.c:365
+#: modules/irc/msgcmds.c:349
 msgid "Currently:"
 msgstr ""
 
-#: modules/irc/msgcmds.c:367
+#: modules/irc/msgcmds.c:351
 msgid "To remove it:"
 msgstr ""
 
-#: modules/irc/msgcmds.c:371
+#: modules/irc/msgcmds.c:355
 msgid "You have no info set on"
 msgstr ""
 
-#: modules/irc/msgcmds.c:373
+#: modules/irc/msgcmds.c:357
 msgid "You have no info set."
 msgstr ""
 
-#: modules/irc/msgcmds.c:406
+#: modules/irc/msgcmds.c:390
 msgid "Channel is currently hidden."
 msgstr ""
 
-#: modules/irc/msgcmds.c:499
+#: modules/irc/msgcmds.c:483
 msgid "No user record."
 msgstr ""
 
-#: modules/irc/msgcmds.c:516
+#: modules/irc/msgcmds.c:500
 msgid "Now on channel"
 msgstr ""
 
-#: modules/irc/msgcmds.c:530
+#: modules/irc/msgcmds.c:514
 msgid "Last seen at"
 msgstr ""
 
-#: modules/irc/msgcmds.c:535
+#: modules/irc/msgcmds.c:519
 msgid "Never joined one of my channels."
 msgstr ""
 
-#: modules/irc/msgcmds.c:537
+#: modules/irc/msgcmds.c:521
 msgid "  (is a global op)"
 msgstr ""
 
-#: modules/irc/msgcmds.c:539
+#: modules/irc/msgcmds.c:523
 msgid "  (is a bot)"
 msgstr ""
 
-#: modules/irc/msgcmds.c:541
+#: modules/irc/msgcmds.c:525
 msgid "  (is a master)"
 msgstr ""
 
-#: modules/irc/msgcmds.c:554
+#: modules/irc/msgcmds.c:538
 msgid "I dont know you; please introduce yourself first."
 msgstr ""
 
-#: modules/irc/msgcmds.c:572
+#: modules/irc/msgcmds.c:556
 msgid "No help."
 msgstr ""
 
-#: modules/irc/msgcmds.c:635 modules/irc/msgcmds.c:737
+#: modules/irc/msgcmds.c:619 modules/irc/msgcmds.c:721
 msgid "Not on that channel right now."
 msgstr ""
 
-#: modules/irc/msgcmds.c:853
+#: modules/irc/msgcmds.c:837
 msgid "Bot shut down beginning...."
 msgstr ""
 
-#: modules/irc/msgcmds.c:930 modules/irc/msgcmds.c:935
+#: modules/irc/msgcmds.c:914 modules/irc/msgcmds.c:919
 msgid "Resetting channel info."
 msgstr ""
 
-#: modules/irc/msgcmds.c:968 modules/server/cmdsserv.c:81
+#: modules/irc/msgcmds.c:952 modules/server/cmdsserv.c:81
 msgid "Jumping servers..."
 msgstr ""
 
@@ -2424,19 +2424,19 @@ msgstr ""
 msgid "DNS lookup failed"
 msgstr ""
 
-#: modules/share/share.c:1592 modules/share/share.c:1617
+#: modules/share/share.c:1591 modules/share/share.c:1616
 msgid "ERROR writing user file to transfer."
 msgstr ""
 
-#: modules/share/share.c:1769
+#: modules/share/share.c:1768
 msgid "CANT READ NEW USERFILE"
 msgstr ""
 
-#: modules/share/share.c:1779
+#: modules/share/share.c:1778
 msgid "Userlist transfer complete; switched over"
 msgstr ""
 
-#: modules/share/share.c:1899
+#: modules/share/share.c:1898
 msgid "Cant send userfile to you (internal error)"
 msgstr ""
 
@@ -2507,7 +2507,7 @@ msgstr ""
 msgid "Restarting..."
 msgstr ""
 
-#: src/tclmisc.c:285
+#: src/tclmisc.c:238
 msgid "Cant load modules"
 msgstr ""
 
