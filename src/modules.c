@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.73 2001/10/15 07:56:41 tothwolf Exp $
+ * $Id: modules.c,v 1.74 2001/10/17 00:19:16 stdarg Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -362,8 +362,8 @@ Function global_table[] =
   /* 176 - 179 */
   (Function) & H_chon,		/* p_tcl_bind_list *			*/
   (Function) & H_chof,		/* p_tcl_bind_list *			*/
-  (Function) & H_load,		/* p_tcl_bind_list *			*/
-  (Function) & H_unld,		/* p_tcl_bind_list *			*/
+  (Function) 0,		/* p_tcl_bind_list *			*/
+  (Function) 0,		/* p_tcl_bind_list *			*/
   /* 180 - 183 */
   (Function) & H_chat,		/* p_tcl_bind_list *			*/
   (Function) & H_act,		/* p_tcl_bind_list *			*/
@@ -507,10 +507,15 @@ Function global_table[] =
   (Function) registry_add_simple_chains
 };
 
+static bind_table_t *BT_load, *BT_unload;
+
 void init_modules(void)
 {
   int i;
   char wbuf[1024];
+
+  BT_load = add_bind_table2("load", 1, "s", MATCH_MASK, 0);
+  BT_unload = add_bind_table2("unload", 1, "s", MATCH_MASK, 0);
 
   module_list = malloc(sizeof(module_entry));
   malloc_strcpy(module_list->name, "eggdrop");
@@ -595,7 +600,7 @@ const char *module_load(char *name)
     free(p);
     return e;
   }
-  check_tcl_load(name);
+  check_bind(BT_load, name, NULL, name);
   putlog(LOG_MISC, "*", _("Module loaded: %-16s"), name);
   return NULL;
 }
@@ -618,7 +623,7 @@ char *module_unload(char *name, char *user)
       if (f && !f[MODCALL_CLOSE])
 	return _("No close function");
       if (f) {
-	check_tcl_unld(name);
+	check_bind(BT_unload, name, NULL, name);
 	e = (((char *(*)()) f[MODCALL_CLOSE]) (user));
 	if (e != NULL)
 	  return e;

@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.48 2001/10/11 18:24:03 tothwolf Exp $
+ * $Id: transfer.c,v 1.49 2001/10/17 00:19:17 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -53,6 +53,8 @@ static int dcc_limit = 3;	/* Maximum number of simultaneous file
 static int dcc_block = 1024;	/* Size of one dcc block */
 static int quiet_reject;        /* Quietly reject dcc chat or sends from
                                    users without access? */
+
+static bind_table_t *BT_load;
 
 /*
  * Prototypes
@@ -1826,10 +1828,10 @@ static cmd_t transfer_ctcps[] =
 /* Add our CTCP bindings if the server module is loaded. */
 static int server_transfer_setup(char *mod)
 {
-  p_tcl_bind_list H_ctcp;
+  bind_table_t *BT_ctcp;
 
-  if ((H_ctcp = find_bind_table("ctcp")))
-    add_builtins(H_ctcp, transfer_ctcps);
+  if (BT_ctcp = find_bind_table2("ctcp"))
+    add_builtins2(BT_ctcp, transfer_ctcps);
   return 1;
 }
 
@@ -1846,7 +1848,7 @@ static cmd_t transfer_load[] =
 static char *transfer_close()
 {
   int i;
-  p_tcl_bind_list H_ctcp;
+  bind_table_t *BT_ctcp;
 
   putlog(LOG_MISC, "*", "Unloading transfer module, killing all transfer connections...");
   for (i = dcc_total - 1; i >= 0; i--) {
@@ -1864,10 +1866,10 @@ static char *transfer_close()
   del_bind_table(H_sent);
   del_bind_table(H_lost);
   del_bind_table(H_tout);
-  rem_builtins(H_load, transfer_load);
+  if (BT_load) rem_builtins2(BT_load, transfer_load);
   /* Try to remove our CTCP bindings */
-  if ((H_ctcp = find_bind_table("ctcp")))
-    rem_builtins(H_ctcp, transfer_ctcps);
+  if (BT_ctcp = find_bind_table2("ctcp"))
+    rem_builtins2(BT_ctcp, transfer_ctcps);
   rem_tcl_commands(mytcls);
   rem_tcl_ints(myints);
   rem_help_reference("transfer.help");
@@ -1925,9 +1927,11 @@ char *start(Function *global_funcs)
     return "This module requires eggdrop1.7.0 or later";
   }
 
+  BT_load = find_bind_table2("load");
+  if (BT_load) add_builtins2(BT_load, transfer_load);
+
   add_tcl_commands(mytcls);
   add_tcl_ints(myints);
-  add_builtins(H_load, transfer_load);
   server_transfer_setup(NULL);
   add_help_reference("transfer.help");
   H_rcvd = add_bind_table("rcvd", HT_STACKABLE, builtin_sentrcvd);

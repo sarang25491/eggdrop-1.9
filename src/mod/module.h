@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.66 2001/10/14 23:13:33 stdarg Exp $
+ * $Id: module.h,v 1.67 2001/10/17 00:19:17 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -304,8 +304,8 @@
 /* 176 - 179 */
 #define H_chon (*(p_tcl_bind_list *)(global[176]))
 #define H_chof (*(p_tcl_bind_list *)(global[177]))
-#define H_load (*(p_tcl_bind_list *)(global[178]))
-#define H_unld (*(p_tcl_bind_list *)(global[179]))
+/*#define H_load (*(p_tcl_bind_list *)(global[178])) */
+/*#define H_unld (*(p_tcl_bind_list *)(global[179])) */
 /* 180 - 183 */
 #define H_chat (*(p_tcl_bind_list *)(global[180]))
 #define H_act (*(p_tcl_bind_list *)(global[181]))

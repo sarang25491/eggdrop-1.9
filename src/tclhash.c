@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.46 2001/10/16 02:42:33 stdarg Exp $
+ * $Id: tclhash.c,v 1.47 2001/10/17 00:19:16 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -49,7 +49,7 @@ static bind_table_t *BT_dcc;
 
 p_tcl_bind_list		bind_table_list;
 p_tcl_bind_list		H_chat, H_act, H_bcst, H_chon, H_chof,
-			H_load, H_unld, H_link, H_disc, H_chjn, H_chpt,
+			H_link, H_disc, H_chjn, H_chpt,
 			H_bot, H_time, H_nkch, H_away, H_note, H_filt;
 
 static int builtin_2char();
@@ -175,10 +175,8 @@ void init_old_binds(void)
 {
   bind_table_list = NULL;
   Context;
-  H_unld = add_bind_table("unld", HT_STACKABLE, builtin_char);
   H_note = add_bind_table("note", 0, builtin_3char);
   H_nkch = add_bind_table("nkch", HT_STACKABLE, builtin_2char);
-  H_load = add_bind_table("load", HT_STACKABLE, builtin_char);
   H_link = add_bind_table("link", HT_STACKABLE, builtin_2char);
   H_filt = add_bind_table("filt", HT_STACKABLE, builtin_idxchar);
   H_disc = add_bind_table("disc", HT_STACKABLE, builtin_char);
@@ -724,33 +722,6 @@ static int builtin_chat STDVAR
   return TCL_OK;
 }
 
-static int builtin_dcc STDVAR
-{
-  int idx;
-  Function F = (Function) cd;
-
-  BADARGS(4, 4, " hand idx param");
-  idx = findidx(atoi(argv[2]));
-  if (idx < 0) {
-    Tcl_AppendResult(irp, "invalid idx", NULL);
-    return TCL_ERROR;
-  }
-  if (F == NULL) {
-    Tcl_AppendResult(irp, "break", NULL);
-    return TCL_OK;
-  }
-  /* Check if it's a password change, if so, don't show the password. We
-   * don't need pretty formats here, as it's only for debugging purposes.
-   */
-  debug4("tcl: builtin dcc call: %s %s %s %s", argv[0], argv[1], argv[2],
-	 (!strcmp(argv[0] + 5, "newpass") ||
-	  !strcmp(argv[0] + 5, "chpass")) ? "[something]" : argv[3]);
-  (F) (dcc[idx].user, idx, argv[3]);
-  Tcl_ResetResult(irp);
-  Tcl_AppendResult(irp, "0", NULL);
-  return TCL_OK;
-}
-
 /* trigger (execute) a proc */
 static int trigger_bind(const char *proc, const char *param)
 {
@@ -1076,12 +1047,6 @@ void check_tcl_disc(const char *bot)
 
   Tcl_SetVar(interp, "_disc1", (char *) bot, 0);
   check_tcl_bind(H_disc, bot, 0, " $_disc1", MATCH_MASK | BIND_STACKABLE);
-}
-
-void check_tcl_loadunld(const char *mod, tcl_bind_list_t *tl)
-{
-  Tcl_SetVar(interp, "_lu1", (char *) mod, 0);
-  check_tcl_bind(tl, mod, 0, " $_lu1", MATCH_MASK | BIND_STACKABLE);
 }
 
 const char *check_tcl_filt(int idx, const char *text)

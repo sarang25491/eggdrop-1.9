@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.38 2001/10/11 13:01:36 tothwolf Exp $
+ * $Id: notes.c,v 1.39 2001/10/17 00:19:17 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -47,7 +47,7 @@ static int notify_onjoin = 1;   /* Notify users they have notes on join?
 				   drummer */
 static Function *global = NULL;	/* DAMN fcntl.h */
 
-static bind_table_t *BT_dcc;
+static bind_table_t *BT_dcc, *BT_load;
 
 static struct user_entry_type USERENTRY_FWD =
 {
@@ -1178,7 +1178,7 @@ static char *notes_close()
   rem_builtins(H_chon, notes_chon);
   rem_builtins(H_away, notes_away);
   rem_builtins(H_nkch, notes_nkch);
-  rem_builtins(H_load, notes_load);
+  if (BT_load) rem_builtins2(BT_load, notes_load);
   rem_help_reference("notes.help");
   del_hook(HOOK_MATCH_NOTEREJ, (Function) match_note_ignore);
   del_hook(HOOK_HOURLY, (Function) notes_hourly);
@@ -1226,12 +1226,13 @@ char *start(Function * global_funcs)
   add_tcl_commands(notes_tcls);
 
   BT_dcc = find_bind_table2("dcc");
+  BT_load = find_bind_table2("load");
   if (BT_dcc) add_builtins2(BT_dcc, notes_cmds);
+  if (BT_load) add_builtins2(BT_load, notes_load);
 
   add_builtins(H_chon, notes_chon);
   add_builtins(H_away, notes_away);
   add_builtins(H_nkch, notes_nkch);
-  add_builtins(H_load, notes_load);
   add_help_reference("notes.help");
   notes_server_setup(0);
   notes_irc_setup(0);

@@ -1,7 +1,7 @@
 /*
  * server.h -- part of server.mod
  *
- * $Id: server.h,v 1.15 2001/10/10 10:44:07 tothwolf Exp $
+ * $Id: server.h,v 1.16 2001/10/17 00:19:17 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -65,8 +65,8 @@
 /* 31 - 34 */
 #define H_notc (*(p_tcl_bind_list *)(server_funcs[31]))
 #define H_flud (*(p_tcl_bind_list *)(server_funcs[32]))
-#define H_ctcp (*(p_tcl_bind_list *)(server_funcs[33]))
-#define H_ctcr (*(p_tcl_bind_list *)(server_funcs[34]))
+/* #define H_ctcp (*(p_tcl_bind_list *)(server_funcs[33])) */
+/* #define H_ctcr (*(p_tcl_bind_list *)(server_funcs[34])) */
 /* 35 - 38 */
 #define ctcp_reply ((char *)(server_funcs[35]))
 #define get_altbotnick ((char *(*)(void))(server_funcs[36]))

@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.55 2001/10/13 12:00:22 stdarg Exp $
+ * $Id: filesys.c,v 1.56 2001/10/17 00:19:17 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -58,7 +58,7 @@
 #define start filesys_LTX_start
 
 static p_tcl_bind_list H_fil;
-static bind_table_t *BT_dcc;
+static bind_table_t *BT_dcc, *BT_load;
 static Function *transfer_funcs = NULL;
 
 /* fcntl.h sets this :/ */
@@ -875,10 +875,10 @@ static cmd_t myctcp[] =
 
 static void init_server_ctcps(char *module)
 {
-  p_tcl_bind_list H_ctcp;
+  bind_table_t *BT_ctcp;
 
-  if ((H_ctcp = find_bind_table("ctcp")))
-    add_builtins(H_ctcp, myctcp);
+  if (BT_ctcp = find_bind_table2("ctcp"))
+    add_builtins2(BT_ctcp, myctcp);
 }
 
 static cmd_t myload[] =
@@ -908,7 +908,7 @@ static void filesys_report(int idx, int details)
 static char *filesys_close()
 {
   int i;
-  p_tcl_bind_list H_ctcp;
+  bind_table_t *BT_ctcp;
 
   putlog(LOG_MISC, "*", "Unloading filesystem, killing all filesystem connections..");
   for (i = 0; i < dcc_total; i++)
@@ -926,11 +926,11 @@ static char *filesys_close()
   rem_tcl_strings(mystrings);
   rem_tcl_ints(myints);
   if (BT_dcc) rem_builtins2(BT_dcc, mydcc);
-  rem_builtins(H_load, myload);
+  if (BT_load) rem_builtins2(BT_load, myload);
   rem_builtins(H_fil, myfiles);
   rem_help_reference("filesys.help");
-  if ((H_ctcp = find_bind_table("ctcp")))
-    rem_builtins(H_ctcp, myctcp);
+  if (BT_ctcp = find_bind_table2("ctcp"))
+    rem_builtins2(BT_ctcp, myctcp);
   del_bind_table(H_fil);
   del_entry_type(&USERENTRY_DCCDIR);
   module_undepend(MODULE_NAME);
@@ -973,9 +973,10 @@ char *start(Function * global_funcs)
   add_tcl_ints(myints);
   H_fil = add_bind_table("fil", 0, builtin_fil);
   BT_dcc = find_bind_table2("dcc");
+  BT_load = find_bind_table2("load");
   if (BT_dcc) add_builtins2(BT_dcc, mydcc);
+  if (BT_load) add_builtins2(BT_load, myload);
   add_builtins(H_fil, myfiles);
-  add_builtins(H_load, myload);
   add_help_reference("filesys.help");
   init_server_ctcps(0);
   memcpy(&USERENTRY_DCCDIR, &USERENTRY_INFO,

@@ -1,7 +1,7 @@
 /*
  * tclhash.h
  *
- * $Id: tclhash.h,v 1.20 2001/10/14 23:13:33 stdarg Exp $
+ * $Id: tclhash.h,v 1.21 2001/10/17 00:19:16 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -166,15 +166,12 @@ void check_tcl_chonof(char *, int, tcl_bind_list_t *);
 #define check_tcl_chof(a, b) check_tcl_chonof(a, b, H_chof)
 void check_tcl_loadunld(const char *, tcl_bind_list_t *);
 
-#define check_tcl_load(a) check_tcl_loadunld(a, H_load)
-#define check_tcl_unld(a) check_tcl_loadunld(a, H_unld)
-
 void rem_builtins(tcl_bind_list_t *, cmd_t *);
 void add_builtins(tcl_bind_list_t *, cmd_t *);
 
 int check_validity(char *, Function);
 extern p_tcl_bind_list H_chat, H_act, H_bcst, H_chon, H_chof;
-extern p_tcl_bind_list H_load, H_unld, H_bot, H_link;
+extern p_tcl_bind_list H_bot, H_link;
 extern p_tcl_bind_list H_away, H_nkch, H_filt, H_disc;
 
 int check_bind(bind_table_t *table, const char *match, struct flag_record *_flags, ...);
