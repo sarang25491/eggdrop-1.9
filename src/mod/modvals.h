@@ -1,7 +1,7 @@
 /*
  * modvals.h
  *
- * $Id: modvals.h,v 1.22 2001/10/10 01:20:11 ite Exp $
+ * $Id: modvals.h,v 1.23 2001/10/10 10:44:05 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -58,7 +58,7 @@
  */
 #define MODCALL_START		  0
 #define MODCALL_CLOSE		  1
-#define MODCALL_EXPMEM		  2
+#define MODCALL_EXPMEM		  2	/* This is no longer used (Tothwolf) */
 #define MODCALL_REPORT		  3
 /* Filesys */
 #define FILESYS_REMOTE_REQ	  4

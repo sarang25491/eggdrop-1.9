@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.52 2001/08/27 23:33:43 poptix Exp $
+ * $Id: cmdschan.c,v 1.53 2001/10/10 10:44:05 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1288,7 +1288,7 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
 
 static void cmd_chanset(struct userrec *u, int idx, char *par)
 {
-  char *chname = NULL, answers[512], *parcpy;
+  char *chname = NULL, answers[512], *parcpy = NULL;
   char *list[2], *bak, *buf;
   struct chanset_t *chan = NULL;
   int all = 0;
@@ -1334,7 +1334,7 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
     if (all)
       chan = chanset;
     bak = par;
-    buf = nmalloc(strlen(par) + 1);
+    buf = malloc(strlen(par) + 1);
     while (chan) {
       chname = chan->dname;
       strcpy(buf, bak);
@@ -1360,8 +1360,7 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
 	  /* Par gets modified in tcl_channel_modify under some
   	   * circumstances, so save it now.
 	   */
-	  parcpy = nmalloc(strlen(par) + 1);
-	  strcpy(parcpy, par);
+	  malloc_strcpy(parcpy, par);
           if (tcl_channel_modify(0, chan, 2, list) == TCL_OK) {
 	    strcat(answers, list[0]);
 	    strcat(answers, " { ");
@@ -1370,7 +1369,7 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
 	  } else if (!all || !chan->next)
 	    dprintf(idx, "Error trying to set %s for %s, invalid option\n",
 		    list[0], all ? "all channels" : chname);
-          nfree(parcpy);
+          free(parcpy);
 	break;
       }
       if (!all && answers[0]) {
@@ -1389,7 +1388,7 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
 	      answers);
       putlog(LOG_CMDS, "*", "#%s# chanset * %s", dcc[idx].nick, answers);
     }
-    nfree(buf);
+    free(buf);
   }
 }
 

@@ -2,7 +2,7 @@
  * users.h
  *   structures and definitions used by users.c and userrec.c
  *
- * $Id: users.h,v 1.8 2001/04/12 02:39:44 guppy Exp $
+ * $Id: users.h,v 1.9 2001/10/10 10:44:04 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -60,7 +60,6 @@ struct user_entry_type {
 		  int, char **);
   int (*tcl_set) (Tcl_Interp *, struct userrec *, struct user_entry *,
 		  int, char **);
-  int (*expmem) (struct user_entry *);
   void (*display) (int idx, struct user_entry *);
   char *name;
 };
@@ -108,14 +107,6 @@ struct filesys_stats {
   int dnloads;
   int dnload_ks;
 };
-
-void *_user_malloc(int size, const char *file, int line);
-void *_user_realloc(void *ptr, int size, const char *file, int line);
-
-#ifndef MAKING_MODS
-#  define user_malloc(x)	_user_malloc(x, __FILE__, __LINE__)
-#  define user_realloc(x, y)	_user_realloc(x, y, __FILE__, __LINE__)
-#endif
 
 int add_entry_type(struct user_entry_type *);
 int del_entry_type(struct user_entry_type *);
@@ -196,7 +187,6 @@ int def_tcl_get(Tcl_Interp *interp, struct userrec *u,
 		struct user_entry *e, int argc, char **argv);
 int def_tcl_set(Tcl_Interp *irp, struct userrec *u,
 		struct user_entry *e, int argc, char **argv);
-int def_expmem(struct user_entry *e);
 void def_display(int idx, struct user_entry *e);
 int def_dupuser(struct userrec *new, struct userrec *old,
 		struct user_entry *e);

@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.49 2001/10/10 01:20:12 ite Exp $
+ * $Id: filesys.c,v 1.50 2001/10/10 10:44:06 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -91,7 +91,6 @@ static int is_valid();
 static void eof_dcc_files(int idx);
 static void dcc_files(int idx, char *buf, int i);
 static void disp_dcc_files(int idx, char *buf);
-static int expmem_dcc_files(void *x);
 static void kill_dcc_files(int idx, void *x);
 static void out_dcc_files(int idx, char *buf, void *x);
 static char *mktempfile(char *filename);
@@ -105,7 +104,6 @@ static struct dcc_table DCC_FILES =
   NULL,
   NULL,
   disp_dcc_files,
-  expmem_dcc_files,
   kill_dcc_files,
   out_dcc_files
 };
@@ -113,7 +111,6 @@ static struct dcc_table DCC_FILES =
 static struct user_entry_type USERENTRY_DCCDIR =
 {
   NULL,				/* always NULL ;) */
-  NULL,
   NULL,
   NULL,
   NULL,
@@ -249,7 +246,7 @@ static void dcc_files(int idx, char *buf, int i)
 
       dprintf(idx, "Returning you to command mode...\n");
       ci = dcc[idx].u.file->chat;
-      my_free(dcc[idx].u.file);
+      free_null(dcc[idx].u.file);
       dcc[idx].u.chat = ci;
       dcc[idx].status &= (~STAT_CHAT);
       dcc[idx].type = &DCC_CHAT;
@@ -326,15 +323,14 @@ static int cmd_files(struct userrec *u, int idx, char *par)
 	  botnet_send_part_idx(idx, "file system");
       }
       ci = dcc[idx].u.chat;
-      dcc[idx].u.file = get_data_ptr(sizeof(struct file_info));
-
+      malloc_memset(dcc[idx].u.file, 0, sizeof(struct file_info));
       dcc[idx].u.file->chat = ci;
       dcc[idx].type = &DCC_FILES;
       dcc[idx].status |= STAT_CHAT;
       if (!welcome_to_files(idx)) {
 	struct chat_info *ci = dcc[idx].u.file->chat;
 
-	my_free(dcc[idx].u.file);
+	free_null(dcc[idx].u.file);
 	dcc[idx].u.chat = ci;
 	dcc[idx].type = &DCC_CHAT;
 	putlog(LOG_FILES, "*", "File system broken.");
@@ -414,7 +410,7 @@ static int _dcc_send(int idx, char *filename, char *nick, char *dir,
     dprintf(DP_HELP, "NOTICE %s :Here is %s file from %s %s...\n", nick,
 	    resend ? "the" : "a", dcc[idx].nick, resend ? "again " : "");
   dprintf(idx, "%sending: %s to %s\n", resend ? "Res" : "S", nfn, nick);
-  my_free(buf);
+  free_null(buf);
   return 1;
 }
 
@@ -439,10 +435,10 @@ static int do_dcc_send(int idx, char *dir, char *fn, char *nick, int resend)
     return 0;
   }
   if (dir[0]) {
-    s = nmalloc(strlen(dccdir) + strlen(dir) + strlen(fn) + 2);
+    s = malloc(strlen(dccdir) + strlen(dir) + strlen(fn) + 2);
     sprintf(s, "%s%s/%s", dccdir, dir, fn);
   } else {
-    s = nmalloc(strlen(dccdir) + strlen(fn) + 1);
+    s = malloc(strlen(dccdir) + strlen(fn) + 1);
     sprintf(s, "%s%s", dccdir, fn);
   }
   f = fopen(s, "r");
@@ -450,7 +446,7 @@ static int do_dcc_send(int idx, char *dir, char *fn, char *nick, int resend)
     dprintf(idx, "No such file.\n");
     putlog(LOG_FILES, "*", "Refused dcc %sget %s from [%s]", resend ? "re" : "",
 	   fn, dcc[idx].nick);
-    my_free(s);
+    free_null(s);
     return 0;
   }
   fclose(f);
@@ -463,38 +459,38 @@ static int do_dcc_send(int idx, char *dir, char *fn, char *nick, int resend)
     sprintf(xxx, "%d*%s%s", strlen(dccdir), dccdir, dir);
     queue_file(xxx, fn, dcc[idx].nick, nick);
     dprintf(idx, "Queued: %s to %s\n", fn, nick);
-    my_free(s);
+    free_null(s);
     return 1;
   }
   if (copy_to_tmp) {
     char *tempfn = mktempfile(fn);
 
     /* Copy this file to /tmp, add a random prefix to the filename. */
-    s = nrealloc(s, strlen(dccdir) + strlen(dir) + strlen(fn) + 2);
+    s = realloc(s, strlen(dccdir) + strlen(dir) + strlen(fn) + 2);
     sprintf(s, "%s%s%s%s", dccdir, dir, dir[0] ? "/" : "", fn);
-    s1 = nrealloc(s1, strlen(tempdir) + strlen(tempfn) + 1);
+    s1 = realloc(s1, strlen(tempdir) + strlen(tempfn) + 1);
     sprintf(s1, "%s%s", tempdir, tempfn);
-    my_free(tempfn);
+    free_null(tempfn);
     if (copyfile(s, s1) != 0) {
       dprintf(idx, "Can't make temporary copy of file!\n");
       putlog(LOG_FILES | LOG_MISC, "*",
 	     "Refused dcc %sget %s: copy to %s FAILED!",
 	     resend ? "re" : "", fn, tempdir);
-      my_free(s);
-      my_free(s1);
+      free_null(s);
+      free_null(s1);
       return 0;
     }
   } else {
-    s1 = nrealloc(s1, strlen(dccdir) + strlen(dir) + strlen(fn) + 2);
+    s1 = realloc(s1, strlen(dccdir) + strlen(dir) + strlen(fn) + 2);
     sprintf(s1, "%s%s%s%s", dccdir, dir, dir[0] ? "/" : "", fn);
   }
-  s = nrealloc(s, strlen(dir) + strlen(fn) + 2);
+  s = realloc(s, strlen(dir) + strlen(fn) + 2);
   sprintf(s, "%s%s%s", dir, dir[0] ? "/" : "", fn);
   x = _dcc_send(idx, s1, nick, s, resend);
   if (x != DCCSEND_OK)
     wipe_tmp_filename(s1, -1);
-  my_free(s);
-  my_free(s1);
+  free_null(s);
+  free_null(s1);
   return x;
 }
 
@@ -548,7 +544,7 @@ static void kill_dcc_files(int idx, void *x)
 
   if (f->chat)
     DCC_CHAT.kill(idx, f->chat);
-  my_free(x);
+  free_null(x);
 }
 
 static void eof_dcc_files(int idx)
@@ -558,16 +554,6 @@ static void eof_dcc_files(int idx)
 	 dcc[idx].host, dcc[idx].port);
   killsock(dcc[idx].sock);
   lostdcc(idx);
-}
-
-static int expmem_dcc_files(void *x)
-{
-  register struct file_info *p = (struct file_info *) x;
-  int tot = sizeof(struct file_info);
-
-  if (p->chat)
-    tot += DCC_CHAT.expmem(p->chat);
-  return tot;
 }
 
 static void out_dcc_files(int idx, char *buf, void *x)
@@ -611,7 +597,6 @@ static struct dcc_table DCC_FILES_PASS =
   NULL,
   tout_dcc_files_pass,
   disp_dcc_files_pass,
-  expmem_dcc_files,
   kill_dcc_files,
   out_dcc_files
 };
@@ -627,7 +612,7 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
   char *param, *ip, *prt, *buf = NULL, *msg;
   int atr = u ? u->flags : 0, i;
 
-  buf = nmalloc(strlen(text) + 1);
+  buf = malloc(strlen(text) + 1);
   msg = buf;
   strcpy(buf, text);
   param = newsplit(&msg);
@@ -685,11 +670,11 @@ debug1("|FILESYS| addr: (%s)", dcc[i].addr);
       dcc[i].user = u;
       strcpy(dcc[i].nick, nick);
       strcpy(dcc[i].host, from);
-      dcc[i].u.dns->cbuf = get_data_ptr(strlen(param) + 1);
+      malloc_memset(dcc[i].u.dns->cbuf, 0, strlen(param) + 1);
       strcpy(dcc[i].u.dns->cbuf, param);
       dcc[i].u.dns->ibuf = atoi(msg);
       
-      dcc[i].u.dns->host = get_data_ptr(strlen(dcc[i].addr) + 1);
+      malloc_memset(dcc[i].u.dns->host, 0, strlen(dcc[i].addr) + 1);
       strcpy(dcc[i].u.dns->host, dcc[i].addr);
 
       dcc[i].u.dns->dns_type = RES_HOSTBYIP;
@@ -699,7 +684,7 @@ debug1("|FILESYS| addr: (%s)", dcc[i].addr);
       dcc_dnshostbyip(dcc[i].addr);
     }
   }
-  my_free(buf);
+  free_null(buf);
 }
 
 /* Create a temporary filename with random elements. Shortens
@@ -721,39 +706,38 @@ static char *mktempfile(char *filename)
   if ((l + MKTEMPFILE_TOT) > NAME_MAX) {
     fn[NAME_MAX - MKTEMPFILE_TOT] = 0;
     l = NAME_MAX - MKTEMPFILE_TOT;
-    fn = nmalloc(l + 1);
+    fn = malloc(l + 1);
     strncpy(fn, filename, l);
     fn[l] = 0;
   }
-  tempname = nmalloc(l + MKTEMPFILE_TOT + 1);
+  tempname = malloc(l + MKTEMPFILE_TOT + 1);
   sprintf(tempname, "%u-%s-%s", getpid(), rands, fn);
   if (fn != filename)
-    my_free(fn);
+    free_null(fn);
   return tempname;
 }
 
 static void filesys_dcc_send_hostresolved(int i)
 {
   FILE *f;
-  char *s1, *param, prt[100], *tempf;
+  char *s1, *param = NULL, prt[100], *tempf;
   int len = dcc[i].u.dns->ibuf, j;
 
   sprintf(prt, "%d", dcc[i].port);
-  param = nmalloc(strlen(dcc[i].u.dns->cbuf) + 1);
-  strcpy(param, dcc[i].u.dns->cbuf);
+  malloc_strcpy(param, dcc[i].u.dns->cbuf);
 
   changeover_dcc(i, &DCC_FORK_SEND, sizeof(struct xfer_info));
   if (param[0] == '.')
     param[0] = '_';
   /* Save the original filename */
-  dcc[i].u.xfer->origname = get_data_ptr(strlen(param) + 1);
+  malloc_memset(dcc[i].u.xfer->origname, 0, strlen(param) + 1);
   strcpy(dcc[i].u.xfer->origname, param);
   tempf = mktempfile(param);
-  dcc[i].u.xfer->filename = get_data_ptr(strlen(tempf) + 1);
+  malloc_memset(dcc[i].u.xfer->filename, 0, strlen(tempf) + 1);
   strcpy(dcc[i].u.xfer->filename, tempf);
   /* We don't need the temporary buffers anymore */
-  my_free(tempf);
-  my_free(param);
+  free_null(tempf);
+  free_null(param);
 
   if (upload_to_cd) {
     char *p = get_user(&USERENTRY_DCCDIR, dcc[i].user);
@@ -765,11 +749,11 @@ static void filesys_dcc_send_hostresolved(int i)
   } else
     strcpy(dcc[i].u.xfer->dir, dccin);
   dcc[i].u.xfer->length = len;
-  s1 = nmalloc(strlen(dcc[i].u.xfer->dir) +
+  s1 = malloc(strlen(dcc[i].u.xfer->dir) +
 	       strlen(dcc[i].u.xfer->origname) + 1);
   sprintf(s1, "%s%s", dcc[i].u.xfer->dir, dcc[i].u.xfer->origname);
   f = fopen(s1, "r");
-  my_free(s1);
+  free_null(s1);
   if (f) {
     fclose(f);
     dprintf(DP_HELP, "NOTICE %s :File `%s' already exists.\n",
@@ -790,10 +774,10 @@ static void filesys_dcc_send_hostresolved(int i)
 	}
       }
     /* Put uploads in /tmp first */
-    s1 = nmalloc(strlen(tempdir) + strlen(dcc[i].u.xfer->filename) + 1);
+    s1 = malloc(strlen(tempdir) + strlen(dcc[i].u.xfer->filename) + 1);
     sprintf(s1, "%s%s", tempdir, dcc[i].u.xfer->filename);
     dcc[i].u.xfer->f = fopen(s1, "w");
-    my_free(s1);
+    free_null(s1);
     if (dcc[i].u.xfer->f == NULL) {
       dprintf(DP_HELP,
 	      "NOTICE %s :Can't create file `%s' (temp dir error)\n",
@@ -872,9 +856,7 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
       strcpy(dcc[i].host, from);
       dcc[i].status = STAT_ECHO;
       dcc[i].timeval = now;
-      dcc[i].u.file->chat = get_data_ptr(sizeof(struct chat_info));
-      egg_bzero(dcc[i].u.file->chat, sizeof(struct chat_info));
-
+      malloc_memset(dcc[i].u.file->chat, 0, sizeof(struct chat_info));
       strcpy(dcc[i].u.file->chat->con_chan, "*");
       dcc[i].user = u;
       putlog(LOG_MISC, "*", "DCC connection: CHAT(file) (%s!%s)", nick, from);
@@ -903,11 +885,6 @@ static cmd_t myload[] =
   {"server",	"",	(Function) init_server_ctcps,	"filesys:server"},
   {NULL,	NULL,	NULL,				NULL}
 };
-
-static int filesys_expmem()
-{
-  return 0;
-}
 
 static void filesys_report(int idx, int details)
 {
@@ -966,7 +943,7 @@ static Function filesys_table[] =
   /* 0 - 3 */
   (Function) start,
   (Function) filesys_close,
-  (Function) filesys_expmem,
+  (Function) 0,
   (Function) filesys_report,
   /* 4 - 7 */
   (Function) remote_filereq,
@@ -999,7 +976,7 @@ char *start(Function * global_funcs)
   add_builtins(H_load, myload);
   add_help_reference("filesys.help");
   init_server_ctcps(0);
-  my_memcpy(&USERENTRY_DCCDIR, &USERENTRY_INFO,
+  memcpy(&USERENTRY_DCCDIR, &USERENTRY_INFO,
 	    sizeof(struct user_entry_type) - sizeof(char *));
 
   USERENTRY_DCCDIR.got_share = 0;	/* We dont want it shared tho */

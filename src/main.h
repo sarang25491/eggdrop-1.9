@@ -2,7 +2,7 @@
  * main.h
  *   include file to include most other include files
  *
- * $Id: main.h,v 1.19 2001/08/13 20:47:52 guppy Exp $
+ * $Id: main.h,v 1.20 2001/10/10 10:44:04 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -71,7 +71,7 @@
 
 /* For pre Tcl7.5p1 versions */
 #ifndef HAVE_TCL_FREE
-#  define Tcl_Free(x) n_free(x, "", 0)
+#  define Tcl_Free(x) free(x)
 #endif
 
 /* For pre7.6 Tcl versions */

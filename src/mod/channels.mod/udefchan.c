@@ -2,7 +2,7 @@
  * udefchan.c -- part of channels.mod
  *   user definable channel flags/settings
  *
- * $Id: udefchan.c,v 1.7 2001/08/23 04:06:10 stdarg Exp $
+ * $Id: udefchan.c,v 1.8 2001/10/10 10:44:05 tothwolf Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -21,30 +21,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
-static int expmem_udef(struct udef_struct *ul)
-{
-  int i = 0;
-
-  for (; ul; ul = ul->next) {
-    i += sizeof(struct udef_struct);
-    i += strlen(ul->name) + 1;
-    i += expmem_udef_chans(ul->type, ul->values);
-  }
-  return i;
-}
-
-static int expmem_udef_chans(int type, struct udef_chans *ul)
-{
-  int i = 0;
-
-  for (; ul; ul = ul->next) {
-    i += sizeof(struct udef_chans);
-    i += strlen(ul->chan) + 1;
-	if (type == UDEF_STR && ul->value) i += strlen((char *)ul->value) + 1;
-  }
-  return i;
-}
 
 static int getudef(struct udef_chans *ul, char *name)
 {
@@ -83,9 +59,8 @@ static void setudef(struct udef_struct *us, char *name, int value)
       return;
     }
 
-  ul = nmalloc(sizeof(struct udef_chans));
-  ul->chan = nmalloc(strlen(name) + 1);
-  strcpy(ul->chan, name);
+  ul = malloc(sizeof(struct udef_chans));
+  malloc_strcpy(ul->chan, name);
   ul->value = value;
   ul->next = NULL;
   if (ul_last)
@@ -110,9 +85,8 @@ static void initudef(int type, char *name, int defined)
     }
 
   debug2("Creating %s (type %d)", name, type);
-  ul = nmalloc(sizeof(struct udef_struct));
-  ul->name = nmalloc(strlen(name) + 1);
-  strcpy(ul->name, name);
+  ul = malloc(sizeof(struct udef_struct));
+  malloc_strcpy(ul->name, name);
   if (defined)
     ul->defined = 1;
   else
@@ -133,8 +107,8 @@ static void free_udef(struct udef_struct *ul)
   for (; ul; ul = ull) {
     ull = ul->next;
     free_udef_chans(ul->values, ul->type);
-    nfree(ul->name);
-    nfree(ul);
+    free(ul->name);
+    free(ul);
   }
 }
 
@@ -145,9 +119,9 @@ static void free_udef_chans(struct udef_chans *ul, int type)
   for (; ul; ul = ull) {
     ull = ul->next;
 	if (type == UDEF_STR && ul->value) {
-		nfree((void *)ul->value);
+		free((void *)ul->value);
 	}
-    nfree(ul->chan);
-    nfree(ul);
+    free(ul->chan);
+    free(ul);
   }
 }

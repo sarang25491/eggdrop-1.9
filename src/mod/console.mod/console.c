@@ -3,7 +3,7 @@
  *   saved console settings based on console.tcl
  *   by cmwagner/billyjoe/D. Senso
  *
- * $Id: console.c,v 1.24 2001/10/10 01:20:12 ite Exp $
+ * $Id: console.c,v 1.25 2001/10/10 10:44:06 tothwolf Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -50,13 +50,12 @@ static struct user_entry_type USERENTRY_CONSOLE;
 
 static int console_unpack(struct userrec *u, struct user_entry *e)
 {
-  struct console_info *ci = user_malloc(sizeof(struct console_info));
+  struct console_info *ci = malloc(sizeof(struct console_info));
   char *par, *arg;
 
   par = e->u.list->extra;
   arg = newsplit(&par);
-  ci->channel = user_malloc(strlen(arg) + 1);
-  strcpy(ci->channel, arg);
+  malloc_strcpy(ci->channel, arg);
   arg = newsplit(&par);
   ci->conflags = logmodes(arg);
   arg = newsplit(&par);
@@ -76,22 +75,20 @@ static int console_pack(struct userrec *u, struct user_entry *e)
 {
   char work[1024];
   struct console_info *ci;
-  int l;
 
   ci = (struct console_info *) e->u.extra;
 
-  l = simple_sprintf(work, "%s %s %s %d %d %d",
+  simple_sprintf(work, "%s %s %s %d %d %d",
 		     ci->channel, masktype(ci->conflags),
 		     stripmasktype(ci->stripflags), ci->echoflags,
 		     ci->page, ci->conchan);
 
-  e->u.list = user_malloc(sizeof(struct list_type));
+  e->u.list = malloc(sizeof(struct list_type));
   e->u.list->next = NULL;
-  e->u.list->extra = user_malloc(l + 1);
-  strcpy(e->u.list->extra, work);
+  malloc_strcpy(e->u.list->extra, work);
 
-  nfree(ci->channel);
-  nfree(ci);
+  free(ci->channel);
+  free(ci);
   return 1;
 }
 
@@ -99,9 +96,9 @@ static int console_kill(struct user_entry *e)
 {
   struct console_info *i = e->u.extra;
 
-  nfree(i->channel);
-  nfree(i);
-  nfree(e);
+  free(i->channel);
+  free(i);
+  free(e);
   return 1;
 }
 
@@ -127,8 +124,8 @@ static int console_set(struct userrec *u, struct user_entry *e, void *buf)
 
   if (ci != buf) {
     if (ci) {
-      nfree(ci->channel);
-      nfree(ci);
+      free(ci->channel);
+      free(ci);
     }
     ci = e->u.extra = buf;
   }
@@ -158,16 +155,14 @@ static int console_tcl_set(Tcl_Interp *irp, struct userrec *u,
   int l;
 
   BADARGS(4, 9, " handle CONSOLE channel flags strip echo page conchan");
-  if (!i) {
-    i = user_malloc(sizeof(struct console_info));
-    egg_bzero(i, sizeof(struct console_info));
-  }
+  if (!i)
+    malloc_memset(i, 0, sizeof(struct console_info));
   if (i->channel)
-    nfree(i->channel);
+    free(i->channel);
   l = strlen(argv[3]);
   if (l > 80)
     l = 80;
-  i->channel = user_malloc(l + 1);
+  i->channel = malloc(l + 1);
   strncpy(i->channel, argv[3], l);
   i->channel[l] = 0;
   if (argc > 4) {
@@ -186,13 +181,6 @@ static int console_tcl_set(Tcl_Interp *irp, struct userrec *u,
   }
   set_user(&USERENTRY_CONSOLE, u, i);
   return TCL_OK;
-}
-
-static int console_expmem(struct user_entry *e)
-{
-  struct console_info *i = e->u.extra;
-
-  return sizeof(struct console_info) + strlen(i->channel) + 1;
 }
 
 static void console_display(int idx, struct user_entry *e)
@@ -217,11 +205,10 @@ static int console_dupuser(struct userrec *new, struct userrec *old,
 {
   struct console_info *i = e->u.extra, *j;
 
-  j = user_malloc(sizeof(struct console_info));
-  my_memcpy(j, i, sizeof(struct console_info));
+  j = malloc(sizeof(struct console_info));
+  memcpy(j, i, sizeof(struct console_info));
 
-  j->channel = user_malloc(strlen(i->channel) + 1);
-  strcpy(j->channel, i->channel);
+  malloc_strcpy(j->channel, i->channel);
   return set_user(e->type, new, j);
 }
 
@@ -238,7 +225,6 @@ static struct user_entry_type USERENTRY_CONSOLE =
   console_set,
   console_tcl_get,
   console_tcl_set,
-  console_expmem,
   console_display,
   "CONSOLE"
 };
@@ -295,14 +281,11 @@ static int console_store(struct userrec *u, int idx, char *par)
 {
   struct console_info *i = get_user(&USERENTRY_CONSOLE, u);
 
-  if (!i) {
-    i = user_malloc(sizeof(struct console_info));
-    egg_bzero(i, sizeof(struct console_info));
-  }
+  if (!i)
+    malloc_memset(i, 0, sizeof(struct console_info));
   if (i->channel)
-    nfree(i->channel);
-  i->channel = user_malloc(strlen(dcc[idx].u.chat->con_chan) + 1);
-  strcpy(i->channel, dcc[idx].u.chat->con_chan);
+    free(i->channel);
+  malloc_strcpy(i->channel, dcc[idx].u.chat->con_chan);
   i->conflags = dcc[idx].u.chat->con_flags;
   i->stripflags = dcc[idx].u.chat->strip_flags;
   i->echoflags = (dcc[idx].status & STAT_ECHO) ? 1 : 0;

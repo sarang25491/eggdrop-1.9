@@ -1,6 +1,6 @@
 /* Original Copyright (c) 2000-2001 proton
  * 
- * $Id: uptime.c,v 1.13 2001/10/10 01:20:14 ite Exp $
+ * $Id: uptime.c,v 1.14 2001/10/10 10:44:08 tothwolf Exp $
  * Borrowed from Emech, reports to http://uptime.energymech.net, feel free to opt out if you
  * dont like it by not loading the module.
  * 
@@ -60,7 +60,7 @@ PackUp upPack;
 
 static Function *global = NULL, *server_funcs = NULL;
 
-char *uptime_host;
+char *uptime_host = NULL;
 int uptimeport = 9969;
 int hours=0;
 int uptimesock;
@@ -70,19 +70,9 @@ unsigned long uptimecookie;
 time_t uptimelast;
 char uptime_version[50]="";
 
-static int uptime_expmem() {
-	int size = 256;
-	return size;
-}
-
 static void uptime_report(int idx, int details)
 {
-  int size;
-
   Context;
-  size = uptime_expmem();
-  if (details)
-    dprintf(idx, "   using %d bytes\n", size);
 }
 	
 
@@ -163,7 +153,7 @@ int send_uptime(void)
 			return -2;
 	}
 	len = sizeof(upPack) + strlen(botnetnick) + strlen(s) + strlen(uptime_version);
-	mem = (PackUp*)nmalloc(len);
+	mem = (PackUp*)malloc(len);
 	memcpy(mem,&upPack,sizeof(upPack));
 	sprintf(mem->string,"%s %s %s",botnetnick,s,uptime_version);
 	memset(&sai,0,sizeof(sai));
@@ -172,7 +162,7 @@ int send_uptime(void)
 	sai.sin_port = htons(uptimeport);
 	len = sendto(uptimesock,(void*)mem,len,0,(struct sockaddr*)&sai,sizeof(sai));
 	putlog(LOG_DEBUG, "*", "len = %d",len);
-	nfree(mem);
+	free(mem);
 	return len;
 }
 
@@ -213,7 +203,7 @@ static char *uptime_close()
 	rem_tcl_strings(mystrings);
 	rem_tcl_ints(myints);
 	rem_builtins(H_dcc, mydcc);
-	nfree(uptime_host);
+	free(uptime_host);
 	close(uptimesock);
 	del_hook(HOOK_HOURLY, (Function) check_hourly);
 	module_undepend(MODULE_NAME);
@@ -226,7 +216,7 @@ static Function uptime_table[] =
     {
         (Function) start,
         (Function) uptime_close,
-        (Function) uptime_expmem,
+        (Function) 0,
         (Function) uptime_report,
     };
 
@@ -246,8 +236,7 @@ char *start(Function * global_funcs)
 	add_tcl_ints(myints);
 	add_builtins(H_dcc, mydcc);
 	add_hook(HOOK_HOURLY, (Function) check_hourly);
-	uptime_host=nmalloc(256);
-	strcpy(uptime_host, UPTIME_HOST);
+	malloc_strcpy(uptime_host, UPTIME_HOST);
 	init_uptime();
 	return NULL;
 }

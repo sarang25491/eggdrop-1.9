@@ -4,7 +4,7 @@
  *
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: filelist.c,v 1.9 2001/04/12 02:39:46 guppy Exp $
+ * $Id: filelist.c,v 1.10 2001/10/10 10:44:06 tothwolf Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -30,7 +30,7 @@ static filelist_t *filelist_new(void)
 {
   filelist_t *flist;
 
-  flist = nmalloc(sizeof(filelist_t));
+  flist = malloc(sizeof(filelist_t));
   flist->tot = 0;
   flist->elements = NULL;
   return flist;
@@ -44,12 +44,12 @@ static void filelist_free(filelist_t *flist)
     return;
   for (i = 0; i < flist->tot; i++) {
     if (flist->elements[i].output)
-      my_free(flist->elements[i].output);
-    my_free(flist->elements[i].fn);
+      free_null(flist->elements[i].output);
+    free_null(flist->elements[i].fn);
   }
   if (flist->elements)
-    my_free(flist->elements);
-  my_free(flist);
+    free_null(flist->elements);
+  free_null(flist);
 }
 
 /* Increase number of filelist entries.
@@ -57,9 +57,8 @@ static void filelist_free(filelist_t *flist)
 static void filelist_add(filelist_t *flist, char *filename)
 {
   flist->tot++;
-  flist->elements = nrealloc(flist->elements, flist->tot * sizeof(filelist_t));
-  FILELIST_LE(flist).fn = nmalloc(strlen(filename) + 1);
-  strcpy(FILELIST_LE(flist).fn, filename);
+  flist->elements = realloc(flist->elements, flist->tot * sizeof(filelist_t));
+  malloc_strcpy(FILELIST_LE(flist).fn, filename);
   FILELIST_LE(flist).output = NULL;
 }
 
@@ -68,12 +67,10 @@ static void filelist_add(filelist_t *flist, char *filename)
 static void filelist_addout(filelist_t *flist, char *desc)
 {
   if (FILELIST_LE(flist).output) {
-    FILELIST_LE(flist).output = nrealloc(FILELIST_LE(flist).output, strlen(FILELIST_LE(flist).output) + strlen(desc) + 1);
+    FILELIST_LE(flist).output = realloc(FILELIST_LE(flist).output, strlen(FILELIST_LE(flist).output) + strlen(desc) + 1);
     strcat(FILELIST_LE(flist).output, desc);
-  } else {
-    FILELIST_LE(flist).output = nmalloc(strlen(desc) + 1);
-    strcpy(FILELIST_LE(flist).output, desc);
-  }
+  } else
+    malloc_strcpy(FILELIST_LE(flist).output, desc);
 }
 
 /* Dump all data to specified idx */

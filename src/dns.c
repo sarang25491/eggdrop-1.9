@@ -4,7 +4,7 @@
  *   provides the code used by the bot if the DNS module is not loaded
  *   DNS Tcl commands
  *
- * $Id: dns.c,v 1.24 2001/08/10 23:51:20 ite Exp $
+ * $Id: dns.c,v 1.25 2001/10/10 10:44:04 tothwolf Exp $
  */
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -70,31 +70,16 @@ static void display_dcc_dnswait(int idx, char *buf)
   sprintf(buf, "dns   waited %lus", now - dcc[idx].timeval);
 }
 
-static int expmem_dcc_dnswait(void *x)
-{
-  register struct dns_info *p = (struct dns_info *) x;
-  int size = 0;
-
-  if (p) {
-    size = sizeof(struct dns_info);
-    if (p->host)
-      size += strlen(p->host) + 1;
-    if (p->cbuf)
-      size += strlen(p->cbuf) + 1;
-  }
-  return size;
-}
-
 static void kill_dcc_dnswait(int idx, void *x)
 {
   register struct dns_info *p = (struct dns_info *) x;
 
   if (p) {
     if (p->host)
-      nfree(p->host);
+      free(p->host);
     if (p->cbuf)
-      nfree(p->cbuf);
-    nfree(p);
+      free(p->cbuf);
+    free(p);
   }
 }
 
@@ -107,7 +92,6 @@ struct dcc_table DCC_DNSWAIT =
   0,
   0,
   display_dcc_dnswait,
-  expmem_dcc_dnswait,
   kill_dcc_dnswait,
   0
 };
@@ -129,8 +113,8 @@ static void dns_dcchostbyip(char *ip, char *hostn, int ok, void *other)
         (dcc[idx].u.dns->dns_type == RES_HOSTBYIP) &&
         (!egg_strcasecmp(dcc[idx].u.dns->host, ip))) {
 debug3("|DNS| idx: %d, dcchostbyip: %s is %s", idx, ip, hostn);
-      nfree(dcc[idx].u.dns->host);
-      dcc[idx].u.dns->host = get_data_ptr(strlen(hostn) + 1);
+      free(dcc[idx].u.dns->host);
+      malloc_memset(dcc[idx].u.dns->host, 0, strlen(hostn) + 1);
       strcpy(dcc[idx].u.dns->host, hostn);
       if (ok)
         dcc[idx].u.dns->dns_success(idx);
@@ -152,8 +136,8 @@ static void dns_dccipbyhost(char *ip, char *hostn, int ok, void *other)
         (dcc[idx].u.dns->dns_type == RES_IPBYHOST) &&
         !egg_strcasecmp(dcc[idx].u.dns->host, hostn)) {
 debug3("|DNS| idx: %d, dccipbyhost: %s is %s", idx, ip, hostn);
-      nfree(dcc[idx].u.dns->host);
-      dcc[idx].u.dns->host = get_data_ptr(strlen(ip) + 1);
+      free(dcc[idx].u.dns->host);
+      malloc_memset(dcc[idx].u.dns->host, 0, strlen(ip) + 1);
       strcpy(dcc[idx].u.dns->host, ip);
       if (ok)
         dcc[idx].u.dns->dns_success(idx);
@@ -163,20 +147,13 @@ debug3("|DNS| idx: %d, dccipbyhost: %s is %s", idx, ip, hostn);
   }
 }
 
-static int dns_dccexpmem(void *other)
-{
-  return 0;
-}
-
 devent_type DNS_DCCEVENT_HOSTBYIP = {
   "DCCEVENT_HOSTBYIP",
-  dns_dccexpmem,
   dns_dcchostbyip
 };
 
 devent_type DNS_DCCEVENT_IPBYHOST = {
   "DCCEVENT_IPBYHOST",
-  dns_dccexpmem,
   dns_dccipbyhost
 };
 
@@ -194,8 +171,7 @@ void dcc_dnsipbyhost(char *hostn)
     }
   }
 
-  de = nmalloc(sizeof(devent_t));
-  egg_bzero(de, sizeof(devent_t));
+  malloc_memset(de, 0, sizeof(devent_t));
 
   /* Link into list. */
   de->next = dns_events;
@@ -203,8 +179,7 @@ void dcc_dnsipbyhost(char *hostn)
 
   de->type = &DNS_DCCEVENT_IPBYHOST;
   de->lookup = RES_IPBYHOST;
-  de->hostname = nmalloc(strlen(hostn) + 1);
-  strcpy(de->hostname, hostn);
+  malloc_strcpy(de->hostname, hostn);
 
   /* Send request. */
   dns_ipbyhost(hostn);
@@ -223,8 +198,7 @@ void dcc_dnshostbyip(char *ip)
     }
   }
 
-  de = nmalloc(sizeof(devent_t));
-  egg_bzero(de, sizeof(devent_t));
+  malloc_memset(de, 0, sizeof(devent_t));
 
   /* Link into list. */
   de->next = dns_events;
@@ -232,9 +206,7 @@ void dcc_dnshostbyip(char *ip)
 
   de->type = &DNS_DCCEVENT_HOSTBYIP;
   de->lookup = RES_HOSTBYIP;
-  
-  de->hostname = nmalloc(strlen(ip) + 1);
-  strcpy(de->hostname, ip);
+  malloc_strcpy(de->hostname, ip);
 
   /* Send request. */
   dns_hostbyip(ip);
@@ -254,36 +226,19 @@ static void dns_tcl_iporhostres(char *ip, char *hostn, int ok, void *other)
     putlog(LOG_MISC, "*", _("Tcl error [%s]: %s"), tclinfo->proc, interp->result);
 
   /* Free the memory. It will be unused after this event call. */
-  nfree(tclinfo->proc);
+  free(tclinfo->proc);
   if (tclinfo->paras)
-    nfree(tclinfo->paras);
-  nfree(tclinfo);
-}
-
-static int dns_tclexpmem(void *other)
-{
-  devent_tclinfo_t *tclinfo = (devent_tclinfo_t *) other;
-  int l = 0;
-
-  if (tclinfo) {
-    l = sizeof(devent_tclinfo_t);
-    if (tclinfo->proc)
-      l += strlen(tclinfo->proc) + 1;
-    if (tclinfo->paras)
-      l += strlen(tclinfo->paras) + 1;
-  }
-  return l;
+    free(tclinfo->paras);
+  free(tclinfo);
 }
 
 devent_type DNS_TCLEVENT_HOSTBYIP = {
   "TCLEVENT_HOSTBYIP",
-  dns_tclexpmem,
   dns_tcl_iporhostres
 };
 
 devent_type DNS_TCLEVENT_IPBYHOST = {
   "TCLEVENT_IPBYHOST",
-  dns_tclexpmem,
   dns_tcl_iporhostres
 };
 
@@ -292,8 +247,7 @@ static void tcl_dnsipbyhost(char *hostn, char *proc, char *paras)
   devent_t *de;
   devent_tclinfo_t *tclinfo;
 
-  de = nmalloc(sizeof(devent_t));
-  egg_bzero(de, sizeof(devent_t));
+  malloc_memset(de, 0, sizeof(devent_t));
 
   /* Link into list. */
   de->next = dns_events;
@@ -301,17 +255,14 @@ static void tcl_dnsipbyhost(char *hostn, char *proc, char *paras)
 
   de->type = &DNS_TCLEVENT_IPBYHOST;
   de->lookup = RES_IPBYHOST;
-  de->hostname = nmalloc(strlen(hostn) + 1);
-  strcpy(de->hostname, hostn);
+  malloc_strcpy(de->hostname, hostn);
 
   /* Store additional data. */
-  tclinfo = nmalloc(sizeof(devent_tclinfo_t));
-  tclinfo->proc = nmalloc(strlen(proc) + 1);
-  strcpy(tclinfo->proc, proc);
-  if (paras) {
-    tclinfo->paras = nmalloc(strlen(paras) + 1);
-    strcpy(tclinfo->paras, paras);
-  } else
+  tclinfo = malloc(sizeof(devent_tclinfo_t));
+  malloc_strcpy(tclinfo->proc, proc);
+  if (paras)
+    malloc_strcpy(tclinfo->paras, paras);
+  else
     tclinfo->paras = NULL;
   de->other = tclinfo;
 
@@ -324,8 +275,7 @@ static void tcl_dnshostbyip(char *ip, char *proc, char *paras)
   devent_t *de;
   devent_tclinfo_t *tclinfo;
 
-  de = nmalloc(sizeof(devent_t));
-  egg_bzero(de, sizeof(devent_t));
+  malloc_memset(de, 0, sizeof(devent_t));
 
   /* Link into list. */
   de->next = dns_events;
@@ -333,17 +283,14 @@ static void tcl_dnshostbyip(char *ip, char *proc, char *paras)
 
   de->type = &DNS_TCLEVENT_HOSTBYIP;
   de->lookup = RES_HOSTBYIP;
-  de->hostname = nmalloc(strlen(ip) + 1);
-  strcpy(de->hostname, ip);
+  malloc_strcpy(de->hostname, ip);
 
   /* Store additional data. */
-  tclinfo = nmalloc(sizeof(devent_tclinfo_t));
-  tclinfo->proc = nmalloc(strlen(proc) + 1);
-  strcpy(tclinfo->proc, proc);
-  if (paras) {
-    tclinfo->paras = nmalloc(strlen(paras) + 1);
-    strcpy(tclinfo->paras, paras);
-  } else
+  tclinfo = malloc(sizeof(devent_tclinfo_t));
+  malloc_strcpy(tclinfo->proc, proc);
+  if (paras)
+    malloc_strcpy(tclinfo->paras, paras);
+  else
     tclinfo->paras = NULL;
   de->other = tclinfo;
 
@@ -355,21 +302,6 @@ static void tcl_dnshostbyip(char *ip, char *proc, char *paras)
 /*
  *    Event functions
  */
-
-inline static int dnsevent_expmem(void)
-{
-  devent_t *de;
-  int tot = 0;
-  
-  for (de = dns_events; de; de = de->next) {
-    tot += sizeof(devent_t);
-    if (de->hostname)
-      tot += strlen(de->hostname) + 1;
-    if (de->type && de->type->expmem)
-      tot += de->type->expmem(de->other);
-  }
-  return tot;
-}
 
 void call_hostbyip(char *ip, char *hostn, int ok)
 {
@@ -393,8 +325,8 @@ debug3("|DNS| call_hostbyip: ip: %s host: %s ok: %d", ip, hostn, ok);
 	putlog(LOG_MISC, "*", "(!) Unknown DNS event type found: %s",
 	       (de->type && de->type->name) ? de->type->name : "<empty>");
       if (de->hostname)
-          nfree(de->hostname);
-      nfree(de);
+          free(de->hostname);
+      free(de);
       de = ode;
     }
     ode = de;
@@ -425,8 +357,8 @@ void call_ipbyhost(char *hostn, char *ip, int ok)
 	       (de->type && de->type->name) ? de->type->name : "<empty>");
 
       if (de->hostname)
-	nfree(de->hostname);
-      nfree(de);
+	free(de->hostname);
+      free(de);
       de = ode;
     }
     ode = de;
@@ -532,16 +464,6 @@ debug1("|DNS| checking only A record for %s", p);
 #endif
 
 /*
- *   Misc functions
- */
-
-int expmem_dns(void)
-{
-  return dnsevent_expmem();
-}
-
-
-/*
  *   Tcl functions
  */
 
@@ -566,11 +488,10 @@ static int tcl_dnslookup STDVAR
     /* Create a string with a leading space out of all provided
      * additional parameters.
      */
-    paras = nmalloc(1);
-    paras[0] = 0;
+    malloc_memset(paras, 0, 1);
     for (p = 3; p < argc; p++) {
       l += strlen(argv[p]) + 1;
-      paras = nrealloc(paras, l + 1);
+      paras = realloc(paras, l + 1);
       strcat(paras, " ");
       strcat(paras, argv[p]);
     }
@@ -585,7 +506,7 @@ static int tcl_dnslookup STDVAR
   else
     tcl_dnsipbyhost(argv[1], argv[2], paras);
   if (paras)
-    nfree(paras);
+    free(paras);
   return TCL_OK;
 }
 
@@ -607,12 +528,11 @@ void dns_hostbyip(char *ip)
 #ifdef IPV6
     struct sockaddr_in6 in6;
 #endif
-    char *origname;
+    char *origname = NULL;
 
     if (egg_inet_pton(AF_INET, ip, &in.sin_addr)) {
 debug1("|DNS| adns_dns_hostbyip(\"%s\") (IPv4)", ip);
-	origname = nmalloc(strlen(ip) + 1);
-	strcpy(origname, ip);
+	malloc_strcpy(origname, ip);
 	in.sin_family = AF_INET;
 	in.sin_port = 0;
 	r = adns_submit_reverse(ads, (struct sockaddr *) &in,
@@ -624,8 +544,7 @@ debug1("|DNS| adns_submit_reverse failed, errno: %d", r);
 #ifdef IPV6
     } else if (egg_inet_pton(AF_INET6, ip, &in6.sin6_addr)) {
 debug1("|DNS| adns_dns_hostbyip(\"%s\") (IPv6)", ip);
-	origname = nmalloc(strlen(ip) + 1);
-	strcpy(origname, ip);
+	malloc_strcpy(origname, ip);
 	in6.sin6_family = AF_INET6;
 	in6.sin6_port = 0;
 	r = adns_submit_reverse(ads, (struct sockaddr *) &in6,
@@ -660,10 +579,9 @@ debug1("|DNS| adns_dns_ipbyhost(\"%s\");", host);
 	call_ipbyhost(host, host, 1);
     } else {
 	char *p;
-	char *origname;
+	char *origname = NULL;
 	int type, r;
-	origname = nmalloc(strlen(host) + 1);
-	strcpy(origname, host);
+	malloc_strcpy(origname, host);
 	if (!egg_strncasecmp("ipv6%", host, 5)) {
 #ifdef IPV6
 	    type = adns_r_addr6;

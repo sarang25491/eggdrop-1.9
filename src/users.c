@@ -10,7 +10,7 @@
  *
  * dprintf'ized, 9nov1995
  *
- * $Id: users.c,v 1.28 2001/08/10 23:51:20 ite Exp $
+ * $Id: users.c,v 1.29 2001/10/10 10:44:04 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -109,17 +109,17 @@ int delignore(char *ign)
 
       if (mask) {
 	shareout(NULL, "-i %s\n", mask);
-	nfree(mask);
+	free(mask);
       }
     }
-    nfree((*u)->igmask);
+    free((*u)->igmask);
     if ((*u)->msg)
-      nfree((*u)->msg);
+      free((*u)->msg);
     if ((*u)->user)
-      nfree((*u)->user);
+      free((*u)->user);
     t = *u;
     *u = (*u)->next;
-    nfree(t);
+    free(t);
   }
   return i;
 }
@@ -130,26 +130,23 @@ void addignore(char *ign, char *from, char *mnote, time_t expire_time)
 
   if (equals_ignore(ign))
     delignore(ign);		/* remove old ignore */
-  p = user_malloc(sizeof(struct igrec));
+  p = malloc(sizeof(struct igrec));
 
   p->next = global_ign;
   global_ign = p;
   p->expire = expire_time;
   p->added = now;
   p->flags = expire_time ? 0 : IGREC_PERM;
-  p->igmask = user_malloc(strlen(ign) + 1);
-  strcpy(p->igmask, ign);
-  p->user = user_malloc(strlen(from) + 1);
-  strcpy(p->user, from);
-  p->msg = user_malloc(strlen(mnote) + 1);
-  strcpy(p->msg, mnote);
+  malloc_strcpy(p->igmask, ign);
+  malloc_strcpy(p->user, from);
+  malloc_strcpy(p->msg, mnote);
   if (!noshare) {
     char *mask = str_escape(ign, ':', '\\');
 
     if (mask) {
       shareout(NULL, "+i %s %lu %c %s %s\n", mask, expire_time - now,
 	       (p->flags & IGREC_PERM) ? 'p' : '-', from, mnote);
-      nfree(mask);
+      free(mask);
     }
   }
 }
@@ -233,7 +230,7 @@ static void addmask_fully(struct chanset_t *chan, maskrec **m, maskrec **global,
 			 char *note, time_t expire_time, int flags,
 			 time_t added, time_t last)
 {
-  maskrec *p = user_malloc(sizeof(maskrec));
+  maskrec *p = malloc(sizeof(maskrec));
   maskrec **u = (chan) ? m : global;
 
   p->next = *u;
@@ -242,12 +239,9 @@ static void addmask_fully(struct chanset_t *chan, maskrec **m, maskrec **global,
   p->added = added;
   p->lastactive = last;
   p->flags = flags;
-  p->mask = user_malloc(strlen(mask) + 1);
-  strcpy(p->mask, mask);
-  p->user = user_malloc(strlen(from) + 1);
-  strcpy(p->user, from);
-  p->desc = user_malloc(strlen(note) + 1);
-  strcpy(p->desc, note);
+  malloc_strcpy(p->mask, mask);
+  malloc_strcpy(p->user, from);
+  malloc_strcpy(p->desc, note);
 }
 
 static void restore_chanban(struct chanset_t *chan, char *host)
@@ -442,21 +436,18 @@ static void restore_ignore(char *host)
 	added = "0";
 	desc = NULL;
       }
-      p = user_malloc(sizeof(struct igrec));
+      p = malloc(sizeof(struct igrec));
 
       p->next = global_ign;
       global_ign = p;
       p->expire = atoi(expi);
       p->added = atoi(added);
       p->flags = flags;
-      p->igmask = user_malloc(strlen(host) + 1);
-      strcpy(p->igmask, host);
-      p->user = user_malloc(strlen(user) + 1);
-      strcpy(p->user, user);
-      if (desc) {
-	p->msg = user_malloc(strlen(desc) + 1);
-	strcpy(p->msg, desc);
-      } else
+      malloc_strcpy(p->igmask, host);
+      malloc_strcpy(p->user, user);
+      if (desc)
+	malloc_strcpy(p->msg, desc);
+      else
 	p->msg = NULL;
       return;
     }
@@ -762,7 +753,7 @@ int readuserfile(char *file, struct userrec **ret)
 		  break;
 	      if (!cr) {
 		cr = (struct chanuserrec *)
-		  user_malloc(sizeof(struct chanuserrec));
+		  malloc(sizeof(struct chanuserrec));
 
 		cr->next = u->chanrec;
 		u->chanrec = cr;
@@ -770,10 +761,9 @@ int readuserfile(char *file, struct userrec **ret)
 		cr->laston = atoi(st);
 		cr->flags = fr.chan;
 		cr->flags_udef = fr.udef_chan;
-		if (s[0]) {
-		  cr->info = (char *) user_malloc(strlen(s) + 1);
-		  strcpy(cr->info, s);
-		} else
+		if (s[0])
+		  malloc_strcpy(cr->info, s);
+		else
 		  cr->info = NULL;
 	      }
 	    }
@@ -866,25 +856,23 @@ int readuserfile(char *file, struct userrec **ret)
 	      if (ue->name && !egg_strcasecmp(code + 2, ue->name)) {
 		struct list_type *list;
 
-		list = user_malloc(sizeof(struct list_type));
+		list = malloc(sizeof(struct list_type));
 
 		list->next = NULL;
-		list->extra = user_malloc(strlen(s) + 1);
-		strcpy(list->extra, s);
+		malloc_strcpy(list->extra, s);
 		list_append((&ue->u.list), list);
 		ok = 1;
 	      }
 	    if (!ok) {
-	      ue = user_malloc(sizeof(struct user_entry));
+	      ue = malloc(sizeof(struct user_entry));
 
-	      ue->name = user_malloc(strlen(code + 1));
+	      ue->name = malloc(strlen(code + 1));
 	      ue->type = NULL;
 	      strcpy(ue->name, code + 2);
-	      ue->u.list = user_malloc(sizeof(struct list_type));
+	      ue->u.list = malloc(sizeof(struct list_type));
 
 	      ue->u.list->next = NULL;
-	      ue->u.list->extra = user_malloc(strlen(s) + 1);
-	      strcpy(ue->u.list->extra, s);
+	      malloc_strcpy(ue->u.list->extra, s);
 	      list_insert((&u->entries), ue);
 	    }
 	  }
@@ -966,8 +954,7 @@ int readuserfile(char *file, struct userrec **ret)
 	if (uet) {
 	  e->type = uet;
 	  uet->unpack(u, e);
-	  nfree(e->name);
-	  e->name = NULL;
+	  free_null(e->name);
 	}
       }
   }

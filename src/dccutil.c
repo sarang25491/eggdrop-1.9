@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  *
- * $Id: dccutil.c,v 1.36 2001/10/07 04:02:54 stdarg Exp $
+ * $Id: dccutil.c,v 1.37 2001/10/10 10:44:04 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -55,31 +55,18 @@ void init_dcc_max()
   if (max_dcc < 1)
     max_dcc = 1;
   if (dcc)
-    dcc = nrealloc(dcc, sizeof(struct dcc_t) * max_dcc);
+    dcc = realloc(dcc, sizeof(struct dcc_t) * max_dcc);
   else
-    dcc = nmalloc(sizeof(struct dcc_t) * max_dcc);
+    dcc = malloc(sizeof(struct dcc_t) * max_dcc);
 
   MAXSOCKS = max_dcc + 10;
   if (socklist)
-    socklist = (sock_list *) nrealloc((void *) socklist,
+    socklist = (sock_list *) realloc((void *) socklist,
 				      sizeof(sock_list) * MAXSOCKS);
   else
-    socklist = (sock_list *) nmalloc(sizeof(sock_list) * MAXSOCKS);
+    socklist = (sock_list *) malloc(sizeof(sock_list) * MAXSOCKS);
   for (; osock < MAXSOCKS; osock++)
     socklist[osock].flags = SOCK_UNUSED;
-}
-
-int expmem_dccutil()
-{
-  int tot, i;
-
-  tot = sizeof(struct dcc_t) * max_dcc + sizeof(sock_list) * MAXSOCKS;
-
-  for (i = 0; i < dcc_total; i++) {
-    if (dcc[i].type && dcc[i].type->expmem)
-      tot += dcc[i].type->expmem(dcc[i].u.other);
-  }
-  return tot;
 }
 
 
@@ -267,8 +254,8 @@ void lostdcc(int n)
   if (dcc[n].type && dcc[n].type->kill)
     dcc[n].type->kill(n, dcc[n].u.other);
   else if (dcc[n].u.other)
-    nfree(dcc[n].u.other);
-  egg_bzero(&dcc[n], sizeof(struct dcc_t));
+    free(dcc[n].u.other);
+  memset(&dcc[n], 0, sizeof(struct dcc_t));
 
   dcc[n].sock = (-1);
   dcc[n].type = &DCC_LOST;
@@ -286,12 +273,12 @@ void removedcc(int n)
   if (dcc[n].type && dcc[n].type->kill)
     dcc[n].type->kill(n, dcc[n].u.other);
   else if (dcc[n].u.other)
-    nfree(dcc[n].u.other);
+    free(dcc[n].u.other);
   dcc_total--;
   if (n < dcc_total)
-    egg_memcpy(&dcc[n], &dcc[dcc_total], sizeof(struct dcc_t));
+    memcpy(&dcc[n], &dcc[dcc_total], sizeof(struct dcc_t));
   else
-    egg_bzero(&dcc[n], sizeof(struct dcc_t)); /* drummer */
+    memset(&dcc[n], 0, sizeof(struct dcc_t)); /* drummer */
 }
 
 /* Clean up sockets that were just left for dead.
@@ -361,8 +348,7 @@ void not_away(int idx)
     }
   }
   dprintf(idx, "You're not away any more.\n");
-  nfree(dcc[idx].u.chat->away);
-  dcc[idx].u.chat->away = NULL;
+  free_null(dcc[idx].u.chat->away);
   check_tcl_away(botnetnick, dcc[idx].sock, NULL);
 }
 
@@ -377,9 +363,8 @@ void set_away(int idx, char *s)
     return;
   }
   if (dcc[idx].u.chat->away != NULL)
-    nfree(dcc[idx].u.chat->away);
-  dcc[idx].u.chat->away = (char *) nmalloc(strlen(s) + 1);
-  strcpy(dcc[idx].u.chat->away, s);
+    free(dcc[idx].u.chat->away);
+  malloc_strcpy(dcc[idx].u.chat->away, s);
   if (dcc[idx].u.chat->channel >= 0) {
     chanout_but(-1, dcc[idx].u.chat->channel,
 		"*** %s is now away: %s\n", dcc[idx].nick, s);
@@ -389,24 +374,6 @@ void set_away(int idx, char *s)
   }
   dprintf(idx, "You are now away.\n");
   check_tcl_away(botnetnick, dcc[idx].sock, s);
-}
-
-/* This helps the memory debugging
- */
-void *_get_data_ptr(int size, char *file, int line)
-{
-  char *p;
-#ifdef DEBUG_MEM
-  char x[1024];
-
-  p = strrchr(file, '/');
-  egg_snprintf(x, sizeof x, "dccutil.c:%s", p ? p + 1 : file);
-  p = n_malloc(size, x, line);
-#else
-  p = nmalloc(size);
-#endif
-  egg_bzero(p, size);
-  return p;
 }
 
 /* Make a password, 10-15 random letters and digits
@@ -427,9 +394,9 @@ void flush_lines(int idx, struct chat_info *ci)
   while (p && c < (ci->max_line)) {
     ci->current_lines--;
     tputs(dcc[idx].sock, p->msg, p->len);
-    nfree(p->msg);
+    free(p->msg);
     o = p->next;
-    nfree(p);
+    free(p);
     p = o;
     c++;
   }
@@ -450,13 +417,11 @@ int new_dcc(struct dcc_table *type, int xtra_size)
   if (dcc_total == max_dcc)
     return -1;
   dcc_total++;
-  egg_bzero((char *) &dcc[i], sizeof(struct dcc_t));
+  memset((char *) &dcc[i], 0, sizeof(struct dcc_t));
 
   dcc[i].type = type;
-  if (xtra_size) {
-    dcc[i].u.other = nmalloc(xtra_size);
-    egg_bzero(dcc[i].u.other, xtra_size);
-  }
+  if (xtra_size)
+    malloc_memset(dcc[i].u.other, 0, xtra_size);
   return i;
 }
 
@@ -467,16 +432,12 @@ void changeover_dcc(int i, struct dcc_table *type, int xtra_size)
   /* Free old structure. */
   if (dcc[i].type && dcc[i].type->kill)
     dcc[i].type->kill(i, dcc[i].u.other);
-  else if (dcc[i].u.other) {
-    nfree(dcc[i].u.other);
-    dcc[i].u.other = NULL;
-  }
+  else if (dcc[i].u.other)
+    free_null(dcc[i].u.other);
 
   dcc[i].type = type;
-  if (xtra_size) {
-    dcc[i].u.other = nmalloc(xtra_size);
-    egg_bzero(dcc[i].u.other, xtra_size);
-  }
+  if (xtra_size)
+    malloc_memset(dcc[i].u.other, 0, xtra_size);
 }
 
 int detect_dcc_flood(time_t * timer, struct chat_info *chat, int idx)

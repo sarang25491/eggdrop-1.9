@@ -1,7 +1,7 @@
 /*
  * tclserv.c -- part of server.mod
  *
- * $Id: tclserv.c,v 1.9 2001/06/30 06:29:57 guppy Exp $
+ * $Id: tclserv.c,v 1.10 2001/10/10 10:44:07 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -139,18 +139,18 @@ static int tcl_clearqueue STDVAR
     msgs = (int) (modeq.tot + mq.tot + hq.tot);
     for (q = modeq.head; q; q = qq) { 
       qq = q->next;
-      nfree(q->msg);
-      nfree(q);
+      free(q->msg);
+      free(q);
     }
     for (q = mq.head; q; q = qq) {
       qq = q->next;
-      nfree(q->msg);
-      nfree(q);
+      free(q->msg);
+      free(q);
     }
     for (q = hq.head; q; q = qq) {
       qq = q->next;
-      nfree(q->msg);
-      nfree(q);
+      free(q->msg);
+      free(q);
     }
     modeq.tot = mq.tot = hq.tot = modeq.warned = mq.warned = hq.warned = 0;
     mq.head = hq.head = modeq.head = mq.last = hq.last = modeq.last = 0;
@@ -163,8 +163,8 @@ static int tcl_clearqueue STDVAR
     msgs = mq.tot;
     for (q = mq.head; q; q = qq) {
       qq = q->next;
-      nfree(q->msg);
-      nfree(q);
+      free(q->msg);
+      free(q);
     }
     mq.tot = mq.warned = 0;
     mq.head = mq.last = 0;
@@ -180,8 +180,8 @@ static int tcl_clearqueue STDVAR
     msgs = modeq.tot;
     for (q = modeq.head; q; q = qq) { 
       qq = q->next;
-      nfree(q->msg);
-      nfree(q);
+      free(q->msg);
+      free(q);
     }
     if (mq.tot == 0)
       burst = 0;
@@ -195,8 +195,8 @@ static int tcl_clearqueue STDVAR
     msgs = hq.tot;
     for (q = hq.head; q; q = qq) {
       qq = q->next;
-      nfree(q->msg);
-      nfree(q);
+      free(q->msg);
+      free(q);
     }
     double_warned = 0;
     hq.tot = hq.warned = 0;

@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.69 2001/10/07 04:02:54 stdarg Exp $
+ * $Id: cmds.c,v 1.70 2001/10/10 10:44:03 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -570,14 +570,12 @@ static void cmd_status(struct userrec *u, int idx, char *par)
     }
     putlog(LOG_CMDS, "*", "#%s# status all", dcc[idx].nick);
     tell_verbose_status(idx);
-    tell_mem_status_dcc(idx);
     dprintf(idx, "\n");
     tell_settings(idx);
     do_module_report(idx, 1, NULL);
   } else {
     putlog(LOG_CMDS, "*", "#%s# status", dcc[idx].nick);
     tell_verbose_status(idx);
-    tell_mem_status_dcc(idx);
     do_module_report(idx, 0, NULL);
   }
 }
@@ -786,7 +784,7 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
       putlog(LOG_CMDS, "*", "#%s# +bot %s %s", dcc[idx].nick, handle, addr);
       userlist = adduser(userlist, handle, "none", "-", USER_BOT);
       u1 = get_user_by_handle(userlist, handle);
-      bi = user_malloc(sizeof(struct bot_addr));
+      bi = malloc(sizeof(struct bot_addr));
 
       if (*addr == '[') {
 	addr++;
@@ -804,12 +802,11 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
 	  addrlen = strlen(addr);
       }
       if (!q) {
-	bi->address = user_malloc(addrlen + 1);
-	strcpy(bi->address, addr);
+	malloc_strcpy(bi->address, addr);
 	bi->telnet_port = 3333;
 	bi->relay_port = 3333;
       } else {
-	bi->address = user_malloc(addrlen + 1);
+	bi->address = malloc(addrlen + 1);
 	strncpyz(bi->address, addr, addrlen + 1);
 	p = q + 1;
 	bi->telnet_port = atoi(p);
@@ -989,7 +986,7 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
     relay_port = bi->relay_port;
   }
 
-  bi = user_malloc(sizeof(struct bot_addr));
+  bi = malloc(sizeof(struct bot_addr));
 
   if (*addr == '[') {
     addr++;
@@ -1007,12 +1004,11 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
 	addrlen = strlen(addr);
   }
   if (!q) {
-    bi->address = user_malloc(addrlen + 1);
-    strcpy(bi->address, addr);
+    malloc_strcpy(bi->address, addr);
     bi->telnet_port = telnet_port;
     bi->relay_port = relay_port;
   } else {
-    bi->address = user_malloc(addrlen + 1);
+    bi->address = malloc(addrlen + 1);
     strncpyz(bi->address, addr, addrlen + 1);
     p = q + 1;
     bi->telnet_port = atoi(p);
@@ -1119,7 +1115,8 @@ static void cmd_debug(struct userrec *u, int idx, char *par)
     debug_help(idx);
   } else {
     putlog(LOG_CMDS, "*", "#%s# debug", dcc[idx].nick);
-    debug_mem_to_dcc(idx);
+    dprintf(idx, "Eggdrop no longer has built-in memory debugging.\n");
+    tell_netdebug(idx);
   }
 }
 
@@ -1362,7 +1359,7 @@ int check_dcc_attrs(struct userrec *u, int oatr)
 	  struct chat_info *ci;
 
 	  ci = dcc[i].u.file->chat;
-	  nfree(dcc[i].u.file);
+	  free(dcc[i].u.file);
 	  dcc[i].u.chat = ci;
 	  dcc[i].status &= (~STAT_CHAT);
 	  dcc[i].type = &DCC_CHAT;
@@ -1514,7 +1511,7 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
 	return;
       }
     } else if (arg && !strpbrk(chg, "&|")) {
-      tmpchg = nmalloc(strlen(chg) + 2);
+      tmpchg = malloc(strlen(chg) + 2);
       strcpy(tmpchg, "|");
       strcat(tmpchg, chg);
       chg = tmpchg;
@@ -1528,14 +1525,14 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
   if (!chan && !glob_botmast(user)) {
     dprintf(idx, "You do not have Bot Master privileges.\n");
     if (tmpchg)
-      nfree(tmpchg);
+      free(tmpchg);
     return;
   }
   if (chan && !glob_master(user) && !chan_master(user)) {
     dprintf(idx, "You do not have channel master privileges for channel %s\n",
 	    par);
     if (tmpchg)
-      nfree(tmpchg);
+      free(tmpchg);
     return;
   }
   user.match &= fl;
@@ -1631,7 +1628,7 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
     }
   }
   if (tmpchg)
-    nfree(tmpchg);
+    free(tmpchg);
 }
 
 static void cmd_botattr(struct userrec *u, int idx, char *par)
@@ -1704,9 +1701,9 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
 	return;
       }
     } else if (arg && !strpbrk(chg, "&|")) {
-      tmpchg = nmalloc(strlen(chg) + 2);
-      strcpy (tmpchg, "|");
-      strcat (tmpchg, chg);
+      tmpchg = malloc(strlen(chg) + 2);
+      strcpy(tmpchg, "|");
+      strcat(tmpchg, chg);
       chg = tmpchg;
     }
   }
@@ -1717,7 +1714,7 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
   if (!glob_botmast(user)) {
     dprintf(idx, "You do not have Bot Master privileges.\n");
     if (tmpchg)
-      nfree(tmpchg);
+      free(tmpchg);
     return;
   }
   if (chg) {
@@ -1776,7 +1773,7 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
       dprintf(idx, "No bot flags for %s on %s.\n", hand, chan->dname);
   }
   if (tmpchg)
-    nfree(tmpchg);
+    free(tmpchg);
 }
 
 static void cmd_chat(struct userrec *u, int idx, char *par)
@@ -2122,10 +2119,10 @@ static void cmd_su(struct userrec *u, int idx, char *par)
 	 * their password right ;)
 	 */
 	if (dcc[idx].u.chat->away != NULL)
-	  nfree(dcc[idx].u.chat->away);
-        dcc[idx].u.chat->away = get_data_ptr(strlen(dcc[idx].nick) + 1);
+	  free(dcc[idx].u.chat->away);
+	malloc_memset(dcc[idx].u.chat->away, 0, strlen(dcc[idx].nick) + 1);
 	strcpy(dcc[idx].u.chat->away, dcc[idx].nick);
-        dcc[idx].u.chat->su_nick = get_data_ptr(strlen(dcc[idx].nick) + 1);
+	malloc_memset(dcc[idx].u.chat->su_nick, 0, strlen(dcc[idx].nick) + 1);
 	strcpy(dcc[idx].u.chat->su_nick, dcc[idx].nick);
 	dcc[idx].user = u;
 	strcpy(dcc[idx].nick, par);
@@ -2142,7 +2139,7 @@ static void cmd_su(struct userrec *u, int idx, char *par)
 	dprintf(idx, "Setting your username to %s.\n", par);
 	if (atr & USER_MASTER)
 	  dcc[idx].u.chat->con_flags = conmask;
-        dcc[idx].u.chat->su_nick = get_data_ptr(strlen(dcc[idx].nick) + 1);
+	malloc_memset(dcc[idx].u.chat->su_nick, 0, strlen(dcc[idx].nick) + 1);
 	strcpy(dcc[idx].u.chat->su_nick, dcc[idx].nick);
 	dcc[idx].user = u;
 	strcpy(dcc[idx].nick, par);
@@ -2738,8 +2735,7 @@ static void cmd_quit(struct userrec *u, int idx, char *text)
 		dcc[idx].user = get_user_by_handle(userlist, dcc[idx].u.chat->su_nick);
 		dcc[idx].type = &DCC_CHAT;
 		dprintf(idx, "Returning to real nick %s!\n", dcc[idx].u.chat->su_nick);
-		nfree(dcc[idx].u.chat->su_nick);
-		dcc[idx].u.chat->su_nick = NULL;
+		free_null(dcc[idx].u.chat->su_nick);
 		dcc_chatter(idx);
 		if (dcc[idx].u.chat->channel < 100000 && dcc[idx].u.chat->channel >= 0) {
 			botnet_send_join_idx(idx, -1);

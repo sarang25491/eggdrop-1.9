@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.61 2001/10/10 01:20:11 ite Exp $
+ * $Id: channels.c,v 1.62 2001/10/10 10:44:05 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -73,19 +73,6 @@ static int gfld_nick_time;
 #include "userchan.c"
 #include "udefchan.c"
 
-
-static void *channel_malloc(int size, char *file, int line)
-{
-  char *p;
-
-#ifdef DEBUG_MEM
-  p = ((void *) (global[0] (size, MODULE_NAME, file, line)));
-#else
-  p = nmalloc(size);
-#endif
-  egg_bzero(p, size);
-  return p;
-}
 
 static void set_mode_protect(struct chanset_t *chan, char *set)
 {
@@ -296,14 +283,14 @@ static void remove_channel(struct chanset_t *chan)
    /* Remove channel specific user flags */
    user_del_chan(chan->dname);
    noshare = 0;
-   nfree(chan->channel.key);
+   free(chan->channel.key);
    for (i = 0; i < 6 && chan->cmode[i].op; i++)
-     nfree(chan->cmode[i].op);
+     free(chan->cmode[i].op);
    if (chan->key)
-     nfree(chan->key);
+     free(chan->key);
    if (chan->rmkey)
-     nfree(chan->rmkey);
-   nfree(chan);
+     free(chan->rmkey);
+   free(chan);
 }
 
 /* Bind this to chon and *if* the users console channel == ***
@@ -652,48 +639,6 @@ static void channels_report(int idx, int details)
   }
 }
 
-static int expmem_masklist(masklist *m)
-{
-  int result = 0;
-
-  for (; m; m = m->next) {
-    result += sizeof(masklist);
-    if (m->mask)
-        result += strlen(m->mask) + 1;
-    if (m->who)
-        result += strlen(m->who) + 1;
-  }
-  return result;
-}
-
-static int channels_expmem()
-{
-  int tot = 0, i;
-  struct chanset_t *chan;
-
-  for (chan = chanset; chan; chan = chan->next) {
-    tot += sizeof(struct chanset_t);
-
-    tot += strlen(chan->channel.key) + 1;
-    if (chan->channel.topic)
-      tot += strlen(chan->channel.topic) + 1;
-    tot += (sizeof(struct memstruct) * (chan->channel.members + 1));
-
-    tot += expmem_masklist(chan->channel.ban);
-    tot += expmem_masklist(chan->channel.exempt);
-    tot += expmem_masklist(chan->channel.invite);
-
-    for (i = 0; i < 6 && chan->cmode[i].op; i++)
-      tot += strlen(chan->cmode[i].op) + 1;
-    if (chan->key)
-      tot += strlen(chan->key) + 1;
-    if (chan->rmkey)
-      tot += strlen(chan->rmkey) + 1;
-  }
-  tot += expmem_udef(udef);
-  return tot;
-}
-
 static char *traced_globchanset(ClientData cdata, Tcl_Interp * irp,
 				char *name1, char *name2, int flags)
 {
@@ -800,7 +745,7 @@ static Function channels_table[] =
   /* 0 - 3 */
   (Function) start,
   (Function) channels_close,
-  (Function) channels_expmem,
+  (Function) 0,
   (Function) channels_report,
   /* 4 - 7 */
   (Function) u_setsticky_mask,
@@ -813,7 +758,7 @@ static Function channels_table[] =
   (Function) del_chanrec,
   (Function) set_handle_chaninfo,
   /* 12 - 15 */
-  (Function) channel_malloc,
+  (Function) 0,
   (Function) u_match_mask,
   (Function) u_equals_mask,
   (Function) clear_channel,

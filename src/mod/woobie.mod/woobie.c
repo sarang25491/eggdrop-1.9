@@ -5,7 +5,7 @@
  * Originally written by ButchBub	  15 July     1997
  * Comments by Fabian Knittel		  29 December 1999
  *
- * $Id: woobie.c,v 1.17 2001/10/10 01:20:14 ite Exp $
+ * $Id: woobie.c,v 1.18 2001/10/10 10:44:08 tothwolf Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -38,16 +38,6 @@
  */
 static Function *global = NULL;
 
-/* Calculate the memory we keep allocated.
- */
-static int woobie_expmem()
-{
-  int size = 0;
-
-  Context;
-  return size;
-}
-
 static int cmd_woobie(struct userrec *u, int idx, char *par)
 {
   /* Define a context.
@@ -72,12 +62,7 @@ static int cmd_woobie(struct userrec *u, int idx, char *par)
  */
 static void woobie_report(int idx, int details)
 {
-  int size;
-
   Context;
-  size = woobie_expmem();
-  if (details)
-    dprintf(idx, "    0 woobies using %d bytes\n", size);
 }
 
 /* Note: The tcl-name is automatically created if you set it to NULL. In
@@ -119,7 +104,7 @@ static Function woobie_table[] =
 {
   (Function) woobie_start,
   (Function) woobie_close,
-  (Function) woobie_expmem,
+  (Function) 0,
   (Function) woobie_report,
 };
 

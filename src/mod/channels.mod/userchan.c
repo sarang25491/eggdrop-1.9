@@ -1,7 +1,7 @@
 /*
  * userchan.c -- part of channels.mod
  *
- * $Id: userchan.c,v 1.26 2001/08/19 02:36:23 drummer Exp $
+ * $Id: userchan.c,v 1.27 2001/10/10 10:44:05 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -37,7 +37,7 @@ static struct chanuserrec *add_chanrec(struct userrec *u, char *chname)
   struct chanuserrec *ch = NULL;
 
   if (findchan_by_dname(chname)) {
-    ch = user_malloc(sizeof(struct chanuserrec));
+    ch = malloc(sizeof(struct chanuserrec));
 
     ch->next = u->chanrec;
     u->chanrec = ch;
@@ -102,16 +102,14 @@ static void set_handle_chaninfo(struct userrec *bu, char *handle,
     add_chanrec_by_handle(bu, handle, chname);
     ch = get_chanrec(u, chname);
   }
-  if (info) {
+  if (info)
     if (strlen(info) > 80)
       info[80] = 0;
-  }
   if (ch->info != NULL)
-    nfree(ch->info);
-  if (info && info[0]) {
-    ch->info = (char *) user_malloc(strlen(info) + 1);
-    strcpy(ch->info, info);
-  } else
+    free(ch->info);
+  if (info && info[0])
+    malloc_strcpy(ch->info, info);
+  else
     ch->info = NULL;
   cst = findchan_by_dname(chname);
   if ((!noshare) && (bu == userlist) &&
@@ -131,8 +129,8 @@ static void del_chanrec(struct userrec *u, char *chname)
       else
 	lst->next = ch->next;
       if (ch->info != NULL)
-	nfree(ch->info);
-      nfree(ch);
+	free(ch->info);
+      free(ch);
       if (!noshare && !(u->flags & USER_UNSHARED))
 	shareout(findchan_by_dname(chname), "-cr %s %s\n", u->handle, chname);
       return;
@@ -264,19 +262,19 @@ static int u_delban(struct chanset_t *c, char *who, int doit)
 	  shareout(c, "-bc %s %s\n", c->dname, mask);
 	else
 	  shareout(NULL, "-b %s\n", mask);
-	nfree(mask);
+	free(mask);
       }
     }
     if (!c)
       gban_total--;
-    nfree((*u)->mask);
+    free((*u)->mask);
     if ((*u)->desc)
-      nfree((*u)->desc);
+      free((*u)->desc);
     if ((*u)->user)
-      nfree((*u)->user);
+      free((*u)->user);
     t = *u;
     *u = (*u)->next;
-    nfree(t);
+    free(t);
   }
   return i;
 }
@@ -315,19 +313,19 @@ static int u_delexempt (struct chanset_t * c, char * who, int doit)
 	  shareout(c, "-ec %s %s\n", c->dname, mask);
 	else
 	  shareout(NULL, "-e %s\n", mask);
-	nfree(mask);
+	free(mask);
       }
     }
     if (!c)
       gexempt_total--;
-    nfree((*u)->mask);
+    free((*u)->mask);
     if ((*u)->desc)
-      nfree((*u)->desc);
+      free((*u)->desc);
     if ((*u)->user)
-      nfree((*u)->user);
+      free((*u)->user);
     t = *u;
     *u = (*u)->next;
-    nfree(t);
+    free(t);
   }
   return i;
 }
@@ -366,19 +364,19 @@ static int u_delinvite(struct chanset_t *c, char *who, int doit)
 	  shareout(c, "-invc %s %s\n", c->dname, mask);
 	else
 	  shareout(NULL, "-inv %s\n", mask);
-	nfree(mask);
+	free(mask);
       }
     }
     if (!c)
       ginvite_total--;
-    nfree((*u)->mask);
+    free((*u)->mask);
     if ((*u)->desc)
-      nfree((*u)->desc);
+      free((*u)->desc);
     if ((*u)->user)
-      nfree((*u)->user);
+      free((*u)->user);
     t = *u;
     *u = (*u)->next;
-    nfree(t);
+    free(t);
   }
   return i;
 }
@@ -429,19 +427,16 @@ static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
     expire_time = 0L;
   }
 
-  p = user_malloc(sizeof(maskrec));
+  p = malloc(sizeof(maskrec));
   p->next = *u;
   *u = p;
   p->expire = expire_time;
   p->added = now;
   p->lastactive = 0;
   p->flags = flags;
-  p->mask = user_malloc(strlen(host) + 1);
-  strcpy(p->mask, host);
-  p->user = user_malloc(strlen(from) + 1);
-  strcpy(p->user, from);
-  p->desc = user_malloc(strlen(note) + 1);
-  strcpy(p->desc, note);
+  malloc_strcpy(p->mask, host);
+  malloc_strcpy(p->user, from);
+  malloc_strcpy(p->desc, note);
   if (!noshare) {
     char *mask = str_escape(host, ':', '\\');
 
@@ -454,7 +449,7 @@ static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
 	shareout(chan, "+bc %s %lu %s %s%s %s %s\n", mask, expire_time - now,
 		 chan->dname, (flags & MASKREC_STICKY) ? "s" : "",
 		 (flags & MASKREC_PERM) ? "p" : "-", from, note);
-      nfree(mask);
+      free(mask);
     }
   }
   return 1;
@@ -494,19 +489,16 @@ static int u_addinvite(struct chanset_t *chan, char *invite, char *from,
     expire_time = 0L;
   }
 
-  p = user_malloc(sizeof(maskrec));
+  p = malloc(sizeof(maskrec));
   p->next = *u;
   *u = p;
   p->expire = expire_time;
   p->added = now;
   p->lastactive = 0;
   p->flags = flags;
-  p->mask = user_malloc(strlen(host)+1);
-  strcpy(p->mask,host);
-  p->user = user_malloc(strlen(from)+1);
-  strcpy(p->user,from);
-  p->desc = user_malloc(strlen(note)+1);
-  strcpy(p->desc,note);
+  malloc_strcpy(p->mask, host);
+  malloc_strcpy(p->user, from);
+  malloc_strcpy(p->desc, note);
   if (!noshare) {
     char *mask = str_escape(host, ':', '\\');
 
@@ -519,7 +511,7 @@ static int u_addinvite(struct chanset_t *chan, char *invite, char *from,
 	shareout(chan, "+invc %s %lu %s %s%s %s %s\n", mask, expire_time - now,
 		 chan->dname, (flags & MASKREC_STICKY) ? "s" : "",
 		 (flags & MASKREC_PERM) ? "p": "-", from, note);
-      nfree(mask);
+      free(mask);
     }
   }
   return 1;
@@ -559,19 +551,16 @@ static int u_addexempt(struct chanset_t *chan, char *exempt, char *from,
     expire_time = 0L;
   }
 
-  p = user_malloc(sizeof(maskrec));
+  p = malloc(sizeof(maskrec));
   p->next = *u;
   *u = p;
   p->expire = expire_time;
   p->added = now;
   p->lastactive = 0;
   p->flags = flags;
-  p->mask = user_malloc(strlen(host)+1);
-  strcpy(p->mask,host);
-  p->user = user_malloc(strlen(from)+1);
-  strcpy(p->user,from);
-  p->desc = user_malloc(strlen(note)+1);
-  strcpy(p->desc,note);
+  malloc_strcpy(p->mask, host);
+  malloc_strcpy(p->user, from);
+  malloc_strcpy(p->desc, note);
   if (!noshare) {
     char *mask = str_escape(host, ':', '\\');
 
@@ -584,7 +573,7 @@ static int u_addexempt(struct chanset_t *chan, char *exempt, char *from,
 	shareout(chan, "+ec %s %lu %s %s%s %s %s\n", mask, expire_time - now,
 		 chan->dname, (flags & MASKREC_STICKY) ? "s" : "",
 		 (flags & MASKREC_PERM) ? "p": "-", from, note);
-      nfree(mask);
+      free(mask);
     }
   }
   return 1;
@@ -1024,10 +1013,10 @@ static int write_bans(FILE *f, int idx)
 		i->user ? i->user : botnetnick, i->added,
 		i->msg ? i->msg : "") == EOF) {
       if (mask)
-	nfree(mask);
+	free(mask);
       return 0;
     }
-    nfree(mask);
+    free(mask);
   }
   if (global_bans)
     if (fprintf(f, BAN_NAME " - -\n") == EOF)	/* Daemus */
@@ -1041,10 +1030,10 @@ static int write_bans(FILE *f, int idx)
 		b->lastactive, b->user ? b->user : botnetnick,
 		b->desc ? b->desc : "requested") == EOF) {
       if (mask)
-	nfree(mask);
+	free(mask);
       return 0;
     }
-    nfree(mask);
+    free(mask);
   }
   for (chan = chanset; chan; chan = chan->next)
     if ((idx < 0) || (chan->status & CHAN_SHARED)) {
@@ -1066,10 +1055,10 @@ static int write_bans(FILE *f, int idx)
 		      b->lastactive, b->user ? b->user : botnetnick,
 		      b->desc ? b->desc : "requested") == EOF) {
 	    if (mask)
-	      nfree(mask);
+	      free(mask);
 	    return 0;
 	  }
-	  nfree(mask);
+	  free(mask);
 	}
       }
     }
@@ -1096,10 +1085,10 @@ static int write_exempts(FILE *f, int idx)
 		e->lastactive, e->user ? e->user : botnetnick,
 		e->desc ? e->desc : "requested") == EOF) {
       if (mask)
-	nfree(mask);
+	free(mask);
       return 0;
     }
-    nfree(mask);
+    free(mask);
   }
   for (chan = chanset;chan;chan=chan->next)
     if ((idx < 0) || (chan->status & CHAN_SHARED)) {
@@ -1121,10 +1110,10 @@ static int write_exempts(FILE *f, int idx)
 		      e->lastactive, e->user ? e->user : botnetnick,
 		      e->desc ? e->desc : "requested") == EOF) {
 	    if (mask)
-	      nfree(mask);
+	      free(mask);
 	    return 0;
 	  }
-	  nfree(mask);
+	  free(mask);
 	}
       }
     }
@@ -1151,10 +1140,10 @@ static int write_invites(FILE *f, int idx)
 		ir->lastactive, ir->user ? ir->user : botnetnick,
 		ir->desc ? ir->desc : "requested") == EOF) {
       if (mask)
-	nfree(mask);
+	free(mask);
       return 0;
     }
-    nfree(mask);
+    free(mask);
   }
   for (chan = chanset; chan; chan = chan->next)
     if ((idx < 0) || (chan->status & CHAN_SHARED)) {
@@ -1176,10 +1165,10 @@ static int write_invites(FILE *f, int idx)
 		      ir->lastactive, ir->user ? ir->user : botnetnick,
 		      ir->desc ? ir->desc : "requested") == EOF) {
 	    if (mask)
-	      nfree(mask);
+	      free(mask);
 	    return 0;
 	  }
-	  nfree(mask);
+	  free(mask);
 	}
       }
     }

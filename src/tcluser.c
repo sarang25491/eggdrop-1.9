@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  *
- * $Id: tcluser.c,v 1.24 2001/08/13 19:22:30 guppy Exp $
+ * $Id: tcluser.c,v 1.25 2001/10/10 10:44:04 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -278,7 +278,7 @@ static int tcl_addbot STDVAR
      Tcl_AppendResult(irp, "0", NULL);
   else {
     userlist = adduser(userlist, argv[1], "none", "-", USER_BOT);
-    bi = user_malloc(sizeof(struct bot_addr));
+    bi = malloc(sizeof(struct bot_addr));
     addr = argv[2];
     if (*addr == '[') {
 	addr++;
@@ -296,12 +296,11 @@ static int tcl_addbot STDVAR
 	  addrlen = strlen(addr);
     }
     if (!q) {
-      bi->address = user_malloc(addrlen + 1);
-      strcpy(bi->address, addr);
+      malloc_strcpy(bi->address, addr);
       bi->telnet_port = 3333;
       bi->relay_port = 3333;
     } else {
-      bi->address = user_malloc(q - argv[2] + 1);
+      bi->address = malloc(q - argv[2] + 1);
       strncpyz(bi->address, addr, addrlen + 1);
       p = q + 1;
       bi->telnet_port = atoi(p);
@@ -536,7 +535,7 @@ static int tcl_setuser STDVAR
       return TCL_OK;		/* Silently ignore user * */
   }
   if (!(e = find_user_entry(et, u))) {
-    e = user_malloc(sizeof(struct user_entry));
+    e = malloc(sizeof(struct user_entry));
     e->type = et;
     e->name = NULL;
     e->u.list = NULL;
@@ -547,7 +546,7 @@ static int tcl_setuser STDVAR
   if (!e->u.list) {
     if (list_delete((struct list_type **) &(u->entries),
 		    (struct list_type *) e))
-      nfree(e);
+      free(e);
     /* else maybe already freed... (entry_type==HOSTS) <drummer> */
   }
   return r;

@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.67 2001/10/07 04:02:55 stdarg Exp $
+ * $Id: servmsg.c,v 1.68 2001/10/10 10:44:07 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -211,17 +211,14 @@ static int got001(char *from, char *ignore, char *msg)
       return 0;
     }
     if (x->realname)
-      nfree(x->realname);
+      free(x->realname);
     if (strict_servernames == 1) {
       x->realname = NULL;
       if (x->name)
-	nfree(x->name);
-      x->name = nmalloc(strlen(from) + 1);
-      strcpy(x->name, from);
-    } else {
-      x->realname = nmalloc(strlen(from) + 1);
-      strcpy(x->realname, from);
-    }
+	free(x->name);
+      malloc_strcpy(x->name, from);
+    } else
+      malloc_strcpy(x->realname, from);
   }
   return 0;
 }
@@ -926,7 +923,6 @@ static struct dcc_table SERVER_SOCKET =
   NULL,
   timeout_server,
   display_server,
-  NULL,
   kill_server,
   NULL
 };
@@ -1120,9 +1116,9 @@ static void connect_server(void)
 
     dcc[servidx].timeval = now;
     dcc[servidx].sock = -1;
-    dcc[servidx].u.dns->host = get_data_ptr(strlen(dcc[servidx].host) + 1);
+    malloc_memset(dcc[servidx].u.dns->host, 0, strlen(dcc[servidx].host) + 1);
     strcpy(dcc[servidx].u.dns->host, dcc[servidx].host);
-    dcc[servidx].u.dns->cbuf = get_data_ptr(strlen(pass) + 1);
+    malloc_memset(dcc[servidx].u.dns->cbuf, 0, strlen(pass) + 1);
     strcpy(dcc[servidx].u.dns->cbuf, pass);
     dcc[servidx].u.dns->dns_success = server_resolve_success;
     dcc[servidx].u.dns->dns_failure = server_resolve_failure;

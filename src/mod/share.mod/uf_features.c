@@ -1,7 +1,7 @@
 /*
  * uf_features.c -- part of share.mod
  *
- * $Id: uf_features.c,v 1.7 2001/04/12 02:39:47 guppy Exp $
+ * $Id: uf_features.c,v 1.8 2001/10/10 10:44:07 tothwolf Exp $
  */
 /*
  * Copyright (C) 2000, 2001 Eggheads Development Team
@@ -82,19 +82,7 @@ static char		uff_sbuf[512];
 
 static void uff_init(void)
 {
-  egg_bzero(&uff_list, sizeof(uff_head_t));
-}
-
-/* Calculate memory used for list.
- */
-static int uff_expmem(void)
-{
-  uff_list_t *ul;
-  int tot = 0;
-
-  for (ul = uff_list.start; ul; ul = ul->next)
-    tot += sizeof(uff_list_t);
-  return tot;
+  memset(&uff_list, 0, sizeof(uff_head_t));
 }
 
 /* Search for a feature in the uff feature list that matches a supplied
@@ -183,7 +171,7 @@ static void uff_addfeature(uff_table_t *ut)
 	   ut->flag, ut->feature, ul->entry->feature);
     return;
   }
-  ul = nmalloc(sizeof(uff_list_t));
+  ul = malloc(sizeof(uff_list_t));
   ul->entry = ut;
   uff_insert_entry(ul);
 }
@@ -207,7 +195,7 @@ static int uff_delfeature(uff_table_t *ut)
   for (ul = uff_list.start; ul; ul = ul->next)
     if (!strcmp(ul->entry->feature, ut->feature)) {
       uff_remove_entry(ul);
-      nfree(ul);
+      free(ul);
       return 1;
     }
   return 0;
@@ -237,7 +225,7 @@ static void uf_features_parse(int idx, char *par)
   uff_list_t *ul;
 
   uff_sbuf[0] = 0;				/* Reset static buffer	*/
-  p = s = buf = nmalloc(strlen(par) + 1);	/* Allocate temp buffer	*/
+  p = s = buf = malloc(strlen(par) + 1);	/* Allocate temp buffer	*/
   strcpy(buf, par);
 
   /* Clear all currently set features. */
@@ -256,7 +244,7 @@ static void uf_features_parse(int idx, char *par)
     }
     p = ++s;
   }
-  nfree(buf);
+  free(buf);
 
   /* Send response string						*/
   if (uff_sbuf[0])
@@ -284,7 +272,7 @@ static int uf_features_check(int idx, char *par)
   uff_list_t *ul;
 
   uff_sbuf[0] = 0;				/* Reset static buffer	*/
-  p = s = buf = nmalloc(strlen(par) + 1);	/* Allocate temp buffer	*/
+  p = s = buf = malloc(strlen(par) + 1);	/* Allocate temp buffer	*/
   strcpy(buf, par);
 
   /* Clear all currently set features. */
@@ -310,12 +298,12 @@ static int uf_features_check(int idx, char *par)
       dprintf(idx, "s e Attempt to use an unsupported feature\n");
       zapfbot(idx);
 
-      nfree(buf);
+      free(buf);
       return 0;
     }
     p = ++s;
   }
-  nfree(buf);
+  free(buf);
   return 1;
 }
 

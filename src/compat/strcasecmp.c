@@ -1,7 +1,7 @@
 /*
  * strcasecmp.c -- provides strcasecmp() and strncasecmp if necessary.
  *
- * $Id: strcasecmp.c,v 1.3 2001/10/10 01:20:10 ite Exp $
+ * $Id: strcasecmp.c,v 1.4 2001/10/10 10:44:04 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -23,7 +23,6 @@
  */
 
 #include "../main.h"
-#include "memcpy.h"
 
 #ifndef HAVE_STRCASECMP
 int egg_strcasecmp(const char *s1, const char *s2)

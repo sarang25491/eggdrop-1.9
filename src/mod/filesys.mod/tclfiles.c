@@ -2,7 +2,7 @@
  * tclfiles.c -- part of filesys.mod
  *   Tcl stubs for file system commands moved here to support modules
  *
- * $Id: tclfiles.c,v 1.14 2001/06/10 00:11:51 poptix Exp $
+ * $Id: tclfiles.c,v 1.15 2001/10/10 10:44:06 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -31,7 +31,7 @@ static int tcl_getdesc STDVAR
   filedb_getdesc(argv[1], argv[2], &s);
   if (s) {
     Tcl_AppendResult(irp, s, NULL);
-    my_free(s);
+    free_null(s);
     return TCL_OK;
   } else {
     Tcl_AppendResult(irp, "filedb access failed", NULL);
@@ -54,7 +54,7 @@ static int tcl_getowner STDVAR
   filedb_getowner(argv[1], argv[2], &s);
   if (s) {
     Tcl_AppendResult(irp, s, NULL);
-    my_free(s);
+    free_null(s);
     return TCL_OK;
   } else {
     Tcl_AppendResult(irp, "filedb access failed", NULL);
@@ -200,12 +200,12 @@ static int tcl_setflags STDVAR
   fdb = filedb_open(d, 0);
   if (!fdb) {
     Tcl_AppendResult(irp, "-3", NULL);		/* filedb access failed */
-    my_free(s);
+    free_null(s);
     return TCL_OK;
   }
   filedb_readtop(fdb, NULL);
   fdbe = filedb_matchfile(fdb, ftell(fdb), p);
-  my_free(s);
+  free_null(s);
 
   if (!fdbe) {
     Tcl_AppendResult(irp, "-1", NULL);	/* No such dir */
@@ -223,7 +223,7 @@ static int tcl_setflags STDVAR
     build_flags(f, &fr, NULL);
     malloc_strcpy(fdbe->flags_req, f);
   } else {
-    my_free(fdbe->flags_req);
+    free_null(fdbe->flags_req);
   }
   if (argc == 4)
     malloc_strcpy(fdbe->chan, argv[3]);
@@ -260,7 +260,7 @@ static int tcl_getflags STDVAR
       /* Not a directory? */
       !(fdbe->stat & FILE_DIR)) {
     Tcl_AppendResult(irp, "", NULL);
-    my_free(s);
+    free_null(s);
     free_fdbe(&fdbe);
     return TCL_OK;
   }
@@ -272,7 +272,7 @@ static int tcl_getflags STDVAR
     s[0] = 0;
   Tcl_AppendElement(irp, s);
   Tcl_AppendElement(irp, fdbe->chan);
-  my_free(s);
+  free_null(s);
   free_fdbe(&fdbe);
   return TCL_OK;
 }
@@ -301,19 +301,19 @@ static int tcl_mkdir STDVAR
   fdb = filedb_open(d, 0);
   if (!fdb) {
     Tcl_AppendResult(irp, "-3", NULL);		/* filedb access failed */
-    my_free(s);
+    free_null(s);
     return TCL_OK;
   }
   filedb_readtop(fdb, NULL);
   fdbe = filedb_matchfile(fdb, ftell(fdb), p);
 
   if (!fdbe) {
-    t = nmalloc(strlen(dccdir) + strlen(d) + strlen(p) + 2);
+    t = malloc(strlen(dccdir) + strlen(d) + strlen(p) + 2);
     sprintf(t, "%s%s/%s", dccdir, d, p);
     if (mkdir(t, 0755) != 0) {
       Tcl_AppendResult(irp, "1", NULL);
-      my_free(t);
-      my_free(s);
+      free_null(t);
+      free_null(s);
       filedb_close(fdb);
       return TCL_OK;
     }
@@ -324,7 +324,7 @@ static int tcl_mkdir STDVAR
   } else if (!(fdbe->stat & FILE_DIR)) {
     Tcl_AppendResult(irp, "2", NULL);
     free_fdbe(&fdbe);
-    my_free(s);
+    free_null(s);
     filedb_close(fdb);
     return TCL_OK;
   }
@@ -335,13 +335,13 @@ static int tcl_mkdir STDVAR
     build_flags(f, &fr, NULL);
     malloc_strcpy(fdbe->flags_req, f);
   } else if (fdbe->flags_req) {
-    my_free(fdbe->flags_req);
+    free_null(fdbe->flags_req);
   }
   if (argc == 4) {
     malloc_strcpy(fdbe->chan, argv[3]);
   } else
     if (fdbe->chan)
-      my_free(fdbe->chan);
+      free_null(fdbe->chan);
 
   if (fdbe->pos)
       filedb_addfile(fdb, fdbe);
@@ -375,7 +375,7 @@ static int tcl_rmdir STDVAR
   fdb = filedb_open(d, 0);
   if (!fdb) {
     Tcl_AppendResult(irp, "1", NULL);
-    my_free(s);
+    free_null(s);
     return TCL_OK;
   }
   filedb_readtop(fdb, NULL);
@@ -384,33 +384,33 @@ static int tcl_rmdir STDVAR
   if (!fdbe) {
     Tcl_AppendResult(irp, "1", NULL);
     filedb_close(fdb);
-    my_free(s);
+    free_null(s);
     return TCL_OK;
   }
   if (!(fdbe->stat & FILE_DIR)) {
     Tcl_AppendResult(irp, "1", NULL);
     filedb_close(fdb);
     free_fdbe(&fdbe);
-    my_free(s);
+    free_null(s);
     return TCL_OK;
   }
   /* Erase '.filedb' and '.files' if they exist */
-  t = nmalloc(strlen(dccdir) + strlen(d) + strlen(p) + 11);
+  t = malloc(strlen(dccdir) + strlen(d) + strlen(p) + 11);
   sprintf(t, "%s%s/%s/.filedb", dccdir, d, p);
   unlink(t);
   sprintf(t, "%s%s/%s/.files", dccdir, d, p);
   unlink(t);
   sprintf(t, "%s%s/%s", dccdir, d, p);
-  my_free(s);
+  free_null(s);
   if (rmdir(t) == 0) {
     filedb_delfile(fdb, fdbe->pos);
     filedb_close(fdb);
     free_fdbe(&fdbe);
-    my_free(t);
+    free_null(t);
     Tcl_AppendResult(irp, "0", NULL);
     return TCL_OK;
   }
-  my_free(t);
+  free_null(t);
   free_fdbe(&fdbe);
   filedb_close(fdb);
   Tcl_AppendResult(irp, "1", NULL);
@@ -436,11 +436,11 @@ static int tcl_mv_cp(Tcl_Interp * irp, int argc, char **argv, int copy)
     if (!resolve_dir("/", s, &oldpath, -1)) {
       /* Tcl can do * anything */
       Tcl_AppendResult(irp, "-1", NULL);	/* Invalid source */
-      my_free(fn);
-      my_free(oldpath);
+      free_null(fn);
+      free_null(oldpath);
       return TCL_OK;
     }
-    my_free(s);
+    free_null(s);
   } else
     malloc_strcpy(oldpath, "/");
   malloc_strcpy(s, argv[2]);
@@ -454,25 +454,25 @@ static int tcl_mv_cp(Tcl_Interp * irp, int argc, char **argv, int copy)
       *p = 0;
       malloc_strcpy(newfn, p + 1);
     }
-    my_free(newpath);
+    free_null(newpath);
     if (!resolve_dir("/", s, &newpath, -1)) {
       Tcl_AppendResult(irp, "-2", NULL);	/* Invalid desto */
-      my_free(newpath);
-      my_free(s);
-      my_free(newfn);
+      free_null(newpath);
+      free_null(s);
+      free_null(newfn);
       return TCL_OK;
     }
   } else
     malloc_strcpy(newfn, "");
-  my_free(s);
+  free_null(s);
 
   /* Stupidness checks */
   if ((!strcmp(oldpath, newpath)) &&
       (!newfn[0] || !strcmp(newfn, fn))) {
-    my_free(newfn);
-    my_free(fn);
-    my_free(oldpath);
-    my_free(newpath);
+    free_null(newfn);
+    free_null(fn);
+    free_null(oldpath);
+    free_null(newpath);
     Tcl_AppendResult(irp, "-3", NULL);	/* Stupid copy to self */
     return TCL_OK;
   }
@@ -488,10 +488,10 @@ static int tcl_mv_cp(Tcl_Interp * irp, int argc, char **argv, int copy)
   else
     fdb_new = filedb_open(newpath, 0);
   if (!fdb_old || !fdb_new) {
-    my_free(newfn);
-    my_free(fn);
-    my_free(oldpath);
-    my_free(newpath);
+    free_null(newfn);
+    free_null(fn);
+    free_null(oldpath);
+    free_null(newpath);
     if (fdb_old)
       filedb_close(fdb_old);
     else if (fdb_new)
@@ -503,10 +503,10 @@ static int tcl_mv_cp(Tcl_Interp * irp, int argc, char **argv, int copy)
   filedb_readtop(fdb_old, NULL);
   fdbe_old = filedb_matchfile(fdb_old, ftell(fdb_old), fn);
   if (!fdbe_old) {
-    my_free(newfn);
-    my_free(fn);
-    my_free(oldpath);
-    my_free(newpath);
+    free_null(newfn);
+    free_null(fn);
+    free_null(oldpath);
+    free_null(newpath);
     if (fdb_new != fdb_old)
       filedb_close(fdb_new);
     filedb_close(fdb_old);
@@ -517,9 +517,9 @@ static int tcl_mv_cp(Tcl_Interp * irp, int argc, char **argv, int copy)
     where = ftell(fdb_old);
     skip_this = 0;
     if (!(fdbe_old->stat & (FILE_HIDDEN | FILE_DIR))) {
-      s = nmalloc(strlen(dccdir) + strlen(oldpath)
+      s = malloc(strlen(dccdir) + strlen(oldpath)
 		  + strlen(fdbe_old->filename) + 2);
-      s1 = nmalloc(strlen(dccdir) + strlen(newpath)
+      s1 = malloc(strlen(dccdir) + strlen(newpath)
 		   + strlen(newfn[0] ? newfn : fdbe_old->filename) + 2);
       sprintf(s, "%s%s%s%s", dccdir, oldpath,
 	      oldpath[0] ? "/" : "", fdbe_old->filename);
@@ -574,8 +574,8 @@ static int tcl_mv_cp(Tcl_Interp * irp, int argc, char **argv, int copy)
 	  free_fdbe(&fdbe_new);
 	}
       }
-      my_free(s);
-      my_free(s1);
+      free_null(s);
+      free_null(s1);
     }
     free_fdbe(&fdbe_old);
     fdbe_old = filedb_matchfile(fdb_old, where, fn);
@@ -594,10 +594,10 @@ static int tcl_mv_cp(Tcl_Interp * irp, int argc, char **argv, int copy)
     sprintf(x, "%d", ok);
     Tcl_AppendResult(irp, x, NULL);
   }
-  my_free(newfn);
-  my_free(fn);
-  my_free(oldpath);
-  my_free(newpath);
+  free_null(newfn);
+  free_null(fn);
+  free_null(oldpath);
+  free_null(newpath);
   return TCL_OK;
 }
 

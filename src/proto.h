@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.51 2001/08/19 02:49:40 drummer Exp $
+ * $Id: proto.h,v 1.52 2001/10/10 10:44:04 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -139,10 +139,8 @@ void makepass(char *);
 void tell_dcc(int);
 void not_away(int);
 void set_away(int, char *);
-void *_get_data_ptr(int, char *, int);
 void dcc_remove_lost(void);
 
-#define get_data_ptr(x) _get_data_ptr(x,__FILE__,__LINE__)
 void flush_lines(int, struct chat_info *);
 struct dcc_t *find_idx(int);
 int new_dcc(struct dcc_table *, int);
@@ -165,7 +163,6 @@ int detect_dcc_flood(time_t *, struct chat_info *, int);
 
 /* main.c */
 void fatal(const char *, int);
-int expected_memory(void);
 void patch(const char *);
 void eggContext(const char *, int, const char *);
 void eggContextNote(const char *, int, const char *, const char *);
@@ -173,16 +170,8 @@ void eggAssert(const char *, int, const char *);
 void backup_userfile(void);
 
 /* match.c */
-int _wild_match(register unsigned char *, register unsigned char *);
-#define wild_match(a,b) _wild_match((unsigned char *)(a),(unsigned char *)(b))
-
-/* mem.c */
-void *n_malloc(int, const char *, int);
-void *n_realloc(void *, int, const char *, int);
-void n_free(void *, const char *, int);
-void tell_mem_status(char *);
-void tell_mem_status_dcc(int);
-void debug_mem_to_dcc(int);
+int wild_match(register unsigned char *, register unsigned char *);
+int wild_match_per(register unsigned char *, register unsigned char *);
 
 /* misc.c */
 int egg_strcatn(char *dst, const char *src, size_t max);
@@ -262,7 +251,6 @@ int findanyidx(int);
 
 /* userent.c */
 void list_type_kill(struct list_type *);
-int list_type_expmem(struct list_type *);
 int xtra_set();
 
 /* userrec.c */

@@ -2,7 +2,7 @@
  * blowfish.c -- part of blowfish.mod
  *   encryption and decryption of passwords
  *
- * $Id: blowfish.c,v 1.22 2001/10/10 01:20:11 ite Exp $
+ * $Id: blowfish.c,v 1.23 2001/10/10 10:44:05 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -62,19 +62,6 @@ static struct box_t {
 /* static u_32bit_t bf_S[4][256]; */
 static u_32bit_t *bf_P;
 static u_32bit_t **bf_S;
-
-static int blowfish_expmem()
-{
-  int i, tot = 0;
-
-  for (i = 0; i < BOXES; i++)
-    if (box[i].P != NULL) {
-      tot += ((bf_N + 2) * sizeof(u_32bit_t));
-      tot += (4 * sizeof(u_32bit_t *));
-      tot += (4 * 256 * sizeof(u_32bit_t));
-    }
-  return tot;
-}
 
 static void blowfish_encipher(u_32bit_t * xl, u_32bit_t * xr)
 {
@@ -201,17 +188,17 @@ static void blowfish_init(u_8bit_t * key, int keybytes)
 	lowest = box[i].lastuse;
 	bx = i;
       }
-    nfree(box[bx].P);
+    free(box[bx].P);
     for (i = 0; i < 4; i++)
-      nfree(box[bx].S[i]);
-    nfree(box[bx].S);
+      free(box[bx].S[i]);
+    free(box[bx].S);
   }
   /* Initialize new buffer */
   /* uh... this is over 4k */
-  box[bx].P = (u_32bit_t *) nmalloc((bf_N + 2) * sizeof(u_32bit_t));
-  box[bx].S = (u_32bit_t **) nmalloc(4 * sizeof(u_32bit_t *));
+  box[bx].P = (u_32bit_t *) malloc((bf_N + 2) * sizeof(u_32bit_t));
+  box[bx].S = (u_32bit_t **) malloc(4 * sizeof(u_32bit_t *));
   for (i = 0; i < 4; i++)
-    box[bx].S[i] = (u_32bit_t *) nmalloc(256 * sizeof(u_32bit_t));
+    box[bx].S[i] = (u_32bit_t *) malloc(256 * sizeof(u_32bit_t));
   bf_P = box[bx].P;
   bf_S = box[bx].S;
   box[bx].keybytes = keybytes;
@@ -313,12 +300,12 @@ static char *encrypt_string(char *key, char *str)
   int i;
 
   /* Pad fake string with 8 bytes to make sure there's enough */
-  s = (char *) nmalloc(strlen(str) + 9);
+  s = (char *) malloc(strlen(str) + 9);
   strcpy(s, str);
   if ((!key) || (!key[0]))
     return s;
   p = s;
-  dest = (char *) nmalloc((strlen(str) + 9) * 2);
+  dest = (char *) malloc((strlen(str) + 9) * 2);
   while (*p)
     p++;
   for (i = 0; i < 8; i++)
@@ -346,7 +333,7 @@ static char *encrypt_string(char *key, char *str)
     }
   }
   *d = 0;
-  nfree(s);
+  free(s);
   return dest;
 }
 
@@ -359,12 +346,12 @@ static char *decrypt_string(char *key, char *str)
   int i;
 
   /* Pad encoded string with 0 bits in case it's bogus */
-  s = (char *) nmalloc(strlen(str) + 12);
+  s = (char *) malloc(strlen(str) + 12);
   strcpy(s, str);
   if ((!key) || (!key[0]))
     return s;
   p = s;
-  dest = (char *) nmalloc(strlen(str) + 12);
+  dest = (char *) malloc(strlen(str) + 12);
   while (*p)
     p++;
   for (i = 0; i < 12; i++)
@@ -386,7 +373,7 @@ static char *decrypt_string(char *key, char *str)
       *d++ = (right & (0xff << ((3 - i) * 8))) >> ((3 - i) * 8);
   }
   *d = 0;
-  nfree(s);
+  free(s);
   return dest;
 }
 
@@ -397,7 +384,7 @@ static int tcl_encrypt STDVAR
   BADARGS(3, 3, " key string");
   p = encrypt_string(argv[1], argv[2]);
   Tcl_AppendResult(irp, p, NULL);
-  nfree(p);
+  free(p);
   return TCL_OK;
 }
 
@@ -408,7 +395,7 @@ static int tcl_decrypt STDVAR
   BADARGS(3, 3, " key string");
   p = decrypt_string(argv[1], argv[2]);
   Tcl_AppendResult(irp, p, NULL);
-  nfree(p);
+  free(p);
   return TCL_OK;
 }
 
@@ -446,7 +433,7 @@ static Function blowfish_table[] =
   /* 0 - 3 */
   (Function) start,
   (Function) blowfish_close,
-  (Function) blowfish_expmem,
+  (Function) 0,
   (Function) blowfish_report,
   /* 4 - 7 */
   (Function) encrypt_string,

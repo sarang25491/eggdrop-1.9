@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.45 2001/08/13 16:21:48 guppy Exp $
+ * $Id: misc.c,v 1.46 2001/10/10 10:44:04 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -72,23 +72,6 @@ static struct help_ref {
 } *help_list = NULL;
 
 
-/* Expected memory usage
- */
-int expmem_misc()
-{
-  struct help_ref *current;
-  struct help_list_t *item;
-  int tot = 0;
-
-  for (current = help_list; current; current = current->next) {
-    tot += sizeof(struct help_ref) + strlen(current->name) + 1;
-
-    for (item = current->first; item; item = item->next)
-      tot += sizeof(struct help_list_t) + strlen(item->name) + 1;
-  }
-  return tot + (max_logs * sizeof(log_t));
-}
-
 void init_misc()
 {
   static int last = 0;
@@ -96,9 +79,9 @@ void init_misc()
   if (max_logs < 1)
     max_logs = 1;
   if (logs)
-    logs = nrealloc(logs, max_logs * sizeof(log_t));
+    logs = realloc(logs, max_logs * sizeof(log_t));
   else
-    logs = nmalloc(max_logs * sizeof(log_t));
+    logs = malloc(max_logs * sizeof(log_t));
   for (; last < max_logs; last++) {
     logs[last].filename = logs[last].chname = NULL;
     logs[last].mask = 0;
@@ -729,7 +712,7 @@ static void subst_addcol(char *s, char *newcol)
 
   if ((newcol[0]) && (newcol[0] != '\377'))
     colsofar++;
-  colstr = nrealloc(colstr, strlen(colstr) + strlen(newcol) +
+  colstr = realloc(colstr, strlen(colstr) + strlen(newcol) +
 		    (colstr[0] ? 2 : 1));
   if ((newcol[0]) && (newcol[0] != '\377')) {
     if (colstr[0])
@@ -751,9 +734,8 @@ static void subst_addcol(char *s, char *newcol)
       p = strchr(q, '\377');
     }
     strcat(s, q);
-    nfree(colstr);
-    colstr = (char *) nmalloc(1);
-    colstr[0] = 0;
+    free(colstr);
+    malloc_memset(colstr, 0, 1);
   }
 }
 
@@ -797,10 +779,8 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
     blind = 0;
     cols = 0;
     subwidth = 70;
-    if (colstr != NULL) {
-      nfree(colstr);
-      colstr = NULL;
-    }
+    if (colstr != NULL)
+      free_null(colstr);
     help_flags = isdcc;
     return;
   }
@@ -963,8 +943,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
 	    if (cols) {
 	      sub[0] = 0;
 	      subst_addcol(sub, "\377");
-	      nfree(colstr);
-	      colstr = NULL;
+	      free_null(colstr);
 	      cols = 0;
 	      towrite = sub;
 	    }
@@ -975,8 +954,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
 
 	    cols = atoi(q + 5);
 	    colsofar = 0;
-	    colstr = (char *) nmalloc(1);
-	    colstr[0] = 0;
+	    malloc_memset(colstr, 0, 1);
 	    r = strchr(q + 5, '/');
 	    if (r != NULL)
 	      subwidth = atoi(r + 1);
@@ -1052,9 +1030,9 @@ static void scan_help_file(struct help_ref *current, char *filename, int type)
 	  q += 7;
 	  if ((p = strchr(q, '}'))) {
 	    *p = 0;
-	    list = nmalloc(sizeof(struct help_list_t));
+	    list = malloc(sizeof(struct help_list_t));
 
-	    list->name = nmalloc(p - q + 1);
+	    list->name = malloc(p - q + 1);
 	    strcpy(list->name, q);
 	    list->next = current->first;
 	    list->type = type;
@@ -1077,10 +1055,9 @@ void add_help_reference(char *file)
   for (current = help_list; current; current = current->next)
     if (!strcmp(current->name, file))
       return;			/* Already exists, can't re-add :P */
-  current = nmalloc(sizeof(struct help_ref));
+  current = malloc(sizeof(struct help_ref));
 
-  current->name = nmalloc(strlen(file) + 1);
-  strcpy(current->name, file);
+  malloc_strcpy(current->name, file);
   current->next = help_list;
   current->first = NULL;
   help_list = current;
@@ -1101,15 +1078,15 @@ void rem_help_reference(char *file)
     if (!strcmp(current->name, file)) {
       while ((item = current->first)) {
 	current->first = item->next;
-	nfree(item->name);
-	nfree(item);
+	free(item->name);
+	free(item);
       }
-      nfree(current->name);
+      free(current->name);
       if (last)
 	last->next = current->next;
       else
 	help_list = current->next;
-      nfree(current);
+      free(current);
       return;
     }
 }
@@ -1123,13 +1100,13 @@ void reload_help_data(void)
   while (current) {
     while ((item = current->first)) {
       current->first = item->next;
-      nfree(item->name);
-      nfree(item);
+      free(item->name);
+      free(item);
     }
     add_help_reference(current->name);
-    nfree(current->name);
+    free(current->name);
     next = current->next;
-    nfree(current);
+    free(current);
     current = next;
   }
 }
@@ -1431,7 +1408,7 @@ char *str_escape(const char *str, const char div, const char mask)
 {
   const int	 len = strlen(str);
   int		 buflen = (2 * len), blen = 0;
-  char		*buf = nmalloc(buflen + 1), *b = buf;
+  char		*buf = malloc(buflen + 1), *b = buf;
   const char	*s;
 
   if (!buf)
@@ -1440,7 +1417,7 @@ char *str_escape(const char *str, const char div, const char mask)
     /* Resize buffer. */
     if ((buflen - blen) <= 3) {
       buflen = (buflen * 2);
-      buf = nrealloc(buf, buflen + 1);
+      buf = realloc(buf, buflen + 1);
       if (!buf)
 	return NULL;
       b = buf + blen;

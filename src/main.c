@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.78 2001/09/28 03:15:34 stdarg Exp $
+ * $Id: main.c,v 1.79 2001/10/10 10:44:04 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -176,23 +176,6 @@ void fatal(const char *s, int recoverable)
   }
 }
 
-
-int expmem_chanprog(), expmem_users(), expmem_misc(), expmem_dccutil(),
- expmem_botnet(), expmem_tcl(), expmem_tclhash(), expmem_net(),
- expmem_modules(int), expmem_tcldcc();
-
-/* For mem.c : calculate memory we SHOULD be using
- */
-int expected_memory(void)
-{
-  int tot;
-
-  tot = expmem_chanprog() + expmem_users() + expmem_misc() +
-    expmem_dccutil() + expmem_botnet() + expmem_tcl() + expmem_tclhash() +
-    expmem_net() + expmem_modules(0) + expmem_tcldcc();
-  return tot;
-}
-
 static void check_expired_dcc()
 {
   int i;
@@ -299,7 +282,7 @@ void write_debug()
 	    (cx_note[cx_ptr][0]) ? cx_note[cx_ptr] : "");
     tell_dcc(-x);
     dprintf(-x, "\n");
-    debug_mem_to_dcc(-x);
+    tell_netdebug(-x);
     killsock(x);
     close(x);
     putlog(LOG_MISC, "*", "* Wrote DEBUG");
@@ -530,10 +513,9 @@ static void core_secondly()
       tell_verbose_status(DP_STDOUT);
       do_module_report(DP_STDOUT, 0, "server");
       do_module_report(DP_STDOUT, 0, "channels");
-      tell_mem_status_dcc(DP_STDOUT);
     }
   }
-  egg_memcpy(&nowtm, localtime(&now), sizeof(struct tm));
+  memcpy(&nowtm, localtime(&now), sizeof(struct tm));
   if (nowtm.tm_min != lastmin) {
     int i = 0;
 
@@ -669,8 +651,8 @@ void check_static(char *, char *(*)());
 
 #include "mod/static.h"
 #endif
-int init_mem(), init_dcc_max(), init_userent(), init_misc(),
- init_net(), init_modules(), init_tcl(int, char **);
+int init_dcc_max(), init_userent(), init_misc(), init_net(),
+ init_modules(), init_tcl(int, char **);
 void botnet_init();
 
 void patch(const char *str)
@@ -702,7 +684,7 @@ int main(int argc, char **argv)
   struct sigaction sv;
   struct chanset_t *chan;
 
-#ifdef DEBUG_MEM
+#ifdef DEBUG_ASSERT
   /* Make sure it can write core, if you make debug. Else it's pretty
    * useless (dw)
    */
@@ -774,10 +756,9 @@ int main(int argc, char **argv)
   /* Initialize variables and stuff */
   now = time(NULL);
   chanset = NULL;
-  egg_memcpy(&nowtm, localtime(&now), sizeof(struct tm));
+  memcpy(&nowtm, localtime(&now), sizeof(struct tm));
   lastmin = nowtm.tm_min;
   srandom(now % (getpid() + getppid()));
-  init_mem();
   if (argc > 1)
     for (i = 1; i < argc; i++)
       do_arg(argv[i]);

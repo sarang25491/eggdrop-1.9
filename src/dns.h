@@ -2,7 +2,7 @@
  * dns.h
  *   stuff used by dns.c
  *
- * $Id: dns.h,v 1.7 2001/07/26 17:04:33 drummer Exp $
+ * $Id: dns.h,v 1.8 2001/10/10 10:44:04 tothwolf Exp $
  */
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -29,7 +29,6 @@
 
 typedef struct {
   char *name;
-  int  (*expmem)(void *);
   void (*event)(char *, char *, int, void *);
 } devent_type;
 

@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.73 2001/09/28 03:15:35 stdarg Exp $
+ * $Id: chan.c,v 1.74 2001/10/10 10:44:06 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -44,7 +44,7 @@ static memberlist *newmember(struct chanset_t *chan)
   memberlist *x;
 
   for (x = chan->channel.member; x && x->nick[0]; x = x->next); 
-  x->next = (memberlist *) channel_malloc(sizeof(memberlist));
+  malloc_memset(x->next, 0, sizeof(memberlist));
   x->next->next = NULL;
   x->next->nick[0] = 0;
   x->next->split = 0L;
@@ -1310,9 +1310,8 @@ static int got475(char *from, char *ignore, char *msg)
   if (chan) {
     putlog(LOG_JOIN, chan->dname, _("Bad key--cant join: %s"), chan->dname);
     if (chan->channel.key[0]) {
-      nfree(chan->channel.key);
-      chan->channel.key = (char *) channel_malloc(1);
-      chan->channel.key[0] = 0;
+      free(chan->channel.key);
+      malloc_memset(chan->channel.key, 0, 1);
       dprintf(DP_MODE, "JOIN %s %s\n", chan->dname, chan->key_prot);
     } else
       check_tcl_need(chan->dname, "key");
@@ -1356,9 +1355,9 @@ static int gotinvite(char *from, char *ignore, char *msg)
 static void set_topic(struct chanset_t *chan, char *k)
 {
   if (chan->channel.topic)
-    nfree(chan->channel.topic);
+    free(chan->channel.topic);
   if (k && k[0]) {
-    chan->channel.topic = (char *) channel_malloc(strlen(k) + 1);
+    malloc_memset(chan->channel.topic, 0, strlen(k) + 1);
     strcpy(chan->channel.topic, k);
   } else
     chan->channel.topic = NULL;
@@ -1477,7 +1476,7 @@ static int gotjoin(char *from, char *ignore, char *chname)
     int	l_chname = strlen(chname);
 
     if (l_chname > (CHANNEL_ID_LEN + 1)) {
-      ch_dname = nmalloc(l_chname + 1);
+      ch_dname = malloc(l_chname + 1);
       if (ch_dname) {
 	egg_snprintf(ch_dname, l_chname + 2, "!%s",
 		     chname + (CHANNEL_ID_LEN + 1));
@@ -1702,7 +1701,7 @@ static int gotjoin(char *from, char *ignore, char *chname)
 
 exit:
   if (ch_dname)
-    nfree(ch_dname);
+    free(ch_dname);
   return 0;
 }
 

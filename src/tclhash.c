@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.39 2001/10/07 04:02:54 stdarg Exp $
+ * $Id: tclhash.c,v 1.40 2001/10/10 10:44:04 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -31,7 +31,6 @@
 #include "main.h"
 #include "chan.h"
 #include "users.h"
-#include "match.c"
 
 extern Tcl_Interp	*interp;
 extern struct dcc_t	*dcc;
@@ -64,38 +63,12 @@ static int builtin_charidx();
 static int builtin_chat();
 static int builtin_dcc();
 
-static char *my_strdup(const char *s)
-{
-	char *t;
-
-	t = (char *)nmalloc(strlen(s)+1);
-	strcpy(t, s);
-	return(t);
-}
-
-/* Allocate and initialise a chunk of memory.
- */
-static inline void *n_malloc_null(int size, const char *file, int line)
-{
-#ifdef DEBUG_MEM
-# define	nmalloc_null(size)	n_malloc_null(size, __FILE__, __LINE__)
-  void	*ptr = n_malloc(size, file, line);
-#else
-# define	nmalloc_null(size)	n_malloc_null(size, NULL, 0)
-  void	*ptr = nmalloc(size);
-#endif
-
-  egg_memset(ptr, 0, size);
-  return ptr;
-}
-
-
 /* Delete trigger/command.
  */
 static inline void tcl_cmd_delete(tcl_cmd_t *tc)
 {
-  nfree(tc->func_name);
-  nfree(tc);
+  free(tc->func_name);
+  free(tc);
 }
 
 /* Delete bind and its elements.
@@ -108,8 +81,8 @@ static inline void tcl_bind_mask_delete(tcl_bind_mask_t *tm)
     tc_next = tc->next;
     tcl_cmd_delete(tc);
   }
-  nfree(tm->mask);
-  nfree(tm);
+  free(tm->mask);
+  free(tm);
 }
 
 /* Delete bind list and its elements.
@@ -122,7 +95,7 @@ static inline void tcl_bind_list_delete(tcl_bind_list_t *tl)
     tm_next = tm->next;
     tcl_bind_mask_delete(tm);
   }
-  nfree(tl);
+  free(tl);
 }
 
 inline void garbage_collect_tclhash(void)
@@ -173,50 +146,6 @@ inline void garbage_collect_tclhash(void)
       tl_prev = tl;
     }
   }
-}
-
-static inline int tcl_cmd_expmem(tcl_cmd_t *tc)
-{
-  int			tot;
-
-  tot = sizeof(*tc);
-  if (tc->func_name)
-    tot += strlen(tc->func_name) + 1;
-  return tot;
-}
-
-static inline int tcl_bind_mask_expmem(tcl_bind_mask_t *tm)
-{
-  int			 tot = 0;
-  tcl_cmd_t		*tc;
-
-  for (tc = tm->first; tc; tc = tc->next)
-    tot += tcl_cmd_expmem(tc);
-  if (tm->mask)
-    tot += strlen(tm->mask) + 1;
-  tot += sizeof(*tm);
-  return tot;
-}
-
-static inline int tcl_bind_list_expmem(tcl_bind_list_t *tl)
-{
-  int			 tot = 0;
-  tcl_bind_mask_t	*tm;
-
-  for (tm = tl->first; tm; tm = tm->next)
-    tot += tcl_bind_mask_expmem(tm);
-  tot += sizeof(*tl);
-  return tot;
-}
-
-int expmem_tclhash(void)
-{
-  int			 tot = 0;
-  tcl_bind_list_t	*tl;
-
-  for (tl = bind_table_list; tl; tl = tl->next)
-    tot += tcl_bind_list_expmem(tl);
-  return tot;
 }
 
 
@@ -298,11 +227,11 @@ bind_table_t *add_bind_table2(const char *name, int nargs, const char *syntax, i
 		if (!strcmp(table->name, name)) return(table);
 	}
 	/* Nope, we have to create a new one. */
-	table = (bind_table_t *)nmalloc(sizeof(*table));
+	table = (bind_table_t *)malloc(sizeof(*table));
 	table->chains = NULL;
-	table->name = my_strdup(name);
+	malloc_strcpy(table->name, name);
 	table->nargs = nargs;
-	table->syntax = my_strdup(syntax);
+	malloc_strcpy(table->syntax, syntax);
 	table->match_type = match_type;
 	table->flags = flags;
 	table->next = bind_table_list_head;
@@ -329,7 +258,7 @@ tcl_bind_list_t *add_bind_table(const char *nme, int flg, Function func)
       break;		/* New. Insert at start of list.	*/
   }
 
-  tl = nmalloc_null(sizeof(tcl_bind_list_t));
+  malloc_memset(tl, 0, sizeof(tcl_bind_list_t));
   strcpy(tl->name, nme);
   tl->flags = flg;
   tl->func = func;
@@ -363,15 +292,15 @@ void del_bind_table2(bind_table_t *table)
 	}
 
 	/* Now delete it. */
-	nfree(table->name);
+	free(table->name);
 	for (chain = table->chains; chain; chain = next_chain) {
 		next_chain = chain->next;
 		for (entry = chain->entries; entry; entry = next_entry) {
 			next_entry = entry->next;
-			nfree(entry->function_name);
-			nfree(entry);
+			free(entry->function_name);
+			free(entry);
 		}
-		nfree(chain);
+		free(chain);
 	}
 }
 
@@ -438,8 +367,8 @@ int del_bind_entry(bind_table_t *table, const char *flags, const char *mask, con
 	/* Delete it. */
 	if (prev) prev->next = entry->next;
 	else if (entry->next) chain->entries = entry->next;
-	nfree(entry->function_name);
-	nfree(entry);
+	free(entry->function_name);
+	free(entry);
 
 	return(0);
 }
@@ -505,9 +434,9 @@ int add_bind_entry(bind_table_t *table, const char *flags, const char *mask, con
 
 	/* Create if it doesn't exist. */
 	if (!chain) {
-		chain = (bind_chain_t *)nmalloc(sizeof(*chain));
+		chain = (bind_chain_t *)malloc(sizeof(*chain));
 		chain->entries = NULL;
-		chain->mask = my_strdup(mask);
+		malloc_strcpy(chain->mask, mask);
 		chain->next = table->chains;
 		table->chains = chain;
 	}
@@ -525,15 +454,15 @@ int add_bind_entry(bind_table_t *table, const char *flags, const char *mask, con
 	}
 
 	/* If we have an old entry, re-use it. */
-	if (entry) nfree(entry->function_name);
+	if (entry) free(entry->function_name);
 	else {
 		/* Otherwise, create a new entry. */
-		entry = (bind_entry_t *)nmalloc(sizeof(*entry));
+		entry = (bind_entry_t *)malloc(sizeof(*entry));
 		entry->next = chain->entries;
 		chain->entries = entry;
 	}
 
-	entry->function_name = my_strdup(function_name);
+	malloc_strcpy(entry->function_name, function_name);
 	entry->callback = callback;
 	entry->client_data = client_data;
 	entry->hits = 0;
@@ -563,9 +492,8 @@ static int bind_bind_entry(tcl_bind_list_t *tl, const char *flags,
 
   /* Create bind if it doesn't exist yet. */
   if (!tm) {
-    tm = nmalloc_null(sizeof(tcl_bind_mask_t));
-    tm->mask = nmalloc(strlen(cmd) + 1);
-    strcpy(tm->mask, cmd);
+    malloc_memset(tm, 0, sizeof(tcl_bind_mask_t));
+    malloc_strcpy(tm->mask, cmd);
 
 #if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
     str_nutf8tounicode(tm->mask, strlen(tm->mask) + 1);
@@ -600,11 +528,10 @@ static int bind_bind_entry(tcl_bind_list_t *tl, const char *flags,
     }
   }
 
-  tc = nmalloc_null(sizeof(tcl_cmd_t));
+  malloc_memset(tc, 0, sizeof(tcl_cmd_t));
   tc->flags.match = FR_GLOBAL | FR_CHAN;
   break_down_flags(flags, &(tc->flags), NULL);
-  tc->func_name = nmalloc(strlen(proc) + 1);
-  strcpy(tc->func_name, proc);
+  malloc_strcpy(tc->func_name, proc);
 
   /* Link into linked list of the bind's command list. */
   tc->next = tm->first;
@@ -690,10 +617,10 @@ static int tcl_bind2 STDVAR
 		return(TCL_ERROR);
 	}
 
-	cdata = (tcl_cmd_cdata *)nmalloc(sizeof(*cdata));
+	cdata = (tcl_cmd_cdata *)malloc(sizeof(*cdata));
 	cdata->irp = irp;
-	cdata->syntax = my_strdup(table->syntax);
-	cdata->cmd = my_strdup(argv[4]);
+	malloc_strcpy(cdata->syntax, table->syntax);
+	malloc_strcpy(cdata->cmd, argv[4]);
 	add_bind_entry(table, argv[2], argv[3], argv[4], BIND_WANTS_CD, (Function) my_tcl_bind_callback, cdata);
 	Tcl_AppendResult(irp, "moooo", NULL);
 	return(TCL_OK);
@@ -712,9 +639,9 @@ static int tcl_unbind2 STDVAR
 	}
 	cdata = get_bind_cdata(table, argv[2], argv[3], argv[4]);
 	if (cdata) {
-		nfree(cdata->cmd);
-		nfree(cdata->syntax);
-		nfree(cdata);
+		free(cdata->cmd);
+		free(cdata->syntax);
+		free(cdata);
 		del_bind_entry(table, argv[2], argv[3], argv[4]);
 	}
 	Tcl_AppendResult(irp, "mooooo", NULL);
@@ -942,11 +869,11 @@ static int trigger_bind(const char *proc, const char *param)
     char *buf;
 
     Context;
-    buf = nmalloc(strlen(msg) + (proc ? strlen(proc) : 6)
+    buf = malloc(strlen(msg) + (proc ? strlen(proc) : 6)
 		  + (param ? strlen(param) : 6) + 1);
     sprintf(buf, msg, proc ? proc : "<null>", param ? param : "<null>");
     ContextNote(buf);
-    nfree(buf);
+    free(buf);
   }
   x = Tcl_VarEval(interp, proc, param, NULL);
   Context;
@@ -1511,11 +1438,11 @@ void add_builtins(tcl_bind_list_t *tl, cmd_t *cc)
   for (i = 0; cc[i].name; i++) {
     egg_snprintf(p, sizeof p, "*%s:%s", tl->name,
 		   cc[i].funcname ? cc[i].funcname : cc[i].name);
-    l = (char *) nmalloc(Tcl_ScanElement(p, &k));
+    l = (char *) malloc(Tcl_ScanElement(p, &k));
     Tcl_ConvertElement(p, l, k | TCL_DONT_USE_BRACES);
     Tcl_CreateCommand(interp, p, tl->func, (ClientData) cc[i].func, NULL);
     bind_bind_entry(tl, cc[i].flags, cc[i].name, l);
-    nfree(l);
+    free(l);
   }
 }
 
@@ -1538,10 +1465,10 @@ void rem_builtins(tcl_bind_list_t *table, cmd_t *cc)
   for (i = 0; cc[i].name; i++) {
     egg_snprintf(p, sizeof p, "*%s:%s", table->name,
 		   cc[i].funcname ? cc[i].funcname : cc[i].name);
-    l = (char *) nmalloc(Tcl_ScanElement(p, &k));
+    l = (char *) malloc(Tcl_ScanElement(p, &k));
     Tcl_ConvertElement(p, l, k | TCL_DONT_USE_BRACES);
     Tcl_DeleteCommand(interp, p);
     unbind_bind_entry(table, cc[i].flags, cc[i].name, l);
-    nfree(l);
+    free(l);
   }
 }

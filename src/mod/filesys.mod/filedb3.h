@@ -4,7 +4,7 @@
  *
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: filedb3.h,v 1.10 2001/04/12 02:39:46 guppy Exp $
+ * $Id: filedb3.h,v 1.11 2001/10/10 10:44:06 tothwolf Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -79,27 +79,8 @@ typedef struct {
 
 
 /*
- *   Macros
+ * Macros
  */
-
-#define my_free(ptr)							\
-  if (ptr) {								\
-    nfree(ptr);								\
-    ptr = NULL;								\
-  }
-
-/* Copy entry to target -- Uses dynamic memory allocation, which
- * means you'll eventually have to free the memory again. 'target'
- * will be overwritten.
- */
-#define malloc_strcpy(target, entry)					\
-do {									\
-  if (entry) {								\
-    (target) = nrealloc((target), strlen(entry) + 1);			\
-    strcpy((target), (entry));						\
-  } else								\
-    my_free(target);							\
-} while (0)
 
 /* Macro to calculate the total length of dynamic data. */
 #define filedb_tot_dynspace(fdh) ((fdh).filename_len + (fdh).desc_len +	\

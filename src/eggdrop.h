@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.42 2001/10/10 01:20:10 ite Exp $
+ * $Id: eggdrop.h,v 1.43 2001/10/10 10:44:04 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -84,7 +84,6 @@
 #  include <libintl.h>
 #  define _(x) gettext(x)
 
-
 /* Have to use a weird way to make the compiler error out cos not all
  * compilers support #error or error
  */
@@ -160,13 +159,35 @@
 #endif
 
 
-/*
- *    Handy aliases for memory tracking and core dumps
+/* Macros for commonly used commands.
  */
 
-#define nmalloc(x)	n_malloc((x),__FILE__,__LINE__)
-#define nrealloc(x,y)	n_realloc((x),(y),__FILE__,__LINE__)
-#define nfree(x)	n_free((x),__FILE__,__LINE__)
+#define free_null(ptr)							\
+  if (ptr) {								\
+    free(ptr);								\
+    ptr = NULL;								\
+  }
+
+/* Allocate memory and set it to byte
+ */
+#define malloc_memset(ptr, byte, size)					\
+  do {									\
+    ptr = malloc(size);							\
+    memset(ptr, byte, size);						\
+  } while (0)
+
+/* Copy entry to target -- Uses dynamic memory allocation, which
+ * means you'll eventually have to free the memory again. 'target'
+ * will be overwritten.
+ */
+#define malloc_strcpy(target, entry)					\
+do {									\
+  if (entry) {								\
+    (target) = realloc((target), strlen(entry) + 1);			\
+    strcpy((target), (entry));						\
+  } else								\
+    free_null(target);							\
+} while (0)
 
 #ifdef DEBUG_CONTEXT
 #  define Context		eggContext(__FILE__, __LINE__, NULL)
@@ -184,13 +205,6 @@
 #else
 #  define Assert(expr)	do {	} while (0)
 #endif
-
-#ifndef COMPILING_MEM
-#  undef malloc
-#  define malloc(x)	dont_use_old_malloc(x)
-#  undef free
-#  define free(x)	dont_use_old_free(x)
-#endif /* !COMPILING_MEM */
 
 /* 32 bit type */
 #if (SIZEOF_INT == 4)
@@ -236,7 +250,6 @@ struct dcc_table {
   int *timeout_val;
   void (*timeout) ();
   void (*display) (int, char *);
-  int (*expmem) (void *);
   void (*kill) (int, void *);
   void (*output) (int, char *, void *);
   void (*outdone) (int);

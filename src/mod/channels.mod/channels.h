@@ -1,7 +1,7 @@
 /*
  * channels.h -- part of channels.mod
  *
- * $Id: channels.h,v 1.18 2001/08/23 04:06:10 stdarg Exp $
+ * $Id: channels.h,v 1.19 2001/10/10 10:44:05 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -102,8 +102,6 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
 			      int items, char **item);
 static int tcl_channel_add(Tcl_Interp * irp, char *, char *);
 static char *convert_element(char *src, char *dst);
-static int expmem_udef(struct udef_struct *);
-static int expmem_udef_chans (int, struct udef_chans *);
 static void free_udef(struct udef_struct *);
 static void free_udef_chans(struct udef_chans *, int);
 static int getudef(struct udef_chans *, char *);
@@ -127,7 +125,7 @@ inline static int chanset_unlink(struct chanset_t *chan);
 #define del_chanrec ((void (*)(struct userrec *, char *))channels_funcs[10])
 #define set_handle_chaninfo ((void (*)(struct userrec *, char *, char *, char *))channels_funcs[11])
 /* 12 - 15 */
-#define channel_malloc(x) ((void *(*)(int, char *, int))channels_funcs[12])(x,__FILE__,__LINE__)
+/* 12: channel_malloc -- UNUSED (Tothwolf) */
 #define u_match_mask ((int (*)(maskrec *, char *))channels_funcs[13])
 #define u_equals_mask ((int (*)(maskrec *, char *))channels_funcs[14])
 #define clear_channel ((void (*)(struct chanset_t *, int))channels_funcs[15])

@@ -1,7 +1,7 @@
 /*
  * server.h -- part of server.mod
  *
- * $Id: server.h,v 1.14 2001/10/07 04:02:55 stdarg Exp $
+ * $Id: server.h,v 1.15 2001/10/10 10:44:07 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -72,17 +72,6 @@
 #define get_altbotnick ((char *(*)(void))(server_funcs[36]))
 #define nick_len (*(int *)(server_funcs[37]))
 #define check_tcl_notc ((int (*)(char *,char *,struct userrec *,char *,char *))server_funcs[38])
-
-#else		/* MAKING_SERVER */
-
-/* Macros for commonly used commands.
- */
-
-#define free_null(ptr)	do {				\
-	nfree(ptr);					\
-	ptr = NULL;					\
-} while (0)
-
 #endif		/* MAKING_SERVER */
 
 struct server_list {

@@ -2,7 +2,7 @@
  * cmdsnote.c -- part of notes.mod
  *   handles all notes interaction over the party line
  *
- * $Id: cmdsnote.c,v 1.13 2001/08/10 23:51:21 ite Exp $
+ * $Id: cmdsnote.c,v 1.14 2001/10/10 10:44:07 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -33,7 +33,7 @@ static void cmd_pls_noteign(struct userrec *u, int idx, char *par)
   }
   putlog(LOG_CMDS, "*", "#%s# +noteign %s", dcc[idx].nick, par);
 
-  p = buf = nmalloc(strlen(par)+1);
+  p = buf = malloc(strlen(par) + 1);
   strcpy(p, par);
   handle = newsplit(&p);
   mask = newsplit(&p);
@@ -44,13 +44,13 @@ static void cmd_pls_noteign(struct userrec *u, int idx, char *par)
       get_user_flagrec(u, &fr, dcc[idx].u.chat->con_chan);
       if (!(glob_master(fr) || glob_owner(fr))) {
 	dprintf(idx, _("You are not allowed to change note ignores for %s\n"), handle);
-	nfree(buf);
+	free(buf);
         return;
       }
     }
     if (!u2) {
       dprintf(idx, _("User %s does not exist.\n"), handle);
-      nfree(buf);
+      free(buf);
       return;
     }
   } else {
@@ -61,7 +61,7 @@ static void cmd_pls_noteign(struct userrec *u, int idx, char *par)
     dprintf(idx, _("Now ignoring notes from %s\n"), mask);
   else
     dprintf(idx, _("Already ignoring %s\n"), mask);
-  nfree(buf);
+  free(buf);
   return;
 }
 
@@ -74,7 +74,7 @@ static void cmd_mns_noteign(struct userrec *u, int idx, char *par)
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# -noteign %s", dcc[idx].nick, par);
-  p = buf = nmalloc(strlen(par)+1);
+  p = buf = malloc(strlen(par) + 1);
   strcpy(p, par);
   handle = newsplit(&p);
   mask = newsplit(&p);
@@ -85,13 +85,13 @@ static void cmd_mns_noteign(struct userrec *u, int idx, char *par)
       get_user_flagrec(u, &fr, dcc[idx].u.chat->con_chan);
       if (!(glob_master(fr) || glob_owner(fr))) {
 	dprintf(idx, _("You are not allowed to change note ignores for %s\n"), handle);
-	nfree(buf);
+	free(buf);
         return;
       }
     }
     if (!u2) {
       dprintf(idx, _("User %s does not exist.\n"), handle);
-      nfree(buf);
+      free(buf);
       return;
     }
   } else {
@@ -103,7 +103,7 @@ static void cmd_mns_noteign(struct userrec *u, int idx, char *par)
     dprintf(idx, _("No longer ignoring notes from %s\n"), mask);
   else
     dprintf(idx, _("Note ignore %s not found in list.\n"), mask);
-  nfree(buf);
+  free(buf);
   return;
 }
 
@@ -140,8 +140,8 @@ static void cmd_noteigns(struct userrec *u, int idx, char *par)
   for (i = 0; i < ignoresn; i++)
     dprintf(idx, " %s", ignores[i]);
   dprintf(idx, "\n");
-  nfree(ignores[0]);		/* Free the string buffer	*/
-  nfree(ignores);		/* Free the ptr array		*/
+  free(ignores[0]);		/* Free the string buffer	*/
+  free(ignores);		/* Free the ptr array		*/
 }
 
 static void cmd_fwd(struct userrec *u, int idx, char *par)

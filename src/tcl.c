@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.42 2001/09/20 19:50:19 stdarg Exp $
+ * $Id: tcl.c,v 1.43 2001/10/10 10:44:04 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -82,23 +82,9 @@ int	    quick_logs = 0;		/* quick write logs? (flush them
 int	    par_telnet_flood = 1;       /* trigger telnet flood for +f
 					   ppl? - dw			      */
 int	    quiet_save = 0;             /* quiet-save patch by Lucas	      */
-int	    strtot = 0;
-
 
 /* Prototypes for tcl */
 Tcl_Interp *Tcl_CreateInterp();
-
-int expmem_tcl()
-{
-  int i, tot = 0;
-
-  for (i = 0; i < max_logs; i++)
-    if (logs[i].filename != NULL) {
-      tot += strlen(logs[i].filename) + 1;
-      tot += strlen(logs[i].chname) + 1;
-    }
-  return tot + strtot;
-}
 
 
 /*
@@ -130,21 +116,17 @@ static int tcl_logfile STDVAR
     if ((logs[i].filename != NULL) && (!strcmp(logs[i].filename, argv[3]))) {
       logs[i].flags &= ~LF_EXPIRING;
       logs[i].mask = logmodes(argv[1]);
-      nfree(logs[i].chname);
-      logs[i].chname = NULL;
+      free_null(logs[i].chname);
       if (!logs[i].mask) {
 	/* ending logfile */
-	nfree(logs[i].filename);
-	logs[i].filename = NULL;
+	free_null(logs[i].filename);
 	if (logs[i].f != NULL) {
 	  fclose(logs[i].f);
 	  logs[i].f = NULL;
 	}
         logs[i].flags = 0;
-      } else {
-	logs[i].chname = (char *) nmalloc(strlen(argv[2]) + 1);
-	strcpy(logs[i].chname, argv[2]);
-      }
+      } else
+	malloc_strcpy(logs[i].chname, argv[2]);
       Tcl_AppendResult(interp, argv[3], NULL);
       return TCL_OK;
     }
@@ -158,10 +140,8 @@ static int tcl_logfile STDVAR
     if (logs[i].filename == NULL) {
       logs[i].flags = 0;
       logs[i].mask = logmodes(argv[1]);
-      logs[i].filename = (char *) nmalloc(strlen(argv[3]) + 1);
-      strcpy(logs[i].filename, argv[3]);
-      logs[i].chname = (char *) nmalloc(strlen(argv[2]) + 1);
-      strcpy(logs[i].chname, argv[2]);
+      malloc_strcpy(logs[i].filename, argv[3]);
+      malloc_strcpy(logs[i].chname, argv[2]);
       Tcl_AppendResult(interp, argv[3], NULL);
       return TCL_OK;
     }
@@ -523,7 +503,7 @@ void init_tcl(int argc, char **argv)
   /* Initialize the interpreter */
   interp = Tcl_CreateInterp();
 
-#ifdef DEBUG_MEM
+#ifdef DEBUG_TCL
   /* Initialize Tcl's memory debugging if we want it */
   Tcl_InitMemory(interp);
 #endif
@@ -673,8 +653,7 @@ void add_tcl_strings(tcl_strings *list)
   int tmp;
 
   for (i = 0; list[i].name; i++) {
-    st = (strinfo *) nmalloc(sizeof(strinfo));
-    strtot += sizeof(strinfo);
+    st = (strinfo *) malloc(sizeof(strinfo));
     st->max = list[i].length - (list[i].flags & STR_DIR);
     if (list[i].flags & STR_PROTECT)
       st->max = -st->max;
@@ -703,10 +682,8 @@ void rem_tcl_strings(tcl_strings *list)
     Tcl_UntraceVar(interp, list[i].name,
 		   TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		   tcl_eggstr, st);
-    if (st != NULL) {
-      strtot -= sizeof(strinfo);
-      nfree(st);
-    }
+    if (st != NULL)
+      free(st);
   }
 }
 
@@ -716,8 +693,7 @@ void add_tcl_ints(tcl_ints *list)
   intinfo *ii;
 
   for (i = 0; list[i].name; i++) {
-    ii = nmalloc(sizeof(intinfo));
-    strtot += sizeof(intinfo);
+    ii = malloc(sizeof(intinfo));
     ii->var = list[i].val;
     ii->ro = list[i].readonly;
     tmp = protect_readonly;
@@ -746,10 +722,8 @@ void rem_tcl_ints(tcl_ints *list)
     Tcl_UntraceVar(interp, list[i].name,
 		   TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		   tcl_eggint, (ClientData) ii);
-    if (ii) {
-      strtot -= sizeof(intinfo);
-      nfree(ii);
-    }
+    if (ii)
+      free(ii);
   }
 }
 
@@ -761,8 +735,7 @@ void add_tcl_coups(tcl_coups *list)
   int i;
 
   for (i = 0; list[i].name; i++) {
-    cp = (coupletinfo *) nmalloc(sizeof(coupletinfo));
-    strtot += sizeof(coupletinfo);
+    cp = (coupletinfo *) malloc(sizeof(coupletinfo));
     cp->left = list[i].lptr;
     cp->right = list[i].rptr;
     tcl_eggcouplet((ClientData) cp, interp, list[i].name, NULL,
@@ -786,10 +759,9 @@ void rem_tcl_coups(tcl_coups * list)
 					  TCL_TRACE_WRITES |
 					  TCL_TRACE_UNSETS,
 					  tcl_eggcouplet, NULL);
-    strtot -= sizeof(coupletinfo);
     Tcl_UntraceVar(interp, list[i].name,
 		   TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		   tcl_eggcouplet, (ClientData) cp);
-    nfree(cp);
+    free(cp);
   }
 }

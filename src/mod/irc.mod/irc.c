@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.64 2001/10/10 01:20:13 ite Exp $
+ * $Id: irc.c,v 1.65 2001/10/10 10:44:06 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -284,13 +284,12 @@ static void maybe_revenge(struct chanset_t *chan, char *whobad,
  */
 static void set_key(struct chanset_t *chan, char *k)
 {
-  nfree(chan->channel.key);
+  free(chan->channel.key);
   if (k == NULL) {
-    chan->channel.key = (char *) channel_malloc(1);
-    chan->channel.key[0] = 0;
+    malloc_memset(chan->channel.key, 0, 1);
     return;
   }
-  chan->channel.key = (char *) channel_malloc(strlen(k) + 1);
+  malloc_memset(chan->channel.key, 0, strlen(k) + 1);
   strcpy(chan->channel.key, k);
 }
 
@@ -316,14 +315,14 @@ static void newmask(masklist *m, char *s, char *who)
   if (m->mask[0])
     return;			/* Already existent mask */
 
-  m->next = (masklist *) channel_malloc(sizeof(masklist));
+  malloc_memset(m->next, 0, sizeof(masklist));
   m->next->next = NULL;
-  m->next->mask = (char *) channel_malloc(1);
+  malloc_memset(m->next->mask, 0, 1);
   m->next->mask[0] = 0;
-  nfree(m->mask);
-  m->mask = (char *) channel_malloc(strlen(s) + 1);
+  free(m->mask);
+  malloc_memset(m->mask, 0, strlen(s) + 1);
   strcpy(m->mask, s);
-  m->who = (char *) channel_malloc(strlen(who) + 1);
+  malloc_memset(m->who, 0, strlen(who) + 1);
   strcpy(m->who, who);
   m->timer = now;
 }
@@ -347,7 +346,7 @@ static int killmember(struct chanset_t *chan, char *nick)
     old->next = x->next;
   else
     chan->channel.member = x->next;
-  nfree(x);
+  free(x);
   chan->channel.members--;
 
   /* The following two errors should NEVER happen. We will try to correct
@@ -364,7 +363,7 @@ static int killmember(struct chanset_t *chan, char *nick)
   }
   if (!chan->channel.member) {
     putlog(LOG_MISC, "*", "(!) BUG: memberlist is NULL");
-    chan->channel.member = (memberlist *) channel_malloc(sizeof(memberlist));
+    malloc_memset(chan->channel.member, 0, sizeof(memberlist));
     chan->channel.member->nick[0] = 0;
     chan->channel.member->next = NULL;
   }
@@ -425,9 +424,8 @@ static void reset_chan_info(struct chanset_t *chan)
     return;
   }
   if (!channel_pending(chan)) {
-    nfree(chan->channel.key);
-    chan->channel.key = (char *) channel_malloc(1);
-    chan->channel.key[0] = 0;
+    free(chan->channel.key);
+    malloc_memset(chan->channel.key, 0, 1);
     clear_channel(chan, 1);
     chan->status |= CHAN_PEND;
     chan->status &= ~(CHAN_ACTIVE | CHAN_ASKEDMODES);
@@ -926,11 +924,6 @@ static char *traced_rfccompliant(ClientData cdata, Tcl_Interp *irp,
   return NULL;
 }
 
-static int irc_expmem()
-{
-  return 0;
-}
-
 static char *irc_close()
 {
   struct chanset_t *chan;
@@ -979,7 +972,7 @@ static Function irc_table[] =
   /* 0 - 3 */
   (Function) start,
   (Function) irc_close,
-  (Function) irc_expmem,
+  (Function) 0,
   (Function) irc_report,
   /* 4 - 7 */
   (Function) recheck_channel,

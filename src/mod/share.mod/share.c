@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.59 2001/10/10 01:20:13 ite Exp $
+ * $Id: share.c,v 1.60 2001/10/10 10:44:07 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -106,15 +106,15 @@ static void add_delay(struct chanset_t *chan, int plsmns, int mode, char *mask)
 {
   struct delay_mode *d = NULL;
 
-  d = (struct delay_mode *) nmalloc(sizeof(struct delay_mode));
+  d = (struct delay_mode *) malloc(sizeof(struct delay_mode));
   if (!d)
     return;
   d->chan = chan;
   d->plsmns = plsmns;
   d->mode = mode;
-  d->mask = (char *) nmalloc(strlen(mask) + 1);
+  d->mask = (char *) malloc(strlen(mask) + 1);
   if (!d->mask) {
-    nfree(d);
+    free(d);
     return;
   }
   strncpyz(d->mask, mask, strlen(mask) + 1);
@@ -134,8 +134,8 @@ static void del_delay(struct delay_mode *delay)
       else
         start_delay = d->next;
       if (d->mask)
-        nfree(d->mask);
-      nfree(d);
+        free(d->mask);
+      free(d);
       break;
     }
   }
@@ -161,23 +161,10 @@ static void delay_free_mem()
   for (d = start_delay; d; d = dnext) {
     dnext = d->next;
     if (d->mask)
-      nfree(d->mask);
-    nfree(d);
+      free(d->mask);
+    free(d);
   }
   start_delay = NULL;
-}
-
-static int delay_expmem()
-{
-  int size = 0;
-  struct delay_mode *d = NULL;
-
-  for (d = start_delay; d; d = d->next) {
-    if (d->mask)
-      size += strlen(d->mask) + 1;
-    size += sizeof(struct delay_mode);
-  }
-  return size;
 }
 
 /*
@@ -615,7 +602,7 @@ static void share_change(int idx, char *par)
 	  return;
 	if (uet->got_share) {
 	  if (!(e = find_user_entry(uet, u))) {
-	    e = user_malloc(sizeof(struct user_entry));
+	    e = malloc(sizeof(struct user_entry));
 
 	    e->type = uet;
 	    e->name = NULL;
@@ -626,7 +613,7 @@ static void share_change(int idx, char *par)
 	  if (!e->u.list) {
 	    list_delete((struct list_type **) &(u->entries),
 			(struct list_type *) e);
-	    nfree(e);
+	    free(e);
 	  }
 	}
 	noshare = 0;
@@ -1149,8 +1136,7 @@ static void share_ufsend(int idx, char *par)
       strcpy(dcc[i].addr, iptostr(htonl(my_atoul(ip))));
       dcc[i].port = atoi(port);
       strcpy(dcc[i].nick, "*users");
-      dcc[i].u.xfer->filename = nmalloc(strlen(s) + 1);
-      strcpy(dcc[i].u.xfer->filename, s);
+      malloc_strcpy(dcc[i].u.xfer->filename, s);
       dcc[i].u.xfer->origname = dcc[i].u.xfer->filename;
       dcc[i].u.xfer->length = atoi(par);
       dcc[i].u.xfer->f = f;
@@ -1397,7 +1383,7 @@ static void new_tbuf(char *bot)
 {
   tandbuf **old = &tbuf, *new;
 
-  new = nmalloc(sizeof(tandbuf));
+  new = malloc(sizeof(tandbuf));
   strcpy(new->bot, bot);
   new->q = NULL;
   new->timer = now;
@@ -1419,10 +1405,10 @@ static void del_tbuf(tandbuf *goner)
         tbuf = t->next;
       for (q = t->q; q && q->msg[0]; q = r) {
 	r = q->next;
-	nfree(q->msg);
-	nfree(q);
+	free(q->msg);
+	free(q);
       }
-      nfree(t);
+      free(t);
       break;
     }
   }
@@ -1484,12 +1470,11 @@ static struct share_msgq *q_addmsg(struct share_msgq *qq,
   int cnt;
 
   if (!qq) {
-    q = (struct share_msgq *) nmalloc(sizeof(struct share_msgq));
+    q = (struct share_msgq *) malloc(sizeof(struct share_msgq));
 
     q->chan = chan;
     q->next = NULL;
-    q->msg = (char *) nmalloc(strlen(s) + 1);
-    strcpy(q->msg, s);
+    malloc_strcpy(q->msg, s);
     return q;
   }
   cnt = 0;
@@ -1497,13 +1482,12 @@ static struct share_msgq *q_addmsg(struct share_msgq *qq,
     cnt++;
   if (cnt > 1000)
     return NULL;		/* Return null: did not alter queue */
-  q->next = (struct share_msgq *) nmalloc(sizeof(struct share_msgq));
+  q->next = (struct share_msgq *) malloc(sizeof(struct share_msgq));
 
   q = q->next;
   q->chan = chan;
   q->next = NULL;
-  q->msg = (char *) nmalloc(strlen(s) + 1);
-  strcpy(q->msg, s);
+  malloc_strcpy(q->msg, s);
   return qq;
 }
 
@@ -1685,8 +1669,8 @@ static struct userrec *dup_userlist(int t)
 	  struct list_type *lt;
 	  struct user_entry *nue;
 
-	  nue = user_malloc(sizeof(struct user_entry));
-	  nue->name = user_malloc(strlen(ue->name) + 1);
+	  nue = malloc(sizeof(struct user_entry));
+	  nue->name = malloc(strlen(ue->name) + 1);
 	  nue->type = NULL;
 	  nue->u.list = NULL;
 	  strcpy(nue->name, ue->name);
@@ -1694,10 +1678,9 @@ static struct userrec *dup_userlist(int t)
 	  for (lt = ue->u.list; lt; lt = lt->next) {
 	    struct list_type *list;
 
-	    list = user_malloc(sizeof(struct list_type));
+	    list = malloc(sizeof(struct list_type));
 	    list->next = NULL;
-	    list->extra = user_malloc(strlen(lt->extra) + 1);
-	    strcpy(list->extra, lt->extra);
+	    malloc_strcpy(list->extra, lt->extra);
 	    list_append((&nue->u.list), list);
 	  }
 	} else {
@@ -1952,7 +1935,7 @@ static void start_sending_users(int idx)
 	    register char *tmp = str_escape(bi->address, ':', '\\');
 	    egg_snprintf(s2, sizeof s2, "s c BOTADDR %s %s %d %d\n", u->handle,
 			 tmp, bi->telnet_port, bi->relay_port);
-	    nfree(tmp);
+	    free(tmp);
 	  }
 	  q_tbuf(dcc[idx].nick, s2, NULL);
 	  fr.match = FR_GLOBAL;
@@ -2107,30 +2090,12 @@ static char *share_close()
   return NULL;
 }
 
-static int share_expmem()
-{
-  int tot = 0;
-  struct share_msgq *q;
-  tandbuf *t;
-
-  for (t = tbuf; t && t->bot[0]; t = t->next) {
-    tot += sizeof(tandbuf);
-    for (q = t->q; q; q = q->next) {
-	tot += sizeof(struct share_msgq);
-	tot += strlen(q->msg) + 1;
-      }
-  }
-  tot += uff_expmem();
-  tot += delay_expmem();
-  return tot;
-}
-
 static void share_report(int idx, int details)
 {
   int i, j;
 
   if (details) {
-    dprintf(idx, "    Share module, using %d bytes.\n", share_expmem());
+    dprintf(idx, "    Share module\n");
     dprintf(idx, "    Private owners: %3s   Allow resync: %3s\n",
 	    (private_global || (private_globals_bitmask() & USER_OWNER)) ?
 	    "yes" : "no", allow_resync ? "yes" : "no");
@@ -2186,7 +2151,7 @@ static Function share_table[] =
   /* 0 - 3 */
   (Function) start,
   (Function) share_close,
-  (Function) share_expmem,
+  (Function) 0,
   (Function) share_report,
   /* 4 - 7 */
   (Function) finish_share,

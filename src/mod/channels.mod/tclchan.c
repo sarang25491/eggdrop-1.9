@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.53 2001/08/29 19:21:12 stdarg Exp $
+ * $Id: tclchan.c,v 1.54 2001/10/10 10:44:05 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -789,10 +789,10 @@ static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
 
 		p = (char *)getudef(ul->values, chan->dname);
 		if (!p) p = "{}";
-		buf = (char *)nmalloc(strlen(ul->name)+strlen(p)+2);
+		buf = malloc(strlen(ul->name) + strlen(p) + 2);
 		simple_sprintf(buf, "%s %s", ul->name, p);
 		Tcl_AppendElement(irp, buf);
-		nfree(buf);
+		free(buf);
       } else
         debug1("UDEF-ERROR: unknown type %d", ul->type);
     }
@@ -1101,11 +1101,11 @@ check_for_udef_flags:
 			return TCL_ERROR;
 		}
 		val = (char *)getudef(ul->values, chan->dname);
-		if (val) nfree(val);
+		if (val) free(val);
 		/* Get extra room for new braces, etc */
-		val = nmalloc(3 * strlen(item[i])+10);
+		val = malloc(3 * strlen(item[i]) + 10);
 		convert_element(item[i], val);
-		val = nrealloc(val, strlen(val)+1);
+		val = realloc(val, strlen(val)+1);
 		setudef(ul, chan->dname, (int)val);
 		found = 1;
 		break;
@@ -1408,8 +1408,7 @@ static int tcl_haschanrec STDVAR
 
 static void init_masklist(masklist *m)
 {
-  m->mask = (char *)nmalloc(1);
-  m->mask[0] = 0;
+  malloc_memset(m->mask, 0, 1);
   m->who = NULL;
   m->next = NULL;
 }
@@ -1421,21 +1420,19 @@ static void init_channel(struct chanset_t *chan, int reset)
   chan->channel.maxmembers = 0;
   chan->channel.mode = 0;
   chan->channel.members = 0;
-  if (!reset) {
-    chan->channel.key = (char *) nmalloc(1);
-    chan->channel.key[0] = 0;
-  }
+  if (!reset)
+    malloc_memset(chan->channel.key, 0, 1);
 
-  chan->channel.ban = (masklist *) nmalloc(sizeof(masklist));
+  chan->channel.ban = (masklist *) malloc(sizeof(masklist));
   init_masklist(chan->channel.ban);
 
-  chan->channel.exempt = (masklist *) nmalloc(sizeof(masklist));
+  chan->channel.exempt = (masklist *) malloc(sizeof(masklist));
   init_masklist(chan->channel.exempt);
 
-  chan->channel.invite = (masklist *) nmalloc(sizeof(masklist));
+  chan->channel.invite = (masklist *) malloc(sizeof(masklist));
   init_masklist(chan->channel.invite);
 
-  chan->channel.member = (memberlist *) nmalloc(sizeof(memberlist));
+  chan->channel.member = (memberlist *) malloc(sizeof(memberlist));
   chan->channel.member->nick[0] = 0;
   chan->channel.member->next = NULL;
   chan->channel.topic = NULL;
@@ -1448,10 +1445,10 @@ static void clear_masklist(masklist *m)
   for (; m; m = temp) {
     temp = m->next;
     if (m->mask)
-      nfree(m->mask);
+      free(m->mask);
     if (m->who)
-      nfree(m->who);
-    nfree(m);
+      free(m->who);
+    free(m);
   }
 }
 
@@ -1462,10 +1459,10 @@ static void clear_channel(struct chanset_t *chan, int reset)
   memberlist *m, *m1;
 
   if (chan->channel.topic)
-    nfree(chan->channel.topic);
+    free(chan->channel.topic);
   for (m = chan->channel.member; m; m = m1) {
     m1 = m->next;
-    nfree(m);
+    free(m);
   }
 
   clear_masklist(chan->channel.ban);
@@ -1510,11 +1507,7 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
     /* Already existing channel, maybe a reload of the channel file */
     chan->status &= ~CHAN_FLAGGED;	/* don't delete me! :) */
   } else {
-    chan = (struct chanset_t *) nmalloc(sizeof(struct chanset_t));
-
-    /* Hells bells, why set *every* variable to 0 when we have bzero? */
-    egg_bzero(chan, sizeof(struct chanset_t));
-
+    malloc_memset(chan, 0, sizeof(struct chanset_t));
     chan->limit_prot = 0;
     chan->limit = 0;
     chan->flood_pub_thr = gfld_chan_thr;
@@ -1603,9 +1596,8 @@ static int tcl_renudef STDVAR
   }
   for (ul = udef; ul; ul = ul->next) {
     if (ul->type == type && !egg_strcasecmp(ul->name, argv[2])) {
-      nfree(ul->name);
-      ul->name = nmalloc(strlen(argv[3]) + 1);
-      strcpy(ul->name, argv[3]);
+      free(ul->name);
+      malloc_strcpy(ul->name, argv[3]);
       found = 1;
     }
   }
@@ -1639,18 +1631,18 @@ static int tcl_deludef STDVAR
       break;
     if (ull->type == type && !egg_strcasecmp(ull->name, argv[2])) {
       ul->next = ull->next;
-      nfree(ull->name);
+      free(ull->name);
       free_udef_chans(ull->values, ull->type);
-      nfree(ull);
+      free(ull);
       found = 1;
     }
   }
   if (udef) {
     if (udef->type == type && !egg_strcasecmp(udef->name, argv[2])) {
       ul = udef->next;
-      nfree(udef->name);
+      free(udef->name);
       free_udef_chans(udef->values, udef->type);
-      nfree(udef);
+      free(udef);
       udef = ul;
       found = 1;
     }

@@ -2,7 +2,7 @@
  * flags.c -- handles:
  *   all the flag matching/conversion functions in one neat package :)
  *
- * $Id: flags.c,v 1.19 2001/08/26 03:16:43 stdarg Exp $
+ * $Id: flags.c,v 1.20 2001/10/10 10:44:04 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -342,10 +342,10 @@ void break_down_flags(const char *string, struct flag_record *plus,
     else
       return;			/* We dont actually want any..huh? */
   }
-  egg_bzero(plus, sizeof(struct flag_record));
+  memset(plus, 0, sizeof(struct flag_record));
 
   if (minus)
-    egg_bzero(minus, sizeof(struct flag_record));
+    memset(minus, 0, sizeof(struct flag_record));
 
   plus->match = FR_OR;		/* Default binding type OR */
   while (*string) {
@@ -634,9 +634,7 @@ void set_user_flagrec(struct userrec *u, struct flag_record *fr,
 	break;
     ch = findchan_by_dname(chname);
     if (!cr && ch) {
-      cr = user_malloc(sizeof(struct chanuserrec));
-      egg_bzero(cr, sizeof(struct chanuserrec));
-
+      malloc_memset(cr, 0, sizeof(struct chanuserrec));
       cr->next = u->chanrec;
       u->chanrec = cr;
       strncpyz(cr->channel, chname, sizeof cr->channel);
@@ -717,16 +715,16 @@ static int botfl_pack(struct userrec *u, struct user_entry *e)
   struct flag_record fr = {FR_BOT, 0, 0, 0, 0, 0};
 
   fr.bot = e->u.ulong;
-  e->u.list = user_malloc(sizeof(struct list_type));
+  e->u.list = malloc(sizeof(struct list_type));
   e->u.list->next = NULL;
-  e->u.list->extra = user_malloc (build_flags (x, &fr, NULL) + 1);
+  e->u.list->extra = malloc(build_flags(x, &fr, NULL) + 1);
   strcpy(e->u.list->extra, x);
   return 1;
 }
 
 static int botfl_kill(struct user_entry *e)
 {
-  nfree(e);
+  free(e);
   return 1;
 }
 
@@ -793,11 +791,6 @@ static int botfl_tcl_set(Tcl_Interp *irp, struct userrec *u,
   return TCL_OK;
 }
 
-static int botfl_expmem(struct user_entry *e)
-{
-  return 0;
-}
-
 static void botfl_display(int idx, struct user_entry *e)
 {
   struct flag_record fr = {FR_BOT, 0, 0, 0, 0, 0};
@@ -821,7 +814,6 @@ struct user_entry_type USERENTRY_BOTFL =
   botfl_set,
   botfl_tcl_get,
   botfl_tcl_set,
-  botfl_expmem,
   botfl_display,
   "BOTFL"
 };

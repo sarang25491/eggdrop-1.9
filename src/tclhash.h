@@ -1,7 +1,7 @@
 /*
  * tclhash.h
  *
- * $Id: tclhash.h,v 1.17 2001/10/09 12:42:13 tothwolf Exp $
+ * $Id: tclhash.h,v 1.18 2001/10/10 10:44:04 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -134,7 +134,6 @@ void init_bind(void);
 void init_bind2(void);
 void kill_bind(void);
 void kill_bind2(void);
-int expmem_tclhash(void);
 
 tcl_bind_list_t *add_bind_table(const char *nme, int flg, Function func);
 void del_bind_table(tcl_bind_list_t *tl_which);

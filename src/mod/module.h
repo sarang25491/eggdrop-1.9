@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.59 2001/10/10 01:20:11 ite Exp $
+ * $Id: module.h,v 1.60 2001/10/10 10:44:05 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -46,15 +46,8 @@
  * held responsible for mental break-downs caused by this file <G>
  */
 
-#undef nmalloc
-#undef nfree
-#undef nrealloc
 #undef feof
-#undef user_malloc
 #undef dprintf
-#undef get_data_ptr
-#undef wild_match
-#undef user_realloc
 #undef Context
 #undef ContextNote
 #undef Assert
@@ -68,9 +61,6 @@
 #endif
 #ifdef egg_snprintf
 #  undef egg_snprintf
-#endif
-#ifdef egg_memset
-#  undef egg_memset
 #endif
 #ifdef egg_strcasecmp
 #  undef egg_strcasecmp
@@ -88,8 +78,8 @@
 /* Redefine for module-relevance */
 
 /* 0 - 3 */
-#define nmalloc(x) ((void *)(global[0]((x),MODULE_NAME,__FILE__,__LINE__)))
-#define nfree(x) (global[1]((x),MODULE_NAME,__FILE__,__LINE__))
+/* 0: nmalloc -- UNUSED (Tothwolf) */
+/* 1: nfree -- UNUSED (Tothwolf) */
 #ifdef DEBUG_CONTEXT
 #  define Context (global[2](__FILE__, __LINE__, MODULE_NAME))
 #else
@@ -138,9 +128,9 @@
 #define nextbot ((int (*)(char *))global[35])
 /* 36 - 39 */
 #define zapfbot ((void (*)(int))global[36])
-#define n_free ((void (*)(void *,char *, int))global[37])
+/* 37: n_free -- UNUSED (Tothwolf) */
 #define u_pass_match ((int (*)(struct userrec *,char *))global[38])
-#define user_malloc(x) ((void *(*)(int,char *,int))global[39])(x,__FILE__,__LINE__)
+/* 39: user_malloc -- UNUSED (Tothwolf) */
 /* 40 - 43 */
 #define get_user ((void *(*)(struct user_entry_type *,struct userrec *))global[40])
 #define set_user ((int(*)(struct user_entry_type *,struct userrec *,void *))global[41])
@@ -199,11 +189,11 @@
 /* 84 - 87 */
 #define open_listen ((int (*) (int *,int))global[84])
 #define open_telnet_dcc ((int (*) (int,char *,char *))global[85])
-#define get_data_ptr(x) ((void *(*)(int,char*,int))global[86])(x,__FILE__,__LINE__)
+/* 86: get_data_ptr -- UNUSED (Tothwolf) */
 #define open_telnet ((int (*) (char *, int))global[87])
 /* 88 - 91 */
 #define check_tcl_event ((void * (*) (const char *))global[88])
-#define my_memcpy ((void * (*) (void *, const void *, size_t))global[89])
+/* 89: my_memcpy / egg_memcpy -- UNUSED (Tothwolf) */
 #define my_atoul ((IP(*)(char *))global[90])
 #define my_strcpy ((int (*)(char *, const char *))global[91])
 /* 92 - 95 */
@@ -302,8 +292,8 @@
 #define detect_dcc_flood ((int (*) (time_t *,struct chat_info *,int))global[166])
 #define flush_lines ((void(*)(int,struct chat_info*))global[167])
 /* 168 - 171 */
-#define expected_memory ((int(*)(void))global[168])
-#define tell_mem_status ((void(*)(char *))global[169])
+/* 168: expected_memory -- UNUSED (Tothwolf) */
+/* 169: tell_mem_status -- UNUSED (Tothwolf) */
 #define do_restart (*(int *)(global[170]))
 #define check_tcl_filt ((const char *(*)(int, const char *))global[171])
 /* 172 - 175 */
@@ -378,8 +368,8 @@
 #define force_expire (*(int *)(global[227]))	/* Rufus */
 /* 228 - 231 */
 /* 228: add_lang_section() -- UNUSED */
-#define user_realloc(x,y) ((void *(*)(void *,int,char *,int))global[229])((x),(y),__FILE__,__LINE__)
-#define nrealloc(x,y) ((void *)(global[230]((x),(y),MODULE_NAME,__FILE__,__LINE__)))
+/* 229: user_realloc -- UNUSED (Tothwolf) */
+/* 230: nrealloc -- UNUSED (Tothwolf) */
 #define xtra_set ((int(*)(struct userrec *,struct user_entry *, void *))global[231])
 /* 232 - 235 */
 #ifdef DEBUG_CONTEXT
@@ -420,7 +410,7 @@
 /* 252 - 255 */
 #define egg_snprintf (global[252])
 #define egg_vsnprintf ((int (*)(char *, size_t, const char *, va_list))global[253])
-#define egg_memset ((void *(*)(void *, int, size_t))global[254])
+/* 254: egg_memset -- UNUSED (Tothwolf) */
 #define egg_strcasecmp ((int (*)(const char *, const char *))global[255])
 /* 256 - 259 */
 #define egg_strncasecmp ((int (*)(const char *, const char *, size_t))global[256])

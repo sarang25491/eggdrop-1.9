@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.40 2001/10/07 04:02:54 stdarg Exp $
+ * $Id: botnet.c,v 1.41 2001/10/10 10:44:03 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -55,23 +55,6 @@ int		 share_unlinks = 0;	/* Allow remote unlinks of my
 static bind_table_t *BT_chjn = NULL;
 static bind_table_t *BT_chpt = NULL;
 
-int expmem_botnet()
-{
-  int size = 0, i;
-  tand_t *bot;
-
-  for (bot = tandbot; bot; bot = bot->next)
-    size += sizeof(tand_t);
-  size += (maxparty * sizeof(party_t));
-  for (i = 0; i < parties; i++) {
-    if (party[i].away)
-      size += strlen(party[i].away) + 1;
-    if (party[i].from)
-      size += strlen(party[i].from) + 1;
-  }
-  return size;
-}
-
 static void init_bots();
 
 void botnet_init()
@@ -87,7 +70,7 @@ static void init_bots()
   tandbot = NULL;
   /* Grab space for 50 bots for now -- expand later as needed */
   maxparty = 50;
-  party = (party_t *) nmalloc(maxparty * sizeof(party_t));
+  party = (party_t *) malloc(maxparty * sizeof(party_t));
 }
 
 tand_t *findbot(char *who)
@@ -111,7 +94,7 @@ void addbot(char *who, char *from, char *next, char flag, int vernum)
       putlog(LOG_BOTS, "*", "!!! Duplicate botnet bot entry!!");
     ptr = &((*ptr)->next);
   }
-  ptr2 = nmalloc(sizeof(tand_t));
+  ptr2 = malloc(sizeof(tand_t));
   strncpy(ptr2->bot, who, HANDLEN);
   ptr2->bot[HANDLEN] = 0;
   ptr2->share = flag;
@@ -175,9 +158,8 @@ int addparty(char *bot, char *nick, int chan, char flag, int sock,
 	  flag = '-';
 	party[i].flag = flag;
 	if (party[i].from)
-	  nfree(party[i].from);
-	party[i].from = nmalloc(strlen(from) + 1);
-	strcpy(party[i].from, from);
+	  free(party[i].from);
+	malloc_strcpy(party[i].from, from);
       }
       *idx = i;
       return oldchan;
@@ -186,7 +168,7 @@ int addparty(char *bot, char *nick, int chan, char flag, int sock,
   /* New member */
   if (parties == maxparty) {
     maxparty += 50;
-    party = (party_t *) nrealloc((void *) party, maxparty * sizeof(party_t));
+    party = (party_t *) realloc((void *) party, maxparty * sizeof(party_t));
   }
   strncpy(party[parties].nick, nick, HANDLEN);
   party[parties].nick[HANDLEN] = 0;
@@ -201,12 +183,10 @@ int addparty(char *bot, char *nick, int chan, char flag, int sock,
     if (flag == ' ')
       flag = '-';
     party[parties].flag = flag;
-    party[parties].from = nmalloc(strlen(from) + 1);
-    strcpy(party[parties].from, from);
+    malloc_strcpy(party[parties].from, from);
   } else {
     party[parties].flag = ' ';
-    party[parties].from = nmalloc(10);
-    strcpy(party[parties].from, "(unknown)");
+    malloc_strcpy(party[parties].from, "(unknown)");
   }
   *idx = parties;
   parties++;
@@ -302,11 +282,10 @@ void partyaway(char *bot, int sock, char *msg)
     if ((!egg_strcasecmp(party[i].bot, bot)) &&
 	(party[i].sock == sock)) {
       if (party[i].away)
-	nfree(party[i].away);
-      if (msg[0]) {
-	party[i].away = nmalloc(strlen(msg) + 1);
-	strcpy(party[i].away, msg);
-      } else
+	free(party[i].away);
+      if (msg[0])
+	malloc_strcpy(party[i].away, msg);
+      else
 	party[i].away = 0;
     }
   }
@@ -330,7 +309,7 @@ void rembot(char *who)
 
   ptr2 = *ptr;
   *ptr = ptr2->next;
-  nfree(ptr2);
+  free(ptr2);
   tands--;
 
   dupwait_notify(who);
@@ -345,9 +324,9 @@ void remparty(char *bot, int sock)
 	(party[i].sock == sock)) {
       parties--;
       if (party[i].from)
-	nfree(party[i].from);
+	free(party[i].from);
       if (party[i].away)
-	nfree(party[i].away);
+	free(party[i].away);
       if (i < parties) {
 	strcpy(party[i].bot, party[parties].bot);
 	strcpy(party[i].nick, party[parties].nick);
@@ -1043,7 +1022,7 @@ int botlink(char *linker, int idx, char *nick)
       strcpy(dcc[i].host, bi->address);
       dcc[i].u.dns->ibuf = idx;
       dcc[i].u.dns->cptr = linker;
-      dcc[i].u.dns->host = get_data_ptr(strlen(dcc[i].host) + 1);
+      malloc_memset(dcc[i].u.dns->host, 0, strlen(dcc[i].host) + 1);
       strcpy(dcc[i].u.dns->host, dcc[i].host);
       dcc[i].u.dns->dns_success = botlink_resolve_success;
       dcc[i].u.dns->dns_failure = botlink_resolve_failure;
@@ -1105,7 +1084,7 @@ static void failed_tandem_relay(int idx)
 
     dprintf(uidx, "%s %s.\n", _("Could not link to"), dcc[idx].nick);
     dcc[uidx].status = dcc[uidx].u.relay->old_status;
-    nfree(dcc[uidx].u.relay);
+    free(dcc[uidx].u.relay);
     dcc[uidx].u.chat = ci;
     dcc[uidx].type = &DCC_CHAT;
     killsock(dcc[idx].sock);
@@ -1177,13 +1156,13 @@ void tandem_relay(int idx, char *nick, register int i)
   dprintf(idx, _("(Type *BYE* on a line by itself to abort.)\n"));
   dcc[idx].type = &DCC_PRE_RELAY;
   ci = dcc[idx].u.chat;
-  dcc[idx].u.relay = get_data_ptr(sizeof(struct relay_info));
+  malloc_memset(dcc[idx].u.relay, 0, sizeof(struct relay_info));
   dcc[idx].u.relay->chat = ci;
   dcc[idx].u.relay->old_status = dcc[idx].status;
   dcc[idx].u.relay->sock = dcc[i].sock;
   dcc[i].timeval = now;
   dcc[i].u.dns->ibuf = dcc[idx].sock;
-  dcc[i].u.dns->host = get_data_ptr(strlen(bi->address) + 1);
+  malloc_memset(dcc[i].u.dns->host, 0, strlen(bi->address) + 1);
   strcpy(dcc[i].u.dns->host, bi->address);
   dcc[i].u.dns->dns_success = tandem_relay_resolve_success;
   dcc[i].u.dns->dns_failure = tandem_relay_resolve_failure;
@@ -1213,7 +1192,7 @@ static void tandem_relay_resolve_failure(int idx)
   ci = dcc[uidx].u.relay->chat;
   dprintf(uidx, _("Could not link to %s.\n"), dcc[idx].nick);
   dcc[uidx].status = dcc[uidx].u.relay->old_status;
-  nfree(dcc[uidx].u.relay);
+  free(dcc[uidx].u.relay);
   dcc[uidx].u.chat = ci;
   dcc[uidx].type = &DCC_CHAT;
   killsock(dcc[idx].sock);
@@ -1226,7 +1205,7 @@ static void tandem_relay_resolve_success(int i)
 
   strcpy(dcc[i].addr, dcc[i].u.dns->host);
   changeover_dcc(i, &DCC_FORK_RELAY, sizeof(struct relay_info));
-  dcc[i].u.relay->chat = get_data_ptr(sizeof(struct chat_info));
+  malloc_memset(dcc[i].u.relay->chat, 0, sizeof(struct chat_info));
 
   dcc[i].u.relay->sock = sock;
   dcc[i].u.relay->port = dcc[i].port;
@@ -1280,7 +1259,7 @@ static void pre_relay(int idx, char *buf, register int i)
     putlog(LOG_MISC, "*", _("Relay aborted: %s -> %s"), dcc[idx].nick,
 	   dcc[tidx].nick);
     dcc[idx].status = dcc[idx].u.relay->old_status;
-    nfree(dcc[idx].u.relay);
+    free(dcc[idx].u.relay);
     dcc[idx].u.chat = ci;
     dcc[idx].type = &DCC_CHAT;
     killsock(dcc[tidx].sock);
@@ -1396,7 +1375,7 @@ static void eof_dcc_relay(int idx)
 	 dcc[idx].nick);
   dprintf(j, "\n\n*** %s %s\n", _("RELAY CONNECTION DROPPED.\nYou are now back on"), botnetnick);
   ci = dcc[j].u.relay->chat;
-  nfree(dcc[j].u.relay);
+  free(dcc[j].u.relay);
   dcc[j].u.chat = ci;
   dcc[j].type = &DCC_CHAT;
   if (dcc[j].u.chat->channel >= 0) {
@@ -1497,7 +1476,7 @@ static void dcc_relaying(int idx, char *buf, int j)
       botnet_send_join_idx(idx, -1);
   }
   ci = dcc[idx].u.relay->chat;
-  nfree(dcc[idx].u.relay);
+  free(dcc[idx].u.relay);
   dcc[idx].u.chat = ci;
   dcc[idx].type = &DCC_CHAT;
   check_tcl_chon(dcc[idx].nick, dcc[idx].sock);
@@ -1529,23 +1508,13 @@ static void display_pre_relay(int i, char *other)
   strcpy(other, "other  >rly");
 }
 
-static int expmem_relay(void *x)
-{
-  register struct relay_info *p = (struct relay_info *) x;
-  int tot = sizeof(struct relay_info);
-
-  if (p->chat)
-    tot += DCC_CHAT.expmem(p->chat);
-  return tot;
-}
-
 static void kill_relay(int idx, void *x)
 {
   register struct relay_info *p = (struct relay_info *) x;
 
   if (p->chat)
     DCC_CHAT.kill(idx, p->chat);
-  nfree(p);
+  free(p);
 }
 
 struct dcc_table DCC_RELAY =
@@ -1557,7 +1526,6 @@ struct dcc_table DCC_RELAY =
   NULL,
   NULL,
   display_relay,
-  expmem_relay,
   kill_relay,
   NULL
 };
@@ -1581,7 +1549,6 @@ struct dcc_table DCC_RELAYING =
   NULL,
   NULL,
   display_relaying,
-  expmem_relay,
   kill_relay,
   out_relay
 };
@@ -1595,7 +1562,6 @@ struct dcc_table DCC_FORK_RELAY =
   &connect_timeout,
   failed_tandem_relay,
   display_tandem_relay,
-  expmem_relay,
   kill_relay,
   NULL
 };
@@ -1609,7 +1575,6 @@ struct dcc_table DCC_PRE_RELAY =
   NULL,
   NULL,
   display_pre_relay,
-  expmem_relay,
   kill_relay,
   NULL
 };

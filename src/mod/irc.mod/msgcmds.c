@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  *
- * $Id: msgcmds.c,v 1.28 2001/09/27 18:33:21 sup Exp $
+ * $Id: msgcmds.c,v 1.29 2001/10/10 10:44:07 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -822,36 +822,11 @@ static int msg_status(char *nick, char *host, struct userrec *u, char *par)
     dprintf(DP_HELP, "NOTICE %s :%s\n", nick, s);
   }
   i = count_users(userlist);
-  dprintf(DP_HELP, "NOTICE %s :%d user%s  (mem: %uk)\n", nick, i,
-	  i == 1 ? "" : "s", (int) (expected_memory() / 1024));
+  dprintf(DP_HELP, "NOTICE %s :%d user%s\n", nick, i, i == 1 ? "" : "s");
   daysdur(now, server_online, s);
   dprintf(DP_HELP, "NOTICE %s :Connected %s\n", nick, s);
   dprintf(DP_HELP, "NOTICE %s :Online as: %s%s%s\n", nick, botname,
 	  botuserhost[0] ? "!" : "", botuserhost[0] ? botuserhost : "");
-  return 1;
-}
-
-static int msg_memory(char *nick, char *host, struct userrec *u, char *par)
-{
-  char *pass;
-
-  if (match_my_nick(nick))
-    return 1;
-  if (!u_pass_match(u, "-")) {
-    pass = newsplit(&par);
-    if (!u_pass_match(u, pass)) {
-      putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed MEMORY", nick, host,
-	     u->handle);
-      return 1;
-    }
-  } else {
-    putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed MEMORY", nick, host, u->handle);
-    if (!quiet_reject)
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("You dont have a password set."));
-    return 1;
-  }
-  putlog(LOG_CMDS, "*", "(%s!%s) !%s! MEMORY", nick, host, u->handle);
-  tell_mem_status(nick);
   return 1;
 }
 
@@ -1017,7 +992,6 @@ static cmd_t C_msg[] =
   {"invite",		"o|o",	(Function) msg_invite,		NULL},
   {"jump",		"m",	(Function) msg_jump,		NULL},
   {"key",		"o|o",	(Function) msg_key,		NULL},
-  {"memory",		"m",	(Function) msg_memory,		NULL},
   {"op",		"",	(Function) msg_op,		NULL},
   {"pass",		"",	(Function) msg_pass,		NULL},
   {"rehash",		"m",	(Function) msg_rehash,		NULL},

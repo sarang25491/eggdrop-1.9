@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.62 2001/10/10 01:20:10 ite Exp $
+ * $Id: modules.c,v 1.63 2001/10/10 10:44:04 tothwolf Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -77,10 +77,9 @@ struct static_list {
 
 void check_static(char *name, char *(*func) ())
 {
-  struct static_list *p = nmalloc(sizeof(struct static_list));
+  struct static_list *p = malloc(sizeof(struct static_list));
 
-  p->name = nmalloc(strlen(name) + 1);
-  strcpy(p->name, name);
+  malloc_strcpy(p->name, name);
   p->func = func;
   p->next = static_modules;
   static_modules = p;
@@ -153,8 +152,8 @@ dependancy *dependancy_list = NULL;
 Function global_table[] =
 {
   /* 0 - 3 */
-  (Function) mod_malloc,
-  (Function) mod_free,
+  (Function) 0,
+  (Function) 0,
 #ifdef DEBUG_CONTEXT
   (Function) eggContext,
 #else
@@ -203,9 +202,9 @@ Function global_table[] =
   (Function) nextbot,
   /* 36 - 39 */
   (Function) zapfbot,
-  (Function) n_free,
+  (Function) 0,
   (Function) u_pass_match,
-  (Function) _user_malloc,
+  (Function) 0,
   /* 40 - 43 */
   (Function) get_user,
   (Function) set_user,
@@ -264,11 +263,11 @@ Function global_table[] =
   /* 84 - 87 */
   (Function) open_listen,
   (Function) open_telnet_dcc,
-  (Function) _get_data_ptr,
+  (Function) 0,
   (Function) open_telnet,
   /* 88 - 91 */
   (Function) check_tcl_event,
-  (Function) egg_memcpy,
+  (Function) 0,
   (Function) my_atoul,
   (Function) my_strcpy,
   /* 92 - 95 */
@@ -348,7 +347,7 @@ Function global_table[] =
   (Function) def_get,
   /* 152 - 155 */
   (Function) makepass,
-  (Function) _wild_match,
+  (Function) wild_match,
   (Function) maskhost,
   (Function) show_motd,
   /* 156 - 159 */
@@ -367,8 +366,8 @@ Function global_table[] =
   (Function) detect_dcc_flood,
   (Function) flush_lines,
   /* 168 - 171 */
-  (Function) expected_memory,
-  (Function) tell_mem_status,
+  (Function) 0,
+  (Function) 0,
   (Function) & do_restart,	/* int					*/
   (Function) check_tcl_filt,
   /* 172 - 175 */
@@ -443,8 +442,8 @@ Function global_table[] =
   (Function) & force_expire,	/* int					*/
   /* 228 - 231 */
   (Function) 0,
-  (Function) _user_realloc,
-  (Function) mod_realloc,
+  (Function) 0,
+  (Function) 0,
   (Function) xtra_set,
   /* 232 - 235 */
 #ifdef DEBUG_CONTEXT
@@ -482,7 +481,7 @@ Function global_table[] =
   /* 252 - 255 */
   (Function) egg_snprintf,
   (Function) egg_vsnprintf,
-  (Function) egg_memset,
+  (Function) 0,
   (Function) egg_strcasecmp,
   /* 256 - 259 */
   (Function) egg_strncasecmp,
@@ -530,9 +529,8 @@ void init_modules(void)
   int i;
   char wbuf[1024];
 
-  module_list = nmalloc(sizeof(module_entry));
-  module_list->name = nmalloc(8);
-  strcpy(module_list->name, "eggdrop");
+  module_list = malloc(sizeof(module_entry));
+  malloc_strcpy(module_list->name, "eggdrop");
   module_list->major = (egg_numver) / 10000;
   module_list->minor = ((egg_numver) / 100) % 100;
 #ifndef STATIC
@@ -550,40 +548,6 @@ void init_modules(void)
   module_list->funcs = NULL;
   for (i = 0; i < REAL_HOOKS; i++)
     hook_list[i] = NULL;
-}
-
-int expmem_modules(int y)
-{
-  int c = 0;
-  int i;
-  module_entry *p;
-  dependancy *d;
-  struct hook_entry *q;
-#ifdef STATIC
-  struct static_list *s;
-#endif
-  Function *f;
-
-#ifdef STATIC
-  for (s = static_modules; s; s = s->next)
-    c += sizeof(struct static_list) + strlen(s->name) + 1;
-#endif
-
-  for (i = 0; i < REAL_HOOKS; i++)
-    for (q = hook_list[i]; q; q = q->next)
-      c += sizeof(struct hook_entry);
-
-  for (d = dependancy_list; d; d = d->next)
-    c += sizeof(dependancy);
-
-  for (p = module_list; p; p = p->next) {
-    c += sizeof(module_entry);
-    c += strlen(p->name) + 1;
-    f = p->funcs;
-    if (f && f[MODCALL_EXPMEM] && !y)
-      c += (int) (f[MODCALL_EXPMEM] ());
-  }
-  return c;
 }
 
 int module_register(char *name, Function * funcs,
@@ -637,11 +601,10 @@ const char *module_load(char *name)
     return "Unknown module.";
   f = (Function) sl->func;
 #endif
-  p = nmalloc(sizeof(module_entry));
+  p = malloc(sizeof(module_entry));
   if (p == NULL)
     return "Malloc error";
-  p->name = nmalloc(strlen(name) + 1);
-  strcpy(p->name, name);
+  malloc_strcpy(p->name, name);
   p->major = 0;
   p->minor = 0;
 #ifndef STATIC
@@ -653,8 +616,8 @@ const char *module_load(char *name)
   e = (((char *(*)()) f) (global_table));
   if (e) {
     module_list = module_list->next;
-    nfree(p->name);
-    nfree(p);
+    free(p->name);
+    free(p);
     return e;
   }
   check_tcl_load(name);
@@ -688,13 +651,13 @@ char *module_unload(char *name, char *user)
 	lt_dlclose(p->hand);
 #endif				/* STATIC */
       }
-      nfree(p->name);
+      free(p->name);
       if (o == NULL) {
 	module_list = p->next;
       } else {
 	o->next = p->next;
       }
-      nfree(p);
+      free(p);
       putlog(LOG_MISC, "*", "%s %s", _("Module unloaded:"), name);
       return NULL;
     }
@@ -725,9 +688,8 @@ static int module_rename(char *name, char *newname)
 
   for (p = module_list; p && p->name; p = p->next)
     if (!egg_strcasecmp(name, p->name)) {
-      nfree(p->name);
-      p->name = nmalloc(strlen(newname) + 1);
-      strcpy(p->name, newname);
+      free(p->name);
+      malloc_strcpy(p->name, newname);
       return 1;
     }
   return 0;
@@ -746,7 +708,7 @@ Function *module_depend(char *name1, char *name2, int major, int minor)
   }
   if (!p || !o)
     return 0;
-  d = nmalloc(sizeof(dependancy));
+  d = malloc(sizeof(dependancy));
 
   d->needed = p;
   d->needing = o;
@@ -772,7 +734,7 @@ int module_undepend(char *name1)
       } else {
 	o->next = d->next;
       }
-      nfree(d);
+      free(d);
       if (o == NULL)
 	d = dependancy_list;
       else
@@ -786,45 +748,6 @@ int module_undepend(char *name1)
   return ok;
 }
 
-void *mod_malloc(int size, const char *modname, const char *filename, int line)
-{
-#ifdef DEBUG_MEM
-  char x[100], *p;
-
-  p = strrchr(filename, '/');
-  egg_snprintf(x, sizeof x, "%s:%s", modname, p ? p + 1 : filename);
-  x[19] = 0;
-  return n_malloc(size, x, line);
-#else
-  return nmalloc(size);
-#endif
-}
-
-void *mod_realloc(void *ptr, int size, const char *modname,
-		  const char *filename, int line)
-{
-#ifdef DEBUG_MEM
-  char x[100], *p;
-
-  p = strrchr(filename, '/');
-  egg_snprintf(x, sizeof x, "%s:%s", modname, p ? p + 1 : filename);
-  x[19] = 0;
-  return n_realloc(ptr, size, x, line);
-#else
-  return nrealloc(ptr, size);
-#endif
-}
-
-void mod_free(void *ptr, const char *modname, const char *filename, int line)
-{
-  char x[100], *p;
-
-  p = strrchr(filename, '/');
-  egg_snprintf(x, sizeof x, "%s:%s", modname, p ? p + 1 : filename);
-  x[19] = 0;
-  n_free(ptr, x, line);
-}
-
 /* Hooks, various tables of functions to call on ceratin events
  */
 void add_hook(int hook_num, Function func)
@@ -835,7 +758,7 @@ void add_hook(int hook_num, Function func)
     for (p = hook_list[hook_num]; p; p = p->next)
       if (p->func == func)
 	return;			/* Don't add it if it's already there */
-    p = nmalloc(sizeof(struct hook_entry));
+    p = malloc(sizeof(struct hook_entry));
 
     p->next = hook_list[hook_num];
     hook_list[hook_num] = p;
@@ -897,7 +820,7 @@ void del_hook(int hook_num, Function func)
 	  hook_list[hook_num] = p->next;
 	else
 	  o->next = p->next;
-	nfree(p);
+	free(p);
 	break;
       }
       o = p;

@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.41 2001/08/19 02:49:40 drummer Exp $
+ * $Id: net.c,v 1.42 2001/10/10 10:44:04 tothwolf Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -101,21 +101,6 @@ void init_net()
   i = adns_init(&ads, adns_if_noautosys, 0);
   if (i)
       fatal(adns_strerror(i), 0);
-}
-
-int expmem_net()
-{
-  int i, tot = 0;
-
-  for (i = 0; i < MAXSOCKS; i++) {
-    if (!(socklist[i].flags & SOCK_UNUSED)) {
-      if (socklist[i].inbuf != NULL)
-	tot += strlen(socklist[i].inbuf) + 1;
-      if (socklist[i].outbuf != NULL)
-	tot += socklist[i].outbuflen;
-    }
-  }
-  return tot;
 }
 
 /* Get my ip number
@@ -330,13 +315,10 @@ void killsock(register int sock)
   for (i = 0; i < MAXSOCKS; i++) {
     if ((socklist[i].sock == sock) && !(socklist[i].flags & SOCK_UNUSED)) {
       close(socklist[i].sock);
-      if (socklist[i].inbuf != NULL) {
-	nfree(socklist[i].inbuf);
-	socklist[i].inbuf = NULL;
-      }
+      if (socklist[i].inbuf != NULL)
+	free_null(socklist[i].inbuf);
       if (socklist[i].outbuf != NULL) {
-	nfree(socklist[i].outbuf);
-	socklist[i].outbuf = NULL;
+	free_null(socklist[i].outbuf);
 	socklist[i].outbuflen = 0;
       }
       socklist[i].flags = SOCK_UNUSED;
@@ -360,7 +342,7 @@ static int proxy_connect(int sock, char *host, int port, int proxy)
     /* numeric IP? */
     if (host[strlen(host) - 1] >= '0' && host[strlen(host) - 1] <= '9') {
       IP ip = ((IP) inet_addr(host)); /* drummer */      
-      egg_memcpy(x, &ip, 4);	/* Beige@Efnet */
+      memcpy(x, &ip, 4);	/* Beige@Efnet */
     } else {
       /* no, must be host.domain */
       if (!setjmp(alarmret)) {
@@ -374,7 +356,7 @@ static int proxy_connect(int sock, char *host, int port, int proxy)
 	killsock(sock);
 	return -2;
       }
-      egg_memcpy(x, hp->h_addr, hp->h_length);
+      memcpy(x, hp->h_addr, hp->h_length);
     }
     for (i = 0; i < MAXSOCKS; i++)
       if (!(socklist[i].flags & SOCK_UNUSED) && socklist[i].sock == sock)
@@ -429,7 +411,7 @@ debug2("|NET| open_telnet_raw: %s %d", server, sport);
     port = sport;
   }
 
-  egg_bzero((char *) &name, sizeof name);
+  memset((char *) &name, 0, sizeof name);
 #ifdef IPV6
   name.sin6_family = AF_INET6;
   name.sin6_port = htons(port);
@@ -472,11 +454,11 @@ debug1("|NET| checking only A record for %s", p);
       return -2;
       
 #ifndef IPV6      
-  egg_memcpy(&name.sin_addr, hp->h_addr, hp->h_length);
+  memcpy(&name.sin_addr, hp->h_addr, hp->h_length);
   name.sin_family = hp->h_addrtype;
 #else
   if (hp->h_addrtype == AF_INET6)
-    egg_memcpy(&name.sin6_addr, hp->h_addr, hp->h_length);
+    memcpy(&name.sin6_addr, hp->h_addr, hp->h_length);
   else if (hp->h_addrtype == AF_INET)
     name.sin6_addr = ipv4to6(*((unsigned int*) hp->h_addr));
   else
@@ -484,7 +466,7 @@ debug1("|NET| checking only A record for %s", p);
   name.sin6_family = AF_INET6;
 #endif
 
-  egg_bzero((char *) &vname, sizeof vname);
+  memset((char *) &vname, 0, sizeof vname);
 #ifndef IPV6
   vname.sin_family = AF_INET;
   vname.sin_addr.s_addr = (myip[0] ? getmyip() : INADDR_ANY);
@@ -554,7 +536,7 @@ int open_address_listen(char *addr, int *port)
     
 debug2("|NET| open_address_listen(\"%s\", %d)", addr, *port);
 
-  egg_bzero((char *) &name, sizeof name);
+  memset((char *) &name, 0, sizeof name);
 #ifdef IPV6
   name.sin6_family = AF_INET6;
   name.sin6_port = htons(*port);	/* 0 = just assign us a port */
@@ -726,6 +708,9 @@ debug2("|NET| open_telnet_dcc: %s %s", server, port);
 void egg_dns_gotanswer(int status, adns_answer *aw, char *origname)
 {
     char name[UHOSTLEN];
+#ifdef IPV6
+    char *orign2 = NULL;
+#endif
 
     if (!aw) {
 debug0("|DNS| egg_dns_gotanswer: ANSWER IS NULL!");
@@ -759,8 +744,7 @@ debug2("|DNS| egg_dns_gotanswer: status=%d adns_answer=%x", status, (int)aw);
 		    egg_strncasecmp(origname, "ipv6%", 5) &&
 		    egg_strncasecmp(origname, "ipv4%", 5)) {
 	    adns_query q6;
-	    char *orign2 = (char*) nmalloc(strlen(origname) + 1);
-	    strcpy(orign2, origname);
+	    malloc_strcpy(orign2, origname);
 	    /* ...it may be AAAA */
 debug1("|DNS| egg_dns_gotanswer: A failed, checking for AAAA (%s)", origname);
 	    adns_submit(ads, origname, adns_r_addr6, 0, orign2, &q6);
@@ -790,7 +774,7 @@ debug3("|DNS| egg_dns_gotanswer: (hostbyip) ip: %s host: %s status: %d", orignam
 	call_hostbyip(origname, name, status);
     } else
 	debug0("|DNS| egg_dns_gotanswer: got unknow type of answer ?!");
-    nfree(origname);
+    free(origname);
 }
 
 void egg_dns_checkall()
@@ -982,13 +966,14 @@ int sockgets(char *s, int *len)
 	  if (strlen(socklist[i].inbuf) > 510)
 	    socklist[i].inbuf[510] = 0;
 	  strcpy(s, socklist[i].inbuf);
-	  px = (char *) nmalloc(strlen(p + 1) + 1);
+	  /* Uhm... very strange way to code this... */
+	  px = (char *) malloc(strlen(p + 1) + 1);
 	  strcpy(px, p + 1);
-	  nfree(socklist[i].inbuf);
+	  free(socklist[i].inbuf);
 	  if (px[0])
 	    socklist[i].inbuf = px;
 	  else {
-	    nfree(px);
+	    free(px);
 	    socklist[i].inbuf = NULL;
 	  }
 	  /* Strip CR if this was CR/LF combo */
@@ -1001,17 +986,16 @@ int sockgets(char *s, int *len)
 	/* Handling buffered binary data (must have been SOCK_BUFFER before). */
 	if (socklist[i].inbuflen <= 510) {
 	  *len = socklist[i].inbuflen;
-	  egg_memcpy(s, socklist[i].inbuf, socklist[i].inbuflen);
-	  nfree(socklist[i].inbuf);
-          socklist[i].inbuf = NULL;
+	  memcpy(s, socklist[i].inbuf, socklist[i].inbuflen);
+	  free_null(socklist[i].inbuf);
 	  socklist[i].inbuflen = 0;
 	} else {
 	  /* Split up into chunks of 510 bytes. */
 	  *len = 510;
-	  egg_memcpy(s, socklist[i].inbuf, *len);
-	  egg_memcpy(socklist[i].inbuf, socklist[i].inbuf + *len, *len);
+	  memcpy(s, socklist[i].inbuf, *len);
+	  memcpy(socklist[i].inbuf, socklist[i].inbuf + *len, *len);
 	  socklist[i].inbuflen -= *len;
-	  socklist[i].inbuf = nrealloc(socklist[i].inbuf,
+	  socklist[i].inbuf = realloc(socklist[i].inbuf,
 				       socklist[i].inbuflen);
 	}
 	return socklist[i].sock;
@@ -1038,9 +1022,9 @@ int sockgets(char *s, int *len)
       socklist[ret].flags &= ~SOCK_STRONGCONN;
       /* Buffer any data that came in, for future read. */
       socklist[ret].inbuflen = *len;
-      socklist[ret].inbuf = (char *) nmalloc(*len + 1);
+      socklist[ret].inbuf = (char *) malloc(*len + 1);
       /* It might be binary data. You never know. */
-      egg_memcpy(socklist[ret].inbuf, xx, *len);
+      memcpy(socklist[ret].inbuf, xx, *len);
       socklist[ret].inbuf[*len] = 0;
     }
     socklist[ret].flags &= ~SOCK_CONNECT;
@@ -1048,16 +1032,16 @@ int sockgets(char *s, int *len)
     return socklist[ret].sock;
   }
   if (socklist[ret].flags & SOCK_BINARY) {
-    egg_memcpy(s, xx, *len);
+    memcpy(s, xx, *len);
     return socklist[ret].sock;
   }
   if ((socklist[ret].flags & SOCK_LISTEN) ||
       (socklist[ret].flags & SOCK_PASS))
     return socklist[ret].sock;
   if (socklist[ret].flags & SOCK_BUFFER) {
-    socklist[ret].inbuf = (char *) nrealloc(socklist[ret].inbuf,
+    socklist[ret].inbuf = (char *) realloc(socklist[ret].inbuf,
 		    			    socklist[ret].inbuflen + *len + 1);
-    egg_memcpy(socklist[ret].inbuf + socklist[ret].inbuflen, xx, *len);
+    memcpy(socklist[ret].inbuf + socklist[ret].inbuflen, xx, *len);
     socklist[ret].inbuflen += *len;
     /* We don't know whether it's binary data. Make sure normal strings
        will be handled properly later on too. */
@@ -1067,23 +1051,22 @@ int sockgets(char *s, int *len)
   /* Might be necessary to prepend stored-up data! */
   if (socklist[ret].inbuf != NULL) {
     p = socklist[ret].inbuf;
-    socklist[ret].inbuf = (char *) nmalloc(strlen(p) + strlen(xx) + 1);
+    socklist[ret].inbuf = (char *) malloc(strlen(p) + strlen(xx) + 1);
     strcpy(socklist[ret].inbuf, p);
     strcat(socklist[ret].inbuf, xx);
-    nfree(p);
+    free(p);
     if (strlen(socklist[ret].inbuf) < 512) {
       strcpy(xx, socklist[ret].inbuf);
-      nfree(socklist[ret].inbuf);
-      socklist[ret].inbuf = NULL;
+      free_null(socklist[ret].inbuf);
       socklist[ret].inbuflen = 0;
     } else {
       p = socklist[ret].inbuf;
       socklist[ret].inbuflen = strlen(p) - 510;
-      socklist[ret].inbuf = (char *) nmalloc(socklist[ret].inbuflen + 1);
+      socklist[ret].inbuf = (char *) malloc(socklist[ret].inbuflen + 1);
       strcpy(socklist[ret].inbuf, p + 510);
       *(p + 510) = 0;
       strcpy(xx, p);
-      nfree(p);
+      free(p);
       /* (leave the rest to be post-pended later) */
     }
   }
@@ -1122,13 +1105,13 @@ int sockgets(char *s, int *len)
   if (socklist[ret].inbuf != NULL) {
     p = socklist[ret].inbuf;
     socklist[ret].inbuflen = strlen(p) + strlen(xx);
-    socklist[ret].inbuf = (char *) nmalloc(socklist[ret].inbuflen + 1);
+    socklist[ret].inbuf = (char *) malloc(socklist[ret].inbuflen + 1);
     strcpy(socklist[ret].inbuf, xx);
     strcat(socklist[ret].inbuf, p);
-    nfree(p);
+    free(p);
   } else {
     socklist[ret].inbuflen = strlen(xx);
-    socklist[ret].inbuf = (char *) nmalloc(socklist[ret].inbuflen + 1);
+    socklist[ret].inbuf = (char *) malloc(socklist[ret].inbuflen + 1);
     strcpy(socklist[ret].inbuf, xx);
   }
   if (data) {
@@ -1189,8 +1172,8 @@ void tputs(register int z, char *s, unsigned int len)
       
       if (socklist[i].outbuf != NULL) {
 	/* Already queueing: just add it */
-	p = (char *) nrealloc(socklist[i].outbuf, socklist[i].outbuflen + len);
-	egg_memcpy(p + socklist[i].outbuflen, s, len);
+	p = (char *) realloc(socklist[i].outbuf, socklist[i].outbuflen + len);
+	memcpy(p + socklist[i].outbuflen, s, len);
 	socklist[i].outbuf = p;
 	socklist[i].outbuflen += len;
 	return;
@@ -1201,8 +1184,8 @@ void tputs(register int z, char *s, unsigned int len)
 	x = 0;
       if (x < len) {
 	/* Socket is full, queue it */
-	socklist[i].outbuf = (char *) nmalloc(len - x);
-	egg_memcpy(socklist[i].outbuf, &s[x], len - x);
+	socklist[i].outbuf = (char *) malloc(len - x);
+	memcpy(socklist[i].outbuf, &s[x], len - x);
 	socklist[i].outbuflen = len - x;
       }
       return;
@@ -1247,17 +1230,16 @@ void dequeue_sockets()
 	socklist[i].flags |= SOCK_EOFD;
       } else if (x == socklist[i].outbuflen) {
 	/* If the whole buffer was sent, nuke it */
-	nfree(socklist[i].outbuf);
-	socklist[i].outbuf = NULL;
+	free_null(socklist[i].outbuf);
 	socklist[i].outbuflen = 0;
       } else if (x > 0) {
 	char *p = socklist[i].outbuf;
 
 	/* This removes any sent bytes from the beginning of the buffer */
-	socklist[i].outbuf = (char *) nmalloc(socklist[i].outbuflen - x);
-	egg_memcpy(socklist[i].outbuf, p + x, socklist[i].outbuflen - x);
+	socklist[i].outbuf = (char *) malloc(socklist[i].outbuflen - x);
+	memcpy(socklist[i].outbuf, p + x, socklist[i].outbuflen - x);
 	socklist[i].outbuflen -= x;
-	nfree(p);
+	free(p);
       }
      
       /* All queued data was sent. Call handler if one exists and the
@@ -1361,7 +1343,7 @@ int flush_inbuf(int idx)
           inbuf = socklist[i].inbuf;
           socklist[i].inbuf = NULL;
           dcc[idx].type->activity(idx, inbuf, len);
-          nfree(inbuf);
+          free(inbuf);
           return len;
         } else
           return -2;

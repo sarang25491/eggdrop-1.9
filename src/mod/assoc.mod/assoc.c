@@ -2,7 +2,7 @@
  * assoc.c -- part of assoc.mod
  *   the assoc code, moved here mainly from botnet.c for module work
  *
- * $Id: assoc.c,v 1.20 2001/10/10 01:20:11 ite Exp $
+ * $Id: assoc.c,v 1.21 2001/10/10 10:44:05 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -59,16 +59,6 @@ static void botnet_send_assoc(int idx, int chan, char *nick,
       botnet_send_zapf(idx2, botnetnick, dcc[idx2].nick, x);
 }
 
-static int assoc_expmem()
-{
-  assoc_t *a;
-  int size = 0;
-
-  for (a = assoc; a; a = a->next)
-    size += sizeof(assoc_t);
-  return size;
-}
-
 static void link_assoc(char *bot, char *via)
 {
   char x[1024];
@@ -97,8 +87,7 @@ static void kill_assoc(int chan)
 	last->next = a->next;
       else
 	assoc = a->next;
-      nfree(a);
-      a = NULL;
+      free_null(a);
     } else {
       last = a;
       a = a->next;
@@ -112,7 +101,7 @@ static void kill_all_assoc()
 
   for (a = assoc; a; a = x) {
     x = a->next;
-    nfree(a);
+    free(a);
   }
   assoc = NULL;
 }
@@ -135,7 +124,7 @@ static void add_assoc(char *name, int chan)
   /* Add in numerical order */
   for (a = assoc; a; old = a, a = a->next) {
     if (a->channel > chan) {
-      b = (assoc_t *) nmalloc(sizeof(assoc_t));
+      b = (assoc_t *) malloc(sizeof(assoc_t));
       b->next = a;
       b->channel = chan;
       strncpyz(b->name, name, sizeof b->name);
@@ -147,7 +136,7 @@ static void add_assoc(char *name, int chan)
     }
   }
   /* Add at the end */
-  b = (assoc_t *) nmalloc(sizeof(assoc_t));
+  b = (assoc_t *) malloc(sizeof(assoc_t));
   b->next = NULL;
   b->channel = chan;
   strncpyz(b->name, name, sizeof b->name);
@@ -401,7 +390,7 @@ static Function assoc_table[] =
 {
   (Function) start,
   (Function) assoc_close,
-  (Function) assoc_expmem,
+  (Function) 0,
   (Function) assoc_report,
 };
 

@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.49 2001/08/13 03:05:53 guppy Exp $
+ * $Id: mode.c,v 1.50 2001/10/10 10:44:07 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -75,7 +75,7 @@ static void flush_mode(struct chanset_t *chan, int pri)
     postsize -= egg_strcatn(post, chan->key, sizeof(post));
     postsize -= egg_strcatn(post, " ", sizeof(post));
 
-    nfree(chan->key), chan->key = NULL;
+    free(chan->key), chan->key = NULL;
   }
 
   /* max +l is signed 2^32 on ircnet at least... so makesure we've got at least
@@ -104,7 +104,7 @@ static void flush_mode(struct chanset_t *chan, int pri)
     postsize -= egg_strcatn(post, chan->rmkey, sizeof(post));
     postsize -= egg_strcatn(post, " ", sizeof(post));
 
-    nfree(chan->rmkey), chan->rmkey = NULL;
+    free(chan->rmkey), chan->rmkey = NULL;
   }
 
   /* Do -{b,e,I} before +{b,e,I} to avoid the server ignoring overlaps */
@@ -122,7 +122,7 @@ static void flush_mode(struct chanset_t *chan, int pri)
       postsize -= egg_strcatn(post, chan->cmode[i].op, sizeof(post));
       postsize -= egg_strcatn(post, " ", sizeof(post));
 
-      nfree(chan->cmode[i].op), chan->cmode[i].op = NULL;
+      free(chan->cmode[i].op), chan->cmode[i].op = NULL;
       chan->cmode[i].type = 0;
     }
   }
@@ -142,7 +142,7 @@ static void flush_mode(struct chanset_t *chan, int pri)
       postsize -= egg_strcatn(post, chan->cmode[i].op, sizeof(post));
       postsize -= egg_strcatn(post, " ", sizeof(post));
 
-      nfree(chan->cmode[i].op), chan->cmode[i].op = NULL;
+      free(chan->cmode[i].op), chan->cmode[i].op = NULL;
       chan->cmode[i].type = 0;
     }
   }
@@ -283,7 +283,7 @@ static void real_add_mode(struct chanset_t *chan,
     for (i = 0; i < modesperline; i++)
       if (chan->cmode[i].type == 0) {
 	chan->cmode[i].type = type;
-	chan->cmode[i].op = (char *) channel_malloc(l);
+	malloc_memset(chan->cmode[i].op, 0, l);
 	chan->bytes += l;	/* Add 1 for safety */
 	strcpy(chan->cmode[i].op, op);
 	break;
@@ -293,16 +293,16 @@ static void real_add_mode(struct chanset_t *chan,
   /* +k ? store key */
   else if (plus == '+' && mode == 'k') {
     if (chan->key)
-      nfree(chan->key);
-    chan->key = (char *) channel_malloc(strlen(op) + 1);
+      free(chan->key);
+    malloc_memset(chan->key, 0, strlen(op) + 1);
     if (chan->key)
       strcpy(chan->key, op);
   }
   /* -k ? store removed key */
   else if (plus == '-' && mode == 'k') {
     if (chan->rmkey)
-      nfree(chan->rmkey);
-    chan->rmkey = (char *) channel_malloc(strlen(op) + 1);
+      free(chan->rmkey);
+    malloc_memset(chan->rmkey, 0, strlen(op) + 1);
     if (chan->rmkey)
       strcpy(chan->rmkey, op);
   }
@@ -685,9 +685,9 @@ static void got_unban(struct chanset_t *chan, char *nick, char *from,
       old->next = b->next;
     else
       chan->channel.ban = b->next;
-    nfree(b->mask);
-    nfree(b->who);
-    nfree(b);
+    free(b->mask);
+    free(b->who);
+    free(b);
   }
 
   if (channel_pending(chan))
@@ -751,9 +751,9 @@ static void got_unexempt(struct chanset_t *chan, char *nick, char *from,
       old->next = e->next;
     else
       chan->channel.exempt = e->next;
-    nfree(e->mask);
-    nfree(e->who);
-    nfree(e);
+    free(e->mask);
+    free(e->who);
+    free(e);
   }
 
   if (channel_pending(chan))
@@ -827,9 +827,9 @@ static void got_uninvite(struct chanset_t *chan, char *nick, char *from,
       old->next = inv->next;
     else
       chan->channel.invite = inv->next;
-    nfree(inv->mask);
-    nfree(inv->who);
-    nfree(inv);
+    free(inv->mask);
+    free(inv->who);
+    free(inv);
   }
 
   if (channel_pending(chan))

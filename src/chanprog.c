@@ -5,7 +5,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.28 2001/08/15 17:09:53 guppy Exp $
+ * $Id: chanprog.c,v 1.29 2001/10/10 10:44:03 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -203,20 +203,6 @@ void set_chanlist(const char *host, struct userrec *rec)
 	m->user = rec;
 }
 
-/* Calculate the memory we should be using
- */
-int expmem_chanprog()
-{
-  register int		 tot = 0;
-  register tcl_timer_t	*t;
-
-  for (t = timer; t; t = t->next)
-    tot += sizeof(tcl_timer_t) + strlen(t->cmd) + 1;
-  for (t = utimer; t; t = t->next)
-    tot += sizeof(tcl_timer_t) + strlen(t->cmd) + 1;
-  return tot;
-}
-
 /* Dump status info out to dcc
  */
 void tell_verbose_status(int idx)
@@ -247,9 +233,8 @@ void tell_verbose_status(int idx)
 #endif
 
   i = count_users(userlist);
-  dprintf(idx, "I am %s, running %s:  %d user%s (mem: %uk)\n",
-	  botnetnick, ver, i, i == 1 ? "" : "s",
-          (int) (expected_memory() / 1024));
+  dprintf(idx, "I am %s, running %s:  %d user%s\n",
+	  botnetnick, ver, i, i == 1 ? "" : "s");
   dprintf(idx, "Running on %s %s\n", uni_t, vers_t);
   if (admin[0])
     dprintf(idx, "Admin: %s\n", admin);
@@ -392,14 +377,10 @@ void chanprog()
     fatal(_("CONFIG FILE NOT LOADED (NOT FOUND, OR ERROR)"), 0);
   for (i = 0; i < max_logs; i++) {
     if (logs[i].flags & LF_EXPIRING) {
-      if (logs[i].filename != NULL) {
-        nfree(logs[i].filename);
-        logs[i].filename = NULL;
-      }
-      if (logs[i].chname != NULL) {
-        nfree(logs[i].chname);
-        logs[i].chname = NULL;
-      }
+      if (logs[i].filename != NULL)
+        free_null(logs[i].filename);
+      if (logs[i].chname != NULL)
+        free_null(logs[i].chname);
       if (logs[i].f != NULL) {
         fclose(logs[i].f);
         logs[i].f = NULL;
@@ -506,11 +487,11 @@ unsigned long add_timer(tcl_timer_t **stack, int elapse, char *cmd,
 {
   tcl_timer_t *old = (*stack);
 
-  *stack = (tcl_timer_t *) nmalloc(sizeof(tcl_timer_t));
+  *stack = (tcl_timer_t *) malloc(sizeof(tcl_timer_t));
   (*stack)->next = old;
   (*stack)->mins = elapse;
-  (*stack)->cmd = (char *) nmalloc(strlen(cmd) + 1);
-  strcpy((*stack)->cmd, cmd);
+  malloc_strcpy((*stack)->cmd, cmd);
+
   /* If it's just being added back and already had an id,
    * don't create a new one.
   */
@@ -533,8 +514,8 @@ int remove_timer(tcl_timer_t **stack, unsigned long id)
       ok++;
       old = *stack;
       *stack = ((*stack)->next);
-      nfree(old->cmd);
-      nfree(old);
+      free(old->cmd);
+      free(old);
     } else
       stack = &((*stack)->next);
   }
@@ -561,8 +542,8 @@ void do_check_timers(tcl_timer_t **stack)
     if (!old->mins) {
       egg_snprintf(x, sizeof x, "timer%lu", old->id);
       do_tcl(x, old->cmd);
-      nfree(old->cmd);
-      nfree(old);
+      free(old->cmd);
+      free(old);
     } else {
       old->next = *stack;
       *stack = old;
@@ -579,8 +560,8 @@ void wipe_timers(Tcl_Interp *irp, tcl_timer_t **stack)
   while (mark) {
     old = mark;
     mark = mark->next;
-    nfree(old->cmd);
-    nfree(old);
+    free(old->cmd);
+    free(old);
   }
   *stack = NULL;
 }

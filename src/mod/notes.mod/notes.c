@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.35 2001/10/10 01:20:13 ite Exp $
+ * $Id: notes.c,v 1.36 2001/10/10 10:44:07 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -50,7 +50,6 @@ static Function *global = NULL;	/* DAMN fcntl.h */
 static struct user_entry_type USERENTRY_FWD =
 {
   NULL,				/* always 0 ;) */
-  NULL,
   NULL,
   NULL,
   NULL,
@@ -940,7 +939,7 @@ static struct xtra_key *getnotesentry(struct userrec *u)
 int get_note_ignores(struct userrec *u, char ***ignores)
 {
   struct xtra_key *xk;
-  char *buf, *p;
+  char *buf = NULL, *p;
   int ignoresn;
 
   /* Hullo? sanity? */
@@ -951,16 +950,15 @@ int get_note_ignores(struct userrec *u, char ***ignores)
     return 0;
 
   rmspace(xk->data);
-  buf = user_malloc(strlen(xk->data) + 1);
-  strcpy(buf, xk->data);
+  malloc_strcpy(buf, xk->data);
   p = buf;
 
   /* Split up the string into small parts */
-  *ignores = nmalloc(sizeof(char *) + 100);
+  *ignores = malloc(sizeof(char *) + 100);
   **ignores = p;
   ignoresn = 1;
   while ((p = strchr(p, ' ')) != NULL) {
-    *ignores = nrealloc(*ignores, sizeof(char *) * (ignoresn+1));
+    *ignores = realloc(*ignores, sizeof(char *) * (ignoresn+1));
     (*ignores)[ignoresn] = p + 1;
     ignoresn++;
     *p = 0;
@@ -980,31 +978,29 @@ int add_note_ignore(struct userrec *u, char *mask)
     /* Search for existing mask */
     for (i = 0; i < ignoresn; i++)
       if (!strcmp(ignores[i], mask)) {
-        nfree(ignores[0]);	/* Free the string buffer	*/
-        nfree(ignores);		/* Free the ptr array		*/
+        free(ignores[0]);	/* Free the string buffer	*/
+        free(ignores);		/* Free the ptr array		*/
 	/* The mask already exists, exit. */
         return 0;
       }
-    nfree(ignores[0]);		/* Free the string buffer	*/
-    nfree(ignores);		/* Free the ptr array		*/
+    free(ignores[0]);		/* Free the string buffer	*/
+    free(ignores);		/* Free the ptr array		*/
   }
 
   xk = getnotesentry(u);
   /* First entry? */
   if (!xk) {
-    struct xtra_key *mxk = user_malloc(sizeof(struct xtra_key));
+    struct xtra_key *mxk = malloc(sizeof(struct xtra_key));
     struct user_entry *ue = find_user_entry(&USERENTRY_XTRA, u);
 
     if (!ue)
       return 0;
     mxk->next = 0;
-    mxk->data = user_malloc(strlen(mask) + 1);
-    strcpy(mxk->data, mask);
-    mxk->key = user_malloc(strlen(NOTES_IGNKEY) + 1);
-    strcpy(mxk->key, NOTES_IGNKEY);
+    malloc_strcpy(mxk->data, mask);
+    malloc_strcpy(mxk->key, NOTES_IGNKEY);
     xtra_set(u, ue, mxk);
   } else { /* ... else, we already have other entries. */
-    xk->data = user_realloc(xk->data, strlen(xk->data) + strlen(mask) + 2);
+    xk->data = realloc(xk->data, strlen(xk->data) + strlen(mask) + 2);
     strcat(xk->data, " ");
     strcat(xk->data, mask);
   }
@@ -1022,36 +1018,36 @@ int del_note_ignore(struct userrec *u, char *mask)
   if (!ignoresn)
     return 0;
 
-  buf = user_malloc(1);
+  buf = malloc(1);
   buf[0] = 0;
   for (i = 0; i < ignoresn; i++) {
     if (strcmp(ignores[i], mask)) {
       size += strlen(ignores[i]);
       if (buf[0])
 	size++;
-      buf = user_realloc(buf, size+1);
+      buf = realloc(buf, size + 1);
       if (buf[0])
 	strcat(buf, " ");
       strcat(buf, ignores[i]);
     } else
       foundit = 1;
   }
-  nfree(ignores[0]);		/* Free the string buffer	*/
-  nfree(ignores);		/* Free the ptr array		*/
+  free(ignores[0]);		/* Free the string buffer	*/
+  free(ignores);		/* Free the ptr array		*/
   /* Entry not found */
   if (!foundit) {
-    nfree(buf);
+    free(buf);
     return 0;
   }
   ue = find_user_entry(&USERENTRY_XTRA, u);
   /* Delete the entry if the buffer is empty */
 
-  xk = user_malloc(sizeof(struct xtra_key));
-  xk->key = user_malloc(strlen(NOTES_IGNKEY)+1);
+  xk = malloc(sizeof(struct xtra_key));
+  xk->key = malloc(strlen(NOTES_IGNKEY)+1);
   xk->next = 0;
 
   if (!buf[0]) {
-    nfree(buf); /* The allocated byte needs to be free'd too */
+    free(buf); /* The allocated byte needs to be free'd too */
     strcpy(xk->key, NOTES_IGNKEY);
     xk->data = 0;
   } else {
@@ -1075,12 +1071,12 @@ int match_note_ignore(struct userrec *u, char *from)
     return 0;
   for (i = 0; i < ignoresn; i++)
     if (wild_match(ignores[i], from)) {
-      nfree(ignores[0]);
-      nfree(ignores);
+      free(ignores[0]);
+      free(ignores);
       return 1;
     }
-  nfree(ignores[0]);		/* Free the string buffer	*/
-  nfree(ignores);		/* Free the ptr array		*/
+  free(ignores[0]);		/* Free the string buffer	*/
+  free(ignores);		/* Free the ptr array		*/
   return 0;
 }
 
@@ -1189,11 +1185,6 @@ static char *notes_close()
   return NULL;
 }
 
-static int notes_expmem()
-{
-  return 0;
-}
-
 static void notes_report(int idx, int details)
 {
   if (details) {
@@ -1210,7 +1201,7 @@ static Function notes_table[] =
 {
   (Function) start,
   (Function) notes_close,
-  (Function) notes_expmem,
+  (Function) 0,
   (Function) notes_report,
   (Function) cmd_note,
 };
@@ -1239,7 +1230,7 @@ char *start(Function * global_funcs)
   add_help_reference("notes.help");
   notes_server_setup(0);
   notes_irc_setup(0);
-  my_memcpy(&USERENTRY_FWD, &USERENTRY_INFO, sizeof(void *) * 12);
+  memcpy(&USERENTRY_FWD, &USERENTRY_INFO, sizeof(void *) * 12);
   add_entry_type(&USERENTRY_FWD);
   return NULL;
 }

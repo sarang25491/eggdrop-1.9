@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.32 2001/10/04 21:37:44 stdarg Exp $
+ * $Id: tcldcc.c,v 1.33 2001/10/10 10:44:04 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -42,17 +42,6 @@ extern time_t		 now;
 int			 enable_simul = 0;
 static struct portmap	*root = NULL;
 
-
-int expmem_tcldcc(void)
-{
-  int tot = 0;
-  struct portmap *pmap;
-
-  for (pmap = root; pmap; pmap = pmap->next)
-    tot += sizeof(struct portmap);
-
-  return tot;
-}
 
 /***********************************************************************/
 
@@ -441,7 +430,7 @@ static int tcl_control STDVAR
     check_tcl_chof(dcc[idx].nick, dcc[idx].sock);
   }
   hold = dcc[idx].u.other;
-  dcc[idx].u.script = get_data_ptr(sizeof(struct script_info));
+  malloc_memset(dcc[idx].u.script, 0, sizeof(struct script_info));
   dcc[idx].u.script->u.other = hold;
   dcc[idx].u.script->type = dcc[idx].type;
   dcc[idx].type = &DCC_SCRIPT;
@@ -876,7 +865,7 @@ static int tcl_listen STDVAR
 	pold->next = pmap->next;
       else
 	root = pmap->next;
-      nfree(pmap);
+      free(pmap);
     }
     /* Remove */
     if (idx < 0) {
@@ -961,7 +950,7 @@ static int tcl_listen STDVAR
   egg_snprintf(s, sizeof s, "%d", port);
   Tcl_AppendResult(irp, s, NULL);
   if (!pmap) {
-    pmap = nmalloc(sizeof(struct portmap));
+    pmap = malloc(sizeof(struct portmap));
     pmap->next = root;
     root = pmap;
   }

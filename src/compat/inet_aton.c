@@ -1,7 +1,7 @@
 /*
  * inet_aton.c -- provides inet_aton() if necessary.
  *
- * $Id: inet_aton.c,v 1.6 2001/10/10 01:20:10 ite Exp $
+ * $Id: inet_aton.c,v 1.7 2001/10/10 10:44:04 tothwolf Exp $
  */
 /*
  * Poritions Copyright (C) 2000, 2001 Eggheads Development Team
@@ -113,7 +113,7 @@ egg_inet_aton(cp, addr)
 	u_32bit_t parts[4];
 	register u_32bit_t *pp = parts;
 
-	egg_bzero(parts, sizeof (parts));
+	memset(parts, 0, sizeof (parts));
 
 	c = *cp;
 	for (;;) {

@@ -4,7 +4,7 @@
  *
  * Written for filedb3 by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: dbcompat.c,v 1.11 2001/08/10 23:51:21 ite Exp $
+ * $Id: dbcompat.c,v 1.12 2001/10/10 10:44:06 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -43,10 +43,10 @@ static int convert_old_files(char *path, char *newfiledb)
   int in_file = 0, i;
   struct stat st;
 
-  s = nmalloc(strlen(path) + 8);
+  s = malloc(strlen(path) + 8);
   sprintf(s, "%s/.files", path);
   f = fopen(s, "r");
-  my_free(s);
+  free_null(s);
   if (f == NULL)
     return 0;
 
@@ -63,7 +63,7 @@ static int convert_old_files(char *path, char *newfiledb)
   putlog(LOG_FILES, "*", _("Converting filesystem image in %s ..."), path);
   /* Scan contents of .files and painstakingly create .filedb entries */
   while (!feof(f)) {
-    s = nmalloc(121);
+    s = malloc(121);
     s1 = s;
     fgets(s, 120, f);
     if (s[strlen(s) - 1] == '\n')
@@ -78,11 +78,11 @@ static int convert_old_files(char *path, char *newfiledb)
 	  if (in_file && fdbe) {
 	    rmspace(s);
 	    if (fdbe->desc) {
-	      fdbe->desc = nrealloc(fdbe->desc,
+	      fdbe->desc = realloc(fdbe->desc,
 				    strlen(fdbe->desc) + strlen(s) + 2);
 	      strcat(fdbe->desc, "\n");
 	    } else
-	      fdbe->desc = nmalloc(strlen(s) + 2);
+	      fdbe->desc = malloc(strlen(s) + 2);
 	    strcat(fdbe->desc, s);
 	  }
 	} else {
@@ -127,7 +127,7 @@ static int convert_old_files(char *path, char *newfiledb)
 	}
       }
     }
-    my_free(s);
+    free_null(s);
   }
   if (fdbe) {
     /* File pending. Write to DB */
@@ -244,7 +244,7 @@ static int convert_old_db(FILE **fdb_s, char *filedb)
     putlog(LOG_MISC, "*", "Converting old filedb %s to newest format.",
 	   filedb);
     /* Create temp DB name */
-    tempdb = nmalloc(strlen(filedb) + 5);
+    tempdb = malloc(strlen(filedb) + 5);
     simple_sprintf(tempdb, "%s-tmp", filedb);
 
     fdb_t = fopen(tempdb, "w+b");		/* Open temp DB		*/
@@ -279,7 +279,7 @@ static int convert_old_db(FILE **fdb_s, char *filedb)
       } else
         putlog(LOG_MISC, "*", "(!) Reopening db %s failed.", filedb);
     }
-    my_free(tempdb);
+    free_null(tempdb);
   /* Database already at the newest version? */
   } else if (fdbt.version == FILEDB_VERSION3) {
     ret = 1;					/* Always successfull	*/

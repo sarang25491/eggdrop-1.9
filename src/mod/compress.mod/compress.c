@@ -6,7 +6,7 @@
  * Written by Fabian Knittel <fknittel@gmx.de>. Based on zlib examples
  * by Jean-loup Gailly and Miguel Albrecht.
  *
- * $Id: compress.c,v 1.13 2001/10/10 01:20:12 ite Exp $
+ * $Id: compress.c,v 1.14 2001/10/10 10:44:06 tothwolf Exp $
  */
 /*
  * Copyright (C) 2000, 2001 Eggheads Development Team
@@ -76,8 +76,8 @@ static int is_compressedfile(char *filename)
   FILE		 *fin;
   register int    len1, len2, i;
 
-  egg_memset(buf1, 0, 50);
-  egg_memset(buf2, 0, 50);
+  memset(buf1, 0, 50);
+  memset(buf2, 0, 50);
   if (!is_file(filename))
     return COMPF_FAILED;
 
@@ -292,7 +292,7 @@ static int compress_file(char *filename, int mode_num)
   int   ret;
 
   /* Create temporary filename. */
-  temp_fn = nmalloc(strlen(filename) + 5);
+  temp_fn = malloc(strlen(filename) + 5);
   make_rand_str(randstr, 4);
   strcpy(temp_fn, filename);
   strcat(temp_fn, randstr);
@@ -306,7 +306,7 @@ static int compress_file(char *filename, int mode_num)
   if (ret == COMPF_SUCCESS)
     movefile(temp_fn, filename);
 
-  nfree(temp_fn);
+  free(temp_fn);
   return ret;
 }
 
@@ -318,7 +318,7 @@ static int uncompress_file(char *filename)
   int   ret;
 
   /* Create temporary filename. */
-  temp_fn = nmalloc(strlen(filename) + 5);
+  temp_fn = malloc(strlen(filename) + 5);
   make_rand_str(randstr, 4);
   strcpy(temp_fn, filename);
   strcat(temp_fn, randstr);
@@ -332,7 +332,7 @@ static int uncompress_file(char *filename)
   if (ret == COMPF_SUCCESS)
     movefile(temp_fn, filename);
 
-  nfree(temp_fn);
+  free(temp_fn);
   return ret;
 }
 
@@ -376,11 +376,6 @@ static tcl_ints my_tcl_ints[] = {
   {NULL,                	NULL}
 };
 
-static int compress_expmem(void)
-{
-  return 0;
-}
-
 static int compress_report(int idx, int details)
 {
   if (details)
@@ -407,7 +402,7 @@ static Function compress_table[] =
   /* 0 - 3 */
   (Function) start,
   (Function) compress_close,
-  (Function) compress_expmem,
+  (Function) 0,
   (Function) compress_report,
   /* 4 - 7 */
   (Function) compress_to_file,
