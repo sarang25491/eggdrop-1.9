@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tclscript.c,v 1.44 2004/06/14 23:42:11 wingman Exp $";
+static const char rcsid[] = "$Id: tclscript.c,v 1.45 2004/06/14 23:57:59 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -102,17 +102,17 @@ static int my_load_script(void *ignore, char *fname)
 	len = strlen(fname);
 	if (len < 4 || fname[len-1] != 'l' || fname[len-2] != 'c' || fname[len-3] != 't' || fname[len-4] != '.') {
 		/* Nope, let someone else load it. */
-		return -2;
+		return SCRIPT_ERR_NOT_RESPONSIBLE;
 	}
 
 	result = Tcl_EvalFile (ginterp, fname);
 	if (result != TCL_OK) {
 		putlog (LOG_MISC, "*", _("Failed to load script %s: %s"),
 				fname, Tcl_GetStringResult (ginterp));
-		return -1;
+		return SCRIPT_ERR_CODE;
 	}
 
-	return 0; 
+	return SCRIPT_OK; 
 }
 
 /* This updates the value of a linked variable (c to tcl). */

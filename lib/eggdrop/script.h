@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: script.h,v 1.14 2004/06/14 23:42:11 wingman Exp $
+ * $Id: script.h,v 1.15 2004/06/14 23:57:59 wingman Exp $
  */
 
 #ifndef _EGG_SCRIPT_H_
@@ -120,7 +120,6 @@ typedef struct script_callback_b {
 	void *delete_data;
 	char *syntax;
 	char *name;
-	char *script;
 	int flags;
 } script_callback_t;
 
@@ -169,7 +168,6 @@ typedef struct script_args_b {
 typedef struct {
 	char *class;
 	char *name;
-	char *script;
 	int (*callback)(void *client_data, script_args_t *args, script_var_t *retval);
 	void *client_data;
 } script_raw_command_t;

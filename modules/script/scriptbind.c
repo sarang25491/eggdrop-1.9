@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptbind.c,v 1.8 2004/06/14 23:42:11 wingman Exp $";
+static const char rcsid[] = "$Id: scriptbind.c,v 1.9 2004/06/14 23:57:59 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -47,8 +47,6 @@ static int fake_bind_placeholder(void *client_data, ...)
 	callback = fake->callback;
 	callback->syntax = strdup(fake->table->syntax);
 	bind_entry_overwrite(fake->table, fake->bind_id, NULL, NULL, callback->callback, callback);
-
-	putlog (LOG_DEBUG, "*", "fake_bind_placeholder()");
 
 	args[0] = callback;
 	va_start(ap, client_data);
