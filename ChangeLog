@@ -1,3 +1,12 @@
+2001-10-10 14:50  tothwolf
+
+	* acinclude.m4, configure.in, src/Makefile.am, src/dcc.c,
+	src/md5.c, src/md5.h, src/tclmisc.c:
+
+	moved md5.c and md5.h from src/md5/ to src/ added header files in
+	src/ to src/Makefile.am removed redundant egglib/libegg.la entry for
+	eggdrop_LDADD fixed -DEBUG_ASSERT typo in acinclude.m4 
+
 2001-10-10 13:15  tothwolf
 
 	* INSTALL, README, eggdrop.complete.conf, doc/compiling.FAQ,
@@ -121,8 +130,7 @@
 	src/compat/Makefile.in, src/compat/inet_aton.c,
 	src/compat/memcpy.c, src/compat/memset.c, src/compat/snprintf.c,
 	src/compat/strcasecmp.c, src/egglib/.cvsignore,
-	src/egglib/Makefile.am, src/md5/.cvsignore, src/md5/Makefile.am,
-	src/md5/Makefile.in, src/mod/.cvsignore, src/mod/Makefile.am,
+	src/egglib/Makefile.am, src/mod/.cvsignore, src/mod/Makefile.am,
 	src/mod/Makefile.in, src/mod/eggautoconf, src/mod/eggmod.m4,
 	src/mod/eggmod.sh, src/mod/module.h, src/mod/modvals.h,
 	src/mod/assoc.mod/.cvsignore, src/mod/assoc.mod/Makefile,
@@ -566,8 +574,7 @@
 
 2001-08-17 05:35  Jeff Fisher <guppy@techmonkeys.org>
 
-	* src/: dcc.c, tclmisc.c, md5/Makefile.in, md5/md5.h, md5/md5c.c,
-	mod/server.mod/servmsg.c:
+	* src/: dcc.c, tclmisc.c, mod/server.mod/servmsg.c:
 
 	Small change to how we send USER again -- since hostname/servername
 	are ignored, send dots in their place as do most other clients ..
@@ -646,8 +653,7 @@
 
 	* .cvsignore, doc/.cvsignore, scripts/.cvsignore, src/.cvsignore,
 	src/adns/.cvsignore, src/compat/.cvsignore, src/egglib/.cvsignore,
-	src/md5/.cvsignore, src/mod/.cvsignore,
-	src/mod/compress.mod/.cvsignore:
+	src/mod/.cvsignore, src/mod/compress.mod/.cvsignore:
 
 	Added .cvsignore files to ease committer's life.  
 
@@ -686,15 +692,14 @@
 	doc/settings/core.settings, help/core.help, src/Makefile.in,
 	src/eggdrop.h, src/lang.h, src/language.c, src/main.c, src/main.h,
 	src/mem.c, src/modules.c, src/proto.h, src/compat/Makefile.in,
-	src/md5/Makefile.in, src/mod/Makefile.in, src/mod/module.h,
-	src/mod/assoc.mod/Makefile, src/mod/blowfish.mod/Makefile,
-	src/mod/channels.mod/Makefile, src/mod/compress.mod/Makefile.in,
-	src/mod/console.mod/Makefile, src/mod/ctcp.mod/Makefile,
-	src/mod/filesys.mod/Makefile, src/mod/filesys.mod/filesys.h,
-	src/mod/irc.mod/Makefile, src/mod/notes.mod/Makefile,
-	src/mod/server.mod/Makefile, src/mod/share.mod/Makefile,
-	src/mod/transfer.mod/Makefile, src/mod/uptime.mod/Makefile,
-	src/mod/woobie.mod/Makefile:
+	src/mod/Makefile.in, src/mod/module.h, src/mod/assoc.mod/Makefile,
+	src/mod/blowfish.mod/Makefile, src/mod/channels.mod/Makefile,
+	src/mod/compress.mod/Makefile.in, src/mod/console.mod/Makefile,
+	src/mod/ctcp.mod/Makefile, src/mod/filesys.mod/Makefile,
+	src/mod/filesys.mod/filesys.h, src/mod/irc.mod/Makefile,
+	src/mod/notes.mod/Makefile, src/mod/server.mod/Makefile,
+	src/mod/share.mod/Makefile, src/mod/transfer.mod/Makefile,
+	src/mod/uptime.mod/Makefile, src/mod/woobie.mod/Makefile:
 
 	Good bye language.c, lang.h, we knew you so well yet hated you 
 
@@ -3230,12 +3235,6 @@
 
 	fabian: applied udef_inactivechan_fix patch 
 
-2000-09-13 19:44  Fabian Knittel <fknittel@gmx.de>
-
-	* src/md5/global.h:
-
-	fabian: forgot to remove md5/global.h 
-
 2000-09-12 15:34  Fabian Knittel <fknittel@gmx.de>
 
 	* src/compat/: strftime.c, strftime.h:
@@ -3264,16 +3263,15 @@
 	src/tclmisc.c, src/users.c, src/compat/Makefile.in,
 	src/compat/compat.h, src/compat/inet_aton.h, src/compat/memcpy.h,
 	src/compat/memset.h, src/compat/snprintf.h,
-	src/compat/strcasecmp.h, src/md5/Makefile.in,
-	src/mod/assoc.mod/Makefile, src/mod/blowfish.mod/Makefile,
-	src/mod/channels.mod/Makefile, src/mod/compress.mod/Makefile.in,
-	src/mod/console.mod/Makefile, src/mod/ctcp.mod/Makefile,
-	src/mod/filesys.mod/Makefile, src/mod/filesys.mod/filedb3.c,
-	src/mod/irc.mod/Makefile, src/mod/irc.mod/cmdsirc.c,
-	src/mod/irc.mod/irc.c, src/mod/irc.mod/msgcmds.c,
-	src/mod/notes.mod/Makefile, src/mod/notes.mod/notes.c,
-	src/mod/server.mod/Makefile, src/mod/share.mod/Makefile,
-	src/mod/transfer.mod/Makefile:
+	src/compat/strcasecmp.h, src/mod/assoc.mod/Makefile,
+	src/mod/blowfish.mod/Makefile, src/mod/channels.mod/Makefile,
+	src/mod/compress.mod/Makefile.in, src/mod/console.mod/Makefile,
+	src/mod/ctcp.mod/Makefile, src/mod/filesys.mod/Makefile,
+	src/mod/filesys.mod/filedb3.c, src/mod/irc.mod/Makefile,
+	src/mod/irc.mod/cmdsirc.c, src/mod/irc.mod/irc.c,
+	src/mod/irc.mod/msgcmds.c, src/mod/notes.mod/Makefile,
+	src/mod/notes.mod/notes.c, src/mod/server.mod/Makefile,
+	src/mod/share.mod/Makefile, src/mod/transfer.mod/Makefile:
 
 	fabian: strftime_compat patch 
 
@@ -3322,10 +3320,10 @@
 	* configure.in, doc/UPDATES1.5, src/Makefile.in, src/botnet.c,
 	src/dcc.c, src/dns.c, src/dns.h, src/eggdrop.h, src/main.h,
 	src/net.c, src/patch.h, src/tcldcc.c, src/tclmisc.c, src/userent.c,
-	src/compat/inet_aton.c, src/compat/memset.c, src/md5/Makefile.in,
-	src/md5/md5.h, src/md5/md5c.c, src/mod/compress.mod/compress.c,
-	src/mod/filesys.mod/filedb3.h, src/mod/filesys.mod/filesys.c,
-	src/mod/server.mod/server.c, src/mod/server.mod/servmsg.c:
+	src/compat/inet_aton.c, src/compat/memset.c,
+	src/mod/compress.mod/compress.c, src/mod/filesys.mod/filedb3.h,
+	src/mod/filesys.mod/filesys.c, src/mod/server.mod/server.c,
+	src/mod/server.mod/servmsg.c:
 
 	fabian: cleanup_types patch 
 
@@ -3782,7 +3780,7 @@
 
 	* Makefile.in, aclocal.m4, doc/Makefile.in, doc/UPDATES1.4,
 	scripts/Makefile.in, src/Makefile.in, src/patch.h,
-	src/compat/Makefile.in, src/md5/Makefile.in, src/mod/Makefile.in:
+	src/compat/Makefile.in, src/mod/Makefile.in:
 
 	1.4 resync, autoconf_shell_fix patch 
 
@@ -4475,13 +4473,13 @@
 
 	* doc/UPDATES1.5, src/Makefile.in, src/patch.h,
 	src/compat/Makefile.in, src/compat/inet_aton.c,
-	src/md5/Makefile.in, src/mod/Makefile.in,
-	src/mod/assoc.mod/Makefile, src/mod/blowfish.mod/Makefile,
-	src/mod/channels.mod/Makefile, src/mod/compress.mod/Makefile.in,
-	src/mod/console.mod/Makefile, src/mod/ctcp.mod/Makefile,
-	src/mod/filesys.mod/Makefile, src/mod/irc.mod/Makefile,
-	src/mod/notes.mod/Makefile, src/mod/server.mod/Makefile,
-	src/mod/share.mod/Makefile, src/mod/transfer.mod/Makefile:
+	src/mod/Makefile.in, src/mod/assoc.mod/Makefile,
+	src/mod/blowfish.mod/Makefile, src/mod/channels.mod/Makefile,
+	src/mod/compress.mod/Makefile.in, src/mod/console.mod/Makefile,
+	src/mod/ctcp.mod/Makefile, src/mod/filesys.mod/Makefile,
+	src/mod/irc.mod/Makefile, src/mod/notes.mod/Makefile,
+	src/mod/server.mod/Makefile, src/mod/share.mod/Makefile,
+	src/mod/transfer.mod/Makefile:
 
 	conf_make_fix7 patch 
 
@@ -4495,25 +4493,25 @@
 	src/patch.h, src/proto.h, src/tcl.c, src/tcldcc.c, src/tclhash.c,
 	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c,
 	src/compat/Makefile.in, src/compat/inet_aton.c,
-	src/compat/snprintf.c, src/md5/Makefile.in, src/md5/md5c.c,
-	src/mod/Makefile.in, src/mod/eggmod.m4, src/mod/module.h,
-	src/mod/assoc.mod/assoc.c, src/mod/blowfish.mod/blowfish.c,
-	src/mod/channels.mod/channels.c, src/mod/channels.mod/cmdschan.c,
-	src/mod/channels.mod/tclchan.c, src/mod/channels.mod/udefchan.c,
-	src/mod/channels.mod/userchan.c, src/mod/compress.mod/compress.c,
-	src/mod/compress.mod/configure, src/mod/console.mod/console.c,
-	src/mod/ctcp.mod/ctcp.c, src/mod/filesys.mod/filedb3.c,
-	src/mod/filesys.mod/files.c, src/mod/filesys.mod/filesys.c,
-	src/mod/filesys.mod/filesys.h, src/mod/irc.mod/chan.c,
-	src/mod/irc.mod/cmdsirc.c, src/mod/irc.mod/irc.c,
-	src/mod/irc.mod/msgcmds.c, src/mod/irc.mod/tclirc.c,
-	src/mod/notes.mod/cmdsnote.c, src/mod/notes.mod/notes.c,
-	src/mod/server.mod/cmdsserv.c, src/mod/server.mod/server.c,
-	src/mod/server.mod/servmsg.c, src/mod/server.mod/tclserv.c,
-	src/mod/share.mod/share.c, src/mod/share.mod/uf_features.c,
-	src/mod/transfer.mod/transfer.c, src/mod/woobie.mod/woobie.c,
-	src/compat/compat.h, src/compat/memcpy.c, src/compat/memcpy.h,
-	src/compat/memset.c, src/compat/memset.h, src/compat/strcasecmp.c,
+	src/compat/snprintf.c, src/mod/Makefile.in, src/mod/eggmod.m4,
+	src/mod/module.h, src/mod/assoc.mod/assoc.c,
+	src/mod/blowfish.mod/blowfish.c, src/mod/channels.mod/channels.c,
+	src/mod/channels.mod/cmdschan.c, src/mod/channels.mod/tclchan.c,
+	src/mod/channels.mod/udefchan.c, src/mod/channels.mod/userchan.c,
+	src/mod/compress.mod/compress.c, src/mod/compress.mod/configure,
+	src/mod/console.mod/console.c, src/mod/ctcp.mod/ctcp.c,
+	src/mod/filesys.mod/filedb3.c, src/mod/filesys.mod/files.c,
+	src/mod/filesys.mod/filesys.c, src/mod/filesys.mod/filesys.h,
+	src/mod/irc.mod/chan.c, src/mod/irc.mod/cmdsirc.c,
+	src/mod/irc.mod/irc.c, src/mod/irc.mod/msgcmds.c,
+	src/mod/irc.mod/tclirc.c, src/mod/notes.mod/cmdsnote.c,
+	src/mod/notes.mod/notes.c, src/mod/server.mod/cmdsserv.c,
+	src/mod/server.mod/server.c, src/mod/server.mod/servmsg.c,
+	src/mod/server.mod/tclserv.c, src/mod/share.mod/share.c,
+	src/mod/share.mod/uf_features.c, src/mod/transfer.mod/transfer.c,
+	src/mod/woobie.mod/woobie.c, src/compat/compat.h,
+	src/compat/memcpy.c, src/compat/memcpy.h, src/compat/memset.c,
+	src/compat/memset.h, src/compat/strcasecmp.c,
 	src/compat/strcasecmp.h:
 
 	conf_make_fix6 patch 
@@ -4540,22 +4538,21 @@
 	src/misc_file.h, src/modules.c, src/patch.h, src/proto.h,
 	src/tclegg.h, src/compat/Makefile.in, src/compat/README.snprintf,
 	src/compat/inet_aton.c, src/compat/inet_aton.h,
-	src/compat/snprintf.c, src/compat/snprintf.h, src/md5/Makefile.in,
-	src/mod/Makefile.in, src/mod/eggmod.m4, src/mod/module.h,
-	src/mod/assoc.mod/Makefile, src/mod/assoc.mod/assoc.c,
-	src/mod/blowfish.mod/Makefile, src/mod/blowfish.mod/blowfish.c,
-	src/mod/channels.mod/Makefile, src/mod/channels.mod/channels.c,
-	src/mod/compress.mod/Makefile.in, src/mod/compress.mod/configure,
-	src/mod/console.mod/Makefile, src/mod/console.mod/console.c,
-	src/mod/ctcp.mod/Makefile, src/mod/ctcp.mod/ctcp.c,
-	src/mod/filesys.mod/Makefile, src/mod/filesys.mod/filesys.c,
-	src/mod/irc.mod/Makefile, src/mod/irc.mod/chan.c,
-	src/mod/irc.mod/irc.c, src/mod/notes.mod/Makefile,
-	src/mod/notes.mod/notes.c, src/mod/server.mod/Makefile,
-	src/mod/server.mod/server.c, src/mod/share.mod/Makefile,
-	src/mod/share.mod/share.c, src/mod/transfer.mod/Makefile,
-	src/mod/transfer.mod/transfer.c, src/mod/woobie.mod/Makefile,
-	src/mod/woobie.mod/woobie.c:
+	src/compat/snprintf.c, src/compat/snprintf.h, src/mod/Makefile.in,
+	src/mod/eggmod.m4, src/mod/module.h, src/mod/assoc.mod/Makefile,
+	src/mod/assoc.mod/assoc.c, src/mod/blowfish.mod/Makefile,
+	src/mod/blowfish.mod/blowfish.c, src/mod/channels.mod/Makefile,
+	src/mod/channels.mod/channels.c, src/mod/compress.mod/Makefile.in,
+	src/mod/compress.mod/configure, src/mod/console.mod/Makefile,
+	src/mod/console.mod/console.c, src/mod/ctcp.mod/Makefile,
+	src/mod/ctcp.mod/ctcp.c, src/mod/filesys.mod/Makefile,
+	src/mod/filesys.mod/filesys.c, src/mod/irc.mod/Makefile,
+	src/mod/irc.mod/chan.c, src/mod/irc.mod/irc.c,
+	src/mod/notes.mod/Makefile, src/mod/notes.mod/notes.c,
+	src/mod/server.mod/Makefile, src/mod/server.mod/server.c,
+	src/mod/share.mod/Makefile, src/mod/share.mod/share.c,
+	src/mod/transfer.mod/Makefile, src/mod/transfer.mod/transfer.c,
+	src/mod/woobie.mod/Makefile, src/mod/woobie.mod/woobie.c:
 
 	configure_makefile_fix3 patch 
 
@@ -5175,12 +5172,11 @@
 
 	* doc/UPDATES1.4, src/main.c, src/misc.c, src/modules.c,
 	src/modules.h, src/net.c, src/patch.h, src/tclegg.h, src/userrec.c,
-	src/md5/global.h, src/mod/module.h,
-	src/mod/blowfish.mod/blowfish.c, src/mod/channels.mod/channels.c,
-	src/mod/irc.mod/irc.c, src/mod/notes.mod/notes.c,
-	src/mod/server.mod/server.c, src/mod/server.mod/servmsg.c,
-	src/mod/share.mod/share.c, src/mod/transfer.mod/transfer.c,
-	src/mod/transfer.mod/transfer.h:
+	src/mod/module.h, src/mod/blowfish.mod/blowfish.c,
+	src/mod/channels.mod/channels.c, src/mod/irc.mod/irc.c,
+	src/mod/notes.mod/notes.c, src/mod/server.mod/server.c,
+	src/mod/server.mod/servmsg.c, src/mod/share.mod/share.c,
+	src/mod/transfer.mod/transfer.c, src/mod/transfer.mod/transfer.h:
 
 	errors_fix, simialer to 1.4 
 
@@ -5222,7 +5218,7 @@
 2000-01-01 19:42  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.5, src/dns.c, src/main.c, src/modules.c,
-	src/patch.h, src/proto.h, src/md5/md5c.c:
+	src/patch.h, src/proto.h:
 
 	bzero_memset patch 
 
@@ -5508,8 +5504,7 @@
 	src/proto.h, src/rfc1459.c, src/tandem.h, src/tcl.c, src/tcldcc.c,
 	src/tclegg.h, src/tclhash.c, src/tclhash.h, src/tclmisc.c,
 	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c,
-	src/users.h, src/md5/Makefile.in, src/md5/global.h, src/md5/md5.h,
-	src/md5/md5c.c, src/mod/Makefile.in, src/mod/buildstatic,
+	src/users.h, src/mod/Makefile.in, src/mod/buildstatic,
 	src/mod/module.h, src/mod/modvals.h, src/mod/assoc.mod/Makefile,
 	src/mod/assoc.mod/assoc.c, src/mod/blowfish.mod/Makefile,
 	src/mod/blowfish.mod/bf_tab.h, src/mod/blowfish.mod/blowfish.c,
@@ -5622,7 +5617,7 @@
 1999-12-12 22:14  Fabian Knittel <fknittel@gmx.de>
 
 	* config.h.in, configure, configure.in, doc/UPDATES1.5,
-	src/eggdrop.h, src/md5/global.h, src/md5/md5c.c, src/patch.h:
+	src/eggdrop.h, src/patch.h:
 
 	32 bit usage made consistent - patch :) 
 
@@ -5907,8 +5902,8 @@
 	src/chanprog.c, src/cmds.c, src/dcc.c, src/dccutil.c, src/main.c,
 	src/main.h, src/mem.c, src/modules.c, src/patch.h, src/proto.h,
 	src/tcl.c, src/tcldcc.c, src/tclegg.h, src/tclhash.c,
-	src/tclmisc.c, src/tcluser.c, src/userent.c, src/md5/Makefile.in,
-	src/mod/Makefile.in, src/mod/module.h, src/mod/assoc.mod/Makefile,
+	src/tclmisc.c, src/tcluser.c, src/userent.c, src/mod/Makefile.in,
+	src/mod/module.h, src/mod/assoc.mod/Makefile,
 	src/mod/blowfish.mod/Makefile, src/mod/channels.mod/Makefile,
 	src/mod/channels.mod/tclchan.c, src/mod/channels.mod/userchan.c,
 	src/mod/console.mod/Makefile, src/mod/console.mod/console.c,
@@ -6032,9 +6027,8 @@
 	src/dns.c, src/eggdrop.h, src/main.c, src/main.h, src/mem.c,
 	src/misc.c, src/modules.c, src/net.c, src/patch.h, src/proto.h,
 	src/tandem.h, src/tcl.c, src/tcldcc.c, src/tcluser.c,
-	src/userent.c, src/userrec.c, src/users.c, src/md5/Makefile,
-	src/md5/Makefile.in, src/mod/Makefile, src/mod/Makefile.generic,
-	src/mod/Makefile.in, src/mod/buildstatic,
+	src/userent.c, src/userrec.c, src/users.c, src/mod/Makefile,
+	src/mod/Makefile.generic, src/mod/Makefile.in, src/mod/buildstatic,
 	src/mod/assoc.mod/Makefile, src/mod/assoc.mod/help/assoc.help,
 	src/mod/blowfish.mod/Makefile, src/mod/blowfish.mod/blowfish.c,
 	src/mod/channels.mod/Makefile, src/mod/channels.mod/channels.c,
@@ -6241,8 +6235,7 @@
 	src/net.c, src/patch.h, src/proto.h, src/rfc1459.c, src/rfc1459.h,
 	src/tandem.h, src/tcl.c, src/tcldcc.c, src/tclegg.h, src/tclhash.c,
 	src/tclhash.h, src/tclmisc.c, src/tcluser.c, src/userent.c,
-	src/userrec.c, src/users.c, src/users.h, src/md5/Makefile,
-	src/md5/global.h, src/md5/md5.h, src/md5/md5c.c, src/mod/Makefile,
+	src/userrec.c, src/users.c, src/users.h, src/mod/Makefile,
 	src/mod/Makefile.generic, src/mod/buildstatic, src/mod/module.h,
 	src/mod/modvals.h, src/mod/assoc.mod/Makefile,
 	src/mod/assoc.mod/assoc.c, src/mod/blowfish.mod/Makefile,
