@@ -2,7 +2,7 @@
  * assoc.c -- part of assoc.mod
  *   the assoc code, moved here mainly from botnet.c for module work
  *
- * $Id: assoc.c,v 1.23 2001/10/10 18:47:42 stdarg Exp $
+ * $Id: assoc.c,v 1.24 2001/10/14 20:04:34 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -256,7 +256,7 @@ static int tcl_killassoc STDVAR {
   else {
     chan = atoi(argv[1]);
     if ((chan < 1) || (chan > 199999)) {
-      Tcl_AppendResult(irp, "invalid channel #", NULL);
+      Tcl_AppendResult(irp, _("invalid channel #"), NULL);
       return TCL_ERROR;
     }
     kill_assoc(chan);
@@ -282,7 +282,7 @@ static int tcl_assoc STDVAR {
   }
   chan = atoi(argv[1]);
   if ((chan < 1) || (chan > 199999)) {
-    Tcl_AppendResult(irp, "invalid channel #", NULL);
+    Tcl_AppendResult(irp, _("invalid channel #"), NULL);
     return TCL_ERROR;
   }
   if (argc == 3) {
@@ -345,7 +345,7 @@ static void assoc_report(int idx, int details)
       count++;
       size += sizeof(assoc_t);
     }
-    dprintf(idx, "    %d assocs using %d bytes\n",
+    dprintf(idx, _("    %d assocs using %d bytes\n"),
 	    count, size);
   }
 }
@@ -403,7 +403,7 @@ char *start(Function * global_funcs)
   module_register(MODULE_NAME, assoc_table, 2, 0);
   if (!module_depend(MODULE_NAME, "eggdrop", 107, 0)) {
     module_undepend(MODULE_NAME);
-    return "This module requires eggdrop1.7.0 or later";
+    return _("This module requires eggdrop1.7.0 or later");
   }
   assoc = NULL;
   BT_dcc = find_bind_table2("dcc");
