@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.67 2002/02/07 22:19:05 wcc Exp $
+ * $Id: proto.h,v 1.68 2002/03/04 02:32:38 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -53,6 +53,7 @@ extern void (*encrypt_pass) (char *, char *);
 extern char *(*encrypt_string) (char *, char *);
 extern char *(*decrypt_string) (char *, char *);
 extern int (*match_noterej) (struct userrec *, char *);
+extern int (*storenote)(char *from, char *to, char *msg, int idx, char *who, int bufsize);
 #endif
 
 /* botcmd.c */

@@ -5,7 +5,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: botmsg.c,v 1.30 2002/02/07 22:19:04 wcc Exp $
+ * $Id: botmsg.c,v 1.31 2002/03/04 02:32:38 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -767,22 +767,13 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
   }
   if (idx == (-2))
     return NOTE_OK;		/* Error msg from a tandembot: don't store */
-  /* Call store note here */
-  Tcl_SetVar(interp, "_from", from, 0);
-  Tcl_SetVar(interp, "_to", to, 0);
-  Tcl_SetVar(interp, "_data", msg, 0);
-  simple_sprintf(ss, "%d", dcc[idx].sock);
-  Tcl_SetVar(interp, "_idx", ss, 0);
-  if (Tcl_VarEval(interp, "storenote", " $_from $_to $_data $_idx", NULL) == TCL_OK) {
-    if (interp->result && interp->result[0])
-      status = NOTE_FWD;
-    if (status == NOTE_AWAY) {
+  status = storenote(from, to, msg, dcc[idx].sock, NULL, 0);
+  if (status < 0) status = NOTE_ERROR;
+  else if (status == NOTE_AWAY) {
       /* User is away in all sessions -- just notify the user that a
        * message arrived and was stored. (only oldest session is notified.)
        */
       dprintf(iaway, "*** %s.\n", _("Note arrived for you"));
-    }
-    return status;
   }
-  return NOTE_ERROR;
+  return(status);
 }

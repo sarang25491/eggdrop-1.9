@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.7 2002/02/13 16:44:57 ite Exp $
+ * $Id: notes.c,v 1.8 2002/03/04 02:32:38 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -208,17 +208,16 @@ static void expire_notes()
 
 /* Add note to notefile.
  */
-static int tcl_storenote STDVAR
+static int storenote(char *argv1, char *argv2, char *argv3, int idx, char *who, int bufsize)
 {
   FILE *f;
-  int idx;
   char u[20], *f1, *to = NULL, work[1024];
   struct userrec *ur;
   struct userrec *ur2;
 
-  BADARGS(5, 5, " from to msg idx");
-  idx = findanyidx(atoi(argv[4]));
-  ur = get_user_by_handle(userlist, argv[2]);
+  idx = findanyidx(idx);
+  if (who && bufsize > 0) who[0] = 0;
+  ur = get_user_by_handle(userlist, argv2);
   if (ur && allow_fwd && (f1 = get_user(&USERENTRY_FWD, ur))) {
     char fwd[161], fwd2[161], *f2, *p, *q, *r;
     int ok = 1;
@@ -227,7 +226,7 @@ static int tcl_storenote STDVAR
      p = strchr(fwd, '@');
     if (p && !strcasecmp(p + 1, botnetnick)) {
       *p = 0;
-      if (!strcasecmp(fwd, argv[2]))
+      if (!strcasecmp(fwd, argv2))
 	/* They're forwarding to themselves on the same bot, llama's */
 	ok = 0;
       strcpy(fwd2, fwd);
@@ -239,19 +238,19 @@ static int tcl_storenote STDVAR
       if ((f2 = get_user(&USERENTRY_FWD, ur2))) {
 	strcpy(fwd2, f2);
 	splitc(fwd2, fwd2, '@');
-	if (!strcasecmp(fwd2, argv[2]))
+	if (!strcasecmp(fwd2, argv2))
 	/* They're forwarding to someone who forwards back to them! */
 	ok = 0;
       }
       p = NULL;
     }
-    if ((argv[1][0] != '@') && ((argv[3][0] == '<') || (argv[3][0] == '>')))
+    if ((argv1[0] != '@') && ((argv3[0] == '<') || (argv3[0] == '>')))
        ok = 0;			/* Probablly fake pre 1.3 hax0r */
 
     if (ok && (!p || in_chain(p + 1))) {
       if (p)
 	p++;
-      q = argv[3];
+      q = argv3;
       while (ok && q && (q = strchr(q, '<'))) {
 	q++;
 	if ((r = strchr(q, ' '))) {
@@ -262,15 +261,15 @@ static int tcl_storenote STDVAR
 	}
       }
       if (ok) {
-	if (p && strchr(argv[1], '@')) {
-	  simple_sprintf(work, "<%s@%s >%s %s", argv[2], botnetnick,
-			 argv[1], argv[3]);
+	if (p && strchr(argv1, '@')) {
+	  simple_sprintf(work, "<%s@%s >%s %s", argv2, botnetnick,
+			 argv1, argv3);
 	  simple_sprintf(u, "@%s", botnetnick);
 	  p = u;
 	} else {
-	  simple_sprintf(work, "<%s@%s %s", argv[2], botnetnick,
-			 argv[3]);
-	  p = argv[1];
+	  simple_sprintf(work, "<%s@%s %s", argv2, botnetnick,
+			 argv3);
+	  p = argv1;
 	}
       }
     } else
@@ -278,14 +277,14 @@ static int tcl_storenote STDVAR
     if (ok) {
       if ((add_note(fwd, p, work, idx, 0) == NOTE_OK) && (idx >= 0))
 	dprintf(idx, _("Not online; forwarded to %s.\n"), f1);
-      Tcl_AppendResult(irp, f1, NULL);
+      if (who) strncpy(who, f1, bufsize);
       to = NULL;
     } else {
-      strcpy(work, argv[3]);
-      to = argv[2];
+      strcpy(work, argv3);
+      to = argv2;
     }
   } else
-    to = argv[2];
+    to = argv2;
   if (to) {
     if (notefile[0] == 0) {
       if (idx >= 0)
@@ -302,25 +301,36 @@ static int tcl_storenote STDVAR
 	  dprintf(idx, "%s\n", _("Cant create notefile.  Sorry."));
 	putlog(LOG_MISC, "*", "%s", _("Notefile unreachable!"));
       } else {
-	char *p, *from = argv[1];
+	char *p, *from = argv1;
 	int l = 0;
 
 	chmod(notefile, userfile_perm);	/* Use userfile permissions. */
-	while ((argv[3][0] == '<') || (argv[3][0] == '>')) {
-	  p = newsplit(&(argv[3]));
+	while ((argv3[0] == '<') || (argv3[0] == '>')) {
+	  p = newsplit(&(argv3));
 	  if (*p == '<')
 	    l += simple_sprintf(work + l, "via %s, ", p + 1);
-	  else if (argv[1][0] == '@')
+	  else if (argv1[0] == '@')
 	    from = p + 1;
 	}
 	fprintf(f, "%s %s %lu %s%s\n", to, from, now,
-		l ? work : "", argv[3]);
+		l ? work : "", argv3);
 	fclose(f);
 	if (idx >= 0)
 	  dprintf(idx, "%s.\n", _("Stored message"));
       }
     }
   }
+}
+
+static int tcl_storenote STDVAR
+{
+  int idx;
+  char who[512];
+
+  BADARGS(5, 5, " from to msg idx");
+  idx = atoi(argv[4]);
+  storenote(argv[1], argv[2], argv[3], idx, who, sizeof(who));
+  Tcl_AppendResult(irp, who, NULL);
   return TCL_OK;
 }
 
@@ -1228,6 +1238,7 @@ char *start(Function * global_funcs)
   }
   add_hook(HOOK_HOURLY, (Function) notes_hourly);
   add_hook(HOOK_MATCH_NOTEREJ, (Function) match_note_ignore);
+  add_hook(HOOK_STORENOTE, (Function) storenote);
   add_tcl_ints(notes_ints);
   add_tcl_strings(notes_strings);
   add_tcl_commands(notes_tcls);

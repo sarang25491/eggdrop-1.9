@@ -1,7 +1,7 @@
 /*
  * modvals.h
  *
- * $Id: modvals.h,v 1.3 2002/02/07 22:19:00 wcc Exp $
+ * $Id: modvals.h,v 1.4 2002/03/04 02:32:37 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -53,6 +53,7 @@
 #define HOOK_DNS_IPBYHOST	113
 #define HOOK_ENCRYPT_STRING     114
 #define HOOK_DECRYPT_STRING     115
+#define HOOK_STORENOTE		116
 
 /* These are FIXED once they are in a release they STAY
  */

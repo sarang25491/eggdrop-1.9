@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.103 2002/02/24 08:14:36 guppy Exp $
+ * $Id: modules.c,v 1.104 2002/03/04 02:32:38 stdarg Exp $
  */
 /* 
  * Copyright (C) 1997 Robey Pointer
@@ -126,6 +126,7 @@ int (*ircncmp) (const char *, const char *, int) = _ircncmp;
 int (*irctolower) (int) = _irctolower;
 int (*irctoupper) (int) = _irctoupper;
 int (*match_noterej) (struct userrec *, char *) = (int (*)(struct userrec *, char *)) false_func;
+int (*storenote)(char *from, char *to, char *msg, int idx, char *who, int bufsize) = (int (*)(char *from, char *to, char *msg, int idx, char *who, int bufsize)) minus_func;
 
 module_entry *module_list;
 dependancy *dependancy_list = NULL;
@@ -779,6 +780,10 @@ void add_hook(int hook_num, Function func)
       if (match_noterej == (int (*)(struct userrec *, char *))false_func)
 	match_noterej = func;
       break;
+    case HOOK_STORENOTE:
+	if (func == NULL) storenote = (int (*)(char *from, char *to, char *msg, int idx, char *who, int bufsize)) minus_func;
+	else storenote = func;
+	break;
     }
 }
 
@@ -833,6 +838,9 @@ void del_hook(int hook_num, Function func)
       if (match_noterej == (int (*)(struct userrec *, char *))func)
 	match_noterej = false_func;
       break;
+    case HOOK_STORENOTE:
+	if (storenote == func) storenote = (int (*)(char *from, char *to, char *msg, int idx, char *who, int bufsize)) minus_func;
+	break;
     }
 }
 
