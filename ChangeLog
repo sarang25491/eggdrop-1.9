@@ -1,3 +1,10 @@
+2001-10-18 09:37  stdarg <stdarg@techmonkeys.org>
+
+	* src/logfile.c:
+
+	Forgot to reopen logfile after cycling.  I dunno why it keeps
+	thinking msprintf.h and tclscript.c are modified..  
+
 2001-10-18 09:26  stdarg <stdarg@techmonkeys.org>
 
 	* src/script.c:
