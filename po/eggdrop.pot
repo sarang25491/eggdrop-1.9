@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2001-12-01 04:00-0600\n"
+"POT-Creation-Date: 2001-12-02 04:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1187,7 +1187,7 @@ msgstr ""
 msgid "Already loaded."
 msgstr ""
 
-#: modules/channels/channels.c:555
+#: modules/channels/channels.c:560
 msgid "lurking"
 msgstr ""
 
@@ -1703,105 +1703,105 @@ msgstr ""
 msgid "Refused DCC chat (invalid port)"
 msgstr ""
 
-#: modules/irc/chan.c:261
+#: modules/irc/chan.c:263
 #, c-format
 msgid "Channel flood from %s -- kicking"
 msgstr ""
 
-#: modules/irc/chan.c:263
+#: modules/irc/chan.c:265
 msgid "flood"
-msgstr ""
-
-#: modules/irc/chan.c:282
-#, c-format
-msgid "JOIN flood from @%s!  Banning."
 msgstr ""
 
 #: modules/irc/chan.c:284
 #, c-format
+msgid "JOIN flood from @%s!  Banning."
+msgstr ""
+
+#: modules/irc/chan.c:286
+#, c-format
 msgid "NICK flood from @%s!  Banning."
 msgstr ""
 
-#: modules/irc/chan.c:297
+#: modules/irc/chan.c:299
 msgid "join flood"
 msgstr ""
 
-#: modules/irc/chan.c:300
+#: modules/irc/chan.c:302
 msgid "nick flood"
 msgstr ""
 
-#: modules/irc/chan.c:309
+#: modules/irc/chan.c:311
 msgid "mass kick, go sit in a corner"
 msgstr ""
 
-#: modules/irc/chan.c:316
+#: modules/irc/chan.c:318
 #, c-format
 msgid "Mass deop on %s by %s"
 msgstr ""
 
-#: modules/irc/chan.c:318
+#: modules/irc/chan.c:320
 msgid "Mass deop.  Go sit in a corner."
 msgstr ""
 
-#: modules/irc/chan.c:418 modules/irc/mode.c:658
+#: modules/irc/chan.c:420 modules/irc/mode.c:658
 msgid "banned: "
 msgstr ""
 
-#: modules/irc/chan.c:421 modules/irc/chan.c:490 modules/irc/chan.c:1661
+#: modules/irc/chan.c:423 modules/irc/chan.c:492 modules/irc/chan.c:1669
 msgid "You are banned"
 msgstr ""
 
-#: modules/irc/chan.c:747
+#: modules/irc/chan.c:753
 msgid "...and thank you for playing."
 msgstr ""
 
-#: modules/irc/chan.c:816
+#: modules/irc/chan.c:822
 msgid "Hmm, mode info from a channel Im not on"
 msgstr ""
 
-#: modules/irc/chan.c:1163
+#: modules/irc/chan.c:1171
 #, c-format
 msgid "Im on too many channels--cant join: %s"
 msgstr ""
 
-#: modules/irc/chan.c:1227 modules/irc/chan.c:1230
+#: modules/irc/chan.c:1235 modules/irc/chan.c:1238
 #, c-format
 msgid "Channel full--cant join: %s"
 msgstr ""
 
-#: modules/irc/chan.c:1255 modules/irc/chan.c:1258
+#: modules/irc/chan.c:1263 modules/irc/chan.c:1266
 #, c-format
 msgid "Channel invite only--cant join: %s"
 msgstr ""
 
-#: modules/irc/chan.c:1283 modules/irc/chan.c:1286
+#: modules/irc/chan.c:1291 modules/irc/chan.c:1294
 #, c-format
 msgid "Banned from channel--can't join: %s"
 msgstr ""
 
-#: modules/irc/chan.c:1311 modules/irc/chan.c:1319
+#: modules/irc/chan.c:1319 modules/irc/chan.c:1327
 #, c-format
 msgid "Bad key--cant join: %s"
 msgstr ""
 
-#: modules/irc/chan.c:1677
+#: modules/irc/chan.c:1685
 msgid "...and dont come back."
 msgstr ""
 
-#: modules/irc/chan.c:1942 modules/server/servmsg.c:680
+#: modules/irc/chan.c:1950 modules/server/servmsg.c:680
 #: modules/server/servmsg.c:828 modules/server/servmsg.c:840
 #, c-format
 msgid "Switching back to nick %s"
 msgstr ""
 
-#: modules/irc/chan.c:1946 modules/server/servmsg.c:683
+#: modules/irc/chan.c:1954 modules/server/servmsg.c:683
 #: modules/server/servmsg.c:832 modules/server/servmsg.c:844
 #, c-format
 msgid "Switching back to altnick %s"
 msgstr ""
 
-#: modules/irc/chan.c:1996 modules/irc/chan.c:2001 modules/irc/chan.c:2134
-#: modules/irc/chan.c:2139
+#: modules/irc/chan.c:2004 modules/irc/chan.c:2009 modules/irc/chan.c:2142
+#: modules/irc/chan.c:2147
 msgid "that was fun, lets do it again!"
 msgstr ""
 
@@ -1878,7 +1878,7 @@ msgstr ""
 msgid "want ops!"
 msgstr ""
 
-#: modules/irc/mode.c:376 modules/irc/mode.c:473 modules/irc/mode.c:1054
+#: modules/irc/mode.c:376 modules/irc/mode.c:473 modules/irc/mode.c:1059
 #, c-format
 msgid "* Mode change on %s for nonexistant %s!"
 msgstr ""
