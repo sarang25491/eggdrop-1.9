@@ -1,7 +1,7 @@
 /*
  * tclhash.h
  *
- * $Id: tclhash.h,v 1.21 2001/10/17 00:19:16 stdarg Exp $
+ * $Id: tclhash.h,v 1.22 2001/10/20 10:22:13 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -172,7 +172,7 @@ void add_builtins(tcl_bind_list_t *, cmd_t *);
 int check_validity(char *, Function);
 extern p_tcl_bind_list H_chat, H_act, H_bcst, H_chon, H_chof;
 extern p_tcl_bind_list H_bot, H_link;
-extern p_tcl_bind_list H_away, H_nkch, H_filt, H_disc;
+extern p_tcl_bind_list H_nkch, H_filt, H_disc;
 
 int check_bind(bind_table_t *table, const char *match, struct flag_record *_flags, ...);
 

@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.78 2001/10/19 07:33:58 stdarg Exp $
+ * $Id: modules.c,v 1.79 2001/10/20 10:22:13 stdarg Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -376,7 +376,7 @@ Function global_table[] =
   /* 184 - 187 */
   (Function) & H_link,		/* p_tcl_bind_list *			*/
   (Function) & H_disc,		/* p_tcl_bind_list *			*/
-  (Function) & H_away,		/* p_tcl_bind_list *			*/
+  (Function) 0,		/* p_tcl_bind_list *			*/
   (Function) & H_nkch,		/* p_tcl_bind_list *			*/
   /* 188 - 191 */
   (Function) & USERENTRY_BOTADDR,	/* struct user_entry_type *	*/

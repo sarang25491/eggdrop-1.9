@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.70 2001/10/19 06:01:21 guppy Exp $
+ * $Id: module.h,v 1.71 2001/10/20 10:22:14 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -299,7 +299,7 @@
 /* 184 - 187 */
 #define H_link (*(p_tcl_bind_list *)(global[184]))
 #define H_disc (*(p_tcl_bind_list *)(global[185]))
-#define H_away (*(p_tcl_bind_list *)(global[186]))
+/* 186: H_away -- UNUSED (oskar) */
 #define H_nkch (*(p_tcl_bind_list *)(global[187]))
 /* 188 - 191 */
 #define USERENTRY_BOTADDR (*(struct user_entry_type *)(global[188]))

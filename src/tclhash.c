@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.49 2001/10/19 01:55:05 tothwolf Exp $
+ * $Id: tclhash.c,v 1.50 2001/10/20 10:22:13 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -50,7 +50,7 @@ static bind_table_t *BT_dcc;
 p_tcl_bind_list		bind_table_list;
 p_tcl_bind_list		H_chat, H_act, H_bcst, H_chon, H_chof,
 			H_link, H_disc, H_chjn, H_chpt,
-			H_bot, H_time, H_nkch, H_away, H_note, H_filt;
+			H_bot, H_time, H_nkch, H_note, H_filt;
 
 static int builtin_2char();
 static int builtin_3char();
@@ -187,7 +187,6 @@ void init_old_binds(void)
   H_chat = add_bind_table("chat", HT_STACKABLE, builtin_chat);
   H_bot = add_bind_table("bot", 0, builtin_3char);
   H_bcst = add_bind_table("bcst", HT_STACKABLE, builtin_chat);
-  H_away = add_bind_table("away", HT_STACKABLE, builtin_chat);
   H_act = add_bind_table("act", HT_STACKABLE, builtin_chat);
   Context;
 }
@@ -1123,16 +1122,7 @@ void check_tcl_chpt(const char *bot, const char *hand, int sock, int chan)
 
 void check_tcl_away(const char *bot, int idx, const char *msg)
 {
-  char	u[11];
-
   check_bind(BT_away, bot, NULL, bot, idx, msg);
-
-  snprintf(u, sizeof u, "%d", idx);
-  Tcl_SetVar(interp, "_away1", (char *) bot, 0);
-  Tcl_SetVar(interp, "_away2", (char *) u, 0);
-  Tcl_SetVar(interp, "_away3", msg ? (char *) msg : "", 0);
-  check_tcl_bind(H_away, bot, 0, " $_away1 $_away2 $_away3",
-		 MATCH_MASK | BIND_STACKABLE);
 }
 
 void tell_binds(int idx, char *par)
