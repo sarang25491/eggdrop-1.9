@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.76 2001/10/14 23:13:33 stdarg Exp $
+ * $Id: servmsg.c,v 1.77 2001/10/16 11:42:30 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -807,6 +807,7 @@ static int gotnick(char *from, char *ignore, char *msg)
   fixcolon(msg);
   u = get_user_by_host(from);
   nick = strtok(from, "!");
+  check_queues(nick, msg);
   if (match_my_nick(nick)) {
     /* Regained nick! */
     strncpyz(botname, msg, NICKLEN);
