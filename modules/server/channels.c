@@ -18,14 +18,15 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.24 2004/07/23 21:58:55 darko Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.25 2004/07/29 19:48:12 darko Exp $";
  #endif
 
 #include "server.h"
 
 #define UHOST_CACHE_SIZE 47
 
-#define CHAN_INACTIVE 0x1
+#define CHAN_INACTIVE		0x1
+#define CHAN_CYCLE		0x2
 
 channel_t *channel_head = NULL;
 hash_table_t *uhost_cache_ht = NULL;
@@ -46,6 +47,9 @@ static int got_list_end(void *client_data, char *from_nick, char *from_uhost, us
 void uhost_cache_decref(const char *nick);
 void server_channel_destroy();
 static int chanfile_load(const char *filename);
+int channame_member_has_flag(const char *nick, const char *channame, unsigned char c);
+static int chanptr_member_has_flag(const char *nick, channel_t *chan, unsigned char c);
+static int channels_minutely();
 
 void server_channel_init()
 {
@@ -69,6 +73,8 @@ void server_channel_init()
 
 	chanset_defaults.builtin_bools = 1;
 	chanfile_load(server_config.chanfile);
+
+	bind_add_simple(BTN_EVENT, NULL, "minutely", channels_minutely);
 }
 
 static inline void free_member(channel_member_t *m)
@@ -84,24 +90,38 @@ static void free_channel_online_stuff(channel_t *chan)
 	channel_member_t *m, *next_mem;
 	int i;
 
-	free(chan->name);
-
 	for (m = chan->member_head; m; m = next_mem) {
 		next_mem = m->next;
 		uhost_cache_decref(m->nick);
 		free_member(m);
 	}
+	chan->member_head = NULL;
+	chan->nmembers = 0;
 
 	free(chan->topic);
+	chan->topic = NULL;
+
 	free(chan->topic_nick);
+	chan->topic_nick = NULL;
+
+	chan->topic_time = 0;
+
+	memset(&chan->mode, 0, sizeof(chan->mode));
+
+	chan->limit = 0;
+
 	free(chan->key);
+	chan->key = NULL;
+
 	for (i = 0; i < chan->nlists; i++)
 		clear_masklist(chan->lists+i);
 	free(chan->lists);
-	free(chan->args);
+	chan->lists = NULL;
+	chan->nlists = 0;
 
-	/* A bit hack-ish. Maybe we should clean it element by element. */
-	memset(chan, 0, (char*)&(chan->builtin_bools) - (char *)&(chan->next));
+	free(chan->args);
+	chan->args = NULL;
+	chan->nargs = 0;
 }
 
 /* Free online related settings for all cahnnels */
@@ -137,7 +157,9 @@ int destroy_channel_record(const char *chan_name)
 		channel_head = chan->next;
 	nchannels--;
 
+	free(chan->name);
 	free_channel_online_stuff(chan);
+
 /* FIXME - Free non IRC related structures, but we don't have any at this time */
 	free(chan);
 	return 0;
@@ -156,6 +178,8 @@ void server_channel_destroy()
 {
 	chanfile_save(server_config.chanfile);
 	destroy_all_channel_records();
+
+	bind_rem_simple(BTN_EVENT, NULL, "minutely", channels_minutely);
 }
 
 /* Find or create channel when passed 0 or 1 */
@@ -1007,7 +1031,8 @@ static int channel_set_bool(channel_t *chanptr, const char *setting)
 			fakechanptr->builtin_bools &= ~(1 << i);
 
 		if (i == 0) /* +/-inactive */
-			printserv(SERVER_NORMAL, "%s %s\r\n", *setting=='+'?"PART":"JOIN", fakechanptr->name);
+			printserv(SERVER_NORMAL, "%s %s %s\r\n", *setting=='+'?"PART":"JOIN",
+				fakechanptr->name, fakechanptr->key?fakechanptr->key:"");
 
 		fakechanptr = fakechanptr->next;
 	}
@@ -1171,6 +1196,55 @@ void update_channel_structures()
 	}
 }
 
+/* Do the stuff like need-* or cycle.. */
+static int channels_minutely()
+{
+	channel_t *chan;
+
+	if (!current_server.registered)
+		return 0;
+
+	for (chan = channel_head; chan; chan = chan->next) {
+		if (chan->status & CHANNEL_JOINED &&
+		   chan->nmembers == 1 &&
+		   !chanptr_member_has_flag(current_server.nick, chan, 'o') &&
+		   !chanptr_member_has_flag(current_server.nick, chan, 'h') &&
+		   !(chan->builtin_bools & CHAN_INACTIVE) &&
+		   chan->builtin_bools & CHAN_CYCLE
+		   ) {
+			putlog(LOG_MISC, "*", _("Cycling channel '%s' for ops."), chan->name);
+			printserv(SERVER_NORMAL, "PART %s\r\n", chan->name);
+			printserv(SERVER_NORMAL, "JOIN %s %s\r\n", chan->name,
+					chan->key?chan->key:"");
+		}
+	}
+	return 0;
+}
+
+static int chanptr_member_has_flag(const char *nick, channel_t *chan, unsigned char c)
+{
+	channel_member_t *m;
+
+	if (!chan)
+		return 0;
+
+	for (m = chan->member_head; m; m = m->next)
+		if (!(current_server.strcmp)(m->nick, nick))
+			return flag_match_single_char(&m->mode, c);
+
+	return 0;
+}
+
+int channame_member_has_flag(const char *nick, const char *channame, unsigned char c)
+{
+	channel_t *chan = NULL;
+
+	if (channel_lookup(channame, 0, &chan, NULL) == -1)
+		return 0;
+	else
+		return chanptr_member_has_flag(nick, chan, c);
+}
+
 static bind_list_t channel_raw_binds[] = {
 	/* WHO replies */
 	{NULL, "352", got352}, /* WHO reply */
@@ -1205,7 +1279,7 @@ static bind_list_t channel_raw_binds[] = {
    Do not add, there can only be 32 such settings */
 
 static const char *channel_builtin_bools[32] = {
-	"inactive", "", "", "",
+	"inactive", "cycle", "", "",
 	"", "", "", "",
 	"", "", "", "",
 	"", "", "", "",

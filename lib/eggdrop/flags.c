@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: flags.c,v 1.10 2004/07/06 17:13:12 lordares Exp $";
+static const char rcsid[] = "$Id: flags.c,v 1.11 2004/07/29 19:48:11 darko Exp $";
 #endif
 
 #include "flags.h"
@@ -127,6 +127,16 @@ int flag_match_partial(flags_t *left, flags_t *right)
 	builtin = left->builtin & right->builtin;
 	udef = left->udef & right->udef;
 	return (builtin || udef);
+}
+
+int flag_match_single_char(flags_t *f, unsigned char c)
+{
+	if (c >= 'a' && c <= 'z')
+		return f->builtin & flagmap[c];
+	else if (c >= 'A' && c <= 'Z')
+		return f->udef & flagmap[c];
+	else
+		return 0;
 }
 
 /* FIXME - This will have to be constantly revised as we add more flags.

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: channels.h,v 1.13 2004/07/23 21:58:55 darko Exp $
+ * $Id: channels.h,v 1.14 2004/07/29 19:48:12 darko Exp $
  */
 
 #ifndef _EGG_MOD_SERVER_CHANNELS_H_
@@ -100,7 +100,7 @@ extern int destroy_channel_record(const char *chan_name);
 extern int channel_set(channel_t *chanptr, const char *setting, const char *value);
 extern int chanfile_save(const char *fname);
 extern int channel_info(partymember_t *p, const char *channame);
-
+extern int channame_member_has_flag(const char *nick, const char *channame, unsigned char c);
 extern int channel_lookup(const char *chan_name, int create, channel_t **chanptr, channel_t **prevptr);
 extern char *uhost_cache_lookup(const char *nick);
 extern void uhost_cache_fillin(const char *nick, const char *uhost, int addref);
