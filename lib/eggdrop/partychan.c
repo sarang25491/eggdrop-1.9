@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partychan.c,v 1.9 2003/12/17 07:52:14 wcc Exp $";
+static const char rcsid[] = "$Id: partychan.c,v 1.10 2004/06/15 11:24:46 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -143,10 +143,14 @@ int partychan_ison(partychan_t *chan, partymember_t *p)
 {
 	int i;
 
+	egg_assert_val (chan != NULL, 0);
+	egg_assert_val (p != NULL, 0);
+	
 	for (i = 0; i < chan->nmembers; i++) {
 		if (chan->members[i].flags & PARTY_DELETED) continue;
 		if (chan->members[i].p == p) return(1);
 	}
+		
 	return(0);
 }
 
@@ -200,7 +204,8 @@ int partychan_join(partychan_t *chan, partymember_t *p)
 	for (i = 0; i < chan->nmembers; i++) {
 		mem = chan->members+i;
 		if (mem->flags & PARTY_DELETED || mem->p->flags & PARTY_DELETED) continue;
-		if (mem->p->handler->on_join) (mem->p->handler->on_join)(mem->p->client_data, chan, p);
+		if (mem->p->handler && mem->p->handler->on_join)
+			(mem->p->handler->on_join)(mem->p->client_data, chan, p);
 	}
 
 	return(0);
@@ -265,7 +270,8 @@ int partychan_part(partychan_t *chan, partymember_t *p, const char *text)
 	for (i = 0; i < chan->nmembers; i++) {
 		mem = chan->members+i;
 		if (mem->flags & PARTY_DELETED || mem->p->flags & PARTY_DELETED) continue;
-		if (mem->p->handler->on_part) (mem->p->handler->on_part)(mem->p->client_data, chan, p, text, len);
+		if (mem->p->handler && mem->p->handler->on_part)
+			(mem->p->handler->on_part)(mem->p->client_data, chan, p, text, len);
 	}
 
 	return(0);
@@ -302,7 +308,8 @@ int partychan_msg(partychan_t *chan, partymember_t *src, const char *text, int l
 	for (i = 0; i < chan->nmembers; i++) {
 		mem = chan->members+i;
 		if (mem->flags & PARTY_DELETED || mem->p->flags & PARTY_DELETED) continue;
-		if (mem->p->handler->on_chanmsg) (mem->p->handler->on_chanmsg)(mem->p->client_data, chan, src, text, len);
+		if (mem->p->handler && mem->p->handler->on_chanmsg)
+			(mem->p->handler->on_chanmsg)(mem->p->client_data, chan, src, text, len);
 	}
 	return(0);
 }

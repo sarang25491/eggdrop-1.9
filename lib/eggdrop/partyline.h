@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: partyline.h,v 1.12 2003/12/17 07:39:14 wcc Exp $
+ * $Id: partyline.h,v 1.13 2004/06/15 11:24:46 wingman Exp $
  */
 
 #ifndef _EGG_PARTYLINE_H_
@@ -25,6 +25,11 @@
 /* Flags for partyline. */
 #define PARTY_DELETED	1
 #define PARTY_SELECTED	2
+
+/* Terminal user settings */
+#define PARTY_TERMINAL_NICK	"HQ"
+#define PARTY_TERMINAL_USER	"HQ"
+#define PARTY_TERMINAL_HOST	"0.0.0.0"
 
 struct partyline_event;
 struct partychan;

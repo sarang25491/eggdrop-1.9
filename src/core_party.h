@@ -1,6 +1,6 @@
-/* core_binds.h: header for core_binds.c
+/* core_party.h: header for core_party.c
  *
- * Copyright (C) 2001, 2002, 2003, 2004 Eggheads Development Team
+ * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,17 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: core_binds.h,v 1.10 2004/06/15 11:24:46 wingman Exp $
+ * $Id: core_party.h,v 1.1 2004/06/15 11:24:46 wingman Exp $
  */
 
-#ifndef _EGG_CORE_BINDS_H_
-#define _EGG_CORE_BINDS_H_
+#ifndef _EGG_CORE_PARTY_H
+#define _EGG_CORE_PARTY_H
 
-void core_binds_init();
-void check_bind_time(struct tm *tm);
-void check_bind_init (void);
-void check_bind_shutdown (void);
-void check_bind_secondly();
-void check_bind_status(partymember_t *p, const char *text);
+void	core_party_init			(void);
+int	core_party_terminal_mode	(void);
 
-#endif /* !_EGG_CORE_BINDS_H_ */
+#endif /* !_EGG_MAIN_H */

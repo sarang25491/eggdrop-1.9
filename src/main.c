@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.166 2004/01/13 15:56:02 stdarg Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.167 2004/06/15 11:24:46 wingman Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -55,12 +55,13 @@ static const char rcsid[] = "$Id: main.c,v 1.166 2004/01/13 15:56:02 stdarg Exp 
 #endif
 
 #include "lib/compat/compat.h"
-#include "main.h"
 #include "debug.h"
 #include "core_config.h"
-#include "bg.h"
+#include "core_party.h"
 #include "core_binds.h"
 #include "logfile.h"
+#include "bg.h"
+#include "main.h"
 
 #ifdef STOP_UAC /* OSF/1 complains a lot */
 #  include <sys/sysinfo.h>
@@ -94,7 +95,6 @@ char version[81];
 static int lastmin = 99;
 static struct tm nowtm;
 
-void core_party_init();
 void core_config_init();
 
 void fatal(const char *s, int recoverable)
@@ -543,6 +543,9 @@ int main(int argc, char **argv)
 	timer_create_repeater(&howlong, "main loop", core_secondly);
 
 	putlog(LOG_DEBUG, "*", "Entering main loop.");
+	
+	check_bind_init ();
+	
 	while (1) {
 		timer_update_now(&egg_timeval_now);
 		now = egg_timeval_now.sec;
@@ -553,4 +556,6 @@ int main(int argc, char **argv)
 		sockbuf_update_all(timeout);
 		garbage_run();
 	}
+	
+	check_bind_shutdown ();
 }

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partymember.c,v 1.9 2003/12/17 07:52:14 wcc Exp $";
+static const char rcsid[] = "$Id: partymember.c,v 1.10 2004/06/15 11:24:46 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -160,7 +160,7 @@ int partymember_delete(partymember_t *p, const char *text)
 	}
 	p->nchannels = 0;
 
-	if (p->handler->on_quit) {
+	if (p->handler && p->handler->on_quit) {
 		(p->handler->on_quit)(p->client_data, p, text, strlen(text));
 	}
 	return(0);
@@ -175,7 +175,8 @@ int partymember_set_nick(partymember_t *p, const char *nick)
 
 	oldnick = p->nick;
 	p->nick = strdup(nick);
-	if (p->handler->on_nick) (p->handler->on_nick)(p->client_data, p, oldnick, nick);
+	if (p->handler && p->handler->on_nick)
+		(p->handler->on_nick)(p->client_data, p, oldnick, nick);
 	p->flags |= PARTY_SELECTED;
 	common = partychan_get_common(p);
 	if (common) {
@@ -245,7 +246,8 @@ int partymember_msg(partymember_t *p, partymember_t *src, const char *text, int 
 	if (!p || p->flags & PARTY_DELETED) return(-1);
 
 	if (len < 0) len = strlen(text);
-	if (p->handler->on_privmsg) (p->handler->on_privmsg)(p->client_data, p, src, text, len);
+	if (p->handler && p->handler->on_privmsg)
+		(p->handler->on_privmsg)(p->client_data, p, src, text, len);
 	return(0);
 }
 

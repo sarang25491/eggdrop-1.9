@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: logfile.c,v 1.37 2003/12/17 08:12:43 wcc Exp $";
+static const char rcsid[] = "$Id: logfile.c,v 1.38 2004/06/15 11:24:46 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -41,7 +41,8 @@ typedef struct log_b {
 	FILE *fp;
 } log_t;
 
-extern int backgrd, use_stderr;
+extern int backgrd, use_stderr, term_z;
+static int terminal_enabled = 0;
 extern time_t now;
 
 static log_t *log_list_head = NULL; /* Linked list of logfiles. */
@@ -211,6 +212,7 @@ static int on_putlog(int flags, const char *chan, const char *text, int len)
 		if (!(log->mask & flags)) continue;
 		if (chan[0] != '*' && log->chname[0] != '*' && irccmp(chan, log->chname)) continue;
 
+		
 		/* If it's a repeat message, don't write it again. */
 		if (!strcasecmp(text, log->last_msg)) {
 			log->repeats++;
@@ -231,7 +233,24 @@ static int on_putlog(int flags, const char *chan, const char *text, int len)
 		fprintf(log->fp, "%s%s\n", timestamp, text);
 	}
 
-	if (!backgrd || use_stderr) printf("%s%s\n", timestamp, text);
+	if (!backgrd || use_stderr) {
+	
+		if (term_z) {
+			/* check if HQ is on console. If yes we disable
+			 * output to stdout since otherwise everything would
+			 * be printed out twice. */		
+			if (!terminal_enabled) {
+				terminal_enabled = (
+					partymember_lookup_nick (PARTY_TERMINAL_NICK) != NULL);
+			}
+			if (terminal_enabled)
+				return 0;
+
+		}
+		
+		fprintf (stdout, "%s%s\n", timestamp, text);
+	}
+		
 	return(0);
 }
 

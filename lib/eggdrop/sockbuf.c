@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: sockbuf.c,v 1.8 2004/01/10 01:43:18 stdarg Exp $";
+static const char rcsid[] = "$Id: sockbuf.c,v 1.9 2004/06/15 11:24:46 wingman Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -131,8 +131,11 @@ static int sockbuf_real_write(int idx, const char *data, int len)
 	sockbuf_t *sbuf = &sockbufs[idx];
 
 	/* If it's not blocked already, write as much as we can. */
-	if (!(sbuf->flags & SOCKBUF_BLOCK)) {
-		nbytes = write(sbuf->sock, data, len);
+	if (!(sbuf->flags & SOCKBUF_BLOCK)) {		
+		if (sbuf->sock == fileno (stdin))
+			nbytes = write (fileno (stdout), data, len);
+		else
+			nbytes = write (sbuf->sock, data, len);
 		if (nbytes < 0) {
 			if (errno != EAGAIN) {
 				sockbuf_got_eof(idx, errno);

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: eggdrop.h,v 1.28 2004/06/14 23:42:11 wingman Exp $
+ * $Id: eggdrop.h,v 1.29 2004/06/15 11:24:46 wingman Exp $
  */
 
 #ifndef _EGG_EGGDROP_H_
@@ -72,7 +72,7 @@
 #define egg_assert(test) \
 		do { \
 			if (!(test)) { \
-				putlog (LOG_DEBUG, "*", _("Assertion failed at %s in line %i: %s"), \
+				fprintf (stderr, _("*** Assertion failed at %s in line %i: %s\n"), \
 					__FILE__, __LINE__, # test); \
 				return; \
 			} \
@@ -81,7 +81,7 @@
 #define egg_assert_val(test, val) \
 		do { \
 			if (!(test)) { \
-                                putlog (LOG_DEBUG, "*", _("Assertion failed at %s in line %i: %s"), \
+                                fprintf (stderr, _("*** Assertion failed at %s in line %i: %s\n"), \
                                         __FILE__, __LINE__, # test); \
 				return val; \
 			} \

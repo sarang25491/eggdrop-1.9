@@ -21,13 +21,25 @@
 
 static bind_table_t *BT_time = NULL,
 	*BT_secondly = NULL,
-	*BT_status = NULL;
+	*BT_status = NULL, *BT_init = NULL, *BT_shutdown = NULL;
 
 void core_binds_init()
 {
+	BT_init = bind_table_add ("init", 0, "", MATCH_NONE, BIND_STACKABLE);
+	BT_shutdown = bind_table_add ("shutdown", 0, "", MATCH_NONE, BIND_STACKABLE);
 	BT_time = bind_table_add("time", 5, "iiiii", MATCH_MASK, BIND_STACKABLE);
 	BT_secondly = bind_table_add("secondly", 0, "", MATCH_NONE, BIND_STACKABLE);
 	BT_status = bind_table_add("status", 2, "Ps", MATCH_NONE, BIND_STACKABLE);
+}
+
+void check_bind_init(void)
+{
+	bind_check (BT_init, NULL, NULL);
+}
+
+void check_bind_shutdown (void)
+{
+	bind_check (BT_shutdown, NULL, NULL);
 }
 
 void check_bind_time(struct tm *tm)

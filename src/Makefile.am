@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.48 2004/06/14 14:45:53 wingman Exp $
+# $Id: Makefile.am,v 1.49 2004/06/15 11:24:46 wingman Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 bindir			= $(exec_prefix)
@@ -17,7 +17,7 @@ bin_PROGRAMS		= eggdrop
 eggdrop_SOURCES		= bg.c bg.h \
 			core_binds.c core_binds.h \
 			core_config.c core_config.h \
-			core_party.c \
+			core_party.c core_party.h \
 			debug.h \
 			logfile.c logfile.h \
 			main.c main.h
