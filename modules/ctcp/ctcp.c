@@ -2,7 +2,7 @@
  * ctcp.c -- part of ctcp.mod
  *   all the ctcp handling (except DCC, it's special ;)
  *
- * $Id: ctcp.c,v 1.1 2001/10/27 16:34:49 ite Exp $
+ * $Id: ctcp.c,v 1.2 2001/12/10 03:22:28 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -148,9 +148,7 @@ static int ctcp_CHAT(char *nick, char *uhost, struct userrec *u, char *object,
 {
   int atr = u ? u->flags : 0, i;
 
-  if ((atr & (USER_PARTY | USER_XFER)) ||
-      ((atr & USER_OP) && !require_p)) {
-
+  if ((atr & (USER_PARTY | USER_XFER))) {
     for (i = 0; i < dcc_total; i++) {
       if ((dcc[i].type->flags & DCT_LISTEN) &&
 	  (!strcmp(dcc[i].nick, "(telnet)") ||

@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.88 2001/12/10 02:38:57 guppy Exp $
+ * $Id: modules.c,v 1.89 2001/12/10 03:22:29 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -50,7 +50,7 @@ extern int	 noshare, dcc_total, egg_numver, userfile_perm,
 			 ignore_time, learn_users,
 			 debug_output, gban_total, make_userfile,
 			 gexempt_total, ginvite_total, default_flags,
-			 require_p, max_dcc, share_greet, password_timeout,
+			 max_dcc, share_greet, password_timeout,
 			 use_invites, use_exempts, force_expire, do_restart,
 			 protect_readonly, reserved_port_min, reserved_port_max;
 extern time_t now, online_since;
@@ -268,7 +268,7 @@ Function global_table[] =
   (Function) & share_greet,	 /* int					*/
   /* 100 - 103 */
   (Function) & max_dcc,		 /* int					*/
-  (Function) & require_p,	 /* int					*/
+  (Function) 0,
   (Function) & ignore_time,	 /* int					*/
   (Function) 0,
   /* 104 - 107 */

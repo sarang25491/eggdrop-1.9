@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.4 2001/12/10 02:38:57 guppy Exp $
+ * $Id: module.h,v 1.5 2001/12/10 03:22:28 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -191,7 +191,7 @@
 #define share_greet (*(int *)global[99])
 /* 100 - 103 */
 #define max_dcc (*(int *)global[100])
-#define require_p (*(int *)global[101])
+/* #define require_p (*(int *)global[101]) */
 #define ignore_time (*(int *)(global[102]))
 /* #define use_console_r (*(int *)(global[103])) */
 /* 104 - 107 */

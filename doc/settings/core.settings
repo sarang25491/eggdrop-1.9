@@ -297,11 +297,6 @@ set max-dcc 50
     increase this later, but never decrease it.
 
 
-set require-p 0
-    Define here if +o user still need the +p flag to dcc the bot.
-    Valid settings are 0 for OFF and 1 ON.
-
-
 set dcc-flood-thr 3
     Specify here the number of lines from a user on the partyline (dcc, telnet)
     before they are considered to be flooding (and therefore get booted)

@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.65 2001/12/10 02:38:57 guppy Exp $
+ * $Id: dcc.c,v 1.66 2001/12/10 03:22:29 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -50,8 +50,6 @@ struct dcc_t *dcc = NULL;	/* DCC list				   */
 int	dcc_total = 0;		/* Total dcc's				   */
 char	tempdir[121] = "";	/* Temporary directory
 				   (default: current directory)		   */
-int	require_p = 0;		/* Require 'p' access to get on the
-				   party line?				   */
 int	learn_users = 0;	/* Allow people to introduce themselves    */
 int	stealth_telnets = 0;	/* Be paranoid? <cybah>			   */
 char	network[41] = "unknown-net"; /* Name of the IRC network you're on  */
@@ -1304,10 +1302,6 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
     dprintf(idx, "\nEnter the nickname you would like to use.\n");
     return;
   }
-  if (chan_op(fr)) {
-    if (!require_p)
-      ok = 1;
-  }
   if (!ok && (glob_party(fr) || glob_bot(fr)))
     ok = 1;
   if (!ok && glob_xfer(fr)) {
@@ -1389,12 +1383,7 @@ static void dcc_telnet_pass(int idx, int atr)
   dcc[idx].timeval = now;
   if (glob_botmast(fr))
     ok = 1;
-  else if (chan_op(fr)) {
-    if (!require_p)
-      ok = 1;
-    else if (glob_party(fr))
-      ok = 1;
-  } else if (glob_party(fr)) {
+  else if (glob_party(fr)) {
     ok = 1;
     dcc[idx].status |= STAT_PARTY;
   }
@@ -1944,9 +1933,7 @@ void dcc_telnet_got_ident(int i, char *host)
     /* Not a user or +p & require p OR +o */
     if (!u)
       ok = 0;
-    else if (require_p && !(u->flags & USER_PARTY))
-      ok = 0;
-    else if (!require_p && !(u->flags & USER_OP))
+    else if (!(u->flags & USER_PARTY))
       ok = 0;
     if (!ok && u && (u->flags & USER_BOT))
       ok = 1;

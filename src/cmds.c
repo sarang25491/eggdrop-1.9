@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.80 2001/12/09 21:38:12 guppy Exp $
+ * $Id: cmds.c,v 1.81 2001/12/10 03:22:29 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -33,7 +33,7 @@ extern struct chanset_t	*chanset;
 extern struct dcc_t	*dcc;
 extern struct userrec	*userlist;
 extern int		 dcc_total, remote_boots, backgrd, make_userfile,
-			 do_restart, conmask, require_p, strict_host,
+			 do_restart, conmask, strict_host,
 			 term_z, con_chan;
 extern unsigned long	 otraffic_irc, otraffic_irc_today,
 			 itraffic_irc, itraffic_irc_today,
@@ -1327,12 +1327,10 @@ int check_dcc_attrs(struct userrec *u, int oatr)
 	  !(u->flags & USER_MASTER))
 	stat |= STAT_PARTY;
       if ((stat & STAT_CHAT) && !(u->flags & USER_PARTY) &&
-	  !(u->flags & USER_MASTER) &&
-	  (!(u->flags & USER_OP) || require_p))
+	  !(u->flags & USER_MASTER))
 	stat &= ~STAT_CHAT;
       if ((dcc[i].type->flags & DCT_FILES) && !(stat & STAT_CHAT) &&
-	  ((u->flags & USER_MASTER) || (u->flags & USER_PARTY) ||
-	   ((u->flags & USER_OP) && !require_p)))
+	  ((u->flags & USER_MASTER) || (u->flags & USER_PARTY)))
 	stat |= STAT_CHAT;
       dcc[i].status = stat;
       /* Check if they no longer have access to wherever they are.
@@ -2087,8 +2085,7 @@ static void cmd_su(struct userrec *u, int idx, char *par)
     dprintf(idx, "You cannot currently double .su, try .su'ing directly\n");
   else {
     get_user_flagrec(u, &fr, NULL);
-    if ((!glob_party(fr) && (require_p || !(glob_op(fr) || chan_op(fr)))) &&
-	!(atr & USER_BOTMAST))
+    if (!glob_party(fr) && !(atr & USER_BOTMAST))
       dprintf(idx, "No party line access permitted for %s.\n", par);
     else {
       correct_handle(par);

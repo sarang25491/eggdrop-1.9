@@ -50,10 +50,6 @@ see also: set save-users-at
    uses for this.
 
 see also: set firewall
-%{help=set require-p}%{+n}
-###  %bset require-p%b <0/1>
-   specifies whether users with 'o' (global op) also need
-   the 'p' flag to join the party line.
 %{help=set keep-all-logs}%{+n}
 ###  %bset keep-all-logs%b <0/1>
    specifies whether to keep logs older than 48 hours or not.  if

@@ -2,7 +2,7 @@
  * flags.c -- handles:
  *   all the flag matching/conversion functions in one neat package :)
  *
- * $Id: flags.c,v 1.23 2001/10/19 06:01:21 guppy Exp $
+ * $Id: flags.c,v 1.24 2001/12/10 03:22:29 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -26,7 +26,7 @@
 #include "main.h"
 
 
-extern int		 debug_output, require_p, noshare, allow_dk_cmds;
+extern int		 debug_output, noshare, allow_dk_cmds;
 extern struct dcc_t	*dcc;
 
 int logmodes(char *s)
@@ -539,11 +539,6 @@ int flagrec_ok(struct flag_record *req,
       }
       return 1;
     }
-    /* The +n/+m checks arent needed anymore since +n/+m
-     * automatically add lower flags
-     */
-    if (!require_p && ((hav & USER_OP) || (have->chan & USER_OWNER)))
-      hav |= USER_PARTY;
     if (hav & req->global)
       return 1;
     if (have->chan & req->chan)

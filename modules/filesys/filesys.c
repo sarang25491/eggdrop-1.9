@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.2 2001/10/31 04:02:50 tothwolf Exp $
+ * $Id: filesys.c,v 1.3 2001/12/10 03:22:29 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -780,7 +780,7 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
   param = newsplit(&msg);
   if (dcc_total == max_dcc) {
     putlog(LOG_MISC, "*", _("DCC connections full: %s %s (%s!%s)"), "CHAT(file)", param, nick, from);
-  } else if (glob_party(fr) || (!require_p && chan_op(fr)))
+  } else if (glob_party(fr))
     return 0;			/* Allow ctcp.so to pick up the chat */
   else if (!glob_xfer(fr)) {
     if (!quiet_reject)

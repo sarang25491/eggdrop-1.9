@@ -114,7 +114,6 @@ save-users-at
 switch-logfiles-at
 connect-timeout
 reserved-portrange
-require-p
 keep-all-logs
 firewall
 console

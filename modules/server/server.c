@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.4 2001/12/10 02:50:55 guppy Exp $
+ * $Id: server.c,v 1.5 2001/12/10 03:22:29 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1402,7 +1402,7 @@ static int ctcp_DCC_CHAT(char *nick, char *from, struct userrec *u,
     if (!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("Sorry, too many DCC connections."));
     putlog(LOG_MISC, "*", _("DCC connections full: %s %s (%s!%s)"), "CHAT", param, nick, from);
-  } else if (!(glob_party(fr) || (!require_p && chan_op(fr)))) {
+  } else if (!glob_party(fr)) {
     if (glob_xfer(fr))
       return 0;			/* Allow filesys to pick up the chat */
     if (!quiet_reject)
