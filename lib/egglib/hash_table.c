@@ -4,6 +4,11 @@
 
 #include "hash_table.h"
 
+static unsigned int my_string_hash(void *key);
+static unsigned int my_int_hash(void *key);
+static unsigned int my_mixed_hash (void *key);
+static int my_int_cmp(const void *left, const void *right);
+
 hash_table_t *hash_table_create(hash_table_hash_alg alg, hash_table_cmp_alg cmp, int nrows, int flags)
 {
 	hash_table_t *ht;
@@ -132,6 +137,7 @@ int hash_table_walk(hash_table_t *ht, hash_table_node_func callback, void *param
 			last = entry;
 		}
 	}
+	return (0);
 }
 
 static int my_int_cmp(const void *left, const void *right)

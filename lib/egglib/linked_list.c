@@ -116,7 +116,6 @@ int linked_list_cursor_find(linked_list_cursor_t *cursor, void *key)
 {
 	linked_list_node_t *node;
 	int diff;
-	int dir, lastdir;
 
 	if (cursor->list->flags & LINKED_LIST_SORTED) {
 		node = cursor->node;

@@ -79,7 +79,6 @@ int registry_add_table(registry_entry_t *entries)
 
 int registry_add_simple_chains(registry_simple_chain_t *entries)
 {
-	FILE *fp;
 	registry_entry_t *entry;
 	char *class;
 
@@ -164,7 +163,6 @@ int registry_unlookup(const char *class, const char *name, Function *funcptr, vo
 
 static int update_listeners(registry_internal_entry_t *internal)
 {
-	registry_entry_t *entry;
 	int i;
 
 	if (internal->nmain != 0 && internal->nchains == 0) {
@@ -188,7 +186,7 @@ static int update_listeners(registry_internal_entry_t *internal)
 static int arbitrator(registry_internal_entry_t *internal, ...)
 {
 	registry_entry_t *entry;
-	int i, retval;
+	int i;
 	int *al = (int *)&internal;
 
 	/* Call chains backwards (first-in-last-out). */

@@ -36,10 +36,4 @@ int hash_table_replace(hash_table_t *ht, void *key, void *data);
 int hash_table_find(hash_table_t *ht, void *key, void *dataptr);
 int hash_table_delete(hash_table_t *ht, void *key);
 
-static unsigned int my_string_hash(void *key);
-static unsigned int my_int_hash(void *key);
-static unsigned int my_mixed_hash (void *key);
-
-static int my_int_cmp(const void *left, const void *right);
-
 #endif /* _HASH_TABLE_H_ */

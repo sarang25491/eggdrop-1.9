@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "base64.h"
 
 static char *b64chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
