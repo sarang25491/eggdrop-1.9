@@ -1,6 +1,6 @@
 dnl mpatrol
 dnl A library for controlling and tracing dynamic memory allocations.
-dnl Copyright (C) 1997-2001 Graeme S. Roy <graeme.roy@analog.com>
+dnl Copyright (C) 1997-2002 Graeme S. Roy <graeme.roy@analog.com>
 dnl
 dnl This library is free software; you can redistribute it and/or
 dnl modify it under the terms of the GNU Library General Public
@@ -21,7 +21,7 @@ dnl MA 02111-1307, USA.
 dnl Automake macro to build with the mpatrol library
 
 
-dnl $Id: mpatrol.m4,v 1.1 2001/10/25 20:10:05 ite Exp $
+dnl $Id: mpatrol.m4,v 1.2 2003/03/07 12:12:10 tothwolf Exp $
 
 
 # serial 1
