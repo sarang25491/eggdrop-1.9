@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2001-12-16 04:00-0600\n"
+"POT-Creation-Date: 2001-12-17 04:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,228 +20,228 @@ msgstr ""
 msgid "* Warning!  Could not write %s file!\n"
 msgstr ""
 
-#: src/botcmd.c:85 src/botcmd.c:89 src/botcmd.c:90
+#: src/botcmd.c:89 src/botcmd.c:93 src/botcmd.c:94
 msgid "Fake message rejected"
 msgstr ""
 
-#: src/botcmd.c:250
+#: src/botcmd.c:256
 msgid "No such user"
 msgstr ""
 
-#: src/botcmd.c:254
+#: src/botcmd.c:260
 msgid "Not online; note stored."
 msgstr ""
 
-#: src/botcmd.c:258
+#: src/botcmd.c:264
 msgid "Notebox is full, sorry."
 msgstr ""
 
-#: src/botcmd.c:262
+#: src/botcmd.c:268
 msgid "is away; note stored."
 msgstr ""
 
-#: src/botcmd.c:266
+#: src/botcmd.c:272
 msgid "Not online; note forwarded to:"
 msgstr ""
 
-#: src/botcmd.c:270
+#: src/botcmd.c:276
 msgid "rejected your note."
 msgstr ""
 
-#: src/botcmd.c:276
+#: src/botcmd.c:282
 msgid "Note sent to"
 msgstr ""
 
-#: src/botcmd.c:295 src/botnet.c:1647 src/botnet.c:1654
+#: src/botcmd.c:301 src/botnet.c:1647 src/botnet.c:1654
 msgid "Disconnected from:"
 msgstr ""
 
-#: src/botcmd.c:328 src/botcmd.c:498 src/cmds.c:273
+#: src/botcmd.c:334 src/botcmd.c:504 src/cmds.c:273
 msgid "no channels"
 msgstr ""
 
-#: src/botcmd.c:335
+#: src/botcmd.c:341
 msgid "Party line members:"
 msgstr ""
 
-#: src/botcmd.c:335 src/botcmd.c:344 src/botcmd.c:350
+#: src/botcmd.c:341 src/botcmd.c:350 src/botcmd.c:356
 msgid "owner"
 msgstr ""
 
-#: src/botcmd.c:335 src/botcmd.c:344 src/botcmd.c:350
+#: src/botcmd.c:341 src/botcmd.c:350 src/botcmd.c:356
 msgid "master"
 msgstr ""
 
-#: src/botcmd.c:335 src/botcmd.c:344 src/botcmd.c:350
+#: src/botcmd.c:341 src/botcmd.c:350 src/botcmd.c:356
 msgid "op"
 msgstr ""
 
-#: src/botcmd.c:341 src/botcmd.c:348
+#: src/botcmd.c:347 src/botcmd.c:354
 msgid "People on channel"
 msgstr ""
 
-#: src/botcmd.c:366 src/botcmd.c:369 src/botcmd.c:372 src/botcmd.c:406
-#: src/botcmd.c:408
+#: src/botcmd.c:372 src/botcmd.c:375 src/botcmd.c:378 src/botcmd.c:412
+#: src/botcmd.c:414
 msgid "idle"
 msgstr ""
 
-#: src/botcmd.c:377 src/botcmd.c:413 src/botnet.c:551
+#: src/botcmd.c:383 src/botcmd.c:419 src/botnet.c:551
 msgid "AWAY"
 msgstr ""
 
-#: src/botcmd.c:384
+#: src/botcmd.c:390
 msgid "Bots connected"
 msgstr ""
 
-#: src/botcmd.c:399
+#: src/botcmd.c:405
 msgid "Other people on the bot"
 msgstr ""
 
-#: src/botcmd.c:534
+#: src/botcmd.c:540
 msgid "Attempting to link"
 msgstr ""
 
-#: src/botcmd.c:537
+#: src/botcmd.c:543
 msgid "Cant link there"
 msgstr ""
 
-#: src/botcmd.c:584 src/botcmd.c:841
+#: src/botcmd.c:590 src/botcmd.c:847
 msgid "Cant unlink"
 msgstr ""
 
-#: src/botcmd.c:635
+#: src/botcmd.c:641
 #, c-format
 msgid "Invalid eggnet protocol from %s (zapfing)"
 msgstr ""
 
-#: src/botcmd.c:637 src/botcmd.c:644 src/botcmd.c:660 src/botcmd.c:670
-#: src/botcmd.c:849 src/botcmd.c:909
+#: src/botcmd.c:643 src/botcmd.c:650 src/botcmd.c:666 src/botcmd.c:676
+#: src/botcmd.c:855 src/botcmd.c:915
 msgid "Disconnected"
 msgstr ""
 
-#: src/botcmd.c:638
+#: src/botcmd.c:644
 msgid "invalid bot"
 msgstr ""
 
-#: src/botcmd.c:643
+#: src/botcmd.c:649
 msgid "Loop detected"
 msgstr ""
 
-#: src/botcmd.c:644
+#: src/botcmd.c:650
 msgid "Detected loop: disconnecting"
 msgstr ""
 
-#: src/botcmd.c:657 src/botcmd.c:659 src/botcmd.c:662
+#: src/botcmd.c:663 src/botcmd.c:665 src/botcmd.c:668
 msgid "Bogus link notice from"
 msgstr ""
 
-#: src/botcmd.c:666
+#: src/botcmd.c:672
 msgid "Disconnected left"
 msgstr ""
 
-#: src/botcmd.c:667 src/botcmd.c:694 src/botmsg.c:407
+#: src/botcmd.c:673 src/botcmd.c:700 src/botmsg.c:407
 msgid "Linked to"
 msgstr ""
 
-#: src/botcmd.c:669 src/botcmd.c:676
+#: src/botcmd.c:675 src/botcmd.c:682
 msgid "Illegal link by leaf"
 msgstr ""
 
-#: src/botcmd.c:671
+#: src/botcmd.c:677
 msgid "You are supposed to be a leaf!"
 msgstr ""
 
 #. we're directly connected to the offending bot?! (shudder!)
-#: src/botcmd.c:702 src/users.c:1049 src/users.c:1052
+#: src/botcmd.c:708 src/users.c:1049 src/users.c:1052
 msgid "Rejecting bot"
 msgstr ""
 
-#: src/botcmd.c:703
+#: src/botcmd.c:709
 msgid "from"
 msgstr ""
 
-#: src/botcmd.c:715
+#: src/botcmd.c:721
 msgid "Older bot detected (unsupported)"
 msgstr ""
 
-#: src/botcmd.c:718
+#: src/botcmd.c:724
 #, c-format
 msgid "Disconnected %s (outdated) (lost %d bot%s and %d user%s"
 msgstr ""
 
-#: src/botcmd.c:801 src/botcmd.c:803
+#: src/botcmd.c:807 src/botcmd.c:809
 msgid "Trace result"
 msgstr ""
 
-#: src/botcmd.c:841
+#: src/botcmd.c:847
 msgid "doesnt exist"
 msgstr ""
 
 #. I'm the connection to the rejected bot
-#: src/botcmd.c:846 src/botcmd.c:847 src/botcmd.c:850 src/botcmd.c:1068
+#: src/botcmd.c:852 src/botcmd.c:853 src/botcmd.c:856 src/botcmd.c:1074
 #: src/users.c:1046
 msgid "rejected"
 msgstr ""
 
-#: src/botcmd.c:878
+#: src/botcmd.c:884
 msgid "Remote boots are not allowed."
 msgstr ""
 
-#: src/botcmd.c:886
+#: src/botcmd.c:892
 msgid "Cant boot the bot owner."
 msgstr ""
 
-#: src/botcmd.c:907
+#: src/botcmd.c:913
 #, c-format
 msgid "Wrong bot--wanted %s, got %s"
 msgstr ""
 
-#: src/botcmd.c:908 src/botcmd.c:910
+#: src/botcmd.c:914 src/botcmd.c:916
 msgid "imposter"
 msgstr ""
 
-#: src/botcmd.c:1016
+#: src/botcmd.c:1022
 msgid "MOTD file:"
 msgstr ""
 
-#: src/botcmd.c:1032
+#: src/botcmd.c:1038
 msgid "No MOTD file."
 msgstr ""
 
-#: src/botcmd.c:1063
+#: src/botcmd.c:1069
 msgid "FILE TRANSFER REJECTED"
 msgstr ""
 
-#: src/botcmd.c:1092
+#: src/botcmd.c:1098
 msgid "Filesys module not loaded."
 msgstr ""
 
-#: src/botcmd.c:1254 src/botcmd.c:1306 src/botcmd.c:1310 src/botmsg.c:639
+#: src/botcmd.c:1260 src/botcmd.c:1312 src/botcmd.c:1316 src/botmsg.c:639
 #: src/botmsg.c:672
 msgid "has left the"
 msgstr ""
 
-#: src/botcmd.c:1259 src/botmsg.c:634 src/botmsg.c:665
+#: src/botcmd.c:1265 src/botmsg.c:634 src/botmsg.c:665
 msgid "has joined the"
 msgstr ""
 
-#: src/botcmd.c:1360 src/botmsg.c:596
+#: src/botcmd.c:1366 src/botmsg.c:596
 msgid "is now away"
 msgstr ""
 
-#: src/botcmd.c:1364 src/botmsg.c:603 src/botmsg.c:610
+#: src/botcmd.c:1370 src/botmsg.c:603 src/botmsg.c:610
 msgid "is no longer away"
 msgstr ""
 
-#: src/botcmd.c:1408
+#: src/botcmd.c:1414
 msgid "User file rejected by"
 msgstr ""
 
-#: src/botcmd.c:1416
+#: src/botcmd.c:1422
 msgid "Old style share request by"
 msgstr ""
 
-#: src/botcmd.c:1417
+#: src/botcmd.c:1423
 msgid "Antiquated sharing request"
 msgstr ""
 
