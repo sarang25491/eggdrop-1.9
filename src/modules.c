@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.90 2001/12/18 07:04:21 guppy Exp $
+ * $Id: modules.c,v 1.91 2001/12/19 06:25:08 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -458,7 +458,7 @@ Function global_table[] =
   (Function) 0,			/* memset				*/
   (Function) 0,			/* strcasecmp				*/
   /* 256 - 259 */
-  (Function) 0,			/* strncasecmp				*/
+  (Function) fixfrom,
   (Function) is_file,
   (Function) 0,
   (Function) & tandbot,		/* tand_t *				*/

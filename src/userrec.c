@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  *
- * $Id: userrec.c,v 1.38 2001/10/19 01:55:05 tothwolf Exp $
+ * $Id: userrec.c,v 1.39 2001/12/19 06:25:08 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -66,7 +66,7 @@ int count_users(struct userrec *bu)
 /* Convert "nick!~user@host", "nick!+user@host" and "nick!-user@host"
  * to "nick!user@host" if necessary. (drummer)
  */
-static char *fixfrom(char *s)
+char *fixfrom(char *s)
 {
   char *p;
   static char buf[512];

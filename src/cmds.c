@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.81 2001/12/10 03:22:29 guppy Exp $
+ * $Id: cmds.c,v 1.82 2001/12/19 06:25:08 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1613,7 +1613,7 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
   if (chg && (me = module_find("irc", 0, 0))) {
     Function *func = me->funcs;
     
-    (func[IRC_CHECK_THIS_USER]) (hand);
+    (func[IRC_CHECK_THIS_USER]) (hand, 0, NULL);
   }
   if (tmpchg)
     free(tmpchg);
@@ -2416,6 +2416,7 @@ static void cmd_mns_user(struct userrec *u, int idx, char *par)
   int idx2;
   char *handle;
   struct userrec *u2;
+  module_entry *me;
 
   if (!par[0]) {
     dprintf(idx, "Usage: -user <hand>\n");
@@ -2453,6 +2454,11 @@ static void cmd_mns_user(struct userrec *u, int idx, char *par)
       !(u2->flags & USER_BOT)) {
     dprintf(idx, "Can't remove users who aren't bots!\n");
     return;
+  }
+  if ((me = module_find("irc", 0, 0))) {
+    Function *func = me->funcs;
+
+   (func[IRC_CHECK_THIS_USER]) (handle, 1, NULL);
   }
   if (deluser(handle)) {
     putlog(LOG_CMDS, "*", "#%s# -user %s", dcc[idx].nick, handle);
@@ -2527,7 +2533,7 @@ static void cmd_pls_host(struct userrec *u, int idx, char *par)
   if ((me = module_find("irc", 0, 0))) {
     Function *func = me->funcs;
 
-    (func[IRC_CHECK_THIS_USER]) (handle);
+    (func[IRC_CHECK_THIS_USER]) (handle, 0, NULL);
   }
 }
 
@@ -2536,6 +2542,7 @@ static void cmd_mns_host(struct userrec *u, int idx, char *par)
   char *handle, *host;
   struct userrec *u2;
   struct flag_record fr = {FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
+  module_entry *me;
 
   if (!par[0]) {
     dprintf(idx, "%s: -host [%s] <%s>\n", _("Usage"), _("handle"), 
@@ -2585,6 +2592,11 @@ static void cmd_mns_host(struct userrec *u, int idx, char *par)
   if (delhost_by_handle(handle, host)) {
     putlog(LOG_CMDS, "*", "#%s# -host %s %s", dcc[idx].nick, handle, host);
     dprintf(idx, _("Removed '%1$s' from %2$s\n"), host, handle);
+    if ((me = module_find("irc", 0, 0))) {
+      Function *func = me->funcs;
+
+      (func[IRC_CHECK_THIS_USER]) (handle, 2, host);
+    }
   } else
     dprintf(idx, _("Failed.\n"));
 }

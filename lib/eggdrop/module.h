@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.7 2001/12/18 07:04:21 guppy Exp $
+ * $Id: module.h,v 1.8 2001/12/19 06:25:08 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -378,7 +378,7 @@
 /* #define memset ((void *(*)(void *, int, size_t))global[254]) */
 /* #define strcasecmp ((int (*)(const char *, const char *))global[255]) */
 /* 256 - 259 */
-/* #define strncasecmp ((int (*)(const char *, const char *, size_t))global[256]) */
+#define fixfrom ((char *(*)(char *))global[256])
 #define is_file ((int (*)(const char *))global[257])
 /* #define must_be_owner (*(int *)(global[258])) */
 #define tandbot (*(tand_t **)(global[259]))

@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands direclty relating to channel interaction
  *
- * $Id: cmdsirc.c,v 1.2 2001/12/08 19:17:43 ite Exp $
+ * $Id: cmdsirc.c,v 1.3 2001/12/19 06:25:08 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -868,7 +868,7 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
     dprintf(idx, "Added hostmask %s to %s.\n", p1, u->handle);
     addhost_by_handle(hand, p1);
     get_user_flagrec(u, &user, chan->dname);
-    check_this_user(hand);
+    check_this_user(hand, 0, NULL);
   }
   putlog(LOG_CMDS, "*", "#%s# adduser %s %s", dcc[idx].nick, nick,
 	 hand == nick ? "" : hand);
