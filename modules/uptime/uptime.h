@@ -1,13 +1,12 @@
-/* Original Copyright (c) 2000-2001 proton
- * 
- * $Id: uptime.h,v 1.1 2001/10/27 16:34:54 ite Exp $
- * Borrowed from Emech, reports to http://uptime.energymech.net, feel free to opt out if you
- * dont like it by not loading the module.
- *                              
- *                              -poptix (poptix@poptix.net) 6June2001
+/* 
+ * uptime.h - part of the uptime module
+ *
+ * $Id: uptime.h,v 1.2 2001/10/29 20:09:08 guppy Exp $
  */
 /* 
- * Eggdrop modifications Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ * Copyright (C) 2001 proton
+ * Copyright (C) 2001 Ian Campbell
+ * Copyright (C) 2001 Eggheads Development Team
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License   

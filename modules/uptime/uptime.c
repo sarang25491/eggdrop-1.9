@@ -1,6 +1,5 @@
-/* Original Copyright (c) 2000-2001 proton
- * 
- * $Id: uptime.c,v 1.1 2001/10/27 16:34:54 ite Exp $
+/* 
+ * $Id: uptime.c,v 1.2 2001/10/29 20:09:08 guppy Exp $
  *
  * This module reports uptime information about your bot to http://uptime.eggheads.org. The
  * purpose for this is to see how your bot rates against many others (including EnergyMechs 
@@ -13,7 +12,9 @@
  * your bot's stability rates against ours and ours against yours <g>.
  */
 /*
- * Eggdrop modifications Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ * Copyright (C) 2001 proton
+ * Copyright (C) 2001 Ian Campbell 
+ * Copyright (C) 2001 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
