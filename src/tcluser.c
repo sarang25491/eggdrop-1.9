@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  *
- * $Id: tcluser.c,v 1.30 2001/12/01 16:03:48 ite Exp $
+ * $Id: tcluser.c,v 1.31 2001/12/01 16:33:38 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -190,7 +190,10 @@ static int tcl_botattr STDVAR
   } else {
     user.match = FR_BOT;
     chan = NULL;
-    chg = NULL;
+    if (argc < 3)
+      chg = NULL;
+    else
+      chg argv[2];
   }
   if (chan && !findchan_by_dname(chan)) {
     Tcl_AppendResult(irp, "no such channel", NULL);
