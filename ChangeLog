@@ -1,3 +1,10 @@
+2001-11-24 15:31  Federico Mennite <ite@techmonkeys.org>
+
+	* modules/transfer/transfer.h, src/eggdrop.h:
+
+	Moved XFER defines from the core in a more suitable place in the
+	transfer module.  
+
 2001-11-24 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
