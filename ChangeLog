@@ -1,3 +1,17 @@
+2001-10-20 01:19  Tothwolf <tothwolf@techmonkeys.org>
+
+	* acinclude.m4, bootstrap, codeset.m4, configure.ac, gettext.m4,
+	glibc21.m4, iconv.m4, isc-posix.m4, lcmessage.m4, progtest.m4,
+	acconfig/acinclude.m4, acconfig/codeset.m4, acconfig/gettext.m4,
+	acconfig/glibc21.m4, acconfig/iconv.m4, acconfig/isc-posix.m4,
+	acconfig/lcmessage.m4, acconfig/progtest.m4:
+
+	* added acconfig for an aux dir 
+	* moved m4 files to acconfig 
+	* modified EGG_LIBTOOL autoconf macro to pass --with-auxdir to
+	libltdl 
+	* added notice to bootstrap about libtool needing a patch 
+
 2001-10-19 23:07  Tothwolf <tothwolf@techmonkeys.org>
 
 	* AUTHORS, Makefile.am, config.guess, config.sub,
