@@ -1,3 +1,10 @@
+2003-01-30 03:05  Will Buckner <wcc@techmonkeys.org>
+
+	* eggdrop.conf, modules/channels/channels.c, src/tcl.c,
+	src/userrec.c:
+
+	* Removed quiet_save.  
+
 2003-01-30 01:15  Will Buckner <wcc@techmonkeys.org>
 
 	* modules/channels/: channels.c, tclchan.c:
