@@ -58,7 +58,8 @@ int partyline_on_input(partychan_t *chan, partymember_t *p, const char *text, in
 				cmd = malloc(len+1);
 				memcpy(cmd, text, len);
 				cmd[len] = 0;
-				partyline_on_command(p, cmd, space+1);
+				while (isspace(*space)) space++;
+				partyline_on_command(p, cmd, space);
 				free(cmd);
 			}
 			else {

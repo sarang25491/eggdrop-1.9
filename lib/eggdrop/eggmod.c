@@ -140,3 +140,17 @@ int module_decref(const char *name)
 	entry->refcount--;
 	return(0);
 }
+
+int get_module_list(char ***names) {
+	module_list_t *entry;
+	int i = 0, c = 0;
+
+	for (entry = module_list_head; entry; entry = entry->next) i++;
+	*names = malloc((i + 1) * sizeof(char **));
+	for (entry = module_list_head; entry; entry = entry->next) {
+		(*names)[c] = entry->modinfo.name;
+		c++;
+	}
+	(*names)[i] = NULL;
+	return(i);
+}

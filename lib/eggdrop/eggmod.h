@@ -29,6 +29,7 @@ int module_unload(const char *name, int why);
 egg_module_t *module_lookup(const char *name);
 int module_addref(const char *name);
 int module_decref(const char *name);
+int get_module_list(char ***);
 
 /* Windows hack to export functions from dlls. */
 #if defined (__CYGWIN__) 

@@ -4,8 +4,8 @@
 
 static int party_join(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
-	if (!text || !strlen(text)) {
-		partymember_write(p, "Syntax: join <channel>", -1);
+	if (!text || !*text) {
+		partymember_printf(p, "Syntax: join <channel>");
 		return(0);
 	}
 	partychan_join_name(text, p);
@@ -16,7 +16,7 @@ static int party_part(partymember_t *p, const char *nick, user_t *u, const char 
 {
 	partychan_t *chan;
 
-	if (!text || !strlen(text)) chan = partychan_get_default(p);
+	if (!text || !*text) chan = partychan_get_default(p);
 	else chan = partychan_lookup_name(text);
 	partychan_part(chan, p, "parting");
 	return(0);
@@ -24,13 +24,13 @@ static int party_part(partymember_t *p, const char *nick, user_t *u, const char 
 
 static int party_quit(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
-	if (!text) text = "Quit";
-	partymember_write(p, "goodbye!", -1);
-	partymember_delete(p, text);
+	partymember_printf(p, "Goodbye!");
+	if (!text || !*text) partymember_delete(p, "Quit");
+	else partymember_delete(p, text);
 	return(0);
 }
 
-static int party_msg(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+static int party_whisper(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	return(0);
 }
@@ -121,11 +121,11 @@ static int party_save(partymember_t *p, const char *nick, user_t *u, const char 
 static int party_newpass(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	if (!text || strlen(text) < 6) {
-		partymember_write(p, "Please use at least 6 characters.", -1);
+		partymember_printf(p, "Please use at least 6 characters.");
 		return(0);
 	}
 	user_set_pass(p->user, text);
-	partymember_printf(p, "Changed password to '%s'", text);
+	partymember_printf(p, "Changed password to '%s'.", text);
 	return(0);
 }
 
@@ -139,7 +139,7 @@ static int party_who(partymember_t *p, const char *nick, user_t *u, const char *
 	partymember_t *who;
 	int *pids, len, i;
 
-	partymember_printf(p, "Partyline members");
+	partymember_printf(p, "Partyline members:");
 	partymember_who(&pids, &len);
 	qsort(pids, len, sizeof(int), intsorter);
 	for (i = 0; i < len; i++) {
@@ -152,6 +152,15 @@ static int party_who(partymember_t *p, const char *nick, user_t *u, const char *
 
 static int party_die(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
+	char *reason;
+
+	if (!text || !*text) reason = "No reason given.";
+	else reason = text;
+	putlog(LOG_MISC, "*", "Saving user file...");
+	user_save(core_config.userfile);
+	putlog(LOG_MISC, "*", "Saving config file...");
+	core_config_save();
+	putlog(LOG_MISC, "*", "Bot shutting down: %s", reason);
 	exit(0);
 }
 
@@ -168,8 +177,8 @@ static int party_plus_user(partymember_t *p, const char *nick, user_t *u, const 
 		return(0);
 	}
 	newuser = user_new(text);
-	if (newuser) partymember_printf(p, "User '%s' created", text);
-	else partymember_printf(p, "Could not create user '%s'", text);
+	if (newuser) partymember_printf(p, "User '%s' created.", text);
+	else partymember_printf(p, "Could not create user '%s'.", text);
 	return(0);
 }
 
@@ -182,9 +191,9 @@ static int party_minus_user(partymember_t *p, const char *nick, user_t *u, const
 		return(0);
 	}
 	who = user_lookup_by_handle(text);
-	if (!who) partymember_printf(p, "User '%s' not found");
+	if (!who) partymember_printf(p, "User '%s' not found.");
 	else {
-		partymember_printf(p, "Deleting user '%s'", who->handle);
+		partymember_printf(p, "Deleting user '%s'.", who->handle);
 		user_delete(who);
 	}
 	return(0);
@@ -224,10 +233,10 @@ static int party_chattr(partymember_t *p, const char *nick, user_t *u, const cha
 		user_set_flag_str(dest, chan, flags);
 		user_get_flags(dest, chan, &flagstruct);
 		flag_to_str(&flagstruct, flagstr);
-		partymember_printf(p, "Flags for %s are now '%s'", who, flagstr);
+		partymember_printf(p, "Flags for %s are now '%s'.", who, flagstr);
 	}
 	else {
-		partymember_printf(p, "'%s' is not a valid user", who);
+		partymember_printf(p, "'%s' is not a valid user.", who);
 	}
 	free(who);
 	free(flags);
@@ -235,9 +244,21 @@ static int party_chattr(partymember_t *p, const char *nick, user_t *u, const cha
 	return(0);
 }
 
+static int party_modules(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	char **modules;
+	int nummods, ctr;
+
+	nummods = get_module_list(&modules);
+	partymember_printf(p, "Loaded modules:");
+	for (ctr = 0; ctr < nummods; ctr++) partymember_printf(p, "   %s", modules[ctr]);
+	free(modules);
+	return(0);
+}
+
 static bind_list_t core_party_binds[] = {
 	{NULL, "join", party_join},
-	{NULL, "msg", party_msg},
+	{NULL, "whisper", party_whisper},
 	{NULL, "newpass", party_newpass},
 	{NULL, "part", party_part},
 	{NULL, "quit", party_quit},
@@ -251,6 +272,9 @@ static bind_list_t core_party_binds[] = {
 	{"n", "+host", party_plus_host},
 	{"n", "-host", party_minus_host},
 	{"n", "chattr", party_chattr},
+	{"n", "modules", party_modules},
+	{"m", "+host", party_plus_host},
+	{"m", "-host", party_minus_host},
 	{0}
 };
 

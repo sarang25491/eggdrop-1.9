@@ -58,7 +58,7 @@ static int party_plus_server(partymember_t *p, const char *nick, user_t *u, cons
 		return(0);
 	}
 	server_add(host, port, pass);
-	partymember_printf(p, "Added %s:%d\n", host, port ? port : server_config.default_port);
+	partymember_printf(p, "Added %s:%d.\n", host, port ? port : server_config.default_port);
 	free(host);
 	return(0);
 }
@@ -79,7 +79,7 @@ static int party_minus_server(partymember_t *p, const char *nick, user_t *u, con
 	if (i < 0) partymember_printf(p, "No matching servers.");
 	else {
 		server_del(i);
-		partymember_printf(p, "Deleted server %d", i+1);
+		partymember_printf(p, "Deleted server %d.", i+1);
 	}
 	return(0);
 }
@@ -104,7 +104,7 @@ static int party_jump(partymember_t *p, const char *nick, user_t *u, const char 
 		num = server_find(host, port, pass);
 		if (num < 0) {
 			server_add(host, port, pass);
-			partymember_printf(p, "Added %s:%d\n", host, port ? port : server_config.default_port);
+			partymember_printf(p, "Added %s:%d.\n", host, port ? port : server_config.default_port);
 			num = 0;
 		}
 		free(host);
@@ -115,11 +115,29 @@ static int party_jump(partymember_t *p, const char *nick, user_t *u, const char 
 	return(0);
 }
 
+static int party_msg(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	char *dest;
+	const char *next;
+
+	egg_get_word(text, &next, &dest);
+	if (!next || !dest) {
+		partymember_printf(p, "Syntax: %s <nick/chan> <text>", cmd);
+		return(0);
+	}
+	while (isspace(*next)) next++;
+	printserv(SERVER_NORMAL, "PRIVMSG %s :%s\r\n", dest, next);
+	return(0);
+}
+
+
 bind_list_t server_party_commands[] = {
 	{"", "servers", party_servers},
 	{"m", "+server", party_plus_server},
 	{"m", "-server", party_minus_server},
 	{"m", "dump", party_dump},
 	{"m", "jump", party_jump},
+	{"m", "msg", party_msg},
+	{"m", "say", party_msg},
 	{0}
 };
