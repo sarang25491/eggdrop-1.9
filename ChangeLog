@@ -1,3 +1,11 @@
+2002-09-22 01:25  stdarg <stdarg@techmonkeys.org>
+
+	* src/: botcmd.c, botcmd.h, botmsg.c, botmsg.h, botnet.c, botnet.h,
+	tandem.h:
+
+	
+	* Remove unnecessary files (botnet stuff) 
+
 2002-09-21 07:40  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/memutil.c, lib/eggdrop/memutil.h,
