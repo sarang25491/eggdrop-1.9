@@ -1,3 +1,38 @@
+2002-10-07 22:37  stdarg <stdarg@techmonkeys.org>
+
+	* src/scriptuser.c:
+
+	
+	* Script interface to new user functions.  
+
+2002-10-07 22:36  stdarg <stdarg@techmonkeys.org>
+
+	* lib/egglib/Makefile.am, lib/egglib/egglib.h,
+	modules/server/binds.c, modules/server/binds.h,
+	modules/server/dcc.c, modules/server/dcc.h,
+	modules/server/scriptcmds.c, src/Makefile.am, src/cmds.c,
+	src/core_binds.c, src/dcc.c, src/logfile.c, src/main.c,
+	src/modules.c, src/scriptnet.c, src/tcl.c, src/tcluser.c,
+	src/users.c:
+
+	
+	* Added some dcc support functions like sending/accepting files,
+	with resume, and chats.  
+	* Starting to migrate to new user system.  
+
+2002-10-07 22:33  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/: Makefile.am, eggdrop.h, eggnet.c, eggnet.h,
+	flags.h, ircmasks.c, ircmasks.h, match.c, match.h, module.h,
+	sockbuf.c, sockbuf.h, throttle.c, throttle.h, users.c, users.h,
+	xml.c, xml.h, xmlread.c, xmlwrite.c:
+
+	
+	* Added input/output throttling for sockets (haven't tested input) 
+	* Basic xml read/write stuff. Very forgiving on xml syntax; doesn't
+	do validation. Not done.  
+	* Beginning of new user code. Works well so far.  
+
 2002-09-22 08:50  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/eggnet.c, lib/eggdrop/eggnet.h,
