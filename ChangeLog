@@ -1,3 +1,21 @@
+2003-02-03 01:01  stdarg <stdarg@techmonkeys.org>
+
+	* eggdrop.conf, lib/eggdrop/Makefile.am, lib/eggdrop/binds.c,
+	lib/eggdrop/binds.h, lib/eggdrop/eggdns.c, lib/eggdrop/eggdrop.h,
+	lib/eggdrop/eggident.c, lib/eggdrop/eggident.h,
+	lib/eggdrop/egglog.c, lib/eggdrop/egglog.h, lib/eggdrop/flags.c,
+	lib/eggdrop/flags.h, lib/eggdrop/memutil.c, lib/eggdrop/memutil.h,
+	lib/eggdrop/partyline.c, lib/eggdrop/partyline.h,
+	lib/eggdrop/users.c, lib/eggdrop/users.h,
+	modules/script/Makefile.am, modules/script/scriptmod.c,
+	modules/server/input.c, modules/tclscript/tclscript.c,
+	src/Makefile.am, src/core_binds.h, src/core_party.c, src/flags.c,
+	src/logfile.c, src/logfile.h, src/main.c, src/misc.c, src/tcl.c,
+	src/telnet.c, src/userent.c:
+
+	
+	* Let me know if there are any missing files! 
+
 2003-02-02 08:41  Will Buckner <wcc@techmonkeys.org>
 
 	* modules/channels/tclchan.c:
