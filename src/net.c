@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.43 2001/10/11 13:01:35 tothwolf Exp $
+ * $Id: net.c,v 1.44 2001/10/12 02:27:45 stdarg Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -88,6 +88,7 @@ void init_net()
   char s[256];
   struct hostent *hp;
 
+  socklist = (sock_list *)calloc(MAXSOCKS, sizeof(sock_list));
   for (i = 0; i < MAXSOCKS; i++) {
     socklist[i].flags = SOCK_UNUSED;
   }
@@ -251,17 +252,20 @@ int allocsock(int sock, int options)
   int i;
 
   for (i = 0; i < MAXSOCKS; i++) {
-    if (socklist[i].flags & SOCK_UNUSED) {
-      /* yay!  there is table space */
-      socklist[i].inbuf = socklist[i].outbuf = NULL;
-      socklist[i].inbuflen = socklist[i].outbuflen = 0;
-      socklist[i].flags = options;
-      socklist[i].sock = sock;
-      return i;
-    }
+    if (socklist[i].flags & SOCK_UNUSED) break;
   }
-  fatal("Socket table is full!", 0);
-  return -1; /* Never reached */
+
+  if (i == MAXSOCKS) {
+    /* Expand table by 5 */
+    socklist = (sock_list *)realloc(socklist, (MAXSOCKS+5) * sizeof(sock_list));
+    memset(socklist+MAXSOCKS, 0, 5 * sizeof(sock_list));
+    MAXSOCKS += 5;
+  }
+
+  memset(socklist+i, 0, sizeof(sock_list));
+  socklist[i].flags = options;
+  socklist[i].sock = sock;
+  return(i);
 }
 
 /* Request a normal socket for i/o

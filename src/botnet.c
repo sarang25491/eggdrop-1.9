@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.42 2001/10/11 11:34:19 tothwolf Exp $
+ * $Id: botnet.c,v 1.43 2001/10/12 02:27:45 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -30,6 +30,7 @@
 
 #include "main.h"
 #include "tandem.h"
+#include "modules.h"
 
 extern char		 spaces[], spaces2[];
 extern int		 dcc_total, backgrd, connect_timeout, max_dcc,
@@ -50,19 +51,50 @@ char		 botnetnick[HANDLEN + 1] = "";	/* Botnet nickname */
 int		 share_unlinks = 0;	/* Allow remote unlinks of my
 					   sharebots? */
 
-/* The bind tables we create. */
+/* From main.c */
+extern int die_on_sigterm;
+extern int die_on_sighup;
 
-static bind_table_t *BT_chjn = NULL;
-static bind_table_t *BT_chpt = NULL;
+/* The bind tables we create. */
+static bind_table_t *BT_chjn, *BT_chpt;
+
+static void botnet_sigterm(char *);
+static void botnet_sighup(char *);
+
+/* We want to listen to the sigterm event. */
+static cmd_t botnet_events[] = {
+	{"botnet_sigterm", "", (Function) botnet_sigterm, NULL},
+	{"botnet_sighup", "", (Function) botnet_sighup, NULL},
+	0
+};
 
 static void init_bots();
 
 void botnet_init()
 {
+	bind_table_t *BT_event;
+
 	init_bots();
 
+	/* Create botnet bind tables. */
 	BT_chjn = add_bind_table2("chjn", 4, "ssdd", MATCH_MASK, BIND_STACKABLE);
 	BT_chpt = add_bind_table2("chpt", 4, "ssdd", MATCH_MASK, BIND_STACKABLE);
+
+	/* Add our event handlers */
+	add_hook(HOOK_5MINUTELY, (Function) check_botnet_pings);
+	BT_event = find_bind_table2("event");
+	if (BT_event) add_builtins2(BT_event, botnet_events);
+}
+
+/* Handle TERM signal */
+static void botnet_sigterm(char *event)
+{
+	if (die_on_sigterm) botnet_send_chat(-1, botnetnick, "ACK, I've been terminated! (SIGTERM)");
+}
+
+static void botnet_sighup(char *event)
+{
+	if (die_on_sighup) botnet_send_chat(-1, botnetnick, "ACK, I've been terminated! (SIGHUP)");
 }
 
 static void init_bots()

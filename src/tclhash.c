@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.42 2001/10/11 11:34:19 tothwolf Exp $
+ * $Id: tclhash.c,v 1.43 2001/10/12 02:27:45 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -154,11 +154,9 @@ static int tcl_bind();
 static int tcl_bind2();
 static int tcl_unbind2();
 
-void init_bind2(void)
+void init_binds(void)
 {
 	bind_table_list_head = NULL;
-	Tcl_CreateCommand(interp, "bind2", tcl_bind2, NULL, NULL);
-	Tcl_CreateCommand(interp, "unbind2", tcl_unbind2, NULL, NULL);
 	BT_event = add_bind_table2("event", 1, "s", MATCH_MASK, BIND_STACKABLE);
 	BT_link = add_bind_table2("link", 2, "ss", MATCH_MASK, BIND_STACKABLE);
 	BT_disc = add_bind_table2("disc", 1, "s", MATCH_MASK, BIND_STACKABLE);
@@ -168,7 +166,7 @@ void init_bind2(void)
 	add_builtins2(BT_dcc, C_dcc);
 }
 
-void init_bind(void)
+void init_old_binds(void)
 {
   bind_table_list = NULL;
   Context;

@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.79 2001/10/10 10:44:04 tothwolf Exp $
+ * $Id: main.c,v 1.80 2001/10/12 02:27:45 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -331,7 +331,6 @@ static void got_term(int z)
   write_userfile(-1);
   check_tcl_event("sigterm");
   if (die_on_sigterm) {
-    botnet_send_chat(-1, botnetnick, "ACK, I've been terminated!");
     fatal("TERMINATE SIGNAL -- SIGNING OFF", 0);
   } else {
     putlog(LOG_MISC, "*", "RECEIVED TERMINATE SIGNAL (IGNORING)");
@@ -537,7 +536,6 @@ static void core_secondly()
     miltime = (nowtm.tm_hour * 100) + (nowtm.tm_min);
     if (((int) (nowtm.tm_min / 5) * 5) == (nowtm.tm_min)) {	/* 5 min */
       call_hook(HOOK_5MINUTELY);
-      check_botnet_pings();
       if (!quick_logs) {
 	flushlogs();
 	check_logsize();
@@ -654,6 +652,7 @@ void check_static(char *, char *(*)());
 int init_dcc_max(), init_userent(), init_misc(), init_net(),
  init_modules(), init_tcl(int, char **);
 void botnet_init();
+void init_binds();
 
 void patch(const char *str)
 {
@@ -768,15 +767,19 @@ int main(int argc, char **argv)
   if (((int) getuid() == 0) || ((int) geteuid() == 0))
     fatal(_("ERROR: Eggdrop will not run as root!"), 0);
 
+  init_binds();
   init_dcc_max();
   init_userent();
   init_misc();
   botnet_init();
   init_net();
   init_modules();
+
   if (backgrd)
     bg_prepare_split();
+
   init_tcl(argc, argv);
+
 #ifdef STATIC
   link_statics();
 #endif

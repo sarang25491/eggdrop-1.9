@@ -2,7 +2,7 @@
  * match.c
  *   wildcard matching functions
  *
- * $Id: match.c,v 1.7 2001/10/11 18:24:01 tothwolf Exp $
+ * $Id: match.c,v 1.8 2001/10/12 02:27:45 stdarg Exp $
  */
 /*
  * Once this code was working, I added support for % so that I could
@@ -102,7 +102,7 @@ int wild_match(register unsigned char *m, register unsigned char *n)
       sofar &= UNQUOTED;	/* Remember not quoted */
     } else
       sofar |= QUOTED;		/* Remember quoted */
-    if (irctoupper(*m) == irctoupper(*n)) {	/* If matching char */
+    if (_irctoupper(*m) == _irctoupper(*n)) {	/* If matching char */
       m--;
       n--;
       sofar++;			/* Tally the match */
@@ -204,7 +204,7 @@ int wild_match_per(register unsigned char *m, register unsigned char *n)
       case QUOTE:
 	m++;			/* Handle quoting */
       }
-      if (irctoupper(*m) == irctoupper(*n)) {		/* If matching */
+      if (_irctoupper(*m) == _irctoupper(*n)) {		/* If matching */
 	m++;
 	n++;
 	sofar++;
