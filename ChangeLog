@@ -1,3 +1,15 @@
+2002-11-29 06:15  Will Buckner <wcc@techmonkeys.org>
+
+	* doc/UPDATES1.6, misc/addpatch, modules/irc/cmdsirc.c,
+	modules/irc/irc.c, modules/irc/irc.h, src/patch.h,
+	testcode/match.c:
+
+	* check_this_user() had the wrong function number in irc_table.  
+	* Exported me_voice() in irc_table (synch 1.6).  
+	* Small fix to zip's match code (requested by zip).  
+	* Applied The_Dawn's kickfix patch (synch 1.6).  
+	* Small fixes to addpatch.  
+
 2002-11-24 04:50  Will Buckner <wcc@techmonkeys.org>
 
 	* eggdrop.conf, doc/UPDATES1.6, modules/channels/channels.c,
