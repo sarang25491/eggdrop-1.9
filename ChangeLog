@@ -1,3 +1,9 @@
+2001-11-25 10:00  Automatic CVS Scripts
+
+	* po/eggdrop.pot:
+
+	Pots 
+
 2001-11-24 20:42  Federico Mennite <ite@techmonkeys.org>
 
 	* modules/assoc/Makefile.am, modules/blowfish/Makefile.am,
