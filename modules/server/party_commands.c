@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: party_commands.c,v 1.11 2004/07/23 21:58:55 darko Exp $";
+static const char rcsid[] = "$Id: party_commands.c,v 1.12 2004/08/11 21:02:16 darko Exp $";
 #endif
 
 #include "server.h"
@@ -293,8 +293,246 @@ static int party_chansave(partymember_t *p, const char *nick, user_t *u, const c
 	return BIND_RET_LOG;
 }
 
+/* +ban/+invite/+exempt <mask> [channel] [%XdYhZm] ["comment"] */
+/* +chanmask <type> <mask> [channel] [%XdYhZm] [comment] */
+static int party_plus_mask(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	const char *rest;
+	char typechar, *mask = NULL, *channame = NULL, *duration = NULL, *comment = NULL;
+	channel_t *chanptr = NULL;
+	int tmpint;
+
+	if (!strcasecmp("+ban", cmd))
+		typechar = 'b';
+	else if (!strcasecmp("+exempt", cmd))
+		typechar = 'e';
+	else if (!strcasecmp("+invite", cmd))
+		typechar = 'I';
+	else {
+		char *type;
+		egg_get_arg(text, &rest, &type);
+		if (!type || strlen(type) != 1) {
+			partymember_printf(p, _("Syntax: +chanmask <type> <mask> [channel] [%%XdYhZm] [\"comment\"]"));
+			free(type);
+			return BIND_RET_LOG;
+		}
+		text = rest;
+		typechar = *type;
+		free(type);
+	}
+
+	egg_get_args(text, &rest, &mask, &channame, &duration, NULL);
+
+	if (!mask || !*mask) {
+		partymember_printf(p, _("Syntax: %s %s<mask> [channel] [%%XdYhZm] [\"comment\"]"),
+					cmd, !strcasecmp("+chanmask", cmd)?"<type> ":"");
+		goto ppb_out;
+	}
+
+	if (rest && *rest) {
+		comment = strdup(rest);
+		if (channel_lookup(channame, 0, &chanptr, NULL) == -1) {
+			partymember_printf(p, _("Error: Invalid channel '%s'"), channame);
+			goto ppb_out;
+		}
+		if (*duration != '%') {
+			partymember_printf(p, _("Error: Invalid duration. Must be of the form %%XdYhZm"));
+			goto ppb_out;
+		}
+	}
+	else if (duration) {
+		if (channel_lookup(channame, 0, &chanptr, NULL) == -1) {
+			if (*channame != '%') {
+				partymember_printf(p, _("Error: Invalid channel %s"), channame);
+				goto ppb_out;
+			}
+			comment = duration;
+			duration = channame;
+			channame = NULL;
+		} else if (*duration != '%') {
+			comment = duration;
+			duration = NULL;
+		}
+	}
+	else if (channame) {
+		if (channel_lookup(channame, 0, &chanptr, NULL) == -1) {
+			if (*channame == '%')
+				duration = channame;
+			else
+				comment = channame;
+			channame = NULL;
+		}
+	}
+
+	/* FIXME - do the duration calculus. For now send 123 :-) */
+	if (comment && *comment == '@')
+		tmpint = channel_notirc_add_mask(chanptr, typechar, mask, u->handle, &comment[1],123, 1, 1);
+	else
+		tmpint = channel_notirc_add_mask(chanptr, typechar, mask, u->handle, comment, 123, 0, 1);
+
+	if (tmpint == 2)
+		partymember_printf(p, _("Error: Entry already exists!"));
+	else if (tmpint == 0)
+		partymember_printf(p, _("Ok, added"));
+
+ppb_out:
+	free(mask);
+	free(channame);
+	free(duration);
+	free(comment);
+	return BIND_RET_LOG;
+}
+
+/* bans/invites/exempts [channel/all [mask]] */
+/* chanmask <type> [channel/all [mask]] */
+static int party_list_masks(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	char typechar, *mask = NULL, *channame = NULL;
+	channel_t *chanptr = NULL;
+	channel_mask_t **cm = NULL;
+	int allchans = 0, i;
+
+	if (!strcasecmp("bans", cmd))
+		typechar = 'b';
+	else if (!strcasecmp("exempts", cmd))
+		typechar = 'e';
+	else if (!strcasecmp("invites", cmd))
+		typechar = 'I';
+	else {
+		char *type = NULL;
+		const char *rest = NULL;
+		egg_get_arg(text, &rest, &type);
+		if (!type || strlen(type) != 1) {
+			partymember_printf(p, _("Syntax: chanmasks <type> [channel/all] [mask]"));
+			free(type);
+			return BIND_RET_LOG;
+		}
+		text = rest;
+		typechar = *type;
+		free(type);
+	}
+
+	egg_get_args(text, NULL, &channame, &mask, NULL);
+
+	if (channame) {
+		if (!strcasecmp("all", channame))
+			allchans = 1;
+		else if (channel_lookup(channame, 0, &chanptr, NULL) == -1) {
+			if (mask) {
+				partymember_printf(p, _("Error: Invalid channel '%s'"), channame),
+				free(mask);
+				free(channame);
+				return BIND_RET_LOG;
+			}
+			else {
+				mask = channame;
+				channame = NULL;
+				allchans = 1;
+			}
+		}
+	}
+	else
+		allchans = 1;
+
+	i = channel_list_masks(&cm, typechar, allchans?NULL:chanptr, mask?mask:"*");
+	if (i) {
+		int j;
+		if (allchans)
+			partymember_printf(p, _("  Global +%c list:"), typechar);
+		else
+			partymember_printf(p, _("  +%c list for channel '%s':"), typechar, channame);
+		for (j = 0; j < i; j++) {
+/* FIXME - sort out the aesthetics later, for now just print data */
+			partymember_printf(p, _(""));
+			partymember_printf(p, _("  %s%s"), cm[j]->mask,
+						cm[j]->sticky?" (sticky)":"");
+			if (cm[j]->creator)
+				partymember_printf(p, _("    Created by:\t%s"), cm[j]->creator);
+			if (cm[j]->set_by)
+				partymember_printf(p, _("    Active:\tset by %s at %d"),
+						cm[j]->set_by, cm[j]->time);
+			partymember_printf(p, _("    Expires:\t%s"),
+				cm[j]->expire?"11/08/2004, 20:38":"never");
+			if (cm[j]->comment)
+				partymember_printf(p, _("    Comment:\t%s"), cm[j]->comment);
+		}
+		free(cm);
+	}
+	else
+		partymember_printf(p, _("  No results."));
+
+	return BIND_RET_LOG;
+}
+
+/* -ban/-invite/-exempt <mask/number> */
+/* -chanmask <type> <mask/number> */
+static int party_minus_mask(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	char typechar, *mask = NULL, *channame = NULL;
+	channel_t *chanptr = NULL;
+	int tmpint;
+
+	if (!strcasecmp("-ban", cmd))
+		typechar = 'b';
+	else if (!strcasecmp("-exempt", cmd))
+		typechar = 'e';
+	else if (!strcasecmp("-invite", cmd))
+		typechar = 'I';
+	else {
+		const char *rest;
+		char *type;
+		egg_get_arg(text, &rest, &type);
+		if (!type || strlen(type) != 1) {
+			partymember_printf(p, _("Syntax: -chanmask <type> <mask/number> [channel]"));
+			free(type);
+			return BIND_RET_LOG;
+		}
+		text = rest;
+		typechar = *type;
+		free(type);
+	}
+
+	egg_get_args(text, NULL, &mask, &channame, NULL);
+
+	if (!mask) {
+		partymember_printf(p, _("Syntax: %s %s<mask/number> [channel]"),
+					cmd, !strcasecmp("-chanmask", cmd)?"<type> ":"");
+		return BIND_RET_LOG;
+	}
+
+	if (channame)
+		channel_lookup(channame, 0, &chanptr, NULL);
+
+	tmpint = channel_del_mask(chanptr, typechar, mask, 1);
+
+	if (tmpint == -2)
+		partymember_printf(p, _("Error: No matches for %s"), mask);
+	else if (tmpint == -1)
+		partymember_printf(p, _("Error: No '+%c' list"), typechar);
+	else
+		partymember_printf(p, _("Ok, removed %s from %s"), mask,
+					chanptr?channame:"global list");
+
+	free(mask);
+	free(channame);
+	return BIND_RET_LOG;
+}
+
+
 bind_list_t server_party_commands[] = {					/* Old flag requirements */
 	{"", "servers", party_servers},			/* DDD	*/
+	{"l", "+ban", party_plus_mask},			/* DDD	*/	/* lo|lo */
+	{"l", "+invite", party_plus_mask},		/* DDD	*/	/* lo|lo */
+	{"l", "+exempt", party_plus_mask},		/* DDD	*/	/* lo|lo */
+	{"l", "+chanmask", party_plus_mask},		/* DDD	*/	/* lo|lo */
+	{"l", "-ban", party_minus_mask},			/* DDD	*/	/* lo|lo */
+	{"l", "-invite", party_minus_mask},		/* DDD	*/	/* lo|lo */
+	{"l", "-exempt", party_minus_mask},		/* DDD	*/	/* lo|lo */
+	{"l", "-chanmask", party_minus_mask},		/* DDD	*/	/* lo|lo */
+	{"l", "bans", party_list_masks},		/* DDD	*/	/* lo|lo */
+	{"l", "invites", party_list_masks},		/* DDD	*/	/* lo|lo */
+	{"l", "exempts", party_list_masks},		/* DDD	*/	/* lo|lo */
+	{"l", "chanmasks", party_list_masks},		/* DDD	*/	/* lo|lo */
 	{"m", "+server", party_plus_server},		/* DDC	*/
 	{"m", "-server", party_minus_server},		/* DDD	*/
 	{"m", "dump", party_dump},			/* DDD	*/

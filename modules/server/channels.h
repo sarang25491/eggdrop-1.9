@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: channels.h,v 1.15 2004/08/05 00:17:58 darko Exp $
+ * $Id: channels.h,v 1.16 2004/08/11 21:02:16 darko Exp $
  */
 
 #ifndef _EGG_MOD_SERVER_CHANNELS_H_
@@ -30,13 +30,13 @@
 
 typedef struct coupplet {
 	struct coupplet *next;
-	const char *name;
+	char *name;
 	unsigned long left, right;
 } coupplet_t;
 
 typedef struct chanstring {
 	struct chanstring *next;
-	const char *name;
+	char *name;
 	char *data;
 } chanstring_t;
 
@@ -59,12 +59,17 @@ typedef struct channel_mask {
 	struct channel_mask *next;
 	char *mask;
 	char *set_by;
+	char *creator;
+	char *comment;
+/* FIXME - these should be long, not int. (EGGTIMEVALT) */
 	int time;
+	int expire;
+	int sticky;
 } channel_mask_t;
 
 typedef struct channel_mask_list {
 	struct channel_mask *head;
-	int len;
+	int len; /* Is this really needed? It wasn't even incremented before */
 	int loading;
 	char type;
 } channel_mask_list_t;
@@ -86,7 +91,7 @@ typedef struct channel {
 	int limit;			/* Channel limit. */
 	char *key;			/* Channel key. */
 
-	channel_mask_list_t *lists;	/* Mask lists (bans, invites, etc). */
+	channel_mask_list_t **lists;	/* Mask lists (bans, invites, etc). */
 	int nlists;
 
 	channel_mode_arg_t *args;	/* Stored channel modes. */
@@ -135,7 +140,10 @@ extern int channel_list(const char ***chans);
 extern int channel_list_members(const char *chan, const char ***members);
 extern channel_mask_list_t *channel_get_mask_list(channel_t *chan, char type);
 extern void channel_add_mask(channel_t *chan, char type, const char *mask, const char *set_by, int time);
-extern void channel_del_mask(channel_t *chan, char type, const char *mask);
+extern int channel_notirc_add_mask(channel_t *chan, char type, const char *mask, const char *creator,
+						const char *comment, int expire, int sticky, int console);
+extern int channel_del_mask(channel_t *chan, char type, const char *mask, int remove);
 extern void channel_clear_masks(channel_t *chan, char type);
+extern int channel_list_masks(channel_mask_t ***cm, char type, channel_t *chanptr, const char *mask);
 
 #endif /* !_EGG_MOD_SERVER_CHANNELS_H_ */

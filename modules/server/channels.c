@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.26 2004/08/05 00:17:58 darko Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.27 2004/08/11 21:02:16 darko Exp $";
  #endif
 
 #include "server.h"
@@ -40,7 +40,7 @@ static const char *channel_builtin_ints[];
 static const char *channel_builtin_coupplets[];
 static const char *channel_builtin_strings[];
 
-static channel_t chanset_defaults = {0};
+static channel_t global_chan;
 
 /* Prototypes. */
 static int uhost_cache_delete(const void *key, void *data, void *param);
@@ -74,7 +74,8 @@ void server_channel_init()
 	bind_entry_add(table, NULL, "347", "invitelistend", BIND_WANTS_CD, got_list_end, (void *)'I');
 	bind_entry_add(table, NULL, "349", "exceptlistend", BIND_WANTS_CD, got_list_end, (void *)'e');
 
-	chanset_defaults.builtin_bools = 1;
+	memset(&global_chan, 0, sizeof global_chan);
+	global_chan.builtin_bools = 1;
 	chanfile_load(server_config.chanfile);
 
 	bind_add_simple(BTN_EVENT, NULL, "minutely", channels_minutely);
@@ -117,7 +118,7 @@ static void free_channel_online_stuff(channel_t *chan)
 	chan->key = NULL;
 
 	for (i = 0; i < chan->nlists; i++)
-		clear_masklist(chan->lists+i);
+		clear_masklist(chan->lists[i]);
 	free(chan->lists);
 	chan->lists = NULL;
 	chan->nlists = 0;
@@ -149,21 +150,25 @@ int destroy_channel_record(const char *chan_name)
 	coupplet_t *cplt, *tmpcplt;
 	chanstring_t *cstr, *tmpcstr;
 
-	channel_lookup(chan_name, 0, &chan, &prev);
-	if (!chan)
-		return -1;
+	if (chan_name) {
+		channel_lookup(chan_name, 0, &chan, &prev);
+		if (!chan)
+			return -1;
 
-	if (chan->status & CHANNEL_JOINED)
-		printserv(SERVER_NORMAL, "PART %s\r\n", chan_name);
+		if (chan->status & CHANNEL_JOINED)
+			printserv(SERVER_NORMAL, "PART %s\r\n", chan_name);
 
-	if (prev)
-		prev->next = chan->next;
+		if (prev)
+			prev->next = chan->next;
+		else
+			channel_head = chan->next;
+		nchannels--;
+
+		free(chan->name);
+		free_channel_online_stuff(chan);
+	}
 	else
-		channel_head = chan->next;
-	nchannels--;
-
-	free(chan->name);
-	free_channel_online_stuff(chan);
+		chan = &global_chan;
 
 	for (cplt = chan->builtin_ints; cplt; cplt = tmpcplt) {
 		tmpcplt = cplt->next;
@@ -184,7 +189,8 @@ int destroy_channel_record(const char *chan_name)
 		free(cstr);
 	}
 
-	free(chan);
+	if (chan != &global_chan)
+		free(chan);
 	return 0;
 }
 
@@ -201,7 +207,7 @@ void server_channel_destroy()
 {
 	chanfile_save(server_config.chanfile);
 	destroy_all_channel_records();
-
+	destroy_channel_record(NULL); /* free any global channel stuff */
 	bind_rem_simple(BTN_EVENT, NULL, "minutely", channels_minutely);
 }
 
@@ -234,7 +240,7 @@ int channel_lookup(const char *chan_name, int create, channel_t **chanptr, chann
 		chan->nlists = strlen(current_server.type1modes);
 		chan->lists = calloc(chan->nlists, sizeof(*chan->lists));
 		for (i = 0; i < chan->nlists; i++) {
-			chan->lists[i].type = current_server.type1modes[i];
+			chan->lists[i]->type = current_server.type1modes[i];
 		}
 	}
 
@@ -246,7 +252,7 @@ int channel_lookup(const char *chan_name, int create, channel_t **chanptr, chann
 		}
 	}
 
-	chan->builtin_bools = chanset_defaults.builtin_bools;
+	chan->builtin_bools = global_chan.builtin_bools;
 /* FIXME - set other members to their respective default values (if any) */
 	chan->next = channel_head;
 	channel_head = chan;
@@ -362,6 +368,9 @@ channel_member_t *channel_add_member(const char *chan_name, const char *nick, co
 	return(m);
 }
 
+/* FIXME - Note to self: Make sure we can always find bot's channel data without
+	cycling the memberlist. Easy accomplished by swapping code in here a bit
+	and adding a pointer to memberlist entry in channel_t. Due next commit */
 void channel_on_join(const char *chan_name, const char *nick, const char *uhost)
 {
 	channel_t *chan;
@@ -375,10 +384,9 @@ void channel_on_join(const char *chan_name, const char *nick, const char *uhost)
 			printserv(SERVER_NORMAL, "WHO %s\r\n", chan_name);
 			printserv(SERVER_NORMAL, "MODE %s\r\n", chan_name);
 			for (i = 0; i < chan->nlists; i++)
-				chan->lists[i].loading = 1;
+				chan->lists[i]->loading = 1;
 			printserv(SERVER_NORMAL, "MODE %s %s\r\n", chan_name, current_server.type1modes);
 		}
-		channel_add_member(chan_name, nick, uhost);
 		return;
 	}
 
@@ -656,51 +664,155 @@ channel_mask_list_t *channel_get_mask_list(channel_t *chan, char type)
 	int i;
 
 	for (i = 0; i < chan->nlists; i++) {
-		if (chan->lists[i].type == type) return(chan->lists+i);
+		if (chan->lists[i]->type == type)
+			return(chan->lists[i]);
 	}
 	return(NULL);
 }
 
-void channel_add_mask(channel_t *chan, char type, const char *mask, const char *set_by, int time)
+/* FIXME - int time should be long expire */
+/* Creates or updates an entry in the mask list, as a result of channel mode change.
+   It is *NOT* allowed to create new list type because, when connected to server,
+   we already know all valid types or use defaults. */
+void channel_irc_add_mask(channel_t *chan, char type, const char *mask, const char *set_by, int time)
 {
 	channel_mask_list_t *l;
 	channel_mask_t *m;
 
 	l = channel_get_mask_list(chan, type);
-	if (!l) return;
 
-	m = calloc(1, sizeof(*m));
-	m->mask = strdup(mask);
+	if (!l)
+		return;
+
+	for (m = l->head; m; m = m->next)
+		if (!(current_server.strcmp)(m->mask, mask))
+			break;
+
+	if (!m) {
+		m = calloc(1, sizeof(*m));
+		m->mask = strdup(mask);
+		m->next = l->head;
+		l->head = m;
+		l->len++;
+	}
 	if (set_by) m->set_by = strdup(set_by);
 	m->time = time;
+}
+
+/* FIXME - int expire should be long expire (EGGTIMEVALT) */
+/* Creates or updates an entry in the mask list, as a result of console command, script, other.. */
+/* It *WILL* create a new list type if need be */
+int channel_notirc_add_mask(channel_t *chan, char type, const char *mask, const char *creator,
+					const char *comment, int expire, int sticky, int console)
+{
+	channel_mask_list_t *l;
+	channel_mask_t *m;
+
+	if (!chan) /* Global mask */
+		chan = &global_chan;
+
+	l = channel_get_mask_list(chan, type);
+	if (!l) {
+		void *tmpp = realloc(chan->lists, (chan->nlists+1) * sizeof(*chan->lists));
+		if (!tmpp)
+			return 1;
+		chan->lists = tmpp;
+		l = calloc(1, sizeof *l);
+		chan->lists[chan->nlists++] = l;
+		l->type = type;
+	}
+
+	for (m = l->head; m; m = m->next)
+		/* Here we do not use wild matching, so to allow for masks to be created
+		   even if wider covering mask already exists. Idea is to be able to set
+		   only the narrowest mask, once the need arises. */
+		if (current_server.strcmp) {
+			if (!(current_server.strcmp)(m->mask, mask))
+				break;
+		}
+		else {
+			if (!strcasecmp(m->mask, mask))
+				break;
+		}
+
+	if (m) {
+		if (m->creator)
+			return 2;
+	}
+	else {
+		m = calloc(1, sizeof(*m));
+		m->mask = strdup(mask);
+	}
+
+	m->creator = strdup(creator);
+	m->comment = strdup(comment?comment:"");
+	m->expire = expire;
+	m->sticky = sticky;
 	m->next = l->head;
 	l->head = m;
+	l->len++;
+	if (chanptr_member_has_flag(current_server.nick, chan, 'o') ||
+		chanptr_member_has_flag(current_server.nick, chan, 'h')) {
+/* FIXME - check for enforcebans and kick if needed. Or maybe we should kick anyway?
+		Or maybe only kick if it was console .+ban?
+		Perhaps best, yet, is to create a separate function to traverse member list
+		and deal with this in appropriate way. We'll need it for other things too.
+		For now, let it just dump mode to channel */
+		if (chan == &global_chan)
+			for (chan = channel_head; chan; chan = chan->next) {
+				printserv(SERVER_QUICK, "MODE %s +%c %s\r\n", chan->name, type, mask);
+				if (type == 'b' && console)
+					; /* Er, nothing for now */
+		}
+		else {
+				printserv(SERVER_QUICK, "MODE %s +%c %s\r\n", chan->name, type, mask);
+				if (type == 'b' && console)
+					;
+		}
+	}
+	return 0;
 }
 
 static void free_mask(channel_mask_t *m)
 {
-	if (m->mask) free(m->mask);
-	if (m->set_by) free(m->set_by);
+	free(m->mask);
+	free(m->creator);
+	free(m->set_by);
+	free(m->comment);
 	free(m);
 }
 
-void channel_del_mask(channel_t *chan, char type, const char *mask)
+int channel_del_mask(channel_t *chan, char type, const char *mask, int remove)
 {
 	channel_mask_list_t *l;
 	channel_mask_t *m, *prev;
 
+	if (!chan)
+		chan = &global_chan;
+
 	l = channel_get_mask_list(chan, type);
-	if (!l) return;
+	if (!l) return -1;
 
 	prev = NULL;
 	for (m = l->head; m; m = m->next) {
 		if (!(current_server.strcmp)(m->mask, mask)) break;
 		prev = m;
 	}
-	if (!m) return;
-	if (prev) prev->next = m->next;
-	else l->head = m->next;
-	free_mask(m);
+	if (!m) return -2;
+
+	if (remove) {
+		if (prev) prev->next = m->next;
+		else l->head = m->next;
+		l->len--;
+		free_mask(m);
+	}
+	else {
+		free(m->set_by);
+		m->set_by = NULL;
+		m->time = 0;
+	}
+/* FIXME - Check if we should send MODE message */
+	return 0;
 }
 
 static void clear_masklist(channel_mask_list_t *l)
@@ -722,6 +834,33 @@ void channel_clear_masks(channel_t *chan, char type)
 	if (l) clear_masklist(l);
 }
 
+/* Returns a number of channel_mask_t nodes stored in *cm */
+int channel_list_masks(channel_mask_t ***cm, char type, channel_t *chanptr, const char *mask)
+{
+	channel_mask_list_t *l;
+	channel_mask_t *m;
+	int nmasks = 0;
+
+	if (chanptr == NULL)
+		chanptr = &global_chan;
+
+	l = channel_get_mask_list(chanptr, type);
+	if (!l)
+		return 0;
+
+	for (m = l->head; m; m = m->next)
+		if (wild_match(mask, m->mask)) {
+			void *tmpp = realloc(*cm, (nmasks+1)*(sizeof cm));
+			if (!tmpp)
+				return nmasks;
+			*cm = tmpp;
+
+			(*cm)[nmasks++] = m;
+		}
+
+	return nmasks;
+}
+
 /* :server 367 <ournick> <chan> <ban> [<nick> <time>]
  * :server 346 <ournick> <chan> <invite> [<nick> <time>]
  * :server 348 <ournick> <chan> <except> [<nick> <time>] */
@@ -737,11 +876,13 @@ static int got_list_item(void *client_data, char *from_nick, char *from_uhost, u
 	if (!chan) return(0);
 	l = channel_get_mask_list(chan, type);
 	if (!l || !(l->loading)) return(0);
-	channel_add_mask(chan, type, ban, (nargs > 3) ? args[3] : NULL, (nargs > 4) ? atoi(args[4]) : -1);
+	channel_irc_add_mask(chan, type, ban, (nargs > 3) ? args[3] : NULL, (nargs > 4) ? atoi(args[4]) : -1);
 	return(0);
 }
 
 /* :server 368 <ournick> <chan> :End of channel ban list */
+/* :server 347 <ournick> <chan> :End of channel invite except list */
+/* :server 349 <ournick> <chan> :End of channel ban except list */
 static int got_list_end(void *client_data, char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
 	char *chan_name = args[1];
@@ -944,8 +1085,8 @@ static void parse_chan_mode(char *from_nick, char *from_uhost, user_t *u, int na
 		}
 		else if (modify_list) {
 			/* Add/remove an address from a list. */
-			if (changestr[0] == '+') channel_add_mask(chan, *change, arg, from_nick, timer_get_now_sec(NULL));
-			else channel_del_mask(chan, *change, arg);
+			if (changestr[0] == '+') channel_irc_add_mask(chan, *change, arg, from_nick, timer_get_now_sec(NULL));
+			else channel_del_mask(chan, *change, arg, 0);
 		}
 		else if (changestr[0] == '+') {
 			/* + flag change that requires special handling. */
@@ -1266,7 +1407,7 @@ static int chanfile_save_channel(xml_node_t *root, channel_t *chan)
 		xml_node_set_str(chan->name, chan_node, "name", 0, 0);
 	}
 	else
-		chan_node->name = strdup("defaults");
+		chan_node->name = strdup("global");
 
 	for (i = j = 0; i < 32; i++) {
 		if (*channel_builtin_bools == '\0')
@@ -1295,6 +1436,22 @@ static int chanfile_save_channel(xml_node_t *root, channel_t *chan)
 		xml_node_set_str(cstr->data, chan_node, "setting", i++, "data", 0, 0);
 	}
 
+	j = 0;
+	for (i = 0; i < chan->nlists; i++) {
+		channel_mask_t *m;
+		char type[2] = " ";
+		type[0] = chan->lists[i]->type;
+		for (m = chan->lists[i]->head; m; m = m->next) {
+			xml_node_set_str(type, chan_node, "chanmask", j, "type", 0, 0);
+			xml_node_set_str(m->mask, chan_node, "chanmask", j, "mask", 0, 0);
+			xml_node_set_str(m->creator, chan_node, "chanmask", j, "creator", 0, 0);
+			xml_node_set_str(m->comment, chan_node, "chanmask", j, "comment", 0, 0);
+			/* FIXME - This should be long integer */
+			xml_node_set_int(m->expire, chan_node, "chanmask", j, "expire", 0, 0);
+			xml_node_set_int(m->sticky, chan_node, "chanmask", j++, "sticky", 0, 0);
+		}
+	}
+
 	xml_node_append(root, chan_node);
 /* FIXME - Do we need to free() here? Appears not.
 	free(chan_node); */
@@ -1310,7 +1467,7 @@ int chanfile_save(const char *fname)
 	root = xml_node_new();
 	root->name = strdup("channels");
 
-	chanfile_save_channel(root, &chanset_defaults);
+	chanfile_save_channel(root, &global_chan);
 
 	for (chan = channel_head; chan; chan = chan->next)
 		chanfile_save_channel(root, chan);
@@ -1349,12 +1506,12 @@ static int chanfile_load(const char *fname)
 			xml_node_get_str(&tmpptr, chan_node, "name", 0, 0);
 /* FIXME - Maybe we should allow for already existing channels,
 		in which case we should just update the existing data */
-		if (!tmpptr || channel_lookup(tmpptr, 1, &chan, NULL) == -1)
+			if (!tmpptr || channel_lookup(tmpptr, 1, &chan, NULL) == -1)
 				continue;
 			chan->name = strdup(tmpptr);
 		}
-		else if (!strcasecmp(chan_node->name, "defaults")) {
-			chan = &chanset_defaults;
+		else if (!strcasecmp(chan_node->name, "global")) {
+			chan = &global_chan;
 			chan->name = NULL;
 		}
 		else
@@ -1380,7 +1537,29 @@ static int chanfile_load(const char *fname)
 				continue;
 			channel_set(chan, tmpptr, tmp2ptr);
 		}
+
+		j = 0;
+		while ((setting_node = xml_node_lookup(chan_node, 0, "chanmask", j++, 0))) {
+			char *type, *mask, *creator, *comment;
+			/* FIXME - 'expire' should be long */
+			int expire, sticky;
+			if (xml_node_get_str(&type, setting_node, "type", 0, 0) == -1)
+				continue;
+			if (xml_node_get_str(&mask, setting_node, "mask", 0, 0) == -1)
+				continue;
+			if (xml_node_get_str(&creator, setting_node, "creator", 0, 0) == -1)
+				continue;
+			if (xml_node_get_str(&comment, setting_node, "comment", 0, 0) == -1)
+				continue;
+			if (xml_node_get_int(&expire, setting_node, "expire", 0, 0) == -1)
+				continue;
+			if (xml_node_get_int(&sticky, setting_node, "sticky", 0, 0) == -1)
+				continue;
+			channel_notirc_add_mask(chan, *type, mask, creator, comment, expire, sticky, 0);
+		}
 	}
+
+	xml_node_delete(doc);
 	return 0;
 }
 
@@ -1396,7 +1575,8 @@ void update_channel_structures()
 			chan->nlists = strlen(current_server.type1modes);
 			chan->lists = calloc(chan->nlists, sizeof(*chan->lists));
 			for (i = 0; i < chan->nlists; i++) {
-				chan->lists[i].type = current_server.type1modes[i];
+				chan->lists[i] = calloc(1, sizeof *chan->lists[i]);
+				chan->lists[i]->type = current_server.type1modes[i];
 			}
 		}
 
@@ -1441,7 +1621,7 @@ static int chanptr_member_has_flag(const char *nick, channel_t *chan, unsigned c
 {
 	channel_member_t *m;
 
-	if (!chan)
+	if (!chan || !(chan->status & CHANNEL_JOINED))
 		return 0;
 
 	for (m = chan->member_head; m; m = m->next)
