@@ -1,3 +1,15 @@
+2001-08-23 00:39  Matthew Hallacy <poptix@techmonkeys.org>
+
+	* src/patch.h:
+
+	[no log message] 
+
+2001-08-23 00:38  Matthew Hallacy <poptix@techmonkeys.org>
+
+	* src/mod/uptime.mod/uptime.c:
+
+	No longer send server name in uptime.mod 
+
 2001-08-22 23:49  Teemu Hjelt <sup@techmonkeys.org>
 
 	* src/mod/channels.mod/tclchan.c:
