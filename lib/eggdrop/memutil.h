@@ -22,7 +22,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: memutil.h,v 1.13 2003/02/03 01:01:07 stdarg Exp $
+ * $Id: memutil.h,v 1.14 2003/03/06 07:56:53 tothwolf Exp $
  */
 
 #ifndef _EGG_MEMUTIL_H
@@ -53,7 +53,6 @@ do {                                                                    \
     free_null(target);                                                  \
 } while (0)
 
-extern int egg_strcatn(char *, const char *, size_t);
 extern int my_strcpy(register char *, register char *);
 
 extern void splitc(char *, char *, char);

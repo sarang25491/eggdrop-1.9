@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: memutil.c,v 1.13 2003/02/03 01:01:07 stdarg Exp $";
+static const char rcsid[] = "$Id: memutil.c,v 1.14 2003/03/06 07:56:53 tothwolf Exp $";
 #endif
 
 #include <stdio.h>
@@ -31,55 +31,6 @@ static const char rcsid[] = "$Id: memutil.c,v 1.13 2003/02/03 01:01:07 stdarg Ex
 #include <string.h>
 #include <stdarg.h>
 #include "memutil.h"
-
-/*        This implementation wont overrun dst - 'max' is the max bytes that dst
- *      can be, including the null terminator. So if 'dst' is a 128 byte buffer,
- *      pass 128 as 'max'. The function will _always_ null-terminate 'dst'.
- *
- *      Returns: The number of characters appended to 'dst'.
- *
- *  Usage eg.
- *
- *              char    buf[128];
- *              size_t  bufsize = sizeof(buf);
- *
- *              buf[0] = 0, bufsize--;
- *
- *              while (blah && bufsize) {
- *                      bufsize -= egg_strcatn(buf, <some-long-string>, sizeof(buf));
- *              }
- *
- *      <Cybah>
- */
-int egg_strcatn(char *dst, const char *src, size_t max)
-{
-  size_t tmpmax = 0;
-
-  /* find end of 'dst' */
-  while (*dst && max > 0) {
-    dst++;
-    max--;
-  }
-	    
-  /*    Store 'max', so we can use it to workout how many characters were
-   *  written later on.
-   */
-  tmpmax = max;
-
-  /* copy upto, but not including the null terminator */
-  while (*src && max > 1) {
-    *dst++ = *src++;
-    max--;
-  }
-
-  /* null-terminate the buffer */
-  *dst = 0;
-
-  /*    Don't include the terminating null in our count, as it will cumulate
-   *  in loops - causing a headache for the caller.
-   */
-  return tmpmax - max;
-}
 
 int my_strcpy(register char *a, register char *b)
 {
