@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggconfig.c,v 1.13 2004/06/15 19:19:16 wingman Exp $";
+static const char rcsid[] = "$Id: eggconfig.c,v 1.14 2004/06/19 10:30:41 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -46,9 +46,9 @@ int nroots = 0;
 
 int config_init()
 {
-	BT_config_str = bind_table_add("config_str", 2, "ss", MATCH_MASK, BIND_STACKABLE);	/* DDD	*/
-	BT_config_int = bind_table_add("config_int", 2, "si", MATCH_MASK, BIND_STACKABLE);	/* DDD	*/
-	BT_config_save = bind_table_add("config_save", 1, "s", MATCH_MASK, BIND_STACKABLE);	/* DDD	*/
+	BT_config_str = bind_table_add(BTN_CONFIG_STR, 2, "ss", MATCH_MASK, BIND_STACKABLE);	/* DDD	*/
+	BT_config_int = bind_table_add(BTN_CONFIG_INT, 2, "si", MATCH_MASK, BIND_STACKABLE);	/* DDD	*/
+	BT_config_save = bind_table_add(BTN_CONFIG_SAVE, 1, "s", MATCH_MASK, BIND_STACKABLE);	/* DDD	*/
 	return(0);
 }
 

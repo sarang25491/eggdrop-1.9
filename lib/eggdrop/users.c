@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.21 2004/06/17 13:32:43 wingman Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.22 2004/06/19 10:30:41 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -75,9 +75,9 @@ int user_init()
 	irchost_cache_ht = hash_table_create(NULL, NULL, HOST_HASH_SIZE, HASH_TABLE_STRINGS);
 
 	/* And bind tables. */
-	BT_uflags = bind_table_add("uflag", 4, "ssss", MATCH_MASK, BIND_STACKABLE);	/* DDD	*/
-	BT_uset = bind_table_add("uset", 4, "ssss", MATCH_MASK, BIND_STACKABLE);	/* DDD	*/
-	BT_udelete = bind_table_add("udelete", 1, "U", MATCH_NONE, BIND_STACKABLE);	/* DDD	*/
+	BT_uflags = bind_table_add(BTN_USER_CHANGE_FLAGS, 4, "ssss", MATCH_MASK, BIND_STACKABLE);	/* DDD	*/
+	BT_uset = bind_table_add(BTN_USER_CHANGE_SETTINGS, 4, "ssss", MATCH_MASK, BIND_STACKABLE);	/* DDD	*/
+	BT_udelete = bind_table_add(BTN_USER_DELETE, 1, "U", MATCH_NONE, BIND_STACKABLE);	/* DDD	*/
 	return(0);
 }
 

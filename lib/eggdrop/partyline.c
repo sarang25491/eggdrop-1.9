@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partyline.c,v 1.15 2004/06/15 19:19:16 wingman Exp $";
+static const char rcsid[] = "$Id: partyline.c,v 1.16 2004/06/19 10:30:41 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -48,9 +48,9 @@ int partyline_init()
 	partychan_init();
 	partymember_init();
 	str_redup(&partyline_command_chars, "./");
-	BT_cmd = bind_table_add("party", 5, "PsUss", MATCH_PARTIAL | MATCH_FLAGS, 0);	/* DDD	*/
-	BT_party_out = bind_table_add("party_out", 5, "isUsi", MATCH_NONE, 0);		/* DDD	*/
-	bind_add_list("log", log_binds);
+	BT_cmd = bind_table_add(BTN_PARTYLINE_CMD, 5, "PsUss", MATCH_PARTIAL | MATCH_FLAGS, 0);	/* DDD	*/
+	BT_party_out = bind_table_add(BTN_PARTYLINE_OUT, 5, "isUsi", MATCH_NONE, 0);		/* DDD	*/
+	bind_add_list(BTN_LOG, log_binds);
 	return(0);
 }
 

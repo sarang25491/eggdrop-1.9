@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.21 2004/06/17 13:32:43 wingman Exp $
+# $Id: Makefile.am,v 1.22 2004/06/19 10:30:41 wingman Exp $
 
 AUX_DIST		= $(ac_aux_dir)/install-sh \
 			$(ac_aux_dir)/ltmain.sh \
@@ -6,10 +6,11 @@ AUX_DIST		= $(ac_aux_dir)/install-sh \
 			$(ac_aux_dir)/mkinstalldirs \
 			$(ac_aux_dir)/depcomp \
 			$(ac_aux_dir)/config.stubs \
-			$(ac_aux_dir)install-help.sh
+			$(ac_aux_dir)/install-help.sh
 
 AUX_DIST_EXTRA		= $(ac_aux_dir)/acinclude.m4 \
 			$(ac_aux_dir)/mpatrol.m4 \
+			$(ac_aux_dir)/module.mk	\
 			$(ac_aux_dir)/config.guess \
 			$(ac_aux_dir)/config.sub \
 			$(ac_aux_dir)/config.rpath

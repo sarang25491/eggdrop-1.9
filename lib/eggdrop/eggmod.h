@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: eggmod.h,v 1.8 2004/06/14 23:42:11 wingman Exp $
+ * $Id: eggmod.h,v 1.9 2004/06/19 10:30:41 wingman Exp $
  */
 
 #ifndef _EGG_EGGMOD_H_
@@ -26,6 +26,10 @@
 #define EGGMOD_USER	0	/* User is manually unloading a module. */
 #define EGGMOD_SHUTDOWN	1	/* Bot is exiting. Can't be ignored. */
 #define EGGMOD_RESTART	2	/* Bot is restarting. */
+
+/* Bind table names for modules events */
+#define BTN_LOAD_MODULE		"load"
+#define BTN_UNLOAD_MODULE	"unload"
 
 struct egg_module;
 typedef struct egg_module egg_module_t;

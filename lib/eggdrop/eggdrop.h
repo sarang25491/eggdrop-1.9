@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: eggdrop.h,v 1.32 2004/06/17 02:01:13 stdarg Exp $
+ * $Id: eggdrop.h,v 1.33 2004/06/19 10:30:41 wingman Exp $
  */
 
 #ifndef _EGG_EGGDROP_H_
@@ -66,6 +66,9 @@
 #  define N_(x)		(x)
 #  define P_(x1, x2, n)	( ((n) == 1) ? (x1) : (x2) )
 #endif
+
+/* Bind table names for eggdrop events */
+#define BTN_EVENT	"event"
 
 #define egg_assert(test) \
 		do { \

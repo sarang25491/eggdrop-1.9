@@ -18,6 +18,7 @@
  */
 
 #include <eggdrop/eggdrop.h>
+#include "core_binds.h"			/* prototypes		*/
 
 static bind_table_t *BT_time = NULL,
 	*BT_secondly = NULL,
@@ -25,11 +26,11 @@ static bind_table_t *BT_time = NULL,
 
 void core_binds_init()
 {
-	BT_init = bind_table_add ("init", 0, "", MATCH_NONE, BIND_STACKABLE);		/* DDD	*/
-	BT_shutdown = bind_table_add ("shutdown", 0, "", MATCH_NONE, BIND_STACKABLE);	/* DDD	*/
-	BT_time = bind_table_add("time", 5, "iiiii", MATCH_MASK, BIND_STACKABLE);	/* DDD	*/
-	BT_secondly = bind_table_add("secondly", 0, "", MATCH_NONE, BIND_STACKABLE);	/* DDD	*/
-	BT_status = bind_table_add("status", 2, "Ps", MATCH_NONE, BIND_STACKABLE);	/* DDD	*/
+	BT_init = bind_table_add (BTN_CORE_INIT, 0, "", MATCH_NONE, BIND_STACKABLE);		/* DDD	*/
+	BT_shutdown = bind_table_add (BTN_CORE_SHUTDOWN, 0, "", MATCH_NONE, BIND_STACKABLE);	/* DDD	*/
+	BT_time = bind_table_add(BTN_CORE_TIME, 5, "iiiii", MATCH_MASK, BIND_STACKABLE);	/* DDD	*/
+	BT_secondly = bind_table_add(BTN_CORE_SECONDLY, 0, "", MATCH_NONE, BIND_STACKABLE);	/* DDD	*/
+	BT_status = bind_table_add(BTN_CORE_STATUS, 2, "Ps", MATCH_NONE, BIND_STACKABLE);	/* DDD	*/
 }
 
 void check_bind_init(void)

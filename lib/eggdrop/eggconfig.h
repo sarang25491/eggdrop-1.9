@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: eggconfig.h,v 1.9 2003/12/20 00:34:37 stdarg Exp $
+ * $Id: eggconfig.h,v 1.10 2004/06/19 10:30:41 wingman Exp $
  */
 
 #ifndef _EGG_EGGCONFIG_H_
@@ -24,6 +24,11 @@
 
 #define CONFIG_INT	1
 #define CONFIG_STRING	2
+
+/* Bind table names for config events */
+#define BTN_CONFIG_STR	"config_str"
+#define BTN_CONFIG_INT	"config_int"
+#define BTN_CONFIG_SAVE	"config_save"
 
 typedef struct {
 	const char *name;

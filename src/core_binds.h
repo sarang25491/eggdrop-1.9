@@ -16,11 +16,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: core_binds.h,v 1.10 2004/06/15 11:24:46 wingman Exp $
+ * $Id: core_binds.h,v 1.11 2004/06/19 10:30:41 wingman Exp $
  */
 
 #ifndef _EGG_CORE_BINDS_H_
 #define _EGG_CORE_BINDS_H_
+
+/* Bind table names for core events */
+#define BTN_CORE_INIT		"init"
+#define BTN_CORE_SHUTDOWN	"shutdown"
+#define BTN_CORE_TIME		"time"
+#define BTN_CORE_SECONDLY	"secondly"
+#define BTN_CORE_STATUS		"status"
 
 void core_binds_init();
 void check_bind_time(struct tm *tm);

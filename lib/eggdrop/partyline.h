@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: partyline.h,v 1.14 2004/06/15 11:54:33 wingman Exp $
+ * $Id: partyline.h,v 1.15 2004/06/19 10:30:41 wingman Exp $
  */
 
 #ifndef _EGG_PARTYLINE_H_
@@ -30,6 +30,13 @@
 #define PARTY_TERMINAL_NICK	"HQ"
 #define PARTY_TERMINAL_USER	"HQ"
 #define PARTY_TERMINAL_HOST	"0.0.0.0"
+
+/* Bind table names for partyline events */
+#define BTN_PARTYLINE_JOIN	"partyjoin"
+#define BTN_PARTYLINE_PART	"partypart"
+#define BTN_PARTYLINE_PUBLIC	"partypub"
+#define BTN_PARTYLINE_CMD	"party"
+#define BTN_PARTYLINE_OUT	"party_out"
 
 struct partyline_event;
 struct partychan;

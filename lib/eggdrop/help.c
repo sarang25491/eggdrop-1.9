@@ -24,7 +24,7 @@
  */
  
 #ifndef lint
-static const char rcsid[] = "$Id: help.c,v 1.4 2004/06/17 13:32:43 wingman Exp $";
+static const char rcsid[] = "$Id: help.c,v 1.5 2004/06/19 10:30:41 wingman Exp $";
 #endif
 
 #include <sys/types.h>
@@ -79,8 +79,8 @@ help_init (void)
 	sections = hash_table_create(NULL, NULL, HELP_HASH_SIZE,
 			HASH_TABLE_STRINGS);
 
-	bind_add_simple ("load", NULL, "*", (Function)help_load_by_module);
-	bind_add_simple ("unload", NULL, "*", (Function)help_unload_by_module);
+	bind_add_simple (BTN_LOAD_MODULE, NULL, "*", (Function)help_load_by_module);
+	bind_add_simple (BTN_UNLOAD_MODULE, NULL, "*", (Function)help_unload_by_module);
 
 	return 0;
 }

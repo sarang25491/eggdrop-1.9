@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: users.h,v 1.9 2004/06/17 13:32:43 wingman Exp $
+ * $Id: users.h,v 1.10 2004/06/19 10:30:41 wingman Exp $
  */
 
 #ifndef _EGG_USERS_H_
@@ -26,6 +26,11 @@
 #define HOST_HASH_SIZE	50
 
 #define USER_DELETED 1
+
+/* Bind table names for user events */
+#define BTN_USER_CHANGE_FLAGS		"uflags"
+#define BTN_USER_CHANGE_SETTINGS	"uset"
+#define BTN_USER_DELETE			"udelete"
 
 typedef struct {
 	char *name;
