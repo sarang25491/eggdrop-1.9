@@ -154,6 +154,7 @@ static int parse_reply(unsigned char *response, int nbytes)
 	/* End of question. */
 
 	for (i = 0; i < header.answer_count; i++) {
+		result[0] = 0;
 		/* Read in the answer. */
 		ptr += skip_name(ptr, end);
 		memcpy(&reply, ptr, 10);
@@ -190,8 +191,8 @@ static int parse_reply(unsigned char *response, int nbytes)
 			ptr = placeholder;
 		}
 		else {
-			printf("unknown reply\n");
-			return(-1);
+			printf("unknown reply: %d (%d bytes)\n", reply.type, reply.rdlength);
+			//return(-1);
 		}
 		ptr += reply.rdlength;
 		printf("result: %s\n", result);
