@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2001-12-19 04:00-0600\n"
+"POT-Creation-Date: 2001-12-20 04:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2430,7 +2430,7 @@ msgstr ""
 msgid "Note delivered."
 msgstr ""
 
-#: modules/notes/notes.c:855 modules/notes/notes.c:912
+#: modules/notes/notes.c:855 modules/notes/notes.c:915
 msgid "For a list:"
 msgstr ""
 
@@ -2447,7 +2447,7 @@ msgstr ""
 msgid "Notes will be stored."
 msgstr ""
 
-#: modules/notes/notes.c:909
+#: modules/notes/notes.c:912
 #, c-format
 msgid "NOTICE %s :You have %d note%s waiting on %s.\n"
 msgstr ""
