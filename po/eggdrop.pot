@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-06-17 06:15-0500\n"
+"POT-Creation-Date: 2004-06-17 12:15-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -533,193 +533,184 @@ msgstr ""
 
 #: src/core_party.c:196
 #, c-format
-msgid "Help path: %s (%d help entries loaded)"
+msgid "Help path: %s (%d entries, %d sections)"
 msgstr ""
 
-#: src/core_party.c:204 src/core_party.c:311 src/main.c:141
+#: src/core_party.c:205 src/core_party.c:312 src/main.c:141
 msgid "Saving user file..."
 msgstr ""
 
-#: src/core_party.c:206 src/main.c:143
+#: src/core_party.c:207 src/main.c:143
 msgid "Saving config file..."
 msgstr ""
 
-#: src/core_party.c:214
+#: src/core_party.c:215
 msgid "Please use at least 6 characters."
 msgstr ""
 
-#: src/core_party.c:218
+#: src/core_party.c:219
 #, c-format
 msgid "Changed password to '%s'."
 msgstr ""
 
-#: src/core_party.c:232
+#: src/core_party.c:233
 msgid "Partyline members:"
 msgstr ""
 
-#: src/core_party.c:313
+#: src/core_party.c:314
 #, c-format
 msgid "Bot shutting down: %s"
 msgstr ""
 
-#: src/core_party.c:314
+#: src/core_party.c:315
 msgid "Bot shutting down."
 msgstr ""
 
-#: src/core_party.c:325
+#: src/core_party.c:326
 msgid "Syntax: +user <handle>"
 msgstr ""
 
-#: src/core_party.c:329
+#: src/core_party.c:330
 #, c-format
 msgid "User '%s' already exists!"
 msgstr ""
 
-#: src/core_party.c:333
+#: src/core_party.c:334
 #, c-format
 msgid "User '%s' created."
 msgstr ""
 
-#: src/core_party.c:334
+#: src/core_party.c:335
 #, c-format
 msgid "Could not create user '%s'."
 msgstr ""
 
-#: src/core_party.c:343
+#: src/core_party.c:344
 msgid "Syntax: -user <handle>"
 msgstr ""
 
-#: src/core_party.c:347 src/core_party.c:372 src/core_party.c:410
+#: src/core_party.c:348 src/core_party.c:373 src/core_party.c:411
 #, c-format
 msgid "User '%s' not found."
 msgstr ""
 
-#: src/core_party.c:349
+#: src/core_party.c:350
 #, c-format
 msgid "Deleting user '%s'."
 msgstr ""
 
-#: src/core_party.c:362
+#: src/core_party.c:363
 msgid "Syntax: +host [handle] <host>"
 msgstr ""
 
-#: src/core_party.c:379
+#: src/core_party.c:380
 msgid "Only valid users can add hosts."
 msgstr ""
 
-#: src/core_party.c:384
+#: src/core_party.c:385
 #, c-format
 msgid "Added '%1$s' to user '%2$s'."
 msgstr ""
 
-#: src/core_party.c:400
+#: src/core_party.c:401
 msgid "Syntax: -host [handle] <host>"
 msgstr ""
 
-#: src/core_party.c:417
+#: src/core_party.c:418
 msgid "Only valid users can remove hosts."
 msgstr ""
 
-#: src/core_party.c:422
+#: src/core_party.c:423
 #, c-format
 msgid "Mask '%1$s' not found for user '%2$s'."
 msgstr ""
 
-#: src/core_party.c:425
+#: src/core_party.c:426
 #, c-format
 msgid "Removed '%1$s' from user '%2$s'."
 msgstr ""
 
-#: src/core_party.c:448
+#: src/core_party.c:449
 msgid "Syntax: chattr <handle> [channel] <+/-flags>"
 msgstr ""
 
-#: src/core_party.c:460
+#: src/core_party.c:461
 #, c-format
 msgid "Flags for %s are now '%s'."
 msgstr ""
 
-#: src/core_party.c:462
+#: src/core_party.c:463
 #, c-format
 msgid "'%s' is not a valid user."
 msgstr ""
 
-#: src/core_party.c:474
-msgid "Syntax: help <section>"
-msgstr ""
-
-#: src/core_party.c:480
-#, c-format
-msgid "No help found for '%s'."
-msgstr ""
-
-#: src/core_party.c:500
+#: src/core_party.c:488
 msgid "Loaded modules:"
 msgstr ""
 
-#: src/core_party.c:509
+#: src/core_party.c:498
 msgid "Syntax: loadmod <module name>"
 msgstr ""
 
-#: src/core_party.c:514
+#: src/core_party.c:503
 #, c-format
 msgid "Module '%s' loaded successfully."
 msgstr ""
 
-#: src/core_party.c:517
+#: src/core_party.c:506
 #, c-format
 msgid "Module '%s' is already loaded."
 msgstr ""
 
-#: src/core_party.c:520
+#: src/core_party.c:509
 #, c-format
 msgid "Module '%s' could not be loaded."
 msgstr ""
 
-#: src/core_party.c:523
+#: src/core_party.c:512
 #, c-format
 msgid ""
 "Module '%s' does not have a valid initialization function. Perhaps it is not "
 "an eggdrop module?"
 msgstr ""
 
-#: src/core_party.c:532
+#: src/core_party.c:521
 msgid "Syntax: unloadmod <module name>"
 msgstr ""
 
-#: src/core_party.c:537
+#: src/core_party.c:526
 #, c-format
 msgid "Module '%s' unloaded successfully."
 msgstr ""
 
-#: src/core_party.c:540
+#: src/core_party.c:529
 #, c-format
 msgid "Module '%s' is not loaded."
 msgstr ""
 
-#: src/core_party.c:543
+#: src/core_party.c:532
 #, c-format
 msgid ""
 "Module '%s' has dependencies that are still loaded. You must unload them "
 "first."
 msgstr ""
 
-#: src/core_party.c:546
+#: src/core_party.c:535
 #, c-format
 msgid "Module '%s' refuses to be unloaded by you!"
 msgstr ""
 
-#: src/logfile.c:125
+#: src/logfile.c:116
 msgid "Cycling logfiles..."
 msgstr ""
 
-#: src/logfile.c:225 src/logfile.c:284
+#: src/logfile.c:216 src/logfile.c:275
 #, c-format
 msgid "Last message repeated %d time(s).\n"
 msgstr ""
 
 #. It's too big.
-#: src/logfile.c:270
+#: src/logfile.c:261
 #, c-format
 msgid "Cycling logfile %s: over max-logsize (%d kilobytes)."
 msgstr ""
@@ -774,8 +765,4 @@ msgstr ""
 #: src/main.c:287
 #, c-format
 msgid "Warning: timer drift (%d minutes)."
-msgstr ""
-
-#: src/main.c:424
-msgid "Help file core_commands.xml could not be opened."
 msgstr ""
