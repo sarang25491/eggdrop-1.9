@@ -1,3 +1,85 @@
+2001-10-19 01:55  Tothwolf <tothwolf@techmonkeys.org>
+
+	* acinclude.m4, configure.ac, src/botcmd.c, src/botmsg.c,
+	src/botnet.c, src/chanprog.c, src/cmds.c, src/dcc.c, src/dccutil.c,
+	src/dns.c, src/eggdrop.h, src/logfile.c, src/main.c, src/misc.c,
+	src/modules.c, src/net.c, src/stat.h, src/tcl.c, src/tcldcc.c,
+	src/tclhash.c, src/tclmisc.c, src/tcluser.c, src/userent.c,
+	src/userrec.c, src/users.c, src/adns/setup.c, src/adns/types.c,
+	src/compat/Makefile.am, src/compat/compat.h,
+	src/compat/gnu_strftime.c, src/compat/inet_aton.c,
+	src/compat/inet_aton.h, src/compat/inet_ntop.c,
+	src/compat/inet_ntop.h, src/compat/inet_pton.c,
+	src/compat/inet_pton.h, src/compat/memcpy.c, src/compat/memcpy.h,
+	src/compat/memset.c, src/compat/memset.h, src/compat/snprintf.c,
+	src/compat/snprintf.h, src/compat/strcasecmp.c,
+	src/compat/strcasecmp.h, src/compat/strftime.c,
+	src/compat/strftime.h, src/compat/strncasecmp.c,
+	src/compat/strncasecmp.h, src/mod/module.h,
+	src/mod/assoc.mod/assoc.c, src/mod/blowfish.mod/bf_tab.h,
+	src/mod/blowfish.mod/blowfish.c, src/mod/blowfish.mod/blowfish.h,
+	src/mod/channels.mod/channels.c, src/mod/channels.mod/cmdschan.c,
+	src/mod/channels.mod/tclchan.c, src/mod/channels.mod/udefchan.c,
+	src/mod/channels.mod/userchan.c, src/mod/compress.mod/compress.c,
+	src/mod/ctcp.mod/ctcp.c, src/mod/filesys.mod/filedb3.c,
+	src/mod/filesys.mod/files.c, src/mod/filesys.mod/filesys.c,
+	src/mod/irc.mod/chan.c, src/mod/irc.mod/cmdsirc.c,
+	src/mod/irc.mod/irc.c, src/mod/irc.mod/mode.c,
+	src/mod/irc.mod/msgcmds.c, src/mod/irc.mod/tclirc.c,
+	src/mod/notes.mod/cmdsnote.c, src/mod/notes.mod/notes.c,
+	src/mod/server.mod/cmdsserv.c, src/mod/server.mod/server.c,
+	src/mod/server.mod/servmsg.c, src/mod/server.mod/tclserv.c,
+	src/mod/share.mod/share.c, src/mod/transfer.mod/transfer.c,
+	src/mod/transfer.mod/transfer.h:
+
+	* removed obsolete EGG_CHECK_FUNC_VSPRINTF autoconf macro 
+	* removed obsolete EGG_HEADER_STDC autoconf macro 
+	* added EGG_C_LONG_LONG autoconf macro 
+	* added EGG_FUNC_C99_VSNPRINTF autoconf macro 
+	* added EGG_REPLACE_SNPRINTF autoconf macro 
+	* added EGG_TYPE_32BIT autoconf macro 
+	
+	* removed unused dlfcn.h header check from configure.ac 
+	* removed AC_CHECK_SIZEOF long and int from configure.ac 
+	* added many required autoconf macros to configure.ac 
+	* added AC_REPLACE_FUNCS to configure.ac for compat functions 
+	* many configure.ac cleanups 
+	
+	* updated compat/snprintf.c with latest version from Samba 
+	* added code to link libm with compat library for snprintf.c 
+	* added support for LIBOBJS to compat/Makefile.am 
+	* added memset back to compat 
+	* added memcpy back to compat 
+	* many compat cleanups 
+	
+	* renamed egg_strcasecmp() to strcasecmp() 
+	* renamed egg_strncasecmp() to strncasecmp() 
+	* renamed egg_snprintf() to snprintf() 
+	* renamed egg_vsnprintf() to vsnprintf() 
+	* renamed egg_strftime() to strftime() 
+	* renamed egg_inet_aton() to inet_aton() 
+	* renamed egg_inet_ntop() to inet_ntop() 
+	* renamed egg_inet_pton() to inet_pton() 
+	
+	* exported strftime() for modules 
+	* exported inet_ntop() for modules 
+	* exported inet_pton() for modules 
+	* exported vasprintf() for modules 
+	* exported asprintf() for modules 
+	
+	* renamed u_32bit_t typedef to u_32int_t 
+	* extended stat.h to support standard bits and checks 
+	
+	* major function changes: 
+	  + egg_strcasecmp -> strcasecmp 
+	  + egg_strncasecmp -> strncasecmp 
+	  + egg_snprintf -> snprintf 
+	  + egg_vsnprintf -> vsnprintf 
+	  + egg_strftime -> strftime 
+	  + egg_inet_aton -> inet_aton 
+	  + egg_inet_ntop -> inet_ntop 
+	  + egg_inet_pton -> inet_pton 
+
 2001-10-19 00:47  stdarg <stdarg@techmonkeys.org>
 
 	* doc/: tcl-commands.doc, howto/README, howto/first_script.txt,
