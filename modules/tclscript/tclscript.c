@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tclscript.c,v 1.15 2002/05/05 16:40:36 tothwolf Exp $";
+static const char rcsid[] = "$Id: tclscript.c,v 1.16 2002/05/09 03:34:31 stdarg Exp $";
 #endif
 
 #include "lib/eggdrop/module.h"
@@ -586,6 +586,8 @@ static int my_command_handler(ClientData client_data, Tcl_Interp *myinterp, int 
 	err = TCL_OK;
 	for (i = 1; i < objc; i++) {
 		err = tcl_to_c_var(myinterp, objv[i], &var, *syntax);
+
+		if (err != TCL_OK) break;
 
 		if (var.type & SCRIPT_FREE) mstack_push(bufs, var.value);
 		else if (*syntax == SCRIPT_CALLBACK) mstack_push(cbacks, var.value);
