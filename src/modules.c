@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.77 2001/10/19 06:01:21 guppy Exp $
+ * $Id: modules.c,v 1.78 2001/10/19 07:33:58 stdarg Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -889,7 +889,7 @@ void del_hook(int hook_num, Function func)
 	add_mode = null_func;
       break;
     case HOOK_MATCH_NOTEREJ:
-      if (match_noterej == (int (*)(struct userrec *, char *))false_func)
+      if (match_noterej == (int (*)(struct userrec *, char *))func)
 	match_noterej = false_func;
       break;
     }
