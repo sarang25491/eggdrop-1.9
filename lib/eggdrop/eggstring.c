@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggstring.c,v 1.5 2003/12/23 22:23:04 stdarg Exp $";
+static const char rcsid[] = "$Id: eggstring.c,v 1.6 2003/12/23 23:21:51 stdarg Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -31,10 +31,10 @@ static const char rcsid[] = "$Id: eggstring.c,v 1.5 2003/12/23 22:23:04 stdarg E
 #include <ctype.h>
 #include "eggstring.h"
 
-int egg_get_word(const char *text, const char **next, char **word)
+int egg_get_word(const unsigned char *text, const char **next, char **word)
 {
 	int len;
-	const char *ptr;
+	const unsigned char *ptr;
 
 	if (!word || !text) {
 		if (next) *next = NULL;
@@ -56,7 +56,7 @@ int egg_get_word(const char *text, const char **next, char **word)
 	return(0);
 }
 
-int egg_get_arg(const char *text, const char **next, char **arg)
+int egg_get_arg(const unsigned char *text, const char **next, char **arg)
 {
 	int len = 0, max = 64, inquote = 0, insingle = 0, n, done;
 

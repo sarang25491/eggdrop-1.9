@@ -16,14 +16,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: eggstring.h,v 1.5 2003/12/23 22:23:04 stdarg Exp $
+ * $Id: eggstring.h,v 1.6 2003/12/23 23:21:51 stdarg Exp $
  */
 
 #ifndef _EGG_EGGSTRING_H_
 #define _EGG_EGGSTRING_H_
 
-int egg_get_word(const char *text, const char **next, char **word);
-int egg_get_arg(const char *text, const char **next, char **arg);
+int egg_get_word(const unsigned char *text, const char **next, char **word);
+int egg_get_arg(const unsigned char *text, const char **next, char **arg);
 int egg_get_words(const char *text, const char **next, char **word, ...);
 int egg_get_args(const char *text, const char **next, char **arg, ...);
 int egg_get_word_array(const char *text, const char **next, char **words, int nwords);
