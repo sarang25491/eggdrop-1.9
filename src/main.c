@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.156 2003/12/16 21:45:35 wcc Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.157 2003/12/16 22:36:38 wcc Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -99,7 +99,7 @@ void core_config_init();
 
 void fatal(const char *s, int recoverable)
 {
-	putlog(LOG_MISC, "*", "Fatal: %s", s);
+	putlog(LOG_MISC, "*", _("Fatal: %s"), s);
 	flushlogs();
 	unlink(pid_file);
 	if (!recoverable) {
@@ -110,7 +110,7 @@ void fatal(const char *s, int recoverable)
 
 static void got_bus(int z)
 {
-	fatal("BUS ERROR.", 1);
+	fatal(_("BUS ERROR."), 1);
 #ifdef SA_RESETHAND
 	kill(getpid(), SIGBUS);
 #else
@@ -121,7 +121,7 @@ static void got_bus(int z)
 
 static void got_segv(int z)
 {
-	fatal("SEGMENT VIOLATION.", 1);
+	fatal(_("SEGMENT VIOLATION."), 1);
 #ifdef SA_RESETHAND
 	kill(getpid(), SIGSEGV);
 #else
@@ -132,43 +132,43 @@ static void got_segv(int z)
 
 static void got_fpe(int z)
 {
-	fatal("FLOATING POINT ERROR.", 0);
+	fatal(_("FLOATING POINT ERROR."), 0);
 }
 
 static void got_term(int z)
 {
 	eggdrop_event("sigterm");
 	if (core_config.die_on_sigterm) {
-		putlog(LOG_MISC, "*", "Saving user file...");
+		putlog(LOG_MISC, "*", _("Saving user file..."));
 		user_save(core_config.userfile);
-		putlog(LOG_MISC, "*", "Saving config file...");
+		putlog(LOG_MISC, "*", _("Saving config file..."));
 		core_config_save();
-		putlog(LOG_MISC, "*", "Bot shutting down: received TERMINATE signal.");
+		putlog(LOG_MISC, "*", _("Bot shutting down: received TERMINATE signal."));
 		flushlogs();
 		unlink(pid_file);
 		exit(0);
 	}
-	else putlog(LOG_MISC, "*", "Received TERMINATE signal (ignoring).");
+	else putlog(LOG_MISC, "*", _("Received TERMINATE signal (ignoring)."));
 }
 
 static void got_quit(int z)
 {
 	eggdrop_event("sigquit");
-	putlog(LOG_MISC, "*", "Received QUIT signal (ignoring).");
+	putlog(LOG_MISC, "*", _("Received QUIT signal (ignoring)."));
 	return;
 }
 
 static void got_hup(int z)
 {
 	eggdrop_event("sighup");
-	putlog(LOG_MISC, "*", "Received HUP signal (ignoring).");
+	putlog(LOG_MISC, "*", _("Received HUP signal (ignoring)."));
 	return;
 }
 
 static void got_ill(int z)
 {
 	eggdrop_event("sigill");
-	putlog(LOG_MISC, "*", "Received ILL signal (ignoring).");
+	putlog(LOG_MISC, "*", _("Received ILL signal (ignoring)."));
 }
 
 
@@ -180,7 +180,7 @@ static void print_version(void)
 static void print_help(const char **argv)
 {
 	print_version();
-	printf("\nUsage: %s [OPTIONS]... [FILE]\n", argv[0]);
+	printf(_("\nUsage: %s [OPTIONS]... [FILE]\n"), argv[0]);
 	printf(_("\n\
   -h, --help                 Print help and exit\n\
   -v, --version              Print version and exit\n\
@@ -248,7 +248,7 @@ static void do_args(int argc, char *const *argv)
 				bg_send_quit(BG_ABORT);
 				exit(1);
 			default: /* bug: option not considered.  */
-				fprintf(stderr, "%s: option unknown: %c\n", argv[0], c);
+				fprintf(stderr, _("%s: option unknown: %c\n"), argv[0], c);
 				bg_send_quit(BG_ABORT);
 				exit(1);
 				break; /* this should never be reached */
@@ -282,7 +282,7 @@ static int core_secondly()
 			lastmin = (lastmin + 1) % 60;
 			eggdrop_event("minutely");
 		}
-		if (i > 1) putlog(LOG_MISC, "*", "Warning: timer drift (%d minutes).", i);
+		if (i > 1) putlog(LOG_MISC, "*", _("Warning: timer drift (%d minutes)."), i);
 
 		miltime = (nowtm.tm_hour * 100) + (nowtm.tm_min);
 		if (((int) (nowtm.tm_min / 5) * 5) == (nowtm.tm_min)) { /* 5 minutes */
@@ -342,7 +342,7 @@ int main(int argc, char **argv)
 	/* Initialize ltdl. */
 	LTDL_SET_PRELOADED_SYMBOLS();
 	if (lt_dlinit()) {
-		printf("Fatal error initializing ltdl: %s\n", lt_dlerror());
+		printf(_("Fatal error initializing ltdl: %s\n"), lt_dlerror());
 		return(-1);
 	}
 
@@ -400,13 +400,13 @@ int main(int argc, char **argv)
 
 	do_args(argc, argv);
 	printf("\n%s\n", version);
-	printf("WARNING: Do NOT run this DEVELOPMENT version for any purpose other than testing.\n\n");
+	printf(_("WARNING: Do NOT run this DEVELOPMENT version for any purpose other than testing.\n\n"));
 
 	if (((int) getuid() == 0) || ((int) geteuid() == 0)) fatal(_("Eggdrop will not run as root!"), 0);
 
 	if (file_check(configfile)) {
 		if (errno) perror(configfile);
-		else fprintf(stderr, "ERROR\n\nCheck file permissions on your config file!\nMake sure other groups and users cannot read/write it.\n");
+		else fprintf(stderr, _("ERROR\n\nCheck file permissions on your config file!\nMake sure other groups and users cannot read/write it.\n"));
 		exit(-1);
 	}
 
@@ -424,31 +424,31 @@ int main(int argc, char **argv)
 		int len;
 
 		if (user_count() != 0) {
-			printf("\n\n\nYou are trying to create a new userfile, but the old one still exists (%s)!\n\nPlease remove the userfile, or do not pass the -m option.\n\n", core_config.userfile);
+			printf(_("\n\n\nYou are trying to create a new userfile, but the old one still exists (%s)!\n\nPlease remove the userfile, or do not pass the -m option.\n\n"), core_config.userfile);
 			exit(1);
 		}
 
-		printf("\n\n\nHello! I see you are creating a new userfile.\n\n");
-		printf("Let's create the owner account.\n\n");
+		printf(_("\n\n\nHello! I see you are creating a new userfile.\n\n"));
+		printf(_("Let's create the owner account.\n\n"));
 		do {
-			printf("Enter the owner handle: ");
+			printf(_("Enter the owner handle: "));
 			fflush(stdout);
 			fgets(handle, sizeof(handle), stdin);
 			for (len = 0; handle[len]; len++) {
 				if (!ispunct(handle[len]) && !isalnum(handle[len])) break;
 			}
-			if (len == 0) printf("Come on, enter a real handle.\n\n");
+			if (len == 0) printf(_("Come on, enter a real handle.\n\n"));
 		} while (len <= 0);
 		handle[len] = 0;
 		owner = user_new(handle);
 		if (!owner) {
-			printf("Failed to create user record! Out of memory?\n\n");
+			printf(_("Failed to create user record! Out of memory?\n\n"));
 			exit(1);
 		}
 		user_rand_pass(password, sizeof(password));
 		user_set_pass(owner, password);
 		user_set_flag_str(owner, NULL, "+n");
-		printf("Your owner handle is '%s' and your password is '%s' (without the quotes).\n\n", handle, password);
+		printf(_("Your owner handle is '%s' and your password is '%s' (without the quotes).\n\n"), handle, password);
 		memset(password, 0, sizeof(password));
 		str_redup(&core_config.owner, handle);
 		core_config_save();
@@ -507,15 +507,15 @@ int main(int argc, char **argv)
 				fprintf(fp, "%u\n", xx);
 				if (fflush(fp)) {
 					/* Let the bot live since this doesn't appear to be a botchk */
-					printf("WARNING: Could not write pid file '%s'.\n", pid_file);
+					printf(_("WARNING: Could not write pid file '%s'.\n"), pid_file);
 					fclose(fp);
 					unlink(pid_file);
 				}
 				else fclose(fp);
 			}
-			else printf("WARNING: Could not write pid file '%s'.\n", pid_file);
+			else printf(_("WARNING: Could not write pid file '%s'.\n"), pid_file);
 #ifdef CYGWIN_HACKS
-			printf("Launched into the background  (pid: %d)\n\n", xx);
+			printf(_("Launched into the background (pid: %d).\n\n"), xx);
 #endif
 		}
 	}

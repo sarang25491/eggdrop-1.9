@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: logfile.c,v 1.35 2003/12/16 21:45:35 wcc Exp $";
+static const char rcsid[] = "$Id: logfile.c,v 1.36 2003/12/16 22:36:38 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -119,7 +119,7 @@ static int logfile_cycle()
 	char suffix[32];
 	char *newfname;
 
-	putlog(LOG_MISC, "*", _("Cycling logfiles"));
+	putlog(LOG_MISC, "*", _("Cycling logfiles..."));
 	flushlogs();
 
 	/* Determine suffix for cycled logfiles. */
@@ -246,7 +246,7 @@ static void check_logsizes()
 		if (size < core_config.max_logsize) continue;
 
 		/* It's too big. */
-		putlog(LOG_MISC, "*", _("Cycling logfile %s, over max-logsize (%d kilobytes)"), log->filename, size);
+		putlog(LOG_MISC, "*", _("Cycling logfile %s: over max-logsize (%d kilobytes)."), log->filename, size);
 		fclose(log->fp);
 
 		newfname = egg_mprintf("%s.yesterday", log->filename);

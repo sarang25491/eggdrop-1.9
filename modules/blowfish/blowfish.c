@@ -26,7 +26,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: blowfish.c,v 1.12 2003/12/11 00:49:10 wcc Exp $";
+static const char rcsid[] = "$Id: blowfish.c,v 1.13 2003/12/16 22:36:37 wcc Exp $";
 #endif
 
 #define MODULE_NAME "encryption"
@@ -126,10 +126,6 @@ static void blowfish_decipher(u_int32_t * xl, u_int32_t * xr)
   *xr = Xl.word;
 }
 
-
-static void blowfish_report(int idx, int details)
-{
-}
 
 static void blowfish_init(u_int8_t * key, int keybytes)
 {

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.15 2003/12/16 21:45:35 wcc Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.16 2003/12/16 22:36:38 wcc Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -40,7 +40,7 @@ extern char pid_file[];
 static int party_join(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	if (!text || !*text) {
-		partymember_printf(p, "Syntax: join <channel>");
+		partymember_printf(p, _("Syntax: join <channel>"));
 		return(0);
 	}
 	partychan_join_name(text, p);
@@ -59,8 +59,8 @@ static int party_part(partymember_t *p, const char *nick, user_t *u, const char 
 
 static int party_quit(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
-	partymember_printf(p, "Goodbye!");
-	if (!text || !*text) partymember_delete(p, "Quit");
+	partymember_printf(p, _("Goodbye!"));
+	if (!text || !*text) partymember_delete(p, _("Quit"));
 	else partymember_delete(p, text);
 	return(0);
 }
@@ -74,13 +74,13 @@ static int party_whisper(partymember_t *p, const char *nick, user_t *u, const ch
 	egg_get_word(text, &next, &who);
 	if (next) while (isspace(*next)) next++;
 	if (!who || !next || !*who || !*next) {
-		partymember_printf(p, "Syntax: whisper <partylineuser> <msg>");
+		partymember_printf(p, _("Syntax: whisper <partylineuser> <msg>"));
 		goto done;
 	}
 
 	dest = partymember_lookup_nick(who);
 	if (!dest) {
-		partymember_printf(p, "No such user '%s'.", who);
+		partymember_printf(p, _("No such user '%s'."), who);
 		goto done;
 	}
 
@@ -99,7 +99,7 @@ static void *lookup_and_check(partymember_t *p, const char *path)
 	root = config_get_root("eggdrop");
 	root = config_exists(root, path, 0, NULL);
 	if (!root) {
-		partymember_printf(p, "That setting was not found.");
+		partymember_printf(p, _("That setting was not found."));
 		return(NULL);
 	}
 
@@ -112,7 +112,7 @@ static void *lookup_and_check(partymember_t *p, const char *path)
 	}
 	return(root);
 nope:
-	partymember_printf(p, "You cannot access that setting.");
+	partymember_printf(p, _("You cannot access that setting."));
 	return(NULL);
 }
 
@@ -122,7 +122,7 @@ static int party_get(partymember_t *p, const char *nick, user_t *u, const char *
 	char *str = NULL;
 
 	if (!text || !*text) {
-		partymember_printf(p, "Syntax: get <path>");
+		partymember_printf(p, _("Syntax: get <path>"));
 		return(0);
 	}
 
@@ -134,7 +134,7 @@ static int party_get(partymember_t *p, const char *nick, user_t *u, const char *
 		partymember_printf(p, "==> '%s'", str);
 	}
 	else {
-		partymember_printf(p, "Config setting not found.");
+		partymember_printf(p, _("Config setting not found."));
 	}
 	return(0);
 }
@@ -147,7 +147,7 @@ static int party_set(partymember_t *p, const char *nick, user_t *u, const char *
 
 	egg_get_word(text, &next, &path);
 	if (!next || !*next || !path || !*path) {
-		partymember_printf(p, "Syntax: set <path> <new value>");
+		partymember_printf(p, _("Syntax: set <path> <new value>"));
 		if (path) free(path);
 		return(0);
 	}
@@ -158,10 +158,10 @@ static int party_set(partymember_t *p, const char *nick, user_t *u, const char *
 	if (!root) return(0);
 
 	config_get_str(&str, root, NULL);
-	partymember_printf(p, "Old value: '%s'", str);
+	partymember_printf(p, _("Old value: '%s'"), str);
 	config_set_str(next, root, NULL);
 	config_get_str(&str, root, NULL);
-	partymember_printf(p, "New value: '%s'", str);
+	partymember_printf(p, _("New value: '%s'"), str);
 	return(0);
 }
 
@@ -171,20 +171,20 @@ static int party_status(partymember_t *p, const char *nick, user_t *u, const cha
 	struct utsname un;
 #endif
 
-	partymember_printf(p, "I am %s, running Eggdrop %s.", core_config.botname, VERSION);
-	partymember_printf(p, "Owner: %s", core_config.owner);
-	if (core_config.admin) partymember_printf(p, "Admin: %s", core_config.admin);
+	partymember_printf(p, _("I am %s, running Eggdrop %s."), core_config.botname, VERSION);
+	partymember_printf(p, _("Owner: %s"), core_config.owner);
+	if (core_config.admin) partymember_printf(p, _("Admin: %s"), core_config.admin);
 #ifdef HAVE_UNAME
-	if (!uname(&un) >= 0) partymember_printf(p, "OS: %s %s", un.sysname, un.release);
+	if (!uname(&un) >= 0) partymember_printf(p, _("OS: %s %s"), un.sysname, un.release);
 #endif
 	return(0);
 }
 
 static int party_save(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
-	putlog(LOG_MISC, "*", "Saving user file...");
+	putlog(LOG_MISC, "*", _("Saving user file..."));
 	user_save(core_config.userfile);
-	putlog(LOG_MISC, "*", "Saving config file...");
+	putlog(LOG_MISC, "*", _("Saving config file..."));
 	core_config_save();
 	return(1);
 }
@@ -192,11 +192,11 @@ static int party_save(partymember_t *p, const char *nick, user_t *u, const char 
 static int party_newpass(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	if (!text || strlen(text) < 6) {
-		partymember_printf(p, "Please use at least 6 characters.");
+		partymember_printf(p, _("Please use at least 6 characters."));
 		return(0);
 	}
 	user_set_pass(p->user, text);
-	partymember_printf(p, "Changed password to '%s'.", text);
+	partymember_printf(p, _("Changed password to '%s'."), text);
 	return(0);
 }
 
@@ -210,7 +210,7 @@ static int party_who(partymember_t *p, const char *nick, user_t *u, const char *
 	partymember_t *who;
 	int *pids, len, i;
 
-	partymember_printf(p, "Partyline members:");
+	partymember_printf(p, _("Partyline members:"));
 	partymember_who(&pids, &len);
 	qsort(pids, len, sizeof(int), intsorter);
 	for (i = 0; i < len; i++) {
@@ -223,15 +223,12 @@ static int party_who(partymember_t *p, const char *nick, user_t *u, const char *
 
 static int party_die(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
-	char *reason;
-
-	if (!text || !*text) reason = "No reason given.";
-	else reason = (char *) text;
-	putlog(LOG_MISC, "*", "Saving user file...");
+	putlog(LOG_MISC, "*", _("Saving user file..."));
 	user_save(core_config.userfile);
-	putlog(LOG_MISC, "*", "Saving config file...");
+	putlog(LOG_MISC, "*", _("Saving config file..."));
 	core_config_save();
-	putlog(LOG_MISC, "*", "Bot shutting down: %s", reason);
+	if (!text || !*text) putlog(LOG_MISC, "*", _("Bot shutting down: %s"), text);
+	else putlog(LOG_MISC, "*", _("Bot shutting down."));
 	flushlogs();
 	unlink(pid_file);
 	exit(0);
@@ -242,16 +239,16 @@ static int party_plus_user(partymember_t *p, const char *nick, user_t *u, const 
 	user_t *newuser;
 
 	if (!text || !*text) {
-		partymember_printf(p, "Syntax: +user <handle>");
+		partymember_printf(p, _("Syntax: +user <handle>"));
 		return(0);
 	}
 	if (user_lookup_by_handle(text)) {
-		partymember_printf(p, "User '%s' already exists!");
+		partymember_printf(p, _("User '%s' already exists!"));
 		return(0);
 	}
 	newuser = user_new(text);
-	if (newuser) partymember_printf(p, "User '%s' created.", text);
-	else partymember_printf(p, "Could not create user '%s'.", text);
+	if (newuser) partymember_printf(p, _("User '%s' created."), text);
+	else partymember_printf(p, _("Could not create user '%s'."), text);
 	return(0);
 }
 
@@ -260,13 +257,13 @@ static int party_minus_user(partymember_t *p, const char *nick, user_t *u, const
 	user_t *who;
 
 	if (!text || !*text) {
-		partymember_printf(p, "Syntax: -user <handle>");
+		partymember_printf(p, _("Syntax: -user <handle>"));
 		return(0);
 	}
 	who = user_lookup_by_handle(text);
-	if (!who) partymember_printf(p, "User '%s' not found.");
+	if (!who) partymember_printf(p, _("User '%s' not found."));
 	else {
-		partymember_printf(p, "Deleting user '%s'.", who->handle);
+		partymember_printf(p, _("Deleting user '%s'."), who->handle);
 		user_delete(who);
 	}
 	return(0);
@@ -294,7 +291,7 @@ static int party_chattr(partymember_t *p, const char *nick, user_t *u, const cha
 	n = egg_get_words(text, &next, &who, &chan, &flags, NULL);
 	if (!chan || !*chan) {
 		if (who) free(who);
-		partymember_printf(p, "Syntax: chattr <user> [channel] <+/-flags>");
+		partymember_printf(p, _("Syntax: chattr <user> [channel] <+/-flags>"));
 		return(0);
 	}
 	if (!flags || !*flags) {
@@ -306,10 +303,10 @@ static int party_chattr(partymember_t *p, const char *nick, user_t *u, const cha
 		user_set_flag_str(dest, chan, flags);
 		user_get_flags(dest, chan, &flagstruct);
 		flag_to_str(&flagstruct, flagstr);
-		partymember_printf(p, "Flags for %s are now '%s'.", who, flagstr);
+		partymember_printf(p, _("Flags for %s are now '%s'."), who, flagstr);
 	}
 	else {
-		partymember_printf(p, "'%s' is not a valid user.", who);
+		partymember_printf(p, _("'%s' is not a valid user."), who);
 	}
 	free(who);
 	free(flags);
@@ -323,7 +320,7 @@ static int party_modules(partymember_t *p, const char *nick, user_t *u, const ch
 	int nummods, ctr;
 
 	nummods = get_module_list(&modules);
-	partymember_printf(p, "Loaded modules:");
+	partymember_printf(p, _("Loaded modules:"));
 	for (ctr = 0; ctr < nummods; ctr++) partymember_printf(p, "   %s", modules[ctr]);
 	free(modules);
 	return(0);

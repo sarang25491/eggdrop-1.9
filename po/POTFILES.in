@@ -2,26 +2,10 @@
 
 lib/compat/getopt.c
 modules/blowfish/blowfish.c
-modules/channels/channels.c
-modules/channels/cmdschan.c
-modules/channels/userchan.c
-modules/compress/compress.c
-modules/console/console.c
-modules/filesys/dbcompat.c
-modules/filesys/filedb3.c
-modules/filesys/files.c
-modules/filesys/filesys.c
-modules/irc/chan.c
-modules/irc/cmdsirc.c
-modules/irc/irc.c
-modules/irc/mode.c
-modules/irc/msgcmds.c
 modules/javascript/javascript.c
-modules/notes/cmdsnote.c
-modules/notes/notes.c
 modules/server/input.c
 modules/tclscript/tclscript.c
-modules/uptime/uptime.c
 src/bg.c
+src/core_party.c
 src/logfile.c
 src/main.c

@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: bg.c,v 1.15 2003/12/16 21:45:35 wcc Exp $";
+static const char rcsid[] = "$Id: bg.c,v 1.16 2003/12/16 22:36:38 wcc Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -123,15 +123,15 @@ static void bg_do_detach(pid_t p)
 		fprintf(fp, "%u\n", p);
 		if (fflush(fp)) {
 			/* Kill bot incase a botchk is run from crond. */
-			printf("Fatal: Could not write pid file '%s'.\n", pid_file);
+			printf(_("Fatal: Could not write pid file '%s'.\n"), pid_file);
 			fclose(fp);
 			unlink(pid_file);
 			exit(1);
 		}
 		fclose(fp);
 	}
-	else printf("WARNING: Could not write pid file '%s'.\n", pid_file);
-	printf("Launched into the background (pid: %d).\n\n", p);
+	else printf(_("WARNING: Could not write pid file '%s'.\n"), pid_file);
+	printf(_("Launched into the background (pid: %d).\n\n"), p);
 #ifdef HAVE_SETPGID
 	setpgid(p, p);
 #endif
@@ -149,7 +149,7 @@ void bg_prepare_split(void)
     int		comm_pair[2];
 
     if (pipe(comm_pair) < 0)
-      fatal("CANNOT OPEN PIPE.", 0);
+      fatal(_("CANNOT OPEN PIPE."), 0);
 
     bg.comm_recv = comm_pair[0];
     bg.comm_send = comm_pair[1];
@@ -157,7 +157,7 @@ void bg_prepare_split(void)
 
   p = fork();
   if (p == -1)
-    fatal("CANNOT FORK PROCESS.", 0);
+    fatal(_("CANNOT FORK PROCESS."), 0);
   if (p == 0) {
     bg.state = BG_SPLIT;
     return;
@@ -189,7 +189,7 @@ void bg_prepare_split(void)
 
 error:
   /* We only reach this point in case of an error. */
-  fatal("COMMUNICATION THROUGH PIPE BROKE.", 0);
+  fatal(_("COMMUNICATION THROUGH PIPE BROKE."), 0);
 }
 
 /* Transfer contents of pid_file to parent process. This is necessary,
@@ -211,7 +211,7 @@ static void bg_send_pidfile(void)
     goto error;
   return;
 error:
-  fatal("COMMUNICATION THROUGH PIPE BROKE.", 0);
+  fatal(_("COMMUNICATION THROUGH PIPE BROKE."), 0);
 }
 
 void bg_send_quit(bg_quit_t q)
@@ -228,7 +228,7 @@ void bg_send_quit(bg_quit_t q)
       message.comm_type = BG_COMM_ABORT;
     /* Send message. */
     if (write(bg.comm_send, &message, sizeof(message)) < 0)
-      fatal("COMMUNICATION THROUGH PIPE BROKE.", 0);
+      fatal(_("COMMUNICATION THROUGH PIPE BROKE."), 0);
   }
 }
 
