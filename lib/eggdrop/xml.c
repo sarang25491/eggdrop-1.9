@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xml.c,v 1.17 2004/06/28 17:36:34 wingman Exp $";
+static const char rcsid[] = "$Id: xml.c,v 1.18 2004/06/30 17:07:20 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -558,3 +558,12 @@ void xml_dump(xml_node_t *node)
 	}
 }
 
+void xml_node_remove_by_name(xml_node_t *parent, const char *name)
+{
+	int i;
+
+	for (i = parent->nchildren - 1; i >= 0; i--) {
+		if (0 == strcmp(parent->children[i]->name, name))
+			xml_node_remove(parent, parent->children[i]);
+	}
+}

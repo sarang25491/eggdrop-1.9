@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: variant.c,v 1.1 2004/06/28 17:36:34 wingman Exp $";
+static const char rcsid[] = "$Id: variant.c,v 1.2 2004/06/30 17:07:20 wingman Exp $";
 #endif
 
 #include <stdio.h>				/* snprintf		*/
@@ -51,6 +51,10 @@ const char *variant_get_str(variant_t *target, const char *nil)
 		case (VARIANT_INT):
 		{
 			char buf[32];
+			
+			if (target->value.i_val == MIN_INT || target->value.i_val == MAX_INT)
+				return NULL;
+
 			snprintf(buf, sizeof(buf), "%d", target->value.i_val);
 			variant_set_str(target, buf);
 			return variant_get_str(target, buf);
@@ -65,6 +69,10 @@ const char *variant_get_str(variant_t *target, const char *nil)
 		case (VARIANT_TIMESTAMP):
 		{
 			char buf[32];
+	
+			if (target->value.ts_val == (time_t)0)
+				return NULL;
+
 			snprintf(buf, sizeof(buf), "%li", target->value.ts_val);
 			variant_set_str(target, buf);
 			return variant_get_str(target, buf);

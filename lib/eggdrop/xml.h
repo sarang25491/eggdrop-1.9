@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: xml.h,v 1.17 2004/06/28 17:36:34 wingman Exp $
+ * $Id: xml.h,v 1.18 2004/06/30 17:07:20 wingman Exp $
  */
 
 #ifndef _EGG_XML_H_
@@ -102,6 +102,7 @@ xml_node_t *xml_root_element(xml_node_t *node);
 
 void xml_node_append(xml_node_t *parent, xml_node_t *child);
 void xml_node_remove(xml_node_t *parent, xml_node_t *child);
+void xml_node_remove_by_name(xml_node_t *parent, const char *name);
 
 void xml_set_text_int(xml_node_t *node, int value);
 int xml_get_text_int(xml_node_t *node, int nil);

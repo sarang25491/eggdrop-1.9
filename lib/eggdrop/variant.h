@@ -16,12 +16,46 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: variant.h,v 1.1 2004/06/28 17:36:34 wingman Exp $
+ * $Id: variant.h,v 1.2 2004/06/30 17:07:20 wingman Exp $
  */
 #ifndef _EGG_VARIANT_H
 #define _EGG_VARIANT_H
 
 #include <sys/time.h>				/* time_t		*/
+
+/* Is there a standard .h file with this? */
+#ifndef MAX_INT
+#	define MAX_INT ((int)(((unsigned) ~0)>>1))
+#endif
+
+#ifndef MIN_INT
+#	define MIN_INT (~MAX_INT)
+#endif
+
+#ifndef MAX_LONG
+#	define MAX_LONG ((long)(((unsigned) ~0L)>>1))
+#endif
+
+#ifndef MIN_LONG
+#	define MIN_LONG (~MAX_LONG)
+#endif
+
+/* Any better solution for this? */
+#ifndef MIN_FLOAT
+#	define MIN_FLOAT   ((float)-1.0e36)
+#endif
+
+#ifndef MAX_FLOAT
+#	define MAX_FLOAT   ((float)1.0e36)
+#endif
+
+#ifndef MAX_DOUBLE
+#	define MAX_DOUBLE (double)MAX_FLOAT
+#endif
+
+#ifndef MIN_DOUBLE
+#	define MIN_DOUBLE (double)MIN_FLOAT
+#endif
 
 typedef enum {
 	VARIANT_STRING = 0,

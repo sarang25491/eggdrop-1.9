@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xmlwrite.c,v 1.9 2004/06/28 17:36:34 wingman Exp $";
+static const char rcsid[] = "$Id: xmlwrite.c,v 1.10 2004/06/30 17:07:20 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -26,13 +26,15 @@ static const char rcsid[] = "$Id: xmlwrite.c,v 1.9 2004/06/28 17:36:34 wingman E
 #include <string.h>
 #include <stdarg.h>
 
-#include "xml.h"
+#include <eggdrop/memutil.h>				/* str_redup		*/
+#include <eggdrop/xml.h>				/* prototypes		*/
 
 #define STREAM_STRING 	0
 #define STREAM_FILE	1
 
 #define XML_INDENT_CHAR	'\t'
 
+extern char *last_error;                                /* from xml.c           */
 static int write_options = XML_NONE;
 
 typedef struct 
@@ -77,8 +79,11 @@ static int stream_printf(stream_t *stream, const char *format, ...)
 						stream->data.string.size + 256);
 
 					/* realloc failed, damn */
-					if (stream->data.string.buf == NULL)
+					if (stream->data.string.buf == NULL) {
+						/* hehe, that'll fail... */
+						str_redup(&last_error, "out of memory");
 						return (-1);
+					}
 
 					memset(stream->data.string.buf + stream->data.string.length, 0,
 						stream->data.string.size - stream->data.string.length);
@@ -99,12 +104,13 @@ static int stream_printf(stream_t *stream, const char *format, ...)
 			break;
 	
 		default:
+			str_redup(&last_error, "invalid stream type");
 			ret = -1;
 			break;
 	}
 	va_end(args);
 
-	return ret;
+	return (ret > 0) ? 0 : ret;
 }
 
 static int level = 0;
@@ -172,7 +178,7 @@ static int xml_write_element(stream_t *stream, xml_node_t *node)
 	}
 
 	stream_printf(stream, ">\n");
-	if (xml_write_children(stream, node) == -1)
+	if (xml_write_children(stream, node) != 0)
 		return (-1);
 
 	return stream_printf(stream, "%s</%s>\n", indent, node->name);
@@ -180,7 +186,14 @@ static int xml_write_element(stream_t *stream, xml_node_t *node)
 
 static int xml_write_document(stream_t *stream, xml_node_t *node)
 {
-	return xml_write_children(stream, node);
+	int i, ret;
+
+	ret = 0;
+        for (i = 0; i < node->nchildren; i++) {
+                if ((ret = xml_write_node(stream, node->children[i])) != 0)
+                        break;
+        }
+	return ret;
 }
 
 static int xml_write_comment(stream_t *stream, xml_node_t *node)
@@ -196,13 +209,13 @@ static int xml_write_cdata_section(stream_t *stream, xml_node_t *node)
 
 static int xml_write_processing_instruction(stream_t *stream, xml_node_t *node)
 {
-	if (stream_printf(stream, "<?%s", node->name) == -1)
+	if (stream_printf(stream, "<?%s", node->name) != 0)
 		return (-1);
 	
-	if (xml_write_attributes(stream, node) == -1)
+	if (xml_write_attributes(stream, node) != 0)
 		return (-1);
 
-	if (stream_printf(stream, "?>\n") == -1)
+	if (stream_printf(stream, "?>\n") != 0)
 		return (-1);
 
 	return (0);
@@ -228,9 +241,11 @@ static int xml_write_node(stream_t *stream, xml_node_t *node)
 			return xml_write_processing_instruction(stream, node);
 			
 		case (XML_ATTRIBUTE):
-			return (-1);
-
+			/* just ignore this */
+			return (0);
 	}
+
+	str_redup(&last_error, "Unknown node type.");
 
 	return (-1);
 }
@@ -240,11 +255,16 @@ int xml_save(FILE *fd, xml_node_t *node, int options)
         stream_t stream;
         int ret;
 
+	/* clear any last error */
+	str_redup(&last_error, NULL);
+
         stream.data.file = fd;
         stream.type = STREAM_FILE;
 
-        if (stream.data.file == NULL)
+        if (stream.data.file == NULL) {
+		str_redup(&last_error, "No file given.");
                 return -1;
+	}
 
 	write_options = options;
         ret = xml_write_node(&stream, node);
@@ -258,11 +278,16 @@ int xml_save_file(const char *file, xml_node_t *node, int options)
 	stream_t stream;
 	int ret;
 
+	/* clear any last error */
+	str_redup(&last_error, NULL);
+
 	stream.data.file = fopen(file, "w");
 	stream.type = STREAM_FILE;
 
-	if (stream.data.file == NULL)
+	if (stream.data.file == NULL) {
+		str_redup(&last_error, "failed to open file.");
 		return -1;
+	}
 
 	write_options = options;
 	ret = xml_write_node(&stream, node);
@@ -283,6 +308,9 @@ int xml_save_str(char **str, xml_node_t *node, int options)
 	stream.data.string.size = 0;
 
 	stream.type = STREAM_STRING;
+
+	/* clear any last error */
+	str_redup(&last_error, NULL);
 
 	write_options = options;
 	ret = xml_write_node(&stream, node);

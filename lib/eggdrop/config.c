@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: config.c,v 1.6 2004/06/28 17:36:34 wingman Exp $";
+static const char rcsid[] = "$Id: config.c,v 1.7 2004/06/30 17:07:20 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -111,15 +111,15 @@ int config_delete_root(const char *handle)
 	return(-1);
 }
 
+/* XXX: remove this */
 xml_node_t *doc;
 
 void *config_load(const char *fname)
 {
 	if (xml_load_file(fname, &doc, XML_TRIM_TEXT) != 0) {
-		/* don't use putlog here since logging may not be initialized at 
-		 * this stage */
-		fprintf(stderr, "*** ERROR: Failed to load config file '%s': %s\n\n",
-			fname, xml_last_error());
+		/* XXX: do not use putlog here since it might not be initialized yet */
+		fprintf(stderr, "ERROR\n");
+		fprintf(stderr, "\tFailed to load config '%s': %s\n\n", fname, xml_last_error());
 		return NULL;
 	}
 
@@ -128,15 +128,16 @@ void *config_load(const char *fname)
 
 int config_save(const char *handle, const char *fname)
 {
-	xml_node_t *root;
+	void *root;
 
 	root = config_get_root(handle);
-	if (!root) return(-1);
-	bind_check(BT_config_save, NULL, handle, handle);
+	if (root) bind_check(BT_config_save, NULL, handle, handle);
 	if (!fname) fname = "config.xml";
 
-	if (xml_save_file(fname, root, XML_INDENT) == 0)
+	if (xml_save_file(fname, doc, XML_INDENT) == 0)
 		return (0);
+	
+	putlog(LOG_MISC, "*", _("Failed to save config '%s': %s"), fname, xml_last_error());
 
 	return (-1);
 }
@@ -406,7 +407,7 @@ static int sync_node(xml_node_t *node, config_type_t *type, void *addr)
 		return (-1);	
 	
 	for (var = type->vars; var->type; var++) {
-		if (var->path == NULL || 0 == strcmp(var->path, ".") )
+		if (var->path == NULL)
 			child = node;			
 		else
 			child = xml_node_path_lookup(node, var->path, 0, 1);		
@@ -445,6 +446,38 @@ static int sync_node(xml_node_t *node, config_type_t *type, void *addr)
 				break;
 			}
 
+			case (CONFIG_LIST):
+			case (CONFIG_LIST_DL):
+			{
+				void *head_ptr, *item, *next;
+				unsigned char *cur;
+			
+				head_ptr = *((void **)bytes); bytes += sizeof(void *);
+	
+				/* remove all nodes */
+				xml_node_remove_by_name(child, var->type->name);
+		
+				for (item = head_ptr; item; ) {
+					cur = (unsigned char *)item;
+	
+					/* skip prev ptr */
+					if (var->modifier == CONFIG_LIST_DL)
+						cur += sizeof(void *);
+
+					/* save next and skip next ptr */
+					next = *((void **)cur); cur += sizeof(void *);
+
+					c = xml_create_element(var->type->name);
+					sync_node(c, var->type, cur);
+					xml_node_append(child, c);
+
+					printf("created list item %s for %p to %s\n", c->name, item, child->name);
+
+					item = next;
+				}				
+				break;
+			}
+
 			case (CONFIG_ARRAY):
 			{
 				void **items; 
@@ -457,11 +490,7 @@ static int sync_node(xml_node_t *node, config_type_t *type, void *addr)
 				length = *((int *)bytes); bytes += sizeof(int);
 				
 				/* remove all nodes */
-				for (i = child->nchildren - 1; i >= 0; i--) {
-					if (0 == strcmp(child->children[i]->name, var->type->name)) {
-						xml_node_remove(child, child->children[i]);
-					}
-				}
+				xml_node_remove_by_name(child, var->type->name);
 				
 				for (i = 0; i < length; i++) {
 					c = xml_create_element(var->type->name);
@@ -501,7 +530,7 @@ static int link_addr(xml_node_t *node, variant_t *data, config_variable_t *var, 
 	if (var->type == &CONFIG_TYPE_STRING)
 		*((char **)addr) = (char *)variant_get_str(data, NULL);
 	else if (var->type == &CONFIG_TYPE_INT)
-		*((int *)addr) = variant_get_int(data, 0);
+		*((int *)addr) = variant_get_int(data, MIN_INT);
 	else if (var->type == &CONFIG_TYPE_BOOL)
 		*((int *)addr) = variant_get_bool(data, 0);
 	else if (var->type == &CONFIG_TYPE_TIMESTAMP)
@@ -527,7 +556,7 @@ static int link_node(xml_node_t *node, config_type_t *type, void *addr)
 	memset(bytes, 0, type->size);
 	
 	for (var = type->vars; var->type; var++) {				
-		if (var->path == NULL || 0 == strcmp(var->path, "."))			
+		if (var->path == NULL)
 			child = node;
 		else
 			child = xml_node_path_lookup(node, var->path, 0, 1);			
@@ -560,6 +589,71 @@ static int link_node(xml_node_t *node, config_type_t *type, void *addr)
 							(*en) |= e->modifier;
 						}	
 					}	
+				}
+				break;
+			}
+
+			case (CONFIG_LIST):
+			case (CONFIG_LIST_DL):
+			{
+				int i;
+				void **head_ptr;
+				unsigned char *cur, *prev;
+
+				prev = NULL;
+				head_ptr = (void **)bytes; bytes += sizeof(void *);
+
+				for (i = 0; i < child->nchildren; i++) {
+					xml_node_t *c = child->children[i];
+					if (0 != strcmp(c->name, var->type->name)) {
+						continue;
+					}
+
+					/* allocate memory for current item */
+					cur = (unsigned char *)malloc(var->type->size);
+					if (cur == NULL)
+						return (-1);
+					memset(cur, 0, var->type->size);		
+					
+					cur += sizeof(void *); /* skip either next or prev ptr */
+					if (var->modifier == CONFIG_LIST_DL)
+						cur += sizeof(void *); /* skip next ptr */
+
+					/* link it */
+					if (link_addr(c, &c->data, var, (void *)cur) != 0) {
+						/* failed to link, free this item and continue
+ 						 * with next one */
+						free(cur);
+						continue;
+					}
+
+					cur -= sizeof(void *);
+					if (var->modifier == CONFIG_LIST_DL)
+						cur -= sizeof(void *); 
+
+					/* set head if not yet set */
+					if (*head_ptr == NULL) {
+						*head_ptr = cur;
+					}
+
+					/* set current item's prev */
+					if (prev) {
+						if (var->modifier == CONFIG_LIST_DL) {
+							*((void **)bytes) = prev;
+						}	
+					}
+		
+					/* set previous item's next */
+					if (prev) {
+						if (var->modifier == CONFIG_LIST_DL) {
+							prev += sizeof(void *); /* skip prev item */
+							*((void **)prev) = cur;
+						} else
+							*((void **)prev) = cur;
+					}
+
+					/* remember prev */
+					prev = cur;
 				}
 				break;
 			}

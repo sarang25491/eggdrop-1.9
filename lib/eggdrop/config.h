@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: config.h,v 1.3 2004/06/28 17:36:34 wingman Exp $
+ * $Id: config.h,v 1.4 2004/06/30 17:07:20 wingman Exp $
  */
 
 #ifndef _EGG_CONFIG_H_
@@ -94,9 +94,40 @@ int config_unlink_table(config_var_t *table, void *config_root, ...);
 typedef struct config_variable config_variable_t;
 typedef struct config_type config_type_t;
 
+/* Layout:
+ *   type item;
+ */
 #define CONFIG_NONE	0
+
+/* Layout:
+ *   type *items;
+ *   int nlength;
+ */
 #define CONFIG_ARRAY	1
+
+/* Layout:
+ *   type item;
+ */
 #define CONFIG_ENUM	2
+
+/* Layout:
+ *   type *head;
+ *
+ *   type {
+ *     type *next
+ *   }
+ */
+#define CONFIG_LIST	3	
+
+/* Layout:
+ *   type *head;
+ *
+ *   type {
+ *     type *prev;
+ *     type *next;
+ *   }
+ */
+#define CONFIG_LIST_DL	4
 
 struct config_variable
 {

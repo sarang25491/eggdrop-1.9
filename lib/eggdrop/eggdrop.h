@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: eggdrop.h,v 1.40 2004/06/23 21:12:57 stdarg Exp $
+ * $Id: eggdrop.h,v 1.41 2004/06/30 17:07:20 wingman Exp $
  */
 
 #ifndef _EGG_EGGDROP_H_
@@ -101,6 +101,7 @@
 				  
 extern int eggdrop_init(void);
 extern int eggdrop_shutdown(void);
+
 extern int eggdrop_event(const char *event);
 extern const char *eggdrop_get_param(const char *key);
 extern int eggdrop_set_params(const char **params, int nparams);

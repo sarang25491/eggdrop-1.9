@@ -1,0 +1,61 @@
+$Id: TODO,v 1.2 2004/06/30 17:07:20 wingman Exp $
+
+Eggdrop 1.9 Todo
+Last revised: July 30, 2004
+     _________________________________________________________________
+
+                             Eggdrop 1.9 TODO
+
+1. Introduction
+
+  As described in TAGS, just try a 'grep -Hrn XXX ' to a get a list of current
+  todos which may not be yet listed in here. Some larger todos (like the help
+  system) are not marked in the source and will be listed here.
+  
+1. Overview
+
+    No   | Subject                                       | Milestone   | Status
+  -----------------------------------------------------------------------------
+    2.1  | rewrite help system                           | 1.9.5       | OPEN
+    2.2  | xml parser errors are wrong                   | 1.9.0       | OPEN
+    2.3  | restart/rehash needs to be revised            | 1.9.0       | OPEN
+
+
+2. Details
+
+  2.1. Rewrite help system
+
+    Currently all help-*.xml files are loaded into memory. Though this isn't
+    that drastic (1.6 help files were ~40kb) it would be nice if they are just
+    read on .help and then thrown away.
+
+    This may safe us some memory, but introduce higher CPU times, but .help 
+    isn't used that often it will decrase memory usage a lot on larger shell
+    providers.
+
+    So make a configuration option like "help.keep_in_memory" which indicates
+    if all help files are loaded on startup and are kept in memory or are 
+    read on every '.help' command.
+
+  2.2 Xml parser errors are wrong
+
+    When loading our config.xml errors like:
+
+       <serverlist>
+          <server>bla</server
+       </serverlist>
+
+    are reported wrong. Currently "Only one root element is allowed" is reported
+    due to our parser logic which just stops if it hits an error. Valid error is
+    "Missing closing character '>' not found".
+
+    Also a lot of errors missing, i suggest looking at common parsers like sax
+    or expat and copy most of them.
+
+  2.3 Restart/rehash needs to be revised
+ 
+    Currently our '.restart' mechanism is optimized for tracking down memory leaks,
+    Therefore all memory allocated is shut down. This may not be the right way
+    to do this since you e.g. don't want to disconnect existing partyline sessions 
+    if you do a .restart.
+

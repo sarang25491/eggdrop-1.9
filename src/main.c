@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.180 2004/06/26 19:49:49 stdarg Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.181 2004/06/30 17:07:20 wingman Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -455,19 +455,21 @@ int main(int argc, char **argv)
 
 	/* we may not run as root */
 	if (((int) getuid() == 0) || ((int) geteuid() == 0)) {
-		fatal("Eggdrop will not run as root!");
+		fprintf(stderr, "ERROR\n");
+		fprintf(stderr, "\tEggdrop will not run as root!\n\n");
 		return -1;
 	}
 
 	/* config file may not be world read/writeable */
 	if (file_check(configfile)) {
-		if (errno) perror(configfile);
-		else {
-			fprintf(stderr, "ERROR\n");
-			fprintf(stderr, "\tCheck file permissions on your config file!");
-			fprintf(stderr, "\tMake sure other groups and users cannot read/write it.\n");
-			return -1;
+		fprintf(stderr, "ERROR\n");
+		if (errno) {
+			fprintf(stderr, "\tFailed to load config file '%s': %s\n\n", configfile, strerror(errno));
+		} else {
+			fprintf(stderr, "\tCheck file permissions on your config file '%s'!\n", configfile);
+			fprintf(stderr, "\tMake sure other groups and users cannot read/write it.\n\n");
 		}
+		return -1;
 	}
 	
 	/* set uptime */
@@ -484,7 +486,7 @@ int main(int argc, char **argv)
 		tid = timer_create_repeater(&howlong, "main loop", core_secondly);
 
 		/* init core */
-		if (!core_init())
+		if (core_init() != 0)
 			break;
 
 		/* set normal running mode */
@@ -618,14 +620,14 @@ int core_init()
 		if (terminal_mode) terminal_init();
 	}
 
-	return 1;
+	return (0);
 }
 
 int core_restart(const char *nick)
 {
 	putlog(LOG_MISC, "*", "Restarting...");
 	runmode = RUNMODE_RESTART;
-	return 1;
+	return (0);
 }
 
 int core_shutdown(int how, const char *nick, const char *reason)

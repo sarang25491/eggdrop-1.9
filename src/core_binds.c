@@ -48,11 +48,15 @@ int core_binds_shutdown(void)
 
 void check_bind_init(void)
 {
+	egg_assert(BT_init != NULL);
+
 	bind_check (BT_init, NULL, NULL);
 }
 
 void check_bind_shutdown (void)
 {
+	egg_assert(BT_shutdown != NULL);
+
 	bind_check (BT_shutdown, NULL, NULL);
 }
 
