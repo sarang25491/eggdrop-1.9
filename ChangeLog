@@ -1,3 +1,11 @@
+2003-04-04 18:18  stdarg <stdarg@techmonkeys.org>
+
+	* modules/server/scriptcmds.c:
+
+	
+	* server_fake_input - lets scripts create input to be processed as
+	if the server sent it 
+
 2003-04-04 15:51  stdarg <stdarg@techmonkeys.org>
 
 	* modules/server/dcc.c:
