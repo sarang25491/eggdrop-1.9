@@ -31,7 +31,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.52 2003/02/25 06:52:19 stdarg Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.53 2003/03/06 12:08:15 tothwolf Exp $";
 #endif
 
 #include "main.h"
@@ -761,7 +761,7 @@ int readuserfile(char *file, struct userrec **ret)
 
 		cr->next = u->chanrec;
 		u->chanrec = cr;
-		strlcpy(cr->channel, chname, 80);
+		strlcpy(cr->channel, chname, sizeof cr->channel);
 		cr->laston = atoi(st);
 		cr->flags = fr.chan;
 		cr->flags_udef = fr.udef_chan;

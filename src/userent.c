@@ -104,7 +104,7 @@ int def_set(struct userrec *u, struct user_entry *e, void *buf)
 
     e->u.string = realloc(e->u.string, l + 1);
 
-    strlcpy (e->u.string, string, l + 1);
+    strlcpy (e->u.string, string, sizeof e->u.string);
 
     for (i = e->u.string; *i; i++)
       /* Allow bold, inverse, underline, color text here...

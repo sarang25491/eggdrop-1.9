@@ -26,7 +26,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: misc.c,v 1.78 2003/02/25 06:52:19 stdarg Exp $";
+static const char rcsid[] = "$Id: misc.c,v 1.79 2003/03/06 12:08:15 tothwolf Exp $";
 #endif
 
 #include "main.h"
@@ -76,6 +76,7 @@ static struct help_ref {
  * or "abc!user@3ffe:604:2:b02e:6174:7265:6964:6573" into
  *    "*!user@3ffe:604:2:b02e:6174:7265:6964:*"
  */
+/* FIXME: Convert strncpy usage to strlcpy */
 void _maskhost(const char *s, char *nw, int host)
 {
   register const char *p, *q, *e, *f;
@@ -343,6 +344,7 @@ static void subst_addcol(char *s, char *newcol)
 #define HELP_UNDER 4
 #define HELP_FLASH 8
 
+/* FIXME: Convert strncpy usage to strlcpy */
 void help_subst(char *s, char *nick, struct flag_record *flags,
 		int isdcc, char *topic)
 {

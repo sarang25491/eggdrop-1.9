@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: msgcmds.c,v 1.17 2003/02/15 05:04:57 wcc Exp $";
+static const char rcsid[] = "$Id: msgcmds.c,v 1.18 2003/03/06 12:08:15 tothwolf Exp $";
 #endif
 */
 
@@ -162,10 +162,8 @@ static int msg_ident(char *nick, char *host, struct userrec *u, char *par)
   pass = newsplit(&par);
   if (!par[0])
     strcpy(who, nick);
-  else {
-    strncpy(who, par, NICKMAX);
-    who[NICKMAX] = 0;
-  }
+  else
+    strlcpy(who, par, sizeof who);
   u2 = get_user_by_handle(userlist, who);
   if (!u2) {
     if (u && !quiet_reject)

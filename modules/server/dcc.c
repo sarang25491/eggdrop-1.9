@@ -685,7 +685,7 @@ static void got_send(char *nick, char *uhost, user_t *u, char *text)
 	*space-- = 0;
 	space = strchr(text, ' ');
 	if (!space || space == text) return;
-	strlcpy(ip, space+1, sizeof(ip));
+	strlcpy(ip, space + 1, sizeof ip);
 	*space = 0;
 
 	if (*fname == '"') {

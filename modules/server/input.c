@@ -141,7 +141,7 @@ static int got005(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 			for (j = 0; j < 3; j++) {
 				comma = strchr(value, ',');
 				if (comma) *comma = 0;
-				strlcpy(types[j], value, 32);
+				strlcpy(types[j], value, sizeof types[j]);
 				if (comma) *comma = ',';
 				value = comma+1;
 			}

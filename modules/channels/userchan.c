@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: userchan.c,v 1.17 2003/02/16 07:05:25 wcc Exp $";
+static const char rcsid[] = "$Id: userchan.c,v 1.18 2003/03/06 12:08:15 tothwolf Exp $";
 #endif
 */
 
@@ -49,8 +49,7 @@ static struct chanuserrec *add_chanrec(struct userrec *u, char *chname)
     ch->flags = 0;
     ch->flags_udef = 0;
     ch->laston = 0;
-    strncpy(ch->channel, chname, 81);
-    ch->channel[80] = 0;
+    strlcpy(ch->channel, chname, sizeof ch->channel);
   }
   return ch;
 }
@@ -300,8 +299,7 @@ static int u_addmask(char type, struct chanset_t *chan, char *who, char *from,
   if (type == 'I')
     u = chan ? &chan->invites : &global_invites;
 
-  strncpy(host, who, 256);
-  host[256] = 0;
+  strlcpy(host, who, sizeof host);
 
   /* Choke check: fix broken bans (must have '!' and '@') */
   if ((strchr(host, '!') == NULL) && (strchr(host, '@') == NULL))

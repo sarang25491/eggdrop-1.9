@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: tclchan.c,v 1.31 2003/03/01 08:25:58 wcc Exp $";
+static const char rcsid[] = "$Id: tclchan.c,v 1.32 2003/03/06 12:08:15 tothwolf Exp $";
 #endif
 */
 
@@ -359,8 +359,7 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
 	  Tcl_AppendResult(irp, "channel chanmode needs argument", NULL);
 	return TCL_ERROR;
       }
-      strncpy(s, item[i], 120);
-      s[120] = 0;
+      strlcpy(s, item[i], sizeof s);
       set_mode_protect(chan, s);
     } else if (!strcmp(item[i], "ban_time")) {
       i++;
@@ -750,9 +749,8 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
 
   convert_element(glob_chanmode, buf2);
   simple_sprintf(buf, "chanmode %s ", buf2);
-  strncat(buf, glob_chanset, 2047 - strlen(buf));
-  strncat(buf, options, 2047 - strlen(buf));
-  buf[2047] = 0;
+  strlcat(buf, glob_chanset, sizeof buf);
+  strlcat(buf, options, sizeof buf);
 
   if (Tcl_SplitList(NULL, buf, &items, &item) != TCL_OK)
     return TCL_ERROR;
@@ -774,8 +772,7 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
      * any code later on. chan->name gets updated with the channel name as
      * the server knows it, when we join the channel. <cybah>
      */
-    strncpy(chan->dname, newname, 81);
-    chan->dname[80] = 0;
+    strlcpy(chan->dname, newname, sizeof chan->dname);
 
     /* Initialize chan->channel info */
     init_channel(chan, 0);

@@ -24,7 +24,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: cmds.c,v 1.116 2003/02/15 09:07:15 wcc Exp $";
+static const char rcsid[] = "$Id: cmds.c,v 1.117 2003/03/06 12:08:15 tothwolf Exp $";
 #endif
 
 #include "main.h"
@@ -463,7 +463,7 @@ static int cmd_console(user_t *u, int idx, char *par)
 	      nick);
       return(0);
     }
-    strlcpy(dcc[dest].u.chat->con_chan, nick, 81);
+    strlcpy(dcc[dest].u.chat->con_chan, nick, sizeof dcc[dest].u.chat->con_chan);
     nick[0] = 0;
     if ((dest == idx) && !glob_master(fr) && !chan_master(fr))
       /* Consoling to another channel for self */
@@ -587,7 +587,7 @@ static int cmd_pls_bot(user_t *u, int idx, char *par)
     bi->relay_port = 3333;
   } else {
     bi->address = malloc(addrlen + 1);
-    strlcpy(bi->address, addr, addrlen + 1);
+    strlcpy(bi->address, addr, sizeof bi->address);
     p = q + 1;
     bi->telnet_port = atoi(p);
     q = strchr(p, '/');
@@ -774,7 +774,7 @@ static int cmd_chaddr(user_t *u, int idx, char *par)
     bi->relay_port = relay_port;
   } else {
     bi->address = malloc(addrlen + 1);
-    strlcpy(bi->address, addr, addrlen + 1);
+    strlcpy(bi->address, addr, sizeof bi->address);
     p = q + 1;
     bi->telnet_port = atoi(p);
     q = strchr(p, '/');
@@ -860,13 +860,13 @@ void cmd_die(user_t *u, int idx, char *par)
 		 par);
     snprintf(s2, sizeof s2, "%s %s!%s (%s)", _("DIE BY"), dcc[idx].nick, 
 		 dcc[idx].host, par);
-    strlcpy(quit_msg, par, 1024);
+    strlcpy(quit_msg, par, sizeof quit_msg);
   } else {
     snprintf(s1, sizeof s1, "%s (%s %s)", _("BOT SHUTDOWN"), _("Authorized by"),
 		 dcc[idx].nick);
     snprintf(s2, sizeof s2, "%s %s!%s (%s)", _("DIE BY"), dcc[idx].nick, 
 		 dcc[idx].host, _("requested"));
-    strlcpy(quit_msg, dcc[idx].nick, 1024);
+    strlcpy(quit_msg, dcc[idx].nick, sizeof quit_msg);
   }
   kill_bot(s1, s2);
 }

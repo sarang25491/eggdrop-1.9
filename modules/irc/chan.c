@@ -27,7 +27,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: chan.c,v 1.35 2003/03/04 01:56:25 tothwolf Exp $";
+static const char rcsid[] = "$Id: chan.c,v 1.36 2003/03/06 12:08:15 tothwolf Exp $";
 #endif
 */
 
@@ -837,8 +837,7 @@ static int got367(char *from, char *ignore, char *origmsg)
   char *ban, *who, *chname, buf[511], *msg;
   struct chanset_t *chan;
 
-  strncpy(buf, origmsg, 510);
-  buf[510] = 0;
+  strlcpy(buf, origmsg, sizeof buf);
   msg = buf;
   newsplit(&msg);
   chname = newsplit(&msg);
@@ -886,8 +885,7 @@ static int got348(char *from, char *ignore, char *origmsg)
   if (use_exempts == 0)
     return 0;
 
-  strncpy(buf, origmsg, 510);
-  buf[510] = 0;
+  strlcpy(buf, origmsg, sizeof buf);
   msg = buf;
   newsplit(&msg);
   chname = newsplit(&msg);
@@ -930,8 +928,7 @@ static int got346(char *from, char *ignore, char *origmsg)
   char *invite, *who, *chname, buf[511], *msg;
   struct chanset_t *chan;
 
-  strncpy(buf, origmsg, 510);
-  buf[510] = 0;
+  strlcpy(buf, origmsg, sizeof buf);
   msg = buf;
   if (use_invites == 0)
     return 0;
@@ -1165,8 +1162,7 @@ static int gotinvite(char *from, char *ignore, char *msg)
     if (now - last_invtime < 30)
       return 0;		/* Two invites to the same channel in 30 seconds? */
   putlog(LOG_MISC, "*", "%s!%s invited me to %s", nick, uhost, msg);
-  strncpy(last_invchan, msg, 299);
-  last_invchan[299] = 0;
+  strlcpy(last_invchan, msg, sizeof last_invchan);
   last_invtime = now;
   chan = findchan(msg);
   if (!chan)
@@ -1439,8 +1435,7 @@ static int gotjoin(char *from, char *ignore, char *chname)
 	  /* It was me joining! Need to update the channel record with the
 	   * unique name for the channel (as the server see's it). <cybah>
 	   */
-	  strncpy(chan->name, chname, 81);
-	  chan->name[80] = 0;
+	  strlcpy(chan->name, chname, sizeof chan->name);
 	  chan->status &= ~CHAN_JUPED;
 
           /* ... and log us joining. Using chan->dname for the channel is

@@ -205,14 +205,15 @@ static void expire_notes()
 /* Add note to notefile.
  * FIXME : botnet dependencies
  */
-static int storenote(char *argv1, char *argv2, char *argv3, int idx, char *who, int bufsize)
+static int storenote(char *argv1, char *argv2, char *argv3, int idx, char *who)
 {
   FILE *f;
   char u[20], *f1, *to = NULL, work[1024];
   struct userrec *ur;
   struct userrec *ur2;
 
-  if (who && bufsize > 0) who[0] = 0;
+  if (who)
+    who[0] = 0;
   ur = get_user_by_handle(userlist, argv2);
   if (ur && allow_fwd && (f1 = get_user(&USERENTRY_FWD, ur))) {
     char fwd[161], fwd2[161], *f2, *p, *q, *r;
@@ -241,7 +242,7 @@ static int storenote(char *argv1, char *argv2, char *argv3, int idx, char *who, 
       p = NULL;
     }
     if ((argv1[0] != '@') && ((argv3[0] == '<') || (argv3[0] == '>')))
-       ok = 0;			/* Probablly fake pre 1.3 hax0r */
+      ok = 0;			/* Probablly fake pre 1.3 hax0r */
 
     if (ok && (!p || in_chain(p + 1))) {
       if (p)
@@ -271,7 +272,8 @@ static int storenote(char *argv1, char *argv2, char *argv3, int idx, char *who, 
     if (ok) {
       if ((add_note(fwd, p, work, idx, 0) == NOTE_OK) && (idx >= 0))
 	dprintf(idx, _("Not online; forwarded to %s.\n"), f1);
-      if (who) strncpy(who, f1, bufsize);
+      if (who)
+        strlcpy(who, f1, sizeof who);
       to = NULL;
     } else {
       strcpy(work, argv3);
@@ -325,7 +327,7 @@ static int tcl_storenote(ClientData cd, Tcl_Interp *irp, int argc,
 
   BADARGS(5, 5, " from to msg idx");
   idx = atoi(argv[4]);
-  storenote(argv[1], argv[2], argv[3], idx, who, sizeof(who));
+  storenote(argv[1], argv[2], argv[3], idx, who);
   Tcl_AppendResult(irp, who, NULL);
   return TCL_OK;
 }

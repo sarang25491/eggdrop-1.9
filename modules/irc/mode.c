@@ -25,7 +25,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: mode.c,v 1.23 2003/03/06 07:55:57 tothwolf Exp $";
+static const char rcsid[] = "$Id: mode.c,v 1.24 2003/03/06 12:08:15 tothwolf Exp $";
 #endif
 */
 
@@ -80,8 +80,8 @@ static void flush_mode(struct chanset_t *chan, int pri)
     }
     *p++ = 'k';
 
-    strlcat(post, chan->key, sizeof(post));
-    strlcat(post, " ", sizeof(post));
+    strlcat(post, chan->key, sizeof post);
+    strlcat(post, " ", sizeof post);
 
     free(chan->key);
     chan->key = NULL;
@@ -113,8 +113,8 @@ static void flush_mode(struct chanset_t *chan, int pri)
     }
     *p++ = 'k';
 
-    strlcat(post, chan->rmkey, sizeof(post));
-    strlcat(post, " ", sizeof(post));
+    strlcat(post, chan->rmkey, sizeof post);
+    strlcat(post, " ", sizeof post);
 
     free(chan->rmkey);
     chan->rmkey = NULL;
@@ -134,8 +134,8 @@ static void flush_mode(struct chanset_t *chan, int pri)
                ((chan->cmode[i].type & MODE_BAN) ? 'b' :
                 ((chan->cmode[i].type & MODE_EXEMPT) ? 'e' : 'I'))));
 
-      strlcat(post, chan->cmode[i].op, sizeof(post));
-      strlcat(post, " ", sizeof(post));
+      strlcat(post, chan->cmode[i].op, sizeof post);
+      strlcat(post, " ", sizeof post);
 
       free(chan->cmode[i].op);
       chan->cmode[i].op = NULL;
@@ -157,8 +157,8 @@ static void flush_mode(struct chanset_t *chan, int pri)
                ((chan->cmode[i].type & MODE_BAN) ? 'b' :
                 ((chan->cmode[i].type & MODE_EXEMPT) ? 'e' : 'I'))));
 
-      strlcat(post, chan->cmode[i].op, sizeof(post));
-      strlcat(post, " ", sizeof(post));
+      strlcat(post, chan->cmode[i].op, sizeof post);
+      strlcat(post, " ", sizeof post);
 
       free(chan->cmode[i].op);
       chan->cmode[i].op = NULL;
@@ -176,8 +176,8 @@ static void flush_mode(struct chanset_t *chan, int pri)
     if (index > 0 && post[index - 1] == ' ')
       post[index - 1] = 0;
 
-    strlcat(out, " ", sizeof(out));
-    strlcat(out, post, sizeof(out));
+    strlcat(out, " ", sizeof out);
+    strlcat(out, post, sizeof out);
   }
   if (out[0]) {
     if (pri == QUICK)

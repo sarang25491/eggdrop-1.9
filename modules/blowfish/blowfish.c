@@ -26,7 +26,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: blowfish.c,v 1.9 2003/02/25 10:28:21 stdarg Exp $";
+static const char rcsid[] = "$Id: blowfish.c,v 1.10 2003/03/06 12:08:14 tothwolf Exp $";
 #endif
 
 #define MODULE_NAME "encryption"
@@ -190,8 +190,7 @@ static void blowfish_init(u_8bit_t * key, int keybytes)
   bf_P = box[bx].P;
   bf_S = box[bx].S;
   box[bx].keybytes = keybytes;
-  strncpy(box[bx].key, key, keybytes);
-  box[bx].key[keybytes] = 0;
+  strlcpy(box[bx].key, key, keybytes + 1);	/* + 1 for NULL */
   box[bx].lastuse = egg_timeval_now.sec;
   /* Robey: Reset blowfish boxes to initial state
    * (I guess normally it just keeps scrambling them, but here it's

@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: files.c,v 1.11 2003/02/15 05:04:57 wcc Exp $";
+static const char rcsid[] = "$Id: files.c,v 1.12 2003/03/06 12:08:15 tothwolf Exp $";
 #endif
 */
 
@@ -410,9 +410,8 @@ static void cmd_chdir(int idx, char *msg)
     free_null(s);
     return;
   }
-  strncpy(dcc[idx].u.file->dir, s, 160);
+  strlcpy(dcc[idx].u.file->dir, s, sizeof dcc[idx].u.file->dir);
   free_null(s);
-  dcc[idx].u.file->dir[160] = 0;
   set_user(&USERENTRY_DCCDIR, dcc[idx].user, dcc[idx].u.file->dir);
   putlog(LOG_FILES, "*", "files: #%s# cd /%s", dcc[idx].nick,
 	 dcc[idx].u.file->dir);

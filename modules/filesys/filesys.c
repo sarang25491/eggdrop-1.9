@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: filesys.c,v 1.22 2003/03/04 22:02:27 wcc Exp $";
+static const char rcsid[] = "$Id: filesys.c,v 1.23 2003/03/06 12:08:15 tothwolf Exp $";
 #endif
 
 #include <fcntl.h>
@@ -323,8 +323,8 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
     nfn = buf = replace_spaces(nfn);
   dcc[i].u.xfer->origname = calloc(1, strlen(nfn) + 1);
   strcpy(dcc[i].u.xfer->origname, nfn);
-  strlcpy(dcc[i].u.xfer->from, from, NICKLEN);
-  strlcpy(dcc[i].u.xfer->dir, dir, DIRLEN);
+  strlcpy(dcc[i].u.xfer->from, from, sizeof dcc[i].u.xfer->from);
+  strlcpy(dcc[i].u.xfer->dir, dir, sizeof dcc[i].u.xfer->dir);
   dcc[i].u.xfer->length = dccfilesize;
   dcc[i].timeval = now;
   dcc[i].u.xfer->f = f;
@@ -1030,7 +1030,7 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
       ipnum = htonl(ipnum);
       inet_ntop(AF_INET, &ipnum, ipbuf, sizeof(ipbuf));
       ip = ipbuf;
-      strlcpy(dcc[i].addr, ip, ADDRLEN);
+      strlcpy(dcc[i].addr, ip, sizeof dcc[i].addr);
       putlog(LOG_DEBUG, "*", "|FILESYS| addr: (%s)", dcc[i].addr);
       dcc[i].port = atoi(prt);
       dcc[i].sock = (-1);
@@ -1074,8 +1074,7 @@ static char *mktempfile(char *filename)
     fn[NAME_MAX - MKTEMPFILE_TOT] = 0;
     l = NAME_MAX - MKTEMPFILE_TOT;
     fn = malloc(l + 1);
-    strncpy(fn, filename, l);
-    fn[l] = 0;
+    strlcpy(fn, filename, sizeof fn);
   }
   tempname = malloc(l + MKTEMPFILE_TOT + 1);
   sprintf(tempname, "%u-%s-%s", getpid(), rands, fn);

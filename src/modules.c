@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: modules.c,v 1.134 2003/02/25 10:30:18 stdarg Exp $";
+static const char rcsid[] = "$Id: modules.c,v 1.135 2003/03/06 12:08:15 tothwolf Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -105,7 +105,7 @@ char *(*decrypt_string) (char *, char *) = 0;
 void (*qserver) (int, char *, int) = (void (*)(int, char *, int)) null_func;
 void (*add_mode) () = null_func;
 int (*match_noterej) (struct userrec *, char *) = (int (*)(struct userrec *, char *)) false_func;
-int (*storenote)(char *from, char *to, char *msg, int idx, char *who, int bufsize) = (int (*)(char *from, char *to, char *msg, int idx, char *who, int bufsize)) minus_func;
+int (*storenote)(char *from, char *to, char *msg, int idx, char *who) = (int (*)(char *from, char *to, char *msg, int idx, char *who)) minus_func;
 
 module_entry *module_list;
 dependancy *dependancy_list = NULL;
@@ -385,7 +385,7 @@ void add_hook(int hook_num, Function func)
 	match_noterej = func;
       break;
     case HOOK_STORENOTE:
-	if (func == NULL) storenote = (int (*)(char *from, char *to, char *msg, int idx, char *who, int bufsize)) minus_func;
+	if (func == NULL) storenote = (int (*)(char *from, char *to, char *msg, int idx, char *who)) minus_func;
 	else storenote = func;
 	break;
     }
@@ -435,7 +435,7 @@ void del_hook(int hook_num, Function func)
 	match_noterej = false_func;
       break;
     case HOOK_STORENOTE:
-	if (storenote == func) storenote = (int (*)(char *from, char *to, char *msg, int idx, char *who, int bufsize)) minus_func;
+	if (storenote == func) storenote = (int (*)(char *from, char *to, char *msg, int idx, char *who)) minus_func;
 	break;
     }
 }

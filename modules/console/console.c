@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: console.c,v 1.14 2003/02/15 05:04:57 wcc Exp $";
+static const char rcsid[] = "$Id: console.c,v 1.15 2003/03/06 12:08:15 tothwolf Exp $";
 #endif
 
 #define MODULE_NAME "console"
@@ -158,8 +158,7 @@ static int console_tcl_set(Tcl_Interp *irp, struct userrec *u,
   if (l > 80)
     l = 80;
   i->channel = malloc(l + 1);
-  strncpy(i->channel, argv[3], l);
-  i->channel[l] = 0;
+  strlcpy(i->channel, argv[3], sizeof i->channel);
   if (argc > 4) {
     i->conflags = logmodes(argv[4]);
     if (argc > 5) {
