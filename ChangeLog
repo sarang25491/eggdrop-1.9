@@ -1,3 +1,17 @@
+2004-06-10 23:59  Dariusz Kulinski <takeda@takeda.tk>
+
+	* bootstrap, acconfig/acinclude.m4, acconfig/mpatrol.m4,
+	acconfig/tcl.m4, modules/proxy/http.c, modules/proxy/socks5.c:
+
+	* fixed some warnings and errors while compiling/generating autoconf
+	on FreeBSD 
+
+2004-06-10 23:15  Automatic CVS Scripts
+
+	* po/eggdrop.pot:
+
+	Pots 
+
 2004-06-10 17:15  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
