@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.56 2002/04/01 23:39:36 ite Exp $
+ * $Id: net.c,v 1.57 2002/05/03 07:57:12 stdarg Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -31,6 +31,8 @@
 #include "logfile.h"
 #include "dns.h"
 
+#include "traffic.h" /* egg_traffic_t */
+
 #if !HAVE_GETDTABLESIZE
 #  ifdef FD_SETSIZE
 #    define getdtablesize() FD_SETSIZE
@@ -47,9 +49,9 @@
 
 extern struct dcc_t	*dcc;
 extern int		 backgrd, use_stderr, resolve_timeout, dcc_total;
-extern unsigned long	 otraffic_irc_today, otraffic_bn_today,
-			 otraffic_dcc_today, otraffic_filesys_today,
-			 otraffic_trans_today, otraffic_unknown_today;
+
+extern egg_traffic_t traffic;
+
 extern char		 natip[];
 
 char	myip[121] = "";		/* IP can be specified in the config file   */
@@ -1093,25 +1095,25 @@ void tputs(register int z, char *s, unsigned int len)
           if (dcc[idx].type) {
             if (dcc[idx].type->name) {
               if (!strncmp(dcc[idx].type->name, "BOT", 3)) {
-                otraffic_bn_today += len;
+                traffic.out_today.bn += len;
                 break;
               } else if (!strcmp(dcc[idx].type->name, "SERVER")) {
-                otraffic_irc_today += len;
+                traffic.out_today.irc += len;
                 break;
               } else if (!strncmp(dcc[idx].type->name, "CHAT", 4)) {
-                otraffic_dcc_today += len;
+                traffic.out_today.dcc += len;
                 break;
               } else if (!strncmp(dcc[idx].type->name, "FILES", 5)) {
-                otraffic_filesys_today += len;
+                traffic.out_today.filesys += len;
                 break;
               } else if (!strcmp(dcc[idx].type->name, "SEND")) {
-                otraffic_trans_today += len;
+                traffic.out_today.trans += len;
                 break;
               } else if (!strncmp(dcc[idx].type->name, "GET", 3)) {
-                otraffic_trans_today += len;
+                traffic.out_today.trans += len;
                 break;
               } else {
-                otraffic_unknown_today += len;
+                traffic.out_today.unknown += len;
                 break;
               }
             }

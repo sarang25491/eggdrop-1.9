@@ -4,7 +4,7 @@
  *   signal handling
  *   command line arguments
  *
- * $Id: main.c,v 1.114 2002/05/03 01:21:16 ite Exp $
+ * $Id: main.c,v 1.115 2002/05/03 07:57:12 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -126,28 +126,8 @@ egg_timeval_t egg_timeval_now;	/* Same thing, but seconds and microseconds. */
 
 /* Traffic stats
  */
-unsigned long	otraffic_irc = 0;
-unsigned long	otraffic_irc_today = 0;
-unsigned long	otraffic_bn = 0;
-unsigned long	otraffic_bn_today = 0;
-unsigned long	otraffic_dcc = 0;
-unsigned long	otraffic_dcc_today = 0;
-unsigned long	otraffic_filesys = 0;
-unsigned long	otraffic_filesys_today = 0;
-unsigned long	otraffic_trans = 0;
-unsigned long	otraffic_trans_today = 0;
-unsigned long	otraffic_unknown = 0;
-unsigned long	otraffic_unknown_today = 0;
-unsigned long	itraffic_irc = 0;
-unsigned long	itraffic_irc_today = 0;
-unsigned long	itraffic_bn = 0;
-unsigned long	itraffic_bn_today = 0;
-unsigned long	itraffic_dcc = 0;
-unsigned long	itraffic_dcc_today = 0;
-unsigned long	itraffic_trans = 0;
-unsigned long	itraffic_trans_today = 0;
-unsigned long	itraffic_unknown = 0;
-unsigned long	itraffic_unknown_today = 0;
+#include "traffic.h" /* egg_traffic_t */
+egg_traffic_t traffic;
 
 void fatal(const char *s, int recoverable)
 {
@@ -465,21 +445,22 @@ static void event_logfile()
 
 static void event_resettraffic()
 {
-  otraffic_irc += otraffic_irc_today;
-  itraffic_irc += itraffic_irc_today;
-  otraffic_bn += otraffic_bn_today;
-  itraffic_bn += itraffic_bn_today;
-  otraffic_dcc += otraffic_dcc_today;
-  itraffic_dcc += itraffic_dcc_today;
-  otraffic_unknown += otraffic_unknown_today;
-  itraffic_unknown += itraffic_unknown_today;
-  otraffic_trans += otraffic_trans_today;
-  itraffic_trans += itraffic_trans_today;
-  otraffic_irc_today = otraffic_bn_today = 0;
-  otraffic_dcc_today = otraffic_unknown_today = 0;
-  itraffic_irc_today = itraffic_bn_today = 0;
-  itraffic_dcc_today = itraffic_unknown_today = 0;
-  itraffic_trans_today = otraffic_trans_today = 0;
+	traffic.out_total.irc += traffic.out_today.irc;
+	traffic.out_total.bn += traffic.out_today.bn;
+	traffic.out_total.dcc += traffic.out_today.dcc;
+	traffic.out_total.filesys += traffic.out_today.filesys;
+	traffic.out_total.trans += traffic.out_today.trans;
+	traffic.out_total.unknown += traffic.out_today.unknown;
+
+	traffic.in_total.irc += traffic.in_today.irc;
+	traffic.in_total.bn += traffic.in_today.bn;
+	traffic.in_total.dcc += traffic.in_today.dcc;
+	traffic.in_total.filesys += traffic.in_today.filesys;
+	traffic.in_total.trans += traffic.in_today.trans;
+	traffic.in_total.unknown += traffic.in_today.unknown;
+
+	memset(&traffic.out_today, 0, sizeof(traffic.out_today));
+	memset(&traffic.in_today, 0, sizeof(traffic.in_today));
 }
 
 static void event_loaded()
@@ -803,19 +784,19 @@ module, please consult the default config file for info.\n"));
 	    /* Traffic stats */
 	    if (dcc[idx].type->name) {
 	      if (!strncmp(dcc[idx].type->name, "BOT", 3))
-		itraffic_bn_today += strlen(buf) + 1;
+		traffic.in_today.bn += strlen(buf) + 1;
 	      else if (!strcmp(dcc[idx].type->name, "SERVER"))
-		itraffic_irc_today += strlen(buf) + 1;
+		traffic.in_today.irc += strlen(buf) + 1;
 	      else if (!strncmp(dcc[idx].type->name, "CHAT", 4))
-		itraffic_dcc_today += strlen(buf) + 1;
+		traffic.in_today.dcc += strlen(buf) + 1;
 	      else if (!strncmp(dcc[idx].type->name, "FILES", 5))
-		itraffic_dcc_today += strlen(buf) + 1;
+		traffic.in_today.dcc += strlen(buf) + 1;
 	      else if (!strcmp(dcc[idx].type->name, "SEND"))
-		itraffic_trans_today += strlen(buf) + 1;
+		traffic.in_today.trans += strlen(buf) + 1;
 	      else if (!strncmp(dcc[idx].type->name, "GET", 3))
-		itraffic_trans_today += strlen(buf) + 1;
+		traffic.in_today.trans += strlen(buf) + 1;
 	      else
-		itraffic_unknown_today += strlen(buf) + 1;
+		traffic.in_today.unknown += strlen(buf) + 1;
 	    }
 	    dcc[idx].type->activity(idx, buf, i);
 	  } else

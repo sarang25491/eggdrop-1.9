@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.77 2002/05/01 03:56:12 stdarg Exp $
+ * $Id: tcl.c,v 1.78 2002/05/03 07:57:12 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -271,7 +271,7 @@ static tcl_strings def_tcl_strings[] =
   {"help_path",		helpdir,	120,		STR_DIR | STR_PROTECT},
   {"temp_path",		tempdir,	120,		STR_DIR | STR_PROTECT},
   {"text_path",		textdir,	120,		STR_DIR | STR_PROTECT},
-  {"mod-path",		moddir,		120,		STR_DIR | STR_PROTECT},
+  {"mod_path",		moddir,		120,		STR_DIR | STR_PROTECT},
   {"notify_newusers",	notify_new,	120,		0},
   {"owner",		owner,		120,		STR_PROTECT},
   {"my_ip",		myip,		120,		0},

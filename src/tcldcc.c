@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.58 2002/05/01 02:30:55 stdarg Exp $
+ * $Id: tcldcc.c,v 1.59 2002/05/03 07:57:12 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -28,6 +28,7 @@
 #include "modules.h"
 #include "logfile.h"
 #include "misc.h"
+#include "traffic.h" /* egg_traffic_t */
 
 extern struct dcc_t	*dcc;
 extern int		 dcc_total, backgrd, parties, make_userfile,
@@ -38,7 +39,7 @@ extern tand_t		*tandbot;
 extern time_t		 now;
 
 /* Traffic stuff. */
-extern unsigned long otraffic_irc, otraffic_irc_today, itraffic_irc, itraffic_irc_today, otraffic_bn, otraffic_bn_today, itraffic_bn, itraffic_bn_today, otraffic_dcc, otraffic_dcc_today, itraffic_dcc, itraffic_dcc_today, otraffic_trans, otraffic_trans_today, itraffic_trans, itraffic_trans_today, otraffic_unknown, otraffic_unknown_today, itraffic_unknown, itraffic_unknown_today;
+extern egg_traffic_t traffic;
 
 static struct portmap	*root = NULL;
 
@@ -779,44 +780,44 @@ static int tcl_traffic STDVAR
   unsigned long in_total_today, in_total;
 
   /* IRC traffic */
-  sprintf(buf, "irc %ld %ld %ld %ld", itraffic_irc_today,
-	  itraffic_irc + itraffic_irc_today, otraffic_irc_today,
-	  otraffic_irc + otraffic_irc_today);
+  sprintf(buf, "irc %ld %ld %ld %ld", traffic.in_today.irc,
+	  traffic.in_total.irc + traffic.in_today.irc, traffic.out_today.irc,
+	  traffic.out_total.irc + traffic.out_today.irc);
   Tcl_AppendElement(irp, buf);  
 
   /* Botnet traffic */
-  sprintf(buf, "botnet %ld %ld %ld %ld", itraffic_bn_today,
-	  itraffic_bn + itraffic_bn_today, otraffic_bn_today,
-	  otraffic_bn + otraffic_bn_today);
+  sprintf(buf, "botnet %ld %ld %ld %ld", traffic.in_today.bn,
+	  traffic.in_total.bn + traffic.in_today.bn, traffic.out_today.bn,
+	  traffic.out_total.bn + traffic.out_today.bn);
   Tcl_AppendElement(irp, buf);
 
   /* Partyline */
-  sprintf(buf, "partyline %ld %ld %ld %ld", itraffic_dcc_today,
-	  itraffic_dcc + itraffic_dcc_today, otraffic_dcc_today,
-	  otraffic_dcc + otraffic_dcc_today);    
+  sprintf(buf, "partyline %ld %ld %ld %ld", traffic.in_today.dcc,
+	  traffic.in_total.dcc + traffic.in_today.dcc, traffic.out_today.dcc,
+	  traffic.out_total.dcc + traffic.out_today.dcc);    
   Tcl_AppendElement(irp, buf);
 
   /* Transfer */
-  sprintf(buf, "transfer %ld %ld %ld %ld", itraffic_trans_today,
-          itraffic_trans + itraffic_trans_today, otraffic_trans_today,
-	  otraffic_trans + otraffic_trans_today);    
+  sprintf(buf, "transfer %ld %ld %ld %ld", traffic.in_today.trans,
+          traffic.in_total.trans + traffic.in_today.trans, traffic.out_today.trans,
+	  traffic.out_total.trans + traffic.out_today.trans);    
   Tcl_AppendElement(irp, buf);
 
   /* Misc traffic */
-  sprintf(buf, "misc %ld %ld %ld %ld", itraffic_unknown_today,
-	  itraffic_unknown + itraffic_unknown_today, otraffic_unknown_today,
-	  otraffic_unknown + otraffic_unknown_today);    
+  sprintf(buf, "misc %ld %ld %ld %ld", traffic.in_today.unknown,
+	  traffic.in_total.unknown + traffic.in_today.unknown, traffic.out_today.unknown,
+	  traffic.out_total.unknown + traffic.out_today.unknown);    
   Tcl_AppendElement(irp, buf);
 
   /* Totals */
-  in_total_today = itraffic_irc_today + itraffic_bn_today + itraffic_dcc_today
-		 + itraffic_trans_today + itraffic_unknown_today,
-  in_total = in_total_today + itraffic_irc + itraffic_bn + itraffic_dcc
-	   + itraffic_trans + itraffic_unknown;
-  out_total_today = otraffic_irc_today + otraffic_bn_today + otraffic_dcc_today
-	          + itraffic_trans_today + otraffic_unknown_today,
-  out_total = out_total_today + otraffic_irc + otraffic_bn + otraffic_dcc
-            + otraffic_trans + otraffic_unknown;	  
+  in_total_today = traffic.in_today.irc + traffic.in_today.bn + traffic.in_today.dcc
+		 + traffic.in_today.trans + traffic.in_today.unknown,
+  in_total = in_total_today + traffic.in_total.irc + traffic.in_total.bn + traffic.in_total.dcc
+	   + traffic.in_total.trans + traffic.in_total.unknown;
+  out_total_today = traffic.out_today.irc + traffic.out_today.bn + traffic.out_today.dcc
+	          + traffic.in_today.trans + traffic.out_today.unknown,
+  out_total = out_total_today + traffic.out_total.irc + traffic.out_total.bn + traffic.out_total.dcc
+            + traffic.out_total.trans + traffic.out_total.unknown;	  
   sprintf(buf, "total %ld %ld %ld %ld",
 	  in_total_today, in_total, out_total_today, out_total);
   Tcl_AppendElement(irp, buf);
