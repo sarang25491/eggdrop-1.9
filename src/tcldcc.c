@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.56 2002/04/25 23:18:03 stdarg Exp $
+ * $Id: tcldcc.c,v 1.57 2002/04/28 03:13:39 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -699,7 +699,7 @@ static int tcl_listen STDVAR
     Tcl_AppendResult(irp, "illegal listen type: must be one of ",
 		     "bots, users, all, off, script", NULL);
     killsock(dcc[idx].sock);
-    dcc_total--;
+    lostdcc(idx);
     return TCL_ERROR;
   }
   if (argc == 4) {
