@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.18 2002/11/24 04:50:33 wcc Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.19 2002/12/27 23:07:53 wcc Exp $";
 #endif
 
 #define MODULE_NAME "channels"
@@ -852,7 +852,7 @@ char *start(eggdrop_t *eggdrop)
   strcpy(glob_chanmode, "nt");
   udef = NULL;
   global_stopnethack_mode = 0;
-  global_revenge_mode = 1;
+  global_revenge_mode = 0;
   global_ban_time = 120;
   global_exempt_time = 60;
   global_invite_time = 60;

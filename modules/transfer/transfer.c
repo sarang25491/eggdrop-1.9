@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: transfer.c,v 1.17 2002/10/11 00:49:20 wcc Exp $";
+static const char rcsid[] = "$Id: transfer.c,v 1.18 2002/12/27 23:07:53 wcc Exp $";
 #endif
 
 #define MODULE_NAME "transfer"
@@ -52,7 +52,7 @@ static int wait_dcc_xfer = 300;	/* Timeout time on DCC xfers */
 static bind_table_t *BT_rcvd, *BT_sent, *BT_lost, *BT_tout;
 static int dcc_limit = 3;	/* Maximum number of simultaneous file
 				   downloads allowed */
-static int dcc_block = 1024;	/* Size of one dcc block */
+static int dcc_block = 0;	/* Size of one dcc block */
 static int quiet_reject;        /* Quietly reject dcc chat or sends from
                                    users without access? */
 

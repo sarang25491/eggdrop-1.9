@@ -1,10 +1,15 @@
-$Id: UPDATES1.6,v 1.205 2002/12/12 04:28:22 wcc Exp $
+$Id: UPDATES1.6,v 1.206 2002/12/27 23:07:53 wcc Exp $
 
 Changes in Eggdrop: (since v1.6.0)
 ----------------------------------
 
 1.6.14
 Found by  Fixed by  What...
+reed      Wcc       updated UnderNet's max_bans to 45
+various   BarkerJr  config file updates
+various   Wcc/      removed quoting support from wild_match() which fixes several
+          zip       bugs with '\' characters
+          BarkerJr  show who unlinked a bot when unlinked remotely
           poptix    fixed default setting for the help-path and text-path settings
           The_Dawn  fixed a problem in cmd_kick()/cmd_kickban() where the
                     victim's access is checked instead of the user's
