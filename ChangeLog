@@ -1,3 +1,11 @@
+2002-01-26 03:44  stdarg <stdarg@techmonkeys.org>
+
+	* modules/transfer/transfer.c:
+
+	
+	* Cleaned up some of the excessive use of the 'register' keyword 
+	* Cleaned up pump_file_to_sock 
+
 2002-01-26 02:57  stdarg <stdarg@techmonkeys.org>
 
 	* modules/perlscript/: Makefile.am, mod_iface.c,
