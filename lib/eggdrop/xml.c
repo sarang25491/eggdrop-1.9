@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xml.c,v 1.24 2004/10/17 05:14:06 stdarg Exp $";
+static const char rcsid[] = "$Id: xml.c,v 1.25 2005/03/03 18:44:47 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -343,30 +343,32 @@ int xml_node_get_vars(xml_node_t *node, const char *fmt, ...)
 		}
 		fmt++;
 	}
+	va_end(args);
 	return(0);
 }
 
 int xml_node_set_vars(xml_node_t *node, const char *fmt, ...)
 {
 	va_list args;
-	char *name, *strptr;
-	int intptr;
+	char *name, *strval;
+	int intval;
 
 	va_start(args, fmt);
 	while (*fmt) {
 		name = va_arg(args, char *);
 		switch (*fmt) {
 			case 's':
-				strptr = va_arg(args, char *);
-				xml_node_set_str(strptr, node, name, 0, 0);
+				strval = va_arg(args, char *);
+				xml_node_set_str(strval, node, name, 0, 0);
 				break;
 			case 'i':
-				intptr = va_arg(args, int);
-				xml_node_get_int(intptr, node, name, 0, 0);
+				intval = va_arg(args, int);
+				xml_node_set_int(intval, node, name, 0, 0);
 				break;
 		}
 		fmt++;
 	}
+	va_end(args);
 	return(0);
 }
 

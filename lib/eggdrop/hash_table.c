@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: hash_table.c,v 1.17 2005/03/03 17:12:13 lordares Exp $";
+static const char rcsid[] = "$Id: hash_table.c,v 1.18 2005/03/03 18:44:47 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -76,14 +76,9 @@ int hash_table_delete(hash_table_t *ht)
 
 int hash_table_check_resize(hash_table_t *ht)
 {
-	if (!ht) return(-1);
+	if (!ht || (ht->flags & HASH_TABLE_NORESIZE)) return(-1);
 
-	/* This 100 allows (ht->max_rows) linked lists (collisions) each with an average of 100 elements in the list
-         * before actually resizing.
-         * This is done to avoid a relatively slow reorganization of the table by having to recalculate all the hash positions
-         * Having (ht->max_rows) linked lists (collisions) is still more effecient than one large linked list.
-         */
-	if (ht->cells_in_use / ht->max_rows > 100) {
+	if ((100 * ht->cells_in_use) / ht->max_rows > HASH_TABLE_RESIZE_BOUNDARY) {
 		hash_table_resize(ht, ht->max_rows * 3);
 	}
 	return(0);

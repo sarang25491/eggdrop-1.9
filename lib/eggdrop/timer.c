@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: timer.c,v 1.8 2004/12/09 06:43:32 lordares Exp $";
+static const char rcsid[] = "$Id: timer.c,v 1.9 2005/03/03 18:44:47 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -65,7 +65,7 @@ int timer_get_time(egg_timeval_t *curtime)
 	return(0);
 }
 
-int timer_update_now(egg_timeval_t *_now)
+long timer_update_now(egg_timeval_t *_now)
 {
 	timer_get_time(&now);
 	if (_now) {
@@ -81,7 +81,7 @@ void timer_get_now(egg_timeval_t *_now)
 	_now->usec = now.usec;
 }
 
-int timer_get_now_sec(int *sec)
+long timer_get_now_sec(long *sec)
 {
 	if (sec) *sec = now.sec;
 	return(now.sec);
@@ -135,7 +135,7 @@ static int timer_add_to_list(egg_timer_t *timer)
 	return(0);
 }
 
-int timer_create_secs(int secs, const char *name, Function callback)
+int timer_create_secs(long secs, const char *name, Function callback)
 {
         egg_timeval_t howlong;
 

@@ -16,15 +16,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: timer.h,v 1.3 2004/12/09 06:43:32 lordares Exp $
+ * $Id: timer.h,v 1.4 2005/03/03 18:44:47 stdarg Exp $
  */
 
 #ifndef _EGG_TIMER_H_
 #define _EGG_TIMER_H_
 
 typedef struct egg_timeval {
-	int sec;
-	int usec;
+	long sec;
+	long usec;
 } egg_timeval_t;
 
 typedef struct egg_timer {
@@ -50,10 +50,10 @@ extern int timer_init();
 extern int timer_shutdown();
 extern int timer_get_time(egg_timeval_t *curtime);
 extern void timer_get_now(egg_timeval_t *_now);
-extern int timer_get_now_sec(int *sec);
-extern int timer_update_now(egg_timeval_t *_now);
+extern long timer_get_now_sec(long *sec);
+extern long timer_update_now(egg_timeval_t *_now);
 extern int timer_diff(egg_timeval_t *from_time, egg_timeval_t *to_time, egg_timeval_t *diff);
-extern int timer_create_secs(int secs, const char *name, Function callback);
+extern int timer_create_secs(long secs, const char *name, Function callback);
 extern int timer_create_complex(egg_timeval_t *howlong, const char *name, Function callback, void *client_data, int flags);
 extern int timer_destroy(int timer_id);
 extern int timer_destroy_all();

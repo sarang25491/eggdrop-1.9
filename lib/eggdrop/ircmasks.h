@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: ircmasks.h,v 1.4 2004/06/22 20:12:37 wingman Exp $
+ * $Id: ircmasks.h,v 1.5 2005/03/03 18:44:47 stdarg Exp $
  */
 
 #ifndef _EGG_IRCMASKS_H_
@@ -37,5 +37,8 @@ int ircmask_list_add(ircmask_list_t *list, const char *ircmask, void *data);
 int ircmask_list_del(ircmask_list_t *list, const char *ircmask, void *data);
 int ircmask_list_find(ircmask_list_t *list, const char *irchost, void *dataptr);
 int ircmask_list_clear(ircmask_list_t *list);
+char *ircmask_create_separate(int type, const char *nick, const char *user, const char *host);
+char *ircmask_create(int type, const char *nick, const char *uhost);
+char *ircmask_create_full(int type, const char *nuhost);
 
 #endif /* _EGG_IRCMASKS_H_ */

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: hash_table.h,v 1.5 2004/06/23 20:19:45 wingman Exp $
+ * $Id: hash_table.h,v 1.6 2005/03/03 18:44:47 stdarg Exp $
  */
 
 #ifndef _EGG_HASH_TABLE_H_
@@ -26,6 +26,10 @@
 #define HASH_TABLE_INTS		2
 #define HASH_TABLE_MIXED	4
 #define HASH_TABLE_NORESIZE	8
+
+/* We automatically resize the table when (100 * cells in use) / max rows
+ * exceeds this constant: */
+#define HASH_TABLE_RESIZE_BOUNDARY	150
 
 /* Turns a key into an unsigned int. */
 typedef unsigned int (*hash_table_hash_alg)(const void *key);
