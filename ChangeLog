@@ -1,3 +1,21 @@
+2001-08-27 23:33  Matthew Hallacy <poptix@techmonkeys.org>
+
+	* src/mod/channels.mod/: cmdschan.c, help/channels.help:
+
+	
+	
+	Damnit, it was n|n for a reason, Do not randomly commit things.  
+
+2001-08-27 23:31  Matthew Hallacy <poptix@techmonkeys.org>
+
+	* doc/tcl-commands.doc, src/mod/irc.mod/irc.c,
+	src/mod/irc.mod/msgcmds.c, src/mod/irc.mod/help/msg/irc.help:
+
+	
+	
+	Submit these patches seperately, slipping in things with other
+	patches is evil, besides we haven't decided on the GO command yet.  
+
 2001-08-27 23:25  Matthew Hallacy <poptix@techmonkeys.org>
 
 	* scripts/userinfo.tcl:
