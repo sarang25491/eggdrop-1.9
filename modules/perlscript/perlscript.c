@@ -1,23 +1,32 @@
 #include <stdio.h>
 #include <stdlib.h>
+
+#ifdef DEBUG
+#undef DEBUG
+#endif
+
 #include <EXTERN.h>
 #include <perl.h>
 #include <XSUB.h>
-#include "lib/eggdrop/module.h"
+
+/* For script_api.h */
+typedef int (*Function)();
+
 #include "lib/egglib/mstack.h"
 #include "lib/egglib/msprintf.h"
 #include "src/script_api.h"
-
-#define MODULE_NAME "perlscript"
-
-static Function *global = NULL;
 
 static PerlInterpreter *ginterp; /* Our global interpreter. */
 
 static XS(my_command_handler);
 static SV *my_resolve_variable(script_var_t *v);
 
-static int my_load_script(registry_entry_t * entry, char *fname)
+/* Functions from module_interface.c */
+void *fake_get_user_by_handle(char *handle);
+char *fake_get_handle(void *user_record);
+int log_error(char *msg);
+
+int my_load_script(void *ignore, char *fname)
 {
 	FILE *fp;
 	char *data;
@@ -45,7 +54,7 @@ static int my_load_script(registry_entry_t * entry, char *fname)
 		int len;
 
 		msg = SvPV(ERRSV, len);
-		putlog(LOG_MISC, "*", "Perl error: %s", msg);
+		log_error(msg);
 	}
 	free(data);
 	return(0);
@@ -86,7 +95,7 @@ static int my_perl_callbacker(script_callback_t *me, ...)
 
 		msg = SvPV(ERRSV, len);
 		retval = POPi;
-		putlog(LOG_MISC, "*", "Perl error: %s", msg);
+		log_error(msg);
 	}
 	if (count > 0) {
 		retval = POPi;
@@ -113,7 +122,7 @@ static int my_perl_cb_delete(script_callback_t *me)
 	return(0);
 }
 
-static int my_create_cmd(void *ignore, script_command_t *info)
+int my_create_cmd(void *ignore, script_command_t *info)
 {
 	char *cmdname;
 	CV *cv;
@@ -191,12 +200,9 @@ static SV *my_resolve_variable(script_var_t *v)
 		}
 		case SCRIPT_USER: {
 			char *handle;
-			struct userrec *u;
 			int str_len;
 
-			u = (struct userrec *)v->value;
-			if (u && u->handle) handle = u->handle;
-			else handle = "*";
+			handle = fake_get_handle(v->value);
 
 			str_len = strlen(handle);
 			result = newSVpv(handle, str_len);
@@ -280,13 +286,13 @@ static XS(my_command_handler)
 				break;
 			}
 			case SCRIPT_USER: { /* User. */
-				struct userrec *u;
+				void *user_record;
 				char *handle;
 
 				handle = SvPV(ST(i), len);
-				if (handle) u = get_user_by_handle(userlist, handle);
-				else u = NULL;
-				mstack_push(args, u);
+				if (handle) user_record = fake_get_user_by_handle(handle);
+				else user_record = NULL;
+				mstack_push(args, user_record);
 				break;
 			}
 			case 'l':
@@ -359,38 +365,24 @@ argerror:
 	Perl_croak(aTHX_ cmd->syntax_error);
 }
 
-static int dcc_cmd_perl(struct userrec *u, int idx, char *text)
+char *real_perl_cmd(char *text)
 {
 	SV *result;
-	char *msg;
+	char *msg, *retval;
 	int len;
-
-	if (!isowner(dcc[idx].nick)) return(0);
 
 	result = eval_pv(text, FALSE);
 	if (SvTRUE(ERRSV)) {
 		msg = SvPV(ERRSV, len);
-		dprintf(idx, "Perl error: %s\n", msg);
+		retval = msprintf("Perl error: %s", msg);
 	}
 	else {
 		msg = SvPV(result, len);
-		dprintf(idx, "Perl result: %s\n", msg);
+		retval = msprintf("Perl result: %s\n", msg);
 	}
 
-	return(0);
+	return(retval);
 }
-
-static cmd_t my_dcc_cmds[] = {
-	{"perl", "n", (Function) dcc_cmd_perl, NULL},
-	{0}
-};
-
-static registry_simple_chain_t my_functions[] = {
-	{"script", NULL, 0},
-	{"load script", my_load_script, 2},
-	{"create cmd", my_create_cmd, 2},
-	{0}
-};
 
 static void init_xs_stuff()
 {
@@ -398,65 +390,20 @@ static void init_xs_stuff()
 	newXS("DynaLoader::boot_DynaLoader", boot_DynaLoader, "eggdrop");
 }
 
-static Function journal_table[] = {
-        (Function)1, /* Version */
-        (Function)SCRIPT_EVENT_MAX, /* Our length */
-        my_load_script,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-        my_create_cmd,
-	NULL
-};
-
-static Function journal_playback;
-static void *journal_playback_h;
-
-EXPORT_SCOPE char *perlscript_LTX_start();
-static char *perlscript_close();
-
-static Function perlscript_table[] = {
-	(Function) perlscript_LTX_start,
-	(Function) perlscript_close,
-	(Function) 0,
-	(Function) 0
-};
-
-char *perlscript_LTX_start(Function *global_funcs)
+int perlscript_init()
 {
 	char *embedding[] = {"", "-e", "0"};
-	bind_table_t *BT_dcc;
-
-	global = global_funcs;
-
-	module_register("perlscript", perlscript_table, 1, 2);
-	if (!module_depend("perlscript", "eggdrop", 107, 0)) {
-		module_undepend("perlscript");
-		return "This module requires eggdrop1.7.0 of later";
-	}
 
 	ginterp = perl_alloc();
 	perl_construct(ginterp);
 	perl_parse(ginterp, init_xs_stuff, 3, embedding, NULL);
-	registry_add_simple_chains(my_functions);
-        registry_lookup("script", "playback", &journal_playback, &journal_playback_h);
-        if (journal_playback) journal_playback(journal_playback_h, journal_table);
-
-	BT_dcc = find_bind_table2("dcc");
-	if (BT_dcc) add_builtins2(BT_dcc, my_dcc_cmds);
-	return(NULL);
+	return(0);
 }
 
-static char *perlscript_close()
+int perlscript_destroy()
 {
-	bind_table_t *BT_dcc = find_bind_table2("dcc");
-	if (BT_dcc) rem_builtins2(BT_dcc, my_dcc_cmds);
 	PL_perl_destruct_level = 1;
 	perl_destruct(ginterp);
 	perl_free(ginterp);
-	module_undepend("perlscript");
-	return(NULL);
+	return(0);
 }

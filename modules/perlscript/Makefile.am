@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.4 2002/01/04 02:56:24 ite Exp $
+# $Id: Makefile.am,v 1.5 2002/01/18 22:55:04 stdarg Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 pkglibdir = $(exec_prefix)/modules
@@ -11,7 +11,7 @@ else
 endif
 
 pkglib_LTLIBRARIES  = $(EGG_PRL)
-perlscript_la_SOURCES = perlscript.c
+perlscript_la_SOURCES = perlscript.c module_interface.c
 perlscript_la_LDFLAGS = -module -avoid-version -no-undefined
 perlscript_la_LIBADD  = @PERL_LDFLAGS@ @LIBS@ \
 			$(top_builddir)/lib/eggdrop/libeggdrop.la
