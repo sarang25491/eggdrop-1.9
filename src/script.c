@@ -31,6 +31,18 @@ static int my_create_cmd(void *ignore, script_command_t *info)
 	return(0);
 }
 
+static int my_link_int(void *ignore, script_int_t *i, int flags)
+{
+	add_event(SCRIPT_EVENT_LINK_INT, (int) i, flags, 0);
+	return(0);
+}
+
+static int my_link_str(void *ignore, script_str_t *str, int flags)
+{
+	add_event(SCRIPT_EVENT_LINK_STR, (int) str, flags, 0);
+	return(0);
+}
+
 static int my_playback(void *ignore, Function *table)
 {
 	script_event_t *event;
@@ -54,6 +66,8 @@ static int my_playback(void *ignore, Function *table)
 static registry_simple_chain_t my_functions[] = {
 	{"script", NULL, 0},
 	{"create cmd", my_create_cmd, 2},
+	{"link int", my_link_int, 2},
+	{"link str", my_link_str, 2},
 	{"playback", my_playback, 2},
 	0
 };

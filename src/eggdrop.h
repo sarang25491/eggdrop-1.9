@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.46 2001/10/12 15:50:26 tothwolf Exp $
+ * $Id: eggdrop.h,v 1.47 2001/10/18 09:06:43 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -442,18 +442,6 @@ struct dupwait_info {
 #define STDOUT     1
 #define STDERR     2
 
-/* Structure for internal logs */
-typedef struct {
-  char *filename;
-  unsigned int mask;		/* what to send to this log		    */
-  char *chname;			/* which channel			    */
-  char szlast[LOGLINELEN];	/* for 'Last message repeated n times'
-				   stuff in misc.c/putlog() <cybah>	    */
-  int repeats;			/* number of times szLast has been repeated */
-  unsigned int flags;		/* other flags <rtc>			    */
-  FILE *f;			/* existing file			    */
-} log_t;
-
 /* Logfile display flags
  */
 #define LOG_MSGS     0x000001	/* m   msgs/notice/ctcps		*/
@@ -480,10 +468,6 @@ typedef struct {
 #define LOG_BOTNET   0x200000	/* t   botnet traffic			*/
 #define LOG_BOTSHARE 0x400000	/* h   share traffic			*/
 #define LOG_ALL      0x7fffff	/* (dump to all logfiles)		*/
-
-/* Internal logfile flags
- */
-#define LF_EXPIRING 0x000001	/* Logfile will be closed soon		*/
 
 #define FILEDB_HIDE     1
 #define FILEDB_UNHIDE   2

@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.57 2001/10/18 02:57:51 stdarg Exp $
+ * $Id: proto.h,v 1.58 2001/10/18 09:06:43 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -170,7 +170,7 @@ void backup_userfile(void);
 /* misc.c */
 int egg_strcatn(char *dst, const char *src, size_t max);
 int my_strcpy(char *, char *);
-void putlog EGG_VARARGS(int, arg1);
+int putlog EGG_VARARGS(int, arg1);
 void flushlogs();
 void check_logsize();
 void maskhost(const char *, char *);

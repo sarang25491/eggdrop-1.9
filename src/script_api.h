@@ -33,8 +33,9 @@ enum {
 
 /* Flags for variables. */
 #define SCRIPT_FREE	256
-#define SCRIPT_ARRAY	512
-#define SCRIPT_ERROR	1024
+#define SCRIPT_FREE_VAR	512
+#define SCRIPT_ARRAY	1024
+#define SCRIPT_ERROR	2048
 
 /* Types for variables. */
 #define SCRIPT_STRING	((int)'s')
@@ -43,6 +44,7 @@ enum {
 #define SCRIPT_CALLBACK	((int)'c')
 #define SCRIPT_USER	((int)'U')
 #define SCRIPT_BYTES	((int)'b')
+#define SCRIPT_VAR	((int)'v')
 #define SCRIPT_TYPE_MASK	255
 
 typedef struct script_callback_b {

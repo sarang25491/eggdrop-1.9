@@ -3,7 +3,7 @@
  *   Tcl stubs for file system commands
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.33 2001/10/17 06:08:11 stdarg Exp $
+ * $Id: tclmisc.c,v 1.34 2001/10/18 09:06:43 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -39,53 +39,6 @@ extern char		 origbotname[], botnetnick[], quit_msg[];
 extern struct userrec	*userlist;
 extern time_t		 now;
 extern module_entry	*module_list;
-
-
-static int tcl_putlog STDVAR
-{
-  char logtext[501];
-
-  BADARGS(2, 2, " text");
-  strncpyz(logtext, argv[1], sizeof logtext);
-  putlog(LOG_MISC, "*", "%s", logtext);
-  return TCL_OK;
-}
-
-static int tcl_putcmdlog STDVAR
-{
-  char logtext[501];
-
-  BADARGS(2, 2, " text");
-  strncpyz(logtext, argv[1], sizeof logtext);
-  putlog(LOG_CMDS, "*", "%s", logtext);
-  return TCL_OK;
-}
-
-static int tcl_putxferlog STDVAR
-{
-  char logtext[501];
-
-  BADARGS(2, 2, " text");
-  strncpyz(logtext, argv[1], sizeof logtext);
-  putlog(LOG_FILES, "*", "%s", logtext);
-  return TCL_OK;
-}
-
-static int tcl_putloglev STDVAR
-{
-  int lev = 0;
-  char logtext[501];
-
-  BADARGS(4, 4, " level channel text");
-  lev = logmodes(argv[1]);
-  if (!lev) {
-    Tcl_AppendResult(irp, "No valid log-level given", NULL);
-    return TCL_ERROR;
-  }
-  strncpyz(logtext, argv[3], sizeof logtext);
-  putlog(lev, argv[2], "%s", logtext);
-  return TCL_OK;
-}
 
 static int tcl_binds STDVAR
 {
@@ -476,10 +429,6 @@ tcl_cmds tclmisc_objcmds[] =
 
 tcl_cmds tclmisc_cmds[] =
 {
-  {"putlog",		tcl_putlog},
-  {"putcmdlog",		tcl_putcmdlog},
-  {"putxferlog",	tcl_putxferlog},
-  {"putloglev",		tcl_putloglev},
   {"unixtime",		tcl_unixtime},
   {"strftime",          tcl_strftime},
   {"ctime",		tcl_ctime},

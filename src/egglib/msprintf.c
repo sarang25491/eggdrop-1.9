@@ -3,16 +3,20 @@
 
 char *msprintf(char *format, ...)
 {
-	va_list args;
 	char *output;
 	int n, len;
+	va_list args;
 
-	va_start(args, format);
 	output = (char *)malloc(128);
-	len = 127;
-	while ((n = vsnprintf(output, len, format, args)) < 0 || n >= len) {
-		len *= 2;
-		output = (char *)realloc(output, len+1);
+	len = 128;
+	while (1) {
+		va_start(args, format);
+		n = vsnprintf(output, len, format, args);
+		va_end(args);
+		if (n > -1 && n < len) return(output);
+		if (n > len) len = n+1;
+		else len *= 2;
+		output = (char *)realloc(output, len);
 	}
 	return(output);
 }

@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.89 2001/10/17 06:08:11 stdarg Exp $
+ * $Id: main.c,v 1.90 2001/10/18 09:06:43 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -73,7 +73,6 @@ extern int		 dcc_total, conmask, cache_hit, cache_miss,
 extern struct dcc_t	*dcc;
 extern struct userrec	*userlist;
 extern struct chanset_t	*chanset;
-extern log_t		*logs;
 extern Tcl_Interp	*interp;
 extern tcl_timer_t	*timer,
 			*utimer;
@@ -103,9 +102,6 @@ int	term_z = 0;		/* Foreground: use the terminal as a party
 char	configfile[121] = "eggdrop.conf"; /* Name of the config file */
 char	helpdir[121];		/* Directory of help files (if used) */
 char	textdir[121] = "";	/* Directory for text files that get dumped */
-int	keep_all_logs = 0;	/* Never erase logfiles, no matter how old
-				   they are? */
-char	logfile_suffix[21] = ".%d%b%Y"; /* Format of logfile suffix. */
 time_t	online_since;		/* Unix-time that the bot loaded up */
 int	make_userfile = 0;	/* Using bot in make-userfile mode? (first
 				   user to 'hello' becomes master) */
@@ -116,7 +112,6 @@ int	save_users_at = 0;	/* How many minutes past the hour to
 				   save the userfile? */
 int	notify_users_at = 0;	/* How many minutes past the hour to
 				   notify users of notes? */
-int	switch_logfiles_at = 300; /* When (military time) to switch logfiles */
 char	version[81];		/* Version info (long form) */
 char	ver[41];		/* Version info (short form) */
 char	egg_xtra[2048];		/* Patch info */
@@ -522,10 +517,6 @@ static void core_secondly()
     miltime = (nowtm.tm_hour * 100) + (nowtm.tm_min);
     if (((int) (nowtm.tm_min / 5) * 5) == (nowtm.tm_min)) {	/* 5 min */
       call_hook(HOOK_5MINUTELY);
-      if (!quick_logs) {
-	flushlogs();
-	check_logsize();
-      }
       if (!miltime) {	/* At midnight */
 	char s[25];
 	int j;
@@ -533,47 +524,17 @@ static void core_secondly()
 	strncpyz(s, ctime(&now), sizeof s);
 	putlog(LOG_ALL, "*", "--- %.11s%s", s, s + 20);
 	call_hook(HOOK_BACKUP);
-	for (j = 0; j < max_logs; j++) {
-	  if (logs[j].filename != NULL && logs[j].f != NULL) {
-	    fclose(logs[j].f);
-	    logs[j].f = NULL;
-	  }
-	}
+	call_hook(HOOK_DAILY);
       }
     }
     if (nowtm.tm_min == notify_users_at)
       call_hook(HOOK_HOURLY);
-    /* These no longer need checking since they are all check vs minutely
-     * settings and we only get this far on the minute.
-     */
-    if (miltime == switch_logfiles_at) {
-      call_hook(HOOK_DAILY);
-      if (!keep_all_logs) {
-	putlog(LOG_MISC, "*", _("Switching logfiles..."));
-	for (i = 0; i < max_logs; i++)
-	  if (logs[i].filename) {
-	    char s[1024];
-
-	    if (logs[i].f) {
-	      fclose(logs[i].f);
-	      logs[i].f = NULL;
-	    }
-	    egg_snprintf(s, sizeof s, "%s.yesterday", logs[i].filename);
-	    unlink(s);
-	    movefile(logs[i].filename, s);
-	  }
-      }
-    }
   }
 }
 
 static void core_minutely()
 {
   check_bind_time(&nowtm);
-  if (quick_logs != 0) {
-    flushlogs();
-    check_logsize();
-  }
 }
 
 static void core_hourly()
@@ -632,6 +593,7 @@ void restart_chons();
 int init_dcc_max(), init_userent(), init_misc(), init_net(),
  init_modules(), init_tcl(int, char **);
 void timer_init();
+void logfile_init();
 void botnet_init();
 void dns_init();
 void script_init();
@@ -752,6 +714,7 @@ int main(int argc, char **argv)
     fatal(_("ERROR: Eggdrop will not run as root!"), 0);
 
   script_init();
+  logfile_init();
   timer_init();
   dns_init();
   binds_init();

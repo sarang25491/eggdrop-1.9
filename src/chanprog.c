@@ -5,7 +5,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.33 2001/10/17 03:28:16 stdarg Exp $
+ * $Id: chanprog.c,v 1.34 2001/10/18 09:06:43 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -39,14 +39,13 @@
 #include "modules.h"
 
 extern struct userrec	*userlist;
-extern log_t		*logs;
 extern Tcl_Interp	*interp;
 extern char		 ver[], botnetnick[], firewall[],
 			 motdfile[], userfile[], helpdir[], tempdir[],
 			 moddir[], notify_new[], owner[], configfile[];
 extern time_t		 now, online_since;
 extern int		 backgrd, term_z, con_chan, cache_hit, cache_miss,
-			 firewallport, default_flags, max_logs, conmask,
+			 firewallport, default_flags, conmask,
 			 protect_readonly, make_userfile, noshare,
 			 ignore_time;
 
@@ -325,12 +324,6 @@ void tell_settings(int idx)
 	  _("notify"), notify_new);
   if (owner[0])
     dprintf(idx, "%s: %s\n", _("Permanent owner(s)"), owner);
-  for (i = 0; i < max_logs; i++)
-    if (logs[i].filename != NULL) {
-      dprintf(idx, "Logfile #%d: %s on %s (%s: %s)\n", i + 1,
-	      logs[i].filename, logs[i].chname,
-	      masktype(logs[i].mask), maskname(logs[i].mask));
-    }
   dprintf(idx, "Ignores last %d mins\n", ignore_time);
 }
 
@@ -367,28 +360,12 @@ void chanprog()
   admin[0] = 0;
   helpdir[0] = 0;
   tempdir[0] = 0;
-  for (i = 0; i < max_logs; i++)
-    logs[i].flags |= LF_EXPIRING;
   conmask = 0;
   /* Turn off read-only variables (make them write-able) for rehash */
   protect_readonly = 0;
   /* Now read it */
   if (!readtclprog(configfile))
     fatal(_("CONFIG FILE NOT LOADED (NOT FOUND, OR ERROR)"), 0);
-  for (i = 0; i < max_logs; i++) {
-    if (logs[i].flags & LF_EXPIRING) {
-      if (logs[i].filename != NULL)
-        free_null(logs[i].filename);
-      if (logs[i].chname != NULL)
-        free_null(logs[i].chname);
-      if (logs[i].f != NULL) {
-        fclose(logs[i].f);
-        logs[i].f = NULL;
-      }
-      logs[i].mask = 0;
-      logs[i].flags = 0;
-    }
-  }
   /* We should be safe now */
   call_hook(HOOK_REHASH);
   protect_readonly = 1;

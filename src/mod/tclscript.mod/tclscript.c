@@ -24,7 +24,7 @@ typedef struct {
 } my_callback_cd_t;
 
 static int my_command_handler(ClientData client_data, Tcl_Interp *myinterp, int objc, Tcl_Obj *CONST objv[]);
-static Tcl_Obj *my_resolve_one_var(Tcl_Interp *myinterp, script_var_t *v);
+static Tcl_Obj *my_resolve_var(Tcl_Interp *myinterp, script_var_t *v);
 
 static Tcl_Interp *ginterp; /* Our global interpreter. */
 static char *my_syntax_error = "syntax error";
@@ -77,7 +77,8 @@ static int my_link_int(void *ignore, script_int_t *i, int flags)
 	char *newname;
 
 	if (flags & SCRIPT_READ_ONLY) f |= TCL_LINK_READ_ONLY;
-	newname = msprintf("%s(%s)", i->class, i->name);
+	if (i->class && strlen(i->class)) newname = msprintf("%s(%s)", i->class, i->name);
+	else newname = msprintf("%s", i->name);
 	Tcl_LinkVar(interp, newname, (char *)i->ptr, f);
 	free(newname);
 	return(0);
@@ -89,7 +90,8 @@ static int my_link_str(void *ignore, script_str_t *str, int flags)
 	char *newname;
 
 	if (flags & SCRIPT_READ_ONLY) f |= TCL_LINK_READ_ONLY;
-	newname = msprintf("%s(%s)", str->class, str->name);
+	if (str->class && strlen(str->class)) newname = msprintf("%s(%s)", str->class, str->name);
+	else newname = msprintf("%s", str->name);
 	Tcl_LinkVar(interp, newname, (char *)str->ptr, TCL_LINK_STRING);
 	free(newname);
 	return(0);
@@ -100,7 +102,8 @@ static int my_unlink_var(void *ignore, script_str_t *str)
 {
 	char *newname;
 
-	newname = msprintf("%s(%s)", str->class, str->name);
+	if (str->class && strlen(str->class)) newname = msprintf("%s(%s)", str->class, str->name);
+	else newname = msprintf("%s", str->name);
 	Tcl_UnlinkVar(interp, newname);
 	free(newname);
 	return(0);
@@ -127,7 +130,7 @@ static int my_tcl_callbacker(script_callback_t *me, ...)
 		var.type = me->syntax[i];
 		var.value = (void *)al[i];
 		var.len = -1;
-		arg = my_resolve_one_var(cd->myinterp, &var);
+		arg = my_resolve_var(cd->myinterp, &var);
 		Tcl_ListObjAppendElement(cd->myinterp, final_command, arg);
 	}
 
@@ -180,11 +183,43 @@ static int my_delete_cmd(void *ignore, script_command_t *info)
 	return(0);
 }
 
-static Tcl_Obj *my_resolve_one_var(Tcl_Interp *myinterp, script_var_t *v)
+static Tcl_Obj *my_resolve_var(Tcl_Interp *myinterp, script_var_t *v)
 {
 	Tcl_Obj *result;
 
 	result = NULL;
+	if (v->type & SCRIPT_ARRAY) {
+		Tcl_Obj *element;
+		int i;
+
+		result = Tcl_NewListObj(0, NULL);
+		if ((v->type & SCRIPT_TYPE_MASK) == SCRIPT_VAR) {
+			script_var_t *v_list;
+
+			v_list = (script_var_t *)v->value;
+			for (i = 0; i < v->len; i++) {
+				element = my_resolve_var(myinterp, v_list+i);
+				Tcl_ListObjAppendElement(myinterp, result, element);
+			}
+		}
+		else {
+			script_var_t v_sub;
+			void **values;
+
+			v_sub.type = v->type & (~SCRIPT_ARRAY);
+			v_sub.len = -1;
+			values = (void **)v->value;
+			for (i = 0; i < v->len; i++) {
+				v_sub.value = values[i];
+				element = my_resolve_var(myinterp, &v_sub);
+				Tcl_ListObjAppendElement(myinterp, result, element);
+			}
+		}
+		/* Whew */
+		if (v->type & SCRIPT_FREE) free(v->value);
+		if (v->type & SCRIPT_FREE_VAR) free(v);
+		return(result);
+	}
 	switch (v->type & SCRIPT_TYPE_MASK) {
 		case SCRIPT_INTEGER:
 			result = Tcl_NewIntObj((int) v->value);
@@ -220,6 +255,7 @@ static Tcl_Obj *my_resolve_one_var(Tcl_Interp *myinterp, script_var_t *v)
 			/* Default: just pass a string with an error message. */
 			result = Tcl_NewStringObj("unsupported type", -1);
 	}
+	if (v->type & SCRIPT_FREE_VAR) free(v);
 	return(result);
 }
 
@@ -387,7 +423,7 @@ static int my_command_handler(ClientData client_data, Tcl_Interp *myinterp, int 
 	}
 
 	my_err = retval.type & SCRIPT_ERROR;
-	tcl_retval = my_resolve_one_var(myinterp, &retval);
+	tcl_retval = my_resolve_var(myinterp, &retval);
 
 	if (tcl_retval) Tcl_SetObjResult(myinterp, tcl_retval);
 

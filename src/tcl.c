@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.47 2001/10/17 03:28:16 stdarg Exp $
+ * $Id: tcl.c,v 1.48 2001/10/18 09:06:43 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -45,24 +45,23 @@ typedef struct {
 
 extern time_t	online_since;
 extern int	backgrd, flood_telnet_thr, flood_telnet_time;
-extern int	shtime, share_greet, require_p, keep_all_logs;
+extern int	shtime, share_greet, require_p;
 extern int	allow_new_telnets, stealth_telnets;
-extern int	default_flags, conmask, switch_logfiles_at, connect_timeout;
+extern int	default_flags, conmask, connect_timeout;
 extern int	firewallport, notify_users_at, flood_thr, ignore_time;
 extern int	reserved_port_min, reserved_port_max;
 extern char	origbotname[], botuser[], motdfile[], admin[], userfile[],
 		firewall[], helpdir[], notify_new[], myip[],
 		moddir[], tempdir[], owner[], network[], botnetnick[],
 		bannerfile[], egg_version[], natip[], configfile[],
-		logfile_suffix[], textdir[], myip6[];
-extern int	die_on_sighup, die_on_sigterm, max_logs, max_logsize,
+		textdir[], myip6[];
+extern int	die_on_sighup, die_on_sigterm,
 		enable_simul, dcc_total, debug_output, identtimeout,
 		protect_telnet, dupwait_timeout, egg_numver, share_unlinks,
 		sort_users, tands, resolve_timeout, userfile_perm,
 		default_uflags, strict_host;
 extern struct dcc_t	*dcc;
 extern tcl_timer_t	*timer, *utimer;
-extern log_t		*logs;
 
 int	    protect_readonly = 0;	/* turn on/off readonly protection */
 char	    whois_fields[1025] = "";	/* fields to display in a .whois */
@@ -77,8 +76,6 @@ int	    allow_dk_cmds = 1;
 int	    must_be_owner = 1;
 int	    max_dcc = 20;		/* needs at least 4 or 5 just to
 					   get started. 20 should be enough   */
-int	    quick_logs = 0;		/* quick write logs? (flush them
-					   every min instead of every 5	      */
 int	    par_telnet_flood = 1;       /* trigger telnet flood for +f
 					   ppl? - dw			      */
 int	    quiet_save = 0;             /* quiet-save patch by Lucas	      */
@@ -86,68 +83,6 @@ int	    quiet_save = 0;             /* quiet-save patch by Lucas	      */
 /* Prototypes for tcl */
 Tcl_Interp *Tcl_CreateInterp();
 
-
-/*
- *      Logging
- */
-
-/* logfile [<modes> <channel> <filename>] */
-static int tcl_logfile STDVAR
-{
-  int i;
-  char s[151];
-
-  BADARGS(1, 4, " ?logModes channel logFile?");
-  if (argc == 1) {
-    /* They just want a list of the logfiles and modes */
-    for (i = 0; i < max_logs; i++)
-      if (logs[i].filename != NULL) {
-	strcpy(s, masktype(logs[i].mask));
-	strcat(s, " ");
-	strcat(s, logs[i].chname);
-	strcat(s, " ");
-	strcat(s, logs[i].filename);
-	Tcl_AppendElement(interp, s);
-      }
-    return TCL_OK;
-  }
-  BADARGS(4, 4, " ?logModes channel logFile?");
-  for (i = 0; i < max_logs; i++)
-    if ((logs[i].filename != NULL) && (!strcmp(logs[i].filename, argv[3]))) {
-      logs[i].flags &= ~LF_EXPIRING;
-      logs[i].mask = logmodes(argv[1]);
-      free_null(logs[i].chname);
-      if (!logs[i].mask) {
-	/* ending logfile */
-	free_null(logs[i].filename);
-	if (logs[i].f != NULL) {
-	  fclose(logs[i].f);
-	  logs[i].f = NULL;
-	}
-        logs[i].flags = 0;
-      } else
-	malloc_strcpy(logs[i].chname, argv[2]);
-      Tcl_AppendResult(interp, argv[3], NULL);
-      return TCL_OK;
-    }
-  /* Do not add logfiles without any flags to log ++rtc */
-  if (!logmodes (argv [1])) {
-    Tcl_AppendResult (interp, "can't remove \"", argv[3],
-                     "\" from list: no such logfile", NULL);
-    return TCL_ERROR;
-  }
-  for (i = 0; i < max_logs; i++)
-    if (logs[i].filename == NULL) {
-      logs[i].flags = 0;
-      logs[i].mask = logmodes(argv[1]);
-      malloc_strcpy(logs[i].filename, argv[3]);
-      malloc_strcpy(logs[i].chname, argv[2]);
-      Tcl_AppendResult(interp, argv[3], NULL);
-      return TCL_OK;
-    }
-  Tcl_AppendResult(interp, "reached max # of logfiles", NULL);
-  return TCL_ERROR;
-}
 
 int findidx(int z)
 {
@@ -275,11 +210,6 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp, char *name1,
 	    return "you can't DECREASE max-dcc";
 	  max_dcc = l;
 	  init_dcc_max();
-	} else if ((int *) ii->var == &max_logs) {
-	  if (l < max_logs)
-	    return "you can't DECREASE max-logs";
-	  max_logs = l;
-	  init_misc();
 	} else
 	  *(ii->var) = (int) l;
       }
@@ -322,8 +252,6 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp, char *name1,
 	s[abs(st->max)] = 0;
       if (st->str == botnetnick)
 	botnet_change(s);
-      else if (st->str == logfile_suffix)
-	logsuffix_change(s);
       else if (st->str == firewall) {
 	splitc(firewall, s, ':');
 	if (!firewall[0])
@@ -395,7 +323,6 @@ static tcl_strings def_tcl_strings[] =
 /* confvar patch by aaronwl */
   {"config",		configfile,	0,		0},
   {"telnet-banner",	bannerfile,	120,		STR_PROTECT},
-  {"logfile-suffix",	logfile_suffix,	20,		0},
   {NULL,		NULL,		0,		0}
 };
 
@@ -405,12 +332,10 @@ static tcl_ints def_tcl_ints[] =
   {"ignore-time",		&ignore_time,		0},
   {"dcc-flood-thr",		&dcc_flood_thr,		0},
   {"hourly-updates",		&notify_users_at,	0},
-  {"switch-logfiles-at",	&switch_logfiles_at,	0},
   {"connect-timeout",		&connect_timeout,	0},
   {"reserved-port",		&reserved_port_min,		0},
   /* booleans (really just ints) */
   {"require-p",			&require_p,		0},
-  {"keep-all-logs",		&keep_all_logs,		0},
   {"open-telnets",		&allow_new_telnets,	0},
   {"stealth-telnets",		&stealth_telnets,	0},
   {"uptime",			(int *) &online_since,	2},
@@ -422,16 +347,12 @@ static tcl_ints def_tcl_ints[] =
   {"die-on-sigterm",		&die_on_sigterm,	1},
   {"remote-boots",		&remote_boots,		1},
   {"max-dcc",			&max_dcc,		0},
-  {"max-logs",			&max_logs,		0},
-  {"max-logsize",		&max_logsize,		0},
-  {"quick-logs",		&quick_logs,		0},
   {"enable-simul",		&enable_simul,		1},
   {"debug-output",		&debug_output,		1},
   {"protect-telnet",		&protect_telnet,	0},
   {"sort-users",		&sort_users,		0},
   {"ident-timeout",		&identtimeout,		0},
   {"share-unlinks",		&share_unlinks,		0},
-  {"log-time",			&shtime,		0},
   {"allow-dk-cmds",		&allow_dk_cmds,		0},
   {"resolve-timeout",		&resolve_timeout,	0},
   {"must-be-owner",		&must_be_owner,		1},
@@ -524,7 +445,6 @@ void init_tcl(int argc, char **argv)
   init_traces();
 
   /* Add new commands */
-  Tcl_CreateCommand(interp, "logfile", tcl_logfile, NULL, NULL);
   add_tcl_commands(tcluser_cmds);
   add_tcl_commands(tcldcc_cmds);
   add_tcl_commands(tclmisc_cmds);
