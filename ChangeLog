@@ -1,3 +1,12 @@
+2002-05-31 03:07  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/memutil.c, lib/eggdrop/memutil.h,
+	modules/server/scriptcmds.c, modules/server/server.c, src/dcc.c:
+
+	
+	* Getting rid of some usage of NICKLEN in the hopes that eventually
+	it will disappear.  
+
 2002-05-31 02:01  stdarg <stdarg@techmonkeys.org>
 
 	* modules/server/: server.c, servmsg.c:
