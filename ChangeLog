@@ -1,3 +1,16 @@
+2003-03-06 12:08  Tothwolf <tothwolf@techmonkeys.org>
+
+	* modules/blowfish/blowfish.c, modules/channels/tclchan.c,
+	modules/channels/userchan.c, modules/console/console.c,
+	modules/filesys/files.c, modules/filesys/filesys.c,
+	modules/irc/chan.c, modules/irc/mode.c, modules/irc/msgcmds.c,
+	modules/notes/notes.c, modules/server/dcc.c,
+	modules/server/input.c, src/cmds.c, src/misc.c, src/modules.c,
+	src/userent.c, src/users.c:
+
+	* Converted most strncpy() usage to strlcpy().  
+	  + See: http://www.courtesan.com/todd/papers/strlcpy.html 
+
 2003-03-06 09:15  stdarg <stdarg@techmonkeys.org>
 
 	* modules/server/: binds.c, binds.h, channels.c, channels.h,
