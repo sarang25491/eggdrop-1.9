@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2001-10-24 04:00-0500\n"
+"POT-Creation-Date: 2001-10-25 04:00-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -607,7 +607,7 @@ msgstr ""
 msgid "Rehashing."
 msgstr ""
 
-#: src/cmds.c:1079 src/mod/irc.mod/msgcmds.c:878 src/tcldcc.c:1002
+#: src/cmds.c:1079 src/mod/irc.mod/msgcmds.c:878 src/tcldcc.c:929
 msgid "Rehashing..."
 msgstr ""
 
@@ -2499,19 +2499,19 @@ msgstr ""
 msgid "No such module.\n"
 msgstr ""
 
-#: src/tcldcc.c:803
+#: src/tcldcc.c:730
 msgid "No free sockets available."
 msgstr ""
 
-#: src/tcldcc.c:998 src/tcldcc.c:1015
+#: src/tcldcc.c:925 src/tcldcc.c:942
 msgid "Userfile creation not necessary--skipping"
 msgstr ""
 
-#: src/tcldcc.c:1019
+#: src/tcldcc.c:946
 msgid "Restarting..."
 msgstr ""
 
-#: src/tclhash.c:1036
+#: src/tclhash.c:1033
 msgid "Command bindings:\n"
 msgstr ""
 
