@@ -18,13 +18,14 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: module.c,v 1.1 2004/06/21 20:35:11 wingman Exp $";
+static const char rcsid[] = "$Id: module.c,v 1.2 2004/06/22 10:54:42 wingman Exp $";
 #endif
 
 #include <ltdl.h>
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
+
 #include <eggdrop/eggdrop.h>
 
 typedef struct module_list {

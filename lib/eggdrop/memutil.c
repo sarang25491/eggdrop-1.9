@@ -19,16 +19,17 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: memutil.c,v 1.16 2003/12/17 07:39:14 wcc Exp $";
+static const char rcsid[] = "$Id: memutil.c,v 1.17 2004/06/22 10:54:42 wingman Exp $";
 #endif
 
-#include <eggdrop/common.h>
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
-#include "memutil.h"
+
+#include <eggdrop/memory.h>
+#include <eggdrop/memutil.h>
 
 void str_redup(char **str, const char *newstr)
 {

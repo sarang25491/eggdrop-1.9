@@ -1,8 +1,10 @@
-# $Id: Makefile.am,v 1.32 2004/06/21 20:35:11 wingman Exp $
+# $Id: Makefile.am,v 1.33 2004/06/22 10:54:42 wingman Exp $
 
 MAINTAINERCLEANFILES	= Makefile.in
 
 lib_LTLIBRARIES 	= libeggdrop.la
+
+DEFS			= $(EGG_DEBUG) @DEFS@
 
 # We need to overwrite the DEFAULT_INCLUDES which contains "-I ."
 # since #include <string.h> would actually include
@@ -24,6 +26,7 @@ libeggdrop_la_SOURCES	= base64.c base64.h \
 			net.c net.h \
 			owner.c owner.h \
 			string.c string.h \
+			memory.h memory.c \
 			timer.c timer.h \
 			fileutil.c fileutil.h \
 			flags.c flags.h \

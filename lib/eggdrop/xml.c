@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xml.c,v 1.10 2004/06/17 13:32:43 wingman Exp $";
+static const char rcsid[] = "$Id: xml.c,v 1.11 2004/06/22 10:54:42 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -27,6 +27,7 @@ static const char rcsid[] = "$Id: xml.c,v 1.10 2004/06/17 13:32:43 wingman Exp $
 #include <stdarg.h>
 #include <ctype.h>				/* isdigit		*/
 
+#include <eggdrop/memory.h>			/* malloc, free		*/
 #include <eggdrop/memutil.h>			/* str_redup		*/
 #include <eggdrop/xml.h>			/* prototypes		*/
 
@@ -66,10 +67,20 @@ void xml_node_destroy (xml_node_t *node)
 		for (i = 0; i < parent->nchildren; i++) {
 			if (parent->children[i] == node) break;
 		}
-		memmove(parent->children+i, parent->children+i+1, sizeof(node) * (parent->nchildren-i-1));
+		if (parent->nchildren == 1) {
+			free(parent->children);	parent->children = NULL;
+		} else {
+			memmove(parent->children+i, parent->children+i+1, sizeof(node) * (parent->nchildren-i-1));
+		}
 		parent->nchildren--;
 	}
-	if (node->text) free(node->text);
+	if (node->name) free(node->name);
+	if (node->value) free(node->value);
+
+	/* Note: we do not free node->text since that's just an alias
+  	 * for node->value. But since node->text may be modified the pointer
+	 * the the allocated memory for "text"/"value" may be wrong */
+
 	for (i = 0; i < node->nattributes; i++) {
 		if (node->attributes[i].name) free(node->attributes[i].name);
 		if (node->attributes[i].value) free(node->attributes[i].value);
@@ -92,6 +103,7 @@ xml_node_t *xml_node_add(xml_node_t *parent, xml_node_t *child)
 	newnode = malloc(sizeof(*newnode));
 	memcpy(newnode, child, sizeof(*child));
 	newnode->parent = parent;
+
 	parent->children = realloc(parent->children, sizeof(child) * (parent->nchildren+1));
 	parent->children[parent->nchildren] = newnode;
 	parent->nchildren++;
@@ -285,6 +297,7 @@ int xml_node_set_str(const char *str, xml_node_t *node, ...)
 	node = xml_node_vlookup(node, args, 1);
 	va_end(args);
 	if (!node) return(-1);
+
 	if (node->text) free(node->text);
 	if (str) {
 		node->text = strdup(str);
@@ -297,8 +310,7 @@ int xml_node_set_str(const char *str, xml_node_t *node, ...)
 	return(0);
 }
 
-xml_node_t *
-xml_root_element (xml_node_t *node)
+xml_node_t *xml_root_element(xml_node_t *node)
 {
 	 int i;
 
@@ -314,8 +326,7 @@ xml_root_element (xml_node_t *node)
 	 return NULL;
 }
 
-xml_node_t *
-xml_node_select	(xml_node_t *parent, const char *path)
+xml_node_t *xml_node_select(xml_node_t *parent, const char *path)
 {
 	xml_node_t *child;
 	char *ptr;
@@ -379,8 +390,7 @@ xml_node_select	(xml_node_t *parent, const char *path)
 	return parent;
 }
 
-xml_attr_t *
-xml_node_lookup_attr(xml_node_t *node, const char *name)
+xml_attr_t *xml_node_lookup_attr(xml_node_t *node, const char *name)
 {
 	int i;
 
@@ -392,8 +402,7 @@ xml_node_lookup_attr(xml_node_t *node, const char *name)
 	return NULL;
 }
 
-void
-xml_node_append_attr (xml_node_t *node, xml_attr_t *attr)
+void xml_node_append_attr (xml_node_t *node, xml_attr_t *attr)
 {
 	xml_attr_t *a;
 	
@@ -407,8 +416,7 @@ xml_node_append_attr (xml_node_t *node, xml_attr_t *attr)
 	a->value = attr->value;
 }
 
-void
-xml_node_remove_attr (xml_node_t *node, xml_attr_t *attr)
+void xml_node_remove_attr (xml_node_t *node, xml_attr_t *attr)
 {
 	int i;
 
@@ -428,8 +436,7 @@ xml_node_remove_attr (xml_node_t *node, xml_attr_t *attr)
 	}
 }
 
-static xml_attr_t *
-xml_node_create_attr (xml_node_t *node, const char *name)
+static xml_attr_t *xml_node_create_attr(xml_node_t *node, const char *name)
 {
 	xml_attr_t *attr;
 	
@@ -443,8 +450,7 @@ xml_node_create_attr (xml_node_t *node, const char *name)
 	return attr;
 }
 
-void
-xml_attr_set_int (xml_node_t *node, const char *name, int value)
+void xml_attr_set_int(xml_node_t *node, const char *name, int value)
 {
 	xml_attr_t *attr;
 	char buf[100];
@@ -454,11 +460,10 @@ xml_attr_set_int (xml_node_t *node, const char *name, int value)
 		attr = xml_node_create_attr (node, name);
 
 	snprintf (buf, sizeof(buf), "%d", value);
-	str_redup (&attr->value, buf);
+	str_redup(&attr->value, buf);
 }
 
-int
-xml_attr_get_int (xml_node_t *node, const char *name)
+int xml_attr_get_int(xml_node_t *node, const char *name)
 {
 	xml_attr_t *attr;
 
@@ -468,8 +473,7 @@ xml_attr_get_int (xml_node_t *node, const char *name)
 	return (0);
 }
 
-void
-xml_attr_set_str (xml_node_t *node, const char *name, const char *value)
+void xml_attr_set_str(xml_node_t *node, const char *name, const char *value)
 {
 	xml_attr_t *attr;
 	
@@ -484,8 +488,7 @@ xml_attr_set_str (xml_node_t *node, const char *name, const char *value)
 	}
 }
 
-char *
-xml_attr_get_str(xml_node_t *node, const char *name)
+char *xml_attr_get_str(xml_node_t *node, const char *name)
 {
 	xml_attr_t *attr;
 

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: config.c,v 1.1 2004/06/21 20:35:11 wingman Exp $";
+static const char rcsid[] = "$Id: config.c,v 1.2 2004/06/22 10:54:42 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -44,13 +44,35 @@ typedef struct {
 static config_handle_t *roots = NULL;
 int nroots = 0;
 
-int config_init()
+int config_init(void)
 {
 	BT_config_str = bind_table_add(BTN_CONFIG_STR, 2, "ss", MATCH_MASK, BIND_STACKABLE);	/* DDD	*/
 	BT_config_int = bind_table_add(BTN_CONFIG_INT, 2, "si", MATCH_MASK, BIND_STACKABLE);	/* DDD	*/
 	BT_config_save = bind_table_add(BTN_CONFIG_SAVE, 1, "s", MATCH_MASK, BIND_STACKABLE);	/* DDD	*/
 	return(0);
 }
+
+int config_shutdown(void)
+{
+	int i;
+
+	for (i = 0; i < nroots; i++) {
+		if (roots[i].handle)
+			free(roots[i].handle);
+		if (roots[i].root)
+			xml_node_destroy(roots[i].root);
+	}
+	if (roots)
+		free(roots);
+	roots = NULL;
+	nroots = 0;
+
+	bind_table_del(BT_config_str);
+	bind_table_del(BT_config_int);
+	bind_table_del(BT_config_save);
+	return (0);
+}
+
 
 void *config_get_root(const char *handle)
 {

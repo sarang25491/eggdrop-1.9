@@ -20,20 +20,20 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: bg.c,v 1.18 2004/06/21 19:04:51 stdarg Exp $";
+static const char rcsid[] = "$Id: bg.c,v 1.19 2004/06/22 10:54:42 wingman Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
 
-#include <eggdrop/eggdrop.h>
 #include <unistd.h>	/* fork(), setpgid() */
 #include <stdio.h>	/* printf() */
 #include <stdlib.h>	/* exit() */
 #include <sys/types.h>	/* pid_t, kill() */
 #include <sys/wait.h>	/* waitpid() */
 #include <signal.h>	/* kill() */
+#include <eggdrop/eggdrop.h>
 #include "main.h"	/* fatal()*/
 #include "bg.h"
 

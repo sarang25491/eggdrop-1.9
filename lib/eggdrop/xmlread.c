@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xmlread.c,v 1.11 2004/06/19 13:18:48 wingman Exp $";
+static const char rcsid[] = "$Id: xmlread.c,v 1.12 2004/06/22 10:54:42 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -262,8 +262,10 @@ int xml_read_node(xml_node_t *parent, char **data)
 			node.text = (char *)malloc(len+1);
 			memcpy(node.text, *data, len);
 			node.text[len] = 0;
+			node.value = node.text;
 			node.len = len;
 			node.type = XML_COMMENT;
+	
 			xml_node_add(parent, &node);
 			*data = end+3;
 			return(0); /* Skip past '-->' part. */
@@ -288,6 +290,7 @@ int xml_read_node(xml_node_t *parent, char **data)
 		node.text = malloc(len + 1);
 		memcpy(node.text, *data, len - 1);
 		node.text[len] = 0;
+		node.value = node.text;
 
 		/* set type */
 		node.type = XML_CDATA_SECTION;
@@ -352,34 +355,32 @@ int xml_read_node(xml_node_t *parent, char **data)
 	return(1);
 }
 
-int
-xml_load (FILE *fd, xml_node_t **node)
+int xml_load (FILE *fd, xml_node_t **node)
 {
 	size_t size, read;
 	char *data;
 	int ret;
 
 	/* seek to begin */
-	fseek (fd, 0l, SEEK_SET);
+	fseek(fd, 0l, SEEK_SET);
 
 	/* seek to end */
-	fseek (fd, 0l, SEEK_END);
-	size = ftell (fd) * sizeof(char);
-	fseek (fd, 0l, SEEK_SET);
+	fseek(fd, 0l, SEEK_END);
+	size = ftell(fd) * sizeof(char);
+	fseek(fd, 0l, SEEK_SET);
 
 	data = malloc(size + (1 * sizeof(char)));
-	read = fread (data, sizeof(char), size, fd);
+	read = fread(data, sizeof(char), size, fd);
 	data[read] = 0;
 
-	ret = xml_load_str (data, node);
+	ret = xml_load_str(data, node);
 
-	free (data);
+	free(data);
 
 	return ret;
 }
 
-int
-xml_load_file (const char *file, xml_node_t **node)
+int xml_load_file (const char *file, xml_node_t **node)
 {
 	FILE *fd;
 	int ret;
@@ -393,18 +394,16 @@ xml_load_file (const char *file, xml_node_t **node)
 	return ret;
 }
 
-int
-xml_load_str (char *str, xml_node_t **node)
+int xml_load_str (char *str, xml_node_t **node)
 {
 	xml_node_t *root;
 
 	(*node) = NULL;
 
-	root = malloc (sizeof (xml_node_t));
+	root = malloc (sizeof(xml_node_t));
 	if (root == NULL)
 		return 0;
-
-	memset (root, 0, sizeof (xml_node_t));
+	memset(root, 0, sizeof(xml_node_t));
 
 	original_text = 1; /* XXX: remove this hack */
 	while (!xml_read_node(root, &str)) {

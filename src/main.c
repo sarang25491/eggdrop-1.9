@@ -19,14 +19,13 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.173 2004/06/21 19:04:51 stdarg Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.174 2004/06/22 10:54:42 wingman Exp $";
 #endif
 
 #if HAVE_CONFIG_H
 #  include <config.h>
 #endif
 
-#include <eggdrop/eggdrop.h>
 #include <ctype.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -41,8 +40,6 @@ static const char rcsid[] = "$Id: main.c,v 1.173 2004/06/21 19:04:51 stdarg Exp 
 #include <ctype.h>
 #include <ltdl.h>
 
-#include <eggdrop/stat.h>
-
 #ifdef TIME_WITH_SYS_TIME
 #  include <sys/time.h>
 #  include <time.h>
@@ -54,6 +51,7 @@ static const char rcsid[] = "$Id: main.c,v 1.173 2004/06/21 19:04:51 stdarg Exp 
 #  endif
 #endif
 
+#include <eggdrop/eggdrop.h>
 #include "lib/compat/compat.h"
 #include "debug.h"
 #include "core_config.h"
@@ -81,10 +79,13 @@ static const char rcsid[] = "$Id: main.c,v 1.173 2004/06/21 19:04:51 stdarg Exp 
 #define RUNMODE_SHUTDOWN	2
 #define RUNMODE_RESTART		3
 
-int runmode = 1;	/* The most important variable ever!  */
-int backgrd = 1;	/* Run in the background? */
-int make_userfile = 0;	/* Start bot in make-userfile mode? */
+int runmode = 1;	/* The most important variable ever!  	*/
+int backgrd = 1;	/* Run in the background? 		*/
+int make_userfile = 0;	/* Start bot in make-userfile mode? 	*/
 int terminal_mode = 0;	/* Terminal mode			*/
+
+/* XXX: remove this feature (but not yet) */
+int debug_run = 0;	/* Just init and shutdown		*/
 
 const char *configfile = NULL;	/* Name of the config file */
 char pid_file[512];		/* Name of Eggdrop's pid file */
@@ -161,6 +162,7 @@ static void print_help(char *const *argv)
   -c  --channel-stats        (with -n) Display channel stats every 10 seconds\n\
   -t  --terminal             (with -n) Use terminal to simulate dcc-chat\n\
   -m  --make-userfile        Userfile creation mode\n\
+  -d  --debug                Do a debugging dry-run\n\
   FILE  optional config filename (default 'config.xml')\n"));
 	printf("\n");
 }
@@ -178,16 +180,17 @@ static void do_args(int argc, char *const *argv)
 		int option_index = 0;
 
 		static struct option long_options[] = {
-			{"help", 0, NULL, 'h'},
-			{"version", 0, NULL, 'v'},
-			{"load-module", 1, NULL, 'p'},
-			{"foreground", 0, NULL, 'n'},
-			{"terminal", 0, NULL, 't'},
-			{"make-userfile", 0, NULL, 'm'},
+			{ "help", 0, NULL, 'h' },
+			{ "version", 0, NULL, 'v' },
+			{ "load-module", 1, NULL, 'p' },
+			{ "foreground", 0, NULL, 'n' },
+			{ "terminal", 0, NULL, 't' },
+			{ "make-userfile", 0, NULL, 'm' },
+			{ "debug", 0, NULL, 'd' },
 			{NULL, 0, NULL, 0}
 		};
 
-		c = getopt_long(argc, argv, "hvp:nctm", long_options, &option_index);
+		c = getopt_long(argc, argv, "hvp:nctmd", long_options, &option_index);
 		if (c == -1) break;
 		switch (c) {
 			case 'n':
@@ -199,6 +202,11 @@ static void do_args(int argc, char *const *argv)
 			case 'm':
 				make_userfile = 1;
 				break;
+			case 'd':
+				backgrd = 0;
+				debug_run = 1;
+				break;
+
 			case 'v':
 				print_version();
 				exit(0);
@@ -472,8 +480,8 @@ int main(int argc, char **argv)
 
 		putlog(LOG_DEBUG, "*", "Entering main loop.");
 
-		/* main loop */
-		while (runmode == RUNMODE_NORMAL) {
+		/* main loop */		
+		while (!debug_run && runmode == RUNMODE_NORMAL) {
 			/* Update the time. */
 			timer_update_now(&egg_timeval_now);
 			now = egg_timeval_now.sec;
@@ -499,7 +507,10 @@ int main(int argc, char **argv)
 		   we have a restart */
 	} while (runmode == RUNMODE_RESTART);
 
-	return 1;
+	if (debug_run)
+		mem_dbg_stats();
+
+	return 0;
 }
 
 int core_init()

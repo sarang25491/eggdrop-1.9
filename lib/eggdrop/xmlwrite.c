@@ -18,14 +18,16 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xmlwrite.c,v 1.5 2003/12/17 07:39:14 wcc Exp $";
+static const char rcsid[] = "$Id: xmlwrite.c,v 1.6 2004/06/22 10:54:42 wingman Exp $";
 #endif
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
-#include "xml.h"
+
+#include <eggdrop/memory.h>
+#include <eggdrop/xml.h>
 
 int xml_write_node(FILE *fp, xml_node_t *node, int indent)
 {

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: config.h,v 1.1 2004/06/21 20:35:11 wingman Exp $
+ * $Id: config.h,v 1.2 2004/06/22 10:54:42 wingman Exp $
  */
 
 #ifndef _EGG_CONFIG_H_
@@ -36,7 +36,9 @@ typedef struct {
 	int type;
 } config_var_t;
 
-int config_init();
+int config_init(void);
+int config_shutdown(void);
+
 void *config_load(const char *fname);
 int config_save(const char *handle, const char *fname);
 int config_destroy(void *config_root);

@@ -19,14 +19,14 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: logfile.c,v 1.44 2004/06/21 10:59:39 wingman Exp $";
+static const char rcsid[] = "$Id: logfile.c,v 1.45 2004/06/22 10:54:42 wingman Exp $";
 #endif
 
-#include <eggdrop/eggdrop.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
+#include <eggdrop/eggdrop.h>
 #include "core_config.h"
 #include "terminal.h"					/* TERMINAL_NICK	*/
 #include "logfile.h"
