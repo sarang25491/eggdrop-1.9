@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: party_commands.c,v 1.19 2004/10/06 02:35:15 stdarg Exp $";
+static const char rcsid[] = "$Id: party_commands.c,v 1.20 2004/10/06 04:53:26 stdarg Exp $";
 #endif
 
 #include "server.h"
@@ -159,6 +159,7 @@ static int party_chanmembermode(partymember_t *p, user_t *u, const char *cmd, co
 		partymember_printf(p, "I'm not on '%s', as far as I know!", chan);
 		free(nick);
 		free(chan);
+		return(0);
 	}
 
 	if (user_check_partial_flags_str(u, NULL, flags) || user_check_flags_str(u, chan, flags)) {
