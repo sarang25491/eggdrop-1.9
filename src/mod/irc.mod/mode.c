@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.50 2001/10/10 10:44:07 tothwolf Exp $
+ * $Id: mode.c,v 1.51 2001/10/10 17:02:06 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -854,7 +854,7 @@ static void got_uninvite(struct chanset_t *chan, char *nick, char *from,
   }
 }
 
-static int gotmode(char *from, char *origmsg)
+static int gotmode(char *from, char *ignore, char *origmsg)
 {
   char *nick, *ch, *op, *chg, *msg;
   char s[UHOSTLEN], buf[511];

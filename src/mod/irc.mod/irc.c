@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.65 2001/10/10 10:44:06 tothwolf Exp $
+ * $Id: irc.c,v 1.66 2001/10/10 17:02:06 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1045,6 +1045,7 @@ char *start(Function * global_funcs)
   BT_part = add_bind_table2("part", 5, "ssUss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
   BT_nick = add_bind_table2("nick", 5, "ssUss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
   BT_mode = add_bind_table2("mode", 6, "ssUsss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
+  BT_kick = add_bind_table2("kick", 6, "ssUsss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
   BT_need = add_bind_table2("need", 2, "ss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
   BT_pub = add_bind_table2("pub", 5, "ssUss", 0, BIND_USE_ATTR);
   BT_pubm = add_bind_table2("pubm", 5, "ssUss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);

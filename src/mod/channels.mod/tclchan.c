@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.54 2001/10/10 10:44:05 tothwolf Exp $
+ * $Id: tclchan.c,v 1.55 2001/10/10 17:02:06 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -987,8 +987,8 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
         else chan->status |= flagval;
       }
       else if (lookup_flag_by_name(stupid_ircnet_flag_map, item[i]+1, &flagval)) {
-        if (item[i][0] == '-') chan->status &= ~flagval;
-        else chan->status |= flagval;
+        if (item[i][0] == '-') chan->ircnet_status &= ~flagval;
+        else chan->ircnet_status |= flagval;
       }
       else {
         /* Hopefully it's a user-defined flag! */

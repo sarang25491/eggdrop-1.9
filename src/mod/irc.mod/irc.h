@@ -1,7 +1,7 @@
 /*
  * irc.h -- part of irc.mod
  *
- * $Id: irc.h,v 1.16 2001/10/07 04:02:55 stdarg Exp $
+ * $Id: irc.h,v 1.17 2001/10/10 17:02:06 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -76,7 +76,7 @@ static void got_op(struct chanset_t *chan, char *nick, char *from, char *who,
  		   struct userrec *opu, struct flag_record *opper);
 static int killmember(struct chanset_t *chan, char *nick);
 static void check_lonely_channel(struct chanset_t *chan);
-static int gotmode(char *, char *);
+static int gotmode(char *, char *, char *);
 
 #define newban(chan, mask, who)         newmask((chan)->channel.ban, mask, who)
 #define newexempt(chan, mask, who)      newmask((chan)->channel.exempt, mask, \
