@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2002-01-13 04:00-0600\n"
+"POT-Creation-Date: 2002-01-14 04:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Transfer-Encoding: ENCODING\n"
 
 #. Kill bot incase a botchk is run from crond.
-#: src/bg.c:125 src/bg.c:133 src/main.c:628 src/main.c:634
+#: src/bg.c:139 src/bg.c:147 src/main.c:626 src/main.c:632
 #, c-format
 msgid "* Warning!  Could not write %s file!\n"
 msgstr ""
@@ -691,7 +691,7 @@ msgstr ""
 msgid "Rehashing."
 msgstr ""
 
-#: modules/irc/msgcmds.c:862 src/cmds.c:1076 src/tcldcc.c:756
+#: modules/irc/msgcmds.c:862 src/cmds.c:1076 src/tcldcc.c:755
 msgid "Rehashing..."
 msgstr ""
 
@@ -719,12 +719,12 @@ msgstr ""
 msgid "What?  You need .help\n"
 msgstr ""
 
-#: modules/filesys/files.c:325 modules/filesys/files.c:337
-#: modules/filesys/files.c:434 modules/filesys/files.c:556
-#: modules/filesys/files.c:598 modules/filesys/files.c:640
-#: modules/filesys/files.c:682 modules/filesys/files.c:731
-#: modules/filesys/files.c:797 modules/filesys/files.c:899
-#: modules/filesys/files.c:948 modules/filesys/files.c:1106
+#: modules/filesys/files.c:323 modules/filesys/files.c:335
+#: modules/filesys/files.c:432 modules/filesys/files.c:554
+#: modules/filesys/files.c:596 modules/filesys/files.c:638
+#: modules/filesys/files.c:680 modules/filesys/files.c:729
+#: modules/filesys/files.c:795 modules/filesys/files.c:897
+#: modules/filesys/files.c:946 modules/filesys/files.c:1104
 #: modules/irc/msgcmds.c:378 modules/irc/msgcmds.c:615
 #: modules/irc/msgcmds.c:717 modules/notes/cmdsnote.c:31
 #: modules/notes/cmdsnote.c:73 modules/notes/cmdsnote.c:153
@@ -788,7 +788,7 @@ msgstr ""
 msgid "Removed '%1$s' from %2$s\n"
 msgstr ""
 
-#: modules/filesys/files.c:990 modules/filesys/files.c:1086 src/cmds.c:2601
+#: modules/filesys/files.c:988 modules/filesys/files.c:1084 src/cmds.c:2601
 msgid "Failed.\n"
 msgstr ""
 
@@ -1114,30 +1114,30 @@ msgid ""
 msgstr ""
 
 #. FLOOD
-#: src/dccutil.c:462
+#: src/dccutil.c:461
 msgid "Goodbye"
 msgstr ""
 
-#: src/dccutil.c:468
+#: src/dccutil.c:467
 #, c-format
 msgid "%s has been forcibly removed for flooding.\n"
 msgstr ""
 
-#: modules/filesys/filesys.c:883 src/dccutil.c:493
+#: modules/filesys/filesys.c:883 src/dccutil.c:492
 msgid "-=- poof -=-\n"
 msgstr ""
 
-#: src/dccutil.c:494
+#: src/dccutil.c:493
 #, c-format
 msgid "Youve been booted from the %s by %s%s%s\n"
 msgstr ""
 
-#: src/dccutil.c:503
+#: src/dccutil.c:502
 #, c-format
 msgid "%s booted %s from the party line%s%s\n"
 msgstr ""
 
-#: src/main.c:289
+#: src/main.c:287
 msgid ""
 "Command line arguments:\n"
 "  -h   help\n"
@@ -1149,41 +1149,41 @@ msgid ""
 "  optional config filename (default 'eggdrop.conf')\n"
 msgstr ""
 
-#: src/main.c:310
+#: src/main.c:308
 msgid "Backing up user file..."
 msgstr ""
 
-#: src/main.c:556
+#: src/main.c:554
 msgid "ERROR: Eggdrop will not run as root!"
 msgstr ""
 
-#: src/main.c:580
+#: src/main.c:578
 msgid ""
 "You have installed modules but have not selected an encryption\n"
 "module, please consult the default config file for info.\n"
 msgstr ""
 
-#: src/main.c:604
+#: src/main.c:602
 #, c-format
 msgid "I detect %s already running from this directory.\n"
 msgstr ""
 
-#: src/main.c:605
+#: src/main.c:603
 #, c-format
 msgid "If this is incorrect, erase the %s\n"
 msgstr ""
 
 #. Should be only 2 modules now - blowfish (or some other
 #. encryption module) and eggdrop.
-#: src/main.c:844
+#: src/main.c:842
 msgid "Stagnant module; there WILL be memory leaks!"
 msgstr ""
 
-#: src/misc.c:819 src/misc.c:858
+#: src/misc.c:802 src/misc.c:841
 msgid "No help available on that."
 msgstr ""
 
-#: src/misc.c:882 src/misc.c:907
+#: src/misc.c:865 src/misc.c:890
 msgid "No help available on that.\n"
 msgstr ""
 
@@ -1591,14 +1591,14 @@ msgstr ""
 msgid "No files in this directory.\n"
 msgstr ""
 
-#: modules/filesys/filedb3.c:1010 modules/filesys/files.c:466
-#: modules/filesys/files.c:513 modules/filesys/files.c:566
-#: modules/filesys/files.c:582 modules/filesys/files.c:608
-#: modules/filesys/files.c:624 modules/filesys/files.c:650
-#: modules/filesys/files.c:666 modules/filesys/files.c:692
-#: modules/filesys/files.c:709 modules/filesys/files.c:847
-#: modules/filesys/files.c:884 modules/filesys/files.c:909
-#: modules/filesys/files.c:931 modules/filesys/files.c:1258
+#: modules/filesys/filedb3.c:1010 modules/filesys/files.c:464
+#: modules/filesys/files.c:511 modules/filesys/files.c:564
+#: modules/filesys/files.c:580 modules/filesys/files.c:606
+#: modules/filesys/files.c:622 modules/filesys/files.c:648
+#: modules/filesys/files.c:664 modules/filesys/files.c:690
+#: modules/filesys/files.c:707 modules/filesys/files.c:845
+#: modules/filesys/files.c:882 modules/filesys/files.c:907
+#: modules/filesys/files.c:929 modules/filesys/files.c:1256
 msgid "No matching files.\n"
 msgstr ""
 
@@ -1627,157 +1627,157 @@ msgstr ""
 msgid "Remote request for /%s%s%s (sending)"
 msgstr ""
 
-#: modules/filesys/files.c:91
+#: modules/filesys/files.c:89
 msgid "Welcome to the %B file server\n"
 msgstr ""
 
-#: modules/filesys/files.c:92
+#: modules/filesys/files.c:90
 msgid ""
 "All file transfers will be sent to '%N' by default.\n"
 "(You can specify an alternate nick with the 'get' command.)\n"
 "Type 'help' for help.\n"
 msgstr ""
 
-#: modules/filesys/files.c:103
+#: modules/filesys/files.c:101
 msgid ""
 "\n"
 "The file system seems to be broken right now.\n"
 msgstr ""
 
-#: modules/filesys/files.c:104
+#: modules/filesys/files.c:102
 msgid "(The files-path is set to an invalid directory.)\n"
 msgstr ""
 
-#: modules/filesys/files.c:115 modules/filesys/files.c:313
+#: modules/filesys/files.c:113 modules/filesys/files.c:311
 msgid "Current directory"
 msgstr ""
 
-#: modules/filesys/files.c:138 modules/filesys/files.c:367
-#: modules/filesys/files.c:387 modules/filesys/files.c:403
-#: modules/filesys/files.c:451
+#: modules/filesys/files.c:136 modules/filesys/files.c:365
+#: modules/filesys/files.c:385 modules/filesys/files.c:401
+#: modules/filesys/files.c:449
 msgid "Illegal directory.\n"
 msgstr ""
 
-#: modules/filesys/files.c:341 modules/filesys/files.c:739
-#: modules/filesys/files.c:1003 modules/filesys/files.c:1055
-#: modules/filesys/files.c:1061
+#: modules/filesys/files.c:339 modules/filesys/files.c:737
+#: modules/filesys/files.c:1001 modules/filesys/files.c:1053
+#: modules/filesys/files.c:1059
 msgid "No such directory.\n"
 msgstr ""
 
-#: modules/filesys/files.c:351
+#: modules/filesys/files.c:349
 msgid "New current directory"
 msgstr ""
 
-#: modules/filesys/files.c:440
+#: modules/filesys/files.c:438
 msgid "Be reasonable.\n"
 msgstr ""
 
-#: modules/filesys/files.c:482
+#: modules/filesys/files.c:480
 #, c-format
 msgid "%s isnt available right now.\n"
 msgstr ""
 
-#: modules/filesys/files.c:491 modules/filesys/files.c:1440
+#: modules/filesys/files.c:489 modules/filesys/files.c:1438
 #, c-format
 msgid "Requested %s from %s ...\n"
 msgstr ""
 
-#: modules/filesys/files.c:574 modules/filesys/files.c:586
+#: modules/filesys/files.c:572 modules/filesys/files.c:584
 msgid "Hid"
 msgstr ""
 
-#: modules/filesys/files.c:616 modules/filesys/files.c:628
+#: modules/filesys/files.c:614 modules/filesys/files.c:626
 msgid "Unhid"
 msgstr ""
 
-#: modules/filesys/files.c:658 modules/filesys/files.c:670
+#: modules/filesys/files.c:656 modules/filesys/files.c:668
 msgid "Shared"
 msgstr ""
 
-#: modules/filesys/files.c:701 modules/filesys/files.c:713
+#: modules/filesys/files.c:699 modules/filesys/files.c:711
 msgid "Unshared"
 msgstr ""
 
-#: modules/filesys/files.c:758
+#: modules/filesys/files.c:756
 #, c-format
 msgid "%s is already a normal file.\n"
 msgstr ""
 
-#: modules/filesys/files.c:764
+#: modules/filesys/files.c:762
 #, c-format
 msgid "Changed link to %s\n"
 msgstr ""
 
-#: modules/filesys/files.c:777
+#: modules/filesys/files.c:775
 msgid "Added link"
 msgstr ""
 
-#: modules/filesys/files.c:857
+#: modules/filesys/files.c:855
 #, c-format
 msgid "You didnt upload %s\n"
 msgstr ""
 
-#: modules/filesys/files.c:874
+#: modules/filesys/files.c:872
 msgid "Changed"
 msgstr ""
 
-#: modules/filesys/files.c:876
+#: modules/filesys/files.c:874
 msgid "Blanked"
 msgstr ""
 
-#: modules/filesys/files.c:923 modules/filesys/files.c:935
+#: modules/filesys/files.c:921 modules/filesys/files.c:933
 #: modules/notes/notes.c:656 modules/notes/notes.c:659
 msgid "Erased"
 msgstr ""
 
-#: modules/filesys/files.c:1000
+#: modules/filesys/files.c:998
 msgid "Created directory"
 msgstr ""
 
-#: modules/filesys/files.c:1014
+#: modules/filesys/files.c:1012
 #, c-format
 msgid "Changed %s/ to require +%s to access\n"
 msgstr ""
 
-#: modules/filesys/files.c:1017
+#: modules/filesys/files.c:1015
 #, c-format
 msgid "Changes %s/ to require no flags to access\n"
 msgstr ""
 
-#: modules/filesys/files.c:1076
+#: modules/filesys/files.c:1074
 msgid "Removed directory"
 msgstr ""
 
-#: modules/filesys/files.c:1115
+#: modules/filesys/files.c:1113
 msgid "Illegal source directory.\n"
 msgstr ""
 
-#: modules/filesys/files.c:1135
+#: modules/filesys/files.c:1133
 msgid "Illegal destination directory.\n"
 msgstr ""
 
-#: modules/filesys/files.c:1148
+#: modules/filesys/files.c:1146
 #, c-format
 msgid "You cant %s files on top of themselves.\n"
 msgstr ""
 
-#: modules/filesys/files.c:1148 modules/filesys/files.c:1197
+#: modules/filesys/files.c:1146 modules/filesys/files.c:1195
 msgid "copy"
 msgstr ""
 
-#: modules/filesys/files.c:1148 modules/filesys/files.c:1197
+#: modules/filesys/files.c:1146 modules/filesys/files.c:1195
 msgid "move"
 msgstr ""
 
-#: modules/filesys/files.c:1196
+#: modules/filesys/files.c:1194
 msgid "onto itself?  Nuh uh."
 msgstr ""
 
-#: modules/filesys/files.c:1264
+#: modules/filesys/files.c:1262
 msgid "Copied"
 msgstr ""
 
-#: modules/filesys/files.c:1264
+#: modules/filesys/files.c:1262
 msgid "Moved"
 msgstr ""
 
@@ -2613,15 +2613,15 @@ msgstr ""
 msgid "No such module.\n"
 msgstr ""
 
-#: src/tcldcc.c:561
+#: src/tcldcc.c:560
 msgid "No free sockets available."
 msgstr ""
 
-#: src/tcldcc.c:752 src/tcldcc.c:765
+#: src/tcldcc.c:751 src/tcldcc.c:764
 msgid "Userfile creation not necessary--skipping"
 msgstr ""
 
-#: src/tcldcc.c:769
+#: src/tcldcc.c:768
 msgid "Restarting..."
 msgstr ""
 
