@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: config.c,v 1.5 2004/06/23 17:24:43 wingman Exp $";
+static const char rcsid[] = "$Id: config.c,v 1.6 2004/06/28 17:36:34 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -111,11 +111,11 @@ int config_delete_root(const char *handle)
 	return(-1);
 }
 
+xml_node_t *doc;
+
 void *config_load(const char *fname)
 {
-	xml_node_t *root;
-
-	if (xml_load_file(fname, &root, XML_TRIM_TEXT) != 0) {
+	if (xml_load_file(fname, &doc, XML_TRIM_TEXT) != 0) {
 		/* don't use putlog here since logging may not be initialized at 
 		 * this stage */
 		fprintf(stderr, "*** ERROR: Failed to load config file '%s': %s\n\n",
@@ -123,7 +123,7 @@ void *config_load(const char *fname)
 		return NULL;
 	}
 
-	return xml_root_element(root);
+	return xml_root_element(doc);
 }
 
 int config_save(const char *handle, const char *fname)
@@ -365,3 +365,235 @@ int config_unlink_table(config_var_t *table, void *config_root, ...)
 	}
 	return(0);
 }
+
+/****************************************************************************/
+
+
+config_type_t CONFIG_TYPE_STRING    = { "#string#", sizeof(char *), NULL };
+config_type_t CONFIG_TYPE_INT       = { "#int#", sizeof(int), NULL };
+config_type_t CONFIG_TYPE_BOOL      = { "#bool#", sizeof(int), NULL };
+config_type_t CONFIG_TYPE_TIMESTAMP = { "#timestamp#", sizeof(time_t), NULL };
+
+static int link_node(xml_node_t *node, config_type_t *type, void *addr);
+static int link_addr(xml_node_t *node, variant_t *data, config_variable_t *var, void **addr);
+
+static int sync_node(xml_node_t *node, config_type_t *type, void *addr);
+static int sync_addr(xml_node_t *node, variant_t *data, config_variable_t *var, void *addr);
+
+int config2_link(int config, config_type_t *type, void *addr)
+{
+	int ret;
+	ret = link_node(xml_node_path_lookup(xml_root_element(doc),type->name, 0, 1), type, addr);
+	return ret;
+}
+
+int config2_sync(int config, config_type_t *type, void *addr)
+{
+	int ret;
+	ret = sync_node(xml_node_path_lookup(xml_root_element(doc),type->name, 0, 1), type, addr);
+	return ret;
+}
+
+static int sync_node(xml_node_t *node, config_type_t *type, void *addr)
+{
+	config_variable_t *var, *e;
+	unsigned char *bytes;
+	xml_node_t *child, *c;
+	variant_t *data;
+	
+	bytes = (unsigned char *)addr;
+	if (bytes == NULL)
+		return (-1);	
+	
+	for (var = type->vars; var->type; var++) {
+		if (var->path == NULL || 0 == strcmp(var->path, ".") )
+			child = node;			
+		else
+			child = xml_node_path_lookup(node, var->path, 0, 1);		
+		data = &child->data;												
+		switch (var->modifier) {
+		
+			case (CONFIG_NONE):
+			{
+				if (sync_addr(child, data, var, bytes) != 0)
+					continue;					
+				bytes += var->type->size;
+				break;
+			}
+				
+			case (CONFIG_ENUM):
+			{
+				int val, i;
+				
+				/* remove all nodes */
+				for (i = child->nchildren - 1; i >= 0; i--) {
+					if (0 == strcmp(child->children[i]->name, var->type->name)) {
+						xml_node_remove(child, child->children[i]);
+					}
+				}
+
+				val = *(int *)bytes; bytes += sizeof(int);
+
+				for (e = var->type->vars; e->path; e++) {
+					if (val & e->modifier) {
+						c = xml_create_element(var->type->name);
+						xml_set_text_str(c, e->path);
+						xml_node_append(child, c);
+					}
+				}
+
+				break;
+			}
+
+			case (CONFIG_ARRAY):
+			{
+				void **items; 
+				int length, i; 
+							
+				/* items */	
+				items = *((void ***)bytes); bytes += sizeof(void **);
+				
+				/* length */
+				length = *((int *)bytes); bytes += sizeof(int);
+				
+				/* remove all nodes */
+				for (i = child->nchildren - 1; i >= 0; i--) {
+					if (0 == strcmp(child->children[i]->name, var->type->name)) {
+						xml_node_remove(child, child->children[i]);
+					}
+				}
+				
+				for (i = 0; i < length; i++) {
+					c = xml_create_element(var->type->name);
+					xml_node_append(child, c);
+					sync_node(c, var->type, &items[i]);
+				}
+								
+				break;
+			}			
+							
+		}
+	}
+			
+	return (0);
+}
+
+static int sync_addr(xml_node_t *node, variant_t *data, config_variable_t *var, void *addr)
+{
+	if (var->type == &CONFIG_TYPE_STRING)
+		variant_set_str(data, *((char **)addr));
+	else if (var->type == &CONFIG_TYPE_INT)
+		variant_set_int(data, *((int *)addr));
+	else if (var->type == &CONFIG_TYPE_BOOL)
+		variant_set_bool(data, *((int *)addr));
+	else if (var->type == &CONFIG_TYPE_TIMESTAMP)
+		variant_set_ts(data, *((time_t *)addr));
+	else {
+		if (sync_node(node, var->type, addr) != 0)
+			return (-1);
+	}
+	
+	return (0);
+}
+
+static int link_addr(xml_node_t *node, variant_t *data, config_variable_t *var, void **addr)
+{	
+	if (var->type == &CONFIG_TYPE_STRING)
+		*((char **)addr) = (char *)variant_get_str(data, NULL);
+	else if (var->type == &CONFIG_TYPE_INT)
+		*((int *)addr) = variant_get_int(data, 0);
+	else if (var->type == &CONFIG_TYPE_BOOL)
+		*((int *)addr) = variant_get_bool(data, 0);
+	else if (var->type == &CONFIG_TYPE_TIMESTAMP)
+		*((time_t *)addr) = variant_get_ts(data, (time_t)0);
+	else {
+		if (link_node(node, var->type, addr) != 0)
+			return (-1);
+	}
+
+	return (0);
+}
+
+static int link_node(xml_node_t *node, config_type_t *type, void *addr)
+{
+	config_variable_t *var, *e;
+	xml_node_t *child;
+	variant_t *data;
+	unsigned char *bytes;
+	
+	bytes = (unsigned char *)addr;
+	if (bytes == NULL)
+		return (-1);
+	memset(bytes, 0, type->size);
+	
+	for (var = type->vars; var->type; var++) {				
+		if (var->path == NULL || 0 == strcmp(var->path, "."))			
+			child = node;
+		else
+			child = xml_node_path_lookup(node, var->path, 0, 1);			
+		data = &child->data;
+		
+		switch (var->modifier) {
+		
+			case (CONFIG_NONE):
+			{
+				if (link_addr(child, data, var, (void *)bytes) != 0)
+					;					
+				bytes += var->type->size;
+				break;
+			}
+				
+			case (CONFIG_ENUM):
+			{
+				int i;
+				int *en;
+
+				en = (int *)bytes; bytes += sizeof(int);
+
+				for (i = 0; i < child->nchildren; i++) {
+					xml_node_t *c = child->children[i];
+					if (0 != strcmp(c->name, var->type->name))
+						continue;
+
+					for (e = var->type->vars; e->path; e++) {
+						if (0 == strcmp(xml_get_text_str(c, ""), e->path)) {
+							(*en) |= e->modifier;
+						}	
+					}	
+				}
+				break;
+			}
+
+			case (CONFIG_ARRAY):
+			{
+				void ***items; 
+				int *length, i; 
+							
+				/* items */	
+				items = (void ***)bytes; bytes += sizeof(void *);
+				
+				/* length */
+				length = (int *)bytes; bytes += sizeof(int);
+					
+				/* allocate enough memory (though not all memory by used here
+				 * since not all children must be items of this array */
+				*items = malloc(child->nchildren * var->type->size);
+				memset(*items, 0, child->nchildren * var->type->size);
+				
+				for (i = 0; i < child->nchildren; i++) {
+					if (0 != strcmp(child->children[i]->name, var->type->name))
+						continue;
+						
+					/* now link array item with the correspondending xml node */
+					if (link_addr(child->children[i], &child->children[i]->data, var, &(*items)[*length]) == 0) {
+						(*length)++;
+					}
+				}
+			}				
+		}				
+	}
+
+	return (0);
+}
+
+

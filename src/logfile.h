@@ -16,17 +16,50 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: logfile.h,v 1.10 2004/06/20 13:33:48 wingman Exp $
+ * $Id: logfile.h,v 1.11 2004/06/28 17:36:34 wingman Exp $
  */
 
 #ifndef _EGG_LOGILE_H
 #define _EGG_LOGILE_H
+
+typedef enum
+{
+	LOG_STATE_ENABLED = 0,
+	LOG_STATE_DISABLED
+} logstate_t;
+
+typedef struct
+{
+	char *filename;
+	char *chname;
+	int mask;
+
+	logstate_t state;
+	char *fname;
+	char *last_msg;
+	int repeats;
+	int flags;
+	FILE *fp;
+} logfile_t;
+
+typedef struct
+{
+	int keep_all;
+	int quick;
+	int max_size;
+	int switch_at;
+	char *suffix;
+
+	logfile_t *logfiles;
+	int nlogfiles;
+} logging_t;
 
 extern void logfile_init(void); 
 extern void logfile_shutdown(void);
 
 extern char *logfile_add(char *, char *, char *);
 extern int logfile_del(char *);
+
 extern void flushlogs(); 
 
 #endif /* !_EGG_LOGFILE_H */

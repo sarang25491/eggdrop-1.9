@@ -24,7 +24,7 @@
  */
  
 #ifndef lint
-static const char rcsid[] = "$Id: help.c,v 1.13 2004/06/25 17:44:03 darko Exp $";
+static const char rcsid[] = "$Id: help.c,v 1.14 2004/06/28 17:36:34 wingman Exp $";
 #endif
 
 #include <sys/types.h>
@@ -168,7 +168,7 @@ static void help_load_description(help_desc_t *desc, xml_node_t *parent)
 	if (parent == NULL)
 		return;
 
-	text = parent->text;
+	text = (char *)xml_get_text_str(parent, NULL);
 	if (text == NULL || !*text)
 		return;
 
@@ -210,11 +210,11 @@ static char *help_new_syntax(xml_node_t *node)
 {
 	xml_node_t *args, *arg;
 	char buf[255];
-	char *name, *optional;
+	const char *name, *optional;
 	int i;
 	size_t len;	
 	
-	args = xml_node_select(node, "args");
+	args = xml_node_lookup(node, 0, "args", 0);
 	if (args == NULL)
 		return NULL;
 	
@@ -226,8 +226,8 @@ static char *help_new_syntax(xml_node_t *node)
 		if (0 != strcmp(arg->name, "arg"))
 			continue;
 			
-		name = arg->text;
-		optional = xml_attr_get_str(arg, "optional");
+		name = xml_get_text_str(arg, NULL);
+		optional = xml_get_attr_str(arg, "optional", NULL);
 
 		if (*buf) {
 			strcat(buf + len, " "); len++;
@@ -255,8 +255,8 @@ static help_entry_t *help_load_entry(const char *module, const char *filename, x
 	entry = malloc(sizeof(help_entry_t));
 	memset(entry, 0, sizeof(help_entry_t));
 
-	str_redup(&entry->name, xml_attr_get_str(node, "name"));
-	str_redup(&entry->flags, xml_attr_get_str(node, "flags"));
+	str_redup(&entry->name, xml_get_attr_str(node, "name", NULL));
+	str_redup(&entry->flags, xml_get_attr_str(node, "flags", NULL));
 
 	entry->type = strdup(node->name);
 	entry->type[0] = toupper(entry->type[0]);
@@ -267,12 +267,12 @@ static help_entry_t *help_load_entry(const char *module, const char *filename, x
 	if (0 == strcmp(entry->type, "Command")) {
 		entry->ext.command.syntax = help_new_syntax(node);
 	} else if (0 == strcmp(entry->type, "Variable")) {
-		str_redup(&entry->ext.variable.path, xml_attr_get_str(node, "path"));
-		str_redup(&entry->ext.variable.type, xml_attr_get_str(node, "type"));		
+		str_redup(&entry->ext.variable.path, xml_get_attr_str(node, "path", NULL));
+		str_redup(&entry->ext.variable.type, xml_get_attr_str(node, "type", NULL));		
 	
 	}
 
-	help_load_description(&entry->desc, xml_node_select(node, "description"));
+	help_load_description(&entry->desc, xml_node_lookup(node, 0, "description", 0, NULL));
 
 	entry->seealso = NULL;
 	entry->nseealso = 0;
@@ -283,7 +283,7 @@ static help_entry_t *help_load_entry(const char *module, const char *filename, x
 
 		entry->seealso = realloc(entry->seealso, sizeof(char *) *
 					(entry->nseealso + 1));
-		entry->seealso [entry->nseealso++] = strdup(node->children[i]->text);
+		entry->seealso [entry->nseealso++] = strdup(xml_get_text_str(node->children[i], NULL));
 	}
 
 	/* add to hash table */
@@ -361,12 +361,12 @@ static help_section_t *help_load_section(help_section_t *section,
 	if (section == NULL) {
 		section = malloc(sizeof(help_section_t));
 		memset(section, 0, sizeof(help_section_t));
-		str_redup(&section->name, xml_attr_get_str(node, "name"));
+		str_redup(&section->name, xml_get_attr_str(node, "name", NULL));
 	
 		section->nentries = 0;
 		section->entries = NULL;
 	
-		help_load_description(&section->desc, xml_node_select(node, "description"));
+		help_load_description(&section->desc, xml_node_lookup(node, 0, "description", 0, NULL));
 	
 		/* add to hash table */
 		hash_table_insert(sections, section->name, section);
@@ -376,7 +376,7 @@ static help_section_t *help_load_section(help_section_t *section,
 	
 	/* load entries */
 	for (i = 0; i < node->nchildren; i++) {
-		char *name;
+		const char *name;
 	
 		/* we just want <command /> or <variable /> tags */
 		child = node->children[i];
@@ -384,7 +384,7 @@ static help_section_t *help_load_section(help_section_t *section,
 			&& 0 != strcmp(child->name, "variable"))
 			continue;	
 			
-		name = xml_attr_get_str(child, "name");
+		name = xml_get_attr_str(child, "name", NULL);
 		if (name == NULL)
 			continue;
 			
@@ -458,7 +458,7 @@ static int help_load_internal(const char *module, const char *filename)
 {
 	xml_node_t *doc, *root, *node;
 	char buf[255];
-	char *name;
+	const char *name;
 	FILE *fd;
 	int i;
 	
@@ -478,7 +478,7 @@ static int help_load_internal(const char *module, const char *filename)
 		if (0 != strcmp(node->name, "section"))
 			continue;
 			
-		name = xml_attr_get_str(node, "name");
+		name = xml_get_attr_str(node, "name", NULL);
 		if (name == NULL)
 			continue;
 			

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_config.c,v 1.20 2004/06/23 17:24:43 wingman Exp $";
+static const char rcsid[] = "$Id: core_config.c,v 1.21 2004/06/28 17:36:34 wingman Exp $";
 #endif
 
 #include <string.h>
@@ -45,13 +45,6 @@ static config_var_t core_config_vars[] = {
 	{"text_path", &core_config.text_path, CONFIG_STRING},		/* DDD	*/
 	{"module_path", &core_config.module_path, CONFIG_STRING},	/* DDD	*/
 
-	/* Logfile. */
-	{"logfile_suffix", &core_config.logfile_suffix, CONFIG_STRING},	/* DDD	*/
-	{"max_logsize", &core_config.max_logsize, CONFIG_INT},		/* DDD	*/
-	{"switch_logfiles_at", &core_config.switch_logfiles_at, CONFIG_INT},	/* DDD	*/
-	{"keep_all_logs", &core_config.keep_all_logs, CONFIG_INT},	/* DDD	*/
-	{"quick_logs", &core_config.quick_logs, CONFIG_INT},		/* DDD	*/
-
 	/* Whois. */
 	{"whois_items", &core_config.whois_items, CONFIG_STRING},	/* DDD	*/
 
@@ -59,6 +52,34 @@ static config_var_t core_config_vars[] = {
 	{"die_on_sigterm", &core_config.die_on_sigterm, CONFIG_INT},	/* DDD	*/
 	{0}
 };
+
+config_variable_t loglevel_vars[] = {
+	{ "LOG_MISC",   LOG_MISC,   NULL },
+	{ "LOG_PUBLIC", LOG_PUBLIC, NULL }, 
+	{ "LOG_MSGS",   LOG_MSGS,   NULL },
+	{ "LOG_JOIN",   LOG_JOIN,   NULL },
+	{ 0, 0, 0 }
+};
+config_type_t loglevel_type = { "level", sizeof(int), loglevel_vars };
+
+config_variable_t logfile_vars[] = {
+	{ "@filename", CONFIG_NONE, &CONFIG_TYPE_STRING },
+	{ "@channel",  CONFIG_NONE, &CONFIG_TYPE_STRING },
+	{ NULL,        CONFIG_ENUM, &loglevel_type      },
+	{ 0, 0, 0 }
+};
+config_type_t logfile_type = { "logfile", sizeof(logfile_t), logfile_vars };
+
+config_variable_t logging_vars[] = {
+	{ "@keep_all",  CONFIG_NONE,  &CONFIG_TYPE_BOOL   },
+	{ "@quick",     CONFIG_NONE,  &CONFIG_TYPE_BOOL   },
+	{ "@max_size",  CONFIG_NONE,  &CONFIG_TYPE_INT    },
+	{ "@switch_at", CONFIG_NONE,  &CONFIG_TYPE_INT    },
+	{ "@suffix",    CONFIG_NONE,  &CONFIG_TYPE_STRING },
+	{ "logfiles",   CONFIG_ARRAY, &logfile_type       },	
+	{ 0, 0, 0 }
+};
+config_type_t logging_type = { "logging", sizeof(logging_t), logging_vars };
 
 int core_config_init(const char *fname)
 {
@@ -78,9 +99,10 @@ int core_config_init(const char *fname)
 	if (!core_config.userfile) core_config.userfile = strdup("users.xml");
 	if (!core_config.lockfile) core_config.lockfile = strdup("lock");
 	if (!core_config.help_path) core_config.help_path = strdup("help/");
-	if (!core_config.logfile_suffix) core_config.logfile_suffix = strdup(".%d%b%Y");
 
 	config_update_table(core_config_vars, config_root, "eggdrop", 0, NULL);
+
+	config2_link(0, &logging_type, &core_config.logging);
 
 	return (0);
 }
@@ -88,6 +110,9 @@ int core_config_init(const char *fname)
 int core_config_save(void)
 {
 	config_update_table(core_config_vars, config_root, "eggdrop", 0, NULL);
+
+	config2_sync(0, &logging_type, &core_config.logging);
+
 	config_save("eggdrop", configfile);
 
 	return (0);

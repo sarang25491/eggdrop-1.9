@@ -16,11 +16,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: core_config.h,v 1.9 2004/06/23 17:24:43 wingman Exp $
+ * $Id: core_config.h,v 1.10 2004/06/28 17:36:34 wingman Exp $
  */
 
 #ifndef _EGG_CORE_CONFIG_H_
 #define _EGG_CORE_CONFIG_H_
+
+#include "logfile.h"				/* logging_t		*/
+
 
 typedef struct {
 	/* General bot stuff. */
@@ -38,12 +41,8 @@ typedef struct {
 	char *text_path;
 	char *module_path;
 
-	/* Logfile. */
-	char *logfile_suffix;
-	int max_logsize;
-	int switch_logfiles_at;
-	int keep_all_logs;
-	int quick_logs;
+	/* Logging. */
+	logging_t logging;
 
 	/* Info to display in whois command. */
 	char *whois_items;

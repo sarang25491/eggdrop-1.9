@@ -16,11 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: memutil.h,v 1.16 2003/12/17 07:39:14 wcc Exp $
+ * $Id: memutil.h,v 1.17 2004/06/28 17:36:34 wingman Exp $
  */
 
 #ifndef _EGG_MEMUTIL_H_
 #define _EGG_MEMUTIL_H_
+
+#include <stdarg.h>				/* va_list			*/
 
 #define free_null(ptr)							\
 	if (ptr) {							\

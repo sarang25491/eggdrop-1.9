@@ -18,13 +18,16 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xmlread.c,v 1.16 2004/06/25 17:44:04 darko Exp $";
+static const char rcsid[] = "$Id: xmlread.c,v 1.17 2004/06/28 17:36:34 wingman Exp $";
 #endif
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <eggdrop/eggdrop.h>
+
+#include <eggdrop/memutil.h>
+#include <eggdrop/memory.h>
+#include <eggdrop/xml.h>
 
 extern xml_amp_conversion_t builtin_conversions[];	/* from xml.c		*/
 extern char *last_error;				/* from xml.c		*/
@@ -60,7 +63,7 @@ static void read_name(char **data, char **name)
 		*name = NULL;
 		return;
 	}
-	*name = malloc(n+1);
+	*name = (char *)malloc(n+1);
 	memcpy(*name, *data, n);
 	(*name)[n] = 0;
 
@@ -89,7 +92,7 @@ static void read_value(char **data, char **value)
 	(*data)++;
 
 	n = strcspn(*data, terminator);
-	*value = malloc(n+1);
+	*value = (char *)malloc(n+1);
 	memcpy(*value, *data, n);
 	(*value)[n] = 0;
 
@@ -102,7 +105,7 @@ static void read_text(xml_node_t *node, char **data)
 {
 	char *end;
 	char *text;
-	int len;
+	int len, node_len;
 
 	/* Find end-point. */
 	end = strchr(*data, '<');
@@ -110,27 +113,29 @@ static void read_text(xml_node_t *node, char **data)
 
 	/* Get length of text. */
 	len = end - *data;
+	node_len = (node->data.value.s_val) ? strlen(node->data.value.s_val) : 0;
 
 	/* Add it to the node's current text value. */
-	text = realloc(node->text, len + node->len + 1);
-	memcpy(text + node->len, *data, len);
-	node->text = text;
-	node->len += len;
-	text[node->len] = 0;
+	text = (char *)realloc(node->data.value.s_val, len + node_len + 1);
+	memcpy(text + node_len, *data, len);
+	node->data.value.s_val = text;
+	node_len += len;
+	text[node_len] = 0;
 
 	/* Update data to point to < (or \0). */
 	*data = end;
 }
 
 /* Decoded result is guaranteed <= original. */
-int xml_decode_text(char *text, int inlen)
+int xml_decode_text(char *text)
 {
 	char *end, *result, *orig;
 	int n;
 	/* Some variables for &char; conversion. */
 	char *amp, *colon, *next;
-	int i;
+	int i, inlen;
 
+	inlen = (text) ? strlen(text) : 0;
 	if (!(read_options & XML_TRIM_TEXT))
 		return inlen;
 		
@@ -193,6 +198,8 @@ static void read_attributes(xml_node_t *node, char **data)
 	xml_attr_t attr;
 
 	for (;;) {
+		memset(&attr, 0, sizeof(xml_attr_t));
+
 		/* Skip over any leading whitespace. */
 		skip_whitespace(data);
 
@@ -211,7 +218,7 @@ static void read_attributes(xml_node_t *node, char **data)
 
 		skip_whitespace(data);
 
-		read_value(data, &attr.value);
+		read_value(data, &attr.data.value.s_val);
 
 		xml_node_append_attr (node, &attr);
 	}
@@ -261,10 +268,10 @@ static int xml_read_node(xml_node_t *parent, char **data)
 			len = end - *data;
 
 			node = xml_node_new();
-			node->text = malloc(len+1);
-			memcpy(node->text, *data, len);
-			node->text[len] = 0;
-			node->len = len;
+			node->data.value.s_val = (char *)malloc(len+1);
+			memcpy(node->data.value.s_val, *data, len);
+			node->data.value.s_val[len] = 0;
+
 			node->type = XML_COMMENT;
 	
 			xml_node_append(parent, node);
@@ -295,9 +302,9 @@ static int xml_read_node(xml_node_t *parent, char **data)
 
 		/* copy text */
 		node = xml_node_new();
-		node->text = malloc(len + 1);
-		memcpy(node->text, *data, len - 1);
-		node->text[len] = 0;
+		node->data.value.s_val = malloc(len + 1);
+		memcpy(node->data.value.s_val, *data, len - 1);
+		node->data.value.s_val[len] = 0;
 
 		/* set type */
 		node->type = XML_CDATA_SECTION;
@@ -361,7 +368,7 @@ static int xml_read_node(xml_node_t *parent, char **data)
 
 	/* Ok, the recursive xml_read_node() has read in all the text value for
 		this node, so decode it now. */
-	node->len = xml_decode_text(node->text, node->len);
+	xml_decode_text(node->data.value.s_val);
 
 	/* Ok, now 1 means we reached end-of-input. */
 	/* 2 means we reached end-of-node. */
@@ -411,8 +418,10 @@ int xml_load_file(const char *file, xml_node_t **node, int options)
 	int ret;
 
 	fd = fopen (file, "r");
-	if (fd == NULL)
+	if (fd == NULL) {
+		str_redup(&last_error, "unable to open file.");
 		return -1;
+	}
 	ret = xml_load(fd, node, options);
 	fclose (fd);
 
@@ -451,7 +460,7 @@ int xml_load_str(char *str, xml_node_t **node, int options)
 		return (-1);
 	}
 
-	root->len = xml_decode_text(root->text, root->len);
+	xml_decode_text(root->data.value.s_val);
 
 	(*node) = root;
 

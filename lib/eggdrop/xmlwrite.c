@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xmlwrite.c,v 1.8 2004/06/23 17:24:43 wingman Exp $";
+static const char rcsid[] = "$Id: xmlwrite.c,v 1.9 2004/06/28 17:36:34 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -26,9 +26,7 @@ static const char rcsid[] = "$Id: xmlwrite.c,v 1.8 2004/06/23 17:24:43 wingman E
 #include <string.h>
 #include <stdarg.h>
 
-#include <eggdrop/memory.h>
-#include <eggdrop/memutil.h>
-#include <eggdrop/xml.h>
+#include "xml.h"
 
 #define STREAM_STRING 	0
 #define STREAM_FILE	1
@@ -115,6 +113,7 @@ static char indent[32] = {0};
 static int xml_write_children(stream_t *stream, xml_node_t *node)
 {
 	int i, ret = 0;
+	const char *text;
 
 	/* init indent */
 	memset(indent, '\t', sizeof(indent));
@@ -122,8 +121,9 @@ static int xml_write_children(stream_t *stream, xml_node_t *node)
 	indent[++level] = 0;
 
 	/* XXX: encode text */
-	if (node->text && *node->text)
-		stream_printf(stream, "%s%s\n", indent, node->text);
+	text = xml_get_text_str(node, NULL);
+	if (text && *text)
+		stream_printf(stream, "%s%s\n", indent, text);
 
         for (i = 0; i < node->nchildren; i++) {
 		stream_printf(stream, "%s", indent);
@@ -142,7 +142,10 @@ static int xml_write_attributes(stream_t *stream, xml_node_t *node)
 
 	for (i = 0; i < node->nattributes; i++) {
 		xml_attr_t *attr = &node->attributes[i];
-		if (stream_printf(stream, " %s=\"%s\"", attr->name, attr->value) == -1)
+		const char *text = variant_get_str(&attr->data, NULL);
+		if (text == NULL)
+			continue;
+		if (stream_printf(stream, " %s=\"%s\"", attr->name, text) == -1)
 			return (-1);
 	}
 
@@ -158,8 +161,9 @@ static int xml_write_element(stream_t *stream, xml_node_t *node)
 		return (-1);
 
 	if (node->nchildren == 0) {
-		if (node->text) {
-			stream_printf(stream, ">%s</%s>\n", node->text, node->name);
+		const char *text = xml_get_text_str(node, NULL);
+		if (text) {
+			stream_printf(stream, ">%s</%s>\n", text, node->name);
 		} else {
 			stream_printf(stream, "/>\n");
 		}
@@ -182,12 +186,12 @@ static int xml_write_document(stream_t *stream, xml_node_t *node)
 static int xml_write_comment(stream_t *stream, xml_node_t *node)
 {
 	/* XXX: that's wrong, text needs to encoded */
-	return stream_printf(stream, "<!--%s-->\n", node->text);
+	return stream_printf(stream, "<!--%s-->\n", xml_get_text_str(node, NULL));
 }
 
 static int xml_write_cdata_section(stream_t *stream, xml_node_t *node)
 {
-	return stream_printf(stream, "<[CDATA[%s]]>\n", node->text);
+	return stream_printf(stream, "<[CDATA[%s]]>\n", xml_get_text_str(node, NULL));
 }
 
 static int xml_write_processing_instruction(stream_t *stream, xml_node_t *node)
@@ -223,6 +227,9 @@ static int xml_write_node(stream_t *stream, xml_node_t *node)
 		case (XML_PROCESSING_INSTRUCTION):
 			return xml_write_processing_instruction(stream, node);
 			
+		case (XML_ATTRIBUTE):
+			return (-1);
+
 	}
 
 	return (-1);

@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: logfile.c,v 1.46 2004/06/22 20:12:37 wingman Exp $";
+static const char rcsid[] = "$Id: logfile.c,v 1.47 2004/06/28 17:36:34 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -31,28 +31,15 @@ static const char rcsid[] = "$Id: logfile.c,v 1.46 2004/06/22 20:12:37 wingman E
 #include "terminal.h"					/* TERMINAL_NICK	*/
 #include "logfile.h"
 
-typedef struct log_b {
-	struct log_b *next;
-	char *filename;
-	int mask;
-	char *chname;
-	char *last_msg;
-	int repeats;
-	int flags;
-	FILE *fp;
-} log_t;
-
 extern int backgrd, use_stderr, terminal_mode;
 int terminal_enabled = 0;
 extern time_t now;
-
-static log_t *log_list_head = NULL; /* Linked list of logfiles. */
 
 static int logfile_minutely();
 static int logfile_5minutely();
 static int logfile_cycle();
 static void check_logsizes();
-static void flushlog(log_t *log, char *timestamp);
+static void flushlog(logfile_t *log, char *timestamp);
 
 /* Bind for the log table. The core does logging to files and the partyline, but
  * modules may implement sql logging or whatever. */
@@ -95,7 +82,7 @@ static int logfile_minutely()
 	struct tm *nowtm;
 	int miltime;
 
-	if (core_config.quick_logs) {
+	if (core_config.logging.quick) {
 		flushlogs();
 		check_logsizes();
 	}
@@ -103,14 +90,14 @@ static int logfile_minutely()
 	nowtm = localtime(&now);
 	miltime = 100 * nowtm->tm_hour + nowtm->tm_min;
 
-	if (miltime == core_config.switch_logfiles_at) logfile_cycle();
+	if (miltime == core_config.logging.switch_at) logfile_cycle();
 
 	return(0);
 }
 
 static int logfile_5minutely()
 {
-	if (!core_config.quick_logs) {
+	if (!core_config.logging.quick) {
 		flushlogs();
 		check_logsizes();
 	}
@@ -119,7 +106,8 @@ static int logfile_5minutely()
 
 static int logfile_cycle()
 {
-	log_t *log, *prev;
+	logfile_t *log;
+	int i;
 	char suffix[32];
 	char *newfname;
 
@@ -127,15 +115,16 @@ static int logfile_cycle()
 	flushlogs();
 
 	/* Determine suffix for cycled logfiles. */
-	if (core_config.keep_all_logs) {
-		strftime(suffix, 32, core_config.logfile_suffix, localtime(&now));
+	if (core_config.logging.keep_all) {
+		strftime(suffix, 32, core_config.logging.suffix, localtime(&now));
 	}
 
-	prev = NULL;
-	for (log = log_list_head; log; log = log->next) {
+	for (i = core_config.logging.nlogfiles - 1; i >= 0; i--) {
+		log = &core_config.logging.logfiles[i];
+
 		fclose(log->fp);
 
-		if (core_config.keep_all_logs) newfname = egg_mprintf("%s%s", log->filename, suffix);
+		if (core_config.logging.keep_all) newfname = egg_mprintf("%s%s", log->filename, suffix);
 		else newfname = egg_mprintf("%s.yesterday", log->filename);
 
 		unlink(newfname);
@@ -143,20 +132,17 @@ static int logfile_cycle()
 		free(newfname);
 
 		log->fp = fopen(log->filename, "a");
-		if (!log->fp) {
+		if (!log->fp)
 			logfile_del(log->filename);
-			if (prev) log = prev;
-			else log = log_list_head;
-		}
-		else prev = log;
 	}
+	
 	return(0);
 }
 
 char *logfile_add(char *modes, char *chan, char *fname)
 {
 	FILE *fp;
-	log_t *log;
+	logfile_t *log;
 
 	/* Get rid of any duplicates. */
 	logfile_del(fname);
@@ -164,59 +150,88 @@ char *logfile_add(char *modes, char *chan, char *fname)
 	/* Test the filename. */
 	fp = fopen(fname, "a");
 	if (!fp) return("");
-
-	log = (log_t *)calloc(1, sizeof(*log));
+	
+	core_config.logging.logfiles = realloc(core_config.logging.logfiles,
+			(core_config.logging.nlogfiles + 1) * sizeof(logfile_t));
+			
+	log = &core_config.logging.logfiles[core_config.logging.nlogfiles++];
 	log->filename = strdup(fname);
 	log->chname = strdup(chan);
 	log->last_msg = strdup("");
 	log->mask = LOG_ALL;
 	log->fp = fp;
 
-	log->next = log_list_head;
-	log_list_head = log;
-
-	return(log->filename);
+	return (log->filename);
 }
 
 int logfile_del(char *filename)
 {
-	log_t *log, *prev;
+	logfile_t *log;
+	int i;
 
-	prev = NULL;
-	for (log = log_list_head; log; log = log->next) {
-		if (!strcmp(log->filename, filename)) break;
-		prev = log;
+	log = NULL;
+	for (i = 0; i < core_config.logging.nlogfiles; i++) {
+		log = &core_config.logging.logfiles[i];
+		if (0 == strcmp(log->filename, filename))
+			break;
+		log = NULL;
 	}
-	if (!log) return(1);
-	if (prev) prev->next = log->next;
-	else log_list_head = log->next;
+
+	if (log == NULL)
+		return (-1);
+		
 	if (log->fp) {
 		flushlog(log, timer_get_timestamp());
 		fclose(log->fp);
 	}
-	free(log->last_msg);
-	free(log->filename);
-	free(log);
+
+	if (log->last_msg) free(log->last_msg);
+	if (log->filename) free(log->filename);
+
+	if (core_config.logging.nlogfiles == 1) {
+		free(core_config.logging.logfiles);
+		core_config.logging.logfiles = NULL;
+	} else {		
+		memmove(core_config.logging.logfiles + i,
+			core_config.logging.logfiles + i + 1,
+			(core_config.logging.nlogfiles - i - 1) * sizeof(logfile_t));
+		core_config.logging.logfiles = realloc(
+			core_config.logging.logfiles, 
+				(core_config.logging.nlogfiles - 1) * sizeof(logfile_t));
+	}
+
+	core_config.logging.nlogfiles--;
+
 	return(0);
 }
 
 static int on_putlog(int flags, const char *chan, const char *text, int len)
 {
-	log_t *log;
 	char *ts;
+	int i;
 
 	ts = timer_get_timestamp();
-	for (log = log_list_head; log; log = log->next) {
-		/* If this log doesn't match, skip it. */
-		if (!(log->mask & flags)) continue;
-		if (chan[0] != '*' && log->chname[0] != '*' && irccmp(chan, log->chname)) continue;
+	for (i = core_config.logging.nlogfiles - 1; i >= 0; i--) {
+		logfile_t *log = &core_config.logging.logfiles[i];
+		
+		/* If this log is disabled, skip it */
+		if (log->state != LOG_STATE_ENABLED)
+			continue;
 
+		/* If this log doesn't match, skip it. */
+		if (!(log->mask & flags)) {
+			continue;
+		}
+
+		if (chan[0] != '*' && log->chname[0] != '*' && irccmp(chan, log->chname))
+			continue;
 		
 		/* If it's a repeat message, don't write it again. */
-		if (!strcasecmp(text, log->last_msg)) {
+		if (log->last_msg && !strcasecmp(text, log->last_msg)) {
 			log->repeats++;
 			continue;
 		}
+
 
 		/* If there was a repeated message, write the count. */
 		if (log->repeats) {
@@ -227,6 +242,25 @@ static int on_putlog(int flags, const char *chan, const char *text, int len)
 
 		/* Save this msg to check for repeats next time. */
 		str_redup(&log->last_msg, text);
+
+		if (log->fp == NULL) {
+			if (log->fname == NULL) {
+				char buf[1024];
+				time_t now;
+
+				now = time(NULL);
+				strftime(buf, sizeof(buf), log->filename, localtime(&now));
+				log->fname = strdup(buf);
+			}	
+
+			log->fp = fopen(log->fname, "a+");
+			if (log->fp == NULL) {
+				log->state = LOG_STATE_DISABLED;
+				putlog(LOG_MISC, "*", _("Failed to open log file: %s"), log->fname);
+				putlog(LOG_MISC, "*", _("  Check if directory (if any) exists and is read- and writeable."));
+				continue;
+			}
+		}
 
 		/* Now output to the file. */
 		fprintf(log->fp, "%s%s\n", ts, text);
@@ -255,15 +289,16 @@ static int on_putlog(int flags, const char *chan, const char *text, int len)
 
 static void check_logsizes()
 {
-	int size;
+	int size, i;
 	char *newfname;
-	log_t *log;
 
-	if (core_config.keep_all_logs || core_config.max_logsize <= 0) return;
+	if (core_config.logging.keep_all || core_config.logging.max_size <= 0) return;
 
-	for (log = log_list_head; log; log = log->next) {
+	for (i = 0; i < core_config.logging.nlogfiles; i++) {
+		logfile_t *log = &core_config.logging.logfiles[i];
+		
 		size = ftell(log->fp) / 1024; /* Size in kilobytes. */
-		if (size < core_config.max_logsize) continue;
+		if (size < core_config.logging.max_size) continue;
 
 		/* It's too big. */
 		putlog(LOG_MISC, "*", _("Cycling logfile %s: over max-logsize (%d kilobytes)."), log->filename, size);
@@ -276,7 +311,7 @@ static void check_logsizes()
 	}
 }
 
-static void flushlog(log_t *log, char *timestamp)
+static void flushlog(logfile_t *log, char *timestamp)
 {
 	if (log->repeats) {
 		fprintf(log->fp, "%s", timestamp);
@@ -292,10 +327,10 @@ static void flushlog(log_t *log, char *timestamp)
 void flushlogs()
 {
 	char *ts;
-	log_t *log;
+	int i;
 
 	ts = timer_get_timestamp();
-	for (log = log_list_head; log; log = log->next) {
-		flushlog(log, ts);
+	for (i = 0; i < core_config.logging.nlogfiles; i++) {
+		flushlog(&core_config.logging.logfiles[i], ts);
 	}
 }

@@ -29,6 +29,13 @@
 		<temp_path />
 		<text_path />
 	</eggdrop>
+	<logging keep_all="yes" quick="no" max_size="0" switch_at="0">
+		<logfiles>
+			<logfile filename="logs/all-%d%b%Y.log" channel="*">
+				<level>LOG_MISC</level>
+			</logfile>
+		</logfiles>
+	</logging>
 	<server>
 		<user>user</user>
 		<realname>real name</realname>
