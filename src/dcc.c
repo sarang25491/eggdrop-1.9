@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.52 2001/08/17 05:35:48 guppy Exp $
+ * $Id: dcc.c,v 1.53 2001/09/28 03:15:34 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -914,9 +914,10 @@ static void dcc_chat(int idx, char *buf, int i)
 	v = newsplit(&buf);
 	rmspace(buf);
 	if (check_tcl_dcc(v, idx, buf)) {
-	  if (dcc[idx].u.chat->channel >= 0)
+	  if (dcc[idx].u.chat->channel >= 0) {
 	    check_tcl_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock,
 			   dcc[idx].u.chat->channel);
+	  }
 	  check_tcl_chof(dcc[idx].nick, dcc[idx].sock);
 	  dprintf(idx, "*** Ja mata!\n");
 	  flush_lines(idx, dcc[idx].u.chat);

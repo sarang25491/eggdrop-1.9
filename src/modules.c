@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.60 2001/08/19 02:36:23 drummer Exp $
+ * $Id: modules.c,v 1.61 2001/09/28 03:15:34 stdarg Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -544,6 +544,13 @@ Function global_table[] =
   (Function) getlocaladdr,
   (Function) kill_bot,
   (Function) quit_msg,                /* char *				  */
+  (Function) add_bind_table2,
+  /* 276 - 280 */
+  (Function) del_bind_table2,
+  (Function) add_builtins2,
+  (Function) rem_builtins2,
+  (Function) find_bind_table2,
+  (Function) check_bind
 };
 
 void init_modules(void)

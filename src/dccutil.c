@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  *
- * $Id: dccutil.c,v 1.34 2001/08/10 23:51:20 ite Exp $
+ * $Id: dccutil.c,v 1.35 2001/09/28 03:15:34 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -248,6 +248,7 @@ void dcc_chatter(int idx)
       }
       check_tcl_chjn(botnetnick, dcc[idx].nick, dcc[idx].u.chat->channel,
 		     geticon(idx), dcc[idx].sock, dcc[idx].host);
+      check_chjn(botnetnick, dcc[idx].nick, dcc[idx].u.chat->channel, geticon(idx), dcc[idx].sock, dcc[idx].host);
     }
     /* But *do* bother with sending it locally */
     if (!dcc[idx].u.chat->channel) {

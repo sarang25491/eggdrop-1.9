@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.30 2001/08/10 23:51:20 ite Exp $
+ * $Id: tcldcc.c,v 1.31 2001/09/28 03:15:34 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -218,12 +218,14 @@ static int tcl_setchan STDVAR
 	botnet_send_part_idx(idx, "*script*");
       check_tcl_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock,
 		     dcc[idx].u.chat->channel);
+      check_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock, dcc[idx].u.chat->channel);
     }
     dcc[idx].u.chat->channel = chan;
     if (chan < GLOBAL_CHANS)
       botnet_send_join_idx(idx, oldchan);
     check_tcl_chjn(botnetnick, dcc[idx].nick, chan, geticon(idx),
 		   dcc[idx].sock, dcc[idx].host);
+    check_chjn(botnetnick, dcc[idx].nick, chan, geticon(idx), dcc[idx].sock, dcc[idx].host);
   }
   /* Console autosave. */
   if ((me = module_find("console", 1, 1))) {
@@ -436,6 +438,7 @@ static int tcl_control STDVAR
 		  dcc[idx].nick);
       check_tcl_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock,
 		     dcc[idx].u.chat->channel);
+      check_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock, dcc[idx].u.chat->channel);
       botnet_send_part_idx(idx, "gone");
     }
     check_tcl_chof(dcc[idx].nick, dcc[idx].sock);
@@ -484,10 +487,10 @@ static int tcl_killdcc STDVAR
 		dcc[idx].nick, dcc[idx].u.chat ? "channel" : "partyline",
 		argc == 3 ? ": " : "", argc == 3 ? argv[2] : "");
     botnet_send_part_idx(idx, argc == 3 ? argv[2] : "");
-    if ((dcc[idx].u.chat->channel >= 0) &&
-	(dcc[idx].u.chat->channel < GLOBAL_CHANS))
-      check_tcl_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock,
-		     dcc[idx].u.chat->channel);
+    if ((dcc[idx].u.chat->channel >= 0) && (dcc[idx].u.chat->channel < GLOBAL_CHANS)) {
+      check_tcl_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock, dcc[idx].u.chat->channel);
+      check_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock, dcc[idx].u.chat->channel);
+    }
     check_tcl_chof(dcc[idx].nick, dcc[idx].sock);
     /* Notice is sent to the party line, the script can add a reason. */
   }

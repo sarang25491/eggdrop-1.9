@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.57 2001/08/21 00:21:18 ite Exp $
+ * $Id: module.h,v 1.58 2001/09/28 03:15:34 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -451,6 +451,12 @@
 #define getlocaladdr ((char* (*) (int))global[272])
 #define kill_bot ((void (*)(char *, char *))global[273])
 #define quit_msg ((char *)(global[274]))
+#define add_bind_table2 ((bind_table_t *(*)(const char *, int, char *, int, int))global[275])
+#define del_bind_table2 ((void (*)(bind_table_t *))global[276])
+#define add_builtins2 ((void (*)(bind_table_t *, cmd_t *))global[277])
+#define rem_builtins2 ((void (*)(bind_table_t *, cmd_t *))global[278])
+#define find_bind_table2 ((bind_table_t *(*)(const char *))global[279])
+#define check_bind ((int (*)(bind_table_t *, const char *, struct flag_record *, ...))global[280])
 
 /* This is for blowfish module, couldnt be bothered making a whole new .h
  * file for it ;)

@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.38 2001/08/10 23:51:20 ite Exp $
+ * $Id: botnet.c,v 1.39 2001/09/28 03:15:34 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -50,6 +50,10 @@ char		 botnetnick[HANDLEN + 1] = "";	/* Botnet nickname */
 int		 share_unlinks = 0;	/* Allow remote unlinks of my
 					   sharebots? */
 
+/* The bind tables we create. */
+
+static bind_table_t *BT_chjn = NULL;
+static bind_table_t *BT_chpt = NULL;
 
 int expmem_botnet()
 {
@@ -68,7 +72,17 @@ int expmem_botnet()
   return size;
 }
 
-void init_bots()
+static void init_bots();
+
+void botnet_init()
+{
+	init_bots();
+
+	BT_chjn = add_bind_table2("chjn", 4, "ssdd", MATCH_MASK, BIND_STACKABLE);
+	BT_chpt = add_bind_table2("chpt", 4, "ssdd", MATCH_MASK, BIND_STACKABLE);
+}
+
+static void init_bots()
 {
   tandbot = NULL;
   /* Grab space for 50 bots for now -- expand later as needed */
@@ -356,8 +370,10 @@ void rempartybot(char *bot)
 
   for (i = 0; i < parties; i++)
     if (!egg_strcasecmp(party[i].bot, bot)) {
-      if (party[i].chan >= 0)
+      if (party[i].chan >= 0) {
         check_tcl_chpt(bot, party[i].nick, party[i].sock, party[i].chan);
+        check_chpt(bot, party[i].nick, party[i].sock, party[i].chan);
+      }
       remparty(bot, party[i].sock);
       i--;
     }
@@ -961,9 +977,11 @@ int botunlink(int idx, char *nick, char *reason)
     while (parties) {
       parties--;
       /* Assert? */
-      if (party[i].chan >= 0)
+      if (party[i].chan >= 0) {
         check_tcl_chpt(party[i].bot, party[i].nick, party[i].sock,
 		       party[i].chan);
+        check_chpt(party[i].bot, party[i].nick, party[i].sock, party[i].chan);
+      }
     }
     strcpy(s, "killassoc &");
     Tcl_Eval(interp, s);
@@ -1353,6 +1371,7 @@ static void cont_tandem_relay(int idx, char *buf, register int i)
       botnet_send_part_idx(uidx, NULL);
     check_tcl_chpt(botnetnick, dcc[uidx].nick, dcc[uidx].sock,
 		   dcc[uidx].u.chat->channel);
+    check_chpt(botnetnick, dcc[uidx].nick, dcc[uidx].sock, dcc[uidx].u.chat->channel);
   }
   check_tcl_chof(dcc[uidx].nick, dcc[uidx].sock);
   dcc[uidx].type = &DCC_RELAYING;
@@ -1392,6 +1411,7 @@ static void eof_dcc_relay(int idx)
   check_tcl_chon(dcc[j].nick, dcc[j].sock);
   check_tcl_chjn(botnetnick, dcc[j].nick, dcc[j].u.chat->channel,
 		 geticon(j), dcc[j].sock, dcc[j].host);
+  check_chjn(botnetnick, dcc[j].nick, dcc[j].u.chat->channel, geticon(j), dcc[j].sock, dcc[j].host);
   killsock(dcc[idx].sock);
   lostdcc(idx);
 }
@@ -1485,9 +1505,11 @@ static void dcc_relaying(int idx, char *buf, int j)
   dcc[idx].u.chat = ci;
   dcc[idx].type = &DCC_CHAT;
   check_tcl_chon(dcc[idx].nick, dcc[idx].sock);
-  if (dcc[idx].u.chat->channel >= 0)
+  if (dcc[idx].u.chat->channel >= 0) {
     check_tcl_chjn(botnetnick, dcc[idx].nick, dcc[idx].u.chat->channel,
 		   geticon(idx), dcc[idx].sock, dcc[idx].host);
+    check_chjn(botnetnick, dcc[idx].nick, dcc[idx].u.chat->channel, geticon(idx), dcc[idx].sock, dcc[idx].host);
+  }
   killsock(dcc[j].sock);
   lostdcc(j);
 }
@@ -1690,10 +1712,40 @@ void restart_chons()
       check_tcl_chon(dcc[i].nick, dcc[i].sock);
       check_tcl_chjn(botnetnick, dcc[i].nick, dcc[i].u.chat->channel,
 		     geticon(i), dcc[i].sock, dcc[i].host);
+      check_chjn(botnetnick, dcc[i].nick, dcc[i].u.chat->channel, geticon(i), dcc[i].sock, dcc[i].host);
+      check_chjn(botnetnick, dcc[i].nick, dcc[i].u.chat->channel, geticon(i),
+		     dcc[i].sock, dcc[i].host);
     }
   }
   for (i = 0; i < parties; i++) {
     check_tcl_chjn(party[i].bot, party[i].nick, party[i].chan,
 		   party[i].flag, party[i].sock, party[i].from);
+    check_chjn(party[i].bot, party[i].nick, party[i].chan, party[i].flag, party[i].sock, party[i].from);
   }
+}
+
+void check_chjn(const char *bot, const char *nick, int chan, const char type, int sock, const char *host)
+{
+	char buf[32];
+	char stype[2];
+	struct flag_record fr = {FR_GLOBAL, 0, 0, 0, 0, 0};
+
+	sprintf(buf, "%d", chan);
+	stype[0] = type;
+	stype[1] = (char) 0;
+	switch (type) {
+		case '*': fr.global = USER_OWNER; break;
+		case '+': fr.global = USER_MASTER; break;
+		case '@': fr.global = USER_OP; break;
+		case '%': fr.global = USER_BOTMAST; break;
+	}
+	check_bind(BT_chjn, buf, NULL, bot, nick, chan, stype, sock, host);
+}
+
+void check_chpt(const char *bot, const char *hand, int sock, int chan)
+{
+	char buf[32];
+
+	sprintf(buf, "%d", chan);
+	check_bind(BT_chpt, buf, NULL, bot, hand, sock, chan);
 }

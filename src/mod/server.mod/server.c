@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.78 2001/08/18 18:56:01 drummer Exp $
+ * $Id: server.c,v 1.79 2001/09/28 03:15:35 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -107,6 +107,9 @@ static void parse_q(struct msgq_head *, char *, char *);
 static void purge_kicks(struct msgq_head *);
 static int deq_kick(int);
 static void msgq_clear(struct msgq_head *qh);
+
+/* New bind tables. */
+static bind_table_t *BT_wall, *BT_raw, *BT_notc, *BT_msg, *BT_msgm;
 
 #include "servmsg.c"
 
@@ -1675,7 +1678,10 @@ static char *server_close()
   nuke_server("Connection reset by peer");
   clearq(serverlist);
   rem_builtins(H_dcc, C_dcc_serv);
-  rem_builtins(H_raw, my_raw_binds);
+
+  /* rem_builtins(H_raw, my_raw_binds); */
+  rem_builtins2(BT_raw, my_raw_binds);
+
   rem_builtins(H_ctcp, my_ctcps);
   /* Restore original commands. */
   del_bind_table(H_wall);
@@ -1864,6 +1870,12 @@ char *server_start(Function *global_funcs)
 	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 	       traced_nicklen, NULL);
 
+	BT_wall = add_bind_table2("wall", 2, "ss", MATCH_MASK, BIND_STACKABLE);
+	BT_raw = add_bind_table2("raw", 3, "sss", MATCH_MASK, BIND_STACKABLE);
+	BT_notc = add_bind_table2("notc", 5, "sssss", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
+	BT_msg = add_bind_table2("msg", 4, "ssss", 0, BIND_USE_ATTR);
+	BT_msgm = add_bind_table2("msgm", 4, "ssss", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
+
   H_wall = add_bind_table("wall", HT_STACKABLE, server_2char);
   H_raw = add_bind_table("raw", HT_STACKABLE, server_raw);
   H_notc = add_bind_table("notc", HT_STACKABLE, server_6char);
@@ -1872,7 +1884,10 @@ char *server_start(Function *global_funcs)
   H_flud = add_bind_table("flud", HT_STACKABLE, server_5char);
   H_ctcr = add_bind_table("ctcr", HT_STACKABLE, server_6char);
   H_ctcp = add_bind_table("ctcp", HT_STACKABLE, server_6char);
-  add_builtins(H_raw, my_raw_binds);
+
+  /* add_builtins(H_raw, my_raw_binds); */
+  add_builtins2(BT_raw, my_raw_binds);
+
   add_builtins(H_dcc, C_dcc_serv);
   add_builtins(H_ctcp, my_ctcps);
   add_help_reference("server.help");

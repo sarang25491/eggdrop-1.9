@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.72 2001/08/27 23:06:40 poptix Exp $
+ * $Id: chan.c,v 1.73 2001/09/28 03:15:35 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -803,7 +803,7 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
 /* got 324: mode status
  * <server> 324 <to> <channel> <mode>
  */
-static int got324(char *from, char *msg)
+static int got324(char *from, char *ignore, char *msg)
 {
   int i = 1, ok =0;
   char *p, *q, *chname;
@@ -923,7 +923,7 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
 
 /* got a 352: who info!
  */
-static int got352(char *from, char *msg)
+static int got352(char *from, char *ignore, char *msg)
 {
   char *nick, *user, *host, *chname, *flags;
   struct chanset_t *chan;
@@ -944,7 +944,7 @@ static int got352(char *from, char *msg)
 
 /* got a 354: who info! - iru style
  */
-static int got354(char *from, char *msg)
+static int got354(char *from, char *ignore, char *msg)
 {
   char *nick, *user, *host, *chname, *flags;
   struct chanset_t *chan;
@@ -969,7 +969,7 @@ static int got354(char *from, char *msg)
 /* got 315: end of who
  * <server> 315 <to> <chan> :End of /who
  */
-static int got315(char *from, char *msg)
+static int got315(char *from, char *ignore, char *msg)
 {
   char *chname;
   struct chanset_t *chan;
@@ -1004,7 +1004,7 @@ static int got315(char *from, char *msg)
 /* got 367: ban info
  * <server> 367 <to> <chan> <ban> [placed-by] [timestamp]
  */
-static int got367(char *from, char *origmsg)
+static int got367(char *from, char *ignore, char *origmsg)
 {
   char s[UHOSTLEN], *ban, *who, *chname, buf[511], *msg;
   struct chanset_t *chan;
@@ -1042,7 +1042,7 @@ static int got367(char *from, char *origmsg)
 /* got 368: end of ban list
  * <server> 368 <to> <chan> :etc
  */
-static int got368(char *from, char *msg)
+static int got368(char *from, char *ignore, char *msg)
 {
   struct chanset_t *chan;
   char *chname;
@@ -1062,7 +1062,7 @@ static int got368(char *from, char *msg)
 /* got 348: ban exemption info
  * <server> 348 <to> <chan> <exemption>
  */
-static int got348(char *from, char *origmsg)
+static int got348(char *from, char *ignore, char *origmsg)
 {
   char *exempt, *who, *chname, buf[511], *msg;
   struct chanset_t *chan;
@@ -1091,7 +1091,7 @@ static int got348(char *from, char *origmsg)
 /* got 349: end of ban exemption list
  * <server> 349 <to> <chan> :etc
  */
-static int got349(char *from, char *msg)
+static int got349(char *from, char *ignore, char *msg)
 {
   struct chanset_t *chan;
   char *chname;
@@ -1109,7 +1109,7 @@ static int got349(char *from, char *msg)
 /* got 346: invite exemption info
  * <server> 346 <to> <chan> <exemption>
  */
-static int got346(char *from, char *origmsg)
+static int got346(char *from, char *ignore, char *origmsg)
 {
   char *invite, *who, *chname, buf[511], *msg;
   struct chanset_t *chan;
@@ -1137,7 +1137,7 @@ static int got346(char *from, char *origmsg)
 /* got 347: end of invite exemption list
  * <server> 347 <to> <chan> :etc
  */
-static int got347(char *from, char *msg)
+static int got347(char *from, char *ignore, char *msg)
 {
   struct chanset_t *chan;
   char *chname;
@@ -1154,7 +1154,7 @@ static int got347(char *from, char *msg)
 
 /* Too many channels.
  */
-static int got405(char *from, char *msg)
+static int got405(char *from, char *ignore, char *msg)
 {
   char *chname;
 
@@ -1170,7 +1170,7 @@ static int got405(char *from, char *msg)
  *
  * 403 - ERR_NOSUCHCHANNEL
  */
-static int got403(char *from, char *msg)
+static int got403(char *from, char *ignore, char *msg)
 {
   char *chname;
   struct chanset_t *chan;
@@ -1205,7 +1205,7 @@ static int got403(char *from, char *msg)
 
 /* got 471: can't join channel, full
  */
-static int got471(char *from, char *msg)
+static int got471(char *from, char *ignore, char *msg)
 {
   char *chname;
   struct chanset_t *chan;
@@ -1233,7 +1233,7 @@ static int got471(char *from, char *msg)
 
 /* got 473: can't join channel, invite only
  */
-static int got473(char *from, char *msg)
+static int got473(char *from, char *ignore, char *msg)
 {
   char *chname;
   struct chanset_t *chan;
@@ -1261,7 +1261,7 @@ static int got473(char *from, char *msg)
 
 /* got 474: can't join channel, banned
  */
-static int got474(char *from, char *msg)
+static int got474(char *from, char *ignore, char *msg)
 {
   char *chname;
   struct chanset_t *chan;
@@ -1289,7 +1289,7 @@ static int got474(char *from, char *msg)
 
 /* got 475: can't goin channel, bad key
  */
-static int got475(char *from, char *msg)
+static int got475(char *from, char *ignore, char *msg)
 {
   char *chname;
   struct chanset_t *chan;
@@ -1323,7 +1323,7 @@ static int got475(char *from, char *msg)
 
 /* got invitation
  */
-static int gotinvite(char *from, char *msg)
+static int gotinvite(char *from, char *ignore, char *msg)
 {
   char *nick;
   struct chanset_t *chan;
@@ -1366,7 +1366,7 @@ static void set_topic(struct chanset_t *chan, char *k)
 
 /* Topic change.
  */
-static int gottopic(char *from, char *msg)
+static int gottopic(char *from, char *ignore, char *msg)
 {
   char *nick, *chname;
   memberlist *m;
@@ -1393,7 +1393,7 @@ static int gottopic(char *from, char *msg)
 /* 331: no current topic for this channel
  * <server> 331 <to> <chname> :etc
  */
-static int got331(char *from, char *msg)
+static int got331(char *from, char *ignore, char *msg)
 {
   char *chname;
   struct chanset_t *chan;
@@ -1411,7 +1411,7 @@ static int got331(char *from, char *msg)
 /* 332: topic on a channel i've just joined
  * <server> 332 <to> <chname> :topic goes here
  */
-static int got332(char *from, char *msg)
+static int got332(char *from, char *ignore, char *msg)
 {
   struct chanset_t *chan;
   char *chname;
@@ -1457,7 +1457,7 @@ static void set_delay(struct chanset_t *chan, char *nick)
 
 /* Got a join
  */
-static int gotjoin(char *from, char *chname)
+static int gotjoin(char *from, char *ignore, char *chname)
 {
   char *nick, *p, buf[UHOSTLEN], *uhost = buf;
   char *ch_dname = NULL;
@@ -1708,7 +1708,7 @@ exit:
 
 /* Got a part
  */
-static int gotpart(char *from, char *msg)
+static int gotpart(char *from, char *ignore, char *msg)
 {
   char *nick, *chname;
   struct chanset_t *chan;
@@ -1758,7 +1758,7 @@ static int gotpart(char *from, char *msg)
 
 /* Got a kick
  */
-static int gotkick(char *from, char *origmsg)
+static int gotkick(char *from, char *ignore, char *origmsg)
 {
   char *nick, *whodid, *chname, s1[UHOSTLEN], buf[UHOSTLEN], *uhost = buf;
   char buf2[511], *msg;
@@ -1814,7 +1814,7 @@ static int gotkick(char *from, char *origmsg)
 
 /* Got a nick change
  */
-static int gotnick(char *from, char *msg)
+static int gotnick(char *from, char *ignore, char *msg)
 {
   char *nick, s1[UHOSTLEN], buf[UHOSTLEN], *uhost = buf;
   memberlist *m, *mm;
@@ -1872,7 +1872,7 @@ static int gotnick(char *from, char *msg)
 
 /* Signoff, similar to part.
  */
-static int gotquit(char *from, char *msg)
+static int gotquit(char *from, char *ignore, char *msg)
 {
   char *nick, *p, *alt;
   char from2[NICKMAX + UHOSTMAX +1];
@@ -1948,7 +1948,7 @@ static int gotquit(char *from, char *msg)
 
 /* Got a private message.
  */
-static int gotmsg(char *from, char *msg)
+static int gotmsg(char *from, char *ignore, char *msg)
 {
   char *to, *realto, buf[UHOSTLEN], *nick, buf2[512], *uhost = buf;
   char *p, *p1, *code, *ctcp;
@@ -2086,7 +2086,7 @@ static int gotmsg(char *from, char *msg)
 
 /* Got a private notice.
  */
-static int gotnotice(char *from, char *msg)
+static int gotnotice(char *from, char *ignore, char *msg)
 {
   char *to, *realto, *nick, buf2[512], *p, *p1, buf[512], *uhost = buf;
   char *ctcp, *code;

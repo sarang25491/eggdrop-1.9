@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.61 2001/09/27 18:33:21 sup Exp $
+ * $Id: irc.c,v 1.62 2001/09/28 03:15:35 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -32,6 +32,12 @@
 #ifdef HAVE_UNAME
 #include <sys/utsname.h>
 #endif
+
+/* We import some bind tables from server.mod */
+static bind_table_t *BT_raw, *BT_msg;
+
+/* We also create a few. */
+static bind_table_t *BT_pub, *BT_pubm;
 
 static p_tcl_bind_list H_topc, H_splt, H_sign, H_rejn, H_part, H_pub, H_pubm;
 static p_tcl_bind_list H_nick, H_mode, H_kick, H_join, H_need;
@@ -776,6 +782,9 @@ static int check_tcl_pub(char *nick, char *from, char *chname, char *msg)
   u = get_user_by_host(host);
   hand = u ? u->handle : "*";
   get_user_flagrec(u, &fr, chname);
+
+  check_bind(BT_pub, cmd, &fr, nick, from, hand, chname, args);
+
   Tcl_SetVar(interp, "_pub1", nick, 0);
   Tcl_SetVar(interp, "_pub2", from, 0);
   Tcl_SetVar(interp, "_pub3", hand, 0);
@@ -795,14 +804,20 @@ static void check_tcl_pubm(char *nick, char *from, char *chname, char *msg)
   struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
   char buf[1024], host[161];
   struct userrec *u;
+  char *hand;
 
   simple_sprintf(buf, "%s %s", chname, msg);
   simple_sprintf(host, "%s!%s", nick, from);
   u = get_user_by_host(host);
   get_user_flagrec(u, &fr, chname);
+  if (u) hand = u->handle;
+  else hand = "*";
+
+  check_bind(BT_pubm, buf, &fr, nick, from, hand, chname, msg);
+
   Tcl_SetVar(interp, "_pubm1", nick, 0);
   Tcl_SetVar(interp, "_pubm2", from, 0);
-  Tcl_SetVar(interp, "_pubm3", u ? u->handle : "*", 0);
+  Tcl_SetVar(interp, "_pubm3", hand, 0);
   Tcl_SetVar(interp, "_pubm4", chname, 0);
   Tcl_SetVar(interp, "_pubm5", msg, 0);
   check_tcl_bind(H_pubm, buf, &fr, " $_pubm1 $_pubm2 $_pubm3 $_pubm4 $_pubm5",
@@ -1018,7 +1033,11 @@ static char *irc_close()
   rem_tcl_ints(myints);
   rem_builtins(H_dcc, irc_dcc);
   rem_builtins(H_msg, C_msg);
-  rem_builtins(H_raw, irc_raw);
+
+  /* rem_builtins(H_raw, irc_raw); */
+  if (BT_raw) rem_builtins2(BT_raw, irc_raw);
+  if (BT_msg) rem_builtins2(BT_msg, C_msg);
+
   rem_tcl_commands(tclchan_cmds);
   rem_help_reference("irc.help");
   del_hook(HOOK_MINUTELY, (Function) check_expired_chanstuff);
@@ -1106,8 +1125,22 @@ char *irc_start(Function * global_funcs)
 	       traced_rfccompliant, NULL);
   add_tcl_ints(myints);
   add_builtins(H_dcc, irc_dcc);
+
+/*
   add_builtins(H_msg, C_msg);
   add_builtins(H_raw, irc_raw);
+*/
+
+  /* Import bind tables from other places. */
+  BT_raw = find_bind_table2("raw");
+  BT_msg = find_bind_table2("msg");
+  if (BT_raw) add_builtins2(BT_raw, irc_raw);
+  if (BT_msg) add_builtins2(BT_msg, C_msg);
+
+  /* Create our own bind tables. */
+  BT_pub = add_bind_table2("pub", 5, "sssss", MATCH_MASK, BIND_USE_ATTR);
+  BT_pubm = add_bind_table2("pubm", 5, "sssss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
+
   add_tcl_commands(tclchan_cmds);
   add_help_reference("irc.help");
   H_topc = add_bind_table("topc", HT_STACKABLE, channels_5char);

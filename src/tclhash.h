@@ -1,7 +1,7 @@
 /*
  * tclhash.h
  *
- * $Id: tclhash.h,v 1.13 2001/09/20 19:50:19 stdarg Exp $
+ * $Id: tclhash.h,v 1.14 2001/09/28 03:15:34 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -28,8 +28,12 @@
 
 #define TC_DELETED	0x0001	/* This command/trigger was deleted.	*/
 
+/* Flags for bind entries */
 /* Does the callback want their client_data inserted as the first argument? */
 #define BIND_WANTS_CD 1
+
+/* Flags for bind tables */
+#define BIND_STRICT_ATTR 0x80
 
 /* Will replace tcl_cmd_t */
 /* This holds the final information for a function listening on a bind
@@ -91,6 +95,8 @@ typedef struct bind_table_b {
 	bind_chain_t *chains;
 	char *name;
 	char *syntax;
+	int nargs;
+	int match_type;
 	int flags;
 } bind_table_t;
 
@@ -157,6 +163,22 @@ int check_validity(char *, Function);
 extern p_tcl_bind_list H_chat, H_act, H_bcst, H_chon, H_chof;
 extern p_tcl_bind_list H_load, H_unld, H_dcc, H_bot, H_link;
 extern p_tcl_bind_list H_away, H_nkch, H_filt, H_disc, H_event;
+
+int check_bind(bind_table_t *table, const char *match, struct flag_record *_flags, ...);
+
+bind_table_t *add_bind_table2(const char *name, int nargs, const char *syntax, int match_type, int flags);
+
+void del_bind_table2(bind_table_t *table);
+
+bind_table_t *find_bind_table2(const char *name);
+
+int add_bind_entry(bind_table_t *table, const char *flags, const char *mask, const char *function_name, int bind_flags, Function callback, void *client_data);
+
+int del_bind_entry(bind_table_t *table, const char *flags, const char *mask, const char *function_name);
+
+void add_builtins2(bind_table_t *table, cmd_t *cmds);
+
+void rem_builtins2(bind_table_t *table, cmd_t *cmds);
 
 #endif
 

@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.35 2001/09/20 19:50:19 stdarg Exp $
+ * $Id: tclhash.c,v 1.36 2001/09/28 03:15:34 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -40,8 +40,12 @@ extern int		 dcc_total;
 extern time_t		 now;
 
 /* New bind table list */
-bind_table_t *bind_table_list_head = NULL;
-bind_table_t *BT_event = NULL;
+static bind_table_t *bind_table_list_head = NULL;
+static bind_table_t *BT_event;
+static bind_table_t *BT_link;
+static bind_table_t *BT_disc;
+static bind_table_t *BT_away;
+static bind_table_t *BT_time;
 
 p_tcl_bind_list		bind_table_list;
 p_tcl_bind_list		H_chat, H_act, H_bcst, H_chon, H_chof,
@@ -58,9 +62,6 @@ static int builtin_idxchar();
 static int builtin_charidx();
 static int builtin_chat();
 static int builtin_dcc();
-
-void del_bind_table2(bind_table_t *table);
-
 
 static char *my_strdup(const char *s)
 {
@@ -228,7 +229,11 @@ void init_bind2(void)
 	bind_table_list_head = NULL;
 	Tcl_CreateCommand(interp, "bind2", tcl_bind2, NULL, NULL);
 	Tcl_CreateCommand(interp, "unbind2", tcl_unbind2, NULL, NULL);
-	BT_event = add_bind_table2("event", "s", 0);
+	BT_event = add_bind_table2("event", 1, "s", MATCH_MASK, BIND_STACKABLE);
+	BT_link = add_bind_table2("link", 2, "ss", MATCH_MASK, BIND_STACKABLE);
+	BT_disc = add_bind_table2("disc", 1, "s", MATCH_MASK, BIND_STACKABLE);
+	BT_away = add_bind_table2("away", 3, "sis", MATCH_MASK, BIND_STACKABLE);
+	BT_time = add_bind_table2("time", 5, "iiiii", MATCH_MASK, BIND_STACKABLE);
 }
 
 void init_bind(void)
@@ -281,7 +286,7 @@ void kill_bind(void)
   bind_table_list = NULL;
 }
 
-bind_table_t *add_bind_table2(const char *name, const char *syntax, int flags)
+bind_table_t *add_bind_table2(const char *name, int nargs, const char *syntax, int match_type, int flags)
 {
 	bind_table_t *table;
 
@@ -292,7 +297,9 @@ bind_table_t *add_bind_table2(const char *name, const char *syntax, int flags)
 	table = (bind_table_t *)nmalloc(sizeof(*table));
 	table->chains = NULL;
 	table->name = my_strdup(name);
+	table->nargs = nargs;
 	table->syntax = my_strdup(syntax);
+	table->match_type = match_type;
 	table->flags = flags;
 	table->next = bind_table_list_head;
 	bind_table_list_head = table;
@@ -385,9 +392,9 @@ bind_table_t *find_bind_table2(const char *name)
 	bind_table_t *table;
 
 	for (table = bind_table_list_head; table; table = table->next) {
-		if (!strcmp(table->name, name)) return(table);
+		if (!strcmp(table->name, name)) break;
 	}
-	return(NULL);
+	return(table);
 }
 
 tcl_bind_list_t *find_bind_table(const char *nme)
@@ -423,7 +430,7 @@ static void dump_bind_tables(Tcl_Interp *irp)
   }
 }
 
-static int del_bind_entry(bind_table_t *table, const char *flags, const char *mask, const char *function_name)
+int del_bind_entry(bind_table_t *table, const char *flags, const char *mask, const char *function_name)
 {
 	bind_chain_t *chain;
 	bind_entry_t *entry, *prev;
@@ -479,10 +486,10 @@ static int unbind_bind_entry(tcl_bind_list_t *tl, const char *flags,
   return 0;			/* No match.	*/
 }
 
-static int add_bind_entry(bind_table_t *table, const char *flags, const char *mask, const char *function_name, int bind_flags, Function callback, void *client_data)
+int add_bind_entry(bind_table_t *table, const char *flags, const char *mask, const char *function_name, int bind_flags, Function callback, void *client_data)
 {
 	bind_chain_t *chain;
-	bind_entry_t *entry, *prev;
+	bind_entry_t *entry;
 
 	/* Find the chain (mask) first. */
 	for (chain = table->chains; chain; chain = chain->next) {
@@ -499,9 +506,9 @@ static int add_bind_entry(bind_table_t *table, const char *flags, const char *ma
 	}
 
 	/* If it's stackable */
-	if (chain->flags & BIND_STACKABLE) {
+	if (table->flags & BIND_STACKABLE) {
 		/* Search for specific entry. */
-		for (prev = NULL, entry = chain->entries; chain; prev = entry, entry = entry->next) {
+		for (entry = chain->entries; entry; entry = entry->next) {
 			if (!strcmp(entry->function_name, function_name)) break;
 		}
 	}
@@ -898,33 +905,37 @@ static int trigger_bind(const char *proc, const char *param)
   }
 }
 
-int check_bind(bind_table_t *table, const char *match, struct flag_record *flags, int match_type, int nargs, ...)
+int check_bind(bind_table_t *table, const char *match, struct flag_record *_flags, ...)
 {
 	int *al; /* Argument list */
+	struct flag_record *flags;
 	bind_chain_t *chain;
 	bind_entry_t *entry;
-	int len, cmp, n_args, r;
+	int len, cmp, r, hits;
 	Function cb;
 
 	/* Experimental way to not use va_list... */
-	n_args = nargs;
-	al = (int *)&nargs;
+	flags = _flags;
+	al = (int *)&_flags;
 
 	/* Save the length for strncmp */
 	len = strlen(match);
 
+	/* Keep track of how many binds execute (or would) */
+	hits = 0;
+
 	/* For each chain in the table... */
 	for (chain = table->chains; chain; chain = chain->next) {
 		/* Test to see if it matches. */
-		if (match_type & MATCH_PARTIAL) {
-			if (match_type & MATCH_CASE) cmp = strncmp(match, chain->mask, len);
+		if (table->match_type & MATCH_PARTIAL) {
+			if (table->match_type & MATCH_CASE) cmp = strncmp(match, chain->mask, len);
 			else cmp = egg_strncasecmp(match, chain->mask, len);
 		}
-		else if (match_type & MATCH_MASK) {
+		else if (table->match_type & MATCH_MASK) {
 			cmp = !wild_match_per((unsigned char *)chain->mask, (unsigned char *)match);
 		}
 		else {
-			if (match_type & MATCH_CASE) cmp = strcmp(match, chain->mask);
+			if (table->match_type & MATCH_CASE) cmp = strcmp(match, chain->mask);
 			else cmp = egg_strcasecmp(match, chain->mask);
 		}
 		if (cmp) continue; /* Doesn't match. */
@@ -933,29 +944,34 @@ int check_bind(bind_table_t *table, const char *match, struct flag_record *flags
 		/* If it's not stackable, There Can Be Only One. */
 		for (entry = chain->entries; entry; entry = entry->next) {
 			/* Check flags. */
-			if (match_type & BIND_USE_ATTR) {
-				if (match_type & BIND_HAS_BUILTINS) cmp = flagrec_ok(&entry->user_flags, flags);
-				else cmp = flagrec_eq(&entry->user_flags, flags);
+			if (table->match_type & BIND_USE_ATTR) {
+				if (table->match_type & BIND_STRICT_ATTR) cmp = flagrec_eq(&entry->user_flags, flags);
+				else cmp = flagrec_ok(&entry->user_flags, flags);
 				if (!cmp) continue;
 			}
 
-			/* It's all good, now do the callback. */
+			/* This is a hit */
+			hits++;
+
+			/* Does the callback want client data? */
 			cb = entry->callback;
 			if (entry->bind_flags & BIND_WANTS_CD) {
 				al[0] = (int) entry->client_data;
-				n_args++;
+				table->nargs++;
 			}
 			else al++;
-			switch (n_args) {
+
+			switch (table->nargs) {
 				case 0: r = cb(); break;
 				case 1: r = cb(al[0]); break;
 				case 2: r = cb(al[0], al[1]); break;
 				case 3: r = cb(al[0], al[1], al[2]); break;
 				case 4: r = cb(al[0], al[1], al[2], al[3]); break;
 				case 5: r = cb(al[0], al[1], al[2], al[3], al[4]); break;
-				default: r = cb(al[0], al[1], al[2], al[3], al[4], al[5]); break;
+				case 6: r = cb(al[0], al[1], al[2], al[3], al[4], al[5]); break;
 			}
-			if (entry->bind_flags & BIND_WANTS_CD) n_args--;
+
+			if (entry->bind_flags & BIND_WANTS_CD) table->nargs--;
 			else al--;
 		}
 	}
@@ -1171,6 +1187,8 @@ void check_tcl_nkch(const char *ohand, const char *nhand)
 
 void check_tcl_link(const char *bot, const char *via)
 {
+  check_bind(BT_link, bot, NULL, bot, via);
+
   Tcl_SetVar(interp, "_link1", (char *) bot, 0);
   Tcl_SetVar(interp, "_link2", (char *) via, 0);
   check_tcl_bind(H_link, bot, 0, " $_link1 $_link2",
@@ -1179,6 +1197,8 @@ void check_tcl_link(const char *bot, const char *via)
 
 void check_tcl_disc(const char *bot)
 {
+  check_bind(BT_disc, bot, NULL, bot);
+
   Tcl_SetVar(interp, "_disc1", (char *) bot, 0);
   check_tcl_bind(H_disc, bot, 0, " $_disc1", MATCH_MASK | BIND_STACKABLE);
 }
@@ -1286,6 +1306,8 @@ void check_tcl_away(const char *bot, int idx, const char *msg)
 {
   char	u[11];
 
+  check_bind(BT_away, bot, NULL, bot, idx, msg);
+
   egg_snprintf(u, sizeof u, "%d", idx);
   Tcl_SetVar(interp, "_away1", (char *) bot, 0);
   Tcl_SetVar(interp, "_away2", (char *) u, 0);
@@ -1310,18 +1332,18 @@ void check_tcl_time(struct tm *tm)
   Tcl_SetVar(interp, "_time5", (char *) y, 0);
   egg_snprintf(y, sizeof y, "%02d %02d %02d %02d %04d", tm->tm_min, tm->tm_hour,
 	       tm->tm_mday, tm->tm_mon, tm->tm_year + 1900);
+
+  check_bind(BT_time, y, NULL, tm->tm_min, tm->tm_hour, tm->tm_mday, tm->tm_mon, tm->tm_year + 1900);
+
   check_tcl_bind(H_time, y, 0,
 		 " $_time1 $_time2 $_time3 $_time4 $_time5",
 		 MATCH_MASK | BIND_STACKABLE);
 }
 
-void check_event2(const char *event)
-{
-	check_bind(BT_event, event, NULL, MATCH_MASK, 1, event);
-}
-
 void check_tcl_event(const char *event)
 {
+  check_bind(BT_event, event, NULL, event);
+
   Tcl_SetVar(interp, "_event1", (char *) event, 0);
   check_tcl_bind(H_event, event, 0, " $_event1", MATCH_EXACT | BIND_STACKABLE);
 }
@@ -1398,6 +1420,16 @@ void tell_binds(int idx, char *par)
   }
 }
 
+void add_builtins2(bind_table_t *table, cmd_t *cmds)
+{
+	char name[50];
+
+	for (; cmds->name; cmds++) {
+		snprintf(name, 50, "*%s:%s", table->name, cmds->funcname ? cmds->funcname : cmds->name);
+		add_bind_entry(table, cmds->flags, cmds->name, name, 0, cmds->func, NULL);
+	}
+}
+
 /* Bring the default msg/dcc/fil commands into the Tcl interpreter */
 void add_builtins(tcl_bind_list_t *tl, cmd_t *cc)
 {
@@ -1413,6 +1445,16 @@ void add_builtins(tcl_bind_list_t *tl, cmd_t *cc)
     bind_bind_entry(tl, cc[i].flags, cc[i].name, l);
     nfree(l);
   }
+}
+
+void rem_builtins2(bind_table_t *table, cmd_t *cmds)
+{
+	char name[50];
+
+	for (; cmds->name; cmds++) {
+		sprintf(name, "*%s:%s", table->name, cmds->funcname ? cmds->funcname : cmds->name);
+		del_bind_entry(table, cmds->flags, cmds->name, name);
+	}
 }
 
 /* Remove the default msg/dcc/fil commands from the Tcl interpreter */
