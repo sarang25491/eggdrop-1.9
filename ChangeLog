@@ -1,3 +1,10 @@
+2001-12-20 01:08  Jeff Fisher <guppy@techmonkeys.org>
+
+	* modules/notes/notes.c:
+
+	fixed join_notes to have the proper arguments and also return if the
+	user isn't known (thanks stdarg) 
+
 2001-12-20 00:42  stdarg <stdarg@techmonkeys.org>
 
 	* modules/server/servmsg.c:
