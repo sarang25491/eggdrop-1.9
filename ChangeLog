@@ -1,3 +1,45 @@
+2002-05-05 15:21  wingman
+
+	* lib/egglib/linked_list_test.c, modules/irc/irc.h,
+	modules/server/server.h, src/botcmd.h, src/botmsg.h, src/botnet.h,
+	src/chanprog.h, src/cmds.h, src/core_binds.c, src/dcc.h,
+	src/dccutil.h, src/misc.h, src/modules.h, src/net.c, src/net.h,
+	src/proto.h, src/tcl.h, src/tclhash.h, src/userent.h,
+	src/userrec.h:
+
+	i knew i forgot something :-P 
+
+2002-05-05 15:19  wingman
+
+	* src/Makefile.am, src/botcmd.c, src/botmsg.c, src/botnet.c,
+	src/chanprog.c, src/cmds.c, src/dcc.c, src/dccutil.c, src/dns.c,
+	src/flags.c, src/logfile.c, src/main.c, src/main.h, src/misc.c,
+	src/modules.c, src/tcl.c, src/tcldcc.c, lib/eggdrop/module.h,
+	modules/filesys/files.c, modules/filesys/filesys.c,
+	modules/filesys/filesys.h, src/tclegg.h, src/tclhash.c,
+	src/tclmisc.c, src/tcluser.c, src/userent.c, src/userrec.c,
+	src/users.c, src/users.h:
+
+	Changes: 
+	
+	 * removed patch.h 
+	 * added proper <filename>.h to (nearly) all <filename.h> 
+	 * moved fixcolon to server.mod and irc.mod 
+	 * moved ip2long to net.h 
+	 * removed some unused function (forgot the name :-P) 
+	
+	Todo: 
+	
+	 * move config.h #include's away from main.h to files which 
+	   needs them 
+	 * clean up lib/eggdrop/module.h 
+	   (now not just main.h is included but nearly all .h files from 
+	    the core, but i guess this fixes itself when the global func 
+	    table is abandon - then the modules must be revised too and 
+	    we can clean up module.h) 
+	
+	And i'll bet i forgot something... ;-) 
+
 2002-05-05 04:59  stdarg <stdarg@techmonkeys.org>
 
 	* src/tclmisc.c:
