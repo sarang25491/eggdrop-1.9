@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: servmsg.c,v 1.23 2002/06/03 03:35:32 stdarg Exp $";
+static const char rcsid[] = "$Id: servmsg.c,v 1.24 2002/06/05 05:10:34 stdarg Exp $";
 #endif
 */
 
@@ -523,35 +523,35 @@ static int gotpong(char *from_nick, char *from_uhost, struct userrec *u, char *c
 
 /* This is a reply on ISON :<current> <orig> [<alt>]
  */
-static void got303(char *from, char *ignore, char *msg)
+static int got303(char *from_nick, char *from_uhost, struct userrec *u, int nargs, char *args[])
 {
-  char *tmp, *alt;
-  int ison_orig = 0, ison_alt = 0;
+	char *nicks, *space, *alt;
+	int ison_orig = 0, ison_alt = 0;
 
-  if (!keepnick ||
-      !strncmp(botname, origbotname, strlen(botname))) {
-    return;
-  }
-  newsplit(&msg);
-  fixcolon(msg);
-  alt = get_altbotnick();
-  tmp = newsplit(&msg);
-  if (tmp[0] && !irccmp(botname, tmp)) {
-    while ((tmp = newsplit(&msg))[0]) { /* no, it's NOT == */
-      if (!irccmp(tmp, origbotname))
-        ison_orig = 1;
-      else if (alt[0] && !irccmp(tmp, alt))
-        ison_alt = 1;
-    }
-    if (!ison_orig) {
-      if (!nick_juped)
-        putlog(LOG_MISC, "*", _("Switching back to nick %s"), origbotname);
-      dprintf(DP_SERVER, "NICK %s\n", origbotname);
-    } else if (alt[0] && !ison_alt && irccmp(botname, alt)) {
-      putlog(LOG_MISC, "*", _("Switching back to altnick %s"), alt);
-      dprintf(DP_SERVER, "NICK %s\n", alt);
-    }
-  }
+	if (!keepnick || !strcmp(botname, origbotname)) return(0);
+	alt = get_altbotnick();
+	nicks = args[1];
+	for (;;) {
+		space = strchr(nicks, ' ');
+		if (space) *space = 0;
+		if (!irccmp(origbotname, nicks)) ison_orig = 1;
+		else if (!irccmp(alt, nicks)) ison_alt = 1;
+		if (space) {
+			*space = ' ';
+			nicks = space+1;
+		}
+		else break;
+	}
+
+	if (!ison_orig) {
+		putlog(LOG_MISC, "*", _("Switching back to nick %s"), origbotname);
+		dprintf(DP_SERVER, "NICK %s\n", origbotname);
+	}
+	else if (!ison_alt && strcmp(botname, alt)) {
+		putlog(LOG_MISC, "*", _("Switching back to altnick %s"), alt);
+		dprintf(DP_SERVER, "NICK %s\n", alt);
+	}
+	return(0);
 }
 
 /* 432 : Bad nickname
