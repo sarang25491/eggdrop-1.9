@@ -18,12 +18,13 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xmlread.c,v 1.5 2003/12/17 07:39:14 wcc Exp $";
+static const char rcsid[] = "$Id: xmlread.c,v 1.6 2003/12/17 07:52:14 wcc Exp $";
 #endif
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 #include "xml.h"
 
 extern xml_amp_conversion_t builtin_conversions[];

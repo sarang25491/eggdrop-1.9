@@ -21,8 +21,10 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: irccmp.c,v 1.3 2003/12/17 07:39:14 wcc Exp $";
+static const char rcsid[] = "$Id: irccmp.c,v 1.4 2003/12/17 07:52:14 wcc Exp $";
 #endif
+
+#include "irccmp.h"
 
 static const unsigned char ToLowerTab[] = {
 	0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa,

@@ -18,11 +18,13 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partychan.c,v 1.8 2003/12/17 07:39:14 wcc Exp $";
+static const char rcsid[] = "$Id: partychan.c,v 1.9 2003/12/17 07:52:14 wcc Exp $";
 #endif
 
-#include <stdarg.h>
 #include <eggdrop/eggdrop.h>
+#include <stdarg.h>
+#include <stdlib.h>
+#include <string.h>
 
 /* When does cid wrap around? This lets cids get up to 99999. */
 #define CID_WRAPAROUND 100000

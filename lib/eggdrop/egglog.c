@@ -18,10 +18,12 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: egglog.c,v 1.4 2003/12/17 07:39:14 wcc Exp $";
+static const char rcsid[] = "$Id: egglog.c,v 1.5 2003/12/17 07:52:14 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
+#include <stdlib.h>
+#include <stdarg.h>
 
 static bind_table_t *BT_log = NULL;
 
