@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.49 2001/11/24 15:31:04 ite Exp $
+ * $Id: eggdrop.h,v 1.50 2001/11/24 20:42:26 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -81,8 +81,9 @@
 
 
 /* Gettext stuff */
-#  include <libintl.h>
-#  define _(x) gettext(x)
+#include <libintl.h>
+#define _(x) gettext(x)
+#define N_(x) gettext_noop(x)
 
 #ifdef HAVE_UNISTD_H
 #  include <unistd.h>
