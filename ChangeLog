@@ -1,3 +1,10 @@
+2002-03-11 20:16  stdarg <stdarg@techmonkeys.org>
+
+	* src/: botmsg.c, cmds.c, dcc.c, tcl.c, tcldcc.c, tclmisc.c:
+
+	* Converted/cleaned some tcl stuff 
+	* More dcc fixes 
+
 2002-03-10 01:35  stdarg <stdarg@techmonkeys.org>
 
 	* modules/notes/notes.c:
