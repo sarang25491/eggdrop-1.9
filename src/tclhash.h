@@ -1,7 +1,7 @@
 /*
  * tclhash.h
  *
- * $Id: tclhash.h,v 1.10 2001/08/24 01:07:26 stdarg Exp $
+ * $Id: tclhash.h,v 1.11 2001/08/24 19:46:54 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -59,7 +59,7 @@ typedef struct tcl_cmd_b {
    For instance, in the "msg" table you might have "pass", "op",
    and "invite". */
 typedef struct bind_chain_b {
-	bind_chain_b *next;
+	struct bind_chain_b *next;
 	bind_entry_t *entries;
 	char *mask;
 	int flags;
@@ -84,7 +84,7 @@ typedef struct tcl_bind_mask_b {
 /* This is the highest-level structure. It's like the "msg" table
    or the "pubm" table. */
 typedef struct bind_table_b {
-	bind_table_b *next;
+	struct bind_table_b *next;
 	bind_chain_t *chains;
 	char *name;
 	int flags;

@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.30 2001/08/24 01:07:26 stdarg Exp $
+ * $Id: tclhash.c,v 1.31 2001/08/24 19:46:54 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -39,6 +39,9 @@ extern struct userrec	*userlist;
 extern int		 dcc_total;
 extern time_t		 now;
 
+/* New bind table list */
+bind_table_t *bind_table_list_head;
+
 p_tcl_bind_list		bind_table_list;
 p_tcl_bind_list		H_chat, H_act, H_bcst, H_chon, H_chof,
 			H_load, H_unld, H_link, H_disc, H_dcc, H_chjn, H_chpt,
@@ -55,6 +58,15 @@ static int builtin_charidx();
 static int builtin_chat();
 static int builtin_dcc();
 
+
+static char *my_strdup(char *s)
+{
+	char *t;
+
+	t = (char *)namlloc(strlen(s)+1);
+	strcpy(t, s);
+	return(t);
+}
 
 /* Allocate and initialise a chunk of memory.
  */
@@ -235,6 +247,12 @@ void init_bind(void)
   Context;
 }
 
+void kill_bind2(void)
+{
+	rem_builtins(H_dcc, C_dcc);
+	while (bind_table_list_head) kill_bind(bind_table_list_head);
+}
+
 void kill_bind(void)
 {
   tcl_bind_list_t	*tl, *tl_next;
@@ -254,17 +272,17 @@ bind_table_t *add_bind_table2(const char *name, int flags)
 {
 	bind_table_t *table;
 
-	for (table = bind_table_list_start; table; table = table->next) {
+	for (table = bind_table_list_head; table; table = table->next) {
 		/* If it already exists, and isn't marked for deletion, return it. */
 		if (!strcmp(table->name, name)) return(table);
 	}
 	/* Nope, we have to create a new one. */
 	table = (bind_table_t *)nmalloc(sizeof(*table));
 	table->chains = NULL;
-	table->name = (char *)strdup(name);
+	table->name = my_strdup(name);
 	table->flags = flags;
-	table->next = bind_table_list_start;
-	bind_table_list_start = table;
+	table->next = bind_table_list_head;
+	bind_table_list_head = table;
 	return(table);
 }
 
@@ -321,7 +339,7 @@ void del_bind_table2(bind_table_t *table)
 	}
 
 	/* Now delete it. */
-	free(table->name); /* Got this from strdup(), so use free(). */
+	nfree(table->name);
 	for (chain = table->chains; chain; chain = next_chain) {
 		next_chain = chain->next;
 		for (entry = chain->entries; entry; entry = next_entry) {
@@ -404,13 +422,26 @@ static void dump_bind_tables(Tcl_Interp *irp)
 static int del_bind_entry(bind_table_t *table, const char *flags, const char *mask, const char *function_name)
 {
 	bind_chain_t *chain;
-	bind_entry_t *entry;
+	bind_entry_t *entry, *prev;
 
+	/* Find the correct mask entry. */
 	for (chain = table->chains; chain; chain = chain->next) {
 		if (!strcmp(chain->mask, mask)) break;
 	}
 	if (!chain) return(1);
-	/* Not done yet, stopping for now :) */
+
+	/* Now find the function name in this mask entry. */
+	for (prev = NULL, entry = table->entries; entry; prev = entry, entry = entry->next) {
+		if (!strcmp(entry->function_name, function_name)) break;
+	}
+	if (!entry) return(1);
+
+	/* Delete it. */
+	if (prev) prev->next = entry->next;
+	else if (entry->next) chain->entries = entry->next;
+	nfree(entry->function_name);
+	nfree(entry);
+
 	return(0);
 }
 
@@ -442,6 +473,31 @@ static int unbind_bind_entry(tcl_bind_list_t *tl, const char *flags,
     }
   }
   return 0;			/* No match.	*/
+}
+
+static int add_bind_entry(bind_table_t *table, const char *flags, const char *mask, const char *function_name, Function callback, void *client_data)
+{
+	bind_chain_t *chain;
+	bind_entry_t *entry, *prev;
+
+	/* Find the chain (mask) first. */
+	for (chain = table->chains; chain; chain = chain->next) {
+		if (!strcmp(chain->mask, mask)) break;
+	}
+
+	/* Create if it doesn't exist. */
+	if (!chain) {
+		chain = (bind_chain_t *)nmalloc(sizeof(*chain));
+		chain->entries = NULL;
+		chain->mask = my_strdup(mask);
+		chain->next = table->chains;
+		table->chains = chain;
+	}
+
+	/* Search for specific entry. */
+	for (prev = NULL, entry = chain->entries; chain; prev = entry, entry = entry->next) {
+		if (!strcmp(entry->function_name, function_name)) break;
+	}
 }
 
 /* Add command (remove old one if necessary)
