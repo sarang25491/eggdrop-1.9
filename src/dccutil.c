@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  *
- * $Id: dccutil.c,v 1.46 2002/02/24 08:14:36 guppy Exp $
+ * $Id: dccutil.c,v 1.47 2002/04/26 17:46:39 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -415,17 +415,14 @@ int new_dcc(struct dcc_table *type, int xtra_size)
 {
   int i = dcc_total;
 
-  for (i = 0; i < dcc_total; i++) {
+  for (i = 0; i < dcc_total; i++)
     if (!dcc[i].type) break;
-  }
-  if (i == dcc_total) {
-    if (dcc_total == max_dcc) {
-      max_dcc += 5;
-      dcc = (struct dcc_t *)realloc(dcc, max_dcc * sizeof(*dcc));
-      memset(dcc+dcc_total, 0, 5 * sizeof(*dcc));
-    }
+
+  if (i == max_dcc)
+    return -1;
+
+  if (i == dcc_total)
     dcc_total++;
-  }
   memset(&dcc[i], 0, sizeof(*dcc));
 
   dcc[i].type = type;
