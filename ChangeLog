@@ -1,3 +1,11 @@
+2001-10-20 10:22  stdarg <stdarg@techmonkeys.org>
+
+	* src/: modules.c, tclhash.c, tclhash.h, mod/module.h,
+	mod/notes.mod/notes.c:
+
+	Applied patch by Oskar Liljeblad <oskar@osk.mine.nu>: Replaces
+	H_away bind with new BT_away bind.  
+
 2001-10-20 08:04  Jeff Fisher <guppy@techmonkeys.org>
 
 	* src/main.c:
