@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.9 2002/02/07 22:19:03 wcc Exp $
+ * $Id: share.c,v 1.10 2002/03/02 23:08:13 eule Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1081,7 +1081,7 @@ static void share_userfileq(int idx, char *par)
 	    (min_share / 100) % 100);
   else {
     for (i = 0; i < dcc_total; i++)
-      if (dcc[i].type->flags & DCT_BOT) {
+      if (dcc[i].type == &DCC_BOT) {
 	if ((dcc[i].status & STAT_SHARE) &&
 	    (dcc[i].status & STAT_AGGRESSIVE) && (i != idx)) {
 	  ok = 0;
@@ -1213,7 +1213,7 @@ static void hook_read_userfile()
 
   if (!noshare) {
     for (i = 0; i < dcc_total; i++)
-      if ((dcc[i].type->flags & DCT_BOT) && (dcc[i].status & STAT_SHARE) &&
+      if ((dcc[i].type == &DCC_BOT) && (dcc[i].status & STAT_SHARE) &&
 	  !(dcc[i].status & STAT_AGGRESSIVE)) {
 	/* Cancel any existing transfers */
 	if (dcc[i].status & STAT_SENDING)
@@ -1324,7 +1324,7 @@ static void shareout_mod EGG_VARARGS_DEF(struct chanset_t *, arg1)
     if ((l = vsnprintf(s + 2, 509, format, va)) < 0)
       s[2 + (l = 509)] = 0;
     for (i = 0; i < dcc_total; i++)
-      if ((dcc[i].type->flags & DCT_BOT) &&
+      if ((dcc[i].type == &DCC_BOT) &&
 	  (dcc[i].status & STAT_SHARE) &&
 	  !(dcc[i].status & (STAT_GETTING | STAT_SENDING))) {
 	if (chan) {
@@ -1355,7 +1355,7 @@ static void shareout_but EGG_VARARGS_DEF(struct chanset_t *, arg1)
   if ((l = vsnprintf(s + 2, 509, format, va)) < 0)
     s[2 + (l = 509)] = 0;
   for (i = 0; i < dcc_total; i++)
-    if ((dcc[i].type->flags & DCT_BOT) && (i != x) &&
+    if ((dcc[i].type == &DCC_BOT) && (i != x) &&
 	(dcc[i].status & STAT_SHARE) &&
 	(!(dcc[i].status & STAT_GETTING)) &&
 	(!(dcc[i].status & STAT_SENDING))) {
@@ -1445,7 +1445,7 @@ static void check_expired_tbufs()
   }
   /* Resend userfile requests */
   for (i = 0; i < dcc_total; i++)
-    if (dcc[i].type->flags & DCT_BOT) {
+    if (dcc[i].type == &DCC_BOT) {
       if (dcc[i].status & STAT_OFFERED) {
 	if (now - dcc[i].timeval > 120) {
 	  if (dcc[i].user && (bot_flags(dcc[i].user) & BOT_AGGRESSIVE))
@@ -1701,7 +1701,7 @@ static void finish_share(int idx)
 
   for (i = 0; i < dcc_total; i++)
     if (!strcasecmp(dcc[i].nick, dcc[idx].host) &&
-	(dcc[i].type->flags & DCT_BOT))
+	(dcc[i].type == &DCC_BOT))
       j = i;
   if (j == -1)
     return;
@@ -2062,7 +2062,7 @@ static char *share_close()
   module_undepend(MODULE_NAME);
   putlog(LOG_MISC | LOG_BOTS, "*", "Sending 'share end' to all sharebots...");
   for (i = 0; i < dcc_total; i++)
-    if ((dcc[i].type->flags & DCT_BOT) && (dcc[i].status & STAT_SHARE)) {
+    if ((dcc[i].type == &DCC_BOT) && (dcc[i].status & STAT_SHARE)) {
       dprintf(i, "s e Unload module\n");
       cancel_user_xfer(-i, 0);
       updatebot(-1, dcc[i].nick, '-', 0);
