@@ -30,7 +30,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.154 2003/12/16 03:13:51 wcc Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.155 2003/12/16 03:26:42 wcc Exp $";
 #endif
 
 #include <ctype.h>
@@ -93,6 +93,8 @@ time_t now;			/* Current time */
 egg_timeval_t egg_timeval_now;	/* Current time in seconds and microseconds. */
 
 int use_stderr = 1;		/* Send stuff to stderr instead of logfiles? */
+
+char version[81];
 
 static int lastmin = 99;
 static struct tm nowtm;

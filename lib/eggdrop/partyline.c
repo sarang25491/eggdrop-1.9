@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <stdarg.h>
 #include <eggdrop/eggdrop.h>
 
