@@ -1,3 +1,16 @@
+2001-12-02 11:54  Federico Mennite <ite@techmonkeys.org>
+
+	* modules/share/share.c:
+
+	Fix in share module while resyncing userfile. Patch by TaKeDa
+	<takeda@eggheads.w.pl> 
+
+2001-12-02 11:43  Federico Mennite <ite@techmonkeys.org>
+
+	* modules/irc/mode.c:
+
+	Minor code indenting fixes. Patch by guppy <guppy@techmonkeys.org> 
+
 2001-12-02 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
