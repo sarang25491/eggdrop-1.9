@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.7 2001/12/19 06:28:03 guppy Exp $
+ * $Id: chan.c,v 1.8 2001/12/29 21:13:26 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -894,7 +894,13 @@ static int got324(char *from, char *ignore, char *msg)
 	  *p = 0;
 	}
       }
-      if ((chan->channel.mode & CHANKEY) && !(chan->channel.key[0]))
+      if ((chan->channel.mode & CHANKEY) && (!chan->channel.key[0] ||
+	  !strcmp("*", chan->channel.key)))
+	/* Undernet use to show a blank channel key if one was set when
+	 * you first joined a channel; however, this has been replaced by
+	 * an asterisk and this has been agreed upon by other major IRC 
+	 * networks so we'll check for an asterisk here as well 
+	 * (guppy 22Dec2001) */ 
         chan->status |= CHAN_ASKEDMODES;
     }
     if (msg[i] == 'l') {
