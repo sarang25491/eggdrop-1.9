@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.48 2001/08/01 19:00:13 drummer Exp $
+dnl $Id: aclocal.m4,v 1.49 2001/08/08 13:47:10 drummer Exp $
 dnl
 
 
@@ -1290,7 +1290,11 @@ AC_ARG_ENABLE(ipv6,
 [ ac_cv_ipv6=$enableval
   AC_MSG_RESULT($ac_cv_ipv6)
 ], [
-  ac_cv_ipv6='no'
+  if test "x$egg_cv_ipv6_supported" = "xyes"; then
+    ac_cv_ipv6='yes'
+  else
+    ac_cv_ipv6='no'
+  fi
   AC_MSG_RESULT((default) $ac_cv_ipv6)
 ])
 if test "$ac_cv_ipv6" = "yes" ; then
