@@ -1,3 +1,10 @@
+2001-10-05 04:28  Jeff Fisher <guppy@techmonkeys.org>
+
+	* src/cmds.c:
+
+	lets try to keep the same messages that make eggdrop the classic it
+	is 
+
 2001-10-04 22:15  stdarg
 
 	* src/dcc.c:
