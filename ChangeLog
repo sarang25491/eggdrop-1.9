@@ -1,3 +1,22 @@
+2001-08-14 18:27  Jeff Fisher <guppy@techmonkeys.org>
+
+	* src/mod/server.mod/servmsg.c:
+
+	Fixed what information we send along with USER when registering to
+	an IRCd.  A sneaky irc admin could transparently detect eggdrop and
+	quickly kline them automatically by making a small patch to his IRCd
+	software.  
+	
+	proper USER format: <username> <hostname> <servername> :<realname> 
+	
+	  most clients send some combination of this; however, eggdrop appears
+	  to be one of the few (if not only) that sends: 
+	
+	  USER username username username :realname 
+	
+	So lets instead send the _proper_ information to avoid detection by
+	sneaky admins who hate eggdrop for some childish reason.  
+
 2001-08-14 16:39  Jeff Fisher <guppy@techmonkeys.org>
 
 	* misc/cvs2cl.pl:
