@@ -4,7 +4,7 @@
  *   signal handling
  *   command line arguments
  *
- * $Id: main.c,v 1.113 2002/04/28 05:53:33 ite Exp $
+ * $Id: main.c,v 1.114 2002/05/03 01:21:16 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -256,60 +256,113 @@ static void got_ill(int z)
   check_bind_event("sigill");
 }
 
-static void do_arg(char *s)
+
+static void print_version (void)
 {
   char x[1024], *z = x;
-  int i;
+    
+  strlcpy(x, egg_version, sizeof x);
+  newsplit(&z);
+  newsplit(&z);
+  printf("%s\n", version);
+  if (z[0])
+    printf("  (patches: %s)\n", z);
+}
 
-  if (s[0] == '-')
-    for (i = 1; i < strlen(s); i++) {
-      switch (s[i]) {
-	case 'n':
+static void print_help (void)
+{
+  print_version ();
+  printf("\n\
+Usage: %s [OPTIONS]... [FILE]\n", PACKAGE);
+  printf(_("\n\
+  -h, --help                 Print help and exit\n\
+  -v, --version              Print version and exit\n\
+  -n, --foreground           Don't go into the background (default=off)\n\
+  -c  --channel-stats        (with -n) Display channel stats every 10 seconds\n\
+  -t  --terminal             (with -n) Use terminal to simulate dcc-chat\n\
+  -m  --make-userfile        Userfile creation mode\n\
+  -p  --load-module=STRING   Modules to load before parsing any configuration\n\
+                             file\n\
+  FILE  optional config filename (default 'eggdrop.conf')\n"));
+  printf("\n");
+}
+
+static void do_args(int argc, char * const *argv)
+{
+  int c;
+  
+  optarg = 0;
+  optind = 1;
+  opterr = 1;
+  optopt = '?';
+	  
+  while (1) {
+    int option_index = 0;
+    static struct option long_options[] = {
+      { "help",       0, NULL, 'h' },
+      { "version",    0, NULL, 'v' },
+      { "load-module",    1, NULL, 'p' },
+      { "foreground",      0, NULL, 'n' },
+      { "channel-stats",      0, NULL, 'c' },
+      { "terminal",   0, NULL, 't' },
+      { "make-userfile",      0, NULL, 'm' },
+      { NULL, 0, NULL, 0 }
+    };
+	  
+    c = getopt_long (argc, argv, "hvp:nctm", long_options, &option_index);
+
+    if (c == -1) break;
+    
+    switch (c) {
+      case 'n':
 	backgrd = 0;
-	  break;
-        case 'c':
+	break;
+
+      case 'c':
 	con_chan = 1;
 	term_z = 0;
-	  break;
-	case 't':
+	break;
+
+      case 't':
 	con_chan = 0;
 	term_z = 1;
-	  break;
-	case 'm':
+        break;
+
+      case 'm':
 	make_userfile = 1;
-	  break;
-	case 'p':
-	  if (*(s+2))
-	    strlcpy(preload_module, s+2, sizeof preload_module);
-	  break;
-	case 'v':
-	  strlcpy(x, egg_version, sizeof x);
-	newsplit(&z);
-	newsplit(&z);
-	printf("%s\n", version);
-	if (z[0])
-	  printf("  (patches: %s)\n", z);
+        break;
+
+      case 'p':
+	strlcpy(preload_module, optarg, sizeof preload_module);
+	break;
+
+      case 'v':
+	print_version();
 	bg_send_quit(BG_ABORT);
 	exit(0);
- 	  break; /* this should never be reached */
-	case 'h':
-	printf("\n%s\n\n", version);
-	printf(_("Command line arguments:\n\
-  -h   help\n\
-  -v   print version and exit\n\
-  -n   don't go into the background\n\
-  -c   (with -n) display channel stats every 10 seconds\n\
-  -t   (with -n) use terminal to simulate dcc-chat\n\
-  -m   userfile creation mode\n\
-  -p   preloads the module with the given name (to choose the config parser)\n\
-  optional config filename (default 'eggdrop.conf')\n"));
-	printf("\n");
+        break; /* this should never be reached */
+
+      case 'h':
+	print_help();
 	bg_send_quit(BG_ABORT);
 	exit(0);
-	  break; /* this should never be reached */
-      }
-  } else
-    strlcpy(configfile, s, sizeof configfile);
+	break; /* this should never be reached */
+
+      case 0: /* Long option with no short option */
+      case '?':       /* Invalid option.  */
+	/* getopt_long() already printed an error message.  */
+	bg_send_quit(BG_ABORT);
+	exit(1);
+
+      default:        /* bug: option not considered.  */
+	fprintf (stderr, "%s: option unknown: %c\n", PACKAGE, c);
+	bg_send_quit(BG_ABORT);
+	exit(1);
+	break; /* this should never be reached */
+    }
+  }
+  if (optind < argc)
+    strlcpy(configfile, argv[optind], sizeof configfile);
 }
 
 void backup_userfile(void)
@@ -500,7 +553,7 @@ int main(int argc, char **argv)
   
 #include "patch.h"
   /* Version info! */
-  snprintf(ver, sizeof ver, "eggdrop v%s", egg_version);
+  snprintf(ver, sizeof ver, "%s v%s", PACKAGE, egg_version);
   snprintf(version, sizeof version, "Eggdrop v%s (C) 1997 Robey Pointer (C) 2002 Eggheads",
 	       egg_version);
   /* Now add on the patchlevel (for Tcl) */
@@ -552,9 +605,9 @@ int main(int argc, char **argv)
   memcpy(&nowtm, localtime(&now), sizeof(struct tm));
   lastmin = nowtm.tm_min;
   srandom(now % (getpid() + getppid()));
-  if (argc > 1)
-    for (i = 1; i < argc; i++)
-      do_arg(argv[i]);
+
+  do_args(argc, argv);
+
   printf("\n%s\n", version);
   printf("   *** WARNING: Do NOT run this DEVELOPMENT version for any purpose other than testing.\n\n");
 

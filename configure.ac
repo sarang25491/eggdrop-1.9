@@ -94,6 +94,9 @@ AC_CHECK_FUNCS(vsnprintf snprintf asprintf vasprintf,,egg_replace_snprintf="yes"
 # Check if vsnprintf is C99 compliant
 EGG_FUNC_C99_VSNPRINTF
 
+# Check if getopt_long is avalaibale
+EGG_FUNC_GETOPT_LONG
+
 # Check if we need to compile all or part of snprintf.c
 EGG_REPLACE_SNPRINTF
 

@@ -2,7 +2,7 @@
  * compat.h
  *   prototypes for compability functions
  *
- * $Id: compat.h,v 1.5 2002/04/01 23:39:35 ite Exp $
+ * $Id: compat.h,v 1.6 2002/05/03 01:21:16 ite Exp $
  */
 /*
  * Copyright (C) 2000, 2001, 2002 Eggheads Development Team
@@ -40,5 +40,11 @@
 #include "strlcpy.h"
 #include "strlcat.h"
 #include "strerror.h"
+
+#ifndef HAVE_GETOPT_LONG
+  #include "getopt.h"
+#else
+  #include <getopt.h>
+#endif
 
 #endif				/* !_EGG_COMPAT_H */

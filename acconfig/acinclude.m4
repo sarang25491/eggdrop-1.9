@@ -1,7 +1,7 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.14 2002/04/14 23:22:53 ite Exp $
+dnl $Id: acinclude.m4,v 1.15 2002/05/03 01:21:16 ite Exp $
 dnl
 
 
@@ -51,14 +51,12 @@ dnl
 AC_DEFUN(EGG_CHECK_CC, [dnl
 if test "${cross_compiling-x}" = "x"
 then
-  cat << 'EOF' >&2
-configure: error:
+  AC_MSG_ERROR([
 
   This system does not appear to have a working C compiler.
   A working C compiler is required to compile Eggdrop.
 
-EOF
-  exit 1
+])
 fi
 ])
 
@@ -117,14 +115,12 @@ AC_DEFUN(EGG_PROG_AWK, [dnl
 AC_PROG_AWK
 if test "${AWK-x}" = "x"
 then
-  cat << 'EOF' >&2
-configure: error:
+  AC_MSG_ERROR([
 
   This system seems to lack a working 'awk' command.
   A working 'awk' command is required to compile Eggdrop.
 
-EOF
-  exit 1
+])
 fi
 ])
 
@@ -182,11 +178,11 @@ case $host_os in
       1.*)
 	AC_PROG_CC_WIN32
 	CC="$CC $WIN32FLAGS"
-        AC_MSG_CHECKING(for /usr/lib/binmode.o)
-        if test -r /usr/lib/binmode.o
-        then
+	AC_MSG_CHECKING(for /usr/lib/binmode.a)
+	if test -r /usr/lib/binmode.a
+	then
           AC_MSG_RESULT(yes)
-          LIBS="$LIBS /usr/lib/binmode.o"
+          LIBS="$LIBS /usr/lib/binmode.a"
         else
           AC_MSG_RESULT(no)
           AC_MSG_WARN(Make sure the directory Eggdrop is installed into is mounted in binary mode.)
@@ -315,6 +311,13 @@ else
 fi
 ])
 
+dnl  EGG_FUNC_GETOPT_LONG
+dnl
+AC_DEFUN(EGG_FUNC_GETOPT_LONG, [dnl
+AC_CHECK_FUNCS(getopt_long , ,
+             [AC_LIBOBJ(getopt)
+              AC_LIBOBJ(getopt1)])
+])
 
 dnl  EGG_REPLACE_SNPRINTF
 dnl
@@ -891,14 +894,12 @@ if test "$egg_cv_var_tcl_threaded" = "yes"
 then
   if test "$enable_tcl_threads" = "no"
   then
-
-    cat << 'EOF' >&2
-configure: warning:
+    AC_MSG_WARN([
 
   You have disabled threads support on a system with a threaded Tcl library.
   Tcl features that rely on scheduled events may not function properly.
 
-EOF
+])
   else
     AC_DEFINE(HAVE_TCL_THREADS, 1,
               [Define for Tcl that has threads])
@@ -955,13 +956,12 @@ else
       TCL_LIBS="-L$TCLLIB -l$TCLLIBFNS $EGG_MATH_LIB"
     fi
   else
-    cat << EOF >&2
-configure: warning:
+  AC_MSG_WARN([
 
   Your Tcl version ($egg_cv_var_tcl_version) is older then 7.4.
   There are known problems, but we will attempt to work around them.
 
-EOF
+])
     TCL_REQS="libtcle.a"
     TCL_LIBS="-L`pwd` -ltcle $EGG_MATH_LIB"
   fi
@@ -1279,23 +1279,21 @@ AC_CHECK_HEADER(zlib.h)
 # are missing.
 if test "${ZLIB-x}" = "x"
 then
-  cat << 'EOF' >&2
-configure: warning:
+  AC_MSG_WARN([
 
   Your system does not provide a working zlib compression library. The
   compress module will therefore be disabled.
 
-EOF
+])
 else
   if test ! "${ac_cv_header_zlib_h}" = "yes"
   then
-    cat << 'EOF' >&2
-configure: warning:
+  AC_MSG_WARN([
 
   Your system does not provide the necessary zlib header files. The
   compress module will therefore be disabled.
 
-EOF
+])
   else
     egg_compress=yes
     AC_FUNC_MMAP
@@ -1355,4 +1353,4 @@ fi
 
 AM_CONDITIONAL(EGG_TCLSCRIPT, test "$egg_tclscript" = "yes")
 ])
-		
+

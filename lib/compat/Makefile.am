@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.4 2002/04/01 23:39:35 ite Exp $
+# $Id: Makefile.am,v 1.5 2002/05/03 01:21:16 ite Exp $
 
 ## libcompat is built as convenience library
 
@@ -12,6 +12,7 @@ noinst_LTLIBRARIES	= libcompat.la
 libcompat_la_LIBADD	= @LTLIBOBJS@ $(SNPRINTF_LIBS)
 
 libcompat_la_SOURCES	= compat.h \
+			getopt.h \
 			inet_aton.h \
 			inet_ntop.h \
 			inet_pton.h \
