@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partyline.c,v 1.13 2004/06/15 11:54:33 wingman Exp $";
+static const char rcsid[] = "$Id: partyline.c,v 1.14 2004/06/15 12:23:19 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -104,11 +104,17 @@ int partyline_on_input(partychan_t *chan, partymember_t *p, const char *text, in
  * is the argument. */
 int partyline_on_command(partymember_t *p, const char *cmd, const char *text)
 {
-	int r;
+	int r, hits;
 
 	if (!p) return(-1);
 
-	r = bind_check(BT_cmd, &p->user->settings[0].flags, cmd, p, p->nick, p->user, cmd, text);
+	r = bind_check_hits(BT_cmd, &p->user->settings[0].flags, cmd, &hits, p, p->nick, p->user, cmd, text);
+
+	/* if we have no hits then there's no such command */
+	if (hits == 0)
+		partymember_printf (p, _("Unknown command '%s', perhaps you need '.help'?"),
+			cmd);
+
 	return(r);
 }
 

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: binds.h,v 1.5 2003/12/17 07:39:14 wcc Exp $
+ * $Id: binds.h,v 1.6 2004/06/15 12:23:19 wingman Exp $
  */
 
 #ifndef _EGG_BINDS_H_
@@ -80,6 +80,8 @@ typedef struct bind_table_b {
 
 void bind_killall();
 int bind_check(bind_table_t *table, flags_t *user_flags, const char *match, ...);
+int bind_check_hits(bind_table_t *table, flags_t *user_flags, const char *match, int *hits, ...);
+
 bind_table_t *bind_table_add(const char *name, int nargs, const char *syntax, int match_type, int flags);
 void bind_table_del(bind_table_t *table);
 bind_table_t *bind_table_lookup(const char *name);
