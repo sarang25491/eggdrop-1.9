@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: flags.c,v 1.34 2003/01/02 21:33:16 wcc Exp $";
+static const char rcsid[] = "$Id: flags.c,v 1.35 2003/01/29 21:39:35 wcc Exp $";
 #endif
 
 #include <ctype.h>
@@ -36,7 +36,7 @@ static const char rcsid[] = "$Id: flags.c,v 1.34 2003/01/02 21:33:16 wcc Exp $";
 #include "irccmp.h"		/* irccmp				*/
 #include "flags.h"		/* prototypes				*/
 
-extern int		 debug_output, noshare, allow_dk_cmds;
+extern int		 raw_log, noshare, allow_dk_cmds;
 
 typedef struct {
 	int flag;
@@ -71,7 +71,7 @@ static logmode_mapping_t logmode_mappings[] = {
 	{0}
 };
 
-#define NEEDS_DEBUG_OUTPUT (LOG_RAW|LOG_SRVOUT|LOG_BOTNET|LOG_BOTSHARE)
+#define NEEDS_RAW_LOG (LOG_RAW|LOG_SRVOUT|LOG_BOTNET|LOG_BOTSHARE)
 
 int logmodes(char *s)
 {
@@ -97,7 +97,7 @@ char *masktype(int x)
 
 	for (mapping = logmode_mappings; mapping->type; mapping++) {
 		if (x & mapping->flag) {
-			if ((mapping->flag & NEEDS_DEBUG_OUTPUT) && !debug_output) continue;
+			if ((mapping->flag & NEEDS_RAW_LOG) && !raw_log) continue;
 			*p++ = mapping->c;
 		}
 	}
@@ -115,7 +115,7 @@ char *maskname(int x)
 	*s = 0;
 	for (mapping = logmode_mappings; mapping->type; mapping++) {
 		if (x & mapping->flag) {
-			if ((mapping->flag & NEEDS_DEBUG_OUTPUT) && !debug_output) continue;
+			if ((mapping->flag & NEEDS_RAW_LOG) && !raw_log) continue;
 			strcat(s, mapping->type);
 			strcat(s, ", ");
 		}

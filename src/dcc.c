@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dcc.c,v 1.95 2003/01/02 21:33:16 wcc Exp $";
+static const char rcsid[] = "$Id: dcc.c,v 1.96 2003/01/29 21:39:35 wcc Exp $";
 #endif
 
 #include "main.h"
@@ -55,7 +55,7 @@ extern struct userrec	*userlist;
 extern struct chanset_t	*chanset;
 extern time_t		 now;
 extern int		 egg_numver, connect_timeout, conmask, backgrd,
-			 make_userfile, default_flags, debug_output,
+			 make_userfile, default_flags, raw_log,
 			 ignore_time, par_telnet_flood;
 extern char		 botnetnick[], ver[], origbotname[], notify_new[];
 

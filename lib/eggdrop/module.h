@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: module.h,v 1.36 2003/01/29 07:42:49 wcc Exp $
+ * $Id: module.h,v 1.37 2003/01/29 21:39:35 wcc Exp $
  */
 
 #ifndef _EGG_MOD_MODULE_H
@@ -179,7 +179,7 @@
 /* 104 - 107 */
 #define reserved_port_min (*(int *)(egg->global[104]))
 #define reserved_port_max (*(int *)(egg->global[105]))
-#define debug_output (*(int *)(egg->global[106]))
+#define raw_log (*(int *)(egg->global[106]))
 #define noshare (*(int *)(egg->global[107]))
 /* 108 - 111 */
 /* 108: gban_total -- UNUSED (Eule) */

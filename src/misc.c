@@ -27,7 +27,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: misc.c,v 1.71 2003/01/02 21:33:16 wcc Exp $";
+static const char rcsid[] = "$Id: misc.c,v 1.72 2003/01/29 21:39:35 wcc Exp $";
 #endif
 
 #include "main.h"
@@ -56,7 +56,7 @@ extern Tcl_Interp	*interp;
 
 
 int	 conmask = LOG_MODES | LOG_CMDS | LOG_MISC; /* Console mask */
-int	 debug_output = 0;	/* Disply output to server to LOG_SERVEROUT */
+int	 raw_log = 0;	/* Disply output to server to LOG_SERVEROUT */
 
 struct help_list_t {
   struct help_list_t *next;

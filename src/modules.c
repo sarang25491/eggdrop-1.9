@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: modules.c,v 1.125 2003/01/29 07:42:50 wcc Exp $";
+static const char rcsid[] = "$Id: modules.c,v 1.126 2003/01/29 21:39:35 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -76,7 +76,7 @@ extern char		 tempdir[], botnetnick[], *botname, natip[],
 			 version[], quit_msg[];
 extern int	 noshare, dcc_total, egg_numver, userfile_perm,
 			 ignore_time, learn_users,
-			 debug_output, make_userfile, default_flags,
+			 raw_log, make_userfile, default_flags,
 			 max_dcc, share_greet, password_timeout,
 			 use_invites, use_exempts, force_expire, do_restart,
 			 protect_readonly, reserved_port_min, reserved_port_max,
@@ -299,7 +299,7 @@ Function global_table[] =
   /* 104 - 107 */
   (Function) & reserved_port_min,
   (Function) & reserved_port_max,
-  (Function) & debug_output,	 /* int					*/
+  (Function) & raw_log,	 	 /* int					*/
   (Function) & noshare,		 /* int					*/
   /* 108 - 111 */
   (Function) 0, /* gban_total -- UNUSED! (Eule)				*/

@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tcl.c,v 1.89 2003/01/29 07:42:50 wcc Exp $";
+static const char rcsid[] = "$Id: tcl.c,v 1.90 2003/01/29 21:39:35 wcc Exp $";
 #endif
 
 #include <stdlib.h>		/* getenv()				*/
@@ -60,7 +60,7 @@ extern char	botuser[], motdfile[], admin[], userfile[],
 		moddir[], tempdir[], owner[], network[], botnetnick[],
 		bannerfile[], egg_version[], natip[], configfile[],
 		textdir[], myip6[], pid_file[];
-extern int	die_on_sighup, die_on_sigterm, dcc_total, debug_output,
+extern int	die_on_sighup, die_on_sigterm, dcc_total, raw_log,
 		identtimeout, egg_numver,
 		userfile_perm, default_uflags, strict_host;
 extern struct dcc_t	*dcc;
@@ -300,7 +300,7 @@ static tcl_ints def_tcl_ints[] =
   {"die_on_sighup",		&die_on_sighup,		1},
   {"die_on_sigterm",		&die_on_sigterm,	1},
   {"remote_boots",		&remote_boots,		1},
-  {"debug_output",		&debug_output,		1},
+  {"raw_log",			&raw_log,		1},
   {"allow_dk_cmds",		&allow_dk_cmds,		0},
   {"use_exempts",		&use_exempts,		0},			/* Jason/drummer */
   {"use_invites",		&use_invites,		0},			/* Jason/drummer */

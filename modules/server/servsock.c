@@ -129,7 +129,7 @@ static int server_on_read(void *client_data, int idx, char *text, int len)
 
 	/* This would be a good place to put an SFILT bind, so that scripts
 		and other modules can modify text sent from the server. */
-	if (debug_output) {
+	if (raw_log) {
 		putlog(LOG_RAW, "*", "[@] %s", text);
 	}
 
