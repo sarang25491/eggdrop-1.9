@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.18 2003/12/18 03:54:46 wcc Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.19 2003/12/19 01:08:58 stdarg Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -227,9 +227,7 @@ static int party_die(partymember_t *p, const char *nick, user_t *u, const char *
 {
 	putlog(LOG_MISC, "*", _("Saving user file..."));
 	user_save(core_config.userfile);
-	putlog(LOG_MISC, "*", _("Saving config file..."));
-	core_config_save();
-	if (!text || !*text) putlog(LOG_MISC, "*", _("Bot shutting down: %s"), text);
+	if (text && *text) putlog(LOG_MISC, "*", _("Bot shutting down: %s"), text);
 	else putlog(LOG_MISC, "*", _("Bot shutting down."));
 	flushlogs();
 	unlink(pid_file);
@@ -318,10 +316,10 @@ static int party_chattr(partymember_t *p, const char *nick, user_t *u, const cha
 
 static int party_modules(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
-	char **modules;
+	const char **modules;
 	int nummods, ctr;
 
-	nummods = get_module_list(&modules);
+	nummods = module_list(&modules);
 	partymember_printf(p, _("Loaded modules:"));
 	for (ctr = 0; ctr < nummods; ctr++) partymember_printf(p, "   %s", modules[ctr]);
 	free(modules);

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: eggmod.h,v 1.5 2003/12/17 07:39:14 wcc Exp $
+ * $Id: eggmod.h,v 1.6 2003/12/19 01:08:58 stdarg Exp $
  */
 
 #ifndef _EGG_EGGMOD_H_
@@ -52,7 +52,7 @@ egg_module_t *module_lookup(const char *name);
 void *module_get_api(const char *name);
 int module_addref(const char *name);
 int module_decref(const char *name);
-int get_module_list(char ***);
+int module_list(const char ***names);
 
 /* Windows hack to export functions from dlls. */
 #if defined (__CYGWIN__) 

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggmod.c,v 1.9 2003/12/17 07:52:14 wcc Exp $";
+static const char rcsid[] = "$Id: eggmod.c,v 1.10 2003/12/19 01:08:58 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -171,15 +171,17 @@ int module_decref(const char *name)
 	return(0);
 }
 
-int get_module_list(char ***names) {
+int module_list(const char ***names)
+{
 	module_list_t *entry;
-	int i = 0, c = 0;
+	int i = 0;
 
 	for (entry = module_list_head; entry; entry = entry->next) i++;
 	*names = malloc((i + 1) * sizeof(char **));
+	i = 0;
 	for (entry = module_list_head; entry; entry = entry->next) {
-		(*names)[c] = (char *) entry->modinfo.name;
-		c++;
+		(*names)[i] = entry->modinfo.name;
+		i++;
 	}
 	(*names)[i] = NULL;
 	return(i);
