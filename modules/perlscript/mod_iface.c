@@ -11,6 +11,8 @@ static eggdrop_t *egg = NULL;
 int perlscript_init();
 int perlscript_destroy();
 int my_load_script(registry_entry_t * entry, char *fname);
+int my_link_var(void *ignore, script_linked_var_t *linked_var);
+int my_unlink_var(void *ignore, script_linked_var_t *linked_var);
 int my_create_cmd(void *ignore, script_command_t *info);
 char *real_perl_cmd(char *text);
 
@@ -66,8 +68,8 @@ static Function journal_table[] = {
         (Function)1, /* Version */
         (Function)5, /* Number of functions */
         my_load_script,
-	NULL, /* my_link_var */
-	NULL, /* my_unlink_var */
+	my_link_var,
+	my_unlink_var,
         my_create_cmd,
 	NULL /* my_delete_cmd */
 };
