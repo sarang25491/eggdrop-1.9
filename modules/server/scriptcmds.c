@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.21 2003/03/10 09:11:50 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.22 2003/03/24 02:11:39 stdarg Exp $";
 #endif
 */
 
@@ -213,6 +213,23 @@ static int script_channel_limit(char *chan_name)
 	return(-1);
 }
 
+/* Output queue commands. */
+
+static int script_queue_get(script_var_t *retval, char *qname, int num)
+{
+	/* Look up queue. */
+	/* Get entry. */
+	/* Return info for that entry. */
+}
+
+static int script_queue_set(char *qname, int num, char *msg)
+{
+}
+
+static int script_queue_add(char *qname, int num, char *msg)
+{
+}
+
 static script_linked_var_t server_script_vars[] = {
 	{"", "servidx", &current_server.idx, SCRIPT_INTEGER | SCRIPT_READONLY, NULL},
 	{"", "server", &server_list_index, SCRIPT_INTEGER | SCRIPT_READONLY, NULL},
@@ -251,6 +268,9 @@ static script_command_t server_script_cmds[] = {
 	{"", "channel_mode", script_channel_mode, NULL, 1, "ss", "channel ?nick?", SCRIPT_STRING|SCRIPT_FREE, SCRIPT_VAR_ARGS},
 	{"", "channel_key", script_channel_key, NULL, 1, "s", "channel", SCRIPT_STRING, 0},
 	{"", "channel_limit", script_channel_limit, NULL, 1, "s", "channel", SCRIPT_INTEGER, 0},
+
+	/* Output queue commands. */
+
         {0}
 };
 

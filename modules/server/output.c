@@ -203,3 +203,7 @@ void dequeue_messages()
 	buf[len++] = '\n';
 	sockbuf_write(current_server.idx, buf, len);
 }
+
+queue_entry_t *queue_lookup(int priority, int num)
+{
+}

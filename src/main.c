@@ -30,7 +30,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.141 2003/03/04 22:02:27 wcc Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.142 2003/03/24 02:11:39 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -47,13 +47,13 @@ static const char rcsid[] = "$Id: main.c,v 1.141 2003/03/04 22:02:27 wcc Exp $";
 #  include <time.h>
 # endif
 #endif
+#include <sys/stat.h>
 #include <errno.h>
 #include <signal.h>
 #include <netdb.h>
 #include <setjmp.h>
-#include "chanprog.h"			/* tell_verbose_status, 
-					   chanprog, rehash		*/
 #include <locale.h>
+#include <ctype.h>
 
 #ifdef STOP_UAC				/* osf/1 complains a lot */
 #include <sys/sysinfo.h>
@@ -445,6 +445,18 @@ int owner_check(const char *handle)
 	return(-1);
 }
 
+int file_check(const char *filename)
+{
+	struct stat sbuf = {0};
+	int r;
+
+	r = stat(filename, &sbuf);
+	if (r) return(-1);
+	errno = 0;
+	if (sbuf.st_mode & (S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH)) return(-1);
+	return(0);
+}
+
 int main(int argc, char **argv)
 {
   int xx, i;
@@ -536,6 +548,12 @@ int main(int argc, char **argv)
   /* Don't allow eggdrop to run as root */
   if (((int) getuid() == 0) || ((int) geteuid() == 0))
     fatal(_("ERROR: Eggdrop will not run as root!"), 0);
+
+	if (file_check(configfile)) {
+		if (errno) perror(configfile);
+		else fprintf(stderr, "ERROR\n\nCheck file permissions on your config file!\nMake sure other groups and users cannot read/write it.\n");
+		exit(-1);
+	}
 
   egg = eggdrop_new();
   config_init();
