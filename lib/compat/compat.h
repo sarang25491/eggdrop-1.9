@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: compat.h,v 1.10 2003/01/02 21:33:13 wcc Exp $
+ * $Id: compat.h,v 1.11 2003/03/06 07:51:38 tothwolf Exp $
  */
 
 #ifndef _EGG_COMPAT_H
@@ -29,7 +29,7 @@
 
 /* Include config.h */
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include <config.h>
 #endif
 
 /*
@@ -49,9 +49,9 @@
 #include "strerror.h"
 
 #ifndef HAVE_GETOPT_LONG
-  #include "getopt.h"
+# include "getopt.h"
 #else
-  #include <getopt.h>
+# include <getopt.h>
 #endif
 
 #endif				/* !_EGG_COMPAT_H */
