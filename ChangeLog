@@ -1,3 +1,11 @@
+2002-01-11 20:06  stdarg <stdarg@techmonkeys.org>
+
+	* src/tcluser.c:
+
+	
+	* Converted all functions in tcluser.c except tcl_getuser and
+	tcl_setuser.  
+
 2002-01-11 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
