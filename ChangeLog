@@ -1,3 +1,12 @@
+2001-08-23 03:19  stdarg
+
+	* src/chan.h:
+
+	
+	
+	Changed some stuff around to make some flags positive instead of
+	negative.  
+
 2001-08-23 00:39  Matthew Hallacy <poptix@techmonkeys.org>
 
 	* src/patch.h:
