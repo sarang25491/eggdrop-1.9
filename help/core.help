@@ -116,7 +116,6 @@ connect-timeout
 reserved-portrange
 require-p
 keep-all-logs
-open-telnets
 firewall
 console
 default-flags

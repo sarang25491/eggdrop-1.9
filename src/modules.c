@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.87 2001/12/09 21:38:12 guppy Exp $
+ * $Id: modules.c,v 1.88 2001/12/10 02:38:57 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -47,7 +47,7 @@ extern char		 tempdir[], botnetnick[], botname[], natip[],
 			 userfile[], ver[], notify_new[], helpdir[],
 			 version[], quit_msg[];
 extern int	 noshare, dcc_total, egg_numver, userfile_perm,
-			 ignore_time,
+			 ignore_time, learn_users,
 			 debug_output, gban_total, make_userfile,
 			 gexempt_total, ginvite_total, default_flags,
 			 require_p, max_dcc, share_greet, password_timeout,
@@ -284,7 +284,7 @@ Function global_table[] =
   /* 112 - 115 */
   (Function) tempdir,		 /* char *				*/
   (Function) natip,		 /* char *				*/
-  (Function) 0,			 /* hostname -- UNUSED! (drummer)	*/
+  (Function) & learn_users,	 /* int *				*/
   (Function) origbotname,	 /* char *				*/
   /* 116 - 119 */
   (Function) botuser,		 /* char *				*/

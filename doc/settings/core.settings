@@ -271,12 +271,6 @@ set paranoid-telnet-flood 1
     Valid settings are 0 for OFF and 1 ON.
 
 
-set open-telnets 0
-    If you want people allow to telnet in and type 'NEW' to become a new user,
-    set this to 1. This is similar to 'hello'
-    Valid settings are 0 for OFF and 1 ON.
-
-
 set protect-telnet 0
     This setting will drop telnet connections not matching a known host. It
     greatly improves protection from IRCOPs, but makes it impossible for NOIRC

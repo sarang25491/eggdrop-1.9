@@ -63,13 +63,6 @@ see also: set firewall
    at midnight, the current logfile will be renamed to "(logfile).
    (date)" and a new logfile started.  eventually your directory
    will be full of files like "LameBot.log.14Jul94".
-%{help=set open-telnets}%{+n}
-###  %bset open-telnets%b <0/1>
-   specifies whether to accept new users via a telnet connection.
-   if set to 0, the bot will only accept telnet connections from
-   people who already have user records.  if set to 1, someone can
-   enter "NEW" after telnetting to the bot, and create a new user
-   record.
 %{help=set uptime}%{+n}
 ###  %bset uptime%b
    this read-only variable returns the time the bot started running
@@ -83,8 +76,7 @@ see also: set firewall
 ###  %bset default-flags%b <flags>
    specifies the flags to give to a user when they first
    introduce themselves to the bot with %b/MSG HELLO%b or via telnet.
-   obviously this has no effect if you have %b'learn-users'%b and
-   %b'open-telnets'%b turned off.
+   obviously this has no effect if you have %b'learn-users'%b turned off.
    for a list of the flags, see %b'whois'%b.
 %{help=set numversion}%{+n}
 ###  %bset numversion%b

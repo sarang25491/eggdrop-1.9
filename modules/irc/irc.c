@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.3 2001/12/08 20:03:20 ite Exp $
+ * $Id: irc.c,v 1.4 2001/12/10 02:38:57 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -56,7 +56,6 @@ static int bounce_bans = 1;
 static int bounce_exempts = 0;
 static int bounce_invites = 0;
 static int bounce_modes = 0;
-static int learn_users = 0;
 static int wait_info = 15;
 static int invite_key = 1;
 static int no_chanrec_info = 0;
@@ -762,7 +761,6 @@ static void check_tcl_need(char *chname, char *type)
 
 static tcl_ints myints[] =
 {
-  {"learn-users",		&learn_users,		0},	/* arthur2 */
   {"wait-split",		&wait_split,		0},
   {"wait-info",			&wait_info,		0},
   {"bounce-bans",		&bounce_bans,		0},
@@ -782,13 +780,13 @@ static tcl_ints myints[] =
   {"max-invites",		&max_invites,		0},
   {"max-modes",			&max_modes,		0},
   {"net-type",			&net_type,		0},
-  {"strict-host",		&strict_host,		0},	/* arthur2 */
-  {"ctcp-mode",			&ctcp_mode,		0},	/* arthur2 */
-  {"keep-nick",			&keepnick,		0},	/* guppy */
+  {"strict-host",		&strict_host,		0},
+  {"ctcp-mode",			&ctcp_mode,		0},
+  {"keep-nick",			&keepnick,		0},
   {"prevent-mixing",		&prevent_mixing,	0},
   {"rfc-compliant",		&rfc_compliant,		0},
   {"include-lk",		&include_lk,		0},
-  {NULL,			NULL,			0}	/* arthur2 */
+  {NULL,			NULL,			0}
 };
 
 /* Flush the modes for EVERY channel.

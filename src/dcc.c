@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.64 2001/12/10 01:35:14 ite Exp $
+ * $Id: dcc.c,v 1.65 2001/12/10 02:38:57 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -52,8 +52,7 @@ char	tempdir[121] = "";	/* Temporary directory
 				   (default: current directory)		   */
 int	require_p = 0;		/* Require 'p' access to get on the
 				   party line?				   */
-int	allow_new_telnets = 0;	/* Allow people to introduce themselves
-				   via telnet				   */
+int	learn_users = 0;	/* Allow people to introduce themselves    */
 int	stealth_telnets = 0;	/* Be paranoid? <cybah>			   */
 char	network[41] = "unknown-net"; /* Name of the IRC network you're on  */
 int	password_timeout = 180;	/* Time to wait for a password from a user */
@@ -1296,8 +1295,7 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
     return;
   }
   dcc[idx].status &= ~(STAT_BOTONLY | STAT_USRONLY);
-  if ((!strcasecmp(buf, "NEW")) &&
-      ((allow_new_telnets) || (make_userfile))) {
+  if (!strcasecmp(buf, "NEW") && (learn_users || make_userfile)) {
     dcc[idx].type = &DCC_TELNET_NEW;
     dcc[idx].timeval = now;
     dprintf(idx, "\n");
@@ -2004,6 +2002,6 @@ void dcc_telnet_got_ident(int i, char *host)
     dprintf(i, "\n\n");
     sub_lang(i, _("%B  (%E)\n\nPlease enter your nickname.\n"));
   }
-  if (allow_new_telnets)
+  if (learn_users)
     dprintf(i, "(If you are new, enter 'NEW' here.)\n");
 }
