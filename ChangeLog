@@ -1,3 +1,25 @@
+2001-12-29 20:59  Jeff Fisher <guppy@techmonkeys.org>
+
+	* doc/UPDATES1.6, modules/irc/tclirc.c, src/botcmd.c, src/patch.h:
+
+	added BarkerJr's whomsg patch from 1.6 including a small fix to my
+	last commit on tclirc.c 
+
+2001-12-29 20:55  Jeff Fisher <guppy@techmonkeys.org>
+
+	* doc/UPDATES1.6, doc/tcl-commands.doc, modules/irc/tclirc.c,
+	src/patch.h:
+
+	added my optionalchannelarg patch from 1.6 (with the fixes BarkerJr
+	pointed out) 
+
+2001-12-29 20:36  Jeff Fisher <guppy@techmonkeys.org>
+
+	* doc/UPDATES1.6, doc/tcl-commands.doc, modules/irc/tclirc.c,
+	src/patch.h:
+
+	added my onchanfix patch from 1.6 
+
 2001-12-29 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
