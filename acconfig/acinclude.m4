@@ -1,7 +1,7 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.18 2002/05/09 21:23:30 ite Exp $
+dnl $Id: acinclude.m4,v 1.19 2002/05/12 15:35:44 ite Exp $
 dnl
 
 
@@ -859,35 +859,9 @@ fi
 ])
 
 
-dnl  EGG_PREFORKING()
-dnl
-AC_DEFUN(EGG_PREFORKING, [dnl
-AC_ARG_ENABLE(preforking,
-              AC_HELP_STRING([--disable-preforking],
-                             [prevent preforking (ignore this option unless you know what you are doing)]),
-              enable_preforking="$enableval",
-              enable_preforking=yes)
-
-  if test "$enable_preforking" = "no"
-  then
-    AC_MSG_WARN([
-
-  You have disabled process preforking. Libraries and modules creating threads
-  may not function properly.
-
-])
-  else
-    AC_DEFINE(ENABLE_PREFORKING, 1,
-              [Define if preforking is wanted])
-  fi
-
-])
-
-
 dnl  EGG_TCL_CHECK_THREADS()
 dnl
 AC_DEFUN(EGG_TCL_CHECK_THREADS, [dnl
-AC_REQUIRE([EGG_PREFORKING])
 
 if test "$egg_tcl_changed" = "yes"
 then
@@ -899,16 +873,6 @@ AC_CHECK_LIB($TCL_TEST_LIB, TclpFinalizeThreadData, egg_cv_var_tcl_threaded=yes,
 
 if test "$egg_cv_var_tcl_threaded" = "yes"
 then
-  if test "$enable_preforking" = "no"
-  then
-    AC_MSG_WARN([
-
-  You have disabled process preforking on a system with a threaded Tcl library.
-  Tcl features that rely on scheduled events may not function properly.
-
-])
-  fi
-
   # Add pthread library to $LIBS if we need it
   if test ! "${ac_cv_lib_pthread-x}" = "x"
   then
@@ -1366,26 +1330,27 @@ egg_javascript=no
 
 AC_ARG_WITH(jslib, 
             AC_HELP_STRING([--with-jslib=PATH],
-                           [full path to javascript library]),
+                           [path to javascript library directory]),
             jslibname="$withval")
 AC_ARG_WITH(jsinc,
             AC_HELP_STRING([--with-jsinc=PATH],
-                           [full path to javascript headers]),
+                           [path to javascript headers directory]),
             jsincname="$withval")
 
 CPPFLAGS_save="$CPPFLAGS"
 LDFLAGS_save="$LDFLAGS"
 
+CPPFLAGS="$CPPFLAGS -DXP_UNIX"
 if test ! x"$jsincname" = "x"
 then
-  CPPFLAGS="$CPPFLAGS -I$jsincname -DXP_UNIX"
+  CPPFLAGS="$CPPFLAGS -I$jsincname"
 fi
 if test ! x"$jslibname" = "x"
 then
   LDFLAGS="$LDFLAGS -L$jslibname"
 fi
 
-AC_CHECK_LIB(js, JS_Now, JSLIBS="-ljs")
+AC_CHECK_LIB(js, JS_NewObject, JSLIBS="-ljs")
 AC_CHECK_HEADER(jsapi.h)
 
 # Disable the module if either the header file or the library

@@ -24,7 +24,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: bg.c,v 1.10 2002/05/05 16:40:37 tothwolf Exp $";
+static const char rcsid[] = "$Id: bg.c,v 1.11 2002/05/12 15:35:44 ite Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -45,8 +45,6 @@ static const char rcsid[] = "$Id: bg.c,v 1.10 2002/05/05 16:40:37 tothwolf Exp $
 
 
 extern char	pid_file[];
-
-#ifdef ENABLE_PREFORKING
 
 /* When threads are started during eggdrop's init phase, we can't simply
  * fork() later on, because that only copies the VM space over and
@@ -117,8 +115,6 @@ typedef struct {
 
 static bg_t	bg = { 0 };
 
-#endif /* ENABLE_PREFORKING */
-
 
 /* Do everything we normally do after we have split off a new
  * process to the background. This includes writing a PID file
@@ -153,7 +149,6 @@ static void bg_do_detach(pid_t p)
 
 void bg_prepare_split(void)
 {
-#ifdef ENABLE_PREFORKING
   /* Create a pipe between parent and split process, fork to create a
      parent and a split process and wait for messages on the pipe. */
   pid_t		p;
@@ -204,10 +199,8 @@ void bg_prepare_split(void)
 error:
   /* We only reach this point in case of an error. */
   fatal("COMMUNICATION THROUGH PIPE BROKE.", 0);
-#endif
 }
 
-#ifdef ENABLE_PREFORKING
 /* Transfer contents of pid_file to parent process. This is necessary,
  * as the pid_file[] buffer has changed in this fork by now, but the
  * parent needs an up-to-date version.
@@ -229,11 +222,9 @@ static void bg_send_pidfile(void)
 error:
   fatal("COMMUNICATION THROUGH PIPE BROKE.", 0);
 }
-#endif
 
 void bg_send_quit(bg_quit_t q)
 {
-#ifdef ENABLE_PREFORKING
   if (bg.state == BG_PARENT) {
     kill(bg.child_pid, SIGKILL);
   } else if (bg.state == BG_SPLIT) {
@@ -248,21 +239,10 @@ void bg_send_quit(bg_quit_t q)
     if (write(bg.comm_send, &message, sizeof(message)) < 0)
       fatal("COMMUNICATION THROUGH PIPE BROKE.", 0);
   }
-#endif
 }
 
 void bg_do_split(void)
 {
-#ifdef ENABLE_PREFORKING
   /* Tell our parent process to go away now, as we don't need it anymore. */
   bg_send_quit(BG_QUIT);
-#else
-  /* Split off a new process. */
-  int	xx = fork();
-
-  if (xx == -1)
-    fatal("CANNOT FORK PROCESS.", 0);
-  if (xx != 0)
-    bg_do_detach(xx);
-#endif
 }

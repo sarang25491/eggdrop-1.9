@@ -30,7 +30,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.117 2002/05/05 16:40:38 tothwolf Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.118 2002/05/12 15:35:44 ite Exp $";
 #endif
 
 #include "main.h"
@@ -481,7 +481,6 @@ void restart_chons();
 
 int init_userent(), init_net(),
  init_tcl(int, char **);
-int user_init();
 void botnet_init();
 void dns_init();
 void binds_init();

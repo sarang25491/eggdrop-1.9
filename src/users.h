@@ -22,7 +22,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: users.h,v 1.12 2002/05/05 16:40:39 tothwolf Exp $
+ * $Id: users.h,v 1.13 2002/05/12 15:35:44 ite Exp $
  */
 
 #ifndef _EGG_USERS_H
@@ -112,6 +112,7 @@ struct filesys_stats {
   int dnload_ks;
 };
 
+int user_init();
 int add_entry_type(struct user_entry_type *);
 int del_entry_type(struct user_entry_type *);
 struct user_entry_type *find_entry_type(char *);
