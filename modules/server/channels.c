@@ -20,6 +20,7 @@ static bind_list_t channel_raw_binds[];
 /* Prototypes. */
 static int uhost_cache_delete(const void *key, void *data, void *param);
 static void clear_banlist(channel_t *chan);
+static void del_ban(channel_t *chan, const char *mask);
 
 void server_channel_init()
 {
@@ -161,17 +162,17 @@ void uhost_cache_decref(const char *nick)
 	}
 }
 
-void channel_add_member(const char *chan_name, const char *nick, const char *uhost)
+channel_member_t *channel_add_member(const char *chan_name, const char *nick, const char *uhost)
 {
 	channel_t *chan;
 	channel_member_t *m;
 
 	channel_lookup(chan_name, 0, &chan, NULL);
-	if (!chan) return;
+	if (!chan) return(NULL);
 
 	/* See if this member is already added. */
 	for (m = chan->member_head; m; m = m->next) {
-		if (!(current_server.strcmp)(m->nick, nick)) return;
+		if (!(current_server.strcmp)(m->nick, nick)) return(m);
 	}
 
 	/* Nope, so add him and put him in the cache. */
@@ -184,6 +185,7 @@ void channel_add_member(const char *chan_name, const char *nick, const char *uho
 
 	m->next = chan->member_head;
 	chan->member_head = m;
+	return(m);
 }
 
 void channel_on_join(const char *chan_name, const char *nick, const char *uhost)
@@ -332,12 +334,27 @@ void channel_list(char ***chans, int *nchans)
 /* :server 352 <ournick> <chan> <user> <host> <server> <nick> <H|G>[*][@|+] :<hops> <name> */
 static int got352(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
-	char *chan_name, *nick, *uhost;
+	char *chan_name, *nick, *uhost, *flags, *ptr, changestr[3];
+	int i;
+	channel_member_t *m;
 
 	chan_name = args[1];
 	nick = args[5];
+	flags = args[6];
 	uhost = egg_mprintf("%s@%s", args[2], args[3]);
-	channel_add_member(chan_name, nick, uhost);
+	m = channel_add_member(chan_name, nick, uhost);
+	changestr[0] = '+';
+	changestr[2] = 0;
+	flags++;
+	while (*flags) {
+		ptr = strchr(current_server.whoprefix, *flags);
+		if (ptr) {
+			i = current_server.whoprefix - ptr;
+			changestr[1] = current_server.modeprefix[i];
+			flag_merge_str(&m->mode, changestr);
+		}
+		flags++;
+	}
 	free(uhost);
 	return(0);
 }
@@ -350,6 +367,25 @@ static int got315(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 
 	channel_lookup(chan_name, 0, &chan, NULL);
 	if (chan) chan->status &= ~CHANNEL_WHOLIST;
+	return(0);
+}
+
+/* :origin TOPIC <chan> :topic */
+static int gottopic(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
+{
+	char *chan_name = args[0];
+	char *topic = args[1];
+	channel_t *chan = NULL;
+
+	channel_lookup(chan_name, 0, &chan, NULL);
+	if (!chan) return(0);
+
+	str_redup(&chan->topic, topic);
+	if (chan->topic_nick) free(chan->topic_nick);
+	if (from_uhost) chan->topic_nick = egg_mprintf("%s!%s", from_nick, from_uhost);
+	else chan->topic_nick = strdup(from_nick);
+	chan->topic_time = egg_timeval_now.sec;
+
 	return(0);
 }
 
@@ -410,6 +446,20 @@ static void add_ban(channel_t *chan, const char *mask, const char *set_by, int t
 	m->time = time;
 	m->next = chan->ban_head;
 	chan->ban_head = m;
+}
+
+static void del_ban(channel_t *chan, const char *mask)
+{
+	channel_mask_t *m, *prev;
+
+	for (m = chan->ban_head; m; m = m->next) {
+		if (!(current_server.strcmp)(m->mask, mask)) break;
+		prev = m;
+	}
+	if (!m) return;
+	free(m->mask);
+	if (m->set_by) free(m->set_by);
+	free(m);
 }
 
 static void clear_banlist(channel_t *chan)
@@ -522,19 +572,50 @@ static int gotnick(char *from_nick, char *from_uhost, user_t *u, char *cmd, int 
  * Mode stuff.
  */
 
+/* nick is NULL to get channel mode */
+int channel_mode(const char *chan_name, const char *nick, char *buf)
+{
+	channel_t *chan;
+	channel_member_t *m;
+
+	buf[0] = 0;
+	channel_lookup(chan_name, 0, &chan, NULL);
+	if (!chan) return(-1);
+	if (!nick) {
+		flag_to_str(&chan->mode, buf);
+		return(0);
+	}
+	for (m = chan->member_head; m; m = m->next) {
+		if (!(current_server.strcmp)(nick, m->nick)) {
+			flag_to_str(&m->mode, buf);
+			return(0);
+		}
+	}
+	return(-2);
+}
+
 /* Got a mode change. */
 static int gotmode(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
 	char *dest = args[0];
 	char *change = args[1];
 	char *arg;
+	char *set_by, buf[128];
 	char changestr[3];
-	int hasarg, curarg;
+	int hasarg, curarg, modify_member, modify_channel;
 	channel_t *chan;
+	channel_member_t *m;
+
+	changestr[0] = '+';
+	changestr[2] = 0;
 
 	/* Is it a user mode? */
 	if (!strchr(current_server.chantypes, *dest)) {
-		/* Not interested right now. */
+		while (*change) {
+			changestr[1] = *change;
+			bind_check(BT_mode, changestr, from_nick, from_uhost, u, dest, changestr, NULL);
+			change++;
+		}
 		return(0);
 	}
 
@@ -544,8 +625,10 @@ static int gotmode(char *from_nick, char *from_uhost, user_t *u, char *cmd, int 
 
 	hasarg = 0;
 	curarg = 2;
-	changestr[0] = '+';
-	changestr[2] = 0;
+
+	if (!from_uhost) set_by = egg_msprintf(buf, sizeof(buf), NULL, "%s", from_nick, from_uhost);
+	else set_by = egg_msprintf(buf, sizeof(buf), NULL, "%s", from_nick, from_uhost);
+
 	while (*change) {
 		/* Direction? */
 		if (*change == '+' || *change == '-') {
@@ -555,25 +638,75 @@ static int gotmode(char *from_nick, char *from_uhost, user_t *u, char *cmd, int 
 		}
 
 		/* Figure out if it takes an argument. */
-		if (strchr(current_server.modeprefix, *change) || strchr(current_server.type1modes, *change) || strchr(current_server.type2modes, *change)) {
+		modify_member = modify_channel = 0;
+		if (strchr(current_server.modeprefix, *change)) {
+			hasarg = 1;
+			modify_member = 1;
+		}
+		else if (strchr(current_server.type1modes, *change) || strchr(current_server.type2modes, *change)) {
 			hasarg = 1;
 		}
-		else if (strchr(current_server.type3modes, *change)) {
-			if (changestr[0] == '+') hasarg = 1;
-			else hasarg = 0;
+		else if (changestr[0] == '+' && strchr(current_server.type3modes, *change)) {
+			hasarg = 1;
 		}
 		else {
+			modify_channel = 1;
 			hasarg = 0;
 		}
 
-		if (hasarg) arg = args[curarg++];
+		if (hasarg) {
+			if (curarg >= nargs) arg = "";
+			else arg = args[curarg++];
+		}
 		else arg = NULL;
 
 		changestr[1] = *change;
 
+		if (modify_member) {
+			for (m = chan->member_head; m; m = m->next) {
+				if (!(current_server.strcmp)(m->nick, arg)) {
+					flag_merge_str(&m->mode, changestr);
+					break;
+				}
+			}
+		}
+		else if (modify_channel) {
+			flag_merge_str(&chan->mode, changestr);
+		}
+		else if (changestr[0] == '+') {
+			switch (*change) {
+				case 'b':
+					add_ban(chan, arg, set_by, egg_timeval_now.sec);
+					break;
+				case 'k':
+					str_redup(&chan->key, arg);
+					break;
+				case 'l':
+					chan->limit = atoi(arg);
+					break;
+			}
+		}
+		else {
+			switch (*change) {
+				case 'b':
+					del_ban(chan, arg);
+					break;
+				case 'k':
+					if (chan->key) free(chan->key);
+					chan->key = NULL;
+					break;
+				case 'l':
+					chan->limit = 0;
+					break;
+				default:
+					flag_merge_str(&chan->mode, arg);
+			}
+		}
+
 		bind_check(BT_mode, changestr, from_nick, from_uhost, u, dest, changestr, arg);
 		change++;
 	}
+	if (set_by != buf) free(set_by);
 	return(0);
 }
 
@@ -583,6 +716,7 @@ static bind_list_t channel_raw_binds[] = {
 	{"315", got315}, /* end of WHO */
 
 	/* Topic info */
+	{"TOPIC", gottopic},
 	{"331", got331},
 	{"332", got332},
 	{"333", got333},

@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.19 2003/03/06 09:15:33 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.20 2003/03/08 07:12:57 stdarg Exp $";
 #endif
 */
 
@@ -186,6 +186,33 @@ static int script_channel_bans(script_var_t *retval, char *chan_name)
 	return(0);
 }
 
+static char *script_channel_mode(char *chan, char *nick)
+{
+	char *buf;
+
+	buf = malloc(64);
+	channel_mode(chan, nick, buf);
+	return(buf);
+}
+
+static char *script_channel_key(char *chan_name)
+{
+	channel_t *chan;
+
+	channel_lookup(chan_name, 0, &chan, NULL);
+	if (chan) return(chan->key);
+	return(NULL);
+}
+
+static int script_channel_limit(char *chan_name)
+{
+	channel_t *chan;
+
+	channel_lookup(chan_name, 0, &chan, NULL);
+	if (chan) return(chan->limit);
+	return(-1);
+}
+
 static script_linked_var_t server_script_vars[] = {
 	{"", "servidx", &current_server.idx, SCRIPT_INTEGER | SCRIPT_READONLY, NULL},
 	{"", "server", &server_list_index, SCRIPT_INTEGER | SCRIPT_READONLY, NULL},
@@ -221,6 +248,9 @@ static script_command_t server_script_cmds[] = {
 	{"", "channel_get_uhost", uhost_cache_lookup, NULL, 1, "s", "nick", SCRIPT_STRING, 0},
 	{"", "channel_topic", script_channel_topic, NULL, 1, "s", "channel", 0, SCRIPT_PASS_RETVAL},
 	{"", "channel_bans", script_channel_bans, NULL, 1, "s", "channel", 0, SCRIPT_PASS_RETVAL},
+	{"", "channel_mode", script_channel_mode, NULL, 1, "ss", "channel ?nick?", SCRIPT_STRING|SCRIPT_FREE, SCRIPT_VAR_ARGS},
+	{"", "channel_key", script_channel_key, NULL, 1, "s", "channel", SCRIPT_STRING, 0},
+	{"", "channel_limit", script_channel_limit, NULL, 1, "s", "channel", SCRIPT_INTEGER, 0},
         {0}
 };
 

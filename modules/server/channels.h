@@ -17,7 +17,7 @@ typedef struct channel_member {
 	char *nick;
 	char *uhost;
 	int join_time;
-	int mode;
+	flags_t mode;
 } channel_member_t;
 
 typedef struct channel_mask {
@@ -35,7 +35,7 @@ typedef struct channel {
 	char *topic, *topic_nick;	/* Topic and who set it. */
 	int topic_time;	/* When it was set. */
 
-	int mode;	/* Mode bits. */
+	flags_t mode;	/* Mode bits. */
 	int limit;	/* Channel limit. */
 	char *key;	/* Channel key. */
 
@@ -59,13 +59,14 @@ extern void server_channel_destroy();
 extern void channel_lookup(const char *chan_name, int create, channel_t **chanptr, channel_t **prevptr);
 extern char *uhost_cache_lookup(const char *nick);
 extern void uhost_cache_fillin(const char *nick, const char *uhost, int addref);
+extern int channel_mode(const char *chan_name, const char *nick, char *buf);
 
 /* Events that hook into input.c. */
 extern void channel_on_nick(const char *old_nick, const char *new_nick);
 extern void channel_on_quit(const char *nick, const char *uhost, user_t *u);
 extern void channel_on_leave(const char *chan_name, const char *nick, const char *uhost, user_t *u);
 extern void channel_on_join(const char *chan_name, const char *nick, const char *uhost);
-extern void channel_add_member(const char *chan_name, const char *nick, const char *uhost);
+extern channel_member_t *channel_add_member(const char *chan_name, const char *nick, const char *uhost);
 
 /* Functions for others (scripts/modules) to access channel data. */
 extern void channel_list(char ***chans, int *nchans);
