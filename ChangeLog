@@ -1,3 +1,14 @@
+2002-01-15 06:11  stdarg <stdarg@techmonkeys.org>
+
+	* testcode/: chat.c, client.c, sockbuf.c, sslmode.c:
+
+	
+	* Added client/server option to sslmode.c and got rid of
+	auto-negotation.  
+	* Experimented with preset dictionaries in zipmode.c... not very
+	successful.  
+	* Cleaned up some stuff.  
+
 2002-01-14 15:39  stdarg <stdarg@techmonkeys.org>
 
 	* src/modules.c:
