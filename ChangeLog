@@ -1,3 +1,24 @@
+2002-10-10 05:50  Will Buckner <wcc@techmonkeys.org>
+
+	* configure.ac, eggdrop.complete.conf, doc/UPDATES1.6,
+	lib/compat/snprintf.c, modules/channels/channels.c,
+	modules/channels/channels.h, modules/channels/cmdschan.c,
+	modules/channels/tclchan.c, modules/filesys/filesys.c,
+	modules/irc/chan.c, modules/irc/cmdsirc.c, modules/irc/irc.c,
+	modules/irc/mode.c, modules/irc/msgcmds.c, modules/share/share.c,
+	modules/transfer/transfer.c, scripts/alltools.tcl, src/chan.h,
+	src/chanprog.c, src/misc.c:
+
+	* Synch'd 1.6 with 1.7 as of September 1st.  
+	  * Did not synch +C or +r chanmode additions or halfop code, as our
+	    mode handling really needs to be redone in 1.7.  
+	  * Did not synch any of the handlen-friendly patches.  
+	  * Did not synch Tcl 8.4 fixes (not a proper fix yet).  
+	  * My banligic patch doesn't seem relevent currently.  
+	  * Did not synch sockfix, as network code has changed drasticly.  
+	
+	Synch will be continued tomorrow.  
+
 2002-10-10 04:41  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/Makefile.am, lib/eggdrop/binds.c,
