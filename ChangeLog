@@ -1,3 +1,10 @@
+2001-08-26 03:16  stdarg
+
+	* src/flags.c:
+
+	Added information about return values so people don't have to trace
+	through the code.  
+
 2001-08-25 20:42  stdarg
 
 	* doc/tcl-commands.doc:
