@@ -58,8 +58,42 @@ static int on_chanmsg(void *client_data, partychan_t *chan, partymember_t *src, 
 static int on_join(void *client_data, partychan_t *chan, partymember_t *src)
 {
 	irc_session_t *session = client_data;
+	partychan_member_t *m;
+	partymember_t *p;
+	int i, cur, len;
+	char buf[510];
 
 	egg_iprintf(session->idx, ":%s!%s@%s JOIN #%s\r\n", src->nick, src->ident, src->host, chan->name);
+
+	if (session->party != src) return(0);
+
+	sprintf(buf, ":eggdrop.bot 353 %s @ #%s :", session->nick, chan->name);
+	cur = strlen(buf);
+
+	for (i = 0; i < chan->nmembers; i++) {
+		m = chan->members+i;
+		if (chan->members[i].flags & PARTY_DELETED) continue;
+		p = m->p;
+		len = strlen(p->nick);
+		if (cur + len > 500) {
+			cur--;
+			buf[cur] = 0;
+			egg_iprintf(session->idx, "%s\r\n", buf);
+			sprintf(buf, ":eggdrop.bot 353 %s @ #%s :", session->nick, chan->name);
+			cur = strlen(buf);
+		}
+		strcpy(buf+cur, p->nick);
+		cur += len;
+		buf[cur++] = ' ';
+	}
+
+	if (cur > 0) {
+		cur--;
+		buf[cur] = 0;
+		putlog(LOG_MISC, "ircpartylog", "SENDING: %s", buf);
+		egg_iprintf(session->idx, "%s\r\n", buf);
+	}
+	egg_iprintf(session->idx, ":eggdrop.bot 366 %s #%s :End of /NAMES list.\r\n", session->nick, chan->name);
 	return(0);
 }
 

@@ -115,7 +115,7 @@ void convert_ansi_code_to_mirc(int *tokens, int ntokens, char **dest, int *cur, 
 		}
 	}
 	*newline = 0;
-	egg_append_str(dest, cur, max, newline);
+	egg_append_str(dest, cur, max, buf);
 }
 
 /* Get an int up to 2 digits from the string. Used for getting

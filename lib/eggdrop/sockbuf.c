@@ -241,7 +241,7 @@ static void sockbuf_got_eof(int idx, int err)
 	/* Get the associated error message. */
 	errmsg = strerror(err);
 
-	sockbuf_close(sbuf->sock);
+	sockbuf_close(idx);
 	sockbuf_on_eof(idx, SOCKBUF_LEVEL_INTERNAL, err, errmsg);
 }
 

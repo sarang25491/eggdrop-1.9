@@ -1,4 +1,5 @@
 #include <eggdrop/eggdrop.h>
+#include <ctype.h>
 #include "oldbotnet.h"
 
 static int on_pub(const char *name, int cid, partymember_t *src, const char *text, int len);
@@ -43,6 +44,12 @@ static char *sto64(const char *s)
 	return ito64(val);
 }
 
+static int validchan(const char *chan)
+{
+	while (*chan) if (!isdigit(*chan++)) return(0);
+	return(1);
+}
+
 static int on_privmsg(void *client_data, partymember_t *dest, partymember_t *src, const char *text, int len)
 {
 	return(0);
@@ -60,17 +67,17 @@ static int on_quit(void *client_data, partymember_t *src, const char *text, int 
 
 static int on_pub(const char *name, int cid, partymember_t *src, const char *text, int len)
 {
-	if (!oldbotnet.connected) return(0);
+	if (!oldbotnet.connected || !validchan(name)) return(0);
 
-	if (src) egg_iprintf(oldbotnet.idx, "c %s@%s %s %s\n", src->nick, oldbotnet.name, sto64(name), text);
-	else egg_iprintf(oldbotnet.idx, "c %s %s %s\n", oldbotnet.name, sto64(name), text);
+	if (!src) egg_iprintf(oldbotnet.idx, "c %s %s %s\n", oldbotnet.name, sto64(name), text);
+	else if (src->pid < BOT_PID_MULT) egg_iprintf(oldbotnet.idx, "c %s@%s %s %s\n", src->nick, oldbotnet.name, sto64(name), text);
 
 	return(0);
 }
 
 static int on_join(const char *name, int cid, partymember_t *src)
 {
-	if (!oldbotnet.connected) return(0);
+	if (!oldbotnet.connected || !validchan(name) || src->pid >= BOT_PID_MULT) return(0);
 
 	egg_iprintf(oldbotnet.idx, "j %s %s %s *%s %s@%s\n", oldbotnet.name, src->nick, sto64(name), ito64(src->pid), src->ident, src->host);
 
@@ -79,7 +86,7 @@ static int on_join(const char *name, int cid, partymember_t *src)
 
 static int on_part(const char *name, int cid, partymember_t *src, const char *text, int len)
 {
-	if (!oldbotnet.connected) return(0);
+	if (!oldbotnet.connected || !validchan(name) || src->pid >= BOT_PID_MULT) return(0);
 
 	egg_iprintf(oldbotnet.idx, "pt %s %s %s %s\n", oldbotnet.name, src->nick, ito64(src->pid), text ? text : "");
 

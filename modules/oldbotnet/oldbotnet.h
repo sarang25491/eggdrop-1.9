@@ -1,6 +1,8 @@
 #ifndef _OLDBOTNET_H_
 #define _OLDBOTNET_H_
 
+#define BOT_PID_MULT	1000
+
 typedef struct {
 	char *host;
 	int port;
@@ -10,9 +12,15 @@ typedef struct {
 } oldbotnet_session_t;
 
 typedef struct {
-	char *name;
-	int connected;
+	user_t *obot;
+	char *host;
+	int port;
 	int idx;
+	char *name;
+	char *password;
+	int connected;
+	int handlen;
+	int oversion;
 } oldbotnet_t;
 
 /* From events.c */

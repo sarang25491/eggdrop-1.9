@@ -191,20 +191,36 @@ int partymember_who(int **pids, int *len)
 	return(0);
 }
 
+partymember_t *partymember_lookup_nick(const char *nick)
+{
+	partymember_t *p;
+
+	for (p = party_head; p; p = p->next) {
+		if (p->flags & PARTY_DELETED) continue;
+		if (!strcmp(p->nick, nick)) break;
+	}
+	return(p);
+}
+
 int partymember_write_pid(int pid, const char *text, int len)
 {
 	partymember_t *p;
 
 	p = partymember_lookup_pid(pid);
-	return partymember_write(p, text, len);
+	return partymember_msg(p, NULL, text, len);
 }
 
 int partymember_write(partymember_t *p, const char *text, int len)
 {
+	return partymember_msg(p, NULL, text, len);
+}
+
+int partymember_msg(partymember_t *p, partymember_t *src, const char *text, int len)
+{
 	if (!p || p->flags & PARTY_DELETED) return(-1);
 
 	if (len < 0) len = strlen(text);
-	(p->handler->on_privmsg)(p->client_data, p, NULL, text, len);
+	if (p->handler->on_privmsg) (p->handler->on_privmsg)(p->client_data, p, src, text, len);
 	return(0);
 }
 

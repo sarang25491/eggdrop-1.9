@@ -73,8 +73,8 @@ void server_binds_init()
 	BT_join = bind_table_add("join", 4, "ssUs", MATCH_MASK | MATCH_FLAGS, BIND_STACKABLE);
 	BT_part = bind_table_add("part", 5, "ssUss", MATCH_MASK | MATCH_FLAGS, BIND_STACKABLE);
 	BT_quit = bind_table_add("quit", 4, "ssUs", MATCH_MASK | MATCH_FLAGS, BIND_STACKABLE);
-	BT_kick = bind_table_add("kick", 6, "ssUss", MATCH_MASK | MATCH_FLAGS, BIND_STACKABLE);
-	BT_leave = bind_table_add("leave", 5, "ssUs", MATCH_MASK | MATCH_FLAGS, BIND_STACKABLE);
+	BT_kick = bind_table_add("kick", 5, "ssUss", MATCH_MASK | MATCH_FLAGS, BIND_STACKABLE);
+	BT_leave = bind_table_add("leave", 4, "ssUs", MATCH_MASK | MATCH_FLAGS, BIND_STACKABLE);
 	BT_mode = bind_table_add("mode", 6, "ssUsss", MATCH_MASK | MATCH_FLAGS, BIND_STACKABLE);
 
 	bind_add_list("ctcp", ctcp_dcc_binds);

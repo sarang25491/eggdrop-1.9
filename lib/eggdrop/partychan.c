@@ -228,6 +228,7 @@ int partychan_part(partychan_t *chan, partymember_t *p, const char *text)
 	 * fired already. */
 	if (p->flags & PARTY_DELETED) return(0);
 
+	if (!text) text = "";
 	len = strlen(text);
 
 	/* Trigger the partyline channel part bind. */

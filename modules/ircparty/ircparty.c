@@ -20,7 +20,17 @@ extern partyline_event_t irc_party_handler;
 
 static int irc_idx = -1;
 static int irc_port = 0;
+static bind_table_t *BT_ircparty = NULL;
 
+/* Ircparty binds. */
+static int got_join(partymember_t *p, int idx, char *cmd, int nargs, char *args[]);
+static int got_part(partymember_t *p, int idx, char *cmd, int nargs, char *args[]);
+static int got_quit(partymember_t *p, int idx, char *cmd, int nargs, char *args[]);
+static int got_privmsg(partymember_t *p, int idx, char *cmd, int nargs, char *args[]);
+static int got_who(partymember_t *p, int idx, char *cmd, int nargs, char *args[]);
+static int got_mode(partymember_t *p, int idx, char *cmd, int nargs, char *args[]);
+
+/* Sockbuf handler. */
 static int irc_on_newclient(void *client_data, int idx, int newidx, const char *peer_ip, int peer_port);
 static int irc_on_read(void *client_data, int idx, char *data, int len);
 static int irc_on_eof(void *client_data, int idx, int err, const char *errmsg);
@@ -29,6 +39,16 @@ static int irc_on_delete(void *client_data, int idx);
 static int ident_result(void *client_data, const char *ip, int port, const char *reply);
 static int dns_result(void *client_data, const char *ip, char **hosts);
 static int process_results(irc_session_t *session);
+
+static bind_list_t ircparty_binds[] = {
+	{NULL, "PRIVMSG", got_privmsg},
+	{NULL, "JOIN", got_join},
+	{NULL, "PART", got_part},
+	{NULL, "QUIT", got_quit},
+	{NULL, "MODE", got_mode},
+	{NULL, "WHO", got_who},
+	{0}
+};
 
 static sockbuf_handler_t server_handler = {
 	"ircparty server",
@@ -45,6 +65,8 @@ static sockbuf_handler_t client_handler = {
 
 int irc_init()
 {
+	BT_ircparty = bind_table_add("ircparty", 5, "PisiS", MATCH_MASK, BIND_STACKABLE);
+	bind_add_list("ircparty", ircparty_binds);
 	/* Open our listening socket. */
 	irc_idx = egg_server(irc_config.vhost, irc_config.port, &irc_port);
 	sockbuf_set_handler(irc_idx, &server_handler, NULL);
@@ -145,6 +167,77 @@ static void irc_greet(irc_session_t *session)
 	egg_iprintf(session->idx, ":eggdrop.bot 376 %s :End of /MOTD command.\r\n", session->nick);
 }
 
+static int got_join(partymember_t *p, int idx, char *cmd, int nargs, char *args[])
+{
+	if (nargs != 1 || strlen(args[0]) < 2) egg_iprintf(idx, ":eggdrop.bot 461 %s JOIN :Not enough parameters.\r\n", p->nick);
+	else partychan_join_name(args[0]+1, p);
+	return(0);
+}
+
+static int got_part(partymember_t *p, int idx, char *cmd, int nargs, char *args[])
+{
+	if (nargs != 1 || strlen(args[0]) < 2) egg_iprintf(idx, ":eggdrop.bot 461 %s PART :Not enough parameters.\r\n", p->nick);
+	else partychan_part_name(args[0]+1, p, args[1]);
+	return(0);
+}
+
+static int got_mode(partymember_t *p, int idx, char *cmd, int nargs, char *args[])
+{
+	if (nargs != 1) return(0);
+	if (*args[0] == '#') egg_iprintf(idx, ":eggdrop.bot 324 %s %s +tn\r\n", p->nick, args[0]);
+	else egg_iprintf(idx, ":eggdrop.bot 221 %s +i\r\n", p->nick);
+	return(0);
+}
+
+static int got_privmsg(partymember_t *p, int idx, char *cmd, int nargs, char *args[])
+{
+	if (nargs != 2) {
+		egg_iprintf(idx, ":eggdrop.bot 461 %s PRIVMSG :Not enough parameters.\r\n", p->nick);
+		return(0);
+	}
+
+	if (*args[0] == '#') {
+		partychan_t *chan = partychan_lookup_name(args[0]+1);
+		if (!chan) egg_iprintf(idx, ":eggdrop.bot 401 %s %s :No such nick/channel\r\n", p->nick, args[0]);
+		else partyline_on_input(partychan_lookup_name(args[0]+1), p, args[1], -1);
+	}
+	else {
+		partymember_t *dest = partymember_lookup_nick(args[0]);
+		if (!dest) egg_iprintf(idx, ":eggdrop.bot 401 %s %s :No such nick/channel\r\n", p->nick, args[0]);
+		else partymember_msg(dest, p, args[1], -1);
+	}
+	return(0);
+}
+
+static int got_who(partymember_t *p, int idx, char *cmd, int nargs, char *args[])
+{
+	partychan_t *chan;
+	partychan_member_t *m;
+	partymember_t *q;
+	int i;
+
+	if (nargs != 1 || strlen(args[0]) < 2) return(0);
+	chan = partychan_lookup_name(args[0]+1);
+	if (!chan) return(0);
+
+	for (i = 0; i < chan->nmembers; i++) {
+		m = chan->members+i;
+		if (chan->members[i].flags & PARTY_DELETED) continue;
+		q = m->p;
+		egg_iprintf(idx, ":eggdrop.bot 352 %s %s %s %s eggdrop.bot %s H :0 real name\r\n", p->nick, args[0], q->ident, q->host, q->nick);
+		putlog(LOG_MISC, "ircpartylog", ":eggdrop.bot 352 %s %s %s %s eggdrop.bot %s H :0 real name\r\n", p->nick, args[0], q->ident, q->host, q->nick);
+	}
+
+	egg_iprintf(idx, ":eggdrop.bot 315 %s %s :End of /WHO list.\r\n", p->nick, args[0]);
+	return(0);
+}
+
+static int got_quit(partymember_t *p, int idx, char *cmd, int nargs, char *args[])
+{
+	sockbuf_delete(idx);
+	return(0);
+}
+
 static int irc_on_read(void *client_data, int idx, char *data, int len)
 {
 	irc_session_t *session = client_data;
@@ -159,41 +252,7 @@ static int irc_on_read(void *client_data, int idx, char *data, int len)
 
 	switch (session->state) {
 		case STATE_PARTYLINE:
-			if (!strcasecmp(msg.cmd, "join")) {
-				if (msg.nargs != 1 || strlen(msg.args[0]) < 2) egg_iprintf(session->idx, ":eggdrop.bot 461 %s JOIN :Not enough parameters.\r\n", session->nick);
-				else partychan_join_name(msg.args[0]+1, session->party);
-			}
-			else if (!strcasecmp(msg.cmd, "part")) {
-				if (msg.nargs != 1 || strlen(msg.args[0]) < 2) egg_iprintf(session->idx, ":eggdrop.bot 461 %s PART :Not enough parameters.\r\n", session->nick);
-				else partychan_part_name(msg.args[0]+1, session->party, msg.args[msg.nargs-1]);
-			}
-			else if (!strcasecmp(msg.cmd, "privmsg")) {
-				if (msg.nargs != 2) egg_iprintf(session->idx, ":eggdrop.bot 461 %s PRIVMSG :Not enough parameters.\r\n", session->nick);
-				else partyline_on_input(partychan_lookup_name(msg.args[0]+1), session->party, msg.args[msg.nargs-1], -1);
-			}
-			else if (!strcasecmp(msg.cmd, "mode")) {
-				if (msg.nargs == 1) egg_iprintf(session->idx, ":eggdrop.bot 324 MODE %s +\r\n", msg.args[0]);
-			}
-			else if (!strcasecmp(msg.cmd, "who")) {
-				if (msg.nargs == 1 && strlen(msg.args[0]) > 1) {
-					partychan_t *chan = partychan_lookup_name(msg.args[0]+1);
-					partychan_member_t *m;
-					partymember_t *p;
-
-					if (chan) {
-						for (i = 0; i < chan->nmembers; i++) {
-							m = chan->members+i;
-							if (chan->members[i].flags & PARTY_DELETED) continue;
-							p = m->p;
-							egg_iprintf(session->idx, ":eggdrop.bot 352 %s %s %s %s eggdrop.bot %s H :0 real name\r\n", session->nick, msg.args[0], p->ident, p->host, p->nick);
-						}
-						egg_iprintf(session->idx, ":eggdrop.bot 315 %s %s :End of /WHO list.\r\n", session->nick, msg.args[0]);
-					}
-				}
-			}
-			else if (!strcasecmp(msg.cmd, "quit")) {
-				sockbuf_delete(session->idx);
-			}
+			bind_check(BT_ircparty, NULL, msg.cmd, session->party, idx, msg.cmd, msg.nargs, msg.args);
 			break;
 		case STATE_UNREGISTERED:
 			if (!strcasecmp(msg.cmd, "nick")) {

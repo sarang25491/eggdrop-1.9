@@ -61,6 +61,31 @@ int egg_get_words(const char *text, const char **next, char **word, ...)
 	return(nwords);
 }
 
+int egg_get_word_array(const char *text, const char **next, char **word, int nwords)
+{
+	int i, j;
+
+	for (i = 0; i < nwords; i++) {
+		if (egg_get_word(text, &text, word+i)) break;
+	}
+	for (j = i; i < nwords; j++) {
+		word[j] = NULL;
+	}
+	if (next) *next = text;
+	return(i);
+}
+
+int egg_free_word_array(char **word, int nwords)
+{
+	int i;
+
+	for (i = 0; i < nwords; i++) {
+		if (word[i]) free(word[i]);
+		word[i] = NULL;
+	}
+	return(0);
+}
+
 /* Append string to a static buffer until full. */
 void egg_append_static_str(char **dest, int *remaining, const char *src)
 {
