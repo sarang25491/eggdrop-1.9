@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.53 2001/08/21 00:21:17 ite Exp $
+dnl $Id: aclocal.m4,v 1.54 2001/08/22 00:41:57 ite Exp $
 dnl
 
 
@@ -1218,7 +1218,8 @@ AC_DEFUN(EGG_SAVE_PARAMETERS, [dnl
   dnl  Normally, we shouldn't use this level as it's not intended for this
   dnl  type of code, but there's no other way to run it before the main
   dnl  parameter loop in configure.
-  AC_DIVERT_PUSH(AC_DIVERSION_NOTICE)dnl
+  ifdef([AC_DIVERSION_NOTICE], [AC_DIVERT_PUSH(AC_DIVERSION_NOTICE)],
+                              [AC_DIVERT_PUSH(NOTICE)])dnl
   egg_ac_parameters="[$]*"
   AC_DIVERT_POP()dnl to NORMAL
   AC_SUBST(egg_ac_parameters)dnl
@@ -1337,7 +1338,7 @@ dnl
 AC_DEFUN(EGG_IPV6_SUPPORTED, [dnl
 AC_MSG_CHECKING(for kernel IPv6 support)
 AC_CACHE_VAL(egg_cv_ipv6_supported,[
- AC_TRY_RUN_NATIVE([
+ AC_TRY_RUN([
 #include <fcntl.h>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -1354,7 +1355,8 @@ int main()
 	close(s);
     return s == -1;
 }
-], egg_cv_ipv6_supported=yes, egg_cv_ipv6_supported=no)])
+], egg_cv_ipv6_supported=yes, egg_cv_ipv6_supported=no,
+egg_cv_ipv6_supported=no)])
 if test "$egg_cv_ipv6_supported" = yes; then
  AC_MSG_RESULT(yes)
 else
