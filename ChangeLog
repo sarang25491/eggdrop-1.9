@@ -1,3 +1,19 @@
+2003-02-23 10:00  Automatic CVS Scripts
+
+	* po/eggdrop.pot:
+
+	Pots 
+
+2003-02-23 09:52  Will Buckner <wcc@techmonkeys.org>
+
+	* doc/: BUG-REPORT, CONTENTS, KNOWN-PROBLEMS, MODULES, Makefile.in,
+	compiling.FAQ, patch.howto, howto/FIRST-SCRIPT, howto/PATCHING,
+	howto/PORTING, howto/TIMERS, howto/UDEF, howto/first_script.txt,
+	howto/porting.txt, howto/setudef.txt, howto/timers.txt,
+	settings/CONTENTS, settings/CORE, settings/core.settings:
+
+	* More docs.  
+
 2003-02-22 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
