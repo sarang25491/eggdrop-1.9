@@ -40,6 +40,9 @@ EGG_LIBTOOL
 # Speedup compile
 EGG_CHECK_CCPIPE
 
+# Compile Warnings
+EGG_CHECK_CFLAGS_WALL
+
 # Checks for programs
 AC_PROG_LN_S
 EGG_PROG_STRIP
@@ -153,12 +156,13 @@ EGG_DEBUG_OPTIONS
 EGG_DEFINE_VERSION_NUM
 
 EGG_COMPRESS_MODULE
+EGG_PERLSCRIPT_MODULE
 
 AC_CONFIG_SUBDIRS(libltdl)
 
 AC_SUBST(ac_aux_dir)
 
 # FIXME: module's Makefiles list will prolly become dynamic
-AC_OUTPUT([Makefile doc/Makefile scripts/Makefile src/Makefile src/compat/Makefile src/egglib/Makefile src/mod/Makefile src/adns/Makefile src/mod/Makefile intl/Makefile po/Makefile.in src/mod/assoc.mod/Makefile src/mod/blowfish.mod/Makefile src/mod/channels.mod/Makefile src/mod/compress.mod/Makefile src/mod/console.mod/Makefile src/mod/ctcp.mod/Makefile src/mod/filesys.mod/Makefile src/mod/irc.mod/Makefile src/mod/notes.mod/Makefile src/mod/server.mod/Makefile src/mod/share.mod/Makefile src/mod/tclscript.mod/Makefile src/mod/transfer.mod/Makefile src/mod/uptime.mod/Makefile src/mod/woobie.mod/Makefile])
+AC_OUTPUT([Makefile doc/Makefile scripts/Makefile src/Makefile src/compat/Makefile src/egglib/Makefile src/mod/Makefile src/adns/Makefile src/mod/Makefile intl/Makefile po/Makefile.in src/mod/assoc.mod/Makefile src/mod/blowfish.mod/Makefile src/mod/channels.mod/Makefile src/mod/compress.mod/Makefile src/mod/console.mod/Makefile src/mod/ctcp.mod/Makefile src/mod/filesys.mod/Makefile src/mod/irc.mod/Makefile src/mod/notes.mod/Makefile src/mod/perlscript.mod/Makefile src/mod/server.mod/Makefile src/mod/share.mod/Makefile src/mod/tclscript.mod/Makefile src/mod/transfer.mod/Makefile src/mod/uptime.mod/Makefile src/mod/woobie.mod/Makefile])
 
 EGG_MSG_CONFIGURE_END

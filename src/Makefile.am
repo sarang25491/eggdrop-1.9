@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.12 2001/10/21 16:05:52 tothwolf Exp $
+# $Id: Makefile.am,v 1.13 2001/10/21 17:38:25 ite Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 bindir			= $(exec_prefix)
@@ -77,45 +77,42 @@ eggdrop_SOURCES		= bg.c \
 			users.h
 
 eggdrop_LDFLAGS		= -no-undefined
+
+# FIXME: test if there's dependency on gnu make. It shouldn't.
+if EGG_PERLSCRIPT
+  EGG_PRL = -dlopen mod/perlscript.mod/perlscript.la
+else
+  EGG_PRL =
+endif
+if EGG_COMPRESS
+  EGG_CMP = -dlopen mod/compress.mod/compress.la
+else
+  EGG_CMP = 
+endif
+
 # FIXME: dlopened/preopened module's list is going to be dynamically defined
 #        by ./configure
 eggdrop_LDADD		= @LIBLTDL@ \
-			"-dlopen" self \
-			"-dlopen" mod/assoc.mod/assoc.la \
-			"-dlopen" mod/blowfish.mod/blowfish.la \
-			"-dlopen" mod/compress.mod/compress.la \
-			"-dlopen" mod/channels.mod/channels.la \
-			"-dlopen" mod/console.mod/console.la \
-			"-dlopen" mod/ctcp.mod/ctcp.la \
-			"-dlopen" mod/filesys.mod/filesys.la \
-			"-dlopen" mod/irc.mod/irc.la \
-			"-dlopen" mod/notes.mod/notes.la \
-			"-dlopen" mod/server.mod/server.la \
-			"-dlopen" mod/share.mod/share.la \
-			"-dlopen" mod/tclscript.mod/tclscript.la \
-			"-dlopen" mod/transfer.mod/transfer.la \
-			"-dlopen" mod/uptime.mod/uptime.la \
-			"-dlopen" mod/woobie.mod/woobie.la \
+			-dlopen mod/assoc.mod/assoc.la \
+			-dlopen mod/blowfish.mod/blowfish.la \
+			-dlopen mod/channels.mod/channels.la \
+			$(EGG_CMP) \
+			-dlopen mod/console.mod/console.la \
+			-dlopen mod/ctcp.mod/ctcp.la \
+			-dlopen mod/filesys.mod/filesys.la \
+			-dlopen mod/irc.mod/irc.la \
+			-dlopen mod/notes.mod/notes.la \
+			$(EGG_PRL) \
+			-dlopen mod/server.mod/server.la \
+			-dlopen mod/share.mod/share.la \
+			-dlopen mod/tclscript.mod/tclscript.la \
+			-dlopen mod/transfer.mod/transfer.la \
+			-dlopen mod/uptime.mod/uptime.la \
+			-dlopen mod/woobie.mod/woobie.la \
 			compat/libcompat.la \
 			adns/libadns.la \
 			egglib/libegg.la \
 			$(XLIBS)
-
-eggdrop_DEPENDENCIES	= $(XREQS)
-			src/mod/assoc.mod/assoc.la \
-			src/mod/blowflish/blowfish.la \
-			src/mod/channels.la \
-			src/mod/console.la \
-			src/mod/ctcp.la \
-			src/mod/filesys.la \
-			src/mod/irc.la \
-			src/mod/notes.la \
-			src/mod/server.la \
-			src/mod/share.la \
-			src/mod/tclscript.la \
-			src/mod/transfer.la \
-			src/mod/uptime.la \
-			src/mod/woobie.la
 
 libtcle.a: $(TCLLIB)/lib$(TCLLIBFN)
 	echo "[ Fixing lib$(TCLLIBFN) -> libtcle.a ]"

@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# $Id: bootstrap,v 1.9 2001/10/21 14:51:34 tothwolf Exp $
+# $Id: bootstrap,v 1.10 2001/10/21 17:38:24 ite Exp $
 #
 # Recommended development tools versions:
 #   autoconf 2.52
@@ -28,7 +28,7 @@ set -x
 #gettextize --copy --force
 
 # Generate aclocal.m4 from acconfig/*.m4 files
-aclocal -I . -I acconfig
+aclocal -I acconfig
 
 # Bring in libtool with libtdl abstraction
 libtoolize --copy --ltdl

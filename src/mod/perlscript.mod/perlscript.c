@@ -45,8 +45,9 @@ static int my_load_script(registry_entry_t * entry, char *fname)
 
 static int my_perl_callbacker(script_callback_t *me, ...)
 {
-	int retval, i, n;
+	int retval, i, n, count;
 	script_var_t var;
+	SV *arg;
 	void **al;
 	dSP;
 

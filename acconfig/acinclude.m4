@@ -1,7 +1,7 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.1 2001/10/20 01:19:42 tothwolf Exp $
+dnl $Id: acinclude.m4,v 1.2 2001/10/21 17:38:24 ite Exp $
 dnl
 
 
@@ -29,6 +29,8 @@ Configuration:
   Compiler flags:             ${CFLAGS}
   Host System Type:           ${host}
   Install path:               ${prefix}
+  Compress module:            ${egg_compress}
+  Perl module:                ${egg_perlscript}
 
 See config.h for further configuration information.
 ------------------------------------------------------------------------
@@ -83,6 +85,29 @@ then
 fi
 ])
 
+
+dnl  EGG_CHECK_CFLAGS_WALL()
+dnl
+dnl  Checks whether the compiler supports the `-WAll' flag.
+AC_DEFUN(EGG_CHECK_CFLAGS_WALL, [dnl
+if test -z "$no_wall"
+then
+  if test -n "$GCC"
+  then
+    AC_CACHE_CHECK(whether the compiler understands -Wall, egg_cv_var_ccwall, [dnl
+      ac_old_CFLAGS="$CFLAGS"
+      CFLAGS="$CFLAGS -Wall"
+      AC_TRY_COMPILE(,, egg_cv_var_ccwall=yes, egg_cv_var_ccwall=no)
+      CFLAGS="$ac_old_CFLAGS"
+    ])
+    if test "$egg_cv_var_ccwall" = "yes"
+    then
+      CFLAGS="$CFLAGS -Wall"
+    fi
+  fi
+fi
+])
+							
 
 dnl  EGG_PROG_STRIP()
 dnl
@@ -1192,6 +1217,7 @@ then
   # FIXME: this should be done along with `--with-efence'
   AC_CHECK_LIB(efence, malloc)
   EGG_DEBUG="-DDEBUG"
+  CFLAGS="$CFLAGS -g3"
 fi
 AC_SUBST(EGG_DEBUG)
 ])
@@ -1236,3 +1262,31 @@ fi
 
 AM_CONDITIONAL(EGG_COMPRESS, test "$egg_compress" = "yes")
 ])
+
+# FIXME: is it worth to make this macro more anal? 
+dnl  EGG_PERLSCRIPT_MODULE
+dnl
+AC_DEFUN(EGG_PERLSCRIPT_MODULE, [dnl
+
+egg_perlscript=no
+
+AC_PATH_PROG(perlcmd, perl)
+PERL_LDFLAGS=`$perlcmd -MExtUtils::Embed -e ldopts 2>/dev/null`
+if test "x$PERL_LDFLAGS" = x
+then
+  AC_MSG_WARN([
+
+  Your system does not provide a working perl environment. The
+  perlscript module will therefore be disabled.
+  
+])
+else
+  PERL_CCFLAGS=`$perlcmd -MExtUtils::Embed -e ccopts 2>/dev/null`
+  egg_perlscript=yes
+  AC_SUBST(PERL_LDFLAGS)
+  AC_SUBST(PERL_CCFLAGS)
+fi
+
+AM_CONDITIONAL(EGG_PERLSCRIPT, test "$egg_perlscript" = "yes")
+])
+

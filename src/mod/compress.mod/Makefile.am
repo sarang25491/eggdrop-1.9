@@ -1,8 +1,9 @@
-# $Id: Makefile.am,v 1.5 2001/10/21 16:05:53 tothwolf Exp $
+# $Id: Makefile.am,v 1.6 2001/10/21 17:38:25 ite Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 pkglibdir		= $(exec_prefix)/modules
 
+# FIXME: test if there's dependency on gnu make. It shouldn't.
 if EGG_COMPRESS
   EGG_CMP = compress.la
 else
@@ -14,7 +15,7 @@ compress_la_SOURCES	= compress.c
 compress_la_LDFLAGS	= -module -avoid-version -no-undefined
 compress_la_LIBADD	= @TCL_LIBS@ @ZLIB@ @LIBS@
 
-MAINTAINERCLEANFILES	= Makefile.in configure config.h.in stamp-h.in
+MAINTAINERCLEANFILES	= Makefile.in
 
 INCLUDES		= -I$(top_builddir) -I$(top_srcdir)
 
