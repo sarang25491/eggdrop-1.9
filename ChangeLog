@@ -1,3 +1,12 @@
+2001-10-16 02:42  stdarg <stdarg@techmonkeys.org>
+
+	* eggdrop.complete.conf, eggdrop.simple.conf, src/script.c,
+	src/script.h, src/script_api.h, src/tclhash.c,
+	src/mod/tclscript.mod/tclscript.c:
+
+	Updated tclscript.mod a bit.  Made bind and unbind use the new
+	tclscript module.  
+
 2001-10-15 18:47  Matthew Hallacy <poptix@techmonkeys.org>
 
 	* src/patch.h:
