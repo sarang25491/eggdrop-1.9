@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.42 2004/10/01 15:31:18 stdarg Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.43 2004/10/06 02:35:15 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -682,18 +682,32 @@ int user_check_flags(user_t *u, const char *chan, flags_t *flags)
 {
 	flags_t f;
 
-	user_get_flags (u, chan, &f);
-
-	return flag_match_subset (flags, &f);
+	user_get_flags(u, chan, &f);
+	return flag_match_subset(flags, &f);
 }
 
 int user_check_flags_str(user_t *u, const char *chan, const char *flags)
 {
 	flags_t f;
 
-	flag_from_str (&f, flags);
+	flag_from_str(&f, flags);
+	return user_check_flags(u, chan, &f);
+}
 
-	return user_check_flags (u, chan, &f);
+int user_check_partial_flags(user_t *u, const char *chan, flags_t *flags)
+{
+	flags_t f;
+
+	user_get_flags(u, chan, &f);
+	return flag_match_partial(flags, &f);
+}
+
+int user_check_partial_flags_str(user_t *u, const char *chan, const char *flags)
+{
+	flags_t f;
+
+	flag_from_str(&f, flags);
+	return user_check_partial_flags(u, chan, &f);
 }
 
 int user_change_handle(user_t *u, const char *newhandle)

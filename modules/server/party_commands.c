@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: party_commands.c,v 1.18 2004/10/04 15:48:30 stdarg Exp $";
+static const char rcsid[] = "$Id: party_commands.c,v 1.19 2004/10/06 02:35:15 stdarg Exp $";
 #endif
 
 #include "server.h"
@@ -129,6 +129,78 @@ static int party_jump(partymember_t *p, const char *nick, user_t *u, const char 
 	server_set_next(num);
 	kill_server("changing servers");
 	return(0);
+}
+
+static int party_chanmembermode(partymember_t *p, user_t *u, const char *cmd, const char *text, const char *flags, const char *mode)
+{
+	char *nick, *chan;
+	partychan_t *pchan;
+	channel_t *ircchan;
+
+	egg_get_arg(text, &text, &chan);
+
+	if (!chan) {
+		partymember_printf(p, "Syntax: %s [channel] <nick>", cmd);
+		return(0);
+	}
+	if (text && *text) nick = strdup(text);
+	else {
+		nick = chan;
+		pchan = partychan_get_default(p);
+		if (pchan) chan = strdup(pchan->name);
+		else {
+			partymember_printf(p, "You are not on a partyline channel! Please specify a channel: %s [channel] <nick>", cmd);
+			free(nick);
+			return(0);
+		}
+	}
+	ircchan = channel_probe(chan, 0);
+	if (!ircchan) {
+		partymember_printf(p, "I'm not on '%s', as far as I know!", chan);
+		free(nick);
+		free(chan);
+	}
+
+	if (user_check_partial_flags_str(u, NULL, flags) || user_check_flags_str(u, chan, flags)) {
+		partymember_printf(p, "Setting mode %s for %s on %s", mode, nick, ircchan->name);
+		printserv(SERVER_NORMAL, "MODE %s %s %s", ircchan->name, mode, nick);
+	}
+	else {
+		partymember_printf(p, "You need +%s to set that mode!", flags);
+	}
+	free(nick);
+	free(chan);
+	return(BIND_RET_LOG);
+}
+
+static int party_op(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	return party_chanmembermode(p, u, cmd, text, "o", "+o");
+}
+
+static int party_deop(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	return party_chanmembermode(p, u, cmd, text, "o", "-o");
+}
+
+static int party_halfop(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	return party_chanmembermode(p, u, cmd, text, "lo", "+l");
+}
+
+static int party_dehalfop(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	return party_chanmembermode(p, u, cmd, text, "lo", "-l");
+}
+
+static int party_voice(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	return party_chanmembermode(p, u, cmd, text, "lo", "+v");
+}
+
+static int party_devoice(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	return party_chanmembermode(p, u, cmd, text, "lo", "-v");
 }
 
 static int party_msg(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
@@ -248,6 +320,35 @@ static int party_chanset(partymember_t *p, const char *nick, user_t *u, const ch
 /* chaninfo <channel> */
 static int party_chaninfo(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
+	channel_t *chan;
+	char *next, *item, *value;
+
+	while (text && isspace(*text)) text++;
+	if (!text || !*text) {
+		partymember_printf(p, "Syntax: %s <channel>", cmd);
+		return(0);
+	}
+	chan = channel_probe(text, 0);
+	if (!chan) {
+		partymember_printf(p, "Channel not found!");
+		return(0);
+	}
+	partymember_printf(p, "Information about '%s':", chan->name);
+	if (!(chan->flags & CHANNEL_STATIC)) {
+		partymember_printf(p, "Saved settings: none (not a static channel)");
+	}
+	else {
+		next = server_config.chaninfo_items;
+		while (next && *next) {
+			egg_get_arg(next, &next, &item);
+			if (!item) break;
+			channel_get(chan, &value, item, 0, NULL);
+			if (value) {
+				partymember_printf(p, "%s: %s", item, value);
+			}
+			free(item);
+		}
+	}
 	return BIND_RET_LOG;
 }
 
@@ -283,6 +384,18 @@ static int party_minus_mask(partymember_t *p, const char *nick, user_t *u, const
 
 bind_list_t server_party_commands[] = {					/* Old flag requirements */
 	{"", "servers", party_servers},			/* DDD	*/
+
+	/* Normal irc commands. */
+	{"o", "halfop", party_halfop},
+	{"o", "dehalfop", party_dehalfop},
+	{"o", "op", party_op},
+	{"o", "deop", party_deop},
+	{"o", "voice", party_voice},
+	{"o", "devoice", party_devoice},
+	{"m", "msg", party_msg},			/* DDD	*/
+	{"m", "say", party_msg},			/* DDD	*/
+	{"m", "act", party_act},			/* DDD	*/
+
 	{"l", "+ban", party_plus_mask},			/* DDD	*/	/* lo|lo */
 	{"l", "+invite", party_plus_mask},		/* DDD	*/	/* lo|lo */
 	{"l", "+exempt", party_plus_mask},		/* DDD	*/	/* lo|lo */
@@ -299,9 +412,6 @@ bind_list_t server_party_commands[] = {					/* Old flag requirements */
 	{"m", "-server", party_minus_server},		/* DDD	*/
 	{"m", "dump", party_dump},			/* DDD	*/
 	{"m", "jump", party_jump},			/* DDD	*/
-	{"m", "msg", party_msg},			/* DDD	*/
-	{"m", "say", party_msg},			/* DDD	*/
-	{"m", "act", party_act},			/* DDD	*/
 	{"n", "+chan", party_pls_chan},			/* DDC	*/	/* n */
 	{"n", "-chan", party_mns_chan},			/* DDC	*/	/* n */
 	{"n", "chanset", party_chanset},		/* DDC	*/	/* n|n */

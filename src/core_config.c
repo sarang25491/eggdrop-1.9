@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_config.c,v 1.22 2004/09/26 09:42:09 stdarg Exp $";
+static const char rcsid[] = "$Id: core_config.c,v 1.23 2004/10/06 02:35:15 stdarg Exp $";
 #endif
 
 #include <string.h>
@@ -53,6 +53,7 @@ static config_var_t core_config_vars[] = {
 	{"logging.quick", &core_config.logging.quick, CONFIG_INT},
 	{"logging.max_size", &core_config.logging.max_size, CONFIG_INT},
 	{"logging.switch_at", &core_config.logging.switch_at, CONFIG_INT},
+	{"logging.suffix", &core_config.logging.suffix, CONFIG_STRING},
 
 	/* Other. */
 	{"die_on_sigterm", &core_config.die_on_sigterm, CONFIG_INT},/* DDD*/
@@ -77,6 +78,7 @@ int core_config_init(const char *fname)
 	if (!core_config.userfile) core_config.userfile = strdup("users.xml");
 	if (!core_config.lockfile) core_config.lockfile = strdup("lock");
 	if (!core_config.help_path) core_config.help_path = strdup("help/");
+	if (!core_config.logging.suffix) core_config.logging.suffix = strdup(".%d%b%Y");
 
 	config_update_table(core_config_vars, config_root, "eggdrop", 0, NULL);
 

@@ -88,7 +88,7 @@ void uhost_cache_decref(const char *nick)
 	cache->ref_count--;
 	if (cache->ref_count <= 0) {
 		hash_table_remove(uhost_cache_ht, cache->nick, NULL);
-		uhost_cache_delete(NULL, cache, NULL);
+		uhost_cache_delete(NULL, &cache, NULL);
 	}
 }
 

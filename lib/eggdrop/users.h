@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: users.h,v 1.15 2004/10/01 15:31:18 stdarg Exp $
+ * $Id: users.h,v 1.16 2004/10/06 02:35:15 stdarg Exp $
  */
 
 #ifndef _EGG_USERS_H_
@@ -78,12 +78,14 @@ int user_del_ircmask(user_t *u, const char *ircmask);
 int user_get_setting(user_t *u, const char *chan, const char *setting, char **valueptr);
 int user_set_setting(user_t *u, const char *chan, const char *setting, const char *newvalue);
 
-int	user_get_flags		(user_t *u, const char *chan, flags_t *flags);
-int	user_set_flags		(user_t *u, const char *chan, flags_t *flags);
-int	user_set_flags_str	(user_t *u, const char *chan, const char *flags);
+int user_get_flags(user_t *u, const char *chan, flags_t *flags);
+int user_set_flags(user_t *u, const char *chan, flags_t *flags);
+int user_set_flags_str(user_t *u, const char *chan, const char *flags);
 
-int	user_check_flags	(user_t *u, const char *chan, flags_t *flags);
-int	user_check_flags_str	(user_t *u, const char *chan, const char *flags);
+int user_check_flags(user_t *u, const char *chan, flags_t *flags);
+int user_check_flags_str(user_t *u, const char *chan, const char *flags);
+int user_check_partial_flags(user_t *u, const char *chan, flags_t *flags);
+int user_check_partial_flags_str(user_t *u, const char *chan, const char *flags);
 
 int user_has_pass(user_t *u);
 int user_check_pass(user_t *u, const char *pass);

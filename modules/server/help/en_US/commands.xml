@@ -107,4 +107,96 @@
 			<see>servers</see>
 		</seealso>
 	</help>
+	<help>
+		<name>servers</name>
+		<summary>displays the current server list</summary>
+		<desc>
+<line>The servers command displays the list of servers known to the bot.</line>
+		</desc>
+		<seealso>
+			<see>+server</see>
+			<see>-server</see>
+			<see>jump</see>
+		</seealso>
+	</help>
+	<help>
+		<name>op</name>
+		<summary>give ops to a nick on a channel</summary>
+		<args>
+			<arg>
+				<name>channel</name>
+				<optional>1</optional>
+				<desc>channel to give ops on, or partyline channel if omitted</desc>
+			</arg>
+			<arg>
+				<name>nick</name>
+				<desc>nick to give ops to</desc>
+			</arg>
+		</args>
+		<desc>
+<line>The op command gives ops (+o) to the specified nick. If a channel</line>
+<line>is not specified, the current partyline channel name is used.</line>
+		</desc>
+		<seealso>
+			<see>deop</see>
+			<see>halfop</see>
+			<see>deehalfop</see>
+			<see>voice</see>
+			<see>devoice</see>
+		</seealso>
+	</help>
+	<help>
+		<name>deop</name>
+		<summary>take ops from a nick on a channel</summary>
+		<args>
+			<arg>
+				<name>channel</name>
+				<optional>1</optional>
+				<desc>channel to remove ops on, or partyline channel if omitted</desc>
+			</arg>
+			<arg>
+				<name>nick</name>
+				<desc>nick to take ops from</desc>
+			</arg>
+		</args>
+		<desc>
+<line>The deop command takes ops (-o) from the specified nick. If a</line>
+<line>channel is not specified, the current partyline channel name is</line>
+<line>used.</line>
+		</desc>
+		<seealso>
+			<see>op</see>
+			<see>halfop</see>
+			<see>deehalfop</see>
+			<see>voice</see>
+			<see>devoice</see>
+		</seealso>
+	</help>
+	<help>
+		<name>voice</name>
+		<summary>give voice to a nick on a channel</summary>
+		<args>
+			<arg>
+				<name>channel</name>
+				<optional>1</optional>
+				<desc>channel to remove ops on, or partyline channel if omitted</desc>
+			</arg>
+			<arg>
+				<name>nick</name>
+				<desc>nick to give voice to</desc>
+			</arg>
+		</args>
+		<desc>
+<line>The voice command gives voice (+v) to the specified nick. If a</line>
+<line>channel is not specified, the current partyline channel name is</line>
+<line>used.</line>
+		</desc>
+		<seealso>
+			<see>op</see>
+			<see>deop</see>
+			<see>halfop</see>
+			<see>deehalfop</see>
+			<see>devoice</see>
+		</seealso>
+	</help>
 </helpfile>

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: server.c,v 1.62 2004/10/04 15:48:30 stdarg Exp $";
+static const char rcsid[] = "$Id: server.c,v 1.63 2004/10/06 02:35:15 stdarg Exp $";
 #endif
 
 #include "server.h"
@@ -205,6 +205,8 @@ static config_var_t server_config_vars[] = {
 	{"default_port", &server_config.default_port, CONFIG_INT},
 	{"max_line_len", &server_config.max_line_len, CONFIG_INT},
 
+	{"chaninfo_items", &server_config.chaninfo_items, CONFIG_STRING},
+
 	{"fake005", &server_config.fake005, CONFIG_STRING},
 
 	{"raw_log", &server_config.raw_log, CONFIG_INT},
@@ -233,6 +235,7 @@ static void server_config_init()
 	server_config.default_port = 6667;
 	server_config.fake005 = NULL;
 	server_config.max_line_len = 510;
+	server_config.chaninfo_items = strdup("Inactive");
 
 	/* Link our config vars. */
 	config_root = config_get_root("eggdrop");

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: channels.h,v 1.21 2004/10/04 15:48:30 stdarg Exp $
+ * $Id: channels.h,v 1.22 2004/10/06 02:35:15 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_SERVER_CHANNELS_H_
@@ -103,8 +103,6 @@ typedef struct channel {
 
 extern channel_t *channel_head;
 extern int nchannels;
-
-extern hash_table_t *uhost_cache_ht;
 
 /* channels.c */
 extern void channel_init();

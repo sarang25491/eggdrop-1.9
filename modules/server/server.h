@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: server.h,v 1.22 2004/10/04 15:48:30 stdarg Exp $
+ * $Id: server.h,v 1.23 2004/10/06 02:35:15 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_SERVER_SERVER_H_
@@ -46,6 +46,9 @@ typedef struct {
 	char *realname;
 	char *chanfile;
 	int max_line_len;
+
+	/* Items to display on .chaninfo */
+	char *chaninfo_items;
 
 	/* Override the 005 sent by the server. */
 	char *fake005;
