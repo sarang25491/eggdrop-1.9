@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.36 2001/08/08 13:45:48 drummer Exp $
+ * $Id: net.c,v 1.37 2001/08/08 14:06:00 drummer Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -67,7 +67,6 @@ adns_state ads;
 /* Types of proxy */
 #define PROXY_SOCKS   1
 #define PROXY_SUN     2
-#define PROXY_POST    3
 
 
 /* I need an UNSIGNED long for dcc type stuff
@@ -389,24 +388,16 @@ static int proxy_connect(int sock, char *host, int port, int proxy)
       }
       egg_memcpy(x, hp->h_addr, hp->h_length);
     }
+    for (i = 0; i < MAXSOCKS; i++)
+      if (!(socklist[i].flags & SOCK_UNUSED) && socklist[i].sock == sock)
+	socklist[i].flags |= SOCK_PROXYWAIT; /* drummer */
     egg_snprintf(s, sizeof s, "\004\001%c%c%c%c%c%c%s", (port >> 8) % 256,
 		 (port % 256), x[0], x[1], x[2], x[3], botuser);
     tputs(sock, s, strlen(botuser) + 9); /* drummer */
   } else if (proxy == PROXY_SUN) {
-    egg_snprintf(s, sizeof s, "CONNECT %s:%d HTTP/1.0\n\n", host, port);
-    fcntl(sock, F_SETFL, 0); /* azta jo qrva anyadat eggdrop! */
+    egg_snprintf(s, sizeof s, "%s %d\n", host, port);
     tputs(sock, s, strlen(s)); /* drummer */
-    fcntl(sock, F_SETFL, O_NONBLOCK);
-  } else if (proxy == PROXY_POST) {
-    egg_snprintf(s, sizeof s, "POST http://%s:%d HTTP/1.0\n\n", host, port);
-    fcntl(sock, F_SETFL, 0); /* azta jo qrva anyadat eggdrop! */
-    tputs(sock, s, strlen(s)); /* drummer */
-    fcntl(sock, F_SETFL, O_NONBLOCK);
   }
-  if (proxy != PROXY_POST)
-  for (i = 0; i < MAXSOCKS; i++)
-    if (!(socklist[i].flags & SOCK_UNUSED) && socklist[i].sock == sock)
-      socklist[i].flags |= SOCK_PROXYWAIT; /* drummer */
   return sock;
 }
 
@@ -438,9 +429,6 @@ debug2("|NET| open_telnet_raw: %s %d", server, sport);
   if (firewall[0]) {
     if (firewall[0] == '!') {
       proxy = PROXY_SUN;
-      strcpy(host, &firewall[1]);
-    } else if (firewall[0] == '@') {
-      proxy = PROXY_POST;
       strcpy(host, &firewall[1]);
     } else {
       proxy = PROXY_SOCKS;
@@ -966,24 +954,6 @@ static int sockread(char *s, int *len)
 	  debug2("net: socket: %d proxy errno: %d", socklist[i].sock, s[1]);
 	  socklist[i].flags &= ~(SOCK_CONNECT | SOCK_PROXYWAIT);
 	  switch (s[1]) {
-	  case 84: /* HTTP/1.0 2 */
-	    {
-	      char c;
-	      int cc = 0;
-	      while (read(socklist[i].sock, &c, 1) > 0) {
-	        if (c == 10) {
-		  if (cc == 0)
-		    cc++;
-		  else
-		    break;
-		} else if (c != 13) {
-		  cc = 0;
-                }
-	      }
-	    }
-	    s[0] = 0;
-	    *len = 0;
-	    return i;
 	  case 90:		/* Success */
 	    s[0] = 0;
 	    *len = 0;
@@ -1260,8 +1230,8 @@ void tputs(register int z, char *s, unsigned int len)
         }
       }
       
-      if ((socklist[i].outbuf != NULL) || (socklist[i].flags & SOCK_PROXYWAIT)) {
-	/* Already queueing or waiting for proxy: just add it */
+      if (socklist[i].outbuf != NULL) {
+	/* Already queueing: just add it */
 	p = (char *) nrealloc(socklist[i].outbuf, socklist[i].outbuflen + len);
 	egg_memcpy(p + socklist[i].outbuflen, s, len);
 	socklist[i].outbuf = p;
@@ -1301,7 +1271,7 @@ void dequeue_sockets()
   int i, x;
 
   for (i = 0; i < MAXSOCKS; i++) { 
-    if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_PROXYWAIT)) &&
+    if (!(socklist[i].flags & SOCK_UNUSED) &&
 	socklist[i].outbuf != NULL) {
       /* Trick tputs into doing the work */
       x = write(socklist[i].sock, socklist[i].outbuf,
