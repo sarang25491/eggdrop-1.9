@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  *
- * $Id: tcluser.c,v 1.37 2002/02/07 22:19:05 wcc Exp $
+ * $Id: tcluser.c,v 1.38 2002/03/26 01:06:22 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -27,8 +27,6 @@
 #include "users.h"
 #include "chan.h"
 #include "tandem.h"
-#include "script_api.h"
-#include "script.h"
 
 extern struct userrec	*userlist;
 extern int		 default_flags, dcc_total, ignore_time;

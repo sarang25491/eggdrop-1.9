@@ -1,7 +1,7 @@
 #include "lib/eggdrop/module.h"
 #include "lib/egglib/mstack.h"
 #include "lib/egglib/msprintf.h"
-#include "src/script_api.h"
+#include <eggdrop/eggdrop.h>
 
 #define MODULE_NAME "tclscript"
 
@@ -189,7 +189,7 @@ static int my_tcl_callbacker(script_callback_t *me, ...)
 	Tcl_ResetResult(cd->myinterp);
 
 	/* If it's a one-time callback, delete it. */
-	if (me->flags & SCRIPT_CALLBACK_ONCE) me->delete(me);
+	if (me->flags & SCRIPT_CALLBACK_ONCE) me->del(me);
 
 	return(retval);
 }
@@ -321,7 +321,7 @@ static int my_argument_cleanup(mstack_t *args, mstack_t *bufs, mstack_t *cbacks)
 			script_callback_t *cback;
 
 			cback = (script_callback_t *)cbacks->stack[i];
-			cback->delete(cback);
+			cback->del(cback);
 		}
 		mstack_destroy(cbacks);
 	}
@@ -421,7 +421,7 @@ static int my_command_handler(ClientData client_data, Tcl_Interp *myinterp, int 
 			cdata = (my_callback_cd_t *)calloc(1, sizeof(*cdata));
 			cback->callback = (Function) my_tcl_callbacker;
 			cback->callback_data = (void *)cdata;
-			cback->delete = (Function) my_tcl_cb_delete;
+			cback->del = (Function) my_tcl_cb_delete;
 			cback->name = (char *)Tcl_GetStringFromObj(objptr, &len);
 			cdata->myinterp = myinterp;
 			cdata->command = objptr;
@@ -606,8 +606,8 @@ char *tclscript_LTX_start(eggdrop_t *eggdrop)
 	error_logfile = strdup("logs/tcl_errors.log");
 	Tcl_LinkVar(ginterp, "error_logfile", (char *)&error_logfile, TCL_LINK_STRING);
 
-	registry_add_simple_chains(egg, my_functions);
-	registry_lookup(egg, "script", "playback", &journal_playback, &journal_playback_h);
+	registry_add_simple_chains(my_functions);
+	registry_lookup("script", "playback", &journal_playback, &journal_playback_h);
 	if (journal_playback) journal_playback(journal_playback_h, journal_table);
 
 	dcc_table = find_bind_table2("dcc");

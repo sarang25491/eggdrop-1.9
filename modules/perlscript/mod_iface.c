@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "lib/eggdrop/module.h"
-#include "src/script_api.h"
+#include <eggdrop/eggdrop.h>
 
 #define MODULE_NAME "perlscript"
 
@@ -15,7 +15,7 @@ int my_create_cmd(void *ignore, script_command_t *info);
 char *real_perl_cmd(char *text);
 
 /* A get_user_by_handle() command for perlscript.c */
-void *fake_get_user_by_handler(char *handle)
+void *fake_get_user_by_handle(char *handle)
 {
 	return get_user_by_handle(userlist, handle);
 }
@@ -104,8 +104,8 @@ char *perlscript_LTX_start(eggdrop_t *eggdrop)
 	/* Initialize interpreter. */
 	perlscript_init();
 
-	registry_add_simple_chains(egg, my_functions);
-        registry_lookup(egg, "script", "playback", &journal_playback, &journal_playback_h);
+	registry_add_simple_chains(my_functions);
+        registry_lookup("script", "playback", &journal_playback, &journal_playback_h);
         if (journal_playback) journal_playback(journal_playback_h, journal_table);
 
 	BT_dcc = find_bind_table2("dcc");

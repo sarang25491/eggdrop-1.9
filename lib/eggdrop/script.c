@@ -1,11 +1,38 @@
+/*
+ * script.c
+ *   stuff needed for scripting modules
+ *
+ * $Id: script.c,v 1.1 2002/03/26 01:06:22 ite Exp $
+ */
+/*
+ * Copyright (C) 2001, 2002 Eggheads Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+#if HAVE_CONFIG_H
+#  include <config.h>
+#endif
+
 #include <stdio.h>
 #include <string.h> /* strlen() */
 #include <stdlib.h> /* calloc(), malloc() */
 
-#include <eggdrop/eggdrop.h>
-#include "script_api.h"
-#include "script.h"
 #include "lib/egglib/mstack.h"
+#include "eggdrop.h"
+#include "script.h"
 
 static Function load_script, link_int, unlink_int, link_str, unlink_str, create_cmd, delete_cmd;
 static void *load_script_h, *link_int_h, *unlink_int_h, *link_str_h, *unlink_str_h, *create_cmd_h, *delete_cmd_h;
@@ -82,17 +109,17 @@ static registry_simple_chain_t my_functions[] = {
 	{0}
 };
 
-int script_init(eggdrop_t *egg)
+int script_init()
 {
 	script_events = mstack_new(0);
-	registry_add_simple_chains(egg, my_functions);
-	registry_lookup(egg, "script", "load script", &load_script, &load_script_h);
-	registry_lookup(egg, "script", "link int", &link_int, &link_int_h);
-	registry_lookup(egg, "script", "unlink int", &unlink_int, &unlink_int_h);
-	registry_lookup(egg, "script", "link str", &link_str, &link_str_h);
-	registry_lookup(egg, "script", "unlink str", &unlink_str, &unlink_str_h);
-	registry_lookup(egg, "script", "create cmd", &create_cmd, &create_cmd_h);
-	registry_lookup(egg, "script", "delete cmd", &delete_cmd, &delete_cmd_h);
+	registry_add_simple_chains(my_functions);
+	registry_lookup("script", "load script", &load_script, &load_script_h);
+	registry_lookup("script", "link int", &link_int, &link_int_h);
+	registry_lookup("script", "unlink int", &unlink_int, &unlink_int_h);
+	registry_lookup("script", "link str", &link_str, &link_str_h);
+	registry_lookup("script", "unlink str", &unlink_str, &unlink_str_h);
+	registry_lookup("script", "create cmd", &create_cmd, &create_cmd_h);
+	registry_lookup("script", "delete cmd", &delete_cmd, &delete_cmd_h);
 
 	script_create_cmd_table(my_script_cmds);
 

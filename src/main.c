@@ -4,7 +4,7 @@
  *   signal handling
  *   command line arguments
  *
- * $Id: main.c,v 1.109 2002/03/22 16:01:20 ite Exp $
+ * $Id: main.c,v 1.110 2002/03/26 01:06:22 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -56,7 +56,6 @@
 #include "core_binds.h"
 #include "logfile.h"
 #include "misc.h"
-#include "script.h"
 
 #include "lib/adns/adns.h"
 
@@ -557,7 +556,7 @@ int main(int argc, char **argv)
     fatal(_("ERROR: Eggdrop will not run as root!"), 0);
 
   egg = eggdrop_new();
-  script_init(egg);
+  script_init();
   binds_init();
   modules_init();
   logfile_init();

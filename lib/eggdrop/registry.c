@@ -2,11 +2,10 @@
  * registry.c
  *   eggdrop registry.
  *
- * $Id: registry.c,v 1.1 2002/03/22 16:01:16 ite Exp $
+ * $Id: registry.c,v 1.2 2002/03/26 01:06:21 ite Exp $
  */
 /*
- * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
+ * Copyright (C) 2001, 2002 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,6 +34,8 @@
 #include "eggdrop.h"
 #include "registry.h"
 
+static hash_table_t *registry_table = NULL;
+
 typedef struct registry_internal_entry_b {
   char *key;
   Function callback;
@@ -53,25 +54,25 @@ static int update_listeners(registry_internal_entry_t * internal);
 /* FIXME: VARARGS */
 static int arbitrator(registry_internal_entry_t * internal, ...);
 
-int registry_add(eggdrop_t * egg, registry_entry_t * entry)
+int registry_add(registry_entry_t * entry)
 {
   registry_internal_entry_t *internal;
   char *key;
 
-  if (!egg->registry_table) {
-    egg->registry_table = hash_table_create(NULL, NULL, 13, 0);
+  if (!registry_table) {
+    registry_table = hash_table_create(NULL, NULL, 13, 0);
   }
 
   key = (char *) malloc(strlen(entry->aclass) + strlen(entry->name) + 4);
   sprintf(key, "%s / %s", entry->aclass, entry->name);
 
   /* Look up registry entry. */
-  if (hash_table_find(egg->registry_table, key, &internal)) {
+  if (hash_table_find(registry_table, key, &internal)) {
     /* Doesn't exist yet, get a new one. */
     internal = (registry_internal_entry_t *) malloc(sizeof(*internal));
     memset(internal, 0, sizeof(*internal));
     internal->key = key;
-    hash_table_insert(egg->registry_table, key, internal);
+    hash_table_insert(registry_table, key, internal);
   } else
     free(key);
 
@@ -100,17 +101,16 @@ int registry_add(eggdrop_t * egg, registry_entry_t * entry)
   return (0);
 }
 
-int registry_add_table(eggdrop_t * egg, registry_entry_t * entries)
+int registry_add_table(registry_entry_t * entries)
 {
   while (entries->callback) {
-    registry_add(egg, entries);
+    registry_add(entries);
     entries++;
   }
   return (0);
 }
 
-int registry_add_simple_chains(eggdrop_t * egg,
-			       registry_simple_chain_t * entries)
+int registry_add_simple_chains(registry_simple_chain_t * entries)
 {
   registry_entry_t *entry;
   char *aclass;
@@ -125,30 +125,30 @@ int registry_add_simple_chains(eggdrop_t * egg,
     entry->callback = entries->callback;
     entry->nargs = entries->nargs;
     entry->flags = REGISTRY_CHAIN;
-    registry_add(egg, entry);
+    registry_add(entry);
     entries++;
   }
   return (0);
 }
 
 /* FIXME: unfinished */
-int registry_remove(eggdrop_t * egg, registry_entry_t * entry)
+int registry_remove(registry_entry_t * entry)
 {
   printf("registry_remove(%s, %s)\n", entry->aclass, entry->name);
   return (0);
 }
 
 /* FIXME: unfinished */
-int registry_remove_table(eggdrop_t * egg, registry_entry_t * entries)
+int registry_remove_table(registry_entry_t * entries)
 {
   while (entries->callback) {
-    registry_remove(egg, entries);
+    registry_remove(entries);
     entries++;
   }
   return (0);
 }
 
-int registry_lookup(eggdrop_t * egg, const char *aclass, const char *name,
+int registry_lookup(const char *aclass, const char *name,
 		    Function * funcptr, void **handleptr)
 {
   registry_internal_entry_t *internal;
@@ -157,16 +157,16 @@ int registry_lookup(eggdrop_t * egg, const char *aclass, const char *name,
   key = (char *) malloc(strlen(aclass) + strlen(name) + 4);
   sprintf(key, "%s / %s", aclass, name);
 
-  if (!egg->registry_table) {
-    egg->registry_table = hash_table_create(NULL, NULL, 13, 0);
+  if (!registry_table) {
+    registry_table = hash_table_create(NULL, NULL, 13, 0);
   }
 
-  if (hash_table_find(egg->registry_table, key, &internal)) {
+  if (hash_table_find(registry_table, key, &internal)) {
     /* Doesn't exist -- create it. */
     internal = (registry_internal_entry_t *) malloc(sizeof(*internal));
     memset(internal, 0, sizeof(*internal));
     internal->key = key;
-    hash_table_insert(egg->registry_table, key, internal);
+    hash_table_insert(registry_table, key, internal);
     internal->callback = (Function) arbitrator;
     internal->client_data = (void *) internal;
   } else
@@ -189,7 +189,7 @@ int registry_lookup(eggdrop_t * egg, const char *aclass, const char *name,
 }
 
 /* FIXME: unfinished */
-int registry_unlookup(eggdrop_t * egg, const char *aclass,
+int registry_unlookup(const char *aclass,
 		      const char *name, Function * funcptr,
 		      void **handleptr)
 {

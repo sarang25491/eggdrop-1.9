@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.45 2002/03/13 00:27:34 stdarg Exp $
+ * $Id: tclmisc.c,v 1.46 2002/03/26 01:06:22 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -29,8 +29,6 @@
 #include "core_binds.h"
 #include "tandem.h"
 #include "md5.h"
-#include "script_api.h"
-#include "script.h"
 #include "logfile.h"
 #include "misc.h"
 #ifdef HAVE_UNAME

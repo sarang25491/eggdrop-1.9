@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.70 2002/03/11 20:16:29 stdarg Exp $
+ * $Id: tcl.c,v 1.71 2002/03/26 01:06:22 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -28,8 +28,6 @@
 #include <stdlib.h>		/* getenv()				*/
 #include <locale.h>		/* setlocale()				*/
 #include "main.h"
-#include "script_api.h"
-#include "script.h"
 #include "logfile.h"
 #include "misc.h"
 

@@ -2,10 +2,10 @@
  * eggdrop.h
  *   libeggdrop header file
  *
- * $Id: eggdrop.h,v 1.5 2002/03/22 16:01:16 ite Exp $
+ * $Id: eggdrop.h,v 1.6 2002/03/26 01:06:21 ite Exp $
  */
 /*
- * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
+ * Copyright (C) 2001, 2002 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,10 +25,6 @@
 #ifndef _EGGDROP_H
 #define _EGGDROP_H
 
-#ifdef HAVE_CONFIG_H
-#  include "config.h"
-#endif
-
 #include "../compat/compat.h"
 #include "../egglib/egglib.h"
 #include <eggdrop/common.h>
@@ -36,13 +32,13 @@
 #include <eggdrop/memutil.h>
 #include <eggdrop/fileutil.h>
 #include <eggdrop/registry.h>
+#include <eggdrop/script.h>
 
 BEGIN_C_DECLS
 
 typedef struct eggdrop {
   Function *global;		/* FIXME: this field will be removed once the
 				   global_funcs mess is cleaned up */
-  hash_table_t *registry_table;
 } eggdrop_t;
 
 extern eggdrop_t *eggdrop_new(void);

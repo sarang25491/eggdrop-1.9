@@ -5,8 +5,6 @@
 
 #include <eggdrop/eggdrop.h>
 #include "egg_timer.h"
-#include "script_api.h"
-#include "script.h"
 
 /* From main.c */
 extern egg_timeval_t egg_timeval_now;

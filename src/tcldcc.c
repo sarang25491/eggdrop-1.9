@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.53 2002/03/13 00:27:33 stdarg Exp $
+ * $Id: tcldcc.c,v 1.54 2002/03/26 01:06:22 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -26,8 +26,6 @@
 #include "main.h"
 #include "tandem.h"
 #include "modules.h"
-#include "script_api.h"
-#include "script.h"
 #include "logfile.h"
 #include "misc.h"
 

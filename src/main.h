@@ -2,7 +2,7 @@
  * main.h
  *   include file to include most other include files
  *
- * $Id: main.h,v 1.26 2002/03/22 16:01:20 ite Exp $
+ * $Id: main.h,v 1.27 2002/03/26 01:06:22 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -26,8 +26,8 @@
 #ifndef _EGG_MAIN_H
 #define _EGG_MAIN_H
 
-#ifdef HAVE_CONFIG_H
-#  include "config.h"
+#if HAVE_CONFIG_H
+#  include <config.h>
 #endif
 
 #include <stdio.h>

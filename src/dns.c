@@ -4,7 +4,7 @@
  *   provides the code used by the bot if the DNS module is not loaded
  *   DNS script commands
  *
- * $Id: dns.c,v 1.34 2002/02/07 22:19:05 wcc Exp $
+ * $Id: dns.c,v 1.35 2002/03/26 01:06:22 ite Exp $
  */
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -35,8 +35,6 @@
 
 #include "dns.h"
 #include "lib/adns/adns.h"
-#include "script_api.h"
-#include "script.h"
 #include "logfile.h"
 
 typedef struct {
@@ -250,7 +248,7 @@ static void dns_script_iporhostres(char *ip, char *hostn, int ok, void *other)
   script_callback_t *callback = (script_callback_t *)other;
 
   callback->callback(callback, ip, hostn, ok);
-  callback->delete(callback);
+  callback->del(callback);
 }
 
 devent_type DNS_SCRIPTEVENT_HOSTBYIP = {

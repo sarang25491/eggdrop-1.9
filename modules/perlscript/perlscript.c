@@ -9,12 +9,9 @@
 #include <perl.h>
 #include <XSUB.h>
 
-/* For script_api.h */
-typedef int (*Function)();
-
 #include "lib/egglib/mstack.h"
 #include "lib/egglib/msprintf.h"
-#include "src/script_api.h"
+#include <eggdrop/eggdrop.h>
 
 static PerlInterpreter *ginterp; /* Our global interpreter. */
 
@@ -25,7 +22,7 @@ static SV *my_resolve_variable(script_var_t *v);
 extern void *fake_get_user_by_handle(char *handle);
 extern char *fake_get_handle(void *user_record);
 extern int log_error(char *msg);
-
+ 
 int my_load_script(void *ignore, char *fname)
 {
 	FILE *fp;
@@ -107,7 +104,7 @@ static int my_perl_callbacker(script_callback_t *me, ...)
 	LEAVE;
 
 	/* If it's a one-time callback, delete it. */
-	if (me->flags & SCRIPT_CALLBACK_ONCE) me->delete(me);
+	if (me->flags & SCRIPT_CALLBACK_ONCE) me->del(me);
 
 	return(retval);
 }
@@ -280,7 +277,7 @@ static XS(my_command_handler)
 
 				cback = (script_callback_t *)calloc(1, sizeof(*cback));
 				cback->callback = (Function) my_perl_callbacker;
-				cback->delete = (Function) my_perl_cb_delete;
+				cback->del = (Function) my_perl_cb_delete;
 				name = SvPV(ST(i), len);
 				cback->name = strdup(name);
 				cback->callback_data = (void *)newSVsv(ST(i));
@@ -361,7 +358,7 @@ argerror:
 	for (i = 0; i < cbacks->len; i++) {
 		script_callback_t *cback;
 		cback = (script_callback_t *)cbacks->stack[i];
-		cback->delete(cback);
+		cback->del(cback);
 	}
 	mstack_destroy(cbacks);
 	Perl_croak(aTHX_ cmd->syntax_error);

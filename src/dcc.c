@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.74 2002/03/11 20:16:29 stdarg Exp $
+ * $Id: dcc.c,v 1.75 2002/03/26 01:06:22 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -30,8 +30,6 @@
 #include <errno.h>
 #include "modules.h"
 #include "tandem.h"
-#include "script_api.h"
-#include "script.h"
 #include "logfile.h"
 #include "dns.h"
 #include "misc.h"

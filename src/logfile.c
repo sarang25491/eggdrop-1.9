@@ -3,8 +3,6 @@
 #include "modules.h" /* add_hook() */
 
 #include "lib/egglib/msprintf.h"
-#include "script_api.h"
-#include "script.h"
 
 #include "logfile.h"
 

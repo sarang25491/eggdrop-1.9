@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.6 2002/03/22 16:01:16 ite Exp $
+# $Id: Makefile.am,v 1.7 2002/03/26 01:06:21 ite Exp $
 
 MAINTAINERCLEANFILES	= Makefile.in
 
@@ -17,6 +17,8 @@ libeggdrop_la_SOURCES	= botnetutil.c \
 			memutil.h \
 			registry.c \
 			registry.h \
+			script.c \
+			script.h \
 			stat.h
 
 libeggdrop_la_LIBADD	= $(top_builddir)/lib/compat/libcompat.la \

@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.60 2002/02/07 22:19:05 wcc Exp $
+ * $Id: tclhash.c,v 1.61 2002/03/26 01:06:22 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -31,8 +31,6 @@
 #include "main.h"
 #include "chan.h"
 #include "users.h"
-#include "script_api.h"
-#include "script.h"
 #include "logfile.h"
 
 extern Tcl_Interp	*interp;
@@ -260,7 +258,7 @@ static int script_unbind(char *table_name, char *flags, char *mask, char *name)
 	if (!table) return(1);
 
 	retval = del_bind_entry(table, flags, mask, name, &callback);
-	if (callback) callback->delete(callback);
+	if (callback) callback->del(callback);
 	return(retval);
 }
 

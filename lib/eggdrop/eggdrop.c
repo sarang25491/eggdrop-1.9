@@ -2,10 +2,10 @@
  * eggdrop.c
  *   libeggdrop 
  *
- * $Id: eggdrop.c,v 1.1 2002/03/22 16:01:16 ite Exp $
+ * $Id: eggdrop.c,v 1.2 2002/03/26 01:06:21 ite Exp $
  */
 /*
- * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
+ * Copyright (C) 2002 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

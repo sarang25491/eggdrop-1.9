@@ -1,7 +1,33 @@
-/* This file contains the stuff you need to use the scripting modules. */
+/*
+ * script.h
+ *   stuff needed for scripting modules
+ *
+ * $Id: script.h,v 1.1 2002/03/26 01:06:22 ite Exp $
+ */
+/*
+ * Copyright (C) 2001, 2002 Eggheads Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
 
-#ifndef _SCRIPT_API_H_
-#define _SCRIPT_API_H_
+#ifndef _EGG_SCRIPT_H
+#define _EGG_SCRIPT_H
+
+#include <eggdrop/common.h>
+
+BEGIN_C_DECLS
 
 /* Script events that get recorded in the script journal. */
 enum {
@@ -77,7 +103,7 @@ enum {
 typedef struct script_callback_b {
 	int (*callback)();
 	void *callback_data;
-	int (*delete)();
+	int (*del)();
 	void *delete_data;
 	char *syntax;
 	char *name;
@@ -114,4 +140,29 @@ typedef struct script_command_b {
 	int flags;
 } script_command_t;
 
-#endif
+typedef struct {
+	char *name;
+	Function callback;
+	char *syntax;
+	char *syntax_error;
+	int retval_type;
+} script_simple_command_t;
+
+extern int script_init();
+
+extern int script_link_int_table(script_int_t *table);
+extern int script_unlink_int_table(script_int_t *table);
+extern int script_link_str_table(script_str_t *table);
+extern int script_unlink_str_table(script_str_t *table);
+extern int script_create_cmd_table(script_command_t *table);
+extern int script_delete_cmd_table(script_command_t *table);
+extern int script_create_simple_cmd_table(script_simple_command_t *table);
+
+extern script_var_t *script_string(char *str, int len);
+extern script_var_t *script_int(int val);
+extern script_var_t *script_list(int nitems, ...);
+extern int script_list_append(script_var_t *list, script_var_t *item);
+
+END_C_DECLS
+
+#endif /* _EGG_SCRIPT_H */

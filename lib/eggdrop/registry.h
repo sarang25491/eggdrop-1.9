@@ -2,11 +2,10 @@
  * registry.h
  *   eggdrop registry.
  *
- * $Id: registry.h,v 1.1 2002/03/22 16:01:16 ite Exp $
+ * $Id: registry.h,v 1.2 2002/03/26 01:06:21 ite Exp $
  */
 /*
- * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
+ * Copyright (C) 2001, 2002 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,8 +28,6 @@
 #include <eggdrop/common.h>
 
 BEGIN_C_DECLS
-
-struct eggdrop;
 
 #define REGISTRY_DONT_CREATE	1
 #define REGISTRY_PREPEND	2
@@ -60,16 +57,13 @@ typedef struct registry_simple_chain_b {
   int nargs;
 } registry_simple_chain_t;
 
-extern int registry_add(struct eggdrop *, registry_entry_t *);
-extern int registry_add_table(struct eggdrop *, registry_entry_t *);
-extern int registry_add_simple_chains(struct eggdrop *,
-				      registry_simple_chain_t *);
-extern int registry_remove(struct eggdrop *, registry_entry_t *);
-extern int registry_remove_table(struct eggdrop *, registry_entry_t *);
-extern int registry_lookup(struct eggdrop *, const char *, const char *,
-			   Function *, void **);
-extern int registry_unlookup(struct eggdrop *, const char *, const char *,
-			     Function *, void **);
+extern int registry_add(registry_entry_t *);
+extern int registry_add_table(registry_entry_t *);
+extern int registry_add_simple_chains(registry_simple_chain_t *);
+extern int registry_remove(registry_entry_t *);
+extern int registry_remove_table(registry_entry_t *);
+extern int registry_lookup(const char *, const char *, Function *, void **);
+extern int registry_unlookup(const char *, const char *, Function *, void **);
 
 END_C_DECLS
 
