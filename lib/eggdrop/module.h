@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.10 2002/01/06 06:21:08 ite Exp $
+ * $Id: module.h,v 1.11 2002/01/13 19:13:23 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -240,8 +240,8 @@
 /* 144 - 147 */
 #define xtra_kill ((void (*)(struct user_entry *))global[144])
 #define xtra_unpack ((void (*)(struct userrec *, struct user_entry *))global[145])
-#define movefile ((int (*) (char *, char *))global[146])
-#define copyfile ((int (*) (char *, char *))global[147])
+/* #define movefile ((int (*) (char *, char *))global[146]) */
+/* #define copyfile ((int (*) (char *, char *))global[147]) */
 /* 148 - 151 */
 #define do_tcl ((void (*)(char *, char *))global[148])
 #define readtclprog ((int (*)(const char *))global[149])
@@ -379,7 +379,7 @@
 /* #define strcasecmp ((int (*)(const char *, const char *))global[255]) */
 /* 256 - 259 */
 #define fixfrom ((char *(*)(char *))global[256])
-#define is_file ((int (*)(const char *))global[257])
+/* #define is_file ((int (*)(const char *))global[257]) */
 /* #define must_be_owner (*(int *)(global[258])) */
 #define tandbot (*(tand_t **)(global[259]))
 /* 260 - 263 */

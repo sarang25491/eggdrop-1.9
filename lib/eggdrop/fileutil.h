@@ -1,11 +1,11 @@
 /*
- * eggdrop.h
- *   libeggdrop header file
+ * fileutil.h
+ *   convenience utilities to deal with common file operations
  *
- * $Id: eggdrop.h,v 1.2 2002/01/13 19:13:22 ite Exp $
+ * $Id: fileutil.h,v 1.1 2002/01/13 19:13:23 ite Exp $
  */
 /*
- * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ * Copyright (C) 2000, 2001 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,17 +22,17 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#ifndef _EGGDROP_H
-#define _EGGDROP_H
+#ifndef _EGG_FILEUTIL_H
+#define _EGG_FILEUTIL_H
 
-#ifdef HAVE_CONFIG_H
-#  include "config.h"
-#endif
+#include <eggdrop/common.h>
 
-#include "../compat/compat.h"
-#include "../egglib/egglib.h"
-#include "botnetutil.h"
-#include "memutil.h"
-#include "fileutil.h"
+BEGIN_C_DECLS
 
-#endif				/* _EGGDROP_H */
+int copyfile(char *, char *);
+int movefile(char *, char *);
+int is_file(const char *);
+
+END_C_DECLS
+
+#endif				/* _EGG_FILEUTIL_H */

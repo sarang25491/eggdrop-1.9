@@ -2,7 +2,7 @@
  * files.c - part of filesys.mod
  *   handles all file system commands
  *
- * $Id: files.c,v 1.2 2001/12/02 14:26:13 ite Exp $
+ * $Id: files.c,v 1.3 2002/01/13 19:13:23 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -39,8 +39,6 @@
 #  include <ndir.h>
 # endif
 #endif
-
-#include "src/stat.h"
 
 
 /* Are there too many people in the file system?

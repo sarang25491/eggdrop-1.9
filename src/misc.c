@@ -6,7 +6,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.56 2002/01/06 06:21:09 ite Exp $
+ * $Id: misc.c,v 1.57 2002/01/13 19:13:23 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -28,7 +28,6 @@
  */
 
 #include "main.h"
-#include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include "chan.h"
@@ -37,7 +36,6 @@
 #ifdef HAVE_UNAME
 #  include <sys/utsname.h>
 #endif
-#include "stat.h"
 
 extern struct dcc_t	*dcc;
 extern struct chanset_t	*chanset;
@@ -69,20 +67,6 @@ static struct help_ref {
 /*
  *    Misc functions
  */
-
-/* low-level stuff for other modules
- */
-int is_file(const char *s)
-{
-  struct stat ss;
-  int i = stat(s, &ss);
-
-  if (i < 0)
-    return 0;
-  if ((ss.st_mode & S_IFREG) || (ss.st_mode & S_IFLNK))
-    return 1;
-  return 0;
-}
 
 /* Convert "abc!user@a.b.host" into "*!user@*.b.host"
  * or "abc!user@1.2.3.4" into "*!user@1.2.3.*"

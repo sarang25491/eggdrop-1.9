@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.63 2002/01/06 06:21:09 ite Exp $
+ * $Id: proto.h,v 1.64 2002/01/13 19:13:23 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -32,7 +32,6 @@
 #define _EGG_PROTO_H
 
 #include "lush.h"
-#include "misc_file.h"
 
 #include "irccmp.h"
 #include "match.h"
@@ -186,7 +185,6 @@ char *extracthostname(char *);
 void show_telnet_banner(int i);
 void make_rand_str(char *, int);
 int oatoi(const char *);
-int is_file(const char *);
 void logsuffix_change(char *);
 #if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
 void str_nutf8tounicode(char *str, int len);

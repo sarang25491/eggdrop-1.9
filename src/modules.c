@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.95 2002/01/06 06:21:09 ite Exp $
+ * $Id: modules.c,v 1.96 2002/01/13 19:13:23 ite Exp $
  */
 /* 
  * Copyright (C) 1997 Robey Pointer
@@ -320,8 +320,8 @@ Function global_table[] =
   /* 144 - 147 */
   (Function) xtra_kill,
   (Function) xtra_unpack,
-  (Function) movefile,
-  (Function) copyfile,
+  (Function) 0,
+  (Function) 0,
   /* 148 - 151 */
   (Function) do_tcl,
   (Function) readtclprog,
@@ -459,7 +459,7 @@ Function global_table[] =
   (Function) 0,			/* strcasecmp				*/
   /* 256 - 259 */
   (Function) fixfrom,
-  (Function) is_file,
+  (Function) 0,
   (Function) 0,
   (Function) & tandbot,		/* tand_t *				*/
   /* 260 - 263 */
