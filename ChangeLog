@@ -1,3 +1,15 @@
+2003-02-18 10:13  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/eggconfig.c, lib/eggdrop/eggconfig.h,
+	lib/eggdrop/module.h, lib/eggdrop/script.c, lib/eggdrop/users.c,
+	modules/server/binds.c, modules/server/binds.h,
+	modules/server/channels.h, modules/server/input.c,
+	modules/server/parse.c, modules/server/scriptcmds.c,
+	modules/server/server.c, modules/server/servsock.c,
+	modules/tclscript/tclscript.c, src/main.c:
+
+	[no log message] 
+
 2003-02-18 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
