@@ -1,3 +1,9 @@
+2003-03-06 13:49  Tothwolf <tothwolf@techmonkeys.org>
+
+	* configure.ac, acconfig/acinclude.m4, lib/compat/Makefile.am:
+
+	* Revert LTLIBOBJS changes for now.  
+
 2003-03-06 12:40  Tothwolf <tothwolf@techmonkeys.org>
 
 	* lib/compat/Makefile.am:
