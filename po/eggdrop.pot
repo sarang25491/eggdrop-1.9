@@ -1,0 +1,2431 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2001-08-19 20:10+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Kill bot incase a botchk is run from crond.
+#: src/bg.c:125 src/bg.c:133 src/main.c:852 src/main.c:858
+#, c-format
+msgid "* Warning!  Could not write %s file!\n"
+msgstr ""
+
+#: src/botcmd.c:85 src/botcmd.c:89 src/botcmd.c:90
+msgid "Fake message rejected"
+msgstr ""
+
+#: src/botcmd.c:250
+msgid "No such user"
+msgstr ""
+
+#: src/botcmd.c:254
+msgid "Not online; note stored."
+msgstr ""
+
+#: src/botcmd.c:258
+msgid "Notebox is full, sorry."
+msgstr ""
+
+#: src/botcmd.c:262
+msgid "is away; note stored."
+msgstr ""
+
+#: src/botcmd.c:276
+msgid "Note sent to"
+msgstr ""
+
+#: src/botcmd.c:295 src/botnet.c:1640 src/botnet.c:1647
+msgid "Disconnected from:"
+msgstr ""
+
+#: src/botcmd.c:328 src/botcmd.c:498 src/cmds.c:274
+msgid "no channels"
+msgstr ""
+
+#: src/botcmd.c:335
+msgid "Party line members:"
+msgstr ""
+
+#: src/botcmd.c:335 src/botcmd.c:344 src/botcmd.c:350
+msgid "owner"
+msgstr ""
+
+#: src/botcmd.c:335 src/botcmd.c:344 src/botcmd.c:350
+msgid "master"
+msgstr ""
+
+#: src/botcmd.c:335 src/botcmd.c:344 src/botcmd.c:350
+msgid "op"
+msgstr ""
+
+#: src/botcmd.c:341 src/botcmd.c:348
+msgid "People on channel"
+msgstr ""
+
+#: src/botcmd.c:366 src/botcmd.c:369 src/botcmd.c:372 src/botcmd.c:406
+#: src/botcmd.c:408
+msgid "idle"
+msgstr ""
+
+#: src/botcmd.c:377 src/botcmd.c:413 src/botnet.c:532
+msgid "AWAY"
+msgstr ""
+
+#: src/botcmd.c:384
+msgid "Bots connected"
+msgstr ""
+
+#: src/botcmd.c:399
+msgid "Other people on the bot"
+msgstr ""
+
+#: src/botcmd.c:534
+msgid "Attempting to link"
+msgstr ""
+
+#: src/botcmd.c:537
+msgid "Cant link there"
+msgstr ""
+
+#: src/botcmd.c:584 src/botcmd.c:839
+msgid "Cant unlink"
+msgstr ""
+
+#: src/botcmd.c:637 src/botcmd.c:644 src/botcmd.c:660 src/botcmd.c:670
+#: src/botcmd.c:717 src/botcmd.c:847 src/botcmd.c:907
+msgid "Disconnected"
+msgstr ""
+
+#: src/botcmd.c:638
+msgid "invalid bot"
+msgstr ""
+
+#: src/botcmd.c:643
+msgid "Loop detected"
+msgstr ""
+
+#: src/botcmd.c:644
+msgid "Detected loop: disconnecting"
+msgstr ""
+
+#: src/botcmd.c:657 src/botcmd.c:659 src/botcmd.c:662
+msgid "Bogus link notice from"
+msgstr ""
+
+#: src/botcmd.c:666
+msgid "Disconnected left"
+msgstr ""
+
+#: src/botcmd.c:667 src/botcmd.c:694 src/botmsg.c:407
+msgid "Linked to"
+msgstr ""
+
+#: src/botcmd.c:669 src/botcmd.c:676
+msgid "Illegal link by leaf"
+msgstr ""
+
+#: src/botcmd.c:671
+msgid "You are supposed to be a leaf!"
+msgstr ""
+
+#. we're directly connected to the offending bot?! (shudder!)
+#: src/botcmd.c:702 src/users.c:1062 src/users.c:1065
+msgid "Rejecting bot"
+msgstr ""
+
+#: src/botcmd.c:703
+msgid "from"
+msgstr ""
+
+#: src/botcmd.c:715
+msgid "Older bot detected (unsupported)"
+msgstr ""
+
+#: src/botcmd.c:717
+msgid "outdated"
+msgstr ""
+
+#: src/botcmd.c:799 src/botcmd.c:801
+msgid "Trace result"
+msgstr ""
+
+#: src/botcmd.c:839
+msgid "doesnt exist"
+msgstr ""
+
+#. I'm the connection to the rejected bot
+#: src/botcmd.c:844 src/botcmd.c:845 src/botcmd.c:848 src/botcmd.c:1066
+#: src/users.c:1059
+msgid "rejected"
+msgstr ""
+
+#: src/botcmd.c:876
+msgid "Remote boots are not allowed."
+msgstr ""
+
+#: src/botcmd.c:884
+msgid "Cant boot the bot owner."
+msgstr ""
+
+#: src/botcmd.c:905
+#, c-format
+msgid "Wrong bot--wanted %s, got %s"
+msgstr ""
+
+#: src/botcmd.c:906 src/botcmd.c:908
+msgid "imposter"
+msgstr ""
+
+#: src/botcmd.c:1014
+msgid "MOTD file:"
+msgstr ""
+
+#: src/botcmd.c:1030
+msgid "No MOTD file."
+msgstr ""
+
+#: src/botcmd.c:1061
+msgid "FILE TRANSFER REJECTED"
+msgstr ""
+
+#: src/botcmd.c:1090
+msgid "Filesys module not loaded."
+msgstr ""
+
+#: src/botcmd.c:1252 src/botcmd.c:1303 src/botcmd.c:1307 src/botmsg.c:639
+#: src/botmsg.c:672
+msgid "has left the"
+msgstr ""
+
+#: src/botcmd.c:1257 src/botmsg.c:634 src/botmsg.c:665
+msgid "has joined the"
+msgstr ""
+
+#: src/botcmd.c:1357 src/botmsg.c:596
+msgid "is now away"
+msgstr ""
+
+#: src/botcmd.c:1361 src/botmsg.c:603 src/botmsg.c:610
+msgid "is no longer away"
+msgstr ""
+
+#: src/botcmd.c:1405
+msgid "User file rejected by"
+msgstr ""
+
+#: src/botcmd.c:1413
+msgid "Old style share request by"
+msgstr ""
+
+#: src/botcmd.c:1414
+msgid "Antiquated sharing request"
+msgstr ""
+
+#: src/botmsg.c:740 src/botmsg.c:762
+msgid "Nick Change:"
+msgstr ""
+
+#: src/botmsg.c:803
+msgid "That bot isnt here.\n"
+msgstr ""
+
+#: src/botmsg.c:834
+msgid "I dont know anyone by that name.\n"
+msgstr ""
+
+#: src/botmsg.c:839
+msgid "Thats a bot.  You cant leave notes for a bot.\n"
+msgstr ""
+
+#: src/botmsg.c:862
+msgid "is away"
+msgstr ""
+
+#. User is away in all sessions -- just notify the user that a
+#. * message arrived and was stored. (only oldest session is notified.)
+#.
+#: src/botmsg.c:905
+msgid "Note arrived for you"
+msgstr ""
+
+#: src/botnet.c:433
+msgid "Users across the botnet"
+msgstr ""
+
+#: src/botnet.c:433
+msgid "Party line"
+msgstr ""
+
+#: src/botnet.c:434
+msgid "Local channel"
+msgstr ""
+
+#: src/botnet.c:438 src/botnet.c:441
+msgid "Users on channel"
+msgstr ""
+
+#: src/botnet.c:547 src/botnet.c:582
+msgid "No bots linked."
+msgstr ""
+
+#: src/botnet.c:568
+msgid "total"
+msgstr ""
+
+#: src/botnet.c:598
+msgid "No trace info for:"
+msgstr ""
+
+#: src/botnet.c:611
+msgid "Tree too complex!"
+msgstr ""
+
+#: src/botnet.c:878
+msgid "Unlinking all bots..."
+msgstr ""
+
+#: src/botnet.c:883 src/botnet.c:886
+msgid "Killed link attempt to"
+msgstr ""
+
+#: src/botnet.c:894
+msgid "No longer trying to link:"
+msgstr ""
+
+#: src/botnet.c:907
+msgid "Breaking link with"
+msgstr ""
+
+#: src/botnet.c:915 src/botnet.c:921
+msgid "Unlinked from:"
+msgstr ""
+
+#: src/botnet.c:935
+msgid "Not connected to that bot."
+msgstr ""
+
+#: src/botnet.c:958
+msgid "Smooshing bot tables and assocs..."
+msgstr ""
+
+#: src/botnet.c:988
+#, c-format
+msgid "%s is not a known bot.\n"
+msgstr ""
+
+#: src/botnet.c:991
+msgid "Link to myself?  Oh boy, Freud would have a field day.\n"
+msgstr ""
+
+#: src/botnet.c:994
+msgid "That bot is already connected up.\n"
+msgstr ""
+
+#: src/botnet.c:1001
+msgid "Already linking to that bot.\n"
+msgstr ""
+
+#: src/botnet.c:1008 src/botnet.c:1135
+#, c-format
+msgid "Invalid telnet address:port stored for '%s'.\n"
+msgstr ""
+
+#: src/botnet.c:1009 src/botnet.c:1136
+#, c-format
+msgid "Use: .chaddr %s <address>:<port#>[/<relay-port#>]\n"
+msgstr ""
+
+#: src/botnet.c:1014 src/botnet.c:1143
+msgid "Sorry, too many DCC connections.\n"
+msgstr ""
+
+#: src/botnet.c:1019
+#, c-format
+msgid "Linking to %s at %s:%d ..."
+msgstr ""
+
+#: src/botnet.c:1047 src/dcc.c:223
+#, c-format
+msgid "Failed link to %s."
+msgstr ""
+
+#: src/botnet.c:1081 src/botnet.c:1333
+msgid "Cant find user for relay!"
+msgstr ""
+
+#: src/botnet.c:1090
+msgid "Could not link to"
+msgstr ""
+
+#: src/botnet.c:1125
+msgid "is not a known bot."
+msgstr ""
+
+#: src/botnet.c:1129
+msgid "Relay to myself?  What on EARTH would be the point?!"
+msgstr ""
+
+#: src/botnet.c:1150
+msgid "No free sockets available.\n"
+msgstr ""
+
+#: src/botnet.c:1161
+msgid "(Type *BYE* on a line by itself to abort.)\n"
+msgstr ""
+
+#: src/botnet.c:1191 src/botnet.c:1252 src/botnet.c:1298
+#, c-format
+msgid "Cant find user for relay!  %d -> %d"
+msgstr ""
+
+#: src/botnet.c:1198
+#, c-format
+msgid "Could not link to %s.\n"
+msgstr ""
+
+#: src/botnet.c:1262
+#, c-format
+msgid "Aborting relay attempt to %s.\n"
+msgstr ""
+
+#: src/botnet.c:1263
+#, c-format
+msgid ""
+"You are now back on %s.\n"
+"\n"
+msgstr ""
+
+#: src/botnet.c:1264
+#, c-format
+msgid "Relay aborted: %s -> %s"
+msgstr ""
+
+#: src/botnet.c:1304
+#, c-format
+msgid "Lost dcc connection to [%s]%s/%d"
+msgstr ""
+
+#: src/botnet.c:1306
+#, c-format
+msgid "(Dropping relay attempt to %s)"
+msgstr ""
+
+#: src/botnet.c:1342
+msgid ""
+"Success!\n"
+"\n"
+"NOW CONNECTED TO RELAY BOT"
+msgstr ""
+
+#: src/botnet.c:1343
+msgid "(You can type *BYE* to prematurely close the connection.)"
+msgstr ""
+
+#: src/botnet.c:1344
+msgid "Relay link:"
+msgstr ""
+
+#: src/botnet.c:1351
+msgid "left the party line."
+msgstr ""
+
+#: src/botnet.c:1379
+msgid "Ended relay link"
+msgstr ""
+
+#: src/botnet.c:1381
+msgid ""
+"RELAY CONNECTION DROPPED.\n"
+"You are now back on"
+msgstr ""
+
+#: src/botnet.c:1388
+msgid "rejoined the party line."
+msgstr ""
+
+#: src/botnet.c:1403
+msgid "Lost dcc connection to"
+msgstr ""
+
+#: src/botnet.c:1408
+msgid "Dropping relay link to"
+msgstr ""
+
+#: src/botnet.c:1473
+msgid "Breaking connection to"
+msgstr ""
+
+#: src/botnet.c:1474
+msgid "You are now back on"
+msgstr ""
+
+#: src/botnet.c:1475
+msgid "Relay broken"
+msgstr ""
+
+#: src/botnet.c:1613 src/botnet.c:1617
+msgid "Ping timeout"
+msgstr ""
+
+#: src/botnet.c:1641 src/botnet.c:1642 src/botnet.c:1647
+msgid "unleaflike behavior"
+msgstr ""
+
+#: src/botnet.c:1674
+msgid "Dropped bot"
+msgstr ""
+
+#: src/chanprog.c:272 src/cmds.c:558
+msgid "background"
+msgstr ""
+
+#: src/chanprog.c:275 src/cmds.c:558
+msgid "terminal mode"
+msgstr ""
+
+#: src/chanprog.c:277 src/cmds.c:559
+msgid "status mode"
+msgstr ""
+
+#: src/chanprog.c:279 src/cmds.c:559
+msgid "log dump mode"
+msgstr ""
+
+#: src/chanprog.c:296 src/cmds.c:557
+msgid "Online for"
+msgstr ""
+
+#: src/chanprog.c:297
+msgid "cache hit"
+msgstr ""
+
+#. info library
+#: src/chanprog.c:301
+msgid "Tcl library:"
+msgstr ""
+
+#. info tclversion/patchlevel
+#: src/chanprog.c:306
+msgid "Tcl version:"
+msgstr ""
+
+#: src/chanprog.c:309
+msgid "header version"
+msgstr ""
+
+#: src/chanprog.c:339
+msgid "New users get flags"
+msgstr ""
+
+#: src/chanprog.c:340
+msgid "notify"
+msgstr ""
+
+#: src/chanprog.c:342
+msgid "Permanent owner(s)"
+msgstr ""
+
+#: src/chanprog.c:392
+msgid "CONFIG FILE NOT LOADED (NOT FOUND, OR ERROR)"
+msgstr ""
+
+#: src/chanprog.c:415
+msgid ""
+"STARTING BOT IN USERFILE CREATION MODE.\n"
+"Telnet to the bot and enter 'NEW' as your nickname."
+msgstr ""
+
+#: src/chanprog.c:421
+#, c-format
+msgid "USER FILE NOT FOUND!  (try ./eggdrop -m %s to make one)\n"
+msgstr ""
+
+#: src/chanprog.c:424
+msgid ""
+"\n"
+"\n"
+"STARTING BOT IN USERFILE CREATION MODE.\n"
+"Telnet to the bot and enter 'NEW' as your nickname.\n"
+msgstr ""
+
+#: src/chanprog.c:427
+#, c-format
+msgid "OR Go to IRC and:  /msg %s hello\n"
+msgstr ""
+
+#: src/chanprog.c:428
+msgid ""
+"This will make the bot recognize you as the master.\n"
+"\n"
+msgstr ""
+
+#: src/chanprog.c:431
+msgid "USERFILE ALREADY EXISTS (drop the -m)\n"
+msgstr ""
+
+#: src/chanprog.c:459
+msgid "CANT WRITE TO TEMP DIR"
+msgstr ""
+
+#: src/chanprog.c:474
+msgid "Cant reload user file!"
+msgstr ""
+
+#: src/chanprog.c:483
+msgid "User file is missing!"
+msgstr ""
+
+#: src/cmds.c:1063
+msgid "You can not .restart a bot when running -n (due to tcl)"
+msgstr ""
+
+#: src/cmds.c:1070
+msgid "Restarting ..."
+msgstr ""
+
+#: src/cmds.c:1079
+msgid "Rehashing."
+msgstr ""
+
+#: src/cmds.c:1083 src/mod/irc.mod/msgcmds.c:901 src/tcldcc.c:1015
+msgid "Rehashing..."
+msgstr ""
+
+#: src/cmds.c:1090
+msgid "Reloading user file..."
+msgstr ""
+
+#: src/cmds.c:1100 src/cmds.c:1106
+msgid "BOT SHUTDOWN"
+msgstr ""
+
+#: src/cmds.c:1102 src/cmds.c:1108
+msgid "DIE BY"
+msgstr ""
+
+#: src/cmds.c:1106
+msgid "Authorized by"
+msgstr ""
+
+#: src/cmds.c:1109
+msgid "requested"
+msgstr ""
+
+#: src/cmds.c:2219 src/cmds.c:2238 src/cmds.c:2271 src/cmds.c:2293
+#: src/mod/server.mod/cmdsserv.c:53 src/tclhash.c:845
+msgid "What?  You need .help\n"
+msgstr ""
+
+#: src/cmds.c:2275 src/cmds.c:2297 src/cmds.c:2551 src/cmds.c:2607
+#: src/mod/filesys.mod/files.c:325 src/mod/filesys.mod/files.c:337
+#: src/mod/filesys.mod/files.c:434 src/mod/filesys.mod/files.c:556
+#: src/mod/filesys.mod/files.c:598 src/mod/filesys.mod/files.c:640
+#: src/mod/filesys.mod/files.c:682 src/mod/filesys.mod/files.c:731
+#: src/mod/filesys.mod/files.c:797 src/mod/filesys.mod/files.c:899
+#: src/mod/filesys.mod/files.c:948 src/mod/filesys.mod/files.c:1106
+#: src/mod/irc.mod/msgcmds.c:394 src/mod/irc.mod/msgcmds.c:631
+#: src/mod/irc.mod/msgcmds.c:733 src/mod/notes.mod/cmdsnote.c:31
+#: src/mod/notes.mod/cmdsnote.c:73 src/mod/notes.mod/cmdsnote.c:153
+#: src/mod/notes.mod/cmdsnote.c:187 src/mod/notes.mod/cmdsnote.c:221
+#: src/mod/notes.mod/notes.c:735 src/mod/notes.mod/notes.c:771
+msgid "Usage"
+msgstr ""
+
+#: src/cmds.c:2279
+msgid "Error loading module:"
+msgstr ""
+
+#: src/cmds.c:2282 src/modules.c:725
+#, c-format
+msgid "Module loaded: %-16s"
+msgstr ""
+
+#: src/cmds.c:2301
+msgid "Error unloading module:"
+msgstr ""
+
+#: src/cmds.c:2304 src/modules.c:769
+msgid "Module unloaded:"
+msgstr ""
+
+#: src/cmds.c:2551
+msgid "handle"
+msgstr ""
+
+#: src/cmds.c:2552
+msgid "hostmask"
+msgstr ""
+
+#: src/cmds.c:2565 src/mod/notes.mod/cmdsnote.c:159
+msgid "No such user."
+msgstr ""
+
+#: src/cmds.c:2573
+msgid "You can't remove hosts while having the +d or +k flag."
+msgstr ""
+
+#: src/cmds.c:2580
+msgid "You can't remove hostmasks from non-bots."
+msgstr ""
+
+#: src/cmds.c:2584
+msgid "You can't remove hostmask from a shared bot."
+msgstr ""
+
+#: src/cmds.c:2588
+msgid "Can't remove hostmasks from the bot owner/master."
+msgstr ""
+
+#: src/cmds.c:2591
+msgid "Permission denied."
+msgstr ""
+
+#: src/cmds.c:2597
+#, c-format
+msgid "Removed '%s' from %s"
+msgstr ""
+
+#: src/cmds.c:2599
+msgid "Failed."
+msgstr ""
+
+#: src/cmds.c:2614
+msgid "No such bot online."
+msgstr ""
+
+#: src/cmds.c:2717
+msgid "You are"
+msgstr ""
+
+#: src/dcc.c:128
+#, c-format
+msgid "Rejecting link from %s"
+msgstr ""
+
+#: src/dcc.c:198
+#, c-format
+msgid "Linked to %s."
+msgstr ""
+
+#. We entered the wrong password
+#: src/dcc.c:325
+#, c-format
+msgid "Bad password on connect attempt to %s."
+msgstr ""
+
+#: src/dcc.c:330
+#, c-format
+msgid "Password required for connection to %s."
+msgstr ""
+
+#: src/dcc.c:343
+#, c-format
+msgid "ERROR linking %s: %s"
+msgstr ""
+
+#: src/dcc.c:350
+#, c-format
+msgid "Lost Bot: %s"
+msgstr ""
+
+#: src/dcc.c:357
+#, c-format
+msgid "Timeout: bot link to %s at %s:%d"
+msgstr ""
+
+#: src/dcc.c:554 src/dcc.c:593
+#, c-format
+msgid "Bad Password: [%s]%s/%d"
+msgstr ""
+
+#. Log entry for successful login -slennox 3/28/1999
+#: src/dcc.c:573
+#, c-format
+msgid "Logged in: %s (%s/%d)"
+msgstr ""
+
+#: src/dcc.c:592
+msgid "Negative on that, Houston.\n"
+msgstr ""
+
+#: src/dcc.c:608 src/dcc.c:1772
+#, c-format
+msgid "*** %s has joined the party line.\n"
+msgstr ""
+
+#: src/dcc.c:618 src/dcc.c:845
+#, c-format
+msgid "Lost dcc connection to %s (%s/%d)"
+msgstr ""
+
+#: src/dcc.c:627
+#, c-format
+msgid "Password timeout on dcc chat: [%s]%s"
+msgstr ""
+
+#: src/dcc.c:923
+#, c-format
+msgid "DCC connection closed (%s!%s)"
+msgstr ""
+
+#: src/dcc.c:1073
+#, c-format
+msgid "Telnet connection flood from %s!  Placing on ignore!"
+msgstr ""
+
+#: src/dcc.c:1100
+#, c-format
+msgid "Failed TELNET incoming (%s)"
+msgstr ""
+
+#: src/dcc.c:1116
+#, c-format
+msgid "Refused %s/%d (bad src port)"
+msgstr ""
+
+#: src/dcc.c:1125
+#, c-format
+msgid "Refused %s/%d (invalid ip)"
+msgstr ""
+
+#: src/dcc.c:1170
+#, c-format
+msgid "Refused %s (bad hostname)"
+msgstr ""
+
+#: src/dcc.c:1187
+#, c-format
+msgid "Telnet connection: %s/%d"
+msgstr ""
+
+#: src/dcc.c:1202
+#, c-format
+msgid "Ident failed for %s: %s"
+msgstr ""
+
+#: src/dcc.c:1219
+#, c-format
+msgid "(!) Listening port %d abruptly died."
+msgstr ""
+
+#: src/dcc.c:1247
+#, c-format
+msgid "Lost telnet connection from %s while checking for duplicate"
+msgstr ""
+
+#: src/dcc.c:1269
+#, c-format
+msgid "Refused telnet connection from %s (duplicate)"
+msgstr ""
+
+#: src/dcc.c:1345
+#, c-format
+msgid "Refused %s (bad nick)"
+msgstr ""
+
+#: src/dcc.c:1355
+#, c-format
+msgid "Refused %s (non-bot)"
+msgstr ""
+
+#: src/dcc.c:1362
+#, c-format
+msgid "Refused %s (non-user)"
+msgstr ""
+
+#: src/dcc.c:1373
+#, c-format
+msgid ""
+"This is the telnet interface to %s, an eggdrop bot.\n"
+"Dont abuse it, and it will be open for all your friends, too.\n"
+msgstr ""
+
+#: src/dcc.c:1374
+msgid ""
+"You now get to pick a nick to use on the bot,\n"
+"and a password so nobody else can pretend to be you.\n"
+"Please remember both!"
+msgstr ""
+
+#: src/dcc.c:1392
+#, c-format
+msgid "Refused %s (invalid handle: %s)"
+msgstr ""
+
+#: src/dcc.c:1402
+#, c-format
+msgid "Refused telnet connection from %s (tried using my botnetnick)"
+msgstr ""
+
+#: src/dcc.c:1446
+#, c-format
+msgid "Refused [%s]%s (no password)"
+msgstr ""
+
+#. NOTE: The MD5 digest used above to prevent cleartext passwords being
+#. *       sent across the net will _only_ work when we have the cleartext
+#. *       password. User passwords are encrypted (with blowfish usually)
+#. *       so the same thing cant be done. Botnet passwords are always
+#. *       stored in cleartext, or at least something that can be reversed.
+#. *       <Cybah>
+#.
+#. Turn off remote telnet echo (send IAC WILL ECHO).
+#: src/dcc.c:1505 src/mod/filesys.mod/filesys.c:879
+#: src/mod/server.mod/server.c:1501
+msgid "Enter your password."
+msgstr ""
+
+#: src/dcc.c:1511
+#, c-format
+msgid "Lost telnet connection to %s/%d"
+msgstr ""
+
+#: src/dcc.c:1520
+#, c-format
+msgid "Ident timeout on telnet: %s"
+msgstr ""
+
+#: src/dcc.c:1599
+msgid ""
+"From now on, you dont need to use the -m option to start the bot.\n"
+"Enjoy !!"
+msgstr ""
+
+#: src/dcc.c:1600 src/mod/irc.mod/msgcmds.c:94
+#, c-format
+msgid "Bot installation complete, first master is %s"
+msgstr ""
+
+#: src/dcc.c:1631
+#, c-format
+msgid "New user via telnet: [%s]%s/%d"
+msgstr ""
+
+#: src/dcc.c:1658
+#, c-format
+msgid "Lost new telnet user (%s/%d)"
+msgstr ""
+
+#: src/dcc.c:1665
+#, c-format
+msgid "Lost new telnet user %s (%s/%d)"
+msgstr ""
+
+#: src/dcc.c:1675
+#, c-format
+msgid "Timeout on new telnet user: %s/%d"
+msgstr ""
+
+#: src/dcc.c:1684
+#, c-format
+msgid "Timeout on new telnet user: [%s]%s/%d"
+msgstr ""
+
+#: src/dcc.c:1736 src/dns.c:254
+#, c-format
+msgid "Tcl error [%s]: %s"
+msgstr ""
+
+#: src/dcc.c:1805
+#, c-format
+msgid "*** ATTENTION: DEAD SOCKET (%d) OF TYPE %s UNTRAPPED"
+msgstr ""
+
+#: src/dcc.c:1917
+#, c-format
+msgid "Lost connection while identing [%s/%d]"
+msgstr ""
+
+#: src/dcc.c:1982
+msgid "Timeout/EOF ident connection"
+msgstr ""
+
+#: src/dcc.c:2021
+msgid "Lost ident wait telnet socket!!"
+msgstr ""
+
+#: src/dcc.c:2045
+#, c-format
+msgid "Denied telnet: %s, No Access"
+msgstr ""
+
+#: src/dcc.c:2090
+msgid ""
+"\n"
+"Nickname.\n"
+msgstr ""
+
+#: src/dcc.c:2093
+msgid ""
+"%B  (%E)\n"
+"\n"
+"Please enter your nickname.\n"
+msgstr ""
+
+#. FLOOD
+#: src/dccutil.c:496
+msgid "Goodbye"
+msgstr ""
+
+#: src/dccutil.c:502
+#, c-format
+msgid "%s has been forcibly removed for flooding.\n"
+msgstr ""
+
+#: src/dccutil.c:527 src/mod/filesys.mod/filesys.c:936
+msgid "-=- poof -=-\n"
+msgstr ""
+
+#: src/dccutil.c:528
+#, c-format
+msgid "Youve been booted from the %s by %s%s%s\n"
+msgstr ""
+
+#: src/dccutil.c:537
+#, c-format
+msgid "%s booted %s from the party line%s%s\n"
+msgstr ""
+
+#: src/main.c:483
+msgid ""
+"Command line arguments:\n"
+"  -h   help\n"
+"  -v   print version and exit\n"
+"  -n   don't go into the background\n"
+"  -c   (with -n) display channel stats every 10 seconds\n"
+"  -t   (with -n) use terminal to simulate dcc-chat\n"
+"  -m   userfile creation mode\n"
+"  optional config filename (default 'eggdrop.conf')\n"
+msgstr ""
+
+#: src/main.c:504
+msgid "Backing up user file..."
+msgstr ""
+
+#: src/main.c:586
+msgid "Switching logfiles..."
+msgstr ""
+
+#: src/main.c:787
+msgid "ERROR: Eggdrop will not run as root!"
+msgstr ""
+
+#: src/main.c:806
+msgid ""
+"You have installed modules but have not selected an encryption\n"
+"module, please consult the default config file for info.\n"
+msgstr ""
+
+#: src/main.c:828
+#, c-format
+msgid "I detect %s already running from this directory.\n"
+msgstr ""
+
+#: src/main.c:829
+#, c-format
+msgid "If this is incorrect, erase the %s\n"
+msgstr ""
+
+#. Should be only 2 modules now - blowfish (or some other
+#. encryption module) and eggdrop.
+#: src/main.c:1065
+msgid "Stagnant module; there WILL be memory leaks!"
+msgstr ""
+
+#: src/misc.c:587 src/misc.c:590 src/misc.c:698 src/misc.c:701
+#, c-format
+msgid "Last message repeated %d time(s).\n"
+msgstr ""
+
+#. write to the log before closing it huh..
+#: src/misc.c:660
+#, c-format
+msgid "Cycling logfile %s, over max-logsize (%d)"
+msgstr ""
+
+#: src/misc.c:1214 src/misc.c:1253
+msgid "No help available on that."
+msgstr ""
+
+#: src/misc.c:1277 src/misc.c:1302
+msgid "No help available on that.\n"
+msgstr ""
+
+#: src/mod/assoc.mod/assoc.c:183
+msgid "No channel names\n"
+msgstr ""
+
+#: src/mod/assoc.mod/assoc.c:186
+msgid " Chan  Name\n"
+msgstr ""
+
+#: src/mod/assoc.mod/assoc.c:202
+msgid "What?  You need '.help'\n"
+msgstr ""
+
+#: src/mod/assoc.mod/assoc.c:208
+msgid "Channel # out of range: must be *0-*99999\n"
+msgstr ""
+
+#: src/mod/assoc.mod/assoc.c:214
+msgid "You cant name the main party line; its just a party line.\n"
+msgstr ""
+
+#: src/mod/assoc.mod/assoc.c:217
+msgid "Channel # out of range: must be 1-99999\n"
+msgstr ""
+
+#: src/mod/assoc.mod/assoc.c:224
+#, c-format
+msgid "Channel %s%d has no name.\n"
+msgstr ""
+
+#: src/mod/assoc.mod/assoc.c:230
+#, c-format
+msgid "Okay, removed name for channel %s%d.\n"
+msgstr ""
+
+#: src/mod/assoc.mod/assoc.c:232
+#, c-format
+msgid "--- %s removed this channels name.\n"
+msgstr ""
+
+#: src/mod/assoc.mod/assoc.c:238
+msgid "Channels name cant be that long (20 chars max).\n"
+msgstr ""
+
+#: src/mod/assoc.mod/assoc.c:242
+msgid "First character of the channel name cant be a digit.\n"
+msgstr ""
+
+#: src/mod/assoc.mod/assoc.c:247
+#, c-format
+msgid "Okay, channel %s%d is %s now.\n"
+msgstr ""
+
+#: src/mod/assoc.mod/assoc.c:249
+#, c-format
+msgid "--- %s named this channel %s\n"
+msgstr ""
+
+#: src/mod/assoc.mod/assoc.c:329
+#, c-format
+msgid "--- (%s) named this channel %s.\n"
+msgstr ""
+
+#: src/mod/assoc.mod/assoc.c:332
+#, c-format
+msgid "--- (%s) %s removed this channels name.\n"
+msgstr ""
+
+#: src/mod/assoc.mod/assoc.c:337
+#, c-format
+msgid "--- (%s) %s named this channel '%s'.\n"
+msgstr ""
+
+#: src/mod/channels.mod/channels.c:558
+msgid "lurking"
+msgstr ""
+
+#: src/mod/channels.mod/cmdschan.c:446 src/mod/channels.mod/cmdschan.c:472
+#: src/mod/channels.mod/cmdschan.c:493
+msgid "Removed ban"
+msgstr ""
+
+#: src/mod/channels.mod/cmdschan.c:535 src/mod/channels.mod/cmdschan.c:561
+#: src/mod/channels.mod/cmdschan.c:582
+msgid "Removed exempt"
+msgstr ""
+
+#: src/mod/channels.mod/cmdschan.c:624 src/mod/channels.mod/cmdschan.c:651
+#: src/mod/channels.mod/cmdschan.c:673
+msgid "Removed invite"
+msgstr ""
+
+#: src/mod/channels.mod/userchan.c:415
+msgid "Wanted to ban myself--deflected."
+msgstr ""
+
+#: src/mod/channels.mod/userchan.c:614 src/mod/channels.mod/userchan.c:662
+#: src/mod/channels.mod/userchan.c:710
+msgid "Created"
+msgstr ""
+
+#: src/mod/channels.mod/userchan.c:617 src/mod/channels.mod/userchan.c:665
+#: src/mod/channels.mod/userchan.c:713
+msgid "last used"
+msgstr ""
+
+#: src/mod/channels.mod/userchan.c:644 src/mod/channels.mod/userchan.c:692
+#: src/mod/channels.mod/userchan.c:740
+msgid "inactive"
+msgstr ""
+
+#: src/mod/channels.mod/userchan.c:762 src/mod/channels.mod/userchan.c:941
+msgid "No such channel defined"
+msgstr ""
+
+#: src/mod/channels.mod/userchan.c:772 src/mod/channels.mod/userchan.c:775
+msgid "Global bans"
+msgstr ""
+
+#: src/mod/channels.mod/userchan.c:773 src/mod/channels.mod/userchan.c:861
+#: src/mod/channels.mod/userchan.c:952
+msgid "not active on"
+msgstr ""
+
+#: src/mod/channels.mod/userchan.c:787
+#, c-format
+msgid "Channel bans for %s:   (! = not active, * = not placed by bot)\n"
+msgstr ""
+
+#: src/mod/channels.mod/userchan.c:790
+#, c-format
+msgid "Channel bans for %s:  (* = not placed by bot)\n"
+msgstr ""
+
+#: src/mod/channels.mod/userchan.c:832
+msgid "(There are no bans, permanent or otherwise.)\n"
+msgstr ""
+
+#: src/mod/channels.mod/userchan.c:834
+msgid "Use .bans all to see the total list.\n"
+msgstr ""
+
+#: src/mod/channels.mod/userchan.c:850
+msgid "No such channel defined.\n"
+msgstr ""
+
+#: src/mod/channels.mod/userchan.c:860
+msgid "Global exempts"
+msgstr ""
+
+#: src/mod/channels.mod/userchan.c:863
+msgid "Global exempts:\n"
+msgstr ""
+
+#: src/mod/channels.mod/userchan.c:876 src/mod/channels.mod/userchan.c:881
+msgid "Channel exempts for"
+msgstr ""
+
+#: src/mod/channels.mod/userchan.c:877 src/mod/channels.mod/userchan.c:968
+msgid "not active"
+msgstr ""
+
+#: src/mod/channels.mod/userchan.c:878 src/mod/channels.mod/userchan.c:882
+#: src/mod/channels.mod/userchan.c:969 src/mod/channels.mod/userchan.c:973
+msgid "not placed by bot"
+msgstr ""
+
+#: src/mod/channels.mod/userchan.c:925
+msgid "Use .exempts all to see the total list"
+msgstr ""
+
+#: src/mod/channels.mod/userchan.c:951 src/mod/channels.mod/userchan.c:954
+msgid "Global invites"
+msgstr ""
+
+#: src/mod/channels.mod/userchan.c:967 src/mod/channels.mod/userchan.c:972
+msgid "Channel invites for"
+msgstr ""
+
+#: src/mod/channels.mod/userchan.c:1016
+msgid "Use .invites all to see the total list"
+msgstr ""
+
+#: src/mod/channels.mod/userchan.c:1216 src/userrec.c:534 src/userrec.c:549
+msgid "ERROR writing user file."
+msgstr ""
+
+#: src/mod/channels.mod/userchan.c:1286 src/mod/channels.mod/userchan.c:1303
+msgid "No longer banning"
+msgstr ""
+
+#: src/mod/channels.mod/userchan.c:1287 src/mod/channels.mod/userchan.c:1304
+#: src/mod/channels.mod/userchan.c:1332 src/mod/channels.mod/userchan.c:1378
+#: src/mod/channels.mod/userchan.c:1406 src/mod/channels.mod/userchan.c:1424
+#: src/users.c:220
+msgid "expired"
+msgstr ""
+
+#: src/mod/channels.mod/userchan.c:1304 src/mod/channels.mod/userchan.c:1378
+#: src/mod/channels.mod/userchan.c:1424
+msgid "on"
+msgstr ""
+
+#: src/mod/channels.mod/userchan.c:1331 src/mod/channels.mod/userchan.c:1377
+msgid "No longer ban exempting"
+msgstr ""
+
+#: src/mod/channels.mod/userchan.c:1405 src/mod/channels.mod/userchan.c:1423
+msgid "No longer inviteing"
+msgstr ""
+
+#: src/mod/console.mod/console.c:201
+msgid "Saved Console Settings:"
+msgstr ""
+
+#: src/mod/console.mod/console.c:202 src/mod/console.mod/console.c:314
+msgid "Channel:"
+msgstr ""
+
+#: src/mod/console.mod/console.c:203 src/mod/console.mod/console.c:315
+msgid "Console flags:"
+msgstr ""
+
+#: src/mod/console.mod/console.c:204 src/mod/console.mod/console.c:316
+msgid "Strip flags:"
+msgstr ""
+
+#: src/mod/console.mod/console.c:205 src/mod/console.mod/console.c:317
+msgid "Echo:"
+msgstr ""
+
+#: src/mod/console.mod/console.c:206 src/mod/console.mod/console.c:318
+msgid "yes"
+msgstr ""
+
+#: src/mod/console.mod/console.c:206 src/mod/console.mod/console.c:318
+msgid "no"
+msgstr ""
+
+#: src/mod/console.mod/console.c:207 src/mod/console.mod/console.c:319
+msgid "Page setting:"
+msgstr ""
+
+#: src/mod/console.mod/console.c:208 src/mod/console.mod/console.c:320
+msgid "Console channel:"
+msgstr ""
+
+#: src/mod/console.mod/console.c:313
+msgid "Saved your Console Settings:"
+msgstr ""
+
+#: src/mod/filesys.mod/dbcompat.c:63
+#, c-format
+msgid "Converting filesystem image in %s ..."
+msgstr ""
+
+#: src/mod/filesys.mod/filedb3.c:654
+msgid "filedb-update: cant open directory!"
+msgstr ""
+
+#: src/mod/filesys.mod/filedb3.c:768
+#, c-format
+msgid "(!) Broken convert to filedb in %s"
+msgstr ""
+
+#: src/mod/filesys.mod/filedb3.c:906
+msgid "Filename                        Size  Sent by/Date         # Gets\n"
+msgstr ""
+
+#: src/mod/filesys.mod/filedb3.c:907
+msgid "------------------------------  ----  -------------------  ------\n"
+msgstr ""
+
+#: src/mod/filesys.mod/filedb3.c:931 src/mod/filesys.mod/filedb3.c:935
+msgid "requires"
+msgstr ""
+
+#: src/mod/filesys.mod/filedb3.c:1016
+msgid "No files in this directory.\n"
+msgstr ""
+
+#: src/mod/filesys.mod/filedb3.c:1018 src/mod/filesys.mod/files.c:466
+#: src/mod/filesys.mod/files.c:513 src/mod/filesys.mod/files.c:566
+#: src/mod/filesys.mod/files.c:582 src/mod/filesys.mod/files.c:608
+#: src/mod/filesys.mod/files.c:624 src/mod/filesys.mod/files.c:650
+#: src/mod/filesys.mod/files.c:666 src/mod/filesys.mod/files.c:692
+#: src/mod/filesys.mod/files.c:709 src/mod/filesys.mod/files.c:847
+#: src/mod/filesys.mod/files.c:884 src/mod/filesys.mod/files.c:909
+#: src/mod/filesys.mod/files.c:931 src/mod/filesys.mod/files.c:1258
+msgid "No matching files.\n"
+msgstr ""
+
+#: src/mod/filesys.mod/filedb3.c:1046
+msgid "Directory does not exist"
+msgstr ""
+
+#: src/mod/filesys.mod/filedb3.c:1052
+msgid "File does not exist"
+msgstr ""
+
+#: src/mod/filesys.mod/filedb3.c:1056
+msgid "File is not shared"
+msgstr ""
+
+#: src/mod/filesys.mod/filedb3.c:1067
+msgid "(remote)"
+msgstr ""
+
+#: src/mod/filesys.mod/filedb3.c:1070
+msgid "Error trying to send file"
+msgstr ""
+
+#: src/mod/filesys.mod/filedb3.c:1094
+#, c-format
+msgid "Remote request for /%s%s%s (sending)"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:91
+msgid "Welcome to the %B file server\n"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:92
+msgid ""
+"All file transfers will be sent to '%N' by default.\n"
+"(You can specify an alternate nick with the 'get' command.)\n"
+"Type 'help' for help.\n"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:103
+msgid ""
+"\n"
+"The file system seems to be broken right now.\n"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:104
+msgid "(The files-path is set to an invalid directory.)\n"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:115 src/mod/filesys.mod/files.c:313
+msgid "Current directory"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:138 src/mod/filesys.mod/files.c:367
+#: src/mod/filesys.mod/files.c:387 src/mod/filesys.mod/files.c:403
+#: src/mod/filesys.mod/files.c:451
+msgid "Illegal directory.\n"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:341 src/mod/filesys.mod/files.c:739
+#: src/mod/filesys.mod/files.c:1003 src/mod/filesys.mod/files.c:1055
+#: src/mod/filesys.mod/files.c:1061
+msgid "No such directory.\n"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:351
+msgid "New current directory"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:440
+msgid "Be reasonable.\n"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:482
+#, c-format
+msgid "%s isnt available right now.\n"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:491 src/mod/filesys.mod/files.c:1440
+#, c-format
+msgid "Requested %s from %s ...\n"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:574 src/mod/filesys.mod/files.c:586
+msgid "Hid"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:616 src/mod/filesys.mod/files.c:628
+msgid "Unhid"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:658 src/mod/filesys.mod/files.c:670
+msgid "Shared"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:701 src/mod/filesys.mod/files.c:713
+msgid "Unshared"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:758
+#, c-format
+msgid "%s is already a normal file.\n"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:764
+#, c-format
+msgid "Changed link to %s\n"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:777
+msgid "Added link"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:857
+#, c-format
+msgid "You didnt upload %s\n"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:874
+msgid "Changed"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:876
+msgid "Blanked"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:923 src/mod/filesys.mod/files.c:935
+#: src/mod/notes.mod/notes.c:653 src/mod/notes.mod/notes.c:656
+msgid "Erased"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:990 src/mod/filesys.mod/files.c:1086
+msgid "Failed.\n"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:1000
+msgid "Created directory"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:1014
+#, c-format
+msgid "Changed %s/ to require +%s to access\n"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:1017
+#, c-format
+msgid "Changes %s/ to require no flags to access\n"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:1076
+msgid "Removed directory"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:1115
+msgid "Illegal source directory.\n"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:1135
+msgid "Illegal destination directory.\n"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:1148
+#, c-format
+msgid "You cant %s files on top of themselves.\n"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:1148 src/mod/filesys.mod/files.c:1197
+msgid "copy"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:1148 src/mod/filesys.mod/files.c:1197
+msgid "move"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:1196
+msgid "onto itself?  Nuh uh."
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:1264
+msgid "Copied"
+msgstr ""
+
+#: src/mod/filesys.mod/files.c:1264
+msgid "Moved"
+msgstr ""
+
+#: src/mod/filesys.mod/filesys.c:652 src/mod/filesys.mod/filesys.c:852
+#: src/mod/server.mod/server.c:1440 src/mod/server.mod/server.c:1484
+#: src/mod/transfer.mod/transfer.c:723
+msgid "Failed to connect"
+msgstr ""
+
+#: src/mod/filesys.mod/filesys.c:831 src/mod/server.mod/server.c:1425
+#, c-format
+msgid "DCC connections full: %s %s (%s!%s)"
+msgstr ""
+
+#: src/mod/filesys.mod/filesys.c:836 src/mod/server.mod/server.c:1430
+msgid "No access"
+msgstr ""
+
+#: src/mod/filesys.mod/filesys.c:837 src/mod/server.mod/server.c:1431
+#: src/mod/server.mod/servmsg.c:492
+msgid "Refused DCC chat (no access)"
+msgstr ""
+
+#: src/mod/filesys.mod/filesys.c:840 src/mod/server.mod/server.c:1434
+msgid "You must have a password set."
+msgstr ""
+
+#: src/mod/filesys.mod/filesys.c:841 src/mod/server.mod/server.c:1435
+msgid "Refused DCC chat (no password)"
+msgstr ""
+
+#: src/mod/filesys.mod/filesys.c:843
+msgid "Refused DCC chat (+x but no file area)"
+msgstr ""
+
+#: src/mod/filesys.mod/filesys.c:853 src/mod/server.mod/server.c:1485
+#: src/mod/transfer.mod/transfer.c:724
+msgid "DCC connection failed"
+msgstr ""
+
+#: src/mod/filesys.mod/filesys.c:861
+msgid "Failed to connect (invalid port)\n"
+msgstr ""
+
+#: src/mod/filesys.mod/filesys.c:862
+msgid "Refused DCC chat (invalid port)"
+msgstr ""
+
+#: src/mod/irc.mod/chan.c:261
+#, c-format
+msgid "Channel flood from %s -- kicking"
+msgstr ""
+
+#: src/mod/irc.mod/chan.c:263
+msgid "flood"
+msgstr ""
+
+#: src/mod/irc.mod/chan.c:282
+#, c-format
+msgid "JOIN flood from @%s!  Banning."
+msgstr ""
+
+#: src/mod/irc.mod/chan.c:284
+#, c-format
+msgid "NICK flood from @%s!  Banning."
+msgstr ""
+
+#: src/mod/irc.mod/chan.c:297
+msgid "join flood"
+msgstr ""
+
+#: src/mod/irc.mod/chan.c:300
+msgid "nick flood"
+msgstr ""
+
+#: src/mod/irc.mod/chan.c:309
+msgid "mass kick, go sit in a corner"
+msgstr ""
+
+#: src/mod/irc.mod/chan.c:316
+#, c-format
+msgid "Mass deop on %s by %s"
+msgstr ""
+
+#: src/mod/irc.mod/chan.c:318
+msgid "Mass deop.  Go sit in a corner."
+msgstr ""
+
+#: src/mod/irc.mod/chan.c:418 src/mod/irc.mod/mode.c:658
+msgid "banned: "
+msgstr ""
+
+#: src/mod/irc.mod/chan.c:421 src/mod/irc.mod/chan.c:490
+#: src/mod/irc.mod/chan.c:1658
+msgid "You are banned"
+msgstr ""
+
+#: src/mod/irc.mod/chan.c:747
+msgid "...and thank you for playing."
+msgstr ""
+
+#: src/mod/irc.mod/chan.c:816
+msgid "Hmm, mode info from a channel Im not on"
+msgstr ""
+
+#: src/mod/irc.mod/chan.c:1163
+#, c-format
+msgid "Im on too many channels--cant join: %s"
+msgstr ""
+
+#: src/mod/irc.mod/chan.c:1227 src/mod/irc.mod/chan.c:1230
+#, c-format
+msgid "Channel full--cant join: %s"
+msgstr ""
+
+#: src/mod/irc.mod/chan.c:1255 src/mod/irc.mod/chan.c:1258
+#, c-format
+msgid "Channel invite only--cant join: %s"
+msgstr ""
+
+#: src/mod/irc.mod/chan.c:1283 src/mod/irc.mod/chan.c:1286
+#, c-format
+msgid "Banned from channel--can't join: %s"
+msgstr ""
+
+#: src/mod/irc.mod/chan.c:1311 src/mod/irc.mod/chan.c:1320
+#, c-format
+msgid "Bad key--cant join: %s"
+msgstr ""
+
+#: src/mod/irc.mod/chan.c:1674
+msgid "...and dont come back."
+msgstr ""
+
+#: src/mod/irc.mod/chan.c:1934 src/mod/server.mod/servmsg.c:722
+#: src/mod/server.mod/servmsg.c:870 src/mod/server.mod/servmsg.c:882
+#, c-format
+msgid "Switching back to nick %s"
+msgstr ""
+
+#: src/mod/irc.mod/chan.c:1938 src/mod/server.mod/servmsg.c:725
+#: src/mod/server.mod/servmsg.c:874 src/mod/server.mod/servmsg.c:886
+#, c-format
+msgid "Switching back to altnick %s"
+msgstr ""
+
+#: src/mod/irc.mod/chan.c:1987 src/mod/irc.mod/chan.c:1992
+#: src/mod/irc.mod/chan.c:2123 src/mod/irc.mod/chan.c:2128
+msgid "that was fun, lets do it again!"
+msgstr ""
+
+#: src/mod/irc.mod/cmdsirc.c:525
+msgid "Not active on channel"
+msgstr ""
+
+#: src/mod/irc.mod/cmdsirc.c:530
+msgid "Processing channel"
+msgstr ""
+
+#: src/mod/irc.mod/cmdsirc.c:532
+msgid "Channel"
+msgstr ""
+
+#: src/mod/irc.mod/cmdsirc.c:534
+msgid "Desiring channel"
+msgstr ""
+
+#: src/mod/irc.mod/cmdsirc.c:538
+msgid "Channel Topic"
+msgstr ""
+
+#: src/mod/irc.mod/cmdsirc.c:651
+msgid "FAKE CHANOP GIVEN BY SERVER"
+msgstr ""
+
+#: src/mod/irc.mod/cmdsirc.c:653
+msgid "pending +o -- Im lagged"
+msgstr ""
+
+#: src/mod/irc.mod/cmdsirc.c:655
+msgid "pending -o -- Im lagged"
+msgstr ""
+
+#: src/mod/irc.mod/cmdsirc.c:657
+msgid "pending kick"
+msgstr ""
+
+#: src/mod/irc.mod/cmdsirc.c:660
+msgid "End of channel info."
+msgstr ""
+
+#: src/mod/irc.mod/cmdsirc.c:948 src/mod/irc.mod/msgcmds.c:310
+#: src/mod/irc.mod/msgcmds.c:399 src/mod/irc.mod/msgcmds.c:949
+msgid "I dont monitor that channel."
+msgstr ""
+
+#: src/mod/irc.mod/irc.c:146
+msgid "dont kick my friends, bud"
+msgstr ""
+
+#: src/mod/irc.mod/irc.c:151
+msgid "dont deop my friends, bud"
+msgstr ""
+
+#: src/mod/irc.mod/irc.c:934
+msgid "juped"
+msgstr ""
+
+#: src/mod/irc.mod/irc.c:936
+msgid "trying"
+msgstr ""
+
+#: src/mod/irc.mod/irc.c:938
+msgid "pending"
+msgstr ""
+
+#: src/mod/irc.mod/irc.c:940
+msgid "want ops!"
+msgstr ""
+
+#: src/mod/irc.mod/mode.c:376 src/mod/irc.mod/mode.c:473
+#: src/mod/irc.mod/mode.c:1053
+#, c-format
+msgid "* Mode change on %s for nonexistant %s!"
+msgstr ""
+
+#: src/mod/irc.mod/mode.c:664
+msgid "Banned"
+msgstr ""
+
+#: src/mod/irc.mod/mode.c:877
+#, c-format
+msgid "Oops.   Someone made me join %s... leaving..."
+msgstr ""
+
+#: src/mod/irc.mod/mode.c:896
+#, c-format
+msgid "Mode change by fake op on %s!  Reversing..."
+msgstr ""
+
+#: src/mod/irc.mod/mode.c:898
+msgid "Abusing ill-gained server ops"
+msgstr ""
+
+#: src/mod/irc.mod/mode.c:902
+#, c-format
+msgid "Mode change by non-chanop on %s!  Reversing..."
+msgstr ""
+
+#: src/mod/irc.mod/mode.c:904
+msgid "Abusing desync"
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:42
+msgid "Hi"
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:50
+#, c-format
+msgid "NOTICE %s :I dont recognize you from that host.\n"
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:51
+#, c-format
+msgid ""
+"NOTICE %s :Either you are using someone elses nickname or you need to type: /"
+"MSG %s IDENT (password)\n"
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:56
+msgid "You're banned, goober."
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:65 src/mod/irc.mod/msgcmds.c:77
+msgid "Introduced to"
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:65
+msgid "common site"
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:82
+#, c-format
+msgid "NOTICE %s :Hi %s!  Im %s, an eggdrop bot.\n"
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:83
+#, c-format
+msgid "NOTICE %s :Ill recognize you by hostmask %s from now on.\n"
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:85
+msgid "Since you come from a common irc site, this means you should"
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:86
+msgid "always use this nickname when talking to me"
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:91
+msgid "YOU ARE THE OWNER ON THIS BOT NOW"
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:92
+#, c-format
+msgid ""
+"NOTICE %s :As master you really need to set a password: with /MSG %s pass "
+"<your-chosen-password>.\n"
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:93
+#, c-format
+msgid ""
+"NOTICE %s :All major commands are used from DCC chat. From now on, you dont "
+"need to use the -m option when starting the bot.  Enjoy !!!\n"
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:97
+msgid "Welcome to Eggdrop! =]"
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:101
+#, c-format
+msgid ""
+"NOTICE %s :All commands are done via /MSG. For the complete list, /MSG %s "
+"help   Cya!\n"
+msgstr ""
+
+#. Notify the user that his/her handle was truncated.
+#: src/mod/irc.mod/msgcmds.c:105
+#, c-format
+msgid ""
+"NOTICE %s :Your nick was too long and therefore it was truncated to %s.\n"
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:107
+#, c-format
+msgid "introduced to %s from %s"
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:139 src/mod/irc.mod/msgcmds.c:202
+#: src/mod/irc.mod/msgcmds.c:265 src/mod/irc.mod/msgcmds.c:305
+#: src/mod/irc.mod/msgcmds.c:787 src/mod/irc.mod/msgcmds.c:848
+#: src/mod/irc.mod/msgcmds.c:872 src/mod/irc.mod/msgcmds.c:943
+#: src/mod/irc.mod/msgcmds.c:1033
+msgid "You dont have a password set."
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:139
+msgid "You have a password set."
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:145
+msgid "You already have a password set."
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:150
+msgid "Incorrect password."
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:161
+msgid "Please use at least 6 characters."
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:166
+msgid "Password set to:"
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:166
+msgid "Password changed to:"
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:182 src/mod/irc.mod/msgcmds.c:254
+msgid "Youre at a common site; you cant IDENT."
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:195 src/mod/irc.mod/msgcmds.c:212
+#, c-format
+msgid "NOTICE %s :Youre not %s, youre %s.\n"
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:205 src/mod/irc.mod/msgcmds.c:268
+msgid "Access denied."
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:208
+msgid "I recognize you there."
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:221 src/mod/irc.mod/msgcmds.c:274
+msgid "Added hostmask"
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:325
+msgid "Your info line is locked"
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:332
+msgid "Removed your info line on"
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:337
+msgid "Removed your info line."
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:344
+msgid "Now:"
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:365
+msgid "Currently:"
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:367
+msgid "To remove it:"
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:371
+msgid "You have no info set on"
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:373
+msgid "You have no info set."
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:406
+msgid "Channel is currently hidden."
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:499
+msgid "No user record."
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:516
+msgid "Now on channel"
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:530
+msgid "Last seen at"
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:535
+msgid "Never joined one of my channels."
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:537
+msgid "  (is a global op)"
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:539
+msgid "  (is a bot)"
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:541
+msgid "  (is a master)"
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:554
+msgid "I dont know you; please introduce yourself first."
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:572
+msgid "No help."
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:635 src/mod/irc.mod/msgcmds.c:737
+msgid "Not on that channel right now."
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:876
+msgid "Bot shut down beginning...."
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:953 src/mod/irc.mod/msgcmds.c:958
+msgid "Resetting channel info."
+msgstr ""
+
+#: src/mod/irc.mod/msgcmds.c:1050 src/mod/server.mod/cmdsserv.c:81
+msgid "Jumping servers..."
+msgstr ""
+
+#: src/mod/notes.mod/cmdsnote.c:46 src/mod/notes.mod/cmdsnote.c:87
+#: src/mod/notes.mod/cmdsnote.c:122
+#, c-format
+msgid "You are not allowed to change note ignores for %s\n"
+msgstr ""
+
+#: src/mod/notes.mod/cmdsnote.c:52 src/mod/notes.mod/cmdsnote.c:93
+#: src/mod/notes.mod/cmdsnote.c:127
+#, c-format
+msgid "User %s does not exist.\n"
+msgstr ""
+
+#: src/mod/notes.mod/cmdsnote.c:61
+#, c-format
+msgid "Now ignoring notes from %s\n"
+msgstr ""
+
+#: src/mod/notes.mod/cmdsnote.c:63
+#, c-format
+msgid "Already ignoring %s\n"
+msgstr ""
+
+#: src/mod/notes.mod/cmdsnote.c:103
+#, c-format
+msgid "No longer ignoring notes from %s\n"
+msgstr ""
+
+#: src/mod/notes.mod/cmdsnote.c:105
+#, c-format
+msgid "Note ignore %s not found in list.\n"
+msgstr ""
+
+#: src/mod/notes.mod/cmdsnote.c:135
+msgid "No note ignores present.\n"
+msgstr ""
+
+#: src/mod/notes.mod/cmdsnote.c:139
+#, c-format
+msgid "Note ignores for %s:\n"
+msgstr ""
+
+#: src/mod/notes.mod/cmdsnote.c:163
+msgid "Cant change notes forwarding of the bot owner.\n"
+msgstr ""
+
+#: src/mod/notes.mod/cmdsnote.c:168
+#, c-format
+msgid "Wiped notes forwarding for %s\n"
+msgstr ""
+
+#: src/mod/notes.mod/cmdsnote.c:174
+msgid "You must supply a botname to forward to."
+msgstr ""
+
+#: src/mod/notes.mod/cmdsnote.c:178
+#, c-format
+msgid "Changed notes forwarding for %s to: %s\n"
+msgstr ""
+
+#: src/mod/notes.mod/cmdsnote.c:190 src/mod/notes.mod/notes.c:739
+msgid "# may be numbers and/or intervals separated by ;"
+msgstr ""
+
+#: src/mod/notes.mod/cmdsnote.c:208
+msgid "Function must be one of INDEX, READ, or ERASE."
+msgstr ""
+
+#: src/mod/notes.mod/notes.c:72
+#, c-format
+msgid "  Forward notes to: %.70s\n"
+msgstr ""
+
+#: src/mod/notes.mod/notes.c:151
+#, c-format
+msgid "Switched %d note%s from %s to %s."
+msgstr ""
+
+#: src/mod/notes.mod/notes.c:203
+#, c-format
+msgid "Expired %d note%s"
+msgstr ""
+
+#: src/mod/notes.mod/notes.c:277
+#, c-format
+msgid "Not online; forwarded to %s.\n"
+msgstr ""
+
+#: src/mod/notes.mod/notes.c:289 src/mod/notes.mod/notes.c:801
+msgid "Notes are not supported by this bot."
+msgstr ""
+
+#: src/mod/notes.mod/notes.c:292
+msgid "Sorry, that user has too many notes already."
+msgstr ""
+
+#: src/mod/notes.mod/notes.c:299 src/mod/notes.mod/notes.c:808
+msgid "Cant create notefile.  Sorry."
+msgstr ""
+
+#: src/mod/notes.mod/notes.c:300 src/mod/notes.mod/notes.c:809
+msgid "Notefile unreachable!"
+msgstr ""
+
+#: src/mod/notes.mod/notes.c:317
+msgid "Stored message"
+msgstr ""
+
+#: src/mod/notes.mod/notes.c:478 src/mod/notes.mod/notes.c:480
+#: src/mod/notes.mod/notes.c:486 src/mod/notes.mod/notes.c:488
+#: src/mod/notes.mod/notes.c:550 src/mod/notes.mod/notes.c:552
+#: src/mod/notes.mod/notes.c:561 src/mod/notes.mod/notes.c:563
+#: src/mod/notes.mod/notes.c:584 src/mod/notes.mod/notes.c:586
+#: src/mod/notes.mod/notes.c:592 src/mod/notes.mod/notes.c:594
+#: src/mod/notes.mod/notes.c:642 src/mod/notes.mod/notes.c:644
+msgid "You have no messages"
+msgstr ""
+
+#: src/mod/notes.mod/notes.c:513
+msgid " -- EXPIRES TODAY"
+msgstr ""
+
+#: src/mod/notes.mod/notes.c:515
+#, c-format
+msgid " -- EXPIRES IN %d DAY%s"
+msgstr ""
+
+#: src/mod/notes.mod/notes.c:521
+msgid "You have the following notes waiting"
+msgstr ""
+
+#: src/mod/notes.mod/notes.c:543 src/mod/notes.mod/notes.c:545
+#: src/mod/notes.mod/notes.c:637 src/mod/notes.mod/notes.c:639
+msgid "You dont have that many messages"
+msgstr ""
+
+#: src/mod/notes.mod/notes.c:555 src/mod/notes.mod/notes.c:819
+msgid "Use .notes read to read them."
+msgstr ""
+
+#: src/mod/notes.mod/notes.c:601 src/mod/notes.mod/notes.c:603
+msgid "Cant modify the note file"
+msgstr ""
+
+#: src/mod/notes.mod/notes.c:648 src/mod/notes.mod/notes.c:650
+msgid "Erased all notes"
+msgstr ""
+
+#: src/mod/notes.mod/notes.c:654 src/mod/notes.mod/notes.c:657
+msgid "left"
+msgstr ""
+
+#: src/mod/notes.mod/notes.c:776
+msgid "I don't know anyone by that name.\n"
+msgstr ""
+
+#: src/mod/notes.mod/notes.c:779
+msgid "Thats a bot.  You cant leave notes for a bot."
+msgstr ""
+
+#: src/mod/notes.mod/notes.c:794
+msgid "Outside note"
+msgstr ""
+
+#: src/mod/notes.mod/notes.c:795 src/mod/notes.mod/notes.c:815
+msgid "Note delivered."
+msgstr ""
+
+#: src/mod/notes.mod/notes.c:852 src/mod/notes.mod/notes.c:909
+msgid "For a list:"
+msgstr ""
+
+#: src/mod/notes.mod/notes.c:860
+#, c-format
+msgid "### You have %d note%s waiting.\n"
+msgstr ""
+
+#: src/mod/notes.mod/notes.c:861
+msgid "### Use '.notes read' to read them.\n"
+msgstr ""
+
+#: src/mod/notes.mod/notes.c:874
+msgid "Notes will be stored."
+msgstr ""
+
+#: src/mod/notes.mod/notes.c:906
+#, c-format
+msgid "NOTICE %s :You have %d note%s waiting on %s.\n"
+msgstr ""
+
+#: src/mod/server.mod/server.c:1424
+msgid "Sorry, too many DCC connections."
+msgstr ""
+
+#: src/mod/server.mod/server.c:1441
+msgid "DCC invalid port"
+msgstr ""
+
+#: src/mod/server.mod/server.c:1531
+msgid "Server got stoned; jumping..."
+msgstr ""
+
+#: src/mod/server.mod/server.c:1602
+msgid "No server currently."
+msgstr ""
+
+#: src/mod/server.mod/server.c:1604
+msgid "Mode queue is at"
+msgstr ""
+
+#: src/mod/server.mod/server.c:1608
+msgid "Server queue is at"
+msgstr ""
+
+#: src/mod/server.mod/server.c:1611
+msgid "Help queue is at"
+msgstr ""
+
+#: src/mod/server.mod/servmsg.c:87
+#, c-format
+msgid "NICK IN USE: Trying %s"
+msgstr ""
+
+#: src/mod/server.mod/servmsg.c:296
+#, c-format
+msgid "Server says Im not on channel: %s"
+msgstr ""
+
+#: src/mod/server.mod/servmsg.c:390
+#, c-format
+msgid "Flood from @%s!  Placing on ignore!"
+msgstr ""
+
+#: src/mod/server.mod/servmsg.c:489
+msgid "I dont accept DCC chats from strangers."
+msgstr ""
+
+#: src/mod/server.mod/servmsg.c:743
+msgid "Server says my nickname is invalid."
+msgstr ""
+
+#: src/mod/server.mod/servmsg.c:786
+#, c-format
+msgid "Cant change nickname on %s.  Is my nickname banned?"
+msgstr ""
+
+#: src/mod/server.mod/servmsg.c:789
+#, c-format
+msgid "Channel %s is juped. :("
+msgstr ""
+
+#: src/mod/server.mod/servmsg.c:800
+msgid "Nickname has been juped"
+msgstr ""
+
+#. Usually if we get this then we really messed up somewhere
+#. * or this is a non-standard server, so we log it and kill the socket
+#. * hoping the next server will work :) -poptix
+#.
+#. Um, this does occur on a lagged anti-spoof server connection if the
+#. * (minutely) sending of joins occurs before the bot does its ping reply.
+#. * Probably should do something about it some time - beldin
+#.
+#: src/mod/server.mod/servmsg.c:827
+#, c-format
+msgid "%s says Im not registered, trying next one."
+msgstr ""
+
+#: src/mod/server.mod/servmsg.c:828
+msgid "You have a fucked up server."
+msgstr ""
+
+#: src/mod/server.mod/servmsg.c:928
+msgid "Disconnected from"
+msgstr ""
+
+#: src/mod/server.mod/servmsg.c:1134
+msgid "Trying server"
+msgstr ""
+
+#: src/mod/server.mod/servmsg.c:1174 src/mod/server.mod/servmsg.c:1192
+msgid "Failed connect to"
+msgstr ""
+
+#: src/mod/server.mod/servmsg.c:1175
+msgid "DNS lookup failed"
+msgstr ""
+
+#: src/mod/share.mod/share.c:1607 src/mod/share.mod/share.c:1632
+msgid "ERROR writing user file to transfer."
+msgstr ""
+
+#: src/mod/share.mod/share.c:1785
+msgid "CANT READ NEW USERFILE"
+msgstr ""
+
+#: src/mod/share.mod/share.c:1795
+msgid "Userlist transfer complete; switched over"
+msgstr ""
+
+#: src/mod/share.mod/share.c:1915
+msgid "Cant send userfile to you (internal error)"
+msgstr ""
+
+#: src/mod/transfer.mod/transfer.c:717
+msgid "Failed connection; aborted userfile transfer."
+msgstr ""
+
+#: src/modules.c:637 src/tclmisc.c:408
+msgid "Already loaded."
+msgstr ""
+
+#: src/modules.c:641
+msgid "Cant determine current directory."
+msgstr ""
+
+#: src/modules.c:695
+msgid "No start function defined."
+msgstr ""
+
+#: src/modules.c:741
+msgid "Needed by another module"
+msgstr ""
+
+#: src/modules.c:745
+msgid "No close function"
+msgstr ""
+
+#: src/modules.c:775
+msgid "No such module"
+msgstr ""
+
+#: src/tcldcc.c:816
+msgid "No free sockets available."
+msgstr ""
+
+#: src/tcldcc.c:1011 src/tcldcc.c:1028
+msgid "Userfile creation not necessary--skipping"
+msgstr ""
+
+#: src/tcldcc.c:1032
+msgid "Restarting..."
+msgstr ""
+
+#: src/tclhash.c:841
+msgid "Ambiguous command.\n"
+msgstr ""
+
+#: src/tclhash.c:1079
+msgid "Command bindings:\n"
+msgstr ""
+
+#: src/tclmisc.c:409
+msgid "Cant load modules"
+msgstr ""
+
+#: src/userrec.c:539
+msgid "Writing user file..."
+msgstr ""
+
+#: src/users.c:182
+msgid "placed by"
+msgstr ""
+
+#: src/users.c:197
+msgid "Currently ignoring"
+msgstr ""
+
+#: src/users.c:219
+msgid "No longer ignoring"
+msgstr ""
+
+#: src/users.c:539
+msgid "Cant find anyone matching that"
+msgstr ""
+
+#: src/users.c:559
+msgid "Matching"
+msgstr ""
+
+#: src/users.c:565
+msgid "skipping first"
+msgstr ""
+
+#: src/users.c:593 src/users.c:601 src/users.c:612
+#, c-format
+msgid "(more than %d matches; list truncated)\n"
+msgstr ""
+
+#: src/users.c:617
+#, c-format
+msgid "--- Found %d match%s.\n"
+msgstr ""
+
+#: src/users.c:683
+msgid "Old userfile, use tclsh scripts/weed <userfile> c to convert"
+msgstr ""
+
+#: src/users.c:686
+msgid "Invalid userfile format."
+msgstr ""
+
+#: src/users.c:911
+msgid "Corrupt user record"
+msgstr ""
+
+#: src/users.c:916
+msgid "Duplicate user record"
+msgstr ""
+
+#: src/users.c:930
+msgid "Corrupted password reset for"
+msgstr ""
+
+#: src/users.c:951
+msgid "Ignored masks for channel(s):"
+msgstr ""

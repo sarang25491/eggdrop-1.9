@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.56 2001/08/19 02:36:23 drummer Exp $
+ * $Id: module.h,v 1.57 2001/08/21 00:21:18 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -81,10 +81,6 @@
 #else
 #  define EXPORT_SCOPE
 #endif
-
-/* Version checks for modules. */
-#define EGG_IS_MIN_VER(ver) 		((ver) <= EGG_VERSION)
-#define EGG_IS_MAX_VER(ver)		((ver) >= EGG_VERSION)
 
 /* Redefine for module-relevance */
 

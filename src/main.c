@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.75 2001/08/13 20:47:52 guppy Exp $
+ * $Id: main.c,v 1.76 2001/08/21 00:21:17 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -38,6 +38,8 @@
 #include <signal.h>
 #include <netdb.h>
 #include <setjmp.h>
+
+#include <locale.h>
 
 #ifdef STOP_UAC				/* osf/1 complains a lot */
 #include <sys/sysinfo.h>
@@ -83,8 +85,8 @@ extern jmp_buf		 alarmret;
  * modified versions of this bot.
  */
 
-char	egg_version[1024] = "1.7.0";
-int	egg_numver = 1070000;
+char	egg_version[1024] = VERSION;
+int	egg_numver = VERSION_NUM;
 
 char	notify_new[121] = "";	/* Person to send a note to for new users */
 int	default_flags = 0;	/* Default user flags and */
@@ -717,6 +719,10 @@ int main(int argc, char **argv)
   for (i = 0; i < 16; i++)
     Context;
 
+  setlocale(LC_MESSAGES, "");
+  bindtextdomain(PACKAGE, LOCALEDIR);
+  textdomain(PACKAGE);
+  
 #include "patch.h"
   /* Version info! */
   egg_snprintf(ver, sizeof ver, "eggdrop v%s", egg_version);
@@ -778,7 +784,7 @@ int main(int argc, char **argv)
 
   /* Don't allow eggdrop to run as root */
   if (((int) getuid() == 0) || ((int) geteuid() == 0))
-    fatal("ERROR: Eggdrop will not run as root!", 0);
+    fatal(_("ERROR: Eggdrop will not run as root!"), 0);
 
   init_dcc_max();
   init_userent();

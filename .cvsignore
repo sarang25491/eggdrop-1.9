@@ -1,3 +1,4 @@
+ABOUT-NLS
 ChangeLog
 config.cache
 config.h
@@ -5,6 +6,7 @@ config.h.in
 config.log
 config.status
 configure
+intl
 Makefile
 eggdrop
 lush.h

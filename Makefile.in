@@ -2,7 +2,7 @@
 #  This is the Makefile for EGGDROP (the irc bot)
 #  You should never need to edit this.
 #
-# $Id: Makefile.in,v 1.33 2001/08/13 21:39:24 ite Exp $
+# $Id: Makefile.in,v 1.34 2001/08/21 00:21:17 ite Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -11,9 +11,11 @@ VPATH = @srcdir@
 
 @SET_MAKE@
 prefix = @prefix@
-DEST = @DEST@
+DEST = ${prefix}
 EGGEXEC = @EGGEXEC@
-EGGVERSION = @EGGVERSION@
+PACKAGE = @PACKAGE@
+VERSION = @VERSION@
+POSUB = po
 
 # things you can put here:
 #   -Wall            if you're using gcc and it supports it
@@ -132,12 +134,17 @@ eggclean:
 	@cd src/compat && $(MAKE) clean
 
 clean: eggclean
+	@cd intl && $(MAKE) clean
 	@cd src/adns && $(MAKE) clean
 	@cd src/mod && $(MAKE) clean
+	@cd $(POSUB) && $(MAKE) clean
 
 distclean: eggclean clean-modconfig
+	@cd intl && $(MAKE) maintainer-clean
+	@rm -rf intl && rm -f ABOUT-NLS
 	@cd src/adns && $(MAKE) distclean
 	@cd src/mod && $(MAKE) distclean
+	@cd $(POSUB) && $(MAKE) maintainer-clean && rm -f Makefile.in.in
 	@rm -f Makefile doc/Makefile scripts/Makefile src/Makefile src/md5/Makefile src/compat/Makefile src/mod/Makefile
 	@rm -f config.cache config.log config.status config.h lush.h configure config.h.in
 
@@ -204,7 +211,9 @@ conftest:
 reconfig: clean-modconfig config
 
 eggdrop: modtest
-	@echo "Making the ADNS library..." && \
+	@echo "Making the intl library..." && \
+	cd intl && $(MAKE) && cd .. && echo "" && \
+	echo "Making the ADNS library..." && \
 	cd src/adns && $(MAKE) && cd ../.. && \
 	echo "" && \
 	cd src/md5 && $(MAKE_GENERIC) md5 && cd ../.. && \
@@ -212,6 +221,8 @@ eggdrop: modtest
 	rm -f src/mod/mod.xlibs && \
 	cd src && $(MAKE_MODEGG) $(EGGEXEC) && cd .. && \
 	echo "" && \
+	echo "Making localization files..." && \
+	cd $(POSUB) && $(MAKE) && cd .. && echo "" && \
 	$(egg_test_run) && \
 	ls -l $(EGGEXEC) && \
 	cd src/mod && $(MAKE_MODULES) modules && cd ../.. && \
@@ -221,7 +232,9 @@ eggdrop: modtest
 	$(egg_install_msg)
 
 static: eggtest
-	@echo "Making the ADNS library..." && \
+	@echo "Making the intl library..." && \
+	cd intl && $(MAKE) && cd .. && echo "" && \
+	echo "Making the ADNS library..." && \
 	cd src/adns && $(MAKE) && cd ../.. && \
 	echo "" && \
 	cd src/md5 && $(MAKE_GENERIC) md5 && cd ../.. && \
@@ -236,18 +249,24 @@ static: eggtest
 	echo "" && \
 	cd src && $(MAKE_STATIC) $(EGGEXEC) && cd .. && \
 	echo "" && \
+	echo "Making localization files..." && \
+	cd $(POSUB) && $(MAKE) && cd .. && echo "" && \
 	$(egg_test_run) && \
 	ls -l $(EGGEXEC) && \
 	$(egg_install_msg)
 
 debug: modtest
-	@echo "Making the ADNS library..." && \
+	@echo "Making the intl library..." && \
+        cd intl && $(MAKE) && cd .. && echo "" && \
+	echo "Making the ADNS library..." && \
 	cd src/adns && $(MAKE) && cd ../.. && \
 	echo "" && \
 	cd src/md5 && $(MAKE_GENERIC) md5 && cd ../.. && \
 	cd src/compat && $(MAKE_GENERIC) compat && cd ../.. && \
 	cd src && $(MAKE_DEBEGG) $(EGGEXEC) && cd .. && \
 	echo "" && \
+	echo "Making localization files..." && \
+	cd $(POSUB) && $(MAKE) && cd .. && echo "" && \
 	$(egg_test_run) && \
 	ls -l $(EGGEXEC) && \
 	cd src/mod && $(MAKE_DEBMODULES) modules && cd ../.. && \
@@ -257,7 +276,9 @@ debug: modtest
 	$(egg_install_msg)
 
 sdebug: eggtest
-	@echo "Making the ADNS library..." && \
+	@echo "Making the intl library..." && \
+	cd intl && $(MAKE) && cd .. && echo "" && \
+	echo "Making the ADNS library..." && \
 	cd src/adns && $(MAKE) && cd ../.. && \
 	echo "" && \
 	cd src/md5 && $(MAKE_GENERIC) md5 && cd ../.. && \
@@ -272,6 +293,8 @@ sdebug: eggtest
 	echo "" && \
 	cd src && $(MAKE_SDEBUG) $(EGGEXEC) && cd .. && \
 	echo "" && \
+	echo "Making localization files..." && \
+	cd $(POSUB) && $(MAKE) && cd .. && echo "" && \
 	$(egg_test_run) && \
 	ls -l $(EGGEXEC) && \
 	$(egg_install_msg)
@@ -303,7 +326,7 @@ dinstall: eggdrop ainstall
 sinstall: static ainstall
 
 ainstall: install-start install-bin install-modules install-data \
-install-help install-filesys install-doc \
+install-lang install-help install-filesys install-doc \
 install-scripts install-end
 
 install-start:
@@ -315,10 +338,6 @@ install-start:
 		echo ""; \
 		echo "  valid targets: eggdrop static debug sdebug"; \
 		echo ""; \
-		exit 1; \
-	fi
-	@if test "x$(DEST)" = "x"; then \
-		echo "You must specify a destination directory with DEST="; \
 		exit 1; \
 	fi
 	@echo ""
@@ -344,8 +363,8 @@ install-bin:
 		mv -f $(DEST)/$(EGGEXEC) $(DEST)/o$(EGGEXEC); \
 	fi
 	@echo "Copying new '$(EGGEXEC)' executable and creating symlink."
-	@$(INSTALL_PROGRAM) $(EGGEXEC) $(DEST)/$(EGGEXEC)-$(EGGVERSION)
-	@(cd $(DEST) && $(LN_S) $(EGGEXEC)-$(EGGVERSION) $(EGGEXEC))
+	@$(INSTALL_PROGRAM) $(EGGEXEC) $(DEST)/$(EGGEXEC)-$(VERSION)
+	@(cd $(DEST) && $(LN_S) $(EGGEXEC)-$(VERSION) $(EGGEXEC))
 
 install-modules:
 	@if test -h $(DEST)/modules; then \
@@ -358,14 +377,14 @@ install-modules:
 		mv -f $(DEST)/modules $(DEST)/modules.old; \
 	fi
 	@if test ! "x`echo *.$(MOD_EXT)`" = "x*.$(MOD_EXT)"; then \
-		if test ! -d $(DEST)/modules-$(EGGVERSION); then \
-			echo "Creating modules-$(EGGVERSION) directory and symlink."; \
-			$(top_srcdir)/misc/mkinstalldirs $(DEST)/modules-$(EGGVERSION); \
+		if test ! -d $(DEST)/modules-$(VERSION); then \
+			echo "Creating modules-$(VERSION) directory and symlink."; \
+			$(top_srcdir)/misc/mkinstalldirs $(DEST)/modules-$(VERSION); \
 		fi; \
-		(cd $(DEST) && $(LN_S) modules-$(EGGVERSION) modules); \
+		(cd $(DEST) && $(LN_S) modules-$(VERSION) modules); \
 		echo "Copying new modules."; \
 		for i in *.$(MOD_EXT); do \
-			$(INSTALL_PROGRAM) $$i $(DEST)/modules-$(EGGVERSION)/; \
+			$(INSTALL_PROGRAM) $$i $(DEST)/modules-$(VERSION)/; \
 		done; \
 	fi
 
@@ -387,6 +406,12 @@ install-data:
 	@if test ! -f $(DEST)/text/banner; then \
 		$(INSTALL_DATA) $(srcdir)/text/banner $(DEST)/text/; \
 	fi
+
+install-lang:
+	@echo "Copying intl files." && \
+	cd intl && $(MAKE) install && cd .. && echo "" && \
+	echo "Copying localization files." && \
+	cd $(POSUB) && $(MAKE) install && cd .. && echo ""
 
 install-help:
 	@echo "Copying help files."

@@ -1,0 +1,13 @@
+core
+core.*
+*.pox
+*.new.po
+*.o
+Makefile
+Makefile.in
+Makefile.in.in
+POTFILES
+*.gmo
+*.mo
+ChangeLog~
+missing

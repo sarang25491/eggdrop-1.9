@@ -2,15 +2,24 @@
 
 set -x
 
+# Bring gettext files
+gettextize --copy --force
+
 # Generate config.h.in from acconfig.h and configure.in
 autoheader
 
 # Generate configure script
 autoconf
 
+# Remove previous config.cache
+if [ -f config.cache ]; then
+  rm -f config.cache
+fi
+
 
 ## The part below will be necessary until we cleanup the actual mess in
 ## module's build system
+## <MESS>
 
 set +x
 
@@ -29,4 +38,6 @@ set -x
 
 # Generate configure scripts for modules
 misc/modconfig --top_srcdir=. eggautoconf
+
+##</MESS>
 

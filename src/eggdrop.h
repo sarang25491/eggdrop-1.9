@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.40 2001/08/13 20:47:52 guppy Exp $
+ * $Id: eggdrop.h,v 1.41 2001/08/21 00:21:17 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -81,7 +81,8 @@
 
 
 /* Gettext stuff */
-#define _(String) (String)
+#  include <libintl.h>
+#  define _(x) gettext(x)
 
 
 /* Have to use a weird way to make the compiler error out cos not all
