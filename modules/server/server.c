@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.2 2001/12/04 01:30:35 ite Exp $
+ * $Id: server.c,v 1.3 2001/12/09 21:49:41 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -55,8 +55,6 @@ static int keepnick;		/* keep trying to regain my intended
 				   nickname? */
 static int nick_juped = 0;	/* True if origbotname is juped(RPL437) (dw) */
 static int check_stoned;	/* Check for a stoned server? */
-static int serverror_quit;	/* Disconnect from server if ERROR
-				   messages received? */
 static int quiet_reject;	/* Quietly reject dcc chat or sends from
 				   users without access? */
 static int waiting_for_awake;	/* set when i unidle myself, cleared when
@@ -1289,7 +1287,6 @@ static tcl_ints my_tcl_ints[] =
   {"keep-nick",			&keepnick,			0},
   {"strict-servernames",	&strict_servernames,		0},
   {"check-stoned",		&check_stoned,			0},
-  {"serverror-quit",		&serverror_quit,		0},
   {"quiet-reject",		&quiet_reject,			0},
   {"max-queue-msg",		&maxqmsg,			0},
   {"trigger-on-ignore",		&trigger_on_ignore,		0},
@@ -1752,7 +1749,6 @@ char *start(Function *global_funcs)
   botuserhost[0] = 0;
   keepnick = 1;
   check_stoned = 1;
-  serverror_quit = 1;
   quiet_reject = 1;
   waiting_for_awake = 0;
   server_online = 0;

@@ -95,12 +95,6 @@ set check-stoned 1
     Valid settings are 0 for OFF and 1 ON.
 
 
-set serverror-quit 1
-    If you want your bot to exit the server if it receives a error msg set
-    this to 1
-    Valid settings are 0 for OFF and 1 ON.
-
-
 set max-queue-msg 300
     Set here the maximum number of lines to queue to the server. If you're
     going to dump large chunks of text to people over irc, you will probably

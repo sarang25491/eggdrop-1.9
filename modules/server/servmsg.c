@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.2 2001/12/02 15:15:04 ite Exp $
+ * $Id: servmsg.c,v 1.3 2001/12/09 21:49:41 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -793,10 +793,8 @@ static int goterror(char *from, char *ignore, char *msg)
 {
   fixcolon(msg);
   putlog(LOG_SERV | LOG_MSGS, "*", "-ERROR from server- %s", msg);
-  if (serverror_quit) {
-    putlog(LOG_SERV, "*", "Disconnecting from server.");
-    nuke_server("Bah, stupid error messages.");
-  }
+  putlog(LOG_SERV, "*", "Disconnecting from server.");
+  nuke_server("Bah, stupid error messages.");
   return 1;
 }
 

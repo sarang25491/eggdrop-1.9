@@ -65,11 +65,6 @@ see also: set nick, set altnick
    This setting, when enabled, will cause the bot to ping the server
    occasionally to make sure it's actually still connected. It also
    provides a 'lag-meter'. This is slightly broken on IRCNet.
-%{help=set serverror-quit}%{+n}
-###  %bset serverror-quit%b 0/1
-   Enabling this will cause the bot to assume that an ERROR message
-   from the server indicates it's about to drop the connection,
-   and so the bot closes the server connection immediately.
 %{help=set quiet-reject}%{+n}
 ###  %bset quiet-reject%b 0/1
    Some of the message & ctcp commands return negative messages to
@@ -168,6 +163,6 @@ see also: default-port
      %bmax-queue-msg%b        %bstrict-host%b    %bbotnick%b
      %bserver-timeout%b       %bservers%b        %bkeep-nick%b
      %bstrict-servernames%b   %bbotname%b        %bquiet-reject%b
-     %bserverror-quit%b       %banswer-ctcp%b    %baltnick%b
+     %banswer-ctcp%b          %baltnick%b        %bflood-msg%b
      %btrigger-on-ignore%b    %bdefault-port%b   %brealname%b
-     %bserver-cycle-wait%b    %bcheck-stoned%b   %bflood-msg%b
+     %bserver-cycle-wait%b    %bcheck-stoned%b
