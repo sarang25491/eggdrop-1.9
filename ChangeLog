@@ -1,3 +1,13 @@
+2002-05-26 02:49  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/module.h, modules/irc/irc.c, src/modules.c,
+	src/tclegg.h, src/tclhash.c, src/tclhash.h:
+
+	
+	* Bind table cleanups 
+	* Removed bind_chain_t for now. I think for non-wildcard,
+	non-stackable tables, we could do a hash table 
+
 2002-05-24 17:50  stdarg <stdarg@techmonkeys.org>
 
 	* src/proxyapi.h:
