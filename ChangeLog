@@ -1,3 +1,27 @@
+2001-11-27 02:15  Federico Mennite <ite@techmonkeys.org>
+
+	* lib/eggdrop/.cvsignore:
+
+	More cvsignore entries.  
+
+2001-11-27 02:13  Federico Mennite <ite@techmonkeys.org>
+
+	* lib/: .cvsignore, eggdrop/.cvsignore:
+
+	Moved cvsinogre entries in the proper place.  
+
+2001-11-27 02:11  Federico Mennite <ite@techmonkeys.org>
+
+	* lib/.cvsignore:
+
+	Added more cvsignore entries.  
+
+2001-11-27 02:08  Federico Mennite <ite@techmonkeys.org>
+
+	* src/main.c:
+
+	More gettext fixes.  
+
 2001-11-26 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
