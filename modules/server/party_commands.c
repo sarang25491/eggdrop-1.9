@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: party_commands.c,v 1.12 2004/08/11 21:02:16 darko Exp $";
+static const char rcsid[] = "$Id: party_commands.c,v 1.13 2004/08/13 20:49:57 darko Exp $";
 #endif
 
 #include "server.h"
@@ -451,7 +451,8 @@ static int party_list_masks(partymember_t *p, const char *nick, user_t *u, const
 			if (cm[j]->set_by)
 				partymember_printf(p, _("    Active:\tset by %s at %d"),
 						cm[j]->set_by, cm[j]->time);
-			partymember_printf(p, _("    Expires:\t%s"),
+			if (cm[j]->creator)
+				partymember_printf(p, _("    Expires:\t%s"),
 				cm[j]->expire?"11/08/2004, 20:38":"never");
 			if (cm[j]->comment)
 				partymember_printf(p, _("    Comment:\t%s"), cm[j]->comment);
@@ -525,7 +526,7 @@ bind_list_t server_party_commands[] = {					/* Old flag requirements */
 	{"l", "+invite", party_plus_mask},		/* DDD	*/	/* lo|lo */
 	{"l", "+exempt", party_plus_mask},		/* DDD	*/	/* lo|lo */
 	{"l", "+chanmask", party_plus_mask},		/* DDD	*/	/* lo|lo */
-	{"l", "-ban", party_minus_mask},			/* DDD	*/	/* lo|lo */
+	{"l", "-ban", party_minus_mask},		/* DDD	*/	/* lo|lo */
 	{"l", "-invite", party_minus_mask},		/* DDD	*/	/* lo|lo */
 	{"l", "-exempt", party_minus_mask},		/* DDD	*/	/* lo|lo */
 	{"l", "-chanmask", party_minus_mask},		/* DDD	*/	/* lo|lo */

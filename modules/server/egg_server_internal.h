@@ -35,7 +35,6 @@
 #define uhost_cache_lookup server_LTX_uhost_cache_lookup
 #define uhost_cache_addref server_LTX_uhost_cache_addref
 #define uhost_cache_decref server_LTX_uhost_cache_decref
-#define channel_add_member server_LTX_channel_add_member
 #define channel_on_join server_LTX_channel_on_join
 #define channel_on_leave server_LTX_channel_on_leave
 #define channel_on_quit server_LTX_channel_on_quit

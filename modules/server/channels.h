@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: channels.h,v 1.16 2004/08/11 21:02:16 darko Exp $
+ * $Id: channels.h,v 1.17 2004/08/13 20:49:57 darko Exp $
  */
 
 #ifndef _EGG_MOD_SERVER_CHANNELS_H_
@@ -27,6 +27,11 @@
 #define CHANNEL_BANLIST		0x2
 #define CHANNEL_NAMESLIST	0x4
 #define CHANNEL_JOINED		0x8
+
+#define BOT_ISOP(chanptr) (((chanptr)->status & CHANNEL_JOINED) && flag_match_single_char(&((chanptr)->bot->mode), 'o'))
+#define BOT_ISHALFOP(chanptr) (((chanptr)->status & CHANNEL_JOINED) && flag_match_single_char(&((chanptr)->bot->mode), 'h'))
+#define BOT_CAN_SET_MODES(chanptr) (((chanptr)->status & CHANNEL_JOINED) && (flag_match_single_char(&((chanptr)->bot->mode), 'o') \
+									|| flag_match_single_char(&((chanptr)->bot->mode), 'h')))
 
 typedef struct coupplet {
 	struct coupplet *next;
@@ -101,6 +106,7 @@ typedef struct channel {
 
 	channel_member_t *member_head;	/* Member list. */
 	int nmembers;
+	channel_member_t *bot;		/* All you need to know about me :-) */
 
 	unsigned long builtin_bools;	/* Channel flags (inactive, autovoice, etc..) */
 	coupplet_t *builtin_ints;	/* Channel settings of the form: <setting> X */
@@ -132,7 +138,6 @@ extern void channel_on_nick(const char *old_nick, const char *new_nick);
 extern void channel_on_quit(const char *nick, const char *uhost, user_t *u);
 extern void channel_on_leave(const char *chan_name, const char *nick, const char *uhost, user_t *u);
 extern void channel_on_join(const char *chan_name, const char *nick, const char *uhost);
-extern channel_member_t *channel_add_member(const char *chan_name, const char *nick, const char *uhost);
 
 /* Functions for others (scripts/modules) to access channel data. */
 extern void channel_reset();

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.43 2004/06/26 19:49:49 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.44 2004/08/13 20:49:57 darko Exp $";
 #endif
 
 #include "server.h"
@@ -214,7 +214,7 @@ static char *script_channel_mode(char *chan, char *nick)
 
 static const char *script_channel_mode_arg(char *chan, char *mode)
 {
-	char *value = NULL;
+	const char *value = NULL;
 
 	channel_mode_arg(chan, *mode, &value);
 	return(value);

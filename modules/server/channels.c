@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.27 2004/08/11 21:02:16 darko Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.28 2004/08/13 20:49:57 darko Exp $";
  #endif
 
 #include "server.h"
@@ -45,6 +45,7 @@ static channel_t global_chan;
 /* Prototypes. */
 static int uhost_cache_delete(const void *key, void *data, void *param);
 static void clear_masklist(channel_mask_list_t *l);
+static void clear_masklists_online_only(channel_t *chanptr);
 static int got_list_item(void *client_data, char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[]);
 static int got_list_end(void *client_data, char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[]);
 void uhost_cache_decref(const char *nick);
@@ -92,7 +93,6 @@ static inline void free_member(channel_member_t *m)
 static void free_channel_online_stuff(channel_t *chan)
 {
 	channel_member_t *m, *next_mem;
-	int i;
 
 	for (m = chan->member_head; m; m = next_mem) {
 		next_mem = m->next;
@@ -101,6 +101,7 @@ static void free_channel_online_stuff(channel_t *chan)
 	}
 	chan->member_head = NULL;
 	chan->nmembers = 0;
+	chan->bot = NULL;
 
 	free(chan->topic);
 	chan->topic = NULL;
@@ -117,11 +118,7 @@ static void free_channel_online_stuff(channel_t *chan)
 	free(chan->key);
 	chan->key = NULL;
 
-	for (i = 0; i < chan->nlists; i++)
-		clear_masklist(chan->lists[i]);
-	free(chan->lists);
-	chan->lists = NULL;
-	chan->nlists = 0;
+	clear_masklists_online_only(chan);
 
 	free(chan->args);
 	chan->args = NULL;
@@ -149,6 +146,7 @@ int destroy_channel_record(const char *chan_name)
 	channel_t *chan, *prev;
 	coupplet_t *cplt, *tmpcplt;
 	chanstring_t *cstr, *tmpcstr;
+	int i;
 
 	if (chan_name) {
 		channel_lookup(chan_name, 0, &chan, &prev);
@@ -169,6 +167,12 @@ int destroy_channel_record(const char *chan_name)
 	}
 	else
 		chan = &global_chan;
+
+	for (i = 0; i < chan->nlists; i++) {
+		clear_masklist(chan->lists[i]);
+		free(chan->lists[i]);
+	}
+	free(chan->lists);
 
 	for (cplt = chan->builtin_ints; cplt; cplt = tmpcplt) {
 		tmpcplt = cplt->next;
@@ -191,6 +195,8 @@ int destroy_channel_record(const char *chan_name)
 
 	if (chan != &global_chan)
 		free(chan);
+	else /* Just in case.. */
+		memset(chan, 0, sizeof *chan);
 	return 0;
 }
 
@@ -334,13 +340,14 @@ void uhost_cache_decref(const char *nick)
 		uhost_cache_delete(NULL, cache, NULL);
 	}
 }
-/* FIXME - Possibly pass another arg here to cater for cases when we already have channel_t* */
-channel_member_t *channel_add_member(const char *chan_name, const char *nick, const char *uhost)
+
+/* Pass NULL as chan_name if you already have pointer to channel */
+static channel_member_t *channel_add_member(const char *chan_name, channel_t *chan, const char *nick, const char *uhost)
 {
-	channel_t *chan;
 	channel_member_t *m;
 
-	channel_lookup(chan_name, 0, &chan, NULL);
+	if (chan_name)
+		channel_lookup(chan_name, 0, &chan, NULL);
 	if (!chan) return(NULL);
 
 	/* See if this member is already added. */
@@ -368,9 +375,6 @@ channel_member_t *channel_add_member(const char *chan_name, const char *nick, co
 	return(m);
 }
 
-/* FIXME - Note to self: Make sure we can always find bot's channel data without
-	cycling the memberlist. Easy accomplished by swapping code in here a bit
-	and adding a pointer to memberlist entry in channel_t. Due next commit */
 void channel_on_join(const char *chan_name, const char *nick, const char *uhost)
 {
 	channel_t *chan;
@@ -378,8 +382,10 @@ void channel_on_join(const char *chan_name, const char *nick, const char *uhost)
 	channel_lookup(chan_name, 0, &chan, NULL);
 
 	if (chan && !(chan->builtin_bools & CHAN_INACTIVE)) {
+		channel_member_t *m = channel_add_member(NULL, chan, nick, uhost);
 		if (match_my_nick(nick)) {
 			int i;
+			chan->bot = m;
 			chan->status |= (CHANNEL_WHOLIST | CHANNEL_JOINED);
 			printserv(SERVER_NORMAL, "WHO %s\r\n", chan_name);
 			printserv(SERVER_NORMAL, "MODE %s\r\n", chan_name);
@@ -498,7 +504,6 @@ int channel_list_members(const char *chan, const char ***members)
 	return(i);
 }
 
-/* FIXME - Yet another function that can pass channel_t further, instead of chan_name */
 /* :server 352 <ournick> <chan> <user> <host> <server> <nick> <H|G>[*][@|+] :<hops> <name> */
 static int got352(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
@@ -512,7 +517,7 @@ static int got352(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 	nick = args[5];
 	flags = args[6];
 	uhost = egg_mprintf("%s@%s", args[2], args[3]);
-	m = channel_add_member(chan_name, nick, uhost);
+	m = channel_add_member(NULL, chan, nick, uhost);
 	changestr[0] = '+';
 	changestr[2] = 0;
 	flags++;
@@ -540,7 +545,6 @@ static int got315(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 	return(0);
 }
 
-/* FIXME - Yet another function that can pass channel_t further, instead of chan_name */
 /* :server 353 <ournick> = <chan> :<mode><nick1> <mode><nick2> ... */
 static int got353(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
@@ -565,7 +569,7 @@ static int got353(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 		while (*ptr && !isspace(*ptr)) ptr++;
 		if (*ptr) *ptr = 0;
 		else ptr = NULL;
-		m = channel_add_member(chan_name, nick, NULL);
+		m = channel_add_member(NULL, chan, nick, NULL);
 		*nick = 0;
 		while (*flags) {
 			prefixptr = strchr(current_server.whoprefix, *flags);
@@ -751,37 +755,31 @@ int channel_notirc_add_mask(channel_t *chan, char type, const char *mask, const 
 	m->next = l->head;
 	l->head = m;
 	l->len++;
-	if (chanptr_member_has_flag(current_server.nick, chan, 'o') ||
-		chanptr_member_has_flag(current_server.nick, chan, 'h')) {
 /* FIXME - check for enforcebans and kick if needed. Or maybe we should kick anyway?
 		Or maybe only kick if it was console .+ban?
 		Perhaps best, yet, is to create a separate function to traverse member list
 		and deal with this in appropriate way. We'll need it for other things too.
 		For now, let it just dump mode to channel */
-		if (chan == &global_chan)
-			for (chan = channel_head; chan; chan = chan->next) {
+	if (chan == &global_chan)
+		for (chan = channel_head; chan; chan = chan->next) {
+			if (BOT_CAN_SET_MODES(chan)) {
 				printserv(SERVER_QUICK, "MODE %s +%c %s\r\n", chan->name, type, mask);
-				if (type == 'b' && console)
-					; /* Er, nothing for now */
-		}
-		else {
-				printserv(SERVER_QUICK, "MODE %s +%c %s\r\n", chan->name, type, mask);
-				if (type == 'b' && console)
-					;
+			if (type == 'b' && console)
+				; /* Er, nothing for now */
 		}
 	}
+	else {
+		if (BOT_CAN_SET_MODES(chan)) {
+			printserv(SERVER_QUICK, "MODE %s +%c %s\r\n", chan->name, type, mask);
+			if (type == 'b' && console)
+				;
+		}
+	}
+
 	return 0;
 }
 
-static void free_mask(channel_mask_t *m)
-{
-	free(m->mask);
-	free(m->creator);
-	free(m->set_by);
-	free(m->comment);
-	free(m);
-}
-
+/* This is not code i feel proud of. It should be written in the cleaner manner but let it be for now */
 int channel_del_mask(channel_t *chan, char type, const char *mask, int remove)
 {
 	channel_mask_list_t *l;
@@ -800,19 +798,78 @@ int channel_del_mask(channel_t *chan, char type, const char *mask, int remove)
 	}
 	if (!m) return -2;
 
-	if (remove) {
+	if (chan == &global_chan) {
 		if (prev) prev->next = m->next;
 		else l->head = m->next;
 		l->len--;
-		free_mask(m);
+		free(m->mask);
+		free(m->creator);
+		free(m->comment);
+		free(m);
+		for (chan = channel_head; chan; chan = chan->next) {
+			if (BOT_CAN_SET_MODES(chan))
+				printserv(SERVER_QUICK, "MODE %s -%c %s\r\n", chan->name, type, mask);
+		}
 	}
-	else {
+	else if (remove) { /* We were called from p-line or script/module */
+		if (BOT_CAN_SET_MODES(chan) && m->set_by)
+			printserv(SERVER_QUICK, "MODE %s -%c %s\r\n", chan->name, type, mask);
+		free(m->creator);
+		free(m->comment);
+		if (!m->set_by) {
+			if (prev) prev->next = m->next;
+			else l->head = m->next;
+			l->len--;
+			free(m->mask);
+			free(m);
+		}
+		else { /* We're not deleting the node so clean up */
+			m->creator = NULL;
+			m->comment = NULL;
+		}
+	}
+	else { /* Function was called as a result of recived IRC message MODE */
 		free(m->set_by);
-		m->set_by = NULL;
-		m->time = 0;
+		if (!m->creator) {
+			if (prev) prev->next = m->next;
+			else l->head = m->next;
+			l->len--;
+			free(m->mask);
+			free(m); /* Rest should've been freed already */
+		}
+		else {
+			m->set_by = NULL;
+			m->time = 0;
+		}
 	}
-/* FIXME - Check if we should send MODE message */
+
 	return 0;
+}
+
+static void clear_masklists_online_only(channel_t *chanptr)
+{
+	channel_mask_t *m, *prev;
+	int i;
+
+	if (!chanptr)
+		return;
+
+	for (i = 0; i < chanptr->nlists; i++) {
+		prev = NULL;
+		for (m = chanptr->lists[i]->head; m; prev = m) {
+			if (!m->creator) {
+				if (m == chanptr->lists[i]->head)
+					chanptr->lists[i]->head = m->next;
+				else
+					prev = m->next;
+				free(m->set_by);
+				free(m);
+				chanptr->lists[i]->len--;
+			}
+			else
+				m = m->next;
+		}
+	}
 }
 
 static void clear_masklist(channel_mask_list_t *l)
@@ -821,7 +878,11 @@ static void clear_masklist(channel_mask_list_t *l)
 
 	for (m = l->head; m; m = next) {
 		next = m->next;
-		free_mask(m);
+		free(m->mask);
+		free(m->creator);
+		free(m->set_by);
+		free(m->comment);
+		free(m);
 	}
 	l->head = NULL;
 }
@@ -1333,7 +1394,7 @@ int channel_set(channel_t *chanptr, const char *setting, const char *value)
 		}
 
 	/* Lastly, it can be one of user defined settings */
-/* FIXME - will be done in the next commit */
+/* FIXME - will be done in near future, once more important things are ready */
 
 	return 0;
 }
@@ -1604,8 +1665,7 @@ static int channels_minutely()
 		   !(chan->builtin_bools & CHAN_INACTIVE) && /* and channel is not inactive */
 		   chan->builtin_bools & CHAN_CYCLE &&/* and channel is +cycle */
 		   chan->nmembers == 1 && /* and we are alone */
-		   !chanptr_member_has_flag(current_server.nick, chan, 'o') && /* and without */
-		   !chanptr_member_has_flag(current_server.nick, chan, 'h') /* (half)op status */
+		   !BOT_CAN_SET_MODES(chan) /* and we are not op/halfop */
 		   ) {
 			putlog(LOG_MISC, "*", _("Cycling channel '%s' for ops."), chan->name);
 			printserv(SERVER_NORMAL, "PART %s\r\n", chan->name);
