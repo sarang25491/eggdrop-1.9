@@ -6,7 +6,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.56 2002/03/03 20:17:54 stdarg Exp $
+ * $Id: botnet.c,v 1.57 2002/04/17 21:09:05 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1047,9 +1047,8 @@ int botlink(char *linker, int idx, char *nick)
       strcpy(dcc[i].nick, nick);
       strcpy(dcc[i].host, bi->address);
       dcc[i].u.dns->ibuf = idx;
-      dcc[i].u.dns->cptr = linker;
-      dcc[i].u.dns->host = calloc(1, strlen(dcc[i].host) + 1);
-      strcpy(dcc[i].u.dns->host, dcc[i].host);
+      dcc[i].u.dns->cptr = strdup(linker);
+      dcc[i].u.dns->host = strdup(dcc[i].host);
       dcc[i].u.dns->dns_success = botlink_resolve_success;
       dcc[i].u.dns->dns_failure = botlink_resolve_failure;
       dcc[i].u.dns->dns_type = RES_IPBYHOST;
@@ -1067,6 +1066,7 @@ static void botlink_resolve_failure(int i)
 
   putlog(LOG_BOTS, "*", _("Failed link to %s."), dcc[i].nick);
   strcpy(s, dcc[i].nick);
+  free(dcc[i].u.dns->cptr);
   lostdcc(i);
   autolink_cycle(s);          /* Check for more auto-connections */
 }
@@ -1084,6 +1084,7 @@ static void botlink_resolve_success(int i)
   dcc[i].u.bot->numver = idx;
   dcc[i].u.bot->port = dcc[i].port;		/* Remember where i started */
   dcc[i].sock = getsock(SOCK_STRONGCONN);
+  free(linker);
   if (dcc[i].sock < 0 ||
       open_telnet_raw(dcc[i].sock, dcc[i].addr,
 		      dcc[i].port) < 0)
@@ -1188,8 +1189,7 @@ void tandem_relay(int idx, char *nick, register int i)
   dcc[idx].u.relay->sock = dcc[i].sock;
   dcc[i].timeval = now;
   dcc[i].u.dns->ibuf = dcc[idx].sock;
-  dcc[i].u.dns->host = calloc(1, strlen(bi->address) + 1);
-  strcpy(dcc[i].u.dns->host, bi->address);
+  dcc[i].u.dns->host = strdup(bi->address);
   dcc[i].u.dns->dns_success = tandem_relay_resolve_success;
   dcc[i].u.dns->dns_failure = tandem_relay_resolve_failure;
   dcc[i].u.dns->dns_type = RES_IPBYHOST;
