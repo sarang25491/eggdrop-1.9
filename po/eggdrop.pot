@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2002-01-31 04:00-0600\n"
+"POT-Creation-Date: 2002-02-01 04:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -812,7 +812,7 @@ msgid "Changed.\n"
 msgstr ""
 
 #: modules/filesys/files.c:988 modules/filesys/files.c:1084
-#: modules/irc/cmdsirc.c:939 src/cmds.c:876 src/cmds.c:907 src/cmds.c:2471
+#: modules/irc/cmdsirc.c:938 src/cmds.c:876 src/cmds.c:907 src/cmds.c:2471
 #: src/cmds.c:2605
 msgid "Failed.\n"
 msgstr ""
@@ -924,7 +924,7 @@ msgstr ""
 msgid "Authorized by"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:237 src/cmds.c:1103
+#: modules/irc/cmdsirc.c:236 src/cmds.c:1103
 msgid "requested"
 msgstr ""
 
@@ -1208,7 +1208,7 @@ msgstr ""
 msgid "That ignore cannot be found.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:824 src/cmds.c:2408
+#: modules/irc/cmdsirc.c:823 src/cmds.c:2408
 #, c-format
 msgid "You can't start a nick with '%c'.\n"
 msgstr ""
@@ -1233,7 +1233,7 @@ msgstr ""
 msgid "Can't remove users who aren't bots!\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:936 src/cmds.c:2469
+#: modules/irc/cmdsirc.c:935 src/cmds.c:2469
 #, c-format
 msgid "Deleted %s.\n"
 msgstr ""
@@ -1817,14 +1817,14 @@ msgstr ""
 msgid "Already loaded."
 msgstr ""
 
-#: modules/channels/channels.c:560
+#: modules/channels/channels.c:564
 msgid "lurking"
 msgstr ""
 
 #: modules/channels/cmdschan.c:55 modules/channels/cmdschan.c:192
 #: modules/channels/cmdschan.c:315 modules/channels/cmdschan.c:1136
-#: modules/channels/cmdschan.c:1329 modules/irc/cmdsirc.c:712
-#: modules/irc/cmdsirc.c:741 modules/irc/cmdsirc.c:770
+#: modules/channels/cmdschan.c:1334 modules/irc/cmdsirc.c:711
+#: modules/irc/cmdsirc.c:740 modules/irc/cmdsirc.c:769
 msgid "That channel doesn't exist!\n"
 msgstr ""
 
@@ -2003,9 +2003,9 @@ msgstr ""
 msgid "User %1$s already has a channel record for %2$s.\n"
 msgstr ""
 
-#: modules/channels/cmdschan.c:1066 modules/channels/cmdschan.c:1344
-#: modules/irc/cmdsirc.c:42 modules/irc/cmdsirc.c:719
-#: modules/irc/cmdsirc.c:748 modules/irc/cmdsirc.c:777
+#: modules/channels/cmdschan.c:1066 modules/channels/cmdschan.c:1349
+#: modules/irc/cmdsirc.c:42 modules/irc/cmdsirc.c:718
+#: modules/irc/cmdsirc.c:747 modules/irc/cmdsirc.c:776
 msgid "Invalid console channel.\n"
 msgstr ""
 
@@ -2066,24 +2066,24 @@ msgstr ""
 msgid "Your console channel is invalid\n"
 msgstr ""
 
-#: modules/channels/cmdschan.c:1175 modules/channels/cmdschan.c:1326
+#: modules/channels/cmdschan.c:1175 modules/channels/cmdschan.c:1331
 #, c-format
 msgid "You don't have access to %s. \n"
 msgstr ""
 
-#: modules/channels/cmdschan.c:1317
+#: modules/channels/cmdschan.c:1322
 msgid "You need to be a global master to use .chanset *.\n"
 msgstr ""
 
-#: modules/channels/cmdschan.c:1412 modules/channels/cmdschan.c:1423
+#: modules/channels/cmdschan.c:1417 modules/channels/cmdschan.c:1428
 msgid "No channel saving file defined.\n"
 msgstr ""
 
-#: modules/channels/cmdschan.c:1414
+#: modules/channels/cmdschan.c:1419
 msgid "Saving all dynamic channel settings.\n"
 msgstr ""
 
-#: modules/channels/cmdschan.c:1425
+#: modules/channels/cmdschan.c:1430
 msgid "Reloading all dynamic channel settings.\n"
 msgstr ""
 
@@ -2593,42 +2593,42 @@ msgstr ""
 msgid "flood"
 msgstr ""
 
-#: modules/irc/chan.c:284
+#: modules/irc/chan.c:282
 #, c-format
 msgid "JOIN flood from @%s!  Banning."
 msgstr ""
 
-#: modules/irc/chan.c:286
+#: modules/irc/chan.c:284
 #, c-format
 msgid "NICK flood from @%s!  Banning."
 msgstr ""
 
-#: modules/irc/chan.c:299
+#: modules/irc/chan.c:297
 msgid "join flood"
 msgstr ""
 
-#: modules/irc/chan.c:302
+#: modules/irc/chan.c:300
 msgid "nick flood"
 msgstr ""
 
-#: modules/irc/chan.c:311
+#: modules/irc/chan.c:309
 msgid "mass kick, go sit in a corner"
 msgstr ""
 
-#: modules/irc/chan.c:318
+#: modules/irc/chan.c:316
 #, c-format
 msgid "Mass deop on %s by %s"
 msgstr ""
 
-#: modules/irc/chan.c:320
+#: modules/irc/chan.c:318
 msgid "Mass deop.  Go sit in a corner."
 msgstr ""
 
-#: modules/irc/chan.c:420 modules/irc/mode.c:660
+#: modules/irc/chan.c:418 modules/irc/mode.c:660
 msgid "banned: "
 msgstr ""
 
-#: modules/irc/chan.c:423 modules/irc/chan.c:492 modules/irc/chan.c:1692
+#: modules/irc/chan.c:421 modules/irc/chan.c:498 modules/irc/chan.c:1688
 msgid "You are banned"
 msgstr ""
 
@@ -2665,17 +2665,17 @@ msgstr ""
 msgid "Bad key--cant join: %s"
 msgstr ""
 
-#: modules/irc/chan.c:1708
+#: modules/irc/chan.c:1702
 msgid "...and dont come back."
 msgstr ""
 
-#: modules/irc/chan.c:1974 modules/server/servmsg.c:638
+#: modules/irc/chan.c:1968 modules/server/servmsg.c:638
 #: modules/server/servmsg.c:784 modules/server/servmsg.c:796
 #, c-format
 msgid "Switching back to nick %s"
 msgstr ""
 
-#: modules/irc/chan.c:1978 modules/server/servmsg.c:641
+#: modules/irc/chan.c:1972 modules/server/servmsg.c:641
 #: modules/server/servmsg.c:788 modules/server/servmsg.c:800
 #, c-format
 msgid "Switching back to altnick %s"
@@ -2701,16 +2701,16 @@ msgstr ""
 msgid "Cannot say to %s, it is moderated.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:167 modules/irc/cmdsirc.c:261
-#: modules/irc/cmdsirc.c:296 modules/irc/cmdsirc.c:331
-#: modules/irc/cmdsirc.c:377 modules/irc/cmdsirc.c:431
-#: modules/irc/cmdsirc.c:497 modules/irc/cmdsirc.c:679
+#: modules/irc/cmdsirc.c:167 modules/irc/cmdsirc.c:260
+#: modules/irc/cmdsirc.c:295 modules/irc/cmdsirc.c:330
+#: modules/irc/cmdsirc.c:376 modules/irc/cmdsirc.c:430
+#: modules/irc/cmdsirc.c:496 modules/irc/cmdsirc.c:678
 #, c-format
 msgid "I'm not on %s right now!\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:172 modules/irc/cmdsirc.c:436
-#: modules/irc/cmdsirc.c:492
+#: modules/irc/cmdsirc.c:172 modules/irc/cmdsirc.c:435
+#: modules/irc/cmdsirc.c:491
 #, c-format
 msgid "I can't help you now because I'm not a channel op on %s.\n"
 msgstr ""
@@ -2719,265 +2719,265 @@ msgstr ""
 msgid "I'm not going to kickban myself.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:189 modules/irc/cmdsirc.c:451
+#: modules/irc/cmdsirc.c:189 modules/irc/cmdsirc.c:450
 #, c-format
 msgid "%1$s is not on %2$s\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:196 modules/irc/cmdsirc.c:459
+#: modules/irc/cmdsirc.c:196 modules/irc/cmdsirc.c:458
 #, c-format
 msgid "%s is a legal op.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:201 modules/irc/cmdsirc.c:464
+#: modules/irc/cmdsirc.c:201 modules/irc/cmdsirc.c:463
 #, c-format
 msgid "%1$s is a %2$s master.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:205 modules/irc/cmdsirc.c:468
+#: modules/irc/cmdsirc.c:205 modules/irc/cmdsirc.c:467
 #, c-format
 msgid "%s is another channel bot!\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:210
+#: modules/irc/cmdsirc.c:209
 #, c-format
 msgid "%s is permanently exempted!\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:241 modules/irc/cmdsirc.c:473
+#: modules/irc/cmdsirc.c:240 modules/irc/cmdsirc.c:472
 msgid "Okay, done.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:265 modules/irc/cmdsirc.c:335
-#: modules/irc/cmdsirc.c:381
+#: modules/irc/cmdsirc.c:264 modules/irc/cmdsirc.c:334
+#: modules/irc/cmdsirc.c:380
 #, c-format
 msgid "I can't help you now because I'm not a chan op on %s.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:273 modules/irc/cmdsirc.c:308
-#: modules/irc/cmdsirc.c:343 modules/irc/cmdsirc.c:389
+#: modules/irc/cmdsirc.c:272 modules/irc/cmdsirc.c:307
+#: modules/irc/cmdsirc.c:342 modules/irc/cmdsirc.c:388
 #, c-format
 msgid "%1$s is not on %2$s.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:278
+#: modules/irc/cmdsirc.c:277
 #, c-format
 msgid "Gave voice to %1$s on %2$s\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:300
+#: modules/irc/cmdsirc.c:299
 #, c-format
 msgid "I can't do that right now I'm not a chan op on %s.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:313
+#: modules/irc/cmdsirc.c:312
 #, c-format
 msgid "Devoiced %1$s on %2$s\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:350
+#: modules/irc/cmdsirc.c:349
 #, c-format
 msgid "%s is currently being auto-deopped.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:355
+#: modules/irc/cmdsirc.c:354
 #, c-format
 msgid "%s is not a registered op.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:359
+#: modules/irc/cmdsirc.c:358
 #, c-format
 msgid "Gave op to %1$s on %2$s\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:393
+#: modules/irc/cmdsirc.c:392
 msgid "I'm not going to deop myself.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:401
+#: modules/irc/cmdsirc.c:400
 #, c-format
 msgid "%1$s is a master for %2$s\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:406
+#: modules/irc/cmdsirc.c:405
 #, c-format
 msgid "%1$s has the op flag for %2$s\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:410
+#: modules/irc/cmdsirc.c:409
 #, c-format
 msgid "Took op from %1$s on %2$s\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:444
+#: modules/irc/cmdsirc.c:443
 msgid "request"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:446
+#: modules/irc/cmdsirc.c:445
 msgid "I'm not going to kick myself.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:503
+#: modules/irc/cmdsirc.c:502
 #, c-format
 msgid "%1$s is already on %2$s!\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:507
+#: modules/irc/cmdsirc.c:506
 #, c-format
 msgid "Inviting %1$s to %2$s.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:530
+#: modules/irc/cmdsirc.c:529
 #, c-format
 msgid "Not active on channel %s\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:535
+#: modules/irc/cmdsirc.c:534
 #, c-format
 msgid "Processing channel %s"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:537
+#: modules/irc/cmdsirc.c:536
 #, c-format
 msgid "Channel %s"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:539
+#: modules/irc/cmdsirc.c:538
 #, c-format
 msgid "Desiring channel %s"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:543
+#: modules/irc/cmdsirc.c:542
 msgid "Channel Topic"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:656
+#: modules/irc/cmdsirc.c:655
 msgid "FAKE CHANOP GIVEN BY SERVER"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:658
+#: modules/irc/cmdsirc.c:657
 msgid "pending +o -- Im lagged"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:660
+#: modules/irc/cmdsirc.c:659
 msgid "pending -o -- Im lagged"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:662
+#: modules/irc/cmdsirc.c:661
 msgid "pending kick"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:665
+#: modules/irc/cmdsirc.c:664
 msgid "End of channel info."
 msgstr ""
 
-#: modules/irc/cmdsirc.c:684
+#: modules/irc/cmdsirc.c:683
 #, c-format
 msgid "The topic for %1$s is: %2$s\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:687
+#: modules/irc/cmdsirc.c:686
 #, c-format
 msgid "No topic is set for %s\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:690
+#: modules/irc/cmdsirc.c:689
 #, c-format
 msgid "I'm not a channel op on %s and the channel is +t.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:694
+#: modules/irc/cmdsirc.c:693
 msgid "Changing topic...\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:726
+#: modules/irc/cmdsirc.c:725
 #, c-format
 msgid "Resetting bans on %s...\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:755
+#: modules/irc/cmdsirc.c:754
 #, c-format
 msgid "Resetting exemptions on %s...\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:784
+#: modules/irc/cmdsirc.c:783
 #, c-format
 msgid "Resetting invitations on %s...\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:821
+#: modules/irc/cmdsirc.c:820
 msgid "You can't have strange characters in a nick.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:836 modules/irc/cmdsirc.c:901
+#: modules/irc/cmdsirc.c:835 modules/irc/cmdsirc.c:900
 #, c-format
 msgid "%s is not on any channels I monitor\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:844
+#: modules/irc/cmdsirc.c:843
 #, c-format
 msgid "%1$s is already known as %2$s.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:850
+#: modules/irc/cmdsirc.c:849
 msgid "You can't add hostmasks to the bot owner/master.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:873
+#: modules/irc/cmdsirc.c:872
 #, c-format
 msgid "Added hostmask %s to %s.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:908
+#: modules/irc/cmdsirc.c:907
 #, c-format
 msgid "%s is not a valid user.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:921
+#: modules/irc/cmdsirc.c:920
 msgid "You can't remove the bot owner!\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:923
+#: modules/irc/cmdsirc.c:922
 msgid "You can't delete a master!\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:925
+#: modules/irc/cmdsirc.c:924
 msgid "You can't remove a channel owner!\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:927
+#: modules/irc/cmdsirc.c:926
 msgid "You can't delete a channel master!\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:929
+#: modules/irc/cmdsirc.c:928
 msgid "You can't delete a bot!\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:951 modules/irc/msgcmds.c:294
+#: modules/irc/cmdsirc.c:950 modules/irc/msgcmds.c:294
 #: modules/irc/msgcmds.c:383 modules/irc/msgcmds.c:910
 msgid "I dont monitor that channel."
 msgstr ""
 
-#: modules/irc/cmdsirc.c:955
+#: modules/irc/cmdsirc.c:954
 #, c-format
 msgid "You are not a master on %s.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:957
+#: modules/irc/cmdsirc.c:956
 #, c-format
 msgid "I'm not on %s at the moment!\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:960
+#: modules/irc/cmdsirc.c:959
 #, c-format
 msgid "Resetting channel info for %s...\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:965
+#: modules/irc/cmdsirc.c:964
 msgid "You are not a Bot Master.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:968
+#: modules/irc/cmdsirc.c:967
 msgid "Resetting channel info for all channels...\n"
 msgstr ""
 
