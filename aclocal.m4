@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.51 2001/08/13 20:47:51 guppy Exp $
+dnl $Id: aclocal.m4,v 1.52 2001/08/19 02:24:40 drummer Exp $
 dnl
 
 
@@ -1364,12 +1364,14 @@ AC_CACHE_VAL(egg_cv_ipv6_supported,[
 #include <fcntl.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <netinet/in.h>
 #include <unistd.h>
 #include <errno.h>
 #include <stdio.h>
 
 int main()
 {
+    struct sockaddr_in6 sin6;
     int s = socket(AF_INET6, SOCK_STREAM, 0);
     if (s != -1)
 	close(s);

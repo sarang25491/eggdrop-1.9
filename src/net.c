@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.38 2001/08/13 14:51:12 guppy Exp $
+ * $Id: net.c,v 1.39 2001/08/19 02:24:41 drummer Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -19,7 +19,7 @@
 #  include <sys/select.h>
 #endif
 #include <netinet/in.h>
-#include <arpa/inet.h>		/* is this really necessary? */
+#include <arpa/inet.h>
 #include <errno.h>
 #if HAVE_UNISTD_H
 #  include <unistd.h>
