@@ -1,3 +1,14 @@
+2003-03-01 08:25  Will Buckner <wcc@techmonkeys.org>
+
+	* AUTHORS, CONTENTS, FEATURES, configure.ac, acconfig/acinclude.m4,
+	doc/AUTHORS, doc/BANS, doc/MODULES, doc/Makefile.in,
+	doc/SCRIPTING-COMMANDS, doc/USERS, doc/tcl-commands.doc,
+	doc/text-substitutions.doc, doc/tricks, modules/channels/tclchan.c,
+	modules/tclscript/tclscript.c:
+
+	* Tcl cleanups.  
+	* More documentation.  
+
 2003-02-27 02:44  Will Buckner <wcc@techmonkeys.org>
 
 	* modules/irc/chan.c, modules/tclscript/tclscript.c, src/patch.h:
