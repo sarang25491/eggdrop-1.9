@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.44 2001/07/16 14:54:01 guppy Exp $
+ * $Id: proto.h,v 1.45 2001/07/26 17:04:33 drummer Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -152,13 +152,11 @@ char *add_cr(char *);
 void changeover_dcc(int, struct dcc_table *, int);
 
 /* dns.c */
-extern void (*dns_hostbyip) (IP);
-extern void (*dns_ipbyhost) (char *);
-void block_dns_hostbyip(IP);
-void block_dns_ipbyhost(char *);
-void call_hostbyip(IP, char *, int);
-void call_ipbyhost(char *, IP, int);
-void dcc_dnshostbyip(IP);
+void dns_hostbyip(char *);
+void dns_ipbyhost(char *);
+void call_hostbyip(char *, char *, int);
+void call_ipbyhost(char *, char *, int);
+void dcc_dnshostbyip(char *);
 void dcc_dnsipbyhost(char *);
 
 /* gotdcc.c */
@@ -239,15 +237,16 @@ void str_nutf8tounicode(char *str, int len);
 IP my_atoul(char *);
 unsigned long iptolong(IP);
 IP getmyip();
+struct in6_addr getmyip6();
 void neterror(char *);
 void setsock(int, int);
 int allocsock(int, int);
 int getsock(int);
 char *hostnamefromip(unsigned long);
 void killsock(int);
-int answer(int, char *, unsigned long *, unsigned short *, int);
-inline int open_listen(int *);
-int open_address_listen(IP addr, int *port);
+int answer(int, char *, char *, unsigned short *, int);
+inline int open_listen(int *, int);
+int open_address_listen(char *, int *);
 int open_telnet(char *, int);
 int open_telnet_dcc(int, char *, char *);
 int open_telnet_raw(int, char *, int);
@@ -258,6 +257,7 @@ void tell_netdebug(int);
 int sanitycheck_dcc(char *, char *, char *, char *);
 int hostsanitycheck_dcc(char *, char *, IP, char *, char *);
 char *iptostr(IP);
+char *getlocaladdr(int);
 int sock_has_data(int, int);
 int sockoptions(int sock, int operation, int sock_options);
 int flush_inbuf(int idx);

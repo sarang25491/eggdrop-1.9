@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.56 2001/07/25 04:21:09 guppy Exp $
+ * $Id: share.c,v 1.57 2001/07/26 17:04:34 drummer Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1144,7 +1144,7 @@ static void share_ufsend(int idx, char *par)
       zapfbot(idx);
     } else {
       i = new_dcc(&DCC_FORK_SEND, sizeof(struct xfer_info));
-      dcc[i].addr = my_atoul(ip);
+      strcpy(dcc[i].addr, iptostr(htonl(my_atoul(ip))));
       dcc[i].port = atoi(port);
       strcpy(dcc[i].nick, "*users");
       dcc[i].u.xfer->filename = nmalloc(strlen(s) + 1);
@@ -1909,7 +1909,8 @@ static void start_sending_users(int idx)
     return;
   }
 
-  if ((i = raw_dcc_send(share_file, "*users", "(users)", share_file)) > 0) {
+  if ((i = raw_dcc_send(share_file, "*users", "(users)",
+			share_file, getlocaladdr(dcc[idx].sock))) > 0) {
     unlink(share_file);
     dprintf(idx, "s e %s\n", USERF_CANTSEND);
     putlog(LOG_BOTS, "*", "%s -- can't send userfile",
@@ -1923,8 +1924,7 @@ static void start_sending_users(int idx)
     dcc[idx].status |= STAT_SENDING;
     i = dcc_total - 1;
     strcpy(dcc[i].host, dcc[idx].nick);		/* Store bot's nick */
-    dprintf(idx, "s us %lu %d %lu\n",
-	    iptolong(natip[0] ? (IP) inet_addr(natip) : getmyip()),
+    dprintf(idx, "s us %s %d %lu\n", getlocaladdr(dcc[idx].sock),
 	    dcc[i].port, dcc[i].u.xfer->length);
     /* Start up a tbuf to queue outgoing changes for this bot until the
      * userlist is done transferring.
@@ -1946,9 +1946,12 @@ static void start_sending_users(int idx)
 	    q_tbuf(dcc[idx].nick, s2, NULL);
 	  }
 	  /* Send address */
-	  if (bi)
+	  if (bi) {
+	    register char *tmp = str_escape(bi->address, ':', '\\');
 	    egg_snprintf(s2, sizeof s2, "s c BOTADDR %s %s %d %d\n", u->handle,
-			 bi->address, bi->telnet_port, bi->relay_port);
+			 tmp, bi->telnet_port, bi->relay_port);
+	    nfree(tmp);
+	  }
 	  q_tbuf(dcc[idx].nick, s2, NULL);
 	  fr.match = FR_GLOBAL;
 	  fr.global = u->flags;

@@ -4,7 +4,7 @@
  *
  * Rewritten by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: filedb3.c,v 1.18 2001/04/12 02:39:46 guppy Exp $
+ * $Id: filedb3.c,v 1.19 2001/07/26 17:04:34 drummer Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1064,7 +1064,7 @@ static void remote_filereq(int idx, char *from, char *file)
 	  copyfile(s1, s);
 	} else
 	  s = s1;
-	i = raw_dcc_send(s, "*remote", FILES_REMOTE, s);
+	i = raw_dcc_send(s, "*remote", FILES_REMOTE, s, 0);
 	if (i > 0) {
 	  wipe_tmp_filename(s, -1);
 	  reject = FILES_SENDERR;

@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  *
- * $Id: dccutil.c,v 1.32 2001/06/20 14:48:34 poptix Exp $
+ * $Id: dccutil.c,v 1.33 2001/07/26 17:04:33 drummer Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -319,16 +319,16 @@ void tell_dcc(int zidx)
   char other[160];
 
   spaces[HANDLEN - 9] = 0;
-  dprintf(zidx, "SOCK ADDR     PORT  NICK     %s HOST              TYPE\n"
+  dprintf(zidx, "SOCK PORT  NICK     %s HOST                       TYPE\n"
 	  ,spaces);
-  dprintf(zidx, "---- -------- ----- ---------%s ----------------- ----\n"
+  dprintf(zidx, "---- ----- ---------%s -------------------------- ----\n"
 	  ,spaces);
   spaces[HANDLEN - 9] = ' ';
   /* Show server */
   for (i = 0; i < dcc_total; i++) {
     j = strlen(dcc[i].host);
-    if (j > 17)
-      j -= 17;
+    if (j > 26)
+      j -= 26;
     else
       j = 0;
     if (dcc[i].type && dcc[i].type->display)
@@ -339,7 +339,7 @@ void tell_dcc(int zidx)
     }
     k = HANDLEN - strlen(dcc[i].nick);
     spaces[k] = 0;
-    dprintf(zidx, "%-4d %08X %5d %s%s %-17s %s\n", dcc[i].sock, dcc[i].addr,
+    dprintf(zidx, "%-4d %5d %s%s %-26s %s\n", dcc[i].sock,
 	    dcc[i].port, dcc[i].nick, spaces, dcc[i].host + j, other);
     spaces[k] = ' ';
   }

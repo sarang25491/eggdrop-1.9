@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.41 2001/07/25 04:21:09 guppy Exp $
+ * $Id: transfer.c,v 1.42 2001/07/26 17:04:34 drummer Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -377,7 +377,7 @@ static void send_next_file(char *to)
     s = nrealloc(s, strlen(this->dir) + strlen(this->file) + 2);
     sprintf(s, "%s%s%s", this->dir, this->dir[0] ? "/" : "", this->file);
   }
-  x = raw_dcc_send(s1, this->to, this->nick, s);
+  x = raw_dcc_send(s1, this->to, this->nick, s, 0);
   if (x == DCCSEND_OK) {
     if (egg_strcasecmp(this->to, this->nick))
       dprintf(DP_HELP, "NOTICE %s :Here is a file from %s ...\n", this->to,
@@ -615,7 +615,7 @@ static int tcl_dccsend STDVAR
     sys = nmalloc(strlen(argv[1]) + 1);
     strcpy(sys, argv[1]);
   }
-  i = raw_dcc_send(sys, argv[2], "*", argv[1]);
+  i = raw_dcc_send(sys, argv[2], "*", argv[1], 0);
   if (i > 0)
     wipe_tmp_filename(sys, -1);
   egg_snprintf(s, sizeof s, "%d", i);
@@ -1359,15 +1359,15 @@ static struct dcc_table DCC_GET_PENDING =
 
 static void dcc_get_pending(int idx, char *buf, int len)
 {
-  unsigned long ip;
+  char ip[ADDRLEN];
   unsigned short port;
   int i;
   char s[UHOSTLEN];
 
-  i = answer(dcc[idx].sock, s, &ip, &port, 1);
+  i = answer(dcc[idx].sock, s, ip, &port, 1);
   killsock(dcc[idx].sock);
   dcc[idx].sock = i;
-  dcc[idx].addr = ip;
+  strcpy(dcc[idx].addr, ip);
   dcc[idx].port = (int) port;
   if (dcc[idx].sock == -1) {
     neterror(s);
@@ -1431,13 +1431,14 @@ static void dcc_get_pending(int idx, char *buf, int len)
  * Use raw_dcc_resend() and raw_dcc_send() instead of this function.
  */
 static int raw_dcc_resend_send(char *filename, char *nick, char *from,
-			       char *dir, int resend)
+			       char *dir, int resend, char *addr)
 {
   int zz, port, i;
   char *nfn, *buf = NULL;
   struct stat ss;
   FILE *f;
 
+debug1("|TRANSFER| raw_dcc_resend_send(... addr=\"%s\")", addr);
   zz = (-1);
   stat(filename, &ss);
   /* File empty?! */
@@ -1445,13 +1446,23 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
     return DCCSEND_FEMPTY;
   if (reserved_port_min > 0 && reserved_port_min < reserved_port_max) {
     for (port = reserved_port_min; port <= reserved_port_max; port++) {
-  zz = open_listen(&port);
+	if (addr && addr[0])
+	  zz = open_address_listen(addr, &port);
+	else {
+	  zz = open_listen(&port, AF_INET);
+	  addr = getlocaladdr(-1);
+	 }
      if (zz != (-1))
        break;
     }
   } else {
     port = reserved_port_min;
-    zz = open_listen(&port);
+    if (addr && addr[0])
+	zz = open_address_listen(addr, &port);
+    else {
+	zz = open_listen(&port, AF_INET);
+        addr = getlocaladdr(-1);
+    }
   }
   if (zz == (-1))
     return DCCSEND_NOSOCK;
@@ -1466,7 +1477,7 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
   if ((i = new_dcc(&DCC_GET_PENDING, sizeof(struct xfer_info))) == -1)
      return DCCSEND_FULL;
   dcc[i].sock = zz;
-  dcc[i].addr = (IP) (-559026163);
+  strcpy(dcc[i].addr, "222.173.240.13"); /* (IP) (-559026163);   WTF?? */
   dcc[i].port = port;
   strcpy(dcc[i].nick, nick);
   strcpy(dcc[i].host, "irc");
@@ -1483,10 +1494,9 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
   dcc[i].u.xfer->f = f;
   dcc[i].u.xfer->type = resend ? XFER_RESEND_PEND : XFER_SEND;
   if (nick[0] != '*') {
-    dprintf(DP_HELP, "PRIVMSG %s :\001DCC %sSEND %s %lu %d %lu\001\n", nick,
-	    resend ? "RE" :  "", nfn,
-	    iptolong(natip[0] ? (IP) inet_addr(natip) : getmyip()), port,
-	    ss.st_size);
+    dprintf(DP_HELP, "PRIVMSG %s :\001DCC %sSEND %s %s %d %lu\001\n", nick,
+	    resend ? "RE" :  "", nfn, addr,
+	    port, ss.st_size);
     putlog(LOG_FILES, "*", "Begin DCC %ssend %s to %s", resend ? "re" :  "",
 	   nfn, nick);
   }
@@ -1497,16 +1507,18 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
 
 /* Starts a DCC RESEND connection.
  */
-static int raw_dcc_resend(char *filename, char *nick, char *from, char *dir)
+static int raw_dcc_resend(char *filename, char *nick, char *from,
+			    char *dir, char *addr)
 {
-  return raw_dcc_resend_send(filename, nick, from, dir, 1);
+  return raw_dcc_resend_send(filename, nick, from, dir, 1, addr);
 }
 
 /* Starts a DCC_SEND connection.
  */
-static int raw_dcc_send(char *filename, char *nick, char *from, char *dir)
+static int raw_dcc_send(char *filename, char *nick, char *from,
+			    char *dir, char *addr)
 {
-  return raw_dcc_resend_send(filename, nick, from, dir, 0);
+  return raw_dcc_resend_send(filename, nick, from, dir, 0, addr);
 }
 
 static tcl_ints myints[] =

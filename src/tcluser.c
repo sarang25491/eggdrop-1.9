@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  *
- * $Id: tcluser.c,v 1.22 2001/06/30 06:29:55 guppy Exp $
+ * $Id: tcluser.c,v 1.23 2001/07/26 17:04:33 drummer Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -266,6 +266,8 @@ static int tcl_addbot STDVAR
 {
   struct bot_addr *bi;
   char *p, *q;
+  char *addr;
+  int addrlen;
 
   BADARGS(3, 3, " handle address");
   if (strlen(argv[1]) > HANDLEN)
@@ -277,16 +279,30 @@ static int tcl_addbot STDVAR
   else {
     userlist = adduser(userlist, argv[1], "none", "-", USER_BOT);
     bi = user_malloc(sizeof(struct bot_addr));
-    q = strchr(argv[2], ':');
+    addr = argv[2];
+    if (*addr == '[') {
+	addr++;
+	if ((q = strchr(addr, ']'))) {
+          addrlen = q - addr;
+          q++;
+          if (*q != ':')
+            q = 0;
+        } else
+          addrlen = strlen(addr);
+    } else {
+        if ((q = strchr(addr, ':')))
+	  addrlen = q - addr;
+        else
+	  addrlen = strlen(addr);
+    }
     if (!q) {
-      bi->address = user_malloc(strlen(argv[2]) + 1);
-      strcpy(bi->address, argv[2]);
+      bi->address = user_malloc(addrlen + 1);
+      strcpy(bi->address, addr);
       bi->telnet_port = 3333;
       bi->relay_port = 3333;
     } else {
       bi->address = user_malloc(q - argv[2] + 1);
-      strncpy(bi->address, argv[2], q - argv[2]);
-      bi->address[q - argv[2]] = 0;
+      strncpyz(bi->address, addr, addrlen + 1);
       p = q + 1;
       bi->telnet_port = atoi(p);
       q = strchr(p, '/');

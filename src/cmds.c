@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.60 2001/07/24 14:19:19 guppy Exp $
+ * $Id: cmds.c,v 1.61 2001/07/26 17:04:33 drummer Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -753,6 +753,7 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
   char *handle, *addr, *p, *q, *host;
   struct userrec *u1;
   struct bot_addr *bi;
+  int addrlen;
 
   if (!par[0])
     dprintf(idx, "Usage: +bot <handle> <address[:telnet-port[/relay-port]]> [host]\n");
@@ -773,16 +774,29 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
       u1 = get_user_by_handle(userlist, handle);
       bi = user_malloc(sizeof(struct bot_addr));
 
-      q = strchr(addr, ':');
+      if (*addr == '[') {
+	addr++;
+        if ((q = strchr(addr, ']'))) {
+          addrlen = q - addr;
+          q++;
+          if (*q != ':')
+            q = 0;
+        } else
+          addrlen = strlen(addr);
+      } else {
+        if ((q = strchr(addr, ':')))
+	  addrlen = q - addr;
+        else
+	  addrlen = strlen(addr);
+      }
       if (!q) {
-	bi->address = user_malloc(strlen(addr) + 1);
+	bi->address = user_malloc(addrlen + 1);
 	strcpy(bi->address, addr);
 	bi->telnet_port = 3333;
 	bi->relay_port = 3333;
       } else {
-	bi->address = user_malloc(q - addr + 1);
-	strncpy(bi->address, addr, q - addr);
-	bi->address[q - addr] = 0;
+	bi->address = user_malloc(addrlen + 1);
+	strncpyz(bi->address, addr, addrlen + 1);
 	p = q + 1;
 	bi->telnet_port = atoi(p);
 	q = strchr(p, '/');
@@ -933,6 +947,7 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
   char *handle, *addr, *p, *q;
   struct bot_addr *bi;
   struct userrec *u1;
+  int addrlen;
 
   if (!par[0]) {
     dprintf(idx, "Usage: chaddr <botname> <address[:telnet-port[/relay-port]]>\n");
@@ -962,15 +977,29 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
 
   bi = user_malloc(sizeof(struct bot_addr));
 
-  q = strchr(addr, ':');
+  if (*addr == '[') {
+    addr++;
+    if ((q = strchr(addr, ']'))) {
+      addrlen = q - addr;
+      q++;
+      if (*q != ':')
+          q = 0;
+    } else
+      addrlen = strlen(addr);
+  } else {
+    if ((q = strchr(addr, ':')))
+	addrlen = q - addr;
+    else
+	addrlen = strlen(addr);
+  }
   if (!q) {
-    bi->address = user_malloc(strlen(addr) + 1);
+    bi->address = user_malloc(addrlen + 1);
     strcpy(bi->address, addr);
     bi->telnet_port = telnet_port;
     bi->relay_port = relay_port;
   } else {
-    bi->address = user_malloc(q - addr + 1);
-    strncpyz(bi->address, addr, q - addr + 1);
+    bi->address = user_malloc(addrlen + 1);
+    strncpyz(bi->address, addr, addrlen + 1);
     p = q + 1;
     bi->telnet_port = atoi(p);
     q = strchr(p, '/');

@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.28 2001/05/14 16:17:00 guppy Exp $
+ * $Id: tcldcc.c,v 1.29 2001/07/26 17:04:33 drummer Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -848,8 +848,20 @@ static int tcl_listen STDVAR
   int i, j, idx = (-1), port, realport;
   char s[11];
   struct portmap *pmap = NULL, *pold = NULL;
+  int af = AF_INET /* af_preferred */;
 
-  BADARGS(3, 5, " port type ?mask?/?proc ?flag??");
+  BADARGS(3, 6, " ?-4/-6? port type ?mask?/?proc ?flag??");
+  if (!strcmp(argv[1], "-4") || !strcmp(argv[1], "-6")) {
+      if (argv[1][1] == '4')
+          af = AF_INET;
+      else
+	  af = AF_INET6;
+      argv[1] = argv[0]; /* UGLY! */
+      argv++;
+      argc--;
+  }
+  BADARGS(3, 6, " ?-4/-6? port type ?mask?/?proc ?flag??");
+
   port = realport = atoi(argv[1]);
   for (pmap = root; pmap; pold = pmap, pmap = pmap->next)
     if (pmap->realport == port) {
@@ -886,7 +898,7 @@ static int tcl_listen STDVAR
     j = port + 20;
     i = (-1);
     while (port < j && i < 0) {
-      i = open_listen(&port);
+      i = open_listen(&port, af);
       if (i == -1)
 	port++;
       else if (i == -2)
@@ -896,11 +908,11 @@ static int tcl_listen STDVAR
       Tcl_AppendResult(irp, "Couldn't grab nearby port", NULL);
       return TCL_ERROR;
     } else if (i == -2) {
-      Tcl_AppendResult(irp, "Couldn't assign the requested IP. Please make sure 'my-ip' is set properly.", NULL);
+      Tcl_AppendResult(irp, "Couldn't assign the requested IP. Please make sure 'my-ip' and/or 'my-ip6' is set properly.", NULL);
       return TCL_ERROR;
     }
     idx = new_dcc(&DCC_TELNET, 0);
-    dcc[idx].addr = iptolong(getmyip());
+    strcpy(dcc[idx].addr, "*"); /* who cares? */
     dcc[idx].port = port;
     dcc[idx].sock = i;
     dcc[idx].timeval = now;

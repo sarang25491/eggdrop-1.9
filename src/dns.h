@@ -2,7 +2,7 @@
  * dns.h
  *   stuff used by dns.c
  *
- * $Id: dns.h,v 1.6 2001/04/12 02:39:43 guppy Exp $
+ * $Id: dns.h,v 1.7 2001/07/26 17:04:33 drummer Exp $
  */
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -30,7 +30,7 @@
 typedef struct {
   char *name;
   int  (*expmem)(void *);
-  void (*event)(IP, char *, int, void *);
+  void (*event)(char *, char *, int, void *);
 } devent_type;
 
 typedef struct {
@@ -42,11 +42,12 @@ typedef struct devent_str {
   struct devent_str *next;	/* Pointer to next dns_event	  */
   devent_type	*type;
   u_8bit_t	lookup;		/* RES_IPBYHOST or RES_HOSTBYIP	  */
-  union {
-    IP		ip_addr;	/* IP address			  */
-    char	*hostname; 	/* Hostname			  */
-  } res_data;
+  char	*hostname;		/* Hostname or IP address (as string) */
   void		*other;		/* Data specific to the event type */
 } devent_t;
+
+#define DNS_CHECK_IPV4 1
+#define DNS_CHECK_IPV6 2
+#define DNS_CHECK_BOTH 3
 
 #endif	/* _EGG_DNS_H */

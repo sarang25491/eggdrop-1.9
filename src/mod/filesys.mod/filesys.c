@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.44 2001/07/25 04:21:08 guppy Exp $
+ * $Id: filesys.c,v 1.45 2001/07/26 17:04:34 drummer Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -359,9 +359,9 @@ static int _dcc_send(int idx, char *filename, char *nick, char *dir,
   if (strlen(nick) > NICKMAX)
     nick[NICKMAX] = 0;
   if (resend)
-    x = raw_dcc_resend(filename, nick, dcc[idx].nick, dir);
+    x = raw_dcc_resend(filename, nick, dcc[idx].nick, dir, 0);
   else
-    x = raw_dcc_send(filename, nick, dcc[idx].nick, dir);
+    x = raw_dcc_send(filename, nick, dcc[idx].nick, dir, 0);
   if (x == DCCSEND_FULL) {
     dprintf(idx, "Sorry, too many DCC connections.  (try again later)\n");
     putlog(LOG_FILES, "*", "DCC connections full: %sGET %s [%s]", filename,
@@ -663,11 +663,14 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
       putlog(LOG_FILES, "*", "Refused dcc send %s (%s): file too large", param,
 	     nick);
     } else {
+      struct in_addr ip4;
       /* This looks like a good place for a sanity check. */
+/*
       if (!sanitycheck_dcc(nick, from, ip, prt)) {
 	my_free(buf);
 	return;
       }
+*/
       i = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
       if (i < 0) {
 	dprintf(DP_HELP, "NOTICE %s :Sorry, too many DCC connections.\n",
@@ -676,7 +679,12 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
 	       param, nick, from);
 	return;
       }
-      dcc[i].addr = my_atoul(ip);
+debug1("|FILESYS| dcc send ip: (%s)", ip);
+    if (egg_inet_aton(ip, &ip4)) /* fix the format! */
+	strncpyz(dcc[i].addr, inet_ntoa(ip4), ADDRLEN);
+    else
+	strncpyz(dcc[i].addr, ip, ADDRLEN);
+debug1("|FILESYS| addr: (%s)", dcc[i].addr);
       dcc[i].port = atoi(prt);
       dcc[i].sock = (-1);
       dcc[i].user = u;
@@ -685,7 +693,10 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
       dcc[i].u.dns->cbuf = get_data_ptr(strlen(param) + 1);
       strcpy(dcc[i].u.dns->cbuf, param);
       dcc[i].u.dns->ibuf = atoi(msg);
-      dcc[i].u.dns->ip = dcc[i].addr;
+      
+      dcc[i].u.dns->host = get_data_ptr(strlen(dcc[i].addr) + 1);
+      strcpy(dcc[i].u.dns->host, dcc[i].addr);
+
       dcc[i].u.dns->dns_type = RES_HOSTBYIP;
       dcc[i].u.dns->dns_success = filesys_dcc_send_hostresolved;
       dcc[i].u.dns->dns_failure = filesys_dcc_send_hostresolved;
@@ -729,16 +740,17 @@ static char *mktempfile(char *filename)
 static void filesys_dcc_send_hostresolved(int i)
 {
   FILE *f;
-  char *s1, *param, prt[100], ip[100], *tempf;
+  char *s1, *param, prt[100], *tempf;
   int len = dcc[i].u.dns->ibuf, j;
 
   sprintf(prt, "%d", dcc[i].port);
-  sprintf(ip, "%lu", iptolong(htonl(dcc[i].addr)));
+/* FIXME:
   if (!hostsanitycheck_dcc(dcc[i].nick, dcc[i].u.dns->host, dcc[i].addr,
                            dcc[i].u.dns->host, prt)) {
     lostdcc(i);
     return;
   }
+*/
   param = nmalloc(strlen(dcc[i].u.dns->cbuf) + 1);
   strcpy(param, dcc[i].u.dns->cbuf);
 
@@ -802,7 +814,7 @@ static void filesys_dcc_send_hostresolved(int i)
     } else {
       dcc[i].timeval = now;
       dcc[i].sock = getsock(SOCK_BINARY);
-      if (dcc[i].sock < 0 || open_telnet_dcc(dcc[i].sock, ip, prt) < 0)
+      if (dcc[i].sock < 0 || open_telnet_dcc(dcc[i].sock, dcc[i].addr, prt) < 0)
 	dcc[i].type->eof(i);
     }
   }
@@ -865,7 +877,7 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
 
     } else {
       i = new_dcc(&DCC_FILES_PASS, sizeof(struct file_info));
-      dcc[i].addr = my_atoul(ip);
+      strcpy(dcc[i].addr, iptostr(htonl(my_atoul(ip))));
       dcc[i].port = atoi(prt);
       dcc[i].sock = sock;
       strcpy(dcc[i].nick, u->handle);

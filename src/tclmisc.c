@@ -3,7 +3,7 @@
  *   Tcl stubs for file system commands
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.22 2001/07/26 04:07:49 guppy Exp $
+ * $Id: tclmisc.c,v 1.23 2001/07/26 17:04:33 drummer Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -307,6 +307,17 @@ static int tcl_myip STDVAR
   return TCL_OK;
 }
 
+static int tcl_myip6 STDVAR
+{
+    BADARGS(1, 1, "");
+#ifdef IPV6
+    Tcl_AppendResult(irp, getmyip6(), NULL);
+#else
+    Tcl_AppendResult(irp, "", NULL);
+#endif
+    return TCL_OK;
+}
+
 static int tcl_rand STDVAR
 {
   unsigned long x;
@@ -582,5 +593,6 @@ tcl_cmds tclmisc_cmds[] =
 #endif
   {"binds",		tcl_binds},
   {"callevent",		tcl_callevent},
+  {"myip6",		tcl_myip6},
   {NULL,		NULL}
 };

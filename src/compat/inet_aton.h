@@ -2,7 +2,7 @@
  * inet_aton.h
  *   prototypes for inet_aton.c
  *
- * $Id: inet_aton.h,v 1.3 2001/04/12 02:39:44 guppy Exp $
+ * $Id: inet_aton.h,v 1.4 2001/07/26 17:04:33 drummer Exp $
  */
 /*
  * Copyright (C) 2000, 2001 Eggheads Development Team
@@ -25,7 +25,7 @@
 #ifndef _EGG_COMPAT_INET_ATON_H
 #define _EGG_COMPAT_INET_ATON_H
 
-#include "src/main.h"
+/* #include "src/main.h" */
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>

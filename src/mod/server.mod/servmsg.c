@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.56 2001/07/04 19:27:37 poptix Exp $
+ * $Id: servmsg.c,v 1.57 2001/07/26 17:04:34 drummer Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1184,7 +1184,7 @@ static void connect_server(void)
       do_tcl("connect-server", connectserver);
     check_tcl_event("connect-server");
     next_server(&curserv, botserver, &botserverport, pass);
-    putlog(LOG_SERV, "*", "%s %s:%d", IRC_SERVERTRY, botserver, botserverport);
+    putlog(LOG_SERV, "*", "%s %s %d", IRC_SERVERTRY, botserver, botserverport);
 
     dcc[servidx].port = botserverport;
     strcpy(dcc[servidx].nick, "(server)");
@@ -1235,10 +1235,11 @@ static void server_resolve_success(int servidx)
   char s[121], pass[121];
 
   resolvserv = 0;
-  dcc[servidx].addr = dcc[servidx].u.dns->ip;
+  
+  strcpy(dcc[servidx].addr, dcc[servidx].u.dns->host);
   strcpy(pass, dcc[servidx].u.dns->cbuf);
   changeover_dcc(servidx, &SERVER_SOCKET, 0);
-  serv = open_telnet(iptostr(htonl(dcc[servidx].addr)), dcc[servidx].port);
+  serv = open_telnet(dcc[servidx].addr, dcc[servidx].port);
   if (serv < 0) {
     neterror(s);
     putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, dcc[servidx].host,
@@ -1259,7 +1260,7 @@ static void server_resolve_success(int servidx)
       dprintf(DP_MODE, "PASS %s\n", pass);
     dprintf(DP_MODE, "NICK %s\n", botname);
     dprintf(DP_MODE, "USER %s %s %s :%s\n",
-	    botuser, bothost, dcc[servidx].host, botrealname);
+	    botuser, botuser, botuser, botrealname);
     /* Wait for async result now */
   }
 }

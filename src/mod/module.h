@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.50 2001/07/18 06:03:29 tothwolf Exp $
+ * $Id: module.h,v 1.51 2001/07/26 17:04:33 drummer Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -188,7 +188,7 @@
 #define list_append ((int (*) ( struct list_type **, struct list_type *))global[74])
 #define list_contains ((int (*) (struct list_type *, struct list_type *))global[75])
 /* 76 - 79 */
-#define answer ((int (*) (int,char *,unsigned long *,unsigned short *,int))global[76])
+#define answer ((int (*) (int,char *,char *,unsigned short *,int))global[76])
 #define getmyip ((IP (*) (void))global[77])
 #define neterror ((void (*) (char *))global[78])
 #define tputs ((void (*) (int, char *,unsigned int))global[79])
@@ -198,7 +198,7 @@
 #define getsock ((int (*) (int))global[82])
 #define killsock ((void (*) (int))global[83])
 /* 84 - 87 */
-#define open_listen ((int (*) (int *))global[84])
+#define open_listen ((int (*) (int *,int))global[84])
 #define open_telnet_dcc ((int (*) (int,char *,char *))global[85])
 #define get_data_ptr(x) ((void *(*)(int,char*,int))global[86])(x,__FILE__,__LINE__)
 #define open_telnet ((int (*) (char *, int))global[87])
@@ -397,15 +397,15 @@
 #  define Assert(expr)	do {	} while (0)
 #endif
 #define allocsock ((int(*)(int sock,int options))global[234])
-#define call_hostbyip ((void(*)(IP, char *, int))global[235])
+#define call_hostbyip ((void(*)(char *, char *, int))global[235])
 /* 236 - 239 */
-#define call_ipbyhost ((void(*)(char *, IP, int))global[236])
+#define call_ipbyhost ((void(*)(char *, char *, int))global[236])
 #define iptostr ((char *(*)(IP))global[237])
 #define DCC_DNSWAIT (*(struct dcc_table *)(global[238]))
 #define hostsanitycheck_dcc ((int(*)(char *, char *, IP, char *, char *))global[239])
 /* 240 - 243 */
 #define dcc_dnsipbyhost ((void (*)(char *))global[240])
-#define dcc_dnshostbyip ((void (*)(IP))global[241])
+#define dcc_dnshostbyip ((void (*)(char *))global[241])
 #define changeover_dcc ((void (*)(int, struct dcc_table *, int))global[242])
 #define make_rand_str ((void (*) (char *, int))global[243])
 /* 244 - 247 */
@@ -430,7 +430,7 @@
 #define tandbot (*(tand_t **)(global[259]))
 /* 260 - 263 */
 #define party (*(party_t **)(global[260]))
-#define open_address_listen ((int (*)(IP addr, int *port))global[261])
+#define open_address_listen ((int (*)(char *addr, int *port))global[261])
 #define str_escape ((char *(*)(const char *, const char, const char))global[262])
 #define strchr_unescape ((char *(*)(char *, const char, register const char))global[263])
 /* 264 - 267 */
@@ -440,7 +440,7 @@
 #if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
 #define str_nutf8tounicode ((int (*)(char *str, int len))global[267])
 #endif
-/* 168 - 270 */
+/* 268 - 270 */
 /* Please don't modify socklist directly, unless there's no other way.
  * Its structure might be changed, or it might be completely removed,
  * so you can't rely on it without a version-check.
@@ -448,6 +448,10 @@
 #define socklist (*(struct sock_list **)global[268])
 #define sockoptions ((int (*)(int, int, int))global[269])
 #define flush_inbuf ((int (*)(int))global[270])
+#ifdef IPV6
+#  define getmyip6 ((struct in6_addr (*) (void))global[271])
+#endif
+#define getlocaladdr ((char* (*) (int))global[272])
 
 /* This is for blowfish module, couldnt be bothered making a whole new .h
  * file for it ;)

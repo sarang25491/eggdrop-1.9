@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.47 2001/06/30 06:29:55 guppy Exp $
+ * $Id: dcc.c,v 1.48 2001/07/26 17:04:33 drummer Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -236,8 +236,8 @@ void failed_link(int idx)
   dcc[idx].port++;
   dcc[idx].timeval = now;
   if (dcc[idx].sock < 0 ||
-      open_telnet_raw(dcc[idx].sock, dcc[idx].addr ?
-		      iptostr(htonl(dcc[idx].addr)) : dcc[idx].host,
+      open_telnet_raw(dcc[idx].sock, dcc[idx].addr[0] ?
+		      dcc[idx].addr : dcc[idx].host,
 		      dcc[idx].port) < 0) {
     failed_link(idx);
   }
@@ -1082,22 +1082,21 @@ static int detect_telnet_flood(char *floodhost)
 
 static void dcc_telnet(int idx, char *buf, int i)
 {
-  unsigned long ip;
+  char ip[ADDRLEN];
   unsigned short port;
-  int j = 0, sock;
+  int j, sock;
   char s[UHOSTLEN + 1];
 
+  sock = answer(dcc[idx].sock, s, ip, &port, 0);
   if (dcc_total + 1 > max_dcc) {
-    j = answer(dcc[idx].sock, s, &ip, &port, 0);
-    if (j != -1) {
-      dprintf(-j, "Sorry, too many connections already.\r\n");
-      killsock(j);
+    if (sock != -1) {
+      dprintf(-sock, "Sorry, too many connections already.\r\n");
+      killsock(sock);
     }
     return;
   }
-  sock = answer(dcc[idx].sock, s, &ip, &port, 0);
   while ((sock == -1) && (errno == EAGAIN))
-    sock = answer(sock, s, &ip, &port, 0);
+    sock = answer(sock, s, ip, &port, 0);
   if (sock < 0) {
     neterror(s);
     putlog(LOG_MISC, "*", DCC_FAILED, s);
@@ -1115,19 +1114,24 @@ static void dcc_telnet(int idx, char *buf, int i)
     killsock(sock);
     return;
   }
+  j = strlen(ip);
   /* Deny ips that ends with 0 or 255, dw */
-  if ((ip & 0xff) == 0 || (ip & 0xff) == 0xff) {
+  if ((j > 4) &&
+      ((ip[j - 1] == '0' && ip[j - 2] == '.') || (ip[j - 1] == '5' &&
+        ip[j - 2] == '5' && ip[j - 3] == '2' && ip[j - 4] == '.'))) {
     putlog(LOG_BOTS, "*", DCC_BADIP, s, port);
     killsock(sock);
     return;
   }
   i = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
   dcc[i].sock = sock;
-  dcc[i].addr = ip;
+  strcpy(dcc[i].addr, ip);
   dcc[i].port = port;
   dcc[i].timeval = now;
   strcpy(dcc[i].nick, "*");
-  dcc[i].u.dns->ip = ip;
+  dcc[i].u.dns->host = get_data_ptr(j + 1);
+  strcpy(dcc[i].u.dns->host, dcc[i].addr);
+debug3("|DCC| dcc_telnet: idx: %d addr: %s u.dns->host: %s", i, dcc[i].addr, dcc[i].u.dns->host);
   dcc[i].u.dns->dns_success = dcc_telnet_hostresolved;
   dcc[i].u.dns->dns_failure = dcc_telnet_hostresolved;
   dcc[i].u.dns->dns_type = RES_HOSTBYIP;
@@ -1143,6 +1147,7 @@ static void dcc_telnet_hostresolved(int i)
   char s[UHOSTLEN], s2[UHOSTLEN + 20];
 
   strncpyz(dcc[i].host, dcc[i].u.dns->host, UHOSTLEN);
+debug2("|DCC| dcc_telnet_hostresolved: idx: %d host: %s", i, dcc[i].host);
 
   for (idx = 0; idx < dcc_total; idx++)
     if ((dcc[idx].type == &DCC_TELNET) &&
@@ -1175,7 +1180,7 @@ static void dcc_telnet_hostresolved(int i)
   changeover_dcc(i, &DCC_IDENTWAIT, 0);
   dcc[i].timeval = now;
   dcc[i].u.ident_sock = dcc[idx].sock;
-  sock = open_telnet(iptostr(htonl(dcc[i].addr)), 113);
+  sock = open_telnet(dcc[i].addr, 113);
   putlog(LOG_MISC, "*", DCC_TELCONN, dcc[i].host, dcc[i].port);
   s[0] = 0;
   if (sock < 0) {
@@ -1198,7 +1203,7 @@ static void dcc_telnet_hostresolved(int i)
   }
   dcc[j].sock = sock;
   dcc[j].port = 113;
-  dcc[j].addr = dcc[i].addr;
+  strcpy(dcc[j].addr, dcc[i].addr);
   strcpy(dcc[j].host, dcc[i].host);
   strcpy(dcc[j].nick, "*");
   dcc[j].u.ident_sock = dcc[i].sock;

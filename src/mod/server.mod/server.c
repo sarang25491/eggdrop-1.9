@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.69 2001/07/25 04:21:09 guppy Exp $
+ * $Id: server.c,v 1.70 2001/07/26 17:04:34 drummer Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -941,15 +941,23 @@ static void add_server(char *ss)
     else
       serverlist = x;
     z = x;
-    q = strchr(ss, ':');
+    if (*ss == '[') {
+	ss++;
+	if ((q = strchr(ss, ']'))) {
+	    *(q++) = 0;
+	    if (*q != ':')
+		q = 0;
+	}
+    } else
+	q = strchr(ss, ':');
     if (!q) {
       x->port = default_port;
       x->pass = 0;
       x->name = nmalloc(strlen(ss) + 1);
       strcpy(x->name, ss);
     } else {
-      *q++ = 0;
-      x->name = nmalloc(q - ss);
+      *(q++) = 0;
+      x->name = nmalloc(strlen(ss) + 1);
       strcpy(x->name, ss);
       ss = q;
       q = strchr(ss, ':');
@@ -1173,8 +1181,9 @@ static char *traced_server(ClientData cdata, Tcl_Interp *irp, char *name1,
 
   if (server_online) {
     int servidx = findanyidx(serv);
-
-    simple_sprintf(s, "%s:%u", dcc[servidx].host, dcc[servidx].port);
+    char *z = strchr(dcc[servidx].host, ':');
+    simple_sprintf(s, "%s%s%s:%u",
+	z ? "[" : "", dcc[servidx].host, z ? "]" : "", dcc[servidx].port);
   } else
     s[0] = 0;
   Tcl_SetVar2(interp, name1, name2, s, TCL_GLOBAL_ONLY);
@@ -1329,7 +1338,9 @@ static char *tcl_eggserver(ClientData cdata, Tcl_Interp *irp, char *name1,
     /* Create server list */
     Tcl_DStringInit(&ds);
     for (q = serverlist; q; q = q->next) {
-      egg_snprintf(x, sizeof x, "%s:%d%s%s %s", q->name,
+      char *z = strchr(q->name, ':');
+      egg_snprintf(x, sizeof x, "%s%s%s:%d%s%s %s",
+                   z ? "[" : "", q->name, z ? "]" : "",
 		   q->port ? q->port : default_port, q->pass ? ":" : "",
 		   q->pass ? q->pass : "", q->realname ? q->realname : "");
       Tcl_DStringAppendElement(&ds, x);
@@ -1390,6 +1401,7 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
   int i;
   struct userrec *u = get_user_by_handle(userlist, handle);
   struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
+  struct in_addr ip4;
 
   strcpy(msg, text);
   action = newsplit(&msg);
@@ -1421,21 +1433,29 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
     putlog(LOG_MISC, "*", "%s: CHAT (%s!%s)", DCC_CONNECTFAILED3,
 	   nick, from);
   } else {
+/*
     if (!sanitycheck_dcc(nick, from, ip, prt))
       return 1;
+*/
     i = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
     if (i < 0) {
       putlog(LOG_MISC, "*", "DCC connection: CHAT (%s!%s)", dcc[i].nick, ip);
       return 1;
     }
-    dcc[i].addr = my_atoul(ip);
+debug1("|SERVER| dcc chat ip: (%s)", ip);
+    if (egg_inet_aton(ip, &ip4))
+	strncpyz(dcc[i].addr, inet_ntoa(ip4), ADDRLEN);
+    else
+	strncpyz(dcc[i].addr, ip, ADDRLEN);
+debug1("|SERVER| addr: (%s)", dcc[i].addr);
     dcc[i].port = atoi(prt);
     dcc[i].sock = -1;
     strcpy(dcc[i].nick, u->handle);
     strcpy(dcc[i].host, from);
     dcc[i].timeval = now;
     dcc[i].user = u;
-    dcc[i].u.dns->ip = dcc[i].addr;
+    dcc[i].u.dns->host = get_data_ptr(strlen(dcc[i].addr) + 1);
+    strcpy(dcc[i].u.dns->host, dcc[i].addr);
     dcc[i].u.dns->dns_type = RES_HOSTBYIP;
     dcc[i].u.dns->dns_success = dcc_chat_hostresolved;
     dcc[i].u.dns->dns_failure = dcc_chat_hostresolved;
@@ -1447,18 +1467,20 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
 
 static void dcc_chat_hostresolved(int i)
 {
-  char buf[512], ip[512];
+  char buf[512];
   struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
 
   egg_snprintf(buf, sizeof buf, "%d", dcc[i].port);
+/*
   if (!hostsanitycheck_dcc(dcc[i].nick, dcc[i].host, dcc[i].addr,
 			   dcc[i].u.dns->host, buf)) {
     lostdcc(i);
     return;
   }
-  egg_snprintf(ip, sizeof ip, "%lu", iptolong(htonl(dcc[i].addr)));
+*/
   dcc[i].sock = getsock(0);
-  if (dcc[i].sock < 0 || open_telnet_dcc(dcc[i].sock, ip, buf) < 0) {
+  if (dcc[i].sock < 0 ||
+          open_telnet_dcc(dcc[i].sock, dcc[i].addr, buf) < 0) {
     neterror(buf);
     if(!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :%s (%s)\n", dcc[i].nick,
@@ -1568,7 +1590,7 @@ static void server_report(int idx, int details)
     int servidx = findanyidx(serv);
 
     nick_juped = 0;
-    dprintf(idx, "    Server %s:%d %s\n", dcc[servidx].host, dcc[servidx].port,
+    dprintf(idx, "    Server %s %d %s\n", dcc[servidx].host, dcc[servidx].port,
 	    trying_server ? "(trying)" : s);
   } else
     dprintf(idx, "    %s\n", IRC_NOSERVER);

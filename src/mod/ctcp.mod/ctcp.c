@@ -2,7 +2,7 @@
  * ctcp.c -- part of ctcp.mod
  *   all the ctcp handling (except DCC, it's special ;)
  *
- * $Id: ctcp.c,v 1.16 2001/07/25 04:21:08 guppy Exp $
+ * $Id: ctcp.c,v 1.17 2001/07/26 17:04:33 drummer Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -155,10 +155,8 @@ static int ctcp_CHAT(char *nick, char *uhost, char *handle, char *object,
         /* Do me a favour and don't change this back to a CTCP reply,
          * CTCP replies are NOTICE's this has to be a PRIVMSG
          * -poptix 5/1/1997 */
-	dprintf(DP_SERVER, "PRIVMSG %s :\001DCC CHAT chat %lu %u\001\n",
-		nick,
-		iptolong(natip[0] ? (IP) inet_addr(natip) : getmyip()),
-		dcc[i].port);
+	dprintf(DP_SERVER, "PRIVMSG %s :\001DCC CHAT chat %s %u\001\n",
+		nick, getlocaladdr(-1), dcc[i].port);
         return 1;
       }
     }

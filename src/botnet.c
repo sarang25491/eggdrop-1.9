@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.35 2001/06/30 06:29:55 guppy Exp $
+ * $Id: botnet.c,v 1.36 2001/07/26 17:04:33 drummer Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1034,7 +1034,7 @@ static void botlink_resolve_success(int i)
   int idx = dcc[i].u.dns->ibuf;
   char *linker = dcc[i].u.dns->cptr;
 
-  dcc[i].addr = dcc[i].u.dns->ip;
+  strcpy(dcc[i].addr, dcc[i].u.dns->host);
   changeover_dcc(i, &DCC_FORK_BOT, sizeof(struct bot_info));
   dcc[i].timeval = now;
   strcpy(dcc[i].u.bot->linker, linker);
@@ -1043,7 +1043,7 @@ static void botlink_resolve_success(int i)
   dcc[i].u.bot->port = dcc[i].port;		/* Remember where i started */
   dcc[i].sock = getsock(SOCK_STRONGCONN);
   if (dcc[i].sock < 0 ||
-      open_telnet_raw(dcc[i].sock, iptostr(htonl(dcc[i].addr)),
+      open_telnet_raw(dcc[i].sock, dcc[i].addr,
 		      dcc[i].port) < 0)
     failed_link(i);
 }
@@ -1081,8 +1081,8 @@ static void failed_tandem_relay(int idx)
   dcc[idx].port++;
   dcc[idx].timeval = now;
   if (dcc[idx].sock < 0 ||
-      open_telnet_raw(dcc[idx].sock, dcc[idx].addr ?
-				     iptostr(htonl(dcc[idx].addr)) :
+      open_telnet_raw(dcc[idx].sock, dcc[idx].addr[0] ?
+				     dcc[idx].addr :
 				     dcc[idx].host, dcc[idx].port) < 0)
     failed_tandem_relay(idx);
 }
@@ -1131,7 +1131,7 @@ void tandem_relay(int idx, char *nick, register int i)
   }
 
   dcc[i].port = bi->relay_port;
-  dcc[i].addr = 0L;
+  dcc[i].addr[0] = '\0';
   strcpy(dcc[i].nick, nick);
   dcc[i].user = u;
   strcpy(dcc[i].host, bi->address);
@@ -1187,7 +1187,7 @@ static void tandem_relay_resolve_success(int i)
 {
   int sock = dcc[i].u.dns->ibuf;
 
-  dcc[i].addr = dcc[i].u.dns->ip;
+  strcpy(dcc[i].addr, dcc[i].u.dns->host);
   changeover_dcc(i, &DCC_FORK_RELAY, sizeof(struct relay_info));
   dcc[i].u.relay->chat = get_data_ptr(sizeof(struct chat_info));
 
@@ -1201,7 +1201,7 @@ static void tandem_relay_resolve_success(int i)
   dcc[i].u.relay->chat->line_count = 0;
   dcc[i].u.relay->chat->current_lines = 0;
   dcc[i].timeval = now;
-  if (open_telnet_raw(dcc[i].sock, iptostr(htonl(dcc[i].addr)),
+  if (open_telnet_raw(dcc[i].sock, dcc[i].addr,
 		      dcc[i].port) < 0)
     failed_tandem_relay(i);
 }

@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.37 2001/04/12 02:39:43 guppy Exp $
+ * $Id: eggdrop.h,v 1.38 2001/07/26 17:04:33 drummer Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -60,6 +60,7 @@
 
 /* Handy string lengths */
 
+#define ADDRMAX		 45
 #define UHOSTMAX	160	/* reasonable, i think?			*/
 #define DIRMAX		256	/* paranoia				*/
 #define LOGLINEMAX	767	/* for misc.c/putlog() <cybah>		*/
@@ -97,6 +98,8 @@
 #if HAVE_UNISTD_H
 #  include <unistd.h>
 #endif
+
+#define ADDRLEN (ADDRMAX + 1)
 
 #ifndef STATIC
 #  if (!defined(MODULES_OK) || !defined(HAVE_DLOPEN)) && !defined(HPUX_HACKS)
@@ -253,7 +256,7 @@ struct userrec;
 struct dcc_t {
   long sock;			/* This should be a long to keep 64-bit
 				   machines sane			 */
-  IP addr;			/* IP address in host byte order	 */
+  char addr[ADDRLEN];		/* IPv4/v6 address as string :)		 */
   unsigned int port;
   struct userrec *user;
   char nick[NICKLEN];
@@ -361,11 +364,10 @@ struct script_info {
 struct dns_info {
   void (*dns_success)(int);	/* is called if the dns request succeeds   */
   void (*dns_failure)(int);	/* is called if it fails		   */
-  char *host;			/* hostname				   */
+  char *host;			/* hostname or IP addr (as string)	   */
   char *cbuf;			/* temporary buffer. Memory will be free'd
 				   as soon as dns_info is free'd	   */
   char *cptr;			/* temporary pointer			   */
-  IP ip;			/* IP address				   */
   int ibuf;			/* temporary buffer for one integer	   */
   char dns_type;		/* lookup type, e.g. RES_HOSTBYIP	   */
   struct dcc_table *type;	/* type of the dcc table we are making the

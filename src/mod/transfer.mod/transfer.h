@@ -1,7 +1,7 @@
 /*
  * transfer.h -- part of transfer.mod
  *
- * $Id: transfer.h,v 1.11 2001/04/12 02:39:47 guppy Exp $
+ * $Id: transfer.h,v 1.12 2001/07/26 17:04:34 drummer Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -41,7 +41,7 @@ enum dccsend_types {
 #define fileq_cancel(a,b) (((void (*) (int,char *))transfer_funcs[7])(a,b))
 /* 8 - 11 */
 #define queue_file(a,b,c,d) (((void (*)(char *,char *,char *,char *))transfer_funcs[8])(a,b,c,d))
-#define raw_dcc_send(a,b,c,d) (((int (*) (char *,char *,char *,char *))transfer_funcs[9])(a,b,c,d))
+#define raw_dcc_send(a,b,c,d,e) (((int (*) (char *,char *,char *,char *,char *))transfer_funcs[9])(a,b,c,d,e))
 #define show_queued_files(a) (((void (*) (int))transfer_funcs[10])(a))
 #define wild_match_file(a,b) (((int (*)(register char * m, register char * n))transfer_funcs[11])(a,b))
 /* 12 - 15 */
@@ -52,15 +52,15 @@ enum dccsend_types {
 /* 16 - 19 */
 #define USERENTRY_FSTAT (*(struct user_entry_type *)(transfer_funcs[16]))
 #define quiet_reject (*(int *)(transfer_funcs[17]))
-#define raw_dcc_resend(a,b,c,d) (((int (*) (char *,char *,char *,char *))transfer_funcs[18])(a,b,c,d))
+#define raw_dcc_resend(a,b,c,d,e) (((int (*) (char *,char *,char *,char *,char *))transfer_funcs[18])(a,b,c,d,e))
 #define H_lost (*(p_tcl_bind_list*)(transfer_funcs[19]))
 /* 20 - 23 */
 #define H_tout (*(p_tcl_bind_list*)(transfer_funcs[20]))
 
 #else	/* MAKING_TRANSFER */
 
-static int raw_dcc_resend(char *, char *, char *, char *);
-static int raw_dcc_send(char *, char *, char *, char *);
+static int raw_dcc_resend(char *, char *, char *, char *, char *);
+static int raw_dcc_send(char *, char *, char *, char *, char *);
 
 #define TRANSFER_REGET_PACKETID 0xfeab
 

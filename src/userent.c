@@ -2,7 +2,7 @@
  * userent.c -- handles:
  *   user-entry handling, new stylem more versatile.
  *
- * $Id: userent.c,v 1.20 2001/04/12 02:39:44 guppy Exp $
+ * $Id: userent.c,v 1.21 2001/07/26 17:04:33 drummer Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -463,18 +463,19 @@ static int botaddr_unpack(struct userrec *u, struct user_entry *e)
 
   egg_bzero(bi, sizeof(struct bot_addr));
 
-  if (!(q = strchr ((p = e->u.list->extra), ':'))) {
+  p = nmalloc(strlen(q = (e->u.list->extra)) + 1);
+  strcpy(p, q);
+  if (!(q = strchr_unescape(p, ':', '\\'))) {
     bi->address = user_malloc(strlen (p) + 1);
     strcpy (bi->address, p);
   } else {
-    bi->address = user_malloc((q - p) + 1);
-    strncpy(bi->address, p, q - p);
-    bi->address[q - p] = 0;
-    q++;
+    bi->address = user_malloc(strlen(p) + 1);
+    strcpy(bi->address, p);
     bi->telnet_port = atoi(q);
     if ((q = strchr(q, '/')))
       bi->relay_port = atoi(q + 1);
   }
+  nfree(p);
   if (!bi->telnet_port)
     bi->telnet_port = 3333;
   if (!bi->relay_port)
@@ -488,11 +489,14 @@ static int botaddr_pack(struct userrec *u, struct user_entry *e)
 {
   char work[1024];
   struct bot_addr *bi;
+  char *tmp;
   int l;
 
   bi = (struct bot_addr *) e->u.extra;
-  l = simple_sprintf(work, "%s:%u/%u", bi->address, bi->telnet_port,
-              bi->relay_port);
+  l = simple_sprintf(work, "%s:%u/%u",
+              (tmp = str_escape(bi->address, ':', '\\')),
+              bi->telnet_port, bi->relay_port);
+  nfree(tmp);
   e->u.list = user_malloc(sizeof(struct list_type));
   e->u.list->next = NULL;
   e->u.list->extra = user_malloc(l + 1);
@@ -514,11 +518,14 @@ static int botaddr_write_userfile(FILE *f, struct userrec *u,
 				  struct user_entry *e)
 {
   register struct bot_addr *bi = (struct bot_addr *) e->u.extra;
+  register char *tmp;
+  register int res;
 
-  if (fprintf(f, "--%s %s:%u/%u\n", e->type->name, bi->address,
-	      bi->telnet_port, bi->relay_port) == EOF)
-    return 0;
-  return 1;
+  res = (fprintf(f, "--%s %s:%u/%u\n", e->type->name,
+              (tmp = str_escape(bi->address, ':', '\\')),
+	      bi->telnet_port, bi->relay_port) != EOF);
+  nfree(tmp);
+  return res;
 }
 
 static int botaddr_set(struct userrec *u, struct user_entry *e, void *buf)
@@ -535,8 +542,11 @@ static int botaddr_set(struct userrec *u, struct user_entry *e, void *buf)
     bi = e->u.extra = buf;
   }
   if (bi && !noshare && !(u->flags & USER_UNSHARED)) {
+    register char *tmp;
     shareout(NULL, "c BOTADDR %s %s %d %d\n", u->handle,
-             bi->address, bi->telnet_port, bi->relay_port);
+             (tmp = str_escape(bi->address, ':', '\\')),
+	     bi->telnet_port, bi->relay_port);
+    nfree(tmp);
   }
   return 1;
 }
@@ -606,6 +616,7 @@ static int botaddr_gotshare(struct userrec *u, struct user_entry *e,
 
   egg_bzero(bi, sizeof(struct bot_addr));
   arg = newsplit(&buf);
+  str_unescape(arg, '\\');
   bi->address = user_malloc(strlen(arg) + 1);
   strcpy(bi->address, arg);
   arg = newsplit(&buf);

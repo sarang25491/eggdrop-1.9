@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.70 2001/07/25 04:21:07 guppy Exp $
+ * $Id: main.c,v 1.71 2001/07/26 17:04:33 drummer Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -51,6 +51,8 @@
 #include "modules.h"
 #include "tandem.h"
 #include "bg.h"
+
+#include "adns/adns.h"
 
 #ifdef CYGWIN_HACKS
 #include <windows.h>
@@ -873,7 +875,7 @@ int main(int argc, char **argv)
   if (!backgrd && term_z) {
     int n = new_dcc(&DCC_CHAT, sizeof(struct chat_info));
 
-    dcc[n].addr = iptolong(getmyip());
+    dcc[n].addr[0] = '\0';
     dcc[n].sock = STDOUT;
     dcc[n].timeval = now;
     dcc[n].u.chat->con_flags = conmask;

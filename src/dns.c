@@ -4,7 +4,7 @@
  *   provides the code used by the bot if the DNS module is not loaded
  *   DNS Tcl commands
  *
- * $Id: dns.c,v 1.22 2001/06/30 06:29:55 guppy Exp $
+ * $Id: dns.c,v 1.23 2001/07/26 17:04:33 drummer Exp $
  */
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -34,6 +34,7 @@
 #include <arpa/inet.h>
 
 #include "dns.h"
+#include "adns/adns.h"
 
 extern struct dcc_t	*dcc;
 extern int		 dcc_total;
@@ -42,8 +43,10 @@ extern time_t		 now;
 extern jmp_buf		 alarmret;
 extern Tcl_Interp	*interp;
 
-devent_t	*dns_events = NULL;
+devent_t		*dns_events = NULL;
 
+extern adns_state	 ads;
+extern int		 af_preferred;
 
 /*
  *   DCC functions
@@ -57,7 +60,7 @@ void dcc_dnswait(int idx, char *buf, int len)
 void eof_dcc_dnswait(int idx)
 {
   putlog(LOG_MISC, "*", "Lost connection while resolving hostname [%s/%d]",
-	 iptostr(htonl(dcc[idx].addr)), dcc[idx].port);
+	 dcc[idx].addr, dcc[idx].port);
   killsock(dcc[idx].sock);
   lostdcc(idx);
 }
@@ -117,16 +120,16 @@ struct dcc_table DCC_DNSWAIT =
 /* Walk through every dcc entry and look for waiting DNS requests
  * of RES_HOSTBYIP for our IP address.
  */
-static void dns_dcchostbyip(IP ip, char *hostn, int ok, void *other)
+static void dns_dcchostbyip(char *ip, char *hostn, int ok, void *other)
 {
   int idx;
 
   for (idx = 0; idx < dcc_total; idx++) {
     if ((dcc[idx].type == &DCC_DNSWAIT) &&
         (dcc[idx].u.dns->dns_type == RES_HOSTBYIP) &&
-        (dcc[idx].u.dns->ip == ip)) {
-      if (dcc[idx].u.dns->host)
-        nfree(dcc[idx].u.dns->host);
+        (!egg_strcasecmp(dcc[idx].u.dns->host, ip))) {
+debug3("|DNS| idx: %d, dcchostbyip: %s is %s", idx, ip, hostn);
+      nfree(dcc[idx].u.dns->host);
       dcc[idx].u.dns->host = get_data_ptr(strlen(hostn) + 1);
       strcpy(dcc[idx].u.dns->host, hostn);
       if (ok)
@@ -140,7 +143,7 @@ static void dns_dcchostbyip(IP ip, char *hostn, int ok, void *other)
 /* Walk through every dcc entry and look for waiting DNS requests
  * of RES_IPBYHOST for our hostname.
  */
-static void dns_dccipbyhost(IP ip, char *hostn, int ok, void *other)
+static void dns_dccipbyhost(char *ip, char *hostn, int ok, void *other)
 {
   int idx;
 
@@ -148,7 +151,10 @@ static void dns_dccipbyhost(IP ip, char *hostn, int ok, void *other)
     if ((dcc[idx].type == &DCC_DNSWAIT) &&
         (dcc[idx].u.dns->dns_type == RES_IPBYHOST) &&
         !egg_strcasecmp(dcc[idx].u.dns->host, hostn)) {
-      dcc[idx].u.dns->ip = ip;
+debug3("|DNS| idx: %d, dccipbyhost: %s is %s", idx, ip, hostn);
+      nfree(dcc[idx].u.dns->host);
+      dcc[idx].u.dns->host = get_data_ptr(strlen(ip) + 1);
+      strcpy(dcc[idx].u.dns->host, ip);
       if (ok)
         dcc[idx].u.dns->dns_success(idx);
       else
@@ -181,8 +187,8 @@ void dcc_dnsipbyhost(char *hostn)
   for (de = dns_events; de; de = de->next) {
     if (de->type && (de->type == &DNS_DCCEVENT_IPBYHOST) &&
 	(de->lookup == RES_IPBYHOST)) {
-      if (de->res_data.hostname &&
-	  !egg_strcasecmp(de->res_data.hostname, hostn))
+      if (de->hostname &&
+	  !egg_strcasecmp(de->hostname, hostn))
 	/* No need to add anymore. */
 	return;
     }
@@ -197,21 +203,21 @@ void dcc_dnsipbyhost(char *hostn)
 
   de->type = &DNS_DCCEVENT_IPBYHOST;
   de->lookup = RES_IPBYHOST;
-  de->res_data.hostname = nmalloc(strlen(hostn) + 1);
-  strcpy(de->res_data.hostname, hostn);
+  de->hostname = nmalloc(strlen(hostn) + 1);
+  strcpy(de->hostname, hostn);
 
   /* Send request. */
   dns_ipbyhost(hostn);
 }
 
-void dcc_dnshostbyip(IP ip)
+void dcc_dnshostbyip(char *ip)
 {
   devent_t *de;
-
+  
   for (de = dns_events; de; de = de->next) {
     if (de->type && (de->type == &DNS_DCCEVENT_HOSTBYIP) &&
 	(de->lookup == RES_HOSTBYIP)) {
-      if (de->res_data.ip_addr == ip)
+      if (!egg_strcasecmp(de->hostname, ip))
 	/* No need to add anymore. */
 	return;
     }
@@ -226,7 +232,9 @@ void dcc_dnshostbyip(IP ip)
 
   de->type = &DNS_DCCEVENT_HOSTBYIP;
   de->lookup = RES_HOSTBYIP;
-  de->res_data.ip_addr = ip;
+  
+  de->hostname = nmalloc(strlen(ip) + 1);
+  strcpy(de->hostname, ip);
 
   /* Send request. */
   dns_hostbyip(ip);
@@ -237,11 +245,11 @@ void dcc_dnshostbyip(IP ip)
  *   Tcl events
  */
 
-static void dns_tcl_iporhostres(IP ip, char *hostn, int ok, void *other)
+static void dns_tcl_iporhostres(char *ip, char *hostn, int ok, void *other)
 {
   devent_tclinfo_t *tclinfo = (devent_tclinfo_t *) other;
 
-  if (Tcl_VarEval(interp, tclinfo->proc, " ", iptostr(htonl(ip)), " ",
+  if (Tcl_VarEval(interp, tclinfo->proc, " ", ip, " ",
 		  hostn, ok ? " 1" : " 0", tclinfo->paras, NULL) == TCL_ERROR)
     putlog(LOG_MISC, "*", DCC_TCLERROR, tclinfo->proc, interp->result);
 
@@ -293,8 +301,8 @@ static void tcl_dnsipbyhost(char *hostn, char *proc, char *paras)
 
   de->type = &DNS_TCLEVENT_IPBYHOST;
   de->lookup = RES_IPBYHOST;
-  de->res_data.hostname = nmalloc(strlen(hostn) + 1);
-  strcpy(de->res_data.hostname, hostn);
+  de->hostname = nmalloc(strlen(hostn) + 1);
+  strcpy(de->hostname, hostn);
 
   /* Store additional data. */
   tclinfo = nmalloc(sizeof(devent_tclinfo_t));
@@ -311,7 +319,7 @@ static void tcl_dnsipbyhost(char *hostn, char *proc, char *paras)
   dns_ipbyhost(hostn);
 }
 
-static void tcl_dnshostbyip(IP ip, char *proc, char *paras)
+static void tcl_dnshostbyip(char *ip, char *proc, char *paras)
 {
   devent_t *de;
   devent_tclinfo_t *tclinfo;
@@ -325,7 +333,8 @@ static void tcl_dnshostbyip(IP ip, char *proc, char *paras)
 
   de->type = &DNS_TCLEVENT_HOSTBYIP;
   de->lookup = RES_HOSTBYIP;
-  de->res_data.ip_addr = ip;
+  de->hostname = nmalloc(strlen(ip) + 1);
+  strcpy(de->hostname, ip);
 
   /* Store additional data. */
   tclinfo = nmalloc(sizeof(devent_tclinfo_t));
@@ -351,37 +360,40 @@ inline static int dnsevent_expmem(void)
 {
   devent_t *de;
   int tot = 0;
-
+  
   for (de = dns_events; de; de = de->next) {
     tot += sizeof(devent_t);
-    if ((de->lookup == RES_IPBYHOST) && de->res_data.hostname)
-      tot += strlen(de->res_data.hostname) + 1;
+    if (de->hostname)
+      tot += strlen(de->hostname) + 1;
     if (de->type && de->type->expmem)
       tot += de->type->expmem(de->other);
   }
   return tot;
 }
 
-void call_hostbyip(IP ip, char *hostn, int ok)
+void call_hostbyip(char *ip, char *hostn, int ok)
 {
   devent_t *de = dns_events, *ode = NULL, *nde = NULL;
 
   while (de) {
     nde = de->next;
     if ((de->lookup == RES_HOSTBYIP) &&
-	(!de->res_data.ip_addr || (de->res_data.ip_addr == ip))) {
+	(!de->hostname || !(de->hostname[0]) ||
+	(!egg_strcasecmp(de->hostname, ip)))) {
       /* Remove the event from the list here, to avoid conflicts if one of
        * the event handlers re-adds another event. */
       if (ode)
 	ode->next = de->next;
       else
 	dns_events = de->next;
-
+debug3("|DNS| call_hostbyip: ip: %s host: %s ok: %d", ip, hostn, ok);
       if (de->type && de->type->event)
 	de->type->event(ip, hostn, ok, de->other);
       else
 	putlog(LOG_MISC, "*", "(!) Unknown DNS event type found: %s",
 	       (de->type && de->type->name) ? de->type->name : "<empty>");
+      if (de->hostname)
+          nfree(de->hostname);
       nfree(de);
       de = ode;
     }
@@ -390,15 +402,15 @@ void call_hostbyip(IP ip, char *hostn, int ok)
   }
 }
 
-void call_ipbyhost(char *hostn, IP ip, int ok)
+void call_ipbyhost(char *hostn, char *ip, int ok)
 {
   devent_t *de = dns_events, *ode = NULL, *nde = NULL;
 
   while (de) {
     nde = de->next;
     if ((de->lookup == RES_IPBYHOST) &&
-	(!de->res_data.hostname ||
-	 !egg_strcasecmp(de->res_data.hostname, hostn))) {
+	(!de->hostname || !(de->hostname[0]) ||
+	 !egg_strcasecmp(de->hostname, hostn))) {
       /* Remove the event from the list here, to avoid conflicts if one of
        * the event handlers re-adds another event. */
       if (ode)
@@ -412,8 +424,8 @@ void call_ipbyhost(char *hostn, IP ip, int ok)
 	putlog(LOG_MISC, "*", "(!) Unknown DNS event type found: %s",
 	       (de->type && de->type->name) ? de->type->name : "<empty>");
 
-      if (de->res_data.hostname)
-	nfree(de->res_data.hostname);
+      if (de->hostname)
+	nfree(de->hostname);
       nfree(de);
       de = ode;
     }
@@ -422,29 +434,38 @@ void call_ipbyhost(char *hostn, IP ip, int ok)
   }
 }
 
-
+#ifdef DISABLE_ADNS
 /*
  *    Async DNS emulation functions
  */
 
-void block_dns_hostbyip(IP ip)
+void dns_hostbyip(char *ip)
 {
-  struct hostent *hp;
-  unsigned long addr = htonl(ip);
+  struct hostent *hp = 0;
+  struct in_addr addr;
+#ifdef IPV6
+  struct in6_addr addr6;
+#endif
   static char s[UHOSTLEN];
 
   if (!setjmp(alarmret)) {
     alarm(resolve_timeout);
-    hp = gethostbyaddr((char *) &addr, sizeof(addr), AF_INET);
+    if (egg_inet_aton(ip, &addr))
+	hp = gethostbyaddr((char *) &addr, sizeof addr, AF_INET);
+#ifdef IPV6
+    else if (egg_inet_pton(AF_INET6, ip, &addr6))
+	hp = gethostbyaddr((char *) &addr6, sizeof addr6, AF_INET6);
+#endif
+    else
+	hp = 0;
     alarm(0);
-    if (hp) {
+    if (hp)
       strncpyz(s, hp->h_name, sizeof s);
-    } else
-      strcpy(s, iptostr(addr));
-  } else {
-    hp = NULL;
-    strcpy(s, iptostr(addr));
-  }
+  } else
+    hp = 0;
+  if (!hp)
+    strncpyz(s, ip, sizeof s);
+debug2("|DNS| block_dns_hostbyip: ip: %s -> host: %s", ip, s);
   /* Call hooks. */
   call_hostbyip(ip, s, hp ? 1 : 0);
 }
@@ -452,33 +473,63 @@ void block_dns_hostbyip(IP ip)
 void block_dns_ipbyhost(char *host)
 {
   struct in_addr inaddr;
+#ifdef IPV6
+  struct in6_addr in6addr;
+#endif
 
-  /* Check if someone passed us an IP address as hostname
+  /* Check if someone passed us an IPv4 address as hostname
    * and return it straight away */
   if (egg_inet_aton(host, &inaddr)) {
-    call_ipbyhost(host, ntohl(inaddr.s_addr), 1);
+    call_ipbyhost(host, host, 1);
     return;
   }
+#ifdef IPV6
+  /* Check if someone passed us an IPv6 address as hostname... */
+  if (egg_inet_pton(AF_INET6, host, &in6addr)) {
+    call_ipbyhost(host, host, 1);
+    return;
+  }
+#endif
   if (!setjmp(alarmret)) {
     struct hostent *hp;
-    struct in_addr *in;
-    IP ip = 0;
+    char *p;
+    int type;
+
+    if (!egg_strncasecmp("ipv6%", host, 5)) {
+	type = AF_INET6;
+	p = host + 5;
+debug1("|DNS| checking only AAAA record for %s", p);
+    } else if (!egg_strncasecmp("ipv4%", host, 5)) {
+	type = AF_INET;
+	p = host + 5;
+debug1("|DNS| checking only A record for %s", p);
+    } else {
+	type = AF_INET; /* af_preferred */
+	p = host;
+    }
 
     alarm(resolve_timeout);
-    hp = gethostbyname(host);
+#ifndef IPV6
+    hp = gethostbyname(p);
+#else
+    hp = gethostbyname2(p, type);
+    if (!hp && (p == host))
+	hp = gethostbyname2(p, (type == AF_INET6 ? AF_INET : AF_INET6));
+#endif
     alarm(0);
 
     if (hp) {
-      in = (struct in_addr *) (hp->h_addr_list[0]);
-      ip = (IP) (in->s_addr);
-      call_ipbyhost(host, ntohl(ip), 1);
+      char tmp[ADDRLEN];
+      egg_inet_ntop(hp->h_addrtype, hp->h_addr_list[0], tmp, ADDRLEN-1);
+      call_ipbyhost(host, tmp, 1);
       return;
     }
     /* Fall through. */
   }
-  call_ipbyhost(host, 0, 0);
+  call_ipbyhost(host, "0.0.0.0", 0);
 }
 
+#endif
 
 /*
  *   Misc functions
@@ -498,6 +549,9 @@ int expmem_dns(void)
 static int tcl_dnslookup STDVAR
 {
   struct in_addr inaddr;
+#ifdef IPV6
+  struct in6_addr inaddr6;
+#endif
   char *paras = NULL;
 
   if (argc < 3) {
@@ -522,8 +576,12 @@ static int tcl_dnslookup STDVAR
     }
   }
 
-  if (egg_inet_aton(argv[1], &inaddr))
-    tcl_dnshostbyip(ntohl(inaddr.s_addr), argv[2], paras);
+  if (egg_inet_aton(argv[1], &inaddr)
+#ifdef IPV6
+	|| egg_inet_pton(AF_INET6, argv[1], &inaddr6)
+#endif
+      )
+    tcl_dnshostbyip(argv[1], argv[2], paras);
   else
     tcl_dnsipbyhost(argv[1], argv[2], paras);
   if (paras)
@@ -536,3 +594,100 @@ tcl_cmds tcldns_cmds[] =
   {"dnslookup",	tcl_dnslookup},
   {NULL,	NULL}
 };
+
+/*********** ADNS support ***********/
+
+#ifndef DISABLE_ADNS
+
+void dns_hostbyip(char *ip)
+{
+    adns_query q;
+    int r;
+    struct sockaddr_in in;
+#ifdef IPV6
+    struct sockaddr_in6 in6;
+#endif
+    char *origname;
+
+    if (egg_inet_pton(AF_INET, ip, &in.sin_addr)) {
+debug1("|DNS| adns_dns_hostbyip(\"%s\") (IPv4)", ip);
+	origname = nmalloc(strlen(ip) + 1);
+	strcpy(origname, ip);
+	in.sin_family = AF_INET;
+	in.sin_port = 0;
+	r = adns_submit_reverse(ads, (struct sockaddr *) &in,
+	    adns_r_ptr, 0, origname, &q);
+	if (r) {
+debug1("|DNS| adns_submit_reverse failed, errno: %d", r);
+	    call_hostbyip(ip, ip, 0);
+	}
+#ifdef IPV6
+    } else if (egg_inet_pton(AF_INET6, ip, &in6.sin6_addr)) {
+debug1("|DNS| adns_dns_hostbyip(\"%s\") (IPv6)", ip);
+	origname = nmalloc(strlen(ip) + 1);
+	strcpy(origname, ip);
+	in6.sin6_family = AF_INET6;
+	in6.sin6_port = 0;
+	r = adns_submit_reverse(ads, (struct sockaddr *) &in6,
+	    adns_r_ptr_ip6, 0, origname, &q);
+	if (r) {
+debug1("|DNS| adns_submit_reverse failed, errno: %d", r);
+	    call_hostbyip(ip, ip, 0);
+	}
+#endif
+     } else {
+debug1("|DNS| adns_dns_hostbyip: got invalid ip: %s", ip);
+	call_hostbyip(ip, ip, 0);
+    }
+}
+
+void dns_ipbyhost(char *host)
+{
+    adns_query q4;
+    struct sockaddr_in in;
+#ifdef IPV6
+    struct sockaddr_in6 in6;
+#endif
+    
+debug1("|DNS| adns_dns_ipbyhost(\"%s\");", host);
+
+    if (egg_inet_pton(AF_INET, host, &in.sin_addr)
+#ifdef IPV6
+	|| egg_inet_pton(AF_INET6, host, &in6.sin6_addr)
+#endif
+	) {
+	/* It's an IP! */
+	call_ipbyhost(host, host, 1);
+    } else {
+	char *p;
+	char *origname;
+	int type, r;
+	origname = nmalloc(strlen(host) + 1);
+	strcpy(origname, host);
+	if (!egg_strncasecmp("ipv6%", host, 5)) {
+#ifdef IPV6
+	    type = adns_r_addr6;
+	    p = host + 5;
+debug1("|DNS| checking only AAAA record for %s", p);
+#else
+debug1("|DNS| compiled without IPv6 support, can't resolv %s", host);
+	    call_ipbyhost(host, "0.0.0.0", 0);
+	    return;
+#endif
+	} else if (!egg_strncasecmp("ipv4%", host, 5)) {
+	    type = adns_r_addr;
+	    p = host + 5;
+debug1("|DNS| checking only A record for %s", p);
+	} else {
+	    type = adns_r_addr; /* af_preferred */
+	    p = host;
+	}
+	r = adns_submit(ads, p, type, 0, origname, &q4);
+	if (r) {
+debug1("|DNS| adns_submit failed, errno: %d", r);
+	    call_ipbyhost(host, "0.0.0.0", 0);
+	}
+    }
+}
+
+#endif
