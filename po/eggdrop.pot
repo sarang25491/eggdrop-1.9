@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2002-01-05 04:00-0600\n"
+"POT-Creation-Date: 2002-01-06 04:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1179,11 +1179,11 @@ msgstr ""
 msgid "Stagnant module; there WILL be memory leaks!"
 msgstr ""
 
-#: src/misc.c:949 src/misc.c:988
+#: src/misc.c:819 src/misc.c:858
 msgid "No help available on that."
 msgstr ""
 
-#: src/misc.c:1012 src/misc.c:1037
+#: src/misc.c:882 src/misc.c:907
 msgid "No help available on that.\n"
 msgstr ""
 
