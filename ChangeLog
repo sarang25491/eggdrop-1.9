@@ -1,3 +1,12 @@
+2001-10-16 11:42  Tothwolf <tothwolf@techmonkeys.org>
+
+	* src/mod/server.mod/: server.c, servmsg.c:
+
+	* fixed a typo in deq_kick() 
+	* check_queues() added back to tree 
+	* parse_q() added back to tree 
+	* purge_kicks() added back to tree 
+
 2001-10-16 05:08  stdarg <stdarg@techmonkeys.org>
 
 	* src/mod/: perlscript.mod/perlscript.c, tclscript.mod/tclscript.c:
