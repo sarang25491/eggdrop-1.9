@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channel_events.c,v 1.1 2004/10/04 15:48:30 stdarg Exp $";
+static const char rcsid[] = "$Id: channel_events.c,v 1.2 2004/10/04 16:15:35 stdarg Exp $";
  #endif
 
 #include "server.h"
@@ -209,7 +209,7 @@ void channel_on_leave(const char *chan_name, const char *nick, const char *uhost
 
 	/* Are we the ones leaving? */
 	if (match_my_nick(nick)) {
-		if (chan->status & CHANNEL_STATIC) channel_free_online(chan);
+		if (chan->flags & CHANNEL_STATIC) channel_free_online(chan);
 		else channel_free(chan);
 	}
 }
