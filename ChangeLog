@@ -1,3 +1,10 @@
+2002-05-31 05:29  stdarg <stdarg@techmonkeys.org>
+
+	* modules/server/: scriptcmds.c, server.c:
+
+	
+	* More conversions in the server module 
+
 2002-05-31 04:11  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/module.h, lib/eggdrop/script.h,
