@@ -597,7 +597,8 @@ static void got_chat(char *nick, char *uhost, user_t *u, char *text)
 	char type[256], ip[256], port[32];
 	int nport;
 
-	sscanf(text, "%255s %255s %31s", type, ip, port);
+	type[0] = ip[0] = port[0] = 0;
+	sscanf(text, "%255[^ ] %255[^ ] %31[^ ]", type, ip, port);
 	type[255] = ip[255] = port[31] = 0;
 
 	/* Check if the ip is 'new-style' (dotted decimal or ipv6). If not,

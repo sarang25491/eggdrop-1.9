@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.20 2003/03/08 07:12:57 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.21 2003/03/10 09:11:50 stdarg Exp $";
 #endif
 */
 
@@ -54,11 +54,11 @@ static int script_putserv(char *queue, char *next, char *text)
 	int prio;
 
 	/* Figure out which arguments they've given us. */
-	if (!next) queue = "-serv";
+	if (!next) queue = "-normal";
 	else if (!queue) {
 		/* If we only have 1 option, check to see if it's -next or
 			a queue. */
-		if (!strcasecmp(next, "-next")) queue = "-serv";
+		if (!strcasecmp(next, "-next")) queue = "-normal";
 		else {
 			queue = next;
 			next = NULL;
@@ -75,11 +75,11 @@ static int script_putserv(char *queue, char *next, char *text)
 	if (!strcasecmp(queue, "-noqueue")) {
 		prio = SERVER_NOQUEUE;
 	}
-	else if (!strcasecmp(queue, "-help")) {
-		prio = SERVER_HELP;
+	else if (!strcasecmp(queue, "-slow")) {
+		prio = SERVER_SLOW;
 	}
 	else if (!strcasecmp(queue, "-quick")) {
-		prio = SERVER_MODE;
+		prio = SERVER_QUICK;
 	}
 	else {
 		prio = SERVER_NORMAL;

@@ -25,12 +25,12 @@ void try_next_nick()
 		try_random_nick();
 		return;
 	}
-	printserv(SERVER_MODE, "NICK %s\r\n", nick);
+	printserv(SERVER_QUICK, "NICK %s\r\n", nick);
 }
 
 void try_random_nick()
 {
-	printserv(SERVER_MODE, "NICK egg%d\r\n", random());
+	printserv(SERVER_QUICK, "NICK egg%d\r\n", random());
 }
 
 void nick_list_on_connect()

@@ -7,7 +7,7 @@
 #define IRC_MSG_NSTATIC_ARGS	10
 typedef struct irc_msg {
 	struct irc_msg *next;
-	char *prefix, *cmd, **args, *trailing;
+	char *prefix, *cmd, **args;
 	char *static_args[IRC_MSG_NSTATIC_ARGS];
 	int nargs;
 } irc_msg_t;

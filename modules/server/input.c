@@ -76,7 +76,7 @@ static int got001(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 	if (!current_server.registered) return BIND_RET_BREAK;
 
 	/* Send a whois request so we can see our nick!user@host */
-	printserv(SERVER_MODE, "WHOIS %s", current_server.nick);
+	printserv(SERVER_QUICK, "WHOIS %s", current_server.nick);
 
 	return(0);
 }
@@ -229,7 +229,7 @@ static int check_global_notice(char *from_nick, char *from_uhost, char *dest, ch
  */
 static int gotmsg(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
-	char *dest, *trailing, *first, *space, *text;
+	char *dest, *destname, *trailing, *first, *space, *text;
 	int to_channel;	/* Is it going to a channel? */
 	int r;
 
@@ -240,10 +240,11 @@ static int gotmsg(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 	r = check_global_notice(from_nick, from_uhost, dest, trailing);
 	if (r) return(0);
 
-	/* Check if it's an op/voice message -- should this be a separate bind? */
-	if (*dest == '@' || *dest == '+') dest++;
+	/* Skip any mode prefix to the destination (e.g. PRIVMSG @#trivia :blah). */
+	if (strchr(current_server.whoprefix, *dest)) destname = dest+1;
+	else destname = dest;
 
-	if (strchr(current_server.chantypes, *dest)) to_channel = 1;
+	if (strchr(current_server.chantypes, *destname)) to_channel = 1;
 	else to_channel = 0;
 
 	/* Check if it's a ctcp. */
@@ -261,7 +262,6 @@ static int gotmsg(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 	}
 	else text = "";
 
-	//get_user_flagrec(u, &fr, dest);
 	if (to_channel) {
 		r = bind_check(BT_pub, first, from_nick, from_uhost, u, dest, text);
 		if (r & BIND_RET_LOG) {
@@ -304,7 +304,7 @@ static int gotmsg(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
  */
 static int gotnotice(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
-	char *dest, *trailing;
+	char *dest, *destname, *trailing;
 	int r, to_channel;
 
 	dest = args[0];
@@ -320,16 +320,17 @@ static int gotnotice(char *from_nick, char *from_uhost, user_t *u, char *cmd, in
 	r = check_global_notice(from_nick, from_uhost, dest, trailing);
 	if (r) return(0);
 
-	if (*dest == '@' || *dest == '+') dest++;
+	/* Skip any mode prefix to the destination (e.g. PRIVMSG @#trivia :blah). */
+	if (strchr(current_server.whoprefix, *dest)) destname = dest+1;
+	else destname = dest;
 
-	if (strchr(current_server.chantypes, *dest)) to_channel = 1;
+	if (strchr(current_server.chantypes, *destname)) to_channel = 1;
 	else to_channel = 0;
 
 	/* Check if it's a ctcr. */
 	r = check_ctcp_ctcr(1, to_channel, u, from_nick, from_uhost, dest, trailing);
 	if (r) return(0);
 
-	//get_user_flagrec(u, &fr, NULL);
 	r = bind_check(BT_notice, trailing, from_nick, from_uhost, u, dest, trailing);
 
 	if (!(r & BIND_RET_BREAK)) {
