@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2002-02-26 04:00-0600\n"
+"POT-Creation-Date: 2002-02-27 04:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2660,11 +2660,11 @@ msgstr ""
 msgid "Mass deop.  Go sit in a corner."
 msgstr ""
 
-#: modules/irc/chan.c:421 modules/irc/mode.c:660
+#: modules/irc/chan.c:421 modules/irc/mode.c:649
 msgid "banned: "
 msgstr ""
 
-#: modules/irc/chan.c:424 modules/irc/chan.c:501 modules/irc/chan.c:1691
+#: modules/irc/chan.c:424 modules/irc/chan.c:501 modules/irc/chan.c:1726
 msgid "You are banned"
 msgstr ""
 
@@ -2681,37 +2681,37 @@ msgstr ""
 msgid "Im on too many channels--cant join: %s"
 msgstr ""
 
-#: modules/irc/chan.c:1261 modules/irc/chan.c:1264
+#: modules/irc/chan.c:1261 modules/irc/chan.c:1267
 #, c-format
 msgid "Channel full--cant join: %s"
 msgstr ""
 
-#: modules/irc/chan.c:1289 modules/irc/chan.c:1292
+#: modules/irc/chan.c:1292 modules/irc/chan.c:1298
 #, c-format
 msgid "Channel invite only--cant join: %s"
 msgstr ""
 
-#: modules/irc/chan.c:1317 modules/irc/chan.c:1320
+#: modules/irc/chan.c:1323 modules/irc/chan.c:1329
 #, c-format
 msgid "Banned from channel--can't join: %s"
 msgstr ""
 
-#: modules/irc/chan.c:1345 modules/irc/chan.c:1353
+#: modules/irc/chan.c:1354 modules/irc/chan.c:1366
 #, c-format
 msgid "Bad key--cant join: %s"
 msgstr ""
 
-#: modules/irc/chan.c:1705
+#: modules/irc/chan.c:1740
 msgid "...and dont come back."
 msgstr ""
 
-#: modules/irc/chan.c:1972 modules/server/servmsg.c:637
+#: modules/irc/chan.c:2036 modules/server/servmsg.c:637
 #: modules/server/servmsg.c:782 modules/server/servmsg.c:794
 #, c-format
 msgid "Switching back to nick %s"
 msgstr ""
 
-#: modules/irc/chan.c:1976 modules/server/servmsg.c:640
+#: modules/irc/chan.c:2040 modules/server/servmsg.c:640
 #: modules/server/servmsg.c:786 modules/server/servmsg.c:798
 #, c-format
 msgid "Switching back to altnick %s"
@@ -3041,35 +3041,35 @@ msgstr ""
 msgid "want ops!"
 msgstr ""
 
-#: modules/irc/mode.c:376 modules/irc/mode.c:474 modules/irc/mode.c:1061
+#: modules/irc/mode.c:376 modules/irc/mode.c:474 modules/irc/mode.c:1050
 #, c-format
 msgid "* Mode change on %s for nonexistant %s!"
 msgstr ""
 
-#: modules/irc/mode.c:666
+#: modules/irc/mode.c:655
 msgid "Banned"
 msgstr ""
 
-#: modules/irc/mode.c:878
+#: modules/irc/mode.c:867
 #, c-format
 msgid "Oops.   Someone made me join %s... leaving..."
 msgstr ""
 
-#: modules/irc/mode.c:899
+#: modules/irc/mode.c:888
 #, c-format
 msgid "Mode change by fake op on %s!  Reversing..."
 msgstr ""
 
-#: modules/irc/mode.c:901
+#: modules/irc/mode.c:890
 msgid "Abusing ill-gained server ops"
 msgstr ""
 
-#: modules/irc/mode.c:905
+#: modules/irc/mode.c:894
 #, c-format
 msgid "Mode change by non-chanop on %s!  Reversing..."
 msgstr ""
 
-#: modules/irc/mode.c:907
+#: modules/irc/mode.c:896
 msgid "Abusing desync"
 msgstr ""
 
