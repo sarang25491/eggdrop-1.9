@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.25 2004/01/20 22:47:56 stdarg Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.26 2004/02/15 05:36:56 stdarg Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -460,18 +460,6 @@ static int party_chattr(partymember_t *p, const char *nick, user_t *u, const cha
 	return(0);
 }
 
-static int party_modules(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
-{
-	const char **modules;
-	int nummods, ctr;
-
-	nummods = module_list(&modules);
-	partymember_printf(p, _("Loaded modules:"));
-	for (ctr = 0; ctr < nummods; ctr++) partymember_printf(p, "   %s", modules[ctr]);
-	free(modules);
-	return(0);
-}
-
 static int party_help(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	help_t *h;
@@ -491,6 +479,70 @@ static int party_help(partymember_t *p, const char *nick, user_t *u, const char 
 	return(0);
 }
 
+static int party_addlog(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	putlog(LOG_MISC, "*", "%s: %s", nick, text);
+	return(0);
+}
+
+static int party_modules(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	const char **modules;
+	int nummods, ctr;
+
+	nummods = module_list(&modules);
+	partymember_printf(p, _("Loaded modules:"));
+	for (ctr = 0; ctr < nummods; ctr++) partymember_printf(p, "   %s", modules[ctr]);
+	free(modules);
+	return(0);
+}
+
+static int party_loadmod(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	if (!text || !*text) {
+		partymember_printf(p, _("Syntax: loadmod <module name>"));
+		return(0);
+	}
+	switch (module_load(text)) {
+		case 0:
+			partymember_printf(p, _("Module '%s' loaded successfully."), text);
+			break;
+		case -1:
+			partymember_printf(p, _("Module '%s' is already loaded."), text);
+			break;
+		case -2:
+			partymember_printf(p, _("Module '%s' could not be loaded."), text);
+			break;
+		case -3:
+			partymember_printf(p, _("Module '%s' does not have a valid initialization function. Perhaps it is not an eggdrop module?"), text);
+			break;
+	}
+	return(0);
+}
+
+static int party_unloadmod(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	if (!text || !*text) {
+		partymember_printf(p, _("Syntax: unloadmod <module name>"));
+		return(0);
+	}
+	switch (module_unload(text, EGGMOD_USER)) {
+		case 0:
+			partymember_printf(p, _("Module '%s' unloaded successfully."), text);
+			break;
+		case -1:
+			partymember_printf(p, _("Module '%s' is not loaded."), text);
+			break;
+		case -2:
+			partymember_printf(p, _("Module '%s' has dependencies that are still loaded. You must unload them first."), text);
+			break;
+		case -3:
+			partymember_printf(p, _("Module '%s' refuses to be unloaded by you!"), text);
+			break;
+	}
+	return(0);
+}
+
 static bind_list_t core_party_binds[] = {
 	{NULL, "join", party_join},
 	{NULL, "whisper", party_whisper},
@@ -500,6 +552,7 @@ static bind_list_t core_party_binds[] = {
 	{NULL, "quit", party_quit},
 	{NULL, "who", party_who},
 	{NULL, "whois", party_whois},
+	{"n", "addlog", party_addlog},
 	{"n", "get", party_get},
 	{"n", "set", party_set},
 	{"n", "unset", party_unset},
@@ -510,6 +563,8 @@ static bind_list_t core_party_binds[] = {
 	{"n", "-user", party_minus_user},
 	{"n", "chattr", party_chattr},
 	{"n", "modules", party_modules},
+	{"n", "loadmod", party_loadmod},
+	{"n", "unloadmod", party_unloadmod},
 	{"m", "+host", party_plus_host},
 	{"m", "-host", party_minus_host},
 	{0}
