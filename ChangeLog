@@ -1,3 +1,10 @@
+2002-01-24 21:06  Federico Mennite <ite@techmonkeys.org>
+
+	* modules/irc/chan.c:
+
+	Patch fixing key for channel request on op wasn't fully applied
+	(synch 1.6) 
+
 2002-01-24 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
