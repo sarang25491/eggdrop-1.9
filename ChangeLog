@@ -1,3 +1,9 @@
+2003-02-03 01:57  stdarg <stdarg@techmonkeys.org>
+
+	* modules/script/scriptlog.c:
+
+	[no log message] 
+
 2003-02-03 01:01  stdarg <stdarg@techmonkeys.org>
 
 	* eggdrop.conf, lib/eggdrop/Makefile.am, lib/eggdrop/binds.c,
