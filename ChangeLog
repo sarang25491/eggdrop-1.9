@@ -1,3 +1,13 @@
+2002-01-13 19:13  Federico Mennite <ite@techmonkeys.org>
+
+	* lib/eggdrop/Makefile.am, lib/eggdrop/eggdrop.h,
+	lib/eggdrop/fileutil.c, lib/eggdrop/fileutil.h,
+	lib/eggdrop/module.h, lib/eggdrop/stat.h, modules/filesys/files.c,
+	src/Makefile.am, src/misc.c, src/modules.c, src/proto.h:
+
+	Moved copyfile(), movefile() and is_file() from the core to
+	libeggdrop 
+
 2002-01-13 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
