@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-06-14 18:15-0500\n"
+"POT-Creation-Date: 2004-06-15 00:15-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -115,7 +115,7 @@ msgstr ""
 msgid "Cannot convert JS object to unknown variable type '%s'."
 msgstr ""
 
-#: modules/javascript/javascript.c:639 modules/tclscript/tclscript.c:605
+#: modules/javascript/javascript.c:639 modules/tclscript/tclscript.c:611
 msgid ""
 "You must be a permanent owner (defined in the config file) to use this "
 "command.\n"
@@ -269,6 +269,11 @@ msgstr ""
 msgid "disconnecting due to error"
 msgstr ""
 
+#: modules/server/input.c:535
+#, c-format
+msgid "Connected to %s as %s!%s@%s."
+msgstr ""
+
 #: modules/server/nicklist.c:37
 #, c-format
 msgid "Using random nick because %s."
@@ -406,44 +411,49 @@ msgstr ""
 msgid "Connected to %s, logging in."
 msgstr ""
 
-#: modules/tclscript/tclscript.c:213
+#: modules/tclscript/tclscript.c:110
+#, c-format
+msgid "Failed to load script %s: %s"
+msgstr ""
+
+#: modules/tclscript/tclscript.c:219
 #, c-format
 msgid "Error opening Tcl error log (%s)!"
 msgstr ""
 
-#: modules/tclscript/tclscript.c:548
+#: modules/tclscript/tclscript.c:554
 msgid "Cannot convert Tcl object to unknown variable type '"
 msgstr ""
 
-#: modules/tclscript/tclscript.c:610
+#: modules/tclscript/tclscript.c:616
 msgid "Syntax: .tcl <tclexpression>"
 msgstr ""
 
-#: modules/tclscript/tclscript.c:617
+#: modules/tclscript/tclscript.c:623
 #, c-format
 msgid ""
 "Tcl error: %s\n"
 "\n"
 msgstr ""
 
-#: modules/tclscript/tclscript.c:621
+#: modules/tclscript/tclscript.c:627
 #, c-format
 msgid ""
 "Tcl: %s\n"
 "\n"
 msgstr ""
 
-#: modules/tclscript/tclscript.c:703
+#: modules/tclscript/tclscript.c:709
 #, c-format
 msgid "Using Tcl version %d.%d (by header).\n"
 msgstr ""
 
-#: modules/tclscript/tclscript.c:707
+#: modules/tclscript/tclscript.c:713
 #, c-format
 msgid "    Using Tcl version %d.%d (by header).\n"
 msgstr ""
 
-#: modules/tclscript/tclscript.c:708
+#: modules/tclscript/tclscript.c:714
 #, c-format
 msgid ""
 "return \"    Library: [info library]\\n    Reported version: [info "
