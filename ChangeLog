@@ -1,3 +1,9 @@
+2003-02-02 08:41  Will Buckner <wcc@techmonkeys.org>
+
+	* modules/channels/tclchan.c:
+
+	* Fixed a small typo.  
+
 2003-02-02 05:34  Will Buckner <wcc@techmonkeys.org>
 
 	* modules/channels/channels.c:
