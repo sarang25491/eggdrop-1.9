@@ -1,3 +1,13 @@
+2002-06-01 05:15  stdarg <stdarg@techmonkeys.org>
+
+	* modules/server/Makefile.am, modules/server/server.c,
+	modules/server/servmsg.c, src/modules.c:
+
+	
+	* Added "newraw" bind table, which will eventually replace "raw" 
+	* Made got001() the first newraw-compliant function 
+	* Started merging irc/server modules a little bit 
+
 2002-06-01 03:50  stdarg <stdarg@techmonkeys.org>
 
 	* testcode/dns.c:
