@@ -1,3 +1,15 @@
+2003-03-03 22:31  stdarg <stdarg@techmonkeys.org>
+
+	* acconfig/acinclude.m4, modules/javascript/javascript.c,
+	modules/server/channels.c, modules/server/channels.h,
+	modules/server/dcc.c, modules/server/input.c,
+	modules/server/scriptcmds.c, modules/server/server.h,
+	modules/server/servsock.c:
+
+	
+	* Make javascript module compile again * "Normal" ip lookup for dccs 
+	* Make a --without-perlscript setting for configure 
+
 2003-03-01 08:25  Will Buckner <wcc@techmonkeys.org>
 
 	* AUTHORS, CONTENTS, FEATURES, configure.ac, acconfig/acinclude.m4,
