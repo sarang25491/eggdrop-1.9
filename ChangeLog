@@ -1,3 +1,17 @@
+2002-06-18 04:40  Jeff Fisher <guppy@techmonkeys.org>
+
+	* eggdrop.complete.conf, doc/html/mod-server.html,
+	doc/settings/mod.server, modules/server/cmdsserv.c,
+	modules/server/scriptcmds.c, modules/server/server.c:
+
+	
+	
+	removed the settings that did not allow for duplicate messages to be
+	enqueued.  this always seemed like a hack to me because it doesn't
+	fix the real problem of broken scripts sending duplicates and
+	causing the bot to flood off. if a script wants to send 4000 of the
+	same message who are we to say that is wrong.  
+
 2002-06-17 16:39  Jeff Fisher <guppy@techmonkeys.org>
 
 	* eggdrop.complete.conf, doc/html/egg-core.html,
