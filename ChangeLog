@@ -1,3 +1,15 @@
+2001-10-22 01:49  stdarg <stdarg@techmonkeys.org>
+
+	* src/: modules.c, egglib/msprintf.h, egglib/mstack.h,
+	mod/module.h, mod/perlscript.mod/perlscript.c,
+	mod/tclscript.mod/tclscript.c:
+
+	* Moved msprintf and mstack to the function table (boo this is
+	temporary I hope) 
+	* Fixed compile warnings and some other stuff in perlscript.mod so
+	that it compiles and loads (but you can't use it to write a script
+	yet).  
+
 2001-10-21 20:59  stdarg <stdarg@techmonkeys.org>
 
 	* src/: dccutil.c, tcldcc.c:
