@@ -1,3 +1,11 @@
+2001-12-20 04:57  Jeff Fisher <guppy@techmonkeys.org>
+
+	* doc/UPDATES1.6, modules/irc/tclirc.c, modules/server/tclserv.c,
+	src/patch.h:
+
+	applied jumpfix from eggdrop1.6 and changed rfc_casecmp to irccmp in
+	tclirc.c 
+
 2001-12-20 01:08  Jeff Fisher <guppy@techmonkeys.org>
 
 	* modules/notes/notes.c:
