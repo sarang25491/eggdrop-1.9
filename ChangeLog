@@ -1,3 +1,12 @@
+2002-05-06 05:44  stdarg <stdarg@techmonkeys.org>
+
+	* lib/egglib/: regexp.c, regexp.h:
+
+	
+	* Added a regsub() function that works sort of like Tcl's. I'll do a
+	regmatch() function later. We should add regcomp() and regexec() to
+	lib/compat I guess? 
+
 2002-05-06 04:52  Jeff Fisher <guppy@techmonkeys.org>
 
 	* testcode/match.c:
