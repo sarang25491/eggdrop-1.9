@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.17 2003/12/17 08:12:43 wcc Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.18 2003/12/18 03:54:46 wcc Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -61,8 +61,8 @@ static int party_part(partymember_t *p, const char *nick, user_t *u, const char 
 
 static int party_quit(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
-	partymember_printf(p, _("Goodbye!"));
-	if (!text || !*text) partymember_delete(p, _("Quit"));
+	partymember_printf(p, "Goodbye!");
+	if (!text || !*text) partymember_delete(p, "Quit");
 	else partymember_delete(p, text);
 	return(0);
 }

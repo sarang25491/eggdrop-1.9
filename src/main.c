@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.159 2003/12/17 08:39:48 wcc Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.160 2003/12/18 03:54:46 wcc Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -100,7 +100,7 @@ void core_config_init();
 
 void fatal(const char *s, int recoverable)
 {
-	putlog(LOG_MISC, "*", _("Fatal: %s"), s);
+	putlog(LOG_MISC, "*", "Fatal: %s", s);
 	flushlogs();
 	unlink(pid_file);
 	if (!recoverable) {
@@ -111,7 +111,7 @@ void fatal(const char *s, int recoverable)
 
 static void got_bus(int z)
 {
-	fatal(_("BUS ERROR."), 1);
+	fatal("BUS ERROR.", 1);
 #ifdef SA_RESETHAND
 	kill(getpid(), SIGBUS);
 #else
@@ -122,7 +122,7 @@ static void got_bus(int z)
 
 static void got_segv(int z)
 {
-	fatal(_("SEGMENT VIOLATION."), 1);
+	fatal("SEGMENT VIOLATION.", 1);
 #ifdef SA_RESETHAND
 	kill(getpid(), SIGSEGV);
 #else
@@ -133,7 +133,7 @@ static void got_segv(int z)
 
 static void got_fpe(int z)
 {
-	fatal(_("FLOATING POINT ERROR."), 0);
+	fatal("FLOATING POINT ERROR.", 0);
 }
 
 static void got_term(int z)
@@ -343,7 +343,7 @@ int main(int argc, char **argv)
 	/* Initialize ltdl. */
 	LTDL_SET_PRELOADED_SYMBOLS();
 	if (lt_dlinit()) {
-		printf(_("Fatal error initializing ltdl: %s\n"), lt_dlerror());
+		printf("Fatal error initializing ltdl: %s\n", lt_dlerror());
 		return(-1);
 	}
 
@@ -401,13 +401,13 @@ int main(int argc, char **argv)
 
 	do_args(argc, argv);
 	printf("\n%s\n", version);
-	printf(_("WARNING: Do NOT run this DEVELOPMENT version for any purpose other than testing.\n\n"));
+	printf("WARNING: Do NOT run this DEVELOPMENT version for any purpose other than testing.\n\n");
 
-	if (((int) getuid() == 0) || ((int) geteuid() == 0)) fatal(_("Eggdrop will not run as root!"), 0);
+	if (((int) getuid() == 0) || ((int) geteuid() == 0)) fatal("Eggdrop will not run as root!", 0);
 
 	if (file_check(configfile)) {
 		if (errno) perror(configfile);
-		else fprintf(stderr, _("ERROR\n\nCheck file permissions on your config file!\nMake sure other groups and users cannot read/write it.\n"));
+		else fprintf(stderr, "ERROR\n\nCheck file permissions on your config file!\nMake sure other groups and users cannot read/write it.\n");
 		exit(-1);
 	}
 
@@ -424,31 +424,31 @@ int main(int argc, char **argv)
 		int len;
 
 		if (user_count() != 0) {
-			printf(_("\n\n\nYou are trying to create a new userfile, but the old one still exists (%s)!\n\nPlease remove the userfile, or do not pass the -m option.\n\n"), core_config.userfile);
+			printf("\n\n\nYou are trying to create a new userfile, but the old one still exists (%s)!\n\nPlease remove the userfile, or do not pass the -m option.\n\n", core_config.userfile);
 			exit(1);
 		}
 
-		printf(_("\n\n\nHello! I see you are creating a new userfile.\n\n"));
-		printf(_("Let's create the owner account.\n\n"));
+		printf("\n\n\nHello! I see you are creating a new userfile.\n\n");
+		printf("Let's create the owner account.\n\n");
 		do {
-			printf(_("Enter the owner handle: "));
+			printf("Enter the owner handle: ");
 			fflush(stdout);
 			fgets(handle, sizeof(handle), stdin);
 			for (len = 0; handle[len]; len++) {
 				if (!ispunct(handle[len]) && !isalnum(handle[len])) break;
 			}
-			if (len == 0) printf(_("Come on, enter a real handle.\n\n"));
+			if (len == 0) printf("Come on, enter a real handle.\n\n");
 		} while (len <= 0);
 		handle[len] = 0;
 		owner = user_new(handle);
 		if (!owner) {
-			printf(_("Failed to create user record! Out of memory?\n\n"));
+			printf("Failed to create user record! Out of memory?\n\n");
 			exit(1);
 		}
 		user_rand_pass(password, sizeof(password));
 		user_set_pass(owner, password);
 		user_set_flag_str(owner, NULL, "+n");
-		printf(_("Your owner handle is '%s' and your password is '%s' (without the quotes).\n\n"), handle, password);
+		printf("Your owner handle is '%s' and your password is '%s' (without the quotes).\n\n", handle, password);
 		memset(password, 0, sizeof(password));
 		str_redup(&core_config.owner, handle);
 		core_config_save();
@@ -468,8 +468,8 @@ int main(int argc, char **argv)
 		xx = atoi(s);
 		kill(xx, SIGCHLD); /* Meaningless kill to determine if pid is used */
 		if (errno != ESRCH) {
-			printf(_("I detect %s already running from this directory.\n"), core_config.botname);
-			printf(_("If this is incorrect, please erase '%s'.\n"), pid_file);
+			printf("I detect %s already running from this directory.\n", core_config.botname);
+			printf("If this is incorrect, please erase '%s'.\n", pid_file);
 			bg_send_quit(BG_ABORT);
 			exit(1);
 		}
@@ -507,15 +507,15 @@ int main(int argc, char **argv)
 				fprintf(fp, "%u\n", xx);
 				if (fflush(fp)) {
 					/* Let the bot live since this doesn't appear to be a botchk */
-					printf(_("WARNING: Could not write pid file '%s'.\n"), pid_file);
+					printf("WARNING: Could not write pid file '%s'.\n", pid_file);
 					fclose(fp);
 					unlink(pid_file);
 				}
 				else fclose(fp);
 			}
-			else printf(_("WARNING: Could not write pid file '%s'.\n"), pid_file);
+			else printf("WARNING: Could not write pid file '%s'.\n", pid_file);
 #ifdef CYGWIN_HACKS
-			printf(_("Launched into the background (pid: %d).\n\n"), xx);
+			printf("Launched into the background (pid: %d).\n\n", xx);
 #endif
 		}
 	}

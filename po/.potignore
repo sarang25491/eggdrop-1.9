@@ -1,2 +1,10 @@
 lib/compat/strftime.c
-
+modules/channels/channels.c
+modules/channels/cmdschan.c
+modules/channels/userchan.c
+modules/compress/compress.c
+modules/filesys/dbcompat.c
+modules/filesys/filedb3.c
+modules/filesys/files.c
+modules/filesys/filesys.c
+modules/uptime/uptime.c

@@ -1,9 +1,5 @@
-/*
- * blowfish.c --
+/* blowfish.c: encryption and decryption of passwords
  *
- *	encryption and decryption of passwords
- */
-/*
  * Copyright (C) 1997 Robey Pointer
  * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
  *
@@ -20,13 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- */
-/*
+ *
  * This code was originally in the public domain.
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: blowfish.c,v 1.14 2003/12/17 08:06:52 wcc Exp $";
+static const char rcsid[] = "$Id: blowfish.c,v 1.15 2003/12/18 03:54:45 wcc Exp $";
 #endif
 
 #define MODULE_NAME "encryption"

@@ -1,3 +1,26 @@
+/* dccparty.c: dcc partyline interface
+ *
+ * Copyright (C) 2003, 2004 Eggheads Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+#ifndef lint
+static const char rcsid[] = "$Id: dccparty.c,v 1.4 2003/12/18 03:54:45 wcc Exp $";
+#endif
+
 #include <eggdrop/eggdrop.h>
 #include <ctype.h>
 #include <string.h>
@@ -85,8 +108,8 @@ static int dcc_on_connect(void *client_data, int idx, const char *peer_ip, int p
 	socket_get_name(sock, NULL, &our_port);
 	session->ip = strdup(peer_ip);
 	session->port = peer_port;
-	egg_iprintf(idx, _("Hello %s/%d!\r\n\r\n"), peer_ip, peer_port);
-	egg_iprintf(idx, _("Please enter your nickname.\r\n"));
+	egg_iprintf(idx, "Hello %s/%d!\r\n\r\n", peer_ip, peer_port);
+	egg_iprintf(idx, "Please enter your nickname.\r\n");
 	session->state = STATE_NICKNAME;
 	session->count = 0;
 
@@ -136,7 +159,7 @@ static int process_results(dcc_session_t *session)
 			sockbuf_delete(session->idx);
 			return(0);
 		}
-		egg_iprintf(session->idx, _("\r\nPlease enter your nickname.\r\n"));
+		egg_iprintf(session->idx, "\r\nPlease enter your nickname.\r\n");
 		session->state = STATE_NICKNAME;
 	}
 	return(0);
@@ -153,12 +176,12 @@ static int dcc_on_read(void *client_data, int idx, char *data, int len)
 		case STATE_NICKNAME:
 			session->nick = strdup(data);
 			session->state = STATE_PASSWORD;
-			sockbuf_write(session->idx, _("Please enter your password.\r\n"), -1);
+			sockbuf_write(session->idx, "Please enter your password.\r\n", -1);
 			break;
 		case STATE_PASSWORD:
 			session->user = user_lookup_authed(session->nick, data);
 			if (!session->user) {
-				sockbuf_write(session->idx, _("Invalid username/password.\r\n\r\n"), -1);
+				sockbuf_write(session->idx, "Invalid username/password.\r\n\r\n", -1);
 				session->count++;
 				if (session->count > dcc_config.max_retries) {
 					sockbuf_delete(session->idx);
@@ -166,7 +189,7 @@ static int dcc_on_read(void *client_data, int idx, char *data, int len)
 				}
 				free(session->nick);
 				session->nick = NULL;
-				sockbuf_write(session->idx, _("Please enter your nickname.\r\n"), -1);
+				sockbuf_write(session->idx, "Please enter your nickname.\r\n", -1);
 				session->state = STATE_NICKNAME;
 			}
 			else {
@@ -202,7 +225,7 @@ static int dcc_on_delete(void *client_data, int idx)
 	dcc_session_t *session = client_data;
 
 	if (session->party) {
-		partymember_delete(session->party, _("Deleted!"));
+		partymember_delete(session->party, "Deleted!");
 		session->party = NULL;
 	}
 	kill_session(session);

@@ -283,8 +283,8 @@ static int telnet_on_newclient(void *client_data, int idx, int newidx, const cha
 		session->flags |= STEALTH_LOGIN;
 	}
 	else {
-		egg_iprintf(newidx, _("Hello %s/%d!\r\n"), peer_ip, peer_port);
-		sockbuf_write(newidx, _("\r\nPlease enter your nickname.\r\n"), -1);
+		egg_iprintf(newidx, "Hello %s/%d!\r\n", peer_ip, peer_port);
+		sockbuf_write(newidx, "\r\nPlease enter your nickname.\r\n", -1);
 		session->state = STATE_NICKNAME;
 		session->count = 0;
 	}
@@ -335,7 +335,7 @@ static int process_results(telnet_session_t *session)
 			sockbuf_delete(session->idx);
 			return(0);
 		}
-		sockbuf_write(session->idx, _("\r\nPlease enter your nickname.\r\n"), -1);
+		sockbuf_write(session->idx, "\r\nPlease enter your nickname.\r\n", -1);
 		session->state = STATE_NICKNAME;
 	}
 	return(0);
@@ -359,14 +359,14 @@ static int telnet_on_read(void *client_data, int idx, char *data, int len)
 			session->state = STATE_PASSWORD;
 			session->flags |= TFLAG_PASSWORD;
 			telnet_code(session->idx, TELNET_WILL, TELNET_ECHO);
-			sockbuf_write(session->idx, _("Please enter your password.\r\n"), -1);
+			sockbuf_write(session->idx, "Please enter your password.\r\n", -1);
 			break;
 		case STATE_PASSWORD:
 			session->flags &= ~TFLAG_PASSWORD;
 			telnet_code(session->idx, TELNET_WONT, TELNET_ECHO);
 			session->user = user_lookup_authed(session->nick, data);
 			if (!session->user) {
-				sockbuf_write(session->idx, _("Invalid username/password.\r\n\r\n"), -1);
+				sockbuf_write(session->idx, "Invalid username/password.\r\n\r\n", -1);
 				session->count++;
 				if (session->count > telnet_config.max_retries) {
 					sockbuf_delete(session->idx);
@@ -374,15 +374,15 @@ static int telnet_on_read(void *client_data, int idx, char *data, int len)
 				}
 				free(session->nick);
 				session->nick = NULL;
-				sockbuf_write(session->idx, _("Please enter your nickname.\r\n"), -1);
+				sockbuf_write(session->idx, "Please enter your nickname.\r\n", -1);
 				session->state = STATE_NICKNAME;
 			}
 			else {
 				session->party = partymember_new(-1, session->user, session->nick, session->ident ? session->ident : "~telnet", session->host ? session->host : session->ip, &telnet_party_handler, session);
 				session->state = STATE_PARTYLINE;
-				egg_iprintf(idx, _("\r\nWelcome to the telnet partyline interface!\r\n"));
-				if (session->ident) egg_iprintf(idx, _("Your ident is: %s\r\n"), session->ident);
-				if (session->host) egg_iprintf(idx, _("Your hostname is: %s\r\n"), session->host);
+				egg_iprintf(idx, "\r\nWelcome to the telnet partyline interface!\r\n");
+				if (session->ident) egg_iprintf(idx, "Your ident is: %s\r\n", session->ident);
+				if (session->host) egg_iprintf(idx, "Your hostname is: %s\r\n", session->host);
 				/* Put them on the main channel. */
 				partychan_join_name("*", session->party);
 			}

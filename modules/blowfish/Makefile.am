@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.7 2003/12/14 08:51:01 stdarg Exp $
+# $Id: Makefile.am,v 1.8 2003/12/18 03:54:45 wcc Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 pkglibdir		= $(exec_prefix)/modules
@@ -10,8 +10,10 @@ blowfish_la_LIBADD	= @LIBS@ $(top_builddir)/lib/eggdrop/libeggdrop.la
 
 MAINTAINERCLEANFILES	= Makefile.in
 
-INCLUDES		= -I$(top_builddir) -I$(top_srcdir) @INCLTDL@ \
-			-I$(top_builddir)/intl -I$(top_srcdir)/intl \
+INCLUDES		= -I$(top_builddir) \
+			-I$(top_srcdir) @INCLTDL@ \
+			-I$(top_builddir)/intl \
+			-I$(top_srcdir)/intl \
 			-I$(top_builddir)/lib \
 			-I$(top_srcdir)/lib
 

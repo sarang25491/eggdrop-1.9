@@ -1,7 +1,5 @@
-/*
- * blowfish.h --
- */
-/*
+/* blowfish.h: header for blowfish.h
+ *
  * Copyright (C) 1997 Robey Pointer
  * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
  *
@@ -12,21 +10,20 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- */
-/*
- * $Id: blowfish.h,v 1.6 2003/12/11 00:49:10 wcc Exp $
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id: blowfish.h,v 1.7 2003/12/18 03:54:45 wcc Exp $
  */
 
-#ifndef _EGG_MOD_BLOWFISH_BLOWFISH_H
-#define _EGG_MOD_BLOWFISH_BLOWFISH_H
+#ifndef _EGG_MOD_BLOWFISH_BLOWFISH_H_
+#define _EGG_MOD_BLOWFISH_BLOWFISH_H_
 
-#define MAXKEYBYTES	56		/* 448 bits */
+#define MAXKEYBYTES	56 /* 448 bits */
 #define bf_N		16
 #define noErr		 0
 #define DATAERROR	-1
@@ -41,13 +38,13 @@ union aword {
     unsigned int byte1:8;
     unsigned int byte2:8;
     unsigned int byte3:8;
-#else				/* !WORDS_BIGENDIAN */
+#else /* WORDS_BIGENDIAN */
     unsigned int byte3:8;
     unsigned int byte2:8;
     unsigned int byte1:8;
     unsigned int byte0:8;
-#endif				/* !WORDS_BIGENDIAN */
+#endif /* WORDS_BIGENDIAN */
   } w;
 };
 
-#endif				/* !_EGG_MOD_BLOWFISH_BLOWFISH_H */
+#endif /* !_EGG_MOD_BLOWFISH_BLOWFISH_H_ */
