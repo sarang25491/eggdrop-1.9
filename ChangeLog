@@ -1,3 +1,12 @@
+2002-06-19 04:51  stdarg <stdarg@techmonkeys.org>
+
+	* testcode/: Makefile, chat.c, client.c, http.c, ipv6.c,
+	linemode.c, my_socket.c, sclient.c, sockbuf.c, sockbuf.h, socks4.c,
+	socks5.c, sslmode.c, zipmode.c:
+
+	
+	* I think the sockbuf api is almost done 
+
 2002-06-18 06:15  Jeff Fisher <guppy@techmonkeys.org>
 
 	* help/cmds2.help:
