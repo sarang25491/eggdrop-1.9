@@ -1,3 +1,12 @@
+2002-01-04 04:49  Federico Mennite <ite@techmonkeys.org>
+
+	* lib/egglib/base64.c, lib/egglib/hash_table.c,
+	lib/egglib/hash_table.h, lib/egglib/linked_list.c,
+	lib/egglib/msprintf.h, lib/egglib/mstack.h,
+	modules/transfer/transfer.c, src/registry.c, src/tclmisc.c:
+
+	Varoius warnings cleanup.  
+
 2002-01-04 03:36  Federico Mennite <ite@techmonkeys.org>
 
 	* lib/eggdrop/botnetutil.c, src/botmsg.c, src/main.h, src/proto.h:
