@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dns.c,v 1.11 2004/12/22 17:40:54 lordares Exp $";
+static const char rcsid[] = "$Id: dns.c,v 1.12 2004/12/22 19:03:08 lordares Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -28,6 +28,7 @@ static const char rcsid[] = "$Id: dns.c,v 1.11 2004/12/22 17:40:54 lordares Exp 
 
 typedef struct {
 	char **list;
+	time_t ttl;
 	int len;
 } dns_answer_t;
 
@@ -339,7 +340,7 @@ static void cache_del(int id)
 	cache = (dns_cache_t *) realloc(cache, (ncache+1)*sizeof(*cache));
 }
 
-static void cache_add(const char *query, dns_answer_t *answer, time_t ttl)
+static void cache_add(const char *query, dns_answer_t *answer)
 {
 	int i;
 
@@ -348,7 +349,7 @@ static void cache_add(const char *query, dns_answer_t *answer, time_t ttl)
 	answer_init(&cache[ncache].answer);
 	for (i = 0; i < answer->len; i++)
 		answer_add(&cache[ncache].answer, answer->list[i]);
-	cache[ncache].expiretime = timer_get_now_sec(NULL) + ttl;
+	cache[ncache].expiretime = timer_get_now_sec(NULL) + answer->ttl;
 	ncache++;
 }
 
@@ -580,7 +581,6 @@ static void parse_reply(char *response, int nbytes)
 	char result[512];
 	unsigned char *ptr;
 	int i;
-	time_t ttl = 0;
 
 	ptr = (unsigned char *)response;
 	memcpy(&header, ptr, 12);
@@ -615,7 +615,8 @@ static void parse_reply(char *response, int nbytes)
 		reply.rdlength = ntohs(reply.rdlength);
 		reply.ttl = ntohl(reply.ttl);
 		/* Cache the lowest ttl */
-		if (reply.ttl && (reply.ttl < ttl)) ttl = reply.ttl
+		if (reply.ttl && ((!q->answer.ttl) || (q->answer.ttl > reply.ttl))) q->answer.ttl = reply.ttl;
+
 		ptr += 10;
 		if (reply.type == 1) {
 			/*fprintf(fp, "ipv4 reply\n");*/
@@ -666,7 +667,7 @@ static void parse_reply(char *response, int nbytes)
 	if (prev) prev->next = q->next;
 	else query_head = q->next;
 
-	cache_add(q->query, &q->answer, ttl);
+	cache_add(q->query, &q->answer);
 
 	q->callback(q->client_data, q->query, q->answer.list);
 	answer_free(&q->answer);
