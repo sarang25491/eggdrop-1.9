@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2001-10-30 04:00-0600\n"
+"POT-Creation-Date: 2001-10-31 04:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Transfer-Encoding: ENCODING\n"
 
 #. Kill bot incase a botchk is run from crond.
-#: src/bg.c:125 src/bg.c:133 src/main.c:787 src/main.c:793
+#: src/bg.c:125 src/bg.c:133 src/main.c:785 src/main.c:791
 #, c-format
 msgid "* Warning!  Could not write %s file!\n"
 msgstr ""
@@ -523,34 +523,34 @@ msgstr ""
 msgid "header version"
 msgstr ""
 
-#: src/chanprog.c:318
+#: src/chanprog.c:317
 msgid "New users get flags"
 msgstr ""
 
-#: src/chanprog.c:319
+#: src/chanprog.c:318
 msgid "notify"
 msgstr ""
 
-#: src/chanprog.c:321
+#: src/chanprog.c:320
 msgid "Permanent owner(s)"
 msgstr ""
 
-#: src/chanprog.c:363
+#: src/chanprog.c:360
 msgid "CONFIG FILE NOT LOADED (NOT FOUND, OR ERROR)"
 msgstr ""
 
-#: src/chanprog.c:368
+#: src/chanprog.c:365
 msgid ""
 "STARTING BOT IN USERFILE CREATION MODE.\n"
 "Telnet to the bot and enter 'NEW' as your nickname."
 msgstr ""
 
-#: src/chanprog.c:374
+#: src/chanprog.c:371
 #, c-format
 msgid "USER FILE NOT FOUND!  (try ./eggdrop -m %s to make one)\n"
 msgstr ""
 
-#: src/chanprog.c:377
+#: src/chanprog.c:374
 msgid ""
 "\n"
 "\n"
@@ -558,30 +558,30 @@ msgid ""
 "Telnet to the bot and enter 'NEW' as your nickname.\n"
 msgstr ""
 
-#: src/chanprog.c:380
+#: src/chanprog.c:377
 #, c-format
 msgid "OR Go to IRC and:  /msg %s hello\n"
 msgstr ""
 
-#: src/chanprog.c:381
+#: src/chanprog.c:378
 msgid ""
 "This will make the bot recognize you as the master.\n"
 "\n"
 msgstr ""
 
-#: src/chanprog.c:384
+#: src/chanprog.c:381
 msgid "USERFILE ALREADY EXISTS (drop the -m)\n"
 msgstr ""
 
-#: src/chanprog.c:412
+#: src/chanprog.c:409
 msgid "CANT WRITE TO TEMP DIR"
 msgstr ""
 
-#: src/chanprog.c:427
+#: src/chanprog.c:424
 msgid "Cant reload user file!"
 msgstr ""
 
-#: src/chanprog.c:436
+#: src/chanprog.c:433
 msgid "User file is missing!"
 msgstr ""
 
@@ -1030,51 +1030,51 @@ msgstr ""
 msgid "Backing up user file..."
 msgstr ""
 
-#: src/main.c:714
+#: src/main.c:713
 msgid "ERROR: Eggdrop will not run as root!"
 msgstr ""
 
-#: src/main.c:739
+#: src/main.c:737
 msgid ""
 "You have installed modules but have not selected an encryption\n"
 "module, please consult the default config file for info.\n"
 msgstr ""
 
-#: src/main.c:763
+#: src/main.c:761
 #, c-format
 msgid "I detect %s already running from this directory.\n"
 msgstr ""
 
-#: src/main.c:764
+#: src/main.c:762
 #, c-format
 msgid "If this is incorrect, erase the %s\n"
 msgstr ""
 
 #. Should be only 2 modules now - blowfish (or some other
 #. encryption module) and eggdrop.
-#: src/main.c:1003
+#: src/main.c:1001
 msgid "Stagnant module; there WILL be memory leaks!"
 msgstr ""
 
-#: src/misc.c:951 src/misc.c:990
+#: src/misc.c:945 src/misc.c:984
 msgid "No help available on that."
 msgstr ""
 
-#: src/misc.c:1014 src/misc.c:1039
+#: src/misc.c:1008 src/misc.c:1033
 msgid "No help available on that.\n"
 msgstr ""
 
-#: src/logfile.c:131
+#: src/logfile.c:134
 msgid "Cycling logfiles"
 msgstr ""
 
-#: src/logfile.c:270 src/logfile.c:325
+#: src/logfile.c:273 src/logfile.c:328
 #, c-format
 msgid "Last message repeated %d time(s).\n"
 msgstr ""
 
 #. It's too big.
-#: src/logfile.c:310
+#: src/logfile.c:313
 #, c-format
 msgid "Cycling logfile %s, over max-logsize (%d kilobytes)"
 msgstr ""
