@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.33 2001/07/26 17:04:33 drummer Exp $
+ * $Id: net.c,v 1.34 2001/07/27 00:46:32 drummer Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -691,7 +691,7 @@ debug1("|NET| getsockname() failed for sock %d", sock);
 #ifdef IPV6
     if (IN6_IS_ADDR_V4MAPPED(&sa.sin6_addr))
 	sprintf(buf, "%lu", 
-		(unsigned long int) ntohl(sa.sin6_addr.s6_addr32[3]));
+		(unsigned long int) ntohl(((uint32_t *)&sa.sin6_addr)[3]));
     else
 	egg_inet_ntop(AF_INET6, &(sa.sin6_addr), buf, sizeof buf);
 #else
@@ -722,7 +722,7 @@ int answer(int sock, char *caller, char *ip, unsigned short *port,
   if (ip != NULL) {
 #ifdef IPV6
     if (IN6_IS_ADDR_V4MAPPED(from.sin6_addr.s6_addr))
-	egg_inet_ntop(AF_INET, &(from.sin6_addr.s6_addr32[3]), ip, ADDRMAX);
+	egg_inet_ntop(AF_INET, &(((uint32_t *)&from.sin6_addr)[3]), ip, ADDRMAX);
     else
 	egg_inet_ntop(AF_INET6, &(from.sin6_addr), ip, ADDRMAX);
 #else

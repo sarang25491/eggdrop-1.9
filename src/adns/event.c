@@ -299,13 +299,13 @@ void adns_processtimeouts(adns_state ads, const struct timeval *now) {
 /* fd handling functions.  These are the top-level of the real work of
  * reception and often transmission.
  */
-int adns__pollfds(adns_state ads, struct pollfd pollfds_buf[MAX_POLLFDS]) {
+int adns__pollfds(adns_state ads, struct adns_pollfd pollfds_buf[MAX_POLLFDS]) {
   /* Returns the number of entries filled in.  Always zeroes revents. */
 
   assert(MAX_POLLFDS==2);
 
   pollfds_buf[0].fd= ads->udpsocket;
-  pollfds_buf[0].events= POLLIN;
+  pollfds_buf[0].events= ADNS_POLLIN;
   pollfds_buf[0].revents= 0;
 
   switch (ads->tcpstate) {
@@ -313,10 +313,10 @@ int adns__pollfds(adns_state ads, struct pollfd pollfds_buf[MAX_POLLFDS]) {
   case server_broken:
     return 1;
   case server_connecting:
-    pollfds_buf[1].events= POLLOUT;
+    pollfds_buf[1].events= ADNS_POLLOUT;
     break;
   case server_ok:
-    pollfds_buf[1].events= ads->tcpsend.used ? POLLIN|POLLOUT|POLLPRI : POLLIN|POLLPRI;
+    pollfds_buf[1].events= ads->tcpsend.used ? ADNS_POLLIN|ADNS_POLLOUT|ADNS_POLLPRI : ADNS_POLLIN|ADNS_POLLPRI;
     break;
   default:
     abort();
@@ -521,7 +521,7 @@ static void fd_event(adns_state ads, int fd,
 }
 
 void adns__fdevents(adns_state ads,
-		    const struct pollfd *pollfds, int npollfds,
+		    const struct adns_pollfd *pollfds, int npollfds,
 		    int maxfd, const fd_set *readfds,
 		    const fd_set *writefds, const fd_set *exceptfds,
 		    struct timeval now, int *r_r) {
@@ -531,9 +531,9 @@ void adns__fdevents(adns_state ads,
     fd= pollfds[i].fd;
     if (fd >= maxfd) maxfd= fd+1;
     revents= pollfds[i].revents;
-    fd_event(ads,fd, revents,POLLIN, maxfd,readfds, adns_processreadable,now,r_r);
-    fd_event(ads,fd, revents,POLLOUT, maxfd,writefds, adns_processwriteable,now,r_r);
-    fd_event(ads,fd, revents,POLLPRI, maxfd,exceptfds, adns_processexceptional,now,r_r);
+    fd_event(ads,fd, revents,ADNS_POLLIN, maxfd,readfds, adns_processreadable,now,r_r);
+    fd_event(ads,fd, revents,ADNS_POLLOUT, maxfd,writefds, adns_processwriteable,now,r_r);
+    fd_event(ads,fd, revents,ADNS_POLLPRI, maxfd,exceptfds, adns_processexceptional,now,r_r);
   }
 }
 
@@ -544,7 +544,7 @@ void adns_beforeselect(adns_state ads, int *maxfd_io, fd_set *readfds_io,
 		       struct timeval **tv_mod, struct timeval *tv_tobuf,
 		       const struct timeval *now) {
   struct timeval tv_nowbuf;
-  struct pollfd pollfds[MAX_POLLFDS];
+  struct adns_pollfd pollfds[MAX_POLLFDS];
   int i, fd, maxfd, npollfds;
   
   adns__consistency(ads,0,cc_entex);
@@ -561,9 +561,9 @@ void adns_beforeselect(adns_state ads, int *maxfd_io, fd_set *readfds_io,
   for (i=0; i<npollfds; i++) {
     fd= pollfds[i].fd;
     if (fd >= maxfd) maxfd= fd+1;
-    if (pollfds[i].events & POLLIN) FD_SET(fd,readfds_io);
-    if (pollfds[i].events & POLLOUT) FD_SET(fd,writefds_io);
-    if (pollfds[i].events & POLLPRI) FD_SET(fd,exceptfds_io);
+    if (pollfds[i].events & ADNS_POLLIN) FD_SET(fd,readfds_io);
+    if (pollfds[i].events & ADNS_POLLOUT) FD_SET(fd,writefds_io);
+    if (pollfds[i].events & ADNS_POLLPRI) FD_SET(fd,exceptfds_io);
   }
   *maxfd_io= maxfd;
 
@@ -575,7 +575,7 @@ void adns_afterselect(adns_state ads, int maxfd, const fd_set *readfds,
 		      const fd_set *writefds, const fd_set *exceptfds,
 		      const struct timeval *now) {
   struct timeval tv_buf;
-  struct pollfd pollfds[MAX_POLLFDS];
+  struct adns_pollfd pollfds[MAX_POLLFDS];
   int npollfds, i;
 
   adns__consistency(ads,0,cc_entex);
@@ -584,7 +584,7 @@ void adns_afterselect(adns_state ads, int maxfd, const fd_set *readfds,
   adns_processtimeouts(ads,now);
 
   npollfds= adns__pollfds(ads,pollfds);
-  for (i=0; i<npollfds; i++) pollfds[i].revents= POLLIN|POLLOUT|POLLPRI;
+  for (i=0; i<npollfds; i++) pollfds[i].revents= ADNS_POLLIN|ADNS_POLLOUT|ADNS_POLLPRI;
   adns__fdevents(ads,
 		 pollfds,npollfds,
 		 maxfd,readfds,writefds,exceptfds,
@@ -618,7 +618,7 @@ void adns_globalsystemfailure(adns_state ads) {
 int adns_processany(adns_state ads) {
   int r, i;
   struct timeval now;
-  struct pollfd pollfds[MAX_POLLFDS];
+  struct adns_pollfd pollfds[MAX_POLLFDS];
   int npollfds;
 
   adns__consistency(ads,0,cc_entex);
@@ -631,7 +631,7 @@ int adns_processany(adns_state ads) {
    * likely just to want to do a read on one or two fds anyway.
    */
   npollfds= adns__pollfds(ads,pollfds);
-  for (i=0; i<npollfds; i++) pollfds[i].revents= pollfds[i].events & ~POLLPRI;
+  for (i=0; i<npollfds; i++) pollfds[i].revents= pollfds[i].events & ~ADNS_POLLPRI;
   adns__fdevents(ads,
 		 pollfds,npollfds,
 		 0,0,0,0,

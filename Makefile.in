@@ -2,7 +2,7 @@
 #  This is the Makefile for EGGDROP (the irc bot)
 #  You should never need to edit this.
 #
-# $Id: Makefile.in,v 1.27 2001/07/26 17:05:01 drummer Exp $
+# $Id: Makefile.in,v 1.28 2001/07/27 00:46:26 drummer Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -140,7 +140,7 @@ distclean: eggclean clean-modconfig
 
 adns:
 	@echo "Making the ADNS library..."
-	@cd src/adns && if test ! -e Makefile; then ./configure @MAKEIPV6@; fi && $(MAKE)
+	@cd src/adns && $(MAKE)
 
 distrib: distclean
 	@rm -f `find . \( -name '*~' -o -name '*#' -o -name '*.orig' \

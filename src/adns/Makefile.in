@@ -21,20 +21,23 @@
 #  along with this program; if not, write to the Free Software Foundation,
 #  Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. 
 
-CC=@CC@
-CFLAGS=-Wall -O2
-RANLIB=@RANLIB@
-AR=@AR@
-XLIBS=@LIBS@
+top_srcdir = ../..
 
-srcdir=		.
+CC = @CC@
+LD = @CC@
+STRIP = @STRIP@
+CFLAGS = @CFLAGS@ -I$(top_srcdir) -I$(top_srcdir)/src/compat @DEFS@ $(CFLGS)
+CPPFLAGS = @CPPFLAGS@
+RANLIB = @RANLIB@
+AR = @AR@
+XLIBS = @LIBS@
 
 include		adns.make
 
 all:		libadns.a
 
 distclean:	clean
-		rm -f config.h config.log config.cache config.status Makefile
+		rm -f Makefile
 
 clean:
 		rm -f *.[oa] libadns.so libadns.so.1 libadns.so.1.0
@@ -48,9 +51,9 @@ libadns.a:	$(LIBOBJS)
 libadns.so:	$(LIBOBJS)
 		rm -f $@ $@.1 $@.1.0
 		$(LD) -shared $(LIBOBJS) -soname=libadns.so.1 -o $@.1.0 \
--lc $(XLIBS) ../compat/inet_ntop.o ../compat/inet_pton.o ../compat/inet_aton.o
+-lc $(XLIBS) src/compat/inet_ntop.o src/compat/inet_pton.o src/compat/inet_aton.o
 		ln -s $@.1.0 $@.1
 		ln -s $@.1.0 $@
 
-$(LIBOBJS):	adns.h internal.h config.h
+$(LIBOBJS):	adns.h internal.h ../../config.h
 

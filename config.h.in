@@ -227,4 +227,7 @@
 /* Define to `unsigned' if something else doesn't define.  */
 #undef socklen_t
 
+/* Define if we want to include rpc/types.h.  Crap BSDs put INADDR_LOOPBACK there. */
+#undef HAVEUSE_RPCTYPES_H
+
 #endif /* !_EGG_CONFIG_H */

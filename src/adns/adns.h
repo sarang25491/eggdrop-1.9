@@ -51,7 +51,7 @@
  *  Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  *
- *  $Id: adns.h,v 1.1 2001/07/26 17:06:39 drummer Exp $
+ *  $Id: adns.h,v 1.2 2001/07/27 00:46:33 drummer Exp $
  */
 
 #ifndef ADNS_H_INCLUDED
@@ -728,7 +728,7 @@ void adns_afterselect(adns_state ads, int maxfd, const fd_set *readfds,
  */
 
 
-struct pollfd;
+struct adns_pollfd;
 /* In case your system doesn't have it or you forgot to include
  * <sys/poll.h>, to stop the following declarations from causing
  * problems.  If your system doesn't have poll then the following
@@ -737,7 +737,7 @@ struct pollfd;
 
 #if 0
 
-int adns_beforepoll(adns_state ads, struct pollfd *fds, int *nfds_io, int *timeout_io,
+int adns_beforepoll(adns_state ads, struct adns_pollfd *fds, int *nfds_io, int *timeout_io,
 		    const struct timeval *now);
 /* Finds out which fd's adns is interested in, and when it would like
  * to be able to time things out.  This is in a form suitable for use
@@ -791,7 +791,7 @@ int adns_beforepoll(adns_state ads, struct pollfd *fds, int *nfds_io, int *timeo
  */
  
 #if 0
-void adns_afterpoll(adns_state ads, const struct pollfd *fds, int nfds,
+void adns_afterpoll(adns_state ads, const struct adns_pollfd *fds, int nfds,
 		    const struct timeval *now);
 /* Gives adns flow-of-control for a bit; intended for use after
  * poll(2).  fds and nfds should be the results from poll().  pollfd

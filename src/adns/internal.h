@@ -26,7 +26,7 @@
  *  along with this program; if not, write to the Free Software Foundation,
  *  Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: internal.h,v 1.1 2001/07/26 17:06:39 drummer Exp $
+ * $Id: internal.h,v 1.2 2001/07/27 00:46:33 drummer Exp $
  */
 
 #ifndef ADNS_INTERNAL_H_INCLUDED
@@ -57,9 +57,9 @@ typedef unsigned char byte;
 #endif
 
 /* eggdrop */
-#include "../compat/inet_aton.h"
-#include "../compat/inet_ntop.h"
-#include "../compat/inet_pton.h"
+#include "inet_aton.h"
+#include "inet_ntop.h"
+#include "inet_pton.h"
 
 /* Configuration and constants */
 
@@ -84,6 +84,11 @@ typedef unsigned char byte;
 #define DNS_IP6_INT	"ip6",	"int"
 
 #define MAX_POLLFDS  ADNS_POLLFDS_RECOMMENDED
+
+struct adns_pollfd { int fd; short events; short revents; };
+#define ADNS_POLLIN  1
+#define ADNS_POLLPRI 2
+#define ADNS_POLLOUT 4
 
 typedef enum {
   cc_user,
@@ -313,7 +318,7 @@ struct adns__state {
    */
   struct sigaction stdsigpipe;
   sigset_t stdsigmask;
-  struct pollfd pollfds_buf[MAX_POLLFDS];
+  struct adns_pollfd pollfds_buf[MAX_POLLFDS];
   struct server {
     struct in_addr addr;
   } servers[MAXSERVERS];
@@ -671,9 +676,9 @@ void adns__autosys(adns_state ads, struct timeval now);
 void adns__must_gettimeofday(adns_state ads, const struct timeval **now_io,
 			     struct timeval *tv_buf);
 
-int adns__pollfds(adns_state ads, struct pollfd pollfds_buf[MAX_POLLFDS]);
+int adns__pollfds(adns_state ads, struct adns_pollfd pollfds_buf[MAX_POLLFDS]);
 void adns__fdevents(adns_state ads,
-		    const struct pollfd *pollfds, int npollfds,
+		    const struct adns_pollfd *pollfds, int npollfds,
 		    int maxfd, const fd_set *readfds,
 		    const fd_set *writefds, const fd_set *exceptfds,
 		    struct timeval now, int *r_r);

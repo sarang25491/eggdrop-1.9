@@ -28,6 +28,7 @@ EGG_PROG_STRIP
 EGG_PROG_AWK
 EGG_PROG_BASENAME
 AC_CHECK_PROG(UNAME,uname,uname)
+AC_CHECK_PROG(AR,ar,ar)
 
 # Test the os and set the module linking settings
 EGG_CHECK_OS
@@ -41,6 +42,7 @@ AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS(sys/time.h)
 AC_HEADER_TIME
 AC_CHECK_HEADERS(sys/select.h sys/rusage.h unistd.h dlfcn.h stdarg.h std_args.h strings.h limits.h)
+EGG_INADDR_LOOPBACK
 
 # Checks for typedefs, structures, and compiler characteristics
 AC_TYPE_PID_T
@@ -128,6 +130,6 @@ EGG_SUBST_DEST
 EGG_SUBST_MOD_UPDIR
 EGG_CATCH_MAKEFILE_REBUILD
 
-AC_OUTPUT(Makefile doc/Makefile scripts/Makefile src/Makefile src/md5/Makefile src/compat/Makefile src/mod/Makefile)
+AC_OUTPUT(Makefile doc/Makefile scripts/Makefile src/Makefile src/md5/Makefile src/compat/Makefile src/mod/Makefile src/adns/Makefile)
 
 EGG_MSG_CONFIGURE_END

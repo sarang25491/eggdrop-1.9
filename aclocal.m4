@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.45 2001/07/26 17:05:01 drummer Exp $
+dnl $Id: aclocal.m4,v 1.46 2001/07/27 00:46:27 drummer Exp $
 dnl
 
 
@@ -1294,15 +1294,12 @@ if test "$ac_cv_ipv6" = "yes" ; then
         echo "Warning! This option requires kernel IPv6 support!"
         echo "If your kernel does not support IPv6 your bot won't be able"
         echo "to connect to any IPv4 or IPv6 host!"
-        MAKEIPV6="--enable-ipv6"
-else
-        MAKEIPV6=""
 fi
 AC_SUBST(MAKEIPV6)dnl
 ])dnl
 
 
-dnl EGG_TYPE_SOCKLEN_t
+dnl EGG_TYPE_SOCKLEN_T
 dnl
 AC_DEFUN(EGG_TYPE_SOCKLEN_T, [dnl
 AC_CACHE_CHECK(for socklen_t, egg_cv_var_socklen_t, [
@@ -1320,3 +1317,29 @@ then
 fi
 ])dnl
 
+
+dnl EGG_INADDR_LOOPBACK
+dnl
+AC_DEFUN(EGG_INADDR_LOOPBACK, [dnl
+AC_MSG_CHECKING(for INADDR_LOOPBACK)
+AC_CACHE_VAL(adns_cv_decl_inaddrloopback,[
+ AC_TRY_COMPILE([
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+ ],[
+  INADDR_LOOPBACK;
+ ],
+ adns_cv_decl_inaddrloopback=yes,
+ adns_cv_decl_inaddrloopback=no)])
+if test "$adns_cv_decl_inaddrloopback" = yes; then
+ AC_MSG_RESULT(found)
+else
+ AC_MSG_RESULT([not in standard headers, urgh...])
+ AC_CHECK_HEADER(rpc/types.h,[
+  AC_DEFINE(HAVEUSE_RPCTYPES_H)
+ ],[
+  AC_MSG_ERROR([cannot find INADDR_LOOPBACK or rpc/types.h])
+ ])
+fi
+])dnl
