@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2002-02-13 04:00-0600\n"
+"POT-Creation-Date: 2002-02-14 04:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -499,142 +499,135 @@ msgstr ""
 msgid "Dropped bot"
 msgstr ""
 
-#: src/chanprog.c:202 src/chanprog.c:265 src/chanprog.c:271 src/chanprog.c:272
+#: src/chanprog.c:202 src/chanprog.c:264 src/chanprog.c:270 src/chanprog.c:271
 msgid "*unknown*"
 msgstr ""
 
-#. FIXME PLURAL: handle it properly
-#: src/chanprog.c:212
+#: src/chanprog.c:211
 #, c-format
-msgid "I am %1$s, running %2$s:  %3$d user%4$s\n"
+msgid "I am %1$s, running %2$s:  "
 msgstr ""
 
-#: src/chanprog.c:214
+#: src/chanprog.c:213
 #, c-format
 msgid "Running on %1$s %2$s\n"
 msgstr ""
 
-#: src/chanprog.c:216
+#: src/chanprog.c:215
 #, c-format
 msgid "Admin: %s\n"
 msgstr ""
 
-#. days
-#. FIXME PLURAL: handle it properly
-#: src/chanprog.c:222
-#, c-format
-msgid "%d day"
-msgstr ""
-
-#: src/chanprog.c:234 src/cmds.c:559
+#: src/chanprog.c:233 src/cmds.c:559
 msgid "background"
 msgstr ""
 
-#: src/chanprog.c:237 src/cmds.c:559
+#: src/chanprog.c:236 src/cmds.c:559
 msgid "terminal mode"
 msgstr ""
 
-#: src/chanprog.c:239 src/cmds.c:560
+#: src/chanprog.c:238 src/cmds.c:560
 msgid "status mode"
 msgstr ""
 
-#: src/chanprog.c:241 src/cmds.c:560
+#: src/chanprog.c:240 src/cmds.c:560
 msgid "log dump mode"
 msgstr ""
 
-#: src/chanprog.c:258 src/cmds.c:558
+#: src/chanprog.c:257 src/cmds.c:558
 msgid "Online for"
 msgstr ""
 
-#: src/chanprog.c:259
+#: src/chanprog.c:258
 msgid "cache hit"
 msgstr ""
 
 #. info library
-#: src/chanprog.c:263
+#: src/chanprog.c:262
 msgid "Tcl library:"
 msgstr ""
 
 #. info tclversion/patchlevel
-#: src/chanprog.c:268
+#: src/chanprog.c:267
 msgid "Tcl version:"
 msgstr ""
 
-#: src/chanprog.c:271
+#: src/chanprog.c:270
 msgid "header version"
 msgstr ""
 
-#: src/chanprog.c:275
+#: src/chanprog.c:274
 msgid "Tcl is threaded\n"
 msgstr ""
 
-#: src/chanprog.c:287
+#: src/chanprog.c:286
 #, c-format
 msgid "Botnet Nickname: %s\n"
 msgstr ""
 
-#: src/chanprog.c:289
+#: src/chanprog.c:288
 #, c-format
 msgid "Firewall: %1$s, port %2$d\n"
 msgstr ""
 
-#: src/chanprog.c:290
+#: src/chanprog.c:289
 #, c-format
 msgid "Userfile: %1$s   Motd: %2$s\n"
 msgstr ""
 
-#: src/chanprog.c:291
+#: src/chanprog.c:290
 msgid "Directories:\n"
 msgstr ""
 
-#: src/chanprog.c:292
+#: src/chanprog.c:291
 #, c-format
 msgid "  Help    : %s\n"
 msgstr ""
 
-#: src/chanprog.c:293
+#: src/chanprog.c:292
 #, c-format
 msgid "  Temp    : %s\n"
 msgstr ""
 
-#: src/chanprog.c:295
+#: src/chanprog.c:293
 #, c-format
 msgid "  Modules : %s\n"
 msgstr ""
 
-#: src/chanprog.c:300
+#: src/chanprog.c:297
 msgid "New users get flags"
 msgstr ""
 
-#: src/chanprog.c:301
+#: src/chanprog.c:298
 msgid "notify"
 msgstr ""
 
-#: src/chanprog.c:304
-msgid "Permanent owner(s)"
+#: src/chanprog.c:301
+#, c-format
+msgid "Permanent owner(s): %s\n"
 msgstr ""
 
-#: src/chanprog.c:305
+#: src/chanprog.c:302
 #, c-format
 msgid "Ignores last %d mins\n"
 msgstr ""
 
-#: src/chanprog.c:344
+#: src/chanprog.c:341
 msgid "CONFIG FILE NOT LOADED (NOT FOUND, OR ERROR)"
 msgstr ""
 
-#: src/chanprog.c:354
+#: src/chanprog.c:351
 msgid ""
 "STARTING BOT IN USERFILE CREATION MODE.\n"
 "Telnet to the bot and enter 'NEW' as your nickname."
 msgstr ""
 
-#: src/chanprog.c:360
+#: src/chanprog.c:357
 #, c-format
 msgid "USER FILE NOT FOUND!  (try ./eggdrop -m %s to make one)\n"
 msgstr ""
 
-#: src/chanprog.c:363
+#: src/chanprog.c:360
 msgid ""
 "\n"
 "\n"
@@ -642,30 +635,30 @@ msgid ""
 "Telnet to the bot and enter 'NEW' as your nickname.\n"
 msgstr ""
 
-#: src/chanprog.c:366
+#: src/chanprog.c:363
 #, c-format
 msgid "OR go to IRC and type:  /msg %s hello\n"
 msgstr ""
 
-#: src/chanprog.c:367
+#: src/chanprog.c:364
 msgid ""
 "This will make the bot recognize you as the master.\n"
 "\n"
 msgstr ""
 
-#: src/chanprog.c:370
+#: src/chanprog.c:367
 msgid "USERFILE ALREADY EXISTS (drop the -m)\n"
 msgstr ""
 
-#: src/chanprog.c:393
+#: src/chanprog.c:390
 msgid "CANT WRITE TO TEMP DIR"
 msgstr ""
 
-#: src/chanprog.c:408
+#: src/chanprog.c:405
 msgid "Cant reload user file!"
 msgstr ""
 
-#: src/chanprog.c:417
+#: src/chanprog.c:414
 msgid "User file is missing!"
 msgstr ""
 
@@ -1173,7 +1166,7 @@ msgstr ""
 #: modules/irc/msgcmds.c:717 modules/notes/cmdsnote.c:31
 #: modules/notes/cmdsnote.c:73 modules/notes/cmdsnote.c:153
 #: modules/notes/cmdsnote.c:187 modules/notes/cmdsnote.c:221
-#: modules/notes/notes.c:739 modules/notes/notes.c:775 src/cmds.c:2263
+#: modules/notes/notes.c:742 modules/notes/notes.c:778 src/cmds.c:2263
 #: src/cmds.c:2285 src/cmds.c:2552
 msgid "Usage"
 msgstr ""
@@ -1182,7 +1175,7 @@ msgstr ""
 msgid "Error loading module:"
 msgstr ""
 
-#: src/cmds.c:2270 src/modules.c:607
+#: src/cmds.c:2270 src/modules.c:600
 #, c-format
 msgid "Module loaded: %-16s"
 msgstr ""
@@ -1813,7 +1806,7 @@ msgstr ""
 msgid "You can't unload an encryption module"
 msgstr ""
 
-#: modules/blowfish/blowfish.c:456 src/modules.c:569 src/tclmisc.c:208
+#: modules/blowfish/blowfish.c:456 src/modules.c:572 src/tclmisc.c:208
 msgid "Already loaded."
 msgstr ""
 
@@ -2178,7 +2171,7 @@ msgstr ""
 msgid "Use .invites all to see the total list"
 msgstr ""
 
-#: modules/channels/userchan.c:1245 src/userrec.c:429 src/userrec.c:444
+#: modules/channels/userchan.c:1245 src/userrec.c:430 src/userrec.c:445
 msgid "ERROR writing user file."
 msgstr ""
 
@@ -2271,11 +2264,11 @@ msgstr ""
 msgid "Failed to compress file `%s': gzclose failed."
 msgstr ""
 
-#: modules/compress/compress.c:428
+#: modules/compress/compress.c:430
 msgid "This module needs eggdrop1.7.0 or later"
 msgstr ""
 
-#: modules/compress/compress.c:433
+#: modules/compress/compress.c:435
 msgid "You need share module version 2.3 to use the compress module."
 msgstr ""
 
@@ -2360,27 +2353,27 @@ msgstr ""
 msgid "No matching files.\n"
 msgstr ""
 
-#: modules/filesys/filedb3.c:1039
+#: modules/filesys/filedb3.c:1038
 msgid "Directory does not exist"
 msgstr ""
 
-#: modules/filesys/filedb3.c:1045
+#: modules/filesys/filedb3.c:1044
 msgid "File does not exist"
 msgstr ""
 
-#: modules/filesys/filedb3.c:1049
+#: modules/filesys/filedb3.c:1048
 msgid "File is not shared"
 msgstr ""
 
-#: modules/filesys/filedb3.c:1060
+#: modules/filesys/filedb3.c:1059
 msgid "(remote)"
 msgstr ""
 
-#: modules/filesys/filedb3.c:1063
+#: modules/filesys/filedb3.c:1062
 msgid "Error trying to send file"
 msgstr ""
 
-#: modules/filesys/filedb3.c:1087
+#: modules/filesys/filedb3.c:1086
 #, c-format
 msgid "Remote request for /%s%s%s (sending)"
 msgstr ""
@@ -2484,7 +2477,6 @@ msgid "Blanked"
 msgstr ""
 
 #: modules/filesys/files.c:921 modules/filesys/files.c:933
-#: modules/notes/notes.c:657 modules/notes/notes.c:660
 msgid "Erased"
 msgstr ""
 
@@ -3327,7 +3319,7 @@ msgstr ""
 msgid "Changed notes forwarding for %s to: %s\n"
 msgstr ""
 
-#: modules/notes/cmdsnote.c:190 modules/notes/notes.c:743
+#: modules/notes/cmdsnote.c:190 modules/notes/notes.c:746
 msgid "# may be numbers and/or intervals separated by ;"
 msgstr ""
 
@@ -3355,7 +3347,7 @@ msgstr ""
 msgid "Not online; forwarded to %s.\n"
 msgstr ""
 
-#: modules/notes/notes.c:292 modules/notes/notes.c:805
+#: modules/notes/notes.c:292 modules/notes/notes.c:808
 msgid "Notes are not supported by this bot."
 msgstr ""
 
@@ -3363,11 +3355,11 @@ msgstr ""
 msgid "Sorry, that user has too many notes already."
 msgstr ""
 
-#: modules/notes/notes.c:302 modules/notes/notes.c:812
+#: modules/notes/notes.c:302 modules/notes/notes.c:815
 msgid "Cant create notefile.  Sorry."
 msgstr ""
 
-#: modules/notes/notes.c:303 modules/notes/notes.c:813
+#: modules/notes/notes.c:303 modules/notes/notes.c:816
 msgid "Notefile unreachable!"
 msgstr ""
 
@@ -3403,7 +3395,7 @@ msgstr ""
 msgid "You dont have that many messages"
 msgstr ""
 
-#: modules/notes/notes.c:558 modules/notes/notes.c:823
+#: modules/notes/notes.c:558 modules/notes/notes.c:826
 msgid "Use .notes read to read them."
 msgstr ""
 
@@ -3415,44 +3407,40 @@ msgstr ""
 msgid "Erased all notes"
 msgstr ""
 
-#: modules/notes/notes.c:658 modules/notes/notes.c:661
-msgid "left"
-msgstr ""
-
-#: modules/notes/notes.c:780
+#: modules/notes/notes.c:783
 msgid "I don't know anyone by that name.\n"
 msgstr ""
 
-#: modules/notes/notes.c:783
+#: modules/notes/notes.c:786
 msgid "Thats a bot.  You cant leave notes for a bot."
 msgstr ""
 
-#: modules/notes/notes.c:798
+#: modules/notes/notes.c:801
 msgid "Outside note"
 msgstr ""
 
-#: modules/notes/notes.c:799 modules/notes/notes.c:819
+#: modules/notes/notes.c:802 modules/notes/notes.c:822
 msgid "Note delivered."
 msgstr ""
 
-#: modules/notes/notes.c:856 modules/notes/notes.c:916
+#: modules/notes/notes.c:859 modules/notes/notes.c:919
 msgid "For a list:"
 msgstr ""
 
-#: modules/notes/notes.c:864
+#: modules/notes/notes.c:867
 #, c-format
 msgid "### You have %d note%s waiting.\n"
 msgstr ""
 
-#: modules/notes/notes.c:865
+#: modules/notes/notes.c:868
 msgid "### Use '.notes read' to read them.\n"
 msgstr ""
 
-#: modules/notes/notes.c:878
+#: modules/notes/notes.c:881
 msgid "Notes will be stored."
 msgstr ""
 
-#: modules/notes/notes.c:913
+#: modules/notes/notes.c:916
 #, c-format
 msgid "NOTICE %s :You have %d note%s waiting on %s.\n"
 msgstr ""
@@ -3606,7 +3594,7 @@ msgstr ""
 msgid "You need the server module to use the uptime module."
 msgstr ""
 
-#: src/modules.c:110
+#: src/modules.c:108
 #, c-format
 msgid "User file rejected by %s: %s"
 msgstr ""
@@ -3616,40 +3604,44 @@ msgstr ""
 msgid "error during libtdl initialization: %s\n"
 msgstr ""
 
-#: src/modules.c:573
+#: src/modules.c:539
 msgid "Cant determine current directory."
 msgstr ""
 
-#: src/modules.c:587
+#: src/modules.c:541 src/modules.c:543
+msgid "Invalid module's search path."
+msgstr ""
+
+#: src/modules.c:580
 msgid "No start function defined."
 msgstr ""
 
-#: src/modules.c:591
+#: src/modules.c:584
 msgid "Malloc error"
 msgstr ""
 
-#: src/modules.c:623
+#: src/modules.c:616
 msgid "Needed by another module"
 msgstr ""
 
-#: src/modules.c:627
+#: src/modules.c:620
 msgid "No close function"
 msgstr ""
 
-#: src/modules.c:642
+#: src/modules.c:635
 #, c-format
 msgid "Module unloaded: %s"
 msgstr ""
 
-#: src/modules.c:648
+#: src/modules.c:641
 msgid "No such module"
 msgstr ""
 
-#: src/modules.c:867
+#: src/modules.c:860
 msgid "MODULES LOADED:\n"
 msgstr ""
 
-#: src/modules.c:892
+#: src/modules.c:885
 msgid "No such module.\n"
 msgstr ""
 
@@ -3669,7 +3661,7 @@ msgstr ""
 msgid "Cant load modules"
 msgstr ""
 
-#: src/userrec.c:434
+#: src/userrec.c:435
 msgid "Writing user file..."
 msgstr ""
 
