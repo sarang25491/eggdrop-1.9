@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: msgcmds.c,v 1.14 2003/02/03 11:41:34 wcc Exp $";
+static const char rcsid[] = "$Id: msgcmds.c,v 1.15 2003/02/04 04:54:15 wcc Exp $";
 #endif
 */
 
@@ -766,7 +766,6 @@ static int msg_status(char *nick, char *host, struct userrec *u, char *par)
   return 1;
 }
 
-/* FIXME: botnet dependencies */
 static int msg_die(char *nick, char *host, struct userrec *u, char *par)
 {
   char s[1024];
@@ -793,8 +792,6 @@ static int msg_die(char *nick, char *host, struct userrec *u, char *par)
   else
     snprintf(s, sizeof s, "BOT SHUTDOWN (%s: %s)", u->handle, par);
   chatout("*** %s\n", s);
-  botnet_send_chat(-1, myname, s);
-  botnet_send_bye();
   if (!par[0])
     nuke_server(nick);
   else

@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tcl.c,v 1.95 2003/02/03 11:41:34 wcc Exp $";
+static const char rcsid[] = "$Id: tcl.c,v 1.96 2003/02/04 04:54:15 wcc Exp $";
 #endif
 
 #include <stdlib.h>		/* getenv()				*/
@@ -78,7 +78,7 @@ int handlen = HANDLEN;
 Tcl_Interp *Tcl_CreateInterp();
 
 
-static void botnet_change(char *new)
+static void myname_change(char *new)
 {
   if (strcasecmp(myname, new)) {
      if (myname[0])

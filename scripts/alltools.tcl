@@ -20,7 +20,7 @@
 # guppy     03Mar2002: optimized
 # Souperman 05Nov2002: added ordnumber
 #
-# $Id: alltools.tcl,v 1.13 2002/11/24 04:50:33 wcc Exp $
+# $Id: alltools.tcl,v 1.14 2003/02/04 04:54:15 wcc Exp $
 #
 ########################################
 # Descriptions of available commands:
@@ -143,19 +143,19 @@ set toolkit_loaded 1
 #
 
 proc putmsg {dest text} {
-  puthelp "PRIVMSG $dest :$text"
+  putserv -help "PRIVMSG $dest :$text"
 }
 
 proc putchan {dest text} {
-  puthelp "PRIVMSG $dest :$text"
+  putserv -help "PRIVMSG $dest :$text"
 }
 
 proc putnotc {dest text} {
-  puthelp "NOTICE $dest :$text"
+  putserv -help "NOTICE $dest :$text"
 }
 
 proc putact {dest text} {
-  puthelp "PRIVMSG $dest :\001ACTION $text\001"
+  putserv -help "PRIVMSG $dest :\001ACTION $text\001"
 }
 
 #

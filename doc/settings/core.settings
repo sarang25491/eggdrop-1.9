@@ -1,19 +1,22 @@
---------------------------------------------
-|Eggdrop Config File Settings Documentation|
---------------------------------------------
+Eggdrop Core Settings
+Last revised: Feburary 03, 2003
+     _________________________________________________________________
 
-This file describes syntax and all settings for your eggdrop configuration
-file. Please note, that you don't need to set all those var to make your
-bot work properly.
+                           Eggdrop Core Settings
 
 
+This file describes the syntax and all the settings of your Eggdrop
+configuration file. Please note that you don't need to set all of these
+variables to make your bot work properly.
 
-##### EGGDROP CORE SETTINGS #####
+
+##### EXECUTABLE PATH #####
 
 
-The first line in eggdrop configuration file should contain a full qualified
-path to eggdrop executable. It has to be implemented in the way the example
-shows to make the config file work as a shell script
+The first line in an Eggdrop configuration file should contain
+a fully qualified path to your Eggdrop executable. It has to be
+implemented in the way the example shows to make the config file
+work as a shell script.
 
 Example:
 
@@ -22,93 +25,115 @@ Example:
 
 ##### BASIC STUFF #####
 
-You can change the basic eggdrop appearence and behaviour in this section.
+You can change the basic Eggdrop appearance and behavior in this section.
+
+  set myname "LamestBot"
+    This is used to identify the bot. You MUST set this.
 
 
-set username "lamest"
-    This setting defines the username the bot uses.
-    Note that his setting is working only if no ident daemon is running on
-    the machine your bot is on
+  set username "lamest"
+    This setting defines the username the bot uses on IRC. This setting has 
+    no effect if an ident daemon is running on your bot's machine.
 
 
-set admin "Lamer <email: lamer@lamest.lame.org>"
+  set admin "Lamer <email: lamer@lamest.lame.org>"
     This setting defines which contact person should be shown in .status,
-    /msg help and other places. You really should include this info.
+    /msg help, and other places. You really should include this information.
 
 
-set network "SomeIrcNetwork"
-    This setting is used only for info to share with others on your botnet
+  set network "SomeIrcNetwork"
+    This setting is used only for info to share with others on your botnet.
+    Set this to the IRC network your bot is connected to.
 
 
-set timezone "EST"
+  set dcc_command_chars "./"
+    These characters at the beginning of text signify a command on the
+    partyline.
+
+
+  set timezone "EST"
     This setting defines the timezone is your bot in. It's used for internal
-    routines as well as for logfile timestamping or scripting purposes.
+    routines as well as for logfile timestamping and scripting purposes.
     The timezone string specifies the name of the timezone and must be three
-    or more alphabetic characters.
-    ex. Central European Time(UTC+1) could be "CET"
+    or more alphabetic characters. For example, Central European Time(UTC+1)
+    should be "CET".
 
 
-set offset "5"
-    offset specifies the time value to be added to the local time to get
-    Coordinated Universal Time (UTC aka GMT). The offset is positive if the
-    local timezone is west of the Prime Meridian and negative if it is east.
-    The value(hours) must be between 0 and 24
-    ex. if the timezone is UTC+1 the offset is -1
+  set offset "5"
+    The offset setting specifies the time value to be added to the local 
+    time to get Coordinated Universal Time (UTC aka GMT). The offset is 
+    positive if the local timezone is west of the Prime Meridian and 
+    negative if it is east. The value (in hours) must be between -23 and
+    23. For example, if the timezone is UTC+1, the offset is -1.
 
 
-set env(TZ) "$timezone $offset" (disabled by default)
-    If you dont want to use the timezone setting for scripting purpose only
-    but instead everywhere possible then use this setting.
+  set env(TZ) "$timezone $offset" (disabled by default)
+    If you don't want to use the timezone setting for scripting purposes only,
+    but instead everywhere possible, then use this setting.
+
+
+  set my_ip "99.99.0.0"
+  set my_ip6 "3ffe:1337::1"
+    If you're using virtual hosting (your machine has more than 1 IP), you may
+    want to specify the particular IP to bind to. my_ip will be used for IPv4
+    hosts, and my_ip6 will be used for IPv6 hosts.
 
 
 ##### LOG FILES #####
 
-Eggdrop is capable of logging various stuff, from channel chatter to
-commands people use on the bot or file transfers.
+Eggdrop is capable of logging various things, from channel chatter to
+partyline commands and file transfers.
 
-Logfiles are kept normaly for 24 hours. Afterwards they'll be renamed
-to "(logfilename).yesterday". After 48 hours they'll get overwritten by the
-logfile of the next day.
-
-
-set max-logs 5
-    maximum number of logfiles to allow - this can be increased if needed
-    (don't decrease this)
+Logfiles are normally kept for 24 hours. Afterwards, they will be renamed
+to "(logfilename).yesterday". After 48 hours, they will be overwritten by
+the logfile of the next day.
 
 
-set max-logsize 0
-    maximum size of your logfiles, set this to 0 to disable.
-    This value is in KiloBytes, so '550' would mean cycle logs when it
-    reaches the size of 550 KiloBytes.
-    Note that this only works if you have keep-all-logs 0 (OFF)
+  set max_logsize 0
+    This is the maximum size of your logfiles. Set it to 0 to disable.
+    This value is in kilobytes, so '550' would mean cycle logs when it
+    reaches the size of 550 kilobytes. Note that this only works if you
+    have keep-all-logs set to 0 (OFF).
 
 
-set quick-logs 0
-    Defaultly eggdrop writes every 5 minutes its logfiles to disk. You can
-    change this behaviour by turning this setting to 1 (ON). Eggdrop will
-    write and check the logfiles for size every minute.
-    Note that this setting might increase the cpu usage of your bot (on the
-    other hand it will decrease your mem usage)
+  set quick_logs 0
+    This could be good if you have had a problem with logfiles filling
+    your quota/hard disk or if you log +p and publish it to the web, and
+    you need more up-to-date info. Note that this setting might increase
+    the CPU usage of your bot (on the other hand it will decrease your RAM
+    usage).
 
+  set raw_log 0
+    This setting allows you the logging of raw incoming server traffic via
+    console/log flag 'r', raw outgoing server traffic via console/log mode 'v',
+    raw botnet traffic via console/log mode 't', and raw share traffic via
+    console/log mode 'h'. These flags can create a large security hole,
+    allowing people to see user passwords. This is now restricted to +n users
+    only. Please choose your owners with care.
 
-logfile <logflags> <channel> "logs/logfile"
-    This setting actually tells the bot what should be loged from where in
-    which file. (duh!).
+  logfile <logflags> <channel> "logs/logfile"
+    This setting tells the bot what should be logged, from where, and to
+    which file.
 
-    The most common log file flags are:
-      m  private msgs/ctcps to the bot
-      k  kicks, bans, mode changes on the channel
-      j  joins, parts, netsplits on the channel
-      p  public chatter on the channel
-      s  server connects/disconnects/notices
-      b  information about bot linking and userfile sharing
-      c  commands people use (via msg or dcc)
-      x  file transfers and file-area commands
-      o  other: misc info, errors -- IMPORTANT STUFF
-      w  wallops: msgs between IRCops (be sure to set the bot +w)
-    There are others, but you probably shouldnt log them, it'd be
-    rather unethical ;). There are also five user-defined levels ('1'..'5') which
-    are used by Tcl scripts.
+    Logfile flags:
+      b - information about bot linking and userfile sharing
+      c - commands
+      d - misc debug information
+      h - raw share traffic
+      j - joins, parts, quits, and netsplits on the channel
+      k - kicks, bans, and mode changes on the channel
+      m - private msgs, notices and ctcps to the bot
+      o - misc info, errors, etc (IMPORTANT STUFF)
+      p - public text on the channel
+      r - raw incoming server traffic
+      s - server connects, disconnects, and notices
+      t - raw botnet traffic
+      v - raw outgoing server traffic
+      w - wallops (make sure the bot sets +w in init-server)
+      x - file transfers and file-area commands
+
+    Note that modes d, h, r, t, and v can fill disk quotas quickly. There are
+    also eight user-defined levels (1-8) which can be used by Tcl scripts.
 
     Each logfile belongs to a certain channel. Events of type 'k', 'j', and 'p'
     are logged to whatever channel they happened on. Most other events are
@@ -120,75 +145,82 @@ logfile <logflags> <channel> "logs/logfile"
     logfile mco * "logs/eggdrop.log"
     logfile jpk #lamest "logs/lamest.log"
 
-    In 'eggdrop.log' put private msgs/ctcps, commands, misc info, and errors
-    from any channel
-    In 'lame.log' put joins, parts, kicks, bans, public chatter and mode changes
-    from #lamest
+    In 'eggdrop.log', put private msgs/ctcps, commands, misc info, and errors
+    from any channel.
+
+    In 'lamest.log', log all joins, parts, kicks, bans, public chatter, and
+    mode changes from #lamest.
 
 
-set keep-all-logs 0
-    If you want to keep your logfiles forever turn this setting on. All
-    logfiles will get suffix ".[day, 2 digits][month, 3 letters][year, 4 digits]"
-    Note that your quota might get full by this, so check your logfiles often and
-    download them.
-    Valid settings are 0 for OFF and 1 ON.
+  set keep_all_logs 0
+    If you want to keep your logfiles forever, turn this setting on. All 
+    logfiles will get the suffix 
+    ".[day, 2 digits][month, 3 letters][year, 4 digits]". Note that your 
+    quota/hard-disk might be filled by this, so check your logfiles
+    often and download them.
 
 
-set switch-logfiles-at 300
-    You can specify in this setting, when eggdrop should switch the logfiles
-    and started fresh.
-    You have to use military time in here. 300 is default and describes 00:00.
-    Note that a leading 0 will make Tcl think this is an octal value,
-    something you probably don't want.
-
-
-set quiet-save 0
-    Those nasty "Writing user file..." and "Writing channel file ..." messages
-    wont be logged anymore if this option is enabled.
-    Valid settings are 0 for OFF and 1 ON.
-
-
-set logfile-suffix ".%d%b%Y"
-    If keep-all-logs is 1, this setting will define the suffix of the logfiles.
+  set logfile_suffix ".%d%b%Y"
+    If keep_all_logs is 1, this setting will define the suffix of the logfiles.
     The default will result in a suffix like "04May2000". "%Y%m%d" will produce
-    the often used yyyymmdd format. Read the strtime manpages for more options.
+    the often used yyyymmdd format. Read the strftime manpages for more options.
     NOTE: On systems which don't support strftime, the default format will
     be used _always_.
 
 
+  set switch_logfiles_at 300
+    You can specify when Eggdrop should switch logfiles and start fresh.
+    use military time for this setting. 300 is the default, and describes
+    03:00 (AM).
+
+
+##### CONSOLE #####
+  
+  set console "mkcobxs"
+    This is the default console mode. It uses the same event flags as the log
+    files do. The console channel is automatically set to your "primary" channel,
+    which is set in the modules section of the config file. Masters can change
+    their console channel and modes with the '.console' command.
+
+
+
 ##### FILES AND DIRECTORIES #####
 
-set userfile "LamestBot.user"
-    Specify here how your userfile should be called
-
-set pidfile "pid.LamestBot"
-    Specify here what filename eggdrop will save its pid under
+  set userfile "LamestBot.user"
+    Specify here the filename your userfile should be saved as.
 
 
-set help-path "help/"
-    Specify here where eggdrop should look for help files.
-    Don't modify this setting until you know what you're doing!
+  set pidfile "pid.LamestBot"
+    Specify here the filename Eggdrop will save its pid to. If no pidfile is
+    specified, pid.(myname) will be used.
 
 
-set temp-path "/tmp"
-    Set here a place to store temporarily files
+  set help_path "help/"
+    Specify here where Eggdrop should look for help files. Don't modify this
+    setting unless you know what you're doing!
 
 
-set motd "text/motd"
-    The MOTD (motto of the day) is displayed when people dcc chat or telnet
-    to the bot. Look into doc/settings.motd or type '.help set motd' in DCC CHAT or
-    telnet connection for options.
+  set text_path "text/"
+    Specify here where Eggdrop should look for text files. This is used for
+    certain Tcl and DCC commands.
 
 
-set telnet-banner "text/banner"
-    The telnet banner is displayed when people first make a telnet connection
-    to the bot. Look into doc/settings.motd or type '.help set motd' in DCC CHAT or
-    telnet connection for options.
+  set temp_path "/tmp"
+    Set here a place to store temporary files.
 
 
-set userfile-perm 0600
-    Specifies what permissions the user, channel and notes (if notes module
-    is loaded) files should be set to.
+  set motd "text/motd"
+    The MOTD (Message Of The day) is displayed when people dcc chat or telnet
+    to the bot. Look at doc/text-substitutions.doc for options.
+
+
+  set telnet_banner "text/banner"
+    This banner will be displayed on telnet connections. Look at
+    doc/text-substitutions.doc for options.
+
+
+  set userfile_perm 0600
+    This specifies what permissions the user, channel, and notes files should be set to.
     The octal values are the same as for the chmod system command.
 
     To remind you:
@@ -203,29 +235,24 @@ set userfile-perm 0600
     applications.
 
 
-set mod-path "modules/"
-    This path specifies the path were eggdrop should look for its modules
+  set mod_path "modules/"
+    This path specifies the path were Eggdrop should look for its modules.
+    If you run the bot from the compilation directory, you will want to set
+    this to "". If you use 'make install' (like all good kiddies do ;), this
+    is a fine default. Otherwise, use your head :).
 
 
 
-##### BOTNET, DCC AND NETWORK #####
+##### DCC/NETWORK #####
 
-Settings in this section should be unimportant fur you until you deal
-with botnets (multiple eggdrops conected together to maximize efficency).
-You should read doc/BOTNET before modifying these settings.
-
-
-set botnet-nick "LlamaBot" (disabled by default)
-    If you want to use a differnt nickname on the botnet than you use on
-    IRC (i.e. if you're in an untrusted botnet) set it here.
-
-
-listen <port> <mode>
+  listen <port> <mode>
     The listen command opens a telnet port by which you or other bots can
-    interact with the eggdrop by telneting in.
+    interact with the Eggdrop by telneting in.
 
-    Valid ports are (as long as you aren't root) >1024.
-    Valid modes are 'all', 'bots' and 'users'. You can assign special ports
+    Valid ports are typically anything between 1025 and 65535 assuming the 
+    port is not already in use.
+
+    Valid modes are 'all', 'bots', and 'users'. You can assign special ports
     for users and bots, or one for all.
 
     Examples:
@@ -233,243 +260,191 @@ listen <port> <mode>
     listen 3333 bots
     listen 4444 users
 
-    or:
+    Or:
 
     listen 3333 all
 
-    There are more options for the listen command in doc/tcl-commands.doc
-    Note, if you are running more than one bot on the same machine, you will
-    want to space the telnet ports at LEAST 5 apart... 10 is even better
+    There are more options for the listen command in doc/tcl-commands.doc.
+    Note that if you are running more than one bot on the same machine, you 
+    will want to space the telnet ports at LEAST 5 apart. 10 is even better.
 
 
-set remote-boots 2
-    This setting defines if people can boot users on the eggdrop from other
-    bots in your botnet. Valid settings are:
-     0 - allow *no* outside boots
-     1 - allow boots from sharebots
-     2 - allow any boots
-
-
-set share-unlinks 1
-    This setting prohibits eggdrop to unlink from share bots if an remote bots
-    tells so.
-
-
-set telnet-flood 5:60
-    Define here how many telnet connection attempt in how many seconds from
-    the same host constitute a flood.
-    Attempts:Seconds
-
-
-set paranoid-telnet-flood 1
-    If you telnet-flood to apply even to +f users, set this setting to 1
-    Valid settings are 0 for OFF and 1 ON.
-
-
-set protect-telnet 0
+  set protect_telnet 0
     This setting will drop telnet connections not matching a known host. It
-    greatly improves protection from IRCOPs, but makes it impossible for NOIRC
-    bots to add hosts or have NEW as a valid login.
-    Valid settings are 0 for OFF and 1 ON.
+    greatly improves protection from IRCops, but makes it impossible to add
+    hosts on limbo (NOIRC) bots or have NEW as a valid login.
 
 
-set quiet-reject 1
-    If turned to 1, the bot will squelch the error message when rejecting a
-    DCC CHAT or SEND.
-    Normally eggdrop tells the DCC user that the CHAT or SEND has been
-    rejected because they don't have access, but sometimes IRC server
-    operators detect bots that way.
+  set ident_timeout 5
+    This settings defines a time in seconds that the bot should wait before
+    a dcc chat, telnet, or relay connection times out.
 
 
-set max-dcc 50
-    Set here the maximum number of dcc connections you will allow - you can
-    increase this later, but never decrease it.
+  set connect_timeout 15
+    This settings defines a time in seconds that the bot should wait before
+    a dcc chat, telnet, or relay connection times out.
 
 
-set dcc-flood-thr 3
-    Specify here the number of lines from a user on the partyline (dcc, telnet)
-    before they are considered to be flooding (and therefore get booted)
+  set dcc_flood_thr 3
+    Specify here the number of lines to accept from a user on the partyline
+    within 1 second before they are considered to be flooding and therefore
+    get booted.
 
 
-set resolve-timeout 15
+  set telnet_flood 5:60
+    Define here how many telnet connection attempts in how many seconds from
+    the same host constitute a flood. The correct format is Attempts:Seconds.
+
+
+  set paranoid_telnet_flood 1
+    If you want telnet-flood to apply even to +f users, set this setting to 1.
+
+
+  set resolve_timeout 15
     Set here the amount of seconds before giving up on hostname/address
-    lookup. (you might want to increase this if you are on a slow network).
+    lookup (you might want to increase this if you are on a slow network).
 
 
-set ident-timeout 5
-    Set a timeout in seconds how long to wait on ident-lookups
+
+##### MORE ADVANCED SETTINGS #####
+
+  set firewall "!sun-barr.ebay:3666"
+    Set this to your socks host if your Eggdrop sits behind a firewall. If 
+    you use a Sun "telnet passthru" firewall, prefix the host with a "!".
 
 
-set connect-timeout 15
-    This settings defines a timeout in seconds how long the bot should wait for
-    a dcc chat, telnet, relay, etc connection.
-
-
-set my-ip "99.99.0.0"
-    If you're using virtual hosting (your machine has more than 1 IP), you
-    may want to specify the particular IP to bind to. You can specify
-    by IP only. You may also want to set the my-ip here if
-    eggdrop has trouble detecting it when it starts up.
-
-
-set firewall "host:port"
-    Set this to your socks host if your eggdrop sits behind a firewall
-
-    Example:
-
-    set firewall "proxy:178"
-
-    If you use a Sun "telnet passthru" firewall, use this setting:
-
-    Example:
-
-    set firewall "!sun-barr.ebay:3666"
-
-
-set nat-ip "127.0.0.1"
+  set nat-ip "127.0.0.1"
     If you have a NAT firewall (you box has an IP in one of the following
     ranges: 192.168.0.0-192.168.255.255, 172.16.0.0-172.31.255.255,
     10.0.0.0-10.255.255.255 and your firewall transparently changes your
-    address to a unique address for your box.) or you have IP masquerading
-    between you and the rest of the world, and /dcc chat,/ctcp chat or
-    userfile shareing aren't working. Enter your outside IP here.
-    Do not enter anything for my-ip if you use this setting.
+    address to a unique address for your box) or you have IP masquerading
+    between you and the rest of the world, and /dcc chat, /ctcp chat or
+    userfile sharing aren't working, enter your outside IP here. Do not
+    enter anything for my_ip if you use this setting.
 
 
-set reserved-portrange 2010:2020
+  set reserved_portrange 2010:2020
     If you want all dcc file transfers to use a particular portrange either
     because you're behind a firewall, or for other security reasons, set it
     here.
 
 
-
-set dupwait-timeout 5
-    If your eggdrop rejects bots that actually have already disconnected from
-    another hub, but the disconnect information has not yet spread over the
-    botnet due to lag, use this setting.
-    The bot will wait dupwait-timeout seconds before it checks again and then
-    finally reject the bot.
+  set ignore_time 15
+    Set the time in minutes that temporary ignores should last.
 
 
-
-##### CONSOLE #####
-
-set console "mkcobxs"
-    This is the default console mode. It uses the same event flags as the log
-    files do.
-    Note that the console channel is automatically set to your "primary" channel
-    (the one you defined first in config file)
-    Masters can change their console channel and modes with the '.console' command
-
-set debug-output 0
-    Enables certain console/logging flags which can be used to see all
-    information sent to and from the server, also botnet and share traffic.
-    NOTE: This is a large security hole, allowing people to see passwords and
-    other information they shouldn't otherwise really see. These flags are
-    restricted to +n users only. Please choose your owners carefully when you
-    enable this option.
-    Valid settings are 0 for OFF and 1 ON.
-
-
-##### COMMON STUFF #####
-
-set ignore-time 15
-    Set the time in minutes how long temp. ignores should last
-
-
-set hourly-updates 00
-    Define here what eggdrop calls 'hourly'. All calls to it, including such things
-    as note notifying or userfile saving are affected by this.
+  set hourly_updates 00
+    Define here what Eggdrop considers 'hourly'. All calls to it, including such
+    things as note notifying or userfile saving, are affected by this.
 
     Example:
 
-    set hourly-updates 15
+      set hourly_updates 15
 
-    Bot will save 15 minutes past every hour its userfile
-
-
-set owner "MrLame, MrsLame"
-    Put all permanent owner into this variable
+    The bot will save its userfile 15 minutes past every hour.
 
 
-set default-flags "hp"
-    Enter all flags that new users should get as a default.
+  set owner "MrLame, MrsLame"
+    Un-comment this line and set the list of owners of the bot.
+    You NEED to change this setting.
 
 
-set whois-fields "url birthday"
-    Enter all user-defined fields that should be displayed in a '.whois'
-    This will only be shown if the user has one of these xtra fields.
+  set notify_newusers "$owner"
+    Who should a note be sent to when new users are learned?
+
+
+  set default_flags "hp"
+    Enter the flags that all new users should get by default. See '.help
+    whois' on the partyline for a list of flags and their descriptions.
+
+
+  set whois_fields "url birthday"
+    Enter all user-defined fields that should be displayed in a '.whois'.
+    This will only be shown if the user has one of these extra fields.
     You might prefer to comment this out and use the userinfo1.0.tcl script
     which provides commands for changing all of these.
 
 
-set die-on-sighup 0
-    Enable this setting if you want your eggdrop on receiving a SIGHUP.
-    Otherwise eggdrop will just rehash.
-    Valid settings are 0 for OFF and 1 ON.
+  set die_on_sighup 0
+    Enable this setting if you want your Eggdrop to die upon receiving a SIGHUP
+    kill signal. Otherwise, the Eggdrop will just save its userfile and rehash.
 
 
-set die-on-sigterm 0
-    Enable this setting if you want your eggdrop on receiving a SIGTERM.
-    Otherwise eggdrop will just save its userfile.
-    Valid settings are 0 for OFF and 1 ON.
+  set die_on_sigterm 0
+    Enable this setting if you want your Eggdrop to die upon receiving a SIGTERM
+    kill signal. Otherwise, the Eggdrop will just save its userfile and rehash.
 
 
-set allow-dk-cmds 1
-    Enable this setting, if you want +d & +k users to use commands bound as -|-
-    Valid settings are 0 for OFF and 1 ON.
+  unbind dcc n tcl *dcc:tcl
+  unbind dcc n set *dcc:set
+    Comment these two lines if you wish to enable the .tcl and .set commands.
+    If you select your owners wisely, you should be okay enabling these.
+
+
+  unbind dcc n simul *dcc:simul
+    Comment out this line to add the 'simul' partyline command (owners
+    can manipulate other people on the party line). Please select owners
+    wisely and use this command ethically!
+
+
+  set max_dcc 50
+    Set here the maximum number of dcc connections you will allow. You can
+    increase this later, but never decrease it.
+
+
+  set dupwait_timeout 5
+    If your Eggdrop rejects bots that actually have already disconnected from
+    another hub, but the disconnect information has not yet spread over the
+    botnet due to lag, use this setting. The bot will wait dupwait-timeout 
+    seconds before it checks again and then finally reject the bot.
+
 
 
 ##### MODULES #####
 
-After those core settings you should start loading up any modules. Modules are
-loaded by the command "loadmodule module". Eggdrop looks for modules in the
-directory you specified by the module-path setting in the path section.
-Documentation and a list of all modules can be found in doc/modules directory
+After the core settings, you should start loading modules. Modules are 
+loaded by the command "loadmodule <module>". Eggdrop looks for modules in
+the directory you specified by the module-path setting in the files and 
+directories section.
 
-Please note, that for different configurations different modules are needed.
+Please note that for different configurations, different modules are needed.
 Four examples:
 
-- Channel Security Bot
+ Channel Security Bot:
+    This bot needs the channels, blowfish, console, dns, irc, and (if you 
+    like) ctcp modules loaded. More is not needed and makes the bot slower.
 
-- Public IRC Bot
+  Public IRC Bot:
+    A public bot should have all modules available loaded since they provide 
+    all functions for everyday use.
 
-- Secure Filesys Bot
+  Secure Filesys Bot:
+    This bot needs all normal IRC operating modules, but not the notes, seen,
+    ctcp or share modules.
 
-- Limbo Bot
-
-Channel Security Bot:
-This bot needs channel, console, dns, irc and if you like ctcp module loaded.
-More is not needed and makes the bot slower.
-
-Public Bot:
-A public bot should have all modules available loaded since they provide all
-functions for everybody.
-
-Secure Filesys Bot:
-This bot needs all normal irc operating modules but not notes, ctcp or
-share module.
-
-Limbo Bot:
-A limbo bot (bot serves as a botnet hub outside irc) just needs channels, console,
-dns and maybe notes or share module loaded. Of course blowfist needs to be loaded
-here, too.
+  Limbo Bot:
+    A limbo bot (serves as a botnet hub outside IRC) just needs the channels,
+    console, dns, and maybe notes or share modules loaded. Of course, blowfish
+    needs to be loaded here, too.
 
 
 
 ##### SCRIPTS #####
 
-Script section should be placed at the end of the config file. All modules should be
-loaded and their variables should be set at this point.
+The scripts section should be placed at the end of the config file. All modules
+should be loaded and their variables should be set at this point.
 
+  source scripts/script.tcl
+    This line loads script.tcl from the scripts directory inside your Eggdrop's
+    directory. All scripts should be put there, although you can place them where
+    you like as long as you can supply a fully qualified path to them.
 
-source scripts/script.tcl
-    This line loads script.tcl in the scripts directory of your eggdrop. All
-    script should be put there, although you can place them where you like as
-    long as you can supply a fully qualified path to them.
+    Some commonly loaded scripts are alltools.tcl and action.fix.tcl. 
+    
+    The appropriate source lines are:
 
-    Some commonly loaded scripts are alltools.tcl and action.fix.tcl. The
-    aproperiate source lines are looking so:
+      source scripts/alltools.tcl
+      source scripts/action.fix.tcl
+     _________________________________________________________________
 
-    source scripts/alltools.tcl
-    source scripts/action.fix.tcl
+   Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
