@@ -1,3 +1,22 @@
+2001-10-11 18:24  Tothwolf <tothwolf@techmonkeys.org>
+
+	* src/: Makefile.am, chanprog.c, flags.c, irccmp.c, irccmp.h,
+	match.c, match.h, misc.c, modules.c, proto.h, rfc1459.c, userent.c,
+	userrec.c, users.c, mod/module.h, mod/modvals.h,
+	mod/channels.mod/channels.c, mod/channels.mod/cmdschan.c,
+	mod/channels.mod/userchan.c, mod/irc.mod/chan.c,
+	mod/irc.mod/cmdsirc.c, mod/irc.mod/irc.c, mod/irc.mod/mode.c,
+	mod/irc.mod/msgcmds.c, mod/server.mod/server.c,
+	mod/server.mod/servmsg.c, mod/share.mod/share.c,
+	mod/transfer.mod/transfer.c:
+
+	* rfc1459.c cleaned up and renamed to irccmp.c 
+	* rfc_casecmp() renamed to irccmp() 
+	* rfc_ncasecmp() renamed to ircncmp() 
+	* rfc_toupper() renamed to irctoupper() 
+	* rfc_tolower() renamed to irctolower() 
+	* more match.c cleanups 
+
 2001-10-11 13:01  Tothwolf <tothwolf@techmonkeys.org>
 
 	* src/: dns.c, eggdrop.h, net.c, mod/channels.mod/cmdschan.c,
