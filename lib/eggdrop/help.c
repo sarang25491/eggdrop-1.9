@@ -24,7 +24,7 @@
  */
  
 #ifndef lint
-static const char rcsid[] = "$Id: help.c,v 1.5 2004/06/19 10:30:41 wingman Exp $";
+static const char rcsid[] = "$Id: help.c,v 1.6 2004/06/19 17:19:25 wingman Exp $";
 #endif
 
 #include <sys/types.h>
@@ -180,15 +180,17 @@ help_load_description (help_desc_t *desc, xml_node_t *parent)
 		if (ptr != NULL)
 			text [(size_t)(ptr - text)] = '\0';
 
-		if (desc->nlines == 0 && strlen (text) == 0)
+		/* Skip empty first lines */
+		if (desc->nlines == 0 && strlen (text) == 0) {
 			indent = -1;
-			
-		desc->lines = realloc (desc->lines, 
-			(desc->nlines + 1) * sizeof(char *));
-		desc->lines[desc->nlines++] = strdup (text);
+		} else {	
+			desc->lines = realloc (desc->lines, 
+				(desc->nlines + 1) * sizeof(char *));
+			desc->lines[desc->nlines++] = strdup (text);
+		}
 
 		if (ptr == NULL)
-			return;
+			break;	
 
 		text += (size_t)(ptr - text) + 1;
 		if (text [-1] == '\r' && text[0] == '\n')
@@ -603,8 +605,6 @@ print_section (const char *name, help_section_t **s, partymember_t *member)
 	for (i = 0; i < section->desc.nlines; i++) {
 		partymember_printf (member, "  %s", section->desc.lines[i]);
 	}	
-	if (section->desc.nlines > 0)
-		partymember_printf (member, "");
 
 	/* we want 4 entries in one row */
 	for (i = 0; i < section->nentries; ) {

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.30 2004/06/17 13:32:44 wingman Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.31 2004/06/19 17:19:25 wingman Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -551,7 +551,7 @@ static bind_list_t core_party_binds[] = {
 	{"n", "get", party_get},		/* DDC	*/
 	{"n", "set", party_set},		/* DDC	*/
 	{"n", "unset", party_unset},		/* DDC	*/
-	{"n", "status", party_status},		/* DDD	*/
+	{"n", "status", party_status},		/* DDC	*/
 	{"n", "save", party_save},		/* DDD	*/
 	{"n", "die", party_die},		/* DDD	*/
 	{"n", "+user", party_plus_user},	/* DDC	*/

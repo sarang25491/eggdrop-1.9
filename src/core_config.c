@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_config.c,v 1.16 2004/06/17 13:32:44 wingman Exp $";
+static const char rcsid[] = "$Id: core_config.c,v 1.17 2004/06/19 17:19:25 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -35,8 +35,8 @@ static config_var_t core_config_vars[] = {
 	{"userfile", &core_config.userfile, CONFIG_STRING},		/* DDC	*/
 
 	/* The owner. */
-	{"owner", &core_config.owner, CONFIG_STRING},			/* DDD	*/
-	{"admin", &core_config.admin, CONFIG_STRING},			/* DDD	*/
+	{"owner", &core_config.owner, CONFIG_STRING},			/* DDC	*/
+	{"admin", &core_config.admin, CONFIG_STRING},			/* DDC	*/
 
 	/* Paths. */
 	{"help_path", &core_config.help_path, CONFIG_STRING},		/* DDD	*/

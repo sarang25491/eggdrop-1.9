@@ -20,6 +20,16 @@
 		</command>
 	</section>
 	
+	<section name="Administration">
+		<command name="status" flags="n">
+			<args />
+			<description>
+				Displays a condensed block of status information about the bot.
+				is running.
+			</description>
+		</command>
+	</section>
+
 	<section name="User Management">
 
 		<command name="+host" flags="m">		
