@@ -1,3 +1,13 @@
+2001-10-12 02:27  stdarg <stdarg@techmonkeys.org>
+
+	* src/: botnet.c, main.c, match.c, net.c, tcl.c, tclhash.c:
+
+	Moved some stuff from main.c to botnet.c (for modularizing botnet) 
+	Changed irctoupper to _irctoupper in match.c (temporary fix, cuz
+	something is making it crash (I think irctoupper isn't initialized
+	or exported or something)) Added code to expand the socket table
+	when it's full.  
+
 2001-10-11 19:38  Tothwolf <tothwolf@techmonkeys.org>
 
 	* src/patch.h:
