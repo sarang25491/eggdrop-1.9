@@ -1,3 +1,13 @@
+2001-12-10 03:22  Jeff Fisher <guppy@techmonkeys.org>
+
+	* eggdrop.complete.conf, doc/html/egg-core.html,
+	doc/settings/core.settings, help/core.help, help/set/cmds2.help,
+	lib/eggdrop/module.h, modules/ctcp/ctcp.c,
+	modules/filesys/filesys.c, modules/server/server.c, src/cmds.c,
+	src/dcc.c, src/flags.c, src/modules.c, src/tcl.c:
+
+	require-p is now gone as a config setting 
+
 2001-12-10 02:50  Jeff Fisher <guppy@techmonkeys.org>
 
 	* eggdrop.complete.conf, doc/html/mod-irc.html,
