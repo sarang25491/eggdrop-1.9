@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: perlscript.c,v 1.24 2003/01/02 21:33:15 wcc Exp $";
+static const char rcsid[] = "$Id: perlscript.c,v 1.25 2003/06/08 03:21:23 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -34,11 +34,7 @@ static const char rcsid[] = "$Id: perlscript.c,v 1.24 2003/01/02 21:33:15 wcc Ex
 #include <perl.h>
 #include <XSUB.h>
 
-#include "lib/egglib/mstack.h"
-#include "lib/egglib/msprintf.h"
 #include <eggdrop/eggdrop.h>
-#include <eggdrop/flags.h>
-#include <eggdrop/users.h>
 
 static PerlInterpreter *ginterp; /* Our global interpreter. */
 
@@ -154,7 +150,7 @@ static int my_link_var(void *ignore, script_linked_var_t *linked_var)
 	char *name;
 
 	/* Figure out the perl name of the variable. */
-	if (linked_var->class && strlen(linked_var->class)) name = msprintf("%s::%s", linked_var->class, linked_var->name);
+	if (linked_var->class && strlen(linked_var->class)) name = egg_mprintf("%s::%s", linked_var->class, linked_var->name);
 	else name = strdup(linked_var->name);
 
 	/* Get a pointer to the sv, creating it if necessary. */
@@ -186,7 +182,7 @@ static int my_unlink_var(void *ignore, script_linked_var_t *linked_var)
 	char *name;
 
 	/* Figure out the perl name of the variable. */
-	if (linked_var->class && strlen(linked_var->class)) name = msprintf("%s::%s", linked_var->class, linked_var->name);
+	if (linked_var->class && strlen(linked_var->class)) name = egg_mprintf("%s::%s", linked_var->class, linked_var->name);
 	else name = strdup(linked_var->name);
 
 	/* Get a pointer to the sv, creating it if necessary. */
@@ -274,7 +270,7 @@ static int my_create_command(void *ignore, script_raw_command_t *info)
 	CV *cv;
 
 	if (info->class && strlen(info->class)) {
-		cmdname = msprintf("%s_%s", info->class, info->name);
+		cmdname = egg_mprintf("%s_%s", info->class, info->name);
 	}
 	else {
 		cmdname = strdup(info->name);
@@ -372,6 +368,11 @@ static SV *c_to_perl_var(script_var_t *v)
 			result = newSVpv(handle, str_len);
 			break;
 		}
+		case SCRIPT_PARTIER: {
+			partymember_t *p = v->value;
+			result = newSViv(p->pid);
+			break;
+		}
 		default:
 			result = &PL_sv_undef;
 	}
@@ -408,6 +409,10 @@ static int perl_to_c_var(SV *sv, script_var_t *var, int type)
 			cback->name = strdup(name);
 			cback->callback_data = newSVsv(sv);
 			var->value = cback;
+			break;
+		}
+		case SCRIPT_PARTIER: {
+			var->value = partymember_lookup_pid(SvIV(sv));
 			break;
 		}
 		case SCRIPT_USER: { /* User. */
@@ -494,11 +499,11 @@ char *real_perl_cmd(char *text)
 	result = eval_pv(text, FALSE);
 	if (SvTRUE(ERRSV)) {
 		msg = SvPV(ERRSV, len);
-		retval = msprintf("Perl error: %s", msg);
+		retval = egg_mprintf("Perl error: %s", msg);
 	}
 	else {
 		msg = SvPV(result, len);
-		retval = msprintf("Perl result: %s\n", msg);
+		retval = egg_mprintf("Perl result: %s\n", msg);
 	}
 
 	return(retval);

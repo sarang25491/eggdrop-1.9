@@ -395,10 +395,19 @@ static Tcl_Obj *c_to_tcl_var(Tcl_Interp *myinterp, script_var_t *v)
 			result = Tcl_NewStringObj(str, -1);
 			break;
 		}
+		case SCRIPT_PARTIER: {
+			partymember_t *p = v->value;
+			int pid;
+
+			if (p) pid = p->pid;
+			else pid = -1;
+			result = Tcl_NewIntObj(pid);
+			break;
+		}
 		case SCRIPT_USER: {
 			/* An eggdrop user record (struct userrec *). */
 			char *handle;
-			user_t *u = v->value;;
+			user_t *u = v->value;
 
 			if (u) handle = u->handle;
 			else handle = "*";
@@ -484,6 +493,14 @@ static int tcl_to_c_var(Tcl_Interp *myinterp, Tcl_Obj *obj, script_var_t *var, i
 			var->value = cback;
 			break;
 		}
+		case SCRIPT_PARTIER: {
+			int pid = -1;
+
+			err = Tcl_GetIntFromObj(myinterp, obj, &pid);
+			if (!err) var->value = partymember_lookup_pid(pid);
+			else var->value = NULL;
+			break;
+		}
 		case SCRIPT_USER: {
 			user_t *u;
 			script_var_t handle;
@@ -556,23 +573,28 @@ static int my_get_arg(void *ignore, script_args_t *args, int num, script_var_t *
 	return tcl_to_c_var(argdata->irp, argdata->objv[num+1], var, type);
 }
 
-static int party_tcl(int pid, char *nick, user_t *u, char *cmd, char *text)
+static int party_tcl(partymember_t *p, char *nick, user_t *u, char *cmd, char *text)
 {
 	char *str;
 
 	if (!u || !egg_isowner(u->handle)) {
-		partyline_write(pid, "You must be a permanent owner (defined in the config file) to use this command.\n");
+		partymember_write(p, "You must be a permanent owner (defined in the config file) to use this command.\n", -1);
 		return(BIND_RET_LOG);
+	}
+
+	if (!text) {
+		partymember_write(p, "Syntax: .tcl tclexpression", -1);
+		return(0);
 	}
 
 	if (Tcl_GlobalEval(ginterp, text) != TCL_OK) {
 		str = Tcl_GetVar(ginterp, "errorInfo", TCL_GLOBAL_ONLY);
 		if (!str) str = Tcl_GetStringResult(ginterp);
-		partyline_printf(pid, "Tcl error: %s\n\n", str);
+		partymember_printf(p, "Tcl error: %s\n\n", str);
 	}
 	else {
 		str = Tcl_GetStringResult(ginterp);
-		partyline_printf(pid, "Tcl: %s\n\n", str);
+		partymember_printf(p, "Tcl: %s\n\n", str);
 	}
 	return(0);
 }

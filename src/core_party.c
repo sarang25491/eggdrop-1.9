@@ -1,9 +1,10 @@
 #include <eggdrop/eggdrop.h>
 
-static int party_quit(int pid, const char *nick, user_t *u, const char *cmd, const char *text)
+static int party_quit(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
-	if (!strlen(text)) text = NULL;
-	partyline_disconnect(pid, text);
+	if (!text) text = "Quit";
+	partymember_write(p, "goodbye!", -1);
+	partymember_delete(p, text);
 	return(0);
 }
 

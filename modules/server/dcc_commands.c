@@ -31,7 +31,7 @@ static int party_plus_server(int pid, const char *nick, user_t *u, const char *c
 
 	parse_server(text, &host, &port, &pass);
 	server_add(host, port, pass);
-	partyline_printf(pid, "Added %s:%d\n", host, port ? port : server_config.default_port);
+	partymember_printf_pid(pid, "Added %s:%d\n", host, port ? port : server_config.default_port);
 	free(host);
 	return(0);
 }
@@ -43,10 +43,10 @@ static int party_minus_server(int pid, const char *nick, user_t *u, const char *
 
 	parse_server(text, &host, &port, &pass);
 	i = server_find(host, port, pass);
-	if (i < 0) partyline_printf(pid, "No matching servers.\n");
+	if (i < 0) partymember_printf_pid(pid, "No matching servers.\n");
 	else {
 		server_del(i);
-		partyline_printf(pid, "Deleted server %d\n", i+1);
+		partymember_printf_pid(pid, "Deleted server %d\n", i+1);
 	}
 	free(host);
 	return(0);
@@ -55,7 +55,7 @@ static int party_minus_server(int pid, const char *nick, user_t *u, const char *
 static int party_dump(int pid, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	if (!*text) {
-		partyline_printf(pid, "Usage: dump <server stuff>\n");
+		partymember_printf_pid(pid, "Usage: dump <server stuff>\n");
 		return(0);
 	}
 	printserv(SERVER_NORMAL, "%s\r\n", text);

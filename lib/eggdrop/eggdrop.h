@@ -34,6 +34,7 @@
 #include <eggdrop/partyline.h>
 #include <eggdrop/egglog.h>
 #include <eggdrop/irccmp.h>
+#include <eggdrop/garbage.h>
 
 /* Gettext macros */
 #ifdef ENABLE_NLS

@@ -30,7 +30,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.149 2003/05/12 11:54:53 wingman Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.150 2003/06/08 03:21:23 stdarg Exp $";
 #endif
 
 #include <unistd.h>
@@ -335,7 +335,7 @@ static int core_secondly()
 
 void core_party_init();
 void core_config_init();
-void telnet_init();
+//void telnet_init();
 
 int file_check(const char *filename)
 {
@@ -462,7 +462,7 @@ int main(int argc, char **argv)
   if (core_config.userfile) user_load(core_config.userfile);
   partyline_init();
   core_party_init();
-  telnet_init();
+  //telnet_init();
   module_init();
   egg_net_init();
   core_binds_init();
@@ -574,5 +574,6 @@ int main(int argc, char **argv)
 			timeout = howlong.sec * 1000 + howlong.usec / 1000;
 		}
 		sockbuf_update_all(timeout);
+		garbage_run();
 	}
 }

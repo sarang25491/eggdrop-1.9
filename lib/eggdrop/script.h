@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: script.h,v 1.10 2003/02/14 07:06:19 stdarg Exp $
+ * $Id: script.h,v 1.11 2003/06/08 03:21:23 stdarg Exp $
  */
 
 #ifndef _EGG_SCRIPT_H
@@ -106,6 +106,7 @@ typedef struct byte_array_b {
 #define SCRIPT_POINTER	((int)'p')
 #define SCRIPT_CALLBACK	((int)'c')
 #define SCRIPT_USER	((int)'U')
+#define SCRIPT_PARTIER	((int)'P')
 #define SCRIPT_BYTES	((int)'b')
 #define SCRIPT_VAR	((int)'v')
 #define SCRIPT_TYPE_MASK	255

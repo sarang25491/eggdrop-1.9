@@ -22,18 +22,23 @@ int log_error(char *msg)
 }
 
 /* A stub for the .perl command. */
-static int party_perl(int pid, char *nick, user_t *u, char *cmd, char *text)
+static int party_perl(partymember_t *p, char *nick, user_t *u, char *cmd, char *text)
 {
 	char *retval;
 
 	/* You must be owner to use this command. */
 	if (!u || !egg_isowner(u->handle)) {
-		partyline_printf(pid, "Sorry, you must be a permanent owner to use this command.");
+		partymember_write(p, "Sorry, you must be a permanent owner to use this command.", -1);
+		return(BIND_RET_LOG);
+	}
+
+	if (!text) {
+		partymember_write(p, "Syntax: .perl perlexpression", -1);
 		return(0);
 	}
 
 	retval = real_perl_cmd(text);
-	partyline_printf(pid, "%s", retval);
+	partymember_write(p, retval, -1);
 	free(retval);
 	return(0);
 }
