@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.8 2002/04/01 17:34:54 eule Exp $
+ * $Id: channels.c,v 1.9 2002/04/17 21:40:39 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -374,7 +374,7 @@ static void write_channels()
     return;
   }
   if (!quiet_save)
-    putlog(LOG_MISC, "*", "Writing channel file ...");
+    putlog(LOG_MISC, "*", "Writing channel file...");
   fprintf(f, "#Dynamic Channel File for %s (%s) -- written %s\n",
 	  botnetnick, ver, ctime(&now));
   for (chan = chanset; chan; chan = chan->next) {
