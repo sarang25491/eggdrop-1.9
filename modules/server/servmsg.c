@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.6 2001/12/18 06:30:55 guppy Exp $
+ * $Id: servmsg.c,v 1.7 2001/12/20 00:42:21 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -103,7 +103,7 @@ static int check_tcl_msg(char *cmd, char *nick, char *uhost,
   get_user_flagrec(u, &fr, NULL);
 
   x = check_bind(BT_msg, cmd, &fr, nick, uhost, u, args);
-  if (x & BIND_RET_LOG) putlog(LOG_CMDS, "*", "(%s!%s) !%s! %s %s", nick, uhost, hand, args);
+  if (x & BIND_RET_LOG) putlog(LOG_CMDS, "*", "(%s!%s) !%s! %s %s", nick, uhost, hand, cmd, args);
   if (x) return(1);
   else return(0);
 }
