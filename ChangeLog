@@ -1,3 +1,20 @@
+2001-10-10 17:07  stdarg
+
+	* src/egglib/linked_list.c:
+
+	Need to initialize cursors even when the pointer is passed in.  
+
+2001-10-10 17:02  stdarg
+
+	* src/mod/: channels.mod/tclchan.c, irc.mod/irc.c, irc.mod/irc.h,
+	irc.mod/mode.c:
+
+	Applied stuff from Bastian Blank: diff1: ircnet (net-type == 1)
+	       specific settings the bits are set in chan.status not in
+	chan.ircnet_status diff2: gotmode have false arguments, it don't get
+	the real mode change diff3: BT_kick isn't initialized so eggdrop
+	want to dereference 0x0 
+
 2001-10-10 15:52  tothwolf
 
 	* src/mod/: assoc.mod/help/assoc.help,
