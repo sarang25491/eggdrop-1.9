@@ -1,3 +1,17 @@
+2002-04-14 23:22  Federico Mennite <ite@techmonkeys.org>
+
+	* acconfig/acinclude.m4:
+
+	Made a few cosmetic changes to the configure macros (synch 1.6).  
+
+2002-04-14 23:10  Federico Mennite <ite@techmonkeys.org>
+
+	* modules/filesys/filesys.c, modules/server/cmdsserv.c, src/cmds.c:
+
+	* Some plural fixes for the filesys and the server modules and the
+	core (synch 1.6).  
+	* More gettextification for the filesys module.  
+
 2002-04-14 22:01  Federico Mennite <ite@techmonkeys.org>
 
 	* acconfig/acinclude.m4:
