@@ -188,6 +188,8 @@ int partychan_part(partychan_t *chan, partymember_t *p, const char *text)
 
 	len = strlen(text);
 
+	if (p->handler->on_part) (p->handler->on_part)(p->client_data, chan, p, text, len);
+
 	/* Send out the part event to the members. */
 	for (i = 0; i < chan->nmembers; i++) {
 		mem = chan->members+i;

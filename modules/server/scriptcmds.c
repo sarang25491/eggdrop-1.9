@@ -20,12 +20,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-/* FIXME: #include mess
-#ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.30 2003/08/19 18:20:04 stdarg Exp $";
-#endif
-*/
-
 #include <eggdrop/eggdrop.h>
 
 #include "server.h"
