@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dns.c,v 1.8 2004/12/09 06:43:32 lordares Exp $";
+static const char rcsid[] = "$Id: dns.c,v 1.9 2004/12/10 19:00:45 lordares Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -69,14 +69,21 @@ typedef struct dns_server {
 typedef struct {
 	char *host;
 	char *ip;
-	time_t expiretime;
 } dns_host_t;
+
+typedef struct {
+       dns_answer_t answer;
+       char *query;
+       time_t expiretime;
+} dns_cache_t;
 
 static int query_id = 1;
 static dns_header_t _dns_header = {0};
 static dns_query_t *query_head = NULL;
 static dns_host_t *hosts = NULL;
 static int nhosts = 0;
+static dns_cache_t *cache = NULL;
+static int ncache = 0;
 static dns_server_t *servers = NULL;
 static int nservers = 0;
 static int cur_server = -1;
@@ -86,13 +93,13 @@ static char separators[] = " ,\t\r\n";
 static int dns_idx = -1;
 static const char *dns_ip = NULL;
 
-static void del_host(int id);
 static int make_header(char *buf, int id);
 static int cut_host(const char *host, char *query);
 static int reverse_ip(const char *host, char *reverse);
 static void read_resolv(char *fname);
 static void read_hosts(char *fname);
 static void get_dns_idx();
+static int cache_find(const char *);
 static int dns_on_read(void *client_data, int idx, char *buf, int len);
 static int dns_on_eof(void *client_data, int idx, int err, const char *errmsg);
 static const char *dns_next_server();
@@ -160,7 +167,7 @@ int egg_dns_lookup(const char *host, int timeout, dns_callback_t callback, void 
 {
 	char buf[512];
 	dns_query_t *q;
-	int i, len;
+	int i, len, cache_id;
 
 	if (socket_valid_ip(host)) {
 		/* If it's already an ip, we're done. */
@@ -171,6 +178,13 @@ int egg_dns_lookup(const char *host, int timeout, dns_callback_t callback, void 
 		callback(client_data, host, answer.list);
 		answer_free(&answer);
 		return(-1);
+	}
+	
+	/* Search our cache for the same query */
+	cache_id = cache_find(host);
+	if (cache_id >= 0) {
+	        callback(client_data, host, cache[cache_id].answer.list);
+	        return(-1);
 	}
 
 	/* Ok, now see if it's in our host cache. */
@@ -226,7 +240,7 @@ int egg_dns_reverse(const char *ip, int timeout, dns_callback_t callback, void *
 {
 	dns_query_t *q;
 	char buf[512], *reversed_ip;
-	int i, len;
+	int i, len, cache_id;
 
 	if (!socket_valid_ip(ip)) {
 		/* If it's not a valid ip, don't even make the request. */
@@ -245,6 +259,13 @@ int egg_dns_reverse(const char *ip, int timeout, dns_callback_t callback, void *
 			answer_free(&answer);
 			return(-1);
 		}
+	}
+
+	/* Search our cache for the same query */
+	cache_id = cache_find(ip);
+	if (cache_id >= 0) {
+        	callback(client_data, ip, cache[cache_id].answer.list);
+	        return(-1);
 	}
 
 	/* We need to transform the ip address into the proper form
@@ -298,17 +319,58 @@ static int dns_on_eof(void *client_data, int idx, int err, const char *errmsg)
 	return(0);
 }
 
+static int cache_expired(int id)
+{
+	if (cache[id].expiretime && (timer_get_now_sec(NULL) >= cache[id].expiretime))  return(1);
+	return (0);
+}
+
+static void cache_del(int id)
+{
+	answer_free(&cache[id].answer);
+	free(cache[id].query);
+	cache[id].expiretime = 0;
+
+	ncache--;
+
+	if (id < ncache) memcpy(&cache[id], &cache[ncache], sizeof(dns_cache_t));
+	else memset(&cache[id], 0, sizeof(dns_cache_t));
+
+	cache = (dns_cache_t *) realloc(cache, (ncache+1)*sizeof(*cache));
+}
+
+static void cache_add(const char *query, dns_answer_t *answer, time_t ttl)
+{
+	int i;
+
+	cache = (dns_cache_t *) realloc(cache, (ncache+1)*sizeof(*cache));
+	cache[ncache].query = strdup(query);
+	answer_init(&cache[ncache].answer);
+	for (i = 0; i < answer->len; i++)
+		answer_add(&cache[ncache].answer, answer->list[i]);
+	cache[ncache].expiretime = timer_get_now_sec(NULL) + ttl;
+	ncache++;
+}
+
+static int cache_find(const char *query)
+{
+	int i;
+
+	for (i = 0; i < ncache; i++)
+	if (!strcasecmp(cache[i].query, query)) return (i);
+
+	return (-1);
+}
+
 
 void expire_queries()
 {
-	int i = 0, now = 0;
+	int cache_id = 0;
 
-	now = timer_get_now_sec(NULL);
-
-	for (i = 0; i < nhosts; i++) {
-		if (hosts[i].expiretime && (now >= hosts[i].expiretime)) {
-			del_host(i);
-			i--;
+	for (cache_id = 0; cache_id < ncache; cache_id++) {
+		if (cache_expired(cache_id)) {
+			cache_del(cache_id);
+			cache_id--;
 		}
 	}
 }
@@ -365,31 +427,13 @@ static void add_server(char *ip)
 	nservers++;
 }
 
-static void add_host(char *host, char *ip, int ttl)
+static void add_host(char *host, char *ip)
 {
 	hosts = realloc(hosts, (nhosts+1)*sizeof(*hosts));
 	hosts[nhosts].host = strdup(host);
 	hosts[nhosts].ip = strdup(ip);
-	hosts[nhosts].expiretime = timer_get_now_sec(NULL) + ttl;
 	nhosts++;
 }
-
-static void del_host(int id)
-{
-  free(hosts[id].host);
-  free(hosts[id].ip);
-  hosts[id].expiretime = 0;
-
-  nhosts--;
-
-  if (id < nhosts)
-    memcpy(&hosts[id], &hosts[nhosts], sizeof(dns_host_t));
-  else
-    memset(&hosts[id], 0, sizeof(dns_host_t));
-
-  hosts = (dns_host_t *) realloc(hosts, (nhosts+1)*sizeof(*hosts));
-}
-
 
 static int read_thing(char *buf, char *ip)
 {
@@ -433,7 +477,7 @@ static void read_hosts(char *fname)
 		if (!strlen(ip)) continue;
 		while ((n = read_thing(buf+skip, host))) {
 			skip += n;
-			if (strlen(host)) add_host(host, ip, 0);
+			if (strlen(host)) add_host(host, ip);
 		}
 	}
 	fclose(fp);
@@ -573,14 +617,12 @@ static void parse_reply(char *response, int nbytes)
 			/*fprintf(fp, "ipv4 reply\n");*/
 			inet_ntop(AF_INET, ptr, result, 512);
 			answer_add(&q->answer, result);
-			add_host(q->query, result, reply.ttl);
 		}
 		else if (reply.type == 28) {
 			/*fprintf(fp, "ipv6 reply\n");*/
 			inet_ntop(AF_INET6, ptr, result, 512);
 			answer_add(&q->answer, result);
-			add_host(q->query, result, reply.ttl);
-			return;
+			return;		/* why is this here? ... */
 		}
 		else if (reply.type == 12) {
 			char *placeholder;
@@ -606,7 +648,6 @@ static void parse_reply(char *response, int nbytes)
 			if (strlen(result)) {
 				result[strlen(result)-1] = 0;
 				answer_add(&q->answer, result);
-				add_host(result, q->query, reply.ttl);
 			}
 			ptr = placeholder;
 		}
@@ -620,6 +661,8 @@ static void parse_reply(char *response, int nbytes)
 	/* Ok, we have, so now issue the callback with the answers. */
 	if (prev) prev->next = q->next;
 	else query_head = q->next;
+
+	cache_add(q->query, &q->answer, reply.ttl);
 
 	q->callback(q->client_data, q->query, q->answer.list);
 	answer_free(&q->answer);
