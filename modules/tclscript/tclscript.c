@@ -11,12 +11,6 @@ static Function *global = NULL;
 	#define USE_BYTE_ARRAYS
 #endif
 
-/* Stacks to keep track of stuff when we're converting tcl args to c. */
-typedef struct {
-	mstack_t *args;
-	mstack_t *bufs;
-} script_argstack_t;
-
 /* Data we need for a tcl callback. */
 typedef struct {
 	Tcl_Interp *myinterp;
@@ -29,6 +23,30 @@ static Tcl_Obj *my_resolve_var(Tcl_Interp *myinterp, script_var_t *v);
 static Tcl_Interp *ginterp; /* Our global interpreter. */
 
 static char *error_logfile = NULL;
+
+#if (TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION < 2)
+static Tcl_Obj *Tcl_GetVar2Ex(Tcl_Interp *myinterp, const char *name1, const char *name2, int flags) {
+	Tcl_Obj *part1, *part2, *obj;
+
+	part1 = Tcl_NewStringObj(name1, -1);
+	part2 = Tcl_NewStringObj(name2, -1);
+	obj = Tcl_ObjGetVar2(myinterp, part1, part2, flags);
+	Tcl_DecrRefCount(part1);
+	Tcl_DecrRefCount(part2);
+	return(obj);
+}
+
+static Tcl_Obj *Tcl_SetVar2Ex(Tcl_Interp *myinterp, const char *name1, const char *name2, Tcl_Obj *newval, int flags) {
+	Tcl_Obj *part1, *part2, *obj;
+
+	part1 = Tcl_NewStringObj(name1, -1);
+	part2 = Tcl_NewStringObj(name2, -1);
+	obj = Tcl_ObjSetVar2(myinterp, part1, part2, flags);
+	Tcl_DecrRefCount(part1);
+	Tcl_DecrRefCount(part2);
+	return(obj);
+}
+#endif
 
 static int my_load_script(registry_entry_t *entry, char *fname)
 {
