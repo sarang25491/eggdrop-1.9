@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.1 2001/10/27 16:34:52 ite Exp $
+ * $Id: servmsg.c,v 1.2 2001/12/02 15:15:04 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -783,7 +783,7 @@ static int got451(char *from, char *ignore, char *msg)
    * Probably should do something about it some time - beldin
    */
   putlog(LOG_MISC, "*", _("%s says Im not registered, trying next one."), from);
-  nuke_server(_("You have a fucked up server."));
+  nuke_server(_("The server says we are not registered yet."));
   return 0;
 }
 
