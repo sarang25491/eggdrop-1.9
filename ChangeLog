@@ -1,3 +1,10 @@
+2003-06-18 17:36  stdarg <stdarg@techmonkeys.org>
+
+	* po/Makefile.in.in:
+
+	
+	* top_builddir undefined in po Makefile.in 
+
 2003-06-18 04:10  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/Makefile.am, lib/eggdrop/binds.c,
