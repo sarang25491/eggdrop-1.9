@@ -1,7 +1,7 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.2 2001/10/21 17:38:24 ite Exp $
+dnl $Id: acinclude.m4,v 1.3 2001/10/25 20:10:05 ite Exp $
 dnl
 
 
@@ -1205,6 +1205,30 @@ ac_configure_args="$ac_configure_args --with-auxdir=$egg_aux_dir"
 ])
 
 
+dnl EGG_WITH_EFENCE
+dnl
+AC_DEFUN(EGG_WITH_EFENCE, [dnl
+AC_REQUIRE([AM_WITH_MPATROL])
+
+AC_ARG_WITH(efence,
+            AC_HELP_STRING([--with-efence],
+                           [build with the efence library]),
+                           egg_with_efence="$withval", egg_with_efence=no)
+if test "$egg_with_efence" = yes
+then
+  if test "$am_with_mpatrol" = 0
+  then
+    AC_CHECK_LIB(efence, malloc, egg_efence_libs="-lefence",
+                 AC_MSG_ERROR(efence library not installed correctly))
+    LIBS="$egg_efence_libs $LIBS"
+  else
+    AC_MSG_ERROR(enabling efence and mpatrol at the same time is evil!)
+  fi
+fi
+
+])
+
+
 dnl  EGG_DEBUG_OPTIONS
 dnl
 AC_DEFUN(EGG_DEBUG_OPTIONS, [dnl
@@ -1214,12 +1238,14 @@ AC_ARG_ENABLE(debug,
                              debug="$enableval", debug=yes)
 if test "$debug" = "yes"
 then
-  # FIXME: this should be done along with `--with-efence'
-  AC_CHECK_LIB(efence, malloc)
   EGG_DEBUG="-DDEBUG"
   CFLAGS="$CFLAGS -g3"
 fi
 AC_SUBST(EGG_DEBUG)
+
+AM_WITH_MPATROL(no)
+EGG_WITH_EFENCE
+
 ])
 
 

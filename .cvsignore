@@ -1,10 +1,10 @@
-ABOUT-NLS
 ChangeLog
 ltmain.sh
 depcomp
 mkinstalldirs
 install-sh
 missing
+confdefs.h
 config.cache
 config.h
 config.h.in
