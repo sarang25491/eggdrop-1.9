@@ -281,7 +281,6 @@ int xml_parse_children(xml_node_t *parent, char **bufptr)
 {
 	char *ptr, *buf = *bufptr;
 	int ret;
-	char temp[8];
 
 	do {
 		ptr = strchr(buf, '<');

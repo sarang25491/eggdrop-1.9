@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: binds.c,v 1.21 2004/10/17 05:14:06 stdarg Exp $";
+static const char rcsid[] = "$Id: binds.c,v 1.22 2004/12/13 15:02:29 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -386,11 +386,9 @@ static int bind_vcheck_hits(bind_table_t *table, flags_t *user_flags, const char
 			if (!cmp) continue;
 		}
 
-		if (table->match_type & MATCH_MASK) {
+		if (table->match_type & MATCH_NONE || !entry->mask) cmp = 0;
+		else if (table->match_type & MATCH_MASK) {
 			cmp = !wild_match_per((unsigned char *)entry->mask, (unsigned char *)match);
-		}
-		else if (table->match_type & MATCH_NONE) {
-			cmp = 0;
 		}
 		else if (table->match_type & MATCH_PARTIAL) {
 			cmp = 1;
