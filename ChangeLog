@@ -1,3 +1,15 @@
+2002-07-17 22:52  Matthew Hallacy <poptix@techmonkeys.org>
+
+	* src/patch.h:
+
+	sigh.  
+
+2002-07-17 22:46  Matthew Hallacy <poptix@techmonkeys.org>
+
+	* src/patch.h:
+
+	Duh, watch your patch.h entries.  
+
 2002-06-19 05:10  stdarg <stdarg@techmonkeys.org>
 
 	* testcode/: mypoll.c, mypoll.h:
