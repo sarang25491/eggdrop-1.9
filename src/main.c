@@ -4,7 +4,7 @@
  *   signal handling
  *   command line arguments
  *
- * $Id: main.c,v 1.106 2002/02/07 22:19:05 wcc Exp $
+ * $Id: main.c,v 1.107 2002/02/13 22:57:37 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -665,11 +665,11 @@ module, please consult the default config file for info.\n"));
     dcc[n].status = STAT_ECHO;
     strcpy(dcc[n].nick, "HQ");
     strcpy(dcc[n].host, "llama@console");
-    dcc[n].user = get_user_by_handle(userlist, "HQ");
+    dcc[n].user = get_user_by_handle(userlist, dcc[n].nick);
     /* Make sure there's an innocuous HQ user if needed */
     if (!dcc[n].user) {
-      userlist = adduser(userlist, "HQ", "none", "-", USER_PARTY);
-      dcc[n].user = get_user_by_handle(userlist, "HQ");
+      userlist = adduser(userlist, dcc[n].nick, "none", "-", USER_PARTY);
+      dcc[n].user = get_user_by_handle(userlist, dcc[n].nick);
     }
     setsock(STDOUT, 0);		/* Entry in net table */
     dprintf(n, "\n### ENTERING DCC CHAT SIMULATION ###\n\n");
