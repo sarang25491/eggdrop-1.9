@@ -1,3 +1,11 @@
+2002-11-04 17:44  stdarg <stdarg@techmonkeys.org>
+
+	* lib/: eggdrop/Makefile.am, eggdrop/base64.c, eggdrop/base64.h,
+	egglib/base64.c, egglib/base64.h:
+
+	
+	* base 64 encoding/decoding 
+
 2002-11-03 23:22  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/users.c:
