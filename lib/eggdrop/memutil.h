@@ -3,7 +3,7 @@
  *   some macros and functions for common operations with strings and memory
  *   in general.
  *
- * $Id: memutil.h,v 1.2 2002/01/06 06:21:08 ite Exp $
+ * $Id: memutil.h,v 1.3 2002/01/07 21:04:47 ite Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -65,15 +65,15 @@ do {                                                                    \
 	(_target)[(_len) - 1] = 0;                                      \
 } while (0)
 
-int egg_strcatn(char *, const char *, size_t);
-int my_strcpy(register char *, register char *);
+extern int egg_strcatn(char *, const char *, size_t);
+extern int my_strcpy(register char *, register char *);
 
-void splitc(char *, char *, char);
-void splitcn(char *, char *, char, size_t);
-char *newsplit(char **);
+extern void splitc(char *, char *, char);
+extern void splitcn(char *, char *, char, size_t);
+extern char *newsplit(char **);
 
-char *str_escape(const char *, const char, const char);
-char *strchr_unescape(char *, const char, register const char);
+extern char *str_escape(const char *, const char, const char);
+extern char *strchr_unescape(char *, const char, register const char);
 #define str_unescape(str, esc_char) strchr_unescape(str, 0, esc_char)
 
 END_C_DECLS
