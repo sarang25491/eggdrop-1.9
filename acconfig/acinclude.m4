@@ -1,7 +1,7 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.13 2002/04/14 22:01:07 ite Exp $
+dnl $Id: acinclude.m4,v 1.14 2002/04/14 23:22:53 ite Exp $
 dnl
 
 
@@ -9,7 +9,7 @@ dnl  EGG_MSG_CONFIGURE_START()
 dnl
 AC_DEFUN(EGG_MSG_CONFIGURE_START, [dnl
 AC_MSG_RESULT()
-AC_MSG_RESULT(This is eggdrop's GNU configure script.)
+AC_MSG_RESULT(This is Eggdrop's GNU configure script.)
 AC_MSG_RESULT(It's going to run a bunch of strange tests to hopefully)
 AC_MSG_RESULT(make your compile work without much twiddling.)
 AC_MSG_RESULT()
@@ -55,7 +55,7 @@ then
 configure: error:
 
   This system does not appear to have a working C compiler.
-  A working C compiler is required to compile eggdrop.
+  A working C compiler is required to compile Eggdrop.
 
 EOF
   exit 1
@@ -121,7 +121,7 @@ then
 configure: error:
 
   This system seems to lack a working 'awk' command.
-  A working 'awk' command is required to compile eggdrop.
+  A working 'awk' command is required to compile Eggdrop.
 
 EOF
   exit 1
@@ -140,7 +140,7 @@ then
 configure: error:
 
   This system seems to lack a working 'basename' command.
-  A working 'basename' command is required to compile eggdrop.
+  A working 'basename' command is required to compile Eggdrop.
 
 EOF
   exit 1
@@ -189,11 +189,11 @@ case $host_os in
           LIBS="$LIBS /usr/lib/binmode.o"
         else
           AC_MSG_RESULT(no)
-          AC_MSG_WARN(Make sure the directory eggdrop is installed into is mounted in binary mode.)
+          AC_MSG_WARN(Make sure the directory Eggdrop is installed into is mounted in binary mode.)
         fi
       ;;
       *)
-        AC_MSG_WARN(Make sure the directory eggdrop is installed into is mounted in binary mode.)
+        AC_MSG_WARN(Make sure the directory Eggdrop is installed into is mounted in binary mode.)
       ;;
     esac
   ;;
@@ -808,7 +808,7 @@ then
   cat << EOF >&2
 configure: error:
 
-  Your Tcl version is much too old for eggdrop to use.
+  Your Tcl version is much too old for Eggdrop to use.
   I suggest you download and complie a more recent version.
   The most reliable current version is $tclrecommendver and
   can be downloaded from $tclrecommendsite
@@ -975,7 +975,7 @@ AC_SUBST(TCL_LIBS)
 dnl  EGG_REPLACE_IF_CHANGED(FILE-NAME, CONTENTS-CMDS, INIT-CMDS)
 dnl
 dnl  Replace FILE-NAME if the newly created contents differs from the existing
-dnl  file contents.  Otherwise leave the file allone.  This avoids needless
+dnl  file contents.  Otherwise, leave the file allone.  This avoids needless
 dnl  recompiles.
 dnl
 define(EGG_REPLACE_IF_CHANGED, [dnl
