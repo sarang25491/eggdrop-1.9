@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.75 2001/08/13 03:58:30 guppy Exp $
+ * $Id: server.c,v 1.76 2001/08/13 14:17:53 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1433,8 +1433,8 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
     if (!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("You must have a password set."));
     putlog(LOG_MISC, "*", "%s: %s!%s", _("Refused DCC chat (no password)"), nick, from);
-  } else if ((atoi(prt) < min_dcc_port) || (atoi(prt) > max_dcc_port)) {
-    /* Invalid port range. */
+  } else if (atoi(prt) < 1024 || atoi(prt) > 65535) {
+    /* Invalid port */
     if (!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :%s (invalid port)\n", nick,
 	      _("Failed to connect"));

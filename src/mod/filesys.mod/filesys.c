@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.46 2001/08/10 23:51:21 ite Exp $
+ * $Id: filesys.c,v 1.47 2001/08/13 14:17:53 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -646,8 +646,8 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
   } else {
     ip = newsplit(&msg);
     prt = newsplit(&msg);
-    if ((atoi(prt) < min_dcc_port) || (atoi(prt) > max_dcc_port)) {
-      /* Invalid port range. */
+    if (atoi(prt) < 1024 || atoi(prt) > 65535) {
+      /* Invalid port */
       dprintf(DP_HELP, "NOTICE %s :%s (invalid port)\n", nick,
 	      _("Failed to connect"));
       putlog(LOG_FILES, "*", "Refused dcc send %s (%s): invalid port", param,
@@ -868,8 +868,8 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
 	     nick, from);
       putlog(LOG_MISC, "*", "    (%s)", buf);
       killsock(sock);
-    } else if ((atoi(prt) < min_dcc_port) || (atoi(prt) > max_dcc_port)) {
-      /* Invalid port range. */
+    } else if (atoi(prt) < 1024 || atoi(prt) > 65535) {
+      /* Invalid port */
       if (!quiet_reject)
         dprintf(DP_HELP, "NOTICE %s :%s", nick,
 	        _("Failed to connect (invalid port)\n"));
