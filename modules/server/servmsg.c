@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: servmsg.c,v 1.18 2002/06/01 05:15:54 stdarg Exp $";
+static const char rcsid[] = "$Id: servmsg.c,v 1.19 2002/06/01 17:57:11 stdarg Exp $";
 #endif
 */
 
@@ -212,12 +212,16 @@ static int got442(char *from, char *ignore, char *msg)
   struct server_list	*x;
   int			 i;
 
+/* Erm, is there any point to this? Only the server can send numeric. */
+/*
   for (x = serverlist, i = 0; x; x = x->next, i++)
     if (i == curserv) {
       if (strcasecmp(from, x->realname ? x->realname : x->name))
 	return 0;
       break;
     }
+*/
+
   newsplit(&msg);
   chname = newsplit(&msg);
   chan = findchan(chname);
