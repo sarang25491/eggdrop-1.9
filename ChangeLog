@@ -1,3 +1,10 @@
+2001-09-20 19:50  stdarg
+
+	* src/: main.c, tcl.c, tclhash.c, tclhash.h:
+
+	STill removing tcl from the bind table.  Created first non-tcl bind
+	entry ("event") and bind2/unbind2.  
+
 2001-08-29 19:21  stdarg
 
 	* src/mod/channels.mod/tclchan.c:
