@@ -1,3 +1,10 @@
+2001-10-14 11:08  Tothwolf <tothwolf@techmonkeys.org>
+
+	* src/: chanprog.c, mod/channels.mod/userchan.c,
+	mod/irc.mod/mode.c:
+
+	* bugfixes where splitnick() was removed 
+
 2001-10-14 10:55  Tothwolf <tothwolf@techmonkeys.org>
 
 	* src/mod/server.mod/servmsg.c:
