@@ -36,14 +36,6 @@ see also: set username
    typically this is set off, since most sites are not running the
    ident protocol, and therefore may get ~ put in front of their
    username when their username is valid.
-%{help=set never-give-up}%{+n}
-###  %bset never-give-up%b <0/1>
-   specifies whether the bot should loop forever.  if never-give-up
-   is set false, then the bot will shut down if it goes through the
-   entire server list once without getting a connection.  this is to
-   keep eggdrop from going through an endless loop, if, for example,
-   your machine gets disconnected from the rest of the net.  however,
-   some people prefer their bot to never shut down, no matter what.
 %{help=set keep-nick}%{+n}
 ###  %bset keep-nick%b <0/1>
    specifies whether the bot will keep trying to regain its nickname if
@@ -159,10 +151,10 @@ see also: default-port
    the server module, for a list of relevant commands type
    %b'.help server module'%b.
      %bserver-online%b        %bnet-type%b       %bnick%b
-     %bnever-give-up%b        %bflood-ctcp%b     %bserver%b
+     %bflood-ctcp%b           %bserver%b         %bcheck-stoned%b
      %bmax-queue-msg%b        %bstrict-host%b    %bbotnick%b
      %bserver-timeout%b       %bservers%b        %bkeep-nick%b
      %bstrict-servernames%b   %bbotname%b        %bquiet-reject%b
      %banswer-ctcp%b          %baltnick%b        %bflood-msg%b
      %btrigger-on-ignore%b    %bdefault-port%b   %brealname%b
-     %bserver-cycle-wait%b    %bcheck-stoned%b
+     %bserver-cycle-wait%b

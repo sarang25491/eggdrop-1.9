@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.4 2001/12/10 02:50:55 guppy Exp $
+ * $Id: servmsg.c,v 1.5 2001/12/18 05:33:19 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1033,8 +1033,8 @@ static void connect_server(void)
   waiting_for_awake = 0;
   trying_server = now;
   empty_msgq();
-  /* Start up the counter (always reset it if "never-give-up" is on) */
-  if ((oldserv < 0) || (never_give_up))
+
+  if (oldserv < 0)
     oldserv = curserv;
   if (newserverport) {		/* Jump to specified server */
     curserv = (-1);		/* Reset server list */
@@ -1129,8 +1129,6 @@ static void server_resolve_success(int servidx)
     putlog(LOG_SERV, "*", "%s %s (%s)", _("Failed connect to"), dcc[servidx].host,
 	   s);
     lostdcc(servidx);
-    if (oldserv == curserv && !never_give_up)
-      fatal("NO SERVERS WILL ACCEPT MY CONNECTION.", 0);
   } else {
     dcc[servidx].sock = serv;
     /* Queue standard login */

@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.5 2001/12/10 03:22:29 guppy Exp $
+ * $Id: server.c,v 1.6 2001/12/18 05:33:19 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -64,7 +64,6 @@ static time_t server_cycle_wait;	/* seconds to wait before
 					   re-beginning the server list */
 static char botrealname[121];	/* realname of bot */
 static int server_timeout;	/* server timeout for connecting */
-static int never_give_up;	/* never give up when connecting to servers? */
 static int strict_servernames;	/* don't update server list */
 static struct server_list *serverlist;	/* old-style queue, still used by
 					   server list */
@@ -1283,7 +1282,6 @@ static tcl_ints my_tcl_ints[] =
 {
   {"server-timeout",		&server_timeout,		0},
   {"server-online",		(int *) &server_online,		2},
-  {"never-give-up",		&never_give_up,			0},
   {"keep-nick",			&keepnick,			0},
   {"strict-servernames",	&strict_servernames,		0},
   {"check-stoned",		&check_stoned,			0},
@@ -1755,7 +1753,6 @@ char *start(Function *global_funcs)
   server_cycle_wait = 60;
   strcpy(botrealname, "A deranged product of evil coders");
   server_timeout = 60;
-  never_give_up = 0;
   strict_servernames = 0;
   serverlist = NULL;
   cycle_time = 0;

@@ -76,11 +76,6 @@ set server-cycle-wait 60
     since many ircops don't like being flooded with connects.
     Valid settings are 0-infinite
 
-set never-give-up 1
-    This settings makes the bot cycle forever and keep trying to connect to
-    all irc servers in it's current list if they're down.
-    Valid settings are 0 for OFF and 1 ON.
-
 
 set server-timeout 60
     Set here the timeout how long eggdrop should wait for a response when
