@@ -1,3 +1,49 @@
+2003-12-18 03:54  Will Buckner <wcc@techmonkeys.org>
+
+	* modules/blowfish/Makefile.am, modules/blowfish/bf_tab.h,
+	modules/blowfish/blowfish.c, modules/blowfish/blowfish.h,
+	modules/blowfish/modinfo, modules/dccparty/Makefile.am,
+	modules/dccparty/dccparty.c, modules/dccparty/dccparty.h,
+	modules/dccparty/events.c, modules/ircparty/Makefile.am,
+	modules/ircparty/events.c, modules/ircparty/ircparty.c,
+	modules/ircparty/ircparty.h, modules/telnetparty/events.c,
+	modules/telnetparty/telnetparty.c, po/.potignore, po/POTFILES.in,
+	src/bg.c, src/core_party.c, src/main.c:
+
+	* Reverted some stuff that shouldn't have been gettextified.  
+	* More GPL/rcsids.  
+
+2003-12-18 02:27  Will Buckner <wcc@techmonkeys.org>
+
+	* modules/server/input.c:
+
+	[no log message] 
+
+2003-12-18 02:23  Will Buckner <wcc@techmonkeys.org>
+
+	* modules/dccparty/dccparty.c, modules/dccparty/events.c,
+	modules/ircparty/ircparty.c, modules/javascript/javascript.c,
+	modules/oldbotnet/oldbotnet.c, modules/perlscript/mod_iface.c,
+	modules/server/input.c, modules/server/nicklist.c,
+	modules/server/party_commands.c, modules/server/server.c,
+	modules/server/servsock.c, modules/tclscript/tclscript.c,
+	modules/telnetparty/events.c, modules/telnetparty/telnetparty.c,
+	po/POTFILES.in, po/eggdrop.pot, po/update.pl:
+
+	* Gettext stuff.  
+
+2003-12-18 01:00  Will Buckner <wcc@techmonkeys.org>
+
+	* modules/: javascript/javascript.c, tclscript/tclscript.c:
+
+	[no log message] 
+
+2003-12-18 00:15  Automatic CVS Scripts
+
+	* po/eggdrop.pot:
+
+	Pots 
+
 2003-12-17 18:15  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
@@ -9,12 +55,6 @@
 	* po/eggdrop.pot:
 
 	Pots 
-
-2003-12-17 08:43  Will Buckner <wcc@techmonkeys.org>
-
-	* help/: cmds1.help, cmds2.help, core.help, set/cmds1.help:
-
-	* Bye bye notes.mod.  
 
 2003-12-17 08:39  Will Buckner <wcc@techmonkeys.org>
 
@@ -2015,19 +2055,13 @@
 	
 	* I think the sockbuf api is almost done 
 
-2002-06-18 06:15  Jeff Fisher <guppy@techmonkeys.org>
-
-	* help/cmds2.help:
-
-	forgot to remove a reference to highlight in a help file 
-
 2002-06-18 06:12  Jeff Fisher <guppy@techmonkeys.org>
 
-	* configure.ac, eggdrop.complete.conf, help/cmds2.help,
-	help/core.help, lib/eggdrop/module.h, modules/Makefile.am,
-	modules/server/servmsg.c, src/Makefile.am, src/botcmd.c,
-	src/cmds.c, src/cmds.h, src/dcc.c, src/egg.h, src/flags.c,
-	src/flags.h, src/main.c, src/misc.c, src/modules.c, src/tcldcc.c:
+	* configure.ac, eggdrop.complete.conf, lib/eggdrop/module.h,
+	modules/Makefile.am, modules/server/servmsg.c, src/Makefile.am,
+	src/botcmd.c, src/cmds.c, src/cmds.h, src/dcc.c, src/egg.h,
+	src/flags.c, src/flags.h, src/main.c, src/misc.c, src/modules.c,
+	src/tcldcc.c:
 
 	
 	
@@ -2062,7 +2096,7 @@
 
 2002-06-17 06:14  Jeff Fisher <guppy@techmonkeys.org>
 
-	* help/cmds2.help, help/core.help, src/flags.c, src/flags.h:
+	* src/: flags.c, flags.h:
 
 	removed the common user access flag sice this is a throw back to the
 	earlier days of IRC -- common accounts are almost non-existant on
@@ -2070,8 +2104,7 @@
 
 2002-06-17 06:04  Jeff Fisher <guppy@techmonkeys.org>
 
-	* eggdrop.complete.conf, help/cmds1.help, help/cmds2.help,
-	help/core.help, src/cmds.c, src/misc.c, src/misc.h:
+	* eggdrop.complete.conf, src/cmds.c, src/misc.c, src/misc.h:
 
 	removed some legacy commands that are fairly non-useful and addhost
 	which is just wrong.  
@@ -4397,7 +4430,7 @@
 
 2001-12-28 18:31  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, help/cmds2.help, src/cmds.c, src/patch.h:
+	* doc/UPDATES1.6, src/cmds.c, src/patch.h:
 
 	added my localmodules patch from 1.6 
 
@@ -4642,9 +4675,9 @@
 2001-12-10 03:22  Jeff Fisher <guppy@techmonkeys.org>
 
 	* eggdrop.complete.conf, doc/settings/core.settings,
-	help/core.help, help/set/cmds2.help, lib/eggdrop/module.h,
-	modules/filesys/filesys.c, modules/server/server.c, src/cmds.c,
-	src/dcc.c, src/flags.c, src/modules.c, src/tcl.c:
+	lib/eggdrop/module.h, modules/filesys/filesys.c,
+	modules/server/server.c, src/cmds.c, src/dcc.c, src/flags.c,
+	src/modules.c, src/tcl.c:
 
 	require-p is now gone as a config setting 
 
@@ -4659,8 +4692,7 @@
 2001-12-10 02:38  Jeff Fisher <guppy@techmonkeys.org>
 
 	* eggdrop.complete.conf, doc/settings/core.settings,
-	help/core.help, help/set/cmds2.help, lib/eggdrop/module.h,
-	src/dcc.c, src/modules.c, src/tcl.c:
+	lib/eggdrop/module.h, src/dcc.c, src/modules.c, src/tcl.c:
 
 	open-telnets is no longer a config setting, learn-users handles both
 	irc and telnet 
@@ -4681,15 +4713,14 @@
 
 2001-12-09 21:46  Jeff Fisher <guppy@techmonkeys.org>
 
-	* eggdrop.complete.conf, doc/settings/core.settings,
-	help/core.help, help/set/cmds2.help, src/tcl.c, src/tcldcc.c:
+	* eggdrop.complete.conf, doc/settings/core.settings, src/tcl.c,
+	src/tcldcc.c:
 
 	enable-simul has been removed as a config setting 
 
 2001-12-09 21:43  Jeff Fisher <guppy@techmonkeys.org>
 
-	* eggdrop.complete.conf, doc/settings/core.settings,
-	help/core.help, help/set/cmds2.help, src/logfile.c:
+	* eggdrop.complete.conf, doc/settings/core.settings, src/logfile.c:
 
 	log-time has been removed as a config setting 
 
@@ -4762,14 +4793,14 @@
 
 2001-12-08 16:16  Federico Mennite <ite@techmonkeys.org>
 
-	* doc/text-substitutions.doc, help/set/cmds1.help, src/misc.c:
+	* doc/text-substitutions.doc, src/misc.c:
 
 	Added %n for  to the list of motd text substitutions. Patch by
 	Benoit Timbert <Benoit.TIMBERT@free.fr> 
 
 2001-12-08 15:59  Federico Mennite <ite@techmonkeys.org>
 
-	* help/cmds1.help, help/cmds2.help, help/core.help, src/cmds.c:
+	* src/cmds.c:
 
 	Rebound some commands to less restrictive bindings (relay, botinfo,
 	bottree, vbottree). Patch by Matthew Hallacy
@@ -6064,8 +6095,7 @@
 2001-10-10 13:15  Tothwolf <tothwolf@techmonkeys.org>
 
 	* INSTALL, README, eggdrop.complete.conf, doc/compiling.FAQ,
-	doc/eggdrop.doc, doc/text-substitutions.doc, help/cmds1.help,
-	help/cmds2.help, help/core.help, scripts/CONTENTS,
+	doc/eggdrop.doc, doc/text-substitutions.doc, scripts/CONTENTS,
 	scripts/compat.tcl, scripts/notes2.tcl, scripts/userinfo.tcl,
 	scripts/weed:
 
@@ -6461,8 +6491,8 @@
 2001-08-19 02:36  Dobos Lorant <drummer@buli.sk>
 
 	* eggdrop.complete.conf, doc/settings/core.settings,
-	doc/settings/mod.dns, help/core.help, help/set/cmds1.help,
-	src/modules.c, src/net.c, src/tcl.c, src/tclmisc.c:
+	doc/settings/mod.dns, src/modules.c, src/net.c, src/tcl.c,
+	src/tclmisc.c:
 
 	Removed my-hostname. Cache local ipv4 address. Updated docs. FIXME
 	for tcl_getmyip6(). Cleanups for channel.mod.  
@@ -6565,9 +6595,9 @@
 	* CONTENTS, Makefile.in, aclocal.m4, configure,
 	eggdrop.complete.conf, doc/Makefile.in, doc/eggdrop.doc,
 	doc/tricks, doc/settings/CONTENTS, doc/settings/contents,
-	doc/settings/core.settings, help/core.help, src/Makefile.in,
-	src/eggdrop.h, src/lang.h, src/language.c, src/main.c, src/main.h,
-	src/mem.c, src/modules.c, src/proto.h:
+	doc/settings/core.settings, src/Makefile.in, src/eggdrop.h,
+	src/lang.h, src/language.c, src/main.c, src/main.h, src/mem.c,
+	src/modules.c, src/proto.h:
 
 	Good bye language.c, lang.h, we knew you so well yet hated you 
 
@@ -6581,8 +6611,7 @@
 
 	* FEATURES, INSTALL, eggdrop.complete.conf, eggdrop.simple.conf,
 	doc/MODULES, doc/settings/contents, doc/settings/core.settings,
-	doc/settings/mod.channel, doc/settings/mod.woobie, help/core.help,
-	src/chan.h:
+	doc/settings/mod.channel, doc/settings/mod.woobie, src/chan.h:
 
 	Removed more references to seen.mod and wire.mod 
 
@@ -6909,9 +6938,8 @@
 
 2001-07-24 14:19  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/MODULES, doc/UPDATES1.6, doc/tcl-commands.doc,
-	help/cmds2.help, src/cmds.c, src/main.c, src/patch.h,
-	src/tclmisc.c:
+	* doc/MODULES, doc/UPDATES1.6, doc/tcl-commands.doc, src/cmds.c,
+	src/main.c, src/patch.h, src/tclmisc.c:
 
 	I thought about doing this years ago .. glad someone did it :P~ 
 
@@ -7147,8 +7175,7 @@
 
 2001-06-28 19:21  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, help/cmds1.help, src/cmds.c, src/net.c,
-	src/patch.h:
+	* doc/UPDATES1.6, src/cmds.c, src/net.c, src/patch.h:
 
 	here is my small fixes patch 
 
@@ -7276,7 +7303,7 @@
 
 2001-06-20 14:50  Matthew Hallacy <poptix@techmonkeys.org>
 
-	* doc/UPDATES1.6, help/cmds2.help, src/cmds.c, src/patch.h:
+	* doc/UPDATES1.6, src/cmds.c, src/patch.h:
 
 	Sup's .whoami patch 
 
@@ -7392,7 +7419,7 @@
 
 2001-06-06 13:20  Matthew Hallacy <poptix@techmonkeys.org>
 
-	* doc/UPDATES1.6, help/core.help:
+	* doc/UPDATES1.6:
 
 	
 		.info locking fix, add .info to .help 
@@ -7667,8 +7694,8 @@
 
 2001-03-11 07:02  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, doc/text-substitutions.doc, help/cmds2.help,
-	src/botcmd.c, src/patch.h:
+	* doc/UPDATES1.6, doc/text-substitutions.doc, src/botcmd.c,
+	src/patch.h:
 
 	Applied ITE's patch to fix a small remote motd bug -- good work ITE.  
 
@@ -7847,9 +7874,8 @@
 2001-01-22 23:47  Jeff Fisher <guppy@techmonkeys.org>
 
 	* eggdrop.complete.conf, doc/UPDATES1.6,
-	doc/settings/core.settings, help/core.help, help/set/cmds1.help,
-	help/set/cmds2.help, src/dccutil.c, src/modules.c, src/patch.h,
-	src/tcl.c:
+	doc/settings/core.settings, src/dccutil.c, src/modules.c,
+	src/patch.h, src/tcl.c:
 
 	applied reserved-portrange.diff (yay) 
 
@@ -7862,8 +7888,7 @@
 
 2001-01-22 23:34  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, doc/tcl-commands.doc, help/cmds1.help,
-	src/patch.h:
+	* doc/UPDATES1.6, doc/tcl-commands.doc, src/patch.h:
 
 	applied a small patch by ppslim 
 
@@ -7957,8 +7982,7 @@
 
 2000-12-23 06:11  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, help/cmds2.help, help/core.help, src/cmds.c,
-	src/net.c, src/patch.h:
+	* doc/UPDATES1.6, src/cmds.c, src/net.c, src/patch.h:
 
 	ITE's trafficfix patch (slightly modified to fix a compiler warning
 	and a problem in net.c dealing with extern) 
@@ -8409,7 +8433,7 @@
 
 2000-10-27 19:38  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, help/cmds2.help, src/flags.h, src/patch.h:
+	* doc/UPDATES1.5, src/flags.h, src/patch.h:
 
 	fabian: applied Eule's stopnethack_exempt patch 
 
@@ -8585,7 +8609,7 @@
 2000-10-01 19:12  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/MODULES, doc/UPDATES1.5, doc/compiling.FAQ, doc/patch.howto,
-	doc/tcl-commands.doc, help/set/cmds2.help, src/patch.h:
+	doc/tcl-commands.doc, src/patch.h:
 
 	fabian: applied Eugene's testfix patch. Slightly edited.  
 
@@ -8936,7 +8960,7 @@
 
 2000-08-21 18:28  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.5, help/cmds1.help:
+	* doc/UPDATES1.5:
 
 	added Sup's two small patches, needfix and ignorehelp (also testing
 	cvslog -- sorry for not letting fabian apply these patches) 
@@ -9156,7 +9180,7 @@
 2000-07-25 19:42  johoho
 
 	* NEWS, TODO, doc/BUG-REPORT, doc/KNOWN-PROBLEMS, doc/MODULES,
-	doc/UPDATES1.5, help/cmds2.help:
+	doc/UPDATES1.5:
 
 	still some patches by sup...damn :-) 
 
@@ -9432,14 +9456,14 @@
 
 2000-06-02 16:56  Fabian Knittel <fknittel@gmx.de>
 
-	* aclocal.m4, configure, doc/UPDATES1.4, help/core.help,
-	src/modules.c, src/patch.h:
+	* aclocal.m4, configure, doc/UPDATES1.4, src/modules.c,
+	src/patch.h:
 
 	resync with 1.4 
 
 2000-05-29 11:44  johoho
 
-	* doc/UPDATES1.5, help/core.help, src/patch.h:
+	* doc/UPDATES1.5, src/patch.h:
 
 	.help tcl info added 
 
@@ -9480,8 +9504,7 @@
 2000-05-22 10:22  johoho
 
 	* eggdrop.advanced.conf, eggdrop.complete.conf,
-	eggdrop.simple.conf, doc/UPDATES1.5, src/patch.h, help/cmds1.help,
-	help/cmds2.help:
+	eggdrop.simple.conf, doc/UPDATES1.5, src/patch.h:
 
 	some changes for better understanding 
 
@@ -9749,7 +9772,6 @@
 
 	* eggdrop.advanced.conf, eggdrop.complete.conf,
 	eggdrop.simple.conf, doc/UPDATES1.5, doc/tcl-commands.doc,
-	help/cmds1.help, help/cmds2.help, help/core.help,
 	scripts/compat.tcl, src/cmds.c, src/patch.h, src/tcluser.c:
 
 	Wiktor's chnick patch 
@@ -9946,8 +9968,7 @@
 
 2000-03-04 20:35  Fabian Knittel <fknittel@gmx.de>
 
-	* eggdrop.conf.dist, doc/UPDATES1.5, help/cmds1.help, src/cmds.c,
-	src/patch.h:
+	* eggdrop.conf.dist, doc/UPDATES1.5, src/cmds.c, src/patch.h:
 
 	Jason's +host for users patch 
 
@@ -10016,7 +10037,7 @@
 
 2000-02-25 22:05  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, help/cmds1.help, src/patch.h, src/tclhash.c:
+	* doc/UPDATES1.5, src/patch.h, src/tclhash.c:
 
 	david's wildbinds patch 
 
@@ -10329,9 +10350,8 @@
 
 2000-01-06 19:46  Fabian Knittel <fknittel@gmx.de>
 
-	* eggdrop.conf.dist, doc/UPDATES1.5, help/set/cmds2.help,
-	src/misc.c, src/modules.c, src/patch.h, src/proto.h, src/tcl.c,
-	src/userrec.c:
+	* eggdrop.conf.dist, doc/UPDATES1.5, src/misc.c, src/modules.c,
+	src/patch.h, src/proto.h, src/tcl.c, src/userrec.c:
 
 	userfile_perm patch 
 
@@ -10557,12 +10577,6 @@
 	* doc/UPDATES1.5, src/chan.h, src/patch.h:
 
 	nodesynchfix 
-
-1999-12-22 22:02  Fabian Knittel <fknittel@gmx.de>
-
-	* help/set/: cmds1.help, cmds2.help:
-
-	re-added missing help/set and help/msg directories 
 
 1999-12-22 13:17  Fabian Knittel <fknittel@gmx.de>
 
@@ -11008,15 +11022,12 @@
 
 	* Makefile.in, acconfig.h, config.h.in, configure, configure.in,
 	install-sh, doc/BUG-REPORT, doc/Makefile.in, doc/UPDATES.pre1.4,
-	help/assoc.help, help/chaninfo.help, help/channels.help,
-	help/console.help, help/filesys.help, help/irc.help,
-	help/notes.help, help/seen.help, help/server.help, help/share.help,
-	help/userinfo.help, scripts/CONTENTS, scripts/Makefile.in,
-	scripts/bugreport.tcl, src/Makefile, src/Makefile.in, src/botcmd.c,
-	src/botmsg.c, src/botnet.c, src/chanprog.c, src/cmds.c, src/dcc.c,
-	src/dccutil.c, src/dns.c, src/eggdrop.h, src/main.c, src/main.h,
-	src/mem.c, src/misc.c, src/modules.c, src/net.c, src/patch.h,
-	src/proto.h, src/tandem.h, src/tcl.c, src/tcldcc.c, src/tcluser.c,
+	scripts/CONTENTS, scripts/Makefile.in, scripts/bugreport.tcl,
+	src/Makefile, src/Makefile.in, src/botcmd.c, src/botmsg.c,
+	src/botnet.c, src/chanprog.c, src/cmds.c, src/dcc.c, src/dccutil.c,
+	src/dns.c, src/eggdrop.h, src/main.c, src/main.h, src/mem.c,
+	src/misc.c, src/modules.c, src/net.c, src/patch.h, src/proto.h,
+	src/tandem.h, src/tcl.c, src/tcldcc.c, src/tcluser.c,
 	src/userent.c, src/userrec.c, src/users.c:
 
 	resync with 1.3 tree, 939863113-940380771 
@@ -11051,10 +11062,10 @@
 1999-10-11 07:59  Fabian Knittel <fknittel@gmx.de>
 
 	* Makefile, Makefile.in, configure.in, eggdrop.conf.dist, motd,
-	telnet-banner, doc/UPDATES.pre1.4, doc/UPDATES1.4, help/cmds2.help,
-	logs/CONTENTS, src/botnet.c, src/cmds.c, src/dcc.c, src/dccutil.c,
-	src/dns.c, src/eggdrop.h, src/main.c, src/net.c, src/patch.h,
-	src/users.c, text/CONTENTS, text/banner, text/motd:
+	telnet-banner, doc/UPDATES.pre1.4, doc/UPDATES1.4, logs/CONTENTS,
+	src/botnet.c, src/cmds.c, src/dcc.c, src/dccutil.c, src/dns.c,
+	src/eggdrop.h, src/main.c, src/net.c, src/patch.h, src/users.c,
+	text/CONTENTS, text/banner, text/motd:
 
 	dns patches, textdir patch, sync 939496415-939574072 
 
@@ -11075,10 +11086,10 @@
 
 	* CONTENTS, FEATURES, Makefile.in, configure, configure.in,
 	eggdrop.conf.dist, doc/BUG-REPORT, doc/UPDATES.pre1.4,
-	doc/eggdrop.doc, doc/tcl-commands.doc, help/cmds1.help,
-	scripts/autobotchk, scripts/botchk, scripts/weed, src/cmds.c,
-	src/eggdrop.h, src/main.c, src/modules.c, src/net.c, src/patch.h,
-	src/tcl.c, src/tcldcc.c:
+	doc/eggdrop.doc, doc/tcl-commands.doc, scripts/autobotchk,
+	scripts/botchk, scripts/weed, src/cmds.c, src/eggdrop.h,
+	src/main.c, src/modules.c, src/net.c, src/patch.h, src/tcl.c,
+	src/tcldcc.c:
 
 	yet another tree merge and fixups... let's see how long it takes
 	until I learn this stuff 
@@ -11119,14 +11130,6 @@
 	src/users.c, src/users.h:
 
 	all changes to the 1.3 tree merged with 1.4 
-
-1999-10-09 13:10  Fabian Knittel <fknittel@gmx.de>
-
-	* help/: assoc.help, chaninfo.help, channels.help, cmds1.help,
-	cmds2.help, console.help, core.help, filesys.help, irc.help,
-	notes.help, seen.help, server.help, share.help, userinfo.help:
-
-	finished reordering help files. They were all misplaced...  
 
 1999-09-13 14:43  segfault
 
