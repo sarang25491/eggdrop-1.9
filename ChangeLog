@@ -1,3 +1,11 @@
+2002-04-25 22:48  stdarg <stdarg@techmonkeys.org>
+
+	* modules/perlscript/: mod_iface.c, perlscript.c:
+
+	
+	* Added variable linking support to perlscript.mod. I'm not sure if
+	unlinking works right now.  
+
 2002-04-25 20:11  stdarg <stdarg@techmonkeys.org>
 
 	* modules/server/: scriptcmds.c, tclserv.c:
