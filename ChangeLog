@@ -1,3 +1,11 @@
+2002-01-03 08:03  stdarg <stdarg@techmonkeys.org>
+
+	* lib/egglib/: base64.c, base64.h, mstack.c:
+
+	
+	* Added some base64 encoding/decoding functions.  
+	* Made mstack initialize memory to 0.  
+
 2002-01-03 07:33  stdarg <stdarg@techmonkeys.org>
 
 	* src/tcldcc.c:
