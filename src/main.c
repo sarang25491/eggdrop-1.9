@@ -30,7 +30,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.118 2002/05/12 15:35:44 ite Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.119 2002/06/01 13:27:46 wingman Exp $";
 #endif
 
 #include "main.h"
@@ -66,6 +66,7 @@ static const char rcsid[] = "$Id: main.c,v 1.118 2002/05/12 15:35:44 ite Exp $";
 #include "core_binds.h"
 #include "logfile.h"
 #include "misc.h"
+#include "traffic.h"
 #include "dccutil.h"			/* dprintf_eggdrop, new_dcc, 
 					   dcc_chatter, dcc_remove_lost,
 					   lostdcc			*/
@@ -139,11 +140,6 @@ int	resolve_timeout = 15;	/* hostname/address lookup timeout */
 char	quit_msg[1024];		/* quit message */
 time_t	now;			/* duh, now :) */
 egg_timeval_t egg_timeval_now;	/* Same thing, but seconds and microseconds. */
-
-/* Traffic stats
- */
-#include "traffic.h" /* egg_traffic_t */
-egg_traffic_t traffic;
 
 void fatal(const char *s, int recoverable)
 {
@@ -450,26 +446,6 @@ static void event_logfile()
   check_bind_event("logfile");
 }
 
-static void event_resettraffic()
-{
-	traffic.out_total.irc += traffic.out_today.irc;
-	traffic.out_total.bn += traffic.out_today.bn;
-	traffic.out_total.dcc += traffic.out_today.dcc;
-	traffic.out_total.filesys += traffic.out_today.filesys;
-	traffic.out_total.trans += traffic.out_today.trans;
-	traffic.out_total.unknown += traffic.out_today.unknown;
-
-	traffic.in_total.irc += traffic.in_today.irc;
-	traffic.in_total.bn += traffic.in_today.bn;
-	traffic.in_total.dcc += traffic.in_today.dcc;
-	traffic.in_total.filesys += traffic.in_today.filesys;
-	traffic.in_total.trans += traffic.in_today.trans;
-	traffic.in_total.unknown += traffic.in_today.unknown;
-
-	memset(&traffic.out_today, 0, sizeof(traffic.out_today));
-	memset(&traffic.in_today, 0, sizeof(traffic.in_today));
-}
-
 static void event_loaded()
 {
   check_bind_event("loaded");
@@ -615,6 +591,7 @@ int main(int argc, char **argv)
   init_userent();
   botnet_init();
   init_net();
+  traffic_init();
 
   if (backgrd)
     bg_prepare_split();
@@ -735,6 +712,8 @@ module, please consult the default config file for info.\n"));
   howlong.sec = 1;
   howlong.usec = 0;
   timer_create_repeater(&howlong, (Function) core_secondly);
+
+  /* init time'd hooks */
   add_hook(HOOK_MINUTELY, (Function) core_minutely);
   add_hook(HOOK_HOURLY, (Function) core_hourly);
   add_hook(HOOK_REHASH, (Function) event_rehash);
@@ -742,7 +721,6 @@ module, please consult the default config file for info.\n"));
   add_hook(HOOK_USERFILE, (Function) event_save);
   add_hook(HOOK_BACKUP, (Function) backup_userfile);
   add_hook(HOOK_DAILY, (Function) event_logfile);
-  add_hook(HOOK_DAILY, (Function) event_resettraffic);
   add_hook(HOOK_LOADED, (Function) event_loaded);
 
   call_hook(HOOK_LOADED);
@@ -787,23 +765,10 @@ module, please consult the default config file for info.\n"));
       for (idx = 0; idx < dcc_total; idx++)
 	if (dcc[idx].sock == xx) {
 	  if (dcc[idx].type && dcc[idx].type->activity) {
-	    /* Traffic stats */
-	    if (dcc[idx].type->name) {
-	      if (!strncmp(dcc[idx].type->name, "BOT", 3))
-		traffic.in_today.bn += strlen(buf) + 1;
-	      else if (!strcmp(dcc[idx].type->name, "SERVER"))
-		traffic.in_today.irc += strlen(buf) + 1;
-	      else if (!strncmp(dcc[idx].type->name, "CHAT", 4))
-		traffic.in_today.dcc += strlen(buf) + 1;
-	      else if (!strncmp(dcc[idx].type->name, "FILES", 5))
-		traffic.in_today.dcc += strlen(buf) + 1;
-	      else if (!strcmp(dcc[idx].type->name, "SEND"))
-		traffic.in_today.trans += strlen(buf) + 1;
-	      else if (!strncmp(dcc[idx].type->name, "GET", 3))
-		traffic.in_today.trans += strlen(buf) + 1;
-	      else
-		traffic.in_today.unknown += strlen(buf) + 1;
-	    }
+
+	    /* update traffic stats */
+	    traffic_update_in(dcc[idx].type, (strlen(buf) + 1));
+
 	    dcc[idx].type->activity(idx, buf, i);
 	  } else
 	    putlog(LOG_MISC, "*",

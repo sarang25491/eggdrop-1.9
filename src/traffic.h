@@ -19,11 +19,14 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: traffic.h,v 1.2 2002/05/05 16:40:39 tothwolf Exp $
+ * $Id: traffic.h,v 1.3 2002/06/01 13:27:46 wingman Exp $
  */
 
 #ifndef _EGG_TRAFFIC_H
 #define _EGG_TRAFFIC_H
+
+#include "main.h"		/* FILE			*/
+#include "egg.h"		/* dcc_t		*/
 
 typedef struct {
 	struct {
@@ -35,5 +38,27 @@ typedef struct {
 		unsigned long unknown;
 	} in_total, in_today, out_total, out_today;
 } egg_traffic_t;
+
+extern egg_traffic_t traffic;
+
+/* init our traffic stats (register hooks, ...)
+ */
+void traffic_init();
+
+/* resets our traffic stats
+ */
+void traffic_reset();
+
+/* update incoming traffic stats (used in main.c loop)
+ */
+void traffic_update_in(struct dcc_table *type, int size);
+
+/* update outgoing traffic stats
+ */
+void traffic_update_out(struct dcc_table *type, int size);
+
+/* traffic dcc command
+ */
+int cmd_traffic(struct userrec *u, int idx, char *par);
 
 #endif				/* !_EGG_TRAFFIC_H */

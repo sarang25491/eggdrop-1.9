@@ -9,7 +9,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: net.c,v 1.61 2002/05/19 04:41:32 stdarg Exp $";
+static const char rcsid[] = "$Id: net.c,v 1.62 2002/06/01 13:27:46 wingman Exp $";
 #endif
 
 #include <fcntl.h>
@@ -55,8 +55,6 @@ static const char rcsid[] = "$Id: net.c,v 1.61 2002/05/19 04:41:32 stdarg Exp $"
 
 extern struct dcc_t	*dcc;
 extern int		 backgrd, use_stderr, resolve_timeout, dcc_total;
-
-extern egg_traffic_t traffic;
 
 extern char		 natip[];
 
@@ -1094,32 +1092,8 @@ void tputs(register int z, char *s, unsigned int len)
     if (!(socklist[i].flags & SOCK_UNUSED) && (socklist[i].sock == z)) {
       for (idx = 0; idx < dcc_total; idx++) {
         if (dcc[idx].sock == z) {
-          if (dcc[idx].type) {
-            if (dcc[idx].type->name) {
-              if (!strncmp(dcc[idx].type->name, "BOT", 3)) {
-                traffic.out_today.bn += len;
-                break;
-              } else if (!strcmp(dcc[idx].type->name, "SERVER")) {
-                traffic.out_today.irc += len;
-                break;
-              } else if (!strncmp(dcc[idx].type->name, "CHAT", 4)) {
-                traffic.out_today.dcc += len;
-                break;
-              } else if (!strncmp(dcc[idx].type->name, "FILES", 5)) {
-                traffic.out_today.filesys += len;
-                break;
-              } else if (!strcmp(dcc[idx].type->name, "SEND")) {
-                traffic.out_today.trans += len;
-                break;
-              } else if (!strncmp(dcc[idx].type->name, "GET", 3)) {
-                traffic.out_today.trans += len;
-                break;
-              } else {
-                traffic.out_today.unknown += len;
-                break;
-              }
-            }
-          }
+	  /* update traffic stats */
+          traffic_update_out(dcc[idx].type, len);
         }
       }
       
