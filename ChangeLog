@@ -1,3 +1,11 @@
+2002-03-03 20:17  stdarg <stdarg@techmonkeys.org>
+
+	* modules/tclscript/tclscript.c, src/botcmd.c, src/botnet.c,
+	src/cmds.c:
+
+	
+	* Moved .tcl command to the tcl module 
+
 2002-03-03 19:09  stdarg <stdarg@techmonkeys.org>
 
 	* eggdrop.complete.conf, doc/tcl-commands.doc:
