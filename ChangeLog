@@ -1,3 +1,10 @@
+2001-10-21 19:51  stdarg <stdarg@techmonkeys.org>
+
+	* src/tcldcc.c:
+
+	* Updated putdcc and putdccraw to accept idx instead of sock.  
+	* Putdccraw now recognizes -1 as the server idx, not 0.  
+
 2001-10-21 17:38  Federico Mennite <ite@techmonkeys.org>
 
 	* bootstrap, configure.ac, acconfig/.cvsignore,
