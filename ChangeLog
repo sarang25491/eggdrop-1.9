@@ -1,3 +1,42 @@
+2001-12-29 21:26  Jeff Fisher <guppy@techmonkeys.org>
+
+	* doc/UPDATES1.6, src/patch.h, src/tcldcc.c:
+
+	added my tcl_boot fix from 1.6 modified for the new script_boot
+	command 
+
+2001-12-29 21:25  Jeff Fisher <guppy@techmonkeys.org>
+
+	* doc/UPDATES1.6, modules/irc/irc.c, src/patch.h:
+
+	added Wcc's nettype_modes patch from 1.6 
+
+2001-12-29 21:21  Jeff Fisher <guppy@techmonkeys.org>
+
+	* doc/UPDATES1.6, modules/channels/channels.c, modules/irc/chan.c,
+	modules/irc/irc.c, modules/irc/msgcmds.c, modules/server/servmsg.c,
+	modules/share/share.c, src/chanprog.c, src/main.c, src/patch.h:
+
+	added my correctname patch from 1.6 
+
+2001-12-29 21:13  Jeff Fisher <guppy@techmonkeys.org>
+
+	* doc/UPDATES1.6, modules/irc/chan.c, src/patch.h:
+
+	added both onopmodefix 1 and 2 from 1.6 
+
+2001-12-29 21:08  Jeff Fisher <guppy@techmonkeys.org>
+
+	* doc/UPDATES1.6, modules/ctcp/ctcp.c, src/patch.h:
+
+	added my nopass patch from 1.6 
+
+2001-12-29 21:04  Jeff Fisher <guppy@techmonkeys.org>
+
+	* doc/UPDATES1.6, modules/transfer/transfer.c, src/patch.h:
+
+	added the filesizefix from eggdrop1.6.7 
+
 2001-12-29 20:59  Jeff Fisher <guppy@techmonkeys.org>
 
 	* doc/UPDATES1.6, modules/irc/tclirc.c, src/botcmd.c, src/patch.h:
