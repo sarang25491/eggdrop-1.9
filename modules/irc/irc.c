@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: irc.c,v 1.24 2002/10/11 00:49:20 wcc Exp $";
+static const char rcsid[] = "$Id: irc.c,v 1.25 2002/11/29 06:15:25 wcc Exp $";
 #endif
 
 #define MODULE_NAME "irc"
@@ -384,20 +384,6 @@ static int me_op(struct chanset_t *chan)
     return 0;
 }
 
-/* Check if there are any ops on the channel. Returns boolean 1 or 0.
- */
-static int any_ops(struct chanset_t *chan)
-{
-  memberlist *x;
-
-  for (x = chan->channel.member; x && x->nick[0]; x = x->next)
-    if (chan_hasop(x))
-      break;
-  if (!x || !x->nick[0])
-    return 0;
-  return 1;
-}
-
 /* Check whether I'm voice. Returns boolean 1 or 0.
  */
 static int me_voice(struct chanset_t *chan)
@@ -411,6 +397,20 @@ static int me_voice(struct chanset_t *chan)
     return 1;
   else
     return 0;
+}
+
+/* Check if there are any ops on the channel. Returns boolean 1 or 0.
+ */
+static int any_ops(struct chanset_t *chan)
+{
+  memberlist *x;
+
+  for (x = chan->channel.member; x && x->nick[0]; x = x->next)
+    if (chan_hasop(x))
+      break;
+  if (!x || !x->nick[0])
+    return 0;
+  return 1;
 }
 
 /* Reset the channel information.
@@ -874,9 +874,10 @@ static Function irc_table[] =
   (Function) me_op,
   (Function) recheck_channel_modes,
   (Function) do_channel_part,
-  /* 8 - 11 */
+  /* 8 - 10 */
   (Function) check_this_ban,
   (Function) check_this_user,
+  (Function) me_voice,
 };
 
 char *start(eggdrop_t *eggdrop)

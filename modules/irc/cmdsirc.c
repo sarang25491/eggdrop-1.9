@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: cmdsirc.c,v 1.13 2002/10/11 00:49:20 wcc Exp $";
+static const char rcsid[] = "$Id: cmdsirc.c,v 1.14 2002/11/29 06:15:25 wcc Exp $";
 #endif
 */
 
@@ -207,7 +207,7 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
     dprintf(idx, _("%1$s is a %2$s master.\n"), nick, chan->dname);
     return;
   }
-  if (glob_bot(victim) && !(glob_owner(victim) || chan_owner(victim))) {
+  if (glob_bot(victim) && !(glob_owner(user) || chan_owner(user))) {
     dprintf(idx, _("%s is another channel bot!\n"), nick);
     return;
   }
@@ -467,7 +467,7 @@ static void cmd_kick(struct userrec *u, int idx, char *par)
     dprintf(idx, _("%1$s is a %2$s master.\n"), nick, chan->dname);
     return;
   }
-  if (glob_bot(victim) && !(glob_owner(victim) || chan_owner(victim))) {
+  if (glob_bot(victim) && !(glob_owner(user) || chan_owner(user))) {
     dprintf(idx, _("%s is another channel bot!\n"), nick);
     return;
   }

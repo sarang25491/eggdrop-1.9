@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: irc.h,v 1.6 2002/05/05 16:40:35 tothwolf Exp $
+ * $Id: irc.h,v 1.7 2002/11/29 06:15:25 wcc Exp $
  */
 
 #ifndef _EGG_MOD_IRC_IRC_H
@@ -60,6 +60,7 @@ static void check_tcl_signtopcnick(char *, char *, struct userrec *u, char *,
 static void check_tcl_pubm(char *, char *, char *, char *);
 static int check_tcl_pub(char *, char *, char *, char *);
 static int me_op(struct chanset_t *);
+static int me_voice(struct chanset_t *);
 static int any_ops(struct chanset_t *);
 static int hand_on_chan(struct chanset_t *, struct userrec *);
 static char *getchanmode(struct chanset_t *);
@@ -103,9 +104,10 @@ static int gotmode(char *, char *, char *);
 #define recheck_channel_modes ((void(*)(struct chanset_t *))irc_funcs[6])
 #define do_channel_part ((void(*)(struct chanset_t *))irc_funcs[7])
 
-/* 8-11 */
+/* 8 - 10 */
 #define check_this_ban ((void(*)(struct chanset_t *,char *,int))irc_funcs[8])
-#define check_this_user ((void(*)(char *hand))irc_funcs[8])
+#define check_this_user ((void(*)(char *hand))irc_funcs[9])
+#define me_voice ((int(*)(struct chanset_t *))irc_funcs[10])
 
 #endif				/* MAKING_IRC */
 

@@ -71,10 +71,8 @@ int wild_match_per(char *wild, char *matchtext) {
           count++;
           break;
       case WILDS :
-          if (!*++wild) {
-            *matchtext=0;
+          if (!*++wild)
             return (count+saved+1);
-          }
           wildcard = 1;
           break;
       default :
@@ -128,10 +126,8 @@ int wild_match(char *wild, char *matchtext) {
           while ((*(matchtext++)==' '));	/* loop through spaces */
           break;
       case WILDS :
-          if (!*++wild) {
-            *matchtext=0;
+          if (!*++wild)
             return (count+saved+1);
-          }
           wildcard = 1;
           break;
       default :
