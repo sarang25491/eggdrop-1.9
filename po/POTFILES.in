@@ -1,5 +1,6 @@
 # List of source files containing translatable strings.
 
+lib/compat/getopt.c
 modules/blowfish/blowfish.c
 modules/channels/channels.c
 modules/channels/cmdschan.c
@@ -24,14 +25,11 @@ modules/uptime/uptime.c
 src/bg.c
 src/chanprog.c
 src/cmds.c
-src/dcc.c
-src/dccutil.c
 src/egg.h
 src/logfile.c
 src/main.c
 src/misc.c
 src/modules.c
-src/tcldcc.c
 src/userrec.c
 src/users.c
 

@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: chanprog.c,v 1.61 2003/02/25 06:52:19 stdarg Exp $";
+static const char rcsid[] = "$Id: chanprog.c,v 1.62 2003/02/26 01:51:14 wcc Exp $";
 #endif
 
 #include "main.h"
@@ -42,7 +42,6 @@ static const char rcsid[] = "$Id: chanprog.c,v 1.61 2003/02/25 06:52:19 stdarg E
 #include "misc.h"
 #include "users.h"		/* get_user_by_handle, readuserfile	*/
 #include "dccutil.h"		/* dprintf_eggdrop			*/
-#include "tcl.h"		/* readtclprog				*/
 #include "userrec.h"		/* count_users, clear_userlist		*/
 
 extern struct userrec	*userlist;

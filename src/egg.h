@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: egg.h,v 1.15 2003/02/15 05:04:58 wcc Exp $
+ * $Id: egg.h,v 1.16 2003/02/26 01:51:14 wcc Exp $
  */
 
 #ifndef _EGG_EGG_H
@@ -44,16 +44,15 @@
  *	 configuration file instead.
  */
 
-#define HANDLEN		  9	/* valid values 9->NICKMAX		*/
-#define NICKMAX		 32	/* valid values HANDLEN->32		*/
+#define HANDLEN   9             /* valid values 9->NICKMAX             */
+#define NICKMAX   32            /* valid values HANDLEN->32            */
 
 
 /* Handy string lengths */
+#define ADDRMAX   45
+#define UHOSTMAX  291 + NICKMAX /* 32 (ident) + 3 (\0, !, @) + NICKMAX */
+#define DIRMAX    512
 
-#define ADDRMAX		 45
-#define UHOSTMAX	160	/* reasonable, i think?			*/
-#define DIRMAX		512
-#define BADHANDCHARS	"-,+*=:!.@#;$%&"
 
 
 /*
@@ -66,7 +65,7 @@
 #define DIRLEN          DIRMAX + 1
 #define NOTENAMELEN     ((HANDLEN * 2) + 1)
 #define BADNICKCHARS	"-,+*=:!.@#;$%&"
-
+#define BADHANDCHARS	"-,+*=:!.@#;$%&"
 
 /* Gettext stuff */
 #ifdef ENABLE_NLS

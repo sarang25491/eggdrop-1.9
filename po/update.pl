@@ -3,7 +3,7 @@
 #
 #  GNOME PO Update Utility
 #
-#  $Id: update.pl,v 1.2 2002/02/13 16:44:57 ite Exp $
+#  $Id: update.pl,v 1.3 2003/02/26 01:51:13 wcc Exp $
 #
 #  Copyright (C) 2000 Free Software Foundation.
 #
@@ -296,7 +296,8 @@ sub GeneratePot{
 
     $GETTEXT ="xgettext --default-domain\=$PACKAGE --directory\=\.\."
              ." --add-comments --keyword\=\_ --keyword\=N\_ --keyword\=P\_:1,2"
-             ." --files-from\=\.\/POTFILES\.in ";  
+             ." --files-from\=\.\/POTFILES\.in"
+             ." --copyright-holder=\"Eggheads Development Team\"";  
     $GTEST   ="test \! -f $PACKAGE\.po \|\| \( rm -f \.\/$PACKAGE\.pot "
              ."&& mv $PACKAGE\.po \.\/$PACKAGE\.pot \)";
 

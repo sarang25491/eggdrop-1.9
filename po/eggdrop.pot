@@ -1,42 +1,89 @@
 # SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Free Software Foundation, Inc.
+# Copyright (C) YEAR Eggheads Development Team
+# This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2003-02-24 04:00-0600\n"
+"POT-Creation-Date: 2003-02-25 20:20-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: modules/blowfish/blowfish.c:139
-msgid "    Blowfish encryption module:\n"
-msgstr ""
-
-#: modules/blowfish/blowfish.c:140
+#: lib/compat/getopt.c:681
 #, c-format
-msgid "    %d of %d boxes in use:"
+msgid "%s: option `%s' is ambiguous\n"
 msgstr ""
 
-#: modules/blowfish/blowfish.c:143
+#: lib/compat/getopt.c:706
 #, c-format
-msgid " (age: %d)"
+msgid "%s: option `--%s' doesn't allow an argument\n"
 msgstr ""
 
-#: modules/blowfish/blowfish.c:399
+#: lib/compat/getopt.c:711
+#, c-format
+msgid "%s: option `%c%s' doesn't allow an argument\n"
+msgstr ""
+
+#: lib/compat/getopt.c:729 lib/compat/getopt.c:902
+#, c-format
+msgid "%s: option `%s' requires an argument\n"
+msgstr ""
+
+#. --option
+#: lib/compat/getopt.c:758
+#, c-format
+msgid "%s: unrecognized option `--%s'\n"
+msgstr ""
+
+#. +option or -option
+#: lib/compat/getopt.c:762
+#, c-format
+msgid "%s: unrecognized option `%c%s'\n"
+msgstr ""
+
+#. 1003.2 specifies the format of this message.
+#: lib/compat/getopt.c:788
+#, c-format
+msgid "%s: illegal option -- %c\n"
+msgstr ""
+
+#: lib/compat/getopt.c:791
+#, c-format
+msgid "%s: invalid option -- %c\n"
+msgstr ""
+
+#. 1003.2 specifies the format of this message.
+#: lib/compat/getopt.c:821 lib/compat/getopt.c:951
+#, c-format
+msgid "%s: option requires an argument -- %c\n"
+msgstr ""
+
+#: lib/compat/getopt.c:868
+#, c-format
+msgid "%s: option `-W %s' is ambiguous\n"
+msgstr ""
+
+#: lib/compat/getopt.c:886
+#, c-format
+msgid "%s: option `-W %s' doesn't allow an argument\n"
+msgstr ""
+
+#: modules/blowfish/blowfish.c:385
 msgid "You can't unload an encryption module"
 msgstr ""
 
-#: modules/blowfish/blowfish.c:429 src/modules.c:573
+#: modules/blowfish/blowfish.c:415 src/modules.c:193
 msgid "Already loaded."
 msgstr ""
 
-#: modules/blowfish/blowfish.c:440 modules/filesys/filesys.c:1325
+#: modules/blowfish/blowfish.c:426 modules/filesys/filesys.c:1325
 #: modules/uptime/uptime.c:240
 msgid "This module requires eggdrop1.7.0 or later"
 msgstr ""
@@ -396,7 +443,7 @@ msgstr ""
 #: modules/channels/userchan.c:991 modules/channels/userchan.c:1008
 #: modules/channels/userchan.c:1036 modules/channels/userchan.c:1082
 #: modules/channels/userchan.c:1110 modules/channels/userchan.c:1128
-#: src/users.c:225
+#: src/users.c:224
 msgid "expired"
 msgstr ""
 
@@ -729,7 +776,7 @@ msgstr ""
 msgid "File system broken."
 msgstr ""
 
-#: modules/filesys/filesys.c:580 src/dcc.c:195
+#: modules/filesys/filesys.c:580
 msgid "Negative on that, Houston.\n"
 msgstr ""
 
@@ -850,8 +897,7 @@ msgstr ""
 msgid "Refused DCC chat (invalid port)"
 msgstr ""
 
-#. Turn off remote telnet echo (send IAC WILL ECHO).
-#: modules/filesys/filesys.c:1230 src/dcc.c:776
+#: modules/filesys/filesys.c:1230
 msgid "Enter your password."
 msgstr ""
 
@@ -895,7 +941,7 @@ msgstr ""
 msgid "Unloading filesystem, killing all filesystem connections."
 msgstr ""
 
-#: modules/filesys/filesys.c:1280 src/dccutil.c:501
+#: modules/filesys/filesys.c:1280
 msgid "-=- poof -=-\n"
 msgstr ""
 
@@ -1350,7 +1396,7 @@ msgid ""
 "need to use the -m option when starting the bot.  Enjoy !!!\n"
 msgstr ""
 
-#: modules/irc/msgcmds.c:76 src/dcc.c:869
+#: modules/irc/msgcmds.c:76
 #, c-format
 msgid "Bot installation complete, first master is %s"
 msgstr ""
@@ -1506,7 +1552,7 @@ msgstr ""
 msgid "Bot shut down beginning...."
 msgstr ""
 
-#: modules/irc/msgcmds.c:801 src/cmds.c:842 src/tcldcc.c:495
+#: modules/irc/msgcmds.c:801 src/cmds.c:842
 msgid "Rehashing..."
 msgstr ""
 
@@ -1519,7 +1565,6 @@ msgid "Jumping servers..."
 msgstr ""
 
 #: modules/javascript/javascript.c:649 modules/tclscript/tclscript.c:569
-#: modules/tclscript/tclscript.c:590
 msgid ""
 "You must be a permanent owner (defined in the config file) to use this "
 "command.\n"
@@ -1728,12 +1773,7 @@ msgstr ""
 msgid "NOTICE %s :You have %d note%s waiting on %s.\n"
 msgstr ""
 
-#: modules/server/input.c:77
-#, c-format
-msgid "Server says Im not on channel: %s"
-msgstr ""
-
-#: modules/server/input.c:353
+#: modules/server/input.c:329
 msgid "Nick change was too fast."
 msgstr ""
 
@@ -1741,7 +1781,7 @@ msgstr ""
 #. * or this is a non-standard server, so we log it and kill the socket
 #. * hoping the next server will work :) -poptix
 #.
-#: modules/server/input.c:363
+#: modules/server/input.c:339
 #, c-format
 msgid "%s says I'm not registered, trying next one."
 msgstr ""
@@ -1751,7 +1791,7 @@ msgid "You need the server module to use the uptime module."
 msgstr ""
 
 #. Kill bot incase a botchk is run from crond.
-#: src/bg.c:134 src/bg.c:142 src/main.c:642 src/main.c:648
+#: src/bg.c:134 src/bg.c:142 src/main.c:611 src/main.c:617
 #, c-format
 msgid "* Warning!  Could not write %s file!\n"
 msgstr ""
@@ -1844,44 +1884,39 @@ msgstr ""
 
 #: src/chanprog.c:280
 #, c-format
-msgid "  Temp    : %s\n"
-msgstr ""
-
-#: src/chanprog.c:281
-#, c-format
 msgid "  Modules : %s\n"
 msgstr ""
 
-#: src/chanprog.c:285
+#: src/chanprog.c:284
 msgid "New users get flags"
 msgstr ""
 
-#: src/chanprog.c:286
+#: src/chanprog.c:285
 msgid "notify"
 msgstr ""
 
-#: src/chanprog.c:289
+#: src/chanprog.c:288
 #, c-format
 msgid "Permanent owner(s): %s\n"
 msgstr ""
 
-#: src/chanprog.c:290
+#: src/chanprog.c:289
 #, c-format
 msgid "Ignores last %d mins\n"
 msgstr ""
 
-#: src/chanprog.c:329
+#: src/chanprog.c:327
 msgid ""
 "STARTING BOT IN USERFILE CREATION MODE.\n"
 "Telnet to the bot and enter 'NEW' as your nickname."
 msgstr ""
 
-#: src/chanprog.c:335
+#: src/chanprog.c:333
 #, c-format
 msgid "USER FILE NOT FOUND!  (try ./eggdrop -m %s to make one)\n"
 msgstr ""
 
-#: src/chanprog.c:338
+#: src/chanprog.c:336
 msgid ""
 "\n"
 "\n"
@@ -1889,30 +1924,26 @@ msgid ""
 "Telnet to the bot and enter 'NEW' as your nickname.\n"
 msgstr ""
 
-#: src/chanprog.c:341
+#: src/chanprog.c:339
 #, c-format
 msgid "OR go to IRC and type:  /msg %s hello\n"
 msgstr ""
 
-#: src/chanprog.c:342
+#: src/chanprog.c:340
 msgid ""
 "This will make the bot recognize you as the master.\n"
 "\n"
 msgstr ""
 
-#: src/chanprog.c:345
+#: src/chanprog.c:343
 msgid "USERFILE ALREADY EXISTS (drop the -m)\n"
 msgstr ""
 
-#: src/chanprog.c:368
-msgid "CANT WRITE TO TEMP DIR"
-msgstr ""
-
-#: src/chanprog.c:380
+#: src/chanprog.c:356
 msgid "Cant reload user file!"
 msgstr ""
 
-#: src/chanprog.c:387
+#: src/chanprog.c:363
 msgid "User file is missing!"
 msgstr ""
 
@@ -2294,7 +2325,7 @@ msgstr ""
 msgid "Error loading module:"
 msgstr ""
 
-#: src/cmds.c:1511 src/modules.c:604
+#: src/cmds.c:1511 src/modules.c:224
 #, c-format
 msgid "Module loaded: %-16s"
 msgstr ""
@@ -2401,257 +2432,22 @@ msgstr ""
 msgid "Returning to real nick %s!\n"
 msgstr ""
 
-#. Log entry for successful login -slennox 3/28/1999
-#: src/dcc.c:182
-#, c-format
-msgid "Logged in: %s (%s/%d)"
-msgstr ""
-
-#: src/dcc.c:196
-#, c-format
-msgid "Bad Password: [%s]%s/%d"
-msgstr ""
-
-#: src/dcc.c:208 src/dcc.c:1033
-#, c-format
-msgid "*** %s has joined the party line.\n"
-msgstr ""
-
-#: src/dcc.c:218 src/dcc.c:348
-#, c-format
-msgid "Lost dcc connection to %s (%s/%d)"
-msgstr ""
-
-#: src/dcc.c:227
-#, c-format
-msgid "Password timeout on dcc chat: [%s]%s"
-msgstr ""
-
-#: src/dcc.c:530
-#, c-format
-msgid "Telnet connection flood from %s!  Placing on ignore!"
-msgstr ""
-
-#: src/dcc.c:557
-#, c-format
-msgid "Failed TELNET incoming (%s)"
-msgstr ""
-
-#: src/dcc.c:564
-#, c-format
-msgid "Refused %s/%d (bad src port)"
-msgstr ""
-
-#: src/dcc.c:602
-#, c-format
-msgid "Lost listening socket while resolving %s"
-msgstr ""
-
-#: src/dcc.c:611
-#, c-format
-msgid "Refused %s (bad hostname)"
-msgstr ""
-
-#: src/dcc.c:628
-#, c-format
-msgid "Telnet connection: %s/%d"
-msgstr ""
-
-#: src/dcc.c:643
-#, c-format
-msgid "Ident failed for %s: %s"
-msgstr ""
-
-#: src/dcc.c:660
-#, c-format
-msgid "(!) Listening port %d abruptly died."
-msgstr ""
-
-#: src/dcc.c:695
-#, c-format
-msgid "Refused %s (bad nick)"
-msgstr ""
-
-#: src/dcc.c:705
-#, c-format
-msgid "Refused %s (non-bot)"
-msgstr ""
-
-#: src/dcc.c:712
-#, c-format
-msgid "Refused %s (non-user)"
-msgstr ""
-
-#: src/dcc.c:722
-#, c-format
-msgid ""
-"This is the telnet interface to %s, an eggdrop bot.\n"
-"Dont abuse it, and it will be open for all your friends, too.\n"
-msgstr ""
-
-#: src/dcc.c:723
-msgid ""
-"You now get to pick a nick to use on the bot,\n"
-"and a password so nobody else can pretend to be you.\n"
-"Please remember both!"
-msgstr ""
-
-#: src/dcc.c:732
-#, c-format
-msgid "Refused %s (invalid handle: %s)"
-msgstr ""
-
-#: src/dcc.c:751
-#, c-format
-msgid "Refused [%s]%s (no password)"
-msgstr ""
-
-#: src/dcc.c:781
-#, c-format
-msgid "Lost telnet connection to %s/%d"
-msgstr ""
-
-#: src/dcc.c:790
-#, c-format
-msgid "Ident timeout on telnet: %s"
-msgstr ""
-
-#: src/dcc.c:867
-msgid ""
-"\n"
-"YOU ARE THE MASTER/OWNER ON THIS BOT NOW\n"
-msgstr ""
-
-#: src/dcc.c:868
-msgid ""
-"From now on, you dont need to use the -m option to start the bot.\n"
-"Enjoy !!"
-msgstr ""
-
-#: src/dcc.c:872
-msgid "Welcome to Eggdrop! :)"
-msgstr ""
-
-#: src/dcc.c:874
-msgid ""
-"\n"
-"Okay, now choose and enter a password:\n"
-msgstr ""
-
-#: src/dcc.c:875
-msgid "(Only the first 15 letters are significant.)\n"
-msgstr ""
-
-#: src/dcc.c:900
-#, c-format
-msgid "New user via telnet: [%s]%s/%d"
-msgstr ""
-
-#: src/dcc.c:927
-#, c-format
-msgid "Lost new telnet user (%s/%d)"
-msgstr ""
-
-#: src/dcc.c:934
-#, c-format
-msgid "Lost new telnet user %s (%s/%d)"
-msgstr ""
-
-#: src/dcc.c:944
-#, c-format
-msgid "Timeout on new telnet user: %s/%d"
-msgstr ""
-
-#: src/dcc.c:953
-#, c-format
-msgid "Timeout on new telnet user: [%s]%s/%d"
-msgstr ""
-
-#: src/dcc.c:1066
-#, c-format
-msgid "*** ATTENTION: DEAD SOCKET (%d) OF TYPE %s UNTRAPPED"
-msgstr ""
-
-#: src/dcc.c:1168
-#, c-format
-msgid "Lost connection while identing [%s/%d]"
-msgstr ""
-
-#: src/dcc.c:1232
-msgid "Timeout/EOF ident connection"
-msgstr ""
-
-#: src/dcc.c:1270
-msgid "Lost ident wait telnet socket!!"
-msgstr ""
-
-#: src/dcc.c:1290
-#, c-format
-msgid "Denied telnet: %s, No Access"
-msgstr ""
-
-#: src/dcc.c:1331
-msgid ""
-"%B  (%E)\n"
-"\n"
-"Please enter your nickname.\n"
-msgstr ""
-
-#. FLOOD
-#: src/dccutil.c:473
-msgid "Goodbye"
-msgstr ""
-
-#: src/dccutil.c:479
-#, c-format
-msgid "%s has been forcibly removed for flooding.\n"
-msgstr ""
-
-#: src/dccutil.c:502
-#, c-format
-msgid "Youve been booted from the %s by %s%s%s\n"
-msgstr ""
-
-#: src/dccutil.c:511
-#, c-format
-msgid "%s booted %s from the party line%s%s\n"
-msgstr ""
-
-#: src/dccutil.c:550
-msgid "I dont know anyone by that name.\n"
-msgstr ""
-
-#: src/dccutil.c:555
-msgid "Thats a bot.  You cant leave notes for a bot.\n"
-msgstr ""
-
-#: src/dccutil.c:578
-msgid "is away"
-msgstr ""
-
-#. User is away in all sessions -- just notify the user that a
-#. * message arrived and was stored. (only oldest session is notified.)
-#.
-#: src/dccutil.c:614
-msgid "Note arrived for you"
-msgstr ""
-
-#: src/logfile.c:110
+#: src/logfile.c:103
 msgid "Cycling logfiles"
 msgstr ""
 
-#: src/logfile.c:210 src/logfile.c:261
+#: src/logfile.c:203 src/logfile.c:250
 #, c-format
 msgid "Last message repeated %d time(s).\n"
 msgstr ""
 
 #. It's too big.
-#: src/logfile.c:247
+#: src/logfile.c:236
 #, c-format
 msgid "Cycling logfile %s, over max-logsize (%d kilobytes)"
 msgstr ""
 
-#: src/main.c:251
+#: src/main.c:229
 msgid ""
 "\n"
 "  -h, --help                 Print help and exit\n"
@@ -2664,146 +2460,124 @@ msgid ""
 "  FILE  optional config filename (default 'config.xml')\n"
 msgstr ""
 
-#: src/main.c:556
+#: src/main.c:537
 msgid "ERROR: Eggdrop will not run as root!"
 msgstr ""
 
-#: src/main.c:618
+#: src/main.c:587
 #, c-format
 msgid "I detect %s already running from this directory.\n"
 msgstr ""
 
-#: src/main.c:619
+#: src/main.c:588
 #, c-format
 msgid "If this is incorrect, erase the %s\n"
 msgstr ""
 
-#. Should be only 2 modules now - blowfish (or some other
-#. encryption module) and eggdrop.
-#: src/main.c:755
-msgid "Stagnant module; there WILL be memory leaks!"
-msgstr ""
-
-#: src/misc.c:754 src/misc.c:793
+#: src/misc.c:753 src/misc.c:792
 msgid "No help available on that."
 msgstr ""
 
-#: src/misc.c:817 src/misc.c:842
+#: src/misc.c:816 src/misc.c:841
 msgid "No help available on that.\n"
 msgstr ""
 
-#: src/modules.c:533
+#: src/modules.c:153
 #, c-format
 msgid "error during libtdl initialization: %s\n"
 msgstr ""
 
-#: src/modules.c:540
+#: src/modules.c:160
 msgid "Cant determine current directory."
 msgstr ""
 
-#: src/modules.c:542 src/modules.c:544
+#: src/modules.c:162 src/modules.c:164
 msgid "Invalid module's search path."
 msgstr ""
 
-#: src/modules.c:584
+#: src/modules.c:204
 msgid "No start function defined."
 msgstr ""
 
-#: src/modules.c:588
+#: src/modules.c:208
 msgid "Malloc error"
 msgstr ""
 
-#: src/modules.c:620
+#: src/modules.c:240
 msgid "Needed by another module"
 msgstr ""
 
-#: src/modules.c:624
+#: src/modules.c:244
 msgid "No close function"
 msgstr ""
 
-#: src/modules.c:639
+#: src/modules.c:259
 #, c-format
 msgid "Module unloaded: %s"
 msgstr ""
 
-#: src/modules.c:645
+#: src/modules.c:265
 msgid "No such module"
 msgstr ""
 
-#: src/modules.c:843
-msgid "MODULES LOADED:\n"
-msgstr ""
-
-#: src/modules.c:868
-msgid "No such module.\n"
-msgstr ""
-
-#: src/tcldcc.c:491 src/tcldcc.c:504
-msgid "Userfile creation not necessary--skipping"
-msgstr ""
-
-#: src/tcldcc.c:508
-msgid "Restarting..."
-msgstr ""
-
-#: src/users.c:187
+#: src/users.c:186
 msgid "placed by"
 msgstr ""
 
-#: src/users.c:202
+#: src/users.c:201
 msgid "Currently ignoring"
 msgstr ""
 
-#: src/users.c:224
+#: src/users.c:223
 msgid "No longer ignoring"
 msgstr ""
 
-#: src/users.c:538
+#: src/users.c:534
 msgid "Cant find anyone matching that"
 msgstr ""
 
-#: src/users.c:558
+#: src/users.c:554
 msgid "Matching"
 msgstr ""
 
-#: src/users.c:564
+#: src/users.c:560
 msgid "skipping first"
 msgstr ""
 
-#: src/users.c:592 src/users.c:600 src/users.c:611
+#: src/users.c:588 src/users.c:596 src/users.c:607
 #, c-format
 msgid "(more than %d matches; list truncated)\n"
 msgstr ""
 
-#: src/users.c:616
+#: src/users.c:612
 #, c-format
 msgid "--- Found %d match%s.\n"
 msgstr ""
 
-#: src/users.c:623
+#: src/users.c:619
 msgid "Backing up user file..."
 msgstr ""
 
-#: src/users.c:691
+#: src/users.c:687
 msgid "Old userfile, use tclsh scripts/weed <userfile> c to convert"
 msgstr ""
 
-#: src/users.c:694
+#: src/users.c:690
 msgid "Invalid userfile format."
 msgstr ""
 
-#: src/users.c:898
+#: src/users.c:894
 msgid "Corrupt user record"
 msgstr ""
 
-#: src/users.c:903
+#: src/users.c:899
 msgid "Duplicate user record"
 msgstr ""
 
-#: src/users.c:914
+#: src/users.c:910
 msgid "Corrupted password reset for"
 msgstr ""
 
-#: src/users.c:935
+#: src/users.c:931
 msgid "Ignored masks for channel(s):"
 msgstr ""
