@@ -1,3 +1,31 @@
+2001-08-21 00:21  Federico Mennite <ite@techmonkeys.org>
+
+	* .cvsignore, Makefile.in, acconfig.h, aclocal.m4, bootstrap,
+	configure.in, misc/config.guess, misc/config.sub, po/.cvsignore,
+	po/POTFILES.in, po/eggdrop.pot, po/update.pl, src/Makefile.in,
+	src/eggdrop.h, src/main.c, src/mod/module.h:
+
+	Gettext phase 2: 
+	* Replced dummy _() define with the real one and added language
+	  domain binding code.  
+	* added gettext's related m4 macros to aclocal 
+	* added misc/config.guess and misc/config.sub system detection
+	scripts 
+	* added the po subdirectory containing: 
+	  - eggdrop.pot: the template translation file.  
+	  - POTFILES.in: a list of the source files containing _("") macros 
+	  - update.pl: a small perl script to generate eggdrop.pot from the
+	    sources and to update existing translation files (*.po) 
+	  - ChangeLog: list of changes in that directory.  
+	* added VERSION and VERSION_NUM (replacing EGG_VERSION and
+	  EGG_VERSION_NUM) defines for versioning information. The version
+	  (+patch excepted) now changes by just editing an entry in top of
+	configure.in.  
+	* removed EGG_VERSION_MAX and EGGDROP_VERSION_MIN C macros that
+	  wheren't used anywhere.  
+	* Modified bootstrap script 
+	* added and and modified .cvsignore files 
+
 2001-08-19 09:08  Matthew Hallacy <poptix@techmonkeys.org>
 
 	* src/: patch.h, mod/irc.mod/chan.c:
