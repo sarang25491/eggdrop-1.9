@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: tclhash.h,v 1.32 2002/05/26 08:34:13 stdarg Exp $
+ * $Id: tclhash.h,v 1.33 2002/08/09 23:44:07 stdarg Exp $
  */
 
 #ifndef _TCLHASH_H_
@@ -37,12 +37,12 @@
 /* Flags for binds. */
 /* Does the callback want their client_data inserted as the first argument? */
 #define BIND_WANTS_CD 1
-
 #define BIND_USE_ATTR	2
 #define BIND_STRICT_ATTR	4
 #define BIND_BREAKABLE	8
 #define BIND_STACKABLE	16
 #define BIND_DELETED	32
+#define BIND_FAKE	64
 
 /* Flags for return values from bind callbacks */
 #define BIND_RET_LOG 1

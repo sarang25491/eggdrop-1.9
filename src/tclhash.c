@@ -28,7 +28,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tclhash.c,v 1.71 2002/05/26 08:34:13 stdarg Exp $";
+static const char rcsid[] = "$Id: tclhash.c,v 1.72 2002/08/09 23:44:07 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -115,17 +115,22 @@ bind_table_t *bind_table_add(const char *name, int nargs, const char *syntax, in
 	bind_table_t *table;
 
 	for (table = bind_table_list_head; table; table = table->next) {
-		if (!strcmp(table->name, name)) return(table);
+		if (!strcmp(table->name, name)) break;
 	}
-	/* Nope, we have to create a new one. */
-	table = (bind_table_t *)calloc(1, sizeof(*table));
-	table->name = strdup(name);
+
+	/* If it doesn't exist, create it. */
+	if (!table) {
+		table = (bind_table_t *)calloc(1, sizeof(*table));
+		table->name = strdup(name);
+		table->next = bind_table_list_head;
+		bind_table_list_head = table;
+	}
+	else if (!(table->flags & BIND_FAKE)) return(table);
+
 	table->nargs = nargs;
-	table->syntax = strdup(syntax);
+	if (syntax) table->syntax = strdup(syntax);
 	table->match_type = match_type;
 	table->flags = flags;
-	table->next = bind_table_list_head;
-	bind_table_list_head = table;
 	return(table);
 }
 
@@ -174,6 +179,15 @@ bind_table_t *bind_table_lookup(const char *name)
 	for (table = bind_table_list_head; table; table = table->next) {
 		if (!(table->flags & BIND_DELETED) && !strcmp(table->name, name)) break;
 	}
+	return(table);
+}
+
+bind_table_t *bind_table_lookup_or_fake(const char *name)
+{
+	bind_table_t *table;
+
+	table = bind_table_lookup(name);
+	if (!table) table = bind_table_add(name, 0, NULL, 0, BIND_FAKE);
 	return(table);
 }
 
@@ -481,8 +495,7 @@ void add_builtins(const char *table_name, cmd_t *cmds)
 	char name[50];
 	bind_table_t *table;
 
-	table = bind_table_lookup(table_name);
-	if (!table) return;
+	table = bind_table_lookup_or_fake(table_name);
 
 	for (; cmds->name; cmds++) {
 		snprintf(name, 50, "*%s:%s", table->name, cmds->funcname ? cmds->funcname : cmds->name);
