@@ -24,7 +24,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: chanprog.c,v 1.54 2003/02/03 11:41:34 wcc Exp $";
+static const char rcsid[] = "$Id: chanprog.c,v 1.55 2003/02/10 00:09:08 wcc Exp $";
 #endif
 
 #include "main.h"
@@ -385,14 +385,11 @@ Telnet to the bot and enter 'NEW' as your nickname.\n"));
  */
 void reload()
 {
-  FILE *f;
-
-  f = fopen(userfile, "r");
-  if (f == NULL) {
+  if (!file_readable(userfile)) {
     putlog(LOG_MISC, "*", _("Cant reload user file!"));
     return;
   }
-  fclose(f);
+
   noshare = 1;
   clear_userlist(userlist);
   noshare = 0;

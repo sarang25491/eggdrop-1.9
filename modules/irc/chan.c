@@ -27,7 +27,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: chan.c,v 1.31 2003/02/03 10:43:36 wcc Exp $";
+static const char rcsid[] = "$Id: chan.c,v 1.32 2003/02/10 00:09:08 wcc Exp $";
 #endif
 */
 
@@ -151,9 +151,7 @@ static char *quickban(struct chanset_t *chan, char *uhost)
 {
   static char s1[512];
 
-  maskhost(uhost, s1);
-  if ((strlen(s1) != 1) && (strict_host == 0))
-    s1[2] = '*';		/* arthur2 */
+  maskban(uhost, s1);
   do_mask(chan, chan->channel.ban, s1, 'b');
   return s1;
 }

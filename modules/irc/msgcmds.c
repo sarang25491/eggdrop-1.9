@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: msgcmds.c,v 1.15 2003/02/04 04:54:15 wcc Exp $";
+static const char rcsid[] = "$Id: msgcmds.c,v 1.16 2003/02/10 00:09:08 wcc Exp $";
 #endif
 */
 
@@ -32,19 +32,14 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
 {
   char host[UHOSTLEN], s[UHOSTLEN], s1[UHOSTLEN], handle[HANDLEN + 1];
   char *p1;
-  int atr = 0;
   struct chanset_t *chan;
 
   if (!learn_users && !make_userfile)
     return 0;
+
   if (match_my_nick(nick))
     return 1;
-  if (u)
-    atr = u->flags;
-  if (u) {
-    dprintf(DP_HELP, "NOTICE %s :%s, %s.\n", nick, _("Hi"), u->handle);
-    return 1;
-  }
+
   strlcpy(handle, nick, sizeof handle);
   if (get_user_by_handle(userlist, handle)) {
     dprintf(DP_HELP, _("NOTICE %s :I dont recognize you from that host.\n"), nick);
@@ -173,9 +168,8 @@ static int msg_ident(char *nick, char *host, struct userrec *u, char *par)
   }
   u2 = get_user_by_handle(userlist, who);
   if (!u2) {
-    if (u && !quiet_reject) {
+    if (u && !quiet_reject)
       dprintf(DP_HELP, _("NOTICE %s :Youre not %s, youre %s.\n"), nick, nick, u->handle);
-    }
   } else if (irccmp(who, origbotname) && !(u2->flags & USER_BOT)) {
     /* This could be used as detection... */
     if (u_pass_match(u2, "-")) {

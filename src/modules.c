@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: modules.c,v 1.127 2003/02/03 11:41:34 wcc Exp $";
+static const char rcsid[] = "$Id: modules.c,v 1.128 2003/02/10 00:09:08 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -77,7 +77,7 @@ extern int noshare, dcc_total, egg_numver, userfile_perm, ignore_time,
            learn_users, raw_log, make_userfile, default_flags, max_dcc,
            share_greet, password_timeout, use_invites, use_exempts,
            force_expire, do_restart, protect_readonly, reserved_port_min,
-           reserved_port_max, copy_to_tmp;
+           reserved_port_max, copy_to_tmp, quiet_reject;
 extern time_t now, online_since;
 extern egg_timeval_t egg_timeval_now;
 extern struct chanset_t *chanset;
@@ -356,7 +356,7 @@ Function global_table[] =
   /* 152 - 155 */
   (Function) makepass,
   (Function) wild_match,
-  (Function) maskhost,
+  (Function) _maskhost,
   (Function) show_motd,
   /* 156 - 159 */
   (Function) tellhelp,
@@ -522,8 +522,10 @@ Function global_table[] =
   (Function) &egg_timeval_now,
   0,
   (Function) killtransfer,
+  /* 280 - 283 */
   (Function) write_ignores,
-  (Function) &copy_to_tmp,
+  (Function) &copy_to_tmp, /* int */
+  (Function) &quiet_reject, /* int */
 };
 
 static bind_table_t *BT_load, *BT_unload;

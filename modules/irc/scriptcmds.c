@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.2 2003/01/02 21:33:15 wcc Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.3 2003/02/10 00:09:08 wcc Exp $";
 #endif
 */
 
@@ -471,7 +471,7 @@ static int script_maskhost (script_var_t *retval, char *whichmask)
 {
   char new[121];
   retval->type = SCRIPT_STRING;
-  maskhost(whichmask, new);
+  maskban(whichmask, new);
   retval->value = (void *) new;
   return(1);
 }

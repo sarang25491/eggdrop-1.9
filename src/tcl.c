@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tcl.c,v 1.96 2003/02/04 04:54:15 wcc Exp $";
+static const char rcsid[] = "$Id: tcl.c,v 1.97 2003/02/10 00:09:08 wcc Exp $";
 #endif
 
 #include <stdlib.h>		/* getenv()				*/
@@ -71,6 +71,7 @@ int use_invites = 0;
 int use_exempts = 0;
 int force_expire = 0;
 int copy_to_tmp = 0;
+int quiet_reject = 1;
 int par_telnet_flood = 1;
 int handlen = HANDLEN;
 
@@ -299,6 +300,7 @@ static tcl_ints def_tcl_ints[] =
   {"strict_host",		&strict_host,		0},
   {"userfile_perm",		&userfile_perm,		0},
   {"copy-to-tmp",		&copy_to_tmp,		0},
+  {"quiet-reject",		&quiet_reject,		0},
   {NULL,			NULL,			0}
 };
 
@@ -403,12 +405,8 @@ void do_tcl(char *whatzit, char *script)
  */
 int readtclprog(char *fname)
 {
-  FILE	*f;
-
-  /* Check whether file is readable. */
-  if ((f = fopen(fname, "r")) == NULL)
+  if (!file_readable(fname))
     return 0;
-  fclose(f);
 
   if (Tcl_EvalFile(interp, fname) != TCL_OK) {
     putlog(LOG_MISC, "*", "TCL error in file '%s':", fname);

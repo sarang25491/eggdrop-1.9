@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: tclfiles.c,v 1.6 2003/01/30 08:20:20 wcc Exp $";
+static const char rcsid[] = "$Id: tclfiles.c,v 1.7 2003/02/10 00:09:08 wcc Exp $";
 #endif
 */
 
@@ -550,7 +550,8 @@ static int tcl_mv_cp(Tcl_Interp * irp, int argc, char **argv, int copy)
 	free_fdbe(&fdbe_new);
       }
       if (!skip_this) {
-	if ((fdbe_old->sharelink) || (copyfile(s, s1) == 0)) {
+        if ((fdbe_old->sharelink) ||
+            ((copy ? copyfile(s, s1) : movefile(s, s1)) == 0)) {
 	  /* Raw file moved okay: create new entry for it */
 	  ok++;
 	  fdbe_new = malloc_fdbe();
@@ -570,10 +571,8 @@ static int tcl_mv_cp(Tcl_Interp * irp, int argc, char **argv, int copy)
 	  fdbe_new->gots = fdbe_old->gots;
 	  realloc_strcpy(fdbe_new->sharelink, fdbe_old->sharelink);
 	  filedb_addfile(fdb_new, fdbe_new);
-	  if (!copy) {
-	    unlink(s);
+	  if (!copy)
 	    filedb_delfile(fdb_old, fdbe_old->pos);
-	  }
 	  free_fdbe(&fdbe_new);
 	}
       }

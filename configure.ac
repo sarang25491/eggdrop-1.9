@@ -109,10 +109,10 @@ EGG_IPV6_OPTIONS
 # (well, what used to be robey's tcl thingies...)
 
 # Latest tested Tcl version to recommend if Tcl isn't found
-tclrecommendver="8.3.3"
+tclrecommendver="8.3.4"
 
 # Site recommended to download Tcl from
-tclrecommendsite="ftp://ftp.eggheads.org/pub/tcl/tcl8_3/"
+tclrecommendsite="ftp://tcl.activestate.com/pub/tcl/"
 
 # Tcl library filename prefixes (also used for Tcl header dir on FreeBSD)
 tcllibnames="tcl tcl8.4 tcl84 tcl8.3 tcl83 tcl8.2 tcl82 tcl8.1 tcl81 \
@@ -134,7 +134,7 @@ tclheadernames="tcl.h"
 # Tcl header search paths
 tclheaderpaths="/usr/local/include /usr/local/pkgs/tcl/include \
 	/usr/include /beos/system/include /beos/devel/include \
-       /sys/include $HOME/include $HOME/tcl/include $HOME"
+	/sys/include $HOME/include $HOME/tcl/include $HOME"
 
 EGG_TCL_WITH_OPTIONS
 EGG_TCL_ENV

@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: files.c,v 1.8 2003/02/03 11:41:34 wcc Exp $";
+static const char rcsid[] = "$Id: files.c,v 1.9 2003/02/10 00:09:08 wcc Exp $";
 #endif
 */
 
@@ -178,8 +178,11 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
     p++;
     realloc_strcpy(elem, new);
     strcpy(new, p);
-    if (!(strcmp(elem, ".")) || (!elem[0])) {	/* Do nothing */
-    } else if (!strcmp(elem, "..")) {	/* Go back */
+    if (!elem[0] || !strcmp(elem, ".")) {
+      p = strchr(new, '/');
+      continue;
+     }
+     else if (!strcmp(elem, "..")) {
       /* Always allowed */
       p = strrchr(*real, '/');
       if (p == NULL) {
@@ -210,6 +213,7 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
 	/* Non-existent */
 	free_null(elem);
 	free_null(new);
+        free_null(s);
 	realloc_strcpy(*real, current);
 	return 0;
       }
@@ -218,6 +222,7 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
 	free_fdbe(&fdbe);
 	free_null(elem);
 	free_null(new);
+        free_null(s);
 	realloc_strcpy(*real, current);
 	return 0;
       }
@@ -233,6 +238,7 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
 	  free_fdbe(&fdbe);
 	  free_null(elem);
 	  free_null(new);
+          free_null(s);
 	  realloc_strcpy(*real, current);
 	  return 0;
 	}
@@ -334,7 +340,7 @@ static void cmd_cancel(int idx, char *par)
 
 static void cmd_chdir(int idx, char *msg)
 {
-  char *s;
+  char *s = NULL;
 
   if (!msg[0]) {
     dprintf(idx, "%s: cd <new-dir>\n", _("Usage"));
@@ -1126,6 +1132,7 @@ static void cmd_mv_cp(int idx, char *par, int copy)
     realloc_strcpy(oldpath, dcc[idx].u.file->dir);
   realloc_strcpy(s, par);
   if (!resolve_dir(dcc[idx].u.file->dir, s, &newpath, idx)) {
+    free_null(newpath);
     /* Destination is not just a directory */
     p = strrchr(s, '/');
     if (p == NULL) {
@@ -1220,7 +1227,9 @@ static void cmd_mv_cp(int idx, char *par, int copy)
 	free_fdbe(&fdbe_new);
       }
       if (!skip_this) {
-	if ((fdbe_old->sharelink) || (copyfile(s, s1) == 0)) {
+        if ((fdbe_old->sharelink) ||
+            ((copy ? copyfile(s, s1) : movefile(s, s1)) == 0)) {
+
 	  /* Raw file moved okay: create new entry for it */
 	  ok++;
 	  fdbe_new = malloc_fdbe();
@@ -1240,10 +1249,8 @@ static void cmd_mv_cp(int idx, char *par, int copy)
 	  fdbe_new->gots = fdbe_old->gots;
 	  realloc_strcpy(fdbe_new->sharelink, fdbe_old->sharelink);
 	  filedb_addfile(fdb_new, fdbe_new);
-	  if (!copy) {
-	    unlink(s);
+	  if (!copy)
 	    filedb_delfile(fdb_old, fdbe_old->pos);
-	  }
 	  free_fdbe(&fdbe_new);
 	}
       }

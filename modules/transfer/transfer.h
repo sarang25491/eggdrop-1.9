@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: transfer.h,v 1.6 2003/01/29 07:42:50 wcc Exp $
+ * $Id: transfer.h,v 1.7 2003/02/10 00:09:08 wcc Exp $
  */
 
 #ifndef _EGG_MOD_TRANSFER_TRANSFER_H
@@ -50,49 +50,68 @@ enum dccsend_types {
   DCCSEND_FEMPTY	/* File is empty			*/
 };
 
+/* File matching */
+#define FILEMATCH (match+sofar)
+#define FILEQUOTE '\\'
+#define FILEWILDS '*'
+#define FILEWILDQ '?'
+
 #ifndef MAKING_TRANSFER
-/* 4 - 7 */
+/* 4-5, 7-8 */
 #define DCC_FORK_SEND (*(struct dcc_table *)(transfer_funcs[4]))
 #define at_limit(a) (((int (*) (char *))transfer_funcs[5])(a))
-
 #define fileq_cancel(a,b) (((void (*) (int,char *))transfer_funcs[7])(a,b))
-/* 8 - 11 */
 #define queue_file(a,b,c,d) (((void (*)(char *,char *,char *,char *))transfer_funcs[8])(a,b,c,d))
-#define raw_dcc_send(a,b,c,d,e) (((int (*) (char *,char *,char *,char *,char *))transfer_funcs[9])(a,b,c,d,e))
+/* 9 - 12 */
+#define raw_dcc_send(a,b,c,d) (((int (*) (char *,char *,char *,char *))transfer_funcs[9])(a,b,c,d))
 #define show_queued_files(a) (((void (*) (int))transfer_funcs[10])(a))
 #define wild_match_file(a,b) (((int (*)(register char * m, register char * n))transfer_funcs[11])(a,b))
-/* 12 - 15 */
 #define wipe_tmp_filename(a,b) (((void (*) (char *,int))transfer_funcs[12])(a,b))
+/* 13, 16, 18, 21 */
 #define DCC_GET (*(struct dcc_table *)(transfer_funcs[13]))
-#define USERENTRY_FSTAT (*(struct user_entry_type *)(transfer_funcs[14]))
-#define quiet_reject (*(int *)(transfer_funcs[15]))
-/* 16 */
-#define raw_dcc_resend(a,b,c,d,e) (((int (*) (char *,char *,char *,char *,char *))transfer_funcs[16])(a,b,c,d,e))
+#define USERENTRY_FSTAT (*(struct user_entry_type *)(transfer_funcs[16]))
+#define raw_dcc_resend(a,b,c,d) (((int (*) (char *,char *,char *,char *))transfer_funcs[18])(a,b,c,d))
+#define DCC_SEND (*(struct dcc_table *)(transfer_funcs[21]))
+/* 22 */
+#define DCC_GET_PENDING (*(struct dcc_table *)(transfer_funcs[22]))
 
-#else	/* MAKING_TRANSFER */
+#else /* MAKING_TRANSFER */
 
-static int raw_dcc_resend(char *, char *, char *, char *, char *);
-static int raw_dcc_send(char *, char *, char *, char *, char *);
+static void dcc_fork_send(int, char *, int);
+static void stats_add_dnload(struct userrec *, unsigned long);
+static void stats_add_upload(struct userrec *, unsigned long);
+static void wipe_tmp_filename(char *, int);
+static void dcc_get_pending(int, char *, int);
+static void queue_file(char *, char *, char *, char *);
+static int raw_dcc_resend(char *, char *, char *, char *);
+static int raw_dcc_send(char *, char *, char *, char *);
+static int at_limit(char *);
+static int fstat_gotshare(struct userrec *u, struct user_entry *e, char *par,
+                           int idx);
+static int fstat_dupuser(struct userrec *u, struct userrec *o,
+                          struct user_entry *e);
+static int fstat_tcl_set(Tcl_Interp *irp, struct userrec *u,
+                         struct user_entry *e, int argc, char **argv);
+static void stats_add_dnload(struct userrec *u, unsigned long bytes);
+static void stats_add_upload(struct userrec *u, unsigned long bytes);
+static int wild_match_file(register char *, register char *);
+static int server_transfer_setup(char *);
 
 #define TRANSFER_REGET_PACKETID 0xfeab
 
 typedef struct {
-  u_16bit_t packet_id;		/* Identification ID, should be equal
-	 			   to TRANSFER_REGET_PACKETID		*/
-  u_8bit_t  byte_order;		/* Byte ordering, see byte_order_test()	*/
-  u_32int_t byte_offset;	/* Number of bytes to skip relative to
-				   the file beginning			*/
+  u_16bit_t packet_id; /* Identification ID, should be equal to TRANSFER_REGET_PACKETID */
+  u_8bit_t  byte_order; /* Byte ordering, see byte_order_test() */
+  u_32bit_t byte_offset; /* Number of bytes to skip relative to the file beginning */
 } transfer_reget;
 
 typedef struct zarrf {
-  char *dir;			/* Absolute dir if it starts with '*',
-				   otherwise dcc dir.			*/
+  char *dir; /* Absolute dir if it starts with '*', otherwise dcc dir. */
   char *file;
-  char nick[NICKLEN];		/* Who queued this file			*/
-  char to[NICKLEN];		/* Who will it be sent to		*/
+  char nick[NICKLEN]; /* Who queued this file */
+  char to[NICKLEN]; /* Who will it be sent to */
   struct zarrf *next;
 } fileq_t;
 
-#endif				/* MAKING_TRANSFER */
-
-#endif				/* !_EGG_MOD_TRANSFER_TRANSFER_H */
+#endif /* MAKING_TRANSFER */
+#endif /* !_EGG_MOD_TRANSFER_TRANSFER_H */

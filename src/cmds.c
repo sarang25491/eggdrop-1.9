@@ -24,7 +24,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: cmds.c,v 1.112 2003/02/03 11:41:34 wcc Exp $";
+static const char rcsid[] = "$Id: cmds.c,v 1.113 2003/02/10 00:09:08 wcc Exp $";
 #endif
 
 #include "main.h"
@@ -536,65 +536,76 @@ static int cmd_pls_bot(user_t *u, int idx, char *par)
   struct bot_addr *bi;
   int addrlen;
 
-  if (!par[0])
-    dprintf(idx, "Usage: +bot <handle> <address[:telnet-port[/relay-port]]> [host]\n");
-  else {
-    handle = newsplit(&par);
-    addr = newsplit(&par);
-    if (strlen(handle) > HANDLEN)
-      handle[HANDLEN] = 0;	/* max len = XX .. for the moment :) */
-    if (get_user_by_handle(userlist, handle))
-      dprintf(idx, _("Someone already exists by that name.\n"));
-    else if (strchr(BADHANDCHARS, handle[0]) != NULL)
-      dprintf(idx, _("You can't start a botnick with '%c'.\n"), handle[0]);
-    else {
-      if (strlen(addr) > 60)
-	addr[60] = 0;
-      userlist = adduser(userlist, handle, "none", "-", USER_BOT);
-      u1 = get_user_by_handle(userlist, handle);
-      bi = malloc(sizeof(struct bot_addr));
-
-      if (*addr == '[') {
-	addr++;
-        if ((q = strchr(addr, ']'))) {
-          addrlen = q - addr;
-          q++;
-          if (*q != ':')
-            q = 0;
-        } else
-          addrlen = strlen(addr);
-      } else {
-        if ((q = strchr(addr, ':')))
-	  addrlen = q - addr;
-        else
-	  addrlen = strlen(addr);
-      }
-      if (!q) {
-	bi->address = strdup(addr);
-	bi->telnet_port = 3333;
-	bi->relay_port = 3333;
-      } else {
-	bi->address = malloc(addrlen + 1);
-	strlcpy(bi->address, addr, addrlen + 1);
-	p = q + 1;
-	bi->telnet_port = atoi(p);
-	q = strchr(p, '/');
-	if (!q) {
-	  bi->relay_port = bi->telnet_port;
-	} else {
-	  bi->relay_port = atoi(q + 1);
-	}
-      }
-      set_user(&USERENTRY_BOTADDR, u1, bi);
-      dprintf(idx, _("Added bot '%s' with address '%s' and no password.\n"),
-	      handle, addr);
-      host = newsplit(&par);
-      if (host[0]) {
-	addhost_by_handle(handle, host);
-      } else if (!add_bot_hostmask(idx, handle))
-	dprintf(idx, _("You'll want to add a hostmask if this bot will ever be on any channels that I'm on.\n"));
-    }
+  if (!par[0]) {
+    dprintf(idx, "Usage: +bot <handle> [address[:telnet-port[/relay-port]]] "
+            "[host]\n");
+    return(0);
   }
+
+  handle = newsplit(&par);
+  addr = newsplit(&par);
+  host = newsplit(&par);
+
+  if (strlen(handle) > HANDLEN)
+    handle[HANDLEN] = 0;
+
+  if (get_user_by_handle(userlist, handle))
+    dprintf(idx, _("Someone already exists by that name.\n"));
+    return(0);
+  }
+
+  if (strchr(BADHANDCHARS, handle[0]) != NULL) {
+    dprintf(idx, _("You can't start a botnick with '%c'.\n"), handle[0]);
+    return(0);
+  }
+
+  if (strlen(addr) > 60)
+    addr[60] = 0;
+
+  userlist = adduser(userlist, handle, "none", "-", USER_BOT);
+  u1 = get_user_by_handle(userlist, handle);
+  bi = malloc(sizeof(struct bot_addr));
+
+  if (*addr == '[') {
+    addr++;
+    if ((q = strchr(addr, ']'))) {
+      addrlen = q - addr;
+      q++;
+      if (*q != ':')
+        q = 0;
+    } else
+      addrlen = strlen(addr);
+  } else {
+    if ((q = strchr(addr, ':')))
+      addrlen = q - addr;
+    else
+      addrlen = strlen(addr);
+  }
+  if (!q) {
+    bi->address = strdup(addr);
+    bi->telnet_port = 3333;
+    bi->relay_port = 3333;
+  } else {
+    bi->address = malloc(addrlen + 1);
+    strlcpy(bi->address, addr, addrlen + 1);
+    p = q + 1;
+    bi->telnet_port = atoi(p);
+    q = strchr(p, '/');
+    if (!q)
+      bi->relay_port = bi->telnet_port;
+    else
+      bi->relay_port = atoi(q + 1);
+  }
+  set_user(&USERENTRY_BOTADDR, u1, bi);
+  dprintf(idx, _("Added bot '%s' with %s%s%s%s and %s%s%s%s.\n"), handle,
+          addr[0] ? "address " : "no address ", addr[0] ? "'" : "",
+          addr[0] ? addr : "", addr[0] ? "'" : "",
+          host[0] ? "hostmask " : "no hostmask", addr[0] ? "'" : "",
+          host[0] ? host : "", addr[0] ? "'" : "");
+  if (host[0])
+    addhost_by_handle(handle, host);
+  else if (!add_bot_hostmask(idx, handle))
+    dprintf(idx, _("You'll want to add a hostmask if this bot will ever be on any channels that I'm on.\n"));
   return(1);
 }
 

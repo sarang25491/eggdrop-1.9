@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: userchan.c,v 1.13 2003/02/03 11:41:34 wcc Exp $";
+static const char rcsid[] = "$Id: userchan.c,v 1.14 2003/02/10 00:09:08 wcc Exp $";
 #endif
 */
 
@@ -255,6 +255,7 @@ static int u_delmask(char type, struct chanset_t *c, char *who, int doit)
 {
   int j, i = 0;
   maskrec **u = NULL, *t;
+  char temp[256];
 
   if (type == 'b')
     u = c ? &c->bans : &global_bans;
@@ -267,7 +268,7 @@ static int u_delmask(char type, struct chanset_t *c, char *who, int doit)
     j--;
     for (; (*u) && j; u = &((*u)->next), j--);
     if (*u) {
-      strcpy(who, (*u)->mask);
+      strncpyz(temp, (*u)->mask, strlen((*u)->mask));
       i = 1;
     } else
       return -j - 1;
@@ -275,6 +276,7 @@ static int u_delmask(char type, struct chanset_t *c, char *who, int doit)
     /* Find matching host, if there is one */
     for (; *u && !i; u = &((*u)->next))
       if (!irccmp((*u)->mask, who)) {
+        strncpyz(temp, who, strlen(who));
 	i = 1;
 	break;
       }
@@ -283,7 +285,7 @@ static int u_delmask(char type, struct chanset_t *c, char *who, int doit)
   }
   if (i && doit) {
     if (!noshare) {
-      char *mask = str_escape(who, ':', '\\');
+      char *mask = str_escape(temp, ':', '\\');
 
       if (mask) {
 	/* Distribute chan bans differently */

@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: modvals.h,v 1.6 2003/01/02 21:33:13 wcc Exp $
+ * $Id: modvals.h,v 1.7 2003/02/10 00:09:08 wcc Exp $
  */
 
 #ifndef _EGG_MOD_MODVALS_H
@@ -60,7 +60,7 @@
  */
 #define MODCALL_START		  0
 #define MODCALL_CLOSE		  1
-#define MODCALL_EXPMEM		  2	/* This is no longer used (Tothwolf) */
+/* MODCALL_EXPMEM (2) - This is no longer used (Tothwolf) */
 #define MODCALL_REPORT		  3
 /* Filesys */
 #define FILESYS_REMOTE_REQ	  4

@@ -25,7 +25,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: mode.c,v 1.18 2003/02/03 10:43:36 wcc Exp $";
+static const char rcsid[] = "$Id: mode.c,v 1.19 2003/02/10 00:09:08 wcc Exp $";
 #endif
 */
 
@@ -412,19 +412,13 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
   if (channel_pending(chan))
     return;
 
-  /* I'm opped, and the opper isn't me */
   if (me_op(chan) && !match_my_nick(who) && nick[0]) {
     /* Channis is +bitch, and the opper isn't a global master or a bot */
     if (channel_bitch(chan) && !(glob_master(*opper) || glob_bot(*opper)) &&
-	/* ... and the *opper isn't a channel master */
-	!chan_master(*opper) &&
-	/* ... and the oppee isn't global op/master/bot */
-	!(glob_op(victim) || glob_bot(victim)) &&
-	/* ... and the oppee isn't a channel op/master */
-	!chan_op(victim))
+	!chan_master(*opper) && !(glob_op(victim) || glob_bot(victim)) &&
+        !chan_op(victim))
       add_mode(chan, '-', 'o', who);
-
-  } else if (reversing && !match_my_nick(who))
+  } else if (me_op(chan) && reversing && !match_my_nick(who))
     add_mode(chan, '-', 'o', who);
   if (!nick[0] && me_op(chan) && !match_my_nick(who)) {
     if (snm > 0 && snm < 7 && !((channel_autoop(chan) || glob_autoop(victim) ||

@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: filesys.c,v 1.17 2003/01/02 21:33:14 wcc Exp $";
+static const char rcsid[] = "$Id: filesys.c,v 1.18 2003/02/10 00:09:08 wcc Exp $";
 #endif
 
 #include <fcntl.h>
@@ -405,7 +405,6 @@ static int _dcc_send(int idx, char *filename, char *nick, char *dir,
 static int do_dcc_send(int idx, char *dir, char *fn, char *nick, int resend)
 {
   char *s = NULL, *s1 = NULL;
-  FILE *f;
   int x;
 
   if (nick && strlen(nick) > NICKMAX)
@@ -429,15 +428,13 @@ static int do_dcc_send(int idx, char *dir, char *fn, char *nick, int resend)
     s = malloc(strlen(dccdir) + strlen(fn) + 1);
     sprintf(s, "%s%s", dccdir, fn);
   }
-  f = fopen(s, "r");
-  if (f == NULL) {
+  if (!file_readable(s)) {
     dprintf(idx, "No such file.\n");
     putlog(LOG_FILES, "*", "Refused dcc %sget %s from [%s]", resend ? "re" : "",
 	   fn, dcc[idx].nick);
     free_null(s);
     return 0;
   }
-  fclose(f);
   if (!nick || !nick[0])
     nick = dcc[idx].nick;
   /* Already have too many transfers active for this user?  queue it */
@@ -590,6 +587,8 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
     putlog(LOG_FILES, "*",
 	   "Refused DCC SEND %s (no access): %s!%s", param,
 	   nick, from);
+    if (!quiet_reject)
+      dprintf(DP_HELP, "NOTICE %s :No access\n", nick);
   } else if (!dccin[0] && !upload_to_cd) {
     dprintf(DP_HELP,
 	    "NOTICE %s :DCC file transfers not supported.\n", nick);
@@ -689,7 +688,6 @@ static char *mktempfile(char *filename)
 
 static void filesys_dcc_send_hostresolved(int i)
 {
-  FILE *f;
   char *s1, *param = NULL, prt[100], *tempf;
   int len = dcc[i].u.dns->ibuf, j;
 
@@ -722,14 +720,13 @@ static void filesys_dcc_send_hostresolved(int i)
   s1 = malloc(strlen(dcc[i].u.xfer->dir) +
 	       strlen(dcc[i].u.xfer->origname) + 1);
   sprintf(s1, "%s%s", dcc[i].u.xfer->dir, dcc[i].u.xfer->origname);
-  f = fopen(s1, "r");
-  free_null(s1);
-  if (f) {
-    fclose(f);
+  if (file_readable(s1)) {
     dprintf(DP_HELP, "NOTICE %s :File `%s' already exists.\n",
 	    dcc[i].nick, dcc[i].u.xfer->origname);
     lostdcc(i);
+    free_null(s1);
   } else {
+    free_null(s1);
     /* Check for dcc-sends in process with the same filename */
     for (j = 0; j < dcc_total; j++)
       if (j != i) {
@@ -762,7 +759,7 @@ static void filesys_dcc_send_hostresolved(int i)
   }
 }
 
-/* This only handles CHAT requests, otherwise it's handled in filesys.
+/* This only handles CHAT requests, otherwise it's handled in transfer.
  */
 static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
 			    char *object, char *keyword, char *text)

@@ -22,7 +22,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: fileutil.c,v 1.4 2003/01/02 21:33:13 wcc Exp $";
+static const char rcsid[] = "$Id: fileutil.c,v 1.5 2003/02/10 00:09:08 wcc Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -114,4 +114,15 @@ int is_file(const char *s)
     return 1;
   return 0;
 }
+
+int file_readable(const char *file)
+{
+  FILE *fp;
+
+  if (!(fp = fopen(file, "r")))
+    return 0;
+
+  fclose(fp);
+  return 1;
+ }
 

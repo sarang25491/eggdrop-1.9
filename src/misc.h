@@ -26,7 +26,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: misc.h,v 1.7 2003/01/02 21:33:16 wcc Exp $
+ * $Id: misc.h,v 1.8 2003/02/10 00:09:08 wcc Exp $
  */
 
 #ifndef _EGG_MISC_H
@@ -40,7 +40,7 @@
 
 #ifndef MAKING_MODS
 
-extern void maskhost(const char *, char *);
+extern void _maskhost(const char *, char *, int);
 extern void dumplots(int, const char *, char *);
 extern void daysago(time_t, time_t, char *);
 extern void days(time_t, time_t, char *);
@@ -60,6 +60,9 @@ extern void show_telnet_banner(int i);
 extern void make_rand_str(char *, int);
 extern int oatoi(const char *);
 extern void kill_bot(char *, char *);
+
+#define maskhost(a,b) _maskhost((a),(b),1)
+#define maskban(a,b)  _maskhost((a),(b),0)
 
 #endif				/* !MAKING_MODS */
 

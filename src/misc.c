@@ -27,7 +27,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: misc.c,v 1.74 2003/02/03 11:41:34 wcc Exp $";
+static const char rcsid[] = "$Id: misc.c,v 1.75 2003/02/10 00:09:08 wcc Exp $";
 #endif
 
 #include "main.h"
@@ -79,7 +79,7 @@ static struct help_ref {
  * or "abc!user@3ffe:604:2:b02e:6174:7265:6964:6573" into
  *    "*!user@3ffe:604:2:b02e:6174:7265:6964:*"
  */
-void maskhost(const char *s, char *nw)
+void _maskhost(const char *s, char *nw, int host)
 {
   register const char *p, *q, *e, *f;
   int i;
@@ -101,6 +101,8 @@ void maskhost(const char *s, char *nw)
       if (!fl && strchr("~+-^=", *p)) {
         if (strict_host)
 	  nw[i] = '?';
+        else if (!host)
+          nw[i] = '*';
 	else
 	  i--;
       } else

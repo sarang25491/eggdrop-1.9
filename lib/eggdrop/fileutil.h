@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: fileutil.h,v 1.5 2003/01/02 21:33:13 wcc Exp $
+ * $Id: fileutil.h,v 1.6 2003/02/10 00:09:08 wcc Exp $
  */
 
 #ifndef _EGG_FILEUTIL_H
@@ -34,6 +34,7 @@ BEGIN_C_DECLS
 extern int copyfile(char *, char *);
 extern int movefile(char *, char *);
 extern int is_file(const char *);
+extern int file_readable(const char *);
 
 END_C_DECLS
 

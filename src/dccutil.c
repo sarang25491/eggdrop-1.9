@@ -27,7 +27,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dccutil.c,v 1.60 2003/02/03 11:41:34 wcc Exp $";
+static const char rcsid[] = "$Id: dccutil.c,v 1.61 2003/02/10 00:09:08 wcc Exp $";
 #endif
 
 #include <sys/stat.h>
@@ -40,14 +40,17 @@ static const char rcsid[] = "$Id: dccutil.c,v 1.60 2003/02/03 11:41:34 wcc Exp $
 #include "cmdt.h"		/* cmd_t				*/
 #include "net.h"		/* tputs, killsock			*/
 #include "dccutil.h"		/* prototypes				*/
-#include "users.h" /* get_user_by_handle */
+#include "users.h"		/* get_user_by_handle */
 
-extern struct dcc_t	*dcc;
+extern struct dcc_t   *dcc;
 extern struct userrec *userlist;
-extern int		 dcc_total, max_dcc, dcc_flood_thr, backgrd, MAXSOCKS;
-extern char		 spaces[], version[];
-extern time_t		 now;
-extern sock_list	*socklist;
+
+extern int  dcc_total, max_dcc, dcc_flood_thr, backgrd, copy_to_tmp, MAXSOCKS;
+extern char spaces[], version[];
+
+extern time_t now;
+
+extern sock_list *socklist;
 
 #ifndef MAKING_MODS
 extern struct dcc_table	DCC_CHAT, DCC_LOST;
@@ -246,7 +249,7 @@ void killtransfer(int n)
 			fclose(dcc[n].u.xfer->f);
 			dcc[n].u.xfer->f = NULL;
 		}
-		if (dcc[n].u.xfer->filename) {
+		if (dcc[n].u.xfer->filename && copy_to_tmp) {
 			for (i = 0; i < dcc_total; i++) {
 				if ((i != n) && (dcc[i].type->flags & DCT_FILETRAN) && (dcc[i].u.xfer->filename) && (!strcmp(dcc[i].u.xfer->filename, dcc[n].u.xfer->filename))) {
 					ok = 0;

@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: module.h,v 1.38 2003/02/03 11:41:34 wcc Exp $
+ * $Id: module.h,v 1.39 2003/02/10 00:09:08 wcc Exp $
  */
 
 #ifndef _EGG_MOD_MODULE_H
@@ -74,6 +74,9 @@
 
 /* #undef feof */
 #undef dprintf
+#undef wild_match_per
+#undef maskhost
+#undef maskban
 
 #if defined (__CYGWIN__) 
 #  define EXPORT_SCOPE	__declspec(dllexport)
@@ -239,7 +242,7 @@
 /* 152 - 155 */
 #define makepass ((void (*) (char *))egg->global[152])
 #define wild_match ((int (*)(const char *, const char *))egg->global[153])
-#define maskhost ((void (*)(const char *, char *))egg->global[154])
+#define _maskhost ((void (*)(const char *, char *, int))egg->global[154])
 #define show_motd ((void(*)(int))egg->global[155])
 /* 156 - 159 */
 #define tellhelp ((void(*)(int, char *, struct flag_record *, int))egg->global[156])
@@ -365,6 +368,12 @@
 #define killtransfer ((void(*)(int))global[283])
 #define write_ignores ((int (*)(FILE *, int))global[284])
 #define copy_to_tmp (*(int *)(global[285]))
+/* 284 - 287 */
+#define quiet_reject (*(int *)(global[286]))
+
+/* hostmasking */
+#define maskhost(a,b) _maskhost((a),(b),1)
+#define maskban(a,b)  _maskhost((a),(b),0)
 
 /* This is for blowfish module, couldnt be bothered making a whole new .h
  * file for it ;)
