@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: console.c,v 1.12 2003/01/02 21:33:14 wcc Exp $";
+static const char rcsid[] = "$Id: console.c,v 1.13 2003/02/03 11:41:34 wcc Exp $";
 #endif
 
 #define MODULE_NAME "console"
@@ -221,6 +221,7 @@ static struct user_entry_type USERENTRY_CONSOLE =
   "CONSOLE"
 };
 
+/* FIXME -- botnet dependencies */
 static int console_chon(char *handle, int idx)
 {
   struct console_info *i = get_user(&USERENTRY_CONSOLE, dcc[idx].user);
@@ -246,7 +247,7 @@ static int console_chon(char *handle, int idx)
     if ((dcc[idx].u.chat->channel >= 0) &&
 	(dcc[idx].u.chat->channel < GLOBAL_CHANS)) {
       botnet_send_join_idx(idx, -1);
-      check_bind_chjn(botnetnick, dcc[idx].nick, dcc[idx].u.chat->channel,
+      check_bind_chjn(myname, dcc[idx].nick, dcc[idx].u.chat->channel,
 		     geticon(dcc[idx].user), dcc[idx].sock, dcc[idx].host);
     }
     if (info_party) {
@@ -259,8 +260,7 @@ static int console_chon(char *handle, int idx)
 	    chanout_but(-1, dcc[idx].u.chat->channel,
 			"*** [%s] %s\n", dcc[idx].nick, p);
 	    simple_sprintf(x, "[%s] %s", dcc[idx].nick, p);
-	    botnet_send_chan(-1, botnetnick, NULL,
-			     dcc[idx].u.chat->channel, x);
+	    botnet_send_chan(-1, myname, NULL, dcc[idx].u.chat->channel, x);
 	}
       }
     }

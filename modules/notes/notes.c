@@ -203,6 +203,7 @@ static void expire_notes()
 }
 
 /* Add note to notefile.
+ * FIXME : botnet dependencies
  */
 static int storenote(char *argv1, char *argv2, char *argv3, int idx, char *who, int bufsize)
 {
@@ -219,7 +220,7 @@ static int storenote(char *argv1, char *argv2, char *argv3, int idx, char *who, 
     /* User is valid & has a valid forwarding address */
      strcpy(fwd, f1);		/* Only 40 bytes are stored in the userfile */
      p = strchr(fwd, '@');
-    if (p && !strcasecmp(p + 1, botnetnick)) {
+    if (p && !strcasecmp(p + 1, myname)) {
       *p = 0;
       if (!strcasecmp(fwd, argv2))
 	/* They're forwarding to themselves on the same bot, llama's */
@@ -257,13 +258,11 @@ static int storenote(char *argv1, char *argv2, char *argv3, int idx, char *who, 
       }
       if (ok) {
 	if (p && strchr(argv1, '@')) {
-	  simple_sprintf(work, "<%s@%s >%s %s", argv2, botnetnick,
-			 argv1, argv3);
-	  simple_sprintf(u, "@%s", botnetnick);
+	  simple_sprintf(work, "<%s@%s >%s %s", argv2, myname, argv1, argv3);
+	  simple_sprintf(u, "@%s", myname);
 	  p = u;
 	} else {
-	  simple_sprintf(work, "<%s@%s %s", argv2, botnetnick,
-			 argv3);
+	  simple_sprintf(work, "<%s@%s %s", argv2, myname, argv3);
 	  p = argv1;
 	}
       }
@@ -882,7 +881,7 @@ static void notes_hourly()
 
 static void away_notes(char *bot, int idx, char *msg)
 {
-  if (strcasecmp(bot, botnetnick))
+  if (strcasecmp(bot, myname))
     return;
   if (msg && msg[0])
     dprintf(idx, "%s\n", _("Notes will be stored."));

@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tcl.c,v 1.94 2003/02/03 10:43:36 wcc Exp $";
+static const char rcsid[] = "$Id: tcl.c,v 1.95 2003/02/03 11:41:34 wcc Exp $";
 #endif
 
 #include <stdlib.h>		/* getenv()				*/
@@ -59,7 +59,7 @@ extern int flood_telnet_thr, flood_telnet_time, learn_users, default_flags,
 
 extern char botuser[], motdfile[], admin[], userfile[], firewall[], helpdir[],
             notify_new[], myip[], moddir[], tempdir[], owner[], network[],
-            botnetnick[], bannerfile[], egg_version[], natip[], configfile[],
+            myname[], bannerfile[], egg_version[], natip[], configfile[],
             textdir[], myip6[], pid_file[];
 	
 extern struct dcc_t *dcc;
@@ -71,7 +71,6 @@ int use_invites = 0;
 int use_exempts = 0;
 int force_expire = 0;
 int copy_to_tmp = 0;
-int remote_boots = 2;
 int par_telnet_flood = 1;
 int handlen = HANDLEN;
 
@@ -81,12 +80,11 @@ Tcl_Interp *Tcl_CreateInterp();
 
 static void botnet_change(char *new)
 {
-  if (strcasecmp(botnetnick, new)) {
-    /* Trying to change bot's nickname */
-      if (botnetnick[0])
-	putlog(LOG_MISC, "*", "* IDENTITY CHANGE: %s -> %s", botnetnick, new);
-      strcpy(botnetnick, new);
-    }
+  if (strcasecmp(myname, new)) {
+     if (myname[0])
+       putlog(LOG_MISC, "*", "* IDENTITY CHANGE: %s -> %s", myname, new);
+     strcpy(myname, new);
+  }
 }
 
 
@@ -216,8 +214,8 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp, char *name1,
     if (s != NULL) {
       if (strlen(s) > abs(st->max))
 	s[abs(st->max)] = 0;
-      if (st->str == botnetnick)
-	botnet_change(s);
+      if (st->str == myname)
+	myname_change(s);
       else if (st->str == firewall) {
 	splitc(firewall, s, ':');
 	if (!firewall[0])
@@ -256,7 +254,7 @@ void rem_tcl_commands(tcl_cmds *tab)
 /* Strings */
 static tcl_strings def_tcl_strings[] =
 {
-  {"botnet_nick",	botnetnick,	HANDLEN,	0},
+  {"myname",            myname,         HANDLEN,        0},
   {"userfile",		userfile,	120,		STR_PROTECT},
   {"motd",		motdfile,	120,		STR_PROTECT},
   {"admin",		admin,		120,		0},
@@ -294,7 +292,6 @@ static tcl_ints def_tcl_ints[] =
   {"numversion",		&egg_numver,		2},
   {"die_on_sighup",		&die_on_sighup,		1},
   {"die_on_sigterm",		&die_on_sigterm,	1},
-  {"remote_boots",		&remote_boots,		1},
   {"raw_log",			&raw_log,		1},
   {"use_exempts",		&use_exempts,		0},
   {"use_invites",		&use_invites,		0},

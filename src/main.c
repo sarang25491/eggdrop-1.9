@@ -30,7 +30,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.131 2003/02/03 06:42:40 stdarg Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.132 2003/02/03 11:41:34 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -89,12 +89,12 @@ static const char rcsid[] = "$Id: main.c,v 1.131 2003/02/03 06:42:40 stdarg Exp 
 #define _POSIX_SOURCE 1
 #endif
 
-extern char		 userfile[], botnetnick[];
-extern int		 dcc_total, conmask, cache_hit, cache_miss;
-extern struct dcc_t	*dcc;
-extern struct userrec	*userlist;
+extern char userfile[], myname[];
+extern int dcc_total, conmask, cache_hit, cache_miss;
+extern struct dcc_t *dcc;
+extern struct userrec *userlist;
 extern struct chanset_t	*chanset;
-extern jmp_buf		 alarmret;
+extern jmp_buf alarmret;
 
 #ifndef MAKING_MODS
 extern struct dcc_table DCC_CHAT;
@@ -624,13 +624,13 @@ module, please consult the default config file for info.\n"));
   i = 0;
   for (chan = chanset; chan; chan = chan->next)
     i++;
-  putlog(LOG_MISC, "*", "=== %s: %d channels, %d users.",
-	 botnetnick, i, count_users(userlist));
+  putlog(LOG_MISC, "*", "=== %s: %d channels, %d users.", myname, i,
+         count_users(userlist));
   cache_miss = 0;
   cache_hit = 0;
 
   if (!pid_file[0])
-    snprintf(pid_file, sizeof pid_file, "pid.%s", botnetnick);
+    snprintf(pid_file, sizeof pid_file, "pid.%s", myname);
 
   /* Check for pre-existing eggdrop! */
   f = fopen(pid_file, "r");
@@ -640,7 +640,7 @@ module, please consult the default config file for info.\n"));
     kill(xx, SIGCHLD);		/* Meaningless kill to determine if pid
 				   is used */
     if (errno != ESRCH) {
-      printf(_("I detect %s already running from this directory.\n"), botnetnick);
+      printf(_("I detect %s already running from this directory.\n"), myname);
       printf(_("If this is incorrect, erase the %s\n"), pid_file);
       bg_send_quit(BG_ABORT);
       exit(1);
@@ -860,7 +860,7 @@ module, please consult the default config file for info.\n"));
 	    }
 	    if (ok) {
 	      strcpy(xx, p->name);
-	      if (module_unload(xx, botnetnick) == NULL) {
+	      if (module_unload(xx, myname) == NULL) {
 		f = 1;
 		break;
 	      }

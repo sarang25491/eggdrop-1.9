@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dcc.c,v 1.96 2003/01/29 21:39:35 wcc Exp $";
+static const char rcsid[] = "$Id: dcc.c,v 1.97 2003/02/03 11:41:34 wcc Exp $";
 #endif
 
 #include "main.h"
@@ -53,11 +53,10 @@ static const char rcsid[] = "$Id: dcc.c,v 1.96 2003/01/29 21:39:35 wcc Exp $";
 
 extern struct userrec	*userlist;
 extern struct chanset_t	*chanset;
-extern time_t		 now;
-extern int		 egg_numver, connect_timeout, conmask, backgrd,
-			 make_userfile, default_flags, raw_log,
-			 ignore_time, par_telnet_flood;
-extern char		 botnetnick[], ver[], origbotname[], notify_new[];
+extern time_t now;
+extern int egg_numver, connect_timeout, conmask, backgrd, make_userfile,
+           default_flags, raw_log, ignore_time, par_telnet_flood;
+extern char myname[], ver[], origbotname[], notify_new[];
 
 #ifndef MAKING_MODS
 extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_PRE_RELAY, DCC_FORK_RELAY,
@@ -275,7 +274,7 @@ static void append_line(int idx, char *line)
     }
     c->buffer = 0;
     dcc[idx].status &= ~STAT_PAGE;
-    do_boot(idx, botnetnick, "too many pages - senq full");
+    do_boot(idx, myname, "too many pages - senq full");
     return;
   }
   if ((c->line_count < c->max_line) && (c->buffer == NULL)) {
@@ -722,7 +721,7 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
     dcc[idx].type = &DCC_TELNET_NEW;
     dcc[idx].timeval = now;
     dprintf(idx, "\n");
-    dprintf(idx, _("This is the telnet interface to %s, an eggdrop bot.\nDont abuse it, and it will be open for all your friends, too.\n"), botnetnick);
+    dprintf(idx, _("This is the telnet interface to %s, an eggdrop bot.\nDont abuse it, and it will be open for all your friends, too.\n"), myname);
     dprintf(idx, _("You now get to pick a nick to use on the bot,\nand a password so nobody else can pretend to be you.\nPlease remember both!"));
     dprintf(idx, "\nEnter the nickname you would like to use.\n");
     return;
@@ -835,7 +834,7 @@ static void dcc_telnet_new(int idx, char *buf, int x)
     dprintf(idx, "\nSorry, that nickname is taken already.\n");
     dprintf(idx, "Try another one please:\n");
     return;
-  } else if (!strcasecmp(buf, botnetnick)) {
+  } else if (!strcasecmp(buf, myname)) {
     dprintf(idx, "Sorry, can't use my name for a nick.\n");
   } else {
     strcpy(dcc[idx].nick, buf);
@@ -872,7 +871,7 @@ static void dcc_telnet_new(int idx, char *buf, int x)
       putlog(LOG_MISC, "*", _("Bot installation complete, first master is %s"), buf);
       make_userfile = 0;
       write_userfile(-1);
-      add_note(buf, botnetnick, _("Welcome to eggdrop! :)"), -1, 0);
+      add_note(buf, myname, _("Welcome to Eggdrop! :)"), -1, 0);
     }
     dprintf(idx, _("\nOkay, now choose and enter a password:\n"));
     dprintf(idx, _("(Only the first 15 letters are significant.)\n"));
@@ -910,16 +909,16 @@ static void dcc_telnet_pw(int idx, char *buf, int x)
     splitc(s2, s1, ',');
     while (s2[0]) {
       rmspace(s2);
-      add_note(s2, botnetnick, s, -1, 0);
+      add_note(s2, myname, s, -1, 0);
       splitc(s2, s1, ',');
     }
     rmspace(s1);
-    add_note(s1, botnetnick, s, -1, 0);
+    add_note(s1, myname, s, -1, 0);
   }
   newpass = newsplit(&buf);
   set_user(&USERENTRY_PASS, dcc[idx].user, newpass);
   dprintf(idx, "\nRemember that!  You'll need it next time you log in.\n");
-  dprintf(idx, "You now have an account on %s...\n\n\n", botnetnick);
+  dprintf(idx, "You now have an account on %s...\n\n\n", myname);
   dcc[idx].type = &DCC_CHAT;
   dcc[idx].u.chat->channel = -2;
   dcc_chatter(idx);

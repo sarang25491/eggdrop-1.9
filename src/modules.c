@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: modules.c,v 1.126 2003/01/29 21:39:35 wcc Exp $";
+static const char rcsid[] = "$Id: modules.c,v 1.127 2003/02/03 11:41:34 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -70,21 +70,18 @@ extern struct dcc_t	*dcc;
 
 extern Tcl_Interp	*interp;
 extern struct userrec	*userlist, *lastuser;
-extern char		 tempdir[], botnetnick[], *botname, natip[],
-			 origbotname[], botuser[], admin[],
-			 userfile[], ver[], notify_new[], helpdir[],
-			 version[], quit_msg[];
-extern int	 noshare, dcc_total, egg_numver, userfile_perm,
-			 ignore_time, learn_users,
-			 raw_log, make_userfile, default_flags,
-			 max_dcc, share_greet, password_timeout,
-			 use_invites, use_exempts, force_expire, do_restart,
-			 protect_readonly, reserved_port_min, reserved_port_max,
-                         copy_to_tmp;
+extern char tempdir[], myname[], *botname, natip[], origbotname[], botuser[],
+            admin[], userfile[], ver[], notify_new[], helpdir[], version[],
+            quit_msg[];
+extern int noshare, dcc_total, egg_numver, userfile_perm, ignore_time,
+           learn_users, raw_log, make_userfile, default_flags, max_dcc,
+           share_greet, password_timeout, use_invites, use_exempts,
+           force_expire, do_restart, protect_readonly, reserved_port_min,
+           reserved_port_max, copy_to_tmp;
 extern time_t now, online_since;
 extern egg_timeval_t egg_timeval_now;
 extern struct chanset_t *chanset;
-extern sock_list        *socklist;
+extern sock_list *socklist;
 
 #ifndef MAKING_MODS
 extern struct dcc_table DCC_CHAT_PASS, DCC_LOST, DCC_DNSWAIT,
@@ -320,7 +317,7 @@ Function global_table[] =
   (Function) notify_new,	 /* char *				*/
   (Function) helpdir,		 /* char *				*/
   (Function) version,		 /* char *				*/
-  (Function) botnetnick,	 /* char *				*/
+  (Function) myname,	         /* char *				*/
   /* 124 - 127 */
   (Function) & DCC_CHAT_PASS,	 /* struct dcc_table *			*/
   (Function) 0, /* & DCC_BOT,		 / struct dcc_table *			*/

@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tcldcc.c,v 1.70 2003/01/18 22:36:52 wcc Exp $";
+static const char rcsid[] = "$Id: tcldcc.c,v 1.71 2003/02/03 11:41:34 wcc Exp $";
 #endif
 
 #include "main.h"
@@ -40,11 +40,10 @@ static const char rcsid[] = "$Id: tcldcc.c,v 1.70 2003/01/18 22:36:52 wcc Exp $"
 #include "userrec.h"		/* write_userfile			*/
 #include "traffic.h" 		/* egg_traffic_t			*/
 
-extern struct dcc_t	*dcc;
-extern int		 dcc_total, backgrd, parties, make_userfile,
-			 do_restart, remote_boots, max_dcc;
-extern char		 botnetnick[];
-extern time_t		 now;
+extern struct dcc_t *dcc;
+extern int dcc_total, backgrd, parties, make_userfile, do_restart, max_dcc;
+extern char myname[];
+extern time_t now;
 
 /* Traffic stuff. */
 extern egg_traffic_t traffic;
@@ -472,7 +471,7 @@ static int script_boot(char *user_bot, char *reason)
 
     splitc(whonick, who, '@');
     whonick[HANDLEN] = 0;
-    if (!strcasecmp(who, botnetnick))
+    if (!strcasecmp(who, myname))
        strlcpy(who, whonick, sizeof who);
     else
         return(0);
@@ -480,7 +479,7 @@ static int script_boot(char *user_bot, char *reason)
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type) && (dcc[i].type->flags & DCT_CANBOOT) &&
         !strcasecmp(dcc[i].nick, who)) {
-      do_boot(i, botnetnick, reason ? reason : "");
+      do_boot(i, myname, reason ? reason : "");
       break;
     }
   return(0);

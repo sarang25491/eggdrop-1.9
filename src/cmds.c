@@ -24,7 +24,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: cmds.c,v 1.111 2003/02/03 10:43:36 wcc Exp $";
+static const char rcsid[] = "$Id: cmds.c,v 1.112 2003/02/03 11:41:34 wcc Exp $";
 #endif
 
 #include "main.h"
@@ -50,14 +50,12 @@ static const char rcsid[] = "$Id: cmds.c,v 1.111 2003/02/03 10:43:36 wcc Exp $";
 
 extern struct chanset_t	*chanset;
 extern struct dcc_t	*dcc;
-extern user_t	*userlist;
-extern int		 dcc_total, remote_boots, backgrd, make_userfile,
-			 do_restart, conmask, strict_host,
-			 term_z, con_chan;
+extern user_t *userlist;
+extern int dcc_total, backgrd, make_userfile, do_restart, conmask, strict_host,
+           term_z, con_chan;
 extern egg_traffic_t traffic;
-extern char		 botnetnick[], ver[], network[],
-			 owner[], spaces[], quit_msg[];
-extern time_t		 now, online_since;
+extern char myname[], ver[], network[], owner[], spaces[], quit_msg[];
+extern time_t now, online_since;
 extern module_entry *module_list;
 
 #ifndef MAKING_MODS
@@ -635,7 +633,7 @@ static int cmd_chhandle(user_t *u, int idx, char *par)
       dprintf(idx, _("You can't change a bot owner's handle.\n"));
     else if (isowner(hand) && strcasecmp(dcc[idx].nick, hand))
       dprintf(idx, _("You can't change a permanent bot owner's handle.\n"));
-    else if (!strcasecmp(newhand, botnetnick) && !(atr2 & USER_BOT))
+    else if (!strcasecmp(newhand, myname) && !(atr2 & USER_BOT))
       dprintf(idx, _("Hey! That's MY name!\n"));
     else if (change_handle(u2, newhand)) {
       dprintf(idx, _("Changed.\n"));
@@ -665,7 +663,7 @@ static int cmd_handle(user_t *u, int idx, char *par)
   } else if (get_user_by_handle(userlist, newhandle) &&
 	     strcasecmp(dcc[idx].nick, newhandle)) {
     dprintf(idx, _("Somebody is already using %s.\n"), newhandle);
-  } else if (!strcasecmp(newhandle, botnetnick)) {
+  } else if (!strcasecmp(newhandle, myname)) {
     dprintf(idx, _("Hey!  That's MY name!\n"));
   } else {
     strlcpy(oldhandle, dcc[idx].nick, sizeof oldhandle);
@@ -1671,7 +1669,7 @@ static int cmd_pls_user(user_t *u, int idx, char *par)
     dprintf(idx, _("Someone already exists by that name.\n"));
   else if (strchr(BADNICKCHARS, handle[0]) != NULL)
     dprintf(idx, _("You can't start a nick with '%c'.\n"), handle[0]);
-  else if (!strcasecmp(handle, botnetnick))
+  else if (!strcasecmp(handle, myname))
     dprintf(idx, _("Hey! That's MY name!\n"));
   else {
     userlist = adduser(userlist, handle, host, "-", 0);
@@ -1974,7 +1972,7 @@ static char *btos(unsigned long  bytes)
 
 static int cmd_whoami(user_t *u, int idx, char *par)
 {
-  dprintf(idx, _("You are %s@%s.\n"), dcc[idx].nick, botnetnick);
+  dprintf(idx, _("You are %s@%s.\n"), dcc[idx].nick, myname);
   return(1);
 }
 

@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: msgcmds.c,v 1.13 2003/02/03 10:43:36 wcc Exp $";
+static const char rcsid[] = "$Id: msgcmds.c,v 1.14 2003/02/03 11:41:34 wcc Exp $";
 #endif
 */
 
@@ -81,7 +81,7 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
     putlog(LOG_MISC, "*", _("Bot installation complete, first master is %s"), handle);
     make_userfile = 0;
     write_userfile(-1);
-    add_note(handle, botnetnick, _("Welcome to Eggdrop! =]"), -1, 0);
+    add_note(handle, myname, _("Welcome to Eggdrop! =]"), -1, 0);
   } else {
     fr.global = default_flags;
 
@@ -101,7 +101,7 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
 	rmspace(p1);
       }
       rmspace(s1);
-      add_note(s1, botnetnick, s, -1, 0);
+      add_note(s1, myname, s, -1, 0);
       if (p1 == NULL)
 	s1[0] = 0;
       else
@@ -725,8 +725,7 @@ static int msg_status(char *nick, char *host, struct userrec *u, char *par)
     return 1;
   }
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! STATUS", nick, host, u->handle);
-  dprintf(DP_HELP, "NOTICE %s :I am %s, running %s.\n", nick, botnetnick,
-	  Version);
+  dprintf(DP_HELP, "NOTICE %s :I am %s, running %s.\n", nick, myname, Version);
   dprintf(DP_HELP, "NOTICE %s :Running on %s %s\n", nick, un_t, ve_t);
   if (admin[0])
     dprintf(DP_HELP, "NOTICE %s :Admin: %s\n", nick, admin);
@@ -767,6 +766,7 @@ static int msg_status(char *nick, char *host, struct userrec *u, char *par)
   return 1;
 }
 
+/* FIXME: botnet dependencies */
 static int msg_die(char *nick, char *host, struct userrec *u, char *par)
 {
   char s[1024];
@@ -793,7 +793,7 @@ static int msg_die(char *nick, char *host, struct userrec *u, char *par)
   else
     snprintf(s, sizeof s, "BOT SHUTDOWN (%s: %s)", u->handle, par);
   chatout("*** %s\n", s);
-  botnet_send_chat(-1, botnetnick, s);
+  botnet_send_chat(-1, myname, s);
   botnet_send_bye();
   if (!par[0])
     nuke_server(nick);

@@ -24,7 +24,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: chanprog.c,v 1.53 2003/01/02 21:33:15 wcc Exp $";
+static const char rcsid[] = "$Id: chanprog.c,v 1.54 2003/02/03 11:41:34 wcc Exp $";
 #endif
 
 #include "main.h"
@@ -47,12 +47,11 @@ static const char rcsid[] = "$Id: chanprog.c,v 1.53 2003/01/02 21:33:15 wcc Exp 
 #include "irccmp.h"		/* irccmp				*/
 
 extern struct userrec	*userlist;
-extern char		 ver[], botnetnick[], firewall[],
-			 motdfile[], userfile[], helpdir[], tempdir[],
-			 moddir[], notify_new[], owner[], configfile[];
-extern time_t		 now, online_since;
-extern int		 backgrd, term_z, con_chan, cache_hit, cache_miss,
-			 firewallport, default_flags, conmask,
+extern char ver[], myname[], firewall[], motdfile[], userfile[], helpdir[],
+            tempdir[], moddir[], notify_new[], owner[], configfile[];
+extern time_t now, online_since;
+extern int backgrd, term_z, con_chan, cache_hit, cache_miss, firewallport,
+default_flags, conmask,
 			 protect_readonly, make_userfile, noshare,
 			 ignore_time;
 
@@ -215,7 +214,7 @@ void tell_verbose_status(int idx)
 #endif
 
   i = count_users(userlist);
-  dprintf(idx, _("I am %1$s, running %2$s:  "), botnetnick, ver);
+  dprintf(idx, _("I am %1$s, running %2$s:  "), myname, ver);
   dprintf(idx, P_("%d user\n", "%d users\n", i), i);
   now2 = now - online_since;
   s[0] = 0;
@@ -274,7 +273,7 @@ void tell_settings(int idx)
   char s[1024];
   struct flag_record fr = {FR_GLOBAL, 0, 0, 0, 0, 0};
 
-  dprintf(idx, _("Botnet Nickname: %s\n"), botnetnick);
+  dprintf(idx, _("My name: %s\n"), myname);
   if (firewall[0])
     dprintf(idx, _("Firewall: %1$s, port %2$d\n"), firewall, firewallport);
   dprintf(idx, _("Userfile: %1$s   Motd: %2$s\n"), userfile, motdfile);
@@ -333,11 +332,8 @@ void chanprog()
   /* We should be safe now */
   call_hook(HOOK_REHASH);
   protect_readonly = 1;
-  if (!botnetnick[0]) {
-    strlcpy(botnetnick, origbotname, HANDLEN + 1);
-  }
-  if (!botnetnick[0])
-    fatal("I don't have a botnet nick!!\n", 0);
+  if (!myname[0])
+    fatal("Please set the myname setting.\n", 0);
   if (!userfile[0])
     fatal(_("STARTING BOT IN USERFILE CREATION MODE.\n\
 Telnet to the bot and enter 'NEW' as your nickname."), 0);

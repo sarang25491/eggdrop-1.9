@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: module.h,v 1.37 2003/01/29 21:39:35 wcc Exp $
+ * $Id: module.h,v 1.38 2003/02/03 11:41:34 wcc Exp $
  */
 
 #ifndef _EGG_MOD_MODULE_H
@@ -200,7 +200,7 @@
 #define notify_new ((char *)egg->global[120])
 #define helpdir ((char *)egg->global[121])
 #define Version ((char *)egg->global[122])
-#define botnetnick ((char *)egg->global[123])
+#define myname ((char *)egg->global[123])
 /* 124 - 127 */
 #define DCC_CHAT_PASS (*(struct dcc_table *)(egg->global[124]))
 #define DCC_BOT (*(struct dcc_table *)(egg->global[125]))

@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: userrec.c,v 1.57 2003/01/30 07:47:17 wcc Exp $";
+static const char rcsid[] = "$Id: userrec.c,v 1.58 2003/02/03 11:41:35 wcc Exp $";
 #endif
 
 #include <sys/stat.h>
@@ -46,7 +46,7 @@ static const char rcsid[] = "$Id: userrec.c,v 1.57 2003/01/30 07:47:17 wcc Exp $
 extern struct dcc_t *dcc;
 extern struct chanset_t *chanset;
 extern int default_flags, default_uflags, dcc_total, share_greet;
-extern char userfile[], ver[], botnetnick[];
+extern char userfile[], ver[], myname[];
 extern time_t now;
 
 #ifndef MAKING_MODS
@@ -351,9 +351,8 @@ int write_ignores(FILE *f, int idx)
   for (i = global_ign; i; i = i->next) {
     mask = str_escape(i->igmask, ':', '\\');
     if (!mask || fprintf(f, "- %s:%s%lu:%s:%lu:%s\n", mask,
-                (i->flags & IGREC_PERM) ? "+" : "", i->expire,
-                i->user ? i->user : botnetnick, i->added,
-                i->msg ? i->msg : "") == EOF) {
+        (i->flags & IGREC_PERM) ? "+" : "", i->expire, i->user ? i->user :
+        myname, i->added, i->msg ? i->msg : "") == EOF) {
       if (mask)
         free(mask);
       return 0;
@@ -390,7 +389,7 @@ void write_userfile(int idx)
   }
   tt = now;
   strcpy(s1, ctime(&tt));
-  fprintf(f, "#4v: %s -- %s -- written %s", ver, botnetnick, s1);
+  fprintf(f, "#4v: %s -- %s -- written %s", ver, myname, s1);
   ok = 1;
   for (u = userlist; u && ok; u = u->next)
     if (!write_user(u, f, idx))

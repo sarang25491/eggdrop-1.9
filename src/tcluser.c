@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tcluser.c,v 1.46 2003/01/02 21:33:17 wcc Exp $";
+static const char rcsid[] = "$Id: tcluser.c,v 1.47 2003/02/03 11:41:35 wcc Exp $";
 #endif
 
 #include "main.h"
@@ -35,11 +35,11 @@ static const char rcsid[] = "$Id: tcluser.c,v 1.46 2003/01/02 21:33:17 wcc Exp $
 				   delhost_by_handle, write_userfile,
 				   change_handle			*/
 
-extern struct userrec	*userlist;
-extern int		 default_flags, dcc_total, ignore_time;
-extern struct dcc_t	*dcc;
-extern char		 botnetnick[];
-extern time_t		 now;
+extern struct userrec *userlist;
+extern int default_flags, dcc_total, ignore_time;
+extern struct dcc_t *dcc;
+extern char myname[];
+extern time_t now;
 
 #ifndef MAKING_MODS
 extern struct dcc_table DCC_BOT;
@@ -293,7 +293,7 @@ static int script_chhandle(struct userrec *u, char *desired_handle)
     if (strchr(BADHANDCHARS, newhand[0]) != NULL) return(0);
     if (strlen(newhand) < 1) return(0);
     if (get_user_by_handle(userlist, newhand)) return(0);
-    if (!strcasecmp(botnetnick, newhand) && (!(u->flags & USER_BOT)))
+    if (!strcasecmp(myname, newhand) && (!(u->flags & USER_BOT)))
       return(0);
     if (newhand[0] == '*') return(0);
 

@@ -26,7 +26,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: filedb3.c,v 1.7 2003/01/02 21:33:14 wcc Exp $";
+static const char rcsid[] = "$Id: filedb3.c,v 1.8 2003/02/03 11:41:34 wcc Exp $";
 #endif
 */
 
@@ -665,7 +665,7 @@ static void filedb_update(char *path, FILE *fdb, int sort)
 	/* new file! */
 	fdbe = malloc_fdbe();
 	realloc_strcpy(fdbe->filename, name);
-	realloc_strcpy(fdbe->uploader, botnetnick);
+	realloc_strcpy(fdbe->uploader, myname);
 	fdbe->uploaded = now;
 	fdbe->size = st.st_size;
 	if (S_ISDIR(st.st_mode))
@@ -1073,8 +1073,8 @@ static void remote_filereq(int idx, char *from, char *file)
       free_fdbe(&fdbe);
     }
   }
-  s1 = malloc(strlen(botnetnick) + strlen(dir) + strlen(what) + 3);
-  simple_sprintf(s1, "%s:%s/%s", botnetnick, dir, what);
+  s1 = malloc(strlen(myname) + strlen(dir) + strlen(what) + 3);
+  simple_sprintf(s1, "%s:%s/%s", myname, dir, what);
   if (reject) {
     botnet_send_filereject(idx, s1, from, reject);
     free_null(s1);
@@ -1201,7 +1201,7 @@ static void filedb_setlink(char *dir, char *fn, char *link)
   }
 
   fdbe = malloc_fdbe();
-  realloc_strcpy(fdbe->uploader, botnetnick);
+  realloc_strcpy(fdbe->uploader, myname);
   realloc_strcpy(fdbe->filename, fn);
   realloc_strcpy(fdbe->sharelink, link);
   fdbe->uploaded = now;

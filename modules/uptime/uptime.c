@@ -34,7 +34,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: uptime.c,v 1.12 2003/01/02 21:33:15 wcc Exp $";
+static const char rcsid[] = "$Id: uptime.c,v 1.13 2003/02/03 11:41:34 wcc Exp $";
 #endif
 
 #define MODULE_NAME "uptime"
@@ -165,10 +165,10 @@ int send_uptime(void)
 		if (uptimeip == -1)
 			return -2;
 	}
-	len = sizeof(upPack) + strlen(botnetnick) + strlen(dcc[servidx].host) + strlen(uptime_version);
+	len = sizeof(upPack) + strlen(myname) + strlen(dcc[servidx].host) + strlen(uptime_version);
 	mem = (PackUp*)malloc(len);
 	memcpy(mem,&upPack,sizeof(upPack));
-	sprintf(mem->string,"%s %s %s",botnetnick,dcc[servidx].host,uptime_version);
+	sprintf(mem->string,"%s %s %s",myname,dcc[servidx].host,uptime_version);
 	memset(&sai,0,sizeof(sai));
 	sai.sin_family = AF_INET;
 	sai.sin_addr.s_addr = uptimeip;
@@ -188,7 +188,7 @@ void check_hourly() {
 
 static int uptime_set_send(struct userrec *u, int idx, char *par)
 {
-	dprintf(idx,"Nick %s Ontime %lu Version %s Result %d\n", botnetnick, online_since,
+	dprintf(idx,"Nick %s Ontime %lu Version %s Result %d\n", myname, online_since,
 	        uptime_version, send_uptime()); 
 	return 1;
 }

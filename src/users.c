@@ -31,7 +31,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.44 2003/01/02 21:33:17 wcc Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.45 2003/02/03 11:41:35 wcc Exp $";
 #endif
 
 #include "main.h"
@@ -60,7 +60,7 @@ extern struct dcc_t *dcc;
 extern struct userrec *userlist, *lastuser;
 extern struct chanset_t *chanset;
 extern int dcc_total, noshare;
-extern char botnetnick[];
+extern char myname[];
 extern Tcl_Interp *interp;
 extern time_t now;
 extern int userfile_perm;
@@ -968,7 +968,7 @@ int readuserfile(char *file, struct userrec **ret)
   for (u = bu; u; u = u->next) {
     struct user_entry *e;
 
-    if (!(u->flags & USER_BOT) && !strcasecmp (u->handle, botnetnick)) {
+    if (!(u->flags & USER_BOT) && !strcasecmp (u->handle, myname)) {
       putlog(LOG_MISC, "*", "(!) I have an user record, but without +b");
       /* u->flags |= USER_BOT; */
     }

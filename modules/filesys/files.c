@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: files.c,v 1.7 2003/01/02 21:33:14 wcc Exp $";
+static const char rcsid[] = "$Id: files.c,v 1.8 2003/02/03 11:41:34 wcc Exp $";
 #endif
 */
 
@@ -417,6 +417,7 @@ static void cmd_lsa(int idx, char *par)
   files_ls(idx, par, 1);
 }
 
+/* FIXME: botnet dependencies */
 static void cmd_reget_get(int idx, char *par, int resend)
 {
   int ok = 0, i;
@@ -479,7 +480,7 @@ static void cmd_reget_get(int idx, char *par, int resend)
 	/* This is a link to a file on another bot... */
 	bot = malloc(strlen(fdbe->sharelink) + 1);
 	splitc(bot, fdbe->sharelink, ':');
-	if (!strcasecmp(bot, botnetnick)) {
+	if (!strcasecmp(bot, myname)) {
 	  dprintf(idx, "Can't get that file, it's linked to this bot!\n");
 	} else if (!in_chain(bot)) {
 	  dprintf(idx, _("%s isnt available right now.\n"), fdbe->filename);
@@ -488,8 +489,8 @@ static void cmd_reget_get(int idx, char *par, int resend)
 	  realloc_strcpy(whoto, par);
 	  if (!whoto[0])
 	    realloc_strcpy(whoto, dcc[idx].nick);
-	  s = malloc(strlen(whoto) + strlen(botnetnick) + 13);
-	  simple_sprintf(s, "%d:%s@%s", dcc[idx].sock, whoto, botnetnick);
+	  s = malloc(strlen(whoto) + strlen(myname) + 13);
+	  simple_sprintf(s, "%d:%s@%s", dcc[idx].sock, whoto, myname);
 	  botnet_send_filereq(i, s, bot, fdbe->sharelink);
 	  dprintf(idx, _("Requested %s from %s ...\n"), fdbe->sharelink, bot);
 	  /* Increase got count now (or never) */
@@ -1364,7 +1365,7 @@ static cmd_t myfiles[] =
 /*
  *    Tcl stub functions
  */
-
+/* FIXME: botnet dependencies */
 static int files_reget(int idx, char *fn, char *nick, int resend)
 {
   int i = 0;
@@ -1415,7 +1416,7 @@ static int files_reget(int idx, char *fn, char *nick, int resend)
     /* This is a link to a file on another bot... */
     bot = malloc(strlen(fdbe->sharelink) + 1);
     splitc(bot, fdbe->sharelink, ':');
-    if (!strcasecmp(bot, botnetnick)) {
+    if (!strcasecmp(bot, myname)) {
       /* Linked to myself *duh* */
       filedb_close(fdb);
       free_null(what);
@@ -1437,8 +1438,8 @@ static int files_reget(int idx, char *fn, char *nick, int resend)
       } else {
 	realloc_strcpy(whoto, dcc[idx].nick);
       }
-      s = malloc(strlen(whoto) + strlen(botnetnick) + 13);
-      simple_sprintf(s, "%d:%s@%s", dcc[idx].sock, whoto, botnetnick);
+      s = malloc(strlen(whoto) + strlen(myname) + 13);
+      simple_sprintf(s, "%d:%s@%s", dcc[idx].sock, whoto, myname);
       botnet_send_filereq(i, s, bot, fdbe->sharelink);
       dprintf(idx, _("Requested %s from %s ...\n"), fdbe->sharelink, bot);
       /* Increase got count now (or never) */

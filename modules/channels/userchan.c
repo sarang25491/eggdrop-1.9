@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: userchan.c,v 1.12 2003/01/29 07:42:49 wcc Exp $";
+static const char rcsid[] = "$Id: userchan.c,v 1.13 2003/02/03 11:41:34 wcc Exp $";
 #endif
 */
 
@@ -857,7 +857,7 @@ static int write_bans(FILE *f, int idx)
 	fprintf(f, "- %s:%s%lu%s:+%lu:%lu:%s:%s\n", mask,
 		(b->flags & MASKREC_PERM) ? "+" : "", b->expire,
 		(b->flags & MASKREC_STICKY) ? "*" : "", b->added,
-		b->lastactive, b->user ? b->user : botnetnick,
+		b->lastactive, b->user ? b->user : myname,
 		b->desc ? b->desc : "requested") == EOF) {
       if (mask)
 	free(mask);
@@ -882,7 +882,7 @@ static int write_bans(FILE *f, int idx)
 	      fprintf(f, "- %s:%s%lu%s:+%lu:%lu:%s:%s\n", mask,
 		      (b->flags & MASKREC_PERM) ? "+" : "", b->expire,
 		      (b->flags & MASKREC_STICKY) ? "*" : "", b->added,
-		      b->lastactive, b->user ? b->user : botnetnick,
+		      b->lastactive, b->user ? b->user : myname,
 		      b->desc ? b->desc : "requested") == EOF) {
 	    if (mask)
 	      free(mask);
@@ -912,7 +912,7 @@ static int write_exempts(FILE *f, int idx)
 	fprintf(f, "%s %s:%s%lu%s:+%lu:%lu:%s:%s\n", "%", e->mask,
 		(e->flags & MASKREC_PERM) ? "+" : "", e->expire,
 		(e->flags & MASKREC_STICKY) ? "*" : "", e->added,
-		e->lastactive, e->user ? e->user : botnetnick,
+		e->lastactive, e->user ? e->user : myname,
 		e->desc ? e->desc : "requested") == EOF) {
       if (mask)
 	free(mask);
@@ -937,7 +937,7 @@ static int write_exempts(FILE *f, int idx)
 	      fprintf(f,"%s %s:%s%lu%s:+%lu:%lu:%s:%s\n","%",e->mask,
 		      (e->flags & MASKREC_PERM) ? "+" : "", e->expire,
 		      (e->flags & MASKREC_STICKY) ? "*" : "", e->added,
-		      e->lastactive, e->user ? e->user : botnetnick,
+		      e->lastactive, e->user ? e->user : myname,
 		      e->desc ? e->desc : "requested") == EOF) {
 	    if (mask)
 	      free(mask);
@@ -967,7 +967,7 @@ static int write_invites(FILE *f, int idx)
 	fprintf(f,"@ %s:%s%lu%s:+%lu:%lu:%s:%s\n",ir->mask,
 		(ir->flags & MASKREC_PERM) ? "+" : "", ir->expire,
 		(ir->flags & MASKREC_STICKY) ? "*" : "", ir->added,
-		ir->lastactive, ir->user ? ir->user : botnetnick,
+		ir->lastactive, ir->user ? ir->user : myname,
 		ir->desc ? ir->desc : "requested") == EOF) {
       if (mask)
 	free(mask);
@@ -992,7 +992,7 @@ static int write_invites(FILE *f, int idx)
 	      fprintf(f,"@ %s:%s%lu%s:+%lu:%lu:%s:%s\n",ir->mask,
 		      (ir->flags & MASKREC_PERM) ? "+" : "", ir->expire,
 		      (ir->flags & MASKREC_STICKY) ? "*" : "", ir->added,
-		      ir->lastactive, ir->user ? ir->user : botnetnick,
+		      ir->lastactive, ir->user ? ir->user : myname,
 		      ir->desc ? ir->desc : "requested") == EOF) {
 	    if (mask)
 	      free(mask);

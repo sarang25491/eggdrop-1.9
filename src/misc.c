@@ -27,7 +27,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: misc.c,v 1.73 2003/02/03 01:01:07 stdarg Exp $";
+static const char rcsid[] = "$Id: misc.c,v 1.74 2003/02/03 11:41:34 wcc Exp $";
 #endif
 
 #include "main.h"
@@ -47,15 +47,14 @@ static const char rcsid[] = "$Id: misc.c,v 1.73 2003/02/03 01:01:07 stdarg Exp $
 
 extern struct dcc_t	*dcc;
 extern struct chanset_t	*chanset;
-extern char		 helpdir[], version[], *botname,
-			 admin[], network[], motdfile[], ver[], botnetnick[],
-			 bannerfile[], textdir[];
-extern int		 strict_host;
-extern time_t		 now;
-extern Tcl_Interp	*interp;
+extern char helpdir[], version[], *botname, admin[], network[], motdfile[],
+            ver[], myname[], bannerfile[], textdir[];
+extern int strict_host;
+extern time_t now;
+extern Tcl_Interp *interp;
 
-int	 conmask = LOG_MODES | LOG_CMDS | LOG_MISC; /* Console mask */
-int	 raw_log = 0;	/* Disply output to server to LOG_SERVEROUT */
+int conmask = LOG_MODES | LOG_CMDS | LOG_MISC; /* Console mask */
+int raw_log = 0;	/* Disply output to server to LOG_SERVEROUT */
 
 struct help_list_t {
   struct help_list_t *next;
@@ -447,7 +446,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
 	towrite = "*UNKNOWN*";
       break;
     case 'B':
-      towrite = (isdcc ? botnetnick : botname);
+      towrite = (isdcc ? myname : botname);
       break;
     case 'V':
       towrite = ver;
@@ -858,7 +857,7 @@ void sub_lang(int idx, char *text)
     s[strlen(s) - 1] = 0;
   if (!s[0])
     strcpy(s, " ");
-  help_subst(s, dcc[idx].nick, &fr, 1, botnetnick);
+  help_subst(s, dcc[idx].nick, &fr, 1, myname);
   if (s[0])
     dprintf(idx, "%s\n", s);
 }
@@ -890,7 +889,7 @@ void show_motd(int idx)
 	s[strlen(s) - 1] = 0;
 	if (!s[0])
 	  strcpy(s, " ");
-	help_subst(s, dcc[idx].nick, &fr, 1, botnetnick);
+	help_subst(s, dcc[idx].nick, &fr, 1, myname);
 	if (s[0])
 	  dprintf(idx, "%s\n", s);
     }
@@ -921,7 +920,7 @@ void show_telnet_banner(int idx) {
     if (!feof(vv)) {
       if (!s[0])
         strcpy(s, " \n");
-      help_subst(s, dcc[idx].nick, &fr, 1, botnetnick);
+      help_subst(s, dcc[idx].nick, &fr, 1, myname);
       dprintf(idx, "%s", s);
     }
   }

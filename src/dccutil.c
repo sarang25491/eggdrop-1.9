@@ -27,7 +27,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dccutil.c,v 1.59 2003/01/29 07:42:50 wcc Exp $";
+static const char rcsid[] = "$Id: dccutil.c,v 1.60 2003/02/03 11:41:34 wcc Exp $";
 #endif
 
 #include <sys/stat.h>
@@ -53,9 +53,9 @@ extern sock_list	*socklist;
 extern struct dcc_table	DCC_CHAT, DCC_LOST;
 #endif /* MAKING_MODS   */
 
-char botnetnick[HANDLEN + 1] = "";
-char	motdfile[121] = "text/motd";	/* File where the motd is stored */
-int	connect_timeout = 15;		/* How long to wait before a telnet
+char myname[HANDLEN + 1] = "";
+char motdfile[121] = "text/motd";	/* File where the motd is stored */
+int connect_timeout = 15;		/* How long to wait before a telnet
 					   connection times out */
 
 int reserved_port_min = 0;
@@ -520,6 +520,7 @@ void do_boot(int idx, char *by, char *reason)
   return;
 }
 
+/* FIXME: botnet dependencies */
 int add_note(char *to, char *from, char *msg, int idx, int echo)
 {
   int status, i, iaway, sock;
@@ -589,7 +590,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
 	  else if (*from == '@')
 	    fr = p + 1;
 	}
-	if (idx == -2 || (!strcasecmp(from, botnetnick)))
+	if (idx == -2 || (!strcasecmp(from, myname)))
 	  dprintf(i, "*** [%s] %s%s\n", fr, l ? work : "", msg);
 	else
 	  dprintf(i, "%cNote [%s]: %s%s\n", 7, fr, l ? work : "", msg);

@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: share.c,v 1.19 2003/01/29 07:42:49 wcc Exp $";
+static const char rcsid[] = "$Id: share.c,v 1.20 2003/02/03 11:41:34 wcc Exp $";
 #endif
 
 #define MODULE_NAME "share"
@@ -1111,7 +1111,7 @@ static void share_ufsend(int idx, char *par)
   int i, sock;
   FILE *f;
 
-  snprintf(s, sizeof s, ".share.%s.%lu.users", botnetnick, now);
+  snprintf(s, sizeof s, ".share.%s.%lu.users", myname, now);
   if (!(b_status(idx) & STAT_SHARE)) {
     dprintf(idx, "s e You didn't ask; you just started sending.\n");
     dprintf(idx, "s e Ask before sending the userfile.\n");
@@ -1589,7 +1589,7 @@ static int write_tmp_userfile(char *fn, struct userrec *bu, int idx)
 
   if ((f = fopen(fn, "wb"))) {
     chmod(fn, 0600);		/* make it -rw------- */
-    fprintf(f, "#4v: %s -- %s -- transmit\n", ver, botnetnick);
+    fprintf(f, "#4v: %s -- %s -- transmit\n", ver, myname);
     ok = 1;
     for (u = bu; u && ok; u = u->next)
       ok = write_user(u, f, idx);

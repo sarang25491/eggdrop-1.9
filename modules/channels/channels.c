@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.26 2003/02/03 10:43:36 wcc Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.27 2003/02/03 11:41:34 wcc Exp $";
 #endif
 
 #define MODULE_NAME "channels"
@@ -346,8 +346,8 @@ static void write_channels()
     putlog(LOG_MISC, "*", "ERROR writing channel file.");
     return;
   }
-  fprintf(f, "#Dynamic Channel File for %s (%s) -- written %s\n",
-	  botnetnick, ver, ctime(&now));
+  fprintf(f, "#Dynamic Channel File for %s (%s) -- written %s\n", myname, ver,
+          ctime(&now));
   for (chan = chanset; chan; chan = chan->next) {
     convert_element(chan->dname, name);
     get_mode_protect(chan, w);
