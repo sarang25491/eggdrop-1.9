@@ -78,6 +78,7 @@ void convert_ansi_code_to_mirc(int *tokens, int ntokens, char **dest, int *cur, 
 	int ansi_to_mirc_colors[] = {1, 4, 3, 8, 2, 5, 10, 0};
 	int i, in_bold, in_uline, in_reverse, fg, bg;
 	char *newline;
+	char buf[64];
 
 	/* User inserted some color stuff... */
 	in_bold = in_uline = in_reverse = 0;
@@ -99,22 +100,26 @@ void convert_ansi_code_to_mirc(int *tokens, int ntokens, char **dest, int *cur, 
 		*dest = realloc(*dest, *max + 10);
 		*max += 10;
 	}
-	newline = *dest;
-	if (in_bold) newline[(*cur)++] = '\002';
-	if (in_uline) newline[(*cur)++] = '\037';
-	if (in_reverse) newline[(*cur)++] = '\026';
+	newline = buf;
+	if (in_bold) *newline++ = '\002';
+	if (in_uline) *newline++ = '\037';
+	if (in_reverse) *newline++ = '\026';
 	if (fg != -1 || bg != -1) {
-		newline[(*cur)++] = '\003';
+		*newline++ = '\003';
 		if (fg == -1) fg = 99;
-		sprintf(newline+*cur, "%02d", fg);
-		*cur += 2;
+		sprintf(newline, "%02d", fg);
+		newline += 2;
 		if (bg != -1) {
-			sprintf(newline+*cur, ",%02d", bg);
-			*cur += 3;
+			sprintf(newline, ",%02d", bg);
+			newline += 3;
 		}
 	}
+	*newline = 0;
+	egg_append_str(dest, cur, max, newline);
 }
 
+/* Get an int up to 2 digits from the string. Used for getting
+ * mirc color values. */
 int get_2(const char *data, int len, int *val)
 {
 	if (isdigit(*data)) {
@@ -129,10 +134,11 @@ int get_2(const char *data, int len, int *val)
 	return(0);
 }
 
-int convert_mirc_color_to_ansi(const char *data, int len, char *newline, int *cur)
+int convert_mirc_color_to_ansi(const char *data, int len, char **newline, int *cur, int *max)
 {
 	const char *orig;
 	char add[64], temp[64];
+	/* Convert a mirc color (0-15) to an ansi escape color (0-7). */
 	int mirc_to_ansi[] = {7, 0, 4, 2, 1, 1, 5, 1, 3, 2, 6, 6, 4, 5, 0, 0};
 	int c1, c2, n;
 
@@ -165,9 +171,7 @@ int convert_mirc_color_to_ansi(const char *data, int len, char *newline, int *cu
 		strcat(add, "m");
 	}
 	else strcat(add, "0m");
-	n = strlen(add);
-	memcpy(newline+*cur, add, n);
-	*cur += n;
+	egg_append_str(newline, cur, max, add);
 	return data - orig;
 }
 
@@ -474,83 +478,86 @@ static int telnet_filter_read(void *client_data, int idx, char *data, int len)
 static int telnet_filter_write(void *client_data, int idx, const char *data, int len)
 {
 	char *newline;
-	const char *add = NULL;
-	char temp[2];
-	int cur, max, addlen, n, code;
+	const char *filterchars = "\n\r\003\002\007\017\026\037\255";
+	char temp[64];
+	int i, cur, max, n, code, esc;
 
 	cur = 0;
 	max = 128;
 	newline = malloc(max+1);
 
-	temp[1] = 0;
-	add = NULL;
-	addlen = 0;
 	code = 0;
+	esc = -1;
 	while (len > 0) {
 		switch (*data) {
 			case '\002':
-				add = "\033[1m"; addlen = 4;
-				code = 1;
+				esc = 1;
 				break;
 			case '\003':
 				code = 1;
 				data++; len--;
-				n = convert_mirc_color_to_ansi(data, len, newline, &cur);
+				n = convert_mirc_color_to_ansi(data, len, &newline, &cur, &max);
 				data += n;
 				len -= n;
-				add = NULL;
 				break;
 			case '\007':
+				/* Skip. */
 				data++; len--;
 				break;
 			case '\017':
-				code = 1;
-				add = "\033[0m"; addlen = 4;
+				esc = 0;
 				break;
 			case '\026':
-				code = 1;
-				add = "\033[7m"; addlen = 4;
+				esc = 7;
 				break;
 			case '\037':
-				code = 1;
-				add = "\033[4m"; addlen = 4;
+				esc = 4;
 				break;
 			case '\r':
 			case '\n':
 				if (code) {
-					strcpy(newline+cur, "\033[0m");
-					cur += 4;
+					/* If we've used an escape code, we
+					 * append the 'reset' code right before
+					 * the end of the line. */
+					egg_append_str(&newline, &cur, &max, "\033[0m");
 					code = 0;
 				}
 				if (*data == '\r') {
+					/* Skip \r and wait for \n, where we
+					 * add both (prevents stray \r's). */
 					data++;
 					len--;
 					break;
 				}
 				else {
-					add = "\r\n";
-					addlen = 2;
+					egg_append_str(&newline, &cur, &max, "\r\n");
 				}
 				break;
 			case '\255':
-				add = "\255\255"; addlen = 2;
+				/* This is the telnet command char, so we have
+				 * to escape it. */
+				egg_append_str(&newline, &cur, &max, "\255\255");
 				break;
 			default:
-				temp[0] = *data;
-				add = temp;
-				addlen = 1;
+				for (i = 0; i < sizeof(temp)-1 && i < len; i++) {
+					if (strchr(filterchars, *data)) break;
+					temp[i] = *data++;
+				}
+				temp[i] = 0;
+				egg_append_str(&newline, &cur, &max, temp);
+				len -= i;
 		}
 
-		if (add) {
-			memcpy(newline+cur, add, addlen);
-			cur += addlen;
-			add = NULL;
+		if (esc != -1) {
+			/* Add the escape code to the line. */
+			sprintf(temp, "\033[%dm", esc);
+			egg_append_str(&newline, &cur, &max, temp);
 			data++; len--;
-		}
+			esc = -1;
 
-		if (max - cur < 10) {
-			max = max + 128;
-			newline = realloc(newline, max+1);
+			/* Remember that we're in a code so we can reset it
+			 * at the end of the line. */
+			code = 1;
 		}
 	}
 	newline[cur] = 0;

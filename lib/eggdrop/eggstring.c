@@ -60,3 +60,34 @@ int egg_get_words(const char *text, const char **next, char **word, ...)
 	if (next) *next = text;
 	return(nwords);
 }
+
+/* Append string to a static buffer until full. */
+void egg_append_static_str(char **dest, int *remaining, const char *src)
+{
+	int len;
+
+	if (!src || *remaining <= 0) return;
+
+	len = strlen(src);
+	if (len > *remaining) len = *remaining;
+
+	memmove(*dest, src, len);
+	*remaining -= len;
+	*dest += len;
+}
+
+/* Append string to a dynamic buffer with reallocation. */
+void egg_append_str(char **dest, int *cur, int *max, const char *src)
+{
+	int len;
+
+	if (!src) return;
+
+	len = strlen(src);
+	if (*cur + len + 10 > *max) {
+		*max += len + 128;
+		*dest = realloc(*dest, *max+1);
+	}
+	memmove(*dest + *cur, src, len);
+	*cur += len;
+}

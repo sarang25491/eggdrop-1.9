@@ -6,6 +6,8 @@
 #define SERVER_QUICK	2
 #define SERVER_NORMAL	3
 #define SERVER_SLOW	4
+
+/* Can be OR'd with any priority queue. */
 #define SERVER_NEXT	8
 
 typedef struct queue_entry {

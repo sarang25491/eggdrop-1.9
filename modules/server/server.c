@@ -138,6 +138,7 @@ static config_var_t server_config_vars[] = {
 	{"keepnick", &server_config.keepnick, CONFIG_INT},
 	{"cycle_delay", &server_config.cycle_delay, CONFIG_INT},
 	{"default_port", &server_config.default_port, CONFIG_INT},
+	{"max_line_len", &server_config.max_line_len, CONFIG_INT},
 
 	{"fake005", &server_config.fake005, CONFIG_STRING},
 
@@ -165,6 +166,7 @@ static void server_config_init()
 	server_config.cycle_delay = 10;
 	server_config.default_port = 6667;
 	server_config.fake005 = NULL;
+	server_config.max_line_len = 510;
 
 	/* Link our config vars. */
 	config_root = config_get_root("eggdrop");

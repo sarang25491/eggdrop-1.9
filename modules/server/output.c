@@ -13,21 +13,6 @@ static queue_t unused_queue = {0};
 
 static void queue_server(int priority, char *text, int len);
 
-/* Little utility function to help append to a fixed buffer. */
-static void append_str(char **dest, int *remaining, const char *src)
-{
-	int len;
-
-	if (!src || *remaining <= 0) return;
-
-	len = strlen(src);
-	if (len > *remaining) len = *remaining;
-
-	memcpy(*dest, src, len);
-	*remaining -= len;
-	*dest += len;
-}
-
 static void do_output(const char *text, int len)
 {
 	int r;
@@ -57,7 +42,7 @@ int printserv(int priority, const char *format, ...)
 	ptr = egg_mvsprintf(buf, sizeof(buf), &len, format, args);
 	va_end(args);
 
-	if (len > 510) len = 510;
+	if (server_config.max_line_len != -1 && len > server_config.max_line_len) len = server_config.max_line_len;
 
 	if (len < 2 || ptr[len-1] != '\n') {
 		ptr[len++] = '\r';
@@ -156,26 +141,26 @@ void queue_entry_to_text(queue_entry_t *q, char *text, int *remaining)
 
 	msg = &q->msg;
 	if (msg->prefix) {
-		append_str(&text, remaining, msg->prefix);
-		append_str(&text, remaining, " ");
+		egg_append_static_str(&text, remaining, msg->prefix);
+		egg_append_static_str(&text, remaining, " ");
 	}
 	if (msg->cmd) {
-		append_str(&text, remaining, msg->cmd);
+		egg_append_static_str(&text, remaining, msg->cmd);
 	}
 
 	/* Add the args (except for last one). */
 	msg->nargs--;
 	for (i = 0; i < msg->nargs; i++) {
-		append_str(&text, remaining, " ");
-		append_str(&text, remaining, msg->args[i]);
+		egg_append_static_str(&text, remaining, " ");
+		egg_append_static_str(&text, remaining, msg->args[i]);
 	}
 	msg->nargs++;
 
 	/* If the last arg has a space in it, put a : before it. */
 	if (i < msg->nargs) {
-		if (strchr(msg->args[i], ' ')) append_str(&text, remaining, " :");
-		else append_str(&text, remaining, " ");
-		append_str(&text, remaining, msg->args[i]);
+		if (strchr(msg->args[i], ' ')) egg_append_static_str(&text, remaining, " :");
+		else egg_append_static_str(&text, remaining, " ");
+		egg_append_static_str(&text, remaining, msg->args[i]);
 	}
 }
 

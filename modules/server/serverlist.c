@@ -37,7 +37,7 @@ void server_set_next(int next)
 /* Add a server to the server list. */
 int server_add(char *host, int port, char *pass)
 {
-	server_t *serv;
+	server_t *serv, *ptr;
 
 	/* Fill out a server entry. */
 	serv = calloc(1, sizeof(*serv));
@@ -45,12 +45,13 @@ int server_add(char *host, int port, char *pass)
 	serv->port = port;
 	if (pass) serv->pass = strdup(pass);
 
-	/* Insert the server into the list. */
-	serv->next = server_list;
-	server_list = serv;
+	/* Append the server to the list. */
+	for (ptr = server_list; ptr && ptr->next; ptr = ptr->next) {
+		; /* empty */
+	}
+	if (ptr) ptr->next = serv;
+	else server_list = serv;
 
-	/* This bumps up the index of the current server and the list len. */
-	server_list_index++;
 	server_list_len++;
 
 	return(0);

@@ -14,6 +14,7 @@ typedef struct {
 	int dcc_timeout;
 	char *user;
 	char *realname;
+	int max_line_len;
 
 	/* Override the 005 sent by the server. */
 	char *fake005;

@@ -3,5 +3,7 @@
 
 int egg_get_word(const char *text, const char **next, char **word);
 int egg_get_words(const char *text, const char **next, char **word, ...);
+void egg_append_static_str(char **dest, int *remaining, const char *src);
+void egg_append_str(char **dest, int *cur, int *max, const char *src);
 
 #endif /* _EGGSTRING_H_ */

@@ -2,9 +2,9 @@
 #define _EGGMOD_H_
 
 /* Values for 'why' in module_unload() */
-#define EGGMOD_USER	0
-#define EGGMOD_SHUTDOWN	1
-#define EGGMOD_RESTART	2
+#define EGGMOD_USER	0	/* User is manually unloading a module. */
+#define EGGMOD_SHUTDOWN	1	/* Bot is exiting. Can't be ignored. */
+#define EGGMOD_RESTART	2	/* Bot is restarting. */
 
 struct egg_module;
 typedef struct egg_module egg_module_t;
