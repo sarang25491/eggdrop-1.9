@@ -24,9 +24,8 @@ specific commands, see later.
   putserv [-serv|-help|-quick|-noqueue] [-next] <text>
     sends text to the server through the specified queue. The default
       queue is -serv. If you use -noqueue, we bypass the queue system
-      and send the text directly to the server (like putdccraw). Make
-      sure you add your own \r\n to the end of messages when using -noqueue.
-      Specifying -next pushes the message to the front of the queue.
+      and send the text directly to the server. Specifying -next pushes
+      the message to the front of the queue.
     returns: nothing
 
   putkick <channel> <nick,nick,...> [reason]

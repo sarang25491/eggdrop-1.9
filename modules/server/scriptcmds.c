@@ -1,7 +1,7 @@
 /*
  * scriptcmds.c -- part of server.mod
  *
- * $Id: scriptcmds.c,v 1.1 2002/04/25 20:11:57 stdarg Exp $
+ * $Id: scriptcmds.c,v 1.2 2002/05/01 05:31:04 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -73,7 +73,10 @@ static int script_putserv (char *queue, char *next, char *text)
 	/* Figure out which queue they want. */
 	if (!strcasecmp(queue, "-noqueue")) {
 		if (serv >= 0) {
-			tputs(serv, text, len);
+			/* We'll add a \r\n to the end before we send it. */
+			char *copy = msprintf("%s\r\n", text);
+			tputs(serv, copy, len+2);
+			free(copy);
 		}
 		return(0);
 	}
