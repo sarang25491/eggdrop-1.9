@@ -53,6 +53,7 @@ static int party_plus_server(partymember_t *p, const char *nick, user_t *u, cons
 	parse_server(text, &host, &port, &pass);
 	if (!strlen(host)) {
 		partymember_printf(p, "Please specify a valid host.");
+		free(host);
 		return(0);
 	}
 	server_add(host, port, pass);

@@ -94,9 +94,10 @@ static void answer_init(dns_answer_t *answer)
 
 static void answer_add(dns_answer_t *answer, const char *what)
 {
-	answer->list = realloc(answer->list, sizeof(*answer->list) * (answer->len+1));
+	answer->list = realloc(answer->list, sizeof(*answer->list) * (answer->len+2));
 	answer->list[answer->len] = strdup(what);
 	answer->len++;
+	answer->list[answer->len] = NULL;
 }
 
 static void answer_free(dns_answer_t *answer)

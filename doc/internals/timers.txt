@@ -1,0 +1,106 @@
+FILES
+
+	eggtimer.c, eggtimer.h in lib/eggdrop
+
+STRUCTURES
+
+egg_timeval_t (typedef of struct egg_timeval)
+	This is a simple struct that is used for keeping track of precise
+	times. It contains a sec (seconds) field and a usec (microseconds)
+	field. This allows eggdrop to specify times down to the microsecond,
+	or 1/1000000'th of a second.
+
+FUNCTIONS
+
+int timer_get_time(egg_timeval_t *curtime)
+	This function stores the current time in the 'curtime' pointer. It
+	uses the gettimeofday() system function.
+
+	Returns: 0 on success
+
+void timer_get_now(egg_timeval_t *now)
+	This function returns the current time as used by the other timer
+	functions. It may be different from the real time because of code
+	that takes a while to execute, such as binds. It is preferable to
+	use this function, because if somebody types !start and you want to
+	record when it was typed, the time eggdrop received the event is more
+	important than when your function is actually called.
+
+int timer_get_now_sec(int *sec)
+	This function works like timer_get_now(), but it only deals with whole
+	seconds, not the egg_timeval_t struct.
+
+	Returns: eggdrop's viewpoint of 'now' in seconds only
+
+int timer_diff(egg_timeval_t *from_time, egg_timeval_t *to_time, egg_timeval_t
+*diff)
+	This functions computes the difference between two times. The result
+	is stored in the 'diff' variable as seconds and microseconds. This
+	function expects from_time to be less than to_time, and will set
+	'diff' equal to 0 otherwise.
+
+	Returns: 0 on success
+
+int timer_create_complex(egg_timeval_t *howlong, const char *name, Function
+callback, void *client_data, int flags)
+	This function creates a timer in eggdrop.
+	
+	'Name' specifies a name to associate with the timer. It is visible
+		to other scripts, modules, and users who examine the timer list.
+
+	'Callback' is the function that will be called when the timer
+		executes. The syntax for the function is:
+		int callback(void *client_data);
+	
+	'Flags' may be 0 or TIMER_REPEAT. A repeating timer will be
+		automatically recreated when the timer triggers -- a normal
+		timer will only trigger one time.
+
+	There are two macros to make timer creation more convenient:
+	#define timer_create(howlong,name,callback)
+	#define timer_create_repeater(howlong,name,callback)
+	The first creates a one-time timer with no client data. The second
+	creates a repeating timer with no client data.
+
+	Note that even if you pass NULL for client_data, your function will
+	be called called with NULL as its parameter, so you still should
+	specify the parameter in your function definition.
+
+	Returns: a timer id (integer)
+
+int timer_destroy(int timer_id)
+	This function kills a timer so that it won't execute.
+
+	Returns: 0 on success
+
+int timer_list(int **ids)
+	This function lists all of the active timers by their ids. Using the
+	id's, you can use timer_destroy to stop them or timer_info to get
+	information about them. You must free() the id list. For instance:
+
+	int *ids, n, i;
+
+	n = timer_list(&ids);
+	for (i = 0; i < n; i++) {
+		something_with(ids[i]);
+	}
+	free(ids);
+
+	Note: Even if there are 0 id's in the list, you still need to free
+	the 'ids' array!
+
+	Returns: the number of timer id's in the list
+
+int timer_info(int id, char **name, egg_timeval_t *initial_len, egg_timeval_t
+*trigger_time)
+	This function provides information on a timer, given its id.
+
+	'Name' will point to the timer's name (as given in
+		timer_create_complex).
+	
+	'initial_len' will contain the initial length of the timer.
+
+	'trigger_time' will contain the absolute time that the timer will
+		trigger.
+
+	Returns: 0 on success

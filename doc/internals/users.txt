@@ -1,0 +1,137 @@
+FILES
+
+	users.c, users.h in lib/eggdrop
+
+STRUCTURES
+
+user_t (typedef of struct user)
+	This struct contains all the information eggdrop associates with a user.
+	The most useful fields are char *handle and int uid. The other fields
+	should be accessed through the provided libeggdrop functions. But in
+	case you're curious, the char **ircmasks contains a list of irc masks
+	for the user, and int nircmasks is the length of that list. Then,
+	user_setting_t *settings is a list of flags and any other data stored
+	in that user record.
+
+	It is important to remember that users can be deleted at any time.
+	Therefore, your code should not save pointers to these user records
+	and access them later (after other code has executed). The record may
+	have been freed, resulting in bad data or a crash. The best way to
+	keep track of users in your code is to save the uid, which is unique
+	and does not change even when the handle changes. Then use
+	user_lookup_by_uid() to retrieve the user record. It is a fast operation
+	since it uses an integer hash table.
+
+FUNCTIONS
+
+user_t *user_new(const char *handle)
+	Create a new user with the given handle.
+
+	Returns: a pointer to the user record, or NULL on error
+
+int user_delete(user_t *u)
+	Deletes a user record. Do not use the user record after it has been
+	deleted.
+
+	Returns: 0 on success
+
+user_t *user_lookup_by_handle(const char *handle)
+user_t *user_lookup_authed(const char *handle, const char *pass)
+user_t *user_lookup_by_uid(int uid)
+user_t *user_lookup_by_irchost_nocache(const char *irchost)
+user_t *user_lookup_by_irchost(const char *irchost)
+	This group of functions lets you look up a user record with the given
+	information. User_lookup_authed is a convenience function to perform
+	the lookup and check the supplied password in one step. If the password
+	is not correct, the function will return NULL as if the user had not
+	been found.
+
+	An 'irchost' is irc information (nick and user) combined with a
+	hostname, in the form nick!user@host. User_lookup_by_irchost and
+	user_lookup_by_irchost_nocache differ only in that the first will cache
+	the result of the lookup so that future lookups will be faster. However,
+	if you know that your code will not be checking the same irchost soon,
+	the nocache variant will save time and memory. The lookup will return
+	the user that matches the given irchost most closely. For instance, if
+	user A has the ircmask *!*@*.blah.com and user B has the ircmask
+	*!*def@*.blah.com, then a lookup on somenick!abcdef@123.blah.com will
+	return user B, since it matches more closely. In the event of a tie,
+	the first user found will be the one returned.
+
+	Returns: All of these functions return a pointer to a user record if
+	it was found or NULL if it was not.
+
+int user_add_ircmask(user_t *u, const char *ircmask)
+int user_del_ircmask(user_t *u, const char *ircmask)
+	These two functions manipulate the list of ircmasks for a user. An
+	'ircmask' is a wildcard mask of irc information (nick and user)
+	combined with a hostname, in the form nick!user@host. Wildcard
+	characters are * (matches any chars) and ? (matches a single char). So,
+	for instance, the mask aa*!*@*.aol.com would match
+	aabbcc!zxcv@blah.aol.com or aa123!mmmm@123.aol.com... anybody with a
+	nick that starts with aa and a hostname ending in .aol.com.
+
+	Returns: 0 on success
+
+int user_get_setting(user_t *u, const char *chan, const char *setting, char **valueptr)
+int user_set_setting(user_t *u, const char *chan, const char *setting, const char *newvalue)
+	These two functions manipulate the list of settings for a user. Each
+	setting is associated with a channel, although it does not have to be
+	an irc channel. For instance, a file-serving module might use the
+	channel name "fserve" so that its setting names don't conflict with
+	those of other modules and scripts. For access to global settings such
+	as the password hash value and the password salt, pass NULL for the
+	'chan' variable.
+
+	When reading a setting, you pass a pointer to the variable that will
+	hold the current value. For instance:
+
+	char *value;
+	user_get_setting(u, "fserve", "lastseen", &value);
+
+	This code makes 'value' point to the current value of that setting. On
+	the other hand, when you are setting a new value, you pass the value
+	directly and not as a double pointer:
+
+	char maxcps_str[128];
+	sprintf(maxcps_str, "%d", transfer->cps);
+	user_set_setting(u, "fserve", "maxcps", maxcps_str);
+
+	Note that all settings are stored as strings, so if you want to store
+	another data-type you must convert it to/from strings.
+	
+	Returns: 0 on success
+
+int user_get_flags(user_t *u, const char *chan, flags_t *flags)
+int user_set_flags(user_t *u, const char *chan, flags_t *flags)
+int user_set_flag_str(user_t *u, const char *chan, const char *flags)
+	These functions deal with user flags (a-z and A-Z). The flags are
+	associated with a channel. Like channels for settings, these channels
+	don't have to be real irc channels. For instance, a file-serving module
+	may use the fake channel "fserve" to store permissions similar to
+	the normal ones: a user with +n on "fserve" could be the fserve
+	maintainer, etc. To access the user's global flags, pass NULL for
+	the 'chan' variable.
+	
+	The user_set_flag_str function allows you to make relative flag changes
+	in addition to fixed ones. For instance, the string "+o" would add
+	the "o" flag without modifying the others, whereas the string "o" would
+	set the user's flags to just "o" and nothing else.
+
+	See also: flags.txt for information on flags_t
+
+	Returns: 0 on success
+
+int user_has_pass(user_t *u)
+int user_check_pass(user_t *u, const char *pass)
+int user_set_pass(user_t *u, const char *pass)
+int user_rand_pass(char *buf, int bufsize)
+	These functions deal with user passwords. User_rand_pass generates
+	a random password from digits, uppercase letters, and lowercase letters.
+	The result is null-terminated.
+
+	Returns: user_has_pass returns 1 if the user has a password set, 0 if
+	not. The others returns 0 on success.
+
+int user_count()
+	Returns: the number of users eggdrop has in its user database

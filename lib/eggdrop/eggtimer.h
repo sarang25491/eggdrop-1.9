@@ -19,13 +19,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: eggtimer.h,v 1.5 2003/04/15 08:18:03 stdarg Exp $
+ * $Id: eggtimer.h,v 1.6 2003/08/13 06:27:32 stdarg Exp $
  */
 
 #ifndef _EGG_TIMER_H
 #define _EGG_TIMER_H
 
-typedef struct egg_timeval_b {
+typedef struct egg_timeval {
 	int sec;
 	int usec;
 } egg_timeval_t;

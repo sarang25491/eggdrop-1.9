@@ -1,0 +1,105 @@
+FILES
+
+	eggdns.c, eggdns.h
+	eggident.c, eggident.h
+	eggnet.c, eggnet.h
+	linemode.c, linemode.h
+	my_socket.c, my_socket.h
+	sockbuf.c, sockbuf.h
+	throttle.c, throttle.h
+	all in lib/eggdrop
+
+STRUCTURES
+
+sockbuf_filter_t
+	This structure is used to implement filters on network connections.
+	See sockbuf.txt for more information.
+
+sockbuf_handler_t
+	This structure is used to implement top-level handlers for network
+	connections.
+	See sockbuf.txt for more information.
+
+FUNCTIONS
+
+int egg_dns_lookup(const char *host, int timeout, dns_callback_t callback, void *client_data)
+int egg_dns_reverse(const char *ip, int timeout, dns_callback_t callback, void *client_data)
+int egg_dns_cancel(int id, int issue_callback)
+	This group of functions deals with DNS requests. Egg_dns_lookup
+	provides a way to turn a hostname into a numeric IP (or IPv6) address.
+	Egg_dns_reverse provides the opposite: a way to turn a numeric IP (or
+	IPv6) address into a hostname. Both functions operate asynchronously;
+	that is, they return immediately and wait for the DNS query to
+	complete in the background. You must provide a callback function that
+	will be called when the query either times out or is answered. If the
+	answer is ready immediately (perhaps the data is cached), the callback
+	will execute immediately as well (before the dns function returns).
+
+	The callback function must be of the form:
+		int yourcallback(void *client_data, const char *query, char
+		**result);
+	'client_data' is the same as the 'client_data' you passed to the
+	dns function. You can use this parameter to keep track of whatever
+	data you wish by passing a pointer to a structure containing all of
+	the pertinent data.
+
+	'query' is the original query you sent.
+
+	'result' is a list of answers to that query. Each entry in the list is
+	a null-terminated string, either a hostname or an ip address. The list
+	itself is terminated by a NULL entry. If 'result' itself is NULL, that
+	means no results were found, either because the request timed out or
+	the request returned no information.
+
+	Both functions return an id that can be used with egg_dns_cancel to
+	cancel the request. When egg_dns_cancel is called, passing 1 to the
+	'issue_callback' field will cause it to execute the callback (as if the
+	request had timed out) before returning. Passing 0 will cause it to
+	ignore the callback.
+
+int egg_ident_lookup(const char *ip, int their_port, int our_port, int timeout, int (*callback)(), void *client_data)
+int egg_ident_cancel(int id, int issue_callback)
+	These two functions deal with ident lookups. Egg_ident_lookup begins a
+	request asynchronously.
+
+	'ip' is the ip address to probe.
+
+	'their_port' is the port they are connecting FROM (on their computer).
+
+	'our_port' is the port they are connecting TO (on the bot's computer).
+
+	'timeout' is max time in seconds that you wish to wait for a response.
+		You can specify 0 to use the default, or -1 to specify no
+		timeout (wait forever).
+
+	'callback' is the function that will be called when the response is
+		received or the request times out. It must be defined as:
+
+		int yourcallback(void *client_data, const char *ip, int
+		their_port, const char *ident);
+
+		'ident' will be NULL if there was an error.
+	
+	It returns an id that can be used with egg_ident_cancel to stop the
+	request. Passing 1 to the 'issue_callback' field will cause it to
+	execute the callback (as if the request had timed out) before returning.
+	Passing 0 will cause it to ignore the callback.
+
+int egg_iprintf(int idx, const char *format, ...)
+	This function sends formatted text to an idx (sockbuf index). The
+	syntax is the same as fprintf, except instead of a file pointer you
+	provide the idx you want to send the data to.
+
+	Returns: size of data sent (in bytes)
+
+int egg_server(const char *vip, int port, int *real_port)
+	This function creates a new idx that listens at ip address 'vip' on
+	port 'port'. If the port is in use, it will try nearby ports. The port
+	number that is actually used will be stored in the 'real_port'
+	parameter (if it's not NULL).
+
+	Returns: an idx representing the listening socket. You should set a
+		handler for the idx to be notified when new connections are
+		detected.
+
+to be continued...
