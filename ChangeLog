@@ -1,3 +1,10 @@
+2002-04-26 00:25  stdarg <stdarg@techmonkeys.org>
+
+	* modules/perlscript/perlscript.c:
+
+	
+	* Got rid of the use of the aTHX_ macro 
+
 2002-04-25 23:18  stdarg <stdarg@techmonkeys.org>
 
 	* modules/channels/cmdschan.c, src/cmds.c, src/tcldcc.c,
