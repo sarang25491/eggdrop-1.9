@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: partyline.h,v 1.16 2004/06/19 16:11:53 wingman Exp $
+ * $Id: partyline.h,v 1.17 2004/06/19 16:15:13 wingman Exp $
  */
 
 #ifndef _EGG_PARTYLINE_H_
@@ -47,7 +47,6 @@ typedef struct partymember {
 	char *nick, *ident, *host;
 	user_t *user;
 	int flags;
-	int type;
 
 	struct partychan **channels;
 	int nchannels;

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partyline.c,v 1.17 2004/06/19 16:11:53 wingman Exp $";
+static const char rcsid[] = "$Id: partyline.c,v 1.18 2004/06/19 16:15:13 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -61,7 +61,7 @@ int partyline_is_command(const char *text)
 }
 
 /* Process any input from someone on the partyline (not bots, just users).
- * Everythin	is either a command or public text. Private messages and all that
+ * Everything is either a command or public text. Private messages and all that
  * are handled via commands. */
 int partyline_on_input(partychan_t *chan, partymember_t *p, const char *text, int len)
 {
@@ -73,7 +73,7 @@ int partyline_on_input(partychan_t *chan, partymember_t *p, const char *text, in
 		text++;
 		len--;
 		/* If there are 2 command chars in a row, then it's not a
-		* command. We skip the command char and treat it as text. */
+		 * command. We skip the command char and treat it as text. */
 		if (*text != *(text-1)) {
 			const char *space;
 
@@ -116,7 +116,7 @@ int partyline_on_command(partymember_t *p, const char *cmd, const char *text)
 			cmd);
 	else {
 		switch (r) {
-			/* logs everythin	*/
+			/* logs everything */
 			case (BIND_RET_LOG):
 				putlog(LOG_MISC, "*", "#%s# %s %s", p->nick, cmd, (text) ? text : "");
 				break;
