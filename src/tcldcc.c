@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.36 2001/10/19 01:55:05 tothwolf Exp $
+ * $Id: tcldcc.c,v 1.37 2001/10/21 19:51:41 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -47,21 +47,20 @@ static struct portmap	*root = NULL;
 
 static int tcl_putdcc STDVAR
 {
-  int i, j;
+  int idx;
 
   BADARGS(3, 3, " idx text");
-  i = atoi(argv[1]);
-  j = findidx(i);
-  if (j < 0) {
+  idx = atoi(argv[1]);
+  if (idx < 0 ||  idx >= dcc_total || dcc[idx].sock == -1) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
     return TCL_ERROR;
   }
-  dumplots(-i, "", argv[2]);
+  dumplots(-(dcc[idx].sock), "", argv[2]);
   return TCL_OK;
 }
 
 /* Allows tcl scripts to send out raw data. Can be used for fast server
- * write (idx=0)
+ * write (idx=-1)
  *
  * usage:
  * 	putdccraw <idx> <size> <rawdata>
@@ -73,24 +72,24 @@ static int tcl_putdcc STDVAR
 
 static int tcl_putdccraw STDVAR
 {
-  int i, j = 0, z;
+  int i, idx;
 
   BADARGS(4, 4, " idx size text");
-  z = atoi(argv[1]);
-  for (i = 0; i < dcc_total; i++) {
-    if (!z && !strcmp(dcc[i].nick, "(server)")) {
-      j = dcc[i].sock;
-      break;
-    } else if (dcc[i].sock == z) {
-      j = dcc[i].sock;
-      break;
+  idx = atoi(argv[1]);
+  if (idx == -1) {
+    /* -1 means search for the server's idx. */
+    for (i = 0; i < dcc_total; i++) {
+      if (!strcmp(dcc[i].nick, "(server)")) {
+        idx = i;
+        break;
+      }
     }
   }
-  if (i == dcc_total) {
+  if (idx < 0 || idx >= dcc_total || dcc[idx].sock == -1) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
     return TCL_ERROR;
   }
-  tputs(j, argv[3], atoi(argv[2]));
+  tputs(idx, argv[3], atoi(argv[2]));
   return TCL_OK;
 }
 
