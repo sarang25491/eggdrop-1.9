@@ -1,7 +1,7 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.15 2002/05/03 01:21:16 ite Exp $
+dnl $Id: acinclude.m4,v 1.16 2002/05/04 14:14:14 ite Exp $
 dnl
 
 
@@ -178,11 +178,11 @@ case $host_os in
       1.*)
 	AC_PROG_CC_WIN32
 	CC="$CC $WIN32FLAGS"
-	AC_MSG_CHECKING(for /usr/lib/binmode.a)
-	if test -r /usr/lib/binmode.a
+	AC_MSG_CHECKING(for /usr/lib/libbinmode.a)
+	if test -r /usr/lib/libbinmode.a
 	then
           AC_MSG_RESULT(yes)
-          LIBS="$LIBS /usr/lib/binmode.a"
+          LIBS="$LIBS /usr/lib/libbinmode.a"
         else
           AC_MSG_RESULT(no)
           AC_MSG_WARN(Make sure the directory Eggdrop is installed into is mounted in binary mode.)
