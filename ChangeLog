@@ -1,3 +1,9 @@
+2001-10-09 06:59  stdarg
+
+	* doc/howto/setudef.txt:
+
+	Sample code for user-defined channel settings 
+
 2001-10-07 04:02  stdarg
 
 	* src/: botcmd.c, botnet.c, cmds.c, dccutil.c, tclhash.c,
