@@ -1,3 +1,12 @@
+2002-01-18 22:55  stdarg <stdarg@techmonkeys.org>
+
+	* modules/perlscript/: Makefile.am, module_interface.c,
+	perlscript.c:
+
+	
+	* Fixed most of the compiler warnings by moving Eggdrop-related
+	stuff into a separate file (module_interface.c) 
+
 2002-01-18 22:28  stdarg <stdarg@techmonkeys.org>
 
 	* modules/channels/cmdschan.c:
