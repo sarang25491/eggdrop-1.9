@@ -1,3 +1,26 @@
+2003-01-30 01:15  Will Buckner <wcc@techmonkeys.org>
+
+	* modules/channels/: channels.c, tclchan.c:
+
+	* udef-[str/int/flag]-* -> udef_[str/int/flag]_*.  
+
+2003-01-30 01:04  Will Buckner <wcc@techmonkeys.org>
+
+	* eggdrop.conf, doc/UPDATES1.6, modules/channels/channels.c,
+	modules/channels/cmdschan.c, modules/channels/tclchan.c,
+	modules/transfer/transfer.c, nettype/custom.irc.conf,
+	nettype/custom.server.conf, nettype/dalnet.server.conf,
+	nettype/efnet.irc.conf, nettype/efnet.server.conf,
+	nettype/hybridefnet.irc.conf, nettype/hybridefnet.server.conf,
+	nettype/ircnet.irc.conf, nettype/ircnet.server.conf,
+	nettype/undernet.irc.conf, nettype/undernet.server.conf:
+
+	  * Removed dont-idle-kick (same as idle-kick 0).  
+	  * Config cleanups (synch 1.6 (not recent)).  
+	  * Changed EFnet's max_bans and max_modes to 25.  
+	  * Renamed max_dloads to dcc_limit in favor of the C variable.  
+	  * Changed -'s in channel settings to _'s in favor of C variables.  
+
 2003-01-29 21:39  Will Buckner <wcc@techmonkeys.org>
 
 	* eggdrop.conf, lib/eggdrop/module.h, modules/server/servsock.c,
