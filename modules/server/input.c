@@ -1,12 +1,6 @@
-/*
- * servmsg.c --
- */
-
 #include <eggdrop/eggdrop.h>
 #include "server.h"
-#include "parse.h"
 #include "channels.h"
-#include "parse.h"
 #include "output.h"
 #include "binds.h"
 #include "servsock.h"

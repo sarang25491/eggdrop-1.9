@@ -25,9 +25,14 @@ static void partymember_really_delete(partymember_t *p)
 	hash_table_delete(pid_ht, (void *)p->pid, NULL);
 
 	/* Free! */
-	free(p->nick);
-	free(p->ident);
-	free(p->host);
+	if (p->nick) free(p->nick);
+	if (p->ident) free(p->ident);
+	if (p->host) free(p->host);
+	if (p->channels) free(p->channels);
+
+	/* Zero it out in case anybody has kept a reference (bad!). */
+	memset(p, 0, sizeof(*p));
+
 	free(p);
 }
 
@@ -85,7 +90,9 @@ partymember_t *partymember_new(int pid, user_t *user, const char *nick, const ch
 
 int partymember_delete(partymember_t *p, const char *text)
 {
-	int i;
+	int i, len;
+	partymember_common_t *common;
+	partymember_t *mem;
 
 	if (p->flags & PARTY_DELETED) return(-1);
 
@@ -93,14 +100,23 @@ int partymember_delete(partymember_t *p, const char *text)
 	p->flags |= PARTY_DELETED;
 	garbage_add(partymember_cleanup, NULL, GARBAGE_ONCE);
 
+	len = strlen(text);
+
+	common = partychan_get_common(p);
+	if (common) for (i = 0; i < common->len; i++) {
+		mem = common->members[i];
+		if (mem->flags & PARTY_DELETED) continue;
+		if (mem->handler->on_quit) (mem->handler->on_quit)(mem->client_data, p, text, len);
+	}
+
 	/* Remove from any stray channels. */
-	for (i = p->nchannels-1; i >= 0; i--) {
+	for (i = 0; i < p->nchannels; i++) {
 		partychan_part(p->channels[i], p, text);
 	}
 	p->nchannels = 0;
 
-	if (p->handler->on_delete) {
-		(p->handler->on_delete)(p->client_data);
+	if (p->handler->on_quit) {
+		(p->handler->on_quit)(p->client_data, p, text, strlen(text));
 	}
 	return(0);
 }

@@ -719,7 +719,9 @@ int tclscript_LTX_start(egg_module_t *modinfo)
 	modinfo->description = "provides tcl scripting support";
 	modinfo->close_func = tclscript_close;
 
+	/* Create the interpreter and let tcl load its init.tcl */
 	ginterp = Tcl_CreateInterp();
+	Tcl_Init(ginterp);
 
 	error_logfile = strdup("logs/tcl_errors.log");
 	Tcl_LinkVar(ginterp, "error_logfile", (char *)&error_logfile, TCL_LINK_STRING);

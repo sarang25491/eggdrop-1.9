@@ -1,8 +1,6 @@
 #ifndef _OUTPUT_H_
 #define _OUTPUT_H_
 
-#include "parse.h"
-
 /* Server output priorities. */
 #define SERVER_NOQUEUE	1
 #define SERVER_QUICK	2

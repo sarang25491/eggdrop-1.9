@@ -64,17 +64,6 @@ static int partychan_cleanup(partychan_t *chan)
 	}
 	if (dirty) chan->members = realloc(chan->members, sizeof(*chan->members) * chan->nmembers);
 
-	dirty = 0;
-	for (i = 0; i < chan->nhandlers; i++) {
-		if (chan->handlers[i].flags & PARTY_DELETED) {
-			memcpy(chan->handlers+i, chan->handlers+i+1, sizeof(*chan->handlers) * (chan->nhandlers-i-1));
-			chan->nhandlers--;
-			dirty++;
-			i--;
-		}
-	}
-	if (dirty) chan->handlers = realloc(chan->handlers, sizeof(*chan->handlers) * chan->nhandlers);
-
 	return(0);
 }
 
@@ -124,6 +113,7 @@ int partychan_join_cid(int cid, partymember_t *p)
 
 int partychan_join(partychan_t *chan, partymember_t *p)
 {
+	partychan_member_t *mem;
 	int i;
 
 	if (!chan || !p) return(-1);
@@ -141,15 +131,11 @@ int partychan_join(partychan_t *chan, partymember_t *p)
 
 	/* Send out the join event to the members. */
 	for (i = 0; i < chan->nmembers; i++) {
-		if (chan->members[i].flags & PARTY_DELETED) continue;
-		(chan->members[i].p->handler->on_join)(chan->members[i].p->client_data, chan, p);
+		mem = chan->members+i;
+		if (mem->flags & PARTY_DELETED || mem->p->flags & PARTY_DELETED) continue;
+		if (mem->p->handler->on_join) (mem->p->handler->on_join)(mem->p->client_data, chan, p);
 	}
 
-	/* Send out the join event to the listeners. */
-	for (i = 0; i < chan->nhandlers; i++) {
-		if (chan->handlers[i].flags & PARTY_DELETED) continue;
-		(chan->handlers[i].handler->on_join)(chan->handlers[i].client_data, chan, p);
-	}
 	return(0);
 }
 
@@ -173,11 +159,12 @@ int partychan_part_cid(int cid, partymember_t *p, const char *text)
 int partychan_part(partychan_t *chan, partymember_t *p, const char *text)
 {
 	int i, len;
+	partychan_member_t *mem;
 
 	if (!chan || !p) return(-1);
 
 	/* Remove the channel entry from the member. */
-	for (i = 0; i < p->nchannels; i++) {
+	if (!(p->flags & PARTY_DELETED)) for (i = 0; i < p->nchannels; i++) {
 		if (p->channels[i] == chan) {
 			memcpy(p->channels+i, p->channels+i+1, sizeof(chan) * (p->nchannels-i-1));
 			p->nchannels--;
@@ -195,47 +182,19 @@ int partychan_part(partychan_t *chan, partymember_t *p, const char *text)
 		}
 	}
 
+	/* If the member is already deleted, then the quit event has been
+	 * fired already. */
+	if (p->flags & PARTY_DELETED) return(0);
+
 	len = strlen(text);
 
 	/* Send out the part event to the members. */
 	for (i = 0; i < chan->nmembers; i++) {
-		if (chan->members[i].flags & PARTY_DELETED) continue;
-		(chan->members[i].p->handler->on_part)(chan->members[i].p->client_data, chan, p, text, len);
+		mem = chan->members+i;
+		if (mem->flags & PARTY_DELETED || mem->p->flags & PARTY_DELETED) continue;
+		if (mem->p->handler->on_part) (mem->p->handler->on_part)(mem->p->client_data, chan, p, text, len);
 	}
 
-	/* Send out the part event to the listeners. */
-	len = strlen(text);
-	for (i = 0; i < chan->nhandlers; i++) {
-		if (chan->handlers[i].flags & PARTY_DELETED) continue;
-		(chan->handlers[i].handler->on_part)(chan->handlers[i].client_data, chan, p, text, len);
-	}
-	return(0);
-}
-
-int partychan_join_handler(partychan_t *chan, partyline_event_t *handler, void *client_data)
-{
-	/* Add the handler (if there is one). */
-	chan->handlers = realloc(chan->handlers, sizeof(*chan->handlers) * (chan->nhandlers+1));
-	chan->handlers[chan->nhandlers].handler = handler;
-	chan->handlers[chan->nhandlers].client_data = client_data;
-	chan->handlers[chan->nhandlers].flags = 0;
-	chan->nhandlers++;
-	return(0);
-}
-
-int partychan_part_handler(partychan_t *chan, partyline_event_t *handler, void *client_data)
-{
-	int i;
-
-	if (!chan) return(-1);
-
-	/* Mark the handler for later deletion. */
-	for (i = 0; i < chan->nhandlers; i++) {
-		if (chan->handlers[i].handler == handler && chan->handlers[i].client_data == client_data) {
-			chan->handlers[i].flags |= PARTY_DELETED;
-			break;
-		}
-	}
 	return(0);
 }
 
@@ -257,6 +216,7 @@ int partychan_msg_cid(int cid, partymember_t *src, const char *text, int len)
 
 int partychan_msg(partychan_t *chan, partymember_t *src, const char *text, int len)
 {
+	partychan_member_t *mem;
 	int i;
 
 	if (!chan || chan->flags & PARTY_DELETED) return(-1);
@@ -264,13 +224,55 @@ int partychan_msg(partychan_t *chan, partymember_t *src, const char *text, int l
 	if (len < 0) len = strlen(text);
 
 	for (i = 0; i < chan->nmembers; i++) {
-		if (chan->members[i].flags & PARTY_DELETED) continue;
-		(chan->members[i].p->handler->on_chanmsg)(chan->members[i].p->client_data, chan, src, text, len);
+		mem = chan->members+i;
+		if (mem->flags & PARTY_DELETED || mem->p->flags & PARTY_DELETED) continue;
+		if (mem->p->handler->on_chanmsg) (mem->p->handler->on_chanmsg)(mem->p->client_data, chan, src, text, len);
+	}
+	return(0);
+}
+
+static partymember_common_t *common_list_head = NULL;
+
+/* Build a list of members on the same channels as p. */
+partymember_common_t *partychan_get_common(partymember_t *p)
+{
+	partymember_common_t *common;
+	partychan_t *chan;
+	partymember_t *mem;
+	int i, j;
+
+	if (common_list_head) {
+		common = common_list_head;
+		common_list_head = common_list_head->next;
+	}
+	else {
+		common = calloc(1, sizeof(*common));
 	}
 
-	for (i = 0; i < chan->nhandlers; i++) {
-		if (chan->handlers[i].flags & PARTY_DELETED) continue;
-		(chan->handlers[i].handler->on_chanmsg)(chan->handlers[i].client_data, chan, src, text, len);
+	common->len = 0;
+	for (i = 0; i < p->nchannels; i++) {
+		chan = p->channels[i];
+		for (j = 0; j < chan->nmembers; j++) {
+			if (chan->members[j].flags & PARTY_DELETED) continue;
+			mem = chan->members[j].p;
+			if (mem->flags & (PARTY_DELETED | PARTY_SELECTED)) continue;
+			mem->flags |= PARTY_SELECTED;
+			if (common->len >= common->max) {
+				common->max = common->len + 10;
+				common->members = realloc(common->members, sizeof(*common->members) * common->max);
+			}
+			common->members[common->len] = mem;
+			common->len++;
+		}
 	}
+	for (i = 0; i < common->len; i++) common->members[i]->flags &= ~PARTY_SELECTED;
+	return(common);
+}
+
+int partychan_free_common(partymember_common_t *common)
+{
+	common->len = 0;
+	common->next = common_list_head;
+	common_list_head = common;
 	return(0);
 }

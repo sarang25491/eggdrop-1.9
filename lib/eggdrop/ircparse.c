@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "parse.h"
+#include "ircparse.h"
 
 /* Take care of array manipulation in adding an argument. */
 static void add_arg(irc_msg_t *msg, char *text)

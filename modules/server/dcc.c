@@ -7,7 +7,6 @@
 #include <eggdrop/eggdrop.h>
 #include "server.h"
 #include "output.h"
-#include "parse.h"
 #include "binds.h"
 #include <netinet/in.h>
 #include <fcntl.h>

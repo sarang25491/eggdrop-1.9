@@ -3,6 +3,7 @@
 
 /* Flags for partyline. */
 #define PARTY_DELETED	1
+#define PARTY_SELECTED	2
 
 struct partyline_event;
 struct partychan;
@@ -26,12 +27,6 @@ typedef struct partychan_member {
 	int flags;
 } partychan_member_t;
 
-typedef struct partychan_handler {
-	struct partyline_event *handler;
-	void *client_data;
-	int flags;
-} partychan_handler_t;
-
 typedef struct partychan {
 	struct partychan *next, *prev;
 	int cid;
@@ -40,17 +35,25 @@ typedef struct partychan {
 
 	partychan_member_t *members;
 	int nmembers;
-	partychan_handler_t *handlers;
-	int nhandlers;
 } partychan_t;
 
+typedef struct partymember_common {
+	struct partymember_common *next;
+	partymember_t **members;
+	int len;
+	int max;
+} partymember_common_t;
+
 typedef struct partyline_event {
+	/* Events that don't depend on a single chan. */
 	int (*on_privmsg)(void *client_data, partymember_t *dest, partymember_t *src, const char *text, int len);
+	int (*on_nick)(void *client_data, partymember_t *src, const char *oldnick, const char *newnick);
+	int (*on_quit)(void *client_data, partymember_t *src, const char *text, int len);
+
+	/* Channel events. */
 	int (*on_chanmsg)(void *client_data, partychan_t *chan, partymember_t *src, const char *text, int len);
 	int (*on_join)(void *client_data, partychan_t *chan, partymember_t *src);
 	int (*on_part)(void *client_data, partychan_t *chan, partymember_t *src, const char *text, int len);
-
-	int (*on_delete)(void *client_data);
 } partyline_event_t;
 
 int partyline_init();
@@ -75,6 +78,8 @@ int partychan_part(partychan_t *chan, partymember_t *p, const char *text);
 int partychan_msg_name(const char *name, partymember_t *src, const char *text, int len);
 int partychan_msg_cid(int cid, partymember_t *src, const char *text, int len);
 int partychan_msg(partychan_t *chan, partymember_t *src, const char *text, int len);
+partymember_common_t *partychan_get_common(partymember_t *p);
+int partychan_free_common(partymember_common_t *common);
 
 
 partymember_t *partymember_lookup_pid(int pid);

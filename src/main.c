@@ -30,9 +30,10 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.150 2003/06/08 03:21:23 stdarg Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.151 2003/06/11 08:37:39 stdarg Exp $";
 #endif
 
+#include <ctype.h>
 #include <unistd.h>
 #include <eggdrop/eggdrop.h>
 #include "main.h"
@@ -335,7 +336,6 @@ static int core_secondly()
 
 void core_party_init();
 void core_config_init();
-//void telnet_init();
 
 int file_check(const char *filename)
 {
@@ -452,20 +452,51 @@ int main(int argc, char **argv)
 		exit(-1);
 	}
 
-  egg = eggdrop_new();
-  config_init();
-  core_config_init(configfile);
-  egglog_init();
-  logfile_init();
-  script_init();
-  user_init();
-  if (core_config.userfile) user_load(core_config.userfile);
-  partyline_init();
-  core_party_init();
-  //telnet_init();
-  module_init();
-  egg_net_init();
-  core_binds_init();
+	egg = eggdrop_new();
+	eggdrop_init();
+	core_config_init(configfile);
+	logfile_init();
+	if (core_config.userfile) user_load(core_config.userfile);
+	core_party_init();
+	core_binds_init();
+
+	if (make_userfile) {
+		user_t *owner;
+		char handle[512], password[12];
+		int len;
+
+		if (user_count() != 0) {
+			printf("\n\n\nYou are trying to create a new userfile, but the old one still exists (%s)!\n\nPlease remove the userfile, or do not pass the -m option.\n\n", core_config.userfile);
+			exit(1);
+		}
+
+		printf("\n\n\nHello! I see you are creating a new userfile.\n\n");
+		printf("Let's create the owner account.\n\n");
+		do {
+			printf("Enter the owner handle: ");
+			fflush(stdout);
+			fgets(handle, sizeof(handle), stdin);
+			for (len = 0; handle[len]; len++) {
+				if (!ispunct(handle[len]) && !isalnum(handle[len])) break;
+			}
+			if (len == 0) {
+				printf("Come on, enter a real handle.\n\n");
+			}
+		} while (len <= 0);
+		handle[len] = 0;
+		owner = user_new(handle);
+		if (!owner) {
+			printf("Failed to create user record! Out of memory?\n\n");
+			exit(1);
+		}
+		user_rand_pass(password, sizeof(password));
+		user_set_pass(owner, password);
+		printf("Your owner handle is '%s' and your password is '%s' (without the quotes).\n\n", handle, password);
+		memset(password, 0, sizeof(password));
+		str_redup(&core_config.owner, handle);
+		core_config_save();
+		user_save(core_config.userfile);
+	}
 
   if (backgrd)
     bg_prepare_split();
@@ -473,24 +504,6 @@ int main(int argc, char **argv)
   strlcpy(s, ctime(&now), sizeof s);
   strcpy(&s[11], &s[20]);
   putlog(LOG_ALL, "*", "--- Loading %s (%s)", ver, s);
-
-	/* Put the module directory in the ltdl search path. */
-	if (core_config.module_path) module_add_dir(core_config.module_path);
-
-	/* Scan the autoload section of config. */
-	config_root = config_get_root("eggdrop");
-	for (i = 0; (entry = config_exists(config_root, "eggdrop", 0, "autoload", 0, "module", i, NULL)); i++) {
-		modname = NULL;
-		config_get_str(&modname, entry, NULL);
-		module_load(modname);
-	}
-	for (i = 0; (entry = config_exists(config_root, "eggdrop", 0, "autoload", 0, "script", i, NULL)); i++) {
-		scriptname = NULL;
-		config_get_str(&scriptname, entry, NULL);
-		script_load(scriptname);
-	}
-
-
 
   if (!pid_file[0])
     snprintf(pid_file, sizeof pid_file, "pid.%s", core_config.botname);
@@ -509,6 +522,22 @@ int main(int argc, char **argv)
       exit(1);
     }
   }
+
+	/* Put the module directory in the ltdl search path. */
+	if (core_config.module_path) module_add_dir(core_config.module_path);
+
+	/* Scan the autoload section of config. */
+	config_root = config_get_root("eggdrop");
+	for (i = 0; (entry = config_exists(config_root, "eggdrop", 0, "autoload", 0, "module", i, NULL)); i++) {
+		modname = NULL;
+		config_get_str(&modname, entry, NULL);
+		module_load(modname);
+	}
+	for (i = 0; (entry = config_exists(config_root, "eggdrop", 0, "autoload", 0, "script", i, NULL)); i++) {
+		scriptname = NULL;
+		config_get_str(&scriptname, entry, NULL);
+		script_load(scriptname);
+	}
 
   /* Move into background? */
   if (backgrd) {
@@ -539,6 +568,7 @@ int main(int argc, char **argv)
 #endif
     }
   }
+
 
   use_stderr = 0;		/* Stop writing to stderr now */
   if (backgrd) {

@@ -1,6 +1,7 @@
 #include <eggdrop/eggdrop.h>
 #include "core_config.h"
 
+extern char configfile[];
 core_config_t core_config = {0};
 void *config_root = NULL;
 
@@ -50,5 +51,5 @@ void core_config_init(const char *fname)
 void core_config_save()
 {
 	config_update_table(core_config_vars, config_root, "eggdrop", 0, NULL);
-	config_save(config_root, "_config.xml");
+	config_save(config_root, configfile);
 }

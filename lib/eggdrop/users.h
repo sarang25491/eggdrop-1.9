@@ -57,5 +57,7 @@ int user_match_flag_str(user_t *u, const char *flags);
 int user_has_pass(user_t *u);
 int user_check_pass(user_t *u, const char *pass);
 int user_set_pass(user_t *u, const char *pass);
+int user_count();
+int user_rand_pass(char *buf, int bufsize);
 
 #endif

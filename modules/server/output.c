@@ -1,12 +1,5 @@
-#if 0
-#define MAKING_SERVER
-#include "lib/eggdrop/module.h"
-#include "server.h"
-#include "output.h"
-#endif
 #include <eggdrop/eggdrop.h>
 #include "server.h"
-#include "parse.h"
 #include "output.h"
 #include "binds.h"
 

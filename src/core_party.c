@@ -1,4 +1,5 @@
 #include <eggdrop/eggdrop.h>
+#include "core_config.h"
 
 static int party_join(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
@@ -40,15 +41,28 @@ static int party_set(int pid, const char *nick, user_t *u, const char *cmd, cons
 
 static int party_save(int pid, const char *nick, user_t *u, const char *cmd, const char *text)
 {
+	user_save(core_config.userfile);
 	core_config_save();
 	return(1);
 }
 
+static int party_newpass(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	if (!text || strlen(text) < 6) {
+		partymember_write(p, "Please use at least 6 characters.", -1);
+		return(0);
+	}
+	user_set_pass(p->user, text);
+	partymember_printf(p, "Changed password to '%s'", text);
+	return(0);
+}
+
 static bind_list_t core_party_binds[] = {
 	{"join", party_join},
+	{"msg", party_msg},
+	{"newpass", party_newpass},
 	{"part", party_part},
 	{"quit", party_quit},
-	{"msg", party_msg},
 	{"set", party_set},
 	{"save", party_save},
 	{0}

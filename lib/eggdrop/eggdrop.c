@@ -22,12 +22,24 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggdrop.c,v 1.5 2003/04/15 08:18:03 stdarg Exp $";
+static const char rcsid[] = "$Id: eggdrop.c,v 1.6 2003/06/11 08:37:38 stdarg Exp $";
 #endif
 
 #include <stdlib.h>
 #include <string.h>
 #include "eggdrop.h"
+
+int eggdrop_init()
+{
+	config_init();
+	egg_net_init();
+	egglog_init();
+	user_init();
+	script_init();
+	partyline_init();
+	module_init();
+	return(0);
+}
 
 eggdrop_t *eggdrop_new(void)
 {

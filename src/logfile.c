@@ -21,10 +21,7 @@ typedef struct log_b {
 	FILE *fp;
 } log_t;
 
-extern int use_stderr; /* From main.c, while we're starting eggdrop. */
-extern int term_z;
-extern int backgrd;
-extern int con_chan;
+extern int backgrd, use_stderr;
 extern time_t now;
 
 static log_t *log_list_head = NULL; /* Linked list of logfiles. */
@@ -215,13 +212,8 @@ static int on_putlog(int flags, const char *chan, const char *text, int len)
 		fprintf(log->fp, "%s%s\n", timestamp, text);
 	}
 
-  if ((!backgrd) && (!con_chan) && (!term_z))
-    printf("%s%s\n", timestamp, text);
-  else if (use_stderr) {
-    fprintf(stderr, "%s%s\n", timestamp, text);
-  }
-
-  return(0);
+	if (!backgrd || use_stderr) printf("%s%s\n", timestamp, text);
+	return(0);
 }
 
 static void check_logsizes()

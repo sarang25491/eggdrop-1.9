@@ -17,6 +17,9 @@ typedef struct {
  * around (probably won't happen), so that we know when we can trust g_uid. */
 static int g_uid = 1, uid_wraparound = 0;
 
+/* The number of users we have. */
+static int nusers = 0;
+
 /* Hash table to associate irchosts (nick!user@host) with users. */
 static hash_table_t *irchost_cache_ht = NULL;
 
@@ -214,6 +217,7 @@ static user_t *real_user_new(const char *handle, int uid)
 	hash_table_insert(uid_ht, (void *)u->uid, u);
 	hash_table_check_resize(&handle_ht);
 	hash_table_check_resize(&uid_ht);
+	nusers++;
 	return(u);
 }
 
@@ -238,6 +242,7 @@ int user_delete(user_t *u)
 	int i, j;
 	user_setting_t *setting;
 
+	nusers--;
 	hash_table_delete(handle_ht, u->handle, NULL);
 	hash_table_delete(uid_ht, (void *)u->uid, NULL);
 
@@ -613,5 +618,28 @@ int user_set_pass(user_t *u, const char *pass)
 	MD5_Final(hash, &ctx);
 	MD5_Hex(hash, hashhex);
 	user_set_setting(u, NULL, "pass", hashhex);
+	return(0);
+}
+
+int user_count()
+{
+	return(nusers);
+}
+
+/* Generate a password out of digits, uppercase, and lowercase letters. */
+int user_rand_pass(char *buf, int bufsize)
+{
+	int i, c;
+
+	bufsize--;
+	if (!buf || bufsize < 0) return(-1);
+	for (i = 0; i < bufsize; i++) {
+		c = (random() + (random() >> 16) + (random() >> 24)) % 62;
+		if (c < 10) c += 48;	/* Digits. */
+		else if (c < 36) c += 55;	/* Uppercase. */
+		else c += 61;	/* Lowercase. */
+		buf[i] = c;
+	}
+	buf[i] = 0;
 	return(0);
 }
