@@ -1,3 +1,33 @@
+2002-11-03 23:22  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/users.c:
+
+	
+	* Removed some debugging stuff from user auth 
+
+2002-11-03 23:16  stdarg <stdarg@techmonkeys.org>
+
+	* configure.ac, lib/eggdrop/Makefile.am, lib/eggdrop/eggdrop.h,
+	lib/eggdrop/eggtimer.c, lib/eggdrop/eggtimer.h,
+	lib/eggdrop/flags.c, lib/eggdrop/flags.h, lib/eggdrop/linemode.c,
+	lib/eggdrop/md5.c, lib/eggdrop/md5.h, lib/eggdrop/module.h,
+	lib/eggdrop/partyline.c, lib/eggdrop/partyline.h,
+	lib/eggdrop/sockbuf.c, lib/eggdrop/users.c, lib/eggdrop/users.h,
+	lib/egglib/Makefile.am, modules/Makefile.am,
+	modules/script/Makefile.am, modules/script/scriptbind.c,
+	modules/script/scriptmod.c, modules/script/scriptnet.c,
+	modules/script/scriptparty.c, modules/script/scripttimer.c,
+	modules/script/scriptuser.c, modules/server/input.c,
+	src/Makefile.am, src/egg_timer.c, src/egg_timer.h, src/main.c,
+	src/md5.c, src/md5.h, src/scriptbind.c, src/scriptnet.c,
+	src/scriptuser.c, src/tcl.c, src/tclmisc.c, src/telnet.c:
+
+	
+	* Moved md5 code to lib/eggdrop so I can use it for password hashing 
+	* Passwords are stored as standard hex encoding of md5(salt +
+	password) 
+	* Started moving script interface functions to modules/script 
+
 2002-10-11 23:59  Will Buckner <wcc@techmonkeys.org>
 
 	* doc/UPDATES1.6, src/egg.h:
