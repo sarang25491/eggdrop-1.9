@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.59 2001/08/13 20:47:52 guppy Exp $
+ * $Id: modules.c,v 1.60 2001/08/19 02:36:23 drummer Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -67,7 +67,7 @@ extern struct dcc_t	*dcc;
 extern Tcl_Interp	*interp;
 extern struct userrec	*userlist, *lastuser;
 extern char		 tempdir[], botnetnick[], botname[], natip[],
-			 hostname[], origbotname[], botuser[], admin[],
+			 origbotname[], botuser[], admin[],
 			 userfile[], ver[], notify_new[], helpdir[],
 			 version[], quit_msg[];
 extern int	 noshare, dcc_total, egg_numver, userfile_perm,
@@ -327,7 +327,7 @@ Function global_table[] =
   /* 112 - 115 */
   (Function) tempdir,		 /* char *				*/
   (Function) natip,		 /* char *				*/
-  (Function) hostname,		 /* char *				*/
+  (Function) 0,			 /* hostname -- UNUSED! (drummer)	*/
   (Function) origbotname,	 /* char *				*/
   /* 116 - 119 */
   (Function) botuser,		 /* char *				*/

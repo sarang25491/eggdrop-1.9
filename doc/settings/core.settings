@@ -331,11 +331,10 @@ set connect-timeout 15
     a dcc chat, telnet, relay, etc connection.
 
 
-set my-hostname "virtual.host.com"
 set my-ip "99.99.0.0"
     If you're using virtual hosting (your machine has more than 1 IP), you
-    may want to specify the particular IP to bind to. You can specify either
-    by hostname or by IP. You may also want to set the hostname here if
+    may want to specify the particular IP to bind to. You can specify
+    by IP only. You may also want to set the my-ip here if
     eggdrop has trouble detecting it when it starts up.
 
 
@@ -360,7 +359,7 @@ set nat-ip "127.0.0.1"
     address to a unique address for your box.) or you have IP masquerading
     between you and the rest of the world, and /dcc chat,/ctcp chat or
     userfile shareing aren't working. Enter your outside IP here.
-    Do not enter anything for my-ip or my-hostname if you use this setting.
+    Do not enter anything for my-ip if you use this setting.
 
 
 set reserved-portrange 2010:2020

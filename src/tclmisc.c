@@ -3,7 +3,7 @@
  *   Tcl stubs for file system commands
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.27 2001/08/17 05:35:48 guppy Exp $
+ * $Id: tclmisc.c,v 1.28 2001/08/19 02:36:23 drummer Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -311,7 +311,7 @@ static int tcl_myip6 STDVAR
 {
     BADARGS(1, 1, "");
 #ifdef IPV6
-    Tcl_AppendResult(irp, getmyip6(), NULL);
+    Tcl_AppendResult(irp, "", NULL); /* FIXME!! */
 #else
     Tcl_AppendResult(irp, "", NULL);
 #endif

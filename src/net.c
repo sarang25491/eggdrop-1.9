@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.39 2001/08/19 02:24:41 drummer Exp $
+ * $Id: net.c,v 1.40 2001/08/19 02:36:23 drummer Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -49,8 +49,6 @@ extern unsigned long	 otraffic_irc_today, otraffic_bn_today,
 			 otraffic_trans_today, otraffic_unknown_today;
 extern char		 natip[];
 
-char	hostname[121] = "";	/* Hostname can be specified in the config
-				   file					    */
 char	myip[121] = "";		/* IP can be specified in the config file   */
 char	myip6[121] = "";	/* IP6 can be specified in the config file  */
 char	firewall[121] = "";	/* Socks server for firewall		    */
@@ -59,6 +57,7 @@ char	botuser[21] = "eggdrop"; /* Username of the user running the bot    */
 sock_list *socklist = NULL;	/* Enough to be safe			    */
 int	MAXSOCKS = 0;
 jmp_buf	alarmret;		/* Env buffer for alarm() returns	    */
+IP	localipv4addr = 0;	/* Cache the local IPv4 address		    */
 
 adns_state ads;
 
@@ -86,11 +85,18 @@ IP my_atoul(char *s)
 void init_net()
 {
   int i;
+  char s[256];
+  struct hostent *hp;
 
   for (i = 0; i < MAXSOCKS; i++) {
     socklist[i].flags = SOCK_UNUSED;
   }
   
+  gethostname(s, sizeof s);
+  if ((hp = gethostbyname(s)) == NULL)
+    fatal("Hostname self-lookup failed.", 0);
+  localipv4addr = *((IP*) (hp->h_addr_list[0]));
+
   /* init ADNS */
   i = adns_init(&ads, adns_if_noautosys, 0);
   if (i)
@@ -116,28 +122,12 @@ int expmem_net()
  */
 IP getmyip()
 {
-  struct hostent *hp;
-  char s[121];
-  IP ip;
-  struct in_addr *in;
-
   /* Could be pre-defined */
-  if (myip[0]) {
-    if ((myip[strlen(myip) - 1] >= '0') && (myip[strlen(myip) - 1] <= '9'))
+  if (myip[0] && (myip[strlen(myip) - 1] >= '0') &&
+      (myip[strlen(myip) - 1] <= '9')) {
       return (IP) inet_addr(myip);
   }
-  /* Also could be pre-defined */
-  if (hostname[0])
-    hp = gethostbyname(hostname);
-  else {
-    gethostname(s, 120);
-    hp = gethostbyname(s);
-  }
-  if (hp == NULL)
-    fatal("Hostname self-lookup failed.", 0);
-  in = (struct in_addr *) (hp->h_addr_list[0]);
-  ip = (IP) (in->s_addr);
-  return ip;
+  return localipv4addr;
 }
 
 #ifdef IPV6
@@ -149,8 +139,8 @@ struct in6_addr getmyip6()
   if (myip6[0])
     egg_inet_pton(AF_INET6, myip6, &ip);
   else {
-    /* get system's default IPv6 ip -- FIXME!! */
-    /* there is know way?! - drummer */
+    /* get system's default IPv6 ip -- FIXME!? */
+    /* is there a know way?! - drummer */
     ip = in6addr_any;
   }
   return ip;

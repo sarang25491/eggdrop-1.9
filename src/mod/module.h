@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.55 2001/08/13 20:47:53 guppy Exp $
+ * $Id: module.h,v 1.56 2001/08/19 02:36:23 drummer Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -235,7 +235,7 @@
 /* 112 - 115 */
 #define tempdir ((char *)(global[112]))
 #define natip ((char *)(global[113]))
-#define hostname ((char *)(global[114]))
+/* 114: hostname -- UNUSED (drummer) */
 #define origbotname ((char *)(global[115]))
 /* 116 - 119 */
 #define botuser ((char *)(global[116]))

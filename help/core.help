@@ -109,7 +109,6 @@ motd
 notify-newusers
 admin
 owner
-my-hostname
 my-ip
 network
 save-users-at

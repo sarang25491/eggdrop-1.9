@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: egg-core.html,v 1.13 2001/08/13 20:47:52 guppy Exp $ -->
+<!-- $Id: egg-core.html,v 1.14 2001/08/19 02:36:22 drummer Exp $ -->
 
 <html>
   <head>
@@ -546,16 +546,13 @@
           should wait for a dcc chat, telnet, relay, etc connection.</p>
         </dd>
 
-        <dt><strong><em>set my-hostname
-        &quot;virtual.host.com&quot;</em></strong></dt>
-
         <dt><strong><em>set my-ip &quot;99.99.0.0&quot;</em></strong></dt>
 
         <dd>
           <p>If you&#39;re using virtual hosting (your machine has more than
           1 IP), you may want to specify the particular IP to bind to. You
-          can specify either by hostname or by IP. You may also want to set
-          the hostname here if eggdrop has trouble detecting it when it
+          can specify by IP only. You may also want to set
+          the my-ip here if eggdrop has trouble detecting it when it
           starts up.</p>
         </dd>
 
@@ -589,7 +586,7 @@
           the world, and /dcc chat,/ctcp chat or userfile shareing aren&#39;t
           working. Enter your outside IP here.</p>
 
-          <p>Do not enter anything for my-ip or my-hostname if you use this
+          <p>Do not enter anything for my-ip if you use this
           setting.</p>
         </dd>
 

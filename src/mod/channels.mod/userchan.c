@@ -1,7 +1,7 @@
 /*
  * userchan.c -- part of channels.mod
  *
- * $Id: userchan.c,v 1.25 2001/08/10 23:51:20 ite Exp $
+ * $Id: userchan.c,v 1.26 2001/08/19 02:36:23 drummer Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -410,8 +410,8 @@ static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
     simple_sprintf(s, "%s!%s", me->funcs[SERVER_BOTNAME],
 		   me->funcs[SERVER_BOTUSERHOST]);
   else
-    simple_sprintf(s, "%s!%s@%s", origbotname, botuser, hostname);
-  if (wild_match(host, s)) {
+    s[0] = 0;
+  if (s[0] && wild_match(host, s)) {
     putlog(LOG_MISC, "*", _("Wanted to ban myself--deflected."));
     return 0;
   }
@@ -467,7 +467,6 @@ static int u_addinvite(struct chanset_t *chan, char *invite, char *from,
 {
   char host[1024], s[1024];
   maskrec *p, **u = chan ? &chan->invites : &global_invites;
-  module_entry *me;
 
   strcpy(host, invite);
   /* Choke check: fix broken invites (must have '!' and '@') */
@@ -482,11 +481,6 @@ static int u_addinvite(struct chanset_t *chan, char *invite, char *from,
     strcat(host, "!*");
     strcat(host, s);
   }
-  if ((me = module_find("server",0,0)) && me->funcs)
-    simple_sprintf(s, "%s!%s", me->funcs[SERVER_BOTNAME],
-		   me->funcs[SERVER_BOTUSERHOST]);
-  else
-    simple_sprintf(s, "%s!%s@%s", origbotname, botuser, hostname);
 
   if (u_equals_mask(*u, host))
     u_delinvite(chan, host,1);	/* Remove old invite */
@@ -538,7 +532,6 @@ static int u_addexempt(struct chanset_t *chan, char *exempt, char *from,
 {
   char host[1024], s[1024];
   maskrec *p, **u = chan ? &chan->exempts : &global_exempts;
-  module_entry *me;
 
   strcpy(host, exempt);
   /* Choke check: fix broken exempts (must have '!' and '@') */
@@ -553,11 +546,6 @@ static int u_addexempt(struct chanset_t *chan, char *exempt, char *from,
     strcat(host, "!*");
     strcat(host, s);
   }
-  if ((me = module_find("server",0,0)) && me->funcs)
-    simple_sprintf(s, "%s!%s", me->funcs[SERVER_BOTNAME],
-		   me->funcs[SERVER_BOTUSERHOST]);
-  else
-    simple_sprintf(s, "%s!%s@%s", origbotname, botuser, hostname);
 
   if (u_equals_mask(*u, host))
     u_delexempt(chan, host,1);	/* Remove old exempt */
