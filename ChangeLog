@@ -1,3 +1,11 @@
+2002-01-14 02:23  Federico Mennite <ite@techmonkeys.org>
+
+	* lib/eggdrop/fileutil.h, src/bg.c, src/dccutil.c, src/main.c,
+	src/misc.c, src/tcl.c, src/tcldcc.c, src/tclmisc.c, src/tcluser.c:
+
+	* Merged bits of tothwolf cleaunps from his alpha patch.  
+	* Removed some unneeded externs in some files.  
+
 2002-01-13 19:13  Federico Mennite <ite@techmonkeys.org>
 
 	* lib/eggdrop/Makefile.am, lib/eggdrop/eggdrop.h,
