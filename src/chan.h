@@ -3,7 +3,7 @@
  *   stuff common to chan.c and mode.c
  *   users.h needs to be loaded too
  *
- * $Id: chan.h,v 1.26 2001/12/19 06:25:08 guppy Exp $
+ * $Id: chan.h,v 1.27 2002/01/31 13:35:43 eule Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -178,47 +178,50 @@ struct chanset_t {
 };
 
 /* behavior modes for the channel */
-#define CHAN_ENFORCEBANS    0x0001	/* kick people who match channel bans */
-#define CHAN_DYNAMICBANS    0x0002	/* only activate bans when needed     */
-#define CHAN_USERBANS     0x0004	/* don't let non-bots place bans      */
-#define CHAN_OPONJOIN       0x0008	/* op +o people as soon as they join  */
-#define CHAN_BITCH          0x0010	/* be a tightwad with ops	      */
-#define CHAN_GREET          0x0020	/* greet people with their info line  */
-#define CHAN_PROTECTOPS     0x0040	/* re-op any +o people who get deop'd */
-#define CHAN_LOGSTATUS      0x0080	/* log channel status every 5 mins    */
-#define CHAN_REVENGE        0x0100	/* get revenge on bad people	      */
-#define CHAN_SECRET         0x0200	/* don't advertise channel on botnet  */
-#define CHAN_AUTOVOICE      0x0400	/* dish out voice stuff automatically */
-#define CHAN_CYCLE          0x0800	/* cycle the channel if possible      */
-#define CHAN_DONTKICKOPS    0x1000	/* never kick +o flag people
+#define CHAN_ENFORCEBANS     0x0001	/* kick people who match channel bans */
+#define CHAN_DYNAMICBANS     0x0002	/* only activate bans when needed     */
+#define CHAN_USERBANS        0x0004	/* don't let non-bots place bans      */
+#define CHAN_OPONJOIN        0x0008	/* op +o people as soon as they join  */
+#define CHAN_BITCH           0x0010	/* be a tightwad with ops	      */
+#define CHAN_GREET           0x0020	/* greet people with their info line  */
+#define CHAN_PROTECTOPS      0x0040	/* re-op any +o people who get deop'd */
+#define CHAN_LOGSTATUS       0x0080	/* log channel status every 5 mins    */
+#define CHAN_REVENGE         0x0100	/* get revenge on bad people	      */
+#define CHAN_SECRET          0x0200	/* don't advertise channel on botnet  */
+#define CHAN_AUTOVOICE       0x0400	/* dish out voice stuff automatically */
+#define CHAN_CYCLE           0x0800	/* cycle the channel if possible      */
+#define CHAN_DONTKICKOPS     0x1000	/* never kick +o flag people
 					   -arthur2			      */
-#define CHAN_INACTIVE       0x2000	/* no irc support for this channel
+#define CHAN_INACTIVE        0x2000	/* no irc support for this channel
 					   - drummer			      */
-#define CHAN_PROTECTFRIENDS 0x4000	/* re-op any +f people who get deop'd */
-#define CHAN_SHARED         0x8000	/* channel is being shared	      */
-/*			    0x10000 */
-#define CHAN_REVENGEBOT     0x20000	/* revenge on actions against the bot */
-#define CHAN_NODESYNCH      0x40000
-/*			    0x100000 */
-#define CHAN_ACTIVE         0x1000000	/* like i'm actually on the channel
+#define CHAN_PROTECTFRIENDS  0x4000	/* re-op any +f people who get deop'd */
+#define CHAN_SHARED          0x8000	/* channel is being shared	      */
+/*			     0x10000 */
+#define CHAN_REVENGEBOT      0x20000	/* revenge on actions against the bot */
+#define CHAN_NODESYNCH       0x40000
+#define CHAN_HONORGLOBALBANS 0x80000     /* enable globalbans for this channel */
+/*			     0x100000 */
+#define CHAN_ACTIVE          0x1000000	/* like i'm actually on the channel
 					   and stuff			      */
-#define CHAN_PEND           0x2000000	/* just joined; waiting for end of
+#define CHAN_PEND            0x2000000	/* just joined; waiting for end of
 					   WHO list			      */
-#define CHAN_FLAGGED        0x4000000	/* flagged during rehash for delete   */
-#define CHAN_STATIC         0x8000000	/* channels that are NOT dynamic      */
-#define CHAN_ASKEDBANS      0x10000000
-#define CHAN_ASKEDMODES     0x20000000  /* find out key-info on IRCu          */
-#define CHAN_JUPED          0x40000000  /* Is channel juped                   */
-#define CHAN_STOP_CYCLE     0x80000000  /* Some efnetservers have defined
-    NO_CHANOPS_WHEN_SPLIT              */
+#define CHAN_FLAGGED         0x4000000	/* flagged during rehash for delete   */
+#define CHAN_STATIC          0x8000000	/* channels that are NOT dynamic      */
+#define CHAN_ASKEDBANS       0x10000000
+#define CHAN_ASKEDMODES      0x20000000  /* find out key-info on IRCu          */
+#define CHAN_JUPED           0x40000000  /* Is channel juped                   */
+#define CHAN_STOP_CYCLE      0x80000000  /* Some efnetservers have defined
+    NO_CHANOPS_WHEN_SPLIT               */
 
-#define CHAN_ASKED_EXEMPTS  0x0001
-#define CHAN_ASKED_INVITED  0x0002
+#define CHAN_ASKED_EXEMPTS       0x0001
+#define CHAN_ASKED_INVITED       0x0002
 
-#define CHAN_DYNAMICEXEMPTS 0x0004
-#define CHAN_USEREXEMPTS  0x0008
-#define CHAN_DYNAMICINVITES 0x0010
-#define CHAN_USERINVITES  0x0020
+#define CHAN_DYNAMICEXEMPTS      0x0004
+#define CHAN_USEREXEMPTS         0x0008
+#define CHAN_DYNAMICINVITES      0x0010
+#define CHAN_USERINVITES         0x0020
+#define CHAN_HONORGLOBALEXEMPTS  0x0040
+#define CHAN_HONORGLOBALINVITES  0x0080
 
 /* prototypes */
 memberlist *ismember(struct chanset_t *, char *);
@@ -257,6 +260,9 @@ struct chanset_t *findchan_by_dname(const char *name);
 #define channel_nouserinvites(chan) (!(chan->ircnet_status & CHAN_USERINVITES))
 #define channel_juped(chan) (chan->status & CHAN_JUPED)
 #define channel_stop_cycle(chan) (chan->status & CHAN_STOP_CYCLE)
+#define channel_honor_global_bans(chan) (chan->status & CHAN_HONORGLOBALBANS)
+#define channel_honor_global_exempts(chan) (chan->ircnet_status & CHAN_HONORGLOBALEXEMPTS)
+#define channel_honor_global_invites(chan) (chan->ircnet_status & CHAN_HONORGLOBALINVITES)
 
 struct msgq_head {
   struct msgq *head;

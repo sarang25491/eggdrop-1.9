@@ -22,6 +22,7 @@ static channel_flag_map_t normal_flag_map[] = {
 	{CHAN_SHARED, "shared"},
 	{CHAN_AUTOVOICE, "autovoice"},
 	{CHAN_CYCLE, "cycle"},
+	{CHAN_HONORGLOBALBANS, "honor-global-bans"},
 	{0, 0}
 };
 
@@ -30,5 +31,7 @@ static channel_flag_map_t stupid_ircnet_flag_map[] = {
 	{CHAN_USEREXEMPTS, "userexempts"},
 	{CHAN_DYNAMICINVITES, "dynamicinvites"},
 	{CHAN_USERINVITES, "userinvites"},
+	{CHAN_HONORGLOBALEXEMPTS, "honor-global-exempts"},
+	{CHAN_HONORGLOBALINVITES, "honor-global-invites"},
 	{0, 0}
 };

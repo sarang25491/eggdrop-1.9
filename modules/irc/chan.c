@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.11 2002/01/24 21:06:14 ite Exp $
+ * $Id: chan.c,v 1.12 2002/01/31 13:35:43 eule Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -268,17 +268,15 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
       return 1;
     case FLOOD_JOIN:
     case FLOOD_NICK:
-      if (use_exempts &&
-	  (u_match_mask(global_exempts, from) ||
-	   u_match_mask(chan->exempts, from)))
+      if (use_exempts && is_perm_exempted(chan, from))
 	return 1;
       simple_sprintf(h, "*!*@%s", p);
       if (!isbanned(chan, h) && me_op(chan)) {
 	check_exemptlist(chan, from);
 	do_mask(chan, chan->channel.ban, h, 'b');
       }
-      if ((u_match_mask(global_bans, from))
-	  || (u_match_mask(chan->bans, from)))
+      if ((u_match_mask(global_bans, from) && channel_honor_global_bans(chan)) ||
+	  (u_match_mask(chan->bans, from)))
 	return 1;		/* Already banned */
       if (which == FLOOD_JOIN)
 	putlog(LOG_MISC | LOG_JOIN, chan->dname, _("JOIN flood from @%s!  Banning."), p);
@@ -361,9 +359,7 @@ static void kick_all(struct chanset_t *chan, char *hostmask, char *comment, int 
 	!match_my_nick(m->nick) && !chan_issplit(m) &&
 	!glob_friend(fr) && !chan_friend(fr) &&
 	!(use_exempts &&
-	  ((bantype && isexempted(chan, s)) ||
-	   (u_match_mask(global_exempts,s) ||
-	    u_match_mask(chan->exempts, s)))) &&
+	  ((bantype && isexempted(chan, s)) || is_perm_exempted(chan, s))) &&
 	!(channel_dontkickops(chan) &&
 	  (chan_op(fr) || (glob_op(fr) && !chan_deop(fr))))) {	/* arthur2 */
       if (!flushed) {
@@ -402,6 +398,8 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
   /* Check global bans in first cycle and channel bans
      in second cycle. */
   for (cycle = 0; cycle < 2; cycle++) {
+    if (!cycle && !channel_honor_global_bans(chan))
+      continue;
     for (b = cycle ? chan->bans : global_bans; b; b = b->next) {
       if (wild_match(b->mask, user)) {
 	struct flag_record	fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
@@ -436,9 +434,13 @@ static void refresh_exempt(struct chanset_t *chan, char *user)
   masklist	*b;
   int		 cycle;
 
+  if (!use_exempts)
+    return;
   /* Check global exempts in first cycle and channel exempts
      in second cycle. */
   for (cycle = 0; cycle < 2; cycle++) {
+    if (!cycle && !channel_honor_global_exempts(chan))
+      continue;
     for (e = cycle ? chan->exempts : global_exempts; e; e = e->next) {
       if (wild_match(user, e->mask) || wild_match(e->mask,user)) {
         for (b = chan->channel.ban; b && b->mask[0]; b = b->next) {
@@ -459,9 +461,13 @@ static void refresh_invite(struct chanset_t *chan, char *user)
   maskrec	*i;
   int		 cycle;
 
+  if (!use_invites)
+    return;
   /* Check global invites in first cycle and channel invites
      in second cycle. */
   for (cycle = 0; cycle < 2; cycle++) {
+    if (!cycle && !channel_honor_global_invites(chan))
+      continue;
     for (i = cycle ? chan->invites : global_invites; i; i = i->next) {
       if (wild_match(i->mask, user) &&
 	  ((i->flags & MASKREC_STICKY) || (chan->channel.mode & CHANINV))) {
@@ -506,6 +512,8 @@ static void recheck_bans(struct chanset_t *chan)
   /* Check global bans in first cycle and channel bans
      in second cycle. */
   for (cycle = 0; cycle < 2; cycle++) {
+    if (!cycle && !channel_honor_global_bans(chan))
+      continue;
     for (u = cycle ? chan->bans : global_bans; u; u = u->next)
       if (!isbanned(chan, u->mask) && (!channel_dynamicbans(chan) ||
 				       (u->flags & MASKREC_STICKY)))
@@ -527,6 +535,8 @@ static void recheck_exempts(struct chanset_t *chan)
   /* Check global exempts in first cycle and channel exempts
      in second cycle. */
   for (cycle = 0; cycle < 2; cycle++) {
+    if (!cycle && !channel_honor_global_exempts(chan))
+      continue;
     for (e = cycle ? chan->exempts : global_exempts; e; e = e->next) {
       if (!isexempted(chan, e->mask) &&
           (!channel_dynamicexempts(chan) || (e->flags & MASKREC_STICKY)))
@@ -554,6 +564,8 @@ static void recheck_invites(struct chanset_t *chan)
   /* Check global invites in first cycle and channel invites
      in second cycle. */
   for (cycle = 0; cycle < 2; cycle++)  {
+    if (!cycle && !channel_honor_global_invites(chan))
+      continue;
     for (ir = cycle ? chan->invites : global_invites; ir; ir = ir->next) {
       /* If invite isn't set and (channel is not dynamic invites and not invite
        * only) or invite is sticky.
@@ -606,9 +618,7 @@ static void check_this_ban(struct chanset_t *chan, char *banmask, int sticky)
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
     sprintf(user, "%s!%s", m->nick, m->userhost);
     if (wild_match(banmask, user) &&
-        !(use_exempts &&
-          (u_match_mask(global_exempts, user) ||
-           u_match_mask(chan->exempts, user))))
+        !(use_exempts && is_perm_exempted(chan, user)))
       refresh_ban_kick(chan, user, m->nick);
   }
   if (!isbanned(chan, banmask) &&
@@ -714,21 +724,11 @@ static void check_this_member(struct chanset_t *chan, char *nick, struct flag_re
     }
   }
   /* check vs invites */
-  if (use_invites &&
-      (u_match_mask(global_invites,s) ||
-       u_match_mask(chan->invites, s)))
-    refresh_invite(chan, s);
+  refresh_invite(chan, s);
   /* don't kickban if permanent exempted */
-  if (!(use_exempts &&
-	(u_match_mask(global_exempts,s) ||
-	 u_match_mask(chan->exempts, s)))) {
-    /* if match a ban */
-    if (u_match_mask(global_bans, s) ||
-        u_match_mask(chan->bans, s)) {
-      /* bewm */
-      refresh_ban_kick(chan, s, m->nick);
-      /* ^ will use the ban comment */
-    }
+  if (!(use_exempts && is_perm_exempted(chan, s))) {
+    /* permanent banned? */
+    refresh_ban_kick(chan, s, m->nick);
     /* are they +k ? */
     if (!chan_sentkick(m) && (chan_kick(*fr) || glob_kick(*fr))) {
       check_exemptlist(chan, s);
@@ -1677,12 +1677,8 @@ static int gotjoin(char *from, char *ignore, char *chname)
 	 * This will require further checking to account for when to use the
 	 * various modes.
 	 */
-	if (u_match_mask(global_invites,from) ||
-	    u_match_mask(chan->invites, from))
-	  refresh_invite(chan, from);
-	if (!(use_exempts &&
-	      (u_match_mask(global_exempts,from) ||
-	       u_match_mask(chan->exempts, from)))) {
+	refresh_invite(chan, from);
+	if (!(use_exempts && is_perm_exempted(chan, from))) {
           if (channel_enforcebans(chan) && !chan_op(fr) && !glob_op(fr) &&
               !glob_friend(fr) && !chan_friend(fr) && !chan_sentkick(m) &&
               !(use_exempts && isexempted(chan, from))) {
@@ -1696,11 +1692,9 @@ static int gotjoin(char *from, char *ignore, char *chname)
             }
           }
 	  /* If it matches a ban, dispose of them. */
-	  if (u_match_mask(global_bans, from) ||
-	      u_match_mask(chan->bans, from)) {
-	    refresh_ban_kick(chan, from, nick);
+	  refresh_ban_kick(chan, from, nick);
 	  /* Likewise for kick'ees */
-	  } else if (!chan_sentkick(m) && (glob_kick(fr) || chan_kick(fr))) {
+	  if (!chan_sentkick(m) && (glob_kick(fr) || chan_kick(fr))) {
 	    check_exemptlist(chan, from);
 	    quickban(chan, from);
 	    p = get_user(&USERENTRY_COMMENT, m->user);

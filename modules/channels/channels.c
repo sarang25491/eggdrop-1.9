@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.3 2001/12/29 21:21:17 guppy Exp $
+ * $Id: channels.c,v 1.4 2002/01/31 13:35:43 eule Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -388,6 +388,7 @@ flood-kick %d:%d flood-deop %d:%d flood-nick %d:%d aop-delay %d:%d \
 %cgreet %cprotectops %cprotectfriends %cdontkickops \
 %cstatuslog %crevenge %crevengebot %cautovoice %csecret \
 %cshared %ccycle %cinactive %cdynamicexempts %cuserexempts \
+%chonor-global-bans %chonor-global-exempts %chonor-global-invites \
 %cdynamicinvites %cuserinvites %cnodesynch ",
 	channel_static(chan) ? "set" : "add",
 	name,
@@ -395,12 +396,12 @@ flood-kick %d:%d flood-deop %d:%d flood-nick %d:%d aop-delay %d:%d \
 	w2,
 	chan->idle_kick, /* idle-kick 0 is same as dont-idle-kick (less code)*/
 	chan->stopnethack_mode,
-        chan->revenge_mode,
+	chan->revenge_mode,
 	chan->flood_pub_thr, chan->flood_pub_time,
-        chan->flood_ctcp_thr, chan->flood_ctcp_time,
-        chan->flood_join_thr, chan->flood_join_time,
-        chan->flood_kick_thr, chan->flood_kick_time,
-        chan->flood_deop_thr, chan->flood_deop_time,
+	chan->flood_ctcp_thr, chan->flood_ctcp_time,
+	chan->flood_join_thr, chan->flood_join_time,
+	chan->flood_kick_thr, chan->flood_kick_time,
+	chan->flood_deop_thr, chan->flood_deop_time,
 	chan->flood_nick_thr, chan->flood_nick_time,
 	chan->aop_min, chan->aop_max,
 	PLSMNS(channel_enforcebans(chan)),
@@ -410,7 +411,7 @@ flood-kick %d:%d flood-deop %d:%d flood-nick %d:%d aop-delay %d:%d \
 	PLSMNS(channel_bitch(chan)),
 	PLSMNS(channel_greet(chan)),
 	PLSMNS(channel_protectops(chan)),
-        PLSMNS(channel_protectfriends(chan)),
+	PLSMNS(channel_protectfriends(chan)),
 	PLSMNS(channel_dontkickops(chan)),
 	PLSMNS(channel_logstatus(chan)),
 	PLSMNS(channel_revenge(chan)),
@@ -420,10 +421,13 @@ flood-kick %d:%d flood-deop %d:%d flood-nick %d:%d aop-delay %d:%d \
 	PLSMNS(channel_shared(chan)),
 	PLSMNS(channel_cycle(chan)),
 	PLSMNS(channel_inactive(chan)),
-        PLSMNS(channel_dynamicexempts(chan)),
-        PLSMNS(!channel_nouserexempts(chan)),
- 	PLSMNS(channel_dynamicinvites(chan)),
-        PLSMNS(!channel_nouserinvites(chan)),
+	PLSMNS(channel_dynamicexempts(chan)),
+	PLSMNS(!channel_nouserexempts(chan)),
+	PLSMNS(channel_honor_global_bans(chan)),
+	PLSMNS(channel_honor_global_exempts(chan)),
+	PLSMNS(channel_honor_global_invites(chan)),
+	PLSMNS(channel_dynamicinvites(chan)),
+	PLSMNS(!channel_nouserinvites(chan)),
 	PLSMNS(channel_nodesynch(chan)));
     for (ul = udef; ul; ul = ul->next) {
       if (ul->defined && ul->name) {
@@ -626,6 +630,12 @@ static void channels_report(int idx, int details)
 	  i += my_strcpy(s + i, "inactive ");
 	if (channel_nodesynch(chan))
 	  i += my_strcpy(s + i, "nodesynch ");
+	if (channel_honor_global_bans(chan))
+	  i += my_strcpy(s + i, "honor-global-bans ");
+	if (channel_honor_global_exempts(chan))
+	  i += my_strcpy(s + i, "honor-global-exempts ");
+	if (channel_honor_global_invites(chan))
+	  i += my_strcpy(s + i, "honor-global-invites ");
 	dprintf(idx, "      Options: %s\n", s);
 	if (chan->idle_kick)
 	  dprintf(idx, "      Kicking idle users after %d min\n",
@@ -843,6 +853,7 @@ char *start(Function * global_funcs)
 +protectops +statuslog -revenge -secret -autovoice +cycle \
 +dontkickops -inactive -protectfriends +shared \
 +userexempts +dynamicexempts +userinvites +dynamicinvites -revengebot \
++honor-global-bans +honor-global-exempts +honor-global-invites \
 -nodesynch" /* Do not remove this extra space: */ " ");
   module_register(MODULE_NAME, channels_table, 1, 0);
   if (!module_depend(MODULE_NAME, "eggdrop", 107, 0)) {

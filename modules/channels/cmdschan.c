@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.4 2002/01/27 14:59:35 ite Exp $
+ * $Id: cmdschan.c,v 1.5 2002/01/31 13:35:43 eule Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1225,6 +1225,11 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
 	    (!(chan->ircnet_status & CHAN_USEREXEMPTS)) ? '-' : '+',
 	    (chan->ircnet_status & CHAN_DYNAMICINVITES) ? '+' : '-',
 	    (!(chan->ircnet_status & CHAN_USERINVITES)) ? '-' : '+');
+    dprintf(idx, "     %chonor-global-bans              %chonor-global-exempts\n",
+	    (chan->status & CHAN_HONORGLOBALBANS) ? '+' : '-',
+	    (chan->ircnet_status & CHAN_HONORGLOBALEXEMPTS) ? '+' : '-');
+    dprintf(idx, "     %chonor-global-invites\n",
+	    (chan->ircnet_status & CHAN_HONORGLOBALINVITES) ? '+' : '-');
 
     ii = 1;
     tmp = 0;

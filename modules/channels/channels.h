@@ -1,7 +1,7 @@
 /*
  * channels.h -- part of channels.mod
  *
- * $Id: channels.h,v 1.2 2002/01/26 13:34:18 ite Exp $
+ * $Id: channels.h,v 1.3 2002/01/31 13:35:43 eule Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -184,5 +184,9 @@ inline static int chanset_unlink(struct chanset_t *chan);
 #define u_setsticky_ban(chan, host, sticky)     u_setsticky_mask(chan, ((struct chanset_t *)chan) ? ((struct chanset_t *)chan)->bans : global_bans, host, sticky, "s")
 #define u_setsticky_exempt(chan, host, sticky)  u_setsticky_mask(chan, ((struct chanset_t *)chan) ? ((struct chanset_t *)chan)->exempts : global_exempts, host, sticky, "se")
 #define u_setsticky_invite(chan, host, sticky)  u_setsticky_mask(chan, ((struct chanset_t *)chan) ? ((struct chanset_t *)chan)->invites : global_invites, host, sticky, "sInv")
+
+#define is_perm_exempted(chan, user) (u_match_mask(chan->exempts, user) || \
+				      (u_match_mask(global_exempts, user) && \
+				       (chan->ircnet_status & CHAN_HONORGLOBALEXEMPTS)))
 
 #endif				/* _EGG_MOD_CHANNELS_CHANNELS_H */
