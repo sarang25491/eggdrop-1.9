@@ -3,7 +3,7 @@
  *   stuff common to chan.c and mode.c
  *   users.h needs to be loaded too
  *
- * $Id: chan.h,v 1.28 2002/02/07 22:19:04 wcc Exp $
+ * $Id: chan.h,v 1.29 2002/04/16 23:08:28 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -168,7 +168,7 @@ struct chanset_t {
   int compat;			/* to prevent mixing old/new modes	*/
   struct {
     char *op;
-    char type;
+    int type;
   } cmode[6];			/* parameter-type mode changes -	*/
   /* detect floods */
   char floodwho[FLOOD_CHAN_MAX][81];

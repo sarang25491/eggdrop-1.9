@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.11 2002/04/01 13:33:32 ite Exp $
+ * $Id: mode.c,v 1.12 2002/04/16 23:08:28 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -110,7 +110,8 @@ static void flush_mode(struct chanset_t *chan, int pri)
 
   /* Do -{b,e,I} before +{b,e,I} to avoid the server ignoring overlaps */
   for (i = 0; i < modesperline; i++) {
-    if (chan->cmode[i].type & MINUS && postsize > strlen(chan->cmode[i].op)) {
+    if ((chan->cmode[i].type & MINUS) &&
+        postsize > strlen(chan->cmode[i].op)) {
       if (plus) {
         *p++ = '-', plus = 0;
       }
@@ -130,7 +131,8 @@ static void flush_mode(struct chanset_t *chan, int pri)
 
   /* now do all the + modes... */
   for (i = 0; i < modesperline; i++) {
-    if (chan->cmode[i].type & PLUS && postsize > strlen(chan->cmode[i].op)) {
+    if ((chan->cmode[i].type & PLUS) &&
+        postsize > strlen(chan->cmode[i].op)) {
       if (plus != 1) {
         *p++ = '+', plus = 1;
       }
