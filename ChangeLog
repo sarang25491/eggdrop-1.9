@@ -1,3 +1,18 @@
+2002-01-17 00:52  Federico Mennite <ite@techmonkeys.org>
+
+	* src/dcc.c:
+
+	* Removed the checks for ips with 0 or 255 in them (synch 1.6)\n *
+	When a leaf is thinking that uses a different HANDLEN then ours log
+	it and then drop the connection instead of just silently dropping
+	the connection.  
+
+2002-01-17 00:47  Federico Mennite <ite@techmonkeys.org>
+
+	* AUTHORS:
+
+	More AUTHORS's entries updates 
+
 2002-01-17 00:26  Federico Mennite <ite@techmonkeys.org>
 
 	* AUTHORS:
