@@ -23,7 +23,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: chan.h,v 1.30 2002/05/05 16:40:37 tothwolf Exp $
+ * $Id: chan.h,v 1.31 2002/10/10 05:50:12 wcc Exp $
  */
 
 #ifndef _EGG_CHAN_H
@@ -152,6 +152,9 @@ struct chanset_t {
   int idle_kick;
   int stopnethack_mode;
   int revenge_mode;
+  int ban_time;
+  int invite_time;
+  int exempt_time;
   maskrec *bans,		/* temporary channel bans		*/
           *exempts,		/* temporary channel exempts		*/
           *invites;		/* temporary channel invites		*/

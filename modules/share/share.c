@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: share.c,v 1.16 2002/05/17 07:29:24 stdarg Exp $";
+static const char rcsid[] = "$Id: share.c,v 1.17 2002/10/10 05:50:12 wcc Exp $";
 #endif
 
 #define MODULE_NAME "share"
@@ -185,8 +185,8 @@ static void share_stick_ban(int idx, char *par)
     noshare = 1;
     if (!par[0]) {		/* Global ban */
       if (u_setsticky_ban(NULL, host, yn) > 0) {
-	putlog(LOG_CMDS, "*", "%s: stick %s %c", dcc[idx].nick, host,
-	       yn ? 'y' : 'n');
+	putlog(LOG_CMDS, "*", "%s: %s %s", dcc[idx].nick,
+               (yn) ? "stick" : "unstick", host);
 	shareout_but(NULL, idx, "s %s %d\n", host, yn);
       }
     } else {
@@ -198,14 +198,14 @@ static void share_stick_ban(int idx, char *par)
                               (cr->flags & BOT_AGGRESSIVE))) ||
                             (bot_flags(dcc[idx].user) & BOT_GLOBAL)))
 	if (u_setsticky_ban(chan, host, yn) > 0) {
-	  putlog(LOG_CMDS, "*", "%s: stick %s %c %s", dcc[idx].nick, host,
-		 yn ? 'y' : 'n', par);
+	  putlog(LOG_CMDS, "*", "%s: %s %s %s", dcc[idx].nick,
+                 (yn) ? "stick" : "unstick", host, par);
 	  shareout_but(chan, idx, "s %s %d %s\n", host, yn, chan->dname);
 	  noshare = 0;
 	  return;
 	}
-      putlog(LOG_CMDS, "*", "Rejecting invalid sticky ban: %s on %s, %c",
-	     host, par, yn ? 'y' : 'n');
+      putlog(LOG_CMDS, "*", "Rejecting invalid sticky ban: %s on %s%s",
+	     host, par, yn ? "" : " (unstick)");
     }
     noshare = 0;
   }
@@ -225,8 +225,8 @@ static void share_stick_exempt(int idx, char *par)
     noshare = 1;
     if (!par[0]) {		/* Global exempt */
       if (u_setsticky_exempt(NULL, host, yn) > 0) {
-	putlog(LOG_CMDS, "*", "%s: stick %s %c", dcc[idx].nick, host,
-	       yn ? 'y' : 'n');
+	putlog(LOG_CMDS, "*", "%s: %s %s", dcc[idx].nick,
+               (yn) ? "stick" : "unstick", host);
 	shareout_but(NULL, idx, "se %s %d\n", host, yn);
       }
     } else {
@@ -238,14 +238,14 @@ static void share_stick_exempt(int idx, char *par)
                               (cr->flags & BOT_AGGRESSIVE))) ||
                             (bot_flags(dcc[idx].user) & BOT_GLOBAL)))
 	if (u_setsticky_exempt(chan, host, yn) > 0) {
-	  putlog(LOG_CMDS, "*", "%s: stick %s %c %s", dcc[idx].nick, host,
-		 yn ? 'y' : 'n', par);
+	  putlog(LOG_CMDS, "*", "%s: %s %s %s", dcc[idx].nick,
+                 (yn) ? "stick" : "unstick", host, par);
 	  shareout_but(chan, idx, "se %s %d %s\n", host, yn, chan->dname);
 	  noshare = 0;
 	  return;
 	}
-      putlog(LOG_CMDS, "*", "Rejecting invalid sticky exempt: %s on %s, %c",
-	     host, par, yn ? 'y' : 'n');
+      putlog(LOG_CMDS, "*", "Rejecting invalid sticky exempt: %s on %s%s",
+	     host, par, yn ? "" : " (unstick)");
     }
     noshare = 0;
   }
@@ -264,8 +264,8 @@ static void share_stick_invite (int idx, char * par) {
     noshare = 1;
     if (!par[0]) {		/* Global invite */
       if (u_setsticky_invite(NULL, host, yn) > 0) {
- 	    putlog(LOG_CMDS, "*", "%s: stick %s %c", dcc[idx].nick, host,
- 		   yn ? 'y' : 'n');
+ 	    putlog(LOG_CMDS, "*", "%s: %s %s", dcc[idx].nick,
+               (yn) ? "stick" : "unstick", host);
  	    shareout_but(NULL, idx, "sInv %s %d\n", host, yn);
       }
     } else {
@@ -277,14 +277,14 @@ static void share_stick_invite (int idx, char * par) {
                               (cr->flags & BOT_AGGRESSIVE))) ||
                             (bot_flags(dcc[idx].user) & BOT_GLOBAL)))
 	if (u_setsticky_invite(chan, host, yn) > 0) {
-	  putlog(LOG_CMDS, "*", "%s: stick %s %c %s", dcc[idx].nick, host,
-		 yn ? 'y' : 'n', par);
+	  putlog(LOG_CMDS, "*", "%s: %s %s %s", dcc[idx].nick,
+                 (yn) ? "stick" : "unstick", host, par);
 	  shareout_but(chan, idx, "sInv %s %d %s\n", host, yn, chan->dname);
 	  noshare = 0;
 	  return;
 	}
-      putlog(LOG_CMDS, "*", "Rejecting invalid sticky invite: %s on %s, %c",
-	     host, par, yn ? 'y' : 'n');
+      putlog(LOG_CMDS, "*", "Rejecting invalid sticky invite: %s on %s%s",
+	     host, par, yn ? "" : " (unstick)");
     }
     noshare = 0;
   }

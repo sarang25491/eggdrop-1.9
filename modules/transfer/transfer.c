@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: transfer.c,v 1.15 2002/05/17 07:29:25 stdarg Exp $";
+static const char rcsid[] = "$Id: transfer.c,v 1.16 2002/10/10 05:50:12 wcc Exp $";
 #endif
 
 #define MODULE_NAME "transfer"
@@ -561,8 +561,14 @@ static int tcl_dccsend STDVAR
   }
   if (copy_to_tmp) {
     sys = malloc(strlen(tempdir) + strlen(nfn) + 1);
-    sprintf(sys, "%s%s", tempdir, nfn);		/* New filename, in /tmp */
-    copyfile(argv[1], sys);
+    sprintf(sys, "%s%s", tempdir, nfn);
+    f = fopen(sys, "r");
+    if (f) {
+      fclose(f);
+      Tcl_AppendResult(irp, "5", NULL);
+      return TCL_OK;
+    } else
+      copyfile(argv[1], sys);
   } else
     sys = strdup(argv[1]);
   i = raw_dcc_send(sys, argv[2], "*", argv[1], 0);

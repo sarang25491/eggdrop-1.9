@@ -1,10 +1,88 @@
-$Id: UPDATES1.6,v 1.200 2002/03/20 13:11:44 wcc Exp $
+$Id: UPDATES1.6,v 1.201 2002/10/10 05:50:11 wcc Exp $
 
 Changes in Eggdrop: (since v1.6.0)
 ----------------------------------
 
-1.6.10
+1.6.13
 Found by  Fixed by  What...
+blaster^  don't log "joined #chan but didn't want to" in certain cases where
+                    the channel was newly removed or set inactive
+          Wcc       cosmetic changes to share_stick_[exempt/invite/ban]
+J Lehto   TaKeDa    msg_key and msg_invite did not work properly for !channels
+          BarkerJr  show the number of hops in .trace's output
+          Mo-Ize    use the proper dynamic lib extention on Mac OSX
+          Wiktor    return 5 from dccsend if the file exists in the temp directory and
+                    copy-to-tmp is enabled
+          poptix    fixed a possible exploit in reaffirm_owners()
+KuNgFo0   Wcc/      friends/ops/bots are now correctly unbanned when a ban is set on a
+          [sL]      channel that matches their host
+          BHAB      compile fix for systems that do not support snprintf()
+various   Wcc/      fixed a bug where if the bot is kicked while channel information is
+          [sL]      still being received, the bot will think it's still on the channel and
+                    not rejoin
+ble       Wcc       removed names parsing, as it causes many problems and was only
+                    added for compatability with an old version of unrealircd
+[sL]      Wcc       more broken dprintf's in irc commands
+ble       Wcc       fixed a broken dprintf in cmd_kick()
+          Wcc       made [ban/invite/exempt]-time a channel int
+          BarkerJr  documentation updates related to the PUBM bind
+
+1.6.12 (26 July 2002)
+Found by  Fixed by  What...
+Segfault            reverted the sockfix patches from 1.6.11
+
+1.6.11 (26 July 2002)
+Found by  Fixed by  What...
+various   Wcc       need-[limit/invite/unban/key] work now
+          [sL]      fixed a problem with 'connect' and 'control' where the script would abort
+                    prematurely
+          Wcc       improved the logic in cmd_mnsban when specifying what happen to remove and
+                    where to remove it from
+          Eule      fixed cmd_kickban so it works
+          Wcc/      fixed a bug causing "[HH:MM] !!! OVER MAXIMUM <queue> QUEUE" to be
+          [sL]      logged to LOG_SVROUT
+          Wcc       log PINGs/PONGs sent to the server in LOG_SVROUT
+          guppy     some small changes to make eggdrop work with tcl8.4b1 (it won't work with
+                    tcl8.4a1 or a2 anymore though)
+dork      TaKeDa    fixed a crash while doing .kickban -nick
+          Zart      the return values of uname() are now properly checked
+          Zart      added handlen friendly code to various commands (this is a new patch to
+                    replace the handlen friendly patch reverted in 1.6.10
+          BarkerJr  don't show +inactive channels in a remote .who
+          guppy     changed the .status output a bit (includes the name of the config file
+                    now)
+guppy     Wcc       msg_whois should require an argument.
+          Wcc       added support for halfops (channel mode +h)
+MaSsKilla Wcc       don't allow channels containing commas to be added.. 
+                    also made an error message more clear
+          BarkerJr  updates to doc/MODULES
+          Wcc       more doc updates
+          TaKeDa    fix for !channels when people quit or change nicks
+          aXs/      made all the commands use CHANMETA instead of hardcoding channel types
+          Eule
+various   stdarg/   added 'channel get <chan> <setting>' (backported from 1.7)
+          Mo-Ize
+          guppy     uptime.mod will not unload now once loaded (this prevents you from
+                    losing your stats on a .restart .. to remove, you have to .die)
+          guppy     uptime.mod now sends the proper pid and also won't send garbage if
+                    the bot currently isn't on a server
+          Wcc       updated slennox's sentinel.tcl to the latest version
+guppy     Wcc       added support for +r on Undernet's ircu 2.10.11
+          upstream  fixed a crash in seen.mod with long channel names
+          slug      added support for the +C channel mode (noctcp) on QuakeNet's ircu
+
+1.6.10 (29 March 2002)
+Found by  Fixed by  What...
+(^Baron^) Eule      protect(ops|friends) works with +bitch now
+          guppy     reverted the handlen friendly patches
+MaSsKilla dw	    fixed a crash when trying to add an invalid chan using .+chan
+various   guppy     nick2hand didn't return "" on a nick that wasn't in the channel
+slennox   Wcc       fixed a few config file problems
+Paladin   Wcc       chattr's description in tcl-commands.doc was unclear relating to
+                    channel-specific flag changes
+          NetIrc    transfer.french.lang was created
+          Noyga     cmd_who is now languagified! (nice word eh?)
+          Noyga     made it easier to change the number of global partyline channels
 MC_8      Wcc       more tcl-commands.doc fixes
 MC_8      Wcc       added some missing command options to tcl-commands.doc
           Uwe       cd_cmd_table was missing a null entry at the end of the list
@@ -27,23 +105,32 @@ various   Eule      modes-per-line is limited to a max of 6 modes per line
           Amir      botlink() now safely copies the linker string
 various   Eule      fixed crashes relating to flushmodes
 Wanderer| dw	    tcl command modules missing in doc/tcl-commands.doc
-          guppy     users with only +x can now only login via dcc chat, they cannot use
+          guppy     users with only +x can now only login via dcc chat, they cannot use 
                     telnet
           Wcc       more documentation updates
           Eule/     changed how protectops and protectfriends works a bit:
           guppy       if the user has either glob +d or chan +d then no protection
                       protectfriends now only protects +f users
                       protectops now only protects +m and +o users
+various   guppy     doc/compiling.FAQ now includes info about setting LD_LIBRARY_PATH
 Boing     guppy     fixed +protectops from reopping users with only +f and +protectfriends
                     from reopping users with only +o
+          Wcc       made a few cosmetic changes to the configure script
+          Wcc       more plural fixes for commands and error messages
 Xerxes    guppy     "channel remove" will not crash the bot anymore if you are removing
                     the channel for which the bind was called
 MC_8      stdarg    "channel info" will properly list all user-defined settings
+various   guppy     fixed a problem with modconfig not being found when rerunning
+                    ./configure
+          ITE       made modconfig more portable across various bourne shell flavours
           Eule      removed gban_total, gexempt_total and ginvite_total since they were
                     unused
+          TaKeDa/   configure should recognize a dynamic tcl library now on cygwin
+          ITE
 dw        guppy     fixed a crash that would happen when we disconnected from our server
                     but did not reconnect to a server before we checked if a server was
                     stoned
+          BHAB      lets compile on solaris now
 BarkerJr  TaKeDa    update a bot's laston info when the bot unlinks
           Wcc       more cosmetic fixes to src/cmds.c
           Eule      small cosmetic fix to cmd_store
@@ -57,6 +144,8 @@ BarkerJr  TaKeDa    update a bot's laston info when the bot unlinks
 Paladinz  guppy     ircu2.10.11 properly formats PART messages; however, eggdrop did not
                     understand them
           Wcc       fixed a couple of cosmetic problems in cmd_pls_user
+          Wcc       do not eval init-server on rehash since this variable is used for
+                    performing tcl commands on a succesful server connection
 MaSsKilla dw	    Couldn't introduce new users through telnet if a
 		      handle named "new" existed.
 SiD3WiNDR Wcc       MISC_USERFCREATE1 should use origbotname instead of botnetnick
@@ -97,9 +186,9 @@ various   guppy     when a leaf is thinking that uses a different HANDLEN then o
                     compat) to follow the standard that handlen uses
           Wcc       updated doc/BOTNET and added doc/first_script.txt
           Wcc       removed some old debugging information
-various   zip       prevent the bot from loosing channel flags when allow-resync is set
+various   zip       prevent the bot from losing channel flags when allow-resync is set
           Wcc       some small cosmetic changes
-          Wcc       added $hand-len for scripters to get the current length of handles from
+          Wcc       added handlen for scripters to get the current length of handles from
                     src/eggdrop.h (this setting does not adjust handle lengths however)
           BarkerJr  cmd_whom now displays a sum of all the partyline users
           Tothwolf  copyright updates
@@ -120,6 +209,8 @@ various   guppy     tcl_botisvoice, tcl_botisop, tcl_botonchan, tcl_onchansplit,
                     now
 Abraham   guppy     tcl_onchan can now be used without a channel to check all the bot's 
                     channels
+various   stdarg/   added tcl_traffic (a modified copy of stdarg's original patch)
+          guppy/
 Tothwolf  guppy     .servers doesn't trunicate server names anymore
 Wcc       guppy     made cmd_modules work locally as well as remotely
           guppy     made show_banner reset the help_subst arguments like show_motd does
@@ -129,18 +220,21 @@ Wcc       guppy     made cmd_modules work locally as well as remotely
 various   guppy     tcl_pushmode now accepts any irc modes instead of the standard ones
           guppy     made tcl_chanlist (when matching chanflags), tcl_handonchan, and
                     tcl_nick2hand much faster
-various   guppy     tcl_pushmode now accepts any irc modes instead of the standard ones
-          guppy     made tcl_chanlist (when matching chanflags), tcl_handonchan, and
-                    tcl_nick2hand much faster
           Eule      a bunch of small fixes to gotjoin, gotkick, got367, a
                     modes-per-line calcuation, and to include_lk
+          Wcc       yet more documentation updates
+ziffie    BHAB      Documentation doesn't cover how to connect to servers with 
+                    a password; documentation added to sample config files.
 |^Raven^| guppy     made tcl_hand2nick _a lot_ faster
           Eule      more membercheck fixes for nick bans, nick +k users, -user, and
                     -host.
           BarkerJr  only show fake alerts once every 10 seconds to prevent flooding
+DFrank    guppy     small make install bug related to doc cleanups
+          Wcc       major cleanup of config files and related documents
           BarkerJr  updated doc/MODULES a bit
 RandomAPB Wcc       show the user port as users instead of telnet and the bot port
                     as a bot port instead of a relay port
+various   stdarg    small fix to the notes module
           BarkerJr  updated the uptime url
 
 1.6.7 (7 December 2001)

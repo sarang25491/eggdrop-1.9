@@ -25,7 +25,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: mode.c,v 1.14 2002/05/05 16:40:35 tothwolf Exp $";
+static const char rcsid[] = "$Id: mode.c,v 1.15 2002/10/10 05:50:12 wcc Exp $";
 #endif
 */
 
@@ -514,15 +514,14 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
 	ok = 0;
     }
 
-    /* do we want to reop victim? */
-    if (!ok && had_op && !match_my_nick(nick) && irccmp(who, nick) && 
-	!match_my_nick(who)) {
-      /* Is the deopper NOT a master or bot? */
-      if (reversing || (!glob_master(user) && !chan_master(user) && !glob_bot(user) &&
-	  !channel_bitch(chan)))
-	/* Then we'll bless the victim */
-	add_mode(chan, '+', 'o', who);
-    }
+    if ((reversing || !ok) && had_op && !match_my_nick(nick) &&
+        rfc_casecmp(who, nick) && !match_my_nick(who) &&
+	/* Is the deopper NOT a master or bot? */
+        !glob_master(user) && !chan_master(user) && !glob_bot(user) &&
+        ((chan_op(victim) || (glob_op(victim) && !chan_deop(victim))) ||
+        !channel_bitch(chan)))
+      /* Then we'll bless the victim */
+      add_mode(chan, '+', 'o', who);
   }
 
   if (!nick[0])
@@ -557,115 +556,66 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
 }
 
 
-static void got_ban(struct chanset_t *chan, char *nick, char *from,
-		    char *who)
+static void got_ban(struct chanset_t *chan, char *nick, char *from, char *who)
 {
   char me[UHOSTLEN], s[UHOSTLEN], s1[UHOSTLEN];
-  int check = 1;
   memberlist *m;
   struct userrec *u;
 
-  simple_sprintf(me, "%s!%s", botname, botuserhost);
-  simple_sprintf(s, "%s!%s", nick, from);
+  snprintf(me, sizeof me, "%s!%s", botname, botuserhost);
+  snprintf(s, sizeof s, "%s!%s", nick, from);
   newban(chan, who, s);
 
-  if (channel_pending(chan))
+  if (channel_pending(chan) || !me_op(chan))
     return;
 
-  if (wild_match(who, me) && me_op(chan)) {
-    /* First of all let's check whether some luser banned us ++rtc */
-    if (match_my_nick(nick))
-      /* Bot banned itself -- doh! ++rtc */
-      putlog(LOG_MISC, "*", "Uh, banned myself on %s, reversing...",
-	     chan->dname);
-    reversing = 1;
-    check = 0;
-  } else if (!match_my_nick(nick)) {	/* It's not my ban */
+  if (wild_match(who, me) && !isexempted(chan, me)) {
+    add_mode(chan, '-', 'b', who);
+    return;
+  }
+
+  if (!match_my_nick(nick)) {
     if (channel_nouserbans(chan) && nick[0] && !glob_bot(user) &&
-	!glob_master(user) && !chan_master(user)) {
-      /* No bans made by users */
+        !glob_master(user) && !chan_master(user)) {
       add_mode(chan, '-', 'b', who);
       return;
     }
-    /* Don't enforce a server ban right away -- give channel users a chance
-     * to remove it, in case it's fake
-     */
-    if (!nick[0]) {
-      check = 0;
-      if (bounce_modes)
-	reversing = 1;
-    }
-    /* Does this remotely match against any of our hostmasks?
-     * just an off-chance...
-     */
-    u = get_user_by_host(who);
-    if (u) {
-      get_user_flagrec(u, &victim, chan->dname);
-      if (glob_friend(victim) || (glob_op(victim) && !chan_deop(victim)) ||
-	  chan_friend(victim) || chan_op(victim)) {
-	if (!glob_master(user) && !glob_bot(user) && !chan_master(user))
-	  /* commented out: reversing = 1; */ /* arthur2 - 99/05/31 */
-	  check = 0;
-	if (glob_master(victim) || chan_master(victim))
-	  check = 0;
-      }
-    } else {
-      /* Banning an oplisted person who's on the channel? */
-      for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-	sprintf(s1, "%s!%s", m->nick, m->userhost);
-	if (wild_match(who, s1)) {
-	  u = get_user_by_host(s1);
-	  if (u) {
-	    get_user_flagrec(u, &victim, chan->dname);
-	    if (glob_friend(victim) ||
-		(glob_op(victim) && !chan_deop(victim))
-		|| chan_friend(victim) || chan_op(victim)) {
-	      /* Remove ban on +o/f/m user, unless placed by another +m/b */
-	      if (!glob_master(user) && !glob_bot(user) &&
-		  !chan_master(user)) {
-		if (!isexempted(chan, s1)) {
-		  /* Crotale - if the victim is not +e, then ban is removed */
-		  add_mode(chan, '-', 'b', who);
-		  check = 0;
-		}
-	      }
-	      if (glob_master(victim) || chan_master(victim))
-		check = 0;
-	    }
-	  }
-	}
+    for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
+      egg_snprintf(s1, sizeof s1, "%s!%s", m->nick, m->userhost);
+      if (wild_match(who, s1)) {
+        u = get_user_by_host(s1);
+        if (u) {
+          get_user_flagrec(u, &victim, chan->dname);
+          if ((glob_friend(victim) || (glob_op(victim) && !chan_deop(victim)) ||
+              chan_friend(victim) || chan_op(victim)) && !glob_master(user) &&
+              !glob_bot(user) && !chan_master(user) && !isexempted(chan, s1)) {
+            add_mode(chan, '-', 'b', who);
+	    return;
+          }
+        }
       }
     }
   }
-  /* If a ban is set on an exempted user then we might as well set exemption
-   * at the same time.
-   */
-  refresh_exempt(chan,who);
-  /* Does the ban match anyone in the internal banlist in that case
-   * use the stored ban reason when kicking
-   */
-  if (check && channel_enforcebans(chan)) {
+  refresh_exempt(chan, who);
+  if (nick[0] && channel_enforcebans(chan)) 
     register maskrec *b;
     int cycle;
     char resn[512]="";
 
     for (cycle = 0; cycle < 2; cycle++) {
       for (b = cycle ? chan->bans : global_bans; b; b = b->next) {
-	if (wild_match(b->mask, who)) {
-	  if (b->desc && b->desc[0] != '@')
-	    snprintf(resn, sizeof resn, "%s%s", _("banned: "), b->desc);
-	  else
+        if (wild_match(b->mask, who)) {
+          if (b->desc && b->desc[0] != '@')
+            snprintf(resn, sizeof resn, "%s%s", IRC_PREBANNED, b->desc);
+          else
 	    resn[0] = 0;
-	}
+        }
       }
     }
     kick_all(chan, who, resn[0] ? resn : _("Banned"), match_my_nick(nick) ? 0 : 1);
   }
-  /* Is it a server ban from nowhere? */
-  if (reversing ||
-      (bounce_bans && (!nick[0]) &&
-       (!u_equals_mask(global_bans, who) ||
-	!u_equals_mask(chan->bans, who)) && (check)))
+  if (!nick[0] && (bounce_bans || bounce_modes) &&
+      (!u_equals_mask(global_bans, who) || !u_equals_mask(chan->bans, who)))
     add_mode(chan, '-', 'b', who);
 }
 

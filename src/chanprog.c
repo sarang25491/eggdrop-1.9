@@ -24,7 +24,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: chanprog.c,v 1.51 2002/08/10 09:31:19 poptix Exp $";
+static const char rcsid[] = "$Id: chanprog.c,v 1.52 2002/10/10 05:50:12 wcc Exp $";
 #endif
 
 #include "main.h"
@@ -217,9 +217,6 @@ void tell_verbose_status(int idx)
   i = count_users(userlist);
   dprintf(idx, _("I am %1$s, running %2$s:  "), botnetnick, ver);
   dprintf(idx, P_("%d user\n", "%d users\n", i), i);
-  dprintf(idx, _("Running on %1$s %2$s\n"), uni_t, vers_t);
-  if (admin[0])
-    dprintf(idx, _("Admin: %s\n"), admin);
   now2 = now - online_since;
   s[0] = 0;
 
@@ -264,6 +261,10 @@ void tell_verbose_status(int idx)
   dprintf(idx, "%s %s  (%s)  %s  %s %4.1f%%\n", _("Online for"),
 	  s, s1, s2, _("cache hit"),
 	  100.0 * ((float) cache_hit) / ((float) (cache_hit + cache_miss)));
+  if (admin[0])
+    dprintf(idx, _("Admin: %s\n"), admin);
+  dprintf(idx, _("Config file: %s\n"), configfile);
+  dprintf(idx, _("OS: %1$s %2$s\n"), uni_t, vers_t);
 }
 
 /* Show all internal state variables

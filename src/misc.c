@@ -27,7 +27,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: misc.c,v 1.69 2002/09/20 21:41:49 stdarg Exp $";
+static const char rcsid[] = "$Id: misc.c,v 1.70 2002/10/10 05:50:12 wcc Exp $";
 #endif
 
 #include "main.h"
@@ -439,7 +439,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
       break;
     case 'U':
 #ifdef HAVE_UNAME
-      if (!uname(&uname_info)) {
+      if (uname(&uname_info) >= 0) {
 	snprintf(sub, sizeof sub, "%s %s", uname_info.sysname,
 		       uname_info.release);
 	towrite = sub;

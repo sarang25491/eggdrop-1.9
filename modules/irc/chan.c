@@ -28,7 +28,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: chan.c,v 1.24 2002/06/18 06:12:31 guppy Exp $";
+static const char rcsid[] = "$Id: chan.c,v 1.25 2002/10/10 05:50:12 wcc Exp $";
 #endif
 */
 
@@ -289,7 +289,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
       else
 	putlog(LOG_MISC | LOG_JOIN, chan->dname, _("NICK flood from @%s!  Banning."), p);
       strcpy(ftype + 4, " flood");
-      u_addmask('b', chan, h, botnetnick, ftype, now + (60 * ban_time), 0);
+      u_addmask('b', chan, h, botnetnick, ftype, now + (60 * chan->ban_time), 0);
       if (!channel_enforcebans(chan) && me_op(chan)) {
 	  char s[UHOSTLEN];
 	  for (m = chan->channel.member; m && m->nick[0]; m = m->next) {	  
@@ -1254,7 +1254,7 @@ static int got471(char *from, char *ignore, char *msg)
   if (chan) {
     putlog(LOG_JOIN, chan->dname, _("Channel full--cant join: %s"), chan->dname);
     check_tcl_need(chan->dname, "limit"); 
-    chan = findchan(chname); 
+    chan = findchan_by_dname(chname); 
     if (!chan)
       return 0;
  } else
@@ -1285,7 +1285,7 @@ static int got473(char *from, char *ignore, char *msg)
   if (chan) {
     putlog(LOG_JOIN, chan->dname, _("Channel invite only--cant join: %s"), chan->dname);
     check_tcl_need(chan->dname, "invite");
-    chan = findchan(chname); 
+    chan = findchan_by_dname(chname); 
     if (!chan)
       return 0;
   } else
@@ -1316,7 +1316,7 @@ static int got474(char *from, char *ignore, char *msg)
   if (chan) {
     putlog(LOG_JOIN, chan->dname, _("Banned from channel--can't join: %s"), chan->dname);
     check_tcl_need(chan->dname, "unban");
-    chan = findchan(chname); 
+    chan = findchan_by_dname(chname); 
     if (!chan)
       return 0;
   } else
@@ -1352,9 +1352,9 @@ static int got475(char *from, char *ignore, char *msg)
       dprintf(DP_MODE, "JOIN %s %s\n", chan->dname, chan->key_prot);
     } else {
       check_tcl_need(chan->dname, "key");
-      chan = findchan(chname); 
+      chan = findchan_by_dname(chname); 
       if (!chan)
-	return 0;
+        return 0;
     }
   } else
     putlog(LOG_JOIN, chname, _("Bad key--cant join: %s"), chname);
@@ -1553,8 +1553,12 @@ static int gotjoin(char *from, char *ignore, char *chname)
   }
 
   if (!chan || channel_inactive(chan)) {
-    putlog(LOG_MISC, "*", "joined %s but didn't want to!", chname);
-    dprintf(DP_MODE, "PART %s\n", chname);
+    strcpy(uhost, from);
+    nick = splitnick(&uhost);
+    if (match_my_nick(nick)) {
+      putlog(LOG_MISC, "*", "joined %s but didn't want to!", chname);
+      dprintf(DP_MODE, "PART %s\n", chname);
+    }
   } else if (!channel_pending(chan)) {
     chan->status &= ~CHAN_STOP_CYCLE;
     strlcpy(buf, from, sizeof buf);
@@ -1828,8 +1832,18 @@ static int gotkick(char *from, char *ignore, char *origmsg)
   msg = buf2;
   chname = newsplit(&msg);
   chan = findchan(chname);
-  if (chan && channel_active(chan)) {
-    kicked = newsplit(&msg);
+  if (!chan)
+    return 0;
+  kicked = newsplit(&msg);
+  if (match_my_nick(kicked) && channel_pending(chan)) {
+    chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
+    dprintf(DP_MODE, "JOIN %s %s\n",
+            (chan->name[0]) ? chan->name : chan->dname,
+            chan->channel.key[0] ? chan->channel.key : chan->key_prot);
+    clear_channel(chan, 1);
+    return 0;
+  }
+  if (channel_active(chan)) {
     fixcolon(msg);
     u = get_user_by_host(from);
     strlcpy(buf, from, sizeof buf);
@@ -1918,7 +1932,7 @@ static int gotnick(char *from, char *ignore, char *msg)
       sprintf(s1, "%s!%s", msg, uhost);
       strcpy(m->nick, msg);
       detect_chan_flood(msg, uhost, from, chan, FLOOD_NICK, NULL);
-      if (!findchan(chname)) {
+      if (!findchan_by_dname(chname)) {
 	chan = oldchan;
 	continue;
       }
@@ -1936,7 +1950,7 @@ static int gotnick(char *from, char *ignore, char *msg)
       u = get_user_by_host(from); /* make sure this is in the loop, someone could have changed the record
                                      in an earlier iteration of the loop */
       check_tcl_nick(nick, uhost, u, chan->dname, msg);
-      if (!findchan(chname)) {
+      if (!findchan_by_dname(chname)) {
 	chan = oldchan;
 	continue;
       }
@@ -1993,7 +2007,7 @@ static int gotquit(char *from, char *ignore, char *msg)
       if (split) {
 	m->split = now;
 	check_tcl_splt(nick, uhost, u, chan->dname);
-	if (!findchan(chname)) {
+	if (!findchan_by_dname(chname)) {
 	  chan = oldchan;
 	  continue;
         }
@@ -2001,7 +2015,7 @@ static int gotquit(char *from, char *ignore, char *msg)
 	       uhost);
       } else {
 	check_tcl_sign(nick, uhost, u, chan->dname, msg);
-	if (!findchan(chname)) {
+	if (!findchan_by_dname(chname))) {
 	  chan = oldchan;
 	  continue;
 	}

@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: msgcmds.c,v 1.9 2002/06/17 06:14:40 guppy Exp $";
+static const char rcsid[] = "$Id: msgcmds.c,v 1.10 2002/10/10 05:50:12 wcc Exp $";
 #endif
 */
 
@@ -409,6 +409,12 @@ static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
     return 1;
   if (!u)
     return 0;
+  if (!par[0]) {
+    dprintf(DP_HELP, "NOTICE %s :%s: /msg %s whois <handle>\n", nick,
+	    MISC_USAGE, botname);
+    return 0;
+  }
+
   if (strlen(par) > NICKMAX)
     par[NICKMAX] = 0;
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! WHOIS %s", nick, host, u->handle, par);
@@ -576,7 +582,7 @@ static int msg_key(char *nick, char *host, struct userrec *u, char *par)
 	    dprintf(DP_SERVER, "NOTICE %s :%s: key is %s\n", nick, par,
 		    chan->channel.key);
 	    if (invite_key && (chan->channel.mode & CHANINV)) {
-	      dprintf(DP_SERVER, "INVITE %s %s\n", nick, par);
+	      dprintf(DP_SERVER, "INVITE %s %s\n", nick, chan->name);
 	      putlog(LOG_CMDS, "*", "(%s!%s) !%s! KEY %s",
 		     nick, host, u->handle, par);
 	    }
@@ -673,7 +679,7 @@ static int msg_invite(char *nick, char *host, struct userrec *u, char *par)
     /* We need to check access here also (dw 991002) */
     get_user_flagrec(u, &fr, par);
     if (chan_op(fr) || (glob_op(fr) && !chan_deop(fr))) {
-      dprintf(DP_SERVER, "INVITE %s %s\n", nick, par);
+      dprintf(DP_SERVER, "INVITE %s %s\n", nick, chan->name);
       putlog(LOG_CMDS, "*", "(%s!%s) !%s! INVITE %s", nick, host,
 	     u->handle, par);
       return 1;
@@ -694,7 +700,7 @@ static int msg_status(char *nick, char *host, struct userrec *u, char *par)
 #ifdef HAVE_UNAME
   struct utsname un;
 
-  if (!uname(&un) < 0) {
+  if (uname(&un) >= 0) {
 #endif
     ve_t = " ";
     un_t = "*unknown*";

@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: channels.h,v 1.8 2002/05/05 16:40:33 tothwolf Exp $
+ * $Id: channels.h,v 1.9 2002/10/10 05:50:11 wcc Exp $
  */
 
 #ifndef _EGG_MOD_CHANNELS_CHANNELS_H
@@ -126,7 +126,7 @@ inline static int chanset_unlink(struct chanset_t *chan);
 #define clear_channel ((void (*)(struct chanset_t *, int))channels_funcs[15])
 /* 16 - 19 */
 #define set_handle_laston ((void (*)(char *,struct userrec *,time_t))channels_funcs[16])
-#define ban_time (*(int *)(channels_funcs[17]))
+/* *HOLE* channels_funcs[17] */
 #define use_info (*(int *)(channels_funcs[18]))
 #define get_handle_chaninfo ((void (*)(char *, char *, char *))channels_funcs[19])
 /* 20 - 23 */
@@ -135,9 +135,9 @@ inline static int chanset_unlink(struct chanset_t *chan);
 #define add_chanrec_by_handle ((void (*)(struct userrec *, char *, char *))channels_funcs[22])
 /* *HOLE* channels_funcs[23] used to be isexempted() <cybah> */
 /* 24 - 27 */
-#define exempt_time (*(int *)(channels_funcs[24]))
+/* *HOLE* channels_funcs[24] */
 /* *HOLE* channels_funcs[25] used to be isinvited() by arthur2 <cybah> */
-#define invite_time (*(int *)(channels_funcs[26]))
+/* *HOLE* channels_funcs[26] */
 /* *HOLE* channels_funcs[27] used to be u_match_exempt() by arthur2 <cybah> */
 /* 28 - 31 */
 /* *HOLE* channels_funcs[28] used to be u_setsticky_exempt() <cybah> */
@@ -162,6 +162,10 @@ inline static int chanset_unlink(struct chanset_t *chan);
 /* 44 - 47 */
 #define expired_mask ((int (*)(struct chanset_t *, char *))channels_funcs[44])
 #define remove_channel ((void (*)(struct chanset_t *))channels_funcs[45])
+#define global_ban_time (*(int *)(channels_funcs[46]))
+#define global_exempt_time (*(int *)(channels_funcs[47]))
+/* 48 - 51 */
+#define global_invite_time (*(int *)(channels_funcs[48]))
 
 #endif				/* MAKING_CHANNELS */
 

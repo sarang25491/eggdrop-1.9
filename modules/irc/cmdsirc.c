@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: cmdsirc.c,v 1.11 2002/06/18 06:12:31 guppy Exp $";
+static const char rcsid[] = "$Id: cmdsirc.c,v 1.12 2002/10/10 05:50:12 wcc Exp $";
 #endif
 */
 
@@ -188,63 +188,62 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
   if (match_my_nick(nick)) {
     dprintf(idx, _("I'm not going to kickban myself.\n"));
     return;
-  } else {
-    m = ismember(chan, nick);
-    if (!m)
-      dprintf(idx, _("%1$s is not on %2$s\n"), nick, chan->dname);
-    else {
-      snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
-      u = get_user_by_host(s);
-      get_user_flagrec(u, &victim, chan->dname);
-      if ((chan_op(victim) || (glob_op(victim) && !chan_deop(victim))) &&
-	  !(chan_master(user) || glob_master(user))) {
-	dprintf(idx, _("%s is a legal op.\n"), nick);
-	return;
-      }
-      if ((chan_master(victim) || glob_master(victim)) &&
-	  !(glob_owner(user) || chan_owner(user))) {
-	dprintf(idx, _("%1$s is a %2$s master.\n"), nick, chan->dname);
-	return;
-      }
-      if (glob_bot(victim) && !(glob_owner(victim) || chan_owner(victim))) {
-	dprintf(idx, _("%s is another channel bot!\n"), nick);
-	return;
-      }
-      if (use_exempts && is_perm_exempted(chan, s)) {
-	dprintf(idx, _("%s is permanently exempted!\n"), nick);
-	return;
-      }
-      if (m->flags & CHANOP)
-	add_mode(chan, '-', 'o', m->nick);
-      check_exemptlist(chan, s);
-      switch (bantype) {
-	case '@':
-	  s1 = strchr(s, '@');
-	  s1 -= 3;
-	  s1[0] = '*';
-	  s1[1] = '!';
-	  s1[2] = '*';
-	  break;
-	case '-':
-	  s1 = strchr(s, '-');
-	  s1[1] = '*';
-	  s1--;
-	  s1[0] = '*';
-	  break;
-	default:
-	  s1 = quickban(chan, m->userhost);
-	  break;
-      }
-      if (bantype == '@' || bantype == '-')
-	do_mask(chan, chan->channel.ban, s1, 'b');
-      if (!par[0])
-	par = _("requested");
-      dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick, par);
-      m->flags |= SENTKICK;
-      u_addmask('b', chan, s1, dcc[idx].nick, par, now + (60 * ban_time), 0);
-      dprintf(idx, _("Okay, done.\n"));
-    }
   }
+  m = ismember(chan, nick);
+  if (!m) {
+    dprintf(idx, _("%1$s is not on %2$s\n"), nick, chan->dname);
+    return;
+  }
+  snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
+  u = get_user_by_host(s);
+  get_user_flagrec(u, &victim, chan->dname);
+  if ((chan_op(victim) || (glob_op(victim) && !chan_deop(victim))) &&
+      !(chan_master(user) || glob_master(user))) {
+    dprintf(idx, _("%s is a legal op.\n"), nick);
+    return;
+  }
+  if ((chan_master(victim) || glob_master(victim)) &&
+      !(glob_owner(user) || chan_owner(user))) {
+    dprintf(idx, _("%1$s is a %2$s master.\n"), nick, chan->dname);
+    return;
+  }
+  if (glob_bot(victim) && !(glob_owner(victim) || chan_owner(victim))) {
+    dprintf(idx, _("%s is another channel bot!\n"), nick);
+    return;
+  }
+  if (use_exempts && is_perm_exempted(chan, s)) {
+    dprintf(idx, _("%s is permanently exempted!\n"), nick);
+    return;
+  }
+  if (m->flags & CHANOP)
+    add_mode(chan, '-', 'o', m->nick);
+  check_exemptlist(chan, s);
+  switch (bantype) {
+    case '@':
+      s1 = strchr(s, '@');
+      s1 -= 3;
+      s1[0] = '*';
+      s1[1] = '!';
+      s1[2] = '*';
+      break;
+    case '-':
+      s1 = strchr(s, '!');
+      s1[1] = '*';
+      s1--;
+      s1[0] = '*';
+      break;
+    default:
+      s1 = quickban(chan, m->userhost);
+      break;
+  }
+  if (bantype == '@' || bantype == '-')
+    do_mask(chan, chan->channel.ban, s1, 'b');
+  if (!par[0])
+    par = _("requested");
+  dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick, par);
+  m->flags |= SENTKICK;
+  u_addmask('b', chan, s1, dcc[idx].nick, par, now + (60 * chan->ban_time), 0);
+  dprintf(idx, _("Okay, done.\n"));
 }
 
 static void cmd_voice(struct userrec *u, int idx, char *par)

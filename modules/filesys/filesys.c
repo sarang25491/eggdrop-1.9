@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: filesys.c,v 1.15 2002/05/26 08:34:13 stdarg Exp $";
+static const char rcsid[] = "$Id: filesys.c,v 1.16 2002/10/10 05:50:11 wcc Exp $";
 #endif
 
 #include <fcntl.h>
@@ -858,20 +858,22 @@ static cmd_t myload[] =
 
 static void filesys_report(int idx, int details)
 {
-  if (dccdir[0]) {
-    dprintf(idx, _("    DCC file path: %s"), dccdir);
-    if (upload_to_cd)
-      dprintf(idx, _("\n        incoming: (go to the current dir)\n"));
-    else if (dccin[0])
-      dprintf(idx, _("\n        incoming: %s\n"), dccin);
-    else
-      dprintf(idx, _("    (no uploads)\n"));
-    if (dcc_users)
-      dprintf(idx, _("        max users is %d\n"), dcc_users);
-    if ((upload_to_cd) || (dccin[0]))
-      dprintf(idx, _("    DCC max file size: %dk\n"), dcc_maxsize);
-  } else
-    dprintf(idx, _("  (Filesystem module loaded, but no active dcc path.)\n"));
+  if (details) {
+    if (dccdir[0]) {
+      dprintf(idx, _("    DCC file path: %s"), dccdir);
+      if (upload_to_cd)
+        dprintf(idx, _("\n        incoming: (go to the current dir)\n"));
+      else if (dccin[0])
+        dprintf(idx, _("\n        incoming: %s\n"), dccin);
+      else
+        dprintf(idx, _("    (no uploads)\n"));
+      if (dcc_users)
+        dprintf(idx, _("        max users is %d\n"), dcc_users);
+      if ((upload_to_cd) || (dccin[0]))
+        dprintf(idx, _("    DCC max file size: %dk\n"), dcc_maxsize);
+    } else
+      dprintf(idx, _("  (Filesystem module loaded, but no active dcc path.)\n"));
+  }
 }
 
 static char *filesys_close()

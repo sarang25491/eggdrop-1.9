@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: cmdschan.c,v 1.12 2002/05/05 16:40:33 tothwolf Exp $";
+static const char rcsid[] = "$Id: cmdschan.c,v 1.13 2002/10/10 05:50:11 wcc Exp $";
 #endif
 */
 
@@ -733,7 +733,7 @@ static void cmd_pls_chan(struct userrec *u, int idx, char *par)
   struct chanset_t *chan;
 
   if (!par[0]) {
-    dprintf(idx, "Usage: +chan [%s]<channel>\n", CHANMETA);
+    dprintf(idx, "Usage: +chan [%s]<channel> [options]\n", CHANMETA);
     return;
   }
 
@@ -750,7 +750,7 @@ static void cmd_pls_chan(struct userrec *u, int idx, char *par)
   }
 
   if (tcl_channel_add(0, chname, par) == TCL_ERROR) /* drummer */
-    dprintf(idx, _("Invalid channel.\n"));
+    dprintf(idx, _("Invalid channel or channel options.\n"));
   else
     putlog(LOG_CMDS, "*", "#%s# +chan %s", dcc[idx].nick, chname);
 }
@@ -805,7 +805,7 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
   if (!par[0]) {
     chname = dcc[idx].u.chat->con_chan;
     if (chname[0] == '*') {
-      dprintf(idx, _("Your console channel is invalid\n"));
+      dprintf(idx, _("Your console channel is invalid.\n"));
       return;
     }
   } else {
@@ -836,6 +836,19 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
       dprintf(idx, "revenge-mode: %d\n", chan->revenge_mode);
     else
       dprintf(idx, "revenge-mode: 0\n");
+    if (chan->ban_time)
+      dprintf(idx, "ban-time: %d\n", chan->ban_time);
+    else
+      dprintf(idx, "ban-time: 0\n");
+    if (chan->exempt_time)
+      dprintf(idx, "exempt-time: %d\n", chan->exempt_time);
+    else
+      dprintf(idx, "exempt-time: 0\n");
+    if (chan->invite_time)
+      dprintf(idx, "invite-time: %d\n", chan->invite_time);
+    else
+      dprintf(idx, "invite-time: 0\n");
+
     dprintf(idx, "Other modes:\n");
     dprintf(idx, "     %cinactive       %cstatuslog      %csecret         %cshared\n",
 	    (chan->status & CHAN_INACTIVE) ? '+' : '-',

@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.15 2002/05/17 07:29:23 stdarg Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.16 2002/10/10 05:50:11 wcc Exp $";
 #endif
 
 #define MODULE_NAME "channels"
@@ -37,11 +37,6 @@ static eggdrop_t *egg = NULL;
 
 static int  setstatic;
 static int  use_info;
-static int  ban_time;
-static int  exempt_time;		/* If exempt_time = 0, never remove
-					   them */
-static int  invite_time;		/* If invite_time = 0, never remove
-					   them */
 static char chanfile[121];
 static int  chan_hack;
 static int  quiet_save;
@@ -52,6 +47,9 @@ static int global_revenge_mode;
 static int global_idle_kick;		/* Default idle-kick setting. */
 static int global_aop_min;
 static int global_aop_max;
+static int global_ban_time;
+static int global_exempt_time;
+static int global_invite_time;
 
 /* Global channel settings (drummer/dw) */
 static char glob_chanset[512];
@@ -644,16 +642,16 @@ static void channels_report(int idx, int details)
 	if (chan->stopnethack_mode)
 	  dprintf(idx, "      stopnethack-mode %d\n",
 		  chan->stopnethack_mode);
-        if (chan->revenge_mode)
-          dprintf(idx, "      revenge-mode %d\n",
+	if (chan->revenge_mode)
+	  dprintf(idx, "      revenge-mode %d\n",
                   chan->revenge_mode);
+	if (details) {
+		dprintf(idx, "    Bans last %d mins.\n", chan->ban_time);
+		dprintf(idx, "    Exemptions last %d mins.\n", chan->exempt_time);
+		dprintf(idx, "    Invitations last %d mins.\n", chan->invite_time);
+	}
       }
     }
-  }
-  if (details) {
-    dprintf(idx, "    Bans last %d mins.\n", ban_time);
-    dprintf(idx, "    Exemptions last %d mins.\n", exempt_time);
-    dprintf(idx, "    Invitations last %d mins.\n", invite_time);
   }
 }
 
@@ -701,13 +699,13 @@ static tcl_ints my_tcl_ints[] =
 {
   {"share_greet",		NULL,				0},
   {"use_info",			&use_info,			0},
-  {"ban_time",			&ban_time,			0},
-  {"exempt_time",		&exempt_time,			0},
-  {"invite_time",		&invite_time,			0},
   {"quiet_save",		&quiet_save,			0},
   {"global_stopnethack_mode",	&global_stopnethack_mode,	0},
   {"global_revenge_mode",       &global_revenge_mode,           0},
   {"global_idle_kick",		&global_idle_kick,		0},
+  {"global_ban_time",		&global_ban_time,		0},
+  {"global_exempt_time",	&global_exempt_time,		0},
+  {"global_invite_time",	&global_invite_time,		0},
   {NULL,			NULL,				0}
 };
 
@@ -783,7 +781,7 @@ static Function channels_table[] =
   (Function) clear_channel,
   /* 16 - 19 */
   (Function) set_handle_laston,
-  (Function) & ban_time,
+  (Function) NULL,
   (Function) & use_info,
   (Function) get_handle_chaninfo,
   /* 20 - 23 */
@@ -792,9 +790,9 @@ static Function channels_table[] =
   (Function) add_chanrec_by_handle,
   (Function) NULL, /* [23] used to be isexempted() <cybah> */
   /* 24 - 27 */
-  (Function) & exempt_time,
+  (Function) NULL,
   (Function) NULL, /* [25] used to be isinvited() <cybah> */
-  (Function) & invite_time,
+  (Function) NULL,
   (Function) NULL,
   /* 28 - 31 */
   (Function) NULL, /* [28] used to be u_setsticky_exempt() <cybah> */
@@ -819,6 +817,10 @@ static Function channels_table[] =
   /* 44 - 47 */
   (Function) expired_mask,
   (Function) remove_channel,
+  (Function) & global_ban_time,
+  (Function) & global_exempt_time,
+  /* 48 - 51 */
+  (Function) & global_invite_time
 };
 
 char *start(eggdrop_t *eggdrop)
@@ -840,9 +842,6 @@ char *start(eggdrop_t *eggdrop)
   global_aop_max = 30;
   setstatic = 0;
   use_info = 1;
-  ban_time = 60;
-  exempt_time = 0;
-  invite_time = 0;
   strcpy(chanfile, "chanfile");
   chan_hack = 0;
   quiet_save = 0;
@@ -850,13 +849,35 @@ char *start(eggdrop_t *eggdrop)
   udef = NULL;
   global_stopnethack_mode = 0;
   global_revenge_mode = 1;
-  strcpy(glob_chanset, "\
--enforcebans +dynamicbans +userbans -autoop -bitch +greet \
-+protectops +statuslog -revenge -secret -autovoice +cycle \
-+dontkickops -inactive -protectfriends +shared \
-+userexempts +dynamicexempts +userinvites +dynamicinvites -revengebot \
-+honor-global-bans +honor-global-exempts +honor-global-invites \
--nodesynch" /* Do not remove this extra space: */ " ");
+  global_ban_time = 120;
+  global_exempt_time = 60;
+  global_invite_time = 60;
+  strcpy(glob_chanset,
+         "-enforcebans "
+	 "+dynamicbans "
+	 "+userbans "
+	 "-autoop "
+	 "-bitch "
+	 "+greet "
+	 "+protectops "
+	 "+statuslog "
+	 "-revenge "
+	 "-secret "
+	 "-autovoice "
+	 "+cycle "
+	 "+dontkickops "
+	 "-inactive "
+	 "-protectfriends "
+	 "+shared "
+	 "+userexempts "
+	 "+dynamicexempts "
+	 "+userinvites "
+	 "+dynamicinvites "
+	 "-revengebot "
+	 "+honor-global-bans "
+         "+honor-global-exempts "
+         "+honor-global-invites "
+	 "-nodesynch ");
   module_register(MODULE_NAME, channels_table, 1, 0);
   if (!module_depend(MODULE_NAME, "eggdrop", 107, 0)) {
     module_undepend(MODULE_NAME);

@@ -18,7 +18,7 @@
 # Tothwolf  13Jun2001: updated/modified several commands
 # Hanno     28Sep2001: fixed testip
 #
-# $Id: alltools.tcl,v 1.11 2001/12/02 13:36:50 ite Exp $
+# $Id: alltools.tcl,v 1.12 2002/10/10 05:50:12 wcc Exp $
 #
 ########################################
 # Descriptions of avaliable commands:
@@ -155,28 +155,27 @@ proc putact {dest text} {
 #
 
 proc strlwr {string} {
-  return [string tolower $string]
+  string tolower $string
 }
 
 proc strupr {string} {
-  return [string toupper $string]
+  string toupper $string
 }
 
 proc strcmp {string1 string2} {
-  return [string compare $string1 $string2]
+  string compare $string1 $string2
 }
 
 proc stricmp {string1 string2} {
-  return [string compare [string tolower $string1] \
-          [string tolower $string2]]
+  string compare [string tolower $string1] [string tolower $string2]
 }
 
 proc strlen {string} {
-  return [string length $string]
+  string length $string
 }
 
 proc stridx {string index} {
-  return [string index $string $index]
+  string index $string $index
 }
 
 proc iscommand {command} {
@@ -205,7 +204,7 @@ proc utimerexists {command} {
 }
 
 proc inchain {bot} {
-  return [islinked $bot]
+  islinked $bot
 }
 
 proc randstring {length {chars abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789}} {
@@ -251,7 +250,7 @@ proc killdccbut {idx} {
 #
 
 proc iso {nick chan} {
-  return [matchattr [nick2hand $nick $chan] o|o $chan]
+  matchattr [nick2hand $nick $chan] o|o $chan
 }
 
 proc realtime {args} {

@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: tclchan.c,v 1.19 2002/06/01 08:13:26 stdarg Exp $";
+static const char rcsid[] = "$Id: tclchan.c,v 1.20 2002/10/10 05:50:11 wcc Exp $";
 #endif
 */
 
@@ -180,7 +180,9 @@ static int script_newsomething(void *type, char *chan_name, char *mask, char *cr
 		expire_time = atoi(lifetime);
 		if (expire_time) expire_time = expire_time * 60 + now;
 	}
-	else expire_time = ban_time * 60 + now;
+	expire_time = now + (60 * (((int) type == 'b') ? chan->ban_time :
+				(((int) type == 'e') ? chan->exempt_time :
+				chan->exempt_time)));
 
 	if (options && !strcasecmp(options, "sticky")) sticky = 1;
 
@@ -262,6 +264,10 @@ static int script_channel_get(script_var_t *retval, char *channel_name, char *se
 	else if (CHECK("flood-deop")) sprintf(s, "%d %d", chan->flood_deop_thr, chan->flood_deop_time);
 	else if (CHECK("flood-nick")) sprintf(s, "%d %d", chan->flood_nick_thr, chan->flood_nick_time);
 	else if (CHECK("aop-delay")) sprintf(s, "%d %d", chan->aop_min, chan->aop_max);
+	else if (CHECK("ban-time"))  sprintf(s, "%d", chan->ban_time);
+	else if (CHECK("exempt-time"))  sprintf(s, "%d", chan->exempt_time);
+	else if (CHECK("invite-time"))  sprintf(s, "%d", chan->invite_time);
+
 	else if (lookup_flag_by_name(normal_flag_map, setting, &flagval)) sprintf(s, "%d", chan->status & flagval);
 	else if (lookup_flag_by_name(stupid_ircnet_flag_map, setting, &flagval)) sprintf(s, "%d", chan->ircnet_status & flagval);
 	else {
@@ -395,6 +401,30 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
         return TCL_ERROR;
       }
       chan->revenge_mode = atoi(item[i]);
+    } else if (!strcmp(item[i], "ban-time")) {
+      i++;
+      if (i >= items) {
+        if (irp)
+          Tcl_AppendResult(irp, "channel ban-time needs argument", NULL);
+        return TCL_ERROR;
+      }
+      chan->ban_time = atoi(item[i]);
+    } else if (!strcmp(item[i], "exempt-time")) {
+      i++;
+      if (i >= items) {
+        if (irp)
+          Tcl_AppendResult(irp, "channel exempt-time needs argument", NULL);
+        return TCL_ERROR;
+      }
+      chan->exempt_time = atoi(item[i]);
+    } else if (!strcmp(item[i], "invite-time")) {
+      i++;
+      if (i >= items) {
+        if (irp)
+          Tcl_AppendResult(irp, "channel invite-time needs argument", NULL);
+        return TCL_ERROR;
+      }
+      chan->invite_time = atoi(item[i]);
     }
     else if (item[i][0] == '+' || item[i][0] == '-') {
       int flagval;
@@ -787,9 +817,16 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
   char buf[2048], buf2[256];
 
   if (!newname || !newname[0] || !strchr(CHANMETA, newname[0])) {
-    Tcl_AppendResult(irp, "invalid channel prefix", NULL);
+    if (irp)
+      Tcl_AppendResult(irp, "invalid channel prefix", NULL);
     return TCL_ERROR;
   }
+
+  if (strchr(newname, ',') != NULL) {
+    if (irp)
+      Tcl_AppendResult(irp, "invalid channel name", NULL);
+     return TCL_ERROR;
+   }
 
   convert_element(glob_chanmode, buf2);
   simple_sprintf(buf, "chanmode %s ", buf2);
@@ -822,6 +859,9 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
     chan->flood_nick_time = gfld_nick_time;
     chan->stopnethack_mode = global_stopnethack_mode;
     chan->revenge_mode = global_revenge_mode;
+    chan->ban_time = global_ban_time;
+    chan->exempt_time = global_exempt_time;
+    chan->invite_time = global_invite_time;
     chan->idle_kick = global_idle_kick;
     chan->aop_min = global_aop_min;
     chan->aop_max = global_aop_max;

@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: irc.c,v 1.22 2002/06/02 08:52:18 stdarg Exp $";
+static const char rcsid[] = "$Id: irc.c,v 1.23 2002/10/10 05:50:12 wcc Exp $";
 #endif
 
 #define MODULE_NAME "irc"
@@ -233,7 +233,7 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
     baduhost = strtok(NULL, "!");
     maskhost(baduhost, s1);
     simple_sprintf(s2, "(%s) %s", ct, reason);
-    u_addmask('b', chan, s1, botnetnick, s2, now + (60 * ban_time), 0);
+    u_addmask('b', chan, s1, botnetnick, s2, now + (60 * chan->ban_time), 0);
     if (!mevictim && me_op(chan)) {
       add_mode(chan, '+', 'b', s1);
       flush_mode(chan, QUICK);
@@ -551,9 +551,9 @@ static void check_expired_chanstuff()
   for (chan = chanset; chan; chan = chan->next) {
     if (channel_active(chan)) {
       if (me_op(chan)) {
-	if (channel_dynamicbans(chan) && ban_time)
+	if (channel_dynamicbans(chan) && chan->ban_time)
 	  for (b = chan->channel.ban; b->mask[0]; b = b->next)
-	    if (now - b->timer > 60 * ban_time &&
+	    if (now - b->timer > 60 * chan->ban_time &&
 		!u_sticky_mask(chan->bans, b->mask) &&
 		!u_sticky_mask(global_bans, b->mask) &&
 		expired_mask(chan, b->who)) {
@@ -564,9 +564,9 @@ static void check_expired_chanstuff()
 	      b->timer = now;
 	    }
 
-	if (use_exempts && channel_dynamicexempts(chan) && exempt_time)
+	if (use_exempts && channel_dynamicexempts(chan) && chan->exempt_time)
 	  for (e = chan->channel.exempt; e->mask[0]; e = e->next)
-	    if (now - e->timer > 60 * exempt_time &&
+	    if (now - e->timer > 60 * chan->exempt_time &&
 		!u_sticky_mask(chan->exempts, e->mask) &&
 		!u_sticky_mask(global_exempts, e->mask) &&
 		expired_mask(chan, e->who)) {
@@ -598,7 +598,7 @@ static void check_expired_chanstuff()
 	if (use_invites && channel_dynamicinvites(chan) &&
 	    invite_time && !(chan->channel.mode & CHANINV))
 	  for (b = chan->channel.invite; b->mask[0]; b = b->next)
-	    if (now - b->timer > 60 * invite_time &&
+	    if (now - b->timer > 60 * chan->invite_time &&
 		!u_sticky_mask(chan->invites, b->mask) &&
 		!u_sticky_mask(global_invites, b->mask) &&
 		expired_mask(chan, b->who)) {
@@ -750,6 +750,8 @@ static void flush_modes()
   struct chanset_t *chan;
   memberlist *m;
 
+  if (modesperline > 6)
+    modesperline = 6;
   for (chan = chanset; chan; chan = chan->next) {
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       if (m->delay && m->delay <= now) {
