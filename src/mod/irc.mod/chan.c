@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.70 2001/08/19 08:33:43 poptix Exp $
+ * $Id: chan.c,v 1.71 2001/08/19 09:08:03 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1821,7 +1821,6 @@ static int gotnick(char *from, char *msg)
   struct chanset_t *chan;
   struct userrec *u;
 
-  u = get_user_by_host(from);
   strcpy(uhost, from);
   nick = splitnick(&uhost);
   fixcolon(msg);
@@ -1862,6 +1861,8 @@ static int gotnick(char *from, char *msg)
       /* Any pending kick to the old nick is lost. Ernst 18/3/1998 */
       if (chan_sentkick(m))
 	m->flags &= ~SENTKICK;
+      u = get_user_by_host(from); /* make sure this is in the loop, someone could have changed the record
+                                     in an earlier iteration of the loop */
       check_tcl_nick(nick, uhost, u, chan->dname, msg);
     }
   }
