@@ -1,3 +1,14 @@
+2003-02-12 08:42  Will Buckner <wcc@techmonkeys.org>
+
+	* eggdrop.conf, modules/channels/channels.c,
+	modules/channels/cmdschan.c, modules/channels/flagmaps.c,
+	modules/channels/tclchan.c, modules/irc/chan.c,
+	modules/irc/cmdsirc.c, modules/irc/mode.c, src/chan.h, text/banner,
+	text/motd:
+
+	* Finished protection removal -- this is everything (will be added
+	  back in a module later).  
+
 2003-02-11 06:59  stdarg <stdarg@techmonkeys.org>
 
 	* src/: core_config.c, core_config.h, logfile.c:
