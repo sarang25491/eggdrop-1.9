@@ -3,7 +3,7 @@
  *   Tcl stubs for file system commands
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.26 2001/08/13 17:24:38 guppy Exp $
+ * $Id: tclmisc.c,v 1.27 2001/08/17 05:35:48 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -534,9 +534,9 @@ static int tcl_md5 STDVAR
   len = strlen(argv[1]);
 #endif
 
-  MD5Init(&md5context);
-  MD5Update(&md5context, (unsigned char *)string, len);
-  MD5Final(digest, &md5context);
+  MD5_Init(&md5context);
+  MD5_Update(&md5context, (unsigned char *)string, len);
+  MD5_Final(digest, &md5context);
   for(i=0; i<16; i++)
     sprintf(digest_string + (i*2), "%.2x", digest[i]);
   Tcl_AppendResult(irp, digest_string, NULL);
