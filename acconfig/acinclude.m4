@@ -1,7 +1,7 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.28 2003/03/08 07:17:29 tothwolf Exp $
+dnl $Id: acinclude.m4,v 1.29 2003/03/08 07:32:49 tothwolf Exp $
 dnl
 
 
@@ -1235,7 +1235,7 @@ then
 
 AC_PATH_PROG(perlcmd, perl)
 PERL_LDFLAGS=`$perlcmd -MExtUtils::Embed -e ldopts 2>/dev/null`
-if test "${PERL_LDFLAGS+set} != set
+if test "${PERL_LDFLAGS+set}" != set
 then
   AC_MSG_WARN([
 
