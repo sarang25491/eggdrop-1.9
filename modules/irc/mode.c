@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.5 2001/12/03 03:25:53 ite Exp $
+ * $Id: mode.c,v 1.6 2001/12/19 06:28:03 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -329,13 +329,13 @@ static void real_add_mode(struct chanset_t *chan,
   for (i = 0; i < modesperline; i++)
     if (chan->cmode[i].type)
       modes--;
-  if (include_lk && chan->limit != -1)
+  if (include_lk && chan->limit)
     modes--;
   if (include_lk && chan->rmkey)
     modes--;
   if (include_lk && chan->key)
     modes--;
-  if (modes < 0)
+  if (modes < 1)
     flush_mode(chan, NORMAL);		/* Full buffer! Flush modes. */
 }
 

@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.6 2001/12/19 06:25:08 guppy Exp $
+ * $Id: chan.c,v 1.7 2001/12/19 06:28:03 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -399,7 +399,7 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
   m = ismember(chan, nick);
   if (!m)
     return;
-  /* Check channel bans in first cycle and global bans
+  /* Check global bans in first cycle and channel bans
      in second cycle. */
   for (cycle = 0; cycle < 2; cycle++) {
     for (b = cycle ? chan->bans : global_bans; b; b = b->next) {
@@ -436,7 +436,7 @@ static void refresh_exempt(struct chanset_t *chan, char *user)
   masklist	*b;
   int		 cycle;
 
-  /* Check channel exempts in first cycle and global exempts
+  /* Check global exempts in first cycle and channel exempts
      in second cycle. */
   for (cycle = 0; cycle < 2; cycle++) {
     for (e = cycle ? chan->exempts : global_exempts; e; e = e->next) {
@@ -459,7 +459,7 @@ static void refresh_invite(struct chanset_t *chan, char *user)
   maskrec	*i;
   int		 cycle;
 
-  /* Check channel invites in first cycle and global invites
+  /* Check global invites in first cycle and channel invites
      in second cycle. */
   for (cycle = 0; cycle < 2; cycle++) {
     for (i = cycle ? chan->invites : global_invites; i; i = i->next) {
@@ -503,7 +503,7 @@ static void recheck_bans(struct chanset_t *chan)
   maskrec	*u;
   int		 cycle;
 
-  /* Check channel bans in first cycle and global bans
+  /* Check global bans in first cycle and channel bans
      in second cycle. */
   for (cycle = 0; cycle < 2; cycle++) {
     for (u = cycle ? chan->bans : global_bans; u; u = u->next)
@@ -524,7 +524,7 @@ static void recheck_exempts(struct chanset_t *chan)
   masklist	*b;
   int		 cycle;
 
-  /* Check channel exempts in first cycle and global exempts
+  /* Check global exempts in first cycle and channel exempts
      in second cycle. */
   for (cycle = 0; cycle < 2; cycle++) {
     for (e = cycle ? chan->exempts : global_exempts; e; e = e->next) {
@@ -551,7 +551,7 @@ static void recheck_invites(struct chanset_t *chan)
   maskrec	*ir;
   int		 cycle;
 
-  /* Check channel invites in first cycle and global invites
+  /* Check global invites in first cycle and channel invites
      in second cycle. */
   for (cycle = 0; cycle < 2; cycle++)  {
     for (ir = cycle ? chan->invites : global_invites; ir; ir = ir->next) {
@@ -730,7 +730,7 @@ static void check_this_member(struct chanset_t *chan, char *nick, struct flag_re
       /* ^ will use the ban comment */
     }
     /* are they +k ? */
-    if (chan_kick(*fr) || glob_kick(*fr)) {
+    if (!chan_sentkick(m) && (chan_kick(*fr) || glob_kick(*fr))) {
       check_exemptlist(chan, s);
       quickban(chan, m->userhost);
       p = get_user(&USERENTRY_COMMENT, m->user);
@@ -1043,10 +1043,8 @@ static int got315(char *from, char *ignore, char *msg)
  */
 static int got367(char *from, char *ignore, char *origmsg)
 {
-  char s[UHOSTLEN], *ban, *who, *chname, buf[511], *msg;
+  char *ban, *who, *chname, buf[511], *msg;
   struct chanset_t *chan;
-  struct userrec *u;
-  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
   strncpy(buf, origmsg, 510);
   buf[510] = 0;
@@ -1063,16 +1061,6 @@ static int got367(char *from, char *ignore, char *origmsg)
     newban(chan, ban, who);
   else
     newban(chan, ban, "existent");
-  simple_sprintf(s, "%s!%s", botname, botuserhost);
-  if (wild_match(ban, s))
-    add_mode(chan, '-', 'b', ban);
-  u = get_user_by_host(ban);
-  if (u) {		/* Why bother check no-user :) - of if Im not an op */
-    get_user_flagrec(u, &fr, chan->dname);
-    if (chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))
-      add_mode(chan, '-', 'b', ban);
-    /* These will be flushed by 368: end of ban info */
-  }
   return 0;
 }
 
@@ -1706,7 +1694,7 @@ static int gotjoin(char *from, char *ignore, char *chname)
 	      u_match_mask(chan->bans, from)) {
 	    refresh_ban_kick(chan, from, nick);
 	  /* Likewise for kick'ees */
-	  } else if (glob_kick(fr) || chan_kick(fr)) {
+	  } else if (!chan_sentkick(m) && (glob_kick(fr) || chan_kick(fr))) {
 	    check_exemptlist(chan, from);
 	    quickban(chan, from);
 	    p = get_user(&USERENTRY_COMMENT, m->user);
@@ -1895,11 +1883,12 @@ static int gotnick(char *from, char *ignore, char *msg)
       sprintf(s1, "%s!%s", msg, uhost);
       strcpy(m->nick, msg);
       detect_chan_flood(msg, uhost, from, chan, FLOOD_NICK, NULL);
-      /* Any pending kick to the old nick is lost. Ernst 18/3/1998 */
-      if (chan_sentkick(m)) {
-	m->flags &= ~SENTKICK;
+      /* don't fill the serverqueue with modes or kicks in a nickflood */
+      if (chan_sentkick(m) || chan_sentdeop(m) || chan_sentop(m) ||
+	  chan_sentdevoice(m) || chan_sentvoice(m))
 	m->flags |= STOPCHECK;
-      }
+      /* Any pending kick or mode to the old nick is lost. */
+	m->flags &= ~(SENTKICK | SENTDEOP | SENTOP | SENTVOICE | SENTDEVOICE);
       /* nick-ban or nick is +k or something? */
       if (!chan_stopcheck(m)) {
 	get_user_flagrec(m->user ? m->user : get_user_by_host(s1), &fr, chan->dname);
