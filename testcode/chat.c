@@ -64,11 +64,12 @@ static int server_read(int idx, int serversock, void *client_data)
 
 	socket_set_nonblock(newsock, 1);
 	newidx = sockbuf_new(newsock, 0);
-	sslmode_on(newidx);
+	sslmode_on(newidx, 1);
 	zipmode_on(newidx);
 	linemode_on(newidx);
 	sockbuf_set_handler(newidx, client_handler, NULL);
 
+	//sockbuf_write(newidx, "Hello!\n", 7);
 	printf("New connection %d\n", newidx);
 	snprintf(buf, 128, "New connection %d\n", newidx);
 	buflen = strlen(buf);

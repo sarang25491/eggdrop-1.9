@@ -361,7 +361,7 @@ int sockbuf_attach_filter(int idx, sockbuf_event_t filter, void *client_data)
 	sbuf->filter_client_data[sbuf->nfilters] = client_data;
 
 	sbuf->nfilters++;
-	return(0);
+	return(sbuf->nfilters);
 }
 
 int sockbuf_detach_filter(int idx, sockbuf_event_t filter, void *client_data)

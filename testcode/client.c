@@ -18,7 +18,7 @@ int server_connect(int idx, void *client_data)
 
 	if (!baa) {
 		printf("Connected to server!\n");
-		sslmode_on(idx);
+		sslmode_on(idx, 0);
 		zipmode_on(idx);
 		linemode_on(idx);
 		baa++;
