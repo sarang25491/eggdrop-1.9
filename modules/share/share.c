@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.1 2001/10/27 16:34:53 ite Exp $
+ * $Id: share.c,v 1.2 2001/12/02 11:54:39 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1169,12 +1169,6 @@ static void share_resyncq(int idx, char *par)
       dcc[idx].status |= STAT_SHARE;
       putlog(LOG_BOTS, "*", "Resync'd user file with %s", dcc[idx].nick);
       updatebot(-1, dcc[idx].nick, '+', 0);
-    } else if (bfl & BOT_PASSIVE) {
-      dprintf(idx, "s r!\n");
-      dcc[idx].status &= ~STAT_OFFERED;
-      dcc[idx].status |= STAT_SHARE;
-      updatebot(-1, dcc[idx].nick, '+', 0);
-      putlog(LOG_BOTS, "*", "Resyncing user file from %s", dcc[idx].nick);
     } else
       dprintf(idx, "s rn No resync buffer.\n");
   }
