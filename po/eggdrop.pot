@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2001-10-21 04:00-0500\n"
+"POT-Creation-Date: 2001-10-22 04:00-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -607,7 +607,7 @@ msgstr ""
 msgid "Rehashing."
 msgstr ""
 
-#: src/cmds.c:1079 src/mod/irc.mod/msgcmds.c:878 src/tcldcc.c:1003
+#: src/cmds.c:1079 src/mod/irc.mod/msgcmds.c:878 src/tcldcc.c:1002
 msgid "Rehashing..."
 msgstr ""
 
@@ -655,7 +655,7 @@ msgstr ""
 msgid "Error loading module:"
 msgstr ""
 
-#: src/cmds.c:2279 src/modules.c:658
+#: src/cmds.c:2279 src/modules.c:666
 #, c-format
 msgid "Module loaded: %-16s"
 msgstr ""
@@ -993,25 +993,25 @@ msgid ""
 msgstr ""
 
 #. FLOOD
-#: src/dccutil.c:457
+#: src/dccutil.c:462
 msgid "Goodbye"
 msgstr ""
 
-#: src/dccutil.c:463
+#: src/dccutil.c:468
 #, c-format
 msgid "%s has been forcibly removed for flooding.\n"
 msgstr ""
 
-#: src/dccutil.c:488 src/mod/filesys.mod/filesys.c:919
+#: src/dccutil.c:493 src/mod/filesys.mod/filesys.c:919
 msgid "-=- poof -=-\n"
 msgstr ""
 
-#: src/dccutil.c:489
+#: src/dccutil.c:494
 #, c-format
 msgid "Youve been booted from the %s by %s%s%s\n"
 msgstr ""
 
-#: src/dccutil.c:498
+#: src/dccutil.c:503
 #, c-format
 msgid "%s booted %s from the party line%s%s\n"
 msgstr ""
@@ -1064,6 +1064,21 @@ msgstr ""
 
 #: src/misc.c:1014 src/misc.c:1039
 msgid "No help available on that.\n"
+msgstr ""
+
+#: src/logfile.c:131
+msgid "Cycling logfiles"
+msgstr ""
+
+#: src/logfile.c:270 src/logfile.c:325
+#, c-format
+msgid "Last message repeated %d time(s).\n"
+msgstr ""
+
+#. It's too big.
+#: src/logfile.c:310
+#, c-format
+msgid "Cycling logfile %s, over max-logsize (%d kilobytes)"
 msgstr ""
 
 #: src/mod/assoc.mod/assoc.c:176
@@ -1147,8 +1162,31 @@ msgstr ""
 msgid "    %d assocs using %d bytes\n"
 msgstr ""
 
-#: src/mod/assoc.mod/assoc.c:406
+#: src/mod/assoc.mod/assoc.c:406 src/mod/blowfish.mod/blowfish.c:467
+#: src/mod/uptime.mod/uptime.c:237
 msgid "This module requires eggdrop1.7.0 or later"
+msgstr ""
+
+#: src/mod/blowfish.mod/blowfish.c:137
+msgid "    Blowfish encryption module:\n"
+msgstr ""
+
+#: src/mod/blowfish.mod/blowfish.c:138
+#, c-format
+msgid "    %d of %d boxes in use:"
+msgstr ""
+
+#: src/mod/blowfish.mod/blowfish.c:141
+#, c-format
+msgid " (age: %d)"
+msgstr ""
+
+#: src/mod/blowfish.mod/blowfish.c:426
+msgid "You can't unload an encryption module"
+msgstr ""
+
+#: src/mod/blowfish.mod/blowfish.c:456 src/modules.c:628 src/tclmisc.c:284
+msgid "Already loaded."
 msgstr ""
 
 #: src/mod/channels.mod/channels.c:555
@@ -1287,6 +1325,79 @@ msgstr ""
 
 #: src/mod/channels.mod/userchan.c:1403 src/mod/channels.mod/userchan.c:1421
 msgid "No longer inviteing"
+msgstr ""
+
+#: src/mod/compress.mod/compress.c:129
+#, c-format
+msgid "Failed to uncompress file `%s': not a file."
+msgstr ""
+
+#: src/mod/compress.mod/compress.c:135
+#, c-format
+msgid "Failed to uncompress file `%s': gzopen failed."
+msgstr ""
+
+#: src/mod/compress.mod/compress.c:142
+#, c-format
+msgid "Failed to uncompress file `%1$s': open failed: %2$s."
+msgstr ""
+
+#: src/mod/compress.mod/compress.c:150
+#, c-format
+msgid "Failed to uncompress file `%s': gzread failed."
+msgstr ""
+
+#: src/mod/compress.mod/compress.c:157
+#, c-format
+msgid "Failed to uncompress file `%1$s': fwrite failed: %2$s."
+msgstr ""
+
+#: src/mod/compress.mod/compress.c:163
+#, c-format
+msgid "Failed to uncompress file `%1$s': fclose failed: %2$s."
+msgstr ""
+
+#: src/mod/compress.mod/compress.c:168
+#, c-format
+msgid "Failed to uncompress file `%s': gzclose failed."
+msgstr ""
+
+#: src/mod/compress.mod/compress.c:231
+#, c-format
+msgid "Failed to compress file `%s': not a file."
+msgstr ""
+
+#: src/mod/compress.mod/compress.c:237
+#, c-format
+msgid "Failed to compress file `%1$s': open failed: %2$s."
+msgstr ""
+
+#: src/mod/compress.mod/compress.c:244
+#, c-format
+msgid "Failed to compress file `%s': gzopen failed."
+msgstr ""
+
+#: src/mod/compress.mod/compress.c:265
+#, c-format
+msgid "Failed to compress file `%1$s': fread failed: %2$s"
+msgstr ""
+
+#: src/mod/compress.mod/compress.c:272
+#, c-format
+msgid "Failed to compress file `%s': gzwrite failed."
+msgstr ""
+
+#: src/mod/compress.mod/compress.c:279
+#, c-format
+msgid "Failed to compress file `%s': gzclose failed."
+msgstr ""
+
+#: src/mod/compress.mod/compress.c:428
+msgid "This module needs eggdrop1.7.0 or later"
+msgstr ""
+
+#: src/mod/compress.mod/compress.c:433
+msgid "You need share module version 2.3 to use the compress module."
 msgstr ""
 
 #: src/mod/console.mod/console.c:193
@@ -2337,66 +2448,66 @@ msgstr ""
 msgid "Failed connection; aborted userfile transfer."
 msgstr ""
 
-#: src/modules.c:105
+#: src/mod/uptime.mod/uptime.c:240
+msgid "You need the server module to use the uptime module."
+msgstr ""
+
+#: src/modules.c:107
 #, c-format
 msgid "User file rejected by %s: %s"
 msgstr ""
 
-#: src/modules.c:583
+#: src/modules.c:591
 #, c-format
 msgid "error during libtdl initialization: %s\n"
 msgstr ""
 
-#: src/modules.c:620 src/tclmisc.c:284
-msgid "Already loaded."
-msgstr ""
-
-#: src/modules.c:624
+#: src/modules.c:632
 msgid "Cant determine current directory."
 msgstr ""
 
-#: src/modules.c:638
+#: src/modules.c:646
 msgid "No start function defined."
 msgstr ""
 
-#: src/modules.c:642
+#: src/modules.c:650
 msgid "Malloc error"
 msgstr ""
 
-#: src/modules.c:674
+#: src/modules.c:682
 msgid "Needed by another module"
 msgstr ""
 
-#: src/modules.c:678
+#: src/modules.c:686
 msgid "No close function"
 msgstr ""
 
-#: src/modules.c:693
+#: src/modules.c:701
 #, c-format
 msgid "Module unloaded: %s"
 msgstr ""
 
-#: src/modules.c:699
+#: src/modules.c:707
 msgid "No such module"
 msgstr ""
 
-#: src/modules.c:918
+#: src/modules.c:926
 msgid "MODULES LOADED:\n"
 msgstr ""
 
-#: src/modules.c:943
+#: src/modules.c:951
 msgid "No such module.\n"
 msgstr ""
 
-#: src/tcldcc.c:804
+#: src/tcldcc.c:803
 msgid "No free sockets available."
 msgstr ""
 
-#: src/tcldcc.c:999 src/tcldcc.c:1016
+#: src/tcldcc.c:998 src/tcldcc.c:1015
 msgid "Userfile creation not necessary--skipping"
 msgstr ""
 
-#: src/tcldcc.c:1020
+#: src/tcldcc.c:1019
 msgid "Restarting..."
 msgstr ""
 
