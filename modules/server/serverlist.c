@@ -92,6 +92,30 @@ int server_del(int num)
 	return(0);
 }
 
+/* Return the index of the first matching server in the list. */
+int server_find(const char *host, int port, const char *pass)
+{
+	server_t *serv;
+	int i, found;
+
+	i = 0;
+	for (serv = server_list; serv; serv = serv->next) {
+		found = 0;
+		if (!host) found++;
+		else if (!strcasecmp(serv->host, host)) found++;
+
+		if (!port) found++;
+		else if (serv->port == port) found++;
+
+		if (!pass) found++;
+		else if (!strcasecmp(serv->pass, pass)) found++;
+
+		if (found == 3) return(i);
+		i++;
+	}
+	return(-1);
+}
+
 /* Clear out the server list. */
 int server_clear()
 {

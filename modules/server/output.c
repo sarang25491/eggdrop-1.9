@@ -1,5 +1,10 @@
+#if 0
 #define MAKING_SERVER
 #include "lib/eggdrop/module.h"
+#include "server.h"
+#include "output.h"
+#endif
+#include <eggdrop/eggdrop.h>
 #include "server.h"
 #include "output.h"
 
@@ -26,7 +31,6 @@ int printserv(int priority, const char *format, ...)
 
 //	if (priority == SERVER_NOQUEUE) {
 		sockbuf_write(current_server.idx, ptr, len);
-		putlog(LOG_MISC, "*", "sent '%s' to server", ptr);
 		if (len > 0 && ptr[len-1] != '\n') {
 			buf[0] = '\r';
 			buf[1] = '\n';

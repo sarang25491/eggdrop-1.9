@@ -209,7 +209,7 @@ int xml_read_node(xml_node_t *parent, char **data)
 {
 	xml_node_t node, *ptr;
 	int n;
-	char *end, *name;
+	char *end;
 
 	/* Read in any excess data and save it with the parent. */
 	read_text(parent, data);
@@ -311,7 +311,7 @@ int xml_read(xml_node_t *root, const char *fname)
 	char *data, *dataptr;
 
 	fp = fopen(fname, "r");
-	if (!fp) return(NULL);
+	if (!fp) return(-1);
 
 	fseek(fp, 0l, SEEK_END);
 	size = ftell(fp);
@@ -327,5 +327,5 @@ int xml_read(xml_node_t *root, const char *fname)
 		; /* empty */
 	}
 	free(data);
-	return(root);
+	return(0);
 }

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "xml.h"
 
 int xml_write_node(FILE *fp, xml_node_t *node, int indent)
@@ -42,7 +43,7 @@ int xml_write_node(FILE *fp, xml_node_t *node, int indent)
 	}
 	if (node->name) indent++;
 	for (i = 0; i < node->nchildren; i++) {
-		xml_write_node(fp, &node->children[i], indent);
+		xml_write_node(fp, node->children[i], indent);
 	}
 	if (node->name) {
 		fprintf(fp, "%s</%s>\n", tabs, node->name);

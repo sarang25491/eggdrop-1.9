@@ -6,6 +6,16 @@ typedef struct {
 	char *botname;	/* Name of the bot as seen by user. */
 	char *userfile;	/* File we store users in. */
 
+	/* Owner stuff. */
+	char *owner;
+	char *admin;
+
+	/* Paths. */
+	char *help_path;
+	char *temp_path;
+	char *text_path;
+	char *module_path;
+
 	/* Telnet stuff. */
 	char *telnet_vhost;
 	int telnet_port;

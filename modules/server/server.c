@@ -44,7 +44,7 @@ extern void dequeue_messages();
 extern bind_list_t my_new_raw_binds[];
 
 /* From dcc_cmd.c */
-extern cmd_t my_dcc_commands[];
+extern bind_list_t server_party_commands[];
 
 /* Every second, we want to
  * 1. See if we're ready to connect to the next server (cycle_delay == 0)
@@ -145,11 +145,8 @@ char *start(eggdrop_t *eggdrop)
 	/* Create our bind tables. */
 	server_binds_init();
 
-	for (cmd = my_dcc_commands; cmd->name; cmd++) {
-		putlog(LOG_MISC, "*", "Making bind: %s", cmd->name);
-	}
 	bind_add_list("newraw", my_new_raw_binds);
-	//add_builtins("dcc", my_dcc_commands);
+	bind_add_list("party", server_party_commands);
 
 	script_create_commands(server_script_cmds);
 	script_link_vars(server_script_vars);

@@ -22,13 +22,16 @@ typedef struct xml_node_b {
 	xml_attribute_t *attributes;
 	int nattributes;
 
-	struct xml_node_b *children;
+	struct xml_node_b *parent;
+	struct xml_node_b **children;
 	int nchildren;
 
 	int type; /* 0 = normal, 1 = decl (<?xml ... ?>), 2 = CDATA,
 			3 = comment, 4 = .. nothing yet. */
 
 	char *data;
+
+	void *client_data;
 } xml_node_t;
 
 //#ifdef AMP_CHARS
@@ -42,7 +45,8 @@ xml_node_t *xml_node_new();
 int xml_node_destroy(xml_node_t *node);
 xml_node_t *xml_node_add(xml_node_t *parent, xml_node_t *child);
 xml_node_t *xml_node_vlookup(xml_node_t *root, va_list args, int create);
-xml_node_t *xml_node_lookup(xml_node_t *root, ...);
+xml_node_t *xml_node_lookup(xml_node_t *root, int create, ...);
+char *xml_node_fullname(xml_node_t *thenode);
 int xml_node_get_int(int *value, xml_node_t *node, ...);
 int xml_node_get_str(char **str, xml_node_t *node, ...);
 int xml_node_set_int(int value, xml_node_t *node, ...);

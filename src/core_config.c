@@ -10,6 +10,16 @@ static config_var_t core_config_vars[] = {
 	{"botname", &core_config.botname, CONFIG_STRING},
 	{"userfile", &core_config.userfile, CONFIG_STRING},
 
+	/* The owner. */
+	{"owner", &core_config.owner, CONFIG_STRING},
+	{"admin", &core_config.admin, CONFIG_STRING},
+
+	/* Paths. */
+	{"help_path", &core_config.help_path, CONFIG_STRING},
+	{"temp_path", &core_config.temp_path, CONFIG_STRING},
+	{"text_path", &core_config.text_path, CONFIG_STRING},
+	{"module_path", &core_config.module_path, CONFIG_STRING},
+
 	/* Telnet stuff. */
 	{"telnet_vhost", &core_config.telnet_vhost, CONFIG_STRING},
 	{"telnet_port", &core_config.telnet_port, CONFIG_INT},
@@ -29,6 +39,8 @@ static config_var_t core_config_vars[] = {
 void core_config_init(const char *fname)
 {
 	/* Set default vals. */
+	memset(&core_config, 0, sizeof(core_config));
+
 	core_config.botname = strdup("eggdrop");
 	core_config.userfile = strdup("users.xml");
 
@@ -40,11 +52,11 @@ void core_config_init(const char *fname)
 
 	config_root = config_load(fname);
 	config_set_root("eggdrop", config_root);
-	config_get_table(core_config_vars, config_root, "eggdrop", 0, NULL);
+	config_link_table(core_config_vars, config_root, "eggdrop", 0, NULL);
 }
 
 void core_config_save()
 {
-	config_set_table(core_config_vars, config_root, "eggdrop", 0, NULL);
+	config_update_table(core_config_vars, config_root, "eggdrop", 0, NULL);
 	config_save(config_root, "_config.xml");
 }

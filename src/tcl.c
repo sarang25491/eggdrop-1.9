@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tcl.c,v 1.97 2003/02/10 00:09:08 wcc Exp $";
+static const char rcsid[] = "$Id: tcl.c,v 1.98 2003/02/16 11:15:06 stdarg Exp $";
 #endif
 
 #include <stdlib.h>		/* getenv()				*/
@@ -63,6 +63,8 @@ extern char botuser[], motdfile[], admin[], userfile[], firewall[], helpdir[],
             textdir[], myip6[], pid_file[];
 	
 extern struct dcc_t *dcc;
+
+extern script_command_t script_dcc_cmds[];
 
 int protect_readonly = 0; /* turn on/off readonly protection */
 char whois_fields[1025] = ""; /* fields to display in a .whois */
@@ -330,9 +332,6 @@ void kill_tcl()
 }
 
 extern tcl_cmds tcldcc_cmds[];
-extern script_command_t script_dcc_cmds[];
-extern script_command_t script_user_cmds[];
-extern script_command_t script_misc_cmds[];
 
 /* Not going through Tcl's crazy main() system (what on earth was he
  * smoking?!) so we gotta initialize the Tcl interpreter
@@ -381,11 +380,7 @@ void init_tcl(int argc, char **argv)
 
   /* Initialize traces */
   init_traces();
-
-  /* Add new commands */
   script_create_commands(script_dcc_cmds);
-  script_create_commands(script_user_cmds);
-  script_create_commands(script_misc_cmds);
 }
 
 void do_tcl(char *whatzit, char *script)

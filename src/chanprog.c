@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: chanprog.c,v 1.58 2003/02/15 05:04:58 wcc Exp $";
+static const char rcsid[] = "$Id: chanprog.c,v 1.59 2003/02/16 11:15:06 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -402,13 +402,11 @@ void rehash()
  */
 int isowner(char *name)
 {
-  char *pa, *pb;
+  char *pa, *pb, *owner;
   char nl, pl;
 
-  if (!owner || !*owner)
-    return (0);
-  if (!name || !*name)
-    return (0);
+  owner = core_config.owner;
+  if (!owner || !*owner || !name || !*name) return(0);
   nl = strlen(name);
   pa = owner;
   pb = owner;

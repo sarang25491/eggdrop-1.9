@@ -60,22 +60,22 @@ int user_init()
 int user_load(const char *fname)
 {
 	int i, j, k, uid;
-	xml_node_t root, *user_node, *setting_node;
+	xml_node_t *root, *user_node, *setting_node;
 	user_setting_t *setting;
 	char *handle, *ircmask, *chan, *name, *value, *flag_str;
 	user_t *u;
 
-	memset(&root, 0, sizeof(root));
-	xml_read(&root, fname);
-	if (xml_node_get_int(&uid, &root, "next_uid", 0, 0)) {
-		xml_node_destroy(&root);
+	root = xml_node_new();
+	xml_read(root, fname);
+	if (xml_node_get_int(&uid, root, "next_uid", 0, 0)) {
+		xml_node_destroy(root);
 		return(0);
 	}
 	g_uid = uid;
-	xml_node_get_int(&uid_wraparound, &root, "uid_wraparound", 0, 0);
-	for (i = 0; i < root.nchildren; i++) {
-		if (strcasecmp(root.children[i].name, "user")) continue;
-		user_node = root.children+i;
+	xml_node_get_int(&uid_wraparound, root, "uid_wraparound", 0, 0);
+	for (i = 0; i < root->nchildren; i++) {
+		user_node = root->children[i];
+		if (strcasecmp(user_node->name, "user")) continue;
 
 		/* The only required user fields are 'handle' and 'uid'. */
 		xml_node_get_str(&handle, user_node, "handle", 0, 0);
@@ -95,7 +95,7 @@ int user_load(const char *fname)
 
 		/* Settings. */
 		for (j = 0; ; j++) {
-			setting_node = xml_node_lookup(user_node, "setting", j, 0);
+			setting_node = xml_node_lookup(user_node, 0, "setting", j, 0);
 			if (!setting_node) break;
 			u->settings = realloc(u->settings, sizeof(*u->settings) * (j+1));
 			u->nsettings++;
@@ -126,7 +126,7 @@ int user_load(const char *fname)
 			u->nsettings = 1;
 		}
 	}
-	xml_node_destroy(&root);
+	xml_node_destroy(root);
 	return(0);
 }
 
@@ -162,19 +162,19 @@ static int save_walker(const void *key, void *dataptr, void *param)
 
 int user_save(const char *fname)
 {
-	xml_node_t root;
+	xml_node_t *root;
 	FILE *fp;
 
-	memset(&root, 0, sizeof(root));
-	xml_node_set_int(g_uid, &root, "next_uid", 0, 0);
-	xml_node_set_int(uid_wraparound, &root, "uid_wraparound", 0, 0);
+	root = xml_node_new();
+	xml_node_set_int(g_uid, root, "next_uid", 0, 0);
+	xml_node_set_int(uid_wraparound, root, "uid_wraparound", 0, 0);
 	hash_table_walk(uid_ht, save_walker, &root);
 	if (!fname) fname = "users.xml";
 	fp = fopen(fname, "w");
 	if (!fp) return(-1);
-	xml_write_node(fp, &root, 0);
+	xml_write_node(fp, root, 0);
 	fclose(fp);
-	xml_node_destroy(&root);
+	xml_node_destroy(root);
 	return(0);
 }
 

@@ -3,8 +3,14 @@
 #include <string.h>
 #include <stdarg.h>
 
-#include "xml.h"
-#include "eggconfig.h"
+#include <eggdrop/eggdrop.h>
+
+/* Config bind tables. */
+static bind_table_t *BT_config_str = NULL;
+
+/* Keep track of whether we're in a nested get/set, so that we don't
+ * trigger binds when we shouldn't. */
+static int gconfig_level = 0;
 
 typedef struct {
 	char *handle;
@@ -16,6 +22,7 @@ int nroots = 0;
 
 int config_init()
 {
+	BT_config_str = bind_table_add("config_str", 2, "ss", MATCH_MASK, BIND_STACKABLE);
 	return(0);
 }
 
@@ -138,8 +145,7 @@ int config_get_str(char **strptr, void *config_root, ...)
 	va_end(args);
 
 	if (!xml_node_get_str(&str, root, NULL)) {
-		if (*strptr) free(*strptr);
-		*strptr = strdup(str);
+		str_redup(strptr, str);
 	}
 	else {
 		str = *strptr;
@@ -164,18 +170,39 @@ int config_set_str(char *strval, void *config_root, ...)
 {
 	va_list args;
 	xml_node_t *root = config_root;
+	config_var_t *var;
+
+	gconfig_level++;
 
 	va_start(args, config_root);
 	root = xml_node_vlookup(root, args, 1);
 	va_end(args);
 
-	return xml_node_set_str(strval, root, NULL);
+	if (gconfig_level == 1) {
+		char *name;
+		int r;
+
+		name = xml_node_fullname(root);
+		r = bind_check(BT_config_str, name, name, strval);
+		free(name);
+		if (r & BIND_RET_BREAK) {
+			gconfig_level--;
+			return(-1);
+		}
+	}
+	var = root->client_data;
+	if (var) str_redup(var->ptr, strval);
+	xml_node_set_str(strval, root, NULL);
+	gconfig_level--;
+	return(0);
 }
 
-int config_get_table(config_var_t *table, void *config_root, ...)
+int config_link_table(config_var_t *table, void *config_root, ...)
 {
-	xml_node_t *root = config_root;
+	xml_node_t *node, *root = config_root;
 	va_list args;
+
+	gconfig_level++;
 
 	va_start(args, config_root);
 	root = xml_node_vlookup(root, args, 1);
@@ -184,16 +211,45 @@ int config_get_table(config_var_t *table, void *config_root, ...)
 	if (!root) return(-1);
 
 	while (table->name) {
+		node = xml_node_lookup(root, 1, table->name, 0, NULL);
+		node->client_data = table;
 		if (table->type == CONFIG_INT) config_get_int(table->ptr, root, table->name, 0, NULL);
 		else if (table->type == CONFIG_STRING) config_get_str(table->ptr, root, table->name, 0, NULL);
 		table++;
 	}
+
+	gconfig_level--;
 	return(0);
 }
 
-int config_set_table(config_var_t *table, void *config_root, ...)
+int config_update_table(config_var_t *table, void *config_root, ...)
 {
-	xml_node_t *root = config_root;
+	xml_node_t *node, *root = config_root;
+	va_list args;
+
+	gconfig_level++;
+
+	va_start(args, config_root);
+	root = xml_node_vlookup(root, args, 1);
+	va_end(args);
+
+	if (!root) return(-1);
+
+	while (table->name) {
+		node = xml_node_lookup(root, 1, table->name, 0, NULL);
+		node->client_data = table;
+		if (table->type == CONFIG_INT) config_set_int(*(int *)table->ptr, root, table->name, 0, NULL);
+		else if (table->type == CONFIG_STRING) config_set_str(*(char **)table->ptr, root, table->name, 0, NULL);
+		table++;
+	}
+
+	gconfig_level--;
+	return(0);
+}
+
+int config_unlink_table(config_var_t *table, void *config_root, ...)
+{
+	xml_node_t *node, *root = config_root;
 	va_list args;
 
 	va_start(args, config_root);
@@ -203,8 +259,8 @@ int config_set_table(config_var_t *table, void *config_root, ...)
 	if (!root) return(-1);
 
 	while (table->name) {
-		if (table->type == CONFIG_INT) config_set_int(*(int *)table->ptr, root, table->name, 0, NULL);
-		else if (table->type == CONFIG_STRING) config_set_str(*(char **)table->ptr, root, table->name, 0, NULL);
+		node = xml_node_lookup(root, 0, table->name, 0, NULL);
+		if (node) xml_node_destroy(node);
 		table++;
 	}
 	return(0);

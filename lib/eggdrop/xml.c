@@ -29,6 +29,14 @@ int xml_node_destroy(xml_node_t *node)
 {
 	int i;
 
+	if (node->parent) {
+		xml_node_t *parent = node->parent;
+		for (i = 0; i < parent->nchildren; i++) {
+			if (parent->children[i] == node) break;
+		}
+		memmove(parent->children+i, parent->children+i+1, sizeof(node) * (parent->nchildren-i-1));
+		parent->nchildren--;
+	}
 	if (node->text) free(node->text);
 	for (i = 0; i < node->nattributes; i++) {
 		if (node->attributes[i].name) free(node->attributes[i].name);
@@ -36,19 +44,26 @@ int xml_node_destroy(xml_node_t *node)
 	}
 	if (node->attributes) free(node->attributes);
 	for (i = 0; i < node->nchildren; i++) {
-		xml_node_destroy(node->children+i);
+		node->children[i]->parent = NULL;
+		xml_node_destroy(node->children[i]);
 	}
 	if (node->children) free(node->children);
+	free(node);
 	return(0);
 }
 
 /* Append a node to another node's children. */
 xml_node_t *xml_node_add(xml_node_t *parent, xml_node_t *child)
 {
-	parent->children = (xml_node_t *)realloc(parent->children, sizeof(*child) * (parent->nchildren+1));
-	memcpy(parent->children+parent->nchildren, child, sizeof(*child));
+	xml_node_t *newnode;
+
+	newnode = malloc(sizeof(*newnode));
+	memcpy(newnode, child, sizeof(*child));
+	newnode->parent = parent;
+	parent->children = realloc(parent->children, sizeof(child) * (parent->nchildren+1));
+	parent->children[parent->nchildren] = newnode;
 	parent->nchildren++;
-	return(parent->children+(parent->nchildren-1));
+	return(newnode);
 }
 
 xml_node_t *xml_node_vlookup(xml_node_t *root, va_list args, int create)
@@ -63,9 +78,9 @@ xml_node_t *xml_node_vlookup(xml_node_t *root, va_list args, int create)
 		index = va_arg(args, int);
 		child = NULL;
 		for (i = 0; i < root->nchildren; i++) {
-			if (!strcasecmp(root->children[i].name, path)) {
+			if (!strcasecmp(root->children[i]->name, path)) {
 				if (index-- > 0) continue;
-				child = root->children+i;
+				child = root->children[i];
 				break;
 			}
 		}
@@ -79,15 +94,42 @@ xml_node_t *xml_node_vlookup(xml_node_t *root, va_list args, int create)
 	return(root);
 }
 
-xml_node_t *xml_node_lookup(xml_node_t *root, ...)
+xml_node_t *xml_node_lookup(xml_node_t *root, int create, ...)
 {
 	va_list args;
 	xml_node_t *node;
 
-	va_start(args, root);
-	node = xml_node_vlookup(root, args, 0);
+	va_start(args, create);
+	node = xml_node_vlookup(root, args, create);
 	va_end(args);
 	return(node);
+}
+
+char *xml_node_fullname(xml_node_t *thenode)
+{
+	xml_node_t *node;
+	char *name, *name2;
+	int len, total_len;
+
+	len = total_len = 0;
+	name = calloc(1, 1);
+	for (node = thenode; node; node = node->parent) {
+		if (!node->name) continue;
+
+		/* Length of name plus the dot. */
+		len = strlen(node->name) + 1;
+
+		/* Name plus the null. */
+		name2 = malloc(len + total_len + 1);
+
+		/* Create new name. */
+		sprintf(name2, "%s.%s", node->name, name);
+		free(name);
+		name = name2;
+		total_len += len;
+	}
+	if (total_len > 0) name[total_len-1] = 0;
+	return(name);
 }
 
 /* Just add an attribute to the end of a node's attribute list. */

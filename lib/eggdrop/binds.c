@@ -13,11 +13,6 @@ static int already_scheduled = 0;
 static void bind_table_really_del(bind_table_t *table);
 static void bind_entry_really_del(bind_table_t *table, bind_entry_t *entry);
 
-void binds_init(void)
-{
-	bind_table_list_head = NULL;
-}
-
 static int internal_bind_cleanup()
 {
 	bind_table_t *table, *next_table;
