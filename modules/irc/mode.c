@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.4 2001/12/02 11:43:30 ite Exp $
+ * $Id: mode.c,v 1.5 2001/12/03 03:25:53 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -431,8 +431,9 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
     if (chan_deop(victim) || (glob_deop(victim) && !chan_op(victim))) {
       m->flags |= FAKEOP;
       add_mode(chan, '-', 'o', who);
-    } else if (snm > 0 && snm < 7 && !(m->delay) &&
-	       !glob_exempt(victim) && !chan_exempt(victim)) {
+    } else if (snm > 0 && snm < 7 && !((channel_autoop(chan) || glob_autoop(victim) ||
+	       chan_autoop(victim)) && (chan_op(victim) || (glob_op(victim) &&
+	       !chan_deop(victim)))) && !glob_exempt(victim) && !chan_exempt(victim)) {
       if (snm == 5) snm = channel_bitch(chan) ? 1 : 3;
       if (snm == 6) snm = channel_bitch(chan) ? 4 : 2;
       if (chan_wasoptest(victim) || glob_wasoptest(victim) ||
