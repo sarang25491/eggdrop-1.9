@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.92 2001/10/19 05:26:32 guppy Exp $
+ * $Id: main.c,v 1.93 2001/10/20 08:04:22 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -708,6 +708,7 @@ int main(int argc, char **argv)
     for (i = 1; i < argc; i++)
       do_arg(argv[i]);
   printf("\n%s\n", version);
+  printf("   *** WARNING: Do NOT run this DEVELOPMENT version for any purpose other than testing.\n\n");
 
   /* Don't allow eggdrop to run as root */
   if (((int) getuid() == 0) || ((int) geteuid() == 0))
