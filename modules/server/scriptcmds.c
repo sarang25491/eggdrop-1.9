@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.26 2003/04/04 20:41:54 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.27 2003/04/07 07:20:11 stdarg Exp $";
 #endif
 */
 
@@ -56,7 +56,7 @@ static int script_isbotnick(char *nick)
 	return match_my_nick(nick);
 }
 
-static int script_match_nick(char *nick1, char *nick2)
+static int script_irccmp(char *nick1, char *nick2)
 {
 	return (current_server.strcmp)(nick1, nick2);
 }
@@ -330,7 +330,8 @@ static script_linked_var_t server_script_vars[] = {
 static script_command_t server_script_cmds[] = {
         {"", "jump", script_jump, NULL, 0, "i", "num", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_PASS_COUNT},
         {"", "isbotnick", script_isbotnick, NULL, 1, "s", "nick", SCRIPT_INTEGER, 0},
-	{"", "match_nick", script_match_nick, NULL, 2, "ss", "nick1 nick2", SCRIPT_INTEGER, 0},
+	{"", "irccmp", script_irccmp, NULL, 2, "ss", "str1 str2", SCRIPT_INTEGER, 0},
+	{"", "get_uhost", uhost_cache_lookup, NULL, 1, "s", "nick", SCRIPT_STRING, 0},
 	{"", "server_add", server_add, NULL, 1, "sis", "host ?port? ?pass?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
 	{"", "server_del", server_del, NULL, 1, "i", "server-num", SCRIPT_INTEGER, 0},
 	{"", "server_clear", server_clear, NULL, 0, "", "", SCRIPT_INTEGER, 0},
@@ -351,7 +352,6 @@ static script_command_t server_script_cmds[] = {
 	/* Channel commands. */
 	{"", "channel_list", script_channel_list, NULL, 0, "", "", 0, SCRIPT_PASS_RETVAL},
 	{"", "channel_members", script_channel_members, NULL, 1, "s", "channel", 0, SCRIPT_PASS_RETVAL},
-	{"", "channel_get_uhost", uhost_cache_lookup, NULL, 1, "s", "nick", SCRIPT_STRING, 0},
 	{"", "channel_topic", script_channel_topic, NULL, 1, "s", "channel", 0, SCRIPT_PASS_RETVAL},
 	{"", "channel_bans", script_channel_bans, NULL, 1, "s", "channel", 0, SCRIPT_PASS_RETVAL},
 	{"", "channel_mode", script_channel_mode, NULL, 1, "ss", "channel ?nick?", SCRIPT_STRING|SCRIPT_FREE, SCRIPT_VAR_ARGS},

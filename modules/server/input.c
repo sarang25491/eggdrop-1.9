@@ -65,8 +65,6 @@ int server_parse_input(char *text)
 /* 001: welcome to IRC */
 static int got001(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
-	char *fake;
-
 	current_server.registered = 1;
 
 	/* First arg is what server decided our nick is. */
@@ -74,12 +72,6 @@ static int got001(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 
 	/* Save the name the server calls itself. */
 	str_redup(&current_server.server_self, from_nick);
-
-	if (server_config.fake005 && server_config.fake005[0]) {
-		fake = strdup(server_config.fake005);
-		server_parse_input(fake);
-		free(fake);
-	}
 
 	check_bind_event("init-server");
 
@@ -173,6 +165,18 @@ static int got005(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 			value = paren+1;
 			str_redup(&current_server.whoprefix, value);
 		}
+	}
+	return(0);
+}
+
+static int got376(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
+{
+	char *fake;
+
+	if (server_config.fake005 && server_config.fake005[0]) {
+		fake = strdup(server_config.fake005);
+		server_parse_input(fake);
+		free(fake);
 	}
 	return(0);
 }
@@ -515,6 +519,7 @@ bind_list_t server_raw_binds[] = {
 	{"ERROR", goterror},
 	{"001", got001},
 	{"005", got005},
+	{"376", got376},
 	{"432",	got432},
 	{"433",	got433},
 	{"435", got435},

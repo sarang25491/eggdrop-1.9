@@ -22,8 +22,8 @@ int server_eof(void *client_data, int idx, int err, const char *errmsg)
 int server_connect(void *client_data, int idx, const char *peer_ip, int peer_port)
 {
 	printf("Connected to server (%s %d)!\n", peer_ip, peer_port);
-	sslmode_on(idx, 0); /* 0 means client, 1 means server */
-	zipmode_on(idx);
+	//sslmode_on(idx, 0); /* 0 means client, 1 means server */
+	//zipmode_on(idx);
 	linemode_on(idx);
 	return(0);
 }
@@ -81,7 +81,7 @@ main (int argc, char *argv[])
 	server_idx = sockbuf_new();
 	sockbuf_set_sock(server_idx, sock, SOCKBUF_CLIENT);
 	sockbuf_set_handler(server_idx, &server_event, NULL);
-	sslmode_init();
+	//sslmode_init();
 
 	stdin_idx = sockbuf_new();
 	socket_set_nonblock(0, 1);

@@ -141,6 +141,7 @@ static int dns_result(void *client_data, const char *ip, const char *host)
 {
 	telnet_session_t *session = client_data;
 
+	if (!host) host = ip;
 	session->host = strdup(host);
 	process_results(session);
 	return(0);

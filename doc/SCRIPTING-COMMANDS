@@ -265,13 +265,15 @@ accurate for Eggdrop v1.7.0.
 
 *** SERVER MODULE COMMANDS ***
 
-  match_nick <nick1> <nick2>
-    Description: Compare nick1 and nick2 case independently, as specified by
-      the current server.
-    Notes: Should also be used for channel name matching.
-    Returns: < 0 if nick1 < nick2
-             = 0 if nick1 = nick2
-	     > 0 if nick1 > nick2
+  irccmp <str1> <str2>
+    Description: Compare str1 and str2 case independently, as specified by
+      the current server. Typical uses are comparing nicks and channel names.
+    Returns: < 0 if str1 < str2
+             = 0 if str1 = str2
+	     > 0 if str1 > str2
+
+  get_uhost <nick>
+    Returns: the uhost for the given nick, or "" if unknown
 
   putserv [noqueue|quick|normal|slow] [next] <text>
     Description: sends text to the server through the specified queue. The
@@ -299,9 +301,6 @@ accurate for Eggdrop v1.7.0.
 
   channel_members <chan>
     Returns: the list of nicks on the given channel
-
-  channel_get_uhost <nick>
-    Returns: the uhost for the given nick, or "" if unknown
 
   channel_topic <chan>
     Returns: the topic, nick that set the topic, time topic was set

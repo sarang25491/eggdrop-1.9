@@ -47,6 +47,7 @@ void connect_to_next_server() {
 	str_redup(&current_server.server_self, serv->host);
 	str_redup(&current_server.pass, serv->pass);
 	current_server.strcmp = strcasecmp;
+	if (!server_config.fake005) server_config.fake005 = strdup(":fakeserver 005 fakenick MODES=3 MAXCHANNELS=10 MAXBANS=100 NICKLEN=9 TOPICLEN=307 KICKLEN=307 CHANTYPES=#& PREFIX=(ov)@+ NETWORK=fakenetwork CASEMAPPING=rfc1459 CHANMODES=b,k,l,imnprst :are available on this server");
 
 	if (serv->port) current_server.port = serv->port;
 	else current_server.port = server_config.default_port;
