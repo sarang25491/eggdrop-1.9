@@ -8,6 +8,8 @@ Makefile
 eggdrop
 lush.h
 EGGMOD.stamp
+.known_modules
+.modules
 *.so
 *.dll
 *.exe
