@@ -1,3 +1,18 @@
+2002-05-21 21:28  stdarg <stdarg@techmonkeys.org>
+
+	* modules/server/server.c:
+
+	
+	* Forgot to set the serverlist to null when it's cleared.  
+
+2002-05-21 21:23  stdarg <stdarg@techmonkeys.org>
+
+	* eggdrop.complete.conf, eggdrop.simple.conf,
+	modules/server/scriptcmds.c, modules/server/server.c:
+
+	
+	* Added server_add and server_clear, still need a server_del.  
+
 2002-05-19 04:41  stdarg <stdarg@techmonkeys.org>
 
 	* modules/filesys/filesys.c, modules/server/server.c, src/net.c:
