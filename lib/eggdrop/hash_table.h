@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: hash_table.h,v 1.3 2003/12/17 07:39:14 wcc Exp $
+ * $Id: hash_table.h,v 1.4 2004/03/01 22:58:32 stdarg Exp $
  */
 
 #ifndef _EGG_HASH_TABLE_H_
@@ -25,6 +25,7 @@
 #define HASH_TABLE_STRINGS	1
 #define HASH_TABLE_INTS		2
 #define HASH_TABLE_MIXED	4
+#define HASH_TABLE_NORESIZE	8
 
 /* Turns a key into an unsigned int. */
 typedef unsigned int (*hash_table_hash_alg)(const void *key);
@@ -52,13 +53,13 @@ typedef struct hash_table_b {
 	int cells_in_use;
 	hash_table_hash_alg hash;
 	hash_table_cmp_alg cmp;
-	hash_table_row_t rows[1];
+	hash_table_row_t *rows;
 } hash_table_t;
 
 hash_table_t *hash_table_create(hash_table_hash_alg alg, hash_table_cmp_alg cmp, int nrows, int flags);
 int hash_table_destroy(hash_table_t *ht);
-int hash_table_check_resize(hash_table_t **ht);
-int hash_table_resize(hash_table_t **ht, int nrows);
+int hash_table_check_resize(hash_table_t *ht);
+int hash_table_resize(hash_table_t *ht, int nrows);
 int hash_table_insert(hash_table_t *ht, const void *key, void *data);
 int hash_table_replace(hash_table_t *ht, const void *key, void *data);
 int hash_table_find(hash_table_t *ht, const void *key, void *dataptr);

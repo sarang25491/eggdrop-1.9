@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: input.c,v 1.29 2003/12/18 23:10:42 stdarg Exp $";
+static const char rcsid[] = "$Id: input.c,v 1.30 2004/03/01 22:58:32 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -137,11 +137,13 @@ static int got005(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 		}
 		else {
 			name = strdup(arg);
-			value = strdup("true");
+			value = NULL;
 		}
 
 		current_server.support[nsupport].name = name;
 		current_server.support[nsupport++].value = value;
+
+		if (!value) continue;
 
 		if (!strcasecmp(name, "chantypes")) {
 			str_redup(&current_server.chantypes, value);
@@ -156,13 +158,15 @@ static int got005(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 			char *comma;
 			int j;
 
+			memset(types, 0, sizeof(types));
 			for (j = 0; j < 3; j++) {
 				comma = strchr(value, ',');
-				if (comma) *comma = 0;
+				if (!comma) break;
 				strlcpy(types[j], value, sizeof types[j]);
 				if (comma) *comma = ',';
 				value = comma+1;
 			}
+			if (comma) strlcpy(types[3], value, sizeof types[3]);
 			str_redup(&current_server.type1modes, types[0]);
 			str_redup(&current_server.type2modes, types[1]);
 			str_redup(&current_server.type3modes, types[2]);

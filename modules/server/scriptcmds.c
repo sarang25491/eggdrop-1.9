@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.37 2004/02/28 06:00:21 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.38 2004/03/01 22:58:33 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -320,6 +320,24 @@ static int script_queue_insert(char *qname, char *next, int num, char *msg)
 	return(0);
 }
 
+/* 005 support */
+static int script_supports(const char *name)
+{
+	const char *value;
+
+	if (!server_support(name, &value)) {
+		/* Supported. */
+		return(1);
+	}
+	return(0);
+}
+
+static const char *script_support_val(const char *name)
+{
+	const char *value;
+	server_support(name, &value);
+	return value;
+}
 
 static script_linked_var_t server_script_vars[] = {
 	{"", "servidx", &current_server.idx, SCRIPT_INTEGER | SCRIPT_READONLY, NULL},
@@ -345,7 +363,8 @@ static script_command_t server_script_cmds[] = {
 	{"", "nick_clear", nick_clear, NULL, 0, "", "", SCRIPT_INTEGER, 0},
 
 	/* Server commands. */
-	{"", "server_support", server_support, NULL, 1, "s", "name", SCRIPT_STRING, 0},
+	{"", "server_supports", script_supports, NULL, 1, "s", "name", SCRIPT_INTEGER, 0},
+	{"", "server_support_val", script_support_val, NULL, 1, "s", "name", SCRIPT_STRING, 0},
         {"", "putserv", script_putserv, NULL, 1, "sss", "?queue? ?next? text", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT},
 
 	/* DCC commands. */

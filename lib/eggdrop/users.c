@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.18 2004/01/11 12:16:08 wcc Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.19 2004/03/01 22:58:32 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -237,8 +237,6 @@ static user_t *real_user_new(const char *handle, int uid)
 
 	hash_table_insert(handle_ht, u->handle, u);
 	hash_table_insert(uid_ht, (void *)u->uid, u);
-	hash_table_check_resize(&handle_ht);
-	hash_table_check_resize(&uid_ht);
 	nusers++;
 	return(u);
 }

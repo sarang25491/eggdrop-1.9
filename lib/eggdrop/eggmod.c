@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggmod.c,v 1.10 2003/12/19 01:08:58 stdarg Exp $";
+static const char rcsid[] = "$Id: eggmod.c,v 1.11 2004/03/01 22:58:32 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -102,7 +102,11 @@ int module_load(const char *name)
 	entry->refcount = 0;
 	module_list_head = entry;
 
-	if (startfunc(&entry->modinfo)) return(-4);
+	if (startfunc(&entry->modinfo)) {
+		module_list_head = module_list_head->next;
+		free(entry);
+		return(-4);
+	}
 
 	bind_check(BT_load, NULL, name, name);
 	putlog(LOG_MISC, "*", "Module loaded: %s", name);
@@ -142,12 +146,13 @@ egg_module_t *module_lookup(const char *name)
 	return(NULL);
 }
 
-void *module_get_api(const char *name)
+void *module_get_api(const char *name, int major, int minor)
 {
 	module_list_t *entry;
 
 	entry = find_module(name);
 	if (!entry) return(NULL);
+	entry->refcount++;
 	return entry->modinfo.module_api;
 }
 

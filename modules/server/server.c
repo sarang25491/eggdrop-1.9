@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: server.c,v 1.56 2004/01/11 10:54:32 stdarg Exp $";
+static const char rcsid[] = "$Id: server.c,v 1.57 2004/03/01 22:58:33 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -54,14 +54,18 @@ extern bind_list_t server_raw_binds[];
 extern bind_list_t server_party_commands[];
 
 /* Look up the information we get from 005. */
-char *server_support(const char *name)
+int server_support(const char *name, const char **value)
 {
 	int i;
 
 	for (i = 0; i < current_server.nsupport; i++) {
-		if (!strcasecmp(name, current_server.support[i].name)) return(current_server.support[i].value);
+		if (!strcasecmp(name, current_server.support[i].name)) {
+			*value = current_server.support[i].value;
+			return(0);
+		}
 	}
-	return(NULL);
+	*value = NULL;
+	return(-1);
 }
 
 /* Every second, we want to

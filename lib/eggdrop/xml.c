@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xml.c,v 1.7 2004/01/11 14:30:23 stdarg Exp $";
+static const char rcsid[] = "$Id: xml.c,v 1.8 2004/03/01 22:58:32 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -77,7 +77,8 @@ int xml_node_destroy(xml_node_t *node)
 /* Append a node to another node's children. */
 xml_node_t *xml_node_add(xml_node_t *parent, xml_node_t *child)
 {
-	xml_node_t *newnode;
+	xml_node_t *newnode, *node;
+	int i;
 
 	newnode = malloc(sizeof(*newnode));
 	memcpy(newnode, child, sizeof(*child));
@@ -85,6 +86,18 @@ xml_node_t *xml_node_add(xml_node_t *parent, xml_node_t *child)
 	parent->children = realloc(parent->children, sizeof(child) * (parent->nchildren+1));
 	parent->children[parent->nchildren] = newnode;
 	parent->nchildren++;
+	newnode->next = newnode->prev = NULL;
+
+	if (child->name) {
+		for (i = parent->nchildren-2; i >= 0; i--) {
+			node = parent->children[i];
+			if (node->name && !strcasecmp(node->name, newnode->name)) {
+				node->next = child;
+				newnode->prev = node;
+				break;
+			}
+		}
+	}
 	return(newnode);
 }
 

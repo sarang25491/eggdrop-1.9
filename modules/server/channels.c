@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.17 2004/02/28 06:00:21 stdarg Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.18 2004/03/01 22:58:32 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -194,7 +194,7 @@ char *uhost_cache_lookup(const char *nick)
 	return(NULL);
 }
 
-void uhost_cache_fillin(const char *nick, const char *uhost, int addref)
+void uhost_cache_addref(const char *nick, const char *uhost)
 {
 	char buf[64], *lnick;
 	uhost_cache_entry_t *cache = NULL;
@@ -203,16 +203,13 @@ void uhost_cache_fillin(const char *nick, const char *uhost, int addref)
 	make_lowercase(lnick);
 	hash_table_find(uhost_cache_ht, lnick, &cache);
 	if (!cache) {
-		cache = malloc(sizeof(*cache));
+		cache = calloc(1, sizeof(*cache));
 		cache->nick = strdup(nick);
 		make_lowercase(cache->nick);
-		cache->uhost = strdup(uhost);
-		cache->ref_count = 1;
+		if (uhost) cache->uhost = strdup(uhost);
 		hash_table_insert(uhost_cache_ht, cache->nick, cache);
 	}
-	else if (addref) {
-		cache->ref_count++;
-	}
+	cache->ref_count++;
 	if (lnick != buf) free(lnick);
 }
 
@@ -259,8 +256,9 @@ channel_member_t *channel_add_member(const char *chan_name, const char *nick, co
 	/* Do we need to fill in the uhost? */
 	if (uhost && !m->uhost) {
 		m->uhost = strdup(uhost);
-		uhost_cache_fillin(nick, uhost, 1);
 	}
+
+	uhost_cache_addref(nick, uhost);
 
 	return(m);
 }

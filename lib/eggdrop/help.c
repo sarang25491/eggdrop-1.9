@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: help.c,v 1.2 2004/01/11 14:30:23 stdarg Exp $";
+static const char rcsid[] = "$Id: help.c,v 1.3 2004/03/01 22:58:32 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -81,7 +81,6 @@ int help_load(const char *path, const char *fname)
 
 		/* Insert help entry into the hashtable. */
 		hash_table_insert(name_ht, h->name, h);
-		hash_table_check_resize(&name_ht);
 
 		nhelp++;
 

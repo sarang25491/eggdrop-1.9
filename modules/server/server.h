@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: server.h,v 1.15 2003/12/18 06:50:47 wcc Exp $
+ * $Id: server.h,v 1.16 2004/03/01 22:58:33 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_SERVER_SERVER_H_
@@ -80,6 +80,6 @@ extern server_config_t server_config;
 extern current_server_t current_server;
 
 /* And one lonely function, because he had nowhere else to fit. */
-extern char *server_support(const char *name);
+extern int server_support(const char *name, const char **value);
 
 #endif /* !_EGG_MOD_SERVER_SERVER_H_ */

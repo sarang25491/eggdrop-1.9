@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: xml.h,v 1.5 2003/12/17 07:39:14 wcc Exp $
+ * $Id: xml.h,v 1.6 2004/03/01 22:58:32 stdarg Exp $
  */
 
 #ifndef _EGG_XML_H_
@@ -29,6 +29,7 @@ typedef struct {
 } xml_attribute_t;
 
 typedef struct xml_node_b {
+	struct xml_node_b *next, *prev;
 	char *name;
 
 	char *text;

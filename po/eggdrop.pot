@@ -1,14 +1,13 @@
-# eggdrop.pot
-# Copyright (C) 2004 Eggheads Development Team
-# This file is distributed under the same license as the Eggdrop package.
-
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Eggheads Development Team
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-03-01 12:15-0600\n"
+"POT-Creation-Date: 2004-03-01 17:59-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -36,19 +35,16 @@ msgstr ""
 msgid "%s: option `%s' requires an argument\n"
 msgstr ""
 
-#. --option
 #: lib/compat/getopt.c:758
 #, c-format
 msgid "%s: unrecognized option `--%s'\n"
 msgstr ""
 
-#. +option or -option
 #: lib/compat/getopt.c:762
 #, c-format
 msgid "%s: unrecognized option `%c%s'\n"
 msgstr ""
 
-#. 1003.2 specifies the format of this message.
 #: lib/compat/getopt.c:788
 #, c-format
 msgid "%s: illegal option -- %c\n"
@@ -59,7 +55,6 @@ msgstr ""
 msgid "%s: invalid option -- %c\n"
 msgstr ""
 
-#. 1003.2 specifies the format of this message.
 #: lib/compat/getopt.c:821 lib/compat/getopt.c:951
 #, c-format
 msgid "%s: option requires an argument -- %c\n"
@@ -208,64 +203,59 @@ msgstr ""
 msgid "Syntax: .perl <perlexpression>"
 msgstr ""
 
-#: modules/server/input.c:251
+#: modules/server/input.c:255
 #, c-format
 msgid "Action: %s %s"
 msgstr ""
 
-#: modules/server/input.c:418
+#: modules/server/input.c:422
 #, c-format
 msgid "NICK IS INVALID: %s (keeping '%s')."
 msgstr ""
 
-#: modules/server/input.c:421
+#: modules/server/input.c:425
 #, c-format
 msgid "Server says my nickname ('%s') is invalid, trying new random nick."
 msgstr ""
 
-#. We are online and have a nickname, we'll keep it
-#: modules/server/input.c:437
+#: modules/server/input.c:441
 #, c-format
 msgid "Nick is in use: '%s' (keeping '%s')."
 msgstr ""
 
-#: modules/server/input.c:440
+#: modules/server/input.c:444
 #, c-format
 msgid "Nick is in use: '%s' (trying next one)."
 msgstr ""
 
-#: modules/server/input.c:453
+#: modules/server/input.c:457
 #, c-format
 msgid "Cannot change to banned nickname (%s on %s)."
 msgstr ""
 
-#: modules/server/input.c:463
+#: modules/server/input.c:467
 #, c-format
 msgid "Can't change nickname to %s. Is my nickname banned?"
 msgstr ""
 
-#: modules/server/input.c:476
+#: modules/server/input.c:480
 msgid "Nick change was too fast."
 msgstr ""
 
-#. Usually if we get this then we really messed up somewhere
-#. * or this is a non-standard server, so we log it and kill the socket
-#. * hoping the next server will work :) -poptix
-#.
-#: modules/server/input.c:486
+#: modules/server/input.c:490
 #, c-format
 msgid "%s says I'm not registered, trying next one."
 msgstr ""
 
-#: modules/server/input.c:487
+#: modules/server/input.c:491
 msgid "The server says I'm not registered, trying next one."
 msgstr ""
 
-#: modules/server/input.c:509
+#: modules/server/input.c:513
 msgid "Disconnecting from server."
 msgstr ""
 
-#: modules/server/input.c:510
+#: modules/server/input.c:514
 msgid "disconnecting due to error"
 msgstr ""
 
@@ -354,37 +344,36 @@ msgstr ""
 msgid "Action to %1$s: %2$s"
 msgstr ""
 
-#: modules/server/server.c:100
+#: modules/server/server.c:104
 #, c-format
 msgid "   Connecting to server %s/%d."
 msgstr ""
 
-#: modules/server/server.c:101
+#: modules/server/server.c:105
 #, c-format
 msgid "   Connecting to next server in %d seconds."
 msgstr ""
 
-#. First line, who we've connected to.
-#: modules/server/server.c:105
+#: modules/server/server.c:109
 #, c-format
 msgid "   Connected to %s/%d."
 msgstr ""
 
-#: modules/server/server.c:109
+#: modules/server/server.c:113
 #, c-format
 msgid "   Online as %s!%s@%s (%s)."
 msgstr ""
 
-#: modules/server/server.c:110
+#: modules/server/server.c:114
 #, c-format
 msgid "   Online as %s (still waiting for WHOIS result)."
 msgstr ""
 
-#: modules/server/server.c:112
+#: modules/server/server.c:116
 msgid "   Still logging in."
 msgstr ""
 
-#: modules/server/server.c:164
+#: modules/server/server.c:168
 msgid "server module unloading"
 msgstr ""
 
@@ -444,7 +433,6 @@ msgid "    Using Tcl version %d.%d (by header).\n"
 msgstr ""
 
 #: modules/tclscript/tclscript.c:708
-#, c-format
 msgid ""
 "return \"    Library: [info library]\\n    Reported version: [info "
 "tclversion]\\n    Reported patchlevel: [info patchlevel]\""
@@ -708,7 +696,6 @@ msgstr ""
 msgid "Last message repeated %d time(s).\n"
 msgstr ""
 
-#. It's too big.
 #: src/logfile.c:251
 #, c-format
 msgid "Cycling logfile %s: over max-logsize (%d kilobytes)."
@@ -742,7 +729,6 @@ msgid ""
 msgstr ""
 
 #: src/main.c:184
-#, c-format
 msgid ""
 "\n"
 "  -h, --help                 Print help and exit\n"
@@ -755,7 +741,6 @@ msgid ""
 "  FILE  optional config filename (default 'config.xml')\n"
 msgstr ""
 
-#. bug: option not considered.
 #: src/main.c:251
 #, c-format
 msgid "%s: option unknown: %c\n"

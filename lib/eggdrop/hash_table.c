@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: hash_table.c,v 1.6 2003/12/17 07:39:14 wcc Exp $";
+static const char rcsid[] = "$Id: hash_table.c,v 1.7 2004/03/01 22:58:32 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -34,13 +34,11 @@ static int my_int_cmp(const void *left, const void *right);
 hash_table_t *hash_table_create(hash_table_hash_alg alg, hash_table_cmp_alg cmp, int nrows, int flags)
 {
 	hash_table_t *ht;
-	int size;
 
 	if (nrows <= 0) nrows = 13; /* Give them a small table to start with. */
 
-	/* One of the rows is included in the struct definition. */
-	size = sizeof(*ht) + (nrows-1) * sizeof(hash_table_entry_t);
-	ht = calloc(1, size);
+	ht = calloc(1, sizeof(*ht));
+	ht->rows = calloc(nrows, sizeof(*ht->rows));
 
 	if (alg) ht->hash = alg;
 	else {
@@ -71,46 +69,44 @@ int hash_table_destroy(hash_table_t *ht)
 			free(entry);
 		}
 	}
+	free(ht->rows);
 	free(ht);
 
 	return(0);
 }
 
-int hash_table_check_resize(hash_table_t **ht)
+int hash_table_check_resize(hash_table_t *ht)
 {
-	if ((*ht)->cells_in_use / (*ht)->max_rows > 100) {
-		hash_table_resize(ht, (*ht)->max_rows * 3);
+	if (ht->cells_in_use / ht->max_rows > 100) {
+		hash_table_resize(ht, ht->max_rows * 3);
 	}
 	return(0);
 }
 
-int hash_table_resize(hash_table_t **ht, int nrows)
+int hash_table_resize(hash_table_t *ht, int nrows)
 {
 	int i, newidx;
-	hash_table_t *newht, *oldht;
-	hash_table_row_t *row, *newrow;
+	hash_table_row_t *oldrow, *newrows;
 	hash_table_entry_t *entry, *next;
 
-	/* First allocate a new hash table. */
-	oldht = *ht;
-	newht = hash_table_create(oldht->hash, oldht->cmp, nrows, oldht->flags);
+	/* First allocate the new rows. */
+	newrows = calloc(nrows, sizeof(*newrows));
 
 	/* Now populate it with the old entries. */
-	for (i = 0; i < oldht->max_rows; i++) {
-		row = oldht->rows+i;
-		for (entry = row->head; entry; entry = next) {
+	for (i = 0; i < ht->max_rows; i++) {
+		oldrow = ht->rows+i;
+		for (entry = oldrow->head; entry; entry = next) {
 			next = entry->next;
 			newidx = entry->hash % nrows;
-			newrow = newht->rows+newidx;
-			entry->next = newrow->head;
-			newrow->head = entry;
-			newrow->len++;
+			entry->next = newrows[newidx].head;
+			newrows[newidx].head = entry;
+			newrows[newidx].len++;
 		}
 	}
 
-	newht->cells_in_use = oldht->cells_in_use;
-	free(oldht);
-	*ht = newht;
+	free(ht->rows);
+	ht->rows = newrows;
+	ht->max_rows = nrows;
 	return(0);
 }
 
@@ -138,6 +134,11 @@ int hash_table_insert(hash_table_t *ht, const void *key, void *data)
 	/* Update stats. */
 	row->len++;
 	ht->cells_in_use++;
+
+	/* See if we need to update the table. */
+	if (!(ht->flags & HASH_TABLE_NORESIZE)) {
+		hash_table_check_resize(ht);
+	}
 
 	return(0);
 }
