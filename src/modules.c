@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.65 2001/10/11 18:24:01 tothwolf Exp $
+ * $Id: modules.c,v 1.66 2001/10/12 07:45:48 tothwolf Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -135,11 +135,11 @@ void (*shareout) () = null_func;
 void (*sharein) (int, char *) = null_share;
 void (*qserver) (int, char *, int) = (void (*)(int, char *, int)) null_func;
 void (*add_mode) () = null_func;
-int (*match_noterej) (struct userrec *, char *) = (int (*)(struct userrec *, char *)) false_func;
 int (*irccmp) (const char *, const char *) = _irccmp;
 int (*ircncmp) (const char *, const char *, int) = _ircncmp;
 int (*irctolower) (int) = _irctolower;
 int (*irctoupper) (int) = _irctoupper;
+int (*match_noterej) (struct userrec *, char *) = (int (*)(struct userrec *, char *)) false_func;
 
 module_entry *module_list;
 dependancy *dependancy_list = NULL;
@@ -800,7 +800,6 @@ void add_hook(int hook_num, Function func)
 	ircncmp = _ircncmp;
 	irctolower = _irctolower;
 	irctoupper = _irctoupper;
-
       }
       break;
     case HOOK_MATCH_NOTEREJ:

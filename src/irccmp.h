@@ -2,7 +2,7 @@
  * irccmp.h
  *   prototypes and macros for irccmp.c
  *
- * $Id: irccmp.h,v 1.1 2001/10/11 18:24:01 tothwolf Exp $
+ * $Id: irccmp.h,v 1.2 2001/10/12 07:45:48 tothwolf Exp $
  */
 /*
  * Copyright (C) 1990 Jarkko Oikarinen
@@ -25,6 +25,11 @@
 #ifndef _EGG_IRCCMP_H
 #define _EGG_IRCCMP_H
 
+
+extern int (*irccmp) (const char *, const char *);
+extern int (*ircncmp) (const char *, const char *, int);
+extern int (*irctoupper) (int);
+extern int (*irctolower) (int);
 
 /*
  * prototypes
