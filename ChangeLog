@@ -1,3 +1,18 @@
+2002-03-26 01:06  Federico Mennite <ite@techmonkeys.org>
+
+	* .cvsignore, lib/eggdrop/Makefile.am, lib/eggdrop/eggdrop.c,
+	lib/eggdrop/eggdrop.h, lib/eggdrop/registry.c,
+	lib/eggdrop/registry.h, lib/eggdrop/script.c, lib/eggdrop/script.h,
+	modules/perlscript/mod_iface.c, modules/perlscript/perlscript.c,
+	modules/tclscript/tclscript.c, src/Makefile.am, src/dcc.c,
+	src/dns.c, src/egg_timer.c, src/logfile.c, src/main.c, src/main.h,
+	src/script.c, src/script.h, src/script_api.h, src/tcl.c,
+	src/tcldcc.c, src/tclhash.c, src/tclmisc.c, src/tcluser.c:
+
+	* moved script API to libeggdrop (without using the bot context) 
+	* fixed a wrong function name in perlscript 
+	* do not use the bot context in registry for now 
+
 2002-03-22 16:01  Federico Mennite <ite@techmonkeys.org>
 
 	* lib/eggdrop/Makefile.am, lib/eggdrop/common.h,
