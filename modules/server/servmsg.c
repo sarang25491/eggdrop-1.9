@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: servmsg.c,v 1.24 2002/06/05 05:10:34 stdarg Exp $";
+static const char rcsid[] = "$Id: servmsg.c,v 1.25 2002/06/05 05:11:47 stdarg Exp $";
 #endif
 */
 
@@ -973,6 +973,7 @@ static cmd_t my_new_raw_binds[] = {
 	{"NOTICE", "", (Function) gotnotice, NULL},
 	{"WALLOPS", "", (Function) gotwall, NULL},
 	{"PONG", "", (Function) gotpong, NULL},
+	{"303", "", (Function) got303, NULL},
 	{0}
 };
 
@@ -980,7 +981,6 @@ static cmd_t my_raw_binds[] =
 {
   {"MODE",	"",	(Function) gotmode,		NULL},
   {"PING",	"",	(Function) gotping,		NULL},
-  {"303",	"",	(Function) got303,		NULL},
   {"432",	"",	(Function) got432,		NULL},
   {"433",	"",	(Function) got433,		NULL},
   {"437",	"",	(Function) got437,		NULL},
