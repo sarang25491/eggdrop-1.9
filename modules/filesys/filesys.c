@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.3 2001/12/10 03:22:29 guppy Exp $
+ * $Id: filesys.c,v 1.4 2001/12/29 21:39:26 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -877,7 +877,7 @@ static char *filesys_close()
   int i;
   bind_table_t *BT_ctcp;
 
-  putlog(LOG_MISC, "*", "Unloading filesystem, killing all filesystem connections..");
+  putlog(LOG_MISC, "*", "Unloading filesystem, killing all filesystem connections.");
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].type == &DCC_FILES) {
       dprintf(i, _("-=- poof -=-\n"));
@@ -930,7 +930,7 @@ char *start(Function * global_funcs)
   }
   if (!(transfer_funcs = module_depend(MODULE_NAME, "transfer", 2, 0))) {
     module_undepend(MODULE_NAME);
-    return "You need the transfer module to user the file system.";
+    return "You need the transfer module to use the filesystem module.";
   }
   add_tcl_commands(mytcls);
   add_tcl_strings(mystrings);

@@ -1,8 +1,8 @@
 /*
  * chancmds.c -- part of irc.mod
- *   handles commands direclty relating to channel interaction
+ *   handles commands directly relating to channel interaction
  *
- * $Id: cmdsirc.c,v 1.3 2001/12/19 06:25:08 guppy Exp $
+ * $Id: cmdsirc.c,v 1.4 2001/12/29 21:39:26 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -704,7 +704,7 @@ static void cmd_resetbans(struct userrec *u, int idx, char *par)
   if (chname[0]) {
     chan = findchan_by_dname(chname);
     if (!chan) {
-      dprintf(idx, "That channel doesnt exist!\n");
+      dprintf(idx, "That channel doesn't exist!\n");
       return;
     }
     get_user_flagrec(u, &user, chname);
@@ -733,7 +733,7 @@ static void cmd_resetexempts(struct userrec *u, int idx, char *par)
   if (chname[0]) {
     chan = findchan_by_dname(chname);
     if (!chan) {
-      dprintf(idx, "That channel doesnt exist!\n");
+      dprintf(idx, "That channel doesn't exist!\n");
       return;
     }
     get_user_flagrec(u, &user, chname);
@@ -762,7 +762,7 @@ static void cmd_resetinvites(struct userrec *u, int idx, char *par)
   if (chname[0]) {
     chan = findchan_by_dname(chname);
     if (!chan) {
-      dprintf(idx, "That channel doesnt exist!\n");
+      dprintf(idx, "That channel doesn't exist!\n");
       return;
     }
     get_user_flagrec(u, &user, chname);
