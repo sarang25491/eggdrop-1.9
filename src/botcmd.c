@@ -3,7 +3,7 @@
  *   commands that comes across the botnet
  *   userfile transfer and update commands from sharebots
  *
- * $Id: botcmd.c,v 1.29 2002/01/19 20:08:57 ite Exp $
+ * $Id: botcmd.c,v 1.30 2002/01/20 11:57:07 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -469,10 +469,18 @@ static void bot_endlink(int idx, char *par)
  */
 static void bot_infoq(int idx, char *par)
 {
-  char s[200], s2[32];
+  char s[200], s2[32], *realnick;
   struct chanset_t *chan;
   time_t now2;
   int hr, min;
+
+  /* Strip the idx from user@bot */
+  realnick = strchr(par, ':');
+  if (realnick)
+    realnick++;
+  else
+    realnick = par;
+  putlog(LOG_BOTS, "*", "#%s# botinfo", realnick);
 
   now2 = now - online_since;
   s2[0] = 0;
