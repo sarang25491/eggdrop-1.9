@@ -23,15 +23,13 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tclmisc.c,v 1.56 2002/09/20 21:41:49 stdarg Exp $";
+static const char rcsid[] = "$Id: tclmisc.c,v 1.57 2002/11/03 23:16:09 stdarg Exp $";
 #endif
 
 #include <sys/stat.h>
 #include "main.h"
 #include "modules.h"
 #include "core_binds.h"
-//#include "tandem.h"
-#include "md5.h"
 #include "logfile.h"
 #include "misc.h"
 #include "dccutil.h"		/* add_note				*/
@@ -290,17 +288,16 @@ static int script_callevent(char *event)
 static char *script_md5(char *data)
 {
   MD5_CTX md5context;
-  char *digest_string;
+  char *hex;
   unsigned char digest[16];
   int i;
 
   MD5_Init(&md5context);
   MD5_Update(&md5context, data, strlen(data));
   MD5_Final(digest, &md5context);
-  digest_string = (char *)malloc(33);
-  for (i = 0; i < 16; i++) sprintf(digest_string + (i*2), "%.2x", digest[i]);
-  digest_string[32] = 0;
-  return(digest_string);
+  hex = malloc(33);
+  MD5_Hex(digest, hex);
+  return(hex);
 }
 
 int script_export(char *name, char *syntax, script_callback_t *callback)

@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: eggdrop.h,v 1.13 2002/10/11 09:00:34 stdarg Exp $
+ * $Id: eggdrop.h,v 1.14 2002/11/03 23:16:09 stdarg Exp $
  */
 
 #ifndef _EGGDROP_H
@@ -29,6 +29,9 @@
 
 #include "../egglib/egglib.h"
 #include <eggdrop/common.h>
+#include <eggdrop/md5.h>
+#include <eggdrop/base64.h>
+#include <eggdrop/match.h>
 #include <eggdrop/binds.h>
 #include <eggdrop/botnetutil.h>
 #include <eggdrop/memutil.h>
@@ -45,7 +48,9 @@
 #include <eggdrop/hash_table.h>
 #include <eggdrop/xml.h>
 #include <eggdrop/flags.h>
+#include <eggdrop/ircmasks.h>
 #include <eggdrop/users.h>
+#include <eggdrop/partyline.h>
 
 BEGIN_C_DECLS
 

@@ -1,4 +1,4 @@
-#include "main.h"
+#include <eggdrop/eggdrop.h>
 #include <eggdrop/flags.h>
 #include <eggdrop/users.h>
 
@@ -124,5 +124,8 @@ script_command_t script_new_user_cmds[] = {
 	{"", "user_setflags", script_setflags, NULL, 2, "Uss", "user ?chan? flags", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
 	{"", "user_load", user_save, NULL, 0, "s", "?fname?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
 	{"", "user_save", script_user_save, NULL, 0, "s", "?fname?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
+	{"", "user_haspass", user_has_pass, NULL, 1, "U", "user", SCRIPT_INTEGER, 0},
+	{"", "user_checkpass", user_check_pass, NULL, 2, "Us", "user pass", SCRIPT_INTEGER, 0},
+	{"", "user_setpass", user_set_pass, NULL, 2, "Us", "user pass", SCRIPT_INTEGER, 0},
 	{0}
 };

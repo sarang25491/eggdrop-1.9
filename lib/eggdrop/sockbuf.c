@@ -519,6 +519,7 @@ int sockbuf_delete(int idx)
 int sockbuf_write(int idx, const char *data, int len)
 {
 	if (!sockbuf_isvalid(idx)) return(-1);
+	if (len < 0) len = strlen(data);
 	return sockbuf_on_write(idx, SOCKBUF_LEVEL_WRITE_INTERNAL, data, len);
 }
 

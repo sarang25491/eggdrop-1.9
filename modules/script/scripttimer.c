@@ -1,41 +1,16 @@
 /*
- * egg_timer.c --
- *
+ * scripttimer.c - script interface for timer functions
  */
-/*
- * Copyright (C) 2002 Eggheads Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- */
-
-#ifndef lint
-static const char rcsid[] = "$Id: egg_timer.c,v 1.14 2002/09/20 02:06:25 stdarg Exp $";
-#endif
 
 #include <stdio.h> /* NULL */
 #include <eggdrop/eggdrop.h>
-
-/* From main.c */
-extern egg_timeval_t egg_timeval_now;
 
 static int script_single_timer(int nargs, int sec, int usec, script_callback_t *callback);
 static int script_repeat_timer(int nargs, int sec, int usec, script_callback_t *callback);
 static int script_timers(script_var_t *retval);
 static int script_timer_info(script_var_t *retval, int timer_id);
 
-static script_command_t script_cmds[] = {
+script_command_t script_timer_cmds[] = {
 	{"", "timer", script_single_timer, NULL, 2, "iic", "seconds ?microseconds? callback", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT | SCRIPT_PASS_COUNT},
 	{"", "rtimer", script_repeat_timer, NULL, 2, "iic", "seconds ?microseconds? callback", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT | SCRIPT_PASS_COUNT},
 	{"", "killtimer", timer_destroy, NULL, 1, "i", "timer-id", SCRIPT_INTEGER, 0},
@@ -43,11 +18,6 @@ static script_command_t script_cmds[] = {
 	{"", "timer_info", script_timer_info, NULL, 1, "i", "timer-id", 0, SCRIPT_PASS_RETVAL},
 	{0}
 };
-
-void timer_init()
-{
-	script_create_commands(script_cmds);
-}
 
 static int script_timer(int sec, int usec, script_callback_t *callback, int flags)
 {
@@ -99,13 +69,15 @@ static int script_timers(script_var_t *retval)
 static int script_timer_info(script_var_t *retval, int timer_id)
 {
 	int *info;
-	egg_timeval_t howlong, trigger_time, start_time, diff;
+	egg_timeval_t howlong, trigger_time, start_time, diff, now;
 
 	if (timer_info(timer_id, &howlong, &trigger_time)) {
 		retval->type = SCRIPT_STRING | SCRIPT_ERROR;
 		retval->value = "Timer not found";
 		return(0);
 	}
+
+	timer_get_now(&now);
 
 	/* We have 11 fields. */
 	info = (int *)malloc(sizeof(int) * 11);
@@ -122,11 +94,11 @@ static int script_timer_info(script_var_t *retval, int timer_id)
 	info[3] = howlong.sec;
 	info[4] = howlong.usec;
 
-	timer_diff(&start_time, &egg_timeval_now, &diff);
+	timer_diff(&start_time, &now, &diff);
 	info[5] = diff.sec;
 	info[6] = diff.usec;
 
-	timer_diff(&egg_timeval_now, &trigger_time, &diff);
+	timer_diff(&now, &trigger_time, &diff);
 	info[7] = diff.sec;
 	info[8] = diff.usec;
 

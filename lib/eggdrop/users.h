@@ -41,6 +41,7 @@ int user_save(const char *fname);
 user_t *user_new(const char *handle);
 int user_delete(user_t *u);
 user_t *user_lookup_by_handle(const char *handle);
+user_t *user_lookup_authed(const char *handle, const char *pass);
 user_t *user_lookup_by_uid(int uid);
 user_t *user_lookup_by_irchost_nocache(const char *irchost);
 user_t *user_lookup_by_irchost(const char *irchost);
@@ -51,5 +52,8 @@ int user_set_setting(user_t *u, const char *chan, const char *setting, const cha
 int user_get_flags(user_t *u, const char *chan, flags_t *flags);
 int user_set_flags(user_t *u, const char *chan, flags_t *flags);
 int user_set_flag_str(user_t *u, const char *chan, const char *flags);
+int user_has_pass(user_t *u);
+int user_check_pass(user_t *u, const char *pass);
+int user_set_pass(user_t *u, const char *pass);
 
 #endif

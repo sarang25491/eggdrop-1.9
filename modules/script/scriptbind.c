@@ -12,6 +12,10 @@ script_command_t script_bind_cmds[] = {
 	{0}
 };
 
+int script_bind_init()
+{
+}
+
 static int script_bind(char *table_name, char *mask, script_callback_t *callback)
 {
 	bind_table_t *table;

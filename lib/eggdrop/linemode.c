@@ -77,6 +77,7 @@ static int linemode_on_eof(void *client_data, int idx, int err, const char *errm
 	/* If there is any buffered data, do one more on->read callback. */
 	if (old_data->len) {
 		old_data->data[old_data->len] = 0;
+		old_data->len = 0;
 		sockbuf_on_read(idx, LINEMODE_LEVEL, old_data->data, old_data->len);
 	}
 

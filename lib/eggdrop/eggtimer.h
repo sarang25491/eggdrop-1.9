@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: eggtimer.h,v 1.1 2002/09/20 02:06:25 stdarg Exp $
+ * $Id: eggtimer.h,v 1.2 2002/11/03 23:16:09 stdarg Exp $
  */
 
 #ifndef _EGG_TIMER_H
@@ -40,6 +40,7 @@ typedef struct egg_timeval_b {
 
 extern void timer_init();
 extern int timer_get_time(egg_timeval_t *curtime);
+extern void timer_get_now(egg_timeval_t *_now);
 extern int timer_update_now(egg_timeval_t *_now);
 extern int timer_diff(egg_timeval_t *from_time, egg_timeval_t *to_time, egg_timeval_t *diff);
 extern int timer_create_complex(egg_timeval_t *howlong, Function callback, void *client_data, int flags);

@@ -6,9 +6,6 @@
 #include <stdio.h> /* NULL */
 #include <eggdrop/eggdrop.h>
 
-/* From main.c */
-extern egg_timeval_t egg_timeval_now;
-
 typedef struct script_net_info {
 	struct script_net_info *prev, *next;
 	int idx;
@@ -34,7 +31,7 @@ static void script_net_info_add(script_net_info_t *info);
 static void script_net_info_remove(script_net_info_t *info);
 
 /* Script interface prototypes. */
-int script_net_takeover(int idx);
+static int script_net_takeover(int idx);
 static int script_net_open(const char *host, int port, int timeout);
 static int script_net_close(int idx);
 static int script_net_write(int idx, const char *text, int len);
@@ -43,7 +40,7 @@ static int script_net_handler(int idx, const char *event, script_callback_t *han
 static int script_net_info(script_var_t *retval, int idx, char *what);
 static int script_net_throttle_set(void *client_data, int idx, int speed);
 
-static script_command_t script_cmds[] = {
+script_command_t script_net_cmds[] = {
 	{"", "net_takeover", script_net_takeover, NULL, 1, "i", "idx", SCRIPT_INTEGER, 0},
 	{"", "net_open", script_net_open, NULL, 2, "sii", "host port ?timeout?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
 	{"", "net_close", script_net_close, NULL, 1, "i", "idx", SCRIPT_INTEGER, 0},
@@ -73,14 +70,8 @@ static sockbuf_handler_t sock_handler = {
 	on_delete
 };
 
-/* Create script commands. */
-void script_net_init()
-{
-	script_create_commands(script_cmds);
-}
-
 /* Put an idx under script control. */
-int script_net_takeover(int idx)
+static int script_net_takeover(int idx)
 {
 	script_net_info_t *info;
 
@@ -220,7 +211,7 @@ static int on_connect(void *client_data, int idx, const char *peer_ip, int peer_
 
 	str_redup(&info->peer_ip, peer_ip);
 	info->peer_port = peer_port;
-	memcpy(&info->connected_at, &egg_timeval_now, sizeof(egg_timeval_now));
+	timer_get_now(&info->connected_at);
 
 	if (info->on_connect) info->on_connect->callback(info->on_connect, idx, peer_ip, peer_port);
 	return(0);
@@ -249,7 +240,7 @@ static int on_read(void *client_data, int idx, char *data, int len)
 	byte_array_t bytes;
 
 	info->bytes_in += len;
-	memcpy(&info->last_input_at, &egg_timeval_now, sizeof(egg_timeval_now));
+	timer_get_now(&info->last_input_at);
 
 	if (info->on_read) {
 		bytes.bytes = data;
@@ -264,7 +255,7 @@ static int on_written(void *client_data, int idx, int len, int remaining)
 {
 	script_net_info_t *info = client_data;
 
-	memcpy(&info->last_output_at, &egg_timeval_now, sizeof(egg_timeval_now));
+	timer_get_now(&info->last_output_at);
 
 	info->bytes_out += len;
 	info->bytes_left = remaining;

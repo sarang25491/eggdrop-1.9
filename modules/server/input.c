@@ -404,5 +404,5 @@ bind_list_t my_new_raw_binds[] = {
 	{"451",	(Function) got451},
 	{"442",	(Function) got442},
 	{"311", (Function) got311},
-	{NULL, NULL, NULL, NULL}
+	{NULL, NULL}
 };

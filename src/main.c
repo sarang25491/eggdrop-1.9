@@ -30,7 +30,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.125 2002/10/10 04:41:59 stdarg Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.126 2002/11/03 23:16:09 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -453,7 +453,6 @@ extern module_entry *module_list;
 
 int init_userent(), init_net(),
  init_tcl(int, char **);
-void script_net_init();
 void dns_init();
 void binds_init();
 void dcc_init();
@@ -576,13 +575,13 @@ int main(int argc, char **argv)
 
   egg = eggdrop_new();
   script_init();
-  script_net_init();
   binds_init();
   user_init();
   user_load("users.xml");
+  partyline_init();
+  telnet_init();
   modules_init();
   logfile_init();
-  timer_init();
   dns_init();
   egg_dns_init();
   core_binds_init();

@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "eggdrop.h"
+/*
 #include "binds.h"
 #include "flags.h"
 #include "users.h"
@@ -10,6 +11,9 @@
 #include "hash_table.h"
 #include "xml.h"
 #include "match.h"
+#include "md5.h"
+#include "base64.h"
+*/
 
 static FILE *fp = NULL;
 
@@ -83,10 +87,14 @@ int user_load(const char *fname)
 	for (i = 0; i < root.nchildren; i++) {
 		if (strcasecmp(root.children[i].name, "user")) continue;
 		user_node = root.children+i;
+
+		/* The only required user fields are 'handle' and 'uid'. */
 		xml_node_get_str(&handle, user_node, "handle", 0, 0);
 		xml_node_get_int(&uid, user_node, "uid", 0, 0);
 		if (!handle || !uid) break;
 		u = real_user_new(handle, uid);
+
+		/* Irc masks. */
 		for (j = 0; ; j++) {
 			xml_node_get_str(&ircmask, user_node, "ircmask", j, 0);
 			if (!ircmask) break;
@@ -95,6 +103,8 @@ int user_load(const char *fname)
 			u->nircmasks++;
 			ircmask_list_add(&ircmask_list, ircmask, u);
 		}
+
+		/* Settings. */
 		for (j = 0; ; j++) {
 			setting_node = xml_node_lookup(user_node, "setting", j, 0);
 			if (!setting_node) break;
@@ -121,6 +131,7 @@ int user_load(const char *fname)
 				setting->extended[k].value = strdup(value);
 			}
 		}
+		/* They have to have at least 1 setting, the global one. */
 		if (j < 0) {
 			u->settings = calloc(1, sizeof(u->settings));
 			u->nsettings = 1;
@@ -182,13 +193,16 @@ static int user_get_uid()
 	user_t *u;
 	int uid;
 
+	if (g_uid <= 0) {
+		g_uid = 1;
+		uid_wraparound++;
+	}
+
 	/* If we've wrapped around on uids, we need to search for a free one. */
 	if (uid_wraparound) {
 		while (!hash_table_find(uid_ht, (void *)g_uid, &u)) g_uid++;
 	}
-	else {
-		if (!g_uid) uid_wraparound++;
-	}
+
 	uid = g_uid;
 	g_uid++;
 	return(uid);
@@ -270,6 +284,16 @@ user_t *user_lookup_by_handle(const char *handle)
 
 	hash_table_find(handle_ht, handle, &u);
 	return(u);
+}
+
+user_t *user_lookup_authed(const char *handle, const char *pass)
+{
+	user_t *u = user_lookup_by_handle(handle);
+	if (!u) fprintf(fp, "handle '%s' not found\n", handle);
+	if (!u) return(NULL);
+	if (user_check_pass(u, pass)) return(u);
+	fprintf(fp, "pass '%s' failed\n", pass);
+	return(NULL);
 }
 
 user_t *user_lookup_by_uid(int uid)
@@ -432,7 +456,7 @@ int user_get_flags(user_t *u, const char *chan, flags_t *flags)
 	return(0);
 }
 
-int check_flag_change(user_t *u, const char *chan, flags_t *oldflags, flags_t *newflags)
+static int check_flag_change(user_t *u, const char *chan, flags_t *oldflags, flags_t *newflags)
 {
 	char oldstr[64], newstr[64], *change;
 	int r;
@@ -544,5 +568,57 @@ int user_set_setting(user_t *u, const char *chan, const char *setting, const cha
 	value = &(u->settings[i].extended[j].value);
 	if (*value) free(*value);
 	*value = strdup(newvalue);
+	return(0);
+}
+
+int user_has_pass(user_t *u)
+{
+	char *hash, *salt;
+
+	user_get_setting(u, NULL, "pass", &hash);
+	user_get_setting(u, NULL, "salt", &salt);
+	if (hash && salt) return(1);
+	return(0);
+}
+
+int user_check_pass(user_t *u, const char *pass)
+{
+	char *hash, *salt, test[16], testhex[33];
+	MD5_CTX ctx;
+
+	user_get_setting(u, NULL, "pass", &hash);
+	user_get_setting(u, NULL, "salt", &salt);
+	if (!hash || !salt) return(0);
+
+	MD5_Init(&ctx);
+	MD5_Update(&ctx, salt, strlen(salt));
+	MD5_Update(&ctx, pass, strlen(pass));
+	MD5_Final(test, &ctx);
+	MD5_Hex(test, testhex);
+	return !strcasecmp(testhex, hash);
+}
+
+int user_set_pass(user_t *u, const char *pass)
+{
+	char hash[16], hashhex[33], *salt, new_salt[33];
+	MD5_CTX ctx;
+	int i;
+
+	user_get_setting(u, NULL, "salt", &salt);
+	if (!salt) {
+		salt = new_salt;
+		for (i = 0; i < 32; i++) {
+			new_salt[i] = random() % 26 + 'A';
+		}
+		new_salt[i] = 0;
+		user_set_setting(u, NULL, "salt", new_salt);
+	}
+
+	MD5_Init(&ctx);
+	MD5_Update(&ctx, salt, strlen(salt));
+	MD5_Update(&ctx, pass, strlen(pass));
+	MD5_Final(hash, &ctx);
+	MD5_Hex(hash, hashhex);
+	user_set_setting(u, NULL, "pass", hashhex);
 	return(0);
 }

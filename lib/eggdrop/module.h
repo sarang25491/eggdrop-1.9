@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: module.h,v 1.32 2002/10/10 04:41:59 stdarg Exp $
+ * $Id: module.h,v 1.33 2002/11/03 23:16:09 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_MODULE_H
@@ -48,8 +48,6 @@
 #include "src/flags.h"
 #include "src/irccmp.h"
 #include "src/logfile.h"
-#include "src/match.h"
-#include "src/md5.h"
 #include "src/misc.h"
 #include "src/modules.h"
 #include "src/net.h"

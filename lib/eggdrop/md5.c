@@ -184,14 +184,13 @@ void MD5_Init(MD5_CTX *ctx)
 	ctx->hi = 0;
 }
 
-void MD5_Update(MD5_CTX *ctx, void *data, unsigned long size)
+void MD5_Update(MD5_CTX *ctx, const void *data, unsigned long size)
 {
 	MD5_u32plus saved_lo;
 	unsigned long used, free;
 
 	saved_lo = ctx->lo;
-	if ((ctx->lo = (saved_lo + size) & 0x1fffffff) < saved_lo)
-		ctx->hi++;
+	if ((ctx->lo = (saved_lo + size) & 0x1fffffff) < saved_lo) ctx->hi++;
 	ctx->hi += size >> 29;
 
 	used = saved_lo & 0x3f;
@@ -267,4 +266,13 @@ void MD5_Final(unsigned char *result, MD5_CTX *ctx)
 	result[15] = ctx->d >> 24;
 
 	memset(ctx, 0, sizeof(ctx));
+}
+
+/* Convenience function to encode the hash as a 32-char hex string.
+ * 'hash' is the 16 byte hash, 'hex' is a 33 byte output buffer. */
+void MD5_Hex(unsigned char *hash, char *hex)
+{
+	int i;
+
+	for (i = 0; i < 16; i++) sprintf(hex + (i*2), "%.2x", (int) hash[i]);
 }
