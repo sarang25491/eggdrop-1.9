@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.25 2003/04/04 20:30:03 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.26 2003/04/04 20:41:54 stdarg Exp $";
 #endif
 */
 
@@ -54,6 +54,11 @@ extern char *global_input_string;
 static int script_isbotnick(char *nick)
 {
 	return match_my_nick(nick);
+}
+
+static int script_match_nick(char *nick1, char *nick2)
+{
+	return (current_server.strcmp)(nick1, nick2);
 }
 
 static int name_to_priority(const char *queue, const char *next)
@@ -325,6 +330,7 @@ static script_linked_var_t server_script_vars[] = {
 static script_command_t server_script_cmds[] = {
         {"", "jump", script_jump, NULL, 0, "i", "num", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_PASS_COUNT},
         {"", "isbotnick", script_isbotnick, NULL, 1, "s", "nick", SCRIPT_INTEGER, 0},
+	{"", "match_nick", script_match_nick, NULL, 2, "ss", "nick1 nick2", SCRIPT_INTEGER, 0},
 	{"", "server_add", server_add, NULL, 1, "sis", "host ?port? ?pass?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
 	{"", "server_del", server_del, NULL, 1, "i", "server-num", SCRIPT_INTEGER, 0},
 	{"", "server_clear", server_clear, NULL, 0, "", "", SCRIPT_INTEGER, 0},
