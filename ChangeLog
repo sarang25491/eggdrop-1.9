@@ -1,3 +1,15 @@
+2001-10-20 07:29  Jeff Fisher <guppy@techmonkeys.org>
+
+	* eggdrop.complete.conf, doc/KNOWN-PROBLEMS,
+	doc/html/egg-core.html, doc/html/mod-server.html,
+	doc/settings/core.settings, doc/settings/mod.server:
+
+	
+	* blanked KNOWN-PROBLEMS since none of them exist anymore, correct
+	me if I'm wrong 
+	* moved debug-output to the core settings documentation since it is
+	both core and server functionality 
+
 2001-10-20 06:04  Tothwolf <tothwolf@techmonkeys.org>
 
 	* Makefile.am:
