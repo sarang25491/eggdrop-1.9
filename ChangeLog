@@ -1,3 +1,26 @@
+2001-08-27 23:25  Matthew Hallacy <poptix@techmonkeys.org>
+
+	* scripts/userinfo.tcl:
+
+	updated userinfo.tcl 
+
+2001-08-27 23:14  Matthew Hallacy <poptix@techmonkeys.org>
+
+	* src/: cmds.c, patch.h:
+
+	PATCH: cmd_boot.patch 
+	
+	Fix boots with people that have full length HANDLEN 
+
+2001-08-27 23:06  Matthew Hallacy <poptix@techmonkeys.org>
+
+	* src/: patch.h, mod/irc.mod/chan.c, mod/server.mod/servmsg.c:
+
+	PATCH: ctcp2help.patch 
+	
+	By BarkerJr, send CTCP replies to the help queue instead of the
+	server queue 
+
 2001-08-26 03:52  stdarg
 
 	* src/: tclhash.c, tclhash.h:
