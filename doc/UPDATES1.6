@@ -1,10 +1,18 @@
-$Id: UPDATES1.6,v 1.198 2002/02/24 08:14:34 guppy Exp $
+$Id: UPDATES1.6,v 1.199 2002/02/27 05:34:00 guppy Exp $
 
 Changes in Eggdrop: (since v1.6.0)
 ----------------------------------
 
 1.6.9
 Found by  Fixed by  What...
+          Eule/     changed how protectops and protectfriends works a bit:
+          guppy       if the user has either glob +d or chan +d then no protection
+                      protectfriends now only protects +f users
+                      protectops now only protects +m and +o users
+Boing     guppy     fixed +protectops from reopping users with only +f and +protectfriends
+                    from reopping users with only +o
+Xerxes    guppy     "channel remove" will not crash the bot anymore if you are removing
+                    the channel for which the bind was called
 MC_8      stdarg    "channel info" will properly list all user-defined settings
           Eule      removed gban_total, gexempt_total and ginvite_total since they were
                     unused
