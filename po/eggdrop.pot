@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2001-11-13 04:00-0600\n"
+"POT-Creation-Date: 2001-11-14 04:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1064,17 +1064,17 @@ msgstr ""
 msgid "No help available on that.\n"
 msgstr ""
 
-#: src/logfile.c:135
+#: src/logfile.c:134
 msgid "Cycling logfiles"
 msgstr ""
 
-#: src/logfile.c:274 src/logfile.c:329
+#: src/logfile.c:273 src/logfile.c:328
 #, c-format
 msgid "Last message repeated %d time(s).\n"
 msgstr ""
 
 #. It's too big.
-#: src/logfile.c:314
+#: src/logfile.c:313
 #, c-format
 msgid "Cycling logfile %s, over max-logsize (%d kilobytes)"
 msgstr ""
