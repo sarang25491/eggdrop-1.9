@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: sockbuf.c,v 1.9 2004/06/15 11:24:46 wingman Exp $";
+static const char rcsid[] = "$Id: sockbuf.c,v 1.10 2004/06/21 01:14:06 stdarg Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -40,7 +40,7 @@ static const char rcsid[] = "$Id: sockbuf.c,v 1.9 2004/06/15 11:24:46 wingman Ex
 #    include <poll.h>
 #  endif
 #else
-#  include "lib/eggdrop/compat/poll.h"
+#  include "lib/compat/poll.h"
 #endif
 
 #include <errno.h>
@@ -132,10 +132,7 @@ static int sockbuf_real_write(int idx, const char *data, int len)
 
 	/* If it's not blocked already, write as much as we can. */
 	if (!(sbuf->flags & SOCKBUF_BLOCK)) {		
-		if (sbuf->sock == fileno (stdin))
-			nbytes = write (fileno (stdout), data, len);
-		else
-			nbytes = write (sbuf->sock, data, len);
+		nbytes = write (sbuf->sock, data, len);
 		if (nbytes < 0) {
 			if (errno != EAGAIN) {
 				sockbuf_got_eof(idx, errno);
@@ -419,7 +416,7 @@ int sockbuf_set_sock(int idx, int sock, int flags)
 	if (!sockbuf_isvalid(idx)) return(-1);
 
 	sockbufs[idx].sock = sock;
-	sockbufs[idx].flags &= ~(SOCKBUF_CLIENT|SOCKBUF_SERVER|SOCKBUF_BLOCK);
+	sockbufs[idx].flags &= ~(SOCKBUF_CLIENT|SOCKBUF_SERVER|SOCKBUF_BLOCK|SOCKBUF_NOREAD);
 	sockbufs[idx].flags |= flags;
 
 	/* pollfds   = [socks][socks][socks][listeners][listeners][end] */

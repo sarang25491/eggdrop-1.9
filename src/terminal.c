@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: terminal.c,v 1.1 2004/06/20 13:33:48 wingman Exp $";
+static const char rcsid[] = "$Id: terminal.c,v 1.2 2004/06/21 01:14:06 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>			/* partyline_*		*/
@@ -52,7 +52,7 @@ static partyline_event_t terminal_party_handler = {
 };
 
 struct {
-	int idx;
+	int in_idx, out_idx;
 	partymember_t *party;
 } terminal_session;
 
@@ -63,19 +63,24 @@ void terminal_init(void)
 	putlog(LOG_MISC, "*", "Entering terminal mode.");
 
 	if (terminal_user == NULL) {
-		terminal_user = user_lookup_by_handle (TERMINAL_HANDLE);
+		terminal_user = user_lookup_by_handle(TERMINAL_HANDLE);
 		if (terminal_user == NULL) {
-			terminal_user = user_new (TERMINAL_HANDLE);
-			user_set_flags_str (terminal_user, NULL, "n");
+			terminal_user = user_new(TERMINAL_HANDLE);
+			user_set_flags_str(terminal_user, NULL, "n");
  		}
 	}
 
-	terminal_session.idx = sockbuf_new();
-	sockbuf_set_sock(terminal_session.idx, fileno(stdin), SOCKBUF_CLIENT);
-	sockbuf_set_handler(terminal_session.idx, &terminal_sockbuf_handler, NULL);
-	linemode_on(terminal_session.idx);
-	
-	terminal_session.party = partymember_new (-1,
+	/* Connect an idx to stdin. */
+	terminal_session.in_idx = sockbuf_new();
+	sockbuf_set_sock(terminal_session.in_idx, fileno(stdin), SOCKBUF_CLIENT);
+	sockbuf_set_handler(terminal_session.in_idx, &terminal_sockbuf_handler, NULL);
+	linemode_on(terminal_session.in_idx);
+
+	/* And one for stdout. */
+	terminal_session.out_idx = sockbuf_new();
+	sockbuf_set_sock(terminal_session.out_idx, fileno(stdout), SOCKBUF_NOREAD);
+
+	terminal_session.party = partymember_new(-1,
 		terminal_user, TERMINAL_NICK, TERMINAL_USER,
 			TERMINAL_HOST, &terminal_party_handler, NULL);
 
@@ -91,37 +96,36 @@ static int on_read(void *client_data, int idx, char *data, int len)
 
 static int on_privmsg(void *client_data, partymember_t *dest, partymember_t *src, const char *text, int len)
 {
-	return partyline_idx_privmsg(terminal_session.idx, dest, src, text, len);
+	return partyline_idx_privmsg(terminal_session.out_idx, dest, src, text, len);
 }
 
 static int on_nick(void *client_data, partymember_t *src, const char *oldnick, const char *newnick)
 {
-	return partyline_idx_nick (terminal_session.idx, src, oldnick, newnick);
+	return partyline_idx_nick (terminal_session.out_idx, src, oldnick, newnick);
 }
 
 static int on_quit(void *client_data, partymember_t *src, const char *text, int len)
 {
-	partyline_idx_quit(terminal_session.idx, src, text, len);
+	partyline_idx_quit(terminal_session.out_idx, src, text, len);
 
 	/* if this quit are we delete our sockbuf. */
 	if (src == terminal_session.party)
-		sockbuf_delete(terminal_session.idx);
+		sockbuf_delete(terminal_session.out_idx);
 
 	return(0);
 }
 
 static int on_chanmsg(void *client_data, partychan_t *chan, partymember_t *src, const char *text, int len)
 {
-	return partyline_idx_chanmsg(terminal_session.idx, chan, src, text, len);
+	return partyline_idx_chanmsg(terminal_session.out_idx, chan, src, text, len);
 }
 
 static int on_join(void *client_data, partychan_t *chan, partymember_t *src)
 {
-	return partyline_idx_join(terminal_session.idx, chan, src);
+	return partyline_idx_join(terminal_session.out_idx, chan, src);
 }
 
 static int on_part(void *client_data, partychan_t *chan, partymember_t *src, const char *text, int len)
 {
-	return partyline_idx_part(terminal_session.idx, chan, src, text, len);
+	return partyline_idx_part(terminal_session.out_idx, chan, src, text, len);
 }
-

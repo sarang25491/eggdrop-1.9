@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: terminal.h,v 1.1 2004/06/20 13:33:48 wingman Exp $
+ * $Id: terminal.h,v 1.2 2004/06/21 01:14:06 stdarg Exp $
  */
 #ifndef _EGG_TERMINAL_H
 #define _EGG_TERMINAL_H
@@ -25,7 +25,7 @@
 #define TERMINAL_NICK	"HQ"
 #define TERMINAL_USER	"hq"
 #define TERMINAL_HANDLE	"HQ"
-#define TERMINAL_HOST	"localhost"
+#define TERMINAL_HOST	"terminal"
 
 void terminal_init(void);
 

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partyline.c,v 1.19 2004/06/20 13:33:48 wingman Exp $";
+static const char rcsid[] = "$Id: partyline.c,v 1.20 2004/06/21 01:14:06 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -214,7 +214,7 @@ static int on_putlog(int flags, const char *chan, const char *text, int len)
 	return(0);
 }
 
-int partyline_idx_privmsg(int idx,  partymember_t *dest, partymember_t *src, const char *text, int len)
+int partyline_idx_privmsg(int idx, partymember_t *dest, partymember_t *src, const char *text, int len)
 {
 	if (src) egg_iprintf(idx, "[%s] %s\r\n", src->nick, text);
 	else egg_iprintf(idx, "%s\r\n", text);
@@ -223,9 +223,9 @@ int partyline_idx_privmsg(int idx,  partymember_t *dest, partymember_t *src, con
 
 int partyline_idx_nick(int idx, partymember_t *src, const char *oldnick, const char *newnick)
 {
-	char ts[32];
+	const char *ts;
 
-	timer_get_timestamp(ts, sizeof(ts));
+	timer_get_timestamp(&ts);
 
 	egg_iprintf(idx, "* %s*** %s is now known as %s.\n", ts, oldnick, newnick);
 	return 0;
@@ -233,9 +233,9 @@ int partyline_idx_nick(int idx, partymember_t *src, const char *oldnick, const c
 
 int partyline_idx_quit(int idx, partymember_t *src, const char *text, int len)
 {
-	char ts[32];
+	const char *ts;
 
-	timer_get_timestamp(ts, sizeof(ts));
+	timer_get_timestamp(&ts);
 
 	egg_iprintf(idx, "* %s*** %s (%s@%s) has quit: %s\n", ts, src->nick, src->ident, src->host, text);
 	return 0;
@@ -243,9 +243,9 @@ int partyline_idx_quit(int idx, partymember_t *src, const char *text, int len)
 
 int partyline_idx_chanmsg(int idx, partychan_t *chan, partymember_t *src, const char *text, int len)
 {
-	char ts[32];
+	const char *ts;
 
-	timer_get_timestamp(ts, sizeof(ts));
+	timer_get_timestamp(&ts);
 
 	if (src) egg_iprintf(idx, "%s %s<%s> %s\r\n", chan->name, ts, src->nick, text);
 	else egg_iprintf(idx, "%s %s%s\r\n", chan->name, ts, text);
@@ -254,9 +254,9 @@ int partyline_idx_chanmsg(int idx, partychan_t *chan, partymember_t *src, const 
 
 int partyline_idx_join(int idx, partychan_t *chan, partymember_t *src)
 {
-	char ts[32];
+	const char *ts;
 
-	timer_get_timestamp(ts, sizeof(ts));
+	timer_get_timestamp(&ts);
 
 	egg_iprintf(idx, "%s %s*** %s (%s@%s) has joined the channel.\r\n", chan->name, ts, src->nick, src->ident, src->host);
 	return 0;
@@ -264,9 +264,9 @@ int partyline_idx_join(int idx, partychan_t *chan, partymember_t *src)
 
 int partyline_idx_part(int idx, partychan_t *chan, partymember_t *src, const char *text, int len)
 {
-	char ts[32];
+	const char *ts;
 
-	timer_get_timestamp(ts, sizeof(ts));
+	timer_get_timestamp(&ts);
 	
 	egg_iprintf(idx, "%s %s*** (%s@%s) has left %s: %s\r\n", chan->name, ts, src->nick, src->ident, src->host, chan->name, text);
 	return 0;

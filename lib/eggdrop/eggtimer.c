@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggtimer.c,v 1.9 2004/06/17 13:32:43 wingman Exp $";
+static const char rcsid[] = "$Id: eggtimer.c,v 1.10 2004/06/21 01:14:05 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -28,6 +28,9 @@ static const char rcsid[] = "$Id: eggtimer.c,v 1.9 2004/06/17 13:32:43 wingman E
 #include <eggdrop/eggdrop.h>
 
 static egg_timeval_t now;
+static char *timestamp_format = NULL;
+static char *timestamp = NULL;
+static int timestamp_len = 0;
 
 /* Internal use only. */
 typedef struct egg_timer_b {
@@ -44,6 +47,21 @@ typedef struct egg_timer_b {
 /* We keep a sorted list of active timers. */
 static egg_timer_t *timer_list_head = NULL;
 static int timer_next_id = 1;
+
+int timer_init()
+{
+	timestamp_len = 32;
+	timestamp = malloc(timestamp_len);
+	return(0);
+}
+
+int timer_shutdown()
+{
+	if (timestamp) free(timestamp);
+	timestamp = NULL;
+	timestamp_len = 0;
+	return(0);
+}
 
 /* Based on TclpGetTime from Tcl 8.3.3 */
 int timer_get_time(egg_timeval_t *curtime)
@@ -264,11 +282,35 @@ int timer_info(int id, char **name, egg_timeval_t *initial_len, egg_timeval_t *t
 	return(0);
 }
 
-int timer_get_timestamp(char *buf, size_t size)
+int timer_set_timestamp(char *format)
 {
-        time_t now = time(NULL);
-                                                                                                                                     
-	/* XXX: make this configurable */
-        return (int)strftime(buf, size, "[%H:%M] ", localtime(&now));
+	str_redup(&timestamp_format, format);
+	return(0);
 }
 
+int timer_get_timestamp(const char **buf)
+{
+        time_t now_secs = (time_t)now.secs;
+	int len;
+
+	while (1) {
+		len = strftime(timestamp, timestamp_len, timestamp_format, localtime(&now_secs));
+
+		/* Did it work and fit in the buffer? */
+		if (len > 0 && len < timestamp_len) break;
+		else if (len >= timestamp_len) {
+			/* Adjust buffer. */
+			timestamp_len = len+1;
+			free(timestamp);
+			timestamp = malloc(timestamp_len);
+		}
+		else {
+			/* Error with strftime, or empty timestamp. */
+			*timestamp = 0;
+			break;
+		}
+	}
+
+	*buf = timestamp;
+        return(0);
+}
