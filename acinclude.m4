@@ -1,7 +1,7 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.6 2001/10/14 14:09:35 ite Exp $
+dnl $Id: acinclude.m4,v 1.7 2001/10/14 19:30:49 ite Exp $
 dnl
 
 
@@ -182,14 +182,11 @@ case $host_os in
   irix*)
     IRIX=yes
   ;;
-  ultrix*)
-    SHELL=/bin/sh5
-  ;;
   osf*)
     AC_DEFINE(STOP_UAC, 1,
               [Define if running on OSF/1 platform])
   ;;
-  mach*)
+  next*)
     AC_DEFINE(BORGCUBES, 1,
               [Define if running on NeXT Step])
   ;;
@@ -1128,6 +1125,7 @@ AC_ARG_ENABLE(debug,
                              debug="$enableval", debug=yes)
 if test "$debug" = "yes"
 then
+  AC_CHECK_LIB(efence, malloc)
   EGG_DEBUG="-DDEBUG"
 fi
 AC_SUBST(EGG_DEBUG)
