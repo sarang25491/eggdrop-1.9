@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.71 2001/10/14 23:06:30 ite Exp $
+ * $Id: modules.c,v 1.72 2001/10/14 23:13:33 stdarg Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -29,6 +29,7 @@
 #include "modules.h"
 #include "tandem.h"
 #include "registry.h"
+#include "core_binds.h"
 #include <ctype.h>
 
 #include <ltdl.h>
@@ -251,7 +252,7 @@ Function global_table[] =
   (Function) 0,
   (Function) open_telnet,
   /* 88 - 91 */
-  (Function) check_tcl_event,
+  (Function) check_bind_event,
   (Function) 0,
   (Function) my_atoul,
   (Function) my_strcpy,
@@ -421,7 +422,7 @@ Function global_table[] =
   (Function) & gexempt_total,	/* int					*/
   (Function) & ginvite_total,	/* int					*/
   /* 224 - 227 */
-  (Function) & H_event,		/* p_tcl_bind_list *			*/
+  (Function) 0,			/* p_tcl_bind_list *			*/
   (Function) & use_exempts,	/* int					*/
   (Function) & use_invites,	/* int					*/
   (Function) & force_expire,	/* int					*/

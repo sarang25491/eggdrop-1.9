@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.65 2001/10/14 04:44:37 stdarg Exp $
+ * $Id: module.h,v 1.66 2001/10/14 23:13:33 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -192,7 +192,7 @@
 /* 86: get_data_ptr -- UNUSED (Tothwolf) */
 #define open_telnet ((int (*) (char *, int))global[87])
 /* 88 - 91 */
-#define check_tcl_event ((void * (*) (const char *))global[88])
+#define check_bind_event ((void * (*) (const char *))global[88])
 /* 89: my_memcpy / egg_memcpy -- UNUSED (Tothwolf) */
 #define my_atoul ((IP(*)(char *))global[90])
 #define my_strcpy ((int (*)(char *, const char *))global[91])
@@ -362,7 +362,7 @@
 #define ginvite_total (*(int*)global[222])
 #define gexempt_total (*(int*)global[223])
 /* 224 - 227 */
-#define H_event (*(p_tcl_bind_list *)(global[224]))
+/* 224: H_event -- UNUSED (stdarg) */
 #define use_exempts (*(int *)(global[225]))	/* drummer/Jason */
 #define use_invites (*(int *)(global[226]))	/* drummer/Jason */
 #define force_expire (*(int *)(global[227]))	/* Rufus */

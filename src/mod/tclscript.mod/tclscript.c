@@ -146,7 +146,6 @@ static int my_create_cmd(void *ignore, script_command_t *info)
 	char *cmdname;
 
 	cmdname = msprintf("%s_%s", info->class, info->name);
-	printf("Creating %s\n", cmdname);
 	Tcl_CreateObjCommand(interp, cmdname, my_command_handler, (ClientData) info, NULL);
 	free(cmdname);
 

@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.44 2001/10/12 15:50:26 tothwolf Exp $
+ * $Id: tclhash.c,v 1.45 2001/10/14 23:13:33 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -38,19 +38,17 @@ extern struct userrec	*userlist;
 extern int		 dcc_total;
 extern time_t		 now;
 
-/* New bind table list */
+/* New bind table list. */
 static bind_table_t *bind_table_list_head = NULL;
-static bind_table_t *BT_event;
 static bind_table_t *BT_link;
 static bind_table_t *BT_disc;
 static bind_table_t *BT_away;
-static bind_table_t *BT_time;
 static bind_table_t *BT_dcc;
 
 p_tcl_bind_list		bind_table_list;
 p_tcl_bind_list		H_chat, H_act, H_bcst, H_chon, H_chof,
 			H_load, H_unld, H_link, H_disc, H_chjn, H_chpt,
-			H_bot, H_time, H_nkch, H_away, H_note, H_filt, H_event;
+			H_bot, H_time, H_nkch, H_away, H_note, H_filt;
 
 static int builtin_2char();
 static int builtin_3char();
@@ -154,14 +152,12 @@ static int tcl_bind();
 static int tcl_bind2();
 static int tcl_unbind2();
 
-void init_binds(void)
+void binds_init(void)
 {
 	bind_table_list_head = NULL;
-	BT_event = add_bind_table2("event", 1, "s", MATCH_MASK, BIND_STACKABLE);
 	BT_link = add_bind_table2("link", 2, "ss", MATCH_MASK, BIND_STACKABLE);
 	BT_disc = add_bind_table2("disc", 1, "s", MATCH_MASK, BIND_STACKABLE);
 	BT_away = add_bind_table2("away", 3, "sis", MATCH_MASK, BIND_STACKABLE);
-	BT_time = add_bind_table2("time", 5, "iiiii", MATCH_MASK, BIND_STACKABLE);
 	BT_dcc = add_bind_table2("dcc", 3, "Uis", MATCH_MASK, BIND_USE_ATTR);
 	add_builtins2(BT_dcc, C_dcc);
 }
@@ -173,7 +169,6 @@ void init_old_binds(void)
   Tcl_CreateCommand(interp, "bind", tcl_bind, (ClientData) 0, NULL);
   Tcl_CreateCommand(interp, "unbind", tcl_bind, (ClientData) 1, NULL);
   H_unld = add_bind_table("unld", HT_STACKABLE, builtin_char);
-  H_time = add_bind_table("time", HT_STACKABLE, builtin_5int);
   H_note = add_bind_table("note", 0, builtin_3char);
   H_nkch = add_bind_table("nkch", HT_STACKABLE, builtin_2char);
   H_load = add_bind_table("load", HT_STACKABLE, builtin_char);
@@ -189,7 +184,6 @@ void init_old_binds(void)
   H_bcst = add_bind_table("bcst", HT_STACKABLE, builtin_chat);
   H_away = add_bind_table("away", HT_STACKABLE, builtin_chat);
   H_act = add_bind_table("act", HT_STACKABLE, builtin_chat);
-  H_event = add_bind_table("evnt", HT_STACKABLE, builtin_char);
   Context;
 }
 
@@ -1288,38 +1282,6 @@ void check_tcl_away(const char *bot, int idx, const char *msg)
   Tcl_SetVar(interp, "_away3", msg ? (char *) msg : "", 0);
   check_tcl_bind(H_away, bot, 0, " $_away1 $_away2 $_away3",
 		 MATCH_MASK | BIND_STACKABLE);
-}
-
-void check_tcl_time(struct tm *tm)
-{
-  char y[18];
-
-  egg_snprintf(y, sizeof y, "%02d", tm->tm_min);
-  Tcl_SetVar(interp, "_time1", (char *) y, 0);
-  egg_snprintf(y, sizeof y, "%02d", tm->tm_hour);
-  Tcl_SetVar(interp, "_time2", (char *) y, 0);
-  egg_snprintf(y, sizeof y, "%02d", tm->tm_mday);
-  Tcl_SetVar(interp, "_time3", (char *) y, 0);
-  egg_snprintf(y, sizeof y, "%02d", tm->tm_mon);
-  Tcl_SetVar(interp, "_time4", (char *) y, 0);
-  egg_snprintf(y, sizeof y, "%04d", tm->tm_year + 1900);
-  Tcl_SetVar(interp, "_time5", (char *) y, 0);
-  egg_snprintf(y, sizeof y, "%02d %02d %02d %02d %04d", tm->tm_min, tm->tm_hour,
-	       tm->tm_mday, tm->tm_mon, tm->tm_year + 1900);
-
-  check_bind(BT_time, y, NULL, tm->tm_min, tm->tm_hour, tm->tm_mday, tm->tm_mon, tm->tm_year + 1900);
-
-  check_tcl_bind(H_time, y, 0,
-		 " $_time1 $_time2 $_time3 $_time4 $_time5",
-		 MATCH_MASK | BIND_STACKABLE);
-}
-
-void check_tcl_event(const char *event)
-{
-  check_bind(BT_event, event, NULL, event);
-
-  Tcl_SetVar(interp, "_event1", (char *) event, 0);
-  check_tcl_bind(H_event, event, 0, " $_event1", MATCH_EXACT | BIND_STACKABLE);
 }
 
 void tell_binds(int idx, char *par)

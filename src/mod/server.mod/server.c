@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.88 2001/10/13 15:55:34 tothwolf Exp $
+ * $Id: server.c,v 1.89 2001/10/14 23:13:33 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1389,7 +1389,7 @@ static void server_postrehash()
   /* Change botname back incase we were using altnick previous to rehash. */
   else if (oldnick[0])
     strcpy(botname, oldnick);
-  check_tcl_event("init-server");
+  check_bind_event("init-server");
 }
 
 static void server_die()

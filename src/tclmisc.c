@@ -3,7 +3,7 @@
  *   Tcl stubs for file system commands
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.30 2001/10/13 12:00:22 stdarg Exp $
+ * $Id: tclmisc.c,v 1.31 2001/10/14 23:13:33 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -552,7 +552,7 @@ static int tcl_reloadhelp STDVAR
 static int tcl_callevent STDVAR
 {
   BADARGS(2, 2, " event");
-  check_tcl_event(argv[1]);
+  check_bind_event(argv[1]);
   return TCL_OK;
 }
 

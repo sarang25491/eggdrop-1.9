@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.84 2001/10/14 14:09:35 ite Exp $
+ * $Id: main.c,v 1.85 2001/10/14 23:13:33 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -54,6 +54,7 @@
 #include "tandem.h"
 #include "bg.h"
 #include "egg_timer.h"
+#include "core_binds.h"
 
 #include "adns/adns.h"
 
@@ -330,7 +331,7 @@ static void got_fpe(int z)
 static void got_term(int z)
 {
   write_userfile(-1);
-  check_tcl_event("sigterm");
+  check_bind_event("sigterm");
   if (die_on_sigterm) {
     fatal("TERMINATE SIGNAL -- SIGNING OFF", 0);
   } else {
@@ -340,7 +341,7 @@ static void got_term(int z)
 
 static void got_quit(int z)
 {
-  check_tcl_event("sigquit");
+  check_bind_event("sigquit");
   putlog(LOG_MISC, "*", "RECEIVED QUIT SIGNAL (IGNORING)");
   return;
 }
@@ -348,7 +349,7 @@ static void got_quit(int z)
 static void got_hup(int z)
 {
   write_userfile(-1);
-  check_tcl_event("sighup");
+  check_bind_event("sighup");
   if (die_on_sighup) {
     fatal("HANGUP SIGNAL -- SIGNING OFF", 0);
   } else
@@ -370,7 +371,7 @@ static void got_alarm(int z)
  */
 static void got_ill(int z)
 {
-  check_tcl_event("sigill");
+  check_bind_event("sigill");
 #ifdef DEBUG_CONTEXT
   putlog(LOG_MISC, "*", "* Context: %s/%d [%s]", cx_file[cx_ptr],
 	 cx_line[cx_ptr], (cx_note[cx_ptr][0]) ? cx_note[cx_ptr] : "");
@@ -569,8 +570,7 @@ static void core_secondly()
 
 static void core_minutely()
 {
-  check_tcl_time(&nowtm);
-  do_check_timers(&timer);
+  check_bind_time(&nowtm);
   if (quick_logs != 0) {
     flushlogs();
     check_logsize();
@@ -584,22 +584,22 @@ static void core_hourly()
 
 static void event_rehash()
 {
-  check_tcl_event("rehash");
+  check_bind_event("rehash");
 }
 
 static void event_prerehash()
 {
-  check_tcl_event("prerehash");
+  check_bind_event("prerehash");
 }
 
 static void event_save()
 {
-  check_tcl_event("save");
+  check_bind_event("save");
 }
 
 static void event_logfile()
 {
-  check_tcl_event("logfile");
+  check_bind_event("logfile");
 }
 
 static void event_resettraffic()
@@ -623,7 +623,7 @@ static void event_resettraffic()
 
 static void event_loaded()
 {
-  check_tcl_event("loaded");
+  check_bind_event("loaded");
 }
 
 void kill_tcl();
@@ -634,7 +634,7 @@ int init_dcc_max(), init_userent(), init_misc(), init_net(),
  init_modules(), init_tcl(int, char **);
 void botnet_init();
 void script_init();
-void init_binds();
+void binds_init();
 
 void patch(const char *str)
 {
@@ -751,7 +751,8 @@ int main(int argc, char **argv)
     fatal(_("ERROR: Eggdrop will not run as root!"), 0);
 
   script_init();
-  init_binds();
+  binds_init();
+  core_binds_init();
   init_dcc_max();
   init_userent();
   init_misc();
@@ -1005,7 +1006,7 @@ module, please consult the default config file for info.\n"));
 	char xx[256];
 
  	/* oops, I guess we should call this event before tcl is restarted */
-	check_tcl_event("prerestart");
+	check_bind_event("prerestart");
 
 	while (f) {
 	  f = 0;

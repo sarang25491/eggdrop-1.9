@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.75 2001/10/14 10:55:24 tothwolf Exp $
+ * $Id: servmsg.c,v 1.76 2001/10/14 23:13:33 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -188,7 +188,7 @@ static int got001(char *from, char *ignore, char *msg)
   strncpyz(botname, msg, NICKLEN);
   altnick_char = 0;
   dprintf(DP_SERVER, "WHOIS %s\n", botname); /* get user@host */
-  check_tcl_event("init-server");
+  check_bind_event("init-server");
   x = serverlist;
   if (x == NULL)
     return 0;			/* Uh, no server list */
@@ -869,7 +869,7 @@ static int gotmode(char *from, char *ignore, char *msg)
 static void disconnect_server(int idx)
 {
   if (server_online > 0)
-    check_tcl_event("disconnect-server");
+    check_bind_event("disconnect-server");
   server_online = 0;
   if (dcc[idx].sock >= 0)
     killsock(dcc[idx].sock);
@@ -1103,7 +1103,7 @@ static void connect_server(void)
       return;
     }
 
-    check_tcl_event("connect-server");
+    check_bind_event("connect-server");
     next_server(&curserv, botserver, &botserverport, pass);
     putlog(LOG_SERV, "*", "%s %s %d", _("Trying server"), botserver, botserverport);
 
