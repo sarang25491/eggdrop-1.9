@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.54 2001/10/04 21:37:44 stdarg Exp $
+ * $Id: dcc.c,v 1.55 2001/10/04 22:15:19 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1714,7 +1714,7 @@ static void dcc_script(int idx, char *buf, int len)
 
     /* Check whether the socket and dcc entry are still valid. They
        might have been killed by `killdcc'. */
-    if (dcc[idx].sock != oldsock || idx > max_dcc)
+    if (idx > max_dcc || dcc[idx].sock != oldsock)
       return;
 
     old_other = dcc[idx].u.script->u.other;
