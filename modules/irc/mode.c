@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.12 2002/04/16 23:08:28 ite Exp $
+ * $Id: mode.c,v 1.13 2002/04/17 21:16:55 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -28,18 +28,18 @@
 /* Reversing this mode? */
 static int reversing = 0;
 
-#define PLUS    1
-#define MINUS   2
-#define CHOP    4
-#define BAN     8
-#define VOICE   16
-#define EXEMPT  32
-#define INVITE  64
+#define PLUS    0x01
+#define MINUS   0x02
+#define CHOP    0x04
+#define BAN     0x08
+#define VOICE   0x10
+#define EXEMPT  0x20
+#define INVITE  0x40
 
 static struct flag_record user   = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 static struct flag_record victim = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
-/* FIXME: adapt this function to stlcat() so we can get rid of egg_strcatn() */
+/* FIXME: adapt this function to strlcat() so we can get rid of egg_strcatn() */
 static void flush_mode(struct chanset_t *chan, int pri)
 {
   char		*p, out[512], post[512];
