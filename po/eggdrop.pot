@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2002-01-03 04:00-0600\n"
+"POT-Creation-Date: 2002-01-04 04:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -139,7 +139,7 @@ msgstr ""
 msgid "Disconnected left"
 msgstr ""
 
-#: src/botcmd.c:679 src/botcmd.c:706 src/botmsg.c:407
+#: src/botcmd.c:679 src/botcmd.c:706 src/botmsg.c:282
 msgid "Linked to"
 msgstr ""
 
@@ -216,20 +216,20 @@ msgstr ""
 msgid "Filesys module not loaded."
 msgstr ""
 
-#: src/botcmd.c:1266 src/botcmd.c:1318 src/botcmd.c:1322 src/botmsg.c:639
-#: src/botmsg.c:672
+#: src/botcmd.c:1266 src/botcmd.c:1318 src/botcmd.c:1322 src/botmsg.c:514
+#: src/botmsg.c:547
 msgid "has left the"
 msgstr ""
 
-#: src/botcmd.c:1271 src/botmsg.c:634 src/botmsg.c:665
+#: src/botcmd.c:1271 src/botmsg.c:509 src/botmsg.c:540
 msgid "has joined the"
 msgstr ""
 
-#: src/botcmd.c:1372 src/botmsg.c:596
+#: src/botcmd.c:1372 src/botmsg.c:471
 msgid "is now away"
 msgstr ""
 
-#: src/botcmd.c:1376 src/botmsg.c:603 src/botmsg.c:610
+#: src/botcmd.c:1376 src/botmsg.c:478 src/botmsg.c:485
 msgid "is no longer away"
 msgstr ""
 
@@ -245,30 +245,30 @@ msgstr ""
 msgid "Antiquated sharing request"
 msgstr ""
 
-#: src/botmsg.c:740 src/botmsg.c:762
+#: src/botmsg.c:615 src/botmsg.c:637
 msgid "Nick Change:"
 msgstr ""
 
-#: src/botmsg.c:803
+#: src/botmsg.c:678
 msgid "That bot isnt here.\n"
 msgstr ""
 
-#: src/botmsg.c:834
+#: src/botmsg.c:709
 msgid "I dont know anyone by that name.\n"
 msgstr ""
 
-#: src/botmsg.c:839
+#: src/botmsg.c:714
 msgid "Thats a bot.  You cant leave notes for a bot.\n"
 msgstr ""
 
-#: src/botmsg.c:862
+#: src/botmsg.c:737
 msgid "is away"
 msgstr ""
 
 #. User is away in all sessions -- just notify the user that a
 #. * message arrived and was stored. (only oldest session is notified.)
 #.
-#: src/botmsg.c:905
+#: src/botmsg.c:780
 msgid "Note arrived for you"
 msgstr ""
 
@@ -1187,17 +1187,17 @@ msgstr ""
 msgid "No help available on that.\n"
 msgstr ""
 
-#: src/logfile.c:131
+#: src/logfile.c:130
 msgid "Cycling logfiles"
 msgstr ""
 
-#: src/logfile.c:270 src/logfile.c:325
+#: src/logfile.c:269 src/logfile.c:324
 #, c-format
 msgid "Last message repeated %d time(s).\n"
 msgstr ""
 
 #. It's too big.
-#: src/logfile.c:310
+#: src/logfile.c:309
 #, c-format
 msgid "Cycling logfile %s, over max-logsize (%d kilobytes)"
 msgstr ""
@@ -1306,7 +1306,7 @@ msgstr ""
 msgid "You can't unload an encryption module"
 msgstr ""
 
-#: modules/blowfish/blowfish.c:456 src/modules.c:566 src/tclmisc.c:237
+#: modules/blowfish/blowfish.c:456 src/modules.c:566 src/tclmisc.c:238
 msgid "Already loaded."
 msgstr ""
 
@@ -2625,7 +2625,7 @@ msgstr ""
 msgid "Restarting..."
 msgstr ""
 
-#: src/tclmisc.c:238
+#: src/tclmisc.c:239
 msgid "Cant load modules"
 msgstr ""
 
