@@ -1,3 +1,10 @@
+2003-03-24 02:42  Will Buckner <wcc@techmonkeys.org>
+
+	* configure.ac, doc/howto/PATCHING, src/Makefile.am, src/main.c,
+	src/main.h, src/patch.h:
+
+	* Removed patch.h.  
+
 2003-03-24 02:11  stdarg <stdarg@techmonkeys.org>
 
 	* modules/server/output.c, modules/server/scriptcmds.c, src/main.c:
@@ -220,7 +227,7 @@
 2003-03-05 02:16  Will Buckner <wcc@techmonkeys.org>
 
 	* acconfig/acinclude.m4, doc/MODULES, lib/compat/snprintf.c,
-	lib/compat/snprintf.h, misc/addpatch:
+	lib/compat/snprintf.h:
 
 	* More doc stuff.  
 	* Reverted last snprintf changes.  
@@ -820,7 +827,7 @@
 	lib/egglib/linked_list_test.c, lib/egglib/mempool.c,
 	lib/egglib/mempool.h, lib/egglib/mempool_test.c,
 	lib/egglib/msprintf.c, lib/egglib/msprintf.h, lib/egglib/mstack.c,
-	lib/egglib/mstack.h, misc/addpatch, modules/blowfish/bf_tab.h,
+	lib/egglib/mstack.h, modules/blowfish/bf_tab.h,
 	modules/blowfish/blowfish.c, modules/blowfish/blowfish.h,
 	modules/channels/channels.c, modules/channels/channels.h,
 	modules/channels/cmdschan.c, modules/channels/flagmaps.c,
@@ -883,9 +890,8 @@
 
 2002-11-29 06:15  Will Buckner <wcc@techmonkeys.org>
 
-	* doc/UPDATES1.6, misc/addpatch, modules/irc/cmdsirc.c,
-	modules/irc/irc.c, modules/irc/irc.h, src/patch.h,
-	testcode/match.c:
+	* doc/UPDATES1.6, modules/irc/cmdsirc.c, modules/irc/irc.c,
+	modules/irc/irc.h, src/patch.h, testcode/match.c:
 
 	* check_this_user() had the wrong function number in irc_table.  
 	* Exported me_voice() in irc_table (synch 1.6).  
@@ -994,7 +1000,7 @@
 
 2002-10-11 00:49  Will Buckner <wcc@techmonkeys.org>
 
-	* eggdrop.simple.conf, misc/addpatch, modules/channels/channels.c,
+	* eggdrop.simple.conf, modules/channels/channels.c,
 	modules/channels/tclchan.c, modules/irc/chan.c,
 	modules/irc/cmdsirc.c, modules/irc/irc.c,
 	modules/transfer/transfer.c, src/chan.h, src/cmds.c, src/egg.h,
@@ -5623,11 +5629,9 @@
 	intl/loadmsgcat.c, intl/localcharset.c, intl/locale.alias,
 	intl/localealias.c, intl/ngettext.c, intl/plural.c, intl/plural.y,
 	intl/ref-add.sin, intl/ref-del.sin, intl/textdomain.c,
-	misc/config.guess, misc/config.sub, misc/install-sh,
-	misc/mkinstalldirs, misc/modconfig, po/Makefile.in.in,
-	po/eggdrop.pot, scripts/.cvsignore, scripts/Makefile.am,
-	scripts/Makefile.in, src/.cvsignore, src/Makefile.am,
-	src/Makefile.in, src/eggdrop.h, src/modules.c:
+	po/Makefile.in.in, po/eggdrop.pot, scripts/.cvsignore,
+	scripts/Makefile.am, scripts/Makefile.in, src/.cvsignore,
+	src/Makefile.am, src/Makefile.in, src/eggdrop.h, src/modules.c:
 
 	* Refactored the tree (especially src/modules.c) to use the libltdl 
 	  wrapper. Modules are configured to be lt_dlopened or dl_preopened
@@ -5884,9 +5888,8 @@
 2001-08-21 00:21  Federico Mennite <ite@techmonkeys.org>
 
 	* .cvsignore, Makefile.in, acconfig.h, aclocal.m4, bootstrap,
-	configure.in, misc/config.guess, misc/config.sub, po/.cvsignore,
-	po/POTFILES.in, po/eggdrop.pot, po/update.pl, src/Makefile.in,
-	src/eggdrop.h, src/main.c:
+	configure.in, po/.cvsignore, po/POTFILES.in, po/eggdrop.pot,
+	po/update.pl, src/Makefile.in, src/eggdrop.h, src/main.c:
 
 	Gettext phase 2: 
 	* Replced dummy _() define with the real one and added language
@@ -6002,14 +6005,6 @@
 	bots we do not overwrite these files normally and they can get dated
 	when people move between series and do not upgrade their motd/banner
 	.. I am one of these people.  
-
-2001-08-14 16:39  Jeff Fisher <guppy@techmonkeys.org>
-
-	* misc/cvs2cl.pl:
-
-	removed cvs2cl.pl since we have automatic changelogs setup now.
-	every 30 minutes the ChangeLog will be regenerated if anything has
-	been changed. Thanks to the irssi people for their little script.  
 
 2001-08-13 23:38  Federico Mennite <ite@techmonkeys.org>
 
@@ -6246,13 +6241,6 @@
 	* src/net.c:
 
 	byteorder problem 
-
-2001-08-07 14:16  Matthew Hallacy <poptix@techmonkeys.org>
-
-	* misc/cvs2cl.pl:
-
-	This script parses cvs logs and creates the Changelog file, you
-	should make sure it ignores changes to the file 'Changelog' =) 
 
 2001-08-07 13:57  Matthew Hallacy <poptix@techmonkeys.org>
 
@@ -6505,7 +6493,7 @@
 
 2001-07-09 15:57  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, misc/modconfig:
+	* doc/UPDATES1.6:
 
 	applied Fabian's modconfig patch ... should I release 1.6.5
 	tomorrow? all signs point to yes 
@@ -7070,16 +7058,16 @@
 2001-04-12 02:39  Jeff Fisher <guppy@techmonkeys.org>
 
 	* FEATURES, INSTALL, NEWS, README, doc/AUTHORS, doc/UPDATES1.6,
-	misc/modconfig, scripts/ques5.tcl, src/bg.c, src/bg.h,
-	src/botcmd.c, src/botmsg.c, src/botnet.c, src/chan.h,
-	src/chanprog.c, src/cmds.c, src/cmdt.h, src/dcc.c, src/dccutil.c,
-	src/dns.c, src/dns.h, src/eggdrop.h, src/flags.c, src/flags.h,
-	src/lang.h, src/language.c, src/main.c, src/main.h, src/mem.c,
-	src/misc.c, src/misc_file.c, src/misc_file.h, src/modules.h,
-	src/patch.h, src/proto.h, src/stat.h, src/tandem.h, src/tcl.c,
-	src/tcldcc.c, src/tclegg.h, src/tclhash.c, src/tclhash.h,
-	src/tclmisc.c, src/tcluser.c, src/userent.c, src/userrec.c,
-	src/users.c, src/users.h, text/banner, text/motd:
+	scripts/ques5.tcl, src/bg.c, src/bg.h, src/botcmd.c, src/botmsg.c,
+	src/botnet.c, src/chan.h, src/chanprog.c, src/cmds.c, src/cmdt.h,
+	src/dcc.c, src/dccutil.c, src/dns.c, src/dns.h, src/eggdrop.h,
+	src/flags.c, src/flags.h, src/lang.h, src/language.c, src/main.c,
+	src/main.h, src/mem.c, src/misc.c, src/misc_file.c,
+	src/misc_file.h, src/modules.h, src/patch.h, src/proto.h,
+	src/stat.h, src/tandem.h, src/tcl.c, src/tcldcc.c, src/tclegg.h,
+	src/tclhash.c, src/tclhash.h, src/tclmisc.c, src/tcluser.c,
+	src/userent.c, src/userrec.c, src/users.c, src/users.h,
+	text/banner, text/motd:
 
 	lets update the copyright info for 2001 k? :P~ 
 
@@ -8495,7 +8483,7 @@
 
 2000-08-18 01:06  Fabian Knittel <fknittel@gmx.de>
 
-	* disabled_modules, doc/UPDATES1.5, misc/modconfig, src/patch.h:
+	* disabled_modules, doc/UPDATES1.5, src/patch.h:
 
 	Tothwolf's fixspaces patch 
 
@@ -9109,7 +9097,7 @@
 2000-04-25 20:49  Fabian Knittel <fknittel@gmx.de>
 
 	* Makefile.in, configure, configure.in, doc/UPDATES1.5,
-	misc/modconfig, src/patch.h:
+	src/patch.h:
 
 	conf_make_fix9 patch 
 
@@ -9317,10 +9305,10 @@
 
 	* Makefile.in, acconfig.h, aclocal.m4, config.h.in, configure,
 	configure.in, doc/Makefile.in, doc/UPDATES1.4, doc/UPDATES1.5,
-	misc/modconfig, scripts/Makefile.in, src/Makefile.in, src/botmsg.c,
-	src/dcc.c, src/dccutil.c, src/dns.c, src/main.h, src/misc.c,
-	src/misc_file.c, src/misc_file.h, src/modules.c, src/patch.h,
-	src/proto.h, src/tclegg.h:
+	scripts/Makefile.in, src/Makefile.in, src/botmsg.c, src/dcc.c,
+	src/dccutil.c, src/dns.c, src/main.h, src/misc.c, src/misc_file.c,
+	src/misc_file.h, src/modules.c, src/patch.h, src/proto.h,
+	src/tclegg.h:
 
 	configure_makefile_fix3 patch 
 
@@ -9389,8 +9377,7 @@
 2000-03-06 18:54  Fabian Knittel <fknittel@gmx.de>
 
 	* Makefile.in, aclocal.m4, configure, configure.in, lush.h.in,
-	doc/Makefile.in, doc/UPDATES1.5, misc/modconfig,
-	scripts/Makefile.in, src/patch.h:
+	doc/Makefile.in, doc/UPDATES1.5, scripts/Makefile.in, src/patch.h:
 
 	configure_fix2,3 patches 
 
@@ -9403,8 +9390,8 @@
 2000-03-05 23:22  Fabian Knittel <fknittel@gmx.de>
 
 	* Makefile.in, aclocal.m4, configure, configure.in, install-sh,
-	mkinstalldirs, doc/UPDATES1.4, doc/UPDATES1.5, misc/install-sh,
-	misc/mkinstalldirs, misc/modconfig, src/main.c, src/patch.h:
+	mkinstalldirs, doc/UPDATES1.4, doc/UPDATES1.5, src/main.c,
+	src/patch.h:
 
 	configure_fix patch 
 
