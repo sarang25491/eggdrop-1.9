@@ -1,3 +1,10 @@
+2001-08-22 23:49  Teemu Hjelt <sup@techmonkeys.org>
+
+	* src/mod/channels.mod/tclchan.c:
+
+	BarkerJr: Added a check for -dynamicbans to
+	newban/newexempt/newinvite.  
+
 2001-08-22 00:41  Federico Mennite <ite@techmonkeys.org>
 
 	* aclocal.m4:
