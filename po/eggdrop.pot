@@ -1,13 +1,14 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Eggheads Development Team
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# eggdrop.pot
+# Copyright (C) 2004 Eggheads Development Team
+# This file is distributed under the same license as the Eggdrop package.
+
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2004-03-01 17:59-0500\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2004-03-01 18:15-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -35,16 +36,19 @@ msgstr ""
 msgid "%s: option `%s' requires an argument\n"
 msgstr ""
 
+#. --option
 #: lib/compat/getopt.c:758
 #, c-format
 msgid "%s: unrecognized option `--%s'\n"
 msgstr ""
 
+#. +option or -option
 #: lib/compat/getopt.c:762
 #, c-format
 msgid "%s: unrecognized option `%c%s'\n"
 msgstr ""
 
+#. 1003.2 specifies the format of this message.
 #: lib/compat/getopt.c:788
 #, c-format
 msgid "%s: illegal option -- %c\n"
@@ -55,6 +59,7 @@ msgstr ""
 msgid "%s: invalid option -- %c\n"
 msgstr ""
 
+#. 1003.2 specifies the format of this message.
 #: lib/compat/getopt.c:821 lib/compat/getopt.c:951
 #, c-format
 msgid "%s: option requires an argument -- %c\n"
@@ -218,6 +223,7 @@ msgstr ""
 msgid "Server says my nickname ('%s') is invalid, trying new random nick."
 msgstr ""
 
+#. We are online and have a nickname, we'll keep it
 #: modules/server/input.c:441
 #, c-format
 msgid "Nick is in use: '%s' (keeping '%s')."
@@ -242,6 +248,10 @@ msgstr ""
 msgid "Nick change was too fast."
 msgstr ""
 
+#. Usually if we get this then we really messed up somewhere
+#. * or this is a non-standard server, so we log it and kill the socket
+#. * hoping the next server will work :) -poptix
+#.
 #: modules/server/input.c:490
 #, c-format
 msgid "%s says I'm not registered, trying next one."
@@ -354,6 +364,7 @@ msgstr ""
 msgid "   Connecting to next server in %d seconds."
 msgstr ""
 
+#. First line, who we've connected to.
 #: modules/server/server.c:109
 #, c-format
 msgid "   Connected to %s/%d."
@@ -433,6 +444,7 @@ msgid "    Using Tcl version %d.%d (by header).\n"
 msgstr ""
 
 #: modules/tclscript/tclscript.c:708
+#, c-format
 msgid ""
 "return \"    Library: [info library]\\n    Reported version: [info "
 "tclversion]\\n    Reported patchlevel: [info patchlevel]\""
@@ -696,6 +708,7 @@ msgstr ""
 msgid "Last message repeated %d time(s).\n"
 msgstr ""
 
+#. It's too big.
 #: src/logfile.c:251
 #, c-format
 msgid "Cycling logfile %s: over max-logsize (%d kilobytes)."
@@ -729,6 +742,7 @@ msgid ""
 msgstr ""
 
 #: src/main.c:184
+#, c-format
 msgid ""
 "\n"
 "  -h, --help                 Print help and exit\n"
@@ -741,6 +755,7 @@ msgid ""
 "  FILE  optional config filename (default 'config.xml')\n"
 msgstr ""
 
+#. bug: option not considered.
 #: src/main.c:251
 #, c-format
 msgid "%s: option unknown: %c\n"
