@@ -27,7 +27,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: chan.c,v 1.33 2003/02/12 08:42:22 wcc Exp $";
+static const char rcsid[] = "$Id: chan.c,v 1.34 2003/02/27 02:44:10 wcc Exp $";
 #endif
 */
 
@@ -732,7 +732,8 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
     strcpy(botuserhost, m->userhost);	/* Yes, save my own userhost */
     m->joined = now;		/* set this to keep the whining masses happy */
   }
-  if (strchr(flags, '@') != NULL)	/* Flags say he's opped? */
+  if ((strchr(flags, '@') != NULL) || (strchr(flags, '&') != NULL) ||
+      (strchr(flags, '~') != NULL))
     m->flags |= (CHANOP | WASOP);	/* Yes, so flag in my table */
   else
     m->flags &= ~(CHANOP | WASOP);

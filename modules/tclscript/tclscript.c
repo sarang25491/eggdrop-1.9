@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tclscript.c,v 1.28 2003/02/25 10:28:22 stdarg Exp $";
+static const char rcsid[] = "$Id: tclscript.c,v 1.29 2003/02/27 02:44:10 wcc Exp $";
 #endif
 
 #include <tcl.h>
@@ -31,8 +31,8 @@ static const char rcsid[] = "$Id: tclscript.c,v 1.28 2003/02/25 10:28:22 stdarg 
 
 static eggdrop_t *egg = NULL;
 
-#if (TCL_MAJOR_VERSION > 8) || (TCL_MAJOR_VERSION == 8 && TCL_MINOR_VERSION > 1)
-	#define USE_BYTE_ARRAYS
+#if (TCL_MAJOR_VERSION > 8) || ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION > 1))
+# define USE_BYTE_ARRAYS
 #endif
 
 /* Data we need for a tcl callback. */
