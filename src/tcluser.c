@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  *
- * $Id: tcluser.c,v 1.23 2001/07/26 17:04:33 drummer Exp $
+ * $Id: tcluser.c,v 1.24 2001/08/13 19:22:30 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -562,7 +562,6 @@ tcl_cmds tcluser_cmds[] =
   {"chattr",		tcl_chattr},
   {"botattr",		tcl_botattr},
   {"matchattr",		tcl_matchattr},
-  {"matchchanattr",	tcl_matchattr},
   {"adduser",		tcl_adduser},
   {"addbot",		tcl_addbot},
   {"deluser",		tcl_deluser},

@@ -3,12 +3,13 @@
 #   use this is you are to lazy to get of your butt and update your scripts :D
 #   by the way it binds some old command to the new ones
 #
+# guppy     12Aug2001: added matchchanattr
 # Wiktor    31Mar2000: added binds and chnick proc
 # Tothwolf  25May1999: cleanup
 # Tothwolf  06Oct1999: optimized
 # rtc       10Oct1999: added [set|get][dn|up]loads functions
 #
-# $Id: compat.tcl,v 1.5 2000/04/05 19:25:34 fabian Exp $
+# $Id: compat.tcl,v 1.6 2001/08/13 19:22:30 guppy Exp $
 
 proc gethosts {hand} {
   getuser $hand HOSTS
@@ -99,6 +100,10 @@ proc setuploads {hand {c 0} {k 0}} {
 
 proc getuploads {hand} {
   getuser $hand FSTAT u
+}
+
+proc matchchanattr {hand flags chan} {
+  matchattr $hand |$flags $chan
 }
 
 # as you can see it takes a lot of effort to simulate all the old commands
