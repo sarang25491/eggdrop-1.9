@@ -85,7 +85,6 @@ int registry_add_simple_chains(registry_simple_chain_t *entries)
 	/* First entry gives the class. */
 	class = entries->name;
 	entries++;
-	fp = fopen("blah", "w");
 	while (entries->name) {
 		entry = (registry_entry_t *)calloc(1, sizeof(*entry));
 		entry->class = class;
@@ -93,7 +92,6 @@ int registry_add_simple_chains(registry_simple_chain_t *entries)
 		entry->callback = entries->callback;
 		entry->nargs = entries->nargs;
 		entry->flags = REGISTRY_CHAIN;
-		fprintf(fp, "%s\n%s\n%d\n%d\n\n", entry->class, entry->name, entry->nargs, entry->flags);
 		registry_add(entry);
 		entries++;
 	}
