@@ -1,3 +1,11 @@
+2003-04-09 02:01  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/eggdns.c, lib/eggdrop/my_socket.c,
+	lib/eggdrop/my_socket.h, src/telnet.c:
+
+	
+	* Support for ipv6 reverse dns 
+
 2003-04-07 07:20  stdarg <stdarg@techmonkeys.org>
 
 	* doc/SCRIPTING-COMMANDS, modules/server/input.c,
