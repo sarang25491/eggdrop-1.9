@@ -3,7 +3,7 @@
  *   Tcl stubs for file system commands
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.25 2001/08/10 23:51:20 ite Exp $
+ * $Id: tclmisc.c,v 1.26 2001/08/13 17:24:38 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -405,7 +405,7 @@ static int tcl_loadmodule STDVAR
 
   BADARGS(2, 2, " module-name");
   p = module_load(argv[1]);
-  if (p && strcmp(p, _("Already loaded.")) && !strcmp(argv[0], "loadmodule"))
+  if (p && strcmp(p, _("Already loaded.")))
     putlog(LOG_MISC, "*", "%s %s: %s", _("Cant load modules"), argv[1], p);
   Tcl_AppendResult(irp, p, NULL);
   return TCL_OK;
@@ -577,7 +577,6 @@ tcl_cmds tclmisc_cmds[] =
   {"unames",		tcl_unames},
   {"unloadmodule",	tcl_unloadmodule},
   {"loadmodule",	tcl_loadmodule},
-  {"checkmodule",	tcl_loadmodule},
   {"modules",		tcl_modules},
   {"loadhelp",		tcl_loadhelp},
   {"unloadhelp",	tcl_unloadhelp},
