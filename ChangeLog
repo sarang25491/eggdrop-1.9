@@ -1,3 +1,12 @@
+2003-06-15 05:43  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/binds.c, lib/eggdrop/partyline.h,
+	lib/eggdrop/partymember.c, lib/eggdrop/users.c,
+	lib/eggdrop/users.h, lib/eggdrop/xml.c,
+	modules/telnetparty/events.c, src/core_party.c, src/main.h:
+
+	[no log message] 
+
 2003-06-13 03:35  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/binds.c, lib/eggdrop/binds.h,
