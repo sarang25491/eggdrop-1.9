@@ -20,6 +20,12 @@ static egg_proxy_t http_proxy_handler = {
 	http_reconnect
 };
 
+static egg_proxy_t socks5_proxy_handler = {
+	"socks5",
+	NULL,
+	socks5_reconnect
+};
+
 static int on_proxy_set(char *setting, char *val)
 {
 	putlog(LOG_MISC, "*", "Setting default proxy to '%s'", val);
@@ -36,6 +42,7 @@ static int proxy_init()
 	config_link_table(proxy_config_vars, config_root, "proxy", 0, NULL);
 
 	egg_proxy_add(&http_proxy_handler);
+	egg_proxy_add(&socks5_proxy_handler);
 	if (proxy_config.type) egg_proxy_set_default(proxy_config.type);
 
 	bind_add_simple("config_str", NULL, "proxy.type", on_proxy_set);

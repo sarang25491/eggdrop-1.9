@@ -15,4 +15,6 @@ extern proxy_config_t proxy_config;
 /* From http.c */
 int http_reconnect(int idx, const char *host, int port);
 
+/* From socks5.c */
+int socks5_reconnect(int idx, const char *host, int port);
 #endif

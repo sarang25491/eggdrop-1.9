@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggconfig.c,v 1.10 2003/12/17 07:39:14 wcc Exp $";
+static const char rcsid[] = "$Id: eggconfig.c,v 1.11 2003/12/19 00:51:37 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -218,7 +218,7 @@ int config_set_str(const char *strval, void *config_root, ...)
 	}
 	var = root->client_data;
 	if (var) {
-		if (var->type == CONFIG_STRING) str_redup(var->ptr, strval);
+		if (var->type == CONFIG_STRING && *(char **)var->ptr != strval) str_redup(var->ptr, strval);
 		else if (var->type == CONFIG_INT) *(int *)var->ptr = atoi(strval);
 	}
 	xml_node_set_str(strval, root, NULL);

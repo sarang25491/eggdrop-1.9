@@ -81,9 +81,10 @@ static int http_on_read(void *client_data, int idx, char *data, int len)
 	}
 
 	/* Successful, switch it over. */
+	sockbuf_detach_filter(info->their_idx, &delete_listener, info);
 	sock = sockbuf_get_sock(info->our_idx);
 	sockbuf_set_sock(info->our_idx, -1, 0);
-	sockbuf_set_sock(info->their_idx, sock, SOCKBUF_CLIENT);
+	sockbuf_set_sock(info->their_idx, sock, 0);
 	sockbuf_on_connect(info->their_idx, SOCKBUF_LEVEL_INTERNAL, info->host, info->port);
 	sockbuf_delete(info->our_idx);
 

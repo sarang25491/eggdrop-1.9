@@ -1,10 +1,10 @@
-# $Id: Makefile.am,v 1.1 2003/12/18 23:11:59 stdarg Exp $
+# $Id: Makefile.am,v 1.2 2003/12/19 00:51:37 stdarg Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 pkglibdir		= $(exec_prefix)/modules
 
 pkglib_LTLIBRARIES	= proxy.la
-proxy_la_SOURCES	= proxy.c proxy.h http.c
+proxy_la_SOURCES	= proxy.c proxy.h http.c socks5.c
 proxy_la_LDFLAGS	= -module -avoid-version -no-undefined
 proxy_la_LIBADD	= @LIBS@ $(top_builddir)/lib/eggdrop/libeggdrop.la
 
