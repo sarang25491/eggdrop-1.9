@@ -1,3 +1,11 @@
+2002-04-25 23:18  stdarg <stdarg@techmonkeys.org>
+
+	* modules/channels/cmdschan.c, src/cmds.c, src/tcldcc.c,
+	src/tclhash.c, src/userrec.c, src/users.c:
+
+	
+	* Added NULL checking to some more dcc table cycling code 
+
 2002-04-25 22:48  stdarg <stdarg@techmonkeys.org>
 
 	* modules/perlscript/: mod_iface.c, perlscript.c:
