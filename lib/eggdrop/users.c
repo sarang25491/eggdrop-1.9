@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.30 2004/06/23 21:15:45 wingman Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.31 2004/06/23 21:26:06 darko Exp $";
 #endif
 
 #include <stdio.h>
@@ -719,3 +719,12 @@ user_check_flags_str (user_t *u, const char *chan, const char *flags)
 	return user_check_flags (u, chan, &f);
 }
 
+int
+user_change_handle(user_t *u, const char *old, const char *new)
+{
+
+	hash_table_delete(handle_ht, old, NULL);
+	free(u->handle);
+	u->handle = strdup(new);
+	return !hash_table_insert(handle_ht, new, u);
+}

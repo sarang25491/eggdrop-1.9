@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: users.h,v 1.11 2004/06/22 20:12:37 wingman Exp $
+ * $Id: users.h,v 1.12 2004/06/23 21:26:06 darko Exp $
  */
 
 #ifndef _EGG_USERS_H_
@@ -95,5 +95,6 @@ int user_check_pass(user_t *u, const char *pass);
 int user_set_pass(user_t *u, const char *pass);
 int user_count();
 int user_rand_pass(char *buf, int bufsize);
+int user_change_handle(user_t *u, const char *old, const char *new);
 
 #endif /* !_EGG_USERS_H_ */

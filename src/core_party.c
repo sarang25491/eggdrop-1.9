@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.35 2004/06/23 21:12:57 stdarg Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.36 2004/06/23 21:26:06 darko Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -566,6 +566,34 @@ static int party_restart(partymember_t *p, const char *nick, user_t *u, const ch
 	return BIND_RET_LOG;
 }
 
+/* Syntax: chhandle <old_handle> <new_handle> */
+static int party_chhandle(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	char *old = NULL, *new = NULL;
+	user_t *dest;
+
+	egg_get_args(text, NULL, &old, &new, NULL);
+	if (!old || !new || !*old || !*new) {
+		partymember_printf(p, _("Syntax: chhandle <old_handle> <new_handle>"));
+		return 0;
+	}
+
+	dest = user_lookup_by_handle(old);
+	if (!dest) {
+		partymember_printf(p, _("Error: User '%s' does not exist."), old);
+		return 0;
+	}
+
+	if (user_lookup_by_handle(new)) {
+		partymember_printf(p, _("Error: User '%s' already exists."), new);
+		return 0;
+	}
+
+	if (user_change_handle(dest, old, new))
+		partymember_printf(p, _("Ok, changed."));
+	return 0;
+}
+
 static bind_list_t core_party_binds[] = {
 	{NULL, "join", party_join},		/* DDD	*/
 	{NULL, "whisper", party_whisper},	/* DDD	*/
@@ -592,6 +620,7 @@ static bind_list_t core_party_binds[] = {
 	{"n", "binds", party_binds},		/* DDD 	*/
 	{"m", "+host", party_plus_host},	/* DDC	*/
 	{"m", "-host", party_minus_host},	/* DDC	*/
+	{"t", "chhandle", party_chhandle},	/* DDD	*/
 	{0}
 };
 
