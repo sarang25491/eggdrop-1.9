@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: input.c,v 1.32 2004/06/14 23:42:11 wingman Exp $";
+static const char rcsid[] = "$Id: input.c,v 1.33 2004/06/29 21:28:17 stdarg Exp $";
 #endif
 
 #include "server.h"
@@ -151,8 +151,8 @@ static int got005(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 			for (j = 0; j < 3; j++) {
 				comma = strchr(value, ',');
 				if (!comma) break;
-				strlcpy(types[j], value, sizeof types[j]);
-				if (comma) *comma = ',';
+				memcpy(types[j], value, comma-value);
+				types[j][comma-value+1] = 0;
 				value = comma+1;
 			}
 			if (comma) strlcpy(types[3], value, sizeof types[3]);

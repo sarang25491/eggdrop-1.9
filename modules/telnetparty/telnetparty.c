@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: telnetparty.c,v 1.17 2004/06/21 11:33:40 wingman Exp $";
+static const char rcsid[] = "$Id: telnetparty.c,v 1.18 2004/06/29 21:28:17 stdarg Exp $";
 #endif
 
 #include <ctype.h>
@@ -281,6 +281,8 @@ char *telnet_fix_line(const char *line)
 
 static void kill_session(telnet_session_t *session)
 {
+	if (session->ident_id != -1) egg_ident_cancel(session->ident_id, 0);
+	if (session->dns_id != -1) egg_dns_cancel(session->dns_id, 0);
 	if (session->ip) free(session->ip);
 	if (session->host) free(session->host);
 	if (session->ident) free(session->ident);
@@ -315,8 +317,8 @@ static int telnet_on_newclient(void *client_data, int idx, int newidx, const cha
 	}
 
 	/* Start lookups. */
-	egg_ident_lookup(peer_ip, peer_port, telnet_port, -1, ident_result, session);
-	egg_dns_reverse(peer_ip, -1, dns_result, session);
+	session->ident_id = egg_ident_lookup(peer_ip, peer_port, telnet_port, -1, ident_result, session);
+	session->dns_id = egg_dns_reverse(peer_ip, -1, dns_result, session);
 
 	return(0);
 }
@@ -325,6 +327,7 @@ static int ident_result(void *client_data, const char *ip, int port, const char 
 {
 	telnet_session_t *session = client_data;
 
+	session->ident_id = -1;
 	if (reply) session->ident = strdup(reply);
 	else session->ident = strdup("~telnet");
 	process_results(session);
@@ -336,6 +339,7 @@ static int dns_result(void *client_data, const char *ip, char **hosts)
 	telnet_session_t *session = client_data;
 	const char *host;
 
+	session->dns_id = -1;
 	if (!hosts || !hosts[0]) host = ip;
 	else host = hosts[0];
 

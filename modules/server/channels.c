@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.22 2004/06/26 19:49:48 stdarg Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.23 2004/06/29 21:28:17 stdarg Exp $";
 #endif
 
 #include "server.h"
@@ -865,13 +865,12 @@ static void parse_chan_mode(char *from_nick, char *from_uhost, user_t *u, int na
 				case 'l':
 					chan->limit = atoi(arg);
 					break;
-				default:
-					for (i = 0; i < chan->nargs; i++) {
-						if (chan->args[i].type == *change) {
-							str_redup(&chan->args[i].value, arg);
-							break;
-						}
-					}
+			}
+			for (i = 0; i < chan->nargs; i++) {
+				if (chan->args[i].type == *change) {
+					str_redup(&chan->args[i].value, arg);
+					break;
+				}
 			}
 		}
 		else {
@@ -884,13 +883,12 @@ static void parse_chan_mode(char *from_nick, char *from_uhost, user_t *u, int na
 				case 'l':
 					chan->limit = 0;
 					break;
-				default:
-					for (i = 0; i < chan->nargs; i++) {
-						if (chan->args[i].type == *change) {
-							str_redup(&chan->args[i].value, NULL);
-							break;
-						}
-					}
+			}
+			for (i = 0; i < chan->nargs; i++) {
+				if (chan->args[i].type == *change) {
+					str_redup(&chan->args[i].value, NULL);
+					break;
+				}
 			}
 		}
 

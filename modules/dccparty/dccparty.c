@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dccparty.c,v 1.7 2004/06/23 22:25:06 darko Exp $";
+static const char rcsid[] = "$Id: dccparty.c,v 1.8 2004/06/29 21:28:17 stdarg Exp $";
 #endif
 
 #include <ctype.h>
@@ -72,6 +72,8 @@ int dcc_init()
 
 static void kill_session(dcc_session_t *session)
 {
+	if (session->ident_id != -1) egg_ident_cancel(session->ident_id, 0);
+	if (session->dns_id != -1) egg_dns_cancel(session->dns_id, 0);
 	if (session->ip) free(session->ip);
 	if (session->host) free(session->host);
 	if (session->ident) free(session->ident);
@@ -116,8 +118,8 @@ static int dcc_on_connect(void *client_data, int idx, const char *peer_ip, int p
 	session->count = 0;
 
 	/* Start lookups. */
-	egg_ident_lookup(peer_ip, peer_port, our_port, -1, ident_result, session);
-	egg_dns_reverse(peer_ip, -1, dns_result, session);
+	session->ident_id = egg_ident_lookup(peer_ip, peer_port, our_port, -1, ident_result, session);
+	session->dns_id = egg_dns_reverse(peer_ip, -1, dns_result, session);
 
 	return(0);
 }
@@ -126,6 +128,7 @@ static int ident_result(void *client_data, const char *ip, int port, const char 
 {
 	dcc_session_t *session = client_data;
 
+	session->ident_id = -1;
 	if (reply) session->ident = strdup(reply);
 	else session->ident = strdup("~dcc");
 	process_results(session);
@@ -137,6 +140,7 @@ static int dns_result(void *client_data, const char *ip, char **hosts)
 	dcc_session_t *session = client_data;
 	const char *host;
 
+	session->dns_id = -1;
 	if (!hosts || !hosts[0]) host = ip;
 	else host = hosts[0];
 

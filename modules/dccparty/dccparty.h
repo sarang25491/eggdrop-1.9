@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: dccparty.h,v 1.3 2003/12/18 06:50:47 wcc Exp $
+ * $Id: dccparty.h,v 1.4 2004/06/29 21:28:17 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_DCCPARTY_DCCPARTY_H_
@@ -47,6 +47,7 @@ typedef struct {
 
 	/* Connection state we're in. */
 	int state, count;
+	int ident_id, dns_id;
 } dcc_session_t;
 
 typedef struct {

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: ircparty.c,v 1.11 2004/06/23 11:19:52 wingman Exp $";
+static const char rcsid[] = "$Id: ircparty.c,v 1.12 2004/06/29 21:28:17 stdarg Exp $";
 #endif
 
 #include <ctype.h>
@@ -101,6 +101,8 @@ int irc_init()
 
 static void kill_session(irc_session_t *session)
 {
+	if (session->ident_id != -1) egg_ident_cancel(session->ident_id, 0);
+	if (session->dns_id != -1) egg_dns_cancel(session->dns_id, 0);
 	if (session->ip) free(session->ip);
 	if (session->host) free(session->host);
 	if (session->ident) free(session->ident);
@@ -134,8 +136,8 @@ static int irc_on_newclient(void *client_data, int idx, int newidx, const char *
 	}
 
 	/* Start lookups. */
-	egg_ident_lookup(peer_ip, peer_port, irc_port, -1, ident_result, session);
-	egg_dns_reverse(peer_ip, -1, dns_result, session);
+	session->ident_id = egg_ident_lookup(peer_ip, peer_port, irc_port, -1, ident_result, session);
+	session->dns_id = egg_dns_reverse(peer_ip, -1, dns_result, session);
 
 	return(0);
 }
@@ -144,6 +146,7 @@ static int ident_result(void *client_data, const char *ip, int port, const char 
 {
 	irc_session_t *session = client_data;
 
+	session->ident_id = -1;
 	if (reply) session->ident = strdup(reply);
 	else session->ident = strdup("~ircparty");
 	process_results(session);
@@ -155,6 +158,7 @@ static int dns_result(void *client_data, const char *ip, char **hosts)
 	irc_session_t *session = client_data;
 	const char *host;
 
+	session->dns_id = -1;
 	if (!hosts || !hosts[0]) host = ip;
 	else host = hosts[0];
 
@@ -282,6 +286,7 @@ static int irc_on_read(void *client_data, int idx, char *data, int len)
 			bind_check(BT_ircparty, NULL, msg.cmd, session->party, idx, msg.cmd, msg.nargs, msg.args);
 			break;
 		case STATE_UNREGISTERED:
+			if (!msg.cmd) break;
 			if (!strcasecmp(msg.cmd, "nick") && msg.nargs == 1) {
 				if (session->nick) egg_iprintf(session->idx, ":%s NICK %s\r\n", session->nick, msg.args[0]);
 				str_redup(&session->nick, msg.args[0]);

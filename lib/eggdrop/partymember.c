@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partymember.c,v 1.15 2004/06/23 20:19:45 wingman Exp $";
+static const char rcsid[] = "$Id: partymember.c,v 1.16 2004/06/29 21:28:16 stdarg Exp $";
 #endif
 
 #include <stdarg.h>
@@ -105,7 +105,7 @@ int partymember_get_pid()
 {
 	int pid;
 
-	for (pid = 0; partymember_lookup_pid(pid); pid++) {
+	for (pid = 1; partymember_lookup_pid(pid); pid++) {
 		;
 	}
 	return(pid);
@@ -225,7 +225,7 @@ int partymember_who(int **pids, int *len)
 		(*pids)[i] = p->pid;
 		i++;
 	}
-	(*pids)[i] = -1;
+	(*pids)[i] = 0;
 	return(0);
 }
 

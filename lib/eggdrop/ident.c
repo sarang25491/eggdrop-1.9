@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: ident.c,v 1.1 2004/06/21 20:35:11 wingman Exp $";
+static const char rcsid[] = "$Id: ident.c,v 1.2 2004/06/29 21:28:16 stdarg Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -50,7 +50,8 @@ static int ident_result(void *client_data, const char *ident);
 static sockbuf_handler_t ident_handler = {
 	"ident",
 	ident_on_connect, ident_on_eof, NULL,
-	ident_on_read, NULL
+	ident_on_read, NULL,
+	NULL
 };
 
 static ident_info_t *ident_head = NULL;

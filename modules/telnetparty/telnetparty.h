@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: telnetparty.h,v 1.4 2004/06/19 16:11:53 wingman Exp $
+ * $Id: telnetparty.h,v 1.5 2004/06/29 21:28:17 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_TELNETPARTY_TELNETPARTY_H_
@@ -62,6 +62,7 @@ typedef struct {
 
 	/* Connection state we're in. */
 	int state, count;
+	int ident_id, dns_id;
 } telnet_session_t;
 
 typedef struct {
