@@ -1,3 +1,16 @@
+2002-01-26 13:26  Federico Mennite <ite@techmonkeys.org>
+
+	* scripts/sentinel.tcl:
+
+	Updated sentinel.tcl to v2.60 (synch 1.6) 
+
+2002-01-26 13:18  Federico Mennite <ite@techmonkeys.org>
+
+	* modules/filesys/filedb3.c, modules/notes/notes.c,
+	modules/transfer/transfer.c, src/botnet.c:
+
+	Cosmetic changes for plurals (synch 1.6) 
+
 2002-01-26 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
