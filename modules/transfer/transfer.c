@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.4 2001/12/29 21:04:22 guppy Exp $
+ * $Id: transfer.c,v 1.5 2001/12/29 21:43:53 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -660,8 +660,6 @@ static void eof_dcc_fork_send(int idx)
     if (y != 0) {
       dcc[y].status &= ~STAT_GETTING;
       dcc[y].status &= ~STAT_SHARE;
-      debug0("(!) Could not find bot responsible for sending us the userfile "
-	     "for which the transfer failed.");
     }
     putlog(LOG_BOTS, "*", _("Failed connection; aborted userfile transfer."));
     unlink(dcc[idx].u.xfer->filename);
