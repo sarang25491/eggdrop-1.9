@@ -985,6 +985,9 @@ GLOBAL VARIABLES:
   isjuped
     value is 1 if bot's nick is juped(437) 0 otherwise.
 
+  hand-len
+    the value of the HANDLEN setting in src/eggdrop.h
+
 COMMAND EXTENSION:
 
 You can use the 'bind' command to attach Tcl procedures to certain events.
