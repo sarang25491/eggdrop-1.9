@@ -102,8 +102,8 @@ static int irc_on_newclient(void *client_data, int idx, int newidx, const char *
 		session->flags |= STEALTH_LOGIN;
 	}
 	else {
-		egg_iprintf(newidx, "NOTICE *** Hello %s/%d!\r\n", peer_ip, peer_port);
-		sockbuf_write(newidx, "NOTICE *** Don't forget to use the /PASS command to send your password in addition to normal registration!\r\n", -1);
+		egg_iprintf(newidx, ":eggdrop.bot NOTICE AUTH :*** Hello %s/%d!\r\n", peer_ip, peer_port);
+		sockbuf_write(newidx, ":eggdrop.bot NOTICE AUTH :*** Don't forget to use the /PASS command to send your password in addition to normal registration!\r\n", -1);
 		session->state = STATE_UNREGISTERED;
 	}
 
@@ -255,13 +255,14 @@ static int irc_on_read(void *client_data, int idx, char *data, int len)
 			bind_check(BT_ircparty, NULL, msg.cmd, session->party, idx, msg.cmd, msg.nargs, msg.args);
 			break;
 		case STATE_UNREGISTERED:
-			if (!strcasecmp(msg.cmd, "nick")) {
+			if (!strcasecmp(msg.cmd, "nick") && msg.nargs == 1) {
 				if (session->nick) egg_iprintf(session->idx, ":%s NICK %s\r\n", session->nick, msg.args[0]);
 				str_redup(&session->nick, msg.args[0]);
 			}
-			else if (!strcasecmp(msg.cmd, "pass")) {
+			else if (!strcasecmp(msg.cmd, "pass") && msg.nargs == 1) {
 				str_redup(&session->pass, msg.args[0]);
 			}
+			else break;
 			if (session->nick && session->pass) {
 				session->user = user_lookup_authed(session->nick, session->pass);
 				if (!session->user) {

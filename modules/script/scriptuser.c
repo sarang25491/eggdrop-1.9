@@ -38,6 +38,14 @@ static int script_adduser(char *handle)
 	return(0);
 }
 
+static int script_get_ircmasks(script_var_t *retval, user_t *u)
+{
+	retval->type = SCRIPT_ARRAY | SCRIPT_STRING;
+	retval->len = u->nircmasks;
+	retval->value = u->ircmasks;
+	return(0);
+}
+
 static char *script_user_find(char *irchost)
 {
 	user_t *u;
@@ -136,6 +144,7 @@ script_command_t script_new_user_cmds[] = {
 	{"", "user_validuid", script_validuid, NULL, 1, "i", "uid", SCRIPT_INTEGER, 0},
 	{"", "user_add", script_adduser, NULL, 1, "s", "handle", SCRIPT_INTEGER, 0},
 	{"", "user_addmask", user_add_ircmask, NULL, 2, "Us", "user ircmask", SCRIPT_INTEGER, 0},
+	{"", "user_getmasks", script_get_ircmasks, NULL, 1, "U", "user", 0, SCRIPT_PASS_RETVAL},
 	{"", "user_delmask", user_del_ircmask, NULL, 2, "Us", "user ircmask", SCRIPT_INTEGER, 0},
 	{"", "user_find", script_user_find, NULL, 1, "s", "irchost", SCRIPT_STRING, 0},
 	{"", "user_get", script_user_get, NULL, 2, "Uss", "user ?channel? setting", SCRIPT_STRING, SCRIPT_VAR_ARGS | SCRIPT_PASS_COUNT},

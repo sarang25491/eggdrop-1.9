@@ -327,11 +327,11 @@ static Tcl_Obj *c_to_tcl_var(Tcl_Interp *myinterp, script_var_t *v)
 			script_var_t v_sub;
 			void **values;
 
-			v_sub.type = v->type & (~SCRIPT_ARRAY);
-			v_sub.len = -1;
 			values = (void **)v->value;
 			for (i = 0; i < v->len; i++) {
+				v_sub.type = v->type & (~SCRIPT_ARRAY);
 				v_sub.value = values[i];
+				v_sub.len = -1;
 				element = c_to_tcl_var(myinterp, &v_sub);
 				Tcl_ListObjAppendElement(myinterp, result, element);
 			}
