@@ -1,3 +1,13 @@
+2003-02-14 10:07  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/eggconfig.c, lib/eggdrop/eggconfig.h,
+	lib/eggdrop/flags.c, modules/script/scriptconfig.c,
+	modules/script/scriptuser.c:
+
+	
+	* User flag matching for scripts 
+	* Config updates 
+
 2003-02-14 07:06  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/eggconfig.c, lib/eggdrop/eggconfig.h,
