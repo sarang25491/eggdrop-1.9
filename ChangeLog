@@ -1,3 +1,10 @@
+2001-10-19 05:33  Jeff Fisher <guppy@techmonkeys.org>
+
+	* config.guess, config.sub:
+
+	Hmmm .. that was odd, cvs update -j 1.2 -j 1.1 config.guess
+	config.sub is cool <g> 
+
 2001-10-19 05:26  Jeff Fisher <guppy@techmonkeys.org>
 
 	* AUTHORS, README, config.guess, config.sub, eggdrop.complete.conf,
