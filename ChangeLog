@@ -1,3 +1,12 @@
+2002-01-06 06:21  Federico Mennite <ite@techmonkeys.org>
+
+	* lib/eggdrop/Makefile.am, lib/eggdrop/memutil.c,
+	lib/eggdrop/memutil.h, lib/eggdrop/module.h, src/misc.c,
+	src/modules.c, src/proto.h:
+
+	Moved egg_strcatn, my_strcpy, splitc, splitcn, newsplit, str_escape,
+	strchr_unescape and str_unescape from the core to libeggdrop.  
+
 2002-01-05 14:18  stdarg <stdarg@techmonkeys.org>
 
 	* modules/tclscript/tclscript.c:
