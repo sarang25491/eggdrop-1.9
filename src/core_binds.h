@@ -2,7 +2,7 @@
  * core_binds.h --
  */
 /*
- * Copyright (C) 2002 Eggheads Development Team
+ * Copyright (C) 2002, 2003 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: core_binds.h,v 1.3 2002/05/26 08:34:13 stdarg Exp $
+ * $Id: core_binds.h,v 1.4 2003/01/02 21:33:16 wcc Exp $
  */
 
 #ifndef _CORE_BINDS_H_

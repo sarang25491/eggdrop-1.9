@@ -5,7 +5,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
+ * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: flags.c,v 1.33 2002/06/18 06:12:32 guppy Exp $";
+static const char rcsid[] = "$Id: flags.c,v 1.34 2003/01/02 21:33:16 wcc Exp $";
 #endif
 
 #include <ctype.h>

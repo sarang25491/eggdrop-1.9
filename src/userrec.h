@@ -2,7 +2,7 @@
  * userrec.h --
  */
 /*
- * Copyright (C) 2000, 2001, 2002 Eggheads Development Team
+ * Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: userrec.h,v 1.3 2002/09/20 02:06:25 stdarg Exp $
+ * $Id: userrec.h,v 1.4 2003/01/02 21:33:17 wcc Exp $
  */
 
 #ifndef _EGG_USERREC_H

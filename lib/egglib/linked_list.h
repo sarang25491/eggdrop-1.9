@@ -9,7 +9,7 @@
  *	    (not just by supplying your own comparator)
  */
 /*
- * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
+ * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,7 +26,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: linked_list.h,v 1.3 2002/05/05 16:40:33 tothwolf Exp $
+ * $Id: linked_list.h,v 1.4 2003/01/02 21:33:14 wcc Exp $
  */
 
 #ifndef _EGG_LINKED_LIST_H

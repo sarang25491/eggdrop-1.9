@@ -4,7 +4,7 @@
  *	libeggdrop 
  */
 /*
- * Copyright (C) 2002 Eggheads Development Team
+ * Copyright (C) 2002, 2003 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,7 +22,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggdrop.c,v 1.3 2002/05/05 16:40:32 tothwolf Exp $";
+static const char rcsid[] = "$Id: eggdrop.c,v 1.4 2003/01/02 21:33:13 wcc Exp $";
 #endif
 
 #include <stdlib.h>

@@ -2,7 +2,7 @@
  * traffic.c --
  */
 /*
- * Copyright (C) 2002 Eggheads Development Team
+ * Copyright (C) 2002, 2003 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: traffic.c,v 1.1 2002/06/01 13:28:32 wingman Exp $
+ * $Id: traffic.c,v 1.2 2003/01/02 21:33:17 wcc Exp $
  */
 
 #include "main.h"
@@ -28,7 +28,7 @@
 #include "traffic.h"			/* prototypes		*/
 
 #ifndef lint
-static const char rcsid[] = "$Id: traffic.c,v 1.1 2002/06/01 13:28:32 wingman Exp $";
+static const char rcsid[] = "$Id: traffic.c,v 1.2 2003/01/02 21:33:17 wcc Exp $";
 #endif
 
 egg_traffic_t traffic;			/* traffic information	*/

@@ -2,7 +2,7 @@
  * uf_features.c --
  */
 /*
- * Copyright (C) 2000, 2001, 2002 Eggheads Development Team
+ * Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
  * This program is free software; you can redistribute it and/or
@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: uf_features.c,v 1.4 2002/05/05 16:40:36 tothwolf Exp $";
+static const char rcsid[] = "$Id: uf_features.c,v 1.5 2003/01/02 21:33:15 wcc Exp $";
 #endif
 */
 

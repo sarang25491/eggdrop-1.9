@@ -4,7 +4,7 @@
  *	prototypes for compability functions
  */
 /*
- * Copyright (C) 2000, 2001, 2002 Eggheads Development Team
+ * Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: compat.h,v 1.9 2002/10/11 06:56:02 stdarg Exp $
+ * $Id: compat.h,v 1.10 2003/01/02 21:33:13 wcc Exp $
  */
 
 #ifndef _EGG_COMPAT_H

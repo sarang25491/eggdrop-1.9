@@ -2,7 +2,7 @@
  * userent.h --
  */
 /*
- * Copyright (C) 2000, 2001, 2002 Eggheads Development Team
+ * Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: userent.h,v 1.2 2002/05/05 16:40:39 tothwolf Exp $
+ * $Id: userent.h,v 1.3 2003/01/02 21:33:17 wcc Exp $
  */
 
 #ifndef _EGG_USERENT_H

@@ -13,7 +13,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
+ * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,7 +30,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: patch.h,v 1.594 2002/12/27 23:07:53 wcc Exp $
+ * $Id: patch.h,v 1.595 2003/01/02 21:33:16 wcc Exp $
  */
 
 #ifndef _EGG_PATCH_H
@@ -44,12 +44,12 @@ patch("CVS");			/* CVS version */
  *
  *
  */
-patch("1041030369");          /* current unixtime */
+patch("1041542985");          /* current unixtime */
   /*
    *
    *
    */
-patch("synch1.6-12-27-02");
+patch("2003-copyright");
 /*
  *
  *

@@ -2,7 +2,7 @@
  * hash_table.c --
  */
 /*
- * Copyright (C) 2002 Eggheads Development Team
+ * Copyright (C) 2002, 2003 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: hash_table.c,v 1.4 2002/05/05 16:40:33 tothwolf Exp $";
+static const char rcsid[] = "$Id: hash_table.c,v 1.5 2003/01/02 21:33:14 wcc Exp $";
 #endif
 
 #include <stdio.h>

@@ -7,7 +7,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
+ * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,7 +30,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.127 2002/12/12 04:28:22 wcc Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.128 2003/01/02 21:33:16 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -512,7 +512,7 @@ int main(int argc, char **argv)
 #include "patch.h"
   /* Version info! */
   snprintf(ver, sizeof ver, "%s v%s", PACKAGE, egg_version);
-  snprintf(version, sizeof version, "Eggdrop v%s (C) 1997 Robey Pointer (C) 2002 Eggheads",
+  snprintf(version, sizeof version, "Eggdrop v%s (C) 1997 Robey Pointer (C) 2003 Eggheads",
 	       egg_version);
   /* Now add on the patchlevel (for Tcl) */
   sprintf(&egg_version[strlen(egg_version)], " %u", egg_numver);

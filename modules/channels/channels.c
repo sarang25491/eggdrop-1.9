@@ -5,7 +5,7 @@
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
+ * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.19 2002/12/27 23:07:53 wcc Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.20 2003/01/02 21:33:14 wcc Exp $";
 #endif
 
 #define MODULE_NAME "channels"
