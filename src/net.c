@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.34 2001/07/27 00:46:32 drummer Exp $
+ * $Id: net.c,v 1.35 2001/08/01 16:31:41 drummer Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -502,7 +502,7 @@ debug1("|NET| checking only A record for %s", p);
   vname.sin_addr.s_addr = (myip[0] ? getmyip() : INADDR_ANY);
 #else
   vname.sin6_family = AF_INET6;
-  if (IN6_IS_ADDR_V4MAPPED(name.sin6_addr.s6_addr))
+  if (IN6_IS_ADDR_V4MAPPED(&name.sin6_addr))
     vname.sin6_addr = ipv4to6(myip[0] ? getmyip() : INADDR_ANY);
   else
     vname.sin6_addr = (myip6[0] ? getmyip6() : in6addr_any);
@@ -721,7 +721,7 @@ int answer(int sock, char *caller, char *ip, unsigned short *port,
     return -1;
   if (ip != NULL) {
 #ifdef IPV6
-    if (IN6_IS_ADDR_V4MAPPED(from.sin6_addr.s6_addr))
+    if (IN6_IS_ADDR_V4MAPPED(&from.sin6_addr))
 	egg_inet_ntop(AF_INET, &(((uint32_t *)&from.sin6_addr)[3]), ip, ADDRMAX);
     else
 	egg_inet_ntop(AF_INET6, &(from.sin6_addr), ip, ADDRMAX);
