@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptmisc.c,v 1.12 2003/12/18 07:10:03 wcc Exp $";
+static const char rcsid[] = "$Id: scriptmisc.c,v 1.13 2003/12/18 07:34:09 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -130,16 +130,16 @@ static int script_die(const char *reason)
 
 static char *script_unames()
 {
-	char buf[512];
 #ifdef HAVE_UNAME
 	struct utsname un;
+	char buf[512];
 
-	if (!uname(&un) < 0) snprintf(buf, sizeof buf, "unknown");
+	if (!uname(&un) < 0) return(strdup("unknown"));
 	else snprintf(buf, sizeof buf, "%s %s", un.sysname, un.release);
-#else
-	snprintf(buf, sizeof buf, "unknown");
-#endif
 	return(strdup(buf));
+#else
+	return(strdup("unknown"));
+#endif
 }
 
 static char *script_md5(char *data)
