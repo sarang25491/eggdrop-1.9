@@ -60,7 +60,7 @@ exec tclsh$lastver "$0" "$@"
 #   15Apr2003: cleaned up a few things, fixed a few bugs, and made a little
 #              love! j/k
 #
-# $Id: autobotchk,v 1.8 2003/05/12 23:32:40 wcc Exp $
+# $Id: autobotchk,v 1.9 2003/12/17 00:58:02 wcc Exp $
 #
 
 if {$argc == 0} {

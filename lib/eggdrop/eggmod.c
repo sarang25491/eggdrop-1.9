@@ -90,9 +90,7 @@ int module_unload(const char *name, int why)
 	module_list_t *entry, *prev;
 	int retval;
 
-	for (entry = module_list_head, prev = NULL;
-		 entry; 
-			prev = entry, entry = entry->next) {
+	for (entry = module_list_head, prev = NULL; entry; prev = entry, entry = entry->next) {
 		if (!strcasecmp(entry->modinfo.name, name)) break;
 	}
 	if (!entry) return(-1);

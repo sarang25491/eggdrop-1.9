@@ -1,42 +1,23 @@
-These are the example scripts that come with eggdrop.  They're meant
-to be useful AND to introduce Tcl to those who haven't dealt with it
-before.  Even people who program in Tcl may be confused by eggdrop's
-implementation at first, because so many commands were added to
-interface the bot.
+$Id: CONTENTS,v 1.10 2003/12/17 00:58:02 wcc Exp $
 
-action.fix.tcl
-   gets rid of those ugly /me's people do instead of a .me.
+Directory Contents - scripts/
+Last revised: December 16, 2003
+     _________________________________________________________________
 
-alltools.tcl
-   toolbox.tcl, toolkit.tcl, moretools.tcl and a few more tools all in 1 file
-   toolbox.tcl
-      cmwagner's collection of handy procs
-   toolkit.tcl
-      a few useful procs that may be required by other Tcl scripts
-   moretools.tcl
-      more useful procs from David Sesno
+                       Directory Contents - scripts/
 
-autobotchk
-   tcl script used to crontab your Eggdrop
-   usage: ./autobotchk <eggdrop config file>
+  alltools.tcl
+    Provides utility functions to Tcl scripters.
 
-botchk
-   A shell script which can be used for auto-starting the bot via 'cron'.
+  autobotchk
+    Automatically generates botchk files automatically. Not currently '1.7
+    compatable'.
 
-cmd_resolve.tcl
-   adds a dcc command called '.resolve' which can be used to resolve hostnames
-   or ip addresses in the partyline.
+  botchk
+    Script used to start the bot from crond.
 
-compat.tcl
-   maps old tcl functions to new ones, for lazy people who can't be bothered
-   updating their scripts
+  compat.tcl
+    1.6 Tcl script compatability.
+    ________________________________________________________________________
 
-getops-2.2d.tcl
-   a way to get ops from other bots on the botnet (if they're on the
-   same channel)
-
-userinfo1.0.tcl
-   cute user info settings things
-
-weed
-   weed out certain undesirables from an eggdrop userlist
+  Copyright (C) 2003, 2004 Eggheads Development Team

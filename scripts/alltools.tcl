@@ -19,8 +19,9 @@
 # Hanno     28Sep2001: fixed testip
 # guppy     03Mar2002: optimized
 # Souperman 05Nov2002: added ordnumber
+# Wcc       16Dec2003: works with 1.7 now
 #
-# $Id: alltools.tcl,v 1.14 2003/02/04 04:54:15 wcc Exp $
+# $Id: alltools.tcl,v 1.15 2003/12/17 00:58:02 wcc Exp $
 #
 ########################################
 # Descriptions of available commands:
@@ -65,29 +66,8 @@
 #   if the given command is scheduled by a timer, return its timer id
 #   else return empty string
 #
-# utimerexists <command>
-#   if the given command is scheduled by a utimer, return its utimer id
-#   else return empty string
-#
-# inchain <bot>
-#   if the given bot is connected to the botnet, return 1
-#   else return 0
-#   (for compat only, same as 'islinked')
-#
 # randstring <length>
 #   returns a random string of the given length
-#
-# putdccall <text>
-#   send the given text to all dcc users
-#
-# putdccbut <idx> <text>
-#   send the given text to all dcc users except for the given idx
-#
-# killdccall
-#   kill all dcc user connections
-#
-# killdccbut <idx>
-#   kill all dcc user connections except for the given idx
 #
 ## (moretools):
 # iso <nick> <channel>
@@ -117,10 +97,6 @@
 #   if the given handle is a permanent owner, return 1
 #   else return 0
 #
-# matchbotattr <bot> <flags>
-#   if the given bot has all the given flags, return 1
-#   else return 0
-#
 # ordnumber <string>
 #   if the given string is a number, returns the
 #   "ordinal" version of that number, i.e. 1 -> "1st",
@@ -134,7 +110,7 @@ set alltools_loaded 1
 set allt_version 205
 
 # For backward compatibility.
-set toolbox_revision 1007
+set toolbox_revision 2000
 set toolbox_loaded 1
 set toolkit_loaded 1
 
@@ -143,19 +119,19 @@ set toolkit_loaded 1
 #
 
 proc putmsg {dest text} {
-  putserv -help "PRIVMSG $dest :$text"
+  putserv -slow "PRIVMSG $dest :$text"
 }
 
 proc putchan {dest text} {
-  putserv -help "PRIVMSG $dest :$text"
+  putserv -slow "PRIVMSG $dest :$text"
 }
 
 proc putnotc {dest text} {
-  putserv -help "NOTICE $dest :$text"
+  putserv -slow "NOTICE $dest :$text"
 }
 
 proc putact {dest text} {
-  putserv -help "PRIVMSG $dest :\001ACTION $text\001"
+  putserv -slow "PRIVMSG $dest :\001ACTION $text\001"
 }
 
 #
@@ -195,24 +171,11 @@ proc iscommand {command} {
 
 proc timerexists {command} {
   foreach i [timers] {
-    if {![string compare $command [lindex $i 1]]} then {
-      return [lindex $i 2]
+    if {![string compare $command [lindex [split $i] 0]]} then {
+      return $i
     }
   }
   return
-}
-
-proc utimerexists {command} {
-  foreach i [utimers] {
-    if {![string compare $command [lindex $i 1]]} then {
-      return [lindex $i 2]
-    }
-  }
-  return
-}
-
-proc inchain {bot} {
-  islinked $bot
 }
 
 proc randstring {length {chars abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789}} {
@@ -221,36 +184,6 @@ proc randstring {length {chars abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVW
     append result [string index $chars [rand $count]]
   }
   return $result
-}
-
-proc putdccall {text} {
-  foreach i [dcclist CHAT] {
-    putdcc [lindex $i 0] $text
-  }
-}
-
-proc putdccbut {idx text} {
-  foreach i [dcclist CHAT] {
-    set j [lindex $i 0]
-    if {$j != $idx} then {
-      putdcc $j $text
-    }
-  }
-}
-
-proc killdccall {} {
-  foreach i [dcclist CHAT] {
-    killdcc [lindex $i 0]
-  }
-}
-
-proc killdccbut {idx} {
-  foreach i [dcclist CHAT] {
-    set j [lindex $i 0]
-    if {$j != $idx} then {
-      killdcc $j
-    }
-  }
 }
 
 #
@@ -361,9 +294,7 @@ proc isnumber {string} {
 }
 
 proc ispermowner {hand} {
-  global owner
-
-  regsub -all -- , [string tolower $owner] "" owners
+  regsub -all -- "," [string tolower [config_get eggdrop.owner]] "" owners
   if {([matchattr $hand n]) && \
       ([lsearch -exact $owners [string tolower $hand]] != -1)} then {
     return 1
@@ -371,29 +302,19 @@ proc ispermowner {hand} {
   return 0
 }
 
-proc matchbotattr {bot flags} {
-  foreach flag [split $flags ""] {
-    if {[lsearch -exact [split [botattr $bot] ""] $flag] == -1} then {
-      return 0
-    }
-  }
-  return 1
-}
-
 proc ordnumber {str} {
-  if {[isnumber $str]} {
-    set last1 [string range $str [expr [strlen $str]-1] end]
-    set last2 [string range $str [expr [strlen $str]-2] end]
-    if {$last1=="1"&&$last2!="11"} {
-      return "[expr $str]st"
-    } elseif {$last1=="2"&&$last2!="12"} {
-      return "[expr $str]nd"
-    } elseif {$last1=="3"&&$last2!="13"} {
-      return "[expr $str]rd"
-    } else {
-      return "[expr $str]th"
-    }
-  } else {
+  if {![isnumber $str]} {
     return "$str"
+  }
+  set last1 [string range $str [expr [strlen $str] - 1] end]
+  set last2 [string range $str [expr [strlen $str] - 2] end]
+  if {$last1 == "1" && $last2 != "11"} {
+    return "[expr $str]st"
+  } elseif {$last1 == "2" && $last2 != "12"} {
+    return "[expr $str]nd"
+  } elseif {$last1 == "3" && $last2 != "13"} {
+    return "[expr $str]rd"
+  } else {
+    return "[expr $str]th"
   }
 }
