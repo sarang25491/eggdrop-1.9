@@ -1,3 +1,66 @@
+2003-12-18 07:34  Will Buckner <wcc@techmonkeys.org>
+
+	* modules/script/scriptmisc.c:
+
+	* script_unames() doesn't crash anymore.  
+
+2003-12-18 07:20  Will Buckner <wcc@techmonkeys.org>
+
+	* src/main.c:
+
+	* Erm..  
+
+2003-12-18 07:18  Will Buckner <wcc@techmonkeys.org>
+
+	* modules/server/scriptcmds.c, modules/server/server.c, src/main.c:
+
+	* Misc stuff.  
+
+2003-12-18 07:10  Will Buckner <wcc@techmonkeys.org>
+
+	* modules/: javascript/Makefile.am, perlscript/Makefile.am,
+	script/scriptmisc.c, tclscript/Makefile.am:
+
+	[no log message] 
+
+2003-12-18 06:50  Will Buckner <wcc@techmonkeys.org>
+
+	* modules/blowfish/blowfish.c, modules/blowfish/blowfish.h,
+	modules/dccparty/dccparty.h, modules/ircparty/ircparty.h,
+	modules/javascript/Makefile.am, modules/javascript/javascript.c,
+	modules/oldbotnet/Makefile.am, modules/oldbotnet/events.c,
+	modules/oldbotnet/oldbotnet.c, modules/oldbotnet/oldbotnet.h,
+	modules/perlscript/Makefile.am, modules/perlscript/mod_iface.c,
+	modules/perlscript/perlscript.c, modules/script/Makefile.am,
+	modules/script/scriptbind.c, modules/script/scriptconfig.c,
+	modules/script/scriptlog.c, modules/script/scriptmisc.c,
+	modules/script/scriptmod.c, modules/script/scriptnet.c,
+	modules/script/scriptparty.c, modules/script/scripttimer.c,
+	modules/script/scriptuser.c, modules/server/Makefile.am,
+	modules/server/binds.c, modules/server/binds.h,
+	modules/server/channels.c, modules/server/channels.h,
+	modules/server/dcc.c, modules/server/dcc.h,
+	modules/server/egg_server_api.h, modules/server/input.c,
+	modules/server/input.h, modules/server/modinfo,
+	modules/server/nicklist.c, modules/server/nicklist.h,
+	modules/server/output.c, modules/server/output.h,
+	modules/server/party_commands.c, modules/server/scriptcmds.c,
+	modules/server/server.c, modules/server/server.h,
+	modules/server/serverlist.c, modules/server/serverlist.h,
+	modules/server/servsock.c, modules/server/servsock.h,
+	modules/tclscript/Makefile.am, modules/tclscript/tclscript.c,
+	modules/telnetparty/Makefile.am, modules/telnetparty/events.c,
+	modules/telnetparty/telnetparty.c,
+	modules/telnetparty/telnetparty.h, src/main.c:
+
+	* More GPL/header/rcsid stuff.  
+
+2003-12-18 06:15  Automatic CVS Scripts
+
+	* po/eggdrop.pot:
+
+	Pots 
+
 2003-12-18 03:54  Will Buckner <wcc@techmonkeys.org>
 
 	* modules/blowfish/Makefile.am, modules/blowfish/bf_tab.h,
@@ -4583,7 +4646,7 @@
 
 	* eggdrop.complete.conf, doc/settings/mod.server,
 	lib/eggdrop/module.h, modules/server/server.c,
-	modules/server/servmsg.c, modules/server/help/set/server.help:
+	modules/server/servmsg.c:
 
 	strict-servernames is gone, also I cleaned up a few leftovers from
 	the old bind code ... hopefully it was done right otherwise stdarg
@@ -4601,8 +4664,7 @@
 2001-12-18 05:33  Jeff Fisher <guppy@techmonkeys.org>
 
 	* eggdrop.complete.conf, doc/settings/mod.server,
-	modules/server/server.c, modules/server/servmsg.c,
-	modules/server/help/set/server.help:
+	modules/server/server.c, modules/server/servmsg.c:
 
 	removed never-give-up as a config setting 
 
@@ -4706,8 +4768,7 @@
 2001-12-09 21:49  Jeff Fisher <guppy@techmonkeys.org>
 
 	* eggdrop.complete.conf, doc/settings/mod.server,
-	modules/server/server.c, modules/server/servmsg.c,
-	modules/server/help/set/server.help:
+	modules/server/server.c, modules/server/servmsg.c:
 
 	serverror-quit has been removed as a config setting 
 
@@ -4861,9 +4922,7 @@
 2001-12-04 01:30  Federico Mennite <ite@techmonkeys.org>
 
 	* modules/: channels/help/chaninfo.help,
-	channels/help/channels.help, server/server.c,
-	server/help/server.help, server/help/set/server.help,
-	transfer/transfer.c:
+	channels/help/channels.help, server/server.c, transfer/transfer.c:
 
 	More spelling fixes here and there. Patch by Wcc
 	<will@dawg.dynu.com> 
@@ -5387,8 +5446,7 @@
 	modules/server/Makefile.am, modules/server/cmdsserv.c,
 	modules/server/modinfo, modules/server/server.c,
 	modules/server/server.h, modules/server/servmsg.c,
-	modules/server/tclserv.c, modules/server/help/server.help,
-	modules/server/help/set/server.help, modules/tclscript/.cvsignore,
+	modules/server/tclserv.c, modules/tclscript/.cvsignore,
 	modules/tclscript/Makefile.am, modules/tclscript/tclscript.c,
 	modules/transfer/.cvsignore, modules/transfer/Makefile.am,
 	modules/transfer/modinfo, modules/transfer/transfer.c,
