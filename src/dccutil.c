@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  *
- * $Id: dccutil.c,v 1.39 2001/10/19 01:55:05 tothwolf Exp $
+ * $Id: dccutil.c,v 1.40 2001/10/21 20:59:49 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -274,11 +274,8 @@ void removedcc(int n)
     dcc[n].type->kill(n, dcc[n].u.other);
   else if (dcc[n].u.other)
     free(dcc[n].u.other);
-  dcc_total--;
-  if (n < dcc_total)
-    memcpy(&dcc[n], &dcc[dcc_total], sizeof(struct dcc_t));
-  else
-    memset(&dcc[n], 0, sizeof(struct dcc_t)); /* drummer */
+
+  memset(&dcc[n], 0, sizeof(struct dcc_t)); /* drummer */
 }
 
 /* Clean up sockets that were just left for dead.
@@ -290,7 +287,6 @@ void dcc_remove_lost(void)
   for (i = 0; i < dcc_total; i++) {
     if (dcc[i].type == &DCC_LOST) {
       dcc[i].type = NULL;
-      dcc[i].sock = (-1);
       removedcc(i);
       i--;
     }
@@ -313,6 +309,7 @@ void tell_dcc(int zidx)
   spaces[HANDLEN - 9] = ' ';
   /* Show server */
   for (i = 0; i < dcc_total; i++) {
+    if (!dcc[i].type) continue;
     j = strlen(dcc[i].host);
     if (j > 26)
       j -= 26;
@@ -326,7 +323,7 @@ void tell_dcc(int zidx)
     }
     k = HANDLEN - strlen(dcc[i].nick);
     spaces[k] = 0;
-    dprintf(zidx, "%-4d %5d %s%s %-26s %s\n", dcc[i].sock,
+    dprintf(zidx, "%-4d %5d %s%s %-26s %s\n", i,
 	    dcc[i].port, dcc[i].nick, spaces, dcc[i].host + j, other);
     spaces[k] = ' ';
   }
@@ -414,10 +411,18 @@ int new_dcc(struct dcc_table *type, int xtra_size)
 {
   int i = dcc_total;
 
-  if (dcc_total == max_dcc)
-    return -1;
-  dcc_total++;
-  memset((char *) &dcc[i], 0, sizeof(struct dcc_t));
+  for (i = 0; i < dcc_total; i++) {
+    if (!dcc[i].type) break;
+  }
+  if (i == dcc_total) {
+    if (dcc_total == max_dcc) {
+      max_dcc += 5;
+      dcc = (struct dcc_t *)realloc(dcc, max_dcc * sizeof(*dcc));
+      memset(dcc+dcc_total, 0, 5 * sizeof(*dcc));
+    }
+    dcc_total++;
+  }
+  memset(&dcc[i], 0, sizeof(*dcc));
 
   dcc[i].type = type;
   if (xtra_size)
