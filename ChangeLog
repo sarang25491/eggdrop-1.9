@@ -1,3 +1,13 @@
+2003-04-15 18:05  stdarg <stdarg@techmonkeys.org>
+
+	* doc/SCRIPTING-COMMANDS, modules/tclscript/tclscript.c,
+	src/main.c:
+
+	
+	* guppy's bugfix 
+	* tcl command to add tcl channels to our event loop (speeds up async
+	tcl sockets) 
+
 2003-04-15 08:18  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/Makefile.am, lib/eggdrop/eggdrop.c,
