@@ -1,3 +1,19 @@
+2003-02-10 00:09  Will Buckner <wcc@techmonkeys.org>
+
+	* configure.ac, doc/UPDATES1.6, lib/eggdrop/fileutil.c,
+	lib/eggdrop/fileutil.h, lib/eggdrop/module.h,
+	lib/eggdrop/modvals.h, modules/channels/userchan.c,
+	modules/filesys/files.c, modules/filesys/filesys.c,
+	modules/filesys/tclfiles.c, modules/irc/chan.c, modules/irc/mode.c,
+	modules/irc/msgcmds.c, modules/irc/scriptcmds.c,
+	modules/transfer/Makefile.am, modules/transfer/transfer.c,
+	modules/transfer/transfer.h, scripts/compat.tcl, src/chanprog.c,
+	src/cmds.c, src/dccutil.c, src/misc.c, src/misc.h, src/modules.c,
+	src/patch.h, src/tcl.c:
+
+	* Synch 1.6: transfer-cleanups, filesys-move, delbancrash,
+	             plsbot_cosmetic, stricthostfix, opreverselogic, dontdelfile 
+
 2003-02-04 04:54  Will Buckner <wcc@techmonkeys.org>
 
 	* eggdrop.conf, doc/settings/CONTENTS, doc/settings/core.settings,
