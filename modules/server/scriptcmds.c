@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.17 2003/03/03 22:31:46 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.18 2003/03/05 12:20:59 stdarg Exp $";
 #endif
 */
 
@@ -34,11 +34,7 @@ static const char rcsid[] = "$Id: scriptcmds.c,v 1.17 2003/03/03 22:31:46 stdarg
 #include "output.h"
 #include "servsock.h"
 #include "dcc.h"
-
-static int script_isbotnick (char *nick);
-static int script_putserv(char *queue, char *next, char *text);
-static int script_jump (int nargs, int num);
-static int script_dcc_send_info(int idx, char *what);
+#include "channels.h"
 
 /* From serverlist.c */
 extern int server_list_index;
@@ -46,32 +42,6 @@ extern int server_list_index;
 /* From server.c */
 extern int cycle_delay;
 extern current_server_t current_server;
-
-script_linked_var_t server_script_vars[] = {
-	{"", "servidx", &current_server.idx, SCRIPT_INTEGER | SCRIPT_READONLY, NULL},
-	{"", "server", &server_list_index, SCRIPT_INTEGER | SCRIPT_READONLY, NULL},
-	{"", "botnick", &current_server.nick, SCRIPT_STRING | SCRIPT_READONLY, NULL},
-	{"", "myip", &current_server.myip, SCRIPT_STRING, NULL},
-	{"", "mylongip", &current_server.mylongip, SCRIPT_UNSIGNED, NULL},
-	{0}
-};
-
-script_command_t server_script_cmds[] = {
-        {"", "jump", script_jump, NULL, 0, "i", "num", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_PASS_COUNT},
-        {"", "isbotnick", script_isbotnick, NULL, 1, "s", "nick", SCRIPT_INTEGER, 0},
-        {"", "putserv", script_putserv, NULL, 1, "sss", "?-queuetype? ?-next? text", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT},
-	{"", "server_add", server_add, NULL, 1, "sis", "host ?port? ?pass?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
-	{"", "server_del", server_del, NULL, 1, "i", "server-num", SCRIPT_INTEGER, 0},
-	{"", "server_clear", server_clear, NULL, 0, "", "", SCRIPT_INTEGER, 0},
-	{"", "nick_add", nick_add, NULL, 1, "s", "nick", SCRIPT_INTEGER, 0},
-	{"", "nick_del", nick_del, NULL, 1, "i", "nick-num", SCRIPT_INTEGER, 0},
-	{"", "nick_clear", nick_clear, NULL, 0, "", "", SCRIPT_INTEGER, 0},
-	{"", "dcc_chat", dcc_start_chat, NULL, 1, "si", "nick ?timeout?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
-	{"", "dcc_send", dcc_start_send, NULL, 2, "ssi", "nick filename ?timeout?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
-	{"", "dcc_send_info", script_dcc_send_info, NULL, 2, "is", "idx stat", SCRIPT_INTEGER, 0},
-	{"", "dcc_accept_send", dcc_accept_send, NULL, 7, "sssiisii", "nick localfile remotefile size resume ip port ?timeout?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
-        {0}
-};
 
 /* match_my_nick() is a macro so we can't put it right into the script command table. */
 static int script_isbotnick(char *nick)
@@ -144,4 +114,98 @@ static int script_dcc_send_info(int idx, char *what)
 
 	if (dcc_send_info(idx, field, &value) < 0) return(-1);
 	return(value);
+}
+
+static int script_channel_list(script_var_t *retval)
+{
+	channel_t *chan;
+
+	retval->type = SCRIPT_ARRAY | SCRIPT_FREE | SCRIPT_VAR;
+	retval->len = 0;
+
+	for (chan = channel_head; chan; chan = chan->next) {
+		script_list_append(retval, script_string(chan->name, -1));
+	}
+	return(0);
+}
+
+static int script_channel_members(script_var_t *retval, char *chan_name)
+{
+	channel_t *chan;
+	channel_member_t *m;
+
+	retval->type = SCRIPT_ARRAY | SCRIPT_FREE | SCRIPT_VAR;
+	retval->len = 0;
+
+	channel_lookup(chan_name, 0, &chan, NULL);
+	if (!chan) return(-1);
+
+	for (m = chan->member_head; m; m = m->next) {
+		script_list_append(retval, script_string(m->nick, -1));
+	}
+
+	return(0);
+}
+
+static int script_channel_topic(script_var_t *retval, char *chan_name)
+{
+	channel_t *chan;
+
+	retval->type = SCRIPT_ARRAY | SCRIPT_FREE | SCRIPT_VAR;
+	retval->len = 0;
+
+	channel_lookup(chan_name, 0, &chan, NULL);
+	if (!chan) return(-1);
+
+	script_list_append(retval, script_string(chan->topic, -1));
+	script_list_append(retval, script_string(chan->topic_nick, -1));
+	script_list_append(retval, script_int(chan->topic_time));
+}
+
+static script_linked_var_t server_script_vars[] = {
+	{"", "servidx", &current_server.idx, SCRIPT_INTEGER | SCRIPT_READONLY, NULL},
+	{"", "server", &server_list_index, SCRIPT_INTEGER | SCRIPT_READONLY, NULL},
+	{"", "botnick", &current_server.nick, SCRIPT_STRING | SCRIPT_READONLY, NULL},
+	{"", "myip", &current_server.myip, SCRIPT_STRING, NULL},
+	{"", "mylongip", &current_server.mylongip, SCRIPT_UNSIGNED, NULL},
+	{0}
+};
+
+static script_command_t server_script_cmds[] = {
+        {"", "jump", script_jump, NULL, 0, "i", "num", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_PASS_COUNT},
+        {"", "isbotnick", script_isbotnick, NULL, 1, "s", "nick", SCRIPT_INTEGER, 0},
+        {"", "putserv", script_putserv, NULL, 1, "sss", "?-queuetype? ?-next? text", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT},
+	{"", "server_add", server_add, NULL, 1, "sis", "host ?port? ?pass?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
+	{"", "server_del", server_del, NULL, 1, "i", "server-num", SCRIPT_INTEGER, 0},
+	{"", "server_clear", server_clear, NULL, 0, "", "", SCRIPT_INTEGER, 0},
+	{"", "nick_add", nick_add, NULL, 1, "s", "nick", SCRIPT_INTEGER, 0},
+	{"", "nick_del", nick_del, NULL, 1, "i", "nick-num", SCRIPT_INTEGER, 0},
+	{"", "nick_clear", nick_clear, NULL, 0, "", "", SCRIPT_INTEGER, 0},
+
+	/* DCC commands. */
+	{"", "dcc_chat", dcc_start_chat, NULL, 1, "si", "nick ?timeout?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
+	{"", "dcc_send", dcc_start_send, NULL, 2, "ssi", "nick filename ?timeout?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
+	{"", "dcc_send_info", script_dcc_send_info, NULL, 2, "is", "idx stat", SCRIPT_INTEGER, 0},
+	{"", "dcc_accept_send", dcc_accept_send, NULL, 7, "sssiisii", "nick localfile remotefile size resume ip port ?timeout?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
+
+	/* Channel commands. */
+	{"", "channel_list", script_channel_list, NULL, 0, "", "", 0, SCRIPT_PASS_RETVAL},
+	{"", "channel_members", script_channel_members, NULL, 1, "s", "channel", 0, SCRIPT_PASS_RETVAL},
+	{"", "channel_get_uhost", uhost_cache_lookup, NULL, 1, "s", "nick", SCRIPT_STRING, 0},
+	{"", "channel_topic", script_channel_topic, NULL, 1, "s", "channel", 0, SCRIPT_PASS_RETVAL},
+        {0}
+};
+
+int server_script_init()
+{
+	script_create_commands(server_script_cmds);
+	script_link_vars(server_script_vars);
+	return(0);
+}
+
+int server_script_destroy()
+{
+	script_delete_commands(server_script_cmds);
+	script_unlink_vars(server_script_vars);
+	return(0);
 }

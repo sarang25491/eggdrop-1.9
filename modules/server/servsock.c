@@ -139,6 +139,7 @@ static int server_on_read(void *client_data, int idx, char *text, int len)
 	irc_msg_t msg;
 	char *from_nick = NULL, *from_uhost = NULL;
 	user_t *u = NULL;
+	char buf[128], *full;
 
 	if (!len) return(0);
 
@@ -157,6 +158,14 @@ static int server_on_read(void *client_data, int idx, char *text, int len)
 			u = user_lookup_by_irchost(from_nick);
 			*from_uhost = 0;
 			from_uhost++;
+		}
+		else {
+			from_uhost = uhost_cache_lookup(from_nick);
+			if (from_uhost) {
+				full = egg_msprintf(buf, sizeof(buf), NULL, "%s!%s", from_nick, from_uhost);
+				u = user_lookup_by_irchost(full);
+				if (full != buf) free(full);
+			}
 		}
 	}
 

@@ -10,6 +10,7 @@
 #include "serverlist.h"
 #include "nicklist.h"
 #include "binds.h"
+#include "channels.h"
 
 #define start server_LTX_start
 
@@ -21,8 +22,8 @@ server_config_t server_config = {0};
 int cycle_delay = 0;
 
 /* From scriptcmds.c */
-extern script_linked_var_t server_script_vars[];
-extern script_command_t server_script_cmds[];
+extern int server_script_init();
+extern int server_script_destroy();
 
 /* From servsock.c */
 extern void connect_to_next_server();
@@ -96,8 +97,10 @@ static char *server_close()
 
 	server_binds_destroy();
 
-	script_delete_commands(server_script_cmds);
-	script_unlink_vars(server_script_vars);
+	server_channel_destroy();
+
+	server_script_destroy();
+
 	del_hook(HOOK_SECONDLY, (Function) server_secondly);
 	return(NULL);
 }
@@ -197,12 +200,15 @@ char *start(eggdrop_t *eggdrop)
 
 	/* Create our bind tables. */
 	server_binds_init();
-
 	bind_add_list("raw", server_raw_binds);
 	bind_add_list("party", server_party_commands);
 
-	script_create_commands(server_script_cmds);
-	script_link_vars(server_script_vars);
+	/* Initialize channels. */
+	server_channel_init();
+
+	/* Initialize script interface. */
+	server_script_init();
+
 	add_hook(HOOK_SECONDLY, (Function) server_secondly);
 
 	return(NULL);

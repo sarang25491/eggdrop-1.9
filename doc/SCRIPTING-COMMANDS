@@ -288,6 +288,18 @@ accurate for Eggdrop v1.7.0.
       mode, server, help, or all.
     Returns: the number of deleted lines from the specified queue.
 
+  channel_list
+    Returns: the list of channels that the bot is currently on
+
+  channel_members <chan>
+    Returns: the list of nicks on the given channel
+
+  channel_topic <chan>
+    Returns: the topic, nick that set the topic, time topic was set
+
+  channel_get_uhost <nick>
+    Returns: the uhost for the given nick, or "" if unknown
+
   <FINISH ME>
 
 

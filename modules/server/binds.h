@@ -15,7 +15,9 @@ extern bind_table_t *BT_wall,
 	*BT_nick,
 	*BT_join,
 	*BT_part,
-	*BT_quit;
+	*BT_quit,
+	*BT_kick,
+	*BT_leave;
 
 extern void server_binds_destroy();
 extern void server_binds_init();

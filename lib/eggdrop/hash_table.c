@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: hash_table.c,v 1.3 2003/02/03 06:42:40 stdarg Exp $";
+static const char rcsid[] = "$Id: hash_table.c,v 1.4 2003/03/05 12:20:59 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -63,6 +63,19 @@ hash_table_t *hash_table_create(hash_table_hash_alg alg, hash_table_cmp_alg cmp,
 
 int hash_table_destroy(hash_table_t *ht)
 {
+	hash_table_entry_t *entry, *next;
+	hash_table_row_t *row;
+	int i;
+
+	for (i = 0; i < ht->max_rows; i++) {
+		row = ht->rows+i;
+		for (entry = row->head; entry; entry = next) {
+			next = entry->next;
+			free(entry);
+		}
+	}
+	free(ht);
+
 	return(0);
 }
 
@@ -152,7 +165,7 @@ int hash_table_find(hash_table_t *ht, const void *key, void *dataptr)
 	return(-1);
 }
 
-int hash_table_delete(hash_table_t *ht, const void *key)
+int hash_table_delete(hash_table_t *ht, const void *key, void *dataptr)
 {
 	int idx;
 	unsigned int hash;
@@ -166,6 +179,8 @@ int hash_table_delete(hash_table_t *ht, const void *key)
 	last = NULL;
 	for (entry = row->head; entry; entry = entry->next) {
 		if (hash == entry->hash && !ht->cmp(key, entry->key)) {
+			if (dataptr) *(void **)dataptr = entry->data;
+
 			/* Remove it from the row's list. */
 			if (last) last->next = entry->next;
 			else row->head = entry->next;

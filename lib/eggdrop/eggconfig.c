@@ -172,7 +172,9 @@ int config_set_int(int intval, void *config_root, ...)
 	}
 
 	var = root->client_data;
-	if (var) *(int *)var->ptr = intval;
+	if (var) {
+		if (var->type == CONFIG_INT) *(int *)var->ptr = intval;
+	}
 	xml_node_set_int(intval, root, NULL);
 	return(0);
 }
@@ -199,7 +201,10 @@ int config_set_str(char *strval, void *config_root, ...)
 		if (r & BIND_RET_BREAK) return(-1);
 	}
 	var = root->client_data;
-	if (var) str_redup(var->ptr, strval);
+	if (var) {
+		if (var->type == CONFIG_STRING) str_redup(var->ptr, strval);
+		else if (var->type == CONFIG_INT) *(int *)var->ptr = atoi(strval);
+	}
 	xml_node_set_str(strval, root, NULL);
 	return(0);
 }

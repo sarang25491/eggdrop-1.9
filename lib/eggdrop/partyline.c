@@ -68,7 +68,7 @@ static void partymember_really_delete(partymember_t *p)
 	if (p->prev) p->prev->next = p->next;
 	else party_head = p->next;
 	if (p->next) p->next->prev = p->prev;
-	hash_table_delete(pid_ht, (void *)p->pid);
+	hash_table_delete(pid_ht, (void *)p->pid, NULL);
 
 	/* Free! */
 	free(p->nick);

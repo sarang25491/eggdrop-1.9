@@ -41,7 +41,7 @@ int hash_table_resize(hash_table_t **ht, int nrows);
 int hash_table_insert(hash_table_t *ht, const void *key, void *data);
 int hash_table_replace(hash_table_t *ht, const void *key, void *data);
 int hash_table_find(hash_table_t *ht, const void *key, void *dataptr);
-int hash_table_delete(hash_table_t *ht, const void *key);
+int hash_table_delete(hash_table_t *ht, const void *key, void *dataptr);
 int hash_table_walk(hash_table_t *ht, hash_table_node_func callback, void *param);
 
 #endif

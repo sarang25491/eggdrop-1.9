@@ -32,9 +32,6 @@ static int got001(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 	/* Send a whois request so we can see our nick!user@host */
 	printserv(SERVER_MODE, "WHOIS %s", current_server.nick);
 
-	/* Join all our channels. */
-	channels_join_all();
-
 	return(0);
 }
 
@@ -355,6 +352,7 @@ static int gotjoin(char *from_nick, char *from_uhost, user_t *u, char *cmd, int 
 {
 	char *chan = args[0];
 
+	channel_on_join(chan, from_nick, from_uhost);
 	bind_check(BT_join, chan, from_nick, from_uhost, u, chan);
 	return(0);
 }
@@ -365,6 +363,7 @@ static int gotpart(char *from_nick, char *from_uhost, user_t *u, char *cmd, int 
 	char *chan = args[0];
 	char *text = args[1];
 
+	channel_on_leave(chan, from_nick, from_uhost, u);
 	bind_check(BT_part, chan, from_nick, from_uhost, u, chan, text);
 	return(0);
 }
@@ -374,7 +373,26 @@ static int gotquit(char *from_nick, char *from_uhost, user_t *u, char *cmd, int 
 {
 	char *text = args[0];
 
+	channel_on_quit(from_nick, from_uhost, u);
 	bind_check(BT_quit, from_nick, from_nick, from_uhost, u, text);
+
+	return(0);
+}
+
+/* Got a kick message. */
+static int gotkick(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
+{
+	char *chan = args[0];
+	char *victim = args[1];
+	char *text = args[2];
+	char *uhost;
+
+	if (!text) text = "";
+	uhost = uhost_cache_lookup(victim);
+	if (!uhost) uhost = "";
+
+	channel_on_leave(chan, victim, uhost, u);
+	bind_check(BT_kick, from_nick, from_nick, from_uhost, u, chan, victim, text);
 
 	return(0);
 }
@@ -384,6 +402,7 @@ static int gotnick(char *from_nick, char *from_uhost, user_t *u, char *cmd, int 
 {
 	char *newnick = args[0];
 
+	channel_on_nick(from_nick, newnick);
 	bind_check(BT_nick, from_nick, from_nick, from_uhost, u, newnick);
 
 	/* Is it our nick that's changing? */
@@ -415,32 +434,32 @@ static int got311(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 		str_redup(&current_server.user, user);
 		str_redup(&current_server.host, host);
 		str_redup(&current_server.real_name, realname);
+		/* If we're using server lookup to determine ip address, start that now. */
+		if (server_config.ip_lookup == 1) dcc_dns_set(host);
 	}
-
-	/* If we're using server lookup to determine ip address, start that now. */
-	if (server_config.ip_lookup == 1) dcc_dns_set(host);
 
 	return(0);
 }
 
 bind_list_t server_raw_binds[] = {
-	{"PRIVMSG", (Function) gotmsg},
-	{"NOTICE", (Function) gotnotice},
-	{"WALLOPS", (Function) gotwall},
-	{"PING", (Function) gotping},
-	{"NICK", (Function) gotnick},
-	{"ERROR", (Function) goterror},
+	{"PRIVMSG", gotmsg},
+	{"NOTICE", gotnotice},
+	{"WALLOPS", gotwall},
+	{"PING", gotping},
+	{"NICK", gotnick},
+	{"ERROR", goterror},
 	{"JOIN", gotjoin},
 	{"PART", gotpart},
 	{"QUIT", gotquit},
-	{"001", (Function) got001},
+	{"KICK", gotkick},
+	{"001", got001},
 	{"005", got005},
-	{"432",	(Function) got432},
-	{"433",	(Function) got433},
-	{"435", (Function) got435},
-	{"438", (Function) got438},
-	{"437",	(Function) got437},
-	{"451",	(Function) got451},
-	{"311", (Function) got311},
+	{"432",	got432},
+	{"433",	got433},
+	{"435", got435},
+	{"438", got438},
+	{"437",	got437},
+	{"451",	got451},
+	{"311", got311},
 	{NULL, NULL}
 };

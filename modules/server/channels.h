@@ -1,28 +1,62 @@
 #ifndef _CHANNELS_H_
 #define _CHANNELS_H_
 
-typedef struct channel_member {
-	struct channel_member *next;
-	char *nick;
-	char *modes;
-	int imode;
-} channel_member_t;
+/* Status bits for channels. */
+#define CHANNEL_WHO	1
 
 typedef struct {
+	char *nick;
+	char *uhost;
+	int ref_count;
+} uhost_cache_entry_t;
+
+typedef struct channel_member {
+	struct channel_member *next;
+
+	char *nick;
+	char *uhost;
+	int join_time;
+	int mode;
+} channel_member_t;
+
+typedef struct channel {
+	struct channel *next;
+
 	char *name;
 
-	/* Topic. */
-	char *topic, *topic_nick;
-	int topic_time;
+	char *topic, *topic_nick;	/* Topic and who set it. */
+	int topic_time;	/* When it was set. */
 
-	char *modes;
-	int imode;
-	int limit;
-	char *key;
-	channel_member_t *members;
+	int mode;	/* Mode bits. */
+	int limit;	/* Channel limit. */
+	char *key;	/* Channel key. */
+
+	int status;
+
 	int nmembers;
+	channel_member_t *member_head;
 } channel_t;
 
-extern void channels_join_all();
+extern channel_t *channel_head;
+extern int nchannels;
+
+extern hash_table_t *uhost_cache_ht;
+
+extern void server_channel_init();
+extern void server_channel_destroy();
+
+extern void channel_lookup(const char *chan_name, int create, channel_t **chanptr, channel_t **prevptr);
+extern char *uhost_cache_lookup(const char *nick);
+extern void uhost_cache_fillin(const char *nick, const char *uhost, int addref);
+
+/* Events that hook into input.c. */
+extern void channel_on_nick(const char *old_nick, const char *new_nick);
+extern void channel_on_quit(const char *nick, const char *uhost, user_t *u);
+extern void channel_on_leave(const char *chan_name, const char *nick, const char *uhost, user_t *u);
+extern void channel_on_join(const char *chan_name, const char *nick, const char *uhost);
+extern void channel_add_member(const char *chan_name, const char *nick, const char *uhost);
+
+/* Functions for others (scripts/modules) to access channel data. */
+extern void channel_list(char ***chans, int *nchans);
 
 #endif

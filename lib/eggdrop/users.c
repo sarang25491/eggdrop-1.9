@@ -239,8 +239,8 @@ int user_delete(user_t *u)
 	int i, j;
 	user_setting_t *setting;
 
-	hash_table_delete(handle_ht, u->handle);
-	hash_table_delete(uid_ht, (void *)u->uid);
+	hash_table_delete(handle_ht, u->handle, NULL);
+	hash_table_delete(uid_ht, (void *)u->uid, NULL);
 
 	/* Get rid of the ircmasks. */
 	cache_user_del(u, "*");
@@ -373,7 +373,7 @@ static int cache_user_del(user_t *u, const char *ircmask)
 	info.nentries = 0;
 	hash_table_walk(irchost_cache_ht, cache_check_del, &info);
 	for (i = 0; i < info.nentries; i++) {
-		hash_table_delete(irchost_cache_ht, info.entries[i]);
+		hash_table_delete(irchost_cache_ht, info.entries[i], NULL);
 	}
 	if (info.entries) free(info.entries);
 
