@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2001-12-29 04:00-0600\n"
+"POT-Creation-Date: 2001-12-30 04:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -52,196 +52,196 @@ msgstr ""
 msgid "Note sent to"
 msgstr ""
 
-#: src/botcmd.c:301 src/botnet.c:1647 src/botnet.c:1654
+#: src/botcmd.c:301 src/botnet.c:1649 src/botnet.c:1656
 msgid "Disconnected from:"
 msgstr ""
 
-#: src/botcmd.c:334 src/botcmd.c:504 src/cmds.c:273
+#: src/botcmd.c:340 src/botcmd.c:510 src/cmds.c:273
 msgid "no channels"
 msgstr ""
 
-#: src/botcmd.c:341
+#: src/botcmd.c:347
 msgid "Party line members:"
 msgstr ""
 
-#: src/botcmd.c:341 src/botcmd.c:350 src/botcmd.c:356
+#: src/botcmd.c:347 src/botcmd.c:356 src/botcmd.c:362
 msgid "owner"
 msgstr ""
 
-#: src/botcmd.c:341 src/botcmd.c:350 src/botcmd.c:356
+#: src/botcmd.c:347 src/botcmd.c:356 src/botcmd.c:362
 msgid "master"
 msgstr ""
 
-#: src/botcmd.c:341 src/botcmd.c:350 src/botcmd.c:356
+#: src/botcmd.c:347 src/botcmd.c:356 src/botcmd.c:362
 msgid "op"
 msgstr ""
 
-#: src/botcmd.c:347 src/botcmd.c:354
+#: src/botcmd.c:353 src/botcmd.c:360
 msgid "People on channel"
 msgstr ""
 
-#: src/botcmd.c:372 src/botcmd.c:375 src/botcmd.c:378 src/botcmd.c:412
-#: src/botcmd.c:414
+#: src/botcmd.c:378 src/botcmd.c:381 src/botcmd.c:384 src/botcmd.c:418
+#: src/botcmd.c:420
 msgid "idle"
 msgstr ""
 
-#: src/botcmd.c:383 src/botcmd.c:419 src/botnet.c:551
+#: src/botcmd.c:389 src/botcmd.c:425 src/botnet.c:552
 msgid "AWAY"
 msgstr ""
 
-#: src/botcmd.c:390
+#: src/botcmd.c:396
 msgid "Bots connected"
 msgstr ""
 
-#: src/botcmd.c:405
+#: src/botcmd.c:411
 msgid "Other people on the bot"
 msgstr ""
 
-#: src/botcmd.c:540
+#: src/botcmd.c:546
 msgid "Attempting to link"
 msgstr ""
 
-#: src/botcmd.c:543
+#: src/botcmd.c:549
 msgid "Cant link there"
 msgstr ""
 
-#: src/botcmd.c:590 src/botcmd.c:847
+#: src/botcmd.c:596 src/botcmd.c:853
 msgid "Cant unlink"
 msgstr ""
 
-#: src/botcmd.c:641
+#: src/botcmd.c:647
 #, c-format
 msgid "Invalid eggnet protocol from %s (zapfing)"
 msgstr ""
 
-#: src/botcmd.c:643 src/botcmd.c:650 src/botcmd.c:666 src/botcmd.c:676
-#: src/botcmd.c:855 src/botcmd.c:915
+#: src/botcmd.c:649 src/botcmd.c:656 src/botcmd.c:672 src/botcmd.c:682
+#: src/botcmd.c:861 src/botcmd.c:921
 msgid "Disconnected"
 msgstr ""
 
-#: src/botcmd.c:644
+#: src/botcmd.c:650
 msgid "invalid bot"
 msgstr ""
 
-#: src/botcmd.c:649
+#: src/botcmd.c:655
 msgid "Loop detected"
 msgstr ""
 
-#: src/botcmd.c:650
+#: src/botcmd.c:656
 msgid "Detected loop: disconnecting"
 msgstr ""
 
-#: src/botcmd.c:663 src/botcmd.c:665 src/botcmd.c:668
+#: src/botcmd.c:669 src/botcmd.c:671 src/botcmd.c:674
 msgid "Bogus link notice from"
 msgstr ""
 
-#: src/botcmd.c:672
+#: src/botcmd.c:678
 msgid "Disconnected left"
 msgstr ""
 
-#: src/botcmd.c:673 src/botcmd.c:700 src/botmsg.c:407
+#: src/botcmd.c:679 src/botcmd.c:706 src/botmsg.c:407
 msgid "Linked to"
 msgstr ""
 
-#: src/botcmd.c:675 src/botcmd.c:682
+#: src/botcmd.c:681 src/botcmd.c:688
 msgid "Illegal link by leaf"
 msgstr ""
 
-#: src/botcmd.c:677
+#: src/botcmd.c:683
 msgid "You are supposed to be a leaf!"
 msgstr ""
 
 #. we're directly connected to the offending bot?! (shudder!)
-#: src/botcmd.c:708 src/users.c:1049 src/users.c:1052
+#: src/botcmd.c:714 src/users.c:1049 src/users.c:1052
 msgid "Rejecting bot"
 msgstr ""
 
-#: src/botcmd.c:709
+#: src/botcmd.c:715
 msgid "from"
 msgstr ""
 
-#: src/botcmd.c:721
+#: src/botcmd.c:727
 msgid "Older bot detected (unsupported)"
 msgstr ""
 
-#: src/botcmd.c:724
+#: src/botcmd.c:730
 #, c-format
 msgid "Disconnected %s (outdated) (lost %d bot%s and %d user%s"
 msgstr ""
 
-#: src/botcmd.c:807 src/botcmd.c:809
+#: src/botcmd.c:813 src/botcmd.c:815
 msgid "Trace result"
 msgstr ""
 
-#: src/botcmd.c:847
+#: src/botcmd.c:853
 msgid "doesnt exist"
 msgstr ""
 
 #. I'm the connection to the rejected bot
-#: src/botcmd.c:852 src/botcmd.c:853 src/botcmd.c:856 src/botcmd.c:1074
+#: src/botcmd.c:858 src/botcmd.c:859 src/botcmd.c:862 src/botcmd.c:1080
 #: src/users.c:1046
 msgid "rejected"
 msgstr ""
 
-#: src/botcmd.c:884
+#: src/botcmd.c:890
 msgid "Remote boots are not allowed."
 msgstr ""
 
-#: src/botcmd.c:892
+#: src/botcmd.c:898
 msgid "Cant boot the bot owner."
 msgstr ""
 
-#: src/botcmd.c:913
+#: src/botcmd.c:919
 #, c-format
 msgid "Wrong bot--wanted %s, got %s"
 msgstr ""
 
-#: src/botcmd.c:914 src/botcmd.c:916
+#: src/botcmd.c:920 src/botcmd.c:922
 msgid "imposter"
 msgstr ""
 
-#: src/botcmd.c:1022
+#: src/botcmd.c:1028
 msgid "MOTD file:"
 msgstr ""
 
-#: src/botcmd.c:1038
+#: src/botcmd.c:1044
 msgid "No MOTD file."
 msgstr ""
 
-#: src/botcmd.c:1069
+#: src/botcmd.c:1075
 msgid "FILE TRANSFER REJECTED"
 msgstr ""
 
-#: src/botcmd.c:1098
+#: src/botcmd.c:1104
 msgid "Filesys module not loaded."
 msgstr ""
 
-#: src/botcmd.c:1260 src/botcmd.c:1312 src/botcmd.c:1316 src/botmsg.c:639
+#: src/botcmd.c:1266 src/botcmd.c:1318 src/botcmd.c:1322 src/botmsg.c:639
 #: src/botmsg.c:672
 msgid "has left the"
 msgstr ""
 
-#: src/botcmd.c:1265 src/botmsg.c:634 src/botmsg.c:665
+#: src/botcmd.c:1271 src/botmsg.c:634 src/botmsg.c:665
 msgid "has joined the"
 msgstr ""
 
-#: src/botcmd.c:1366 src/botmsg.c:596
+#: src/botcmd.c:1372 src/botmsg.c:596
 msgid "is now away"
 msgstr ""
 
-#: src/botcmd.c:1370 src/botmsg.c:603 src/botmsg.c:610
+#: src/botcmd.c:1376 src/botmsg.c:603 src/botmsg.c:610
 msgid "is no longer away"
 msgstr ""
 
-#: src/botcmd.c:1414
+#: src/botcmd.c:1420
 msgid "User file rejected by"
 msgstr ""
 
-#: src/botcmd.c:1422
+#: src/botcmd.c:1428
 msgid "Old style share request by"
 msgstr ""
 
-#: src/botcmd.c:1423
+#: src/botcmd.c:1429
 msgid "Antiquated sharing request"
 msgstr ""
 
@@ -272,230 +272,230 @@ msgstr ""
 msgid "Note arrived for you"
 msgstr ""
 
-#: src/botnet.c:452
+#: src/botnet.c:451
 msgid "Users across the botnet"
 msgstr ""
 
-#: src/botnet.c:452
+#: src/botnet.c:451
 msgid "Party line"
 msgstr ""
 
-#: src/botnet.c:453
+#: src/botnet.c:452
 msgid "Local channel"
 msgstr ""
 
-#: src/botnet.c:457 src/botnet.c:460
+#: src/botnet.c:456 src/botnet.c:459
 msgid "Users on channel"
 msgstr ""
 
-#: src/botnet.c:566 src/botnet.c:601
+#: src/botnet.c:568 src/botnet.c:603
 msgid "No bots linked."
 msgstr ""
 
-#: src/botnet.c:587
+#: src/botnet.c:589
 msgid "total"
 msgstr ""
 
-#: src/botnet.c:617
+#: src/botnet.c:619
 msgid "No trace info for:"
 msgstr ""
 
-#: src/botnet.c:630
+#: src/botnet.c:632
 msgid "Tree too complex!"
 msgstr ""
 
-#: src/botnet.c:897
+#: src/botnet.c:899
 msgid "Unlinking all bots..."
 msgstr ""
 
-#: src/botnet.c:902 src/botnet.c:905
+#: src/botnet.c:904 src/botnet.c:907
 msgid "Killed link attempt to"
 msgstr ""
 
-#: src/botnet.c:913
+#: src/botnet.c:915
 msgid "No longer trying to link:"
 msgstr ""
 
-#: src/botnet.c:926
+#: src/botnet.c:928
 msgid "Breaking link with"
 msgstr ""
 
-#: src/botnet.c:934 src/botnet.c:940
+#: src/botnet.c:936 src/botnet.c:942
 msgid "Unlinked from:"
 msgstr ""
 
-#: src/botnet.c:954
+#: src/botnet.c:956
 msgid "Not connected to that bot."
 msgstr ""
 
-#: src/botnet.c:977
+#: src/botnet.c:979
 msgid "Smooshing bot tables and assocs..."
 msgstr ""
 
-#: src/botnet.c:1008
+#: src/botnet.c:1010
 #, c-format
 msgid "%s is not a known bot.\n"
 msgstr ""
 
-#: src/botnet.c:1011
+#: src/botnet.c:1013
 msgid "Link to myself?  Oh boy, Freud would have a field day.\n"
 msgstr ""
 
-#: src/botnet.c:1014
+#: src/botnet.c:1016
 msgid "That bot is already connected up.\n"
 msgstr ""
 
-#: src/botnet.c:1021
+#: src/botnet.c:1023
 msgid "Already linking to that bot.\n"
 msgstr ""
 
-#: src/botnet.c:1028 src/botnet.c:1155
+#: src/botnet.c:1030 src/botnet.c:1157
 #, c-format
 msgid "Invalid telnet address:port stored for '%s'.\n"
 msgstr ""
 
-#: src/botnet.c:1029 src/botnet.c:1156
+#: src/botnet.c:1031 src/botnet.c:1158
 #, c-format
 msgid "Use: .chaddr %s <address>:<port#>[/<relay-port#>]\n"
 msgstr ""
 
-#: src/botnet.c:1034 src/botnet.c:1163
+#: src/botnet.c:1036 src/botnet.c:1165
 msgid "Sorry, too many DCC connections.\n"
 msgstr ""
 
-#: src/botnet.c:1039
+#: src/botnet.c:1041
 #, c-format
 msgid "Linking to %s at %s:%d ..."
 msgstr ""
 
-#: src/botnet.c:1067 src/dcc.c:237
+#: src/botnet.c:1069 src/dcc.c:237
 #, c-format
 msgid "Failed link to %s."
 msgstr ""
 
-#: src/botnet.c:1101 src/botnet.c:1353
+#: src/botnet.c:1103 src/botnet.c:1355
 msgid "Cant find user for relay!"
 msgstr ""
 
-#: src/botnet.c:1110
+#: src/botnet.c:1112
 msgid "Could not link to"
 msgstr ""
 
-#: src/botnet.c:1145
+#: src/botnet.c:1147
 msgid "is not a known bot."
 msgstr ""
 
-#: src/botnet.c:1149
+#: src/botnet.c:1151
 msgid "Relay to myself?  What on EARTH would be the point?!"
 msgstr ""
 
-#: src/botnet.c:1170
+#: src/botnet.c:1172
 msgid "No free sockets available.\n"
 msgstr ""
 
-#: src/botnet.c:1181
+#: src/botnet.c:1183
 msgid "(Type *BYE* on a line by itself to abort.)\n"
 msgstr ""
 
-#: src/botnet.c:1211 src/botnet.c:1272 src/botnet.c:1318
+#: src/botnet.c:1213 src/botnet.c:1274 src/botnet.c:1320
 #, c-format
 msgid "Cant find user for relay!  %d -> %d"
 msgstr ""
 
-#: src/botnet.c:1218
+#: src/botnet.c:1220
 #, c-format
 msgid "Could not link to %s.\n"
 msgstr ""
 
-#: src/botnet.c:1282
+#: src/botnet.c:1284
 #, c-format
 msgid "Aborting relay attempt to %s.\n"
 msgstr ""
 
-#: src/botnet.c:1283
+#: src/botnet.c:1285
 #, c-format
 msgid ""
 "You are now back on %s.\n"
 "\n"
 msgstr ""
 
-#: src/botnet.c:1284
+#: src/botnet.c:1286
 #, c-format
 msgid "Relay aborted: %s -> %s"
 msgstr ""
 
-#: src/botnet.c:1324
+#: src/botnet.c:1326
 #, c-format
 msgid "Lost dcc connection to [%s]%s/%d"
 msgstr ""
 
-#: src/botnet.c:1326
+#: src/botnet.c:1328
 #, c-format
 msgid "(Dropping relay attempt to %s)"
 msgstr ""
 
-#: src/botnet.c:1362
+#: src/botnet.c:1364
 msgid ""
 "Success!\n"
 "\n"
 "NOW CONNECTED TO RELAY BOT"
 msgstr ""
 
-#: src/botnet.c:1363
+#: src/botnet.c:1365
 msgid "(You can type *BYE* to prematurely close the connection.)"
 msgstr ""
 
-#: src/botnet.c:1364
+#: src/botnet.c:1366
 msgid "Relay link:"
 msgstr ""
 
-#: src/botnet.c:1371
+#: src/botnet.c:1373
 msgid "left the party line."
 msgstr ""
 
-#: src/botnet.c:1399
+#: src/botnet.c:1401
 msgid "Ended relay link"
 msgstr ""
 
-#: src/botnet.c:1401
+#: src/botnet.c:1403
 msgid ""
 "RELAY CONNECTION DROPPED.\n"
 "You are now back on"
 msgstr ""
 
-#: src/botnet.c:1408
+#: src/botnet.c:1410
 msgid "rejoined the party line."
 msgstr ""
 
-#: src/botnet.c:1423
+#: src/botnet.c:1425
 msgid "Lost dcc connection to"
 msgstr ""
 
-#: src/botnet.c:1428
+#: src/botnet.c:1430
 msgid "Dropping relay link to"
 msgstr ""
 
-#: src/botnet.c:1493
+#: src/botnet.c:1495
 msgid "Breaking connection to"
 msgstr ""
 
-#: src/botnet.c:1494
+#: src/botnet.c:1496
 msgid "You are now back on"
 msgstr ""
 
-#: src/botnet.c:1495
+#: src/botnet.c:1497
 msgid "Relay broken"
 msgstr ""
 
-#: src/botnet.c:1620 src/botnet.c:1624
+#: src/botnet.c:1622 src/botnet.c:1626
 msgid "Ping timeout"
 msgstr ""
 
-#: src/botnet.c:1648 src/botnet.c:1649 src/botnet.c:1654
+#: src/botnet.c:1650 src/botnet.c:1651 src/botnet.c:1656
 msgid "unleaflike behavior"
 msgstr ""
 
-#: src/botnet.c:1681
+#: src/botnet.c:1683
 msgid "Dropped bot"
 msgstr ""
 
@@ -623,18 +623,18 @@ msgstr ""
 msgid "CONFIG FILE NOT LOADED (NOT FOUND, OR ERROR)"
 msgstr ""
 
-#: src/chanprog.c:368
+#: src/chanprog.c:373
 msgid ""
 "STARTING BOT IN USERFILE CREATION MODE.\n"
 "Telnet to the bot and enter 'NEW' as your nickname."
 msgstr ""
 
-#: src/chanprog.c:374
+#: src/chanprog.c:379
 #, c-format
 msgid "USER FILE NOT FOUND!  (try ./eggdrop -m %s to make one)\n"
 msgstr ""
 
-#: src/chanprog.c:377
+#: src/chanprog.c:382
 msgid ""
 "\n"
 "\n"
@@ -642,23 +642,19 @@ msgid ""
 "Telnet to the bot and enter 'NEW' as your nickname.\n"
 msgstr ""
 
-#: src/chanprog.c:380
+#: src/chanprog.c:385
 #, c-format
 msgid "OR Go to IRC and:  /msg %s hello\n"
 msgstr ""
 
-#: src/chanprog.c:381
+#: src/chanprog.c:386
 msgid ""
 "This will make the bot recognize you as the master.\n"
 "\n"
 msgstr ""
 
-#: src/chanprog.c:384
+#: src/chanprog.c:389
 msgid "USERFILE ALREADY EXISTS (drop the -m)\n"
-msgstr ""
-
-#: src/chanprog.c:396
-msgid "I don't have a botnet nick!!\n"
 msgstr ""
 
 #: src/chanprog.c:412
@@ -1787,7 +1783,7 @@ msgstr ""
 
 #: modules/filesys/filesys.c:604 modules/filesys/filesys.c:803
 #: modules/server/server.c:1358 modules/server/server.c:1402
-#: modules/transfer/transfer.c:672
+#: modules/transfer/transfer.c:670
 msgid "Failed to connect"
 msgstr ""
 
@@ -1818,7 +1814,7 @@ msgid "Refused DCC chat (+x but no file area)"
 msgstr ""
 
 #: modules/filesys/filesys.c:804 modules/server/server.c:1403
-#: modules/transfer/transfer.c:673
+#: modules/transfer/transfer.c:671
 msgid "DCC connection failed"
 msgstr ""
 
@@ -1874,7 +1870,7 @@ msgstr ""
 msgid "banned: "
 msgstr ""
 
-#: modules/irc/chan.c:423 modules/irc/chan.c:492 modules/irc/chan.c:1686
+#: modules/irc/chan.c:423 modules/irc/chan.c:492 modules/irc/chan.c:1692
 msgid "You are banned"
 msgstr ""
 
@@ -1886,42 +1882,42 @@ msgstr ""
 msgid "Hmm, mode info from a channel Im not on"
 msgstr ""
 
-#: modules/irc/chan.c:1188
+#: modules/irc/chan.c:1194
 #, c-format
 msgid "Im on too many channels--cant join: %s"
 msgstr ""
 
-#: modules/irc/chan.c:1252 modules/irc/chan.c:1255
+#: modules/irc/chan.c:1258 modules/irc/chan.c:1261
 #, c-format
 msgid "Channel full--cant join: %s"
 msgstr ""
 
-#: modules/irc/chan.c:1280 modules/irc/chan.c:1283
+#: modules/irc/chan.c:1286 modules/irc/chan.c:1289
 #, c-format
 msgid "Channel invite only--cant join: %s"
 msgstr ""
 
-#: modules/irc/chan.c:1308 modules/irc/chan.c:1311
+#: modules/irc/chan.c:1314 modules/irc/chan.c:1317
 #, c-format
 msgid "Banned from channel--can't join: %s"
 msgstr ""
 
-#: modules/irc/chan.c:1336 modules/irc/chan.c:1344
+#: modules/irc/chan.c:1342 modules/irc/chan.c:1350
 #, c-format
 msgid "Bad key--cant join: %s"
 msgstr ""
 
-#: modules/irc/chan.c:1702
+#: modules/irc/chan.c:1708
 msgid "...and dont come back."
 msgstr ""
 
-#: modules/irc/chan.c:1968 modules/server/servmsg.c:638
+#: modules/irc/chan.c:1974 modules/server/servmsg.c:638
 #: modules/server/servmsg.c:784 modules/server/servmsg.c:796
 #, c-format
 msgid "Switching back to nick %s"
 msgstr ""
 
-#: modules/irc/chan.c:1972 modules/server/servmsg.c:641
+#: modules/irc/chan.c:1978 modules/server/servmsg.c:641
 #: modules/server/servmsg.c:788 modules/server/servmsg.c:800
 #, c-format
 msgid "Switching back to altnick %s"
@@ -1980,23 +1976,23 @@ msgstr ""
 msgid "dont deop my friends, bud"
 msgstr ""
 
-#: modules/irc/irc.c:830
+#: modules/irc/irc.c:824
 msgid "juped"
 msgstr ""
 
-#: modules/irc/irc.c:832
+#: modules/irc/irc.c:826
 msgid "trying"
 msgstr ""
 
-#: modules/irc/irc.c:834
+#: modules/irc/irc.c:828
 msgid "pending"
 msgstr ""
 
-#: modules/irc/irc.c:836
+#: modules/irc/irc.c:830
 msgid "opless"
 msgstr ""
 
-#: modules/irc/irc.c:838
+#: modules/irc/irc.c:832
 msgid "want ops!"
 msgstr ""
 
@@ -2558,11 +2554,11 @@ msgstr ""
 msgid "Userlist transfer complete; switched over"
 msgstr ""
 
-#: modules/share/share.c:1898
+#: modules/share/share.c:1900
 msgid "Cant send userfile to you (internal error)"
 msgstr ""
 
-#: modules/transfer/transfer.c:666
+#: modules/transfer/transfer.c:664
 msgid "Failed connection; aborted userfile transfer."
 msgstr ""
 
