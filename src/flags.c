@@ -2,7 +2,7 @@
  * flags.c -- handles:
  *   all the flag matching/conversion functions in one neat package :)
  *
- * $Id: flags.c,v 1.27 2002/02/07 22:19:05 wcc Exp $
+ * $Id: flags.c,v 1.28 2002/03/05 08:12:01 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -23,223 +23,98 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <ctype.h>
 #include "main.h"
 #include "logfile.h"
 
 extern int		 debug_output, noshare, allow_dk_cmds;
 
+typedef struct {
+	int flag;
+	char c;
+	char *type;
+} logmode_mapping_t;
+
+static logmode_mapping_t logmode_mappings[] = {
+	{LOG_MSGS, 'm', "msgs"},
+	{LOG_PUBLIC, 'p', "public"},
+	{LOG_JOIN, 'j', "joins"},
+	{LOG_MODES, 'k', "kicks/modes"},
+	{LOG_CMDS, 'c', "cmds"},
+	{LOG_MISC, 'o', "misc"},
+	{LOG_BOTS, 'b', "bots"},
+	{LOG_RAW, 'r', "raw"},
+	{LOG_WALL, 'w', "wallops"},
+	{LOG_FILES, 'x', "files"},
+	{LOG_SERV, 's', "server"},
+	{LOG_DEBUG, 'd', "debug"},
+	{LOG_SRVOUT, 'v', "server output"},
+	{LOG_BOTNET, 't', "botnet traffic"},
+	{LOG_BOTSHARE, 'h', "share traffic"},
+	{LOG_LEV1, '1', "level 1"},
+	{LOG_LEV2, '2', "level 2"},
+	{LOG_LEV3, '3', "level 3"},
+	{LOG_LEV4, '4', "level 4"},
+	{LOG_LEV5, '5', "level 5"},
+	{LOG_LEV6, '6', "level 6"},
+	{LOG_LEV7, '7', "level 7"},
+	{LOG_LEV8, '8', "level 8"},
+	{0}
+};
+
+#define NEEDS_DEBUG_OUTPUT (LOG_RAW|LOG_SRVOUT|LOG_BOTNET|LOG_BOTSHARE)
+
 int logmodes(char *s)
 {
-  int i;
-  int res = 0;
+	logmode_mapping_t *mapping;
+	int modes = 0;
 
-  for (i = 0; i < strlen(s); i++)
-    switch (s[i]) {
-    case 'm':
-    case 'M':
-      res |= LOG_MSGS;
-      break;
-    case 'p':
-    case 'P':
-      res |= LOG_PUBLIC;
-      break;
-    case 'j':
-    case 'J':
-      res |= LOG_JOIN;
-      break;
-    case 'k':
-    case 'K':
-      res |= LOG_MODES;
-      break;
-    case 'c':
-    case 'C':
-      res |= LOG_CMDS;
-      break;
-    case 'o':
-    case 'O':
-      res |= LOG_MISC;
-      break;
-    case 'b':
-    case 'B':
-      res |= LOG_BOTS;
-      break;
-    case 'r':
-    case 'R':
-      res |= debug_output ? LOG_RAW : 0;
-      break;
-    case 'w':
-    case 'W':
-      res |= LOG_WALL;
-      break;
-    case 'x':
-    case 'X':
-      res |= LOG_FILES;
-      break;
-    case 's':
-    case 'S':
-      res |= LOG_SERV;
-      break;
-    case 'd':
-    case 'D':
-      res |= LOG_DEBUG;
-      break;
-    case 'v':
-    case 'V':
-      res |= debug_output ? LOG_SRVOUT : 0;
-      break;
-    case 't':
-    case 'T':
-      res |= debug_output ? LOG_BOTNET : 0;
-      break;
-    case 'h':
-    case 'H':
-      res |= debug_output ? LOG_BOTSHARE : 0;
-      break;
-    case '1':
-      res |= LOG_LEV1;
-      break;
-    case '2':
-      res |= LOG_LEV2;
-      break;
-    case '3':
-      res |= LOG_LEV3;
-      break;
-    case '4':
-      res |= LOG_LEV4;
-      break;
-    case '5':
-      res |= LOG_LEV5;
-      break;
-    case '6':
-      res |= LOG_LEV6;
-      break;
-    case '7':
-      res |= LOG_LEV7;
-      break;
-    case '8':
-      res |= LOG_LEV8;
-      break;
-    case '*':
-      res |= LOG_ALL;
-      break;
-    }
-  return res;
+	while (*s) {
+		if (*s == '*') return(LOG_ALL);
+		for (mapping = logmode_mappings; mapping->type; mapping++) {
+			if (mapping->c == tolower(*s)) break;
+		}
+		if (mapping->type) modes |= mapping->flag;
+		s++;
+	}
+	return(modes);
 }
 
 char *masktype(int x)
 {
-  static char s[24];		/* Change this if you change the levels */
-  char *p = s;
+	static char s[24];	/* Change this if you change the levels */
+	char *p = s;
+	logmode_mapping_t *mapping;
 
-  if (x & LOG_MSGS)
-    *p++ = 'm';
-  if (x & LOG_PUBLIC)
-    *p++ = 'p';
-  if (x & LOG_JOIN)
-    *p++ = 'j';
-  if (x & LOG_MODES)
-    *p++ = 'k';
-  if (x & LOG_CMDS)
-    *p++ = 'c';
-  if (x & LOG_MISC)
-    *p++ = 'o';
-  if (x & LOG_BOTS)
-    *p++ = 'b';
-  if ((x & LOG_RAW) && debug_output)
-    *p++ = 'r';
-  if (x & LOG_FILES)
-    *p++ = 'x';
-  if (x & LOG_SERV)
-    *p++ = 's';
-  if (x & LOG_DEBUG)
-    *p++ = 'd';
-  if (x & LOG_WALL)
-    *p++ = 'w';
-  if ((x & LOG_SRVOUT) && debug_output)
-    *p++ = 'v';
-  if ((x & LOG_BOTNET) && debug_output)
-    *p++ = 't';
-  if ((x & LOG_BOTSHARE) && debug_output)
-    *p++ = 'h';
-  if (x & LOG_LEV1)
-    *p++ = '1';
-  if (x & LOG_LEV2)
-    *p++ = '2';
-  if (x & LOG_LEV3)
-    *p++ = '3';
-  if (x & LOG_LEV4)
-    *p++ = '4';
-  if (x & LOG_LEV5)
-    *p++ = '5';
-  if (x & LOG_LEV6)
-    *p++ = '6';
-  if (x & LOG_LEV7)
-    *p++ = '7';
-  if (x & LOG_LEV8)
-    *p++ = '8';
-  if (p == s)
-    *p++ = '-';
-  *p = 0;
-  return s;
+	for (mapping = logmode_mappings; mapping->type; mapping++) {
+		if (x & mapping->flag) {
+			if ((mapping->flag & NEEDS_DEBUG_OUTPUT) && !debug_output) continue;
+			*p++ = mapping->c;
+		}
+	}
+	if (p == s) *p++ = '-';
+	*p = 0;
+	return(s);
 }
 
 char *maskname(int x)
 {
-  static char s[207];		/* Change this if you change the levels */
-  int i = 0;
+	static char s[207];	/* Change this if you change the levels */
+	logmode_mapping_t *mapping;
+	int len;
 
-  s[0] = 0;
-  if (x & LOG_MSGS)
-    i += my_strcpy(s, "msgs, ");
-  if (x & LOG_PUBLIC)
-    i += my_strcpy(s + i, "public, ");
-  if (x & LOG_JOIN)
-    i += my_strcpy(s + i, "joins, ");
-  if (x & LOG_MODES)
-    i += my_strcpy(s + i, "kicks/modes, ");
-  if (x & LOG_CMDS)
-    i += my_strcpy(s + i, "cmds, ");
-  if (x & LOG_MISC)
-    i += my_strcpy(s + i, "misc, ");
-  if (x & LOG_BOTS)
-    i += my_strcpy(s + i, "bots, ");
-  if ((x & LOG_RAW) && debug_output)
-    i += my_strcpy(s + i, "raw, ");
-  if (x & LOG_FILES)
-    i += my_strcpy(s + i, "files, ");
-  if (x & LOG_SERV)
-    i += my_strcpy(s + i, "server, ");
-  if (x & LOG_DEBUG)
-    i += my_strcpy(s + i, "debug, ");
-  if (x & LOG_WALL)
-    i += my_strcpy(s + i, "wallops, ");
-  if ((x & LOG_SRVOUT) && debug_output)
-    i += my_strcpy(s + i, "server output, ");
-  if ((x & LOG_BOTNET) && debug_output)
-    i += my_strcpy(s + i, "botnet traffic, ");
-  if ((x & LOG_BOTSHARE) && debug_output)
-    i += my_strcpy(s + i, "share traffic, ");
-  if (x & LOG_LEV1)
-    i += my_strcpy(s + i, "level 1, ");
-  if (x & LOG_LEV2)
-    i += my_strcpy(s + i, "level 2, ");
-  if (x & LOG_LEV3)
-    i += my_strcpy(s + i, "level 3, ");
-  if (x & LOG_LEV4)
-    i += my_strcpy(s + i, "level 4, ");
-  if (x & LOG_LEV5)
-    i += my_strcpy(s + i, "level 5, ");
-  if (x & LOG_LEV6)
-    i += my_strcpy(s + i, "level 6, ");
-  if (x & LOG_LEV7)
-    i += my_strcpy(s + i, "level 7, ");
-  if (x & LOG_LEV8)
-    i += my_strcpy(s + i, "level 8, ");
-  if (i)
-    s[i - 2] = 0;
-  else
-    strcpy(s, "none");
-  return s;
+	*s = 0;
+	for (mapping = logmode_mappings; mapping->type; mapping++) {
+		if (x & mapping->flag) {
+			if ((mapping->flag & NEEDS_DEBUG_OUTPUT) && !debug_output) continue;
+			strcat(s, mapping->type);
+			strcat(s, ", ");
+		}
+	}
+	len = strlen(s);
+	if (len) s[len-2] = 0;
+	else strcpy(s, "none");
+	return(s);
 }
 
 /* Some flags are mutually exclusive -- this roots them out
