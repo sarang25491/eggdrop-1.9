@@ -201,7 +201,6 @@ static int my_tcl_cb_delete(script_callback_t *me)
 	cd = (my_callback_cd_t *)me->callback_data;
 	Tcl_DecrRefCount(cd->command);
 	if (me->syntax) free(me->syntax);
-	if (me->name) free(me->name);
 	free(cd);
 	free(me);
 	return(0);
@@ -369,13 +368,15 @@ static int my_command_handler(ClientData client_data, Tcl_Interp *myinterp, int 
 	/* Parse arguments. */
 	syntax = cmd->syntax;
 	if (cmd->flags & SCRIPT_VAR_FRONT) {
-		skip = (objc-1) - cmd->nargs;
+		/* See how many args to skip. */
+		skip = strlen(syntax) - (objc-1);
 		if (skip < 0) skip = 0;
+		for (i = 0; i < skip; i++) mstack_push(args, NULL);
 		syntax += skip;
 	}
 	else skip = 0;
 
-	for (i = skip+1; i < objc; i++) {
+	for (i = 1; i < objc; i++) {
 		objptr = objv[i];
 
 		switch (*syntax++) {
@@ -462,7 +463,7 @@ static int my_command_handler(ClientData client_data, Tcl_Interp *myinterp, int 
 	al = args->stack; /* Argument list shortcut name. */
 	nopts = 0;
 	if (cmd->flags & SCRIPT_PASS_COUNT) {
-		al[2-nopts] = args->len - 3;
+		al[2-nopts] = args->len - 3 - skip;
 		nopts++;
 	}
 	if (cmd->flags & SCRIPT_PASS_RETVAL) {
