@@ -1,3 +1,11 @@
+2003-03-08 09:20  stdarg <stdarg@techmonkeys.org>
+
+	* modules/: javascript/javascript.c, tclscript/tclscript.c:
+
+	
+	* Add SCRIPT_STRING_LIST support to tcl/javascript (for raw binds)
+	(perl is messed up on my computer right now) 
+
 2003-03-08 07:32  Tothwolf <tothwolf@techmonkeys.org>
 
 	* acconfig/acinclude.m4:
