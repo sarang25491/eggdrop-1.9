@@ -2,8 +2,7 @@
 #define _FLAGS_H_
 
 typedef struct {
-	int global;
-	int channel;
+	int builtin;
 	int udef;
 } flags_t;
 

@@ -32,7 +32,7 @@ static hash_table_t *handle_ht = NULL;
 static hash_table_t *uid_ht = NULL;
 
 /* List to keep all users' ircmasks in. */
-static ircmask_list_t ircmask_list = {0, NULL};
+static ircmask_list_t ircmask_list = {NULL};
 
 /* Prototypes for internal functions. */
 static user_t *real_user_new(const char *handle, int uid);
@@ -43,9 +43,12 @@ static int cache_user_del(user_t *u, const char *ircmask);
 
 int user_init()
 {
+	/* Create hash tables. */
 	handle_ht = hash_table_create(NULL, NULL, USER_HASH_SIZE, HASH_TABLE_STRINGS);
 	uid_ht = hash_table_create(NULL, NULL, USER_HASH_SIZE, HASH_TABLE_INTS);
 	irchost_cache_ht = hash_table_create(NULL, NULL, HOST_HASH_SIZE, HASH_TABLE_STRINGS);
+
+	/* And bind tables. */
 	return(0);
 }
 
@@ -59,9 +62,15 @@ int user_load(const char *fname)
 
 	memset(&root, 0, sizeof(root));
 	xml_read(&root, fname);
-	for (i = 0; ; i++) {
-		user_node = xml_node_lookup(&root, "user", i, 0);
-		if (!user_node) break;
+	if (xml_node_get_int(&uid, &root, "next_uid", 0, 0)) {
+		xml_node_destroy(&root);
+		return(0);
+	}
+	g_uid = uid;
+	xml_node_get_int(&uid_wraparound, &root, "uid_wraparound", 0, 0);
+	for (i = 0; i < root.nchildren; i++) {
+		if (strcasecmp(root.children[i].name, "user")) continue;
+		user_node = root.children+i;
 		xml_node_get_str(&handle, user_node, "handle", 0, 0);
 		xml_node_get_int(&uid, user_node, "uid", 0, 0);
 		if (!handle || !uid) break;
@@ -194,6 +203,8 @@ static user_t *real_user_new(const char *handle, int uid)
 
 	hash_table_insert(handle_ht, u->handle, u);
 	hash_table_insert(uid_ht, (void *)u->uid, u);
+	hash_table_check_resize(&handle_ht);
+	hash_table_check_resize(&uid_ht);
 	return(u);
 }
 
@@ -355,6 +366,7 @@ int user_add_ircmask(user_t *u, const char *ircmask)
 	/* Add the ircmask to the user entry. */
 	u->ircmasks = (char **)realloc(u->ircmasks, sizeof(char *) * (u->nircmasks+1));
 	u->ircmasks[u->nircmasks] = strdup(ircmask);
+	u->nircmasks++;
 
 	/* Put it in the big list. */
 	ircmask_list_add(&ircmask_list, ircmask, u);
@@ -378,6 +390,7 @@ int user_del_ircmask(user_t *u, const char *ircmask)
 
 	/* Get rid of it. */
 	memmove(u->ircmasks+i, u->ircmasks+i+1, sizeof(char *) * (u->nircmasks - i - 1));
+	u->nircmasks--;
 
 	/* Delete matching entries of this user in the host cache. */
 	cache_user_del(u, ircmask);
@@ -385,16 +398,39 @@ int user_del_ircmask(user_t *u, const char *ircmask)
 	return(0);
 }
 
-int user_get_flags(user_t *u, const char *chan, flags_t *flags)
+static int get_flags(user_t *u, const char *chan, int **flags, int **udef)
 {
 	int i;
-	flags->global = u->settings[0].flags;
-	if (chan) for (i = 1; i < u->nsettings; i++) {
-		if (!strcasecmp(chan, u->settings[i].chan)) {
-			flags->channel = u->settings[i].flags;
-			break;
+
+	if (!chan) i = 0;
+	else {
+		for (i = 1; i < u->nsettings; i++) {
+			if (!strcasecmp(chan, u->settings[i].chan)) break;
 		}
+		if (i == u->nsettings) return(-1);
 	}
+	*flags = &u->settings[i].flags;
+	*udef = &u->settings[i].udef_flags;
+	return(0);
+}
+
+int user_get_flags(user_t *u, const char *chan, flags_t *flags)
+{
+	int *builtin, *udef;
+
+	if (get_flags(u, chan, &builtin, &udef)) return(-1);
+	flags->builtin = *builtin;
+	flags->udef = *udef;
+	return(0);
+}
+
+int user_set_flags(user_t *u, const char *chan, flags_t *flags)
+{
+	int *builtin, *udef;
+
+	if (get_flags(u, chan, &builtin, &udef)) return(-1);
+	*builtin = flags->builtin;
+	*udef = flags->udef;
 	return(0);
 }
 

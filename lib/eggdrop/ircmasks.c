@@ -7,6 +7,7 @@
 int ircmask_list_add(ircmask_list_t *list, const char *ircmask, void *data)
 {
 	int i, stars, len;
+	ircmask_list_entry_t *entry, *prev;
 
 	stars = 0;
 	len = strlen(ircmask);
@@ -14,15 +15,23 @@ int ircmask_list_add(ircmask_list_t *list, const char *ircmask, void *data)
 		if (ircmask[i] == '*') stars++;
 	}
 	len -= stars;
-	for (i = 0; i < list->len; i++) {
-		if (len > list->list[i].len) break;
+	prev = NULL;
+	for (entry = list->head; entry; entry = entry->next) {
+		if (len >= entry->len) break;
+		prev = entry;
 	}
-	list->list = realloc(list->list, sizeof(*list->list) * (list->len+1));
-	memmove(list->list+i+1, list->list+i, sizeof(*list->list) * (list->len-i));
-	list->list[i].ircmask = strdup(ircmask);
-	list->list[i].len = len;
-	list->list[i].data = data;
-	list->len++;
+	entry = malloc(sizeof(*entry));
+	entry->ircmask = strdup(ircmask);
+	entry->len = len;
+	entry->data = data;
+	if (prev) {
+		entry->next = prev->next;
+		prev->next = entry;
+	}
+	else {
+		entry->next = list->head;
+		list->head = entry;
+	}
 	return(0);
 }
 
@@ -32,11 +41,11 @@ int ircmask_list_del(ircmask_list_t *list, const char *ircmask, void *data)
 
 int ircmask_list_find(ircmask_list_t *list, const char *irchost, void *dataptr)
 {
-	int i;
+	ircmask_list_entry_t *entry;
 
-	for (i = 0; i < list->len; i++) {
-		if (wild_match(list->list[i].ircmask, irchost) > 0) {
-			*(void **)dataptr = list->list[i].data;
+	for (entry = list->head; entry; entry = entry->next) {
+		if (wild_match(entry->ircmask, irchost) > 0) {
+			*(void **)dataptr = entry->data;
 			return(0);
 		}
 	}
