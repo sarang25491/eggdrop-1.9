@@ -1,3 +1,13 @@
+2003-06-18 04:10  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/Makefile.am, lib/eggdrop/binds.c,
+	lib/eggdrop/eggdns.c, lib/eggdrop/eggdns.h, lib/eggdrop/eggnet.c,
+	lib/eggdrop/eggnet.h, lib/eggdrop/partyline.h,
+	lib/eggdrop/partymember.c, modules/server/dcc.c,
+	modules/telnetparty/telnetparty.c, src/core_party.c:
+
+	[no log message] 
+
 2003-06-15 05:43  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/binds.c, lib/eggdrop/partyline.h,
