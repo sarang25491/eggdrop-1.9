@@ -30,7 +30,7 @@ cmd_resolve.tcl
 compat.tcl
    maps old tcl functions to new ones, for lazy people who can't be bothered
    updating their scripts
-   
+
 getops-2.2d.tcl
    a way to get ops from other bots on the botnet (if they're on the
    same channel)
@@ -38,7 +38,7 @@ getops-2.2d.tcl
 klined.tcl
    removes servers from your server list that your bot has been k-lined on
    to prevent admins getting peeved with constant connects from your bot's host
-   
+
 notes2.tcl
    Check your notes on every shared bot of the hub.
 
@@ -47,12 +47,12 @@ ques5.tcl
    (requires alltools.tcl)
 
 sentinel.tcl (by slennox)
-   flood protection script for eggdrop with integrated BitchX CTCP simulation. 
+   flood protection script for eggdrop with integrated BitchX CTCP simulation.
    this script is designed to provide strong protection for your bot and
    channels against large floodnets and proxy floods.
 
 userinfo1.0.tcl
-   cute user info settings things 
- 
+   cute user info settings things
+
 weed
    weed out certain undesirables from an eggdrop userlist

@@ -29,7 +29,7 @@ do \
 done; \
 exec tclsh$lastver "$0" "$@"
 #
-# $Id: weed,v 1.6 2001/04/13 19:19:14 guppy Exp $
+# $Id: weed,v 1.7 2001/10/10 13:15:59 tothwolf Exp $
 #
 # weed out certain undesirables from an eggdrop userlist
 # try just typing 'tclsh weed' to find out the options
@@ -127,11 +127,11 @@ puts stdout "\nWEED  18jun97, robey\n"
 set filename [lindex $argv 0]
 for {set i 1} {$i < $argc} {incr i} {
   set carg [lindex $argv $i]
-  if {$carg == ":n"} { 
-    set weedlurkers 1 
+  if {$carg == ":n"} {
+    set weedlurkers 1
   } elseif {$carg == ":o"} {
     set weedops 1 ; set stripops 0 ; set weednopw 0
-  } elseif {$carg == ":m"} { 
+  } elseif {$carg == ":m"} {
     set weedmasters 1 ; set stripmasters 0 ; set weednopw 0
   } elseif {$carg == ":a"} {
     set weednopw 1 ; set weedops 0 ; set weedmasters 0
@@ -473,7 +473,7 @@ foreach i [array names User] {
   incr total
   set attr [lindex $User($i) 0]
   set chanattr [lindex [lindex $Channel($i) 0] 2]
-  if {([lsearch -exact $exempt $i] == -1) &&  
+  if {([lsearch -exact $exempt $i] == -1) &&
     ([string range $i 0 1] != "::") &&
     ([string range $i 0 1] != "--") &&
     (([string first o $attr] == -1) || (!$exemptops)) &&
@@ -498,7 +498,7 @@ foreach i [array names User] {
       } elseif {([string first m $attr] != -1) && ($weedmasters == 1)} {
         unset User($i) ; incr weeded
         puts -nonewline stdout "[format "pwd: %-10s     " $i]"
-      } 
+      }
       if {([string first o $attr] != -1) && ($stripops == 1)} {
         set nattr {}
         for {set x 0} {$x < [string length $attr]} {incr x} {
@@ -525,7 +525,7 @@ foreach i [array names User] {
     if {($ts==0) && ($weedlurkers==1) && ([string first b $attr] == -1) && [info exists User($i)]} {
       unset User($i) ; incr weeded
       puts -nonewline stdout "[format "lrk: %-10s     " $i]"
-    } 
+    }
     if {($ts > 0) && ($maxlast > 0) && ($CURRENT-$ts > $maxlast &&  [info exists User($i)])} {
       unset User($i) ; incr weeded
       puts -nonewline stdout "[format "exp: %-10s     " $i]"

@@ -56,7 +56,7 @@
    clears your email address.
 %{help=url}
 ###  %burl%b [url site address]
-   sets your url address.  this data isn't really used by the bot,  
+   sets your url address.  this data isn't really used by the bot,
    but it will show up if someone does a %b'whois'%b on you.  if you
    don't specify an url address, the bot will show you the url
    address it currently has set for you (if any).
@@ -72,23 +72,23 @@
    clears your boyfriend.
 %{help=gf}
 ###  %bgf%b [girlfriend]
-   sets your girlfriend.  this data isn't really used by the bot, but  
-   it will show up if someone does a %b'whois'%b on you.  it's also 
+   sets your girlfriend.  this data isn't really used by the bot, but
+   it will show up if someone does a %b'whois'%b on you.  it's also
    used by the seen script. if you don't specify a girlfriend, the bot
    will show you the girlfriend it currently has set for you (if any).
 ###  %bgf none%b
    clears your girlfriend.
 %{help=irl}
 ###  %birl%b [irl]
-   sets your 'in real life' name.  this data isn't really used by the  
-   bot, but it will show up if someone does a %b'whois'%b on you. if 
+   sets your 'in real life' name.  this data isn't really used by the
+   bot, but it will show up if someone does a %b'whois'%b on you. if
    you don't specify a 'in real life' name, the bot will show you the
    'in real life' name it currently has set for you (if any).
 ###  %birl none%b
    clears your 'in real life' name.
 %{help=dob}
 ###  %bdob%b [date of birth]
-   sets your date of birth.  this data isn't really used by the bot,  
+   sets your date of birth.  this data isn't really used by the bot,
    but it will show up if someone does a %b'whois'%b on you. if you
    don't specify a date of birth, the bot will show you your date of
    birth it currently has set for you (if any).

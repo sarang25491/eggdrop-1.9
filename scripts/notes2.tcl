@@ -3,7 +3,7 @@
 #                     - a bind apart script from #TSF
 #                     - for eggdrop 1.3.15+
 #
-# $Id: notes2.tcl,v 1.5 2001/03/17 23:20:57 guppy Exp $
+# $Id: notes2.tcl,v 1.6 2001/10/10 13:15:59 tothwolf Exp $
 #
 ####
 #
@@ -190,7 +190,7 @@ proc *dcc:notes2 {handle idx arg} {
 	set num $numlog
 	if {($num == "")} { set num "-" }
 	if {($bot != "all") && ([lsearch [string tolower [bots]] $bot] < 0)} {
-	    if {($cmd != "index") && ($cmd != "read") && ($cmd != "erase")} {	    
+	    if {($cmd != "index") && ($cmd != "read") && ($cmd != "erase")} {
 		if {($bot == [string tolower $nick])} {
 		    return [*dcc:notes $handle $idx [lrange $arg 1 end]]
 		} else {

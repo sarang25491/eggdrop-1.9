@@ -1,7 +1,7 @@
 # userinfo.tcl v1.06 for Eggdrop 1.4.3 and higher
 #           Scott G. Taylor -- ButchBub!staylor@mrynet.com
 #
-# $Id: userinfo.tcl,v 1.3 2001/08/27 23:25:46 poptix Exp $
+# $Id: userinfo.tcl,v 1.4 2001/10/10 13:15:59 tothwolf Exp $
 #
 # v1.00      ButchBub     14 July      1997 -Original release.  Based on
 #                                            whois.tcl "URL" commands.
@@ -257,7 +257,7 @@ proc showfields {hand idx arg} {
  if { ${userinfo-fields} == "" } {
   putdcc $idx "Their is no user info fields set."
   return 0
- }  
+ }
  putdcc $idx "Currently: [string toupper ${userinfo-fields}]"
  putcmdlog "#$hand# showfields"
  return 0

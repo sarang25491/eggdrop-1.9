@@ -501,8 +501,8 @@ README
           January 1997, eggdrop is distributed according to the GNU
           General Public License. There should be a copy of this
           license in the file COPYING. If not, write to the Free
-          Software Foundation, Inc., 675 Mass Ave, Cambridge, MA
-          02139, USA.
+          Software Foundation, Inc., 59 Temple Place, Suite 330,
+          Boston, MA  02111-1307  USA
 
           As of eggdrop1.3.28 all changes made by the Eggheads
           development team to the eggdrop source code and any related
@@ -513,15 +513,16 @@ README
           Releases previous to 1.0m were made using a different
           licensing scheme. You may, at your option, use the GNU
           General Public License on those versions (instead of the
-          license packaged with them) with my blessing. For any
-          versions bearing a copyright date of 1997 or later, you have
-          no choice -- you must use the GNU General Public License.
+          license packaged with them) with my blessing. [Robey Pointer]
+          For any versions bearing a copyright date of 1997 or later,
+          you have no choice -- you must use the GNU General Public
+          License.
 
           The files "match.c", "net.c", and "blowfish.c" are exempt
           from the above restrictions. "match.c" is original code by
           Chris Fuller (email: crf@cfox.bchs.uh.edu) and has been
           placed by him into the public domain. "net.c" is by me and I
-          [who?] also choose to place it in the public domain.
+          [Robey Pointer] also choose to place it in the public domain.
           "blowfish.c" is by various sources and is in the public
           domain. All 3 files contain useful functions that could
           easily be ported to other applications -- the other parts of

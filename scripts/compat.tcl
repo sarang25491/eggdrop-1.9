@@ -9,7 +9,7 @@
 # Tothwolf  06Oct1999: optimized
 # rtc       10Oct1999: added [set|get][dn|up]loads functions
 #
-# $Id: compat.tcl,v 1.6 2001/08/13 19:22:30 guppy Exp $
+# $Id: compat.tcl,v 1.7 2001/10/10 13:15:59 tothwolf Exp $
 
 proc gethosts {hand} {
   getuser $hand HOSTS
@@ -24,11 +24,11 @@ proc chpass {hand pass} {
 }
 
 
-proc chnick {oldnick newnick} { 
+proc chnick {oldnick newnick} {
   chhandle $oldnick $newnick
 }
 
-# setxtra is no longer relevant 
+# setxtra is no longer relevant
 
 proc getxtra {hand} {
   getuser $hand XTRA

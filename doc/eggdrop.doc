@@ -11,7 +11,8 @@ Currently completed sections are:
 (8) Bans and How They Work
 
 Appendices:
-(Y) Bugs and bug reporting
+(X) Bugs and bug reporting
+(Y) What Are Runts?
 (Z) Weird Messages That Get Logged
 
 
@@ -463,8 +464,7 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
     to their category.  Be sure to check out the help pages for those
     commands for more info.
 
-
-(Y) BUGS AND BUG REPORTING
+(X) BUGS AND BUG REPORTING
 
     Although we try hard to remove all bugs, there are probably a few bugs
     left in the eggdrop. Sometimes this may even lead to a complete crash
@@ -474,6 +474,14 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
 
     If you encounter a bug or even a crash, please read doc/BUG-REPORT
     and follow the instructions mentioned therein.
+
+
+(Y) WHAT ARE RUNTS?
+
+    Runts are an American candy, part of the Willy Wonka line from Nestlé.
+    They are little pebble-sized hard nuggets, brightly colored, and shaped
+    like fruit: cherries, bananas, oranges, and limes. They seem to
+    be made almost exclusively from sugar, and are very addictive.
 
 
 (Z) WEIRD MESSAGES THAT GET LOGGED

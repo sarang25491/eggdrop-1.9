@@ -12,7 +12,7 @@ be interpreted by eggdrop:
  %f   display flashing via telnet, bold underline via irc
  %B   bot's nickname (ie, "LamestBot")
  %V   current eggdrop version (ie, "eggdrop v1.7.0")
- %E   long form of %V (ie, "Eggdrop v1.7.0  (c)1997 Robey Pointer (c)1999, 2000  Eggheads")
+ %E   long form of %V (ie, "Eggdrop v1.7.0  (C) 1997 Robey Pointer (C) 1999, 2000, 2001  Eggheads")
  %C   channels the bot is on (ie, "#lamest, #botnetcentral")
  %A   whatever is set in 'admin' (see 'set admin')
  %T   the current time (ie, "15:00")
