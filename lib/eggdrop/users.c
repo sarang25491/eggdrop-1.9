@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.29 2004/06/23 20:19:45 wingman Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.30 2004/06/23 21:15:45 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -103,18 +103,24 @@ int user_shutdown(void)
 int user_load(const char *fname)
 {
 	int i, j, k, uid;
-	xml_node_t *root, *user_node, *setting_node;
+	xml_node_t *doc, *root, *user_node, *setting_node;
 	user_setting_t *setting;
 	char *handle, *ircmask, *chan, *name, *value, *flag_str;
 	user_t *u;
 
-	if (xml_load_file(fname, &root, XML_TRIM_TEXT) != 0)
+	if (xml_load_file(fname, &doc, XML_TRIM_TEXT) != 0) {
+		putlog(LOG_MISC, "*", _("Failed to load userfile '%s': %s"), fname, xml_last_error());
 		return -1;
+	}
+
+	root = xml_root_element(doc);
 
 	if (xml_node_get_int(&uid, root, "next_uid", 0, 0)) {
+		putlog(LOG_MISC, "*", _("Failed to load userfile '%s': Missing next_uid attribute."), fname);
 		xml_node_delete(root);
-		return(0);
+		return -1;
 	}
+
 	g_uid = uid;
 	xml_node_get_int(&uid_wraparound, root, "uid_wraparound", 0, 0);
 	for (i = 0; i < root->nchildren; i++) {
@@ -175,7 +181,10 @@ int user_load(const char *fname)
 			u->nsettings = 1;
 		}
 	}
-	xml_node_delete(root);
+	xml_node_delete(doc);
+
+	putlog(LOG_MISC, "*", _("Loaded %i user(s)"), nusers);
+
 	return(0);
 }
 
