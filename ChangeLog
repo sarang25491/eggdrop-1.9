@@ -6,16 +6,12 @@
 
 2001-08-14 18:30  Jeff Fisher <guppy@techmonkeys.org>
 
-	* text/: banner, motd:
-
 	Lets remove version numbers from motd/banner since when we upgrade
 	bots we do not overwrite these files normally and they can get dated
 	when people move between series and do not upgrade their motd/banner
 	.. I am one of these people.  
 
 2001-08-14 18:27  Jeff Fisher <guppy@techmonkeys.org>
-
-	* src/mod/server.mod/servmsg.c:
 
 	Fixed what information we send along with USER when registering to
 	an IRCd.  A sneaky irc admin could transparently detect eggdrop and
@@ -34,51 +30,31 @@
 
 2001-08-14 16:39  Jeff Fisher <guppy@techmonkeys.org>
 
-	* misc/cvs2cl.pl:
-
 	removed cvs2cl.pl since we have automatic changelogs setup now.
 	every 30 minutes the ChangeLog will be regenerated if anything has
 	been changed. Thanks to the irssi people for their little script.  
 
 2001-08-13 23:38  Federico Mennite <ite@techmonkeys.org>
 
-	* bootstrap:
-
 	Added executable bootstrap.  
 
 2001-08-13 23:36  Federico Mennite <ite@techmonkeys.org>
-
-	* bootstrap:
 
 	Removed non executable bootstrap.  
 
 2001-08-13 22:51  Federico Mennite <ite@techmonkeys.org>
 
-	* .cvsignore, doc/.cvsignore, scripts/.cvsignore, src/.cvsignore,
-	src/adns/.cvsignore, src/compat/.cvsignore, src/egglib/.cvsignore,
-	src/md5/.cvsignore, src/mod/.cvsignore,
-	src/mod/compress.mod/.cvsignore:
-
 	Added .cvsignore files to ease committer's life.  
 
 2001-08-13 21:50  Federico Mennite <ite@techmonkeys.org>
-
-	* config.h.in, configure,
-	src/mod/compress.mod/compress_config.h.in,
-	src/mod/compress.mod/configure:
 
 	Removed needless config stuff. See previous patch.  
 
 2001-08-13 21:41  Federico Mennite <ite@techmonkeys.org>
 
-	* bootstrap:
-
 	Added missing bootstrap script from the prevoius patch.  
 
 2001-08-13 21:39  Federico Mennite <ite@techmonkeys.org>
-
-	* INSTALL, Makefile.in, acconfig.h,
-	src/mod/compress.mod/Makefile.in:
 
 	* Created bootstrap script that runs the various autotools with a
 	single command.  
@@ -89,49 +65,17 @@
 
 2001-08-13 20:47  Jeff Fisher <guppy@techmonkeys.org>
 
-	* CONTENTS, Makefile.in, aclocal.m4, configure,
-	eggdrop.complete.conf, doc/Makefile.in, doc/eggdrop.doc,
-	doc/tricks, doc/html/egg-core.html, doc/man1/eggdrop.1,
-	doc/settings/CONTENTS, doc/settings/contents,
-	doc/settings/core.settings, help/core.help, src/Makefile.in,
-	src/eggdrop.h, src/lang.h, src/language.c, src/main.c, src/main.h,
-	src/mem.c, src/modules.c, src/proto.h, src/compat/Makefile.in,
-	src/md5/Makefile.in, src/mod/Makefile.in, src/mod/module.h,
-	src/mod/assoc.mod/Makefile, src/mod/blowfish.mod/Makefile,
-	src/mod/channels.mod/Makefile, src/mod/compress.mod/Makefile.in,
-	src/mod/console.mod/Makefile, src/mod/ctcp.mod/Makefile,
-	src/mod/filesys.mod/Makefile, src/mod/filesys.mod/filesys.h,
-	src/mod/irc.mod/Makefile, src/mod/notes.mod/Makefile,
-	src/mod/server.mod/Makefile, src/mod/share.mod/Makefile,
-	src/mod/transfer.mod/Makefile, src/mod/uptime.mod/Makefile,
-	src/mod/woobie.mod/Makefile:
-
 	Good bye language.c, lang.h, we knew you so well yet hated you 
 
 2001-08-13 19:22  Jeff Fisher <guppy@techmonkeys.org>
-
-	* scripts/compat.tcl, src/tcluser.c:
 
 	Removed matchchanattr from the core and made a compat tcl proc 
 
 2001-08-13 19:12  Jeff Fisher <guppy@techmonkeys.org>
 
-	* FEATURES, INSTALL, eggdrop.complete.conf, eggdrop.simple.conf,
-	doc/MODULES, doc/html/egg-core.html, doc/html/features.html,
-	doc/html/index.html, doc/html/install.html,
-	doc/html/mod-channels.html, doc/html/mod-wire.html,
-	doc/settings/contents, doc/settings/core.settings,
-	doc/settings/mod.channel, doc/settings/mod.woobie, help/core.help,
-	src/chan.h, src/mod/channels.mod/channels.c,
-	src/mod/channels.mod/cmdschan.c, src/mod/channels.mod/tclchan.c:
-
 	Removed more references to seen.mod and wire.mod 
 
 2001-08-13 17:24  Jeff Fisher <guppy@techmonkeys.org>
-
-	* eggdrop.complete.conf, eggdrop.simple.conf,
-	doc/html/mod-blowfish.html, doc/settings/mod.blowfish,
-	src/tclmisc.c:
 
 	removed checkmodule .. it the same as loadmodule basically,
 	loadmodule blowfish behaves the same as checkmodule blowfish on
@@ -139,8 +83,6 @@
 	this patch 
 
 2001-08-13 16:52  Jeff Fisher <guppy@techmonkeys.org>
-
-	* src/: chanprog.c, main.c:
 
 	Cleaned up the output of .status inregards to TCL ...  
 	
@@ -164,10 +106,6 @@
 
 2001-08-13 16:21  Jeff Fisher <guppy@techmonkeys.org>
 
-	* eggdrop.complete.conf, doc/html/egg-core.html,
-	doc/settings/core.settings, src/dcc.c, src/misc.c, src/proto.h,
-	src/tcl.c:
-
 	removed use-telnet-banner (useless option), renamed show_banner to
 	show_telnet_banner, updated the docs a bit for telnet-banner, got
 	rid of a message in show_motd when the motd wasn't a regular text
@@ -177,11 +115,6 @@
 	we can read the file.  
 
 2001-08-13 14:51  Jeff Fisher <guppy@techmonkeys.org>
-
-	* eggdrop.complete.conf, doc/html/egg-core.html,
-	doc/settings/core.settings, src/modules.c, src/net.c, src/proto.h,
-	src/tcl.c, src/mod/module.h, src/mod/filesys.mod/filesys.c,
-	src/mod/server.mod/server.c:
 
 	Removed dcc-sanitycheck since it was half commented out as "FIXME"
 	-- also, in the day and age of IRC bouncers and socks5 connections,
@@ -195,11 +128,6 @@
 
 2001-08-13 14:17  Jeff Fisher <guppy@techmonkeys.org>
 
-	* eggdrop.complete.conf, doc/html/egg-core.html,
-	doc/settings/core.settings, src/dcc.c, src/modules.c, src/tcl.c,
-	src/mod/module.h, src/mod/filesys.mod/filesys.c,
-	src/mod/server.mod/server.c:
-
 	Removed dcc-portrange since it was a stupid setting (good idea of
 	course) and the values 1024 and 65535 are now hardcoded as the
 	portrange .. anything below 1024 shouldn't be used for dcc and of
@@ -209,35 +137,15 @@
 
 2001-08-13 03:58  Jeff Fisher <guppy@techmonkeys.org>
 
-	* eggdrop.complete.conf, doc/html/mod-server.html,
-	doc/settings/mod.server, src/mod/server.mod/server.c,
-	src/mod/server.mod/server.h, src/mod/server.mod/servmsg.c,
-	src/mod/server.mod/help/set/server.help:
-
 	well, servlimit is now gone also .. this is another feature that was
 	made useless years ago and should have been removed years ago 
 
 2001-08-13 03:08  Jeff Fisher <guppy@techmonkeys.org>
 
-	* eggdrop.advanced.conf:
-
 	Sorry, forgot to remove eggdrop.advanced.conf -- we shouldn't give
 	Canadians commit access 
 
 2001-08-13 03:05  Jeff Fisher <guppy@techmonkeys.org>
-
-	* CONTENTS, Makefile.in, NEWS, eggdrop.complete.conf,
-	eggdrop.simple.conf, doc/eggdrop.doc, doc/tcl-commands.doc,
-	doc/html/egg-core.html, doc/html/mod-channels.html,
-	doc/html/mod-server.html, doc/man1/eggdrop.1,
-	doc/settings/core.settings, doc/settings/mod.channel,
-	doc/settings/mod.server, src/chan.h,
-	src/mod/channels.mod/channels.c, src/mod/channels.mod/cmdschan.c,
-	src/mod/channels.mod/tclchan.c,
-	src/mod/channels.mod/help/chaninfo.help, src/mod/irc.mod/chan.c,
-	src/mod/irc.mod/irc.c, src/mod/irc.mod/mode.c,
-	src/mod/server.mod/server.c, src/mod/server.mod/servmsg.c,
-	src/mod/server.mod/help/set/server.help:
 
 	PATCH: clean_leftover_features About time these got removed since we
 	have better replacements for them ... scripters will hate us at
@@ -245,21 +153,14 @@
 
 2001-08-12 03:09  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/Makefile.in:
-
 	lets not try to install UPDATES1.7 since we dont have one (found by
 	Webbie) 
 
 2001-08-11 08:22  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/AUTHORS:
-
 	ITE! We now know you 
 
 2001-08-11 07:29  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, doc/tcl-commands.doc, scripts/getops.tcl,
-	src/patch.h:
 
 	sync'd 1.7 to 1.6 ... also, I modifed the ChangeLog ... gonna try
 	again to get that stupid thing atuomated -- if anyone has any hints
@@ -267,158 +168,90 @@
 
 2001-08-10 23:51  Federico Mennite <ite@techmonkeys.org>
 
-	* Makefile.in, src/bg.c, src/botcmd.c, src/botmsg.c, src/botnet.c,
-	src/chanprog.c, src/cmds.c, src/dcc.c, src/dccutil.c, src/dns.c,
-	src/eggdrop.h, src/lang.h, src/main.c, src/misc.c, src/modules.c,
-	src/tcldcc.c, src/tclhash.c, src/tclmisc.c, src/userrec.c,
-	src/users.c, src/mod/assoc.mod/assoc.c, src/mod/assoc.mod/assoc.h,
-	src/mod/channels.mod/channels.c, src/mod/channels.mod/cmdschan.c,
-	src/mod/channels.mod/userchan.c, src/mod/console.mod/console.c,
-	src/mod/console.mod/console.h, src/mod/filesys.mod/dbcompat.c,
-	src/mod/filesys.mod/filedb3.c, src/mod/filesys.mod/files.c,
-	src/mod/filesys.mod/files.h, src/mod/filesys.mod/filesys.c,
-	src/mod/irc.mod/chan.c, src/mod/irc.mod/cmdsirc.c,
-	src/mod/irc.mod/irc.c, src/mod/irc.mod/mode.c,
-	src/mod/irc.mod/msgcmds.c, src/mod/notes.mod/cmdsnote.c,
-	src/mod/notes.mod/notes.c, src/mod/notes.mod/notes.h,
-	src/mod/server.mod/cmdsserv.c, src/mod/server.mod/server.c,
-	src/mod/server.mod/servmsg.c, src/mod/share.mod/share.c,
-	src/mod/transfer.mod/transfer.c:
-
 	Gettext phase 1: created a dummy _() macro, replaced old get_lang
 	#defines with the respective string entries in english.*.lang and
 	removed them.  
 
 2001-08-10 14:50  Dobos Lorant <drummer@buli.sk>
 
-	* src/adns/: dlist.h, query.c, setup.c:
-
 	changed LIST_INIT to ADNS_LIST_INIT to avoid warning messages on
 	freebsd 
 
 2001-08-10 14:33  Dobos Lorant <drummer@buli.sk>
-
-	* src/: adns/setup.c, compat/inet_ntop.c:
 
 	cygwin: checking resolv.conf in the current dir, avoid
 	arpa/nameser.h 
 
 2001-08-09 13:44  Dobos Lorant <drummer@buli.sk>
 
-	* src/adns/event.c:
-
 	blocking recvfrom() on cygwin 
 
 2001-08-09 04:07  Jeff Fisher <guppy@techmonkeys.org>
-
-	* src/patch.h:
 
 	oops, I guess I should faithfully use addpatch eh? 
 
 2001-08-09 04:06  Jeff Fisher <guppy@techmonkeys.org>
 
-	* aclocal.m4, configure:
-
 	PATCH: cygwinsharedtcl1 -- added Kirben's patch to sync upto 1.6 
 
 2001-08-09 04:05  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6:
 
 	updated doc/UPDATES1.6 to be in sync with 1.6 
 
 2001-08-08 14:06  Dobos Lorant <drummer@buli.sk>
 
-	* src/net.c:
-
 	reversing something that should not be there 
 
 2001-08-08 13:47  Dobos Lorant <drummer@buli.sk>
-
-	* aclocal.m4, configure:
 
 	autoenabling IPv6 if supported 
 
 2001-08-08 13:45  Dobos Lorant <drummer@buli.sk>
 
-	* src/net.c:
-
 	byteorder problem 
 
 2001-08-07 14:16  Matthew Hallacy <poptix@techmonkeys.org>
-
-	* misc/cvs2cl.pl:
 
 	This script parses cvs logs and creates the Changelog file, you
 	should make sure it ignores changes to the file 'Changelog' =) 
 
 2001-08-07 13:57  Matthew Hallacy <poptix@techmonkeys.org>
 
-	* src/: patch.h, mod/channels.mod/help/chaninfo.help:
-
 	PATCH: helppatch.diff 
 
 2001-08-07 13:49  Matthew Hallacy <poptix@techmonkeys.org>
-
-	* src/: botnet.c, patch.h:
 
 	PATCH: nice_whom.patch 
 
 2001-08-07 13:48  Matthew Hallacy <poptix@techmonkeys.org>
 
-	* src/: patch.h, mod/server.mod/server.c:
-
 	PATCH: dalupd 
 
 2001-08-01 19:00  Dobos Lorant <drummer@buli.sk>
-
-	* aclocal.m4, configure:
 
 	ipv6support detection fix for freebsd 
 
 2001-08-01 16:31  Dobos Lorant <drummer@buli.sk>
 
-	* src/net.c:
-
 	freebsd warnings part2 
 
 2001-07-31 16:40  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/cmds.c, src/main.c, src/misc.c,
-	src/modules.c, src/patch.h, src/proto.h, src/tclmisc.c,
-	src/compat/inet_pton.c, src/mod/module.h, src/mod/modvals.h,
-	src/mod/server.mod/cmdsserv.c, src/mod/server.mod/server.c:
 
 	sync'd 1.7 to the latest 1.6 
 
 2001-07-29 20:00  Dobos Lorant <drummer@buli.sk>
 
-	* src/adns/check.c:
-
 	warning in adns/check.c 
 
 2001-07-29 19:43  Dobos Lorant <drummer@buli.sk>
-
-	* Makefile.in, aclocal.m4, configure, configure.in,
-	src/Makefile.in, src/compat/inet_ntop.c, src/compat/inet_ntop.h,
-	src/compat/inet_pton.c, src/compat/inet_pton.h:
 
 	autoconf, Makefile, compat/ changes 
 
 2001-07-27 00:46  Dobos Lorant <drummer@buli.sk>
 
-	* Makefile.in, aclocal.m4, config.h.in, configure, configure.in,
-	src/net.c, src/adns/Makefile.in, src/adns/README.eggdrop,
-	src/adns/acconfig.h, src/adns/aclocal.m4, src/adns/adns.h,
-	src/adns/config.h.in, src/adns/configure, src/adns/configure.in,
-	src/adns/event.c, src/adns/internal.h:
-
 	adns and eggdrop configure merge 
 
 2001-07-26 22:59  Matthew Hallacy <poptix@techmonkeys.org>
-
-	* doc/BUG-REPORT, doc/patch.howto, doc/text-substitutions.doc,
-	text/banner, text/motd:
 
 	
 	
@@ -427,86 +260,37 @@
 
 2001-07-26 22:58  Matthew Hallacy <poptix@techmonkeys.org>
 
-	* doc/settings/: mod.seen, mod.wire:
-
 	Finished guppy's seen/wire cleanup.  
 
 2001-07-26 17:39  Dobos Lorant <drummer@buli.sk>
-
-	* src/compat/: inet_ntop.c, inet_ntop.h, inet_pton.c, inet_pton.h:
 
 	inet_pton, inet_ntop 
 
 2001-07-26 17:06  Dobos Lorant <drummer@buli.sk>
 
-	* src/adns/: COPYING, GPL-vs-LGPL, Makefile.in, README,
-	README.eggdrop, README.ircd, acconfig.h, aclocal.m4, adns.h,
-	adns.make, check.c, config.h.in, configure, configure.in, dlist.h,
-	event.c, general.c, internal.h, parse.c, query.c, reply.c, setup.c,
-	transmit.c, tvarith.h, types.c:
-
 	adns library 
 
 2001-07-26 17:05  Dobos Lorant <drummer@buli.sk>
-
-	* Makefile.in, aclocal.m4, config.h.in, configure, configure.in,
-	eggdrop.advanced.conf, eggdrop.complete.conf, eggdrop.simple.conf:
 
 	ipv6 stuff 
 
 2001-07-26 17:04  Dobos Lorant <drummer@buli.sk>
 
-	* src/: Makefile.in, botnet.c, cmds.c, dcc.c, dccutil.c, dns.c,
-	dns.h, eggdrop.h, main.c, modules.c, net.c, proto.h, tcl.c,
-	tcldcc.c, tclmisc.c, tcluser.c, userent.c, compat/Makefile.in,
-	compat/compat.h, compat/inet_aton.h, mod/module.h,
-	mod/ctcp.mod/ctcp.c, mod/filesys.mod/filedb3.c,
-	mod/filesys.mod/filesys.c, mod/irc.mod/mode.c,
-	mod/server.mod/server.c, mod/server.mod/servmsg.c,
-	mod/share.mod/share.c, mod/transfer.mod/transfer.c,
-	mod/transfer.mod/transfer.h:
-
 	added adns dir 
 
 2001-07-26 17:02  Jeff Fisher <guppy@techmonkeys.org>
-
-	* disabled_modules:
 
 	removed dns.mod since we are moving to using adns 
 
 2001-07-26 04:07  Jeff Fisher <guppy@techmonkeys.org>
 
-	* aclocal.m4, configure, doc/UPDATES1.6, src/patch.h, src/tcl.c,
-	src/tclegg.h, src/tclmisc.c:
-
 	sync'd the lastest 1.6 cvs w/ 1.7 
 
-2001-07-25 20:32  stdarg
-
-	* src/egglib/: avl.c, avl.h, hash_table.c, hash_table.h,
-	hash_table_test.c, libegg.so, linked_list.c, linked_list.h,
-	linked_list_test.c, mempool.c, mempool.h, mempool_test.c,
-	libegg.so:
-
-	[no log message] 
-
 2001-07-25 17:32  Jeff Fisher <guppy@techmonkeys.org>
-
-	* src/mod/: channels.mod/channels.c, irc.mod/mode.c:
 
 	sync to current 1.6 cvs 
 
 2001-07-25 04:21  Jeff Fisher <guppy@techmonkeys.org>
-
-	* disabled_modules, doc/CONTENTS, doc/Makefile.in,
-	doc/UPDATES.pre1.5, doc/UPDATES1.5, src/main.c, src/patch.h,
-	src/mod/assoc.mod/assoc.c, src/mod/blowfish.mod/blowfish.c,
-	src/mod/channels.mod/channels.c, src/mod/compress.mod/compress.c,
-	src/mod/console.mod/console.c, src/mod/ctcp.mod/ctcp.c,
-	src/mod/filesys.mod/filesys.c, src/mod/irc.mod/irc.c,
-	src/mod/notes.mod/notes.c, src/mod/server.mod/server.c,
-	src/mod/share.mod/share.c, src/mod/transfer.mod/transfer.c,
-	src/mod/uptime.mod/uptime.c, src/mod/woobie.mod/woobie.c:
 
 	what will the future hold fellow eggdevers! seen and wire are
 	disabled ... shall we remove them and replace in the future with
@@ -514,160 +298,98 @@
 
 2001-07-24 21:50  Jeff Fisher <guppy@techmonkeys.org>
 
-	* src/patch.h:
-
 	doh, I forgot to commit the changed configure :P~ 
 
 2001-07-24 15:11  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/AUTHORS, src/patch.h:
 
 	go Kirben, go Kirben, its your birthday 
 
 2001-07-24 15:08  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h:
-
 	here is Kirben's bind82.patch applied 
 
 2001-07-24 15:02  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/patch.h, src/mod/irc.mod/mode.c:
 
 	yay dw, .. that Vodka helps 
 
 2001-07-24 14:48  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h, src/mod/irc.mod/irc.c:
-
 	let me strike down thee olde ircd 
 
 2001-07-24 14:43  Jeff Fisher <guppy@techmonkeys.org>
-
-	* aclocal.m4, configure, doc/UPDATES1.6, src/patch.h:
 
 	QNX? don't banks use that 
 
 2001-07-24 14:32  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/net.c, src/patch.h,
-	src/mod/channels.mod/channels.c:
-
 	dang those mismatches ... yay stdarg 
 
 2001-07-24 14:22  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/modules.c, src/patch.h:
 
 	a typo hunting we shall go ... yay Kirben 
 
 2001-07-24 14:19  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/MODULES, doc/UPDATES1.6, doc/tcl-commands.doc,
-	doc/html/egg-core.html, help/cmds2.help, src/cmds.c, src/main.c,
-	src/patch.h, src/tclmisc.c, src/mod/modvals.h,
-	src/mod/channels.mod/channels.c:
-
 	I thought about doing this years ago .. glad someone did it :P~ 
 
 2001-07-24 14:09  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/patch.h, src/tclhash.c:
 
 	well, we know unicode support will work one day :P~ 
 
 2001-07-24 14:05  Jeff Fisher <guppy@techmonkeys.org>
 
-	* src/: main.c, patch.h:
-
 	go go gadget mobile .. lets do lots of work today on eggdrop 
 
 2001-07-21 06:53  Jeff Fisher <guppy@techmonkeys.org>
-
-	* src/main.c:
 
 	forgot main.c ..  
 
 2001-07-21 06:52  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h:
-
 	lets go for 1.6.7 .. I'm gonna make a 1.7 branch off of this 
 
 2001-07-18 14:12  Jeff Fisher <guppy@techmonkeys.org>
-
-	* INSTALL, README, doc/UPDATES1.6, src/patch.h,
-	src/mod/channels.mod/help/chaninfo.help:
 
 	applied Paladin's doc updates patch 
 
 2001-07-18 06:03  tothwolf
 
-	* src/mod/module.h:
-
 	Autoindenting mess-up 
 
 2001-07-17 19:53  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/patch.h, src/mod/module.h,
-	src/mod/assoc.mod/assoc.c, src/mod/blowfish.mod/blowfish.c,
-	src/mod/channels.mod/channels.c, src/mod/compress.mod/compress.c,
-	src/mod/console.mod/console.c, src/mod/ctcp.mod/ctcp.c,
-	src/mod/filesys.mod/filesys.c, src/mod/irc.mod/irc.c,
-	src/mod/notes.mod/notes.c, src/mod/server.mod/server.c,
-	src/mod/share.mod/share.c, src/mod/transfer.mod/transfer.c,
-	src/mod/uptime.mod/uptime.c, src/mod/woobie.mod/woobie.c:
 
 	here is ITE's expore_define_fix 
 
 2001-07-16 14:59  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h, src/users.c:
-
 	added drummer's delignore patch 
 
 2001-07-16 14:54  Jeff Fisher <guppy@techmonkeys.org>
-
-	* src/: misc.c, modules.c, proto.h, mod/module.h:
 
 	oops, I should apply the patch too I guess 
 
 2001-07-16 14:53  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h:
-
 	applied drummer's patch to get rid of remove_gunk 
 
 2001-07-16 05:14  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/patch.h, src/userrec.c:
 
 	fixed a tiny buffer overflow in cmd_whois ..  
 
 2001-07-15 05:26  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, scripts/getops.tcl, src/patch.h:
-
 	here is a fix for getops and I moved ITE's patches to 1.6.6 
 
 2001-07-15 05:15  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/main.c, src/patch.h:
 
 	here is 1.6.6 ...  
 
 2001-07-14 12:38  Matthew Hallacy <poptix@techmonkeys.org>
 
-	* eggdrop.advanced.conf, eggdrop.complete.conf, doc/UPDATES1.6,
-	src/patch.h:
-
 	
 	          ITE       .conf cleanups, TCL threaded info in DEBUG 
 
 2001-07-14 12:37  Matthew Hallacy <poptix@techmonkeys.org>
-
-	* src/: chanprog.c, cmds.c, language.c, main.c, patch.h, tcl.c,
-	tclhash.c:
 
 	
 	
@@ -675,45 +397,30 @@
 
 2001-07-09 15:57  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, misc/modconfig:
-
 	applied Fabian's modconfig patch ... should I release 1.6.5
 	tomorrow? all signs point to yes 
 
 2001-07-07 01:49  tothwolf
 
-	* configure, configure.in, doc/UPDATES1.6:
-
 	std_args.h check was missing from configure 
 
 2001-07-06 16:38  Jeff Fisher <guppy@techmonkeys.org>
-
-	* src/: patch.h, mod/share.mod/share.c:
 
 	Sorry about this bug ... newbies shouldn't use linked lists :) 
 
 2001-07-06 16:36  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h, src/mod/irc.mod/mode.c:
-
 	here is the limitlegacy patch ... eggdrop had some funny hacks 
 
 2001-07-06 04:48  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/patch.h, src/mod/irc.mod/msgcmds.c,
-	src/mod/irc.mod/help/msg/irc.help:
 
 	couple of fixes to /msg commands 
 
 2001-07-05 22:19  Jeff Fisher <guppy@techmonkeys.org>
 
-	* src/main.c:
-
 	two unalligned colons in the debug code 
 
 2001-07-04 19:27  Matthew Hallacy <poptix@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/patch.h, src/mod/server.mod/servmsg.c:
 
 	
 	
@@ -721,25 +428,17 @@
 
 2001-07-03 16:47  Jeff Fisher <guppy@techmonkeys.org>
 
-	* aclocal.m4, configure, src/patch.h:
-
 	Tothwolf's patch to fix his aclocal.m4 patch 
 
 2001-07-03 16:46  Jeff Fisher <guppy@techmonkeys.org>
-
-	* src/: cmds.c, patch.h:
 
 	BAD POPTIX. BAD.  
 
 2001-07-03 01:52  Matthew Hallacy <poptix@techmonkeys.org>
 
-	* doc/UPDATES1.6:
-
 	guppy's wiremod.diff, check encrypt mod before trying to load 
 
 2001-07-03 01:33  Matthew Hallacy <poptix@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/cmds.c:
 
 	
 	
@@ -747,19 +446,13 @@
 
 2001-07-02 16:39  Jeff Fisher <guppy@techmonkeys.org>
 
-	* src/patch.h:
-
 	oops, forgot patch.h 
 
 2001-07-02 16:39  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/mod/irc.mod/cmdsirc.c:
-
 	committed an old patch of dw's that I and others think is useful 
 
 2001-07-01 07:19  Jeff Fisher <guppy@techmonkeys.org>
-
-	* aclocal.m4, configure:
 
 	tothwolf's lastest aclocal.m4 patch .. lets test this on as many
 	systems as possible until 1.6.5 is released .. any problems, i'll
@@ -768,52 +461,27 @@
 
 2001-07-01 07:06  Jeff Fisher <guppy@techmonkeys.org>
 
-	* README, doc/UPDATES1.6, doc/html/readme.html,
-	doc/html/chat/efnet_eggfaq.chat, src/patch.h,
-	src/mod/channels.mod/channels.c, text/motd:
-
 	added Sup's inactive patch 
 
 2001-06-30 14:51  Jeff Fisher <guppy@techmonkeys.org>
-
-	* src/: patch.h, mod/irc.mod/tclirc.c:
 
 	Sorry about that bug in tcl_getchanhost .. Sup fixed it and I am
 	commiting the fix without a patch since its not worth a patch.  
 
 2001-06-30 06:34  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, doc/tcl-commands.doc, src/patch.h,
-	src/mod/channels.mod/tclchan.c:
-
 	my haschanrec patch 
 
 2001-06-30 06:33  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/patch.h, src/mod/share.mod/share.c:
 
 	Sup's shareflood fix ... would some people please test this on
 	irncet and such ...  
 
 2001-06-30 06:29  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/botcmd.c, src/botnet.c, src/chanprog.c,
-	src/cmds.c, src/dcc.c, src/dns.c, src/language.c, src/modules.c,
-	src/patch.h, src/tcluser.c, src/userrec.c, src/users.c,
-	src/mod/assoc.mod/assoc.c, src/mod/channels.mod/channels.c,
-	src/mod/channels.mod/tclchan.c, src/mod/channels.mod/userchan.c,
-	src/mod/irc.mod/chan.c, src/mod/irc.mod/irc.c,
-	src/mod/irc.mod/mode.c, src/mod/irc.mod/tclirc.c,
-	src/mod/server.mod/cmdsserv.c, src/mod/server.mod/server.c,
-	src/mod/server.mod/servmsg.c, src/mod/server.mod/tclserv.c,
-	src/mod/transfer.mod/transfer.c:
-
 	here are my cleanup patches ...  
 
 2001-06-29 13:58  Jeff Fisher <guppy@techmonkeys.org>
-
-	* configure, configure.in, doc/UPDATES1.6, scripts/getops.tcl,
-	src/mod/share.mod/share.c:
 
 	Silly guppy, making bugs that crash the bot <g> .. 1.6.5 is looking
 	nice .. many many many bug fixes and even a few legacy bugs got
@@ -821,64 +489,40 @@
 
 2001-06-29 05:09  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/dcc.c, src/patch.h:
-
 	One small patch coming up ... I even created this problem I believe
 	.. silly guppy, mistakes are for lusers 
 
 2001-06-28 19:21  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, help/cmds1.help, src/cmds.c, src/net.c,
-	src/patch.h, src/mod/channels.mod/cmdschan.c,
-	src/mod/channels.mod/help/channels.help,
-	src/mod/server.mod/server.c:
-
 	here is my small fixes patch 
 
 2001-06-28 19:10  Jeff Fisher <guppy@techmonkeys.org>
-
-	* src/patch.h:
 
 	oops forget addpatch 
 
 2001-06-28 19:06  Jeff Fisher <guppy@techmonkeys.org>
 
-	* aclocal.m4, configure, doc/UPDATES1.6:
-
 	Kirben's binary patch for Cygwin 
 
 2001-06-28 19:04  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/patch.h, src/mod/compress.mod/configure,
-	src/mod/compress.mod/configure.in:
 
 	Kirben's compiler patch (affects both unix and cygwin actually) 
 
 2001-06-28 19:01  Jeff Fisher <guppy@techmonkeys.org>
 
-	* eggdrop.advanced.conf, eggdrop.complete.conf, doc/UPDATES1.6,
-	doc/html/mod-server.html, doc/settings/mod.server, src/patch.h,
-	src/mod/channels.mod/channels.c, src/mod/channels.mod/channels.h:
-
 	Sup's channels fix patch 
 
 2001-06-25 21:32  Jeff Fisher <guppy@techmonkeys.org>
-
-	* aclocal.m4, configure, doc/UPDATES1.6, src/patch.h:
 
 	added a fixed up version of Kirben's pthreads patch .. also I forgot
 	an update for his previous cygwin_bind patch 
 
 2001-06-25 21:17  Jeff Fisher <guppy@techmonkeys.org>
 
-	* src/patch.h:
-
 	Kirben's cygwin bind patch .. I'm redoing his cygwin pthreads one
 	currently 
 
 2001-06-25 04:34  Jeff Fisher <guppy@techmonkeys.org>
-
-	* aclocal.m4, src/patch.h:
 
 	I knew I had commit'd aclocal.m4 properly ... having two copies of
 	the libsafe fixes in aclocal.m4 was bad .. hehe here I thought it
@@ -886,26 +530,17 @@
 
 2001-06-24 20:50  Matthew Hallacy <poptix@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h, src/mod/server.mod/server.c:
-
 	logging fix, extraneous \n's by G`Quann/Florian 
 
 2001-06-24 20:49  Matthew Hallacy <poptix@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/modules.c, src/net.c, src/patch.h,
-	src/proto.h, src/mod/module.h:
 
 	florian's 'netstuff' patch.  
 
 2001-06-24 20:42  Matthew Hallacy <poptix@techmonkeys.org>
 
-	* src/: patch.h, mod/irc.mod/msgcmds.c:
-
 	ITE's new patch for msg key invite etc 
 
 2001-06-24 20:37  Matthew Hallacy <poptix@techmonkeys.org>
-
-	* aclocal.m4, src/mod/share.mod/share.c:
 
 	
 	
@@ -913,35 +548,24 @@
 
 2001-06-24 18:29  Matthew Hallacy <poptix@techmonkeys.org>
 
-	* src/mod/ctcp.mod/ctcp.c:
-
 	
 	
 	nuh, my warning re-added =P 
 
 2001-06-22 05:52  Jeff Fisher <guppy@techmonkeys.org>
 
-	* aclocal.m4, configure, doc/UPDATES1.6, src/patch.h:
-
 	here is that pthreads patch with the changes tothwolf talked about 
 
 2001-06-22 05:49  Jeff Fisher <guppy@techmonkeys.org>
-
-	* acconfig.h, aclocal.m4, config.h.in, configure, configure.in,
-	doc/UPDATES1.6, src/language.c, src/patch.h:
 
 	I added my libsafe_hacks patch because I want to get a few people to
 	test it tonight also, I have a patch I'm trying to hack into eggdrop 
 
 2001-06-21 04:01  Jeff Fisher <guppy@techmonkeys.org>
 
-	* configure:
-
 	poptix forgot to run autoconf <g> 
 
 2001-06-21 01:21  Matthew Hallacy <poptix@techmonkeys.org>
-
-	* doc/UPDATES1.6:
 
 	
 	
@@ -949,19 +573,13 @@
 
 2001-06-21 01:15  Matthew Hallacy <poptix@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h:
-
 	Boo hoo, fix my name or i'll cry..  
 
 2001-06-20 15:57  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6:
-
 	fixed 
 
 2001-06-20 14:53  Matthew Hallacy <poptix@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/main.c, src/patch.h:
 
 	
 	
@@ -969,103 +587,43 @@
 
 2001-06-20 14:50  Matthew Hallacy <poptix@techmonkeys.org>
 
-	* doc/UPDATES1.6, help/cmds2.help, src/cmds.c, src/patch.h:
-
 	Sup's .whoami patch 
 
 2001-06-20 14:48  Matthew Hallacy <poptix@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/botmsg.c, src/dccutil.c, src/patch.h:
 
 	stdarg's unicode fixes, along with buffer overflow(s) 
 
 2001-06-20 14:44  Matthew Hallacy <poptix@techmonkeys.org>
 
-	* aclocal.m4, doc/UPDATES1.6, src/main.c, src/patch.h,
-	src/mod/module.h, src/mod/assoc.mod/assoc.c,
-	src/mod/blowfish.mod/blowfish.c, src/mod/channels.mod/channels.c,
-	src/mod/compress.mod/compress.c, src/mod/console.mod/console.c,
-	src/mod/ctcp.mod/ctcp.c, src/mod/filesys.mod/filesys.c,
-	src/mod/irc.mod/irc.c, src/mod/notes.mod/notes.c,
-	src/mod/server.mod/server.c, src/mod/share.mod/share.c,
-	src/mod/transfer.mod/transfer.c, src/mod/uptime.mod/uptime.c,
-	src/mod/woobie.mod/woobie.c:
-
 	Cygwin32 Fixes 
 
 2001-06-17 14:09  Matthew Hallacy <poptix@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/cmds.c, src/patch.h:
 
 	cleanup, removal of userfix.patch, yawn..  
 
 2001-06-16 01:36  Matthew Hallacy <poptix@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/cmds.c, src/patch.h:
-
 	Noyga's default-flags in .+user fix 
 
 2001-06-16 01:33  Matthew Hallacy <poptix@techmonkeys.org>
 
-	* eggdrop.advanced.conf, eggdrop.complete.conf,
-	eggdrop.simple.conf, doc/UPDATES1.6, src/misc.c, src/patch.h,
-	src/tcl.c:
-
 	dccdumpfile/dumpfile fixes.  
 
-2001-06-15 05:31  tothwolf
-
-	* scripts/alltools.tcl:
-
-	[no log message] 
-
-2001-06-14 12:52  Matthew Hallacy <poptix@techmonkeys.org>
-
-	* scripts/alltools.tcl:
-
-	[no log message] 
-
-2001-06-14 12:39  Matthew Hallacy <poptix@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/patch.h, src/mod/irc.mod/chan.c:
-
-	[no log message] 
-
 2001-06-14 00:19  tothwolf
-
-	* scripts/alltools.tcl:
 
 	added a few more explicit returns 
 
 2001-06-14 00:15  tothwolf
 
-	* scripts/alltools.tcl:
-
 	updated/modified several commands 
 
-2001-06-12 19:49  Matthew Hallacy <poptix@techmonkeys.org>
-
-	* src/mod/uptime.mod/: uptime.c, uptime.c:
-
-	[no log message] 
-
 2001-06-12 17:50  Matthew Hallacy <poptix@techmonkeys.org>
-
-	* src/mod/uptime.mod/uptime.c:
 
 	
 	
 	we use botnet-nick now, instead of botname 
 
-2001-06-12 17:45  Matthew Hallacy <poptix@techmonkeys.org>
-
-	* src/mod/uptime.mod/: uptime.c, uptime.h:
-
-	[no log message] 
-
 2001-06-12 17:44  Matthew Hallacy <poptix@techmonkeys.org>
-
-	* src/mod/uptime.mod/: Makefile, uptime.c, uptime.h:
 
 	
 	
@@ -1074,14 +632,9 @@
 
 2001-06-11 02:48  Matthew Hallacy <poptix@techmonkeys.org>
 
-	* src/mod/uptime.mod/: uptime.c, uptime.h:
-
 	uptime.mod 3 of 3 (license) 
 
 2001-06-11 02:45  Matthew Hallacy <poptix@techmonkeys.org>
-
-	* eggdrop.advanced.conf, eggdrop.complete.conf,
-	eggdrop.simple.conf:
 
 	
 	
@@ -1089,100 +642,59 @@
 
 2001-06-11 02:40  Matthew Hallacy <poptix@techmonkeys.org>
 
-	* src/mod/uptime.mod/: Makefile, modinfo, uptime.c, uptime.h:
-
 	uptime.mod 
 
 2001-06-10 00:11  Matthew Hallacy <poptix@techmonkeys.org>
-
-	* doc/UPDATES1.6, doc/tcl-commands.doc, src/patch.h,
-	src/mod/filesys.mod/tclfiles.c:
 
 	filesys memleak fixed, setflags allows flags/channel now like it
 	claimed to.  
 
 2001-06-08 17:02  Matthew Hallacy <poptix@techmonkeys.org>
 
-	* doc/tcl-commands.doc, src/patch.h:
-
 	teeny tiny addition in tcl-commands.doc for the people who cannot
 	figure out the obvious.  
 
 2001-06-08 07:00  Matthew Hallacy <poptix@techmonkeys.org>
-
-	* src/patch.h:
 
 	Boo! updating patch.h with the addpatch script to show the last
 	patch I applied.  
 
 2001-06-06 22:49  tothwolf
 
-	* doc/tcl-commands.doc:
-
 	ignorelist entry was slightly wrong 
 
-2001-06-06 22:34  tothwolf
-
-	* src/patch.h:
-
-	[no log message] 
-
 2001-06-06 21:35  Matthew Hallacy <poptix@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/tcluser.c:
 
 	Sup's ignorelist patch.  
 
 2001-06-06 13:20  Matthew Hallacy <poptix@techmonkeys.org>
-
-	* doc/UPDATES1.6, help/core.help, src/mod/channels.mod/cmdschan.c,
-	src/mod/channels.mod/help/channels.help:
 
 	
 		.info locking fix, add .info to .help 
 
 2001-06-04 23:41  tothwolf
 
-	* doc/: UPDATES1.6, tcl-commands.doc:
-
 	additions/clarifications to tcl-commands.doc 
 
-2001-06-01 22:07  Matthew Hallacy <poptix@techmonkeys.org>
-
-	* doc/UPDATES1.6, scripts/getops.tcl:
-
-	[no log message] 
-
 2001-06-01 22:03  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/botnet.c, src/cmds.c, src/patch.h:
 
 	here is sup's patch to fix .relay and .chaddr 
 
 2001-06-01 22:00  Jeff Fisher <guppy@techmonkeys.org>
 
-	* src/: misc.c, patch.h:
-
 	small cleanup in misc.c by Eugene 
 
 2001-06-01 21:56  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, doc/tcl-commands.doc, src/main.c, src/patch.h,
-	src/mod/modvals.h:
-
 	new evnt: loaded 
 
 2001-05-25 11:09  Matthew Hallacy <poptix@techmonkeys.org>
-
-	* doc/UPDATES1.6:
 
 	
 	
 	Update for last 2 patches (mkdir, server var problems) 
 
 2001-05-25 11:06  Matthew Hallacy <poptix@techmonkeys.org>
-
-	* src/mod/: filesys.mod/tclfiles.c, server.mod/servmsg.c:
 
 	
 	
@@ -1191,8 +703,6 @@
 
 2001-05-23 07:00  Matthew Hallacy <poptix@techmonkeys.org>
 
-	* scripts/getops.tcl:
-
 	
 	
 	Added my email address, actually testing cvs, guppy says I have
@@ -1200,340 +710,183 @@
 
 2001-05-20 00:25  Jeff Fisher <guppy@techmonkeys.org>
 
-	* eggdrop.advanced.conf, eggdrop.complete.conf,
-	eggdrop.simple.conf, doc/BUG-REPORT, doc/UPDATES1.6,
-	doc/eggdrop.doc, doc/html/compiling.html, doc/man1/eggdrop.1,
-	src/cmds.c, src/main.c, src/patch.h:
-
 	oops, after a few hours I finally remembered to commit this 
 
 2001-05-19 22:19  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, doc/tcl-commands.doc, src/main.c, src/patch.h,
-	src/tclmisc.c:
 
 	here we go ... 1.6.5 any time soon because of that dns.mod
 	problem....  
 
 2001-05-18 22:46  Jeff Fisher <guppy@techmonkeys.org>
 
-	* README, doc/UPDATES1.6, src/patch.h:
-
 	ooo dns.mod now too :P~ 
 
 2001-05-18 22:35  Jeff Fisher <guppy@techmonkeys.org>
-
-	* eggdrop.advanced.conf, eggdrop.complete.conf, doc/UPDATES1.6,
-	doc/html/mod-server.html, doc/settings/mod.server, src/patch.h,
-	src/mod/server.mod/server.c, src/mod/server.mod/servmsg.c:
 
 	ooo legacy code 
 
 2001-05-14 16:17  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h, src/tcldcc.c, src/tclmisc.c,
-	src/tcluser.c:
-
 	Come on september 
 
 2001-05-12 20:50  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/dcc.c, src/patch.h:
 
 	TaKeDa's patch is now commited 
 
 2001-05-12 20:48  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h, src/mod/server.mod/server.c:
-
 	small small fix to msgm 
 
 2001-04-26 03:41  Jeff Fisher <guppy@techmonkeys.org>
-
-	* README, doc/UPDATES1.6, doc/html/readme.html,
-	doc/html/chat/efnet_eggheads.chat,
-	doc/html/chat/efnet_egghelp.chat, doc/html/chat/efnet_eggtcl.chat,
-	doc/html/chat/ircnet_bothelp.chat,
-	doc/html/chat/ircnet_egghelp.chat,
-	doc/html/chat/undernet_eggheads.chat, src/patch.h, text/motd:
 
 	applied Sup's helpchans patch 
 
 2001-04-26 03:38  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h, src/mod/modvals.h,
-	src/mod/channels.mod/cmdschan.c, src/mod/irc.mod/chan.c,
-	src/mod/irc.mod/irc.c, src/mod/irc.mod/irc.h:
-
 	applied Eule's patch to save us some cpu 
 
 2001-04-19 04:49  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/patch.h,
-	src/mod/channels.mod/help/chaninfo.help:
 
 	added a few more patches...  
 
 2001-04-19 04:31  Jeff Fisher <guppy@techmonkeys.org>
 
-	* aclocal.m4, configure, doc/BUG-REPORT, doc/UPDATES1.6,
-	src/patch.h:
-
 	updated the OS check for IRIX, thank you Kevin 
 
 2001-04-13 22:27  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/main.c, src/patch.h:
 
 	yay, 1.6.5 
 
 2001-04-13 19:26  Jeff Fisher <guppy@techmonkeys.org>
 
-	* src/: main.c, patch.h:
-
 	added Sup's write_debug patch 
 
 2001-04-13 19:25  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h:
-
 	more typos and more German translations have been added 
 
 2001-04-13 19:19  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, scripts/autobotchk, scripts/weed, src/patch.h:
 
 	added ITE's weed.patch, also modified weed and autobotchk slighty,
 	sorry for not sending a patch 
 
 2001-04-13 06:33  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h, src/users.c,
-	src/mod/assoc.mod/assoc.c:
-
 	added sup's patch also a small small small fix to assoc.mod .. a
 	NULL NULL NULL NULL line was missing <g> 
 
 2001-04-13 06:22  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h:
-
 	Added some German translations and a German notes language file 
 
 2001-04-12 02:44  Jeff Fisher <guppy@techmonkeys.org>
-
-	* config.h.in, configure, configure.in, doc/UPDATES1.6,
-	src/misc_file.c, src/patch.h, src/mod/notes.mod/cmdsnote.c,
-	src/mod/transfer.mod/transfer.c:
 
 	yay, how close are we to releasing 1.6.4 now? 
 
 2001-04-12 02:41  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h, src/mod/notes.mod/notes.c:
-
 	here is Krome's .-noteign patch ... yay 
 
 2001-04-12 02:39  Jeff Fisher <guppy@techmonkeys.org>
-
-	* FEATURES, INSTALL, NEWS, README, doc/AUTHORS, doc/UPDATES1.6,
-	doc/html/readme.html, doc/man1/eggdrop.1, misc/modconfig,
-	scripts/ques5.tcl, src/bg.c, src/bg.h, src/botcmd.c, src/botmsg.c,
-	src/botnet.c, src/chan.h, src/chanprog.c, src/cmds.c, src/cmdt.h,
-	src/dcc.c, src/dccutil.c, src/dns.c, src/dns.h, src/eggdrop.h,
-	src/flags.c, src/flags.h, src/lang.h, src/language.c, src/main.c,
-	src/main.h, src/mem.c, src/misc.c, src/misc_file.c,
-	src/misc_file.h, src/modules.h, src/patch.h, src/proto.h,
-	src/stat.h, src/tandem.h, src/tcl.c, src/tcldcc.c, src/tclegg.h,
-	src/tclhash.c, src/tclhash.h, src/tclmisc.c, src/tcluser.c,
-	src/userent.c, src/userrec.c, src/users.c, src/users.h,
-	src/compat/compat.h, src/compat/inet_aton.c,
-	src/compat/inet_aton.h, src/compat/memcpy.c, src/compat/memcpy.h,
-	src/compat/memset.c, src/compat/memset.h, src/compat/snprintf.c,
-	src/compat/snprintf.h, src/compat/strcasecmp.c,
-	src/compat/strcasecmp.h, src/compat/strftime.c,
-	src/mod/eggautoconf, src/mod/module.h, src/mod/modvals.h,
-	src/mod/assoc.mod/assoc.c, src/mod/assoc.mod/assoc.h,
-	src/mod/blowfish.mod/bf_tab.h, src/mod/blowfish.mod/blowfish.c,
-	src/mod/blowfish.mod/blowfish.h, src/mod/channels.mod/channels.c,
-	src/mod/channels.mod/channels.h, src/mod/channels.mod/cmdschan.c,
-	src/mod/channels.mod/tclchan.c, src/mod/channels.mod/udefchan.c,
-	src/mod/channels.mod/userchan.c, src/mod/compress.mod/compress.c,
-	src/mod/compress.mod/compress.h,
-	src/mod/compress.mod/tclcompress.c, src/mod/console.mod/console.c,
-	src/mod/console.mod/console.h, src/mod/ctcp.mod/ctcp.c,
-	src/mod/ctcp.mod/ctcp.h, src/mod/filesys.mod/dbcompat.c,
-	src/mod/filesys.mod/dbcompat.h, src/mod/filesys.mod/filedb3.c,
-	src/mod/filesys.mod/filedb3.h, src/mod/filesys.mod/filelist.c,
-	src/mod/filesys.mod/filelist.h, src/mod/filesys.mod/files.c,
-	src/mod/filesys.mod/files.h, src/mod/filesys.mod/filesys.c,
-	src/mod/filesys.mod/filesys.h, src/mod/filesys.mod/tclfiles.c,
-	src/mod/irc.mod/chan.c, src/mod/irc.mod/cmdsirc.c,
-	src/mod/irc.mod/irc.c, src/mod/irc.mod/irc.h,
-	src/mod/irc.mod/mode.c, src/mod/irc.mod/msgcmds.c,
-	src/mod/irc.mod/tclirc.c, src/mod/notes.mod/cmdsnote.c,
-	src/mod/notes.mod/notes.c, src/mod/notes.mod/notes.h,
-	src/mod/server.mod/cmdsserv.c, src/mod/server.mod/server.c,
-	src/mod/server.mod/server.h, src/mod/server.mod/servmsg.c,
-	src/mod/server.mod/tclserv.c, src/mod/share.mod/share.c,
-	src/mod/share.mod/share.h, src/mod/share.mod/uf_features.c,
-	src/mod/transfer.mod/transfer.c, src/mod/transfer.mod/transfer.h,
-	src/mod/woobie.mod/woobie.c, text/banner, text/motd:
 
 	lets update the copyright info for 2001 k? :P~ 
 
 2001-04-07 19:36  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h, src/mod/irc.mod/mode.c:
-
 	fixed Krome's modes per line bug finally, modes-per-line 3 now works 
 
 2001-04-06 22:39  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/tclhash.c:
 
 	fixed a channel add bug 
 
 2001-04-06 22:31  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, scripts/ques5.tcl, src/patch.h:
-
 	added a small typo patch 
 
 2001-04-06 22:29  Jeff Fisher <guppy@techmonkeys.org>
-
-	* aclocal.m4, configure, doc/UPDATES1.6, src/patch.h:
 
 	applied nakee's solaris compile fix 
 
 2001-04-06 22:28  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/botmsg.c, src/dccutil.c, src/misc.c,
-	src/modules.c, src/patch.h, src/proto.h, src/tcl.c,
-	src/mod/module.h, src/mod/channels.mod/tclchan.c:
-
 	applied Zart's patch to make the unicode shit handle tcl version > 9 
 
 2001-04-02 22:50  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, scripts/alltools.tcl, src/patch.h:
 
 	added sup's patch, who thinks 1.6.4 on friday or saturday? I got a
 	few things I'll be sending on wed 
 
 2001-04-01 17:42  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/main.c, src/patch.h:
-
 	applied kirben's cygwin patch 
 
 2001-04-01 16:02  Jeff Fisher <guppy@techmonkeys.org>
-
-	* scripts/getops.tcl:
 
 	gave poptix more credit for getops.tcl 
 
 2001-03-18 23:00  Jeff Fisher <guppy@techmonkeys.org>
 
-	* src/: botmsg.c, dccutil.c, misc.c, modules.c, patch.h, proto.h,
-	mod/module.h, mod/channels.mod/tclchan.c:
-
 	here is wingman's bug fix, yay 
 
 2001-03-17 23:25  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/mod/channels.mod/cmdschan.c:
 
 	per's patch for .stick 
 
 2001-03-17 23:20  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/KNOWN-PROBLEMS, scripts/notes2.tcl, scripts/userinfo.tcl,
-	src/patch.h:
-
 	typos fixed by eugene 
 
 2001-03-17 23:19  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/patch.h, src/tcldcc.c:
 
 	abraham's patch for remote boots 
 
 2001-03-11 21:00  Jeff Fisher <guppy@techmonkeys.org>
 
-	* src/: modules.c, patch.h, proto.h, mod/module.h:
-
 	added a fix to Wingman's unicode patch 
 
 2001-03-11 07:02  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, doc/text-substitutions.doc, help/cmds2.help,
-	src/botcmd.c, src/patch.h:
 
 	Applied ITE's patch to fix a small remote motd bug -- good work ITE.  
 
 2001-03-10 22:44  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/dns.c, src/patch.h:
-
 	ITE's dns fix .. yay .. such a simple fix 
 
 2001-03-10 22:38  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h, src/tcl.c, src/tclhash.c:
-
 	added Wingman's patch to remove debug-tcl 
 
 2001-03-10 22:32  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/patch.h, src/mod/blowfish.mod/blowfish.c:
 
 	added Wingman's encryption fix patch, this does the same as ITE's
 	but Wingman's was there first, sorry ITE.  
 
 2001-03-10 06:36  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/botmsg.c, src/dccutil.c, src/misc.c,
-	src/modules.c, src/patch.h, src/proto.h, src/mod/module.h,
-	src/mod/channels.mod/tclchan.c:
-
 	Wingman's utf8 fix ... please test this alot people :P~ 
 
 2001-02-27 21:33  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/main.c, src/patch.h:
-
 	time for 1.6.4, looks like we have bugs already 
 
 2001-02-27 17:06  Jeff Fisher <guppy@techmonkeys.org>
-
-	* Makefile.in, doc/UPDATES1.6, src/dcc.c, src/patch.h:
 
 	reverted the Makefile patch and the protect-telnet patch before
 	1.6.3 -- we are ready to release 
 
 2001-02-27 03:18  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/modules.c, src/patch.h, src/mod/module.h,
-	src/mod/modvals.h, src/mod/blowfish.mod/blowfish.c:
-
 	lets make blowfish more friendly 
 
 2001-02-26 04:17  Jeff Fisher <guppy@techmonkeys.org>
-
-	* Makefile.in, doc/UPDATES1.6:
 
 	nakee's makefile fix 
 
 2001-02-26 03:56  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h, src/userent.c:
-
 	this memory leak has existed for a long time, pre 1.6 :P~ 
 
 2001-02-25 07:33  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/net.c, src/patch.h, src/tcldcc.c:
 
 	this adds Habeeb's patch which gives the user a more formal answer
 	if their IP is set incorrectly instead of saying it cannot grab a
@@ -1541,139 +894,81 @@
 
 2001-02-25 07:05  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, scripts/sentinel.tcl, src/patch.h:
-
 	new sentinel version 
 
 2001-02-24 20:15  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/dcc.c, src/patch.h:
 
 	fireball's protect-telnet patch 
 
 2001-02-24 20:11  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h, src/mod/share.mod/share.c:
-
 	jason's shareexpire patch 
 
 2001-02-24 20:08  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/chanprog.c, src/lang.h, src/main.c,
-	src/patch.h:
-
 	added tothwolf's root patch 
 
-2001-02-16 03:48  tothwolf
-
-	* doc/UPDATES1.6:
-
-	[no log message] 
-
 2001-02-15 04:33  tothwolf
-
-	* doc/tcl-commands.doc, src/mod/irc.mod/tclirc.c:
 
 	Reversed putkickall patch 
 
 2001-02-11 17:57  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h, src/mod/irc.mod/msgcmds.c:
-
 	finally, msg_hello is fixed <g> 
 
 2001-02-11 17:55  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, doc/tcl-commands.doc, src/patch.h,
-	src/mod/irc.mod/tclirc.c:
 
 	putkickall, I am for this command since I have written it myself in
 	tcl various times 
 
 2001-01-31 05:40  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h, src/mod/notes.mod/notes.c:
-
 	jason's notes patch ...  
 
 2001-01-31 05:38  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/patch.h, src/mod/irc.mod/irc.c:
 
 	more revengebot crap <g> Thanks fabian, the code is cleaner ..  
 
 2001-01-31 05:34  Jeff Fisher <guppy@techmonkeys.org>
 
-	* eggdrop.complete.conf, doc/UPDATES1.6, src/main.c, src/patch.h:
-
 	sigterm-default.diff -- I agree wit this, kill -9 <pid> is bad 
 
 2001-01-31 05:32  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/chanprog.c, src/lang.h, src/main.c,
-	src/main.h, src/patch.h:
-
 	added tclstuff.diff -- finally, we can see our tcl version in a
 	.status <g> 
 
-2001-01-27 06:26  tothwolf
-
-	* src/dccutil.c:
-
-	[no log message] 
-
 2001-01-26 21:18  Jeff Fisher <guppy@techmonkeys.org>
-
-	* src/: dccutil.c, misc.c, patch.h, tcl.c, tclegg.h:
 
 	Tothwolf's lastest i18n fix 
 
 2001-01-26 21:06  Jeff Fisher <guppy@techmonkeys.org>
 
-	* README, doc/UPDATES1.6, doc/html/readme.html, src/patch.h:
-
 	applied sup's helpchans patch 
 
 2001-01-24 13:43  tothwolf
 
-	* src/: patch.h, tcl.c:
-
 	Call Tcl_FindExecutable() in tcl.c before Tcl_SetSystemEncoding() 
 
 2001-01-23 04:33  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/patch.h, src/mod/irc.mod/irc.c:
 
 	applied revengebot.patch (slightly modified by myself) -- please
 	test as I dont use revengebot ever 
 
 2001-01-22 23:47  Jeff Fisher <guppy@techmonkeys.org>
 
-	* eggdrop.complete.conf, doc/UPDATES1.6, doc/html/egg-core.html,
-	doc/settings/core.settings, help/core.help, help/set/cmds1.help,
-	help/set/cmds2.help, src/dccutil.c, src/modules.c, src/patch.h,
-	src/tcl.c, src/mod/module.h, src/mod/filesys.mod/filesys.c,
-	src/mod/transfer.mod/transfer.c:
-
 	applied reserved-portrange.diff (yay) 
 
 2001-01-22 23:41  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/patch.h, src/tcl.c, src/tclegg.h:
 
 	applied Tothwolf's i18n support patch -- lets test this one, cause
 	it would be good for 1.6.4 
 
 2001-01-22 23:34  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, doc/tcl-commands.doc, help/cmds1.help,
-	src/patch.h:
-
 	applied a small patch by ppslim 
 
 2001-01-21 07:49  Jeff Fisher <guppy@techmonkeys.org>
-
-	* src/: patch.h, tclhash.c:
 
 	a little fix to .binds .. should work the way we want now -- it only
 	ignores procs with a leading * and doesn't give a care in the world
@@ -1681,47 +976,22 @@
 
 2001-01-21 07:32  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h, src/mod/notes.mod/cmdsnote.c:
-
 	our noteusage fix .. brought to you by the makers of Sup.  
 
 2001-01-21 07:25  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/cmds.c, src/patch.h:
 
 	applied Jason's -host patch (now how am I suppose to get around that
 	+k flag? <g>) 
 
 2001-01-19 08:16  tothwolf
 
-	* configure:
-
 	autoconf needed to be run 
 
 2001-01-17 23:32  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h, src/tclhash.c:
-
 	oops I did it again .. Britney Spears, <g>, this fixes .binds 
 
 2001-01-16 17:13  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/botcmd.c, src/botmsg.c, src/botnet.c,
-	src/patch.h, src/mod/assoc.mod/assoc.c,
-	src/mod/blowfish.mod/blowfish.c, src/mod/channels.mod/channels.c,
-	src/mod/channels.mod/cmdschan.c, src/mod/channels.mod/tclchan.c,
-	src/mod/channels.mod/userchan.c, src/mod/compress.mod/compress.c,
-	src/mod/console.mod/console.c, src/mod/ctcp.mod/ctcp.c,
-	src/mod/filesys.mod/dbcompat.c, src/mod/filesys.mod/filedb3.c,
-	src/mod/filesys.mod/filelist.c, src/mod/filesys.mod/files.c,
-	src/mod/filesys.mod/filesys.c, src/mod/filesys.mod/tclfiles.c,
-	src/mod/irc.mod/chan.c, src/mod/irc.mod/cmdsirc.c,
-	src/mod/irc.mod/irc.c, src/mod/irc.mod/mode.c,
-	src/mod/irc.mod/msgcmds.c, src/mod/irc.mod/tclirc.c,
-	src/mod/notes.mod/cmdsnote.c, src/mod/notes.mod/notes.c,
-	src/mod/server.mod/server.c, src/mod/server.mod/servmsg.c,
-	src/mod/server.mod/tclserv.c, src/mod/share.mod/share.c,
-	src/mod/share.mod/uf_features.c, src/mod/transfer.mod/transfer.c:
 
 	Cleanup of Context(); and Assert(); usage in the core and modules is
 	completed Doing some testing lastnite, the size of the binary and
@@ -1734,26 +1004,18 @@
 
 2001-01-15 03:28  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/main.c, src/patch.h:
-
 	welcome to 1.6.3 land boys and girls 
 
 2001-01-15 02:44  Jeff Fisher <guppy@techmonkeys.org>
-
-	* configure.in:
 
 	updated the recommended tcl version to 8.3.2 .. working on a 1.6.2
 	release soon 
 
 2001-01-15 00:25  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6:
-
 	fixed UPDATES1.6, we were missing an entry.  
 
 2001-01-08 03:43  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/patch.h, src/mod/server.mod/servmsg.c:
 
 	applied sup's patch; however, I removed the change from a while loop
 	to a for loop since it caused compiler warnings:
@@ -1762,69 +1024,47 @@
 
 2001-01-08 03:30  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h, src/tclhash.c:
-
 	applied blaster's tclhash patch slightly 
 
 2000-12-23 06:15  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/cmds.c, src/patch.h:
 
 	quickly fixed chaddr .. looked over cmds.c for anymore broken
 	strncpyz, and couldn't seem to find any 
 
 2000-12-23 06:11  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, help/cmds2.help, help/core.help, src/cmds.c,
-	src/net.c, src/patch.h:
-
 	ITE's trafficfix patch (slightly modified to fix a compiler warning
 	and a problem in net.c dealing with extern) 
 
 2000-12-21 20:20  Jeff Fisher <guppy@techmonkeys.org>
 
-	* aclocal.m4, configure, configure.in, doc/UPDATES1.6, src/patch.h,
-	src/mod/Makefile.in:
-
 	ITE's configure path fix patch 
 
 2000-12-21 20:12  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/patch.h, src/mod/share.mod/share.c:
 
 	sharefix.diff has been applied, slightly modified since I realized I
 	sent the wrong patch :) 
 
 2000-12-19 22:17  Jeff Fisher <guppy@techmonkeys.org>
 
-	* src/patch.h:
-
 	forgot the revenge fix in patch.h 
 
 2000-12-19 21:56  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/userent.c, src/mod/channels.mod/tclchan.c:
 
 	applied toot's two patches (revengefix and the one to eggdev about
 	XTRA info breaking) 
 
 2000-12-18 20:24  Jeff Fisher <guppy@techmonkeys.org>
 
-	* src/misc.c:
-
 	oops 
 
 2000-12-18 20:18  Jeff Fisher <guppy@techmonkeys.org>
-
-	* src/misc.c:
 
 	quickly fixed src/misc.c -- I broke daysago and the other functions
 	that convert from seconds to a duration in core_cleanup.diff, sorry
 	I didn't send a patch to patches, its a small revert.  
 
 2000-12-17 21:48  Jeff Fisher <guppy@techmonkeys.org>
-
-	* src/: proto.h, tcl.c, mod/module.h:
 
 	Applying fabian's patch for unicode support (also by Wingman);
 	however, there was a warning in src/tcl.c 
@@ -1838,223 +1078,136 @@
 
 2000-12-17 21:37  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h, src/mod/channels.mod/channels.c,
-	src/mod/channels.mod/tclchan.c, src/mod/irc.mod/chan.c,
-	src/mod/irc.mod/mode.c:
-
 	TaKeDa's negative limit patch 
 
 2000-12-14 04:11  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/patch.h, src/mod/share.mod/share.c,
-	src/mod/share.mod/uf_features.c, src/mod/transfer.mod/transfer.c:
 
 	guppy: fabian's share_status_message fix, fixes a few problems with
 	userfile sharing 
 
 2000-12-10 15:10  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/chanprog.c, src/cmds.c, src/dcc.c,
-	src/dccutil.c, src/dns.c, src/flags.c, src/language.c, src/main.c,
-	src/mem.c, src/misc.c, src/misc_file.c, src/modules.c, src/net.c,
-	src/patch.h, src/rfc1459.c, src/tcl.c, src/tcldcc.c, src/tclhash.c,
-	src/tclmisc.c, src/userent.c, src/userrec.c, src/users.c:
-
 	guppy: core_cleanup.diff ...  
 
 2000-12-08 03:07  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/patch.h, src/tcldcc.c, src/tclmisc.c,
-	src/tcluser.c:
 
 	guppy: added my tclfiles.diff (left out the shit to remove the check
 	for # in tcl_utimers and tcl_timers) 
 
 2000-12-06 02:45  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h, src/mod/channels.mod/cmdschan.c,
-	src/mod/channels.mod/help/channels.help:
-
 	guppy: Sup's stickfix patch 
 
 2000-12-06 02:35  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/patch.h, src/users.c,
-	src/mod/channels.mod/userchan.c, src/mod/transfer.mod/transfer.c:
 
 	guppy: fabian's transfer_fclose_fix 
 
 2000-12-06 02:32  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/chan.h, src/patch.h, src/mod/irc.mod/chan.c,
-	src/mod/irc.mod/irc.c:
-
 	guppy: Eule's efnetcycle patch 
 
 2000-11-29 03:10  Jeff Fisher <guppy@techmonkeys.org>
-
-	* eggdrop.advanced.conf, eggdrop.complete.conf, doc/UPDATES1.6,
-	src/patch.h, src/mod/channels.mod/cmdschan.c,
-	src/mod/channels.mod/help/chaninfo.help, src/mod/irc.mod/chan.c,
-	src/mod/irc.mod/irc.c:
 
 	Eule's delayvoice patch 
 
 2000-11-29 02:52  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/lang.h, src/patch.h:
-
 	Tothwolf's unused language cleanup 
 
 2000-11-29 02:49  Jeff Fisher <guppy@techmonkeys.org>
-
-	* eggdrop.advanced.conf, eggdrop.complete.conf, doc/UPDATES1.6,
-	src/patch.h:
 
 	part of sup's variable fix patch.  
 
 2000-11-29 02:46  Jeff Fisher <guppy@techmonkeys.org>
 
-	* aclocal.m4, configure, configure.in, doc/UPDATES1.6, src/patch.h:
-
 	added Tothwolf's thread-stuff-fixed patch 
 
 2000-11-23 03:56  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/Makefile.in, src/main.c, src/patch.h:
 
 	guppy: changed to 1.6.2 folks ...  
 
 2000-11-21 22:31  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/KNOWN-PROBLEMS, doc/UPDATES1.6, src/patch.h:
-
 	guppy: Wiktor's knownproblems patch 
 
 2000-11-21 22:30  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h, src/mod/channels.mod/channels.c,
-	src/mod/channels.mod/userchan.c:
-
 	guppy: Eule's (from fabian) new_expired patch 
 
 2000-11-21 05:18  Jeff Fisher <guppy@techmonkeys.org>
-
-	* eggdrop.advanced.conf, eggdrop.complete.conf, doc/UPDATES1.6,
-	doc/settings/mod.channel, doc/settings/mod.irc, src/chan.h,
-	src/cmds.c, src/patch.h, src/mod/channels.mod/channels.c,
-	src/mod/channels.mod/cmdschan.c, src/mod/channels.mod/tclchan.c,
-	src/mod/channels.mod/help/chaninfo.help,
-	src/mod/channels.mod/help/set/channels.help, src/mod/irc.mod/irc.c:
 
 	guppy: toot's revenge-mode patch and two patches by dw for seen.mod
 	and quietsave 
 
 2000-11-21 05:06  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h, src/mod/irc.mod/chan.c:
-
 	guppy: Axel's recheck_channel patch 
 
 2000-11-21 04:56  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/patch.h, src/mod/channels.mod/cmdschan.c:
 
 	guppy: dw's dynamicbans patch 
 
 2000-11-21 04:55  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h, src/users.c:
-
 	guppy: fabian's chanmasks ignore patch 
 
 2000-11-21 04:46  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/misc.c, src/patch.h, src/proto.h:
 
 	guppy: fabian's dumplots patch 
 
 2000-11-21 04:38  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h, src/mod/channels.mod/userchan.c:
-
 	guppy: fabian's expired_banmask_fix patch 
 
 2000-11-16 03:27  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/main.c, src/patch.h:
 
 	guppy: 1.6.1 here we go 
 
 2000-11-16 02:49  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/chanprog.c, src/patch.h:
-
 	guppy: my nouserfile patch, time to release 1.6.0 
 
 2000-11-12 06:57  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/tcl-commands.doc, src/patch.h:
-
 	guppy: fabian's fixdoc patch ...  
 
 2000-11-10 19:43  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/patch.h, src/userrec.c:
 
 	guppy: dw's default setting patch, I've heard many people complain
 	about this 
 
 2000-11-10 19:39  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/flags.c, src/patch.h:
-
 	guppy: flags.patch by ITE ..  
 
 2000-11-08 22:55  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, src/patch.h, src/mod/irc.mod/chan.c:
 
 	guppy: added Eule's ircd2.9 patch ... damn legacy code 
 
 2000-11-08 20:11  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, doc/html/mod-server.html,
-	doc/settings/mod.server, src/patch.h, src/mod/server.mod/server.h:
-
 	guppy: the lagcheck removal patch 
 
 2000-11-08 20:07  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h, src/mod/irc.mod/chan.c:
-
 	guppy: Eule's check_exempt2.patch 
 
 2000-11-08 19:52  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/UPDATES1.6, scripts/CONTENTS, scripts/Makefile.in,
-	scripts/sentinel.tcl, scripts/sentinel1.55.tcl:
 
 	guppy: applied sentinelupgrade.diff, did I remember to add the
 	files? 
 
 2000-11-08 19:45  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/mod/irc.mod/irc.c:
-
 	guppy: Sup's statuslog fix .. can't believe I left a bug in some of
 	my own code ...  
 
 2000-11-08 19:43  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/cmds.c:
-
 	guppy: Applied Sup's patch so you cannot unlink directly linked
 	bots.  
 
 2000-11-08 14:59  Jeff Fisher <guppy@techmonkeys.org>
-
-	* NEWS, doc/UPDATES1.6, doc/settings/mod.server, src/patch.h:
 
 	reverted Wiktor's lagcheck removal patch, btw, if you do a 'grep -ri
 	lagcheck *' there are still some refs to lagcheck, one in
@@ -2063,428 +1216,235 @@
 
 2000-11-08 12:30  johoho
 
-	* NEWS:
-
 	forgot to change the last mod. line in NEWS file...heaven forbid to
 	write a new patch :o) 
 
 2000-11-08 07:32  johoho
 
-	* NEWS, doc/UPDATES1.6, doc/settings/mod.server, src/patch.h:
-
 	removed lagcheck from the docs 
 
 2000-11-08 02:42  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/: Makefile.in, UPDATES.pre1.5, UPDATES1.6:
 
 	guppy: cleaned up the UPDATES.pre1.5 file 
 
 2000-11-07 08:16  johoho
 
-	* doc/: UPDATES1.3, UPDATES1.4:
-
 	I hope this is final now....  
 
-2000-11-07 08:13  johoho
-
-	* doc/: UPDATES.pre1.5, UPDATES.pre1.3:
-
-	[no log message] 
-
 2000-11-07 08:12  johoho
-
-	* doc/UPDATES1.6, src/patch.h:
 
 	concated updates* files in doc/ 
 
 2000-11-06 14:30  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/MODULES:
 
 	guppy: sup just told me his module patch from long ago was still not
 	applied, minor doc change 
 
 2000-11-06 14:27  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/html/authors.html:
-
 	guppy: and our authors html file 
 
 2000-11-06 14:26  Jeff Fisher <guppy@techmonkeys.org>
-
-	* doc/AUTHORS:
 
 	guppy: sup reminded me to fix AUTHORS 
 
 2000-11-06 05:57  tothwolf
 
-	* text/motd:
-
 	Changed version to 1.6 in motd file 
 
 2000-11-06 04:24  tothwolf
-
-	* eggdrop.advanced.conf, eggdrop.complete.conf:
 
 	Removed ^M chars from config examples 
 
 2000-11-06 04:18  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6:
-
 	forgot UPDATES1.6 
 
 2000-11-06 04:06  Jeff Fisher <guppy@techmonkeys.org>
-
-	* FEATURES, NEWS, README, eggdrop.advanced.conf,
-	eggdrop.complete.conf, eggdrop.simple.conf, doc/BOTNET,
-	doc/BUG-REPORT, doc/CONTENTS, doc/Makefile.in, doc/UPDATES1.5,
-	doc/patch.howto, doc/tcl-commands.doc, doc/text-substitutions.doc,
-	doc/html/app-textsub.html, doc/html/egg-core.html,
-	doc/html/faq1.html, doc/html/features.html, doc/html/index.html,
-	doc/html/news.html, doc/html/readme.html, scripts/getops.tcl,
-	src/main.c, src/patch.h, src/mod/assoc.mod/assoc.c,
-	src/mod/blowfish.mod/blowfish.c, src/mod/channels.mod/channels.c,
-	src/mod/compress.mod/compress.c, src/mod/console.mod/console.c,
-	src/mod/ctcp.mod/ctcp.c, src/mod/filesys.mod/filesys.c,
-	src/mod/irc.mod/irc.c, src/mod/notes.mod/notes.c,
-	src/mod/server.mod/server.c, src/mod/share.mod/share.c,
-	src/mod/transfer.mod/transfer.c, src/mod/woobie.mod/woobie.c,
-	text/banner:
 
 	1.5 has now become 1.6 
 
 2000-11-05 21:37  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/irc.mod/irc.c:
-
 	fabian: applied Eule's irc_close patch 
 
 2000-11-05 21:36  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, scripts/CONTENTS, scripts/Makefile.in,
-	scripts/cmd_resolve.tcl, scripts/help/cmd_resolve.help,
-	src/patch.h:
 
 	fabian: applied guppy's cmd_resolve patch 
 
 2000-11-05 10:31  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h:
-
 	fabian: applied dns_zero_resolve patch 
 
 2000-11-05 10:30  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/irc.mod/chan.c:
 
 	fabian: applied idchannel_detect patch 
 
 2000-11-04 16:03  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h:
-
 	fabian: applied Sup's remove_cmd_resolve patch 
 
 2000-11-03 17:17  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/irc.mod/cmdsirc.c:
 
 	fabian: applied Sup's cmdsirc_fix patch. Stylistic adjustments.
 	Changed to make use of strncpyz.  
 
 2000-11-03 17:15  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/channels.mod/channels.h,
-	src/mod/channels.mod/cmdschan.c, src/mod/channels.mod/tclchan.c:
-
 	fabian: applied guppy's banreason patch. Adjusted to make use of
 	strncpyz. Added MASKREASON_LEN/_MAX defines.  
 
 2000-11-03 17:06  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/main.h, src/patch.h,
-	src/mod/server.mod/server.h:
-
 	fabian: applied strncpyz patch 
 
 2000-11-03 17:05  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/server.mod/server.c:
 
 	fabian: applied Eule's who_stack patch 
 
 2000-11-03 17:04  Fabian Knittel <fknittel@gmx.de>
 
-	* eggdrop.advanced.conf, eggdrop.complete.conf, doc/UPDATES1.5,
-	src/chan.h, src/patch.h, src/mod/channels.mod/channels.c,
-	src/mod/channels.mod/tclchan.c, src/mod/irc.mod/chan.c,
-	src/mod/irc.mod/irc.c:
-
 	fabian: applied Eule's delayset patch 
 
 2000-10-30 20:51  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/channels.mod/channels.c:
 
 	fabian: applied do_channel_part_fix patch 
 
 2000-10-30 20:50  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/dcc.c, src/patch.h, src/tclhash.c:
-
 	fabian: applied const_setvar_fix patch 
 
 2000-10-30 20:49  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/net.c, src/patch.h:
 
 	fabian: applied drummer's sun_firewall_fix patch (net.c.patch) 
 
 2000-10-27 19:40  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/irc.mod/chan.c:
-
 	fabian: applied delchan_during_joinbind patch 
 
 2000-10-27 19:39  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/filesys.mod/dbcompat.c,
-	src/mod/filesys.mod/filedb3.c, src/mod/filesys.mod/filedb3.h,
-	src/mod/filesys.mod/files.c:
 
 	fabian: applied filesys_remote_ln patch 
 
 2000-10-27 19:38  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/irc.mod/irc.c:
-
 	fabian: applied Eule's expired2 patch 
 
 2000-10-27 19:38  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, help/cmds2.help, src/flags.h, src/patch.h,
-	src/mod/irc.mod/mode.c:
 
 	fabian: applied Eule's stopnethack_exempt patch 
 
 2000-10-27 19:36  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/bg.c, src/patch.h:
-
 	fabian: applied bg_cleanup patch 
 
 2000-10-27 19:35  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/dcc.c, src/eggdrop.h, src/net.c, src/patch.h,
-	src/proto.h, src/tcldcc.c:
 
 	fabian: applied save_data patch 
 
 2000-10-27 19:34  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/botnet.c, src/dcc.c, src/lang.h, src/net.c,
-	src/patch.h, src/tcldcc.c, src/mod/filesys.mod/filesys.c,
-	src/mod/server.mod/server.c, src/mod/share.mod/share.c:
-
 	fabian: applied net_sockfail_nonfatal patch 
 
 2000-10-27 19:33  Fabian Knittel <fknittel@gmx.de>
 
-	* aclocal.m4, configure, doc/UPDATES1.5, src/patch.h:
-
 	fabian: applied sunos_aclocal_fix patch 
 
 2000-10-27 19:32  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/dcc.c, src/flags.c, src/flags.h, src/main.c,
-	src/mem.c, src/modules.c, src/modules.h, src/patch.h, src/proto.h,
-	src/tclhash.c, src/tclhash.h, src/tclmisc.c, src/userrec.c,
-	src/users.h, src/mod/module.h, src/mod/irc.mod/chan.c,
-	src/mod/server.mod/servmsg.c, src/mod/share.mod/share.c:
 
 	fabian: applied tcl_hash_overhaul patch. (minor change: added
 	comments to end of check_tcl_bind().) 
 
 2000-10-27 19:30  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/net.c, src/patch.h,
-	src/mod/server.mod/server.c:
-
 	fabian: applied getmyhostname_fix patch 
 
 2000-10-27 19:29  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/modvals.h,
-	src/mod/channels.mod/channels.c, src/mod/channels.mod/channels.h,
-	src/mod/channels.mod/cmdschan.c, src/mod/channels.mod/tclchan.c,
-	src/mod/irc.mod/irc.c, src/mod/irc.mod/irc.h:
 
 	fabian: applied channel_part_fix patch 
 
 2000-10-27 19:28  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/eggdrop.h, src/main.c, src/patch.h,
-	src/proto.h, src/mod/module.h:
-
 	fabian: applied the assert_fix patch 
 
 2000-10-27 19:27  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/misc.c, src/patch.h:
 
 	fabian: applied the ambiguous_braces patch 
 
 2000-10-27 19:26  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/channels.mod/channels.c,
-	src/mod/channels.mod/channels.h, src/mod/channels.mod/userchan.c,
-	src/mod/irc.mod/irc.c:
-
 	fabian: applied Eule's expired patch 
 
 2000-10-27 19:24  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/filesys.mod/filesys.c,
-	src/mod/server.mod/server.c:
 
 	fabian: applied Sup's ctcp_dcc_fix patch 
 
 2000-10-26 10:20  jason
 
-	* doc/man1/eggdrop.1:
-
 	Fabians manpage patch 
 
 2000-10-19 16:35  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/irc.mod/irc.h:
 
 	fabian: applied Looser^'s me_op_fix patch, fixing the export macro
 	for me_op 
 
 2000-10-19 16:34  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/irc.mod/mode.c:
-
 	fabian: applied Eule's mode_while_pending patch 
 
 2000-10-19 16:33  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/userrec.c:
 
 	fabian: applied Eule's set_chanlist-fix patch 
 
 2000-10-19 16:32  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/chanprog.c, src/modules.c, src/patch.h,
-	src/proto.h, src/mod/module.h, src/mod/irc.mod/chan.c:
-
 	fabian: applied Eule's gotnick patch 
 
 2000-10-19 16:31  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/dcc.c, src/patch.h,
-	src/mod/irc.mod/msgcmds.c:
 
 	fabian: applied guppy's bug83-telnetuser-v2 patch 
 
 2000-10-19 16:30  Fabian Knittel <fknittel@gmx.de>
 
-	* eggdrop.advanced.conf, eggdrop.complete.conf,
-	eggdrop.simple.conf, doc/UPDATES1.5, doc/html/mod-channels.html,
-	doc/settings/mod.channel, src/chan.h, src/patch.h,
-	src/mod/channels.mod/channels.c, src/mod/channels.mod/cmdschan.c,
-	src/mod/channels.mod/tclchan.c,
-	src/mod/channels.mod/help/chaninfo.help, src/mod/irc.mod/chan.c,
-	src/mod/irc.mod/irc.c:
-
 	fabian: applied Eule's clearmodes patch 
 
 2000-10-15 16:11  tothwolf
-
-	* doc/Makefile.in:
 
 	doc/Makefile.in still had a reference to doc/readme 
 
 2000-10-11 11:03  tothwolf
 
-	* doc/html/: app-botnet.html, app-sharing.html, index.html:
-
 	renamed app-botnet.html to app-sharing.html 
 
 2000-10-11 10:27  tothwolf
-
-	* doc/html/: about.html, app-botnet.html, app-problems.html,
-	app-textsub.html, app-tricks.html, app-weird.html, authors.html,
-	bans.html, botnet.html, compiling.html, egg-core.html, faq1.html,
-	faqs.html, features.html, flags.html, index.html, install.html,
-	mod-assoc.html, mod-blowfish.html, mod-channels.html,
-	mod-compress.html, mod-dns.html, mod-filesys.html, mod-irc.html,
-	mod-notes.html, mod-server.html, mod-share.html, mod-wire.html,
-	news.html, party.html, readme.html, sharing.html, starting.html,
-	users.html:
 
 	Changed copyright footer 
 
 2000-10-09 13:07  tothwolf
 
-	* doc/html/: about.html, app-botnet.html, app-problems.html,
-	app-textsub.html, app-tricks.html, app-weird.html, authors.html,
-	bans.html, botnet.html, compiling.html, egg-core.html, faq1.html,
-	faqs.html, features.html, flags.html, index.html, install.html,
-	mod-assoc.html, mod-blowfish.html, mod-channels.html,
-	mod-compress.html, mod-dns.html, mod-filesys.html, mod-irc.html,
-	mod-notes.html, mod-server.html, mod-share.html, mod-wire.html,
-	news.html, party.html, readme.html, sharing.html, starting.html,
-	users.html:
-
 	fixed html doctype 
 
 2000-10-09 12:57  tothwolf
-
-	* doc/: AUTHORS, html/authors.html:
 
 	Use table for authors file 
 
 2000-10-09 12:32  tothwolf
 
-	* doc/readme:
-
 	Removed extra readme file 
 
 2000-10-09 12:26  tothwolf
-
-	* NEWS, README, eggdrop.advanced.conf, eggdrop.complete.conf,
-	doc/AUTHORS, doc/BOTNET, doc/CONTENTS, doc/KNOWN-PROBLEMS,
-	doc/MODULES, doc/UPDATES.pre1.3, doc/UPDATES1.3, doc/UPDATES1.4,
-	doc/UPDATES1.5, doc/compiling.FAQ, doc/eggdrop.doc,
-	doc/patch.howto, doc/readme, doc/tcl-commands.doc, doc/tricks,
-	doc/html/app-problems.html, doc/html/app-probs.html,
-	doc/html/app-textsub.html, doc/html/app-tricks.html,
-	doc/html/authors.html, doc/html/compiling.html, doc/html/faq1.html,
-	doc/html/features.html, doc/html/index.html, doc/html/install.html,
-	doc/html/readme.html, doc/settings/core.settings,
-	doc/settings/mod.channel:
 
 	Documentation updates 
 
 2000-10-02 22:35  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/chanprog.c, src/patch.h:
-
 	fabian: applied the ismember_fix patch 
 
 2000-10-02 00:18  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/irc.mod/mode.c:
-
 	fabian: applied Cybah's flush_mode_cleanups patch 
 
 2000-10-01 19:19  Fabian Knittel <fknittel@gmx.de>
-
-	* aclocal.m4, configure, configure.in, doc/UPDATES1.5, src/patch.h:
 
 	fabian: applied SuperS' osfix3 patch. Fixed tcl configuration
 	caching (should have made a seperate patch, but I'm too lazy.
@@ -2492,3210 +1452,1610 @@
 
 2000-10-01 19:14  Fabian Knittel <fknittel@gmx.de>
 
-	* aclocal.m4, configure, configure.in, doc/UPDATES1.5, src/patch.h:
-
 	fabian: applied TheUnknown's patch solaris-config. Adjusted to cache
 	result.  
 
 2000-10-01 19:12  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/MODULES, doc/UPDATES1.5, doc/compiling.FAQ, doc/patch.howto,
-	doc/tcl-commands.doc, help/set/cmds2.help, src/patch.h:
-
 	fabian: applied Eugene's testfix patch. Slightly edited.  
 
 2000-10-01 19:11  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, scripts/getops.tcl, src/chan.h, src/chanprog.c,
-	src/patch.h, src/proto.h, src/userrec.c, src/mod/irc.mod/chan.c,
-	src/mod/notes.mod/notes.c:
 
 	fabian: applied notes_lang_fix patch 
 
 2000-09-27 19:48  Fabian Knittel <fknittel@gmx.de>
 
-	* aclocal.m4, configure, doc/UPDATES1.5, src/Makefile.in, src/bg.c,
-	src/bg.h, src/main.c, src/patch.h:
-
 	fabian: applied threaded_libtcl_support patch 
 
 2000-09-27 19:47  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/assoc.mod/Makefile,
-	src/mod/channels.mod/channels.c, src/mod/channels.mod/cmdschan.c,
-	src/mod/channels.mod/tclchan.c, src/mod/console.mod/Makefile,
-	src/mod/irc.mod/irc.c:
-
 	fabian: applied the plus_a_cycle patch 
 
 2000-09-27 19:43  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/irc.mod/chan.c:
 
 	fabian: applied Eule's kickall_fix patch, together with my own small
 	tweaks 
 
 2000-09-27 19:41  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/server.mod/server.c:
-
 	fabian: applied guppy's serverloaded patch 
 
 2000-09-27 19:40  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/main.c, src/patch.h, src/tcldcc.c,
-	src/mod/filesys.mod/filesys.c, src/mod/server.mod/server.c,
-	src/mod/server.mod/servmsg.c, src/mod/share.mod/share.c:
 
 	fabian: applied new_dcc_fixes patch 
 
 2000-09-23 17:49  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/misc.c, src/modules.c, src/patch.h,
-	src/proto.h, src/mod/module.h:
-
 	fabian: applied Cybah's egg_strcatn patch 
 
 2000-09-23 17:49  Fabian Knittel <fknittel@gmx.de>
-
-	* eggdrop.simple.conf, doc/UPDATES1.5, src/patch.h:
 
 	fabian: applied eugene's helppath (aka eggdrop.simple.conf) patch 
 
 2000-09-23 17:47  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h:
-
 	fabian: applied seen_help patch 
 
 2000-09-23 17:46  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/eggdrop.h, src/net.c, src/patch.h,
-	src/mod/transfer.mod/transfer.c:
 
 	fabian: applied transfer_turbodcc_dos patch 
 
 2000-09-23 17:46  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/flags.h, src/patch.h:
-
 	fabian: applied flag_correct patch 
 
 2000-09-23 17:45  Fabian Knittel <fknittel@gmx.de>
-
-	* src/mod/: assoc.mod/assoc.h, console.mod/console.h:
 
 	fabian: phew.. that was close. almost forgot to add the new files
 	again.. (guppy's language-v2 patch) 
 
 2000-09-23 17:40  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/lang.h, src/patch.h,
-	src/mod/assoc.mod/assoc.c, src/mod/console.mod/console.c,
-	src/mod/notes.mod/cmdsnote.c, src/mod/notes.mod/notes.c,
-	src/mod/notes.mod/notes.h:
-
 	fabian: applied guppy's language-v2 patch 
 
 2000-09-18 20:04  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/dcc.c, src/dccutil.c, src/lang.h,
-	src/patch.h, src/mod/irc.mod/chan.c, src/mod/irc.mod/mode.c,
-	src/mod/irc.mod/msgcmds.c, src/mod/notes.mod/notes.c:
 
 	fabian: applied guppy's lang_args patch 
 
 2000-09-18 20:03  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/ctcp.mod/ctcp.c:
-
 	fabian: applied guppy's ctcp_mod_cleanup patch 
 
 2000-09-18 20:02  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/server.mod/help/server.help:
 
 	fabian: applied guppy's cmd_jump_helpfix patch 
 
 2000-09-18 20:01  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/cmds.c, src/misc.c, src/modules.c,
-	src/patch.h, src/proto.h, src/users.c, src/mod/module.h,
-	src/mod/channels.mod/cmdschan.c, src/mod/channels.mod/userchan.c,
-	src/mod/share.mod/share.c, src/mod/share.mod/uf_features.c:
-
 	fabian: applied ipv6_masks patch, revision 3 
 
 2000-09-18 10:06  Fabian Knittel <fknittel@gmx.de>
-
-	* src/compat/gnu_strftime.c:
 
 	fabian: thanks to Tothwolf, I remembered to finally complete
 	applying the strftime_compat patch. probably the third attempt. 8) 
 
 2000-09-15 20:08  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/channels.mod/cmdschan.c:
-
 	fabian: applied the chaninfo_udef_output patch 
 
 2000-09-13 20:49  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/botmsg.c, src/patch.h,
-	src/mod/channels.mod/channels.c, src/mod/channels.mod/channels.h,
-	src/mod/channels.mod/cmdschan.c, src/mod/channels.mod/tclchan.c,
-	src/mod/channels.mod/udefchan.c:
 
 	fabian: applied udef_inactivechan_fix patch 
 
 2000-09-13 19:44  Fabian Knittel <fknittel@gmx.de>
 
-	* src/md5/global.h:
-
 	fabian: forgot to remove md5/global.h 
 
 2000-09-12 15:34  Fabian Knittel <fknittel@gmx.de>
-
-	* src/compat/: strftime.c, strftime.h:
 
 	forgot to add the new files strftime.c and strftime.h, belonging to
 	the strftime_compat patch.  
 
 2000-09-12 15:29  Fabian Knittel <fknittel@gmx.de>
 
-	* eggdrop.advanced.conf, eggdrop.complete.conf, doc/UPDATES1.5,
-	src/patch.h:
-
 	fabian: applied revenge_bot_update patch 
 
 2000-09-12 15:28  Fabian Knittel <fknittel@gmx.de>
-
-	* Makefile.in, aclocal.m4, configure, eggdrop.advanced.conf,
-	eggdrop.complete.conf, doc/UPDATES1.5, src/patch.h:
 
 	fabian: configure_fix patch 
 
 2000-09-12 15:26  Fabian Knittel <fknittel@gmx.de>
 
-	* config.h.in, configure, configure.in, doc/UPDATES1.5,
-	src/Makefile.in, src/cmds.c, src/main.h, src/misc.c, src/patch.h,
-	src/tclmisc.c, src/users.c, src/compat/Makefile.in,
-	src/compat/compat.h, src/compat/inet_aton.h, src/compat/memcpy.h,
-	src/compat/memset.h, src/compat/snprintf.h,
-	src/compat/strcasecmp.h, src/md5/Makefile.in,
-	src/mod/assoc.mod/Makefile, src/mod/blowfish.mod/Makefile,
-	src/mod/channels.mod/Makefile, src/mod/compress.mod/Makefile.in,
-	src/mod/console.mod/Makefile, src/mod/ctcp.mod/Makefile,
-	src/mod/filesys.mod/Makefile, src/mod/filesys.mod/filedb3.c,
-	src/mod/irc.mod/Makefile, src/mod/irc.mod/cmdsirc.c,
-	src/mod/irc.mod/irc.c, src/mod/irc.mod/msgcmds.c,
-	src/mod/notes.mod/Makefile, src/mod/notes.mod/notes.c,
-	src/mod/server.mod/Makefile, src/mod/share.mod/Makefile,
-	src/mod/transfer.mod/Makefile:
-
 	fabian: strftime_compat patch 
 
 2000-09-12 15:25  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/botmsg.c, src/patch.h:
 
 	fabian: Eule's notebeep2 patch 
 
 2000-09-09 17:31  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/server.mod/servmsg.c:
-
 	fabian: Koach's rfc1459_pass patch 
 
 2000-09-09 17:30  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/share.mod/share.c:
 
 	fabian: guppy's unlink patch 
 
 2000-09-09 17:29  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/botcmd.c, src/botmsg.c, src/patch.h,
-	src/mod/channels.mod/tclchan.c, src/mod/channels.mod/userchan.c,
-	src/mod/filesys.mod/filedb3.c, src/mod/server.mod/server.c,
-	src/mod/share.mod/share.c:
-
 	fabian: format_string_fixes patch 
 
 2000-09-09 11:40  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/share.mod/share.c:
 
 	fabian: userfile_fail_fix patch 
 
 2000-09-09 11:40  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/compress.mod/compress.c,
-	src/mod/share.mod/share.c:
-
 	fabian: uff_compress_fix patch 
 
 2000-09-09 11:39  Fabian Knittel <fknittel@gmx.de>
-
-	* configure.in, doc/UPDATES1.5, src/Makefile.in, src/botnet.c,
-	src/dcc.c, src/dns.c, src/dns.h, src/eggdrop.h, src/main.h,
-	src/net.c, src/patch.h, src/tcldcc.c, src/tclmisc.c, src/userent.c,
-	src/compat/inet_aton.c, src/compat/memset.c, src/md5/Makefile.in,
-	src/md5/md5.h, src/md5/md5c.c, src/mod/compress.mod/compress.c,
-	src/mod/filesys.mod/filedb3.h, src/mod/filesys.mod/filesys.c,
-	src/mod/server.mod/server.c, src/mod/server.mod/servmsg.c:
 
 	fabian: cleanup_types patch 
 
 2000-09-09 11:37  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/channels.mod/channels.c,
-	src/mod/console.mod/console.c, src/mod/irc.mod/tclirc.c,
-	src/mod/notes.mod/cmdsnote.c, src/mod/transfer.mod/transfer.c:
-
 	fabian: fix_exporting patch 
 
 2000-09-09 11:36  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/irc.mod/chan.c,
-	src/mod/irc.mod/mode.c:
-
 	fabian: Eule's recheck-addmode patch 
 
 2000-09-07 16:04  Fabian Knittel <fknittel@gmx.de>
-
-	* src/: patch.h, mod/irc.mod/mode.c:
 
 	fabian: fixing modesperline patch stuff, which was applied
 	incorrectly 
 
 2000-09-05 16:00  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/users.c:
-
 	fabian: whois_match_crash patch 
 
 2000-09-05 15:59  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/dcc.c, src/flags.c, src/net.c, src/patch.h,
-	src/userrec.c, src/mod/channels.mod/userchan.c,
-	src/mod/share.mod/share.c:
 
 	fabian: minor_share_cleanup patch 
 
 2000-09-05 15:58  Fabian Knittel <fknittel@gmx.de>
 
-	* aclocal.m4, configure, doc/UPDATES1.5, src/patch.h:
-
 	fabian: SuperS' osfix2 patch 
 
 2000-09-02 19:45  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/botnet.c, src/dcc.c, src/eggdrop.h,
-	src/patch.h, src/mod/filesys.mod/filesys.c,
-	src/mod/server.mod/server.c, src/mod/server.mod/servmsg.c:
 
 	fabian: server_dns_recursion patch. Added minor modifications to
 	mod/dns.mod/dns.c.  
 
 2000-09-02 19:34  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/irc.mod/chan.c,
-	src/mod/irc.mod/cmdsirc.c, src/mod/irc.mod/mode.c:
-
 	fabian: Eule's checkexempt patch 
 
 2000-09-02 18:48  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/cmds.c, src/patch.h:
 
 	fabian: Sup's addbothost patch 
 
 2000-09-02 18:47  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/irc.mod/irc.c,
-	src/mod/irc.mod/mode.c:
-
 	fabian: irc_mode_cleanup patch 
 
 2000-09-02 18:46  Fabian Knittel <fknittel@gmx.de>
-
-	* eggdrop.advanced.conf, eggdrop.complete.conf, doc/UPDATES1.5,
-	src/patch.h, src/mod/irc.mod/irc.c, src/mod/irc.mod/mode.c:
 
 	Eule's modesperline3 patch, with really minor modifications 
 
 2000-09-02 18:45  Fabian Knittel <fknittel@gmx.de>
 
-	* aclocal.m4, configure, configure.in, doc/UPDATES1.5, src/patch.h:
-
 	SuperS' osfix patch 
 
 2000-08-31 18:11  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/filesys.mod/filesys.c,
-	src/mod/filesys.mod/tclfiles.c:
 
 	fabian: FirebaII's filesys_nicklen patch, with minor additions.  
 
 2000-08-31 18:10  Fabian Knittel <fknittel@gmx.de>
 
-	* eggdrop.advanced.conf, eggdrop.complete.conf, doc/UPDATES1.5,
-	doc/html/mod-server.html, doc/settings/mod.server, src/patch.h,
-	src/mod/server.mod/server.c, src/mod/server.mod/servmsg.c:
-
 	fabian: G`Quann's finallagcheckfix patch.  
 
 2000-08-31 18:08  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/tcldcc.c,
-	src/mod/filesys.mod/files.c, src/mod/filesys.mod/filesys.c:
 
 	fabian: dccsimul_errmsg patch 
 
 2000-08-27 19:21  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h:
-
 	<fabian> dns_retry patch.  
 
 2000-08-27 19:14  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/channels.mod/channels.c,
-	src/mod/channels.mod/cmdschan.c:
 
 	<fabian> Eule's remove_channel patch 
 
 2000-08-27 18:52  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/userrec.c:
-
 	<fabian> userfile_disappear patch.  
 
 2000-08-26 16:07  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/misc.c, src/patch.h:
 
 	<fabian> splitc crash fix, suggested by blaster.  
 
 2000-08-25 13:15  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/channels.mod/cmdschan.c:
-
 	<fabian> Tothwolf's cmdschan_c-cleanup patch.  
 
 2000-08-25 13:14  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/cmds.c, src/misc.c, src/patch.h, src/proto.h:
 
 	<Fabian> Cybah's splitcn patch. Small style corrections (added
 	newline after var def).  
 
 2000-08-25 13:12  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/irc.mod/cmdsirc.c:
-
 	<Fabian> Shaun's chanfix patch. Removed parts overlapping with
 	Cybah. Removed unnecessary initialisation.  
 
 2000-08-24 21:08  Fabian Knittel <fknittel@gmx.de>
 
-	* src/patch.h:
-
 	fabian: hmm... who messed up patch.h? :) Added 'CVS' again.  
 
 2000-08-24 21:03  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/main.c, src/patch.h:
 
 	fabian: changes to reflect release of 1.5.4 
 
 2000-08-24 02:01  tothwolf
 
-	* doc/: UPDATES1.3, UPDATES1.5:
-
 	Minor corrections and changes.  
 
 2000-08-22 16:22  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/chan.h, src/patch.h, src/mod/irc.mod/mode.c:
 
 	Eule's overrun patch (fixing a security bug). Slightly modified by
 	Cybah and me.  
 
 2000-08-21 18:28  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.5, help/cmds1.help, src/mod/irc.mod/irc.c:
-
 	added Sup's two small patches, needfix and ignorehelp (also testing
 	cvslog -- sorry for not letting fabian apply these patches) 
 
 2000-08-20 12:27  johoho
 
-	* eggdrop.advanced.conf, eggdrop.complete.conf, doc/UPDATES1.5,
-	doc/compiling.FAQ, doc/settings/core.settings,
-	doc/settings/mod.channel, src/patch.h:
-
 	documentation update 
 
 2000-08-20 11:17  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/users.h:
 
 	Tothwolf's user_entry_type patch 
 
 2000-08-20 11:16  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/server.mod/servmsg.c:
-
 	G`Quann's lagcheck6 patch; minor coding style in affected function 
 
 2000-08-19 14:17  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/botmsg.c, src/botnet.c, src/patch.h,
-	src/tandem.h:
 
 	Tothwolf's no_safe_str patch; minor fix to make it compile 
 
 2000-08-19 14:15  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, src/botmsg.c, src/patch.h:
-
 	1.4, Sup's note_bell_chr patch 
 
 2000-08-19 01:10  Jeff Fisher <guppy@techmonkeys.org>
-
-	* NEWS:
 
 	updated NEWS slightly to add a line about bind need, sorry for no
 	patch, just a doc update 
 
 2000-08-18 19:35  Jeff Fisher <guppy@techmonkeys.org>
 
-	* scripts/notes2.tcl:
-
 	missing global botnet-nick 
 
 2000-08-18 16:45  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/cmds.c, src/patch.h:
 
 	guppy's ign-lifetime patch 
 
 2000-08-18 01:06  Fabian Knittel <fknittel@gmx.de>
 
-	* disabled_modules, doc/UPDATES1.5, misc/modconfig, src/patch.h:
-
 	Tothwolf's fixspaces patch 
 
 2000-08-18 01:05  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, doc/tcl-commands.doc, src/patch.h,
-	src/mod/irc.mod/chan.c, src/mod/irc.mod/irc.c,
-	src/mod/irc.mod/irc.h, src/mod/irc.mod/mode.c:
 
 	guppy's bindneed patch 
 
 2000-08-18 01:04  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/notes.mod/notes.c:
-
 	stary's notes patch 
 
 2000-08-18 00:25  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/modules.c, src/net.c, src/patch.h,
-	src/proto.h, src/mod/module.h:
 
 	open_address_listen patch 
 
 2000-08-17 03:49  Jeff Fisher <guppy@techmonkeys.org>
 
-	* scripts/getops.tcl:
-
 	reverting my small changes to getops.tcl 
 
 2000-08-17 03:45  Jeff Fisher <guppy@techmonkeys.org>
-
-	* scripts/getops.tcl:
 
 	testing the cvs again 
 
 2000-08-17 03:42  Jeff Fisher <guppy@techmonkeys.org>
 
-	* TODO:
-
 	the TODO file is useless 
 
 2000-08-16 20:33  Jeff Fisher <guppy@techmonkeys.org>
-
-	* disabled_modules:
 
 	testing 
 
 2000-08-16 20:26  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.3:
-
 	testing for cvs lcoks 
 
 2000-08-11 22:44  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/modules.c, src/patch.h, src/mod/module.h:
 
 	guppy's and Sup's tandbot_party patch 
 
 2000-08-11 22:43  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/channels.mod/cmdschan.c:
-
 	Sup's chrec_usage patch 
 
 2000-08-11 22:42  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/server.mod/server.c,
-	src/mod/server.mod/servmsg.c:
 
 	drummer's jupedfix3 patch 
 
 2000-08-11 22:40  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, scripts/notes2.tcl, src/patch.h, src/tcl.c:
-
 	resync with 1.4, Aug12 966031001 
 
 2000-08-07 10:09  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/userrec.c:
 
 	Sup's handlechg patch 
 
 2000-08-07 10:09  Fabian Knittel <fknittel@gmx.de>
 
-	* aclocal.m4, configure, doc/UPDATES1.4, src/chan.h, src/patch.h,
-	src/mod/channels.mod/channels.c, src/mod/irc.mod/chan.c,
-	src/mod/irc.mod/mode.c:
-
 	1.4 reync, Aug7 965641446 
 
 2000-08-06 14:53  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/channels.mod/cmdschan.c:
 
 	Sup's chanset_usage patch 
 
 2000-08-06 14:53  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/botnet.c, src/patch.h:
-
 	ghost_unlink_fix patch 
 
 2000-08-06 14:52  Fabian Knittel <fknittel@gmx.de>
-
-	* scripts/getops.tcl, src/patch.h:
 
 	Eule's getops patch 
 
 2000-08-06 14:51  Fabian Knittel <fknittel@gmx.de>
 
-	* config.h.in, configure, configure.in, doc/UPDATES1.5, src/cmds.c,
-	src/misc.c, src/patch.h, src/users.c,
-	src/mod/filesys.mod/filedb3.c, src/mod/irc.mod/cmdsirc.c,
-	src/mod/irc.mod/irc.c, src/mod/irc.mod/msgcmds.c,
-	src/mod/notes.mod/notes.c:
-
 	Tothwolf's strftime2 patch 
 
 2000-08-06 14:50  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/filesys.mod/filesys.c,
-	src/mod/server.mod/server.c:
 
 	Sup's dccrefused2 patch 
 
 2000-08-06 14:49  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/channels.mod/tclchan.c:
-
 	Eule's lastkey2 patch 
 
 2000-08-06 14:48  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/userrec.c:
 
 	Shaun's change_handlefix 
 
 2000-08-06 14:47  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/share.mod/share.c:
-
 	TaKeDa's share_newuser patch 
 
 2000-08-03 21:51  Fabian Knittel <fknittel@gmx.de>
-
-	* configure, eggdrop.advanced.conf, eggdrop.complete.conf,
-	doc/UPDATES1.4, doc/tcl-commands.doc, doc/html/mod-irc.html,
-	doc/settings/mod.irc, src/lang.h, src/patch.h, src/tcl.c,
-	src/tclhash.c, src/tclmisc.c, src/mod/irc.mod/chan.c,
-	src/mod/irc.mod/irc.c, src/mod/irc.mod/mode.c:
 
 	resync with 1.4, Aug03 965337849 
 
 2000-08-03 04:45  tothwolf
 
-	* COPYING:
-
 	Updated FSF postal address 
 
 2000-07-25 19:48  johoho
-
-	* doc/UPDATES1.5:
 
 	still some patches by sup...damn :-) 
 
 2000-07-25 19:42  johoho
 
-	* NEWS, TODO, doc/BUG-REPORT, doc/KNOWN-PROBLEMS, doc/MODULES,
-	doc/UPDATES1.5, doc/html/news.html, help/cmds2.help:
-
 	still some patches by sup...damn :-) 
 
 2000-07-25 19:27  johoho
-
-	* doc/UPDATES1.5:
 
 	doc/MODULES typo patch 2 
 
 2000-07-25 19:25  johoho
 
-	* doc/UPDATES1.5:
-
 	doc/MODULES typo patch 
 
 2000-07-25 19:19  johoho
-
-	* doc/UPDATES1.4, doc/MODULES, src/patch.h:
 
 	fixes various typos in the docs and a small bug when 
 
 2000-07-25 19:16  johoho
 
-	* README:
-
 	fixes various typos in the docs and a small bug when 
 
 2000-07-25 19:15  johoho
-
-	* doc/html/readme.html:
 
 	README 
 
 2000-07-23 20:50  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/irc.mod/cmdsirc.c:
-
 	Sup's addusercomp patch 
 
 2000-07-23 20:47  Fabian Knittel <fknittel@gmx.de>
-
-	* Makefile.in, aclocal.m4, doc/Makefile.in, doc/UPDATES1.4,
-	scripts/Makefile.in, src/Makefile.in, src/patch.h,
-	src/compat/Makefile.in, src/md5/Makefile.in, src/mod/Makefile.in:
 
 	1.4 resync, autoconf_shell_fix patch 
 
 2000-07-13 21:19  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/channels.mod/channels.c,
-	src/mod/channels.mod/cmdschan.c, src/mod/channels.mod/tclchan.c,
-	src/mod/irc.mod/chan.c, src/mod/irc.mod/irc.c,
-	src/mod/server.mod/servmsg.c:
-
 	Eule's lastkey patch 
 
 2000-07-13 21:18  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.4, doc/UPDATES1.5, src/patch.h:
 
 	Lucas' and Tit00n's frenchlangfixes for 1.4 and 1.5, bug-fixed.  
 
 2000-07-12 21:52  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/cmds.c, src/patch.h:
-
 	Sup's addbotfix patch 
 
 2000-07-12 21:51  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/irc.mod/cmdsirc.c:
 
 	Sup's deluser patch 
 
 2000-07-12 21:50  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, doc/tcl-commands.doc, src/eggdrop.h, src/patch.h,
-	src/tclegg.h, src/tclhash.c, src/tclhash.h,
-	src/mod/filesys.mod/files.c, src/mod/transfer.mod/transfer.c,
-	src/mod/transfer.mod/transfer.h:
-
 	lost_tout_getfilesendtime patch 
 
 2000-07-12 21:49  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/server.mod/server.c,
-	src/mod/server.mod/servmsg.c:
 
 	G`Quann's lagcheckfix5 patch, with minor modifications by me 
 
 2000-07-12 21:45  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, src/botnet.c, src/dcc.c, src/patch.h,
-	src/tcldcc.c:
-
 	resync with 1.4, Jul12 963435800 
 
 2000-07-11 20:47  tothwolf
-
-	* doc/UPDATES1.5, src/mod/console.mod/Makefile:
 
 	Fixed remaining 'console..$(MOD_EXT)' typos 
 
 2000-07-11 17:06  tothwolf
 
-	* doc/html/faq1.html:
-
 	Missing Id tag and newline at end of file 
 
 2000-07-11 17:03  tothwolf
 
-	* src/mod/console.mod/Makefile:
-
 	Fixed 'console..$(MOD_EXT)' typo 
 
 2000-07-09 14:23  Fabian Knittel <fknittel@gmx.de>
-
-	* configure, src/patch.h:
 
 	updates to the modules_cygwin patch, 963151788 -- I forgot to
 	rebuild configure 
 
 2000-07-09 14:13  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h:
-
 	Tit00n's core.french.lang update 
 
 2000-07-09 14:10  Fabian Knittel <fknittel@gmx.de>
-
-	* Makefile.in, acconfig.h, aclocal.m4, config.h.in, doc/UPDATES1.5,
-	src/modules.c, src/patch.h, src/mod/Makefile.in,
-	src/mod/assoc.mod/Makefile, src/mod/blowfish.mod/Makefile,
-	src/mod/channels.mod/Makefile, src/mod/compress.mod/Makefile.in,
-	src/mod/console.mod/Makefile, src/mod/ctcp.mod/Makefile,
-	src/mod/filesys.mod/Makefile, src/mod/irc.mod/Makefile,
-	src/mod/notes.mod/Makefile, src/mod/server.mod/Makefile,
-	src/mod/share.mod/Makefile, src/mod/transfer.mod/Makefile,
-	src/mod/woobie.mod/Makefile:
 
 	RebuM's modules_cygwin patch, together with my corrections 
 
 2000-07-09 14:07  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/server.mod/cmdsserv.c,
-	src/mod/server.mod/server.c, src/mod/server.mod/server.h,
-	src/mod/server.mod/servmsg.c:
-
 	server_cleanup patch 
 
 2000-07-09 13:51  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.4, doc/UPDATES1.5, scripts/getops.tcl, src/cmds.c,
-	src/modules.c, src/modules.h, src/patch.h, src/userrec.c,
-	src/mod/notes.mod/notes.c:
 
 	resync with 1.4, Jul9 963149797 
 
 2000-06-21 22:28  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, src/cmds.c, src/lang.h, src/patch.h,
-	src/mod/filesys.mod/files.c, src/mod/irc.mod/msgcmds.c,
-	src/mod/notes.mod/notes.c:
-
 	1.4 resync Jun22, 961625558 
 
 2000-06-20 21:41  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.4, doc/UPDATES1.5, src/lang.h, src/patch.h,
-	src/mod/irc.mod/mode.c:
 
 	guppy's permbanned patch (modified a bit to get the logic straight),
 	1.4 
 
 2000-06-20 21:01  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/filesys.mod/filedb3.c:
-
 	filesys_fixes3 patch 
 
 2000-06-20 20:54  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.4, src/patch.h, src/mod/irc.mod/cmdsirc.c:
 
 	Sup's msgfix patch, for 1.4 too 
 
 2000-06-20 20:49  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/irc.mod/cmdsirc.c:
-
 	Sup's sanitycheck patch 
 
 2000-06-20 20:44  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/irc.mod/cmdsirc.c:
 
 	Sup's missingdnames patch 
 
 2000-06-20 20:41  Fabian Knittel <fknittel@gmx.de>
 
-	* configure, configure.in, doc/UPDATES1.5, src/patch.h:
-
 	SuperS' tcl8.4 patch 
 
 2000-06-20 20:37  Fabian Knittel <fknittel@gmx.de>
-
-	* eggdrop.advanced.conf, eggdrop.complete.conf,
-	eggdrop.simple.conf, doc/UPDATES1.5, scripts/Makefile.in,
-	scripts/getops-2.2d.tcl, scripts/getops.tcl, scripts/userinfo.tcl,
-	scripts/userinfo1.0.tcl, src/patch.h:
 
 	getops_userinfo_fix patch 
 
 2000-06-20 19:54  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, doc/UPDATES1.5, scripts/alltools.tcl,
-	src/botnet.c, src/cmds.c, src/dcc.c, src/dccutil.c, src/eggdrop.h,
-	src/patch.h, src/mod/channels.mod/userchan.c:
-
 	1.4 resync patch, Jun20, 961529757 
 
 2000-06-14 11:24  johoho
-
-	* doc/UPDATES1.5:
 
 	oops, a typo :-) 
 
 2000-06-14 11:18  johoho
 
-	* src/cmds.c, src/patch.h, doc/UPDATES1.5,
-	src/mod/irc.mod/help/msg/irc.help, src/mod/notes.mod/notes.c:
-
 	some places used still nick instead of hand 
 
 2000-06-10 01:28  Fabian Knittel <fknittel@gmx.de>
-
-	* src/: patch.h, mod/server.mod/servmsg.c:
 
 	G`Quann's lagcheckfix4 patch 
 
 2000-06-10 01:03  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/tcluser.c,
-	src/mod/channels.mod/userchan.c, src/mod/irc.mod/irc.c,
-	src/mod/irc.mod/mode.c, src/mod/transfer.mod/transfer.c:
-
 	minor_fixes patch 
 
 2000-06-10 01:02  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/irc.mod/mode.c:
 
 	Eule's addmode patch 
 
 2000-06-10 01:00  Fabian Knittel <fknittel@gmx.de>
 
-	* eggdrop.advanced.conf, eggdrop.complete.conf, doc/UPDATES1.5,
-	src/main.c, src/misc.c, src/patch.h, src/proto.h, src/tcl.c:
-
 	G`Quann's logsuffix_fix patch 
 
 2000-06-10 00:59  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/server.mod/server.c:
 
 	G`Quann's lagcheckfix3 patch 
 
 2000-06-10 00:54  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, scripts/alltools.tcl, src/cmds.c, src/lang.h,
-	src/patch.h:
-
 	resync with 1.4, June 10 
 
 2000-06-03 12:16  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/share.mod/share.c:
 
 	private_owner_fix patch 
 
 2000-06-03 12:15  Fabian Knittel <fknittel@gmx.de>
 
-	* eggdrop.advanced.conf, eggdrop.complete.conf, doc/UPDATES1.4,
-	src/patch.h, src/mod/channels.mod/channels.c,
-	src/mod/channels.mod/tclchan.c:
-
 	1.4 resync, Jun3 
 
 2000-06-03 12:14  Fabian Knittel <fknittel@gmx.de>
-
-	* eggdrop.advanced.conf, eggdrop.complete.conf, doc/UPDATES1.5,
-	doc/tcl-commands.doc, doc/html/mod-server.html,
-	doc/settings/mod.server, src/cmds.c, src/modules.c, src/patch.h,
-	src/tcl.c, src/users.c, src/mod/module.h, src/mod/irc.mod/irc.c,
-	src/mod/irc.mod/tclirc.c, src/mod/server.mod/server.c,
-	src/mod/server.mod/servmsg.c,
-	src/mod/server.mod/help/set/server.help:
 
 	channame2dname patch 
 
 2000-06-02 17:54  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/irc.mod/chan.c,
-	src/mod/irc.mod/irc.c:
-
 	channel_fixes patch 
 
 2000-06-02 17:46  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/main.c, src/patch.h:
 
 	context_fix patch 
 
 2000-06-02 17:44  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, scripts/CONTENTS, scripts/Makefile.in,
-	scripts/sentinel1.54.tcl, scripts/sentinel1.55.tcl, src/patch.h:
-
 	drummer's sentinel_update patch 
 
 2000-06-02 16:56  Fabian Knittel <fknittel@gmx.de>
-
-	* aclocal.m4, configure, doc/UPDATES1.4, help/core.help,
-	src/modules.c, src/patch.h, src/mod/channels.mod/cmdschan.c,
-	src/mod/irc.mod/msgcmds.c:
 
 	resync with 1.4 
 
 2000-05-29 11:44  johoho
 
-	* doc/UPDATES1.5, help/core.help, src/patch.h:
-
 	.help tcl info added 
 
 2000-05-29 11:38  johoho
-
-	* doc/UPDATES1.5, doc/patch.howto, src/patch.h:
 
 	extended info in patch.howto 
 
 2000-05-28 18:59  Fabian Knittel <fknittel@gmx.de>
 
-	* CONTENTS, INSTALL, Makefile.in, README, doc/eggdrop.doc,
-	doc/readme, doc/tcl-commands.doc, doc/settings/mod.assoc,
-	doc/settings/mod.blowfish, doc/settings/mod.channel,
-	doc/settings/mod.compress, doc/settings/mod.console,
-	doc/settings/mod.ctcp, doc/settings/mod.dns,
-	doc/settings/mod.filesys, doc/settings/mod.irc,
-	doc/settings/mod.notes, doc/settings/mod.seen,
-	doc/settings/mod.server, doc/settings/mod.share,
-	doc/settings/mod.transfer, doc/settings/mod.wire,
-	doc/settings/mod.woobie, scripts/CONTENTS, src/patch.h:
-
 	Wiktor's config1.5_2 patch 
 
 2000-05-28 17:32  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.4, doc/tcl-commands.doc, scripts/userinfo1.0.tcl,
-	src/botnet.c, src/modules.c, src/patch.h, src/mod/module.h,
-	src/mod/modvals.h, src/mod/channels.mod/tclchan.c,
-	src/mod/channels.mod/help/chaninfo.help, src/mod/irc.mod/chan.c,
-	src/mod/irc.mod/irc.c, src/mod/irc.mod/irc.h,
-	src/mod/server.mod/server.c, src/mod/server.mod/servmsg.c:
 
 	Resync with egg1.4 CVS, May28 
 
 2000-05-28 12:07  johoho
 
-	* doc/UPDATES1.5, doc/compiling.FAQ, src/patch.h:
-
 	ultrix hint added to compiling faq 
 
 2000-05-22 10:22  johoho
-
-	* eggdrop.advanced.conf, eggdrop.complete.conf,
-	eggdrop.simple.conf, doc/UPDATES1.5, src/patch.h, help/cmds1.help,
-	help/cmds2.help:
 
 	some changes for better understanding 
 
 2000-05-14 22:16  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/dccutil.c, src/patch.h, text/motd:
-
 	Wiktor's login2 patch 
 
 2000-05-13 20:28  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/compat/snprintf.h:
 
 	snprintf_fix2 patch 
 
 2000-05-13 20:24  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/dcc.c, src/patch.h:
-
 	Eule's botversion patch 
 
 2000-05-13 20:20  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/main.c, src/misc_file.c, src/patch.h,
-	src/mod/filesys.mod/files.c, src/mod/share.mod/share.c:
 
 	Tothwolf's cygwin-fixes-07May2000 patch (with changes by Fabian) 
 
 2000-05-13 14:46  johoho
 
-	* eggdrop.advanced.conf, eggdrop.complete.conf, doc/UPDATES1.5,
-	src/patch.h:
-
 	removed private-owner 
 
 2000-05-07 11:45  johoho
-
-	* eggdrop.complete.conf, doc/UPDATES1.5, src/patch.h:
 
 	compress.mod was missing in eggdropc.omplete.conf 
 
 2000-05-07 10:57  johoho
 
-	* NEWS, doc/UPDATES1.5, src/patch.h:
-
 	NEWS file update 
 
 2000-05-07 01:28  Fabian Knittel <fknittel@gmx.de>
-
-	* src/mod/assoc.mod/modinfo:
 
 	this was supposed to be committed together with the conf_make_fix9
 	patch. grumble...  
 
 2000-05-07 01:10  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/main.c, src/patch.h:
-
 	start 1.5.4 
 
 2000-05-07 00:18  Fabian Knittel <fknittel@gmx.de>
-
-	* aclocal.m4, configure, src/patch.h:
 
 	fixed small typo in SuperS' change to aclocal.m4 
 
 2000-05-07 00:08  Fabian Knittel <fknittel@gmx.de>
 
-	* aclocal.m4, doc/BUG-REPORT, doc/UPDATES1.5, src/botnet.c,
-	src/patch.h, src/mod/filesys.mod/filesys.c:
-
 	SuperS' dell patch 
 
 2000-05-07 00:07  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/compat/snprintf.h:
 
 	SuperS' vafix patch 
 
 2000-05-06 22:08  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/server.mod/server.c:
-
 	G`Quann's lagcheckfix2 patch 
 
 2000-05-06 22:06  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/channels.mod/cmdschan.c:
 
 	G`Quann's achanset patch 
 
 2000-05-06 22:04  Fabian Knittel <fknittel@gmx.de>
 
-	* config.h.in, configure, configure.in, eggdrop.advanced.conf,
-	eggdrop.complete.conf, doc/UPDATES1.5, src/main.c, src/misc.c,
-	src/patch.h, src/proto.h, src/tcl.c:
-
 	G`Quann's logfilesuffix patch 
 
 2000-05-06 22:02  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/botcmd.c, src/chan.h, src/cmds.c,
-	src/patch.h, src/tcl.c, src/tclegg.h, src/tclhash.c, src/tclmisc.c,
-	src/userent.c, src/users.c, src/mod/channels.mod/tclchan.c,
-	src/mod/irc.mod/chan.c, src/mod/server.mod/server.h:
 
 	guppy's cleanups patch 
 
 2000-05-06 22:00  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/botnet.c, src/cmds.c, src/dcc.c, src/dns.c,
-	src/patch.h, src/compat/snprintf.h, src/mod/server.mod/servmsg.c,
-	src/mod/transfer.mod/transfer.c:
-
 	misc_fix patch 
 
 2000-05-06 21:59  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.4, src/botmsg.c, src/patch.h:
 
 	note_x_fix patch 
 
 2000-05-06 21:58  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, text/motd:
-
 	guppy's motd_fix patch (orginally motd1.diff) 
 
 2000-04-25 20:53  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/filesys.mod/files.c:
 
 	filesys_ls_fix patch 
 
 2000-04-25 20:49  Fabian Knittel <fknittel@gmx.de>
 
-	* Makefile.in, configure, configure.in, doc/UPDATES1.5,
-	misc/modconfig, src/patch.h, src/mod/Makefile.in:
-
 	conf_make_fix9 patch 
 
 2000-04-25 20:46  Fabian Knittel <fknittel@gmx.de>
-
-	* eggdrop.advanced.conf, eggdrop.complete.conf, doc/UPDATES1.5,
-	src/patch.h, src/mod/filesys.mod/filesys.c:
 
 	max-filesize patch 
 
 2000-04-25 08:32  johoho
 
-	* README, doc/BOTNET, doc/UPDATES1.5, doc/readme,
-	doc/tcl-commands.doc, text/motd:
-
 	misc. small doc patches 
 
 2000-04-13 21:44  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/irc.mod/mode.c:
 
 	Wiktor's bogusowner patch 
 
 2000-04-13 21:38  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, src/patch.h, src/mod/irc.mod/chan.c,
-	src/mod/server.mod/servmsg.c:
-
 	Eule's got442_2 patch, 1.4 
 
 2000-04-13 11:22  tothwolf
-
-	* doc/html/app-textsub.html:
 
 	Fixed %{center} typo.  
 
 2000-04-13 11:21  tothwolf
 
-	* doc/html/: about.html, app-botnet.html, app-probs.html,
-	app-textsub.html, app-tricks.html, app-weird.html, bans.html,
-	botnet.html, compiling.html, egg-core.html, faqs.html,
-	features.html, flags.html, index.html, install.html,
-	mod-assoc.html, mod-blowfish.html, mod-channels.html,
-	mod-compress.html, mod-dns.html, mod-filesys.html, mod-irc.html,
-	mod-notes.html, mod-server.html, mod-share.html, mod-wire.html,
-	news.html, party.html, readme.html, sharing.html, starting.html,
-	users.html, chat/efnet_eggheads.chat, chat/efnet_eggtcl.chat,
-	chat/ircnet_bothelp.chat, chat/ircnet_eggdrop.chat,
-	chat/ircnet_egghelp.chat, chat/undernet_eggdrop.chat:
-
 	Updated html docs, added html/chat dir and files for irc links.  
 
 2000-04-13 10:10  tothwolf
-
-	* NEWS:
 
 	Updated NEWS file to refer to 'doc/html/' instead of 'doc/web_docs/' 
 
 2000-04-13 10:08  tothwolf
 
-	* doc/Makefile.in:
-
 	Updated Makefile.in to use 'html' dir instead of 'web_docs' dir.  
 
 2000-04-13 09:56  jason
-
-	* doc/: UPDATES1.5, html/about.html, html/app-botnet.html,
-	html/app-probs.html, html/app-textsub.html, html/app-tricks.html,
-	html/app-weird.html, html/bans.html, html/botnet.html,
-	html/compiling.html, html/egg-core.html, html/faq1.html,
-	html/faqs.html, html/features.html, html/flags.html,
-	html/index.html, html/install.html, html/mod-assoc.html,
-	html/mod-blowfish.html, html/mod-channels.html,
-	html/mod-compress.html, html/mod-dns.html, html/mod-filesys.html,
-	html/mod-irc.html, html/mod-notes.html, html/mod-server.html,
-	html/mod-share.html, html/mod-wire.html, html/news.html,
-	html/party.html, html/readme.html, html/sharing.html,
-	html/starting.html, html/users.html:
 
 	renaming of web_docs to html 
 
 2000-04-11 08:58  jason
 
-	* doc/UPDATES1.5:
-
 	toth's addition of textfile substituion to webdocs 
 
 2000-04-10 19:05  johoho
-
-	* src/patch.h, doc/UPDATES1.4:
 
 	KNOWN-PROBLEMS update 
 
 2000-04-10 18:53  johoho
 
-	* doc/KNOWN-PROBLEMS:
-
 	This patch adds the ghost bug to the KNOWN-PROBLEMS file..Johoho 
 
 2000-04-10 14:22  jason
-
-	* doc/UPDATES1.5:
 
 	doc/web_docs changes 
 
 2000-04-09 10:00  johoho
 
-	* INSTALL:
-
 	changed a copyright message 
 
 2000-04-05 19:58  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/modules.c, src/patch.h, src/mod/module.h,
-	src/mod/channels.mod/channels.c, src/mod/server.mod/server.c:
 
 	must_be_owner patch 
 
 2000-04-05 19:55  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/dccutil.c, src/mem.c, src/modules.c,
-	src/patch.h, src/userrec.c:
-
 	mem_debug_fix patch 
 
 2000-04-05 19:51  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, doc/tcl-commands.doc, src/misc.c, src/modules.c,
-	src/patch.h, src/proto.h, src/mod/module.h,
-	src/mod/compress.mod/compress.c, src/mod/compress.mod/compress.h,
-	src/mod/compress.mod/tclcompress.c:
 
 	compress_fix patch 
 
 2000-04-05 19:48  Fabian Knittel <fknittel@gmx.de>
 
-	* NEWS, eggdrop.simple.conf, doc/UPDATES1.5, src/patch.h:
-
 	Wiktor's smalldoc patch 
 
 2000-04-05 19:45  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.4, doc/UPDATES1.5, src/dcc.c, src/misc.c,
-	src/patch.h:
 
 	show_banner_fix2 patch, 1.4 
 
 2000-04-05 19:40  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/compat/README.snprintf,
-	src/compat/snprintf.c, src/compat/snprintf.h:
-
 	snprintf_fix patch 
 
 2000-04-05 19:35  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/lang.h, src/language.c, src/modules.c,
-	src/patch.h, src/proto.h:
 
 	make_quiet_lang patch 
 
 2000-04-05 19:31  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/eggdrop.h, src/patch.h,
-	src/mod/transfer.mod/transfer.c:
-
 	transfer_resume_ack_fix patch 
 
 2000-04-05 19:27  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/transfer.mod/transfer.c:
 
 	transfer_memleak_fix patch 
 
 2000-04-05 19:25  Fabian Knittel <fknittel@gmx.de>
 
-	* eggdrop.advanced.conf, eggdrop.complete.conf,
-	eggdrop.simple.conf, doc/UPDATES1.5, doc/tcl-commands.doc,
-	help/cmds1.help, help/cmds2.help, help/core.help,
-	scripts/compat.tcl, src/cmds.c, src/patch.h, src/tcluser.c:
-
 	Wiktor's chnick patch 
 
 2000-04-05 19:22  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.4, src/patch.h, src/tcldcc.c:
 
 	resync with 1.4, Apr05 
 
 2000-03-31 23:04  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/assoc.mod/Makefile,
-	src/mod/blowfish.mod/Makefile, src/mod/channels.mod/Makefile,
-	src/mod/compress.mod/Makefile.in, src/mod/console.mod/Makefile,
-	src/mod/ctcp.mod/Makefile, src/mod/filesys.mod/Makefile,
-	src/mod/irc.mod/Makefile, src/mod/notes.mod/Makefile,
-	src/mod/server.mod/Makefile, src/mod/share.mod/Makefile,
-	src/mod/transfer.mod/Makefile, src/mod/woobie.mod/Makefile:
-
 	conf_make_fix8 patch 
 
 2000-03-31 22:50  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/CONTENTS, doc/MODULES, doc/Makefile.in, doc/UPDATES1.4,
-	doc/UPDATES1.5, doc/motd.settings, doc/readme,
-	doc/text-substitutions.doc, doc/settings/contents,
-	doc/settings/mod.woobie, doc/settings/tricks, src/patch.h:
 
 	Wiktor's miscdoc patch 
 
 2000-03-31 22:27  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, doc/UPDATES1.5, doc/tcl-commands.doc,
-	src/patch.h:
-
 	resync with 1.4, Mar31 
 
 2000-03-24 23:00  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/Makefile.in, src/patch.h,
-	src/compat/Makefile.in, src/compat/inet_aton.c,
-	src/md5/Makefile.in, src/mod/Makefile.in,
-	src/mod/assoc.mod/Makefile, src/mod/blowfish.mod/Makefile,
-	src/mod/channels.mod/Makefile, src/mod/compress.mod/Makefile.in,
-	src/mod/console.mod/Makefile, src/mod/ctcp.mod/Makefile,
-	src/mod/filesys.mod/Makefile, src/mod/irc.mod/Makefile,
-	src/mod/notes.mod/Makefile, src/mod/server.mod/Makefile,
-	src/mod/share.mod/Makefile, src/mod/transfer.mod/Makefile:
 
 	conf_make_fix7 patch 
 
 2000-03-23 23:17  Fabian Knittel <fknittel@gmx.de>
 
-	* Makefile.in, config.h.in, configure, configure.in,
-	doc/Makefile.in, doc/UPDATES1.5, src/Makefile.in, src/botcmd.c,
-	src/botmsg.c, src/botnet.c, src/chanprog.c, src/cmds.c, src/dcc.c,
-	src/dccutil.c, src/dns.c, src/eggdrop.h, src/flags.c, src/main.c,
-	src/main.h, src/mem.c, src/misc.c, src/modules.c, src/net.c,
-	src/patch.h, src/proto.h, src/tcl.c, src/tcldcc.c, src/tclhash.c,
-	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c,
-	src/compat/Makefile.in, src/compat/inet_aton.c,
-	src/compat/snprintf.c, src/md5/Makefile.in, src/md5/md5c.c,
-	src/mod/Makefile.in, src/mod/eggmod.m4, src/mod/module.h,
-	src/mod/assoc.mod/assoc.c, src/mod/blowfish.mod/blowfish.c,
-	src/mod/channels.mod/channels.c, src/mod/channels.mod/cmdschan.c,
-	src/mod/channels.mod/tclchan.c, src/mod/channels.mod/udefchan.c,
-	src/mod/channels.mod/userchan.c, src/mod/compress.mod/compress.c,
-	src/mod/compress.mod/configure, src/mod/console.mod/console.c,
-	src/mod/ctcp.mod/ctcp.c, src/mod/filesys.mod/filedb3.c,
-	src/mod/filesys.mod/files.c, src/mod/filesys.mod/filesys.c,
-	src/mod/filesys.mod/filesys.h, src/mod/irc.mod/chan.c,
-	src/mod/irc.mod/cmdsirc.c, src/mod/irc.mod/irc.c,
-	src/mod/irc.mod/msgcmds.c, src/mod/irc.mod/tclirc.c,
-	src/mod/notes.mod/cmdsnote.c, src/mod/notes.mod/notes.c,
-	src/mod/server.mod/cmdsserv.c, src/mod/server.mod/server.c,
-	src/mod/server.mod/servmsg.c, src/mod/server.mod/tclserv.c,
-	src/mod/share.mod/share.c, src/mod/share.mod/uf_features.c,
-	src/mod/transfer.mod/transfer.c, src/mod/woobie.mod/woobie.c,
-	src/compat/compat.h, src/compat/memcpy.c, src/compat/memcpy.h,
-	src/compat/memset.c, src/compat/memset.h, src/compat/strcasecmp.c,
-	src/compat/strcasecmp.h:
-
 	conf_make_fix6 patch 
 
 2000-03-23 23:10  Fabian Knittel <fknittel@gmx.de>
-
-	* aclocal.m4, config.h.in, configure, configure.in, doc/UPDATES1.4,
-	src/chanprog.c, src/main.c, src/patch.h, src/tcldcc.c:
 
 	resync with 1.4, Mar24 
 
 2000-03-22 01:04  Fabian Knittel <fknittel@gmx.de>
 
-	* Makefile.in, src/patch.h:
-
 	conf_make_fix5 patch 
 
 2000-03-22 00:42  Fabian Knittel <fknittel@gmx.de>
-
-	* Makefile.in, acconfig.h, aclocal.m4, config.h.in, configure,
-	configure.in, doc/Makefile.in, doc/UPDATES1.4, doc/UPDATES1.5,
-	misc/modconfig, scripts/Makefile.in, src/Makefile.in, src/botmsg.c,
-	src/dcc.c, src/dccutil.c, src/dns.c, src/main.h, src/misc.c,
-	src/misc_file.c, src/misc_file.h, src/modules.c, src/patch.h,
-	src/proto.h, src/tclegg.h, src/compat/Makefile.in,
-	src/compat/README.snprintf, src/compat/inet_aton.c,
-	src/compat/inet_aton.h, src/compat/snprintf.c,
-	src/compat/snprintf.h, src/md5/Makefile.in, src/mod/Makefile.in,
-	src/mod/eggmod.m4, src/mod/module.h, src/mod/assoc.mod/Makefile,
-	src/mod/assoc.mod/assoc.c, src/mod/blowfish.mod/Makefile,
-	src/mod/blowfish.mod/blowfish.c, src/mod/channels.mod/Makefile,
-	src/mod/channels.mod/channels.c, src/mod/compress.mod/Makefile.in,
-	src/mod/compress.mod/configure, src/mod/console.mod/Makefile,
-	src/mod/console.mod/console.c, src/mod/ctcp.mod/Makefile,
-	src/mod/ctcp.mod/ctcp.c, src/mod/filesys.mod/Makefile,
-	src/mod/filesys.mod/filesys.c, src/mod/irc.mod/Makefile,
-	src/mod/irc.mod/chan.c, src/mod/irc.mod/irc.c,
-	src/mod/notes.mod/Makefile, src/mod/notes.mod/notes.c,
-	src/mod/server.mod/Makefile, src/mod/server.mod/server.c,
-	src/mod/share.mod/Makefile, src/mod/share.mod/share.c,
-	src/mod/transfer.mod/Makefile, src/mod/transfer.mod/transfer.c,
-	src/mod/woobie.mod/Makefile, src/mod/woobie.mod/woobie.c:
 
 	configure_makefile_fix3 patch 
 
 2000-03-22 00:38  Fabian Knittel <fknittel@gmx.de>
 
-	* FEATURES, INSTALL, NEWS, README, doc/UPDATES1.5,
-	doc/compiling.FAQ, src/patch.h:
-
 	Jason's webdocs patch for 1.5 
 
 2000-03-22 00:35  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, doc/tcl-commands.doc, src/patch.h:
 
 	Wiktor's nextparam patch 
 
 2000-03-22 00:33  Fabian Knittel <fknittel@gmx.de>
 
-	* eggdrop.advanced.conf, eggdrop.complete.conf, eggdrop.conf.dist,
-	eggdrop.simple.conf, doc/CONTENTS, doc/UPDATES1.5,
-	doc/motd.settings, doc/settings/core.settings,
-	doc/settings/mod.assoc, doc/settings/mod.blowfish,
-	doc/settings/mod.channel, doc/settings/mod.compress,
-	doc/settings/mod.console, doc/settings/mod.ctcp,
-	doc/settings/mod.dns, doc/settings/mod.filesys,
-	doc/settings/mod.irc, doc/settings/mod.notes,
-	doc/settings/mod.seen, doc/settings/mod.server,
-	doc/settings/mod.share, doc/settings/mod.transfer,
-	doc/settings/mod.wire, src/mod/share.mod/share.c,
-	src/mod/share.mod/help/share.help, src/patch.h:
-
 	Wiktor's settingsdoc patch 
 
 2000-03-22 00:28  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.4, scripts/userinfo1.0.tcl, src/eggdrop.h,
-	src/patch.h, src/tclhash.c, src/mod/server.mod/servmsg.c:
 
 	resync with 1.4, Mar22 
 
 2000-03-19 23:58  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/cmds.c, src/main.c, src/patch.h:
-
 	G`Quann's muchtraffic patch 
 
 2000-03-19 23:56  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/modules.c, src/patch.h,
-	src/mod/channels.mod/channels.c, src/mod/channels.mod/channels.h,
-	src/mod/channels.mod/udefchan.c:
 
 	G`Quann's udefexport patch 
 
 2000-03-19 23:32  Fabian Knittel <fknittel@gmx.de>
 
-	* aclocal.m4, configure, doc/UPDATES1.4, doc/compiling.FAQ,
-	src/patch.h, src/mod/irc.mod/msgcmds.c:
-
 	1.4 resync, Mar20 
 
 2000-03-06 19:10  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/botnet.c, src/eggdrop.h, src/net.c,
-	src/patch.h:
 
 	drummer's relaydns patch 
 
 2000-03-06 18:54  Fabian Knittel <fknittel@gmx.de>
 
-	* Makefile.in, aclocal.m4, configure, configure.in, lush.h.in,
-	doc/Makefile.in, doc/UPDATES1.5, misc/modconfig,
-	scripts/Makefile.in, src/patch.h, src/mod/eggautoconf:
-
 	configure_fix2,3 patches 
 
 2000-03-05 23:48  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.4, src/patch.h, src/mod/irc.mod/msgcmds.c:
 
 	drummer's msg_voice patch, 1.4 
 
 2000-03-05 23:22  Fabian Knittel <fknittel@gmx.de>
 
-	* Makefile.in, aclocal.m4, configure, configure.in, install-sh,
-	mkinstalldirs, doc/UPDATES1.4, doc/UPDATES1.5, misc/install-sh,
-	misc/mkinstalldirs, misc/modconfig, src/main.c, src/patch.h,
-	src/mod/Makefile.in, src/mod/eggmod.m4,
-	src/mod/compress.mod/configure:
-
 	configure_fix patch 
 
 2000-03-04 21:23  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.4, src/patch.h, src/mod/irc.mod/chan.c:
 
 	Eule's duplicate_check patch, 1.4 
 
 2000-03-04 21:14  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, src/misc.c, src/patch.h:
-
 	Lucas' closebanner patch, 1.4 
 
 2000-03-04 21:05  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/tclhash.c:
 
 	david's wildbinds fix patch 
 
 2000-03-04 20:49  Fabian Knittel <fknittel@gmx.de>
 
-	* eggdrop.conf.dist, doc/UPDATES1.5, src/eggdrop.h, src/main.c,
-	src/patch.h, src/mod/modvals.h, src/mod/compress.mod/Makefile.in,
-	src/mod/compress.mod/compress.c, src/mod/compress.mod/compress.h,
-	src/mod/compress.mod/compress_config.h.in,
-	src/mod/compress.mod/configure, src/mod/compress.mod/configure.in,
-	src/mod/compress.mod/tclcompress.c,
-	src/mod/compress.mod/help/set/compress.help,
-	src/mod/share.mod/share.c, src/mod/share.mod/share.h,
-	src/mod/share.mod/uf_features.c:
-
 	share_compress patch 
 
 2000-03-04 20:40  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h:
 
 	dns_minor_fixes patch 
 
 2000-03-04 20:38  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/filesys.mod/dbcompat.c,
-	src/mod/filesys.mod/filedb3.c, src/mod/filesys.mod/filedb3.h:
-
 	filesys_minor_fixes patch 
 
 2000-03-04 20:35  Fabian Knittel <fknittel@gmx.de>
-
-	* eggdrop.conf.dist, doc/UPDATES1.5, help/cmds1.help, src/cmds.c,
-	src/patch.h:
 
 	Jason's +host for users patch 
 
 2000-03-04 20:31  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/share.mod/share.c:
-
 	eule's bothost patch 
 
 2000-03-04 18:40  Fabian Knittel <fknittel@gmx.de>
-
-	* eggdrop.conf.dist, doc/UPDATES1.4, src/patch.h:
 
 	resync with 1.4 
 
 2000-03-01 17:54  Fabian Knittel <fknittel@gmx.de>
 
-	* eggdrop.conf.dist, doc/UPDATES1.5, doc/tcl-commands.doc,
-	src/patch.h, src/mod/modvals.h, src/mod/compress.mod/Makefile.in,
-	src/mod/compress.mod/compress.c, src/mod/compress.mod/compress.h,
-	src/mod/compress.mod/configure, src/mod/compress.mod/configure.in,
-	src/mod/compress.mod/modinfo, src/mod/compress.mod/tclcompress.c,
-	src/mod/compress.mod/help/set/compress.help,
-	src/mod/share.mod/share.c:
-
 	uff_compress2 patch 
 
 2000-02-29 20:29  Fabian Knittel <fknittel@gmx.de>
-
-	* aclocal.m4, configure, configure.in, doc/BUG-REPORT,
-	doc/UPDATES1.4, src/patch.h, src/mod/filesys.mod/filedb3.c:
 
 	resync with 1.4 
 
 2000-02-29 20:16  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, doc/tcl-commands.doc, src/patch.h,
-	src/mod/irc.mod/irc.c, src/mod/server.mod/servmsg.c:
-
 	drummer's partnotc patch 
 
 2000-02-29 20:13  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/server.mod/server.c:
 
 	drummer's optimizefix patch 
 
 2000-02-29 20:10  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/irc.mod/chan.c:
-
 	Eule's who_recheck patch 
 
 2000-02-29 20:05  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/filesys.mod/filesys.c:
 
 	filesys_info patch 
 
 2000-02-29 20:03  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/filesys.mod/files.c,
-	src/mod/filesys.mod/filesys.c:
-
 	filesys_fixes patch 
 
 2000-02-29 19:57  Fabian Knittel <fknittel@gmx.de>
-
-	* Makefile.in, aclocal.m4, configure, configure.in, doc/UPDATES1.5,
-	src/patch.h, src/mod/Makefile.in, src/mod/eggmod.m4,
-	src/mod/modtool:
 
 	configure_makefile_fix2 patch 
 
 2000-02-25 22:05  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, help/cmds1.help, src/patch.h, src/tclhash.c:
-
 	david's wildbinds patch 
 
 2000-02-25 21:51  Fabian Knittel <fknittel@gmx.de>
-
-	* Makefile.in, README, aclocal.m4, configure, configure.in,
-	disabled_modules, doc/KNOWN-PROBLEMS, doc/MODULES, doc/UPDATES1.5,
-	doc/tricks, src/Makefile.in, src/patch.h, src/mod/Makefile.in,
-	src/mod/buildstatic, src/mod/eggautoconf, src/mod/eggmod.m4,
-	src/mod/eggmod.sh, src/mod/modtool, src/mod/assoc.mod/Makefile,
-	src/mod/blowfish.mod/Makefile, src/mod/blowfish.mod/modinfo,
-	src/mod/channels.mod/Makefile, src/mod/channels.mod/modinfo,
-	src/mod/console.mod/Makefile, src/mod/console.mod/modinfo,
-	src/mod/ctcp.mod/Makefile, src/mod/ctcp.mod/modinfo,
-	src/mod/filesys.mod/Makefile, src/mod/filesys.mod/modinfo,
-	src/mod/irc.mod/Makefile, src/mod/irc.mod/modinfo,
-	src/mod/notes.mod/Makefile, src/mod/notes.mod/modinfo,
-	src/mod/server.mod/Makefile, src/mod/server.mod/modinfo,
-	src/mod/share.mod/Makefile, src/mod/share.mod/modinfo,
-	src/mod/transfer.mod/Makefile, src/mod/transfer.mod/modinfo,
-	src/mod/woobie.mod/Makefile, src/mod/woobie.mod/modinfo:
 
 	configure_module patch 
 
 2000-02-25 21:36  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, src/patch.h, src/mod/irc.mod/chan.c:
-
 	Jason's mult_exempts patch, 1.4 
 
 2000-02-25 20:51  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.4, src/patch.h, src/mod/channels.mod/cmdschan.c,
-	src/mod/console.mod/console.c, src/mod/irc.mod/irc.c,
-	src/mod/irc.mod/tclirc.c, src/mod/server.mod/server.c:
 
 	resync with 1.4, Feb25 
 
 2000-02-18 22:45  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, doc/patch.howto, src/patch.h,
-	src/mod/irc.mod/irc.c:
-
 	Wiktor's typodoc patch 
 
 2000-02-18 22:40  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/dcc.c, src/patch.h,
-	src/mod/server.mod/servmsg.c:
 
 	G`Quann's lagcheckfix patch 
 
 2000-02-18 22:38  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/irc.mod/chan.c:
-
 	invite_fix patch 
 
 2000-02-18 22:36  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/main.c, src/patch.h,
-	src/mod/blowfish.mod/blowfish.c:
 
 	blowfish_fix patch 
 
 2000-02-18 22:34  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, doc/tcl-commands.doc, src/patch.h:
-
 	dw's docfix patch 
 
 2000-02-18 22:27  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.4, doc/UPDATES1.5, src/patch.h, src/users.c,
-	src/mod/irc.mod/chan.c, src/mod/irc.mod/cmdsirc.c,
-	src/mod/irc.mod/irc.c, src/mod/irc.mod/mode.c,
-	src/mod/irc.mod/help/irc.help, src/mod/share.mod/share.c:
 
 	1.4 resync 
 
 2000-02-04 23:31  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/main.c, src/patch.h:
-
 	release of 1.5.2 
 
 2000-02-03 22:54  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, doc/tcl-commands.doc, src/chan.h, src/lang.h,
-	src/patch.h, src/mod/irc.mod/chan.c, src/mod/irc.mod/irc.c,
-	src/mod/irc.mod/tclirc.c, src/mod/server.mod/servmsg.c:
 
 	Jason's 2nd chanjupe patch 
 
 2000-02-03 21:58  Fabian Knittel <fknittel@gmx.de>
 
-	* eggdrop.conf.dist, doc/UPDATES1.4, src/cmds.c, src/misc.c,
-	src/patch.h:
-
 	1.4 resync Feb03 
 
 2000-02-01 23:35  Fabian Knittel <fknittel@gmx.de>
-
-	* aclocal.m4, configure, doc/UPDATES1.5, src/patch.h:
 
 	tiny_makefile_fix patch 
 
 2000-02-01 20:47  Fabian Knittel <fknittel@gmx.de>
 
-	* src/stat.h:
-
 	src/stat.h belonging to the stat_fix patch 
 
 2000-02-01 20:36  Fabian Knittel <fknittel@gmx.de>
-
-	* src/: main.c, main.h, misc.c, mod/filesys.mod/Makefile,
-	mod/filesys.mod/files.c, mod/filesys.mod/filesys.c,
-	mod/share.mod/share.c:
 
 	stat_fix patch 
 
 2000-02-01 20:17  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, src/patch.h, src/userent.c,
-	src/mod/channels.mod/cmdschan.c, src/mod/irc.mod/chan.c:
-
 	resync with 1.4 on the 1st of January 
 
 2000-01-31 23:02  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/botcmd.c, src/botnet.c, src/dcc.c,
-	src/patch.h, src/tandem.h, src/mod/module.h:
 
 	G`Quann's yaup patch 
 
 2000-01-31 22:56  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/irc.mod/chan.c,
-	src/mod/irc.mod/irc.h, src/mod/irc.mod/mode.c,
-	src/mod/server.mod/server.c, src/mod/server.mod/servmsg.c:
-
 	G`Quann's lagcheck patch 
 
 2000-01-31 22:49  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.4, src/patch.h,
-	src/mod/filesys.mod/help/filesys.help:
 
 	resync with 1.4, Jan 31st 
 
 2000-01-30 19:26  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/botcmd.c, src/botmsg.c, src/botnet.c,
-	src/chan.h, src/chanprog.c, src/cmds.c, src/dcc.c, src/dccutil.c,
-	src/dns.c, src/eggdrop.h, src/flags.c, src/flags.h, src/lang.h,
-	src/language.c, src/main.c, src/main.h, src/match.c, src/mem.c,
-	src/misc.c, src/modules.c, src/modules.h, src/net.c, src/patch.h,
-	src/proto.h, src/tandem.h, src/tcl.c, src/tcldcc.c, src/tclegg.h,
-	src/tclhash.c, src/tclhash.h, src/tclmisc.c, src/tcluser.c,
-	src/userent.c, src/userrec.c, src/users.h, src/mod/module.h,
-	src/mod/modvals.h, src/mod/blowfish.mod/bf_tab.h,
-	src/mod/blowfish.mod/blowfish.c, src/mod/blowfish.mod/blowfish.h,
-	src/mod/channels.mod/channels.c, src/mod/notes.mod/notes.c,
-	src/mod/share.mod/share.c:
-
 	cleanup3 patch 
 
 2000-01-30 18:02  Fabian Knittel <fknittel@gmx.de>
-
-	* eggdrop.conf.dist, doc/UPDATES1.5, src/patch.h,
-	src/mod/channels.mod/channels.c, src/mod/channels.mod/tclchan.c:
 
 	eule's globalset patch 
 
 2000-01-30 17:59  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, src/lang.h, src/patch.h, src/mod/irc.mod/chan.c:
-
 	resync with 1.4, Jan30 
 
 2000-01-28 22:14  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, doc/tcl-commands.doc, src/patch.h,
-	src/mod/irc.mod/chan.c, src/mod/irc.mod/irc.c,
-	src/mod/irc.mod/irc.h, src/mod/server.mod/server.c,
-	src/mod/server.mod/server.h, src/mod/server.mod/servmsg.c:
 
 	guppy's binds patch 
 
 2000-01-28 22:05  Fabian Knittel <fknittel@gmx.de>
 
-	* NEWS, doc/UPDATES1.5, src/patch.h:
-
 	Wiktor's NEWS patch 
 
 2000-01-28 21:51  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/channels.mod/tclchan.c:
 
 	Eule's stopnethack-mode2 patch 
 
 2000-01-28 21:24  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, doc/UPDATES1.5, doc/tcl-commands.doc, doc/tricks,
-	src/patch.h, src/tcluser.c, src/userrec.c:
-
 	resync with 1.4, 2000/08/01 
 
 2000-01-24 21:42  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/server.mod/server.c,
-	src/mod/server.mod/servmsg.c:
 
 	dw's nickjuped patch 
 
 2000-01-24 21:37  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, src/botcmd.c, src/patch.h:
-
 	dw's who patch 
 
 2000-01-24 20:46  Fabian Knittel <fknittel@gmx.de>
-
-	* config.h.in, configure, configure.in, doc/UPDATES1.5, src/main.h,
-	src/patch.h:
 
 	bzerofix patch 
 
 2000-01-22 23:43  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, doc/tcl-commands.doc, src/patch.h,
-	src/mod/irc.mod/chan.c, src/mod/irc.mod/irc.h,
-	src/mod/irc.mod/mode.c:
-
 	dw's got_op_deop patch to 1.4 
 
 2000-01-22 23:30  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/botcmd.c, src/botnet.c, src/dcc.c,
-	src/patch.h, src/users.c:
 
 	david's unlink info patch 
 
 2000-01-22 23:04  Fabian Knittel <fknittel@gmx.de>
 
-	* src/mod/share.mod/: share.h, uf_features.c:
-
 	forgot to add those files again (originally in uff.patch) 
 
 2000-01-22 23:01  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.4, src/patch.h, src/mod/irc.mod/chan.c:
 
 	Toth's and Wiktor's banreason-fix patch 
 
 2000-01-22 22:54  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/server.mod/server.c,
-	src/mod/server.mod/servmsg.c:
-
 	G`Quann's kickstuff patch 
 
 2000-01-22 22:37  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/eggdrop.h, src/main.c, src/modules.c,
-	src/net.c, src/patch.h, src/proto.h, src/mod/module.h,
-	src/mod/share.mod/Makefile, src/mod/share.mod/share.c:
 
 	uff and outdone_event patch 
 
 2000-01-17 23:00  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5:
-
 	changed Johoho to Wiktor in UPDATES1.5 
 
 2000-01-17 22:36  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.4, scripts/ques5.tcl, src/botcmd.c, src/botmsg.c,
-	src/botnet.c, src/chan.h, src/chanprog.c, src/cmds.c, src/cmdt.h,
-	src/dcc.c, src/dccutil.c, src/dns.c, src/dns.h, src/eggdrop.h,
-	src/flags.c, src/flags.h, src/lang.h, src/language.c, src/main.c,
-	src/main.h, src/mem.c, src/misc.c, src/modules.c, src/modules.h,
-	src/patch.h, src/proto.h, src/tandem.h, src/tcl.c, src/tcldcc.c,
-	src/tclegg.h, src/tclhash.c, src/tclhash.h, src/tclmisc.c,
-	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c,
-	src/users.h, src/mod/module.h, src/mod/modvals.h,
-	src/mod/assoc.mod/assoc.c, src/mod/channels.mod/channels.c,
-	src/mod/channels.mod/channels.h, src/mod/channels.mod/cmdschan.c,
-	src/mod/channels.mod/tclchan.c, src/mod/channels.mod/udefchan.c,
-	src/mod/channels.mod/userchan.c, src/mod/console.mod/console.c,
-	src/mod/ctcp.mod/ctcp.c, src/mod/ctcp.mod/ctcp.h,
-	src/mod/filesys.mod/dbcompat.c, src/mod/filesys.mod/dbcompat.h,
-	src/mod/filesys.mod/filedb3.c, src/mod/filesys.mod/filedb3.h,
-	src/mod/filesys.mod/filelist.c, src/mod/filesys.mod/filelist.h,
-	src/mod/filesys.mod/files.c, src/mod/filesys.mod/files.h,
-	src/mod/filesys.mod/filesys.c, src/mod/filesys.mod/filesys.h,
-	src/mod/filesys.mod/tclfiles.c, src/mod/irc.mod/chan.c,
-	src/mod/irc.mod/cmdsirc.c, src/mod/irc.mod/irc.c,
-	src/mod/irc.mod/irc.h, src/mod/irc.mod/mode.c,
-	src/mod/irc.mod/msgcmds.c, src/mod/irc.mod/tclirc.c,
-	src/mod/notes.mod/cmdsnote.c, src/mod/notes.mod/notes.c,
-	src/mod/notes.mod/notes.h, src/mod/server.mod/cmdsserv.c,
-	src/mod/server.mod/server.c, src/mod/server.mod/server.h,
-	src/mod/server.mod/servmsg.c, src/mod/server.mod/tclserv.c,
-	src/mod/share.mod/share.c, src/mod/transfer.mod/transfer.c,
-	src/mod/transfer.mod/transfer.h, src/mod/woobie.mod/woobie.c,
-	text/banner, text/motd:
 
 	Eule's copyright patch, updated by him for 1.5 
 
 2000-01-17 22:28  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/server.mod/server.c,
-	src/mod/server.mod/servmsg.c:
-
 	G`Quann's penaltyfix patch 
 
 2000-01-17 22:18  Fabian Knittel <fknittel@gmx.de>
-
-	* aclocal.m4, configure, doc/UPDATES1.5, src/patch.h:
 
 	Tothwolf's resolv-before-bind patch 
 
 2000-01-17 22:13  Fabian Knittel <fknittel@gmx.de>
 
-	* eggdrop.conf.dist, doc/UPDATES1.5, src/chan.h, src/patch.h,
-	src/mod/channels.mod/channels.c, src/mod/channels.mod/cmdschan.c,
-	src/mod/channels.mod/tclchan.c,
-	src/mod/channels.mod/help/chaninfo.help, src/mod/irc.mod/mode.c:
-
 	Eule's stopnethack_mode patch 
 
 2000-01-17 21:59  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.4, src/botcmd.c, src/botnet.c, src/cmds.c,
-	src/dccutil.c, src/flags.c, src/main.c, src/misc.c, src/net.c,
-	src/patch.h, src/tcl.c, src/tcldcc.c, src/tclhash.c, src/tclmisc.c,
-	src/tcluser.c, src/userrec.c, src/users.c, src/mod/irc.mod/chan.c,
-	src/mod/transfer.mod/transfer.c:
 
 	resync with 1.4, 17Jan2000 
 
 2000-01-09 16:34  Fabian Knittel <fknittel@gmx.de>
 
-	* acconfig.h, aclocal.m4, config.h.in, configure, doc/UPDATES1.4,
-	src/patch.h, src/mod/module.h:
-
 	forgot the version_export patch, during last 1.4 resync 
 
 2000-01-09 15:06  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/share.mod/share.c,
-	src/mod/transfer.mod/transfer.c:
 
 	tiny_transfer_share patch 
 
 2000-01-09 14:59  Fabian Knittel <fknittel@gmx.de>
 
-	* aclocal.m4, configure, configure.in, doc/UPDATES1.4,
-	doc/UPDATES1.5, doc/compiling.FAQ, src/main.c, src/modules.c,
-	src/patch.h, src/mod/module.h, src/mod/filesys.mod/files.c,
-	src/mod/filesys.mod/filesys.c, src/mod/filesys.mod/filesys.h,
-	src/mod/share.mod/share.c, src/mod/transfer.mod/transfer.c,
-	src/mod/transfer.mod/transfer.h:
-
 	resync with 1.4, a few 1.5 specific additions 
 
 2000-01-09 14:36  Fabian Knittel <fknittel@gmx.de>
-
-	* eggdrop.conf.dist, doc/UPDATES1.5, src/patch.h:
 
 	Johoho's config patch 
 
 2000-01-07 21:43  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/chan.h, src/patch.h,
-	src/mod/channels.mod/channels.c, src/mod/channels.mod/cmdschan.c,
-	src/mod/channels.mod/tclchan.c, src/mod/irc.mod/chan.c:
-
 	S0meguy's flood-nick patch, which i missed to apply earlier 
 
 2000-01-07 20:04  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.4, src/patch.h, src/mod/server.mod/servmsg.c:
 
 	S0meguy's ctcpchanfloodfix patch, which i missed to commit by
 	accident 
 
 2000-01-06 19:46  Fabian Knittel <fknittel@gmx.de>
 
-	* eggdrop.conf.dist, doc/UPDATES1.5, help/set/cmds2.help,
-	src/misc.c, src/modules.c, src/patch.h, src/proto.h, src/tcl.c,
-	src/userrec.c, src/mod/module.h, src/mod/channels.mod/channels.c,
-	src/mod/notes.mod/notes.c:
-
 	userfile_perm patch 
 
 2000-01-06 19:45  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.4, src/main.c, src/misc.c, src/modules.c,
-	src/modules.h, src/net.c, src/patch.h, src/tclegg.h, src/userrec.c,
-	src/md5/global.h, src/mod/module.h,
-	src/mod/blowfish.mod/blowfish.c, src/mod/channels.mod/channels.c,
-	src/mod/irc.mod/irc.c, src/mod/notes.mod/notes.c,
-	src/mod/server.mod/server.c, src/mod/server.mod/servmsg.c,
-	src/mod/share.mod/share.c, src/mod/transfer.mod/transfer.c,
-	src/mod/transfer.mod/transfer.h:
 
 	errors_fix, simialer to 1.4 
 
 2000-01-06 19:42  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, src/cmds.c, src/dcc.c, src/mem.c, src/misc.c,
-	src/patch.h, src/userrec.c, src/mod/irc.mod/chan.c,
-	src/mod/share.mod/share.c:
-
 	resync with 1.4, 6Jan2000 
 
 2000-01-02 17:29  Fabian Knittel <fknittel@gmx.de>
-
-	* src/mod/channels.mod/udefchan.c:
 
 	don't ask. Yet Another File Fabian Forgot To Add...  
 
 2000-01-02 02:42  Fabian Knittel <fknittel@gmx.de>
 
-	* src/: main.c, patch.h, mod/assoc.mod/assoc.c,
-	mod/blowfish.mod/blowfish.h, mod/channels.mod/channels.c,
-	mod/channels.mod/channels.h, mod/channels.mod/cmdschan.c,
-	mod/channels.mod/tclchan.c, mod/channels.mod/userchan.c,
-	mod/console.mod/console.c, mod/ctcp.mod/ctcp.c,
-	mod/filesys.mod/dbcompat.c, mod/filesys.mod/dbcompat.h,
-	mod/filesys.mod/filedb3.c, mod/filesys.mod/filedb3.h,
-	mod/filesys.mod/filelist.c, mod/filesys.mod/filelist.h,
-	mod/filesys.mod/files.c, mod/filesys.mod/files.h,
-	mod/filesys.mod/filesys.c, mod/filesys.mod/tclfiles.c,
-	mod/irc.mod/chan.c, mod/irc.mod/cmdsirc.c, mod/irc.mod/irc.c,
-	mod/notes.mod/notes.c, mod/server.mod/cmdsserv.c,
-	mod/server.mod/server.c, mod/server.mod/servmsg.c,
-	mod/server.mod/tclserv.c, mod/share.mod/share.c,
-	mod/transfer.mod/transfer.c, mod/transfer.mod/transfer.h,
-	mod/woobie.mod/woobie.c:
-
 	cleanup2 patch 
 
 2000-01-01 19:42  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/dns.c, src/main.c, src/modules.c,
-	src/patch.h, src/proto.h, src/md5/md5c.c:
 
 	bzero_memset patch 
 
 2000-01-01 19:34  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, src/botnet.c, src/dcc.c, src/dccutil.c,
-	src/main.c, src/patch.h, src/mod/server.mod/server.c,
-	src/mod/server.mod/servmsg.c, src/mod/share.mod/share.c,
-	src/mod/transfer.mod/transfer.c:
-
 	1.4 dccfix patch 
 
 2000-01-01 19:28  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, doc/tcl-commands.doc, src/dcc.c, src/eggdrop.h,
-	src/patch.h, src/tcldcc.c:
 
 	publisten patch 
 
 2000-01-01 19:24  Fabian Knittel <fknittel@gmx.de>
 
-	* src/: patch.h, mod/notes.mod/cmdsnote.c, mod/notes.mod/notes.c,
-	mod/notes.mod/notes.h:
-
 	notes_cleanup patch 
 
 2000-01-01 19:23  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/main.c, src/patch.h:
 
 	G`Quann's trafficfix patch 
 
 2000-01-01 19:22  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/irc.mod/chan.c,
-	src/mod/irc.mod/cmdsirc.c, src/mod/irc.mod/irc.c,
-	src/mod/irc.mod/irc.h, src/mod/irc.mod/mode.c,
-	src/mod/irc.mod/msgcmds.c, src/mod/irc.mod/tclirc.c:
-
 	irc_cleanup patch 
 
 2000-01-01 19:12  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/tclhash.c, src/mod/modvals.h,
-	src/mod/transfer.mod/transfer.c, src/mod/woobie.mod/woobie.c:
 
 	cleanup patch 
 
 2000-01-01 19:08  Fabian Knittel <fknittel@gmx.de>
 
-	* eggdrop.conf.dist, doc/UPDATES1.4, doc/tcl-commands.doc,
-	src/patch.h, src/userrec.c, src/mod/irc.mod/chan.c,
-	src/mod/irc.mod/mode.c, src/mod/irc.mod/tclirc.c:
-
 	resync with 1.4 
 
 1999-12-27 20:39  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.4, src/misc.c, src/patch.h, src/tcl.c,
-	src/userrec.c, src/mod/irc.mod/chan.c, src/mod/server.mod/server.c,
-	src/mod/server.mod/server.h, src/mod/server.mod/servmsg.c:
 
 	1.4 drummer's stricthost patch 
 
 1999-12-27 20:38  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/honorable.mentions:
-
 	useless file 
 
 1999-12-27 20:07  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/Makefile.in:
 
 	forgot to patch Makefile.in when removing Ode_To_Beldin 
 
 1999-12-27 19:56  Fabian Knittel <fknittel@gmx.de>
 
-	* src/: patch.h, tclmisc.c:
-
 	tcl_md5 messup ...  
 
 1999-12-27 19:50  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5:
 
 	the override-bots change was in 1.5.1 not 1.5.0\! 
 
 1999-12-27 19:36  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, doc/tcl-commands.doc, src/patch.h, src/tclmisc.c:
-
 	Olrick's tcl md5 patch 
 
 1999-12-27 19:35  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/Ode_To_Beldin:
 
 	removed useless file 
 
 1999-12-27 18:35  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/cmds.c, src/patch.h:
-
 	dw's strip patch 
 
 1999-12-27 14:52  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, doc/tcl-commands.doc, src/patch.h, src/tcluser.c:
 
 	dw's getuser patch 
 
 1999-12-26 12:29  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h:
-
 	dnsfix 
 
 1999-12-26 12:21  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, doc/tcl-commands.doc, src/dns.c, src/dns.h,
-	src/patch.h:
-
 	dnslookup2 
 
 1999-12-26 05:50  Matthew Hallacy <poptix@techmonkeys.org>
-
-	* doc/honorable.mentions:
 
 	blah, just a text file i felt like adding, we can throw random funny
 	stuff in here.  
 
 1999-12-25 16:18  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, src/main.c, src/patch.h:
-
 	1.4 nowtm_timerfix.patch 
 
 1999-12-25 15:05  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, doc/tcl-commands.doc, src/dns.c, src/dns.h,
-	src/patch.h:
 
 	dnslookup 
 
 1999-12-25 02:37  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, src/patch.h, src/mod/server.mod/server.c,
-	src/mod/server.mod/servmsg.c:
-
 	serverfix 
 
 1999-12-25 00:36  Fabian Knittel <fknittel@gmx.de>
-
-	* src/dns.h:
 
 	tclasyncdns.patch 
 
 1999-12-25 00:07  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, doc/tcl-commands.doc, src/Makefile.in,
-	src/botnet.c, src/dcc.c, src/dns.c, src/mem.c, src/modules.c,
-	src/patch.h, src/proto.h, src/tcl.c, src/mod/module.h,
-	src/mod/filesys.mod/filesys.c, src/mod/server.mod/server.c,
-	src/mod/server.mod/servmsg.c:
-
 	tclasyncdns 
 
 1999-12-24 23:59  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/language.c, src/patch.h:
 
 	langclean 
 
 1999-12-24 23:57  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, src/patch.h, src/mod/irc.mod/irc.c:
-
 	1.4 revengepunishfix 
 
 1999-12-24 14:25  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/irc.mod/cmdsirc.c:
 
 	toot's .channel fix 
 
 1999-12-24 14:23  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, src/dccutil.c, src/patch.h:
-
 	1.4 hidelost 
 
 1999-12-24 14:21  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.4, src/dccutil.c, src/main.c, src/modules.c,
-	src/patch.h, src/proto.h, src/mod/module.h,
-	src/mod/filesys.mod/filesys.c, src/mod/server.mod/server.c,
-	src/mod/transfer.mod/transfer.c:
 
 	dccremovelost 
 
 1999-12-24 14:20  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, doc/UPDATES1.5, src/patch.h,
-	src/mod/server.mod/server.c:
-
 	nicklength2 
 
 1999-12-24 14:19  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/chan.h, src/patch.h,
-	src/mod/channels.mod/tclchan.c:
 
 	nodesynchfix 
 
 1999-12-22 22:02  Fabian Knittel <fknittel@gmx.de>
 
-	* help/set/: cmds1.help, cmds2.help:
-
 	re-added missing help/set and help/msg directories 
 
 1999-12-22 13:17  Fabian Knittel <fknittel@gmx.de>
-
-	* src/: patch.h, mod/channels.mod/channels.c:
 
 	small error while applying a patch, reported by SuperS 
 
 1999-12-22 12:27  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h:
-
 	G`Quann's whoispenaltyfix patch 
 
 1999-12-22 12:24  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/cmds.c, src/patch.h, src/tcluser.c,
-	src/mod/server.mod/servmsg.c:
 
 	Ian's silencefix patch 
 
 1999-12-22 12:21  Fabian Knittel <fknittel@gmx.de>
 
-	* eggdrop.conf.dist, doc/UPDATES1.5, src/chan.h, src/patch.h,
-	src/mod/channels.mod/channels.c, src/mod/channels.mod/cmdschan.c,
-	src/mod/channels.mod/tclchan.c, src/mod/irc.mod/irc.c,
-	src/mod/irc.mod/mode.c:
-
 	Ian's nodesync patch 
 
 1999-12-22 12:11  Fabian Knittel <fknittel@gmx.de>
-
-	* eggdrop.conf.dist, doc/UPDATES1.4, src/botcmd.c, src/botnet.c,
-	src/cmds.c, src/dcc.c, src/dccutil.c, src/eggdrop.h, src/lang.h,
-	src/main.c, src/modules.c, src/net.c, src/proto.h, src/tclhash.c,
-	src/users.c, src/mod/module.h, src/mod/modvals.h,
-	src/mod/filesys.mod/files.c, src/mod/irc.mod/irc.c,
-	src/mod/server.mod/server.c, src/mod/server.mod/server.h,
-	src/mod/server.mod/servmsg.c, src/mod/share.mod/share.c,
-	src/mod/transfer.mod/transfer.h:
 
 	resync with 1.4.2, 1999/12/22 
 
 1999-12-22 12:07  Fabian Knittel <fknittel@gmx.de>
 
-	* src/patch.h:
-
 	resync with 1.4.2, 1999/12/22 
 
 1999-12-21 17:35  Fabian Knittel <fknittel@gmx.de>
-
-	* Makefile.in, acconfig.h, aclocal.m4, configure, configure.in,
-	eggdrop.conf.dist, install-sh, doc/Makefile.in, doc/UPDATES1.4,
-	scripts/Makefile.in, scripts/action.fix.tcl, scripts/alltools.tcl,
-	scripts/autobotchk, scripts/botchk, scripts/compat.tcl,
-	scripts/getops-2.2d.tcl, scripts/klined.tcl, scripts/notes2.tcl,
-	scripts/ques5.tcl, scripts/sentinel1.54.tcl,
-	scripts/userinfo1.0.tcl, scripts/weed, src/Makefile.in,
-	src/botcmd.c, src/botmsg.c, src/botnet.c, src/chan.h,
-	src/chanprog.c, src/cmds.c, src/cmdt.h, src/dcc.c, src/dccutil.c,
-	src/dns.c, src/eggdrop.h, src/flags.c, src/flags.h, src/lang.h,
-	src/language.c, src/main.c, src/main.h, src/match.c, src/mem.c,
-	src/misc.c, src/modules.c, src/modules.h, src/net.c, src/patch.h,
-	src/proto.h, src/rfc1459.c, src/tandem.h, src/tcl.c, src/tcldcc.c,
-	src/tclegg.h, src/tclhash.c, src/tclhash.h, src/tclmisc.c,
-	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c,
-	src/users.h, src/md5/Makefile.in, src/md5/global.h, src/md5/md5.h,
-	src/md5/md5c.c, src/mod/Makefile.in, src/mod/buildstatic,
-	src/mod/module.h, src/mod/modvals.h, src/mod/assoc.mod/Makefile,
-	src/mod/assoc.mod/assoc.c, src/mod/blowfish.mod/Makefile,
-	src/mod/blowfish.mod/bf_tab.h, src/mod/blowfish.mod/blowfish.c,
-	src/mod/blowfish.mod/blowfish.h, src/mod/channels.mod/Makefile,
-	src/mod/channels.mod/channels.c, src/mod/channels.mod/channels.h,
-	src/mod/channels.mod/cmdschan.c, src/mod/channels.mod/tclchan.c,
-	src/mod/channels.mod/userchan.c, src/mod/console.mod/Makefile,
-	src/mod/console.mod/console.c, src/mod/ctcp.mod/Makefile,
-	src/mod/ctcp.mod/ctcp.c, src/mod/ctcp.mod/ctcp.h,
-	src/mod/filesys.mod/Makefile, src/mod/filesys.mod/dbcompat.c,
-	src/mod/filesys.mod/dbcompat.h, src/mod/filesys.mod/filedb3.c,
-	src/mod/filesys.mod/filedb3.h, src/mod/filesys.mod/filelist.c,
-	src/mod/filesys.mod/filelist.h, src/mod/filesys.mod/files.c,
-	src/mod/filesys.mod/files.h, src/mod/filesys.mod/filesys.c,
-	src/mod/filesys.mod/filesys.h, src/mod/filesys.mod/tclfiles.c,
-	src/mod/irc.mod/Makefile, src/mod/irc.mod/chan.c,
-	src/mod/irc.mod/cmdsirc.c, src/mod/irc.mod/irc.c,
-	src/mod/irc.mod/irc.h, src/mod/irc.mod/mode.c,
-	src/mod/irc.mod/msgcmds.c, src/mod/irc.mod/tclirc.c,
-	src/mod/notes.mod/Makefile, src/mod/notes.mod/cmdsnote.c,
-	src/mod/notes.mod/notes.c, src/mod/notes.mod/notes.h,
-	src/mod/server.mod/Makefile, src/mod/server.mod/cmdsserv.c,
-	src/mod/server.mod/server.c, src/mod/server.mod/server.h,
-	src/mod/server.mod/servmsg.c, src/mod/server.mod/tclserv.c,
-	src/mod/share.mod/Makefile, src/mod/share.mod/share.c,
-	src/mod/transfer.mod/Makefile, src/mod/transfer.mod/transfer.c,
-	src/mod/transfer.mod/transfer.h, src/mod/woobie.mod/Makefile,
-	src/mod/woobie.mod/woobie.c:
 
 	Tothwolf's id-header 
 
 1999-12-21 17:32  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/filesys.mod/dbcompat.c,
-	src/mod/filesys.mod/filedb3.c, src/mod/filesys.mod/filedb3.h,
-	src/mod/filesys.mod/filelist.c, src/mod/filesys.mod/files.c,
-	src/mod/filesys.mod/filesys.c, src/mod/filesys.mod/tclfiles.c,
-	src/mod/filesys.mod/help/filesys.help:
-
 	filesys_fixes2 
 
 1999-12-19 16:06  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/cmds.c, src/main.c, src/net.c, src/patch.h:
 
 	G`Quann's traffic patch 
 
 1999-12-19 16:05  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/channels.mod/cmdschan.c,
-	src/mod/channels.mod/tclchan.c:
-
 	G`Quann's udef_dname patch 
 
 1999-12-17 20:26  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/botnet.c, src/dcc.c, src/patch.h,
-	src/mod/filesys.mod/filesys.c, src/mod/server.mod/server.c:
 
 	dns_reversefail 
 
 1999-12-17 18:40  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, src/cmds.c, src/flags.c, src/patch.h,
-	src/userent.c, src/mod/module.h, src/mod/console.mod/console.c,
-	src/mod/transfer.mod/transfer.c:
-
 	tothwolf's assert-nulls patch 
 
 1999-12-15 17:20  Fabian Knittel <fknittel@gmx.de>
-
-	* eggdrop.conf.dist, doc/UPDATES1.5, src/eggdrop.h, src/main.c,
-	src/patch.h, src/mod/share.mod/share.c:
 
 	the share_botoverride patch...  
 
 1999-12-15 15:31  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, src/patch.h, src/mod/irc.mod/chan.c:
-
 	1.4 resync 991215 
 
 1999-12-14 22:39  Fabian Knittel <fknittel@gmx.de>
-
-	* Makefile.in, doc/UPDATES1.4, doc/UPDATES1.5, src/eggdrop.h,
-	src/main.c, src/modules.c, src/patch.h, src/proto.h,
-	src/mod/module.h:
 
 	toth's patch-assert 
 
 1999-12-13 23:53  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, doc/UPDATES1.5, src/dcc.c, src/patch.h,
-	src/tcl.c, src/tcluser.c, src/mod/channels.mod/tclchan.c,
-	src/mod/server.mod/server.c:
-
 	tothwolf's sync-1.5-11Dec1999-1 patch 
 
 1999-12-13 23:39  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, doc/tcl-commands.doc, src/eggdrop.h, src/patch.h,
-	src/mod/modvals.h, src/mod/filesys.mod/files.c,
-	src/mod/filesys.mod/filesys.c, src/mod/filesys.mod/filesys.h,
-	src/mod/filesys.mod/tclfiles.c, src/mod/irc.mod/chan.c,
-	src/mod/server.mod/server.c, src/mod/server.mod/server.h,
-	src/mod/transfer.mod/transfer.c, src/mod/transfer.mod/transfer.h:
 
 	resume patch 
 
 1999-12-12 22:14  Fabian Knittel <fknittel@gmx.de>
 
-	* config.h.in, configure, configure.in, doc/UPDATES1.5,
-	src/eggdrop.h, src/md5/global.h, src/md5/md5c.c, src/patch.h:
-
 	32 bit usage made consistent - patch :) 
 
 1999-12-12 15:39  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/botnet.c, src/patch.h:
 
 	tiny botlink fix 
 
 1999-12-11 23:20  Fabian Knittel <fknittel@gmx.de>
 
-	* src/: eggdrop.h, patch.h:
-
 	removed silly warning in Asser macro 
 
 1999-12-11 18:58  Fabian Knittel <fknittel@gmx.de>
-
-	* Makefile.in, src/botcmd.c, src/botmsg.c, src/botnet.c,
-	src/chanprog.c, src/cmds.c, src/dcc.c, src/dccutil.c, src/dns.c,
-	src/eggdrop.h, src/flags.c, src/language.c, src/main.c, src/mem.c,
-	src/misc.c, src/modules.c, src/net.c, src/patch.h, src/proto.h,
-	src/tcl.c, src/tcldcc.c, src/tclhash.c, src/tclmisc.c,
-	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c,
-	src/mod/module.h, src/mod/modvals.h, src/mod/assoc.mod/assoc.c,
-	src/mod/blowfish.mod/blowfish.c, src/mod/channels.mod/channels.c,
-	src/mod/channels.mod/cmdschan.c, src/mod/channels.mod/tclchan.c,
-	src/mod/channels.mod/userchan.c, src/mod/console.mod/console.c,
-	src/mod/ctcp.mod/ctcp.c, src/mod/filesys.mod/dbcompat.c,
-	src/mod/filesys.mod/filedb3.c, src/mod/filesys.mod/filelist.c,
-	src/mod/filesys.mod/files.c, src/mod/filesys.mod/filesys.c,
-	src/mod/filesys.mod/tclfiles.c, src/mod/irc.mod/chan.c,
-	src/mod/irc.mod/cmdsirc.c, src/mod/irc.mod/irc.c,
-	src/mod/irc.mod/mode.c, src/mod/irc.mod/msgcmds.c,
-	src/mod/irc.mod/tclirc.c, src/mod/notes.mod/cmdsnote.c,
-	src/mod/notes.mod/notes.c, src/mod/server.mod/server.c,
-	src/mod/server.mod/servmsg.c, src/mod/server.mod/tclserv.c,
-	src/mod/share.mod/share.c, src/mod/transfer.mod/transfer.c,
-	src/mod/woobie.mod/woobie.c:
 
 	tothwolf's remove-context-bloat patch 
 
 1999-12-10 17:20  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, doc/tcl-commands.doc, src/chanprog.c,
-	src/patch.h, src/userent.c, src/mod/channels.mod/tclchan.c,
-	src/mod/channels.mod/userchan.c, src/mod/irc.mod/chan.c,
-	src/mod/irc.mod/mode.c, src/mod/server.mod/Makefile,
-	src/mod/server.mod/server.c, src/mod/server.mod/tclserv.c:
-
 	resync 991210 with 1.4 
 
 1999-12-06 16:15  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.4, src/patch.h, src/mod/blowfish.mod/blowfish.c,
-	src/mod/channels.mod/channels.c, src/mod/channels.mod/cmdschan.c,
-	src/mod/channels.mod/tclchan.c, src/mod/irc.mod/chan.c:
 
 	1.4 resync 
 
 1999-12-06 15:56  Fabian Knittel <fknittel@gmx.de>
 
-	* aclocal.m4, configure, doc/UPDATES1.5, src/patch.h:
-
 	Toth's configure-with-fixes patch 
 
 1999-12-04 14:05  Fabian Knittel <fknittel@gmx.de>
-
-	* aclocal.m4, configure, configure.in, doc/UPDATES1.5:
 
 	Tothwolf's configure-strip-fix patch 
 
 1999-12-01 14:49  Fabian Knittel <fknittel@gmx.de>
 
-	* aclocal.m4, src/patch.h:
-
 	missed aclocal in toth's new-configure patch... as always... :/ 
 
 1999-12-01 00:09  Fabian Knittel <fknittel@gmx.de>
-
-	* configure, configure.in, doc/UPDATES1.5, src/patch.h:
 
 	toths new-configure patch 
 
 1999-11-30 23:04  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, src/chanprog.c, src/eggdrop.h, src/patch.h,
-	src/userrec.c, src/mod/irc.mod/chan.c, src/mod/irc.mod/cmdsirc.c,
-	src/mod/irc.mod/irc.c, src/mod/irc.mod/mode.c,
-	src/mod/irc.mod/msgcmds.c, src/mod/irc.mod/tclirc.c,
-	src/mod/notes.mod/notes.c, src/mod/server.mod/servmsg.c,
-	src/mod/share.mod/share.c:
-
 	egg1.4 resync 991130 
 
 1999-11-27 23:54  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/filesys.mod/files.c,
-	src/mod/filesys.mod/filesys.c, src/mod/transfer.mod/transfer.c:
 
 	filesys_fixes patch 
 
 1999-11-27 23:53  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/cmds.c, src/flags.c, src/modules.c,
-	src/patch.h, src/proto.h, src/userrec.c, src/mod/module.h,
-	src/mod/channels.mod/channels.c, src/mod/channels.mod/cmdschan.c,
-	src/mod/channels.mod/tclchan.c:
-
 	complete_sharefix patch 
 
 1999-11-27 23:51  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/patch.h, src/mod/irc.mod/mode.c:
 
 	addbanmode patch 
 
 1999-11-26 17:21  Fabian Knittel <fknittel@gmx.de>
 
-	* eggdrop.conf.dist, doc/UPDATES1.5, src/botnet.c, src/dcc.c,
-	src/eggdrop.h, src/lang.h, src/patch.h, src/proto.h, src/tcl.c:
-
 	dupwait patch 
 
 1999-11-24 23:28  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.4, src/botmsg.c, src/patch.h:
 
 	drummer's notefix patch 
 
 1999-11-24 22:23  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, src/modules.c, src/patch.h, src/proto.h,
-	src/mod/module.h, src/mod/channels.mod/channels.c,
-	src/mod/channels.mod/channels.h, src/mod/filesys.mod/filesys.c:
-
 	guppy's tables patch 
 
 1999-11-22 19:42  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, src/dccutil.c, src/eggdrop.h, src/patch.h,
-	src/mod/server.mod/server.c:
 
 	G`Quann's putnext patch 
 
 1999-11-22 19:31  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/filesys.mod/filedb3.c,
-	src/mod/filesys.mod/filelist.c, src/mod/filesys.mod/files.c:
-
 	filedb3_fix2 patch 
 
 1999-11-22 16:22  Fabian Knittel <fknittel@gmx.de>
-
-	* eggdrop.conf.dist, doc/UPDATES1.4, scripts/ques4.tcl,
-	src/patch.h, src/tcl.c, src/mod/irc.mod/mode.c:
 
 	resync 11Nov1999 
 
 1999-11-20 21:40  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/channels.mod/channels.c,
-	src/mod/channels.mod/tclchan.c:
-
 	G`Quann's udefmemleak patch 
 
 1999-11-20 21:27  Fabian Knittel <fknittel@gmx.de>
-
-	* Makefile.in, doc/UPDATES1.5, src/Makefile.in, src/patch.h:
 
 	dnsstatic patch 
 
 1999-11-20 15:56  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/filesys.mod/filedb3.c,
-	src/mod/filesys.mod/filedb3.h:
-
 	filedb3_fix patch 
 
 1999-11-16 21:06  Fabian Knittel <fknittel@gmx.de>
-
-	* configure, configure.in, src/patch.h:
 
 	filedb_autoconf patch 
 
 1999-11-15 20:36  Fabian Knittel <fknittel@gmx.de>
 
-	* NEWTO1.5.0:
-
 	missed to remove that file during tosk's NEWTO1.5.0 -> NEWS switch 
 
 1999-11-15 17:42  Fabian Knittel <fknittel@gmx.de>
 
-	* CONTENTS, FEATURES, INSTALL, NEWS, README, configure,
-	configure.in, eggdrop.conf.dist, doc/BOTNET, doc/BUG-REPORT,
-	doc/CONTENTS, doc/Makefile.in, doc/UPDATES.pre1.3,
-	doc/UPDATES.pre1.5, doc/UPDATES1.3, doc/UPDATES1.4, doc/UPDATES1.5,
-	doc/eggdrop.doc, doc/patch.howto, doc/tcl-commands.doc,
-	logs/CONTENTS, scripts/userinfo1.0.tcl, src/cmds.c, src/dccutil.c,
-	src/main.c, src/main.h, src/match.c, src/mem.c, src/net.c,
-	src/patch.h, src/proto.h, src/mod/blowfish.mod/blowfish.c,
-	src/mod/channels.mod/channels.c, src/mod/channels.mod/channels.h,
-	src/mod/channels.mod/cmdschan.c, src/mod/channels.mod/tclchan.c,
-	src/mod/channels.mod/userchan.c, src/mod/console.mod/console.c,
-	src/mod/irc.mod/chan.c, src/mod/notes.mod/notes.c,
-	src/mod/server.mod/server.c, src/mod/share.mod/share.c,
-	src/mod/woobie.mod/woobie.c:
-
 	Toth's sync-1.5-14Nov1999-1 
 
 1999-11-15 17:13  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.5, doc/tcl-commands.doc, src/dcc.c, src/patch.h,
-	src/mod/filesys.mod/filesys.c, src/mod/server.mod/server.c:
 
 	fastdeq_options patch (G`Quann), udef_doc patch (G`Quann), fixlisten
 	patch (Fabian), minorfilesys patch (Fabian) 
 
 1999-11-14 17:15  Fabian Knittel <fknittel@gmx.de>
 
-	* src/: patch.h, mod/filesys.mod/files.c:
-
 	spelling mistake, reported by guppy 
 
 1999-11-14 13:06  Fabian Knittel <fknittel@gmx.de>
-
-	* NEWTO1.5.0, doc/UPDATES1.5, src/patch.h,
-	src/mod/filesys.mod/Makefile, src/mod/filesys.mod/dbcompat.c,
-	src/mod/filesys.mod/dbcompat.h, src/mod/filesys.mod/filedb.c,
-	src/mod/filesys.mod/filedb3.c, src/mod/filesys.mod/filedb3.h,
-	src/mod/filesys.mod/filelist.c, src/mod/filesys.mod/filelist.h,
-	src/mod/filesys.mod/files.c, src/mod/filesys.mod/files.h,
-	src/mod/filesys.mod/filesys.c, src/mod/filesys.mod/filesys.h,
-	src/mod/filesys.mod/tclfiles.c:
 
 	filedb3 patch 
 
 1999-11-13 00:53  segfault
 
-	* text/: banner, motd:
-
 	Tothwolf's banner and motd updates to new version 
 
 1999-11-11 21:51  Fabian Knittel <fknittel@gmx.de>
 
-	* configure:
-
 	messed up configure, oops 
 
 1999-11-11 21:44  Fabian Knittel <fknittel@gmx.de>
-
-	* configure, doc/UPDATES1.5, src/dns.c, src/patch.h:
 
 	dns_fixagain.patch which fixes a bug in blocking dns code and turns
 	on debugmem to default on linux 
 
 1999-11-11 17:45  segfault
 
-	* configure, configure.in, src/patch.h:
-
 	Configure did not have default make = make debug 
 
 1999-11-11 16:22  segfault
-
-	* mkinstalldirs:
 
 	mkinstalldirs was mysteriously left out of 1.5 and therefore would
 	not make install correctly 
 
 1999-11-10 22:02  Fabian Knittel <fknittel@gmx.de>
 
-	* scripts/Makefile.in, src/patch.h:
-
 	I had messed up the scripts Makefile.in 
 
 1999-11-10 21:34  Fabian Knittel <fknittel@gmx.de>
-
-	* FEATURES, Makefile.in, README, TODO, acconfig.h, config.h.in,
-	configure, configure.in, eggdrop.conf.dist, doc/BOTNET,
-	doc/Makefile.in, doc/UPDATES.pre1.5, doc/eggdrop.doc,
-	doc/patch.howto, doc/tcl-commands.doc, doc/man1/eggdrop.1,
-	scripts/Makefile.in, src/Makefile.in, src/botcmd.c, src/botmsg.c,
-	src/chanprog.c, src/cmds.c, src/dcc.c, src/dccutil.c, src/main.c,
-	src/main.h, src/mem.c, src/modules.c, src/patch.h, src/proto.h,
-	src/tcl.c, src/tcldcc.c, src/tclegg.h, src/tclhash.c,
-	src/tclmisc.c, src/tcluser.c, src/userent.c, src/md5/Makefile.in,
-	src/mod/Makefile.in, src/mod/module.h, src/mod/assoc.mod/Makefile,
-	src/mod/blowfish.mod/Makefile, src/mod/channels.mod/Makefile,
-	src/mod/channels.mod/tclchan.c, src/mod/channels.mod/userchan.c,
-	src/mod/console.mod/Makefile, src/mod/console.mod/console.c,
-	src/mod/ctcp.mod/Makefile, src/mod/filesys.mod/Makefile,
-	src/mod/irc.mod/Makefile, src/mod/irc.mod/chan.c,
-	src/mod/irc.mod/msgcmds.c, src/mod/irc.mod/tclirc.c,
-	src/mod/notes.mod/Makefile, src/mod/notes.mod/notes.c,
-	src/mod/server.mod/Makefile, src/mod/server.mod/server.c,
-	src/mod/share.mod/Makefile, src/mod/transfer.mod/Makefile,
-	src/mod/transfer.mod/transfer.c, src/mod/woobie.mod/Makefile:
 
 	Resync with 1.4 
 
 1999-11-10 00:08  segfault
 
-	* text/banner:
-
 	Another oops 
 
 1999-11-10 00:07  segfault
-
-	* NEWTO1.4.0:
 
 	Blah 
 
 1999-11-10 00:06  segfault
 
-	* src/: main.c, mod/assoc.mod/assoc.c, mod/blowfish.mod/blowfish.c,
-	mod/channels.mod/channels.c, mod/console.mod/console.c,
-	mod/filesys.mod/filesys.c, mod/notes.mod/notes.c,
-	mod/server.mod/server.c, mod/share.mod/share.c,
-	mod/transfer.mod/transfer.c, mod/woobie.mod/woobie.c:
-
 	Part 2 
 
 1999-11-10 00:01  segfault
-
-	* NEWTO1.5.0, README, doc/CONTENTS, doc/UPDATES.pre1.4,
-	doc/UPDATES.pre1.5, doc/UPDATES1.4, doc/UPDATES1.5,
-	doc/tcl-commands.doc:
 
 	Part 1 of numbering revision 
 
 1999-10-26 21:46  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, src/botcmd.c, src/chan.h, src/chanprog.c,
-	src/cmds.c, src/flags.c, src/lang.h, src/misc.c, src/modules.c,
-	src/patch.h, src/tcldcc.c, src/tcluser.c, src/userrec.c,
-	src/users.c, src/mod/module.h, src/mod/channels.mod/channels.c,
-	src/mod/channels.mod/channels.h, src/mod/channels.mod/cmdschan.c,
-	src/mod/channels.mod/tclchan.c, src/mod/channels.mod/userchan.c,
-	src/mod/filesys.mod/files.c, src/mod/irc.mod/chan.c,
-	src/mod/irc.mod/cmdsirc.c, src/mod/irc.mod/irc.c,
-	src/mod/irc.mod/mode.c, src/mod/irc.mod/msgcmds.c,
-	src/mod/irc.mod/tclirc.c, src/mod/server.mod/server.c,
-	src/mod/server.mod/servmsg.c, src/mod/share.mod/share.c:
-
 	Cybah's safechan patch 
 
 1999-10-26 21:38  Fabian Knittel <fknittel@gmx.de>
-
-	* Makefile.in, acconfig.h, config.h.in, configure, configure.in,
-	eggdrop.conf.dist, doc/UPDATES.pre1.4, doc/tcl-commands.doc,
-	scripts/action.fix.tcl, scripts/alltools.tcl, scripts/autobotchk,
-	scripts/botchk, scripts/compat.tcl, scripts/weed, src/Makefile.in,
-	src/botnet.c, src/chanprog.c, src/cmds.c, src/dcc.c, src/flags.c,
-	src/language.c, src/main.c, src/misc.c, src/modules.c, src/patch.h,
-	src/tcldcc.c, src/tcluser.c, src/userent.c, src/mod/module.h,
-	src/mod/assoc.mod/Makefile, src/mod/blowfish.mod/Makefile,
-	src/mod/blowfish.mod/blowfish.h, src/mod/channels.mod/Makefile,
-	src/mod/channels.mod/cmdschan.c, src/mod/channels.mod/tclchan.c,
-	src/mod/console.mod/Makefile, src/mod/ctcp.mod/Makefile,
-	src/mod/filesys.mod/Makefile, src/mod/irc.mod/Makefile,
-	src/mod/irc.mod/chan.c, src/mod/irc.mod/irc.h,
-	src/mod/irc.mod/mode.c, src/mod/notes.mod/Makefile,
-	src/mod/server.mod/Makefile, src/mod/server.mod/server.c,
-	src/mod/server.mod/servmsg.c, src/mod/share.mod/Makefile,
-	src/mod/share.mod/share.c, src/mod/transfer.mod/Makefile,
-	src/mod/transfer.mod/transfer.c, src/mod/woobie.mod/Makefile:
 
 	resync 940380771-940924890 
 
 1999-10-26 19:44  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, src/patch.h, src/mod/server.mod/server.c:
-
 	G`Quann's fastdeq patch 
 
 1999-10-24 14:36  Fabian Knittel <fknittel@gmx.de>
-
-	* src/: patch.h, mod/channels.mod/Makefile,
-	mod/channels.mod/channels.c, mod/channels.mod/tclchan.c:
 
 	1) udef patch was wrongly applied in one place. 2) small fixes 
 
 1999-10-24 12:17  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, src/patch.h, src/mod/channels.mod/channels.c,
-	src/mod/channels.mod/cmdschan.c, src/mod/channels.mod/tclchan.c:
-
 	G`Quann's udef_chanstuff3 patch 
 
 1999-10-21 20:04  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.4, src/dns.c, src/patch.h:
 
 	dnsfix patch from G`Quann 
 
 1999-10-21 19:22  Fabian Knittel <fknittel@gmx.de>
 
-	* Makefile.in, acconfig.h, config.h.in, configure, configure.in,
-	install-sh, doc/BUG-REPORT, doc/Makefile.in, doc/UPDATES.pre1.4,
-	doc/man1/eggdrop.1, help/assoc.help, help/chaninfo.help,
-	help/channels.help, help/console.help, help/filesys.help,
-	help/irc.help, help/notes.help, help/seen.help, help/server.help,
-	help/share.help, help/userinfo.help, scripts/CONTENTS,
-	scripts/Makefile.in, scripts/bugreport.tcl,
-	scripts/help/userinfo.help, scripts/help/msg/userinfo.help,
-	src/Makefile, src/Makefile.in, src/botcmd.c, src/botmsg.c,
-	src/botnet.c, src/chanprog.c, src/cmds.c, src/dcc.c, src/dccutil.c,
-	src/dns.c, src/eggdrop.h, src/main.c, src/main.h, src/mem.c,
-	src/misc.c, src/modules.c, src/net.c, src/patch.h, src/proto.h,
-	src/tandem.h, src/tcl.c, src/tcldcc.c, src/tcluser.c,
-	src/userent.c, src/userrec.c, src/users.c, src/md5/Makefile,
-	src/md5/Makefile.in, src/mod/Makefile, src/mod/Makefile.generic,
-	src/mod/Makefile.in, src/mod/buildstatic,
-	src/mod/assoc.mod/Makefile, src/mod/assoc.mod/help/assoc.help,
-	src/mod/blowfish.mod/Makefile, src/mod/blowfish.mod/blowfish.c,
-	src/mod/channels.mod/Makefile, src/mod/channels.mod/channels.c,
-	src/mod/channels.mod/channels.h, src/mod/channels.mod/cmdschan.c,
-	src/mod/channels.mod/tclchan.c,
-	src/mod/channels.mod/help/chaninfo.help,
-	src/mod/channels.mod/help/channels.help,
-	src/mod/channels.mod/help/set/channels.help,
-	src/mod/console.mod/Makefile,
-	src/mod/console.mod/help/console.help,
-	src/mod/console.mod/help/set/console.help,
-	src/mod/ctcp.mod/Makefile, src/mod/ctcp.mod/help/set/ctcp.help,
-	src/mod/filesys.mod/Makefile, src/mod/filesys.mod/files.c,
-	src/mod/filesys.mod/files.english.lang,
-	src/mod/filesys.mod/files.german.lang,
-	src/mod/filesys.mod/filesys.c,
-	src/mod/filesys.mod/help/filesys.help,
-	src/mod/filesys.mod/help/set/filesys.help,
-	src/mod/irc.mod/Makefile, src/mod/irc.mod/chan.c,
-	src/mod/irc.mod/mode.c, src/mod/irc.mod/help/irc.help,
-	src/mod/irc.mod/help/msg/irc.help,
-	src/mod/irc.mod/help/set/irc.help, src/mod/notes.mod/Makefile,
-	src/mod/notes.mod/help/notes.help,
-	src/mod/notes.mod/help/msg/notes.help,
-	src/mod/notes.mod/help/set/notes.help, src/mod/server.mod/Makefile,
-	src/mod/server.mod/server.c, src/mod/server.mod/servmsg.c,
-	src/mod/server.mod/help/server.help,
-	src/mod/server.mod/help/set/server.help,
-	src/mod/share.mod/Makefile, src/mod/share.mod/share.c,
-	src/mod/share.mod/help/share.help, src/mod/transfer.mod/Makefile,
-	src/mod/transfer.mod/help/set/transfer.help,
-	src/mod/woobie.mod/Makefile:
-
 	resync with 1.3 tree, 939863113-940380771 
 
 1999-10-15 10:44  Fabian Knittel <fknittel@gmx.de>
-
-	* eggdrop.conf.dist, doc/UPDATES.pre1.4, doc/tcl-commands.doc,
-	scripts/compat.tcl, src/chan.h, src/chanprog.c, src/cmds.c,
-	src/eggdrop.h, src/flags.c, src/language.c, src/patch.h,
-	src/rfc1459.h, src/tcl.c, src/userent.c, src/users.c,
-	src/mod/console.mod/console.c, src/mod/filesys.mod/Makefile,
-	src/mod/filesys.mod/filedb.c, src/mod/filesys.mod/files.c,
-	src/mod/filesys.mod/files.german.lang,
-	src/mod/filesys.mod/filesys.c, src/mod/filesys.mod/filesys.h,
-	src/mod/filesys.mod/tclfiles.c, src/mod/irc.mod/chan.c,
-	src/mod/irc.mod/irc.c, src/mod/irc.mod/mode.c,
-	src/mod/transfer.mod/transfer.c:
 
 	resync 1.3: 939574072->939863113 
 
 1999-10-12 22:19  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, src/eggdrop.h, src/modules.c, src/patch.h,
-	src/mod/module.h, src/mod/filesys.mod/filesys.c,
-	src/mod/share.mod/share.c, src/mod/transfer.mod/transfer.c,
-	src/mod/transfer.mod/transfer.h:
-
 	the transfer patch 
 
 1999-10-12 10:28  Fabian Knittel <fknittel@gmx.de>
-
-	* doc/UPDATES1.4, src/patch.h, src/mod/server.mod/server.c,
-	src/mod/server.mod/servmsg.c:
 
 	penalties3 patch 
 
 1999-10-11 16:20  Fabian Knittel <fknittel@gmx.de>
 
-	* Makefile:
-
 	This shouldn't have happened... *grrr* 
 
 1999-10-11 07:59  Fabian Knittel <fknittel@gmx.de>
-
-	* Makefile, Makefile.in, configure.in, eggdrop.conf.dist, motd,
-	telnet-banner, doc/UPDATES.pre1.4, doc/UPDATES1.4, help/cmds2.help,
-	logs/CONTENTS, src/botnet.c, src/cmds.c, src/dcc.c, src/dccutil.c,
-	src/dns.c, src/eggdrop.h, src/main.c, src/net.c, src/patch.h,
-	src/users.c, src/mod/channels.mod/channels.c,
-	src/mod/channels.mod/channels.h, src/mod/channels.mod/cmdschan.c,
-	src/mod/channels.mod/userchan.c, src/mod/filesys.mod/filesys.c,
-	src/mod/irc.mod/mode.c, src/mod/irc.mod/tclirc.c,
-	src/mod/server.mod/server.c, src/mod/server.mod/servmsg.c,
-	text/CONTENTS, text/banner, text/motd:
 
 	dns patches, textdir patch, sync 939496415-939574072 
 
 1999-10-10 23:33  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, src/patch.h, src/mod/server.mod/servmsg.c:
-
 	the nonallocsock patch 
 
 1999-10-10 22:24  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, src/botnet.c, src/dcc.c, src/dns.c,
-	src/eggdrop.h, src/net.c, src/patch.h,
-	src/mod/server.mod/servmsg.c:
-
 	the hostbyteorder patch 
 
 1999-10-10 00:56  Fabian Knittel <fknittel@gmx.de>
-
-	* CONTENTS, FEATURES, Makefile.in, configure, configure.in,
-	eggdrop.conf.dist, doc/BUG-REPORT, doc/UPDATES.pre1.4,
-	doc/eggdrop.doc, doc/tcl-commands.doc, doc/man1/eggdrop.1,
-	help/cmds1.help, scripts/autobotchk, scripts/botchk, scripts/weed,
-	src/cmds.c, src/eggdrop.h, src/main.c, src/modules.c, src/net.c,
-	src/patch.h, src/tcl.c, src/tcldcc.c, src/mod/share.mod/share.c:
 
 	yet another tree merge and fixups... let's see how long it takes
 	until I learn this stuff 
 
 1999-10-09 19:44  Fabian Knittel <fknittel@gmx.de>
 
-	* src/dns.c:
-
 	forgot those new files again.. *gnnnn*.. I'll learn it...  
 
 1999-10-09 19:31  Fabian Knittel <fknittel@gmx.de>
-
-	* Makefile.in, configure, configure.in, eggdrop.conf.dist,
-	doc/UPDATES1.4, src/Makefile, src/botnet.c, src/dcc.c,
-	src/dccutil.c, src/eggdrop.h, src/main.h, src/modules.c, src/net.c,
-	src/proto.h, src/mod/Makefile, src/mod/Makefile.generic,
-	src/mod/module.h, src/mod/modvals.h, src/mod/filesys.mod/filesys.c,
-	src/mod/server.mod/server.c, src/mod/server.mod/servmsg.c:
 
 	Fabian's asyncdns patch 
 
 1999-10-09 16:41  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/BUG-REPORT, scripts/ques5.tcl, src/mod/notes.mod/cmdsnote.c,
-	src/mod/notes.mod/notes.h:
-
 	missed new files during 1.3 merge 
 
 1999-10-09 15:46  Fabian Knittel <fknittel@gmx.de>
-
-	* Makefile, Makefile.in, README, config.h.in, configure,
-	configure.in, eggdrop.conf.dist, doc/MODULES, doc/UPDATES.pre1.4,
-	doc/eggdrop.doc, doc/tcl-commands.doc, doc/tricks,
-	scripts/CONTENTS, scripts/ques4.tcl, scripts/weed, src/Makefile,
-	src/botcmd.c, src/botmsg.c, src/chan.h, src/chanprog.c, src/cmds.c,
-	src/dcc.c, src/dccutil.c, src/eggdrop.h, src/flags.c, src/lang.h,
-	src/language.c, src/main.c, src/main.h, src/match.c, src/misc.c,
-	src/modules.c, src/modules.h, src/net.c, src/patch.h, src/proto.h,
-	src/rfc1459.c, src/tcl.c, src/tcldcc.c, src/tclhash.c,
-	src/tclhash.h, src/tclmisc.c, src/userent.c, src/userrec.c,
-	src/users.c, src/users.h, src/mod/module.h, src/mod/modvals.h,
-	src/mod/assoc.mod/assoc.c, src/mod/blowfish.mod/blowfish.c,
-	src/mod/channels.mod/channels.c, src/mod/channels.mod/channels.h,
-	src/mod/channels.mod/cmdschan.c, src/mod/channels.mod/tclchan.c,
-	src/mod/channels.mod/userchan.c, src/mod/console.mod/console.c,
-	src/mod/ctcp.mod/ctcp.c, src/mod/filesys.mod/Makefile,
-	src/mod/filesys.mod/filedb.c, src/mod/filesys.mod/files.c,
-	src/mod/filesys.mod/filesys.c, src/mod/irc.mod/chan.c,
-	src/mod/irc.mod/cmdsirc.c, src/mod/irc.mod/irc.c,
-	src/mod/irc.mod/irc.h, src/mod/irc.mod/mode.c,
-	src/mod/irc.mod/msgcmds.c, src/mod/irc.mod/tclirc.c,
-	src/mod/notes.mod/Makefile, src/mod/notes.mod/notes.c,
-	src/mod/server.mod/cmdsserv.c, src/mod/server.mod/server.c,
-	src/mod/server.mod/servmsg.c, src/mod/share.mod/share.c,
-	src/mod/transfer.mod/transfer.c, src/mod/woobie.mod/woobie.c:
 
 	all changes to the 1.3 tree merged with 1.4 
 
 1999-10-09 13:10  Fabian Knittel <fknittel@gmx.de>
 
-	* help/: assoc.help, chaninfo.help, channels.help, cmds1.help,
-	cmds2.help, console.help, core.help, filesys.help, irc.help,
-	notes.help, seen.help, server.help, share.help, userinfo.help:
-
 	finished reordering help files. They were all misplaced...  
 
 1999-09-13 14:43  segfault
-
-	* src/patch.h:
 
 	Blah 
 
 1999-09-13 14:38  segfault
 
-	* configure, configure.in:
-
 	Commits 
 
 1999-09-13 14:36  segfault
 
-	* doc/BOTNET, doc/CONTENTS, doc/KNOWN-PROBLEMS, doc/MODULES,
-	doc/Ode_To_Beldin, doc/UPDATES.pre1.4, doc/UPDATES1.4,
-	doc/compiling.FAQ, doc/eggdrop.doc, doc/patch.howto,
-	doc/tcl-commands.doc, doc/tricks, doc/man1/eggdrop.1,
-	scripts/CONTENTS, scripts/action.fix.tcl, scripts/alltools.tcl,
-	scripts/autobotchk, scripts/botchk, scripts/bugreport.tcl,
-	scripts/compat.tcl, scripts/getops-2.2d.tcl, scripts/klined.tcl,
-	scripts/notes2.tcl, scripts/ques4.tcl, scripts/sentinel1.54.tcl,
-	scripts/userinfo1.0.tcl, scripts/weed, src/Makefile, src/botcmd.c,
-	src/botmsg.c, src/botnet.c, src/chan.h, src/chanprog.c, src/cmds.c,
-	src/cmdt.h, src/dcc.c, src/dccutil.c, src/eggdrop.h, src/flags.c,
-	src/flags.h, src/lang.h, src/language.c, src/main.c, src/main.h,
-	src/match.c, src/mem.c, src/misc.c, src/modules.c, src/modules.h,
-	src/net.c, src/patch.h, src/proto.h, src/rfc1459.c, src/rfc1459.h,
-	src/tandem.h, src/tcl.c, src/tcldcc.c, src/tclegg.h, src/tclhash.c,
-	src/tclhash.h, src/tclmisc.c, src/tcluser.c, src/userent.c,
-	src/userrec.c, src/users.c, src/users.h, src/md5/Makefile,
-	src/md5/global.h, src/md5/md5.h, src/md5/md5c.c, src/mod/Makefile,
-	src/mod/Makefile.generic, src/mod/buildstatic, src/mod/module.h,
-	src/mod/modvals.h, src/mod/assoc.mod/Makefile,
-	src/mod/assoc.mod/assoc.c, src/mod/blowfish.mod/Makefile,
-	src/mod/blowfish.mod/bf_tab.h, src/mod/blowfish.mod/blowfish.c,
-	src/mod/blowfish.mod/blowfish.h, src/mod/channels.mod/Makefile,
-	src/mod/channels.mod/channels.c, src/mod/channels.mod/channels.h,
-	src/mod/channels.mod/cmdschan.c, src/mod/channels.mod/tclchan.c,
-	src/mod/channels.mod/userchan.c, src/mod/console.mod/Makefile,
-	src/mod/console.mod/console.c, src/mod/ctcp.mod/Makefile,
-	src/mod/ctcp.mod/ctcp.c, src/mod/ctcp.mod/ctcp.h,
-	src/mod/filesys.mod/Makefile, src/mod/filesys.mod/filedb.c,
-	src/mod/filesys.mod/files.c,
-	src/mod/filesys.mod/files.english.lang,
-	src/mod/filesys.mod/files.h, src/mod/filesys.mod/filesys.c,
-	src/mod/filesys.mod/filesys.h, src/mod/filesys.mod/tclfiles.c,
-	src/mod/irc.mod/Makefile, src/mod/irc.mod/chan.c,
-	src/mod/irc.mod/cmdsirc.c, src/mod/irc.mod/irc.c,
-	src/mod/irc.mod/irc.h, src/mod/irc.mod/mode.c,
-	src/mod/irc.mod/msgcmds.c, src/mod/irc.mod/tclirc.c,
-	src/mod/notes.mod/Makefile, src/mod/notes.mod/notes.c,
-	src/mod/server.mod/Makefile, src/mod/server.mod/cmdsserv.c,
-	src/mod/server.mod/server.c, src/mod/server.mod/server.h,
-	src/mod/server.mod/servmsg.c, src/mod/share.mod/Makefile,
-	src/mod/share.mod/share.c, src/mod/transfer.mod/Makefile,
-	src/mod/transfer.mod/transfer.c, src/mod/transfer.mod/transfer.h,
-	src/mod/woobie.mod/Makefile, src/mod/woobie.mod/woobie.c:
-
 	Initial commit based off of .29 cvs 
 
 1999-09-13 14:18  segfault
-
-	* CONTENTS, COPYING, FEATURES, INSTALL, Makefile, Makefile.in,
-	NEWTO1.4.0, README, TODO, config.h.in, configure, configure.in,
-	eggdrop.conf.dist, lush.h.in, motd, telnet-banner:
 
 	Initial stuff (.29 cvs) 
 

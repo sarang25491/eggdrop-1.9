@@ -1,13 +1,11 @@
 /*
  * chanprog.c -- handles:
  *   rmspace()
- *   maintaining the server list
- *   revenge punishment
  *   timers, utimers
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.27 2001/08/13 16:52:13 guppy Exp $
+ * $Id: chanprog.c,v 1.28 2001/08/15 17:09:53 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -217,41 +215,6 @@ int expmem_chanprog()
   for (t = utimer; t; t = t->next)
     tot += sizeof(tcl_timer_t) + strlen(t->cmd) + 1;
   return tot;
-}
-
-/* Dump uptime info out to dcc (guppy 9Jan99)
- */
-void tell_verbose_uptime(int idx)
-{
-  char s[256], s1[121];
-  time_t now2, hr, min;
-
-  now2 = now - online_since;
-  s[0] = 0;
-  if (now2 > 86400) {
-    /* days */
-    sprintf(s, "%d day", (int) (now2 / 86400));
-    if ((int) (now2 / 86400) >= 2)
-      strcat(s, "s");
-    strcat(s, ", ");
-    now2 -= (((int) (now2 / 86400)) * 86400);
-  }
-  hr = (time_t) ((int) now2 / 3600);
-  now2 -= (hr * 3600);
-  min = (time_t) ((int) now2 / 60);
-  sprintf(&s[strlen(s)], "%02d:%02d", (int) hr, (int) min);
-  s1[0] = 0;
-  if (backgrd)
-    strcpy(s1, _("background"));
-  else {
-    if (term_z)
-      strcpy(s1, _("terminal mode"));
-    else if (con_chan)
-      strcpy(s1, _("status mode"));
-    else
-      strcpy(s1, _("log dump mode"));
-  }
-  dprintf(idx, "%s %s  (%s)\n", _("Online for"), s, s1);
 }
 
 /* Dump status info out to dcc

@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.49 2001/08/13 20:47:52 guppy Exp $
+ * $Id: proto.h,v 1.50 2001/08/15 17:09:53 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -98,7 +98,6 @@ char *unsigned_int_to_base10(unsigned int);
 char *int_to_base64(unsigned int);
 
 /* chanprog.c */
-void tell_verbose_uptime(int);
 void tell_verbose_status(int);
 void tell_settings(int);
 int logmodes(char *);

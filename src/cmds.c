@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.63 2001/08/10 23:51:20 ite Exp $
+ * $Id: cmds.c,v 1.64 2001/08/15 17:09:53 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -35,7 +35,7 @@ extern struct userrec	*userlist;
 extern tcl_timer_t	*timer, *utimer;
 extern int		 dcc_total, remote_boots, backgrd, make_userfile,
 			 do_restart, conmask, require_p, must_be_owner,
-			 strict_host;
+			 strict_host, term_z, con_chan;
 extern unsigned long	 otraffic_irc, otraffic_irc_today,
 			 itraffic_irc, itraffic_irc_today,
 			 otraffic_bn, otraffic_bn_today,
@@ -233,26 +233,22 @@ static void cmd_botinfo(struct userrec *u, int idx, char *par)
 {
   char s[512], s2[32];
   struct chanset_t *chan;
-  time_t now2;
-  int hr, min;
+  unsigned long uptime, tmp, hr, min;
 
-  now2 = now - online_since;
-  s2[0] = 0;
-  if (now2 > 86400) {
-    int days = now2 / 86400;
-
-    /* Days */
-    sprintf(s2, "%d day", days);
-    if (days >= 2)
-      strcat(s2, "s");
-    strcat(s2, ", ");
-    now2 -= days * 86400;
-  }
-  hr = (time_t) ((int) now2 / 3600);
-  now2 -= (hr * 3600);
-  min = (time_t) ((int) now2 / 60);
-  sprintf(&s2[strlen(s2)], "%02d:%02d", (int) hr, (int) min);
   putlog(LOG_CMDS, "*", "#%s# botinfo", dcc[idx].nick);
+
+  uptime = now - online_since;
+  s2[0] = 0;
+  if (uptime > 86400) {
+    tmp = (uptime / 86400);
+    sprintf(s2, "%lu day%s, ", tmp, (tmp == 1) ? "" : "s");
+    uptime -= (tmp * 86400);
+  }
+  hr = (uptime / 3600); 
+  uptime -= (hr * 3600);
+  min = (uptime / 60); 
+  sprintf(&s2[strlen(s2)], "%02lu:%02lu", hr, min);
+
   simple_sprintf(s, "%d:%s@%s", dcc[idx].sock, dcc[idx].nick, botnetnick);
   botnet_send_infoq(-1, s);
   s[0] = 0;
@@ -541,8 +537,26 @@ static void cmd_match(struct userrec *u, int idx, char *par)
 
 static void cmd_uptime(struct userrec *u, int idx, char *par)
 {
+  char s[256];
+  unsigned long uptime, tmp, hr, min; 
+
   putlog(LOG_CMDS, "*", "#%s# uptime", dcc[idx].nick);
-  tell_verbose_uptime(idx);
+    
+  uptime = now - online_since;
+  s[0] = 0;
+  if (uptime > 86400) {
+    tmp = (uptime / 86400);
+    sprintf(s, "%lu day%s, ", tmp, (tmp == 1) ? "" : "s");
+    uptime -= (tmp * 86400);
+  }
+  hr = (uptime / 3600);
+  uptime -= (hr * 3600);
+  min = (uptime / 60);
+  sprintf(&s[strlen(s)], "%02lu:%02lu", hr, min);
+
+  dprintf(idx, "%s %s  (%s)\n", _("Online for"), s, backgrd ?
+	  _("background") : term_z ? _("terminal mode") : con_chan ?
+	  _("status mode") : _("log dump mode"));
 }
 
 static void cmd_status(struct userrec *u, int idx, char *par)
@@ -1046,17 +1060,14 @@ static void cmd_restart(struct userrec *u, int idx, char *par)
 {
   putlog(LOG_CMDS, "*", "#%s# restart", dcc[idx].nick);
   if (!backgrd) {
-    dprintf(idx, "You can not .restart a bot when running -n (due to tcl)\n");
+    dprintf(idx, "%s\n", _("You can not .restart a bot when running -n (due to tcl)"));
     return;
   }
   dprintf(idx, "Restarting.\n");
-  if (make_userfile) {
-    putlog(LOG_MISC, "*",
-	   "Uh, guess you don't need to create a new userfile.");
+  if (make_userfile)
     make_userfile = 0;
-  }
   write_userfile(-1);
-  putlog(LOG_MISC, "*", "Restarting ...");
+  putlog(LOG_MISC, "*", "%s", _("Restarting ..."));
   wipe_timers(interp, &utimer);
   wipe_timers(interp, &timer);
   do_restart = idx;
@@ -1065,21 +1076,18 @@ static void cmd_restart(struct userrec *u, int idx, char *par)
 static void cmd_rehash(struct userrec *u, int idx, char *par)
 {
   putlog(LOG_CMDS, "*", "#%s# rehash", dcc[idx].nick);
-  dprintf(idx, "Rehashing.\n");
-  if (make_userfile) {
-    putlog(LOG_MISC, "*",
-	   "Uh, guess you don't need to create a new userfile.");
+  dprintf(idx, "%s\n", _("Rehashing."));
+  if (make_userfile)
     make_userfile = 0;
-  }
   write_userfile(-1);
-  putlog(LOG_MISC, "*", "Rehashing ...");
+  putlog(LOG_MISC, "*", "%s", _("Rehashing..."));
   do_restart = -2;
 }
 
 static void cmd_reload(struct userrec *u, int idx, char *par)
 {
   putlog(LOG_CMDS, "*", "#%s# reload", dcc[idx].nick);
-  dprintf(idx, "Reloading user file...\n");
+  dprintf(idx, "%s\n", _("Reloading user file..."));
   reload();
 }
 
@@ -1089,12 +1097,16 @@ void cmd_die(struct userrec *u, int idx, char *par)
 
   putlog(LOG_CMDS, "*", "#%s# die %s", dcc[idx].nick, par);
   if (par[0]) {
-    egg_snprintf(s1, sizeof s1, "BOT SHUTDOWN (%s: %s)", dcc[idx].nick, par);
-    egg_snprintf(s2, sizeof s2, "DIE BY %s!%s (%s)", dcc[idx].nick, dcc[idx].host, par);
+    egg_snprintf(s1, sizeof s1, "%s (%s: %s)", _("BOT SHUTDOWN"), dcc[idx].nick,
+		 par);
+    egg_snprintf(s2, sizeof s2, "%s %s!%s (%s)", _("DIE BY"), dcc[idx].nick, 
+		 dcc[idx].host, par);
     strncpyz(quit_msg, par, 1024);
   } else {
-    egg_snprintf(s1, sizeof s1, "BOT SHUTDOWN (Authorized by %s)", dcc[idx].nick);
-    egg_snprintf(s2, sizeof s2, "DIE BY %s!%s (request)", dcc[idx].nick, dcc[idx].host);
+    egg_snprintf(s1, sizeof s1, "%s (%s %s)", _("BOT SHUTDOWN"), _("Authorized by"),
+		 dcc[idx].nick);
+    egg_snprintf(s2, sizeof s2, "%s %s!%s (%s)", _("DIE BY"), dcc[idx].nick, 
+		 dcc[idx].host, _("requested"));
     strncpyz(quit_msg, dcc[idx].nick, 1024);
   }
   kill_bot(s1, s2);
@@ -2536,7 +2548,8 @@ static void cmd_mns_host(struct userrec *u, int idx, char *par)
   struct flag_record fr = {FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
 
   if (!par[0]) {
-    dprintf(idx, "Usage: -host [handle] <hostmask>\n");
+    dprintf(idx, "%s: -host [%s] <%s>\n", _("Usage"), _("handle"), 
+	    _("hostmask"));
     return;
   }
   handle = newsplit(&par);
@@ -2549,41 +2562,41 @@ static void cmd_mns_host(struct userrec *u, int idx, char *par)
     u2 = u;
   }
   if (!u2 || !u) {
-    dprintf(idx, "No such user.\n");
+    dprintf(idx, "%s\n", _("No such user."));
     return;
   }
 
   get_user_flagrec(u, &fr, NULL);
   /* check to see if user is +d or +k and don't let them remove hosts */
-  if ((u->flags & USER_DEOP) || (u->flags & USER_KICK) || chan_deop(fr) || chan_kick (fr))
-    {
-      dprintf(idx, "You can't remove hosts while having the +d or +k flag.\n");
-      return;
-    }
+  if ((u->flags & USER_DEOP) || (u->flags & USER_KICK) || chan_deop(fr) || 
+      chan_kick (fr)) {
+    dprintf(idx, "%s\n", _("You can't remove hosts while having the +d or +k flag."));
+    return;
+  }
 
   if (egg_strcasecmp(handle, dcc[idx].nick)) {
     if (!(u2->flags & USER_BOT) && !(u->flags & USER_MASTER) &&
 	!chan_master(fr)) {
-      dprintf(idx, "You can't remove hostmasks from non-bots.\n");
+      dprintf(idx, "%s\n", _("You can't remove hostmasks from non-bots."));
       return;
     } else if ((u2->flags & USER_BOT) && (bot_flags(u2) & BOT_SHARE) &&
 	       !(u->flags & USER_OWNER)) {
-      dprintf(idx, "You can't remove hostmask from a shared bot.\n");
+      dprintf(idx, "%s\n", _("You can't remove hostmask from a shared bot."));
       return;
     } else if ((u2->flags & (USER_OWNER|USER_MASTER)) &&
 	       !(u->flags & USER_OWNER) && (u2 != u)) {
-      dprintf(idx, "Can't remove hostmasks from the bot owner/master.\n");
+      dprintf(idx, "%s\n", _("Can't remove hostmasks from the bot owner/master."));
       return;
     } else if (!(u->flags & USER_BOTMAST) && !chan_master(fr)) {
-      dprintf(idx, "Permission denied.\n");
+      dprintf(idx, "%s\n", _("Permission denied."));
       return;
     }
   }
   if (delhost_by_handle(handle, host)) {
     putlog(LOG_CMDS, "*", "#%s# -host %s %s", dcc[idx].nick, handle, host);
-    dprintf(idx, "Removed '%s' from %s\n", host, handle);
+    dprintf(idx, "%s\n", _("Removed '%s' from %s"), host, handle);
   } else
-    dprintf(idx, "Failed.\n");
+    dprintf(idx, "%s\n", _("Failed."));
 }
 
 static void cmd_modules(struct userrec *u, int idx, char *par)
@@ -2591,14 +2604,14 @@ static void cmd_modules(struct userrec *u, int idx, char *par)
   int ptr;
 
   if (!par[0])
-    dprintf(idx, "Usage: modules <bot>\n");
+    dprintf(idx, "%s: modules <bot>\n", _("Usage"));
   else {
     putlog(LOG_CMDS, "*", "#%s# modules %s", dcc[idx].nick, par);
     if ((ptr = nextbot(par)) >= 0)
       dprintf(ptr, "v %s %s %d:%s\n", botnetnick, par, dcc[idx].sock,
 	      dcc[idx].nick);
     else
-      dprintf(idx, "No such bot online.\n");
+      dprintf(idx, "%s\n", _("No such bot online."));
   }
 }
 
@@ -2701,7 +2714,7 @@ static char *btos(unsigned long  bytes)
 
 static void cmd_whoami(struct userrec *u, int idx, char *par)
 {
-  dprintf(idx, "You are %s@%s\n", dcc[idx].nick, botnetnick);
+  dprintf(idx, "%s %s@%s\n", _("You are"), dcc[idx].nick, botnetnick);
   putlog(LOG_CMDS, "*", "#%s# whoami", dcc[idx].nick);
 }
 
