@@ -1,0 +1,20 @@
+<eggdrop>
+	<botname>eggdrop</botname>
+	<userfile>users.xml</userfile>
+	<telnet_vhost />
+	<telnet_port>3141</telnet_port>
+	<telnet_stealth>0</telnet_stealth>
+	<telnet_max_retries>3</telnet_max_retries>
+	<logfile_suffix>.%d%b%Y</logfile_suffix>
+	<max_logsize>0</max_logsize>
+	<switch_logfiles_at>0</switch_logfiles_at>
+	<keep_all_logs>0</keep_all_logs>
+	<quick_logs>0</quick_logs>
+	<autoload>
+		<module>blowfish</module>
+		<module>tclscript</module>
+		<module>script</module>
+		<module>server</module>
+		<script>config.tcl</script>
+	</autoload>
+</eggdrop>

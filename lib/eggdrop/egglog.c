@@ -4,7 +4,7 @@ static bind_table_t *BT_log = NULL;
 
 void egglog_init()
 {
-	BT_log = bind_table_add("log", 4, "issl", MATCH_NONE, 0);
+	BT_log = bind_table_add("log", 4, "issi", MATCH_NONE, BIND_STACKABLE);
 }
 
 int putlog(int flags, const char *chan, const char *format, ...)

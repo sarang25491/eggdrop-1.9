@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: chanprog.c,v 1.56 2003/02/11 02:32:05 stdarg Exp $";
+static const char rcsid[] = "$Id: chanprog.c,v 1.57 2003/02/14 20:55:02 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -324,14 +324,7 @@ void chanprog()
   helpdir[0] = 0;
   tempdir[0] = 0;
   conmask = 0;
-  /* Turn off read-only variables (make them write-able) for rehash */
-  protect_readonly = 0;
-  /* Now read it */
-  if (!readtclprog(configfile))
-    fatal(_("CONFIG FILE NOT LOADED (NOT FOUND, OR ERROR)"), 0);
-  /* We should be safe now */
   call_hook(HOOK_REHASH);
-  protect_readonly = 1;
   if (!core_config.botname)
     fatal("Please set the myname setting.\n", 0);
   if (!userfile[0])
@@ -347,7 +340,7 @@ Telnet to the bot and enter 'NEW' as your nickname."), 0);
     printf(_("\n\nSTARTING BOT IN USERFILE CREATION MODE.\n\
 Telnet to the bot and enter 'NEW' as your nickname.\n"));
     if (module_find("server", 0, 0))
-      printf(_("OR go to IRC and type:  /msg %s hello\n"), origbotname);
+      printf(_("OR go to IRC and type:  /msg %s hello\n"), core_config.botname);
     printf(_("This will make the bot recognize you as the master.\n\n"));
   } else if (make_userfile) {
      make_userfile = 0;

@@ -30,7 +30,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.133 2003/02/11 02:32:05 stdarg Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.134 2003/02/14 20:55:02 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -123,8 +123,7 @@ int	con_chan = 0;		/* Foreground: constantly display channel
 				   stats? */
 int	term_z = 0;		/* Foreground: use the terminal as a party
 				   line? */
-char	configfile[121] = "eggdrop.conf"; /* Name of the config file */
-static char preload_module[121] = ""; /* Name of the module to preload */
+char	configfile[121] = "config.xml"; /* Name of the config file */
 char	helpdir[121] = "help/";	/* Directory of help files (if used) */
 char	textdir[121] = "text/";	/* Directory for text files that get dumped */
 time_t	online_since;		/* Unix-time that the bot loaded up */
@@ -332,10 +331,6 @@ static void do_args(int argc, char * const *argv)
 	make_userfile = 1;
         break;
 
-      case 'p':
-	strlcpy(preload_module, optarg, sizeof preload_module);
-	break;
-
       case 'v':
 	print_version();
 	bg_send_quit(BG_ABORT);
@@ -501,6 +496,8 @@ int main(int argc, char **argv)
   struct chanset_t *chan;
   egg_timeval_t howlong;
   int timeout;
+  void *config_root;
+  char *modname, *scriptname;
 
 #ifdef DEBUG
   /* Make sure it can write core, if you make debug. Else it's pretty
@@ -587,7 +584,7 @@ int main(int argc, char **argv)
     fatal(_("ERROR: Eggdrop will not run as root!"), 0);
 
   egg = eggdrop_new();
-  core_config_init();
+  core_config_init(configfile);
   egglog_init();
   logfile_init();
   script_init();
@@ -615,19 +612,25 @@ int main(int argc, char **argv)
   strlcpy(s, ctime(&now), sizeof s);
   strcpy(&s[11], &s[20]);
   putlog(LOG_ALL, "*", "--- Loading %s (%s)", ver, s);
-  if (preload_module[0])
-    module_load(preload_module);
-  chanprog();
-  if (!encrypt_pass) {
-    printf(_("You have installed modules but have not selected an encryption\n\
-module, please consult the default config file for info.\n"));
-    bg_send_quit(BG_ABORT);
-    exit(1);
-  }
+
+	/* Scan the autoload section of config. */
+	config_root = config_get_root("eggdrop");
+	for (i = 0; config_exists(config_root, "eggdrop", 0, "autoload", 0, "module", i, NULL); i++) {
+		modname = NULL;
+		config_get_str(&modname, config_root, "eggdrop", 0, "autoload", 0, "module", i, NULL);
+		module_load(modname);
+	}
+	for (i = 0; config_exists(config_root, "eggdrop", 0, "autoload", 0, "script", i, NULL); i++) {
+		scriptname = NULL;
+		config_get_str(&scriptname, config_root, "eggdrop", 0, "autoload", 0, "script", i, NULL);
+		script_load(scriptname);
+	}
+
+
   i = 0;
   for (chan = chanset; chan; chan = chan->next)
     i++;
-  putlog(LOG_MISC, "*", "=== %s: %d channels, %d users.", myname, i,
+  putlog(LOG_MISC, "*", "=== %s: %d channels, %d users.", core_config.botname, i,
          count_users(userlist));
   cache_miss = 0;
   cache_hit = 0;

@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: modules.h,v 1.17 2003/01/02 21:33:16 wcc Exp $
+ * $Id: modules.h,v 1.18 2003/02/14 20:55:02 stdarg Exp $
  */
 
 #ifndef _EGG_MODULE_H
@@ -33,14 +33,6 @@
 /* Module related structures
  */
 #include <eggdrop/modvals.h>
-
-#ifndef MAKING_MODS
-extern void (*encrypt_pass) (char *, char *);
-extern char *(*encrypt_string) (char *, char *);
-extern char *(*decrypt_string) (char *, char *);
-extern int (*match_noterej) (struct userrec *, char *);
-extern int (*storenote)(char *from, char *to, char *msg, int idx, char *who, int bufsize);
-#endif /* MAKING_MODS	*/
 
 #ifndef MAKING_NUMMODS
 

@@ -26,7 +26,7 @@ static config_var_t core_config_vars[] = {
 	{0}
 };
 
-void core_config_init()
+void core_config_init(const char *fname)
 {
 	/* Set default vals. */
 	core_config.botname = strdup("eggdrop");
@@ -38,7 +38,7 @@ void core_config_init()
 
 	core_config.logfile_suffix = strdup(".%d%b%Y");
 
-	config_root = config_load("config.xml");
+	config_root = config_load(fname);
 	config_set_root("eggdrop", config_root);
 	config_get_table(core_config_vars, config_root, "eggdrop", 0, NULL);
 }
@@ -46,5 +46,5 @@ void core_config_init()
 void core_config_save()
 {
 	config_set_table(core_config_vars, config_root, "eggdrop", 0, NULL);
-	config_save(config_root, "config.xml");
+	config_save(config_root, "_config.xml");
 }

@@ -35,12 +35,20 @@ static partymember_t *party_head = NULL;
 static partychan_t *chan_head = NULL;
 static int g_pid = 0;	/* Keep track of next available pid. */
 
+static int on_putlog(int flags, const char *chan, const char *text, int len);
+
+static bind_list_t log_binds[] = {
+	{"", on_putlog},
+	{0}
+};
+
 int partyline_init()
 {
 	str_redup(&partyline_command_chars, "./");
 	pid_ht = hash_table_create(NULL, NULL, 13, HASH_TABLE_INTS);
 	BT_cmd = bind_table_add("party", 5, "isUss", MATCH_PARTIAL, 0);
 	BT_party_out = bind_table_add("party_out", 5, "isUsi", MATCH_NONE, 0);
+	bind_add_list("log", log_binds);
 	return(0);
 }
 
@@ -267,6 +275,23 @@ int partyline_printf(int pid, const char *fmt, ...)
 
 	if (p->idx != -1) sockbuf_write(p->idx, ptr, len);
 	bind_check(BT_party_out, NULL, pid, p->nick, p->user, ptr, len);
+	if (ptr != buf) free(ptr);
+	return(0);
+}
+
+/* Logging stuff. */
+static int on_putlog(int flags, const char *chan, const char *text, int len)
+{
+	char *ptr, buf[1024];
+	int buflen;
+	partymember_t *p;
+
+	ptr = egg_msprintf(buf, sizeof(buf), &buflen, "%s\n", text);
+
+	for (p = party_head; p; p = p->next) {
+		if ((p->flags & PARTY_DELETED) || p->idx == -1) continue;
+		sockbuf_write(p->idx, ptr, buflen);
+	}
 	if (ptr != buf) free(ptr);
 	return(0);
 }
