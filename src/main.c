@@ -30,7 +30,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.143 2003/03/24 02:42:39 wcc Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.144 2003/04/04 04:04:46 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -633,7 +633,7 @@ int main(int argc, char **argv)
   online_since = now;
   howlong.sec = 1;
   howlong.usec = 0;
-  timer_create_repeater(&howlong, core_secondly);
+  timer_create_repeater(&howlong, "main loop", core_secondly);
 
   /* init time'd hooks */
   add_hook(HOOK_MINUTELY, (Function) core_minutely);

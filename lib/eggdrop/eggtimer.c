@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggtimer.c,v 1.4 2003/01/02 21:33:13 wcc Exp $";
+static const char rcsid[] = "$Id: eggtimer.c,v 1.5 2003/04/04 04:04:46 stdarg Exp $";
 #endif
 
 #include <stdio.h> /* NULL */
@@ -37,6 +37,7 @@ static egg_timeval_t now;
 typedef struct egg_timer_b {
 	struct egg_timer_b *next;
 	int id;
+	char *name;
 	Function callback;
 	void *client_data;
 	egg_timeval_t howlong;
@@ -123,13 +124,15 @@ static int timer_add_to_list(egg_timer_t *timer)
 	return(0);
 }
 
-int timer_create_complex(egg_timeval_t *howlong, Function callback, void *client_data, int flags)
+int timer_create_complex(egg_timeval_t *howlong, const char *name, Function callback, void *client_data, int flags)
 {
 	egg_timer_t *timer;
 
 	/* Fill out a new timer. */
 	timer = (egg_timer_t *)malloc(sizeof(*timer));
 	timer->id = timer_next_id++;
+	if (name) timer->name = strdup(name);
+	else timer->name = NULL;
 	timer->callback = callback;
 	timer->client_data = client_data;
 	timer->flags = flags;
@@ -160,6 +163,7 @@ int timer_destroy(int timer_id)
 	if (prev) prev->next = timer->next;
 	else timer_list_head = timer->next;
 
+	if (timer->name) free(timer->name);
 	free(timer);
 	return(0);
 }
@@ -170,6 +174,7 @@ int timer_destroy_all()
 
 	for (timer = timer_list_head; timer; timer = next) {
 		next = timer->next;
+		if (timer->name) free(timer->name);
 		free(timer);
 	}
 	timer_list_head = NULL;
@@ -216,6 +221,7 @@ int timer_run()
 			timer_add_to_list(timer);
 		}
 		else {
+			if (timer->name) free(timer->name);
 			free(timer);
 		}
 
@@ -242,7 +248,7 @@ int timer_list(int **ids)
 	return(ntimers);
 }
 
-int timer_info(int id, egg_timeval_t *initial_len, egg_timeval_t *trigger_time)
+int timer_info(int id, char **name, egg_timeval_t *initial_len, egg_timeval_t *trigger_time)
 {
 	egg_timer_t *timer;
 
@@ -250,6 +256,7 @@ int timer_info(int id, egg_timeval_t *initial_len, egg_timeval_t *trigger_time)
 		if (timer->id == id) break;
 	}
 	if (!timer) return(-1);
+	if (name) *name = timer->name;
 	if (initial_len) memcpy(initial_len, &timer->howlong, sizeof(*initial_len));
 	if (trigger_time) memcpy(trigger_time, &timer->trigger_time, sizeof(*trigger_time));
 	return(0);

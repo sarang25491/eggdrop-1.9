@@ -28,7 +28,7 @@ static int script_timer(int sec, int usec, script_callback_t *callback, int flag
 	howlong.usec = usec;
 	callback->syntax = (char *)malloc(1);
 	callback->syntax[0] = 0;
-	id = timer_create_complex(&howlong, callback->callback, callback, flags);
+	id = timer_create_complex(&howlong, callback->name, callback->callback, callback, flags);
 	return(id);
 }
 
@@ -68,47 +68,39 @@ static int script_timers(script_var_t *retval)
 
 static int script_timer_info(script_var_t *retval, int timer_id)
 {
-	int *info;
 	egg_timeval_t howlong, trigger_time, start_time, diff, now;
+	char *name;
 
-	if (timer_info(timer_id, &howlong, &trigger_time)) {
-		retval->type = SCRIPT_STRING | SCRIPT_ERROR;
-		retval->value = "Timer not found";
-		return(0);
-	}
+	retval->type = SCRIPT_VAR | SCRIPT_FREE | SCRIPT_ARRAY;
+	retval->len = 0;
+
+	if (timer_info(timer_id, &name, &howlong, &trigger_time)) return(0);
 
 	timer_get_now(&now);
 
-	/* We have 11 fields. */
-	info = (int *)malloc(sizeof(int) * 11);
-
-	/* Timer id, when it started, initial timer length,
+	/* Name, when it started, initial timer length,
 		how long it's run already, how long until it triggers,
 		absolute time when it triggers. */
-	info[0] = timer_id;
+
+	script_list_append(retval, script_string(name, -1));
 
 	timer_diff(&howlong, &trigger_time, &start_time);
-	info[1] = start_time.sec;
-	info[2] = start_time.usec;
+	script_list_append(retval, script_int(start_time.sec));
+	script_list_append(retval, script_int(start_time.usec));
 
-	info[3] = howlong.sec;
-	info[4] = howlong.usec;
+	script_list_append(retval, script_int(howlong.sec));
+	script_list_append(retval, script_int(howlong.usec));
 
 	timer_diff(&start_time, &now, &diff);
-	info[5] = diff.sec;
-	info[6] = diff.usec;
+	script_list_append(retval, script_int(diff.sec));
+	script_list_append(retval, script_int(diff.usec));
 
 	timer_diff(&now, &trigger_time, &diff);
-	info[7] = diff.sec;
-	info[8] = diff.usec;
+	script_list_append(retval, script_int(diff.sec));
+	script_list_append(retval, script_int(diff.usec));
 
-	info[9] = trigger_time.sec;
-	info[10] = trigger_time.usec;
-
-	/* A malloc'd array of ints. */
-	retval->type = SCRIPT_FREE | SCRIPT_ARRAY | SCRIPT_INTEGER;
-	retval->value = info;
-	retval->len = 11;
+	script_list_append(retval, script_int(trigger_time.sec));
+	script_list_append(retval, script_int(trigger_time.usec));
 
 	return(0);
 }

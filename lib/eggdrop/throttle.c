@@ -146,7 +146,7 @@ int throttle_on(int idx)
 	if (throttle_timer < 0) {
 		howlong.sec = 1;
 		howlong.usec = 0;
-		throttle_timer = timer_create_repeater(&howlong, throttle_secondly);
+		throttle_timer = timer_create_repeater(&howlong, "bandwidth throttler", throttle_secondly);
 	}
 	return(0);
 }

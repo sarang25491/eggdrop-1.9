@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.18 2003/02/25 10:28:21 stdarg Exp $
+# $Id: Makefile.am,v 1.19 2003/04/04 04:04:46 stdarg Exp $
 
 MAINTAINERCLEANFILES	= Makefile.in
 
@@ -8,7 +8,6 @@ lib_LTLIBRARIES 	= libeggdrop.la
 
 libeggdrop_la_SOURCES	= base64.c base64.h \
 			binds.c binds.h \
-			botnetutil.c botnetutil.h \
 			common.h \
 			eggconfig.c eggconfig.h \
 			eggdrop.c eggdrop.h \

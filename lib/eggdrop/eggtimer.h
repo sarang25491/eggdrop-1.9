@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: eggtimer.h,v 1.3 2003/01/02 21:33:13 wcc Exp $
+ * $Id: eggtimer.h,v 1.4 2003/04/04 04:04:46 stdarg Exp $
  */
 
 #ifndef _EGG_TIMER_H
@@ -33,22 +33,22 @@ typedef struct egg_timeval_b {
 #define TIMER_REPEAT 1
 
 /* Create a simple timer with no client data and no flags. */
-#define timer_create(howlong,callback) timer_create_complex(howlong, callback, NULL, 0)
+#define timer_create(howlong,name,callback) timer_create_complex(howlong, name, callback, NULL, 0)
 
 /* Create a simple timer with no client data, but it repeats. */
-#define timer_create_repeater(howlong,callback) timer_create_complex(howlong, callback, NULL, TIMER_REPEAT)
+#define timer_create_repeater(howlong,name,callback) timer_create_complex(howlong, name, callback, NULL, TIMER_REPEAT)
 
 extern void timer_init();
 extern int timer_get_time(egg_timeval_t *curtime);
 extern void timer_get_now(egg_timeval_t *_now);
 extern int timer_update_now(egg_timeval_t *_now);
 extern int timer_diff(egg_timeval_t *from_time, egg_timeval_t *to_time, egg_timeval_t *diff);
-extern int timer_create_complex(egg_timeval_t *howlong, Function callback, void *client_data, int flags);
+extern int timer_create_complex(egg_timeval_t *howlong, const char *name, Function callback, void *client_data, int flags);
 extern int timer_destroy(int timer_id);
 extern int timer_destroy_all();
 extern int timer_get_shortest(egg_timeval_t *howlong);
 extern int timer_run();
 extern int timer_list(int **ids);
-extern int timer_info(int id, egg_timeval_t *initial_len, egg_timeval_t *trigger_time);
+extern int timer_info(int id, char **name, egg_timeval_t *initial_len, egg_timeval_t *trigger_time);
 
 #endif				/* !_EGG_TIMER_H */

@@ -128,9 +128,12 @@ static dcc_listen_t *dcc_listen(int timeout)
 	if (!timeout) timeout = server_config.dcc_timeout;
 
 	if (timeout > 0) {
+		char buf[128];
+
+		snprintf(buf, "dcc listen port %d", port);
 		howlong.sec = timeout;
 		howlong.usec = 0;
-		listen->timer_id = timer_create_complex(&howlong, dcc_listen_timeout, listen, 0);
+		listen->timer_id = timer_create_complex(&howlong, buf, dcc_listen_timeout, listen, 0);
 	}
 
 	return(listen);
@@ -464,9 +467,12 @@ int dcc_accept_send(char *nick, char *localfname, char *fname, int size, int res
 	/* See if they want the default timeout. */
 	if (!timeout) timeout = server_config.dcc_timeout;
 	if (timeout > 0) {
+		char buf[128];
+
+		snprintf(buf, sizeof(buf), "dcc recv %s/%d", ip, port);
 		howlong.sec = timeout;
 		howlong.usec = 0;
-		send->timer_id = timer_create_complex(&howlong, dcc_recv_timeout, send, 0);
+		send->timer_id = timer_create_complex(&howlong, buf, dcc_recv_timeout, send, 0);
 	}
 	else send->connect_time = -1;
 
