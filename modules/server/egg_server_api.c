@@ -1,11 +1,19 @@
 #include "server.h"
 
+static int match_botnick(const char *nick)
+{
+	return current_server.nick && !(current_server.strcmp)(current_server.nick, nick);
+}
+
 void *server_get_api()
 {
 	static egg_server_api_t api;
 
 	api.major = EGG_SERVER_API_MAJOR;
 	api.minor = EGG_SERVER_API_MINOR;
+
+	/* General stuff. */
+	api.match_botnick = match_botnick;
 
 	/* Output functions. */
 	api.printserv = printserv;
@@ -17,12 +25,12 @@ void *server_get_api()
 	api.queue_get_by_priority = queue_get_by_priority;
 	api.dequeue_messages = dequeue_messages;
 
-#if 0
 	/* Channel functions. */
-	int (*channel_list)(const char ***chans);
-	int (*channel_list_members)(const char *chan, const char ***members);
-} egg_server_api_t;
+	api.channel_lookup = channel_lookup;
+	api.channel_add = channel_add;
+	api.channel_set = channel_set;
+	api.channel_get = channel_get;
+	api.channel_get_int = channel_get_int;
 
-#endif
 	return(&api);
 }

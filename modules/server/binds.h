@@ -16,15 +16,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: binds.h,v 1.9 2003/12/18 06:50:47 wcc Exp $
+ * $Id: binds.h,v 1.10 2005/03/03 18:45:26 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_SERVER_BINDS_H_
 #define _EGG_MOD_SERVER_BINDS_H_
 
-extern bind_table_t *BT_wall, *BT_raw, *BT_server_input, *BT_server_output, *BT_notice, *BT_msg, *BT_msgm, *BT_pub, *BT_pubm,
-		    *BT_ctcp, *BT_ctcr, *BT_dcc_chat, *BT_dcc_recv, *BT_nick, *BT_join, *BT_part, *BT_quit, *BT_kick, *BT_leave,
-		    *BT_mode;
+extern bind_table_t *BT_wall, *BT_raw, *BT_server_input, *BT_server_output,
+	*BT_notice, *BT_msg, *BT_msgm, *BT_pub, *BT_pubm, *BT_ctcp, *BT_ctcr,
+	*BT_dcc_chat, *BT_dcc_recv, *BT_nick, *BT_join, *BT_part, *BT_quit,
+	*BT_kick, *BT_leave, *BT_mode, *BT_chanset;
 
 extern void server_binds_destroy();
 extern void server_binds_init();

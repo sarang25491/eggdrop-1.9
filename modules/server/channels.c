@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.34 2004/10/04 15:48:30 stdarg Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.35 2005/03/03 18:45:26 stdarg Exp $";
  #endif
 
 #include "server.h"
@@ -108,6 +108,12 @@ channel_t *channel_probe(const char *chan_name, int create)
 	else channel_head = chan;
 	chan->prev = prev;
 	return(chan);
+}
+
+/* Find a channel if it exists. */
+channel_t *channel_lookup(const char *chan_name)
+{
+	return channel_probe(chan_name, 0);
 }
 
 /* Add a channel to our static list. */
@@ -225,11 +231,18 @@ int channel_set(channel_t *chan, const char *value, ...)
 {
 	va_list args;
 	xml_node_t *node;
+	char *setting, *oldvalue;
+	int r;
 
 	va_start(args, value);
 	node = xml_node_vlookup(chan->settings, args, 1);
 	va_end(args);
-	return xml_node_set_str(value, node, NULL);
+	setting = xml_node_fullname(node);
+	xml_node_get_str(&oldvalue, node, NULL);
+	r = bind_check(BT_chanset, NULL, setting, chan->name, setting, oldvalue, value);
+	free(setting);
+	if (!(r & BIND_RET_BREAK)) xml_node_set_str(value, node, NULL);
+	return(0);
 }
 
 int channel_get(channel_t *chan, char **strptr, ...)

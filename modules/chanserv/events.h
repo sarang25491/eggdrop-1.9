@@ -16,12 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: events.h,v 1.1 2004/12/13 15:02:29 stdarg Exp $
+ * $Id: events.h,v 1.2 2005/03/03 18:45:26 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_CHANSERV_EVENTS_H_
 #define _EGG_MOD_CHANSERV_EVENTS_H_
 
 extern int events_init();
+extern int events_shutdown();
 
 #endif

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: binds.c,v 1.16 2004/06/15 19:19:16 wingman Exp $";
+static const char rcsid[] = "$Id: binds.c,v 1.17 2005/03/03 18:45:26 stdarg Exp $";
 #endif
 
 #include "server.h"
@@ -42,7 +42,8 @@ bind_table_t *BT_wall = NULL,
              *BT_quit = NULL,
              *BT_kick = NULL,
              *BT_leave = NULL,
-             *BT_mode = NULL;
+             *BT_mode = NULL,
+	     *BT_chanset = NULL;
 
 void server_binds_destroy()
 {
@@ -66,6 +67,7 @@ void server_binds_destroy()
 	bind_table_del(BT_kick);
 	bind_table_del(BT_leave);
 	bind_table_del(BT_mode);
+	bind_table_del(BT_chanset);
 }
 
 void server_binds_init()
@@ -91,6 +93,8 @@ void server_binds_init()
 	BT_kick = bind_table_add("kick", 5, "ssUss", MATCH_MASK | MATCH_FLAGS, BIND_STACKABLE);			/* DDD */
 	BT_leave = bind_table_add("leave", 4, "ssUs", MATCH_MASK | MATCH_FLAGS, BIND_STACKABLE);		/* DDD */
 	BT_mode = bind_table_add("mode", 6, "ssUsss", MATCH_MASK | MATCH_FLAGS, BIND_STACKABLE);		/* DDD */
+
+	BT_chanset = bind_table_add("chanset", 4, "ssss", MATCH_MASK, BIND_STACKABLE);
 
 	bind_add_list("ctcp", ctcp_dcc_binds);
 }

@@ -22,6 +22,7 @@
 #define BT_kick server_LTX_BT_kick
 #define BT_leave server_LTX_BT_leave
 #define BT_mode server_LTX_BT_mode
+#define BT_chanset server_LTX_BT_chanset
 
 /* Things from channels.c */
 #define channel_head server_LTX_channel_head
@@ -42,6 +43,7 @@
 #define channel_del_mask server_LTX_channel_del_mask
 #define channel_clear_masks server_LTX_channel_clear_masks
 #define channel_mode server_LTX_channel_mode
+#define channel_lookup_member server_LTX_channel_lookup_member
 
 /* Things from dcc.c */
 #define dcc_dns_set server_LTX_dcc_dns_set

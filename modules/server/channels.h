@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: channels.h,v 1.22 2004/10/06 02:35:15 stdarg Exp $
+ * $Id: channels.h,v 1.23 2005/03/03 18:45:26 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_SERVER_CHANNELS_H_
@@ -43,63 +43,6 @@ typedef struct {
 	int ref_count;
 } uhost_cache_entry_t;
 
-typedef struct channel_member {
-	struct channel_member *next;
-
-	char *nick;
-	char *uhost;
-	int join_time;
-	flags_t mode;
-} channel_member_t;
-
-typedef struct channel_mask {
-	struct channel_mask *next;
-	char *mask;
-	char *set_by;
-/* FIXME - these should be long, not int. (EGGTIMEVALT) */
-	int time;
-	int last_used;
-} channel_mask_t;
-
-typedef struct channel_mask_list {
-	struct channel_mask *head;
-	int len;
-	int loading;
-	char type;
-} channel_mask_list_t;
-
-typedef struct channel_mode_arg {
-	int type;
-	char *value;
-} channel_mode_arg_t;
-
-typedef struct channel {
-	struct channel *next, *prev;
-
-	char *name;
-
-	char *topic, *topic_nick;	/* Topic and who set it. */
-	int topic_time;			/* When it was set. */
-
-	flags_t mode;			/* Mode bits. */
-	int limit;			/* Channel limit. */
-	char *key;			/* Channel key. */
-
-	channel_mask_list_t **lists;	/* Mask lists (bans, invites, etc). */
-	int nlists;
-
-	channel_mode_arg_t *args;	/* Stored channel modes. */
-	int nargs;
-
-	channel_member_t *member_head;	/* Member list. */
-	int nmembers;
-
-	channel_member_t *bot;		/* All you need to know about me :-) */
-
-	xml_node_t *settings;	/* Extended settings for scripts/modules/us. */
-	int status;		/* Status of channel. */
-	int flags;		/* Internal flags for channel. */
-} channel_t;
 
 extern channel_t *channel_head;
 extern int nchannels;
@@ -110,6 +53,7 @@ extern void channel_reset();
 extern void channel_destroy();
 extern void channel_free(channel_t *chan);
 extern channel_t *channel_probe(const char *chan_name, int create);
+extern channel_t *channel_lookup(const char *chan_name);
 extern channel_t *channel_add(const char *name);
 extern int channel_remove(const char *name);
 extern int channel_load(const char *fname);

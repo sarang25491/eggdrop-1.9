@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channel_events.c,v 1.2 2004/10/04 16:15:35 stdarg Exp $";
+static const char rcsid[] = "$Id: channel_events.c,v 1.3 2005/03/03 18:45:26 stdarg Exp $";
  #endif
 
 #include "server.h"
@@ -140,6 +140,16 @@ static channel_member_t *channel_add_member(channel_t *chan, const char *nick, c
 
 	uhost_cache_addref(nick, uhost);
 
+	return(m);
+}
+
+channel_member_t *channel_lookup_member(channel_t *chan, const char *nick)
+{
+	channel_member_t *m;
+
+	for (m = chan->member_head; m; m = m->next) {
+		if (!(current_server.strcmp)(m->nick, nick)) break;
+	}
 	return(m);
 }
 
@@ -567,12 +577,7 @@ static void parse_chan_mode(char *from_nick, char *from_uhost, user_t *u, int na
 
 		if (modify_member) {
 			/* Find the person it modifies and apply. */
-			for (m = chan->member_head; m; m = m->next) {
-				if (!(current_server.strcmp)(m->nick, arg)) {
-					flag_merge_str(&m->mode, changestr);
-					break;
-				}
-			}
+			m = channel_lookup_member(chan, arg);
 		}
 		else if (modify_channel) {
 			/* Simple flag change for channel. */

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: egg_server_api.h,v 1.4 2004/10/01 16:13:31 stdarg Exp $
+ * $Id: egg_server_api.h,v 1.5 2005/03/03 18:45:26 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_SERVER_API_H_
@@ -47,9 +47,71 @@ typedef struct {
 	int next_id;
 } queue_t;
 
+/* Channel structures. */
+typedef struct channel_member {
+	struct channel_member *next;
+
+	char *nick;
+	char *uhost;
+	int join_time;
+	flags_t mode;
+} channel_member_t;
+
+typedef struct channel_mask {
+	struct channel_mask *next;
+	char *mask;
+	char *set_by;
+/* FIXME - these should be long, not int. (EGGTIMEVALT) */
+	int time;
+	int last_used;
+} channel_mask_t;
+
+typedef struct channel_mask_list {
+	struct channel_mask *head;
+	int len;
+	int loading;
+	char type;
+} channel_mask_list_t;
+
+typedef struct channel_mode_arg {
+	int type;
+	char *value;
+} channel_mode_arg_t;
+
+typedef struct channel {
+	struct channel *next, *prev;
+
+	char *name;
+
+	char *topic, *topic_nick;	/* Topic and who set it. */
+	int topic_time;			/* When it was set. */
+
+	flags_t mode;			/* Mode bits. */
+	int limit;			/* Channel limit. */
+	char *key;			/* Channel key. */
+
+	channel_mask_list_t **lists;	/* Mask lists (bans, invites, etc). */
+	int nlists;
+
+	channel_mode_arg_t *args;	/* Stored channel modes. */
+	int nargs;
+
+	channel_member_t *member_head;	/* Member list. */
+	int nmembers;
+
+	channel_member_t *bot;		/* All you need to know about me :-) */
+
+	xml_node_t *settings;	/* Extended settings for scripts/modules/us. */
+	int status;		/* Status of channel. */
+	int flags;		/* Internal flags for channel. */
+} channel_t;
+
 /* API structure. */
 typedef struct {
 	int major, minor; /* Version of this instance. */
+
+	/* General stuff. */
+	int (*match_botnick)(const char *nick);
 
 	/* Output functions. */
 	int (*printserv)(int priority, const char *format, ...);
@@ -63,8 +125,13 @@ typedef struct {
 	void (*dequeue_messages)();
 
 	/* Channel functions. */
-	int (*channel_list)(const char ***chans);
-	int (*channel_list_members)(const char *chan, const char ***members);
+	channel_t *(*channel_lookup)(const char *chan_name);
+	channel_t *(*channel_add)(const char *chan_name);
+	int (*channel_set)(channel_t *chan, const char *value, ...);
+	int (*channel_get)(channel_t *chan, char **strptr, ...);
+	int (*channel_get_int)(channel_t *chan, int *intptr, ...);
+
+	/* to be continued */
 } egg_server_api_t;
 
 #endif /* !_EGG_MOD_SERVER_API_H_ */

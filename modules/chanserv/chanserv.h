@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: chanserv.h,v 1.1 2004/12/13 15:02:29 stdarg Exp $
+ * $Id: chanserv.h,v 1.2 2005/03/03 18:45:26 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_CHANSERV_CHANSERV_H_
@@ -24,22 +24,65 @@
 
 #include <modules/server/egg_server_api.h>
 
-#define chan_config chanserv_LTX_chan_config
+#define chanserv_config chanserv_LTX_chanserv_config
 #define server chanserv_LTX_server
+#define chanserv_update_stats chanserv_LTX_chanserv_update_stats
 #define events_init chanserv_LTX_events_init
+#define events_shutdown chanserv_LTX_events_shutdown
 
 #include "events.h"
 
-typedef struct {
-	int short_joins, long_joins;
-} chanserv_stats_t;
+enum {
+	CHANSERV_STAT_JOIN = 0,
+	CHANSERV_STAT_PART,
+	CHANSERV_STAT_QUIT,
+	CHANSERV_STAT_CYCLE,
+	CHANSERV_STAT_LEAVE,
+	CHANSERV_STAT_CTCP,
+	CHANSERV_STAT_MSG,
+	CHANSERV_STAT_NOTICE,
+	CHANSERV_STAT_LINE,
+	CHANSERV_STAT_NICK,
+	CHANSERV_STAT_KICK,
+	CHANSERV_STAT_MODE,
+	CHANSERV_STAT_MODEFIGHT,
+	CHANSERV_STAT_TOPIC,
+	CHANSERV_STAT_LEN
+};
 
 typedef struct {
-	int short_join_period, long_join_period;
-	int short_join_limit, long_join_limit;
-} chan_config_t;
+	char *who;
+	int stats[CHANSERV_STAT_LEN];
+	time_t last_event_time[CHANSERV_STAT_LEN];
+	time_t join_time;
+} chanserv_member_stats_t;
 
-extern chan_config_t chan_config;
+typedef struct chanserv_channel_stats {
+	struct chanserv_channel_stats *next, *prev;
+
+	char *name;
+	int stats[CHANSERV_STAT_LEN];
+	int periods[CHANSERV_STAT_LEN];
+	int limits[CHANSERV_STAT_LEN];
+	time_t last_event_time[CHANSERV_STAT_LEN];
+
+	chanserv_member_stats_t *members;
+	int nmembers;
+} chanserv_channel_stats_t;
+
+typedef struct {
+	int channel_periods[CHANSERV_STAT_LEN];
+	int channel_limits[CHANSERV_STAT_LEN];
+	int individual_periods[CHANSERV_STAT_LEN];
+	int individual_limits[CHANSERV_STAT_LEN];
+	int cycle_time;
+} chanserv_config_t;
+
+extern chanserv_config_t chanserv_config;
 extern egg_server_api_t *server;
+
+extern int chanserv_lookup_config(const char *chan, int stat, int *limit, int *period);
+extern chanserv_channel_stats_t *chanserv_probe_chan(const char *chan, int create);
+extern int chanserv_update_stats(int stat, const char *chan, const char *nick, const char *uhost);
 
 #endif
