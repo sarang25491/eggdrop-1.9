@@ -31,7 +31,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.47 2003/02/15 09:07:15 wcc Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.48 2003/02/16 07:01:30 wcc Exp $";
 #endif
 
 #include "main.h"
@@ -118,7 +118,7 @@ int delignore(char *ign)
   if (!strchr(ign, '!') && (j = atoi(ign))) {
     for (u = &global_ign, j--; *u && j; u = &((*u)->next), j--);
     if (*u) {
-      strncpyz(temp, (*u)->mask, sizeof temp);
+      strncpyz(temp, (*u)->igmask, sizeof temp);
       i = 1;
     }
   } else {
