@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.6 2001/12/29 21:39:26 guppy Exp $
+ * $Id: share.c,v 1.7 2001/12/29 21:40:34 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1814,6 +1814,7 @@ static void finish_share(int idx)
 
 	u->flags = (u2->flags & pgbm) | (u->flags & ~pgbm);
       }
+      noshare = 1;
       for (cr = u2->chanrec; cr; cr = cr_next) {
 	struct chanset_t *chan = findchan_by_dname(cr->channel);
 
@@ -1847,6 +1848,7 @@ static void finish_share(int idx)
 	  }
 	}
       }
+      noshare = 0;
       /* Any unshared user entries need copying over */
       for (ue = u2->entries; ue; ue = ue->next)
 	if (ue->type && !ue->type->got_share && ue->type->dup_user)
