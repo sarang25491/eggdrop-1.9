@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.13 2001/10/21 17:38:25 ite Exp $
+# $Id: Makefile.am,v 1.14 2001/10/27 16:34:54 ite Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 bindir			= $(exec_prefix)
@@ -9,11 +9,13 @@ XLIBS			= @TCL_LIBS@ @LIBS@
 TCLLIB			= @TCLLIB@
 TCLLIBFN		= @TCLLIBFN@
 
-SUBDIRS			= adns compat egglib mod
+SUBDIRS			= adns compat egglib
 MAINTAINERCLEANFILES	= Makefile.in
 
 INCLUDES		= -I$(top_builddir) -I$(top_srcdir) @INCLTDL@ \
-			-I$(top_builddir)/intl -I$(top_srcdir)/intl
+			-I$(top_builddir)/intl -I$(top_srcdir)/intl \
+			-I$(top_builddir)/lib/eggdrop \
+			-I$(top_srcdir)/lib/eggdrop
 
 localedir		= $(datadir)/locale
 DEFS			= -DLOCALEDIR=\"\$(localedir)\" $(EGG_DEBUG) @DEFS@
@@ -80,12 +82,12 @@ eggdrop_LDFLAGS		= -no-undefined
 
 # FIXME: test if there's dependency on gnu make. It shouldn't.
 if EGG_PERLSCRIPT
-  EGG_PRL = -dlopen mod/perlscript.mod/perlscript.la
+  EGG_PRL = -dlopen ../modules/perlscript/perlscript.la
 else
   EGG_PRL =
 endif
 if EGG_COMPRESS
-  EGG_CMP = -dlopen mod/compress.mod/compress.la
+  EGG_CMP = -dlopen ../modules/compress/compress.la
 else
   EGG_CMP = 
 endif
@@ -93,22 +95,22 @@ endif
 # FIXME: dlopened/preopened module's list is going to be dynamically defined
 #        by ./configure
 eggdrop_LDADD		= @LIBLTDL@ \
-			-dlopen mod/assoc.mod/assoc.la \
-			-dlopen mod/blowfish.mod/blowfish.la \
-			-dlopen mod/channels.mod/channels.la \
+			-dlopen ../modules/assoc/assoc.la \
+			-dlopen ../modules/blowfish/blowfish.la \
+			-dlopen ../modules/channels/channels.la \
 			$(EGG_CMP) \
-			-dlopen mod/console.mod/console.la \
-			-dlopen mod/ctcp.mod/ctcp.la \
-			-dlopen mod/filesys.mod/filesys.la \
-			-dlopen mod/irc.mod/irc.la \
-			-dlopen mod/notes.mod/notes.la \
+			-dlopen ../modules/console/console.la \
+			-dlopen ../modules/ctcp/ctcp.la \
+			-dlopen ../modules/filesys/filesys.la \
+			-dlopen ../modules/irc/irc.la \
+			-dlopen ../modules/notes/notes.la \
 			$(EGG_PRL) \
-			-dlopen mod/server.mod/server.la \
-			-dlopen mod/share.mod/share.la \
-			-dlopen mod/tclscript.mod/tclscript.la \
-			-dlopen mod/transfer.mod/transfer.la \
-			-dlopen mod/uptime.mod/uptime.la \
-			-dlopen mod/woobie.mod/woobie.la \
+			-dlopen ../modules/server/server.la \
+			-dlopen ../modules/share/share.la \
+			-dlopen ../modules/tclscript/tclscript.la \
+			-dlopen ../modules/transfer/transfer.la \
+			-dlopen ../modules/uptime/uptime.la \
+			-dlopen ../modules/woobie/woobie.la \
 			compat/libcompat.la \
 			adns/libadns.la \
 			egglib/libegg.la \
