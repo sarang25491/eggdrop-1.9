@@ -1,3 +1,25 @@
+2002-04-01 13:33  Federico Mennite <ite@techmonkeys.org>
+
+	* configure.ac, acconfig/acinclude.m4, lib/compat/Makefile.am,
+	lib/compat/compat.h, lib/compat/strlcat.c, lib/compat/strlcat.h,
+	lib/compat/strlcpy.c, lib/compat/strlcpy.h, lib/eggdrop/common.h,
+	lib/eggdrop/eggdrop.h, lib/eggdrop/memutil.c,
+	lib/eggdrop/memutil.h, modules/channels/cmdschan.c,
+	modules/channels/tclchan.c, modules/channels/userchan.c,
+	modules/filesys/filesys.c, modules/irc/chan.c,
+	modules/irc/cmdsirc.c, modules/irc/irc.c, modules/irc/mode.c,
+	modules/irc/msgcmds.c, modules/server/cmdsserv.c,
+	modules/server/server.c, modules/server/servmsg.c,
+	modules/server/tclserv.c, modules/share/share.c, src/chanprog.c,
+	src/cmds.c, src/dcc.c, src/dns.c, src/flags.c, src/main.c,
+	src/misc.c, src/modules.c, src/net.c, src/tcldcc.c, src/tclmisc.c,
+	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c:
+
+	* Got rid of strncpyz() in favour of BSD's strlcpy(). Fallback
+	function provided.  
+	* BSD's strlcat() provided as fallback function.  
+	* Fallback functions weren't linked as expected when needed.  
+
 2002-03-26 01:06  Federico Mennite <ite@techmonkeys.org>
 
 	* .cvsignore, lib/eggdrop/Makefile.am, lib/eggdrop/eggdrop.c,
