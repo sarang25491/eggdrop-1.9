@@ -28,7 +28,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tclhash.c,v 1.72 2002/08/09 23:44:07 stdarg Exp $";
+static const char rcsid[] = "$Id: tclhash.c,v 1.73 2002/08/12 01:16:31 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -446,6 +446,11 @@ int check_bind(bind_table_t *table, const char *match, struct flag_record *flags
 		winner = NULL;
 		for (entry = table->entries; entry; entry = entry->next) {
 			if (entry->flags & BIND_DELETED) continue;
+			if (table->flags & BIND_USE_ATTR) {
+				if (table->flags & BIND_STRICT_ATTR) cmp = flagrec_eq(&entry->user_flags, flags);
+				else cmp = flagrec_ok(&entry->user_flags, flags);
+				if (!cmp) continue;
+			}
 			masklen = strlen(entry->mask);
 			if (!strncasecmp(match, entry->mask, masklen < matchlen ? masklen : matchlen)) {
 				winner = entry;
