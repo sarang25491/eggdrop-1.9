@@ -5,7 +5,7 @@
  * acconfig.h
  *   template file autoheader uses when building config.h.in
  * 
- * $Id: acconfig.h,v 1.8 2001/06/22 05:49:30 guppy Exp $
+ * $Id: acconfig.h,v 1.9 2001/08/13 21:39:24 ite Exp $
  */
 
 /* Define if modules will work on your system  */
@@ -52,6 +52,15 @@
 
 /* Defines extension of eggdrop modules  */
 #undef EGG_MOD_EXT
+
+/* Define if you want IPv6 support */
+#undef IPV6
+
+/* Define to `unsigned' if something else doesn't define.  */
+#undef socklen_t
+
+/* Define if we want to include rpc/types.h.  Crap BSDs put INADDR_LOOPBACK there. */
+#undef HAVEUSE_RPCTYPES_H
 
 @BOTTOM@
 

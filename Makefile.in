@@ -2,7 +2,7 @@
 #  This is the Makefile for EGGDROP (the irc bot)
 #  You should never need to edit this.
 #
-# $Id: Makefile.in,v 1.32 2001/08/13 20:47:51 guppy Exp $
+# $Id: Makefile.in,v 1.33 2001/08/13 21:39:24 ite Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -139,7 +139,7 @@ distclean: eggclean clean-modconfig
 	@cd src/adns && $(MAKE) distclean
 	@cd src/mod && $(MAKE) distclean
 	@rm -f Makefile doc/Makefile scripts/Makefile src/Makefile src/md5/Makefile src/compat/Makefile src/mod/Makefile
-	@rm -f config.cache config.log config.status config.h lush.h
+	@rm -f config.cache config.log config.status config.h lush.h configure config.h.in
 
 distrib: distclean
 	@rm -f `find . \( -name '*~' -o -name '*#' -o -name '*.orig' \

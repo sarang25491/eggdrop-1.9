@@ -1,5 +1,5 @@
 # Makefile.in for src/mod/compress.mod/
-# $Id: Makefile.in,v 1.8 2001/08/13 20:47:54 guppy Exp $
+# $Id: Makefile.in,v 1.9 2001/08/13 21:39:24 ite Exp $
 
 ZLIB = @ZLIB@
 srcdir = .
@@ -32,7 +32,7 @@ clean:
 	@rm -f .depend *.o *.$(MOD_EXT) *~
 
 distclean: clean
-	@rm -f Makefile config.cache config.log config.status config.h compress_config.h
+	@rm -f Makefile config.cache config.log config.status config.h compress_config.h configure compress_config.h.in
 
 #safety hash
 ../compress.o: .././compress.mod/compress.c ../../../src/mod/module.h \
