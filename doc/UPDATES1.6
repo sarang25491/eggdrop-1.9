@@ -1,10 +1,94 @@
-$Id: UPDATES1.6,v 1.166 2001/08/11 07:29:25 guppy Exp $
+$Id: UPDATES1.6,v 1.167 2001/12/08 21:16:35 tothwolf Exp $
 
 Changes in eggdrop: (since v1.6.0)
 ----------------------------------
 
-1.6.7
+1.6.8
 Found by  Fixed by  What...
+          BarkerJr  updated the uptime url
+
+1.6.7 (7 December 2001)
+Found by  Fixed by  What...
+          guppy     don't show status_log if we don't have a server
+Wcc       ITE       lets make eggdrop work on cygwin again
+Wcc       guppy     fixed a mixed up transfer language entry that caused a crash
+various   nakee     added '--disable-cc-optimization' to disable -O2 flags
+Abraham   Eule      added a missing channel membercheck in a few commands
+S7reaM    guppy     tcl_newban had some silly guppy logic which caused a crash
+          Noyga     added French language files for: assoc, console, notes
+          Noyga     added %n for $network to the list of motd text substitutions
+          nakee     added language support to transfer.mod
+ClubCX    guppy     got rid of bad language
+          poptix    rebound some commands to proper bindings (relay, bottree, vbottree)
+          ITE       made our build system work with newer autoconf versions
+          guppy     make the default bot a bit more secure in regards to
+                    the ability to execute tcl commands from the partyline
+various   guppy     tcl_newban and tcl_newchanban didn't always add the bans
+          Wcc       cmd_optimise is now cmd_optimize
+          Hanno     fixed testip in alltools.tcl
+          Wcc       some more doc changes
+          Eule      actually fixed stopnethack and a wasop bug
+various   Wcc       added support for dalnet's +M chanmode
+          Lam       fixed +a for !channels
+          TaKaDa    fixed tcl_botattr
+various   stdarg    fixed a bogus memory leak
+          guppy     removed some leftovers in uptime.mod
+blaster^  poptix    yet ANOTHER stupid bug. (crash in .-chan)
+          guppy     minor changes to autobotchk (v1.09.1)
+TaKeDa    stdarg    fixed a small crash in notes.mod
+          TaKeDa    fix 'setuser <hand> PASS' from crashing
+boro      bhab      stop_nethack_mode 4 oddity when a +a bot returns from a
+                    split getting a -o+o (double negating mode)
+	  poptix    Testing some better socket code (++)++
+          Wcc       more typo fixing in the config files
+          BarkerJr  more typo fixes
+          Wcc       fixed several tons of spelling errors (really)
+guppy     stdarg    tcl_chattr now lets you remove global flags
+various   stdarg    fixed some issues with utf8 dealing with how we handle tcl
+                    arguments
+          Wcc       small fix to let tcl_adduser accept only a handle
+FeaRx/    Sup       show `#channel is active but has no ops :(' only if channel
+DarkReap1           is set +statuslog.
+          Wcc       fixed up some spelling mistakes in tcl-commands.doc
+          poptix    lots of argv[] fixes that caused crashes
+dfrank    stdarg    'chattr hand' no longer crashes (legacy bug)
+          poptix    finally fixed the banreason bug 
+zip       guppy     small fix for ircu servers that send ERROR: instead of ERROR :
+          fuchs     don't get GO if the channel is -cycle
+          guppy     couple of small uptime.mod backports from 1.7
+DrDeath   Sup       Exported module_load and module_unload for modules.
+various   stdarg    fixed a potential sendnote crash when the notes module
+                    is unloaded
+          poptix    bad pointers are evil in tcl_userlist
+          poptix    re-fix adduser overflow
+          Tothwolf  don't attempt to flood check server notices
+          Tothwolf  display global bans, exempts and invites even if
+                    not on a channel
+          Tothwolf  removed unused "existant" check from tell_bans(),
+                    tell_exempts(), and tell_invites()
+          Tothwolf  fixed buffer overflow in adduser()
+          Tothwolf  fixed typo in filedb3.c: EBUG_MEM -> DEBUG_MEM
+          Tothwolf  removed extra egg_bzero call from filesys.c
+          poptix    properly check argv[]/argc before using it
+          Tothwolf  added missing memory check for tclmisc.c
+Tothwolf  guppy     new setting: pidfile (detaults to pid.botnetnick)
+          poptix    oops, .kickban -nick didn't work.
+          BarkerJr  backported a check for -dynamicbans to new[ban|exempt|invite]
+          guppy     replaced old md5 routines with new ones (backport from 1.7)
+          guppy     cleaned up our tcl information on .status (backport from 1.7)
+          guppy     removed dcc-portrange since it was useless (backport from 1.7)
+          drummer   show our proper user@host in cmd_status (backport from 1.7)
+various   stdarg    proper utf8 support
+          TaKeDa    small wasop fix
+bleah     PPSlim    Fixed booting with full length handles
+          BarkerJr  Allow wildcard CTCP binds
+          BarkerJr  CTCP replies go to the HELP queue..
+proton    poptix    don't bother sending server in the uptime packets
+stdarg    poptix    we weren't looking the user record back up on iterations on channels
+                    in the NICK bind, causing the chance of a bad pointer reference =P
+                    (stdarg gave me the idea to look =)
+          poptix    Oh, look, SIGN and SPLT binds actually pass on the user record now, 
+                    and allow flag bindings =P
 various   guppy     the documentation for the need bind was slightly screwy
           Kirben    don't check for static tcl under cygwin
           dw        Helpfile says nodesync (invalid mode) instead of nodesynch.
@@ -12,14 +96,13 @@ various   guppy     the documentation for the need bind was slightly screwy
           Noyga     Fixes/Additions to command stacking
 |^Raven^| Noyga     PRIVMSGs with the same message to the same destination
                     are no longer stacked also USERHOST/USERIP are not stacked
-                    using a comma
-          Sup       Added HOOK_DIE to allow tcl_die to have
-                    a quit message.
+                    using a comma 
+          Sup       Added HOOK_DIE to allow tcl_die to have a quit message.
+          TaKeDa    small resync fix
           TaKaDa    fixed tcl_md5, it was broken on tcl8.1+
           Kirben    check whether cygwin requires -mwin32 to support
                     old versions of cygwin
-          Kirben    check for bind in /usr/local/bind when using
-                    cygwin
+          Kirben    check for bind in /usr/local/bind when using cygwin
 NeoN-	  dw	    a banreason wasn't used in some cases.
 Noyga     Sup       Bot sent a useless TOPIC command to the server
                     when it joined a channel.
