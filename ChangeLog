@@ -1,3 +1,12 @@
+2001-08-23 04:06  stdarg
+
+	* src/mod/channels.mod/: channels.c, channels.h, cmdschan.c,
+	flagmaps.c, tclchan.c, udefchan.c:
+
+	
+	
+	Adding user-defined strings and the "channel get" command.  
+
 2001-08-23 03:19  stdarg
 
 	* src/chan.h:
