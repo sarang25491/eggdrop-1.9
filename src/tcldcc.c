@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tcldcc.c,v 1.69 2003/01/02 21:33:16 wcc Exp $";
+static const char rcsid[] = "$Id: tcldcc.c,v 1.70 2003/01/18 22:36:52 wcc Exp $";
 #endif
 
 #include "main.h"
@@ -254,19 +254,17 @@ static int script_killdcc(int idx, char *reason)
 {
 	if (idx < 0 || idx >= dcc_total || !dcc[idx].type || !(dcc[idx].type->flags & DCT_VALIDIDX)) return(-1);
 
-  /* Don't kill terminal socket */
-  if ((dcc[idx].sock == STDOUT) && !backgrd) return(0);
+	/* Don't kill terminal socket */
+	if ((dcc[idx].sock == STDOUT) && !backgrd) return(0);
 
-  /* Make sure 'whom' info is updated for other bots */
-  if (dcc[idx].type->flags & DCT_CHAT) {
-    chanout_but(idx, dcc[idx].u.chat->channel, "*** %s has left the %s%s%s\n",
-		dcc[idx].nick, dcc[idx].u.chat ? "channel" : "partyline",
-		reason ? ": " : "", reason ? reason : "");
-    /* Notice is sent to the party line, the script can add a reason. */
-  }
-  killsock(dcc[idx].sock);
-  lostdcc(idx);
-  return TCL_OK;
+	/* Make sure 'whom' info is updated for other bots */
+	if (dcc[idx].type->flags & DCT_CHAT) chanout_but(idx, dcc[idx].u.chat->channel, "*** %s has left the %s%s%s\n", dcc[idx].nick, dcc[idx].u.chat ? "channel" : "partyline", reason ? ": " : "", reason ? reason : "");
+	/* Notice is sent to the party line, the script can add a reason. */
+
+	killsock(dcc[idx].sock);
+	killtransfer(idx);
+	lostdcc(idx);
+	return(TCL_OK);
 }
 
 static char *script_idx2hand(int idx)

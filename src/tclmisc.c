@@ -23,10 +23,11 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tclmisc.c,v 1.58 2003/01/02 21:33:16 wcc Exp $";
+static const char rcsid[] = "$Id: tclmisc.c,v 1.59 2003/01/18 22:36:52 wcc Exp $";
 #endif
 
 #include <sys/stat.h>
+#include <time.h>
 #include "main.h"
 #include "modules.h"
 #include "core_binds.h"
@@ -87,7 +88,7 @@ static char *script_duration(unsigned int sec)
 
 static unsigned int script_unixtime()
 {
-	return(now);
+	return(time(NULL));
 }
 
 static char *script_ctime(unsigned int sec)

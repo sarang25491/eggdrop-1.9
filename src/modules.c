@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: modules.c,v 1.122 2003/01/02 21:33:16 wcc Exp $";
+static const char rcsid[] = "$Id: modules.c,v 1.123 2003/01/18 22:36:52 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -523,6 +523,7 @@ Function global_table[] =
   0,
   (Function) &egg_timeval_now,
   0,
+  (Function) killtranfer,
 };
 
 static bind_table_t *BT_load, *BT_unload;

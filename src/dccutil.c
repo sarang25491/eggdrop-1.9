@@ -27,7 +27,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dccutil.c,v 1.57 2003/01/02 21:33:16 wcc Exp $";
+static const char rcsid[] = "$Id: dccutil.c,v 1.58 2003/01/18 22:36:52 wcc Exp $";
 #endif
 
 #include <sys/stat.h>
@@ -235,6 +235,15 @@ void dcc_chatter(int idx)
     }
   }
 }
+
+/* Closes an open FD for transfer sockets. */
+void killtransfer(int n)
+{
+	if (dcc[n].u.xfer->f) {
+		fclose(dcc[n].u.xfer->f);
+		dcc[n].u.xfer->f = NULL;
+	}
+ }
 
 /* Mark an entry as lost and deconstruct it's contents. It will be securely
  * removed from the dcc list in the main loop.

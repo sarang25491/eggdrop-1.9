@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: logfile.c,v 1.24 2003/01/02 21:33:16 wcc Exp $";
+static const char rcsid[] = "$Id: logfile.c,v 1.25 2003/01/18 22:36:52 wcc Exp $";
 #endif
 
 #include "main.h"
@@ -104,8 +104,10 @@ void logfile_init()
 
 static int get_timestamp(char *t)
 {
+	time_t now2 = time(NULL);
+
 	/* Calculate timestamp. */
-	strftime(t, 32, "[%H:%M] ", localtime(&now));
+	strftime(t, 32, "[%H:%M] ", localtime(&now2));
 	return(0);
 }
 

@@ -28,7 +28,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: chan.c,v 1.28 2003/01/02 21:33:14 wcc Exp $";
+static const char rcsid[] = "$Id: chan.c,v 1.29 2003/01/18 22:36:52 wcc Exp $";
 #endif
 */
 
@@ -1894,6 +1894,7 @@ static int gotkick(char *from, char *ignore, char *origmsg)
 static int gotnick(char *from, char *ignore, char *msg)
 {
   char buf[UHOSTLEN], *nick, *chname, *uhost, s1[UHOSTLEN];
+  unsigned char found = 0;
   memberlist *m, *mm;
   struct chanset_t *chan, *oldchan = NULL;
   struct userrec *u;
@@ -1949,6 +1950,7 @@ static int gotnick(char *from, char *ignore, char *msg)
       }
       u = get_user_by_host(from); /* make sure this is in the loop, someone could have changed the record
                                      in an earlier iteration of the loop */
+      found = 1;
       check_tcl_nick(nick, uhost, u, chan->dname, msg);
       if (!findchan_by_dname(chname)) {
 	chan = oldchan;
@@ -1956,6 +1958,13 @@ static int gotnick(char *from, char *ignore, char *msg)
       }
     }
   }
+  if (!found)
+  {
+    u = get_user_by_host(from);
+    s1[0] = '*';
+    s1[1] = 0;
+    check_tcl_nick(nick, uhost, u, s1, msg);
+   }
   return 0;
 }
 

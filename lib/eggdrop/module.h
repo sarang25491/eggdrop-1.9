@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: module.h,v 1.34 2003/01/02 21:33:13 wcc Exp $
+ * $Id: module.h,v 1.35 2003/01/18 22:36:52 wcc Exp $
  */
 
 #ifndef _EGG_MOD_MODULE_H
@@ -362,6 +362,7 @@
 /* 276 - 279 */
 /* 280 - 283 */
 #define egg_timeval_now (*(egg_timeval_t *)egg->global[281])
+#define killtransfer ((void(*)(int))global[283])
 
 /* This is for blowfish module, couldnt be bothered making a whole new .h
  * file for it ;)
