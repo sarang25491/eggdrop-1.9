@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2002-01-16 04:00-0600\n"
+"POT-Creation-Date: 2002-01-17 04:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -368,7 +368,7 @@ msgstr ""
 msgid "Linking to %s at %s:%d ..."
 msgstr ""
 
-#: src/botnet.c:1069 src/dcc.c:237
+#: src/botnet.c:1069 src/dcc.c:242
 #, c-format
 msgid "Failed link to %s."
 msgstr ""
@@ -815,172 +815,167 @@ msgstr ""
 msgid "Rejecting link from %s"
 msgstr ""
 
-#: src/dcc.c:212
+#: src/dcc.c:217
 #, c-format
 msgid "Linked to %s."
 msgstr ""
 
-#: src/dcc.c:322
+#: src/dcc.c:327
 #, c-format
 msgid "Received challenge from %s... sending response ..."
 msgstr ""
 
 #. We entered the wrong password
-#: src/dcc.c:339
+#: src/dcc.c:344
 #, c-format
 msgid "Bad password on connect attempt to %s."
 msgstr ""
 
-#: src/dcc.c:344
+#: src/dcc.c:349
 #, c-format
 msgid "Password required for connection to %s."
 msgstr ""
 
-#: src/dcc.c:357
+#: src/dcc.c:362
 #, c-format
 msgid "ERROR linking %s: %s"
 msgstr ""
 
-#: src/dcc.c:364
+#: src/dcc.c:369
 #, c-format
 msgid "Lost Bot: %s"
 msgstr ""
 
-#: src/dcc.c:371
+#: src/dcc.c:376
 #, c-format
 msgid "Timeout: bot link to %s at %s:%d"
 msgstr ""
 
-#: src/dcc.c:535
+#: src/dcc.c:540
 #, c-format
 msgid "Response (password hash) from %s incorrect"
 msgstr ""
 
-#: src/dcc.c:560 src/dcc.c:596
+#: src/dcc.c:565 src/dcc.c:601
 #, c-format
 msgid "Bad Password: [%s]%s/%d"
 msgstr ""
 
 #. Log entry for successful login -slennox 3/28/1999
-#: src/dcc.c:578
+#: src/dcc.c:583
 #, c-format
 msgid "Logged in: %s (%s/%d)"
 msgstr ""
 
-#: src/dcc.c:595
+#: src/dcc.c:600
 msgid "Negative on that, Houston.\n"
 msgstr ""
 
-#: src/dcc.c:609 src/dcc.c:1686
+#: src/dcc.c:614 src/dcc.c:1675
 #, c-format
 msgid "*** %s has joined the party line.\n"
 msgstr ""
 
-#: src/dcc.c:619 src/dcc.c:822
+#: src/dcc.c:624 src/dcc.c:827
 #, c-format
 msgid "Lost dcc connection to %s (%s/%d)"
 msgstr ""
 
-#: src/dcc.c:628
+#: src/dcc.c:633
 #, c-format
 msgid "Password timeout on dcc chat: [%s]%s"
 msgstr ""
 
-#: src/dcc.c:1012
+#: src/dcc.c:1017
 #, c-format
 msgid "Telnet connection flood from %s!  Placing on ignore!"
 msgstr ""
 
-#: src/dcc.c:1039
+#: src/dcc.c:1044
 #, c-format
 msgid "Failed TELNET incoming (%s)"
 msgstr ""
 
-#: src/dcc.c:1055
+#: src/dcc.c:1051
 #, c-format
 msgid "Refused %s/%d (bad src port)"
 msgstr ""
 
-#: src/dcc.c:1064
-#, c-format
-msgid "Refused %s/%d (invalid ip)"
-msgstr ""
-
-#: src/dcc.c:1100
+#: src/dcc.c:1089
 #, c-format
 msgid "Lost listening socket while resolving %s"
 msgstr ""
 
-#: src/dcc.c:1109
+#: src/dcc.c:1098
 #, c-format
 msgid "Refused %s (bad hostname)"
 msgstr ""
 
-#: src/dcc.c:1126
+#: src/dcc.c:1115
 #, c-format
 msgid "Telnet connection: %s/%d"
 msgstr ""
 
-#: src/dcc.c:1141
+#: src/dcc.c:1130
 #, c-format
 msgid "Ident failed for %s: %s"
 msgstr ""
 
-#: src/dcc.c:1158
+#: src/dcc.c:1147
 #, c-format
 msgid "(!) Listening port %d abruptly died."
 msgstr ""
 
-#: src/dcc.c:1185
+#: src/dcc.c:1174
 #, c-format
 msgid "Lost telnet connection from %s while checking for duplicate"
 msgstr ""
 
-#: src/dcc.c:1207
+#: src/dcc.c:1196
 #, c-format
 msgid "Refused telnet connection from %s (duplicate)"
 msgstr ""
 
-#: src/dcc.c:1272
+#: src/dcc.c:1261
 #, c-format
 msgid "Refused %s (bad nick)"
 msgstr ""
 
-#: src/dcc.c:1282
+#: src/dcc.c:1271
 #, c-format
 msgid "Refused %s (non-bot)"
 msgstr ""
 
-#: src/dcc.c:1289
+#: src/dcc.c:1278
 #, c-format
 msgid "Refused %s (non-user)"
 msgstr ""
 
-#: src/dcc.c:1299
+#: src/dcc.c:1288
 #, c-format
 msgid ""
 "This is the telnet interface to %s, an eggdrop bot.\n"
 "Dont abuse it, and it will be open for all your friends, too.\n"
 msgstr ""
 
-#: src/dcc.c:1300
+#: src/dcc.c:1289
 msgid ""
 "You now get to pick a nick to use on the bot,\n"
 "and a password so nobody else can pretend to be you.\n"
 "Please remember both!"
 msgstr ""
 
-#: src/dcc.c:1314
+#: src/dcc.c:1303
 #, c-format
 msgid "Refused %s (invalid handle: %s)"
 msgstr ""
 
-#: src/dcc.c:1324
+#: src/dcc.c:1313
 #, c-format
 msgid "Refused telnet connection from %s (tried using my botnetnick)"
 msgstr ""
 
-#: src/dcc.c:1368
+#: src/dcc.c:1357
 #, c-format
 msgid "Refused [%s]%s (no password)"
 msgstr ""
@@ -995,7 +990,7 @@ msgstr ""
 #. * authentication will not be correct - you've been warned ;)
 #. * <Cybah>
 #.
-#: src/dcc.c:1410
+#: src/dcc.c:1399
 #, c-format
 msgid "Challenging %s..."
 msgstr ""
@@ -1008,105 +1003,105 @@ msgstr ""
 #. *       <Cybah>
 #.
 #. Turn off remote telnet echo (send IAC WILL ECHO).
-#: modules/filesys/filesys.c:831 modules/server/server.c:1419 src/dcc.c:1422
+#: modules/filesys/filesys.c:831 modules/server/server.c:1419 src/dcc.c:1411
 msgid "Enter your password."
 msgstr ""
 
-#: src/dcc.c:1428
+#: src/dcc.c:1417
 #, c-format
 msgid "Lost telnet connection to %s/%d"
 msgstr ""
 
-#: src/dcc.c:1437
+#: src/dcc.c:1426
 #, c-format
 msgid "Ident timeout on telnet: %s"
 msgstr ""
 
-#: src/dcc.c:1514
+#: src/dcc.c:1503
 msgid ""
 "\n"
 "YOU ARE THE MASTER/OWNER ON THIS BOT NOW\n"
 msgstr ""
 
-#: src/dcc.c:1515
+#: src/dcc.c:1504
 msgid ""
 "From now on, you dont need to use the -m option to start the bot.\n"
 "Enjoy !!"
 msgstr ""
 
-#: modules/irc/msgcmds.c:94 src/dcc.c:1516
+#: modules/irc/msgcmds.c:94 src/dcc.c:1505
 #, c-format
 msgid "Bot installation complete, first master is %s"
 msgstr ""
 
-#: src/dcc.c:1519
+#: src/dcc.c:1508
 msgid "Welcome to eggdrop! :)"
 msgstr ""
 
-#: src/dcc.c:1521
+#: src/dcc.c:1510
 msgid ""
 "\n"
 "Okay, now choose and enter a password:\n"
 msgstr ""
 
-#: src/dcc.c:1522
+#: src/dcc.c:1511
 msgid "(Only the first 15 letters are significant.)\n"
 msgstr ""
 
-#: src/dcc.c:1547
+#: src/dcc.c:1536
 #, c-format
 msgid "New user via telnet: [%s]%s/%d"
 msgstr ""
 
-#: src/dcc.c:1574
+#: src/dcc.c:1563
 #, c-format
 msgid "Lost new telnet user (%s/%d)"
 msgstr ""
 
-#: src/dcc.c:1581
+#: src/dcc.c:1570
 #, c-format
 msgid "Lost new telnet user %s (%s/%d)"
 msgstr ""
 
-#: src/dcc.c:1591
+#: src/dcc.c:1580
 #, c-format
 msgid "Timeout on new telnet user: %s/%d"
 msgstr ""
 
-#: src/dcc.c:1600
+#: src/dcc.c:1589
 #, c-format
 msgid "Timeout on new telnet user: [%s]%s/%d"
 msgstr ""
 
-#: src/dcc.c:1650
+#: src/dcc.c:1639
 #, c-format
 msgid "Tcl error [%s]: %s"
 msgstr ""
 
-#: src/dcc.c:1719
+#: src/dcc.c:1708
 #, c-format
 msgid "*** ATTENTION: DEAD SOCKET (%d) OF TYPE %s UNTRAPPED"
 msgstr ""
 
-#: src/dcc.c:1818
+#: src/dcc.c:1807
 #, c-format
 msgid "Lost connection while identing [%s/%d]"
 msgstr ""
 
-#: src/dcc.c:1882
+#: src/dcc.c:1871
 msgid "Timeout/EOF ident connection"
 msgstr ""
 
-#: src/dcc.c:1920
+#: src/dcc.c:1909
 msgid "Lost ident wait telnet socket!!"
 msgstr ""
 
-#: src/dcc.c:1942
+#: src/dcc.c:1931
 #, c-format
 msgid "Denied telnet: %s, No Access"
 msgstr ""
 
-#: src/dcc.c:1983
+#: src/dcc.c:1972
 msgid ""
 "%B  (%E)\n"
 "\n"
@@ -1306,7 +1301,7 @@ msgstr ""
 msgid "You can't unload an encryption module"
 msgstr ""
 
-#: modules/blowfish/blowfish.c:456 src/modules.c:566 src/tclmisc.c:238
+#: modules/blowfish/blowfish.c:456 src/modules.c:566 src/tclmisc.c:207
 msgid "Already loaded."
 msgstr ""
 
@@ -2625,7 +2620,7 @@ msgstr ""
 msgid "Restarting..."
 msgstr ""
 
-#: src/tclmisc.c:239
+#: src/tclmisc.c:208
 msgid "Cant load modules"
 msgstr ""
 
