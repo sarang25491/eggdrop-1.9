@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: msgcmds.c,v 1.12 2003/01/29 07:42:49 wcc Exp $";
+static const char rcsid[] = "$Id: msgcmds.c,v 1.13 2003/02/03 10:43:36 wcc Exp $";
 #endif
 */
 
@@ -452,10 +452,8 @@ static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
       get_user_flagrec(u, &fr, chan->dname);
       cr = get_chanrec(u2, chan->dname);
       if (cr && (cr->laston > tt) &&
-	  (!channel_hidden(chan) ||
-	   hand_on_chan(chan, u) ||
-	   (glob_op(fr) && !chan_deop(fr)) ||
-	   glob_friend(fr) || chan_op(fr) || chan_friend(fr))) {
+	  (!channel_hidden(chan) || hand_on_chan(chan, u) || glob_op(fr) ||
+	  glob_friend(fr) || chan_op(fr) || chan_friend(fr))) {
 	tt = cr->laston;
 	strftime(s, 14, "%b %d %H:%M", localtime(&tt));
 	ok = 1;
@@ -532,7 +530,7 @@ static int msg_op(char *nick, char *host, struct userrec *u, char *par)
 	chan = findchan_by_dname(par);
 	if (chan && channel_active(chan)) {
 	  get_user_flagrec(u, &fr, par);
-	  if (chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))
+	  if (chan_op(fr) || glob_op(fr))
 	    add_mode(chan, '+', 'o', nick);
 	    putlog(LOG_CMDS, "*", "(%s!%s) !%s! OP %s",
 		   nick, host, u->handle, par);
@@ -541,7 +539,7 @@ static int msg_op(char *nick, char *host, struct userrec *u, char *par)
       } else {
 	for (chan = chanset; chan; chan = chan->next) {
 	  get_user_flagrec(u, &fr, chan->dname);
-	  if (chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))
+	  if (chan_op(fr) || glob_op(fr))
 	    add_mode(chan, '+', 'o', nick);
 	}
 	putlog(LOG_CMDS, "*", "(%s!%s) !%s! OP", nick, host, u->handle);
@@ -578,7 +576,7 @@ static int msg_key(char *nick, char *host, struct userrec *u, char *par)
       chan = findchan_by_dname(par);
       if (chan && channel_active(chan)) {
 	get_user_flagrec(u, &fr, par);
-	if (chan_op(fr) || (glob_op(fr) && !chan_deop(fr))) {
+	if (chan_op(fr) || glob_op(fr)) {
 	  if (chan->channel.key[0]) {
 	    dprintf(DP_SERVER, "NOTICE %s :%s: key is %s\n", nick, par,
 		    chan->channel.key);
@@ -660,8 +658,7 @@ static int msg_invite(char *nick, char *host, struct userrec *u, char *par)
     if (par[0] == '*') {
       for (chan = chanset; chan; chan = chan->next) {
 	get_user_flagrec(u, &fr, chan->dname);
-	if ((chan_op(fr) || (glob_op(fr) && !chan_deop(fr))) &&
-	    (chan->channel.mode & CHANINV))
+	if ((chan_op(fr) || glob_op(fr)) && (chan->channel.mode & CHANINV))
 	  dprintf(DP_SERVER, "INVITE %s %s\n", nick, chan->name);
       }
       putlog(LOG_CMDS, "*", "(%s!%s) !%s! INVITE ALL", nick, host,
@@ -679,7 +676,7 @@ static int msg_invite(char *nick, char *host, struct userrec *u, char *par)
     }
     /* We need to check access here also (dw 991002) */
     get_user_flagrec(u, &fr, par);
-    if (chan_op(fr) || (glob_op(fr) && !chan_deop(fr))) {
+    if (chan_op(fr) || glob_op(fr)) {
       dprintf(DP_SERVER, "INVITE %s %s\n", nick, chan->name);
       putlog(LOG_CMDS, "*", "(%s!%s) !%s! INVITE %s", nick, host,
 	     u->handle, par);

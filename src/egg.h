@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: egg.h,v 1.13 2003/01/29 07:42:50 wcc Exp $
+ * $Id: egg.h,v 1.14 2003/02/03 10:43:36 wcc Exp $
  */
 
 #ifndef _EGG_EGG_H
@@ -352,18 +352,6 @@ struct dupwait_info {
 /* Flags for listening sockets
  */
 #define LSTN_PUBLIC  0x000001	/* No access restrictions		*/
-
-/* chan & global */
-#define FLOOD_PRIVMSG    0
-#define FLOOD_NOTICE     1
-#define FLOOD_CTCP       2
-#define FLOOD_NICK       3
-#define FLOOD_JOIN       4
-#define FLOOD_KICK       5
-#define FLOOD_DEOP       6
-
-#define FLOOD_CHAN_MAX   7
-#define FLOOD_GLOBAL_MAX 3
 
 /* For local console: */
 #define STDIN      0

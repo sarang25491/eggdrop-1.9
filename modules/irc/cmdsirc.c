@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: cmdsirc.c,v 1.15 2003/01/02 21:33:15 wcc Exp $";
+static const char rcsid[] = "$Id: cmdsirc.c,v 1.16 2003/02/03 10:43:36 wcc Exp $";
 #endif
 */
 
@@ -49,7 +49,7 @@ static struct chanset_t *has_op(int idx, char *chname)
     }
   }
   get_user_flagrec(dcc[idx].user, &user, chname);
-  if (chan_op(user) || (glob_op(user) && !chan_deop(user)))
+  if (chan_op(user) || glob_op(user))
     return chan;
   dprintf(idx, _("You are not a channel op on %s.\n"), chan->dname);
   return 0;
@@ -197,8 +197,8 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
   snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
   u = get_user_by_host(s);
   get_user_flagrec(u, &victim, chan->dname);
-  if ((chan_op(victim) || (glob_op(victim) && !chan_deop(victim))) &&
-      !(chan_master(user) || glob_master(user))) {
+  if ((chan_op(victim) || glob_op(victim)) && !(chan_master(user) ||
+      glob_master(user))) {
     dprintf(idx, _("%s is a legal op.\n"), nick);
     return;
   }
@@ -349,12 +349,7 @@ static void cmd_op(struct userrec *u, int idx, char *par)
   snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
   u = get_user_by_host(s);
   get_user_flagrec(u, &victim, chan->dname);
-  if (chan_deop(victim) || (glob_deop(victim) && !glob_op(victim))) {
-    dprintf(idx, _("%s is currently being auto-deopped.\n"), m->nick);
-    return;
-  }
-  if (channel_bitch(chan)
-      && !(chan_op(victim) || (glob_op(victim) && !chan_deop(victim)))) {
+  if (channel_bitch(chan) && !(chan_op(victim) || glob_op(victim))) {
     dprintf(idx, _("%s is not a registered op.\n"), m->nick);
     return;
   }
@@ -404,8 +399,8 @@ static void cmd_deop(struct userrec *u, int idx, char *par)
     dprintf(idx, _("%1$s is a master for %2$s\n"), m->nick, chan->dname);
     return;
   }
-  if ((chan_op(victim) || (glob_op(victim) && !chan_deop(victim))) &&
-      !(chan_master(user) || glob_master(user))) {
+  if ((chan_op(victim) || glob_op(victim)) && !(chan_master(user) ||
+      glob_master(user))) {
     dprintf(idx, _("%1$s has the op flag for %2$s\n"), m->nick, chan->dname);
     return;
   }
@@ -457,8 +452,8 @@ static void cmd_kick(struct userrec *u, int idx, char *par)
   snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
   u = get_user_by_host(s);
   get_user_flagrec(u, &victim, chan->dname);
-  if ((chan_op(victim) || (glob_op(victim) && !chan_deop(victim))) &&
-      !(chan_master(user) || glob_master(user))) {
+  if ((chan_op(victim) || glob_op(victim)) && !(chan_master(user) ||
+      glob_master(user))) {
     dprintf(idx, _("%s is a legal op.\n"), nick);
     return;
   }
@@ -583,10 +578,6 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
 	atrflag = 'M';
       else if (chan_master(user))
 	atrflag = 'm';
-      else if (glob_deop(user))
-	atrflag = 'D';
-      else if (chan_deop(user))
-	atrflag = 'd';
       else if (glob_autoop(user))
 	atrflag = 'A';
       else if (chan_autoop(user))
@@ -595,10 +586,6 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
 	atrflag = 'O';
       else if (chan_op(user))
 	atrflag = 'o';
-      else if (glob_quiet(user))
-	atrflag = 'Q';
-      else if (chan_quiet(user))
-	atrflag = 'q';
       else if (glob_gvoice(user))
 	atrflag = 'G';
       else if (chan_gvoice(user))

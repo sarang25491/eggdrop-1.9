@@ -5,7 +5,6 @@
  *	telling channel status
  *	'who' response
  *	user kickban, kick, op, deop
- *	idle kicking
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -28,7 +27,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: chan.c,v 1.30 2003/01/29 07:42:49 wcc Exp $";
+static const char rcsid[] = "$Id: chan.c,v 1.31 2003/02/03 10:43:36 wcc Exp $";
 #endif
 */
 
@@ -145,190 +144,6 @@ static void do_mask(struct chanset_t *chan, masklist *m, char *mask, char Mode)
   flush_mode(chan, QUICK);
 }
 
-/* This is a clone of detect_flood, but works for channel specificity now
- * and handles kick & deop as well.
- */
-static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
-			     struct chanset_t *chan, int which, char *victim)
-{
-  char h[UHOSTLEN], ftype[12], *p;
-  struct userrec *u;
-  memberlist *m;
-  int thr = 0, lapse = 0;
-  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
-
-  if (!chan || (which < 0) || (which >= FLOOD_CHAN_MAX))
-    return 0;
-  m = ismember(chan, floodnick);
-  /* Do not punish non-existant channel members and IRC services like
-   * ChanServ
-   */
-  if (!m && (which != FLOOD_JOIN))
-    return 0;
-
-  get_user_flagrec(get_user_by_host(from), &fr, chan->dname);
-  if (glob_bot(fr) ||
-      ((which == FLOOD_DEOP) &&
-       (glob_master(fr) || chan_master(fr)) && (glob_friend(fr) || chan_friend(fr))) ||
-      ((which == FLOOD_KICK) &&
-       (glob_master(fr) || chan_master(fr)) && (glob_friend(fr) || chan_friend(fr))) ||
-      ((which != FLOOD_DEOP) && (which != FLOOD_KICK) && (glob_friend(fr) || chan_friend(fr))) ||
-      (channel_dontkickops(chan) &&
-       (chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))))	/* arthur2 */
-    return 0;
-
-  /* Determine how many are necessary to make a flood. */
-  switch (which) {
-  case FLOOD_PRIVMSG:
-  case FLOOD_NOTICE:
-    thr = chan->flood_pub_thr;
-    lapse = chan->flood_pub_time;
-    strcpy(ftype, "pub");
-    break;
-  case FLOOD_CTCP:
-    thr = chan->flood_ctcp_thr;
-    lapse = chan->flood_ctcp_time;
-    strcpy(ftype, "pub");
-    break;
-  case FLOOD_NICK:
-    thr = chan->flood_nick_thr;
-    lapse = chan->flood_nick_time;
-    strcpy(ftype, "nick");
-    break;
-  case FLOOD_JOIN:
-    thr = chan->flood_join_thr;
-    lapse = chan->flood_join_time;
-      strcpy(ftype, "join");
-    break;
-  case FLOOD_DEOP:
-    thr = chan->flood_deop_thr;
-    lapse = chan->flood_deop_time;
-    strcpy(ftype, "deop");
-    break;
-  case FLOOD_KICK:
-    thr = chan->flood_kick_thr;
-    lapse = chan->flood_kick_time;
-    strcpy(ftype, "kick");
-    break;
-  }
-  if ((thr == 0) || (lapse == 0))
-    return 0;			/* no flood protection */
-  /* Okay, make sure i'm not flood-checking myself */
-  if (match_my_nick(floodnick))
-    return 0;
-  if (!strcasecmp(floodhost, botuserhost))
-    return 0;
-  /* My user@host (?) */
-  if ((which == FLOOD_KICK) || (which == FLOOD_DEOP))
-    p = floodnick;
-  else {
-    p = strchr(floodhost, '@');
-    if (p) {
-      p++;
-    }
-    if (!p)
-      return 0;
-  }
-  if (irccmp(chan->floodwho[which], p)) {	/* new */
-    strncpy(chan->floodwho[which], p, 80);
-    chan->floodwho[which][80] = 0;
-    chan->floodtime[which] = now;
-    chan->floodnum[which] = 1;
-    return 0;
-  }
-  if (chan->floodtime[which] < now - lapse) {
-    /* Flood timer expired, reset it */
-    chan->floodtime[which] = now;
-    chan->floodnum[which] = 1;
-    return 0;
-  }
-  /* Deop'n the same person, sillyness ;) - so just ignore it */
-  if (which == FLOOD_DEOP) {
-    if (!irccmp(chan->deopd, victim))
-      return 0;
-    else
-      strcpy(chan->deopd, victim);
-  }
-  chan->floodnum[which]++;
-  if (chan->floodnum[which] >= thr) {	/* FLOOD */
-    /* Reset counters */
-    chan->floodnum[which] = 0;
-    chan->floodtime[which] = 0;
-    chan->floodwho[which][0] = 0;
-    if (which == FLOOD_DEOP)
-      chan->deopd[0] = 0;
-    u = get_user_by_host(from);
-    if (check_tcl_flud(floodnick, floodhost, u, ftype, chan->dname))
-      return 0;
-    switch (which) {
-    case FLOOD_PRIVMSG:
-    case FLOOD_NOTICE:
-    case FLOOD_CTCP:
-      /* Flooding chan! either by public or notice */
-      if (me_op(chan) && !chan_sentkick(m)) {
-	putlog(LOG_MODES, chan->dname, _("Channel flood from %s -- kicking"), floodnick);
-	dprintf(DP_MODE, "KICK %s %s :%s\n", chan->name, floodnick,
-		_("flood"));
-	m->flags |= SENTKICK;
-      }
-      return 1;
-    case FLOOD_JOIN:
-    case FLOOD_NICK:
-      if (use_exempts && is_perm_exempted(chan, from))
-	return 1;
-      simple_sprintf(h, "*!*@%s", p);
-      if (!isbanned(chan, h) && me_op(chan)) {
-	check_exemptlist(chan, from);
-	do_mask(chan, chan->channel.ban, h, 'b');
-      }
-      if ((u_match_mask(global_bans, from) && channel_honor_global_bans(chan)) ||
-	  (u_match_mask(chan->bans, from)))
-	return 1;		/* Already banned */
-      if (which == FLOOD_JOIN)
-	putlog(LOG_MISC | LOG_JOIN, chan->dname, _("JOIN flood from @%s!  Banning."), p);
-      else
-	putlog(LOG_MISC | LOG_JOIN, chan->dname, _("NICK flood from @%s!  Banning."), p);
-      strcpy(ftype + 4, " flood");
-      u_addmask('b', chan, h, botnetnick, ftype, now + (60 * chan->ban_time), 0);
-      if (!channel_enforcebans(chan) && me_op(chan)) {
-	  char s[UHOSTLEN];
-	  for (m = chan->channel.member; m && m->nick[0]; m = m->next) {	  
-	    sprintf(s, "%s!%s", m->nick, m->userhost);
-	    if (wild_match(h, s) &&
-		(m->joined >= chan->floodtime[which]) &&
-		   !chan_sentkick(m) && !match_my_nick(m->nick)) {
-	      m->flags |= SENTKICK;
-	      if (which == FLOOD_JOIN)
-	      dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick,
-		      _("join flood"));
-	      else
-	        dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick,
-		      _("nick flood"));
-	    }
-	  }
-	}
-      return 1;
-    case FLOOD_KICK:
-      if (me_op(chan) && !chan_sentkick(m)) {
-	putlog(LOG_MODES, chan->dname, "Kicking %s, for mass kick.", floodnick);
-	dprintf(DP_MODE, "KICK %s %s :%s\n", chan->name, floodnick,
-		_("mass kick, go sit in a corner"));
-	m->flags |= SENTKICK;
-      }
-    return 1;
-    case FLOOD_DEOP:
-      if (me_op(chan) && !chan_sentkick(m)) {
-	putlog(LOG_MODES, chan->dname,
-	       _("Mass deop on %s by %s"), chan->dname, from);
-	dprintf(DP_MODE, "KICK %s %s :%s\n",
-		chan->name, floodnick, _("Mass deop.  Go sit in a corner."));
-	m->flags |= SENTKICK;
-      }
-      return 1;
-    }
-  }
-  return 0;
-}
 
 /* Given a [nick!]user@host, place a quick ban on them on a chan.
  */
@@ -362,12 +177,10 @@ static void kick_all(struct chanset_t *chan, char *hostmask, char *comment, int 
     sprintf(s, "%s!%s", m->nick, m->userhost);
     get_user_flagrec(m->user ? m->user : get_user_by_host(s), &fr, chan->dname);
     if (wild_match(hostmask, s) && !chan_sentkick(m) &&
-	!match_my_nick(m->nick) && !chan_issplit(m) &&
-	!glob_friend(fr) && !chan_friend(fr) &&
-	!(use_exempts &&
-	  ((bantype && isexempted(chan, s)) || is_perm_exempted(chan, s))) &&
-	!(channel_dontkickops(chan) &&
-	  (chan_op(fr) || (glob_op(fr) && !chan_deop(fr))))) {	/* arthur2 */
+        !match_my_nick(m->nick) && !chan_issplit(m) &&
+	!glob_friend(fr) && !chan_friend(fr) && !(use_exempts && ((bantype &&
+        isexempted(chan, s)) || is_perm_exempted(chan, s))) &&
+        !(channel_dontkickops(chan) && (chan_op(fr) || glob_op(fr)))) {
       if (!flushed) {
 	/* We need to kick someone, flush eventual bans first */
 	flush_mode(chan, QUICK);
@@ -711,13 +524,10 @@ static void check_this_member(struct chanset_t *chan, char *nick, struct flag_re
   if (!m || match_my_nick(nick) || !me_op(chan))
     return;
 
-  if (chan_hasop(m) && ((chan_deop(*fr) || (glob_deop(*fr) &&
-      !chan_op(*fr))) || (channel_bitch(chan) && (!chan_op(*fr) &&
-      !(glob_op(*fr) && !chan_deop(*fr))))))
+  if (chan_hasop(m) && channel_bitch(chan) && (!chan_op(*fr) && !glob_op(*fr)))
     add_mode(chan, '-', 'o', m->nick);
-  if (!chan_hasop(m) && (chan_op(*fr) || (glob_op(*fr) &&
-      !chan_deop(*fr))) && (channel_autoop(chan) || glob_autoop(*fr) ||
-      chan_autoop(*fr))) {
+  if (!chan_hasop(m) && (chan_op(*fr) || glob_op(*fr)) &&
+      (channel_autoop(chan) || glob_autoop(*fr) || chan_autoop(*fr))) {
     if (!chan->aop_min)
       add_mode(chan, '+', 'o', m->nick);
     else {
@@ -726,12 +536,9 @@ static void check_this_member(struct chanset_t *chan, char *nick, struct flag_re
     }
   }
 
-  if (chan_hasvoice(m) && (chan_quiet(*fr) || (glob_quiet(*fr) &&
-     !chan_voice(*fr))))
-    add_mode(chan, '-', 'v', m->nick);
   if (!chan_hasvoice(m) && !chan_hasop(m) && (chan_voice(*fr) ||
-      (glob_voice(*fr) && !chan_quiet(*fr))) && (channel_autovoice(chan) ||
-      glob_gvoice(*fr) || chan_gvoice(*fr))) {
+      glob_voice(*fr)) && (channel_autovoice(chan) || glob_gvoice(*fr) ||
+      chan_gvoice(*fr))) {
     if (!chan->aop_min)
       add_mode(chan, '+', 'v', m->nick);
     else {
@@ -748,15 +555,6 @@ static void check_this_member(struct chanset_t *chan, char *nick, struct flag_re
       u_match_mask(chan->exempts, s)))) {
     if (u_match_mask(global_bans, s) || u_match_mask(chan->bans, s))
       refresh_ban_kick(chan, s, m->nick);
-    if (!chan_sentkick(m) && (chan_kick(*fr) || glob_kick(*fr)) &&
-	me_op(chan)) {
-      check_exemptlist(chan, s);
-      quickban(chan, m->userhost);
-      p = get_user(&USERENTRY_COMMENT, m->user);
-      dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick,
-	      p ? p : IRC_POLITEKICK);
-      m->flags |= SENTKICK;
-    }
   }
 }
 
@@ -1564,7 +1362,6 @@ static int gotjoin(char *from, char *ignore, char *chname)
     strlcpy(buf, from, sizeof buf);
     nick = strtok(buf, "!");
     uhost = strtok(NULL, "!");
-    detect_chan_flood(nick, uhost, from, chan, FLOOD_JOIN, NULL);
     chan = findchan(chname);
     if (!chan) {   
       if (ch_dname)
@@ -1731,19 +1528,16 @@ static int gotjoin(char *from, char *ignore, char *chname)
 	  refresh_ban_kick(chan, from, nick);
 	}
 	/* Are they a chan op, or global op without chan deop? */
-	if ((chan_op(fr) || (glob_op(fr) && !chan_deop(fr))) &&
-	   /* ... and is it op-on-join or is the use marked auto-op? */
-	    (channel_autoop(chan) || glob_autoop(fr) || chan_autoop(fr))) {
-	  /* Yes! do the honors. */
+	if ((chan_op(fr) || glob_op(fr)) && channel_autoop(chan) ||
+            glob_autoop(fr) || chan_autoop(fr))) {
 	  if (!chan->aop_min)
 	    add_mode(chan, '+', 'o', nick);
 	  else {
             set_delay(chan, nick);
             m->flags |= SENTOP;
 	  }
-	} else if ((channel_autovoice(chan) &&
-		    (chan_voice(fr) || (glob_voice(fr) && !chan_quiet(fr)))) ||
-                   ((glob_gvoice(fr) || chan_gvoice(fr)) && !chan_quiet(fr))) {
+	} else if ((channel_autovoice(chan) && (chan_voice(fr) ||
+                   glob_voice(fr))) || glob_gvoice(fr) || chan_gvoice(fr)) {
            if (!chan->aop_min)
              add_mode(chan, '+', 'v', nick);
            else {
@@ -1849,7 +1643,6 @@ static int gotkick(char *from, char *ignore, char *origmsg)
     strlcpy(buf, from, sizeof buf);
     nick = strtok(buf, "!");
     uhost = strtok(NULL, "!");
-    detect_chan_flood(nick, uhost, from, chan, FLOOD_KICK, kicked);
     chan = findchan(chname);
     if (!chan)
       return 0;     
@@ -1870,7 +1663,6 @@ static int gotkick(char *from, char *ignore, char *origmsg)
       simple_sprintf(s1, "%s!%s", m->nick, m->userhost);
       u2 = get_user_by_host(s1);
       set_handle_laston(chan->dname, u2, now);
-      maybe_revenge(chan, from, s1, REVENGE_KICK);
     }
     putlog(LOG_MODES, chan->dname, "%s kicked from %s by %s: %s", s1,
 	   chan->dname, from, msg);
@@ -1932,12 +1724,10 @@ static int gotnick(char *from, char *ignore, char *msg)
       /* Compose a nick!user@host for the new nick */
       sprintf(s1, "%s!%s", msg, uhost);
       strcpy(m->nick, msg);
-      detect_chan_flood(msg, uhost, from, chan, FLOOD_NICK, NULL);
       if (!findchan_by_dname(chname)) {
 	chan = oldchan;
 	continue;
       }
-      /* don't fill the serverqueue with modes or kicks in a nickflood */
       if (chan_sentkick(m) || chan_sentdeop(m) || chan_sentop(m) ||
 	  chan_sentdevoice(m) || chan_sentvoice(m))
 	m->flags |= STOPCHECK;

@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.25 2003/02/02 05:34:24 wcc Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.26 2003/02/03 10:43:36 wcc Exp $";
 #endif
 
 #define MODULE_NAME "channels"
@@ -36,12 +36,8 @@ static const char rcsid[] = "$Id: channels.c,v 1.25 2003/02/02 05:34:24 wcc Exp 
 static eggdrop_t *egg = NULL;
 
 static int setstatic, use_info, chan_hack, global_stopnethack_mode,
-           global_revenge_mode, global_idle_kick, global_aop_min,
-           global_aop_max, global_ban_time, global_exempt_time,
-           global_invite_time, gfld_chan_thr, gfld_chan_time, gfld_deop_thr,
-           gfld_deop_time, gfld_kick_thr, gfld_kick_time, gfld_join_thr,
-           gfld_join_time, gfld_ctcp_thr, gfld_ctcp_time, gfld_nick_thr,
-           gfld_nick_time;
+           global_aop_min, global_aop_max, global_ban_time, global_exempt_time,
+           global_invite_time;
 
 static char chanfile[121], glob_chanmode[64], glob_chanset[512];
 
@@ -356,58 +352,42 @@ static void write_channels()
     convert_element(chan->dname, name);
     get_mode_protect(chan, w);
     convert_element(w, w2);
-    fprintf(f, "channel %s %s%schanmode %s idle_kick %d stopnethack_mode %d \
-revenge_mode %d flood_chan %d:%d flood_ctcp %d:%d flood_join %d:%d \
-flood_kick %d:%d flood_deop %d:%d flood_nick %d:%d aop_delay %d:%d \
-ban_time %d exempt_time %d invite_time %d \
-%cenforcebans %cdynamicbans %cuserbans %cautoop %cbitch \
-%cgreet %cprotectops %cprotectfriends %cdontkickops \
-%cstatuslog %crevenge %crevengebot %cautovoice %csecret \
-%cshared %ccycle %cinactive %cdynamicexempts %cuserexempts \
-%chonor-global-bans %chonor-global-exempts %chonor-global-invites \
-%cdynamicinvites %cuserinvites %cnodesynch ",
-	channel_static(chan) ? "set" : "add",
-	name,
-	channel_static(chan) ? " " : " { ",
-	w2,
-	chan->idle_kick,
-	chan->stopnethack_mode,
-	chan->revenge_mode,
-	chan->flood_pub_thr, chan->flood_pub_time,
-	chan->flood_ctcp_thr, chan->flood_ctcp_time,
-	chan->flood_join_thr, chan->flood_join_time,
-	chan->flood_kick_thr, chan->flood_kick_time,
-	chan->flood_deop_thr, chan->flood_deop_time,
-	chan->flood_nick_thr, chan->flood_nick_time,
-	chan->aop_min, chan->aop_max,
-	chan->ban_time,
-	chan->exempt_time,
-	chan->invite_time,
-	PLSMNS(channel_enforcebans(chan)),
-	PLSMNS(channel_dynamicbans(chan)),
-	PLSMNS(!channel_nouserbans(chan)),
-	PLSMNS(channel_autoop(chan)),
-	PLSMNS(channel_bitch(chan)),
-	PLSMNS(channel_greet(chan)),
-	PLSMNS(channel_protectops(chan)),
-	PLSMNS(channel_protectfriends(chan)),
-	PLSMNS(channel_dontkickops(chan)),
-	PLSMNS(channel_logstatus(chan)),
-	PLSMNS(channel_revenge(chan)),
-	PLSMNS(channel_revengebot(chan)),
-	PLSMNS(channel_autovoice(chan)),
-	PLSMNS(channel_secret(chan)),
-	PLSMNS(channel_shared(chan)),
-	PLSMNS(channel_cycle(chan)),
-	PLSMNS(channel_inactive(chan)),
-	PLSMNS(channel_dynamicexempts(chan)),
-	PLSMNS(!channel_nouserexempts(chan)),
-	PLSMNS(channel_honor_global_bans(chan)),
-	PLSMNS(channel_honor_global_exempts(chan)),
-	PLSMNS(channel_honor_global_invites(chan)),
-	PLSMNS(channel_dynamicinvites(chan)),
-	PLSMNS(!channel_nouserinvites(chan)),
-	PLSMNS(channel_nodesynch(chan)));
+    fprintf(f,
+            "channel %s %s%schanmode %s stopnethack_mode %d aop_delay %d:%d "
+             "ban_time %d exempt_time %d invite_time %d %cenforcebans "
+             "%cdynamicbans %cuserbans %cautoop %cbitch %cgreet %cprotectops "
+             "%cprotectfriends %cdontkickops %cstatuslog %cautovoice %csecret "
+             "%cshared %ccycle %cinactive %cdynamicexempts %cuserexempts "
+             "%chonor-global-bans %chonor-global-exempts "
+             "%chonor-global-invites %cdynamicinvites %cuserinvites "
+             "%cnodesynch ",
+             channel_static(chan) ? "set" : "add", name,
+             channel_static(chan) ? " " : " { ", w2, chan->stopnethack_mode,
+             chan->aop_min, chan->aop_max, chan->ban_time, chan->exempt_time,
+             chan->invite_time,
+             PLSMNS(channel_enforcebans(chan)),
+             PLSMNS(channel_dynamicbans(chan)),
+             PLSMNS(!channel_nouserbans(chan)),
+             PLSMNS(channel_autoop(chan)),
+             PLSMNS(channel_bitch(chan)),
+             PLSMNS(channel_greet(chan)),
+             PLSMNS(channel_protectops(chan)),
+             PLSMNS(channel_protectfriends(chan)),
+             PLSMNS(channel_dontkickops(chan)),
+             PLSMNS(channel_logstatus(chan)),
+             PLSMNS(channel_autovoice(chan)),
+             PLSMNS(channel_secret(chan)),
+             PLSMNS(channel_shared(chan)),
+             PLSMNS(channel_cycle(chan)),
+             PLSMNS(channel_inactive(chan)),
+             PLSMNS(channel_dynamicexempts(chan)),
+             PLSMNS(!channel_nouserexempts(chan)),
+             PLSMNS(channel_honor_global_bans(chan)),
+             PLSMNS(channel_honor_global_exempts(chan)),
+             PLSMNS(channel_honor_global_invites(chan)),
+             PLSMNS(channel_dynamicinvites(chan)),
+             PLSMNS(!channel_nouserinvites(chan)),
+             PLSMNS(channel_nodesynch(chan)));
     for (ul = udef; ul; ul = ul->next) {
       if (ul->defined && ul->name) {
 	if (ul->type == UDEF_FLAG)
@@ -585,8 +565,6 @@ static void channels_report(int idx, int details)
 	  i += my_strcpy(s + i, "dont-kick-ops ");
 	if (channel_logstatus(chan))
 	  i += my_strcpy(s + i, "log-status ");
-	if (channel_revenge(chan))
-	  i += my_strcpy(s + i, "revenge ");
 	if (channel_secret(chan))
 	  i += my_strcpy(s + i, "secret ");
 	if (channel_shared(chan))
@@ -616,15 +594,9 @@ static void channels_report(int idx, int details)
 	if (channel_honor_global_invites(chan))
 	  i += my_strcpy(s + i, "honor-global-invites ");
 	dprintf(idx, "      Options: %s\n", s);
-	if (chan->idle_kick)
-	  dprintf(idx, "      Kicking idle users after %d min\n",
-		  chan->idle_kick);
 	if (chan->stopnethack_mode)
 	  dprintf(idx, "      stopnethack_mode %d\n",
 		  chan->stopnethack_mode);
-	if (chan->revenge_mode)
-	  dprintf(idx, "      revenge_mode %d\n",
-                  chan->revenge_mode);
 	if (details) {
 		dprintf(idx, "    Bans last %d mins.\n", chan->ban_time);
 		dprintf(idx, "    Exemptions last %d mins.\n", chan->exempt_time);
@@ -680,8 +652,6 @@ static tcl_ints my_tcl_ints[] =
   {"share_greet",		NULL,				0},
   {"use_info",			&use_info,			0},
   {"global_stopnethack_mode",	&global_stopnethack_mode,	0},
-  {"global_revenge_mode",       &global_revenge_mode,           0},
-  {"global_idle_kick",		&global_idle_kick,		0},
   {"global_ban_time",		&global_ban_time,		0},
   {"global_exempt_time",	&global_exempt_time,		0},
   {"global_invite_time",	&global_invite_time,		0},
@@ -690,12 +660,6 @@ static tcl_ints my_tcl_ints[] =
 
 static tcl_coups mychan_tcl_coups[] =
 {
-  {"global_flood_chan",		&gfld_chan_thr,		&gfld_chan_time},
-  {"global_flood_deop",		&gfld_deop_thr,		&gfld_deop_time},
-  {"global_flood_kick",		&gfld_kick_thr,		&gfld_kick_time},
-  {"global_flood_join",		&gfld_join_thr,		&gfld_join_time},
-  {"global_flood_ctcp",		&gfld_ctcp_thr,		&gfld_ctcp_time},
-  {"global_flood_nick",		&gfld_nick_thr, 	&gfld_nick_time},
   {"global_aop_delay",		&global_aop_min,	&global_aop_max},
   {NULL,			NULL,			NULL}
 };
@@ -805,18 +769,6 @@ static Function channels_table[] =
 char *start(eggdrop_t *eggdrop)
 {
   egg = eggdrop;
-
-  gfld_chan_thr = 10;
-  gfld_chan_time = 60;
-  gfld_deop_thr = 3;
-  gfld_deop_time = 10;
-  gfld_kick_thr = 3;
-  gfld_kick_time = 10;
-  gfld_join_thr = 5;
-  gfld_join_time = 60;
-  gfld_ctcp_thr = 5;
-  gfld_ctcp_time = 60;
-  global_idle_kick = 0;
   global_aop_min = 5;
   global_aop_max = 30;
   setstatic = 0;
@@ -826,7 +778,6 @@ char *start(eggdrop_t *eggdrop)
   strcpy(glob_chanmode, "nt");
   udef = NULL;
   global_stopnethack_mode = 0;
-  global_revenge_mode = 0;
   global_ban_time = 120;
   global_exempt_time = 60;
   global_invite_time = 60;
@@ -839,7 +790,6 @@ char *start(eggdrop_t *eggdrop)
 	 "+greet "
 	 "+protectops "
 	 "+statuslog "
-	 "-revenge "
 	 "-secret "
 	 "-autovoice "
 	 "+cycle "
@@ -851,7 +801,6 @@ char *start(eggdrop_t *eggdrop)
 	 "+dynamicexempts "
 	 "+userinvites "
 	 "+dynamicinvites "
-	 "-revengebot "
 	 "+honor-global-bans "
          "+honor-global-exempts "
          "+honor-global-invites "

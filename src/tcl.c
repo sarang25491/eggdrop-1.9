@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tcl.c,v 1.93 2003/02/03 01:01:07 stdarg Exp $";
+static const char rcsid[] = "$Id: tcl.c,v 1.94 2003/02/03 10:43:36 wcc Exp $";
 #endif
 
 #include <stdlib.h>		/* getenv()				*/
@@ -72,7 +72,6 @@ int use_exempts = 0;
 int force_expire = 0;
 int copy_to_tmp = 0;
 int remote_boots = 2;
-int allow_dk_cmds = 1;
 int par_telnet_flood = 1;
 int handlen = HANDLEN;
 
@@ -297,7 +296,6 @@ static tcl_ints def_tcl_ints[] =
   {"die_on_sigterm",		&die_on_sigterm,	1},
   {"remote_boots",		&remote_boots,		1},
   {"raw_log",			&raw_log,		1},
-  {"allow_dk_cmds",		&allow_dk_cmds,		0},
   {"use_exempts",		&use_exempts,		0},
   {"use_invites",		&use_invites,		0},
   {"force_expire",		&force_expire,		0},

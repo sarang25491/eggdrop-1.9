@@ -24,7 +24,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: cmds.c,v 1.110 2003/01/02 21:33:15 wcc Exp $";
+static const char rcsid[] = "$Id: cmds.c,v 1.111 2003/02/03 10:43:36 wcc Exp $";
 #endif
 
 #include "main.h"
@@ -460,7 +460,7 @@ static int cmd_console(user_t *u, int idx, char *par)
       return(0);
     }
     get_user_flagrec(u, &fr, nick);
-    if (!chan_op(fr) && !(glob_op(fr) && !chan_deop(fr))) {
+    if (!chan_op(fr) && !glob_op(fr)) {
       dprintf(idx, "You don't have op or master access to channel %s.\n",
 	      nick);
       return(0);
@@ -1837,12 +1837,6 @@ static int cmd_mns_host(user_t *u, int idx, char *par)
 
   get_user_flagrec(u, &fr, NULL);
   get_user_flagrec(u2, &fr2, NULL);
-  /* check to see if user is +d or +k and don't let them remove hosts */
-  if (glob_deop(fr) || glob_kick(fr) || chan_deop(fr) || chan_kick (fr)) {
-    dprintf(idx, _("You can't remove hostmasks while having the +d or +k "
-            "flag.\n"));
-    return(0);
-  }
   if (strcasecmp(handle, dcc[idx].nick)) {
     if (!glob_master(fr) && !glob_bot(fr2) && !chan_master(fr)) {
       dprintf(idx, _("You can't remove hostmasks from non-bots.\n"));
@@ -2053,7 +2047,6 @@ cmd_t C_dcc[] =
   {"motd",		"",	(Function) cmd_motd,		NULL},
   {"newpass",		"",	(Function) cmd_newpass,		NULL},
   {"handle",		"",	(Function) cmd_handle,		NULL},
-  {"nick",		"",	(Function) cmd_handle,		NULL},
   {"page",		"",	(Function) cmd_page,		NULL},
   {"quit",		"",	(Function) cmd_quit,		NULL},
   {"rehash",		"m",	(Function) cmd_rehash,		NULL},

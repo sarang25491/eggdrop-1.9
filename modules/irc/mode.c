@@ -25,7 +25,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: mode.c,v 1.17 2003/01/02 21:33:15 wcc Exp $";
+static const char rcsid[] = "$Id: mode.c,v 1.18 2003/02/03 10:43:36 wcc Exp $";
 #endif
 */
 
@@ -413,9 +413,7 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
     return;
 
   /* I'm opped, and the opper isn't me */
-  if (me_op(chan) && !match_my_nick(who) &&
-    /* and it isn't a server op */
-	   nick[0]) {
+  if (me_op(chan) && !match_my_nick(who) && nick[0]) {
     /* Channis is +bitch, and the opper isn't a global master or a bot */
     if (channel_bitch(chan) && !(glob_master(*opper) || glob_bot(*opper)) &&
 	/* ... and the *opper isn't a channel master */
@@ -425,22 +423,13 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
 	/* ... and the oppee isn't a channel op/master */
 	!chan_op(victim))
       add_mode(chan, '-', 'o', who);
-      /* Opped is channel +d or global +d */
-    else if ((chan_deop(victim) ||
-		(glob_deop(victim) && !chan_op(victim))) &&
-	       !glob_master(*opper) && !chan_master(*opper))
-      add_mode(chan, '-', 'o', who);
-    else if (reversing)
-      add_mode(chan, '-', 'o', who);
+
   } else if (reversing && !match_my_nick(who))
     add_mode(chan, '-', 'o', who);
   if (!nick[0] && me_op(chan) && !match_my_nick(who)) {
-    if (chan_deop(victim) || (glob_deop(victim) && !chan_op(victim))) {
-      m->flags |= FAKEOP;
-      add_mode(chan, '-', 'o', who);
-    } else if (snm > 0 && snm < 7 && !((channel_autoop(chan) || glob_autoop(victim) ||
-	       chan_autoop(victim)) && (chan_op(victim) || (glob_op(victim) &&
-	       !chan_deop(victim)))) && !glob_exempt(victim) && !chan_exempt(victim)) {
+    if (snm > 0 && snm < 7 && !((channel_autoop(chan) || glob_autoop(victim) ||
+	       chan_autoop(victim)) && (chan_op(victim) || glob_op(victim))) &&
+               !glob_exempt(victim) && !chan_exempt(victim)) {
       if (snm == 5) snm = channel_bitch(chan) ? 1 : 3;
       if (snm == 6) snm = channel_bitch(chan) ? 4 : 2;
       if (chan_wasoptest(victim) || glob_wasoptest(victim) ||
@@ -449,11 +438,10 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
           m->flags |= FAKEOP;
           add_mode(chan, '-', 'o', who);
         }
-      } else if (!(chan_op(victim) ||
-		 (glob_op(victim) && !chan_deop(victim)))) {
-		  if (snm == 1 || snm == 4 || (snm == 3 && !chan_wasop(m))) {
-		    add_mode(chan, '-', 'o', who);
-		    m->flags |= FAKEOP;
+      } else if (!(chan_op(victim) || glob_op(victim))) {
+        if (snm == 1 || snm == 4 || (snm == 3 && !chan_wasop(m))) {
+          add_mode(chan, '-', 'o', who);
+          m->flags |= FAKEOP;
         }
       } else if (snm == 4 && !chan_wasop(m)) {
         add_mode(chan, '-', 'o', who);
@@ -504,32 +492,23 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
   if (me_op(chan)) {
     int ok = 1;
 
-    /* if they aren't d|d then check if they are something we should protect */
-    if (!glob_deop(victim) && !chan_deop(victim)) {
-      if (channel_protectops(chan) && (glob_master(victim) || chan_master(victim) ||
-	  glob_op(victim) || chan_op(victim)))
-	ok = 0;
-      else if (channel_protectfriends(chan) && (glob_friend(victim) ||
-	       chan_friend(victim)))
-	ok = 0;
-    }
+    if (channel_protectops(chan) && (glob_master(victim) || chan_master(victim) ||
+        glob_op(victim) || chan_op(victim)))
+      ok = 0;
+    else if (channel_protectfriends(chan) && (glob_friend(victim) ||
+             chan_friend(victim)))
+      ok = 0;
 
     if ((reversing || !ok) && had_op && !match_my_nick(nick) &&
-        rfc_casecmp(who, nick) && !match_my_nick(who) &&
-	/* Is the deopper NOT a master or bot? */
-        !glob_master(user) && !chan_master(user) && !glob_bot(user) &&
-        ((chan_op(victim) || (glob_op(victim) && !chan_deop(victim))) ||
-        !channel_bitch(chan)))
-      /* Then we'll bless the victim */
+        irccmp(who, nick) && !match_my_nick(who) && !glob_master(user) &&
+        !chan_master(user) && !glob_bot(user) && ((chan_op(victim) ||
+        glob_op(victim)) || !channel_bitch(chan)))
       add_mode(chan, '+', 'o', who);
   }
 
   if (!nick[0])
     putlog(LOG_MODES, chan->dname, "TS resync (%s): %s deopped by %s",
 	   chan->dname, who, from);
-  /* Check for mass deop */
-  if (nick[0])
-    detect_chan_flood(nick, from, s1, chan, FLOOD_DEOP, who);
   /* Having op hides your +v status -- so now that someone's lost ops,
    * check to see if they have +v
    */
@@ -551,8 +530,6 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
       putlog(LOG_MODES, chan->dname, "TS resync deopped me on %s :(",
 	     chan->dname);
   }
-  if (nick[0])
-    maybe_revenge(chan, s1, s, REVENGE_DEOP);
 }
 
 
@@ -586,9 +563,9 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from, char *who)
         u = get_user_by_host(s1);
         if (u) {
           get_user_flagrec(u, &victim, chan->dname);
-          if ((glob_friend(victim) || (glob_op(victim) && !chan_deop(victim)) ||
-              chan_friend(victim) || chan_op(victim)) && !glob_master(user) &&
-              !glob_bot(user) && !chan_master(user) && !isexempted(chan, s1)) {
+          if ((glob_friend(victim) || glob_op(victim) || chan_friend(victim) ||
+              chan_op(victim)) && !glob_master(user) && !glob_bot(user) &&
+              !chan_master(user) && !isexempted(chan, s1)) {
             add_mode(chan, '-', 'b', who);
 	    return;
           }
@@ -650,8 +627,8 @@ static void got_unban(struct chanset_t *chan, char *nick, char *from,
   if ((u_equals_mask(global_bans, who) || u_equals_mask(chan->bans, who)) &&
       me_op(chan) && !channel_dynamicbans(chan)) {
     /* That's a permban! */
-    if ((!glob_bot(user) || !(bot_flags(u) & BOT_SHARE)) &&
-        ((!glob_op(user) || chan_deop(user)) && !chan_op(user)))
+    if ((!glob_bot(user) || !(bot_flags(u) & BOT_SHARE)) && !glob_op(user) &&
+        !chan_op(user)))
       add_mode(chan, '+', 'b', who);
   }
 }
@@ -837,10 +814,9 @@ static int gotmode(char *from, char *ignore, char *origmsg)
       m = ismember(chan, nick);
       if (m)
 	m->last = now;
-      if (channel_active(chan) && m && me_op(chan)  &&
-	  !(glob_friend(user) || chan_friend(user) ||
-	    (channel_dontkickops(chan) &&
-	     (chan_op(user) || (glob_op(user) && !chan_deop(user)))))) {
+      if (channel_active(chan) && m && me_op(chan)  && !(glob_friend(user) ||
+          chan_friend(user) || (channel_dontkickops(chan) && (chan_op(user) ||
+          glob_op(user))))) {
 	if (chan_fakeop(m)) {
 	  putlog(LOG_MODES, ch, _("Mode change by fake op on %s!  Reversing..."), ch);
 	  dprintf(DP_MODE, "KICK %s %s :%s\n", ch, nick,
@@ -1014,25 +990,15 @@ static int gotmode(char *from, char *ignore, char *origmsg)
 	      m->flags &= ~SENTVOICE;
 	      m->flags |= CHANVOICE;
 	      check_tcl_mode(nick, uhost, u, chan->dname, ms2, op);
-	      if (channel_active(chan) &&
-		  !glob_master(user) && !chan_master(user)) {
-		if (channel_autovoice(chan) &&
-		    (chan_quiet(victim) ||
-		     (glob_quiet(victim) && !chan_voice(victim)))) {
-		  add_mode(chan, '-', 'v', op);
-		} else if (reversing)
-		  add_mode(chan, '-', 'v', op);
-	      }
 	    } else {
 	      m->flags &= ~SENTDEVOICE;
 	      m->flags &= ~CHANVOICE;
 	      check_tcl_mode(nick, uhost, u, chan->dname, ms2, op);
 	      if (channel_active(chan) &&
 		  !glob_master(user) && !chan_master(user)) {
-		if ((channel_autovoice(chan) && !chan_quiet(victim) &&
-		    (chan_voice(victim) || glob_voice(victim))) ||
-		    (!chan_quiet(victim) &&
-		    (glob_gvoice(victim) || chan_gvoice(victim)))) {
+		if ((channel_autovoice(chan) && (chan_voice(victim) ||
+                    glob_voice(victim))) || glob_gvoice(victim) ||
+                    chan_gvoice(victim)) {
 		  add_mode(chan, '+', 'v', op);
 		} else if (reversing)
 		  add_mode(chan, '+', 'v', op);

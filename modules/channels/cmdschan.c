@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: cmdschan.c,v 1.15 2003/01/30 01:04:36 wcc Exp $";
+static const char rcsid[] = "$Id: cmdschan.c,v 1.16 2003/02/03 10:43:36 wcc Exp $";
 #endif
 */
 
@@ -61,7 +61,7 @@ static void cmd_pls_mask(char type, struct userrec *u, int idx, char *par)
     if (!chan) {
       dprintf(idx, _("That channel doesn't exist!\n"));
       return;
-    } else if (!((glob_op(user) && !chan_deop(user)) || chan_op(user))) {
+    } else if (!glob_op(user) && !chan_op(user)) {
       dprintf(idx, _("You don't have access to set %ss on %s.\n"), cmd, chname);
       return;
     }
@@ -221,7 +221,7 @@ static void cmd_mns_mask(char type, struct userrec *u, int idx, char *par)
     if (!chname)
       chname = dcc[idx].u.chat->con_chan;
     get_user_flagrec(u, &user, chname);
-    if (!((glob_op(user) && !chan_deop(user)) || chan_op(user)))
+    if (!glob_op(user) && !chan_op(user))
       return;
   }
   strlcpy(s, who, sizeof s);
@@ -823,19 +823,11 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
 	    channel_static(chan) ? "static" : "dynamic", chan->dname);
     get_mode_protect(chan, work);
     dprintf(idx, "Protect modes (chanmode): %s\n", work[0] ? work : "None");
-    if (chan->idle_kick)
-      dprintf(idx, "Idle Kick after (idle_kick): %d\n", chan->idle_kick);
-    else
-      dprintf(idx, "Idle Kick after (idle_kick): DON'T!\n");
     if (chan->stopnethack_mode)
       dprintf(idx, "stopnethack_mode: %d\n", chan->stopnethack_mode);
     else
       dprintf(idx, "stopnethack: DON'T!\n");
       dprintf(idx, "aop_delay: %d:%d\n", chan->aop_min, chan->aop_max);
-    if (chan->revenge_mode)
-      dprintf(idx, "revenge_mode: %d\n", chan->revenge_mode);
-    else
-      dprintf(idx, "revenge_mode: 0\n");
     if (chan->ban_time)
       dprintf(idx, "ban_time: %d\n", chan->ban_time);
     else
@@ -859,19 +851,17 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
 	    (chan->status & CHAN_GREET) ? '+' : '-',
 	    (chan->status & CHAN_CYCLE) ? '+' : '-',
 	    (chan->status & CHAN_DONTKICKOPS) ? '+' : '-');
-    dprintf(idx, "     %cprotectops     %cprotectfriends %crevenge        %crevengebot\n",
+    dprintf(idx, "     %cprotectops     %cprotectfriends %cbitch          %cautoop\n",
 	    (chan->status & CHAN_PROTECTOPS) ? '+' : '-',
             (chan->status & CHAN_PROTECTFRIENDS) ? '+' : '-',
-	    (chan->status & CHAN_REVENGE) ? '+' : '-',
-	    (chan->status & CHAN_REVENGEBOT) ? '+' : '-');
-    dprintf(idx, "     %cbitch          %cautoop         %cautovoice      %cnodesynch\n",
-	    (chan->status & CHAN_BITCH) ? '+' : '-',
-	    (chan->status & CHAN_OPONJOIN) ? '+' : '-',
+            (chan->status & CHAN_BITCH) ? '+' : '-',
+            (chan->status & CHAN_OPONJOIN) ? '+' : '-');
+    dprintf(idx, "     %cautovoice      %cnodesynch      %cenforcebans    %cdynamicbans\n",
 	    (chan->status & CHAN_AUTOVOICE) ? '+' : '-',
-	    (chan->status & CHAN_NODESYNCH) ? '+' : '-');
-    dprintf(idx, "     %cenforcebans    %cdynamicbans    %cuserbans\n",
-	    (chan->status & CHAN_ENFORCEBANS) ? '+' : '-',
-	    (chan->status & CHAN_DYNAMICBANS) ? '+' : '-',
+	    (chan->status & CHAN_NODESYNCH) ? '+' : '-',
+            (chan->status & CHAN_ENFORCEBANS) ? '+' : '-',
+	    (chan->status & CHAN_DYNAMICBANS) ? '+' : '-');
+    dprintf(idx, "     %cuserbans\n",
 	    (!(chan->status & CHAN_USERBANS)) ? '-' : '+');
     dprintf(idx, "     %cdynamicexempts %cuserexempts    %cdynamicinvites %cuserinvites\n",
 	    (chan->ircnet_status & CHAN_DYNAMICEXEMPTS) ? '+' : '-',
@@ -944,16 +934,6 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
 				dprintf(idx, "%s: %s\n", ul->name, p);
 			}
 	}
-
-    dprintf(idx, "flood settings: chan ctcp join kick deop nick\n");
-    dprintf(idx, "number:          %3d  %3d  %3d  %3d  %3d  %3d\n",
-	    chan->flood_pub_thr, chan->flood_ctcp_thr,
-	    chan->flood_join_thr, chan->flood_kick_thr,
-	    chan->flood_deop_thr, chan->flood_nick_thr);
-    dprintf(idx, "time  :          %3d  %3d  %3d  %3d  %3d  %3d\n",
-	    chan->flood_pub_time, chan->flood_ctcp_time,
-	    chan->flood_join_time, chan->flood_kick_time,
-	    chan->flood_deop_time, chan->flood_nick_time);
     putlog(LOG_CMDS, "*", "#%s# chaninfo %s", dcc[idx].nick, chname);
   }
 }

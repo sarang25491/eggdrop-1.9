@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: flags.c,v 1.36 2003/02/03 01:01:07 stdarg Exp $";
+static const char rcsid[] = "$Id: flags.c,v 1.37 2003/02/03 10:43:36 wcc Exp $";
 #endif
 
 #include <ctype.h>
@@ -36,7 +36,7 @@ static const char rcsid[] = "$Id: flags.c,v 1.36 2003/02/03 01:01:07 stdarg Exp 
 #include "irccmp.h"		/* irccmp				*/
 #include "flags.h"		/* prototypes				*/
 
-extern int		 raw_log, noshare, allow_dk_cmds;
+extern int raw_log, noshare;
 
 typedef struct {
 	int flag;
@@ -145,14 +145,6 @@ int sanity_check(int atr)
   if ((atr & USER_BOT) &&
       (atr & (USER_PARTY | USER_MASTER | USER_OWNER)))
     atr &= ~(USER_PARTY | USER_MASTER | USER_OWNER);
-  if ((atr & USER_OP) && (atr & USER_DEOP))
-    atr &= ~(USER_OP | USER_DEOP);
-  if ((atr & USER_AUTOOP) && (atr & USER_DEOP))
-    atr &= ~(USER_AUTOOP | USER_DEOP);
-  if ((atr & USER_VOICE) && (atr & USER_QUIET))
-    atr &= ~(USER_VOICE | USER_QUIET);
-  if ((atr & USER_GVOICE) && (atr & USER_QUIET))
-    atr &= ~(USER_GVOICE | USER_QUIET);
   /* Can't be owner without also being master */
   if (atr & USER_OWNER)
     atr |= USER_MASTER;
@@ -172,15 +164,7 @@ int sanity_check(int atr)
  */
 int chan_sanity_check(int chatr, int atr)
 {
-  if ((chatr & USER_OP) && (chatr & USER_DEOP))
-    chatr &= ~(USER_OP | USER_DEOP);
-  if ((chatr & USER_AUTOOP) && (chatr & USER_DEOP))
-    chatr &= ~(USER_AUTOOP | USER_DEOP);
-  if ((chatr & USER_VOICE) && (chatr & USER_QUIET))
-    chatr &= ~(USER_VOICE | USER_QUIET);
-  if ((chatr & USER_GVOICE) && (chatr & USER_QUIET))
-    chatr &= ~(USER_GVOICE | USER_QUIET);
-  /* Can't be channel owner without also being channel master */
+  /* Can't be channel owner without also being channel master. */
   if (chatr & USER_OWNER)
     chatr |= USER_MASTER;
   /* Master implies op */
@@ -424,12 +408,8 @@ int flagrec_ok(struct flag_record *req,
     /* Exception 1 - global +d/+k cant use -|-, unless they are +p */
     if (!req->chan && !req->global && !req->udef_global &&
 	!req->udef_chan) {
-      if (!allow_dk_cmds) {
-	if (glob_party(*have))
-	  return 1;
-	if (glob_deop(*have) || chan_deop(*have))
-	  return 0;		/* neither can +d's */
-      }
+      if (glob_party(*have))
+        return 1;
       return 1;
     }
     if (hav & req->global)

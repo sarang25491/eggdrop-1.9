@@ -21,7 +21,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: flagmaps.c,v 1.4 2003/01/02 21:33:14 wcc Exp $";
+static const char rcsid[] = "$Id: flagmaps.c,v 1.5 2003/02/03 10:43:36 wcc Exp $";
 #endif
 */
 
@@ -43,8 +43,6 @@ static channel_flag_map_t normal_flag_map[] = {
 	{CHAN_DONTKICKOPS, "dontkickops"},
 	{CHAN_INACTIVE, "inactive"},
 	{CHAN_LOGSTATUS, "statuslog"},
-	{CHAN_REVENGE, "revenge"},
-	{CHAN_REVENGEBOT, "revengebot"},
 	{CHAN_SECRET, "secret"},
 	{CHAN_SHARED, "shared"},
 	{CHAN_AUTOVOICE, "autovoice"},

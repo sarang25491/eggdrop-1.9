@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: flags.h,v 1.14 2003/01/02 21:33:16 wcc Exp $
+ * $Id: flags.h,v 1.15 2003/02/03 10:43:36 wcc Exp $
  */
 
 #ifndef _EGG_FLAGS_H
@@ -45,48 +45,47 @@ struct flag_record {
 
 /*
  * userflags:
- *             abcdefgh?jk?mnopq??tuvwx??
+ *   abc?efgh?j??mnop???tuvwx??
  * + user defined A-Z
- *   unused letters: ilrsyz
+ *   unused letters: dillqrsyz
  *
  * botflags:
  *   0123456789ab????ghi??l???p?rs???????
  *   unused letters: cdefjkmnoqtuvwxyz
  *
  * chanflags:
- *             a??defg???k?mno?q???uv????
+ *   a???efg?????mno?????uv????
  * + user defined A-Z
- *   unused letters: bchijlprstwxyz
+ *   unused letters: bcdhijklpqrstwxyz
  */
-#define USER_VALID    0xF9F27B		/* all USER_ flags in use	 */
-#define CHAN_VALID    0x757079		/* all flags that can be chan
-					   specific			 */
-#define BOT_VALID     0x7fe689C1	/* all BOT_ flags in use	 */
+#define USER_VALID    0x78F273   /* all USER_ flags in use */
+#define CHAN_VALID    0x603071   /* all flags that can be chan specific */
+#define BOT_VALID     0x7fe689C1 /* all BOT_ flags in use */
 
 
-#define USER_AUTOOP   0x00000001	/* a  auto-op			 */
-#define USER_BOT      0x00000002	/* b  user is a bot		 */
-#define USER_C        0x00000004	/* c  unused			 */
-#define USER_DEOP     0x00000008	/* d  user is global de-op	 */
-#define USER_EXEMPT   0x00000010	/* e  exempted from stopnethack	 */
-#define USER_FRIEND   0x00000020	/* f  user is global friend	 */
-#define USER_GVOICE   0x00000040	/* g  give voice true auto	 */
-#define USER_H	      0x00000080	/* h  unused			 */
-#define USER_I        0x00000100	/* i  unused			 */
-#define USER_JANITOR  0x00000200	/* j  user has file area master	 */
-#define USER_K	      0x00000400	/* k  unused			 */
-#define USER_L        0x00000800	/* l  unused			 */
-#define USER_MASTER   0x00001000	/* m  user has full bot access	 */
-#define USER_OWNER    0x00002000	/* n  user is the bot owner	 */
-#define USER_OP       0x00004000	/* o  user is +o on all channels */
-#define USER_PARTY    0x00008000	/* p  user has party line access */
-#define USER_QUIET    0x00010000	/* q  never let 'em get a voice	 */
-#define USER_R        0x00020000	/* r  unused			 */
-#define USER_S        0x00040000	/* s  unused			 */
-#define USER_BOTMAST  0x00080000	/* t  user is botnet master	 */
-#define USER_UNSHARED 0x00100000	/* u  not shared with sharebots	 */
-#define USER_VOICE    0x00200000	/* v  auto-voice on join	 */
-#define USER_WASOPTEST 0x00400000	/* w  wasop test needed for
+#define USER_AUTOOP    0x00000001
+#define USER_BOT       0x00000002
+#define USER_C         0x00000004
+#define USER_D         0x00000008
+#define USER_EXEMPT    0x00000010
+#define USER_FRIEND    0x00000020
+#define USER_GVOICE    0x00000040
+#define USER_H         0x00000080
+#define USER_I         0x00000100
+#define USER_JANITOR   0x00000200
+#define USER_K         0x00000400
+#define USER_L         0x00000800
+#define USER_MASTER    0x00001000
+#define USER_OWNER     0x00002000
+#define USER_OP        0x00004000
+#define USER_PARTY     0x00008000
+#define USER_Q         0x00010000
+#define USER_R         0x00020000
+#define USER_S         0x00040000
+#define USER_BOTMAST   0x00080000
+#define USER_UNSHARED  0x00100000
+#define USER_VOICE     0x00200000
+#define USER_WASOPTEST 0x00400000
 					      stopnethack		 */
 #define USER_XFER     0x00800000	/* x  user has file area access	 */
 #define USER_Y        0x01000000	/* y  unused			 */
@@ -144,8 +143,6 @@ struct flag_record {
  */
 #define chan_op(x)		((x).chan & USER_OP)
 #define glob_op(x)		((x).global & USER_OP)
-#define chan_deop(x)		((x).chan & USER_DEOP)
-#define glob_deop(x)		((x).global & USER_DEOP)
 #define glob_master(x)		((x).global & USER_MASTER)
 #define glob_bot(x)		((x).global & USER_BOT)
 #define glob_owner(x)		((x).global & USER_OWNER)
@@ -159,8 +156,6 @@ struct flag_record {
 #define glob_voice(x)		((x).global & USER_VOICE)
 #define chan_wasoptest(x)	((x).chan & USER_WASOPTEST)
 #define glob_wasoptest(x)	((x).global & USER_WASOPTEST)
-#define chan_quiet(x)		((x).chan & USER_QUIET)
-#define glob_quiet(x)		((x).global & USER_QUIET)
 #define chan_friend(x)		((x).chan & USER_FRIEND)
 #define glob_friend(x)		((x).global & USER_FRIEND)
 #define glob_botmast(x)		((x).global & USER_BOTMAST)

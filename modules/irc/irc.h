@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: irc.h,v 1.8 2003/01/02 21:33:15 wcc Exp $
+ * $Id: irc.h,v 1.9 2003/02/03 10:43:36 wcc Exp $
  */
 
 #ifndef _EGG_MOD_IRC_IRC_H
@@ -37,9 +37,6 @@
 #define check_tcl_nick(a,b,c,d,e) check_tcl_signtopcnick(a,b,c,d,e,BT_nick)
 #define check_tcl_mode(a,b,c,d,e,f) check_tcl_kickmode(a,b,c,d,e,f,BT_mode)
 #define check_tcl_kick(a,b,c,d,e,f) check_tcl_kickmode(a,b,c,d,e,f,BT_kick)
-
-#define REVENGE_KICK 1		/* Kicked victim	*/
-#define REVENGE_DEOP 2		/* Took op		*/
 
 #define fixcolon(x)             do {                                    \
 	if ((x)[0] == ':')                                              \
@@ -79,9 +76,6 @@ static void flush_mode(struct chanset_t *, int);
 static void reset_chan_info(struct chanset_t *);
 static void recheck_channel(struct chanset_t *, int);
 static void set_key(struct chanset_t *, char *);
-static void maybe_revenge(struct chanset_t *, char *, char *, int);
-static int detect_chan_flood(char *, char *, char *, struct chanset_t *, int,
-			     char *);
 static void newmask(masklist *, char *, char *);
 static char *quickban(struct chanset_t *, char *);
 static void got_op(struct chanset_t *chan, char *nick, char *from, char *who,
