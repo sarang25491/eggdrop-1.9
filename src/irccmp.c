@@ -2,7 +2,7 @@
  * irccmp.c
  *   heavily based on code from src/match.c in ircd-hybrid
  *
- * $Id: irccmp.c,v 1.1 2001/10/11 18:24:01 tothwolf Exp $
+ * $Id: irccmp.c,v 1.2 2001/10/12 15:50:26 tothwolf Exp $
  */
 /*
  * Copyright (C) 1990 Jarkko Oikarinen
@@ -57,8 +57,8 @@ int _irccmp(const char *s1, const char *s2)
   const unsigned char* str1 = (const unsigned char*) s1;
   const unsigned char* str2 = (const unsigned char*) s2;
   int   res;
-/*  assert(0 != s1); */
-/*  assert(0 != s2); */
+  assert(0 != s1);
+  assert(0 != s2);
 
   while ((res = ToUpper(*str1) - ToUpper(*str2)) == 0) {
     if (*str1 == '\0')
@@ -74,8 +74,8 @@ int _ircncmp(const char* s1, const char *s2, int n)
   const unsigned char* str1 = (const unsigned char*) s1;
   const unsigned char* str2 = (const unsigned char*) s2;
   int res;
-/*  assert(0 != s1); */
-/*  assert(0 != s2); */
+  assert(0 != s1);
+  assert(0 != s2);
 
   while ((res = ToUpper(*str1) - ToUpper(*str2)) == 0) {
     str1++;

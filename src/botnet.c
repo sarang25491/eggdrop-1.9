@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.43 2001/10/12 02:27:45 stdarg Exp $
+ * $Id: botnet.c,v 1.44 2001/10/12 15:50:25 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -986,7 +986,7 @@ int botunlink(int idx, char *nick, char *reason)
       rembot(tandbot->bot);
     while (parties) {
       parties--;
-      /* Assert? */
+      /* assert? */
       if (party[i].chan >= 0) {
         check_tcl_chpt(party[i].bot, party[i].nick, party[i].sock,
 		       party[i].chan);

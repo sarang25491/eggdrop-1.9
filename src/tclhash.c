@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.43 2001/10/12 02:27:45 stdarg Exp $
+ * $Id: tclhash.c,v 1.44 2001/10/12 15:50:26 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -241,7 +241,7 @@ tcl_bind_list_t *add_bind_table(const char *nme, int flg, Function func)
 
   /* Do not allow coders to use bind table names longer than
      4 characters. */
-  Assert(strlen(nme) <= 4);
+  assert(strlen(nme) <= 4);
 
   for (tl = bind_table_list, tl_prev = NULL; tl; tl_prev = tl, tl = tl->next) {
     if (tl->flags & HT_DELETED)

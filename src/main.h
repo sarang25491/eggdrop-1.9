@@ -2,7 +2,7 @@
  * main.h
  *   include file to include most other include files
  *
- * $Id: main.h,v 1.20 2001/10/10 10:44:04 tothwolf Exp $
+ * $Id: main.h,v 1.21 2001/10/12 15:50:26 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -57,6 +57,7 @@
 #endif
 #include <sys/types.h>
 #include "lush.h"
+#include "debug.h"
 #include "eggdrop.h"
 #include "flags.h"
 #ifndef MAKING_MODS

@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.71 2001/10/11 11:34:19 tothwolf Exp $
+ * $Id: cmds.c,v 1.72 2001/10/12 15:50:25 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1494,7 +1494,7 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
    * chan: pointer to channel structure, NULL if none found or none specified
    * chg:  pointer to changes, NULL if none specified
    */
-  Assert(!(!arg && chan));
+  assert(!(!arg && chan));
   if (arg && !chan) {
     dprintf(idx, "No channel record for %s.\n", arg);
     return;
@@ -1684,7 +1684,7 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
    * chan: pointer to channel structure, NULL if none found or none specified
    * chg:  pointer to changes, NULL if none specified
    */
-  Assert(!(!arg && chan));
+  assert(!(!arg && chan));
   if (arg && !chan) {
     dprintf(idx, "No channel record for %s.\n", arg);
     return;

@@ -1,7 +1,7 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.3 2001/10/10 14:50:01 tothwolf Exp $
+dnl $Id: acinclude.m4,v 1.4 2001/10/12 15:50:25 tothwolf Exp $
 dnl
 
 
@@ -1072,7 +1072,7 @@ AM_GNU_GETTEXT
 dnl EGG_DEBUG_OPTIONS
 dnl
 AC_DEFUN(EGG_DEBUG_OPTIONS, [dnl
-EGG_DEBUG="-DDEBUG_ASSERT"
+EGG_DEBUG="-DDEBUG"
 AC_SUBST(EGG_DEBUG)
 ])dnl
 

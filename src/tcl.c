@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.44 2001/10/12 02:27:45 stdarg Exp $
+ * $Id: tcl.c,v 1.45 2001/10/12 15:50:26 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -503,7 +503,7 @@ void init_tcl(int argc, char **argv)
   /* Initialize the interpreter */
   interp = Tcl_CreateInterp();
 
-#ifdef DEBUG_TCL
+#ifdef DEBUG
   /* Initialize Tcl's memory debugging if we want it */
   Tcl_InitMemory(interp);
 #endif

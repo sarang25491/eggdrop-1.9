@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.80 2001/10/12 02:27:45 stdarg Exp $
+ * $Id: main.c,v 1.81 2001/10/12 15:50:26 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -412,22 +412,6 @@ void eggContextNote(const char *file, int line, const char *module,
 }
 #endif
 
-#ifdef DEBUG_ASSERT
-/* Called from the Assert macro.
- */
-void eggAssert(const char *file, int line, const char *module)
-{
-#ifdef DEBUG_CONTEXT
-  write_debug();
-#endif
-  if (!module)
-    putlog(LOG_MISC, "*", "* In file %s, line %u", file, line);
-  else
-    putlog(LOG_MISC, "*", "* In file %s:%s, line %u", module, file, line);
-  fatal("ASSERT FAILED -- CRASHING!", 1);
-}
-#endif
-
 static void do_arg(char *s)
 {
   char x[1024], *z = x;
@@ -683,7 +667,7 @@ int main(int argc, char **argv)
   struct sigaction sv;
   struct chanset_t *chan;
 
-#ifdef DEBUG_ASSERT
+#ifdef DEBUG
   /* Make sure it can write core, if you make debug. Else it's pretty
    * useless (dw)
    */

@@ -1,7 +1,7 @@
 /*
  * modvals.h
  *
- * $Id: modvals.h,v 1.24 2001/10/11 18:24:02 tothwolf Exp $
+ * $Id: modvals.h,v 1.25 2001/10/12 15:50:26 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -95,9 +95,6 @@ typedef struct _module_entry {
   lt_dlhandle		hand;
 #endif		/* STATIC */
   Function		*funcs;
-#  ifdef DEBUG_MEM
-  int			 mem_work;
-#  endif	/* DEBUG_MEM */
 } module_entry;
 
 #endif		/* _EGG_MOD_MODVALS_H */

@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.44 2001/10/12 02:27:45 stdarg Exp $
+ * $Id: net.c,v 1.45 2001/10/12 15:50:26 tothwolf Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -1337,7 +1337,7 @@ int flush_inbuf(int idx)
   int i, len;
   char *inbuf;
 
-  Assert((idx >= 0) && (idx < dcc_total));
+  assert((idx >= 0) && (idx < dcc_total));
   for (i = 0; i < MAXSOCKS; i++) {
     if ((dcc[idx].sock == socklist[i].sock)
         && !(socklist[i].flags & SOCK_UNUSED)) {

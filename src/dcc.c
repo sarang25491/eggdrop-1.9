@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.58 2001/10/11 11:34:19 tothwolf Exp $
+ * $Id: dcc.c,v 1.59 2001/10/12 15:50:26 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1233,7 +1233,7 @@ void dupwait_notify(char *who)
 {
   register int idx;
 
-  Assert(who);
+  assert(who);
   for (idx = 0; idx < dcc_total; idx++)
     if ((dcc[idx].type == &DCC_DUPWAIT) &&
 	!egg_strcasecmp(dcc[idx].nick, who)) {

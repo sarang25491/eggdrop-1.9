@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.54 2001/10/12 07:45:48 tothwolf Exp $
+ * $Id: proto.h,v 1.55 2001/10/12 15:50:26 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -165,7 +165,6 @@ void fatal(const char *, int);
 void patch(const char *);
 void eggContext(const char *, int, const char *);
 void eggContextNote(const char *, int, const char *, const char *);
-void eggAssert(const char *, int, const char *);
 void backup_userfile(void);
 
 /* misc.c */

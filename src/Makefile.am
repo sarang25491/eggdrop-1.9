@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.4 2001/10/11 18:24:01 tothwolf Exp $
+# $Id: Makefile.am,v 1.5 2001/10/12 15:50:25 tothwolf Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 bindir    = $(exec_prefix)
@@ -30,6 +30,7 @@ eggdrop_SOURCES = bg.c \
 		cmdt.h \
 		dcc.c \
 		dccutil.c \
+		debug.h \
 		dns.c \
 		dns.h \
 		eggdrop.h \

@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.45 2001/10/11 13:01:35 tothwolf Exp $
+ * $Id: eggdrop.h,v 1.46 2001/10/12 15:50:26 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -84,22 +84,11 @@
 #  include <libintl.h>
 #  define _(x) gettext(x)
 
-/* Have to use a weird way to make the compiler error out cos not all
- * compilers support #error or error
- */
-#if !HAVE_VSPRINTF
-#  include "error_you_need_vsprintf_to_compile_eggdrop"
-#endif
-
-#if HAVE_UNISTD_H
+#ifdef HAVE_UNISTD_H
 #  include <unistd.h>
 #endif
 
 #define ADDRLEN (ADDRMAX + 1)
-
-#if !defined(STDC_HEADERS)
-#  include "you_need_to_upgrade_your_compiler_to_a_standard_c_one_mate!"
-#endif
 
 #if (NICKMAX < 9) || (NICKMAX > 32)
 #  include "invalid NICKMAX value"
@@ -136,15 +125,15 @@
 #  endif
 #endif
 
-#if !HAVE_SRANDOM
+#ifndef HAVE_SRANDOM
 #  define srandom(x) srand(x)
 #endif
 
-#if !HAVE_RANDOM
+#ifndef HAVE_RANDOM
 #  define random() (rand()/16)
 #endif
 
-#if !HAVE_SIGACTION		/* old "weird signals" */
+#ifndef HAVE_SIGACTION		/* old "weird signals" */
 #  define sigaction sigvec
 #  ifndef sa_handler
 #    define sa_handler sv_handler
@@ -153,7 +142,7 @@
 #  endif
 #endif
 
-#if !HAVE_SIGEMPTYSET
+#ifndef HAVE_SIGEMPTYSET
 /* and they probably won't have sigemptyset, dammit */
 #  define sigemptyset(x) ((*(int *)(x))=0)
 #endif
@@ -193,15 +182,6 @@ do {									\
 #else
 #  define Context		{}
 #  define ContextNote(note)	{}
-#endif
-
-#ifdef DEBUG_ASSERT
-#  define Assert(expr)	do {						\
-	if (!(expr))							\
-		eggAssert(__FILE__, __LINE__, NULL);			\
-} while (0)
-#else
-#  define Assert(expr)	do {	} while (0)
 #endif
 
 /* 32 bit type */

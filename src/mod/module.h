@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.62 2001/10/11 18:24:02 tothwolf Exp $
+ * $Id: module.h,v 1.63 2001/10/12 15:50:26 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -50,7 +50,6 @@
 #undef dprintf
 #undef Context
 #undef ContextNote
-#undef Assert
 
 /* Compability functions. */
 #ifdef egg_inet_aton
@@ -377,14 +376,7 @@
 #else
 #  define ContextNote(note)	do {	} while (0)
 #endif
-#ifdef DEBUG_ASSERT
-#  define Assert(expr)		do {					\
-	if (!(expr))							\
-		(global[233](__FILE__, __LINE__, MODULE_NAME));		\
-} while (0)
-#else
-#  define Assert(expr)	do {	} while (0)
-#endif
+/* 233: Assert -- UNUSED (Tothwolf) */
 #define allocsock ((int(*)(int sock,int options))global[234])
 #define call_hostbyip ((void(*)(char *, char *, int))global[235])
 /* 236 - 239 */

@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.66 2001/10/12 07:45:48 tothwolf Exp $
+ * $Id: modules.c,v 1.67 2001/10/12 15:50:26 tothwolf Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -451,11 +451,7 @@ Function global_table[] =
 #else
   (Function) 0,
 #endif
-#ifdef DEBUG_ASSERT
-  (Function) eggAssert,
-#else
   (Function) 0,
-#endif
   (Function) allocsock,
   (Function) call_hostbyip,
   /* 236 - 239 */
