@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: flags.h,v 1.11 2002/05/05 16:40:38 tothwolf Exp $
+ * $Id: flags.h,v 1.12 2002/06/17 06:14:40 guppy Exp $
  */
 
 #ifndef _EGG_FLAGS_H
@@ -58,7 +58,7 @@ struct flag_record {
  * + user defined A-Z
  *   unused letters: bchijlprstwxyz
  */
-#define USER_VALID    0x00f9f6ff	/* all USER_ flags in use	 */
+#define USER_VALID    0x00f9f6fb	/* all USER_ flags in use	 */
 #define CHAN_VALID    0x00757479	/* all flags that can be chan
 					   specific			 */
 #define BOT_VALID     0x7fe689C1	/* all BOT_ flags in use	 */
@@ -66,8 +66,7 @@ struct flag_record {
 
 #define USER_AUTOOP   0x00000001	/* a  auto-op			 */
 #define USER_BOT      0x00000002	/* b  user is a bot		 */
-#define USER_COMMON   0x00000004	/* c  user is actually a public
-					      irc site			 */
+/* 0x00000004 is unused (guppy)						 */
 #define USER_DEOP     0x00000008	/* d  user is global de-op	 */
 #define USER_EXEMPT   0x00000010	/* e  exempted from stopnethack	 */
 #define USER_FRIEND   0x00000020	/* f  user is global friend	 */

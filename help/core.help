@@ -1,21 +1,3 @@
-%{help=common}%{+o|o}
-###  %b(the +c 'common' flag)%b
-   Sometimes a lot of people use irc from the same account, i.e.
-   example, a public telnet site.  In that case, many people can
-   have the same user@host.  For that reason, they can't use a
-   traditional user record because they will appear to all be
-   the same person.
-
-   In such cases, create a user record for the account, and mark
-   it +c, or "common access".  Marking it as "common access" means
-   that it shouldn't be used as a definitive address.  When someone
-   introduces themself to the bot (ie, by /msg'ing "hello")and matches
-   as a +c user, they will be given a new user record which identifies
-   them BY NICKNAME.
-
-   Obviously people with that kind of user record shouldn't be given
-   much special access, as when they change nicknames the bot
-   will identify them as someone else.
 %{help=help}
 DCC COMMANDS for %B, %V:
 %b  who          away         quit         whom         me%b

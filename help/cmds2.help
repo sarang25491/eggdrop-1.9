@@ -326,7 +326,6 @@ see also: whom
       x   xfer (user has file-area access)
       j   janitor (user is a file-area master)
       p   party-line (user has party-line access)
-      c   common (user record is a common-access site)  [see 'help common']
       u   unshared (not sent to other share-bots)
       b   bot (user is another bot)
       d   global deop (user cannot get ops)

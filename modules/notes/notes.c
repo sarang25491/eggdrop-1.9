@@ -742,7 +742,7 @@ static int msg_notes(char *nick, char *host, struct userrec *u, char *par)
 
   if (!u)
     return 0;
-  if (u->flags & (USER_BOT | USER_COMMON))
+  if (u->flags & USER_BOT)
     return 1;
   if (!par[0]) {
     dprintf(DP_HELP, "NOTICE %s :%s: NOTES <pass> INDEX\n", nick, _("Usage"));

@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: msgcmds.c,v 1.8 2002/06/17 06:04:36 guppy Exp $";
+static const char rcsid[] = "$Id: msgcmds.c,v 1.9 2002/06/17 06:14:40 guppy Exp $";
 #endif
 */
 
@@ -32,7 +32,6 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
 {
   char host[UHOSTLEN], s[UHOSTLEN], s1[UHOSTLEN], handle[HANDLEN + 1];
   char *p1;
-  int common = 0;
   int atr = 0;
   struct chanset_t *chan;
   struct flag_record fr = {FR_GLOBAL, 0, 0, 0, 0, 0};
@@ -43,7 +42,7 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
     return 1;
   if (u)
     atr = u->flags;
-  if (u && !(atr & USER_COMMON)) {
+  if (u) {
     dprintf(DP_HELP, "NOTICE %s :%s, %s.\n", nick, _("Hi"), u->handle);
     return 1;
   }
@@ -61,35 +60,24 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
     dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, _("You're banned, goober."));
     return 1;
   }
-  if (atr & USER_COMMON) {
-    maskhost(s, host);
-    strcpy(s, host);
-    snprintf(host, sizeof host, "%s!%s", nick, s + 2);
-    userlist = adduser(userlist, handle, host, "-", USER_DEFAULT);
-    putlog(LOG_MISC, "*", "%s %s (%s) -- %s",
-	   _("Introduced to"), nick, host, _("common site"));
-    common = 1;
-  } else {
-    maskhost(s, host);
-    if (make_userfile) {
-      userlist = adduser(userlist, handle, host, "-",
-		 sanity_check(default_flags | USER_MASTER | USER_OWNER));
-      set_user(&USERENTRY_HOSTS, get_user_by_handle(userlist, handle),
-	       "-telnet!*@*");
-    } else
-      userlist = adduser(userlist, handle, host, "-",
-			 sanity_check(default_flags));
-    putlog(LOG_MISC, "*", "%s %s (%s)", _("Introduced to"), nick, host);
-  }
+
+  maskhost(s, host);
+  if (make_userfile) {
+    userlist = adduser(userlist, handle, host, "-",
+		       sanity_check(default_flags | USER_MASTER | USER_OWNER));
+    set_user(&USERENTRY_HOSTS, get_user_by_handle(userlist, handle),
+	     "-telnet!*@*");
+  } else
+    userlist = adduser(userlist, handle, host, "-",
+		       sanity_check(default_flags));
+  putlog(LOG_MISC, "*", "%s %s (%s)", _("Introduced to"), nick, host);
+
   for (chan = chanset; chan; chan = chan->next)
     if (ismember(chan, handle))
       add_chanrec_by_handle(userlist, handle, chan->dname);
   dprintf(DP_HELP, _("NOTICE %s :Hi %s!  Im %s, an eggdrop bot.\n"), nick, nick, botname);
   dprintf(DP_HELP, _("NOTICE %s :Ill recognize you by hostmask %s from now on.\n"), nick, host);
-  if (common) {
-    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("Since you come from a common irc site, this means you should"));
-    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("always use this nickname when talking to me"));
-  }
+
   if (make_userfile) {
     fr.global = sanity_check(default_flags | USER_OWNER);
 
@@ -137,7 +125,7 @@ static int msg_pass(char *nick, char *host, struct userrec *u, char *par)
     return 1;
   if (!u)
     return 1;
-  if (u->flags & (USER_BOT | USER_COMMON))
+  if (u->flags & USER_BOT)
     return 1;
   if (!par[0]) {
     dprintf(DP_HELP, "NOTICE %s :%s\n", nick,
@@ -181,11 +169,7 @@ static int msg_ident(char *nick, char *host, struct userrec *u, char *par)
     return 1;
   if (u && (u->flags & USER_BOT))
     return 1;
-  if (u && (u->flags & USER_COMMON)) {
-    if (!quiet_reject)
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("Youre at a common site; you cant IDENT."));
-    return 1;
-  }
+
   pass = newsplit(&par);
   if (!par[0])
     strcpy(who, nick);
@@ -240,7 +224,7 @@ static int msg_info(char *nick, char *host, struct userrec *u, char *par)
     return 1;
   if (!u)
     return 0;
-  if (u->flags & (USER_COMMON | USER_BOT))
+  if (u->flags & USER_BOT)
     return 1;
   if (!u_pass_match(u, "-")) {
     pass = newsplit(&par);

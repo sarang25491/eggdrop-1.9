@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: flags.c,v 1.31 2002/05/05 16:40:38 tothwolf Exp $";
+static const char rcsid[] = "$Id: flags.c,v 1.32 2002/06/17 06:14:40 guppy Exp $";
 #endif
 
 #include <ctype.h>
@@ -131,8 +131,8 @@ char *maskname(int x)
 int sanity_check(int atr)
 {
   if ((atr & USER_BOT) &&
-      (atr & (USER_PARTY | USER_MASTER | USER_COMMON | USER_OWNER)))
-    atr &= ~(USER_PARTY | USER_MASTER | USER_COMMON | USER_OWNER);
+      (atr & (USER_PARTY | USER_MASTER | USER_OWNER)))
+    atr &= ~(USER_PARTY | USER_MASTER | USER_OWNER);
   if ((atr & USER_OP) && (atr & USER_DEOP))
     atr &= ~(USER_OP | USER_DEOP);
   if ((atr & USER_AUTOOP) && (atr & USER_DEOP))
