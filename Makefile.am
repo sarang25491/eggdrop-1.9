@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.8 2002/02/17 12:40:43 ite Exp $
+# $Id: Makefile.am,v 1.9 2002/10/11 02:32:15 wcc Exp $
 
 AUX_DIST		= $(ac_aux_dir)/install-sh \
 			$(ac_aux_dir)/ltmain.sh \
@@ -37,8 +37,9 @@ dist-hook:
 	done
 
 install-data-local:
-	$(INSTALL_DATA) $(srcdir)/eggdrop.complete.conf $(prefix)/eggdrop.complete.conf
-	$(INSTALL_DATA) $(srcdir)/eggdrop.simple.conf $(prefix)/eggdrop.simple.conf
+	@if test ! -f $(prefix)/eggdrop.conf; then \
+		$(INSTALL_DATA) $(srcdir)/eggdrop.conf $(prefix)/eggdrop.conf
+	fi
 
 distclean-local:
 	-test -z "$(DISTCLEANLOCAL)" || rm -rf $(DISTCLEANLOCAL)
