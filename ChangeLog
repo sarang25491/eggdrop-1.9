@@ -1,3 +1,11 @@
+2001-10-17 06:08  stdarg <stdarg@techmonkeys.org>
+
+	* src/: egg_timer.c, main.c, script_api.h, tclmisc.c,
+	mod/perlscript.mod/perlscript.c, mod/tclscript.mod/tclscript.c:
+
+	Updates to timer code.  Added USER and CALLBACK types to perl
+	module.  
+
 2001-10-17 03:28  stdarg <stdarg@techmonkeys.org>
 
 	* src/: chanprog.c, dns.c, main.c, tcl.c, tclegg.h, tclhash.c,
