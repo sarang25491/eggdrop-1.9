@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: server.c,v 1.54 2003/12/18 07:18:48 wcc Exp $";
+static const char rcsid[] = "$Id: server.c,v 1.55 2003/12/20 00:34:37 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -86,31 +86,70 @@ static int server_secondly()
 	return(0);
 }
 
-#if 0
-static void server_status(partymember_t *p, int details)
+static int server_status(partymember_t *p, const char *text)
 {
+	int details = 0;
+
+	if (text) {
+		if (!strcasecmp(text, "all") || !strcasecmp(text, "server")) details = 1;
+		else if (*text) return(0);
+	}
+
+	partymember_printf(p, "Server module:");
 	if (!current_server.connected) {
-		if (current_server.idx >= 0) partymember_printf(p, _("   Connecting to server %s:%d."), current_server.server_host, current_server.port);
+		if (current_server.idx >= 0) partymember_printf(p, _("   Connecting to server %s/%d."), current_server.server_host, current_server.port);
 		else partymember_printf(p, _("   Connecting to next server in %d seconds."), cycle_delay);
 	}
 	else {
 		/* First line, who we've connected to. */
-		partymember_printf(p, _("   Connected to %s:%d."), current_server.server_self ? current_server.server_self : current_server.server_host, current_server.port);
+		partymember_printf(p, _("   Connected to %s/%d."), current_server.server_self ? current_server.server_self : current_server.server_host, current_server.port);
 
 		/* Second line, who we're connected as. */
 		if (current_server.registered) {
-			if (current_server.user) partymember_printf(p, _("    Online as %s!%s@%s (%s)."), current_server.nick, current_server.user, current_server.host, current_server.real_name);
-			else partymember_printf(p, _("    Online as %s (still waiting for WHOIS result)."), current_server.nick);
+			if (current_server.user) partymember_printf(p, _("   Online as %s!%s@%s (%s)."), current_server.nick, current_server.user, current_server.host, current_server.real_name);
+			else partymember_printf(p, _("   Online as %s (still waiting for WHOIS result)."), current_server.nick);
 		}
 		else partymember_printf(p, _("   Still logging in."));
 	}
+	partymember_printf(p, "");
+	return(0);
 }
-#endif
 
-static bind_list_t server_secondly_binds[] = {
-	{NULL, NULL, server_secondly},
-	{0}
-};
+static int server_config_save(const char *handle)
+{
+	server_t *server;
+	void *root, *list, *node;
+	int i;
+
+	putlog(LOG_MISC, "*", "Saving server config...");
+	root = config_get_root("eggdrop");
+
+	/* Erase the server list. */
+	list = config_exists(root, "server.serverlist", 0, NULL);
+	if (list) config_destroy(list);
+
+	/* Save the server list. */
+	list = config_lookup_section(root, "server.serverlist", 0, NULL);
+	i = 0;
+	for (server = server_list; server; server = server->next) {
+		node = config_lookup_section(list, "server", i, NULL);
+		config_set_str(server->host, node, "host", 0, NULL);
+		config_set_str(server->pass, node, "pass", 0, NULL);
+		config_set_int(server->port, node, "port", 0, NULL);
+		i++;
+	}
+
+	/* Erase the nick list. */
+	list = config_exists(root, "server.nicklist", 0, NULL);
+	if (list) config_destroy(list);
+
+	/* Save the nick list. */
+	list = config_lookup_section(root, "server.nicklist", 0, NULL);
+	for (i = 0; i < nick_list_len; i++) {
+		config_set_str(nick_list[i], list, "nick", i, NULL);
+	}
+	return(0);
+}
 
 static int server_close(int why)
 {
@@ -119,7 +158,9 @@ static int server_close(int why)
 
 	bind_rem_list("raw", server_raw_binds);
 	bind_rem_list("party", server_party_commands);
-	bind_rem_list("secondly", server_secondly_binds);
+	bind_rem_simple("secondly", NULL, NULL, server_secondly);
+	bind_rem_simple("status", NULL, NULL, server_status);
+	bind_rem_simple("config_save", NULL, "eggdrop", server_config_save);
 
 	server_binds_destroy();
 
@@ -159,7 +200,7 @@ static void server_config_init()
 	int i;
 	char *host, *pass, *nickstr;
 	int port;
-	void *config_root, *server, *nick;
+	void *config_root, *server, *nick, *list;
 
 	/* Set default values. */
 	server_config.user = strdup("user");
@@ -180,7 +221,8 @@ static void server_config_init()
 	config_update_table(server_config_vars, config_root, "server", 0, NULL);
 
 	/* Get the server list. */
-	for (i = 0; (server = config_exists(config_root, "server", 0, "server", i, NULL)); i++) {
+	list = config_exists(config_root, "server", 0, "serverlist", 0, NULL);
+	for (i = 0; (server = config_exists(list, "server", i, NULL)); i++) {
 		host = pass = NULL;
 		port = 0;
 		config_get_str(&host, server, "host", 0, NULL);
@@ -190,7 +232,8 @@ static void server_config_init()
 	}
 
 	/* And the nick list. */
-	for (i = 0; (nick = config_exists(config_root, "server", 0, "nick", i, NULL)); i++) {
+	list = config_exists(config_root, "server", 0, "nicklist", 0, NULL);
+	for (i = 0; (nick = config_exists(list, "nick", i, NULL)); i++) {
 		nickstr = NULL;
 		config_get_str(&nickstr, nick, NULL);
 		if (nickstr) nick_add(nickstr);
@@ -217,7 +260,9 @@ int server_LTX_start(egg_module_t *modinfo)
 	server_binds_init();
 	bind_add_list("raw", server_raw_binds);
 	bind_add_list("party", server_party_commands);
-	bind_add_list("secondly", server_secondly_binds);
+	bind_add_simple("secondly", NULL, NULL, server_secondly);
+	bind_add_simple("status", NULL, NULL, server_status);
+	bind_add_simple("config_save", NULL, "eggdrop", server_config_save);
 
 	/* Initialize channels. */
 	server_channel_init();

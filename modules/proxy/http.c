@@ -86,6 +86,7 @@ static int http_on_read(void *client_data, int idx, char *data, int len)
 	sockbuf_set_sock(info->our_idx, -1, 0);
 	sockbuf_set_sock(info->their_idx, sock, 0);
 	sockbuf_on_connect(info->their_idx, SOCKBUF_LEVEL_INTERNAL, info->host, info->port);
+	info->their_idx = -1;
 	sockbuf_delete(info->our_idx);
 
 	return(0);

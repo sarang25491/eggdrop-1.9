@@ -167,7 +167,7 @@ static void socks5_auth_reply(char *data, int len, proxy_info_t *info)
 	we issue a CONNECT event on the original idx. */
 static void socks5_connect_reply(char *data, int len, proxy_info_t *info)
 {
-	int our_idx, their_idx, sock;
+	int sock;
 
 	/* Abort if it's an invalid reply or the connection failed. */
 	/* It's actually supposed to be more than 2 bytes, but we only care
@@ -205,15 +205,13 @@ static void socks5_connect_reply(char *data, int len, proxy_info_t *info)
 
 	/* We're connected! Simulate a CONNECT event for the other idx. */
 	/* putlog(LOG_MISC, "*", "socks5 connected"); */
-	our_idx = info->our_idx;
-	their_idx = info->their_idx;
+	sockbuf_detach_filter(info->their_idx, &delete_listener, NULL);
+	sock = sockbuf_get_sock(info->our_idx);
+	sockbuf_set_sock(info->our_idx, -1, 0);
+	sockbuf_set_sock(info->their_idx, sock, 0);
+	sockbuf_on_connect(info->their_idx, SOCKBUF_LEVEL_INTERNAL, info->host, info->port);
 	info->their_idx = -1;
-	sockbuf_detach_filter(their_idx, &delete_listener, NULL);
-	sock = sockbuf_get_sock(our_idx);
-	sockbuf_set_sock(our_idx, -1, 0);
-	sockbuf_set_sock(their_idx, sock, 0);
-	sockbuf_on_connect(their_idx, SOCKBUF_LEVEL_INTERNAL, info->host, info->port);
-	sockbuf_delete(our_idx);
+	sockbuf_delete(info->our_idx);
 	return;
 }
 

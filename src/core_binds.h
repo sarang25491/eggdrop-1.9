@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: core_binds.h,v 1.8 2003/12/16 21:45:35 wcc Exp $
+ * $Id: core_binds.h,v 1.9 2003/12/20 00:34:37 stdarg Exp $
  */
 
 #ifndef _EGG_CORE_BINDS_H_
@@ -25,5 +25,6 @@
 void core_binds_init();
 void check_bind_time(struct tm *tm);
 void check_bind_secondly();
+void check_bind_status(partymember_t *p, const char *text);
 
 #endif /* !_EGG_CORE_BINDS_H_ */

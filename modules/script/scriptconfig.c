@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptconfig.c,v 1.5 2003/12/18 06:50:47 wcc Exp $";
+static const char rcsid[] = "$Id: scriptconfig.c,v 1.6 2003/12/20 00:34:37 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -111,21 +111,11 @@ static int script_config_load(char *handle, char *fname)
 	return(0);
 }
 
-static int script_config_save(char *handle, char *fname)
-{
-	void *root;
-
-	root = config_get_root(handle);
-	if (!root) return(-1);
-	config_save(root, fname);
-	return(0);
-}
-
 script_command_t script_config_cmds[] = {
 	{"", "config_exists", script_config_exists, NULL, 1, "ss", "?handle? path", SCRIPT_INTEGER, SCRIPT_VAR_ARGS|SCRIPT_VAR_FRONT},
 	{"", "config_get", script_config_get, NULL, 1, "ss", "?handle? path", SCRIPT_STRING, SCRIPT_VAR_ARGS|SCRIPT_VAR_FRONT},
 	{"", "config_set", script_config_set, NULL, 2, "sss", "?handle? path value", SCRIPT_INTEGER, SCRIPT_VAR_ARGS|SCRIPT_VAR_FRONT},
 	{"", "config_load", script_config_load, NULL, 2, "ss", "handle filename", SCRIPT_INTEGER, 0},
-	{"", "config_save", script_config_save, NULL, 2, "ss", "handle filename", SCRIPT_INTEGER, 0},
+	{"", "config_save", config_save, NULL, 2, "ss", "handle filename", SCRIPT_INTEGER, 0},
 	{0}
 };

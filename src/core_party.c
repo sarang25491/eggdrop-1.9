@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.19 2003/12/19 01:08:58 stdarg Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.20 2003/12/20 00:34:37 stdarg Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -31,6 +31,7 @@ static const char rcsid[] = "$Id: core_party.c,v 1.19 2003/12/19 01:08:58 stdarg
 #include <string.h>
 #include <stdlib.h>
 #include "core_config.h"
+#include "core_binds.h"
 #include "logfile.h"
 
 #ifdef HAVE_UNAME
@@ -101,7 +102,7 @@ static void *lookup_and_check(partymember_t *p, const char *path)
 	root = config_get_root("eggdrop");
 	root = config_exists(root, path, 0, NULL);
 	if (!root) {
-		partymember_printf(p, _("That setting was not found."));
+		partymember_printf(p, _("That setting does not exist."));
 		return(NULL);
 	}
 
@@ -136,7 +137,7 @@ static int party_get(partymember_t *p, const char *nick, user_t *u, const char *
 		partymember_printf(p, "==> '%s'", str);
 	}
 	else {
-		partymember_printf(p, _("Config setting not found."));
+		partymember_printf(p, _("==> null (unset)"));
 	}
 	return(0);
 }
@@ -163,7 +164,31 @@ static int party_set(partymember_t *p, const char *nick, user_t *u, const char *
 	partymember_printf(p, _("Old value: '%s'"), str);
 	config_set_str(next, root, NULL);
 	config_get_str(&str, root, NULL);
-	partymember_printf(p, _("New value: '%s'"), str);
+	if (str) partymember_printf(p, _("New value: '%s'"), str);
+	else partymember_printf(p, _("New value: null (unset)"));
+	return(0);
+}
+
+static int party_unset(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	void *root;
+	char *str;
+
+	if (!text || !*text) {
+		partymember_printf(p, _("Syntax: unset <path>"));
+		return(0);
+	}
+
+	root = lookup_and_check(p, text);
+	if (!root) return(0);
+
+	config_get_str(&str, root, NULL);
+	if (str) partymember_printf(p, _("Old value: '%s'"), str);
+	else partymember_printf(p, _("Old value: null (unset)"));
+	config_set_str(NULL, root, NULL);
+	config_get_str(&str, root, NULL);
+	if (str) partymember_printf(p, _("New value: '%s'"), str);
+	else partymember_printf(p, _("New value: null (unset)"));
 	return(0);
 }
 
@@ -173,12 +198,14 @@ static int party_status(partymember_t *p, const char *nick, user_t *u, const cha
 	struct utsname un;
 #endif
 
-	partymember_printf(p, _("I am %s, running Eggdrop %s."), core_config.botname, VERSION);
+	partymember_printf(p, _("I am %1$s, running Eggdrop %2$s."), core_config.botname, VERSION);
 	partymember_printf(p, _("Owner: %s"), core_config.owner);
 	if (core_config.admin) partymember_printf(p, _("Admin: %s"), core_config.admin);
 #ifdef HAVE_UNAME
-	if (!uname(&un) >= 0) partymember_printf(p, _("OS: %s %s"), un.sysname, un.release);
+	if (!uname(&un)) partymember_printf(p, _("OS: %1$s %2$s"), un.sysname, un.release);
 #endif
+	partymember_printf(p, "");
+	check_bind_status(p, text);
 	return(0);
 }
 
@@ -210,14 +237,22 @@ static int intsorter(const void *left, const void *right)
 static int party_who(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	partymember_t *who;
-	int *pids, len, i;
+	int *pids, len, i, width = 0;
 
 	partymember_printf(p, _("Partyline members:"));
 	partymember_who(&pids, &len);
 	qsort(pids, len, sizeof(int), intsorter);
+	if (len > 0) {
+		i = pids[len-1];
+		if (!i) i++;
+		while (i != 0) {
+			i /= 10;
+			width++;
+		}
+	}
 	for (i = 0; i < len; i++) {
 		who = partymember_lookup_pid(pids[i]);
-		partymember_printf(p, "  [%5d] %s (%s@%s)", who->pid, who->nick, who->ident, who->host);
+		partymember_printf(p, "  [%*d] %s (%s@%s)", width, who->pid, who->nick, who->ident, who->host);
 	}
 	free(pids);
 	return(0);
@@ -335,6 +370,7 @@ static bind_list_t core_party_binds[] = {
 	{NULL, "who", party_who},
 	{"n", "get", party_get},
 	{"n", "set", party_set},
+	{"n", "unset", party_unset},
 	{"n", "status", party_status},
 	{"n", "save", party_save},
 	{"n", "die", party_die},

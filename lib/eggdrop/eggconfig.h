@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: eggconfig.h,v 1.8 2003/12/17 07:39:14 wcc Exp $
+ * $Id: eggconfig.h,v 1.9 2003/12/20 00:34:37 stdarg Exp $
  */
 
 #ifndef _EGG_EGGCONFIG_H_
@@ -33,7 +33,7 @@ typedef struct {
 
 int config_init();
 void *config_load(const char *fname);
-int config_save(void *config_root, const char *fname);
+int config_save(const char *handle, const char *fname);
 int config_destroy(void *config_root);
 void *config_get_root(const char *handle);
 int config_set_root(const char *handle, void *config_root);

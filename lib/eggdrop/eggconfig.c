@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggconfig.c,v 1.11 2003/12/19 00:51:37 stdarg Exp $";
+static const char rcsid[] = "$Id: eggconfig.c,v 1.12 2003/12/20 00:34:37 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -28,7 +28,9 @@ static const char rcsid[] = "$Id: eggconfig.c,v 1.11 2003/12/19 00:51:37 stdarg 
 #include <eggdrop/eggdrop.h>
 
 /* Config bind tables. */
-static bind_table_t *BT_config_str = NULL, *BT_config_int = NULL;
+static bind_table_t *BT_config_str = NULL,
+	*BT_config_int = NULL,
+	*BT_config_save = NULL;
 
 /* Keep track of whether we're in a nested get/set, so that we don't
  * trigger binds when we shouldn't. */
@@ -46,6 +48,7 @@ int config_init()
 {
 	BT_config_str = bind_table_add("config_str", 2, "ss", MATCH_MASK, BIND_STACKABLE);
 	BT_config_int = bind_table_add("config_int", 2, "si", MATCH_MASK, BIND_STACKABLE);
+	BT_config_save = bind_table_add("config_save", 1, "s", MATCH_MASK, BIND_STACKABLE);
 	return(0);
 }
 
@@ -91,11 +94,14 @@ void *config_load(const char *fname)
 	return(root);
 }
 
-int config_save(void *config_root, const char *fname)
+int config_save(const char *handle, const char *fname)
 {
-	xml_node_t *root = config_root;
+	xml_node_t *root;
 	FILE *fp;
 
+	root = config_get_root(handle);
+	if (!root) return(-1);
+	bind_check(BT_config_save, NULL, handle, handle);
 	if (!fname) fname = "config.xml";
 	fp = fopen(fname, "w");
 	if (!fp) return(-1);
@@ -109,7 +115,6 @@ int config_destroy(void *config_root)
 	xml_node_t *root = config_root;
 
 	xml_node_destroy(root);
-	free(root);
 	return(0);
 }
 

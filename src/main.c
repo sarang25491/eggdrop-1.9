@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.163 2003/12/18 07:20:04 wcc Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.164 2003/12/20 00:34:37 stdarg Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -390,8 +390,8 @@ int main(int argc, char **argv)
 	sv.sa_handler = SIG_IGN;
 	sigaction(SIGPIPE, &sv, NULL);
 
-	sv.sa_handler = got_ill;
-	sigaction(SIGILL, &sv, NULL);
+	/*sv.sa_handler = got_ill;
+	sigaction(SIGILL, &sv, NULL);*/
 
 	timer_update_now(&egg_timeval_now);
 	now = egg_timeval_now.sec;

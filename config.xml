@@ -33,10 +33,12 @@
 <server>
 	<user>user</user>
 	<realname>real name</realname>
-	<nick>primary</nick>
-	<nick>altnick1</nick>
-	<nick>altnick2</nick>
-	<nick>...</nick>
+	<nicklist>
+		<nick>primary</nick>
+		<nick>altnick1</nick>
+		<nick>altnick2</nick>
+		<nick>...</nick>
+	</nicklist>
 	<connect_timeout>30</connect_timeout>
 	<ping_timeout>30</ping_timeout>
 	<dcc_timeout>30</dcc_timeout>
@@ -47,14 +49,17 @@
 	<fake005 />
 	<raw_log>0</raw_log>
 	<ip_lookup>0</ip_lookup>
-	<server>
-		<host>some.host.com</host>
-		<port>6667</port>
-	</server>
-	<server>
-		<host>another.host.com</host>
-		<port>6667</port>
-	</server>
+	<serverlist>
+		<server>
+			<host>some.host.com</host>
+			<port>6667</port>
+		</server>
+		<server>
+			<host>another.host.com</host>
+			<pass>thepassword</pass>
+			<port>7000</port>
+		</server>
+	</serverlist>
 </server>
 <telnetparty>
 	<vhost />

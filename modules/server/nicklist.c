@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: nicklist.c,v 1.6 2003/12/18 06:50:47 wcc Exp $";
+static const char rcsid[] = "$Id: nicklist.c,v 1.7 2003/12/20 00:34:37 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -101,5 +101,7 @@ int nick_clear()
 
 	for (i = 0; i < nick_list_len; i++) free(nick_list[i]);
 	if (nick_list) free(nick_list);
+	nick_list = NULL;
+	nick_list_len = 0;
 	return(0);
 }

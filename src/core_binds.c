@@ -19,12 +19,15 @@
 
 #include <eggdrop/eggdrop.h>
 
-static bind_table_t *BT_time = NULL, *BT_secondly = NULL;
+static bind_table_t *BT_time = NULL,
+	*BT_secondly = NULL,
+	*BT_status = NULL;
 
 void core_binds_init()
 {
 	BT_time = bind_table_add("time", 5, "iiiii", MATCH_MASK, BIND_STACKABLE);
 	BT_secondly = bind_table_add("secondly", 0, "", MATCH_NONE, BIND_STACKABLE);
+	BT_status = bind_table_add("status", 2, "Ps", MATCH_NONE, BIND_STACKABLE);
 }
 
 void check_bind_time(struct tm *tm)
@@ -38,4 +41,9 @@ void check_bind_time(struct tm *tm)
 void check_bind_secondly()
 {
 	bind_check(BT_secondly, NULL, NULL);
+}
+
+void check_bind_status(partymember_t *p, const char *text)
+{
+	bind_check(BT_status, NULL, NULL, p, text);
 }

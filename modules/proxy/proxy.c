@@ -28,7 +28,8 @@ static egg_proxy_t socks5_proxy_handler = {
 
 static int on_proxy_set(char *setting, char *val)
 {
-	putlog(LOG_MISC, "*", "Setting default proxy to '%s'", val);
+	if (val) putlog(LOG_MISC, "*", "Using proxy to '%s'.", val);
+	else putlog(LOG_MISC, "*", "Disabling proxy.");
 	egg_proxy_set_default(val);
 	return(0);
 }

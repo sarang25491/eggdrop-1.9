@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: nicklist.h,v 1.2 2003/12/18 06:50:47 wcc Exp $
+ * $Id: nicklist.h,v 1.3 2003/12/20 00:34:37 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_SERVER_NICKLIST_H_
@@ -29,5 +29,8 @@ const char *nick_get_next();
 int nick_add(const char *);
 int nick_del(int);
 int nick_clear();
+
+extern char **nick_list;
+extern int nick_list_len;
 
 #endif /* !_EGG_MOD_SERVER_NICKLIST_H_ */

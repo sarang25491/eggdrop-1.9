@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_config.c,v 1.11 2003/12/17 08:12:43 wcc Exp $";
+static const char rcsid[] = "$Id: core_config.c,v 1.12 2003/12/20 00:34:37 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -77,5 +77,5 @@ void core_config_init(const char *fname)
 void core_config_save()
 {
 	config_update_table(core_config_vars, config_root, "eggdrop", 0, NULL);
-	config_save(config_root, configfile);
+	config_save("eggdrop", configfile);
 }

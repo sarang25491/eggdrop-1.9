@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: party_commands.c,v 1.4 2003/12/18 06:50:47 wcc Exp $";
+static const char rcsid[] = "$Id: party_commands.c,v 1.5 2003/12/20 00:34:37 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -84,7 +84,7 @@ static int party_plus_server(partymember_t *p, const char *nick, user_t *u, cons
 		return(0);
 	}
 	server_add(host, port, pass);
-	partymember_printf(p, _("Added %s:%d.\n"), host, port ? port : server_config.default_port);
+	partymember_printf(p, _("Added %s/%d.\n"), host, port ? port : server_config.default_port);
 	free(host);
 	return(0);
 }
@@ -130,7 +130,7 @@ static int party_jump(partymember_t *p, const char *nick, user_t *u, const char 
 		num = server_find(host, port, pass);
 		if (num < 0) {
 			server_add(host, port, pass);
-			partymember_printf(p, _("Added %s:%d.\n"), host, port ? port : server_config.default_port);
+			partymember_printf(p, _("Added %s/%d.\n"), host, port ? port : server_config.default_port);
 			num = 0;
 		}
 		free(host);
@@ -147,12 +147,12 @@ static int party_msg(partymember_t *p, const char *nick, user_t *u, const char *
 	const char *next;
 
 	egg_get_word(text, &next, &dest);
+	if (next) while (isspace(*next)) next++;
 	if (!next || !*next || !dest || !*dest) {
 		partymember_printf(p, _("Syntax: %s <nick/chan> <message>"), cmd);
 		if (dest) free(dest);
 		return(0);
 	}
-	while (isspace(*next)) next++;
 	printserv(SERVER_NORMAL, "PRIVMSG %s :%s\r\n", dest, next);
 	partymember_printf(p, _("Msg to %s: %s"), dest, next);
 	free(dest);
@@ -165,14 +165,14 @@ static int party_act(partymember_t *p, const char *nick, user_t *u, const char *
 	const char *next;
 
 	egg_get_word(text, &next, &dest);
+	if (next) while (isspace(*next)) next++;
 	if (!next || !*next || !dest || !*dest) {
 		partymember_printf(p, _("Syntax: act <nick/chan> <action>"));
 		if (dest) free(dest);
 		return(0);
 	}
-	while (isspace(*next)) next++;
 	printserv(SERVER_NORMAL, "PRIVMSG %s :\001ACTION %s\001\r\n", dest, next);
-	partymember_printf(p, _("Action to %s: %s"), dest, next);
+	partymember_printf(p, _("Action to %1$s: %2$s"), dest, next);
 	free(dest);
 	return(0);
 }
