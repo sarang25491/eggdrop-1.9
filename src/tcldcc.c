@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.47 2002/01/19 20:08:58 ite Exp $
+ * $Id: tcldcc.c,v 1.48 2002/01/20 16:56:07 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -39,6 +39,8 @@ extern party_t		*party;
 extern tand_t		*tandbot;
 extern time_t		 now;
 
+/* Traffic stuff. */
+extern unsigned long otraffic_irc, otraffic_irc_today, itraffic_irc, itraffic_irc_today, otraffic_bn, otraffic_bn_today, itraffic_bn, itraffic_bn_today, otraffic_dcc, otraffic_dcc_today, itraffic_dcc, itraffic_dcc_today, otraffic_trans, otraffic_trans_today, itraffic_trans, itraffic_trans_today, otraffic_unknown, otraffic_unknown_today, itraffic_unknown, itraffic_unknown_today;
 
 static struct portmap	*root = NULL;
 
@@ -772,6 +774,57 @@ static int script_restart()
   return(0);
 }
 
+static int tcl_traffic STDVAR
+{
+  char buf[1024];
+  unsigned long out_total_today, out_total;
+  unsigned long in_total_today, in_total;
+
+  /* IRC traffic */
+  sprintf(buf, "irc %ld %ld %ld %ld", itraffic_irc_today,
+	  itraffic_irc + itraffic_irc_today, otraffic_irc_today,
+	  otraffic_irc + otraffic_irc_today);
+  Tcl_AppendElement(irp, buf);  
+
+  /* Botnet traffic */
+  sprintf(buf, "botnet %ld %ld %ld %ld", itraffic_bn_today,
+	  itraffic_bn + itraffic_bn_today, otraffic_bn_today,
+	  otraffic_bn + otraffic_bn_today);
+  Tcl_AppendElement(irp, buf);
+
+  /* Partyline */
+  sprintf(buf, "partyline %ld %ld %ld %ld", itraffic_dcc_today,
+	  itraffic_dcc + itraffic_dcc_today, otraffic_dcc_today,
+	  otraffic_dcc + otraffic_dcc_today);    
+  Tcl_AppendElement(irp, buf);
+
+  /* Transfer */
+  sprintf(buf, "transfer %ld %ld %ld %ld", itraffic_trans_today,
+          itraffic_trans + itraffic_trans_today, otraffic_trans_today,
+	  otraffic_trans + otraffic_trans_today);    
+  Tcl_AppendElement(irp, buf);
+
+  /* Misc traffic */
+  sprintf(buf, "misc %ld %ld %ld %ld", itraffic_unknown_today,
+	  itraffic_unknown + itraffic_unknown_today, otraffic_unknown_today,
+	  otraffic_unknown + otraffic_unknown_today);    
+  Tcl_AppendElement(irp, buf);
+
+  /* Totals */
+  in_total_today = itraffic_irc_today + itraffic_bn_today + itraffic_dcc_today
+		 + itraffic_trans_today + itraffic_unknown_today,
+  in_total = in_total_today + itraffic_irc + itraffic_bn + itraffic_dcc
+	   + itraffic_trans + itraffic_unknown;
+  out_total_today = otraffic_irc_today + otraffic_bn_today + otraffic_dcc_today
+	          + itraffic_trans_today + otraffic_unknown_today,
+  out_total = out_total_today + otraffic_irc + otraffic_bn + otraffic_dcc
+            + otraffic_trans + otraffic_unknown;	  
+  sprintf(buf, "total %ld %ld %ld %ld",
+	  in_total_today, in_total, out_total_today, out_total);
+  Tcl_AppendElement(irp, buf);
+  return(TCL_OK);
+}
+
 script_simple_command_t script_dcc_cmds[] = {
 	{"", NULL, NULL, NULL, 0},
 	{"putdcc", script_putdcc, "is", "idx text", SCRIPT_INTEGER},
@@ -817,5 +870,6 @@ tcl_cmds tcldcc_cmds[] =
   {"killdcc",		tcl_killdcc},
   {"connect",		tcl_connect},
   {"listen",		tcl_listen},
+  {"traffic",		tcl_traffic},
   {NULL,		NULL}
 };

@@ -1,9 +1,8 @@
 /*
  * tclmisc.c -- handles:
- *   Tcl stubs for file system commands
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.41 2002/01/19 20:08:58 ite Exp $
+ * $Id: tclmisc.c,v 1.42 2002/01/20 16:56:07 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
