@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: servmsg.c,v 1.26 2002/06/07 06:38:07 stdarg Exp $";
+static const char rcsid[] = "$Id: servmsg.c,v 1.27 2002/06/08 07:21:37 stdarg Exp $";
 #endif
 */
 
@@ -511,7 +511,7 @@ static int gotpong(char *from_nick, char *from_uhost, struct userrec *u, char *c
 
 /* This is a reply on ISON :<current> <orig> [<alt>]
  */
-static int got303(char *from_nick, char *from_uhost, struct userrec *u, int nargs, char *args[])
+static int got303(char *from_nick, char *from_uhost, struct userrec *u, char *cmd, int nargs, char *args[])
 {
 	char *nicks, *space, *alt;
 	int ison_orig = 0, ison_alt = 0;
@@ -617,11 +617,8 @@ static int got437(char *from, char *ignore, char *msg)
  */
 static int got438(char *from, char *ignore, char *msg)
 {
-  newsplit(&msg);
-  newsplit(&msg);
-  fixcolon(msg);
-  putlog(LOG_MISC, "*", "%s", msg);
-  return 0;
+	putlog(LOG_MISC, "*", "%s", _("Nick change was too fast."));
+	return(0);
 }
 
 static int got451(char *from, char *ignore, char *msg)
@@ -960,6 +957,7 @@ static cmd_t my_new_raw_binds[] = {
 	{"303", "", (Function) got303, NULL},
 	{"432",	"", (Function) got432, NULL},
 	{"433",	"", (Function) got433, NULL},
+	{"438", "", (Function) got438, NULL},
 	{0}
 };
 
@@ -968,7 +966,6 @@ static cmd_t my_raw_binds[] =
   {"MODE",	"",	(Function) gotmode,		NULL},
   {"PING",	"",	(Function) gotping,		NULL},
   {"437",	"",	(Function) got437,		NULL},
-  {"438",	"",	(Function) got438,		NULL},
   {"451",	"",	(Function) got451,		NULL},
   {"442",	"",	(Function) got442,		NULL},
   {"NICK",	"",	(Function) gotnick,		NULL},
