@@ -1,11 +1,24 @@
-# $Id: Makefile.am,v 1.26 2004/06/15 19:36:52 wingman Exp $
+# $Id: Makefile.am,v 1.27 2004/06/19 09:59:12 wingman Exp $
 
 MAINTAINERCLEANFILES	= Makefile.in
 
-INCLUDES		= -I$(top_srcdir) -I$(top_srcdir)/lib $(INCLTDL)
-
 lib_LTLIBRARIES 	= libeggdrop.la
 
+# Uncomment this line if we start removing the "egg" prefix from
+# files and/or functions. We need to overwrite the DEFAULT_INCLUDE
+# which contains -I. since #include <string.h> would actually include
+# <lib/eggdrop/string.h> if -I. is supplied. By override the default
+# includes we can safely (and portable) use string.h or config.h for
+# our filenames (Already tested it).
+#
+# #include <config.h>		<- will include top src dir config.h
+# #include <eggdrop/config.h>	<- will include lib config.h
+# #include <string.h>		<- will include system string.h
+# #include <eggdrop/string.h> 	<- will include lib string.h
+#
+#DEFAULT_INCLUDE	= 
+
+libeggdrop_la_CPPFLAGS	= -I$(top_srcdir) -I$(top_srcdir)/lib $(INCLTDL)
 libeggdrop_la_SOURCES	= base64.c base64.h \
 			binds.c binds.h \
 			common.h \
