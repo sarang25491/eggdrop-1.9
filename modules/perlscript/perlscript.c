@@ -406,7 +406,7 @@ static XS(my_command_handler)
 	if (cmd->flags & SCRIPT_VAR_ARGS) i = (cmd->nargs <= items);
 	else i = (cmd->nargs >= 0 && cmd->nargs == items);
 	if (!i) {
-		Perl_croak(aTHX_ cmd->syntax_error);
+		croak(cmd->syntax_error);
 		return;
 	}
 
@@ -494,7 +494,7 @@ argerror:
 		cback->del(cback);
 	}
 	mstack_destroy(cbacks);
-	Perl_croak(aTHX_ cmd->syntax_error);
+	croak(cmd->syntax_error);
 }
 
 char *real_perl_cmd(char *text)
