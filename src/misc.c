@@ -6,7 +6,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.52 2001/10/31 04:02:51 tothwolf Exp $
+ * $Id: misc.c,v 1.53 2001/12/08 16:16:39 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -42,7 +42,7 @@
 extern struct dcc_t	*dcc;
 extern struct chanset_t	*chanset;
 extern char		 helpdir[], version[], origbotname[], botname[],
-			 admin[], motdfile[], ver[], botnetnick[],
+			 admin[], network[], motdfile[], ver[], botnetnick[],
 			 bannerfile[], textdir[];
 extern int		 backgrd, con_chan, term_z, use_stderr, dcc_total,
 			 strict_host;
@@ -500,6 +500,7 @@ static void subst_addcol(char *s, char *newcol)
  * %C = list of channels i monitor
  * %E = eggdrop banner
  * %A = admin line
+ * %n = network name
  * %T = current time ("14:15")
  * %N = user's nickname
  * %U = display system name if possible
@@ -636,6 +637,9 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
       break;
     case 'A':
       towrite = admin;
+      break;
+    case 'n';
+      towrite = network;
       break;
     case 'T':
       strftime(sub, 6, "%H:%M", localtime(&now));
