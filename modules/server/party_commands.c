@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: party_commands.c,v 1.5 2003/12/20 00:34:37 stdarg Exp $";
+static const char rcsid[] = "$Id: party_commands.c,v 1.6 2003/12/23 22:23:04 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -146,8 +146,7 @@ static int party_msg(partymember_t *p, const char *nick, user_t *u, const char *
 	char *dest;
 	const char *next;
 
-	egg_get_word(text, &next, &dest);
-	if (next) while (isspace(*next)) next++;
+	egg_get_arg(text, &next, &dest);
 	if (!next || !*next || !dest || !*dest) {
 		partymember_printf(p, _("Syntax: %s <nick/chan> <message>"), cmd);
 		if (dest) free(dest);
@@ -164,8 +163,7 @@ static int party_act(partymember_t *p, const char *nick, user_t *u, const char *
 	char *dest;
 	const char *next;
 
-	egg_get_word(text, &next, &dest);
-	if (next) while (isspace(*next)) next++;
+	egg_get_arg(text, &next, &dest);
 	if (!next || !*next || !dest || !*dest) {
 		partymember_printf(p, _("Syntax: act <nick/chan> <action>"));
 		if (dest) free(dest);

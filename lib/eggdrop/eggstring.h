@@ -16,16 +16,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: eggstring.h,v 1.4 2003/12/17 07:39:14 wcc Exp $
+ * $Id: eggstring.h,v 1.5 2003/12/23 22:23:04 stdarg Exp $
  */
 
 #ifndef _EGG_EGGSTRING_H_
 #define _EGG_EGGSTRING_H_
 
 int egg_get_word(const char *text, const char **next, char **word);
+int egg_get_arg(const char *text, const char **next, char **arg);
 int egg_get_words(const char *text, const char **next, char **word, ...);
-int egg_get_word_array(const char *text, const char **next, char **word, int nwords);
-int egg_free_word_array(char **word, int nwords);
+int egg_get_args(const char *text, const char **next, char **arg, ...);
+int egg_get_word_array(const char *text, const char **next, char **words, int nwords);
+int egg_get_arg_array(const char *text, const char **next, char **args, int nargs);
+int egg_free_word_array(char **words, int nwords);
+int egg_free_arg_array(char **args, int nargs);
 void egg_append_static_str(char **dest, int *remaining, const char *src);
 void egg_append_str(char **dest, int *cur, int *max, const char *src);
 

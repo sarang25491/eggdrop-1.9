@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.20 2003/12/20 00:34:37 stdarg Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.21 2003/12/23 22:23:04 stdarg Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -74,8 +74,7 @@ static int party_whisper(partymember_t *p, const char *nick, user_t *u, const ch
 	const char *next;
 	partymember_t *dest;
 
-	egg_get_word(text, &next, &who);
-	if (next) while (isspace(*next)) next++;
+	egg_get_arg(text, &next, &who);
 	if (!who || !next || !*who || !*next) {
 		partymember_printf(p, _("Syntax: whisper <partylineuser> <msg>"));
 		goto done;
@@ -148,13 +147,12 @@ static int party_set(partymember_t *p, const char *nick, user_t *u, const char *
 	char *path, *str;
 	const char *next;
 
-	egg_get_word(text, &next, &path);
+	egg_get_arg(text, &next, &path);
 	if (!next || !*next || !path || !*path) {
 		partymember_printf(p, _("Syntax: set <path> <new value>"));
 		if (path) free(path);
 		return(0);
 	}
-	while (isspace(*next)) next++;
 
 	root = lookup_and_check(p, path);
 	free(path);
@@ -314,6 +312,7 @@ static int party_minus_host(partymember_t *p, const char *nick, user_t *u, const
 	return(0);
 }
 
+/* Syntax: chattr <user> [chan] <flags> */
 static int party_chattr(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	const char *next;
@@ -323,7 +322,7 @@ static int party_chattr(partymember_t *p, const char *nick, user_t *u, const cha
 	char flagstr[64];
 	int n;
 
-	n = egg_get_words(text, &next, &who, &chan, &flags, NULL);
+	n = egg_get_args(text, &next, &who, &chan, &flags, NULL);
 	if (!chan || !*chan) {
 		if (who) free(who);
 		partymember_printf(p, _("Syntax: chattr <user> [channel] <+/-flags>"));

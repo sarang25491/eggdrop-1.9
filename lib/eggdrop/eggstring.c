@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggstring.c,v 1.4 2003/12/17 07:39:14 wcc Exp $";
+static const char rcsid[] = "$Id: eggstring.c,v 1.5 2003/12/23 22:23:04 stdarg Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -36,10 +36,9 @@ int egg_get_word(const char *text, const char **next, char **word)
 	int len;
 	const char *ptr;
 
-	if (!word) return(-1);
-	if (!text) {
+	if (!word || !text) {
 		if (next) *next = NULL;
-		*word = NULL;
+		if (word) *word = NULL;
 		return(-1);
 	}
 	while (isspace(*text)) text++;
@@ -54,6 +53,70 @@ int egg_get_word(const char *text, const char **next, char **word)
 	*word = malloc(len + 1);
 	memcpy(*word, text, len);
 	(*word)[len] = 0;
+	return(0);
+}
+
+int egg_get_arg(const char *text, const char **next, char **arg)
+{
+	int len = 0, max = 64, inquote = 0, insingle = 0, n, done;
+
+	if (!arg || !text) {
+		if (next) *next = NULL;
+		if (arg) *arg = NULL;
+		return(-1);
+	}
+	while (isspace(*text)) text++;
+	*arg = malloc(max+10);
+
+	done = 0;
+	while (!done) {
+		n = strcspn(text, "\"\\ \t'");
+		if (n) {
+			/* Guarantee there is always some unused space left. */
+			if (n + len + 10 > max) {
+				max = 2*max + n + 10;
+				*arg = realloc(*arg, max+1);
+			}
+			memcpy(*arg + len, text, n);
+			len += n;
+		}
+		text += n;
+		switch (*text) {
+			case '"':
+				if (insingle) (*arg)[len++] = '"';
+				else if (inquote) inquote = 0;
+				else inquote = 1;
+				text++;
+				break;
+			case '\'':
+				if (inquote) (*arg)[len++] = '\'';
+				else if (insingle) insingle = 0;
+				else insingle = 1;
+				text++;
+				break;
+			case ' ':
+			case '\t':
+				/* If we're *not* in a quoted string, this is
+				 * the end. Otherwise, just copy it. */
+				if (!insingle && !inquote) done = 1;
+				else (*arg)[len++] = *text;
+				text++;
+				break;
+			case '\\':
+				text++;
+				if (insingle) (*arg)[len++] = '\\';
+				else if (!inquote) (*arg)[len++] = *text++;
+				else if (*text == '\\' || *text == '"') (*arg)[len++] = *text++;
+				else (*arg)[len++] = '\\';
+				break;
+			default:
+				done = 1;
+				break;
+		}
+	}
+	while (*text && isspace(*text)) text++;
+	if (next) *next = text;
+	(*arg)[len] = 0;
 	return(0);
 }
 
@@ -81,29 +144,64 @@ int egg_get_words(const char *text, const char **next, char **word, ...)
 	return(nwords);
 }
 
-int egg_get_word_array(const char *text, const char **next, char **word, int nwords)
+int egg_get_args(const char *text, const char **next, char **arg, ...)
 {
-	int i, j;
+	va_list args;
+	int nargs = 0;
 
-	for (i = 0; i < nwords; i++) {
-		if (egg_get_word(text, &text, word+i)) break;
+	va_start(args, arg);
+	while (arg) {
+		if (egg_get_arg(text, &text, arg)) break;
+		nargs++;
+		arg = va_arg(args, char **);
 	}
-	for (j = i; i < nwords; j++) {
-		word[j] = NULL;
+	while (arg) {
+		*arg = NULL;
+		arg = va_arg(args, char **);
 	}
+	va_end(args);
 	if (next) *next = text;
-	return(i);
+	return(nargs);
 }
 
-int egg_free_word_array(char **word, int nwords)
+int egg_get_word_array(const char *text, const char **next, char **word, int nwords)
 {
 	int i;
 
 	for (i = 0; i < nwords; i++) {
-		if (word[i]) free(word[i]);
-		word[i] = NULL;
+		if (egg_get_word(text, &text, word+i)) break;
+	}
+	while (i < nwords) word[i++] = NULL;
+	if (next) *next = text;
+	return(i);
+}
+
+int egg_get_arg_array(const char *text, const char **next, char **args, int nargs)
+{
+	int i;
+
+	for (i = 0; i < nargs; i++) {
+		if (egg_get_arg(text, &text, args+i)) break;
+	}
+	while (i < nargs) args[i++] = NULL;
+	if (next) *next = text;
+	return(i);
+}
+
+int egg_free_word_array(char **words, int nwords)
+{
+	int i;
+
+	for (i = 0; i < nwords; i++) {
+		if (words[i]) free(words[i]);
+		words[i] = NULL;
 	}
 	return(0);
+}
+
+int egg_free_arg_array(char **args, int nargs)
+{
+	return egg_free_word_array(args, nargs);
 }
 
 /* Append string to a static buffer until full. */
