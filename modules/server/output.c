@@ -18,17 +18,10 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: output.c,v 1.12 2003/12/18 06:50:47 wcc Exp $";
+static const char rcsid[] = "$Id: output.c,v 1.13 2004/06/07 23:14:48 stdarg Exp $";
 #endif
 
-#include <eggdrop/eggdrop.h>
-#include <string.h>
-#include <stdlib.h>
-
 #include "server.h"
-#include "egg_server_api.h"
-#include "output.h"
-#include "binds.h"
 
 char *global_output_string = NULL;
 

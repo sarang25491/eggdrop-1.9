@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: egg_server_api.h,v 1.2 2003/12/18 06:50:47 wcc Exp $
+ * $Id: egg_server_api.h,v 1.3 2004/06/07 23:14:48 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_SERVER_API_H_
@@ -55,7 +55,6 @@ typedef struct {
 	/* Output functions. */
 	int (*printserv)(int priority, const char *format, ...);
 	queue_entry_t (*queue_new)(char *text);
-	void (*queue_server)(int priority, char *text, int len);
 	void (*queue_append)(queue_t *queue, queue_entry_t *q);
 	void (*queue_unlink)(queue_t *queue, queue_entry_t *q);
 	void (*queue_entry_from_text)(queue_entry_t *q, char *text);

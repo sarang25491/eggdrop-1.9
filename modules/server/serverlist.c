@@ -18,13 +18,10 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: serverlist.c,v 1.5 2003/12/18 06:50:47 wcc Exp $";
+static const char rcsid[] = "$Id: serverlist.c,v 1.6 2004/06/07 23:14:48 stdarg Exp $";
 #endif
 
-#include <stdlib.h>
-#include <string.h>
-
-#include "serverlist.h"
+#include "server.h"
 
 /*
  * serverlist.c maintains the connection of servers and gets the next entry

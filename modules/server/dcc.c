@@ -18,23 +18,14 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dcc.c,v 1.19 2003/12/18 06:50:47 wcc Exp $";
+static const char rcsid[] = "$Id: dcc.c,v 1.20 2004/06/07 23:14:48 stdarg Exp $";
 #endif
 
-#include <eggdrop/eggdrop.h>
-#include <stdio.h>
 #include <unistd.h>
 #include <netinet/in.h>
 #include <fcntl.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 
-#include "egg_server_api.h"
-#include "dcc.h"
 #include "server.h"
-#include "output.h"
-#include "binds.h"
 
 typedef struct dcc_listen {
 	int serv, client;

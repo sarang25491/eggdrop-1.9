@@ -18,16 +18,10 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: nicklist.c,v 1.8 2004/01/11 12:16:08 wcc Exp $";
+static const char rcsid[] = "$Id: nicklist.c,v 1.9 2004/06/07 23:14:48 stdarg Exp $";
 #endif
 
-#include <eggdrop/eggdrop.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include "egg_server_api.h"
-#include "nicklist.h"
-#include "output.h"
+#include "server.h"
 
 char **nick_list = NULL;
 int nick_list_index = -1;

@@ -18,19 +18,10 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: server.c,v 1.57 2004/03/01 22:58:33 stdarg Exp $";
+static const char rcsid[] = "$Id: server.c,v 1.58 2004/06/07 23:14:48 stdarg Exp $";
 #endif
 
-#include <eggdrop/eggdrop.h>
-#include <string.h>
-#include <stdlib.h>
-
 #include "server.h"
-#include "servsock.h"
-#include "serverlist.h"
-#include "nicklist.h"
-#include "binds.h"
-#include "channels.h"
 
 current_server_t current_server = {0};
 server_config_t server_config = {0};
@@ -174,6 +165,10 @@ static int server_close(int why)
 	bind_rem_simple("status", NULL, NULL, server_status);
 	bind_rem_simple("config_save", NULL, "eggdrop", server_config_save);
 
+	/* Clear the server and nick lists. */
+	server_clear();
+	nick_clear();
+
 	server_binds_destroy();
 
 	server_channel_destroy();
@@ -252,15 +247,18 @@ static void server_config_init()
 	}
 }
 
-EXPORT_SCOPE int server_LTX_start(egg_module_t *modinfo);
+EXPORT_SCOPE int server_start(egg_module_t *modinfo);
 
-int server_LTX_start(egg_module_t *modinfo)
+int server_start(egg_module_t *modinfo)
 {
 	modinfo->name = "server";
 	modinfo->author = "eggdev";
 	modinfo->version = "1.0.0";
 	modinfo->description = "normal irc server support";
 	modinfo->close_func = server_close;
+	modinfo->major = EGG_SERVER_API_MAJOR;
+	modinfo->minor = EGG_SERVER_API_MINOR;
+	modinfo->module_api = server_get_api();
 
 	memset(&current_server, 0, sizeof(current_server));
 	current_server.idx = -1;

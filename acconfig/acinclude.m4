@@ -1,7 +1,7 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.32 2003/05/13 07:16:18 stdarg Exp $
+dnl $Id: acinclude.m4,v 1.33 2004/06/07 23:14:48 stdarg Exp $
 dnl
 
 
@@ -644,19 +644,6 @@ AC_SUBST(EGG_DEBUG)
 AM_WITH_MPATROL(no)
 EGG_WITH_EFENCE
 
-])
-
-
-dnl  EGG_LTLIBOBJS
-dnl
-AC_DEFUN(EGG_LTLIBOBJS, [dnl
-
-AC_CONFIG_COMMANDS_PRE(
-              [LIBOBJS=`echo "$LIBOBJS" |
-                        sed 's,\.[[^.]]* ,$U&,g;s,\.[[^.]]*$,$U&,'`
-               LTLIBOBJS=`echo "$LIBOBJS" |
-                          sed 's,\.[[^.]]* ,.lo ,g;s,\.[[^.]]*$,.lo,'`
-               AC_SUBST(LTLIBOBJS)])
 ])
 
 

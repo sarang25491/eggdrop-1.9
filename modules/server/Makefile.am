@@ -1,10 +1,10 @@
-# $Id: Makefile.am,v 1.13 2003/12/18 06:50:47 wcc Exp $
+# $Id: Makefile.am,v 1.14 2004/06/07 23:14:48 stdarg Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 pkglibdir		= $(exec_prefix)/modules
 
 pkglib_LTLIBRARIES	= server.la
-server_la_SOURCES	= server.c server.h binds.c binds.h input.c input.h output.c output.h serverlist.c serverlist.h channels.c channels.h nicklist.c nicklist.h scriptcmds.c servsock.c servsock.h party_commands.c dcc.c dcc.h egg_server_api.h
+server_la_SOURCES	= server.c server.h binds.c binds.h input.c input.h output.c output.h serverlist.c serverlist.h channels.c channels.h nicklist.c nicklist.h scriptcmds.c servsock.c servsock.h party_commands.c dcc.c dcc.h egg_server_api.c egg_server_api.h
 server_la_LDFLAGS	= -module -avoid-version -no-undefined
 server_la_LIBADD	= @LIBS@ $(top_builddir)/lib/eggdrop/libeggdrop.la
 

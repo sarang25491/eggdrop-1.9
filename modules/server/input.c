@@ -18,21 +18,10 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: input.c,v 1.30 2004/03/01 22:58:32 stdarg Exp $";
+static const char rcsid[] = "$Id: input.c,v 1.31 2004/06/07 23:14:48 stdarg Exp $";
 #endif
 
-#include <eggdrop/eggdrop.h>
-#include <string.h>
-#include <stdlib.h>
-
-#include "egg_server_api.h"
 #include "server.h"
-#include "channels.h"
-#include "output.h"
-#include "binds.h"
-#include "servsock.h"
-#include "nicklist.h"
-#include "dcc.h"
 
 char *global_input_string = NULL;
 

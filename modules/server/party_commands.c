@@ -18,19 +18,10 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: party_commands.c,v 1.7 2004/01/11 12:16:08 wcc Exp $";
+static const char rcsid[] = "$Id: party_commands.c,v 1.8 2004/06/07 23:14:48 stdarg Exp $";
 #endif
 
-#include <eggdrop/eggdrop.h>
-#include <ctype.h>
-#include <string.h>
-#include <stdlib.h>
-
-#include "egg_server_api.h"
 #include "server.h"
-#include "serverlist.h"
-#include "output.h"
-#include "servsock.h"
 
 static int party_servers(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {

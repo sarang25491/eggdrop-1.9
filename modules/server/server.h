@@ -16,11 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: server.h,v 1.16 2004/03/01 22:58:33 stdarg Exp $
+ * $Id: server.h,v 1.17 2004/06/07 23:14:48 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_SERVER_SERVER_H_
 #define _EGG_MOD_SERVER_SERVER_H_
+
+#include "egg_server_internal.h"
 
 #define match_my_nick(test) (!((current_server.strcmp)(current_server.nick, test)))
 
@@ -76,10 +78,26 @@ typedef struct {
 	unsigned int mylongip;
 } current_server_t;
 
+#include <eggdrop/eggdrop.h>
+#include <stdio.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "egg_server_api.h"
+#include "channels.h"
+#include "input.h"
+#include "output.h"
+#include "dcc.h"
+#include "binds.h"
+#include "servsock.h"
+#include "nicklist.h"
+#include "serverlist.h"
+
 extern server_config_t server_config;
 extern current_server_t current_server;
 
-/* And one lonely function, because he had nowhere else to fit. */
 extern int server_support(const char *name, const char **value);
+extern void *server_get_api();
 
 #endif /* !_EGG_MOD_SERVER_SERVER_H_ */

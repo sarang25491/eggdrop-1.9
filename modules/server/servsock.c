@@ -18,22 +18,10 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: servsock.c,v 1.21 2004/02/28 06:00:21 stdarg Exp $";
+static const char rcsid[] = "$Id: servsock.c,v 1.22 2004/06/07 23:14:48 stdarg Exp $";
 #endif
 
-#include <eggdrop/eggdrop.h>
-#include <string.h>
-#include <stdlib.h>
-
-#include "egg_server_api.h"
 #include "server.h"
-#include "servsock.h"
-#include "input.h"
-#include "serverlist.h"
-#include "channels.h"
-#include "nicklist.h"
-#include "output.h"
-#include "dcc.h"
 
 /* From server.c. */
 extern int cycle_delay;

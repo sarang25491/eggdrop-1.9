@@ -18,19 +18,10 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.18 2004/03/01 22:58:32 stdarg Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.19 2004/06/07 23:14:48 stdarg Exp $";
 #endif
 
-#include <eggdrop/eggdrop.h>
-#include <ctype.h>
-#include <string.h>
-#include <stdlib.h>
-
-#include "egg_server_api.h"
 #include "server.h"
-#include "binds.h"
-#include "channels.h"
-#include "output.h"
 
 #define UHOST_CACHE_SIZE 47
 
