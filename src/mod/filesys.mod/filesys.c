@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.51 2001/10/10 18:37:55 stdarg Exp $
+ * $Id: filesys.c,v 1.52 2001/10/10 18:47:42 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -58,6 +58,7 @@
 #define start filesys_LTX_start
 
 static p_tcl_bind_list H_fil;
+static bind_table_t *BT_dcc;
 static Function *transfer_funcs = NULL;
 
 /* fcntl.h sets this :/ */

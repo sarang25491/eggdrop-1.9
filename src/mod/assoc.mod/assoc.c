@@ -2,7 +2,7 @@
  * assoc.c -- part of assoc.mod
  *   the assoc code, moved here mainly from botnet.c for module work
  *
- * $Id: assoc.c,v 1.22 2001/10/10 18:37:54 stdarg Exp $
+ * $Id: assoc.c,v 1.23 2001/10/10 18:47:42 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -44,6 +44,8 @@ typedef struct assoc_t_ {
 
 /* Channel name-number associations */
 static assoc_t *assoc;
+
+static bind_table_t *BT_dcc;
 
 static void botnet_send_assoc(int idx, int chan, char *nick,
 			      char *buf)

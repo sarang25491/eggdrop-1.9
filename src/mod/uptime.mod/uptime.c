@@ -1,6 +1,6 @@
 /* Original Copyright (c) 2000-2001 proton
  * 
- * $Id: uptime.c,v 1.15 2001/10/10 18:37:56 stdarg Exp $
+ * $Id: uptime.c,v 1.16 2001/10/10 18:47:42 stdarg Exp $
  * Borrowed from Emech, reports to http://uptime.energymech.net, feel free to opt out if you
  * dont like it by not loading the module.
  * 
@@ -58,6 +58,7 @@ typedef struct PackUp
 
 PackUp upPack;
 
+static bind_table_t *BT_dcc;
 static Function *global = NULL, *server_funcs = NULL;
 
 char *uptime_host = NULL;
