@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.71 2001/07/26 17:04:33 drummer Exp $
+ * $Id: main.c,v 1.72 2001/07/31 16:40:40 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -121,6 +121,7 @@ int	do_restart = 0;		/* .restart has been called, restart asap */
 int	die_on_sighup = 0;	/* die if bot receives SIGHUP */
 int	die_on_sigterm = 1;	/* die if bot receives SIGTERM */
 int	resolve_timeout = 15;	/* hostname/address lookup timeout */
+char	quit_msg[1024];		/* quit message */
 time_t	now;			/* duh, now :) */
 
 /* Traffic stats

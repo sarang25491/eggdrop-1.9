@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.70 2001/07/26 17:04:34 drummer Exp $
+ * $Id: server.c,v 1.71 2001/07/31 16:40:41 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -90,6 +90,7 @@ static int double_help;
 static int double_warned;
 static int lastpingtime;	/* IRCNet LAGmeter support -- drummer */
 static char stackablecmds[511];
+static char stackable2cmds[511];
 static time_t last_time;
 static int use_penalties;
 static int use_fastdeq;
@@ -395,7 +396,7 @@ static int fast_deq(int which)
   struct msgq *m, *nm;
   char msgstr[511], nextmsgstr[511], tosend[511], victims[511], stackable[511],
        *msg, *nextmsg, *cmd, *nextcmd, *to, *nextto, *stckbl;
-  int len, doit = 0, found = 0, who_count =0;
+  int len, doit = 0, found = 0, who_count =0, stack_method = 1;
 
   if (!use_fastdeq)
     return 0;
@@ -432,6 +433,14 @@ static int fast_deq(int which)
      */
     if (use_fastdeq == 3 && found)
       return 0;
+    /* we check for the stacking method (default=1) */
+    strncpyz(stackable, stackable2cmds, sizeof stackable);
+    stckbl = stackable;
+    while (strlen(stckbl) > 0)
+      if (!egg_strcasecmp(newsplit(&stckbl), cmd)) {
+        stack_method = 2;
+        break;
+      }    
   }
   to = newsplit(&msg);
   len = strlen(to);
@@ -449,13 +458,17 @@ static int fast_deq(int which)
     len = strlen(nextto);
     if (nextto[len - 1] == '\n')
       nextto[len - 1] = 0;
-    if (!strcmp(cmd, nextcmd) && !strcmp(msg, nextmsg)
+    if ( strcmp(to, nextto) /* we don't stack to the same recipients */
+        && !strcmp(cmd, nextcmd) && !strcmp(msg, nextmsg)
         && ((strlen(cmd) + strlen(victims) + strlen(nextto)
 	     + strlen(msg) + 2) < 510)
         && (egg_strcasecmp(cmd, "WHO") || who_count < MAXPENALTY - 1)) {
       if (!egg_strcasecmp(cmd, "WHO"))
         who_count++;
-      simple_sprintf(victims, "%s,%s", victims, nextto);
+      if (stack_method == 1)
+      	simple_sprintf(victims, "%s,%s", victims, nextto);
+      else
+      	simple_sprintf(victims, "%s %s", victims, nextto);
       doit = 1;
       m->next = nm->next;
       if (!nm->next)
@@ -1226,6 +1239,7 @@ static void do_nettype(void)
     use_fastdeq = 2;
     nick_len = 9;
     simple_sprintf(stackablecmds, "PRIVMSG NOTICE TOPIC PART WHOIS");
+    simple_sprintf(stackable2cmds, "USERHOST USERIP");
     break;
   case NETT_DALNET:
     check_mode_r = 0;
@@ -1277,6 +1291,7 @@ static tcl_strings my_tcl_strings[] =
   {"init-server",		initserver,	120,		0},
   {"connect-server",		connectserver,	120,		0},
   {"stackable-commands",	stackablecmds,	510,		0},
+  {"stackable2-commands",	stackable2cmds,	510,		0},
   {NULL,			NULL,		0,		0}
 };
 
@@ -1565,6 +1580,16 @@ static void server_postrehash()
     do_tcl("init-server", initserver);
 }
 
+static void server_die()
+{
+  cycle_time = 100;
+  if (server_online) {
+    dprintf(-serv, "QUIT :%s\n", quit_msg[0] ? quit_msg : "");
+    sleep(3); /* Give the server time to understand */
+  }
+  nuke_server(NULL);
+}
+
 /* A report on the module status.
  */
 static void server_report(int idx, int details)
@@ -1695,14 +1720,6 @@ static cmd_t my_ctcps[] =
 
 static char *server_close()
 {
-  /* FIXME - I'm an ugly hack. */
-  cmd_t C_t[] =
-  {
-    {"die",	"m",	NULL /* Inserted below. */,	NULL},
-    {NULL,	NULL,	NULL,				NULL}
-  };
-  C_t[0].func = (Function) cmd_die;
-
   cycle_time = 100;
   nuke_server("Connection reset by peer");
   clearq(serverlist);
@@ -1710,7 +1727,6 @@ static char *server_close()
   rem_builtins(H_raw, my_raw_binds);
   rem_builtins(H_ctcp, my_ctcps);
   /* Restore original commands. */
-  add_builtins(H_dcc, C_t);
   del_bind_table(H_wall);
   del_bind_table(H_raw);
   del_bind_table(H_notc);
@@ -1749,6 +1765,7 @@ static char *server_close()
   del_hook(HOOK_MINUTELY, (Function) minutely_checks);
   del_hook(HOOK_PRE_REHASH, (Function) server_prerehash);
   del_hook(HOOK_REHASH, (Function) server_postrehash);
+  del_hook(HOOK_DIE, (Function) server_die);
   module_undepend(MODULE_NAME);
   return NULL;
 }
@@ -1862,6 +1879,7 @@ char *server_start(Function *global_funcs)
   use_penalties = 0;
   use_fastdeq = 0;
   stackablecmds[0] = 0;
+  strcpy(stackable2cmds, "USERHOST");
   resolvserv = 0;
   lastpingtime = 0;
   last_time = 0;
@@ -1870,7 +1888,7 @@ char *server_start(Function *global_funcs)
   optimize_kicks = 0;
 
   server_table[4] = (Function) botname;
-  module_register(MODULE_NAME, server_table, 1, 1);
+  module_register(MODULE_NAME, server_table, 1, 2);
   if (!module_depend(MODULE_NAME, "eggdrop", 107, 0)) {
     module_undepend(MODULE_NAME);
     return "This module requires eggdrop1.7.0 or later";
@@ -1924,6 +1942,7 @@ char *server_start(Function *global_funcs)
   add_hook(HOOK_QSERV, (Function) queue_server);
   add_hook(HOOK_PRE_REHASH, (Function) server_prerehash);
   add_hook(HOOK_REHASH, (Function) server_postrehash);
+  add_hook(HOOK_DIE, (Function) server_die);
   mq.head = hq.head = modeq.head = NULL;
   mq.last = hq.last = modeq.last = NULL;
   mq.tot = hq.tot = modeq.tot = 0;

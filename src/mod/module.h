@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.51 2001/07/26 17:04:33 drummer Exp $
+ * $Id: module.h,v 1.52 2001/07/31 16:40:41 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -440,7 +440,7 @@
 #if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
 #define str_nutf8tounicode ((int (*)(char *str, int len))global[267])
 #endif
-/* 268 - 270 */
+/* 268 - 271 */
 /* Please don't modify socklist directly, unless there's no other way.
  * Its structure might be changed, or it might be completely removed,
  * so you can't rely on it without a version-check.
@@ -451,7 +451,10 @@
 #ifdef IPV6
 #  define getmyip6 ((struct in6_addr (*) (void))global[271])
 #endif
+/* 272 - 275 */
 #define getlocaladdr ((char* (*) (int))global[272])
+#define kill_bot ((void (*)(char *, char *))global[273])
+#define quit_msg ((char *)(global[274]))
 
 /* This is for blowfish module, couldnt be bothered making a whole new .h
  * file for it ;)

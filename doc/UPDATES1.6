@@ -1,10 +1,15 @@
-$Id: UPDATES1.6,v 1.163 2001/07/26 04:07:49 guppy Exp $
+$Id: UPDATES1.6,v 1.164 2001/07/31 16:40:40 guppy Exp $
 
 Changes in eggdrop: (since v1.6.0)
 ----------------------------------
 
 1.6.7
 Found by  Fixed by  What...
+|^Raven^| Noyga     PRIVMSGs with the same message to the same destination
+                    are no longer stacked also USERHOST/USERIP are not stacked
+                    using a comma
+          Sup       Added HOOK_DIE to allow tcl_die to have
+                    a quit message.
           TaKaDa    fixed tcl_md5, it was broken on tcl8.1+
           Kirben    check whether cygwin requires -mwin32 to support
                     old versions of cygwin

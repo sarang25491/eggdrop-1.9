@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.61 2001/07/26 17:04:33 drummer Exp $
+ * $Id: cmds.c,v 1.62 2001/07/31 16:40:40 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -48,7 +48,7 @@ extern unsigned long	 otraffic_irc, otraffic_irc_today,
 			 itraffic_unknown, itraffic_unknown_today;
 extern Tcl_Interp	*interp;
 extern char		 botnetnick[], origbotname[], ver[], network[],
-			 owner[], spaces[];
+			 owner[], spaces[], quit_msg[];
 extern time_t		 now, online_since;
 
 
@@ -1083,26 +1083,21 @@ static void cmd_reload(struct userrec *u, int idx, char *par)
   reload();
 }
 
-/* NOTE: This gets replaced in the server mod, with a version that handles
- *       the server disconnect better.
- */
 void cmd_die(struct userrec *u, int idx, char *par)
 {
-  char s[1024];
+  char s1[1024], s2[1024];
 
   putlog(LOG_CMDS, "*", "#%s# die %s", dcc[idx].nick, par);
   if (par[0]) {
-    simple_sprintf(s, "BOT SHUTDOWN (%s: %s)", dcc[idx].nick, par);
+    egg_snprintf(s1, sizeof s1, "BOT SHUTDOWN (%s: %s)", dcc[idx].nick, par);
+    egg_snprintf(s2, sizeof s2, "DIE BY %s!%s (%s)", dcc[idx].nick, dcc[idx].host, par);
+    strncpyz(quit_msg, par, 1024);
   } else {
-    simple_sprintf(s, "BOT SHUTDOWN (authorized by %s)", dcc[idx].nick);
+    egg_snprintf(s1, sizeof s1, "BOT SHUTDOWN (Authorized by %s)", dcc[idx].nick);
+    egg_snprintf(s2, sizeof s2, "DIE BY %s!%s (request)", dcc[idx].nick, dcc[idx].host);
+    strncpyz(quit_msg, dcc[idx].nick, 1024);
   }
-  chatout("*** %s\n", s);
-  botnet_send_chat(-1, botnetnick, s);
-  botnet_send_bye();
-  write_userfile(-1);
-  simple_sprintf(s, "DIE BY %s!%s (%s)", dcc[idx].nick,
-		 dcc[idx].host, par[0] ? par : "request");
-  fatal(s, 0);
+  kill_bot(s1, s2);
 }
 
 static void cmd_debug(struct userrec *u, int idx, char *par)

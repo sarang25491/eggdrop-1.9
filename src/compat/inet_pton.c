@@ -1,7 +1,7 @@
 /*
  * inet_pton.c -- provides inet_pton() if necessary.
  *
- * $Id: inet_pton.c,v 1.2 2001/07/29 19:43:05 drummer Exp $
+ * $Id: inet_pton.c,v 1.3 2001/07/31 16:40:41 guppy Exp $
  */
 /*
  * Copyright (c) 1996,1999 by Internet Software Consortium.
@@ -226,3 +226,4 @@ inet_pton6(src, dst)
 }
 
 #endif
+

@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.54 2001/07/26 17:04:33 drummer Exp $
+ * $Id: modules.c,v 1.55 2001/07/31 16:40:40 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -69,7 +69,7 @@ extern struct userrec	*userlist, *lastuser;
 extern char		 tempdir[], botnetnick[], botname[], natip[],
 			 hostname[], origbotname[], botuser[], admin[],
 			 userfile[], ver[], notify_new[], helpdir[],
-			 version[];
+			 version[], quit_msg[];
 extern int	 noshare, dcc_total, egg_numver, userfile_perm,
 			 use_console_r, ignore_time, must_be_owner,
 			 debug_output, gban_total, make_userfile,
@@ -532,6 +532,7 @@ Function global_table[] =
 #else
   (Function) 0,
 #endif
+  /* 268 - 271 */
   (Function) & socklist,              /* sock_list *                      */
   (Function) sockoptions,
   (Function) flush_inbuf,
@@ -540,7 +541,10 @@ Function global_table[] =
 #else
   (Function) 0,
 #endif
+  /* 272 - 275 */ 
   (Function) getlocaladdr,
+  (Function) kill_bot,
+  (Function) quit_msg,                /* char *				  */
 };
 
 void init_modules(void)
