@@ -1,3 +1,12 @@
+2001-08-14 18:30  Jeff Fisher <guppy@techmonkeys.org>
+
+	* text/: banner, motd:
+
+	Lets remove version numbers from motd/banner since when we upgrade
+	bots we do not overwrite these files normally and they can get dated
+	when people move between series and do not upgrade their motd/banner
+	.. I am one of these people.  
+
 2001-08-14 18:27  Jeff Fisher <guppy@techmonkeys.org>
 
 	* src/mod/server.mod/servmsg.c:
