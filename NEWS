@@ -1,29 +1,31 @@
-News - Updated 12 August 2001
-  ------------------------------------------------------------------------
+$Id: NEWS,v 1.19 2003/12/11 01:21:48 wcc Exp $
 
-Whats new, first read the following documents:
+News
+Last revised: December 10, 2003
+     _________________________________________________________________
 
-     INSTALL
-     README
-     BOTNET
-     UPDATES 1.6/ChangeLog
-     tcl-commands
+                                   News
 
-All of these documents combined will fill you in on the latest changes to
-eggdrop in version 1.7.x. All files are also available in html in doc/html/.
 
-A lot of things have changed in this version so at a minimum read the
-UPDATES1.6 and ChangeLog text file. 
+  What's new? First, read the following documents:
 
-CAUTION:
+    INSTALL
+    README
+    doc/BOTNET
 
-     1. Before you start the bot for the first time BACKUP your
-     userfile if this is an upgrade from a previous version.
+<WILL BE COMPLETED AT A LATER TIME>
 
-     2. DON'T USE YOUR OLD CONFIG FILE.. MAKE A NEW ONE.........
+  If you are upgrading from a pre-1.7 version of Eggdrop:
 
-Changes made to Eggdrop 1.7.x from Eggdrop1.6.x
+    1. Before you start the bot for the first time, BACKUP your userfile.
 
-  ------------------------------------------------------------------------
+    2. DON'T USE YOUR OLD CONFIG FILE. MAKE A NEW ONE!
+
+     _________________________________________________________________
+
+
+<WILL BE COMPLETED AT A LATER TIME>
+  ________________________________________________________________________
+
 Copyright (C) 1997 Robey Pointer
 Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team

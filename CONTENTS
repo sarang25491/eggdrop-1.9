@@ -1,5 +1,7 @@
+$Id: CONTENTS,v 1.9 2003/12/11 01:21:48 wcc Exp $
+
 Directory Contents - /
-Last revised: March  03, 2003
+Last revised: December 10, 2003
      _________________________________________________________________
 
                            Directory Contents - /
@@ -46,11 +48,11 @@ Last revised: March  03, 2003
   text/
     This contains the motd and banner files.
 
-  AUTHORS
-    A list of Eggdrop developers and contributors is in this file.
-
   ABOUT-NLS
     This contains gettext information.
+
+  AUTHORS
+    A list of Eggdrop developers and contributors is in this file.
 
   bootstrap
     This script generates several files needed for the configure process.
@@ -81,3 +83,6 @@ Last revised: March  03, 2003
 
   README
     You should read this file before even trying to compile Eggdrop.
+    ________________________________________________________________________
+
+  Copyright (C) 2003, 2004 Eggheads Development Team

@@ -1,132 +1,53 @@
+$Id: INSTALL,v 1.16 2003/12/11 01:21:48 wcc Exp $
+
 Compilation and Installation of Eggdrop
-  ------------------------------------------------------------------------
+Last revised: December 10, 2003
+     _________________________________________________________________
 
-This is the quick install guide, if you have had little or no experience
-with unix or eggdrop, READ THE README FILE NOW! This file is only for
-experienced users.
+                  Compilation and Installation of Eggdrop
 
-(1) WHAT IS EGGDROP?
 
-     Please, read the file README before attempting to set up this
-     bot. It is NOT easy to use! This file is a quick setup guide, not
-     a miracle worker. If you enter this file without basic eggdrop
-     knowledge, you will NOT leave with a working bot! Before asking
-     ANY questions, READ THE README FILE OR YOU WILL BE BURNED TO A
-     HORRIBLE DEATH! IF YOU DO NOT READ THAT FILE I WILL PERSONALLY
-     WALK TO YOUR TERMINAL AND BEAT IT WITH A SMELLY SNEAKER! By the
-     way, read README.
+  This is the quick install guide; if you have had little or no experience
+  with UNIX or Eggdrop, READ THE README FILE NOW! This file is only for
+  experienced users.
 
-(2) QUICK STARTUP
+  Contents:
+    1. What is Eggdrop?
+    2. Compiling Eggdrop 1.7
 
-     Eggdrop uses the GNU autoconfigure scripts, to make things
-     easier.
 
-  1. If you downloaded eggdrop from the CVS repository type './bootstrap' from
-     the eggdrop directory. That script will prepare system configuration
-     detection's scripts. For a successful run of bootstrap, your system needs
-     to satisfy some requirements (read bootstrap top contents to know which),
-     otherwhise you need to get an already bootstrapped package from
-     ftp://ftp.eggheads.org/pub/eggdrop/source/current/.
-     If you don't know of what we are talking about in this step
-     it probably means you don't need to run the bootstrap script, so just
-     ignore this step.
+  (1) WHAT IS EGGDROP?
 
-  2. Type './configure' from the eggdrop directory.  That script will
-     determine how your system is set up, and figure out how to compile
-     eggdrop.  It will also try to find Tcl, which is required to compile.
-     Or to force a statically linked module bot type './configure
-     --disable-shared'.  Otherwise the configure script will determin which
-     type of bot your system will support.  Dynamic is always the better way
-     to go if possible. There is also the option --enable-debug which will
-     give more detailed output on (a highly unlikely :) crash. This might
-     help the devteam to track down the crash and fix the bug. The bot will
-     take a little longer to build and will enlarge the binary a bit, but
-     it's worth if you want to support eggdrop development.
+    Please, read the README file before attempting to set up this bot. This
+    file is a quick setup guide, not a miracle worker. If you enter this file
+    without basic Eggdrop knowledge, you will NOT leave with a working bot!
+    Before asking ANY questions, READ THE README FILE OR YOU WILL BE BURNED
+    TO A HORRIBLE DEATH! IF YOU DO NOT READ THAT FILE I WILL PERSONALLY WALK
+    TO YOUR TERMINAL AND BEAT IT WITH A SMELLY SNEAKER! By the way, read the
+    README file.
 
-  3. Type 'make' from the eggdrop directory.
+  (2) COMPILING EGGDROP 1.7
 
-  4. Eggdrop must be installed in a directory somewhere.  This is
-     accomplished by entering the unix command:
+    The build process will be simplified at a later time. For now, the basic
+    steps to compiling Eggdrop 1.7 are as follows.
 
-     make install
-     This will install the eggdrop in your home directory in a directory
-     called eggdrop (i.e. /home/user/eggdrop).
+      1. Install the following development tools on your system:
+           autoconf 2.52
+           automake 1.5
+           libtool  1.4.2
 
-     If you want to install to a different directory make sure you have run
-     './configure --prefix=<directory>' before the make process.
-     Example, if you ran './configure --prefix=/home/user/otherdir',
-     'make install' will install eggdrop in /home/user/otherdir.
+      2. Create the following symlinks in the Eggdrop 1.7 root directory:
+           ln -s acconfig/mkinstalldirs ./
+           ln -s configure.ac configure.in
 
-     [The following is performed from the directory installed above]
+      3. Run './bootstrap'.
 
-  5. Copy the file 'eggdrop.complete.conf' to a new file, usually the same name
-     as the bot that will use it, e.g. "LamestBot.conf".
+      4. Run './configure --prefix=<install path>'.
 
-  6. Edit your config file LamestBot.conf completely.
+      5. Run 'make'.
 
-  7. Start the bot with the "-m" option to create a user file, ie './eggdrop
-     -m LamestBot.conf'.
+      6. Run 'make install'.
+  ________________________________________________________________________
 
-  8. When starting the bot in the future, drop the "-m".  If you have
-     edited your bot script correctly, you can type:
-     chmod u+x <my-bot-script-name>
-     e.g.
-     chmod u+x LamestBot
-
-     and from then on, you will be able to run your bot directly from the
-     script.  So you can just type "LamestBot" from your shell prompt to
-     start up your bot.  For this to work, the top line of your script MUST
-     contain the correct path to eggdrop.
-
-  9. It's advisable to run your bot via crontab so that it will
-     automatically restart if the machine goes down or (heaven forbid) the
-     bot should crash. Look at the file 'scripts/botchk' and
-     'scripts/autobotchk' for a great start with crontabbing the bot.
-
- 10. Smile, and if you haven't already read the README file in its
-     entirety, go take a long walk off a short pier.
-
-(3) MODULES
-
-  1. Modules are small pieces of code that can either be compiled into the
-     binary or can be compiled seperatly in a file.  This allows for a much
-     smaller binary and a way of choosing which options you want installed
-     in the bot.  Before you compile the bot you can remove any *.mod
-     directory in the src/mod that you dont wish to be compiled.  Use
-     caution though most of the modules that come with eggdrop the are
-     required.  The exception is woobie.mod -- If you do not want this module
-     it is safe to delete it's directoy.
-
-  2. If there are any personal modules that you have made or downloaded you
-     can add them to the bot by placing them in the /src/mod directory with
-     a mod extension.  They will be automatically compiled during the make
-     for you.  They must have a valid make file and of course be
-     compatiable with the rest of the eggdrop source.
-
-  3. If you wish to add a module at a latter time follow the same steps in
-     paragraph 2.  After you have moved the appropriate files you will only
-     need to type make modules to compile only the modules portion of the
-     bot.
-
-(3) FREQUENTLY ASKED QUESTIONS
-
-  1. WHAT DO I DO IF...?
-     READ THE README FILE!
-
-  2. THE README DOES NOT ANSWER...!
-     READ THE README FILE AGAIN!
-
-  3. I still don't know how to....
-     Well, go to www.egghelp.org or www.eggheads.org and see if you can
-     find there what you're looking for. There're also lots of IRC help
-     channels (usually #eggdrop) and various mailing lists. Try Eggheads
-     mailing list http://scrambled.eggheads.org/mailman/listinfo/eggheads
-
-This is the end. If you read to this point, hopefully you have also read
-the README file. If not, then READ IT!&@#%@!
-
-Have fun with Eggdrop!
-
-  ------------------------------------------------------------------------
 Copyright (C) 1997 Robey Pointer
 Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
