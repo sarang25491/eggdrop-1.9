@@ -1,3 +1,10 @@
+2001-12-08 19:48  Federico Mennite <ite@techmonkeys.org>
+
+	* configure.ac, acconfig/acinclude.m4, doc/compiling.FAQ:
+
+	Added '--disable-cc-optimization' to disable -O2 flags. Patch by Ely
+	Levy <cs.huji.ac.il> 
+
 2001-12-08 19:17  Federico Mennite <ite@techmonkeys.org>
 
 	* lib/eggdrop/modvals.h, modules/irc/chan.c, modules/irc/cmdsirc.c,
