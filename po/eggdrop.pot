@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2001-11-12 04:00-0600\n"
+"POT-Creation-Date: 2001-11-13 04:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -607,7 +607,7 @@ msgstr ""
 msgid "Rehashing."
 msgstr ""
 
-#: modules/irc/msgcmds.c:878 src/cmds.c:1076 src/tcldcc.c:865
+#: modules/irc/msgcmds.c:878 src/cmds.c:1076 src/tcldcc.c:785
 msgid "Rehashing..."
 msgstr ""
 
@@ -1064,17 +1064,17 @@ msgstr ""
 msgid "No help available on that.\n"
 msgstr ""
 
-#: src/logfile.c:134
+#: src/logfile.c:135
 msgid "Cycling logfiles"
 msgstr ""
 
-#: src/logfile.c:273 src/logfile.c:328
+#: src/logfile.c:274 src/logfile.c:329
 #, c-format
 msgid "Last message repeated %d time(s).\n"
 msgstr ""
 
 #. It's too big.
-#: src/logfile.c:313
+#: src/logfile.c:314
 #, c-format
 msgid "Cycling logfile %s, over max-logsize (%d kilobytes)"
 msgstr ""
@@ -2495,15 +2495,15 @@ msgstr ""
 msgid "No such module.\n"
 msgstr ""
 
-#: src/tcldcc.c:666
+#: src/tcldcc.c:590
 msgid "No free sockets available."
 msgstr ""
 
-#: src/tcldcc.c:861 src/tcldcc.c:878
+#: src/tcldcc.c:781 src/tcldcc.c:794
 msgid "Userfile creation not necessary--skipping"
 msgstr ""
 
-#: src/tcldcc.c:882
+#: src/tcldcc.c:798
 msgid "Restarting..."
 msgstr ""
 
