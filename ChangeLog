@@ -1,3 +1,18 @@
+2003-02-03 10:43  Will Buckner <wcc@techmonkeys.org>
+
+	* eggdrop.conf, modules/channels/channels.c,
+	modules/channels/cmdschan.c, modules/channels/flagmaps.c,
+	modules/channels/tclchan.c, modules/irc/chan.c,
+	modules/irc/cmdsirc.c, modules/irc/irc.c, modules/irc/irc.h,
+	modules/irc/mode.c, modules/irc/msgcmds.c, scripts/klined.tcl,
+	scripts/notes2.tcl, scripts/ques5.tcl, scripts/sentinel.tcl,
+	src/chan.h, src/cmds.c, src/egg.h, src/flags.c, src/flags.h,
+	src/tcl.c:
+
+	* Removed protection stuff, will be added back in a module later.  
+	* Removed klined, ques5, sentinel, and notes2 as they won't be
+	  compatable and are not maintained by us.  
+
 2003-02-03 06:42  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/hash_table.c, lib/eggdrop/users.c, src/logfile.c,
