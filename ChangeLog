@@ -1,3 +1,10 @@
+2002-02-04 07:27  wcc
+
+	* src/: chanprog.c, patch.h:
+
+	The '/msg bot hello' info should use origbotname instead of
+	botnetnick when starting the bot in userfile creation mode.  
+
 2002-02-03 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
