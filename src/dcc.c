@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.73 2002/02/07 22:19:04 wcc Exp $
+ * $Id: dcc.c,v 1.74 2002/03/11 20:16:29 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1655,7 +1655,7 @@ static void dcc_script(int idx, char *buf, int len)
 
   dcc[idx].timeval = now;
   oldsock = dcc[idx].sock;	/* Remember the socket number.	*/
-  if (call_tcl_func(dcc[idx].u.script->command, dcc[idx].sock, buf)) {
+  if (call_tcl_func(dcc[idx].u.script->command, idx, buf)) {
     void *old_other = NULL;
 
     /* Check whether the socket and dcc entry are still valid. They
@@ -1697,7 +1697,7 @@ static void eof_dcc_script(int idx)
   oldflags = dcc[idx].type->flags;
   dcc[idx].type->flags &= ~(DCT_VALIDIDX);
   /* Tell the script they're gone: */
-  call_tcl_func(dcc[idx].u.script->command, dcc[idx].sock, "");
+  call_tcl_func(dcc[idx].u.script->command, idx, "");
   /* Restore the flags */
   dcc[idx].type->flags = oldflags;
   old = dcc[idx].u.script->u.other;

@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.69 2002/02/14 00:55:11 ite Exp $
+ * $Id: tcl.c,v 1.70 2002/03/11 20:16:29 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -289,16 +289,6 @@ void rem_tcl_commands(tcl_cmds *tab)
     Tcl_DeleteCommand(interp, tab[i].name);
 }
 
-void add_tcl_objcommands(tcl_cmds *tab)
-{
-#if (TCL_MAJOR_VERSION >= 8)
-  int i;
-
-  for (i = 0; tab[i].name; i++)
-    Tcl_CreateObjCommand(interp, tab[i].name, tab[i].func, (ClientData) 0, NULL);
-#endif
-}
-
 /* Strings */
 static tcl_strings def_tcl_strings[] =
 {
@@ -391,7 +381,7 @@ void kill_tcl()
   Tcl_DeleteInterp(interp);
 }
 
-extern tcl_cmds tcluser_cmds[], tcldcc_cmds[], tclmisc_cmds[], tclmisc_objcmds[];
+extern tcl_cmds tcluser_cmds[], tcldcc_cmds[], tclmisc_cmds[];
 extern script_simple_command_t script_dcc_cmds[];
 extern script_command_t script_full_dcc_cmds[];
 extern script_command_t script_user_cmds[];
@@ -449,7 +439,6 @@ void init_tcl(int argc, char **argv)
   add_tcl_commands(tcluser_cmds);
   add_tcl_commands(tcldcc_cmds);
   add_tcl_commands(tclmisc_cmds);
-  add_tcl_objcommands(tclmisc_objcmds);
   script_create_simple_cmd_table(script_dcc_cmds);
   script_create_cmd_table(script_full_dcc_cmds);
   script_create_cmd_table(script_user_cmds);

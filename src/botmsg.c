@@ -5,7 +5,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: botmsg.c,v 1.31 2002/03/04 02:32:38 stdarg Exp $
+ * $Id: botmsg.c,v 1.32 2002/03/11 20:16:29 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -34,7 +34,6 @@ extern struct dcc_t	*dcc;
 extern int		 dcc_total, tands;
 extern char		 botnetnick[];
 extern party_t		*party;
-extern Tcl_Interp	*interp;
 extern struct userrec	*userlist;
 
 static char	OBUF[1024];

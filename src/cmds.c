@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.95 2002/03/04 03:55:28 stdarg Exp $
+ * $Id: cmds.c,v 1.96 2002/03/11 20:16:29 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -47,7 +47,6 @@ extern unsigned long	 otraffic_irc, otraffic_irc_today,
 			 itraffic_trans, itraffic_trans_today,
 			 otraffic_unknown, otraffic_unknown_today,
 			 itraffic_unknown, itraffic_unknown_today;
-extern Tcl_Interp	*interp;
 extern char		 botnetnick[], ver[], network[],
 			 owner[], spaces[], quit_msg[];
 extern time_t		 now, online_since;

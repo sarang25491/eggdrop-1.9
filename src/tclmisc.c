@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.43 2002/02/07 22:19:05 wcc Exp $
+ * $Id: tclmisc.c,v 1.44 2002/03/11 20:16:30 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -300,56 +300,20 @@ static int tcl_callevent STDVAR
   return TCL_OK;
 }
 
-#if (TCL_MAJOR_VERSION >= 8)
-static int tcl_md5(cd, irp, objc, objv)
-ClientData cd;
-Tcl_Interp *irp;
-int objc;
-Tcl_Obj *CONST objv[];
+static char *script_md5(char *data)
 {
-#else
-static int tcl_md5 STDVAR
-{
-#endif
-  MD5_CTX       md5context;
-  char digest_string[33], *string;
+  MD5_CTX md5context;
+  static char digest_string[33];
   unsigned char digest[16];
-  int i, len;
-
-#if (TCL_MAJOR_VERSION >= 8)
-  if (objc != 2) {
-    Tcl_WrongNumArgs(irp, 1, objv, "string");
-    return TCL_ERROR;
-  }
-
-#if (TCL_MAJOR_VERSION == 8 && TCL_MINOR_VERSION < 1)
-  string = Tcl_GetStringFromObj(objv[1], &len);
-#else
-  string = Tcl_GetByteArrayFromObj(objv[1], &len);
-#endif
-
-#else
-  BADARGS(2, 2, " string");
-  string = argv[1];
-  len = strlen(argv[1]);
-#endif
+  int i;
 
   MD5_Init(&md5context);
-  MD5_Update(&md5context, (unsigned char *)string, len);
+  MD5_Update(&md5context, data, strlen(data));
   MD5_Final(digest, &md5context);
-  for(i=0; i<16; i++)
-    sprintf(digest_string + (i*2), "%.2x", digest[i]);
-  Tcl_AppendResult(irp, digest_string, NULL);
-  return TCL_OK;
+  for (i = 0; i < 16; i++) sprintf(digest_string + (i*2), "%.2x", digest[i]);
+  digest_string[32] = 0;
+  return(digest_string);
 }
-
-tcl_cmds tclmisc_objcmds[] =
-{
-#if (TCL_MAJOR_VERSION >= 8)
-  {"md5",	tcl_md5},
-#endif
-  {NULL,	NULL}
-};
 
 script_command_t script_misc_cmds[] = {
 	{"", "duration", (Function) script_duration, NULL, 1, "u", "seconds", SCRIPT_STRING|SCRIPT_FREE, 0},
@@ -364,6 +328,7 @@ script_command_t script_misc_cmds[] = {
 	{"", "dccdumpfile", (Function) script_dccdumpfile, NULL, 2, "is", "idx filename", SCRIPT_INTEGER, 0},
 	{"", "backup", (Function) script_backup, NULL, 0, "", "", SCRIPT_INTEGER},
 	{"", "die", (Function) script_die, NULL, 0, "s", "?reason?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
+	{"", "md5", (Function) script_md5, NULL, 1, "s", "data", SCRIPT_STRING, 0},
 	{0}
 };
 
@@ -376,9 +341,6 @@ tcl_cmds tclmisc_cmds[] =
   {"loadhelp",		tcl_loadhelp},
   {"unloadhelp",	tcl_unloadhelp},
   {"reloadhelp",	tcl_reloadhelp},
-#if (TCL_MAJOR_VERSION < 8)
-  {"md5",		tcl_md5},
-#endif
   {"callevent",		tcl_callevent},
   {NULL,		NULL}
 };

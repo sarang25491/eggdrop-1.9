@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.51 2002/03/03 19:03:46 stdarg Exp $
+ * $Id: tcldcc.c,v 1.52 2002/03/11 20:16:30 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -284,12 +284,12 @@ static int tcl_control STDVAR
   void *hold;
 
   BADARGS(3, 3, " idx command");
-  idx = findidx(atoi(argv[1]));
+  //idx = findidx(atoi(argv[1]));
   if (idx < 0) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
     return TCL_ERROR;
   }
-  if (dcc[idx].type->flags & DCT_CHAT) {
+  if (dcc[idx].type && dcc[idx].type->flags & DCT_CHAT) {
     if (dcc[idx].u.chat->channel >= 0) {
       chanout_but(idx, dcc[idx].u.chat->channel, "*** %s has gone.\n",
 		  dcc[idx].nick);
@@ -322,7 +322,7 @@ static int tcl_killdcc STDVAR
   int idx;
 
   BADARGS(2, 3, " idx ?reason?");
-  idx = findidx(atoi(argv[1]));
+  //idx = findidx(atoi(argv[1]));
   if (idx < 0) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
     return TCL_ERROR;
@@ -581,7 +581,7 @@ static int tcl_connect STDVAR
   dcc[i].port = atoi(argv[2]);
   strcpy(dcc[i].nick, "*");
   strncpyz(dcc[i].host, argv[1], UHOSTMAX);
-  snprintf(s, sizeof s, "%d", sock);
+  snprintf(s, sizeof s, "%d", i);
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }
