@@ -164,15 +164,22 @@ void dequeue_messages()
 	remaining = sizeof(buf);
 	text = buf;
 	msg = &q->msg;
-	append_str(&text, &remaining, msg->prefix);
-	append_str(&text, &remaining, " ");
-	append_str(&text, &remaining, msg->cmd);
+	if (msg->prefix) {
+		append_str(&text, &remaining, msg->prefix);
+		append_str(&text, &remaining, " ");
+		free(msg->prefix);
+	}
+	if (msg->cmd) {
+		append_str(&text, &remaining, msg->cmd);
+		free(msg->cmd);
+	}
 
 	/* Add the args (except for last one). */
 	msg->nargs--;
 	for (i = 0; i < msg->nargs; i++) {
 		append_str(&text, &remaining, " ");
 		append_str(&text, &remaining, msg->args[i]);
+		free(msg->args[i]);
 	}
 	msg->nargs++;
 
@@ -181,6 +188,7 @@ void dequeue_messages()
 		if (strchr(msg->args[i], ' ')) append_str(&text, &remaining, " :");
 		else append_str(&text, &remaining, " ");
 		append_str(&text, &remaining, msg->args[i]);
+		free(msg->args[i]);
 	}
 
 	/* Now we're done with q, so free anything we need to free and store it
