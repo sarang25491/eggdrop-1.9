@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.60 2001/08/27 23:31:17 poptix Exp $
+ * $Id: irc.c,v 1.61 2001/09/27 18:33:21 sup Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -508,15 +508,13 @@ static void status_log()
 }
 
 /* If i'm the only person on the channel, and i'm not op'd,
- * might as well leave and rejoin. If i'm NOT the only person
- * on the channel, but i'm still not op'd, demand ops.
+ * might as well leave and rejoin.
  */
 static void check_lonely_channel(struct chanset_t *chan)
 {
   memberlist *m;
   char s[UHOSTLEN];
   int i = 0;
-  static int whined = 0;
 
   if (channel_pending(chan) || !channel_active(chan) || me_op(chan) ||
       channel_inactive(chan) || (chan->channel.mode & CHANANON))
@@ -525,51 +523,14 @@ static void check_lonely_channel(struct chanset_t *chan)
   for (m = chan->channel.member; m && m->nick[0]; m = m->next)
     if (!chan_issplit(m))
       i++;
-  if (i == 1 && channel_cycle(chan) && !channel_stop_cycle(chan)) {
-    if (chan->name[0] != '+') {	/* Its pointless to cycle + chans for ops */
-      putlog(LOG_MISC, "*", "Trying to cycle %s to regain ops.", chan->dname);
-      dprintf(DP_MODE, "PART %s\n", chan->name);
-      /* If it's a !chan, we need to recreate the channel with !!chan <cybah> */
-      dprintf(DP_MODE, "JOIN %s%s %s\n", (chan->dname[0] == '!') ? "!" : "",
-	      chan->dname, chan->key_prot);
-      whined = 0;
-    }
-  } else if (any_ops(chan)) {
-    whined = 0;
-    check_tcl_need(chan->dname, "op");
-  } else {
-    /* Other people here, but none are ops. If there are other bots make
-     * them LEAVE!
-     */
-    int ok = 1;
-    struct userrec *u;
-
-    if (!whined) {
-      /* + is opless. Complaining about no ops when without special
-       * help(services), we cant get them - Raist
-       */
-      if (chan->name[0] != '+')
-	putlog(LOG_MISC, "*", "%s is active but has no ops :(", chan->dname);
-      whined = 1;
-    }
-    for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-      sprintf(s, "%s!%s", m->nick, m->userhost);
-      u = get_user_by_host(s);
-      if (!match_my_nick(m->nick) && (!u || !(u->flags & USER_BOT))) {
-	ok = 0;
-	break;
-      }
-    }
-    if (ok) {
-      /* ALL bots!  make them LEAVE!!! */
-      for (m = chan->channel.member; m && m->nick[0]; m = m->next)
-	if (!match_my_nick(m->nick))
-	  dprintf(DP_SERVER, "PRIVMSG %s :go %s\n", m->nick, chan->dname);
-    } else {
-      /* Some humans on channel, but still op-less */
-      check_tcl_need(chan->dname, "op");
-    }
-  }
+  if (i == 1 && channel_cycle(chan) && !channel_stop_cycle(chan) && (chan->name[0] != '+')) {
+    putlog(LOG_MISC, "*", "Trying to cycle %s to regain ops.", chan->dname);
+    dprintf(DP_MODE, "PART %s\n", chan->name);
+    /* If it's a !chan, we need to recreate the channel with !!chan <cybah> */
+    dprintf(DP_MODE, "JOIN %s%s %s\n", (chan->dname[0] == '!') ? "!" : "",
+	    chan->dname, chan->key_prot);
+  } else 
+    check_tcl_need(chan->dname, "cycle");
 }
 
 static void check_expired_chanstuff()
@@ -936,6 +897,8 @@ static void irc_report(int idx, int details)
 	  p = _("trying");
 	else if (chan->status & CHAN_PEND)
 	  p = _("pending");
+        else if (!any_ops(chan))
+          p = _("opless");
 	else if (!me_op(chan))
 	  p = _("want ops!");
       }
