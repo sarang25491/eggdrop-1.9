@@ -1,3 +1,10 @@
+2002-03-05 08:12  stdarg <stdarg@techmonkeys.org>
+
+	* src/flags.c:
+
+	
+	* Cleaned up logmodes a bit.  
+
 2002-03-04 03:55  stdarg <stdarg@techmonkeys.org>
 
 	* modules/tclscript/tclscript.c, src/chanprog.c, src/cmds.c:
