@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: javascript.c,v 1.19 2003/12/17 08:39:48 wcc Exp $";
+static const char rcsid[] = "$Id: javascript.c,v 1.20 2003/12/18 01:00:35 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -646,6 +646,24 @@ static int party_js(int pid, char *nick, user_t *u, char *cmd, char *text)
 	}
 	return(0);
 }
+
+#if 0
+static void javascript_report(int idx, int details)
+{
+	JSVersion version;
+	const char *version_str;
+
+	version = JS_GetVersion(global_js_context);
+	version_str = JS_VersionToString(version);
+
+	if (!details) {
+		dprintf(idx, "Using JavaScript version %s\n", version_str);
+		return;
+	}
+
+	dprintf(idx, "    Using JavaScript version %s\n", version_str);
+}
+#endif
 
 static bind_list_t party_commands[] = {
 	{"js", party_js},

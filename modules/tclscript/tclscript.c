@@ -669,6 +669,25 @@ static int tclscript_secondly()
 	return(0);
 }
 
+#if 0
+static void tclscript_report(int idx, int details)
+{
+	char script[512];
+	char *reported;
+
+	if (!details) {
+		dprintf(idx, "Using Tcl version %d.%d (by header)\n", TCL_MAJOR_VERSION, TCL_MINOR_VERSION);
+		return;
+	}
+
+	dprintf(idx, "    Using Tcl version %d.%d (by header)\n", TCL_MAJOR_VERSION, TCL_MINOR_VERSION);
+	sprintf(script, "return \"    Library: [info library]\\n    Reported version: [info tclversion]\\n    Reported patchlevel: [info patchlevel]\"");
+	Tcl_GlobalEval(ginterp, script);
+	reported = Tcl_GetStringResult(ginterp);
+	dprintf(idx, "%s\n", reported);
+}
+#endif
+
 static bind_list_t party_commands[] = {
 	{"n", "tcl", (Function) party_tcl},
 	{0}
