@@ -204,7 +204,7 @@ static int gotmsg(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 		r = bind_check(BT_pubm, trailing, from_nick, from_uhost, u, dest, trailing);
 	}
 	else {
-		r = bind_check(BT_msg, trailing, from_nick, from_uhost, u, trailing);
+		r = bind_check(BT_msgm, trailing, from_nick, from_uhost, u, trailing);
 	}
 
 	if (!(r & BIND_RET_BREAK)) {
@@ -292,7 +292,7 @@ static int got432(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 
 	badnick = args[1];
 	if (current_server.registered) {
-		putlog(LOG_MISC, "*", "NICK IS INVALID: %s (keeping '%s').", badnick, botname);
+		putlog(LOG_MISC, "*", "NICK IS INVALID: %s (keeping '%s').", badnick, current_server.nick);
 	}
 	else {
 		putlog(LOG_MISC, "*", "Server says my nickname ('%s') is invalid, trying new random nick.", badnick);
@@ -311,10 +311,10 @@ static int got433(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 	badnick = args[1];
 	if (current_server.registered) {
 		/* We are online and have a nickname, we'll keep it */
-		putlog(LOG_MISC, "*", "Nick is in use: '%s' (keeping '%s')", badnick, botname);
+		putlog(LOG_MISC, "*", "Nick is in use: '%s' (keeping '%s')", badnick, current_server.nick);
 	}
 	else {
-		putlog(LOG_MISC, "*", "Nick is in use: '%s' (trying next one)", badnick, botname);
+		putlog(LOG_MISC, "*", "Nick is in use: '%s' (trying next one)", badnick, current_server.nick);
 		try_next_nick();
 	}
 	return(0);
@@ -374,13 +374,43 @@ static int goterror(char *from_nick, char *from_uhost, user_t *u, char *cmd, int
 	return(0);
 }
 
+/* Got a join message. */
+static int gotjoin(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
+{
+	char *chan = args[0];
+
+	bind_check(BT_join, chan, from_nick, from_uhost, u, chan);
+	return(0);
+}
+
+/* Got a part message. */
+static int gotpart(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
+{
+	char *chan = args[0];
+	char *text = args[1];
+
+	bind_check(BT_part, chan, from_nick, from_uhost, u, chan, text);
+	return(0);
+}
+
+/* Got a quit message. */
+static int gotquit(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
+{
+	char *text = args[0];
+
+	bind_check(BT_quit, from_nick, from_nick, from_uhost, u, text);
+	return(0);
+}
+
 /* Got nick change.  */
 static int gotnick(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
 	char *newnick = args[0];
 
-	if (match_my_nick(from_nick)) str_redup(&botname, newnick);
 	bind_check(BT_nick, from_nick, from_nick, from_uhost, u, newnick);
+
+	/* Is it our nick that's changing? */
+	if (match_my_nick(from_nick)) str_redup(&current_server.nick, newnick);
 	return(0);
 }
 
@@ -411,13 +441,16 @@ static int got311(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 	return(0);
 }
 
-bind_list_t my_new_raw_binds[] = {
+bind_list_t server_raw_binds[] = {
 	{"PRIVMSG", (Function) gotmsg},
 	{"NOTICE", (Function) gotnotice},
 	{"WALLOPS", (Function) gotwall},
 	{"PING", (Function) gotping},
 	{"NICK", (Function) gotnick},
 	{"ERROR", (Function) goterror},
+	{"JOIN", gotjoin},
+	{"PART", gotpart},
+	{"QUIT", gotquit},
 	{"001", (Function) got001},
 	{"005", got005},
 	{"432",	(Function) got432},

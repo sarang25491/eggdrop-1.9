@@ -22,7 +22,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: script.c,v 1.10 2003/02/14 07:06:19 stdarg Exp $";
+static const char rcsid[] = "$Id: script.c,v 1.11 2003/02/18 10:13:17 stdarg Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -117,18 +117,20 @@ static void journal_add(int event, void *data, void *key)
 }
 
 /* Cancel an event from the journal. */
-static void *journal_del(int event, void *data, void *key)
+static void *journal_del(int event, void *key)
 {
 	int i;
+	void *data = NULL;
+
 	for (i = 0; i < njournal_events; i++) {
 		if (journal_events[i].event == event && journal_events[i].key == key) break;
 	}
 	if (i < njournal_events) {
+		data = journal_events[i].data;
 		memmove(journal_events+i, journal_events+i+1, sizeof(*journal_events) * (njournal_events-i-1));
 		njournal_events--;
-		return(data);
 	}
-	return(NULL);
+	return(data);
 }
 
 /* We shall provide a handy default linked var write handler. */
@@ -316,7 +318,7 @@ int script_unlink_vars(script_linked_var_t *table)
 	int i;
 
 	while (table->class && table->name) {
-		journal_del(EVENT_VAR, table, table);
+		journal_del(EVENT_VAR, table);
 		for (i = 0; i < nscript_modules; i++) {
 			script_modules[i]->unlink_var(script_modules[i]->client_data, table);
 		}
@@ -344,7 +346,7 @@ int script_delete_raw_commands(script_raw_command_t *table)
 	int i;
 
 	while (table->class && table->name) {
-		journal_del(EVENT_CMD, table, table);
+		journal_del(EVENT_CMD, table);
 		for (i = 0; i < nscript_modules; i++) {
 			script_modules[i]->delete_command(script_modules[i]->client_data, table);
 		}
@@ -380,7 +382,7 @@ int script_delete_commands(script_command_t *table)
 	script_raw_command_t *cmd;
 
 	while (table->class && table->name) {
-		cmd = journal_del(EVENT_CMD, table, table);
+		cmd = journal_del(EVENT_CMD, table);
 		if (!cmd) continue;
 		for (i = 0; i < nscript_modules; i++) {
 			script_modules[i]->delete_command(script_modules[i]->client_data, cmd);

@@ -168,7 +168,7 @@ int user_save(const char *fname)
 	root = xml_node_new();
 	xml_node_set_int(g_uid, root, "next_uid", 0, 0);
 	xml_node_set_int(uid_wraparound, root, "uid_wraparound", 0, 0);
-	hash_table_walk(uid_ht, save_walker, &root);
+	hash_table_walk(uid_ht, save_walker, root);
 	if (!fname) fname = "users.xml";
 	fp = fopen(fname, "w");
 	if (!fp) return(-1);

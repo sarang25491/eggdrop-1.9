@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: module.h,v 1.41 2003/02/17 10:22:30 stdarg Exp $
+ * $Id: module.h,v 1.42 2003/02/18 10:13:17 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_MODULE_H
@@ -278,7 +278,7 @@
 #define USERENTRY_COMMENT (*(struct user_entry_type *)(egg->global[195]))
 /* 196 - 199 */
 #define USERENTRY_LASTON (*(struct user_entry_type *)(egg->global[196]))
-#define putlog (egg->global[197])
+//#define putlog (egg->global[197])
 #define botnet_send_chan ((void(*)(int,char*,char*,int,char*))egg->global[198])
 #define list_type_kill ((void(*)(struct list_type *))egg->global[199])
 /* 200 - 203 */

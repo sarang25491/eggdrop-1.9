@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.15 2003/02/17 10:22:30 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.16 2003/02/18 10:13:17 stdarg Exp $";
 #endif
 */
 
@@ -71,6 +71,7 @@ script_command_t server_script_cmds[] = {
         {0}
 };
 
+/* match_my_nick() is a macro so we can't put it right into the script command table. */
 static int script_isbotnick(char *nick)
 {
 	return match_my_nick(nick);

@@ -7,6 +7,8 @@
 #include "lib/eggdrop/module.h"
 #include "server.h"
 #include "servsock.h"
+#include "serverlist.h"
+#include "nicklist.h"
 #include "binds.h"
 
 #define start server_LTX_start
@@ -29,7 +31,7 @@ extern void connect_to_next_server();
 extern void dequeue_messages();
 
 /* From input.c */
-extern bind_list_t my_new_raw_binds[];
+extern bind_list_t server_raw_binds[];
 
 /* From dcc_cmd.c */
 extern bind_list_t server_party_commands[];
@@ -90,7 +92,7 @@ static char *server_close()
 	kill_server("Server module unloading");
 	cycle_delay = 100;
 
-	bind_rem_list("newraw", my_new_raw_binds);
+	bind_rem_list("raw", server_raw_binds);
 
 	server_binds_destroy();
 
@@ -130,12 +132,12 @@ static config_var_t server_config_vars[] = {
 	{0}
 };
 
-char *start(eggdrop_t *eggdrop)
+static void server_config_init()
 {
-	cmd_t *cmd;
-	void *config_root;
-
-	egg = eggdrop;
+	int i;
+	char *host, *pass, *nickstr;
+	int port;
+	void *config_root, *server, *nick;
 
 	/* Set default values. */
 	server_config.user = strdup("user");
@@ -153,6 +155,29 @@ char *start(eggdrop_t *eggdrop)
 	/* Link our config vars. */
 	config_root = config_get_root("eggdrop");
 	config_link_table(server_config_vars, config_root, "server", 0, NULL);
+	config_update_table(server_config_vars, config_root, "server", 0, NULL);
+
+	/* Get the server list. */
+	for (i = 0; (server = config_exists(config_root, "server", 0, "server", i, NULL)); i++) {
+		host = pass = NULL;
+		port = 0;
+		config_get_str(&host, server, "host", 0, NULL);
+		config_get_str(&pass, server, "pass", 0, NULL);
+		config_get_int(&port, server, "port", 0, NULL);
+		if (host) server_add(host, port, pass);
+	}
+
+	/* And the nick list. */
+	for (i = 0; (nick = config_exists(config_root, "server", 0, "nick", i, NULL)); i++) {
+		nickstr = NULL;
+		config_get_str(&nickstr, nick, NULL);
+		if (nickstr) nick_add(nickstr);
+	}
+}
+
+char *start(eggdrop_t *eggdrop)
+{
+	egg = eggdrop;
 
 	memset(&current_server, 0, sizeof(current_server));
 	current_server.idx = -1;
@@ -164,10 +189,12 @@ char *start(eggdrop_t *eggdrop)
 		return "This module requires eggdrop1.7.0 or later";
 	}
 
+	server_config_init();
+
 	/* Create our bind tables. */
 	server_binds_init();
 
-	bind_add_list("newraw", my_new_raw_binds);
+	bind_add_list("raw", server_raw_binds);
 	bind_add_list("party", server_party_commands);
 
 	script_create_commands(server_script_cmds);

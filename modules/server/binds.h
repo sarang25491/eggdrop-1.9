@@ -3,7 +3,6 @@
 
 extern bind_table_t *BT_wall,
 	*BT_raw,
-	*BT_new_raw,
 	*BT_notice,
 	*BT_msg,
 	*BT_msgm,
@@ -13,7 +12,10 @@ extern bind_table_t *BT_wall,
 	*BT_ctcr,
 	*BT_dcc_chat,
 	*BT_dcc_recv,
-	*BT_nick;
+	*BT_nick,
+	*BT_join,
+	*BT_part,
+	*BT_quit;
 
 extern void server_binds_destroy();
 extern void server_binds_init();

@@ -125,7 +125,7 @@ static int server_on_read(void *client_data, int idx, char *text, int len)
 {
 	/* The components of any irc message. */
 	irc_msg_t msg;
-	char *from_nick = NULL, *from_uhost = NULL, *prefix = NULL;
+	char *from_nick = NULL, *from_uhost = NULL;
 	user_t *u = NULL;
 
 	if (!len) return(0);
@@ -148,21 +148,7 @@ static int server_on_read(void *client_data, int idx, char *text, int len)
 		}
 	}
 
-	bind_check(BT_new_raw, msg.cmd, from_nick, from_uhost, u, msg.cmd, msg.nargs, msg.args);
-
-	/* For now, let's emulate the old style. */
-
-	if (from_nick && from_uhost) prefix = msprintf("%s!%s", from_nick, from_uhost);
-	else if (from_nick) prefix = strdup(from_nick);
-	else prefix = strdup("");
-
-	text = msg.args[0];
-	irc_msg_restore(&msg);
-	irc_msg_cleanup(&msg);
-	if (text[-1] == ':') text--;
-	text[-1] = 0;
-	bind_check(BT_raw, msg.cmd, prefix, msg.cmd, text);
-	free(prefix);
+	bind_check(BT_raw, msg.cmd, from_nick, from_uhost, u, msg.cmd, msg.nargs, msg.args);
 	return(0);
 }
 

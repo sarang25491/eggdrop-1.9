@@ -30,7 +30,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.136 2003/02/16 11:15:06 stdarg Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.137 2003/02/18 10:13:17 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -494,7 +494,7 @@ int main(int argc, char **argv)
   struct chanset_t *chan;
   egg_timeval_t howlong;
   int timeout;
-  void *config_root;
+  void *config_root, *entry;
   char *modname, *scriptname;
 
 #ifdef DEBUG
@@ -612,14 +612,14 @@ int main(int argc, char **argv)
 
 	/* Scan the autoload section of config. */
 	config_root = config_get_root("eggdrop");
-	for (i = 0; config_exists(config_root, "eggdrop", 0, "autoload", 0, "module", i, NULL); i++) {
+	for (i = 0; (entry = config_exists(config_root, "eggdrop", 0, "autoload", 0, "module", i, NULL)); i++) {
 		modname = NULL;
-		config_get_str(&modname, config_root, "eggdrop", 0, "autoload", 0, "module", i, NULL);
+		config_get_str(&modname, entry, NULL);
 		module_load(modname);
 	}
-	for (i = 0; config_exists(config_root, "eggdrop", 0, "autoload", 0, "script", i, NULL); i++) {
+	for (i = 0; (entry = config_exists(config_root, "eggdrop", 0, "autoload", 0, "script", i, NULL)); i++) {
 		scriptname = NULL;
-		config_get_str(&scriptname, config_root, "eggdrop", 0, "autoload", 0, "script", i, NULL);
+		config_get_str(&scriptname, entry, NULL);
 		script_load(scriptname);
 	}
 

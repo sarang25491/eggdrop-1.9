@@ -51,6 +51,8 @@ void irc_msg_parse(char *text, irc_msg_t *msg)
 		else break;
 	}
 	if (*text == ':') add_arg(msg, text+1);
+	add_arg(msg, NULL);
+	msg->nargs--;
 }
 
 /* Replace nulls with spaces again, in case you want to re-use the text. */
