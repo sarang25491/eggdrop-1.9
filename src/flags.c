@@ -2,7 +2,7 @@
  * flags.c -- handles:
  *   all the flag matching/conversion functions in one neat package :)
  *
- * $Id: flags.c,v 1.22 2001/10/11 18:24:01 tothwolf Exp $
+ * $Id: flags.c,v 1.23 2001/10/19 06:01:21 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -26,12 +26,8 @@
 #include "main.h"
 
 
-extern int		 use_console_r, debug_output, require_p, noshare,
-			 allow_dk_cmds;
+extern int		 debug_output, require_p, noshare, allow_dk_cmds;
 extern struct dcc_t	*dcc;
-
-int	use_console_r = 0;	/* Allow users to set their console +r	*/
-
 
 int logmodes(char *s)
 {
@@ -70,7 +66,7 @@ int logmodes(char *s)
       break;
     case 'r':
     case 'R':
-      res |= use_console_r ? LOG_RAW : 0;
+      res |= debug_output ? LOG_RAW : 0;
       break;
     case 'w':
     case 'W':
@@ -150,7 +146,7 @@ char *masktype(int x)
     *p++ = 'o';
   if (x & LOG_BOTS)
     *p++ = 'b';
-  if ((x & LOG_RAW) && use_console_r)
+  if ((x & LOG_RAW) && debug_output)
     *p++ = 'r';
   if (x & LOG_FILES)
     *p++ = 'x';
@@ -208,7 +204,7 @@ char *maskname(int x)
     i += my_strcpy(s + i, "misc, ");
   if (x & LOG_BOTS)
     i += my_strcpy(s + i, "bots, ");
-  if ((x & LOG_RAW) && use_console_r)
+  if ((x & LOG_RAW) && debug_output)
     i += my_strcpy(s + i, "raw, ");
   if (x & LOG_FILES)
     i += my_strcpy(s + i, "files, ");

@@ -104,7 +104,6 @@ logfile <logflags> <channel> "logs/logfile"
       b  information about bot linking and userfile sharing
       c  commands people use (via msg or dcc)
       x  file transfers and file-area commands
-      r  (if use-console-r enabled) EVERYTHING sent to the bot by the server
       o  other: misc info, errors -- IMPORTANT STUFF
       w  wallops: msgs between IRCops (be sure to set the bot +w)
     There are others, but you probably shouldnt log them, it'd be

@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.91 2001/10/19 01:55:08 tothwolf Exp $
+ * $Id: server.c,v 1.92 2001/10/19 06:01:21 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1283,7 +1283,6 @@ static tcl_coups my_tcl_coups[] =
 
 static tcl_ints my_tcl_ints[] =
 {
-  {"use-console-r",		NULL,				1},
   {"server-timeout",		&server_timeout,		0},
   {"server-online",		(int *) &server_online,		2},
   {"never-give-up",		&never_give_up,			0},
@@ -1837,7 +1836,6 @@ char *start(Function *global_funcs)
   add_help_reference("server.help");
   my_tcl_strings[0].buf = botname;
   add_tcl_strings(my_tcl_strings);
-  my_tcl_ints[0].val = &use_console_r;
   add_tcl_ints(my_tcl_ints);
   add_tcl_commands(my_tcl_cmds);
   add_tcl_coups(my_tcl_coups);
