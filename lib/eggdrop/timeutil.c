@@ -18,14 +18,10 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: timeutil.c,v 1.4 2004/08/29 07:34:12 takeda Exp $";
+static const char rcsid[] = "$Id: timeutil.c,v 1.5 2004/10/17 05:14:06 stdarg Exp $";
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <time.h>
+#include <eggdrop/eggdrop.h>
 
 /* Returns pointer to static buffer containing string
    "12 days, 34 hours and 56 minutes"

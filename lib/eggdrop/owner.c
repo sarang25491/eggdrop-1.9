@@ -18,11 +18,9 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: owner.c,v 1.1 2004/06/21 20:35:11 wingman Exp $";
+static const char rcsid[] = "$Id: owner.c,v 1.2 2004/10/17 05:14:06 stdarg Exp $";
 #endif
 
-#include <ctype.h>
-#include <string.h>
 #include <eggdrop/eggdrop.h>
 
 static char **owner = NULL;

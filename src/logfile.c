@@ -19,14 +19,11 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: logfile.c,v 1.49 2004/10/04 15:48:30 stdarg Exp $";
+static const char rcsid[] = "$Id: logfile.c,v 1.50 2004/10/17 05:14:07 stdarg Exp $";
 #endif
 
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
-#include <stdlib.h>
 #include <eggdrop/eggdrop.h>
+#include <unistd.h>
 #include "core_config.h"
 #include "terminal.h"					/* TERMINAL_NICK	*/
 #include "logfile.h"
@@ -329,7 +326,7 @@ static void flushlog(logfile_t *log, char *timestamp)
 		fprintf(log->fp, "%s", timestamp);
 		fprintf(log->fp, _("Last message repeated %d time(s).\n"), log->repeats);
 		log->repeats = 0;
-		realloc_strcpy(log->last_msg, "");
+		str_redup(&log->last_msg, "");
 	}
 	fflush(log->fp);
 }

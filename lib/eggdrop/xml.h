@@ -16,14 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: xml.h,v 1.22 2004/10/01 15:31:18 stdarg Exp $
+ * $Id: xml.h,v 1.23 2004/10/17 05:14:06 stdarg Exp $
  */
 
 #ifndef _EGG_XML_H_
 #define _EGG_XML_H_
-
-#include <stdio.h>			/* FILE			*/
-#include <stdarg.h>			/* va_list		*/
 
 #define XML_NONE	(1 << 0)
 #define XML_INDENT	(1 << 1)
@@ -89,8 +86,10 @@ int xml_node_int(xml_node_t *node, int def);
 int xml_node_set_int(int value, xml_node_t *node, ...);
 
 int xml_node_get_vars(xml_node_t *node, const char *fmt, ...);
+int xml_node_set_vars(xml_node_t *node, const char *fmt, ...);
 
 xml_node_t *xml_node_new(void);
+xml_node_t *xml_node_new_named(const char *name);
 void xml_node_free(xml_node_t *node);
 void xml_node_unlink(xml_node_t *node);
 void xml_node_delete(xml_node_t *node);

@@ -18,14 +18,11 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: throttle.c,v 1.4 2004/01/10 01:43:18 stdarg Exp $";
+static const char rcsid[] = "$Id: throttle.c,v 1.5 2004/10/17 05:14:06 stdarg Exp $";
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
 #include <eggdrop/eggdrop.h>
+#include <unistd.h>
 
 #define THROTTLE_LEVEL SOCKBUF_LEVEL_THROTTLE
 

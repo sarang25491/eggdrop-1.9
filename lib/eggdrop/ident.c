@@ -18,11 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: ident.c,v 1.2 2004/06/29 21:28:16 stdarg Exp $";
-#endif
-
-#if HAVE_CONFIG_H
-#  include <config.h>
+static const char rcsid[] = "$Id: ident.c,v 1.3 2004/10/17 05:14:06 stdarg Exp $";
 #endif
 
 #include <stdio.h>

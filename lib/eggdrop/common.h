@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: common.h,v 1.9 2004/01/10 01:43:18 stdarg Exp $
+ * $Id: common.h,v 1.10 2004/10/17 05:14:06 stdarg Exp $
  */
 
 #ifndef _EGG_COMMON_H_
@@ -30,6 +30,27 @@
 #  define END_C_DECLS
 #endif
 
+#if HAVE_CONFIG_H
+	#include <config.h>
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#ifdef HAVE_SYS_TYPES_H
+	#include <sys/types.h>
+#endif
+
+#ifdef HAVE_STRING_H
+	#include <string.h>
+#endif
+#ifdef HAVE_STRINGS_H
+	#include <strings.h>
+#endif
+#ifdef HAVE_CTYPE_H
+	#include <ctype.h>
+#endif
+
 #ifdef __STDC__
 #  ifdef HAVE_STDARG_H
 #    include <stdarg.h>
@@ -38,14 +59,8 @@
 #      include <std_args.h>
 #    endif
 #  endif
-#  define EGG_VARARGS(type, name)		(type name, ...)
-#  define EGG_VARARGS_DEF(type, name)		(type name, ...)
-#  define EGG_VARARGS_START(type, name, list)	(va_start(list, name), name)
 #else
 #  include <varargs.h>
-#  define EGG_VARARGS(type, name)		()
-#  define EGG_VARARGS_DEF(type, name)		(va_alist) va_dcl
-#  define EGG_VARARGS_START(type, name, list)	(va_start(list), va_arg(list,type))
 #endif
 
 #ifdef HAVE_INTTYPES_H
@@ -53,6 +68,17 @@
 #else
 	#ifdef HAVE_STDINT_H
 		#include <stdint.h>
+	#endif
+#endif
+
+#ifdef TIME_WITH_SYS_TIME
+	#include <sys/time.h>
+	#include <time.h>
+#else
+	#ifdef HAVE_SYS_TIME_H
+		#include <sys/time.h>
+	#else
+		#include <time.h>
 	#endif
 #endif
 

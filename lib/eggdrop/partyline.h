@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: partyline.h,v 1.22 2004/10/04 16:05:32 stdarg Exp $
+ * $Id: partyline.h,v 1.23 2004/10/17 05:14:06 stdarg Exp $
  */
 
 #ifndef _EGG_PARTYLINE_H_
@@ -39,9 +39,6 @@ typedef struct partychan partychan_t;
 typedef struct partychan_member partychan_member_t;
 typedef struct partymember_common partymember_common_t;
 typedef struct partyline_event partyline_event_t;
-
-#include <eggdrop/partychan.h>
-#include <eggdrop/partymember.h>
 
 struct partyline_event {
 	/* Events that don't depend on a single chan. */

@@ -18,10 +18,9 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptparty.c,v 1.5 2004/06/23 11:19:52 wingman Exp $";
+static const char rcsid[] = "$Id: scriptparty.c,v 1.6 2004/10/17 05:14:07 stdarg Exp $";
 #endif
 
-#include <stdio.h>
 #include <eggdrop/eggdrop.h>
 
 script_command_t script_party_cmds[] = {

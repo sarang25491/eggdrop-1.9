@@ -18,11 +18,10 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: match.c,v 1.5 2004/06/22 20:12:37 wingman Exp $";
+static const char rcsid[] = "$Id: match.c,v 1.6 2004/10/17 05:14:06 stdarg Exp $";
 #endif
 
-#include <ctype.h>
-#include "match.h"
+#include <eggdrop/eggdrop.h>
 
 #define irctoupper toupper
 

@@ -18,12 +18,10 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: ircparse.c,v 1.3 2004/06/25 17:44:03 darko Exp $";
+static const char rcsid[] = "$Id: ircparse.c,v 1.4 2004/10/17 05:14:06 stdarg Exp $";
 #endif
 
-#include <stdlib.h>
-#include <string.h>
-#include "ircparse.h"
+#include <eggdrop/eggdrop.h>
 
 /* Take care of array manipulation in adding an argument. */
 static void add_arg(irc_msg_t *msg, char *text)

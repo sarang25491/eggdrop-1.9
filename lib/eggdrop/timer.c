@@ -18,13 +18,9 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: timer.c,v 1.6 2004/10/06 14:59:09 stdarg Exp $";
+static const char rcsid[] = "$Id: timer.c,v 1.7 2004/10/17 05:14:06 stdarg Exp $";
 #endif
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <sys/time.h>
 #include <eggdrop/eggdrop.h>
 
 static egg_timeval_t now;

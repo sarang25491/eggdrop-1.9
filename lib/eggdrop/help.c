@@ -18,12 +18,9 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: help.c,v 1.19 2004/10/04 15:48:29 stdarg Exp $";
+static const char rcsid[] = "$Id: help.c,v 1.20 2004/10/17 05:14:06 stdarg Exp $";
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <eggdrop/eggdrop.h>
 
 static help_file_t **help_files = NULL;

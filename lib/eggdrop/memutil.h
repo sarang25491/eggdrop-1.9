@@ -16,31 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: memutil.h,v 1.17 2004/06/28 17:36:34 wingman Exp $
+ * $Id: memutil.h,v 1.18 2004/10/17 05:14:06 stdarg Exp $
  */
 
 #ifndef _EGG_MEMUTIL_H_
 #define _EGG_MEMUTIL_H_
-
-#include <stdarg.h>				/* va_list			*/
-
-#define free_null(ptr)							\
-	if (ptr) {							\
-		free(ptr);						\
-		ptr = NULL;						\
-	}
-
-/* Copy entry to target -- Uses dynamic memory allocation, which means you'll
- * eventually have to free the memory again. 'target' will be overwritten. */
-#define realloc_strcpy(target, entry)						\
-	do {									\
-		if (entry) {							\
-			(target) = realloc((target), strlen(entry) + 1);	\
-			strcpy((target), (entry));				\
-		}								\
-		else								\
-		free_null(target);						\
-	} while (0)
 
 extern void str_redup(char **str, const char *newstr);
 extern char *egg_mprintf(const char *format, ...);

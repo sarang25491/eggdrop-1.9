@@ -18,12 +18,8 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: oldbotnet.c,v 1.10 2004/10/04 16:05:32 stdarg Exp $";
+static const char rcsid[] = "$Id: oldbotnet.c,v 1.11 2004/10/17 05:14:06 stdarg Exp $";
 #endif
-
-#include <ctype.h>
-#include <string.h>
-#include <stdlib.h>
 
 #include <eggdrop/eggdrop.h>
 

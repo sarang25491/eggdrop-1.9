@@ -1,10 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <errno.h>
-
 #include <eggdrop/eggdrop.h>
+#include <errno.h>
 
 static const char *name_terminators = "= \t\n\r?/>";
 

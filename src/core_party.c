@@ -18,23 +18,15 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.44 2004/10/10 04:55:11 stdarg Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.45 2004/10/17 05:14:07 stdarg Exp $";
 #endif
 
-#ifdef HAVE_CONFIG_H
-#  include <config.h>
-#endif
-
-#include <ctype.h>
+#include <eggdrop/eggdrop.h>
 #include <unistd.h>
-#include <string.h>
-#include <stdlib.h>
 
 #ifdef HAVE_UNAME
 #  include <sys/utsname.h>
 #endif
-
-#include <eggdrop/eggdrop.h>
 
 #include "core_config.h"
 #include "core_binds.h"

@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.23 2004/06/19 13:18:48 wingman Exp $
+# $Id: Makefile.am,v 1.24 2004/10/17 05:14:06 stdarg Exp $
 
 AUX_DIST		= $(ac_aux_dir)/install-sh \
 			$(ac_aux_dir)/ltmain.sh \
@@ -17,7 +17,7 @@ AUX_DIST_EXTRA		= $(ac_aux_dir)/acinclude.m4 \
 
 EXTRA_DIST		= bootstrap config.xml
 
-SUBDIRS			= libltdl lib m4 modules src po
+SUBDIRS			= libltdl lib m4 modules src po intl
 DISTCLEANFILES		=
 MAINTAINERCLEANFILES	= Makefile.in aclocal.m4 configure config-h.in \
 			config.cache config.log config.status \

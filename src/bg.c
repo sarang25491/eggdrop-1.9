@@ -20,24 +20,18 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: bg.c,v 1.21 2004/09/26 09:42:09 stdarg Exp $";
+static const char rcsid[] = "$Id: bg.c,v 1.22 2004/10/17 05:14:07 stdarg Exp $";
 #endif
 
-#ifdef HAVE_CONFIG_H
-#  include <config.h>
-#endif
+#include <eggdrop/eggdrop.h>
 
 #ifdef CYGWIN_HACKS
 #  include <windows.h>
 #endif
 
 #include <unistd.h>	/* fork(), setpgid() */
-#include <stdio.h>	/* printf() */
-#include <stdlib.h>	/* exit() */
-#include <sys/types.h>	/* pid_t, kill() */
 #include <sys/wait.h>	/* waitpid() */
 #include <signal.h>	/* kill() */
-#include <eggdrop/eggdrop.h>
 #include "main.h"	/* fatal()*/
 #include "bg.h"
 
@@ -61,7 +55,7 @@ static int pipefd[2];
 
 void bg_begin_split()
 {
-	pid_t parent_pid = -1, child_pid = -1;
+	int parent_pid = -1, child_pid = -1;
 	int result;
 	char temp = 0;
 

@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# $Id: bootstrap,v 1.19 2004/06/21 10:34:07 wingman Exp $
+# $Id: bootstrap,v 1.20 2004/10/17 05:14:06 stdarg Exp $
 #
 # Recommended development tools versions:
 #   autoconf 2.59
@@ -66,7 +66,7 @@ $AUTOMAKE --add-missing --copy
 acconfig/config.stubs --bootstrap $AUTOMAKE
 
 # Remove previous config.cache
-if test -f config.cache
-then
-  rm -f config.cache
-fi
+#if test -f config.cache
+#then
+#  rm -f config.cache
+#fi

@@ -18,16 +18,9 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: net.c,v 1.4 2004/10/10 04:55:11 stdarg Exp $";
+static const char rcsid[] = "$Id: net.c,v 1.5 2004/10/17 05:14:06 stdarg Exp $";
 #endif
 
-#if HAVE_CONFIG_H
-#  include <config.h>
-#endif
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <eggdrop/eggdrop.h>
 
 #define EGGNET_LEVEL (SOCKBUF_LEVEL_INTERNAL+1)

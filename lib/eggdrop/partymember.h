@@ -16,13 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: partymember.h,v 1.2 2004/06/28 20:44:37 darko Exp $
+ * $Id: partymember.h,v 1.3 2004/10/17 05:14:06 stdarg Exp $
  */
 
 #ifndef _EGG_PARTYMEMBER_H
 #define _EGG_PARTYMEMBER_H
-
-#include <eggdrop/partyline.h>
 
 struct partymember {
         partymember_t *next;

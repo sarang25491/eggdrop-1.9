@@ -19,14 +19,8 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: memutil.c,v 1.19 2004/09/26 09:42:09 stdarg Exp $";
+static const char rcsid[] = "$Id: memutil.c,v 1.20 2004/10/17 05:14:06 stdarg Exp $";
 #endif
-
-#include <stdio.h>
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
 
 #include <eggdrop/eggdrop.h>
 

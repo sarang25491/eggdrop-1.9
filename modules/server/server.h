@@ -16,16 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: server.h,v 1.23 2004/10/06 02:35:15 stdarg Exp $
+ * $Id: server.h,v 1.24 2004/10/17 05:14:07 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_SERVER_SERVER_H_
 #define _EGG_MOD_SERVER_SERVER_H_
-
-#include <stdio.h>
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
 
 #include <eggdrop/eggdrop.h>
 

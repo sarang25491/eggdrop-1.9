@@ -16,12 +16,10 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: md5.c,v 1.6 2004/06/25 17:44:03 darko Exp $";
+static const char rcsid[] = "$Id: md5.c,v 1.7 2004/10/17 05:14:06 stdarg Exp $";
 #endif
 
-#include <string.h>
-#include <stdio.h>
-#include "md5.h"
+#include <eggdrop/eggdrop.h>
 
 /*
  * The basic MD5 functions.

@@ -18,20 +18,14 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: fileutil.c,v 1.7 2003/12/17 07:39:14 wcc Exp $";
+static const char rcsid[] = "$Id: fileutil.c,v 1.8 2004/10/17 05:14:06 stdarg Exp $";
 #endif
 
-#if HAVE_CONFIG_H
-#  include <config.h>
-#endif
-
-#include <eggdrop/common.h>
-#include <stdio.h>
+#include <eggdrop/eggdrop.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include "stat.h"
-#include "fileutil.h"
 
 /* Copy a file from one place to another (possibly erasing old copy).
  * 0 - OK

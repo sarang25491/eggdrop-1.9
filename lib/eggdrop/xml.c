@@ -18,21 +18,10 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xml.c,v 1.23 2004/10/01 15:31:18 stdarg Exp $";
+static const char rcsid[] = "$Id: xml.c,v 1.24 2004/10/17 05:14:06 stdarg Exp $";
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <ctype.h>			/* isdigit		*/
-
 #include <eggdrop/eggdrop.h>
-
-#include "xml.h"			/* prototypes		*/
-
-#define XML_PATH_SEPARATOR '/'
-
 
 static char *last_error = NULL;
 
@@ -47,13 +36,21 @@ void xml_set_error(const char *err)
 }
 
 /* Get a new, blank node. */
-xml_node_t *xml_node_new(void)
+xml_node_t *xml_node_new()
 {
 	xml_node_t *node;
 
 	node = calloc(sizeof(*node), 1);
 	
 	return node;
+}
+
+/* Get a new, named node. */
+xml_node_t *xml_node_new_named(const char *name)
+{
+	xml_node_t *node = xml_node_new();
+	node->name = strdup(name);
+	return(node);
 }
 
 /* Free all memory associated with a node. */
@@ -342,6 +339,30 @@ int xml_node_get_vars(xml_node_t *node, const char *fmt, ...)
 			case 'n':
 				nodeptr = va_arg(args, xml_node_t **);
 				*nodeptr = xml_node_path_lookup(node, name, 0, 0);
+				break;
+		}
+		fmt++;
+	}
+	return(0);
+}
+
+int xml_node_set_vars(xml_node_t *node, const char *fmt, ...)
+{
+	va_list args;
+	char *name, *strptr;
+	int intptr;
+
+	va_start(args, fmt);
+	while (*fmt) {
+		name = va_arg(args, char *);
+		switch (*fmt) {
+			case 's':
+				strptr = va_arg(args, char *);
+				xml_node_set_str(strptr, node, name, 0, 0);
+				break;
+			case 'i':
+				intptr = va_arg(args, int);
+				xml_node_get_int(intptr, node, name, 0, 0);
 				break;
 		}
 		fmt++;

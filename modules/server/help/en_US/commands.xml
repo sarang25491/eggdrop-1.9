@@ -140,7 +140,7 @@
 		<seealso>
 			<see>deop</see>
 			<see>halfop</see>
-			<see>deehalfop</see>
+			<see>dehalfop</see>
 			<see>voice</see>
 			<see>devoice</see>
 		</seealso>
@@ -167,7 +167,7 @@
 		<seealso>
 			<see>op</see>
 			<see>halfop</see>
-			<see>deehalfop</see>
+			<see>dehalfop</see>
 			<see>voice</see>
 			<see>devoice</see>
 		</seealso>
@@ -195,7 +195,7 @@
 			<see>op</see>
 			<see>deop</see>
 			<see>halfop</see>
-			<see>deehalfop</see>
+			<see>dehalfop</see>
 			<see>devoice</see>
 		</seealso>
 	</help>

@@ -18,12 +18,9 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partychan.c,v 1.17 2004/06/23 20:19:45 wingman Exp $";
+static const char rcsid[] = "$Id: partychan.c,v 1.18 2004/10/17 05:14:06 stdarg Exp $";
 #endif
 
-#include <stdarg.h>
-#include <stdlib.h>
-#include <string.h>
 #include <eggdrop/eggdrop.h>
 
 /* When does cid wrap around? This lets cids get up to 99999. */
@@ -119,20 +116,21 @@ partychan_t *partychan_new(int cid, const char *name)
 	return(chan);
 }
 
-void partychan_delete(partychan_t *chan)
-{
-	if (chan->name) free(chan->name);
-	free(chan);
-}
-
 static int partychan_cleanup(partychan_t *chan)
 {
 	int i;
 	int dirty = 0;
 
+	if (chan->flags & PARTY_DELETED) {
+		free(chan->name);
+		free(chan->members);
+		free(chan);
+		return(0);
+	}
+
 	for (i = 0; i < chan->nmembers; i++) {
 		if (chan->members[i].flags & PARTY_DELETED) {
-			memcpy(chan->members+i, chan->members+i+1, sizeof(*chan->members) * (chan->nmembers-i-1));
+			memmove(chan->members+i, chan->members+i+1, sizeof(*chan->members) * (chan->nmembers-i-1));
 			chan->nmembers--;
 			dirty++;
 			i--;
@@ -141,6 +139,13 @@ static int partychan_cleanup(partychan_t *chan)
 	if (dirty) chan->members = realloc(chan->members, sizeof(*chan->members) * chan->nmembers);
 
 	return(0);
+}
+
+void partychan_delete(partychan_t *chan)
+{
+	chan->flags |= PARTY_DELETED;
+	hash_table_remove(cid_ht, (void *)chan->cid, NULL);
+	garbage_add((garbage_proc_t)partychan_cleanup, chan, GARBAGE_ONCE);
 }
 
 partychan_t *partychan_lookup_cid(int cid)

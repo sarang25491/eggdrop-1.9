@@ -18,12 +18,9 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.43 2004/10/06 02:35:15 stdarg Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.44 2004/10/17 05:14:06 stdarg Exp $";
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <eggdrop/eggdrop.h>
 
 /* When we walk along irchost_cache_ht, we pass along this struct so the

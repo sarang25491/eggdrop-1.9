@@ -18,11 +18,9 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: binds.c,v 1.20 2004/09/26 09:42:09 stdarg Exp $";
+static const char rcsid[] = "$Id: binds.c,v 1.21 2004/10/17 05:14:06 stdarg Exp $";
 #endif
 
-#include <string.h>
-#include <stdlib.h>
 #include <eggdrop/eggdrop.h>
 
 /* The head of the bind table linked list. */

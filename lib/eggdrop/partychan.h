@@ -16,13 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: partychan.h,v 1.1 2004/06/23 20:19:45 wingman Exp $
+ * $Id: partychan.h,v 1.2 2004/10/17 05:14:06 stdarg Exp $
  */
 
 #ifndef _EGG_PARTYCHAN_H
 #define _EGG_PARTYCHAN_H
-
-#include <eggdrop/partychan.h>
 
 struct partychan_member {
         partymember_t *p;

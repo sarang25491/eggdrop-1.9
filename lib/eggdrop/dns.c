@@ -18,22 +18,13 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dns.c,v 1.5 2004/06/25 17:44:03 darko Exp $";
+static const char rcsid[] = "$Id: dns.c,v 1.6 2004/10/17 05:14:06 stdarg Exp $";
 #endif
 
-#if HAVE_CONFIG_H
-#  include <config.h>
-#endif
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <string.h>
-#include <sys/types.h>
+#include <eggdrop/eggdrop.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
-#include <eggdrop/eggdrop.h>
 
 typedef struct {
 	char **list;

@@ -18,14 +18,11 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: linemode.c,v 1.6 2004/06/25 17:44:03 darko Exp $";
+static const char rcsid[] = "$Id: linemode.c,v 1.7 2004/10/17 05:14:06 stdarg Exp $";
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
 #include <eggdrop/eggdrop.h>
+#include <unistd.h>
 
 #define LINEMODE_LEVEL SOCKBUF_LEVEL_TEXT_BUFFER
 

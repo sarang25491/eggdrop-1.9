@@ -18,20 +18,10 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: string.c,v 1.2 2004/10/04 15:48:29 stdarg Exp $";
+static const char rcsid[] = "$Id: string.c,v 1.3 2004/10/17 05:14:06 stdarg Exp $";
 #endif
-
-#if HAVE_CONFIG_H
-#  include <config.h>
-#endif
-
-#include <stdlib.h>
-#include <stdarg.h>
-#include <string.h>
-#include <ctype.h>
 
 #include <eggdrop/eggdrop.h>				/* egg_return_val_if_fail	*/
-#include <eggdrop/string.h>				/* prototypes			*/
 
 int egg_get_word(const unsigned char *text, const char **next, char **word)
 {

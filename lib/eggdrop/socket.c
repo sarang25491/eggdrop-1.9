@@ -18,21 +18,17 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: socket.c,v 1.6 2004/06/30 21:07:02 stdarg Exp $";
+static const char rcsid[] = "$Id: socket.c,v 1.7 2004/10/17 05:14:06 stdarg Exp $";
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <eggdrop/eggdrop.h>
+
 #include <unistd.h>
-#include <string.h>
-#include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <fcntl.h>
 #include <errno.h>
-
-#include <eggdrop/eggdrop.h>
 
 /* Apparently SHUT_RDWR is not defined on some systems. */
 #ifndef SHUT_RDWR

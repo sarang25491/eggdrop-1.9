@@ -18,13 +18,9 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: config.c,v 1.9 2004/09/26 09:42:09 stdarg Exp $";
+static const char rcsid[] = "$Id: config.c,v 1.10 2004/10/17 05:14:06 stdarg Exp $";
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
 #include <eggdrop/eggdrop.h>
 
 /* Config bind tables. */

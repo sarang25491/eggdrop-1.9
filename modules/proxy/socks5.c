@@ -1,10 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
-#include <sys/types.h>
-#include <netinet/in.h>
 #include <eggdrop/eggdrop.h>
+#include <errno.h>
+#include <netinet/in.h>
 #include "proxy.h"
 
 extern proxy_config_t proxy_config;

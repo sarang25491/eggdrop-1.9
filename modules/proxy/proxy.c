@@ -1,5 +1,3 @@
-#include <string.h>
-
 #include <eggdrop/eggdrop.h>
 
 #include "proxy.h"

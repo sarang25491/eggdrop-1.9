@@ -18,20 +18,12 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: sockbuf.c,v 1.16 2004/10/10 04:55:11 stdarg Exp $";
+static const char rcsid[] = "$Id: sockbuf.c,v 1.17 2004/10/17 05:14:06 stdarg Exp $";
 #endif
 
-#if HAVE_CONFIG_H
-#  include <config.h>
-#endif
-
-#include <stdio.h>
-#include <stdlib.h>
+#include <eggdrop/eggdrop.h>
 #include <unistd.h>
-#include <string.h>
-#include <sys/types.h>
 #include <sys/socket.h>
-#include <sys/time.h>
 
 #ifdef HAVE_POLL
 #  ifdef HAVE_SYS_POLL_H
@@ -44,7 +36,6 @@ static const char rcsid[] = "$Id: sockbuf.c,v 1.16 2004/10/10 04:55:11 stdarg Ex
 #endif
 
 #include <errno.h>
-#include <eggdrop/eggdrop.h>
 
 typedef struct {
 	int sock;	/* Underlying socket descriptor */

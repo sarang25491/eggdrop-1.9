@@ -19,40 +19,18 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.185 2004/09/29 15:38:39 stdarg Exp $";
-#endif
-
-#if HAVE_CONFIG_H
-#  include <config.h>
-#endif
-
-#include <ctype.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <string.h>
-#include <stdlib.h>
-#include <sys/stat.h>
-#include <errno.h>
-#include <signal.h>
-#include <netdb.h>
-#include <setjmp.h>
-#include <locale.h>
-#include <ctype.h>
-#include <ltdl.h>
-
-#ifdef TIME_WITH_SYS_TIME
-#  include <sys/time.h>
-#  include <time.h>
-#else
-#  ifdef HAVE_SYS_TIME_H
-#    include <sys/time.h>
-#  else
-#    include <time.h>
-#  endif
+static const char rcsid[] = "$Id: main.c,v 1.186 2004/10/17 05:14:07 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
-#include "lib/compat/compat.h"
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <errno.h>
+#include <signal.h>
+#include <locale.h>
+#include <ltdl.h>
+
 #include "debug.h"
 #include "core_config.h"
 #include "core_party.h"
@@ -594,7 +572,7 @@ int core_init()
 	core_party_init();
 
 	/* Load core help */
-	//help_load_by_module ("core");
+	help_load_by_module ("core");
 
 	/* Put the module directory in the ltdl search path. */
 	if (core_config.module_path) module_add_dir(core_config.module_path);
