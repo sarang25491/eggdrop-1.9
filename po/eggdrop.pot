@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-01-11 06:15-0600\n"
+"POT-Creation-Date: 2004-01-11 12:15-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -271,7 +271,7 @@ msgstr ""
 
 #: modules/server/nicklist.c:43
 #, c-format
-msgid "try_next_nick: using random nick because %s."
+msgid "Using random nick because %s."
 msgstr ""
 
 #: modules/server/nicklist.c:43
@@ -342,7 +342,7 @@ msgstr ""
 
 #: modules/server/party_commands.c:156
 #, c-format
-msgid "Msg to %s: %s"
+msgid "Msg to %1$s: %2$s"
 msgstr ""
 
 #: modules/server/party_commands.c:168
@@ -449,156 +449,170 @@ msgid ""
 "tclversion]\\n    Reported patchlevel: [info patchlevel]\""
 msgstr ""
 
-#: src/core_party.c:46
+#: src/core_party.c:48
 msgid "Syntax: join <channel>"
 msgstr ""
 
-#: src/core_party.c:79
+#: src/core_party.c:81
 msgid "Syntax: whisper <partylineuser> <msg>"
 msgstr ""
 
-#: src/core_party.c:85
+#: src/core_party.c:87
 #, c-format
 msgid "No such user '%s'."
 msgstr ""
 
-#: src/core_party.c:101
+#: src/core_party.c:103
 msgid "That setting does not exist."
 msgstr ""
 
-#: src/core_party.c:111
+#: src/core_party.c:113
 msgid "Syntax: get <path>"
 msgstr ""
 
-#: src/core_party.c:123
+#: src/core_party.c:122
 msgid "Current value: null (unset)"
 msgstr ""
 
-#: src/core_party.c:136
+#: src/core_party.c:134
 msgid "Syntax: set <path> [new value]"
 msgstr ""
 
-#: src/core_party.c:149 src/core_party.c:171
+#: src/core_party.c:147 src/core_party.c:169
 #, c-format
 msgid "Old value: '%s'"
 msgstr ""
 
-#: src/core_party.c:152 src/core_party.c:175
+#: src/core_party.c:150 src/core_party.c:173
 #, c-format
 msgid "New value: '%s'"
 msgstr ""
 
-#: src/core_party.c:153 src/core_party.c:176
+#: src/core_party.c:151 src/core_party.c:174
 msgid "New value: null (unset)"
 msgstr ""
 
-#: src/core_party.c:163
+#: src/core_party.c:161
 msgid "Syntax: unset <path>"
 msgstr ""
 
-#: src/core_party.c:172
+#: src/core_party.c:170
 msgid "Old value: null (unset)"
 msgstr ""
 
-#: src/core_party.c:186
+#: src/core_party.c:184
 #, c-format
 msgid "I am %1$s, running Eggdrop %2$s."
 msgstr ""
 
-#: src/core_party.c:187
+#: src/core_party.c:185
 #, c-format
 msgid "Owner: %s"
 msgstr ""
 
-#: src/core_party.c:188
+#: src/core_party.c:186
 #, c-format
 msgid "Admin: %s"
 msgstr ""
 
-#: src/core_party.c:190
+#: src/core_party.c:188
 #, c-format
 msgid "OS: %1$s %2$s"
 msgstr ""
 
-#: src/core_party.c:199 src/core_party.c:306 src/main.c:144
+#: src/core_party.c:190
+#, c-format
+msgid "Help path: %s (%d help entries loaded)"
+msgstr ""
+
+#: src/core_party.c:198 src/core_party.c:305 src/main.c:144
 msgid "Saving user file..."
 msgstr ""
 
-#: src/core_party.c:201 src/main.c:146
+#: src/core_party.c:200 src/main.c:146
 msgid "Saving config file..."
 msgstr ""
 
-#: src/core_party.c:209
+#: src/core_party.c:208
 msgid "Please use at least 6 characters."
 msgstr ""
 
-#: src/core_party.c:213
+#: src/core_party.c:212
 #, c-format
 msgid "Changed password to '%s'."
 msgstr ""
 
-#: src/core_party.c:227
+#: src/core_party.c:226
 msgid "Partyline members:"
 msgstr ""
 
-#: src/core_party.c:308
+#: src/core_party.c:307
 #, c-format
 msgid "Bot shutting down: %s"
 msgstr ""
 
-#: src/core_party.c:309
+#: src/core_party.c:308
 msgid "Bot shutting down."
 msgstr ""
 
-#: src/core_party.c:320
+#: src/core_party.c:319
 msgid "Syntax: +user <handle>"
 msgstr ""
 
-#: src/core_party.c:324
+#: src/core_party.c:323
 #, c-format
 msgid "User '%s' already exists!"
 msgstr ""
 
-#: src/core_party.c:328
+#: src/core_party.c:327
 #, c-format
 msgid "User '%s' created."
 msgstr ""
 
-#: src/core_party.c:329
+#: src/core_party.c:328
 #, c-format
 msgid "Could not create user '%s'."
 msgstr ""
 
-#: src/core_party.c:338
+#: src/core_party.c:337
 msgid "Syntax: -user <handle>"
 msgstr ""
 
-#: src/core_party.c:342
+#: src/core_party.c:341
 #, c-format
 msgid "User '%s' not found."
 msgstr ""
 
-#: src/core_party.c:344
+#: src/core_party.c:343
 #, c-format
 msgid "Deleting user '%s'."
 msgstr ""
 
-#: src/core_party.c:373
-msgid "Syntax: chattr <user> [channel] <+/-flags>"
+#: src/core_party.c:372
+msgid "Syntax: chattr <handle> [channel] <+/-flags>"
 msgstr ""
 
-#: src/core_party.c:385
+#: src/core_party.c:384
 #, c-format
 msgid "Flags for %s are now '%s'."
 msgstr ""
 
-#: src/core_party.c:388
+#: src/core_party.c:386
 #, c-format
 msgid "'%s' is not a valid user."
 msgstr ""
 
-#: src/core_party.c:402
+#: src/core_party.c:399
 msgid "Loaded modules:"
+msgstr ""
+
+#: src/core_party.c:411
+msgid "Syntax: help <section>"
+msgstr ""
+
+#: src/core_party.c:417
+#, c-format
+msgid "No help found for '%s'."
 msgstr ""
 
 #: src/logfile.c:124
@@ -665,4 +679,8 @@ msgstr ""
 #: src/main.c:287
 #, c-format
 msgid "Warning: timer drift (%d minutes)."
+msgstr ""
+
+#: src/main.c:421
+msgid "Help file core_commands.xml could not be opened."
 msgstr ""
