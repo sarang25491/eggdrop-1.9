@@ -1,3 +1,13 @@
+2003-04-04 04:04  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/Makefile.am, lib/eggdrop/binds.c,
+	lib/eggdrop/eggnet.c, lib/eggdrop/eggtimer.c,
+	lib/eggdrop/eggtimer.h, lib/eggdrop/throttle.c,
+	modules/script/scripttimer.c, modules/server/dcc.c, src/main.c:
+
+	
+	* Added a name field to timers 
+
 2003-04-01 05:56  stdarg <stdarg@techmonkeys.org>
 
 	* modules/server/: binds.c, binds.h, input.c, output.c, output.h,
