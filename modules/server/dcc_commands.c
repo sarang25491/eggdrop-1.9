@@ -4,6 +4,7 @@
 #include "server.h"
 #include "serverlist.h"
 #include "output.h"
+#include "servsock.h"
 
 static int party_servers(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {

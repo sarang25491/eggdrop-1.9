@@ -184,7 +184,6 @@ static int on_putlog(int flags, const char *chan, const char *text, int len)
 {
 	log_t *log;
 	char timestamp[32];
-	int i;
 
 	get_timestamp(timestamp);
 	for (log = log_list_head; log; log = log->next) {
