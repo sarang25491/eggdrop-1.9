@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.44 2002/03/11 20:16:30 stdarg Exp $
+ * $Id: tclmisc.c,v 1.45 2002/03/13 00:27:34 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -30,6 +30,7 @@
 #include "tandem.h"
 #include "md5.h"
 #include "script_api.h"
+#include "script.h"
 #include "logfile.h"
 #include "misc.h"
 #ifdef HAVE_UNAME
@@ -201,32 +202,34 @@ static int script_die(char *reason)
 
 static int tcl_loadmodule STDVAR
 {
+	if (argc != 2) return TCL_ERROR;
+
+	module_load(argv[1]);
+	return TCL_OK;
+}
+
+static const char *script_loadmodule(char *modname)
+{
   const char *p;
 
-  BADARGS(2, 2, " module-name");
-  p = module_load(argv[1]);
-  if (p && strcmp(p, _("Already loaded.")))
-    putlog(LOG_MISC, "*", "%s %s: %s", _("Cant load modules"), argv[1], p);
-  Tcl_AppendResult(irp, p, NULL);
-  return TCL_OK;
+  p = module_load(modname);
+  return(p);
 }
 
-static int tcl_unloadmodule STDVAR
+static const char *script_unloadmodule(char *modname)
 {
-  BADARGS(2, 2, " module-name");
-  Tcl_AppendResult(irp, module_unload(argv[1], origbotname), NULL);
-  return TCL_OK;
+  return module_unload(modname, origbotname);
 }
 
-static int tcl_unames STDVAR
+static char *script_unames()
 {
-  char *unix_n, *vers_n;
+  char *unix_n, *vers_n, *retval;
 #ifdef HAVE_UNAME
   struct utsname un;
 
   if (uname(&un) < 0) {
 #endif
-    unix_n = "*unkown*";
+    unix_n = "*unknown*";
     vers_n = "";
 #ifdef HAVE_UNAME
   } else {
@@ -234,70 +237,60 @@ static int tcl_unames STDVAR
     vers_n = un.release;
   }
 #endif
-  Tcl_AppendResult(irp, unix_n, " ", vers_n, NULL);
-  return TCL_OK;
+  retval = msprintf("%s %s", unix_n, vers_n);
+  return(retval);
 }
 
-static int tcl_modules STDVAR
+static int script_modules(script_var_t *retval)
 {
-  module_entry *current;
-  dependancy *dep;
-  char *list[100], *list2[2], *p;
-  char s[24], s2[24];
-  int i;
+	module_entry *current;
+	dependancy *dep;
+	script_var_t *name, *version, *entry, *deplist;
 
-  BADARGS(1, 1, "");
-  for (current = module_list; current; current = current->next) {
-    list[0] = current->name;
-    snprintf(s, sizeof s, "%d.%d", current->major, current->minor);
-    list[1] = s;
-    i = 2;
-    for (dep = dependancy_list; dep && (i < 100); dep = dep->next) {
-      if (dep->needing == current) {
-	list2[0] = dep->needed->name;
-	snprintf(s2, sizeof s2, "%d.%d", dep->major, dep->minor);
-	list2[1] = s2;
-	list[i] = Tcl_Merge(2, list2);
-	i++;
-      }
-    }
-    p = Tcl_Merge(i, list);
-    Tcl_AppendElement(irp, p);
-    Tcl_Free((char *) p);
-    while (i > 2) {
-      i--;
-      Tcl_Free((char *) list[i]);
-    }
-  }
-  return TCL_OK;
+	retval->type = SCRIPT_ARRAY | SCRIPT_FREE | SCRIPT_VAR;
+
+	for (current = module_list; current; current = current->next) {
+		name = script_string(current->name, -1);
+		version = script_string(msprintf("%d.%d", current->major, current->minor), -1);
+		version->type |= SCRIPT_FREE;
+		deplist = script_list(0);
+		for (dep = dependancy_list; dep; dep = dep->next) {
+			script_var_t *depname, *depver;
+
+			depname = script_string(dep->needed->name, -1);
+			depver = script_string(msprintf("%d.%d", dep->needed->major, dep->needed->minor), -1);
+			depver->type |= SCRIPT_FREE;
+
+			script_list_append(deplist, script_list(2, depname, depver));
+		}
+		entry = script_list(3, name, version, deplist);
+		script_list_append(retval, entry);
+	}
+	return(0);
 }
 
-static int tcl_loadhelp STDVAR
+static int script_loadhelp(char *helpfile)
 {
-  BADARGS(2, 2, " helpfile-name");
-  add_help_reference(argv[1]);
-  return TCL_OK;
+  add_help_reference(helpfile);
+  return(0);
 }
 
-static int tcl_unloadhelp STDVAR
+static int script_unloadhelp(char *helpfile)
 {
-  BADARGS(2, 2, " helpfile-name");
-  rem_help_reference(argv[1]);
-  return TCL_OK;
+  rem_help_reference(helpfile);
+  return(0);
 }
 
-static int tcl_reloadhelp STDVAR
+static int script_reloadhelp()
 {
-  BADARGS(1, 1, "");
   reload_help_data();
-  return TCL_OK;
+  return(0);
 }
 
-static int tcl_callevent STDVAR
+static int script_callevent(char *event)
 {
-  BADARGS(2, 2, " event");
-  check_bind_event(argv[1]);
-  return TCL_OK;
+  check_bind_event(event);
+  return(0);
 }
 
 static char *script_md5(char *data)
@@ -315,6 +308,11 @@ static char *script_md5(char *data)
   return(digest_string);
 }
 
+tcl_cmds tclmisc_cmds[] = {
+	{"loadmodule", tcl_loadmodule},
+	{0}
+};
+
 script_command_t script_misc_cmds[] = {
 	{"", "duration", (Function) script_duration, NULL, 1, "u", "seconds", SCRIPT_STRING|SCRIPT_FREE, 0},
 	{"", "unixtime", (Function) script_unixtime, NULL, 0, "", "", SCRIPT_UNSIGNED, 0},
@@ -328,19 +326,13 @@ script_command_t script_misc_cmds[] = {
 	{"", "dccdumpfile", (Function) script_dccdumpfile, NULL, 2, "is", "idx filename", SCRIPT_INTEGER, 0},
 	{"", "backup", (Function) script_backup, NULL, 0, "", "", SCRIPT_INTEGER},
 	{"", "die", (Function) script_die, NULL, 0, "s", "?reason?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
+	{"", "unames", (Function) script_unames, NULL, 0, "", "", SCRIPT_STRING | SCRIPT_FREE, 0},
+	{"", "modules", (Function) script_modules, NULL, 0, "", "", 0, SCRIPT_PASS_RETVAL},
+	{"", "loadhelp", (Function) script_loadhelp, NULL, 1, "s", "filename", SCRIPT_INTEGER, 0},
+	{"", "unloadhelp", (Function) script_unloadhelp, NULL, 1, "s", "filename", SCRIPT_INTEGER, 0},
+	{"", "reloadhelp", (Function) script_reloadhelp, NULL, 0, "", "", SCRIPT_INTEGER, 0},
+	{"", "unloadmodule", (Function) script_unloadmodule, NULL, 1, "s", "module-name", SCRIPT_INTEGER, 0},
 	{"", "md5", (Function) script_md5, NULL, 1, "s", "data", SCRIPT_STRING, 0},
+	{"", "callevent", (Function) script_callevent, NULL, 1, "s", "event", SCRIPT_INTEGER, 0},
 	{0}
-};
-
-tcl_cmds tclmisc_cmds[] =
-{
-  {"unames",		tcl_unames},
-  {"unloadmodule",	tcl_unloadmodule},
-  {"loadmodule",	tcl_loadmodule},
-  {"modules",		tcl_modules},
-  {"loadhelp",		tcl_loadhelp},
-  {"unloadhelp",	tcl_unloadhelp},
-  {"reloadhelp",	tcl_reloadhelp},
-  {"callevent",		tcl_callevent},
-  {NULL,		NULL}
 };

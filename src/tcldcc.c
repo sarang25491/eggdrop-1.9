@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.52 2002/03/11 20:16:30 stdarg Exp $
+ * $Id: tcldcc.c,v 1.53 2002/03/13 00:27:33 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -284,7 +284,7 @@ static int tcl_control STDVAR
   void *hold;
 
   BADARGS(3, 3, " idx command");
-  //idx = findidx(atoi(argv[1]));
+  idx = atoi(argv[1]);
   if (idx < 0) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
     return TCL_ERROR;
@@ -322,7 +322,7 @@ static int tcl_killdcc STDVAR
   int idx;
 
   BADARGS(2, 3, " idx ?reason?");
-  //idx = findidx(atoi(argv[1]));
+  idx = atoi(argv[1]);
   if (idx < 0) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
     return TCL_ERROR;
