@@ -4903,23 +4903,7 @@
 	lib/egglib/msprintf.h, lib/egglib/mstack.c, lib/egglib/mstack.h,
 	modules/perlscript/perlscript.c, modules/tclscript/tclscript.c,
 	src/Makefile.am, src/dns.c, src/logfile.c, src/main.c, src/main.h,
-	src/modules.c, src/net.c, src/registry.c, src/script.c,
-	src/compat/.cvsignore, src/compat/Makefile.am, src/compat/compat.h,
-	src/compat/inet_aton.c, src/compat/inet_aton.h,
-	src/compat/inet_ntop.c, src/compat/inet_ntop.h,
-	src/compat/inet_pton.c, src/compat/inet_pton.h,
-	src/compat/memcpy.c, src/compat/memcpy.h, src/compat/memset.c,
-	src/compat/memset.h, src/compat/snprintf.c, src/compat/snprintf.h,
-	src/compat/strcasecmp.c, src/compat/strcasecmp.h,
-	src/compat/strftime.c, src/compat/strftime.h,
-	src/compat/strncasecmp.c, src/compat/strncasecmp.h,
-	src/egglib/.cvsignore, src/egglib/Makefile.am, src/egglib/avl.c,
-	src/egglib/avl.h, src/egglib/hash_table.c, src/egglib/hash_table.h,
-	src/egglib/hash_table_test.c, src/egglib/linked_list.c,
-	src/egglib/linked_list.h, src/egglib/linked_list_test.c,
-	src/egglib/mempool.c, src/egglib/mempool.h,
-	src/egglib/mempool_test.c, src/egglib/msprintf.c,
-	src/egglib/msprintf.h, src/egglib/mstack.c, src/egglib/mstack.h:
+	src/modules.c, src/net.c, src/registry.c, src/script.c:
 
 	Renamed src/adns, src/compat, src/egglib to lib/adns, lib/compat,
 	lib/egglib respectively.  
@@ -5007,14 +4991,7 @@
 	modules/transfer/transfer.h, modules/uptime/.cvsignore,
 	modules/uptime/Makefile.am, modules/uptime/modinfo,
 	modules/uptime/uptime.c, modules/uptime/uptime.h, src/Makefile.am,
-	src/logfile.c, src/modules.h, src/mod/.cvsignore,
-	src/mod/Makefile.am, src/mod/module.h, src/mod/modvals.h,
-	src/mod/assoc.mod/.cvsignore, src/mod/assoc.mod/Makefile.am,
-	src/mod/assoc.mod/assoc.c, src/mod/assoc.mod/assoc.h,
-	src/mod/assoc.mod/modinfo, src/mod/assoc.mod/help/assoc.help,
-	src/mod/blowfish.mod/.cvsignore, src/mod/blowfish.mod/Makefile.am,
-	src/mod/blowfish.mod/bf_tab.h, src/mod/blowfish.mod/blowfish.c,
-	src/mod/blowfish.mod/blowfish.h, src/mod/blowfish.mod/modinfo:
+	src/logfile.c, src/modules.h:
 
 	* Renamed src/mod to modules.  
 	* Created lib as top dir for eggdrop's libraries.  
@@ -5034,7 +5011,7 @@
 2001-10-26 22:22  stdarg <stdarg@techmonkeys.org>
 
 	* src/: chanprog.c, cmds.c, main.c, modules.c, tcl.c, tcldcc.c,
-	tclegg.h, tclhash.c, tclhash.h, mod/module.h:
+	tclegg.h, tclhash.c, tclhash.h:
 
 	
 	* Converted the last few bind tables (I think).  
@@ -5101,8 +5078,7 @@
 
 2001-10-22 01:49  stdarg <stdarg@techmonkeys.org>
 
-	* src/: modules.c, egglib/msprintf.h, egglib/mstack.h,
-	mod/module.h:
+	* src/modules.c:
 
 	* Moved msprintf and mstack to the function table (boo this is
 	temporary I hope) 
@@ -5126,7 +5102,7 @@
 2001-10-21 17:38  Federico Mennite <ite@techmonkeys.org>
 
 	* bootstrap, configure.ac, acconfig/.cvsignore,
-	acconfig/acinclude.m4, src/Makefile.am, src/mod/Makefile.am:
+	acconfig/acinclude.m4, src/Makefile.am:
 
 	* Added autoconf and automake support for perlscript.mod.  
 	* Removed old stuff from bootstrap and
@@ -5136,10 +5112,7 @@
 
 2001-10-21 16:05  Tothwolf <tothwolf@techmonkeys.org>
 
-	* Makefile.am, scripts/Makefile.am, src/Makefile.am,
-	src/compat/Makefile.am, src/egglib/Makefile.am,
-	src/mod/Makefile.am, src/mod/assoc.mod/Makefile.am,
-	src/mod/blowfish.mod/Makefile.am:
+	* Makefile.am, scripts/Makefile.am, src/Makefile.am:
 
 	* cleanups in Makefile.am files 
 
@@ -5210,7 +5183,7 @@
 2001-10-21 03:44  stdarg <stdarg@techmonkeys.org>
 
 	* src/: botnet.c, cmds.c, logfile.c, modules.c, tcl.c, tclhash.c,
-	tclhash.h, mod/module.h, mod/assoc.mod/assoc.c:
+	tclhash.h:
 
 	* Applied Oskar Liljeblad's patch to convert more bind tables.  
 	* Fixed bug in putlog which causes an infinite loop.  
@@ -5220,7 +5193,7 @@
 
 2001-10-20 21:57  stdarg <stdarg@techmonkeys.org>
 
-	* src/: dcc.c, modules.c, tclhash.c, tclhash.h, mod/module.h:
+	* src/: dcc.c, modules.c, tclhash.c, tclhash.h:
 
 	* Added Oskar Liljeblad's patch to convert H_chat, H_act, and
 	H_bcst.  
@@ -5229,7 +5202,7 @@
 
 2001-10-20 10:22  stdarg <stdarg@techmonkeys.org>
 
-	* src/: modules.c, tclhash.c, tclhash.h, mod/module.h:
+	* src/: modules.c, tclhash.c, tclhash.h:
 
 	Applied patch by Oskar Liljeblad <oskar@osk.mine.nu>: Replaces
 	H_away bind with new BT_away bind.  
@@ -5300,8 +5273,7 @@
 2001-10-19 06:01  Jeff Fisher <guppy@techmonkeys.org>
 
 	* eggdrop.complete.conf, doc/settings/core.settings,
-	doc/settings/mod.server, src/flags.c, src/modules.c,
-	src/mod/module.h:
+	doc/settings/mod.server, src/flags.c, src/modules.c:
 
 	* removed use-console-r since we have debug-output 
 	* removed +r as a log option we tell people about since it used for
@@ -5326,12 +5298,6 @@
 	* applied the pidfile patch from eggdrop1.6 
 	* added stdarg to AUTHORS (wish we had a realname <g>) 
 
-2001-10-19 02:01  Tothwolf <tothwolf@techmonkeys.org>
-
-	* src/compat/strftime.c:
-
-	* update strftime.c to version from glibc 2.2.4 
-
 2001-10-19 01:55  Tothwolf <tothwolf@techmonkeys.org>
 
 	* acinclude.m4, configure.ac, src/botcmd.c, src/botmsg.c,
@@ -5339,19 +5305,7 @@
 	src/dns.c, src/eggdrop.h, src/logfile.c, src/main.c, src/misc.c,
 	src/modules.c, src/net.c, src/stat.h, src/tcl.c, src/tcldcc.c,
 	src/tclhash.c, src/tclmisc.c, src/tcluser.c, src/userent.c,
-	src/userrec.c, src/users.c, src/compat/Makefile.am,
-	src/compat/compat.h, src/compat/gnu_strftime.c,
-	src/compat/inet_aton.c, src/compat/inet_aton.h,
-	src/compat/inet_ntop.c, src/compat/inet_ntop.h,
-	src/compat/inet_pton.c, src/compat/inet_pton.h,
-	src/compat/memcpy.c, src/compat/memcpy.h, src/compat/memset.c,
-	src/compat/memset.h, src/compat/snprintf.c, src/compat/snprintf.h,
-	src/compat/strcasecmp.c, src/compat/strcasecmp.h,
-	src/compat/strftime.c, src/compat/strftime.h,
-	src/compat/strncasecmp.c, src/compat/strncasecmp.h,
-	src/mod/module.h, src/mod/assoc.mod/assoc.c,
-	src/mod/blowfish.mod/bf_tab.h, src/mod/blowfish.mod/blowfish.c,
-	src/mod/blowfish.mod/blowfish.h:
+	src/userrec.c, src/users.c:
 
 	* removed obsolete EGG_CHECK_FUNC_VSPRINTF autoconf macro 
 	* removed obsolete EGG_HEADER_STDC autoconf macro 
@@ -5436,8 +5390,7 @@
 2001-10-18 09:06  stdarg <stdarg@techmonkeys.org>
 
 	* src/: Makefile.am, chanprog.c, eggdrop.h, logfile.c, main.c,
-	misc.c, proto.h, script.c, script_api.h, tcl.c, tclmisc.c,
-	egglib/msprintf.c:
+	misc.c, proto.h, script.c, script_api.h, tcl.c, tclmisc.c:
 
 	Fixed a bug in msprintf.  Added SCRIPT_FREE_VAR flag, to
 	automatically free a script_var_t.  Added first config variables
@@ -5448,7 +5401,7 @@
 
 2001-10-18 02:57  stdarg <stdarg@techmonkeys.org>
 
-	* src/: modules.c, net.c, proto.h, mod/module.h:
+	* src/: modules.c, net.c, proto.h:
 
 	Converted my_atoul to sscanf.  
 
@@ -5478,15 +5431,9 @@
 
 	updated config files for tclscript.mod 
 
-2001-10-17 00:43  stdarg <stdarg@techmonkeys.org>
-
-	* src/mod/assoc.mod/assoc.c:
-
-	add_builtins -> add_builtins2 
-
 2001-10-17 00:19  stdarg <stdarg@techmonkeys.org>
 
-	* src/: modules.c, tclhash.c, tclhash.h, mod/module.h:
+	* src/: modules.c, tclhash.c, tclhash.h:
 
 	Moved load and unload bind tables to modules.c.  Removed old ctcp
 	table.  
@@ -5538,7 +5485,7 @@
 2001-10-14 23:13  stdarg <stdarg@techmonkeys.org>
 
 	* src/: Makefile.am, core_binds.c, core_binds.h, main.c, modules.c,
-	script.h, tclhash.c, tclhash.h, tclmisc.c, mod/module.h:
+	script.h, tclhash.c, tclhash.h, tclmisc.c:
 
 	Updates to binds (event and time).  New file to handle core binds.  
 
@@ -5547,24 +5494,6 @@
 	* src/modules.c:
 
 	Fixed stupid bug when not sharing userfile.  
-
-2001-10-14 22:35  Federico Mennite <ite@techmonkeys.org>
-
-	* src/mod/blowfish.mod/blowfish.c:
-
-	Minor gettext's usage cleanup.  
-
-2001-10-14 20:31  Federico Mennite <ite@techmonkeys.org>
-
-	* src/mod/blowfish.mod/blowfish.c:
-
-	Finished gettextification in blowfish.mod.  
-
-2001-10-14 20:04  Federico Mennite <ite@techmonkeys.org>
-
-	* src/mod/assoc.mod/assoc.c:
-
-	Finished gettextification in assoc.mod.  
 
 2001-10-14 19:30  Federico Mennite <ite@techmonkeys.org>
 
@@ -5605,7 +5534,7 @@
 2001-10-14 14:09  Federico Mennite <ite@techmonkeys.org>
 
 	* INSTALL, README, acinclude.m4, bootstrap, configure.in,
-	po/eggdrop.pot, src/main.c, src/modules.c, src/mod/modvals.h:
+	po/eggdrop.pot, src/main.c, src/modules.c:
 
 	* STATIC is #defined again on static builds.  
 	* Removed code for old module loading emulation on static builds.  
@@ -5621,7 +5550,7 @@
 
 2001-10-14 10:22  Tothwolf <tothwolf@techmonkeys.org>
 
-	* Makefile.am, src/Makefile.am, src/compat/Makefile.am:
+	* Makefile.am, src/Makefile.am:
 
 	* more minor Makefile.am cleanups 
 	* added .cvsignore for tclscript.mod 
@@ -5632,9 +5561,7 @@
 
 	* configure.in, src/Makefile.am, src/main.c, src/modules.c,
 	src/registry.c, src/registry.h, src/script.c, src/script_api.h,
-	src/tcl.c, src/egglib/Makefile.am, src/egglib/msprintf.c,
-	src/egglib/msprintf.h, src/egglib/mstack.c, src/egglib/mstack.h,
-	src/mod/Makefile.am, src/mod/module.h:
+	src/tcl.c:
 
 	Added code for tclscript.mod Made it compile correctly with
 	configure et al (hopefully...) Removed stuff for encodings from
@@ -5645,8 +5572,7 @@
 
 2001-10-13 21:36  Tothwolf <tothwolf@techmonkeys.org>
 
-	* acconfig.h, acinclude.m4, configure.in, src/Makefile.am,
-	src/mod/assoc.mod/Makefile.am, src/mod/blowfish.mod/Makefile.am:
+	* acconfig.h, acinclude.m4, configure.in, src/Makefile.am:
 
 	* configure cleanups 
 	* updated many autoconf macros to new formats 
@@ -5656,7 +5582,7 @@
 
 2001-10-13 15:55  Tothwolf <tothwolf@techmonkeys.org>
 
-	* src/: chanprog.c, misc.c, modules.c, proto.h, mod/module.h:
+	* src/: chanprog.c, misc.c, modules.c, proto.h:
 
 	* splitnick() removed 
 	* cleanup where splitnicks() was removed 
@@ -5693,7 +5619,7 @@
 	* acinclude.m4, src/Makefile.am, src/botnet.c, src/cmds.c,
 	src/dcc.c, src/debug.h, src/eggdrop.h, src/irccmp.c, src/main.c,
 	src/main.h, src/modules.c, src/net.c, src/proto.h, src/tcl.c,
-	src/tclhash.c, src/mod/module.h, src/mod/modvals.h:
+	src/tclhash.c:
 
 	* DEBUG_ASSERT renamed to DEBUG 
 	* Assert macro removed, replaced with ANSI assert support 
@@ -5725,7 +5651,7 @@
 
 	* src/: Makefile.am, chanprog.c, flags.c, irccmp.c, irccmp.h,
 	match.c, match.h, misc.c, modules.c, proto.h, rfc1459.c, userent.c,
-	userrec.c, users.c, mod/module.h, mod/modvals.h:
+	userrec.c, users.c:
 
 	* rfc1459.c cleaned up and renamed to irccmp.c 
 	* rfc_casecmp() renamed to irccmp() 
@@ -5743,41 +5669,20 @@
 2001-10-11 11:34  Tothwolf <tothwolf@techmonkeys.org>
 
 	* src/: botnet.c, cmds.c, dcc.c, dccutil.c, dns.c, eggdrop.h,
-	flags.c, misc.c, tcldcc.c, tclhash.c, userent.c,
-	egglib/hash_table.c:
+	flags.c, misc.c, tcldcc.c, tclhash.c, userent.c:
 
 	* Use calloc() instead of malloc_memset macro 
 
-2001-10-10 18:47  stdarg <stdarg@techmonkeys.org>
-
-	* src/mod/assoc.mod/assoc.c:
-
-	Yeah, better declare BT_dcc before I use it heh.  
-
 2001-10-10 18:37  stdarg <stdarg@techmonkeys.org>
 
-	* src/: modules.c, tclhash.c, tclhash.h, mod/module.h,
-	mod/assoc.mod/assoc.c:
+	* src/: modules.c, tclhash.c, tclhash.h:
 
 	Got rid of the last remnants of H_dcc.  
-
-2001-10-10 17:07  stdarg <stdarg@techmonkeys.org>
-
-	* src/egglib/linked_list.c:
-
-	Need to initialize cursors even when the pointer is passed in.  
-
-2001-10-10 15:52  Tothwolf <tothwolf@techmonkeys.org>
-
-	* src/mod/assoc.mod/help/assoc.help:
-
-	more documentation updates from alpha tree 
 
 2001-10-10 14:50  Tothwolf <tothwolf@techmonkeys.org>
 
 	* acinclude.m4, configure.in, src/Makefile.am, src/dcc.c,
-	src/md5.c, src/md5.h, src/tclmisc.c, src/md5/.cvsignore,
-	src/md5/Makefile.am, src/md5/md5.h, src/md5/md5c.c:
+	src/md5.c, src/md5.h, src/tclmisc.c:
 
 	moved md5.c and md5.h from src/md5/ to src/ added header files in
 	src/ to src/Makefile.am removed redundant egglib/libegg.la entry for
@@ -5801,12 +5706,7 @@
 	src/match.c, src/mem.c, src/misc.c, src/modules.c, src/modules.h,
 	src/net.c, src/proto.h, src/tcl.c, src/tcldcc.c, src/tclhash.c,
 	src/tclhash.h, src/tcluser.c, src/userent.c, src/userrec.c,
-	src/users.c, src/users.h, src/compat/Makefile.am,
-	src/compat/compat.h, src/compat/inet_aton.c, src/compat/memcpy.c,
-	src/compat/memcpy.h, src/compat/memset.c, src/compat/memset.h,
-	src/compat/strcasecmp.c, src/egglib/hash_table.c,
-	src/egglib/linked_list.c, src/mod/module.h, src/mod/modvals.h,
-	src/mod/assoc.mod/assoc.c, src/mod/blowfish.mod/blowfish.c:
+	src/users.c, src/users.h:
 
 	all expmem functions and support removed all memory status/debugging
 	code removed all #ifdef DEBUG_MEM code removed 
@@ -5872,19 +5772,7 @@
 	intl/ref-add.sin, intl/ref-del.sin, intl/textdomain.c,
 	po/Makefile.in.in, po/eggdrop.pot, scripts/.cvsignore,
 	scripts/Makefile.am, scripts/Makefile.in, src/.cvsignore,
-	src/Makefile.am, src/Makefile.in, src/eggdrop.h, src/modules.c,
-	src/compat/.cvsignore, src/compat/Makefile.am,
-	src/compat/Makefile.in, src/compat/inet_aton.c,
-	src/compat/memcpy.c, src/compat/memset.c, src/compat/snprintf.c,
-	src/compat/strcasecmp.c, src/egglib/.cvsignore,
-	src/egglib/Makefile.am, src/md5/.cvsignore, src/md5/Makefile.am,
-	src/md5/Makefile.in, src/mod/.cvsignore, src/mod/Makefile.am,
-	src/mod/Makefile.in, src/mod/eggautoconf, src/mod/eggmod.m4,
-	src/mod/eggmod.sh, src/mod/module.h, src/mod/modvals.h,
-	src/mod/assoc.mod/.cvsignore, src/mod/assoc.mod/Makefile,
-	src/mod/assoc.mod/Makefile.am, src/mod/assoc.mod/assoc.c,
-	src/mod/blowfish.mod/.cvsignore, src/mod/blowfish.mod/Makefile,
-	src/mod/blowfish.mod/Makefile.am, src/mod/blowfish.mod/blowfish.c:
+	src/Makefile.am, src/Makefile.in, src/eggdrop.h, src/modules.c:
 
 	* Refactored the tree (especially src/modules.c) to use the libltdl 
 	  wrapper. Modules are configured to be lt_dlopened or dl_preopened
@@ -5938,7 +5826,7 @@
 2001-10-07 04:02  stdarg <stdarg@techmonkeys.org>
 
 	* src/: botcmd.c, botnet.c, cmds.c, dccutil.c, tclhash.c,
-	tclhash.h, mod/modvals.h:
+	tclhash.h:
 
 	Got rid of bind tables in the exported irc function table. They're
 	not used anywhere in the core or other normal modules. Other people
@@ -5983,7 +5871,7 @@
 2001-09-28 03:15  stdarg <stdarg@techmonkeys.org>
 
 	* src/: botcmd.c, botnet.c, dcc.c, dccutil.c, main.c, modules.c,
-	tcldcc.c, tclhash.c, tclhash.h, mod/module.h:
+	tcldcc.c, tclhash.c, tclhash.h:
 
 	
 	
@@ -6142,8 +6030,7 @@
 
 	* .cvsignore, Makefile.in, acconfig.h, aclocal.m4, bootstrap,
 	configure.in, po/.cvsignore, po/POTFILES.in, po/eggdrop.pot,
-	po/update.pl, src/Makefile.in, src/eggdrop.h, src/main.c,
-	src/mod/module.h:
+	po/update.pl, src/Makefile.in, src/eggdrop.h, src/main.c:
 
 	Gettext phase 2: 
 	* Replced dummy _() define with the real one and added language
@@ -6203,7 +6090,7 @@
 	* eggdrop.complete.conf, doc/settings/core.settings,
 	doc/settings/mod.dns, help/core.help, help/set/cmds1.help,
 	scripts/help/cmd_resolve.help, src/modules.c, src/net.c, src/tcl.c,
-	src/tclmisc.c, src/mod/module.h:
+	src/tclmisc.c:
 
 	Removed my-hostname. Cache local ipv4 address. Updated docs. FIXME
 	for tcl_getmyip6(). Cleanups for channel.mod.  
@@ -6216,7 +6103,7 @@
 
 2001-08-17 05:35  Jeff Fisher <guppy@techmonkeys.org>
 
-	* src/: dcc.c, tclmisc.c, md5/Makefile.in, md5/md5.h, md5/md5c.c:
+	* src/: dcc.c, tclmisc.c:
 
 	Small change to how we send USER again -- since hostname/servername
 	are ignored, send dots in their place as do most other clients ..
@@ -6274,9 +6161,7 @@
 
 2001-08-13 22:51  Federico Mennite <ite@techmonkeys.org>
 
-	* .cvsignore, doc/.cvsignore, scripts/.cvsignore, src/.cvsignore,
-	src/compat/.cvsignore, src/egglib/.cvsignore, src/md5/.cvsignore,
-	src/mod/.cvsignore:
+	* .cvsignore, doc/.cvsignore, scripts/.cvsignore, src/.cvsignore:
 
 	Added .cvsignore files to ease committer's life.  
 
@@ -6310,9 +6195,7 @@
 	doc/tricks, doc/settings/CONTENTS, doc/settings/contents,
 	doc/settings/core.settings, help/core.help, src/Makefile.in,
 	src/eggdrop.h, src/lang.h, src/language.c, src/main.c, src/main.h,
-	src/mem.c, src/modules.c, src/proto.h, src/compat/Makefile.in,
-	src/md5/Makefile.in, src/mod/Makefile.in, src/mod/module.h,
-	src/mod/assoc.mod/Makefile, src/mod/blowfish.mod/Makefile:
+	src/mem.c, src/modules.c, src/proto.h:
 
 	Good bye language.c, lang.h, we knew you so well yet hated you 
 
@@ -6381,7 +6264,7 @@
 2001-08-13 14:51  Jeff Fisher <guppy@techmonkeys.org>
 
 	* eggdrop.complete.conf, doc/settings/core.settings, src/modules.c,
-	src/net.c, src/proto.h, src/tcl.c, src/mod/module.h:
+	src/net.c, src/proto.h, src/tcl.c:
 
 	Removed dcc-sanitycheck since it was half commented out as "FIXME"
 	-- also, in the day and age of IRC bouncers and socks5 connections,
@@ -6396,7 +6279,7 @@
 2001-08-13 14:17  Jeff Fisher <guppy@techmonkeys.org>
 
 	* eggdrop.complete.conf, doc/settings/core.settings, src/dcc.c,
-	src/modules.c, src/tcl.c, src/mod/module.h:
+	src/modules.c, src/tcl.c:
 
 	Removed dcc-portrange since it was a stupid setting (good idea of
 	course) and the values 1024 and 65535 are now hardcoded as the
@@ -6458,18 +6341,11 @@
 	src/chanprog.c, src/cmds.c, src/dcc.c, src/dccutil.c, src/dns.c,
 	src/eggdrop.h, src/lang.h, src/main.c, src/misc.c, src/modules.c,
 	src/tcldcc.c, src/tclhash.c, src/tclmisc.c, src/userrec.c,
-	src/users.c, src/mod/assoc.mod/assoc.c, src/mod/assoc.mod/assoc.h:
+	src/users.c:
 
 	Gettext phase 1: created a dummy _() macro, replaced old get_lang
 	#defines with the respective string entries in english.*.lang and
 	removed them.  
-
-2001-08-10 14:33  Dobos Lorant <drummer@buli.sk>
-
-	* src/compat/inet_ntop.c:
-
-	cygwin: checking resolv.conf in the current dir, avoid
-	arpa/nameser.h 
 
 2001-08-09 04:07  Jeff Fisher <guppy@techmonkeys.org>
 
@@ -6540,16 +6416,14 @@
 2001-07-31 16:40  Jeff Fisher <guppy@techmonkeys.org>
 
 	* doc/UPDATES1.6, src/cmds.c, src/main.c, src/misc.c,
-	src/modules.c, src/patch.h, src/proto.h, src/tclmisc.c,
-	src/compat/inet_pton.c, src/mod/module.h, src/mod/modvals.h:
+	src/modules.c, src/patch.h, src/proto.h, src/tclmisc.c:
 
 	sync'd 1.7 to the latest 1.6 
 
 2001-07-29 19:43  Dobos Lorant <drummer@buli.sk>
 
 	* Makefile.in, aclocal.m4, configure, configure.in,
-	src/Makefile.in, src/compat/inet_ntop.c, src/compat/inet_ntop.h,
-	src/compat/inet_pton.c, src/compat/inet_pton.h:
+	src/Makefile.in:
 
 	autoconf, Makefile, compat/ changes 
 
@@ -6576,12 +6450,6 @@
 
 	Finished guppy's seen/wire cleanup.  
 
-2001-07-26 17:39  Dobos Lorant <drummer@buli.sk>
-
-	* src/compat/: inet_ntop.c, inet_ntop.h, inet_pton.c, inet_pton.h:
-
-	inet_pton, inet_ntop 
-
 2001-07-26 17:05  Dobos Lorant <drummer@buli.sk>
 
 	* Makefile.in, aclocal.m4, config.h.in, configure, configure.in,
@@ -6593,8 +6461,7 @@
 
 	* src/: Makefile.in, botnet.c, cmds.c, dcc.c, dccutil.c, dns.c,
 	dns.h, eggdrop.h, main.c, modules.c, net.c, proto.h, tcl.c,
-	tcldcc.c, tclmisc.c, tcluser.c, userent.c, compat/Makefile.in,
-	compat/compat.h, compat/inet_aton.h, mod/module.h:
+	tcldcc.c, tclmisc.c, tcluser.c, userent.c:
 
 	added adns dir 
 
@@ -6611,20 +6478,10 @@
 
 	sync'd the lastest 1.6 cvs w/ 1.7 
 
-2001-07-25 20:32  stdarg <stdarg@techmonkeys.org>
-
-	* src/egglib/: avl.c, avl.h, hash_table.c, hash_table.h,
-	hash_table_test.c, libegg.so, linked_list.c, linked_list.h,
-	linked_list_test.c, mempool.c, mempool.h, mempool_test.c,
-	libegg.so:
-
-	[no log message] 
-
 2001-07-25 04:21  Jeff Fisher <guppy@techmonkeys.org>
 
 	* disabled_modules, doc/CONTENTS, doc/Makefile.in,
-	doc/UPDATES.pre1.5, doc/UPDATES1.5, src/main.c, src/patch.h,
-	src/mod/assoc.mod/assoc.c, src/mod/blowfish.mod/blowfish.c:
+	doc/UPDATES.pre1.5, doc/UPDATES1.5, src/main.c, src/patch.h:
 
 	what will the future hold fellow eggdevers! seen and wire are
 	disabled ... shall we remove them and replace in the future with
@@ -6682,7 +6539,7 @@
 
 	* doc/MODULES, doc/UPDATES1.6, doc/tcl-commands.doc,
 	help/cmds2.help, src/cmds.c, src/main.c, src/patch.h,
-	src/tclmisc.c, src/mod/modvals.h:
+	src/tclmisc.c:
 
 	I thought about doing this years ago .. glad someone did it :P~ 
 
@@ -6716,16 +6573,9 @@
 
 	applied Paladin's doc updates patch 
 
-2001-07-18 06:03  Tothwolf <tothwolf@techmonkeys.org>
-
-	* src/mod/module.h:
-
-	Autoindenting mess-up 
-
 2001-07-17 19:53  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h, src/mod/module.h,
-	src/mod/assoc.mod/assoc.c, src/mod/blowfish.mod/blowfish.c:
+	* doc/UPDATES1.6, src/patch.h:
 
 	here is ITE's expore_define_fix 
 
@@ -6737,7 +6587,7 @@
 
 2001-07-16 14:54  Jeff Fisher <guppy@techmonkeys.org>
 
-	* src/: misc.c, modules.c, proto.h, mod/module.h:
+	* src/: misc.c, modules.c, proto.h:
 
 	oops, I should apply the patch too I guess 
 
@@ -6904,8 +6754,7 @@
 
 	* doc/UPDATES1.6, src/botcmd.c, src/botnet.c, src/chanprog.c,
 	src/cmds.c, src/dcc.c, src/dns.c, src/language.c, src/modules.c,
-	src/patch.h, src/tcluser.c, src/userrec.c, src/users.c,
-	src/mod/assoc.mod/assoc.c:
+	src/patch.h, src/tcluser.c, src/userrec.c, src/users.c:
 
 	here are my cleanup patches ...  
 
@@ -6987,7 +6836,7 @@
 2001-06-24 20:49  Matthew Hallacy <poptix@techmonkeys.org>
 
 	* doc/UPDATES1.6, src/modules.c, src/net.c, src/patch.h,
-	src/proto.h, src/mod/module.h:
+	src/proto.h:
 
 	florian's 'netstuff' patch.  
 
@@ -7067,9 +6916,7 @@
 
 2001-06-20 14:44  Matthew Hallacy <poptix@techmonkeys.org>
 
-	* aclocal.m4, doc/UPDATES1.6, src/main.c, src/patch.h,
-	src/mod/module.h, src/mod/assoc.mod/assoc.c,
-	src/mod/blowfish.mod/blowfish.c:
+	* aclocal.m4, doc/UPDATES1.6, src/main.c, src/patch.h:
 
 	Cygwin32 Fixes 
 
@@ -7204,8 +7051,7 @@
 
 2001-06-01 21:56  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, doc/tcl-commands.doc, src/main.c, src/patch.h,
-	src/mod/modvals.h:
+	* doc/UPDATES1.6, doc/tcl-commands.doc, src/main.c, src/patch.h:
 
 	new evnt: loaded 
 
@@ -7282,7 +7128,7 @@
 
 2001-04-26 03:38  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h, src/mod/modvals.h:
+	* doc/UPDATES1.6, src/patch.h:
 
 	applied Eule's patch to save us some cpu 
 
@@ -7326,8 +7172,7 @@
 
 2001-04-13 06:33  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h, src/users.c,
-	src/mod/assoc.mod/assoc.c:
+	* doc/UPDATES1.6, src/patch.h, src/users.c:
 
 	added sup's patch also a small small small fix to assoc.mod .. a
 	NULL NULL NULL NULL line was missing <g> 
@@ -7363,15 +7208,7 @@
 	src/stat.h, src/tandem.h, src/tcl.c, src/tcldcc.c, src/tclegg.h,
 	src/tclhash.c, src/tclhash.h, src/tclmisc.c, src/tcluser.c,
 	src/userent.c, src/userrec.c, src/users.c, src/users.h,
-	src/compat/compat.h, src/compat/inet_aton.c,
-	src/compat/inet_aton.h, src/compat/memcpy.c, src/compat/memcpy.h,
-	src/compat/memset.c, src/compat/memset.h, src/compat/snprintf.c,
-	src/compat/snprintf.h, src/compat/strcasecmp.c,
-	src/compat/strcasecmp.h, src/compat/strftime.c,
-	src/mod/eggautoconf, src/mod/module.h, src/mod/modvals.h,
-	src/mod/assoc.mod/assoc.c, src/mod/assoc.mod/assoc.h,
-	src/mod/blowfish.mod/bf_tab.h, src/mod/blowfish.mod/blowfish.c,
-	src/mod/blowfish.mod/blowfish.h, text/banner, text/motd:
+	text/banner, text/motd:
 
 	lets update the copyright info for 2001 k? :P~ 
 
@@ -7402,8 +7239,7 @@
 2001-04-06 22:28  Jeff Fisher <guppy@techmonkeys.org>
 
 	* doc/UPDATES1.6, src/botmsg.c, src/dccutil.c, src/misc.c,
-	src/modules.c, src/patch.h, src/proto.h, src/tcl.c,
-	src/mod/module.h:
+	src/modules.c, src/patch.h, src/proto.h, src/tcl.c:
 
 	applied Zart's patch to make the unicode shit handle tcl version > 9 
 
@@ -7428,8 +7264,7 @@
 
 2001-03-18 23:00  Jeff Fisher <guppy@techmonkeys.org>
 
-	* src/: botmsg.c, dccutil.c, misc.c, modules.c, patch.h, proto.h,
-	mod/module.h:
+	* src/: botmsg.c, dccutil.c, misc.c, modules.c, patch.h, proto.h:
 
 	here is wingman's bug fix, yay 
 
@@ -7454,7 +7289,7 @@
 
 2001-03-11 21:00  Jeff Fisher <guppy@techmonkeys.org>
 
-	* src/: modules.c, patch.h, proto.h, mod/module.h:
+	* src/: modules.c, patch.h, proto.h:
 
 	added a fix to Wingman's unicode patch 
 
@@ -7479,7 +7314,7 @@
 
 2001-03-10 22:32  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/patch.h, src/mod/blowfish.mod/blowfish.c:
+	* doc/UPDATES1.6, src/patch.h:
 
 	added Wingman's encryption fix patch, this does the same as ITE's
 	but Wingman's was there first, sorry ITE.  
@@ -7487,7 +7322,7 @@
 2001-03-10 06:36  Jeff Fisher <guppy@techmonkeys.org>
 
 	* doc/UPDATES1.6, src/botmsg.c, src/dccutil.c, src/misc.c,
-	src/modules.c, src/patch.h, src/proto.h, src/mod/module.h:
+	src/modules.c, src/patch.h, src/proto.h:
 
 	Wingman's utf8 fix ... please test this alot people :P~ 
 
@@ -7506,8 +7341,7 @@
 
 2001-02-27 03:18  Jeff Fisher <guppy@techmonkeys.org>
 
-	* doc/UPDATES1.6, src/modules.c, src/patch.h, src/mod/module.h,
-	src/mod/modvals.h, src/mod/blowfish.mod/blowfish.c:
+	* doc/UPDATES1.6, src/modules.c, src/patch.h:
 
 	lets make blowfish more friendly 
 
@@ -7643,7 +7477,7 @@
 	* eggdrop.complete.conf, doc/UPDATES1.6,
 	doc/settings/core.settings, help/core.help, help/set/cmds1.help,
 	help/set/cmds2.help, src/dccutil.c, src/modules.c, src/patch.h,
-	src/tcl.c, src/mod/module.h:
+	src/tcl.c:
 
 	applied reserved-portrange.diff (yay) 
 
@@ -7697,8 +7531,7 @@
 2001-01-16 17:13  Jeff Fisher <guppy@techmonkeys.org>
 
 	* doc/UPDATES1.6, src/botcmd.c, src/botmsg.c, src/botnet.c,
-	src/patch.h, src/mod/assoc.mod/assoc.c,
-	src/mod/blowfish.mod/blowfish.c:
+	src/patch.h:
 
 	Cleanup of Context(); and Assert(); usage in the core and modules is
 	completed Doing some testing lastnite, the size of the binary and
@@ -7760,8 +7593,7 @@
 
 2000-12-21 20:20  Jeff Fisher <guppy@techmonkeys.org>
 
-	* aclocal.m4, configure, configure.in, doc/UPDATES1.6, src/patch.h,
-	src/mod/Makefile.in:
+	* aclocal.m4, configure, configure.in, doc/UPDATES1.6, src/patch.h:
 
 	ITE's configure path fix patch 
 
@@ -7801,7 +7633,7 @@
 
 2000-12-17 21:48  Jeff Fisher <guppy@techmonkeys.org>
 
-	* src/: proto.h, tcl.c, mod/module.h:
+	* src/: proto.h, tcl.c:
 
 	Applying fabian's patch for unicode support (also by Wingman);
 	however, there was a warning in src/tcl.c 
@@ -8099,9 +7931,7 @@
 	eggdrop.complete.conf, eggdrop.simple.conf, doc/BOTNET,
 	doc/BUG-REPORT, doc/CONTENTS, doc/Makefile.in, doc/UPDATES1.5,
 	doc/patch.howto, doc/tcl-commands.doc, doc/text-substitutions.doc,
-	scripts/getops.tcl, src/main.c, src/patch.h,
-	src/mod/assoc.mod/assoc.c, src/mod/blowfish.mod/blowfish.c,
-	text/banner:
+	scripts/getops.tcl, src/main.c, src/patch.h, text/banner:
 
 	1.5 has now become 1.6 
 
@@ -8243,7 +8073,7 @@
 	* doc/UPDATES1.5, src/dcc.c, src/flags.c, src/flags.h, src/main.c,
 	src/mem.c, src/modules.c, src/modules.h, src/patch.h, src/proto.h,
 	src/tclhash.c, src/tclhash.h, src/tclmisc.c, src/userrec.c,
-	src/users.h, src/mod/module.h:
+	src/users.h:
 
 	fabian: applied tcl_hash_overhaul patch. (minor change: added
 	comments to end of check_tcl_bind().) 
@@ -8256,14 +8086,14 @@
 
 2000-10-27 19:29  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/modvals.h:
+	* doc/UPDATES1.5, src/patch.h:
 
 	fabian: applied channel_part_fix patch 
 
 2000-10-27 19:28  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.5, src/eggdrop.h, src/main.c, src/patch.h,
-	src/proto.h, src/mod/module.h:
+	src/proto.h:
 
 	fabian: applied the assert_fix patch 
 
@@ -8307,7 +8137,7 @@
 2000-10-19 16:32  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.5, src/chanprog.c, src/modules.c, src/patch.h,
-	src/proto.h, src/mod/module.h:
+	src/proto.h:
 
 	fabian: applied Eule's gotnick patch 
 
@@ -8404,7 +8234,7 @@
 
 2000-09-27 19:47  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/assoc.mod/Makefile:
+	* doc/UPDATES1.5, src/patch.h:
 
 	fabian: applied the plus_a_cycle patch 
 
@@ -8430,7 +8260,7 @@
 2000-09-23 17:49  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.5, src/misc.c, src/modules.c, src/patch.h,
-	src/proto.h, src/mod/module.h:
+	src/proto.h:
 
 	fabian: applied Cybah's egg_strcatn patch 
 
@@ -8458,17 +8288,9 @@
 
 	fabian: applied flag_correct patch 
 
-2000-09-23 17:45  Fabian Knittel <fknittel@gmx.de>
-
-	* src/mod/assoc.mod/assoc.h:
-
-	fabian: phew.. that was close. almost forgot to add the new files
-	again.. (guppy's language-v2 patch) 
-
 2000-09-23 17:40  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/lang.h, src/patch.h,
-	src/mod/assoc.mod/assoc.c:
+	* doc/UPDATES1.5, src/lang.h, src/patch.h:
 
 	fabian: applied guppy's language-v2 patch 
 
@@ -8494,16 +8316,9 @@
 2000-09-18 20:01  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.5, src/cmds.c, src/misc.c, src/modules.c,
-	src/patch.h, src/proto.h, src/users.c, src/mod/module.h:
+	src/patch.h, src/proto.h, src/users.c:
 
 	fabian: applied ipv6_masks patch, revision 3 
-
-2000-09-18 10:06  Fabian Knittel <fknittel@gmx.de>
-
-	* src/compat/gnu_strftime.c:
-
-	fabian: thanks to Tothwolf, I remembered to finally complete
-	applying the strftime_compat patch. probably the third attempt. 8) 
 
 2000-09-15 20:08  Fabian Knittel <fknittel@gmx.de>
 
@@ -8516,19 +8331,6 @@
 	* doc/UPDATES1.5, src/botmsg.c, src/patch.h:
 
 	fabian: applied udef_inactivechan_fix patch 
-
-2000-09-13 19:44  Fabian Knittel <fknittel@gmx.de>
-
-	* src/md5/global.h:
-
-	fabian: forgot to remove md5/global.h 
-
-2000-09-12 15:34  Fabian Knittel <fknittel@gmx.de>
-
-	* src/compat/: strftime.c, strftime.h:
-
-	forgot to add the new files strftime.c and strftime.h, belonging to
-	the strftime_compat patch.  
 
 2000-09-12 15:29  Fabian Knittel <fknittel@gmx.de>
 
@@ -8548,11 +8350,7 @@
 
 	* config.h.in, configure, configure.in, doc/UPDATES1.5,
 	src/Makefile.in, src/cmds.c, src/main.h, src/misc.c, src/patch.h,
-	src/tclmisc.c, src/users.c, src/compat/Makefile.in,
-	src/compat/compat.h, src/compat/inet_aton.h, src/compat/memcpy.h,
-	src/compat/memset.h, src/compat/snprintf.h,
-	src/compat/strcasecmp.h, src/md5/Makefile.in,
-	src/mod/assoc.mod/Makefile, src/mod/blowfish.mod/Makefile:
+	src/tclmisc.c, src/users.c:
 
 	fabian: strftime_compat patch 
 
@@ -8596,9 +8394,7 @@
 
 	* configure.in, doc/UPDATES1.5, src/Makefile.in, src/botnet.c,
 	src/dcc.c, src/dns.c, src/dns.h, src/eggdrop.h, src/main.h,
-	src/net.c, src/patch.h, src/tcldcc.c, src/tclmisc.c, src/userent.c,
-	src/compat/inet_aton.c, src/compat/memset.c, src/md5/Makefile.in,
-	src/md5/md5.h, src/md5/md5c.c:
+	src/net.c, src/patch.h, src/tcldcc.c, src/tclmisc.c, src/userent.c:
 
 	fabian: cleanup_types patch 
 
@@ -8847,7 +8643,7 @@
 2000-08-18 00:25  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.5, src/modules.c, src/net.c, src/patch.h,
-	src/proto.h, src/mod/module.h:
+	src/proto.h:
 
 	open_address_listen patch 
 
@@ -8883,7 +8679,7 @@
 
 2000-08-11 22:44  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/modules.c, src/patch.h, src/mod/module.h:
+	* doc/UPDATES1.5, src/modules.c, src/patch.h:
 
 	guppy's and Sup's tandbot_party patch 
 
@@ -9026,8 +8822,7 @@
 2000-07-23 20:47  Fabian Knittel <fknittel@gmx.de>
 
 	* Makefile.in, aclocal.m4, doc/Makefile.in, doc/UPDATES1.4,
-	scripts/Makefile.in, src/Makefile.in, src/patch.h,
-	src/compat/Makefile.in, src/md5/Makefile.in, src/mod/Makefile.in:
+	scripts/Makefile.in, src/Makefile.in, src/patch.h:
 
 	1.4 resync, autoconf_shell_fix patch 
 
@@ -9097,8 +8892,7 @@
 2000-07-09 14:10  Fabian Knittel <fknittel@gmx.de>
 
 	* Makefile.in, acconfig.h, aclocal.m4, config.h.in, doc/UPDATES1.5,
-	src/modules.c, src/patch.h, src/mod/Makefile.in,
-	src/mod/assoc.mod/Makefile, src/mod/blowfish.mod/Makefile:
+	src/modules.c, src/patch.h:
 
 	RebuM's modules_cygwin patch, together with my corrections 
 
@@ -9242,8 +9036,7 @@
 
 	* eggdrop.advanced.conf, eggdrop.complete.conf, doc/UPDATES1.5,
 	doc/tcl-commands.doc, doc/settings/mod.server, src/cmds.c,
-	src/modules.c, src/patch.h, src/tcl.c, src/users.c,
-	src/mod/module.h:
+	src/modules.c, src/patch.h, src/tcl.c, src/users.c:
 
 	channame2dname patch 
 
@@ -9303,8 +9096,7 @@
 2000-05-28 17:32  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.4, doc/tcl-commands.doc, scripts/userinfo1.0.tcl,
-	src/botnet.c, src/modules.c, src/patch.h, src/mod/module.h,
-	src/mod/modvals.h:
+	src/botnet.c, src/modules.c, src/patch.h:
 
 	Resync with egg1.4 CVS, May28 
 
@@ -9330,7 +9122,7 @@
 
 2000-05-13 20:28  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/compat/snprintf.h:
+	* doc/UPDATES1.5, src/patch.h:
 
 	snprintf_fix2 patch 
 
@@ -9365,13 +9157,6 @@
 
 	NEWS file update 
 
-2000-05-07 01:28  Fabian Knittel <fknittel@gmx.de>
-
-	* src/mod/assoc.mod/modinfo:
-
-	this was supposed to be committed together with the conf_make_fix9
-	patch. grumble...  
-
 2000-05-07 01:10  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.5, src/main.c, src/patch.h:
@@ -9393,7 +9178,7 @@
 
 2000-05-07 00:07  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/compat/snprintf.h:
+	* doc/UPDATES1.5, src/patch.h:
 
 	SuperS' vafix patch 
 
@@ -9428,7 +9213,7 @@
 2000-05-06 22:00  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.5, src/botnet.c, src/cmds.c, src/dcc.c, src/dns.c,
-	src/patch.h, src/compat/snprintf.h:
+	src/patch.h:
 
 	misc_fix patch 
 
@@ -9453,7 +9238,7 @@
 2000-04-25 20:49  Fabian Knittel <fknittel@gmx.de>
 
 	* Makefile.in, configure, configure.in, doc/UPDATES1.5,
-	src/patch.h, src/mod/Makefile.in:
+	src/patch.h:
 
 	conf_make_fix9 patch 
 
@@ -9533,7 +9318,7 @@
 
 2000-04-05 19:58  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/modules.c, src/patch.h, src/mod/module.h:
+	* doc/UPDATES1.5, src/modules.c, src/patch.h:
 
 	must_be_owner patch 
 
@@ -9547,7 +9332,7 @@
 2000-04-05 19:51  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.5, doc/tcl-commands.doc, src/misc.c, src/modules.c,
-	src/patch.h, src/proto.h, src/mod/module.h:
+	src/patch.h, src/proto.h:
 
 	compress_fix patch 
 
@@ -9566,8 +9351,7 @@
 
 2000-04-05 19:40  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/compat/README.snprintf,
-	src/compat/snprintf.c, src/compat/snprintf.h:
+	* doc/UPDATES1.5, src/patch.h:
 
 	snprintf_fix patch 
 
@@ -9607,8 +9391,7 @@
 
 2000-03-31 23:04  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/mod/assoc.mod/Makefile,
-	src/mod/blowfish.mod/Makefile:
+	* doc/UPDATES1.5, src/patch.h:
 
 	conf_make_fix8 patch 
 
@@ -9630,10 +9413,7 @@
 
 2000-03-24 23:00  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/Makefile.in, src/patch.h,
-	src/compat/Makefile.in, src/compat/inet_aton.c,
-	src/md5/Makefile.in, src/mod/Makefile.in,
-	src/mod/assoc.mod/Makefile, src/mod/blowfish.mod/Makefile:
+	* doc/UPDATES1.5, src/Makefile.in, src/patch.h:
 
 	conf_make_fix7 patch 
 
@@ -9645,14 +9425,7 @@
 	src/dccutil.c, src/dns.c, src/eggdrop.h, src/flags.c, src/main.c,
 	src/main.h, src/mem.c, src/misc.c, src/modules.c, src/net.c,
 	src/patch.h, src/proto.h, src/tcl.c, src/tcldcc.c, src/tclhash.c,
-	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c,
-	src/compat/Makefile.in, src/compat/inet_aton.c,
-	src/compat/snprintf.c, src/md5/Makefile.in, src/md5/md5c.c,
-	src/mod/Makefile.in, src/mod/eggmod.m4, src/mod/module.h,
-	src/mod/assoc.mod/assoc.c, src/mod/blowfish.mod/blowfish.c,
-	src/compat/compat.h, src/compat/memcpy.c, src/compat/memcpy.h,
-	src/compat/memset.c, src/compat/memset.h, src/compat/strcasecmp.c,
-	src/compat/strcasecmp.h:
+	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c:
 
 	conf_make_fix6 patch 
 
@@ -9676,12 +9449,7 @@
 	scripts/Makefile.in, src/Makefile.in, src/botmsg.c, src/dcc.c,
 	src/dccutil.c, src/dns.c, src/main.h, src/misc.c, src/misc_file.c,
 	src/misc_file.h, src/modules.c, src/patch.h, src/proto.h,
-	src/tclegg.h, src/compat/Makefile.in, src/compat/README.snprintf,
-	src/compat/inet_aton.c, src/compat/inet_aton.h,
-	src/compat/snprintf.c, src/compat/snprintf.h, src/md5/Makefile.in,
-	src/mod/Makefile.in, src/mod/eggmod.m4, src/mod/module.h,
-	src/mod/assoc.mod/Makefile, src/mod/assoc.mod/assoc.c,
-	src/mod/blowfish.mod/Makefile, src/mod/blowfish.mod/blowfish.c:
+	src/tclegg.h:
 
 	configure_makefile_fix3 patch 
 
@@ -9750,8 +9518,7 @@
 2000-03-06 18:54  Fabian Knittel <fknittel@gmx.de>
 
 	* Makefile.in, aclocal.m4, configure, configure.in, lush.h.in,
-	doc/Makefile.in, doc/UPDATES1.5, scripts/Makefile.in, src/patch.h,
-	src/mod/eggautoconf:
+	doc/Makefile.in, doc/UPDATES1.5, scripts/Makefile.in, src/patch.h:
 
 	configure_fix2,3 patches 
 
@@ -9765,7 +9532,7 @@
 
 	* Makefile.in, aclocal.m4, configure, configure.in, install-sh,
 	mkinstalldirs, doc/UPDATES1.4, doc/UPDATES1.5, src/main.c,
-	src/patch.h, src/mod/Makefile.in, src/mod/eggmod.m4:
+	src/patch.h:
 
 	configure_fix patch 
 
@@ -9790,7 +9557,7 @@
 2000-03-04 20:49  Fabian Knittel <fknittel@gmx.de>
 
 	* eggdrop.conf.dist, doc/UPDATES1.5, src/eggdrop.h, src/main.c,
-	src/patch.h, src/mod/modvals.h:
+	src/patch.h:
 
 	share_compress patch 
 
@@ -9828,7 +9595,7 @@
 2000-03-01 17:54  Fabian Knittel <fknittel@gmx.de>
 
 	* eggdrop.conf.dist, doc/UPDATES1.5, doc/tcl-commands.doc,
-	src/patch.h, src/mod/modvals.h:
+	src/patch.h:
 
 	uff_compress2 patch 
 
@@ -9872,8 +9639,7 @@
 2000-02-29 19:57  Fabian Knittel <fknittel@gmx.de>
 
 	* Makefile.in, aclocal.m4, configure, configure.in, doc/UPDATES1.5,
-	src/patch.h, src/mod/Makefile.in, src/mod/eggmod.m4,
-	src/mod/modtool:
+	src/patch.h:
 
 	configure_makefile_fix2 patch 
 
@@ -9887,10 +9653,7 @@
 
 	* Makefile.in, README, aclocal.m4, configure, configure.in,
 	disabled_modules, doc/KNOWN-PROBLEMS, doc/MODULES, doc/UPDATES1.5,
-	doc/tricks, src/Makefile.in, src/patch.h, src/mod/Makefile.in,
-	src/mod/buildstatic, src/mod/eggautoconf, src/mod/eggmod.m4,
-	src/mod/eggmod.sh, src/mod/modtool, src/mod/assoc.mod/Makefile,
-	src/mod/blowfish.mod/Makefile, src/mod/blowfish.mod/modinfo:
+	doc/tricks, src/Makefile.in, src/patch.h:
 
 	configure_module patch 
 
@@ -9926,8 +9689,7 @@
 
 2000-02-18 22:36  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/main.c, src/patch.h,
-	src/mod/blowfish.mod/blowfish.c:
+	* doc/UPDATES1.5, src/main.c, src/patch.h:
 
 	blowfish_fix patch 
 
@@ -9990,7 +9752,7 @@
 2000-01-31 23:02  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.5, src/botcmd.c, src/botnet.c, src/dcc.c,
-	src/patch.h, src/tandem.h, src/mod/module.h:
+	src/patch.h, src/tandem.h:
 
 	G`Quann's yaup patch 
 
@@ -10015,9 +9777,7 @@
 	src/misc.c, src/modules.c, src/modules.h, src/net.c, src/patch.h,
 	src/proto.h, src/tandem.h, src/tcl.c, src/tcldcc.c, src/tclegg.h,
 	src/tclhash.c, src/tclhash.h, src/tclmisc.c, src/tcluser.c,
-	src/userent.c, src/userrec.c, src/users.h, src/mod/module.h,
-	src/mod/modvals.h, src/mod/blowfish.mod/bf_tab.h,
-	src/mod/blowfish.mod/blowfish.c, src/mod/blowfish.mod/blowfish.h:
+	src/userent.c, src/userrec.c, src/users.h:
 
 	cleanup3 patch 
 
@@ -10105,7 +9865,7 @@
 2000-01-22 22:37  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.5, src/eggdrop.h, src/main.c, src/modules.c,
-	src/net.c, src/patch.h, src/proto.h, src/mod/module.h:
+	src/net.c, src/patch.h, src/proto.h:
 
 	uff and outdone_event patch 
 
@@ -10125,8 +9885,7 @@
 	src/patch.h, src/proto.h, src/tandem.h, src/tcl.c, src/tcldcc.c,
 	src/tclegg.h, src/tclhash.c, src/tclhash.h, src/tclmisc.c,
 	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c,
-	src/users.h, src/mod/module.h, src/mod/modvals.h,
-	src/mod/assoc.mod/assoc.c, text/banner, text/motd:
+	src/users.h, text/banner, text/motd:
 
 	Eule's copyright patch, updated by him for 1.5 
 
@@ -10160,7 +9919,7 @@
 2000-01-09 16:34  Fabian Knittel <fknittel@gmx.de>
 
 	* acconfig.h, aclocal.m4, config.h.in, configure, doc/UPDATES1.4,
-	src/patch.h, src/mod/module.h:
+	src/patch.h:
 
 	forgot the version_export patch, during last 1.4 resync 
 
@@ -10174,7 +9933,7 @@
 
 	* aclocal.m4, configure, configure.in, doc/UPDATES1.4,
 	doc/UPDATES1.5, doc/compiling.FAQ, src/main.c, src/modules.c,
-	src/patch.h, src/mod/module.h:
+	src/patch.h:
 
 	resync with 1.4, a few 1.5 specific additions 
 
@@ -10201,16 +9960,14 @@
 
 	* eggdrop.conf.dist, doc/UPDATES1.5, help/set/cmds2.help,
 	src/misc.c, src/modules.c, src/patch.h, src/proto.h, src/tcl.c,
-	src/userrec.c, src/mod/module.h:
+	src/userrec.c:
 
 	userfile_perm patch 
 
 2000-01-06 19:45  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.4, src/main.c, src/misc.c, src/modules.c,
-	src/modules.h, src/net.c, src/patch.h, src/tclegg.h, src/userrec.c,
-	src/md5/global.h, src/mod/module.h,
-	src/mod/blowfish.mod/blowfish.c:
+	src/modules.h, src/net.c, src/patch.h, src/tclegg.h, src/userrec.c:
 
 	errors_fix, simialer to 1.4 
 
@@ -10223,15 +9980,14 @@
 
 2000-01-02 02:42  Fabian Knittel <fknittel@gmx.de>
 
-	* src/: main.c, patch.h, mod/assoc.mod/assoc.c,
-	mod/blowfish.mod/blowfish.h:
+	* src/: main.c, patch.h:
 
 	cleanup2 patch 
 
 2000-01-01 19:42  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.5, src/dns.c, src/main.c, src/modules.c,
-	src/patch.h, src/proto.h, src/md5/md5c.c:
+	src/patch.h, src/proto.h:
 
 	bzero_memset patch 
 
@@ -10269,7 +10025,7 @@
 
 2000-01-01 19:12  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, src/patch.h, src/tclhash.c, src/mod/modvals.h:
+	* doc/UPDATES1.5, src/patch.h, src/tclhash.c:
 
 	cleanup patch 
 
@@ -10384,7 +10140,7 @@
 
 	* doc/UPDATES1.5, doc/tcl-commands.doc, src/Makefile.in,
 	src/botnet.c, src/dcc.c, src/dns.c, src/mem.c, src/modules.c,
-	src/patch.h, src/proto.h, src/tcl.c, src/mod/module.h:
+	src/patch.h, src/proto.h, src/tcl.c:
 
 	tclasyncdns 
 
@@ -10415,7 +10171,7 @@
 1999-12-24 14:21  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.4, src/dccutil.c, src/main.c, src/modules.c,
-	src/patch.h, src/proto.h, src/mod/module.h:
+	src/patch.h, src/proto.h:
 
 	dccremovelost 
 
@@ -10466,7 +10222,7 @@
 	* eggdrop.conf.dist, doc/UPDATES1.4, src/botcmd.c, src/botnet.c,
 	src/cmds.c, src/dcc.c, src/dccutil.c, src/eggdrop.h, src/lang.h,
 	src/main.c, src/modules.c, src/net.c, src/proto.h, src/tclhash.c,
-	src/users.c, src/mod/module.h, src/mod/modvals.h:
+	src/users.c:
 
 	resync with 1.4.2, 1999/12/22 
 
@@ -10493,12 +10249,7 @@
 	src/proto.h, src/rfc1459.c, src/tandem.h, src/tcl.c, src/tcldcc.c,
 	src/tclegg.h, src/tclhash.c, src/tclhash.h, src/tclmisc.c,
 	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c,
-	src/users.h, src/md5/Makefile.in, src/md5/global.h, src/md5/md5.h,
-	src/md5/md5c.c, src/mod/Makefile.in, src/mod/buildstatic,
-	src/mod/module.h, src/mod/modvals.h, src/mod/assoc.mod/Makefile,
-	src/mod/assoc.mod/assoc.c, src/mod/blowfish.mod/Makefile,
-	src/mod/blowfish.mod/bf_tab.h, src/mod/blowfish.mod/blowfish.c,
-	src/mod/blowfish.mod/blowfish.h:
+	src/users.h:
 
 	Tothwolf's id-header 
 
@@ -10529,7 +10280,7 @@
 1999-12-17 18:40  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.4, src/cmds.c, src/flags.c, src/patch.h,
-	src/userent.c, src/mod/module.h:
+	src/userent.c:
 
 	tothwolf's assert-nulls patch 
 
@@ -10549,8 +10300,7 @@
 1999-12-14 22:39  Fabian Knittel <fknittel@gmx.de>
 
 	* Makefile.in, doc/UPDATES1.4, doc/UPDATES1.5, src/eggdrop.h,
-	src/main.c, src/modules.c, src/patch.h, src/proto.h,
-	src/mod/module.h:
+	src/main.c, src/modules.c, src/patch.h, src/proto.h:
 
 	toth's patch-assert 
 
@@ -10563,15 +10313,14 @@
 
 1999-12-13 23:39  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.5, doc/tcl-commands.doc, src/eggdrop.h, src/patch.h,
-	src/mod/modvals.h:
+	* doc/UPDATES1.5, doc/tcl-commands.doc, src/eggdrop.h, src/patch.h:
 
 	resume patch 
 
 1999-12-12 22:14  Fabian Knittel <fknittel@gmx.de>
 
 	* config.h.in, configure, configure.in, doc/UPDATES1.5,
-	src/eggdrop.h, src/md5/global.h, src/md5/md5c.c, src/patch.h:
+	src/eggdrop.h, src/patch.h:
 
 	32 bit usage made consistent - patch :) 
 
@@ -10594,9 +10343,7 @@
 	src/eggdrop.h, src/flags.c, src/language.c, src/main.c, src/mem.c,
 	src/misc.c, src/modules.c, src/net.c, src/patch.h, src/proto.h,
 	src/tcl.c, src/tcldcc.c, src/tclhash.c, src/tclmisc.c,
-	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c,
-	src/mod/module.h, src/mod/modvals.h, src/mod/assoc.mod/assoc.c,
-	src/mod/blowfish.mod/blowfish.c:
+	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c:
 
 	tothwolf's remove-context-bloat patch 
 
@@ -10609,7 +10356,7 @@
 
 1999-12-06 16:15  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, src/patch.h, src/mod/blowfish.mod/blowfish.c:
+	* doc/UPDATES1.4, src/patch.h:
 
 	1.4 resync 
 
@@ -10653,7 +10400,7 @@
 1999-11-27 23:53  Fabian Knittel <fknittel@gmx.de>
 
 	* doc/UPDATES1.5, src/cmds.c, src/flags.c, src/modules.c,
-	src/patch.h, src/proto.h, src/userrec.c, src/mod/module.h:
+	src/patch.h, src/proto.h, src/userrec.c:
 
 	complete_sharefix patch 
 
@@ -10678,8 +10425,7 @@
 
 1999-11-24 22:23  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, src/modules.c, src/patch.h, src/proto.h,
-	src/mod/module.h:
+	* doc/UPDATES1.4, src/modules.c, src/patch.h, src/proto.h:
 
 	guppy's tables patch 
 
@@ -10741,7 +10487,7 @@
 	doc/eggdrop.doc, doc/patch.howto, doc/tcl-commands.doc,
 	logs/CONTENTS, scripts/userinfo1.0.tcl, src/cmds.c, src/dccutil.c,
 	src/main.c, src/main.h, src/match.c, src/mem.c, src/net.c,
-	src/patch.h, src/proto.h, src/mod/blowfish.mod/blowfish.c:
+	src/patch.h, src/proto.h:
 
 	Toth's sync-1.5-14Nov1999-1 
 
@@ -10812,9 +10558,7 @@
 	src/cmds.c, src/dcc.c, src/dccutil.c, src/main.c, src/main.h,
 	src/mem.c, src/modules.c, src/patch.h, src/proto.h, src/tcl.c,
 	src/tcldcc.c, src/tclegg.h, src/tclhash.c, src/tclmisc.c,
-	src/tcluser.c, src/userent.c, src/md5/Makefile.in,
-	src/mod/Makefile.in, src/mod/module.h, src/mod/assoc.mod/Makefile,
-	src/mod/blowfish.mod/Makefile:
+	src/tcluser.c, src/userent.c:
 
 	Resync with 1.4 
 
@@ -10832,7 +10576,7 @@
 
 1999-11-10 00:06  segfault
 
-	* src/: main.c, mod/assoc.mod/assoc.c, mod/blowfish.mod/blowfish.c:
+	* src/main.c:
 
 	Part 2 
 
@@ -10849,7 +10593,7 @@
 	* doc/UPDATES1.4, src/botcmd.c, src/chan.h, src/chanprog.c,
 	src/cmds.c, src/flags.c, src/lang.h, src/misc.c, src/modules.c,
 	src/patch.h, src/tcldcc.c, src/tcluser.c, src/userrec.c,
-	src/users.c, src/mod/module.h:
+	src/users.c:
 
 	Cybah's safechan patch 
 
@@ -10861,9 +10605,7 @@
 	scripts/botchk, scripts/compat.tcl, scripts/weed, src/Makefile.in,
 	src/botnet.c, src/chanprog.c, src/cmds.c, src/dcc.c, src/flags.c,
 	src/language.c, src/main.c, src/misc.c, src/modules.c, src/patch.h,
-	src/tcldcc.c, src/tcluser.c, src/userent.c, src/mod/module.h,
-	src/mod/assoc.mod/Makefile, src/mod/blowfish.mod/Makefile,
-	src/mod/blowfish.mod/blowfish.h:
+	src/tcldcc.c, src/tcluser.c, src/userent.c:
 
 	resync 940380771-940924890 
 
@@ -10906,11 +10648,7 @@
 	src/main.c, src/main.h, src/mem.c, src/misc.c, src/modules.c,
 	src/net.c, src/patch.h, src/proto.h, src/tandem.h, src/tcl.c,
 	src/tcldcc.c, src/tcluser.c, src/userent.c, src/userrec.c,
-	src/users.c, src/md5/Makefile, src/md5/Makefile.in,
-	src/mod/Makefile, src/mod/Makefile.generic, src/mod/Makefile.in,
-	src/mod/buildstatic, src/mod/assoc.mod/Makefile,
-	src/mod/assoc.mod/help/assoc.help, src/mod/blowfish.mod/Makefile,
-	src/mod/blowfish.mod/blowfish.c:
+	src/users.c:
 
 	resync with 1.3 tree, 939863113-940380771 
 
@@ -10925,8 +10663,7 @@
 
 1999-10-12 22:19  Fabian Knittel <fknittel@gmx.de>
 
-	* doc/UPDATES1.4, src/eggdrop.h, src/modules.c, src/patch.h,
-	src/mod/module.h:
+	* doc/UPDATES1.4, src/eggdrop.h, src/modules.c, src/patch.h:
 
 	the transfer patch 
 
@@ -10988,8 +10725,7 @@
 	* Makefile.in, configure, configure.in, eggdrop.conf.dist,
 	doc/UPDATES1.4, src/Makefile, src/botnet.c, src/dcc.c,
 	src/dccutil.c, src/eggdrop.h, src/main.h, src/modules.c, src/net.c,
-	src/proto.h, src/mod/Makefile, src/mod/Makefile.generic,
-	src/mod/module.h, src/mod/modvals.h:
+	src/proto.h:
 
 	Fabian's asyncdns patch 
 
@@ -11011,8 +10747,7 @@
 	src/modules.c, src/modules.h, src/net.c, src/patch.h, src/proto.h,
 	src/rfc1459.c, src/tcl.c, src/tcldcc.c, src/tclhash.c,
 	src/tclhash.h, src/tclmisc.c, src/userent.c, src/userrec.c,
-	src/users.c, src/users.h, src/mod/module.h, src/mod/modvals.h,
-	src/mod/assoc.mod/assoc.c, src/mod/blowfish.mod/blowfish.c:
+	src/users.c, src/users.h:
 
 	all changes to the 1.3 tree merged with 1.4 
 
@@ -11054,13 +10789,7 @@
 	src/net.c, src/patch.h, src/proto.h, src/rfc1459.c, src/rfc1459.h,
 	src/tandem.h, src/tcl.c, src/tcldcc.c, src/tclegg.h, src/tclhash.c,
 	src/tclhash.h, src/tclmisc.c, src/tcluser.c, src/userent.c,
-	src/userrec.c, src/users.c, src/users.h, src/md5/Makefile,
-	src/md5/global.h, src/md5/md5.h, src/md5/md5c.c, src/mod/Makefile,
-	src/mod/Makefile.generic, src/mod/buildstatic, src/mod/module.h,
-	src/mod/modvals.h, src/mod/assoc.mod/Makefile,
-	src/mod/assoc.mod/assoc.c, src/mod/blowfish.mod/Makefile,
-	src/mod/blowfish.mod/bf_tab.h, src/mod/blowfish.mod/blowfish.c,
-	src/mod/blowfish.mod/blowfish.h:
+	src/userrec.c, src/users.c, src/users.h:
 
 	Initial commit based off of .29 cvs 
 
