@@ -132,6 +132,8 @@ static char *my_trace_callback(ClientData client_data, Tcl_Interp *irp, char *na
 	else if (flags & TCL_TRACE_WRITES) {
 		Tcl_Obj *obj;
 
+		if (linked_var->type & SCRIPT_READONLY) return("read only variable");
+
 		obj = Tcl_GetVar2Ex(irp, name1, name2, 0);
 		if (!obj) return("Error setting variable");
 
@@ -142,6 +144,7 @@ static char *my_trace_callback(ClientData client_data, Tcl_Interp *irp, char *na
 		/* If someone unsets a variable, we'll just reset it. */
 		if (flags & TCL_TRACE_DESTROYED) my_link_var(NULL, linked_var);
 		else set_linked_var(linked_var, NULL);
+		return("read only variable");
 	}
 	return(NULL);
 }
@@ -421,7 +424,7 @@ static int tcl_to_c_var(Tcl_Interp *myinterp, Tcl_Obj *obj, script_var_t *var, i
 	var->len = -1;
 	var->value = NULL;
 
-	switch (type) {
+	switch (type & SCRIPT_TYPE_MASK) {
 		case SCRIPT_STRING: {
 			char *str;
 			int len;
