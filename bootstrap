@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# $Id: bootstrap,v 1.6 2001/10/14 14:09:35 ite Exp $
+# $Id: bootstrap,v 1.7 2001/10/14 14:33:48 ite Exp $
 #
 # Recommended development tools versions:
 #   autoconf 2.52
@@ -28,13 +28,13 @@ aclocal -I .
 libtoolize --force --copy --ltdl
 
 # Generate config.h.in from configure.in
-autoheader2.50
+autoheader
 
 # Generate Makefile.in from Makefile.am
 automake --add-missing --copy
 
 # Generate configure script
-autoconf2.50
+autoconf
 
 # Remove previous config.cache
 if [ -f config.cache ]; then
