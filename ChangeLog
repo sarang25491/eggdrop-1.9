@@ -1,3 +1,9 @@
+2001-10-14 13:50  Tothwolf <tothwolf@techmonkeys.org>
+
+	* src/mod/channels.mod/userchan.c:
+
+	* display global bans, exempts and invites even if not on a channel 
+
 2001-10-14 11:08  Tothwolf <tothwolf@techmonkeys.org>
 
 	* src/: chanprog.c, mod/channels.mod/userchan.c,
