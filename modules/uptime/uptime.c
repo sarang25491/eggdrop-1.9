@@ -1,5 +1,5 @@
 /* 
- * $Id: uptime.c,v 1.4 2001/12/02 12:36:38 ite Exp $
+ * $Id: uptime.c,v 1.5 2001/12/18 07:04:21 guppy Exp $
  *
  * This module reports uptime information about your bot to http://uptime.eggheads.org. The
  * purpose for this is to see how your bot rates against many others (including EnergyMechs 
@@ -79,7 +79,6 @@ char uptime_version[50]="";
 
 static void uptime_report(int idx, int details)
 {
-  Context;
 }
 	
 
@@ -182,7 +181,6 @@ void check_hourly() {
 
 static int uptime_set_send(struct userrec *u, int idx, char *par)
 {
-	Context;
 	dprintf(idx,"Nick %s Ontime %lu Version %s Result %d\n", botnetnick, online_since,
 	        uptime_version, send_uptime()); 
 	return 1;
@@ -230,7 +228,6 @@ char *start(Function * global_funcs)
 {
 	global = global_funcs;
 
-	Context;
 	if (!module_depend(MODULE_NAME, "eggdrop", 107, 0)) {
 		module_undepend(MODULE_NAME);
 		return _("This module requires eggdrop1.7.0 or later");

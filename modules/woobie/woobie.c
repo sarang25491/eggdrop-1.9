@@ -5,7 +5,7 @@
  * Originally written by ButchBub	  15 July     1997
  * Comments by Fabian Knittel		  29 December 1999
  *
- * $Id: woobie.c,v 1.1 2001/10/27 16:34:54 ite Exp $
+ * $Id: woobie.c,v 1.2 2001/12/18 07:04:21 guppy Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -43,13 +43,6 @@ static bind_table_t *BT_dcc;
 
 static int cmd_woobie(struct userrec *u, int idx, char *par)
 {
-  /* Define a context.
-   *
-   * If the bot crashes after the context, it will be  the last mentioned
-   * in the resulting DEBUG file. This helps you debugging.
-   */
-  Context;
-
   /* Log the command as soon as you're sure all parameters are valid. */
   putlog(LOG_CMDS, "*", "#%s# woobie", dcc[idx].nick);
 
@@ -65,7 +58,6 @@ static int cmd_woobie(struct userrec *u, int idx, char *par)
  */
 static void woobie_report(int idx, int details)
 {
-  Context;
 }
 
 /* Note: The tcl-name is automatically created if you set it to NULL. In
@@ -83,7 +75,6 @@ static cmd_t mydcc[] =
 
 static char *woobie_close()
 {
-  Context;
   if (BT_dcc) rem_builtins2(BT_dcc, mydcc);
   module_undepend(MODULE_NAME);
   return NULL;
@@ -115,7 +106,6 @@ char *woobie_start(Function *global_funcs)
    */
   global = global_funcs;
 
-  Context;
   /* Register the module. */
   module_register(MODULE_NAME, woobie_table, 2, 0);
   /*                                            ^--- minor module version

@@ -220,8 +220,6 @@ drastically reduce the size of modules on decent systems.
 
 void *nmalloc (int a);      - allocates a bytes
 void   nfree (void *a);     - frees a modmalloc'd block
-       context;             - actually a #define, records the current
-                            - possition in execution, for debugging
 void   dprintf (int idx,char *format, ... ) - just like normal printf,
                             outputs to a dcc/socket/server,
                             idx is a normal dcc idx OR if < 0 is a sock #

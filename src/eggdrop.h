@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.51 2001/11/25 14:45:09 ite Exp $
+ * $Id: eggdrop.h,v 1.52 2001/12/18 07:04:21 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -33,12 +33,6 @@
  * then you can safely define this.
  */
 #undef NO_OLD_BOTNET
-
-/*
- * Undefine this to completely disable context debugging.
- * WARNING: DO NOT send in bug reports if you undefine this!
- */
-#define DEBUG_CONTEXT
 
 /*
  * HANDLEN note:
@@ -181,14 +175,6 @@ do {									\
   } else								\
     free_null(target);							\
 } while (0)
-
-#ifdef DEBUG_CONTEXT
-#  define Context		eggContext(__FILE__, __LINE__, NULL)
-#  define ContextNote(note)	eggContextNote(__FILE__, __LINE__, NULL, note)
-#else
-#  define Context		{}
-#  define ContextNote(note)	{}
-#endif
 
 /* 32 bit type
  */

@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.89 2001/12/10 03:22:29 guppy Exp $
+ * $Id: modules.c,v 1.90 2001/12/18 07:04:21 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -140,11 +140,7 @@ Function global_table[] =
   /* 0 - 3 */
   (Function) 0,
   (Function) 0,
-#ifdef DEBUG_CONTEXT
-  (Function) eggContext,
-#else
   (Function) 0,
-#endif
   (Function) module_rename,
   /* 4 - 7 */
   (Function) module_register,
@@ -432,11 +428,7 @@ Function global_table[] =
   (Function) 0,
   (Function) xtra_set,
   /* 232 - 235 */
-#ifdef DEBUG_CONTEXT
-  (Function) eggContextNote,
-#else
   (Function) 0,
-#endif
   (Function) 0,
   (Function) allocsock,
   (Function) call_hostbyip,

@@ -3,9 +3,8 @@
  *   core event handling
  *   signal handling
  *   command line arguments
- *   context and assert debugging
  *
- * $Id: main.c,v 1.100 2001/12/09 03:55:57 stdarg Exp $
+ * $Id: main.c,v 1.101 2001/12/18 07:04:21 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -146,15 +145,6 @@ unsigned long	itraffic_trans_today = 0;
 unsigned long	itraffic_unknown = 0;
 unsigned long	itraffic_unknown_today = 0;
 
-#ifdef DEBUG_CONTEXT
-/* Context storage for fatal crashes */
-char	cx_file[16][30];
-char	cx_note[16][256];
-int	cx_line[16];
-int	cx_ptr = 0;
-#endif
-
-
 void fatal(const char *s, int recoverable)
 {
   int i;
@@ -189,107 +179,8 @@ static void check_expired_dcc()
     }
 }
 
-#ifdef DEBUG_CONTEXT
-static int	nested_debug = 0;
-
-void write_debug()
-{
-  int x;
-  char s[25];
-  int y;
-
-  if (nested_debug) {
-    /* Yoicks, if we have this there's serious trouble!
-     * All of these are pretty reliable, so we'll try these.
-     *
-     * NOTE: dont try and display context-notes in here, it's
-     *       _not_ safe <cybah>
-     */
-    x = creat("DEBUG.DEBUG", 0644);
-    setsock(x, SOCK_NONSOCK);
-    if (x >= 0) {
-      strncpyz(s, ctime(&now), sizeof s);
-      dprintf(-x, "Debug (%s) written %s\n", ver, s);
-      dprintf(-x, "Please report problem to bugs@eggheads.org\n");
-      dprintf(-x, "after a visit to http://www.eggheads.org/bugzilla/\n");
-      dprintf(-x, "Full Patch List: %s\n", egg_xtra);
-      dprintf(-x, "Context: ");
-      cx_ptr = cx_ptr & 15;
-      for (y = ((cx_ptr + 1) & 15); y != cx_ptr; y = ((y + 1) & 15))
-	dprintf(-x, "%s/%d,\n         ", cx_file[y], cx_line[y]);
-      dprintf(-x, "%s/%d\n\n", cx_file[y], cx_line[y]);
-      killsock(x);
-      close(x);
-    }
-    bg_send_quit(BG_ABORT);
-    exit(1);			/* Dont even try & tell people about, that may
-				   have caused the fault last time. */
-  } else
-    nested_debug = 1;
-  putlog(LOG_MISC, "*", "* Last context: %s/%d [%s]", cx_file[cx_ptr],
-	 cx_line[cx_ptr], cx_note[cx_ptr][0] ? cx_note[cx_ptr] : "");
-  putlog(LOG_MISC, "*", "* Please REPORT this BUG!");
-  putlog(LOG_MISC, "*", "* Check doc/BUG-REPORT on how to do so.");
-  x = creat("DEBUG", 0644);
-  setsock(x, SOCK_NONSOCK);
-  if (x < 0) {
-    putlog(LOG_MISC, "*", "* Failed to write DEBUG");
-  } else {
-    strncpyz(s, ctime(&now), sizeof s);
-    dprintf(-x, "Debug (%s) written %s\n", ver, s);
-    dprintf(-x, "Full Patch List: %s\n", egg_xtra);
-#ifdef STATIC
-    dprintf(-x, "STATICALLY LINKED\n");
-#endif
-
-    /* info library */
-    dprintf(-x, "TCL library: %s\n",
-	    ((interp) && (Tcl_Eval(interp, "info library") == TCL_OK)) ?
-	    interp->result : "*unknown*");
-
-    /* info tclversion/patchlevel */
-    dprintf(-x, "TCL version: %s (header version %s)\n",
-	    ((interp) && (Tcl_Eval(interp, "info patchlevel") == TCL_OK)) ?
-	    interp->result : (Tcl_Eval(interp, "info tclversion") == TCL_OK) ?
-	    interp->result : "*unknown*", TCL_PATCH_LEVEL ? TCL_PATCH_LEVEL :
-	    "*unknown*");
-
-#if HAVE_TCL_THREADS
-    dprintf(-x, "TCL is threaded\n");
-#endif
-
-#ifdef CCFLAGS
-    dprintf(-x, "Compile flags: %s\n", CCFLAGS);
-#endif
-#ifdef LDFLAGS
-    dprintf(-x, "Link flags: %s\n", LDFLAGS);
-#endif
-#ifdef STRIPFLAGS
-    dprintf(-x, "Strip flags: %s\n", STRIPFLAGS);
-#endif
-
-    dprintf(-x, "Context: ");
-    cx_ptr = cx_ptr & 15;
-    for (y = ((cx_ptr + 1) & 15); y != cx_ptr; y = ((y + 1) & 15))
-      dprintf(-x, "%s/%d, [%s]\n         ", cx_file[y], cx_line[y],
-	      (cx_note[y][0]) ? cx_note[y] : "");
-    dprintf(-x, "%s/%d [%s]\n\n", cx_file[cx_ptr], cx_line[cx_ptr],
-	    (cx_note[cx_ptr][0]) ? cx_note[cx_ptr] : "");
-    tell_dcc(-x);
-    dprintf(-x, "\n");
-    tell_netdebug(-x);
-    killsock(x);
-    close(x);
-    putlog(LOG_MISC, "*", "* Wrote DEBUG");
-  }
-}
-#endif
-
 static void got_bus(int z)
 {
-#ifdef DEBUG_CONTEXT
-  write_debug();
-#endif
   fatal("BUS ERROR -- CRASHING!", 1);
 #ifdef SA_RESETHAND
   kill(getpid(), SIGBUS);
@@ -301,9 +192,6 @@ static void got_bus(int z)
 
 static void got_segv(int z)
 {
-#ifdef DEBUG_CONTEXT
-  write_debug();
-#endif
   fatal("SEGMENT VIOLATION -- CRASHING!", 1);
 #ifdef SA_RESETHAND
   kill(getpid(), SIGSEGV);
@@ -315,9 +203,6 @@ static void got_segv(int z)
 
 static void got_fpe(int z)
 {
-#ifdef DEBUG_CONTEXT
-  write_debug();
-#endif
   fatal("FLOATING POINT ERROR -- CRASHING!", 0);
 }
 
@@ -360,52 +245,12 @@ static void got_alarm(int z)
   /* -Never reached- */
 }
 
-/* Got ILL signal -- log context and continue
+/* Got ILL signal
  */
 static void got_ill(int z)
 {
   check_bind_event("sigill");
-#ifdef DEBUG_CONTEXT
-  putlog(LOG_MISC, "*", "* Context: %s/%d [%s]", cx_file[cx_ptr],
-	 cx_line[cx_ptr], (cx_note[cx_ptr][0]) ? cx_note[cx_ptr] : "");
-#endif
 }
-
-#ifdef DEBUG_CONTEXT
-/* Context */
-void eggContext(const char *file, int line, const char *module)
-{
-  char x[31], *p;
-
-  p = strrchr(file, '/');
-  if (!module) {
-    strncpyz(x, p ? p + 1 : file, sizeof x);
-  } else
-    snprintf(x, 31, "%s:%s", module, p ? p + 1 : file);
-  cx_ptr = ((cx_ptr + 1) & 15);
-  strcpy(cx_file[cx_ptr], x);
-  cx_line[cx_ptr] = line;
-  cx_note[cx_ptr][0] = 0;
-}
-
-/* Called from the ContextNote macro.
- */
-void eggContextNote(const char *file, int line, const char *module,
-		    const char *note)
-{
-  char x[31], *p;
-
-  p = strrchr(file, '/');
-  if (!module) {
-    strncpyz(x, p ? p + 1 : file, sizeof x);
-  } else
-    snprintf(x, 31, "%s:%s", module, p ? p + 1 : file);
-  cx_ptr = ((cx_ptr + 1) & 15);
-  strcpy(cx_file[cx_ptr], x);
-  cx_line[cx_ptr] = line;
-  strncpyz(cx_note[cx_ptr], note, sizeof cx_note[cx_ptr]);
-}
-#endif
 
 static void do_arg(char *s)
 {
@@ -473,8 +318,6 @@ static time_t		then;
 static struct tm	nowtm;
 
 /* Called once a second.
- *
- * Note:  Try to not put any Context lines in here (guppy 21Mar2000).
  */
 static void core_secondly()
 {
@@ -642,10 +485,6 @@ int main(int argc, char **argv)
     setrlimit(RLIMIT_CORE, &cdlim);
   }
 #endif
-
-  /* Initialise context list */
-  for (i = 0; i < 16; i++)
-    Context;
 
 #ifdef ENABLE_NLS
   setlocale(LC_MESSAGES, "");

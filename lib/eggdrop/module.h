@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.6 2001/12/18 06:30:54 guppy Exp $
+ * $Id: module.h,v 1.7 2001/12/18 07:04:21 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -49,8 +49,6 @@
 
 /* #undef feof */
 #undef dprintf
-#undef Context
-#undef ContextNote
 
 #if defined (__CYGWIN__) && !defined(STATIC)
 #  define EXPORT_SCOPE	__declspec(dllexport)
@@ -63,11 +61,6 @@
 /* 0 - 3 */
 /* 0: nmalloc -- UNUSED (Tothwolf) */
 /* 1: nfree -- UNUSED (Tothwolf) */
-#ifdef DEBUG_CONTEXT
-#  define Context (global[2](__FILE__, __LINE__, MODULE_NAME))
-#else
-#  define Context {}
-#endif
 #define module_rename ((int (*)(char *, char *))global[3])
 /* 4 - 7 */
 #define module_register ((int (*)(char *, Function *, int, int))global[4])
@@ -355,11 +348,7 @@
 /* 230: nrealloc -- UNUSED (Tothwolf) */
 #define xtra_set ((int(*)(struct userrec *,struct user_entry *, void *))global[231])
 /* 232 - 235 */
-#ifdef DEBUG_CONTEXT
-#  define ContextNote(note) (global[232](__FILE__, __LINE__, MODULE_NAME, note))
-#else
-#  define ContextNote(note)	do {	} while (0)
-#endif
+/* #define ContextNote(note) (global[232](__FILE__, __LINE__, MODULE_NAME, note)) */
 /* 233: Assert -- UNUSED (Tothwolf) */
 #define allocsock ((int(*)(int sock,int options))global[234])
 #define call_hostbyip ((void(*)(char *, char *, int))global[235])

@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.49 2001/10/28 13:30:33 ite Exp $
+ * $Id: net.c,v 1.50 2001/12/18 07:04:21 guppy Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -1124,8 +1124,6 @@ int sockgets(char *s, int *len)
 }
 
 /* Dump something to a socket
- * 
- * NOTE: Do NOT put Contexts in here if you want DEBUG to be meaningful!!
  */
 void tputs(register int z, char *s, unsigned int len)
 {
