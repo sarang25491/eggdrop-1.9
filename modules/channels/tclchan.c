@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: tclchan.c,v 1.24 2003/01/30 01:04:36 wcc Exp $";
+static const char rcsid[] = "$Id: tclchan.c,v 1.25 2003/01/30 01:15:49 wcc Exp $";
 #endif
 */
 
@@ -505,11 +505,11 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
 	chan->aop_max = chan->aop_min;
       }
     } else {
-      if (!strncmp(item[i] + 1, "udef-flag-", 10))
+      if (!strncmp(item[i] + 1, "udef_flag_", 10))
         initudef(UDEF_FLAG, item[i] + 11, 0);
-      else if (!strncmp(item[i], "udef-int-", 9))
+      else if (!strncmp(item[i], "udef_int_", 9))
         initudef(UDEF_INT, item[i] + 9, 0);
-	else if (!strncmp(item[i], "udef-str-", 9))
+	else if (!strncmp(item[i], "udef_str_", 9))
 		initudef(UDEF_STR, item[i] + 9, 0);
 check_for_udef_flags:
       found = 0;
@@ -518,7 +518,7 @@ check_for_udef_flags:
 	     /* Direct match when set during .chanset ... */
 	    (!strcasecmp(item[i] + 1, ul->name) ||
 	     /* ... or with prefix when set during chanfile load. */
-	     (!strncmp(item[i] + 1, "udef-flag-", 10) &&
+	     (!strncmp(item[i] + 1, "udef_flag_", 10) &&
 	      !strcasecmp(item[i] + 11, ul->name)))) {
           if (item[i][0] == '+')
             setudef(ul, chan->dname, 1);
@@ -530,7 +530,7 @@ check_for_udef_flags:
 		    /* Direct match when set during .chanset ... */
 		   (!strcasecmp(item[i], ul->name) ||
 		    /* ... or with prefix when set during chanfile load. */
-		    (!strncmp(item[i], "udef-int-", 9) &&
+		    (!strncmp(item[i], "udef_int_", 9) &&
 		     !strcasecmp(item[i] + 9, ul->name)))) {
           i++;
           if (i >= items) {
@@ -542,7 +542,7 @@ check_for_udef_flags:
           found = 1;
 	  break;
         }
-	else if (ul->type == UDEF_STR && (!strcasecmp(item[i], ul->name) || (!strncmp(item[i], "udef-str-", 9) && !strcasecmp(item[i] + 9, ul->name)))) {
+	else if (ul->type == UDEF_STR && (!strcasecmp(item[i], ul->name) || (!strncmp(item[i], "udef_str_", 9) && !strcasecmp(item[i] + 9, ul->name)))) {
 		char *val;
 		i++;
 		if (i >= items) {

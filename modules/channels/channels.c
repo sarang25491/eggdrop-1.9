@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.22 2003/01/30 01:04:36 wcc Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.23 2003/01/30 01:15:49 wcc Exp $";
 #endif
 
 #define MODULE_NAME "channels"
@@ -435,15 +435,15 @@ ban_time %d exempt_time %d invite_time %d \
       if (ul->defined && ul->name) {
 	if (ul->type == UDEF_FLAG)
 	  fprintf(f, "%c%s%s ", getudef(ul->values, chan->dname) ? '+' : '-',
-		  "udef-flag-", ul->name);
+		  "udef_flag_", ul->name);
 	else if (ul->type == UDEF_INT)
-	  fprintf(f, "%s%s %d ", "udef-int-", ul->name, getudef(ul->values,
+	  fprintf(f, "%s%s %d ", "udef_int_", ul->name, getudef(ul->values,
 		  chan->dname));
 	else if (ul->type == UDEF_STR) {
 		char *p;
 		p = (char *)getudef(ul->values, chan->dname);
 		if (!p) strcpy(s, "{}");
-		fprintf(f, "udef-str-%s %s ", ul->name, p);
+		fprintf(f, "udef_str_%s %s ", ul->name, p);
 	}
 	else
 	  debug1("UDEF-ERROR: unknown type %d", ul->type);
