@@ -1,7 +1,7 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.8 2002/02/14 01:36:10 ite Exp $
+dnl $Id: acinclude.m4,v 1.9 2002/02/17 18:34:13 ite Exp $
 dnl
 
 
@@ -30,6 +30,7 @@ Configuration:
   Host System Type:           ${host}
   Install path:               ${prefix}
   Compress module:            ${egg_compress}
+  Tcl module:                 ${egg_tclscript}
   Perl module:                ${egg_perlscript}
 
 See config.h for further configuration information.
@@ -1276,7 +1277,7 @@ fi
 AM_CONDITIONAL(EGG_COMPRESS, test "$egg_compress" = "yes")
 ])
 
-# FIXME: is it worth to make this macro more anal? 
+# FIXME: is it worth to make this macro more anal? Yes it is!
 dnl  EGG_PERLSCRIPT_MODULE
 dnl
 AC_DEFUN(EGG_PERLSCRIPT_MODULE, [dnl
@@ -1303,3 +1304,26 @@ fi
 AM_CONDITIONAL(EGG_PERLSCRIPT, test "$egg_perlscript" = "yes")
 ])
 
+dnl  EGG_TCLSCRIPT_MODULE
+dnl
+AC_DEFUN(EGG_TCLSCRIPT_MODULE, [dnl
+
+egg_tclscript=no
+
+# Is this version of Tcl too old for tclscript to use ?
+TCL_VER_PRE80=`echo $egg_cv_var_tcl_version | $AWK '{split([$]1, i, "."); if (i[[1]] < 8) print "yes"; else print "no"}'`
+if test "$TCL_VER_PRE80" = "yes"
+then
+  AC_MSG_WARN([
+
+  Your system does not provide tcl 8.0 or later. The
+  tclscript module will therefore be disabled.
+
+])
+else
+  egg_tclscript=yes
+fi
+
+AM_CONDITIONAL(EGG_TCLSCRIPT, test "$egg_tclscript" = "yes")
+])
+		

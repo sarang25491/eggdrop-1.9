@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.19 2002/01/19 20:08:57 ite Exp $
+# $Id: Makefile.am,v 1.20 2002/02/17 18:34:14 ite Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 bindir			= $(exec_prefix)
@@ -84,6 +84,11 @@ if EGG_PERLSCRIPT
 else
   EGG_PRL =
 endif
+if EGG_TCLSCRIPT
+  EGG_TCL = -dlopen ../modules/tclscript/tclscript.la
+else
+  EGG_TCL =
+endif
 if EGG_COMPRESS
   EGG_CMP = -dlopen ../modules/compress/compress.la
 else
@@ -105,7 +110,7 @@ eggdrop_LDADD		= @LIBLTDL@ \
 			$(EGG_PRL) \
 			-dlopen ../modules/server/server.la \
 			-dlopen ../modules/share/share.la \
-			-dlopen ../modules/tclscript/tclscript.la \
+			$(EGG_TCL) \
 			-dlopen ../modules/transfer/transfer.la \
 			-dlopen ../modules/uptime/uptime.la \
 			-dlopen ../modules/woobie/woobie.la \
