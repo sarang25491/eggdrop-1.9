@@ -6,19 +6,6 @@
 	           modes can be enforced
 	%bidle-kick%b  kick idle users (non +f's anyway) on the channel after
 	           how many minutes (use 0, or dont-idle-kick to turn this off)
-%{+n}
-     ATTENTION: Due to security concerns, only permanent owners can set the
-                need-* modes.
-	%bneed-op%b           tcl command to execute when the bot doesn't have
-	                  ops
-	%bneed-invite%b  tcl command to execute when the bot needs to be
-	             invited to the channel (ie channel has mode +i)
-	%bneed-key%b     tcl command to execute when the bot needs to find 
-	             out the key to the channel
-	%bneed-unban%b   tcl command to execute when the bot is banned and
-                     can't get on the channel
-	%bneed-limit%b        tcl command to execute when the bot can't
-	                  join the channel because the channel is full
 %{+m|m}
 	%bstopnethack-mode%b    de-op anyone who enters the channel with server
                        ops

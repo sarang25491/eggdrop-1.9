@@ -101,46 +101,6 @@ channel add #channel { SETTINGS }
      3 for deop, chattr +d #chan, kick and ban.
     Valid settings are 0-3
 
-    need-op { putserv "PRIVMSG #lamest :op me cos i'm lame!" }
-     This setting will make the bot do the specified thing in the
-     brackets if it becomes opless.
-     Attention, you put anything that is longer than 120 chars in
-     here!
-     Note that if you use scripts like get-ops, you don't need to
-     set this setting.
-
-    need-invite { putserv "PRIVMSG #lamest :let me in!" }
-     This setting will make the bot do the specified thing in the
-     brackets if it needs an invitation to the channel.
-     Attention, you put anything that is longer than 120 chars in
-     here!
-     Note that if you use scripts like get-ops, you don't need to
-     set this setting.
-
-    need-key { putserv "PRIVMSG #lamest :let me in!" }
-     This setting will make the bot do the specified thing in the
-     brackets if it needs a key to a channel.
-     Attention, you put anything that is longer than 120 chars in
-     here!
-     Note that if you use scripts like get-ops, you don't need to
-     set this setting.
-
-    need-unban { putserv "PRIVMSG #lamest :let me in!" }
-     This setting will make the bot do the specified thing in the
-     brackets if it becomes banned.
-     Attention, you put anything that is longer than 120 chars in
-     here!
-     Note that if you use scripts like get-ops, you don't need to
-     set this setting.
-
-    need-limit { putserv "PRIVMSG #lamest :let me in!" }
-     This setting will make the bot do the specified thing in the
-     brackets if it needs a limit raise.
-     Attention, you put anything that is longer than 120 chars in
-     here!
-     Note that if you use scripts like get-ops, you don't need to
-     set this setting.
-
     flood-chan 10:60
      Set here how many channel messages in how many seconds from one
      host are recognized as a flood. Not specifying or using number = 0

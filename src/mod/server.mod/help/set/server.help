@@ -15,11 +15,6 @@ see also: set nick, set botnet-nick
    long.
    
 see also: set username
-%{help=set init-server}%{+n}
-###  %bset init-server%b <raw-irc-text>
-   specifies text to send to the server when first connecting
-   there.  this is usually used to set the bot's mode to +i
-   or something equally unimportant.
 %{help=set botnick}%{+n}
 ###  %bset botnick%b
    this read-only variable returns the bots current nickname on irc.
@@ -36,10 +31,6 @@ see also: set username
    specifies how long to wait when connecting to a server.  if the
    server doesn't connect after this many seconds, the bot will just
    hang up and move on to the next server.
-%{help=set lowercase-ctcp}%{+n}
-###  %bset lowercase-ctcp%b 0/1
-   Some IRC clients accept lowercase as well as uppercase CTCP's,
-   changing this setting to 1 enables this.
 %{help=set server-online}%{+n}
 ###  %bset server-online%b
    This read-only variables returns the unix-time that the bot
@@ -183,9 +174,9 @@ see also: default-port
      %bserver-online%b        %bservlimit%b      %bnick%b
      %bnever-give-up%b        %bflood-ctcp%b     %bserver%b
      %bmax-queue-msg%b        %bstrict-host%b    %bbotnick%b
-     %bserver-timeout%b       %binit-server%b    %bservers%b
-     %blowercase-ctcp%b       %bnet-type%b       %bbotname%b
+     %bserver-timeout%b       %bservers%b        %bkeep-nick%b
+     %bnet-type%b             %bbotname%b        %bquiet-reject%b
      %bserverror-quit%b       %banswer-ctcp%b    %baltnick%b
      %btrigger-on-ignore%b    %bdefault-port%b   %brealname%b
      %bserver-cycle-wait%b    %bcheck-stoned%b   %bflood-msg%b
-     %bstrict-servernames%b   %bquiet-reject%b   %bkeep-nick
+     %bstrict-servernames%b

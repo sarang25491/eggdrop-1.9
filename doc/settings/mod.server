@@ -40,10 +40,6 @@ set realname "/msg LamestBot hello"
     Set here what to display in the real-name field for the bot
 
 
-set init-server { putserv "MODE $botnick +i-ws" }
-    Set here a script to run (if any) when first connecting to a server
-
-
 set servers { IRCSERVER1:PORT IRSERVER2:PORT ... }
     Set here the list of irc servers you want your bot to connect to. You can
     add an optional port for the server.
@@ -165,13 +161,6 @@ set flood-ctcp 3:60
 
 set answer-ctcp 3
     Set how many ctcps should be answered at once
-
-
-set lowercase-ctcp 0
-    If you want your bot to answer lower case ctcp request (non rfc
-    compliant) set this setting to 1.
-    Please note: mIRAC will do this, most other clients will not
-    Valid settings are 0 for OFF and 1 ON.
 
 
 set trigger-on-ignore 0

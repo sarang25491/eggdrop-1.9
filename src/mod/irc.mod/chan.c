@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.68 2001/08/10 23:51:21 ite Exp $
+ * $Id: chan.c,v 1.69 2001/08/13 03:05:53 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -915,11 +915,8 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
     m->flags &= ~CHANVOICE;
   if (!(m->flags & (CHANVOICE | CHANOP)))
     m->flags |= STOPWHO;
-  if (match_my_nick(nick) && any_ops(chan) && !me_op(chan)) {
+  if (match_my_nick(nick) && any_ops(chan) && !me_op(chan))
     check_tcl_need(chan->dname, "op");
-    if (chan->need_op[0])
-      do_tcl("need-op", chan->need_op);
-  }
   m->user = get_user_by_host(userhost);
   return 0;
 }
@@ -1229,8 +1226,6 @@ static int got471(char *from, char *msg)
   if (chan) {
     putlog(LOG_JOIN, chan->dname, _("Channel full--cant join: %s"), chan->dname);
     check_tcl_need(chan->dname, "limit");
-    if (chan->need_limit[0])
-      do_tcl("need-limit", chan->need_limit);
   } else
     putlog(LOG_JOIN, chname, _("Channel full--cant join: %s"), chname);
   return 0;
@@ -1259,8 +1254,6 @@ static int got473(char *from, char *msg)
   if (chan) {
     putlog(LOG_JOIN, chan->dname, _("Channel invite only--cant join: %s"), chan->dname);
     check_tcl_need(chan->dname, "invite");
-    if (chan->need_invite[0])
-      do_tcl("need-invite", chan->need_invite);
   } else
     putlog(LOG_JOIN, chname, _("Channel invite only--cant join: %s"), chname);
   return 0;
@@ -1289,8 +1282,6 @@ static int got474(char *from, char *msg)
   if (chan) {
     putlog(LOG_JOIN, chan->dname, _("Banned from channel--can't join: %s"), chan->dname);
     check_tcl_need(chan->dname, "unban");
-    if (chan->need_unban[0])
-      do_tcl("need-unban", chan->need_unban);
   } else
     putlog(LOG_JOIN, chname, _("Banned from channel--can't join: %s"), chname);
   return 0;
@@ -1323,11 +1314,8 @@ static int got475(char *from, char *msg)
       chan->channel.key = (char *) channel_malloc(1);
       chan->channel.key[0] = 0;
       dprintf(DP_MODE, "JOIN %s %s\n", chan->dname, chan->key_prot);
-    } else {
+    } else
       check_tcl_need(chan->dname, "key");
-      if (chan->need_key[0])
-	do_tcl("need-key", chan->need_key);
-    }
   } else
     putlog(LOG_JOIN, chname, _("Bad key--cant join: %s"), chname);
   return 0;

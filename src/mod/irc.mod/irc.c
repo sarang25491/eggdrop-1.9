@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.57 2001/08/10 23:51:21 ite Exp $
+ * $Id: irc.c,v 1.58 2001/08/13 03:05:53 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -537,8 +537,6 @@ static void check_lonely_channel(struct chanset_t *chan)
   } else if (any_ops(chan)) {
     whined = 0;
     check_tcl_need(chan->dname, "op");
-    if (chan->need_op[0])
-      do_tcl("need-op", chan->need_op);
   } else {
     /* Other people here, but none are ops. If there are other bots make
      * them LEAVE!
@@ -570,8 +568,6 @@ static void check_lonely_channel(struct chanset_t *chan)
     } else {
       /* Some humans on channel, but still op-less */
       check_tcl_need(chan->dname, "op");
-      if (chan->need_op[0])
-	do_tcl("need-op", chan->need_op);
     }
   }
 }

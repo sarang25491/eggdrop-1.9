@@ -3,7 +3,7 @@
  *   stuff common to chan.c and mode.c
  *   users.h needs to be loaded too
  *
- * $Id: chan.h,v 1.21 2001/04/12 02:39:43 guppy Exp $
+ * $Id: chan.h,v 1.22 2001/08/13 03:05:52 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -128,11 +128,6 @@ struct chanset_t {
 				   like !eggdev				*/
   char name[81];                /* what the servers know the channel
 				   as, like !ABCDEeggdev		*/
-  char need_op[121];
-  char need_key[121];
-  char need_limit[121];
-  char need_unban[121];
-  char need_invite[121];
   int flood_pub_thr;
   int flood_pub_time;
   int flood_join_thr;

@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.48 2001/06/30 06:34:44 guppy Exp $
+ * $Id: tclchan.c,v 1.49 2001/08/13 03:05:53 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -735,11 +735,6 @@ static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
   Tcl_AppendElement(irp, s);
   simple_sprintf(s, "%d", chan->revenge_mode);
   Tcl_AppendElement(irp, s);
-  Tcl_AppendElement(irp, chan->need_op);
-  Tcl_AppendElement(irp, chan->need_invite);
-  Tcl_AppendElement(irp, chan->need_key);
-  Tcl_AppendElement(irp, chan->need_unban);
-  Tcl_AppendElement(irp, chan->need_limit);
   simple_sprintf(s, "%d:%d", chan->flood_pub_thr, chan->flood_pub_time);
   Tcl_AppendElement(irp, s);
   simple_sprintf(s, "%d:%d", chan->flood_ctcp_thr, chan->flood_ctcp_time);
@@ -921,52 +916,7 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
   module_entry *me;
 
   for (i = 0; i < items; i++) {
-    if (!strcmp(item[i], "need-op")) {
-      i++;
-      if (i >= items) {
-	if (irp)
-	  Tcl_AppendResult(irp, "channel need-op needs argument", NULL);
-	return TCL_ERROR;
-      }
-      strncpy(chan->need_op, item[i], 120);
-      chan->need_op[120] = 0;
-    } else if (!strcmp(item[i], "need-invite")) {
-      i++;
-      if (i >= items) {
-	if (irp)
-	  Tcl_AppendResult(irp, "channel need-invite needs argument", NULL);
-	return TCL_ERROR;
-      }
-      strncpy(chan->need_invite, item[i], 120);
-      chan->need_invite[120] = 0;
-    } else if (!strcmp(item[i], "need-key")) {
-      i++;
-      if (i >= items) {
-	if (irp)
-	  Tcl_AppendResult(irp, "channel need-key needs argument", NULL);
-	return TCL_ERROR;
-      }
-      strncpy(chan->need_key, item[i], 120);
-      chan->need_key[120] = 0;
-    } else if (!strcmp(item[i], "need-limit")) {
-      i++;
-      if (i >= items) {
-	if (irp)
-	  Tcl_AppendResult(irp, "channel need-limit needs argument", NULL);
-	return TCL_ERROR;
-      }
-      strncpy(chan->need_limit, item[i], 120);
-      chan->need_limit[120] = 0;
-    } else if (!strcmp(item[i], "need-unban")) {
-      i++;
-      if (i >= items) {
-	if (irp)
-	  Tcl_AppendResult(irp, "channel need-unban needs argument", NULL);
-	return TCL_ERROR;
-      }
-      strncpy(chan->need_unban, item[i], 120);
-      chan->need_unban[120] = 0;
-    } else if (!strcmp(item[i], "chanmode")) {
+    if (!strcmp(item[i], "chanmode")) {
       i++;
       if (i >= items) {
 	if (irp)

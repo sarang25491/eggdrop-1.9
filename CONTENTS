@@ -30,9 +30,6 @@ doc/
 eggdrop.simple.conf
    a simple configuration file for your bot
 
-eggdrop.advanced.conf
-   an advanced configuration file for your bot
-
 eggdrop.complete.conf
    a configuration file including all options for your bot
 

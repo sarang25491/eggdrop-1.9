@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.57 2001/08/10 23:51:20 ite Exp $
+ * $Id: channels.c,v 1.58 2001/08/13 03:05:53 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -360,13 +360,11 @@ static char *convert_element(char *src, char *dst)
  * Note:
  *  - We write chanmode "" too, so that the bot won't use default-chanmode
  *    instead of ""
- *  - We will write empty need-xxxx too, why not? (less code + lazyness)
  */
 static void write_channels()
 {
   FILE *f;
   char s[121], w[1024], w2[1024], name[163];
-  char need1[242], need2[242], need3[242], need4[242], need5[242];
   struct chanset_t *chan;
   struct udef_struct *ul;
 
@@ -387,15 +385,8 @@ static void write_channels()
     convert_element(chan->dname, name);
     get_mode_protect(chan, w);
     convert_element(w, w2);
-    convert_element(chan->need_op, need1);
-    convert_element(chan->need_invite, need2);
-    convert_element(chan->need_key, need3);
-    convert_element(chan->need_unban, need4);
-    convert_element(chan->need_limit, need5);
     fprintf(f, "channel %s %s%schanmode %s idle-kick %d stopnethack-mode %d \
-revenge-mode %d \
-need-op %s need-invite %s need-key %s need-unban %s need-limit %s \
-flood-chan %d:%d flood-ctcp %d:%d flood-join %d:%d \
+revenge-mode %d flood-chan %d:%d flood-ctcp %d:%d flood-join %d:%d \
 flood-kick %d:%d flood-deop %d:%d flood-nick %d:%d aop-delay %d:%d \
 %cenforcebans %cdynamicbans %cuserbans %cautoop %cbitch \
 %cgreet %cprotectops %cprotectfriends %cdontkickops \
@@ -409,7 +400,6 @@ flood-kick %d:%d flood-deop %d:%d flood-nick %d:%d aop-delay %d:%d \
 	chan->idle_kick, /* idle-kick 0 is same as dont-idle-kick (less code)*/
 	chan->stopnethack_mode,
         chan->revenge_mode,
-	need1, need2, need3, need4, need5,
 	chan->flood_pub_thr, chan->flood_pub_time,
         chan->flood_ctcp_thr, chan->flood_ctcp_time,
         chan->flood_join_thr, chan->flood_join_time,
@@ -638,18 +628,6 @@ static void channels_report(int idx, int details)
 	if (channel_nodesynch(chan))
 	  i += my_strcpy(s + i, "nodesynch ");
 	dprintf(idx, "      Options: %s\n", s);
-	if (chan->need_op[0])
-	  dprintf(idx, "      To get ops I do: %s\n", chan->need_op);
-	if (chan->need_invite[0])
-	  dprintf(idx, "      To get invited I do: %s\n", chan->need_invite);
-	if (chan->need_limit[0])
-	  dprintf(idx, "      To get the channel limit up'd I do: %s\n",
-		  chan->need_limit);
-	if (chan->need_unban[0])
-	  dprintf(idx, "      To get unbanned I do: %s\n", chan->need_unban);
-	if (chan->need_key[0])
-	  dprintf(idx, "      To get the channel key I do: %s\n",
-		  chan->need_key);
 	if (chan->idle_kick)
 	  dprintf(idx, "      Kicking idle users after %d min\n",
 		  chan->idle_kick);

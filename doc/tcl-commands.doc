@@ -138,10 +138,10 @@ specific commands, see later.
                   will set a users laston time in a channel record
                   (if it already exists)
 
-|  chhandle <old-handle> <new-handle>
-|    changes a user's handle
-|    returns: "1" on success; "0" if the handle is already used, the handle
-|      is invalid, or the user can't be found
+   chhandle <old-handle> <new-handle>
+     changes a user's handle
+     returns: "1" on success; "0" if the handle is already used, the handle
+       is invalid, or the user can't be found
 
   chattr <handle> [changes [channel]]
     changes the attributes for a user record, if you include any -- changes
@@ -192,8 +192,8 @@ specific commands, see later.
     returns: "1" on success, "0" if the user does not exist or if there
       isn't such a channel
 
-| haschanrec <handle> <channel>
-|   returns: "1" if handle has a chanrec for that channel, "0" otherwise
+  haschanrec <handle> <channel>
+    returns: "1" if handle has a chanrec for that channel, "0" otherwise
 
   getchaninfo <handle> <channel>
     returns: info line for a specific channel (behaves just like 'getinfo')
@@ -410,9 +410,7 @@ specific commands, see later.
     returns: nothing
 
   backup
-    makes a simple backup of the userfile that's on disk
-|   if the channels module is loaded, this also makes a simple backup of
-|   the channel file.
+    makes a simple backup of the userfile and channel file that's on disk
     returns: nothing
 
   getting-users
@@ -435,8 +433,7 @@ specific commands, see later.
 
   channel info <name>
     returns: list of info about that channel record: enforced mode, idle
-      kick limit, need-op script, need-invite script, and then various
-      +/- options as seen in the config file
+      kick limit, and then various +/- options as seen in the config file
 
   channel remove <name>
     destroys a channel record for the bot and makes the bot no longer
@@ -454,24 +451,24 @@ specific commands, see later.
   channels
     returns: list of the channels the bot is monitoring (or trying to)
 
-| channame2dname <channel-name>
-| chandname2name <channel-dname>
-|   These two functions are important to correctly support !channels. The
-|   bot differentiates between channel description names (chan dnames) and
-|   real channel names (chan names). The chan dnames are what you would
-|   normally call the channel; "!channel". The chan names are what the
-|   IRC server uses to identify the channel, they consist of the chan dname
-|   prefixed with an ID; "!ABCDEchannel".
-|
-|   For bot functions like isop, isvoice, etc. you need to know the chan
-|   dnames. If you communicate with the server, you usually get the chan
-|   name though. That's what you need the channame2dname function for.
-|
-|   If you only have the chan dname and want to directly send raw server
-|   commands, you need the chan name. Use the chandname2name function for
-|   that case.
-|
-|   NOTE: For non-!channels, chan dname and chan name are the same.
+  channame2dname <channel-name>
+  chandname2name <channel-dname>
+    These two functions are important to correctly support !channels. The
+    bot differentiates between channel description names (chan dnames) and
+    real channel names (chan names). The chan dnames are what you would
+    normally call the channel; "!channel". The chan names are what the
+    IRC server uses to identify the channel, they consist of the chan dname
+    prefixed with an ID; "!ABCDEchannel".
+
+    For bot functions like isop, isvoice, etc. you need to know the chan
+    dnames. If you communicate with the server, you usually get the chan
+    name though. That's what you need the channame2dname function for.
+
+    If you only have the chan dname and want to directly send raw server
+    commands, you need the chan name. Use the chandname2name function for
+    that case.
+ 
+    NOTE: For non-!channels, chan dname and chan name are the same.
 
   isbotnick <nick>
     returns: "1" if the nick matches the botnick; "0" otherwise
@@ -822,10 +819,10 @@ specific commands, see later.
     removes a previously-made binding
     returns: name of the command that was removed
 
-| binds ?type/mask?
-|  returns: a list of tcl binds, each item in the list will be a sublist of
-|    five elements:
-|      {<type> <flags> <name> <hits> <proc>}
+  binds ?type/mask?
+   returns: a list of tcl binds, each item in the list will be a sublist of
+     five elements:
+       {<type> <flags> <name> <hits> <proc>}
 
   logfile [<modes> <channel> <filename>]
     creates a new logfile, which will log the modes given for the channel
@@ -946,9 +943,9 @@ specific commands, see later.
   md5 <string>
     returns: the 128 bit MD5 message-digest of the specified string.
 
-| callevent <event>
-|   Triggers the evnt bind manually for a certain event. For example:
-|     callevent rehash
+  callevent <event>
+    Triggers the evnt bind manually for a certain event. For example:
+      callevent rehash
 
 GLOBAL VARIABLES:
   (All config-file variables are global, too. But these variables
@@ -986,8 +983,8 @@ GLOBAL VARIABLES:
     The last command binding which triggered. This allows you to
     identify which command triggered a tcl routine.
 
-| isjuped
-|   value is 1 if bot's nick is juped(437) 0 otherwise.
+  isjuped
+    value is 1 if bot's nick is juped(437) 0 otherwise.
 
 COMMAND EXTENSION:
 
@@ -1060,20 +1057,20 @@ for the msg-command "stop", use 'unbind msg - stop msg_stop'.
 
   (7)  NOTC   (stackable)
        bind notc <flags> <mask> <proc>
-|      procname <nick> <user@host> <handle> <text> <dest>
+       procname <nick> <user@host> <handle> <text> <dest>
 
-|      destination will be a nickname (the bot's nickname, obviously) or
-|      a channel name; matches the entire line of text from a /notice with
+       destination will be a nickname (the bot's nickname, obviously) or
+       a channel name; matches the entire line of text from a /notice with
        the mask; it is considered a breach of protocol to respond to a
        /notice on IRC, so this is intended for internal use (logging, etc)
        only
 
-|      new Tcl procs should be declared as
-|      proc notcproc {nick uhost hand text {dest ""}} {
-|        global botnick; if {$dest == ""} {set dest $botnick}
-|        ...
-|      }
-|      for compatiblity
+       new Tcl procs should be declared as
+       proc notcproc {nick uhost hand text {dest ""}} {
+         global botnick; if {$dest == ""} {set dest $botnick}
+         ...
+       }
+       for compatiblity
 
   (8)  JOIN   (stackable)
        bind join <flags> <mask> <proc>
@@ -1085,15 +1082,15 @@ for the msg-command "stop", use 'unbind msg - stop msg_stop'.
 
   (9)  PART   (stackable)
        bind part <flags> <mask> <proc>
-|      procname <nick> <user@host> <handle> <channel> <msg>
+       procname <nick> <user@host> <handle> <channel> <msg>
 
        triggered by someone leaving the channel; as in JOIN, the <mask>
        is matched against "#channel nick!user@host" and can contain
        wildcards. if no part message is specified msg will be set to "".
 
-|      new Tcl procs should be declared as
-|      proc partproc {nick uhost hand chan {msg ""}} { ... }
-|      for compatiblity
+       new Tcl procs should be declared as
+       proc partproc {nick uhost hand chan {msg ""}} { ... }
+       for compatiblity
 
   (10) SIGN   (stackable)
        bind sign <flags> <mask> <proc>
@@ -1160,7 +1157,7 @@ for the msg-command "stop", use 'unbind msg - stop msg_stop'.
 
 
   (15) CTCP
-       bind ctcp <flags> <keyword> <proc>
+       bind ctcp <flags> <mask> <proc>
        proc-name <nick> <user@host> <handle> <dest> <keyword> <arg...>
 
        destination will be a nickname (the bot's nickname, obviously) or
@@ -1289,17 +1286,17 @@ for the msg-command "stop", use 'unbind msg - stop msg_stop'.
        is considered parsed; otherwise the bot will use the text returned
        from the proc and continue parsing that
 
-| (29) NEED   (stackable)
-|      bind need <flags> <mask> <proc>
-|      procname <channel> <type>
-|
-|      this bind is triggered on certain events, like when the bot needs
-|      operator status or the key for a channel; the types are: op, unban,
-|      invite, and key; the <mask> in the bind is matched against 
-|      "#channel type" and can contain wildcards; flags are ignored
-|
-|      example: bind need - "% op" needop < handles only need op
-|               bind need - "*" needall   < handles all needs
+  (29) NEED   (stackable)
+       bind need <flags> <mask> <proc>
+       procname <channel> <type>
+ 
+       this bind is triggered on certain events, like when the bot needs
+       operator status or the key for a channel; the types are: op, unban,
+       invite, and key; the <mask> in the bind is matched against 
+       "#channel type" and can contain wildcards; flags are ignored
+ 
+       example: bind need - "% op" needop < handles only need op
+                bind need - "*" needall   < handles all needs
 
   (30) FLUD   (stackable)
        bind flud <flags> <type> <proc>
@@ -1407,31 +1404,31 @@ for the msg-command "stop", use 'unbind msg - stop msg_stop'.
          save              (called when the userfile is saved)
          rehash            (called just after a rehash)
          prerehash         (called just before a rehash)
-|        prerestart        (called just before a restart)
+         prerestart        (called just before a restart)
          logfile           (called when the logs are switched daily)
-|        loaded            (called when the bot is done loading itself)
+         loaded            (called when the bot is done loading itself)
 
-|        connect-server    (called just before we connect to an irc server)
-|        init-server       (called when we actually get on our irc server)
-|        disconnect-server (called when we disconnect from our irc server)
+         connect-server    (called just before we connect to an irc server)
+         init-server       (called when we actually get on our irc server)
+         disconnect-server (called when we disconnect from our irc server)
 
-| (43) LOST   (stackable)
-|      bind lost <flags> <mask> <proc>
-|      proc-name <handle> <nick> <path> <bytes-transferred> <length-of-file>
-|
-|      Triggered when a DCC SEND transfer gets lost, such as when the
-|      connection is terminated before all data was successfully
-|      sent/received. This is typically caused by a user abort.
-|      (This is only avaliable when the 'transfer' module is loaded.)
+  (43) LOST   (stackable)
+       bind lost <flags> <mask> <proc>
+       proc-name <handle> <nick> <path> <bytes-transferred> <length-of-file>
+ 
+       Triggered when a DCC SEND transfer gets lost, such as when the
+       connection is terminated before all data was successfully
+       sent/received. This is typically caused by a user abort.
+       (This is only avaliable when the 'transfer' module is loaded.)
 
-| (44) TOUT   (stackable)
-|      bind tout <flags> <mask> <proc>
-|      proc-name <handle> <nick> <path> <bytes-transferred> <length-of-file>
-|
-|      Triggered when a DCC SEND transfer times out. This may either happen
-|      because the dcc connection was not accepted or because the data
-|      transfer stalled for some reason.
-|      (This is only avaliable when the 'transfer' module is loaded.)
+  (44) TOUT   (stackable)
+       bind tout <flags> <mask> <proc>
+       proc-name <handle> <nick> <path> <bytes-transferred> <length-of-file>
+ 
+       Triggered when a DCC SEND transfer times out. This may either happen
+       because the dcc connection was not accepted or because the data
+       transfer stalled for some reason.
+       (This is only avaliable when the 'transfer' module is loaded.)
 
 
 
@@ -1669,12 +1666,12 @@ users to read later
     returns: "0" on failure; "1" on success (either an immediate send
       or a queued send)
 
-| fileresend <idx> <filename> [ircnick]
-|   like filesend, only that it starts a DCC RESEND instead of a DCC SEND,
-|     which allows people to resume aborted file transfers if their client
-|     supports that protocol. ircII/BitchX/etc. support it, mIRC does not.
-|   returns: "0" on failure; "1" on success (either an immediate send
-|     or a queued send)
+  fileresend <idx> <filename> [ircnick]
+    like filesend, only that it starts a DCC RESEND instead of a DCC SEND,
+      which allows people to resume aborted file transfers if their client
+      supports that protocol. ircII/BitchX/etc. support it, mIRC does not.
+    returns: "0" on failure; "1" on success (either an immediate send
+      or a queued send)
 
   setdesc <dir> <file> <desc>
     sets the description for a file in a file system directory; the

@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.58 2001/08/10 23:51:21 ite Exp $
+ * $Id: servmsg.c,v 1.59 2001/08/13 03:05:53 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -177,8 +177,7 @@ static int check_tcl_ctcpr(char *nick, char *uhost, struct userrec *u,
   Tcl_SetVar(interp, "_ctcpr6", args, 0);
   x = check_tcl_bind(table, keyword, &fr,
 		     " $_ctcpr1 $_ctcpr2 $_ctcpr3 $_ctcpr4 $_ctcpr5 $_ctcpr6",
-		     (lowercase_ctcp ? MATCH_EXACT : MATCH_CASE)
-		     | BIND_USE_ATTR | BIND_STACKABLE |
+		      MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE |
 		     ((table == H_ctcp) ? BIND_WANTRET : 0));
   return (x == BIND_EXEC_LOG) || (table == H_ctcr);
 }
@@ -234,9 +233,6 @@ static int got001(char *from, char *msg)
   fixcolon(msg);
   strncpyz(botname, msg, NICKLEN);
   altnick_char = 0;
-  /* Call Tcl init-server */
-  if (initserver[0])
-    do_tcl("init-server", initserver);
   check_tcl_event("init-server");
   x = serverlist;
   if (x == NULL)
@@ -478,8 +474,7 @@ static int gotmsg(char *from, char *msg)
 	    if (!ignoring || trigger_on_ignore) {
 	      if (!check_tcl_ctcp(nick, uhost, u, to, code, ctcp) &&
 		  !ignoring) {
-		if ((lowercase_ctcp && !egg_strcasecmp(code, "DCC")) ||
-		    (!lowercase_ctcp && !strcmp(code, "DCC"))) {
+		if (!egg_strcasecmp(code, "DCC")) {
 		  /* If it gets this far unhandled, it means that
 		   * the user is totally unknown.
 		   */
@@ -1180,8 +1175,6 @@ static void connect_server(void)
       return;
     }
 
-    if (connectserver[0])	/* drummer */
-      do_tcl("connect-server", connectserver);
     check_tcl_event("connect-server");
     next_server(&curserv, botserver, &botserverport, pass);
     putlog(LOG_SERV, "*", "%s %s %d", _("Trying server"), botserver, botserverport);

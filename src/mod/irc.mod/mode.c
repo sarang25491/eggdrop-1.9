@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.48 2001/08/10 23:51:21 ite Exp $
+ * $Id: mode.c,v 1.49 2001/08/13 03:05:53 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -550,8 +550,7 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
 	m2->flags &= ~(SENTKICK | SENTDEOP | SENTOP | SENTVOICE | SENTDEVOICE);
 
     check_tcl_need(chan->dname, "op");
-    if (chan->need_op[0])
-      do_tcl("need-op", chan->need_op);
+
     if (!nick[0])
       putlog(LOG_MODES, chan->dname, "TS resync deopped me on %s :(",
 	     chan->dname);

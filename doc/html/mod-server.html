@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: mod-server.html,v 1.9 2001/06/28 19:01:13 guppy Exp $ -->
+<!-- $Id: mod-server.html,v 1.10 2001/08/13 03:05:52 guppy Exp $ -->
 
 <html>
   <head>
@@ -97,14 +97,6 @@
         <dd>
           <p>This setting tells the bot what to display in the realname field
           that shows up on IRC</p>
-        </dd>
-
-        <dt><strong>set init-server { putserv &quot;MODE $botnick +i-ws&quot;
-        }</strong></dt>
-
-        <dd>
-          <p>This setting allows the bot to evaluate Tcl commands when it
-          first connects to a server.</p>
         </dd>
 
         <dt><strong>set servers { IRCSERVER1:PORT IRSERVER2:PORT ...
@@ -289,17 +281,6 @@
 
         <dd>
           <p>Set how many ctcps should be answered at once</p>
-        </dd>
-
-        <dt><strong><em>set lowercase-ctcp 0</em></strong></dt>
-
-        <dd>
-          <p>If you want your bot to answer lower case ctcp request (non rfc
-          compliant) set this setting to 1.</p>
-
-          <p>Please note: mIRC will do this, most other clients will not</p>
-
-          <p>Valid settings are 0 and 1.</p>
         </dd>
 
         <dt><strong><em>set trigger-on-ignore 0</em></strong></dt>

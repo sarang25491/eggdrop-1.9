@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.46 2001/08/10 23:51:20 ite Exp $
+ * $Id: cmdschan.c,v 1.47 2001/08/13 03:05:53 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1194,19 +1194,6 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
       dprintf(idx, "revenge-mode: %d\n", chan->revenge_mode);
     else
       dprintf(idx, "revenge-mode: 0\n");
-    /* Only bot owners can see/change these (they're TCL commands) */
-    if (u->flags & USER_OWNER) {
-      if (chan->need_op[0])
-	dprintf(idx, "To regain op's (need-op):\n%s\n", chan->need_op);
-      if (chan->need_invite[0])
-	dprintf(idx, "To get invite (need-invite):\n%s\n", chan->need_invite);
-      if (chan->need_key[0])
-	dprintf(idx, "To get key (need-key):\n%s\n", chan->need_key);
-      if (chan->need_unban[0])
-	dprintf(idx, "If Im banned (need-unban):\n%s\n", chan->need_unban);
-      if (chan->need_limit[0])
-	dprintf(idx, "When channel full (need-limit):\n%s\n", chan->need_limit);
-    }
     dprintf(idx, "Other modes:\n");
     dprintf(idx, "     %cinactive       %cstatuslog      %csecret         %cshared\n",
 	    (chan->status & CHAN_INACTIVE) ? '+' : '-',
@@ -1366,16 +1353,8 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
 	  continue;
 	}
 	/* The rest have an unknown amount of args, so assume the rest of the
-	 * line is args. Woops nearly made a nasty little hole here :) we'll
-	 * just ignore any non global +n's trying to set the need-commands.
+	 * line is args. 
 	 */
-	if (strncmp(list[0], "need-", 5) || (u->flags & USER_OWNER)) {
-	  if (!strncmp(list[0], "need-", 5) && !(isowner(dcc[idx].nick)) &&
-	      must_be_owner) {
-	    dprintf(idx, "Due to security concerns, only permanent owners can set these modes.\n");
-	    nfree(buf);
-	    return;
-	  }
 	  list[1] = par;
 	  /* Par gets modified in tcl_channel_modify under some
   	   * circumstances, so save it now.
@@ -1391,7 +1370,6 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
 	    dprintf(idx, "Error trying to set %s for %s, invalid option\n",
 		    list[0], all ? "all channels" : chname);
           nfree(parcpy);
-	}
 	break;
       }
       if (!all && answers[0]) {

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: mod-channels.html,v 1.5 2000/10/19 16:30:31 fabian Exp $ -->
+<!-- $Id: mod-channels.html,v 1.6 2001/08/13 03:05:52 guppy Exp $ -->
 
 <html>
   <head>
@@ -171,66 +171,6 @@
                  &nbsp;&nbsp; if channel +bitch: see stopnethack-mode 1<br>
                  6 if channel -bitch: see stopnethack-mode 2<br>
                  &nbsp;&nbsp; if channel +bitch: see stopnethack-mode 4</p>
-              </dd>
-
-              <dt><strong><em>need-op { putserv &quot;PRIVMSG #lamest :op me
-              cos i&#39;m lame!&quot; }</em></strong></dt>
-
-              <dd>
-                <p>This setting will make the bot do the specified thing in
-                the brackets if it becomes opless.<br>
-                 Attention, you cannot put anything that is longer than 120
-                chars in here!<br>
-                 Note that if you use scripts like get-ops, you don&#39;t
-                need to set this setting.</p>
-              </dd>
-
-              <dt><strong><em>need-invite { putserv &quot;PRIVMSG #lamest
-              :let me in!&quot; }</em></strong></dt>
-
-              <dd>
-                <p>This setting will make the bot do the specified thing in
-                the brackets if it needs an invitation to the channel.<br>
-                 Attention, you cannot put anything that is longer than 120
-                chars in here!<br>
-                 Note that if you use scripts like get-ops, you don&#39;t
-                need to set this setting.</p>
-              </dd>
-
-              <dt><strong><em>need-key { putserv &quot;PRIVMSG #lamest :let
-              me in!&quot; }</em></strong></dt>
-
-              <dd>
-                <p>This setting will make the bot do the specified thing in
-                the brackets if it needs a key to a channel.<br>
-                 Attention, you cannot put anything that is longer than 120
-                chars in here!<br>
-                 Note that if you use scripts like get-ops, you don&#39;t
-                need to set this setting.</p>
-              </dd>
-
-              <dt><strong><em>need-unban { putserv &quot;PRIVMSG #lamest :let
-              me in!&quot; }</em></strong></dt>
-
-              <dd>
-                <p>This setting will make the bot do the specified thing in
-                the brackets if it becomes banned.<br>
-                 Attention, you cannot put anything that is longer than 120
-                chars in here!<br>
-                 Note that if you use scripts like get-ops, you don&#39;t
-                need to set this setting.</p>
-              </dd>
-
-              <dt><strong><em>need-limit { putserv &quot;PRIVMSG #lamest :let
-              me in!&quot; }</em></strong></dt>
-
-              <dd>
-                <p>This setting will make the bot do the specified thing in
-                the brackets if it needs a limit raise.<br>
-                 Attention, you cannot put anything that is longer than 120
-                chars in here!<br>
-                 Note that if you use scripts like get-ops, you don&#39;t
-                need to set this setting.</p>
               </dd>
 
               <dt><strong><em>flood-chan 10:60</em></strong></dt>
@@ -548,8 +488,7 @@
 
         <dd>
           <p>returns: list of info about that channel record: enforced mode,
-          idle kick limit, need-op script, need-invite script, and then
-          various +/- options as seen in the config file</p>
+          idle kick limit, and then various +/- options as seen in the config file</p>
         </dd>
 
         <dt><strong>channel remove &lt;name&gt;</strong></dt>

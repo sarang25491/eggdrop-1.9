@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.73 2001/08/10 23:51:21 ite Exp $
+ * $Id: server.c,v 1.74 2001/08/13 03:05:53 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -46,8 +46,6 @@ static int flud_thr;		/* msg flood threshold */
 static int flud_time;		/* msg flood time */
 static int flud_ctcp_thr;	/* ctcp flood threshold */
 static int flud_ctcp_time;	/* ctcp flood time */
-static char initserver[121];	/* what, if anything, to send to the
-				   server on connection */
 static char botuserhost[121];	/* bot's user@host (refreshed whenever the
 				   bot joins a channel) */
 				/* may not be correct user@host BUT it's
@@ -77,12 +75,9 @@ static int default_port;	/* default IRC port */
 static char oldnick[NICKLEN];	/* previous nickname *before* rehash */
 static int trigger_on_ignore;	/* trigger bindings if user is ignored ? */
 static int answer_ctcp;		/* answer how many stacked ctcp's ? */
-static int lowercase_ctcp;	/* answer lowercase CTCP's (non-standard) */
 static char bothost[81];	/* dont mind me, Im stupid */
 static int check_mode_r;	/* check for IRCNET +r modes */
 static int net_type;
-static char connectserver[121];	/* what, if anything, to do before connect
-				   to the server */
 static int resolvserv;		/* in the process of resolving a server host */
 static int double_mode;		/* allow a msgs to be twice in a queue? */
 static int double_server;
@@ -1291,8 +1286,6 @@ static tcl_strings my_tcl_strings[] =
   {"botnick",			NULL,		0,		STR_PROTECT},
   {"altnick",			altnick,	NICKMAX,	0},
   {"realname",			botrealname,	80,		0},
-  {"init-server",		initserver,	120,		0},
-  {"connect-server",		connectserver,	120,		0},
   {"stackable-commands",	stackablecmds,	510,		0},
   {"stackable2-commands",	stackable2cmds,	510,		0},
   {NULL,			NULL,		0,		0}
@@ -1310,7 +1303,6 @@ static tcl_ints my_tcl_ints[] =
   {"use-console-r",		NULL,				1},
   {"servlimit",			&min_servs,			0},
   {"server-timeout",		&server_timeout,		0},
-  {"lowercase-ctcp",		&lowercase_ctcp,		0},
   {"server-online",		(int *) &server_online,		2},
   {"never-give-up",		&never_give_up,			0},
   {"keep-nick",			&keepnick,			0},
@@ -1579,8 +1571,7 @@ static void server_postrehash()
   /* Change botname back incase we were using altnick previous to rehash. */
   else if (oldnick[0])
     strcpy(botname, oldnick);
-  if (initserver[0])
-    do_tcl("init-server", initserver);
+  check_tcl_event("init-server");
 }
 
 static void server_die()
@@ -1635,10 +1626,6 @@ static void server_report(int idx, int details)
   if (details) {
     if (min_servs)
       dprintf(idx, "    Requiring a net of at least %d server(s)\n", min_servs);
-    if (initserver[0])
-      dprintf(idx, "    On connect, I do: %s\n", initserver);
-    if (connectserver[0])
-      dprintf(idx, "    Before connect, I do: %s\n", connectserver);
     dprintf(idx, "    Flood is: %d msg/%ds, %d ctcp/%ds\n",
 	    flud_thr, flud_time, flud_ctcp_thr, flud_ctcp_time);
   }
@@ -1849,8 +1836,6 @@ char *server_start(Function *global_funcs)
   flud_time = 60;
   flud_ctcp_thr = 3;
   flud_ctcp_time = 60;
-  initserver[0] = 0;
-  connectserver[0] = 0;		/* drummer */
   botuserhost[0] = 0;
   keepnick = 1;
   check_stoned = 1;
@@ -1870,7 +1855,6 @@ char *server_start(Function *global_funcs)
   oldnick[0] = 0;
   trigger_on_ignore = 0;
   answer_ctcp = 1;
-  lowercase_ctcp = 0;
   bothost[0] = 0;
   check_mode_r = 0;
   maxqmsg = 300;
