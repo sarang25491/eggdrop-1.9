@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.14 2002/02/18 22:43:31 ite Exp $
+ * $Id: chan.c,v 1.15 2002/02/18 22:53:12 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1743,6 +1743,7 @@ static int gotpart(char *from, char *ignore, char *msg)
   struct userrec *u;
 
   chname = newsplit(&msg);
+  fixcolon(chname);
   fixcolon(msg);
   chan = findchan(chname);
   if (chan && channel_inactive(chan)) {
