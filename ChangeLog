@@ -1,3 +1,18 @@
+2003-02-15 09:24  Will Buckner <wcc@techmonkeys.org>
+
+	* doc/eggdrop.doc, lib/eggdrop/modvals.h,
+	modules/filesys/filedb3.c, modules/filesys/filesys.c,
+	modules/filesys/filesys.h, modules/filesys/modinfo:
+
+	* Removed tray portions of code from share/transfer/botnet removal.  
+
+2003-02-15 09:07  Will Buckner <wcc@techmonkeys.org>
+
+	* modules/channels/userchan.c, src/cmds.c, src/patch.h,
+	src/users.c:
+
+	* Synch 1.6: off-by-one, delignore-bounds.  
+
 2003-02-15 05:04  Will Buckner <wcc@techmonkeys.org>
 
 	* Makefile.am, config.tcl, eggdrop.conf, doc/BOTNET,
