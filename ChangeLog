@@ -1,3 +1,27 @@
+2002-02-22 13:56  stdarg <stdarg@techmonkeys.org>
+
+	* modules/perlscript/perlscript.c:
+
+	
+	* Sync perl module with tcl module for SCRIPT_VAR_FRONT functions.  
+
+2002-02-22 13:44  stdarg <stdarg@techmonkeys.org>
+
+	* modules/tclscript/tclscript.c:
+
+	
+	* Changed the calling conventions for SCRIPT_VAR_FRONT functions.  
+	* Strings returned from Tcl_GetStringFromObj are owned by Tcl, not
+	us. Oops.  
+
+2002-02-22 13:43  stdarg <stdarg@techmonkeys.org>
+
+	* src/egg_timer.c:
+
+	
+	* Made 'microseconds' field optional to the timer and rtimer
+	commands.  
+
 2002-02-22 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
