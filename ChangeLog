@@ -1,3 +1,10 @@
+2003-01-29 21:39  Will Buckner <wcc@techmonkeys.org>
+
+	* eggdrop.conf, lib/eggdrop/module.h, modules/server/servsock.c,
+	src/dcc.c, src/flags.c, src/misc.c, src/modules.c, src/tcl.c:
+
+	* Renamed debug_output to raw_log.  
+
 2003-01-29 07:42  Will Buckner <wcc@techmonkeys.org>
 
 	* lib/eggdrop/memutil.c, lib/eggdrop/module.h,
