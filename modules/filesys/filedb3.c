@@ -26,7 +26,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: filedb3.c,v 1.8 2003/02/03 11:41:34 wcc Exp $";
+static const char rcsid[] = "$Id: filedb3.c,v 1.9 2003/02/15 00:23:51 wcc Exp $";
 #endif
 */
 
@@ -74,6 +74,64 @@ static const char rcsid[] = "$Id: filedb3.c,v 1.8 2003/02/03 11:41:34 wcc Exp $"
  */
 static int count = 0;
 
+
+/* Forward, case-sensitive file matching supporting the '*' and '?'
+ * wildcard characters. This is basically a direct copy of wild_match_per(),
+ * but without support for '%', or '~'.
+ */
+static int wild_match_file(register char *m, register char *n)
+{
+  char *ma = m, *lsm = 0, *lsn = 0;
+  int match = 1;
+  register unsigned int sofar = 0;
+
+  /* null strings should never match */
+  if ((m == 0) || (n == 0) || (!*n))
+    return 0;
+
+  while (*n) {
+    switch (*m) {
+    case 0:
+      do
+	m--;
+      while ((m > ma) && (*m == '?'));
+      if ((m > ma) ? ((*m == '*') && (m[-1] != FILEQUOTE)) : (*m == '*'))
+	return FILEMATCH;
+      break;
+    case FILEWILDS:
+      do
+	m++;
+      while (*m == FILEWILDS);
+      lsm = m;
+      lsn = n;
+      match += sofar;
+      sofar = 0;
+      continue;
+    case FILEWILDQ:
+      m++;
+      n++;
+      continue;
+    case FILEQUOTE:
+      m++;
+    }
+    if (*m == *n) {
+      m++;
+      n++;
+      sofar++;
+      continue;
+    }
+    if (lsm) {
+      n = ++lsn;
+      m = lsm;
+      sofar = 0;
+      continue;
+    }
+    return 0;
+  }
+  while (*m == FILEWILDS)
+    m++;
+  return (*m) ? 0 : MATCH;
+}
 
 /*
  *   Memory management helper functions

@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tcldcc.c,v 1.71 2003/02/03 11:41:34 wcc Exp $";
+static const char rcsid[] = "$Id: tcldcc.c,v 1.72 2003/02/15 00:23:51 wcc Exp $";
 #endif
 
 #include "main.h"
@@ -541,13 +541,6 @@ static int script_traffic(script_var_t *retval)
 		script_int(traffic.out_today.dcc + traffic.out_total.dcc));
 	script_list_append(retval, sublist);
 
-	sublist = script_list(5, script_string("transfer", -1),
-		script_int(traffic.in_today.trans),
-		script_int(traffic.in_today.trans + traffic.in_total.trans),
-		script_int(traffic.out_today.trans),
-		script_int(traffic.out_today.trans + traffic.out_total.trans));
-	script_list_append(retval, sublist);
-
 	sublist = script_list(5, script_string("filesys", -1),
 		script_int(traffic.in_today.filesys),
 		script_int(traffic.in_today.filesys + traffic.in_total.filesys),
@@ -563,13 +556,13 @@ static int script_traffic(script_var_t *retval)
 	script_list_append(retval, sublist);
 
 	/* Totals */
-	in_total_today = traffic.in_today.irc + traffic.in_today.bn + traffic.in_today.dcc + traffic.in_today.trans + traffic.in_today.unknown;
+	in_total_today = traffic.in_today.irc + traffic.in_today.bn + traffic.in_today.dcc + traffic.in_today.unknown;
 
-	in_total = in_total_today + traffic.in_total.irc + traffic.in_total.bn + traffic.in_total.dcc + traffic.in_total.trans + traffic.in_total.unknown;
+	in_total = in_total_today + traffic.in_total.irc + traffic.in_total.bn + traffic.in_total.dcc + traffic.in_total.unknown;
 
-	out_total_today = traffic.out_today.irc + traffic.out_today.bn + traffic.out_today.dcc + traffic.in_today.trans + traffic.out_today.unknown;
+	out_total_today = traffic.out_today.irc + traffic.out_today.bn + traffic.out_today.dcc + traffic.out_today.unknown;
 
-	out_total = out_total_today + traffic.out_total.irc + traffic.out_total.bn + traffic.out_total.dcc + traffic.out_total.trans + traffic.out_total.unknown;	  
+	out_total = out_total_today + traffic.out_total.irc + traffic.out_total.bn + traffic.out_total.dcc + traffic.out_total.unknown;	  
 
 	sublist = script_list(5, script_string("total", -1),
 		script_int(in_total_today),

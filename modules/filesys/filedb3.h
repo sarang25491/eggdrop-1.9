@@ -23,7 +23,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: filedb3.h,v 1.5 2003/01/29 07:42:49 wcc Exp $
+ * $Id: filedb3.h,v 1.6 2003/02/15 00:23:51 wcc Exp $
  */
 
 #ifndef _EGG_MOD_FILESYS_FILEDB3_H
@@ -123,6 +123,11 @@ typedef struct {
 #define filedb_addfile(fdb, fdbe) _filedb_addfile(fdb, fdbe, __FILE__, __LINE__)
 #define filedb_movefile(fdb, pos, fdbe) _filedb_movefile(fdb, pos, fdbe, __FILE__, __LINE__)
 
+/* File matching */
+#define FILEMATCH (match+sofar)
+#define FILEQUOTE '\\'
+#define FILEWILDS '*'
+#define FILEWILDQ '?'
 
 /*
  *  Constants

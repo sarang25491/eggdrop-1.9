@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: flags.h,v 1.16 2003/02/03 18:49:45 stdarg Exp $
+ * $Id: flags.h,v 1.17 2003/02/15 00:23:51 wcc Exp $
  */
 
 #ifndef _EGG_FLAGS_H
@@ -86,10 +86,10 @@ struct flag_record {
 #define USER_UNSHARED  0x00100000
 #define USER_VOICE     0x00200000
 #define USER_WASOPTEST 0x00400000
-#define USER_XFER     0x00800000	/* x  user has file area access	 */
-#define USER_Y        0x01000000	/* y  unused			 */
-#define USER_Z        0x02000000	/* z  unused			 */
-#define USER_DEFAULT  0x40000000	/* use default-flags		 */
+#define USER_XFER      0x00800000
+#define USER_Y         0x01000000
+#define USER_Z         0x02000000
+#define USER_DEFAULT   0x40000000
 
 /* Flags specifically for bots
  */

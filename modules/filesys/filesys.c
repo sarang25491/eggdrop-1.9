@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: filesys.c,v 1.18 2003/02/10 00:09:08 wcc Exp $";
+static const char rcsid[] = "$Id: filesys.c,v 1.19 2003/02/15 00:23:51 wcc Exp $";
 #endif
 
 #include <fcntl.h>
@@ -95,6 +95,7 @@ static void disp_dcc_files(int idx, char *buf);
 static void kill_dcc_files(int idx, void *x);
 static void out_dcc_files(int idx, char *buf, void *x);
 static char *mktempfile(char *filename);
+static void wipe_tmp_filename(char *fn, int idx);
 
 static struct dcc_table DCC_FILES =
 {
@@ -107,6 +108,59 @@ static struct dcc_table DCC_FILES =
   disp_dcc_files,
   kill_dcc_files,
   out_dcc_files
+};
+
+static struct dcc_table DCC_GET =
+{
+  "GET",
+  DCT_FILETRAN | DCT_VALIDIDX,
+  eof_dcc_get,
+  dcc_get,
+  &wait_dcc_xfer,
+  transfer_get_timeout,
+  display_dcc_get,
+  kill_dcc_xfer,
+  out_dcc_xfer,
+  outdone_dcc_xfer
+};
+
+static struct dcc_table DCC_FORK_SEND =
+{
+  "FORK_SEND",
+  DCT_FILETRAN | DCT_FORKTYPE | DCT_FILESEND | DCT_VALIDIDX,
+  eof_dcc_fork_send,
+  dcc_fork_send,
+  &wait_dcc_xfer,
+  eof_dcc_fork_send,
+  display_dcc_fork_send,
+  kill_dcc_xfer,
+  out_dcc_xfer
+};
+
+static struct dcc_table DCC_GET_PENDING =
+{
+  "GET_PENDING",
+  DCT_FILETRAN | DCT_VALIDIDX,
+  eof_dcc_get,
+  dcc_get_pending,
+  &wait_dcc_xfer,
+  transfer_get_timeout,
+  display_dcc_get_p,
+  kill_dcc_xfer,
+  out_dcc_xfer
+};
+
+static struct dcc_table DCC_SEND =
+{
+  "SEND",
+  DCT_FILETRAN | DCT_FILESEND | DCT_VALIDIDX,
+  eof_dcc_send,
+  dcc_send,
+  &wait_dcc_xfer,
+  tout_dcc_send,
+  display_dcc_send,
+  kill_dcc_xfer,
+  out_dcc_xfer
 };
 
 static struct user_entry_type USERENTRY_DCCDIR =
@@ -124,6 +178,23 @@ static struct user_entry_type USERENTRY_DCCDIR =
   NULL,
   NULL,
   "DCCDIR"
+};
+
+static struct user_entry_type USERENTRY_FSTAT =
+{
+  NULL,
+  fstat_gotshare,
+  fstat_dupuser,
+  fstat_unpack,
+  fstat_pack,
+  fstat_write_userfile,
+  fstat_kill,
+  NULL,
+  fstat_set,
+  fstat_tcl_get,
+  fstat_tcl_set,
+  fstat_display,
+  "FSTAT"
 };
 
 #include "files.c"
@@ -146,6 +217,149 @@ static int check_tcl_fil(char *cmd, int idx, char *text)
     putlog(LOG_FILES, "*", "#%s# files: %s %s", dcc[idx].nick, cmd, text);
   }
   return 0;
+}
+
+static int at_limit(char *nick)
+{
+  int i, x = 0;
+
+  for (i = 0; i < dcc_total; i++)
+    if (dcc[i].type == &DCC_GET || dcc[i].type == &DCC_GET_PENDING)
+      if (!strcasecmp(dcc[i].nick, nick))
+	x++;
+  return (x >= dcc_limit);
+}
+
+static void wipe_tmp_filename(char *fn, int idx)
+{
+  int i, ok = 1;
+
+  if (!copy_to_tmp)
+    return;
+
+  for (i = 0; i < dcc_total; i++) {
+    if ((i != idx) &&
+        (dcc[i].type == &DCC_GET || dcc[i].type == &DCC_GET_PENDING) &&
+        (!strcmp(dcc[i].u.xfer->filename, fn))) {
+      ok = 0;
+      break;
+    }
+  }
+  if (ok)
+    unlink(fn);
+}
+
+static void queue_file(char *dir, char *file, char *from, char *to)
+{
+  fileq_t *q = fileq;
+
+  fileq = (fileq_t *) malloc(sizeof(fileq_t));
+  fileq->next = q;
+  fileq->dir = strdup(dir);
+  fileq->file = strdup(file);
+  strcpy(fileq->nick, from);
+  strcpy(fileq->to, to);
+}
+
+
+/* Starts a new DCC SEND or DCC RESEND connection to `nick', transferring
+ * `filename' from `dir'.
+ *
+ * Use raw_dcc_resend() and raw_dcc_send() instead of this function.
+ */
+static int raw_dcc_resend_send(char *filename, char *nick, char *from,
+			       char *dir, int resend, char *addr)
+{
+  int zz, port, i;
+  char *nfn, *buf = NULL;
+  long dccfilesize;
+  FILE *f, *dccfile;
+
+debug1("|TRANSFER| raw_dcc_resend_send(... addr=\"%s\")", addr);
+  zz = -1;
+  dccfile = fopen(filename,"r");
+  fseek(dccfile, 0, SEEK_END);
+  dccfilesize = ftell(dccfile);
+  fclose(dccfile);
+  /* File empty?! */
+  if (dccfilesize == 0)
+    return DCCSEND_FEMPTY;
+  if (reserved_port_min > 0 && reserved_port_min < reserved_port_max) {
+    for (port = reserved_port_min; port <= reserved_port_max; port++) {
+      if (addr && addr[0])
+        zz = open_address_listen(addr, &port);
+      else {
+        zz = open_listen(&port, AF_INET);
+        addr = getlocaladdr(-1);
+      }
+      if (zz != -1)
+        break;
+    }
+  } else {
+    port = reserved_port_min;
+    if (addr && addr[0])
+      zz = open_address_listen(addr, &port);
+    else {
+      zz = open_listen(&port, AF_INET);
+      addr = getlocaladdr(-1);
+    }
+  }
+
+  if (zz == -1)
+    return DCCSEND_NOSOCK;
+
+  nfn = strrchr(dir, '/');
+  if (nfn == NULL)
+    nfn = dir;
+  else
+    nfn++;
+  f = fopen(filename, "r");
+
+  if (!f)
+    return DCCSEND_BADFN;
+
+  if ((i = new_dcc(&DCC_GET_PENDING, sizeof(struct xfer_info))) == -1)
+     return DCCSEND_FULL;
+
+  dcc[i].sock = zz;
+  strcpy(dcc[i].addr, "222.173.240.13"); /* (IP) (-559026163);   WTF?? */
+  dcc[i].port = port;
+  strcpy(dcc[i].nick, nick);
+  strcpy(dcc[i].host, "irc");
+  dcc[i].u.xfer->filename = calloc(1, strlen(filename) + 1);
+  strcpy(dcc[i].u.xfer->filename, filename);
+  if (strchr(nfn, ' '))
+    nfn = buf = replace_spaces(nfn);
+  dcc[i].u.xfer->origname = calloc(1, strlen(nfn) + 1);
+  strcpy(dcc[i].u.xfer->origname, nfn);
+  strlcpy(dcc[i].u.xfer->from, from, NICKLEN);
+  strlcpy(dcc[i].u.xfer->dir, dir, DIRLEN);
+  dcc[i].u.xfer->length = dccfilesize;
+  dcc[i].timeval = now;
+  dcc[i].u.xfer->f = f;
+  dcc[i].u.xfer->type = resend ? XFER_RESEND_PEND : XFER_SEND;
+  if (nick[0] != '*') {
+    dprintf(DP_HELP, "PRIVMSG %s :\001DCC %sSEND %s %s %d %lu\001\n", nick,
+	    resend ? "RE" :  "", nfn, addr,
+	    port, dccfilesize);
+    putlog(LOG_FILES, "*", "Begin DCC %ssend %s to %s", resend ? "re" :  "",
+	   nfn, nick);
+  }
+  if (buf)
+    free(buf);
+  return DCCSEND_OK;
+}
+
+static int raw_dcc_resend(char *filename, char *nick, char *from,
+			    char *dir, char *addr)
+{
+  return raw_dcc_resend_send(filename, nick, from, dir, 1, addr);
+}
+
+static int raw_dcc_send(char *filename, char *nick, char *from,
+			    char *dir, char *addr)
+{
+  return raw_dcc_resend_send(filename, nick, from, dir, 0, addr);
 }
 
 static void dcc_files_pass(int idx, char *buf, int x)

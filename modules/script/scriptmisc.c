@@ -1,7 +1,7 @@
 /*
- * tclmisc.c --
+ * scriptmisc.c --
  *
- *	Tcl stubs for everything else
+ *	Misc script commands
  */
 /*
  * Copyright (C) 1997 Robey Pointer

@@ -1,397 +1,537 @@
-# $Id: config.tcl,v 1.1 2003/02/14 20:55:01 stdarg Exp $
+#! /path/to/executable/eggdrop -ptclscript
+# ^- This should contain a fully qualified path to your Eggdrop executable.
+#  Make sure you preload a config parser using the -p<name> parameter.
 #
-# This config file includes all possible options you can
-# use to configure your bot properly.
-# be sure that you know what you are doing!
+# $Id: config.tcl,v 1.2 2003/02/15 00:23:51 wcc Exp $
 #
-# more detailed descriptions of all those settings can be found in
-# doc/settings/
+# This is a sample Eggdrop configuration file which includes all possible
+# settings that can be used to configure your bot.
+#
+# The pound signs (#) that you see at the beginning of some lines mean that
+# the remainder of that line is a comment, or just for your information. By
+# adding or deleting pound signs, you can comment or uncomment a setting,
+# respectively.
+#
+# Arguments for a command or setting may be inclosed in <>'s or []'s in the
+# example/description. Arguments in <>'s are required, while [] means optional.
+#
+# More detailed descriptions of all these settings can be found in
+# doc/settings/.
 
 
-##### GENERAL STUFF #####
+##### BASIC SETTINGS #####
 
-# the username the bot uses, this is only used if identd isn't working
-# on the machine the bot is running on.
+# This is used to identify the bot. You MUST set this.
+set myname "LamestBot"
+
+# This setting defines the username the bot uses on IRC. This setting has
+# no effect if an ident daemon is running on your bot's machine.
 set username "lamest"
 
-# who's running this bot?
+# This setting defines which contact person should be shown in .status,
+# /msg help, and other places. You really should include this information.
 set admin "Lamer <email: lamer@lamest.lame.org>"
 
-# what IRC network are you on?  this is just info to share with others on
-# your botnet, for human curiosity only.
+# This setting is used only for info to share with others on your botnet.
+# Set this to the IRC network your bot is connected to.
 set network "I.didnt.edit.my.config.file.net"
 
-# what characters do you want to signify a command on the partyline?
+# These characters at the beginning of text signify a command on the partyline.
 set dcc_command_chars "./"
 
-# what timezone is your bot in? The timezone string specifies the name of
-# the timezone and must be three or more alphabetic characters.
-#
-# ex. Central European Time(UTC+1) would be "CET"
+# This setting defines the timezone is your bot in. It's used for internal
+# routines as well as for logfile timestamping and scripting purposes.
+# The timezone string specifies the name of the timezone and must be three
+# or more alphabetic characters. For example, Central European Time(UTC+1)
+# should be "CET".
 set timezone "EST"
 
-# offset specifies the time value to be added to the local time to get
-# Coordinated Universal Time (UTC aka GMT).  The offset is positive if the
-# local timezone is west of the Prime Meridian and negative if it is east.
-# The value(hours) must be between 0 and 24.
-#
-# ex. if the timezone is UTC+1 the offset is -1
+# The offset setting specifies the time value to be added to the local
+# time to get Coordinated Universal Time (UTC aka GMT). The offset is
+# positive if the local timezone is west of the Prime Meridian and
+# negative if it is east. The value (in hours) must be between -23 and
+# 23. For example, if the timezone is UTC+1, the offset is -1.
 set offset "5"
 
-# If you dont want to use the timezone setting for scripting purpose
-# only but instead everywhere possible (new) then uncomment the next line.
+# If you don't want to use the timezone setting for scripting purposes only,
+# but instead everywhere possible, un-comment the following line.
 #set env(TZ) "$timezone $offset"
 
-# if you're using virtual hosting (your machine has more than 1 IP), you
-# may want to specify the particular IP to bind to.  you can specify
-# by IP. if eggdrop has trouble detecting the hostname when it starts up,
-# set my_ip. (it will let you know if it has trouble -- trust me.)
-# my_ip will be used for IPv4 hosts, my_ip6 will be used for IPv6 hosts.
+# If you're using virtual hosting (your machine has more than 1 IP), you
+# may want to specify the particular IP to bind to. my_ip will be used for
+# IPv4 hosts, and my_ip6 will be used for IPv6 hosts.
 #set my_ip "99.99.0.0"
 #set my_ip6 "3ffe:1337::1"
 
 ##### LOG FILES #####
 
-# You can specify a limit on how many log files you can have.
-# At midnight every day, the old log files are renamed and a new log file begins.
-# By default, the old one is called "(logfilename).yesterday",
-# and any logfiles before yesterday are erased.
+# Eggdrop is capable of logging various things, from channel chatter to
+# commands people use on the bot and file transfers. Logfiles are normally
+# kept for 24 hours. Afterwards, they will be renamed to "(logfile).yesterday".
+# After 48 hours, they will be overwritten by the logfile of the next day.
+#
+# Events are logged by certain categories. This way, you can specify
+# exactly what kind of events you want sent to various logfiles.
+#
+# Logfile flags:
+#   b - information about bot linking and userfile sharing
+#   c - commands
+#   d - misc debug information
+#   h - raw share traffic
+#   j - joins, parts, quits, and netsplits on the channel
+#   k - kicks, bans, and mode changes on the channel
+#   m - private msgs, notices and ctcps to the bot
+#   o - misc info, errors, etc (IMPORTANT STUFF)
+#   p - public text on the channel
+#   r - raw incoming server traffic
+#   s - server connects, disconnects, and notices
+#   t - raw botnet traffic
+#   v - raw outgoing server traffic
+#   w - wallops (make sure the bot sets +w in init-server)
+#   x - file transfers and file-area commands
+#
+# Note that modes d, h, r, t, and v can fill disk quotas quickly. There are
+# also eight user-defined levels (1-8) which can be used by Tcl scripts.
+#
+# Each logfile belongs to a certain channel. Events of type 'k', 'j', and 'p'
+# are logged to whatever channel they happened on. Most other events are
+# currently logged to every channel. You can make a logfile belong to all
+# channels by assigning it to channel "*".
 
-# Events are logged by certain categories -- this way you can specify
-# exactly what kind of events you want sent to various logfiles.  the
-# events are:
-#   m  private msgs/ctcps to the bot
-#   k  kicks, bans, mode changes on the channel
-#   j  joins, parts, netsplits on the channel
-#   p  public chatter on the channel
-#   s  server connects/disconnects/notices
-#   b  information about bot linking and userfile sharing
-#   c  commands people use (via msg or dcc)
-#   x  file transfers and file-area commands
-#   o  other: misc info, errors -- IMPORTANT STUFF
-#   w  wallops: msgs between IRCops (be sure to set the bot +w)
-# There are others, but you probably shouldn't log them, it'd be rather
-# unethical ;)
-
-# maximum number of logfiles to allow - this can be increased if needed
-# (don't decrease this)
-set max_logs 5
-
-# maximum size of your logfiles, set this to 0 to disable.
-# this only works if you have keep_all_logs 0 (OFF)
-# this value is in KiloBytes, so '550' would mean cycle logs when
-# it reaches the size of 550 KiloBytes.
+# This is the maximum size of your logfiles. Set it to 0 to disable.
+# This value is in kilobytes, so '550' would mean cycle logs when it
+# reaches the size of 550 kilobytes. Note that this only works if you
+# have keep-all-logs 0 (OFF).
 set max_logsize 0
 
-# write the logfiles and check the size every minute
-# (if max_logsize is enabled) instead of every 5minutes as before.
-# This could be good if you have had problem with the
-# logfile filling your quota or hdd or if you log +p
-# and publish it on the web and wants more uptodate info.
-# If you are concerned with resources keep the default setting 0.
-# (although I haven't noticed anything)
+# This could be good if you have had problem with the logfile filling
+# your quota/hard disk or if you log +p and publish it to the web and
+# need more up-to-date info. Note that this setting might increase the
+# CPU usage of your bot (on the other hand it will decrease your mem usage).
 set quick_logs 0
 
-# each logfile also belongs to a certain channel.  events of type 'k', 'j',
-# and 'p' are logged to whatever channel they happened on.  most other
-# events are currently logged to every channel.  you can make a logfile
-# belong to all channels by assigning it to channel "*".  there are also
-# five user-defined levels ('1'..'5') which are used by Tcl scripts.
+# This setting allows you the logging of raw incoming server traffic via
+# console/log flag 'r', raw outgoing server traffic via console/log mode 'v',
+# raw botnet traffic via console/log mode 't', and raw share traffic via
+# console/log mode 'h'. These flags can create a large security hole,
+# allowing people to see user passwords. This is now restricted to +n users
+# only. Please choose your owners with care.
+set raw_log 0
 
-# in 'eggdrop.log' put private msgs/ctcps, commands, misc info, and
-# errors from any channel:
+# This creates a logfile named eggdrop.log containing private msgs/ctcps,
+# commands, errors, and misc. info from any channel.
 logfile mco * "logs/eggdrop.log"
-# in 'lame.log' put joins, parts, kicks, bans, and mode changes from #lamest:
-logfile jk #lamest "logs/lamest.log"
 
-# [0/1] enable quiet saves? "Writing user file..." and "Writing channel file ..."
-# will not be logged if this option is enabled.
-set quiet_save 0
+# This creates a logfile named lamest.log containing joins, parts,
+# netsplits, kicks, bans, mode changes, and public chat on the
+# channel #lamest.
+logfile jpk #lamest "logs/lamest.log"
 
-# this is the default console mode -- what masters will see automatically
-# when they dcc chat with the bot (masters can alter their own console
-# flags once they connect, though) -- it uses the same event flags as
-# the log files
-# (note that the console channel is automatically set to your "primary"
-# channel -- the one you defined first in this file.  masters can change
-# their console channel with the '.console' command, however.)
+# If you want to keep your logfiles forever, turn this setting on. All
+# logfiles will get suffix ".[day, 2 digits][month, 3 letters][year, 4 digits]".
+# Note that your quota/hard-disk might be filled by this, so check your logfiles
+# often and download them.
+set keep_all_logs 0
+
+# If keep-all-logs is 1, this setting will define the suffix of the logfiles.
+# The default will result in a suffix like "04May2000". "%Y%m%d" will produce
+# the often used yyyymmdd format. Read the strftime manpages for more options.
+# NOTE: On systems which don't support strftime, the default format will
+# be used _always_.
+set logfile_suffix ".%d%b%Y"
+
+# You can specify when Eggdrop should switch logfiles and start fresh. You
+# must use military time for this setting. 300 is the default, and describes
+# 03:00 (AM).
+set switch_logfiles_at 300
+
+
+##### CONSOLE #####
+
+# This is the default console mode. It uses the same event flags as the log
+# files do. The console channel is automatically set to your "primary" channel,
+# which is set in the modules section of the config file. Masters can change
+# their console channel and modes with the '.console' command.
+
 set console "mkcobxs"
 
 
 ##### FILES AND DIRECTORIES #####
 
-# the userfile: where user records are stored
+# Specify here the filename your userfile should be saved as.
 set userfile "LamestBot.user"
 
-# the pidfile: where eggdrop saves its pid file to
-# set pidfile "pid.$botnet_nick"
+# Specify here the filename Eggdrop will save its pid to. If no pidfile is
+# specified, pid.(myname) will be used.
+#set pidfile "pid.LamestBot"
 
-# where the help files can be found (and there are plenty)
+# Specify here where Eggdrop should look for help files. Don't modify this
+# setting unless you know what you're doing!
 set help_path "help/"
 
-# where the text files can be found (used with various dump commands)
+# Specify here where Eggdrop should look for text files. This is used for
+# certain Tcl and DCC commands.
 set text_path "text/"
 
-# a good place to temporarily store files (i.e.: /tmp)
+# Set here a place to store temporary files.
 set temp_path "/tmp"
 
-# the MOTD is displayed when people dcc chat to the bot.
-# type '.help set motd' in DCC CHAT for tons of text substitutions
-# that the bot can performed on the motd.
+# The MOTD (Message Of The day) is displayed when people dcc chat or telnet
+# to the bot. Look at doc/text-substitutions.doc for options.
 set motd "text/motd"
 
-# the telnet banner is displayed when people first make a telnet
-# connection to the bot. type '.help set motd' in DCC CHAT for tons of
-# text substitutions that the bot can be performed on the telnet banner.
+# This banner will be displayed on telnet connections. Look at
+# doc/text-substitutions.doc for options.
 set telnet_banner "text/banner"
 
-# Specifies what permissions the user, channel and notes files should be set
-# to.  The octal values are the same as for the chmod system command.
+# This specifies what permissions the user, channel, and notes files should
+# be set to. The octal values are the same as for the chmod system command.
+#
+# To remind you:
 #
 #          u  g  o           u  g  o           u  g  o
 #    0600  rw-------   0400  r--------   0200  -w-------    u - user
 #    0660  rw-rw----   0440  r--r-----   0220  -w--w----    g - group
 #    0666  rw-rw-rw-   0444  r--r--r--   0222  -w--w--w-    o - others
 #
-# Most users will want to leave the permissions set to 0600, to ensure
-# maximum security.
+# Note that the default 0600 is the most secure one and should only be changed
+# if you need your files for shell scripting or other external applications.
 set userfile_perm 0600
 
-##### BOTNET #####
+##### DCC/TELNET #####
 
-# you probably shouldn't deal with this until reading 'botnet.doc' or
-# something.  you need to know what you're doing.
+# This opens a telnet port by which you and other bots can
+# interact with the Eggdrop by telneting in.
+#
+# There are more options for the listen command in doc/tcl-commands.doc.
+# Note, if you are running more than one bot on the same machine, you will
+# want to space the telnet ports at LEAST 5 apart. 10 is even better.
+#
+# Valid ports are typically anything between 1025 and 65535 assuming the
+# port is not already in use.
+#
 
-# if you want to use a different nickname on the botnet than you use on
-# IRC, set it here:
-#set botnet_nick "LlamaBot"
-
-# what telnet port should this bot answer?
-# NOTE: if you are running more than one bot on the same machine, you will
-#   want to space the telnet ports at LEAST 5 apart... 10 is even better
-# if you would rather have one port for the botnet, and one for normal
-#   users, you will want something like this instead:
-#listen 3333 bots
-#listen 4444 users
-# NOTE: there are more options listed for the listen command in
-#   doc/tcl-commands.doc
+# If you would like the bot to listen for users and bots in separate ports,
+# use the following format.
+#
+# listen 3333 bots
+# listen 4444 users
+#
+# If you wish to use only one port, use this format:
 listen 3333 all
 
-# [0/1] This setting will drop telnet connections not matching a known host
-# It greatly improves protection from IRCOPs, but makes it impossible
-# for NOIRC bots to add hosts or have NEW as a valid login
+# This setting will drop telnet connections not matching a known host. It
+# greatly improves protection from IRCops, but makes it impossible to add
+# hosts on limbo (NOIRC) bots or have NEW as a valid login.
 set protect_telnet 0
 
-# and a timeout value for ident lookups would help (seconds)
+# This settings defines a time in seconds that the bot should wait before
+# a dcc chat, telnet, or relay connection times out.
 set ident_timeout 5
 
-# How long (in seconds) should I wait for a connect (dcc chat, telnet,
-# relay, etc) before it times out?
+# This settings defines a time in seconds that the bot should wait before
+# a dcc chat, telnet, or relay connection times out.
 set connect_timeout 15
 
-# number of messages / lines from a user on the partyline (dcc, telnet)  before
-# they are considered to be flooding (and therefore get booted)
+# Specify here the number of lines to accept from a user on the partyline
+# within 10 seconds before they are considered to be flooding and therefore
+# get booted.
 set dcc_flood_thr 3
 
-# how many telnet connection attempt in how many seconds from the same
-# host constitutes a flood?
+# Define here how many telnet connection attempts in how many seconds from
+# the same host constitute a flood. The correct format is Attempts:Seconds.
 set telnet_flood 5:60
 
-# [0/1] apply telnet flood protection for everyone?
-# set this to 0 if you want to exempt +f users from telnet flood protection
+# If you want telnet-flood to apply even to +f users, set this setting to 1.
 set paranoid_telnet_flood 1
 
-# how long should I wait (seconds) before giving up on hostname/address
-# lookup? (you might want to increase this if you are on a slow network).
+# Set here the amount of seconds before giving up on hostname/address
+# lookup (you might want to increase this if you are on a slow network).
 set resolve_timeout 15
 
 
-##### MORE ADVANCED STUFF #####
+##### MORE ADVANCED SETTINGS #####
 
-# are you behind a firewall?  uncomment this and specify your socks host
-#set firewall "proxy:178"
-# or, for a Sun "telnet passthru" firewall, set it this way
-# (does anyone besides Sun use this?)
+# Set this to your socks host if your Eggdrop sits behind a firewall. If
+# you use a Sun "telnet passthru" firewall, prefix the host with a '!'.
 #set firewall "!sun-barr.ebay:3666"
 
-# if you have a NAT firewall (you box has an IP in one of the following
+# If you have a NAT firewall (you box has an IP in one of the following
 # ranges: 192.168.0.0-192.168.255.255, 172.16.0.0-172.31.255.255,
 # 10.0.0.0-10.255.255.255 and your firewall transparently changes your
-# address to a unique address for your box.) or you have IP masquerading
-# between you and the rest of the world, and /dcc chat,/ctcp chat or
-# userfile shareing aren't working. Enter your outside IP here.
-# Do not enter anything for my_ip.
+# address to a unique address for your box) or you have IP masquerading
+# between you and the rest of the world, and /dcc chat, /ctcp chat or
+# userfile sharing aren't working, enter your outside IP here. Do not
+# enter anything for my_ip if you use this setting.
 #set nat_ip "127.0.0.1"
 
-# if you want all dcc file transfers to use a particular portrange either
+# If you want all dcc file transfers to use a particular portrange either
 # because you're behind a firewall, or for other security reasons, set it
 # here.
 #set reserved_portrange 2010:2020
 
-# [0/1] enables certain console/logging flags which can be used to see all
-# information sent to and from the server, also botnet and share traffic.
-# NOTE: This is a large security hole, allowing people to see passwords and
-# other information they shouldn't otherwise really see. These flags are
-# restricted to +n users only. Please choose your owners carefully when you
-# enable this option.
-set debug_output 0
-
-# temporary ignores will last how many minutes?
+# Set the time in minutes that temporary ignores should last.
 set ignore_time 15
 
-# this setting affects what part of the hour the 'hourly' calls occur
-# on the bot, this includes such things as note notifying,
-# You can change that here (for example, "15" means to
-# notify every hour at 15 minutes past the hour)
-# this now includes when the bot will save its userfile
+# Define here what Eggdrop considers 'hourly'. All calls to it, including such
+# things as note notifying or userfile saving, are affected by this.
+# For example:
+#
+#   set hourly_updates 15
+#
+# The bot will save its userfile 15 minutes past every hour.
 set hourly_updates 00
 
-# the following user(s) will ALWAYS have the owner (+n) flag (You really 
-# should change this default value)
-#set owner "---"
+# Un-comment the next line and set the list of owners of the bot.
+# You NEED to change this setting.
+#set owner "MrLame, MrsLame"
 
-# who should I send a note to when I learn new users?
+# Who should a note be sent to when new users are learned?
 set notify_newusers "$owner"
 
-# what flags should new users get as a default?
-# check '.help whois' on the partyline (dcc chat, telnet) for tons of
-# options.
+# Enter the flags that all new users should get by default. See '.help whois'
+# on the partyline for a list of flags and their descriptions.
 set default_flags "hp"
 
-# what user-defined fields should be displayed in a '.whois'?
-# this will only be shown if the user has one of these xtra fields
-# you might prefer to comment this out and use the userinfo1.0.tcl script
+# Enter all user-defined fields that should be displayed in a '.whois'.
+# This will only be shown if the user has one of these extra fields.
+# You might prefer to comment this out and use the userinfo1.0.tcl script
 # which provides commands for changing all of these.
 set whois_fields "url birthday"
 
-# [0/1/2] allow people from other bots (in your bot-net) to boot people off
-# your bot's party line?
-# values:
-#   0 - allow *no* outside boots
-#   1 - allow boots from sharebots
-#   2 - allow any boots
-set remote_boots 2
-
-# [0/1] if you don't want people to unlink your share bots from remote bots
-# set this to 0
-set share_unlinks 1
-
-# [0/1] die on receiving a SIGHUP?
-# The bot will save it's userfile when it receives a SIGHUP signal
-# with either setting.
+# Enable this setting if you want your Eggdrop to die upon receiving a SIGHUP
+# kill signal. Otherwise, the Eggdrop will just save its userfile and rehash.
 set die_on_sighup 0
 
-# [0/1] die on receiving a SIGTERM?
-# The bot will save it's userfile when it receives a SIGTERM signal
-# with either setting.
+# Enable this setting if you want your Eggdrop to die upon receiving a SIGTERM
+# kill signal. Otherwise, the Eggdrop will just save its userfile and rehash.
 set die_on_sigterm 1
 
-# to enable the 'tcl' and 'set' command (let owners directly execute
-# Tcl commands)? - a security risk!!
+# Comment these two lines if you wish to enable the .tcl and .set commands.
 # If you select your owners wisely, you should be okay enabling these.
-# to enable, comment these two lines out
-# (In previous versions, this was enabled by default in eggdrop.h)
 #unbind dcc n tcl *dcc:tcl
 #unbind dcc n set *dcc:set
 
-# comment the following line out to add the 'simul' command (owners can
-# manipulate other people on the party line).
-# Please select owners wisely! Use this command ethically!
+# Comment out this line to add the 'simul' partyline command (owners can
+# manipulate other people on the party line). Please select owners wisely
+# and use this command ethically!
 #unbind dcc n simul *dcc:simul
 
-# maximum number of dcc connections you will allow - you can increase this
-# later, but never decrease it, 50 seems to be enough for everybody
+# Set here the maximum number of dcc connections you will allow. You can
+# increase this later, but never decrease it.
 set max_dcc 50
 
-# [0/1] allow +d & +k users to use commands bound as -|- ?
-set allow_dk_cmds 1
-
-# If a bot connects which already seems to be connected, I wait
-# dupwait_timeout seconds before I check again and then finally reject
-# the bot. This is useful to stop hubs from rejecting bots that actually
-# have already disconnected from another hub, but the disconnect information
-# has not yet spread over the botnet due to lag.
+# If your Eggdrop rejects bots that actually have already disconnected from
+# another hub, but the disconnect information has not yet spread over the
+# botnet due to lag, use this setting. The bot will wait dupwait_timeout
+# seconds before it checks again and then finally reject the bot.
 set dupwait_timeout 5
-
 
 
 ########## MODULES ##########
 
-# below are various settings for the modules available with eggdrop,
-# PLEASE EDIT THEM CAREFULLY, READ THEM, even if you're an old hand
-# at eggdrop, lots of things have changed slightly
+# Below are various settings for the modules included with Eggdrop.
+# PLEASE READ AND EDIT THEM CAREFULLY, even if you're an old hand at
+# Eggdrop, things change.
 
-# this is the directory to look for the modules in, if you run the
-# bot in the compilation directories you will want to set this to ""
-# if you use 'make install' (like all good kiddies do ;) this is a fine
-# default, otherwise, use your head :)
+# This path specifies the path were Eggdrop should look for its modules.
+# If you run the bot from the compilation directory, you will want to set
+# this to "". If you use 'make install' (like all good kiddies do ;), this
+# is a fine default. Otherwise, use your head :)
 set mod_path "modules/"
 
 
 ##### CHANNELS MODULE #####
 
-# this next module provides channel related support for the bot, without
-# it, it will just sit on irc, it can respond to msg & ctcp commands, but
-# that's all
+# This module provides channel related support for the bot. Without it,
+# you won't be able to make the bot join a channel or save channel
+# specific userfile information.
 #loadmodule channels
 
-# the chanfile: where dynamic channel settings are stored
+# Enter here the filename where dynamic channel settings are stored.
 set chanfile "LamestBot.chan"
 
-# [0/1] expire bans/exempts/invites set by other opped bots on the channel?
-# set force_expire 0
+# Set this setting to 1 if you want your bot to expire bans/exempts/invites set
+# by other opped bots on the channel.
+set force_expire 0
 
-# [0/1] share user greets with other bots on the channel if sharing user data?
+# Set this setting to 1 if you want your bot to share user greets with other
+# bots on the channel if sharing user data.
 set share_greet 0
 
-# [0/1] allow users to store an info line?
+# Set this setting to 1 if you want to allow users to store an info line.
 set use_info 1
 
-# these settings are used as default values when you
-# .+chan #chan or .tcl channel add #chan
-# look in the section above for explanation on every option
-
-set global_flood_chan 10:60
-set global_flood_deop 3:10
-set global_flood_kick 3:10
-set global_flood_join 5:60
-set global_flood_ctcp 3:60
-set global_flood_nick 5:60
-
+# The following settings are used as default values when you .+chan #chan or .tcl
+# channel add #chan. Look in the section below for explanation of every option.
 set global_aop_delay 5:30
-
-set global_idle_kick 0
 set global_chanmode "nt"
-set global_stopnethack_mode 0
-set global_revenge_mode 0
 set global_ban_time 120
 set global_exempt_time 60
 set global_invite_time 60
 
-set global_chanset {
+set global-chanset {
         -autoop               -autovoice
-        -bitch                +cycle
-        +dontkickops          +dynamicbans
-        +dynamicexempts       +dynamicinvites
-        -enforcebans          +greet
-        -inactive             -nodesynch
-        -protectfriends       +protectops
-        -revenge              -revengebot
-        -secret               +statuslog
-        +shared               +userinvites
-        +userbans             +userexempts
+        +cycle                +dontkickops
+        +dynamicbans          +dynamicexempts
+        +dynamicinvites       -enforcebans
+        +greet                -inactive
+        -nodesynch            -secret
+        +shared               +statuslog
         +honor-global-bans    +honor-global-invites
         +honor-global-exempts
 }
 
-##### SERVER MODULE #####
+# Add each static channel you want your bot to sit in using the following
+# command. There are many different possible settings you can insert into
+# this command, which are explained below.
+#
+#    channel add #lamest {
+#      chanmode "+nt-likm"
+#      ban_time 120
+#      exempt_time 60
+#      invite_time 60
+#      aop_delay 5:30
+#    }
+#
+# chanmode +/-<modes>
+#    This setting makes the bot enforce channel modes. It will always add
+#    the +<modes> and remove the -<modes> modes.
+#
+# ban_time 120
+#   Set here how long temporary bans will last (in minutes). If you
+#   set this setting to 0, the bot will never remove them.
+#
+# exempt_time 60
+#   Set here how long temporary exempts will last (in minutes). If you
+#   set this setting to 0, the bot will never remove them. The bot will
+#   check the exempts every X minutes, but will not remove the exempt if
+#   a ban is set on the channel that matches that exempt. Once the ban is
+#   removed, then the exempt will be removed the next time the bot checks.
+#   Please note that this is an IRCnet feature.
+#
+# invite_time 60
+#   Set here how long temporary invites will last (in minutes). If you
+#   set this setting to 0, the bot will never remove them. The bot will
+#   check the invites every X minutes, but will not remove the invite if
+#   a channel is set to +i. Once the channel is -i then the invite will be
+#   removed the next time the bot checks. Please note that this is an IRCnet
+#   feature.
+#
+# aop_delay (minimum:maximum)
+# This is used for autoop, autohalfop, autovoice. If an op or voice joins a
+# channel while another op or voice is pending, the bot will attempt to put
+# both modes on one line.
+#   aop_delay 0   No delay is used.
+#   aop_delay X   An X second delay is used.
+#   aop_delay X:Y A random delay between X and Y is used.
+#
+# There are many different options for channels which you can
+# define. They can be enabled or disabled using the channel set command by a
+# plus or minus in front of them.
+#
+#   channel set #lamest +enforcebans +dynamicbans +dynamicexempts -autoop
+#   channel set #lamest +statuslog +dontkickops +autovoice +honor-global-bans
+#   channel set #lamest +honor-global-exempts +greet +honor-global-invites
+#   channel set #lamest +dynamicinvites -secret -shared +cycle
+#
+# A complete list of all available channel settings:
+#
+# enforcebans
+#    When a ban is set, kick people who are on the channel and match
+#    the ban?
+#
+# dynamicbans
+#    Only activate bans on the channel when necessary? This keeps
+#    the channel's ban list from getting excessively long. The bot
+#    still remembers every ban, but it only activates a ban on the
+#    channel when it sees someone join who matches that ban.
+#
+# dynamicexempts
+#    Only activate exempts on the channel when necessary? This keeps
+#    the channel's exempt list from getting excessively long. The bot
+#    still remembers every exempt, but it only activates a exempt on
+#    the channel when it sees a ban set that matches the exempt. The
+#    exempt remains active on the channel for as long as the ban is
+#    still active.
+#
+# dynamicinvites
+#    Only activate invites on the channel when necessary? This keeps
+#    the channel's invite list from getting excessively long. The bot
+#    still remembers every invite, but the invites are only activated
+#    when the channel is set to invite only and a user joins after
+#    requesting an invite. Once set, the invite remains until the
+#    channel goes to -i.
+#
+# autoop
+#    Op users with the +o flag as soon as they join the channel?
+#    This is insecure and not recommended.
+#
+# greet
+#    Say a user's info line when they join the channel?
+#
+# statuslog
+#    Log the channel status line every 5 minutes? This shows the bot's
+#    status on the channel (op, voice, etc.), The channel's modes, and
+#    the number of +m/+o/+v/+n/+b/+e/+I users on the channel. A sample
+#    status line follows:
+#
+#      [01:40] @#lamest (+istn) : [m/1 o/1 v/4 n/7 b/1 e/5 I/7]
+#
+# autovoice
+#    Voice users with the +v flag when they join the channel?
+#
+# secret
+#    Prevent this channel from being listed on the botnet?
+#
+# shared
+#    Share channel-related user info for this channel?
+#
+# cycle
+#    Cycle the channel when it has no ops?
+#
+# dontkickops
+#    Do you want the bot not to be able to kick users who have the +o
+#    flag, letting them kick-flood for instance to protect the channel
+#    against clone attacks.
+#
+# inactive
+#    This prevents the bot from joining the channel (or makes it leave
+#    the channel if it is already there). It can be useful to make the
+#    bot leave a channel without losing its settings, channel-specific
+#    user flags, channel bans, and without affecting sharing.
+#
+# nodesynch
+#    Allow non-ops to perform channel modes? This can stop the bot from
+#    fighting with services such as ChanServ, or from kicking IRCops when
+#    setting channel modes without having ops.
+#
+# honor-global-bans
+#    Should global bans apply to this channel?
+#
+# honor-global-exempts
+#    Should global exempts apply to this channel?
+#
+# honor-global-invites
+#    Should global invites apply to this channel?
+#
+# Here is a shorter example:
+#
+#   channel add #botcentral {
+#     chanmode "+mntisl 1"
+#   }
+#   channel set #botcentral +enforcebans -greet
 
-# this provides the core server support (removing this is equivalent to
-# the old NO_IRC define)
-#loadmodule server
+
+#### SERVER MODULE ####
+
+# This module provides the core server support. You have to load this
+# if you want your bot to come on IRC. Not loading this is equivalent
+# to the old NO_IRC define.
+loadmodule server
 
 # Uncomment and edit one of the folowing files for network specific
-# features. 
+# features.
 source nettype/custom.server.conf
 #source nettype/dalnet.server.conf
 #source nettype/efnet.server.conf
@@ -399,88 +539,102 @@ source nettype/custom.server.conf
 #source nettype/ircnet.server.conf
 #source nettype/undernet.server.conf
 
-##### variables:
-# the nick of the bot, that which it uses on IRC, and on the botnet
-# unless you specify a separate botnet_nick
-set nick "LamestBot"
+# Set the nick the bot uses on IRC.
+set nick "Lamestbot"
 
-set botnet_nick "LamestBot"
+# Set the alternative nick which the bot uses on IRC if the nick specified
+# by 'set nick' is unavailable. All '?' characters will be replaced by random
+# numbers.
+set altnick "Llamab?t"
 
-set myname "LamestBot"
-
-# an alternative nick to use if the nick specified by 'set nick' is
-# unavailable. All '?' characters will be replaced by a random number.
-set altnick "Llamabot"
-
-# what to display in the real-name field for the bot
+# Set what should be displayed in the real-name field for the bot on IRC.
 set realname "/msg LamestBot hello"
 
-# tcl code to run (if any) when first connecting to a server
-
-bind event init-server event:init_server
+# This is a Tcl script to be run when connecting to a server.
+bind event - init-server event:init_server
 
 proc event:init_server {type} {
   global botnick
   putserv -quick "MODE $botnick +i-ws"
 }
 
-# if no port is specified on a .jump, which port should I use?
+# Set the default port which should be used if none is specified with
+# '.jump' or in 'set servers'.
 set default_port 6667
 
-# the server list -- the bot will start at the first server listed, and cycle
-# through them whenever it's disconnected
-# (please note: you need to change these servers to YOUR network's servers)
+# This is the bot's server list. The bot will start at the first server listed,
+# and cycle through them whenever it gets disconnected. You need to change these
+# servers to YOUR network's servers.
+#
+# Format:
+#   server_add <host> [port] [pass]
+#
+# Both the port and password fields are optional; however, if you want to set a
+# password you must also set a port. If a port isn't specified it will default to
+# your default_port setting.
 
-# server_add <host> [port] [pass] <-- port and pass are optional
+server_add "hostname.without.port"
+server_add "hostname.with.port" 6668
+server_add "hostname.with.port.and.pass" 6669 "somepass"
+server_add "IPv6:server:with:port:and:pass" 6667 "mypass"
+server_add "1.2.3.4" 6660
 
-server_add edit.your.config.file
-
-# [0/1] if the bot's nickname is changed (for example, if the intended
-# nickname is already in use) keep trying to get the nick back?
+# This setting makes the bot try to get his original nickname back if its
+# primary nickname is already in use.
 set keep_nick 1
 
-# [0/1] if this is set, a leading '~' on user@hosts WON'T be stripped off
+# Set this to 1 if you don't want your the bot to strip a leading '~' on
+# user@hosts.
 set strict_host 0
 
-# [0/1] Squelch the error message when rejecting a DCC CHAT or SEND?
-# Normally it tells the DCC user that the CHAT or SEND has been rejected
-# because they don't have access, but sometimes IRC server operators
-# detect bots that way.
+# This setting makes the bot squelch the error message when rejecting a DCC
+# CHAT, SEND or message command. Normally, Eggdrop notifies the user that the
+# command has been rejected because they don't have access. Note that sometimes
+# IRC server operators detect bots that way.
 set quiet_reject 1
 
-# answer HOW MANY stacked ctcps at once
+# Set how many ctcps should be answered at once.
 set answer_ctcp 3
 
-# setting any of the following with how many == 0 will turn them off
-# how many msgs in how many seconds from the same host constitutes a flood?
+# Set here how many msgs in how many seconds from one host constitutes
+# a flood. If you set this to 0:0, msg flood protection will be disabled.
 set flood_msg 5:60
-# how many CTCPs in how many seconds?
+
+# Set here how many ctcps in how many seconds from one host constitutes
+# a flood. If you set this to 0:0, ctcp flood protection will be disabled.
 set flood_ctcp 3:60
 
-# number of seconds to wait between each server connect (0 = no wait)
-# useful for preventing ircu throttling
-# setting this too low could make your server admins *very* unhappy
+# This setting defines how long Eggdrop should wait before moving from one
+# server to another on disconnect. If you set 0 here, Eggdrop will not wait
+# at all and will connect instantly. Setting this too low could result in
+# your bot being K:Lined.
 set server_cycle_wait 60
 
-# how many seconds to wait for a response when connecting to a server
-# before giving up and moving on?
+# Set here how long Eggdrop should wait for a response when connecting to a
+# server before giving up and moving on to next server.
 set server_timeout 60
 
-# [0/1] check for stoned servers? (i.e. Where the server connection has
-# died, but eggdrop hasn't been notified yet).
+# Set this to 1 if Eggdrop should check for stoned servers? (where the server
+# connection has died, but Eggdrop hasn't been notified yet).
 set check_stoned 1
 
-# maximum number of lines to queue to the server.
-# if you're going to dump large chunks of text to people over irc,  you
-# will probably want to raise this -- most people are fine at 300 though
+# Set here the maximum number of lines to queue to the server. If you're
+# going to dump large chunks of text to people over IRC, you will probably
+# want to raise this. 300 is fine for most people though.
 set max_queue_msg 300
 
-# [0/1] trigger bindings for ignored users?
+# If you want Eggdrop to trigger binds for ignored users, set this to 1.
 set trigger_on_ignore 0
 
-# [0/1/2] do you want the bot to optimize the kicking queues? Set to 2 if you
-# want the bot to change queues if somebody parts or changes nickname.
-# ATTENTION: Setting 2 is very CPU intensive
+# This optimizes the kick queue. It also traces nick changes and parts in
+# the channel and changes the kick queue accordingly. There are three
+# different options for this setting:
+#   0 = Turn it off.
+#   1 = Optimize the kick queue by summarizing kicks.
+#   2 = Trace nick changes and parts on the channel and change the queue
+#       accordingly. For example, bot will not try to kick users who have
+#       already parted the channel.
+# ATTENTION: Setting 2 is very CPU intensive.
 set optimize_kicks 1
 
 # If your network supports more recipients per command then 1, you can
@@ -489,30 +643,32 @@ set optimize_kicks 1
 set stack_limit 4
 
 
-##### CTCP MODULE #####
+#### CTCP MODULE ####
 
-# this provides the normal ctcp replies that you'd expect *RECOMMENDED*
+# This module provides the normal ctcp replies that you'd expect.
+# Without it loaded, CTCP CHAT will not work. The server module
+# is required for this module to function.
 #loadmodule ctcp
 
-# several variables exist to better blend your egg in.  they are
-# ctcp_version, ctcp_finger, and ctcp_userinfo.  you can use set
-# to set them to values you like.
-
-# [0/1/2] 0: normal behavior. 1: bot ignores all CTCPs, except for CTCP
-# CHATs & PINGs requested by +o flag users. 2: bot doesn't answer more
-# than C CTCPs in S seconds.
-# C/S are defined by the set flood_ctcp C:S (cf. server module)
+# Set here how the ctcp module should answer ctcps. There are 3 possible
+# operating modes:
+#   0: Normal behavior is used.
+#   1: The bot ignores all ctcps, except for CHAT and PING requests
+#      by users with the +o flag.
+#   2: Normal behavior is used, however the bot will not answer more
+#      than X ctcps in Y seconds (defined by 'set flood_ctcp').
 set ctcp_mode 0
 
 
 ##### IRC MODULE #####
 
-# this module provides ALL NORMAL IRC INTERACTION, if you want the normal
-# join & maintain channels stuff, this is the module.
+# This module provides basic IRC support for your bot. You have to
+# load this if you want your bot to come on IRC. The server and channels
+# modules must be loaded for this module to function.
 #loadmodule irc
 
 # Uncomment and edit one of the folowing files for network specific
-# features. 
+# features.
 source nettype/custom.irc.conf
 #source nettype/dalnet.irc.conf
 #source nettype/efnet.irc.conf
@@ -520,240 +676,269 @@ source nettype/custom.irc.conf
 #source nettype/ircnet.irc.conf
 #source nettype/undernet.irc.conf
 
-# [0/1] define this if you want to bounce all server bans
+# Set this to 1 if you want to bounce all server bans.
 set bounce_bans 1
 
-# [0/1] define this if you want to bounce all the server modes
+# Set this to 1 if you want to bounce all server modes.
 set bounce_modes 0
 
-# [0/1] let users introduce themselves to the bot via 'hello'?
+# If you want people to be able to add themselves to the bot's userlist
+# with the default userflags (defined above in the config file) via the
+# 'hello' msg command, set this to 1.
 set learn_users 0
 
-# time (in seconds) to wait for someone to return from a netsplit
+# Set here the time (in seconds) to wait for someone to return from a netsplit
+# (i.e. wasop will expire afterwards). Set this to 1500 on IRCnet since its
+# nick delay stops after 30 minutes.
 set wait_split 600
 
-# time (in seconds) that someone must have been off-channel before
-# re-displaying their info
+# Set here the time (in seconds) that someone must have been off-channel
+# before re-displaying their info line.
 set wait_info 180
 
-# this is the maximum number of bytes to send in the arguments to mode's
-# sent to the server, most servers default this to 200, so it should
-# be sufficient
+# Set this to the maximum number of bytes to send in the arguments
+# of modes sent to the server. Most servers default this to 200.
 set mode_buf_length 200
 
-# many irc ops check for bots that respond to 'hello'.  you can change this
-# to another word by uncommenting the following two lines, and changing
-# "myword" to the word you want to use instead of 'hello' (it must be a
-# single word)
-# novice users are not expected to understand what these two lines do; they
-# are just here to help you.  for more information on 'bind', check the file
-# 'tcl-commands.doc'
+# Many IRCops find bots by seeing if they reply to 'hello' in a msg.
+# You can change this to another word by un-commenting the following
+# two lines and changing "myword" to the word wish to use instead of
+# 'hello'. It must be a single word.
 #unbind msg - hello *msg:hello
 #bind msg - myword *msg:hello
 
-# Many takeover attempts occur due to lame users blindy /msg ident'n to
-# the bot without checking if the bot is the bot.
-# We now unbind this command by default to discourage them
-#unbind msg ident *msg:ident
+# Many takeover attempts occur due to lame users blindly /msg ident'ing to
+# the bot and attempting to guess passwords. We now unbind this command by
+# default to discourage them. You can enable this commands by commenting the
+# following line.
+unbind msg - ident *msg:ident
 
-# If you or your users use many different hosts and wants to
-# be able to add it by /msg'ing you need to remove the
-# unbind ident line above or bind it to another word.
-#bind msg - myidentword *msg:ident
-
-# [0/1] If you are so lame you want the bot to display peoples info lines, even
-# when you are too lazy to add their chanrecs to a channel, set this to 1
+# If you are so lame you want the bot to display peoples info lines, even
+# when you are too lazy to add their chanrecs to a channel, set this to 1.
 # *NOTE* This means *every* user with an info line will have their info
-# display on EVERY channel they join (provided they have been gone longer than
-# wait_info)
+# line displayed on EVERY channel they join (provided they have been gone
+# longer than wait_info).
 set no_chanrec_info 0
 
 
-##### TRANSFER MODULE #####
+#### TRANSFER MODULE ####
 
-# uncomment this line to load the transfer module, this provides
-# dcc send/get support and bot userfile transfer support (not sharing)
+# The transfer module provides dcc send/get support and userfile transfer
+# support for userfile sharing. Un-comment the next line to load it if you
+# need this functionality.
 #loadmodule transfer
 
-##### variables:
-# set maximum number of simultaneous downloads to allow for each user
-set max_dloads 3
+# Set here the maximum number of simultaneous downloads to allow for
+# each user.
+set dcc_limit 3
 
-# set the block size for dcc transfers (ircII uses 512 bytes, but admits
-# that may be too small -- 1024 is standard these days)
-# set this to 0 to use turbo-dcc (recommended)
+# Set here the block size for dcc transfers. ircII uses 512 bytes,
+# but admits that it may be too small. 1024 is standard these days.
+# 0 is turbo-dcc (recommended).
 set dcc_block 0
 
-# [0/1] copy files into the /tmp directory before sending them?  this is
-# useful on most systems for file stability.  (someone could move a file
-# around while it's being downloaded, and mess up the transfer.)  but if
-# your directories are NFS mounted, it's a pain, and you'll want to set
-# this to 0. If you are low on disk space, you may want to set this to 0.
+# Enable this setting if you want to copy files into the /tmp directory
+# before sending them. This is useful on most systems for file stability,
+# but if your directories are NFS mounted, it's a pain, and you'll want
+# to set this to 0. If you are low on disk space, you may also want to
+# set this to 0.
 set copy_to_tmp 1
 
-# time (in seconds) that a dcc file transfer can remain inactive
-# before being timed out
+# Set here the time (in seconds) to wait before an inactive transfer times out.
 set xfer_timeout 30
 
 
-##### SHARE MODULE #####
+#### SHARE MODULE ####
 
-# this provides the userfile sharing support
-# (this requires the channels & transfer modules)
+# This module provides userfile sharing support between two directly
+# linked bots. The transfer and channels modules are required for this
+# module to correctly function. Un-comment the following line to load
+# the share module.
 #loadmodule share
 
-##### variables:
-# [0/1] When two bots get disconnected this flag allows them to create
-# a resync buffer which saves all changes done to the userfile during
-# the disconnect. So, when they reconnect, they will not have to transfer
-# the complete user file, but instead, just send the resync buffer.
-# If you have problems with this feature please tell us. Take a look at
-# doc/BUG-REPORT first though.
+# Settings in this section must be un-commented before setting.
+
+# When two bots get disconnected, this setting allows them to create a
+# resync buffer which saves all changes done to the userfile during
+# the disconnect. When they reconnect, they will not have to transfer
+# the complete user file, but, instead, just send the resync buffer.
+#
+# NOTE: This has been known to cause loss of channel flags and other
+# problems. Using this setting is not recommended.
 #set allow_resync 0
 
-# this specifies how long to hold another bots resync data for before
-# flushing it
+# This setting specifies how long to hold another bots resync data
+# before flushing it.
 #set resync_time 900
 
-# [0/1] when sharing user lists, DONT ACCEPT global flag changes from other bots?
-# NOTE: the bot will still send changes made on the bot, it just wont accept
-# any global flag changes from other bots
+# When sharing user lists, DON'T ACCEPT global flag changes from other bots?
+# NOTE: The bot will still send changes made on the bot, it just won't accept
+# any global flag changes from other bots.
 #set private_global 0
 
-# when sharing user lists, if private_global isn't set, which global flag
-# changes from other bots should be ignored ?
+# When sharing user lists, if private_global isn't set, which global flag
+# changes from other bots should be ignored?
 #set private_globals "mnot"
 
-# [0/1] when sharing user lists, DON'T ACCEPT any userfile changes from other
-# bots?
-# NOTE: paranoid people should use this feature on their hub bot - this
-# will force all +host/+user/chpass/etc. changes to be made via the hub
+# When sharing user lists, don't accept ANY userfile changes from other
+# bots? Paranoid people should use this feature on their hub bot. This
+# will force all userlist changes to be made via the hub.
 #set private_user 0
 
-# [0/1] this setting makes the bot discard it's own bot records in favor of
-# the ones sent by the hub. Note: This only works with hubs that are v1.5.1
-# _or higher_.
+# This setting makes the bot discard its own bot records in favor of
+# the ones sent by the hub.
+# NOTE: No passwords or botflags are shared, only ports and
+# address are added to sharing procedure. This only works with hubs that
+# are v1.5.1 or higher.
 #set override_bots 0
 
 
-##### COMPRESS MODULE #####
+#### COMPRESS MODULE ####
 
-# The compress module provides support for file compression. This allows the
-# bot to transfer compressed user files and therefore save a significant
-# amount of bandwidth, especially on very active hubs.
+# This module provides provides support for file compression. This allows the
+# bot to transfer compressed user files and therefore save a significant amount
+# of bandwidth. The share module must be loaded to load this module. Un-comment
+# the following line to the compress module.
 #loadmodule compress
 
-# [0/1] allow compressed sending of user files. The user files
-# are compressed with the compression level defined in `compress_level'.
-#set share_compressed 1
+# Allow compressed sending of user files? The user files are compressed with
+# the compression level defined in `compress_level'.
+set share_compressed 1
 
-# [0-9] default compression level used.
+# This is the default compression level used.
 #set compress_level 9
 
 
-##### FILESYSTEM MODULE #####
+#### FILESYSTEM MODULE ####
 
-# uncomment this line to load the file system module, this provides
-# an area within the bot where you can store files
+# This module provides an area within the bot where users can store
+# files. With this module, the bot is usable as a file server. The
+# transfer module is required for this module to function. Un-comment
+# the following line to load the filesys module.
 #loadmodule filesys
 
-# this is the 'root' directory for the file system (set it to "" if you
-# don't want a file system)
+# Set here the 'root' directory for the file system.
 set files_path "/home/mydir/filesys"
 
-# if you want to allow uploads, set this to the directory uploads should be
-# put into
+# If you want to allow uploads, set this to the directory uploads
+# should be put into. Set this to "" if you don't want people to
+# upload files to your bot.
 set incoming_path "/home/mydir/filesys/incoming"
 
-# [0/1] alternately, you can set this, and uploads will go to the current
-# directory that a user is in
+# If you don't want to have a central incoming directory, but instead
+# want uploads to go to the current directory that a user is in, set
+# this setting to 1.
 set upload_to_pwd 0
 
-# eggdrop creates a '.filedb' file in each subdirectory of your dcc area,
-# to keep track of its own file system info -- if you can't do that (like
-# if the dcc path isn't owned by yours) or you just don't want it to do
-# that, specify a path here where you'd like all the database files to
-# be stored instead (otherwise, just leave it blank)
+# Eggdrop creates a '.filedb' file in each subdirectory of your file area
+# to keep track of its own file system information. If you can't do that (for
+# example, if the dcc path isn't owned by you, or you just don't want it to do
+# that) specify a path here where you'd like all of the database files to be
+# stored instead.
 set filedb_path ""
 
-# set maximum number of people that can be in the file area at once
-# (0 to make it effectively infinite)
+# Set here the maximum number of people that can be in the file area at once.
+# Setting this to 0 makes it effectively infinite.
 set max_file_users 20
 
-# maximum allowable file size that will be received, in K
-# (default is 1024K = 1M). 0 makes it effectively infinite.
+# Set here the maximum allowable file size that will be received (in kb).
+# Setting this to 0 makes it effectively infinite.
 set max_filesize 1024
 
 
-##### NOTES MODULE #####
+#### NOTES MODULE ####
 
-# this provides support for storing of notes for users from each other
-# notes between currently online users is supported in the core, this is
-# only for storing the notes for later retrieval, direct user->user notes
-# are built-in
+# This module provides support for storing of notes for users from each other.
+# Note sending between currently online users is supported in the core, this is
+# only for storing the notes for later retrieval.
 #loadmodule notes
 
-# the notefile: where private notes between users are stored
+# Set here the filename where private notes between users are stored.
 set notefile "LamestBot.notes"
 
-# maximum number of notes to allow to be stored for each user
-# (to prevent flooding)
+# Set here the maximum number of notes to allow to be stored for each user
+# (to prevent flooding).
 set max_notes 50
 
-# time (in days) to let stored notes live before expiring them
+# Set here how long (in days) to store notes before expiring them.
 set note_life 60
 
-# [0/1] allow users to specify a forwarding address for forwarding notes
-# to another bot
+# Set this to 1 if you want to allow users to specify a forwarding address
+# for forwarding notes to another account on another bot.
 set allow_fwd 0
 
-# [0/1] set this to 1 if you want the bot to let people know hourly if they
-# have any notes
+# Set this to 1 if you want the bot to let people know hourly if they have
+# any notes.
 set notify_users 1
 
-# [0/1] set this to 1 if you want the bot to let people know on join if they
-# have any notes
+# Set this to 1 if you want the bot to let people know on join if they have
+# any notes.
 set notify_onjoin 1
 
-##### CONSOLE MODULE #####
 
-# this module provides storage of console settings when you exit the bot
-# (or .store)
+#### CONSOLE MODULE ####
+
+# This module provides storage of console settings when you exit the bot or
+# type .store on the partyline.
 #loadmodule console
 
-##### variables:
-# [0/1] save users console settings automatically? (otherwise they have to use
-# .store)
-set console_autosave 0
+# Save users console settings automatically? Otherwise, they have to use the
+# .store command.
+set console_autosave 1
 
-# [0-99999] if a user doesn't have any console settings saved, which channel
-# do you want them automatically put on?
+# If a user doesn't have any console settings saved, which channel do you want
+# them automatically put on?
 set force_channel 0
 
-# [0/1] display a user's global info line when they join a botnet channel?
+# Enable this setting if a user's global info line should be displayed when
+# they join a botnet channel.
 set info_party 0
 
 
-##### UPTIME MODULE #####
+#### BLOWFISH MODULE ####
 
-# this module reports uptime statistics to http://uptime.eggheads.org
-# go look and see what your uptime is! (it will show up after 9 hours or so)
-# (this requires the server module)
+# IF YOU DON'T READ THIS YOU MAY RENDER YOUR USERFILE USELESS LATER
+# Eggdrop encrypts its userfile, so users can have secure passwords.
+# Please note that when you change your encryption method later (i.e.
+# using other modules like a md5 module), you can't use your current
+# userfile anymore. Eggdrop will not start without an encryption module.
+#loadmodule blowfish
+
+
+#### UPTIME MODULE ####
+
+# This module reports uptime statistics to http://uptime.eggheads.org.
+# Go look and see what your uptime is! It takes about 9 hours to show up,
+# so if your bot isn't listed, try again later. The server module must be
+# loaded for this module to function.
+#
+# Information sent to the server includes the bot's uptime, name, server,
+# version, and IP address. This information is stored in a temporary logfile
+# for debugging purposes only. The only publicly available information will
+# be the bot's name, version and uptime. If you do not wish for this
+# information to be sent, comment out the following line.
 #loadmodule uptime
 
 
 ##### SCRIPTS #####
 
-# these are some commonly loaded (and needed) scripts.
+# This is a good place to load scripts to use with your bot.
+
+# This line loads script.tcl from the scripts directory inside your Eggdrop's
+# directory. All scripts should be put there, although you can place them where
+# you like as long as you can supply a fully qualified path to them.
+#
+# source scripts/script.tcl
+
 #source scripts/alltools.tcl
 #source scripts/action.fix.tcl
 
-# use this for tcl and eggdrop downwards compatibility
+# Use this script for Tcl and Eggdrop downwards compatibility.
+# NOTE: This can also cause problems with some newer scripts.
 #source scripts/compat.tcl
 
-# This script provides many useful minor informational commands
-# (like setting user's URLs, email address, etc). You can modify
-# it to add extra entries, you might also want to modify help/userinfo.help
-# and help/msg/userinfo.help to change the help files.
+# This script provides many useful informational functions, like setting
+# users' URLs, e-mail address, ICQ numbers, etc. You can modify it to add
+# extra entries.
 #source scripts/userinfo.tcl
 loadhelp userinfo.help

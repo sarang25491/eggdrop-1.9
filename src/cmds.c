@@ -24,7 +24,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: cmds.c,v 1.113 2003/02/10 00:09:08 wcc Exp $";
+static const char rcsid[] = "$Id: cmds.c,v 1.114 2003/02/15 00:23:51 wcc Exp $";
 #endif
 
 #include "main.h"
@@ -1916,14 +1916,6 @@ static int cmd_traffic(user_t *u, int idx, char *par)
     dprintf(idx, "   in: %s", btos(traffic.in_total.dcc + traffic.in_today.dcc));
               dprintf(idx, " (%s today)\n", btos(traffic.in_today.dcc));
   }
-  if (traffic.out_total.trans > 0 || traffic.in_total.trans > 0 || traffic.out_today.trans > 0 ||
-      traffic.in_today.trans > 0) {
-    dprintf(idx, "Transfer.mod:\n");
-    dprintf(idx, "  out: %s", btos(traffic.out_total.trans + traffic.out_today.trans));
-              dprintf(idx, " (%s today)\n", btos(traffic.out_today.trans));
-    dprintf(idx, "   in: %s", btos(traffic.in_total.trans + traffic.in_today.trans));
-              dprintf(idx, " (%s today)\n", btos(traffic.in_today.trans));
-  }
   if (traffic.out_total.unknown > 0 || traffic.out_today.unknown > 0) {
     dprintf(idx, "Misc:\n");
     dprintf(idx, "  out: %s", btos(traffic.out_total.unknown + traffic.out_today.unknown));
@@ -1933,20 +1925,18 @@ static int cmd_traffic(user_t *u, int idx, char *par)
   }
   dprintf(idx, "---\n");
   dprintf(idx, "Total:\n");
-  itmp = traffic.out_total.irc + traffic.out_total.bn + traffic.out_total.dcc + traffic.out_total.trans
-         + traffic.out_total.unknown + traffic.out_today.irc
-         + traffic.out_today.dcc + traffic.out_today.trans + traffic.out_today.unknown;
-  itmp2 = traffic.out_today.irc + traffic.out_today.dcc
-         + traffic.out_today.trans + traffic.out_today.unknown;
+  itmp =  traffic.out_total.irc + traffic.out_total.bn + traffic.out_total.dcc +
+          traffic.out_total.unknown + traffic.out_today.irc +
+          traffic.out_today.dcc + traffic.out_today.unknown;
+  itmp2 = traffic.out_today.irc + traffic.out_today.dcc +
+          traffic.out_today.unknown;
   dprintf(idx, "  out: %s", btos(itmp));
               dprintf(idx, " (%s today)\n", btos(itmp2));
-  dprintf(idx, "   in: %s", btos(traffic.in_total.irc + traffic.in_total.dcc
-	  + traffic.in_total.trans + traffic.in_total.unknown + traffic.in_today.irc
-	  + traffic.in_today.dcc + traffic.in_today.trans
-	  + traffic.in_today.unknown));
-  dprintf(idx, " (%s today)\n", btos(traffic.in_today.irc
-          + traffic.in_today.dcc + traffic.in_today.trans
-	  + traffic.in_today.unknown));
+  dprintf(idx, "   in: %s", btos(traffic.in_total.irc + traffic.in_total.dcc +
+          traffic.in_total.unknown + traffic.in_today.irc +
+          traffic.in_today.dcc + traffic.in_today.unknown));
+  dprintf(idx, " (%s today)\n", btos(traffic.in_today.irc +
+          traffic.in_today.dcc + traffic.in_today.unknown));
   return(1);
 }
 

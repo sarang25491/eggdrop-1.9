@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: files.c,v 1.9 2003/02/10 00:09:08 wcc Exp $";
+static const char rcsid[] = "$Id: files.c,v 1.10 2003/02/15 00:23:51 wcc Exp $";
 #endif
 */
 
@@ -45,6 +45,65 @@ static const char rcsid[] = "$Id: files.c,v 1.9 2003/02/10 00:09:08 wcc Exp $";
 # endif
 #endif
 
+static void show_queued_files(int idx)
+{
+  int i, cnt = 0, len;
+  char spaces[] = "                                 ";
+  fileq_t *q;
+
+  for (q = fileq; q; q = q->next) {
+    if (!strcasecmp(q->nick, dcc[idx].nick)) {
+      if (!cnt) {
+	spaces[HANDLEN - 9] = 0;
+	dprintf(idx, "  Send to  %s  Filename\n", spaces);
+	dprintf(idx, "  ---------%s  --------------------\n", spaces);
+	spaces[HANDLEN - 9] = ' ';
+      }
+      cnt++;
+      spaces[len = HANDLEN - strlen(q->to)] = 0;
+      if (q->dir[0] == '*')
+	dprintf(idx, "  %s%s  %s/%s\n", q->to, spaces, &q->dir[1],
+		q->file);
+      else
+	dprintf(idx, "  %s%s  /%s%s%s\n", q->to, spaces, q->dir,
+		q->dir[0] ? "/" : "", q->file);
+      spaces[len] = ' ';
+    }
+  }
+  for (i = 0; i < dcc_total; i++) {
+    if ((dcc[i].type == &DCC_GET_PENDING || dcc[i].type == &DCC_GET) &&
+	(!strcasecmp(dcc[i].nick, dcc[idx].nick) ||
+	 !strcasecmp(dcc[i].u.xfer->from, dcc[idx].nick))) {
+      char *nfn;
+
+      if (!cnt) {
+	spaces[HANDLEN - 9] = 0;
+	dprintf(idx, "  Send to  %s  Filename\n", spaces);
+	dprintf(idx, "  ---------%s  --------------------\n", spaces);
+	spaces[HANDLEN - 9] = ' ';
+      }
+      nfn = strrchr(dcc[i].u.xfer->origname, '/');
+      if (nfn == NULL)
+	nfn = dcc[i].u.xfer->origname;
+      else
+	nfn++;
+      cnt++;
+      spaces[len = HANDLEN - strlen(dcc[i].nick)] = 0;
+      if (dcc[i].type == &DCC_GET_PENDING)
+	dprintf(idx, "  %s%s  %s  [WAITING]\n", dcc[i].nick, spaces,
+		nfn);
+      else
+	dprintf(idx, "  %s%s  %s  (%.1f%% done)\n", dcc[i].nick, spaces,
+		nfn, (100.0 * ((float) dcc[i].status /
+			       (float) dcc[i].u.xfer->length)));
+      spaces[len] = ' ';
+    }
+  }
+  if (!cnt)
+    dprintf(idx, "No files queued up.\n");
+  else
+    dprintf(idx, "Total: %d\n", cnt);
+}
 
 /* Are there too many people in the file system?
  */

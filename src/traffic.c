@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: traffic.c,v 1.2 2003/01/02 21:33:17 wcc Exp $
+ * $Id: traffic.c,v 1.3 2003/02/15 00:23:51 wcc Exp $
  */
 
 #include "main.h"
@@ -28,7 +28,7 @@
 #include "traffic.h"			/* prototypes		*/
 
 #ifndef lint
-static const char rcsid[] = "$Id: traffic.c,v 1.2 2003/01/02 21:33:17 wcc Exp $";
+static const char rcsid[] = "$Id: traffic.c,v 1.3 2003/02/15 00:23:51 wcc Exp $";
 #endif
 
 egg_traffic_t traffic;			/* traffic information	*/
@@ -82,10 +82,6 @@ void traffic_update_out(struct dcc_table *type, int size)
                 traffic.out_today.dcc += size;
         else if (!strncmp(type->name, "FILES", 5))
                 traffic.out_today.dcc += size;
-        else if (!strcmp(type->name, "SEND"))
-                traffic.out_today.trans += size;
-        else if (!strncmp(type->name, "GET", 3))
-                traffic.out_today.trans += size;
         else
                 traffic.out_today.unknown += size;
 }
@@ -105,10 +101,6 @@ void traffic_update_in(struct dcc_table *type, int size)
 		traffic.in_today.dcc += size;
 	else if (!strncmp(type->name, "FILES", 5))
 		traffic.in_today.dcc += size;
-	else if (!strcmp(type->name, "SEND"))
-		traffic.in_today.trans += size;
-	else if (!strncmp(type->name, "GET", 3))
-		traffic.in_today.trans += size;
 	else
 		traffic.in_today.unknown += size;
 }
@@ -128,14 +120,12 @@ void traffic_reset()
 	traffic.out_total.bn += traffic.out_today.bn;
 	traffic.out_total.dcc += traffic.out_today.dcc;
 	traffic.out_total.filesys += traffic.out_today.filesys;
-	traffic.out_total.trans += traffic.out_today.trans;
 	traffic.out_total.unknown += traffic.out_today.unknown;
 
 	traffic.in_total.irc += traffic.in_today.irc;
 	traffic.in_total.bn += traffic.in_today.bn;
 	traffic.in_total.dcc += traffic.in_today.dcc;
 	traffic.in_total.filesys += traffic.in_today.filesys;
-	traffic.in_total.trans += traffic.in_today.trans;
 	traffic.in_total.unknown += traffic.in_today.unknown;
 
 	memset(&traffic.out_today, 0, sizeof(traffic.out_today));
@@ -198,22 +188,6 @@ int cmd_traffic(struct userrec *u, int idx, char *par)
     dprintf(idx, " (%s today)\n", btos(traffic.in_today.dcc));
   }
 
-  /* Transfer module */
-  if (   traffic.out_total.trans > 0
-      || traffic.in_total.trans > 0
-      || traffic.out_today.trans > 0
-      || traffic.in_today.trans > 0) {
-
-    dprintf(idx, "Transfer.mod:\n");
-    dprintf(idx, "  out: %s", btos(traffic.out_total.trans
-			      + traffic.out_today.trans));
-    dprintf(idx, " (%s today)\n", btos(traffic.out_today.trans));
-    dprintf(idx, "   in: %s", btos(traffic.in_total.trans
-			      + traffic.in_today.trans));
-    dprintf(idx, " (%s today)\n", btos(traffic.in_today.trans));
-
-  }
-
   /* unknown */
   if (traffic.out_total.unknown > 0 || traffic.out_today.unknown > 0) {
     dprintf(idx, "Misc:\n");
@@ -231,41 +205,24 @@ int cmd_traffic(struct userrec *u, int idx, char *par)
   dprintf(idx, "Total:\n");
 
   /* compute total */
-  itmp = traffic.out_total.irc
-       + traffic.out_total.bn
-       + traffic.out_total.dcc
-       + traffic.out_total.trans
-       + traffic.out_total.unknown
-       + traffic.out_today.irc
-       + traffic.out_today.bn
-       + traffic.out_today.dcc
-       + traffic.out_today.trans
-       + traffic.out_today.unknown;
+  itmp = traffic.out_total.irc + traffic.out_total.bn + 
+         traffic.out_total.dcc + traffic.out_total.unknown +
+         traffic.out_today.irc + traffic.out_today.bn +
+         traffic.out_today.dcc + traffic.out_today.unknown;
 
-  itmp2 = traffic.out_today.irc
-        + traffic.out_today.bn
-        + traffic.out_today.dcc
-        + traffic.out_today.trans
-        + traffic.out_today.unknown;
+  itmp2 = traffic.out_today.irc + traffic.out_today.bn +
+          traffic.out_today.dcc + traffic.out_today.unknown;
 
   dprintf(idx, "  out: %s", btos(itmp));
   dprintf(idx, " (%s today)\n", btos(itmp2));
-  dprintf(idx, "   in: %s", btos(traffic.in_total.irc
-                                 + traffic.in_total.bn
-                                 + traffic.in_total.dcc
-                                 + traffic.in_total.trans
-                                 + traffic.in_total.unknown
-                                 + traffic.in_today.irc
-                                 + traffic.in_today.bn
-                                 + traffic.in_today.dcc
-                                 + traffic.in_today.trans
-                                 + traffic.in_today.unknown));
+  dprintf(idx, "   in: %s", btos(traffic.in_total.irc + traffic.in_total.bn +
+          traffic.in_total.dcc + traffic.in_total.unknown +
+          traffic.in_today.irc + traffic.in_today.bn + traffic.in_today.dcc +
+          traffic.in_today.unknown));
 
-  dprintf(idx, " (%s today)\n", btos(traffic.in_today.irc
-                                     + traffic.in_today.bn
-                                     + traffic.in_today.dcc
-                                     + traffic.in_today.trans
-                                     + traffic.in_today.unknown));
+  dprintf(idx, " (%s today)\n", btos(traffic.in_today.irc +
+          traffic.in_today.bn + traffic.in_today.dcc +
+          traffic.in_today.unknown));
 
   return 1;
 }
