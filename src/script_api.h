@@ -66,6 +66,7 @@ enum {
 /* Types for variables. */
 #define SCRIPT_STRING	((int)'s')
 #define SCRIPT_INTEGER	((int)'i')
+#define SCRIPT_UNSIGNED	((int)'u')
 #define SCRIPT_POINTER	((int)'p')
 #define SCRIPT_CALLBACK	((int)'c')
 #define SCRIPT_USER	((int)'U')

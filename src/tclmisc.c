@@ -3,7 +3,7 @@
  *   Tcl stubs for file system commands
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.38 2002/01/14 02:23:27 ite Exp $
+ * $Id: tclmisc.c,v 1.39 2002/01/16 18:09:22 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -30,6 +30,7 @@
 #include "core_binds.h"
 #include "tandem.h"
 #include "md5.h"
+#include "script_api.h"
 #ifdef HAVE_UNAME
 #include <sys/utsname.h>
 #endif
@@ -39,188 +40,151 @@ extern char		 origbotname[], quit_msg[];
 extern struct userrec	*userlist;
 extern time_t		 now;
 extern module_entry	*module_list;
+extern int dcc_total;
 
-static int tcl_duration STDVAR
+static char *script_duration(unsigned int sec)
 {
   char s[70];
-  unsigned long sec, tmp;
+  int tmp;
 
-  BADARGS(2, 2, " seconds");
-  if (atol(argv[1]) <= 0) {
-    Tcl_AppendResult(irp, "0 seconds", NULL);
-    return TCL_OK;
-  }
-  sec = atol(argv[1]);
   s[0] = 0;
   if (sec >= 31536000) {
     tmp = (sec / 31536000);
-    sprintf(s, "%lu year%s ", tmp, (tmp == 1) ? "" : "s");
+    sprintf(s, "%d year%s ", tmp, (tmp == 1) ? "" : "s");
     sec -= (tmp * 31536000);
   }
   if (sec >= 604800) {
     tmp = (sec / 604800);
-    sprintf(&s[strlen(s)], "%lu week%s ", tmp, (tmp == 1) ? "" : "s");
+    sprintf(&s[strlen(s)], "%d week%s ", tmp, (tmp == 1) ? "" : "s");
     sec -= (tmp * 604800);
   }
   if (sec >= 86400) {
     tmp = (sec / 86400);
-    sprintf(&s[strlen(s)], "%lu day%s ", tmp, (tmp == 1) ? "" : "s");
+    sprintf(&s[strlen(s)], "%d day%s ", tmp, (tmp == 1) ? "" : "s");
     sec -= (tmp * 86400);
   }
   if (sec >= 3600) {
     tmp = (sec / 3600);
-    sprintf(&s[strlen(s)], "%lu hour%s ", tmp, (tmp == 1) ? "" : "s");
+    sprintf(&s[strlen(s)], "%d hour%s ", tmp, (tmp == 1) ? "" : "s");
     sec -= (tmp * 3600);
   }
   if (sec >= 60) {
     tmp = (sec / 60);
-    sprintf(&s[strlen(s)], "%lu minute%s ", tmp, (tmp == 1) ? "" : "s");
+    sprintf(&s[strlen(s)], "%d minute%s ", tmp, (tmp == 1) ? "" : "s");
     sec -= (tmp * 60);
   }
   if (sec > 0) {
     tmp = (sec);
-    sprintf(&s[strlen(s)], "%lu second%s", tmp, (tmp == 1) ? "" : "s");
+    sprintf(&s[strlen(s)], "%d second%s", tmp, (tmp == 1) ? "" : "s");
   }
-  Tcl_AppendResult(irp, s, NULL);
-  return TCL_OK;
+  if (strlen(s) > 0 && s[strlen(s)-1] == ' ') s[strlen(s)-1] = 0;
+  return strdup(s);
 }
 
-static int tcl_unixtime STDVAR
+static unsigned int script_unixtime()
 {
-  char s[11];
-
-  BADARGS(1, 1, "");
-  snprintf(s, sizeof s, "%lu", (unsigned long) now);
-  Tcl_AppendResult(irp, s, NULL);
-  return TCL_OK;
+	return(now);
 }
 
-static int tcl_ctime STDVAR
+static char *script_ctime(unsigned int sec)
 {
   time_t tt;
-  char s[25];
 
-  BADARGS(2, 2, " unixtime");
-  tt = (time_t) atol(argv[1]);
-  strncpyz(s, ctime(&tt), sizeof s);
-  Tcl_AppendResult(irp, s, NULL);
-  return TCL_OK;
+  tt = (time_t) sec;
+  return ctime(&tt);
 }
 
-static int tcl_strftime STDVAR
+static char *script_strftime(int nargs, char *format, unsigned int sec)
 {
   char buf[512];
   struct tm *tm1;
   time_t t;
 
-  BADARGS(2, 3, " format ?time?");
-  if (argc == 3)
-    t = atol(argv[2]);
-  else
-    t = now;
-    tm1 = localtime(&t);
-  if (strftime(buf, sizeof(buf) - 1, argv[1], tm1)) {
-    Tcl_AppendResult(irp, buf, NULL);
-    return TCL_OK;
-  }
-  Tcl_AppendResult(irp, " error with strftime", NULL);
-  return TCL_ERROR;
+  if (nargs > 1) t = sec;
+  else t = now;
+
+  tm1 = localtime(&t);
+  if (strftime(buf, sizeof(buf), format, tm1)) return strdup(buf);
+  return strdup("error with strftime");
 }
 
-static int tcl_myip STDVAR
+static unsigned int script_myip()
 {
-  char s[16];
-
-  BADARGS(1, 1, "");
-  snprintf(s, sizeof s, "%lu", iptolong(getmyip()));
-  Tcl_AppendResult(irp, s, NULL);
-  return TCL_OK;
+  return iptolong(getmyip());
 }
 
-static int tcl_myip6 STDVAR
+static char *script_myip6()
 {
-    BADARGS(1, 1, "");
 #ifdef IPV6
-    Tcl_AppendResult(irp, "", NULL); /* FIXME!! */
+	struct in6_addr ip;
+	char buf[512], *ptr;
+
+	ip = getmyip6();
+	ptr = (char *)inet_ntop(AF_INET6, &ip, buf, sizeof(buf));
+	if (!ptr) {
+		/* Error with conversion -- return "". */
+		buf[0] = 0;
+	}
+	return(strdup(buf));
 #else
-    Tcl_AppendResult(irp, "", NULL);
+	/* Empty string if there's no IPv6 support. */
+	return(strdup(""));
 #endif
-    return TCL_OK;
 }
 
-static int tcl_rand STDVAR
+static int script_rand(int nargs, int min, int max)
 {
-  unsigned long x;
-  char s[11];
+	if (nargs == 1) {
+		max = min;
+		min = 0;
+	}
+	if (max <= min) return(max);
 
-  BADARGS(2, 2, " limit");
-  if (atol(argv[1]) <= 0) {
-    Tcl_AppendResult(irp, "random limit must be greater than zero", NULL);
-    return TCL_ERROR;
-  }
-  x = random() % (atol(argv[1]));
-  snprintf(s, sizeof s, "%lu", x);
-  Tcl_AppendResult(irp, s, NULL);
-  return TCL_OK;
+	return(random() % (max - min) + min);
 }
 
-static int tcl_sendnote STDVAR
+static int script_sendnote(char *from, char *to, char *msg)
 {
-  char s[5], from[NOTENAMELEN + 1], to[NOTENAMELEN + 1], msg[451];
+  char trunc_from[NOTENAMELEN + 1], trunc_to[NOTENAMELEN + 1], trunc_msg[451];
 
-  BADARGS(4, 4, " from to message");
-  strncpyz(from, argv[1], sizeof from);
-  strncpyz(to, argv[2], sizeof to);
-  strncpyz(msg, argv[3], sizeof msg);
-  snprintf(s, sizeof s, "%d", add_note(to, from, msg, -1, 0));
-  Tcl_AppendResult(irp, s, NULL);
-  return TCL_OK;
+  strncpyz(trunc_from, from, sizeof(trunc_from));
+  strncpyz(trunc_to, to, sizeof(trunc_to));
+  strncpyz(trunc_msg, msg, sizeof(trunc_msg));
+  return add_note(trunc_to, trunc_from, trunc_msg, -1, 0);
 }
 
-static int tcl_dumpfile STDVAR
+static int script_dumpfile(char *nick, char *filename)
 {
-  char nick[NICKLEN];
   struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
-  BADARGS(3, 3, " nickname filename");
-  strncpyz(nick, argv[1], sizeof nick);
   get_user_flagrec(get_user_by_nick(nick), &fr, NULL);
-  showhelp(argv[1], argv[2], &fr, HELP_TEXT);
+  showhelp(nick, filename, &fr, HELP_TEXT);
   return TCL_OK;
 }
 
-static int tcl_dccdumpfile STDVAR
+static int script_dccdumpfile(int idx, char *filename)
 {
-  int idx, i;
   struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
 
-  BADARGS(3, 3, " idx filename");
-  i = atoi(argv[1]);
-  idx = findidx(i);
-  if (idx < 0) {
-    Tcl_AppendResult(irp, "illegal idx", NULL);
-    return TCL_ERROR;
-  }
+  if (idx < 0 || idx >= dcc_total || !dcc[idx].type) return(1);
   get_user_flagrec(get_user_by_handle(userlist, dcc[idx].nick), &fr, NULL);
-  tellhelp(idx, argv[2], &fr, HELP_TEXT);
-  return TCL_OK;
+  tellhelp(idx, filename, &fr, HELP_TEXT);
+  return(0);
 }
 
-static int tcl_backup STDVAR
+static int script_backup()
 {
-  BADARGS(1, 1, "");
   call_hook(HOOK_BACKUP);
-  return TCL_OK;
+  return(0);
 }
 
-static int tcl_die STDVAR
+static int script_die(char *reason)
 {
   char s[1024];
 
-  BADARGS(1, 2, " ?reason?");
-  if (argc == 2) {
-    snprintf(s, sizeof s, "BOT SHUTDOWN (%s)", argv[1]);
-    strncpyz(quit_msg, argv[1], 1024);
+  if (reason) {
+    snprintf(s, sizeof s, "BOT SHUTDOWN (%s)", reason);
+    strncpyz(quit_msg, reason, 1024);
   } else {
     strncpyz(s, "BOT SHUTDOWN (No reason)", sizeof s);
     quit_msg[0] = 0;
@@ -381,19 +345,24 @@ tcl_cmds tclmisc_objcmds[] =
   {NULL,	NULL}
 };
 
+script_command_t script_misc_cmds[] = {
+	{"", "duration", (Function) script_duration, NULL, 1, "u", "seconds", SCRIPT_STRING|SCRIPT_FREE, 0},
+	{"", "unixtime", (Function) script_unixtime, NULL, 0, "", "", SCRIPT_UNSIGNED, 0},
+	{"", "ctime", (Function) script_ctime, NULL, 1, "u", "seconds", SCRIPT_STRING|SCRIPT_FREE, 0},
+	{"", "strftime", (Function) script_strftime, NULL, 1, "su", "format ?seconds?", SCRIPT_STRING|SCRIPT_FREE, SCRIPT_PASS_COUNT|SCRIPT_VAR_ARGS},
+	{"", "myip", (Function) script_myip, NULL, 0, "", "", SCRIPT_UNSIGNED, 0},
+	{"", "myip6", (Function) script_myip6, NULL, 0, "", "", SCRIPT_STRING|SCRIPT_FREE, 0},
+	{"", "rand", (Function) script_rand, NULL, 1, "ii", "?min? max", SCRIPT_INTEGER, SCRIPT_PASS_COUNT|SCRIPT_VAR_ARGS},
+	{"", "sendnote", (Function) script_sendnote, NULL, 3, "sss", "from to msg", SCRIPT_INTEGER, 0},
+	{"", "dumpfile", (Function) script_dumpfile, NULL, 2, "ss", "nick filename", SCRIPT_INTEGER, 0},
+	{"", "dccdumpfile", (Function) script_dccdumpfile, NULL, 2, "is", "idx filename", SCRIPT_INTEGER, 0},
+	{"", "backup", (Function) script_backup, NULL, 0, "", "", SCRIPT_INTEGER},
+	{"", "die", (Function) script_die, NULL, 0, "s", "?reason?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
+	{0}
+};
+
 tcl_cmds tclmisc_cmds[] =
 {
-  {"unixtime",		tcl_unixtime},
-  {"strftime",          tcl_strftime},
-  {"ctime",		tcl_ctime},
-  {"myip",		tcl_myip},
-  {"rand",		tcl_rand},
-  {"sendnote",		tcl_sendnote},
-  {"dumpfile",		tcl_dumpfile},
-  {"dccdumpfile",	tcl_dccdumpfile},
-  {"backup",		tcl_backup},
-  {"exit",		tcl_die},
-  {"die",		tcl_die},
   {"unames",		tcl_unames},
   {"unloadmodule",	tcl_unloadmodule},
   {"loadmodule",	tcl_loadmodule},
@@ -401,11 +370,9 @@ tcl_cmds tclmisc_cmds[] =
   {"loadhelp",		tcl_loadhelp},
   {"unloadhelp",	tcl_unloadhelp},
   {"reloadhelp",	tcl_reloadhelp},
-  {"duration",		tcl_duration},
 #if (TCL_MAJOR_VERSION < 8)
   {"md5",		tcl_md5},
 #endif
   {"callevent",		tcl_callevent},
-  {"myip6",		tcl_myip6},
   {NULL,		NULL}
 };
