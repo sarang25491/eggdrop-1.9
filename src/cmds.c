@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.83 2001/12/28 18:31:39 guppy Exp $
+ * $Id: cmds.c,v 1.84 2002/01/16 20:29:56 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -206,7 +206,7 @@ static void tell_who(struct userrec *u, int idx, int chan)
       if (dcc[i].u.chat->away != NULL)
 	dprintf(idx, "      AWAY: %s\n", dcc[i].u.chat->away);
     }
-    if ((atr & USER_MASTER) && (dcc[i].type->flags & DCT_SHOWWHO) &&
+    if ((atr & USER_MASTER) && dcc[i].type && (dcc[i].type->flags & DCT_SHOWWHO) &&
 	(dcc[i].type != &DCC_CHAT)) {
       if (!ok) {
 	ok = 1;
