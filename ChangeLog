@@ -1,3 +1,9 @@
+2001-12-19 10:00  Automatic CVS Scripts
+
+	* po/eggdrop.pot:
+
+	Pots 
+
 2001-12-19 06:31  Jeff Fisher <guppy@techmonkeys.org>
 
 	* doc/UPDATES1.6, modules/irc/tclirc.c, src/patch.h:
