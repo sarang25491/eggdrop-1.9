@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.35 2003/12/18 06:50:47 wcc Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.36 2003/12/18 07:18:48 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -316,20 +316,6 @@ static int script_queue_insert(char *qname, char *next, int num, char *msg)
 	return(0);
 }
 
-int server_script_init()
-{
-	script_create_commands(server_script_cmds);
-	script_link_vars(server_script_vars);
-	return(0);
-}
-
-int server_script_destroy()
-{
-	script_delete_commands(server_script_cmds);
-	script_unlink_vars(server_script_vars);
-	return(0);
-}
-
 
 static script_linked_var_t server_script_vars[] = {
 	{"", "servidx", &current_server.idx, SCRIPT_INTEGER | SCRIPT_READONLY, NULL},
@@ -384,3 +370,17 @@ static script_command_t server_script_cmds[] = {
 
         {0}
 };
+
+int server_script_init()
+{
+	script_create_commands(server_script_cmds);
+	script_link_vars(server_script_vars);
+	return(0);
+}
+
+int server_script_destroy()
+{
+	script_delete_commands(server_script_cmds);
+	script_unlink_vars(server_script_vars);
+	return(0);
+}

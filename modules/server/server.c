@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: server.c,v 1.53 2003/12/18 06:50:47 wcc Exp $";
+static const char rcsid[] = "$Id: server.c,v 1.54 2003/12/18 07:18:48 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -31,8 +31,6 @@ static const char rcsid[] = "$Id: server.c,v 1.53 2003/12/18 06:50:47 wcc Exp $"
 #include "nicklist.h"
 #include "binds.h"
 #include "channels.h"
-
-#define start server_LTX_start
 
 current_server_t current_server = {0};
 server_config_t server_config = {0};
@@ -88,6 +86,7 @@ static int server_secondly()
 	return(0);
 }
 
+#if 0
 static void server_status(partymember_t *p, int details)
 {
 	if (!current_server.connected) {
@@ -106,6 +105,7 @@ static void server_status(partymember_t *p, int details)
 		else partymember_printf(p, _("   Still logging in."));
 	}
 }
+#endif
 
 static bind_list_t server_secondly_binds[] = {
 	{NULL, NULL, server_secondly},
@@ -197,9 +197,9 @@ static void server_config_init()
 	}
 }
 
-EXPORT_SCOPE int start(egg_module_t *modinfo);
+EXPORT_SCOPE int server_LTX_start(egg_module_t *modinfo);
 
-int start(egg_module_t *modinfo)
+int server_LTX_start(egg_module_t *modinfo)
 {
 	modinfo->name = "server";
 	modinfo->author = "eggdev";
