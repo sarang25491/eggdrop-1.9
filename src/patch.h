@@ -30,7 +30,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: patch.h,v 1.586 2002/05/12 07:58:30 stdarg Exp $
+ * $Id: patch.h,v 1.587 2002/07/17 22:46:41 poptix Exp $
  */
 
 #ifndef _EGG_PATCH_H
@@ -54,12 +54,11 @@ patch("no-more-registry");
  *
  *
  */
-patch("no-more-registry");
+/* PATCH GOES HERE */
 /*
  *
  *
  */
-/* PATCH GOES HERE */
 /*
  *
  *
