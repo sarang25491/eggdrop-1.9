@@ -1,3 +1,21 @@
+2003-03-06 07:56  Tothwolf <tothwolf@techmonkeys.org>
+
+	* lib/eggdrop/: memutil.c, memutil.h:
+
+	Removed egg_strcatn().  
+
+2003-03-06 07:55  Tothwolf <tothwolf@techmonkeys.org>
+
+	* modules/irc/mode.c:
+
+	Convert flush_mode() to use strlcat() instead of egg_strcatn().  
+
+2003-03-06 07:51  Tothwolf <tothwolf@techmonkeys.org>
+
+	* lib/compat/compat.h:
+
+	Misc formatting cleanups.  
+
 2003-03-05 12:20  stdarg <stdarg@techmonkeys.org>
 
 	* doc/SCRIPTING-COMMANDS, lib/eggdrop/eggconfig.c,
