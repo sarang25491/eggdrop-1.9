@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: javascript.c,v 1.9 2002/05/17 07:29:24 stdarg Exp $";
+static const char rcsid[] = "$Id: javascript.c,v 1.10 2002/05/31 04:11:37 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -163,22 +163,25 @@ static int my_load_script(void *ignore, char *fname)
 	return(0);
 }
 
-static void linked_var_to_jsval(JSContext *cx, script_linked_var_t *var, jsval *val)
+static void linked_var_to_jsval(JSContext *cx, script_linked_var_t *var, jsval *val, script_var_t *script_val)
 {
 	script_var_t script_var;
 
-	script_var.type = var->type & SCRIPT_TYPE_MASK;
-	script_var.len = -1;
-	script_var.value = *(void **)var->value;
+	if (!script_val || !script_val->type) {
+		script_var.type = var->type & SCRIPT_TYPE_MASK;
+		script_var.len = -1;
+		script_var.value = *(void **)var->value;
+		script_val = &script_var;
+	}
 
-	c_to_js_var(cx, &script_var, val);
+	c_to_js_var(cx, script_val, val);
 }
 
 /* This gets called when people do, e.g. botnick.set("newnick"); */
 static int my_eggvar_set(JSContext *cx, JSObject *obj, int argc, jsval *argv, jsval *rval)
 {
 	script_linked_var_t *linked_var;
-	script_var_t script_var;
+	script_var_t script_var = {0};
 
 	if (argc != 1) return JS_FALSE;
 
@@ -223,10 +226,12 @@ static int my_eggvar_value_of(JSContext *cx, JSObject *obj, int argc, jsval *arg
 
 	linked_var = JS_GetPrivate(cx, obj);
 	if (linked_var->callbacks && linked_var->callbacks->on_read) {
-		int r = (linked_var->callbacks->on_read)(linked_var);
+		script_var_t newval = {0};
+		int r = (linked_var->callbacks->on_read)(linked_var, &newval);
 		if (r) return JS_FALSE;
+		linked_var_to_jsval(cx, linked_var, rval, &newval);
 	}
-	linked_var_to_jsval(cx, linked_var, rval);
+	else linked_var_to_jsval(cx, linked_var, rval, NULL);
 	return(JS_TRUE);
 }
 

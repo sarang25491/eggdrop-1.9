@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: server.c,v 1.28 2002/05/31 03:07:23 stdarg Exp $";
+static const char rcsid[] = "$Id: server.c,v 1.29 2002/05/31 04:11:37 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "server"
@@ -1094,19 +1094,20 @@ static char *get_altbotnick(void)
 	return raltnick;
 }
 
+/*
 static char *traced_botname(ClientData cdata, Tcl_Interp *irp, char *name1,
 			    char *name2, int flags)
 {
   char s[1024];
 
-  simple_sprintf(s, "%s%s%s", botname, 
-      botuserhost[0] ? "!" : "", botuserhost[0] ? botuserhost : "");
+  simple_sprintf(s, "%s%s%s", botname, botuserhost[0] ? "!" : "", botuserhost);
   Tcl_SetVar2(interp, name1, name2, s, TCL_GLOBAL_ONLY);
   if (flags & TCL_TRACE_UNSETS)
     Tcl_TraceVar(irp, name1, TCL_TRACE_READS | TCL_TRACE_WRITES |
 		 TCL_TRACE_UNSETS, traced_botname, cdata);
   return NULL;
 }
+*/
 
 static char *traced_nicklen(ClientData cdata, Tcl_Interp *irp, char *name1,
 			    char *name2, int flags)
@@ -1134,7 +1135,6 @@ static char *traced_nicklen(ClientData cdata, Tcl_Interp *irp, char *name1,
 
 static tcl_strings my_tcl_strings[] =
 {
-  {"botnick",			NULL,		0,		STR_PROTECT},
   {"realname",			botrealname,	80,		0},
   {"stackable_commands",	stackablecmds,	510,		0},
   {"stackable2_commands",	stackable2cmds,	510,		0},
@@ -1327,7 +1327,7 @@ static void server_prerehash()
 
 static void server_postrehash()
 {
-  strlcpy(botname, origbotname, NICKLEN);
+  str_redup(&botname, origbotname);
   if (!botname[0])
     fatal("NO BOT NAME.", 0);
   if (serverlist == NULL)
@@ -1335,12 +1335,11 @@ static void server_postrehash()
   if (oldnick && !irccmp(oldnick, botname)
        && !irccmp(oldnick, get_altbotnick())) {
     /* Change botname back, don't be premature. */
-    strcpy(botname, oldnick);
+    str_redup(&botname, oldnick);
     dprintf(DP_SERVER, "NICK %s\n", origbotname);
   }
   /* Change botname back incase we were using altnick previous to rehash. */
-  else if (oldnick)
-    strcpy(botname, oldnick);
+  else if (oldnick) str_redup(&botname, oldnick);
   check_bind_event("init-server");
 }
 
@@ -1447,9 +1446,6 @@ static char *server_close()
   Tcl_UntraceVar(interp, "nick",
 		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		 nick_change, NULL);
-  Tcl_UntraceVar(interp, "botname",
-		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
-		 traced_botname, NULL);
   Tcl_UntraceVar(interp, "nick-len",
 		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		 traced_nicklen, NULL);
@@ -1532,7 +1528,7 @@ char *start(eggdrop_t *eggdrop)
   serv = -1;
   servidx = -1;
   strict_host = 1;
-  botname[0] = 0;
+  botname = strdup("");
   trying_server = 0L;
   server_lag = 0;
   altnick = strdup("egg??????");
@@ -1583,14 +1579,10 @@ char *start(eggdrop_t *eggdrop)
 
   /* Fool bot in reading the values. */
   s = Tcl_GetVar(interp, "nick", TCL_GLOBAL_ONLY);
-  if (s)
-    strlcpy(origbotname, s, NICKLEN);
+  if (s) strlcpy(origbotname, s, NICKLEN);
   Tcl_TraceVar(interp, "nick",
 	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 	       nick_change, NULL);
-  Tcl_TraceVar(interp, "botname",
-	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
-	       traced_botname, NULL);
   Tcl_TraceVar(interp, "nick-len",
 	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 	       traced_nicklen, NULL);
@@ -1610,7 +1602,6 @@ char *start(eggdrop_t *eggdrop)
   add_builtins("dcc", C_dcc_serv);
 
   add_help_reference("server.help");
-  my_tcl_strings[0].buf = botname;
   add_tcl_strings(my_tcl_strings);
   add_tcl_ints(my_tcl_ints);
   script_create_commands(server_script_cmds);

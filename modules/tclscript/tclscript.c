@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tclscript.c,v 1.18 2002/05/17 07:29:25 stdarg Exp $";
+static const char rcsid[] = "$Id: tclscript.c,v 1.19 2002/05/31 04:11:37 stdarg Exp $";
 #endif
 
 #include "lib/eggdrop/module.h"
@@ -116,16 +116,19 @@ static int my_load_script(void *ignore, char *fname)
 }
 
 /* This updates the value of a linked variable (c to tcl). */
-static void set_linked_var(script_linked_var_t *var)
+static void set_linked_var(script_linked_var_t *var, script_var_t *val)
 {
 	Tcl_Obj *obj;
 	script_var_t script_var;
 
-	script_var.type = var->type & SCRIPT_TYPE_MASK;
-	script_var.len = -1;
-	script_var.value = *(void **)var->value;
+	if (!val || !val->type) {
+		script_var.type = var->type & SCRIPT_TYPE_MASK;
+		script_var.len = -1;
+		script_var.value = *(void **)var->value;
+		val = &script_var;
+	}
 
-	obj = c_to_tcl_var(interp, &script_var);
+	obj = c_to_tcl_var(interp, val);
 
 	if (var->class && strlen(var->class)) {
 		Tcl_SetVar2Ex(interp, var->class, var->name, obj, TCL_GLOBAL_ONLY);
@@ -139,19 +142,20 @@ static void set_linked_var(script_linked_var_t *var)
 static char *my_trace_callback(ClientData client_data, Tcl_Interp *irp, char *name1, char *name2, int flags)
 {
 	script_linked_var_t *linked_var = (script_linked_var_t *)client_data;
+	script_var_t newvalue = {0};
 
 	if (flags & TCL_INTERP_DESTROYED) return(NULL);
 
 	if (flags & TCL_TRACE_READS) {
 		if (linked_var->callbacks && linked_var->callbacks->on_read) {
-			int r = (linked_var->callbacks->on_read)(linked_var);
+			script_var_t newvalue = {0};
+			int r = (linked_var->callbacks->on_read)(linked_var, &newvalue);
 			if (r) return(NULL);
 		}
-		set_linked_var(linked_var);
+		set_linked_var(linked_var, &newvalue);
 	}
 	else if (flags & TCL_TRACE_WRITES) {
 		Tcl_Obj *obj;
-		script_var_t newvalue = {0};
 
 		obj = Tcl_GetVar2Ex(irp, name1, name2, 0);
 		if (!obj) return("Error setting variable");
@@ -165,6 +169,7 @@ static char *my_trace_callback(ClientData client_data, Tcl_Interp *irp, char *na
 
 			r = (linked_var->callbacks->on_write)(linked_var, &newvalue);
 			if (r) return("Error setting variable");
+			set_linked_var(linked_var, &newvalue);
 		}
 		else switch (linked_var->type & SCRIPT_TYPE_MASK) {
 			case SCRIPT_UNSIGNED:
@@ -191,7 +196,7 @@ static char *my_trace_callback(ClientData client_data, Tcl_Interp *irp, char *na
 	else if (flags & TCL_TRACE_UNSETS) {
 		/* If someone unsets a variable, we'll just reset it. */
 		if (flags & TCL_TRACE_DESTROYED) my_link_var(NULL, linked_var);
-		else set_linked_var(linked_var);
+		else set_linked_var(linked_var, NULL);
 	}
 	return(NULL);
 }
@@ -204,7 +209,7 @@ static int my_link_var(void *ignore, script_linked_var_t *var)
 	if (var->class && strlen(var->class)) varname = msprintf("%s(%s)", var->class, var->name);
 	else varname = strdup(var->name);
 
-	set_linked_var(var);
+	set_linked_var(var, NULL);
 	Tcl_TraceVar(interp, varname, TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS, my_trace_callback, var);
 
 	free(varname);

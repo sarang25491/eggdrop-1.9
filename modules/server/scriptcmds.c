@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.6 2002/05/31 03:07:22 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.7 2002/05/31 04:11:37 stdarg Exp $";
 #endif
 */
 
@@ -36,16 +36,25 @@ static int script_queuesize (script_var_t *retval, int nargs, char *queuetype, i
 static int script_server_list(script_var_t *retval);
 
 static int altnick_on_write(script_linked_var_t *linked_var, script_var_t *newvalue);
-
 static script_var_callbacks_t altnick_callbacks = {
 	NULL,
 	altnick_on_write,
 	NULL
 };
 
+static char *script_botname;
+static int botname_on_read(script_linked_var_t *linked_var, script_var_t *newvalue);
+static int botname_on_write(script_linked_var_t *linked_var, script_var_t *newvalue);
+static script_var_callbacks_t botname_callbacks = {
+	botname_on_read,
+	botname_on_write,
+	NULL
+};
+
 static script_linked_var_t server_script_vars[] = {
 	{"", "server", &curserv, SCRIPT_INTEGER, NULL},
 	{"", "altnick", &altnick, SCRIPT_STRING, &altnick_callbacks},
+	{"", "botname", &script_botname, SCRIPT_STRING, &botname_callbacks},
 	{0}
 };
 
@@ -283,4 +292,16 @@ static int altnick_on_write(script_linked_var_t *linked_var, script_var_t *newva
 	if (raltnick) free(raltnick);
 	raltnick = NULL;
 	return(0);
+}
+
+static int botname_on_read(script_linked_var_t *linked_var, script_var_t *newvalue)
+{
+	if (script_botname) free(script_botname);
+	script_botname = msprintf("%s%s%s", botname, botuserhost[0] ? "!" : "", botuserhost);
+	return(0);
+}
+
+static int botname_on_write(script_linked_var_t *linked_var, script_var_t *newvalue)
+{
+	return(1);
 }

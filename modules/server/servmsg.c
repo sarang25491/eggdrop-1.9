@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: servmsg.c,v 1.15 2002/05/31 02:01:06 stdarg Exp $";
+static const char rcsid[] = "$Id: servmsg.c,v 1.16 2002/05/31 04:11:37 stdarg Exp $";
 #endif
 */
 
@@ -55,15 +55,16 @@ static int gotfake433(char *from)
 
     if (alt[0] && (irccmp(alt, botname)))
       /* Alternate nickname defined. Let's try that first. */
-      strcpy(botname, alt);
+	str_redup(&botname, alt);
     else {
       /* Fall back to appending count char. */
       altnick_char = '0';
       if ((l + 1) == nick_len) {
 	botname[l] = altnick_char;
       } else {
-	botname[++l]   = altnick_char;
-	botname[l + 1] = 0;
+	botname = (char *)realloc(botname, l+2);
+	botname[l+1] = altnick_char;
+	botname[l+2] = 0;
       }
     }
   /* No, we already tried the default stuff. Now we'll go through variations
@@ -188,7 +189,7 @@ static int got001(char *from, char *ignore, char *msg)
   /* Ok...param #1 of 001 = what server thinks my nick is */
   server_online = now;
   fixcolon(msg);
-  strlcpy(botname, msg, NICKLEN);
+  str_redup(&botname, msg);
   altnick_char = 0;
   dprintf(DP_SERVER, "WHOIS %s\n", botname); /* get user@host */
   check_bind_event("init-server");
@@ -759,15 +760,17 @@ static int goterror(char *from, char *ignore, char *msg)
 static int gotnick(char *from, char *ignore, char *msg)
 {
   char *nick, *alt = get_altbotnick();
+  char buf[512];
   struct userrec *u;
 
   fixcolon(msg);
   u = get_user_by_host(from);
-  nick = strtok(from, "!");
+  strlcpy(buf, from, sizeof(buf));
+  nick = strtok(buf, "!");
   check_queues(nick, msg);
   if (match_my_nick(nick)) {
     /* Regained nick! */
-    strlcpy(botname, msg, NICKLEN);
+    str_redup(&botname, msg);
     altnick_char = 0;
     if (!strcmp(msg, origbotname)) {
       putlog(LOG_SERV | LOG_MISC, "*", "Regained nickname '%s'.", msg);
@@ -1125,7 +1128,7 @@ static void server_resolve_success(int servidx)
     dcc[servidx].timeval = now;
     SERVER_SOCKET.timeout_val = &server_timeout;
     /* Another server may have truncated it, so use the original */
-    strcpy(botname, origbotname);
+    str_redup(&botname, origbotname);
     /* Start alternate nicks from the beginning */
     altnick_char = 0;
     if (pass[0]) dprintf(DP_MODE, "PASS %s\r\n", pass);

@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: modules.c,v 1.113 2002/05/26 08:34:13 stdarg Exp $";
+static const char rcsid[] = "$Id: modules.c,v 1.114 2002/05/31 04:11:37 stdarg Exp $";
 #endif
 
 #include "main.h"		/* NOTE: when removing this, include config.h */
@@ -76,7 +76,7 @@ extern struct dcc_t	*dcc;
 
 extern Tcl_Interp	*interp;
 extern struct userrec	*userlist, *lastuser;
-extern char		 tempdir[], botnetnick[], botname[], natip[],
+extern char		 tempdir[], botnetnick[], *botname, natip[],
 			 origbotname[], botuser[], admin[],
 			 userfile[], ver[], notify_new[], helpdir[],
 			 version[], quit_msg[];
@@ -437,7 +437,7 @@ Function global_table[] =
   (Function) check_dcc_chanattrs,
   (Function) add_tcl_coups,
   (Function) rem_tcl_coups,
-  (Function) botname,
+  (Function) &botname,
   /* 212 - 215 */
   (Function) 0,			/* remove_gunk() -- UNUSED! (drummer)	*/
   (Function) check_bind_chjn,

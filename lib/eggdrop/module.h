@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: module.h,v 1.24 2002/05/26 08:34:13 stdarg Exp $
+ * $Id: module.h,v 1.25 2002/05/31 04:11:36 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_MODULE_H
@@ -356,7 +356,7 @@
 #define check_dcc_chanattrs ((int (*)(struct userrec *,char *,int,int))egg->global[208])
 #define add_tcl_coups ((void (*) (tcl_coups *))egg->global[209])
 #define rem_tcl_coups ((void (*) (tcl_coups *))egg->global[210])
-#define botname ((char *)(egg->global[211]))
+#define botname (*(char **)(egg->global[211]))
 /* 212 - 215 */
 /* 212: remove_gunk() -- UNUSED (drummer) */
 #define check_bind_chjn ((void (*) (const char *,const char *,int,char,int,const char *))egg->global[213])

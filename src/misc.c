@@ -27,7 +27,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: misc.c,v 1.65 2002/05/12 06:12:07 stdarg Exp $";
+static const char rcsid[] = "$Id: misc.c,v 1.66 2002/05/31 04:11:37 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -48,7 +48,7 @@ static const char rcsid[] = "$Id: misc.c,v 1.65 2002/05/12 06:12:07 stdarg Exp $
 
 extern struct dcc_t	*dcc;
 extern struct chanset_t	*chanset;
-extern char		 helpdir[], version[], botname[],
+extern char		 helpdir[], version[], *botname,
 			 admin[], network[], motdfile[], ver[], botnetnick[],
 			 bannerfile[], textdir[];
 extern int		 strict_host;

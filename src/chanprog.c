@@ -24,7 +24,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: chanprog.c,v 1.49 2002/05/05 16:40:37 tothwolf Exp $";
+static const char rcsid[] = "$Id: chanprog.c,v 1.50 2002/05/31 04:11:37 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -59,7 +59,7 @@ extern int		 backgrd, term_z, con_chan, cache_hit, cache_miss,
 struct chanset_t *chanset = NULL;	/* Channel list			*/
 char		  admin[121] = "";	/* Admin info			*/
 char		  origbotname[NICKLEN + 1];
-char		  botname[NICKLEN + 1];	/* Primary botname		*/
+char		  *botname;	/* Primary botname		*/
 
 
 /* Returns memberfields if the nick is in the member list.

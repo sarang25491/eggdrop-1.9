@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: perlscript.c,v 1.19 2002/05/12 05:59:51 stdarg Exp $";
+static const char rcsid[] = "$Id: perlscript.c,v 1.20 2002/05/31 04:11:37 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -105,16 +105,19 @@ static int my_load_script(void *ignore, char *fname)
 	return(0);
 }
 
-static void set_linked_var(script_linked_var_t *linked_var, SV *sv)
+static void set_linked_var(script_linked_var_t *linked_var, SV *sv, script_var_t *val)
 {
 	SV *newsv;
 	script_var_t var;
 
-	var.type = linked_var->type & SCRIPT_TYPE_MASK;
-	var.len = -1;
-	var.value = *(void **)linked_var->value;
+	if (!val || !val->type) {
+		var.type = linked_var->type & SCRIPT_TYPE_MASK;
+		var.len = -1;
+		var.value = *(void **)linked_var->value;
+		val = &var;
+	}
 
-	newsv = c_to_perl_var(&var);
+	newsv = c_to_perl_var(val);
 	sv_setsv(sv, newsv);
 	SvREFCNT_dec(newsv);
 }
@@ -124,10 +127,12 @@ static int linked_var_get(SV *sv, MAGIC *mg)
 	script_linked_var_t *linked_var = (script_linked_var_t *)mg->mg_ptr;
 
 	if (linked_var->callbacks && linked_var->callbacks->on_read) {
-		int r = (linked_var->callbacks->on_read)(linked_var);
+		script_var_t newvalue = {0};
+		int r = (linked_var->callbacks->on_read)(linked_var, &newvalue);
 		if (r) return(r);
+		set_linked_var(linked_var, sv, &newvalue);
 	}
-	set_linked_var(linked_var, sv);
+	else set_linked_var(linked_var, sv, NULL);
 	return(0);
 }
 
@@ -179,7 +184,7 @@ static int my_link_var(void *ignore, script_linked_var_t *linked_var)
 	free(name);
 
 	/* Set the initial value before we do our magic. */
-	set_linked_var(linked_var, sv);
+	set_linked_var(linked_var, sv, NULL);
 
 	/* Create the magic virtual table, which hooks in our callbacks.
 		We put a pointer to linked_var as the name field, with a length

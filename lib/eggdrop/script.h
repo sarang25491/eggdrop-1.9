@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: script.h,v 1.5 2002/05/12 05:59:50 stdarg Exp $
+ * $Id: script.h,v 1.6 2002/05/31 04:11:36 stdarg Exp $
  */
 
 #ifndef _EGG_SCRIPT_H
@@ -129,7 +129,7 @@ typedef struct script_var_b {
 struct script_linked_var_b;
 
 typedef struct script_var_callbacks_b {
-	int (*on_read)(struct script_linked_var_b *linked_var);
+	int (*on_read)(struct script_linked_var_b *linked_var, script_var_t *newvalue);
 	int (*on_write)(struct script_linked_var_b *linked_var, script_var_t *newvalue);
 	void *client_data;
 } script_var_callbacks_t;
