@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.18 2003/12/16 22:54:27 stdarg Exp $
+# $Id: Makefile.am,v 1.19 2003/12/16 23:01:50 stdarg Exp $
 
 AUX_DIST		= $(ac_aux_dir)/install-sh \
 			$(ac_aux_dir)/ltmain.sh \
@@ -34,7 +34,7 @@ dist-hook:
 install-data-local:
 	@if test ! -f $(prefix)/config.xml; then \
 		$(INSTALL_DATA) $(srcdir)/config.xml $(prefix)/config.xml; \
-		chmod 0600 $(srcdir)/config.xml \
+		chmod 0600 $(prefix)/config.xml; \
 	fi
 
 distclean-local:
