@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# $Id: bootstrap,v 1.13 2004/06/08 00:51:58 stdarg Exp $
+# $Id: bootstrap,v 1.14 2004/06/09 06:45:06 tothwolf Exp $
 #
 # Recommended development tools versions:
 #   autoconf 2.57
@@ -14,7 +14,7 @@
 #       ln -s acconfig/mkinstalldirs ./
 #       ln -s configure.ac configure.in
 #    OR
-#   - apply to libtool 1.4.2.
+#   - apply a patch to libtool 1.4.2.
 #     It is avaliable here:
 #     http://www.techmonkeys.org/~tothwolf/libtool/libtool-1.4.2-auxdir.patch
 #
@@ -29,13 +29,18 @@
 #
 # ITE
 
+###
+### DO NOT ADD --force to libtoolize!
+### It will overwrite config.sub and config.guess with older versions!
+###
+
 set -x
 
 # Bring gettext files
-#gettextize --force --copy
+#gettextize --copy --force
 
 # Bring in libtool with libtdl abstraction
-libtoolize --automake --ltdl --force --copy
+libtoolize --ltdl --copy
 
 # Generate aclocal.m4 from acconfig/*.m4 files
 aclocal -I acconfig -I m4
@@ -47,7 +52,7 @@ autoconf
 autoheader
 
 # Generate Makefile.in from Makefile.am
-automake --add-missing
+automake --add-missing --copy
 
 # Remove previous config.cache
 if test -f config.cache
