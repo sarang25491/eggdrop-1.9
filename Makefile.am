@@ -1,6 +1,6 @@
-# $Id: Makefile.am,v 1.3 2001/10/19 23:07:46 tothwolf Exp $
+# $Id: Makefile.am,v 1.4 2001/10/20 06:04:19 tothwolf Exp $
 
-AUX_DIST                = $(ac_aux_dir)/install-sh \
+AUX_DIST		= $(ac_aux_dir)/install-sh \
 			$(ac_aux_dir)/ltmain.sh \
 			$(ac_aux_dir)/missing \
 			$(ac_aux_dir)/mkinstalldirs \
@@ -17,15 +17,17 @@ AUX_DIST_EXTRA		= $(ac_aux_dir)/codeset.m4 \
 			$(ac_aux_dir)/progtest.m4 \
 			$(ac_aux_dir)/acinclude.m4
 
-EXTRA_DIST              = bootstrap
+EXTRA_DIST		= bootstrap
 
-SUBDIRS                 = intl libltdl scripts src @POSUB@
+SUBDIRS			= intl libltdl scripts src @POSUB@
 DISTCLEANFILES		= lush.h
-MAINTAINERCLEANFILES    = Makefile.in aclocal.m4 configure config-h.in \
+MAINTAINERCLEANFILES	= Makefile.in aclocal.m4 configure config-h.in \
 			config.cache config.log config.status \
 			config.h.in stamp-h.in $(AUX_DIST)
-			 
-ACLOCAL                 = aclocal -I $(ac_aux_dir)
+DISTCLEANLOCAL		= autom4te.cache
+MAINTAINERCLEANLOCAL	= libltdl
+
+ACLOCAL			= aclocal -I $(ac_aux_dir)
 
 dist-hook:
 	(cd $(distdir) && mkdir $(ac_aux_dir))
@@ -37,7 +39,12 @@ install-data-local:
 	$(INSTALL_DATA) $(srcdir)/eggdrop.complete.conf $(prefix)/eggdrop.complete.conf
 	$(INSTALL_DATA) $(srcdir)/eggdrop.simple.conf $(prefix)/eggdrop.simple.conf
 
+distclean-local:
+	-test -z "$(DISTCLEANLOCAL)" || rm -rf $(DISTCLEANLOCAL)
+
+maintainer-clean-local:
+	-test -z "$(MAINTAINERCLEANLOCAL)" || rm -rf $(MAINTAINERCLEANLOCAL)
+
 $(OBJECTS): libtool
 libtool: $(LIBTOOL_DEPS)
 	$(SHELL) ./config.status --recheck
-
