@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.65 2001/08/27 23:14:45 poptix Exp $
+ * $Id: cmds.c,v 1.66 2001/08/28 01:33:11 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -72,7 +72,7 @@ static int add_bot_hostmask(int idx, char *nick)
 	egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
 	u = get_user_by_host(s);
 	if (u) {
-	  dprintf(idx, "(Can't add hostmask for %s because it matches %s)\n",
+	  dprintf(idx, _("(Can't add hostmask for %1$s because it matches %2$s)\n"),
 		  nick, u->handle);
 	  return 0;
 	}
@@ -80,7 +80,7 @@ static int add_bot_hostmask(int idx, char *nick)
 	  egg_snprintf(s, sizeof s, "*!%s%s", strict_host ? "?" : "", m->userhost+1);
 	else
 	  egg_snprintf(s, sizeof s, "*!%s", m->userhost);
-	dprintf(idx, "(Added hostmask for %s from %s)\n", nick, chan->dname);
+	dprintf(idx, _("(Added hostmask for %1$s from %2$s)\n"), nick, chan->dname);
 	addhost_by_handle(nick, s);
 	return 1;
       }
@@ -2577,26 +2577,26 @@ static void cmd_mns_host(struct userrec *u, int idx, char *par)
   if (egg_strcasecmp(handle, dcc[idx].nick)) {
     if (!(u2->flags & USER_BOT) && !(u->flags & USER_MASTER) &&
 	!chan_master(fr)) {
-      dprintf(idx, "%s\n", _("You can't remove hostmasks from non-bots."));
+      dprintf(idx, _("You can't remove hostmasks from non-bots.\n"));
       return;
     } else if ((u2->flags & USER_BOT) && (bot_flags(u2) & BOT_SHARE) &&
 	       !(u->flags & USER_OWNER)) {
-      dprintf(idx, "%s\n", _("You can't remove hostmask from a shared bot."));
+      dprintf(idx, _("You can't remove hostmask from a shared bot.\n"));
       return;
     } else if ((u2->flags & (USER_OWNER|USER_MASTER)) &&
 	       !(u->flags & USER_OWNER) && (u2 != u)) {
-      dprintf(idx, "%s\n", _("Can't remove hostmasks from the bot owner/master."));
+      dprintf(idx, _("Can't remove hostmasks from the bot owner/master.\n"));
       return;
     } else if (!(u->flags & USER_BOTMAST) && !chan_master(fr)) {
-      dprintf(idx, "%s\n", _("Permission denied."));
+      dprintf(idx, _("Permission denied.\n"));
       return;
     }
   }
   if (delhost_by_handle(handle, host)) {
     putlog(LOG_CMDS, "*", "#%s# -host %s %s", dcc[idx].nick, handle, host);
-    dprintf(idx, "%s\n", _("Removed '%s' from %s"), host, handle);
+    dprintf(idx, _("Removed '%1$s' from %2$s\n"), host, handle);
   } else
-    dprintf(idx, "%s\n", _("Failed."));
+    dprintf(idx, _("Failed.\n"));
 }
 
 static void cmd_modules(struct userrec *u, int idx, char *par)
@@ -2604,14 +2604,14 @@ static void cmd_modules(struct userrec *u, int idx, char *par)
   int ptr;
 
   if (!par[0])
-    dprintf(idx, "%s: modules <bot>\n", _("Usage"));
+    dprintf(idx, _("Usage: modules <bot>\n"));
   else {
     putlog(LOG_CMDS, "*", "#%s# modules %s", dcc[idx].nick, par);
     if ((ptr = nextbot(par)) >= 0)
       dprintf(ptr, "v %s %s %d:%s\n", botnetnick, par, dcc[idx].sock,
 	      dcc[idx].nick);
     else
-      dprintf(idx, "%s\n", _("No such bot online."));
+      dprintf(idx, _("No such bot online.\n"));
   }
 }
 
@@ -2714,7 +2714,7 @@ static char *btos(unsigned long  bytes)
 
 static void cmd_whoami(struct userrec *u, int idx, char *par)
 {
-  dprintf(idx, "%s %s@%s\n", _("You are"), dcc[idx].nick, botnetnick);
+  dprintf(idx, _("You are %s@%s\n"), dcc[idx].nick, botnetnick);
   putlog(LOG_CMDS, "*", "#%s# whoami", dcc[idx].nick);
 }
 
