@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.1 2001/10/27 16:34:51 ite Exp $
+ * $Id: notes.c,v 1.2 2001/12/20 01:08:49 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -886,15 +886,18 @@ static int chon_notes(char *nick, int idx)
   return 0;
 }
 
-static void join_notes(char *nick, char *uhost, char *handle, char *par)
+static void join_notes(char *nick, char *uhost, struct userrec *u, char *par)
 {
   int i = -1, j;
   struct chanset_t *chan = chanset;
 
+  if (!u)
+    return;
+
   if (notify_onjoin) { /* drummer */
     for (j = 0; j < dcc_total; j++)
       if ((dcc[j].type->flags & DCT_CHAT)
-	  && (!strcasecmp(dcc[j].nick, handle))) {
+	  && (!strcasecmp(dcc[j].nick, u->handle))) {
 	return;			/* They already know they have notes */
       }
 
@@ -904,7 +907,7 @@ static void join_notes(char *nick, char *uhost, char *handle, char *par)
       chan = chan->next;
     }
 
-    i = num_notes(handle);
+    i = num_notes(u->handle);
     if (i) {
       dprintf(DP_HELP, _("NOTICE %s :You have %d note%s waiting on %s.\n"), nick, i, i == 1 ? "" : "s",
 	      botname);
