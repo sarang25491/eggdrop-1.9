@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  *
- * $Id: msgcmds.c,v 1.25 2001/08/18 18:56:01 drummer Exp $
+ * $Id: msgcmds.c,v 1.26 2001/08/21 20:00:32 sup Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -804,6 +804,8 @@ static int msg_status(char *nick, char *host, struct userrec *u, char *par)
       l += my_strcpy(s + l, " (trying)");
     else if (channel_pending(chan))
       l += my_strcpy(s + l, " (pending)");
+    else if (!any_ops(chan))
+      l += my_strcpy(s + l, " (opless)");
     else if (!me_op(chan))
       l += my_strcpy(s + l, " (want ops!)");
     s[l++] = ',';
@@ -961,65 +963,6 @@ static int msg_reset(char *nick, char *host, struct userrec *u, char *par)
   return 1;
 }
 
-static int msg_go(char *nick, char *host, struct userrec *u, char *par)
-{
-  struct chanset_t *chan;
-  int ok = 0, ok2 = 0;
-  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
-
-  if (match_my_nick(nick))
-    return 1;
-  if (!u)
-    return 0;
-  if (par[0]) {
-    chan = findchan_by_dname(par);
-    if (!chan)
-      return 0;
-    if (!(chan->status & CHAN_ACTIVE)) {
-      putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed GO (i'm blind)", nick, host,
-	     u->handle);
-      return 1;
-    }
-    get_user_flagrec(u, &fr, par);
-    if (!chan_op(fr) && !(glob_op(fr) && !chan_deop(fr))) {
-      putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed GO (not op)", nick, host,
-	     u->handle);
-      return 1;
-    }
-    if (!me_op(chan)) {
-      dprintf(DP_SERVER, "PART %s\n", chan->name);
-      putlog(LOG_CMDS, chan->dname, "(%s!%s) !%s! GO %s", nick, host,
-	     u->handle, par);
-      return 1;
-    }
-    putlog(LOG_CMDS, chan->dname, "(%s!%s) !%s! failed GO %s (i'm chop)",
-	   nick, host, u->handle, par);
-    return 1;
-  }
-  for (chan = chanset; chan; chan = chan->next) {
-    if (ismember(chan, nick)) {
-      get_user_flagrec(u, &fr, par);
-      if (chan_op(fr) || (glob_op(fr) && !chan_deop(fr))) {
-	ok2 = 1;
-	if (!me_op(chan)) {
-	  dprintf(DP_SERVER, "PART %s\n", chan->name);
-	  ok = 1;
-	}
-      }
-    }
-  }
-  if (ok) {
-    putlog(LOG_CMDS, "*", "(%s!%s) !%s! GO", nick, host, u->handle);
-  } else if (ok2) {
-    putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed GO (i'm chop)", nick, host,
-	   u->handle);
-  } else {
-    putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed GO (not op)", nick, host,
-	   u->handle);
-  }
-  return 1;
-}
-
 static int msg_jump(char *nick, char *host, struct userrec *u, char *par)
 {
   char *s;
@@ -1067,7 +1010,6 @@ static cmd_t C_msg[] =
 {
   {"addhost",		"",	(Function) msg_addhost,		NULL},
   {"die",		"n",	(Function) msg_die,		NULL},
-  {"go",		"",	(Function) msg_go,		NULL},
   {"hello",		"",	(Function) msg_hello,		NULL},
   {"help",		"",	(Function) msg_help,		NULL},
   {"ident",		"",	(Function) msg_ident,		NULL},

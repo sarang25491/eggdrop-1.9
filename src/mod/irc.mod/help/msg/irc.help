@@ -2,10 +2,6 @@
 %b/MSG%b %B %bDIE%b <password> [message]
    This makes me die (go away) -- not something you will
    probably be doing very often.
-%{help=go}%{+o|o}
-%b/MSG%b %B %bGO%b <channel>
-   This makes me leave a channel if I'm not a channel op.
-   (It's useful for regaining ops.)
 %{help=help}
 %bMSG%b commands for %b%B%b:
 %{cols=4/50}%{-}
@@ -20,7 +16,6 @@ PASS
 %{+o|o}
 OP
 INVITE
-GO
 KEY
 %{-}%{+m}
 DIE
