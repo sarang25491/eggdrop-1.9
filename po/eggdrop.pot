@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2002-02-19 04:00-0600\n"
+"POT-Creation-Date: 2002-02-20 04:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -727,7 +727,7 @@ msgid "Placed entry in the log file.\n"
 msgstr ""
 
 #: src/cmds.c:484
-msgid "You are on a local channel\n"
+msgid "You are on a local channel.\n"
 msgstr ""
 
 #: src/cmds.c:569 src/cmds.c:1516 src/cmds.c:1706
@@ -743,21 +743,21 @@ msgid "Remote boots are disabled here.\n"
 msgstr ""
 
 #: src/cmds.c:629
-msgid "Can't boot the bot owner.\n"
+msgid "You can't boot a bot owner.\n"
 msgstr ""
 
 #: src/cmds.c:633
-msgid "Can't boot a bot master.\n"
+msgid "You can't boot a bot master.\n"
 msgstr ""
 
 #: src/cmds.c:638
 #, c-format
-msgid "Booted %s from the file section.\n"
+msgid "Booted %s from the file area.\n"
 msgstr ""
 
 #: src/cmds.c:640
 #, c-format
-msgid "Booted %s from the bot.\n"
+msgid "Booted %s from the party line.\n"
 msgstr ""
 
 #: src/cmds.c:646
@@ -786,7 +786,7 @@ msgstr ""
 
 #: src/cmds.c:850
 #, c-format
-msgid "Bizarre quantum forces prevent nicknames from starting with %c\n"
+msgid "Bizarre quantum forces prevent nicknames from starting with %c.\n"
 msgstr ""
 
 #: src/cmds.c:854 src/cmds.c:899
@@ -795,19 +795,19 @@ msgid "Somebody is already using %s.\n"
 msgstr ""
 
 #: src/cmds.c:860
-msgid "You can't change nick for non-bots.\n"
+msgid "You can't change handles for non-bots.\n"
 msgstr ""
 
 #: src/cmds.c:862
-msgid "You can't change shared bot's nick.\n"
+msgid "You can't change a share bot's handle.\n"
 msgstr ""
 
 #: src/cmds.c:865
-msgid "You can't change the bot owner's handle.\n"
+msgid "You can't change a bot owner's handle.\n"
 msgstr ""
 
 #: src/cmds.c:867
-msgid "You can't change the permanent bot owner's handle.\n"
+msgid "You can't change a permanent bot owner's handle.\n"
 msgstr ""
 
 #: src/cmds.c:870 src/cmds.c:2410
@@ -844,19 +844,19 @@ msgid "No such user.\n"
 msgstr ""
 
 #: src/cmds.c:926
-msgid "You can't change password for non-bots.\n"
+msgid "You can't change passwords for non-bots.\n"
 msgstr ""
 
 #: src/cmds.c:928
-msgid "You can't change shared bot's password.\n"
+msgid "You can't change a share bot's password.\n"
 msgstr ""
 
 #: src/cmds.c:931
-msgid "Can't change the bot owner's password.\n"
+msgid "You can't change a bot owner's password.\n"
 msgstr ""
 
 #: src/cmds.c:933
-msgid "Can't change the permanent bot owner's password.\n"
+msgid "You can't change a permanent bot owner's password.\n"
 msgstr ""
 
 #: src/cmds.c:938
@@ -868,11 +868,11 @@ msgid "Changed password.\n"
 msgstr ""
 
 #: src/cmds.c:973
-msgid "Useful only for tandem bots.\n"
+msgid "This command is only useful for tandem bots.\n"
 msgstr ""
 
 #: src/cmds.c:977
-msgid "You can't change shared bot's address.\n"
+msgid "You can't change a share bot's address.\n"
 msgstr ""
 
 #: src/cmds.c:981
@@ -896,7 +896,7 @@ msgid "Changed comment.\n"
 msgstr ""
 
 #: src/cmds.c:1059
-msgid "You can not .restart a bot when running -n (due to tcl)"
+msgid "You can not .restart a bot when running -n (due to tcl)."
 msgstr ""
 
 #: src/cmds.c:1062
@@ -952,7 +952,7 @@ msgid "Saving user file...\n"
 msgstr ""
 
 #: src/cmds.c:1223
-msgid "Backing up the channel & user file...\n"
+msgid "Backing up the channel & user files...\n"
 msgstr ""
 
 #: src/cmds.c:1237
@@ -1030,12 +1030,12 @@ msgstr ""
 
 #: src/cmds.c:1523
 #, c-format
-msgid "You do not have channel master privileges for channel %s\n"
+msgid "You do not have channel master privileges for channel %s.\n"
 msgstr ""
 
 #: src/cmds.c:1598
 #, c-format
-msgid "Global flags for %1$s are now +%2$s\n"
+msgid "Global flags for %1$s are now +%2$s.\n"
 msgstr ""
 
 #: src/cmds.c:1600
@@ -1045,7 +1045,7 @@ msgstr ""
 
 #: src/cmds.c:1610
 #, c-format
-msgid "Channel flags for %1$s on %2$s are now +%3$s\n"
+msgid "Channel flags for %1$s on %2$s are now +%3$s.\n"
 msgstr ""
 
 #: src/cmds.c:1613
@@ -1063,7 +1063,7 @@ msgstr ""
 
 #: src/cmds.c:1751
 #, c-format
-msgid "Bot flags for %1$s are now +%2$s\n"
+msgid "Bot flags for %1$s are now +%2$s.\n"
 msgstr ""
 
 #: src/cmds.c:1753
@@ -1073,7 +1073,7 @@ msgstr ""
 
 #: src/cmds.c:1761
 #, c-format
-msgid "Bot flags for %1$s on %2$s are now +%3$s\n"
+msgid "Bot flags for %1$s on %2$s are now +%3$s.\n"
 msgstr ""
 
 #: src/cmds.c:1764
@@ -1132,7 +1132,7 @@ msgid "No party line access permitted for %s.\n"
 msgstr ""
 
 #: src/cmds.c:2102
-msgid "No password set for user. You may not .su to them\n"
+msgid "No password set for user. You may not .su to them.\n"
 msgstr ""
 
 #: src/cmds.c:2130
@@ -1230,15 +1230,15 @@ msgid "no host"
 msgstr ""
 
 #: src/cmds.c:2437
-msgid "Can't remove the permanent bot owner!\n"
+msgid "You can't remove the permanent bot owner!\n"
 msgstr ""
 
 #: src/cmds.c:2441
-msgid "Can't remove the bot owner!\n"
+msgid "You can't remove a bot owner!\n"
 msgstr ""
 
 #: src/cmds.c:2446
-msgid "You can't remove shared bots.\n"
+msgid "You can't remove share bots.\n"
 msgstr ""
 
 #: src/cmds.c:2454
@@ -1246,7 +1246,7 @@ msgid "You can't remove a directly linked bot.\n"
 msgstr ""
 
 #: src/cmds.c:2460
-msgid "Can't remove users who aren't bots!\n"
+msgid "You can't remove users who aren't bots!\n"
 msgstr ""
 
 #: modules/irc/cmdsirc.c:935 src/cmds.c:2470
@@ -1259,11 +1259,11 @@ msgid "You can't add hostmasks to non-bots.\n"
 msgstr ""
 
 #: src/cmds.c:2511
-msgid "You can't add hostmasks to share-bots.\n"
+msgid "You can't add hostmasks to share bots.\n"
 msgstr ""
 
-#: src/cmds.c:2516
-msgid "Can't add hostmasks to the bot owner/master.\n"
+#: modules/irc/cmdsirc.c:849 src/cmds.c:2516
+msgid "You can't add hostmasks to the bot owner/master.\n"
 msgstr ""
 
 #: src/cmds.c:2520 src/cmds.c:2593
@@ -1299,16 +1299,16 @@ msgid "You can't remove hostmasks from non-bots.\n"
 msgstr ""
 
 #: src/cmds.c:2586
-msgid "You can't remove hostmask from a shared bot.\n"
+msgid "You can't remove hostmasks from a share bot.\n"
 msgstr ""
 
 #: src/cmds.c:2590
-msgid "You can't remove hostmasks from the bot owner/master.\n"
+msgid "You can't remove hostmasks from a bot owner/master.\n"
 msgstr ""
 
 #: src/cmds.c:2599
 #, c-format
-msgid "Removed '%1$s' from %2$s\n"
+msgid "Removed '%1$s' from %2$s.\n"
 msgstr ""
 
 #: src/cmds.c:2618
@@ -1321,7 +1321,7 @@ msgstr ""
 
 #: src/cmds.c:2731
 #, c-format
-msgid "You are %s@%s\n"
+msgid "You are %s@%s.\n"
 msgstr ""
 
 #: src/cmds.c:2741
@@ -2620,98 +2620,98 @@ msgstr ""
 msgid "Refused DCC chat (invalid port)"
 msgstr ""
 
-#: modules/irc/chan.c:263
+#: modules/irc/chan.c:266
 #, c-format
 msgid "Channel flood from %s -- kicking"
 msgstr ""
 
-#: modules/irc/chan.c:265
+#: modules/irc/chan.c:268
 msgid "flood"
 msgstr ""
 
-#: modules/irc/chan.c:282
+#: modules/irc/chan.c:285
 #, c-format
 msgid "JOIN flood from @%s!  Banning."
 msgstr ""
 
-#: modules/irc/chan.c:284
+#: modules/irc/chan.c:287
 #, c-format
 msgid "NICK flood from @%s!  Banning."
 msgstr ""
 
-#: modules/irc/chan.c:297
+#: modules/irc/chan.c:300
 msgid "join flood"
 msgstr ""
 
-#: modules/irc/chan.c:300
+#: modules/irc/chan.c:303
 msgid "nick flood"
 msgstr ""
 
-#: modules/irc/chan.c:309
+#: modules/irc/chan.c:312
 msgid "mass kick, go sit in a corner"
 msgstr ""
 
-#: modules/irc/chan.c:316
+#: modules/irc/chan.c:319
 #, c-format
 msgid "Mass deop on %s by %s"
 msgstr ""
 
-#: modules/irc/chan.c:318
+#: modules/irc/chan.c:321
 msgid "Mass deop.  Go sit in a corner."
 msgstr ""
 
-#: modules/irc/chan.c:418 modules/irc/mode.c:660
+#: modules/irc/chan.c:421 modules/irc/mode.c:660
 msgid "banned: "
 msgstr ""
 
-#: modules/irc/chan.c:421 modules/irc/chan.c:498 modules/irc/chan.c:1688
+#: modules/irc/chan.c:424 modules/irc/chan.c:501 modules/irc/chan.c:1691
 msgid "You are banned"
 msgstr ""
 
-#: modules/irc/chan.c:738
+#: modules/irc/chan.c:741
 msgid "...and thank you for playing."
 msgstr ""
 
-#: modules/irc/chan.c:851
+#: modules/irc/chan.c:854
 msgid "Hmm, mode info from a channel Im not on"
 msgstr ""
 
-#: modules/irc/chan.c:1194
+#: modules/irc/chan.c:1197
 #, c-format
 msgid "Im on too many channels--cant join: %s"
 msgstr ""
 
-#: modules/irc/chan.c:1258 modules/irc/chan.c:1261
+#: modules/irc/chan.c:1261 modules/irc/chan.c:1264
 #, c-format
 msgid "Channel full--cant join: %s"
 msgstr ""
 
-#: modules/irc/chan.c:1286 modules/irc/chan.c:1289
+#: modules/irc/chan.c:1289 modules/irc/chan.c:1292
 #, c-format
 msgid "Channel invite only--cant join: %s"
 msgstr ""
 
-#: modules/irc/chan.c:1314 modules/irc/chan.c:1317
+#: modules/irc/chan.c:1317 modules/irc/chan.c:1320
 #, c-format
 msgid "Banned from channel--can't join: %s"
 msgstr ""
 
-#: modules/irc/chan.c:1342 modules/irc/chan.c:1350
+#: modules/irc/chan.c:1345 modules/irc/chan.c:1353
 #, c-format
 msgid "Bad key--cant join: %s"
 msgstr ""
 
-#: modules/irc/chan.c:1702
+#: modules/irc/chan.c:1705
 msgid "...and dont come back."
 msgstr ""
 
-#: modules/irc/chan.c:1969 modules/server/servmsg.c:638
+#: modules/irc/chan.c:1972 modules/server/servmsg.c:638
 #: modules/server/servmsg.c:784 modules/server/servmsg.c:796
 #, c-format
 msgid "Switching back to nick %s"
 msgstr ""
 
-#: modules/irc/chan.c:1973 modules/server/servmsg.c:641
+#: modules/irc/chan.c:1976 modules/server/servmsg.c:641
 #: modules/server/servmsg.c:788 modules/server/servmsg.c:800
 #, c-format
 msgid "Switching back to altnick %s"
@@ -2953,10 +2953,6 @@ msgstr ""
 #: modules/irc/cmdsirc.c:843
 #, c-format
 msgid "%1$s is already known as %2$s.\n"
-msgstr ""
-
-#: modules/irc/cmdsirc.c:849
-msgid "You can't add hostmasks to the bot owner/master.\n"
 msgstr ""
 
 #: modules/irc/cmdsirc.c:872
