@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: server.c,v 1.29 2002/05/31 04:11:37 stdarg Exp $";
+static const char rcsid[] = "$Id: server.c,v 1.30 2002/05/31 05:29:20 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "server"
@@ -1094,45 +1094,6 @@ static char *get_altbotnick(void)
 	return raltnick;
 }
 
-/*
-static char *traced_botname(ClientData cdata, Tcl_Interp *irp, char *name1,
-			    char *name2, int flags)
-{
-  char s[1024];
-
-  simple_sprintf(s, "%s%s%s", botname, botuserhost[0] ? "!" : "", botuserhost);
-  Tcl_SetVar2(interp, name1, name2, s, TCL_GLOBAL_ONLY);
-  if (flags & TCL_TRACE_UNSETS)
-    Tcl_TraceVar(irp, name1, TCL_TRACE_READS | TCL_TRACE_WRITES |
-		 TCL_TRACE_UNSETS, traced_botname, cdata);
-  return NULL;
-}
-*/
-
-static char *traced_nicklen(ClientData cdata, Tcl_Interp *irp, char *name1,
-			    char *name2, int flags)
-{
-  if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
-    char s[40];
-
-    snprintf(s, sizeof s, "%d", nick_len);
-    Tcl_SetVar2(interp, name1, name2, s, TCL_GLOBAL_ONLY);
-    if (flags & TCL_TRACE_UNSETS)
-      Tcl_TraceVar(irp, name1, TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
-		   traced_nicklen, cdata);
-  } else {
-    char *cval = Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
-    long lval = 0;
-
-    if (cval && Tcl_ExprLong(interp, cval, &lval) != TCL_ERROR) {
-      if (lval > NICKMAX)
-	lval = NICKMAX;
-      nick_len = (int) lval;
-    }
-  }
-  return NULL;
-}
-
 static tcl_strings my_tcl_strings[] =
 {
   {"realname",			botrealname,	80,		0},
@@ -1446,9 +1407,6 @@ static char *server_close()
   Tcl_UntraceVar(interp, "nick",
 		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		 nick_change, NULL);
-  Tcl_UntraceVar(interp, "nick-len",
-		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
-		 traced_nicklen, NULL);
   empty_msgq();
   del_hook(HOOK_SECONDLY, (Function) server_secondly);
   del_hook(HOOK_5MINUTELY, (Function) server_5minutely);
@@ -1583,9 +1541,6 @@ char *start(eggdrop_t *eggdrop)
   Tcl_TraceVar(interp, "nick",
 	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 	       nick_change, NULL);
-  Tcl_TraceVar(interp, "nick-len",
-	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
-	       traced_nicklen, NULL);
 
 	/* Create our own bind tables. */
 	BT_wall = bind_table_add("wall", 2, "ss", MATCH_MASK, BIND_STACKABLE);
@@ -1605,6 +1560,7 @@ char *start(eggdrop_t *eggdrop)
   add_tcl_strings(my_tcl_strings);
   add_tcl_ints(my_tcl_ints);
   script_create_commands(server_script_cmds);
+  server_script_vars[3].value = &botname;
   script_link_vars(server_script_vars);
   add_tcl_coups(my_tcl_coups);
   add_hook(HOOK_SECONDLY, (Function) server_secondly);

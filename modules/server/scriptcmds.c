@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.7 2002/05/31 04:11:37 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.8 2002/05/31 05:29:20 stdarg Exp $";
 #endif
 */
 
@@ -55,6 +55,8 @@ static script_linked_var_t server_script_vars[] = {
 	{"", "server", &curserv, SCRIPT_INTEGER, NULL},
 	{"", "altnick", &altnick, SCRIPT_STRING, &altnick_callbacks},
 	{"", "botname", &script_botname, SCRIPT_STRING, &botname_callbacks},
+	{"", "botnick", NULL, SCRIPT_STRING, NULL},
+	{"", "nick_len", &nick_len, SCRIPT_INTEGER, NULL},
 	{0}
 };
 
