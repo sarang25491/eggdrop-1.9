@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tclscript.c,v 1.19 2002/05/31 04:11:37 stdarg Exp $";
+static const char rcsid[] = "$Id: tclscript.c,v 1.20 2002/09/20 02:06:25 stdarg Exp $";
 #endif
 
 #include "lib/eggdrop/module.h"
@@ -161,37 +161,7 @@ static char *my_trace_callback(ClientData client_data, Tcl_Interp *irp, char *na
 		if (!obj) return("Error setting variable");
 
 		tcl_to_c_var(irp, obj, &newvalue, linked_var->type);
-
-		/* If they give a callback, then let them handle it. Otherwise, we
-			do some default handling for strings and ints. */
-		if (linked_var->callbacks && linked_var->callbacks->on_write) {
-			int r;
-
-			r = (linked_var->callbacks->on_write)(linked_var, &newvalue);
-			if (r) return("Error setting variable");
-			set_linked_var(linked_var, &newvalue);
-		}
-		else switch (linked_var->type & SCRIPT_TYPE_MASK) {
-			case SCRIPT_UNSIGNED:
-			case SCRIPT_INTEGER:
-				/* linked_var->value is a pointer to an int/uint */
-				*(int *)(linked_var->value) = (int) newvalue.value;
-				break;
-			case SCRIPT_STRING: {
-				/* linked_var->value is a pointer to a (char *) */
-				char **charptr = (char **)(linked_var->value);
-
-				/* Free the old value. */
-				if (*charptr) free(*charptr);
-
-				/* If we copied the string (> 8.0) then just use the copy. */
-				if (newvalue.type & SCRIPT_FREE) *charptr = newvalue.value;
-				else *charptr = strdup(newvalue.value);
-				break;
-			}
-			default:
-				return("Error setting variable (unsupported type)");
-		}
+		script_linked_var_on_write(linked_var, &newvalue);
 	}
 	else if (flags & TCL_TRACE_UNSETS) {
 		/* If someone unsets a variable, we'll just reset it. */

@@ -1,12 +1,121 @@
-#include <stdio.h>
-#include <string.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include "my_socket.h"
+#if HAVE_CONFIG_H
+	#include <config.h>
+#endif
 
-#define DNS_IPV4	1
-#define DNS_IPV6	2
-#define DNS_REVERSE	3
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <string.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include "my_socket.h"
+#include "sockbuf.h"
+#include "eggnet.h"
+#include "eggdns.h"
+
+static void get_dns_idx();
+static int dns_on_read(void *client_data, int idx, char *buf, int len);
+static int dns_on_eof(void *client_data, int idx, int err, const char *errmsg);
+static const char *dns_next_server();
+static void parse_reply(char *response, int nbytes);
+static int dns_make_query(const char *host, int type, char **buf, int *query_len, int (*callback)(), void *client_data);
+
+static sockbuf_handler_t dns_handler = {
+	"dns",
+	NULL, dns_on_eof, NULL,
+	dns_on_read, NULL
+};
+
+static int dns_idx = -1;
+static const char *dns_ip = NULL;
+
+static void get_dns_idx()
+{
+	int i, sock;
+
+	sock = -1;
+	for (i = 0; i < 5; i++) {
+		if (!dns_ip) dns_ip = dns_next_server();
+		sock = socket_create(dns_ip, DNS_PORT, NULL, 0, SOCKET_CLIENT | SOCKET_NONBLOCK | SOCKET_UDP);
+		if (sock < 0) {
+			/* Try the next server. */
+			dns_ip = NULL;
+		}
+		else break;
+	}
+	if (i == 5) return;
+	dns_idx = sockbuf_new();
+	sockbuf_set_handler(dns_idx, &dns_handler, NULL);
+	sockbuf_set_sock(dns_idx, sock, 0);
+}
+
+void egg_dns_send(char *query, int len)
+{
+	if (dns_idx < 0) {
+		get_dns_idx();
+		if (dns_idx < 0) return;
+	}
+	sockbuf_write(dns_idx, query, len);
+}
+
+/* Perform an async dns lookup. This is host -> ip. For ip -> host, use
+ * egg_dns_reverse(). We return a dns id that you can use to cancel the
+ * lookup. */
+int egg_dns_lookup(const char *host, int timeout, int (*callback)(), void *client_data)
+{
+	char *query;
+	int len, id;
+
+	if (socket_valid_ip(host)) {
+		/* If it's already an ip, we're done. */
+		callback(client_data, host, host);
+		return(-1);
+	}
+	/* Nope, we have to actually do a lookup. */
+	id = dns_make_query(host, DNS_IPV4, &query, &len, callback, client_data);
+	if (id != -1) {
+		egg_dns_send(query, len);
+		free(query);
+	}
+	return(id);
+}
+
+/* Perform an async dns reverse lookup. This does ip -> host. For host -> ip
+ * use egg_dns_lookup(). We return a dns id that you can use to cancel the
+ * lookup. */
+int egg_dns_reverse(const char *ip, int timeout, int (*callback)(), void *client_data)
+{
+	char *query;
+	int len, id;
+
+	if (!socket_valid_ip(ip)) {
+		/* If it's not a valid ip, don't even make the request. */
+		callback(client_data, ip, NULL);
+		return(-1);
+	}
+	/* Nope, we have to actually do a lookup. */
+	id = dns_make_query(ip, DNS_REVERSE, &query, &len, callback, client_data);
+	if (id != -1) {
+		egg_dns_send(query, len);
+		free(query);
+	}
+	return(id);
+}
+
+static int dns_on_read(void *client_data, int idx, char *buf, int len)
+{
+	parse_reply(buf, len);
+	return(0);
+}
+
+static int dns_on_eof(void *client_data, int idx, int err, const char *errmsg)
+{
+	sockbuf_delete(idx);
+	dns_idx = -1;
+	dns_ip = NULL;
+	return(0);
+}
 
 typedef struct dns_query {
 	struct dns_query *next;
@@ -52,17 +161,16 @@ static dns_host_t *hosts = NULL;
 static int nhosts = 0;
 static dns_server_t *servers = NULL;
 static int nservers = 0;
-static int curserver = -1;
+static int cur_server = -1;
 
-static char separators[] = " ,\t";
+static char separators[] = " ,\t\r\n";
 
 static void read_resolv(char *fname);
 static void read_hosts(char *fname);
 
 /* Read in .hosts and /etc/hosts and .resolv.conf and /etc/resolv.conf */
-int dns_init()
+int egg_dns_init()
 {
-	FILE *fp;
 	_dns_header.flags = htons(1 << 8 | 1 << 7);
 	_dns_header.question_count = htons(1);
 	read_resolv("/etc/resolv.conf");
@@ -72,11 +180,10 @@ int dns_init()
 	return(0);
 }
 
-const char *dns_next_server()
+static const char *dns_next_server()
 {
-	static int cur_server = 0;
-
 	if (!servers || nservers < 1) return("127.0.0.1");
+	cur_server++;
 	if (cur_server >= nservers) cur_server = 0;
 	return(servers[cur_server].ip);
 }
@@ -85,7 +192,6 @@ static void add_server(char *ip)
 {
 	servers = (dns_server_t *)realloc(servers, (nservers+1)*sizeof(*servers));
 	servers[nservers].ip = strdup(ip);
-	servers[nservers].idx = -1;
 	nservers++;
 }
 
@@ -137,11 +243,12 @@ static void read_hosts(char *fname)
 		if (strchr(buf, '#')) continue;
 		skip = read_thing(buf, ip);
 		if (!strlen(ip)) continue;
-		while (n = read_thing(buf+skip, host)) {
+		while ((n = read_thing(buf+skip, host))) {
 			skip += n;
 			if (strlen(host)) add_host(ip, host);
 		}
 	}
+	fclose(fp);
 }
 
 static int make_header(char *buf, int id)
@@ -151,13 +258,13 @@ static int make_header(char *buf, int id)
 	return(12);
 }
 
-static int cut_host(char *host, char *query)
+static int cut_host(const char *host, char *query)
 {
 	char *period, *orig;
 	int len;
 
 	orig = query;
-	while (period = strchr(host, '.')) {
+	while ((period = strchr(host, '.'))) {
 		len = period - host;
 		if (len > 63) return(-1);
 		*query++ = len;
@@ -175,12 +282,11 @@ static int cut_host(char *host, char *query)
 	return(query-orig);
 }
 
-static int reverse_ip(char *host, char *reverse)
+static int reverse_ip(const char *host, char *reverse)
 {
 	char *period;
 	int offset, len;
 
-	printf("reversing %s\n", host);
 	period = strchr(host, '.');
 	if (!period) {
 		len = strlen(host);
@@ -197,26 +303,45 @@ static int reverse_ip(char *host, char *reverse)
 	}
 }
 
-int dns_make_query(char *host, int type, char **buf, int *query_len, int (*callback)(), void *client_data)
+static int dns_make_query(const char *host, int type, char **buf, int *query_len, int (*callback)(), void *client_data)
 {
 	char *newhost = NULL;
 	int len = 0;
 	int ns_type = 0;
+	int i;
 	dns_query_t *q;
 
-	if (type == DNS_IPV4) ns_type = 1; /* IPv4 */
-	else if (type == DNS_IPV6) ns_type = 28; /* IPv6 */
-	else if (type == DNS_REVERSE) {
+	*buf = NULL;
+	*query_len = 0;
+	if (type == DNS_REVERSE) {
+		/* First see if we have it in our host cache. */
+		for (i = 0; i < nhosts; i++) {
+			if (!strcasecmp(hosts[i].ip, host)) {
+				callback(client_data, host, hosts[i].host);
+				return(-1);
+			}
+		}
+
 		/* We need to transform the ip address into the proper form
 		 * for reverse lookup. */
 		newhost = (char *)malloc(strlen(host) + 14);
 		reverse_ip(host, newhost);
 		strcat(newhost, ".in-addr.arpa");
-		printf("newhost: %s\n", newhost);
 		host = newhost;
 		ns_type = 12; /* PTR (reverse lookup) */
 	}
-	else return(-1);
+	else {
+		/* First see if it's in our host cache. */
+		for (i = 0; i < nhosts; i++) {
+			if (!strcasecmp(host, hosts[i].host)) {
+				callback(client_data, host, hosts[i].host);
+				return(-1);
+			}
+		}
+		if (type == DNS_IPV4) ns_type = 1; /* IPv4 */
+		else if (type == DNS_IPV6) ns_type = 28; /* IPv6 */
+		else return(-1);
+	}
 
 	*buf = (char *)malloc(strlen(host) + 512);
 	len = make_header(*buf, query_id);
@@ -229,6 +354,7 @@ int dns_make_query(char *host, int type, char **buf, int *query_len, int (*callb
 	q = calloc(1, sizeof(*q));
 	q->id = query_id;
 	query_id++;
+	q->query = strdup(host);
 	q->callback = callback;
 	q->client_data = client_data;
 	if (query_head) q->next = query_head->next;
@@ -236,9 +362,10 @@ int dns_make_query(char *host, int type, char **buf, int *query_len, int (*callb
 	return(q->id);
 }
 
-static int dns_cancel_query(int id, int issue_callback)
+int egg_dns_cancel(int id, int issue_callback)
 {
 	dns_query_t *q, *prev;
+	FILE *fp;
 
 	prev = NULL;
 	for (q = query_head; q; q = q->next) {
@@ -254,10 +381,10 @@ static int dns_cancel_query(int id, int issue_callback)
 	return(0);
 }
 
-static int skip_name(char *ptr, char *end)
+static int skip_name(unsigned char *ptr)
 {
 	int len;
-	char *start = ptr;
+	unsigned char *start = ptr;
 
 	while ((len = *ptr++) > 0) {
 		if (len > 63) {
@@ -275,7 +402,6 @@ static void got_answer(int id, char *answer)
 {
 	dns_query_t *q, *prev;
 
-	printf("got_answer for id %d: %s\n", id, answer);
 	prev = NULL;
 	for (q = query_head; q; q = q->next) {
 		if (q->id == id) break;
@@ -296,10 +422,10 @@ static void parse_reply(char *response, int nbytes)
 	dns_header_t header;
 	dns_rr_t reply;
 	char result[512];
-	char *ptr, *end;
+	unsigned char *ptr;
 	int i;
 
-	ptr = response;
+	ptr = (unsigned char *)response;
 	memcpy(&header, ptr, 12);
 	ptr += 12;
 
@@ -308,26 +434,26 @@ static void parse_reply(char *response, int nbytes)
 	header.answer_count = ntohs(header.answer_count);
 
 	/* Pass over the question. */
-	ptr += skip_name(ptr, end);
+	ptr += skip_name(ptr);
 	ptr += 4;
 	/* End of question. */
 
 	for (i = 0; i < header.answer_count; i++) {
 		result[0] = 0;
 		/* Read in the answer. */
-		ptr += skip_name(ptr, end);
+		ptr += skip_name(ptr);
 		memcpy(&reply, ptr, 10);
 		reply.type = ntohs(reply.type);
 		reply.rdlength = ntohs(reply.rdlength);
 		ptr += 10;
 		if (reply.type == 1) {
-			//printf("ipv4 reply\n");
+			//fprintf(fp, "ipv4 reply\n");
 			inet_ntop(AF_INET, ptr, result, 512);
 			got_answer(header.id, result);
 			return;
 		}
 		else if (reply.type == 28) {
-			//printf("ipv6 reply\n");
+			//fprintf(fp, "ipv6 reply\n");
 			inet_ntop(AF_INET6, ptr, result, 512);
 			got_answer(header.id, result);
 			return;
@@ -336,7 +462,7 @@ static void parse_reply(char *response, int nbytes)
 			char *placeholder;
 			int len, dot;
 
-			//printf("reverse-lookup reply\n");
+			//fprintf(fp, "reverse-lookup reply\n");
 			placeholder = ptr;
 			result[0] = 0;
 			while ((len = *ptr++) != 0) {
@@ -363,50 +489,4 @@ static void parse_reply(char *response, int nbytes)
 		ptr += reply.rdlength;
 	}
 	got_answer(header.id, NULL);
-}
-
-int dns_lookup(const char *host, int (*callback)())
-{
-}
-
-main (int argc, char *argv[])
-{
-	char *query, response[512], *ptr, buf[512];
-	int i, len, sock;
-	struct sockaddr_in server;
-	dns_header_t header;
-	dns_rr_t reply;
-	unsigned long addr;
-
-	if (argc != 3) {
-		printf("usage: %s <host> <type>\n", argv[0]);
-		printf("  <type> can be 1 (ipv4), 2 (ipv4), or 3 (reverse lookup)\n");
-		return(0);
-	}
-
-	dns_init();
-	if (!nservers) return(0);
-	server.sin_family = AF_INET;
-	server.sin_port = htons(53);
-	server.sin_addr.s_addr = inet_addr(servers[0].ip);
-
-	len = dns_make_query(argv[1], atoi(argv[2]), &query);
-
-	sock = socket(AF_INET, SOCK_DGRAM, 0);
-
-	if (sock < 0) {
-		perror("socket");
-		return(1);
-	}
-
-	connect(sock, (struct sockaddr *)&server, sizeof(server));
-	write(sock, query, len);
-	len = read(sock, response, 512);
-	printf("parsing reply, %d bytes\n", len);
-	parse_reply(response, len);
-	write(sock, query, len);
-	len = read(sock, response, 512);
-	printf("parsing next reply, %d bytes\n", len);
-	parse_reply(response, len);
-	return(0);
 }

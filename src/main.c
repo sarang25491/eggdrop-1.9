@@ -30,7 +30,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.120 2002/06/18 06:12:32 guppy Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.121 2002/09/20 02:06:25 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -62,7 +62,6 @@ static const char rcsid[] = "$Id: main.c,v 1.120 2002/06/18 06:12:32 guppy Exp $
 #include "modules.h"
 #include "tandem.h"
 #include "bg.h"
-#include "egg_timer.h"
 #include "core_binds.h"
 #include "logfile.h"
 #include "misc.h"
@@ -562,7 +561,7 @@ int main(int argc, char **argv)
   sigaction(SIGALRM, &sv, NULL);
 
   /* Initialize variables and stuff */
-  timer_get_time(&egg_timeval_now);
+  timer_update_now(&egg_timeval_now);
   now = egg_timeval_now.sec;
   chanset = NULL;
   memcpy(&nowtm, localtime(&now), sizeof(struct tm));
@@ -585,6 +584,7 @@ int main(int argc, char **argv)
   logfile_init();
   timer_init();
   dns_init();
+  egg_dns_init();
   core_binds_init();
   dcc_init();
   user_init();
@@ -756,8 +756,9 @@ module, please consult the default config file for info.\n"));
     /* Free unused structures. */
     /* garbage_collect(); */
 
+    sockbuf_update_all(0);
     xx = sockgets(buf, &i);
-    timer_get_time(&egg_timeval_now);
+    timer_update_now(&egg_timeval_now);
     if (xx >= 0) {		/* Non-error */
       int idx;
 

@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: userrec.c,v 1.50 2002/06/17 16:39:38 guppy Exp $";
+static const char rcsid[] = "$Id: userrec.c,v 1.51 2002/09/20 02:06:25 stdarg Exp $";
 #endif
 
 #include <sys/stat.h>
@@ -104,7 +104,7 @@ char *fixfrom(char *s)
   return buf;
 }
 
-struct userrec *check_dcclist_hand(char *handle)
+struct userrec *check_dcclist_hand(const char *handle)
 {
   int i;
 
@@ -114,15 +114,12 @@ struct userrec *check_dcclist_hand(char *handle)
   return NULL;
 }
 
-struct userrec *get_user_by_handle(struct userrec *bu, char *handle)
+struct userrec *get_user_by_handle(struct userrec *bu, const char *handle)
 {
   struct userrec *u, *ret;
 
   if (!handle)
     return NULL;
-  /* FIXME: This should be done outside of this function. */
-  /*        handle might and should be const */
-  rmspace(handle);
   if (!handle[0] || (handle[0] == '*'))
     return NULL;
   if (bu == userlist) {

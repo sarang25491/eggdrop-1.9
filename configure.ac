@@ -68,7 +68,7 @@ AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS(sys/time.h)
 AC_HEADER_TIME
 AC_CHECK_HEADERS(string.h strings.h ctype.h stdlib.h limits.h unistd.h)
-AC_CHECK_HEADERS(sys/rusage.h sys/select.h stdarg.h std_args.h)
+AC_CHECK_HEADERS(sys/rusage.h sys/select.h sys/poll.h stdarg.h std_args.h)
 
 # Checks for types and structures
 AC_TYPE_PID_T
@@ -85,7 +85,7 @@ AC_CHECK_FUNCS(clock dprintf fsync getdtablesize getrusage isascii)
 AC_CHECK_FUNCS(random srandom rename setpgid sigaction sigemptyset uname)
 
 # Check for these functions, and replace those not found
-AC_REPLACE_FUNCS(memcpy memset strcasecmp strncasecmp strftime strdup)
+AC_REPLACE_FUNCS(memcpy memset poll strcasecmp strncasecmp strftime strdup)
 AC_REPLACE_FUNCS(inet_ntop inet_pton strerror strlcat strlcpy)
 
 # These all share a common file: snprintf.c
@@ -172,6 +172,6 @@ AC_SUBST(ac_aux_dir)
 EGG_LTLIBOBJS
 
 # FIXME: module's Makefiles list will prolly become dynamic
-AC_OUTPUT([Makefile doc/Makefile intl/Makefile lib/Makefile lib/adns/Makefile lib/compat/Makefile lib/eggdrop/Makefile lib/egglib/Makefile modules/Makefile modules/blowfish/Makefile modules/channels/Makefile modules/compress/Makefile modules/console/Makefile modules/ctcp/Makefile modules/filesys/Makefile modules/irc/Makefile modules/javascript/Makefile modules/notes/Makefile modules/perlscript/Makefile modules/server/Makefile modules/share/Makefile modules/tclscript/Makefile modules/transfer/Makefile modules/uptime/Makefile po/Makefile.in scripts/Makefile nettype/Makefile src/Makefile])
+AC_OUTPUT([Makefile doc/Makefile intl/Makefile lib/Makefile lib/adns/Makefile lib/compat/Makefile lib/eggdrop/Makefile lib/egglib/Makefile modules/Makefile modules/blowfish/Makefile modules/compress/Makefile modules/console/Makefile modules/javascript/Makefile modules/perlscript/Makefile modules/server/Makefile modules/tclscript/Makefile po/Makefile.in scripts/Makefile nettype/Makefile src/Makefile])
 
 EGG_MSG_CONFIGURE_END

@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: javascript.c,v 1.10 2002/05/31 04:11:37 stdarg Exp $";
+static const char rcsid[] = "$Id: javascript.c,v 1.11 2002/09/20 02:06:25 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -192,28 +192,7 @@ static int my_eggvar_set(JSContext *cx, JSObject *obj, int argc, jsval *argv, js
 	}
 
 	js_to_c_var(cx, obj, argv[0], &script_var, linked_var->type);
-	if (linked_var->callbacks && linked_var->callbacks->on_write) {
-		int r;
-		r = (linked_var->callbacks->on_write)(linked_var, &script_var);
-		if (r) return JS_FALSE;
-		c_to_js_var(cx, &script_var, rval);
-		return JS_TRUE;
-	}
-	switch (linked_var->type & SCRIPT_TYPE_MASK) {
-		case SCRIPT_UNSIGNED:
-		case SCRIPT_INTEGER:
-			*(int *)(linked_var->value) = (int) script_var.value;
-			break;
-		case SCRIPT_STRING: {
-			char **charptr = (char **)(linked_var->value);
-
-			if (*charptr) free(*charptr);
-			*charptr = strdup(script_var.value);
-			break;
-		}
-		default:
-			return JS_FALSE;
-	}
+	script_linked_var_on_write(linked_var, &script_var);
 	c_to_js_var(cx, &script_var, rval);
 	return JS_TRUE;
 }

@@ -117,7 +117,7 @@ static void socks5_auth_method(char *data, int len, proxy_info_t *info)
 		ulen = strlen(info->username) % 255;
 		plen = strlen(info->password) % 255;
 
-		buf[0] = 5;
+		buf[0] = 1;
 		buf[1] = ulen;
 		memcpy(buf+2, info->username, ulen);
 		buf[2+ulen] = plen;
@@ -240,7 +240,7 @@ static int socks5_on_eof(void *client_data, int idx, int err, const char *errmsg
 static int socks5_on_connect(void *client_data, int idx, const char *peer_ip, int peer_port)
 {
 	proxy_info_t *info = client_data;
-	char buf[] = "\005\002\001\000";
+	char buf[] = "\005\002\002\000";
 
 	printf("socks5 connected\n");
 	/* Send the accepted auth methods (user/pass and none). */

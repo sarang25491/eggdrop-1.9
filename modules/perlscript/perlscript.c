@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: perlscript.c,v 1.20 2002/05/31 04:11:37 stdarg Exp $";
+static const char rcsid[] = "$Id: perlscript.c,v 1.21 2002/09/20 02:06:25 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -142,29 +142,7 @@ static int linked_var_set(SV *sv, MAGIC *mg)
 	script_var_t newvalue = {0};
 
 	perl_to_c_var(sv, &newvalue, linked_var->type);
-	if (linked_var->callbacks && linked_var->callbacks->on_write) {
-		(linked_var->callbacks->on_write)(linked_var, &newvalue);
-		return(0);
-	}
-	switch (linked_var->type) {
-		case SCRIPT_UNSIGNED:
-		case SCRIPT_INTEGER:
-			/* linked_var->value is a pointer to an int/uint */
-			*(int *)(linked_var->value) = (int) newvalue.value;
-			break;
-		case SCRIPT_STRING: {
-			/* linked_var->value is a pointer to a (char *) */
-			char **charptr = (char **)(linked_var->value);
-
-			/* Free the old value. */
-			if (*charptr) free(*charptr);
-
-			/* Set the new value. */
-			if (newvalue.type & SCRIPT_FREE) *charptr = newvalue.value;
-			else *charptr = strdup(newvalue.value);
-			break;
-		}
-	}
+	script_linked_var_on_write(linked_var, &newvalue);
 	return(0);
 }
 

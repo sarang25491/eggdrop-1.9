@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: script.h,v 1.6 2002/05/31 04:11:36 stdarg Exp $
+ * $Id: script.h,v 1.7 2002/09/20 02:06:25 stdarg Exp $
  */
 
 #ifndef _EGG_SCRIPT_H
@@ -80,9 +80,6 @@ typedef struct byte_array_b {
 */
 #define SCRIPT_CALLBACK_ONCE	1
 
-/* Flags for linked variables. */
-#define SCRIPT_READ_ONLY	1
-
 /* Flags for variables. */
 /* SCRIPT_FREE means we will call free(retval->value) (i.e. free a malloc'd
    string or array base ptr.)
@@ -98,9 +95,11 @@ typedef struct byte_array_b {
 #define SCRIPT_FREE_VAR	512
 #define SCRIPT_ARRAY	1024
 #define SCRIPT_ERROR	2048
+#define SCRIPT_READONLY	4096
 
 /* Types for variables. */
 #define SCRIPT_STRING	((int)'s')
+#define SCRIPT_STRING_LIST ((int)'S')
 #define SCRIPT_INTEGER	((int)'i')
 #define SCRIPT_UNSIGNED	((int)'u')
 #define SCRIPT_POINTER	((int)'p')
@@ -202,6 +201,7 @@ typedef struct script_module_b {
 extern int script_register_module(script_module_t *module);
 extern int script_unregister_module(script_module_t *module);
 extern int script_playback(script_module_t *module);
+extern int script_linked_var_on_write(script_linked_var_t *var, script_var_t *newval);
 
 END_C_DECLS
 

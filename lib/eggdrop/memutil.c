@@ -23,12 +23,13 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: memutil.c,v 1.8 2002/05/31 03:07:22 stdarg Exp $";
+static const char rcsid[] = "$Id: memutil.c,v 1.9 2002/09/20 02:06:25 stdarg Exp $";
 #endif
 
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
+#include <stdarg.h>
 #include "memutil.h"
 
 /*        This implementation wont overrun dst - 'max' is the max bytes that dst
@@ -266,7 +267,53 @@ void str_redup(char **str, char *newstr)
 {
 	int len;
 
+	if (!newstr) {
+		if (*str) free(*str);
+		*str = NULL;
+		return;
+	}
 	len = strlen(newstr)+1;
 	*str = (char *)realloc(*str, len);
 	memcpy(*str, newstr, len);
+}
+
+char *egg_msprintf(char *buf, int len, int *final_len, const char *format, ...)
+{
+	va_list args;
+	char *ptr;
+
+	va_start(args, format);
+	ptr = egg_mvsprintf(buf, len, final_len, format, args);
+	va_end(args);
+	return(ptr);
+}
+
+char *egg_mvsprintf(char *buf, int len, int *final_len, const char *format, va_list args)
+{
+	char *output;
+	int n;
+
+	if (buf && len > 10) {
+		output = buf;
+	}
+	else {
+		output = (char *)malloc(512);
+		len = 512;
+	}
+	while (1) {
+		len -= 10;
+		n = vsnprintf(output, len, format, args);
+		if (n > -1 && n < len) break;
+		if (n > len) len = n+1;
+		else len *= 2;
+		len += 10;
+		if (output == buf) output = (char *)malloc(len);
+		else output = (char *)realloc(output, len);
+		if (!output) return(NULL);
+	}
+	if (final_len) {
+		if (!(n % 1024)) n = strlen(output);
+		*final_len = n;
+	}
+	return(output);
 }

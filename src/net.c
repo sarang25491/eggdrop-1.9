@@ -9,7 +9,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: net.c,v 1.62 2002/06/01 13:27:46 wingman Exp $";
+static const char rcsid[] = "$Id: net.c,v 1.63 2002/09/20 02:06:25 stdarg Exp $";
 #endif
 
 #include <fcntl.h>
@@ -30,7 +30,6 @@ static const char rcsid[] = "$Id: net.c,v 1.62 2002/06/01 13:27:46 wingman Exp $
 #include <setjmp.h>
 
 #include "lib/adns/adns.h"
-#include "egg_timer.h"
 #include "logfile.h"
 #include "dns.h"
 #include "dccutil.h"			/* dprintf_eggdrop		*/

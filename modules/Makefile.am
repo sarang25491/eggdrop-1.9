@@ -1,6 +1,6 @@
-# $Id: Makefile.am,v 1.4 2002/06/18 06:12:31 guppy Exp $
+# $Id: Makefile.am,v 1.5 2002/09/20 02:06:25 stdarg Exp $
 
 # FIXME: list will prolly become dynamic
-SUBDIRS			= blowfish channels compress console ctcp filesys irc notes perlscript server share tclscript transfer uptime javascript
+SUBDIRS			= blowfish compress console notes perlscript server tclscript javascript
 
 MAINTAINERCLEANFILES	= Makefile.in

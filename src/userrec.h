@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: userrec.h,v 1.2 2002/05/05 16:40:39 tothwolf Exp $
+ * $Id: userrec.h,v 1.3 2002/09/20 02:06:25 stdarg Exp $
  */
 
 #ifndef _EGG_USERREC_H
@@ -42,7 +42,7 @@ int change_handle(struct userrec *, char *);
 void correct_handle(char *);
 int write_user(struct userrec *u, FILE * f, int shr);
 void write_userfile(int);
-struct userrec *check_dcclist_hand(char *);
+struct userrec *check_dcclist_hand(const char *);
 void touch_laston(struct userrec *, char *, time_t);
 void user_del_chan(char *);
 char *fixfrom(char *);

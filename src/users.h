@@ -22,7 +22,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: users.h,v 1.13 2002/05/12 15:35:44 ite Exp $
+ * $Id: users.h,v 1.14 2002/09/20 02:06:25 stdarg Exp $
  */
 
 #ifndef _EGG_USERS_H
@@ -166,6 +166,8 @@ struct userrec {
   struct user_entry *entries;
 };
 
+typedef struct userrec user_t;
+
 struct igrec {
   struct igrec *next;
   char *igmask;
@@ -184,7 +186,8 @@ extern struct igrec *global_ign;
  */
 
 struct userrec *adduser();
-struct userrec *get_user_by_handle(struct userrec *, char *);
+struct userrec *get_user_by_handle(struct userrec *, const char *);
+user_t *get_user_authed(char *handle, char *pass);
 struct userrec *get_user_by_host(char *);
 struct userrec *get_user_by_nick(char *);
 struct userrec *check_chanlist();

@@ -22,67 +22,56 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.9 2002/06/18 04:40:16 guppy Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.10 2002/09/20 02:06:25 stdarg Exp $";
 #endif
 */
 
-#include <eggdrop/eggdrop.h> /* Eggdrop API */
+#include "lib/eggdrop/module.h"
+
+#include "server.h"
+#include "serverlist.h"
+#include "nicklist.h"
+#include "output.h"
+#include "servsock.h"
 
 static int script_isbotnick (char *nick);
 static int script_putserv(char *queue, char *next, char *text);
-static int script_jump (int nargs, char *optserver, int optport, char *optpassword);
-static int script_clearqueue (script_var_t *retval, char *queuetype);
-static int script_queuesize (script_var_t *retval, int nargs, char *queuetype, int flags);
-static int script_server_list(script_var_t *retval);
+static int script_jump (int nargs, int num);
 
-static int altnick_on_write(script_linked_var_t *linked_var, script_var_t *newvalue);
-static script_var_callbacks_t altnick_callbacks = {
-	NULL,
-	altnick_on_write,
-	NULL
-};
+/* From serverlist.c */
+extern int server_list_index;
 
-static char *script_botname;
-static int botname_on_read(script_linked_var_t *linked_var, script_var_t *newvalue);
-static int botname_on_write(script_linked_var_t *linked_var, script_var_t *newvalue);
-static script_var_callbacks_t botname_callbacks = {
-	botname_on_read,
-	botname_on_write,
-	NULL
-};
+/* From server.c */
+extern int cycle_delay;
+extern current_server_t current_server;
 
-static script_linked_var_t server_script_vars[] = {
-	{"", "server", &curserv, SCRIPT_INTEGER, NULL},
-	{"", "altnick", &altnick, SCRIPT_STRING, &altnick_callbacks},
-	{"", "botname", &script_botname, SCRIPT_STRING, &botname_callbacks},
-	{"", "botnick", NULL, SCRIPT_STRING, NULL},
-	{"", "nick_len", &nick_len, SCRIPT_INTEGER, NULL},
+script_linked_var_t server_script_vars[] = {
+	{"", "server", &server_list_index, SCRIPT_INTEGER | SCRIPT_READONLY, NULL},
+	{"", "botnick", &current_server.nick, SCRIPT_STRING | SCRIPT_READONLY, NULL},
 	{0}
 };
 
-static script_command_t server_script_cmds[] = {
-        {"", "jump", script_jump, NULL, 0, "sis", "server port password", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_PASS_COUNT},
+script_command_t server_script_cmds[] = {
+        {"", "jump", script_jump, NULL, 0, "i", "num", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_PASS_COUNT},
         {"", "isbotnick", script_isbotnick, NULL, 1, "s", "nick", SCRIPT_INTEGER, 0},
-        {"", "clearqueue", script_clearqueue, NULL, 1, "s", "queuetype", SCRIPT_INTEGER, SCRIPT_PASS_RETVAL},
-        {"", "queuesize", script_queuesize, NULL, 0, "s", "?queuetype?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_PASS_COUNT | SCRIPT_PASS_RETVAL},
         {"", "putserv", script_putserv, NULL, 1, "sss", "?-queuetype? ?-next? text", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT},
 	{"", "server_add", server_add, NULL, 1, "sis", "host ?port? ?pass?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
 	{"", "server_del", server_del, NULL, 1, "i", "server-num", SCRIPT_INTEGER, 0},
 	{"", "server_clear", server_clear, NULL, 0, "", "", SCRIPT_INTEGER, 0},
-	{"", "server_list", script_server_list, NULL, 0, "", "", 0, SCRIPT_PASS_RETVAL},
+	{"", "nick_add", nick_add, NULL, 1, "s", "nick", SCRIPT_INTEGER, 0},
+	{"", "nick_del", nick_del, NULL, 1, "i", "nick-num", SCRIPT_INTEGER, 0},
+	{"", "nick_clear", nick_clear, NULL, 0, "", "", SCRIPT_INTEGER, 0},
         {0}
 };
 
-static int script_isbotnick (char *nick)
+static int script_isbotnick(char *nick)
 {
 	return match_my_nick(nick);
 }
 
-static int script_putserv (char *queue, char *next, char *text)
+static int script_putserv(char *queue, char *next, char *text)
 {
-	char s[511];
-	int queue_num = 0;
-	int len = strlen(text);
+	int prio;
 
 	/* Figure out which arguments they've given us. */
 	if (!next) queue = "-serv";
@@ -104,202 +93,31 @@ static int script_putserv (char *queue, char *next, char *text)
 
 	/* Figure out which queue they want. */
 	if (!strcasecmp(queue, "-noqueue")) {
-		if (serv >= 0) {
-			/* We'll add a \r\n to the end before we send it. */
-			char *copy = msprintf("%s\r\n", text);
-			tputs(serv, copy, len+2);
-			free(copy);
-		}
-		return(0);
+		prio = SERVER_NOQUEUE;
 	}
 	else if (!strcasecmp(queue, "-help")) {
-		queue_num = next ? DP_HELP_NEXT : DP_HELP;
+		prio = SERVER_HELP;
 	}
 	else if (!strcasecmp(queue, "-quick")) {
-		queue_num = next ? DP_MODE_NEXT : DP_MODE;
+		prio = SERVER_MODE;
 	}
 	else {
-		queue_num = next ? DP_SERVER_NEXT : DP_SERVER;
+		prio = SERVER_NORMAL;
 	}
 
-	/* We trim the data to make it IRC-compatible */
-	if (len > 510) {
-		strncpy(s, text, 510);
-		s[510] = 0;
+	if (next) prio |= SERVER_NEXT;
 
-		dprintf(queue_num, "%s\n", s);
-	}
-	else dprintf(queue_num, "%s\n", text);
+	printserv(prio, "%s\r\n", text);
 
 	return(0);
 }
 
-static int script_jump (int nargs, char *optserver, int optport, char *optpassword)
+static int script_jump(int nargs, int num)
 {
-  	if (nargs >= 1) {
-    		strlcpy(newserver, optserver, sizeof(newserver));
-    		
-		if (nargs >= 2)
-      			newserverport = optport;
-    		else
-      			newserverport = default_port;
-    
-		if (nargs == 3)
-      			strlcpy(newserverpass, optpassword, sizeof(newserverpass) );
-  	}
+  	if (nargs) server_set_next(num);
   
-	cycle_time = 0;
-	
-  	nuke_server("changing servers\n");
-	
-	return(1);
-}
-
-static int script_clearqueue (script_var_t *retval, char *queuetype)
-{
-	struct msgq *q, *qq;
-	int msgs = 0;
-	retval->type = SCRIPT_INTEGER;
-	
-	if (!strcmp(queuetype,"all")) {
-		msgs = (int) (modeq.tot + mq.tot + hq.tot);
-		for (q = modeq.head; q; q = qq) { 
-			qq = q->next;
-			free(q->msg);
-			free(q);
-		}
-		for (q = mq.head; q; q = qq) {
-			qq = q->next;
-			free(q->msg);
-			free(q);
-		}
-		for (q = hq.head; q; q = qq) {
-			qq = q->next;
-			free(q->msg);
-			free(q);
-		}
-		modeq.tot = mq.tot = hq.tot = modeq.warned = mq.warned = hq.warned = 0;
-		mq.head = hq.head = modeq.head = mq.last = hq.last = modeq.last = 0;
-		burst = 0;
-		
-		retval->value = (void *)msgs;
-		return(1);
-	
-	} else if (!strncmp(queuetype,"serv", 4)) {
-		msgs = mq.tot;
-		for (q = mq.head; q; q = qq) {
-			qq = q->next;
-			free(q->msg);
-			free(q);
-		}
-		mq.tot = mq.warned = 0;
-		mq.head = mq.last = 0;
-		if (modeq.tot == 0)
-			burst = 0;
-		mq.tot = mq.warned = 0;
-		mq.head = mq.last = 0;
-		
-		retval->value = (void *)msgs;
-		return(1);
-	
-	} else if (!strcmp(queuetype,"mode")) {
-		msgs = modeq.tot;
-		for (q = modeq.head; q; q = qq) { 
-			qq = q->next;
-			free(q->msg);
-			free(q);
-		}
-		if (mq.tot == 0)
-			burst = 0;
-		modeq.tot = modeq.warned = 0;
-		modeq.head = modeq.last = 0;
-		
-		retval->value = (void *)msgs;	
-		return(1);
-		
-	} else if (!strcmp(queuetype,"help")) {
-		msgs = hq.tot;
-		for (q = hq.head; q; q = qq) {
-			qq = q->next;
-			free(q->msg);
-			free(q);
-		}
-		hq.tot = hq.warned = 0;
-		hq.head = hq.last = 0;
-	
-		retval->value = (void *)msgs;
-		return(1);
-	}
-	
-	retval->type = SCRIPT_STRING | SCRIPT_ERROR;
-	retval->value = "bad option: must be mode, server, help, or all";
+	cycle_delay = config.cycle_delay;
+	kill_server("changing servers");
 	
 	return(0);
-}
-
-static int script_queuesize (script_var_t *retval, int nargs, char *queuetype, int flags)
-{	
-	int x = 0;
-
-	retval->type = SCRIPT_INTEGER;
-	if (nargs == 0) {
-		x = (int) (modeq.tot + hq.tot + mq.tot);
-		retval->value = (void *)x;
-		return(1);
-	} else if (!strncmp(queuetype, "serv", 4)) {
-		x = (int) (mq.tot);
-		retval->value = (void *)x;
-		return(1);
-	} else if (!strcmp(queuetype, "mode")) {
-		x = (int) (modeq.tot);
-		retval->value = (void *)x;
-		return(1);
-	} else if (!strcmp(queuetype, "help")) {
-		x = (int) (hq.tot);
-		retval->value = (void *)x;
-		return(1);
-	}
-	
-	retval->type = SCRIPT_STRING | SCRIPT_ERROR;
-	retval->value = "bad option: must be mode, server, or help";
-	return(0);
-}
-
-static int script_server_list(script_var_t *retval)
-{
-	script_var_t *sublist;
-	struct server_list *ptr;
-
-	retval->type = SCRIPT_ARRAY | SCRIPT_VAR | SCRIPT_FREE;
-	retval->len = 0;
-
-	for (ptr = serverlist; ptr; ptr = ptr->next) {
-		sublist = script_list(4, script_string(ptr->name, -1),
-			script_int(ptr->port),
-			script_string(ptr->pass, -1),
-			script_string(ptr->realname, -1)
-		);
-		script_list_append(retval, sublist);
-	}
-	return(0);
-}
-
-static int altnick_on_write(script_linked_var_t *linked_var, script_var_t *newvalue)
-{
-	str_redup(&altnick, newvalue->value);
-	if (raltnick) free(raltnick);
-	raltnick = NULL;
-	return(0);
-}
-
-static int botname_on_read(script_linked_var_t *linked_var, script_var_t *newvalue)
-{
-	if (script_botname) free(script_botname);
-	script_botname = msprintf("%s%s%s", botname, botuserhost[0] ? "!" : "", botuserhost);
-	return(0);
-}
-
-static int botname_on_write(script_linked_var_t *linked_var, script_var_t *newvalue)
-{
-	return(1);
 }

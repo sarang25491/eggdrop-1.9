@@ -22,7 +22,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: script.c,v 1.7 2002/05/24 06:52:05 stdarg Exp $";
+static const char rcsid[] = "$Id: script.c,v 1.8 2002/09/20 02:06:25 stdarg Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -129,6 +129,35 @@ static void *journal_del(int event, void *data, void *key)
 		return(data);
 	}
 	return(NULL);
+}
+
+/* We shall provide a handy default linked var write handler. */
+
+int script_linked_var_on_write(script_linked_var_t *var, script_var_t *newval)
+{
+	int r;
+	char **charptr;
+
+	/* See if the owner provides a write callback. */
+	if (var->callbacks && var->callbacks->on_write) {
+		r = (var->callbacks->on_write)(var, newval);
+		return(r);
+	}
+
+	/* Provide default handling for strings and ints. */
+	switch (var->type & SCRIPT_TYPE_MASK) {
+		case SCRIPT_UNSIGNED:
+		case SCRIPT_INTEGER:
+			*(int *)(var->value) = (int) newval->value;
+			break;
+		case SCRIPT_STRING:
+			charptr = (char **)var->value;
+			if (*charptr) free(*charptr);
+			if (newval->type & SCRIPT_FREE) *charptr = newval->value;
+			else *charptr = strdup(newval->value);
+			break;
+	}
+	return(0);
 }
 
 /* We shall provide a handy callback interface, to reduce the amount of

@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: module.h,v 1.27 2002/06/18 06:12:31 guppy Exp $
+ * $Id: module.h,v 1.28 2002/09/20 02:06:25 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_MODULE_H
@@ -34,6 +34,7 @@
 /* FIXME: filter out files which are not needed (it was easier after removing
    proto.h and cleaning up main.h to just include all .h files here w/o
    validating if they aren't needed */
+#include "src/users.h"
 #include "src/bg.h"
 #include "src/botcmd.h"
 #include "src/botmsg.h"
@@ -48,7 +49,6 @@
 #include "src/debug.h"
 #include "src/dns.h"
 #include "src/egg.h"
-#include "src/egg_timer.h"
 #include "src/flags.h"
 #include "src/irccmp.h"
 #include "src/logfile.h"
@@ -64,7 +64,6 @@
 #include "src/traffic.h"
 #include "src/userent.h"
 #include "src/userrec.h"
-#include "src/users.h"
 #include "src/tandem.h"
 #include "src/logfile.h"
 #include "src/dns.h"

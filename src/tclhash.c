@@ -28,7 +28,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tclhash.c,v 1.73 2002/08/12 01:16:31 stdarg Exp $";
+static const char rcsid[] = "$Id: tclhash.c,v 1.74 2002/09/20 02:06:25 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -39,7 +39,6 @@ static const char rcsid[] = "$Id: tclhash.c,v 1.73 2002/08/12 01:16:31 stdarg Ex
 #include "userrec.h"		/* touch_laston			*/
 #include "match.h"		/* wild_match_per		*/
 #include "tclhash.h"		/* prototypes			*/
-#include "egg_timer.h"
 
 extern struct dcc_t *dcc;
 extern int dcc_total;
