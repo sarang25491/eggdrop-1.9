@@ -1,3 +1,10 @@
+2003-02-18 10:37  stdarg <stdarg@techmonkeys.org>
+
+	* src/: Makefile.am, core_binds.c, dcc.c, main.c, match.c, match.h,
+	misc.c, modules.c, tcl.c, userent.c, userrec.c, users.c:
+
+	[no log message] 
+
 2003-02-18 10:13  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/eggconfig.c, lib/eggdrop/eggconfig.h,
