@@ -10,7 +10,7 @@
  * statement, leave the rest of the file alone, this allows better
  * overlapping patches.
  *
- * $Id: patch.h,v 1.552 2001/10/17 02:01:56 poptix Exp $
+ * $Id: patch.h,v 1.553 2001/11/05 03:47:36 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -51,7 +51,7 @@ patch("userlist");
  *
  *
  */
-/* PATCH GOES HERE */
+patch("tcldcc");
 /*
  *
  *

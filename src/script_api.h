@@ -3,10 +3,6 @@
 #ifndef _SCRIPT_API_H_
 #define _SCRIPT_API_H_
 
-/* How about some macros for setting return values? */
-#define SCRIPT_RETURN_INT(x) retval->type = SCRIPT_INTEGER, retval->intval = x
-#define SCRIPT_RETURN_STR(s) retval->type = SCRIPT_STRING, retval->str = s
-
 /* Script events that get recorded in the script journal. */
 enum {
 	SCRIPT_EVENT_LOAD_SCRIPT = 0,
@@ -22,6 +18,19 @@ enum {
 };
 
 /* Flags for commands. */
+/* SCRIPT_PASS_CDATA means your callback wants its (void *)client_data passed
+   as it's *first* arg.
+   SCRIPT_PASS_RETVAL will pass a (scriptvar_t *)retval so that you can return
+   complex types.
+   SCRIPT_PASS_ARRAY will pass all the args from the script in an array. It
+   actually causes 2 arguments: int argc and void *argv[].
+   SCRIPT_PASS_COUNT will pass the number of script arguments you're getting.
+   SCRIPT_VAR_ARGS means you accept variable number of args. The nargs field
+   of the command struct is the minimum number required, and the strlen of your
+   syntax field is the max number (unless it ends in * of course).
+   SCRIPT_VAR_FRONT means the variable args come from the front instead of the
+   back. This is useful for flags and stuff.
+*/
 #define SCRIPT_PASS_CDATA	1
 #define SCRIPT_PASS_RETVAL	2
 #define SCRIPT_PASS_ARRAY	4
@@ -30,12 +39,25 @@ enum {
 #define SCRIPT_VAR_FRONT	32
 
 /* Flags for callbacks. */
+/* SCRIPT_CALLBACK_ONCE means the callback will be automatically deleted after
+   its first use.
+*/
 #define SCRIPT_CALLBACK_ONCE	1
 
 /* Flags for linked variables. */
 #define SCRIPT_READ_ONLY	1
 
 /* Flags for variables. */
+/* SCRIPT_FREE means we will call free(retval->value) (i.e. free a malloc'd
+   string or array base ptr.
+   SCRIPT_FREE_VAR means we will call free(retval) (you may need this if you
+   build a complex list structure of (script_var_t *)'s).
+   SCRIPT_ARRAY means we interpret retval->value as an array of length
+   retval->len, of whatever basic type is specified in retval->type (flags
+   are ignored).
+   SCRIPT_ERROR means the interpreter will raise an error exception if it knows
+   how, with retval->value as the error information. Otherwise, it is ignored.
+*/
 #define SCRIPT_FREE	256
 #define SCRIPT_FREE_VAR	512
 #define SCRIPT_ARRAY	1024

@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.40 2001/10/26 22:22:22 stdarg Exp $
+ * $Id: tcldcc.c,v 1.41 2001/11/05 03:47:36 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -166,170 +166,115 @@ static int script_dccputchan(int chan, char *msg)
   return(0);
 }
 
-static int tcl_console STDVAR
+static int script_console(script_var_t *retval, int nargs, int idx, char *what)
 {
-  int i, j, pls, arg;
-  module_entry *me;
+	static char *view[2];
+	char str[2];
+	int plus;
 
-  BADARGS(2, 4, " idx ?channel? ?console-modes?");
-  i = findidx(atoi(argv[1]));
-  if (i < 0 || dcc[i].type != &DCC_CHAT) {
-    Tcl_AppendResult(irp, "invalid idx", NULL);
-    return TCL_ERROR;
-  }
-  pls = 1;
-  for (arg = 2; arg < argc; arg++) {
-    if (argv[arg][0] && ((strchr(CHANMETA, argv[arg][0]) != NULL) ||
-	(argv[arg][0] == '*'))) {
-      if ((argv[arg][0] != '*') && (!findchan_by_dname(argv[arg]))) {
-        /* If we dont find the channel, and it starts with a +... assume it
-         * should be the console flags to set.
-         */
-        if (argv[arg][0]=='+')
-          goto do_console_flags;
-	Tcl_AppendResult(irp, "invalid channel", NULL);
-	return TCL_ERROR;
-      }
-      strncpyz(dcc[i].u.chat->con_chan, argv[arg], 81);
-    } else {
-      if ((argv[arg][0] != '+') && (argv[arg][0] != '-'))
-	dcc[i].u.chat->con_flags = 0;
-      do_console_flags:
-      for (j = 0; j < strlen(argv[arg]); j++) {
-	if (argv[arg][j] == '+')
-	  pls = 1;
-	else if (argv[arg][j] == '-')
-	  pls = (-1);
-	else {
-	  char s[2];
+	str[1] = 0;
 
-	  s[0] = argv[arg][j];
-	  s[1] = 0;
-	  if (pls == 1)
-	    dcc[i].u.chat->con_flags |= logmodes(s);
-	  else
-	    dcc[i].u.chat->con_flags &= ~logmodes(s);
+	if (idx < 0 || idx >= dcc_total || !dcc[idx].type || dcc[idx].type != &DCC_CHAT) {
+		retval->value = "invalid idx";
+		retval->len = 10;
+		retval->type = SCRIPT_ERROR | SCRIPT_STRING;
 	}
-      }
-    }
-  }
-  Tcl_AppendElement(irp, dcc[i].u.chat->con_chan);
-  Tcl_AppendElement(irp, masktype(dcc[i].u.chat->con_flags));
-  /* Console autosave. */
-  if (argc > 2 && (me = module_find("console", 1, 1))) {
-    Function *func = me->funcs;
 
-    (func[CONSOLE_DOSTORE]) (i);
-  }
-  return TCL_OK;
+	retval->type = SCRIPT_ARRAY | SCRIPT_STRING;
+	retval->len = 2;
+	view[0] = dcc[idx].u.chat->con_chan;
+	view[1] = masktype(dcc[idx].u.chat->con_flags);
+	retval->value = (void *)view;
+
+	if (nargs != 2) {
+		view[1] = masktype(dcc[idx].u.chat->con_flags);
+		return(0); /* Done. */
+	}
+
+	/* They want to change something. */
+	if (strchr(CHANMETA, what[0]) != NULL) {
+		/* The channel. */
+		strncpyz(dcc[idx].u.chat->con_chan, what, 80);
+		return(0);
+	}
+
+	/* The flags. */
+	if (*what != '+' && *what != '-') dcc[idx].u.chat->con_flags = 0;
+	for (plus = 1; *what; what++) {
+		if (*what == '-') plus = 0;
+		else if (*what == '+') plus = 1;
+		else {
+			str[0] = *what;
+			if (plus) dcc[idx].u.chat->con_flags |= logmodes(str);
+			else dcc[idx].u.chat->con_flags &= (~logmodes(str));
+		}
+	}
+	view[1] = masktype(dcc[idx].u.chat->con_flags);
+	return(0);
 }
 
-static int tcl_strip STDVAR
+static int script_strip(script_var_t *retval, int nargs, int idx, char *what)
 {
-  int i, j, pls, arg;
-  module_entry *me;
+	char str[2];
+	int plus;
 
-  BADARGS(2, 4, " idx ?strip-flags?");
-  i = findidx(atoi(argv[1]));
-  if (i < 0 || dcc[i].type != &DCC_CHAT) {
-    Tcl_AppendResult(irp, "invalid idx", NULL);
-    return TCL_ERROR;
-  }
-  pls = 1;
-  for (arg = 2; arg < argc; arg++) {
-    if ((argv[arg][0] != '+') && (argv[arg][0] != '-'))
-      dcc[i].u.chat->strip_flags = 0;
-    for (j = 0; j < strlen(argv[arg]); j++) {
-      if (argv[arg][j] == '+')
-	pls = 1;
-      else if (argv[arg][j] == '-')
-	pls = (-1);
-      else {
-	char s[2];
+	str[1] = 0;
 
-	s[0] = argv[arg][j];
-	s[1] = 0;
-	if (pls == 1)
-	  dcc[i].u.chat->strip_flags |= stripmodes(s);
-	else
-	  dcc[i].u.chat->strip_flags &= ~stripmodes(s);
-      }
-    }
-  }
-  Tcl_AppendElement(irp, stripmasktype(dcc[i].u.chat->strip_flags));
-  /* Console autosave. */
-  if (argc > 2 && (me = module_find("console", 1, 1))) {
-    Function *func = me->funcs;
+	if (idx < 0 || idx >= dcc_total || !dcc[idx].type || dcc[idx].type != &DCC_CHAT) {
+		retval->value = "invalid idx";
+		retval->len = 10;
+		retval->type = SCRIPT_ERROR | SCRIPT_STRING;
+	}
 
-    (func[CONSOLE_DOSTORE]) (i);
-  }
-  return TCL_OK;
+	retval->len = -1;
+	retval->type = SCRIPT_STRING;
+
+	if (nargs == 1) {
+		retval->value = stripmasktype(dcc[idx].u.chat->strip_flags);
+		return(0);
+	}
+
+	/* The flags. */
+	if (*what != '+' && *what != '-') dcc[idx].u.chat->strip_flags = 0;
+	for (plus = 1; *what; what++) {
+		if (*what == '-') plus = 0;
+		else if (*what == '+') plus = 1;
+		else {
+			str[0] = *what;
+			if (plus) dcc[idx].u.chat->con_flags |= stripmodes(str);
+			else dcc[idx].u.chat->con_flags &= (~stripmodes(str));
+		}
+	}
+
+	retval->value = stripmasktype(dcc[idx].u.chat->strip_flags);
+	return(0);
 }
 
-static int tcl_echo STDVAR
+static int script_echo(int nargs, int idx, int status)
 {
-  int i;
-  module_entry *me;
+	if (idx < 0 || idx >= dcc_total || !dcc[idx].type || dcc[idx].type != &DCC_CHAT) return(0);
+	if (nargs == 2) {
+		if (status) dcc[idx].status |= STAT_ECHO;
+		else dcc[idx].status &= (~STAT_ECHO);
+	}
 
-  BADARGS(2, 3, " idx ?status?");
-  i = findidx(atoi(argv[1]));
-  if (i < 0 || dcc[i].type != &DCC_CHAT) {
-    Tcl_AppendResult(irp, "invalid idx", NULL);
-    return TCL_ERROR;
-  }
-  if (argc == 3) {
-    if (atoi(argv[2]))
-      dcc[i].status |= STAT_ECHO;
-    else
-      dcc[i].status &= ~STAT_ECHO;
-  }
-  if (dcc[i].status & STAT_ECHO)
-    Tcl_AppendResult(irp, "1", NULL);
-  else
-    Tcl_AppendResult(irp, "0", NULL);
-  /* Console autosave. */
-  if (argc > 2 && (me = module_find("console", 1, 1))) {
-    Function *func = me->funcs;
-
-    (func[CONSOLE_DOSTORE]) (i);
-  }
-  return TCL_OK;
+	if (dcc[idx].status & STAT_ECHO) return(1);
+	return(0);
 }
 
-static int tcl_page STDVAR
+static int script_page(int nargs, int idx, int status)
 {
-  int i;
-  char x[20];
-  module_entry *me;
+	if (idx < 0 || idx >= dcc_total || !dcc[idx].type || dcc[idx].type != &DCC_CHAT) return(0);
 
-  BADARGS(2, 3, " idx ?status?");
-  i = findidx(atoi(argv[1]));
-  if (i < 0 || dcc[i].type != &DCC_CHAT) {
-    Tcl_AppendResult(irp, "invalid idx", NULL);
-    return TCL_ERROR;
-  }
-  if (argc == 3) {
-    int l = atoi(argv[2]);
-
-    if (!l)
-      dcc[i].status &= ~STAT_PAGE;
-    else {
-      dcc[i].status |= STAT_PAGE;
-      dcc[i].u.chat->max_line = l;
-    }
-  }
-  if (dcc[i].status & STAT_PAGE) {
-    snprintf(x, sizeof x, "%d", dcc[i].u.chat->max_line);
-    Tcl_AppendResult(irp, x, NULL);
-  } else
-    Tcl_AppendResult(irp, "0", NULL);
-  /* Console autosave. */
-  if ((argc > 2) && (me = module_find("console", 1, 1))) {
-    Function *func = me->funcs;
-
-    (func[CONSOLE_DOSTORE]) (i);
-  }
-  return TCL_OK;
+	if (nargs == 2) {
+		if (status) {
+			dcc[idx].status |= STAT_PAGE;
+			dcc[idx].u.chat->max_line = status;
+		}
+		else dcc[idx].status &= (~STAT_PAGE);
+	}
+	if (dcc[idx].status & STAT_PAGE) return(dcc[idx].u.chat->max_line);
+	return(0);
 }
 
 static int tcl_control STDVAR
@@ -365,17 +310,10 @@ static int tcl_control STDVAR
   return TCL_OK;
 }
 
-static int tcl_valididx STDVAR
+static int script_valididx(int idx)
 {
-  int idx;
-
-  BADARGS(2, 2, " idx");
-  idx = findidx(atoi(argv[1]));
-  if (idx < 0 || !(dcc[idx].type->flags & DCT_VALIDIDX))
-     Tcl_AppendResult(irp, "0", NULL);
-  else
-     Tcl_AppendResult(irp, "1", NULL);
-   return TCL_OK;
+	if (idx < 0 || idx >= dcc_total || !dcc[idx].type || !(dcc[idx].type->flags & DCT_VALIDIDX)) return(0);
+	return(1);
 }
 
 static int tcl_killdcc STDVAR
@@ -956,17 +894,21 @@ script_simple_command_t script_dcc_cmds[] = {
 	{"getchan", script_getchan, "i", "idx", SCRIPT_INTEGER},
 	{"setchan", script_setchan, "ii", "idx chan", SCRIPT_INTEGER},
 	{"dccputchan", script_dccputchan, "is", "chan text", SCRIPT_INTEGER},
+	{"valididx", script_valididx, "i", "idx", SCRIPT_INTEGER},
+	{0}
+};
+
+script_command_t script_full_dcc_cmds[] = {
+	{"", "console", script_console, NULL, 1, "is", "idx ?changes?", 0, SCRIPT_PASS_RETVAL|SCRIPT_PASS_COUNT|SCRIPT_VAR_ARGS},
+	{"", "strip", script_strip, NULL, 1, "is", "idx ?change?", 0, SCRIPT_PASS_RETVAL|SCRIPT_PASS_COUNT|SCRIPT_VAR_ARGS},
+	{"", "echo", script_echo, NULL, 1, "ii", "idx ?status?", SCRIPT_INTEGER, SCRIPT_PASS_COUNT|SCRIPT_VAR_ARGS},
+	{"", "page", script_page, NULL, 1, "ii", "idx ?status?", SCRIPT_INTEGER, SCRIPT_PASS_COUNT|SCRIPT_VAR_ARGS},
 	{0}
 };
 
 tcl_cmds tcldcc_cmds[] =
 {
-  {"console",		tcl_console},
-  {"strip",		tcl_strip},
-  {"echo",		tcl_echo},
-  {"page",		tcl_page},
   {"control",		tcl_control},
-  {"valididx",		tcl_valididx},
   {"killdcc",		tcl_killdcc},
   {"putbot",		tcl_putbot},
   {"putallbots",	tcl_putallbots},
