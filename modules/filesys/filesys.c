@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.6 2002/03/22 16:01:17 ite Exp $
+ * $Id: filesys.c,v 1.7 2002/04/01 13:33:32 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -624,9 +624,9 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
       }
 debug1("|FILESYS| dcc send ip: (%s)", ip);
     if (inet_aton(ip, &ip4)) /* fix the format! */
-	strncpyz(dcc[i].addr, inet_ntoa(ip4), ADDRLEN);
+	strlcpy(dcc[i].addr, inet_ntoa(ip4), ADDRLEN);
     else
-	strncpyz(dcc[i].addr, ip, ADDRLEN);
+	strlcpy(dcc[i].addr, ip, ADDRLEN);
 debug1("|FILESYS| addr: (%s)", dcc[i].addr);
       dcc[i].port = atoi(prt);
       dcc[i].sock = (-1);

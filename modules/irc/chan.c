@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.18 2002/02/27 05:34:00 guppy Exp $
+ * $Id: chan.c,v 1.19 2002/04/01 13:33:32 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1376,7 +1376,7 @@ static int gotinvite(char *from, char *ignore, char *msg)
 
   newsplit(&msg);
   fixcolon(msg);
-  strncpyz(buf, from, sizeof buf);
+  strlcpy(buf, from, sizeof buf);
   nick = strtok(buf, "!");
   uhost = strtok(NULL, "!");
   if (!irccmp(last_invchan, msg))
@@ -1423,7 +1423,7 @@ static int gottopic(char *from, char *ignore, char *msg)
   chname = newsplit(&msg);
   fixcolon(msg);
   u = get_user_by_host(from);
-  strncpyz(buf, from, sizeof buf);
+  strlcpy(buf, from, sizeof buf);
   nick = strtok(buf, "!");
   uhost = strtok(NULL, "!");
   chan = findchan(chname);
@@ -1563,7 +1563,7 @@ static int gotjoin(char *from, char *ignore, char *chname)
     dprintf(DP_MODE, "PART %s\n", chname);
   } else if (!channel_pending(chan)) {
     chan->status &= ~CHAN_STOP_CYCLE;
-    strncpyz(buf, from, sizeof buf);
+    strlcpy(buf, from, sizeof buf);
     nick = strtok(buf, "!");
     uhost = strtok(NULL, "!");
     detect_chan_flood(nick, uhost, from, chan, FLOOD_JOIN, NULL);
@@ -1800,7 +1800,7 @@ static int gotpart(char *from, char *ignore, char *msg)
     }
     u = get_user_by_host(from);
     set_handle_laston(chan->dname, u, now);
-    strncpyz(buf, from, sizeof buf);
+    strlcpy(buf, from, sizeof buf);
     nick = strtok(buf, "!");
     uhost = strtok(NULL, "!");
     check_tcl_part(nick, uhost, u, chan->dname, msg); /* This must be directly above the killmember, in case
@@ -1839,7 +1839,7 @@ static int gotkick(char *from, char *ignore, char *origmsg)
   struct userrec *u;
   struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
-  strncpyz(buf2, origmsg, sizeof buf2);
+  strlcpy(buf2, origmsg, sizeof buf2);
   msg = buf2;
   chname = newsplit(&msg);
   chan = findchan(chname);
@@ -1847,7 +1847,7 @@ static int gotkick(char *from, char *ignore, char *origmsg)
     kicked = newsplit(&msg);
     fixcolon(msg);
     u = get_user_by_host(from);
-    strncpyz(buf, from, sizeof buf);
+    strlcpy(buf, from, sizeof buf);
     nick = strtok(buf, "!");
     uhost = strtok(NULL, "!");
     detect_chan_flood(nick, uhost, from, chan, FLOOD_KICK, kicked);
@@ -1901,7 +1901,7 @@ static int gotnick(char *from, char *ignore, char *msg)
   struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
   fixcolon(msg);
-  strncpyz(buf, from, sizeof buf);
+  strlcpy(buf, from, sizeof buf);
   nick = strtok(buf, "!");
   uhost = strtok(NULL, "!");
   clear_chanlist_member(nick);	/* Cache for nick 'nick' is meaningless now. */
@@ -1971,7 +1971,7 @@ static int gotquit(char *from, char *ignore, char *msg)
   struct userrec *u;
 
   fixcolon(msg);
-  strncpyz(buf, from, sizeof buf);
+  strlcpy(buf, from, sizeof buf);
   nick = strtok(buf, "!");
   uhost = strtok(NULL, "!");
   /* Fred1: Instead of expensive wild_match on signoff, quicker method.
@@ -2065,7 +2065,7 @@ static int gotmsg(char *from, char *ignore, char *msg)
   if (!chan)
     return 0;			/* Private msg to an unknown channel?? */
   fixcolon(msg);
-  strncpyz(buf, from, sizeof buf);
+  strlcpy(buf, from, sizeof buf);
   nick = strtok(buf, "!");
   uhost = strtok(NULL, "!");
 
@@ -2176,7 +2176,7 @@ static int gotnotice(char *from, char *ignore, char *msg)
   if (!chan)
     return 0;			/* Notice to an unknown channel?? */
   fixcolon(msg);
-  strncpyz(buf, from, sizeof buf);
+  strlcpy(buf, from, sizeof buf);
   nick = strtok(buf, "!");
   uhost = strtok(NULL, "!");
   u = get_user_by_host(from);

@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.12 2002/03/22 16:01:19 ite Exp $
+ * $Id: share.c,v 1.13 2002/04/01 13:33:33 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -120,7 +120,7 @@ static void add_delay(struct chanset_t *chan, int plsmns, int mode, char *mask)
     free(d);
     return;
   }
-  strncpyz(d->mask, mask, strlen(mask) + 1);
+  strlcpy(d->mask, mask, strlen(mask) + 1);
   d->seconds = (int) (now + (random() % 20));
   d->next = start_delay;
   start_delay = d;

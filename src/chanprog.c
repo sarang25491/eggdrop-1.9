@@ -3,7 +3,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.46 2002/03/04 03:55:28 stdarg Exp $
+ * $Id: chanprog.c,v 1.47 2002/04/01 13:33:33 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -103,7 +103,7 @@ struct userrec *check_chanlist(const char *host)
   register memberlist		*m;
   register struct chanset_t	*chan;
 
-  strncpyz(buf, host, sizeof buf);
+  strlcpy(buf, host, sizeof buf);
   nick = strtok(buf, "!");
   uhost = strtok(NULL, "!");
   for (chan = chanset; chan; chan = chan->next)
@@ -168,7 +168,7 @@ void set_chanlist(const char *host, struct userrec *rec)
   register memberlist		*m;
   register struct chanset_t	*chan;
 
-  strncpyz(buf, host, sizeof buf);
+  strlcpy(buf, host, sizeof buf);
   nick = strtok(buf, "!");
   uhost = strtok(NULL, "!");
   for (chan = chanset; chan; chan = chan->next)
@@ -294,7 +294,7 @@ void reaffirm_owners()
     q = owner;
     p = strchr(q, ',');
     while (p) {
-      strncpyz(s, q, p - q);
+      strlcpy(s, q, p - q);
       rmspace(s);
       u = get_user_by_handle(userlist, s);
       if (u)
@@ -325,7 +325,7 @@ void chanprog()
   call_hook(HOOK_REHASH);
   protect_readonly = 1;
   if (!botnetnick[0]) {
-    strncpyz(botnetnick, origbotname, HANDLEN + 1);
+    strlcpy(botnetnick, origbotname, HANDLEN + 1);
   }
   if (!botnetnick[0])
     fatal("I don't have a botnet nick!!\n", 0);

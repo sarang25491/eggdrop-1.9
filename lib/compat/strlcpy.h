@@ -1,11 +1,11 @@
 /*
- * compat.h
- *   prototypes for compability functions
+ * strlcpy.h
+ *   prototypes for strlcpy.c
  *
- * $Id: compat.h,v 1.4 2002/04/01 13:33:31 ite Exp $
+ * $Id: strlcpy.h,v 1.1 2002/04/01 13:33:31 ite Exp $
  */
 /*
- * Copyright (C) 2000, 2001, 2002 Eggheads Development Team
+ * Copyright (C) 2002 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,23 +21,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-#ifndef _EGG_COMPAT_H
-#define _EGG_COMPAT_H
+#ifndef _EGG_STRLCPY_H
+#define _EGG_STRLCPY_H
 
-/*
- * Include prototypes
- */
-#include "memcpy.h"
-#include "memset.h"
-#include "strcasecmp.h"
-#include "strncasecmp.h"
-#include "snprintf.h"
-#include "strftime.h"
-#include "inet_aton.h"
-#include "inet_ntop.h"
-#include "inet_pton.h"
-#include "strdup.h"
-#include "strlcpy.h"
-#include "strlcat.h"
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
 
-#endif				/* !_EGG_COMPAT_H */
+#include <stdio.h>
+
+#ifndef HAVE_STRLCPY
+size_t strlcpy(char *, const char *, size_t);
+#endif
+
+#endif				/* !_EGG_STRLCPY_H */

@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.54 2002/03/26 01:06:22 ite Exp $
+ * $Id: tcldcc.c,v 1.55 2002/04/01 13:33:33 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -193,7 +193,7 @@ static int script_console(script_var_t *retval, int nargs, int idx, char *what)
 	/* They want to change something. */
 	if (strchr(CHANMETA, what[0]) != NULL) {
 		/* The channel. */
-		strncpyz(dcc[idx].u.chat->con_chan, what, 80);
+		strlcpy(dcc[idx].u.chat->con_chan, what, 80);
 		return(0);
 	}
 
@@ -305,7 +305,7 @@ static int tcl_control STDVAR
   /* Do not buffer data anymore. All received and stored data is passed
      over to the dcc functions from now on.  */
   sockoptions(dcc[idx].sock, EGG_OPTION_UNSET, SOCK_BUFFER);
-  strncpyz(dcc[idx].u.script->command, argv[2], 120);
+  strlcpy(dcc[idx].u.script->command, argv[2], 120);
   return TCL_OK;
 }
 
@@ -567,7 +567,7 @@ static int tcl_connect STDVAR
   if (z < 0) {
     killsock(sock);
     if (z == (-2))
-      strncpyz(s, "DNS lookup failed", sizeof s);
+      strlcpy(s, "DNS lookup failed", sizeof s);
     else
       neterror(s);
     Tcl_AppendResult(irp, s, NULL);
@@ -578,7 +578,7 @@ static int tcl_connect STDVAR
   dcc[i].sock = sock;
   dcc[i].port = atoi(argv[2]);
   strcpy(dcc[i].nick, "*");
-  strncpyz(dcc[i].host, argv[1], UHOSTMAX);
+  strlcpy(dcc[i].host, argv[1], UHOSTMAX);
   snprintf(s, sizeof s, "%d", i);
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
@@ -683,7 +683,7 @@ static int tcl_listen STDVAR
       }
       dcc[idx].status = LSTN_PUBLIC;
     }
-    strncpyz(dcc[idx].host, argv[3], UHOSTMAX);
+    strlcpy(dcc[idx].host, argv[3], UHOSTMAX);
     snprintf(s, sizeof s, "%d", port);
     Tcl_AppendResult(irp, s, NULL);
     return TCL_OK;
@@ -703,7 +703,7 @@ static int tcl_listen STDVAR
     return TCL_ERROR;
   }
   if (argc == 4) {
-    strncpyz(dcc[idx].host, argv[3], UHOSTMAX);
+    strlcpy(dcc[idx].host, argv[3], UHOSTMAX);
   } else
     strcpy(dcc[idx].host, "*");
   snprintf(s, sizeof s, "%d", port);
@@ -724,14 +724,14 @@ static int script_boot(char *user_bot, char *reason)
   char who[NOTENAMELEN + 1];
   int i;
 
-  strncpyz(who, user_bot, sizeof who);
+  strlcpy(who, user_bot, sizeof who);
   if (strchr(who, '@') != NULL) {
     char whonick[HANDLEN + 1];
 
     splitc(whonick, who, '@');
     whonick[HANDLEN] = 0;
     if (!strcasecmp(who, botnetnick))
-       strncpyz(who, whonick, sizeof who);
+       strlcpy(who, whonick, sizeof who);
     else if (remote_boots > 0) {
       i = nextbot(who);
       if (i < 0) return(0);

@@ -1,7 +1,7 @@
 /*
  * userchan.c -- part of channels.mod
  *
- * $Id: userchan.c,v 1.6 2002/03/09 19:42:11 eule Exp $
+ * $Id: userchan.c,v 1.7 2002/04/01 13:33:32 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -727,7 +727,7 @@ static void tell_bans(int idx, int show_inact, char *match)
       for (b = chan->channel.ban; b && b->mask[0]; b = b->next) {    
 	if ((!u_equals_mask(global_bans, b->mask)) &&
 	    (!u_equals_mask(chan->bans, b->mask))) {
-	  strncpyz(buf, b->who, sizeof buf);
+	  strlcpy(buf, b->who, sizeof buf);
 	  nick = strtok(buf, "!");
 	  uhost = strtok(NULL, "!");
 	  if (nick)
@@ -825,7 +825,7 @@ static void tell_exempts(int idx, int show_inact, char *match)
       for (e = chan->channel.exempt; e && e->mask[0]; e = e->next) {
 	if ((!u_equals_mask(global_exempts,e->mask)) &&
 	    (!u_equals_mask(chan->exempts, e->mask))) {
-	  strncpyz(buf, e->who, sizeof buf);
+	  strlcpy(buf, e->who, sizeof buf);
 	  nick = strtok(buf, "!");
 	  uhost = strtok(NULL, "!");
 	  if (nick)
@@ -923,7 +923,7 @@ static void tell_invites(int idx, int show_inact, char *match)
       for (i = chan->channel.invite; i && i->mask[0]; i = i->next) {
 	if ((!u_equals_mask(global_invites,i->mask)) &&
 	    (!u_equals_mask(chan->invites, i->mask))) {
-	  strncpyz(buf, i->who, sizeof buf);
+	  strlcpy(buf, i->who, sizeof buf);
 	  nick = strtok(buf, "!");
 	  uhost = strtok(NULL, "!");
 	  if (nick)
@@ -1170,7 +1170,7 @@ static int expired_mask(struct chanset_t *chan, char *who)
   if (force_expire)
     return 1;
 
-  strncpyz(buf, who, sizeof buf);
+  strlcpy(buf, who, sizeof buf);
   nick = strtok(buf, "!");
   uhost = strtok(NULL, "!");
 

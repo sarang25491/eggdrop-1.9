@@ -3,7 +3,7 @@
  *   some macros and functions for common operations with strings and memory
  *   in general.
  *
- * $Id: memutil.c,v 1.5 2002/02/07 22:18:59 wcc Exp $
+ * $Id: memutil.c,v 1.6 2002/04/01 13:33:31 ite Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
@@ -130,7 +130,7 @@ void splitcn(char *first, char *rest, char divider, size_t max)
   }
   *p = 0;
   if (first != NULL)
-    strncpyz(first, rest, max);
+    strlcpy(first, rest, max);
   if (first != rest)
     /*    In most circumstances, strcpy with src and dst being the same buffer
      *  can produce undefined results. We're safe here, as the src is

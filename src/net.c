@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.54 2002/03/05 19:53:48 stdarg Exp $
+ * $Id: net.c,v 1.55 2002/04/01 13:33:33 ite Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -144,7 +144,7 @@ void neterror(char *s)
 	char *err = strerror(e);
 
 	/* Calling procs usually use char s[UHOSTLEN] for the error message. */
-	if (err) strncpyz(s, err, UHOSTLEN);
+	if (err) strlcpy(s, err, UHOSTLEN);
 	else sprintf(s, "Unforeseen error %d", e);
 #else
   switch (errno) {
@@ -675,7 +675,7 @@ int answer(int sock, char *caller, char *ip, unsigned short *port,
 #endif
     /* This is now done asynchronously. We now only provide the IP address.
      */
-    strncpyz(caller, ip, 121);
+    strlcpy(caller, ip, 121);
   }
   if (port != NULL)
 #ifdef IPV6
@@ -764,13 +764,13 @@ debug3("|DNS| egg_dns_gotanswer: (ipbyhost) host: %s ip: %s status: %d", orignam
     } else if ((aw->type == adns_r_ptr_ip6) || (aw->type == adns_r_ptr)) {
 	if ((aw->status == adns_s_ok) && (aw->nrrs > 0)) {
 	    if (aw->rrs.str) {
-		strncpyz(name, *(aw->rrs.str), UHOSTLEN);
+		strlcpy(name, *(aw->rrs.str), UHOSTLEN);
 		status = 1;
 	    }
 	}
 	if (!status) {
 	    if (origname)
-		strncpyz(name, origname, UHOSTLEN);
+		strlcpy(name, origname, UHOSTLEN);
 	    else
 		strcpy(name, "error");
 	}

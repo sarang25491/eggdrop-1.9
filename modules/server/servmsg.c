@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.11 2002/02/24 08:14:35 guppy Exp $
+ * $Id: servmsg.c,v 1.12 2002/04/01 13:33:32 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -185,7 +185,7 @@ static int got001(char *from, char *ignore, char *msg)
   /* Ok...param #1 of 001 = what server thinks my nick is */
   server_online = now;
   fixcolon(msg);
-  strncpyz(botname, msg, NICKLEN);
+  strlcpy(botname, msg, NICKLEN);
   altnick_char = 0;
   dprintf(DP_SERVER, "WHOIS %s\n", botname); /* get user@host */
   check_bind_event("init-server");
@@ -356,7 +356,7 @@ static int gotmsg(char *from, char *ignore, char *msg)
   ignoring = match_ignore(from);
   to = newsplit(&msg);
   fixcolon(msg);
-  strncpyz(buf, from, sizeof buf);
+  strlcpy(buf, from, sizeof buf);
   nick = strtok(buf, "!");
   uhost = strtok(NULL, "!");
 
@@ -481,7 +481,7 @@ static int gotnotice(char *from, char *ignore, char *msg)
   ignoring = match_ignore(from);
   to = newsplit(&msg);
   fixcolon(msg);
-  strncpyz(buf, from, sizeof buf);
+  strlcpy(buf, from, sizeof buf);
   nick = strtok(buf, "!");
   uhost = strtok(NULL, "!");
 
@@ -554,7 +554,7 @@ static int gotwall(char *from, char *ignore, char *msg)
   fixcolon(msg);
   p = strchr(from, '!');
   if (p && (p == strrchr(from, '!'))) {
-    strncpyz(buf, from, sizeof buf);
+    strlcpy(buf, from, sizeof buf);
     nick = strtok(buf, "!");
     uhost = strtok(NULL, "!");
     r = check_tcl_wall(nick, msg);
@@ -768,7 +768,7 @@ static int gotnick(char *from, char *ignore, char *msg)
   check_queues(nick, msg);
   if (match_my_nick(nick)) {
     /* Regained nick! */
-    strncpyz(botname, msg, NICKLEN);
+    strlcpy(botname, msg, NICKLEN);
     altnick_char = 0;
     if (!strcmp(msg, origbotname)) {
       putlog(LOG_SERV | LOG_MISC, "*", "Regained nickname '%s'.", msg);
@@ -1056,7 +1056,7 @@ static void connect_server(void)
 
     dcc[servidx].port = botserverport;
     strcpy(dcc[servidx].nick, "(server)");
-    strncpyz(dcc[servidx].host, botserver, UHOSTLEN);
+    strlcpy(dcc[servidx].host, botserver, UHOSTLEN);
 
     botuserhost[0] = 0;
 

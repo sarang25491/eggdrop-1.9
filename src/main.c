@@ -4,7 +4,7 @@
  *   signal handling
  *   command line arguments
  *
- * $Id: main.c,v 1.110 2002/03/26 01:06:22 ite Exp $
+ * $Id: main.c,v 1.111 2002/04/01 13:33:33 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -278,7 +278,7 @@ static void do_arg(char *s)
 	make_userfile = 1;
 	  break;
 	case 'v':
-	  strncpyz(x, egg_version, sizeof x);
+	  strlcpy(x, egg_version, sizeof x);
 	newsplit(&z);
 	newsplit(&z);
 	printf("%s\n", version);
@@ -303,7 +303,7 @@ static void do_arg(char *s)
 	  break; /* this should never be reached */
       }
   } else
-    strncpyz(configfile, s, sizeof configfile);
+    strlcpy(configfile, s, sizeof configfile);
 }
 
 void backup_userfile(void)
@@ -363,7 +363,7 @@ static void core_secondly()
       if (!miltime) {	/* At midnight */
 	char s[25];
 
-	strncpyz(s, ctime(&now), sizeof s);
+	strlcpy(s, ctime(&now), sizeof s);
 	putlog(LOG_ALL, "*", "--- %.11s%s", s, s + 20);
 	call_hook(HOOK_BACKUP);
 	call_hook(HOOK_DAILY);
@@ -573,7 +573,7 @@ int main(int argc, char **argv)
 
   init_tcl(argc, argv);
 
-  strncpyz(s, ctime(&now), sizeof s);
+  strlcpy(s, ctime(&now), sizeof s);
   strcpy(&s[11], &s[20]);
   putlog(LOG_ALL, "*", "--- Loading %s (%s)", ver, s);
   chanprog();

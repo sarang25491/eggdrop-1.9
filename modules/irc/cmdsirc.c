@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands directly relating to channel interaction
  *
- * $Id: cmdsirc.c,v 1.7 2002/02/07 22:19:02 wcc Exp $
+ * $Id: cmdsirc.c,v 1.8 2002/04/01 13:33:32 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -529,7 +529,7 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
     dprintf(idx, _("Not active on channel %s\n"), chname);
     return;
   }
-  strncpyz(s, getchanmode(chan), sizeof s);
+  strlcpy(s, getchanmode(chan), sizeof s);
   if (channel_pending(chan))
     snprintf(s1, sizeof s1, _("Processing channel %s"), chan->dname);
   else if (channel_active(chan))
@@ -555,15 +555,15 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
 	else
 	  strftime(s, 6, "%H:%M", localtime(&(m->joined)));
       } else
-	strncpyz(s, " --- ", sizeof s);
+	strlcpy(s, " --- ", sizeof s);
       if (m->user == NULL) {
 	snprintf(s1, sizeof s1, "%s!%s", m->nick, m->userhost);
 	m->user = get_user_by_host(s1);
       }
       if (m->user == NULL) {
-	strncpyz(handle, "*", sizeof handle);
+	strlcpy(handle, "*", sizeof handle);
       } else {
-	strncpyz(handle, m->user->handle, sizeof handle);
+	strlcpy(handle, m->user->handle, sizeof handle);
       }
       get_user_flagrec(m->user, &user, chan->dname);
       /* Determine status char to use */
@@ -645,7 +645,7 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
 	else if (now - (m->last) > 180)
 	  snprintf(s1, sizeof s1, "%2lum", ((now - (m->last)) / 60));
 	else
-	  strncpyz(s1, "   ", sizeof s1);
+	  strlcpy(s1, "   ", sizeof s1);
 	dprintf(idx, "%c%s%s %s%s %s %c %s  %s\n", chanflag, m->nick,
 		spaces, handle, spaces2, s, atrflag, s1, m->userhost);
       }
@@ -852,7 +852,7 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
   if (!statichost)
     maskhost(s, s1);
   else {
-    strncpyz(s1, s, sizeof s1);
+    strlcpy(s1, s, sizeof s1);
     p1 = strchr(s1, '!');
     if (strchr("~^+=-", p1[1])) {
       if (strict_host)
@@ -929,7 +929,7 @@ static void cmd_deluser(struct userrec *u, int idx, char *par)
   } else {
     char buf[HANDLEN + 1];
 
-    strncpyz(buf, u->handle, sizeof buf);
+    strlcpy(buf, u->handle, sizeof buf);
     buf[HANDLEN] = 0;
     if (deluser(u->handle)) {
       dprintf(idx, _("Deleted %s.\n"), buf); /* ?!?! :) */

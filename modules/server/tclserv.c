@@ -1,7 +1,7 @@
 /*
  * tclserv.c -- part of server.mod
  *
- * $Id: tclserv.c,v 1.3 2002/02/07 22:19:03 wcc Exp $
+ * $Id: tclserv.c,v 1.4 2002/04/01 13:33:32 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -114,13 +114,13 @@ static int tcl_jump STDVAR
 {
   BADARGS(1, 4, " ?server? ?port? ?pass?");
   if (argc >= 2) {
-    strncpyz(newserver, argv[1], sizeof newserver);
+    strlcpy(newserver, argv[1], sizeof newserver);
     if (argc >= 3)
       newserverport = atoi(argv[2]);
     else
       newserverport = default_port;
     if (argc == 4)
-      strncpyz(newserverpass, argv[3], sizeof newserverpass);
+      strlcpy(newserverpass, argv[3], sizeof newserverpass);
   }
   cycle_time = 0;
   nuke_server("changing servers\n");

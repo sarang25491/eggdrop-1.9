@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.10 2002/03/02 07:51:53 guppy Exp $
+ * $Id: mode.c,v 1.11 2002/04/01 13:33:32 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -39,6 +39,7 @@ static int reversing = 0;
 static struct flag_record user   = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 static struct flag_record victim = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
+/* FIXME: adapt this function to stlcat() so we can get rid of egg_strcatn() */
 static void flush_mode(struct chanset_t *chan, int pri)
 {
   char		*p, out[512], post[512];
@@ -855,7 +856,7 @@ static int gotmode(char *from, char *ignore, char *origmsg)
   memberlist *m;
   struct chanset_t *chan;
 
-  strncpyz(buf2, origmsg, sizeof buf2);
+  strlcpy(buf2, origmsg, sizeof buf2);
   msg = buf2;
   /* Usermode changes? */
   if (msg[0] && (strchr(CHANMETA, msg[0]) != NULL)) {
@@ -874,7 +875,7 @@ static int gotmode(char *from, char *ignore, char *origmsg)
 	     ch, chg, msg, from);
       u = get_user_by_host(from);
       get_user_flagrec(u, &user, ch);
-      strncpyz(buf, from, sizeof buf);
+      strlcpy(buf, from, sizeof buf);
       nick = strtok(buf, "!");
       uhost = strtok(NULL, "!");
       m = ismember(chan, nick);

@@ -1,25 +1,25 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.9 2002/02/17 18:34:13 ite Exp $
+dnl $Id: acinclude.m4,v 1.10 2002/04/01 13:33:31 ite Exp $
 dnl
 
 
 dnl  EGG_MSG_CONFIGURE_START()
 dnl
 AC_DEFUN(EGG_MSG_CONFIGURE_START, [dnl
-AC_MSG_NOTICE()
-AC_MSG_NOTICE(This is eggdrop's GNU configure script.)
-AC_MSG_NOTICE(It's going to run a bunch of strange tests to hopefully)
-AC_MSG_NOTICE(make your compile work without much twiddling.)
-AC_MSG_NOTICE()
+AC_MSG_RESULT()
+AC_MSG_RESULT(This is eggdrop's GNU configure script.)
+AC_MSG_RESULT(It's going to run a bunch of strange tests to hopefully)
+AC_MSG_RESULT(make your compile work without much twiddling.)
+AC_MSG_RESULT()
 ])
 
 
 dnl  EGG_MSG_CONFIGURE_END()
 dnl
 AC_DEFUN(EGG_MSG_CONFIGURE_END, [dnl
-AC_MSG_NOTICE()
+AC_MSG_RESULT()
 cat << EOF
 ------------------------------------------------------------------------
 Configuration:
@@ -36,11 +36,11 @@ Configuration:
 See config.h for further configuration information.
 ------------------------------------------------------------------------
 EOF
-AC_MSG_NOTICE()
-AC_MSG_NOTICE(Configure is done.)
-AC_MSG_NOTICE()
-AC_MSG_NOTICE([Type 'make' to create the bot.])
-AC_MSG_NOTICE()
+AC_MSG_RESULT()
+AC_MSG_RESULT(Configure is done.)
+AC_MSG_RESULT()
+AC_MSG_RESULT([Type 'make' to create the bot.])
+AC_MSG_RESULT()
 ])
 
 
@@ -1236,6 +1236,18 @@ EGG_WITH_EFENCE
 
 ])
 
+
+dnl  EGG_LTLIBOBJS
+dnl
+AC_DEFUN(EGG_LTLIBOBJS, [dnl
+
+AC_CONFIG_COMMANDS_PRE(
+              [LIB@&t@OBJS=`echo "$LIB@&t@OBJS" |
+                        sed 's,\.[[^.]]* ,$U&,g;s,\.[[^.]]*$,$U&,'`
+               LTLIBOBJS=`echo "$LIB@&t@OBJS" |
+                          sed 's,\.[[^.]]* ,.lo ,g;s,\.[[^.]]*$,.lo,'`
+               AC_SUBST(LTLIBOBJS)])
+])
 
 dnl  EGG_COMPRESS_MODULE
 dnl

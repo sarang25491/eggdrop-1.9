@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.96 2002/03/11 20:16:29 stdarg Exp $
+ * $Id: cmds.c,v 1.97 2002/04/01 13:33:33 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -677,7 +677,7 @@ static void cmd_console(struct userrec *u, int idx, char *par)
 	      nick);
       return;
     }
-    strncpyz(dcc[dest].u.chat->con_chan, nick, 81);
+    strlcpy(dcc[dest].u.chat->con_chan, nick, 81);
     nick[0] = 0;
     if ((dest == idx) && !glob_master(fr) && !chan_master(fr))
       /* Consoling to another channel for self */
@@ -790,7 +790,7 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
 	bi->relay_port = 3333;
       } else {
 	bi->address = malloc(addrlen + 1);
-	strncpyz(bi->address, addr, addrlen + 1);
+	strlcpy(bi->address, addr, addrlen + 1);
 	p = q + 1;
 	bi->telnet_port = atoi(p);
 	q = strchr(p, '/');
@@ -818,8 +818,8 @@ static void cmd_chhandle(struct userrec *u, int idx, char *par)
   int i, atr = u ? u->flags : 0, atr2;
   struct userrec *u2;
 
-  strncpyz(hand, newsplit(&par), sizeof hand);
-  strncpyz(newhand, newsplit(&par), sizeof newhand);
+  strlcpy(hand, newsplit(&par), sizeof hand);
+  strlcpy(newhand, newsplit(&par), sizeof newhand);
 
   if (!hand[0] || !newhand[0]) {
     dprintf(idx, "Usage: chhandle <oldhandle> <newhandle>\n");
@@ -864,7 +864,7 @@ static int cmd_handle(struct userrec *u, int idx, char *par)
   char oldhandle[HANDLEN + 1], newhandle[HANDLEN + 1];
   int i;
 
-  strncpyz(newhandle, newsplit(&par), sizeof newhandle);
+  strlcpy(newhandle, newsplit(&par), sizeof newhandle);
 
   if (!newhandle[0]) {
     dprintf(idx, "Usage: handle <new-handle>\n");
@@ -882,7 +882,7 @@ static int cmd_handle(struct userrec *u, int idx, char *par)
   } else if (!strcasecmp(newhandle, botnetnick)) {
     dprintf(idx, _("Hey!  That's MY name!\n"));
   } else {
-    strncpyz(oldhandle, dcc[idx].nick, sizeof oldhandle);
+    strlcpy(oldhandle, dcc[idx].nick, sizeof oldhandle);
     if (change_handle(u, newhandle)) {
       dprintf(idx, _("Okay, changed.\n"));
     } else
@@ -991,7 +991,7 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
     bi->relay_port = relay_port;
   } else {
     bi->address = malloc(addrlen + 1);
-    strncpyz(bi->address, addr, addrlen + 1);
+    strlcpy(bi->address, addr, addrlen + 1);
     p = q + 1;
     bi->telnet_port = atoi(p);
     q = strchr(p, '/');
@@ -1077,13 +1077,13 @@ void cmd_die(struct userrec *u, int idx, char *par)
 		 par);
     snprintf(s2, sizeof s2, "%s %s!%s (%s)", _("DIE BY"), dcc[idx].nick, 
 		 dcc[idx].host, par);
-    strncpyz(quit_msg, par, 1024);
+    strlcpy(quit_msg, par, 1024);
   } else {
     snprintf(s1, sizeof s1, "%s (%s %s)", _("BOT SHUTDOWN"), _("Authorized by"),
 		 dcc[idx].nick);
     snprintf(s2, sizeof s2, "%s %s!%s (%s)", _("DIE BY"), dcc[idx].nick, 
 		 dcc[idx].host, _("requested"));
-    strncpyz(quit_msg, dcc[idx].nick, 1024);
+    strlcpy(quit_msg, dcc[idx].nick, 1024);
   }
   kill_bot(s1, s2);
 }
@@ -2300,7 +2300,7 @@ static void cmd_mns_ignore(struct userrec *u, int idx, char *par)
     dprintf(idx, "Usage: -ignore <hostmask | ignore #>\n");
     return;
   }
-  strncpyz(buf, par, sizeof buf);
+  strlcpy(buf, par, sizeof buf);
   if (delignore(buf)) {
     putlog(LOG_CMDS, "*", "#%s# -ignore %s", dcc[idx].nick, buf);
     dprintf(idx, _("No longer ignoring: %s\n"), buf);

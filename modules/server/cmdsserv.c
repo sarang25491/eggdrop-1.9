@@ -2,7 +2,7 @@
  * cmdsserv.c -- part of server.mod
  *   handles commands from a user via dcc that cause server interaction
  *
- * $Id: cmdsserv.c,v 1.5 2002/02/07 22:19:03 wcc Exp $
+ * $Id: cmdsserv.c,v 1.6 2002/04/01 13:33:32 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -73,9 +73,9 @@ static void cmd_jump(struct userrec *u, int idx, char *par)
       port = default_port;
     putlog(LOG_CMDS, "*", "#%s# jump %s %d %s", dcc[idx].nick, other,
 	   port, par);
-    strncpyz(newserver, other, sizeof newserver);
+    strlcpy(newserver, other, sizeof newserver);
     newserverport = port;
-    strncpyz(newserverpass, par, sizeof newserverpass);
+    strlcpy(newserverpass, par, sizeof newserverpass);
   } else
     putlog(LOG_CMDS, "*", "#%s# jump", dcc[idx].nick);
   dprintf(idx, "%s...\n", _("Jumping servers..."));

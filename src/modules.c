@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.105 2002/03/22 16:01:20 ite Exp $
+ * $Id: modules.c,v 1.106 2002/04/01 13:33:33 ite Exp $
  */
 /* 
  * Copyright (C) 1997 Robey Pointer
@@ -33,8 +33,6 @@
 #include "misc.h"
 #include "dns.h"
 #include <ctype.h>
-#include "lib/egglib/msprintf.h"
-#include "lib/egglib/mstack.h"
 
 #include <ltdl.h>
 

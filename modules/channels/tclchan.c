@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.10 2002/03/09 19:42:11 eule Exp $
+ * $Id: tclchan.c,v 1.11 2002/04/01 13:33:32 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -477,9 +477,9 @@ static int tcl_newchanban STDVAR
       return TCL_ERROR;
     }
   }
-  strncpyz(ban, argv[2], sizeof ban);
-  strncpyz(from, argv[3], sizeof from);
-  strncpyz(cmt, argv[4], sizeof cmt);
+  strlcpy(ban, argv[2], sizeof ban);
+  strlcpy(from, argv[3], sizeof from);
+  strlcpy(cmt, argv[4], sizeof cmt);
   if (argc == 5)
     expire_time = now + (60 * ban_time);
   else {
@@ -513,9 +513,9 @@ static int tcl_newban STDVAR
       return TCL_ERROR;
     }
   }
-  strncpyz(ban, argv[1], sizeof ban);
-  strncpyz(from, argv[2], sizeof from);
-  strncpyz(cmt, argv[3], sizeof cmt);
+  strlcpy(ban, argv[1], sizeof ban);
+  strlcpy(from, argv[2], sizeof from);
+  strlcpy(cmt, argv[3], sizeof cmt);
   if (argc == 4)
     expire_time = now + (60 * ban_time);
   else {
@@ -554,9 +554,9 @@ static int tcl_newchanexempt STDVAR
       return TCL_ERROR;
     }
   }
-  strncpyz(exempt, argv[2], sizeof exempt);
-  strncpyz(from, argv[3], sizeof from);
-  strncpyz(cmt, argv[4], sizeof cmt);
+  strlcpy(exempt, argv[2], sizeof exempt);
+  strlcpy(from, argv[3], sizeof from);
+  strlcpy(cmt, argv[4], sizeof cmt);
   if (argc == 5)
     expire_time = now + (60 * exempt_time);
   else {
@@ -588,9 +588,9 @@ static int tcl_newexempt STDVAR
       return TCL_ERROR;
     }
   }
-  strncpyz(exempt, argv[1], sizeof exempt);
-  strncpyz(from, argv[2], sizeof from);
-  strncpyz(cmt, argv[3], sizeof cmt);
+  strlcpy(exempt, argv[1], sizeof exempt);
+  strlcpy(from, argv[2], sizeof from);
+  strlcpy(cmt, argv[3], sizeof cmt);
   if (argc == 4)
     expire_time = now + (60 * exempt_time);
   else {
@@ -628,9 +628,9 @@ static int tcl_newchaninvite STDVAR
       return TCL_ERROR;
     }
   }
-  strncpyz(invite, argv[2], sizeof invite);
-  strncpyz(from, argv[3], sizeof from);
-  strncpyz(cmt, argv[4], sizeof cmt);
+  strlcpy(invite, argv[2], sizeof invite);
+  strlcpy(from, argv[3], sizeof from);
+  strlcpy(cmt, argv[4], sizeof cmt);
   if (argc == 5)
     expire_time = now + (60 * invite_time);
   else {
@@ -662,9 +662,9 @@ static int tcl_newinvite STDVAR
       return TCL_ERROR;
     }
   }
-  strncpyz(invite, argv[1], sizeof invite);
-  strncpyz(from, argv[2], sizeof from);
-  strncpyz(cmt, argv[3], sizeof cmt);
+  strlcpy(invite, argv[1], sizeof invite);
+  strlcpy(from, argv[2], sizeof from);
+  strlcpy(cmt, argv[3], sizeof cmt);
   if (argc == 4)
      expire_time = now + (60 * invite_time);
   else {

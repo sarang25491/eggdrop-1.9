@@ -10,7 +10,7 @@
  *
  * dprintf'ized, 9nov1995
  *
- * $Id: users.c,v 1.35 2002/02/24 08:14:36 guppy Exp $
+ * $Id: users.c,v 1.36 2002/04/01 13:33:33 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -747,7 +747,7 @@ int readuserfile(char *file, struct userrec **ret)
 
 		cr->next = u->chanrec;
 		u->chanrec = cr;
-		strncpyz(cr->channel, chname, 80);
+		strlcpy(cr->channel, chname, 80);
 		cr->laston = atoi(st);
 		cr->flags = fr.chan;
 		cr->flags_udef = fr.udef_chan;

@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  *
- * $Id: tcluser.c,v 1.38 2002/03/26 01:06:22 ite Exp $
+ * $Id: tcluser.c,v 1.39 2002/04/01 13:33:33 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -200,7 +200,7 @@ static int script_addbot(char *handle, char *address)
 	}
 	else {
 		bi->address = malloc(q - addr + 1);
-		strncpyz(bi->address, addr, addrlen + 1);
+		strlcpy(bi->address, addr, addrlen + 1);
 		p = q + 1;
 		bi->telnet_port = atoi(p);
 		q = strchr(p, '/');
@@ -273,7 +273,7 @@ static int script_chhandle(struct userrec *u, char *desired_handle)
   int i;
 
 	if (!u) return(0);
-	strncpyz(newhand, desired_handle, sizeof(newhand));
+	strlcpy(newhand, desired_handle, sizeof(newhand));
     for (i = 0; i < strlen(newhand); i++)
       if ((newhand[i] <= 32) || (newhand[i] >= 127) || (newhand[i] == '@'))
 	newhand[i] = '?';
@@ -310,9 +310,9 @@ static int script_newignore(int nargs, char *hostmask, char *creator, char *comm
   char ign[UHOSTLEN], cmt[66], from[HANDLEN + 1];
 
   //BADARGS(4, 5, " hostmask creator comment ?lifetime?");
-  strncpyz(ign, hostmask, sizeof ign);
-  strncpyz(from, creator, sizeof from);
-  strncpyz(cmt, comment, sizeof cmt);
+  strlcpy(ign, hostmask, sizeof ign);
+  strlcpy(from, creator, sizeof from);
+  strlcpy(cmt, comment, sizeof cmt);
   if (lifetime < 0) lifetime = 0;
   if (nargs == 3) expire_time = now + (60 * ignore_time);
   else {

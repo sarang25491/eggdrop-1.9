@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.12 2002/03/22 16:01:18 ite Exp $
+ * $Id: irc.c,v 1.13 2002/04/01 13:33:32 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -225,7 +225,7 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
     char *baduhost, s[UHOSTLEN], s1[UHOSTLEN], s2[UHOSTLEN];
 
     /* FIXME: clean this mess up */
-    strncpyz(s, whobad, sizeof s);
+    strlcpy(s, whobad, sizeof s);
     strtok(s, "!");
     baduhost = strtok(NULL, "!");
     maskhost(baduhost, s1);
@@ -265,12 +265,12 @@ static void maybe_revenge(struct chanset_t *chan, char *whobad,
 
   /* Get info about offender */
   u = get_user_by_host(whobad);
-  strncpyz(buf, whobad, sizeof buf);
+  strlcpy(buf, whobad, sizeof buf);
   badnick = strtok(buf, "!");
 
   /* Get info about victim */
   u2 = get_user_by_host(whovictim);
-  strncpyz(buf2, whovictim, sizeof buf2);
+  strlcpy(buf2, whovictim, sizeof buf2);
   victim = strtok(buf2, "!");
   mevictim = match_my_nick(victim);
 

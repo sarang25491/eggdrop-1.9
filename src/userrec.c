@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  *
- * $Id: userrec.c,v 1.44 2002/02/13 22:57:37 ite Exp $
+ * $Id: userrec.c,v 1.45 2002/04/01 13:33:33 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -74,7 +74,7 @@ char *fixfrom(char *s)
 
   if (s == NULL)
     return NULL;
-  strncpyz(buf, s, sizeof buf);
+  strlcpy(buf, s, sizeof buf);
   if (strict_host)
     return buf;
   if ((p = strchr(buf, '!')))
@@ -227,7 +227,7 @@ struct userrec *get_user_by_host(char *host)
     return ret;
   }
   cache_miss++;
-  strncpyz(host2, host, sizeof host2);
+  strlcpy(host2, host, sizeof host2);
   host = fixfrom(host);
   for (u = userlist; u; u = u->next) {
     q = get_user(&USERENTRY_HOSTS, u);
@@ -467,11 +467,11 @@ int change_handle(struct userrec *u, char *newh)
   /* Yes, even send bot nick changes now: */
   if (!noshare && !(u->flags & USER_UNSHARED))
     shareout(NULL, "h %s %s\n", u->handle, newh);
-  strncpyz(s, u->handle, sizeof s);
-  strncpyz(u->handle, newh, sizeof u->handle);
+  strlcpy(s, u->handle, sizeof s);
+  strlcpy(u->handle, newh, sizeof u->handle);
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].type != &DCC_BOT && !strcasecmp(dcc[i].nick, s)) {
-      strncpyz(dcc[i].nick, newh, sizeof dcc[i].nick);
+      strlcpy(dcc[i].nick, newh, sizeof dcc[i].nick);
       if (dcc[i].type == &DCC_CHAT && dcc[i].u.chat->channel >= 0) {
 	chanout_but(-1, dcc[i].u.chat->channel,
 		    "*** Handle change: %s -> %s\n", s, newh);
@@ -495,7 +495,7 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
   u = (struct userrec *) malloc(sizeof(struct userrec));
 
   /* u->next=bu; bu=u; */
-  strncpyz(u->handle, handle, sizeof u->handle);
+  strlcpy(u->handle, handle, sizeof u->handle);
   u->next = NULL;
   u->chanrec = NULL;
   u->entries = NULL;

@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.13 2002/03/22 16:01:18 ite Exp $
+ * $Id: server.c,v 1.14 2002/04/01 13:33:32 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -387,11 +387,11 @@ static int fast_deq(int which)
       return 0;
   }
   m = h->head;
-  strncpyz(msgstr, m->msg, sizeof msgstr);
+  strlcpy(msgstr, m->msg, sizeof msgstr);
   msg = msgstr;
   cmd = newsplit(&msg);
   if (use_fastdeq > 1) {
-    strncpyz(stackable, stackablecmds, sizeof stackable);
+    strlcpy(stackable, stackablecmds, sizeof stackable);
     stckbl = stackable;
     while (strlen(stckbl) > 0)
       if (!strcasecmp(newsplit(&stckbl), cmd)) {
@@ -407,7 +407,7 @@ static int fast_deq(int which)
     if (use_fastdeq == 3 && found)
       return 0;
     /* we check for the stacking method (default=1) */
-    strncpyz(stackable, stackable2cmds, sizeof stackable);
+    strlcpy(stackable, stackable2cmds, sizeof stackable);
     stckbl = stackable;
     while (strlen(stckbl) > 0)
       if (!strcasecmp(newsplit(&stckbl), cmd)) {
@@ -424,7 +424,7 @@ static int fast_deq(int which)
     nm = m->next;
     if (!nm)
       break;
-    strncpyz(nextmsgstr, nm->msg, sizeof nextmsgstr);
+    strlcpy(nextmsgstr, nm->msg, sizeof nextmsgstr);
     nextmsg = nextmsgstr;
     nextcmd = newsplit(&nextmsg);
     nextto = newsplit(&nextmsg);
@@ -506,7 +506,7 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
     changed = 0;
     if (optimize_kicks == 2 && !strncasecmp(m->msg, "KICK ", 5)) {
       newnicks[0] = 0;
-      strncpyz(buf, m->msg, sizeof buf);
+      strlcpy(buf, m->msg, sizeof buf);
       if (buf[0] && (buf[strlen(buf)-1] == '\n'))
 	buf[strlen(buf)-1] = '\0';
       msg = buf;
@@ -567,7 +567,7 @@ static void purge_kicks(struct msgq_head *q)
     if (!strncasecmp(m->msg, "KICK", 4)) {
       newnicks[0] = 0;
       changed = 0;
-      strncpyz(buf, m->msg, sizeof buf);
+      strlcpy(buf, m->msg, sizeof buf);
       if (buf[0] && (buf[strlen(buf)-1] == '\n'))
 	buf[strlen(buf)-1] = '\0';
       reason = buf;
@@ -577,7 +577,7 @@ static void purge_kicks(struct msgq_head *q)
       nick = strtok(nicks, ",");
       while (nick) {
 	found = 0;
-	strncpyz(chans, chan, sizeof chans);
+	strlcpy(chans, chan, sizeof chans);
 	chns = chans;
 	while (strlen(chns) > 0) {
 	  ch = newsplit(&chns);
@@ -660,7 +660,7 @@ static int deq_kick(int which)
   if (strncasecmp(h->head->msg, "KICK", 4))
     return 0;
   msg = h->head;
-  strncpyz(buf, msg->msg, sizeof buf);
+  strlcpy(buf, msg->msg, sizeof buf);
   reason = buf;
   newsplit(&reason);
   chan = newsplit(&reason);
@@ -674,7 +674,7 @@ static int deq_kick(int which)
     if (!strncasecmp(m->msg, "KICK", 4)) {
       changed = 0;
       newnicks2[0] = 0;
-      strncpyz(buf2, m->msg, sizeof buf2);
+      strlcpy(buf2, m->msg, sizeof buf2);
       if (buf2[0] && (buf2[strlen(buf2)-1] == '\n'))
         buf2[strlen(buf2)-1] = '\0';
       reason2 = buf2;
@@ -850,7 +850,7 @@ static void queue_server(int which, char *buf, int len)
     h->last = q;
     q->len = len;
     q->msg = malloc(len + 1);
-    strncpyz(q->msg, buf, len + 1);
+    strlcpy(q->msg, buf, len + 1);
     h->tot++;
     h->warned = 0;
     double_warned = 0;
@@ -1058,7 +1058,7 @@ static char *nick_change(ClientData cdata, Tcl_Interp *irp, char *name1,
 	       origbotname, new);
         nick_juped = 0;
       }
-      strncpyz(origbotname, new, NICKLEN);
+      strlcpy(origbotname, new, NICKLEN);
       if (server_online)
 	dprintf(DP_SERVER, "NICK %s\n", origbotname);
     }
@@ -1085,7 +1085,7 @@ static char *get_altbotnick(void)
   /* A random-number nick? */
   if (strchr(altnick, '?')) {
     if (!raltnick[0]) {
-      strncpyz(raltnick, altnick, NICKLEN);
+      strlcpy(raltnick, altnick, NICKLEN);
       rand_nick(raltnick);
     }
     return raltnick;
@@ -1322,9 +1322,9 @@ static int ctcp_DCC_CHAT(char *nick, char *from, struct userrec *u,
     }
 debug1("|SERVER| dcc chat ip: (%s)", ip);
     if (inet_aton(ip, &ip4))
-	strncpyz(dcc[i].addr, inet_ntoa(ip4), ADDRLEN);
+	strlcpy(dcc[i].addr, inet_ntoa(ip4), ADDRLEN);
     else
-	strncpyz(dcc[i].addr, ip, ADDRLEN);
+	strlcpy(dcc[i].addr, ip, ADDRLEN);
 debug1("|SERVER| addr: (%s)", dcc[i].addr);
     dcc[i].port = atoi(prt);
     dcc[i].sock = -1;
@@ -1418,7 +1418,7 @@ static void server_prerehash()
 
 static void server_postrehash()
 {
-  strncpyz(botname, origbotname, NICKLEN);
+  strlcpy(botname, origbotname, NICKLEN);
   if (!botname[0])
     fatal("NO BOT NAME.", 0);
   if (serverlist == NULL)
@@ -1682,7 +1682,7 @@ char *start(eggdrop_t *eggdrop)
   tcl_traceserver("servers", NULL);
   s = Tcl_GetVar(interp, "nick", TCL_GLOBAL_ONLY);
   if (s)
-    strncpyz(origbotname, s, NICKLEN);
+    strlcpy(origbotname, s, NICKLEN);
   Tcl_TraceVar(interp, "nick",
 	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 	       nick_change, NULL);

@@ -3,7 +3,7 @@
  *   some macros and functions for common operations with strings and memory
  *   in general.
  *
- * $Id: memutil.h,v 1.6 2002/02/07 22:19:00 wcc Exp $
+ * $Id: memutil.h,v 1.7 2002/04/01 13:33:31 ite Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
@@ -49,14 +49,6 @@ do {                                                                    \
     strcpy((target), (entry));                                          \
   } else                                                                \
     free_null(target);                                                  \
-} while (0)
-
-/* This macro copies (_len - 1) bytes from _source to _target. The
- * target string is NULL-terminated.
- */
-#define strncpyz(_target, _source, _len)        do {                    \
-	strncpy((_target), (_source), (_len) - 1);                      \
-	(_target)[(_len) - 1] = 0;                                      \
 } while (0)
 
 extern int egg_strcatn(char *, const char *, size_t);

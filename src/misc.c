@@ -6,7 +6,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.61 2002/02/07 22:19:05 wcc Exp $
+ * $Id: misc.c,v 1.62 2002/04/01 13:33:33 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -190,7 +190,7 @@ void str_nutf8tounicode(char *str, int len)
     /* convert UTF-8 to unicode */
     Tcl_UtfToExternalDString(NULL, str, -1, &ds_conversion);
     Tcl_DStringResult(interp, &ds_conversion);
-    strncpyz(str, interp->result, len);
+    strlcpy(str, interp->result, len);
 
     /* restore our old result */
     Tcl_RestoreResult(interp, &sr_oldresult);
@@ -394,7 +394,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
     help_flags = isdcc;
     return;
   }
-  strncpyz(xx, s, sizeof xx);
+  strlcpy(xx, s, sizeof xx);
   readidx = xx;
   writeidx = s;
   current = strchr(readidx, '%');
@@ -902,7 +902,7 @@ void sub_lang(int idx, char *text)
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.chat->con_chan);
   help_subst(NULL, NULL, 0,
 	     (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC, NULL);
-  strncpyz(s, text, sizeof s);
+  strlcpy(s, text, sizeof s);
   if (s[strlen(s) - 1] == '\n')
     s[strlen(s) - 1] = 0;
   if (!s[0])

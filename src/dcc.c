@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.75 2002/03/26 01:06:22 ite Exp $
+ * $Id: dcc.c,v 1.76 2002/04/01 13:33:33 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -214,7 +214,7 @@ dprintf(idx, "error Non-matching handle length: mine %d, yours 9\n",
 #ifndef NO_OLD_BOTNET
   }
 #endif
-  strncpyz(dcc[idx].u.bot->version, par, 120);
+  strlcpy(dcc[idx].u.bot->version, par, 120);
   putlog(LOG_BOTS, "*", _("Linked to %s."), dcc[idx].nick);
   chatout("*** Linked to %s\n", dcc[idx].nick);
   botnet_send_nlinked(idx, dcc[idx].nick, botnetnick, '!',
@@ -1078,7 +1078,7 @@ static void dcc_telnet_hostresolved(int i)
   int j = 0, sock;
   char s[UHOSTLEN], s2[UHOSTLEN + 20];
 
-  strncpyz(dcc[i].host, dcc[i].u.dns->host, UHOSTLEN);
+  strlcpy(dcc[i].host, dcc[i].u.dns->host, UHOSTLEN);
 debug2("|DCC| dcc_telnet_hostresolved: idx: %d host: %s", i, dcc[i].host);
 
   for (idx = 0; idx < dcc_total; idx++)
@@ -1912,7 +1912,7 @@ void dcc_telnet_got_ident(int i, char *host)
     lostdcc(i);
     return;
   }
-  strncpyz(dcc[i].host, host, UHOSTLEN);
+  strlcpy(dcc[i].host, host, UHOSTLEN);
   snprintf(x, sizeof x, "-telnet!%s", dcc[i].host);
   if (protect_telnet && !make_userfile) {
     struct userrec *u;
@@ -1962,7 +1962,7 @@ void dcc_telnet_got_ident(int i, char *host)
   if (!strcmp(dcc[idx].nick, "(users)"))
     dcc[i].status |= STAT_USRONLY;
   /* Copy acceptable-nick/host mask */
-  strncpyz(dcc[i].nick, dcc[idx].host, HANDLEN);
+  strlcpy(dcc[i].nick, dcc[idx].host, HANDLEN);
   dcc[i].timeval = now;
   strcpy(dcc[i].u.chat->con_chan, chanset ? chanset->name : "*");
 

@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.46 2002/03/26 01:06:22 ite Exp $
+ * $Id: tclmisc.c,v 1.47 2002/04/01 13:33:33 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -152,9 +152,9 @@ static int script_sendnote(char *from, char *to, char *msg)
 {
   char trunc_from[NOTENAMELEN + 1], trunc_to[NOTENAMELEN + 1], trunc_msg[451];
 
-  strncpyz(trunc_from, from, sizeof(trunc_from));
-  strncpyz(trunc_to, to, sizeof(trunc_to));
-  strncpyz(trunc_msg, msg, sizeof(trunc_msg));
+  strlcpy(trunc_from, from, sizeof(trunc_from));
+  strlcpy(trunc_to, to, sizeof(trunc_to));
+  strlcpy(trunc_msg, msg, sizeof(trunc_msg));
   return add_note(trunc_to, trunc_from, trunc_msg, -1, 0);
 }
 
@@ -189,9 +189,9 @@ static int script_die(char *reason)
 
   if (reason) {
     snprintf(s, sizeof s, "BOT SHUTDOWN (%s)", reason);
-    strncpyz(quit_msg, reason, 1024);
+    strlcpy(quit_msg, reason, 1024);
   } else {
-    strncpyz(s, "BOT SHUTDOWN (No reason)", sizeof s);
+    strlcpy(s, "BOT SHUTDOWN (No reason)", sizeof s);
     quit_msg[0] = 0;
   }
   kill_bot(s, quit_msg[0] ? quit_msg : "EXIT");

@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.7 2002/03/09 19:42:10 eule Exp $
+ * $Id: cmdschan.c,v 1.8 2002/04/01 13:33:32 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -107,7 +107,7 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
     } else if (!strchr(who, '@'))
       snprintf(s, sizeof s, "%s@*", who);	/* brain-dead? */
     else
-      strncpyz(s, who, sizeof s);
+      strlcpy(s, who, sizeof s);
     if ((me = module_find("server", 0, 0)) && me->funcs)
       snprintf(s1, sizeof s1, "%s!%s", (char *)(me->funcs[SERVER_BOTNAME]),
 	            (char *)(me->funcs[SERVER_BOTUSERHOST]));
@@ -245,7 +245,7 @@ static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
     } else if (!strchr(who, '@'))
       snprintf(s, sizeof s, "%s@*", who);		/* brain-dead? */
     else
-      strncpyz(s, who, sizeof s);
+      strlcpy(s, who, sizeof s);
 
     /* IRC can't understand exempts longer than 70 characters */
     if (strlen(s) > 70) {
@@ -368,7 +368,7 @@ static void cmd_pls_invite(struct userrec *u, int idx, char *par)
     } else if (!strchr(who, '@'))
       snprintf(s, sizeof s, "%s@*", who);		/* brain-dead? */
     else
-      strncpyz(s, who, sizeof s);
+      strlcpy(s, who, sizeof s);
 
     /* IRC can't understand invites longer than 70 characters */
     if (strlen(s) > 70) {
@@ -431,7 +431,7 @@ static void cmd_mns_ban(struct userrec *u, int idx, char *par)
     if (!((glob_op(user) && !chan_deop(user)) || chan_op(user)))
       return;
   }
-  strncpyz(s, ban, sizeof s);
+  strlcpy(s, ban, sizeof s);
   i = u_delmask('b', NULL, s, (u->flags & USER_MASTER));
   if (i > 0) {
     putlog(LOG_CMDS, "*", "#%s# -ban %s", dcc[idx].nick, s);
@@ -521,7 +521,7 @@ static void cmd_mns_exempt (struct userrec *u, int idx, char *par)
     if (!((glob_op(user) && !chan_deop(user)) || chan_op(user)))
       return;
   }
-  strncpyz(s, exempt, sizeof s);
+  strlcpy(s, exempt, sizeof s);
   i = u_delmask('e', NULL, s, (u->flags & USER_MASTER));
   if (i > 0) {
     putlog(LOG_CMDS, "*", "#%s# -exempt %s", dcc[idx].nick, s);
@@ -611,7 +611,7 @@ static void cmd_mns_invite (struct userrec *u, int idx, char *par)
     if (!((glob_op(user) && !chan_deop(user)) || chan_op(user)))
       return;
   }
-  strncpyz(s, invite, sizeof s);
+  strlcpy(s, invite, sizeof s);
   i = u_delmask('I', NULL, s, (u->flags & USER_MASTER));
   if (i > 0) {
     putlog(LOG_CMDS, "*", "#%s# -invite %s", dcc[idx].nick, s);
@@ -865,14 +865,14 @@ static void cmd_stick_yn(int idx, char *par, int yn)
   module_entry *me;
 
   stick_type = newsplit(&par);
-  strncpyz(s, newsplit(&par), sizeof s);
-  strncpyz(chname, newsplit(&par), sizeof chname);
+  strlcpy(s, newsplit(&par), sizeof s);
+  strlcpy(chname, newsplit(&par), sizeof chname);
 
   if (strcasecmp(stick_type, "exempt") &&
       strcasecmp(stick_type, "invite") &&
       strcasecmp(stick_type, "ban")) {
-    strncpyz(chname, s, sizeof chname);
-    strncpyz(s, stick_type, sizeof s);
+    strlcpy(chname, s, sizeof chname);
+    strlcpy(s, stick_type, sizeof s);
   }
   if (!s[0]) {
     dprintf(idx, "Usage: %sstick [ban/exempt/invite] <hostmask or number> [channel]\n",
@@ -896,7 +896,7 @@ static void cmd_stick_yn(int idx, char *par, int yn)
 	        s);
         return;
       }
-      strncpyz(chname, dcc[idx].u.chat->con_chan, sizeof chname);
+      strlcpy(chname, dcc[idx].u.chat->con_chan, sizeof chname);
     }
     /* Channel-specific exempt? */
     if (!(chan = findchan_by_dname(chname))) {
@@ -930,7 +930,7 @@ static void cmd_stick_yn(int idx, char *par, int yn)
         dprintf(idx, "%stuck invite: %s\n", yn ? "S" : "Uns", s);
         return;
       }
-      strncpyz(chname, dcc[idx].u.chat->con_chan, sizeof chname);
+      strlcpy(chname, dcc[idx].u.chat->con_chan, sizeof chname);
     }
     /* Channel-specific invite? */
     if (!(chan = findchan_by_dname(chname))) {
@@ -961,7 +961,7 @@ static void cmd_stick_yn(int idx, char *par, int yn)
 	  (me->funcs[IRC_CHECK_THIS_BAN])(achan, s, yn);
       return;
     }
-    strncpyz(chname, dcc[idx].u.chat->con_chan, sizeof chname);
+    strlcpy(chname, dcc[idx].u.chat->con_chan, sizeof chname);
   }
   /* Channel-specific ban? */
   if (!(chan = findchan_by_dname(chname))) {

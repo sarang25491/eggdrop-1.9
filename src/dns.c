@@ -4,7 +4,7 @@
  *   provides the code used by the bot if the DNS module is not loaded
  *   DNS script commands
  *
- * $Id: dns.c,v 1.35 2002/03/26 01:06:22 ite Exp $
+ * $Id: dns.c,v 1.36 2002/04/01 13:33:33 ite Exp $
  */
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -395,11 +395,11 @@ void dns_hostbyip(char *ip)
 	hp = 0;
     alarm(0);
     if (hp)
-      strncpyz(s, hp->h_name, sizeof s);
+      strlcpy(s, hp->h_name, sizeof s);
   } else
     hp = 0;
   if (!hp)
-    strncpyz(s, ip, sizeof s);
+    strlcpy(s, ip, sizeof s);
 debug2("|DNS| block_dns_hostbyip: ip: %s -> host: %s", ip, s);
   /* Call hooks. */
   call_hostbyip(ip, s, hp ? 1 : 0);
