@@ -1,3 +1,35 @@
+2001-12-29 21:43  Jeff Fisher <guppy@techmonkeys.org>
+
+	* doc/UPDATES1.6, modules/irc/irc.c, modules/transfer/transfer.c,
+	src/patch.h:
+
+	added Wcc's old_debugs patch 
+
+2001-12-29 21:40  Jeff Fisher <guppy@techmonkeys.org>
+
+	* doc/UPDATES1.6, modules/share/share.c, src/patch.h:
+
+	Added Ian's capture_the_flag patch from 1.6 
+
+2001-12-29 21:39  Jeff Fisher <guppy@techmonkeys.org>
+
+	* doc/UPDATES1.6, modules/filesys/filesys.c, modules/irc/cmdsirc.c,
+	modules/irc/mode.c, modules/share/share.c, src/patch.h:
+
+	added Wcc's mod_cosmetic patch from 1.6 
+
+2001-12-29 21:33  Jeff Fisher <guppy@techmonkeys.org>
+
+	* doc/UPDATES1.6, doc/tcl-commands.doc, src/patch.h, src/tcl.c:
+
+	added Wcc's hand-len patch from 1.6 
+
+2001-12-29 21:31  Jeff Fisher <guppy@techmonkeys.org>
+
+	* doc/UPDATES1.6, src/botnet.c, src/patch.h:
+
+	added BarkerJr's sum_whom patch from 1.6 
+
 2001-12-29 21:26  Jeff Fisher <guppy@techmonkeys.org>
 
 	* doc/UPDATES1.6, src/patch.h, src/tcldcc.c:
