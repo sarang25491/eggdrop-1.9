@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.6 2002/02/07 22:19:01 wcc Exp $
+ * $Id: tclchan.c,v 1.7 2002/02/09 18:37:06 eule Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -210,21 +210,15 @@ static int tcl_stickexempt STDVAR
 static int tcl_isban STDVAR
 {
   struct chanset_t *chan;
-  int ok = 0;
 
-  BADARGS(2, 3, " ban ?channel?");
-  if (argc == 3) {
-    chan = findchan_by_dname(argv[2]);
-    if (!chan) {
-      Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
-      return TCL_ERROR;
-    }
-    if (u_equals_mask(chan->bans, argv[1]))
-      ok = 1;
+  BADARGS(3, 3, " ban channel");
+  chan = findchan_by_dname(argv[2]);
+  if (!chan) {
+    Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
+    return TCL_ERROR;
   }
-  if (u_equals_mask(global_bans, argv[1]))
-    ok = 1;
-  if (ok)
+  if (u_equals_mask(chan->bans, argv[1]) ||
+      (u_equals_mask(global_bans, argv[1]) && channel_honor_global_bans(chan)))
     Tcl_AppendResult(irp, "1", NULL);
   else
     Tcl_AppendResult(irp, "0", NULL);
@@ -234,21 +228,15 @@ static int tcl_isban STDVAR
 static int tcl_isexempt STDVAR
 {
   struct chanset_t *chan;
-  int ok = 0;
 
-  BADARGS(2, 3, " exempt ?channel?");
-  if (argc == 3) {
-    chan = findchan_by_dname(argv[2]);
-    if (!chan) {
-      Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
-      return TCL_ERROR;
-    }
-    if (u_equals_mask(chan->exempts, argv[1]))
-      ok = 1;
+  BADARGS(3, 3, " exempt channel");
+  chan = findchan_by_dname(argv[2]);
+  if (!chan) {
+    Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
+    return TCL_ERROR;
   }
-  if (u_equals_mask(global_exempts,argv[1]))
-    ok = 1;
-  if (ok)
+  if (u_equals_mask(chan->exempts, argv[1]) ||
+      (u_equals_mask(global_exempts,argv[1]) && channel_honor_global_exempts(chan)))
     Tcl_AppendResult(irp, "1", NULL);
   else
     Tcl_AppendResult(irp, "0", NULL);
@@ -258,46 +246,33 @@ static int tcl_isexempt STDVAR
 static int tcl_isinvite STDVAR
 {
   struct chanset_t *chan;
-  int ok = 0;
 
-  BADARGS(2, 3, " invite ?channel?");
-  if (argc == 3) {
-    chan = findchan_by_dname(argv[2]);
-    if (!chan) {
-      Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
-      return TCL_ERROR;
-    }
-    if (u_equals_mask(chan->invites, argv[1]))
-      ok = 1;
+  BADARGS(3, 3, " invite channel");
+  chan = findchan_by_dname(argv[2]);
+  if (!chan) {
+    Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
+    return TCL_ERROR;
   }
-  if (u_equals_mask(global_invites,argv[1]))
-    ok = 1;
-  if (ok)
+  if (u_equals_mask(chan->invites, argv[1]) ||
+      (u_equals_mask(global_invites,argv[1]) && channel_honor_global_invites(chan)))
     Tcl_AppendResult(irp, "1", NULL);
   else
     Tcl_AppendResult(irp, "0", NULL);
   return TCL_OK;
 }
 
-
 static int tcl_isbansticky STDVAR
 {
   struct chanset_t *chan;
-  int ok = 0;
 
-  BADARGS(2, 3, " ban ?channel?");
-  if (argc == 3) {
-    chan = findchan_by_dname(argv[2]);
-    if (!chan) {
-      Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
-      return TCL_ERROR;
-    }
-    if (u_sticky_mask(chan->bans, argv[1]))
-      ok = 1;
+  BADARGS(3, 3, " ban channel");
+  chan = findchan_by_dname(argv[2]);
+  if (!chan) {
+    Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
+    return TCL_ERROR;
   }
-  if (u_sticky_mask(global_bans, argv[1]))
-    ok = 1;
-  if (ok)
+  if (u_sticky_mask(chan->bans, argv[1]) ||
+      (u_sticky_mask(global_bans, argv[1]) && channel_honor_global_bans(chan)))
     Tcl_AppendResult(irp, "1", NULL);
   else
     Tcl_AppendResult(irp, "0", NULL);
@@ -307,22 +282,16 @@ static int tcl_isbansticky STDVAR
 static int tcl_isexemptsticky STDVAR
 {
   struct chanset_t *chan;
-  int ok = 0;
 
-  BADARGS(2, 3, " exempt ?channel?");
-  if (argc == 3) {
-    chan = findchan_by_dname(argv[2]);
-    if (!chan) {
-      Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
-      return TCL_ERROR;
-    }
-    if (u_sticky_mask(chan->exempts, argv[1]))
-      ok = 1;
+  BADARGS(3, 3, " exempt channel");
+  chan = findchan_by_dname(argv[2]);
+  if (!chan) {
+    Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
+    return TCL_ERROR;
   }
-  if (u_sticky_mask(global_exempts,argv[1]))
-    ok = 1;
-  if (ok)
-       Tcl_AppendResult(irp, "1", NULL);
+  if (u_sticky_mask(chan->exempts, argv[1]) ||
+      (u_sticky_mask(global_exempts,argv[1]) && channel_honor_global_exempts(chan)))
+    Tcl_AppendResult(irp, "1", NULL);
   else
     Tcl_AppendResult(irp, "0", NULL);
   return TCL_OK;
@@ -331,21 +300,15 @@ static int tcl_isexemptsticky STDVAR
 static int tcl_isinvitesticky STDVAR
 {
   struct chanset_t *chan;
-  int ok = 0;
 
-  BADARGS(2, 3, " invite ?channel?");
-  if (argc == 3) {
-    chan = findchan_by_dname(argv[2]);
-    if (!chan) {
-      Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
-      return TCL_ERROR;
-    }
-    if (u_sticky_mask(chan->invites, argv[1]))
-      ok = 1;
+  BADARGS(3, 3, " invite channel");
+  chan = findchan_by_dname(argv[2]);
+  if (!chan) {
+    Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
+    return TCL_ERROR;
   }
-  if (u_sticky_mask(global_invites,argv[1]))
-    ok = 1;
-  if (ok)
+  if (u_sticky_mask(chan->invites, argv[1]) ||
+      (u_sticky_mask(global_invites,argv[1]) && channel_honor_global_invites(chan)))
     Tcl_AppendResult(irp, "1", NULL);
   else
        Tcl_AppendResult(irp, "0", NULL);
@@ -355,21 +318,15 @@ static int tcl_isinvitesticky STDVAR
 static int tcl_ispermban STDVAR
 {
   struct chanset_t *chan;
-  int ok = 0;
 
-  BADARGS(2, 3, " ban ?channel?");
-  if (argc == 3) {
-    chan = findchan_by_dname(argv[2]);
-    if (chan == NULL) {
-      Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
-      return TCL_ERROR;
-    }
-    if (u_equals_mask(chan->bans, argv[1]) == 2)
-      ok = 1;
+  BADARGS(3, 3, " ban channel");
+  chan = findchan_by_dname(argv[2]);
+  if (!chan) {
+    Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
+    return TCL_ERROR;
   }
-  if (u_equals_mask(global_bans, argv[1]) == 2)
-    ok = 1;
-  if (ok)
+  if (u_equals_mask(chan->bans, argv[1]) == 2 ||
+      (u_equals_mask(global_bans, argv[1]) == 2 && channel_honor_global_bans(chan)))
     Tcl_AppendResult(irp, "1", NULL);
   else
     Tcl_AppendResult(irp, "0", NULL);
@@ -379,21 +336,15 @@ static int tcl_ispermban STDVAR
 static int tcl_ispermexempt STDVAR
 {
   struct chanset_t *chan;
-  int ok = 0;
 
-  BADARGS(2, 3, " exempt ?channel?");
-  if (argc == 3) {
-    chan = findchan_by_dname(argv[2]);
-    if (chan == NULL) {
-      Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
-      return TCL_ERROR;
-    }
-    if (u_equals_mask(chan->exempts, argv[1]) == 2)
-      ok = 1;
+  BADARGS(3, 3, " exempt channel");
+  chan = findchan_by_dname(argv[2]);
+  if (!chan) {
+    Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
+    return TCL_ERROR;
   }
-  if (u_equals_mask(global_exempts,argv[1]) == 2)
-    ok = 1;
-  if (ok)
+  if (u_equals_mask(chan->exempts, argv[1]) == 2 ||
+      (u_equals_mask(global_exempts,argv[1]) == 2 && channel_honor_global_exempts(chan)))
     Tcl_AppendResult(irp, "1", NULL);
    else
      Tcl_AppendResult(irp, "0", NULL);
@@ -403,21 +354,15 @@ static int tcl_ispermexempt STDVAR
 static int tcl_isperminvite STDVAR
 {
   struct chanset_t *chan;
-  int ok = 0;
 
-  BADARGS(2, 3, " invite ?channel?");
-  if (argc == 3) {
-    chan = findchan_by_dname(argv[2]);
-    if (chan == NULL) {
-      Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
-      return TCL_ERROR;
-    }
-    if (u_equals_mask(chan->invites, argv[1]) == 2)
-      ok = 1;
+  BADARGS(3, 3, " invite channel");
+  chan = findchan_by_dname(argv[2]);
+  if (!chan) {
+    Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
+    return TCL_ERROR;
   }
-  if (u_equals_mask(global_invites,argv[1]) == 2)
-    ok = 1;
-  if (ok)
+  if (u_equals_mask(chan->invites, argv[1]) == 2 ||
+      (u_equals_mask(global_invites,argv[1]) == 2 && channel_honor_global_invites(chan)))
     Tcl_AppendResult(irp, "1", NULL);
   else
     Tcl_AppendResult(irp, "0", NULL);
@@ -427,21 +372,15 @@ static int tcl_isperminvite STDVAR
 static int tcl_matchban STDVAR
 {
   struct chanset_t *chan;
-  int ok = 0;
 
-  BADARGS(2, 3, " user!nick@host ?channel?");
-  if (argc == 3) {
-    chan = findchan_by_dname(argv[2]);
-    if (chan == NULL) {
-      Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
-      return TCL_ERROR;
-    }
-    if (u_match_mask(chan->bans, argv[1]))
-      ok = 1;
+  BADARGS(3, 3, " nick!user@host channel");
+  chan = findchan_by_dname(argv[2]);
+  if (!chan) {
+    Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
+    return TCL_ERROR;
   }
-  if (u_match_mask(global_bans, argv[1]))
-    ok = 1;
-  if (ok)
+  if (u_match_mask(chan->bans, argv[1]) ||
+      (u_match_mask(global_bans, argv[1]) && channel_honor_global_bans(chan)))
     Tcl_AppendResult(irp, "1", NULL);
   else
     Tcl_AppendResult(irp, "0", NULL);
@@ -451,21 +390,15 @@ static int tcl_matchban STDVAR
 static int tcl_matchexempt STDVAR
 {
   struct chanset_t *chan;
-  int ok = 0;
 
-  BADARGS(2, 3, " user!nick@host ?channel?");
-  if (argc == 3) {
-    chan = findchan_by_dname(argv[2]);
-    if (chan == NULL) {
-      Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
-      return TCL_ERROR;
-    }
-    if (u_match_mask(chan->exempts, argv[1]))
-      ok = 1;
+  BADARGS(3, 3, " nick!user@host channel");
+  chan = findchan_by_dname(argv[2]);
+  if (!chan) {
+    Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
+    return TCL_ERROR;
   }
-  if (u_match_mask(global_exempts,argv[1]))
-    ok = 1;
-  if (ok)
+  if (u_match_mask(chan->exempts, argv[1]) ||
+      (u_match_mask(global_exempts,argv[1]) && channel_honor_global_exempts(chan)))
     Tcl_AppendResult(irp, "1", NULL);
   else
     Tcl_AppendResult(irp, "0", NULL);
@@ -475,21 +408,15 @@ static int tcl_matchexempt STDVAR
 static int tcl_matchinvite STDVAR
 {
   struct chanset_t *chan;
-  int ok = 0;
 
-  BADARGS(2, 3, " user!nick@host ?channel?");
-  if (argc == 3) {
-    chan = findchan_by_dname(argv[2]);
-    if (chan == NULL) {
-      Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
-      return TCL_ERROR;
-    }
-    if (u_match_mask(chan->invites, argv[1]))
-      ok = 1;
+  BADARGS(3, 3, " nick!user@host channel");
+  chan = findchan_by_dname(argv[2]);
+  if (!chan) {
+    Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
+    return TCL_ERROR;
   }
-  if (u_match_mask(global_invites,argv[1]))
-    ok = 1;
-  if (ok)
+  if (u_match_mask(chan->invites, argv[1]) ||
+      (u_match_mask(global_invites,argv[1]) && channel_honor_global_invites(chan)))
     Tcl_AppendResult(irp, "1", NULL);
   else
     Tcl_AppendResult(irp, "0", NULL);

@@ -309,62 +309,86 @@ specific commands, see later.
     returns: "1" if the channel is juped and bot is unable to join, "0"
       otherwise
 
-  isban <ban> [channel]
-    returns: "1" if that ban is in the global ban list, "0" otherwise; if
-      a channel is specified, that channel's ban list is checked too
+|  isban <ban> <channel>
+|    returns: "1" if that ban is in the channel ban list, "0" otherwise; if
+|      the global ban list is not disabled for this channel (see
+|      honor-global-bans in your config), the global ban list is checked also
+|      [1.7.x-series: channel is not longer optional]
 
-  ispermban <ban> [channel]
-    returns: "1" if that ban is in the global ban list AND is marked as
-      permanent, "0" otherwise; if a channel is specified, that channel's
-      ban list is checked too
+|  ispermban <ban> <channel>
+|    returns: "1" if that ban is in the channel ban list AND is marked as
+|      permanent, "0" otherwise; if the global ban list is not disabled for
+|      this channel (see honor-global-bans in your config), the global ban
+|      list is checked also
+|      [1.7.x-series: channel is not longer optional]
 
-  isexempt <exempt> [channel]
-    returns: "1" if that exempt is in the global exempt list, "0" otherwise; if
-      a channel is specified, that channel's exempt list is checked too
+|  isexempt <exempt> <channel>
+|    returns: "1" if that exempt is in the channel exempt list, "0" otherwise;
+|      if the global exempt list is not disabled for this channel (see
+|      honor-global-exempts in your config), the global exempt list is checked
+|      also
+|      [1.7.x-series: channel is not longer optional]
 
-  ispermexempt <exempt> [channel]
-    returns: "1" if that exempt is in the global exempt list AND is marked as
-      permanent, "0" otherwise; if a channel is specified, that channel's
-      exempt list is checked too
+|  ispermexempt <exempt> <channel>
+|    returns: "1" if that exempt is in the channel exempt list AND is marked as
+|      permanent, "0" otherwise; if the global exempt list is not disabled for
+|      this channel (see honor-global-exempts in your config), the global exempt
+|      list is checked also
+|      [1.7.x-series: channel is not longer optional]
 
-  isinvite <invite> [channel]
-    returns: "1" if that invite is in the global invite list, "0" otherwise; if
-      a channel is specified, that channel's invite list is checked too
+|  isinvite <invite> <channel>
+|    returns: "1" if that invite is in the channel invite list, "0" otherwise;
+|      if the global invite list is not disabled for this channel (see
+|      honor-global-invites in your config), the global invite list is checked
+|      also
+|      [1.7.x-series: channel is not longer optional]
 
-  isperminvite <invite> [channel]
-    returns: "1" if that invite is in the global invite list AND is marked as
-      permanent, "0" otherwise; if a channel is specified, that channel's
-      invite list is checked too
+|  isperminvite <invite> <channel>
+|    returns: "1" if that invite is in the channel invite list AND is marked as
+|      permanent, "0" otherwise; if the global invite list is not disabled for
+|      this channel (see honor-global-invites in your config), the global invite
+|      list is checked also
+|      [1.7.x-series: channel is not longer optional]
 
-  isbansticky <ban> [channel]
-    returns: "1" if that ban is a sticky ban in the global ban list, "0"
-      otherwise; if a channel is specified, that channel's ban list is checked
-      too
+|  isbansticky <ban> <channel>
+|    returns: "1" if that ban is a sticky ban in the channel ban list, "0"
+|      otherwise; if the global ban list is not disabled for this channel (see
+|      honor-global-bans in your config), the global ban list is checked also
+|      [1.7.x-series: channel is not longer optional]
 
-  isexemptsticky <exempt> [channel]
-    returns: "1" if that exempt is a sticky exempt in the global exempt list,
-      "0" otherwise; if a channel is specified, that channel's exempt list is
-      checked too
+|  isexemptsticky <exempt> <channel>
+|    returns: "1" if that exempt is a sticky exempt in the channel exempt list,
+|      "0" otherwise; if the global exempt list is not disabled for this channel
+|      (see honor-global-exempts in your config), the global exempt list is
+|      checked also
+|      [1.7.x-series: channel is not longer optional]
 
-  isinvitesticky <invite> [channel]
-    returns: "1" if that invite is a sticky invite in the global invite list,
-      "0" otherwise; if a channel is specified, that channel's invite list is
-      checked too
+|  isinvitesticky <invite> <channel>
+|    returns: "1" if that invite is a sticky invite in the channel invite list,
+|      "0" otherwise; if the global invite list is not disabled for this channel
+|      (see honor-global-invites in your config), the global invite list is
+|      checked also
+|      [1.7.x-series: channel is not longer optional]
 
-  matchban <nick!user@host> [channel]
-    returns: "1" if that user address matches a ban in the global ban list,
-      "0" otherwise; if a channel is specified, that channel's ban list is
-      checked too
+|  matchban <nick!user@host> <channel>
+|    returns: "1" if that user address matches a ban in the channel ban list,
+|      "0" otherwise; if the global ban list is not disabled for this channel (see
+|      honor-global-bans in your config), the global ban list is checked also
+|      [1.7.x-series: channel is not longer optional]
 
-  matchexempt <nick!user@host> [channel]
-    returns: "1" if that user address matches a exempt in the global exempt
-      list, "0" otherwise; if a channel is specified, that channel's exempt
-      list is checked too
+|  matchexempt <nick!user@host> <channel>
+|    returns: "1" if that user address matches a exempt in the channel exempt
+|      list, "0" otherwise; if the global exempt list is not disabled for this
+|      channel (see honor-global-exempts in your config), the global exempt list
+|      is checked also
+|      [1.7.x-series: channel is not longer optional]
 
-  matchinvite <nick!user@host> [channel]
-    returns: "1" if that user address matches a invite in the global invite
-      list, "0" otherwise; if a channel is specified, that channel's invite
-      list is checked too
+|  matchinvite <nick!user@host> <channel>
+|    returns: "1" if that user address matches a invite in the channel invite
+|      list, "0" otherwise; if the global invite list is not disabled for this
+|      channel (see honor-global-invites in your config), the global invite list
+|      is checked also
+|      [1.7.x-series: channel is not longer optional]
 
   banlist [channel]
     returns: list of global bans, or (if a channel is specified) list of
