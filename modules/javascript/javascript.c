@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: javascript.c,v 1.22 2003/12/18 06:50:47 wcc Exp $";
+static const char rcsid[] = "$Id: javascript.c,v 1.23 2003/12/18 23:10:41 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -371,10 +371,10 @@ static int c_to_js_var(JSContext *cx, script_var_t *v, jsval *result)
 			void **values;
 
 			v_sub.type = v->type & (~SCRIPT_ARRAY);
-			v_sub.len = -1;
 			values = (void **)v->value;
 			for (i = 0; i < v->len; i++) {
 				v_sub.value = values[i];
+				v_sub.len = -1;
 				c_to_js_var(cx, &v_sub, &element);
 				JS_SetElement(cx, js_array, i, &element);
 			}

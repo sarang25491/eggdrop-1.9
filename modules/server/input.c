@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: input.c,v 1.28 2003/12/18 06:50:47 wcc Exp $";
+static const char rcsid[] = "$Id: input.c,v 1.29 2003/12/18 23:10:42 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -112,14 +112,15 @@ static int got001(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 static int got005(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
 	char *arg, *name, *equalsign, *value;
-	int i;
+	int i, nsupport;
 
 	/* Some servers send multiple 005 messages, so we need to process
 	 * them all. */
 	current_server.got005++;
 
-	current_server.support = realloc(current_server.support, sizeof(*current_server.support) * (current_server.nsupport+nargs-1));
-	current_server.nsupport += nargs-2;
+	nsupport = current_server.nsupport;
+	current_server.support = realloc(current_server.support, sizeof(*current_server.support) * (nsupport+nargs));
+	current_server.nsupport += nargs-2; /* we skip first and last args */
 
 	for (i = 1; i < nargs-1; i++) {
 		arg = args[i];
@@ -139,8 +140,8 @@ static int got005(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 			value = strdup("true");
 		}
 
-		current_server.support[i-1].name = name;
-		current_server.support[i-1].value = value;
+		current_server.support[nsupport].name = name;
+		current_server.support[nsupport++].value = value;
 
 		if (!strcasecmp(name, "chantypes")) {
 			str_redup(&current_server.chantypes, value);

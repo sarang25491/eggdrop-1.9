@@ -18,19 +18,20 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: perlscript.c,v 1.27 2003/12/18 06:50:47 wcc Exp $";
+static const char rcsid[] = "$Id: perlscript.c,v 1.28 2003/12/18 23:10:41 stdarg Exp $";
 #endif
 
 #ifdef DEBUG
 #  undef DEBUG
 #endif
 
-#include <eggdrop/eggdrop.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <EXTERN.h>
 #include <perl.h>
 #include <XSUB.h>
+#undef _
+#include <eggdrop/eggdrop.h>
 
 static PerlInterpreter *ginterp; /* Our global interpreter. */
 

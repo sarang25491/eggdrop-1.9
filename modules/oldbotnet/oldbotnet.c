@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: oldbotnet.c,v 1.5 2003/12/18 06:50:47 wcc Exp $";
+static const char rcsid[] = "$Id: oldbotnet.c,v 1.6 2003/12/18 23:10:41 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -166,7 +166,7 @@ static int party_plusobot(partymember_t *p, char *nick, user_t *u, char *cmd, ch
 	if (!username) {
 		/* No username, so look up the botname. */
 		void *config_root = config_get_root("eggdrop");
-		config_get_str(&username, config_root, "botname");
+		config_get_str(&username, config_root, "eggdrop.botname");
 		if (!username) {
 			partymember_printf(p, _("Could not get local botname; please specify a username to log in as."));
 			goto done;
