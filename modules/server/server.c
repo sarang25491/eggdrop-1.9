@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: server.c,v 1.34 2002/06/03 03:35:32 stdarg Exp $";
+static const char rcsid[] = "$Id: server.c,v 1.35 2002/06/18 04:40:16 guppy Exp $";
 #endif
 
 #define MODULE_NAME "server"
@@ -77,10 +77,6 @@ static int trigger_on_ignore;	/* trigger bindings if user is ignored ? */
 static int answer_ctcp;		/* answer how many stacked ctcp's ? */
 static int check_mode_r;	/* check for IRCNET +r modes */
 static int resolvserv;		/* in the process of resolving a server host */
-static int double_mode;		/* allow a msgs to be twice in a queue? */
-static int double_server;
-static int double_help;
-static int double_warned;
 static int lastpingtime;	/* IRCNet LAGmeter support -- drummer */
 static char stackablecmds[511];
 static char stackable2cmds[511];
@@ -776,9 +772,8 @@ static void queue_server(int which, char *buf, int len)
 {
   struct msgq_head *h = NULL,
   		    tempq;
-  struct msgq	   *q, *tq, *tqq;
-  int		    doublemsg = 0,
-  		    qnext = 0;
+  struct msgq	   *q;
+  int		    qnext = 0;
 
   /* Don't even BOTHER if there's no server online. */
   if (serv < 0)
@@ -798,8 +793,6 @@ static void queue_server(int which, char *buf, int len)
   case DP_MODE:
     h = &modeq;
     tempq = modeq;
-    if (double_mode)
-      doublemsg = 1;
     break;
 
   case DP_SERVER_NEXT:
@@ -808,8 +801,6 @@ static void queue_server(int which, char *buf, int len)
   case DP_SERVER:
     h = &mq;
     tempq = mq;
-    if (double_server)
-      doublemsg = 1;
     break;
 
   case DP_HELP_NEXT:
@@ -818,8 +809,6 @@ static void queue_server(int which, char *buf, int len)
   case DP_HELP:
     h = &hq;
     tempq = hq;
-    if (double_help)
-      doublemsg = 1;
     break;
 
   default:
@@ -828,21 +817,6 @@ static void queue_server(int which, char *buf, int len)
   }
 
   if (h->tot < maxqmsg) {
-    /* Don't queue msg if it's already queued?  */
-    if (!doublemsg)
-      for (tq = tempq.head; tq; tq = tqq) {
-	tqq = tq->next;
-	if (!strcasecmp(tq->msg, buf)) {
-	  if (!double_warned) {
-	    if (buf[len - 1] == '\n')
-	      buf[len - 1] = 0;
-	    debug1("msg already queued. skipping: %s", buf);
-	    double_warned = 1;
-	  }
-	  return;
-	}
-      }
-
     q = malloc(sizeof(struct msgq));
     if (qnext)
       q->next = h->head;
@@ -861,7 +835,6 @@ static void queue_server(int which, char *buf, int len)
     strlcpy(q->msg, buf, len + 1);
     h->tot++;
     h->warned = 0;
-    double_warned = 0;
   } else {
     if (!h->warned) {
       switch (which) {   
@@ -1137,9 +1110,6 @@ static tcl_ints my_tcl_ints[] =
   {"default_port",		&default_port,			0},
   {"check_mode_r",		&check_mode_r,			0},
   {"ctcp_mode",			&ctcp_mode,			0},
-  {"double_mode",		&double_mode,			0},/* G`Quann */
-  {"double_server",		&double_server,			0},
-  {"double_help",		&double_help,			0},
   {"use_penalties",		&use_penalties,			0},
   {"use_fastdeq",		&use_fastdeq,			0},
   {"nicklen",                   &nick_len,                      0},
@@ -1529,9 +1499,6 @@ char *start(eggdrop_t *eggdrop)
   check_mode_r = 0;
   maxqmsg = 300;
   burst = 0;
-  double_mode = 0;
-  double_server = 0;
-  double_help = 0;
   use_penalties = 0;
   use_fastdeq = 0;
   stackablecmds[0] = 0;
@@ -1593,7 +1560,6 @@ char *start(eggdrop_t *eggdrop)
   mq.last = hq.last = modeq.last = NULL;
   mq.tot = hq.tot = modeq.tot = 0;
   mq.warned = hq.warned = modeq.warned = 0;
-  double_warned = 0;
   newserver[0] = 0;
   newserverport = 0;
   curserv = 999;

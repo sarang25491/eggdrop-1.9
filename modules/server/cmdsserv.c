@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: cmdsserv.c,v 1.8 2002/05/05 16:40:36 tothwolf Exp $";
+static const char rcsid[] = "$Id: cmdsserv.c,v 1.9 2002/06/18 04:40:16 guppy Exp $";
 #endif
 */
 
@@ -101,7 +101,7 @@ static void cmd_clearqueue(struct userrec *u, int idx, char *par)
     msgq_clear(&modeq);
     msgq_clear(&mq);
     msgq_clear(&hq);
-    double_warned = burst = 0;
+    burst = 0;
     dprintf(idx, P_("Removed %d message from all queues\n",
                     "Removed %d messages from all queues\n", msgs), msgs);
   } else if (!strcasecmp(par, "mode")) {
@@ -109,14 +109,12 @@ static void cmd_clearqueue(struct userrec *u, int idx, char *par)
     msgq_clear(&modeq);
     if (mq.tot == 0)
       burst = 0;
-    double_warned = 0;
     dprintf(idx, P_("Removed %1$d message from the %2$s queue\n",
                     "Removed %1$d messages from the %2$s queue\n", msgs), msgs,
             "mode");
   } else if (!strcasecmp(par, "help")) {
     msgs = hq.tot;
     msgq_clear(&hq);
-    double_warned = 0;
     dprintf(idx, P_("Removed %1$d message from the %2$s queue\n",
                     "Removed %1$d messages from the %2$s queue\n", msgs), msgs,
             "help");
@@ -125,7 +123,6 @@ static void cmd_clearqueue(struct userrec *u, int idx, char *par)
     msgq_clear(&mq);
     if (modeq.tot == 0)
       burst = 0;
-    double_warned = 0;
     dprintf(idx, P_("Removed %1$d message from the %2$s queue\n",
                    "Removed %1$d messages from the %2$s queue\n", msgs), msgs,
             "server");

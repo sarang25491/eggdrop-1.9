@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.8 2002/05/31 05:29:20 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.9 2002/06/18 04:40:16 guppy Exp $";
 #endif
 */
 
@@ -180,7 +180,6 @@ static int script_clearqueue (script_var_t *retval, char *queuetype)
 		}
 		modeq.tot = mq.tot = hq.tot = modeq.warned = mq.warned = hq.warned = 0;
 		mq.head = hq.head = modeq.head = mq.last = hq.last = modeq.last = 0;
-		double_warned = 0;
 		burst = 0;
 		
 		retval->value = (void *)msgs;
@@ -197,7 +196,6 @@ static int script_clearqueue (script_var_t *retval, char *queuetype)
 		mq.head = mq.last = 0;
 		if (modeq.tot == 0)
 			burst = 0;
-		double_warned = 0;
 		mq.tot = mq.warned = 0;
 		mq.head = mq.last = 0;
 		
@@ -213,7 +211,6 @@ static int script_clearqueue (script_var_t *retval, char *queuetype)
 		}
 		if (mq.tot == 0)
 			burst = 0;
-		double_warned = 0;
 		modeq.tot = modeq.warned = 0;
 		modeq.head = modeq.last = 0;
 		
@@ -227,7 +224,6 @@ static int script_clearqueue (script_var_t *retval, char *queuetype)
 			free(q->msg);
 			free(q);
 		}
-		double_warned = 0;
 		hq.tot = hq.warned = 0;
 		hq.head = hq.last = 0;
 	

@@ -123,20 +123,6 @@ set trigger-on-ignore 0
     Valid settings are 0 for OFF and 1 ON.
 
 
-set double-mode 0
-    Allow a msg being twice in mode queue?
-    Valid settings are 0 for OFF and 1 ON.
-
-
-set double-server 0
-    Allow a msg being twice in server queue?
-    Valid settings are 0 for OFF and 1 ON.
-
-
-set double-help 0
-    Allow a msg being twice in help queue?
-    Valid settings are 0 for OFF and 1 ON.
-
 set use-penalties 1 (default on net-type 1)
     This enables eggdrop's penalty calculation. Every command eggdrop sends to
     the irc server raises it's penatly points. If eggdrop reaches a server limit,
