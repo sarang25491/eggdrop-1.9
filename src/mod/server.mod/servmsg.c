@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.60 2001/08/13 03:58:30 guppy Exp $
+ * $Id: servmsg.c,v 1.61 2001/08/14 18:27:13 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1207,7 +1207,7 @@ static void server_resolve_success(int servidx)
       dprintf(DP_MODE, "PASS %s\n", pass);
     dprintf(DP_MODE, "NICK %s\n", botname);
     dprintf(DP_MODE, "USER %s %s %s :%s\n",
-	    botuser, botuser, botuser, botrealname);
+	    botuser, bothost, dcc[servidx].host, botrealname);
     /* Wait for async result now */
   }
 }
