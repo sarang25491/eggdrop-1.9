@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: javascript.c,v 1.23 2003/12/18 23:10:41 stdarg Exp $";
+static const char rcsid[] = "$Id: javascript.c,v 1.24 2003/12/20 08:13:41 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -266,6 +266,9 @@ static void log_error_message(Tcl_Interp *myinterp)
 static int my_js_callbacker(script_callback_t *me, ...)
 {
 	jsval *argv, result = 0;
+	JSObject *myobj;
+	JSContext *mycx;
+	JSFunction *command;
 	script_var_t var;
 	my_callback_cd_t *cd; /* My callback client data */
 	int i, n, retval = 0;
@@ -287,16 +290,20 @@ static int my_js_callbacker(script_callback_t *me, ...)
 		c_to_js_var(cd->mycx, &var, argv+i);
 	}
 
-	n = JS_CallFunction(cd->mycx, cd->myobj, cd->command, n, argv, &result);
+	mycx = cd->mycx;
+	myobj = cd->myobj;
+	command = cd->command;
+
+	/* If it's a one-time callback, delete it. */
+	if (me->flags & SCRIPT_CALLBACK_ONCE) me->del(me);
+
+	n = JS_CallFunction(mycx, myobj, command, n, argv, &result);
 	free(argv);
 	if (n) {
 		int32 intval;
 
-		if (JS_ValueToInt32(cd->mycx, result, &intval)) retval = intval;
+		if (JS_ValueToInt32(mycx, result, &intval)) retval = intval;
 	}
-
-	/* If it's a one-time callback, delete it. */
-	if (me->flags & SCRIPT_CALLBACK_ONCE) me->del(me);
 
 	return(retval);
 }
@@ -307,7 +314,7 @@ static int my_js_cb_delete(script_callback_t *me)
 	my_callback_cd_t *cd;
 
 	cd = (my_callback_cd_t *)me->callback_data;
-	free(cd->name);
+	if (cd->name) free(cd->name);
 	if (me->syntax) free(me->syntax);
 	free(cd);
 	free(me);

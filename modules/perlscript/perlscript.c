@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: perlscript.c,v 1.28 2003/12/18 23:10:41 stdarg Exp $";
+static const char rcsid[] = "$Id: perlscript.c,v 1.29 2003/12/20 08:13:41 stdarg Exp $";
 #endif
 
 #ifdef DEBUG
@@ -115,7 +115,7 @@ static void set_linked_var(script_linked_var_t *linked_var, SV *sv, script_var_t
 	SvREFCNT_dec(newsv);
 }
 
-static int linked_var_get(SV *sv, MAGIC *mg)
+static int linked_var_get(pTHX_ SV *sv, MAGIC *mg)
 {
 	script_linked_var_t *linked_var = (script_linked_var_t *)mg->mg_ptr;
 
@@ -129,7 +129,7 @@ static int linked_var_get(SV *sv, MAGIC *mg)
 	return(0);
 }
 
-static int linked_var_set(SV *sv, MAGIC *mg)
+static int linked_var_set(pTHX_ SV *sv, MAGIC *mg)
 {
 	script_linked_var_t *linked_var = (script_linked_var_t *)mg->mg_ptr;
 	script_var_t newvalue = {0};
@@ -203,7 +203,7 @@ static int my_perl_callbacker(script_callback_t *me, ...)
 {
 	int retval, i, n, count;
 	script_var_t var;
-	SV *arg;
+	SV *cmd, *arg;
 	int *al;
 	dSP;
 
@@ -224,7 +224,13 @@ static int my_perl_callbacker(script_callback_t *me, ...)
 	}
 	PUTBACK;
 
-	count = call_sv((SV *)me->callback_data, G_EVAL|G_SCALAR);
+	/* If it's a one-time callback, delete it. */
+	cmd = me->callback_data;
+	SvREFCNT_inc(cmd);
+	if (me->flags & SCRIPT_CALLBACK_ONCE) me->del(me);
+
+	count = call_sv(cmd, G_EVAL|G_SCALAR);
+	SvREFCNT_dec(cmd);
 
 	SPAGAIN;
 
@@ -244,9 +250,6 @@ static int my_perl_callbacker(script_callback_t *me, ...)
 	PUTBACK;
 	FREETMPS;
 	LEAVE;
-
-	/* If it's a one-time callback, delete it. */
-	if (me->flags & SCRIPT_CALLBACK_ONCE) me->del(me);
 
 	return(retval);
 }

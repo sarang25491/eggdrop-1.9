@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tclscript.c,v 1.42 2003/12/18 06:50:47 wcc Exp $";
+static const char rcsid[] = "$Id: tclscript.c,v 1.43 2003/12/20 08:13:41 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -224,6 +224,7 @@ static void log_error_message(Tcl_Interp *myinterp)
 static int my_tcl_callbacker(script_callback_t *me, ...)
 {
 	Tcl_Obj *arg, *final_command, *result;
+	Tcl_Interp *interp;
 	script_var_t var;
 	my_callback_cd_t *cd; /* My callback client data */
 	int i, n, retval;
@@ -239,6 +240,7 @@ static int my_tcl_callbacker(script_callback_t *me, ...)
 	al++;
 	if (me->syntax) n = strlen(me->syntax);
 	else n = 0;
+
 	for (i = 0; i < n; i++) {
 		var.type = me->syntax[i];
 		var.value = al[i];
@@ -247,26 +249,28 @@ static int my_tcl_callbacker(script_callback_t *me, ...)
 		Tcl_ListObjAppendElement(cd->myinterp, final_command, arg);
 	}
 
-#ifdef USE_TCL_BYTE_ARRAYS
-	n = Tcl_EvalObjEx(cd->myinterp, final_command, TCL_EVAL_GLOBAL);
-#else
-	n = Tcl_GlobalEvalObj(cd->myinterp, final_command);
-#endif
-
-	if (n == TCL_OK) {
-		result = Tcl_GetObjResult(cd->myinterp);
-		Tcl_GetIntFromObj(NULL, result, &retval);
-	}
-	else {
-		log_error_message(cd->myinterp);
-		Tcl_BackgroundError(cd->myinterp);
-	}
-
-	/* Clear any errors or stray messages. */
-	Tcl_ResetResult(cd->myinterp);
+	interp = cd->myinterp;
 
 	/* If it's a one-time callback, delete it. */
 	if (me->flags & SCRIPT_CALLBACK_ONCE) me->del(me);
+
+#ifdef USE_TCL_BYTE_ARRAYS
+	n = Tcl_EvalObjEx(interp, final_command, TCL_EVAL_GLOBAL);
+#else
+	n = Tcl_GlobalEvalObj(interp, final_command);
+#endif
+
+	if (n == TCL_OK) {
+		result = Tcl_GetObjResult(interp);
+		Tcl_GetIntFromObj(interp, result, &retval);
+	}
+	else {
+		log_error_message(interp);
+		Tcl_BackgroundError(interp);
+	}
+
+	/* Clear any errors or stray messages. */
+	Tcl_ResetResult(interp);
 
 	return(retval);
 }
@@ -278,8 +282,9 @@ static int my_tcl_cb_delete(script_callback_t *me)
 
 	cd = (my_callback_cd_t *)me->callback_data;
 	Tcl_DecrRefCount(cd->command);
-	free(cd->name);
+	if (cd->name) free(cd->name);
 	if (me->syntax) free(me->syntax);
+	if (me->name) free(me->name);
 	free(cd);
 	free(me);
 	return(0);
@@ -502,9 +507,9 @@ static int tcl_to_c_var(Tcl_Interp *myinterp, Tcl_Obj *obj, script_var_t *var, i
 			cback = (script_callback_t *)calloc(1, sizeof(*cback));
 			cdata = (my_callback_cd_t *)calloc(1, sizeof(*cdata));
 			cback->callback = (Function) my_tcl_callbacker;
-			cback->callback_data = (void *)cdata;
+			cback->callback_data = cdata;
 			cback->del = (Function) my_tcl_cb_delete;
-			cback->name = strdup((char *)Tcl_GetStringFromObj(obj, NULL));
+			cback->name = strdup(Tcl_GetString(obj));
 			cdata->myinterp = myinterp;
 			cdata->command = obj;
 			Tcl_IncrRefCount(obj);
