@@ -1,3 +1,16 @@
+2003-01-29 07:42  Will Buckner <wcc@techmonkeys.org>
+
+	* lib/eggdrop/memutil.c, lib/eggdrop/module.h,
+	modules/channels/channels.c, modules/channels/userchan.c,
+	modules/filesys/dbcompat.c, modules/filesys/filedb3.h,
+	modules/irc/chan.c, modules/irc/msgcmds.c, modules/share/share.c,
+	modules/transfer/transfer.c, modules/transfer/transfer.h,
+	src/dccutil.c, src/egg.h, src/main.c, src/modules.c, src/patch.h,
+	src/tcl.c, src/tclmisc.c, src/userrec.c, src/userrec.h:
+
+	* Synch 1.6: save_ignores, save_ignores2, killtransfer-segv, 
+	             bugfixes (whatever applied), header-fixes, hello.  
+
 2003-01-28 20:38  Will Buckner <wcc@techmonkeys.org>
 
 	* src/modules.c:
