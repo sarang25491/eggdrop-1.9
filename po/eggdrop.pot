@@ -1,20 +1,18 @@
 # SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
+# Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2003-02-14 23:17-0500\n"
+"POT-Creation-Date: 2003-02-15 04:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
 #: modules/blowfish/blowfish.c:139
 msgid "    Blowfish encryption module:\n"
@@ -38,7 +36,7 @@ msgstr ""
 msgid "Already loaded."
 msgstr ""
 
-#: modules/blowfish/blowfish.c:440 modules/filesys/filesys.c:1142
+#: modules/blowfish/blowfish.c:440 modules/filesys/filesys.c:1325
 #: modules/uptime/uptime.c:240
 msgid "This module requires eggdrop1.7.0 or later"
 msgstr ""
@@ -398,7 +396,7 @@ msgstr ""
 #: modules/channels/userchan.c:991 modules/channels/userchan.c:1008
 #: modules/channels/userchan.c:1036 modules/channels/userchan.c:1082
 #: modules/channels/userchan.c:1110 modules/channels/userchan.c:1128
-#: src/users.c:225
+#: src/users.c:227
 msgid "expired"
 msgstr ""
 
@@ -556,15 +554,15 @@ msgstr ""
 msgid "------------------------------  ----  -------------------  ------\n"
 msgstr ""
 
-#: modules/filesys/filedb3.c:969 modules/filesys/filedb3.c:973
+#: modules/filesys/filedb3.c:969 modules/filesys/filedb3.c:971
 msgid "requires"
 msgstr ""
 
-#: modules/filesys/filedb3.c:1046
+#: modules/filesys/filedb3.c:1043
 msgid "No files in this directory.\n"
 msgstr ""
 
-#: modules/filesys/filedb3.c:1048 modules/filesys/files.c:535
+#: modules/filesys/filedb3.c:1045 modules/filesys/files.c:535
 #: modules/filesys/files.c:550 modules/filesys/files.c:603
 #: modules/filesys/files.c:619 modules/filesys/files.c:645
 #: modules/filesys/files.c:661 modules/filesys/files.c:729
@@ -573,7 +571,7 @@ msgstr ""
 msgid "No matching files.\n"
 msgstr ""
 
-#: modules/filesys/filedb3.c:1052
+#: modules/filesys/filedb3.c:1049
 #, c-format
 msgid "--- %d file.\n"
 msgid_plural "--- %d files.\n"
@@ -719,194 +717,190 @@ msgstr ""
 msgid "Moved"
 msgstr ""
 
-#: modules/filesys/filesys.c:373
+#: modules/filesys/filesys.c:556
 msgid "Too many people are in the file system right now.\n"
 msgstr ""
 
-#: modules/filesys/filesys.c:374 modules/filesys/filesys.c:512
+#: modules/filesys/filesys.c:557 modules/filesys/filesys.c:695
 msgid "Please try again later.\n"
 msgstr ""
 
-#: modules/filesys/filesys.c:387 modules/filesys/filesys.c:538
+#: modules/filesys/filesys.c:570 modules/filesys/filesys.c:721
 msgid "File system broken."
 msgstr ""
 
-#: modules/filesys/filesys.c:397 src/dcc.c:197
+#: modules/filesys/filesys.c:580 src/dcc.c:197
 msgid "Negative on that, Houston.\n"
 msgstr ""
 
-#: modules/filesys/filesys.c:447
+#: modules/filesys/filesys.c:630
 msgid "Returning you to command mode...\n"
 msgstr ""
 
-#: modules/filesys/filesys.c:460
+#: modules/filesys/filesys.c:643
 msgid "Dropping connection now.\n"
 msgstr ""
 
-#: modules/filesys/filesys.c:481
+#: modules/filesys/filesys.c:664
 #, c-format
 msgid "No file statistics for %s.\n"
 msgstr ""
 
-#: modules/filesys/filesys.c:490
+#: modules/filesys/filesys.c:673
 msgid "(infinite file leech)\n"
 msgstr ""
 
-#: modules/filesys/filesys.c:494
+#: modules/filesys/filesys.c:677
 msgid "(infinite size leech)\n"
 msgstr ""
 
-#: modules/filesys/filesys.c:506
+#: modules/filesys/filesys.c:689
 msgid "There is no file transfer area.\n"
 msgstr ""
 
-#: modules/filesys/filesys.c:509
+#: modules/filesys/filesys.c:692
 #, c-format
 msgid "The maximum of %d person is in the file area right now.\n"
 msgid_plural "The maximum of %d people are in the file area right now.\n"
 msgstr[0] ""
 msgstr[1] ""
 
-#: modules/filesys/filesys.c:515
+#: modules/filesys/filesys.c:698
 msgid "You don't have access to the file area.\n"
 msgstr ""
 
-#: modules/filesys/filesys.c:518
+#: modules/filesys/filesys.c:701
 msgid "Entering file system...\n"
 msgstr ""
 
-#: modules/filesys/filesys.c:566
+#: modules/filesys/filesys.c:749
 msgid "Sorry, too many DCC connections.  (try again later)\n"
 msgstr ""
 
-#: modules/filesys/filesys.c:573
+#: modules/filesys/filesys.c:756
 msgid "All my DCC SEND ports are in use.  Try later.\n"
 msgstr ""
 
-#: modules/filesys/filesys.c:577
+#: modules/filesys/filesys.c:760
 msgid "Unable to listen at a socket.\n"
 msgstr ""
 
-#: modules/filesys/filesys.c:584
+#: modules/filesys/filesys.c:767
 msgid "File not found ?\n"
 msgstr ""
 
-#: modules/filesys/filesys.c:590
+#: modules/filesys/filesys.c:773
 msgid "The file is empty.  Aborted transfer.\n"
 msgstr ""
 
-#: modules/filesys/filesys.c:627
+#: modules/filesys/filesys.c:810
 msgid "DCC file transfers not supported.\n"
 msgstr ""
 
-#: modules/filesys/filesys.c:633
+#: modules/filesys/filesys.c:816
 msgid "Filename cannot have '/' in it...\n"
 msgstr ""
 
-#: modules/filesys/filesys.c:674
+#: modules/filesys/filesys.c:857
 msgid "Can't make temporary copy of file!\n"
 msgstr ""
 
-#: modules/filesys/filesys.c:698
+#: modules/filesys/filesys.c:881
 msgid "Timeout.\n"
 msgstr ""
 
-#: modules/filesys/filesys.c:822 modules/filesys/filesys.c:1019
+#: modules/filesys/filesys.c:1005 modules/filesys/filesys.c:1202
 msgid "Failed to connect"
 msgstr ""
 
-#: modules/filesys/filesys.c:998
+#: modules/filesys/filesys.c:1181
 #, c-format
 msgid "DCC connections full: %s %s (%s!%s)"
 msgstr ""
 
-#: modules/filesys/filesys.c:1003
+#: modules/filesys/filesys.c:1186
 msgid "No access"
 msgstr ""
 
-#: modules/filesys/filesys.c:1004
+#: modules/filesys/filesys.c:1187
 msgid "Refused DCC chat (no access)"
 msgstr ""
 
-#: modules/filesys/filesys.c:1007
+#: modules/filesys/filesys.c:1190
 msgid "You must have a password set."
 msgstr ""
 
-#: modules/filesys/filesys.c:1008
+#: modules/filesys/filesys.c:1191
 msgid "Refused DCC chat (no password)"
 msgstr ""
 
-#: modules/filesys/filesys.c:1010
+#: modules/filesys/filesys.c:1193
 msgid "Refused DCC chat (+x but no file area)"
 msgstr ""
 
-#: modules/filesys/filesys.c:1020
+#: modules/filesys/filesys.c:1203
 msgid "DCC connection failed"
 msgstr ""
 
-#: modules/filesys/filesys.c:1028
+#: modules/filesys/filesys.c:1211
 msgid "Failed to connect (invalid port)\n"
 msgstr ""
 
-#: modules/filesys/filesys.c:1029
+#: modules/filesys/filesys.c:1212
 msgid "Refused DCC chat (invalid port)"
 msgstr ""
 
 #. Turn off remote telnet echo (send IAC WILL ECHO).
-#: modules/filesys/filesys.c:1047 src/dcc.c:778
+#: modules/filesys/filesys.c:1230 src/dcc.c:778
 msgid "Enter your password."
 msgstr ""
 
-#: modules/filesys/filesys.c:1074
+#: modules/filesys/filesys.c:1257
 #, c-format
 msgid "    DCC file path: %s"
 msgstr ""
 
-#: modules/filesys/filesys.c:1076
+#: modules/filesys/filesys.c:1259
 msgid ""
 "\n"
 "        incoming: (go to the current dir)\n"
 msgstr ""
 
-#: modules/filesys/filesys.c:1078
+#: modules/filesys/filesys.c:1261
 #, c-format
 msgid ""
 "\n"
 "        incoming: %s\n"
 msgstr ""
 
-#: modules/filesys/filesys.c:1080
+#: modules/filesys/filesys.c:1263
 msgid "    (no uploads)\n"
 msgstr ""
 
-#: modules/filesys/filesys.c:1082
+#: modules/filesys/filesys.c:1265
 #, c-format
 msgid "        max users is %d\n"
 msgstr ""
 
-#: modules/filesys/filesys.c:1084
+#: modules/filesys/filesys.c:1267
 #, c-format
 msgid "    DCC max file size: %dk\n"
 msgstr ""
 
-#: modules/filesys/filesys.c:1086
+#: modules/filesys/filesys.c:1269
 msgid "  (Filesystem module loaded, but no active dcc path.)\n"
 msgstr ""
 
-#: modules/filesys/filesys.c:1094
+#: modules/filesys/filesys.c:1277
 msgid "Unloading filesystem, killing all filesystem connections."
 msgstr ""
 
-#: modules/filesys/filesys.c:1097 src/dccutil.c:501
+#: modules/filesys/filesys.c:1280 src/dccutil.c:501
 msgid "-=- poof -=-\n"
 msgstr ""
 
-#: modules/filesys/filesys.c:1099
+#: modules/filesys/filesys.c:1282
 msgid "You have been booted from the filesystem, module unloaded.\n"
-msgstr ""
-
-#: modules/filesys/filesys.c:1146
-msgid "You need the transfer module to use the filesystem module."
 msgstr ""
 
 #: modules/irc/chan.c:316 modules/irc/chan.c:1510
@@ -2752,64 +2746,64 @@ msgstr ""
 msgid "Restarting..."
 msgstr ""
 
-#: src/users.c:187
+#: src/users.c:189
 msgid "placed by"
 msgstr ""
 
-#: src/users.c:202
+#: src/users.c:204
 msgid "Currently ignoring"
 msgstr ""
 
-#: src/users.c:224
+#: src/users.c:226
 msgid "No longer ignoring"
 msgstr ""
 
-#: src/users.c:538
+#: src/users.c:540
 msgid "Cant find anyone matching that"
 msgstr ""
 
-#: src/users.c:558
+#: src/users.c:560
 msgid "Matching"
 msgstr ""
 
-#: src/users.c:564
+#: src/users.c:566
 msgid "skipping first"
 msgstr ""
 
-#: src/users.c:592 src/users.c:600 src/users.c:611
+#: src/users.c:594 src/users.c:602 src/users.c:613
 #, c-format
 msgid "(more than %d matches; list truncated)\n"
 msgstr ""
 
-#: src/users.c:616
+#: src/users.c:618
 #, c-format
 msgid "--- Found %d match%s.\n"
 msgstr ""
 
-#: src/users.c:623
+#: src/users.c:625
 msgid "Backing up user file..."
 msgstr ""
 
-#: src/users.c:691
+#: src/users.c:693
 msgid "Old userfile, use tclsh scripts/weed <userfile> c to convert"
 msgstr ""
 
-#: src/users.c:694
+#: src/users.c:696
 msgid "Invalid userfile format."
 msgstr ""
 
-#: src/users.c:898
+#: src/users.c:900
 msgid "Corrupt user record"
 msgstr ""
 
-#: src/users.c:903
+#: src/users.c:905
 msgid "Duplicate user record"
 msgstr ""
 
-#: src/users.c:914
+#: src/users.c:916
 msgid "Corrupted password reset for"
 msgstr ""
 
-#: src/users.c:935
+#: src/users.c:937
 msgid "Ignored masks for channel(s):"
 msgstr ""
