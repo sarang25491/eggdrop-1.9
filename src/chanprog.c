@@ -3,7 +3,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.41 2002/01/23 22:18:15 ite Exp $
+ * $Id: chanprog.c,v 1.42 2002/02/04 07:27:02 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -363,7 +363,7 @@ Telnet to the bot and enter 'NEW' as your nickname."), 0);
     printf(_("\n\nSTARTING BOT IN USERFILE CREATION MODE.\n\
 Telnet to the bot and enter 'NEW' as your nickname.\n"));
     if (module_find("server", 0, 0))
-      printf(_("OR Go to IRC and:  /msg %s hello\n"), botnetnick);
+      printf(_("OR go to IRC and type:  /msg %s hello\n"), origbotname);
     printf(_("This will make the bot recognize you as the master.\n\n"));
   } else if (make_userfile) {
      make_userfile = 0;
