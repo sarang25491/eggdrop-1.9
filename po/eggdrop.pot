@@ -7,7 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2003-12-16 19:36-0600\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2003-12-17 00:15-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -35,16 +36,19 @@ msgstr ""
 msgid "%s: option `%s' requires an argument\n"
 msgstr ""
 
+#. --option
 #: lib/compat/getopt.c:758
 #, c-format
 msgid "%s: unrecognized option `--%s'\n"
 msgstr ""
 
+#. +option or -option
 #: lib/compat/getopt.c:762
 #, c-format
 msgid "%s: unrecognized option `%c%s'\n"
 msgstr ""
 
+#. 1003.2 specifies the format of this message.
 #: lib/compat/getopt.c:788
 #, c-format
 msgid "%s: illegal option -- %c\n"
@@ -55,6 +59,7 @@ msgstr ""
 msgid "%s: invalid option -- %c\n"
 msgstr ""
 
+#. 1003.2 specifies the format of this message.
 #: lib/compat/getopt.c:821 lib/compat/getopt.c:951
 #, c-format
 msgid "%s: option requires an argument -- %c\n"
@@ -80,16 +85,22 @@ msgstr ""
 msgid "Nick change was too fast."
 msgstr ""
 
+#. Usually if we get this then we really messed up somewhere
+#. * or this is a non-standard server, so we log it and kill the socket
+#. * hoping the next server will work :) -poptix
+#.
 #: modules/server/input.c:459
 #, c-format
 msgid "%s says I'm not registered, trying next one."
 msgstr ""
 
+#. Kill bot incase a botchk is run from crond.
 #: src/bg.c:126
 #, c-format
 msgid "Fatal: Could not write pid file '%s'.\n"
 msgstr ""
 
+#. Let the bot live since this doesn't appear to be a botchk
 #: src/bg.c:133 src/main.c:510 src/main.c:516
 #, c-format
 msgid "WARNING: Could not write pid file '%s'.\n"
@@ -110,6 +121,7 @@ msgstr ""
 msgid "CANNOT FORK PROCESS."
 msgstr ""
 
+#. We only reach this point in case of an error.
 #: src/bg.c:192 src/bg.c:214 src/bg.c:231
 msgid "COMMUNICATION THROUGH PIPE BROKE."
 msgstr ""
@@ -275,6 +287,7 @@ msgstr ""
 msgid "Last message repeated %d time(s).\n"
 msgstr ""
 
+#. It's too big.
 #: src/logfile.c:249
 #, c-format
 msgid "Cycling logfile %s: over max-logsize (%d kilobytes)."
@@ -337,6 +350,7 @@ msgid ""
 "  FILE  optional config filename (default 'config.xml')\n"
 msgstr ""
 
+#. bug: option not considered.
 #: src/main.c:251
 #, c-format
 msgid "%s: option unknown: %c\n"
