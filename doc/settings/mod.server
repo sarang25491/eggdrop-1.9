@@ -61,13 +61,6 @@ set default-port 6667
     '.jump' or in 'server'
 
 
-set strict-servernames 0
-    Often irc server call themself in another way then there dns is. If
-    you want eggdrop to replace your entry in the config file with this
-    name, set this to 1. If you turn this setting to 0, eggdrop will keep
-    a seperate list of the names irc servers call themselves
-    Valid settings are 0 for OFF and 1 ON.
-
 set server-cycle-wait 60
     This setting defines how long eggdrop should wait before moving from one
     server to another on disconnect.

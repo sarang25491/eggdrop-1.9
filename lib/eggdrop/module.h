@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.5 2001/12/10 03:22:28 guppy Exp $
+ * $Id: module.h,v 1.6 2001/12/18 06:30:54 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -155,7 +155,7 @@
 #define chatout (global[70])
 #define chanout_but ((void(*)())global[71])
 /* 72 - 75 */
-#define check_validity ((int (*) (char *,Function))global[72])
+/* #define check_validity ((int (*) (char *,Function))global[72]) */
 #define list_delete ((int (*)( struct list_type **, struct list_type *))global[73])
 #define list_append ((int (*) ( struct list_type **, struct list_type *))global[74])
 #define list_contains ((int (*) (struct list_type *, struct list_type *))global[75])

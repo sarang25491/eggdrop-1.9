@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.5 2001/12/18 05:33:19 guppy Exp $
+ * $Id: servmsg.c,v 1.6 2001/12/18 06:30:55 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -212,13 +212,7 @@ static int got001(char *from, char *ignore, char *msg)
     }
     if (x->realname)
       free(x->realname);
-    if (strict_servernames == 1) {
-      x->realname = NULL;
-      if (x->name)
-	free(x->name);
-      malloc_strcpy(x->name, from);
-    } else
-      malloc_strcpy(x->realname, from);
+    malloc_strcpy(x->realname, from);
   }
   return 0;
 }
@@ -955,15 +949,9 @@ static int whoispenalty(char *from, char *msg)
   if (x && use_penalties) {
     i = ii = 0;
     for (; x; x = x->next) {
-      if (i == curserv) {
-        if ((strict_servernames == 1) || !x->realname) {
-          if (strcmp(x->name, from))
+      if (i == curserv)
+          if (strcmp(x->name, from) || strcmp(x->realname, from))
             ii = 1;
-        } else {
-          if (strcmp(x->realname, from))
-            ii = 1;
-        }
-      }
       i++;
     }
     if (ii) {
@@ -1115,7 +1103,6 @@ static void server_resolve_failure(int servidx)
 
 static void server_resolve_success(int servidx)
 {
-  int oldserv = dcc[servidx].u.dns->ibuf;
   char s[121], pass[121];
 
   resolvserv = 0;

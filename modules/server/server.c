@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.6 2001/12/18 05:33:19 guppy Exp $
+ * $Id: server.c,v 1.7 2001/12/18 06:30:55 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -64,7 +64,6 @@ static time_t server_cycle_wait;	/* seconds to wait before
 					   re-beginning the server list */
 static char botrealname[121];	/* realname of bot */
 static int server_timeout;	/* server timeout for connecting */
-static int strict_servernames;	/* don't update server list */
 static struct server_list *serverlist;	/* old-style queue, still used by
 					   server list */
 static int cycle_time;		/* cycle time till next server connect */
@@ -1000,10 +999,6 @@ static void next_server(int *ptr, char *serv, unsigned int *port, char *pass)
 	if (!strcasecmp(x->name, serv)) {
 	  *ptr = i;
 	  return;
-	} else if (x->realname && !strcasecmp(x->realname, serv)) {
-	  *ptr = i;
-	  strncpyz(serv, x->realname, sizeof serv);
-	  return;
 	}
       }
       i++;
@@ -1043,59 +1038,6 @@ static void next_server(int *ptr, char *serv, unsigned int *port, char *pass)
     strcpy(pass, x->pass);
   else
     pass[0] = 0;
-}
-
-static int server_6char STDVAR
-{
-  Function F = (Function) cd;
-  char x[20];
-
-  BADARGS(7, 7, " nick user@host handle desto/chan keyword/nick text");
-  CHECKVALIDITY(server_6char);
-  snprintf(x, sizeof x, "%d",
-	       F(argv[1], argv[2], argv[3], argv[4], argv[5], argv[6]));
-  Tcl_AppendResult(irp, x, NULL);
-  return TCL_OK;
-}
-
-static int server_5char STDVAR
-{
-  Function F = (Function) cd;
-
-  BADARGS(6, 6, " nick user@host handle channel text");
-  CHECKVALIDITY(server_5char);
-  F(argv[1], argv[2], argv[3], argv[4], argv[5]);
-  return TCL_OK;
-}
-
-static int server_2char STDVAR
-{
-  Function F = (Function) cd;
-
-  BADARGS(3, 3, " nick msg");
-  CHECKVALIDITY(server_2char);
-  F(argv[1], argv[2]);
-  return TCL_OK;
-}
-
-static int server_msg STDVAR
-{
-  Function F = (Function) cd;
-
-  BADARGS(5, 5, " nick uhost hand buffer");
-  CHECKVALIDITY(server_msg);
-  F(argv[1], argv[2], get_user_by_handle(userlist, argv[3]), argv[4]);
-  return TCL_OK;
-}
-
-static int server_raw STDVAR
-{
-  Function F = (Function) cd;
-
-  BADARGS(4, 4, " from code args");
-  CHECKVALIDITY(server_raw);
-  Tcl_AppendResult(irp, int_to_base10(F(argv[1], argv[3])), NULL);
-  return TCL_OK;
 }
 
 /* Read/write normal string variable.
@@ -1283,7 +1225,6 @@ static tcl_ints my_tcl_ints[] =
   {"server-timeout",		&server_timeout,		0},
   {"server-online",		(int *) &server_online,		2},
   {"keep-nick",			&keepnick,			0},
-  {"strict-servernames",	&strict_servernames,		0},
   {"check-stoned",		&check_stoned,			0},
   {"quiet-reject",		&quiet_reject,			0},
   {"max-queue-msg",		&maxqmsg,			0},
@@ -1753,7 +1694,6 @@ char *start(Function *global_funcs)
   server_cycle_wait = 60;
   strcpy(botrealname, "A deranged product of evil coders");
   server_timeout = 60;
-  strict_servernames = 0;
   serverlist = NULL;
   cycle_time = 0;
   default_port = 6667;
