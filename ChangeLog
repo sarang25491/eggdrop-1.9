@@ -1,3 +1,12 @@
+2001-10-20 21:57  stdarg <stdarg@techmonkeys.org>
+
+	* src/: dcc.c, modules.c, tclhash.c, tclhash.h, mod/module.h:
+
+	* Added Oskar Liljeblad's patch to convert H_chat, H_act, and
+	H_bcst.  
+	* Experimented with changing around the chat bind so it's called
+	before text is sent, and is breakable.  
+
 2001-10-20 10:22  stdarg <stdarg@techmonkeys.org>
 
 	* src/: modules.c, tclhash.c, tclhash.h, mod/module.h,
