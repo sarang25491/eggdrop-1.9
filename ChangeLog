@@ -1,3 +1,13 @@
+2001-10-14 19:30  Federico Mennite <ite@techmonkeys.org>
+
+	* acinclude.m4:
+
+	* Removed old shell customization on Ultrix. It should work fine
+	now.  
+	* Fixed wrong $host_os match for NextStep.  
+	* In a debug build, link with Electric Fence Malloc Debugger if
+	detected.  
+
 2001-10-14 16:59  stdarg <stdarg@techmonkeys.org>
 
 	* src/: script.c, script_api.h, mod/tclscript.mod/tclscript.c:
