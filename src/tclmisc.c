@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tclmisc.c,v 1.60 2003/01/29 07:42:50 wcc Exp $";
+static const char rcsid[] = "$Id: tclmisc.c,v 1.61 2003/01/30 07:47:17 wcc Exp $";
 #endif
 
 #include "main.h"
@@ -300,7 +300,6 @@ static char *script_md5(char *data)
   MD5_CTX md5context;
   char *hex;
   unsigned char digest[16];
-  int i;
 
   MD5_Init(&md5context);
   MD5_Update(&md5context, data, strlen(data));

@@ -9,7 +9,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: net.c,v 1.65 2002/10/11 00:49:20 wcc Exp $";
+static const char rcsid[] = "$Id: net.c,v 1.66 2003/01/30 07:47:17 wcc Exp $";
 #endif
 
 #include <fcntl.h>
@@ -1253,14 +1253,15 @@ int sock_has_data(int type, int sock)
  */
 int flush_inbuf(int idx)
 {
-  int i, len;
+  int i;
   char *inbuf;
 
   assert((idx >= 0) && (idx < dcc_total));
   for (i = 0; i < MAXSOCKS; i++) {
-    if ((dcc[idx].sock == socklist[i].sock)
-        && !(socklist[i].flags & SOCK_UNUSED)) {
-      len = socklist[i].inbuflen;
+    if ((dcc[idx].sock == socklist[i].sock) &&
+        !(socklist[i].flags & SOCK_UNUSED)) {
+      int len = socklist[i].inbuflen;
+
       if ((len > 0) && socklist[i].inbuf) {
         if (dcc[idx].type && dcc[idx].type->activity) {
           inbuf = socklist[i].inbuf;

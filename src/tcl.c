@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tcl.c,v 1.91 2003/01/30 03:05:18 wcc Exp $";
+static const char rcsid[] = "$Id: tcl.c,v 1.92 2003/01/30 07:47:17 wcc Exp $";
 #endif
 
 #include <stdlib.h>		/* getenv()				*/
@@ -52,7 +52,7 @@ typedef struct {
 extern time_t online_since;
 
 extern int flood_telnet_thr, flood_telnet_time, learn_users, default_flags,
-           conmask; firewallport, notify_users_at, ignore_time,
+           conmask, firewallport, notify_users_at, ignore_time,
            reserved_port_min, reserved_port_max, die_on_sighup, die_on_sigterm,
            dcc_total, raw_log, identtimeout, egg_numver, userfile_perm,
            default_uflags, strict_host;

@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: userrec.c,v 1.56 2003/01/30 03:05:18 wcc Exp $";
+static const char rcsid[] = "$Id: userrec.c,v 1.57 2003/01/30 07:47:17 wcc Exp $";
 #endif
 
 #include <sys/stat.h>
@@ -355,10 +355,10 @@ int write_ignores(FILE *f, int idx)
                 i->user ? i->user : botnetnick, i->added,
                 i->msg ? i->msg : "") == EOF) {
       if (mask)
-        nfree(mask);
+        free(mask);
       return 0;
     }
-    nfree(mask);
+    free(mask);
   }
   return 1;
 }
