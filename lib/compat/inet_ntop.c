@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: inet_ntop.c,v 1.2 2002/05/05 16:40:32 tothwolf Exp $";
+static const char rcsid[] = "$Id: inet_ntop.c,v 1.3 2004/12/22 21:07:15 lordares Exp $";
 #endif
 
 #if defined(LIBC_SCCS) && !defined(lint)
@@ -79,8 +79,10 @@ inet_ntop(af, src, dst, size)
 	switch (af) {
 	case AF_INET:
 		return (inet_ntop4(src, dst, size));
+#ifdef IPV6
 	case AF_INET6:
 		return (inet_ntop6(src, dst, size));
+#endif
 	default:
 /*		__set_errno (EAFNOSUPPORT); */
 		return (NULL);
