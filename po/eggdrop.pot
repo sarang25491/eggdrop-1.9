@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-06-07 12:15-0500\n"
+"POT-Creation-Date: 2004-06-07 18:15-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -208,43 +208,43 @@ msgstr ""
 msgid "Syntax: .perl <perlexpression>"
 msgstr ""
 
-#: modules/server/input.c:255
+#: modules/server/input.c:244
 #, c-format
 msgid "Action: %s %s"
 msgstr ""
 
-#: modules/server/input.c:422
+#: modules/server/input.c:411
 #, c-format
 msgid "NICK IS INVALID: %s (keeping '%s')."
 msgstr ""
 
-#: modules/server/input.c:425
+#: modules/server/input.c:414
 #, c-format
 msgid "Server says my nickname ('%s') is invalid, trying new random nick."
 msgstr ""
 
 #. We are online and have a nickname, we'll keep it
-#: modules/server/input.c:441
+#: modules/server/input.c:430
 #, c-format
 msgid "Nick is in use: '%s' (keeping '%s')."
 msgstr ""
 
-#: modules/server/input.c:444
+#: modules/server/input.c:433
 #, c-format
 msgid "Nick is in use: '%s' (trying next one)."
 msgstr ""
 
-#: modules/server/input.c:457
+#: modules/server/input.c:446
 #, c-format
 msgid "Cannot change to banned nickname (%s on %s)."
 msgstr ""
 
-#: modules/server/input.c:467
+#: modules/server/input.c:456
 #, c-format
 msgid "Can't change nickname to %s. Is my nickname banned?"
 msgstr ""
 
-#: modules/server/input.c:480
+#: modules/server/input.c:469
 msgid "Nick change was too fast."
 msgstr ""
 
@@ -252,156 +252,156 @@ msgstr ""
 #. * or this is a non-standard server, so we log it and kill the socket
 #. * hoping the next server will work :) -poptix
 #.
-#: modules/server/input.c:490
+#: modules/server/input.c:479
 #, c-format
 msgid "%s says I'm not registered, trying next one."
 msgstr ""
 
-#: modules/server/input.c:491
+#: modules/server/input.c:480
 msgid "The server says I'm not registered, trying next one."
 msgstr ""
 
-#: modules/server/input.c:513
+#: modules/server/input.c:502
 msgid "Disconnecting from server."
 msgstr ""
 
-#: modules/server/input.c:514
+#: modules/server/input.c:503
 msgid "disconnecting due to error"
 msgstr ""
 
-#: modules/server/nicklist.c:43
+#: modules/server/nicklist.c:37
 #, c-format
 msgid "Using random nick because %s."
 msgstr ""
 
-#: modules/server/nicklist.c:43
+#: modules/server/nicklist.c:37
 msgid "none of the defined nicks are valid"
 msgstr ""
 
-#: modules/server/nicklist.c:43
+#: modules/server/nicklist.c:37
 msgid "there are no nicks defined"
 msgstr ""
 
-#: modules/server/party_commands.c:39
+#: modules/server/party_commands.c:30
 msgid "The server list is empty."
 msgstr ""
 
-#: modules/server/party_commands.c:40
+#: modules/server/party_commands.c:31
 #, c-format
 msgid "%d server%s:"
 msgstr ""
 
-#: modules/server/party_commands.c:42
+#: modules/server/party_commands.c:33
 #, c-format
 msgid "   %s (port %d)%s"
 msgstr ""
 
-#: modules/server/party_commands.c:42 modules/server/party_commands.c:43
+#: modules/server/party_commands.c:33 modules/server/party_commands.c:34
 msgid " (password set)"
 msgstr ""
 
-#: modules/server/party_commands.c:43
+#: modules/server/party_commands.c:34
 #, c-format
 msgid "   %s (default port)%s"
 msgstr ""
 
-#: modules/server/party_commands.c:77
+#: modules/server/party_commands.c:68
 msgid "Syntax: +server <host> [port] [pass]"
 msgstr ""
 
-#: modules/server/party_commands.c:82
+#: modules/server/party_commands.c:73
 msgid "Please specify a valid host."
 msgstr ""
 
-#: modules/server/party_commands.c:87 modules/server/party_commands.c:133
+#: modules/server/party_commands.c:78 modules/server/party_commands.c:124
 #, c-format
 msgid "Added %s/%d.\n"
 msgstr ""
 
-#: modules/server/party_commands.c:98
+#: modules/server/party_commands.c:89
 msgid "Syntax: -server <host> [port] [pass]"
 msgstr ""
 
-#: modules/server/party_commands.c:105
+#: modules/server/party_commands.c:96
 msgid "No matching servers."
 msgstr ""
 
-#: modules/server/party_commands.c:108
+#: modules/server/party_commands.c:99
 #, c-format
 msgid "Deleted server %d."
 msgstr ""
 
-#: modules/server/party_commands.c:116
+#: modules/server/party_commands.c:107
 msgid "Syntax: dump <server stuff>"
 msgstr ""
 
-#: modules/server/party_commands.c:151
+#: modules/server/party_commands.c:142
 #, c-format
 msgid "Syntax: %s <nick/chan> <message>"
 msgstr ""
 
-#: modules/server/party_commands.c:156
+#: modules/server/party_commands.c:147
 #, c-format
 msgid "Msg to %1$s: %2$s"
 msgstr ""
 
-#: modules/server/party_commands.c:168
+#: modules/server/party_commands.c:159
 msgid "Syntax: act <nick/chan> <action>"
 msgstr ""
 
-#: modules/server/party_commands.c:173
+#: modules/server/party_commands.c:164
 #, c-format
 msgid "Action to %1$s: %2$s"
 msgstr ""
 
-#: modules/server/server.c:104
+#: modules/server/server.c:95
 #, c-format
 msgid "   Connecting to server %s/%d."
 msgstr ""
 
-#: modules/server/server.c:105
+#: modules/server/server.c:96
 #, c-format
 msgid "   Connecting to next server in %d seconds."
 msgstr ""
 
 #. First line, who we've connected to.
-#: modules/server/server.c:109
+#: modules/server/server.c:100
 #, c-format
 msgid "   Connected to %s/%d."
 msgstr ""
 
-#: modules/server/server.c:113
+#: modules/server/server.c:104
 #, c-format
 msgid "   Online as %s!%s@%s (%s)."
 msgstr ""
 
-#: modules/server/server.c:114
+#: modules/server/server.c:105
 #, c-format
 msgid "   Online as %s (still waiting for WHOIS result)."
 msgstr ""
 
-#: modules/server/server.c:116
+#: modules/server/server.c:107
 msgid "   Still logging in."
 msgstr ""
 
-#: modules/server/server.c:168
+#: modules/server/server.c:159
 msgid "server module unloading"
 msgstr ""
 
-#: modules/server/servsock.c:63
+#: modules/server/servsock.c:51
 msgid "Error connecting to next server: no servers are defined!"
 msgstr ""
 
-#: modules/server/servsock.c:76
+#: modules/server/servsock.c:64
 #, c-format
 msgid "Connecting to %s (%d)."
 msgstr ""
 
-#: modules/server/servsock.c:79
+#: modules/server/servsock.c:67
 msgid "Error connecting to server."
 msgstr ""
 
-#: modules/server/servsock.c:151
+#: modules/server/servsock.c:139
 #, c-format
 msgid "Connected to %s, logging in."
 msgstr ""
