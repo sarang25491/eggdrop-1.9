@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tcldcc.c,v 1.63 2002/05/12 05:59:52 stdarg Exp $";
+static const char rcsid[] = "$Id: tcldcc.c,v 1.64 2002/05/12 06:23:39 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -807,7 +807,7 @@ static int script_traffic(script_var_t *retval)
 		script_int(traffic.in_today.unknown),
 		script_int(traffic.in_today.unknown + traffic.in_total.unknown),
 		script_int(traffic.out_today.unknown),
-		script_int(traffic.out_today.unknown + traffic.out_total.dcc));
+		script_int(traffic.out_today.unknown + traffic.out_total.unknown));
 	script_list_append(retval, sublist);
 
 	/* Totals */

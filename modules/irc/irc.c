@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: irc.c,v 1.18 2002/05/12 05:59:51 stdarg Exp $";
+static const char rcsid[] = "$Id: irc.c,v 1.19 2002/05/12 06:23:39 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "irc"
@@ -885,7 +885,7 @@ static char *irc_close()
   if (BT_raw) rem_builtins2(BT_raw, irc_raw);
   if (BT_msg) rem_builtins2(BT_msg, C_msg);
 
-  script_delete_cmd_table(irc_script_cmds);
+  script_delete_commands(irc_script_cmds);
   rem_help_reference("irc.help");
   del_hook(HOOK_MINUTELY, (Function) check_expired_chanstuff);
   del_hook(HOOK_5MINUTELY, (Function) status_log);

@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: server.c,v 1.18 2002/05/12 05:59:51 stdarg Exp $";
+static const char rcsid[] = "$Id: server.c,v 1.19 2002/05/12 06:23:39 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "server"
@@ -1537,7 +1537,7 @@ static char *server_close()
   rem_tcl_strings(my_tcl_strings);
   rem_tcl_ints(my_tcl_ints);
   rem_help_reference("server.help");
-  script_delete_cmd_table(server_script_cmds);
+  script_delete_commands(server_script_cmds);
   Tcl_UntraceVar(interp, "nick",
 		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		 nick_change, NULL);
