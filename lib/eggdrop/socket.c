@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: socket.c,v 1.5 2004/06/25 17:44:04 darko Exp $";
+static const char rcsid[] = "$Id: socket.c,v 1.6 2004/06/30 21:07:02 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -32,8 +32,7 @@ static const char rcsid[] = "$Id: socket.c,v 1.5 2004/06/25 17:44:04 darko Exp $
 #include <fcntl.h>
 #include <errno.h>
 
-#include <eggdrop/memory.h>
-#include <eggdrop/socket.h>
+#include <eggdrop/eggdrop.h>
 
 /* Apparently SHUT_RDWR is not defined on some systems. */
 #ifndef SHUT_RDWR
@@ -116,6 +115,7 @@ int socket_get_name(int sock, char **ip, int *port)
 		if (ip) {
 			*ip = malloc(128);
 			inet_ntop(AF_INET6, &name.u.ipv6.sin6_addr, *ip, 128);
+			if (IN6_IS_ADDR_V4MAPPED((&name.u.ipv6.sin6_addr))) memmove(*ip, *ip+7, strlen(*ip)-7);
 		}
 		if (port) *port = ntohs(name.u.ipv6.sin6_port);
 		return(0);
@@ -191,6 +191,7 @@ int socket_accept(int sock, char **peer_ip, int *peer_port)
 		*peer_ip = malloc(128);
 		*peer_port = ntohs(name.u.ipv6.sin6_port);
 		inet_ntop(AF_INET6, &name.u.ipv6.sin6_addr, *peer_ip, 128);
+		if (IN6_IS_ADDR_V4MAPPED((&name.u.ipv6.sin6_addr))) memmove(*peer_ip, *peer_ip+7, strlen(*peer_ip)-6);
 	}
 #endif
 	return(newsock);

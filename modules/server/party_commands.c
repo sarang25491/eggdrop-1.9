@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: party_commands.c,v 1.9 2004/06/15 19:19:16 wingman Exp $";
+static const char rcsid[] = "$Id: party_commands.c,v 1.10 2004/06/30 21:07:02 stdarg Exp $";
 #endif
 
 #include "server.h"
@@ -120,9 +120,8 @@ static int party_jump(partymember_t *p, const char *nick, user_t *u, const char 
 		parse_server(text, &host, &port, &pass);
 		num = server_find(host, port, pass);
 		if (num < 0) {
-			server_add(host, port, pass);
-			partymember_printf(p, _("Added %s/%d.\n"), host, port ? port : server_config.default_port);
-			num = 0;
+			num = server_add(host, port, pass);
+			partymember_printf(p, _("Added %s/%d as server #%d.\n"), host, port ? port : server_config.default_port, num+1);
 		}
 		free(host);
 	}

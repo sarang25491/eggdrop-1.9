@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: serverlist.c,v 1.6 2004/06/07 23:14:48 stdarg Exp $";
+static const char rcsid[] = "$Id: serverlist.c,v 1.7 2004/06/30 21:07:02 stdarg Exp $";
 #endif
 
 #include "server.h"
@@ -74,7 +74,7 @@ int server_add(char *host, int port, char *pass)
 
 	server_list_len++;
 
-	return(0);
+	return(server_list_len-1);
 }
 
 static void server_free(server_t *serv)

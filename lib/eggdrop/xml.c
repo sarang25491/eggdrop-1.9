@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xml.c,v 1.18 2004/06/30 17:07:20 wingman Exp $";
+static const char rcsid[] = "$Id: xml.c,v 1.19 2004/06/30 21:07:02 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -236,7 +236,8 @@ xml_node_t *xml_node_path_lookup(xml_node_t *root, const char *path, int index, 
 					break;
 				}
 			}
-		} else {
+		}
+		else {
 			for (i = 0; i < root->nchildren; i++) {			
 				if (root->children[i]->name && !strcasecmp(root->children[i]->name, name)) {
 					if (thisindex-- > 0) continue;
