@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.69 2001/10/14 04:44:36 stdarg Exp $
+ * $Id: modules.c,v 1.70 2001/10/14 14:09:35 ite Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -68,24 +68,6 @@ static int module_rename(char *name, char *newname);
 /* Directory to look for modules */
 char moddir[121] = "modules/";
 
-#else
-
-struct static_list {
-  struct static_list *next;
-  char *name;
-  char *(*func) ();
-} *static_modules = NULL;
-
-void check_static(char *name, char *(*func) ())
-{
-  struct static_list *p = malloc(sizeof(struct static_list));
-
-  malloc_strcpy(p->name, name);
-  p->func = func;
-  p->next = static_modules;
-  static_modules = p;
-}
-
 #endif
 
 
@@ -119,14 +101,14 @@ struct hook_entry *hook_list[REAL_HOOKS];
 static void null_share(int idx, char *x)
 {
   if ((x[0] == 'u') && (x[1] == 'n')) {
-    putlog(LOG_BOTS, "*", "User file rejected by %s: %s",
+    putlog(LOG_BOTS, "*", _("User file rejected by %s: %s"),
 	   dcc[idx].nick, x + 3);
     dcc[idx].status &= ~STAT_OFFERED;
     if (!(dcc[idx].status & STAT_GETTING)) {
       dcc[idx].status &= ~STAT_SHARE;
     }
   } else if ((x[0] != 'v') && (x[0] != 'e'))
-    dprintf(idx, "s un Not sharing userfile.\n");
+    dprintf(idx, _("Not sharing userfile.\n"));
 }
 
 void (*encrypt_pass) (char *, char *) = 0;
@@ -533,7 +515,6 @@ void init_modules(void)
   malloc_strcpy(module_list->name, "eggdrop");
   module_list->major = (egg_numver) / 10000;
   module_list->minor = ((egg_numver) / 100) % 100;
-#ifndef STATIC
   module_list->hand = NULL;
   
   LTDL_SET_PRELOADED_SYMBOLS();
@@ -543,7 +524,7 @@ void init_modules(void)
 		    lt_dlerror());
     fatal(wbuf, 0);
   }
-#endif
+
   module_list->next = NULL;
   module_list->funcs = NULL;
   for (i = 0; i < REAL_HOOKS; i++)
@@ -572,10 +553,8 @@ const char *module_load(char *name)
   Function f;
 #ifndef STATIC
   char workbuf[1024];
-  lt_dlhandle hand;
-#else
-  struct static_list *sl;
 #endif
+  lt_dlhandle hand;
 
   if (module_find(name, 0, 0) != NULL)
     return _("Already loaded.");
@@ -587,6 +566,9 @@ const char *module_load(char *name)
   } else
     sprintf(workbuf, "%s%s", moddir, name);
   hand = lt_dlopenext(workbuf);
+#else
+  hand = lt_dlopenext(name);
+#endif
   if (!hand)
     return lt_dlerror();
 
@@ -595,21 +577,13 @@ const char *module_load(char *name)
     lt_dlclose(hand);
       return _("No start function defined.");
     }
-#else
-  for (sl = static_modules; sl && egg_strcasecmp(sl->name, name); sl = sl->next);
-  if (!sl)
-    return "Unknown module.";
-  f = (Function) sl->func;
-#endif
   p = malloc(sizeof(module_entry));
   if (p == NULL)
-    return "Malloc error";
+    return _("Malloc error");
   malloc_strcpy(p->name, name);
   p->major = 0;
   p->minor = 0;
-#ifndef STATIC
   p->hand = hand;
-#endif
   p->funcs = 0;
   p->next = module_list;
   module_list = p;
@@ -647,9 +621,7 @@ char *module_unload(char *name, char *user)
 	e = (((char *(*)()) f[MODCALL_CLOSE]) (user));
 	if (e != NULL)
 	  return e;
-#ifndef STATIC
 	lt_dlclose(p->hand);
-#endif				/* STATIC */
       }
       free(p->name);
       if (o == NULL) {
@@ -658,7 +630,7 @@ char *module_unload(char *name, char *user)
 	o->next = p->next;
       }
       free(p);
-      putlog(LOG_MISC, "*", "%s %s", _("Module unloaded:"), name);
+      putlog(LOG_MISC, "*", _("Module unloaded: %s"), name);
       return NULL;
     }
     o = p;
@@ -883,7 +855,7 @@ void do_module_report(int idx, int details, char *which)
   module_entry *p = module_list;
 
   if (p && !which && details)
-    dprintf(idx, "MODULES LOADED:\n");
+    dprintf(idx, _("MODULES LOADED:\n"));
   for (; p; p = p->next) {
     if (!which || !egg_strcasecmp(which, p->name)) {
       dependancy *d;
@@ -908,5 +880,5 @@ void do_module_report(int idx, int details, char *which)
     }
   }
   if (which)
-    dprintf(idx, "No such module.\n");
+    dprintf(idx, _("No such module.\n"));
 }

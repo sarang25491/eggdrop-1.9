@@ -1,7 +1,7 @@
 /*
  * modvals.h
  *
- * $Id: modvals.h,v 1.25 2001/10/12 15:50:26 tothwolf Exp $
+ * $Id: modvals.h,v 1.26 2001/10/14 14:09:35 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -91,9 +91,7 @@ typedef struct _module_entry {
   char			*name;	/* Name of the module (without .so)	*/
   int			 major;	/* Major version number MUST match	*/
   int			 minor;	/* Minor version number MUST be >=	*/
-#ifndef STATIC
   lt_dlhandle		hand;
-#endif		/* STATIC */
   Function		*funcs;
 } module_entry;
 

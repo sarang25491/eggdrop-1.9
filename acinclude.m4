@@ -1,7 +1,7 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.5 2001/10/13 21:36:58 tothwolf Exp $
+dnl $Id: acinclude.m4,v 1.6 2001/10/14 14:09:35 ite Exp $
 dnl
 
 
@@ -1098,6 +1098,25 @@ AC_MSG_RESULT($ALL_LINGUAS)
 
 AM_GNU_GETTEXT
 ])
+
+
+dnl  EGG_LIBTOOL
+dnl
+AC_DEFUN(EGG_LIBTOOL, [dnl
+AC_DISABLE_FAST_INSTALL
+AC_DISABLE_STATIC
+AC_LIBTOOL_WIN32_DLL
+AC_LIBLTDL_CONVENIENCE
+AC_SUBST(INCLTDL)
+AC_SUBST(LIBLTDL)
+AC_LIBTOOL_DLOPEN
+AM_PROG_LIBTOOL
+
+if test "x$enable_shared" = "xno"
+then
+  AC_DEFINE_UNQUOTED(STATIC, 1, Define if build is static)
+fi
+])dnl
 
 
 dnl  EGG_DEBUG_OPTIONS

@@ -337,9 +337,7 @@ README
                system CAN'T run modules it will setup 'make' to
                link the modules in statically for you, you can
                also choose this option if you can do dynamic
-               modules by typing 'make static'. You can also try
-               to compile dynamic modules on a static-only system
-               by typing 'make eggdrop'.
+               modules by typing 'configure --disable-shared'.
 
                8.1 DO I STILL NEED TO 'loadmodule modules' ???
 
@@ -433,8 +431,7 @@ README
                --enable-shared' when you configure TCL (not the
                bot) and then remake, & reinstall
                (2) if it's not you machine, you make have to
-               resort to 'make static' and 'make sinstall
-               DESTDIR=<dir>' to make and install your bot.
+               resort to './configure --disable-shared'.
                (3) if you are of a more aggressive sense of mind,
                go beat the stuffing out of your admin for have
                lame static libraries :)

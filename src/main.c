@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.83 2001/10/14 04:44:36 stdarg Exp $
+ * $Id: main.c,v 1.84 2001/10/14 14:09:35 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -630,11 +630,6 @@ void kill_tcl();
 extern module_entry *module_list;
 void restart_chons();
 
-#ifdef STATIC
-void check_static(char *, char *(*)());
-
-#include "mod/static.h"
-#endif
 int init_dcc_max(), init_userent(), init_misc(), init_net(),
  init_modules(), init_tcl(int, char **);
 void botnet_init();
@@ -769,9 +764,6 @@ int main(int argc, char **argv)
 
   init_tcl(argc, argv);
 
-#ifdef STATIC
-  link_statics();
-#endif
   strncpyz(s, ctime(&now), sizeof s);
   strcpy(&s[11], &s[20]);
   putlog(LOG_ALL, "*", "--- Loading %s (%s)", ver, s);
