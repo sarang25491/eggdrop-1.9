@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-02-14 18:15-0600\n"
+"POT-Creation-Date: 2004-02-15 00:15-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -634,17 +634,69 @@ msgstr ""
 msgid "'%s' is not a valid user."
 msgstr ""
 
-#: src/core_party.c:469
-msgid "Loaded modules:"
-msgstr ""
-
-#: src/core_party.c:480
+#: src/core_party.c:468
 msgid "Syntax: help <section>"
 msgstr ""
 
-#: src/core_party.c:486
+#: src/core_party.c:474
 #, c-format
 msgid "No help found for '%s'."
+msgstr ""
+
+#: src/core_party.c:494
+msgid "Loaded modules:"
+msgstr ""
+
+#: src/core_party.c:503
+msgid "Syntax: loadmod <module name>"
+msgstr ""
+
+#: src/core_party.c:508
+#, c-format
+msgid "Module '%s' loaded successfully."
+msgstr ""
+
+#: src/core_party.c:511
+#, c-format
+msgid "Module '%s' is already loaded."
+msgstr ""
+
+#: src/core_party.c:514
+#, c-format
+msgid "Module '%s' could not be loaded."
+msgstr ""
+
+#: src/core_party.c:517
+#, c-format
+msgid ""
+"Module '%s' does not have a valid initialization function. Perhaps it is not "
+"an eggdrop module?"
+msgstr ""
+
+#: src/core_party.c:526
+msgid "Syntax: unloadmod <module name>"
+msgstr ""
+
+#: src/core_party.c:531
+#, c-format
+msgid "Module '%s' unloaded successfully."
+msgstr ""
+
+#: src/core_party.c:534
+#, c-format
+msgid "Module '%s' is not loaded."
+msgstr ""
+
+#: src/core_party.c:537
+#, c-format
+msgid ""
+"Module '%s' has dependencies that are still loaded. You must unload them "
+"first."
+msgstr ""
+
+#: src/core_party.c:540
+#, c-format
+msgid "Module '%s' refuses to be unloaded by you!"
 msgstr ""
 
 #: src/logfile.c:124
