@@ -27,6 +27,8 @@
 
 #include "internal.h"
 
+#include <stdlib.h>	/* abort() */
+
 void adns_checkconsistency(adns_state ads, adns_query qu) {
   adns__consistency(ads,qu,cc_user);
 }
