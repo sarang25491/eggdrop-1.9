@@ -1,3 +1,21 @@
+2002-05-12 05:59  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/Makefile.am, lib/eggdrop/eggdrop.h,
+	lib/eggdrop/registry.c, lib/eggdrop/registry.h,
+	lib/eggdrop/script.c, lib/eggdrop/script.h,
+	modules/blowfish/blowfish.c, modules/channels/channels.c,
+	modules/irc/irc.c, modules/javascript/javascript.c,
+	modules/perlscript/mod_iface.c, modules/perlscript/perlscript.c,
+	modules/server/server.c, modules/tclscript/tclscript.c, src/dcc.c,
+	src/dns.c, src/egg_timer.c, src/logfile.c, src/tcl.c, src/tcldcc.c,
+	src/tclhash.c, src/tclmisc.c, src/users.c:
+
+	
+	* Converting the scripting modules to using a well-defined interface
+	rather than the general registry.  
+	* Converted the 'traffic' command.  
+	* Got rid of the registry since it wasn't needed anymore.  
+
 2002-05-11 01:08  stdarg <stdarg@techmonkeys.org>
 
 	* modules/javascript/javascript.c, src/cmds.c:
