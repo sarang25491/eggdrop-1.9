@@ -1,3 +1,9 @@
+2002-01-07 21:04  Federico Mennite <ite@techmonkeys.org>
+
+	* lib/eggdrop/memutil.h:
+
+	Missing extern's from lib/eggdrop/memutil.h 
+
 2002-01-07 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
