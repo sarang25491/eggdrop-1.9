@@ -165,7 +165,7 @@ int config_set_int(int intval, void *config_root, ...)
 
 		name = xml_node_fullname(root);
 		gconfig_level++;
-		r = bind_check(BT_config_int, name, name, intval);
+		r = bind_check(BT_config_int, NULL, name, name, intval);
 		gconfig_level--;
 		free(name);
 		if (r & BIND_RET_BREAK) return(-1);
@@ -195,7 +195,7 @@ int config_set_str(char *strval, void *config_root, ...)
 
 		name = xml_node_fullname(root);
 		gconfig_level++;
-		r = bind_check(BT_config_str, name, name, strval);
+		r = bind_check(BT_config_str, NULL, name, name, strval);
 		gconfig_level--;
 		free(name);
 		if (r & BIND_RET_BREAK) return(-1);

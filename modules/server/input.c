@@ -21,7 +21,7 @@ int server_parse_input(char *text)
 		free(global_input_string);
 		global_input_string = NULL;
 	}
-	r = bind_check(BT_server_input, text, text);
+	r = bind_check(BT_server_input, NULL, text, text);
 	if (r & BIND_RET_BREAK) return(0);
 	if (global_input_string) text = global_input_string;
 
@@ -51,7 +51,7 @@ int server_parse_input(char *text)
 		}
 	}
 
-	bind_check(BT_raw, msg.cmd, from_nick, from_uhost, u, msg.cmd, msg.nargs, msg.args);
+	bind_check(BT_raw, NULL, msg.cmd, from_nick, from_uhost, u, msg.cmd, msg.nargs, msg.args);
 	return(0);
 }
 
@@ -66,7 +66,7 @@ static int got001(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 	/* Save the name the server calls itself. */
 	str_redup(&current_server.server_self, from_nick);
 
-	check_bind_event("init-server");
+	eggdrop_event("init-server");
 
 	/* If the init-server bind made us leave the server, stop processing. */
 	if (!current_server.registered) return BIND_RET_BREAK;
@@ -200,7 +200,7 @@ static int check_ctcp_ctcr(int which, int to_channel, user_t *u, char *nick, cha
 	if (which == 0) table = BT_ctcp;
 	else table = BT_ctcr;
 
-	r = bind_check(table, cmd, nick, uhost, u, dest, cmd, text);
+	r = bind_check(table, u ? &u->settings[0].flags : NULL, cmd, nick, uhost, u, dest, cmd, text);
 
 	if (!(r & BIND_RET_BREAK)) {
 		if (which == 0) ctcptype = "";
@@ -272,13 +272,13 @@ static int gotmsg(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 	else text = "";
 
 	if (to_channel) {
-		r = bind_check(BT_pub, first, from_nick, from_uhost, u, dest, text);
+		r = bind_check(BT_pub, u ? &u->settings[0].flags : NULL, first, from_nick, from_uhost, u, dest, text);
 		if (r & BIND_RET_LOG) {
 			putlog(LOG_CMDS, dest, "<<%s>> !%s! %s %s", from_nick, u ? u->handle : "*", first, text);
 		}
 	}
 	else {
-		r = bind_check(BT_msg, first, from_nick, from_uhost, u, text);
+		r = bind_check(BT_msg, u ? &u->settings[0].flags : NULL, first, from_nick, from_uhost, u, text);
 		if (r & BIND_RET_LOG) {
 			putlog(LOG_CMDS, "*", "(%s!%s) !%s! %s %s", from_nick, from_uhost, u ? u->handle : "*", first, text);
 		}
@@ -290,10 +290,10 @@ static int gotmsg(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 
 	/* And now the stackable version. */
 	if (to_channel) {
-		r = bind_check(BT_pubm, trailing, from_nick, from_uhost, u, dest, trailing);
+		r = bind_check(BT_pubm, u ? &u->settings[0].flags : NULL, trailing, from_nick, from_uhost, u, dest, trailing);
 	}
 	else {
-		r = bind_check(BT_msgm, trailing, from_nick, from_uhost, u, trailing);
+		r = bind_check(BT_msgm, u ? &u->settings[0].flags : NULL, trailing, from_nick, from_uhost, u, trailing);
 	}
 
 	if (!(r & BIND_RET_BREAK)) {
@@ -340,7 +340,7 @@ static int gotnotice(char *from_nick, char *from_uhost, user_t *u, char *cmd, in
 	r = check_ctcp_ctcr(1, to_channel, u, from_nick, from_uhost, dest, trailing);
 	if (r) return(0);
 
-	r = bind_check(BT_notice, trailing, from_nick, from_uhost, u, dest, trailing);
+	r = bind_check(BT_notice, u ? &u->settings[0].flags : NULL, trailing, from_nick, from_uhost, u, dest, trailing);
 
 	if (!(r & BIND_RET_BREAK)) {
 		/* This should probably go in the partyline module later. */
@@ -363,7 +363,7 @@ static int gotwall(char *from_nick, char *from_uhost, user_t *u, char *cmd, int 
 	int r;
 
 	msg = args[1];
-	r = bind_check(BT_wall, msg, from_nick, msg);
+	r = bind_check(BT_wall, NULL, msg, from_nick, msg);
 	if (!(r & BIND_RET_BREAK)) {
 		if (from_uhost) putlog(LOG_WALL, "*", "!%s (%s)! %s", from_nick, from_uhost, msg);
 		else putlog(LOG_WALL, "*", "!%s! %s", from_nick, msg);
@@ -505,20 +505,20 @@ static int got311(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 }
 
 bind_list_t server_raw_binds[] = {
-	{"PRIVMSG", gotmsg},
-	{"NOTICE", gotnotice},
-	{"WALLOPS", gotwall},
-	{"PING", gotping},
-	{"ERROR", goterror},
-	{"001", got001},
-	{"005", got005},
-	{"376", got376},
-	{"432",	got432},
-	{"433",	got433},
-	{"435", got435},
-	{"438", got438},
-	{"437",	got437},
-	{"451",	got451},
-	{"311", got311},
-	{NULL, NULL}
+	{NULL, "PRIVMSG", gotmsg},
+	{NULL, "NOTICE", gotnotice},
+	{NULL, "WALLOPS", gotwall},
+	{NULL, "PING", gotping},
+	{NULL, "ERROR", goterror},
+	{NULL, "001", got001},
+	{NULL, "005", got005},
+	{NULL, "376", got376},
+	{NULL, "432", got432},
+	{NULL, "433", got433},
+	{NULL, "435", got435},
+	{NULL, "438", got438},
+	{NULL, "437", got437},
+	{NULL, "451", got451},
+	{NULL, "311", got311},
+	{NULL, NULL, NULL}
 };

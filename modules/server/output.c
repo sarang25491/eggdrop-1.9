@@ -36,7 +36,7 @@ static void do_output(const char *text, int len)
 		free(global_output_string);
 		global_output_string = NULL;
 	}
-	r = bind_check(BT_server_output, text, text);
+	r = bind_check(BT_server_output, NULL, text, text);
 	if (r & BIND_RET_BREAK) return;
 
 	if (global_output_string) {

@@ -135,13 +135,7 @@ static char *script_unames()
 
 static int script_backup()
 {
-	check_bind_event("backup");
-	return(0);
-}
-
-static int script_callevent(char *event)
-{
-	check_bind_event(event);
+	eggdrop_event("backup");
 	return(0);
 }
 
@@ -182,7 +176,7 @@ script_command_t script_misc_cmds[] = {
 	{"", "die", (Function) script_die, NULL, 0, "s", "?reason?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
 	{"", "unames", (Function) script_unames, NULL, 0, "", "", SCRIPT_STRING | SCRIPT_FREE, 0},
 	{"", "md5", (Function) script_md5, NULL, 1, "s", "data", SCRIPT_STRING | SCRIPT_FREE, 0},
-	{"", "callevent", (Function) script_callevent, NULL, 1, "s", "event", SCRIPT_INTEGER, 0},
+	{"", "eggdrop_event", (Function) eggdrop_event, NULL, 1, "s", "event", SCRIPT_INTEGER, 0},
 	{"", "script_export", script_export, NULL, 3, "ssc", "export-name syntax callback", SCRIPT_INTEGER, 0},
 	{0}
 };

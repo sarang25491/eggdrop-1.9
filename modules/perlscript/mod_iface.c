@@ -44,7 +44,7 @@ static int party_perl(partymember_t *p, char *nick, user_t *u, char *cmd, char *
 }
 
 static bind_list_t my_party_cmds[] = {
-	{"perl", party_perl},
+	{"n", "perl", party_perl},
 	{0}
 };
 

@@ -30,7 +30,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.151 2003/06/11 08:37:39 stdarg Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.152 2003/06/13 03:35:15 stdarg Exp $";
 #endif
 
 #include <ctype.h>
@@ -154,7 +154,7 @@ static void got_fpe(int z)
 
 static void got_term(int z)
 {
-  check_bind_event("sigterm");
+  eggdrop_event("sigterm");
   if (die_on_sigterm) {
     fatal("TERMINATE SIGNAL -- SIGNING OFF", 0);
   } else {
@@ -164,14 +164,14 @@ static void got_term(int z)
 
 static void got_quit(int z)
 {
-  check_bind_event("sigquit");
+  eggdrop_event("sigquit");
   putlog(LOG_MISC, "*", "RECEIVED QUIT SIGNAL (IGNORING)");
   return;
 }
 
 static void got_hup(int z)
 {
-  check_bind_event("sighup");
+  eggdrop_event("sighup");
   if (die_on_sighup) {
     fatal("HANGUP SIGNAL -- SIGNING OFF", 0);
   } else
@@ -184,7 +184,7 @@ static void got_hup(int z)
  */
 static void got_ill(int z)
 {
-  check_bind_event("sigill");
+  eggdrop_event("sigill");
 }
 
 
@@ -305,7 +305,7 @@ static int core_secondly()
 
     /* Once a minute */
     lastmin = (lastmin + 1) % 60;
-    check_bind_event("minutely");
+    eggdrop_event("minutely");
     check_bind_time(&nowtm);
     /* In case for some reason more than 1 min has passed: */
     while (nowtm.tm_min != lastmin) {
@@ -314,20 +314,20 @@ static int core_secondly()
              nowtm.tm_min);
       i++;
       lastmin = (lastmin + 1) % 60;
-      check_bind_event("minutely");
+      eggdrop_event("minutely");
     }
     if (i > 1)
       putlog(LOG_MISC, "*", "(!) timer drift -- spun %d minutes", i);
     miltime = (nowtm.tm_hour * 100) + (nowtm.tm_min);
     if (((int) (nowtm.tm_min / 5) * 5) == (nowtm.tm_min)) {	/* 5 min */
-	    check_bind_event("5minutely");
+	    eggdrop_event("5minutely");
       if (!miltime) {	/* At midnight */
 	char s[25];
 
 	strlcpy(s, ctime(&now), sizeof s);
 	putlog(LOG_ALL, "*", "--- %.11s%s", s, s + 20);
-	check_bind_event("backup");
-	check_bind_event("daily");
+	eggdrop_event("backup");
+	eggdrop_event("daily");
       }
     }
   }
@@ -491,6 +491,7 @@ int main(int argc, char **argv)
 		}
 		user_rand_pass(password, sizeof(password));
 		user_set_pass(owner, password);
+		user_set_flag_str(owner, NULL, "+n");
 		printf("Your owner handle is '%s' and your password is '%s' (without the quotes).\n\n", handle, password);
 		memset(password, 0, sizeof(password));
 		str_redup(&core_config.owner, handle);

@@ -250,7 +250,7 @@ static void real_channel_leave(channel_t *chan, const char *nick, const char *uh
 		free(m);
 	}
 
-	bind_check(BT_leave, chan_name, nick, uhost, u, chan_name);
+	bind_check(BT_leave, u ? &u->settings[0].flags : NULL, chan_name, nick, uhost, u, chan_name);
 
 	if (match_my_nick(nick)) free(chan_name);
 }
@@ -509,7 +509,7 @@ static int gotjoin(char *from_nick, char *from_uhost, user_t *u, char *cmd, int 
 	char *chan = args[0];
 
 	channel_on_join(chan, from_nick, from_uhost);
-	bind_check(BT_join, chan, from_nick, from_uhost, u, chan);
+	bind_check(BT_join, u ? &u->settings[0].flags : NULL, chan, from_nick, from_uhost, u, chan);
 	return(0);
 }
 
@@ -520,7 +520,7 @@ static int gotpart(char *from_nick, char *from_uhost, user_t *u, char *cmd, int 
 	char *text = args[1];
 
 	channel_on_leave(chan, from_nick, from_uhost, u);
-	bind_check(BT_part, chan, from_nick, from_uhost, u, chan, text);
+	bind_check(BT_part, u ? &u->settings[0].flags : NULL, chan, from_nick, from_uhost, u, chan, text);
 	return(0);
 }
 
@@ -530,7 +530,7 @@ static int gotquit(char *from_nick, char *from_uhost, user_t *u, char *cmd, int 
 	char *text = args[0];
 
 	channel_on_quit(from_nick, from_uhost, u);
-	bind_check(BT_quit, from_nick, from_nick, from_uhost, u, text);
+	bind_check(BT_quit, u ? &u->settings[0].flags : NULL, from_nick, from_nick, from_uhost, u, text);
 
 	return(0);
 }
@@ -548,7 +548,7 @@ static int gotkick(char *from_nick, char *from_uhost, user_t *u, char *cmd, int 
 	if (!uhost) uhost = "";
 
 	channel_on_leave(chan, victim, uhost, u);
-	bind_check(BT_kick, from_nick, from_nick, from_uhost, u, chan, victim, text);
+	bind_check(BT_kick, u ? &u->settings[0].flags : NULL, from_nick, from_nick, from_uhost, u, chan, victim, text);
 
 	return(0);
 }
@@ -559,7 +559,7 @@ static int gotnick(char *from_nick, char *from_uhost, user_t *u, char *cmd, int 
 	char *newnick = args[0];
 
 	channel_on_nick(from_nick, newnick);
-	bind_check(BT_nick, from_nick, from_nick, from_uhost, u, newnick);
+	bind_check(BT_nick, u ? &u->settings[0].flags : NULL, from_nick, from_nick, from_uhost, u, newnick);
 
 	/* Is it our nick that's changing? */
 	if (match_my_nick(from_nick)) str_redup(&current_server.nick, newnick);
@@ -619,7 +619,7 @@ static int gotmode(char *from_nick, char *from_uhost, user_t *u, char *cmd, int 
 			}
 
 			changestr[1] = *change;
-			bind_check(BT_mode, changestr, from_nick, from_uhost, u, dest, changestr, NULL);
+			bind_check(BT_mode, u ? &u->settings[0].flags : NULL, changestr, from_nick, from_uhost, u, dest, changestr, NULL);
 			change++;
 		}
 		return(0);
@@ -709,7 +709,7 @@ static int gotmode(char *from_nick, char *from_uhost, user_t *u, char *cmd, int 
 			}
 		}
 
-		bind_check(BT_mode, changestr, from_nick, from_uhost, u, dest, changestr, arg);
+		bind_check(BT_mode, u ? &u->settings[0].flags : NULL, changestr, from_nick, from_uhost, u, dest, changestr, arg);
 		change++;
 	}
 	if (set_by != buf) free(set_by);
@@ -718,28 +718,28 @@ static int gotmode(char *from_nick, char *from_uhost, user_t *u, char *cmd, int 
 
 static bind_list_t channel_raw_binds[] = {
 	/* WHO replies */
-	{"352", got352}, /* WHO reply */
-	{"315", got315}, /* end of WHO */
+	{NULL, "352", got352}, /* WHO reply */
+	{NULL, "315", got315}, /* end of WHO */
 
 	/* Topic info */
-	{"TOPIC", gottopic},
-	{"331", got331},
-	{"332", got332},
-	{"333", got333},
+	{NULL, "TOPIC", gottopic},
+	{NULL, "331", got331},
+	{NULL, "332", got332},
+	{NULL, "333", got333},
 
 	/* Bans. */
-	{"367", got367},
-	{"368", got368},
+	{NULL, "367", got367},
+	{NULL, "368", got368},
 
 	/* Channel member stuff. */
-	{"JOIN", gotjoin},
-	{"PART", gotpart},
-	{"QUIT", gotquit},
-	{"KICK", gotkick},
-	{"NICK", gotnick},
+	{NULL, "JOIN", gotjoin},
+	{NULL, "PART", gotpart},
+	{NULL, "QUIT", gotquit},
+	{NULL, "KICK", gotkick},
+	{NULL, "NICK", gotnick},
 
 	/* Mode. */
-	{"MODE", gotmode},
+	{NULL, "MODE", gotmode},
 
-	{NULL, NULL}
+	{NULL, NULL, NULL}
 };

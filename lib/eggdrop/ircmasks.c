@@ -38,11 +38,20 @@ int ircmask_list_add(ircmask_list_t *list, const char *ircmask, void *data)
 
 int ircmask_list_del(ircmask_list_t *list, const char *ircmask, void *data)
 {
-	putlog(LOG_DEBUG, "*", "implement me %s:%i, ircmask_list_del()", 
-			__FILE__, 
-			__LINE__
-	);
-	return (-1);
+	ircmask_list_entry_t *entry, *prev;
+
+	prev = NULL;
+	for (entry = list->head; entry; entry = entry->next) {
+		if (!strcasecmp(ircmask, entry->ircmask)) break;
+		prev = entry;
+	}
+	if (entry) {
+		if (prev) prev->next = entry->next;
+		else list->head = entry->next;
+		free(entry->ircmask);
+		free(entry);
+	}
+	return(0);
 }
 
 int ircmask_list_find(ircmask_list_t *list, const char *irchost, void *dataptr)

@@ -29,17 +29,17 @@ static int party_quit(partymember_t *p, const char *nick, user_t *u, const char 
 	return(0);
 }
 
-static int party_msg(int pid, const char *nick, user_t *u, const char *cmd, const char *text)
+static int party_msg(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	return(0);
 }
 
-static int party_set(int pid, const char *nick, user_t *u, const char *cmd, const char *text)
+static int party_set(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	return(0);
 }
 
-static int party_save(int pid, const char *nick, user_t *u, const char *cmd, const char *text)
+static int party_save(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	user_save(core_config.userfile);
 	core_config_save();
@@ -58,13 +58,13 @@ static int party_newpass(partymember_t *p, const char *nick, user_t *u, const ch
 }
 
 static bind_list_t core_party_binds[] = {
-	{"join", party_join},
-	{"msg", party_msg},
-	{"newpass", party_newpass},
-	{"part", party_part},
-	{"quit", party_quit},
-	{"set", party_set},
-	{"save", party_save},
+	{NULL, "join", party_join},
+	{NULL, "msg", party_msg},
+	{NULL, "newpass", party_newpass},
+	{NULL, "part", party_part},
+	{NULL, "quit", party_quit},
+	{"n", "set", party_set},
+	{"n", "save", party_save},
 	{0}
 };
 

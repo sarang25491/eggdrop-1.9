@@ -80,7 +80,7 @@ int module_load(const char *name)
 
 	if (startfunc(&entry->modinfo)) return(-4);
 
-	bind_check(BT_load, name, name);
+	bind_check(BT_load, NULL, name, name);
 	putlog(LOG_MISC, "*", "Module loaded: %s", name);
 	return(0);
 }
@@ -107,7 +107,7 @@ int module_unload(const char *name, int why)
 	if (prev) prev->next = entry->next;
 	else module_list_head = entry->next;
 	free(entry);
-	bind_check(BT_unload, name, name);
+	bind_check(BT_unload, NULL, name, name);
 	putlog(LOG_MISC, "*", "Module unloaded: %s", name);
 	return(0);
 }

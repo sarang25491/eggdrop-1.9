@@ -3,7 +3,6 @@
 
 void core_binds_init();
 void check_bind_time(struct tm *tm);
-void check_bind_event(char *event);
 void check_bind_secondly();
 
 #endif				/* !_CORE_BINDS_H_ */

@@ -12,7 +12,7 @@ extern int partychan_init();
 extern int partymember_init();
 
 static bind_list_t log_binds[] = {
-	//{"", on_putlog},
+	{NULL, NULL, on_putlog},
 	{0}
 };
 
@@ -21,7 +21,7 @@ int partyline_init()
 	partychan_init();
 	partymember_init();
 	str_redup(&partyline_command_chars, "./");
-	BT_cmd = bind_table_add("party", 5, "PsUss", MATCH_PARTIAL, 0);
+	BT_cmd = bind_table_add("party", 5, "PsUss", MATCH_PARTIAL | MATCH_FLAGS, 0);
 	BT_party_out = bind_table_add("party_out", 5, "isUsi", MATCH_NONE, 0);
 	bind_add_list("log", log_binds);
 	return(0);
@@ -80,7 +80,7 @@ int partyline_on_command(partymember_t *p, const char *cmd, const char *text)
 
 	if (!p) return(-1);
 
-	r = bind_check(BT_cmd, cmd, p, p->nick, p->user, cmd, text);
+	r = bind_check(BT_cmd, &p->user->settings[0].flags, cmd, p, p->nick, p->user, cmd, text);
 	return(r);
 }
 
@@ -151,17 +151,19 @@ int partyline_printf_all_but(int pid, const char *fmt, ...)
 	if (ptr != buf) free(ptr);
 	return(0);
 }
+#endif
 
 /* Logging stuff. */
 static int on_putlog(int flags, const char *chan, const char *text, int len)
 {
+	partychan_t *chanptr;
 	char *ptr, buf[1024];
 	int buflen;
-	partymember_t *p;
 
-	ptr = egg_msprintf(buf, sizeof(buf), &buflen, "%s\n", text);
-	partyline_write_all_but(-1, ptr, buflen);
+	chanptr = partychan_lookup_name(chan);
+	if (!chanptr) return(0);
+	ptr = egg_msprintf(buf, sizeof(buf), &buflen, "[log] %s", text);
+	partychan_msg(chanptr, NULL, ptr, buflen);
 	if (ptr != buf) free(ptr);
 	return(0);
 }
-#endif

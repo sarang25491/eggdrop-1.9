@@ -617,7 +617,7 @@ static void got_chat(char *nick, char *uhost, user_t *u, char *text)
 
 	nport = atoi(port);
 
-	bind_check(BT_dcc_chat, nick, nick, uhost, u, type, ip, nport);
+	bind_check(BT_dcc_chat, u ? &u->settings[0].flags : NULL, nick, nick, uhost, u, type, ip, nport);
 }
 
 static void got_resume(char *nick, char *uhost, user_t *u, char *text)
@@ -709,7 +709,7 @@ static void got_send(char *nick, char *uhost, user_t *u, char *text)
 		sprintf(ip, "%d.%d.%d.%d", (longip >> 24) & 255, (longip >> 16) & 255, (longip >> 8) & 255, (longip) & 255);
 	}
 
-	bind_check(BT_dcc_recv, nick, nick, uhost, u, fname, ip, port, size);
+	bind_check(BT_dcc_recv, u ? &u->settings[0].flags : NULL, nick, nick, uhost, u, fname, ip, port, size);
 }
 
 /* PRIVMSG ((target) :^ADCC CHAT ((type) ((longip) ((port)^A */
@@ -731,6 +731,6 @@ static int got_dcc(char *nick, char *uhost, user_t *u, char *dest, char *cmd, ch
 }
 
 bind_list_t ctcp_dcc_binds[] = {
-	{"DCC", (Function) got_dcc},
+	{NULL, "DCC", (Function) got_dcc},
 	{0}
 };

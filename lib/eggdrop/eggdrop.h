@@ -58,6 +58,7 @@ typedef struct eggdrop {
 } eggdrop_t;
 
 extern int eggdrop_init();
+extern int eggdrop_event(const char *event);
 extern eggdrop_t *eggdrop_new(void);
 extern eggdrop_t *eggdrop_delete(eggdrop_t *);
 

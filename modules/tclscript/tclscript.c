@@ -689,12 +689,12 @@ static int tclscript_secondly()
 }
 
 static bind_list_t party_commands[] = {
-	{"tcl", (Function) party_tcl},
+	{"n", "tcl", (Function) party_tcl},
 	{0}
 };
 
 static bind_list_t secondly_binds[] = {
-	{NULL, tclscript_secondly},
+	{NULL, NULL, tclscript_secondly},
 	{0}
 };
 

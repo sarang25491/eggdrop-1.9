@@ -103,10 +103,13 @@ int partymember_delete(partymember_t *p, const char *text)
 	len = strlen(text);
 
 	common = partychan_get_common(p);
-	if (common) for (i = 0; i < common->len; i++) {
-		mem = common->members[i];
-		if (mem->flags & PARTY_DELETED) continue;
-		if (mem->handler->on_quit) (mem->handler->on_quit)(mem->client_data, p, text, len);
+	if (common) {
+		for (i = 0; i < common->len; i++) {
+			mem = common->members[i];
+			if (mem->flags & PARTY_DELETED) continue;
+			if (mem->handler->on_quit) (mem->handler->on_quit)(mem->client_data, p, text, len);
+		}
+		partychan_free_common(common);
 	}
 
 	/* Remove from any stray channels. */
@@ -118,6 +121,31 @@ int partymember_delete(partymember_t *p, const char *text)
 	if (p->handler->on_quit) {
 		(p->handler->on_quit)(p->client_data, p, text, strlen(text));
 	}
+	return(0);
+}
+
+int partymember_set_nick(partymember_t *p, const char *nick)
+{
+	partymember_common_t *common;
+	partymember_t *mem;
+	char *oldnick;
+	int i;
+
+	oldnick = p->nick;
+	p->nick = strdup(nick);
+	if (p->handler->on_nick) (p->handler->on_nick)(p->client_data, p, oldnick, nick);
+	p->flags |= PARTY_SELECTED;
+	common = partychan_get_common(p);
+	if (common) {
+		for (i = 0; i < common->len; i++) {
+			mem = common->members[i];
+			if (mem->flags & PARTY_DELETED) continue;
+			if (mem->handler->on_nick) (mem->handler->on_nick)(mem->client_data, p, oldnick, nick);
+		}
+		partychan_free_common(common);
+	}
+	if (oldnick) free(oldnick);
+	p->flags &= ~PARTY_SELECTED;
 	return(0);
 }
 

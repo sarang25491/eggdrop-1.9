@@ -103,7 +103,7 @@ static void server_report(int idx, int details)
 }
 
 static bind_list_t server_secondly_binds[] = {
-	{"", server_secondly},
+	{NULL, NULL, server_secondly},
 	{0}
 };
 

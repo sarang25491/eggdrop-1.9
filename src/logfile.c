@@ -42,13 +42,13 @@ static script_command_t log_script_cmds[] = {
 };
 
 static bind_list_t log_binds[] = {
-	{"", on_putlog},
+	{NULL, NULL, on_putlog},
 	{0}
 };
 
 static bind_list_t log_events[] = {
-	{"minutely", logfile_minutely},
-	{"5minutely", logfile_5minutely},
+	{NULL, "minutely", logfile_minutely},
+	{NULL, "5minutely", logfile_5minutely},
 	{0}
 };
 

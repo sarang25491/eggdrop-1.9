@@ -313,14 +313,14 @@ user_t *user_lookup_by_irchost(const char *irchost)
 {
 	user_t *u;
 
-	/* Check the ircmask cache. */
+	/* Check the irchost cache. */
 	if (!hash_table_find(irchost_cache_ht, irchost, &u)) return(u);
 
-	/* Nope, find it in the ircmask list. */
+	/* Look for a match in the ircmask list. */
 	ircmask_list_find(&ircmask_list, irchost, &u);
 
-	/* Cache it, even if it's null. */
-	hash_table_insert(irchost_cache_ht, irchost, u);
+	/* Cache it, even if it's null (to prevent future lookups). */
+	hash_table_insert(irchost_cache_ht, strdup(irchost), u);
 	return(u);
 }
 
@@ -356,7 +356,7 @@ static int cache_check_del(const void *key, void *dataptr, void *client_data)
 	walker_info_t *info = client_data;
 
 	if (u == info->u && wild_match(info->ircmask, irchost)) {
-		info->entries = realloc(info->entries, sizeof(char *) * (info->nentries+1));
+		info->entries = realloc(info->entries, sizeof(*info->entries) * (info->nentries+1));
 		info->entries[info->nentries] = irchost;
 		info->nentries++;
 	}
@@ -376,6 +376,7 @@ static int cache_user_del(user_t *u, const char *ircmask)
 	hash_table_walk(irchost_cache_ht, cache_check_del, &info);
 	for (i = 0; i < info.nentries; i++) {
 		hash_table_delete(irchost_cache_ht, info.entries[i], NULL);
+		free(info.entries[i]);
 	}
 	if (info.entries) free(info.entries);
 
@@ -457,7 +458,7 @@ static int check_flag_change(user_t *u, const char *chan, flags_t *oldflags, fla
 	flag_to_str(oldflags, oldstr);
 	flag_to_str(newflags, newstr);
 	change = egg_msprintf(NULL, 0, NULL, "%s %s %s", chan ? chan : "", oldstr, newstr);
-	r = bind_check(BT_uflags, change, u->handle, chan, oldstr, newstr);
+	r = bind_check(BT_uflags, NULL, change, u->handle, chan, oldstr, newstr);
 	free(change);
 
 	/* Does a callback want to cancel this flag change? */
@@ -538,7 +539,7 @@ int user_set_setting(user_t *u, const char *chan, const char *setting, const cha
 	user_setting_t *setptr;
 
 	change = egg_msprintf(NULL, 0, NULL, "%s %s", chan ? chan : "", setting);
-	r = bind_check(BT_uset, change, u->handle, chan, setting, newvalue);
+	r = bind_check(BT_uset, NULL, change, u->handle, chan, setting, newvalue);
 	free(change);
 
 	if (r & BIND_RET_BREAK) return(0);

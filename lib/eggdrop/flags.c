@@ -79,6 +79,9 @@ int flag_match_partial(flags_t *left, flags_t *right)
 {
 	int builtin, udef;
 
+	/* If no bits are on in right, it matches automatically. */
+	if (!(right->builtin | right->udef)) return(1);
+
 	builtin = left->builtin & right->builtin;
 	udef = left->udef & right->udef;
 	return (builtin || udef);

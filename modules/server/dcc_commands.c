@@ -24,38 +24,47 @@ static void parse_server(const char *text, char **host, int *port, char **pass)
 	}
 }
 
-static int party_plus_server(int pid, const char *nick, user_t *u, const char *cmd, const char *text)
+static int party_plus_server(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	char *host, *pass;
 	int port;
 
+	if (!text || !*text) {
+		partymember_printf(p, "Syntax: +server <host> [port] [pass]");
+		return(0);
+	}
 	parse_server(text, &host, &port, &pass);
 	server_add(host, port, pass);
-	partymember_printf_pid(pid, "Added %s:%d\n", host, port ? port : server_config.default_port);
+	partymember_printf(p, "Added %s:%d\n", host, port ? port : server_config.default_port);
 	free(host);
 	return(0);
 }
 
-static int party_minus_server(int pid, const char *nick, user_t *u, const char *cmd, const char *text)
+static int party_minus_server(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	char *host, *pass;
 	int port, i;
 
+	if (!text || !*text) {
+		partymember_printf(p, "Syntax: -server <host> [port] [pass]");
+		return(0);
+	}
+
 	parse_server(text, &host, &port, &pass);
 	i = server_find(host, port, pass);
-	if (i < 0) partymember_printf_pid(pid, "No matching servers.\n");
+	if (i < 0) partymember_printf(p, "No matching servers.");
 	else {
 		server_del(i);
-		partymember_printf_pid(pid, "Deleted server %d\n", i+1);
+		partymember_printf(p, "Deleted server %d", i+1);
 	}
 	free(host);
 	return(0);
 }
 
-static int party_dump(int pid, const char *nick, user_t *u, const char *cmd, const char *text)
+static int party_dump(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
-	if (!*text) {
-		partymember_printf_pid(pid, "Usage: dump <server stuff>\n");
+	if (!text || !*text) {
+		partymember_printf(p, "Syntax: dump <server stuff>");
 		return(0);
 	}
 	printserv(SERVER_NORMAL, "%s\r\n", text);
@@ -63,8 +72,8 @@ static int party_dump(int pid, const char *nick, user_t *u, const char *cmd, con
 }
 
 bind_list_t server_party_commands[] = {
-	{"+server", party_plus_server},
-	{"-server", party_minus_server},
-	{"dump", party_dump},
+	{"m", "+server", party_plus_server},
+	{"m", "-server", party_minus_server},
+	{"m", "dump", party_dump},
 	{0}
 };

@@ -22,6 +22,7 @@
 #define LOG_DEBUG    0x040000   /* d   debug                            */
 #define LOG_WALL     0x080000   /* w   wallops                          */
 #define LOG_SRVOUT   0x100000   /* v   server output                    */
+#define LOG_ERR      0x200000	/* e   errors                           */
 #define LOG_ALL      0xFFFFFF   /* (dump to all logfiles)               */
 
 extern void egglog_init(); 

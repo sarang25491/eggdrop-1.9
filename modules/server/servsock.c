@@ -82,7 +82,7 @@ static void disconnect_server()
 		current_server.idx = -1;
 	}
 
-	if (connected) check_bind_event("disconnect-server");
+	if (connected) eggdrop_event("disconnect-server");
 }
 
 
@@ -127,7 +127,7 @@ static int server_on_connect(void *client_data, int idx, const char *peer_ip, in
 	current_server.connected = 1;
 	nick_list_on_connect();
 	putlog(LOG_SERV, "*", "Connected to %s, logging in.", current_server.server_host);
-	check_bind_event("connect-server");
+	eggdrop_event("connect-server");
 	if (!current_server.connected) return(0);
 
 	printserv(SERVER_NOQUEUE, "USER %s localhost %s :%s\r\n", server_config.user, current_server.server_host, server_config.realname);

@@ -58,7 +58,7 @@ typedef struct partyline_event {
 
 int partyline_init();
 partymember_t *partymember_new(int pid, user_t *user, const char *nick, const char *ident, const char *host, partyline_event_t *handler, void *client_data);
-//int partyline_disconnect(int pid, const char *msg);
+int partyline_delete(partymember_t *p, const char *text);
 int partyline_is_command(const char *text);
 int partyline_on_input(partychan_t *chan, partymember_t *p, const char *text, int len);
 int partyline_on_command(partymember_t *p, const char *cmd, const char *text);
