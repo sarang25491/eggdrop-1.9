@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.77 2001/08/13 14:51:13 guppy Exp $
+ * $Id: server.c,v 1.78 2001/08/18 18:56:01 drummer Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -27,7 +27,6 @@
 #define MAKING_SERVER
 #include "src/mod/module.h"
 #include "server.h"
-#include <netdb.h>
 
 static Function *global = NULL;
 
@@ -74,7 +73,6 @@ static int default_port;	/* default IRC port */
 static char oldnick[NICKLEN];	/* previous nickname *before* rehash */
 static int trigger_on_ignore;	/* trigger bindings if user is ignored ? */
 static int answer_ctcp;		/* answer how many stacked ctcp's ? */
-static char bothost[81];	/* dont mind me, Im stupid */
 static int check_mode_r;	/* check for IRCNET +r modes */
 static int net_type;
 static int resolvserv;		/* in the process of resolving a server host */
@@ -1205,7 +1203,8 @@ static char *traced_botname(ClientData cdata, Tcl_Interp *irp, char *name1,
 {
   char s[1024];
 
-  simple_sprintf(s, "%s!%s", botname, botuserhost);
+  simple_sprintf(s, "%s%s%s", botname, 
+      botuserhost[0] ? "!" : "", botuserhost[0] ? botuserhost : "");
   Tcl_SetVar2(interp, name1, name2, s, TCL_GLOBAL_ONLY);
   if (flags & TCL_TRACE_UNSETS)
     Tcl_TraceVar(irp, name1, TCL_TRACE_READS | TCL_TRACE_WRITES |
@@ -1575,27 +1574,30 @@ static void server_die()
  */
 static void server_report(int idx, int details)
 {
-  char s1[128], s[128];
+  char s1[64], s[128];
+  int servidx;
 
-  if (nick_juped)
-    dprintf(idx, "    NICK IS JUPED: %s %s\n", origbotname,
-            keepnick ? "(trying)" : "");
-  dprintf(idx, "    Online as: %s!%s (%s)\n", botname, botuserhost,
-	  botrealname);
-  if (!trying_server) {
+  if (server_online) {
+    dprintf(idx, "    Online as: %s%s%s (%s)\n", botname,
+        botuserhost[0] ? "!" : "", botuserhost[0] ? botuserhost : "",
+	botrealname);
+    if (nick_juped)
+	dprintf(idx, "    NICK IS JUPED: %s %s\n", origbotname,
+		keepnick ? "(trying)" : "");
+    nick_juped = 0;	/* WHY?? -- drummer */
+
     daysdur(now, server_online, s1);
     egg_snprintf(s, sizeof s, "(connected %s)", s1);
     if ((server_lag) && !(waiting_for_awake)) {
-      egg_snprintf(s1, sizeof s1, " (lag: %ds)", server_lag);
-      if (server_lag == (-1))
-	egg_snprintf(s1, sizeof s1, " (bad pong replies)");
-      strcat(s, s1);
+	if (server_lag == (-1))
+	    egg_snprintf(s1, sizeof s1, " (bad pong replies)");
+	else
+	    egg_snprintf(s1, sizeof s1, " (lag: %ds)", server_lag);
+	strcat(s, s1);
     }
   }
-  if (server_online) {
-    int servidx = findanyidx(serv);
-
-    nick_juped = 0;
+  if ((trying_server || server_online) &&
+          ((servidx = findanyidx(serv)) != (-1))) {
     dprintf(idx, "    Server %s %d %s\n", dcc[servidx].host, dcc[servidx].port,
 	    trying_server ? "(trying)" : s);
   } else
@@ -1659,32 +1661,6 @@ static int server_expmem()
   tot += msgq_expmem(&mq) + msgq_expmem(&hq) + msgq_expmem(&modeq);
 
   return tot;
-}
-
-/* Put the full hostname in s.
- */
-static void getmyhostname(char *s)
-{
-  struct hostent	*hp;
-  char			*p;
-
-  if (hostname[0]) {
-    strcpy(s, hostname);
-    return;
-  }
-  p = getenv("HOSTNAME");
-  if (p != NULL) {
-    strncpyz(s, p, 81);
-    if (strchr(s, '.') != NULL)
-      return;
-  }
-  gethostname(s, 80);
-  if (strchr(s, '.') != NULL)
-    return;
-  hp = gethostbyname(s);
-  if (hp == NULL)
-    fatal("Hostname self-lookup failed.", 0);
-  strcpy(s, hp->h_name);
 }
 
 static cmd_t my_ctcps[] =
@@ -1839,7 +1815,6 @@ char *server_start(Function *global_funcs)
   oldnick[0] = 0;
   trigger_on_ignore = 0;
   answer_ctcp = 1;
-  bothost[0] = 0;
   check_mode_r = 0;
   maxqmsg = 300;
   burst = 0;
@@ -1921,9 +1896,6 @@ char *server_start(Function *global_funcs)
   double_warned = 0;
   newserver[0] = 0;
   newserverport = 0;
-  getmyhostname(bothost);
-  /* Wishful thinking ... */
-  egg_snprintf(botuserhost, sizeof botuserhost, "%s@%s", botuser, bothost);
   curserv = 999;
   do_nettype();
   return NULL;

@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.62 2001/08/17 05:35:48 guppy Exp $
+ * $Id: servmsg.c,v 1.63 2001/08/18 18:56:01 drummer Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -233,6 +233,7 @@ static int got001(char *from, char *msg)
   fixcolon(msg);
   strncpyz(botname, msg, NICKLEN);
   altnick_char = 0;
+  dprintf(DP_SERVER, "WHOIS %s\n", botname); /* get user@host */
   check_tcl_event("init-server");
   x = serverlist;
   if (x == NULL)
@@ -921,6 +922,7 @@ static void disconnect_server(int idx)
     killsock(dcc[idx].sock);
   dcc[idx].sock = (-1);
   serv = (-1);
+  botuserhost[0] = 0;
 }
 
 static void eof_server(int idx)
@@ -1060,6 +1062,25 @@ static int whoispenalty(char *from, char *msg)
   return 0;
 }
 
+static int got311(char *from, char *msg)
+{
+  char *n1, *n2, *u, *h;
+  
+  n1 = newsplit(&msg);
+  n2 = newsplit(&msg);
+  u = newsplit(&msg);
+  h = newsplit(&msg);
+  
+  if (!n1 || !n2 || !u || !h)
+    return 0;
+    
+  if (match_my_nick(n2))
+    egg_snprintf(botuserhost, sizeof botuserhost, "%s@%s", u, h);
+  
+  return 0;
+}
+
+
 static cmd_t my_raw_binds[] =
 {
   {"PRIVMSG",	"",	(Function) gotmsg,		NULL},
@@ -1080,6 +1101,7 @@ static cmd_t my_raw_binds[] =
   {"ERROR",	"",	(Function) goterror,		NULL},
   {"KICK",	"",	(Function) gotkick,		NULL},
   {"318",	"",	(Function) whoispenalty,	NULL},
+  {"311",	"",	(Function) got311,		NULL},
   {NULL,	NULL,	NULL,				NULL}
 };
 
@@ -1136,6 +1158,8 @@ static void connect_server(void)
     dcc[servidx].port = botserverport;
     strcpy(dcc[servidx].nick, "(server)");
     strncpyz(dcc[servidx].host, botserver, UHOSTLEN);
+
+    botuserhost[0] = 0;
 
     nick_juped = 0;
     for (chan = chanset; chan; chan = chan->next)

@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  *
- * $Id: msgcmds.c,v 1.24 2001/08/10 23:51:21 ite Exp $
+ * $Id: msgcmds.c,v 1.25 2001/08/18 18:56:01 drummer Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -824,8 +824,8 @@ static int msg_status(char *nick, char *host, struct userrec *u, char *par)
 	  i == 1 ? "" : "s", (int) (expected_memory() / 1024));
   daysdur(now, server_online, s);
   dprintf(DP_HELP, "NOTICE %s :Connected %s\n", nick, s);
-  dprintf(DP_HELP, "NOTICE %s :Online as: %s!%s\n", nick, botname,
-	  botuserhost);
+  dprintf(DP_HELP, "NOTICE %s :Online as: %s%s%s\n", nick, botname,
+	  botuserhost[0] ? "!" : "", botuserhost[0] ? botuserhost : "");
   return 1;
 }
 
