@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.7 2002/04/01 13:33:32 ite Exp $
+ * $Id: filesys.c,v 1.8 2002/04/14 23:10:38 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -153,8 +153,8 @@ static void dcc_files_pass(int idx, char *buf, int x)
     return;
   if (u_pass_match(u, buf)) {
     if (too_many_filers()) {
-      dprintf(idx, "Too many people are in the file system right now.\n");
-      dprintf(idx, "Please try again later.\n");
+      dprintf(idx, _("Too many people are in the file system right now.\n"));
+      dprintf(idx, _("Please try again later.\n"));
       putlog(LOG_MISC, "*", "File area full: DCC chat [%s]%s", dcc[idx].nick,
 	     dcc[idx].host);
       killsock(dcc[idx].sock);
@@ -167,7 +167,7 @@ static void dcc_files_pass(int idx, char *buf, int x)
     putlog(LOG_FILES, "*", "File system: [%s]%s/%d", dcc[idx].nick,
 	   dcc[idx].host, dcc[idx].port);
     if (!welcome_to_files(idx)) {
-      putlog(LOG_FILES, "*", "File system broken.");
+      putlog(LOG_FILES, "*", _("File system broken."));
       killsock(dcc[idx].sock);
       lostdcc(idx);
     } else {
@@ -177,7 +177,7 @@ static void dcc_files_pass(int idx, char *buf, int x)
     }
     return;
   }
-  dprintf(idx, "Negative on that, Houston.\n");
+  dprintf(idx, _("Negative on that, Houston.\n"));
   putlog(LOG_MISC, "*", "Bad password: DCC chat [%s]%s", dcc[idx].nick,
 	 dcc[idx].host);
   killsock(dcc[idx].sock);
@@ -227,7 +227,7 @@ static void dcc_files(int idx, char *buf, int i)
     if (dcc[idx].status & STAT_CHAT) {
       struct chat_info *ci;
 
-      dprintf(idx, "Returning you to command mode...\n");
+      dprintf(idx, _("Returning you to command mode...\n"));
       ci = dcc[idx].u.file->chat;
       free_null(dcc[idx].u.file);
       dcc[idx].u.chat = ci;
@@ -240,7 +240,7 @@ static void dcc_files(int idx, char *buf, int i)
 	  botnet_send_join_idx(idx, -1);
       }
     } else {
-      dprintf(idx, "Dropping connection now.\n");
+      dprintf(idx, _("Dropping connection now.\n"));
       putlog(LOG_FILES, "*", "Left files: [%s]%s/%d", dcc[idx].nick,
 	     dcc[idx].host, dcc[idx].port);
       killsock(dcc[idx].sock);
@@ -261,7 +261,7 @@ static void tell_file_stats(int idx, char *hand)
   if (u == NULL)
     return;
   if (!(fs = get_user(&USERENTRY_FSTAT, u))) {
-    dprintf(idx, "No file statistics for %s.\n", hand);
+    dprintf(idx, _("No file statistics for %s.\n"), hand);
   } else {
     dprintf(idx, "  uploads: %4u / %6luk\n", fs->uploads, fs->upload_ks);
     dprintf(idx, "downloads: %4u / %6luk\n", fs->dnloads, fs->dnload_ks);
@@ -270,11 +270,11 @@ static void tell_file_stats(int idx, char *hand)
     if (fs->upload_ks)
       kr = ((float) fs->dnload_ks / (float) fs->upload_ks);
     if (fr < 0.0)
-      dprintf(idx, "(infinite file leech)\n");
+      dprintf(idx, _("(infinite file leech)\n"));
     else
       dprintf(idx, "leech ratio (files): %6.2f\n", fr);
     if (kr < 0.0)
-      dprintf(idx, "(infinite size leech)\n");
+      dprintf(idx, _("(infinite size leech)\n"));
     else
       dprintf(idx, "leech ratio (size) : %6.2f\n", kr);
   }
@@ -286,17 +286,19 @@ static int cmd_files(struct userrec *u, int idx, char *par)
   static struct chat_info *ci;
 
   if (dccdir[0] == 0)
-    dprintf(idx, "There is no file transfer area.\n");
+    dprintf(idx, _("There is no file transfer area.\n"));
   else if (too_many_filers()) {
-    dprintf(idx, "The maximum of %d people are in the file area right now.\n",
-	    dcc_users);
-    dprintf(idx, "Please try again later.\n");
+    dprintf(idx,
+            P_("The maximum of %d person is in the file area right now.\n",
+               "The maximum of %d people are in the file area right now.\n",
+               dcc_users), dcc_users);
+    dprintf(idx, _("Please try again later.\n"));
   } else {
     if (!(atr & (USER_MASTER | USER_XFER)))
-      dprintf(idx, "You don't have access to the file area.\n");
+      dprintf(idx, _("You don't have access to the file area.\n"));
     else {
       putlog(LOG_CMDS, "*", "#%s# files", dcc[idx].nick);
-      dprintf(idx, "Entering file system...\n");
+      dprintf(idx, _("Entering file system...\n"));
       if (dcc[idx].u.chat->channel >= 0) {
 
 	chanout_but(-1, dcc[idx].u.chat->channel,
@@ -316,7 +318,7 @@ static int cmd_files(struct userrec *u, int idx, char *par)
 	free_null(dcc[idx].u.file);
 	dcc[idx].u.chat = ci;
 	dcc[idx].type = &DCC_CHAT;
-	putlog(LOG_FILES, "*", "File system broken.");
+	putlog(LOG_FILES, "*", _("File system broken."));
 	if (dcc[idx].u.chat->channel >= 0) {
 	  chanout_but(-1, dcc[idx].u.chat->channel,
 		      "*** %s has returned.\n",
@@ -344,31 +346,31 @@ static int _dcc_send(int idx, char *filename, char *nick, char *dir,
   else
     x = raw_dcc_send(filename, nick, dcc[idx].nick, dir, 0);
   if (x == DCCSEND_FULL) {
-    dprintf(idx, "Sorry, too many DCC connections.  (try again later)\n");
+    dprintf(idx, _("Sorry, too many DCC connections.  (try again later)\n"));
     putlog(LOG_FILES, "*", "DCC connections full: %sGET %s [%s]", filename,
 	   resend ? "RE" : "", dcc[idx].nick);
     return 0;
   }
   if (x == DCCSEND_NOSOCK) {
     if (reserved_port_min) {
-      dprintf(idx, "All my DCC SEND ports are in use.  Try later.\n");
+      dprintf(idx, _("All my DCC SEND ports are in use.  Try later.\n"));
       putlog(LOG_FILES, "*", "DCC port in use (can't open): %sGET %s [%s]",
 	     resend ? "RE" : "", filename, dcc[idx].nick);
     } else {
-      dprintf(idx, "Unable to listen at a socket.\n");
+      dprintf(idx, _("Unable to listen at a socket.\n"));
       putlog(LOG_FILES, "*", "DCC socket error: %sGET %s [%s]", filename,
 	     resend ? "RE" : "", dcc[idx].nick);
     }
     return 0;
   }
   if (x == DCCSEND_BADFN) {
-    dprintf(idx, "File not found ?\n");
+    dprintf(idx, _("File not found ?\n"));
     putlog(LOG_FILES, "*", "DCC file not found: %sGET %s [%s]", filename,
 	   resend ? "RE" : "", dcc[idx].nick);
     return 0;
   }
   if (x == DCCSEND_FEMPTY) {
-    dprintf(idx, "The file is empty.  Aborted transfer.\n");
+    dprintf(idx, _("The file is empty.  Aborted transfer.\n"));
     putlog(LOG_FILES, "*", "DCC file is empty: %s [%s]", filename,
 	   dcc[idx].nick);
     return 0;
@@ -406,13 +408,13 @@ static int do_dcc_send(int idx, char *dir, char *fn, char *nick, int resend)
   if (nick && strlen(nick) > NICKMAX)
     nick[NICKMAX] = 0;
   if (dccdir[0] == 0) {
-    dprintf(idx, "DCC file transfers not supported.\n");
+    dprintf(idx, _("DCC file transfers not supported.\n"));
     putlog(LOG_FILES, "*", "Refused dcc %sget %s from [%s]", resend ? "re" : "",
 	   fn, dcc[idx].nick);
     return 0;
   }
   if (strchr(fn, '/') != NULL) {
-    dprintf(idx, "Filename cannot have '/' in it...\n");
+    dprintf(idx, _("Filename cannot have '/' in it...\n"));
     putlog(LOG_FILES, "*", "Refused dcc %sget %s from [%s]", resend ? "re" : "",
 	   fn, dcc[idx].nick);
     return 0;
@@ -455,7 +457,7 @@ static int do_dcc_send(int idx, char *dir, char *fn, char *nick, int resend)
     sprintf(s1, "%s%s", tempdir, tempfn);
     free_null(tempfn);
     if (copyfile(s, s1) != 0) {
-      dprintf(idx, "Can't make temporary copy of file!\n");
+      dprintf(idx, _("Can't make temporary copy of file!\n"));
       putlog(LOG_FILES | LOG_MISC, "*",
 	     "Refused dcc %sget %s: copy to %s FAILED!",
 	     resend ? "re" : "", fn, tempdir);
@@ -479,7 +481,7 @@ static int do_dcc_send(int idx, char *dir, char *fn, char *nick, int resend)
 
 static void tout_dcc_files_pass(int i)
 {
-  dprintf(i, "Timeout.\n");
+  dprintf(i, _("Timeout.\n"));
   putlog(LOG_MISC, "*", "Password timeout on dcc chat: [%s]%s", dcc[i].nick,
 	 dcc[i].host);
   killsock(dcc[i].sock);
@@ -855,19 +857,19 @@ static cmd_t myload[] =
 static void filesys_report(int idx, int details)
 {
   if (dccdir[0]) {
-    dprintf(idx, "    DCC file path: %s", dccdir);
+    dprintf(idx, _("    DCC file path: %s"), dccdir);
     if (upload_to_cd)
-      dprintf(idx, "\n        incoming: (go to the current dir)\n");
+      dprintf(idx, _("\n        incoming: (go to the current dir)\n"));
     else if (dccin[0])
-      dprintf(idx, "\n        incoming: %s\n", dccin);
+      dprintf(idx, _("\n        incoming: %s\n"), dccin);
     else
-      dprintf(idx, "    (no uploads)\n");
+      dprintf(idx, _("    (no uploads)\n"));
     if (dcc_users)
-      dprintf(idx, "        max users is %d\n", dcc_users);
+      dprintf(idx, _("        max users is %d\n"), dcc_users);
     if ((upload_to_cd) || (dccin[0]))
-      dprintf(idx, "    DCC max file size: %dk\n", dcc_maxsize);
+      dprintf(idx, _("    DCC max file size: %dk\n"), dcc_maxsize);
   } else
-    dprintf(idx, "  (Filesystem module loaded, but no active dcc path.)\n");
+    dprintf(idx, _("  (Filesystem module loaded, but no active dcc path.)\n"));
 }
 
 static char *filesys_close()
@@ -875,12 +877,12 @@ static char *filesys_close()
   int i;
   bind_table_t *BT_ctcp;
 
-  putlog(LOG_MISC, "*", "Unloading filesystem, killing all filesystem connections.");
+  putlog(LOG_MISC, "*", _("Unloading filesystem, killing all filesystem connections."));
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].type == &DCC_FILES) {
       dprintf(i, _("-=- poof -=-\n"));
       dprintf(i,
-	 "You have been booted from the filesystem, module unloaded.\n");
+	 _("You have been booted from the filesystem, module unloaded.\n"));
       killsock(dcc[i].sock);
       lostdcc(i);
     } else if (dcc[i].type == &DCC_FILES_PASS) {
@@ -924,11 +926,11 @@ char *start(eggdrop_t *eggdrop)
   module_register(MODULE_NAME, filesys_table, 2, 0);
   if (!module_depend(MODULE_NAME, "eggdrop", 107, 0)) {
     module_undepend(MODULE_NAME);
-    return "This module requires eggdrop1.7.0 or later";
+    return _("This module requires eggdrop1.7.0 or later");
   }
   if (!(transfer_funcs = module_depend(MODULE_NAME, "transfer", 2, 0))) {
     module_undepend(MODULE_NAME);
-    return "You need the transfer module to use the filesystem module.";
+    return _("You need the transfer module to use the filesystem module.");
   }
   add_tcl_commands(mytcls);
   add_tcl_strings(mystrings);
