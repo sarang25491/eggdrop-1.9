@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: help.h,v 1.5 2004/09/29 18:03:53 stdarg Exp $
+ * $Id: help.h,v 1.6 2004/10/04 16:05:32 stdarg Exp $
  */
 
 #ifndef _EGG_HELP_H_
@@ -48,6 +48,8 @@ typedef struct {
 
 int help_init();
 int help_shutdown();
+int help_set_default_path(const char *path);
+int help_set_default_lang(const char *lang);
 
 int help_count_sections();
 int help_count_entries();
@@ -60,7 +62,7 @@ int help_unload_by_module(const char *name);
 
 help_summary_t *help_lookup_summary(const char *name);
 help_section_t *help_lookup_section(const char *name);
-int help_print_entry(partymember_t *p, const char *name);
+xml_node_t *help_lookup_entry(help_summary_t *entry);
 
 help_search_t *help_search_new(const char *searchstr);
 int help_search_end(help_search_t *search);

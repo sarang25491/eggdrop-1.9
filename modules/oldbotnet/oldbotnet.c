@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: oldbotnet.c,v 1.9 2004/06/23 11:19:52 wingman Exp $";
+static const char rcsid[] = "$Id: oldbotnet.c,v 1.10 2004/10/04 16:05:32 stdarg Exp $";
 #endif
 
 #include <ctype.h>
@@ -359,7 +359,7 @@ static int got_chat(char *cmd, const char *next)
 	char *word[2];
 	partychan_t *chan;
 	partymember_t *p;
-	int n, pid;
+	int n;
 
 	n = egg_get_word_array(next, &next, word, 2);
 	if (n != 2 || !next) {

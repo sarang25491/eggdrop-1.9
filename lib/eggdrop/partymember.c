@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partymember.c,v 1.17 2004/10/04 15:48:29 stdarg Exp $";
+static const char rcsid[] = "$Id: partymember.c,v 1.18 2004/10/04 16:05:32 stdarg Exp $";
 #endif
 
 #include <stdarg.h>
@@ -41,16 +41,20 @@ static bind_list_t partymember_udelete_binds[] = {
 	{0}
 };
 
+static bind_table_t *BT_nick = NULL;
+
 int partymember_init(void)
 {
 	pid_ht = hash_table_create(NULL, NULL, 13, HASH_TABLE_INTS);
 	bind_add_list(BTN_USER_DELETE, partymember_udelete_binds);
+	BT_nick = bind_table_add(BTN_PARTYLINE_NICK, 3, "Pss", MATCH_NONE, BIND_STACKABLE);
 	return(0);
 }
 
 int partymember_shutdown(void)
 {
 	bind_rem_list(BTN_USER_DELETE, partymember_udelete_binds);
+	bind_table_del(BT_nick);
 
 	/* force a garbage run since we might have some partymembers 
  	 * marked as deleted and w/o a garbage_run we may not destroy
@@ -200,6 +204,7 @@ int partymember_set_nick(partymember_t *p, const char *nick)
 		}
 		partychan_free_common(common);
 	}
+	bind_check(BT_nick, &p->user->settings[0].flags, NULL, p, oldnick, p->nick);
 	if (oldnick) free(oldnick);
 	p->flags &= ~PARTY_SELECTED;
 	return(0);

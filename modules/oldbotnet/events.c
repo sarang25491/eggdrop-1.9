@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: events.c,v 1.5 2004/06/23 11:19:52 wingman Exp $";
+static const char rcsid[] = "$Id: events.c,v 1.6 2004/10/04 16:05:32 stdarg Exp $";
 #endif
 
 #include <ctype.h>
@@ -34,9 +34,9 @@ static int on_part(const char *name, int cid, partymember_t *src, const char *te
 
 int oldbotnet_events_init()
 {
-	bind_add_simple("partypub", NULL, NULL, on_pub);
-	bind_add_simple("partyjoin", NULL, NULL, on_join);
-	bind_add_simple("partypart", NULL, NULL, on_part);
+	bind_add_simple(BTN_PARTYLINE_PUBLIC, NULL, NULL, on_pub);
+	bind_add_simple(BTN_PARTYLINE_JOIN, NULL, NULL, on_join);
+	bind_add_simple(BTN_PARTYLINE_PART, NULL, NULL, on_part);
 	return(0);
 }
 
@@ -76,6 +76,7 @@ static int validchan(const char *chan)
 	return(1);
 }
 
+#if 0
 static int on_privmsg(void *client_data, partymember_t *dest, partymember_t *src, const char *text, int len)
 {
 	return(0);
@@ -90,6 +91,7 @@ static int on_quit(void *client_data, partymember_t *src, const char *text, int 
 {
 	return(0);
 }
+#endif
 
 static int on_pub(const char *name, int cid, partymember_t *src, const char *text, int len)
 {
