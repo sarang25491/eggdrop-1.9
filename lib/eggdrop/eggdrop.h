@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: eggdrop.h,v 1.27 2004/01/11 12:16:08 wcc Exp $
+ * $Id: eggdrop.h,v 1.28 2004/06/14 23:42:11 wingman Exp $
  */
 
 #ifndef _EGG_EGGDROP_H_
@@ -69,6 +69,30 @@
 #  define P_(x1, x2, n)	( ((n) == 1) ? (x1) : (x2) )
 #endif
 
+#define egg_assert(test) \
+		do { \
+			if (!(test)) { \
+				putlog (LOG_DEBUG, "*", _("Assertion failed at %s in line %i: %s"), \
+					__FILE__, __LINE__, # test); \
+				return; \
+			} \
+		} while (0);
+
+#define egg_assert_val(test, val) \
+		do { \
+			if (!(test)) { \
+                                putlog (LOG_DEBUG, "*", _("Assertion failed at %s in line %i: %s"), \
+                                        __FILE__, __LINE__, # test); \
+				return val; \
+			} \
+	 	} while (0);
+
+#define egg_return_if_fail(test) \
+		if (!(test)) return;
+
+#define egg_return_val_if_fail(test, val) \
+		if (!(test)) return val;
+				  
 extern int eggdrop_init();
 extern int eggdrop_event(const char *event);
 

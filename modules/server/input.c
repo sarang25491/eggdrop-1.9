@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: input.c,v 1.31 2004/06/07 23:14:48 stdarg Exp $";
+static const char rcsid[] = "$Id: input.c,v 1.32 2004/06/14 23:42:11 wingman Exp $";
 #endif
 
 #include "server.h"
@@ -528,8 +528,13 @@ static int got311(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 		str_redup(&current_server.user, user);
 		str_redup(&current_server.host, host);
 		str_redup(&current_server.real_name, realname);
+
 		/* If we're using server lookup to determine ip address, start that now. */
 		if (server_config.ip_lookup == 1) dcc_dns_set(host);
+
+		putlog(LOG_SERV, "*", _("Connected to %s as %s!%s@%s."),
+			current_server.server_host, current_server.nick, current_server.user,
+				current_server.host);
 	}
 
 	return(0);

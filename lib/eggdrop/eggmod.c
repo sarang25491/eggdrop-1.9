@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggmod.c,v 1.11 2004/03/01 22:58:32 stdarg Exp $";
+static const char rcsid[] = "$Id: eggmod.c,v 1.12 2004/06/14 23:42:11 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -144,6 +144,15 @@ egg_module_t *module_lookup(const char *name)
 	entry = find_module(name);
 	if (entry) return(&entry->modinfo);
 	return(NULL);
+}
+
+int
+module_loaded (const char *name)
+{
+	if (name == NULL)
+		return 0;
+
+	return (find_module (name) != NULL);
 }
 
 void *module_get_api(const char *name, int major, int minor)

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptbind.c,v 1.7 2004/03/01 22:58:32 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptbind.c,v 1.8 2004/06/14 23:42:11 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -48,6 +48,8 @@ static int fake_bind_placeholder(void *client_data, ...)
 	callback->syntax = strdup(fake->table->syntax);
 	bind_entry_overwrite(fake->table, fake->bind_id, NULL, NULL, callback->callback, callback);
 
+	putlog (LOG_DEBUG, "*", "fake_bind_placeholder()");
+
 	args[0] = callback;
 	va_start(ap, client_data);
 	for (i = 1; i <= fake->table->nargs; i++) {
@@ -64,7 +66,11 @@ static int script_bind(char *table_name, char *flags, char *mask, script_callbac
 	int retval;
 
 	table = bind_table_lookup_or_fake(table_name);
-	if (!table) return(1);
+	if (!table) {
+		putlog (LOG_MISC, "*", _("Script '%s' accessed non-existing bind table '%s'."),
+				NULL, table_name);
+		return(1);
+	}
 
 	if (table->syntax) {
 		callback->syntax = strdup(table->syntax);

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: script.h,v 1.13 2003/12/17 07:39:14 wcc Exp $
+ * $Id: script.h,v 1.14 2004/06/14 23:42:11 wingman Exp $
  */
 
 #ifndef _EGG_SCRIPT_H_
@@ -25,13 +25,22 @@
 BEGIN_C_DECLS
 
 /* Script events that get recorded in the script journal. */
-enum {
+enum
+{
 	SCRIPT_EVENT_LOAD_SCRIPT = 0,
 	SCRIPT_EVENT_LINK_VAR,
 	SCRIPT_EVENT_UNLINK_VAR,
 	SCRIPT_EVENT_CREATE_CMD,
 	SCRIPT_EVENT_DELETE_CMD,
 	SCRIPT_EVENT_MAX
+};
+
+/* Script implementation return codes. */
+enum
+{
+	SCRIPT_OK = 0,
+	SCRIPT_ERR_NOT_RESPONSIBLE,
+	SCRIPT_ERR_CODE,
 };
 
 /* Byte-arrays are simply strings with their length given explicitly, so it
@@ -111,6 +120,7 @@ typedef struct script_callback_b {
 	void *delete_data;
 	char *syntax;
 	char *name;
+	char *script;
 	int flags;
 } script_callback_t;
 
@@ -159,6 +169,7 @@ typedef struct script_args_b {
 typedef struct {
 	char *class;
 	char *name;
+	char *script;
 	int (*callback)(void *client_data, script_args_t *args, script_var_t *retval);
 	void *client_data;
 } script_raw_command_t;

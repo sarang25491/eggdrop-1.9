@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: eggmod.h,v 1.7 2004/03/01 22:58:32 stdarg Exp $
+ * $Id: eggmod.h,v 1.8 2004/06/14 23:42:11 wingman Exp $
  */
 
 #ifndef _EGG_EGGMOD_H_
@@ -50,6 +50,7 @@ struct egg_module {
 int module_init();
 int module_add_dir(const char *moddir);
 int module_load(const char *name);
+int module_loaded(const char *name);
 int module_unload(const char *name, int why);
 egg_module_t *module_lookup(const char *name);
 void *module_get_api(const char *name, int major, int minor);

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: script.c,v 1.13 2003/12/17 07:39:14 wcc Exp $";
+static const char rcsid[] = "$Id: script.c,v 1.14 2004/06/14 23:42:11 wingman Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -284,12 +284,44 @@ cleanup_args:
 /* Ahh, the client scripting interface. */
 int script_load(char *filename)
 {
-	int i;
+	int i, ret;
+
+	egg_assert_val (filename != NULL, 0);
+
+	/* check if we have at least one script module loaded. */
+	if (nscript_modules == 0) {
+		putlog (LOG_MISC, "*", _("Failed to load script '%s': no script modules loaded."),
+			filename);
+		return 0;
+	}
 
 	for (i = 0; i < nscript_modules; i++) {
-		script_modules[i]->load_script(script_modules[i]->client_data, filename);
+		ret = script_modules[i]->load_script(script_modules[i]->client_data, filename);
+
+		switch (ret) {
+
+			/* The current module was responsible and everything worked fine
+			 */
+			case (SCRIPT_OK):
+				putlog (LOG_MISC, "*", _("Script loaded: %s"), filename);
+				return 1;
+	
+			/* The current module is not responsible for this type of
+			 * script. */
+			case (SCRIPT_ERR_NOT_RESPONSIBLE):
+				break;
+
+			/* Code error, script implementation (hopefully) put a log
+			 * message for a detailed error description. */
+			case (SCRIPT_ERR_CODE):
+				return 0;
+
+		}
 	}
-	return(0);
+
+	putlog (LOG_MISC, "*", _("Failed to load script '%s': no appropiate script module."), filename);
+	
+	return 0;
 }
 
 int script_link_vars(script_linked_var_t *table)
