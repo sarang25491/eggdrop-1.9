@@ -22,6 +22,7 @@
 	<module_path>modules/</module_path>
 	<autoload>
 		<module>telnetparty</module>
+		<module>ircparty</module>
 		<module>tclscript</module>
 		<module>script</module>
 		<module>server</module>
