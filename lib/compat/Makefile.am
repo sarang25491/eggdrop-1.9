@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.3 2002/04/01 13:33:31 ite Exp $
+# $Id: Makefile.am,v 1.4 2002/04/01 23:39:35 ite Exp $
 
 ## libcompat is built as convenience library
 
@@ -20,6 +20,7 @@ libcompat_la_SOURCES	= compat.h \
 			snprintf.h \
 			strcasecmp.h \
 			strdup.h \
+			strerror.h \
 			strlcat.h \
 			strlcpy.h \
 			strncasecmp.h \

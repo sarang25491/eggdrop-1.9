@@ -1,7 +1,7 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.11 2002/04/01 23:35:17 ite Exp $
+dnl $Id: acinclude.m4,v 1.12 2002/04/01 23:39:35 ite Exp $
 dnl
 
 
@@ -341,6 +341,21 @@ else
     AC_DEFINE(UNSIGNED_LONG32, 1,
               [Define this if an unsigned long is 32 bits])
   fi
+fi
+])
+
+
+dnl  EGG_VAR_SYS_ERRLIST()
+dnl
+AC_DEFUN([EGG_VAR_SYS_ERRLIST], [dnl
+AC_CACHE_CHECK([for sys_errlist],
+egg_cv_var_sys_errlist,
+[AC_TRY_LINK([int *p;], [extern int sys_errlist; p = &sys_errlist;],
+	    egg_cv_var_sys_errlist=yes, egg_cv_var_sys_errlist=no)
+])
+if test x"$egg_cv_var_sys_errlist" = xyes; then
+  AC_DEFINE([HAVE_SYS_ERRLIST], 1,
+           [Define if your system libraries have a sys_errlist variable.])
 fi
 ])
 

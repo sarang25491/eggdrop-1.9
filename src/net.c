@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.55 2002/04/01 13:33:33 ite Exp $
+ * $Id: net.c,v 1.56 2002/04/01 23:39:36 ite Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -139,84 +139,12 @@ struct in6_addr ipv4to6(IP a)
 
 void neterror(char *s)
 {
-#ifdef HAVE_STRERROR
 	int e = errno;
 	char *err = strerror(e);
 
 	/* Calling procs usually use char s[UHOSTLEN] for the error message. */
 	if (err) strlcpy(s, err, UHOSTLEN);
 	else sprintf(s, "Unforeseen error %d", e);
-#else
-  switch (errno) {
-  case EADDRINUSE:
-    strcpy(s, "Address already in use");
-    break;
-  case EADDRNOTAVAIL:
-    strcpy(s, "Address invalid on remote machine");
-    break;
-  case EAFNOSUPPORT:
-    strcpy(s, "Address family not supported");
-    break;
-  case EALREADY:
-    strcpy(s, "Socket already in use");
-    break;
-  case EBADF:
-    strcpy(s, "Socket descriptor is bad");
-    break;
-  case ECONNREFUSED:
-    strcpy(s, "Connection refused");
-    break;
-  case EFAULT:
-    strcpy(s, "Namespace segment violation");
-    break;
-  case EINPROGRESS:
-    strcpy(s, "Operation in progress");
-    break;
-  case EINTR:
-    strcpy(s, "Timeout");
-    break;
-  case EINVAL:
-    strcpy(s, "Invalid namespace");
-    break;
-  case EISCONN:
-    strcpy(s, "Socket already connected");
-    break;
-  case ENETUNREACH:
-    strcpy(s, "Network unreachable");
-    break;
-  case ENOTSOCK:
-    strcpy(s, "File descriptor, not a socket");
-    break;
-  case ETIMEDOUT:
-    strcpy(s, "Connection timed out");
-    break;
-  case ENOTCONN:
-    strcpy(s, "Socket is not connected");
-    break;
-  case EHOSTUNREACH:
-    strcpy(s, "Host is unreachable");
-    break;
-  case EPIPE:
-    strcpy(s, "Broken pipe");
-    break;
-#ifdef ECONNRESET
-  case ECONNRESET:
-    strcpy(s, "Connection reset by peer");
-    break;
-#endif
-#ifdef EACCES
-  case EACCES:
-    strcpy(s, "Permission denied");
-    break;
-#endif
-  case 0:
-    strcpy(s, "Error 0");
-    break;
-  default:
-    sprintf(s, "Unforseen error %d", errno);
-    break;
-  }
-#endif
 }
 
 /* Sets/Unsets options for a specific socket.

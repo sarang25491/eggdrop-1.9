@@ -1,11 +1,11 @@
 /*
- * compat.h
- *   prototypes for compability functions
+ * strerror.h
+ *   prototypes for strerror.c
  *
- * $Id: compat.h,v 1.5 2002/04/01 23:39:35 ite Exp $
+ * $Id: strerror.h,v 1.1 2002/04/01 23:39:35 ite Exp $
  */
 /*
- * Copyright (C) 2000, 2001, 2002 Eggheads Development Team
+ * Copyright (C) 2002 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,24 +21,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-#ifndef _EGG_COMPAT_H
-#define _EGG_COMPAT_H
+#ifndef _EGG_STRERROR_H
+#define _EGG_STRERROR_H
 
-/*
- * Include prototypes
- */
-#include "memcpy.h"
-#include "memset.h"
-#include "strcasecmp.h"
-#include "strncasecmp.h"
-#include "snprintf.h"
-#include "strftime.h"
-#include "inet_aton.h"
-#include "inet_ntop.h"
-#include "inet_pton.h"
-#include "strdup.h"
-#include "strlcpy.h"
-#include "strlcat.h"
-#include "strerror.h"
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
 
-#endif				/* !_EGG_COMPAT_H */
+#ifndef HAVE_STRERROR
+char *strerror(int);
+#endif
+
+#endif				/* !_EGG_STRERROR_H */
