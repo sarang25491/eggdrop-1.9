@@ -1,3 +1,19 @@
+2003-03-05 12:20  stdarg <stdarg@techmonkeys.org>
+
+	* doc/SCRIPTING-COMMANDS, lib/eggdrop/eggconfig.c,
+	lib/eggdrop/hash_table.c, lib/eggdrop/hash_table.h,
+	lib/eggdrop/partyline.c, lib/eggdrop/users.c,
+	modules/server/binds.c, modules/server/binds.h,
+	modules/server/channels.c, modules/server/channels.h,
+	modules/server/input.c, modules/server/scriptcmds.c,
+	modules/server/server.c, modules/server/servsock.c:
+
+	
+	* Store some channel information (members, topic info) 
+	* Hash table for nick->uhost assocation 
+	* Script commands to access channel info 
+	* Documentation for script commands *gasp* 
+
 2003-03-05 02:16  Will Buckner <wcc@techmonkeys.org>
 
 	* acconfig/acinclude.m4, doc/MODULES, lib/compat/snprintf.c,
