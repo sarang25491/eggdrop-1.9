@@ -16,27 +16,11 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: config.m4,v 1.2 2004/06/16 06:33:45 wcc Exp $
+dnl $Id: config.m4,v 1.1 2004/06/16 06:33:44 wcc Exp $
 dnl
 
-EGG_MODULE_START(perlscript, [perl support], "yes")
+EGG_MODULE_START(oldbotnet, [old botnet linking support], "yes")
 
-AC_PATH_PROG(perlcmd, perl)
-PERL_LDFLAGS=`$perlcmd -MExtUtils::Embed -e ldopts 2>/dev/null`
-
-if test "${PERL_LDFLAGS+set}" != "set"; then
-  AC_MSG_WARN([
-
-  Your system does not provide a working perl environment. The
-  perlscript module will therefore be disabled.
-
-  ])
-  EGG_MOD_ENABLED="no"
-else
-  PERL_CCFLAGS=`$perlcmd -MExtUtils::Embed -e ccopts 2>/dev/null`
-  egg_perlscript="yes"
-  AC_SUBST(PERL_LDFLAGS)
-  AC_SUBST(PERL_CCFLAGS)
-fi
+# Nothing special to configure in this module
 
 EGG_MODULE_END()
