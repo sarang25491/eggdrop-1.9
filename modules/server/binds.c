@@ -4,11 +4,14 @@
 
 #define MODULE_NAME "server"
 #define MAKING_SERVER
-#include "lib/eggdrop/module.h"
+#include <stdio.h>
+#include <eggdrop/eggdrop.h>
 #include "dcc.h"
 
 bind_table_t *BT_wall = NULL,
 	*BT_raw = NULL,
+	*BT_server_input = NULL,
+	*BT_server_output = NULL,
 	*BT_notice = NULL,
 	*BT_msg = NULL,
 	*BT_msgm = NULL,
@@ -30,7 +33,8 @@ void server_binds_destroy()
 {
 	bind_table_del(BT_wall);
 	bind_table_del(BT_raw);
-	bind_table_del(BT_raw);
+	bind_table_del(BT_server_input);
+	bind_table_del(BT_server_output);
 	bind_table_del(BT_notice);
 	bind_table_del(BT_msgm);
 	bind_table_del(BT_msg);
@@ -39,6 +43,7 @@ void server_binds_destroy()
 	bind_table_del(BT_ctcr);
 	bind_table_del(BT_ctcp);
 	bind_table_del(BT_dcc_chat);
+	bind_table_del(BT_dcc_recv);
 	bind_table_del(BT_nick);
 	bind_table_del(BT_join);
 	bind_table_del(BT_part);
@@ -53,6 +58,8 @@ void server_binds_init()
 	/* Create our bind tables. */
 	BT_wall = bind_table_add("wall", 2, "ss", MATCH_MASK, BIND_STACKABLE);
 	BT_raw = bind_table_add("raw", 6, "ssUsiS", MATCH_MASK, BIND_STACKABLE);
+	BT_server_input = bind_table_add("server_input", 1, "s", MATCH_NONE, BIND_STACKABLE);
+	BT_server_output = bind_table_add("server_output", 1, "s", MATCH_NONE, BIND_STACKABLE);
 	BT_notice = bind_table_add("notice", 5, "ssUss", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
 	BT_msg = bind_table_add("msg", 4, "ssUs", MATCH_EXACT, BIND_USE_ATTR);
 	BT_msgm = bind_table_add("msgm", 4, "ssUs", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);

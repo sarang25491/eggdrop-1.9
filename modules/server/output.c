@@ -8,18 +8,9 @@
 #include "server.h"
 #include "parse.h"
 #include "output.h"
+#include "binds.h"
 
-typedef struct queue_entry {
-	struct queue_entry *next, *prev;
-	int id;
-	irc_msg_t msg;
-} queue_entry_t;
-
-typedef struct {
-	queue_entry_t *queue_head, *queue_tail;
-	int len;
-	int next_id;
-} queue_t;
+char *global_output_string = NULL;
 
 /* We have 6 queues, one for each combo of priority and 'next'. */
 static queue_t output_queues[6] = {{0}, {0}, {0}, {0}, {0}, {0}};
@@ -28,6 +19,39 @@ static queue_t output_queues[6] = {{0}, {0}, {0}, {0}, {0}, {0}};
 static queue_t unused_queue = {0};
 
 static void queue_server(int priority, char *text, int len);
+
+/* Little utility function to help append to a fixed buffer. */
+static void append_str(char **dest, int *remaining, const char *src)
+{
+	int len;
+
+	if (!src || *remaining <= 0) return;
+
+	len = strlen(src);
+	if (len > *remaining) len = *remaining;
+
+	memcpy(*dest, src, len);
+	*remaining -= len;
+	*dest += len;
+}
+
+static void do_output(const char *text, int len)
+{
+	int r;
+
+	if (global_output_string) {
+		free(global_output_string);
+		global_output_string = NULL;
+	}
+	r = bind_check(BT_server_output, text, text);
+	if (r & BIND_RET_BREAK) return;
+
+	if (global_output_string) {
+		len = strlen(global_output_string);
+		if (len > 0) sockbuf_write(current_server.idx, global_output_string, len);
+	}
+	else sockbuf_write(current_server.idx, text, len);
+}
 
 /* Sends formatted output to the currently connected server. */
 int printserv(int priority, const char *format, ...)
@@ -49,7 +73,7 @@ int printserv(int priority, const char *format, ...)
 	ptr[len] = 0;
 
 	if ((priority & (~SERVER_NEXT)) == SERVER_NOQUEUE) {
-		sockbuf_write(current_server.idx, ptr, len);
+		do_output(ptr, len);
 	}
 	else {
 		queue_server(priority, ptr, len);
@@ -59,7 +83,26 @@ int printserv(int priority, const char *format, ...)
 	return(len);
 }
 
-static void queue_append(queue_t *queue, queue_entry_t *q)
+queue_entry_t *queue_new(char *text)
+{
+	queue_entry_t *q;
+
+	/* Either get one from the unused_queue, or allocate a new one. */
+	if (unused_queue.queue_head) {
+		q = unused_queue.queue_head;
+		queue_unlink(&unused_queue, q);
+	}
+	else {
+		q = calloc(1, sizeof(*q));
+	}
+
+	/* Parse the text into the queue entry. */
+	queue_entry_from_text(q, text);
+
+	return(q);
+}
+
+void queue_append(queue_t *queue, queue_entry_t *q)
 {
 	q->next = NULL;
 	q->prev = queue->queue_tail;
@@ -70,7 +113,7 @@ static void queue_append(queue_t *queue, queue_entry_t *q)
 	queue->len++;
 }
 
-static void queue_unlink(queue_t *queue, queue_entry_t *q)
+void queue_unlink(queue_t *queue, queue_entry_t *q)
 {
 	if (q->next) q->next->prev = q->prev;
 	else queue->queue_tail = q->prev;
@@ -81,26 +124,10 @@ static void queue_unlink(queue_t *queue, queue_entry_t *q)
 	queue->len--;
 }
 
-static void queue_server(int priority, char *text, int len)
+void queue_entry_from_text(queue_entry_t *q, char *text)
 {
-	queue_t *queue;
-	queue_entry_t *q;
-	int i, qnum;
 	irc_msg_t *msg;
-
-	qnum = priority & (~SERVER_NEXT);
-	if (qnum < SERVER_QUICK || qnum > SERVER_SLOW) qnum = SERVER_SLOW;
-	qnum -= SERVER_QUICK;
-	if (priority & SERVER_NEXT) qnum += 3;
-	queue = output_queues+qnum;
-
-	if (unused_queue.queue_head) {
-		q = unused_queue.queue_head;
-		queue_unlink(&unused_queue, q);
-	}
-	else {
-		q = calloc(1, sizeof(*q));
-	}
+	int i;
 
 	/* Parse the irc message. */
 	msg = &q->msg;
@@ -112,31 +139,83 @@ static void queue_server(int priority, char *text, int len)
 	for (i = 0; i < msg->nargs; i++) {
 		msg->args[i] = strdup(msg->args[i]);
 	}
+}
+
+void queue_entry_cleanup(queue_entry_t *q)
+{
+	irc_msg_t *msg;
+	int i;
+
+	msg = &q->msg;
+	if (msg->prefix) free(msg->prefix);
+	if (msg->cmd) free(msg->cmd);
+
+	for (i = 0; i < msg->nargs; i++) {
+		free(msg->args[i]);
+	}
+	memset(msg, 0, sizeof(*msg));
+}
+
+void queue_entry_to_text(queue_entry_t *q, char *text, int *remaining)
+{
+	irc_msg_t *msg;
+	int i;
+
+	msg = &q->msg;
+	if (msg->prefix) {
+		append_str(&text, remaining, msg->prefix);
+		append_str(&text, remaining, " ");
+	}
+	if (msg->cmd) {
+		append_str(&text, remaining, msg->cmd);
+	}
+
+	/* Add the args (except for last one). */
+	msg->nargs--;
+	for (i = 0; i < msg->nargs; i++) {
+		append_str(&text, remaining, " ");
+		append_str(&text, remaining, msg->args[i]);
+	}
+	msg->nargs++;
+
+	/* If the last arg has a space in it, put a : before it. */
+	if (i < msg->nargs) {
+		if (strchr(msg->args[i], ' ')) append_str(&text, remaining, " :");
+		else append_str(&text, remaining, " ");
+		append_str(&text, remaining, msg->args[i]);
+	}
+}
+
+queue_t *queue_get_by_priority(int priority)
+{
+	int qnum;
+
+	qnum = priority & (~SERVER_NEXT);
+	if (qnum < SERVER_QUICK || qnum > SERVER_SLOW) qnum = SERVER_SLOW;
+	qnum -= SERVER_QUICK;
+	if (priority & SERVER_NEXT) qnum += 3;
+
+	return output_queues+qnum;
+}
+
+static void queue_server(int priority, char *text, int len)
+{
+	queue_t *queue;
+	queue_entry_t *q;
+
+	queue = queue_get_by_priority(priority);
+
+	q = queue_new(text);
 
 	/* Ok, put it in the queue. */
 	q->id = queue->next_id++;
 	queue_append(queue, q);
 }
 
-static void append_str(char **dest, int *remaining, const char *src)
-{
-	int len;
-
-	if (!src || *remaining <= 0) return;
-
-	len = strlen(src);
-	if (len > *remaining) len = *remaining;
-
-	memcpy(*dest, src, len);
-	*remaining -= len;
-	*dest += len;
-}
-
 void dequeue_messages()
 {
 	queue_entry_t *q;
 	queue_t *queue = NULL;
-	irc_msg_t *msg;
 	int i, remaining, len;
 	char *text, buf[1024];
 
@@ -161,49 +240,21 @@ void dequeue_messages()
 	queue_unlink(queue, q);
 
 	/* Construct an irc message out of it. */
-	remaining = sizeof(buf);
 	text = buf;
-	msg = &q->msg;
-	if (msg->prefix) {
-		append_str(&text, &remaining, msg->prefix);
-		append_str(&text, &remaining, " ");
-		free(msg->prefix);
-	}
-	if (msg->cmd) {
-		append_str(&text, &remaining, msg->cmd);
-		free(msg->cmd);
-	}
-
-	/* Add the args (except for last one). */
-	msg->nargs--;
-	for (i = 0; i < msg->nargs; i++) {
-		append_str(&text, &remaining, " ");
-		append_str(&text, &remaining, msg->args[i]);
-		free(msg->args[i]);
-	}
-	msg->nargs++;
-
-	/* If the last arg has a space in it, put a : before it. */
-	if (i < msg->nargs) {
-		if (strchr(msg->args[i], ' ')) append_str(&text, &remaining, " :");
-		else append_str(&text, &remaining, " ");
-		append_str(&text, &remaining, msg->args[i]);
-		free(msg->args[i]);
-	}
+	remaining = sizeof(buf);
+	queue_entry_to_text(q, text, &remaining);
 
 	/* Now we're done with q, so free anything we need to free and store it
 	 * in the unused queue. */
-	irc_msg_cleanup(msg);
+	queue_entry_cleanup(q);
 	queue_append(&unused_queue, q);
 
-	/* Make sure last 2 chars are \r\n. */
-	if (remaining < 2) remaining = 2;
+	/* Make sure last 2 chars are \r\n and there's a space left for \0. */
+	if (remaining < 3) remaining = 3;
 	len = sizeof(buf) - remaining;
 	buf[len++] = '\r';
 	buf[len++] = '\n';
-	sockbuf_write(current_server.idx, buf, len);
-}
+	buf[len] = 0;
 
-queue_entry_t *queue_lookup(int priority, int num)
-{
+	do_output(buf, len);
 }

@@ -14,12 +14,23 @@
 #include "nicklist.h"
 #include "dcc.h"
 
+char *global_input_string = NULL;
+
 int server_parse_input(char *text)
 {
 	irc_msg_t msg;
 	char *from_nick = NULL, *from_uhost = NULL;
 	user_t *u = NULL;
 	char buf[128], *full;
+	int r;
+
+	if (global_input_string) {
+		free(global_input_string);
+		global_input_string = NULL;
+	}
+	r = bind_check(BT_server_input, text, text);
+	if (r & BIND_RET_BREAK) return(0);
+	if (global_input_string) text = global_input_string;
 
 	/* This would be a good place to put an SFILT bind, so that scripts
 		and other modules can modify text sent from the server. */

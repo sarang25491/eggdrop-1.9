@@ -3,6 +3,8 @@
 
 extern bind_table_t *BT_wall,
 	*BT_raw,
+	*BT_server_input,
+	*BT_server_output,
 	*BT_notice,
 	*BT_msg,
 	*BT_msgm,

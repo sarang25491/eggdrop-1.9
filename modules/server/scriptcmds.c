@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.22 2003/03/24 02:11:39 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.23 2003/04/01 05:56:02 stdarg Exp $";
 #endif
 */
 
@@ -43,50 +43,57 @@ extern int server_list_index;
 extern int cycle_delay;
 extern current_server_t current_server;
 
+/* From output.c */
+extern char *global_output_string;
+
+/* From input.c */
+extern char *global_input_string;
+
 /* match_my_nick() is a macro so we can't put it right into the script command table. */
 static int script_isbotnick(char *nick)
 {
 	return match_my_nick(nick);
 }
 
-static int script_putserv(char *queue, char *next, char *text)
+static int name_to_priority(const char *queue, const char *next)
 {
 	int prio;
 
 	/* Figure out which arguments they've given us. */
-	if (!next) queue = "-normal";
+	if (!next) queue = NULL;
 	else if (!queue) {
 		/* If we only have 1 option, check to see if it's -next or
 			a queue. */
-		if (!strcasecmp(next, "-next")) queue = "-normal";
+		if (!strcasecmp(next, "next")) queue = NULL;
 		else {
 			queue = next;
 			next = NULL;
 		}
 	}
-	else if (!strcasecmp(queue, "-next")) {
+	else if (!strcasecmp(queue, "next")) {
 		/* They did it in reverse order, so swap them. */
-		char *temp = next;
+		const char *temp = next;
 		next = queue;
 		queue = temp;
 	}
 
 	/* Figure out which queue they want. */
-	if (!strcasecmp(queue, "-noqueue")) {
-		prio = SERVER_NOQUEUE;
-	}
-	else if (!strcasecmp(queue, "-slow")) {
-		prio = SERVER_SLOW;
-	}
-	else if (!strcasecmp(queue, "-quick")) {
-		prio = SERVER_QUICK;
-	}
-	else {
-		prio = SERVER_NORMAL;
-	}
+	if (!queue) prio = SERVER_NORMAL;
+	else if (!strcasecmp(queue, "noqueue")) prio = SERVER_NOQUEUE;
+	else if (!strcasecmp(queue, "slow")) prio = SERVER_SLOW;
+	else if (!strcasecmp(queue, "quick")) prio = SERVER_QUICK;
+	else prio = SERVER_NORMAL;
 
 	if (next) prio |= SERVER_NEXT;
 
+	return(prio);
+}
+
+static int script_putserv(char *queue, char *next, char *text)
+{
+	int prio;
+
+	prio = name_to_priority(queue, next);
 	printserv(prio, "%s\r\n", text);
 
 	return(0);
@@ -215,19 +222,92 @@ static int script_channel_limit(char *chan_name)
 
 /* Output queue commands. */
 
-static int script_queue_get(script_var_t *retval, char *qname, int num)
+static int script_queue_len(char *qname, char *next)
 {
+	int prio;
+	queue_t *queue;
+
 	/* Look up queue. */
+	prio = name_to_priority(qname, next);
+	queue = queue_get_by_priority(prio);
+
+	return(queue->len);
+}
+
+static void get_queue_entry(char *qname, char *next, int num, queue_t **queue_ptr, queue_entry_t **queue_entry_ptr)
+{
+	int prio;
+	queue_t *queue;
+	queue_entry_t *q;
+
+	/* Look up queue. */
+	prio = name_to_priority(qname, next);
+	queue = queue_get_by_priority(prio);
+
 	/* Get entry. */
-	/* Return info for that entry. */
+	if (num >= 0 && num < queue->len/2) {
+		for (q = queue->queue_head; q && num > 0; q = q->next) {
+			num--;
+		}
+	}
+	else if (num >= queue->len/2 && num < queue->len) {
+		num -= (queue->len/2);
+		for (q = queue->queue_tail; q && num > 0; q = q->prev) {
+			num--;
+		}
+	}
+	else q = NULL;
+
+	if (queue_ptr) *queue_ptr = queue;
+	if (queue_entry_ptr) *queue_entry_ptr = q;
 }
 
-static int script_queue_set(char *qname, int num, char *msg)
+static char *script_queue_get(char *qname, char *next, int num)
 {
+	queue_entry_t *q;
+	char buf[1024];
+	int remaining;
+
+	get_queue_entry(qname, next, num, NULL, &q);
+	if (!q) return(NULL);
+
+	remaining = sizeof(buf);
+	queue_entry_to_text(q, buf, &remaining);
+	if (remaining < sizeof(buf)) buf[sizeof(buf)-remaining-1] = 0;
+	else buf[0] = 0;
+
+	return strdup(buf);
 }
 
-static int script_queue_add(char *qname, int num, char *msg)
+static int script_queue_set(char *qname, char *next, int num, char *msg)
 {
+	queue_entry_t *q;
+
+	get_queue_entry(qname, next, num, NULL, &q);
+	if (!q) return(-1);
+
+	queue_entry_from_text(q, msg);
+	return(0);
+}
+
+static int script_queue_insert(char *qname, char *next, int num, char *msg)
+{
+	queue_t *queue;
+	queue_entry_t *q, *newq;
+
+	get_queue_entry(qname, next, num, &queue, &q);
+	newq = queue_new(msg);
+	if (!q) queue_append(queue, newq);
+	else {
+		queue->len++;
+		newq->next = q;
+		newq->prev = q->prev;
+		if (q->prev) q->prev->next = newq;
+		else queue->queue_head = newq;
+		q->prev = q;
+	}
+
+	return(0);
 }
 
 static script_linked_var_t server_script_vars[] = {
@@ -236,6 +316,8 @@ static script_linked_var_t server_script_vars[] = {
 	{"", "botnick", &current_server.nick, SCRIPT_STRING | SCRIPT_READONLY, NULL},
 	{"", "myip", &current_server.myip, SCRIPT_STRING, NULL},
 	{"", "mylongip", &current_server.mylongip, SCRIPT_UNSIGNED, NULL},
+	{"", "server_input_string", &global_input_string, SCRIPT_STRING, NULL},
+	{"", "server_output_string", &global_output_string, SCRIPT_STRING, NULL},
 	{0}
 };
 
@@ -270,6 +352,10 @@ static script_command_t server_script_cmds[] = {
 	{"", "channel_limit", script_channel_limit, NULL, 1, "s", "channel", SCRIPT_INTEGER, 0},
 
 	/* Output queue commands. */
+	{"", "server_queue_len", script_queue_len, NULL, 1, "ssi", "queue ?next?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
+	{"", "server_queue_get", script_queue_get, NULL, 1, "ssi", "?queue? ?next? msgnum", SCRIPT_STRING|SCRIPT_FREE, SCRIPT_VAR_ARGS|SCRIPT_VAR_FRONT},
+	{"", "server_queue_set", script_queue_set, NULL, 2, "ssis", "?queue? ?next? msgnum msg", SCRIPT_INTEGER, SCRIPT_VAR_ARGS|SCRIPT_VAR_FRONT},
+	{"", "server_queue_insert", script_queue_insert, NULL, 2, "ssis", "?queue? ?next? msgnum msg", SCRIPT_INTEGER, SCRIPT_VAR_ARGS|SCRIPT_VAR_FRONT},
 
         {0}
 };
