@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2002-02-23 04:00-0600\n"
+"POT-Creation-Date: 2002-02-24 04:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -52,7 +52,7 @@ msgstr ""
 msgid "Note sent to"
 msgstr ""
 
-#: src/botcmd.c:303 src/botnet.c:1654 src/botnet.c:1661
+#: src/botcmd.c:303 src/botnet.c:1659 src/botnet.c:1666
 msgid "Disconnected from:"
 msgstr ""
 
@@ -85,7 +85,7 @@ msgstr ""
 msgid "idle"
 msgstr ""
 
-#: src/botcmd.c:391 src/botcmd.c:428 src/botnet.c:555
+#: src/botcmd.c:391 src/botcmd.c:428 src/botnet.c:560
 msgid "AWAY"
 msgstr ""
 
@@ -152,7 +152,7 @@ msgid "You are supposed to be a leaf!"
 msgstr ""
 
 #. we're directly connected to the offending bot?! (shudder!)
-#: src/botcmd.c:725 src/users.c:1051 src/users.c:1054
+#: src/botcmd.c:725 src/users.c:1039 src/users.c:1042
 msgid "Rejecting bot"
 msgstr ""
 
@@ -179,7 +179,7 @@ msgstr ""
 
 #. I'm the connection to the rejected bot
 #: src/botcmd.c:869 src/botcmd.c:870 src/botcmd.c:873 src/botcmd.c:1091
-#: src/users.c:1048
+#: src/users.c:1036
 msgid "rejected"
 msgstr ""
 
@@ -272,230 +272,230 @@ msgstr ""
 msgid "Note arrived for you"
 msgstr ""
 
-#: src/botnet.c:454
+#: src/botnet.c:459
 msgid "Users across the botnet"
 msgstr ""
 
-#: src/botnet.c:454
+#: src/botnet.c:459
 msgid "Party line"
 msgstr ""
 
-#: src/botnet.c:455
+#: src/botnet.c:460
 msgid "Local channel"
 msgstr ""
 
-#: src/botnet.c:459 src/botnet.c:462
+#: src/botnet.c:464 src/botnet.c:467
 msgid "Users on channel"
 msgstr ""
 
-#: src/botnet.c:571 src/botnet.c:606
+#: src/botnet.c:576 src/botnet.c:611
 msgid "No bots linked."
 msgstr ""
 
-#: src/botnet.c:592
+#: src/botnet.c:597
 msgid "total"
 msgstr ""
 
-#: src/botnet.c:622
+#: src/botnet.c:627
 msgid "No trace info for:"
 msgstr ""
 
-#: src/botnet.c:635
+#: src/botnet.c:640
 msgid "Tree too complex!"
 msgstr ""
 
-#: src/botnet.c:902
+#: src/botnet.c:907
 msgid "Unlinking all bots..."
 msgstr ""
 
-#: src/botnet.c:907 src/botnet.c:910
+#: src/botnet.c:912 src/botnet.c:915
 msgid "Killed link attempt to"
 msgstr ""
 
-#: src/botnet.c:918
+#: src/botnet.c:923
 msgid "No longer trying to link:"
 msgstr ""
 
-#: src/botnet.c:931
+#: src/botnet.c:936
 msgid "Breaking link with"
 msgstr ""
 
-#: src/botnet.c:940 src/botnet.c:947
+#: src/botnet.c:945 src/botnet.c:952
 msgid "Unlinked from:"
 msgstr ""
 
-#: src/botnet.c:961
+#: src/botnet.c:966
 msgid "Not connected to that bot."
 msgstr ""
 
-#: src/botnet.c:984
+#: src/botnet.c:989
 msgid "Smooshing bot tables and assocs..."
 msgstr ""
 
-#: src/botnet.c:1015
+#: src/botnet.c:1020
 #, c-format
 msgid "%s is not a known bot.\n"
 msgstr ""
 
-#: src/botnet.c:1018
+#: src/botnet.c:1023
 msgid "Link to myself?  Oh boy, Freud would have a field day.\n"
 msgstr ""
 
-#: src/botnet.c:1021
+#: src/botnet.c:1026
 msgid "That bot is already connected up.\n"
 msgstr ""
 
-#: src/botnet.c:1028
+#: src/botnet.c:1033
 msgid "Already linking to that bot.\n"
 msgstr ""
 
-#: src/botnet.c:1035 src/botnet.c:1162
+#: src/botnet.c:1040 src/botnet.c:1167
 #, c-format
 msgid "Invalid telnet address:port stored for '%s'.\n"
 msgstr ""
 
-#: src/botnet.c:1036 src/botnet.c:1163
+#: src/botnet.c:1041 src/botnet.c:1168
 #, c-format
 msgid "Use: .chaddr %s <address>:<port#>[/<relay-port#>]\n"
 msgstr ""
 
-#: src/botnet.c:1041 src/botnet.c:1170
+#: src/botnet.c:1046 src/botnet.c:1175
 msgid "Sorry, too many DCC connections.\n"
 msgstr ""
 
-#: src/botnet.c:1046
+#: src/botnet.c:1051
 #, c-format
 msgid "Linking to %s at %s:%d ..."
 msgstr ""
 
-#: src/botnet.c:1074 src/dcc.c:245
+#: src/botnet.c:1079 src/dcc.c:245
 #, c-format
 msgid "Failed link to %s."
 msgstr ""
 
-#: src/botnet.c:1108 src/botnet.c:1360
+#: src/botnet.c:1113 src/botnet.c:1365
 msgid "Cant find user for relay!"
 msgstr ""
 
-#: src/botnet.c:1117
+#: src/botnet.c:1122
 msgid "Could not link to"
 msgstr ""
 
-#: src/botnet.c:1152
+#: src/botnet.c:1157
 msgid "is not a known bot."
 msgstr ""
 
-#: src/botnet.c:1156
+#: src/botnet.c:1161
 msgid "Relay to myself?  What on EARTH would be the point?!"
 msgstr ""
 
-#: src/botnet.c:1177
+#: src/botnet.c:1182
 msgid "No free sockets available.\n"
 msgstr ""
 
-#: src/botnet.c:1188
+#: src/botnet.c:1193
 msgid "(Type *BYE* on a line by itself to abort.)\n"
 msgstr ""
 
-#: src/botnet.c:1218 src/botnet.c:1279 src/botnet.c:1325
+#: src/botnet.c:1223 src/botnet.c:1284 src/botnet.c:1330
 #, c-format
 msgid "Cant find user for relay!  %d -> %d"
 msgstr ""
 
-#: src/botnet.c:1225
+#: src/botnet.c:1230
 #, c-format
 msgid "Could not link to %s.\n"
 msgstr ""
 
-#: src/botnet.c:1289
+#: src/botnet.c:1294
 #, c-format
 msgid "Aborting relay attempt to %s.\n"
 msgstr ""
 
-#: src/botnet.c:1290
+#: src/botnet.c:1295
 #, c-format
 msgid ""
 "You are now back on %s.\n"
 "\n"
 msgstr ""
 
-#: src/botnet.c:1291
+#: src/botnet.c:1296
 #, c-format
 msgid "Relay aborted: %s -> %s"
 msgstr ""
 
-#: src/botnet.c:1331
+#: src/botnet.c:1336
 #, c-format
 msgid "Lost dcc connection to [%s]%s/%d"
 msgstr ""
 
-#: src/botnet.c:1333
+#: src/botnet.c:1338
 #, c-format
 msgid "(Dropping relay attempt to %s)"
 msgstr ""
 
-#: src/botnet.c:1369
+#: src/botnet.c:1374
 msgid ""
 "Success!\n"
 "\n"
 "NOW CONNECTED TO RELAY BOT"
 msgstr ""
 
-#: src/botnet.c:1370
+#: src/botnet.c:1375
 msgid "(You can type *BYE* to prematurely close the connection.)"
 msgstr ""
 
-#: src/botnet.c:1371
+#: src/botnet.c:1376
 msgid "Relay link:"
 msgstr ""
 
-#: src/botnet.c:1378
+#: src/botnet.c:1383
 msgid "left the party line."
 msgstr ""
 
-#: src/botnet.c:1406
+#: src/botnet.c:1411
 msgid "Ended relay link"
 msgstr ""
 
-#: src/botnet.c:1408
+#: src/botnet.c:1413
 msgid ""
 "RELAY CONNECTION DROPPED.\n"
 "You are now back on"
 msgstr ""
 
-#: src/botnet.c:1415
+#: src/botnet.c:1420
 msgid "rejoined the party line."
 msgstr ""
 
-#: src/botnet.c:1430
+#: src/botnet.c:1435
 msgid "Lost dcc connection to"
 msgstr ""
 
-#: src/botnet.c:1435
+#: src/botnet.c:1440
 msgid "Dropping relay link to"
 msgstr ""
 
-#: src/botnet.c:1500
+#: src/botnet.c:1505
 msgid "Breaking connection to"
 msgstr ""
 
-#: src/botnet.c:1501
+#: src/botnet.c:1506
 msgid "You are now back on"
 msgstr ""
 
-#: src/botnet.c:1502
+#: src/botnet.c:1507
 msgid "Relay broken"
 msgstr ""
 
-#: src/botnet.c:1627 src/botnet.c:1631
+#: src/botnet.c:1632 src/botnet.c:1636
 msgid "Ping timeout"
 msgstr ""
 
-#: src/botnet.c:1655 src/botnet.c:1656 src/botnet.c:1661
+#: src/botnet.c:1660 src/botnet.c:1661 src/botnet.c:1666
 msgid "unleaflike behavior"
 msgstr ""
 
-#: src/botnet.c:1688
+#: src/botnet.c:1693
 msgid "Dropped bot"
 msgstr ""
 
@@ -1189,7 +1189,7 @@ msgstr ""
 msgid "Error loading module:"
 msgstr ""
 
-#: src/cmds.c:2270 src/modules.c:600
+#: src/cmds.c:2270 src/modules.c:599
 #, c-format
 msgid "Module loaded: %-16s"
 msgstr ""
@@ -1637,25 +1637,25 @@ msgid ""
 msgstr ""
 
 #. FLOOD
-#: src/dccutil.c:463
+#: src/dccutil.c:466
 msgid "Goodbye"
 msgstr ""
 
-#: src/dccutil.c:469
+#: src/dccutil.c:472
 #, c-format
 msgid "%s has been forcibly removed for flooding.\n"
 msgstr ""
 
-#: modules/filesys/filesys.c:883 src/dccutil.c:494
+#: modules/filesys/filesys.c:883 src/dccutil.c:497
 msgid "-=- poof -=-\n"
 msgstr ""
 
-#: src/dccutil.c:495
+#: src/dccutil.c:498
 #, c-format
 msgid "Youve been booted from the %s by %s%s%s\n"
 msgstr ""
 
-#: src/dccutil.c:504
+#: src/dccutil.c:507
 #, c-format
 msgid "%s booted %s from the party line%s%s\n"
 msgstr ""
@@ -1829,7 +1829,7 @@ msgstr ""
 msgid "You can't unload an encryption module"
 msgstr ""
 
-#: modules/blowfish/blowfish.c:456 src/modules.c:572 src/tclmisc.c:208
+#: modules/blowfish/blowfish.c:456 src/modules.c:571 src/tclmisc.c:208
 msgid "Already loaded."
 msgstr ""
 
@@ -2103,122 +2103,122 @@ msgstr ""
 msgid "Reloading all dynamic channel settings.\n"
 msgstr ""
 
-#: modules/channels/userchan.c:413
+#: modules/channels/userchan.c:407
 msgid "Wanted to ban myself--deflected."
 msgstr ""
 
-#: modules/channels/userchan.c:622 modules/channels/userchan.c:670
-#: modules/channels/userchan.c:718
+#: modules/channels/userchan.c:616 modules/channels/userchan.c:664
+#: modules/channels/userchan.c:712
 msgid "Created"
 msgstr ""
 
-#: modules/channels/userchan.c:625 modules/channels/userchan.c:673
-#: modules/channels/userchan.c:721
+#: modules/channels/userchan.c:619 modules/channels/userchan.c:667
+#: modules/channels/userchan.c:715
 msgid "last used"
 msgstr ""
 
-#: modules/channels/userchan.c:652 modules/channels/userchan.c:700
-#: modules/channels/userchan.c:748
+#: modules/channels/userchan.c:646 modules/channels/userchan.c:694
+#: modules/channels/userchan.c:742
 msgid "inactive"
 msgstr ""
 
-#: modules/channels/userchan.c:771 modules/channels/userchan.c:964
+#: modules/channels/userchan.c:765 modules/channels/userchan.c:958
 msgid "No such channel defined"
 msgstr ""
 
-#: modules/channels/userchan.c:786 modules/channels/userchan.c:789
+#: modules/channels/userchan.c:780 modules/channels/userchan.c:783
 msgid "Global bans"
 msgstr ""
 
-#: modules/channels/userchan.c:787 modules/channels/userchan.c:882
-#: modules/channels/userchan.c:980
+#: modules/channels/userchan.c:781 modules/channels/userchan.c:876
+#: modules/channels/userchan.c:974
 msgid "not active on"
 msgstr ""
 
-#: modules/channels/userchan.c:802
+#: modules/channels/userchan.c:796
 #, c-format
 msgid "Channel bans for %s:   (! = not active, * = not placed by bot)\n"
 msgstr ""
 
-#: modules/channels/userchan.c:805
+#: modules/channels/userchan.c:799
 #, c-format
 msgid "Channel bans for %s:  (* = not placed by bot)\n"
 msgstr ""
 
-#: modules/channels/userchan.c:847
+#: modules/channels/userchan.c:841
 msgid "(There are no bans, permanent or otherwise.)\n"
 msgstr ""
 
-#: modules/channels/userchan.c:849
+#: modules/channels/userchan.c:843
 msgid "Use .bans all to see the total list.\n"
 msgstr ""
 
-#: modules/channels/userchan.c:866
+#: modules/channels/userchan.c:860
 msgid "No such channel defined.\n"
 msgstr ""
 
-#: modules/channels/userchan.c:881
+#: modules/channels/userchan.c:875
 msgid "Global exempts"
 msgstr ""
 
-#: modules/channels/userchan.c:884
+#: modules/channels/userchan.c:878
 msgid "Global exempts:\n"
 msgstr ""
 
-#: modules/channels/userchan.c:898 modules/channels/userchan.c:903
+#: modules/channels/userchan.c:892 modules/channels/userchan.c:897
 msgid "Channel exempts for"
 msgstr ""
 
-#: modules/channels/userchan.c:899 modules/channels/userchan.c:997
+#: modules/channels/userchan.c:893 modules/channels/userchan.c:991
 msgid "not active"
 msgstr ""
 
-#: modules/channels/userchan.c:900 modules/channels/userchan.c:904
-#: modules/channels/userchan.c:998 modules/channels/userchan.c:1002
+#: modules/channels/userchan.c:894 modules/channels/userchan.c:898
+#: modules/channels/userchan.c:992 modules/channels/userchan.c:996
 msgid "not placed by bot"
 msgstr ""
 
-#: modules/channels/userchan.c:947
+#: modules/channels/userchan.c:941
 msgid "Use .exempts all to see the total list"
 msgstr ""
 
-#: modules/channels/userchan.c:979 modules/channels/userchan.c:982
+#: modules/channels/userchan.c:973 modules/channels/userchan.c:976
 msgid "Global invites"
 msgstr ""
 
-#: modules/channels/userchan.c:996 modules/channels/userchan.c:1001
+#: modules/channels/userchan.c:990 modules/channels/userchan.c:995
 msgid "Channel invites for"
 msgstr ""
 
-#: modules/channels/userchan.c:1045
+#: modules/channels/userchan.c:1039
 msgid "Use .invites all to see the total list"
 msgstr ""
 
-#: modules/channels/userchan.c:1245 src/userrec.c:430 src/userrec.c:445
+#: modules/channels/userchan.c:1239 src/userrec.c:430 src/userrec.c:445
 msgid "ERROR writing user file."
 msgstr ""
 
-#: modules/channels/userchan.c:1315 modules/channels/userchan.c:1332
+#: modules/channels/userchan.c:1309 modules/channels/userchan.c:1326
 msgid "No longer banning"
 msgstr ""
 
-#: modules/channels/userchan.c:1316 modules/channels/userchan.c:1333
-#: modules/channels/userchan.c:1361 modules/channels/userchan.c:1407
-#: modules/channels/userchan.c:1435 modules/channels/userchan.c:1453
-#: src/users.c:219
+#: modules/channels/userchan.c:1310 modules/channels/userchan.c:1327
+#: modules/channels/userchan.c:1355 modules/channels/userchan.c:1401
+#: modules/channels/userchan.c:1429 modules/channels/userchan.c:1447
+#: src/users.c:216
 msgid "expired"
 msgstr ""
 
-#: modules/channels/userchan.c:1333 modules/channels/userchan.c:1407
-#: modules/channels/userchan.c:1453
+#: modules/channels/userchan.c:1327 modules/channels/userchan.c:1401
+#: modules/channels/userchan.c:1447
 msgid "on"
 msgstr ""
 
-#: modules/channels/userchan.c:1360 modules/channels/userchan.c:1406
+#: modules/channels/userchan.c:1354 modules/channels/userchan.c:1400
 msgid "No longer ban exempting"
 msgstr ""
 
-#: modules/channels/userchan.c:1434 modules/channels/userchan.c:1452
+#: modules/channels/userchan.c:1428 modules/channels/userchan.c:1446
 msgid "No longer inviteing"
 msgstr ""
 
@@ -2705,14 +2705,14 @@ msgstr ""
 msgid "...and dont come back."
 msgstr ""
 
-#: modules/irc/chan.c:1972 modules/server/servmsg.c:638
-#: modules/server/servmsg.c:784 modules/server/servmsg.c:796
+#: modules/irc/chan.c:1972 modules/server/servmsg.c:637
+#: modules/server/servmsg.c:782 modules/server/servmsg.c:794
 #, c-format
 msgid "Switching back to nick %s"
 msgstr ""
 
-#: modules/irc/chan.c:1976 modules/server/servmsg.c:641
-#: modules/server/servmsg.c:788 modules/server/servmsg.c:800
+#: modules/irc/chan.c:1976 modules/server/servmsg.c:640
+#: modules/server/servmsg.c:786 modules/server/servmsg.c:798
 #, c-format
 msgid "Switching back to altnick %s"
 msgstr ""
@@ -3573,21 +3573,21 @@ msgstr ""
 msgid "I dont accept DCC chats from strangers."
 msgstr ""
 
-#: modules/server/servmsg.c:659
+#: modules/server/servmsg.c:658
 msgid "Server says my nickname is invalid."
 msgstr ""
 
-#: modules/server/servmsg.c:702
+#: modules/server/servmsg.c:701
 #, c-format
 msgid "Cant change nickname on %s.  Is my nickname banned?"
 msgstr ""
 
-#: modules/server/servmsg.c:705
+#: modules/server/servmsg.c:704
 #, c-format
 msgid "Channel %s is juped. :("
 msgstr ""
 
-#: modules/server/servmsg.c:716
+#: modules/server/servmsg.c:715
 msgid "Nickname has been juped"
 msgstr ""
 
@@ -3599,28 +3599,28 @@ msgstr ""
 #. * (minutely) sending of joins occurs before the bot does its ping reply.
 #. * Probably should do something about it some time - beldin
 #.
-#: modules/server/servmsg.c:743
+#: modules/server/servmsg.c:742
 #, c-format
 msgid "%s says Im not registered, trying next one."
 msgstr ""
 
-#: modules/server/servmsg.c:744
+#: modules/server/servmsg.c:743
 msgid "The server says we are not registered yet."
 msgstr ""
 
-#: modules/server/servmsg.c:843
+#: modules/server/servmsg.c:841
 msgid "Disconnected from"
 msgstr ""
 
-#: modules/server/servmsg.c:1057
+#: modules/server/servmsg.c:1055
 msgid "Trying server"
 msgstr ""
 
-#: modules/server/servmsg.c:1099 modules/server/servmsg.c:1116
+#: modules/server/servmsg.c:1097 modules/server/servmsg.c:1114
 msgid "Failed connect to"
 msgstr ""
 
-#: modules/server/servmsg.c:1100
+#: modules/server/servmsg.c:1098
 msgid "DNS lookup failed"
 msgstr ""
 
@@ -3655,54 +3655,54 @@ msgstr ""
 msgid "You need the server module to use the uptime module."
 msgstr ""
 
-#: src/modules.c:108
+#: src/modules.c:107
 #, c-format
 msgid "User file rejected by %s: %s"
 msgstr ""
 
-#: src/modules.c:532
+#: src/modules.c:531
 #, c-format
 msgid "error during libtdl initialization: %s\n"
 msgstr ""
 
-#: src/modules.c:539
+#: src/modules.c:538
 msgid "Cant determine current directory."
 msgstr ""
 
-#: src/modules.c:541 src/modules.c:543
+#: src/modules.c:540 src/modules.c:542
 msgid "Invalid module's search path."
 msgstr ""
 
-#: src/modules.c:580
+#: src/modules.c:579
 msgid "No start function defined."
 msgstr ""
 
-#: src/modules.c:584
+#: src/modules.c:583
 msgid "Malloc error"
 msgstr ""
 
-#: src/modules.c:616
+#: src/modules.c:615
 msgid "Needed by another module"
 msgstr ""
 
-#: src/modules.c:620
+#: src/modules.c:619
 msgid "No close function"
 msgstr ""
 
-#: src/modules.c:635
+#: src/modules.c:634
 #, c-format
 msgid "Module unloaded: %s"
 msgstr ""
 
-#: src/modules.c:641
+#: src/modules.c:640
 msgid "No such module"
 msgstr ""
 
-#: src/modules.c:860
+#: src/modules.c:859
 msgid "MODULES LOADED:\n"
 msgstr ""
 
-#: src/modules.c:885
+#: src/modules.c:884
 msgid "No such module.\n"
 msgstr ""
 
@@ -3726,60 +3726,60 @@ msgstr ""
 msgid "Writing user file..."
 msgstr ""
 
-#: src/users.c:181
+#: src/users.c:178
 msgid "placed by"
 msgstr ""
 
-#: src/users.c:196
+#: src/users.c:193
 msgid "Currently ignoring"
 msgstr ""
 
-#: src/users.c:218
+#: src/users.c:215
 msgid "No longer ignoring"
 msgstr ""
 
-#: src/users.c:532
+#: src/users.c:529
 msgid "Cant find anyone matching that"
 msgstr ""
 
-#: src/users.c:552
+#: src/users.c:549
 msgid "Matching"
 msgstr ""
 
-#: src/users.c:558
+#: src/users.c:555
 msgid "skipping first"
 msgstr ""
 
-#: src/users.c:586 src/users.c:594 src/users.c:605
+#: src/users.c:583 src/users.c:591 src/users.c:602
 #, c-format
 msgid "(more than %d matches; list truncated)\n"
 msgstr ""
 
-#: src/users.c:610
+#: src/users.c:607
 #, c-format
 msgid "--- Found %d match%s.\n"
 msgstr ""
 
-#: src/users.c:676
+#: src/users.c:673
 msgid "Old userfile, use tclsh scripts/weed <userfile> c to convert"
 msgstr ""
 
-#: src/users.c:679
+#: src/users.c:676
 msgid "Invalid userfile format."
 msgstr ""
 
-#: src/users.c:901
+#: src/users.c:889
 msgid "Corrupt user record"
 msgstr ""
 
-#: src/users.c:906
+#: src/users.c:894
 msgid "Duplicate user record"
 msgstr ""
 
-#: src/users.c:920
+#: src/users.c:908
 msgid "Corrupted password reset for"
 msgstr ""
 
-#: src/users.c:941
+#: src/users.c:929
 msgid "Ignored masks for channel(s):"
 msgstr ""
