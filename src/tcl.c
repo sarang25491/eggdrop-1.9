@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.39 2001/08/13 14:51:12 guppy Exp $
+ * $Id: tcl.c,v 1.40 2001/08/13 16:21:48 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -46,7 +46,7 @@ typedef struct {
 extern time_t	online_since;
 extern int	backgrd, flood_telnet_thr, flood_telnet_time;
 extern int	shtime, share_greet, require_p, keep_all_logs;
-extern int	allow_new_telnets, stealth_telnets, use_telnet_banner;
+extern int	allow_new_telnets, stealth_telnets;
 extern int	default_flags, conmask, switch_logfiles_at, connect_timeout;
 extern int	firewallport, notify_users_at, flood_thr, ignore_time;
 extern int	reserved_port_min, reserved_port_max;
@@ -434,7 +434,6 @@ static tcl_ints def_tcl_ints[] =
   {"keep-all-logs",		&keep_all_logs,		0},
   {"open-telnets",		&allow_new_telnets,	0},
   {"stealth-telnets",		&stealth_telnets,	0},
-  {"use-telnet-banner",		&use_telnet_banner,	0},
   {"uptime",			(int *) &online_since,	2},
   {"console",			&conmask,		0},
   {"default-flags",		&default_flags,		0},

@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.50 2001/08/13 14:17:52 guppy Exp $
+ * $Id: dcc.c,v 1.51 2001/08/13 16:21:48 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -53,7 +53,6 @@ int	require_p = 0;		/* Require 'p' access to get on the
 int	allow_new_telnets = 0;	/* Allow people to introduce themselves
 				   via telnet				   */
 int	stealth_telnets = 0;	/* Be paranoid? <cybah>			   */
-int	use_telnet_banner = 0;	/* Display telnet banner?		   */
 char	network[41] = "unknown-net"; /* Name of the IRC network you're on  */
 int	password_timeout = 180;	/* Time to wait for a password from a user */
 int	bot_timeout = 60;	/* Bot timeout value			   */
@@ -2080,9 +2079,10 @@ void dcc_telnet_got_ident(int i, char *host)
   strncpyz(dcc[i].nick, dcc[idx].host, HANDLEN);
   dcc[i].timeval = now;
   strcpy(dcc[i].u.chat->con_chan, chanset ? chanset->name : "*");
-  /* Displays a customizable banner. */
-  if (use_telnet_banner)
-    show_banner(i);
+
+  /* Displays a telnet banner if the file exists. */
+  show_telnet_banner(i);
+
   /* This is so we dont tell someone doing a portscan anything
    * about ourselves. <cybah>
    */

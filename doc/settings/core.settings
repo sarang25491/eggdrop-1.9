@@ -192,13 +192,14 @@ set temp-path "/tmp"
 
 set motd "text/motd"
     The MOTD (motto of the day) is displayed when people dcc chat or telnet
-    to the bot.
-    Look into doc/settings.motd or type '.help set motd' in DCC CHAT or
+    to the bot. Look into doc/settings.motd or type '.help set motd' in DCC CHAT or
     telnet connection for options.
 
 
 set telnet-banner "text/banner"
-    This banner will be displayed on telnet connections
+    The telnet banner is displayed when people first make a telnet connection
+    to the bot. Look into doc/settings.motd or type '.help set motd' in DCC CHAT or
+    telnet connection for options.
 
 
 set userfile-perm 0600
@@ -298,11 +299,6 @@ set stealth-telnets 0
     If you don't want eggdrop to identify itself on a telnet connection, set
     this setting to 1. Eggdrop will display its nickname instead.
     Valid settings are 0 for OFF and 1 ON.
-
-
-set use-telnet-banner 0
-    If you want eggdrop to display a banner when telneting in set this setting
-    to 1. The telnet banner is set by 'telnet-banner'.
 
 
 set quiet-reject 1
