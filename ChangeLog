@@ -1,3 +1,9 @@
+2001-09-27 18:33  Teemu Hjelt <sup@techmonkeys.org>
+
+	* src/mod/irc.mod/: irc.c, msgcmds.c:
+
+	Removed the GO command again and readded need-cycle 
+
 2001-09-20 19:50  stdarg
 
 	* src/: main.c, tcl.c, tclhash.c, tclhash.h:
