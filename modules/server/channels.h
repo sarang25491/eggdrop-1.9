@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: channels.h,v 1.11 2004/02/28 06:00:21 stdarg Exp $
+ * $Id: channels.h,v 1.12 2004/06/26 19:49:49 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_SERVER_CHANNELS_H_
@@ -56,6 +56,11 @@ typedef struct channel_mask_list {
 	char type;
 } channel_mask_list_t;
 
+typedef struct channel_mode_arg {
+	int type;
+	char *value;
+} channel_mode_arg_t;
+
 typedef struct channel {
 	struct channel *next;
 
@@ -70,6 +75,9 @@ typedef struct channel {
 
 	channel_mask_list_t *lists;	/* Mask lists (bans, invites, etc). */
 	int nlists;
+
+	channel_mode_arg_t *args;	/* Stored channel modes. */
+	int nargs;
 
 	int status;
 
@@ -89,6 +97,7 @@ extern void channel_lookup(const char *chan_name, int create, channel_t **chanpt
 extern char *uhost_cache_lookup(const char *nick);
 extern void uhost_cache_fillin(const char *nick, const char *uhost, int addref);
 extern int channel_mode(const char *chan_name, const char *nick, char *buf);
+extern int channel_mode_arg(const char *chan_name, int type, const char **value);
 
 /* Events that hook into input.c. */
 extern void channel_on_nick(const char *old_nick, const char *new_nick);

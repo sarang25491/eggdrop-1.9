@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.21 2004/06/23 20:19:45 wingman Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.22 2004/06/26 19:49:48 stdarg Exp $";
 #endif
 
 #include "server.h"
@@ -139,6 +139,11 @@ void channel_lookup(const char *chan_name, int create, channel_t **chanptr, chan
 	chan->lists = calloc(chan->nlists, sizeof(*chan->lists));
 	for (i = 0; i < chan->nlists; i++) {
 		chan->lists[i].type = current_server.type1modes[i];
+	}
+	chan->nargs = strlen(current_server.type2modes);
+	chan->args = calloc(chan->nargs, sizeof(*chan->args));
+	for (i = 0; i < chan->nargs; i++) {
+		chan->args[i].type = current_server.type2modes[i];
 	}
 	chan->next = channel_head;
 	channel_head = chan;
@@ -737,17 +742,35 @@ int channel_mode(const char *chan_name, const char *nick, char *buf)
 {
 	channel_t *chan;
 	channel_member_t *m;
+	flags_t *flags = NULL;
 
 	buf[0] = 0;
 	channel_lookup(chan_name, 0, &chan, NULL);
 	if (!chan) return(-1);
-	if (!nick) {
-		flag_to_str(&chan->mode, buf);
-		return(0);
+	if (!nick) flags = &chan->mode;
+	else {
+		for (m = chan->member_head; m; m = m->next) {
+			if (!(current_server.strcmp)(nick, m->nick)) {
+				flags = &m->mode;
+				break;
+			}
+		}
+		if (!flags) return(-2);
 	}
-	for (m = chan->member_head; m; m = m->next) {
-		if (!(current_server.strcmp)(nick, m->nick)) {
-			flag_to_str(&m->mode, buf);
+	flag_to_str(flags, buf);
+	return(0);
+}
+
+int channel_mode_arg(const char *chan_name, int type, const char **value)
+{
+	int i;
+	channel_t *chan;
+
+	channel_lookup(chan_name, 0, &chan, NULL);
+	if (!chan) return(-1);
+	for (i = 0; i < chan->nargs; i++) {
+		if (chan->args[i].type == type) {
+			*value = chan->args[i].value;
 			return(0);
 		}
 	}
@@ -757,6 +780,7 @@ int channel_mode(const char *chan_name, const char *nick, char *buf)
 static void parse_chan_mode(char *from_nick, char *from_uhost, user_t *u, int nargs, char *args[], int trigger_bind)
 {
 	int hasarg, curarg, modify_member, modify_channel, modify_list;
+	int i;
 	channel_member_t *m;
 	char changestr[3];
 	char *dest;
@@ -841,6 +865,13 @@ static void parse_chan_mode(char *from_nick, char *from_uhost, user_t *u, int na
 				case 'l':
 					chan->limit = atoi(arg);
 					break;
+				default:
+					for (i = 0; i < chan->nargs; i++) {
+						if (chan->args[i].type == *change) {
+							str_redup(&chan->args[i].value, arg);
+							break;
+						}
+					}
 			}
 		}
 		else {
@@ -853,6 +884,13 @@ static void parse_chan_mode(char *from_nick, char *from_uhost, user_t *u, int na
 				case 'l':
 					chan->limit = 0;
 					break;
+				default:
+					for (i = 0; i < chan->nargs; i++) {
+						if (chan->args[i].type == *change) {
+							str_redup(&chan->args[i].value, NULL);
+							break;
+						}
+					}
 			}
 		}
 

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.42 2004/06/24 06:19:56 wcc Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.43 2004/06/26 19:49:49 stdarg Exp $";
 #endif
 
 #include "server.h"
@@ -212,6 +212,14 @@ static char *script_channel_mode(char *chan, char *nick)
 	return(buf);
 }
 
+static const char *script_channel_mode_arg(char *chan, char *mode)
+{
+	char *value = NULL;
+
+	channel_mode_arg(chan, *mode, &value);
+	return(value);
+}
+
 static char *script_channel_key(char *chan_name)
 {
 	channel_t *chan;
@@ -385,6 +393,7 @@ static script_command_t server_script_cmds[] = {
 	{"", "channel_topic", script_channel_topic, NULL, 1, "s", "channel", 0, SCRIPT_PASS_RETVAL},				/* DDC */
 	{"", "channel_mask_list", script_channel_mask_list, NULL, 2, "ss", "channel type", 0, SCRIPT_PASS_RETVAL},		/* DDC */
 	{"", "channel_mode", script_channel_mode, NULL, 1, "ss", "channel ?nick?", SCRIPT_STRING|SCRIPT_FREE, SCRIPT_VAR_ARGS},	/* DDC */
+	{"", "channel_mode_arg", script_channel_mode_arg, NULL, 2, "ss", "channel mode", SCRIPT_STRING, 0},	/* DDC */
 	{"", "channel_key", script_channel_key, NULL, 1, "s", "channel", SCRIPT_STRING, 0},					/* DDC */
 	{"", "channel_limit", script_channel_limit, NULL, 1, "s", "channel", SCRIPT_INTEGER, 0},				/* DDC */
 

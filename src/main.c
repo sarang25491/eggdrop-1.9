@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.179 2004/06/23 21:12:57 stdarg Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.180 2004/06/26 19:49:49 stdarg Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -344,7 +344,7 @@ static void init_signals(void)
 	sigaction(SIGBUS, &sv, NULL);
 
 	sv.sa_handler = got_segv;
-	sigaction(SIGSEGV, &sv, NULL);
+	//sigaction(SIGSEGV, &sv, NULL);
 #ifdef SA_RESETHAND
 	sv.sa_flags = 0;
 #endif
