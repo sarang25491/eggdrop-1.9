@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.1 2001/10/27 16:34:47 ite Exp $
+ * $Id: module.h,v 1.2 2001/10/29 23:01:32 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -176,9 +176,7 @@
 #define open_telnet ((int (*) (char *, int))global[87])
 /* 88 - 91 */
 #define check_bind_event ((void * (*) (const char *))global[88])
-#ifndef HAVE_MEMCPY
-# define memcpy ((void * (*) (void *, const void *, size_t))global[89])
-#endif
+/* #define memcpy ((void * (*) (void *, const void *, size_t))global[89]) */
 /* #define my_atoul ((IP(*)(char *))global[90]) */
 #define my_strcpy ((int (*)(char *, const char *))global[91])
 /* 92 - 95 */
@@ -384,26 +382,14 @@
 #define sock_has_data ((int(*)(int, int))global[248])
 #define bots_in_subtree ((int (*)(tand_t *))global[249])
 #define users_in_subtree ((int (*)(tand_t *))global[250])
-#ifndef HAVE_INET_ATON
-# define inet_aton ((int (*)(const char *cp, struct in_addr *addr))global[251])
-#endif
+/* #define inet_aton ((int (*)(const char *cp, struct in_addr *addr))global[251]) */
 /* 252 - 255 */
-#ifndef HAVE_SNPRINTF
-# define snprintf (global[252])
-#endif
-#ifndef HAVE_VSNPRINTF
-# define vsnprintf ((int (*)(char *, size_t, const char *, va_list))global[253])
-#endif
-#ifndef HAVE_MEMSET
-# define memset ((void *(*)(void *, int, size_t))global[254])
-#endif
-#ifndef HAVE_STRCASECMP
-# define strcasecmp ((int (*)(const char *, const char *))global[255])
-#endif
+/* #define snprintf (global[252]) */
+/* #define vsnprintf ((int (*)(char *, size_t, const char *, va_list))global[253]) */
+/* #define memset ((void *(*)(void *, int, size_t))global[254]) */
+/* #define strcasecmp ((int (*)(const char *, const char *))global[255]) */
 /* 256 - 259 */
-#ifndef HAVE_STRNCASECMP
-# define strncasecmp ((int (*)(const char *, const char *, size_t))global[256])
-#endif
+/* #define strncasecmp ((int (*)(const char *, const char *, size_t))global[256]) */
 #define is_file ((int (*)(const char *))global[257])
 #define must_be_owner (*(int *)(global[258]))
 #define tandbot (*(tand_t **)(global[259]))
@@ -444,28 +430,12 @@
 #define check_bind ((int (*)(bind_table_t *, const char *, struct flag_record *, ...))global[280])
 #define registry_lookup ((int (*)(const char *, const char *, Function *, void **))global[281])
 #define registry_add_simple_chains ((int (*)(registry_simple_chain_t *))global[282])
-#ifndef HAVE_STRFTIME
-# define strftime ((size_t (*)(char *, size_t, const char *, const struct tm *))global[283])
-#endif
+/* #define strftime ((size_t (*)(char *, size_t, const char *, const struct tm *))global[283]) */
 /* 284 - 287 */
-#ifndef HAVE_INET_NTOP
-# define inet_ntop ((const char (*)(int, const void *, char *, socklen_t size))global[284])
-#endif
-#ifndef HAVE_INET_PTON
-# define inet_pton ((int (*)(int, const char *, void *))global[285])
-#endif
-#ifndef HAVE_VASPRINTF
-# define vasprintf ((int (*)(char **, const char *, va_list))global[286])
-#endif
-#ifndef HAVE_ASPRINTF
-# define asprintf ((int (*)(char **, const char *, ...))global[287])
-#endif
-
-/* 288 - 291 */
-#define msprintf ((char *(*)())global[288])
-#define mstack_new ((mstack_t *(*)())global[289])
-#define mstack_push ((void *(*)())global[290])
-#define mstack_destroy ((void *(*)())global[291])
+/* #define inet_ntop ((const char (*)(int, const void *, char *, socklen_t size))global[284]) */
+/* #define inet_pton ((int (*)(int, const char *, void *))global[285]) */
+/* #define vasprintf ((int (*)(char **, const char *, va_list))global[286]) */
+/* #define asprintf ((int (*)(char **, const char *, ...))global[287]) */
 
 /* This is for blowfish module, couldnt be bothered making a whole new .h
  * file for it ;)

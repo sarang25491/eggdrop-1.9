@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.84 2001/10/28 13:30:33 ite Exp $
+ * $Id: modules.c,v 1.85 2001/10/29 23:01:35 ite Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -253,11 +253,7 @@ Function global_table[] =
   (Function) open_telnet,
   /* 88 - 91 */
   (Function) check_bind_event,
-#ifndef HAVE_MEMCPY
-  (Function) memcpy,
-#else
-  (Function) 0,
-#endif
+  (Function) 0,			/* memcpy				*/
   (Function) 0,
   (Function) my_strcpy,
   /* 92 - 95 */
@@ -463,38 +459,14 @@ Function global_table[] =
   (Function) sock_has_data,
   (Function) bots_in_subtree,
   (Function) users_in_subtree,
-#ifndef HAVE_INET_ATON
-  (Function) inet_aton,
-#else
-  (Function) 0,
-#endif
+  (Function) 0,			/* inet_aton				*/
   /* 252 - 255 */
-#ifndef HAVE_SNPRINTF
-  (Function) snprintf,
-#else
-  (Function) 0,
-#endif
-#ifndef HAVE_VSNPRINTF
-  (Function) vsnprintf,
-#else
-  (Function) 0,
-#endif
-#ifndef HAVE_MEMSET
-  (Function) memset,
-#else
-  (Function) 0,
-#endif
-#ifndef HAVE_STRCASECMP
-  (Function) strcasecmp,
-#else
-  (Function) 0,
-#endif
+  (Function) 0,			/* snprintf				*/
+  (Function) 0,			/* vsnprintf				*/
+  (Function) 0,			/* memset				*/
+  (Function) 0,			/* strcasecmp				*/
   /* 256 - 259 */
-#ifndef HAVE_STRNCASECMP
-  (Function) strncasecmp,
-#else
-  (Function) 0,
-#endif
+  (Function) 0,			/* strncasecmp				*/
   (Function) is_file,
   (Function) & must_be_owner,	/* int					*/
   (Function) & tandbot,		/* tand_t *				*/
@@ -535,38 +507,12 @@ Function global_table[] =
   (Function) check_bind,
   (Function) registry_lookup,
   (Function) registry_add_simple_chains,
-#ifndef HAVE_STRFTIME
-  (Function) strftime,
-#else
-  (Function) 0,
-#endif
+  (Function) 0,			/* strftime				*/
   /* 284 - 287 */
-#ifndef HAVE_INET_NTOP
-  (Function) inet_ntop,
-#else
-  (Function) 0,
-#endif
-#ifndef HAVE_INET_PTON
-  (Function) inet_pton,
-#else
-  (Function) 0,
-#endif
-#ifndef HAVE_VASPRINTF
-  (Function) vasprintf,
-#else
-  (Function) 0,
-#endif
-#ifndef HAVE_ASPRINTF
-  (Function) asprintf,
-#else
-  (Function) 0,
-#endif
-
-	/* 288 - 291 -- egglib stuff */
-	(Function) msprintf,
-	(Function) mstack_new,
-	(Function) mstack_push,
-	(Function) mstack_destroy
+  (Function) 0,			/* inet_ntop				*/
+  (Function) 0,			/* inet_pton				*/
+  (Function) 0,			/* vasprintf				*/
+  (Function) 0			/* asprintf				*/
 };
 
 static bind_table_t *BT_load, *BT_unload;
