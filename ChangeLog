@@ -1,3 +1,9 @@
+2001-10-30 01:35  Matthew Hallacy <poptix@techmonkeys.org>
+
+	* modules/uptime/: uptime.c, uptime.h:
+
+	Proper copyright information.  
+
 2001-10-29 23:01  Federico Mennite <ite@techmonkeys.org>
 
 	* lib/eggdrop/Makefile.am, lib/eggdrop/module.h,
