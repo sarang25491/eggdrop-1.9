@@ -1,3 +1,15 @@
+2001-12-04 01:30  Federico Mennite <ite@techmonkeys.org>
+
+	* modules/: channels/help/chaninfo.help,
+	channels/help/channels.help, console/help/console.help,
+	ctcp/help/set/ctcp.help, irc/help/irc.help, server/server.c,
+	server/help/server.help, server/help/set/server.help,
+	share/share.c, share/help/share.help, transfer/transfer.c,
+	transfer/help/set/transfer.help:
+
+	More spelling fixes here and there. Patch by Wcc
+	<will@dawg.dynu.com> 
+
 2001-12-03 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
