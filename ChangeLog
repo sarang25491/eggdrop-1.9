@@ -1,3 +1,9 @@
+2002-01-20 11:57  Federico Mennite <ite@techmonkeys.org>
+
+	* src/botcmd.c:
+
+	Let's log remote botinfo calls.  
+
 2002-01-20 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
