@@ -1,3 +1,10 @@
+2001-12-01 13:46  Federico Mennite <ite@techmonkeys.org>
+
+	* modules/irc/tclirc.c:
+
+	Fixed potential crashes in the getchanhost command. Patch by Matthew
+	Hallacy <poptix@techmonkeys.org> 
+
 2001-12-01 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
