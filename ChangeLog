@@ -1,3 +1,15 @@
+2002-02-18 22:53  Federico Mennite <ite@techmonkeys.org>
+
+	* modules/irc/chan.c:
+
+	PART messages weren't parsed correctly (synch 1.6) 
+
+2002-02-18 22:43  Federico Mennite <ite@techmonkeys.org>
+
+	* modules/irc/chan.c:
+
+	Fixed missing sanity check in check_this_member() (synch 1.6) 
+
 2002-02-18 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
