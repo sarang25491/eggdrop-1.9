@@ -1,7 +1,7 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.10 2002/04/01 13:33:31 ite Exp $
+dnl $Id: acinclude.m4,v 1.11 2002/04/01 23:35:17 ite Exp $
 dnl
 
 
@@ -1242,9 +1242,9 @@ dnl
 AC_DEFUN(EGG_LTLIBOBJS, [dnl
 
 AC_CONFIG_COMMANDS_PRE(
-              [LIB@&t@OBJS=`echo "$LIB@&t@OBJS" |
+              [LIBOBJS=`echo "$LIBOBJS" |
                         sed 's,\.[[^.]]* ,$U&,g;s,\.[[^.]]*$,$U&,'`
-               LTLIBOBJS=`echo "$LIB@&t@OBJS" |
+               LTLIBOBJS=`echo "$LIBOBJS" |
                           sed 's,\.[[^.]]* ,.lo ,g;s,\.[[^.]]*$,.lo,'`
                AC_SUBST(LTLIBOBJS)])
 ])
