@@ -1,3 +1,16 @@
+2002-05-31 04:11  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/module.h, lib/eggdrop/script.h,
+	modules/javascript/javascript.c, modules/perlscript/perlscript.c,
+	modules/server/scriptcmds.c, modules/server/server.c,
+	modules/server/servmsg.c, modules/tclscript/tclscript.c,
+	src/chanprog.c, src/misc.c, src/modules.c:
+
+	
+	* Botname doesn't rely on NICKLEN 
+	* Ok.. using strtok() on function arguments that get re-used (binds)
+	is BAD.  
+
 2002-05-31 03:07  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/memutil.c, lib/eggdrop/memutil.h,
