@@ -1,3 +1,17 @@
+2001-10-27 18:39  Federico Mennite <ite@techmonkeys.org>
+
+	* modules/irc/.cvsignore:
+
+	Added a missing .cvsignore.  
+
+2001-10-27 18:35  Federico Mennite <ite@techmonkeys.org>
+
+	* po/: .potignore, POTFILES.in:
+
+	* Updated internationalizable list of files in po/POTIFLES.in.  
+	* Added po/.potignore as list of files to be ignored when running 
+	  po/update.pl --maintain.  
+
 2001-10-27 16:39  Federico Mennite <ite@techmonkeys.org>
 
 	* lib/.cvsignore:
