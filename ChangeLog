@@ -1,3 +1,10 @@
+2002-01-25 21:25  Federico Mennite <ite@techmonkeys.org>
+
+	* lib/eggdrop/memutil.c:
+
+	Got rid of the whitespace macro. isspace() does the same thing and
+	should be available on every system.  
+
 2002-01-25 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
