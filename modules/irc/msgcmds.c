@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: msgcmds.c,v 1.11 2003/01/02 21:33:15 wcc Exp $";
+static const char rcsid[] = "$Id: msgcmds.c,v 1.12 2003/01/29 07:42:49 wcc Exp $";
 #endif
 */
 
@@ -34,7 +34,6 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
   char *p1;
   int atr = 0;
   struct chanset_t *chan;
-  struct flag_record fr = {FR_GLOBAL, 0, 0, 0, 0, 0};
 
   if (!learn_users && !make_userfile)
     return 0;
@@ -48,9 +47,6 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
   }
   strlcpy(handle, nick, sizeof handle);
   if (get_user_by_handle(userlist, handle)) {
-    struct flag_record fr = {FR_GLOBAL, 0, 0, 0, 0, 0};
-    fr.global = atr;
-
     dprintf(DP_HELP, _("NOTICE %s :I dont recognize you from that host.\n"), nick);
     dprintf(DP_HELP, _("NOTICE %s :Either you are using someone elses nickname or you need to type: /MSG %s IDENT (password)\n"), nick, botname);
     return 1;
@@ -79,8 +75,6 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
   dprintf(DP_HELP, _("NOTICE %s :Ill recognize you by hostmask %s from now on.\n"), nick, host);
 
   if (make_userfile) {
-    fr.global = sanity_check(default_flags | USER_OWNER);
-
     dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("YOU ARE THE OWNER ON THIS BOT NOW"));
     dprintf(DP_HELP, _("NOTICE %s :As master you really need to set a password: with /MSG %s pass <your-chosen-password>.\n"), nick, botname);
     dprintf(DP_HELP, _("NOTICE %s :All major commands are used from DCC chat. From now on, you dont need to use the -m option when starting the bot.  Enjoy !!!\n"), nick);
@@ -488,13 +482,19 @@ static int msg_help(char *nick, char *host, struct userrec *u, char *par)
 
   if (match_my_nick(nick))
     return 1;
+
   if (!u) {
     if (!quiet_reject) {
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("I dont know you; please introduce yourself first."));
-      dprintf(DP_HELP, "NOTICE %s :/MSG %s hello\n", nick, botname);
+      if (!learn_users)
+        dprintf(DP_HELP, "NOTICE %s :No access\n", nick);
+      else {
+        dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("I dont know you; please introduce yourself first."));
+        dprintf(DP_HELP, "NOTICE %s :/MSG %s hello\n", nick, botname);
+      }
     }
     return 0;
   }
+
   if (helpdir[0]) {
     struct flag_record fr = {FR_ANYWH | FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
@@ -509,6 +509,7 @@ static int msg_help(char *nick, char *host, struct userrec *u, char *par)
     }
   } else
     dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("No help."));
+
   return 1;
 }
 

@@ -28,7 +28,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: chan.c,v 1.29 2003/01/18 22:36:52 wcc Exp $";
+static const char rcsid[] = "$Id: chan.c,v 1.30 2003/01/29 07:42:49 wcc Exp $";
 #endif
 */
 
@@ -230,8 +230,8 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
       return 0;
   }
   if (irccmp(chan->floodwho[which], p)) {	/* new */
-    strncpy(chan->floodwho[which], p, 81);
-    chan->floodwho[which][81] = 0;
+    strncpy(chan->floodwho[which], p, 80);
+    chan->floodwho[which][80] = 0;
     chan->floodtime[which] = now;
     chan->floodnum[which] = 1;
     return 0;

@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: userchan.c,v 1.11 2003/01/02 21:33:14 wcc Exp $";
+static const char rcsid[] = "$Id: userchan.c,v 1.12 2003/01/29 07:42:49 wcc Exp $";
 #endif
 */
 
@@ -841,31 +841,13 @@ static void tell_invites(int idx, int show_inact, char *match)
     dprintf(idx, "%s.\n", _("Use .invites all to see the total list"));
 }
 
-/* Write the ban lists and the ignore list to a file.
- */
+/* Write the ban lists and the ignore list to a file. */
 static int write_bans(FILE *f, int idx)
 {
   struct chanset_t *chan;
   maskrec *b;
-  struct igrec *i;
   char	*mask;
 
-  if (global_ign)
-    if (fprintf(f, IGNORE_NAME " - -\n") == EOF)	/* Daemus */
-      return 0;
-  for (i = global_ign; i; i = i->next) {
-    mask = str_escape(i->igmask, ':', '\\');
-    if (!mask ||
-	fprintf(f, "- %s:%s%lu:%s:%lu:%s\n", mask,
-		(i->flags & IGREC_PERM) ? "+" : "", i->expire,
-		i->user ? i->user : botnetnick, i->added,
-		i->msg ? i->msg : "") == EOF) {
-      if (mask)
-	free(mask);
-      return 0;
-    }
-    free(mask);
-  }
   if (global_bans)
     if (fprintf(f, BAN_NAME " - -\n") == EOF)	/* Daemus */
       return 0;

@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: memutil.c,v 1.11 2003/01/02 21:33:13 wcc Exp $";
+static const char rcsid[] = "$Id: memutil.c,v 1.12 2003/01/29 07:42:49 wcc Exp $";
 #endif
 
 #include <stdio.h>
@@ -221,7 +221,7 @@ char *strchr_unescape(char *str, const char div, register const char esc_char)
   char           buf[3];
   register char *s, *p;
 
-  buf[3] = 0;
+  buf[2] = 0;
   for (s = p = str; *s; s++, p++) {
     if (*s == esc_char) {       /* Found escape character.              */
       /* Convert code to character. */

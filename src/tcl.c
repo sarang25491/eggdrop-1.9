@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tcl.c,v 1.88 2003/01/02 21:33:16 wcc Exp $";
+static const char rcsid[] = "$Id: tcl.c,v 1.89 2003/01/29 07:42:50 wcc Exp $";
 #endif
 
 #include <stdlib.h>		/* getenv()				*/
@@ -72,6 +72,7 @@ Tcl_Interp *interp;			/* eggdrop always uses the same
 int	    use_invites = 0;		/* Jason/drummer */
 int	    use_exempts = 0;		/* Jason/drummer */
 int	    force_expire = 0;		/* Rufus */
+int	    copy_to_tmp = 0;
 int	    remote_boots = 2;
 int	    allow_dk_cmds = 1;
 int	    par_telnet_flood = 1;       /* trigger telnet flood for +f
@@ -290,8 +291,6 @@ static tcl_ints def_tcl_ints[] =
 {
   {"ignore_time",		&ignore_time,		0},
   {"handlen",                   &handlen,               2},
-  /* FIXME: remove this later ... before first stable release */
-  {"hand_len",			&handlen,		2},
   {"hourly_updates",		&notify_users_at,	0},
   {"learn_users",		&learn_users,		0},
   {"uptime",			(int *) &online_since,	2},
@@ -309,6 +308,7 @@ static tcl_ints def_tcl_ints[] =
   {"force_expire",		&force_expire,		0},			/* Rufus */
   {"strict_host",		&strict_host,		0}, 			/* drummer */
   {"userfile_perm",		&userfile_perm,		0},
+  {"copy-to-tmp",		&copy_to_tmp,		0},
   {NULL,			NULL,			0}	/* arthur2 */
 };
 
@@ -447,6 +447,7 @@ void add_tcl_strings(tcl_strings *list)
     tmp = protect_readonly;
     protect_readonly = 0;
     tcl_eggstr((ClientData) st, interp, list[i].name, NULL, TCL_TRACE_WRITES);
+    protect_readonly = tmp;
     tcl_eggstr((ClientData) st, interp, list[i].name, NULL, TCL_TRACE_READS);
     Tcl_TraceVar(interp, list[i].name, TCL_TRACE_READS | TCL_TRACE_WRITES |
 		 TCL_TRACE_UNSETS, tcl_eggstr, (ClientData) st);

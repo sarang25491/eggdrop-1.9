@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: userrec.c,v 1.54 2003/01/02 21:33:17 wcc Exp $";
+static const char rcsid[] = "$Id: userrec.c,v 1.55 2003/01/29 07:42:50 wcc Exp $";
 #endif
 
 #include <sys/stat.h>
@@ -345,6 +345,29 @@ int write_user(struct userrec *u, FILE * f, int idx)
   return 1;
 }
 
+int write_ignores(FILE *f, int idx)
+{
+  struct igrec *i;
+  char *mask;
+
+  if ((global_ign) && (fprintf(f, IGNORE_NAME " - -\n") == EOF))
+    return 0;
+
+  for (i = global_ign; i; i = i->next) {
+    mask = str_escape(i->igmask, ':', '\\');
+    if (!mask || fprintf(f, "- %s:%s%lu:%s:%lu:%s\n", mask,
+                (i->flags & IGREC_PERM) ? "+" : "", i->expire,
+                i->user ? i->user : botnetnick, i->added,
+                i->msg ? i->msg : "") == EOF) {
+      if (mask)
+        nfree(mask);
+      return 0;
+    }
+    nfree(mask);
+  }
+  return 1;
+}
+
 /* Rewrite the entire user file. Call USERFILE hook as well, probably
  * causing the channel file to be rewritten as well.
  */
@@ -377,8 +400,9 @@ void write_userfile(int idx)
   fprintf(f, "#4v: %s -- %s -- written %s", ver, botnetnick, s1);
   ok = 1;
   for (u = userlist; u && ok; u = u->next)
-    ok = write_user(u, f, idx);
-  if (!ok || fflush(f)) {
+    if (!write_user(u, f, idx))
+      ok = 0;
+  if (!ok || !write_ignores(f, -1) || fflush(f)) {
     putlog(LOG_MISC, "*", "%s (%s)", _("ERROR writing user file."), strerror(ferror(f)));
     fclose(f);
     free(new_userfile);

@@ -30,13 +30,22 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.128 2003/01/02 21:33:16 wcc Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.129 2003/01/29 07:42:50 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
 #include "main.h"
 #include <fcntl.h>
-#include <time.h>
+#ifdef TIME_WITH_SYS_TIME
+# include <sys/time.h>
+# include <time.h>
+#else
+# ifdef HAVE_SYS_TIME_H
+#  include <sys/time.h>
+# else
+#  include <time.h>
+# endif
+#endif
 #include <errno.h>
 #include <signal.h>
 #include <netdb.h>
@@ -800,7 +809,7 @@ module, please consult the default config file for info.\n"));
     } else if (xx == -2 && errno != EINTR) {	/* select() error */
       putlog(LOG_MISC, "*", "* Socket error #%d; recovering.", errno);
       for (i = 0; i < dcc_total; i++) {
-	if ((fcntl(dcc[i].sock, F_GETFD, 0) == -1) && (errno = EBADF)) {
+	if ((fcntl(dcc[i].sock, F_GETFD, 0) == -1) && (errno == EBADF)) {
 	  putlog(LOG_MISC, "*",
 		 "DCC socket %d (type %d, name '%s') expired -- pfft",
 		 dcc[i].sock, dcc[i].type, dcc[i].nick);

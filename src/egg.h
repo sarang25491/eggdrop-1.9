@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: egg.h,v 1.12 2003/01/02 21:33:16 wcc Exp $
+ * $Id: egg.h,v 1.13 2003/01/29 07:42:50 wcc Exp $
  */
 
 #ifndef _EGG_EGG_H
@@ -110,11 +110,11 @@
 #endif
 
 /* Almost every module needs some sort of time thingy, so... */
-#if TIME_WITH_SYS_TIME
+#ifdef TIME_WITH_SYS_TIME
 #  include <sys/time.h>
 #  include <time.h>
 #else
-#  if HAVE_SYS_TIME_H
+#  ifdef HAVE_SYS_TIME_H
 #    include <sys/time.h>
 #  else
 #    include <time.h>

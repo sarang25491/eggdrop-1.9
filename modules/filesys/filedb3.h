@@ -23,13 +23,30 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: filedb3.h,v 1.4 2003/01/02 21:33:14 wcc Exp $
+ * $Id: filedb3.h,v 1.5 2003/01/29 07:42:49 wcc Exp $
  */
 
 #ifndef _EGG_MOD_FILESYS_FILEDB3_H
 #define _EGG_MOD_FILESYS_FILEDB3_H
 
-#include <time.h>	/* for time_t */
+/*
+ * FIXME: These really should be in the .c files that include this header
+ */
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+/* for time_t */
+#ifdef TIME_WITH_SYS_TIME
+# include <sys/time.h>
+# include <time.h>
+#else
+# ifdef HAVE_SYS_TIME_H
+#  include <sys/time.h>
+# else
+#  include <time.h>
+# endif
+#endif
 
 /* Top of each DB */
 typedef struct {

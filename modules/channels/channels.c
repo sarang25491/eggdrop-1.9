@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.20 2003/01/02 21:33:14 wcc Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.21 2003/01/29 07:42:49 wcc Exp $";
 #endif
 
 #define MODULE_NAME "channels"
@@ -163,11 +163,10 @@ static void set_mode_protect(struct chanset_t *chan, char *set)
 static void get_mode_protect(struct chanset_t *chan, char *s)
 {
   char *p = s, s1[121];
-  int ok = 0, i, tst;
+  int i, tst;
 
   s1[0] = 0;
   for (i = 0; i < 2; i++) {
-    ok = 0;
     if (i == 0) {
       tst = chan->mode_pls_prot;
       if ((tst) || (chan->limit_prot != 0) || (chan->key_prot[0]))

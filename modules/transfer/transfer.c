@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: transfer.c,v 1.19 2003/01/02 21:33:15 wcc Exp $";
+static const char rcsid[] = "$Id: transfer.c,v 1.20 2003/01/29 07:42:50 wcc Exp $";
 #endif
 
 #define MODULE_NAME "transfer"
@@ -47,15 +47,13 @@ static const char rcsid[] = "$Id: transfer.c,v 1.19 2003/01/02 21:33:15 wcc Exp 
 
 static eggdrop_t *egg = NULL;
 
-static int copy_to_tmp = 1;	/* Copy files to /tmp before transmitting? */
-static int wait_dcc_xfer = 300;	/* Timeout time on DCC xfers */
-static bind_table_t *BT_rcvd, *BT_sent, *BT_lost, *BT_tout;
-static int dcc_limit = 3;	/* Maximum number of simultaneous file
-				   downloads allowed */
-static int dcc_block = 0;	/* Size of one dcc block */
+static int wait_dcc_xfer = 300; /* Timeout time on DCC xfers */
+static int dcc_limit = 3;       /* Max simultaneous downloads allowed */
+static int dcc_block = 0;       /* Size of one dcc block */
 static int quiet_reject;        /* Quietly reject dcc chat or sends from
-                                   users without access? */
-
+                                 * users without access? */
+static int quiet_reject;        /* Quietly reject dcc chat or sends from users
+                                 * without access? */
 /*
  * Prototypes
  */
@@ -1456,7 +1454,6 @@ static tcl_ints myints[] =
 {
   {"max_dloads",	&dcc_limit},
   {"dcc_block",		&dcc_block},
-  {"copy_to_tmp",	&copy_to_tmp},
   {"xfer_timeout",	&wait_dcc_xfer},
   {NULL,		NULL}
 };
@@ -1852,7 +1849,7 @@ static Function transfer_table[] =
   /* 4- 7 */
   (Function) & DCC_FORK_SEND,		/* struct dcc_table		*/
   (Function) at_limit,
-  (Function) & copy_to_tmp,		/* int				*/
+  (Function) 0,
   (Function) fileq_cancel,
   /* 8 - 11 */
   (Function) queue_file,

@@ -27,7 +27,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dccutil.c,v 1.58 2003/01/18 22:36:52 wcc Exp $";
+static const char rcsid[] = "$Id: dccutil.c,v 1.59 2003/01/29 07:42:50 wcc Exp $";
 #endif
 
 #include <sys/stat.h>
@@ -239,9 +239,23 @@ void dcc_chatter(int idx)
 /* Closes an open FD for transfer sockets. */
 void killtransfer(int n)
 {
-	if (dcc[n].u.xfer->f) {
-		fclose(dcc[n].u.xfer->f);
-		dcc[n].u.xfer->f = NULL;
+	int i, ok = 1;
+
+	if (dcc[n].type->flags & DCT_FILETRAN) {
+		if (dcc[n].u.xfer->f) {
+			fclose(dcc[n].u.xfer->f);
+			dcc[n].u.xfer->f = NULL;
+		}
+		if (dcc[n].u.xfer->filename) {
+			for (i = 0; i < dcc_total; i++) {
+				if ((i != n) && (dcc[i].type->flags & DCT_FILETRAN) && (dcc[i].u.xfer->filename) && (!strcmp(dcc[i].u.xfer->filename, dcc[n].u.xfer->filename))) {
+					ok = 0;
+					break;
+				}
+			}
+			if (ok)
+			unlink(dcc[n].u.xfer->filename);
+		}
 	}
  }
 
