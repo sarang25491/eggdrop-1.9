@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# $Id: bootstrap,v 1.16 2004/06/16 06:33:44 wcc Exp $
+# $Id: bootstrap,v 1.17 2004/06/20 09:40:22 wingman Exp $
 #
 # Recommended development tools versions:
 #   autoconf 2.59
@@ -34,6 +34,14 @@
 ### It will overwrite config.sub and config.guess with older versions!
 ###
 
+ACLOCAL=aclocal
+AUTOMAKE=automake
+
+if [ "$1" != "" ]; then
+	ACLOCAL=$ACLOCAL-$1
+	AUTOMAKE=$AUTOMAKE-$1
+fi
+
 set -x
 
 # Bring gettext files
@@ -43,7 +51,7 @@ set -x
 libtoolize --ltdl --copy
 
 # Generate aclocal.m4 from acconfig/*.m4 files
-aclocal -I acconfig -I m4 -I libltdl
+$ACLOCAL -I acconfig -I m4 -I libltdl
 
 # Generate configure script
 autoconf
@@ -52,7 +60,7 @@ autoconf
 autoheader
 
 # Generate Makefile.in from Makefile.am
-automake --add-missing --copy
+$AUTOMAKE --add-missing --copy
 
 # Remove previous config.cache
 if test -f config.cache

@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.27 2004/06/19 09:59:12 wingman Exp $
+# $Id: Makefile.am,v 1.28 2004/06/20 09:40:22 wingman Exp $
 
 MAINTAINERCLEANFILES	= Makefile.in
 
@@ -18,7 +18,8 @@ lib_LTLIBRARIES 	= libeggdrop.la
 #
 #DEFAULT_INCLUDE	= 
 
-libeggdrop_la_CPPFLAGS	= -I$(top_srcdir) -I$(top_srcdir)/lib $(INCLTDL)
+# Do not use CPPFLAGS since it's not supported by automake-1.6
+libeggdrop_la_CFLAGS	= -I$(top_srcdir) -I$(top_srcdir)/lib $(INCLTDL)
 libeggdrop_la_SOURCES	= base64.c base64.h \
 			binds.c binds.h \
 			common.h \
