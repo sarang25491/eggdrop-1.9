@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.85 2001/10/29 23:01:35 ite Exp $
+ * $Id: modules.c,v 1.86 2001/12/09 03:55:58 stdarg Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -232,7 +232,7 @@ Function global_table[] =
   (Function) chatout,
   (Function) chanout_but,
   /* 72 - 75 */
-  (Function) check_validity,
+  (Function) 0,
   (Function) list_delete,
   (Function) list_append,
   (Function) list_contains,

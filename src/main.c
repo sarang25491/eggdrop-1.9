@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.99 2001/11/27 02:08:20 ite Exp $
+ * $Id: main.c,v 1.100 2001/12/09 03:55:57 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -608,6 +608,7 @@ void patch(const char *str)
   sprintf(&egg_xtra[strlen(egg_xtra)], " %s", str);
 }
 
+/*
 static inline void garbage_collect(void)
 {
   static u_8bit_t	run_cnt = 0;
@@ -617,6 +618,7 @@ static inline void garbage_collect(void)
   else
     run_cnt++;
 }
+*/
 
 int main(int argc, char **argv)
 {
@@ -889,7 +891,7 @@ module, please consult the default config file for info.\n"));
       socket_cleanup--;
 
     /* Free unused structures. */
-    garbage_collect();
+    /* garbage_collect(); */
 
     xx = sockgets(buf, &i);
     if (xx >= 0) {		/* Non-error */

@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.55 2001/11/05 03:47:36 stdarg Exp $
+ * $Id: tcl.c,v 1.56 2001/12/09 03:55:58 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -391,7 +391,7 @@ void kill_tcl()
   rem_tcl_coups(def_tcl_coups);
   rem_tcl_strings(def_tcl_strings);
   rem_tcl_ints(def_tcl_ints);
-  kill_bind();
+  kill_bind2();
   Tcl_DeleteInterp(interp);
 }
 
