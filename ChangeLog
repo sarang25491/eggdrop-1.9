@@ -1,3 +1,11 @@
+2001-12-18 07:04  Jeff Fisher <guppy@techmonkeys.org>
+
+	* doc/MODULES, lib/eggdrop/module.h, modules/uptime/uptime.c,
+	modules/woobie/woobie.c, src/eggdrop.h, src/main.c, src/modules.c,
+	src/net.c, src/proto.h:
+
+	removed Context and ContextNote 
+
 2001-12-18 06:30  Jeff Fisher <guppy@techmonkeys.org>
 
 	* eggdrop.complete.conf, doc/html/mod-server.html,
