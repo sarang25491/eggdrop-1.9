@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.34 2001/10/11 11:34:19 tothwolf Exp $
+ * $Id: tcldcc.c,v 1.35 2001/10/15 09:27:08 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1018,8 +1018,6 @@ static int tcl_restart STDVAR
   }
   write_userfile(-1);
   putlog(LOG_MISC, "*", _("Restarting..."));
-  wipe_timers(interp, &utimer);
-  wipe_timers(interp, &timer);
   do_restart = -1;
   return TCL_OK;
 }

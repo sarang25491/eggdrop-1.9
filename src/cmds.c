@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.72 2001/10/12 15:50:25 tothwolf Exp $
+ * $Id: cmds.c,v 1.73 2001/10/15 09:27:07 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1064,8 +1064,6 @@ static void cmd_restart(struct userrec *u, int idx, char *par)
     make_userfile = 0;
   write_userfile(-1);
   putlog(LOG_MISC, "*", "%s", _("Restarting ..."));
-  wipe_timers(interp, &utimer);
-  wipe_timers(interp, &timer);
   do_restart = idx;
 }
 

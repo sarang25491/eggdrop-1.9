@@ -92,6 +92,17 @@ int timer_destroy(int timer_id)
 	return(0);
 }
 
+int timer_destroy_all()
+{
+	egg_timer_t *timer;
+
+	for (timer = timer_list_head; timer; timer = timer->next) {
+		free(timer);
+	}
+	timer_list_head = NULL;
+	return(0);
+}
+
 int timer_get_shortest(egg_timeval_t *howlong)
 {
 	egg_timeval_t curtime;

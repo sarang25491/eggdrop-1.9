@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.85 2001/10/14 23:13:33 stdarg Exp $
+ * $Id: main.c,v 1.86 2001/10/15 09:27:08 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1049,6 +1049,7 @@ module, please consult the default config file for info.\n"));
 	call_hook(HOOK_LOADED);
       }
       do_restart = 0;
+      timer_destroy_all(); /* Destroy all timers. */
     }
   }
 }

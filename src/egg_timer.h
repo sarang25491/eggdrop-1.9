@@ -17,6 +17,7 @@ typedef struct egg_timeval_b {
 int timer_get_time(egg_timeval_t *curtime);
 int timer_create_complex(egg_timeval_t *howlong, Function callback, void *client_data, int flags);
 int timer_destroy(int timer_id);
+int timer_destroy_all();
 int timer_get_shortest(egg_timeval_t *howlong);
 int timer_run();
 

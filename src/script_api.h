@@ -7,6 +7,20 @@
 #define SCRIPT_RETURN_INT(x) retval->type = SCRIPT_INTEGER, retval->intval = x
 #define SCRIPT_RETURN_STR(s) retval->type = SCRIPT_STRING, retval->str = s
 
+/* Script events that get recorded in the script journal. */
+enum {
+	SCRIPT_EVENT_LOAD_SCRIPT = 0,
+	SCRIPT_EVENT_SET_INT,
+	SCRIPT_EVENT_SET_STR,
+	SCRIPT_EVENT_LINK_INT,
+	SCRIPT_EVENT_UNLINK_INT,
+	SCRIPT_EVENT_LINK_STR,
+	SCRIPT_EVENT_UNLINK_STR,
+	SCRIPT_EVENT_CREATE_CMD,
+	SCRIPT_EVENT_DELETE_CMD,
+	SCRIPT_EVENT_MAX
+};
+
 /* Flags for commands. */
 #define SCRIPT_WANTS_CD	1
 #define SCRIPT_COMPLEX	2
@@ -38,19 +52,10 @@ typedef struct script_callback_b {
 } script_callback_t;
 
 typedef struct script_var_b {
-	int type;
-	union {
-		int intval;
-		char *str;
-		unsigned char *bytes;
-		void *ptr;
-		void *list;
-		void **ptrarray;
-		struct script_var_b *varray;
-		struct script_var_b **vptrarray;
-	};
-	int len;
-	int flags;
+	int type;	/* Type of variable (int, str, etc). */
+	void *value;	/* Value (needs to be cast to right type). */
+	int len;	/* Length of string of array (when appropriate). */
+	int flags;	/* Not used right now. */
 } script_var_t;
 
 typedef struct script_int_b {

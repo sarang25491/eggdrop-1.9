@@ -167,56 +167,50 @@ static Tcl_Obj *my_resolve_var(Tcl_Interp *myinterp, script_var_t *v)
 	Tcl_Obj *result;
 
 	result = NULL;
-	if (v->type & SCRIPT_INTEGER) result = Tcl_NewIntObj(v->intval);
+	if (v->type & SCRIPT_INTEGER) result = Tcl_NewIntObj((int) v->value);
 	else if (v->type & SCRIPT_STRING) {
-		if (v->len == -1) v->len = strlen(v->str);
+		/* A normal string. */
+
+		if (v->len == -1) v->len = strlen((char *)v->value);
 		#ifdef USE_BYTE_ARRAYS
-			result = Tcl_NewByteArrayObj(v->str, v->len);
+			result = Tcl_NewByteArrayObj((char *)v->value, v->len);
 		#else
-			result = Tcl_NewStringObj(v->str, v->len);
+			result = Tcl_NewStringObj((char *)v->value, v->len);
 		#endif
-		if (!(v->type & SCRIPT_STATIC)) free(v->str);
+		if (!(v->type & SCRIPT_STATIC)) free((char *)v->value);
 	}
 	else if (v->type & SCRIPT_ARRAY) {
+		/* An array of script_var_t's (not pointers, actual struct). */
+		script_var_t *vararray;
 		int i;
 
-		result = Tcl_NewListObj(0, NULL);
-		for (i = 0; i < v->len; i++) {
-			Tcl_Obj *item;
-			script_var_t *pv;
-
-			pv = v->ptrarray[i];
-			item = my_resolve_var(myinterp, pv);
-			if (item) Tcl_ListObjAppendElement(myinterp, result, item);
-		}
-	}
-	else if (v->type & SCRIPT_VARRAY) {
-		int i;
-
+		vararray = (script_var_t *)v->value;
 		result = Tcl_NewListObj(0, NULL);
 		for (i = 0; i < v->len; i++) {
 			Tcl_Obj *item;
 
-			item = my_resolve_var(myinterp, &v->varray[i]);
+			item = my_resolve_var(myinterp, &vararray[i]);
 			if (item) Tcl_ListObjAppendElement(myinterp, result, item);
 		}
-		
 	}
 	else if (v->type & SCRIPT_POINTER) {
-		char str[15];
+		/* A pointer variable (will be represented as a hex string). */
+		char str[32];
 
-		sprintf(str, "%#x", v->ptr);
+		sprintf(str, "#%u", v->value);
 		result = Tcl_NewStringObj(str, -1);
 	}
 	else if (v->type & SCRIPT_USER) {
+		/* An eggdrop user record (struct userrec *). */
 		char *handle;
-		struct userrec *u = (struct userrec *)v->ptr;
+		struct userrec *u = (struct userrec *)v->value;
 
 		if (u) handle = u->handle;
 		else handle = "*";
 		result = Tcl_NewStringObj(handle, -1);
 	}
 	else {
+		/* Default: just pass a string with an error message. */
 		result = Tcl_NewStringObj("unsupported return type", -1);
 	}
 	if (!(v->flags & SCRIPT_STATIC)) free(v);
@@ -226,7 +220,7 @@ static Tcl_Obj *my_resolve_var(Tcl_Interp *myinterp, script_var_t *v)
 static int my_argument_parser(Tcl_Interp *myinterp, int objc, Tcl_Obj *CONST objv[], char *syntax, script_argstack_t *argstack)
 {
 	Tcl_Obj *objptr;
-	int i, err = 0, len = 0, needs_free = 0;
+	int i, err = 0, len = 0;
 	void *arg;
 
 	for (i = 1; i < objc; i++) {
@@ -241,7 +235,7 @@ static int my_argument_parser(Tcl_Interp *myinterp, int objc, Tcl_Obj *CONST obj
 				nullterm = (char *)malloc(len+1);
 				memcpy(nullterm, orig, len);
 				nullterm[len] = 0;
-				needs_free = 1;
+				mstack_push(argstack->bufs, nullterm);
 			#else
 				nullterm = Tcl_GetStringFromObj(objptr, &len);
 			#endif
@@ -304,10 +298,6 @@ static int my_argument_parser(Tcl_Interp *myinterp, int objc, Tcl_Obj *CONST obj
 
 		if (err != TCL_OK) return(2);
 
-		if (needs_free) {
-			mstack_push(argstack->bufs, arg);
-			needs_free = 0;
-		}
 		mstack_push(argstack->args, arg);
 	}
 	return(0);
@@ -373,8 +363,8 @@ static int my_command_handler(ClientData client_data, Tcl_Interp *myinterp, int 
 	else {
 		retval.type = cmd->retval_type;
 		retval.len = -1;
-		if (cmd->pass_array) retval.intval = cmd->callback(&retval, argstack.args->len, al);
-		else retval.intval = cmd->callback(al[0], al[1], al[2], al[3], al[4]);
+		if (cmd->pass_array) retval.value = (void *)cmd->callback(&retval, argstack.args->len, al);
+		else retval.value = (void *)cmd->callback(al[0], al[1], al[2], al[3], al[4]);
 	}
 
 	my_err = retval.type & SCRIPT_ERROR;
@@ -403,10 +393,9 @@ static registry_simple_chain_t my_functions[] = {
 	0
 };
 
-/*
 static Function journal_table[] = {
 	(Function)1,
-	(Function)EV_MAX,
+	(Function)SCRIPT_EVENT_MAX,
 	my_load_script,
 	my_set_int,
 	my_set_str,
@@ -417,7 +406,6 @@ static Function journal_table[] = {
 	my_create_cmd,
 	my_delete_cmd
 };
-*/
 
 static Function journal_playback;
 static void *journal_playback_h;
@@ -440,8 +428,8 @@ char *tclscript_LTX_start(Function *global_funcs)
 	/* interp = Tcl_CreateInterp(); */
 	ginterp = interp;
 	registry_add_simple_chains(my_functions);
-	registry_lookup("script", "journal playback", &journal_playback, &journal_playback_h);
-	/* if (journal_playback) journal_playback(journal_playback_h, journal_table); */
+	registry_lookup("script", "playback", &journal_playback, &journal_playback_h);
+	if (journal_playback) journal_playback(journal_playback_h, journal_table);
 
 	module_register("tclscript", tclscript_table, 1, 2);
 	if (!module_depend("tclscript", "eggdrop", 107, 0)) {
