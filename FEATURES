@@ -93,8 +93,6 @@ The base loadable modules distributed with this Eggdrop version are:
      other. Notes between currently online users is supported in the core,
      this is only for storing the notes for later retrieval, direct
      user->user notes are built-in.
-   * seen This provides seen commands via msg, on channel or via dcc,
-     similar to the various scripts.
    * server This allows eggdrop to connect to a server, but that's about
      it.
    * share This provides the userfile sharing support (this requires the
@@ -102,7 +100,6 @@ The base loadable modules distributed with this Eggdrop version are:
    * transfer This module performs the bot-to-bot userfile sharing
      necessary for sharebots. It is loaded automatically when filesys is
      loaded.
-   * wire This provides an encrypted partyline communication.
    * woobie This is a example/skeletal module for writing your own module.
 
 MODULE - static

@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.58 2001/08/13 03:05:53 guppy Exp $
+ * $Id: channels.c,v 1.59 2001/08/13 19:12:29 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -391,7 +391,7 @@ flood-kick %d:%d flood-deop %d:%d flood-nick %d:%d aop-delay %d:%d \
 %cenforcebans %cdynamicbans %cuserbans %cautoop %cbitch \
 %cgreet %cprotectops %cprotectfriends %cdontkickops \
 %cstatuslog %crevenge %crevengebot %cautovoice %csecret \
-%cshared %ccycle %cseen %cinactive %cdynamicexempts %cuserexempts \
+%cshared %ccycle %cinactive %cdynamicexempts %cuserexempts \
 %cdynamicinvites %cuserinvites %cnodesynch ",
 	channel_static(chan) ? "set" : "add",
 	name,
@@ -423,7 +423,6 @@ flood-kick %d:%d flood-deop %d:%d flood-nick %d:%d aop-delay %d:%d \
 	PLSMNS(channel_secret(chan)),
 	PLSMNS(channel_shared(chan)),
 	PLSMNS(channel_cycle(chan)),
-	PLSMNS(channel_seen(chan)),
 	PLSMNS(channel_inactive(chan)),
         PLSMNS(channel_dynamicexempts(chan)),
         PLSMNS(!channel_nouserexempts(chan)),
@@ -613,8 +612,6 @@ static void channels_report(int idx, int details)
 	  i += my_strcpy(s + i, "autovoice ");
 	if (channel_cycle(chan))
 	  i += my_strcpy(s + i, "cycle ");
-	if (channel_seen(chan))
-	  i += my_strcpy(s + i, "seen ");
 	if (channel_dynamicexempts(chan))
 	  i += my_strcpy(s + i, "dynamic-exempts ");
 	if (channel_nouserexempts(chan))
@@ -884,7 +881,7 @@ char *channels_start(Function * global_funcs)
   strcpy(glob_chanset, "\
 -enforcebans +dynamicbans +userbans -autoop -bitch +greet \
 +protectops +statuslog -revenge -secret -autovoice +cycle \
-+dontkickops -inactive -protectfriends +shared -seen \
++dontkickops -inactive -protectfriends +shared \
 +userexempts +dynamicexempts +userinvites +dynamicinvites -revengebot \
 -nodesynch" /* Do not remove this extra space: */ " ");
   module_register(MODULE_NAME, channels_table, 1, 0);

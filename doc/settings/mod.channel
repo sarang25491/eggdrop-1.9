@@ -239,9 +239,6 @@ channel set <chan> +/-<setting>
       for this channel, bans for this channel, and without affecting any
       sharing
 
-     seen
-      respond to seen requests in the channel?  (seen module must be loaded)
-
      nodesynch
       allow non-ops to perform channel modes?  (Stops bot from
       fighting with services such as ChanServ)
@@ -273,9 +270,8 @@ set global-chanset {
         -inactive       -nodesynch
         -protectfriends +protectops
         -revenge        -revengebot
-        -secret         -seen
-        +shared         +statuslog
+        -secret         +statuslog
+        +shared         +userinvites
         +userbans       +userexempts
-        +userinvites
 }
 

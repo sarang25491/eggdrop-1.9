@@ -484,7 +484,7 @@ A public bot should have all modules available loaded since they provide all
 functions for everybody.
 
 Secure Filesys Bot:
-This bot needs all normal irc operating modules but not notes, seen, ctcp or
+This bot needs all normal irc operating modules but not notes, ctcp or
 share module.
 
 Limbo Bot:

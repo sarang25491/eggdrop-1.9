@@ -3,7 +3,7 @@
  *   stuff common to chan.c and mode.c
  *   users.h needs to be loaded too
  *
- * $Id: chan.h,v 1.22 2001/08/13 03:05:52 guppy Exp $
+ * $Id: chan.h,v 1.23 2001/08/13 19:12:28 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -193,7 +193,7 @@ struct chanset_t {
 					   - drummer			      */
 #define CHAN_PROTECTFRIENDS 0x4000	/* re-op any +f people who get deop'd */
 #define CHAN_SHARED         0x8000	/* channel is being shared	      */
-#define CHAN_SEEN           0x10000
+/*			    0x10000 */
 #define CHAN_REVENGEBOT     0x20000	/* revenge on actions against the bot */
 #define CHAN_NODESYNCH      0x40000
 /*			    0x100000 */
@@ -246,7 +246,6 @@ struct chanset_t *findchan_by_dname(const char *name);
 #define channel_shared(chan) (chan->status & CHAN_SHARED)
 #define channel_static(chan) (chan->status & CHAN_STATIC)
 #define channel_cycle(chan) (chan->status & CHAN_CYCLE)
-#define channel_seen(chan) (chan->status & CHAN_SEEN)
 #define channel_inactive(chan) (chan->status & CHAN_INACTIVE)
 #define channel_revengebot(chan) (chan->status & CHAN_REVENGEBOT)
 #define channel_dynamicexempts(chan) (chan->ircnet_status & CHAN_DYNAMICEXEMPTS)

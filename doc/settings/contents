@@ -46,10 +46,6 @@ mod.notes
   The notes module is documented, including it's settings and tcl
   commands / variables in this file
 
-mod.seen
-  The seen module is documented, including it's settings and tcl
-  commands / variables in this file
-
 mod.server
   The server module is documented, including it's settings and tcl
   commands / variables in this file
@@ -60,10 +56,6 @@ mod.share
 
 mod.transfer
   The transfer module is documented, including it's settings and tcl
-  commands / variables in this file
-
-mod.wire
-  The wire module is documented, including it's settings and tcl
   commands / variables in this file
 
 mod.woobie

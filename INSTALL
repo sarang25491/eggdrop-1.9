@@ -89,8 +89,8 @@ experienced users.
      in the bot.  Before you compile the bot you can remove any *.mod
      directory in the src/mod that you dont wish to be compiled.  Use
      caution though most of the modules that come with eggdrop the are
-     required.  The exception is woobie.mod and seen.mod.  If you do not
-     want these modules it is safe to delete those directories.
+     required.  The exception is woobie.mod -- If you do not want this module
+     it is safe to delete it's directoy.
 
   2. If there are any personal modules that you have made or downloaded you
      can add them to the bot by placing them in the /src/mod directory with

@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.49 2001/08/13 03:05:53 guppy Exp $
+ * $Id: tclchan.c,v 1.50 2001/08/13 19:12:29 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -817,10 +817,6 @@ static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
     Tcl_AppendElement(irp, "+cycle");
   else
     Tcl_AppendElement(irp, "-cycle");
-  if (chan->status & CHAN_SEEN)
-    Tcl_AppendElement(irp, "+seen");
-  else
-    Tcl_AppendElement(irp, "-seen");
   if (chan->ircnet_status& CHAN_DYNAMICEXEMPTS)
     Tcl_AppendElement(irp, "+dynamicexempts");
   else
@@ -1025,10 +1021,6 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
       chan->status |= CHAN_CYCLE;
     else if (!strcmp(item[i], "-cycle"))
       chan->status &= ~CHAN_CYCLE;
-    else if (!strcmp(item[i], "+seen"))
-      chan->status |= CHAN_SEEN;
-    else if (!strcmp(item[i], "-seen"))
-      chan->status &= ~CHAN_SEEN;
     else if (!strcmp(item[i], "+dynamicexempts"))
       chan->ircnet_status|= CHAN_DYNAMICEXEMPTS;
     else if (!strcmp(item[i], "-dynamicexempts"))
