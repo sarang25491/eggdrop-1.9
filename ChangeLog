@@ -1,3 +1,16 @@
+2002-05-26 08:34  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/module.h, modules/console/console.c,
+	modules/filesys/filesys.c, src/botcmd.c, src/botmsg.c,
+	src/botnet.c, src/cmds.c, src/core_binds.c, src/core_binds.h,
+	src/dcc.c, src/dccutil.c, src/modules.c, src/tcldcc.c,
+	src/tclhash.c, src/tclhash.h, src/userrec.c:
+
+	
+	* Moved creation and maintenance of core binds from tclhash.c to
+	core_binds.c 
+	* Renamed check_tcl_* to check_bind_* in the core 
+
 2002-05-26 03:02  stdarg <stdarg@techmonkeys.org>
 
 	* src/tclhash.c:
