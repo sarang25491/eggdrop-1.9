@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: servmsg.c,v 1.25 2002/06/05 05:11:47 stdarg Exp $";
+static const char rcsid[] = "$Id: servmsg.c,v 1.26 2002/06/07 06:38:07 stdarg Exp $";
 #endif
 */
 
@@ -30,7 +30,9 @@ static const char rcsid[] = "$Id: servmsg.c,v 1.25 2002/06/05 05:11:47 stdarg Ex
 
 static time_t last_ctcp    = (time_t) 0L;
 static int    count_ctcp   = 0;
-static char   altnick_char = 0;
+
+static int altnick_char = -1;
+static char altnick_chars[] = "1234567890^_-[]{}abcdefghijklmnopqrstuvwxyz";
 
 /* We try to change to a preferred unique nick here. We always first try the
  * specified alternate nick. If that failes, we repeatedly modify the nick
@@ -47,52 +49,38 @@ static char   altnick_char = 0;
  *
  * fixed by guppy (1999/02/24) and Fabian (1999/11/26)
  */
-static int gotfake433(char *from)
+static void choose_altnick()
 {
-  int l = strlen(botname) - 1;
+	int len;
+	char *alt;
 
-  /* First run? */
-  if (altnick_char == 0) {
-    char *alt = get_altbotnick();
+	len = strlen(botname);
+	alt = get_altbotnick();
 
-    if (alt[0] && (irccmp(alt, botname)))
-      /* Alternate nickname defined. Let's try that first. */
-	str_redup(&botname, alt);
-    else {
-      /* Fall back to appending count char. */
-      altnick_char = '0';
-      if ((l + 1) == nick_len) {
-	botname[l] = altnick_char;
-      } else {
-	botname = (char *)realloc(botname, l+2);
-	botname[l+1] = altnick_char;
-	botname[l+2] = 0;
-      }
-    }
-  /* No, we already tried the default stuff. Now we'll go through variations
-   * of the original alternate nick.
-   */
-  } else {
-    char *oknicks = "^-_\\[]`";
-    char *p = strchr(oknicks, altnick_char);
-
-    if (p == NULL) {
-      if (altnick_char == '9')
-        altnick_char = oknicks[0];
-      else
-	altnick_char = altnick_char + 1;
-    } else {
-      p++;
-      if (!*p)
-	altnick_char = 'a' + random() % 26;
-      else
-	altnick_char = (*p);
-    }
-    botname[l] = altnick_char;
-  }
-  putlog(LOG_MISC, "*", _("NICK IN USE: Trying %s"), botname);
-  dprintf(DP_MODE, "NICK %s\n", botname);
-  return 0;
+	/* First run? */
+	if ((altnick_char == -1) && irccmp(alt, botname)) {
+		/* Alternate nickname defined. Let's try that first. */
+		str_redup(&botname, alt);
+	}
+	else if (altnick_char == -1) {
+		botname = (char *)realloc(botname, len+2);
+		botname[len] = altnick_chars[0];
+		altnick_char = 0;
+		botname[len+1] = 0;
+	}
+	else {
+		altnick_char++;
+		if (altnick_char >= sizeof(altnick_chars)) {
+			make_rand_str(botname, len);
+		}
+		else {
+			botname[len] = altnick_chars[altnick_char];
+			botname[len+1] = 0;
+		}
+	}
+	putlog(LOG_MISC, "*", _("NICK IN USE: Trying %s"), botname);
+	dprintf(DP_MODE, "NICK %s\n", botname);
+	return;
 }
 
 static void check_tcl_notc(char *nick, char *uhost, struct userrec *u,
@@ -556,44 +544,40 @@ static int got303(char *from_nick, char *from_uhost, struct userrec *u, int narg
 
 /* 432 : Bad nickname
  */
-static int got432(char *from, char *ignore, char *msg)
+static int got432(char *from_nick, char *from_uhost, struct userrec *u, char *cmd, int nargs, char *args[])
 {
-  char *erroneus;
+	char *badnick;
+	char newnick[10];
 
-  newsplit(&msg);
-  erroneus = newsplit(&msg);
-  if (server_online)
-    putlog(LOG_MISC, "*", "NICK IS INVALID: %s (keeping '%s').", erroneus,
-	   botname);
-  else {
-    putlog(LOG_MISC, "*", _("Server says my nickname is invalid."));
-    if (!keepnick) {
-      makepass(erroneus);
-      erroneus[NICKMAX] = 0;
-      dprintf(DP_MODE, "NICK %s\n", erroneus);
-    }
-    return 0;
-  }
-  return 0;
+	badnick = args[1];
+	if (server_online) putlog(LOG_MISC, "*", "NICK IS INVALID: %s (keeping '%s').", badnick, botname);
+	else {
+		putlog(LOG_MISC, "*", _("Server says my nickname is invalid, choosing new random nick."));
+		if (!keepnick) {
+			make_rand_str(newnick, 9);
+			newnick[9] = 0;
+			dprintf(DP_MODE, "NICK %s\n", newnick);
+		}
+	}
+	return(0);
 }
 
 /* 433 : Nickname in use
  * Change nicks till we're acceptable or we give up
  */
-static int got433(char *from, char *ignore, char *msg)
+static int got433(char *from_nick, char *from_uhost, struct userrec *u, char *cmd, int nargs, char *args[])
 {
-  char *tmp;
+	char *badnick;
 
-  if (server_online) {
-    /* We are online and have a nickname, we'll keep it */
-    newsplit(&msg);
-    tmp = newsplit(&msg);
-    putlog(LOG_MISC, "*", "NICK IN USE: %s (keeping '%s').", tmp, botname);
-    nick_juped = 0;
-    return 0;
-  }
-  gotfake433(from);
-  return 0;
+	badnick = args[1];
+	if (server_online) {
+		/* We are online and have a nickname, we'll keep it */
+		putlog(LOG_MISC, "*", "NICK IN USE: %s (keeping '%s').", badnick, botname);
+		nick_juped = 0;
+		return(0);
+	}
+	choose_altnick();
+	return(0);
 }
 
 /* 437 : Nickname juped (IRCnet)
@@ -624,7 +608,7 @@ static int got437(char *from, char *ignore, char *msg)
       nick_juped = 1;
   } else {
     putlog(LOG_MISC, "*", "%s: %s", _("Nickname has been juped"), s);
-    gotfake433(from);
+    choose_altnick();
   }
   return 0;
 }
@@ -682,7 +666,7 @@ static int gotnick(char *from, char *ignore, char *msg)
   if (match_my_nick(nick)) {
     /* Regained nick! */
     str_redup(&botname, msg);
-    altnick_char = 0;
+    altnick_char = -1;
     if (!strcmp(msg, origbotname)) {
       putlog(LOG_SERV | LOG_MISC, "*", "Regained nickname '%s'.", msg);
       nick_juped = 0;
@@ -974,6 +958,8 @@ static cmd_t my_new_raw_binds[] = {
 	{"WALLOPS", "", (Function) gotwall, NULL},
 	{"PONG", "", (Function) gotpong, NULL},
 	{"303", "", (Function) got303, NULL},
+	{"432",	"", (Function) got432, NULL},
+	{"433",	"", (Function) got433, NULL},
 	{0}
 };
 
@@ -981,8 +967,6 @@ static cmd_t my_raw_binds[] =
 {
   {"MODE",	"",	(Function) gotmode,		NULL},
   {"PING",	"",	(Function) gotping,		NULL},
-  {"432",	"",	(Function) got432,		NULL},
-  {"433",	"",	(Function) got433,		NULL},
   {"437",	"",	(Function) got437,		NULL},
   {"438",	"",	(Function) got438,		NULL},
   {"451",	"",	(Function) got451,		NULL},
@@ -1114,7 +1098,7 @@ static void server_resolve_success(int servidx)
     /* Another server may have truncated it, so use the original */
     str_redup(&botname, origbotname);
     /* Start alternate nicks from the beginning */
-    altnick_char = 0;
+    altnick_char = -1;
     if (pass[0]) dprintf(DP_MODE, "PASS %s\r\n", pass);
     dprintf(DP_MODE, "NICK %s\r\n", botname);
     dprintf(DP_MODE, "USER %s localhost %s :%s\r\n", botuser, dcc[servidx].host, botrealname);
