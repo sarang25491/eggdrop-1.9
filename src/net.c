@@ -9,7 +9,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: net.c,v 1.59 2002/05/05 16:40:38 tothwolf Exp $";
+static const char rcsid[] = "$Id: net.c,v 1.60 2002/05/18 07:41:33 stdarg Exp $";
 #endif
 
 #include <fcntl.h>
@@ -484,7 +484,7 @@ debug2("|NET| open_address_listen(\"%s\", %d)", addr, *port);
       name.sin6_addr = in6addr_any;
   else if (!inet_pton(AF_INET6, addr, &name.sin6_addr)) {
       struct in_addr a4;
-      if (inet_aton(addr, &a4))
+      if (inet_pton(AF_INET, addr, &a4))
           name.sin6_addr = ipv4to6(a4.s_addr);
       else
 	  name.sin6_addr = in6addr_any;
@@ -493,7 +493,7 @@ debug2("|NET| open_address_listen(\"%s\", %d)", addr, *port);
   name.sin_family = AF_INET;
   name.sin_port = htons(*port);	/* 0 = just assign us a port */
   if (addr[0])
-      inet_aton(addr, &name.sin_addr);
+      inet_pton(AF_INET, addr, &name.sin_addr);
   else
       name.sin_addr.s_addr = INADDR_ANY;
 #endif
@@ -639,7 +639,7 @@ debug2("|NET| open_telnet_dcc: %s %s", server, port);
   if (server == NULL)
     return -3;
   /* fix the IPv4 IP format (ie: 167772161 -> 10.0.0.1) */
-  if (inet_aton(server, &ia))
+  if (inet_pton(AF_INET, server, &ia))
     return open_telnet_raw(sock, inet_ntoa(ia), p);
   else
     return open_telnet_raw(sock, server, p);

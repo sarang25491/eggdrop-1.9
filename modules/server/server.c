@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: server.c,v 1.20 2002/05/17 07:29:24 stdarg Exp $";
+static const char rcsid[] = "$Id: server.c,v 1.21 2002/05/18 07:41:33 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "server"
@@ -1321,7 +1321,7 @@ static int ctcp_DCC_CHAT(char *nick, char *from, struct userrec *u,
       return 1;
     }
 debug1("|SERVER| dcc chat ip: (%s)", ip);
-    if (inet_aton(ip, &ip4))
+    if (inet_pton(AF_INET, ip, &ip4))
 	strlcpy(dcc[i].addr, inet_ntoa(ip4), ADDRLEN);
     else
 	strlcpy(dcc[i].addr, ip, ADDRLEN);

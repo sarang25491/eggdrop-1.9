@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: compat.h,v 1.7 2002/05/05 16:40:31 tothwolf Exp $
+ * $Id: compat.h,v 1.8 2002/05/18 07:41:33 stdarg Exp $
  */
 
 #ifndef _EGG_COMPAT_H
@@ -36,7 +36,6 @@
 #include "strncasecmp.h"
 #include "snprintf.h"
 #include "strftime.h"
-#include "inet_aton.h"
 #include "inet_ntop.h"
 #include "inet_pton.h"
 #include "strdup.h"

@@ -108,7 +108,7 @@ static int nextword(const char **bufp_io, const char **word_r, int *l_r) {
 static void ccf_nameserver(adns_state ads, const char *fn, int lno, const char *buf) {
   struct in_addr ia;
   
-  if (!inet_aton(buf,&ia)) {
+  if (!inet_pton(AF_INET, buf,&ia)) {
     configparseerr(ads,fn,lno,"invalid nameserver address `%s'",buf);
     return;
   }
@@ -170,14 +170,14 @@ static void ccf_sortlist(adns_state ads, const char *fn, int lno, const char *bu
     slash= strchr(tbuf,'/');
     if (slash) *slash++= 0;
     
-    if (!inet_aton(tbuf,&base)) {
+    if (!inet_pton(AF_INET, tbuf,&base)) {
       configparseerr(ads,fn,lno,"invalid address `%s' in sortlist",tbuf);
       continue;
     }
 
     if (slash) {
       if (strchr(slash,'.')) {
-	if (!inet_aton(slash,&mask)) {
+	if (!inet_pton(AF_INET, slash,&mask)) {
 	  configparseerr(ads,fn,lno,"invalid mask `%s' in sortlist",slash);
 	  continue;
 	}

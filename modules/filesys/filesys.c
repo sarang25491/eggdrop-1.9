@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: filesys.c,v 1.12 2002/05/17 07:29:23 stdarg Exp $";
+static const char rcsid[] = "$Id: filesys.c,v 1.13 2002/05/18 07:41:33 stdarg Exp $";
 #endif
 
 #include <fcntl.h>
@@ -628,7 +628,7 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
 	return;
       }
 debug1("|FILESYS| dcc send ip: (%s)", ip);
-    if (inet_aton(ip, &ip4)) /* fix the format! */
+    if (inet_pton(AF_INET, ip, &ip4)) /* fix the format! */
 	strlcpy(dcc[i].addr, inet_ntoa(ip4), ADDRLEN);
     else
 	strlcpy(dcc[i].addr, ip, ADDRLEN);

@@ -86,7 +86,7 @@ AC_CHECK_FUNCS(random srandom rename setpgid sigaction sigemptyset uname)
 
 # Check for these functions, and replace those not found
 AC_REPLACE_FUNCS(memcpy memset strcasecmp strncasecmp strftime strdup)
-AC_REPLACE_FUNCS(inet_aton inet_ntop inet_pton strerror strlcat strlcpy)
+AC_REPLACE_FUNCS(inet_ntop inet_pton strerror strlcat strlcpy)
 
 # These all share a common file: snprintf.c
 AC_CHECK_FUNCS(vsnprintf snprintf asprintf vasprintf,,egg_replace_snprintf="yes")

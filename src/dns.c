@@ -26,7 +26,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dns.c,v 1.39 2002/05/12 05:59:52 stdarg Exp $";
+static const char rcsid[] = "$Id: dns.c,v 1.40 2002/05/18 07:41:33 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -390,7 +390,7 @@ void dns_hostbyip(char *ip)
 
   if (!setjmp(alarmret)) {
     alarm(resolve_timeout);
-    if (inet_aton(ip, &addr))
+    if (inet_pton(AF_INET, ip, &addr))
 	hp = gethostbyaddr((char *) &addr, sizeof addr, AF_INET);
 #ifdef IPV6
     else if (inet_pton(AF_INET6, ip, &addr6))
@@ -419,7 +419,7 @@ void block_dns_ipbyhost(char *host)
 
   /* Check if someone passed us an IPv4 address as hostname
    * and return it straight away */
-  if (inet_aton(host, &inaddr)) {
+  if (inet_pton(AF_INET, host, &inaddr)) {
     call_ipbyhost(host, host, 1);
     return;
   }
@@ -483,7 +483,7 @@ static int script_dnslookup(char *iporhost, script_callback_t *callback)
   struct in6_addr inaddr6;
 #endif
 
-  if (inet_aton(iporhost, &inaddr)
+  if (inet_pton(AF_INET, iporhost, &inaddr)
 #ifdef IPV6
 	|| inet_pton(AF_INET6, iporhost, &inaddr6)
 #endif

@@ -26,7 +26,7 @@
  *  along with this program; if not, write to the Free Software Foundation,
  *  Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: internal.h,v 1.1 2001/10/28 13:30:32 ite Exp $
+ * $Id: internal.h,v 1.2 2002/05/18 07:41:32 stdarg Exp $
  */
 
 #ifndef ADNS_INTERNAL_H_INCLUDED
@@ -57,7 +57,6 @@ typedef unsigned char byte;
 #endif
 
 /* eggdrop */
-#include "inet_aton.h"
 #include "inet_ntop.h"
 #include "inet_pton.h"
 
