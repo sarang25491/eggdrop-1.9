@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.7 2002/01/16 22:09:42 ite Exp $
+ * $Id: transfer.c,v 1.8 2002/01/26 03:44:46 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -617,28 +617,21 @@ static tcl_cmds mytcls[] =
  *
  * In that case, we delay further sending until we receive the
  * dcc outdone event.
- *
- * Note: To optimize buffer sizes, we default to PMAX_SIZE, but
- *       allocate a smaller buffer for smaller pending_data sizes.
  */
 #define	PMAX_SIZE	4096
 static unsigned long pump_file_to_sock(FILE *file, long sock,
-				       register unsigned long pending_data)
+				       unsigned long pending_data)
 {
-  const unsigned long		 buf_len = pending_data >= PMAX_SIZE ?
-	  					PMAX_SIZE : pending_data;
-  char				*bf = malloc(buf_len);
-  register unsigned long	 actual_size;
+  char buf[PMAX_SIZE];
+  int n;
 
-  if (bf) {
-    do {
-      actual_size = pending_data >= buf_len ? buf_len : pending_data;
-      fread(bf, actual_size, 1, file);
-      tputs(sock, bf, actual_size);
-      pending_data -= actual_size;
-    } while (!sock_has_data(SOCK_DATA_OUTGOING, sock) && pending_data != 0);
-    free(bf);
-  }
+  do {
+    n = fread(buf, 1, PMAX_SIZE, file);
+    if (n <= 0) break;
+    tputs(sock, buf, n);
+    pending_data -= n;
+  } while (!sock_has_data(SOCK_DATA_OUTGOING, sock) && pending_data > 0);
+
   return pending_data;
 }
 
@@ -1191,7 +1184,7 @@ static void display_dcc_fork_send(int idx, char *buf)
 
 static void kill_dcc_xfer(int idx, void *x)
 {
-  register struct xfer_info *p = (struct xfer_info *) x;
+  struct xfer_info *p = (struct xfer_info *) x;
 
   if (p->filename)
     free(p->filename);
@@ -1493,7 +1486,7 @@ static int fstat_unpack(struct userrec *u, struct user_entry *e)
 
 static int fstat_pack(struct userrec *u, struct user_entry *e)
 {
-  register struct filesys_stats *fs;
+  struct filesys_stats *fs;
   struct list_type *l = malloc(sizeof(struct list_type));
 
   fs = e->u.extra;
@@ -1509,7 +1502,7 @@ static int fstat_pack(struct userrec *u, struct user_entry *e)
 static int fstat_write_userfile(FILE *f, struct userrec *u,
 				struct user_entry *e)
 {
-  register struct filesys_stats *fs;
+  struct filesys_stats *fs;
 
   fs = e->u.extra;
   if (fprintf(f, "--FSTAT %09u %09u %09u %09u\n",
@@ -1521,7 +1514,7 @@ static int fstat_write_userfile(FILE *f, struct userrec *u,
 
 static int fstat_set(struct userrec *u, struct user_entry *e, void *buf)
 {
-  register struct filesys_stats *fs = buf;
+  struct filesys_stats *fs = buf;
 
   if (e->u.extra != fs) {
     if (e->u.extra)
@@ -1554,7 +1547,7 @@ static int fstat_set(struct userrec *u, struct user_entry *e, void *buf)
 static int fstat_tcl_get(Tcl_Interp *irp, struct userrec *u,
 			 struct user_entry *e, int argc, char **argv)
 {
-  register struct filesys_stats *fs;
+  struct filesys_stats *fs;
   char d[50];
 
   BADARGS(3, 4, " handle FSTAT ?u/d?");
@@ -1674,7 +1667,7 @@ static int fstat_dupuser(struct userrec *u, struct userrec *o,
 static void stats_add_dnload(struct userrec *u, unsigned long bytes)
 {
   struct user_entry *ue;
-  register struct filesys_stats *fs;
+  struct filesys_stats *fs;
 
   if (u) {
     if (!(ue = find_user_entry (&USERENTRY_FSTAT, u)) ||
@@ -1690,7 +1683,7 @@ static void stats_add_dnload(struct userrec *u, unsigned long bytes)
 static void stats_add_upload(struct userrec *u, unsigned long bytes)
 {
   struct user_entry *ue;
-  register struct filesys_stats *fs;
+  struct filesys_stats *fs;
 
   if (u) {
     if (!(ue = find_user_entry (&USERENTRY_FSTAT, u)) ||
@@ -1706,7 +1699,7 @@ static void stats_add_upload(struct userrec *u, unsigned long bytes)
 static int fstat_tcl_set(Tcl_Interp *irp, struct userrec *u,
 			 struct user_entry *e, int argc, char **argv)
 {
-  register struct filesys_stats *fs;
+  struct filesys_stats *fs;
   int f = 0, k = 0;
 
   BADARGS(4, 6, " handle FSTAT u/d ?files ?ks??");
