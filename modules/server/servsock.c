@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: servsock.c,v 1.20 2003/12/18 06:50:47 wcc Exp $";
+static const char rcsid[] = "$Id: servsock.c,v 1.21 2004/02/28 06:00:21 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -96,6 +96,7 @@ static void disconnect_server()
 
 	cycle_delay = server_config.cycle_delay;
 
+	channel_reset();
 	if (current_server.server_host) free(current_server.server_host);
 	if (current_server.server_self) free(current_server.server_self);
 	if (current_server.nick) free(current_server.nick);

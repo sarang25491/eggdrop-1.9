@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.16 2004/01/13 15:56:02 stdarg Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.17 2004/02/28 06:00:21 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -43,16 +43,31 @@ static bind_list_t channel_raw_binds[];
 
 /* Prototypes. */
 static int uhost_cache_delete(const void *key, void *data, void *param);
-static void clear_banlist(channel_t *chan);
+static void clear_masklist(channel_mask_list_t *l);
 static void del_ban(channel_t *chan, const char *mask);
+static int got_list_item(void *client_data, char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[]);
+static int got_list_end(void *client_data, char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[]);
 void uhost_cache_decref(const char *nick);
 
 void server_channel_init()
 {
+	bind_table_t *table;
+
 	channel_head = NULL;
 	nchannels = 0;
 	uhost_cache_ht = hash_table_create(NULL, NULL, UHOST_CACHE_SIZE, HASH_TABLE_STRINGS);
 	bind_add_list("raw", channel_raw_binds);
+	table = bind_table_lookup_or_fake("raw");
+	if (!table) return;
+
+	/* FIXME Putting these here for now... but they should probably be
+	 * configurable or moved to an addon module/script. */
+	bind_entry_add(table, NULL, "367", "banlistitem", BIND_WANTS_CD, got_list_item, (void *)'b');
+	bind_entry_add(table, NULL, "346", "invitelistitem", BIND_WANTS_CD, got_list_item, (void *)'I');
+	bind_entry_add(table, NULL, "348", "exceptlistitem", BIND_WANTS_CD, got_list_item, (void *)'e');
+	bind_entry_add(table, NULL, "368", "banlistend", BIND_WANTS_CD, got_list_end, (void *)'b');
+	bind_entry_add(table, NULL, "347", "invitelistend", BIND_WANTS_CD, got_list_end, (void *)'I');
+	bind_entry_add(table, NULL, "349", "exceptlistend", BIND_WANTS_CD, got_list_end, (void *)'e');
 }
 
 static void free_member(channel_member_t *m)
@@ -65,6 +80,7 @@ static void free_member(channel_member_t *m)
 static void free_channel(channel_t *chan)
 {
 	channel_member_t *m, *next_mem;
+	int i;
 
 	if (chan->name) free(chan->name);
 	for (m = chan->member_head; m; m = next_mem) {
@@ -75,11 +91,14 @@ static void free_channel(channel_t *chan)
 	if (chan->topic) free(chan->topic);
 	if (chan->topic_nick) free(chan->topic_nick);
 	if (chan->key) free(chan->key);
-	clear_banlist(chan);
+	for (i = 0; i < chan->nlists; i++) {
+		clear_masklist(chan->lists+i);
+	}
+	if (chan->lists) free(chan->lists);
 	free(chan);
 }
 
-void server_channel_destroy()
+void channel_reset()
 {
 	channel_t *chan, *next_chan;
 
@@ -94,11 +113,20 @@ void server_channel_destroy()
 	/* And the uhost cache. */
 	hash_table_walk(uhost_cache_ht, uhost_cache_delete, NULL);
 	hash_table_destroy(uhost_cache_ht);
+	uhost_cache_ht = hash_table_create(NULL, NULL, UHOST_CACHE_SIZE, HASH_TABLE_STRINGS);
+}
+
+void server_channel_destroy()
+{
+	/* Free everything. */
+	channel_reset();
+	hash_table_destroy(uhost_cache_ht);
 }
 
 void channel_lookup(const char *chan_name, int create, channel_t **chanptr, channel_t **prevptr)
 {
 	channel_t *chan, *prev;
+	int i;
 
 	*chanptr = NULL;
 	if (prevptr) *prevptr = NULL;
@@ -117,6 +145,11 @@ void channel_lookup(const char *chan_name, int create, channel_t **chanptr, chan
 	nchannels++;
 	chan = calloc(1, sizeof(*chan));
 	chan->name = strdup(chan_name);
+	chan->nlists = strlen(current_server.type1modes);
+	chan->lists = calloc(chan->nlists, sizeof(*chan->lists));
+	for (i = 0; i < chan->nlists; i++) {
+		chan->lists[i].type = current_server.type1modes[i];
+	}
 	chan->next = channel_head;
 	channel_head = chan;
 	*chanptr = chan;
@@ -130,9 +163,9 @@ static void make_lowercase(char *nick)
 	}
 }
 
-static int uhost_cache_delete(const void *key, void *data, void *param)
+static int uhost_cache_delete(const void *key, void *dataptr, void *param)
 {
-	uhost_cache_entry_t *cache = data;
+	uhost_cache_entry_t *cache = *(void **)dataptr;
 
 	if (cache->nick) free(cache->nick);
 	if (cache->uhost) free(cache->uhost);
@@ -210,20 +243,25 @@ channel_member_t *channel_add_member(const char *chan_name, const char *nick, co
 
 	/* See if this member is already added. */
 	for (m = chan->member_head; m; m = m->next) {
-		if (!(current_server.strcmp)(m->nick, nick)) return(m);
+		if (!(current_server.strcmp)(m->nick, nick)) break;
 	}
 
-	/* Nope, so add him and put him in the cache. */
-	if (uhost) uhost_cache_fillin(nick, uhost, 1);
+	/* Do we need to create a new member? */
+	if (!m) {
+		m = calloc(1, sizeof(*m));
+		m->nick = strdup(nick);
+		timer_get_now_sec(&m->join_time);
+		m->next = chan->member_head;
+		chan->member_head = m;
+		chan->nmembers++;
+	}
 
-	m = calloc(1, sizeof(*m));
-	m->nick = strdup(nick);
-	if (uhost) m->uhost = strdup(uhost);
-	timer_get_now_sec(&m->join_time);
+	/* Do we need to fill in the uhost? */
+	if (uhost && !m->uhost) {
+		m->uhost = strdup(uhost);
+		uhost_cache_fillin(nick, uhost, 1);
+	}
 
-	m->next = chan->member_head;
-	chan->member_head = m;
-	chan->nmembers++;
 	return(m);
 }
 
@@ -231,6 +269,7 @@ void channel_on_join(const char *chan_name, const char *nick, const char *uhost)
 {
 	channel_t *chan;
 	int create;
+	int i;
 
 	if (match_my_nick(nick)) create = 1;
 	else create = 0;
@@ -239,10 +278,11 @@ void channel_on_join(const char *chan_name, const char *nick, const char *uhost)
 	if (!chan) return;
 
 	if (create) {
-		chan->status |= CHANNEL_WHOLIST | CHANNEL_BANLIST;
+		chan->status |= CHANNEL_WHOLIST;
 		printserv(SERVER_NORMAL, "WHO %s\r\n", chan_name);
 		printserv(SERVER_NORMAL, "MODE %s\r\n", chan_name);
-		printserv(SERVER_NORMAL, "MODE %s +b\r\n", chan_name);
+		for (i = 0; i < chan->nlists; i++) chan->lists[i].loading = 1;
+		printserv(SERVER_NORMAL, "MODE %s %s\r\n", chan_name, current_server.type1modes);
 	}
 
 	channel_add_member(chan_name, nick, uhost);
@@ -524,19 +564,33 @@ static int got333(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 }
 
 /************************************
- * Ban handling
+ * Mask list handling
  */
 
-static void add_ban(channel_t *chan, const char *mask, const char *set_by, int time)
+channel_mask_list_t *channel_get_mask_list(channel_t *chan, char type)
 {
+	int i;
+
+	for (i = 0; i < chan->nlists; i++) {
+		if (chan->lists[i].type == type) return(chan->lists+i);
+	}
+	return(NULL);
+}
+
+void channel_add_mask(channel_t *chan, char type, const char *mask, const char *set_by, int time)
+{
+	channel_mask_list_t *l;
 	channel_mask_t *m;
+
+	l = channel_get_mask_list(chan, type);
+	if (!l) return;
 
 	m = calloc(1, sizeof(*m));
 	m->mask = strdup(mask);
 	if (set_by) m->set_by = strdup(set_by);
 	m->time = time;
-	m->next = chan->ban_head;
-	chan->ban_head = m;
+	m->next = l->head;
+	l->head = m;
 }
 
 static void free_mask(channel_mask_t *m)
@@ -546,54 +600,75 @@ static void free_mask(channel_mask_t *m)
 	free(m);
 }
 
-static void del_ban(channel_t *chan, const char *mask)
+void channel_del_mask(channel_t *chan, char type, const char *mask)
 {
+	channel_mask_list_t *l;
 	channel_mask_t *m, *prev;
 
+	l = channel_get_mask_list(chan, type);
+	if (!l) return;
+
 	prev = NULL;
-	for (m = chan->ban_head; m; m = m->next) {
+	for (m = l->head; m; m = m->next) {
 		if (!(current_server.strcmp)(m->mask, mask)) break;
 		prev = m;
 	}
 	if (!m) return;
 	if (prev) prev->next = m->next;
-	else chan->ban_head = m->next;
+	else l->head = m->next;
 	free_mask(m);
 }
 
-static void clear_banlist(channel_t *chan)
+static void clear_masklist(channel_mask_list_t *l)
 {
 	channel_mask_t *m, *next;
 
-	for (m = chan->ban_head; m; m = next) {
+	for (m = l->head; m; m = next) {
 		next = m->next;
 		free_mask(m);
 	}
-	chan->ban_head = NULL;
+	l->head = NULL;
 }
 
-/* :server 367 <ournick> <chan> <ban> [<nick> <time>] */
-static int got367(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
+void channel_clear_masks(channel_t *chan, char type)
+{
+	channel_mask_list_t *l;
+
+	l = channel_get_mask_list(chan, type);
+	if (l) clear_masklist(l);
+}
+
+/* :server 367 <ournick> <chan> <ban> [<nick> <time>]
+ * :server 346 <ournick> <chan> <invite> [<nick> <time>]
+ * :server 348 <ournick> <chan> <except> [<nick> <time>] */
+static int got_list_item(void *client_data, char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
 	char *chan_name = args[1];
 	char *ban = args[2];
+	char type = (char) (int) client_data;
 	channel_t *chan;
+	channel_mask_list_t *l;
 
 	channel_lookup(chan_name, 0, &chan, NULL);
-	if (!chan || !(chan->status & CHANNEL_BANLIST)) return(0);
-	add_ban(chan, ban, (nargs > 3) ? args[3] : NULL, (nargs > 4) ? atoi(args[4]) : -1);
+	if (!chan) return(0);
+	l = channel_get_mask_list(chan, type);
+	if (!l || !(l->loading)) return(0);
+	channel_add_mask(chan, type, ban, (nargs > 3) ? args[3] : NULL, (nargs > 4) ? atoi(args[4]) : -1);
 	return(0);
 }
 
 /* :server 368 <ournick> <chan> :End of channel ban list */
-static int got368(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
+static int got_list_end(void *client_data, char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
 	char *chan_name = args[1];
+	char type = (char) (int) client_data;
 	channel_t *chan;
+	channel_mask_list_t *l;
 
 	channel_lookup(chan_name, 0, &chan, NULL);
 	if (!chan) return(0);
-	chan->status &= ~CHANNEL_BANLIST;
+	l = channel_get_mask_list(chan, type);
+	if (l) l->loading = 0;
 	return(0);
 }
 
@@ -693,7 +768,7 @@ int channel_mode(const char *chan_name, const char *nick, char *buf)
 
 static void parse_chan_mode(char *from_nick, char *from_uhost, user_t *u, int nargs, char *args[], int trigger_bind)
 {
-	int hasarg, curarg, modify_member, modify_channel;
+	int hasarg, curarg, modify_member, modify_channel, modify_list;
 	channel_member_t *m;
 	char changestr[3];
 	char *dest;
@@ -723,12 +798,16 @@ static void parse_chan_mode(char *from_nick, char *from_uhost, user_t *u, int na
 
 		/* Figure out what kind of change it is and if it takes an
 		 * argument. */
-		modify_member = modify_channel = 0;
+		modify_member = modify_channel = modify_list = 0;
 		if (strchr(current_server.modeprefix, *change)) {
 			hasarg = 1;
 			modify_member = 1;
 		}
-		else if (strchr(current_server.type1modes, *change) || strchr(current_server.type2modes, *change)) {
+		else if (strchr(current_server.type1modes, *change)) {
+			hasarg = 1;
+			modify_list = 1;
+		}
+		else if (strchr(current_server.type2modes, *change)) {
 			hasarg = 1;
 		}
 		else if (changestr[0] == '+' && strchr(current_server.type3modes, *change)) {
@@ -760,12 +839,14 @@ static void parse_chan_mode(char *from_nick, char *from_uhost, user_t *u, int na
 			/* Simple flag change for channel. */
 			flag_merge_str(&chan->mode, changestr);
 		}
+		else if (modify_list) {
+			/* Add/remove an address from a list. */
+			if (changestr[0] == '+') channel_add_mask(chan, *change, arg, from_nick, timer_get_now_sec(NULL));
+			else channel_del_mask(chan, *change, arg);
+		}
 		else if (changestr[0] == '+') {
 			/* + flag change that requires special handling. */
 			switch (*change) {
-				case 'b':
-					add_ban(chan, arg, from_nick, timer_get_now_sec(NULL));
-					break;
 				case 'k':
 					str_redup(&chan->key, arg);
 					break;
@@ -777,9 +858,6 @@ static void parse_chan_mode(char *from_nick, char *from_uhost, user_t *u, int na
 		else {
 			/* - flag change that requires special handling. */
 			switch (*change) {
-				case 'b':
-					del_ban(chan, arg);
-					break;
 				case 'k':
 					if (chan->key) free(chan->key);
 					chan->key = NULL;
@@ -848,10 +926,6 @@ static bind_list_t channel_raw_binds[] = {
 	{NULL, "331", got331},
 	{NULL, "332", got332},
 	{NULL, "333", got333},
-
-	/* Bans. */
-	{NULL, "367", got367},
-	{NULL, "368", got368},
 
 	/* Channel member stuff. */
 	{NULL, "JOIN", gotjoin},

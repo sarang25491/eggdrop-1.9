@@ -18,15 +18,12 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: binds.c,v 1.11 2003/12/17 07:52:14 wcc Exp $";
+static const char rcsid[] = "$Id: binds.c,v 1.12 2004/02/28 06:00:21 stdarg Exp $";
 #endif
 
 #include <string.h>
 #include <stdlib.h>
 #include <eggdrop/eggdrop.h>
-
-extern struct dcc_t *dcc;
-extern int dcc_total;
 
 /* The head of the bind table linked list. */
 static bind_table_t *bind_table_list_head = NULL;

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: channels.h,v 1.10 2003/12/18 06:50:47 wcc Exp $
+ * $Id: channels.h,v 1.11 2004/02/28 06:00:21 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_SERVER_CHANNELS_H_
@@ -49,6 +49,13 @@ typedef struct channel_mask {
 	int time;
 } channel_mask_t;
 
+typedef struct channel_mask_list {
+	struct channel_mask *head;
+	int len;
+	int loading;
+	char type;
+} channel_mask_list_t;
+
 typedef struct channel {
 	struct channel *next;
 
@@ -61,8 +68,8 @@ typedef struct channel {
 	int limit;			/* Channel limit. */
 	char *key;			/* Channel key. */
 
-	channel_mask_t *ban_head;	/* Ban list. */
-	int nbans;
+	channel_mask_list_t *lists;	/* Mask lists (bans, invites, etc). */
+	int nlists;
 
 	int status;
 
@@ -91,7 +98,12 @@ extern void channel_on_join(const char *chan_name, const char *nick, const char 
 extern channel_member_t *channel_add_member(const char *chan_name, const char *nick, const char *uhost);
 
 /* Functions for others (scripts/modules) to access channel data. */
+extern void channel_reset();
 extern int channel_list(const char ***chans);
 extern int channel_list_members(const char *chan, const char ***members);
+extern channel_mask_list_t *channel_get_mask_list(channel_t *chan, char type);
+extern void channel_add_mask(channel_t *chan, char type, const char *mask, const char *set_by, int time);
+extern void channel_del_mask(channel_t *chan, char type, const char *mask);
+extern void channel_clear_masks(channel_t *chan, char type);
 
 #endif /* !_EGG_MOD_SERVER_CHANNELS_H_ */

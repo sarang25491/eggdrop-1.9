@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.36 2003/12/18 07:18:48 wcc Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.37 2004/02/28 06:00:21 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -176,10 +176,11 @@ static int script_channel_topic(script_var_t *retval, char *chan_name)
 	return(0);
 }
 
-static int script_channel_bans(script_var_t *retval, char *chan_name)
+static int script_channel_mask_list(script_var_t *retval, char *chan_name, char *type)
 {
 	channel_t *chan;
 	channel_mask_t *m;
+	channel_mask_list_t *l;
 
 	retval->type = SCRIPT_ARRAY | SCRIPT_FREE | SCRIPT_VAR;
 	retval->len = 0;
@@ -187,7 +188,10 @@ static int script_channel_bans(script_var_t *retval, char *chan_name)
 	channel_lookup(chan_name, 0, &chan, NULL);
 	if (!chan) return(-1);
 
-	for (m = chan->ban_head; m; m = m->next) {
+	l = channel_get_mask_list(chan, type[0]);
+	if (!l) return(-1);
+
+	for (m = l->head; m; m = m->next) {
 		script_list_append(retval,
 			script_list(3,
 				script_string(m->mask, -1),
@@ -354,7 +358,7 @@ static script_command_t server_script_cmds[] = {
 	{"", "channel_list", script_channel_list, NULL, 0, "", "", 0, SCRIPT_PASS_RETVAL},
 	{"", "channel_members", script_channel_members, NULL, 1, "s", "channel", 0, SCRIPT_PASS_RETVAL},
 	{"", "channel_topic", script_channel_topic, NULL, 1, "s", "channel", 0, SCRIPT_PASS_RETVAL},
-	{"", "channel_bans", script_channel_bans, NULL, 1, "s", "channel", 0, SCRIPT_PASS_RETVAL},
+	{"", "channel_mask_list", script_channel_mask_list, NULL, 2, "ss", "channel type", 0, SCRIPT_PASS_RETVAL},
 	{"", "channel_mode", script_channel_mode, NULL, 1, "ss", "channel ?nick?", SCRIPT_STRING|SCRIPT_FREE, SCRIPT_VAR_ARGS},
 	{"", "channel_key", script_channel_key, NULL, 1, "s", "channel", SCRIPT_STRING, 0},
 	{"", "channel_limit", script_channel_limit, NULL, 1, "s", "channel", SCRIPT_INTEGER, 0},
