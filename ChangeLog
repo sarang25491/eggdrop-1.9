@@ -1,3 +1,17 @@
+2002-02-13 16:44  Federico Mennite <ite@techmonkeys.org>
+
+	* modules/compress/compress.c, modules/filesys/filedb3.c,
+	modules/notes/notes.c, modules/transfer/transfer.c, po/update.pl,
+	src/chanprog.c, src/egg.h:
+
+	gettext plurals are now supported with the P_() macro 
+
+2002-02-13 16:38  Federico Mennite <ite@techmonkeys.org>
+
+	* bootstrap:
+
+	Updated info about the bootstrap step 
+
 2002-02-13 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
