@@ -123,10 +123,12 @@ static int party_msg(partymember_t *p, const char *nick, user_t *u, const char *
 	egg_get_word(text, &next, &dest);
 	if (!next || !dest) {
 		partymember_printf(p, "Syntax: %s <nick/chan> <text>", cmd);
+		if (dest) free(dest);
 		return(0);
 	}
 	while (isspace(*next)) next++;
 	printserv(SERVER_NORMAL, "PRIVMSG %s :%s\r\n", dest, next);
+	free(dest);
 	return(0);
 }
 
