@@ -22,7 +22,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: script.c,v 1.6 2002/05/13 08:38:36 stdarg Exp $";
+static const char rcsid[] = "$Id: script.c,v 1.7 2002/05/24 06:52:05 stdarg Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -345,9 +345,14 @@ int script_get_arg(script_args_t *args, int num, script_var_t *var, int type)
 script_var_t *script_string(char *str, int len)
 {
 	script_var_t *var = (script_var_t *)malloc(sizeof(*var));
+
 	var->type = SCRIPT_STRING | SCRIPT_FREE_VAR;
+	if (!str) {
+		str = "";
+		len = 0;
+	}
+	else if (len < 0) len = strlen(str);
 	var->value = (void *)str;
-	if (len < 0) len = strlen(str);
 	var->len = len;
 	return(var);
 }
@@ -362,7 +367,11 @@ script_var_t *script_copy_string(char *str, int len)
 {
 	char *copy;
 
-	if (len < 0) len = strlen(str);
+	if (!str) {
+		str = "";
+		len = 0;
+	}
+	else if (len < 0) len = strlen(str);
 	copy = (char *)malloc(len+1);
 	memcpy(copy, str, len);
 	copy[len] = 0;

@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: server.c,v 1.24 2002/05/21 21:28:31 stdarg Exp $";
+static const char rcsid[] = "$Id: server.c,v 1.25 2002/05/24 06:52:05 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "server"
@@ -125,6 +125,7 @@ static int burst;
 
 /* Prototypes for serverlist manipulation. */
 static int server_add(char *host, int port, char *pass);
+static int server_del(int num);
 static int server_clear();
 
 #include "cmdsserv.c"
@@ -913,6 +914,15 @@ static void queue_server(int which, char *buf, int len)
 			   possible. */
 }
 
+/* Free a server struct and its associated data. */
+static void server_destroy(struct server_list *ptr)
+{
+	if (ptr->name) free(ptr->name);
+	if (ptr->realname) free(ptr->realname);
+	if (ptr->pass) free(ptr->pass);
+	free(ptr);
+}
+
 /* Add a server to the server list. */
 static int server_add(char *host, int port, char *pass)
 {
@@ -936,17 +946,37 @@ static int server_add(char *host, int port, char *pass)
 	return(0);
 }
 
-/* Clear out the server_list. */
+/* Remove a server from the server list based on its index. */
+static int server_del(int num)
+{
+	struct server_list *cur, *prev;
+	int i;
+
+	prev = NULL;
+	i = 0;
+	for (cur = serverlist; cur; cur = cur->next) {
+		if (i == num) break;
+		prev = cur;
+		i++;
+	}
+	if (i != num) return(-1);
+
+	if (prev) prev->next = cur->next;
+	else serverlist = cur->next;
+
+	server_destroy(cur);
+
+	return(0);
+}
+
+/* Clear out the server list. */
 static int server_clear()
 {
 	struct server_list *cur, *next;
 
 	for (cur = serverlist; cur; cur = next) {
 		next = cur->next;
-		if (cur->name) free(cur->name);
-		if (cur->realname) free(cur->realname);
-		if (cur->pass) free(cur->pass);
-		free(cur);
+		server_destroy(cur);
 	}
 	serverlist = NULL;
 	return(0);
@@ -1074,25 +1104,6 @@ static char *altnick_change(ClientData cdata, Tcl_Interp *irp, char *name1,
   return NULL;
 }
 
-static char *traced_server(ClientData cdata, Tcl_Interp *irp, char *name1,
-			   char *name2, int flags)
-{
-  char s[1024];
-
-  if (server_online) {
-    int servidx = findanyidx(serv);
-    char *z = strchr(dcc[servidx].host, ':');
-    simple_sprintf(s, "%s%s%s:%u",
-	z ? "[" : "", dcc[servidx].host, z ? "]" : "", dcc[servidx].port);
-  } else
-    s[0] = 0;
-  Tcl_SetVar2(interp, name1, name2, s, TCL_GLOBAL_ONLY);
-  if (flags & TCL_TRACE_UNSETS)
-    Tcl_TraceVar(irp, name1, TCL_TRACE_READS | TCL_TRACE_WRITES |
-		 TCL_TRACE_UNSETS, traced_server, cdata);
-  return NULL;
-}
-
 static char *traced_botname(ClientData cdata, Tcl_Interp *irp, char *name1,
 			    char *name2, int flags)
 {
@@ -1174,47 +1185,6 @@ static tcl_ints my_tcl_ints[] =
   {"isjuped",			&nick_juped,			0},
   {NULL,			NULL,				0}
 }; 
-
-
-/*
- *     Tcl variable trace functions
- */
-
-/* Read or write the server list.
- */
-static char *tcl_eggserver(ClientData cdata, Tcl_Interp *irp, char *name1,
-			   char *name2, int flags)
-{
-  Tcl_DString ds;
-  char *slist, x[1024];
-  struct server_list *q;
-
-  if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
-    /* Create server list */
-    Tcl_DStringInit(&ds);
-    for (q = serverlist; q; q = q->next) {
-      char *z = strchr(q->name, ':');
-      snprintf(x, sizeof x, "%s%s%s:%d%s%s %s",
-                   z ? "[" : "", q->name, z ? "]" : "",
-		   q->port ? q->port : default_port, q->pass ? ":" : "",
-		   q->pass ? q->pass : "", q->realname ? q->realname : "");
-      Tcl_DStringAppendElement(&ds, x);
-    }
-    slist = Tcl_DStringValue(&ds);
-    Tcl_SetVar2(interp, name1, name2, slist, TCL_GLOBAL_ONLY);
-    Tcl_DStringFree(&ds);
-  }
-  return NULL;
-}
-
-/* Trace the servers */
-#define tcl_traceserver(name, ptr) \
-  Tcl_TraceVar(interp, name, TCL_TRACE_READS | TCL_TRACE_WRITES |	\
-	       TCL_TRACE_UNSETS, tcl_eggserver, (ClientData) ptr)
-
-#define tcl_untraceserver(name, ptr) \
-  Tcl_UntraceVar(interp, name, TCL_TRACE_READS | TCL_TRACE_WRITES |	\
-		 TCL_TRACE_UNSETS, tcl_eggserver, (ClientData) ptr)
 
 
 /*
@@ -1488,6 +1458,7 @@ static char *server_close()
   rem_tcl_ints(my_tcl_ints);
   rem_help_reference("server.help");
   script_delete_commands(server_script_cmds);
+  script_unlink_vars(server_script_vars);
   Tcl_UntraceVar(interp, "nick",
 		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		 nick_change, NULL);
@@ -1496,13 +1467,9 @@ static char *server_close()
   Tcl_UntraceVar(interp, "botname",
 		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		 traced_botname, NULL);
-  Tcl_UntraceVar(interp, "server",
-		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
-		 traced_server, NULL);
   Tcl_UntraceVar(interp, "nick-len",
 		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		 traced_nicklen, NULL);
-  tcl_untraceserver("servers", NULL);
   empty_msgq();
   del_hook(HOOK_SECONDLY, (Function) server_secondly);
   del_hook(HOOK_5MINUTELY, (Function) server_5minutely);
@@ -1631,8 +1598,6 @@ char *start(eggdrop_t *eggdrop)
   }
 
   /* Fool bot in reading the values. */
-  tcl_eggserver(NULL, interp, "servers", NULL, 0);
-  tcl_traceserver("servers", NULL);
   s = Tcl_GetVar(interp, "nick", TCL_GLOBAL_ONLY);
   if (s)
     strlcpy(origbotname, s, NICKLEN);
@@ -1644,9 +1609,6 @@ char *start(eggdrop_t *eggdrop)
   Tcl_TraceVar(interp, "botname",
 	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 	       traced_botname, NULL);
-  Tcl_TraceVar(interp, "server",
-	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
-	       traced_server, NULL);
   Tcl_TraceVar(interp, "nick-len",
 	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 	       traced_nicklen, NULL);
@@ -1670,6 +1632,7 @@ char *start(eggdrop_t *eggdrop)
   add_tcl_strings(my_tcl_strings);
   add_tcl_ints(my_tcl_ints);
   script_create_commands(server_script_cmds);
+  script_link_vars(server_script_vars);
   add_tcl_coups(my_tcl_coups);
   add_hook(HOOK_SECONDLY, (Function) server_secondly);
   add_hook(HOOK_5MINUTELY, (Function) server_5minutely);

@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.4 2002/05/21 21:23:01 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.5 2002/05/24 06:52:05 stdarg Exp $";
 #endif
 */
 
@@ -33,6 +33,12 @@ static int script_putserv(char *queue, char *next, char *text);
 static int script_jump (int nargs, char *optserver, int optport, char *optpassword);
 static int script_clearqueue (script_var_t *retval, char *queuetype);
 static int script_queuesize (script_var_t *retval, int nargs, char *queuetype, int flags);
+static int script_server_list(script_var_t *retval);
+
+static script_linked_var_t server_script_vars[] = {
+	{"", "server", &curserv, SCRIPT_INTEGER, NULL},
+	{0}
+};
 
 static script_command_t server_script_cmds[] = {
         {"", "jump", script_jump, NULL, 0, "sis", "server port password", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_PASS_COUNT},
@@ -41,7 +47,9 @@ static script_command_t server_script_cmds[] = {
         {"", "queuesize", script_queuesize, NULL, 0, "s", "?queuetype?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_PASS_COUNT | SCRIPT_PASS_RETVAL},
         {"", "putserv", script_putserv, NULL, 1, "sss", "?-queuetype? ?-next? text", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT},
 	{"", "server_add", server_add, NULL, 1, "sis", "host ?port? ?pass?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
+	{"", "server_del", server_del, NULL, 1, "i", "server-num", SCRIPT_INTEGER, 0},
 	{"", "server_clear", server_clear, NULL, 0, "", "", SCRIPT_INTEGER, 0},
+	{"", "server_list", script_server_list, NULL, 0, "", "", 0, SCRIPT_PASS_RETVAL},
         {0}
 };
 
@@ -241,3 +249,21 @@ static int script_queuesize (script_var_t *retval, int nargs, char *queuetype, i
 	return(0);
 }
 
+static int script_server_list(script_var_t *retval)
+{
+	script_var_t *sublist;
+	struct server_list *ptr;
+
+	retval->type = SCRIPT_ARRAY | SCRIPT_VAR | SCRIPT_FREE;
+	retval->len = 0;
+
+	for (ptr = serverlist; ptr; ptr = ptr->next) {
+		sublist = script_list(4, script_string(ptr->name, -1),
+			script_int(ptr->port),
+			script_string(ptr->pass, -1),
+			script_string(ptr->realname, -1)
+		);
+		script_list_append(retval, sublist);
+	}
+	return(0);
+}
