@@ -1,3 +1,11 @@
+2003-07-06 07:17  stdarg <stdarg@techmonkeys.org>
+
+	* config.xml, lib/eggdrop/xmlwrite.c, modules/server/channels.c,
+	modules/server/channels.h, modules/server/input.c,
+	modules/server/servsock.c:
+
+	[no log message] 
+
 2003-06-18 22:59  stdarg <stdarg@techmonkeys.org>
 
 	* mkinstalldirs:
