@@ -2,7 +2,7 @@
  * flags.c -- handles:
  *   all the flag matching/conversion functions in one neat package :)
  *
- * $Id: flags.c,v 1.18 2001/04/12 02:39:43 guppy Exp $
+ * $Id: flags.c,v 1.19 2001/08/26 03:16:43 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -521,6 +521,7 @@ int build_flags(char *string, struct flag_record *plus,
   return string - old;
 }
 
+/* Returns 1 if flags match, 0 if they don't. */
 int flagrec_ok(struct flag_record *req,
 	       struct flag_record *have)
 {
@@ -560,6 +561,7 @@ int flagrec_ok(struct flag_record *req,
   return 0;			/* fr0k3 binding, dont pass it */
 }
 
+/* Returns 1 if flags match, 0 if they don't. */
 int flagrec_eq(struct flag_record *req, struct flag_record *have)
 {
   if (req->match & FR_AND) {
