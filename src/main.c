@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.93 2001/10/20 08:04:22 guppy Exp $
+ * $Id: main.c,v 1.94 2001/10/21 06:02:48 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -590,7 +590,7 @@ void kill_tcl();
 extern module_entry *module_list;
 void restart_chons();
 
-int init_dcc_max(), init_userent(), init_misc(), init_net(),
+int init_userent(), init_misc(), init_net(),
  init_modules(), init_tcl(int, char **);
 void timer_init();
 void logfile_init();
@@ -598,6 +598,7 @@ void botnet_init();
 void dns_init();
 void script_init();
 void binds_init();
+void dcc_init();
 
 void patch(const char *str)
 {
@@ -720,7 +721,7 @@ int main(int argc, char **argv)
   dns_init();
   binds_init();
   core_binds_init();
-  init_dcc_max();
+  dcc_init();
   init_userent();
   init_misc();
   botnet_init();

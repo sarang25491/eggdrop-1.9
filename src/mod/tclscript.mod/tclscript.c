@@ -139,7 +139,7 @@ static int my_tcl_callbacker(script_callback_t *me, ...)
 	n = Tcl_EvalObjEx(cd->myinterp, final_command, TCL_EVAL_GLOBAL | TCL_EVAL_DIRECT);
 	if (n == TCL_OK) {
 		result = Tcl_GetObjResult(cd->myinterp);
-		Tcl_GetIntFromObj(cd->myinterp, result, &retval);
+		Tcl_GetIntFromObj(NULL, result, &retval);
 	}
 	else {
 		FILE *fp;

@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.61 2001/10/20 21:57:15 stdarg Exp $
+ * $Id: dcc.c,v 1.62 2001/10/21 06:02:48 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -30,6 +30,8 @@
 #include <errno.h>
 #include "modules.h"
 #include "tandem.h"
+#include "script_api.h"
+#include "script.h"
 
 /* Includes for botnet md5 challenge/response code <cybah> */
 #include "md5.h"
@@ -64,10 +66,26 @@ int	flood_telnet_thr = 5;	/* Number of telnet connections to be
 int	flood_telnet_time = 60;	/* In how many seconds?			   */
 char	bannerfile[121] = "text/banner"; /* File displayed on telnet login */
 
+static char *dcc_command_chars = NULL;
+
 static void dcc_telnet_hostresolved(int);
 static void dcc_telnet_got_ident(int, char *);
 static void dcc_telnet_pass(int, int);
 
+
+extern void init_dcc_max();
+
+static script_str_t dcc_script_strings[] = {
+	{"", "dcc_command_chars", &dcc_command_chars},
+	0
+};
+
+void dcc_init()
+{
+	malloc_strcpy(dcc_command_chars, "./");
+	script_link_str_table(dcc_script_strings);
+	init_dcc_max();
+}
 
 static void strip_telnet(int sock, char *buf, int *len)
 {
@@ -823,16 +841,20 @@ static void eof_dcc_chat(int idx)
 static void dcc_chat(int idx, char *buf, int i)
 {
   int nathan = 0, doron = 0, fixed = 0;
+  int iscommand;
   char *v, *d;
 
   strip_telnet(dcc[idx].sock, buf, &i);
-  if (buf[0] && (buf[0] != '.') &&
-      detect_dcc_flood(&dcc[idx].timeval, dcc[idx].u.chat, idx))
-    return;
+  if (!buf[0]) return;
+  iscommand = (strchr(dcc_command_chars, buf[0]) != NULL);
+
+  /* If it's not a command, check for a flood, and abort if it is a flood. */
+  if (!iscommand && detect_dcc_flood(&dcc[idx].timeval, dcc[idx].u.chat, idx)) return;
+
   dcc[idx].timeval = now;
-  if (buf[0])
-    strcpy(buf, check_tcl_filt(idx, buf));
-  if (buf[0]) {
+
+  strcpy(buf, check_tcl_filt(idx, buf));
+
     /* Check for beeps and cancel annoying ones */
     v = buf;
     d = buf;
@@ -871,38 +893,34 @@ static void dcc_chat(int idx, char *buf, int i)
     else
       *d = 0;
 
-    if ((buf[0] == '.') || (dcc[idx].u.chat->channel < 0)) {
-	if (buf[0] == '.')
-	  buf++;
+    if (iscommand || (dcc[idx].u.chat->channel < 0)) {
+	if (iscommand) buf++;
 	v = newsplit(&buf);
 	rmspace(buf);
 	check_tcl_dcc(v, idx, buf);
-    } else if (buf[0] == ',') {
+    }
+    else if (buf[0] == ',') {
 	int me = 0;
 
 	if ((buf[1] == 'm') && (buf[2] == 'e') && buf[3] == ' ')
 	  me = 1;
 	for (i = 0; i < dcc_total; i++) {
-	  int ok = 0;
+	  struct userrec *u;
 
-	  if (dcc[i].type->flags & DCT_MASTER) {
-	    if ((dcc[i].type != &DCC_CHAT) ||
-		(dcc[i].u.chat->channel >= 0))
-	      if ((i != idx) || (dcc[idx].status & STAT_ECHO))
-		ok = 1;
-	  }
-	  if (ok) {
-	    struct userrec *u = get_user_by_handle(userlist, dcc[i].nick);
+	  if (!(dcc[i].type->flags & DCT_MASTER) ||
+		(dcc[i].type != &DCC_CHAT) ||
+		(dcc[i].u.chat->channel < 0) ||
+		(i == idx && dcc[idx].status != STAT_ECHO)) continue;
 
-	    if (u && (u->flags & USER_MASTER)) {
-	      if (me)
-		dprintf(i, "-> %s%s\n", dcc[idx].nick, buf + 3);
-	      else
-		dprintf(i, "-%s-> %s\n", dcc[idx].nick, buf + 1);
-	    }
+	  u = get_user_by_handle(userlist, dcc[i].nick);
+
+	  if (u && (u->flags & USER_MASTER)) {
+	    if (me) dprintf(i, "-> %s%s\n", dcc[idx].nick, buf + 3);
+	    else dprintf(i, "-%s-> %s\n", dcc[idx].nick, buf + 1);
 	  }
 	}
-    } else if (buf[0] == '\'') {
+    }
+    else if (buf[0] == '\'') {
 	int me = 0;
 
 	if ((buf[1] == 'm') && (buf[2] == 'e') &&
@@ -919,7 +937,7 @@ static void dcc_chat(int idx, char *buf, int i)
     } else {
 	int r;
 
-	r = check_tcl_chat(dcc[idx].user, dcc[idx].u.chat->channel, buf);
+	r = check_tcl_chat(dcc[idx].nick, dcc[idx].u.chat->channel, buf);
 	if (r & BIND_RET_BREAK) return;
 
 	if (dcc[idx].u.chat->away != NULL)
@@ -932,8 +950,7 @@ static void dcc_chat(int idx, char *buf, int i)
 		      dcc[idx].nick, buf);
 	botnet_send_chan(-1, botnetnick, dcc[idx].nick,
 			 dcc[idx].u.chat->channel, buf);
-      }
-  }
+    }
   if (dcc[idx].type == &DCC_CHAT)	/* Could have change to files */
     if (dcc[idx].status & STAT_PAGE)
       flush_lines(idx, dcc[idx].u.chat);

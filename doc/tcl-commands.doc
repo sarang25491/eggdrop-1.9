@@ -1276,9 +1276,9 @@ for the msg-command "stop", use 'unbind msg - stop msg_stop'.
        procname <idx> <text>
 
        DCC party line and file system users have their text sent through
-       filt before being processed; if the proc a blank string, the text
-       is considered parsed; otherwise the bot will use the text returned
-       from the proc and continue parsing that
+       filt before being processed; the proc can modify the global variable
+       filt_string to change the text; if the proc makes filt_string blank ("")
+       the text will be dropped without further processing
 
   (29) NEED   (stackable)
        bind need <flags> <mask> <proc>
