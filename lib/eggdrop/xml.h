@@ -3,9 +3,6 @@
 
 #include <stdarg.h>
 
-/* Comment out to disable &char; conversions. */
-#define AMP_CHARS
-
 typedef struct {
 	char *name;
 	char *value;
@@ -34,12 +31,10 @@ typedef struct xml_node_b {
 	void *client_data;
 } xml_node_t;
 
-//#ifdef AMP_CHARS
 typedef struct {
 	char *key;
 	char value;
 } xml_amp_conversion_t;
-//#endif
 
 xml_node_t *xml_node_new();
 int xml_node_destroy(xml_node_t *node);

@@ -3,9 +3,7 @@
 #include <string.h>
 #include "xml.h"
 
-#ifdef AMP_CHARS
 extern xml_amp_conversion_t builtin_conversions[];
-#endif
 
 /* These are pretty much in 'most common' order. */
 static const char *spaces = " \t\n\r\v";
@@ -195,7 +193,6 @@ static void read_attributes(xml_node_t *node, char **data)
 		read_value(data, &attr.value);
 
 		xml_attribute_add(node, &attr);
-		//printf("name: '%s'\nvalue: '%s'\n", attr.name, attr.value);
 	}
 }
 

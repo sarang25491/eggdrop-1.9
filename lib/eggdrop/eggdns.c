@@ -351,9 +351,10 @@ static int dns_make_query(const char *host, int type, char **buf, int *query_len
 		else if (type == DNS_IPV6) ns_type = 28; /* IPv6 */
 		else return(-1);
 
-		// hmm, casting const to char * doesn't seem to
-  		// be a good idea ;-) shouldn't the funciton be changed
-		// (i.e. removing the const identifier?)
+		/* hmm, casting const to char * doesn't seem to
+  		 * be a good idea ;-) shouldn't the funciton be changed
+		 * (i.e. removing the const identifier?)
+		 */
 		newhost = (char *)host;
 	}
 
@@ -461,13 +462,13 @@ static void parse_reply(char *response, int nbytes)
 		reply.rdlength = ntohs(reply.rdlength);
 		ptr += 10;
 		if (reply.type == 1) {
-			//fprintf(fp, "ipv4 reply\n");
+			/*fprintf(fp, "ipv4 reply\n");*/
 			inet_ntop(AF_INET, ptr, result, 512);
 			got_answer(header.id, result);
 			return;
 		}
 		else if (reply.type == 28) {
-			//fprintf(fp, "ipv6 reply\n");
+			/*fprintf(fp, "ipv6 reply\n");*/
 			inet_ntop(AF_INET6, ptr, result, 512);
 			got_answer(header.id, result);
 			return;
@@ -476,7 +477,7 @@ static void parse_reply(char *response, int nbytes)
 			char *placeholder;
 			int len, dot;
 
-			//fprintf(fp, "reverse-lookup reply\n");
+			/*fprintf(fp, "reverse-lookup reply\n");*/
 			placeholder = ptr;
 			result[0] = 0;
 			while ((len = *ptr++) != 0) {

@@ -223,8 +223,10 @@ int bind_entry_add(bind_table_t *table, const char *mask, const char *function_n
 	entry->client_data = client_data;
 	entry->flags = bind_flags;
 
-	//entry->user_flags.match = FR_GLOBAL | FR_CHAN;
-	//break_down_flags(flags, &(entry->user_flags), NULL);
+	/*
+	entry->user_flags.match = FR_GLOBAL | FR_CHAN;
+	break_down_flags(flags, &(entry->user_flags), NULL);
+	*/
 
 	return(0);
 }

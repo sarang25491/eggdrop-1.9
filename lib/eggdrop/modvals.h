@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: modvals.h,v 1.10 2003/02/17 10:22:30 stdarg Exp $
+ * $Id: modvals.h,v 1.11 2003/05/12 14:11:42 wingman Exp $
  */
 
 #ifndef _EGG_MOD_MODVALS_H
@@ -47,7 +47,7 @@
 #define HOOK_QSERV		108
 #define HOOK_ADD_MODE		109
 #define HOOK_MATCH_NOTEREJ	110
-//#define HOOK_IRCCMP		111
+/*#define HOOK_IRCCMP		111*/
 #define HOOK_DNS_HOSTBYIP	112
 #define HOOK_DNS_IPBYHOST	113
 #define HOOK_ENCRYPT_STRING     114

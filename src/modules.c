@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: modules.c,v 1.135 2003/03/06 12:08:15 tothwolf Exp $";
+static const char rcsid[] = "$Id: modules.c,v 1.136 2003/05/12 14:11:42 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -36,7 +36,7 @@ static const char rcsid[] = "$Id: modules.c,v 1.135 2003/03/06 12:08:15 tothwolf
 #include "misc.h"
 #include "cmdt.h"		/* cmd_t				*/
 #include "core_binds.h"
-//#include "cmds.h"		/* check_dcc_attrs, check_dcc_chanattrs	*/
+/*#include "cmds.h"*/		/* check_dcc_attrs, check_dcc_chanattrs	*/
 #include <ctype.h>
 #include <ltdl.h>
 

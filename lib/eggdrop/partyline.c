@@ -227,7 +227,7 @@ int partyline_on_public(int pid, const char *text, int len)
 		sockbuf_write(p->idx, ptr, buflen);
 	}
 	if (ptr != buf) free(ptr);
-	//bind_check(BT_public, NULL, pid, party->nick, party->user, party->chan, text, len);
+	/*bind_check(BT_public, NULL, pid, party->nick, party->user, party->chan, text, len);*/
 	return(0);
 }
 
