@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  *
- * $Id: userrec.c,v 1.40 2002/01/16 22:09:43 ite Exp $
+ * $Id: userrec.c,v 1.41 2002/01/17 01:05:37 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -506,13 +506,15 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
   }
   set_user(&USERENTRY_PASS, u, pass);
   if (!noxtra) {
+    char *now2;
     xk = malloc(sizeof(struct xtra_key));
     xk->key = strdup("created");
-    xk->data = malloc(15);		/* should be enough, this should be changed  */
-    sprintf(xk->data, "%lu", now);	/* when time_t is a 64 bit integer.. -poptix */ 
+    now2 = malloc(15);
+    sprintf(now2, "%lu", now);
+    xk->data = malloc(strlen(now2) +1);
+    sprintf(xk->data, "%lu", now);
     set_user(&USERENTRY_XTRA, u, xk);
-/*    free(xk->data); We can't free this here, someone figure out why !FIXME!
-    free(xk); */ 
+    free(now2); 
   }
   /* Strip out commas -- they're illegal */
   if (host && host[0]) {
