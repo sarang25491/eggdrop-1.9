@@ -21,27 +21,12 @@ specific commands, see later.
 
 *** OUTPUT COMMANDS ***
 
-  putserv <text> [options]
-    sends text to the server, like 'dump' (intended for direct server
-      commands); output is queued so that you won't flood yourself off
-      the server
-    options are:
-      -next     push messages to the front of the queue
-    returns: nothing
-
-  puthelp <text> [options]
-    sends text to the server like 'putserv', but uses a different queue
-      (intended for sending messages to channels or people)
-    options are:
-      -next     push messages to the front of the queue
-    returns: nothing
-
-  putquick <text> [options]
-    sends text to the server, like 'dump' (intended for direct server
-    commands); output is queued so that you won't flood yourself off
-    the server, using the MODE queue (should be a lot faster)
-    options are:
-      -next     push messages to the front of the queue
+  putserv [-serv|-help|-quick|-noqueue] [-next] <text>
+    sends text to the server through the specified queue. The default
+      queue is -serv. If you use -noqueue, we bypass the queue system
+      and send the text directly to the server (like putdccraw). Make
+      sure you add your own \r\n to the end of messages when using -noqueue.
+      Specifying -next pushes the message to the front of the queue.
     returns: nothing
 
   putkick <channel> <nick,nick,...> [reason]
