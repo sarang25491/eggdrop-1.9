@@ -26,7 +26,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: blowfish.c,v 1.5 2002/05/05 16:40:33 tothwolf Exp $";
+static const char rcsid[] = "$Id: blowfish.c,v 1.6 2002/05/12 05:59:50 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "encryption"
@@ -446,7 +446,7 @@ char *start(eggdrop_t *eggdrop)
     add_hook(HOOK_ENCRYPT_STRING, (Function) encrypt_string);
     add_hook(HOOK_DECRYPT_STRING, (Function) decrypt_string);
   }
-  script_create_cmd_table(blowfish_script_cmds);
+  script_create_commands(blowfish_script_cmds);
   return NULL;
 }
 

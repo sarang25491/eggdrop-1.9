@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.12 2002/05/05 16:40:33 tothwolf Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.13 2002/05/12 05:59:51 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "channels"
@@ -878,7 +878,7 @@ char *start(eggdrop_t *eggdrop)
   if (BT_chon) add_builtins2(BT_chon, my_chon);
   BT_dcc = find_bind_table2("dcc");
   if (BT_dcc) add_builtins2(BT_dcc, C_dcc_irc);
-  script_create_cmd_table(channel_script_cmds);
+  script_create_commands(channel_script_cmds);
   add_tcl_commands(channels_cmds);
   add_tcl_strings(my_tcl_strings);
   add_help_reference("channels.help");

@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: server.c,v 1.17 2002/05/05 16:40:36 tothwolf Exp $";
+static const char rcsid[] = "$Id: server.c,v 1.18 2002/05/12 05:59:51 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "server"
@@ -1722,7 +1722,7 @@ char *start(eggdrop_t *eggdrop)
   my_tcl_strings[0].buf = botname;
   add_tcl_strings(my_tcl_strings);
   add_tcl_ints(my_tcl_ints);
-  script_create_cmd_table(server_script_cmds);
+  script_create_commands(server_script_cmds);
   add_tcl_coups(my_tcl_coups);
   add_hook(HOOK_SECONDLY, (Function) server_secondly);
   add_hook(HOOK_5MINUTELY, (Function) server_5minutely);

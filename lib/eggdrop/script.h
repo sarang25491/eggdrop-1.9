@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: script.h,v 1.4 2002/05/05 16:40:32 tothwolf Exp $
+ * $Id: script.h,v 1.5 2002/05/12 05:59:50 stdarg Exp $
  */
 
 #ifndef _EGG_SCRIPT_H
@@ -52,25 +52,25 @@ typedef struct byte_array_b {
 /* SCRIPT_PASS_CDATA means your callback wants its (void *)client_data passed
    as its *first* arg.
 
-   SCRIPT_PASS_RETVAL will pass a (scriptvar_t *)retval so that you can return
+   SCRIPT_PASS_RETVAL will pass a (script_var_t *)retval so that you can return
    complex types.
-
-   SCRIPT_PASS_ARRAY will pass all the args from the script in an array. It
-   actually causes 2 arguments: int argc and void *argv[].
 
    SCRIPT_PASS_COUNT will pass the number of script arguments you're getting.
 
+   SCRIPT_PASS_ARRAY will pass the arguments as an array, with argc and argv.
+
    SCRIPT_VAR_ARGS means you accept variable number of args. The nargs field
    of the command struct is the minimum number required, and the strlen of your
-   syntax field is the max number (unless it ends in * of course).
+   syntax field is the max number. Arguments that weren't given will be filled
+   in with 0.
 
    SCRIPT_VAR_FRONT means the variable args come from the front instead of the
    back. This is useful for flags and stuff.
 */
 #define SCRIPT_PASS_CDATA	1
 #define SCRIPT_PASS_RETVAL	2
-#define SCRIPT_PASS_ARRAY	4
-#define SCRIPT_PASS_COUNT	8
+#define SCRIPT_PASS_COUNT	4
+#define SCRIPT_PASS_ARRAY	8
 #define SCRIPT_VAR_ARGS	16
 #define SCRIPT_VAR_FRONT	32
 
@@ -143,10 +143,10 @@ typedef struct script_linked_var_b {
 } script_linked_var_t;
 
 typedef struct script_command_b {
-	char *class;
-	char *name;
-	Function callback;
-	void *client_data;
+	char *class; /* General class of the function. E.g. "server". */
+	char *name; /* Specific name of the function. E.g. "putserv". */
+	void *callback; /* Pointer to the callback function. */
+	void *client_data; /* Whatever private data you want passed back. */
 	int nargs; /* Number of arguments the script wants. */
 	char *syntax; /* Argument types. */
 	char *syntax_error; /* Error to print when called incorrectly. */
@@ -154,28 +154,54 @@ typedef struct script_command_b {
 	int flags;
 } script_command_t;
 
+struct script_module_b;
+
+typedef struct script_args_b {
+	struct script_module_b *module;
+	void *client_data;
+	int len;
+} script_args_t;
+
 typedef struct {
+	char *class;
 	char *name;
-	Function callback;
-	char *syntax;
-	char *syntax_error;
-	int retval_type;
-} script_simple_command_t;
+	int (*callback)(void *client_data, script_args_t *args, script_var_t *retval);
+	void *client_data;
+} script_raw_command_t;
 
 extern int script_init();
 
-extern int script_link_var_table(script_linked_var_t *table);
-extern int script_unlink_var_table(script_linked_var_t *table);
-extern int script_create_cmd_table(script_command_t *table);
-extern int script_delete_cmd_table(script_command_t *table);
-extern int script_create_simple_cmd_table(script_simple_command_t *table);
+extern int script_load(char *filename);
+extern int script_link_vars(script_linked_var_t *table);
+extern int script_unlink_vars(script_linked_var_t *table);
+extern int script_create_commands(script_command_t *table);
+extern int script_delete_commands(script_command_t *table);
+extern int script_get_arg(script_args_t *args, int num, script_var_t *var, int type);
 
 extern script_var_t *script_string(char *str, int len);
-script_var_t *script_dynamic_string(char *str, int len);
-script_var_t *script_copy_string(char *str, int len);
+extern script_var_t *script_dynamic_string(char *str, int len);
+extern script_var_t *script_copy_string(char *str, int len);
 extern script_var_t *script_int(int val);
 extern script_var_t *script_list(int nitems, ...);
 extern int script_list_append(script_var_t *list, script_var_t *item);
+
+/* Interface definition for scripting modules. */
+
+typedef struct script_module_b {
+	char *name;
+	void *client_data;
+
+	int (*load_script)(void *client_data, char *filename);
+	int (*link_var)(void *client_data, script_linked_var_t *linked_var);
+	int (*unlink_var)(void *client_data, script_linked_var_t *linked_var);
+	int (*create_command)(void *client_data, script_raw_command_t *cmd);
+	int (*delete_command)(void *client_data, script_raw_command_t *cmd);
+	int (*get_arg)(void *client_data, script_args_t *args, int num, script_var_t *var, int type);
+} script_module_t;
+
+extern int script_register_module(script_module_t *module);
+extern int script_unregister_module(script_module_t *module);
+extern int script_playback(script_module_t *module);
 
 END_C_DECLS
 

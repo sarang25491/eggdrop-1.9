@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tcldcc.c,v 1.62 2002/05/09 07:37:49 stdarg Exp $";
+static const char rcsid[] = "$Id: tcldcc.c,v 1.63 2002/05/12 05:59:52 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -758,84 +758,99 @@ static int script_restart()
   return(0);
 }
 
-static int tcl_traffic STDVAR
+static int script_traffic(script_var_t *retval)
 {
-  char buf[1024];
-  unsigned long out_total_today, out_total;
-  unsigned long in_total_today, in_total;
+	unsigned long out_total_today, out_total;
+	unsigned long in_total_today, in_total;
+	script_var_t *sublist;
 
-  /* IRC traffic */
-  sprintf(buf, "irc %ld %ld %ld %ld", traffic.in_today.irc,
-	  traffic.in_total.irc + traffic.in_today.irc, traffic.out_today.irc,
-	  traffic.out_total.irc + traffic.out_today.irc);
-  Tcl_AppendElement(irp, buf);  
+	retval->type = SCRIPT_ARRAY | SCRIPT_FREE | SCRIPT_VAR;
+	retval->len = 0;
+	retval->value = NULL;
 
-  /* Botnet traffic */
-  sprintf(buf, "botnet %ld %ld %ld %ld", traffic.in_today.bn,
-	  traffic.in_total.bn + traffic.in_today.bn, traffic.out_today.bn,
-	  traffic.out_total.bn + traffic.out_today.bn);
-  Tcl_AppendElement(irp, buf);
+	sublist = script_list(5, script_string("irc", -1),
+		script_int(traffic.in_today.irc),
+		script_int(traffic.in_today.irc + traffic.in_total.irc),
+		script_int(traffic.out_today.irc),
+		script_int(traffic.out_today.irc + traffic.out_total.irc));
+	script_list_append(retval, sublist);
 
-  /* Partyline */
-  sprintf(buf, "partyline %ld %ld %ld %ld", traffic.in_today.dcc,
-	  traffic.in_total.dcc + traffic.in_today.dcc, traffic.out_today.dcc,
-	  traffic.out_total.dcc + traffic.out_today.dcc);    
-  Tcl_AppendElement(irp, buf);
+	sublist = script_list(5, script_string("botnet", -1),
+		script_int(traffic.in_today.bn),
+		script_int(traffic.in_today.bn + traffic.in_total.bn),
+		script_int(traffic.out_today.bn),
+		script_int(traffic.out_today.bn + traffic.out_total.bn));
+	script_list_append(retval, sublist);
 
-  /* Transfer */
-  sprintf(buf, "transfer %ld %ld %ld %ld", traffic.in_today.trans,
-          traffic.in_total.trans + traffic.in_today.trans, traffic.out_today.trans,
-	  traffic.out_total.trans + traffic.out_today.trans);    
-  Tcl_AppendElement(irp, buf);
+	sublist = script_list(5, script_string("dcc", -1),
+		script_int(traffic.in_today.dcc),
+		script_int(traffic.in_today.dcc + traffic.in_total.dcc),
+		script_int(traffic.out_today.dcc),
+		script_int(traffic.out_today.dcc + traffic.out_total.dcc));
+	script_list_append(retval, sublist);
 
-  /* Misc traffic */
-  sprintf(buf, "misc %ld %ld %ld %ld", traffic.in_today.unknown,
-	  traffic.in_total.unknown + traffic.in_today.unknown, traffic.out_today.unknown,
-	  traffic.out_total.unknown + traffic.out_today.unknown);    
-  Tcl_AppendElement(irp, buf);
+	sublist = script_list(5, script_string("transfer", -1),
+		script_int(traffic.in_today.trans),
+		script_int(traffic.in_today.trans + traffic.in_total.trans),
+		script_int(traffic.out_today.trans),
+		script_int(traffic.out_today.trans + traffic.out_total.trans));
+	script_list_append(retval, sublist);
 
-  /* Totals */
-  in_total_today = traffic.in_today.irc + traffic.in_today.bn + traffic.in_today.dcc
-		 + traffic.in_today.trans + traffic.in_today.unknown,
-  in_total = in_total_today + traffic.in_total.irc + traffic.in_total.bn + traffic.in_total.dcc
-	   + traffic.in_total.trans + traffic.in_total.unknown;
-  out_total_today = traffic.out_today.irc + traffic.out_today.bn + traffic.out_today.dcc
-	          + traffic.in_today.trans + traffic.out_today.unknown,
-  out_total = out_total_today + traffic.out_total.irc + traffic.out_total.bn + traffic.out_total.dcc
-            + traffic.out_total.trans + traffic.out_total.unknown;	  
-  sprintf(buf, "total %ld %ld %ld %ld",
-	  in_total_today, in_total, out_total_today, out_total);
-  Tcl_AppendElement(irp, buf);
-  return(TCL_OK);
+	sublist = script_list(5, script_string("filesys", -1),
+		script_int(traffic.in_today.filesys),
+		script_int(traffic.in_today.filesys + traffic.in_total.filesys),
+		script_int(traffic.out_today.filesys),
+		script_int(traffic.out_today.filesys + traffic.out_total.filesys));
+	script_list_append(retval, sublist);
+
+	sublist = script_list(5, script_string("unknown", -1),
+		script_int(traffic.in_today.unknown),
+		script_int(traffic.in_today.unknown + traffic.in_total.unknown),
+		script_int(traffic.out_today.unknown),
+		script_int(traffic.out_today.unknown + traffic.out_total.dcc));
+	script_list_append(retval, sublist);
+
+	/* Totals */
+	in_total_today = traffic.in_today.irc + traffic.in_today.bn + traffic.in_today.dcc + traffic.in_today.trans + traffic.in_today.unknown;
+
+	in_total = in_total_today + traffic.in_total.irc + traffic.in_total.bn + traffic.in_total.dcc + traffic.in_total.trans + traffic.in_total.unknown;
+
+	out_total_today = traffic.out_today.irc + traffic.out_today.bn + traffic.out_today.dcc + traffic.in_today.trans + traffic.out_today.unknown;
+
+	out_total = out_total_today + traffic.out_total.irc + traffic.out_total.bn + traffic.out_total.dcc + traffic.out_total.trans + traffic.out_total.unknown;	  
+
+	sublist = script_list(5, script_string("total", -1),
+		script_int(in_total_today),
+		script_int(in_total),
+		script_int(out_total_today),
+		script_int(out_total));
+	script_list_append(retval, sublist);
+
+	return(0);
 }
 
-script_simple_command_t script_dcc_cmds[] = {
-	{"", NULL, NULL, NULL, 0},
-	{"putdcc", script_putdcc, "is", "idx text", SCRIPT_INTEGER},
-	{"putdccraw", script_putdccraw, "iis", "idx len text", SCRIPT_INTEGER},
-	{"dccsimul", script_dccsimul, "is", "idx command", SCRIPT_INTEGER},
-	{"dccbroadcast", script_dccbroadcast, "s", "text", SCRIPT_INTEGER},
-	{"hand2idx", script_hand2idx, "s", "handle", SCRIPT_INTEGER},
-	{"getchan", script_getchan, "i", "idx", SCRIPT_INTEGER},
-	{"setchan", script_setchan, "ii", "idx chan", SCRIPT_INTEGER},
-	{"dccputchan", script_dccputchan, "is", "chan text", SCRIPT_INTEGER},
-	{"valididx", script_valididx, "i", "idx", SCRIPT_INTEGER},
-	{"putbot", script_putbot, "ss", "bot text", SCRIPT_INTEGER},
-	{"putallbots", script_putallbots, "s", "text", SCRIPT_INTEGER},
-	{"idx2hand", (Function) script_idx2hand, "i", "idx", SCRIPT_INTEGER},
-	{"islinked", script_islinked, "s", "bot", SCRIPT_INTEGER},
-	{"dccused", script_dccused, "", "", SCRIPT_INTEGER},
-	{"getdccidle", script_getdccidle, "i", "idx", SCRIPT_INTEGER},
-	{"getdccaway", (Function) script_getdccaway, "i", "idx", SCRIPT_STRING},
-	{"setdccaway", script_setdccaway, "is", "idx msg", SCRIPT_INTEGER},
-	{"unlink", script_unlink, "ss", "bot comment", SCRIPT_INTEGER},
-	{"boot", script_boot, "ss", "user@bot reason", SCRIPT_INTEGER},
-	{"rehash", script_rehash, "", "", SCRIPT_INTEGER},
-	{"restart", script_restart, "", "", SCRIPT_INTEGER},
-	{0}
-};
-
-script_command_t script_full_dcc_cmds[] = {
+script_command_t script_dcc_cmds[] = {
+	{"", "putdcc", script_putdcc, NULL, 2, "is", "idx text", SCRIPT_INTEGER, 0},
+	{"", "putdccraw", script_putdccraw, NULL, 3, "iis", "idx len text", SCRIPT_INTEGER, 0},
+	{"", "dccsimul", script_dccsimul, NULL, 2, "is", "idx command", SCRIPT_INTEGER, 0},
+	{"", "dccbroadcast", script_dccbroadcast, NULL, 1, "s", "text", SCRIPT_INTEGER, 0},
+	{"", "hand2idx", script_hand2idx, NULL, 1, "s", "handle", SCRIPT_INTEGER, 0},
+	{"", "getchan", script_getchan, NULL, 2, "i", "idx", SCRIPT_INTEGER, 0},
+	{"", "setchan", script_setchan, NULL, 2, "ii", "idx chan", SCRIPT_INTEGER, 0},
+	{"", "dccputchan", script_dccputchan, NULL, 2, "is", "chan text", SCRIPT_INTEGER, 0},
+	{"", "valididx", script_valididx, NULL, 1, "i", "idx", SCRIPT_INTEGER, 0},
+	{"", "putbot", script_putbot, NULL, 2, "ss", "bot text", SCRIPT_INTEGER, 0},
+	{"", "putallbots", script_putallbots, NULL, 1, "s", "text", SCRIPT_INTEGER, 0},
+	{"", "idx2hand", script_idx2hand, NULL, 1, "i", "idx", SCRIPT_INTEGER, 0},
+	{"", "islinked", script_islinked, NULL, 1, "s", "bot", SCRIPT_INTEGER, 0},
+	{"", "dccused", script_dccused, NULL, 0, "", "", SCRIPT_INTEGER, 0},
+	{"", "getdccidle", script_getdccidle, NULL, 1, "i", "idx", SCRIPT_INTEGER, 0},
+	{"", "getdccaway", script_getdccaway, NULL, 1, "i", "idx", SCRIPT_STRING, 0},
+	{"", "setdccaway", script_setdccaway, NULL, 2, "is", "idx msg", SCRIPT_INTEGER, 0},
+	{"", "unlink", script_unlink, NULL, 2, "ss", "bot comment", SCRIPT_INTEGER, 0},
+	{"", "boot", script_boot, NULL, 2,"ss", "user@bot reason", SCRIPT_INTEGER, 0},
+	{"", "rehash", script_rehash, NULL, 0,"", "", SCRIPT_INTEGER, 0},
+	{"", "restart", script_restart, NULL, 0, "", "", SCRIPT_INTEGER, 0},
 	{"", "console", script_console, NULL, 1, "is", "idx ?changes?", 0, SCRIPT_PASS_RETVAL|SCRIPT_PASS_COUNT|SCRIPT_VAR_ARGS},
 	{"", "strip", script_strip, NULL, 1, "is", "idx ?change?", 0, SCRIPT_PASS_RETVAL|SCRIPT_PASS_COUNT|SCRIPT_VAR_ARGS},
 	{"", "echo", script_echo, NULL, 1, "ii", "idx ?status?", SCRIPT_INTEGER, SCRIPT_PASS_COUNT|SCRIPT_VAR_ARGS},
@@ -851,11 +866,6 @@ script_command_t script_full_dcc_cmds[] = {
 	{"", "listen_off", script_listen_off, NULL, 1, "i", "port", SCRIPT_INTEGER, 0},
 	{"", "listen_script", script_listen_script, NULL, 2, "scs", "port callback ?flags?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
 	{"", "listen", script_listen, NULL, 2, "sss", "port type ?mask?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
+	{"", "traffic", script_traffic, NULL, 0, "", "", 0, SCRIPT_PASS_RETVAL},
 	{0}
-};
-
-tcl_cmds tcldcc_cmds[] =
-{
-  {"traffic",		tcl_traffic},
-  {NULL,		NULL}
 };

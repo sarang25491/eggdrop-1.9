@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dcc.c,v 1.86 2002/05/09 07:37:49 stdarg Exp $";
+static const char rcsid[] = "$Id: dcc.c,v 1.87 2002/05/12 05:59:52 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -134,7 +134,7 @@ static script_linked_var_t dcc_script_vars[] = {
 void dcc_init()
 {
 	dcc_command_chars = strdup("./");
-	script_link_var_table(dcc_script_vars);
+	script_link_vars(dcc_script_vars);
 	init_dcc_max(50);
 }
 

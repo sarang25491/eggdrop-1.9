@@ -28,7 +28,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tclhash.c,v 1.66 2002/05/05 16:40:38 tothwolf Exp $";
+static const char rcsid[] = "$Id: tclhash.c,v 1.67 2002/05/12 05:59:52 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -79,8 +79,8 @@ void binds_init(void)
 {
 	bind_table_list_head = NULL;
 	global_filt_string = strdup("");
-	script_link_var_table(tclhash_script_vars);
-	script_create_cmd_table(tclhash_script_cmds);
+	script_link_vars(tclhash_script_vars);
+	script_create_commands(tclhash_script_cmds);
 	BT_link = add_bind_table2("link", 2, "ss", MATCH_MASK, BIND_STACKABLE);
 	BT_nkch = add_bind_table2("nkch", 2, "ss", MATCH_MASK, BIND_STACKABLE);
 	BT_disc = add_bind_table2("disc", 1, "s", MATCH_MASK, BIND_STACKABLE);

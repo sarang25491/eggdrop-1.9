@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tclmisc.c,v 1.54 2002/05/09 07:37:49 stdarg Exp $";
+static const char rcsid[] = "$Id: tclmisc.c,v 1.55 2002/05/12 05:59:52 stdarg Exp $";
 #endif
 
 #include <sys/stat.h>
@@ -311,10 +311,9 @@ int script_export(char *name, char *syntax, script_callback_t *callback)
 	script_command_t *copy;
 
 	callback->syntax = strdup(syntax);
-	copy = malloc(2 * sizeof(*copy));
+	copy = calloc(2, sizeof(*copy));
 	memcpy(copy, &new_command, sizeof(new_command));
-	memset(&(copy[1]), 0, sizeof(copy[1]));
-	script_create_cmd_table(copy);
+	script_create_commands(copy);
 	return(0);
 }
 

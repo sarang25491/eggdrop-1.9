@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: perlscript.c,v 1.18 2002/05/05 16:40:36 tothwolf Exp $";
+static const char rcsid[] = "$Id: perlscript.c,v 1.19 2002/05/12 05:59:51 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -44,12 +44,34 @@ static XS(my_command_handler);
 static SV *c_to_perl_var(script_var_t *v);
 static int perl_to_c_var(SV *sv, script_var_t *var, int type);
 
+static int my_load_script(void *ignore, char *fname);
+static int my_link_var(void *ignore, script_linked_var_t *linked_var);
+static int my_unlink_var(void *ignore, script_linked_var_t *linked_var);
+static int my_create_command(void *ignore, script_raw_command_t *info);
+static int my_delete_command(void *ignore, script_raw_command_t *info);
+static int my_get_arg(void *ignore, script_args_t *args, int num, script_var_t *var, int type);
+
+script_module_t my_script_interface = {
+	"Perl", NULL,
+	my_load_script,
+	my_link_var, my_unlink_var,
+	my_create_command, my_delete_command,
+	my_get_arg
+};
+
+typedef struct {
+	SV **sp;
+	SV **mark;
+	I32 ax;
+	I32 items;
+} my_args_data_t;
+
 /* Functions from mod_iface.c */
 extern void *fake_get_user_by_handle(char *handle);
 extern char *fake_get_handle(void *user_record);
 extern int log_error(char *msg);
  
-int my_load_script(void *ignore, char *fname)
+static int my_load_script(void *ignore, char *fname)
 {
 	FILE *fp;
 	char *data;
@@ -142,7 +164,7 @@ static int linked_var_set(SV *sv, MAGIC *mg)
 }
 
 /* This function creates the Perl <-> C variable linkage for reads/writes. */
-int my_link_var(void *ignore, script_linked_var_t *linked_var)
+static int my_link_var(void *ignore, script_linked_var_t *linked_var)
 {
 	MAGIC *mg;
 	SV *sv;
@@ -174,7 +196,7 @@ int my_link_var(void *ignore, script_linked_var_t *linked_var)
 	return(0);
 }
 
-int my_unlink_var(void *ignore, script_linked_var_t *linked_var)
+static int my_unlink_var(void *ignore, script_linked_var_t *linked_var)
 {
 	MAGIC *mg;
 	SV *sv;
@@ -263,7 +285,7 @@ static int my_perl_cb_delete(script_callback_t *me)
 	return(0);
 }
 
-int my_create_cmd(void *ignore, script_command_t *info)
+static int my_create_command(void *ignore, script_raw_command_t *info)
 {
 	char *cmdname;
 	CV *cv;
@@ -275,10 +297,16 @@ int my_create_cmd(void *ignore, script_command_t *info)
 		cmdname = strdup(info->name);
 	}
 	cv = newXS(cmdname, my_command_handler, "eggdrop");
-	XSANY.any_i32 = (int) info;
+	XSANY.any_ptr = info;
 	free(cmdname);
 
-	return (0);
+	return(0);
+}
+
+static int my_delete_command(void *ignore, script_raw_command_t *info)
+{
+	/* Not sure how to delete CV's in perl yet. */
+	return(0);
 }
 
 static SV *c_to_perl_var(script_var_t *v)
@@ -410,98 +438,32 @@ static int perl_to_c_var(SV *sv, script_var_t *var, int type)
 static XS(my_command_handler)
 {
 	dXSARGS;
-	dXSI32;
 
-	/* Now we have an "items" variable for number of args and also an XSANY.any_i32 variable for client data. This isn't what you would call a "well documented" feature of perl heh. */
+	/* Now we have an "items" variable for number of args and also an XSANY.any_ptr variable for client data. This isn't what you would call a "well documented" feature of perl heh. */
 
-	script_command_t *cmd = (script_command_t *) XSANY.any_i32;
-	script_var_t var, retval;
+	script_raw_command_t *cmd = (script_raw_command_t *) XSANY.any_ptr;
+	script_var_t retval;
 	SV *result = NULL;
-	mstack_t *args, *cbacks;
-	int i, my_err, simple_retval;
-	int skip, nopts;
-	char *syntax;
-	void **al;
+	script_args_t args;
+	my_args_data_t argdata;
 
-	/* Get rid of a compiler warning */
-	if (ix) {}
+	argdata.mark = mark;
+	argdata.sp = sp;
+	argdata.ax = ax;
+	argdata.items = items;
+	args.module = &my_script_interface;
+	args.client_data = &argdata;
+	args.len = items;
 
-	/* Check for proper number of args. */
-	/* -1 means "any number" and implies pass_array. */
-	if (cmd->flags & SCRIPT_VAR_ARGS) i = (cmd->nargs <= items);
-	else i = (cmd->nargs >= 0 && cmd->nargs == items);
-	if (!i) {
-		croak(cmd->syntax_error);
-		return;
-	}
+	retval.type = 0;
+	retval.value = NULL;
+	retval.len = -1;
 
-	/* We want at least 10 items. */
-	args = mstack_new(2*items+10);
-	cbacks = mstack_new(items);
+	cmd->callback(cmd->client_data, &args, &retval);
 
-	/* Reserve space for 3 optional args. */
-	mstack_push(args, NULL);
-	mstack_push(args, NULL);
-	mstack_push(args, NULL);
-
-	/* Parse arguments. */
-	syntax = cmd->syntax;
-	if (cmd->flags & SCRIPT_VAR_FRONT) {
-		skip = strlen(syntax) - items;
-		if (skip < 0) skip = 0;
-		for (i = 0; i < skip; i++) mstack_push(args, NULL);
-		syntax += skip;
-	}
-	else skip = 0;
-
-	for (i = 0; i < items; i++) {
-		my_err = perl_to_c_var(ST(i), &var, *syntax);
-
-		if (*syntax == SCRIPT_CALLBACK) mstack_push(cbacks, var.value);
-
-		mstack_push(args, var.value);
-		if (my_err) goto argerror;
-		syntax++;
-	}
-
-	/* Ok, now we have our args. */
-
-	memset(&retval, 0, sizeof(retval));
-
-	al = (void **)args->stack; /* Argument list shortcut name. */
-	nopts = 0;
-	if (cmd->flags & SCRIPT_PASS_COUNT) {
-		al[2-nopts] = (void *)(args->len - 3 - skip);
-		nopts++;
-	}
-	if (cmd->flags & SCRIPT_PASS_RETVAL) {
-		al[2-nopts] = (void *)&retval;
-		nopts++;
-	}
-	if (cmd->flags & SCRIPT_PASS_CDATA) {
-		al[2-nopts] = cmd->client_data;
-		nopts++;
-	}
-	al += (3-nopts);
-	args->len -= (3-nopts);
-
-	if (cmd->flags & SCRIPT_PASS_ARRAY) {
-		simple_retval = cmd->callback(args->len, al);
-	}
-	else {
-		simple_retval = cmd->callback(al[0], al[1], al[2], al[3], al[4], al[5], al[6], al[7], al[8], al[9]);
-	}
-
-	if (!(cmd->flags & SCRIPT_PASS_RETVAL)) {
-		retval.type = cmd->retval_type;
-		retval.len = -1;
-		retval.value = (void *)simple_retval;
-	}
-
-	my_err = retval.type & SCRIPT_ERROR;
+	/* No error exceptions right now. */
+	/* err = retval.type & SCRIPT_ERROR; */
 	result = c_to_perl_var(&retval);
-
-	mstack_destroy(args);
 
 	if (result) {
 		XSprePUSH;
@@ -511,16 +473,25 @@ static XS(my_command_handler)
 	else {
 		XSRETURN_EMPTY;
 	}
+}
 
-argerror:
-	mstack_destroy(args);
-	for (i = 0; i < cbacks->len; i++) {
-		script_callback_t *cback;
-		cback = (script_callback_t *)cbacks->stack[i];
-		cback->del(cback);
-	}
-	mstack_destroy(cbacks);
-	croak(cmd->syntax_error);
+static int my_get_arg(void *ignore, script_args_t *args, int num, script_var_t *var, int type)
+{
+	my_args_data_t *argdata;
+	register SV **sp;
+	register SV **mark;
+	I32 ax;
+	I32 items;
+
+	argdata = (my_args_data_t *)args->client_data;
+	sp = argdata->sp;
+	mark = argdata->mark;
+	ax = argdata->ax;
+	items = argdata->items;
+
+	if (num >= items) return(-1);
+
+	return perl_to_c_var(ST(num), var, type);
 }
 
 char *real_perl_cmd(char *text)

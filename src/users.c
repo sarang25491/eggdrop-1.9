@@ -31,7 +31,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.40 2002/05/05 16:40:39 tothwolf Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.41 2002/05/12 05:59:52 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -81,7 +81,7 @@ static script_linked_var_t user_script_vars[] = {
 
 int user_init()
 {
-	script_link_var_table(user_script_vars);
+	script_link_vars(user_script_vars);
 	return(0);
 }
 

@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: irc.c,v 1.17 2002/05/09 03:26:39 stdarg Exp $";
+static const char rcsid[] = "$Id: irc.c,v 1.18 2002/05/12 05:59:51 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "irc"
@@ -981,7 +981,7 @@ char *start(eggdrop_t *eggdrop)
   BT_pub = add_bind_table2("pub", 5, "ssUss", 0, BIND_USE_ATTR);
   BT_pubm = add_bind_table2("pubm", 5, "ssUss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
 
-  script_create_cmd_table(irc_script_cmds);
+  script_create_commands(irc_script_cmds);
   add_help_reference("irc.help");
 
   /* Update all rfc_ function pointers */

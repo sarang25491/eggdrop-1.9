@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: javascript.c,v 1.7 2002/05/11 01:08:43 stdarg Exp $";
+static const char rcsid[] = "$Id: javascript.c,v 1.8 2002/05/12 05:59:51 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -53,6 +53,28 @@ static int my_command_handler(JSContext *cx, JSObject *obj, int argc, jsval *arg
 static int c_to_js_var(JSContext *cx, script_var_t *v, jsval *result);
 
 static int js_to_c_var(JSContext *cx, JSObject *obj, jsval val, script_var_t *var, int type);
+
+/* Script module interface. */
+static int my_load_script(void *ignore, char *fname);
+static int my_link_var(void *ignore, script_linked_var_t *var);
+static int my_unlink_var(void *ignore, script_linked_var_t *var);
+static int my_create_command(void *ignore, script_raw_command_t *info);
+static int my_delete_command(void *ignore, script_raw_command_t *info);
+static int my_get_arg(void *ignore, script_args_t *args, int num, script_var_t *var, int type);
+
+static script_module_t my_script_interface = {
+	"JavaScript", NULL,
+	my_load_script,
+	my_link_var, my_unlink_var,
+	my_create_command, my_delete_command,
+	my_get_arg
+};
+
+typedef struct {
+	JSContext *cx;
+	JSObject *obj;
+	jsval *argv;
+} my_args_data_t;
 
 static JSRuntime *global_js_runtime;
 static JSContext *global_js_context;
@@ -106,7 +128,7 @@ static JSClass global_class = {"global", JSCLASS_HAS_PRIVATE,
 };
 
 /* Load a JS script. */
-static int my_load_script(registry_entry_t *entry, char *fname)
+static int my_load_script(void *ignore, char *fname)
 {
 	FILE *fp;
 	int len;
@@ -187,7 +209,7 @@ static int my_eggvar_set(JSContext *cx, JSObject *obj, int argc, jsval *argv, js
 		default:
 			return JS_FALSE;
 	}
-	c_to_js_val(cx, &script_var, rval);
+	c_to_js_var(cx, &script_var, rval);
 	return JS_TRUE;
 }
 
@@ -277,7 +299,7 @@ static int my_js_callbacker(script_callback_t *me, ...)
 	jsval *argv, result = 0;
 	script_var_t var;
 	my_callback_cd_t *cd; /* My callback client data */
-	int i, n, retval;
+	int i, n, retval = 0;
 	void **al;
 
 	/* This struct contains the interp and the obj command. */
@@ -324,10 +346,9 @@ static int my_js_cb_delete(script_callback_t *me)
 }
 
 /* Create JS commands with a C callback. */
-static int my_create_cmd(void *ignore, script_command_t *info)
+static int my_create_command(void *ignore, script_raw_command_t *info)
 {
 	char *cmdname;
-	//JSFunction *func;
 	JSObject *obj;
 
 	if (info->class && strlen(info->class)) {
@@ -342,17 +363,15 @@ static int my_create_cmd(void *ignore, script_command_t *info)
 
 	if (!obj) return(0);
 
-	//free(cmdname);
+	free(cmdname);
 
-	//JS_DefineFunction(global_js_context, obj,
-		//"toString", my_to_string, 0, 0);
 	JS_SetPrivate(global_js_context, obj, info);
 
 	return(0);
 }
 
 /* Delete JS commands. */
-static int my_delete_cmd(void *ignore, script_command_t *info)
+static int my_delete_command(void *ignore, script_raw_command_t *info)
 {
 	char *cmdname;
 
@@ -548,149 +567,54 @@ static int js_to_c_var(JSContext *cx, JSObject *obj, jsval val, script_var_t *va
 	return(err);
 }
 
-/* This function cleans up temporary buffers we used when calling
-	a C command. */
-static int my_argument_cleanup(mstack_t *args, mstack_t *bufs, mstack_t *cbacks, int err)
-{
-	int i;
-
-	for (i = 0; i < bufs->len; i++) {
-		free((void *)bufs->stack[i]);
-	}
-	if (err) {
-		for (i = 0; i < cbacks->len; i++) {
-			script_callback_t *cback;
-
-			cback = (script_callback_t *)cbacks->stack[i];
-			cback->del(cback);
-		}
-	}
-	mstack_destroy(cbacks);
-	mstack_destroy(bufs);
-	mstack_destroy(args);
-	return(0);
-}
-
-/* This handles all the JS commands we create. It converts the JS arguments
-	to C variables, calls the C callback function, then converts
-	the return value to a JS variable. */
+/* This handles all the JS commands we create. */
 static int my_command_handler(JSContext *cx, JSObject *obj, int argc, jsval *argv, jsval *rval)
 {
-	script_command_t *cmd;
-	script_var_t retval, var;
-	mstack_t *args, *bufs, *cbacks;
-	void **al; /* Argument list to pass to the callback*/
-	int nopts; /* Number of optional args we're passing. */
-	int simple_retval; /* Return value for simple commands. */
-	int i, err, skip;
-	char *syntax;
+	script_raw_command_t *cmd;
+	script_var_t retval;
+	int err;
 	JSObject *this_obj;
+	script_args_t args;
+	my_args_data_t argdata;
 
 	/* Start off with a void value. */
 	*rval = JSVAL_VOID;
 
-	/* I don't know how well documented this is, or if it's the best way
-		to do it, but argv[-2] is the function's "this" object. */
+	/* Get a pointer to the function object, so we can access the
+		private data. */
 	this_obj = JSVAL_TO_OBJECT(argv[-2]);
 
 	/* Get the associated command structure stored in the object. */
-	cmd = (script_command_t *)JS_GetPrivate(cx, this_obj);
+	cmd = (script_raw_command_t *)JS_GetPrivate(cx, this_obj);
 
-	/* Check for proper number of args. */
-	if (cmd->flags & SCRIPT_VAR_ARGS) err = !(cmd->nargs <= argc);
-	else err = !(cmd->nargs < 0 || cmd->nargs == argc);
+	argdata.cx = cx;
+	argdata.obj = obj;
+	argdata.argv = argv;
+	args.module = &my_script_interface;
+	args.client_data = &argdata;
+	args.len = argc;
 
-	if (err) {
-		JS_ReportError(cx, "Wrong number of arguments: %s", cmd->syntax_error);
-		return JS_FALSE;
-	}
+	retval.type = 0;
+	retval.value = NULL;
+	retval.len = -1;
 
-	/* We want space for at least 10 args. */
-	args = mstack_new(2*argc+10);
-
-	/* Reserve space for 3 optional args. */
-	mstack_push(args, NULL);
-	mstack_push(args, NULL);
-	mstack_push(args, NULL);
-
-	/* Have some space for buffers too. */
-	bufs = mstack_new(argc);
-
-	/* And callbacks. */
-	cbacks = mstack_new(argc);
-
-	/* Parse arguments. */
-	syntax = cmd->syntax;
-	if (cmd->flags & SCRIPT_VAR_FRONT) {
-		/* See how many args to skip. */
-		skip = strlen(syntax) - argc;
-		if (skip < 0) skip = 0;
-		for (i = 0; i < skip; i++) mstack_push(args, NULL);
-		syntax += skip;
-	}
-	else skip = 0;
-
-	err = 0;
-	for (i = 0; i < argc; i++) {
-		err = js_to_c_var(cx, obj, argv[i], &var, *syntax);
-
-		if (err) break;
-
-		if (var.type & SCRIPT_FREE) mstack_push(bufs, var.value);
-		else if (*syntax == SCRIPT_CALLBACK) mstack_push(cbacks, var.value);
-
-		mstack_push(args, var.value);
-		syntax++;
-	}
-
-	if (err) {
-		putlog(LOG_MISC, "*", "arg error");
-		my_argument_cleanup(args, bufs, cbacks, 1);
-		JS_ReportError(cx, "Invalid arguments, should be: %s", cmd->syntax_error);
-		return JS_FALSE;
-	}
-
-	memset(&retval, 0, sizeof(retval));
-
-	al = args->stack; /* Argument list shortcut name. */
-	nopts = 0;
-	if (cmd->flags & SCRIPT_PASS_COUNT) {
-		al[2-nopts] = (void *)(args->len - 3 - skip);
-		nopts++;
-	}
-	if (cmd->flags & SCRIPT_PASS_RETVAL) {
-		al[2-nopts] = &retval;
-		nopts++;
-	}
-	if (cmd->flags & SCRIPT_PASS_CDATA) {
-		al[2-nopts] = cmd->client_data;
-		nopts++;
-	}
-	al += (3-nopts);
-	args->len -= (3-nopts);
-
-	if (cmd->flags & SCRIPT_PASS_ARRAY) {
-		simple_retval = cmd->callback(args->len, al);
-	}
-	else {
-		simple_retval = cmd->callback(al[0], al[1], al[2], al[3], al[4]);
-	}
-
-	if (!(cmd->flags & SCRIPT_PASS_RETVAL)) {
-		retval.type = cmd->retval_type;
-		retval.len = -1;
-		retval.value = (void *)simple_retval;
-	}
+	cmd->callback(cmd->client_data, &args, &retval);
 
 	err = retval.type & SCRIPT_ERROR;
 	c_to_js_var(cx, &retval, rval);
-
-	my_argument_cleanup(args, bufs, cbacks, 0);
 
 	if (err) return JS_FALSE;
 	return JS_TRUE;
 }
 
+static int my_get_arg(void *ignore, script_args_t *args, int num, script_var_t *var, int type)
+{
+	my_args_data_t *argdata;
+
+	argdata = args->client_data;
+	return js_to_c_var(argdata->cx, argdata->obj, argdata->argv[num], var, type);
+
+}
 
 static int javascript_init()
 {
@@ -720,29 +644,6 @@ static int javascript_init()
 
 	return(0);
 }
-
-static registry_simple_chain_t my_functions[] = {
-	{"script", NULL, 0}, /* First arg gives our class */
-	{"load script", my_load_script, 2}, /* name, ptr, nargs */
-	{"link var", my_link_var, 2},
-	{"unlink var", my_unlink_var, 2},
-	{"create cmd", my_create_cmd, 2},
-	{"delete cmd", my_delete_cmd, 2},
-	{0}
-};
-
-static Function journal_table[] = {
-	(Function)1,	/* Version */
-	(Function)5,	/* Number of functions */
-	my_load_script,
-	my_link_var,
-	my_unlink_var,
-	my_create_cmd,
-	my_delete_cmd
-};
-
-static Function journal_playback;
-static void *journal_playback_h;
 
 /* Here we process the dcc console .tcl command. */
 static int cmd_js(struct userrec *u, int idx, char *text)
@@ -822,9 +723,8 @@ char *javascript_LTX_start(eggdrop_t *eggdrop)
 
 	error_logfile = strdup("logs/javascript_errors.log");
 
-	registry_add_simple_chains(my_functions);
-	registry_lookup("script", "playback", &journal_playback, &journal_playback_h);
-	if (journal_playback) journal_playback(journal_playback_h, journal_table);
+	script_register_module(&my_script_interface);
+	script_playback(&my_script_interface);
 
 	dcc_table = find_bind_table2("dcc");
 	if (dcc_table) add_builtins2(dcc_table, dcc_commands);
@@ -838,6 +738,8 @@ static char *javascript_close()
 
 	/* When tcl is gone from the core, this will be uncommented. */
 	/* Tcl_DeleteInterp(ginterp); */
+
+	script_unregister_module(&my_script_interface);
 
 	dcc_table = find_bind_table2("dcc");
 	if (dcc_table) rem_builtins2(dcc_table, dcc_commands);

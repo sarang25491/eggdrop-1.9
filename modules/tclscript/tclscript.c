@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tclscript.c,v 1.16 2002/05/09 03:34:31 stdarg Exp $";
+static const char rcsid[] = "$Id: tclscript.c,v 1.17 2002/05/12 05:59:52 stdarg Exp $";
 #endif
 
 #include "lib/eggdrop/module.h"
@@ -43,10 +43,31 @@ typedef struct {
 	char *name;
 } my_callback_cd_t;
 
+/* Data we need to process command arguments. */
+typedef struct {
+	Tcl_Interp *irp;
+	Tcl_Obj *CONST *objv;
+} my_args_data_t;
+
 static int my_command_handler(ClientData client_data, Tcl_Interp *myinterp, int objc, Tcl_Obj *CONST objv[]);
 static Tcl_Obj *c_to_tcl_var(Tcl_Interp *myinterp, script_var_t *v);
 static int tcl_to_c_var(Tcl_Interp *myinterp, Tcl_Obj *obj, script_var_t *var, int type);
+
+/* Implementation of the script module interface. */
+static int my_load_script(void *ignore, char *fname);
 static int my_link_var(void *ignore, script_linked_var_t *var);
+static int my_unlink_var(void *ignore, script_linked_var_t *var);
+static int my_create_command(void *ignore, script_raw_command_t *info);
+static int my_delete_command(void *ignore, script_raw_command_t *info);
+static int my_get_arg(void *ignore, script_args_t *args, int num, script_var_t *var, int type);
+
+static script_module_t my_script_interface = {
+	"Tcl", NULL,
+	my_load_script,
+	my_link_var, my_unlink_var,
+	my_create_command, my_delete_command,
+	my_get_arg
+};
 
 static Tcl_Interp *ginterp; /* Our global interpreter. */
 
@@ -78,7 +99,7 @@ static Tcl_Obj *Tcl_GetVar2Ex(Tcl_Interp *myinterp, const char *name1, const cha
 #endif
 
 /* Load a tcl script. */
-static int my_load_script(registry_entry_t *entry, char *fname)
+static int my_load_script(void *ignore, char *fname)
 {
 	int result;
 	int len;
@@ -293,7 +314,7 @@ static int my_tcl_cb_delete(script_callback_t *me)
 }
 
 /* Create Tcl commands with a C callback. */
-static int my_create_cmd(void *ignore, script_command_t *info)
+static int my_create_command(void *ignore, script_raw_command_t *info)
 {
 	char *cmdname;
 
@@ -310,7 +331,7 @@ static int my_create_cmd(void *ignore, script_command_t *info)
 }
 
 /* Delete Tcl commands. */
-static int my_delete_cmd(void *ignore, script_command_t *info)
+static int my_delete_command(void *ignore, script_raw_command_t *info)
 {
 	char *cmdname;
 
@@ -385,7 +406,7 @@ static Tcl_Obj *c_to_tcl_var(Tcl_Interp *myinterp, script_var_t *v)
 			#else
 			result = Tcl_NewStringObj(str, v->len);
 			#endif
-			if (v->value && v->type & SCRIPT_FREE) free((char *)v->value);
+			if (v->value && v->type & SCRIPT_FREE) free(v->value);
 			break;
 		}
 		case SCRIPT_POINTER: {
@@ -512,162 +533,49 @@ static int tcl_to_c_var(Tcl_Interp *myinterp, Tcl_Obj *obj, script_var_t *var, i
 	return(err);
 }
 
-/* This function cleans up temporary buffers we used when calling
-	a C command. */
-static int my_argument_cleanup(mstack_t *args, mstack_t *bufs, mstack_t *cbacks, int err)
-{
-	int i;
-
-	for (i = 0; i < bufs->len; i++) {
-		free((void *)bufs->stack[i]);
-	}
-	if (err) {
-		for (i = 0; i < cbacks->len; i++) {
-			script_callback_t *cback;
-
-			cback = (script_callback_t *)cbacks->stack[i];
-			cback->del(cback);
-		}
-	}
-	mstack_destroy(cbacks);
-	mstack_destroy(bufs);
-	mstack_destroy(args);
-	return(0);
-}
-
-/* This handles all the Tcl commands we create. It converts the Tcl arguments
-	to C variables, calls the C callback function, then converts
-	the return value to a Tcl variable. */
+/* This handles all the Tcl commands we create. */
 static int my_command_handler(ClientData client_data, Tcl_Interp *myinterp, int objc, Tcl_Obj *CONST objv[])
 {
-	script_command_t *cmd = (script_command_t *)client_data;
-	script_var_t retval, var;
+	script_raw_command_t *cmd = (script_raw_command_t *)client_data;
+	script_var_t retval;
 	Tcl_Obj *tcl_retval = NULL;
-	mstack_t *args, *bufs, *cbacks;
-	void **al; /* Argument list to pass to the callback*/
-	int nopts; /* Number of optional args we're passing. */
-	int simple_retval; /* Return value for simple commands. */
-	int i, err, skip;
-	char *syntax;
+	script_args_t args;
+	my_args_data_t argdata;
+	int err;
 
-	/* Check for proper number of args. */
-	if (cmd->flags & SCRIPT_VAR_ARGS) i = (cmd->nargs <= (objc-1));
-	else i = (cmd->nargs < 0 || cmd->nargs == (objc-1));
-	if (!i) {
-		Tcl_WrongNumArgs(myinterp, 0, NULL, cmd->syntax_error);
-		return(TCL_ERROR);
-	}
+	/* Initialize args. */
+	argdata.irp = myinterp;
+	argdata.objv = objv;
+	args.module = &my_script_interface;
+	args.client_data = &argdata;
+	args.len = objc-1;
 
-	/* We want space for at least 10 args. */
-	args = mstack_new(2*objc+10);
+	/* Initialize retval. */
+	retval.type = 0;
+	retval.value = NULL;
+	retval.len = -1;
 
-	/* Reserve space for 3 optional args. */
-	mstack_push(args, NULL);
-	mstack_push(args, NULL);
-	mstack_push(args, NULL);
-
-	/* Have some space for buffers too. */
-	bufs = mstack_new(objc);
-
-	/* And callbacks. */
-	cbacks = mstack_new(objc);
-
-	/* Parse arguments. */
-	syntax = cmd->syntax;
-	if (cmd->flags & SCRIPT_VAR_FRONT) {
-		/* See how many args to skip. */
-		skip = strlen(syntax) - (objc-1);
-		if (skip < 0) skip = 0;
-		for (i = 0; i < skip; i++) mstack_push(args, NULL);
-		syntax += skip;
-	}
-	else skip = 0;
-
-	err = TCL_OK;
-	for (i = 1; i < objc; i++) {
-		err = tcl_to_c_var(myinterp, objv[i], &var, *syntax);
-
-		if (err != TCL_OK) break;
-
-		if (var.type & SCRIPT_FREE) mstack_push(bufs, var.value);
-		else if (*syntax == SCRIPT_CALLBACK) mstack_push(cbacks, var.value);
-
-		mstack_push(args, var.value);
-		syntax++;
-	}
-
-	if (err != TCL_OK) {
-		my_argument_cleanup(args, bufs, cbacks, 1);
-		Tcl_WrongNumArgs(myinterp, 0, NULL, cmd->syntax_error);
-		return(TCL_ERROR);
-	}
-
-	memset(&retval, 0, sizeof(retval));
-
-	al = args->stack; /* Argument list shortcut name. */
-	nopts = 0;
-	if (cmd->flags & SCRIPT_PASS_COUNT) {
-		al[2-nopts] = (void *)(args->len - 3 - skip);
-		nopts++;
-	}
-	if (cmd->flags & SCRIPT_PASS_RETVAL) {
-		al[2-nopts] = &retval;
-		nopts++;
-	}
-	if (cmd->flags & SCRIPT_PASS_CDATA) {
-		al[2-nopts] = cmd->client_data;
-		nopts++;
-	}
-	al += (3-nopts);
-	args->len -= (3-nopts);
-
-	if (cmd->flags & SCRIPT_PASS_ARRAY) {
-		simple_retval = cmd->callback(args->len, al);
-	}
-	else {
-		simple_retval = cmd->callback(al[0], al[1], al[2], al[3], al[4]);
-	}
-
-	if (!(cmd->flags & SCRIPT_PASS_RETVAL)) {
-		retval.type = cmd->retval_type;
-		retval.len = -1;
-		retval.value = (void *)simple_retval;
-	}
-
+	/* Execute callback. */
+	cmd->callback(cmd->client_data, &args, &retval);
 	err = retval.type & SCRIPT_ERROR;
+
+	/* Process the return value. */
 	tcl_retval = c_to_tcl_var(myinterp, &retval);
 
 	if (tcl_retval) Tcl_SetObjResult(myinterp, tcl_retval);
 	else Tcl_ResetResult(myinterp);
 
-	my_argument_cleanup(args, bufs, cbacks, 0);
-
 	if (err) return TCL_ERROR;
 	return TCL_OK;
 }
 
-static registry_simple_chain_t my_functions[] = {
-	{"script", NULL, 0}, /* First arg gives our class */
-	{"load script", my_load_script, 2}, /* name, ptr, nargs */
-	{"link var", my_link_var, 2},
-	{"unlink var", my_unlink_var, 2},
-	{"create cmd", my_create_cmd, 2},
-	{"delete cmd", my_delete_cmd, 2},
-	{0}
-};
+static int my_get_arg(void *ignore, script_args_t *args, int num, script_var_t *var, int type)
+{
+	my_args_data_t *argdata;
 
-static Function journal_table[] = {
-	(Function)1,	/* Version */
-	(Function)5,	/* Number of functions */
-	my_load_script,
-	my_link_var,
-	my_unlink_var,
-	my_create_cmd,
-	my_delete_cmd
-};
-
-static Function journal_playback;
-static void *journal_playback_h;
+	argdata = (my_args_data_t *)args->client_data;
+	return tcl_to_c_var(argdata->irp, argdata->objv[num+1], var, type);
+}
 
 /* Here we process the dcc console .tcl command. */
 static int cmd_tcl(struct userrec *u, int idx, char *text)
@@ -742,9 +650,8 @@ char *tclscript_LTX_start(eggdrop_t *eggdrop)
 	error_logfile = strdup("logs/tcl_errors.log");
 	Tcl_LinkVar(ginterp, "error_logfile", (char *)&error_logfile, TCL_LINK_STRING);
 
-	registry_add_simple_chains(my_functions);
-	registry_lookup("script", "playback", &journal_playback, &journal_playback_h);
-	if (journal_playback) journal_playback(journal_playback_h, journal_table);
+	script_register_module(&my_script_interface);
+	script_playback(&my_script_interface);
 
 	dcc_table = find_bind_table2("dcc");
 	if (dcc_table) add_builtins2(dcc_table, dcc_commands);
@@ -763,5 +670,6 @@ static char *tclscript_close()
 	if (dcc_table) rem_builtins2(dcc_table, dcc_commands);
 
 	module_undepend("tclscript");
+	script_unregister_module(&my_script_interface);
 	return(NULL);
 }

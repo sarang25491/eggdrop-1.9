@@ -22,7 +22,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: script.c,v 1.4 2002/05/05 16:40:32 tothwolf Exp $";
+static const char rcsid[] = "$Id: script.c,v 1.5 2002/05/12 05:59:50 stdarg Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -37,170 +37,303 @@ static const char rcsid[] = "$Id: script.c,v 1.4 2002/05/05 16:40:32 tothwolf Ex
 #include "eggdrop.h"
 #include "script.h"
 
-static Function load_script, link_var, unlink_var, create_cmd, delete_cmd;
-static void *load_script_h, *link_var_h, *unlink_var_h, *create_cmd_h, *delete_cmd_h;
-
-static mstack_t *script_events;
-
-int script_load(char *fname);
-int script_create_cmd_table(script_command_t *table);
-
-static script_command_t my_script_cmds[] = {
-	{"", "loadscript", script_load, NULL, 1, "s", "filename", SCRIPT_INTEGER, 0},
-	{0}
-};
+#define EVENT_VAR	1
+#define EVENT_CMD	2
 
 typedef struct {
-	int type;
-	void *arg1, *arg2, *arg3;
-} script_event_t;
+	int event;
+	void *data;
+	void *key;
+} journal_event_t;
 
-static void add_event(int type, void *arg1, void *arg2, void *arg3)
-{
-	script_event_t *event = (script_event_t *)malloc(sizeof(*event));
-	event->type = type;
-	event->arg1 = arg1;
-	event->arg2 = arg2;
-	event->arg3 = arg3;
-	mstack_push(script_events, event);
-}
+static journal_event_t *journal_events = NULL;
+static int njournal_events = 0;
 
-static int my_create_cmd(void *ignore, script_command_t *info)
-{
-	add_event(SCRIPT_EVENT_CREATE_CMD, info, 0, 0);
-	return(0);
-}
+static script_module_t **script_modules = NULL;
+static int nscript_modules = 0;
 
-static int my_delete_cmd(void *ignore, script_command_t *info)
-{
-	add_event(SCRIPT_EVENT_DELETE_CMD, info, 0, 0);
-	return(0);
-}
-
-static int my_link_var(void *ignore, script_linked_var_t *var)
-{
-	add_event(SCRIPT_EVENT_LINK_VAR, var, 0, 0);
-	return(0);
-}
-
-static int my_unlink_var(void *ignore, script_linked_var_t *var)
-{
-	add_event(SCRIPT_EVENT_UNLINK_VAR, var, 0, 0);
-	return(0);
-}
-
-static int my_playback(void *ignore, Function *table)
-{
-	script_event_t *event;
-	int i, version, max;
-
-	version = (int) *table;
-	if (version != 1) return(0);
-	table++;
-
-	max = (int) *table;
-	table++;
-	for (i = 0; i < script_events->len; i++) {
-		event = (script_event_t *)script_events->stack[i];
-		if (event->type < max && table[event->type]) {
-			(table[event->type])(NULL, event->arg1, event->arg2, event->arg3);
-		}
-	}
-	return(0);
-}
-
-static registry_simple_chain_t my_functions[] = {
-	{"script", NULL, 0},
-	{"create cmd", my_create_cmd, 2},
-	{"delete cmd", my_delete_cmd, 2},
-	{"link var", my_link_var, 2},
-	{"unlink var", my_unlink_var, 2},
-	{"playback", my_playback, 2},
+static script_command_t script_cmds[] = {
+	{"", "loadscript", script_load, NULL, 1, "s", "filename", SCRIPT_INTEGER, 0},
 	{0}
 };
 
 int script_init()
 {
-	script_events = mstack_new(0);
-	registry_add_simple_chains(my_functions);
-	registry_lookup("script", "load script", &load_script, &load_script_h);
-	registry_lookup("script", "link var", &link_var, &link_var_h);
-	registry_lookup("script", "unlink var", &unlink_var, &unlink_var_h);
-	registry_lookup("script", "create cmd", &create_cmd, &create_cmd_h);
-	registry_lookup("script", "delete cmd", &delete_cmd, &delete_cmd_h);
-
-	script_create_cmd_table(my_script_cmds);
+	script_create_commands(script_cmds);
 
 	return(0);
 }
 
-int script_load(char *fname)
+/* Called by scripting modules to register themselves. */
+int script_register_module(script_module_t *module)
 {
-	load_script(load_script_h, fname);
+	script_modules = (script_module_t **)realloc(script_modules, sizeof(*script_modules) * (nscript_modules+1));
+	script_modules[nscript_modules] = module;
+	nscript_modules++;
 	return(0);
 }
 
-int script_link_var_table(script_linked_var_t *table)
+/* Called by scripting modules to unregister themselves. */
+int script_unregister_module(script_module_t *module)
 {
+	int i;
+
+	for (i = 0; i < nscript_modules; i++) {
+		if (script_modules[i] == module) break;
+	}
+	if (i == nscript_modules) return(-1);
+	memmove(script_modules+i, script_modules+i+1, sizeof(script_module_t) * (nscript_modules-i-1));
+	nscript_modules--;
+	return(0);
+}
+
+/* Called by scripting modules to receive the full list of linked variables
+	and functions. */
+int script_playback(script_module_t *module)
+{
+	int i;
+
+	for (i = 0; i < njournal_events; i++) {
+		switch (journal_events[i].event) {
+			case EVENT_VAR:
+				module->link_var(module->client_data, journal_events[i].data);
+				break;
+			case EVENT_CMD:
+				module->create_command(module->client_data, journal_events[i].data);
+				break;
+		}
+	}
+	return(0);
+}
+
+/* Add an event to our internal journal. */
+static void journal_add(int event, void *data, void *key)
+{
+	journal_events = (journal_event_t *)realloc(journal_events, sizeof(*journal_events) * (njournal_events+1));
+	journal_events[njournal_events].event = event;
+	journal_events[njournal_events].data = data;
+	journal_events[njournal_events].key = key;
+	njournal_events++;
+}
+
+/* Cancel an event from the journal. */
+static void journal_del(int event, void *data, void *key)
+{
+	int i;
+	for (i = 0; i < njournal_events; i++) {
+		if (journal_events[i].event == event && journal_events[i].key == key) break;
+	}
+	if (i < njournal_events) {
+		memmove(journal_events+i, journal_events+i+1, sizeof(*journal_events) * (njournal_events-i-1));
+		njournal_events--;
+		if (event == EVENT_CMD) free(data);
+	}
+}
+
+/* We shall provide a handy callback interface, to reduce the amount of
+	work in other places. */
+
+static int my_command_handler(void *client_data, script_args_t *args, script_var_t *retval)
+{
+	script_command_t *cmd = (script_command_t *)client_data;
+	void *static_argstack[20], *static_free_args[20];
+	void **argstack, **free_args;
+	script_callback_t **callbacks, *static_callbacks[20];
+	int argstack_len, nfree_args, ncallbacks;
+	char *syntax;
+	int i, skip, nopts, err, simple_retval;
+	script_var_t var;
+	int (*callback)();
+
+	/* Check if there is an argument count error. */
+	if (cmd->flags & SCRIPT_VAR_ARGS) err = (cmd->nargs > args->len);
+	else err = (cmd->nargs != args->len);
+
+	if (err) {
+		retval->type = SCRIPT_STRING | SCRIPT_ERROR;
+		retval->value = cmd->syntax_error;
+		return(-1);
+	}
+
+	/* Get space for the argument conversion.
+		We'll try to use stack space instead of a calloc(). */
+	if (args->len+3 > 20) {
+		argstack = (void **)calloc(args->len+3, sizeof(void *));
+		free_args = (void **)calloc(args->len, sizeof(void *));
+		callbacks = (script_callback_t **)calloc(args->len, sizeof(*callbacks));
+	}
+	else {
+		argstack = static_argstack;
+		free_args = static_free_args;
+		callbacks = static_callbacks;
+	}
+	argstack_len = 3;
+	nfree_args = 0;
+	ncallbacks = 0;
+
+	/* Figure out how many args to skip. */
+	syntax = cmd->syntax;
+	if (cmd->flags & SCRIPT_VAR_FRONT) {
+		skip = strlen(syntax) - args->len;
+		if (skip < 0) skip = 0;
+		argstack_len += skip;
+	}
+	else skip = 0;
+
+	/* Now start converting arguments according to the command's syntax
+		string. */
+	for (i = 0; i < args->len; i++) {
+		err = script_get_arg(args, i, &var, *syntax);
+		if (err) {
+			retval->value = cmd->syntax_error;
+			retval->type = SCRIPT_STRING | SCRIPT_ERROR;
+			goto cleanup_args;
+		}
+		if (var.type & SCRIPT_FREE) free_args[nfree_args++] = var.value;
+		else if (*syntax == SCRIPT_CALLBACK) callbacks[ncallbacks++] = var.value;
+		argstack[argstack_len++] = var.value;
+		syntax++;
+	}
+
+	/* Calculate the optional args we want for the callback.
+		This is why we saved space for 3 args earlier on. */
+	nopts = 3;
+	if (cmd->flags & SCRIPT_PASS_COUNT) {
+		nopts--;
+		argstack[nopts] = (void *)(argstack_len - 3 - skip);
+	}
+	if (cmd->flags & SCRIPT_PASS_RETVAL) {
+		nopts--;
+		argstack[nopts] = retval;
+	}
+	if (cmd->flags & SCRIPT_PASS_CDATA) {
+		nopts--;
+		argstack[nopts] = cmd->client_data;
+	}
+
+	/* Adjust the base of the argument stack. */
+	argstack += nopts;
+	argstack_len -= nopts;
+
+	/* Execute the callback. */
+	callback = (int (*)())cmd->callback;
+	if (cmd->flags & SCRIPT_PASS_ARRAY) {
+		simple_retval = callback(argstack_len, argstack);
+	}
+	else {
+		simple_retval = callback(argstack[0], argstack[1],
+			argstack[2], argstack[3], argstack[4], argstack[5],
+			argstack[6], argstack[7], argstack[8], argstack[9]);
+	}
+
+	argstack -= nopts;
+	argstack_len += nopts;
+
+	/* Process the return value. */
+	if (!(cmd->flags & SCRIPT_PASS_RETVAL)) {
+		retval->type = cmd->retval_type;
+		retval->len = -1;
+		retval->value = (void *)simple_retval;
+	}
+
+cleanup_args:
+	for (i = 0; i < nfree_args; i++) {
+		if (free_args[i]) free(free_args[i]);
+	}
+	if (err) {
+		for (i = 0; i < ncallbacks; i++) {
+			if (callbacks[i]) callbacks[i]->del(callbacks[i]);
+		}
+	}
+	if (argstack != static_argstack) {
+		free(argstack);
+		free(free_args);
+		free(callbacks);
+	}
+
+	return(0);
+}
+
+/* Ahh, the client scripting interface. */
+int script_load(char *filename)
+{
+	int i;
+
+	for (i = 0; i < nscript_modules; i++) {
+		script_modules[i]->load_script(script_modules[i]->client_data, filename);
+	}
+	return(0);
+}
+
+int script_link_vars(script_linked_var_t *table)
+{
+	int i;
+
 	while (table->class && table->name) {
-		link_var(link_var_h, table);
+		journal_add(EVENT_VAR, table, table);
+		for (i = 0; i < nscript_modules; i++) {
+			script_modules[i]->link_var(script_modules[i]->client_data, table);
+		}
 		table++;
 	}
 	return(0);
 }
 
-int script_unlink_var_table(script_linked_var_t *table)
+int script_unlink_vars(script_linked_var_t *table)
 {
+	int i;
+
 	while (table->class && table->name) {
-		unlink_var(unlink_var_h, table);
+		journal_del(EVENT_VAR, table, table);
+		for (i = 0; i < nscript_modules; i++) {
+			script_modules[i]->unlink_var(script_modules[i]->client_data, table);
+		}
 		table++;
 	}
 	return(0);
 }
 
-int script_create_cmd_table(script_command_t *table)
+int script_create_commands(script_command_t *table)
 {
-	script_command_t *cmd;
+	int i;
+	script_raw_command_t *cmd;
 
-	for (cmd = table; cmd->class && cmd->name; cmd++) {
-		create_cmd(create_cmd_h, cmd);
-	}
-	return(0);
-}
-
-int script_delete_cmd_table(script_command_t *table)
-{
-
-	script_command_t *cmd;
-
-	for (cmd = table; cmd->class && cmd->name; cmd++) {
-		delete_cmd(delete_cmd_h, cmd);
-	}
-	return(0);
-}
-
-int script_create_simple_cmd_table(script_simple_command_t *table)
-{
-	script_command_t *cmd;
-	char *class;
-
-	/* First entry gives the class. */
-	class = table->name;
-	table++;
-
-	while (table->name) {
-		cmd = (script_command_t *)calloc(1, sizeof(*cmd));
-		cmd->class = class;
+	while (table->class && table->name) {
+		cmd = (script_raw_command_t *)malloc(sizeof(*cmd));
+		cmd->class = table->class;
 		cmd->name = table->name;
-		cmd->callback = table->callback;
-		cmd->nargs = strlen(table->syntax);
-		cmd->syntax = table->syntax;
-		cmd->syntax_error = table->syntax_error;
-		cmd->retval_type = table->retval_type;
-		create_cmd(create_cmd_h, cmd);
+		cmd->callback = my_command_handler;
+		cmd->client_data = table;
+
+		journal_add(EVENT_CMD, cmd, table);
+		for (i = 0; i < nscript_modules; i++) {
+			script_modules[i]->create_command(script_modules[i]->client_data, table);
+		}
 		table++;
 	}
 	return(0);
+}
+
+int script_delete_commands(script_command_t *table)
+{
+	int i;
+
+	while (table->class && table->name) {
+		journal_del(EVENT_CMD, table, table);
+		for (i = 0; i < nscript_modules; i++) {
+			script_modules[i]->delete_command(script_modules[i]->client_data, table);
+		}
+		table++;
+	}
+	return(0);
+}
+
+int script_get_arg(script_args_t *args, int num, script_var_t *var, int type)
+{
+	script_module_t *module;
+
+	module = args->module;
+	return module->get_arg(module->client_data, args, num, var, type);
 }
 
 script_var_t *script_string(char *str, int len)

@@ -26,7 +26,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dns.c,v 1.38 2002/05/05 16:40:38 tothwolf Exp $";
+static const char rcsid[] = "$Id: dns.c,v 1.39 2002/05/12 05:59:52 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -73,15 +73,14 @@ extern int		 af_preferred;
 
 static int script_dnslookup(char *iporhost, script_callback_t *callback);
 
-static script_simple_command_t scriptdns_cmds[] = {
-	{"", NULL, NULL, NULL, 0},
-	{"dnslookup", script_dnslookup, "sc", "ip-address/hostname callback", SCRIPT_INTEGER},
+static script_command_t scriptdns_cmds[] = {
+	{"", "dnslookup", script_dnslookup, NULL, 2, "sc", "ip-address/hostname callback", SCRIPT_INTEGER, 0},
 	{0}
 };
 
 void dns_init()
 {
-	script_create_simple_cmd_table(scriptdns_cmds);
+	script_create_commands(scriptdns_cmds);
 }
 
 void dcc_dnswait(int idx, char *buf, int len)

@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: logfile.c,v 1.21 2002/05/05 16:40:38 tothwolf Exp $";
+static const char rcsid[] = "$Id: logfile.c,v 1.22 2002/05/12 05:59:52 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -96,8 +96,8 @@ static script_linked_var_t log_script_vars[] = {
 void logfile_init()
 {
 	logfile_suffix = strdup(".%d%b%Y");
-	script_create_cmd_table(log_script_cmds);
-	script_link_var_table(log_script_vars);
+	script_create_commands(log_script_cmds);
+	script_link_vars(log_script_vars);
 	add_hook(HOOK_MINUTELY, logfile_minutely);
 	add_hook(HOOK_5MINUTELY, logfile_5minutely);
 }

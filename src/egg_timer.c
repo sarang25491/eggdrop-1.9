@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: egg_timer.c,v 1.12 2002/05/09 03:11:54 stdarg Exp $";
+static const char rcsid[] = "$Id: egg_timer.c,v 1.13 2002/05/12 05:59:52 stdarg Exp $";
 #endif
 
 #include <stdio.h> /* NULL */
@@ -66,7 +66,7 @@ static script_command_t script_cmds[] = {
 
 void timer_init()
 {
-	script_create_cmd_table(script_cmds);
+	script_create_commands(script_cmds);
 }
 
 /* Based on TclpGetTime from Tcl 8.3.3 */

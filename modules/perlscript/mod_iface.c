@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: mod_iface.c,v 1.6 2002/05/05 16:40:36 tothwolf Exp $";
+static const char rcsid[] = "$Id: mod_iface.c,v 1.7 2002/05/12 05:59:51 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -32,14 +32,11 @@ static const char rcsid[] = "$Id: mod_iface.c,v 1.6 2002/05/05 16:40:36 tothwolf
 
 static eggdrop_t *egg = NULL;
 
-/* Functions from perlscript.c. */
-int perlscript_init();
-int perlscript_destroy();
-int my_load_script(registry_entry_t * entry, char *fname);
-int my_link_var(void *ignore, script_linked_var_t *linked_var);
-int my_unlink_var(void *ignore, script_linked_var_t *linked_var);
-int my_create_cmd(void *ignore, script_command_t *info);
-char *real_perl_cmd(char *text);
+/* Stuff from perlscript.c. */
+extern int perlscript_init();
+extern int perlscript_destroy();
+extern script_module_t my_script_interface;
+extern char *real_perl_cmd(char *text);
 
 /* A get_user_by_handle() command for perlscript.c */
 void *fake_get_user_by_handle(char *handle)
@@ -64,7 +61,7 @@ int log_error(char *msg)
 }
 
 /* A stub for the .perl command. */
-int dcc_cmd_perl(struct userrec *u, int idx, char *text)
+static int dcc_cmd_perl(struct userrec *u, int idx, char *text)
 {
 	char *retval;
 
@@ -81,26 +78,6 @@ static cmd_t my_dcc_cmds[] = {
 	{"perl", "n", (Function) dcc_cmd_perl, NULL},
 	{0}
 };
-
-static registry_simple_chain_t my_functions[] = {
-	{"script", NULL, 0},
-	{"load script", my_load_script, 2},
-	{"create cmd", my_create_cmd, 2},
-	{0}
-};
-
-static Function journal_table[] = {
-        (Function)1, /* Version */
-        (Function)5, /* Number of functions */
-        my_load_script,
-	my_link_var,
-	my_unlink_var,
-        my_create_cmd,
-	NULL /* my_delete_cmd */
-};
-
-static Function journal_playback;
-static void *journal_playback_h;
 
 EXPORT_SCOPE char *perlscript_LTX_start();
 static char *perlscript_close();
@@ -127,9 +104,8 @@ char *perlscript_LTX_start(eggdrop_t *eggdrop)
 	/* Initialize interpreter. */
 	perlscript_init();
 
-	registry_add_simple_chains(my_functions);
-        registry_lookup("script", "playback", &journal_playback, &journal_playback_h);
-        if (journal_playback) journal_playback(journal_playback_h, journal_table);
+	script_register_module(&my_script_interface);
+	script_playback(&my_script_interface);
 
 	BT_dcc = find_bind_table2("dcc");
 	if (BT_dcc) add_builtins2(BT_dcc, my_dcc_cmds);
@@ -143,6 +119,8 @@ static char *perlscript_close()
 
 	/* Destroy interpreter. */
 	perlscript_destroy();
+
+	script_unregister_module(&my_script_interface);
 
 	module_undepend("perlscript");
 	return(NULL);
