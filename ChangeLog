@@ -1,3 +1,10 @@
+2002-06-01 08:13  stdarg <stdarg@techmonkeys.org>
+
+	* modules/channels/tclchan.c:
+
+	
+	* Converted a few more channel commands 
+
 2002-06-01 05:15  stdarg <stdarg@techmonkeys.org>
 
 	* modules/server/Makefile.am, modules/server/server.c,
