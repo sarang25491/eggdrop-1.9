@@ -1,3 +1,25 @@
+2001-11-13 04:51  stdarg <stdarg@techmonkeys.org>
+
+	* modules/perlscript/perlscript.c:
+
+	
+	* Added support for lists in perl callbacks.  
+
+2001-11-13 04:51  stdarg <stdarg@techmonkeys.org>
+
+	* modules/tclscript/tclscript.c:
+
+	
+	* Added support for returned lists in tcl callbacks.  
+
+2001-11-13 04:50  stdarg <stdarg@techmonkeys.org>
+
+	* src/: logfile.c, script.c, script.h, script_api.h, tcldcc.c:
+
+	
+	* Added convenience functions for script_var_t's.  
+	* Converted a bunch of functions in tcldcc.c.  
+
 2001-11-12 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
