@@ -881,8 +881,9 @@ specific commands, see later.
     returns: a long number representing the bot's IP address, as it might
       appear in (for example) a DCC request
 
-  rand <limit>
-    returns: a random integer between 0 and limit-1
+  rand [min] <max>
+    returns: a random integer between min and (max-1); if min is omitted, it
+      defaults to 0
 
   control <idx> <command>
     removes a user from the party line and sends all future input from them
