@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: tclchan.c,v 1.17 2002/05/27 04:19:32 stdarg Exp $";
+static const char rcsid[] = "$Id: tclchan.c,v 1.18 2002/05/28 05:13:12 stdarg Exp $";
 #endif
 */
 
@@ -252,18 +252,18 @@ static int script_channel_get(script_var_t *retval, char *channel_name, char *se
 
 #define CHECK(x) !strcmp(setting, x)
 	if (CHECK("chanmode")) get_mode_protect(chan, s);
-	else if (CHECK("idle-kick")) simple_sprintf(s, "%d", chan->idle_kick);
-	else if (CHECK("stop-net-hack")) simple_sprintf(s, "%d", chan->stopnethack_mode);
-	else if (CHECK("revenge-mode")) simple_sprintf(s, "%d", chan->revenge_mode);
-	else if (CHECK("flood-pub")) simple_sprintf(s, "%d %d", chan->flood_pub_thr, chan->flood_pub_time);
-	else if (CHECK("flood-ctcp")) simple_sprintf(s, "%d %d", chan->flood_ctcp_thr, chan->flood_ctcp_time);
-	else if (CHECK("flood-join")) simple_sprintf(s, "%d %d", chan->flood_join_thr, chan->flood_join_time);
-	else if (CHECK("flood-kick")) simple_sprintf(s, "%d %d", chan->flood_kick_thr, chan->flood_kick_time);
-	else if (CHECK("flood-deop")) simple_sprintf(s, "%d %d", chan->flood_deop_thr, chan->flood_deop_time);
-	else if (CHECK("flood-nick")) simple_sprintf(s, "%d %d", chan->flood_nick_thr, chan->flood_nick_time);
-	else if (CHECK("aop-delay")) simple_sprintf(s, "%d %d", chan->aop_min, chan->aop_max);
-	else if (lookup_flag_by_name(normal_flag_map, setting, &flagval)) simple_sprintf(s, "%d", chan->status & flagval);
-	else if (lookup_flag_by_name(stupid_ircnet_flag_map, setting, &flagval)) simple_sprintf(s, "%d", chan->ircnet_status & flagval);
+	else if (CHECK("idle-kick")) sprintf(s, "%d", chan->idle_kick);
+	else if (CHECK("stop-net-hack")) sprintf(s, "%d", chan->stopnethack_mode);
+	else if (CHECK("revenge-mode")) sprintf(s, "%d", chan->revenge_mode);
+	else if (CHECK("flood-pub")) sprintf(s, "%d %d", chan->flood_pub_thr, chan->flood_pub_time);
+	else if (CHECK("flood-ctcp")) sprintf(s, "%d %d", chan->flood_ctcp_thr, chan->flood_ctcp_time);
+	else if (CHECK("flood-join")) sprintf(s, "%d %d", chan->flood_join_thr, chan->flood_join_time);
+	else if (CHECK("flood-kick")) sprintf(s, "%d %d", chan->flood_kick_thr, chan->flood_kick_time);
+	else if (CHECK("flood-deop")) sprintf(s, "%d %d", chan->flood_deop_thr, chan->flood_deop_time);
+	else if (CHECK("flood-nick")) sprintf(s, "%d %d", chan->flood_nick_thr, chan->flood_nick_time);
+	else if (CHECK("aop-delay")) sprintf(s, "%d %d", chan->aop_min, chan->aop_max);
+	else if (lookup_flag_by_name(normal_flag_map, setting, &flagval)) sprintf(s, "%d", chan->status & flagval);
+	else if (lookup_flag_by_name(stupid_ircnet_flag_map, setting, &flagval)) sprintf(s, "%d", chan->ircnet_status & flagval);
 	else {
 		/* Hopefully it's a user-defined flag. */
 		for (ul = udef; ul && ul->name; ul = ul->next) {
@@ -285,7 +285,7 @@ static int script_channel_get(script_var_t *retval, char *channel_name, char *se
 		}
 		else {
 			/* Flag or int, all the same. */
-			simple_sprintf(s, "%d", getudef(ul->values, chan->dname));
+			sprintf(s, "%d", getudef(ul->values, chan->dname));
 		}
 	}
 	/* Ok, if we make it this far, the result is "s". */
@@ -568,87 +568,51 @@ check_for_udef_flags:
   return TCL_OK;
 }
 
-static int tcl_do_masklist(maskrec *m, Tcl_Interp *irp)
+static int script_channels(script_var_t *retval)
 {
-  char ts[21], ts1[21], ts2[21], *list[6], *p;
+	struct chanset_t *chan;
 
-  for (; m; m = m->next) {
-    list[0] = m->mask;
-    list[1] = m->desc;
-    sprintf(ts, "%lu", m->expire);
-    list[2] = ts;
-    sprintf(ts1, "%lu", m->added);
-    list[3] = ts1;
-    sprintf(ts2, "%lu", m->lastactive);
-    list[4] = ts2;
-    list[5] = m->user;
-    p = Tcl_Merge(6, list);
-    Tcl_AppendElement(irp, p);
-    Tcl_Free((char *) p);
-  }
-  return TCL_OK;
+	retval->type = SCRIPT_ARRAY | SCRIPT_VAR | SCRIPT_FREE;
+	retval->len = 0;
+
+	for (chan = chanset; chan; chan = chan->next) {
+		script_list_append(retval, script_string(chan->dname, -1));
+	}
+	return(0);
 }
 
-static int tcl_banlist STDVAR
+static int script_listmask(void *type, script_var_t *retval, char *channel_name)
 {
-  struct chanset_t *chan;
+	script_var_t *mlist;
+	struct chanset_t *chan = NULL;
+	struct maskrec *m, *masks;
 
-  BADARGS(1, 2, " ?channel?");
-  if (argc == 2) {
-    chan = findchan_by_dname(argv[1]);
-    if (chan == NULL) {
-      Tcl_AppendResult(irp, "invalid channel: ", argv[1], NULL);
-      return TCL_ERROR;
-    }
-    return tcl_do_masklist(chan->bans, irp);
-  }
+	retval->type = SCRIPT_ARRAY | SCRIPT_VAR | SCRIPT_FREE;
+	retval->len = 0;
 
-  return tcl_do_masklist(global_bans, irp);
+	if (channel_name) {
+		chan = findchan_by_dname(channel_name);
+		if (!chan) return(-1);
+	}
+	if ((int) type == 'b') masks = (chan ? chan->bans : global_bans);
+	else if ((int) type == 'I') masks = (chan ? chan->invites : global_invites);
+	else if ((int) type == 'e') masks = (chan ? chan->exempts : global_exempts);
+	else return(-1);
+
+	for (m = masks; m; m = m->next) {
+		mlist = script_list(6, script_string(m->mask, -1),
+			script_string(m->desc, -1),
+			script_int(m->expire),
+			script_int(m->added),
+			script_int(m->lastactive),
+			script_string(m->user, -1)
+		);
+		script_list_append(retval, mlist);
+	}
+	return(0);
 }
 
-static int tcl_exemptlist STDVAR
-{
-  struct chanset_t *chan;
-
-  BADARGS(1, 2, " ?channel?");
-  if (argc == 2) {
-    chan = findchan_by_dname(argv[1]);
-    if (chan == NULL) {
-      Tcl_AppendResult(irp, "invalid channel: ", argv[1], NULL);
-      return TCL_ERROR;
-    }
-    return tcl_do_masklist(chan->exempts, irp);
-  }
-
-  return tcl_do_masklist(global_exempts, irp);
-}
-
-static int tcl_invitelist STDVAR
-{
-  struct chanset_t *chan;
-
-  BADARGS(1, 2, " ?channel?");
-  if (argc == 2) {
-    chan = findchan_by_dname(argv[1]);
-    if (chan == NULL) {
-      Tcl_AppendResult(irp, "invalid channel: ", argv[1], NULL);
-      return TCL_ERROR;
-    }
-    return tcl_do_masklist(chan->invites, irp);
-  }
-  return tcl_do_masklist(global_invites, irp);
-}
-
-static int tcl_channels STDVAR
-{
-  struct chanset_t *chan;
-
-  BADARGS(1, 1, "");
-  for (chan = chanset; chan; chan = chan->next) 
-    Tcl_AppendElement(irp, chan->dname);
-  return TCL_OK;
-}
-
+/* Should be removed when the new config system is in place. */
 static int tcl_savechannels STDVAR
 {
   BADARGS(1, 1, "");
@@ -660,6 +624,7 @@ static int tcl_savechannels STDVAR
   return TCL_OK;
 }
 
+/* Should be removed when the new config system is in place. */
 static int tcl_loadchannels STDVAR
 {
   BADARGS(1, 1, "");
@@ -672,19 +637,12 @@ static int tcl_loadchannels STDVAR
   return TCL_OK;
 }
 
-static int tcl_validchan STDVAR
+static int script_channel_valid(char *channel_name)
 {
-  struct chanset_t *chan;
-
-  BADARGS(2, 2, " channel");
-  chan = findchan_by_dname(argv[1]);
-  if (chan == NULL)
-    Tcl_AppendResult(irp, "0", NULL);
-  else
-    Tcl_AppendResult(irp, "1", NULL);
-  return TCL_OK;
+	return findchan_by_dname(channel_name) ? 1 : 0;
 }
 
+/* Should be removed when the new config system is in place. */
 static int tcl_isdynamic STDVAR
 {
   struct chanset_t *chan;
@@ -700,36 +658,20 @@ static int tcl_isdynamic STDVAR
   return TCL_OK;
 }
 
-static int tcl_getchaninfo STDVAR
+static char *script_channel_getinfo(struct userrec *u, char *channel_name)
 {
-  char s[161];
-  struct userrec *u;
+	struct chanuserrec *ch;
 
-  BADARGS(3, 3, " handle channel");
-  u = get_user_by_handle(userlist, argv[1]);
-  if (!u || (u->flags & USER_BOT))
-    return TCL_OK;
-  get_handle_chaninfo(argv[1], argv[2], s);
-  Tcl_AppendResult(irp, s, NULL);
-  return TCL_OK;
+	ch = get_chanrec(u, channel_name);
+	if (ch && ch->info) return ch->info;
+	return "";
 }
 
-static int tcl_setchaninfo STDVAR
+static int script_channel_setinfo(struct userrec *u, char *channel_name, char *info)
 {
-  struct chanset_t *chan;
-
-  BADARGS(4, 4, " handle channel info");
-  chan = findchan_by_dname(argv[2]);
-  if (chan == NULL) {
-    Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
-    return TCL_ERROR;
-  }
-  if (!strcasecmp(argv[3], "none")) {
-    set_handle_chaninfo(userlist, argv[1], argv[2], NULL);
-    return TCL_OK;
-  }
-  set_handle_chaninfo(userlist, argv[1], argv[2], argv[3]);
-  return TCL_OK;
+	if (!findchan_by_dname(channel_name)) return(-1);
+	set_handle_chaninfo(userlist, u->handle, channel_name, info);
+	return(0);
 }
 
 static int tcl_setlaston STDVAR
@@ -1102,8 +1044,16 @@ static script_command_t channel_script_cmds[] = {
 	{"", "unstickinvite", script_sticksomething, (void *)('I'+256), 1, "ss", "?channel? mask", SCRIPT_INTEGER, SCRIPT_PASS_CDATA | SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT},
 	{"", "unstickexempt", script_sticksomething, (void *)('e'+256), 1, "ss", "?channel? mask", SCRIPT_INTEGER, SCRIPT_PASS_CDATA | SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT},
 
+	{"", "listbans", script_listmask, (void *)'b', 0, "s", "?channel?", 0, SCRIPT_VAR_ARGS | SCRIPT_PASS_RETVAL | SCRIPT_PASS_CDATA},
+	{"", "listinvites", script_listmask, (void *)'I', 0, "s", "?channel?", 0, SCRIPT_VAR_ARGS | SCRIPT_PASS_RETVAL | SCRIPT_PASS_CDATA},
+	{"", "listexempts", script_listmask, (void *)'e', 0, "s", "?channel?", 0, SCRIPT_VAR_ARGS | SCRIPT_PASS_RETVAL | SCRIPT_PASS_CDATA},
+
 	{"", "channel_get", script_channel_get, NULL, 2, "ss", "channel setting", 0, SCRIPT_PASS_RETVAL},
 	{"", "channel_info", script_channel_info, NULL, 0, "", "", 0, SCRIPT_PASS_RETVAL},
+	{"", "channel_valid", script_channel_valid, NULL, 1, "s", "channel", SCRIPT_INTEGER, 0},
+	{"", "channel_setinfo", script_channel_setinfo, NULL, 2, "Uss", "handle channel ?info?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
+	{"", "channel_getinfo", script_channel_getinfo, NULL, 2, "Us", "handle channel", SCRIPT_STRING, 0},
+	{"", "channels", script_channels, NULL, 0, "", "", 0, SCRIPT_PASS_RETVAL},
 
 	{0}
 };
@@ -1111,16 +1061,9 @@ static script_command_t channel_script_cmds[] = {
 static tcl_cmds channels_cmds[] =
 {
   {"channel",		tcl_channel},
-  {"channels",		tcl_channels},
-  {"exemptlist",	tcl_exemptlist},
-  {"invitelist",	tcl_invitelist},
-  {"banlist",		tcl_banlist},
   {"savechannels",	tcl_savechannels},
   {"loadchannels",	tcl_loadchannels},
-  {"validchan",		tcl_validchan},
   {"isdynamic",		tcl_isdynamic},
-  {"getchaninfo",	tcl_getchaninfo},
-  {"setchaninfo",	tcl_setchaninfo},
   {"setlaston",		tcl_setlaston},
   {"addchanrec",	tcl_addchanrec},
   {"delchanrec",	tcl_delchanrec},
