@@ -18,14 +18,6 @@ see also: set username
 %{help=set botnick}%{+n}
 ###  %bset botnick%b
    this read-only variable returns the bots current nickname on irc.
-%{help=set servlimit}%{+n}
-###  %bset servlimit%b <#>
-   specifies the minimum number of servers the bot should accept.
-   if the bot's home channel ever empties out, and the number of
-   servers on the irc net becomes less than the 'servlimit', the
-   bot will jump to a new server.  this is to prevent it from
-   getting stuck on the wrong end of a netsplit.  to disable it,
-   just set it to 0.
 %{help=set server-timeout}%{+n}
 ###  %bset server-timeout%b <seconds>
    specifies how long to wait when connecting to a server.  if the
@@ -171,12 +163,11 @@ see also: default-port
    This is a list of the tcl variables the can be used to setup
    the server module, for a list of revelant commands type
    %b'.help server module'%b.
-     %bserver-online%b        %bservlimit%b      %bnick%b
+     %bserver-online%b        %bnet-type%b       %bnick%b
      %bnever-give-up%b        %bflood-ctcp%b     %bserver%b
      %bmax-queue-msg%b        %bstrict-host%b    %bbotnick%b
      %bserver-timeout%b       %bservers%b        %bkeep-nick%b
-     %bnet-type%b             %bbotname%b        %bquiet-reject%b
+     %bstrict-servernames%b   %bbotname%b        %bquiet-reject%b
      %bserverror-quit%b       %banswer-ctcp%b    %baltnick%b
      %btrigger-on-ignore%b    %bdefault-port%b   %brealname%b
      %bserver-cycle-wait%b    %bcheck-stoned%b   %bflood-msg%b
-     %bstrict-servernames%b

@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.74 2001/08/13 03:05:53 guppy Exp $
+ * $Id: server.c,v 1.75 2001/08/13 03:58:30 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -64,7 +64,6 @@ static time_t server_online;	/* server connection time */
 static time_t server_cycle_wait;	/* seconds to wait before
 					   re-beginning the server list */
 static char botrealname[121];	/* realname of bot */
-static int min_servs;		/* minimum number of servers to be around */
 static int server_timeout;	/* server timeout for connecting */
 static int never_give_up;	/* never give up when connecting to servers? */
 static int strict_servernames;	/* don't update server list */
@@ -1301,7 +1300,6 @@ static tcl_coups my_tcl_coups[] =
 static tcl_ints my_tcl_ints[] =
 {
   {"use-console-r",		NULL,				1},
-  {"servlimit",			&min_servs,			0},
   {"server-timeout",		&server_timeout,		0},
   {"server-online",		(int *) &server_online,		2},
   {"never-give-up",		&never_give_up,			0},
@@ -1624,8 +1622,6 @@ static void server_report(int idx, int details)
     dprintf(idx, "    %s %d%%, %d msgs\n", _("Help queue is at"),
            (int) ((float) (hq.tot * 100.0) / (float) maxqmsg), (int) hq.tot);
   if (details) {
-    if (min_servs)
-      dprintf(idx, "    Requiring a net of at least %d server(s)\n", min_servs);
     dprintf(idx, "    Flood is: %d msg/%ds, %d ctcp/%ds\n",
 	    flud_thr, flud_time, flud_ctcp_thr, flud_ctcp_time);
   }
@@ -1796,7 +1792,7 @@ static Function server_table[] =
   (Function) & cycle_time,	/* int					*/
   (Function) & default_port,	/* int					*/
   (Function) & server_online,	/* int					*/
-  (Function) & min_servs,	/* int					*/
+  (Function) NULL,		/* min_servs - removed useless feature	*/
   /* 28 - 31 */
   (Function) & H_raw,		/* p_tcl_bind_list			*/
   (Function) & H_wall,		/* p_tcl_bind_list			*/
@@ -1845,7 +1841,6 @@ char *server_start(Function *global_funcs)
   server_online = 0;
   server_cycle_wait = 60;
   strcpy(botrealname, "A deranged product of evil coders");
-  min_servs = 0;
   server_timeout = 60;
   never_give_up = 0;
   strict_servernames = 0;
