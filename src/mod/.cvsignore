@@ -1,0 +1,4 @@
+Makefile
+*.o
+*.obj
+mod.xlibs

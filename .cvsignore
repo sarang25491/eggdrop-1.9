@@ -1,0 +1,13 @@
+config.cache
+config.h
+config.h.in
+config.log
+config.status
+configure
+Makefile
+eggdrop
+lush.h
+EGGMOD.stamp
+*.so
+*.dll
+*.exe
