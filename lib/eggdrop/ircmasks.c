@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: ircmasks.c,v 1.7 2004/06/22 20:12:37 wingman Exp $";
+static const char rcsid[] = "$Id: ircmasks.c,v 1.8 2004/06/22 22:00:26 wingman Exp $";
 #endif
 
 #include <string.h>				/* strlen		*/
@@ -43,6 +43,8 @@ int ircmask_list_clear(ircmask_list_t *list)
 
 		entry = next;
 	}
+
+	return (0);
 }
 
 int ircmask_list_add(ircmask_list_t *list, const char *ircmask, void *data)

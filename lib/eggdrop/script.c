@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: script.c,v 1.16 2004/06/22 21:55:32 wingman Exp $";
+static const char rcsid[] = "$Id: script.c,v 1.17 2004/06/22 22:00:26 wingman Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -80,7 +80,6 @@ int script_shutdown(void)
 				journal_events[i].event,
 				journal_events[i].key);
 		}
-		printf("hi\n");
 	}
 
 	script_delete_commands(script_cmds);
