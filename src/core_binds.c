@@ -24,13 +24,26 @@ static bind_table_t *BT_time = NULL,
 	*BT_secondly = NULL,
 	*BT_status = NULL, *BT_init = NULL, *BT_shutdown = NULL;
 
-void core_binds_init()
+int core_binds_init(void)
 {
 	BT_init = bind_table_add (BTN_CORE_INIT, 0, "", MATCH_NONE, BIND_STACKABLE);		/* DDD	*/
 	BT_shutdown = bind_table_add (BTN_CORE_SHUTDOWN, 0, "", MATCH_NONE, BIND_STACKABLE);	/* DDD	*/
 	BT_time = bind_table_add(BTN_CORE_TIME, 5, "iiiii", MATCH_MASK, BIND_STACKABLE);	/* DDD	*/
 	BT_secondly = bind_table_add(BTN_CORE_SECONDLY, 0, "", MATCH_NONE, BIND_STACKABLE);	/* DDD	*/
 	BT_status = bind_table_add(BTN_CORE_STATUS, 2, "Ps", MATCH_NONE, BIND_STACKABLE);	/* DDD	*/
+
+	return (0);
+}
+
+int core_binds_shutdown(void)
+{
+	bind_table_del(BT_status);
+	bind_table_del(BT_secondly);
+	bind_table_del(BT_time);
+	bind_table_del(BT_shutdown);
+	bind_table_del(BT_init);
+
+	return (0);
 }
 
 void check_bind_init(void)

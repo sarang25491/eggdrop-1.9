@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xml.c,v 1.13 2004/06/22 21:55:32 wingman Exp $";
+static const char rcsid[] = "$Id: xml.c,v 1.14 2004/06/22 23:20:23 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -27,6 +27,7 @@ static const char rcsid[] = "$Id: xml.c,v 1.13 2004/06/22 21:55:32 wingman Exp $
 #include <stdarg.h>
 #include <ctype.h>				/* isdigit		*/
 
+#include <eggdrop/eggdrop.h>			/* egg_return_if_fail	*/
 #include <eggdrop/memory.h>			/* malloc, free		*/
 #include <eggdrop/memutil.h>			/* str_redup		*/
 #include <eggdrop/xml.h>			/* prototypes		*/
@@ -396,6 +397,43 @@ xml_attr_t *xml_node_lookup_attr(xml_node_t *node, const char *name)
 	}
 
 	return NULL;
+}
+
+void xml_node_remove_child(xml_node_t *parent, xml_node_t *child)
+{
+	int i;
+
+	for (i = 0; i < parent->nchildren; i++) {
+		if (parent->children[i] != child)
+			continue;
+
+		if (parent->nchildren == 1) {
+			free(parent->children); parent->children = NULL;
+		} else {
+			memmove(parent->children + i,
+				parent->children + i + 1,
+					parent->nchildren -i - 1);
+			parent->children = realloc(parent->children, (parent->nchildren - 1) * sizeof(xml_node_t *));
+		}
+		parent->nchildren--;
+		return;
+	}
+}
+
+void xml_node_append_child(xml_node_t *parent, xml_node_t *child)
+{
+	egg_return_if_fail(parent != NULL);
+	egg_return_if_fail(child != NULL);
+
+	/* remove from previous parent */
+	if (child->parent)
+		xml_node_remove_child(child->parent, child);
+
+	parent->children = realloc(parent->children, parent->nchildren + 1);
+	parent->children[parent->nchildren++] = child;
+
+	/* set new parent */
+	child->parent = parent;
 }
 
 void xml_node_append_attr (xml_node_t *node, xml_attr_t *attr)

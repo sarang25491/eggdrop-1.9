@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: sockbuf.c,v 1.11 2004/06/21 11:33:40 wingman Exp $";
+static const char rcsid[] = "$Id: sockbuf.c,v 1.12 2004/06/22 23:20:23 wingman Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -96,6 +96,36 @@ static void stats_in(sockbuf_stats_t *stats, int len);
 static void stats_out(sockbuf_stats_t *stats, int len);
 static void skip_stats(sockbuf_stats_t *stats, int curtime);
 static void update_stats(sockbuf_stats_t *stats);
+
+int sockbuf_init(void)
+{
+	return (0);	
+}
+
+int sockbuf_shutdown(void)
+{
+	int i;
+
+	for (i = npollfds - 1; i >= 0; i--) {
+        	sockbuf_t *sbuf = &sockbufs[idx_array[i]];
+
+		putlog(LOG_DEBUG, "*", "Socket %s:%i shouldn't be opened at this stage, closing.\n",
+			(sbuf->peer_ip) ? sbuf->peer_ip : sbuf->my_ip,
+			(sbuf->peer_ip) ? sbuf->peer_port : sbuf->my_port);
+			
+		sockbuf_delete(idx_array[i]);
+	}
+
+	if (idx_array) free(idx_array); idx_array = NULL;
+
+	if (pollfds) free(pollfds); pollfds = NULL;
+	npollfds = 0;
+
+	if (sockbufs) free(sockbufs); sockbufs = NULL;
+	nsockbufs = 0;
+
+	return (0);
+}
 
 /* Mark a sockbuf as blocked and put it on the POLLOUT list. */
 static void sockbuf_block(int idx)
@@ -567,6 +597,16 @@ int sockbuf_delete(int idx)
 
 	/* Free the stats struct. */
 	if (sbuf->stats) free(sbuf->stats);
+
+	/* Free filters */
+	if (sbuf->filters)
+		free(sbuf->filters);
+	sbuf->filters = NULL;
+
+	/* Free filter client data */
+	if (sbuf->filter_client_data)
+		free(sbuf->filter_client_data);
+	sbuf->filter_client_data = NULL;
 
 	/* Mark it as deleted. */
 	memset(sbuf, 0, sizeof(*sbuf));

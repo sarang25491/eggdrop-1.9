@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partychan.c,v 1.15 2004/06/22 21:55:32 wingman Exp $";
+static const char rcsid[] = "$Id: partychan.c,v 1.16 2004/06/22 23:20:23 wingman Exp $";
 #endif
 
 #include <stdarg.h>
@@ -35,6 +35,7 @@ static const char rcsid[] = "$Id: partychan.c,v 1.15 2004/06/22 21:55:32 wingman
 static hash_table_t *cid_ht = NULL;
 static partychan_t *partychan_head = NULL;
 static int g_cid = 0; /* Keep track of next available cid. */
+static partymember_common_t *common_list_head = NULL;
 
 /* Some bind tables for partyline channels. */
 static bind_table_t *BT_partyjoin = NULL,
@@ -55,6 +56,30 @@ int partychan_init(void)
 
 int partychan_shutdown(void)
 {
+	partychan_t *chan, *next;
+	partymember_common_t *common, *next_common;
+
+	if (partychan_head != NULL) {
+		for (chan = partychan_head; chan; ) {
+			next = chan->next;
+			partychan_delete(chan);
+			chan = next;
+		}
+		partychan_head = NULL;
+	}
+
+	if (common_list_head) {
+		for (common = common_list_head; common; ) {
+			next_common = common->next;
+
+			free(common->members);
+			free(common);
+
+			common = next_common;
+		} 
+		common_list_head = NULL;
+	}
+
 	bind_table_del(BT_partypub);
 	bind_table_del(BT_partypart);
 	bind_table_del(BT_partyjoin);
@@ -94,9 +119,10 @@ partychan_t *partychan_new(int cid, const char *name)
 	return(chan);
 }
 
-int partychan_delete(partychan_t *chan)
+void partychan_delete(partychan_t *chan)
 {
-	return(0);
+	if (chan->name) free(chan->name);
+	free(chan);
 }
 
 static int partychan_cleanup(partychan_t *chan)
@@ -327,8 +353,6 @@ int partychan_msg(partychan_t *chan, partymember_t *src, const char *text, int l
 	}
 	return(0);
 }
-
-static partymember_common_t *common_list_head = NULL;
 
 /* Build a list of members on the same channels as p. */
 partymember_common_t *partychan_get_common(partymember_t *p)

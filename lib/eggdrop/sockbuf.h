@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: sockbuf.h,v 1.6 2004/01/10 01:43:18 stdarg Exp $
+ * $Id: sockbuf.h,v 1.7 2004/06/22 23:20:23 wingman Exp $
  */
 
 #ifndef _EGG_SOCKBUF_H_
@@ -97,6 +97,9 @@ typedef struct {
 	/* Command-level events. */
 	int (*on_delete)(void *client_data, int idx);
 } sockbuf_handler_t;
+
+int sockbuf_init(void);
+int sockbuf_shutdown(void);
 
 int sockbuf_write(int idx, const char *data, int len);
 int sockbuf_new();

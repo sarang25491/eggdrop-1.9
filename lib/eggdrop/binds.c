@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: binds.c,v 1.17 2004/06/22 20:32:18 wingman Exp $";
+static const char rcsid[] = "$Id: binds.c,v 1.18 2004/06/22 23:20:23 wingman Exp $";
 #endif
 
 #include <string.h>
@@ -118,19 +118,23 @@ static void bind_table_really_del(bind_table_t *table)
 			break;
 	}
 
-	egg_assert(cur != NULL);
+	if (cur == NULL) {
+		putlog(LOG_DEBUG, "*", "bind table '%s' is marked for destroying but isn't found.", table->name);
+		return;
+	}
 
 	/* unlink it from list */
 	if (prev == NULL) bind_table_list_head = table->next;
 	else prev->next = table->next;
 
-	free(table->name);
 	for (entry = table->entries; entry; entry = next) {
 		next = entry->next;
 		if (entry->function_name) free(entry->function_name);
 		if (entry->mask) free(entry->mask);
 		free(entry);
 	}
+	if (table->name) free(table->name);
+	if (table->syntax) free(table->syntax);
 	free(table);
 }
 
@@ -161,7 +165,7 @@ bind_entry_t *bind_entry_lookup(bind_table_t *table, int id, const char *mask, c
 
 	for (entry = table->entries; entry; entry = entry->next) {
 		if (entry->flags & BIND_DELETED) continue;
-		if (entry->id >= 0) {
+		if (id != -1 && entry->id >= 0) {
 			if (entry->id == id) break;
 		}
 		else {
@@ -183,7 +187,15 @@ int bind_entry_del(bind_table_t *table, int id, const char *mask, const char *fu
 	
 	/* better to issue a warning message than silently ignoring 
 	 * that this entry is not found...at least for now */
-	egg_assert_val(entry != NULL, -1);
+	if (entry == NULL) {
+		putlog(LOG_DEBUG, "*", "A bind entry '%i/%s/%s' is marked for destroying but isn't found in table '%s'.",
+			id, mask, function_name, table->name);
+		putlog(LOG_DEBUG, "*", "Current entries are:");
+		for (entry = table->entries; entry; entry = entry->next) {
+			putlog(LOG_DEBUG, "*", "  %i/%s/%s", entry->id, entry->mask, entry->function_name);
+		}
+		return -1;
+	}
 	/*if (!entry) return(-1);*/
 
 	if (cdataptr) *(void **)cdataptr = entry->client_data;
@@ -199,9 +211,9 @@ static void bind_entry_really_del(bind_table_t *table, bind_entry_t *entry)
 	if (entry->next) entry->next->prev = entry->prev;
 	if (entry->prev) entry->prev->next = entry->next;
 	else table->entries = entry->next;
+
 	if (entry->function_name) free(entry->function_name);
 	if (entry->mask) free(entry->mask);
-	memset(entry, 0, sizeof(*entry));
 	free(entry);
 }
 
@@ -334,12 +346,12 @@ int bind_check(bind_table_t *table, flags_t *user_flags, const char *match, ...)
 
 int bind_check_hits(bind_table_t *table, flags_t *user_flags, const char *match, int *hits,...)
 {
-        va_list args;
-        int ret;
+	va_list args;
+	int ret;
 
-        va_start (args, hits);
-        ret = bind_vcheck_hits (table, user_flags, match, hits, args);
-        va_end (args);
+	va_start (args, hits);
+	ret = bind_vcheck_hits (table, user_flags, match, hits, args);
+	va_end (args);
 
 	return ret;
 }

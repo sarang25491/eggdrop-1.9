@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.176 2004/06/22 21:55:32 wingman Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.177 2004/06/22 23:20:23 wingman Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -381,6 +381,9 @@ static void core_shutdown_or_restart()
 
 	/* unload core help */
 	help_unload_by_module("core");
+
+	/* shutdown core binds */
+	core_binds_shutdown();
 
 	/* shutdown logging */ 
 	logfile_shutdown();

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: script.c,v 1.17 2004/06/22 22:00:26 wingman Exp $";
+static const char rcsid[] = "$Id: script.c,v 1.18 2004/06/22 23:20:23 wingman Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -64,6 +64,8 @@ int script_shutdown(void)
 {
 	int i;
 
+	script_delete_commands(script_cmds);
+
 	/* XXX: this may be the wrong place. This should be handled by module
  	 * XXX: dependencies. E.g. if someone unloads "script", e.g. "tclscript" 
 	 * XXX: should be magicly unloaded too */
@@ -72,6 +74,7 @@ int script_shutdown(void)
 			script_unregister_module(script_modules[i]);
 		}
 	}
+	if (script_modules) free(script_modules); script_modules = NULL;
 
 	/* XXX: this shouldn't be necessary too if everything gets unloaded. */
 	if (njournal_events > 0) {
@@ -81,9 +84,8 @@ int script_shutdown(void)
 				journal_events[i].key);
 		}
 	}
+	if (journal_events) free(journal_events); journal_events = NULL;
 
-	script_delete_commands(script_cmds);
-	
 	return (0);
 }
 
@@ -153,6 +155,7 @@ static void *journal_del(int event, void *key)
 		memmove(journal_events+i, journal_events+i+1, sizeof(*journal_events) * (njournal_events-i-1));
 		njournal_events--;
 	}
+
 	return(data);
 }
 

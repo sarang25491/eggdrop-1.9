@@ -18,13 +18,16 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: memory.c,v 1.5 2004/06/22 21:55:32 wingman Exp $";
+static const char rcsid[] = "$Id: memory.c,v 1.6 2004/06/22 23:20:23 wingman Exp $";
 #endif
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <malloc.h>
 #include <string.h>
+
+#define _EGG_MEMORY_H /* don't include memory.h */
+#include <eggdrop/eggdrop.h>
 
 #define MEM_DEBUG_NONE               (1 << 0)
 #define MEM_DEBUG_PRINT_EACH_CALL    (1 << 1)
@@ -297,6 +300,10 @@ void mem_dbg_stats()
 			|| 0 == strcmp(block->func, "xml_node_set_int")
 			|| 0 == strcmp(block->func, "str_redup")) {
 			data = (char *)block->ptr;
+		} else if (0 == strcmp(block->func, "bind_table_add") && block->line == 82) {
+			data = ((bind_table_t *)block->ptr)->name;
+		} else if (0 == strcmp(block->func, "xml_node_new")) {
+			data = ((xml_node_t *)block->ptr)->name;
 		}
 
 		fprintf(fd, "%-16s %4i %-25s %5i %p %s\n", block->file, block->line, block->func, block->size, block->ptr, data);

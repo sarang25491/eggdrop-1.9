@@ -24,7 +24,7 @@
  */
  
 #ifndef lint
-static const char rcsid[] = "$Id: help.c,v 1.10 2004/06/22 21:55:32 wingman Exp $";
+static const char rcsid[] = "$Id: help.c,v 1.11 2004/06/22 23:20:23 wingman Exp $";
 #endif
 
 #include <sys/types.h>
@@ -311,9 +311,9 @@ static void help_delete_entry(help_entry_t *entry)
 	if (entry->flags) free(entry->flags);
 	if (entry->module) free(entry->module);
 
-	if (0 == strcmp(entry->type, "Variable")) {
+	if (0 == strcmp(entry->type, "Command")) {
 		if (entry->ext.command.syntax) free(entry->ext.command.syntax);
-	} else if (0 == strcmp(entry->type, "Command")) {	
+	} else if (0 == strcmp(entry->type, "Variable")) {	
 		if (entry->ext.variable.type) free(entry->ext.variable.type);
 		if (entry->ext.variable.path) free(entry->ext.variable.path);
 	}

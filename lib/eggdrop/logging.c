@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: logging.c,v 1.1 2004/06/21 18:44:20 wingman Exp $";
+static const char rcsid[] = "$Id: logging.c,v 1.2 2004/06/22 23:20:23 wingman Exp $";
 #endif
 
 #include <stdlib.h>
@@ -34,7 +34,7 @@ void logging_init(void)
 
 void logging_shutdown(void)
 {
-	/* XXX: bind_table_del(BT_LOG); */
+	bind_table_del(BT_log);
 }
 
 int putlog(int flags, const char *chan, const char *format, ...)

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.26 2004/06/22 21:55:32 wingman Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.27 2004/06/22 23:20:23 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -203,24 +203,21 @@ static int save_walker(const void *key, void *dataptr, void *param)
 			xml_node_set_str(setting->extended[j].value, user_node, "setting", i, "extended", j, "value", 0, 0);
 		}
 	}
-	xml_node_add(root, user_node);
+	xml_node_append_child(root, user_node);
 	return(0);
 }
 
 int user_save(const char *fname)
 {
 	xml_node_t *root;
-	FILE *fp;
 
 	root = xml_node_new();
 	xml_node_set_int(g_uid, root, "next_uid", 0, 0);
 	xml_node_set_int(uid_wraparound, root, "uid_wraparound", 0, 0);
 	hash_table_walk(uid_ht, save_walker, root);
-	if (!fname) fname = "users.xml";
-	fp = fopen(fname, "w");
-	if (!fp) return(-1);
-	xml_write_node(fp, root, 0);
-	fclose(fp);
+
+	xml_save_file((fname) ? fname : "users.xml", root, XML_INDENT);
+
 	xml_node_delete(root);
 	return(0);
 }
@@ -301,8 +298,7 @@ static int user_really_delete(void *client_data)
 		if (setting->chan) free(setting->chan);
 	}
 	if (u->settings) free(u->settings);
-
-	memset(u, 0, sizeof(*u));
+	if (u->handle) free(u->handle);
 	free(u);
 	return(0);
 }

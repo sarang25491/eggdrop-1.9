@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xmlwrite.c,v 1.6 2004/06/22 10:54:42 wingman Exp $";
+static const char rcsid[] = "$Id: xmlwrite.c,v 1.7 2004/06/22 23:20:23 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -72,3 +72,29 @@ int xml_write_node(FILE *fp, xml_node_t *node, int indent)
 	free(tabs);
 	return(0);
 }
+
+int xml_save(FILE *fd, xml_node_t *node, int options)
+{
+	return xml_write_node(fd, node, (options & XML_INDENT) ? 1 : 0);	
+}
+
+int xml_save_file(const char *file, xml_node_t *node, int options)
+{
+	FILE *fd;
+	int ret;
+
+	fd = fopen(file, "r");
+	if (fd == NULL)
+		return -1;
+	ret = xml_save(fd, node, options);
+	fclose(fd);
+
+	return ret;
+}
+
+#if 0
+int xml_save_str(char **str, xml_node_t *node, int options)
+{
+	return -1; /* not supported */
+}
+#endif

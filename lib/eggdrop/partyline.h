@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: partyline.h,v 1.19 2004/06/22 20:12:37 wingman Exp $
+ * $Id: partyline.h,v 1.20 2004/06/22 23:20:23 wingman Exp $
  */
 
 #ifndef _EGG_PARTYLINE_H_
@@ -103,6 +103,7 @@ int partyline_update_info(partymember_t *p, const char *ident, const char *host)
 
 /* Channel functions. */
 partychan_t *partychan_new(int cid, const char *name);
+void partychan_delete(partychan_t *chan);
 partychan_t *partychan_lookup_cid(int cid);
 partychan_t *partychan_lookup_name(const char *name);
 partychan_t *partychan_get_default(partymember_t *p);
