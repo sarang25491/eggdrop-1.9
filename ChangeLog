@@ -1,3 +1,9 @@
+2003-02-03 02:32  Will Buckner <wcc@techmonkeys.org>
+
+	* eggdrop.conf:
+
+	* Fixed a config file conflict.  
+
 2003-02-03 01:57  stdarg <stdarg@techmonkeys.org>
 
 	* modules/script/scriptlog.c:
