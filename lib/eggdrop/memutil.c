@@ -3,7 +3,7 @@
  *   some macros and functions for common operations with strings and memory
  *   in general.
  *
- * $Id: memutil.c,v 1.3 2002/01/25 21:25:32 ite Exp $
+ * $Id: memutil.c,v 1.4 2002/01/26 02:47:57 stdarg Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -25,6 +25,7 @@
 
 #include <stdio.h>
 #include <ctype.h>
+#include <string.h>
 #include "memutil.h"
 
 /*        This implementation wont overrun dst - 'max' is the max bytes that dst
@@ -235,20 +236,26 @@ char *strchr_unescape(char *str, const char div, register const char esc_char)
 
 /* Remove space characters from beginning and end of string 
  * (more efficent by Fred1)
+ * (even more by stdarg)
  */
-void rmspace(char *s)    
-{                        
-  char *p;               
-
-  if (*s == '\0')
-        return;
+void rmspace(char *s)
+{
+  char *p;
+  int len;
 
   /* Wipe end of string */
-  for (p = s + strlen(s) - 1; ((isspace(*p)) && (p >= s)); p--);
-    if (p != s + strlen(s) - 1)
-      *(p + 1) = 0;
-  for (p = s; ((isspace(*p)) && (*p)); p++);
-    if (p != s)
-      strcpy(s, p);
+  for (p = s + strlen(s) - 1; (p >= s) && isspace(*p); p--) ; /* empty */
+
+  len = (p+1) - s;
+  *(p + 1) = 0;
+
+  for (p = s; isspace(*p); p++) ; /* empty */
+
+  if (p != s) {
+    /* strcpy() shouldn't be used to copy overlapping strings */
+    len -= (p - s);
+    memmove(s, p, len);
+    s[len] = 0;
+  }
 }
 
