@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.59 2001/08/13 19:12:29 guppy Exp $
+ * $Id: channels.c,v 1.60 2001/08/23 04:06:10 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -437,6 +437,12 @@ flood-kick %d:%d flood-deop %d:%d flood-nick %d:%d aop-delay %d:%d \
 	else if (ul->type == UDEF_INT)
 	  fprintf(f, "%s%s %d ", "udef-int-", ul->name, getudef(ul->values,
 		  chan->dname));
+	else if (ul->type == UDEF_STR) {
+		char *p;
+		p = (char *)getudef(ul->values, chan->dname);
+		if (!p) strcpy(s, "{}");
+		fprintf(f, "udef-str-%s %s ", ul->name, p);
+	}
 	else
 	  debug1("UDEF-ERROR: unknown type %d", ul->type);
       }

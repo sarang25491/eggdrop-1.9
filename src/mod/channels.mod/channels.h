@@ -1,7 +1,7 @@
 /*
  * channels.h -- part of channels.mod
  *
- * $Id: channels.h,v 1.17 2001/06/28 19:01:14 guppy Exp $
+ * $Id: channels.h,v 1.18 2001/08/23 04:06:10 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -28,6 +28,7 @@
 /* User defined chanmodes/settings */
 #define UDEF_FLAG 1
 #define UDEF_INT 2
+#define UDEF_STR 3
 
 #define MASKREASON_MAX	160	/* Max length of ban/invite/exempt/etc.
 				   reasons.				*/
@@ -102,9 +103,9 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
 static int tcl_channel_add(Tcl_Interp * irp, char *, char *);
 static char *convert_element(char *src, char *dst);
 static int expmem_udef(struct udef_struct *);
-static int expmem_udef_chans (struct udef_chans *);
+static int expmem_udef_chans (int, struct udef_chans *);
 static void free_udef(struct udef_struct *);
-static void free_udef_chans(struct udef_chans *);
+static void free_udef_chans(struct udef_chans *, int);
 static int getudef(struct udef_chans *, char *);
 static void initudef(int type, char *, int);
 static void setudef(struct udef_struct *, char *, int);

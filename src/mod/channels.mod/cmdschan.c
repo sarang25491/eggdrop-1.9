@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.50 2001/08/21 22:03:30 sup Exp $
+ * $Id: cmdschan.c,v 1.51 2001/08/23 04:06:10 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1205,12 +1205,12 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
     dprintf(idx, "     %cenforcebans    %cdynamicbans    %cuserbans\n",
 	    (chan->status & CHAN_ENFORCEBANS) ? '+' : '-',
 	    (chan->status & CHAN_DYNAMICBANS) ? '+' : '-',
-	    (chan->status & CHAN_NOUSERBANS) ? '-' : '+');
+	    (!(chan->status & CHAN_USERBANS)) ? '-' : '+');
     dprintf(idx, "     %cdynamicexempts %cuserexempts    %cdynamicinvites %cuserinvites\n",
 	    (chan->ircnet_status & CHAN_DYNAMICEXEMPTS) ? '+' : '-',
-	    (chan->ircnet_status & CHAN_NOUSEREXEMPTS) ? '-' : '+',
+	    (!(chan->ircnet_status & CHAN_USEREXEMPTS)) ? '-' : '+',
 	    (chan->ircnet_status & CHAN_DYNAMICINVITES) ? '+' : '-',
-	    (chan->ircnet_status & CHAN_NOUSERINVITES) ? '-' : '+');
+	    (!(chan->ircnet_status & CHAN_USERINVITES)) ? '-' : '+');
 
     ii = 1;
     tmp = 0;
@@ -1258,6 +1258,20 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
       }
     if (ii > 1)
       dprintf(idx, "%s\n", work);
+
+	if (u->flags & USER_OWNER) {
+		tmp = 0;
+		for (ul = udef; ul; ul = ul->next)
+			if (ul->defined && ul->type == UDEF_STR) {
+				char *p = (char *)getudef(ul->values, chan->dname);
+				if (!p) p = "{}";
+				if (!tmp) {
+					dprintf(idx, "User defined channel strings:\n");
+					tmp = 1;
+				}
+				dprintf(idx, "%s: %s\n", ul->name, p);
+			}
+	}
 
     dprintf(idx, "flood settings: chan ctcp join kick deop nick\n");
     dprintf(idx, "number:          %3d  %3d  %3d  %3d  %3d  %3d\n",

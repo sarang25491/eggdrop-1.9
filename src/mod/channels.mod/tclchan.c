@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.51 2001/08/22 23:49:28 sup Exp $
+ * $Id: tclchan.c,v 1.52 2001/08/23 04:06:10 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -21,6 +21,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+/* flagmaps.c defines flag name to flag value structures. */
+#include "flagmaps.c"
+
+static int lookup_flag_by_name(channel_flag_map_t *map, char *name, int *flagval);
 
 static int tcl_killban STDVAR
 {
@@ -732,6 +737,7 @@ static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
 {
   char s[121];
   struct udef_struct *ul;
+  channel_flag_map_t *flag_map;
 
   get_mode_protect(chan, s);
   Tcl_AppendElement(irp, s);
@@ -755,94 +761,20 @@ static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
   Tcl_AppendElement(irp, s);
   simple_sprintf(s, "%d:%d", chan->aop_min, chan->aop_max);
   Tcl_AppendElement(irp, s);
-  if (chan->status & CHAN_ENFORCEBANS)
-    Tcl_AppendElement(irp, "+enforcebans");
-  else
-    Tcl_AppendElement(irp, "-enforcebans");
-  if (chan->status & CHAN_DYNAMICBANS)
-    Tcl_AppendElement(irp, "+dynamicbans");
-  else
-    Tcl_AppendElement(irp, "-dynamicbans");
-  if (chan->status & CHAN_NOUSERBANS)
-    Tcl_AppendElement(irp, "-userbans");
-  else
-    Tcl_AppendElement(irp, "+userbans");
-  if (chan->status & CHAN_OPONJOIN)
-    Tcl_AppendElement(irp, "+autoop");
-  else
-    Tcl_AppendElement(irp, "-autoop");
-  if (chan->status & CHAN_BITCH)
-    Tcl_AppendElement(irp, "+bitch");
-  else
-    Tcl_AppendElement(irp, "-bitch");
-  if (chan->status & CHAN_GREET)
-    Tcl_AppendElement(irp, "+greet");
-  else
-    Tcl_AppendElement(irp, "-greet");
-  if (chan->status & CHAN_PROTECTOPS)
-    Tcl_AppendElement(irp, "+protectops");
-  else
-    Tcl_AppendElement(irp, "-protectops");
-  if (chan->status & CHAN_PROTECTFRIENDS)
-    Tcl_AppendElement(irp, "+protectfriends");
-  else
-    Tcl_AppendElement(irp, "-protectfriends");
-  if (chan->status & CHAN_DONTKICKOPS)
-    Tcl_AppendElement(irp, "+dontkickops");
-  else
-    Tcl_AppendElement(irp, "-dontkickops");
-  if (chan->status& CHAN_INACTIVE)
-    Tcl_AppendElement(irp, "+inactive");
-  else
-    Tcl_AppendElement(irp, "-inactive");
-  if (chan->status & CHAN_LOGSTATUS)
-    Tcl_AppendElement(irp, "+statuslog");
-  else
-    Tcl_AppendElement(irp, "-statuslog");
-  if (chan->status & CHAN_REVENGE)
-    Tcl_AppendElement(irp, "+revenge");
-  else
-    Tcl_AppendElement(irp, "-revenge");
-  if (chan->status & CHAN_REVENGEBOT)
-    Tcl_AppendElement(irp, "+revengebot");
-  else
-    Tcl_AppendElement(irp, "-revengebot");
-  if (chan->status & CHAN_SECRET)
-    Tcl_AppendElement(irp, "+secret");
-  else
-    Tcl_AppendElement(irp, "-secret");
-  if (chan->status & CHAN_SHARED)
-    Tcl_AppendElement(irp, "+shared");
-  else
-    Tcl_AppendElement(irp, "-shared");
-  if (chan->status & CHAN_AUTOVOICE)
-    Tcl_AppendElement(irp, "+autovoice");
-  else
-    Tcl_AppendElement(irp, "-autovoice");
-  if (chan->status & CHAN_CYCLE)
-    Tcl_AppendElement(irp, "+cycle");
-  else
-    Tcl_AppendElement(irp, "-cycle");
-  if (chan->ircnet_status& CHAN_DYNAMICEXEMPTS)
-    Tcl_AppendElement(irp, "+dynamicexempts");
-  else
-    Tcl_AppendElement(irp, "-dynamicexempts");
-  if (chan->ircnet_status& CHAN_NOUSEREXEMPTS)
-    Tcl_AppendElement(irp, "-userexempts");
-  else
-    Tcl_AppendElement(irp, "+userexempts");
-  if (chan->ircnet_status& CHAN_DYNAMICINVITES)
-    Tcl_AppendElement(irp, "+dynamicinvites");
-  else
-    Tcl_AppendElement(irp, "-dynamicinvites");
-  if (chan->ircnet_status& CHAN_NOUSERINVITES)
-    Tcl_AppendElement(irp, "-userinvites");
-  else
-    Tcl_AppendElement(irp, "+userinvites");
-  if (chan->status & CHAN_NODESYNCH)
-    Tcl_AppendElement(irp, "+nodesynch");
-  else
-    Tcl_AppendElement(irp, "-nodesynch");
+  for (flag_map = normal_flag_map; flag_map->name; flag_map++) {
+    char buf[50], dir;
+    if (chan->status & flag_map->flagval) dir = '+';
+    else dir = '-';
+    sprintf(buf, "%c%s", dir, flag_map->name);
+    Tcl_AppendElement(irp, buf);
+  }
+  for (flag_map = stupid_ircnet_flag_map; flag_map->name; flag_map++) {
+    char buf[50], dir;
+    if (chan->status & flag_map->flagval) dir = '+';
+    else dir = '-';
+    sprintf(buf, "%c%s", dir, flag_map->name);
+    Tcl_AppendElement(irp, buf);
+  }
   for (ul = udef; ul && ul->defined && ul->name; ul = ul->next) {
       if (ul->type == UDEF_FLAG) {
         simple_sprintf(s, "%c%s", getudef(ul->values, chan->dname) ? '+' : '-',
@@ -851,10 +783,80 @@ static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
       } else if (ul->type == UDEF_INT) {
         simple_sprintf(s, "%s %d", ul->name, getudef(ul->values, chan->dname));
         Tcl_AppendElement(irp, s);
+	} else if (ul->type == UDEF_STR) {
+		char *p;
+		char *buf;
+
+		p = (char *)getudef(ul->values, chan->dname);
+		if (!p) p = "{}";
+		buf = (char *)nmalloc(strlen(ul->name)+strlen(p)+2);
+		simple_sprintf(buf, "%s %s", ul->name, p);
+		Tcl_AppendElement(irp, buf);
+		nfree(buf);
       } else
         debug1("UDEF-ERROR: unknown type %d", ul->type);
     }
   return TCL_OK;
+}
+
+static int tcl_channel_get(Tcl_Interp * irp, struct chanset_t *chan, char *setting)
+{
+	char s[121];
+	struct udef_struct *ul;
+	int flagval;
+
+#define CHECK(x) !strcmp(setting, x)
+	if (CHECK("mode")) {
+		get_mode_protect(chan, s);
+	}
+	else if (CHECK("idle-kick")) simple_sprintf(s, "%d", chan->idle_kick);
+	else if (CHECK("stop-net-hack")) simple_sprintf(s, "%d", chan->stopnethack_mode);
+	else if (CHECK("revenge-mode")) simple_sprintf(s, "%d", chan->revenge_mode);
+	else if (CHECK("flood-pub")) simple_sprintf(s, "%d %d", chan->flood_pub_thr, chan->flood_pub_time);
+	else if (CHECK("flood-ctcp")) simple_sprintf(s, "%d %d", chan->flood_ctcp_thr, chan->flood_ctcp_time);
+	else if (CHECK("flood-join")) simple_sprintf(s, "%d %d", chan->flood_join_thr, chan->flood_join_time);
+	else if (CHECK("flood-kick")) simple_sprintf(s, "%d %d", chan->flood_kick_thr, chan->flood_kick_time);
+	else if (CHECK("flood-deop")) simple_sprintf(s, "%d %d", chan->flood_deop_thr, chan->flood_deop_time);
+	else if (CHECK("flood-nick")) simple_sprintf(s, "%d %d", chan->flood_nick_thr, chan->flood_nick_time);
+	else if (CHECK("aop-delay")) simple_sprintf(s, "%d %d", chan->aop_min, chan->aop_max);
+	else if (lookup_flag_by_name(normal_flag_map, setting, &flagval)) simple_sprintf(s, "%d", chan->status & flagval);
+	else if (lookup_flag_by_name(stupid_ircnet_flag_map, setting, &flagval)) simple_sprintf(s, "%d", chan->ircnet_status & flagval);
+	else {
+		/* Hopefully it's a user-defined flag. */
+		for (ul = udef; ul && ul->name; ul = ul->next) {
+			if (!strcmp(setting, ul->name)) break;
+		}
+		if (!ul || !ul->name) {
+			/* Error if it wasn't found. */
+			Tcl_AppendResult(irp, "Unknown channel setting.", NULL);
+			return(TCL_ERROR);
+		}
+		if (ul->type == UDEF_STR) {
+			char **elms = NULL, *result, *value;
+			int nelms = 0;
+
+			/* If it's unset then give them an empty string. */
+			value = (char *)getudef(ul->values, chan->dname);
+			if (!value) value = "";
+
+			Tcl_SplitList(irp, (char *)value, &nelms, &elms);
+			if (nelms < 1) result = "";
+			else result = elms[0];
+
+			Tcl_AppendResult(irp, result, NULL);
+			if (elms) Tcl_Free((char *)elms);
+			return(TCL_OK);
+		}
+		else {
+			/* Flag or int, all the same. */
+			simple_sprintf(s, "%d", getudef(ul->values, chan->dname));
+			Tcl_AppendResult(irp, s, NULL);
+			return(TCL_OK);
+		}
+	}
+	/* Ok, if we make it this far, the result is "s". */
+	Tcl_AppendResult(irp, s, NULL);
+	return(TCL_OK);
 }
 
 static int tcl_channel STDVAR
@@ -881,6 +883,15 @@ static int tcl_channel STDVAR
     }
     return tcl_channel_modify(irp, chan, argc - 3, &argv[3]);
   }
+  if (!strcmp(argv[1], "get")) {
+    BADARGS(4, 4, " get channel-name setting-name");
+    chan = findchan_by_dname(argv[2]);
+    if (chan == NULL) {
+      Tcl_AppendResult(irp, "no such channel record", NULL);
+      return TCL_ERROR;
+    }
+    return(tcl_channel_get(irp, chan, argv[3]));
+  }
   if (!strcmp(argv[1], "info")) {
     BADARGS(3, 3, " info channel-name");
     chan = findchan_by_dname(argv[2]);
@@ -903,6 +914,19 @@ static int tcl_channel STDVAR
   Tcl_AppendResult(irp, "unknown channel command: should be one of: ",
 		   "add, set, info, remove", NULL);
   return TCL_ERROR;
+}
+
+static int lookup_flag_by_name(channel_flag_map_t *map, char *name, int *flagval)
+{
+	channel_flag_map_t *flagmap;
+
+	for (flagmap = map; flagmap->name; flagmap++) {
+		if (!strcmp(flagmap->name, name)) {
+			*flagval = flagmap->flagval;
+			return(1);
+		}
+	}
+	return(0);
 }
 
 /* Parse options for a channel.
@@ -955,102 +979,22 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
       }
       chan->revenge_mode = atoi(item[i]);
     }
-    else if (!strcmp(item[i], "+enforcebans"))
-      chan->status |= CHAN_ENFORCEBANS;
-    else if (!strcmp(item[i], "-enforcebans"))
-      chan->status &= ~CHAN_ENFORCEBANS;
-    else if (!strcmp(item[i], "+dynamicbans"))
-      chan->status |= CHAN_DYNAMICBANS;
-    else if (!strcmp(item[i], "-dynamicbans"))
-      chan->status &= ~CHAN_DYNAMICBANS;
-    else if (!strcmp(item[i], "-userbans"))
-      chan->status |= CHAN_NOUSERBANS;
-    else if (!strcmp(item[i], "+userbans"))
-      chan->status &= ~CHAN_NOUSERBANS;
-    else if (!strcmp(item[i], "+autoop"))
-      chan->status |= CHAN_OPONJOIN;
-    else if (!strcmp(item[i], "-autoop"))
-      chan->status &= ~CHAN_OPONJOIN;
-    else if (!strcmp(item[i], "+bitch"))
-      chan->status |= CHAN_BITCH;
-    else if (!strcmp(item[i], "-bitch"))
-      chan->status &= ~CHAN_BITCH;
-    else if (!strcmp(item[i], "+nodesynch"))
-      chan->status |= CHAN_NODESYNCH;
-    else if (!strcmp(item[i], "-nodesynch"))
-      chan->status &= ~CHAN_NODESYNCH;
-    else if (!strcmp(item[i], "+greet"))
-      chan->status |= CHAN_GREET;
-    else if (!strcmp(item[i], "-greet"))
-      chan->status &= ~CHAN_GREET;
-    else if (!strcmp(item[i], "+protectops"))
-      chan->status |= CHAN_PROTECTOPS;
-    else if (!strcmp(item[i], "-protectops"))
-      chan->status &= ~CHAN_PROTECTOPS;
-    else if (!strcmp(item[i], "+protectfriends"))
-      chan->status |= CHAN_PROTECTFRIENDS;
-    else if (!strcmp(item[i], "-protectfriends"))
-      chan->status &= ~CHAN_PROTECTFRIENDS;
-    else if (!strcmp(item[i], "+dontkickops"))
-      chan->status |= CHAN_DONTKICKOPS;
-    else if (!strcmp(item[i], "-dontkickops"))
-      chan->status &= ~CHAN_DONTKICKOPS;
-    else if (!strcmp(item[i], "+inactive"))
-      chan->status |= CHAN_INACTIVE;
-    else if (!strcmp(item[i], "-inactive"))
-      chan->status&= ~CHAN_INACTIVE;
-    else if (!strcmp(item[i], "+statuslog"))
-      chan->status |= CHAN_LOGSTATUS;
-    else if (!strcmp(item[i], "-statuslog"))
-      chan->status &= ~CHAN_LOGSTATUS;
-    else if (!strcmp(item[i], "+revenge"))
-      chan->status |= CHAN_REVENGE;
-    else if (!strcmp(item[i], "-revenge"))
-      chan->status &= ~CHAN_REVENGE;
-    else if (!strcmp(item[i], "+revengebot"))
-      chan->status |= CHAN_REVENGEBOT;
-    else if (!strcmp(item[i], "-revengebot"))
-      chan->status &= ~CHAN_REVENGEBOT;
-    else if (!strcmp(item[i], "+secret"))
-      chan->status |= CHAN_SECRET;
-    else if (!strcmp(item[i], "-secret"))
-      chan->status &= ~CHAN_SECRET;
-    else if (!strcmp(item[i], "+shared"))
-      chan->status |= CHAN_SHARED;
-    else if (!strcmp(item[i], "-shared"))
-      chan->status &= ~CHAN_SHARED;
-    else if (!strcmp(item[i], "+autovoice"))
-      chan->status |= CHAN_AUTOVOICE;
-    else if (!strcmp(item[i], "-autovoice"))
-      chan->status &= ~CHAN_AUTOVOICE;
-    else if (!strcmp(item[i], "+cycle"))
-      chan->status |= CHAN_CYCLE;
-    else if (!strcmp(item[i], "-cycle"))
-      chan->status &= ~CHAN_CYCLE;
-    else if (!strcmp(item[i], "+dynamicexempts"))
-      chan->ircnet_status|= CHAN_DYNAMICEXEMPTS;
-    else if (!strcmp(item[i], "-dynamicexempts"))
-      chan->ircnet_status&= ~CHAN_DYNAMICEXEMPTS;
-    else if (!strcmp(item[i], "-userexempts"))
-      chan->ircnet_status|= CHAN_NOUSEREXEMPTS;
-    else if (!strcmp(item[i], "+userexempts"))
-      chan->ircnet_status&= ~CHAN_NOUSEREXEMPTS;
-    else if (!strcmp(item[i], "+dynamicinvites"))
-      chan->ircnet_status|= CHAN_DYNAMICINVITES;
-    else if (!strcmp(item[i], "-dynamicinvites"))
-      chan->ircnet_status&= ~CHAN_DYNAMICINVITES;
-    else if (!strcmp(item[i], "-userinvites"))
-      chan->ircnet_status|= CHAN_NOUSERINVITES;
-    else if (!strcmp(item[i], "+userinvites"))
-      chan->ircnet_status&= ~CHAN_NOUSERINVITES;
-    /* ignore wasoptest, stopnethack and clearbans in chanfile, remove
-       this later */
-    else if (!strcmp(item[i], "-stopnethack"))  ;
-    else if (!strcmp(item[i], "+stopnethack"))  ;
-    else if (!strcmp(item[i], "-wasoptest"))  ;
-    else if (!strcmp(item[i], "+wasoptest"))  ;  /* Eule 01.2000 */
-    else if (!strcmp(item[i], "+clearbans"))  ;
-    else if (!strcmp(item[i], "-clearbans"))  ;
+    else if (item[i][0] == '+' || item[i][0] == '-') {
+      int flagval;
+
+      if (lookup_flag_by_name(normal_flag_map, item[i]+1, &flagval)) {
+        if (item[i][0] == '-') chan->status &= ~flagval;
+        else chan->status |= flagval;
+      }
+      else if (lookup_flag_by_name(stupid_ircnet_flag_map, item[i]+1, &flagval)) {
+        if (item[i][0] == '-') chan->status &= ~flagval;
+        else chan->status |= flagval;
+      }
+      else {
+        /* Hopefully it's a user-defined flag! */
+        goto check_for_udef_flags;
+      }
+    }
     else if (!strncmp(item[i], "flood-", 6)) {
       int *pthr = 0, *ptime;
       char *p;
@@ -1116,6 +1060,9 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
         initudef(UDEF_FLAG, item[i] + 11, 0);
       else if (!strncmp(item[i], "udef-int-", 9))
         initudef(UDEF_INT, item[i] + 9, 0);
+	else if (!strncmp(item[i], "udef-str-", 9))
+		initudef(UDEF_STR, item[i] + 9, 0);
+check_for_udef_flags:
       found = 0;
       for (ul = udef; ul; ul = ul->next) {
         if (ul->type == UDEF_FLAG &&
@@ -1146,6 +1093,23 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
           found = 1;
 	  break;
         }
+	else if (ul->type == UDEF_STR && (!egg_strcasecmp(item[i], ul->name) || (!strncmp(item[i], "udef-str-", 9) && !egg_strcasecmp(item[i] + 9, ul->name)))) {
+		char *val;
+		i++;
+		if (i >= items) {
+			if (irp) Tcl_AppendResult(irp, "this setting needs an aargument", NULL);
+			return TCL_ERROR;
+		}
+		val = (char *)getudef(ul->values, chan->dname);
+		if (val) nfree(val);
+		/* Get extra room for new braces, etc */
+		val = nmalloc(3 * strlen(item[i])+10);
+		convert_element(item[i], val);
+		val = nrealloc(val, strlen(val)+1);
+		setudef(ul, chan->dname, (int)val);
+		found = 1;
+		break;
+	}
       }
       if (!found) {
         if (irp && item[i][0]) /* ignore "" */
@@ -1609,8 +1573,11 @@ static int tcl_setudef STDVAR
     type = UDEF_FLAG;
   else if (!egg_strcasecmp(argv[1], "int"))
     type = UDEF_INT;
+	/*## ADD CODE FOR STRING SETTINGS*/
+	else if (!egg_strcasecmp(argv[1], "str"))
+		type = UDEF_STR;
   else {
-    Tcl_AppendResult(irp, "invalid type. Must be one of: flag, int", NULL);
+    Tcl_AppendResult(irp, "invalid type. Must be one of: flag, int, str", NULL);
     return TCL_ERROR;
   }
   initudef(type, argv[2], 1);
@@ -1627,8 +1594,11 @@ static int tcl_renudef STDVAR
     type = UDEF_FLAG;
   else if (!egg_strcasecmp(argv[1], "int"))
     type = UDEF_INT;
+	/*## ADD CODE FOR STRING SETTINGS*/
+	else if (!egg_strcasecmp(argv[1], "str"))
+		type = UDEF_STR;
   else {
-    Tcl_AppendResult(irp, "invalid type. Must be one of: flag, int", NULL);
+    Tcl_AppendResult(irp, "invalid type. Must be one of: flag, int, str", NULL);
     return TCL_ERROR;
   }
   for (ul = udef; ul; ul = ul->next) {
@@ -1656,8 +1626,11 @@ static int tcl_deludef STDVAR
     type = UDEF_FLAG;
   else if (!egg_strcasecmp(argv[1], "int"))
     type = UDEF_INT;
+	/*## ADD CODE FOR STRING SETTINGS*/
+	else if (!egg_strcasecmp(argv[1], "str"))
+		type = UDEF_STR;
   else {
-    Tcl_AppendResult(irp, "invalid type. Must be one of: flag, int", NULL);
+    Tcl_AppendResult(irp, "invalid type. Must be one of: flag, int, str", NULL);
     return TCL_ERROR;
   }
   for (ul = udef; ul; ul = ul->next) {
@@ -1667,7 +1640,7 @@ static int tcl_deludef STDVAR
     if (ull->type == type && !egg_strcasecmp(ull->name, argv[2])) {
       ul->next = ull->next;
       nfree(ull->name);
-      free_udef_chans(ull->values);
+      free_udef_chans(ull->values, ull->type);
       nfree(ull);
       found = 1;
     }
@@ -1676,7 +1649,7 @@ static int tcl_deludef STDVAR
     if (udef->type == type && !egg_strcasecmp(udef->name, argv[2])) {
       ul = udef->next;
       nfree(udef->name);
-      free_udef_chans(udef->values);
+      free_udef_chans(udef->values, udef->type);
       nfree(udef);
       udef = ul;
       found = 1;
