@@ -1,3 +1,21 @@
+2002-04-25 17:39  stdarg <stdarg@techmonkeys.org>
+
+	* doc/tcl-commands.doc:
+
+	
+	* Updated docs for putserv 
+
+2002-04-25 17:34  stdarg <stdarg@techmonkeys.org>
+
+	* modules/: notes/notes.c, server/server.c:
+
+	
+	* Fixed compiler warning in storenote 
+	* Applied patch by Guillaume Leclanche <mo-ize@nul-en.info> to
+	convert server script functions to language independence 
+	* Changed putserv to handle multiple queues, and removed
+	puthelp/putquick 
+
 2002-04-25 04:25  stdarg <stdarg@techmonkeys.org>
 
 	* testcode/base64.h:
