@@ -1,7 +1,7 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.22 2003/03/04 09:16:27 wcc Exp $
+dnl $Id: acinclude.m4,v 1.23 2003/03/04 10:33:56 tothwolf Exp $
 dnl
 
 
@@ -210,7 +210,7 @@ case $host_os in
   osf*)
     AC_DEFINE(STOP_UAC, 1,
               [Define if running on OSF/1 platform.])
-    AC_DEFINE(DONT_USE_SNPRINTFS, 1,
+    AC_DEFINE(BROKEN_SNPRINTF, 1,
               [Define to use Eggdrop's snprintf functions without regard to HAVE_SNPRINTF.])
   ;;
   next*)
