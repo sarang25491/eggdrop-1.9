@@ -1,3 +1,10 @@
+2001-10-19 00:47  stdarg <stdarg@techmonkeys.org>
+
+	* doc/: tcl-commands.doc, howto/README, howto/first_script.txt,
+	howto/timers.txt:
+
+	Documentation updates.  
+
 2001-10-18 11:29  stdarg <stdarg@techmonkeys.org>
 
 	* src/registry.c:
