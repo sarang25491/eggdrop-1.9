@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2001-12-17 04:00-0600\n"
+"POT-Creation-Date: 2001-12-18 04:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Transfer-Encoding: ENCODING\n"
 
 #. Kill bot incase a botchk is run from crond.
-#: src/bg.c:125 src/bg.c:133 src/main.c:789 src/main.c:795
+#: src/bg.c:125 src/bg.c:133 src/main.c:628 src/main.c:634
 #, c-format
 msgid "* Warning!  Could not write %s file!\n"
 msgstr ""
@@ -368,7 +368,7 @@ msgstr ""
 msgid "Linking to %s at %s:%d ..."
 msgstr ""
 
-#: src/botnet.c:1067 src/dcc.c:238
+#: src/botnet.c:1067 src/dcc.c:237
 #, c-format
 msgid "Failed link to %s."
 msgstr ""
@@ -742,7 +742,7 @@ msgstr ""
 msgid "Error loading module:"
 msgstr ""
 
-#: src/cmds.c:2266 src/modules.c:612
+#: src/cmds.c:2266 src/modules.c:604
 #, c-format
 msgid "Module loaded: %-16s"
 msgstr ""
@@ -818,177 +818,177 @@ msgstr ""
 msgid "DCC connection closed (%s!%s)"
 msgstr ""
 
-#: src/dcc.c:143
+#: src/dcc.c:142
 #, c-format
 msgid "Rejecting link from %s"
 msgstr ""
 
-#: src/dcc.c:213
+#: src/dcc.c:212
 #, c-format
 msgid "Linked to %s."
 msgstr ""
 
-#: src/dcc.c:323
+#: src/dcc.c:322
 #, c-format
 msgid "Received challenge from %s... sending response ..."
 msgstr ""
 
 #. We entered the wrong password
-#: src/dcc.c:340
+#: src/dcc.c:339
 #, c-format
 msgid "Bad password on connect attempt to %s."
 msgstr ""
 
-#: src/dcc.c:345
+#: src/dcc.c:344
 #, c-format
 msgid "Password required for connection to %s."
 msgstr ""
 
-#: src/dcc.c:358
+#: src/dcc.c:357
 #, c-format
 msgid "ERROR linking %s: %s"
 msgstr ""
 
-#: src/dcc.c:365
+#: src/dcc.c:364
 #, c-format
 msgid "Lost Bot: %s"
 msgstr ""
 
-#: src/dcc.c:372
+#: src/dcc.c:371
 #, c-format
 msgid "Timeout: bot link to %s at %s:%d"
 msgstr ""
 
-#: src/dcc.c:536
+#: src/dcc.c:535
 #, c-format
 msgid "Response (password hash) from %s incorrect"
 msgstr ""
 
-#: src/dcc.c:561 src/dcc.c:597
+#: src/dcc.c:560 src/dcc.c:596
 #, c-format
 msgid "Bad Password: [%s]%s/%d"
 msgstr ""
 
 #. Log entry for successful login -slennox 3/28/1999
-#: src/dcc.c:579
+#: src/dcc.c:578
 #, c-format
 msgid "Logged in: %s (%s/%d)"
 msgstr ""
 
-#: src/dcc.c:596
+#: src/dcc.c:595
 msgid "Negative on that, Houston.\n"
 msgstr ""
 
-#: src/dcc.c:610 src/dcc.c:1687
+#: src/dcc.c:609 src/dcc.c:1686
 #, c-format
 msgid "*** %s has joined the party line.\n"
 msgstr ""
 
-#: src/dcc.c:620 src/dcc.c:823
+#: src/dcc.c:619 src/dcc.c:822
 #, c-format
 msgid "Lost dcc connection to %s (%s/%d)"
 msgstr ""
 
-#: src/dcc.c:629
+#: src/dcc.c:628
 #, c-format
 msgid "Password timeout on dcc chat: [%s]%s"
 msgstr ""
 
-#: src/dcc.c:1013
+#: src/dcc.c:1012
 #, c-format
 msgid "Telnet connection flood from %s!  Placing on ignore!"
 msgstr ""
 
-#: src/dcc.c:1040
+#: src/dcc.c:1039
 #, c-format
 msgid "Failed TELNET incoming (%s)"
 msgstr ""
 
-#: src/dcc.c:1056
+#: src/dcc.c:1055
 #, c-format
 msgid "Refused %s/%d (bad src port)"
 msgstr ""
 
-#: src/dcc.c:1065
+#: src/dcc.c:1064
 #, c-format
 msgid "Refused %s/%d (invalid ip)"
 msgstr ""
 
-#: src/dcc.c:1101
+#: src/dcc.c:1100
 #, c-format
 msgid "Lost listening socket while resolving %s"
 msgstr ""
 
-#: src/dcc.c:1110
+#: src/dcc.c:1109
 #, c-format
 msgid "Refused %s (bad hostname)"
 msgstr ""
 
-#: src/dcc.c:1127
+#: src/dcc.c:1126
 #, c-format
 msgid "Telnet connection: %s/%d"
 msgstr ""
 
-#: src/dcc.c:1142
+#: src/dcc.c:1141
 #, c-format
 msgid "Ident failed for %s: %s"
 msgstr ""
 
-#: src/dcc.c:1159
+#: src/dcc.c:1158
 #, c-format
 msgid "(!) Listening port %d abruptly died."
 msgstr ""
 
-#: src/dcc.c:1186
+#: src/dcc.c:1185
 #, c-format
 msgid "Lost telnet connection from %s while checking for duplicate"
 msgstr ""
 
-#: src/dcc.c:1208
+#: src/dcc.c:1207
 #, c-format
 msgid "Refused telnet connection from %s (duplicate)"
 msgstr ""
 
-#: src/dcc.c:1273
+#: src/dcc.c:1272
 #, c-format
 msgid "Refused %s (bad nick)"
 msgstr ""
 
-#: src/dcc.c:1283
+#: src/dcc.c:1282
 #, c-format
 msgid "Refused %s (non-bot)"
 msgstr ""
 
-#: src/dcc.c:1290
+#: src/dcc.c:1289
 #, c-format
 msgid "Refused %s (non-user)"
 msgstr ""
 
-#: src/dcc.c:1300
+#: src/dcc.c:1299
 #, c-format
 msgid ""
 "This is the telnet interface to %s, an eggdrop bot.\n"
 "Dont abuse it, and it will be open for all your friends, too.\n"
 msgstr ""
 
-#: src/dcc.c:1301
+#: src/dcc.c:1300
 msgid ""
 "You now get to pick a nick to use on the bot,\n"
 "and a password so nobody else can pretend to be you.\n"
 "Please remember both!"
 msgstr ""
 
-#: src/dcc.c:1315
+#: src/dcc.c:1314
 #, c-format
 msgid "Refused %s (invalid handle: %s)"
 msgstr ""
 
-#: src/dcc.c:1325
+#: src/dcc.c:1324
 #, c-format
 msgid "Refused telnet connection from %s (tried using my botnetnick)"
 msgstr ""
 
-#: src/dcc.c:1369
+#: src/dcc.c:1368
 #, c-format
 msgid "Refused [%s]%s (no password)"
 msgstr ""
@@ -1003,7 +1003,7 @@ msgstr ""
 #. * authentication will not be correct - you've been warned ;)
 #. * <Cybah>
 #.
-#: src/dcc.c:1411
+#: src/dcc.c:1410
 #, c-format
 msgid "Challenging %s..."
 msgstr ""
@@ -1016,111 +1016,105 @@ msgstr ""
 #. *       <Cybah>
 #.
 #. Turn off remote telnet echo (send IAC WILL ECHO).
-#: modules/filesys/filesys.c:831 modules/server/server.c:1480 src/dcc.c:1423
+#: modules/filesys/filesys.c:831 modules/server/server.c:1419 src/dcc.c:1422
 msgid "Enter your password."
 msgstr ""
 
-#: src/dcc.c:1429
+#: src/dcc.c:1428
 #, c-format
 msgid "Lost telnet connection to %s/%d"
 msgstr ""
 
-#: src/dcc.c:1438
+#: src/dcc.c:1437
 #, c-format
 msgid "Ident timeout on telnet: %s"
 msgstr ""
 
-#: src/dcc.c:1515
+#: src/dcc.c:1514
 msgid ""
 "\n"
 "YOU ARE THE MASTER/OWNER ON THIS BOT NOW\n"
 msgstr ""
 
-#: src/dcc.c:1516
+#: src/dcc.c:1515
 msgid ""
 "From now on, you dont need to use the -m option to start the bot.\n"
 "Enjoy !!"
 msgstr ""
 
-#: modules/irc/msgcmds.c:94 src/dcc.c:1517
+#: modules/irc/msgcmds.c:94 src/dcc.c:1516
 #, c-format
 msgid "Bot installation complete, first master is %s"
 msgstr ""
 
-#: src/dcc.c:1520
+#: src/dcc.c:1519
 msgid "Welcome to eggdrop! :)"
 msgstr ""
 
-#: src/dcc.c:1522
+#: src/dcc.c:1521
 msgid ""
 "\n"
 "Okay, now choose and enter a password:\n"
 msgstr ""
 
-#: src/dcc.c:1523
+#: src/dcc.c:1522
 msgid "(Only the first 15 letters are significant.)\n"
 msgstr ""
 
-#: src/dcc.c:1548
+#: src/dcc.c:1547
 #, c-format
 msgid "New user via telnet: [%s]%s/%d"
 msgstr ""
 
-#: src/dcc.c:1575
+#: src/dcc.c:1574
 #, c-format
 msgid "Lost new telnet user (%s/%d)"
 msgstr ""
 
-#: src/dcc.c:1582
+#: src/dcc.c:1581
 #, c-format
 msgid "Lost new telnet user %s (%s/%d)"
 msgstr ""
 
-#: src/dcc.c:1592
+#: src/dcc.c:1591
 #, c-format
 msgid "Timeout on new telnet user: %s/%d"
 msgstr ""
 
-#: src/dcc.c:1601
+#: src/dcc.c:1600
 #, c-format
 msgid "Timeout on new telnet user: [%s]%s/%d"
 msgstr ""
 
-#: src/dcc.c:1651
+#: src/dcc.c:1650
 #, c-format
 msgid "Tcl error [%s]: %s"
 msgstr ""
 
-#: src/dcc.c:1720
+#: src/dcc.c:1719
 #, c-format
 msgid "*** ATTENTION: DEAD SOCKET (%d) OF TYPE %s UNTRAPPED"
 msgstr ""
 
-#: src/dcc.c:1819
+#: src/dcc.c:1818
 #, c-format
 msgid "Lost connection while identing [%s/%d]"
 msgstr ""
 
-#: src/dcc.c:1883
+#: src/dcc.c:1882
 msgid "Timeout/EOF ident connection"
 msgstr ""
 
-#: src/dcc.c:1921
+#: src/dcc.c:1920
 msgid "Lost ident wait telnet socket!!"
 msgstr ""
 
-#: src/dcc.c:1943
+#: src/dcc.c:1942
 #, c-format
 msgid "Denied telnet: %s, No Access"
 msgstr ""
 
-#: src/dcc.c:1987
-msgid ""
-"\n"
-"Nickname.\n"
-msgstr ""
-
-#: src/dcc.c:1990
+#: src/dcc.c:1983
 msgid ""
 "%B  (%E)\n"
 "\n"
@@ -1151,7 +1145,7 @@ msgstr ""
 msgid "%s booted %s from the party line%s%s\n"
 msgstr ""
 
-#: src/main.c:444
+#: src/main.c:289
 msgid ""
 "Command line arguments:\n"
 "  -h   help\n"
@@ -1163,33 +1157,33 @@ msgid ""
 "  optional config filename (default 'eggdrop.conf')\n"
 msgstr ""
 
-#: src/main.c:465
+#: src/main.c:310
 msgid "Backing up user file..."
 msgstr ""
 
-#: src/main.c:717
+#: src/main.c:556
 msgid "ERROR: Eggdrop will not run as root!"
 msgstr ""
 
-#: src/main.c:741
+#: src/main.c:580
 msgid ""
 "You have installed modules but have not selected an encryption\n"
 "module, please consult the default config file for info.\n"
 msgstr ""
 
-#: src/main.c:765
+#: src/main.c:604
 #, c-format
 msgid "I detect %s already running from this directory.\n"
 msgstr ""
 
-#: src/main.c:766
+#: src/main.c:605
 #, c-format
 msgid "If this is incorrect, erase the %s\n"
 msgstr ""
 
 #. Should be only 2 modules now - blowfish (or some other
 #. encryption module) and eggdrop.
-#: src/main.c:1005
+#: src/main.c:844
 msgid "Stagnant module; there WILL be memory leaks!"
 msgstr ""
 
@@ -1298,7 +1292,7 @@ msgid "    %d assocs using %d bytes\n"
 msgstr ""
 
 #: modules/assoc/assoc.c:406 modules/blowfish/blowfish.c:467
-#: modules/uptime/uptime.c:236
+#: modules/uptime/uptime.c:233
 msgid "This module requires eggdrop1.7.0 or later"
 msgstr ""
 
@@ -1320,7 +1314,7 @@ msgstr ""
 msgid "You can't unload an encryption module"
 msgstr ""
 
-#: modules/blowfish/blowfish.c:456 src/modules.c:574 src/tclmisc.c:237
+#: modules/blowfish/blowfish.c:456 src/modules.c:566 src/tclmisc.c:237
 msgid "Already loaded."
 msgstr ""
 
@@ -1796,30 +1790,30 @@ msgid "Moved"
 msgstr ""
 
 #: modules/filesys/filesys.c:604 modules/filesys/filesys.c:803
-#: modules/server/server.c:1419 modules/server/server.c:1463
+#: modules/server/server.c:1358 modules/server/server.c:1402
 #: modules/transfer/transfer.c:672
 msgid "Failed to connect"
 msgstr ""
 
-#: modules/filesys/filesys.c:782 modules/server/server.c:1404
+#: modules/filesys/filesys.c:782 modules/server/server.c:1343
 #, c-format
 msgid "DCC connections full: %s %s (%s!%s)"
 msgstr ""
 
-#: modules/filesys/filesys.c:787 modules/server/server.c:1409
+#: modules/filesys/filesys.c:787 modules/server/server.c:1348
 msgid "No access"
 msgstr ""
 
-#: modules/filesys/filesys.c:788 modules/server/server.c:1410
-#: modules/server/servmsg.c:415
+#: modules/filesys/filesys.c:788 modules/server/server.c:1349
+#: modules/server/servmsg.c:409
 msgid "Refused DCC chat (no access)"
 msgstr ""
 
-#: modules/filesys/filesys.c:791 modules/server/server.c:1413
+#: modules/filesys/filesys.c:791 modules/server/server.c:1352
 msgid "You must have a password set."
 msgstr ""
 
-#: modules/filesys/filesys.c:792 modules/server/server.c:1414
+#: modules/filesys/filesys.c:792 modules/server/server.c:1353
 msgid "Refused DCC chat (no password)"
 msgstr ""
 
@@ -1827,7 +1821,7 @@ msgstr ""
 msgid "Refused DCC chat (+x but no file area)"
 msgstr ""
 
-#: modules/filesys/filesys.c:804 modules/server/server.c:1464
+#: modules/filesys/filesys.c:804 modules/server/server.c:1403
 #: modules/transfer/transfer.c:673
 msgid "DCC connection failed"
 msgstr ""
@@ -1925,14 +1919,14 @@ msgstr ""
 msgid "...and dont come back."
 msgstr ""
 
-#: modules/irc/chan.c:1977 modules/server/servmsg.c:644
-#: modules/server/servmsg.c:790 modules/server/servmsg.c:802
+#: modules/irc/chan.c:1977 modules/server/servmsg.c:638
+#: modules/server/servmsg.c:784 modules/server/servmsg.c:796
 #, c-format
 msgid "Switching back to nick %s"
 msgstr ""
 
-#: modules/irc/chan.c:1981 modules/server/servmsg.c:647
-#: modules/server/servmsg.c:794 modules/server/servmsg.c:806
+#: modules/irc/chan.c:1981 modules/server/servmsg.c:641
+#: modules/server/servmsg.c:788 modules/server/servmsg.c:800
 #, c-format
 msgid "Switching back to altnick %s"
 msgstr ""
@@ -2458,31 +2452,31 @@ msgstr ""
 msgid "NOTICE %s :You have %d note%s waiting on %s.\n"
 msgstr ""
 
-#: modules/server/server.c:1403
+#: modules/server/server.c:1342
 msgid "Sorry, too many DCC connections."
 msgstr ""
 
-#: modules/server/server.c:1420
+#: modules/server/server.c:1359
 msgid "DCC invalid port"
 msgstr ""
 
-#: modules/server/server.c:1510
+#: modules/server/server.c:1449
 msgid "Server got stoned; jumping..."
 msgstr ""
 
-#: modules/server/server.c:1584
+#: modules/server/server.c:1523
 msgid "No server currently."
 msgstr ""
 
-#: modules/server/server.c:1586
+#: modules/server/server.c:1525
 msgid "Mode queue is at"
 msgstr ""
 
-#: modules/server/server.c:1590
+#: modules/server/server.c:1529
 msgid "Server queue is at"
 msgstr ""
 
-#: modules/server/server.c:1593
+#: modules/server/server.c:1532
 msgid "Help queue is at"
 msgstr ""
 
@@ -2491,35 +2485,35 @@ msgstr ""
 msgid "NICK IN USE: Trying %s"
 msgstr ""
 
-#: modules/server/servmsg.c:248
+#: modules/server/servmsg.c:242
 #, c-format
 msgid "Server says Im not on channel: %s"
 msgstr ""
 
-#: modules/server/servmsg.c:342
+#: modules/server/servmsg.c:336
 #, c-format
 msgid "Flood from @%s!  Placing on ignore!"
 msgstr ""
 
-#: modules/server/servmsg.c:412
+#: modules/server/servmsg.c:406
 msgid "I dont accept DCC chats from strangers."
 msgstr ""
 
-#: modules/server/servmsg.c:665
+#: modules/server/servmsg.c:659
 msgid "Server says my nickname is invalid."
 msgstr ""
 
-#: modules/server/servmsg.c:708
+#: modules/server/servmsg.c:702
 #, c-format
 msgid "Cant change nickname on %s.  Is my nickname banned?"
 msgstr ""
 
-#: modules/server/servmsg.c:711
+#: modules/server/servmsg.c:705
 #, c-format
 msgid "Channel %s is juped. :("
 msgstr ""
 
-#: modules/server/servmsg.c:722
+#: modules/server/servmsg.c:716
 msgid "Nickname has been juped"
 msgstr ""
 
@@ -2531,28 +2525,28 @@ msgstr ""
 #. * (minutely) sending of joins occurs before the bot does its ping reply.
 #. * Probably should do something about it some time - beldin
 #.
-#: modules/server/servmsg.c:749
+#: modules/server/servmsg.c:743
 #, c-format
 msgid "%s says Im not registered, trying next one."
 msgstr ""
 
-#: modules/server/servmsg.c:750
+#: modules/server/servmsg.c:744
 msgid "The server says we are not registered yet."
 msgstr ""
 
-#: modules/server/servmsg.c:849
+#: modules/server/servmsg.c:843
 msgid "Disconnected from"
 msgstr ""
 
-#: modules/server/servmsg.c:1069
+#: modules/server/servmsg.c:1057
 msgid "Trying server"
 msgstr ""
 
-#: modules/server/servmsg.c:1111 modules/server/servmsg.c:1129
+#: modules/server/servmsg.c:1099 modules/server/servmsg.c:1116
 msgid "Failed connect to"
 msgstr ""
 
-#: modules/server/servmsg.c:1112
+#: modules/server/servmsg.c:1100
 msgid "DNS lookup failed"
 msgstr ""
 
@@ -2576,7 +2570,7 @@ msgstr ""
 msgid "Failed connection; aborted userfile transfer."
 msgstr ""
 
-#: modules/uptime/uptime.c:239
+#: modules/uptime/uptime.c:236
 msgid "You need the server module to use the uptime module."
 msgstr ""
 
@@ -2585,45 +2579,45 @@ msgstr ""
 msgid "User file rejected by %s: %s"
 msgstr ""
 
-#: src/modules.c:537
+#: src/modules.c:529
 #, c-format
 msgid "error during libtdl initialization: %s\n"
 msgstr ""
 
-#: src/modules.c:578
+#: src/modules.c:570
 msgid "Cant determine current directory."
 msgstr ""
 
-#: src/modules.c:592
+#: src/modules.c:584
 msgid "No start function defined."
 msgstr ""
 
-#: src/modules.c:596
+#: src/modules.c:588
 msgid "Malloc error"
 msgstr ""
 
-#: src/modules.c:628
+#: src/modules.c:620
 msgid "Needed by another module"
 msgstr ""
 
-#: src/modules.c:632
+#: src/modules.c:624
 msgid "No close function"
 msgstr ""
 
-#: src/modules.c:647
+#: src/modules.c:639
 #, c-format
 msgid "Module unloaded: %s"
 msgstr ""
 
-#: src/modules.c:653
+#: src/modules.c:645
 msgid "No such module"
 msgstr ""
 
-#: src/modules.c:872
+#: src/modules.c:864
 msgid "MODULES LOADED:\n"
 msgstr ""
 
-#: src/modules.c:897
+#: src/modules.c:889
 msgid "No such module.\n"
 msgstr ""
 
