@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: server.c,v 1.26 2002/05/28 20:36:06 stdarg Exp $";
+static const char rcsid[] = "$Id: server.c,v 1.27 2002/05/31 02:01:06 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "server"
@@ -95,7 +95,7 @@ static int optimize_kicks;
 
 static void empty_msgq(void);
 static void next_server(int *, char *, unsigned int *, char *);
-static void disconnect_server(int);
+static void disconnect_server();
 static char *get_altbotnick(void);
 static int calc_penalty(char *);
 static int fast_deq(int);
@@ -1322,8 +1322,7 @@ static void server_5minutely()
       /* Uh oh!  Never got pong from last time, five minutes ago!
        * Server is probably stoned.
        */
-      disconnect_server(servidx);
-      lostdcc(servidx);
+      disconnect_server();
       putlog(LOG_SERV, "*", _("Server got stoned; jumping..."));
     } else if (!trying_server) {
       /* Check for server being stoned. */

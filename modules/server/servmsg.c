@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: servmsg.c,v 1.14 2002/05/28 20:36:06 stdarg Exp $";
+static const char rcsid[] = "$Id: servmsg.c,v 1.15 2002/05/31 02:01:06 stdarg Exp $";
 #endif
 */
 
@@ -259,8 +259,7 @@ static void nuke_server(char *reason)
 {
   if (serv >= 0) {
     if (reason && (servidx > 0)) dprintf(servidx, "QUIT :%s\r\n", reason);
-    disconnect_server(servidx);
-    lostdcc(servidx);
+    disconnect_server();
   }
 }
 
@@ -805,7 +804,10 @@ static int gotnick(char *from, char *ignore, char *msg)
 static int gotmode(char *from, char *ignore, char *msg)
 {
   char *ch;
+  char buf[512];
 
+  strlcpy(buf, msg, sizeof(buf));
+  msg = buf;
   ch = newsplit(&msg);
   /* Usermode changes? */
   if (strchr(CHANMETA, ch[0]) == NULL) {
@@ -822,24 +824,28 @@ static int gotmode(char *from, char *ignore, char *msg)
   return 0;
 }
 
-static void disconnect_server(int idx)
+static void disconnect_server()
 {
-  if (server_online > 0)
-    check_bind_event("disconnect-server");
-  server_online = 0;
-  if (dcc[idx].sock >= 0)
-    killsock(dcc[idx].sock);
-  dcc[idx].sock = (-1);
-  serv = -1;
-  servidx = -1;
-  botuserhost[0] = 0;
+	int idx;
+
+	if (server_online > 0) check_bind_event("disconnect-server");
+
+	server_online = 0;
+	if (servidx != -1 && dcc[servidx].sock >= 0) {
+		killsock(dcc[servidx].sock);
+		dcc[servidx].sock = (-1);
+	}
+	serv = -1;
+	botuserhost[0] = 0;
+	idx = servidx;
+	servidx = -1;
+	lostdcc(idx);
 }
 
 static void eof_server(int idx)
 {
   putlog(LOG_SERV, "*", "%s %s", _("Disconnected from"), dcc[idx].host);
-  disconnect_server(idx);
-  lostdcc(idx);
+  disconnect_server();
 }
 
 static void display_server(int idx, char *buf)
@@ -854,7 +860,7 @@ static void kill_server(int idx, void *x)
 {
   module_entry *me;
 
-  disconnect_server(idx);
+  disconnect_server();
   if ((me = module_find("channels", 0, 0)) && me->funcs) {
     struct chanset_t *chan;
 
@@ -868,8 +874,7 @@ static void kill_server(int idx, void *x)
 static void timeout_server(int idx)
 {
   putlog(LOG_SERV, "*", "Timeout: connect to %s", dcc[idx].host);
-  disconnect_server(idx);
-  lostdcc(idx);
+  disconnect_server();
 }
 
 static void server_activity(int idx, char *msg, int len);
@@ -1091,6 +1096,7 @@ static void connect_server(void)
 static void server_resolve_failure(int servidx)
 {
   serv = -1;
+  servidx = -1;
   resolvserv = 0;
   putlog(LOG_SERV, "*", "%s %s (%s)", _("Failed connect to"), dcc[servidx].host,
 	 _("DNS lookup failed"));
@@ -1112,6 +1118,7 @@ static void server_resolve_success(int servidx)
     putlog(LOG_SERV, "*", "%s %s (%s)", _("Failed connect to"), dcc[servidx].host,
 	   s);
     lostdcc(servidx);
+    servidx = -1;
   } else {
     dcc[servidx].sock = serv;
     /* Queue standard login */
