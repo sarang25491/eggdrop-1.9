@@ -1,3 +1,9 @@
+2001-09-28 02:52  Matthew Hallacy <poptix@techmonkeys.org>
+
+	* src/: patch.h, mod/irc.mod/cmdsirc.c:
+
+	Someone put a ! in place of a -, .kickban didn't work correctly.  
+
 2001-09-27 18:33  Teemu Hjelt <sup@techmonkeys.org>
 
 	* src/mod/irc.mod/: irc.c, msgcmds.c:
