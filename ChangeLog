@@ -1,3 +1,11 @@
+2002-11-24 04:50  Will Buckner <wcc@techmonkeys.org>
+
+	* eggdrop.conf, doc/UPDATES1.6, modules/channels/channels.c,
+	modules/channels/tclchan.c, modules/irc/chan.c, modules/irc/mode.c,
+	scripts/alltools.tcl, src/chan.h, src/patch.h:
+
+	* Synch'd 1.6 with 1.7 as of November 23rd.  
+
 2002-11-04 17:44  stdarg <stdarg@techmonkeys.org>
 
 	* lib/: eggdrop/Makefile.am, eggdrop/base64.c, eggdrop/base64.h,
