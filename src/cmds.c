@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.66 2001/08/28 01:33:11 ite Exp $
+ * $Id: cmds.c,v 1.67 2001/10/04 21:37:44 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -2718,6 +2718,45 @@ static void cmd_whoami(struct userrec *u, int idx, char *par)
   putlog(LOG_CMDS, "*", "#%s# whoami", dcc[idx].nick);
 }
 
+static void cmd_quit(struct userrec *u, int idx, char *text)
+{
+	if (dcc[idx].u.chat->channel >= 0 && dcc[idx].u.chat->channel < GLOBAL_CHANS) {
+		check_tcl_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock, dcc[idx].u.chat->channel);
+	}
+	check_tcl_chof(dcc[idx].nick, dcc[idx].sock);
+	dprintf(idx, "*** See you later cowboy!\n\n");
+	flush_lines(idx, dcc[idx].u.chat);
+	putlog(LOG_MISC, "*", _("DCC connection closed (%s!%s)"), dcc[idx].nick, dcc[idx].host);
+	if (dcc[idx].u.chat->channel >= 0) {
+		chanout_but(-1, dcc[idx].u.chat->channel, "*** %s left the party line%s%s\n", dcc[idx].nick, text[0] ? ": " : ".", buf);
+		if (dcc[idx].u.chat->channel < 100000) {
+			botnet_send_part_idx(idx, text);
+		}
+	}
+
+	if (dcc[idx].u.chat->su_nick) {
+		dcc[idx].user = get_user_by_handle(userlist, dcc[idx].u.chat->su_nick);
+		dcc[idx].type = &DCC_CHAT;
+		dprintf(idx, "Returning to real nick %s!\n", dcc[idx].u.chat->su_nick);
+		nfree(dcc[idx].u.chat->su_nick);
+		dcc[idx].u.chat->su_nick = NULL;
+		dcc_chatter(idx);
+		if (dcc[idx].u.chat->channel < 100000 && dcc[idx].u.chat->channel >= 0) {
+			botnet_send_join_idx(idx, -1);
+		}
+	}
+	else if ((dcc[idx].sock != STDOUT) || backgrd) {
+		killsock(dcc[idx].sock);
+		lostdcc(idx);
+	}
+	else {
+		dprintf(DP_STDOUT, "\n### SIMULATION RESET\n\n");
+		dcc_chatter(idx);
+	}
+}
+
+
+
 /* DCC CHAT COMMANDS
  */
 /* Function call should be:
@@ -2771,7 +2810,7 @@ cmd_t C_dcc[] =
   {"handle",		"",	(Function) cmd_handle,		NULL},
   {"nick",		"",	(Function) cmd_handle,		NULL},
   {"page",		"",	(Function) cmd_page,		NULL},
-  {"quit",		"",	(Function) NULL,		NULL},
+  {"quit",		"",	(Function) cmd_quit,		NULL},
   {"rehash",		"m",	(Function) cmd_rehash,		NULL},
   {"rehelp",		"n",	(Function) cmd_rehelp,		NULL},
   {"relay",		"t",	(Function) cmd_relay,		NULL},

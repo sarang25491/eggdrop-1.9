@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.53 2001/09/28 03:15:34 stdarg Exp $
+ * $Id: dcc.c,v 1.54 2001/10/04 21:37:44 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -907,54 +907,14 @@ static void dcc_chat(int idx, char *buf, int i)
       strcpy(d, "\033[0m");
     else
       *d = 0;
-    if (buf[0]) {		/* Nothing to say - maybe paging... */
-      if ((buf[0] == '.') || (dcc[idx].u.chat->channel < 0)) {
+
+    if ((buf[0] == '.') || (dcc[idx].u.chat->channel < 0)) {
 	if (buf[0] == '.')
 	  buf++;
 	v = newsplit(&buf);
 	rmspace(buf);
-	if (check_tcl_dcc(v, idx, buf)) {
-	  if (dcc[idx].u.chat->channel >= 0) {
-	    check_tcl_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock,
-			   dcc[idx].u.chat->channel);
-	  }
-	  check_tcl_chof(dcc[idx].nick, dcc[idx].sock);
-	  dprintf(idx, "*** Ja mata!\n");
-	  flush_lines(idx, dcc[idx].u.chat);
-	  putlog(LOG_MISC, "*", _("DCC connection closed (%s!%s)"), dcc[idx].nick,
-		 dcc[idx].host);
-	  if (dcc[idx].u.chat->channel >= 0) {
-	    chanout_but(-1, dcc[idx].u.chat->channel,
-			"*** %s left the party line%s%s\n",
-			dcc[idx].nick, buf[0] ? ": " : ".", buf);
-	    if (dcc[idx].u.chat->channel < 100000)
-	      botnet_send_part_idx(idx, buf);
-	  }
-	  if (dcc[idx].u.chat->su_nick) {
-	    dcc[idx].user = get_user_by_handle(userlist,
-					       dcc[idx].u.chat->su_nick);
-	    strcpy(dcc[idx].nick, dcc[idx].u.chat->su_nick);
-	    dcc[idx].type = &DCC_CHAT;
-	    dprintf(idx, "Returning to real nick %s!\n",
-		    dcc[idx].u.chat->su_nick);
-	    nfree(dcc[idx].u.chat->su_nick);
-	    dcc[idx].u.chat->su_nick = NULL;
-	    dcc_chatter(idx);
-	    if (dcc[idx].u.chat->channel < 100000 &&
-		dcc[idx].u.chat->channel >= 0)
-	      botnet_send_join_idx(idx, -1);
-	    return;
-	  } else if ((dcc[idx].sock != STDOUT) || backgrd) {
-	    killsock(dcc[idx].sock);
-	    lostdcc(idx);
-	    return;
-	  } else {
-	    dprintf(DP_STDOUT, "\n### SIMULATION RESET\n\n");
-	    dcc_chatter(idx);
-	    return;
-	  }
-	}
-      } else if (buf[0] == ',') {
+	check_tcl_dcc(v, idx, buf);
+    } else if (buf[0] == ',') {
 	int me = 0;
 
 	if ((buf[1] == 'm') && (buf[2] == 'e') && buf[3] == ' ')
@@ -979,7 +939,7 @@ static void dcc_chat(int idx, char *buf, int i)
 	    }
 	  }
 	}
-      } else if (buf[0] == '\'') {
+    } else if (buf[0] == '\'') {
 	int me = 0;
 
 	if ((buf[1] == 'm') && (buf[2] == 'e') &&
@@ -993,7 +953,7 @@ static void dcc_chat(int idx, char *buf, int i)
 	      dprintf(i, "=%s=> %s\n", dcc[idx].nick, buf + 1);
 	  }
 	}
-      } else {
+    } else {
 	if (dcc[idx].u.chat->away != NULL)
 	  not_away(idx);
 	if (dcc[idx].status & STAT_ECHO)
@@ -1006,7 +966,6 @@ static void dcc_chat(int idx, char *buf, int i)
 			 dcc[idx].u.chat->channel, buf);
 	check_tcl_chat(dcc[idx].nick, dcc[idx].u.chat->channel, buf);
       }
-    }
   }
   if (dcc[idx].type == &DCC_CHAT)	/* Could have change to files */
     if (dcc[idx].status & STAT_PAGE)

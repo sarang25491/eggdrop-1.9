@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.37 2001/09/30 04:27:38 stdarg Exp $
+ * $Id: tclhash.c,v 1.38 2001/10/04 21:37:45 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1146,9 +1146,6 @@ int check_tcl_dcc(const char *cmd, int idx, const char *args)
     return 0;
   }
   if (x == BIND_NOMATCH) {
-    /* Temporary fix for special-case quit command. */
-    /* Later I'll fix the real quit command so that it's not special. */
-    if (!strcmp(cmd, "quit")) return(1);
     /* Check the new bind table. */
     check_bind(BT_dcc, cmd, &fr, dcc[idx].user, idx, args);
     return 0;
