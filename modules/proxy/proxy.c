@@ -1,5 +1,7 @@
-#include <eggdrop/eggdrop.h>
 #include <string.h>
+
+#include <eggdrop/eggdrop.h>
+
 #include "proxy.h"
 
 EXPORT_SCOPE int proxy_LTX_start(egg_module_t *modinfo);

@@ -18,11 +18,13 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: events.c,v 1.6 2003/12/18 03:54:45 wcc Exp $";
+static const char rcsid[] = "$Id: events.c,v 1.7 2004/06/23 11:19:52 wingman Exp $";
 #endif
 
-#include <eggdrop/eggdrop.h>
 #include <string.h>
+
+#include <eggdrop/eggdrop.h>
+
 #include "ircparty.h"
 
 static int on_privmsg(void *client_data, partymember_t *dest, partymember_t *src, const char *text, int len);

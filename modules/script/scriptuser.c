@@ -18,11 +18,12 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptuser.c,v 1.8 2004/06/17 13:32:44 wingman Exp $";
+static const char rcsid[] = "$Id: scriptuser.c,v 1.9 2004/06/23 11:19:52 wingman Exp $";
 #endif
 
-#include <eggdrop/eggdrop.h>
 #include <string.h>
+
+#include <eggdrop/eggdrop.h>
 
 static char *script_uid_to_handle(int uid)
 {

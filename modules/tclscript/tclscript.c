@@ -18,13 +18,15 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tclscript.c,v 1.46 2004/06/15 11:54:33 wingman Exp $";
+static const char rcsid[] = "$Id: tclscript.c,v 1.47 2004/06/23 11:19:52 wingman Exp $";
 #endif
 
-#include <eggdrop/eggdrop.h>
-#include <tcl.h>
 #include <string.h>
 #include <stdlib.h>
+
+#include <tcl.h>
+
+#include <eggdrop/eggdrop.h>
 
 #if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 1)) || (TCL_MAJOR_VERSION > 8))
 #  define USE_TCL_BYTE_ARRAYS

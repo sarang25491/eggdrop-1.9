@@ -18,14 +18,16 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptmisc.c,v 1.14 2004/06/15 19:19:16 wingman Exp $";
+static const char rcsid[] = "$Id: scriptmisc.c,v 1.15 2004/06/23 11:19:52 wingman Exp $";
 #endif
 
-#include <eggdrop/eggdrop.h>
 #include <string.h>
 #include <stdlib.h>
 #include <sys/stat.h>
-#include <eggdrop/stat.h>
+
+#ifdef HAVE_CONFIG_H
+#	include <config.h>
+#endif
 
 #ifdef TIME_WITH_SYS_TIME
 #  include <sys/time.h>
@@ -41,6 +43,8 @@ static const char rcsid[] = "$Id: scriptmisc.c,v 1.14 2004/06/15 19:19:16 wingma
 #ifdef HAVE_UNAME
 #  include <sys/utsname.h>
 #endif
+
+#include <eggdrop/eggdrop.h>
 
 static char *script_duration(unsigned int sec)
 {

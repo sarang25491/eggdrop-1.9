@@ -18,10 +18,9 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: javascript.c,v 1.24 2003/12/20 08:13:41 stdarg Exp $";
+static const char rcsid[] = "$Id: javascript.c,v 1.25 2004/06/23 11:19:52 wingman Exp $";
 #endif
 
-#include <eggdrop/eggdrop.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -30,7 +29,7 @@ static const char rcsid[] = "$Id: javascript.c,v 1.24 2003/12/20 08:13:41 stdarg
 
 #include <jsapi.h>
 
-#include "lib/eggdrop/module.h"
+#include <eggdrop/eggdrop.h>
 
 /* Data we need for a JavaScript callback. */
 typedef struct {

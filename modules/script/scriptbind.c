@@ -18,12 +18,13 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptbind.c,v 1.11 2004/06/21 19:04:51 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptbind.c,v 1.12 2004/06/23 11:19:52 wingman Exp $";
 #endif
 
-#include <eggdrop/eggdrop.h>
 #include <string.h>
 #include <stdlib.h>
+
+#include <eggdrop/eggdrop.h>
 
 /* Prototypes for the commands we create in this file. */
 static int script_bind(char *table_name, char *flags, char *mask, script_callback_t *callback);

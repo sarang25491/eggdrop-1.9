@@ -21,13 +21,14 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: blowfish.c,v 1.17 2004/06/20 21:33:28 wingman Exp $";
+static const char rcsid[] = "$Id: blowfish.c,v 1.18 2004/06/23 11:19:52 wingman Exp $";
 #endif
 
-#include <eggdrop/eggdrop.h>
 #include <sys/types.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include <eggdrop/eggdrop.h>
 
 #include "blowfish.h"
 #include "bf_tab.h" /* P-box P-array, S-box */

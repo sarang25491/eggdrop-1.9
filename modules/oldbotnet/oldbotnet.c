@@ -18,13 +18,15 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: oldbotnet.c,v 1.8 2004/06/20 21:33:28 wingman Exp $";
+static const char rcsid[] = "$Id: oldbotnet.c,v 1.9 2004/06/23 11:19:52 wingman Exp $";
 #endif
 
-#include <eggdrop/eggdrop.h>
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
+
+#include <eggdrop/eggdrop.h>
+
 #include "oldbotnet.h"
 
 EXPORT_SCOPE int oldbotnet_LTX_start(egg_module_t *modinfo);

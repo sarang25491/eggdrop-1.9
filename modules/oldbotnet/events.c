@@ -18,12 +18,14 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: events.c,v 1.4 2003/12/18 06:50:47 wcc Exp $";
+static const char rcsid[] = "$Id: events.c,v 1.5 2004/06/23 11:19:52 wingman Exp $";
 #endif
 
-#include <eggdrop/eggdrop.h>
 #include <ctype.h>
 #include <stdlib.h>
+
+#include <eggdrop/eggdrop.h>
+
 #include "oldbotnet.h"
 
 static int on_pub(const char *name, int cid, partymember_t *src, const char *text, int len);

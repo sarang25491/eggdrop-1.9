@@ -18,13 +18,15 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dccparty.c,v 1.5 2004/06/17 02:01:13 stdarg Exp $";
+static const char rcsid[] = "$Id: dccparty.c,v 1.6 2004/06/23 11:19:52 wingman Exp $";
 #endif
 
-#include <eggdrop/eggdrop.h>
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
+
+#include <eggdrop/eggdrop.h>
+
 #include "dccparty.h"
 
 dcc_config_t dcc_config = {0};

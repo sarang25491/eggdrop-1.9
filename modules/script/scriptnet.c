@@ -18,13 +18,14 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptnet.c,v 1.6 2004/06/15 19:19:16 wingman Exp $";
+static const char rcsid[] = "$Id: scriptnet.c,v 1.7 2004/06/23 11:19:52 wingman Exp $";
 #endif
 
-#include <eggdrop/eggdrop.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
+#include <eggdrop/eggdrop.h>
 
 typedef struct script_net_info {
 	struct script_net_info *prev, *next;
