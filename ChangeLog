@@ -1,3 +1,26 @@
+2001-12-08 15:59  Federico Mennite <ite@techmonkeys.org>
+
+	* help/cmds1.help, help/cmds2.help, help/core.help, src/cmds.c:
+
+	Rebound some commands to less restrictive bindings (relay, botinfo,
+	bottree, vbottree). Patch by Matthew Hallacy
+	<poptix@techmonkeys.org> 
+
+2001-12-08 15:40  Federico Mennite <ite@techmonkeys.org>
+
+	* eggdrop.complete.conf, eggdrop.simple.conf:
+
+	Make the default bot a bit more secure in regards to the ability to
+	execute tcl commands from the partyline. Patch by Jeff Fisher
+	<guppy@techmonkeys.org> 
+
+2001-12-08 15:30  Federico Mennite <ite@techmonkeys.org>
+
+	* modules/channels/tclchan.c:
+
+	Last bans patch wasn't applied correctly. Patch by Jeff Fisher
+	<guppy@techmonkeys.org> 
+
 2001-12-08 15:14  Federico Mennite <ite@techmonkeys.org>
 
 	* modules/channels/tclchan.c:
