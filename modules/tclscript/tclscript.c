@@ -28,8 +28,8 @@ static char *error_logfile = NULL;
 static Tcl_Obj *Tcl_GetVar2Ex(Tcl_Interp *myinterp, const char *name1, const char *name2, int flags) {
 	Tcl_Obj *part1, *part2, *obj;
 
-	part1 = Tcl_NewStringObj(name1, -1);
-	part2 = Tcl_NewStringObj(name2, -1);
+	part1 = Tcl_NewStringObj((char *)name1, -1);
+	part2 = Tcl_NewStringObj((char *)name2, -1);
 	obj = Tcl_ObjGetVar2(myinterp, part1, part2, flags);
 	Tcl_DecrRefCount(part1);
 	Tcl_DecrRefCount(part2);
@@ -39,9 +39,9 @@ static Tcl_Obj *Tcl_GetVar2Ex(Tcl_Interp *myinterp, const char *name1, const cha
 static Tcl_Obj *Tcl_SetVar2Ex(Tcl_Interp *myinterp, const char *name1, const char *name2, Tcl_Obj *newval, int flags) {
 	Tcl_Obj *part1, *part2, *obj;
 
-	part1 = Tcl_NewStringObj(name1, -1);
-	part2 = Tcl_NewStringObj(name2, -1);
-	obj = Tcl_ObjSetVar2(myinterp, part1, part2, flags);
+	part1 = Tcl_NewStringObj((char *)name1, -1);
+	part2 = Tcl_NewStringObj((char *)name2, -1);
+	obj = Tcl_ObjSetVar2(myinterp, part1, part2, newval, flags);
 	Tcl_DecrRefCount(part1);
 	Tcl_DecrRefCount(part2);
 	return(obj);
@@ -153,7 +153,12 @@ static int my_tcl_callbacker(script_callback_t *me, ...)
 		Tcl_ListObjAppendElement(cd->myinterp, final_command, arg);
 	}
 
-	n = Tcl_EvalObjEx(cd->myinterp, final_command, TCL_EVAL_GLOBAL | TCL_EVAL_DIRECT);
+#ifdef USE_BYTE_ARRAYS
+	n = Tcl_EvalObjEx(cd->myinterp, final_command, TCL_EVAL_GLOBAL);
+#else
+	n = Tcl_GlobalEvalObj(cd->myinterp, final_command);
+#endif
+
 	if (n == TCL_OK) {
 		result = Tcl_GetObjResult(cd->myinterp);
 		Tcl_GetIntFromObj(NULL, result, &retval);
