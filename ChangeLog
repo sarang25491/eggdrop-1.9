@@ -1,3 +1,10 @@
+2003-04-17 21:49  stdarg <stdarg@techmonkeys.org>
+
+	* config.xml:
+
+	
+	* module_path setting 
+
 2003-04-15 18:05  stdarg <stdarg@techmonkeys.org>
 
 	* doc/SCRIPTING-COMMANDS, modules/tclscript/tclscript.c,
