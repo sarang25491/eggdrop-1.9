@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.171 2004/06/20 13:33:48 wingman Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.172 2004/06/21 14:26:02 stdarg Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -144,7 +144,7 @@ static void got_term(int z)
 {
 	eggdrop_event("sigterm");
 	if (core_config.die_on_sigterm)
-		core_shutdown (SHUTDOWN_SIGTERM, NULL, NULL);
+		core_shutdown(SHUTDOWN_SIGTERM, NULL, NULL);
 	else
 		putlog(LOG_MISC, "*", _("Received TERM signal (ignoring)."));
 }
@@ -280,7 +280,7 @@ static int core_secondly()
 		if (i > 1) putlog(LOG_MISC, "*", _("Warning: timer drift (%d minutes)."), i);
 
 		miltime = (nowtm.tm_hour * 100) + (nowtm.tm_min);
-		if (((int) (nowtm.tm_min / 5) * 5) == (nowtm.tm_min)) { /* 5 minutes */
+		if (nowtm.tm_min % 5 == 0) { /* 5 minutes */
 			eggdrop_event("5minutely");
 			if (!miltime) { /* At midnight */
 				char s[25];
@@ -318,7 +318,7 @@ static int create_userfile(void)
 	if (user_count() != 0) {
 		printf("You are trying to create a new userfile, but the old one still exists (%s)!\n", core_config.userfile);
 		printf("Please remove the userfile, or do not pass the -m option.\n\n");
-		return 0;
+		return(-1);
 	}
 	
 	printf("Hello! I see you are creating a new userfile.\n\n");
@@ -337,7 +337,7 @@ static int create_userfile(void)
 	owner = user_new(handle);
 	if (!owner) {
 		printf("Failed to create user record! Out of memory?\n\n");
-		return 0;
+		return(-1);
 	}
 	
 	user_rand_pass(password, sizeof(password));
@@ -349,7 +349,7 @@ static int create_userfile(void)
 	core_config_save();	
 	user_save(core_config.userfile);
 	
-	return 1;
+	return(0);
 }
 
 static void init_signals(void)
@@ -486,14 +486,13 @@ static void core_shutdown_or_restart()
 	/* shutdown libeggdrop */
 	eggdrop_shutdown();
 
-	/* force an garbage run */	
+	/* force a garbage run */	
 	garbage_run();
 
 	/* just remove pid file if didn't restart */ 
 	if (runmode != RUNMODE_RESTART)
 		unlink(pid_file);
 }
-
 
 int main(int argc, char **argv)
 {
@@ -548,7 +547,7 @@ int main(int argc, char **argv)
 	printf("\n%s\n", version);
 	printf("WARNING: Do NOT run this DEVELOPMENT version for any purpose other than testing.\n\n");
 
-	/* we may not ru as root */
+	/* we may not run as root */
 	if (((int) getuid() == 0) || ((int) geteuid() == 0)) {
 		fatal("Eggdrop will not run as root!", 0);
 		return -1;
@@ -574,15 +573,15 @@ int main(int argc, char **argv)
 		/* default select timeout is 1 sec */
 		howlong.sec  = 1;
 		howlong.usec = 0;
-		
+
 		timer_create_repeater(&howlong, "main loop", core_secondly);
-		
+
 		/* init core */
 		core_init();
 
 		/* set normal running mode */
 		runmode = RUNMODE_NORMAL;
-					
+
 		putlog(LOG_DEBUG, "*", "Entering main loop.");
 
 		/* main loop */
@@ -596,14 +595,14 @@ int main(int argc, char **argv)
 			sockbuf_update_all(timeout);
 			garbage_run();
 		}
-		
+
 		/* Save user file, config file, ... */
 		core_shutdown_or_restart();					
 
 		/* the only chance to loop again is that running = 2, meaning
 		   we have a restart */
 	} while (runmode == RUNMODE_RESTART);
-	
+
 	return 1;
 }
 
@@ -619,11 +618,17 @@ int core_init()
 
 	/* load config */	
 	core_config_init(configfile);	
-	
+
+	/* did the user specify -m? */
+	if (make_userfile) {
+		if (create_userfile()) return(-1);
+		make_userfile = 0;
+	}
+
 	/* init background mode and pid file */
 	if (runmode != RUNMODE_RESTART)
 		init_bg_and_pid();	
-	
+
 	/* init logging */
 	logfile_init();	
 
@@ -634,23 +639,16 @@ int core_init()
 		strcpy(&s[11], &s[20]);
 		putlog(LOG_ALL, "*", "Loading Eggdrop %s (%s)", VERSION, s);
 	}	
-		
+
 	/* load userlist */
 	if (core_config.userfile)
 		user_load(core_config.userfile);
-		
+
 	/* init core bindings */
 	core_binds_init();
-	
+
 	/* init core partyline */
 	core_party_init();
-
-	/* did the user specify -m? */
-	if (make_userfile) {
-		if (!create_userfile())
-			return 0;
-		make_userfile = 0;
-	}
 
 	/* Load core help */
 	help_load_by_module ("core");

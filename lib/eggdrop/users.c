@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.22 2004/06/19 10:30:41 wingman Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.23 2004/06/21 14:26:02 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -106,6 +106,9 @@ int user_load(const char *fname)
 		xml_node_get_int(&uid, user_node, "uid", 0, 0);
 		if (!handle || !uid) break;
 		u = real_user_new(handle, uid);
+
+		/* User already exists? */
+		if (!u) continue;
 
 		/* Irc masks. */
 		for (j = 0; ; j++) {
