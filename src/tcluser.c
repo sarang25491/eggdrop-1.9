@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  *
- * $Id: tcluser.c,v 1.25 2001/10/10 10:44:04 tothwolf Exp $
+ * $Id: tcluser.c,v 1.26 2001/10/17 02:01:56 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -357,7 +357,10 @@ static int tcl_userlist STDVAR
   for (u = userlist; u; u = u->next) {
     if (argc >= 2) {
       user.match = FR_GLOBAL | FR_CHAN | FR_BOT | (argc == 3 ? 0 : FR_ANYWH);
-      get_user_flagrec(u, &user, argv[2]);	/* argv[2] == NULL for argc = 2 ;) */
+      if (argc == 3) 
+        get_user_flagrec(u, &user, argv[2]);
+      else 
+        get_user_flagrec(u, &user, NULL);
       if (flagrec_eq(&plus, &user) && !(f && flagrec_eq(&minus, &user)))
 	ok = 1;
       else
