@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: javascript.c,v 1.5 2002/05/07 22:09:08 stdarg Exp $";
+static const char rcsid[] = "$Id: javascript.c,v 1.6 2002/05/09 21:23:30 ite Exp $";
 #endif
 
 #include <stdio.h>
@@ -29,7 +29,7 @@ static const char rcsid[] = "$Id: javascript.c,v 1.5 2002/05/07 22:09:08 stdarg 
 
 #define XP_UNIX
 
-#include "jsapi.h"
+#include <jsapi.h>
 
 #include "lib/eggdrop/module.h"
 #include "lib/egglib/mstack.h"

@@ -1,26 +1,25 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.17 2002/05/04 16:17:47 ite Exp $
+dnl $Id: acinclude.m4,v 1.18 2002/05/09 21:23:30 ite Exp $
 dnl
 
 
 dnl  EGG_MSG_CONFIGURE_START()
 dnl
 AC_DEFUN(EGG_MSG_CONFIGURE_START, [dnl
-AC_MSG_RESULT()
-AC_MSG_RESULT(This is Eggdrop's GNU configure script.)
-AC_MSG_RESULT(It's going to run a bunch of strange tests to hopefully)
-AC_MSG_RESULT(make your compile work without much twiddling.)
-AC_MSG_RESULT()
+AC_MSG_RESULT([
+This is Eggdrop's GNU configure script.
+It's going to run a bunch of strange tests to hopefully
+make your compile work without much twiddling.
+])
 ])
 
 
 dnl  EGG_MSG_CONFIGURE_END()
 dnl
 AC_DEFUN(EGG_MSG_CONFIGURE_END, [dnl
-AC_MSG_RESULT()
-cat << EOF
+AC_MSG_RESULT([
 ------------------------------------------------------------------------
 Configuration:
 
@@ -32,15 +31,17 @@ Configuration:
   Compress module:            ${egg_compress}
   Tcl module:                 ${egg_tclscript}
   Perl module:                ${egg_perlscript}
+  Javascript module:          ${egg_javascript}
 
 See config.h for further configuration information.
 ------------------------------------------------------------------------
-EOF
-AC_MSG_RESULT()
-AC_MSG_RESULT(Configure is done.)
-AC_MSG_RESULT()
-AC_MSG_RESULT([Type 'make' to create the bot.])
-AC_MSG_RESULT()
+])
+AC_MSG_RESULT([
+Configure is done.
+
+Type 'make' to create the bot.
+])
+
 ])
 
 
@@ -400,13 +401,12 @@ else
 fi
 if test "$WARN" = 1
 then
-  cat << 'EOF' >&2
-configure: warning:
+  AC_MSG_WARN([
 
   You must specify both --with-tcllib and --with-tclinc for them to work.
   configure will now attempt to autodetect both the Tcl library and header...
 
-EOF
+])
 fi
 ])
 
@@ -436,14 +436,13 @@ else
 fi
 if test "$WARN" = 1
 then
-  cat << EOF >&2
-configure: warning:
+  AC_MSG_WARN([
 
   Environment variable $WVAR1 was set, but I did not detect ${WVAR2}.
   Please set both TCLLIB and TCLINC correctly if you wish to use them.
   configure will now attempt to autodetect both the Tcl library and header...
 
-EOF
+])
 fi
 ])
 
@@ -461,13 +460,12 @@ then
     TCLLIBEXT=".`echo $TCLLIBFN | $AWK '{j=split([$]1, i, "."); print i[[j]]}'`"
     TCLLIBFNS=`$BASENAME $tcllibname $TCLLIBEXT | cut -c4-`
   else
-    cat << EOF >&2
-configure: warning:
+    AC_MSG_WARN([
 
   The file '$tcllibname' given to option --with-tcllib is not valid.
   configure will now attempt to autodetect both the Tcl library and header...
 
-EOF
+])
     tcllibname=""
     tclincname=""
     TCLLIB=""
@@ -490,13 +488,12 @@ then
     TCLINC=`echo $tclincname | sed 's%/[[^/]][[^/]]*$%%'`
     TCLINCFN=`$BASENAME $tclincname`
   else
-    cat << EOF >&2
-configure: warning:
+    AC_MSG_WARN([
 
   The file '$tclincname' given to option --with-tclinc is not valid.
   configure will now attempt to autodetect both the Tcl library and header...
 
-EOF
+])
     tcllibname=""
     tclincname=""
     TCLLIB=""
@@ -534,14 +531,13 @@ then
     fi
     if test "${TCLLIBFN-x}" = "x"
     then
-      cat << 'EOF' >&2
-configure: warning:
+      AC_MSG_WARN([
 
   Environment variable TCLLIB was set, but incorrect.
   Please set both TCLLIB and TCLINC correctly if you wish to use them.
   configure will now attempt to autodetect both the Tcl library and header...
 
-EOF
+])
       TCLLIB=""
       TCLLIBFN=""
       TCLINC=""
@@ -573,14 +569,13 @@ then
     fi
     if test "${TCLINCFN-x}" = "x"
     then
-      cat << 'EOF' >&2
-configure: warning:
+      AC_MSG_WARN([
 
   Environment variable TCLINC was set, but incorrect.
   Please set both TCLLIB and TCLINC correctly if you wish to use them.
   configure will now attempt to autodetect both the Tcl library and header...
 
-EOF
+])
       TCLLIB=""
       TCLLIBFN=""
       TCLINC=""
@@ -781,8 +776,7 @@ fi
 # Check if we found Tcl's version
 if test "$TCL_FOUND" = 0
 then
-  cat << 'EOF' >&2
-configure: error:
+  AC_MSG_ERROR([
 
   I can't find Tcl on this system.
 
@@ -795,8 +789,7 @@ configure: error:
   Read the README file if you don't know what Tcl is or how to get it
   and install it.
 
-EOF
-  exit 1
+])
 fi
 ])
 
@@ -808,16 +801,14 @@ AC_DEFUN(EGG_TCL_CHECK_PRE70, [dnl
 TCL_VER_PRE70=`echo $egg_cv_var_tcl_version | $AWK '{split([$]1, i, "."); if (i[[1]] < 7) print "yes"; else print "no"}'`
 if test "$TCL_VER_PRE70" = "yes"
 then
-  cat << EOF >&2
-configure: error:
+  AC_MSG_ERROR([
 
   Your Tcl version is much too old for Eggdrop to use.
   I suggest you download and complie a more recent version.
   The most reliable current version is $tclrecommendver and
   can be downloaded from $tclrecommendsite
 
-EOF
-  exit 1
+])
 fi
 ])
 
@@ -1367,3 +1358,73 @@ fi
 AM_CONDITIONAL(EGG_TCLSCRIPT, test "$egg_tclscript" = "yes")
 ])
 
+dnl  EGG_JAVASCRIPT_MODULE
+dnl
+AC_DEFUN(EGG_JAVASCRIPT_MODULE, [dnl
+
+egg_javascript=no
+
+AC_ARG_WITH(jslib, 
+            AC_HELP_STRING([--with-jslib=PATH],
+                           [full path to javascript library]),
+            jslibname="$withval")
+AC_ARG_WITH(jsinc,
+            AC_HELP_STRING([--with-jsinc=PATH],
+                           [full path to javascript headers]),
+            jsincname="$withval")
+
+CPPFLAGS_save="$CPPFLAGS"
+LDFLAGS_save="$LDFLAGS"
+
+if test ! x"$jsincname" = "x"
+then
+  CPPFLAGS="$CPPFLAGS -I$jsincname -DXP_UNIX"
+fi
+if test ! x"$jslibname" = "x"
+then
+  LDFLAGS="$LDFLAGS -L$jslibname"
+fi
+
+AC_CHECK_LIB(js, JS_Now, JSLIBS="-ljs")
+AC_CHECK_HEADER(jsapi.h)
+
+# Disable the module if either the header file or the library
+# are missing.
+if test x"${JSLIBS}" = "x"
+then
+  AC_MSG_WARN([
+
+  Your system does not provide a working javascript library. The
+  javascript module will therefore be disabled.
+
+])
+else
+  if test ! "${ac_cv_header_jsapi_h}" = "yes"
+  then
+    AC_MSG_WARN([
+
+  Your system does not provide the necessary javascript header files. The
+  javascript module will therefore be disabled.
+
+])
+  else
+    egg_javascript=yes
+    AC_SUBST(JSLIBS)
+    if test ! x"$jslibname" = "x"
+    then
+      JSLDFLAGS="-L$jslibname"
+    fi
+    AC_SUBST(JSLDFLAGS)
+    if test ! x"$jsincname" = "x"
+    then
+      JSINCL="-I$jsincname"
+    fi   
+    AC_SUBST(JSINCL)
+  fi
+fi
+
+CPPFLAGS="${CPPFLAGS_save}" 
+LDFLAGS="${LDFLAGS_save}"
+
+AM_CONDITIONAL(EGG_JAVASCRIPT, test "$egg_javascript" = "yes")
+])
