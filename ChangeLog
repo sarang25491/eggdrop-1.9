@@ -1,3 +1,10 @@
+2002-10-11 23:59  Will Buckner <wcc@techmonkeys.org>
+
+	* doc/UPDATES1.6, src/egg.h:
+
+	* Removed a left-over piece of botnet code and finished synch'ing
+	the updates file.  
+
 2002-10-11 09:00  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/eggdrop.h, modules/javascript/javascript.c,
