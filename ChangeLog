@@ -1,3 +1,10 @@
+2001-10-14 16:59  stdarg <stdarg@techmonkeys.org>
+
+	* src/: script.c, script_api.h, mod/tclscript.mod/tclscript.c:
+
+	Added a convenience function, made normal c functions easy to wrap,
+	added a SCRIPT_USER type (handle <--> struct userrec *) 
+
 2001-10-14 16:20  Matthew Hallacy <poptix@techmonkeys.org>
 
 	* src/: patch.h, userrec.c:
