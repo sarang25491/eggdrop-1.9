@@ -1,3 +1,9 @@
+2003-01-28 20:38  Will Buckner <wcc@techmonkeys.org>
+
+	* src/modules.c:
+
+	* Fixed a typo in modules.c (found by Eule).  
+
 2003-01-18 22:36  Will Buckner <wcc@techmonkeys.org>
 
 	* doc/UPDATES1.6, lib/eggdrop/module.h, modules/irc/chan.c,
