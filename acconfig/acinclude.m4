@@ -1,7 +1,7 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.21 2003/03/03 22:31:46 stdarg Exp $
+dnl $Id: acinclude.m4,v 1.22 2003/03/04 09:16:27 wcc Exp $
 dnl
 
 
@@ -174,7 +174,7 @@ AC_CACHE_CHECK(system release, egg_cv_var_system_release, egg_cv_var_system_rele
 case $host_os in
   cygwin)
     EGG_CYGWIN=yes
-    AC_DEFINE(CYGWIN_HACKS, 1, [Define if running under cygwin])
+    AC_DEFINE(CYGWIN_HACKS, 1, [Define if running under Cygwin.])
     case "`echo $egg_cv_var_system_release | cut -c 1-3`" in
       1.*)
 	AC_PROG_CC_WIN32
@@ -196,11 +196,11 @@ case $host_os in
   ;;
   hpux*)
     AC_DEFINE(HPUX_HACKS, 1,
-              [Define if running on hpux that supports dynamic linking])
+              [Define if running on HPUX that supports dynamic linking.])
     case $host_os in
     hpux10)
       AC_DEFINE(HPUX10_HACKS, 1,
-                [Define if running on hpux 10.x])
+                [Define if running on HPUX 10.x.])
     ;;
     esac
   ;;
@@ -209,11 +209,13 @@ case $host_os in
   ;;
   osf*)
     AC_DEFINE(STOP_UAC, 1,
-              [Define if running on OSF/1 platform])
+              [Define if running on OSF/1 platform.])
+    AC_DEFINE(DONT_USE_SNPRINTFS, 1,
+              [Define to use Eggdrop's snprintf functions without regard to HAVE_SNPRINTF.])
   ;;
   next*)
     AC_DEFINE(BORGCUBES, 1,
-              [Define if running on NeXT Step])
+              [Define if running on NeXT Step.])
   ;;
 esac
 
@@ -269,7 +271,7 @@ egg_cv_have_long_long="cross")])
 if test "$egg_cv_have_long_long" = "yes"
 then
   AC_DEFINE(HAVE_LONG_LONG, 1,
-	    [Define if system supports long long])
+	    [Define if system supports long long.])
 fi
 ])
 
@@ -306,7 +308,7 @@ egg_cv_have_c99_vsnprintf="cross")])
 if test "$egg_cv_have_c99_vsnprintf" = "yes"
 then
   AC_DEFINE(HAVE_C99_VSNPRINTF, 1,
-            [Define if vsnprintf is C99 compliant])
+            [Define if vsnprintf is C99 compliant.])
 else
   egg_replace_snprintf="yes"
 fi
@@ -339,13 +341,13 @@ AC_CHECK_SIZEOF(unsigned int, 4)
 if test "$ac_cv_sizeof_unsigned_int" = 4
 then
   AC_DEFINE(UNSIGNED_INT32, 1,
-            [Define this if an unsigned int is 32 bits])
+            [Define this if an unsigned int is 32 bits.])
 else
   AC_CHECK_SIZEOF(unsigned long, 4)
   if test "$ac_cv_sizeof_unsigned_long" = 4
   then
     AC_DEFINE(UNSIGNED_LONG32, 1,
-              [Define this if an unsigned long is 32 bits])
+              [Define this if an unsigned long is 32 bits.])
   fi
 fi
 ])
@@ -361,7 +363,7 @@ egg_cv_var_sys_errlist,
 ])
 if test x"$egg_cv_var_sys_errlist" = xyes; then
   AC_DEFINE([HAVE_SYS_ERRLIST], 1,
-           [Define if your system libraries have a sys_errlist variable.])
+           [Define if your system libraries has a sys_errlist variable.])
 fi
 ])
 
@@ -826,26 +828,6 @@ then
 fi
 ])
 
-
-dnl  EGG_TCL_CHECK_FREE()
-dnl
-AC_DEFUN(EGG_TCL_CHECK_FREE, [dnl
-if test "$egg_tcl_changed" = "yes"
-then
-  EGG_CACHE_UNSET(egg_cv_var_tcl_free)
-fi
-
-# Check for Tcl_Free()
-AC_CHECK_LIB($TCL_TEST_LIB, Tcl_Free, egg_cv_var_tcl_free=yes, egg_cv_var_tcl_free=no, $TCL_TEST_OTHERLIBS)
-
-if test "$egg_cv_var_tcl_free" = "yes"
-then
-  AC_DEFINE(HAVE_TCL_FREE, 1,
-            [Define for Tcl that has Tcl_Free() (7.5p1 and later)])
-fi
-])
-
-
 dnl  EGG_TCL_CHECK_THREADS()
 dnl
 AC_DEFUN(EGG_TCL_CHECK_THREADS, [dnl
@@ -1002,7 +984,7 @@ AC_ARG_ENABLE(ipv6,
 if test "$ac_cv_ipv6" = "yes"
 then
   AC_DEFINE(IPV6, 1,
-            [Define if you want IPv6 support])
+            [Define if you want to enable IPv6 support.])
 fi
 ])
 
@@ -1022,7 +1004,7 @@ x = 0;
 if test "$egg_cv_var_socklen_t" = "no"
 then
   AC_DEFINE(socklen_t, unsigned,
-            [Define to `unsigned' if something else doesn't define])
+            [Define to `unsigned' if something else doesn't define.])
 fi
 ])
 
@@ -1048,7 +1030,7 @@ else
  AC_MSG_RESULT([not in standard headers, urgh...])
  AC_CHECK_HEADER(rpc/types.h,[
   AC_DEFINE(HAVEUSE_RPCTYPES_H, 1,
-            [Define if we want to include rpc/types.h.  Crap BSDs put INADDR_LOOPBACK there.])
+            [Define if we want to include rpc/types.h. Crap BSDs put INADDR_LOOPBACK there.])
  ],[
   AC_MSG_ERROR([cannot find INADDR_LOOPBACK or rpc/types.h])
  ])
@@ -1094,7 +1076,7 @@ dnl
 AC_DEFUN(EGG_DEFINE_VERSION_NUM, [dnl
 egg_version_num=`echo $VERSION | $AWK 'BEGIN {FS = "."} {printf("%d%02d%02d00", [$]1, [$]2, [$]3)}'`
 AC_DEFINE_UNQUOTED(VERSION_NUM, $egg_version_num,
-                   [Define version number])
+                   [Define version number.])
 ])
 
 
