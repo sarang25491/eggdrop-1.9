@@ -1,3 +1,13 @@
+2003-05-13 07:16  stdarg <stdarg@techmonkeys.org>
+
+	* acconfig/acinclude.m4, lib/eggdrop/module.h,
+	lib/eggdrop/modvals.h, modules/tclscript/Makefile.am,
+	src/modules.c, src/modules.h:
+
+	
+	* Added help to error message if tcl isn't found 
+	* Remove some stray files 
+
 2003-05-12 23:32  Will Buckner <wcc@techmonkeys.org>
 
 	* doc/UPDATES1.6, modules/filesys/files.c, modules/irc/cmdsirc.c,
