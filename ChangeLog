@@ -1,3 +1,10 @@
+2001-08-24 01:07  stdarg
+
+	* src/: tclhash.c, tclhash.h:
+
+	Some more changes... haven't deleted anything yet, so it should all 
+	still compile. :) 
+
 2001-08-23 23:15  stdarg
 
 	* src/tclhash.h:
