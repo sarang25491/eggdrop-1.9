@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tclscript.c,v 1.30 2003/03/01 08:25:58 wcc Exp $";
+static const char rcsid[] = "$Id: tclscript.c,v 1.31 2003/03/08 09:20:35 stdarg Exp $";
 #endif
 
 #include <tcl.h>
@@ -380,6 +380,22 @@ static Tcl_Obj *c_to_tcl_var(Tcl_Interp *myinterp, script_var_t *v)
 			result = Tcl_NewStringObj(str, v->len);
 			#endif
 			if (v->value && v->type & SCRIPT_FREE) free(v->value);
+			break;
+		}
+		case SCRIPT_STRING_LIST: {
+			char **str = v->value;
+			Tcl_Obj *element;
+
+			result = Tcl_NewListObj(0, NULL);
+			while (str && *str) {
+				#ifdef USE_TCL_BYTE_ARRAYS
+				element = Tcl_NewByteArrayObj(*str, strlen(*str));
+				#else
+				element = Tcl_NewStringObj(*str, strlen(*str));
+				#endif
+				Tcl_ListObjAppendElement(myinterp, result, element);
+				str++;
+			}
 			break;
 		}
 		case SCRIPT_BYTES: {
