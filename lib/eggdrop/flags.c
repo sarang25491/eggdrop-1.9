@@ -18,16 +18,16 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: flags.c,v 1.9 2004/07/06 05:40:04 lordares Exp $";
+static const char rcsid[] = "$Id: flags.c,v 1.10 2004/07/06 17:13:12 lordares Exp $";
 #endif
 
 #include "flags.h"
 
-unsigned long flagmap[128];
+unsigned long flagmap[256];
 
 void init_flag_map()
 {
-	unsigned char i;
+	int i;
 
 	for (i = 0; i < 'A'; i++)
 		flagmap[i] = 0;
@@ -37,7 +37,8 @@ void init_flag_map()
 		flagmap[i] = 0;
 	for (; i <= 'z'; i++)
 		flagmap[i] = 1 << (i - 'a');
-	for (; i < 128; i++)
+	/* extra space is reserved for future use */
+	for (; i < 256; i++)
 		flagmap[i] = 0;
 }
 
