@@ -1,3 +1,10 @@
+2002-04-28 03:13  Federico Mennite <ite@techmonkeys.org>
+
+	* src/tcldcc.c:
+
+	Dcc entries weren't released properly in a case of listen command
+	failure 
+
 2002-04-28 02:21  Federico Mennite <ite@techmonkeys.org>
 
 	* lib/eggdrop/module.h, src/dcc.c, src/dccutil.c, src/modules.c,
