@@ -1,5 +1,5 @@
 Directory Contents - doc/
-Last revised: February 23, 2003
+Last revised: March  03, 2003
      _________________________________________________________________
 
                           Directory Contents - doc/
@@ -17,9 +17,6 @@ Last revised: February 23, 2003
     Fill out this form and e-mail it to bugs@eggheads.org if you find a bug
     in Eggdrop.
 
-  first_script.txt
-    This document will help get you started with Tcl scripting for Eggdrop.
-
   KNOWN-PROBLEMS
     See this file for a list of things that are broken but aren't getting
     fixed anytime soon
@@ -27,17 +24,9 @@ Last revised: February 23, 2003
   MODULES
     Information on writing Eggdrop modules can be found in this document.
 
-  tcl-commands.doc
+  SCRIPTING-COMMANDS
     Documentation on Eggdrop Tcl commands available to scripters can be found
     here.
-
-  text-substitutions.doc
-    This contains documentation on %-variables that can be used in help, MOTD,
-    and BANNER files.
-
-  tricks
-    Some advanced tips on making Eggdrop do what you want it to do can be found
-    here. It also contains tweaking tips for your config file.
 
   UPDATES1.6
     This is a complete list of changes made to Eggdrop 1.6.

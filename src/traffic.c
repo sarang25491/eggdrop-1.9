@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: traffic.c,v 1.3 2003/02/15 00:23:51 wcc Exp $
+ * $Id: traffic.c,v 1.4 2003/03/04 03:12:45 wcc Exp $
  */
 
 #include "main.h"
@@ -28,7 +28,7 @@
 #include "traffic.h"			/* prototypes		*/
 
 #ifndef lint
-static const char rcsid[] = "$Id: traffic.c,v 1.3 2003/02/15 00:23:51 wcc Exp $";
+static const char rcsid[] = "$Id: traffic.c,v 1.4 2003/03/04 03:12:45 wcc Exp $";
 #endif
 
 egg_traffic_t traffic;			/* traffic information	*/
@@ -142,11 +142,8 @@ int cmd_traffic(struct userrec *u, int idx, char *par)
   dprintf(idx, "==========================\n");
       
   /* IRC */
-  if (   traffic.out_total.irc > 0
-      || traffic.in_total.irc > 0
-      || traffic.out_today.irc > 0
-      || traffic.in_today.irc > 0) {
-
+  if (traffic.out_total.irc > 0 || traffic.in_total.irc > 0 ||
+      traffic.out_today.irc > 0 || traffic.in_today.irc > 0) {
     dprintf(idx, "IRC:\n");
     dprintf(idx, "  out: %s", btos(traffic.out_total.irc
 			      + traffic.out_today.irc));
@@ -156,12 +153,9 @@ int cmd_traffic(struct userrec *u, int idx, char *par)
     dprintf(idx, " (%s today)\n", btos(traffic.in_today.irc));
   }
  
-  /* Botnet */
-  if (   traffic.out_total.bn > 0
-      || traffic.in_total.bn > 0
-      || traffic.out_today.bn > 0
-      || traffic.in_today.bn > 0) {
-
+  /*
+  if (traffic.out_total.bn > 0 || traffic.in_total.bn > 0 ||
+      traffic.out_today.bn > 0 || traffic.in_today.bn > 0) {
     dprintf(idx, "Botnet:\n");
     dprintf(idx, "  out: %s", btos(traffic.out_total.bn
 			      + traffic.out_today.bn));
@@ -169,39 +163,34 @@ int cmd_traffic(struct userrec *u, int idx, char *par)
     dprintf(idx, "   in: %s", btos(traffic.in_total.bn + traffic.in_today.bn));
     dprintf(idx, " (%s today)\n", btos(traffic.in_today.bn));
   }
+  */
 
   /* Partyline */
-  if (   traffic.out_total.dcc > 0
-      || traffic.in_total.dcc > 0
-      || traffic.out_today.dcc > 0 
-      || traffic.in_today.dcc > 0) {
-
-    /* compute total out of partyline */
+  if (traffic.out_total.dcc > 0 || traffic.in_total.dcc > 0 ||
+      traffic.out_today.dcc > 0  || traffic.in_today.dcc > 0) {
     itmp = traffic.out_total.dcc + traffic.out_today.dcc;
     itmp2 = traffic.out_today.dcc;
 
     dprintf(idx, "Partyline:\n");
     dprintf(idx, "  out: %s", btos(itmp));
     dprintf(idx, " (%s today)\n", btos(itmp2));
-    dprintf(idx, "   in: %s", btos(traffic.in_total.dcc
-			      + traffic.in_today.dcc));
+    dprintf(idx, "   in: %s", btos(traffic.in_total.dcc +
+            traffic.in_today.dcc));
     dprintf(idx, " (%s today)\n", btos(traffic.in_today.dcc));
   }
 
   /* unknown */
   if (traffic.out_total.unknown > 0 || traffic.out_today.unknown > 0) {
     dprintf(idx, "Misc:\n");
-    dprintf(idx, "  out: %s", btos(traffic.out_total.unknown
-			      + traffic.out_today.unknown));
+    dprintf(idx, "  out: %s", btos(traffic.out_total.unknown +
+            traffic.out_today.unknown));
     dprintf(idx, " (%s today)\n", btos(traffic.out_today.unknown));
-    dprintf(idx, "   in: %s", btos(traffic.in_total.unknown
-                              + traffic.in_today.unknown));
+    dprintf(idx, "   in: %s", btos(traffic.in_total.unknown +
+            traffic.in_today.unknown));
     dprintf(idx, " (%s today)\n", btos(traffic.in_today.unknown));
   }
 
   dprintf(idx, "---\n");
-
-  /* total */
   dprintf(idx, "Total:\n");
 
   /* compute total */

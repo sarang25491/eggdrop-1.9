@@ -1,5 +1,5 @@
 Directory Contents - /
-Last revised: March  01, 2003
+Last revised: March  03, 2003
      _________________________________________________________________
 
                            Directory Contents - /
@@ -45,6 +45,12 @@ Last revised: March  01, 2003
 
   text/
     This contains the motd and banner files.
+
+  AUTHORS
+    A list of Eggdrop developers and contributors is in this file.
+
+  ABOUT-NLS
+    This contains gettext information.
 
   bootstrap
     This script generates several files needed for the configure process.

@@ -1,0 +1,22 @@
+Directory Contents - doc/howto/
+Last revised: March  03, 2003
+     _________________________________________________________________
+
+                       Directory Contents - doc/howto/
+
+
+  FIRST-SCRIPT
+    This contains a very simple, profusely commented sample Tcl script.
+
+  PATCHING
+    This is a guide to creating, applying and submitting Eggdrop patches.
+
+  PORTING
+    Information about porting scripts from the 1.6 tree to the 1.7 tree can
+    be found in this document.
+
+  TIMERS
+    This document contains information about using Eggdrop timers in scripts.
+
+  UDEF
+    This contains information about using user-defiend channel settings.
