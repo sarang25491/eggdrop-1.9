@@ -10,6 +10,11 @@
 
 #include "my_socket.h"
 
+/* Apparently SHUT_RDWR is not defined on some systems. */
+#ifndef SHUT_RDWR
+#define SHUT_RDWR 2
+#endif
+
 #ifdef AF_INET6
 #define DO_IPV6
 #endif

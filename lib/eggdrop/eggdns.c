@@ -365,7 +365,6 @@ static int dns_make_query(const char *host, int type, char **buf, int *query_len
 int egg_dns_cancel(int id, int issue_callback)
 {
 	dns_query_t *q, *prev;
-	FILE *fp;
 
 	prev = NULL;
 	for (q = query_head; q; q = q->next) {

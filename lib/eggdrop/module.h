@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: module.h,v 1.28 2002/09/20 02:06:25 stdarg Exp $
+ * $Id: module.h,v 1.29 2002/09/20 20:18:22 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_MODULE_H
@@ -64,7 +64,6 @@
 #include "src/traffic.h"
 #include "src/userent.h"
 #include "src/userrec.h"
-#include "src/tandem.h"
 #include "src/logfile.h"
 #include "src/dns.h"
 
