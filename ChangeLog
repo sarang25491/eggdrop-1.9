@@ -1,3 +1,9 @@
+2001-10-03 16:00  Matthew Hallacy <poptix@techmonkeys.org>
+
+	* src/mod/uptime.mod/uptime.c:
+
+	remove useless debug line from uptime.mod 
+
 2001-09-30 04:27  stdarg
 
 	* src/: tclhash.c, tclhash.h, mod/server.mod/server.c,
