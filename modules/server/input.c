@@ -102,7 +102,7 @@ static int got005(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 	if (current_server.support) free(current_server.support);
 
 	current_server.support = malloc(sizeof(*current_server.support) * (nargs-1));
-	current_server.nsupport = nargs-1;
+	current_server.nsupport = nargs-2;
 
 	for (i = 1; i < nargs-1; i++) {
 		arg = args[i];
