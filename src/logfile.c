@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: logfile.c,v 1.48 2004/09/26 09:42:09 stdarg Exp $";
+static const char rcsid[] = "$Id: logfile.c,v 1.49 2004/10/04 15:48:30 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -173,6 +173,7 @@ char *logfile_add(char *modes, char *chan, char *fname)
 	logfiles = realloc(logfiles, (nlogfiles + 1) * sizeof(*logfiles));
 			
 	log = &logfiles[nlogfiles++];
+	memset(log, 0, sizeof(*log));
 	log->filename = strdup(fname);
 	log->chname = strdup(chan);
 	log->last_msg = strdup("");

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: channels.h,v 1.20 2004/09/26 09:42:09 stdarg Exp $
+ * $Id: channels.h,v 1.21 2004/10/04 15:48:30 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_SERVER_CHANNELS_H_
@@ -27,6 +27,10 @@
 #define CHANNEL_BANLIST		0x2
 #define CHANNEL_NAMESLIST	0x4
 #define CHANNEL_JOINED		0x8
+
+/* Flag bits for channels. */
+#define	CHANNEL_STATIC		0x1
+#define CHANNEL_INACTIVE	0x2
 
 #define BOT_ISOP(chanptr) (((chanptr)->status & CHANNEL_JOINED) && flag_match_single_char(&((chanptr)->bot->mode), 'o'))
 #define BOT_ISHALFOP(chanptr) (((chanptr)->status & CHANNEL_JOINED) && flag_match_single_char(&((chanptr)->bot->mode), 'h'))
@@ -70,7 +74,7 @@ typedef struct channel_mode_arg {
 } channel_mode_arg_t;
 
 typedef struct channel {
-	struct channel *next;
+	struct channel *next, *prev;
 
 	char *name;
 
@@ -87,12 +91,14 @@ typedef struct channel {
 	channel_mode_arg_t *args;	/* Stored channel modes. */
 	int nargs;
 
-	int status;
-
 	channel_member_t *member_head;	/* Member list. */
 	int nmembers;
 
 	channel_member_t *bot;		/* All you need to know about me :-) */
+
+	xml_node_t *settings;	/* Extended settings for scripts/modules/us. */
+	int status;		/* Status of channel. */
+	int flags;		/* Internal flags for channel. */
 } channel_t;
 
 extern channel_t *channel_head;
@@ -100,28 +106,40 @@ extern int nchannels;
 
 extern hash_table_t *uhost_cache_ht;
 
-extern void server_channel_init();
-extern void server_channel_destroy();
-extern int channel_lookup(const char *chan_name, int create, channel_t **chanptr, channel_t **prevptr);
-extern char *uhost_cache_lookup(const char *nick);
-extern void uhost_cache_fillin(const char *nick, const char *uhost, int addref);
+/* channels.c */
+extern void channel_init();
+extern void channel_reset();
+extern void channel_destroy();
+extern void channel_free(channel_t *chan);
+extern channel_t *channel_probe(const char *chan_name, int create);
+extern channel_t *channel_add(const char *name);
+extern int channel_remove(const char *name);
+extern int channel_load(const char *fname);
+extern int channel_save(const char *fname);
+extern int channel_set(channel_t *chan, const char *value, ...);
+extern int channel_get(channel_t *chan, char **strptr, ...);
+extern int channel_get_int(channel_t *chan, int *intptr, ...);
+extern xml_node_t *channel_get_node(channel_t *chan, ...);
 extern int channel_mode(const char *chan_name, const char *nick, char *buf);
 extern int channel_mode_arg(const char *chan_name, int type, const char **value);
-
-/* Events that hook into input.c. */
-extern void channel_on_nick(const char *old_nick, const char *new_nick);
-extern void channel_on_quit(const char *nick, const char *uhost, user_t *u);
-extern void channel_on_leave(const char *chan_name, const char *nick, const char *uhost, user_t *u);
-extern void channel_on_join(const char *chan_name, const char *nick, const char *uhost);
-
-/* Functions for others (scripts/modules) to access channel data. */
-extern void channel_reset();
-extern int channel_list(const char ***chans);
-extern int channel_list_members(const char *chan, const char ***members);
 extern channel_mask_list_t *channel_get_mask_list(channel_t *chan, char type);
 extern void channel_add_mask(channel_t *chan, char type, const char *mask, const char *set_by, int time);
-extern int channel_del_mask(channel_t *chan, char type, const char *mask, int remove);
-extern void channel_clear_masks(channel_t *chan, char type);
-extern int channel_list_masks(channel_mask_t ***cm, char type, channel_t *chanptr, const char *mask);
+extern void channel_del_mask(channel_t *chan, char type, const char *mask);
+
+/* channel_events.c */
+extern void channel_events_init();
+extern void channel_events_destroy();
+extern void channel_free_online(channel_t *chan);
+extern void channel_on_quit(const char *nick, const char *uhost, user_t *u);
+extern void channel_on_connect();
+
+/* uhost_cache.c */
+extern void uhost_cache_init();
+extern void uhost_cache_reset();
+extern void uhost_cache_destroy();
+extern char *uhost_cache_lookup(const char *nick);
+extern void uhost_cache_addref(const char *nick, const char *uhost);
+extern void uhost_cache_decref(const char *nick);
+void uhost_cache_swap(const char *old_nick, const char *new_nick);
 
 #endif /* !_EGG_MOD_SERVER_CHANNELS_H_ */

@@ -25,12 +25,11 @@
 
 /* Things from channels.c */
 #define channel_head server_LTX_channel_head
-#define uhost_cache_ht server_LTX_uhost_cache_ht
 #define nchannels server_LTX_nchannels
-#define server_channel_init server_LTX_server_channel_init
-#define server_channel_destroy server_LTX_server_channel_destroy
+#define channel_init server_LTX_server_channel_init
+#define channel_destroy server_LTX_server_channel_destroy
 #define channel_reset server_LTX_channel_reset
-#define channel_lookup server_LTX_channel_lookup
+#define channel_probe server_LTX_channel_probe
 #define uhost_cache_lookup server_LTX_uhost_cache_lookup
 #define uhost_cache_addref server_LTX_uhost_cache_addref
 #define uhost_cache_decref server_LTX_uhost_cache_decref
@@ -38,8 +37,6 @@
 #define channel_on_leave server_LTX_channel_on_leave
 #define channel_on_quit server_LTX_channel_on_quit
 #define channel_on_nick server_LTX_channel_on_nick
-#define channel_list server_LTX_channel_list
-#define channel_list_members server_LTX_channel_list_members
 #define channel_get_mask_list server_LTX_channel_get_mask_list
 #define channel_add_mask server_LTX_channel_add_mask
 #define channel_del_mask server_LTX_channel_del_mask

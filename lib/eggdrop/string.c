@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: string.c,v 1.1 2004/06/21 18:44:20 wingman Exp $";
+static const char rcsid[] = "$Id: string.c,v 1.2 2004/10/04 15:48:29 stdarg Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -271,3 +271,10 @@ str_starts_with(const char *text, const char *str)
 	return (*str);
 }
 
+void str_tolower(char *str)
+{
+	while (*str) {
+		*str = tolower(*str);
+		str++;
+	}
+}

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partymember.c,v 1.16 2004/06/29 21:28:16 stdarg Exp $";
+static const char rcsid[] = "$Id: partymember.c,v 1.17 2004/10/04 15:48:29 stdarg Exp $";
 #endif
 
 #include <stdarg.h>
@@ -58,6 +58,7 @@ int partymember_shutdown(void)
 	garbage_run();
 
 	hash_table_delete(pid_ht);
+	pid_ht = NULL;
 	return (0);
 }
 

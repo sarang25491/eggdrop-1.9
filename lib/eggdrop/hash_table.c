@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: hash_table.c,v 1.13 2004/09/26 09:42:09 stdarg Exp $";
+static const char rcsid[] = "$Id: hash_table.c,v 1.14 2004/10/04 15:48:29 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -63,6 +63,8 @@ int hash_table_delete(hash_table_t *ht)
 	hash_table_row_t *row;
 	int i;
 
+	if (!ht) return(-1);
+
 	for (i = 0; i < ht->max_rows; i++) {
 		row = ht->rows+i;
 		for (entry = row->head; entry; entry = next) {
@@ -78,6 +80,8 @@ int hash_table_delete(hash_table_t *ht)
 
 int hash_table_check_resize(hash_table_t *ht)
 {
+	if (!ht) return(-1);
+
 	if (ht->cells_in_use / ht->max_rows > 100) {
 		hash_table_resize(ht, ht->max_rows * 3);
 	}
@@ -89,6 +93,8 @@ int hash_table_resize(hash_table_t *ht, int nrows)
 	int i, newidx;
 	hash_table_row_t *oldrow, *newrows;
 	hash_table_entry_t *entry, *next;
+
+	if (!ht) return(-1);
 
 	/* First allocate the new rows. */
 	newrows = calloc(nrows, sizeof(*newrows));
@@ -117,6 +123,8 @@ int hash_table_insert(hash_table_t *ht, const void *key, void *data)
 	int idx;
 	hash_table_entry_t *entry;
 	hash_table_row_t *row;
+
+	if (!ht) return(-1);
 
 	hash = ht->hash(key);
 	idx = hash % ht->max_rows;
@@ -151,7 +159,7 @@ int hash_table_find(hash_table_t *ht, const void *key, void *dataptr)
 	hash_table_entry_t *entry;
 	hash_table_row_t *row;
 
-	if (key == NULL) return (-1);
+	if (!ht) return (-1);
 
 	hash = ht->hash(key);
 	idx = hash % ht->max_rows;
@@ -172,6 +180,8 @@ int hash_table_remove(hash_table_t *ht, const void *key, void *dataptr)
 	unsigned int hash;
 	hash_table_entry_t *entry, *last;
 	hash_table_row_t *row;
+
+	if (!ht) return(-1);
 
 	hash = ht->hash(key);
 	idx = hash % ht->max_rows;
@@ -200,6 +210,8 @@ int hash_table_walk(hash_table_t *ht, hash_table_node_func callback, void *param
 	hash_table_row_t *row;
 	hash_table_entry_t *entry, *next;
 	int i;
+
+	if (!ht) return(-1);
 
 	for (i = 0; i < ht->max_rows; i++) {
 		row = ht->rows+i;

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: server.c,v 1.61 2004/10/01 15:31:18 stdarg Exp $";
+static const char rcsid[] = "$Id: server.c,v 1.62 2004/10/04 15:48:30 stdarg Exp $";
 #endif
 
 #include "server.h"
@@ -84,6 +84,7 @@ static int server_secondly()
 static int server_status(partymember_t *p, const char *text)
 {
 	int details = 0;
+	channel_t *chan;
 
 	if (text) {
 		if (!strcasecmp(text, "all") || !strcasecmp(text, "server")) details = 1;
@@ -94,27 +95,30 @@ static int server_status(partymember_t *p, const char *text)
 	if (!current_server.connected) {
 		if (current_server.idx >= 0) partymember_printf(p, _("   Connecting to server %s/%d."), current_server.server_host, current_server.port);
 		else partymember_printf(p, _("   Connecting to next server in %d seconds."), cycle_delay);
+		return(0);
 	}
-	else {
-		/* First line, who we've connected to. */
-		partymember_printf(p, _("   Connected to %s/%d."), current_server.server_self ? current_server.server_self : current_server.server_host, current_server.port);
+	/* First line, who we've connected to. */
+	partymember_printf(p, _("   Connected to %s/%d."), current_server.server_self ? current_server.server_self : current_server.server_host, current_server.port);
 
-		/* Second line, who we're connected as. */
-		if (current_server.registered) {
-			if (current_server.user) partymember_printf(p, _("   Online as %s!%s@%s (%s)."), current_server.nick, current_server.user, current_server.host, current_server.real_name);
-			else partymember_printf(p, _("   Online as %s (still waiting for WHOIS result)."), current_server.nick);
-		}
-		else partymember_printf(p, _("   Still logging in."));
-
-		/* Some traffic stats. */
-		if (details) {
-			sockbuf_stats_t *stats;
-
-			sockbuf_get_stats(current_server.idx, &stats);
-			partymember_printf(p, "   Server traffic: %lld in / %lld out (raw), %lld in / %lld out (filtered)", stats->raw_bytes_in, stats->raw_bytes_out, stats->bytes_in, stats->bytes_out);
-		}
+	/* Second line, who we're connected as. */
+	if (current_server.registered) {
+		if (current_server.user) partymember_printf(p, _("   Online as %s!%s@%s (%s)."), current_server.nick, current_server.user, current_server.host, current_server.real_name);
+		else partymember_printf(p, _("   Online as %s (still waiting for WHOIS result)."), current_server.nick);
 	}
-	partymember_printf(p, "");
+	else partymember_printf(p, _("   Still logging in."));
+
+	/* Print the channel list if we have one. */
+	for (chan = channel_head; chan; chan = chan->next) {
+		partymember_printf(p, "   %s : %d member%s", chan->name, chan->nmembers, chan->nmembers == 1 ? "" : "s");
+	}
+
+	/* Some traffic stats. */
+	if (details) {
+		sockbuf_stats_t *stats;
+
+		sockbuf_get_stats(current_server.idx, &stats);
+		partymember_printf(p, "   Server traffic: %lld in / %lld out (raw), %lld in / %lld out (filtered)", stats->raw_bytes_in, stats->raw_bytes_out, stats->bytes_in, stats->bytes_out);
+	}
 	return(0);
 }
 
@@ -154,7 +158,7 @@ static int server_config_save(const char *handle)
 
 	/* Save the channel file. */
 	putlog(LOG_MISC, "*", "Saving channels file...");
-	schan_save(server_config.chanfile);
+	channel_save(server_config.chanfile);
 	return(0);
 }
 
@@ -175,9 +179,9 @@ static int server_close(int why)
 
 	server_binds_destroy();
 
-	server_channel_destroy();
-
-	server_schan_destroy();
+	channel_destroy();
+	channel_events_destroy();
+	uhost_cache_destroy();
 
 	server_script_destroy();
 
@@ -283,8 +287,9 @@ int server_start(egg_module_t *modinfo)
 	bind_add_simple("config_save", NULL, "eggdrop", server_config_save);
 
 	/* Initialize channels. */
-	server_channel_init();
-	server_schan_init();
+	channel_init();
+	channel_events_init();
+	uhost_cache_init();
 
 	/* Initialize script interface. */
 	server_script_init();

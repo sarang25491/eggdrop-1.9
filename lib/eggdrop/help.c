@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: help.c,v 1.18 2004/09/29 18:03:53 stdarg Exp $";
+static const char rcsid[] = "$Id: help.c,v 1.19 2004/10/04 15:48:29 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -32,7 +32,6 @@ static int nhelp_files = 0;
 static help_section_t *sections = NULL;
 static int nsections = 0;
 
-/* XXX: make this configurable(just how?) */
 static char *help_path = NULL;
 static char *help_lang_default = NULL;
 static char *help_lang_fallback = "en_US";

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: party_commands.c,v 1.17 2004/09/26 09:42:09 stdarg Exp $";
+static const char rcsid[] = "$Id: party_commands.c,v 1.18 2004/10/04 15:48:30 stdarg Exp $";
 #endif
 
 #include "server.h"
@@ -165,21 +165,83 @@ static int party_act(partymember_t *p, const char *nick, user_t *u, const char *
 	return(0);
 }
 
+static void parse_chanset(channel_t *chan, const char *settings)
+{
+	char *name, *value;
+	char flagbuf[2] = {0, 0};
+
+	while (settings) {
+		egg_get_arg(settings, &settings, &name);
+		if (!name) break;
+		if (*name == '+' || *name == '-') {
+			if (*name == '+') flagbuf[0] = '1';
+			else flagbuf[0] = '0';
+			value = flagbuf;
+			if (*(name+1)) channel_set(chan, flagbuf, name+1, 0, NULL);
+		}
+		else {
+			egg_get_arg(settings, &settings, &value);
+			channel_set(chan, value, name, 0, NULL);
+			if (value) free(value);
+		}
+		free(name);
+	}
+}
+
 /* +chan <name> [settings] */
 static int party_pls_chan(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
+	const char *settings;
+	char *name;
+	channel_t *chan;
+
+	egg_get_arg(text, &settings, &name);
+	if (!name) {
+		partymember_printf(p, "Syntax: %s <channel> [settings]", cmd);
+		return(0);
+	}
+	chan = channel_add(name);
+	free(name);
+	parse_chanset(chan, settings);
 	return BIND_RET_LOG;
 }
 
 /* -chan <name> */
 static int party_mns_chan(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
+	while (text && isspace(*text)) text++;
+	if (!text || !*text) {
+		partymember_printf(p, "Syntax: %s <channel>", cmd);
+		return(0);
+	}
+	if (channel_remove(text)) {
+		partymember_printf(p, "Channel not found!");
+		return(0);
+	}
+	partymember_printf(p, "Channel removed.");
+	printserv(SERVER_NORMAL, "PART %s", text);
 	return BIND_RET_LOG;
 }
 
 /* chanset <channel / *> <setting> [data] */
 static int party_chanset(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
+	const char *settings;
+	char *name;
+	channel_t *chan;
+
+	egg_get_arg(text, &settings, &name);
+	if (!name) {
+		partymember_printf(p, "Syntax: %s <channel> [settings]", cmd);
+		return(0);
+	}
+	chan = channel_probe(name, 0);
+	free(name);
+	if (!chan) {
+		partymember_printf(p, "Channel not found! Use +chan if you want to create a new channel.");
+		return(0);
+	}
+	parse_chanset(chan, settings);
 	return BIND_RET_LOG;
 }
 
@@ -192,6 +254,8 @@ static int party_chaninfo(partymember_t *p, const char *nick, user_t *u, const c
 /* chansave [filename] */
 static int party_chansave(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
+	while (text && isspace(*text)) text++;
+	channel_save(text && *text ? text : server_config.chanfile);
 	return BIND_RET_LOG;
 }
 

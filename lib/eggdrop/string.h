@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: string.h,v 1.2 2004/06/21 20:35:11 wingman Exp $
+ * $Id: string.h,v 1.3 2004/10/04 15:48:29 stdarg Exp $
  */
 
 #ifndef _EGG_STRING_H_
@@ -24,6 +24,7 @@
 
 int str_ends_with(const char *text, const char *str);
 int str_starts_with(const char *text, const char *str);
+void str_tolower(char *str);
 
 int egg_get_word(const unsigned char *text, const char **next, char **word);
 int egg_get_arg(const unsigned char *text, const char **next, char **arg);

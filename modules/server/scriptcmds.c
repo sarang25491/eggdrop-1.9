@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.45 2004/10/01 15:31:18 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.46 2004/10/04 15:48:30 stdarg Exp $";
 #endif
 
 #include "server.h"
@@ -150,7 +150,7 @@ static int script_channel_members(script_var_t *retval, char *chan_name)
 	retval->type = SCRIPT_ARRAY | SCRIPT_FREE | SCRIPT_VAR;
 	retval->len = 0;
 
-	channel_lookup(chan_name, 0, &chan, NULL);
+	chan = channel_probe(chan_name, 0);
 	if (!chan) return(-1);
 
 	for (m = chan->member_head; m; m = m->next) {
@@ -167,7 +167,7 @@ static int script_channel_topic(script_var_t *retval, char *chan_name)
 	retval->type = SCRIPT_ARRAY | SCRIPT_FREE | SCRIPT_VAR;
 	retval->len = 0;
 
-	channel_lookup(chan_name, 0, &chan, NULL);
+	chan = channel_probe(chan_name, 0);
 	if (!chan) return(-1);
 
 	script_list_append(retval, script_string(chan->topic, -1));
@@ -185,7 +185,7 @@ static int script_channel_mask_list(script_var_t *retval, char *chan_name, char 
 	retval->type = SCRIPT_ARRAY | SCRIPT_FREE | SCRIPT_VAR;
 	retval->len = 0;
 
-	channel_lookup(chan_name, 0, &chan, NULL);
+	chan = channel_probe(chan_name, 0);
 	if (!chan) return(-1);
 
 	l = channel_get_mask_list(chan, type[0]);
@@ -224,7 +224,7 @@ static char *script_channel_key(char *chan_name)
 {
 	channel_t *chan;
 
-	channel_lookup(chan_name, 0, &chan, NULL);
+	chan = channel_probe(chan_name, 0);
 	if (chan) return(chan->key);
 	return(NULL);
 }
@@ -233,29 +233,27 @@ static int script_channel_limit(char *chan_name)
 {
 	channel_t *chan;
 
-	channel_lookup(chan_name, 0, &chan, NULL);
+	chan = channel_probe(chan_name, 0);
 	if (chan) return(chan->limit);
 	return(-1);
 }
 
-/* Schan commands. */
-
 static char *script_schan_get(char *chan_name, char *setting)
 {
-	schan_t *chan = schan_lookup(chan_name, 0);
+	channel_t *chan = channel_probe(chan_name, 0);
 	char *value;
 
 	if (!chan) return(NULL);
-	schan_get(chan, &value, setting, 0, NULL);
+	channel_get(chan, &value, setting, 0, NULL);
 	return(value);
 }
 
 static int script_schan_set(char *chan_name, char *setting, char *value)
 {
-	schan_t *chan = schan_lookup(chan_name, 1);
+	channel_t *chan = channel_probe(chan_name, 1);
 
 	if (!chan) return(-1);
-	return schan_set(chan, value, setting, 0, NULL);
+	return channel_set(chan, value, setting, 0, NULL);
 }
 
 /* Output queue commands. */
