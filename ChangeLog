@@ -1,3 +1,10 @@
+2001-12-01 15:44  Federico Mennite <ite@techmonkeys.org>
+
+	* doc/tcl-commands.doc:
+
+	Fixed up some spelling mistakes in doc/tcl-commands.doc. Patch by
+	Wcc <will@centerofnowhere.com> 
+
 2001-12-01 15:13  Federico Mennite <ite@techmonkeys.org>
 
 	* src/tcluser.c:
