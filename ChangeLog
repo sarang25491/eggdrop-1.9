@@ -1,3 +1,9 @@
+2002-01-28 10:00  Automatic CVS Scripts
+
+	* po/eggdrop.pot:
+
+	Pots 
+
 2002-01-27 14:59  Federico Mennite <ite@techmonkeys.org>
 
 	* modules/channels/cmdschan.c, modules/irc/cmdsirc.c,
