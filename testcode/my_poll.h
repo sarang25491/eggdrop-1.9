@@ -1,5 +1,5 @@
-#ifndef _MYPOLL_H_
-#define _MYPOLL_H_
+#ifndef _MY_POLL_H_
+#define _MY_POLL_H_
 
 #define POLLIN	1
 #define POLLOUT	2

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <sys/select.h>
-#include "mypoll.h"
+#include "my_poll.h"
 
 int poll(struct pollfd *pollfds, int npollfds, int timeout)
 {

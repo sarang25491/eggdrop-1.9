@@ -10,7 +10,7 @@
 #ifdef HAVE_POLL
 	#include <sys/poll.h>
 #else
-	#include "mypoll.h"
+	#include "my_poll.h"
 #endif
 
 #include <errno.h>
@@ -152,19 +152,19 @@ int sockbuf_on_connect(int idx, int level, const char *peer_ip, int peer_port)
 }
 
 /* When an incoming connection is accepted. */
-int sockbuf_on_newclient(int idx, int level, int newsock, const char *peer_ip, int peer_port)
+int sockbuf_on_newclient(int idx, int level, int newidx, const char *peer_ip, int peer_port)
 {
 	int i;
 	sockbuf_t *sbuf = &sockbufs[idx];
 
 	for (i = 0; i < sbuf->nfilters; i++) {
 		if (sbuf->filters[i]->on_connect && sbuf->filters[i]->level > level) {
-			return sbuf->filters[i]->on_newclient(sbuf->filter_client_data[i], idx, newsock, peer_ip, peer_port);
+			return sbuf->filters[i]->on_newclient(sbuf->filter_client_data[i], idx, newidx, peer_ip, peer_port);
 		}
 	}
 
 	if (sbuf->handler->on_newclient) {
-		sbuf->handler->on_newclient(sbuf->client_data, idx, newsock, peer_ip, peer_port);
+		sbuf->handler->on_newclient(sbuf->client_data, idx, newidx, peer_ip, peer_port);
 	}
 	return(0);
 }
@@ -264,7 +264,7 @@ static void sockbuf_got_writable_client(int idx)
 	call the on_newclient event. */
 static void sockbuf_got_readable_server(int idx)
 {
-	int newsock, peer_port;
+	int newsock, newidx, peer_port;
 	char *peer_ip = NULL;
 	sockbuf_t *sbuf = &sockbufs[idx];
 
@@ -273,8 +273,11 @@ static void sockbuf_got_readable_server(int idx)
 		if (peer_ip) free(peer_ip);
 		return;
 	}
+	socket_set_nonblock(newsock, 1);
 
-	sockbuf_on_newclient(idx, SOCKBUF_LEVEL_INTERNAL, newsock, peer_ip, peer_port);
+	newidx = sockbuf_new();
+	sockbuf_set_sock(newidx, newsock, 0);
+	sockbuf_on_newclient(idx, SOCKBUF_LEVEL_INTERNAL, newidx, peer_ip, peer_port);
 }
 
 /* This is called when the POLLOUT condition is true for already-connected

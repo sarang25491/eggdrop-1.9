@@ -51,14 +51,11 @@ static sockbuf_handler_t client_handler = {
 	client_read, NULL
 };
 
-static int server_newclient(void *client_data, int idx, int newsock, const char *peer_ip, int peer_port)
+static int server_newclient(void *client_data, int idx, int newidx, const char *peer_ip, int peer_port)
 {
 	char buf[512];
-	int buflen, newidx, i;
+	int buflen, i;
 
-	socket_set_nonblock(newsock, 1);
-	newidx = sockbuf_new();
-	sockbuf_set_sock(newidx, newsock, 0);
 	sslmode_on(newidx, 1);
 	zipmode_on(newidx);
 	linemode_on(newidx);

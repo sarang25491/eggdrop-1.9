@@ -32,7 +32,7 @@ typedef struct {
 	/* Connection-level events. */
 	int (*on_connect)(void *client_data, int idx, const char *peer_ip, int peer_port);
 	int (*on_eof)(void *client_data, int idx, int err, const char *errmsg);
-	int (*on_newclient)(void *client_data, int idx, int newsock, const char *peer_ip, int peer_port);
+	int (*on_newclient)(void *client_data, int idx, int newidx, const char *peer_ip, int peer_port);
 
 	/* Data-level events. */
 	int (*on_read)(void *client_data, int idx, char *data, int len);
@@ -50,7 +50,7 @@ typedef struct {
 	/* Connection-level events. */
 	int (*on_connect)(void *client_data, int idx, const char *peer_ip, int peer_port);
 	int (*on_eof)(void *client_data, int idx, int err, const char *errmsg);
-	int (*on_newclient)(void *client_data, int idx, int newsock, const char *peer_ip, int peer_port);
+	int (*on_newclient)(void *client_data, int idx, int newidx, const char *peer_ip, int peer_port);
 
 	/* Data-level events. */
 	int (*on_read)(void *client_data, int idx, char *data, int len);
