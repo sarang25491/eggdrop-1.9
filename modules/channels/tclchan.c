@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: tclchan.c,v 1.21 2002/10/11 00:49:20 wcc Exp $";
+static const char rcsid[] = "$Id: tclchan.c,v 1.22 2002/11/24 04:50:33 wcc Exp $";
 #endif
 */
 
@@ -180,9 +180,12 @@ static int script_newsomething(void *type, char *chan_name, char *mask, char *cr
 		expire_time = atoi(lifetime);
 		if (expire_time) expire_time = expire_time * 60 + now;
 	}
-	expire_time = now + (60 * (((int) type == 'b') ? chan->ban_time :
-				(((int) type == 'e') ? chan->exempt_time :
-				chan->exempt_time)));
+	expire_time = now + (60 * (((int) type == 'b') ?
+			    ((chan->ban_time == 0) ? 0L : chan->ban_time) :
+			    (((int) type == 'e') ? ((chan->exempt_time == 0) ?
+			    0L : chan->exempt_time) :
+			    ((chan->invite_time == 0) ?
+			    0L : chan->invite_time))));
 
 	if (options && !strcasecmp(options, "sticky")) sticky = 1;
 

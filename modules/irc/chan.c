@@ -28,7 +28,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: chan.c,v 1.26 2002/10/11 00:49:20 wcc Exp $";
+static const char rcsid[] = "$Id: chan.c,v 1.27 2002/11/24 04:50:33 wcc Exp $";
 #endif
 */
 
@@ -96,7 +96,7 @@ static char *getchanmode(struct chanset_t *chan)
     s[i++] = 'R';
   if (atr & CHANTOPIC)
     s[i++] = 't';
-  if (atr & CHANMODR)
+  if (atr & CHANMODREG)
     s[i++] = 'M';
   if (atr & CHANNOMSG)
     s[i++] = 'n';
@@ -399,7 +399,7 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
   int			 cycle;
 
   m = ismember(chan, nick);
-  if (!m)
+  if (!m || chan_sentkick(m))
     return;
   /* Check global bans in first cycle and channel bans
      in second cycle. */
@@ -415,17 +415,18 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
 	sprintf(s, "%s!%s", m->nick, m->userhost);
 	get_user_flagrec(m->user ? m->user : get_user_by_host(s), &fr,
 			 chan->dname);
-	if (!glob_friend(fr) && !chan_friend(fr))
-	  add_mode(chan, '-', 'o', nick);	/* Guess it can't hurt.	*/
-	check_exemptlist(chan, user);
-	do_mask(chan, chan->channel.ban, b->mask, 'b');
-	b->lastactive = now;
-	if (b->desc && b->desc[0] != '@')
-	  snprintf(c, sizeof c, "%s%s", _("banned: "), b->desc);
-	else
-	  c[0] = 0;
-	kick_all(chan, b->mask, c[0] ? c : _("You are banned"), 0);
-	return;					/* Drop out on 1st ban.	*/
+	if (!glob_friend(fr) && !chan_friend(fr)) {
+          add_mode(chan, '-', 'o', nick); /* Guess it can't hurt. */
+          check_exemptlist(chan, user);
+          do_mask(chan, chan->channel.ban, b->mask, 'b');
+          b->lastactive = now;
+          if (b->desc && b->desc[0] != '@')
+            egg_snprintf(c, sizeof c, "%s%s", IRC_PREBANNED, b->desc);
+          else
+            c[0] = 0;
+          kick_all(chan, b->mask, c[0] ? c : IRC_YOUREBANNED, 0);
+          return; /* Drop out on 1st ban. */
+        }
       }
     }
   }
@@ -663,9 +664,9 @@ static void recheck_channel_modes(struct chanset_t *chan)
       add_mode(chan, '+', 'R', "");
     else if (mns & CHANREGON && cur & CHANREGON)
       add_mode(chan, '-', 'R', "");
-    if (pls & CHANMODR && !(cur & CHANMODR))
+    if (pls & CHANMODREG && !(cur & CHANMODREG))
       add_mode(chan, '+', 'M', "");
-    else if (mns & CHANMODR && cur & CHANMODR)
+    else if (mns & CHANMODREG && cur & CHANMODREG)
       add_mode(chan, '-', 'M', "");
     if (pls & CHANTOPIC && !(cur & CHANTOPIC))
       add_mode(chan, '+', 't', "");
@@ -866,7 +867,7 @@ static int got324(char *from, char *ignore, char *msg)
     if (msg[i] == 'R')
       chan->channel.mode |= CHANREGON;
     if (msg[i] == 'M')
-      chan->channel.mode |= CHANMODR;
+      chan->channel.mode |= CHANMODREG;
     if (msg[i] == 't')
       chan->channel.mode |= CHANTOPIC;
     if (msg[i] == 'n')

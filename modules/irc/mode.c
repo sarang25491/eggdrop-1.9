@@ -25,7 +25,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: mode.c,v 1.15 2002/10/10 05:50:12 wcc Exp $";
+static const char rcsid[] = "$Id: mode.c,v 1.16 2002/11/24 04:50:33 wcc Exp $";
 #endif
 */
 
@@ -898,7 +898,7 @@ static int gotmode(char *from, char *ignore, char *origmsg)
 	    reversing = 1;
 	  break;
 	case 'M':
-	  todo = CHANMODR;
+	  todo = CHANMODREG;
 	  if (!nick && bounce_modes)
 	    reversing = 1;
 	  break;

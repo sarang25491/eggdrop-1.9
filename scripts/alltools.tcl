@@ -17,11 +17,13 @@
 # Sup       02Apr2001: added matchbotattr
 # Tothwolf  13Jun2001: updated/modified several commands
 # Hanno     28Sep2001: fixed testip
+# guppy     03Mar2002: optimized
+# Souperman 05Nov2002: added ordnumber
 #
-# $Id: alltools.tcl,v 1.12 2002/10/10 05:50:12 wcc Exp $
+# $Id: alltools.tcl,v 1.13 2002/11/24 04:50:33 wcc Exp $
 #
 ########################################
-# Descriptions of avaliable commands:
+# Descriptions of available commands:
 ## (toolkit):
 # putmsg <nick/chan> <text>
 #   send a privmsg to the given nick or channel
@@ -119,13 +121,19 @@
 #   if the given bot has all the given flags, return 1
 #   else return 0
 #
+# ordnumber <string>
+#   if the given string is a number, returns the
+#   "ordinal" version of that number, i.e. 1 -> "1st",
+#   2 -> "2nd", etc.
+#   else return <string>
+#
 ########################################
 
 # So scripts can see if allt is loaded.
 set alltools_loaded 1
-set allt_version 204
+set allt_version 205
 
-# For backward comptibility.
+# For backward compatibility.
 set toolbox_revision 1007
 set toolbox_loaded 1
 set toolkit_loaded 1
@@ -370,4 +378,22 @@ proc matchbotattr {bot flags} {
     }
   }
   return 1
+}
+
+proc ordnumber {str} {
+  if {[isnumber $str]} {
+    set last1 [string range $str [expr [strlen $str]-1] end]
+    set last2 [string range $str [expr [strlen $str]-2] end]
+    if {$last1=="1"&&$last2!="11"} {
+      return "[expr $str]st"
+    } elseif {$last1=="2"&&$last2!="12"} {
+      return "[expr $str]nd"
+    } elseif {$last1=="3"&&$last2!="13"} {
+      return "[expr $str]rd"
+    } else {
+      return "[expr $str]th"
+    }
+  } else {
+    return "$str"
+  }
 }

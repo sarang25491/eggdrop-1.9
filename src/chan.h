@@ -23,7 +23,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: chan.h,v 1.32 2002/10/11 00:49:20 wcc Exp $
+ * $Id: chan.h,v 1.33 2002/11/24 04:50:33 wcc Exp $
  */
 
 #ifndef _EGG_CHAN_H
@@ -123,7 +123,7 @@ struct chan_t {
 #define CHANQUIET  0x0200	/* +q -- ircd 2.9			*/
 #define CHANNOCLR  0x0400	/* +c -- bahamut			*/
 #define CHANREGON  0x0800	/* +R -- bahamut			*/
-#define CHANMODR   0x1000	/* +M -- bahamut			*/
+#define CHANMODREG 0x1000	/* +M -- bahamut			*/
 
 #define MODES_PER_LINE_MAX 6
 

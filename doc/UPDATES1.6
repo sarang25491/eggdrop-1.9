@@ -1,10 +1,24 @@
-$Id: UPDATES1.6,v 1.202 2002/10/11 23:59:35 wcc Exp $
+$Id: UPDATES1.6,v 1.203 2002/11/24 04:50:33 wcc Exp $
 
 Changes in Eggdrop: (since v1.6.0)
 ----------------------------------
 
-1.6.13
+1.6.14
 Found by  Fixed by  What...
+          Wcc       .say and .act now allow you to send a message to a moderated
+                    channel when the bot has halfop status
+
+1.6.13 (22 November 2002)
+Found by  Fixed by  What...
+          BarkerJr  doc/MODULES updates
+          stdarg    fixed utf-8 handling for config file strings (such as realname)
+          Souperman added a proc to alltools that returns the ordinal number
+                    for a number
+          Wcc       added support for EMFILE (errno 24 - Too many files open)
+                    in neterror()
+          MC_8      fixed the list format returned by tcl_channel_info()
+          Eule      don't ban users when not going to kick in refresh_ban_kick()
+          Eule      added a stacking limit for fastdeq
           Eule      made the modes-per-line limit definable in src/chan.h
           BarkerJr  [ban/exempt/invite]-time were not being saved to the channel file
 Eule      Wcc       halfops were not honored in flush_modes()

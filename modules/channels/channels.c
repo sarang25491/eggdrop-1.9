@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.17 2002/10/11 00:49:20 wcc Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.18 2002/11/24 04:50:33 wcc Exp $";
 #endif
 
 #define MODULE_NAME "channels"
@@ -112,7 +112,7 @@ static void set_mode_protect(struct chanset_t *chan, char *set)
       i = CHANREGON;
       break;
     case 'M':
-      i = CHANMODR;
+      i = CHANMODREG;
       break;
     case 't':
       i = CHANTOPIC;
@@ -201,7 +201,7 @@ static void get_mode_protect(struct chanset_t *chan, char *s)
       *p++ = 'c';
     if (tst & CHANREGON)
       *p++ = 'R';
-    if (tst & CHANMODR)
+    if (tst & CHANMODREG)
       *p++ = 'M';
     if (tst & CHANTOPIC)
       *p++ = 't';
