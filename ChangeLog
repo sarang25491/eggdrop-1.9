@@ -1,3 +1,10 @@
+2002-01-09 12:11  stdarg <stdarg@techmonkeys.org>
+
+	* src/: tcl.c, tcluser.c:
+
+	
+	* Converted some commands in tcluser.c 
+
 2002-01-09 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
