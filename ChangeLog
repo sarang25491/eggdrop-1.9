@@ -1,3 +1,15 @@
+2001-10-13 15:55  Tothwolf <tothwolf@techmonkeys.org>
+
+	* src/: chanprog.c, misc.c, modules.c, proto.h, mod/module.h,
+	mod/channels.mod/userchan.c, mod/irc.mod/chan.c, mod/irc.mod/irc.c,
+	mod/irc.mod/mode.c, mod/server.mod/server.c,
+	mod/server.mod/servmsg.c:
+
+	* splitnick() removed 
+	* cleanup where splitnicks() was removed 
+	* removed unused "existant" check from
+	tell_bans/tell_exempts/tell_invites 
+
 2001-10-13 12:00  stdarg <stdarg@techmonkeys.org>
 
 	* src/: Makefile.am, egg_timer.c, egg_timer.h, main.c, net.c,
