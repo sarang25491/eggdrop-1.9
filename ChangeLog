@@ -1,3 +1,15 @@
+2002-10-11 02:46  Will Buckner <wcc@techmonkeys.org>
+
+	* Makefile.am:
+
+	* Makefile fixes.  
+
+2002-10-11 02:32  Will Buckner <wcc@techmonkeys.org>
+
+	* Makefile.am:
+
+	* Makefile fixes from last commit.  
+
 2002-10-11 00:51  Will Buckner <wcc@techmonkeys.org>
 
 	* eggdrop.complete.conf, eggdrop.conf:
