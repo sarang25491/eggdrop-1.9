@@ -1009,14 +1009,14 @@ for the msg-command "stop", use 'unbind msg - stop msg_stop'.
 
   (1)  MSG
        bind msg <flags> <command> <proc>
-       procname <nick> <user@host> <handle> <arg>
+       procname <nick> <user@host> <handle> <rest>
 
        used for /msg commands; the first word of the user's msg is the
        command, and everything else becomes the argument string
 
   (2)  DCC
        bind dcc <flags> <command> <proc>
-       procname <handle> <idx> <arg>
+       procname <handle> <idx> <rest>
 
        used for commands from a dcc chat on the party line; as in MSG, the
        command is the first word and everything else is the argument string;
@@ -1025,7 +1025,7 @@ for the msg-command "stop", use 'unbind msg - stop msg_stop'.
 
   (3)  FIL
        bind fil <flags> <command> <proc>
-       procname <handle> <idx> <arg>
+       procname <handle> <idx> <rest>
 
        the same as DCC, except this is triggered if the user is in the file
        area instead of the party line
@@ -1033,7 +1033,7 @@ for the msg-command "stop", use 'unbind msg - stop msg_stop'.
 
   (4)  PUB
        bind pub <flags> <command> <proc>
-       procname <nick> <user@host> <handle> <channel> <arg>
+       procname <nick> <user@host> <handle> <channel> <rest>
 
        used for commands given on a channel; just like MSG, the first word
        becomes the command and everything else is the argument string
@@ -1188,7 +1188,7 @@ for the msg-command "stop", use 'unbind msg - stop msg_stop'.
 
   (18) BOT
        bind bot <flags> <command> <proc>
-       proc-name <from-bot> <command> <arg>
+       proc-name <from-bot> <command> <rest>
 
        triggered by a message coming from another bot in the botnet; works
        similar to a DCC binding; the first word is the command and the rest
