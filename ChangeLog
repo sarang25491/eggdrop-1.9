@@ -1,3 +1,52 @@
+2002-09-20 02:10  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/: my_socket.c, my_socket.h, sockbuf.c, sockbuf.h:
+
+	
+	* Ah I knew I forgot some.  
+
+2002-09-20 02:06  stdarg <stdarg@techmonkeys.org>
+
+	* configure.ac, lib/compat/Makefile.am, lib/eggdrop/Makefile.am,
+	lib/eggdrop/eggdns.c, lib/eggdrop/eggdns.h, lib/eggdrop/eggdrop.h,
+	lib/eggdrop/eggident.c, lib/eggdrop/eggident.h,
+	lib/eggdrop/eggnet.c, lib/eggdrop/eggnet.h, lib/eggdrop/eggtimer.c,
+	lib/eggdrop/eggtimer.h, lib/eggdrop/linemode.c,
+	lib/eggdrop/linemode.h, lib/eggdrop/memutil.c,
+	lib/eggdrop/memutil.h, lib/eggdrop/module.h, lib/eggdrop/script.c,
+	lib/eggdrop/script.h, modules/Makefile.am,
+	modules/javascript/javascript.c, modules/perlscript/perlscript.c,
+	modules/server/Makefile.am, modules/server/channels.c,
+	modules/server/cmdsserv.c, modules/server/dcc_commands.c,
+	modules/server/input.c, modules/server/nicklist.c,
+	modules/server/nicklist.h, modules/server/output.c,
+	modules/server/output.h, modules/server/parse.c,
+	modules/server/parse.h, modules/server/scriptcmds.c,
+	modules/server/server.c, modules/server/server.h,
+	modules/server/serverlist.c, modules/server/serverlist.h,
+	modules/server/servmsg.c, modules/server/servsock.c,
+	modules/server/servsock.h, modules/tclscript/tclscript.c,
+	src/Makefile.am, src/egg_timer.c, src/main.c, src/modules.c,
+	src/net.c, src/tclhash.c, src/userrec.c, src/userrec.h,
+	src/users.h, testcode/dnscache.c, testcode/socks5.c:
+
+	
+	* Moved several things from the core into libegg 
+	* Server module uses new network code 
+	* Lots of stuff removed from the server module, like flood stuff,
+	which should go into a new module 
+	* Moved some things from irc module to server module (mostly bind
+	stuff, like pub) 
+	* Not everything works right now, but I wanted to get it into cvs in
+	case my computer dies a horrible death. I'm going to combine
+	irc/server (mostly) and make a new one for all the default
+	protection stuff.  
+	* Right now server messages are not queued. I thought the code was
+	pretty much beyond repair. The new queueing code will hopefully be
+	more maintainable.  
+	* I'm not sure I added/removed all the files necessary! Let me know
+	if it doesn't compile for you.  
+
 2002-08-12 01:16  stdarg <stdarg@techmonkeys.org>
 
 	* src/tclhash.c:
