@@ -1,3 +1,18 @@
+2001-10-14 23:13  stdarg <stdarg@techmonkeys.org>
+
+	* src/: Makefile.am, core_binds.c, core_binds.h, main.c, modules.c,
+	script.h, tclhash.c, tclhash.h, tclmisc.c, mod/module.h,
+	mod/server.mod/server.c, mod/server.mod/servmsg.c,
+	mod/tclscript.mod/tclscript.c:
+
+	Updates to binds (event and time).  New file to handle core binds.  
+
+2001-10-14 23:06  Federico Mennite <ite@techmonkeys.org>
+
+	* src/modules.c:
+
+	Fixed stupid bug when not sharing userfile.  
+
 2001-10-14 22:44  Federico Mennite <ite@techmonkeys.org>
 
 	* src/mod/uptime.mod/uptime.c:
