@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: userchan.c,v 1.18 2003/03/06 12:08:15 tothwolf Exp $";
+static const char rcsid[] = "$Id: userchan.c,v 1.19 2003/03/11 03:53:37 wcc Exp $";
 #endif
 */
 
@@ -271,7 +271,9 @@ static int u_delmask(char type, struct chanset_t *c, char *who, int doit)
       return 0;
   }
   if (i && doit) {
-    free((*u)->mask);
+    if (lastdeletedmask)
+      free(lastdeletedmask);
+    lastdeletedmask = (*u)->mask;
     if ((*u)->desc)
       free((*u)->desc);
     if ((*u)->user)

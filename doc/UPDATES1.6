@@ -1,10 +1,21 @@
-$Id: UPDATES1.6,v 1.211 2003/03/04 22:02:27 wcc Exp $
+$Id: UPDATES1.6,v 1.212 2003/03/11 03:53:37 wcc Exp $
 
 Changes in Eggdrop: (since v1.6.0)
 ----------------------------------
 
 1.6.14
 Found by  Fixed by  What...
+          Eule      users with appropriate flags can now halfop and voice
+                    themselves
+          Sven      -ban <number> now works for channel bans
+          Sven      -ban <number> now removes the ban from the channel
+          Wcc       cleaned up the output of .status
+          Felix     added a german language file for the transfer module
+          Wcc       show a meaningful error message when adding an invalid
+                    channel with .+chan
+          Wcc       don't use memcpy() and memset() directly
+          Sven      fixed a crash that can happen when the serverlist contains
+                    null strings
           Sven/     added NO_HALFOP_CHANMODES and NOHALFOPS_MODES defines to
           Wcc       chan.h to allow halfop-related mode behavior to be changed
                     on IRCd's that implement halfops differently

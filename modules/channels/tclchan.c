@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: tclchan.c,v 1.32 2003/03/06 12:08:15 tothwolf Exp $";
+static const char rcsid[] = "$Id: tclchan.c,v 1.33 2003/03/11 03:53:37 wcc Exp $";
 #endif
 */
 
@@ -735,7 +735,7 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
   char **item;
   char buf[2048], buf2[256];
 
-  if (!newname || !newname[0] || !strchr(CHANMETA, newname[0])) {
+  if (!newname || !newname[0] || (strchr(CHANMETA, newname[0]) == NULL)) {
     if (irp)
       Tcl_AppendResult(irp, "invalid channel prefix", NULL);
     return TCL_ERROR;

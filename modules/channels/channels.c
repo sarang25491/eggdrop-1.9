@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.30 2003/03/04 22:02:27 wcc Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.31 2003/03/11 03:53:37 wcc Exp $";
 #endif
 
 #define MODULE_NAME "channels"
@@ -39,6 +39,7 @@ static int setstatic, use_info, chan_hack, global_aop_min, global_aop_max,
            global_ban_time, global_exempt_time, global_invite_time;
 
 static char chanfile[121], glob_chanmode[64], glob_chanset[512];
+static char *lastdeletedmask;
 
 static struct udef_struct *udef;
 
@@ -641,6 +642,8 @@ static char *channels_close()
 {
   write_channels();
   free_udef(udef);
+  if (lastdeletedmask)
+    free(lastdeletedmask);
   rem_builtins("chon", my_chon);
   rem_builtins("dcc", C_dcc_irc);
   script_delete_commands(channel_script_cmds);
@@ -738,6 +741,7 @@ char *start(eggdrop_t *eggdrop)
   global_aop_min = 5;
   global_aop_max = 30;
   setstatic = 0;
+  lastdeletedmask = 0;
   use_info = 1;
   strcpy(chanfile, "chanfile");
   chan_hack = 0;

@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: cmdschan.c,v 1.18 2003/02/15 05:04:57 wcc Exp $";
+static const char rcsid[] = "$Id: cmdschan.c,v 1.19 2003/03/11 03:53:37 wcc Exp $";
 #endif
 */
 
@@ -204,7 +204,7 @@ static void cmd_mns_mask(char type, struct userrec *u, int idx, char *par)
 {
   int i = 0, j;
   struct chanset_t *chan = NULL;
-  char s[UHOSTLEN], *who, *chname, *cmd;
+  char s[UHOSTLEN], *who, *chname, *cmd, *mask;
   masklist *m;
 
   cmd = type == 'b' ? "ban" : type == 'e' ? "exempt" : "invite";
@@ -227,10 +227,14 @@ static void cmd_mns_mask(char type, struct userrec *u, int idx, char *par)
   strlcpy(s, who, sizeof s);
   i = u_delmask(type, NULL, s, (u->flags & USER_MASTER));
   if (i > 0) {
-    putlog(LOG_CMDS, "*", "#%s# -%s %s", dcc[idx].nick, cmd, s);
+    if (lastdeletedmask)
+      mask = lastdeletedmask;
+    else
+      mask = s;
+    putlog(LOG_CMDS, "*", "#%s# -%s %s", dcc[idx].nick, cmd, mask);
     dprintf(idx, "%s %s: %s\n", _("Removed"), cmd, s);
     for (chan = chanset; chan != NULL; chan = chan->next)
-      add_mode(chan, '-', type, s);
+      add_mode(chan, '-', type, mask);
     return;
   }
   /* Channel-specific ban? */
@@ -239,14 +243,19 @@ static void cmd_mns_mask(char type, struct userrec *u, int idx, char *par)
   if (chan) {
     m = type == 'b' ? chan->channel.ban :
         type == 'e' ? chan->channel.exempt : chan->channel.invite;
-    if (atoi(who) > 0) {
-      snprintf(s, sizeof s, "%d", -i);
+    if ((i = atoi(who)) > 0) {
+      snprintf(s, sizeof s, "%d", i);
       j = u_delmask(type, chan, s, 1);
       if (j > 0) {
-	putlog(LOG_CMDS, "*", "#%s# (%s) -%s %s", dcc[idx].nick,
-	       chan->dname, cmd, s);
-	dprintf(idx, _("Removed %1$s channel %2$s: %3$s\n"), chan->dname, cmd, s);
-	add_mode(chan, '-', type, s);
+        if (lastdeletedmask)
+          mask = lastdeletedmask;
+        else
+          mask = s;
+	putlog(LOG_CMDS, "*", "#%s# (%s) -%s %s", dcc[idx].nick, chan->dname,
+               cmd, mask);
+	dprintf(idx, _("Removed %1$s channel %2$s: %3$s\n"), chan->dname, cmd,
+                mask);
+	add_mode(chan, '-', type, mask);
 	return;
       }
       i = 0;
@@ -742,14 +751,17 @@ static void cmd_pls_chan(struct userrec *u, int idx, char *par)
     dprintf(idx, _("That channel already exists!\n"));
     return;
   } else if ((chan = findchan(chname))) {
-    /* This prevents someone adding a channel by it's unique server
-     * name <cybah>
-     */
     dprintf(idx, _("That channel already exists as %s!\n"), chan->dname);
+    return;
+  } else if (strchr(CHANMETA, chname[0]) == NULL) {
+    dprintf(idx, _("Invalid channel prefix.\n"));
+    return;
+  } else if (strchr(chname, ',') != NULL) {
+    dprintf(idx, _("Invalid channel name.\n"));
     return;
   }
 
-  if (tcl_channel_add(0, chname, par) == TCL_ERROR) /* drummer */
+  if (tcl_channel_add(0, chname, par) == TCL_ERROR)
     dprintf(idx, _("Invalid channel or channel options.\n"));
   else
     putlog(LOG_CMDS, "*", "#%s# +chan %s", dcc[idx].nick, chname);
