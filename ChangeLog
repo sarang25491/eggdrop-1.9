@@ -1,3 +1,11 @@
+2002-03-04 03:55  stdarg <stdarg@techmonkeys.org>
+
+	* modules/tclscript/tclscript.c, src/chanprog.c, src/cmds.c:
+
+	
+	* Got rid of .set command 
+	* Moved Tcl info from chanprog.c to tcl module 
+
 2002-03-04 02:32  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/modvals.h, modules/notes/notes.c, src/botmsg.c,
