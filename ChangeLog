@@ -1,3 +1,10 @@
+2002-06-19 05:10  stdarg <stdarg@techmonkeys.org>
+
+	* testcode/: mypoll.c, mypoll.h:
+
+	
+	* poll() emulation 
+
 2002-06-19 04:51  stdarg <stdarg@techmonkeys.org>
 
 	* testcode/: Makefile, chat.c, client.c, http.c, ipv6.c,
