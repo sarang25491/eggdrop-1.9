@@ -1,0 +1,9 @@
+
+The files in adns/ were borrowed from the (original) ADNS library and from
+the hybrid-ircd's ANDS library.
+The original code's copyright notices are in README.
+The hybrid-ircd's code's copyright notices are in README.ircd.
+
+The modified portions are Copyright 2001 Lorant Dobos <drummer@buli.sk>
+
+I changed back everything to the original library except the IPv6 support.
