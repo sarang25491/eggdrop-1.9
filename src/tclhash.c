@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.31 2001/08/24 19:46:54 stdarg Exp $
+ * $Id: tclhash.c,v 1.32 2001/08/24 19:54:49 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -58,12 +58,14 @@ static int builtin_charidx();
 static int builtin_chat();
 static int builtin_dcc();
 
+void del_bind_table2(bind_table_t *table);
 
-static char *my_strdup(char *s)
+
+static char *my_strdup(const char *s)
 {
 	char *t;
 
-	t = (char *)namlloc(strlen(s)+1);
+	t = (char *)nmalloc(strlen(s)+1);
 	strcpy(t, s);
 	return(t);
 }
@@ -250,7 +252,7 @@ void init_bind(void)
 void kill_bind2(void)
 {
 	rem_builtins(H_dcc, C_dcc);
-	while (bind_table_list_head) kill_bind(bind_table_list_head);
+	while (bind_table_list_head) del_bind_table2(bind_table_list_head);
 }
 
 void kill_bind(void)
@@ -344,8 +346,8 @@ void del_bind_table2(bind_table_t *table)
 		next_chain = chain->next;
 		for (entry = chain->entries; entry; entry = next_entry) {
 			next_entry = entry->next;
-			free(entry->function_name);
-			free(entry);
+			nfree(entry->function_name);
+			nfree(entry);
 		}
 		nfree(chain);
 	}
@@ -431,7 +433,7 @@ static int del_bind_entry(bind_table_t *table, const char *flags, const char *ma
 	if (!chain) return(1);
 
 	/* Now find the function name in this mask entry. */
-	for (prev = NULL, entry = table->entries; entry; prev = entry, entry = entry->next) {
+	for (prev = NULL, entry = chain->entries; entry; prev = entry, entry = entry->next) {
 		if (!strcmp(entry->function_name, function_name)) break;
 	}
 	if (!entry) return(1);
@@ -498,6 +500,7 @@ static int add_bind_entry(bind_table_t *table, const char *flags, const char *ma
 	for (prev = NULL, entry = chain->entries; chain; prev = entry, entry = entry->next) {
 		if (!strcmp(entry->function_name, function_name)) break;
 	}
+	return(0);
 }
 
 /* Add command (remove old one if necessary)
