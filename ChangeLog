@@ -1,3 +1,22 @@
+2001-12-10 02:50  Jeff Fisher <guppy@techmonkeys.org>
+
+	* eggdrop.complete.conf, doc/html/mod-irc.html,
+	doc/settings/mod.irc, modules/irc/chan.c, modules/irc/irc.c,
+	modules/server/server.c, modules/server/server.h,
+	modules/server/servmsg.c:
+
+	kick-fun and ban-fun have been removed as settings 
+
+2001-12-10 02:38  Jeff Fisher <guppy@techmonkeys.org>
+
+	* eggdrop.complete.conf, doc/html/egg-core.html,
+	doc/settings/core.settings, help/core.help, help/set/cmds2.help,
+	lib/eggdrop/module.h, modules/irc/irc.c, src/dcc.c, src/modules.c,
+	src/tcl.c:
+
+	open-telnets is no longer a config setting, learn-users handles both
+	irc and telnet 
+
 2001-12-10 01:35  Federico Mennite <ite@techmonkeys.org>
 
 	* src/: botcmd.c, dcc.c:
