@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-12-18 00:15-0600\n"
+"POT-Creation-Date: 2003-12-18 06:15-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -96,155 +96,155 @@ msgstr ""
 msgid "Your hostname is: %s\r\n"
 msgstr ""
 
-#: modules/javascript/javascript.c:179
+#: modules/javascript/javascript.c:177
 msgid "Don't create your own eggvars!"
 msgstr ""
 
-#: modules/javascript/javascript.c:533
+#: modules/javascript/javascript.c:531
 #, c-format
 msgid "User not found: %s"
 msgstr ""
 
-#: modules/javascript/javascript.c:541
+#: modules/javascript/javascript.c:539
 #, c-format
 msgid "Converting unknown! '%c'"
 msgstr ""
 
-#: modules/javascript/javascript.c:544
+#: modules/javascript/javascript.c:542
 #, c-format
 msgid "Cannot convert JS object to unknown variable type '%s'."
 msgstr ""
 
-#: modules/javascript/javascript.c:634 modules/tclscript/tclscript.c:581
+#: modules/javascript/javascript.c:632 modules/tclscript/tclscript.c:600
 msgid ""
 "You must be a permanent owner (defined in the config file) to use this "
 "command.\n"
 msgstr ""
 
-#: modules/javascript/javascript.c:639
+#: modules/javascript/javascript.c:637
 msgid "JS Error: unknown for now\n"
 msgstr ""
 
-#: modules/javascript/javascript.c:660
+#: modules/javascript/javascript.c:658
 #, c-format
 msgid "Using JavaScript version %s.\n"
 msgstr ""
 
-#: modules/javascript/javascript.c:664
+#: modules/javascript/javascript.c:662
 #, c-format
 msgid "    Using JavaScript version %s.\n"
 msgstr ""
 
-#: modules/oldbotnet/oldbotnet.c:83
+#: modules/oldbotnet/oldbotnet.c:106
 msgid "*** Disconnecting"
 msgstr ""
 
-#: modules/oldbotnet/oldbotnet.c:139
+#: modules/oldbotnet/oldbotnet.c:162
 msgid "Syntax: <obot> <host> <port> [username] [password]"
 msgstr ""
 
-#: modules/oldbotnet/oldbotnet.c:148
+#: modules/oldbotnet/oldbotnet.c:171
 msgid "Could not get local botname; please specify a username to log in as."
 msgstr ""
 
-#: modules/oldbotnet/oldbotnet.c:151
+#: modules/oldbotnet/oldbotnet.c:174
 #, c-format
 msgid "No username specified, using '%s' by default."
 msgstr ""
 
-#: modules/oldbotnet/oldbotnet.c:157
+#: modules/oldbotnet/oldbotnet.c:180
 #, c-format
 msgid "Could not create obot '%s'."
 msgstr ""
 
-#: modules/oldbotnet/oldbotnet.c:183
+#: modules/oldbotnet/oldbotnet.c:206
 msgid "Syntax: olink <obot>"
 msgstr ""
 
-#: modules/oldbotnet/oldbotnet.c:192
+#: modules/oldbotnet/oldbotnet.c:215
 #, c-format
 msgid "Error: '%s' is not an obot."
 msgstr ""
 
-#: modules/oldbotnet/oldbotnet.c:208
+#: modules/oldbotnet/oldbotnet.c:231
 #, c-format
 msgid "Linking to %s (%s %d) on idx %d as %s."
 msgstr ""
 
-#: modules/oldbotnet/oldbotnet.c:223
+#: modules/oldbotnet/oldbotnet.c:246
 #, c-format
 msgid "oldbotnet error: password on %s needs to be reset."
 msgstr ""
 
-#: modules/oldbotnet/oldbotnet.c:232
+#: modules/oldbotnet/oldbotnet.c:255
 #, c-format
 msgid "Calculating md5 of '%s' + '%s'."
 msgstr ""
 
-#: modules/oldbotnet/oldbotnet.c:240
+#: modules/oldbotnet/oldbotnet.c:263
 #, c-format
 msgid "Result: '%s'"
 msgstr ""
 
-#: modules/oldbotnet/oldbotnet.c:252
+#: modules/oldbotnet/oldbotnet.c:275
 msgid "oldbotnet error: password was rejected."
 msgstr ""
 
-#: modules/oldbotnet/oldbotnet.c:383
+#: modules/oldbotnet/oldbotnet.c:406
 #, c-format
 msgid "eof from %s (%s)."
 msgstr ""
 
-#: modules/perlscript/mod_iface.c:18
+#: modules/perlscript/mod_iface.c:37
 #, c-format
 msgid "Perl error: %s"
 msgstr ""
 
-#: modules/perlscript/mod_iface.c:29
+#: modules/perlscript/mod_iface.c:48
 msgid "Sorry, you must be a permanent owner to use this command."
 msgstr ""
 
-#: modules/perlscript/mod_iface.c:34
+#: modules/perlscript/mod_iface.c:53
 msgid "Syntax: .perl <perlexpression>"
 msgstr ""
 
-#: modules/server/input.c:226
+#: modules/server/input.c:250
 #, c-format
 msgid "Action: %s %s"
 msgstr ""
 
-#: modules/server/input.c:393
+#: modules/server/input.c:417
 #, c-format
 msgid "NICK IS INVALID: %s (keeping '%s')."
 msgstr ""
 
-#: modules/server/input.c:396
+#: modules/server/input.c:420
 #, c-format
 msgid "Server says my nickname ('%s') is invalid, trying new random nick."
 msgstr ""
 
 #. We are online and have a nickname, we'll keep it
-#: modules/server/input.c:412
+#: modules/server/input.c:436
 #, c-format
 msgid "Nick is in use: '%s' (keeping '%s')."
 msgstr ""
 
-#: modules/server/input.c:415
+#: modules/server/input.c:439
 #, c-format
 msgid "Nick is in use: '%s' (trying next one)."
 msgstr ""
 
-#: modules/server/input.c:428
+#: modules/server/input.c:452
 #, c-format
 msgid "Cannot change to banned nickname (%s on %s)."
 msgstr ""
 
-#: modules/server/input.c:438
+#: modules/server/input.c:462
 #, c-format
 msgid "Can't change nickname to %s. Is my nickname banned?"
 msgstr ""
 
-#: modules/server/input.c:451
+#: modules/server/input.c:475
 msgid "Nick change was too fast."
 msgstr ""
 
@@ -252,198 +252,198 @@ msgstr ""
 #. * or this is a non-standard server, so we log it and kill the socket
 #. * hoping the next server will work :) -poptix
 #.
-#: modules/server/input.c:461
+#: modules/server/input.c:485
 #, c-format
 msgid "%s says I'm not registered, trying next one."
 msgstr ""
 
-#: modules/server/input.c:462
+#: modules/server/input.c:486
 msgid "The server says I'm not registered, trying next one."
 msgstr ""
 
-#: modules/server/input.c:484
+#: modules/server/input.c:508
 msgid "Disconnecting from server."
 msgstr ""
 
-#: modules/server/input.c:485
+#: modules/server/input.c:509
 msgid "disconnecting due to error"
 msgstr ""
 
-#: modules/server/nicklist.c:25
+#: modules/server/nicklist.c:43
 #, c-format
 msgid "try_next_nick: using random nick because %s."
 msgstr ""
 
-#: modules/server/nicklist.c:25
+#: modules/server/nicklist.c:43
 msgid "none of the defined nicks are valid"
 msgstr ""
 
-#: modules/server/nicklist.c:25
+#: modules/server/nicklist.c:43
 msgid "there are no nicks defined"
 msgstr ""
 
-#: modules/server/party_commands.c:15
+#: modules/server/party_commands.c:39
 msgid "The server list is empty."
 msgstr ""
 
-#: modules/server/party_commands.c:16
+#: modules/server/party_commands.c:40
 #, c-format
 msgid "%d server%s:"
 msgstr ""
 
-#: modules/server/party_commands.c:18
+#: modules/server/party_commands.c:42
 #, c-format
 msgid "   %s (port %d)%s"
 msgstr ""
 
-#: modules/server/party_commands.c:18 modules/server/party_commands.c:19
+#: modules/server/party_commands.c:42 modules/server/party_commands.c:43
 msgid " (password set)"
 msgstr ""
 
-#: modules/server/party_commands.c:19
+#: modules/server/party_commands.c:43
 #, c-format
 msgid "   %s (default port)%s"
 msgstr ""
 
-#: modules/server/party_commands.c:53
+#: modules/server/party_commands.c:77
 msgid "Syntax: +server <host> [port] [pass]"
 msgstr ""
 
-#: modules/server/party_commands.c:58
+#: modules/server/party_commands.c:82
 msgid "Please specify a valid host."
 msgstr ""
 
-#: modules/server/party_commands.c:63 modules/server/party_commands.c:109
+#: modules/server/party_commands.c:87 modules/server/party_commands.c:133
 #, c-format
 msgid "Added %s:%d.\n"
 msgstr ""
 
-#: modules/server/party_commands.c:74
+#: modules/server/party_commands.c:98
 msgid "Syntax: -server <host> [port] [pass]"
 msgstr ""
 
-#: modules/server/party_commands.c:81
+#: modules/server/party_commands.c:105
 msgid "No matching servers."
 msgstr ""
 
-#: modules/server/party_commands.c:84
+#: modules/server/party_commands.c:108
 #, c-format
 msgid "Deleted server %d."
 msgstr ""
 
-#: modules/server/party_commands.c:92
+#: modules/server/party_commands.c:116
 msgid "Syntax: dump <server stuff>"
-msgstr ""
-
-#: modules/server/party_commands.c:127
-#, c-format
-msgid "Syntax: %s <nick/chan> <message>"
-msgstr ""
-
-#: modules/server/party_commands.c:133
-#, c-format
-msgid "Msg to %s: %s"
-msgstr ""
-
-#: modules/server/party_commands.c:145
-msgid "Syntax: act <nick/chan> <action>"
 msgstr ""
 
 #: modules/server/party_commands.c:151
 #, c-format
+msgid "Syntax: %s <nick/chan> <message>"
+msgstr ""
+
+#: modules/server/party_commands.c:157
+#, c-format
+msgid "Msg to %s: %s"
+msgstr ""
+
+#: modules/server/party_commands.c:169
+msgid "Syntax: act <nick/chan> <action>"
+msgstr ""
+
+#: modules/server/party_commands.c:175
+#, c-format
 msgid "Action to %s: %s"
 msgstr ""
 
-#: modules/server/server.c:77
+#: modules/server/server.c:93
 #, c-format
 msgid "   Connecting to server %s:%d."
 msgstr ""
 
-#: modules/server/server.c:78
+#: modules/server/server.c:94
 #, c-format
 msgid "   Connecting to next server in %d seconds."
 msgstr ""
 
 #. First line, who we've connected to.
-#: modules/server/server.c:82
+#: modules/server/server.c:98
 #, c-format
 msgid "   Connected to %s:%d."
 msgstr ""
 
-#: modules/server/server.c:86
+#: modules/server/server.c:102
 #, c-format
 msgid "    Online as %s!%s@%s (%s)."
 msgstr ""
 
-#: modules/server/server.c:87
+#: modules/server/server.c:103
 #, c-format
 msgid "    Online as %s (still waiting for WHOIS result)."
 msgstr ""
 
-#: modules/server/server.c:89
+#: modules/server/server.c:105
 msgid "   Still logging in."
 msgstr ""
 
-#: modules/server/server.c:100
+#: modules/server/server.c:117
 msgid "server module unloading"
 msgstr ""
 
-#: modules/server/servsock.c:43
+#: modules/server/servsock.c:63
 msgid "Error connecting to next server: no servers are defined!"
 msgstr ""
 
-#: modules/server/servsock.c:56
+#: modules/server/servsock.c:76
 #, c-format
 msgid "Connecting to %s (%d)."
 msgstr ""
 
-#: modules/server/servsock.c:59
+#: modules/server/servsock.c:79
 msgid "Error connecting to server."
 msgstr ""
 
-#: modules/server/servsock.c:130
+#: modules/server/servsock.c:150
 #, c-format
 msgid "Connected to %s, logging in."
 msgstr ""
 
-#: modules/tclscript/tclscript.c:194
+#: modules/tclscript/tclscript.c:213
 #, c-format
 msgid "Error opening Tcl error log (%s)!"
 msgstr ""
 
-#: modules/tclscript/tclscript.c:524
+#: modules/tclscript/tclscript.c:543
 msgid "Cannot convert Tcl object to unknown variable type '"
 msgstr ""
 
-#: modules/tclscript/tclscript.c:586
+#: modules/tclscript/tclscript.c:605
 msgid "Syntax: .tcl <tclexpression>"
 msgstr ""
 
-#: modules/tclscript/tclscript.c:593
+#: modules/tclscript/tclscript.c:612
 #, c-format
 msgid ""
 "Tcl error: %s\n"
 "\n"
 msgstr ""
 
-#: modules/tclscript/tclscript.c:597
+#: modules/tclscript/tclscript.c:616
 #, c-format
 msgid ""
 "Tcl: %s\n"
 "\n"
 msgstr ""
 
-#: modules/tclscript/tclscript.c:679
+#: modules/tclscript/tclscript.c:698
 #, c-format
 msgid "Using Tcl version %d.%d (by header).\n"
 msgstr ""
 
-#: modules/tclscript/tclscript.c:683
+#: modules/tclscript/tclscript.c:702
 #, c-format
 msgid "    Using Tcl version %d.%d (by header).\n"
 msgstr ""
 
-#: modules/tclscript/tclscript.c:684
+#: modules/tclscript/tclscript.c:703
 msgid ""
 "return \"    Library: [info library]\\n    Reported version: [info "
 "tclversion]\\n    Reported patchlevel: [info patchlevel]\""
@@ -512,11 +512,11 @@ msgstr ""
 msgid "OS: %s %s"
 msgstr ""
 
-#: src/core_party.c:187 src/core_party.c:228 src/main.c:143
+#: src/core_party.c:187 src/core_party.c:228 src/main.c:144
 msgid "Saving user file..."
 msgstr ""
 
-#: src/core_party.c:189 src/core_party.c:230 src/main.c:145
+#: src/core_party.c:189 src/core_party.c:230 src/main.c:146
 msgid "Saving config file..."
 msgstr ""
 
@@ -608,34 +608,34 @@ msgstr ""
 msgid "Cycling logfile %s: over max-logsize (%d kilobytes)."
 msgstr ""
 
-#: src/main.c:147
+#: src/main.c:148
 msgid "Bot shutting down: received TERMINATE signal."
 msgstr ""
 
-#: src/main.c:152
+#: src/main.c:153
 msgid "Received TERMINATE signal (ignoring)."
 msgstr ""
 
-#: src/main.c:158
+#: src/main.c:159
 msgid "Received QUIT signal (ignoring)."
 msgstr ""
 
-#: src/main.c:165
+#: src/main.c:166
 msgid "Received HUP signal (ignoring)."
 msgstr ""
 
-#: src/main.c:172
+#: src/main.c:173
 msgid "Received ILL signal (ignoring)."
 msgstr ""
 
-#: src/main.c:184
+#: src/main.c:185
 #, c-format
 msgid ""
 "\n"
 "Usage: %s [OPTIONS]... [FILE]\n"
 msgstr ""
 
-#: src/main.c:185
+#: src/main.c:186
 msgid ""
 "\n"
 "  -h, --help                 Print help and exit\n"
@@ -649,12 +649,12 @@ msgid ""
 msgstr ""
 
 #. bug: option not considered.
-#: src/main.c:252
+#: src/main.c:253
 #, c-format
 msgid "%s: option unknown: %c\n"
 msgstr ""
 
-#: src/main.c:286
+#: src/main.c:287
 #, c-format
 msgid "Warning: timer drift (%d minutes)."
 msgstr ""
