@@ -1,10 +1,10 @@
-2001-10-10 17:07  stdarg
+2001-10-10 17:07  stdarg <stdarg@techmonkeys.org>
 
 	* src/egglib/linked_list.c:
 
 	Need to initialize cursors even when the pointer is passed in.  
 
-2001-10-10 17:02  stdarg
+2001-10-10 17:02  stdarg <stdarg@techmonkeys.org>
 
 	* src/mod/: channels.mod/tclchan.c, irc.mod/irc.c, irc.mod/irc.h,
 	irc.mod/mode.c:
@@ -15,7 +15,7 @@
 	the real mode change diff3: BT_kick isn't initialized so eggdrop
 	want to dereference 0x0 
 
-2001-10-10 15:52  tothwolf
+2001-10-10 15:52  Tothwolf <tothwolf@techmonkeys.org>
 
 	* src/mod/: assoc.mod/help/assoc.help,
 	channels.mod/help/chaninfo.help, channels.mod/help/channels.help,
@@ -28,7 +28,7 @@
 
 	more documentation updates from alpha tree 
 
-2001-10-10 14:50  tothwolf
+2001-10-10 14:50  Tothwolf <tothwolf@techmonkeys.org>
 
 	* acinclude.m4, configure.in, src/Makefile.am, src/dcc.c,
 	src/md5.c, src/md5.h, src/tclmisc.c:
@@ -37,7 +37,7 @@
 	src/ to src/Makefile.am removed redundant egglib/libegg.la entry for
 	eggdrop_LDADD fixed -DEBUG_ASSERT typo in acinclude.m4 
 
-2001-10-10 13:15  tothwolf
+2001-10-10 13:15  Tothwolf <tothwolf@techmonkeys.org>
 
 	* INSTALL, README, eggdrop.complete.conf, doc/compiling.FAQ,
 	doc/eggdrop.doc, doc/text-substitutions.doc, doc/html/about.html,
@@ -60,7 +60,7 @@
 
 	documentation and misc updates from alpha tree 
 
-2001-10-10 10:44  tothwolf
+2001-10-10 10:44  Tothwolf <tothwolf@techmonkeys.org>
 
 	* acinclude.m4, configure.in, src/Makefile.am, src/botnet.c,
 	src/chanprog.c, src/cmds.c, src/dcc.c, src/dccutil.c, src/dns.c,
@@ -230,19 +230,19 @@
 	configure script.  
 	* Switched to gettext 0.10.40 and pre-gettextized the devel tree.  
 
-2001-10-09 12:42  tothwolf
+2001-10-09 12:42  Tothwolf <tothwolf@techmonkeys.org>
 
 	* src/tclhash.h:
 
 	Added missing prototypes for init_bind2 and kill_bind2 to tclhash.h 
 
-2001-10-09 06:59  stdarg
+2001-10-09 06:59  stdarg <stdarg@techmonkeys.org>
 
 	* doc/howto/setudef.txt:
 
 	Sample code for user-defined channel settings 
 
-2001-10-07 04:02  stdarg
+2001-10-07 04:02  stdarg <stdarg@techmonkeys.org>
 
 	* src/: botcmd.c, botnet.c, cmds.c, dccutil.c, tclhash.c,
 	tclhash.h, mod/modvals.h, mod/ctcp.mod/ctcp.c, mod/irc.mod/irc.c,
@@ -267,13 +267,13 @@
 	lets try to keep the same messages that make eggdrop the classic it
 	is 
 
-2001-10-04 22:15  stdarg
+2001-10-04 22:15  stdarg <stdarg@techmonkeys.org>
 
 	* src/dcc.c:
 
 	Little potential problem I saw.  
 
-2001-10-04 21:37  stdarg
+2001-10-04 21:37  stdarg <stdarg@techmonkeys.org>
 
 	* src/: cmds.c, dcc.c, tcldcc.c, tclhash.c:
 
@@ -286,7 +286,7 @@
 
 	remove useless debug line from uptime.mod 
 
-2001-09-30 04:27  stdarg
+2001-09-30 04:27  stdarg <stdarg@techmonkeys.org>
 
 	* src/: tclhash.c, tclhash.h, mod/server.mod/server.c,
 	mod/server.mod/servmsg.c:
@@ -296,7 +296,7 @@
 	that table.  The behavior of the new table is a little different
 	than the old one (for now).  
 
-2001-09-28 03:15  stdarg
+2001-09-28 03:15  stdarg <stdarg@techmonkeys.org>
 
 	* src/: botcmd.c, botnet.c, dcc.c, dccutil.c, main.c, modules.c,
 	tcldcc.c, tclhash.c, tclhash.h, mod/module.h, mod/irc.mod/chan.c,
@@ -322,14 +322,14 @@
 
 	Removed the GO command again and readded need-cycle 
 
-2001-09-20 19:50  stdarg
+2001-09-20 19:50  stdarg <stdarg@techmonkeys.org>
 
 	* src/: main.c, tcl.c, tclhash.c, tclhash.h:
 
 	STill removing tcl from the bind table.  Created first non-tcl bind
 	entry ("event") and bind2/unbind2.  
 
-2001-08-29 19:21  stdarg
+2001-08-29 19:21  stdarg <stdarg@techmonkeys.org>
 
 	* src/mod/channels.mod/tclchan.c:
 
@@ -389,20 +389,20 @@
 	By BarkerJr, send CTCP replies to the help queue instead of the
 	server queue 
 
-2001-08-26 03:52  stdarg
+2001-08-26 03:52  stdarg <stdarg@techmonkeys.org>
 
 	* src/: tclhash.c, tclhash.h:
 
 	Continuing with new check_bind function.  
 
-2001-08-26 03:16  stdarg
+2001-08-26 03:16  stdarg <stdarg@techmonkeys.org>
 
 	* src/flags.c:
 
 	Added information about return values so people don't have to trace
 	through the code.  
 
-2001-08-25 20:42  stdarg
+2001-08-25 20:42  stdarg <stdarg@techmonkeys.org>
 
 	* doc/tcl-commands.doc:
 
@@ -411,7 +411,7 @@
 	in proper programming examples. I'm not sure it's showing up in this
 	commit though.  
 
-2001-08-25 07:47  stdarg
+2001-08-25 07:47  stdarg <stdarg@techmonkeys.org>
 
 	* src/tclhash.c:
 
@@ -425,33 +425,33 @@
 	Defined a variable in Makefile.in needed for the link with the non
 	system install gexttext.  
 
-2001-08-24 19:54  stdarg
+2001-08-24 19:54  stdarg <stdarg@techmonkeys.org>
 
 	* src/tclhash.c:
 
 	Ahh, some more fixes, should be fine now except for "defined but not
 	used" errors.  
 
-2001-08-24 19:46  stdarg
+2001-08-24 19:46  stdarg <stdarg@techmonkeys.org>
 
 	* src/: tclhash.c, tclhash.h:
 
 	Fixed some stuff and added some more.  
 
-2001-08-24 01:07  stdarg
+2001-08-24 01:07  stdarg <stdarg@techmonkeys.org>
 
 	* src/: tclhash.c, tclhash.h:
 
 	Some more changes... haven't deleted anything yet, so it should all 
 	still compile. :) 
 
-2001-08-23 23:15  stdarg
+2001-08-23 23:15  stdarg <stdarg@techmonkeys.org>
 
 	* src/tclhash.h:
 
 	Making way for tcl-less bind tables.  
 
-2001-08-23 04:06  stdarg
+2001-08-23 04:06  stdarg <stdarg@techmonkeys.org>
 
 	* src/mod/channels.mod/: channels.c, channels.h, cmdschan.c,
 	flagmaps.c, tclchan.c, udefchan.c:
@@ -460,7 +460,7 @@
 	
 	Adding user-defined strings and the "channel get" command.  
 
-2001-08-23 03:19  stdarg
+2001-08-23 03:19  stdarg <stdarg@techmonkeys.org>
 
 	* src/chan.h:
 
@@ -546,7 +546,7 @@
 	                    causing the chance of a bad pointer reference =P (stdarg gave me the
 	idea to look =) 
 
-2001-08-19 08:49  stdarg
+2001-08-19 08:49  stdarg <stdarg@techmonkeys.org>
 
 	* doc/tcl-commands.doc:
 
@@ -1099,7 +1099,7 @@
 
 	sync'd the lastest 1.6 cvs w/ 1.7 
 
-2001-07-25 20:32  stdarg
+2001-07-25 20:32  stdarg <stdarg@techmonkeys.org>
 
 	* src/egglib/: avl.c, avl.h, hash_table.c, hash_table.h,
 	hash_table_test.c, libegg.so, linked_list.c, linked_list.h,
@@ -1219,7 +1219,7 @@
 
 	applied Paladin's doc updates patch 
 
-2001-07-18 06:03  tothwolf
+2001-07-18 06:03  Tothwolf <tothwolf@techmonkeys.org>
 
 	* src/mod/module.h:
 
@@ -1298,7 +1298,7 @@
 	applied Fabian's modconfig patch ... should I release 1.6.5
 	tomorrow? all signs point to yes 
 
-2001-07-07 01:49  tothwolf
+2001-07-07 01:49  Tothwolf <tothwolf@techmonkeys.org>
 
 	* configure, configure.in, doc/UPDATES1.6:
 
@@ -1631,7 +1631,7 @@
 
 	dccdumpfile/dumpfile fixes.  
 
-2001-06-15 05:31  tothwolf
+2001-06-15 05:31  Tothwolf <tothwolf@techmonkeys.org>
 
 	* scripts/alltools.tcl:
 
@@ -1649,13 +1649,13 @@
 
 	[no log message] 
 
-2001-06-14 00:19  tothwolf
+2001-06-14 00:19  Tothwolf <tothwolf@techmonkeys.org>
 
 	* scripts/alltools.tcl:
 
 	added a few more explicit returns 
 
-2001-06-14 00:15  tothwolf
+2001-06-14 00:15  Tothwolf <tothwolf@techmonkeys.org>
 
 	* scripts/alltools.tcl:
 
@@ -1733,13 +1733,13 @@
 	Boo! updating patch.h with the addpatch script to show the last
 	patch I applied.  
 
-2001-06-06 22:49  tothwolf
+2001-06-06 22:49  Tothwolf <tothwolf@techmonkeys.org>
 
 	* doc/tcl-commands.doc:
 
 	ignorelist entry was slightly wrong 
 
-2001-06-06 22:34  tothwolf
+2001-06-06 22:34  Tothwolf <tothwolf@techmonkeys.org>
 
 	* src/patch.h:
 
@@ -1759,7 +1759,7 @@
 	
 		.info locking fix, add .info to .help 
 
-2001-06-04 23:41  tothwolf
+2001-06-04 23:41  Tothwolf <tothwolf@techmonkeys.org>
 
 	* doc/: UPDATES1.6, tcl-commands.doc:
 
@@ -2181,13 +2181,13 @@
 
 	added tothwolf's root patch 
 
-2001-02-16 03:48  tothwolf
+2001-02-16 03:48  Tothwolf <tothwolf@techmonkeys.org>
 
 	* doc/UPDATES1.6:
 
 	[no log message] 
 
-2001-02-15 04:33  tothwolf
+2001-02-15 04:33  Tothwolf <tothwolf@techmonkeys.org>
 
 	* doc/tcl-commands.doc, src/mod/irc.mod/tclirc.c:
 
@@ -2233,7 +2233,7 @@
 	added tclstuff.diff -- finally, we can see our tcl version in a
 	.status <g> 
 
-2001-01-27 06:26  tothwolf
+2001-01-27 06:26  Tothwolf <tothwolf@techmonkeys.org>
 
 	* src/dccutil.c:
 
@@ -2251,7 +2251,7 @@
 
 	applied sup's helpchans patch 
 
-2001-01-24 13:43  tothwolf
+2001-01-24 13:43  Tothwolf <tothwolf@techmonkeys.org>
 
 	* src/: patch.h, tcl.c:
 
@@ -2309,7 +2309,7 @@
 	applied Jason's -host patch (now how am I suppose to get around that
 	+k flag? <g>) 
 
-2001-01-19 08:16  tothwolf
+2001-01-19 08:16  Tothwolf <tothwolf@techmonkeys.org>
 
 	* configure:
 
@@ -2734,13 +2734,13 @@
 
 	guppy: sup reminded me to fix AUTHORS 
 
-2000-11-06 05:57  tothwolf
+2000-11-06 05:57  Tothwolf <tothwolf@techmonkeys.org>
 
 	* text/motd:
 
 	Changed version to 1.6 in motd file 
 
-2000-11-06 04:24  tothwolf
+2000-11-06 04:24  Tothwolf <tothwolf@techmonkeys.org>
 
 	* eggdrop.advanced.conf, eggdrop.complete.conf:
 
@@ -3019,19 +3019,19 @@
 
 	fabian: applied Eule's clearmodes patch 
 
-2000-10-15 16:11  tothwolf
+2000-10-15 16:11  Tothwolf <tothwolf@techmonkeys.org>
 
 	* doc/Makefile.in:
 
 	doc/Makefile.in still had a reference to doc/readme 
 
-2000-10-11 11:03  tothwolf
+2000-10-11 11:03  Tothwolf <tothwolf@techmonkeys.org>
 
 	* doc/html/: app-botnet.html, app-sharing.html, index.html:
 
 	renamed app-botnet.html to app-sharing.html 
 
-2000-10-11 10:27  tothwolf
+2000-10-11 10:27  Tothwolf <tothwolf@techmonkeys.org>
 
 	* doc/html/: about.html, app-botnet.html, app-problems.html,
 	app-textsub.html, app-tricks.html, app-weird.html, authors.html,
@@ -3045,7 +3045,7 @@
 
 	Changed copyright footer 
 
-2000-10-09 13:07  tothwolf
+2000-10-09 13:07  Tothwolf <tothwolf@techmonkeys.org>
 
 	* doc/html/: about.html, app-botnet.html, app-problems.html,
 	app-textsub.html, app-tricks.html, app-weird.html, authors.html,
@@ -3059,19 +3059,19 @@
 
 	fixed html doctype 
 
-2000-10-09 12:57  tothwolf
+2000-10-09 12:57  Tothwolf <tothwolf@techmonkeys.org>
 
 	* doc/: AUTHORS, html/authors.html:
 
 	Use table for authors file 
 
-2000-10-09 12:32  tothwolf
+2000-10-09 12:32  Tothwolf <tothwolf@techmonkeys.org>
 
 	* doc/readme:
 
 	Removed extra readme file 
 
-2000-10-09 12:26  tothwolf
+2000-10-09 12:26  Tothwolf <tothwolf@techmonkeys.org>
 
 	* NEWS, README, eggdrop.advanced.conf, eggdrop.complete.conf,
 	doc/AUTHORS, doc/BOTNET, doc/CONTENTS, doc/KNOWN-PROBLEMS,
@@ -3520,7 +3520,7 @@
 
 	fabian: changes to reflect release of 1.5.4 
 
-2000-08-24 02:01  tothwolf
+2000-08-24 02:01  Tothwolf <tothwolf@techmonkeys.org>
 
 	* doc/: UPDATES1.3, UPDATES1.5:
 
@@ -3751,7 +3751,7 @@
 
 	resync with 1.4, Aug03 965337849 
 
-2000-08-03 04:45  tothwolf
+2000-08-03 04:45  Tothwolf <tothwolf@techmonkeys.org>
 
 	* COPYING:
 
@@ -3864,19 +3864,19 @@
 
 	resync with 1.4, Jul12 963435800 
 
-2000-07-11 20:47  tothwolf
+2000-07-11 20:47  Tothwolf <tothwolf@techmonkeys.org>
 
 	* doc/UPDATES1.5, src/mod/console.mod/Makefile:
 
 	Fixed remaining 'console..$(MOD_EXT)' typos 
 
-2000-07-11 17:06  tothwolf
+2000-07-11 17:06  Tothwolf <tothwolf@techmonkeys.org>
 
 	* doc/html/faq1.html:
 
 	Missing Id tag and newline at end of file 
 
-2000-07-11 17:03  tothwolf
+2000-07-11 17:03  Tothwolf <tothwolf@techmonkeys.org>
 
 	* src/mod/console.mod/Makefile:
 
@@ -4312,13 +4312,13 @@
 
 	Eule's got442_2 patch, 1.4 
 
-2000-04-13 11:22  tothwolf
+2000-04-13 11:22  Tothwolf <tothwolf@techmonkeys.org>
 
 	* doc/html/app-textsub.html:
 
 	Fixed %{center} typo.  
 
-2000-04-13 11:21  tothwolf
+2000-04-13 11:21  Tothwolf <tothwolf@techmonkeys.org>
 
 	* doc/html/: about.html, app-botnet.html, app-probs.html,
 	app-textsub.html, app-tricks.html, app-weird.html, bans.html,
@@ -4334,13 +4334,13 @@
 
 	Updated html docs, added html/chat dir and files for irc links.  
 
-2000-04-13 10:10  tothwolf
+2000-04-13 10:10  Tothwolf <tothwolf@techmonkeys.org>
 
 	* NEWS:
 
 	Updated NEWS file to refer to 'doc/html/' instead of 'doc/web_docs/' 
 
-2000-04-13 10:08  tothwolf
+2000-04-13 10:08  Tothwolf <tothwolf@techmonkeys.org>
 
 	* doc/Makefile.in:
 
