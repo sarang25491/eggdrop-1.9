@@ -30,7 +30,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.142 2003/03/24 02:11:39 stdarg Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.143 2003/03/24 02:42:39 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -88,13 +88,6 @@ extern struct userrec *userlist;
 extern struct dcc_table DCC_CHAT;
 #endif /* MAKING_MODS   */
 
-/*
- * Please use the PATCH macro instead of directly altering the version
- * string from now on (it makes it much easier to maintain patches).
- * Also please read the README file regarding your rights to distribute
- * modified versions of this bot.
- */
-
 char	egg_version[1024] = VERSION;
 int	egg_numver = VERSION_NUM;
 
@@ -125,7 +118,6 @@ int	notify_users_at = 0;	/* How many minutes past the hour to
 				   notify users of notes? */
 char	version[81];		/* Version info (long form) */
 char	ver[41];		/* Version info (short form) */
-char	egg_xtra[2048];		/* Patch info */
 int	use_stderr = 1;		/* Send stuff to stderr instead of logfiles? */
 int	do_restart = 0;		/* .restart has been called, restart asap */
 int	die_on_sighup = 0;	/* die if bot receives SIGHUP */
@@ -211,14 +203,10 @@ static void got_ill(int z)
 
 static void print_version(void)
 {
-  char x[1024], *z = x;
+  char x[1024];
     
   strlcpy(x, egg_version, sizeof x);
-  newsplit(&z);
-  newsplit(&z);
   printf("%s\n", version);
-  if (z[0])
-    printf("  (patches: %s)\n", z);
 }
 
 static void print_help(void)
@@ -401,17 +389,6 @@ void core_config_init();
 void telnet_init();
 void binds_init();
 
-void patch(const char *str)
-{
-  char *p = strchr(egg_version, '+');
-
-  if (!p)
-    p = &egg_version[strlen(egg_version)];
-  sprintf(p, "+%s", str);
-  egg_numver++;
-  sprintf(&egg_xtra[strlen(egg_xtra)], " %s", str);
-}
-
 /*
 static inline void garbage_collect(void)
 {
@@ -487,15 +464,13 @@ int main(int argc, char **argv)
   bindtextdomain(PACKAGE, LOCALEDIR);
   textdomain(PACKAGE);
 #endif
-  
-#include "patch.h"
+
   /* Version info! */
   snprintf(ver, sizeof ver, "%s v%s", PACKAGE, egg_version);
   snprintf(version, sizeof version, "Eggdrop v%s (C) 1997 Robey Pointer (C) 2003 Eggheads",
 	       egg_version);
   /* Now add on the patchlevel (for Tcl) */
   sprintf(&egg_version[strlen(egg_version)], " %u", egg_numver);
-  strcat(egg_version, egg_xtra);
 #ifdef STOP_UAC
   {
     int nvpair[2];

@@ -70,9 +70,8 @@ Last revised: March  04, 2003
          why you changed it. Don't forget to include the botversion for which
          your patch was made.
 
-    Never modify src/patch.h or one of the UPDATES files. We will do it. If
-    your patch includes changes related to autotools (./configure, etc), do
-    NOT run autoconf, autoheader, etc; we will do this as well.
+    If your patch includes changes related to autotools (./configure, etc), do
+    NOT run autoconf, autoheader, etc; we will do this.
     
     Also, please don't add credit lines all over the source when patching.
     Patch contributers will receive credit in ChangeLog.
