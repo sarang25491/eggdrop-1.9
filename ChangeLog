@@ -1,3 +1,25 @@
+2002-03-22 16:01  Federico Mennite <ite@techmonkeys.org>
+
+	* lib/eggdrop/Makefile.am, lib/eggdrop/common.h,
+	lib/eggdrop/eggdrop.c, lib/eggdrop/eggdrop.h, lib/eggdrop/module.h,
+	lib/eggdrop/registry.c, lib/eggdrop/registry.h,
+	lib/egglib/egglib.h, modules/blowfish/blowfish.c,
+	modules/channels/channels.c, modules/compress/compress.c,
+	modules/console/console.c, modules/ctcp/ctcp.c,
+	modules/filesys/filesys.c, modules/irc/irc.c,
+	modules/notes/notes.c, modules/perlscript/mod_iface.c,
+	modules/server/server.c, modules/share/share.c,
+	modules/tclscript/Makefile.am, modules/tclscript/tclscript.c,
+	modules/transfer/transfer.c, modules/uptime/uptime.c,
+	modules/woobie/woobie.c, src/Makefile.am, src/egg.h,
+	src/egg_timer.c, src/egg_timer.h, src/main.c, src/main.h,
+	src/modules.c, src/modules.h, src/registry.c, src/registry.h,
+	src/script.c, src/script.h:
+
+	* Created eggdrop's library context.  
+	* Moved registry stuff to libeggdrop.  
+	* Some headers vs. prototypes cleanups.  
+
 2002-03-20 13:11  Will Buckner <wcc@techmonkeys.org>
 
 	* doc/UPDATES1.6:
