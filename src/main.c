@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.172 2004/06/21 14:26:02 stdarg Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.173 2004/06/21 19:04:51 stdarg Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -102,51 +102,33 @@ static struct tm nowtm;
 
 void core_config_init();
 
-void fatal(const char *s, int recoverable)
+void fatal(const char *errmsg)
 {
-	putlog(LOG_MISC, "*", "Fatal: %s", s);
+	putlog(LOG_MISC, "*", "Fatal: %s", errmsg);
 	flushlogs();
-	unlink(pid_file);
-	if (!recoverable) {
-		bg_send_quit(BG_ABORT);
-		exit(1);
-	}
+	exit(1);
 }
 
 static void got_bus(int z)
 {
-	fatal("BUS ERROR.", 1);
-#ifdef SA_RESETHAND
-	kill(getpid(), SIGBUS);
-#else
-	bg_send_quit(BG_ABORT);
-	exit(1);
-#endif
+	fatal("BUS ERROR.");
 }
 
 static void got_segv(int z)
 {
-	fatal("SEGMENT VIOLATION.", 1);
-#ifdef SA_RESETHAND
-	kill(getpid(), SIGSEGV);
-#else
-	bg_send_quit(BG_ABORT);
-	exit(1);
-#endif
+	fatal("SEGMENT VIOLATION.");
 }
 
 static void got_fpe(int z)
 {
-	fatal("FLOATING POINT ERROR.", 0);
+	fatal("FLOATING POINT ERROR.");
 }
 
 static void got_term(int z)
 {
 	eggdrop_event("sigterm");
-	if (core_config.die_on_sigterm)
-		core_shutdown(SHUTDOWN_SIGTERM, NULL, NULL);
-	else
-		putlog(LOG_MISC, "*", _("Received TERM signal (ignoring)."));
+	if (core_config.die_on_sigterm) core_shutdown(SHUTDOWN_SIGTERM, NULL, NULL);
+	else putlog(LOG_MISC, "*", _("Received TERM signal (ignoring)."));
 }
 
 static void got_quit(int z)
@@ -162,15 +144,6 @@ static void got_hup(int z)
 	putlog(LOG_MISC, "*", _("Received HUP signal (ignoring)."));
 	return;
 }
-
-#if 0
-static void got_ill(int z)
-{
-	eggdrop_event("sigill");
-	putlog(LOG_MISC, "*", _("Received ILL signal (ignoring)."));
-}
-#endif
-
 
 static void print_version(void)
 {
@@ -228,22 +201,18 @@ static void do_args(int argc, char *const *argv)
 				break;
 			case 'v':
 				print_version();
-				bg_send_quit(BG_ABORT);
 				exit(0);
 				break; /* this should never be reached */
 			case 'h':
 				print_help(argv);
-				bg_send_quit(BG_ABORT);
 				exit(0);
 				break; /* this should never be reached */
 			case 0: /* Long option with no short option */
 			case '?': /* Invalid option. */
 				/* getopt_long() already printed an error message. */
-				bg_send_quit(BG_ABORT);
 				exit(1);
 			default: /* bug: option not considered.  */
 				fprintf(stderr, _("%s: option unknown: %c\n"), argv[0], c);
-				bg_send_quit(BG_ABORT);
 				exit(1);
 				break; /* this should never be reached */
 		}
@@ -386,87 +355,6 @@ static void init_signals(void)
 
 	sv.sa_handler = SIG_IGN;
 	sigaction(SIGPIPE, &sv, NULL);
-
-/* XXX: why is this disabled? */
-#if 0
-	sv.sa_handler = got_ill;
-	sigaction(SIGILL, &sv, NULL);
-#endif
-}
-
-static int init_bg_and_pid (void)
-{
-	FILE *f;
-	int xx;
-	char s[25];	
-	
-	if (backgrd)
-		bg_prepare_split();
-
-	/* XXX: what shall we do if we've restarted and one changed our
-	 * XXX: botname? Remove old pid_file and create new one? Then this
- 	 * XXX: is the wrong place. */
-	snprintf(pid_file, sizeof pid_file, "pid.%s", core_config.botname);
-
-	f = fopen(pid_file, "r");
-	if (f != NULL) {
-		fgets(s, 10, f);
-		xx = atoi(s);
-		kill(xx, SIGCHLD); /* Meaningless kill to determine if pid is used */
-		if (errno != ESRCH) {
-			printf("I detect %s already running from this directory.\n", core_config.botname);
-			printf("If this is incorrect, please erase '%s'.\n", pid_file);
-			bg_send_quit(BG_ABORT);
-			return 0;
-		}
-	}
-
-	if (backgrd) { /* Move into background? */
-#ifndef CYGWIN_HACKS
-		bg_do_split();
-	}
-	else {
-#endif
-		xx = getpid();
-		if (xx != 0) {
-			FILE *fp;
-
-			unlink(pid_file);
-			fp = fopen(pid_file, "w");
-			if (fp != NULL) {
-				fprintf(fp, "%u\n", xx);
-				if (fflush(fp)) {
-					/* Let the bot live since this doesn't appear to be a botchk */
-					printf("WARNING: Could not write pid file '%s'.\n", pid_file);
-					fclose(fp);
-					unlink(pid_file);
-				}
-				else fclose(fp);
-			}
-			else printf("WARNING: Could not write pid file '%s'.\n", pid_file);
-#ifdef CYGWIN_HACKS
-			printf("Launched into the background (pid: %d).\n\n", xx);
-#endif
-		}
-	}
-
-	use_stderr = 0; /* Stop writing to stderr now */
-
-	if (backgrd) {
-		/* Try to disassociate from controlling terminal (finger cross) */
-#if HAVE_SETPGID && !defined(CYGWIN_HACKS)
-		setpgid(0, 0);
-#endif
-		/* Tcl wants the stdin, stdout and stderr file handles kept open. */
-		freopen("/dev/null", "r", stdin);
-		freopen("/dev/null", "w", stdout);
-		freopen("/dev/null", "w", stderr);
-#ifdef CYGWIN_HACKS
-		FreeConsole();
-#endif
-	}
-
-	return 1;
 }
 
 static void core_shutdown_or_restart()
@@ -549,7 +437,7 @@ int main(int argc, char **argv)
 
 	/* we may not run as root */
 	if (((int) getuid() == 0) || ((int) geteuid() == 0)) {
-		fatal("Eggdrop will not run as root!", 0);
+		fatal("Eggdrop will not run as root!");
 		return -1;
 	}
 
@@ -586,13 +474,21 @@ int main(int argc, char **argv)
 
 		/* main loop */
 		while (runmode == RUNMODE_NORMAL) {
+			/* Update the time. */
 			timer_update_now(&egg_timeval_now);
 			now = egg_timeval_now.sec;
-			random(); /* Woop, lets really jumble things */
+
+			/* Run any expired timers. */
 			timer_run();
+
+			/* Figure out how long to wait for activity. */
 			if (timer_get_shortest(&howlong)) timeout = 1000;
 			else timeout = howlong.sec * 1000 + howlong.usec / 1000;
+
+			/* Wait and monitor sockets. */
 			sockbuf_update_all(timeout);
+
+			/* Run any scheduled cleanups. */
 			garbage_run();
 		}
 
@@ -611,13 +507,18 @@ int core_init()
 	int i;
 	char *name;
 	void *config_root, *entry;
-	char s[25];	
-	
+	char datetime[25];
+	static int lockfd = -1;
+	struct flock lock;
+
 	/* init libeggdrop */
 	eggdrop_init();
 
 	/* load config */	
 	core_config_init(configfile);	
+
+	/* init logging */
+	logfile_init();	
 
 	/* did the user specify -m? */
 	if (make_userfile) {
@@ -626,18 +527,29 @@ int core_init()
 	}
 
 	/* init background mode and pid file */
-	if (runmode != RUNMODE_RESTART)
-		init_bg_and_pid();	
+	if (runmode != RUNMODE_RESTART) {
+		if (backgrd) bg_begin_split();
+	}
 
-	/* init logging */
-	logfile_init();	
+	/* Check lock file. */
+	if (core_config.lockfile && lockfd == -1) {
+		lockfd = open(core_config.lockfile, O_WRONLY | O_CREAT, S_IWUSR);
+		if (lockfd < 0) {
+			fatal("Could not open lock file!");
+		}
+		memset(&lock, 0, sizeof(lock));
+		lock.l_type = F_WRLCK;
+		if (fcntl(lockfd, F_SETLK, &lock) != 0) {
+			fatal("Lock file is already locked! Is eggdrop already running?");
+		}
+	}
 
 	/* just issue this "Loading Eggdrop" message if we are not
 	 * restarting */
 	if (runmode != RUNMODE_RESTART) {	
-		strlcpy(s, ctime(&now), sizeof s);
-		strcpy(&s[11], &s[20]);
-		putlog(LOG_ALL, "*", "Loading Eggdrop %s (%s)", VERSION, s);
+		strlcpy(datetime, ctime(&now), sizeof(datetime));
+		strcpy(&datetime[11], &datetime[20]);
+		putlog(LOG_ALL, "*", "Loading Eggdrop %s (%s)", VERSION, datetime);
 	}	
 
 	/* load userlist */
@@ -674,9 +586,10 @@ int core_init()
 	check_bind_init();
 	
 	/* start terminal */
-	if (runmode != RUNMODE_RESTART)
-		if (terminal_mode)
-			terminal_init();
+	if (runmode != RUNMODE_RESTART) {
+		if (backgrd) bg_finish_split();
+		if (terminal_mode) terminal_init();
+	}
 
 	return 1;
 }

@@ -17,13 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: main.h,v 1.40 2004/06/20 13:33:48 wingman Exp $
+ * $Id: main.h,v 1.41 2004/06/21 19:04:51 stdarg Exp $
  */
 
 #ifndef _EGG_MAIN_H
 #define _EGG_MAIN_H
 
-void fatal(const char *, int);
+void fatal(const char *errmsg);
 
 #define SHUTDOWN_GRACEFULL	0
 #define SHUTDOWN_HARD		1

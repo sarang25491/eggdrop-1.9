@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: core_config.h,v 1.7 2004/01/11 12:02:38 stdarg Exp $
+ * $Id: core_config.h,v 1.8 2004/06/21 19:04:51 stdarg Exp $
  */
 
 #ifndef _EGG_CORE_CONFIG_H_
@@ -26,6 +26,7 @@ typedef struct {
 	/* General bot stuff. */
 	char *botname;	/* Name of the bot as seen by user. */
 	char *userfile;	/* File we store users in. */
+	char *lockfile;	/* To make sure only one instance runs. */
 
 	/* Owner stuff. */
 	char *owner;

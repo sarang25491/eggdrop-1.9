@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: bg.c,v 1.17 2003/12/18 03:54:46 wcc Exp $";
+static const char rcsid[] = "$Id: bg.c,v 1.18 2004/06/21 19:04:51 stdarg Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -28,16 +28,14 @@ static const char rcsid[] = "$Id: bg.c,v 1.17 2003/12/18 03:54:46 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
-#include <unistd.h>	/* fork(), pipe(), read(), setpgid(), unlink(), write() */
-#include <stdio.h>	/* fflush(), fopen(), fprintf(), printf()               */
-#include <string.h>	/* strlen()                                             */
-#include <stdlib.h>	/* exit()                                               */
-#include <sys/types.h>	/* pid_t, kill()                                        */
-#include <signal.h>	/* kill()                                               */
-#include "main.h"	/* fatal()                                              */
+#include <unistd.h>	/* fork(), setpgid() */
+#include <stdio.h>	/* printf() */
+#include <stdlib.h>	/* exit() */
+#include <sys/types.h>	/* pid_t, kill() */
+#include <sys/wait.h>	/* waitpid() */
+#include <signal.h>	/* kill() */
+#include "main.h"	/* fatal()*/
 #include "bg.h"
-
-extern char pid_file[];
 
 /* When threads are started during eggdrop's init phase, we can't simply
  * fork() later on, because that only copies the VM space over and
@@ -46,194 +44,69 @@ extern char pid_file[];
  * To work around this, we fork() very early and let the parent process
  * wait in an event loop. As soon as the init phase is completed and we
  * would normally move to the background, the child process simply
- * messages it's parent that it may now quit. This allows us to control
+ * signals its parent that it may now quit. This allows us to control
  * the terminal long enough to, e.g. properly feed error messages to
  * cron scripts and let the user abort the loading process by hitting
  * CTRL+C.
  *
- *
- * [ Parent process                  ] [ Child process                   ]
- *
- *   main()
- *     ...
- *     bg_prepare_split()
- *       fork()                              - created -
- *       waiting in event loop.            continuing execution in main()
- *                                         ...
- *                                         completed init.
- *                                         bg_do_detach()
- *                                           message parent new PID file-
- *                                            name.
- *       receives new PID filename
- *         message.
- *                                           message parent to quit.
- *       receives quit message.            continues to main loop.
- *       writes PID to file.               ...
- *       exits.
  */
 
-/* Format of messages sent from the newly forked process to the
- * original process, connected to the terminal.
- */
-typedef struct {
-	enum {
-		BG_COMM_QUIT,		/* Quit original process. Write
-					   PID file, etc. i.e. detach.	 */
-		BG_COMM_ABORT,		/* Quit original process.	 */
-		BG_COMM_TRANSFERPF	/* Sending pid_file.		 */
-	} comm_type;
-	union {
-		struct {		/* Data for BG_COMM_TRANSFERPF.	 */
-			int	len;	/* Length of the file name.	 */
-		} transferpf;
-	} comm_data;
-} bg_comm_t;
+/* The child has to keep the parent's pid so it can send it a signal when it's
+ * time to exit. */
+static pid_t parent_pid = -1, child_pid = -1;
 
-typedef enum {
-	BG_NONE = 0,			/* No forking has taken place
-					   yet.				 */
-	BG_SPLIT,			/* I'm the newly forked process. */
-	BG_PARENT			/* I'm the original process.	 */
-} bg_state_t;
-
-typedef struct {
-	int		comm_recv;	/* Receives messages from the
-					   child process.		 */
-	int		comm_send;	/* Sends messages to the parent
-					   process.			 */
-	bg_state_t	state;		/* Current state, see above
-					   enum descriptions.		 */
-	pid_t		child_pid;	/* PID of split process.	 */
-} bg_t;
-
-static bg_t bg = { 0 };
-
-
-/* Do everything we normally do after we have split off a new
- * process to the background. This includes writing a PID file
- * and informing the user of the split.
- */
-static void bg_do_detach(pid_t p)
+void wait_for_child(int sig)
 {
-	FILE *fp;
-
-	unlink(pid_file);
-	fp = fopen(pid_file, "w");
-	if (fp != NULL) {
-		fprintf(fp, "%u\n", p);
-		if (fflush(fp)) {
-			/* Kill bot incase a botchk is run from crond. */
-			printf("Fatal: Could not write pid file '%s'.\n", pid_file);
-			fclose(fp);
-			unlink(pid_file);
-			exit(1);
-		}
-		fclose(fp);
-	}
-	else printf("WARNING: Could not write pid file '%s'.\n", pid_file);
-	printf("Launched into the background (pid: %d).\n\n", p);
-#ifdef HAVE_SETPGID
-	setpgid(p, p);
-#endif
+	printf("Eggdrop launched successfully into the background, pid = %d.\n", child_pid);
 	exit(0);
 }
 
-void bg_prepare_split(void)
+void bg_begin_split()
 {
-  /* Create a pipe between parent and split process, fork to create a
-     parent and a split process and wait for messages on the pipe. */
-  pid_t		p;
-  bg_comm_t	message;
+	int result;
 
-  {
-    int		comm_pair[2];
+	parent_pid = getpid();
 
-    if (pipe(comm_pair) < 0)
-      fatal("CANNOT OPEN PIPE.", 0);
+	child_pid = fork();
+	if (child_pid == -1) fatal("CANNOT FORK PROCESS.");
 
-    bg.comm_recv = comm_pair[0];
-    bg.comm_send = comm_pair[1];
-  }
+	/* Are we the child? */
+	if (child_pid == 0) {
+		/* Yes. Continue as normal. */
+		return;
+	}
 
-  p = fork();
-  if (p == -1)
-    fatal("CANNOT FORK PROCESS.", 0);
-  if (p == 0) {
-    bg.state = BG_SPLIT;
-    return;
-  } else {
-    bg.child_pid = p;
-    bg.state = BG_PARENT;
-  }
+	/* We are the parent. Just hang around until the child is done. When
+	 * the child wants us to exit, it will send us the signal and trigger
+	 * wait_for_child. */
+	signal(SIGUSR1, wait_for_child);
+	waitpid(child_pid, &result, 0);
 
-  while (read(bg.comm_recv, &message, sizeof(message)) > 0) {
-    switch (message.comm_type) {
-    case BG_COMM_QUIT:
-      bg_do_detach(p);
-      break;
-    case BG_COMM_ABORT:
-      exit(1);
-      break;
-    case BG_COMM_TRANSFERPF:
-      /* Now transferring file from split process.
-       */
-      if (message.comm_data.transferpf.len >= 40)
-	message.comm_data.transferpf.len = 40 - 1;
-      /* Next message contains data. */
-      if (read(bg.comm_recv, pid_file, message.comm_data.transferpf.len) <= 0)
-	goto error;
-      pid_file[message.comm_data.transferpf.len] = 0;
-      break;
-    }
-  }
-
-error:
-  /* We only reach this point in case of an error. */
-  fatal("COMMUNICATION THROUGH PIPE BROKE.", 0);
+	/* If we reach this point, that means the child process exited, so
+	 * there was an error. */
+	printf("Eggdrop exited abnormally!\n");
+	exit(1);
 }
 
-/* Transfer contents of pid_file to parent process. This is necessary,
- * as the pid_file[] buffer has changed in this fork by now, but the
- * parent needs an up-to-date version.
- */
-static void bg_send_pidfile(void)
+void bg_close()
 {
-  bg_comm_t	message;
-
-  message.comm_type = BG_COMM_TRANSFERPF;
-  message.comm_data.transferpf.len = strlen(pid_file);
-
-  /* Send type message. */
-  if (write(bg.comm_send, &message, sizeof(message)) < 0)
-    goto error;
-  /* Send data. */
-  if (write(bg.comm_send, pid_file, message.comm_data.transferpf.len) < 0)
-    goto error;
-  return;
-error:
-  fatal("COMMUNICATION THROUGH PIPE BROKE.", 0);
+	/* Send parent the USR1 signal, which tells it to print a message
+	 * and exit. */
+	kill(parent_pid, SIGUSR1);
 }
 
-void bg_send_quit(bg_quit_t q)
+void bg_finish_split()
 {
-  if (bg.state == BG_PARENT) {
-    kill(bg.child_pid, SIGKILL);
-  } else if (bg.state == BG_SPLIT) {
-    bg_comm_t	message;
+	bg_close();
 
-    if (q == BG_QUIT) {
-      bg_send_pidfile();
-      message.comm_type = BG_COMM_QUIT;
-    } else
-      message.comm_type = BG_COMM_ABORT;
-    /* Send message. */
-    if (write(bg.comm_send, &message, sizeof(message)) < 0)
-      fatal("COMMUNICATION THROUGH PIPE BROKE.", 0);
-  }
-}
+#if HAVE_SETPGID && !defined(CYGWIN_HACKS)
+	setpgid(0, 0);
+#endif
+	freopen("/dev/null", "r", stdin);
+	freopen("/dev/null", "w", stdout);
+	freopen("/dev/null", "w", stderr);
 
-void bg_do_split(void)
-{
-  /* Tell our parent process to go away now, as we don't need it anymore. */
-  bg_send_quit(BG_QUIT);
+#ifdef CYGWIN_HACKS
+	FreeConsole();
+#endif
 }

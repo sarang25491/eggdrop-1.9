@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_config.c,v 1.17 2004/06/19 17:19:25 wingman Exp $";
+static const char rcsid[] = "$Id: core_config.c,v 1.18 2004/06/21 19:04:51 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -33,6 +33,7 @@ static config_var_t core_config_vars[] = {
 	/* General bot stuff. */
 	{"botname", &core_config.botname, CONFIG_STRING},		/* DDC	*/
 	{"userfile", &core_config.userfile, CONFIG_STRING},		/* DDC	*/
+	{"lockfile", &core_config.lockfile, CONFIG_STRING},		/* DDC	*/
 
 	/* The owner. */
 	{"owner", &core_config.owner, CONFIG_STRING},			/* DDC	*/
@@ -67,15 +68,16 @@ void core_config_init(const char *fname)
 	/* Hook the owner variable into libeggdrop. */
 	egg_setowner(&core_config.owner);
 
-	core_config.botname = strdup("eggdrop");
-	core_config.userfile = strdup("users.xml");
-	core_config.help_path = strdup("help/");
-
-	core_config.logfile_suffix = strdup(".%d%b%Y");
-
 	config_root = config_load(fname);
 	config_set_root("eggdrop", config_root);
 	config_link_table(core_config_vars, config_root, "eggdrop", 0, NULL);
+	if (!core_config.botname) core_config.botname = strdup("eggdrop");
+	if (!core_config.userfile) core_config.userfile = strdup("users.xml");
+	if (!core_config.lockfile) core_config.lockfile = strdup("lock");
+	if (!core_config.help_path) core_config.help_path = strdup("help/");
+	if (!core_config.logfile_suffix) core_config.logfile_suffix = strdup(".%d%b%Y");
+
+	config_update_table(core_config_vars, config_root, "eggdrop", 0, NULL);
 }
 
 void core_config_save()

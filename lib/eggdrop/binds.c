@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: binds.c,v 1.15 2004/06/19 18:07:01 wingman Exp $";
+static const char rcsid[] = "$Id: binds.c,v 1.16 2004/06/21 19:04:51 stdarg Exp $";
 #endif
 
 #include <string.h>
@@ -158,10 +158,9 @@ bind_entry_t *bind_entry_lookup(bind_table_t *table, int id, const char *mask, c
 		}
 		else {
 			hit = 0;
-			if (entry->mask && !strcmp(entry->mask, mask)) hit++;
-			else if (!entry->mask) hit++;
-			if (entry->function_name && !strcmp(entry->function_name, function_name)) hit++;
-			if (entry->callback == callback || !callback) hit++;
+			if (!entry->mask || !strcmp(entry->mask, mask)) hit++;
+			if (!entry->function_name || !strcmp(entry->function_name, function_name)) hit++;
+			if (!callback || entry->callback == callback) hit++;
 			if (hit == 3) break;
 		}
 	}

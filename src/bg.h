@@ -16,23 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: bg.h,v 1.8 2003/12/16 21:45:35 wcc Exp $
+ * $Id: bg.h,v 1.9 2004/06/21 19:04:51 stdarg Exp $
  */
 
 #ifndef _EGG_BG_H
 #define _EGG_BG_H
 
-typedef enum {
-	BG_QUIT = 1,
-	BG_ABORT
-} bg_quit_t;
-
-
-/*
- * Prototypes
- */
-void bg_prepare_split(void);
-void bg_send_quit(bg_quit_t);
-void bg_do_split(void);
+void bg_begin_split();
+void bg_finish_split();
 
 #endif				/* !_EGG_BG_H */
