@@ -1,3 +1,11 @@
+2003-06-18 22:59  stdarg <stdarg@techmonkeys.org>
+
+	* mkinstalldirs:
+
+	
+	* Added mkinstalldirs to top buildir for snapshot downloaders who
+	don't run/read bootstrap 
+
 2003-06-18 17:36  stdarg <stdarg@techmonkeys.org>
 
 	* po/Makefile.in.in:
