@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: servmsg.c,v 1.16 2002/05/31 04:11:37 stdarg Exp $";
+static const char rcsid[] = "$Id: servmsg.c,v 1.17 2002/05/31 08:02:57 stdarg Exp $";
 #endif
 */
 
@@ -134,13 +134,6 @@ static void check_tcl_msgm(char *nick, char *uhost, struct userrec *u, char *arg
 
   get_user_flagrec(u, &fr, NULL);
   check_bind(BT_msgm, arg, &fr, nick, uhost, u, arg);
-}
-
-/* Return 1 if processed.
- */
-static int check_tcl_raw(char *from, char *code, char *msg)
-{
-  return check_bind(BT_raw, code, NULL, from, code, msg);
 }
 
 static int check_tcl_ctcpr(char *nick, char *uhost, struct userrec *u,
@@ -897,28 +890,65 @@ static struct dcc_table SERVER_SOCKET =
 
 static void server_activity(int idx, char *msg, int len)
 {
-  char *from, *code;
+	/* The components of any irc message. */
+	char *prefix, *cmd = "", *middle = "", *trailing = "";
+	char *remainder;
 
-  if (trying_server) {
-    strcpy(dcc[idx].nick, "(server)");
-    putlog(LOG_SERV, "*", "Connected to %s", dcc[idx].host);
-    trying_server = 0;
-    SERVER_SOCKET.timeout_val = 0;
-  }
-  waiting_for_awake = 0;
-  from = "";
-  if (msg[0] == ':') {
-    msg++;
-    from = newsplit(&msg);
-  }
-  code = newsplit(&msg);
-  if (debug_output)
-    putlog(LOG_RAW, "*", "[@] %s %s %s", from, code, msg);
+	if (trying_server) {
+		strcpy(dcc[idx].nick, "(server)");
+		putlog(LOG_SERV, "*", "Connected to %s", dcc[idx].host);
+		trying_server = 0;
+		SERVER_SOCKET.timeout_val = 0;
+	}
+	waiting_for_awake = 0;
 
-  /* This has GOT to go into the raw binding table, * merely because this
-   * is less effecient.
-   */
-  check_tcl_raw(from, code, msg);
+	if (!len) return;
+
+	/* This would be a good place to put an SFILT bind, so that scripts
+		and other modules can modify text sent from the server. */
+	if (debug_output) {
+		putlog(LOG_RAW, "*", "[@] %s", msg);
+	}
+
+	/* First word is the prefix, or command if it doesn't start with ':' */
+	if (*msg == ':') {
+		prefix = msg+1;
+		msg = strchr(msg, ' ');
+		if (!msg) goto done_parsing;
+		*msg = 0;
+		msg++;
+	}
+	else prefix = "";
+
+	cmd = msg;
+	msg = strchr(msg, ' ');
+	if (!msg) goto done_parsing;
+	*msg = 0;
+	msg++;
+
+	/* Next comes the 'middle' or args to the command. */
+	if (*msg == ':') {
+		trailing = msg;
+		goto done_parsing;
+	}
+	else {
+		middle = msg;
+		msg = strchr(msg, ':');
+		if (!msg) goto done_parsing;
+		if (*(msg-1) == ' ') *(msg-1) = 0;
+		trailing = msg;
+	}
+
+done_parsing:
+
+	/* For now, let's emulate the old style. */
+	if (strlen(middle) && strlen(trailing)) remainder = msprintf("%s %s", middle, trailing);
+	else remainder = msprintf("%s%s", middle, trailing);
+
+	// putlog(LOG_MISC, "*", "(%s) (%s) (%s) (%s)\nremainder: (%s)\n", prefix, cmd, middle, trailing, remainder);
+
+	check_bind(BT_raw, cmd, NULL, prefix, cmd, remainder);
+	free(remainder);
 }
 
 static int gotping(char *from, char *ignore, char *msg)
