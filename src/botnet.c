@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.46 2001/10/21 03:44:30 stdarg Exp $
+ * $Id: botnet.c,v 1.47 2001/10/31 04:02:51 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -62,7 +62,7 @@ static void botnet_sighup(char *);
 static cmd_t botnet_events[] = {
 	{"botnet_sigterm", "", (Function) botnet_sigterm, NULL},
 	{"botnet_sighup", "", (Function) botnet_sighup, NULL},
-	0
+	{0}
 };
 
 static void init_bots();

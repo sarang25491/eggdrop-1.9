@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h> /* strlen(), memset(), memmove() */
 #include <stdlib.h>
 
 #include "lib/egglib/hash_table.h"

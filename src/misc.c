@@ -6,7 +6,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.51 2001/10/19 01:55:05 tothwolf Exp $
+ * $Id: misc.c,v 1.52 2001/10/31 04:02:51 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -64,12 +64,6 @@ static struct help_ref {
   struct help_list_t *first;
   struct help_ref *next;
 } *help_list = NULL;
-
-
-void init_misc()
-{
-  static int last = 0;
-}
 
 
 /*

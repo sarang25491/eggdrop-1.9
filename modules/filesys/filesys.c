@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.1 2001/10/27 16:34:50 ite Exp $
+ * $Id: filesys.c,v 1.2 2001/10/31 04:02:50 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -844,7 +844,7 @@ static void init_server_ctcps(char *module)
 {
   bind_table_t *BT_ctcp;
 
-  if (BT_ctcp = find_bind_table2("ctcp"))
+  if ((BT_ctcp = find_bind_table2("ctcp")))
     add_builtins2(BT_ctcp, myctcp);
 }
 
@@ -895,7 +895,7 @@ static char *filesys_close()
   if (BT_dcc) rem_builtins2(BT_dcc, mydcc);
   if (BT_load) rem_builtins2(BT_load, myload);
   rem_help_reference("filesys.help");
-  if (BT_ctcp = find_bind_table2("ctcp"))
+  if ((BT_ctcp = find_bind_table2("ctcp")))
     rem_builtins2(BT_ctcp, myctcp);
   del_bind_table2(BT_file);
   del_entry_type(&USERENTRY_DCCDIR);

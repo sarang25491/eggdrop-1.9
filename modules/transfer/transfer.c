@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.1 2001/10/27 16:34:53 ite Exp $
+ * $Id: transfer.c,v 1.2 2001/10/31 04:02:51 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1792,7 +1792,7 @@ static int server_transfer_setup(char *mod)
 {
   bind_table_t *BT_ctcp;
 
-  if (BT_ctcp = find_bind_table2("ctcp"))
+  if ((BT_ctcp = find_bind_table2("ctcp")))
     add_builtins2(BT_ctcp, transfer_ctcps);
   return 1;
 }
@@ -1830,7 +1830,7 @@ static char *transfer_close()
   del_bind_table2(BT_tout);
   if (BT_load) rem_builtins2(BT_load, transfer_load);
   /* Try to remove our CTCP bindings */
-  if (BT_ctcp = find_bind_table2("ctcp"))
+  if ((BT_ctcp = find_bind_table2("ctcp")))
     rem_builtins2(BT_ctcp, transfer_ctcps);
   rem_tcl_commands(mytcls);
   rem_tcl_ints(myints);

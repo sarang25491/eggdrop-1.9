@@ -1,5 +1,7 @@
-#include <stdio.h> /* For NULL */
-#include <sys/time.h> /* For gettimeofday() */
+#include <stdio.h> /* NULL */
+#include <string.h> /* memcpy() */
+#include <stdlib.h> /* malloc(), free() */
+#include <sys/time.h> /* gettimeofday() */
 
 typedef int (*Function)();
 #include "egg_timer.h"

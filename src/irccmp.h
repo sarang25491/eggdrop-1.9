@@ -2,7 +2,7 @@
  * irccmp.h
  *   prototypes and macros for irccmp.c
  *
- * $Id: irccmp.h,v 1.2 2001/10/12 07:45:48 tothwolf Exp $
+ * $Id: irccmp.h,v 1.3 2001/10/31 04:02:51 tothwolf Exp $
  */
 /*
  * Copyright (C) 1990 Jarkko Oikarinen
@@ -26,21 +26,21 @@
 #define _EGG_IRCCMP_H
 
 
-extern int (*irccmp) (const char *, const char *);
-extern int (*ircncmp) (const char *, const char *, int);
-extern int (*irctoupper) (int);
-extern int (*irctolower) (int);
-
 /*
- * prototypes
+ * Prototypes
  */
 extern int _irccmp(const char *, const char *);
 extern int _ircncmp(const char *, const char *, int);
 extern int _irctolower(int);
 extern int _irctoupper(int);
+extern int (*irccmp) (const char *, const char *);
+extern int (*ircncmp) (const char *, const char *, int);
+extern int (*irctoupper) (int);
+extern int (*irctolower) (int);
+
 
 /*
- * character macros
+ * Character macros
  */
 extern const unsigned char ToLowerTab[];
 #define ToLower(c) (ToLowerTab[(unsigned char)(c)])

@@ -1,6 +1,9 @@
 /* Implement a stack based on malloc. */
 
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
 #include "mstack.h"
 
 mstack_t *mstack_new(int initial_size)

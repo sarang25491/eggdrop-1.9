@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #include "mempool.h"
 
 mempool_t *mempool_create(mempool_t *pool, int nchunks, int chunk_size)

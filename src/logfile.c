@@ -1,5 +1,8 @@
 #include "main.h"
 #include <modvals.h>
+
+#include "modules.h" /* add_hook() */
+
 #include "lib/egglib/msprintf.h"
 #include "script_api.h"
 #include "script.h"
@@ -59,7 +62,7 @@ static script_command_t log_script_cmds[] = {
 
 static script_str_t log_script_strings[] = {
 	{"", "logfile-suffix", &logfile_suffix},
-	0
+	{0}
 };
 
 static script_int_t log_script_ints[] = {
@@ -68,7 +71,7 @@ static script_int_t log_script_ints[] = {
 	{"", "switch-logfiles-at", &cycle_at},
 	{"", "keep-all-logs", &keep_all_logs},
 	{"", "quick-logs", &quick_logs},
-	0
+	{0}
 };
 
 void logfile_init()

@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.96 2001/10/28 13:30:33 ite Exp $
+ * $Id: main.c,v 1.97 2001/10/31 04:02:51 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -517,7 +517,6 @@ static void core_secondly()
       call_hook(HOOK_5MINUTELY);
       if (!miltime) {	/* At midnight */
 	char s[25];
-	int j;
 
 	strncpyz(s, ctime(&now), sizeof s);
 	putlog(LOG_ALL, "*", "--- %.11s%s", s, s + 20);
@@ -588,7 +587,7 @@ void kill_tcl();
 extern module_entry *module_list;
 void restart_chons();
 
-int init_userent(), init_misc(), init_net(),
+int init_userent(), init_net(),
  init_modules(), init_tcl(int, char **);
 void timer_init();
 void logfile_init();
@@ -721,7 +720,6 @@ int main(int argc, char **argv)
   core_binds_init();
   dcc_init();
   init_userent();
-  init_misc();
   botnet_init();
   init_net();
   init_modules();

@@ -1,4 +1,7 @@
 #include <stdio.h>
+#include <string.h> /* strlen() */
+#include <stdlib.h> /* calloc(), malloc() */
+
 typedef int (*Function)();
 #include "registry.h"
 #include "script_api.h"

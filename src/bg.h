@@ -1,7 +1,7 @@
 /*
  * bg.h
  *
- * $Id: bg.h,v 1.2 2001/04/12 02:39:43 guppy Exp $
+ * $Id: bg.h,v 1.3 2001/10/31 04:02:51 tothwolf Exp $
  */
 /*
  * Copyright (C) 2000, 2001 Eggheads Development Team
@@ -29,8 +29,12 @@ typedef enum {
 	BG_ABORT
 } bg_quit_t;
 
+
+/*
+ * Prototypes
+ */
 void bg_prepare_split(void);
-void bg_send_quit(bg_quit_t q);
+void bg_send_quit(bg_quit_t);
 void bg_do_split(void);
 
 #endif			/* _EGG_BG_H */

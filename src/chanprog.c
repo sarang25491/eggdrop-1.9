@@ -4,7 +4,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.36 2001/10/26 22:22:22 stdarg Exp $
+ * $Id: chanprog.c,v 1.37 2001/10/31 04:02:51 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -299,7 +299,6 @@ void tell_verbose_status(int idx)
 void tell_settings(int idx)
 {
   char s[1024];
-  int i;
   struct flag_record fr = {FR_GLOBAL, 0, 0, 0, 0, 0};
 
   dprintf(idx, "Botnet Nickname: %s\n", botnetnick);
@@ -350,8 +349,6 @@ void reaffirm_owners()
 
 void chanprog()
 {
-  int i;
-
   admin[0] = 0;
   helpdir[0] = 0;
   tempdir[0] = 0;

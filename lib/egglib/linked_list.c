@@ -1,4 +1,7 @@
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
 #include "mempool.h"
 #include "linked_list.h"
 
@@ -151,7 +154,7 @@ int linked_list_cursor_prepend(linked_list_cursor_t *cursor, void *key, void *da
 
 	node = NEW_NODE;
 	if (cursor->node) {
-		if (node->prev = cursor->node->prev) node->prev->next = node;
+		if ((node->prev = cursor->node->prev)) node->prev->next = node;
 		else cursor->list->head = node;
 		node->next = cursor->node;
 		cursor->node->prev = node;
@@ -181,7 +184,7 @@ int linked_list_cursor_append(linked_list_cursor_t *cursor, void *key, void *dat
 	node = NEW_NODE;
 	if (cursor->node) {
 		node->prev = cursor->node;
-		if (node->next = cursor->node->next) node->next->prev = node;
+		if ((node->next = cursor->node->next)) node->next->prev = node;
 		else cursor->list->tail = node;
 		cursor->node->next = node;
 	}
@@ -230,7 +233,7 @@ int linked_list_append(linked_list_t *list, void *key, void *data)
 	linked_list_node_t *node;
 
 	node = NEW_NODE;
-	if (node->prev = list->tail) node->prev->next = node;
+	if ((node->prev = list->tail)) node->prev->next = node;
 	node->next = (linked_list_node_t *)0;
 	list->tail = node;
 	if (!list->head) list->head = node;
