@@ -1,3 +1,12 @@
+2003-03-11 03:53  Will Buckner <wcc@techmonkeys.org>
+
+	* doc/UPDATES1.6, modules/channels/channels.c,
+	modules/channels/cmdschan.c, modules/channels/tclchan.c,
+	modules/channels/userchan.c, modules/irc/cmdsirc.c, po/eggdrop.pot,
+	src/patch.h:
+
+	* Sync 1.6: pls_chan_error, mns_ban-fix, has_flags-get_channel.  
+
 2003-03-10 09:46  stdarg <stdarg@techmonkeys.org>
 
 	* modules/server/output.c:
