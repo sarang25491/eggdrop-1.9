@@ -103,7 +103,7 @@ main (int argc, char *argv[])
 	signal(SIGPIPE, SIG_IGN);
 	srand(time(0));
 	sslmode_init();
-	sock = socket_create(host, port, SOCKET_SERVER);
+	sock = socket_create(NULL, 0, host, port, SOCKET_SERVER);
 	if (sock < 0) {
 		perror("socket_create");
 		return(0);

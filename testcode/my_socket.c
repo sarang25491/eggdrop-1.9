@@ -11,81 +11,102 @@
 #define DO_IPV6
 #define DO_IPV4
 
-/* Return values: */
-/* -1: invalid ip address */
-/* -2: socket() failure */
-/* -3: bind() failure */
-/* -4: connect() failure */
-int socket_create(char *ipaddr, int port, int flags)
+typedef struct {
+	int len;
+	int family;
+	union {
+		struct sockaddr addr;
+		#ifdef DO_IPV4
+		struct sockaddr_in ipv4;
+		#endif
+		#ifdef DO_IPV6
+		struct sockaddr_in6 ipv6;
+		#endif
+	} u;
+} sockname_t;
+
+static int socket_name(sockname_t *name, char *ipaddr, int port)
 {
-	int sock, pfamily, err, len;
-	struct sockaddr *name;
-	#ifdef DO_IPV4
-	struct sockaddr_in ipv4_name;
-	#endif
-	#ifdef DO_IPV6
-	struct sockaddr_in6 ipv6_name;
-	#endif
+	memset(name, 0, sizeof(*name));
 
 	if (!ipaddr) {
 		#ifdef DO_IPV6
-		ipaddr = "0:0:0:0:0:0:0:0";
+		ipaddr = "::";
 		#else
 		ipaddr = "0.0.0.0";
 		#endif
 	}
 
-	/* Resolve the ip address. */
 	#ifdef DO_IPV6
-	err = inet_pton(AF_INET6, ipaddr, &ipv6_name.sin6_addr);
-	if (err <= 0) {
-		#ifndef DO_IPV4
-		return(err);
-		#else
-		err = inet_pton(AF_INET, ipaddr, &ipv4_name.sin_addr);
-		if (err <= 0) return(-1);
-		pfamily = PF_INET;
-		name = (struct sockaddr *)&ipv4_name;
-		len = sizeof(ipv4_name);
-		ipv4_name.sin_port = htons(port);
-		ipv4_name.sin_family = AF_INET;
-		#endif
+	if (inet_pton(AF_INET6, ipaddr, &name->u.ipv6.sin6_addr) > 0) {
+		name->len = sizeof(name->u.ipv6);
+		name->family = PF_INET6;
+		name->u.ipv6.sin6_port = htons(port);
+		name->u.ipv6.sin6_family = AF_INET6;
+		return(0);
 	}
-	else {
-		pfamily = PF_INET6;
-		name = (struct sockaddr *)&ipv6_name;
-		len = sizeof(ipv6_name);
-		ipv6_name.sin6_port = htons(port);
-		ipv6_name.sin6_family = AF_INET6;
-	}
-	#else
-	err = inet_aton(ipaddr, &ipv4_name.sin_addr);
-	if (err <= 0) return(-1);
-	pfamily = PF_INET;
-	name = (struct sockaddr *)&ipv4_name;
-	len = sizeof(ipv4_name);
-	ipv4_name.sin_port = htons(port);
-	ipv4_name.sin_family = AF_INET;
 	#endif
 
-	/* Create the socket! */
+	#ifdef DO_IPV4
+	if (inet_pton(AF_INET, ipaddr, &name->u.ipv4.sin_addr) > 0) {
+		name->len = sizeof(name->u.ipv4);
+		name->family = PF_INET;
+		name->u.ipv4.sin_port = htons(port);
+		name->u.ipv4.sin_family = AF_INET;
+		return(0);
+	}
+	#endif
+
+	return(-1);
+}
+
+/* Return values: */
+/* -1: invalid ip address */
+/* -2: socket() failure */
+/* -3: bind() failure */
+/* -4: connect() failure */
+int socket_create(char *dest_ip, int dest_port, char *src_ip, int src_port, int flags)
+{
+	int sock, pfamily;
+	sockname_t dest_name, src_name;
+
+	/* Resolve the ip addresses. */
+	socket_name(&dest_name, dest_ip, dest_port);
+	socket_name(&src_name, src_ip, src_port);
+
+	if (src_ip || src_port) flags |= SOCKET_BIND;
+
+	if (flags & SOCKET_CLIENT) pfamily = dest_name.family;
+	else if (flags & SOCKET_SERVER) pfamily = src_name.family;
+	else {
+		errno = EADDRNOTAVAIL;
+		return(-1);
+	}
+
+	/* Create the socket. */
 	if (flags & SOCKET_UDP) sock = socket(pfamily, SOCK_DGRAM, 0);
 	else sock = socket(pfamily, SOCK_STREAM, 0);
+
 	if (sock < 0) return(-2);
 
 	if (flags & SOCKET_NONBLOCK) socket_set_nonblock(sock, 1);
 
-	if (flags & SOCKET_SERVER) {
+	/* Do the bind if necessary. */
+	if (flags & (SOCKET_SERVER|SOCKET_BIND)) {
 		int yes = 1;
+
 		setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
-		err = bind(sock, name, len);
-		if (err < 0) return(-3);
-		listen(sock, 50);
+		if (bind(sock, &src_name.u.addr, src_name.len) != 0) return(-3);
+		if (flags & SOCKET_SERVER) listen(sock, 50);
 	}
-	else {
-		err = connect(sock, name, len);
-		if (err < 0 && errno != EINPROGRESS) return(-4);
+
+	if (flags & SOCKET_CLIENT) {
+		if (connect(sock, &dest_name.u.addr, dest_name.len) != 0) {
+			if (errno != EINPROGRESS) return(-4);
+		}
 	}
+
+	errno = 0;
 
 	/* Yay, we're done. */
 	return(sock);

@@ -64,6 +64,7 @@ static int linemode_read(int idx, int event, int level, sockbuf_iobuf_t *new_dat
 		my_iobuf.data = line;
 		my_iobuf.len = linelen;
 		my_iobuf.max = linelen;
+		line[linelen] = 0;
 		sockbuf_filter(idx, event, level, &my_iobuf);
 
 		/* If we're out of data, we're done. */

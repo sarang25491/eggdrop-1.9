@@ -82,7 +82,7 @@ main (int argc, char *argv[])
 	}
 
 	printf("Connecting to %s %d\n", host, port);
-	sock = socket_create(host, port, SOCKET_CLIENT);
+	sock = socket_create(host, port, NULL, 0, SOCKET_CLIENT);
 	if (sock < 0) {
 		perror("socket_create");
 		return(0);

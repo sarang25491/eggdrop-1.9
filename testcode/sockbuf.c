@@ -42,15 +42,16 @@ typedef struct sockbuf_b {
 
 static sockbuf_t *sockbufs = NULL;
 static int nsockbufs = 0;
+static int ndeleted_sockbufs = 0;
 
 /* 'idx_array' and 'pollfds' are parallel arrays. */
 static int *idx_array = NULL;
 static struct pollfd *pollfds = NULL;
-static int nsocks = 0;
+static int npollfds = 0;
 static int nlisteners = 0;
 
 /* An idle event handler that does nothing. */
-static sockbuf_event_t sockbuf_idler = {0, "idle"};
+static sockbuf_event_t sockbuf_idler = {0, (Function) "idle"};
 
 static int sockbuf_real_write(int idx, sockbuf_iobuf_t *iobuf);
 
@@ -64,7 +65,10 @@ int sockbuf_filter(int idx, int event, int level, void *arg)
 	int found;
 	int retval;
 	Function callback;
-	sockbuf_t *sbuf = &sockbufs[idx];
+	sockbuf_t *sbuf;
+
+	if (!sockbuf_isvalid(idx)) return(-1);
+	sbuf = &sockbufs[idx];
 
 	/* Search for the first filter that handles this event. */
 	/* SOCKBUF_WRITE needs to be processed backwards. */
@@ -122,7 +126,7 @@ static int sockbuf_block(sockbuf_t *sbuf)
 {
 	int i;
 	sbuf->flags |= SOCKBUF_BLOCK;
-	for (i = 0; i < nsocks; i++) {
+	for (i = 0; i < npollfds; i++) {
 		if (pollfds[i].fd == sbuf->sock) {
 			pollfds[i].events |= POLLOUT;
 			break;
@@ -137,8 +141,8 @@ static int sockbuf_unblock(int idx)
 	int i;
 
 	sockbufs[idx].flags &= (~SOCKBUF_BLOCK);
-	for (i = 0; i < nsocks; i++) {
-		if (pollfds[i].fd == sockbufs[idx].sock) {
+	for (i = 0; i < npollfds; i++) {
+		if (idx_array[i] == idx) {
 			pollfds[i].events &= (~POLLOUT);
 			break;
 		}
@@ -171,7 +175,7 @@ static int sockbuf_err(int idx, int err)
 		if (!err) return(0);
 	}
 
-	sockbuf_filter(idx, SOCKBUF_ERR, -1, NULL);
+	sockbuf_filter(idx, SOCKBUF_ERR, -1, (void *)err);
 	return(err);
 }
 
@@ -284,70 +288,127 @@ static int sockbuf_on_readable(int idx)
 int sockbuf_new(int sock, int flags)
 {
 	sockbuf_t *sbuf;
-	int i, idx;
+	int idx;
 
 	for (idx = 0; idx < nsockbufs; idx++) {
-		if (sockbufs[idx].sock == -1) break;
+		if (sockbufs[idx].flags & SOCKBUF_AVAIL) break;
 	}
 	if (idx == nsockbufs) {
+		int i;
+
 		sockbufs = (sockbuf_t *)realloc(sockbufs, (nsockbufs+5) * sizeof(*sockbufs));
 		memset(sockbufs+nsockbufs, 0, 5 * sizeof(*sockbufs));
-		for (i = 0; i < 5; i++) sockbufs[nsockbufs+i].sock = -1;
+		for (i = 0; i < 5; i++) {
+			sockbufs[nsockbufs+i].sock = -1;
+			sockbufs[nsockbufs+i].flags = SOCKBUF_AVAIL;
+		}
 		nsockbufs += 5;
 	}
 
 	sbuf = &sockbufs[idx];
 	memset(sbuf, 0, sizeof(*sbuf));
-	sbuf->flags = flags;
-	sbuf->sock = sock;
+	sbuf->flags = (flags & ~(SOCKBUF_AVAIL|SOCKBUF_DELETED));
+	sbuf->sock = -1;
 	sbuf->on = sockbuf_idler;
+
+	if (sock >= 0) sockbuf_set_sock(idx, sock, flags);
+
+	return(idx);
+}
+
+int sockbuf_set_sock(int idx, int sock, int flags)
+{
+	int i;
+
+	if (!sockbuf_isvalid(idx)) return(-1);
+
+	sockbufs[idx].sock = sock;
+	sockbufs[idx].flags = flags;
 
 	/* pollfds   = [socks][socks][socks][listeners][listeners][end] */
 	/* idx_array = [ idx ][ idx ][ idx ][end]*/
 	/* So when we grow pollfds, we shift the listeners at the end. */
 
-	/* Add the new idx to the idx_array. */
-	idx_array = (int *)realloc(idx_array, sizeof(int) * (nsocks+1));
-	idx_array[nsocks] = idx;
+	/* Find the entry in the pollfds array. */
+	for (i = 0; i < npollfds; i++) {
+		if (idx_array[i] == idx) break;
+	}
 
-	/* Add corresponding pollfd to pollfds. */
-	pollfds = (struct pollfd *)realloc(pollfds, sizeof(*pollfds) * (nsocks+nlisteners+1));
-	memmove(pollfds+nsocks, pollfds+nsocks+1, sizeof(*pollfds) * nlisteners);
-	pollfds[nsocks].fd = sock;
-	if (flags & (SOCKBUF_NOREAD)) pollfds[nsocks].events = 0;
-	else pollfds[nsocks].events = POLLIN;
-	if (flags & (SOCKBUF_BLOCK | SOCKBUF_CLIENT)) pollfds[nsocks].events |= POLLOUT;
-	nsocks++;
+	if (sock == -1) {
+		if (i == npollfds) return(1);
+
+		/* If they set the sock to -1, then we remove the entry. */
+		memmove(idx_array+i, idx_array+i+1, sizeof(int) * (npollfds-i-1));
+		memmove(pollfds+i, pollfds+i+1, sizeof(*pollfds) * (nlisteners + npollfds-i-1));
+		npollfds--;
+		return(0);
+	}
+
+	/* Add it to the end if it's not found. */
+	if (i == npollfds) {
+		/* Add the new idx to the idx_array. */
+		idx_array = (int *)realloc(idx_array, sizeof(int) * (i+1));
+		idx_array[i] = idx;
+
+		/* Add corresponding pollfd to pollfds. */
+		pollfds = (struct pollfd *)realloc(pollfds, sizeof(*pollfds) * (i+nlisteners+1));
+		memmove(pollfds+i+1, pollfds+i, sizeof(*pollfds) * nlisteners);
+
+		npollfds++;
+	}
+
+	pollfds[i].fd = sock;
+	if (flags & (SOCKBUF_NOREAD)) pollfds[i].events = 0;
+	else pollfds[i].events = POLLIN;
+	if (flags & (SOCKBUF_BLOCK | SOCKBUF_CLIENT)) pollfds[i].events |= POLLOUT;
 
 	return(idx);
 }
 
+int sockbuf_isvalid(int idx)
+{
+	if (idx >= 0 && idx < nsockbufs && !(sockbufs[idx].flags & (SOCKBUF_AVAIL | SOCKBUF_DELETED))) return(1);
+	return(0);
+}
+
 int sockbuf_delete(int idx)
 {
-	sockbuf_t *sbuf = &sockbufs[idx];
+	sockbuf_t *sbuf;
 	int i;
 
+	if (!sockbuf_isvalid(idx)) return(-1);
+	sbuf = &sockbufs[idx];
+
 	/* Close the file descriptor. */
-	close(sbuf->sock);
+	if (sbuf->sock >= 0) close(sbuf->sock);
 
 	/* Free its output buffer. */
 	if (sbuf->outbuf.data) free(sbuf->outbuf.data);
 
-	/* Find it in the pollfds/idx_array and delete it. */
-	for (i = 0; i < nsocks; i++) if (idx_array[i] == idx) break;
-	memmove(pollfds+i, pollfds+i+1, sizeof(*pollfds) * (nsocks+nlisteners-i-1));
-	memmove(idx_array+i, idx_array+i+1, sizeof(int) * (nsocks-i-1));
-	nsocks--;
-
+	/* Mark it as deleted. */
 	memset(sbuf, 0, sizeof(*sbuf));
 	sbuf->sock = -1;
+	sbuf->flags = SOCKBUF_DELETED;
+	ndeleted_sockbufs++;
+
+	/* Find it in the pollfds/idx_array and delete it. */
+	for (i = 0; i < npollfds; i++) if (idx_array[i] == idx) break;
+	if (i == npollfds) return(0);
+
+	memmove(pollfds+i, pollfds+i+1, sizeof(*pollfds) * (npollfds+nlisteners-i-1));
+	memmove(idx_array+i, idx_array+i+1, sizeof(int) * (npollfds-i-1));
+	npollfds--;
+
 	return(0);
 }
 
 int sockbuf_set_handler(int idx, sockbuf_event_t handler, void *client_data)
 {
+	if (!sockbuf_isvalid(idx)) return(-1);
 	sockbufs[idx].on = handler;
 	sockbufs[idx].client_data = client_data;
+
+	return(0);
 }
 
 /* Listeners are sockets that you want to be included in the event loop, but
@@ -358,10 +419,10 @@ int sockbuf_set_handler(int idx, sockbuf_event_t handler, void *client_data)
 */
 int sockbuf_attach_listener(int fd)
 {
-	pollfds = (struct pollfd *)realloc(pollfds, sizeof(*pollfds) * (nsocks + nlisteners + 1));
-	pollfds[nsocks+nlisteners].fd = fd;
-	pollfds[nsocks+nlisteners].events = POLLIN;
-	pollfds[nsocks+nlisteners].revents = 0;
+	pollfds = (struct pollfd *)realloc(pollfds, sizeof(*pollfds) * (npollfds + nlisteners + 1));
+	pollfds[npollfds+nlisteners].fd = fd;
+	pollfds[npollfds+nlisteners].events = POLLIN;
+	pollfds[npollfds+nlisteners].revents = 0;
 	nlisteners++;
 	return(0);
 }
@@ -372,10 +433,10 @@ int sockbuf_detach_listener(int fd)
 
 	/* Search for it so we can clear its event field. */
 	for (i = 0; i < nlisteners; i++) {
-		if (pollfds[nsocks+i].fd == fd) break;
+		if (pollfds[npollfds+i].fd == fd) break;
 	}
 	if (i < nlisteners) {
-		memmove(pollfds+nsocks+i, pollfds+nsocks+i+1, sizeof(*pollfds) * (nlisteners-i-1));
+		memmove(pollfds+npollfds+i, pollfds+npollfds+i+1, sizeof(*pollfds) * (nlisteners-i-1));
 		nlisteners--;
 	}
 	return(0);
@@ -390,7 +451,10 @@ int sockbuf_detach_listener(int fd)
 */
 int sockbuf_attach_filter(int idx, sockbuf_event_t filter, void *client_data)
 {
-	sockbuf_t *sbuf = &sockbufs[idx];
+	sockbuf_t *sbuf;
+
+	if (!sockbuf_isvalid(idx)) return(-1);
+	sbuf = &sockbufs[idx];
 
 	sbuf->filters = (sockbuf_event_b *)realloc(sbuf->filters, sizeof(*sbuf->filters) * (sbuf->nfilters+1));
 	sbuf->filters[sbuf->nfilters] = filter;
@@ -405,7 +469,10 @@ int sockbuf_attach_filter(int idx, sockbuf_event_t filter, void *client_data)
 int sockbuf_detach_filter(int idx, sockbuf_event_t filter, void *client_data)
 {
 	int i;
-	sockbuf_t *sbuf = &sockbufs[idx];
+	sockbuf_t *sbuf;
+
+	if (!sockbuf_isvalid(idx)) return(-1);
+	sbuf = &sockbufs[idx];
 
 	for (i = 0; i < sbuf->nfilters; i++) if (sbuf->filters[i] == filter) break;
 	if (i == sbuf->nfilters) {
@@ -427,10 +494,14 @@ int sockbuf_detach_filter(int idx, sockbuf_event_t filter, void *client_data)
 */
 int sockbuf_update_all(int timeout)
 {
-	int i, n, revents;
+	int i, n, revents, idx;
+	static int depth = 0;
+
+	/* Increment the depth counter when we enter the proc. */
+	depth++;
 
 #ifdef DO_POLL
-	n = poll(pollfds, nsocks, timeout);
+	n = poll(pollfds, npollfds, timeout);
 	if (n < 0) n = 0;
 #else
 	fd_set reads, writes, excepts;
@@ -438,7 +509,7 @@ int sockbuf_update_all(int timeout)
 	int events;
 
 	FD_ZERO(&reads); FD_ZERO(&writes); FD_ZERO(&excepts);
-	for (i = 0; i < nsocks; i++) {
+	for (i = 0; i < npollfds; i++) {
 		if (pollfds[i].fd == -1) continue;
 		events = pollfds[i].events;
 		n = pollfds[i].fd;
@@ -460,7 +531,7 @@ int sockbuf_update_all(int timeout)
 		char temp[1];
 		/* There is a bad file descriptor among us... find it! */
 		events = 0;
-		for (i = 0; i < nsocks; i++) {
+		for (i = 0; i < npollfds; i++) {
 			errno = 0;
 			n = write(pollfds[i].fd, temp, 0);
 			if (n < 0 && errno != EINVAL) {
@@ -470,7 +541,7 @@ int sockbuf_update_all(int timeout)
 			else pollfds[i].revents = 0;
 		}
 	}
-	else for (i = 0; i < nsocks; i++) {
+	else for (i = 0; i < npollfds; i++) {
 		n = pollfds[i].fd;
 		pollfds[i].revents = 0;
 		if (FD_ISSET(n, &reads)) pollfds[i].revents |= POLLIN;
@@ -485,15 +556,37 @@ int sockbuf_update_all(int timeout)
 		socket. That's ok, because we'll pick up those events next
 		time.
 	*/
-	for (i = 0; n && i < nsocks; i++) {
+	for (i = 0; n && i < npollfds; i++) {
 		/* Common case: no activity. */
-		if (!pollfds[i].revents) continue;
+		revents = pollfds[i].revents;
+		if (!revents) continue;
 
-		if (pollfds[i].revents & POLLIN) sockbuf_on_readable(idx_array[i]);
-		if (i < nsocks && pollfds[i].revents & POLLOUT) sockbuf_on_writable(idx_array[i]);
-		if (i < nsocks && pollfds[i].revents & POLLHUP) sockbuf_eof(idx_array[i]);
-		if (i < nsocks && pollfds[i].revents & (POLLERR|POLLNVAL)) sockbuf_err(idx_array[i], -1);
+		idx = idx_array[i];
+		if (revents & POLLIN) sockbuf_on_readable(idx);
+		if (revents & POLLOUT) sockbuf_on_writable(idx);
+		if (revents & POLLHUP) sockbuf_eof(idx);
+		if (revents & (POLLERR|POLLNVAL)) {
+			/* Try socket-level error first, then generic error. */
+			if (!sockbuf_err(idx, 0)) sockbuf_err(idx, -1);
+		}
 		n--;
+	}
+
+	/* Now that we're done manipulating stuff, back out of the depth. */
+	depth--;
+
+	/* If this is the topmost level, check for deleted sockbufs. */
+	if (ndeleted_sockbufs && !depth) {
+		for (i = 0; ndeleted_sockbufs && i < nsockbufs; i++) {
+			if (sockbufs[i].flags & SOCKBUF_DELETED) {
+				sockbufs[i].flags = SOCKBUF_AVAIL;
+				ndeleted_sockbufs--;
+			}
+		}
+		/* If ndeleted_sockbufs isn't 0, then we somehow lost track of
+			an idx. That can't happen, but we might as well be
+			safe. */
+		ndeleted_sockbufs = 0;
 	}
 
 	return(0);

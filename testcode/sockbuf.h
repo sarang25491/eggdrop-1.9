@@ -7,6 +7,14 @@
 #define SOCKBUF_CLIENT	4
 #define SOCKBUF_DELETE	8
 #define SOCKBUF_NOREAD	16
+#define SOCKBUF_AVAIL	32
+#define SOCKBUF_DELETED	64
+
+/* The difference between SOCKBUF_AVAIL and SOCKBUF_DELETED is that DELETED
+	means it's invalid but not available for use yet. That happens when you
+	delete a sockbuf from within sockbuf_update_all(). Otherwise, when you
+	create a new sockbuf after you delete one, you could get the same idx,
+	and sockbuf_update_all() might trigger invalid events for it. */
 
 /* Event types. */
 enum {
