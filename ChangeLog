@@ -1,3 +1,9 @@
+2002-02-22 02:43  Axel Franke <eule@berlin.snafu.de>
+
+	* modules/irc/chan.c:
+
+	fix a crash in gotquit 
+
 2002-02-21 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
