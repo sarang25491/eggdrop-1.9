@@ -1,3 +1,20 @@
+2002-12-27 23:07  Will Buckner <wcc@techmonkeys.org>
+
+	* eggdrop.conf, doc/UPDATES1.6, modules/channels/channels.c,
+	modules/transfer/transfer.c, nettype/undernet.irc.conf,
+	src/patch.h:
+
+	* Fixed default setting for the help-path and text-path settings.  
+	  Patch by poptix.  
+	* Did not port matching changes. We can fix this once we start using 
+	  Ian's new matching code.  
+	* Updated max_bans to 45 for UnderNet. Found by reed.  
+	* BarkerJr: 
+	  * Reworded the comment above the addhost/ident unbinds (found by 
+	    persaukko).  
+	  * Changed global-revenge-mode to 0 by default.  
+	  * Changed dcc-block to default to 0 (zero; turbo-dcc).  
+
 2002-12-12 04:28  Will Buckner <wcc@techmonkeys.org>
 
 	* doc/UPDATES1.6, src/main.c, src/patch.h:
