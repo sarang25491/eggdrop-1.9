@@ -1,3 +1,23 @@
+2001-12-26 05:03  Tothwolf <tothwolf@techmonkeys.org>
+
+	* doc/text-substitutions.doc, doc/html/about.html,
+	doc/html/app-problems.html, doc/html/app-sharing.html,
+	doc/html/app-textsub.html, doc/html/app-tricks.html,
+	doc/html/app-weird.html, doc/html/authors.html, doc/html/bans.html,
+	doc/html/botnet.html, doc/html/compiling.html,
+	doc/html/egg-core.html, doc/html/faqs.html, doc/html/features.html,
+	doc/html/flags.html, doc/html/index.html, doc/html/install.html,
+	doc/html/mod-assoc.html, doc/html/mod-blowfish.html,
+	doc/html/mod-channels.html, doc/html/mod-compress.html,
+	doc/html/mod-dns.html, doc/html/mod-filesys.html,
+	doc/html/mod-irc.html, doc/html/mod-notes.html,
+	doc/html/mod-server.html, doc/html/mod-share.html,
+	doc/html/news.html, doc/html/party.html, doc/html/readme.html,
+	doc/html/sharing.html, doc/html/starting.html, doc/html/users.html,
+	src/bg.c, src/main.c, src/modules.c:
+
+	more copyright updates 
+
 2001-12-26 04:02  Tothwolf <tothwolf@techmonkeys.org>
 
 	* src/modules.c:
