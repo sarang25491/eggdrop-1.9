@@ -1,3 +1,11 @@
+2003-03-10 09:11  stdarg <stdarg@techmonkeys.org>
+
+	* modules/server/: dcc.c, input.c, nicklist.c, output.c, output.h,
+	parse.h, scriptcmds.c:
+
+	
+	* Initial output queue for server.mod, stores pre-parsed messages 
+
 2003-03-08 09:20  stdarg <stdarg@techmonkeys.org>
 
 	* modules/: javascript/javascript.c, tclscript/tclscript.c:
