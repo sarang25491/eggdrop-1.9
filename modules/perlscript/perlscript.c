@@ -300,11 +300,15 @@ static SV *c_to_perl_var(script_var_t *v)
 			result = newSViv((int) v->value);
 			break;
 		case SCRIPT_STRING:
-		case SCRIPT_BYTES:
-			if (v->len == -1) v->len = strlen((char *)v->value);
-			result = newSVpv((char *)v->value, v->len);
-			if (v->type & SCRIPT_FREE) free(v->value);
+		case SCRIPT_BYTES: {
+			char *str = v->value;
+
+			if (!str) str = "";
+			if (v->len == -1) v->len = strlen(str);
+			result = newSVpv(str, v->len);
+			if (v->value && v->type & SCRIPT_FREE) free(v->value);
 			break;
+		}
 		case SCRIPT_POINTER: {
 			char str[32];
 			int str_len;

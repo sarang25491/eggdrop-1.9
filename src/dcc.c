@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.82 2002/04/28 02:21:07 ite Exp $
+ * $Id: dcc.c,v 1.83 2002/04/28 07:37:12 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -56,9 +56,11 @@ int	learn_users = 0;	/* Allow people to introduce themselves    */
 char	network[41] = "unknown-net"; /* Name of the IRC network you're on  */
 int	password_timeout = 180;	/* Time to wait for a password from a user */
 int	bot_timeout = 60;	/* Bot timeout value			   */
-int	identtimeout = 5;	/* Timeout value for ident lookups	   */
+int	ident_timeout = 5;	/* Timeout value for ident lookups	   */
 int	dupwait_timeout = 5;	/* Timeout for rejecting duplicate entries */
+extern int resolve_timeout;
 int	protect_telnet = 1;	/* Even bother with ident lookups :)	   */
+int	dcc_flood_thr = 3;
 int	flood_telnet_thr = 5;	/* Number of telnet connections to be
 				   considered a flood			   */
 int	flood_telnet_time = 60;	/* In how many seconds?			   */
@@ -87,6 +89,13 @@ static script_var_callbacks_t max_dcc_callback = {
 static script_linked_var_t dcc_script_vars[] = {
 	{"", "dcc_command_chars", &dcc_command_chars, SCRIPT_STRING, NULL},
 	{"", "max_dcc", &max_dcc, SCRIPT_INTEGER, &max_dcc_callback},
+	{"", "dcc_flood_thr", &dcc_flood_thr, SCRIPT_INTEGER, NULL},
+	{"", "protect_telnet", &protect_telnet, SCRIPT_INTEGER, NULL},
+	{"", "connect_timeout", &connect_timeout, SCRIPT_INTEGER, NULL},
+	{"", "dupwait_timeout", &dupwait_timeout, SCRIPT_INTEGER, NULL},
+	{"", "ident_timeout", &ident_timeout, SCRIPT_INTEGER, NULL},
+	{"", "resolve_timeout", &resolve_timeout, SCRIPT_INTEGER, NULL},
+	{"", "paranoid_telnet_flood", &par_telnet_flood, SCRIPT_INTEGER, NULL},
 	{0}
 };
 
@@ -1899,7 +1908,7 @@ struct dcc_table DCC_IDENT =
   0,
   eof_dcc_ident,
   dcc_ident,
-  &identtimeout,
+  &ident_timeout,
   eof_dcc_ident,
   display_dcc_ident,
   NULL,

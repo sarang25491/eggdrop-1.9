@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.75 2002/04/28 06:15:49 ite Exp $
+ * $Id: tcl.c,v 1.76 2002/04/28 07:37:12 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -48,7 +48,7 @@ typedef struct {
 extern time_t	online_since;
 extern int	flood_telnet_thr, flood_telnet_time;
 extern int	learn_users;
-extern int	default_flags, conmask, connect_timeout;
+extern int	default_flags, conmask;
 extern int	firewallport, notify_users_at, ignore_time;
 extern int	reserved_port_min, reserved_port_max;
 extern char	botuser[], motdfile[], admin[], userfile[],
@@ -58,8 +58,8 @@ extern char	botuser[], motdfile[], admin[], userfile[],
 		textdir[], myip6[], pid_file[];
 extern int	die_on_sighup, die_on_sigterm,
 		dcc_total, debug_output, identtimeout,
-		protect_telnet, dupwait_timeout, egg_numver, share_unlinks,
-		sort_users, tands, resolve_timeout, userfile_perm,
+		egg_numver, share_unlinks,
+		sort_users, tands, userfile_perm,
 		default_uflags, strict_host;
 extern struct dcc_t	*dcc;
 
@@ -67,7 +67,6 @@ int	    protect_readonly = 0;	/* turn on/off readonly protection */
 char	    whois_fields[1025] = "";	/* fields to display in a .whois */
 Tcl_Interp *interp;			/* eggdrop always uses the same
 					   interpreter */
-int	    dcc_flood_thr = 3;
 int	    use_invites = 0;		/* Jason/drummer */
 int	    use_exempts = 0;		/* Jason/drummer */
 int	    force_expire = 0;		/* Rufus */
@@ -297,10 +296,7 @@ static tcl_ints def_tcl_ints[] =
   {"handlen",                   &handlen,               2},
   /* FIXME: remove this later ... before first stable release */
   {"hand-len",			&handlen,		2},
-  {"dcc-flood-thr",		&dcc_flood_thr,		0},
   {"hourly-updates",		&notify_users_at,	0},
-  {"connect-timeout",		&connect_timeout,	0},
-  {"reserved-port",		&reserved_port_min,	0},
   {"learn-users",		&learn_users,		0},
   {"uptime",			(int *) &online_since,	2},
   {"console",			&conmask,		0},
@@ -310,18 +306,13 @@ static tcl_ints def_tcl_ints[] =
   {"die-on-sigterm",		&die_on_sigterm,	1},
   {"remote-boots",		&remote_boots,		1},
   {"debug-output",		&debug_output,		1},
-  {"protect-telnet",		&protect_telnet,	0},
   {"sort-users",		&sort_users,		0},
-  {"ident-timeout",		&identtimeout,		0},
   {"share-unlinks",		&share_unlinks,		0},
   {"allow-dk-cmds",		&allow_dk_cmds,		0},
-  {"resolve-timeout",		&resolve_timeout,	0},
-  {"paranoid-telnet-flood",	&par_telnet_flood,	0},
   {"use-exempts",		&use_exempts,		0},			/* Jason/drummer */
   {"use-invites",		&use_invites,		0},			/* Jason/drummer */
   {"quiet-save",		&quiet_save,		0},			/* Lucas */
   {"force-expire",		&force_expire,		0},			/* Rufus */
-  {"dupwait-timeout",		&dupwait_timeout,	0},
   {"strict-host",		&strict_host,		0}, 			/* drummer */
   {"userfile-perm",		&userfile_perm,		0},
   {NULL,			NULL,			0}	/* arthur2 */

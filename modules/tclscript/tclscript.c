@@ -350,15 +350,19 @@ static Tcl_Obj *c_to_tcl_var(Tcl_Interp *myinterp, script_var_t *v)
 			result = Tcl_NewIntObj((int) v->value);
 			break;
 		case SCRIPT_STRING:
-		case SCRIPT_BYTES:
-			if (v->len == -1) v->len = strlen((char *)v->value);
+		case SCRIPT_BYTES: {
+			char *str = v->value;
+
+			if (!str) str = "";
+			if (v->len == -1) v->len = strlen(str);
 			#ifdef USE_BYTE_ARRAYS
-			result = Tcl_NewByteArrayObj((char *)v->value, v->len);
+			result = Tcl_NewByteArrayObj(str, v->len);
 			#else
-			result = Tcl_NewStringObj((char *)v->value, v->len);
+			result = Tcl_NewStringObj(str, v->len);
 			#endif
-			if (v->type & SCRIPT_FREE) free((char *)v->value);
+			if (v->value && v->type & SCRIPT_FREE) free((char *)v->value);
 			break;
+		}
 		case SCRIPT_POINTER: {
 			char str[32];
 

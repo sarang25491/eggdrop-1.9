@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.48 2002/04/28 06:15:49 ite Exp $
+ * $Id: tclmisc.c,v 1.49 2002/04/28 07:37:12 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -316,8 +316,8 @@ script_command_t script_misc_cmds[] = {
 	{"", "loadhelp", (Function) script_loadhelp, NULL, 1, "s", "filename", SCRIPT_INTEGER, 0},
 	{"", "unloadhelp", (Function) script_unloadhelp, NULL, 1, "s", "filename", SCRIPT_INTEGER, 0},
 	{"", "reloadhelp", (Function) script_reloadhelp, NULL, 0, "", "", SCRIPT_INTEGER, 0},
-	{"", "loadmodule", (Function) script_loadmodule, NULL, 1, "s", "module-name", SCRIPT_INTEGER, 0},
-	{"", "unloadmodule", (Function) script_unloadmodule, NULL, 1, "s", "module-name", SCRIPT_INTEGER, 0},
+	{"", "loadmodule", (Function) script_loadmodule, NULL, 1, "s", "module-name", SCRIPT_STRING, 0},
+	{"", "unloadmodule", (Function) script_unloadmodule, NULL, 1, "s", "module-name", SCRIPT_STRING, 0},
 	{"", "md5", (Function) script_md5, NULL, 1, "s", "data", SCRIPT_STRING, 0},
 	{"", "callevent", (Function) script_callevent, NULL, 1, "s", "event", SCRIPT_INTEGER, 0},
 	{0}
