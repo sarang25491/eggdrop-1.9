@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: modules.c,v 1.133 2003/02/25 10:28:22 stdarg Exp $";
+static const char rcsid[] = "$Id: modules.c,v 1.134 2003/02/25 10:30:18 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -36,28 +36,7 @@ static const char rcsid[] = "$Id: modules.c,v 1.133 2003/02/25 10:28:22 stdarg E
 #include "misc.h"
 #include "cmdt.h"		/* cmd_t				*/
 #include "core_binds.h"
-#include "chanprog.h"		/* clear_chanlist, reaffirm_owners,
-				   logmodes, masktype, isowner,
-				   clear_chanlist_member		*/
 //#include "cmds.h"		/* check_dcc_attrs, check_dcc_chanattrs	*/
-#include "dccutil.h"		/* chatout, chanout_but, new_dcc,
-				   lostdcc, makepass, flush_lines,
-				   changeover_dcc			*/
-#include "net.h"		/* getlocaladdr, flush_inbuf,
-				   sockoptions, open_address_listen,
-				   sock_has_data, iptostr, allocsock,
-				   open_telnet, open_telnet_dcc,
-				   killsock, open_listen, getsock,
-				   tputs, neterror, getmyip, answer	*/
-#include "users.h"		/* list_type				*/
-#include "userent.h"		/* list_type_kill, xtra_set		*/
-#include "userrec.h"		/* fixfrom, user_del_chan, touch_laston,
-				   count_users, clear_userlist,
-				   write_user, change_handle,
-				   write_userfile, u_pass_match, deluser,
-				   addhost_by_handle, delhost_by_handle	*/
-
-
 #include <ctype.h>
 #include <ltdl.h>
 
