@@ -1,3 +1,9 @@
+2001-11-27 02:30  Federico Mennite <ite@techmonkeys.org>
+
+	* intl/.cvsignore, lib/eggdrop/.cvsignore:
+
+	More and more cvsignore entries.  
+
 2001-11-27 02:15  Federico Mennite <ite@techmonkeys.org>
 
 	* lib/eggdrop/.cvsignore:
