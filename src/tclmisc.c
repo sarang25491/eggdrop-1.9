@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.47 2002/04/01 13:33:33 ite Exp $
+ * $Id: tclmisc.c,v 1.48 2002/04/28 06:15:49 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -198,14 +198,6 @@ static int script_die(char *reason)
   return TCL_OK;
 }
 
-static int tcl_loadmodule STDVAR
-{
-	if (argc != 2) return TCL_ERROR;
-
-	module_load(argv[1]);
-	return TCL_OK;
-}
-
 static const char *script_loadmodule(char *modname)
 {
   const char *p;
@@ -306,11 +298,6 @@ static char *script_md5(char *data)
   return(digest_string);
 }
 
-tcl_cmds tclmisc_cmds[] = {
-	{"loadmodule", tcl_loadmodule},
-	{0}
-};
-
 script_command_t script_misc_cmds[] = {
 	{"", "duration", (Function) script_duration, NULL, 1, "u", "seconds", SCRIPT_STRING|SCRIPT_FREE, 0},
 	{"", "unixtime", (Function) script_unixtime, NULL, 0, "", "", SCRIPT_UNSIGNED, 0},
@@ -329,6 +316,7 @@ script_command_t script_misc_cmds[] = {
 	{"", "loadhelp", (Function) script_loadhelp, NULL, 1, "s", "filename", SCRIPT_INTEGER, 0},
 	{"", "unloadhelp", (Function) script_unloadhelp, NULL, 1, "s", "filename", SCRIPT_INTEGER, 0},
 	{"", "reloadhelp", (Function) script_reloadhelp, NULL, 0, "", "", SCRIPT_INTEGER, 0},
+	{"", "loadmodule", (Function) script_loadmodule, NULL, 1, "s", "module-name", SCRIPT_INTEGER, 0},
 	{"", "unloadmodule", (Function) script_unloadmodule, NULL, 1, "s", "module-name", SCRIPT_INTEGER, 0},
 	{"", "md5", (Function) script_md5, NULL, 1, "s", "data", SCRIPT_STRING, 0},
 	{"", "callevent", (Function) script_callevent, NULL, 1, "s", "event", SCRIPT_INTEGER, 0},
