@@ -2,7 +2,7 @@
 #  This is the Makefile for EGGDROP (the irc bot)
 #  You should never need to edit this.
 #
-# $Id: Makefile.in,v 1.26 2001/02/27 17:06:27 guppy Exp $
+# $Id: Makefile.in,v 1.27 2001/07/26 17:05:01 drummer Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -129,12 +129,18 @@ eggclean:
 	@cd src/compat && $(MAKE) clean
 
 clean: eggclean
+	@cd src/adns && $(MAKE) clean
 	@cd src/mod && $(MAKE) clean
 
 distclean: eggclean clean-modconfig
+	@cd src/adns && $(MAKE) distclean
 	@cd src/mod && $(MAKE) distclean
 	@rm -f Makefile doc/Makefile scripts/Makefile src/Makefile src/md5/Makefile src/compat/Makefile src/mod/Makefile
 	@rm -f config.cache config.log config.status config.h lush.h
+
+adns:
+	@echo "Making the ADNS library..."
+	@cd src/adns && if test ! -e Makefile; then ./configure @MAKEIPV6@; fi && $(MAKE)
 
 distrib: distclean
 	@rm -f `find . \( -name '*~' -o -name '*#' -o -name '*.orig' \
@@ -200,7 +206,7 @@ reconfig: clean-modconfig config
 
 eggdrop: modegg modules
 
-modegg: modtest
+modegg: modtest adns
 	@rm -f src/mod/mod.xlibs
 	@cd src && $(MAKE_MODEGG) $(EGGEXEC)
 	@echo ""
@@ -214,7 +220,7 @@ modules: modtest
 	@ls -l *.$(MOD_EXT)
 	@$(egg_install_msg)
 
-static: eggtest
+static: eggtest adns
 	@echo ""
 	@echo "Making module objects for static linking..."
 	@echo ""
@@ -231,7 +237,7 @@ static: eggtest
 
 debug: debegg debmodules
 
-debegg: modtest
+debegg: modtest adns
 	@cd src && $(MAKE_DEBEGG) $(EGGEXEC)
 	@echo ""
 	@$(egg_test_run)
@@ -244,7 +250,7 @@ debmodules: modtest
 	@ls -l *.$(MOD_EXT)
 	@$(egg_install_msg)
 
-sdebug: eggtest
+sdebug: eggtest adns
 	@echo ""
 	@echo "Making module objects for static linking..."
 	@echo ""

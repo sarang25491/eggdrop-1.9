@@ -45,6 +45,7 @@ AC_CHECK_HEADERS(sys/select.h sys/rusage.h unistd.h dlfcn.h stdarg.h std_args.h 
 # Checks for typedefs, structures, and compiler characteristics
 AC_TYPE_PID_T
 AC_TYPE_SIZE_T
+EGG_TYPE_SOCKLEN_T
 AC_C_CONST
 AC_C_BIGENDIAN
 AC_C_INLINE
@@ -52,7 +53,7 @@ AC_CHECK_SIZEOF(long, 0)
 AC_CHECK_SIZEOF(int, 0)
 
 # Checks for library functions
-AC_CHECK_FUNCS(clock getrusage setpgid uname sigaction sigemptyset rename strcasecmp strncasecmp getdtablesize memset random srandom dlopen dprintf snprintf vsnprintf isascii inet_aton memcpy strftime fsync)
+AC_CHECK_FUNCS(clock getrusage setpgid uname sigaction sigemptyset rename strcasecmp strncasecmp getdtablesize memset random srandom dlopen dprintf snprintf vsnprintf isascii inet_aton memcpy strftime fsync inet_pton inet_ntop)
 EGG_CHECK_FUNC_VSPRINTF
 
 # Make sure we have stdc headers, since we can't compile without them
@@ -64,6 +65,8 @@ EGG_CHECK_LIBSAFE_SSCANF
 # Checks for cygwin
 EGG_CYGWIN
 EGG_EXEEXT
+
+EGG_ENABLE_IPV6
 
 # Where is tcl?  Is it here?
 # ---------- begin robey's tcl thingies

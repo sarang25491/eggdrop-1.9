@@ -215,4 +215,16 @@
 /* Define if you have fsync */
 #undef HAVE_FSYNC
 
+/* Define if you want IPv6 support */
+#undef IPV6
+
+/* Define if you have the inet_pton function.  */
+#undef HAVE_INET_PTON
+
+/* Define if you have the inet_ntop function.  */
+#undef HAVE_INET_NTOP
+
+/* Define to `unsigned' if something else doesn't define.  */
+#undef socklen_t
+
 #endif /* !_EGG_CONFIG_H */

@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.44 2001/07/26 04:07:48 guppy Exp $
+dnl $Id: aclocal.m4,v 1.45 2001/07/26 17:05:01 drummer Exp $
 dnl
 
 
@@ -1278,3 +1278,45 @@ AC_MSG_RESULT([not found])
 
 ])
 dnl
+
+
+dnl  EGG_ENABLE_IPV6()
+dnl
+AC_DEFUN(EGG_ENABLE_IPV6, [dnl
+AC_ARG_ENABLE(ipv6,
+[  --enable-ipv6           Enable IPV6 support.
+  --disable-ipv6          Disable IPV6 support. ],
+    [ ac_cv_ipv6=$enableval ], [ ac_cv_ipv6='no' ])
+
+if test "$ac_cv_ipv6" = "yes" ; then
+        AC_DEFINE(IPV6)
+        echo "Using IPv6 support."
+        echo "Warning! This option requires kernel IPv6 support!"
+        echo "If your kernel does not support IPv6 your bot won't be able"
+        echo "to connect to any IPv4 or IPv6 host!"
+        MAKEIPV6="--enable-ipv6"
+else
+        MAKEIPV6=""
+fi
+AC_SUBST(MAKEIPV6)dnl
+])dnl
+
+
+dnl EGG_TYPE_SOCKLEN_t
+dnl
+AC_DEFUN(EGG_TYPE_SOCKLEN_T, [dnl
+AC_CACHE_CHECK(for socklen_t, egg_cv_var_socklen_t, [
+AC_TRY_COMPILE([#include <sys/param.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+], [
+socklen_t x;
+x = 0;
+], egg_cv_var_socklen_t="yes", egg_cv_var_socklen_t="no")
+])
+if test "$egg_cv_var_socklen_t" = "no"
+then
+  AC_DEFINE(socklen_t, unsigned)dnl
+fi
+])dnl
+
