@@ -1,3 +1,14 @@
+2002-04-28 02:21  Federico Mennite <ite@techmonkeys.org>
+
+	* lib/eggdrop/module.h, src/dcc.c, src/dccutil.c, src/modules.c,
+	src/proto.h:
+
+	* Let's increase candidates to be schrienked out from the dcc table.  
+	* Built default for max_dcc is the same to the one in the config
+	file.  
+	* Minor dcc clean up.  
+	* Exporting removedcc() was unneeded and dangerous.  
+
 2002-04-27 18:34  stdarg <stdarg@techmonkeys.org>
 
 	* src/: dcc.c, dccutil.c, tcl.c:
