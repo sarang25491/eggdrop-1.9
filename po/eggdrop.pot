@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-06-16 18:15-0500\n"
+"POT-Creation-Date: 2004-06-17 00:15-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -80,18 +80,18 @@ msgstr ""
 msgid "Ignoring chat request from %s (user unknown)."
 msgstr ""
 
-#: modules/dccparty/dccparty.c:198
+#: modules/dccparty/dccparty.c:199
 msgid ""
 "\r\n"
 "Welcome to the dcc partyline interface!\r\n"
 msgstr ""
 
-#: modules/dccparty/dccparty.c:199
+#: modules/dccparty/dccparty.c:200
 #, c-format
 msgid "Your ident is: %s\r\n"
 msgstr ""
 
-#: modules/dccparty/dccparty.c:200
+#: modules/dccparty/dccparty.c:201
 #, c-format
 msgid "Your hostname is: %s\r\n"
 msgstr ""
