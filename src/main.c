@@ -30,7 +30,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.147 2003/05/11 02:30:54 stdarg Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.148 2003/05/11 02:33:32 stdarg Exp $";
 #endif
 
 #include <unistd.h>
@@ -357,7 +357,6 @@ int main(int argc, char **argv)
 {
   int xx, i;
   char s[25];
-  char *a;
   FILE *f;
   struct sigaction sv;
   egg_timeval_t howlong;
@@ -579,7 +578,5 @@ int main(int argc, char **argv)
 			timeout = howlong.sec * 1000 + howlong.usec / 1000;
 		}
 		sockbuf_update_all(timeout);
-		a = malloc(20);
-		free(a);
 	}
 }
