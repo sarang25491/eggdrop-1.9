@@ -1,10 +1,16 @@
 /* Original Copyright (c) 2000-2001 proton
  * 
- * $Id: uptime.c,v 1.17 2001/10/14 22:44:04 ite Exp $
- * Borrowed from Emech, reports to http://uptime.energymech.net, feel free to opt out if you
- * dont like it by not loading the module.
- * 
- *				-poptix (poptix@poptix.net) 6June2001
+ * $Id: uptime.c,v 1.18 2001/10/20 07:46:01 guppy Exp $
+ *
+ * This module reports uptime information about your bot to http://uptime.eggheads.org. The
+ * purpose for this is to see how your bot rates against many others (including EnergyMechs 
+ * and Eggdrops) -- It is a fun little project, jointly run by Eggheads.org and EnergyMech.net.
+ *
+ * If you don't like being a part of it please just unload this module.
+ *
+ * Also for bot developers feel free to modify this code to make it a part of your bot and 
+ * e-mail webmaster@eggheads.org for more information on registering your bot type. See how
+ * your bot's stability rates against ours and ours against yours <g>.
  */
 /*
  * Eggdrop modifications Copyright (C) 1999, 2000, 2001 Eggheads Development Team

@@ -1,6 +1,6 @@
 /* Original Copyright (c) 2000-2001 proton
  * 
- * $Id: uptime.h,v 1.4 2001/06/12 17:45:33 poptix Exp $
+ * $Id: uptime.h,v 1.5 2001/10/20 07:46:01 guppy Exp $
  * Borrowed from Emech, reports to http://uptime.energymech.net, feel free to opt out if you
  * dont like it by not loading the module.
  *                              
@@ -28,6 +28,6 @@
 #define _EGG_MOD_UPTIME_UPTIME_H
 
 #define UPTIME_EGGDROP 2
-#define UPTIME_HOST "egg-uptime.energymech.net"
+#define UPTIME_HOST "uptime.eggheads.org"
 
 #endif /* _EGG_MOD_UPTIME_UPTIME_H */
