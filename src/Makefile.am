@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.25 2002/06/01 13:42:46 wingman Exp $
+# $Id: Makefile.am,v 1.26 2002/06/18 06:12:32 guppy Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 bindir			= $(exec_prefix)
@@ -120,7 +120,6 @@ eggdrop_LDADD		= @LIBLTDL@ \
 			$(EGG_TCL) \
 			-dlopen ../modules/transfer/transfer.la \
 			-dlopen ../modules/uptime/uptime.la \
-			-dlopen ../modules/woobie/woobie.la \
 			$(top_builddir)/lib/eggdrop/libeggdrop.la \
 			$(XLIBS)
 

@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: console.c,v 1.10 2002/05/26 08:34:13 stdarg Exp $";
+static const char rcsid[] = "$Id: console.c,v 1.11 2002/06/18 06:12:31 guppy Exp $";
 #endif
 
 #define MODULE_NAME "console"
@@ -42,7 +42,6 @@ static int info_party = 0;
 struct console_info {
   char *channel;
   int conflags;
-  int stripflags;
   int echoflags;
   int page;
   int conchan;
@@ -62,8 +61,6 @@ static int console_unpack(struct userrec *u, struct user_entry *e)
   arg = newsplit(&par);
   ci->conflags = logmodes(arg);
   arg = newsplit(&par);
-  ci->stripflags = stripmodes(arg);
-  arg = newsplit(&par);
   ci->echoflags = (arg[0] == '1') ? 1 : 0;
   arg = newsplit(&par);
   ci->page = atoi(arg);
@@ -81,10 +78,9 @@ static int console_pack(struct userrec *u, struct user_entry *e)
 
   ci = (struct console_info *) e->u.extra;
 
-  simple_sprintf(work, "%s %s %s %d %d %d",
+  simple_sprintf(work, "%s %s %d %d %d",
 		     ci->channel, masktype(ci->conflags),
-		     stripmasktype(ci->stripflags), ci->echoflags,
-		     ci->page, ci->conchan);
+		     ci->echoflags, ci->page, ci->conchan);
 
   e->u.list = malloc(sizeof(struct list_type));
   e->u.list->next = NULL;
@@ -110,10 +106,9 @@ static int console_write_userfile(FILE *f, struct userrec *u,
 {
   struct console_info *i = e->u.extra;
 
-  if (fprintf(f, "--CONSOLE %s %s %s %d %d %d\n",
+  if (fprintf(f, "--CONSOLE %s %s %d %d %d\n",
 	      i->channel, masktype(i->conflags),
-	      stripmasktype(i->stripflags), i->echoflags,
-	      i->page, i->conchan) == EOF)
+	      i->echoflags, i->page, i->conchan) == EOF)
     return 0;
   return 1;
 }
@@ -143,10 +138,9 @@ static int console_tcl_get(Tcl_Interp *irp, struct userrec *u,
   char work[1024];
   struct console_info *i = e->u.extra;
 
-  simple_sprintf(work, "%s %s %s %d %d %d",
+  simple_sprintf(work, "%s %s %d %d %d",
 		 i->channel, masktype(i->conflags),
-		 stripmasktype(i->stripflags), i->echoflags,
-		 i->page, i->conchan);
+		 i->echoflags, i->page, i->conchan);
   Tcl_AppendResult(irp, work, NULL);
   return TCL_OK;
 }
@@ -157,7 +151,7 @@ static int console_tcl_set(Tcl_Interp *irp, struct userrec *u,
   struct console_info *i = e->u.extra;
   int l;
 
-  BADARGS(4, 9, " handle CONSOLE channel flags strip echo page conchan");
+  BADARGS(4, 8, " handle CONSOLE channel flags echo page conchan");
   if (!i)
     i = calloc(1, sizeof(struct console_info));
   if (i->channel)
@@ -171,14 +165,11 @@ static int console_tcl_set(Tcl_Interp *irp, struct userrec *u,
   if (argc > 4) {
     i->conflags = logmodes(argv[4]);
     if (argc > 5) {
-      i->stripflags = stripmodes(argv[5]);
+      i->echoflags = (argv[6][0] == '1') ? 1 : 0;
       if (argc > 6) {
-	i->echoflags = (argv[6][0] == '1') ? 1 : 0;
-	if (argc > 7) {
-	  i->page = atoi(argv[7]);
-	  if (argc > 8)
-	    i->conchan = atoi(argv[8]);
-	}
+	i->page = atoi(argv[7]);
+	if (argc > 7)
+	  i->conchan = atoi(argv[8]);
       }
     }
   }
@@ -193,10 +184,8 @@ static void console_display(int idx, struct user_entry *e)
   if (dcc[idx].user && (dcc[idx].user->flags & USER_MASTER)) {
     dprintf(idx, "  %s\n", _("Saved Console Settings:"));
     dprintf(idx, "    %s %s\n", _("Channel:"), i->channel);
-    dprintf(idx, "    %s %s, %s %s, %s %s\n", _("Console flags:"),
-    	masktype(i->conflags), _("Strip flags:"),
-	    stripmasktype(i->stripflags), _("Echo:"),
-	    i->echoflags ? _("yes") : _("no"));
+    dprintf(idx, "    %s %s, %s %s\n", _("Console flags:"),
+    	masktype(i->conflags), _("Echo:"), i->echoflags ? _("yes") : _("no"));
     dprintf(idx, "    %s %d, %s %s%d\n", _("Page setting:"), i->page,
             _("Console channel:"), (i->conchan < 100000) ? "" : "*",
             i->conchan % 100000);
@@ -241,7 +230,6 @@ static int console_chon(char *handle, int idx)
       if (i->channel && i->channel[0])
 	strcpy(dcc[idx].u.chat->con_chan, i->channel);
       dcc[idx].u.chat->con_flags = i->conflags;
-      dcc[idx].u.chat->strip_flags = i->stripflags;
       if (i->echoflags)
 	dcc[idx].status |= STAT_ECHO;
       else
@@ -290,7 +278,6 @@ static int console_store(struct userrec *u, int idx, char *par)
     free(i->channel);
   i->channel = strdup(dcc[idx].u.chat->con_chan);
   i->conflags = dcc[idx].u.chat->con_flags;
-  i->stripflags = dcc[idx].u.chat->strip_flags;
   i->echoflags = (dcc[idx].status & STAT_ECHO) ? 1 : 0;
   if (dcc[idx].status & STAT_PAGE)
     i->page = dcc[idx].u.chat->max_line;
@@ -300,10 +287,8 @@ static int console_store(struct userrec *u, int idx, char *par)
   if (par) {
     dprintf(idx, "%s\n", _("Saved your Console Settings:"));
     dprintf(idx, "  %s %s\n", _("Channel:"), i->channel);
-    dprintf(idx, "  %s %s, %s %s, %s %s\n", _("Console flags:"),
-	    masktype(i->conflags), _("Strip flags:"),
-	    stripmasktype(i->stripflags), _("Echo:"),
-	    i->echoflags ? _("yes") : _("no"));
+    dprintf(idx, "  %s %s, %s %s\n", _("Console flags:"),
+	    masktype(i->conflags), _("Echo:"), i->echoflags ? _("yes") : _("no"));
     dprintf(idx, "  %s %d, %s %d\n", _("Page setting:"), i->page,
             _("Console channel:"), i->conchan);
   }

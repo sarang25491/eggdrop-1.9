@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: cmds.h,v 1.2 2002/05/05 16:40:38 tothwolf Exp $
+ * $Id: cmds.h,v 1.3 2002/06/18 06:12:32 guppy Exp $
  */
 
 #ifndef _EGG_CMDS_H
@@ -27,7 +27,5 @@
 
 int check_dcc_attrs(struct userrec *, int);
 int check_dcc_chanattrs(struct userrec *, char *, int, int);
-int stripmodes(char *);
-char *stripmasktype(int);
 
 #endif				/* !_EGG_CMDS_H */

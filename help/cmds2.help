@@ -197,22 +197,6 @@ see also: reload, rehash
    makes it just as if "dweeb" typed ".quit". this command will not work
    unless eggdrop has simul enabled in the config file. Please use this
    command ethically.
-%{help=strip}
-###  %bstrip%b [modes]
-   enables you to remove embedded 'attribute' codes from within a
-   section of text. Valid options are:
-      b  remove all boldface codes
-      c  remove all color codes
-      r  remove all reverse video codes
-      u  remove all underline codes
-      a  remove all ansi codes
-      g  remove all ctrl-g (bell) codes
-   the mode can also be a modifier like '+c' or '-bu' or '+ru-c'.  if
-   you omit modes, it will show your current setting.
-%{+m}
-###  %bstrip%b <user> [modes]
-   is used to set the strip level of another user, a master can't
-   set their own strip flags without starting the modes with a +/-
 %{help=su}
 ###  %bsu%b <user>
    changes your username to that of another. If you
@@ -329,7 +313,6 @@ see also: whom
       u   unshared (not sent to other share-bots)
       b   bot (user is another bot)
       d   global deop (user cannot get ops)
-      k   global auto-kick (user kicked & banned automatically)
       f   global friend (user is not punished for doing bad things)
       v   global voice (user get +v automatically on +autovoice channels)
       a   global auto-op (always op this user on join)
@@ -347,7 +330,6 @@ see also: whom
       o   op (bot will give this user chanop)
       d   deop (bot will not allow this user to become a chanop)
       f   friend (user is not punished for doing bad things)
-      k   kick (user is auto-kicked)
       v   voice (user gets +v automatically on +autovoice channels)
       q   quiet (user never gets +v on +autovoice channels)
       a   auto-op (always op this user on join)

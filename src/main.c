@@ -30,7 +30,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.119 2002/06/01 13:27:46 wingman Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.120 2002/06/18 06:12:32 guppy Exp $";
 #endif
 
 #include "main.h"
@@ -689,7 +689,6 @@ module, please consult the default config file for info.\n"));
     dcc[n].sock = STDOUT;
     dcc[n].timeval = now;
     dcc[n].u.chat->con_flags = conmask;
-    dcc[n].u.chat->strip_flags = STRIP_ALL;
     dcc[n].status = STAT_ECHO;
     strcpy(dcc[n].nick, "HQ");
     strcpy(dcc[n].host, "llama@console");

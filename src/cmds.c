@@ -24,7 +24,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: cmds.c,v 1.105 2002/06/17 06:04:36 guppy Exp $";
+static const char rcsid[] = "$Id: cmds.c,v 1.106 2002/06/18 06:12:32 guppy Exp $";
 #endif
 
 #include "main.h"
@@ -355,8 +355,7 @@ static int cmd_motd(struct userrec *u, int idx, char *par)
 	char x[40];
 
 	simple_sprintf(x, "%s%d:%s@%s",
-		       (u->flags & USER_HIGHLITE) ?
-		       ((dcc[idx].status & STAT_TELNET) ? "#" : "!") : "",
+		       (dcc[idx].status & STAT_TELNET) ? "#" : "!",
 		       dcc[idx].sock, dcc[idx].nick, botnetnick);
 	botnet_send_motd(i, x, par);
       }
@@ -1846,166 +1845,6 @@ static int cmd_echo(struct userrec *u, int idx, char *par)
   return(1);
 }
 
-int stripmodes(char *s)
-{
-  int res = 0;
-
-  for (; *s; s++)
-    switch (tolower(*s)) {
-    case 'b':
-      res |= STRIP_BOLD;
-      break;
-    case 'c':
-      res |= STRIP_COLOR;
-      break;
-    case 'r':
-      res |= STRIP_REV;
-      break;
-    case 'u':
-      res |= STRIP_UNDER;
-      break;
-    case 'a':
-      res |= STRIP_ANSI;
-      break;
-    case 'g':
-      res |= STRIP_BELLS;
-      break;
-    case '*':
-      res |= STRIP_ALL;
-      break;
-    }
-  return res;
-}
-
-char *stripmasktype(int x)
-{
-  static char s[20];
-  char *p = s;
-
-  if (x & STRIP_BOLD)
-    *p++ = 'b';
-  if (x & STRIP_COLOR)
-    *p++ = 'c';
-  if (x & STRIP_REV)
-    *p++ = 'r';
-  if (x & STRIP_UNDER)
-    *p++ = 'u';
-  if (x & STRIP_ANSI)
-    *p++ = 'a';
-  if (x & STRIP_BELLS)
-    *p++ = 'g';
-  if (p == s)
-    *p++ = '-';
-  *p = 0;
-  return s;
-}
-
-static char *stripmaskname(int x)
-{
-  static char s[161];
-  int i = 0;
-
-  s[i] = 0;
-  if (x & STRIP_BOLD)
-    i += my_strcpy(s + i, "bold, ");
-  if (x & STRIP_COLOR)
-    i += my_strcpy(s + i, "color, ");
-  if (x & STRIP_REV)
-    i += my_strcpy(s + i, "reverse, ");
-  if (x & STRIP_UNDER)
-    i += my_strcpy(s + i, "underline, ");
-  if (x & STRIP_ANSI)
-    i += my_strcpy(s + i, "ansi, ");
-  if (x & STRIP_BELLS)
-    i += my_strcpy(s + i, "bells, ");
-  if (!i)
-    strcpy(s, "none");
-  else
-    s[i - 2] = 0;
-  return s;
-}
-
-static int cmd_strip(struct userrec *u, int idx, char *par)
-{
-  char *nick, *changes, *c, s[2];
-  int dest = 0, i, pls, md, ok = 0;
-  module_entry *me;
-
-  if (!par[0]) {
-    dprintf(idx, "Your current strip settings are: %s (%s)\n",
-	    stripmasktype(dcc[idx].u.chat->strip_flags),
-	    stripmaskname(dcc[idx].u.chat->strip_flags));
-    return(0);
-  }
-  nick = newsplit(&par);
-  if ((nick[0] != '+') && (nick[0] != '-') && u &&
-      (u->flags & USER_MASTER)) {
-    for (i = 0; i < dcc_total; i++)
-      if (dcc[i].type && !strcasecmp(nick, dcc[i].nick) && dcc[i].type == &DCC_CHAT &&
-	  !ok) {
-	ok = 1;
-	dest = i;
-      }
-    if (!ok) {
-      dprintf(idx, _("No such user on the party line!\n"));
-      return(0);
-    }
-    changes = par;
-  } else {
-    changes = nick;
-    nick = "";
-    dest = idx;
-  }
-  c = changes;
-  if ((c[0] != '+') && (c[0] != '-'))
-    dcc[dest].u.chat->strip_flags = 0;
-  s[1] = 0;
-  for (pls = 1; *c; c++) {
-    switch (*c) {
-    case '+':
-      pls = 1;
-      break;
-    case '-':
-      pls = 0;
-      break;
-    default:
-      s[0] = *c;
-      md = stripmodes(s);
-      if (pls == 1)
-	dcc[dest].u.chat->strip_flags |= md;
-      else
-	dcc[dest].u.chat->strip_flags &= ~md;
-    }
-  }
-  if (dest == idx) {
-    dprintf(idx, "Your strip settings are: %s (%s).\n",
-	    stripmasktype(dcc[idx].u.chat->strip_flags),
-	    stripmaskname(dcc[idx].u.chat->strip_flags));
-  } else {
-    dprintf(idx, "Strip setting for %s: %s (%s).\n", dcc[dest].nick,
-	    stripmasktype(dcc[dest].u.chat->strip_flags),
-	    stripmaskname(dcc[dest].u.chat->strip_flags));
-    dprintf(dest, "%s set your strip settings to: %s (%s).\n", dcc[idx].nick,
-	    stripmasktype(dcc[dest].u.chat->strip_flags),
-	    stripmaskname(dcc[dest].u.chat->strip_flags));
-  }
-  /* Set highlight flag here so user is able to control stripping of
-   * bold also as intended -- dw 27/12/1999
-   */
-  if (dcc[dest].u.chat->strip_flags & STRIP_BOLD && u->flags & USER_HIGHLITE) {
-    u->flags &= ~USER_HIGHLITE;
-  } else if (!(dcc[dest].u.chat->strip_flags & STRIP_BOLD) &&
-	     !(u->flags & USER_HIGHLITE)) {
-    u->flags |= USER_HIGHLITE;
-  }
-  /* New style autosave here too -- rtc, 09/28/1999*/
-  if ((me = module_find("console", 1, 1))) {
-    Function *func = me->funcs;
-    (func[CONSOLE_DOSTORE]) (dest);
-  }
-  return(1);
-}
-
 static int cmd_su(struct userrec *u, int idx, char *par)
 {
   int atr = u ? u->flags : 0;
@@ -2460,9 +2299,8 @@ static int cmd_mns_host(struct userrec *u, int idx, char *par)
 
   get_user_flagrec(u, &fr, NULL);
   /* check to see if user is +d or +k and don't let them remove hosts */
-  if ((u->flags & USER_DEOP) || (u->flags & USER_KICK) || chan_deop(fr) || 
-      chan_kick (fr)) {
-    dprintf(idx, "%s\n", _("You can't remove hosts while having the +d or +k flag."));
+  if ((u->flags & USER_DEOP) || chan_deop(fr)) {
+    dprintf(idx, "%s\n", _("You can't remove hosts while having the +d flag."));
     return(0);
   }
 
@@ -2717,7 +2555,6 @@ cmd_t C_dcc[] =
   {"save",		"m|m",	(Function) cmd_save,		NULL},
   {"simul",		"n",	(Function) cmd_simul,		NULL},
   {"status",		"m|m",	(Function) cmd_status,		NULL},
-  {"strip",		"",	(Function) cmd_strip,		NULL},
   {"su",		"",	(Function) cmd_su,		NULL},
   {"trace",		"",	(Function) cmd_trace,		NULL},
   {"unlink",		"t",	(Function) cmd_unlink,		NULL},

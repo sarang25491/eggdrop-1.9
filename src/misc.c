@@ -27,7 +27,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: misc.c,v 1.67 2002/06/17 06:04:36 guppy Exp $";
+static const char rcsid[] = "$Id: misc.c,v 1.68 2002/06/18 06:12:32 guppy Exp $";
 #endif
 
 #include "main.h"
@@ -389,60 +389,52 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
     towrite = NULL;
     switch (chr) {
     case 'b':
-      if (glob_hilite(*flags)) {
-	if (help_flags & HELP_IRC) {
-	  towrite = "\002";
-	} else if (help_flags & HELP_BOLD) {
-	  help_flags &= ~HELP_BOLD;
-	  towrite = "\033[0m";
-	} else {
-	  help_flags |= HELP_BOLD;
-	  towrite = "\033[1m";
-	}
+      if (help_flags & HELP_IRC) {
+	towrite = "\002";
+      } else if (help_flags & HELP_BOLD) {
+	help_flags &= ~HELP_BOLD;
+	towrite = "\033[0m";
+      } else {
+	help_flags |= HELP_BOLD;
+	towrite = "\033[1m";
       }
       break;
     case 'v':
-      if (glob_hilite(*flags)) {
-	if (help_flags & HELP_IRC) {
-	  towrite = "\026";
-	} else if (help_flags & HELP_REV) {
-	  help_flags &= ~HELP_REV;
-	  towrite = "\033[0m";
-	} else {
-	  help_flags |= HELP_REV;
-	  towrite = "\033[7m";
-	}
+      if (help_flags & HELP_IRC) {
+	towrite = "\026"; 
+      } else if (help_flags & HELP_REV) {
+	help_flags &= ~HELP_REV;
+	towrite = "\033[0m";
+      } else {
+	help_flags |= HELP_REV;
+	towrite = "\033[7m";
       }
       break;
     case '_':
-      if (glob_hilite(*flags)) {
-	if (help_flags & HELP_IRC) {
-	  towrite = "\037";
-	} else if (help_flags & HELP_UNDER) {
-	  help_flags &= ~HELP_UNDER;
-	  towrite = "\033[0m";
-	} else {
-	  help_flags |= HELP_UNDER;
-	  towrite = "\033[4m";
-	}
+      if (help_flags & HELP_IRC) {
+	towrite = "\037";
+      } else if (help_flags & HELP_UNDER) {
+	help_flags &= ~HELP_UNDER;
+	towrite = "\033[0m";
+      } else {
+	help_flags |= HELP_UNDER;
+	towrite = "\033[4m";
       }
       break;
     case 'f':
-      if (glob_hilite(*flags)) {
-	if (help_flags & HELP_FLASH) {
-	  if (help_flags & HELP_IRC) {
-	    towrite = "\002\037";
-	  } else {
-	    towrite = "\033[0m";
-	  }
-	  help_flags &= ~HELP_FLASH;
+      if (help_flags & HELP_FLASH) {
+	if (help_flags & HELP_IRC) {
+	  towrite = "\002\037";
 	} else {
-	  help_flags |= HELP_FLASH;
-	  if (help_flags & HELP_IRC) {
-	    towrite = "\037\002";
-	  } else {
-	    towrite = "\033[5m";
-	  }
+	  towrite = "\033[0m";
+	}
+	help_flags &= ~HELP_FLASH;
+      } else {
+	help_flags |= HELP_FLASH;
+	if (help_flags & HELP_IRC) {
+	  towrite = "\037\002";
+	} else {
+	  towrite = "\033[5m";
 	}
       }
       break;

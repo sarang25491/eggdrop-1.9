@@ -22,14 +22,11 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: servmsg.c,v 1.27 2002/06/08 07:21:37 stdarg Exp $";
+static const char rcsid[] = "$Id: servmsg.c,v 1.28 2002/06/18 06:12:32 guppy Exp $";
 #endif
 */
 
 #include "channels.h"
-
-static time_t last_ctcp    = (time_t) 0L;
-static int    count_ctcp   = 0;
 
 static int altnick_char = -1;
 static char altnick_chars[] = "1234567890^_-[]{}abcdefghijklmnopqrstuvwxyz";

@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: flags.c,v 1.32 2002/06/17 06:14:40 guppy Exp $";
+static const char rcsid[] = "$Id: flags.c,v 1.33 2002/06/18 06:12:32 guppy Exp $";
 #endif
 
 #include <ctype.h>
@@ -415,8 +415,6 @@ int flagrec_ok(struct flag_record *req,
       if (!allow_dk_cmds) {
 	if (glob_party(*have))
 	  return 1;
-	if (glob_kick(*have) || chan_kick(*have))
-	  return 0;		/* +k cant use -|- commands */
 	if (glob_deop(*have) || chan_deop(*have))
 	  return 0;		/* neither can +d's */
       }

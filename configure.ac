@@ -172,6 +172,6 @@ AC_SUBST(ac_aux_dir)
 EGG_LTLIBOBJS
 
 # FIXME: module's Makefiles list will prolly become dynamic
-AC_OUTPUT([Makefile doc/Makefile intl/Makefile lib/Makefile lib/adns/Makefile lib/compat/Makefile lib/eggdrop/Makefile lib/egglib/Makefile modules/Makefile modules/blowfish/Makefile modules/channels/Makefile modules/compress/Makefile modules/console/Makefile modules/ctcp/Makefile modules/filesys/Makefile modules/irc/Makefile modules/javascript/Makefile modules/notes/Makefile modules/perlscript/Makefile modules/server/Makefile modules/share/Makefile modules/tclscript/Makefile modules/transfer/Makefile modules/uptime/Makefile modules/woobie/Makefile po/Makefile.in scripts/Makefile nettype/Makefile src/Makefile])
+AC_OUTPUT([Makefile doc/Makefile intl/Makefile lib/Makefile lib/adns/Makefile lib/compat/Makefile lib/eggdrop/Makefile lib/egglib/Makefile modules/Makefile modules/blowfish/Makefile modules/channels/Makefile modules/compress/Makefile modules/console/Makefile modules/ctcp/Makefile modules/filesys/Makefile modules/irc/Makefile modules/javascript/Makefile modules/notes/Makefile modules/perlscript/Makefile modules/server/Makefile modules/share/Makefile modules/tclscript/Makefile modules/transfer/Makefile modules/uptime/Makefile po/Makefile.in scripts/Makefile nettype/Makefile src/Makefile])
 
 EGG_MSG_CONFIGURE_END

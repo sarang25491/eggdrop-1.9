@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: modules.c,v 1.116 2002/06/03 03:35:32 stdarg Exp $";
+static const char rcsid[] = "$Id: modules.c,v 1.117 2002/06/18 06:12:32 guppy Exp $";
 #endif
 
 #include "main.h"		/* NOTE: when removing this, include config.h */
@@ -44,8 +44,7 @@ static const char rcsid[] = "$Id: modules.c,v 1.116 2002/06/03 03:35:32 stdarg E
 #include "chanprog.h"		/* clear_chanlist, reaffirm_owners, 
 				   logmodes, masktype, isowner, 
 				   clear_chanlist_member		*/
-#include "cmds.h"		/* stripmodes, stripmasktype,
-				   check_dcc_attrs, check_dcc_chanattrs	*/
+#include "cmds.h"		/* check_dcc_attrs, check_dcc_chanattrs	*/
 #include "dccutil.h"		/* chatout, chanout_but, new_dcc,
 				   lostdcc, makepass, flush_lines, 
 				   changeover_dcc			*/
@@ -428,8 +427,8 @@ Function global_table[] =
   /* 200 - 203 */
   (Function) logmodes,
   (Function) masktype,
-  (Function) stripmodes,
-  (Function) stripmasktype,
+  (Function) 0,
+  (Function) 0,
   /* 204 - 207 */
   (Function) sub_lang,
   (Function) & online_since,	/* time_t *				*/

@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: flags.h,v 1.12 2002/06/17 06:14:40 guppy Exp $
+ * $Id: flags.h,v 1.13 2002/06/18 06:12:32 guppy Exp $
  */
 
 #ifndef _EGG_FLAGS_H
@@ -58,23 +58,23 @@ struct flag_record {
  * + user defined A-Z
  *   unused letters: bchijlprstwxyz
  */
-#define USER_VALID    0x00f9f6fb	/* all USER_ flags in use	 */
-#define CHAN_VALID    0x00757479	/* all flags that can be chan
+#define USER_VALID    0xF9F27B		/* all USER_ flags in use	 */
+#define CHAN_VALID    0x757079		/* all flags that can be chan
 					   specific			 */
 #define BOT_VALID     0x7fe689C1	/* all BOT_ flags in use	 */
 
 
 #define USER_AUTOOP   0x00000001	/* a  auto-op			 */
 #define USER_BOT      0x00000002	/* b  user is a bot		 */
-/* 0x00000004 is unused (guppy)						 */
+#define USER_C        0x00000004	/* c  unused			 */
 #define USER_DEOP     0x00000008	/* d  user is global de-op	 */
 #define USER_EXEMPT   0x00000010	/* e  exempted from stopnethack	 */
 #define USER_FRIEND   0x00000020	/* f  user is global friend	 */
 #define USER_GVOICE   0x00000040	/* g  give voice true auto	 */
-#define USER_HIGHLITE 0x00000080	/* h  highlighting (bold)	 */
+#define USER_H	      0x00000080	/* h  unused			 */
 #define USER_I        0x00000100	/* i  unused			 */
 #define USER_JANITOR  0x00000200	/* j  user has file area master	 */
-#define USER_KICK     0x00000400	/* k  user is global auto-kick	 */
+#define USER_K	      0x00000400	/* k  unused			 */
 #define USER_L        0x00000800	/* l  unused			 */
 #define USER_MASTER   0x00001000	/* m  user has full bot access	 */
 #define USER_OWNER    0x00002000	/* n  user is the bot owner	 */
@@ -155,8 +155,6 @@ struct flag_record {
 #define glob_autoop(x)		((x).global & USER_AUTOOP)
 #define chan_gvoice(x)		((x).chan & USER_GVOICE)
 #define glob_gvoice(x)		((x).global & USER_GVOICE)
-#define chan_kick(x)		((x).chan & USER_KICK)
-#define glob_kick(x)		((x).global & USER_KICK)
 #define chan_voice(x)		((x).chan & USER_VOICE)
 #define glob_voice(x)		((x).global & USER_VOICE)
 #define chan_wasoptest(x)	((x).chan & USER_WASOPTEST)
@@ -168,7 +166,6 @@ struct flag_record {
 #define glob_botmast(x)		((x).global & USER_BOTMAST)
 #define glob_party(x)		((x).global & USER_PARTY)
 #define glob_xfer(x)		((x).global & USER_XFER)
-#define glob_hilite(x) 		((x).global & USER_HIGHLITE)
 #define chan_exempt(x)		((x).chan & USER_EXEMPT)
 #define glob_exempt(x)		((x).global & USER_EXEMPT)
 

@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dcc.c,v 1.90 2002/05/31 03:07:23 stdarg Exp $";
+static const char rcsid[] = "$Id: dcc.c,v 1.91 2002/06/18 06:12:32 guppy Exp $";
 #endif
 
 #include "main.h"
@@ -717,77 +717,6 @@ static void kill_dcc_general(int idx, void *x)
   }
 }
 
-/* Remove the color control codes that mIRC,pIRCh etc use to make
- * their client seem so fecking cool! (Sorry, Khaled, you are a nice
- * guy, but when you added this feature you forced people to either
- * use your *SHAREWARE* client or face screenfulls of crap!)
- */
-static void strip_mirc_codes(int flags, char *text)
-{
-  char *dd = text;
-
-  while (*text) {
-    switch (*text) {
-    case 2:			/* Bold text */
-      if (flags & STRIP_BOLD) {
-	text++;
-	continue;
-      }
-      break;
-    case 3:			/* mIRC colors? */
-      if (flags & STRIP_COLOR) {
-	if (isdigit(text[1])) {	/* Is the first char a number? */
-	  text += 2;		/* Skip over the ^C and the first digit */
-	  if (isdigit(*text))
-	    text++;		/* Is this a double digit number? */
-	  if (*text == ',') {	/* Do we have a background color next? */
-	    if (isdigit(text[1]))
-	      text += 2;	/* Skip over the first background digit */
-	    if (isdigit(*text))
-	      text++;		/* Is it a double digit? */
-	  }
-	} else
-	  text++;
-	continue;
-      }
-      break;
-    case 7:
-      if (flags & STRIP_BELLS) {
-	text++;
-	continue;
-      }
-      break;
-    case 0x16:			/* Reverse video */
-      if (flags & STRIP_REV) {
-	text++;
-	continue;
-      }
-      break;
-    case 0x1f:			/* Underlined text */
-      if (flags & STRIP_UNDER) {
-	text++;
-	continue;
-      }
-      break;
-    case 033:
-      if (flags & STRIP_ANSI) {
-	text++;
-	if (*text == '[') {
-	  text++;
-	  while ((*text == ';') || isdigit(*text))
-	    text++;
-	  if (*text)
-	    text++;		/* also kill the following char */
-	}
-	continue;
-      }
-      break;
-    }
-    *dd++ = *text++;		/* Move on to the next char */
-  }
-  *dd = 0;
-}
-
 static void append_line(int idx, char *line)
 {
   int l = strlen(line);
@@ -834,7 +763,6 @@ static void out_dcc_general(int idx, char *buf, void *x)
   register struct chat_info *p = (struct chat_info *) x;
   char *y = buf;
 
-  strip_mirc_codes(p->strip_flags, buf);
   if (dcc[idx].status & STAT_TELNET)
     y = add_cr(buf);
   if (dcc[idx].status & STAT_PAGE)

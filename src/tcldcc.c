@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tcldcc.c,v 1.65 2002/05/26 08:34:13 stdarg Exp $";
+static const char rcsid[] = "$Id: tcldcc.c,v 1.66 2002/06/18 06:12:32 guppy Exp $";
 #endif
 
 #include "main.h"
@@ -36,7 +36,6 @@ static const char rcsid[] = "$Id: tcldcc.c,v 1.65 2002/05/26 08:34:13 stdarg Exp
 				   check_bind_bcst, check_bind_chof	*/
 #include "botnet.h"		/* nextbot, botlink, botunlink, lastbot	*/
 #include "chanprog.h"		/* masktype, logmodes			*/
-#include "cmds.h"		/* stripmasktype, stripmodes		*/
 #include "dccutil.h"		/* chatout, chanout_but, lostdcc
 				   not_away, set_away, new_dcc		*/
 #include "net.h"		/* tputs, sockoptions, killsock,
@@ -226,43 +225,6 @@ static int script_console(script_var_t *retval, int nargs, int idx, char *what)
 		}
 	}
 	view[1] = masktype(dcc[idx].u.chat->con_flags);
-	return(0);
-}
-
-static int script_strip(script_var_t *retval, int nargs, int idx, char *what)
-{
-	char str[2];
-	int plus;
-
-	str[1] = 0;
-
-	if (idx < 0 || idx >= dcc_total || !dcc[idx].type || dcc[idx].type != &DCC_CHAT) {
-		retval->value = "invalid idx";
-		retval->len = 10;
-		retval->type = SCRIPT_ERROR | SCRIPT_STRING;
-	}
-
-	retval->len = -1;
-	retval->type = SCRIPT_STRING;
-
-	if (nargs == 1) {
-		retval->value = stripmasktype(dcc[idx].u.chat->strip_flags);
-		return(0);
-	}
-
-	/* The flags. */
-	if (*what != '+' && *what != '-') dcc[idx].u.chat->strip_flags = 0;
-	for (plus = 1; *what; what++) {
-		if (*what == '-') plus = 0;
-		else if (*what == '+') plus = 1;
-		else {
-			str[0] = *what;
-			if (plus) dcc[idx].u.chat->con_flags |= stripmodes(str);
-			else dcc[idx].u.chat->con_flags &= (~stripmodes(str));
-		}
-	}
-
-	retval->value = stripmasktype(dcc[idx].u.chat->strip_flags);
 	return(0);
 }
 
@@ -852,7 +814,6 @@ script_command_t script_dcc_cmds[] = {
 	{"", "rehash", script_rehash, NULL, 0,"", "", SCRIPT_INTEGER, 0},
 	{"", "restart", script_restart, NULL, 0, "", "", SCRIPT_INTEGER, 0},
 	{"", "console", script_console, NULL, 1, "is", "idx ?changes?", 0, SCRIPT_PASS_RETVAL|SCRIPT_PASS_COUNT|SCRIPT_VAR_ARGS},
-	{"", "strip", script_strip, NULL, 1, "is", "idx ?change?", 0, SCRIPT_PASS_RETVAL|SCRIPT_PASS_COUNT|SCRIPT_VAR_ARGS},
 	{"", "echo", script_echo, NULL, 1, "ii", "idx ?status?", SCRIPT_INTEGER, SCRIPT_PASS_COUNT|SCRIPT_VAR_ARGS},
 	{"", "page", script_page, NULL, 1, "ii", "idx ?status?", SCRIPT_INTEGER, SCRIPT_PASS_COUNT|SCRIPT_VAR_ARGS},
 	{"", "bots", script_bots, NULL, 0, "", "", 0, SCRIPT_PASS_RETVAL},

@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: cmdsirc.c,v 1.10 2002/05/05 16:40:35 tothwolf Exp $";
+static const char rcsid[] = "$Id: cmdsirc.c,v 1.11 2002/06/18 06:12:31 guppy Exp $";
 #endif
 */
 
@@ -612,10 +612,6 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
         atrflag = 'F';
       else if (chan_friend(user))
         atrflag = 'f';
-      else if (glob_kick(user))
-        atrflag = 'K';
-      else if (chan_kick(user))
-        atrflag = 'k';
       else if (glob_wasoptest(user))
         atrflag = 'W';
       else if (chan_wasoptest(user))

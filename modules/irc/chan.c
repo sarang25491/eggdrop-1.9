@@ -28,12 +28,10 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: chan.c,v 1.23 2002/06/02 18:06:01 stdarg Exp $";
+static const char rcsid[] = "$Id: chan.c,v 1.24 2002/06/18 06:12:31 guppy Exp $";
 #endif
 */
 
-static time_t last_ctcp = (time_t) 0L;
-static int    count_ctcp = 0;
 static time_t last_invtime = (time_t) 0L;
 static char   last_invchan[300] = "";
 
@@ -706,7 +704,7 @@ static void recheck_channel_modes(struct chanset_t *chan)
 static void check_this_member(struct chanset_t *chan, char *nick, struct flag_record *fr)
 {
   memberlist *m;
-  char s[UHOSTLEN], *p;
+  char s[UHOSTLEN];
 
   m = ismember(chan, nick);
   if (!m || match_my_nick(nick) || !me_op(chan))
@@ -737,15 +735,6 @@ static void check_this_member(struct chanset_t *chan, char *nick, struct flag_re
   if (!(use_exempts && is_perm_exempted(chan, s))) {
     /* permanent banned? */
     refresh_ban_kick(chan, s, m->nick);
-    /* are they +k ? */
-    if (!chan_sentkick(m) && (chan_kick(*fr) || glob_kick(*fr))) {
-      check_exemptlist(chan, s);
-      quickban(chan, m->userhost);
-      p = get_user(&USERENTRY_COMMENT, m->user);
-      dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick,
-	      p ? p : _("...and thank you for playing."));
-      m->flags |= SENTKICK;
-    }
   }
   /* now lets look at de-op'd ppl */
   if (!chan_hasop(m) &&
@@ -1513,7 +1502,7 @@ static void set_delay(struct chanset_t *chan, char *nick)
  */
 static int gotjoin(char *from, char *ignore, char *chname)
 {
-  char buf[UHOSTLEN], *nick, *uhost, *p;
+  char buf[UHOSTLEN], *nick, *uhost;
   char *ch_dname = NULL;
   struct chanset_t *chan;
   memberlist *m;
@@ -1736,15 +1725,6 @@ static int gotjoin(char *from, char *ignore, char *chname)
           }
 	  /* If it matches a ban, dispose of them. */
 	  refresh_ban_kick(chan, from, nick);
-	  /* Likewise for kick'ees */
-	  if (!chan_sentkick(m) && (glob_kick(fr) || chan_kick(fr))) {
-	    check_exemptlist(chan, from);
-	    quickban(chan, from);
-	    p = get_user(&USERENTRY_COMMENT, m->user);
-	    dprintf(DP_MODE, "KICK %s %s :%s\n", chname, nick,
-		    (p && (p[0] != '@')) ? p : _("...and dont come back."));
-	    m->flags |= SENTKICK;
-	  }
 	}
 	/* Are they a chan op, or global op without chan deop? */
 	if ((chan_op(fr) || (glob_op(fr) && !chan_deop(fr))) &&

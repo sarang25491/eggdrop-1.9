@@ -3,8 +3,8 @@ DCC COMMANDS for %B, %V:
 %b  who          away         quit         whom         me%b
 %b  whois        page         match        motd         bots%b
 %b  newpass      console      chat         handle       echo%b
-%b  strip        su           trace        fixcodes     info%b
-%b  bottree      botinfo      relay%b
+%b  su           trace        fixcodes     info         bottree%b
+%b  botinfo      relay%b
 %{+t}
 For botnet masters:
 %b  +bot         botattr      chhandle     chpass       +host%b
@@ -52,8 +52,8 @@ texts will be displayed.
   %b.help%b <command>    get more help on a specific command
 The following commands are also available:
 %b   bots      newpass   email     who       echo%b
-%b   info      away      back      strip     trace%b
-%b   page      su        fixcodes  motd      whom%b
+%b   info      away      back      trace     page%b
+%b   su        fixcodes  motd      whom%b
 %b%{+x}   files%{-}%b
 Anything you type that doesn't begin with a '.' goes out to
 everyone on the party line.
@@ -116,8 +116,8 @@ telnet-flood
 %b  who          away         quit         whom         me%b
 %b  whois        page         match        motd         bots%b
 %b  newpass      console      chat         handle       echo%b
-%b  strip        su           trace        fixcodes     bottree%b
-%b  botinfo      relay%b
+%b  su           trace        fixcodes     bottree      botinfo%b
+%b  relay%b
 %{+t}
 For botnet masters:
 %b  +bot         botattr      chhandle     chpass       +host%b

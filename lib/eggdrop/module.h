@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: module.h,v 1.26 2002/06/03 03:35:32 stdarg Exp $
+ * $Id: module.h,v 1.27 2002/06/18 06:12:31 guppy Exp $
  */
 
 #ifndef _EGG_MOD_MODULE_H
@@ -345,8 +345,8 @@
 /* 200 - 203 */
 #define logmodes ((int(*)(char *))egg->global[200])
 #define masktype ((const char *(*)(int))egg->global[201])
-#define stripmodes ((int(*)(char *))egg->global[202])
-#define stripmasktype ((const char *(*)(int))egg->global[203])
+/* #define stripmodes ((int(*)(char *))egg->global[202]) */
+/* #define stripmasktype ((const char *(*)(int))egg->global[203]) */
 /* 204 - 207 */
 #define sub_lang ((void(*)(int,char *))egg->global[204])
 #define online_since (*(int *)(egg->global[205]))

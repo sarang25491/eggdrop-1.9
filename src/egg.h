@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: egg.h,v 1.8 2002/05/09 07:37:49 stdarg Exp $
+ * $Id: egg.h,v 1.9 2002/06/18 06:12:32 guppy Exp $
  */
 
 #ifndef _EGG_EGG_H
@@ -229,7 +229,6 @@ struct chat_info {
   char *away;			/* non-NULL if user is away		*/
   int msgs_per_sec;		/* used to stop flooding		*/
   int con_flags;		/* with console: what to show		*/
-  int strip_flags;		/* what codes to strip (b,r,u,c,a,g,*)	*/
   char con_chan[81];		/* with console: what channel to view	*/
   int channel;			/* 0=party line, -1=off			*/
   struct msgq *buffer;		/* a buffer of outgoing lines
@@ -340,16 +339,6 @@ struct dupwait_info {
 #define STAT_BOTONLY 0x00020	/* telnet on bots-only connect		*/
 #define STAT_USRONLY 0x00040	/* telnet on users-only connect		*/
 #define STAT_PAGE    0x00080	/* page output to the user		*/
-
-/* For stripping out mIRC codes
- */
-#define STRIP_COLOR  0x00001	/* remove mIRC color codes		*/
-#define STRIP_BOLD   0x00002	/* remove bold codes			*/
-#define STRIP_REV    0x00004	/* remove reverse video codes		*/
-#define STRIP_UNDER  0x00008	/* remove underline codes		*/
-#define STRIP_ANSI   0x00010	/* remove ALL ansi codes		*/
-#define STRIP_BELLS  0x00020	/* remote ctrl-g's			*/
-#define STRIP_ALL    0x00040	/* remove every damn thing!		*/
 
 /* for dcc bot links: */
 #define STAT_PINGED  0x00001	/* waiting for ping to return		 */

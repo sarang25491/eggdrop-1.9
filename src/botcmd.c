@@ -24,7 +24,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: botcmd.c,v 1.38 2002/05/26 08:34:13 stdarg Exp $";
+static const char rcsid[] = "$Id: botcmd.c,v 1.39 2002/06/18 06:12:32 guppy Exp $";
 #endif
 
 #include "main.h"
@@ -1031,12 +1031,8 @@ static void bot_motd(int idx, char *par)
       p = who;
     if (who[0] == '!') {
       irc = HELP_IRC;
-      fr.global |=USER_HIGHLITE;
-
       who++;
     } else if (who[0] == '#') {
-      fr.global |=USER_HIGHLITE;
-
       who++;
     }
     putlog(LOG_CMDS, "*", "#%s# motd", p);
