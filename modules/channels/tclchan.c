@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.7 2002/02/09 18:37:06 eule Exp $
+ * $Id: tclchan.c,v 1.8 2002/02/13 23:56:17 eule Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -201,6 +201,36 @@ static int tcl_stickexempt STDVAR
       !strncmp(argv[0], "un", 2) ? 0 : 1))
     ok = 1;
   if (ok)
+    Tcl_AppendResult(irp, "1", NULL);
+  else
+    Tcl_AppendResult(irp, "0", NULL);
+  return TCL_OK;
+}
+
+static int tcl_isglobalban STDVAR
+{
+  BADARGS(2, 2, " ban");
+  if (u_equals_mask(global_bans, argv[1]))
+    Tcl_AppendResult(irp, "1", NULL);
+  else
+    Tcl_AppendResult(irp, "0", NULL);
+  return TCL_OK;
+}
+
+static int tcl_isglobalexempt STDVAR
+{
+  BADARGS(2, 2, " exempt");
+  if (u_equals_mask(global_exempts, argv[1]))
+    Tcl_AppendResult(irp, "1", NULL);
+  else
+    Tcl_AppendResult(irp, "0", NULL);
+  return TCL_OK;
+}
+
+static int tcl_isglobalinvite STDVAR
+{
+  BADARGS(2, 2, " invite");
+  if (u_equals_mask(global_invites, argv[1]))
     Tcl_AppendResult(irp, "1", NULL);
   else
     Tcl_AppendResult(irp, "0", NULL);
@@ -1620,5 +1650,8 @@ static tcl_cmds channels_cmds[] =
   {"renudef",		tcl_renudef},
   {"deludef",		tcl_deludef},
   {"haschanrec",	tcl_haschanrec},
+  {"isglobalban",	tcl_isglobalban},
+  {"isglobalexempt",	tcl_isglobalexempt},
+  {"isglobalinvite",	tcl_isglobalinvite},
   {NULL,		NULL}
 };

@@ -315,6 +315,10 @@ specific commands, see later.
 |      honor-global-bans in your config), the global ban list is checked also
 |      [1.7.x-series: channel is not longer optional]
 
+|  isglobalban <ban>
+|    returns: "1" if that ban is in the global ban list, "0" otherwise;
+|      [new in 1.7.x-series]
+
 |  ispermban <ban> <channel>
 |    returns: "1" if that ban is in the channel ban list AND is marked as
 |      permanent, "0" otherwise; if the global ban list is not disabled for
@@ -329,6 +333,10 @@ specific commands, see later.
 |      also
 |      [1.7.x-series: channel is not longer optional]
 
+|  isglobalexempt <exempt>
+|    returns: "1" if that exempt is in the global exempt list, "0" otherwise;
+|      [new in 1.7.x-series]
+
 |  ispermexempt <exempt> <channel>
 |    returns: "1" if that exempt is in the channel exempt list AND is marked as
 |      permanent, "0" otherwise; if the global exempt list is not disabled for
@@ -342,6 +350,10 @@ specific commands, see later.
 |      honor-global-invites in your config), the global invite list is checked
 |      also
 |      [1.7.x-series: channel is not longer optional]
+
+|  isglobalinvite <invite>
+|    returns: "1" if that invite is in the global invite list, "0" otherwise;
+|      [new in 1.7.x-series]
 
 |  isperminvite <invite> <channel>
 |    returns: "1" if that invite is in the channel invite list AND is marked as
