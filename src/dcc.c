@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.78 2002/04/25 04:06:40 stdarg Exp $
+ * $Id: dcc.c,v 1.79 2002/04/26 17:33:37 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -270,7 +270,7 @@ static void cont_link(int idx, char *buf, int i)
   if (atr & BOT_HUB) {
     /* Disconnect all +a bots because we just got a hub */
     for (i = 0; i < dcc_total; i++) {
-      if ((i != idx) && (bot_flags(dcc[i].user) & BOT_ALT)) {
+      if (dcc[i].type && (i != idx) && (bot_flags(dcc[i].user) & BOT_ALT)) {
 	if ((dcc[i].type == &DCC_FORK_BOT) ||
 	    (dcc[i].type == &DCC_BOT_NEW)) {
 	  killsock(dcc[i].sock);
@@ -909,6 +909,8 @@ static void dcc_chat(int idx, char *buf, int i)
 	for (i = 0; i < dcc_total; i++) {
 	  struct userrec *u;
 
+	  if (!dcc[i].type) continue;
+
 	  if (!(dcc[i].type->flags & DCT_MASTER) ||
 		(dcc[i].type != &DCC_CHAT) ||
 		(dcc[i].u.chat->channel < 0) ||
@@ -929,7 +931,7 @@ static void dcc_chat(int idx, char *buf, int i)
 	    ((buf[3] == ' ') || (buf[3] == '\'') || (buf[3] == ',')))
 	  me = 1;
 	for (i = 0; i < dcc_total; i++) {
-	  if (dcc[i].type->flags & DCT_CHAT) {
+	  if (dcc[i].type && dcc[i].type->flags & DCT_CHAT) {
 	    if (me)
 	      dprintf(i, "=> %s%s\n", dcc[idx].nick, buf + 3);
 	    else

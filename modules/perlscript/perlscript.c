@@ -213,7 +213,7 @@ static int my_perl_callbacker(script_callback_t *me, ...)
 		retval = POPi;
 		log_error(msg);
 	}
-	if (count > 0) {
+	else if (count > 0) {
 		retval = POPi;
 	}
 	else retval = 0;
@@ -432,6 +432,7 @@ static XS(my_command_handler)
 
 		mstack_push(args, var.value);
 		if (my_err) goto argerror;
+		syntax++;
 	}
 
 	/* Ok, now we have our args. */
