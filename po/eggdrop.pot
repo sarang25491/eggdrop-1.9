@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-01-11 00:15-0600\n"
+"POT-Creation-Date: 2004-01-11 06:15-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -384,7 +384,7 @@ msgstr ""
 msgid "   Still logging in."
 msgstr ""
 
-#: modules/server/server.c:156
+#: modules/server/server.c:164
 msgid "server module unloading"
 msgstr ""
 
@@ -462,142 +462,142 @@ msgstr ""
 msgid "No such user '%s'."
 msgstr ""
 
-#: src/core_party.c:102
+#: src/core_party.c:101
 msgid "That setting does not exist."
 msgstr ""
 
-#: src/core_party.c:112
+#: src/core_party.c:111
 msgid "Syntax: get <path>"
 msgstr ""
 
-#: src/core_party.c:124
+#: src/core_party.c:123
 msgid "Current value: null (unset)"
 msgstr ""
 
-#: src/core_party.c:137
+#: src/core_party.c:136
 msgid "Syntax: set <path> [new value]"
 msgstr ""
 
-#: src/core_party.c:150 src/core_party.c:172
+#: src/core_party.c:149 src/core_party.c:171
 #, c-format
 msgid "Old value: '%s'"
 msgstr ""
 
-#: src/core_party.c:153 src/core_party.c:176
+#: src/core_party.c:152 src/core_party.c:175
 #, c-format
 msgid "New value: '%s'"
 msgstr ""
 
-#: src/core_party.c:154 src/core_party.c:177
+#: src/core_party.c:153 src/core_party.c:176
 msgid "New value: null (unset)"
 msgstr ""
 
-#: src/core_party.c:164
+#: src/core_party.c:163
 msgid "Syntax: unset <path>"
 msgstr ""
 
-#: src/core_party.c:173
+#: src/core_party.c:172
 msgid "Old value: null (unset)"
 msgstr ""
 
-#: src/core_party.c:187
+#: src/core_party.c:186
 #, c-format
 msgid "I am %1$s, running Eggdrop %2$s."
 msgstr ""
 
-#: src/core_party.c:188
+#: src/core_party.c:187
 #, c-format
 msgid "Owner: %s"
 msgstr ""
 
-#: src/core_party.c:189
+#: src/core_party.c:188
 #, c-format
 msgid "Admin: %s"
 msgstr ""
 
-#: src/core_party.c:191
+#: src/core_party.c:190
 #, c-format
 msgid "OS: %1$s %2$s"
 msgstr ""
 
-#: src/core_party.c:200 src/core_party.c:249 src/main.c:144
+#: src/core_party.c:199 src/core_party.c:306 src/main.c:144
 msgid "Saving user file..."
 msgstr ""
 
-#: src/core_party.c:202 src/main.c:146
+#: src/core_party.c:201 src/main.c:146
 msgid "Saving config file..."
 msgstr ""
 
-#: src/core_party.c:210
+#: src/core_party.c:209
 msgid "Please use at least 6 characters."
 msgstr ""
 
-#: src/core_party.c:214
+#: src/core_party.c:213
 #, c-format
 msgid "Changed password to '%s'."
 msgstr ""
 
-#: src/core_party.c:228
+#: src/core_party.c:227
 msgid "Partyline members:"
 msgstr ""
 
-#: src/core_party.c:251
+#: src/core_party.c:308
 #, c-format
 msgid "Bot shutting down: %s"
 msgstr ""
 
-#: src/core_party.c:252
+#: src/core_party.c:309
 msgid "Bot shutting down."
 msgstr ""
 
-#: src/core_party.c:263
+#: src/core_party.c:320
 msgid "Syntax: +user <handle>"
 msgstr ""
 
-#: src/core_party.c:267
+#: src/core_party.c:324
 #, c-format
 msgid "User '%s' already exists!"
 msgstr ""
 
-#: src/core_party.c:271
+#: src/core_party.c:328
 #, c-format
 msgid "User '%s' created."
 msgstr ""
 
-#: src/core_party.c:272
+#: src/core_party.c:329
 #, c-format
 msgid "Could not create user '%s'."
 msgstr ""
 
-#: src/core_party.c:281
+#: src/core_party.c:338
 msgid "Syntax: -user <handle>"
 msgstr ""
 
-#: src/core_party.c:285
+#: src/core_party.c:342
 #, c-format
 msgid "User '%s' not found."
 msgstr ""
 
-#: src/core_party.c:287
+#: src/core_party.c:344
 #, c-format
 msgid "Deleting user '%s'."
 msgstr ""
 
-#: src/core_party.c:316
+#: src/core_party.c:373
 msgid "Syntax: chattr <user> [channel] <+/-flags>"
 msgstr ""
 
-#: src/core_party.c:328
+#: src/core_party.c:385
 #, c-format
 msgid "Flags for %s are now '%s'."
 msgstr ""
 
-#: src/core_party.c:331
+#: src/core_party.c:388
 #, c-format
 msgid "'%s' is not a valid user."
 msgstr ""
 
-#: src/core_party.c:345
+#: src/core_party.c:402
 msgid "Loaded modules:"
 msgstr ""
 
