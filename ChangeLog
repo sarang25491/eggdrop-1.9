@@ -1,3 +1,14 @@
+2001-10-14 10:22  Tothwolf <tothwolf@techmonkeys.org>
+
+	* Makefile.am, src/Makefile.am, src/adns/Makefile.am,
+	src/compat/Makefile.am, src/mod/compress.mod/Makefile.am,
+	src/mod/server.mod/servmsg.c, src/mod/tclscript.mod/.cvsignore:
+
+	* more minor Makefile.am cleanups 
+	* added .cvsignore for tclscript.mod 
+	* detect_flood() needed to be called in gotnotice() *after* checking
+	that a notice is not from a server 
+
 2001-10-14 04:46  stdarg <stdarg@techmonkeys.org>
 
 	* src/mod/tclscript.mod/: Makefile.am, tclscript.c:
