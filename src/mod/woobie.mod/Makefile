@@ -1,5 +1,5 @@
 # Makefile for src/mod/woobie.mod/
-# $Id: Makefile,v 1.9 2000/07/09 14:10:49 fabian Exp $
+# $Id: Makefile,v 1.10 2001/08/13 20:47:56 guppy Exp $
 
 srcdir = .
 
@@ -32,7 +32,7 @@ distclean: clean
 
 #safety hash
 ../woobie.o: .././woobie.mod/woobie.c ../../../src/mod/module.h \
- ../../../src/main.h ../../../src/lang.h ../../../src/eggdrop.h \
+ ../../../src/main.h ../../../src/eggdrop.h \
  ../../../src/flags.h ../../../src/proto.h ../../../lush.h \
  ../../../src/misc_file.h ../../../src/cmdt.h ../../../src/tclegg.h \
  ../../../src/tclhash.h ../../../src/chan.h ../../../src/users.h \

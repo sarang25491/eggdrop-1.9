@@ -42,6 +42,3 @@ Some little tricks that you may or may not know about...
   'keep-all-logs' to 0 and 'switch-logfiles-at' to 2500 in your bot
   config file to make it keeping one logfile all the time. However this
   is not recommended on high traffic channels.
-
-* You can modify eggdrops output in partyline, kick msg and other texts by
-  editing core.english.lang in the language directory.

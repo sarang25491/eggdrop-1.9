@@ -1,5 +1,5 @@
 # Makefile for src/mod/ctcp.mod/
-# $Id: Makefile,v 1.11 2000/09/12 15:26:52 fabian Exp $
+# $Id: Makefile,v 1.12 2001/08/13 20:47:54 guppy Exp $
 
 srcdir = .
 
@@ -33,7 +33,7 @@ distclean: clean
 #safety hash
 ../ctcp.o: .././ctcp.mod/ctcp.c ../ctcp.mod/ctcp.h \
  ../../../src/mod/module.h ../../../src/main.h ../../../config.h \
- ../../../src/lang.h ../../../src/eggdrop.h ../../../src/flags.h \
+ ../../../src/eggdrop.h ../../../src/flags.h \
  ../../../src/proto.h ../../../lush.h ../../../src/misc_file.h \
  ../../../src/cmdt.h ../../../src/tclegg.h ../../../src/tclhash.h \
  ../../../src/chan.h ../../../src/users.h ../../../src/compat/compat.h \

@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.74 2001/08/13 16:52:13 guppy Exp $
+ * $Id: main.c,v 1.75 2001/08/13 20:47:52 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -177,7 +177,7 @@ void fatal(const char *s, int recoverable)
 
 int expmem_chanprog(), expmem_users(), expmem_misc(), expmem_dccutil(),
  expmem_botnet(), expmem_tcl(), expmem_tclhash(), expmem_net(),
- expmem_modules(int), expmem_language(), expmem_tcldcc();
+ expmem_modules(int), expmem_tcldcc();
 
 /* For mem.c : calculate memory we SHOULD be using
  */
@@ -187,7 +187,7 @@ int expected_memory(void)
 
   tot = expmem_chanprog() + expmem_users() + expmem_misc() +
     expmem_dccutil() + expmem_botnet() + expmem_tcl() + expmem_tclhash() +
-    expmem_net() + expmem_modules(0) + expmem_language() + expmem_tcldcc();
+    expmem_net() + expmem_modules(0) + expmem_tcldcc();
   return tot;
 }
 
@@ -668,8 +668,7 @@ void check_static(char *, char *(*)());
 #include "mod/static.h"
 #endif
 int init_mem(), init_dcc_max(), init_userent(), init_misc(), init_bots(),
- init_net(), init_modules(), init_tcl(int, char **),
- init_language(int);
+ init_net(), init_modules(), init_tcl(int, char **);
 
 void patch(const char *str)
 {
@@ -772,7 +771,6 @@ int main(int argc, char **argv)
   lastmin = nowtm.tm_min;
   srandom(now % (getpid() + getppid()));
   init_mem();
-  init_language(1);
   if (argc > 1)
     for (i = 1; i < argc; i++)
       do_arg(argv[i]);
@@ -791,7 +789,6 @@ int main(int argc, char **argv)
   if (backgrd)
     bg_prepare_split();
   init_tcl(argc, argv);
-  init_language(0);
 #ifdef STATIC
   link_statics();
 #endif
@@ -1063,7 +1060,6 @@ module, please consult the default config file for info.\n"));
 	flushlogs();
 	kill_tcl();
 	init_tcl(argc, argv);
-	init_language(0);
 	/* We expect the encryption module as the current module pointed
 	 * to by `module_list'.
 	 */

@@ -1,5 +1,5 @@
 # Makefile for src/mod/
-# $Id: Makefile.in,v 1.13 2000/12/21 20:20:03 guppy Exp $
+# $Id: Makefile.in,v 1.14 2001/08/13 20:47:53 guppy Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -117,7 +117,7 @@ distclean:
 		fi; \
 	done
 
-install: install-help install-language
+install: install-help
 
 install-help:
 	@echo "Copying module help files."
@@ -151,20 +151,6 @@ install-help:
 		if test ! "x`echo $(srcdir)/$$i/help/set/*.help`" = "x$(srcdir)/$$i/help/set/*.help"; then \
 			for h in $(srcdir)/$$i/help/set/*.help; do \
 				$(INSTALL_DATA) $$h $(DEST)/help/set/; \
-			done; \
-		fi; \
-	done;
-
-install-language:
-	@echo "Copying module language files."
-	@if test ! -d $(DEST)/language; then \
-		echo "Creating 'language' subdirectory."; \
-		$(top_srcdir)/misc/mkinstalldirs $(DEST)/language; \
-	fi; \
-	for i in $(mods); do \
-		if test ! "x`echo $(srcdir)/$$i/language/*.lang`" = "x$(srcdir)/$$i/language/*.lang"; then \
-			for h in $(srcdir)/$$i/language/*.lang; do \
-				$(INSTALL_DATA) $$h $(DEST)/language/; \
 			done; \
 		fi; \
 	done;

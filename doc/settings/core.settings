@@ -61,13 +61,6 @@ set env(TZ) "$timezone $offset" (disabled by default)
     but instead everywhere possible then use this setting.
 
 
-addlang "english"
-    if you want to have your eggdrop messages displayed in another language
-    change the below command to match your preferences. An alternative would
-    be to set the environment variabel EGG_LANG to that value.
-
-
-
 ##### LOG FILES #####
 
 Eggdrop is capable of logging various stuff, from channel chatter to

@@ -9,7 +9,6 @@ Currently completed sections are:
 (6) Botnet
 (7) Userfile Sharing
 (8) Bans and How They Work
-(9) Language support
 
 Appendices:
 (Y) Bugs and bug reporting
@@ -463,54 +462,6 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
     add a channel-specific ban.  '.bans' will list them all, according
     to their category.  Be sure to check out the help pages for those
     commands for more info.
-
-
-(9) LANGUAGE SUPPORT
-
-    Large parts of what eggdrop outputs have been translated to other
-    languages. At the moment we have English, French and German; however,
-    English is loaded by default.
-
-    There are three ways to set your preferred language:
-
-    * Set the environment variable EGG_LANG:
-      csh/tcsh:
-         setenv EGG_LANG <language>
-      bash/ksh:
-         export EGG_LANG=<language>
-      This takes effect right from the beginning.
-
-    * Add 'addlang "<language>"' to the bot's configuration file.
-      This takes effect as soon as the command is processed, so you will
-      probably want to add it towards the top of you configuration file.
-
-    * Type '.+lang <language>' on the party line.
-      This takes effect as soon as the command is processed.
-
-    <language> is either "english", "french", "german" or possibly
-    another language file.
-
-    The last added language is the most preferred language, so eggdrop will
-    try to find all messages in that language first and then check other
-    languages.
-
-    You can add several languages, e.g. english, french and german. If a
-    message is not found in german, eggdrop searches for a french version,
-    and if that doesn't succeed it falls back to the english message.
-
-    You can remove languages with the '-lang' command on the party line.
-    Btw: 'lstat' displays (among other information) the selected languages.
-
-
-    The default language directory is "./language". If you want to specify
-    another directory just set the environment variable EGG_LANGDIR
-    apropriately.
-
-    csh/tcsh:
-       setenv EGG_LANGDIR <directory>
-    bash/ksh:
-       export EGG_LANGDIR=<directory>
-
 
 
 (Y) BUGS AND BUG REPORTING

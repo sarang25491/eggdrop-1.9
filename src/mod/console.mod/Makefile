@@ -1,5 +1,5 @@
 # Makefile for src/mod/console.mod/
-# $Id: Makefile,v 1.14 2000/09/27 19:47:16 fabian Exp $
+# $Id: Makefile,v 1.15 2001/08/13 20:47:54 guppy Exp $
 
 srcdir = .
 
@@ -32,7 +32,7 @@ distclean: clean
 
 #safety hash
 ../console.o: .././console.mod/console.c ../../../src/mod/module.h \
- ../../../src/main.h ../../../config.h ../../../src/lang.h \
+ ../../../src/main.h ../../../config.h \
  ../../../src/eggdrop.h ../../../src/flags.h ../../../src/proto.h \
  ../../../lush.h ../../../src/misc_file.h ../../../src/cmdt.h \
  ../../../src/tclegg.h ../../../src/tclhash.h ../../../src/chan.h \

@@ -1,5 +1,5 @@
 # Makefile for src/mod/filesys.mod/
-# $Id: Makefile,v 1.15 2000/09/12 15:26:53 fabian Exp $
+# $Id: Makefile,v 1.16 2001/08/13 20:47:54 guppy Exp $
 
 srcdir = .
 
@@ -32,7 +32,7 @@ distclean: clean
 
 #safety hash
 ../filesys.o: .././filesys.mod/filesys.c ../../../config.h \
- ../../../src/mod/module.h ../../../src/main.h ../../../src/lang.h \
+ ../../../src/mod/module.h ../../../src/main.h \
  ../../../src/eggdrop.h ../../../src/flags.h ../../../src/proto.h \
  ../../../lush.h ../../../src/misc_file.h ../../../src/cmdt.h \
  ../../../src/tclegg.h ../../../src/tclhash.h ../../../src/chan.h \

@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.54 2001/08/13 14:51:12 guppy Exp $
+ * $Id: module.h,v 1.55 2001/08/13 20:47:53 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -280,7 +280,7 @@
 /* 148 - 151 */
 #define do_tcl ((void (*)(char *, char *))global[148])
 #define readtclprog ((int (*)(const char *))global[149])
-#define get_language ((char *(*)(int))global[150])
+/* 150: get_language() -- UNUSED */
 #define def_get ((void *(*)(struct userrec *, struct user_entry *))global[151])
 /* 152 - 155 */
 #define makepass ((void (*) (char *))global[152])
@@ -299,7 +299,7 @@
 #define in_chain ((int (*)(char *))global[163])
 /* 164 - 167 */
 #define add_note ((int (*)(char *,char*,char*,int,int))global[164])
-#define del_lang_section ((int(*)(char *))global[165])
+/* 165: del_lang_section() -- UNUSED */
 #define detect_dcc_flood ((int (*) (time_t *,struct chat_info *,int))global[166])
 #define flush_lines ((void(*)(int,struct chat_info*))global[167])
 /* 168 - 171 */
@@ -350,7 +350,7 @@
 /* 204 - 207 */
 #define sub_lang ((void(*)(int,char *))global[204])
 #define online_since (*(int *)(global[205]))
-#define cmd_loadlanguage ((int (*)(struct userrec *,int,char *))global[206])
+/* 206: cmd_loadlanguage() -- UNUSED */
 #define check_dcc_attrs ((int (*)(struct userrec *,int))global[207])
 /* 208 - 211 */
 #define check_dcc_chanattrs ((int (*)(struct userrec *,char *,int,int))global[208])
@@ -378,7 +378,7 @@
 #define use_invites (*(int *)(global[226]))	/* drummer/Jason */
 #define force_expire (*(int *)(global[227]))	/* Rufus */
 /* 228 - 231 */
-#define add_lang_section ((void(*)(char *))global[228])
+/* 228: add_lang_section() -- UNUSED */
 #define user_realloc(x,y) ((void *(*)(void *,int,char *,int))global[229])((x),(y),__FILE__,__LINE__)
 #define nrealloc(x,y) ((void *)(global[230]((x),(y),MODULE_NAME,__FILE__,__LINE__)))
 #define xtra_set ((int(*)(struct userrec *,struct user_entry *, void *))global[231])

@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.39 2001/08/10 23:51:20 ite Exp $
+ * $Id: eggdrop.h,v 1.40 2001/08/13 20:47:52 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -65,14 +65,6 @@
 #define DIRMAX		256	/* paranoia				*/
 #define LOGLINEMAX	767	/* for misc.c/putlog() <cybah>		*/
 #define BADHANDCHARS	"-,+*=:!.@#;$%&"
-
-
-/* Language stuff */
-
-#define LANGDIR	"./language"	/* language file directory		*/
-#define BASELANG "english"	/* language which always gets loaded
-				   before all other languages. You do
-				   not want to change this.		*/
 
 
 /*

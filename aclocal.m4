@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.50 2001/08/09 04:06:32 guppy Exp $
+dnl $Id: aclocal.m4,v 1.51 2001/08/13 20:47:51 guppy Exp $
 dnl
 
 
@@ -434,7 +434,6 @@ then
 configure: error:
 
   Your system must support ANSI C Header files.
-  These are required for the language support.  Sorry.
 
 EOF
   exit 1

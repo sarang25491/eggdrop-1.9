@@ -2,7 +2,7 @@
 #  This is the Makefile for EGGDROP (the irc bot)
 #  You should never need to edit this.
 #
-# $Id: Makefile.in,v 1.31 2001/08/13 03:05:51 guppy Exp $
+# $Id: Makefile.in,v 1.32 2001/08/13 20:47:51 guppy Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -303,7 +303,7 @@ dinstall: eggdrop ainstall
 sinstall: static ainstall
 
 ainstall: install-start install-bin install-modules install-data \
-install-help install-language install-filesys install-doc \
+install-help install-filesys install-doc \
 install-scripts install-end
 
 install-start:
@@ -418,19 +418,6 @@ install-help:
 		done; \
 	fi
 	@cd src/mod/ && $(MAKE_INSTALL) install-help
-
-install-language:
-	@echo "Copying language files."
-	@if test ! "x`echo $(srcdir)/language/*.lang`" = "x$(srcdir)/language/*.lang"; then \
-		if test ! -d $(DEST)/language; then \
-			echo "Creating 'language' subdirectory."; \
-			$(top_srcdir)/misc/mkinstalldirs $(DEST)/language; \
-		fi; \
-		for i in $(srcdir)/language/*.lang; do \
-			$(INSTALL_DATA) $$i $(DEST)/language/; \
-		done; \
-	fi
-	@cd src/mod && $(MAKE_INSTALL) install-language
 
 install-filesys:
 	@if test ! -d $(DEST)/filesys; then \

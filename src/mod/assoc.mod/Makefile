@@ -1,5 +1,5 @@
 # Makefile for src/mod/assoc.mod/
-# $Id: Makefile,v 1.12 2000/09/27 19:47:15 fabian Exp $
+# $Id: Makefile,v 1.13 2001/08/13 20:47:53 guppy Exp $
 
 srcdir = .
 
@@ -32,7 +32,7 @@ distclean: clean
 
 #safety hash
 ../assoc.o: .././assoc.mod/assoc.c ../../../src/mod/module.h \
- ../../../src/main.h ../../../config.h ../../../src/lang.h \
+ ../../../src/main.h ../../../config.h \
  ../../../src/eggdrop.h ../../../src/flags.h ../../../src/proto.h \
  ../../../lush.h ../../../src/misc_file.h ../../../src/cmdt.h \
  ../../../src/tclegg.h ../../../src/tclhash.h ../../../src/chan.h \

@@ -1,5 +1,5 @@
 # Makefile for src/mod/uptime.mod/
-# $Id: Makefile,v 1.2 2001/06/12 17:44:42 poptix Exp $
+# $Id: Makefile,v 1.3 2001/08/13 20:47:55 guppy Exp $
 srcdir = .
 
 
@@ -32,7 +32,7 @@ distclean: clean
 #safety hash
 ../uptime.o: .././uptime.mod/uptime.c ../uptime.mod/uptime.h \
  ../../../src/mod/module.h ../../../src/main.h ../../../config.h \
- ../../../src/lang.h ../../../src/eggdrop.h ../../../src/flags.h \
+ ../../../src/eggdrop.h ../../../src/flags.h \
  ../../../src/proto.h ../../../lush.h ../../../src/misc_file.h \
  ../../../src/cmdt.h ../../../src/tclegg.h ../../../src/tclhash.h \
  ../../../src/chan.h ../../../src/users.h ../../../src/compat/compat.h \

@@ -1,5 +1,5 @@
 # Makefile for src/mod/transfer.mod/
-# $Id: Makefile,v 1.11 2000/09/12 15:26:54 fabian Exp $
+# $Id: Makefile,v 1.12 2001/08/13 20:47:55 guppy Exp $
 
 srcdir = .
 
@@ -32,7 +32,7 @@ distclean: clean
 
 #safety hash
 ../transfer.o: .././transfer.mod/transfer.c ../../../src/mod/module.h \
- ../../../src/main.h ../../../config.h ../../../src/lang.h \
+ ../../../src/main.h ../../../config.h \
  ../../../src/eggdrop.h ../../../src/flags.h ../../../src/proto.h \
  ../../../lush.h ../../../src/misc_file.h ../../../src/cmdt.h \
  ../../../src/tclegg.h ../../../src/tclhash.h ../../../src/chan.h \

@@ -3,7 +3,7 @@
  *   memory allocation and deallocation
  *   keeping track of what memory is being used by whom
  *
- * $Id: mem.c,v 1.15 2001/04/12 02:39:43 guppy Exp $
+ * $Id: mem.c,v 1.16 2001/08/13 20:47:52 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -62,7 +62,6 @@ int expmem_tcl();
 int expmem_tclhash();
 int expmem_net();
 int expmem_modules();
-int expmem_language();
 int expmem_tcldcc();
 int expmem_dns();
 
@@ -123,7 +122,7 @@ void debug_mem_to_dcc(int idx)
   module_entry *me;
   char *p;
 
-  exp[0] = expmem_language();
+  exp[0] = expmem_dns();
   exp[1] = expmem_chanprog();
   exp[2] = expmem_misc();
   exp[3] = expmem_users();
@@ -134,7 +133,6 @@ void debug_mem_to_dcc(int idx)
   exp[8] = expmem_tclhash();
   exp[9] = expmem_modules(1);
   exp[10] = expmem_tcldcc();
-  exp[11] = expmem_dns();
   for (me = module_list; me; me = me->next)
     me->mem_work = 0;
   for (i = 0; i < MAX_MEM; i++)
@@ -145,7 +143,7 @@ void debug_mem_to_dcc(int idx)
     if (p)
       *p = 0;
     l = memtbl[i].size;
-    if (!strcmp(fn, "language.c"))
+    if (!strcmp(fn, "dns.c"))
       use[0] += l;
     else if (!strcmp(fn, "chanprog.c"))
       use[1] += l;
@@ -167,8 +165,6 @@ void debug_mem_to_dcc(int idx)
       use[9] += l;
     else if (!strcmp(fn, "tcldcc.c"))
       use[10] += l;
-    else if (!strcmp(fn, "dns.c"))
-      use[11] += l;
     else if (p) {
       for (me = module_list; me; me = me->next)
 	if (!strcmp(fn, me->name))
@@ -179,7 +175,7 @@ void debug_mem_to_dcc(int idx)
   for (i = 0; i < MAX_MEM; i++) {
     switch (i) {
     case 0:
-      strcpy(fn, "language.c");
+      strcpy(fn, "dns.c");
       break;
     case 1:
       strcpy(fn, "chanprog.c");
@@ -210,9 +206,6 @@ void debug_mem_to_dcc(int idx)
       break;
     case 10:
       strcpy(fn, "tcldcc.c");
-      break;
-    case 11:
-      strcpy(fn, "dns.c");
       break;
     }
     if (use[i] == exp[i]) {

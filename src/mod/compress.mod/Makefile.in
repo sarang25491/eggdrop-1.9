@@ -1,5 +1,5 @@
 # Makefile.in for src/mod/compress.mod/
-# $Id: Makefile.in,v 1.7 2000/09/12 15:26:52 fabian Exp $
+# $Id: Makefile.in,v 1.8 2001/08/13 20:47:54 guppy Exp $
 
 ZLIB = @ZLIB@
 srcdir = .
@@ -36,7 +36,7 @@ distclean: clean
 
 #safety hash
 ../compress.o: .././compress.mod/compress.c ../../../src/mod/module.h \
- ../../../src/main.h ../../../config.h ../../../src/lang.h \
+ ../../../src/main.h ../../../config.h \
  ../../../src/eggdrop.h ../../../src/flags.h ../../../src/proto.h \
  ../../../lush.h ../../../src/misc_file.h ../../../src/cmdt.h \
  ../../../src/tclegg.h ../../../src/tclhash.h ../../../src/chan.h \
