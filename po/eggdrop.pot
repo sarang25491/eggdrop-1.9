@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-01-13 06:15-0600\n"
+"POT-Creation-Date: 2004-01-13 12:15-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -525,11 +525,11 @@ msgstr ""
 msgid "Help path: %s (%d help entries loaded)"
 msgstr ""
 
-#: src/core_party.c:198 src/core_party.c:305 src/main.c:144
+#: src/core_party.c:198 src/core_party.c:305 src/main.c:142
 msgid "Saving user file..."
 msgstr ""
 
-#: src/core_party.c:200 src/main.c:146
+#: src/core_party.c:200 src/main.c:144
 msgid "Saving config file..."
 msgstr ""
 
@@ -630,34 +630,34 @@ msgstr ""
 msgid "Cycling logfile %s: over max-logsize (%d kilobytes)."
 msgstr ""
 
-#: src/main.c:148
+#: src/main.c:146
 msgid "Bot shutting down: received TERMINATE signal."
 msgstr ""
 
-#: src/main.c:153
+#: src/main.c:151
 msgid "Received TERMINATE signal (ignoring)."
 msgstr ""
 
-#: src/main.c:159
+#: src/main.c:157
 msgid "Received QUIT signal (ignoring)."
 msgstr ""
 
-#: src/main.c:166
+#: src/main.c:164
 msgid "Received HUP signal (ignoring)."
 msgstr ""
 
-#: src/main.c:173
+#: src/main.c:171
 msgid "Received ILL signal (ignoring)."
 msgstr ""
 
-#: src/main.c:185
+#: src/main.c:183
 #, c-format
 msgid ""
 "\n"
 "Usage: %s [OPTIONS]... [FILE]\n"
 msgstr ""
 
-#: src/main.c:186
+#: src/main.c:184
 msgid ""
 "\n"
 "  -h, --help                 Print help and exit\n"
@@ -671,16 +671,16 @@ msgid ""
 msgstr ""
 
 #. bug: option not considered.
-#: src/main.c:253
+#: src/main.c:251
 #, c-format
 msgid "%s: option unknown: %c\n"
 msgstr ""
 
-#: src/main.c:287
+#: src/main.c:286
 #, c-format
 msgid "Warning: timer drift (%d minutes)."
 msgstr ""
 
-#: src/main.c:421
+#: src/main.c:420
 msgid "Help file core_commands.xml could not be opened."
 msgstr ""
