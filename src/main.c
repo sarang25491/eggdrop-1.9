@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.98 2001/11/14 01:57:50 stdarg Exp $
+ * $Id: main.c,v 1.99 2001/11/27 02:08:20 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -645,9 +645,11 @@ int main(int argc, char **argv)
   for (i = 0; i < 16; i++)
     Context;
 
+#ifdef ENABLE_NLS
   setlocale(LC_MESSAGES, "");
   bindtextdomain(PACKAGE, LOCALEDIR);
   textdomain(PACKAGE);
+#endif
   
 #include "patch.h"
   /* Version info! */
