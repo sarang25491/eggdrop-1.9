@@ -3,12 +3,11 @@
 
 #include "server.h"
 #include "servsock.h"
+#include "input.h"
 #include "serverlist.h"
 #include "channels.h"
-#include "parse.h"
 #include "nicklist.h"
 #include "output.h"
-#include "binds.h"
 #include "dcc.h"
 
 /* From server.c. */
@@ -47,9 +46,7 @@ void connect_to_next_server() {
 	str_redup(&current_server.server_host, serv->host);
 	str_redup(&current_server.server_self, serv->host);
 	str_redup(&current_server.pass, serv->pass);
-	str_redup(&current_server.chantypes, server_config.chantypes);
-	if (!strcasecmp(server_config.strcmp, "ascii")) current_server.strcmp = strcasecmp;
-	else current_server.strcmp = irccmp;
+	current_server.strcmp = strcasecmp;
 
 	if (serv->port) current_server.port = serv->port;
 	else current_server.port = server_config.default_port;
@@ -74,6 +71,7 @@ static void disconnect_server()
 
 	current_server.connected = 0;
 	current_server.registered = 0;
+	current_server.got005 = 0;
 
 	if (current_server.idx != -1) {
 		sockbuf_delete(current_server.idx);
@@ -136,40 +134,8 @@ static int server_on_connect(void *client_data, int idx, const char *peer_ip, in
 
 static int server_on_read(void *client_data, int idx, char *text, int len)
 {
-	irc_msg_t msg;
-	char *from_nick = NULL, *from_uhost = NULL;
-	user_t *u = NULL;
-	char buf[128], *full;
-
 	if (!len) return(0);
-
-	/* This would be a good place to put an SFILT bind, so that scripts
-		and other modules can modify text sent from the server. */
-	if (server_config.raw_log) {
-		putlog(LOG_RAW, "*", "[@] %s", text);
-	}
-
-	irc_msg_parse(text, &msg);
-
-	if (msg.prefix) {
-		from_nick = msg.prefix;
-		from_uhost = strchr(from_nick, '!');
-		if (from_uhost) {
-			u = user_lookup_by_irchost(from_nick);
-			*from_uhost = 0;
-			from_uhost++;
-		}
-		else {
-			from_uhost = uhost_cache_lookup(from_nick);
-			if (from_uhost) {
-				full = egg_msprintf(buf, sizeof(buf), NULL, "%s!%s", from_nick, from_uhost);
-				u = user_lookup_by_irchost(full);
-				if (full != buf) free(full);
-			}
-		}
-	}
-
-	bind_check(BT_raw, msg.cmd, from_nick, from_uhost, u, msg.cmd, msg.nargs, msg.args);
+	server_parse_input(text);
 	return(0);
 }
 

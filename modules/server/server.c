@@ -37,6 +37,19 @@ extern bind_list_t server_raw_binds[];
 /* From dcc_cmd.c */
 extern bind_list_t server_party_commands[];
 
+/* Look up the information we get from 005. */
+char *server_support(const char *name)
+{
+	int i;
+
+	for (i = 0; i < current_server.nsupport; i++) {
+		if (!strcasecmp(name, current_server.support[i].name)) {
+			return(current_server.support[i].value);
+		}
+	}
+	return(NULL);
+}
+
 /* Every second, we want to
  * 1. See if we're ready to connect to the next server (cycle_delay == 0)
  * 2. Dequeue some messages if we're connected. */
@@ -130,8 +143,7 @@ static config_var_t server_config_vars[] = {
 	{"cycle_delay", &server_config.cycle_delay, CONFIG_INT},
 	{"default_port", &server_config.default_port, CONFIG_INT},
 
-	{"chantypes", &server_config.chantypes, CONFIG_STRING},
-	{"strcmp", &server_config.strcmp, CONFIG_STRING},
+	{"fake005", &server_config.fake005, CONFIG_STRING},
 
 	{"raw_log", &server_config.raw_log, CONFIG_INT},
 
@@ -156,8 +168,7 @@ static void server_config_init()
 	server_config.keepnick = 0;
 	server_config.cycle_delay = 10;
 	server_config.default_port = 6667;
-	server_config.chantypes = strdup("#&");
-	server_config.strcmp = strdup("rfc1459");
+	server_config.fake005 = NULL;
 
 	/* Link our config vars. */
 	config_root = config_get_root("eggdrop");

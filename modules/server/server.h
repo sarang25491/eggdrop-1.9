@@ -14,8 +14,9 @@ typedef struct {
 	int dcc_timeout;
 	char *user;
 	char *realname;
-	char *chantypes;
-	char *strcmp;
+
+	/* Override the 005 sent by the server. */
+	char *fake005;
 
 	int raw_log;
 
@@ -33,12 +34,20 @@ typedef struct {
 
 	/* Our info on the server. */
 	int registered;	/* Has the server accepted our registration? */
+	int got005;	/* Did we get the 005 message? */
 	char *nick, *user, *host, *real_name;
 	char *pass;
 
 	/* Information about this server. */
+	struct {
+		char *name;
+		char *value;
+	} *support;
+	int nsupport;
 	char *chantypes;
 	int (*strcmp)(const char *s1, const char *s2);
+	char *type1modes, *type2modes, *type3modes, *type4modes;
+	char *modeprefix, *whoprefix;
 
 	/* Our dcc information for this server. */
 	char *myip;
@@ -47,5 +56,8 @@ typedef struct {
 
 extern server_config_t server_config;
 extern current_server_t current_server;
+
+/* And one lonely function, because he had nowhere else to fit. */
+extern char *server_support(const char *name);
 
 #endif

@@ -18,7 +18,8 @@ hash_table_t *uhost_cache_ht = NULL;
 static bind_list_t channel_raw_binds[];
 
 /* Prototypes. */
-int uhost_cache_delete(const void *key, void *data, void *param);
+static int uhost_cache_delete(const void *key, void *data, void *param);
+static void clear_banlist(channel_t *chan);
 
 void server_channel_init()
 {
@@ -46,6 +47,7 @@ void server_channel_destroy()
 		if (chan->topic) free(chan->topic);
 		if (chan->topic_nick) free(chan->topic_nick);
 		if (chan->key) free(chan->key);
+		clear_banlist(chan);
 		free(chan);
 	}
 
@@ -89,7 +91,7 @@ static void make_lowercase(char *nick)
 	}
 }
 
-int uhost_cache_delete(const void *key, void *data, void *param)
+static int uhost_cache_delete(const void *key, void *data, void *param)
 {
 	uhost_cache_entry_t *cache = data;
 
@@ -196,8 +198,9 @@ void channel_on_join(const char *chan_name, const char *nick, const char *uhost)
 	if (!chan) return;
 
 	if (create) {
-		chan->status |= CHANNEL_WHO;
+		chan->status |= CHANNEL_WHOLIST | CHANNEL_BANLIST;
 		printserv(SERVER_NORMAL, "WHO %s\r\n", chan_name);
+		printserv(SERVER_NORMAL, "MODE %s +b\r\n", chan_name);
 	}
 
 	channel_add_member(chan_name, nick, uhost);
@@ -206,10 +209,12 @@ void channel_on_join(const char *chan_name, const char *nick, const char *uhost)
 static void real_channel_leave(channel_t *chan, const char *nick, const char *uhost, user_t *u)
 {
 	channel_member_t *m;
+	char *chan_name;
 
 	if (match_my_nick(nick)) {
 		channel_member_t *next;
 
+		chan_name = strdup(chan->name);
 		for (m = chan->member_head; m; m = next) {
 			next = m->next;
 			uhost_cache_decref(m->nick);
@@ -227,6 +232,7 @@ static void real_channel_leave(channel_t *chan, const char *nick, const char *uh
 	else {
 		channel_member_t *prev;
 
+		chan_name = chan->name;
 		uhost_cache_decref(nick);
 		prev = NULL;
 		for (m = chan->member_head; m; m = m->next) {
@@ -243,7 +249,9 @@ static void real_channel_leave(channel_t *chan, const char *nick, const char *uh
 		free(m);
 	}
 
-	bind_check(BT_leave, chan->name, nick, uhost, u, chan->name);
+	bind_check(BT_leave, chan_name, nick, uhost, u, chan_name);
+
+	if (match_my_nick(nick)) free(chan_name);
 }
 
 void channel_on_leave(const char *chan_name, const char *nick, const char *uhost, user_t *u)
@@ -255,6 +263,7 @@ void channel_on_leave(const char *chan_name, const char *nick, const char *uhost
 	if (match_my_nick(nick)) {
 		if (prev) prev->next = chan->next;
 		else channel_head = chan->next;
+		nchannels--;
 	}
 	real_channel_leave(chan, nick, uhost, u);
 }
@@ -269,6 +278,7 @@ void channel_on_quit(const char *nick, const char *uhost, user_t *u)
 			real_channel_leave(chan, nick, uhost, u);
 		}
 		channel_head = NULL;
+		nchannels = 0;
 	}
 	else {
 		for (chan = channel_head; chan; chan = chan->next) {
@@ -339,7 +349,7 @@ static int got315(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 	channel_t *chan = NULL;
 
 	channel_lookup(chan_name, 0, &chan, NULL);
-	if (chan) chan->status &= ~CHANNEL_WHO;
+	if (chan) chan->status &= ~CHANNEL_WHOLIST;
 	return(0);
 }
 
@@ -386,6 +396,187 @@ static int got333(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 	return(0);
 }
 
+/************************************
+ * Ban handling
+ */
+
+static void add_ban(channel_t *chan, const char *mask, const char *set_by, int time)
+{
+	channel_mask_t *m;
+
+	m = calloc(1, sizeof(*m));
+	m->mask = strdup(mask);
+	if (set_by) m->set_by = strdup(set_by);
+	m->time = time;
+	m->next = chan->ban_head;
+	chan->ban_head = m;
+}
+
+static void clear_banlist(channel_t *chan)
+{
+	channel_mask_t *m, *next;
+
+	for (m = chan->ban_head; m; m = next) {
+		next = m->next;
+		free(m->mask);
+		if (m->set_by) free(m->set_by);
+		free(m);
+	}
+	chan->ban_head = NULL;
+}
+
+/* :server 367 <ournick> <chan> <ban> [<nick> <time>] */
+static int got367(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
+{
+	char *chan_name = args[1];
+	char *ban = args[2];
+	channel_t *chan;
+
+	channel_lookup(chan_name, 0, &chan, NULL);
+	if (!chan || !(chan->status & CHANNEL_BANLIST)) return(0);
+	add_ban(chan, ban, (nargs > 3) ? args[3] : NULL, (nargs > 4) ? atoi(args[4]) : -1);
+	return(0);
+}
+
+/* :server 368 <ournick> <chan> :End of channel ban list */
+static int got368(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
+{
+	char *chan_name = args[1];
+	channel_t *chan;
+
+	channel_lookup(chan_name, 0, &chan, NULL);
+	if (!chan) return(0);
+	chan->status &= ~CHANNEL_BANLIST;
+	return(0);
+}
+
+/**********************************************
+ * Join/leave stuff.
+ */
+
+/* Got a join message. */
+static int gotjoin(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
+{
+	char *chan = args[0];
+
+	channel_on_join(chan, from_nick, from_uhost);
+	bind_check(BT_join, chan, from_nick, from_uhost, u, chan);
+	return(0);
+}
+
+/* Got a part message. */
+static int gotpart(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
+{
+	char *chan = args[0];
+	char *text = args[1];
+
+	channel_on_leave(chan, from_nick, from_uhost, u);
+	bind_check(BT_part, chan, from_nick, from_uhost, u, chan, text);
+	return(0);
+}
+
+/* Got a quit message. */
+static int gotquit(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
+{
+	char *text = args[0];
+
+	channel_on_quit(from_nick, from_uhost, u);
+	bind_check(BT_quit, from_nick, from_nick, from_uhost, u, text);
+
+	return(0);
+}
+
+/* Got a kick message. */
+static int gotkick(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
+{
+	char *chan = args[0];
+	char *victim = args[1];
+	char *text = args[2];
+	char *uhost;
+
+	if (!text) text = "";
+	uhost = uhost_cache_lookup(victim);
+	if (!uhost) uhost = "";
+
+	channel_on_leave(chan, victim, uhost, u);
+	bind_check(BT_kick, from_nick, from_nick, from_uhost, u, chan, victim, text);
+
+	return(0);
+}
+
+/* Got nick change.  */
+static int gotnick(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
+{
+	char *newnick = args[0];
+
+	channel_on_nick(from_nick, newnick);
+	bind_check(BT_nick, from_nick, from_nick, from_uhost, u, newnick);
+
+	/* Is it our nick that's changing? */
+	if (match_my_nick(from_nick)) str_redup(&current_server.nick, newnick);
+
+	return(0);
+}
+
+/*************************************************
+ * Mode stuff.
+ */
+
+/* Got a mode change. */
+static int gotmode(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
+{
+	char *dest = args[0];
+	char *change = args[1];
+	char *arg;
+	char changestr[3];
+	int hasarg, curarg;
+	channel_t *chan;
+
+	/* Is it a user mode? */
+	if (!strchr(current_server.chantypes, *dest)) {
+		/* Not interested right now. */
+		return(0);
+	}
+
+	/* Make sure it's a valid channel. */
+	channel_lookup(dest, 0, &chan, NULL);
+	if (!chan) return(0);
+
+	hasarg = 0;
+	curarg = 2;
+	changestr[0] = '+';
+	changestr[2] = 0;
+	while (*change) {
+		/* Direction? */
+		if (*change == '+' || *change == '-') {
+			changestr[0] = *change;
+			change++;
+			continue;
+		}
+
+		/* Figure out if it takes an argument. */
+		if (strchr(current_server.modeprefix, *change) || strchr(current_server.type1modes, *change) || strchr(current_server.type2modes, *change)) {
+			hasarg = 1;
+		}
+		else if (strchr(current_server.type3modes, *change)) {
+			if (changestr[0] == '+') hasarg = 1;
+			else hasarg = 0;
+		}
+		else {
+			hasarg = 0;
+		}
+
+		if (hasarg) arg = args[curarg++];
+		else arg = NULL;
+
+		changestr[1] = *change;
+
+		bind_check(BT_mode, changestr, from_nick, from_uhost, u, dest, changestr, arg);
+		change++;
+	}
+	return(0);
+}
+
 static bind_list_t channel_raw_binds[] = {
 	/* WHO replies */
 	{"352", got352}, /* WHO reply */
@@ -395,6 +586,20 @@ static bind_list_t channel_raw_binds[] = {
 	{"331", got331},
 	{"332", got332},
 	{"333", got333},
+
+	/* Bans. */
+	{"367", got367},
+	{"368", got368},
+
+	/* Channel member stuff. */
+	{"JOIN", gotjoin},
+	{"PART", gotpart},
+	{"QUIT", gotquit},
+	{"KICK", gotkick},
+	{"NICK", gotnick},
+
+	/* Mode. */
+	{"MODE", gotmode},
 
 	{NULL, NULL}
 };

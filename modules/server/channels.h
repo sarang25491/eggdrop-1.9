@@ -2,7 +2,8 @@
 #define _CHANNELS_H_
 
 /* Status bits for channels. */
-#define CHANNEL_WHO	1
+#define CHANNEL_WHOLIST	1
+#define CHANNEL_BANLIST	2
 
 typedef struct {
 	char *nick;
@@ -19,6 +20,13 @@ typedef struct channel_member {
 	int mode;
 } channel_member_t;
 
+typedef struct channel_mask {
+	struct channel_mask *next;
+	char *mask;
+	char *set_by;
+	int time;
+} channel_mask_t;
+
 typedef struct channel {
 	struct channel *next;
 
@@ -31,10 +39,13 @@ typedef struct channel {
 	int limit;	/* Channel limit. */
 	char *key;	/* Channel key. */
 
+	channel_mask_t *ban_head;	/* Ban list. */
+	int nbans;
+
 	int status;
 
+	channel_member_t *member_head;	/* Member list. */
 	int nmembers;
-	channel_member_t *member_head;
 } channel_t;
 
 extern channel_t *channel_head;

@@ -5,6 +5,7 @@
 #include <eggdrop/eggdrop.h>
 #include "lib/eggdrop/module.h"
 #include "server.h"
+#include "parse.h"
 #include "channels.h"
 #include "parse.h"
 #include "output.h"
@@ -13,9 +14,48 @@
 #include "nicklist.h"
 #include "dcc.h"
 
+int server_parse_input(char *text)
+{
+	irc_msg_t msg;
+	char *from_nick = NULL, *from_uhost = NULL;
+	user_t *u = NULL;
+	char buf[128], *full;
+
+	/* This would be a good place to put an SFILT bind, so that scripts
+		and other modules can modify text sent from the server. */
+	if (server_config.raw_log) {
+		putlog(LOG_RAW, "*", "[@] %s", text);
+	}
+
+	irc_msg_parse(text, &msg);
+
+	if (msg.prefix) {
+		from_nick = msg.prefix;
+		from_uhost = strchr(from_nick, '!');
+		if (from_uhost) {
+			u = user_lookup_by_irchost(from_nick);
+			*from_uhost = 0;
+			from_uhost++;
+		}
+		else {
+			from_uhost = uhost_cache_lookup(from_nick);
+			if (from_uhost) {
+				full = egg_msprintf(buf, sizeof(buf), NULL, "%s!%s", from_nick, from_uhost);
+				u = user_lookup_by_irchost(full);
+				if (full != buf) free(full);
+			}
+		}
+	}
+
+	bind_check(BT_raw, msg.cmd, from_nick, from_uhost, u, msg.cmd, msg.nargs, msg.args);
+	return(0);
+}
+
 /* 001: welcome to IRC */
 static int got001(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
+	char *fake;
+
 	current_server.registered = 1;
 
 	/* First arg is what server decided our nick is. */
@@ -23,6 +63,12 @@ static int got001(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 
 	/* Save the name the server calls itself. */
 	str_redup(&current_server.server_self, from_nick);
+
+	if (server_config.fake005 && server_config.fake005[0]) {
+		fake = strdup(server_config.fake005);
+		server_parse_input(fake);
+		free(fake);
+	}
 
 	check_bind_event("init-server");
 
@@ -42,19 +88,79 @@ static int got001(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
  */
 static int got005(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
-	char *arg;
+	char *arg, *name, *equalsign, *value;
 	int i;
+
+	/* We only process this once (fake or real). */
+	if (current_server.got005) return(0);
+	current_server.got005 = 1;
+
+	for (i = 0; i < current_server.nsupport; i++) {
+		free(current_server.support[i].name);
+		free(current_server.support[i].value);
+	}
+	if (current_server.support) free(current_server.support);
+
+	current_server.support = malloc(sizeof(*current_server.support) * (nargs-1));
+	current_server.nsupport = nargs-1;
 
 	for (i = 1; i < nargs-1; i++) {
 		arg = args[i];
-		if (!strncasecmp(arg, "chantypes=", 10)) {
-			str_redup(&current_server.chantypes, arg+10);
+
+		equalsign = strchr(arg, '=');
+		if (equalsign) {
+			int len;
+
+			len = equalsign - arg;
+			name = malloc(len + 1);
+			memcpy(name, arg, len);
+			name[len] = 0;
+			value = strdup(equalsign+1);
 		}
-		else if (!strncasecmp(arg, "casemapping=", 12)) {
-			arg += 12;
-			if (!strcasecmp(arg, "ascii")) current_server.strcmp = strcasecmp;
-			else if (!strcasecmp(arg, "rfc1459")) current_server.strcmp = irccmp;
+		else {
+			name = strdup(arg);
+			value = strdup("true");
+		}
+
+		current_server.support[i-1].name = name;
+		current_server.support[i-1].value = value;
+
+		if (!strcasecmp(name, "chantypes")) {
+			str_redup(&current_server.chantypes, value);
+		}
+		else if (!strcasecmp(arg, "casemapping")) {
+			if (!strcasecmp(value, "ascii")) current_server.strcmp = strcasecmp;
+			else if (!strcasecmp(value, "rfc1459")) current_server.strcmp = irccmp;
 			else current_server.strcmp = strcasecmp;
+		}
+		else if (!strcasecmp(name, "chanmodes")) {
+			char types[4][33];
+			char *comma;
+			int j;
+
+			for (j = 0; j < 3; j++) {
+				comma = strchr(value, ',');
+				if (comma) *comma = 0;
+				strlcpy(types[j], value, 32);
+				if (comma) *comma = ',';
+				value = comma+1;
+			}
+			str_redup(&current_server.type1modes, types[0]);
+			str_redup(&current_server.type2modes, types[1]);
+			str_redup(&current_server.type3modes, types[2]);
+			str_redup(&current_server.type4modes, types[3]);
+		}
+		else if (!strcasecmp(name, "prefix")) {
+			char *paren;
+
+			value++;
+			paren = strchr(value, ')');
+			if (!paren) continue;
+			*paren = 0;
+			str_redup(&current_server.modeprefix, value);
+			*paren = ')';
+			value = paren+1;
+			str_redup(&current_server.whoprefix, value);
 		}
 	}
 	return(0);
@@ -341,75 +447,22 @@ static int got451(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 /* Got error */
 static int goterror(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
+	if (current_server.registered) {
+		char *uhost, *full;
+
+		uhost = egg_mprintf("%s@%s", current_server.user, current_server.host);
+		full = egg_mprintf("%s!%s", current_server.nick, uhost);
+		u = user_lookup_by_irchost_nocache(full);
+		channel_on_quit(current_server.nick, full, u);
+		free(full);
+	}
+
 	putlog(LOG_MSGS | LOG_SERV, "*", "-ERROR from server- %s", args[0]);
 	putlog(LOG_SERV, "*", "Disconnecting from server.");
 	kill_server("disconnecting due to error");
 	return(0);
 }
 
-/* Got a join message. */
-static int gotjoin(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
-{
-	char *chan = args[0];
-
-	channel_on_join(chan, from_nick, from_uhost);
-	bind_check(BT_join, chan, from_nick, from_uhost, u, chan);
-	return(0);
-}
-
-/* Got a part message. */
-static int gotpart(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
-{
-	char *chan = args[0];
-	char *text = args[1];
-
-	channel_on_leave(chan, from_nick, from_uhost, u);
-	bind_check(BT_part, chan, from_nick, from_uhost, u, chan, text);
-	return(0);
-}
-
-/* Got a quit message. */
-static int gotquit(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
-{
-	char *text = args[0];
-
-	channel_on_quit(from_nick, from_uhost, u);
-	bind_check(BT_quit, from_nick, from_nick, from_uhost, u, text);
-
-	return(0);
-}
-
-/* Got a kick message. */
-static int gotkick(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
-{
-	char *chan = args[0];
-	char *victim = args[1];
-	char *text = args[2];
-	char *uhost;
-
-	if (!text) text = "";
-	uhost = uhost_cache_lookup(victim);
-	if (!uhost) uhost = "";
-
-	channel_on_leave(chan, victim, uhost, u);
-	bind_check(BT_kick, from_nick, from_nick, from_uhost, u, chan, victim, text);
-
-	return(0);
-}
-
-/* Got nick change.  */
-static int gotnick(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
-{
-	char *newnick = args[0];
-
-	channel_on_nick(from_nick, newnick);
-	bind_check(BT_nick, from_nick, from_nick, from_uhost, u, newnick);
-
-	/* Is it our nick that's changing? */
-	if (match_my_nick(from_nick)) str_redup(&current_server.nick, newnick);
-
-	return(0);
-}
 
 /* Pings are immediately returned, no queue. */
 static int gotping(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
@@ -446,12 +499,7 @@ bind_list_t server_raw_binds[] = {
 	{"NOTICE", gotnotice},
 	{"WALLOPS", gotwall},
 	{"PING", gotping},
-	{"NICK", gotnick},
 	{"ERROR", goterror},
-	{"JOIN", gotjoin},
-	{"PART", gotpart},
-	{"QUIT", gotquit},
-	{"KICK", gotkick},
 	{"001", got001},
 	{"005", got005},
 	{"432",	got432},

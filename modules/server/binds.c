@@ -23,7 +23,8 @@ bind_table_t *BT_wall = NULL,
 	*BT_part = NULL,
 	*BT_quit = NULL,
 	*BT_kick = NULL,
-	*BT_leave = NULL;
+	*BT_leave = NULL,
+	*BT_mode = NULL;
 
 void server_binds_destroy()
 {
@@ -44,6 +45,7 @@ void server_binds_destroy()
 	bind_table_del(BT_quit);
 	bind_table_del(BT_kick);
 	bind_table_del(BT_leave);
+	bind_table_del(BT_mode);
 }
 
 void server_binds_init()
@@ -66,6 +68,7 @@ void server_binds_init()
 	BT_quit = bind_table_add("quit", 4, "ssUs", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
 	BT_kick = bind_table_add("kick", 6, "ssUss", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
 	BT_leave = bind_table_add("leave", 5, "ssUs", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
+	BT_mode = bind_table_add("mode", 6, "ssUsss", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
 
 	bind_add_list("ctcp", ctcp_dcc_binds);
 }

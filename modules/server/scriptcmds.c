@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.18 2003/03/05 12:20:59 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.19 2003/03/06 09:15:33 stdarg Exp $";
 #endif
 */
 
@@ -160,6 +160,30 @@ static int script_channel_topic(script_var_t *retval, char *chan_name)
 	script_list_append(retval, script_string(chan->topic, -1));
 	script_list_append(retval, script_string(chan->topic_nick, -1));
 	script_list_append(retval, script_int(chan->topic_time));
+	return(0);
+}
+
+static int script_channel_bans(script_var_t *retval, char *chan_name)
+{
+	channel_t *chan;
+	channel_mask_t *m;
+
+	retval->type = SCRIPT_ARRAY | SCRIPT_FREE | SCRIPT_VAR;
+	retval->len = 0;
+
+	channel_lookup(chan_name, 0, &chan, NULL);
+	if (!chan) return(-1);
+
+	for (m = chan->ban_head; m; m = m->next) {
+		script_list_append(retval,
+			script_list(3,
+				script_string(m->mask, -1),
+				script_string(m->set_by, -1),
+				script_int(m->time)
+			)
+		);
+	}
+	return(0);
 }
 
 static script_linked_var_t server_script_vars[] = {
@@ -174,13 +198,16 @@ static script_linked_var_t server_script_vars[] = {
 static script_command_t server_script_cmds[] = {
         {"", "jump", script_jump, NULL, 0, "i", "num", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_PASS_COUNT},
         {"", "isbotnick", script_isbotnick, NULL, 1, "s", "nick", SCRIPT_INTEGER, 0},
-        {"", "putserv", script_putserv, NULL, 1, "sss", "?-queuetype? ?-next? text", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT},
 	{"", "server_add", server_add, NULL, 1, "sis", "host ?port? ?pass?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
 	{"", "server_del", server_del, NULL, 1, "i", "server-num", SCRIPT_INTEGER, 0},
 	{"", "server_clear", server_clear, NULL, 0, "", "", SCRIPT_INTEGER, 0},
 	{"", "nick_add", nick_add, NULL, 1, "s", "nick", SCRIPT_INTEGER, 0},
 	{"", "nick_del", nick_del, NULL, 1, "i", "nick-num", SCRIPT_INTEGER, 0},
 	{"", "nick_clear", nick_clear, NULL, 0, "", "", SCRIPT_INTEGER, 0},
+
+	/* Server commands. */
+	{"", "server_support", server_support, NULL, 1, "s", "name", SCRIPT_STRING, 0},
+        {"", "putserv", script_putserv, NULL, 1, "sss", "?-queuetype? ?-next? text", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT},
 
 	/* DCC commands. */
 	{"", "dcc_chat", dcc_start_chat, NULL, 1, "si", "nick ?timeout?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
@@ -193,6 +220,7 @@ static script_command_t server_script_cmds[] = {
 	{"", "channel_members", script_channel_members, NULL, 1, "s", "channel", 0, SCRIPT_PASS_RETVAL},
 	{"", "channel_get_uhost", uhost_cache_lookup, NULL, 1, "s", "nick", SCRIPT_STRING, 0},
 	{"", "channel_topic", script_channel_topic, NULL, 1, "s", "channel", 0, SCRIPT_PASS_RETVAL},
+	{"", "channel_bans", script_channel_bans, NULL, 1, "s", "channel", 0, SCRIPT_PASS_RETVAL},
         {0}
 };
 
