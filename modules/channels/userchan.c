@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: userchan.c,v 1.16 2003/02/15 09:07:15 wcc Exp $";
+static const char rcsid[] = "$Id: userchan.c,v 1.17 2003/02/16 07:05:25 wcc Exp $";
 #endif
 */
 
@@ -256,7 +256,7 @@ static int u_delmask(char type, struct chanset_t *c, char *who, int doit)
     j--;
     for (; (*u) && j; u = &((*u)->next), j--);
     if (*u) {
-      strncpyz(temp, (*u)->mask, sizeof temp);
+      strlcpy(temp, (*u)->mask, sizeof temp);
       i = 1;
     } else
       return -j - 1;
@@ -264,7 +264,7 @@ static int u_delmask(char type, struct chanset_t *c, char *who, int doit)
     /* Find matching host, if there is one */
     for (; *u && !i; u = &((*u)->next))
       if (!irccmp((*u)->mask, who)) {
-        strncpyz(temp, who, sizeof temp);
+        strlcpy(temp, who, sizeof temp);
 	i = 1;
 	break;
       }
