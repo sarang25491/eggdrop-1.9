@@ -1,3 +1,26 @@
+2003-12-18 23:11  stdarg <stdarg@techmonkeys.org>
+
+	* modules/proxy/: Makefile.am, http.c, proxy.c, proxy.h:
+
+	
+	* Initial http proxy support 
+
+2003-12-18 23:10  stdarg <stdarg@techmonkeys.org>
+
+	* configure.ac, lib/eggdrop/eggnet.c, lib/eggdrop/eggnet.h,
+	modules/Makefile.am, modules/javascript/javascript.c,
+	modules/oldbotnet/oldbotnet.c, modules/perlscript/perlscript.c,
+	modules/server/input.c:
+
+	
+	* Fix for 005 parsing when multiple 005 messages are received 
+
+2003-12-18 18:15  Automatic CVS Scripts
+
+	* po/eggdrop.pot:
+
+	Pots 
+
 2003-12-18 12:15  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
