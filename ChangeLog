@@ -1,3 +1,9 @@
+2001-08-19 02:24  Dobos Lorant <drummer@buli.sk>
+
+	* aclocal.m4, src/net.c:
+
+	Small changes to ipv6 detection to fail on cygwin 
+
 2001-08-18 18:56  Dobos Lorant <drummer@buli.sk>
 
 	* src/mod/: irc.mod/msgcmds.c, server.mod/server.c,
