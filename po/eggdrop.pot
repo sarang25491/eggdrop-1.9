@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-01-20 12:15-0600\n"
+"POT-Creation-Date: 2004-01-20 18:15-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -579,7 +579,7 @@ msgstr ""
 msgid "Syntax: -user <handle>"
 msgstr ""
 
-#: src/core_party.c:341
+#: src/core_party.c:341 src/core_party.c:366 src/core_party.c:404
 #, c-format
 msgid "User '%s' not found."
 msgstr ""
@@ -589,29 +589,60 @@ msgstr ""
 msgid "Deleting user '%s'."
 msgstr ""
 
-#: src/core_party.c:372
+#: src/core_party.c:356
+msgid "Syntax: +host [handle] <host>"
+msgstr ""
+
+#: src/core_party.c:373
+msgid "Only valid users can add hosts."
+msgstr ""
+
+#: src/core_party.c:378
+#, c-format
+msgid "Added '%1$s' to user '%2$s'."
+msgstr ""
+
+#: src/core_party.c:394
+msgid "Syntax: -host [handle] <host>"
+msgstr ""
+
+#: src/core_party.c:411
+msgid "Only valid users can remove hosts."
+msgstr ""
+
+#: src/core_party.c:416
+#, c-format
+msgid "Mask '%1$s' not found for user '%2$s'."
+msgstr ""
+
+#: src/core_party.c:419
+#, c-format
+msgid "Removed '%1$s' from user '%2$s'."
+msgstr ""
+
+#: src/core_party.c:442
 msgid "Syntax: chattr <handle> [channel] <+/-flags>"
 msgstr ""
 
-#: src/core_party.c:384
+#: src/core_party.c:454
 #, c-format
 msgid "Flags for %s are now '%s'."
 msgstr ""
 
-#: src/core_party.c:386
+#: src/core_party.c:456
 #, c-format
 msgid "'%s' is not a valid user."
 msgstr ""
 
-#: src/core_party.c:399
+#: src/core_party.c:469
 msgid "Loaded modules:"
 msgstr ""
 
-#: src/core_party.c:411
+#: src/core_party.c:480
 msgid "Syntax: help <section>"
 msgstr ""
 
-#: src/core_party.c:417
+#: src/core_party.c:486
 #, c-format
 msgid "No help found for '%s'."
 msgstr ""
