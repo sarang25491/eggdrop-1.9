@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2001-10-29 04:00-0600\n"
+"POT-Creation-Date: 2001-10-30 04:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -655,7 +655,7 @@ msgstr ""
 msgid "Error loading module:"
 msgstr ""
 
-#: src/cmds.c:2270 src/modules.c:666
+#: src/cmds.c:2270 src/modules.c:612
 #, c-format
 msgid "Module loaded: %-16s"
 msgstr ""
@@ -1183,7 +1183,7 @@ msgstr ""
 msgid "You can't unload an encryption module"
 msgstr ""
 
-#: modules/blowfish/blowfish.c:456 src/modules.c:628 src/tclmisc.c:284
+#: modules/blowfish/blowfish.c:456 src/modules.c:574 src/tclmisc.c:284
 msgid "Already loaded."
 msgstr ""
 
@@ -2453,45 +2453,45 @@ msgstr ""
 msgid "User file rejected by %s: %s"
 msgstr ""
 
-#: src/modules.c:591
+#: src/modules.c:537
 #, c-format
 msgid "error during libtdl initialization: %s\n"
 msgstr ""
 
-#: src/modules.c:632
+#: src/modules.c:578
 msgid "Cant determine current directory."
 msgstr ""
 
-#: src/modules.c:646
+#: src/modules.c:592
 msgid "No start function defined."
 msgstr ""
 
-#: src/modules.c:650
+#: src/modules.c:596
 msgid "Malloc error"
 msgstr ""
 
-#: src/modules.c:682
+#: src/modules.c:628
 msgid "Needed by another module"
 msgstr ""
 
-#: src/modules.c:686
+#: src/modules.c:632
 msgid "No close function"
 msgstr ""
 
-#: src/modules.c:701
+#: src/modules.c:647
 #, c-format
 msgid "Module unloaded: %s"
 msgstr ""
 
-#: src/modules.c:707
+#: src/modules.c:653
 msgid "No such module"
 msgstr ""
 
-#: src/modules.c:926
+#: src/modules.c:872
 msgid "MODULES LOADED:\n"
 msgstr ""
 
-#: src/modules.c:951
+#: src/modules.c:897
 msgid "No such module.\n"
 msgstr ""
 
