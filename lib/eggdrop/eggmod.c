@@ -161,7 +161,7 @@ int get_module_list(char ***names) {
 	for (entry = module_list_head; entry; entry = entry->next) i++;
 	*names = malloc((i + 1) * sizeof(char **));
 	for (entry = module_list_head; entry; entry = entry->next) {
-		(*names)[c] = entry->modinfo.name;
+		(*names)[c] = (char *) entry->modinfo.name;
 		c++;
 	}
 	(*names)[i] = NULL;

@@ -69,15 +69,13 @@ static unsigned int script_unixtime()
 
 static char *script_ctime(unsigned int sec)
 {
-  time_t tt;
-  char *str;
+	time_t tt;
+	char *str;
 
-  tt = (time_t) sec;
-
-  /* ctime() puts a '\n' on the end of the date string, let's remove it. */
-  str = ctime(&tt);
-  str[strlen(str)-1] = 0;
-  return(str);
+	tt = (time_t) sec;
+	str = ctime(&tt);
+	str[strlen(str)-1] = 0;
+	return(str);
 }
 
 static char *script_strftime(int nargs, char *format, unsigned int sec)
@@ -107,30 +105,31 @@ static int script_rand(int nargs, int min, int max)
 
 static int script_die(const char *reason)
 {
+	void *config_root = config_get_root("eggdrop");
+
 	if (!reason) reason = "No reason given.";
+	putlog(LOG_MISC, "*", "Saving user file...");
+	user_save(core_config.userfile);
+	putlog(LOG_MISC, "*", "Saving config file...");
+	config_save(config_root, configfile);
 	putlog(LOG_MISC, "*", "Bot shutting down: %s", reason);
+	flushlogs();
+	/* FIXME: unlink the pidfile */
 	exit(0);
 }
 
 static char *script_unames()
 {
-	char *unix_n, *vers_n, *retval;
+	char buf[512];
 #ifdef HAVE_UNAME
 	struct utsname un;
 
-	if (!uname(&un) < 0) {
+	if (!uname(&un) < 0) snprintf(buf, sizeof buf, "unknown");
+	else snprintf(buf, sizeof buf, "%s %s", un.sysname, un.release);
+#else
+	snprintf(buf, sizeof buf, "unknown");
 #endif
-		unix_n = "unknown";
-		vers_n = "";
-#ifdef HAVE_UNAME
-	}
-	else {
-		unix_n = un.sysname;
-		vers_n = un.release;
-	}
-#endif
-	retval = msprintf("%s%s%s", unix_n, *vers_n ? ' ' : "", vers_n);
-	return(retval);
+	return strdup(buf);
 }
 
 static char *script_md5(char *data)
@@ -162,11 +161,11 @@ int script_export(char *name, char *syntax, script_callback_t *callback)
 }
 
 script_command_t script_misc_cmds[] = {
-	{"", "duration", (Function) script_duration, NULL, 1, "u", "seconds", SCRIPT_STRING|SCRIPT_FREE, 0},
+	{"", "duration", (Function) script_duration, NULL, 1, "u", "seconds", SCRIPT_STRING | SCRIPT_FREE, 0},
 	{"", "unixtime", (Function) script_unixtime, NULL, 0, "", "", SCRIPT_UNSIGNED, 0},
 	{"", "ctime", (Function) script_ctime, NULL, 1, "u", "seconds", SCRIPT_STRING, 0},
-	{"", "strftime", (Function) script_strftime, NULL, 1, "su", "format ?seconds?", SCRIPT_STRING|SCRIPT_FREE, SCRIPT_PASS_COUNT|SCRIPT_VAR_ARGS},
-	{"", "rand", (Function) script_rand, NULL, 1, "ii", "?min? max", SCRIPT_INTEGER, SCRIPT_PASS_COUNT|SCRIPT_VAR_ARGS},
+	{"", "strftime", (Function) script_strftime, NULL, 1, "su", "format ?seconds?", SCRIPT_STRING | SCRIPT_FREE, SCRIPT_PASS_COUNT | SCRIPT_VAR_ARGS},
+	{"", "rand", (Function) script_rand, NULL, 1, "ii", "?min? max", SCRIPT_INTEGER, SCRIPT_PASS_COUNT | SCRIPT_VAR_ARGS},
 	{"", "die", (Function) script_die, NULL, 0, "s", "?reason?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
 	{"", "unames", (Function) script_unames, NULL, 0, "", "", SCRIPT_STRING | SCRIPT_FREE, 0},
 	{"", "md5", (Function) script_md5, NULL, 1, "s", "data", SCRIPT_STRING | SCRIPT_FREE, 0},
