@@ -1,3 +1,15 @@
+2003-02-16 07:05  Will Buckner <wcc@techmonkeys.org>
+
+	* doc/UPDATES1.6, modules/channels/userchan.c, src/users.c:
+
+	* Fixes from last commit.  
+
+2003-02-16 07:01  Will Buckner <wcc@techmonkeys.org>
+
+	* src/: patch.h, users.c:
+
+	* Synch 1.6: delignore-bounds2.  
+
 2003-02-15 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
