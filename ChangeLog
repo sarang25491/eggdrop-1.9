@@ -1,3 +1,12 @@
+2002-06-03 03:35  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/module.h, modules/server/server.c,
+	modules/server/servmsg.c, src/modules.c:
+
+	
+	* Server lag checking now does hundredths of a second.  
+	* gotwallops() and gotpong() converted to new raw syntax 
+
 2002-06-02 18:06  stdarg <stdarg@techmonkeys.org>
 
 	* modules/: irc/chan.c, server/server.c, server/servmsg.c:
