@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.72 2001/10/14 23:13:33 stdarg Exp $
+ * $Id: modules.c,v 1.73 2001/10/15 07:56:41 tothwolf Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -108,10 +108,8 @@ static void null_share(int idx, char *x)
     if (!(dcc[idx].status & STAT_GETTING)) {
       dcc[idx].status &= ~STAT_SHARE;
     }
-  } else if ((x[0] != 'v') && (x[0] != 'e')) {
-    dprintf(idx, "s un ");
-    dprintf(idx, _("Not sharing userfile.\n"));
-  }
+  } else if ((x[0] != 'v') && (x[0] != 'e'))
+    dprintf(idx, "s un Not sharing userfile.\n");
 }
 
 void (*encrypt_pass) (char *, char *) = 0;
