@@ -105,15 +105,8 @@ static int script_rand(int nargs, int min, int max)
 
 static int script_die(const char *reason)
 {
-	void *config_root = config_get_root("eggdrop");
-
-	if (!reason) reason = "No reason given.";
-	putlog(LOG_MISC, "*", "Saving user file...");
-	user_save(core_config.userfile);
-	putlog(LOG_MISC, "*", "Bot shutting down: %s", reason);
-	flushlogs();
-	/* FIXME: unlink the pidfile */
-	exit(0);
+	eggdrop_event("die");
+	return(0);
 }
 
 static char *script_unames()
