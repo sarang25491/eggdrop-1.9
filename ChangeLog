@@ -1,19 +1,37 @@
-2004-06-07  gettextize  <bug-gnu-gettext@gnu.org>
+2004-06-08 00:51  stdarg <stdarg@techmonkeys.org>
 
-	* Makefile.am (SUBDIRS): Remove intl.
+	* ABOUT-NLS, Makefile.am, bootstrap, configure.ac,
+	acconfig/acinclude.m4, acconfig/config.guess, acconfig/config.sub,
+	m4/gettext.m4, po/Makefile.in.in:
 
-2004-06-07  gettextize  <bug-gnu-gettext@gnu.org>
+	
+	* Hmm... reran bootstrap with some new options... some of takeda's
+	reordering 
 
-	* Makefile.am (SUBDIRS): Remove intl.
+2004-06-07 23:19  stdarg <stdarg@techmonkeys.org>
 
-2004-06-07  gettextize  <bug-gnu-gettext@gnu.org>
+	* modules/server/: egg_server_api.c, egg_server_internal.h:
 
-	* Makefile.am (SUBDIRS): Remove intl.
+	[no log message] 
 
-2004-06-07  gettextize  <bug-gnu-gettext@gnu.org>
+2004-06-07 23:15  Automatic CVS Scripts
 
-	* Makefile.am (SUBDIRS): Remove intl.
-	* configure.ac (AC_CONFIG_FILES): Remove intl/Makefile.
+	* po/eggdrop.pot:
+
+	Pots 
+
+2004-06-07 23:14  stdarg <stdarg@techmonkeys.org>
+
+	* configure.ac, acconfig/acinclude.m4, modules/server/Makefile.am,
+	modules/server/binds.c, modules/server/channels.c,
+	modules/server/dcc.c, modules/server/egg_server_api.h,
+	modules/server/input.c, modules/server/nicklist.c,
+	modules/server/output.c, modules/server/party_commands.c,
+	modules/server/scriptcmds.c, modules/server/server.c,
+	modules/server/server.h, modules/server/serverlist.c,
+	modules/server/servsock.c:
+
+	[no log message] 
 
 2004-06-07 17:24  Will Buckner <wcc@techmonkeys.org>
 
