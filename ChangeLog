@@ -1,3 +1,10 @@
+2001-12-01 15:13  Federico Mennite <ite@techmonkeys.org>
+
+	* src/tcluser.c:
+
+	adduser wasn't accepting handle parameter without hostmask
+	parameter. Patch by Wcc <will@centerofnowhere.com> 
+
 2001-12-01 14:39  Federico Mennite <ite@techmonkeys.org>
 
 	* src/tcluser.c:
