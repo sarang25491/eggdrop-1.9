@@ -1,3 +1,9 @@
+2002-01-06 10:00  Automatic CVS Scripts
+
+	* po/eggdrop.pot:
+
+	Pots 
+
 2002-01-06 06:21  Federico Mennite <ite@techmonkeys.org>
 
 	* lib/eggdrop/Makefile.am, lib/eggdrop/memutil.c,
