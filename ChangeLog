@@ -1,3 +1,18 @@
+2002-06-05 05:11  stdarg <stdarg@techmonkeys.org>
+
+	* modules/server/servmsg.c:
+
+	
+	* Oops committed too early, doh 
+	* Converted got303(), thought about moving the keep-nick stuff to a
+	separate file and adding watch-list support 
+
+2002-06-05 05:10  stdarg <stdarg@techmonkeys.org>
+
+	* modules/server/servmsg.c:
+
+	[no log message] 
+
 2002-06-03 03:35  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/module.h, modules/server/server.c,
