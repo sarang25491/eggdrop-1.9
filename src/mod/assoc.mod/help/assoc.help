@@ -3,8 +3,8 @@
    This module provides botnet channel naming, see help on the
    %b'.assoc'%b command.
 %{help=assoc}
-###  %bassoc%b 
-   Displays a list of current botnet channel names. 
+###  %bassoc%b
+   Displays a list of current botnet channel names.
 %{+t}
 ###  %bassoc%b <channel #> <name>
    Creates a name for a channel.  The name will propagate across your
@@ -16,7 +16,7 @@
 ###  %bassoc%b <*channel #> <name>
    Creates a name for a local channel.  These channels are local to
    the bot itself.
- 
+
 ###  %bassoc%b <[*]channel #>
    Wipes out the name for a channel, if there was one.
 %{end}

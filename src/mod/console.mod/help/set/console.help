@@ -2,7 +2,7 @@
 ###  %bset console-autosave%b 0/1
    When this flag is set, a users console settings are automatically
    saved for the next time the user joins the party line.
-   
+
 See Also: store
 %{help=set force-channel}%{+n}
 ###  %bset force-channel%b <chan#>
