@@ -1,3 +1,9 @@
+2002-02-18 00:07  Federico Mennite <ite@techmonkeys.org>
+
+	* src/cmds.c:
+
+	Fixed a couple of cosmetic problems in cmd_pls_user (synch 1.6) 
+
 2002-02-17 19:49  Federico Mennite <ite@techmonkeys.org>
 
 	* nettype/dalnet.server.conf:
