@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.86 2001/10/12 13:43:34 tothwolf Exp $
+ * $Id: server.c,v 1.87 2001/10/12 17:40:46 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -100,9 +100,6 @@ static void disconnect_server(int);
 static char *get_altbotnick(void);
 static int calc_penalty(char *);
 static int fast_deq(int);
-static void check_queues(char *, char *);
-static void parse_q(struct msgq_head *, char *, char *);
-static void purge_kicks(struct msgq_head *);
 static int deq_kick(int);
 static void msgq_clear(struct msgq_head *qh);
 
@@ -131,25 +128,6 @@ static int burst;
 #include "cmdsserv.c"
 #include "tclserv.c"
 
-
-/* FIXME: get rid of this */
-char *splitnicks(char **rest)
-{
-  register char *o, *r;
-
-  if (!rest)
-    return *rest = "";
-  o = *rest;
-  while (*o == ' ')
-    o++;
-  r = o;
-  while (*o && *o != ',')
-    o++;
-  if (*o)
-    *o++ = 0;
-  *rest = o;
-  return r;
-}
 
 /*
  *     Bot server queues
@@ -512,148 +490,6 @@ static int fast_deq(int which)
   return 0;
 }
 
-static void check_queues(char *oldnick, char *newnick)
-{
-  if (optimize_kicks == 2) {
-    if (modeq.head)
-      parse_q(&modeq, oldnick, newnick);
-    if (mq.head)
-      parse_q(&mq, oldnick, newnick);
-    if (hq.head)
-      parse_q(&hq, oldnick, newnick);
-  }
-}
-
-static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
-{
-  struct msgq *m, *lm = NULL;
-  char buf[511], *msg, *nicks, *nick, *chan, newnicks[511], newmsg[511];
-  int changed;
-
-  for (m = q->head; m;) {
-    changed = 0;
-    if (optimize_kicks == 2 && !egg_strncasecmp(m->msg, "KICK ", 5)) {
-      newnicks[0] = 0;
-      strncpyz(buf, m->msg, sizeof buf);
-      if (buf[0] && (buf[strlen(buf)-1] == '\n'))
-        buf[strlen(buf)-1] = '\0';
-      msg = buf;
-      newsplit(&msg);
-      chan = newsplit(&msg);
-      nicks = newsplit(&msg);
-/* FIXME: get rid of splitnicks() */
-      while (strlen(nicks) > 0) {
-	nick = splitnicks(&nicks);
-        if (!egg_strcasecmp(nick, oldnick) &&
-            ((9 + strlen(chan) + strlen(newnicks) + strlen(newnick) +
-              strlen(nicks) + strlen(msg)) < 510)) {
-          if (newnick)
-            egg_snprintf(newnicks, sizeof newnicks, "%s,%s", newnicks, newnick);
-          changed = 1;
-        } else
-          egg_snprintf(newnicks, sizeof newnicks, ",%s", nick);
-      }
-      egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s\n", chan,
-		   newnicks + 1, msg);
-    }
-    if (changed) {
-      if (newnicks[0] == 0) {
-        if (!lm)
-          q->head = m->next;
-        else
-          lm->next = m->next;
-        free(m->msg);
-        free(m);
-        m = lm;
-        q->tot--;
-        if (!q->head)
-          q->last = 0;
-      } else {
-        free(m->msg);
-        m->msg = malloc(strlen(newmsg) + 1);
-        m->len = strlen(newmsg);
-        strcpy(m->msg, newmsg);
-      }
-    }
-    lm = m;
-    if (m)
-      m = m->next;
-    else
-      m = q->head;
-  }
-}
-
-static void purge_kicks(struct msgq_head *q)
-{
-  struct msgq *m, *lm = NULL;
-  char buf[511], *reason, *nicks, *nick, *chan, newnicks[511],
-       newmsg[511], chans[511], *chns, *ch;
-  int changed, found;
-  struct chanset_t *cs;
-
-  for (m = q->head; m;) {
-    if (!egg_strncasecmp(m->msg, "KICK", 4)) {
-      newnicks[0] = 0;
-      changed = 0;
-      strncpyz(buf, m->msg, sizeof buf);
-      if (buf[0] && (buf[strlen(buf)-1] == '\n'))
-        buf[strlen(buf)-1] = '\0';
-      reason = buf;
-      newsplit(&reason);
-      chan = newsplit(&reason);
-      nicks = newsplit(&reason);
-/* FIXME: get rid of splitnicks() */
-      while (strlen(nicks) > 0) {
-        found = 0;
-	nick = splitnicks(&nicks);
-        strncpyz(chans, chan, sizeof chans);
-        chns = chans;
-        while (strlen(chns) > 0) {
-          ch = newsplit(&chns);
-          cs = findchan(ch);
-          if (!cs)
-            continue;
-          if (ismember(cs, nick))
-            found = 1;
-        }
-        if (found)
-          egg_snprintf(newnicks, sizeof newnicks, "%s,%s", newnicks, nick);
-        else {
-          putlog(LOG_SRVOUT, "*", "%s isn't on any target channel, removing "
-		 "kick...", nick);
-          changed = 1;
-        }
-      }
-      if (changed) {
-        if (newnicks[0] == 0) {
-          if (!lm)
-            q->head = m->next;
-          else
-            lm->next = m->next;
-          free(m->msg);
-          free(m);
-          m = lm;
-          q->tot--;
-          if (!q->head)
-            q->last = 0;
-        } else {
-          free(m->msg);
-          egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s\n", chan,
-		       newnicks + 1, reason);
-          m->msg = malloc(strlen(newmsg) + 1);
-          m->len = strlen(newmsg);
-          strcpy(m->msg, newmsg);
-        }
-      }
-    }
-    lm = m;
-    if (m)
-      m = m->next;
-    else
-      m = q->head;
-  }
-}
-
 static int deq_kick(int which)
 {
   struct msgq_head *h;
@@ -680,13 +516,6 @@ static int deq_kick(int which)
   }
   if (egg_strncasecmp(h->head->msg, "KICK", 4))
     return 0;
-  if (optimize_kicks == 2) {
-    purge_kicks(h);
-    if (!h->head)
-      return 1;
-  }
-  if (egg_strncasecmp(h->head->msg, "KICK", 4))
-    return 0;
   msg = h->head;
   strncpyz(buf, msg->msg, sizeof buf);
   reason = buf;
@@ -710,9 +539,8 @@ static int deq_kick(int which)
       chan2 = newsplit(&reason2);
       nicks = newsplit(&reason2);
       if (!egg_strcasecmp(chan, chan2) && !egg_strcasecmp(reason, reason2)) {
-/* FIXME: get rid of splitnicks() */
-	while (strlen(nicks) > 0) {
-	  nick = splitnicks(&nicks);
+        nick = strtok(nicks, ",");
+	while (nicks) {
           if ((nr < kick_method) &&
              ((9 + strlen(chan) + strlen(newnicks) + strlen(nick) +
              strlen(reason)) < 510)) {
@@ -721,6 +549,7 @@ static int deq_kick(int which)
             changed = 1;
           } else
             egg_snprintf(newnicks2, sizeof newnicks2, "%s,%s", newnicks2, nick);
+	  nick = strtok(NULL, ",");
         }
       }
       if (changed) {

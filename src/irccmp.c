@@ -2,7 +2,7 @@
  * irccmp.c
  *   heavily based on code from src/match.c in ircd-hybrid
  *
- * $Id: irccmp.c,v 1.2 2001/10/12 15:50:26 tothwolf Exp $
+ * $Id: irccmp.c,v 1.3 2001/10/12 17:40:46 tothwolf Exp $
  */
 /*
  * Copyright (C) 1990 Jarkko Oikarinen
@@ -43,6 +43,8 @@
 
 /* prototypes */
 #include "irccmp.h"
+
+#include "debug.h"	/* assert */
 
 
 /*
