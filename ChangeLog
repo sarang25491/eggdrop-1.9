@@ -1,3 +1,11 @@
+2003-01-30 08:20  Will Buckner <wcc@techmonkeys.org>
+
+	* modules/channels/tclchan.c, modules/compress/tclcompress.c,
+	modules/filesys/tclfiles.c, modules/notes/notes.c,
+	modules/transfer/transfer.c, src/tclegg.h:
+
+	* Removed STDVAR macro.  
+
 2003-01-30 07:47  Will Buckner <wcc@techmonkeys.org>
 
 	* src/: net.c, tcl.c, tclmisc.c, userrec.c:
