@@ -5,7 +5,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: botmsg.c,v 1.28 2002/01/19 20:08:57 ite Exp $
+ * $Id: botmsg.c,v 1.29 2002/01/22 01:17:16 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -498,13 +498,14 @@ void botnet_send_join_idx(int useridx, int oldchan)
   if (tands > 0) {
     l = simple_sprintf(OBUF, "j %s %s %D %c%D %s\n",
 		       botnetnick, dcc[useridx].nick,
-		       dcc[useridx].u.chat->channel, geticon(useridx),
+		       dcc[useridx].u.chat->channel, geticon(dcc[useridx].user),
 		       dcc[useridx].sock, dcc[useridx].host);
     send_tand_but(-1, OBUF, -l);
 #ifndef NO_OLD_BOTNET
     tandout_but(-1, "join %s %s %d %c%d %s\n", botnetnick,
 		dcc[useridx].nick, dcc[useridx].u.chat->channel,
-		geticon(useridx), dcc[useridx].sock, dcc[useridx].host);
+		geticon(dcc[useridx].user), dcc[useridx].sock,
+		dcc[useridx].host);
     tandout_but(-1, "chan %s %d %s %s %s.\n",
 		botnetnick, dcc[useridx].u.chat->channel,
 		dcc[useridx].nick, _("has joined the"),
@@ -610,7 +611,8 @@ void botnet_send_nkch(int useridx, char *oldnick)
 		dcc[useridx].nick, dcc[useridx].sock);
     tandout_but(-1, "join %s %s %d %c%d %s\n", botnetnick,
 		dcc[useridx].nick, dcc[useridx].u.chat->channel,
-		geticon(useridx), dcc[useridx].sock, dcc[useridx].host);
+		geticon(dcc[useridx].user), dcc[useridx].sock,
+		dcc[useridx].host);
     tandout_but(-1, "chan %s %d %s: %s -> %s.\n",
 		botnetnick, dcc[useridx].u.chat->channel,
 		oldnick, _("Nick Change:"), dcc[useridx].nick);

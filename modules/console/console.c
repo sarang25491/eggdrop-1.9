@@ -3,7 +3,7 @@
  *   saved console settings based on console.tcl
  *   by cmwagner/billyjoe/D. Senso
  *
- * $Id: console.c,v 1.2 2002/01/16 22:09:41 ite Exp $
+ * $Id: console.c,v 1.3 2002/01/22 01:17:15 ite Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -258,7 +258,7 @@ static int console_chon(char *handle, int idx)
 	(dcc[idx].u.chat->channel < GLOBAL_CHANS)) {
       botnet_send_join_idx(idx, -1);
       check_tcl_chjn(botnetnick, dcc[idx].nick, dcc[idx].u.chat->channel,
-		     geticon(idx), dcc[idx].sock, dcc[idx].host);
+		     geticon(dcc[idx].user), dcc[idx].sock, dcc[idx].host);
     }
     if (info_party) {
       char *p = get_user(&USERENTRY_INFO, dcc[idx].user);

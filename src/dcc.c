@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.70 2002/01/19 20:08:58 ite Exp $
+ * $Id: dcc.c,v 1.71 2002/01/22 01:17:16 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1679,7 +1679,7 @@ static void dcc_script(int idx, char *buf, int len)
 	if (dcc[idx].u.chat->channel < 10000)
 	  botnet_send_join_idx(idx, -1);
 	check_tcl_chjn(botnetnick, dcc[idx].nick, dcc[idx].u.chat->channel,
-		       geticon(idx), dcc[idx].sock, dcc[idx].host);
+		       geticon(dcc[idx].user), dcc[idx].sock, dcc[idx].host);
       }
       check_tcl_chon(dcc[idx].nick, dcc[idx].sock);
     }

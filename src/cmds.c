@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.87 2002/01/19 20:08:58 ite Exp $
+ * $Id: cmds.c,v 1.88 2002/01/22 01:17:16 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -112,12 +112,12 @@ static void tell_who(struct userrec *u, int idx, int chan)
       if (dcc[i].u.chat->channel == chan) {
 	spaces[len = HANDLEN - strlen(dcc[i].nick)] = 0;
 	if (atr & USER_OWNER) {
-	  sprintf(s, "  [%.2lu]  %c%s%s %s",
-		  dcc[i].sock, (geticon(i) == '-' ? ' ' : geticon(i)),
+	  sprintf(s, "  [%.2lu]  %c%s%s %s", dcc[i].sock,
+		  (geticon(dcc[i].user) == '-' ? ' ' : geticon(dcc[i].user)),
 		  dcc[i].nick, spaces, dcc[i].host);
 	} else {
 	  sprintf(s, "  %c%s%s %s",
-		  (geticon(i) == '-' ? ' ' : geticon(i)),
+		  (geticon(dcc[i].user) == '-' ? ' ' : geticon(dcc[i].user)),
 		  dcc[i].nick, spaces, dcc[i].host);
 	}
 	spaces[len] = ' ';
@@ -175,12 +175,12 @@ static void tell_who(struct userrec *u, int idx, int chan)
       if (atr & USER_OWNER) {
 	sprintf(s, "  [%.2lu]  %c%s%s ",
 		dcc[i].sock,
-		(geticon(i) == '-' ? ' ' : geticon(i)), dcc[i].nick,
-		spaces);
+		(geticon(dcc[i].user) == '-' ? ' ' : geticon(dcc[i].user)),
+		dcc[i].nick, spaces);
       } else {
 	sprintf(s, "  %c%s%s ",
-		(geticon(i) == '-' ? ' ' : geticon(i)), dcc[i].nick,
-		spaces);
+		(geticon(dcc[i].user) == '-' ? ' ' : geticon(dcc[i].user)),
+		dcc[i].nick, spaces);
       }
       spaces[len] = ' ';
       if (atr & USER_MASTER) {
@@ -1866,7 +1866,7 @@ static void cmd_chat(struct userrec *u, int idx, char *par)
 	dprintf(idx, "Joining channel '%s'...\n", arg);
 	chanout_but(-1, newchan, "*** %s joined the channel.\n", dcc[idx].nick);
       }
-      check_tcl_chjn(botnetnick, dcc[idx].nick, newchan, geticon(idx),
+      check_tcl_chjn(botnetnick, dcc[idx].nick, newchan, geticon(dcc[idx].user),
 		     dcc[idx].sock, dcc[idx].host);
       if (newchan < 100000)
 	botnet_send_join_idx(idx, oldchan);

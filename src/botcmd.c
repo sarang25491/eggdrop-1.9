@@ -3,7 +3,7 @@
  *   commands that comes across the botnet
  *   userfile transfer and update commands from sharebots
  *
- * $Id: botcmd.c,v 1.30 2002/01/20 11:57:07 ite Exp $
+ * $Id: botcmd.c,v 1.31 2002/01/22 01:17:16 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -367,7 +367,7 @@ static void remote_tell_who(int idx, char *nick, int chan)
     if (dcc[i].type->flags & DCT_REMOTEWHO)
       if (dcc[i].u.chat->channel == chan) {
 	k = sprintf(s, "  %c%-15s %s",
-		    (geticon(i) == '-' ? ' ' : geticon(i)),
+		    (geticon(dcc[i].user) == '-' ? ' ' : geticon(dcc[i].user)),
 		    dcc[i].nick, dcc[i].host);
 	if (now - dcc[i].timeval > 300) {
 	  unsigned long days, hrs, mins;
@@ -412,7 +412,8 @@ static void remote_tell_who(int idx, char *nick, int chan)
 	  botnet_send_priv(idx, botnetnick, nick, NULL, "%s:",
 			   _("Other people on the bot"));
 	}
-	l = sprintf(s, "  %c%-15s %s", (geticon(i) == '-' ? ' ' : geticon(i)),
+	l = sprintf(s, "  %c%-15s %s",
+		    (geticon(dcc[i].user) == '-' ? ' ' : geticon(dcc[i].user)),
 		    dcc[i].nick, dcc[i].host);
 	if (now - dcc[i].timeval > 300) {
 	  k = (now - dcc[i].timeval) / 60;

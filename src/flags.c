@@ -2,7 +2,7 @@
  * flags.c -- handles:
  *   all the flag matching/conversion functions in one neat package :)
  *
- * $Id: flags.c,v 1.25 2002/01/19 20:08:58 ite Exp $
+ * $Id: flags.c,v 1.26 2002/01/22 01:17:16 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -27,7 +27,6 @@
 #include "logfile.h"
 
 extern int		 debug_output, noshare, allow_dk_cmds;
-extern struct dcc_t	*dcc;
 
 int logmodes(char *s)
 {
@@ -305,13 +304,13 @@ int chan_sanity_check(int chatr, int atr)
  * (@) op on any channel
  * (-) other
  */
-char geticon(int idx)
+char geticon(struct userrec *user)
 {
   struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
 
-  if (!dcc[idx].user)
+  if (!user)
     return '-';
-  get_user_flagrec(dcc[idx].user, &fr, 0);
+  get_user_flagrec(user, &fr, 0);
   if (chan_owner(fr))
     return '*';
   if (chan_master(fr))

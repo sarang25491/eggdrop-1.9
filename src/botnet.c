@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.50 2002/01/19 20:08:57 ite Exp $
+ * $Id: botnet.c,v 1.51 2002/01/22 01:17:16 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -491,7 +491,7 @@ void answer_local_whom(int idx, int chan)
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].type == &DCC_CHAT) {
       if ((chan == (-1)) || ((chan >= 0) && (dcc[i].u.chat->channel == chan))) {
-	c = geticon(i);
+	c = geticon(dcc[i].user);
 	if (c == '-')
 	  c = ' ';
 	if (now - dcc[i].timeval > 300) {
@@ -786,13 +786,13 @@ void dump_links(int z)
 	  if (b_numver(z) < NEAT_BOTNET)
 	    l = simple_sprintf(x, "join %s %s %d %c%d %s\n",
 			       botnetnick, dcc[i].nick,
-			       dcc[i].u.chat->channel, geticon(i),
+			       dcc[i].u.chat->channel, geticon(dcc[i].user),
 			       dcc[i].sock, dcc[i].host);
 	  else
 #endif
 	    l = simple_sprintf(x, "j !%s %s %D %c%D %s\n",
 			       botnetnick, dcc[i].nick,
-			       dcc[i].u.chat->channel, geticon(i),
+			       dcc[i].u.chat->channel, geticon(dcc[i].user),
 			       dcc[i].sock, dcc[i].host);
 	  tputs(dcc[z].sock, x, l);
 #ifndef NO_OLD_BOTNET
@@ -1416,7 +1416,7 @@ static void eof_dcc_relay(int idx)
   }
   check_tcl_chon(dcc[j].nick, dcc[j].sock);
   check_tcl_chjn(botnetnick, dcc[j].nick, dcc[j].u.chat->channel,
-		 geticon(j), dcc[j].sock, dcc[j].host);
+		 geticon(dcc[j].user), dcc[j].sock, dcc[j].host);
   killsock(dcc[idx].sock);
   lostdcc(idx);
 }
@@ -1512,7 +1512,7 @@ static void dcc_relaying(int idx, char *buf, int j)
   check_tcl_chon(dcc[idx].nick, dcc[idx].sock);
   if (dcc[idx].u.chat->channel >= 0) {
     check_tcl_chjn(botnetnick, dcc[idx].nick, dcc[idx].u.chat->channel,
-		   geticon(idx), dcc[idx].sock, dcc[idx].host);
+		   geticon(dcc[idx].user), dcc[idx].sock, dcc[idx].host);
   }
   killsock(dcc[j].sock);
   lostdcc(j);
@@ -1701,7 +1701,7 @@ void restart_chons()
     if (dcc[i].type == &DCC_CHAT) {
       check_tcl_chon(dcc[i].nick, dcc[i].sock);
       check_tcl_chjn(botnetnick, dcc[i].nick, dcc[i].u.chat->channel,
-		     geticon(i), dcc[i].sock, dcc[i].host);
+		     geticon(dcc[i].user), dcc[i].sock, dcc[i].host);
     }
   }
   for (i = 0; i < parties; i++) {

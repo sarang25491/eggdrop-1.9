@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.48 2002/01/20 16:56:07 ite Exp $
+ * $Id: tcldcc.c,v 1.49 2002/01/22 01:17:16 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -153,7 +153,7 @@ static int script_setchan(int idx, int chan)
   }
   dcc[idx].u.chat->channel = chan;
   if (chan < GLOBAL_CHANS) botnet_send_join_idx(idx, oldchan);
-  check_tcl_chjn(botnetnick, dcc[idx].nick, chan, geticon(idx),
+  check_tcl_chjn(botnetnick, dcc[idx].nick, chan, geticon(dcc[idx].user),
 	   idx, dcc[idx].host);
   return(0);
 }
@@ -483,7 +483,9 @@ static int script_whom(script_var_t *retval, int nargs, int which_chan)
 	for (i = 0; i < dcc_total; i++) {
 		if (dcc[i].type != &DCC_CHAT) continue;
 		if (which_chan != -1 && dcc[i].u.chat->channel != which_chan) continue;
-		whom_entry(retval, dcc[i].nick, botnetnick, dcc[i].host, geticon(i), dcc[i].timeval, dcc[i].u.chat->away, dcc[i].u.chat->channel);
+		whom_entry(retval, dcc[i].nick, botnetnick, dcc[i].host,
+		geticon(dcc[i].user), dcc[i].timeval, dcc[i].u.chat->away,
+		dcc[i].u.chat->channel);
 	}
 	for (i = 0; i < parties; i++) {
 		if (which_chan != -1 && party[i].chan != which_chan) continue;

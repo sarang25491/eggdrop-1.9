@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.12 2002/01/19 20:08:57 ite Exp $
+ * $Id: module.h,v 1.13 2002/01/22 01:17:15 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -130,7 +130,7 @@
 #define readuserfile ((int (*)(char *,struct userrec **))global[54])
 #define write_userfile ((void(*)(int))global[55])
 /* 56 - 59 */
-#define geticon ((char (*) (int))global[56])
+#define geticon ((char (*) (struct userrec *))global[56])
 #define clear_chanlist ((void (*)(void))global[57])
 #define reaffirm_owners ((void (*)(void))global[58])
 #define change_handle ((int(*)(struct userrec *,char*))global[59])

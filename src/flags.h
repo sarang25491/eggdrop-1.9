@@ -1,7 +1,7 @@
 /*
  * flags.h
  *
- * $Id: flags.h,v 1.8 2001/04/12 02:39:43 guppy Exp $
+ * $Id: flags.h,v 1.9 2002/01/22 01:17:16 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -187,7 +187,7 @@ int flagrec_eq(struct flag_record *, struct flag_record *);
 int flagrec_ok(struct flag_record *, struct flag_record *);
 int sanity_check(int);
 int chan_sanity_check(int, int);
-char geticon(int);
+char geticon(struct userrec *);
 
 #endif				/* MAKING_MODS */
 
