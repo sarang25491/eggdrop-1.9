@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-12-18 18:15-0600\n"
+"POT-Creation-Date: 2003-12-19 00:15-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -516,7 +516,7 @@ msgstr ""
 msgid "Saving user file..."
 msgstr ""
 
-#: src/core_party.c:189 src/core_party.c:230 src/main.c:146
+#: src/core_party.c:189 src/main.c:146
 msgid "Saving config file..."
 msgstr ""
 
@@ -533,63 +533,63 @@ msgstr ""
 msgid "Partyline members:"
 msgstr ""
 
-#: src/core_party.c:232
+#: src/core_party.c:230
 #, c-format
 msgid "Bot shutting down: %s"
 msgstr ""
 
-#: src/core_party.c:233
+#: src/core_party.c:231
 msgid "Bot shutting down."
 msgstr ""
 
-#: src/core_party.c:244
+#: src/core_party.c:242
 msgid "Syntax: +user <handle>"
 msgstr ""
 
-#: src/core_party.c:248
+#: src/core_party.c:246
 #, c-format
 msgid "User '%s' already exists!"
 msgstr ""
 
-#: src/core_party.c:252
+#: src/core_party.c:250
 #, c-format
 msgid "User '%s' created."
 msgstr ""
 
-#: src/core_party.c:253
+#: src/core_party.c:251
 #, c-format
 msgid "Could not create user '%s'."
 msgstr ""
 
-#: src/core_party.c:262
+#: src/core_party.c:260
 msgid "Syntax: -user <handle>"
 msgstr ""
 
-#: src/core_party.c:266
+#: src/core_party.c:264
 #, c-format
 msgid "User '%s' not found."
 msgstr ""
 
-#: src/core_party.c:268
+#: src/core_party.c:266
 #, c-format
 msgid "Deleting user '%s'."
 msgstr ""
 
-#: src/core_party.c:296
+#: src/core_party.c:294
 msgid "Syntax: chattr <user> [channel] <+/-flags>"
 msgstr ""
 
-#: src/core_party.c:308
+#: src/core_party.c:306
 #, c-format
 msgid "Flags for %s are now '%s'."
 msgstr ""
 
-#: src/core_party.c:311
+#: src/core_party.c:309
 #, c-format
 msgid "'%s' is not a valid user."
 msgstr ""
 
-#: src/core_party.c:325
+#: src/core_party.c:323
 msgid "Loaded modules:"
 msgstr ""
 
