@@ -4,7 +4,7 @@
  *   signal handling
  *   command line arguments
  *
- * $Id: main.c,v 1.101 2001/12/18 07:04:21 guppy Exp $
+ * $Id: main.c,v 1.102 2001/12/26 05:03:02 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -495,7 +495,7 @@ int main(int argc, char **argv)
 #include "patch.h"
   /* Version info! */
   snprintf(ver, sizeof ver, "eggdrop v%s", egg_version);
-  snprintf(version, sizeof version, "Eggdrop v%s (C)1997 Robey Pointer (C)2001 Eggheads",
+  snprintf(version, sizeof version, "Eggdrop v%s (C) 1997 Robey Pointer (C) 2001 Eggheads",
 	       egg_version);
   /* Now add on the patchlevel (for Tcl) */
   sprintf(&egg_version[strlen(egg_version)], " %u", egg_numver);
