@@ -1,3 +1,32 @@
+2002-05-12 06:25  stdarg <stdarg@techmonkeys.org>
+
+	* modules/channels/channels.c:
+
+	
+	* yay 
+
+2002-05-12 06:24  stdarg <stdarg@techmonkeys.org>
+
+	* src/botmsg.c:
+
+	
+	* Unnecessary strlen() 
+
+2002-05-12 06:23  stdarg <stdarg@techmonkeys.org>
+
+	* modules/irc/irc.c, modules/server/server.c, src/tcldcc.c:
+
+	
+	* Overlooked name changes 
+
+2002-05-12 06:12  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/module.h, modules/channels/tclchan.c, src/botmsg.c,
+	src/dccutil.c, src/misc.c, src/misc.h, src/modules.c:
+
+	
+	* Got rid of str_nutf8tounicode 
+
 2002-05-12 05:59  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/Makefile.am, lib/eggdrop/eggdrop.h,
