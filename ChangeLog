@@ -1,3 +1,11 @@
+2002-02-17 18:34  Federico Mennite <ite@techmonkeys.org>
+
+	* configure.ac, acconfig/acinclude.m4,
+	modules/tclscript/Makefile.am, src/Makefile.am:
+
+	tclscript modules isn't being compiled anymore with tcl versions
+	prior to 8.  
+
 2002-02-17 12:44  Federico Mennite <ite@techmonkeys.org>
 
 	* nettype/: .cvsignore, Makefile.am, custom.irc.conf,
