@@ -27,6 +27,9 @@
 #define WILDQ '?'		/* matches exactly one character */
 #define WILDT '~'		/* matches any number of spaces */
 
+#include <ctype.h>
+#define irctoupper toupper
+
 /* matching for binds */
 int wild_match_per(char *wild, char *matchtext) {
   char *fallback=0;

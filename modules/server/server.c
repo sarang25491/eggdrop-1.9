@@ -41,7 +41,7 @@ extern void connect_to_next_server();
 extern void dequeue_messages();
 
 /* From input.c */
-extern cmd_t my_new_raw_binds[];
+extern bind_list_t my_new_raw_binds[];
 
 /* From dcc_cmd.c */
 extern cmd_t my_dcc_commands[];
@@ -102,7 +102,7 @@ static char *server_close()
 	kill_server("Server module unloading");
 	cycle_delay = 100;
 
-	rem_builtins("newraw", my_new_raw_binds);
+	bind_rem_list("newraw", my_new_raw_binds);
 
 	server_binds_destroy();
 
@@ -148,7 +148,7 @@ char *start(eggdrop_t *eggdrop)
 	for (cmd = my_dcc_commands; cmd->name; cmd++) {
 		putlog(LOG_MISC, "*", "Making bind: %s", cmd->name);
 	}
-	add_builtins("newraw", my_new_raw_binds);
+	bind_add_list("newraw", my_new_raw_binds);
 	//add_builtins("dcc", my_dcc_commands);
 
 	script_create_commands(server_script_cmds);

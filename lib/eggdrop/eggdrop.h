@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: eggdrop.h,v 1.11 2002/10/07 22:33:54 stdarg Exp $
+ * $Id: eggdrop.h,v 1.12 2002/10/10 04:41:59 stdarg Exp $
  */
 
 #ifndef _EGGDROP_H
@@ -29,6 +29,7 @@
 
 #include "../egglib/egglib.h"
 #include <eggdrop/common.h>
+#include <eggdrop/binds.h>
 #include <eggdrop/botnetutil.h>
 #include <eggdrop/memutil.h>
 #include <eggdrop/fileutil.h>

@@ -12,6 +12,6 @@ int dcc_start_send(const char *nick, const char *fname, int timeout);
 int dcc_send_info(int idx, int field, void *valueptr);
 int dcc_accept_send(char *nick, char *localfname, char *fname, int size, int resume, char *ip, int port, int timeout);
 
-extern cmd_t ctcp_dcc_binds[];
+extern bind_list_t ctcp_dcc_binds[];
 
 #endif

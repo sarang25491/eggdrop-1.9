@@ -48,7 +48,7 @@ static int script_user_addmask(int uid, char *ircmask)
 	return(0);
 }
 
-static char *script_lookup_by_irchost(char *irchost)
+static char *script_user_find(char *irchost)
 {
 	user_t *u;
 	
@@ -100,6 +100,30 @@ static int script_user_save(char *fname)
 	return(0);
 }
 
+static int script_setflags(int uid, char *chan, char *flags)
+{
+	user_t *u;
+
+	u = user_lookup_by_uid(uid);
+	if (!u) return(-1);
+
+	if (!flags) {
+		flags = chan;
+		chan = NULL;
+	}
+
+	//user_setflags(u, chan, flags);
+	return(0);
+}
+
+static char *script_getflags(int uid, char *chan)
+{
+	user_t *u;
+
+	u = user_lookup_by_uid(uid);
+	if (!u) return(-1);
+}
+
 script_command_t script_new_user_cmds[] = {
 	{"", "user_uid_to_handle", script_uid_to_handle, NULL, 1, "i", "uid", SCRIPT_STRING, 0},
 	{"", "user_handle_to_uid", script_handle_to_uid, NULL, 1, "s", "handle", SCRIPT_INTEGER, 0},
@@ -107,7 +131,7 @@ script_command_t script_new_user_cmds[] = {
 	{"", "user_validuid", script_validuid, NULL, 1, "i", "uid", SCRIPT_INTEGER, 0},
 	{"", "user_add", script_adduser, NULL, 1, "s", "handle", SCRIPT_INTEGER, 0},
 	{"", "user_addmask", script_user_addmask, NULL, 2, "is", "uid ircmask", SCRIPT_INTEGER, 0},
-	{"", "user_lookup_by_irchost", script_lookup_by_irchost, NULL, 1, "s", "irchost", SCRIPT_STRING, 0},
+	{"", "user_find", script_user_find, NULL, 1, "s", "irchost", SCRIPT_STRING, 0},
 	{"", "user_get", script_user_get, NULL, 2, "iss", "uid ?channel? setting", SCRIPT_STRING, SCRIPT_VAR_ARGS | SCRIPT_PASS_COUNT},
 	{"", "user_set", script_user_set, NULL, 3, "isss", "uid ?channel? setting value", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_PASS_COUNT},
 	{"", "user_save", script_user_save, NULL, 0, "s", "?fname?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},

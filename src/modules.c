@@ -25,9 +25,10 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: modules.c,v 1.120 2002/10/07 22:36:37 stdarg Exp $";
+static const char rcsid[] = "$Id: modules.c,v 1.121 2002/10/10 04:41:59 stdarg Exp $";
 #endif
 
+#include <eggdrop/eggdrop.h>
 #include "main.h"		/* NOTE: when removing this, include config.h */
 #include "modules.h"
 #include "core_binds.h"
@@ -35,7 +36,6 @@ static const char rcsid[] = "$Id: modules.c,v 1.120 2002/10/07 22:36:37 stdarg E
 #include "misc.h"
 #include "dns.h"
 #include "cmdt.h"		/* cmd_t				*/
-#include "tclhash.h"
 #include "core_binds.h"
 #include "chanprog.h"		/* clear_chanlist, reaffirm_owners, 
 				   logmodes, masktype, isowner, 
@@ -50,7 +50,7 @@ static const char rcsid[] = "$Id: modules.c,v 1.120 2002/10/07 22:36:37 stdarg E
 				   open_telnet, open_telnet_dcc, 
 				   killsock, open_listen, getsock,
 				   tputs, neterror, getmyip, answer	*/
-#include "tcl.h"		/* findanyidx, do_tcl, readtclprog	*/
+#include "tcl.h"		/* do_tcl, readtclprog	*/
 #include "users.h"		/* list_type				*/
 #include "userent.h"		/* list_type_kill, xtra_set		*/
 #include "userrec.h"		/* fixfrom, user_del_chan, touch_laston,
@@ -328,7 +328,7 @@ Function global_table[] =
   /* 128 - 131 */
   (Function) & interp,		 /* Tcl_Interp *			*/
   (Function) & now,		 /* time_t				*/
-  (Function) findanyidx,
+  (Function) 0,
   (Function) findchan,
   /* 132 - 135 */
   (Function) 0,
@@ -379,7 +379,7 @@ Function global_table[] =
   (Function) 0,
   (Function) 0,
   (Function) & do_restart,	/* int					*/
-  (Function) check_bind_filt,
+  0,
   /* 172 - 175 */
   (Function) add_hook,
   (Function) del_hook,
@@ -432,7 +432,7 @@ Function global_table[] =
   (Function) &botname,
   /* 212 - 215 */
   (Function) 0,			/* remove_gunk() -- UNUSED! (drummer)	*/
-  (Function) check_bind_chjn,
+  (Function) 0,
   (Function) 0,
   (Function) isowner,
   /* 216 - 219 */
@@ -513,14 +513,14 @@ Function global_table[] =
   (Function) getlocaladdr,
   (Function) kill_bot,
   (Function) quit_msg,                /* char *				  */
-  (Function) bind_table_add,
+  0,
   /* 276 - 279 */
-  (Function) bind_table_del,
-  (Function) add_builtins,
-  (Function) rem_builtins,
-  (Function) bind_table_lookup,
+  0,
+  0,
+  0,
+  0,
   /* 280 - 283 */
-  (Function) check_bind,
+  0,
   (Function) &egg_timeval_now,
   0,
 };
@@ -619,7 +619,7 @@ const char *module_load(char *name)
     free(p);
     return e;
   }
-  check_bind(BT_load, name, NULL, name);
+  bind_check(BT_load, name, name);
   putlog(LOG_MISC, "*", _("Module loaded: %-16s"), name);
   return NULL;
 }
@@ -642,7 +642,7 @@ char *module_unload(char *name, char *user)
       if (f && !f[MODCALL_CLOSE])
 	return _("No close function");
       if (f) {
-	check_bind(BT_unload, name, NULL, name);
+	bind_check(BT_unload, name, name);
 	e = (((char *(*)()) f[MODCALL_CLOSE]) (user));
 	if (e != NULL)
 	  return e;

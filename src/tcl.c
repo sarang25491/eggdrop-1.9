@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tcl.c,v 1.85 2002/10/07 22:36:37 stdarg Exp $";
+static const char rcsid[] = "$Id: tcl.c,v 1.86 2002/10/10 04:41:59 stdarg Exp $";
 #endif
 
 #include <stdlib.h>		/* getenv()				*/
@@ -33,8 +33,6 @@ static const char rcsid[] = "$Id: tcl.c,v 1.85 2002/10/07 22:36:37 stdarg Exp $"
 #include "main.h"
 #include "logfile.h"
 #include "misc.h"
-#include "cmdt.h"		/* cmd_t				*/
-#include "tclhash.h"		/* kill_bind2				*/
 #include "chanprog.h"		/* masktype				*/
 
 /* Used for read/write to internal strings */
@@ -336,14 +334,14 @@ void kill_tcl()
   rem_tcl_coups(def_tcl_coups);
   rem_tcl_strings(def_tcl_strings);
   rem_tcl_ints(def_tcl_ints);
-  kill_binds();
   Tcl_DeleteInterp(interp);
 }
 
-extern tcl_cmds tcluser_cmds[], tcldcc_cmds[];
+extern tcl_cmds tcldcc_cmds[];
 extern script_command_t script_dcc_cmds[];
 extern script_command_t script_user_cmds[];
 extern script_command_t script_new_user_cmds[];
+extern script_command_t script_bind_cmds[];
 extern script_command_t script_misc_cmds[];
 
 /* Not going through Tcl's crazy main() system (what on earth was he
@@ -395,10 +393,10 @@ void init_tcl(int argc, char **argv)
   init_traces();
 
   /* Add new commands */
-  add_tcl_commands(tcluser_cmds);
   script_create_commands(script_dcc_cmds);
   script_create_commands(script_user_cmds);
   script_create_commands(script_new_user_cmds);
+  script_create_commands(script_bind_cmds);
   script_create_commands(script_misc_cmds);
 }
 

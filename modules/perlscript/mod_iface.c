@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: mod_iface.c,v 1.8 2002/05/17 07:29:24 stdarg Exp $";
+static const char rcsid[] = "$Id: mod_iface.c,v 1.9 2002/10/10 04:41:59 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -74,8 +74,8 @@ static int dcc_cmd_perl(struct userrec *u, int idx, char *text)
 	return(0);
 }
 
-static cmd_t my_dcc_cmds[] = {
-	{"perl", "n", (Function) dcc_cmd_perl, NULL},
+static bind_list_t my_dcc_cmds[] = {
+	{"perl", (Function) dcc_cmd_perl},
 	{0}
 };
 
@@ -105,13 +105,13 @@ char *perlscript_LTX_start(eggdrop_t *eggdrop)
 	script_register_module(&my_script_interface);
 	script_playback(&my_script_interface);
 
-	add_builtins("dcc", my_dcc_cmds);
+	bind_add_list("dcc", my_dcc_cmds);
 	return(NULL);
 }
 
 static char *perlscript_close()
 {
-	rem_builtins("dcc", my_dcc_cmds);
+	bind_rem_list("dcc", my_dcc_cmds);
 
 	/* Destroy interpreter. */
 	perlscript_destroy();

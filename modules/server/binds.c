@@ -51,32 +51,26 @@ void server_binds_init()
 	BT_dcc_chat = bind_table_add("dcc_chat", 6, "ssUssi", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
 	BT_dcc_recv = bind_table_add("dcc_recv", 7, "ssUssii", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
 
-	add_builtins("ctcp", ctcp_dcc_binds);
+	bind_add_list("ctcp", ctcp_dcc_binds);
 }
 
 void check_tcl_notc(char *nick, char *uhost, struct userrec *u, char *dest, char *arg)
 {
-  struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
-
-  get_user_flagrec(u, &fr, NULL);
-  check_bind(BT_notice, arg, &fr, nick, uhost, u, arg, dest);
+  bind_check(BT_notice, arg, nick, uhost, u, arg, dest);
 }
 
 static int check_tcl_ctcpr(char *nick, char *uhost, struct userrec *u,
 			   char *dest, char *keyword, char *args,
 			   bind_table_t *table)
 {
-  struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
-  get_user_flagrec(u, &fr, NULL);
-
-  return check_bind(table, keyword, &fr, nick, uhost, u, dest, keyword, args);
+  return bind_check(table, keyword, nick, uhost, u, dest, keyword, args);
 }
 
 static int check_tcl_wall(char *from, char *msg)
 {
   int x;
 
-  x = check_bind(BT_wall, msg, NULL, from, msg);
+  x = bind_check(BT_wall, msg, from, msg);
   if (x & BIND_RET_LOG) {
     putlog(LOG_WALL, "*", "!%s! %s", from, msg);
     return 1;

@@ -145,7 +145,7 @@ static int server_on_read(void *client_data, int idx, char *text, int len)
 		}
 	}
 
-	check_bind(BT_new_raw, msg.cmd, NULL, from_nick, from_uhost, u, msg.cmd, msg.nargs, msg.args);
+	bind_check(BT_new_raw, msg.cmd, from_nick, from_uhost, u, msg.cmd, msg.nargs, msg.args);
 
 	/* For now, let's emulate the old style. */
 
@@ -158,7 +158,7 @@ static int server_on_read(void *client_data, int idx, char *text, int len)
 	irc_msg_cleanup(&msg);
 	if (text[-1] == ':') text--;
 	text[-1] = 0;
-	check_bind(BT_raw, msg.cmd, NULL, prefix, msg.cmd, text);
+	bind_check(BT_raw, msg.cmd, prefix, msg.cmd, text);
 	free(prefix);
 	return(0);
 }

@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tcldcc.c,v 1.67 2002/09/20 21:41:49 stdarg Exp $";
+static const char rcsid[] = "$Id: tcldcc.c,v 1.68 2002/10/10 04:41:59 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -31,8 +31,6 @@ static const char rcsid[] = "$Id: tcldcc.c,v 1.67 2002/09/20 21:41:49 stdarg Exp
 #include "logfile.h"
 #include "misc.h"
 #include "cmdt.h"		/* cmd_t				*/
-#include "core_binds.h"		/* check_bind_chpt, check_bind_chjn,
-				   check_bind_bcst, check_bind_chof	*/
 #include "chanprog.h"		/* masktype, logmodes			*/
 #include "dccutil.h"		/* chatout, chanout_but, lostdcc
 				   not_away, set_away, new_dcc		*/
@@ -213,10 +211,7 @@ static int script_control(int idx, script_callback_t *callback)
     if (dcc[idx].u.chat->channel >= 0) {
       chanout_but(idx, dcc[idx].u.chat->channel, "*** %s has gone.\n",
 		  dcc[idx].nick);
-      check_bind_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock,
-		     dcc[idx].u.chat->channel);
     }
-    check_bind_chof(dcc[idx].nick, dcc[idx].sock);
   }
 
 	if (dcc[idx].type == &DCC_SCRIPT) {
@@ -267,7 +262,6 @@ static int script_killdcc(int idx, char *reason)
     chanout_but(idx, dcc[idx].u.chat->channel, "*** %s has left the %s%s%s\n",
 		dcc[idx].nick, dcc[idx].u.chat ? "channel" : "partyline",
 		reason ? ": " : "", reason ? reason : "");
-    check_bind_chof(dcc[idx].nick, dcc[idx].sock);
     /* Notice is sent to the party line, the script can add a reason. */
   }
   killsock(dcc[idx].sock);

@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: module.h,v 1.31 2002/10/07 22:33:54 stdarg Exp $
+ * $Id: module.h,v 1.32 2002/10/10 04:41:59 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_MODULE_H
@@ -55,7 +55,6 @@
 #include "src/net.h"
 #include "src/tclegg.h"
 #include "src/tcl.h"
-#include "src/tclhash.h"
 #include "src/traffic.h"
 #include "src/userent.h"
 #include "src/userrec.h"
@@ -96,13 +95,6 @@
 #define module_depend ((Function *(*)(char *,char *,int,int))egg->global[6])
 #define module_undepend ((int(*)(char *))egg->global[7])
 /* 8 - 11 */
-/* #define add_bind_table ((p_tcl_bind_list(*)(const char *,int,Function))egg->global[8]) */
-/* #define del_bind_table ((void (*) (p_tcl_bind_list))egg->global[9]) */
-/* #define find_bind_table ((p_tcl_bind_list(*)(const char *))egg->global[10]) */
-/* #define check_bind_bind ((int (*) (p_tcl_bind_list,const char *,struct flag_record *,const char *, int))egg->global[11]) */
-/* 12 - 15 */
-/* #define add_builtins ((int (*) (p_tcl_bind_list, cmd_t *))egg->global[12]) */
-/* #define rem_builtins ((int (*) (p_tcl_bind_list, cmd_t *))egg->global[13]) */
 #define add_tcl_commands ((void (*) (tcl_cmds *))egg->global[14])
 #define rem_tcl_commands ((void (*) (tcl_cmds *))egg->global[15])
 /* 16 - 19 */
@@ -110,32 +102,7 @@
 #define rem_tcl_ints ((void (*) (tcl_ints *))egg->global[17])
 #define add_tcl_strings ((void (*) (tcl_strings *))egg->global[18])
 #define rem_tcl_strings ((void (*) (tcl_strings *))egg->global[19])
-/* 20 - 23 */
-/* #define base64_to_int ((int (*) (char *))egg->global[20]) */
-/* #define int_to_base64 ((char * (*) (int))egg->global[21]) */
-/* #define int_to_base10 ((char * (*) (int))egg->global[22]) */
-/* #define simple_sprintf ((int (*)())egg->global[23]) */
-/* 24 - 27 */
-/* #define botnet_send_zapf ((void (*)(int, char *, char *, char *))egg->global[24]) */
-/* #define botnet_send_zapf_broad ((void (*)(int, char *, char *, char *))egg->global[25]) */
-/* #define botnet_send_unlinked ((void (*)(int, char *, char *))egg->global[26]) */
-/* #define botnet_send_bye ((void(*)(void))egg->global[27]) */
-/* 28 - 31 */
-/* #define botnet_send_chat ((void(*)(int,char*,char*))egg->global[28]) */
-/* #define botnet_send_filereject ((void(*)(int,char*,char*,char*))egg->global[29]) */
-/* #define botnet_send_filesend ((void(*)(int,char*,char*,char*))egg->global[30]) */
-/* #define botnet_send_filereq ((void(*)(int,char*,char*,char*))egg->global[31]) */
-/* 32 - 35 */
-/* #define botnet_send_join_idx ((void(*)(int,int))egg->global[32]) */
-/* #define botnet_send_part_idx ((void(*)(int,char *))egg->global[33]) */
-/* #define updatebot ((void(*)(int,char*,char,int))egg->global[34]) */
-/* #define nextbot ((int (*)(char *))egg->global[35]) */
-/* 36 - 39 */
-/* #define zapfbot ((void (*)(int))egg->global[36]) */
-/* 37: n_free -- UNUSED (Tothwolf) */
 #define u_pass_match ((int (*)(struct userrec *,char *))egg->global[38])
-/* 39: user_malloc -- UNUSED (Tothwolf) */
-/* 40 - 43 */
 #define get_user ((void *(*)(struct user_entry_type *,struct userrec *))egg->global[40])
 #define set_user ((int(*)(struct user_entry_type *,struct userrec *,void *))egg->global[41])
 #define add_entry_type ((int (*) ( struct user_entry_type * ))egg->global[42])
@@ -193,13 +160,9 @@
 /* 84 - 87 */
 #define open_listen ((int (*) (int *,int))egg->global[84])
 #define open_telnet_dcc ((int (*) (int,char *,char *))egg->global[85])
-/* 86: get_data_ptr -- UNUSED (Tothwolf) */
 #define open_telnet ((int (*) (char *, int))egg->global[87])
 /* 88 - 91 */
 #define check_bind_event ((void * (*) (const char *))egg->global[88])
-/* #define memcpy ((void * (*) (void *, const void *, size_t))egg->global[89]) */
-/* #define my_atoul ((IP(*)(char *))egg->global[90]) */
-/* #define my_strcpy ((int (*)(char *, const char *))egg->global[91]) */
 /* 92 - 95 */
 #define dcc (*(struct dcc_t **)egg->global[92])
 #define chanset (*(struct chanset_t **)(egg->global[93]))
@@ -303,23 +266,6 @@
 /* 172 - 175 */
 #define add_hook(a,b) (((void (*) (int, Function))egg->global[172])(a,b))
 #define del_hook(a,b) (((void (*) (int, Function))egg->global[173])(a,b))
-/* 174: H_dcc -- UNUSED (stdarg) */
-/* 175: H_filt -- UNUSED (oskar) */
-/* 176 - 179 */
-/* 176: H_chon -- UNUSED (oskar) */
-/* 177: H_chof -- UNUSED (oskar) */
-/*#define H_load (*(p_tcl_bind_list *)(egg->global[178])) */
-/*#define H_unld (*(p_tcl_bind_list *)(egg->global[179])) */
-/* 180 - 183 */
-/* 180: H_chat -- UNUSED (oskar) */
-/* 181: H_act -- UNUSED (oskar) */
-/* 182: H_bcst -- UNUSED (oskar) */
-/* 183: H_bot -- UNUSED (oskar) */
-/* 184 - 187 */
-/* 184: H_link -- UNUSED (oskar) */
-/* 185: H_disc -- UNUSED (oskar) */
-/* 186: H_away -- UNUSED (oskar) */
-/* 187: H_nkch -- UNUSED (oskar) */
 /* 188 - 191 */
 #define USERENTRY_BOTADDR (*(struct user_entry_type *)(egg->global[188]))
 #define USERENTRY_BOTFL (*(struct user_entry_type *)(egg->global[189]))
@@ -338,8 +284,6 @@
 /* 200 - 203 */
 #define logmodes ((int(*)(char *))egg->global[200])
 #define masktype ((const char *(*)(int))egg->global[201])
-/* #define stripmodes ((int(*)(char *))egg->global[202]) */
-/* #define stripmasktype ((const char *(*)(int))egg->global[203]) */
 /* 204 - 207 */
 #define sub_lang ((void(*)(int,char *))egg->global[204])
 #define online_since (*(int *)(egg->global[205]))
@@ -363,17 +307,11 @@
 /* 220 - 223 */
 #define global_exempts (*(maskrec **)(egg->global[220]))
 #define global_invites (*(maskrec **)(egg->global[221]))
-/* 222: ginvite_total -- UNUSED (Eule) */
-/* 223: gexempt_total -- UNUSED (Eule) */
 /* 224 - 227 */
-/* 224: H_event -- UNUSED (stdarg) */
 #define use_exempts (*(int *)(egg->global[225]))	/* drummer/Jason */
 #define use_invites (*(int *)(egg->global[226]))	/* drummer/Jason */
 #define force_expire (*(int *)(egg->global[227]))	/* Rufus */
 /* 228 - 231 */
-/* 228: add_lang_section() -- UNUSED */
-/* 229: user_realloc -- UNUSED (Tothwolf) */
-/* 230: nrealloc -- UNUSED (Tothwolf) */
 #define xtra_set ((int(*)(struct userrec *,struct user_entry *, void *))egg->global[231])
 /* 232 - 235 */
 /* #define ContextNote(note) (egg->global[232](__FILE__, __LINE__, MODULE_NAME, note)) */
@@ -399,12 +337,6 @@
 #define sock_has_data ((int(*)(int, int))egg->global[248])
 #define bots_in_subtree ((int (*)(tand_t *))egg->global[249])
 #define users_in_subtree ((int (*)(tand_t *))egg->global[250])
-/* #define inet_aton ((int (*)(const char *cp, struct in_addr *addr))egg->global[251]) */
-/* 252 - 255 */
-/* #define snprintf (egg->global[252]) */
-/* #define vsnprintf ((int (*)(char *, size_t, const char *, va_list))egg->global[253]) */
-/* #define memset ((void *(*)(void *, int, size_t))egg->global[254]) */
-/* #define strcasecmp ((int (*)(const char *, const char *))egg->global[255]) */
 /* 256 - 259 */
 #define fixfrom ((char *(*)(char *))egg->global[256])
 /* #define is_file ((int (*)(const char *))egg->global[257]) */
@@ -413,11 +345,6 @@
 /* 260 - 263 */
 #define party (*(party_t **)(egg->global[260]))
 #define open_address_listen ((int (*)(char *addr, int *port))egg->global[261])
-/* #define str_escape ((char *(*)(const char *, const char, const char))egg->global[262]) */
-/* #define strchr_unescape ((char *(*)(char *, const char, register const char))egg->global[263]) */
-/* 264 - 267 */
-/* #define str_unescape ((void (*)(char *, register const char))egg->global[264]) */
-/* #define egg_strcatn ((int (*)(char *dst, const char *src, size_t max))egg->global[265]) */
 #define clear_chanlist_member ((void (*)(const char *nick))egg->global[266])
 /* 268 - 271 */
 /* Please don't modify socklist directly, unless there's no other way.
@@ -434,14 +361,8 @@
 #define getlocaladdr ((char* (*) (int))egg->global[272])
 #define kill_bot ((void (*)(char *, char *))egg->global[273])
 #define quit_msg ((char *)(egg->global[274]))
-#define bind_table_add ((bind_table_t *(*)(const char *, int, char *, int, int))egg->global[275])
 /* 276 - 279 */
-#define bind_table_del ((void (*)(bind_table_t *))egg->global[276])
-#define add_builtins ((void (*)(const char *, cmd_t *))egg->global[277])
-#define rem_builtins ((void (*)(const char *, cmd_t *))egg->global[278])
-#define bind_table_lookup ((bind_table_t *(*)(const char *))egg->global[279]) 
 /* 280 - 283 */
-#define check_bind ((int (*)(bind_table_t *, const char *, struct flag_record *, ...))egg->global[280])
 #define egg_timeval_now (*(egg_timeval_t *)egg->global[281])
 
 /* This is for blowfish module, couldnt be bothered making a whole new .h

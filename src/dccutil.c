@@ -27,7 +27,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dccutil.c,v 1.55 2002/09/20 21:41:49 stdarg Exp $";
+static const char rcsid[] = "$Id: dccutil.c,v 1.56 2002/10/10 04:41:59 stdarg Exp $";
 #endif
 
 #include <sys/stat.h>
@@ -39,8 +39,6 @@ static const char rcsid[] = "$Id: dccutil.c,v 1.55 2002/09/20 21:41:49 stdarg Ex
 #include "misc.h"
 #include "cmdt.h"		/* cmd_t				*/
 #include "net.h"		/* tputs, killsock			*/
-#include "core_binds.h"		/* check_bind_chon, check_bind_chjn,
-				   check_bind_chof, check_bind_away	*/
 #include "dccutil.h"		/* prototypes				*/
 #include "users.h" /* get_user_by_handle */
 
@@ -212,7 +210,6 @@ void dcc_chatter(int idx)
   dcc[idx].u.chat->channel = 234567;
   j = dcc[idx].sock;
   strcpy(dcc[idx].u.chat->con_chan, "***");
-  check_bind_chon(dcc[idx].nick, idx);
   /* Still there? */
   if ((idx >= dcc_total) || (dcc[idx].sock != j))
     return;			/* Nope */
@@ -228,8 +225,6 @@ void dcc_chatter(int idx)
       if (i == -2)
 	i = 0;
       dcc[idx].u.chat->channel = i;
-      check_bind_chjn(botnetnick, dcc[idx].nick, dcc[idx].u.chat->channel,
-		     geticon(dcc[idx].user), dcc[idx].sock, dcc[idx].host);
     }
     /* But *do* bother with sending it locally */
     if (!dcc[idx].u.chat->channel) {
@@ -344,7 +339,6 @@ void not_away(int idx)
   }
   dprintf(idx, "You're not away any more.\n");
   free_null(dcc[idx].u.chat->away);
-  check_bind_away(botnetnick, dcc[idx].sock, NULL);
 }
 
 void set_away(int idx, char *s)
@@ -365,7 +359,6 @@ void set_away(int idx, char *s)
 		"*** %s is now away: %s\n", dcc[idx].nick, s);
   }
   dprintf(idx, "You are now away.\n");
-  check_bind_away(botnetnick, dcc[idx].sock, s);
 }
 
 /* Make a password, 10-15 random letters and digits
@@ -460,7 +453,6 @@ int detect_dcc_flood(time_t * timer, struct chat_info *chat, int idx)
 	snprintf(x, sizeof x, _("%s has been forcibly removed for flooding.\n"), dcc[idx].nick);
 	chanout_but(idx, chat->channel, "*** %s", x);
       }
-      check_bind_chof(dcc[idx].nick, dcc[idx].sock);
       if ((dcc[idx].sock != STDOUT) || backgrd) {
 	killsock(dcc[idx].sock);
 	lostdcc(idx);
@@ -494,7 +486,6 @@ void do_boot(int idx, char *by, char *reason)
 		 reason[0] ? ": " : "", reason);
     chanout_but(idx, dcc[idx].u.chat->channel, "*** %s.\n", x);
   }
-  check_bind_chof(dcc[idx].nick, dcc[idx].sock);
   if ((dcc[idx].sock != STDOUT) || backgrd) {
     killsock(dcc[idx].sock);
     lostdcc(idx);
@@ -526,11 +517,6 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
     sock = atoi(ss);
   /* Don't process if there's a note binding for it */
   if (idx != (-2)) {		/* Notes from bots don't trigger it */
-    if (check_bind_note(from, to, msg)) {
-      if ((idx >= 0) && (echo))
-	dprintf(idx, "-> %s: %s\n", to, msg);
-      return NOTE_TCL;
-    }
   }
   if (!(u = get_user_by_handle(userlist, to))) {
     if (idx >= 0)

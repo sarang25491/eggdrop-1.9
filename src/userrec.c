@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: userrec.c,v 1.52 2002/09/20 21:41:49 stdarg Exp $";
+static const char rcsid[] = "$Id: userrec.c,v 1.53 2002/10/10 04:41:59 stdarg Exp $";
 #endif
 
 #include <sys/stat.h>
@@ -39,7 +39,6 @@ static const char rcsid[] = "$Id: userrec.c,v 1.52 2002/09/20 21:41:49 stdarg Ex
 #include "chanprog.h"		/* clear_chanlist, set_chanlist		*/
 #include "dccutil.h"		/* shareout, chanout_but		*/
 #include "irccmp.h"		/* irccmp				*/
-#include "core_binds.h"		/* check_bind_nkch			*/
 #include "flags.h"
 #include "match.h"		/* wild_match				*/
 #include "userrec.h"		/* prototypes				*/
@@ -401,7 +400,6 @@ int change_handle(struct userrec *u, char *newh)
   /* Nothing that will confuse the userfile */
   if (!newh[1] && strchr(BADHANDCHARS, newh[0]))
     return 0;
-  check_bind_nkch(u->handle, newh);
   /* Yes, even send bot nick changes now: */
   if (!noshare && !(u->flags & USER_UNSHARED))
     shareout(NULL, "h %s %s\n", u->handle, newh);

@@ -62,7 +62,6 @@ static int got442(char *from_nick, char *from_uhost, struct userrec *u, char *cm
 
 static int check_ctcp_ctcr(int which, int to_channel, struct userrec *u, char *nick, char *uhost, char *dest, char *trailing)
 {
-	struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 	char *cmd, *space, *logdest, *text, *ctcptype;
 	bind_table_t *table;
 	int r, len, flags;
@@ -85,9 +84,7 @@ static int check_ctcp_ctcr(int which, int to_channel, struct userrec *u, char *n
 	if (which == 0) table = BT_ctcp;
 	else table = BT_ctcr;
 
-	get_user_flagrec(u, &fr, dest);
-
-	r = check_bind(table, cmd, &fr, nick, uhost, u, dest, cmd, text);
+	r = bind_check(table, cmd, nick, uhost, u, dest, cmd, text);
 
 	trailing[len-1] = 1;
 
@@ -162,13 +159,13 @@ static int gotmsg(char *from_nick, char *from_uhost, struct userrec *u, char *cm
 
 	get_user_flagrec(u, &fr, dest);
 	if (to_channel) {
-		r = check_bind(BT_pub, first, &fr, from_nick, from_uhost, u, dest, text);
+		r = bind_check(BT_pub, first, from_nick, from_uhost, u, dest, text);
 		if (r & BIND_RET_LOG) {
 			putlog(LOG_CMDS, dest, "<<%s>> !%s! %s %s", from_nick, u ? u->handle : "*", first, text);
 		}
 	}
 	else {
-		r = check_bind(BT_msg, first, &fr, from_nick, from_uhost, u, text);
+		r = bind_check(BT_msg, first, from_nick, from_uhost, u, text);
 		if (r & BIND_RET_LOG) {
 			putlog(LOG_CMDS, "*", "(%s!%s) !%s! %s %s", from_nick, from_uhost, u ? u->handle : "*", first, text);
 		}
@@ -180,10 +177,10 @@ static int gotmsg(char *from_nick, char *from_uhost, struct userrec *u, char *cm
 
 	/* And now the stackable version. */
 	if (to_channel) {
-		r = check_bind(BT_pubm, trailing, &fr, from_nick, from_uhost, u, dest, trailing);
+		r = bind_check(BT_pubm, trailing, from_nick, from_uhost, u, dest, trailing);
 	}
 	else {
-		r = check_bind(BT_msg, trailing, &fr, from_nick, from_uhost, u, trailing);
+		r = bind_check(BT_msg, trailing, from_nick, from_uhost, u, trailing);
 	}
 
 	if (!(r & BIND_RET_BREAK)) {
@@ -232,7 +229,7 @@ static int gotnotice(char *from_nick, char *from_uhost, struct userrec *u, char 
 	if (r) return(0);
 
 	get_user_flagrec(u, &fr, NULL);
-	r = check_bind(BT_notice, trailing, &fr, from_nick, from_uhost, u, dest, trailing);
+	r = bind_check(BT_notice, trailing, from_nick, from_uhost, u, dest, trailing);
 
 	if (!(r & BIND_RET_BREAK)) {
 		/* This should probably go in the partyline module later. */
@@ -255,7 +252,7 @@ static int gotwall(char *from_nick, char *from_uhost, struct userrec *u, char *c
 	int r;
 
 	msg = args[1];
-	r = check_bind(BT_wall, msg, NULL, from_nick, msg);
+	r = bind_check(BT_wall, msg, from_nick, msg);
 	if (!(r & BIND_RET_BREAK)) {
 		if (from_uhost) putlog(LOG_WALL, "*", "!%s (%s)! %s", from_nick, from_uhost, msg);
 		else putlog(LOG_WALL, "*", "!%s! %s", from_nick, msg);
@@ -391,21 +388,21 @@ static int got311(char *from_nick, char *from_uhost, struct userrec *u, char *cm
 	return(0);
 }
 
-cmd_t my_new_raw_binds[] = {
-	{"PRIVMSG", "", (Function) gotmsg, NULL},
-	{"NOTICE", "", (Function) gotnotice, NULL},
-	{"WALLOPS", "", (Function) gotwall, NULL},
-	{"PING", "", (Function) gotping, NULL},
-	{"NICK", "", (Function) gotnick, NULL},
-	{"ERROR", "", (Function) goterror, NULL},
-	{"001", "", (Function) got001, NULL},
-	{"432",	 "", (Function) got432,  NULL},
-	{"433",	 "", (Function) got433,  NULL},
-	{"435",  "", (Function) got435,  NULL},
-	{"438",  "", (Function) got438,  NULL},
-	{"437",	 "", (Function) got437,	 NULL},
-	{"451",	 "", (Function) got451,	 NULL},
-	{"442",	 "", (Function) got442,	 NULL},
-	{"311", "", (Function) got311, NULL},
+bind_list_t my_new_raw_binds[] = {
+	{"PRIVMSG", (Function) gotmsg},
+	{"NOTICE", (Function) gotnotice},
+	{"WALLOPS", (Function) gotwall},
+	{"PING", (Function) gotping},
+	{"NICK", (Function) gotnick},
+	{"ERROR", (Function) goterror},
+	{"001", (Function) got001},
+	{"432",	(Function) got432},
+	{"433",	(Function) got433},
+	{"435", (Function) got435},
+	{"438", (Function) got438},
+	{"437",	(Function) got437},
+	{"451",	(Function) got451,},
+	{"442",	(Function) got442,},
+	{"311", (Function) got311,},
 	{NULL, NULL, NULL, NULL}
 };

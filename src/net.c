@@ -9,7 +9,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: net.c,v 1.63 2002/09/20 02:06:25 stdarg Exp $";
+static const char rcsid[] = "$Id: net.c,v 1.64 2002/10/10 04:41:59 stdarg Exp $";
 #endif
 
 #include <fcntl.h>
@@ -1172,10 +1172,6 @@ void dequeue_sockets()
        * dcc entry wants it.
        */
       if (!socklist[i].outbuf) {
-	int idx = findanyidx(socklist[i].sock);
-
-	if (idx > 0 && dcc[idx].type && dcc[idx].type->outdone)
-	  dcc[idx].type->outdone(idx);
       }
     }
   }

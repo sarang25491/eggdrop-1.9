@@ -1,44 +1,5 @@
-/*
- * tclhash.c --
- *
- *	bind and unbind
- *	checking and triggering the various in-bot bindings
- *	listing current bindings
- *	adding/removing new binding tables
- *	(non-Tcl) procedure lookups for msg/dcc/file commands
- *	(Tcl) binding internal procedures to msg/dcc/file commands
- */
-/*
- * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- */
-
-#ifndef lint
-static const char rcsid[] = "$Id: tclhash.c,v 1.74 2002/09/20 02:06:25 stdarg Exp $";
-#endif
-
-#include "main.h"
-#include "chan.h"
-#include "users.h"
-#include "logfile.h"
-#include "cmdt.h"		/* cmd_t			*/
-#include "userrec.h"		/* touch_laston			*/
-#include "match.h"		/* wild_match_per		*/
-#include "tclhash.h"		/* prototypes			*/
+#include <stdlib.h>
+#include <eggdrop/eggdrop.h>
 
 extern struct dcc_t *dcc;
 extern int dcc_total;
@@ -52,24 +13,9 @@ static int already_scheduled = 0;
 static void bind_table_really_del(bind_table_t *table);
 static void bind_entry_really_del(bind_table_t *table, bind_entry_t *entry);
 
-/* Prototypes for the commands we create in this file. */
-static int script_bind(char *table_name, char *flags, char *mask, script_callback_t *callback);
-static int script_unbind(char *table_name, char *flags, char *mask, char *name);
-static int script_rebind(char *table_name, char *flags, char *mask, char *command, char *newflags, char *newmask);
-static int script_binds(script_var_t *retval, char *tablename);
-
-static script_command_t tclhash_script_cmds[] = {
-	{"", "binds", script_binds, NULL, 0, "s", "?bind-table?", 0, SCRIPT_PASS_RETVAL | SCRIPT_VAR_ARGS},
-	{"", "bind", script_bind, NULL, 4, "sssc", "table flags mask command", SCRIPT_INTEGER, 0},
-	{"", "unbind", script_unbind, NULL, 4, "ssss", "table flags mask command", SCRIPT_INTEGER, 0},
-	{"", "rebind", script_rebind, NULL, 6, "ssssss", "table flags mask command newflags newmask", SCRIPT_INTEGER, 0},
-	{0}
-};
-
 void binds_init(void)
 {
 	bind_table_list_head = NULL;
-	script_create_commands(tclhash_script_cmds);
 }
 
 static int internal_bind_cleanup()
@@ -202,14 +148,14 @@ bind_entry_t *bind_entry_lookup(bind_table_t *table, int id, const char *mask, c
 	return(entry);
 }
 
-int bind_entry_del(bind_table_t *table, int id, const char *mask, const char *function_name, void *cdata)
+int bind_entry_del(bind_table_t *table, int id, const char *mask, const char *function_name, void *cdataptr)
 {
 	bind_entry_t *entry;
 
 	entry = bind_entry_lookup(table, id, mask, function_name);
 	if (!entry) return(-1);
 
-	if (cdata) *(void **)cdata = entry->client_data;
+	if (cdataptr) *(void **)cdataptr = entry->client_data;
 
 	/* Delete it. */
 	if (check_bind_executing) {
@@ -242,13 +188,11 @@ int bind_entry_modify(bind_table_t *table, int id, const char *mask, const char 
 	/* Modify it. */
 	free(entry->mask);
 	entry->mask = strdup(newmask);
-	entry->user_flags.match = FR_GLOBAL | FR_CHAN;
-	break_down_flags(newflags, &(entry->user_flags), NULL);
 
 	return(0);
 }
 
-int bind_entry_add(bind_table_t *table, const char *flags, const char *mask, const char *function_name, int bind_flags, Function callback, void *client_data)
+int bind_entry_add(bind_table_t *table, const char *mask, const char *function_name, int bind_flags, Function callback, void *client_data)
 {
 	bind_entry_t *entry, *old_entry;
 
@@ -284,93 +228,9 @@ int bind_entry_add(bind_table_t *table, const char *flags, const char *mask, con
 	entry->client_data = client_data;
 	entry->flags = bind_flags;
 
-	entry->user_flags.match = FR_GLOBAL | FR_CHAN;
-	break_down_flags(flags, &(entry->user_flags), NULL);
+	//entry->user_flags.match = FR_GLOBAL | FR_CHAN;
+	//break_down_flags(flags, &(entry->user_flags), NULL);
 
-	return(0);
-}
-
-static int script_bind(char *table_name, char *flags, char *mask, script_callback_t *callback)
-{
-	bind_table_t *table;
-	int retval;
-
-	table = bind_table_lookup(table_name);
-	if (!table) return(1);
-
-	callback->syntax = strdup(table->syntax);
-	retval = bind_entry_add(table, flags, mask, callback->name, BIND_WANTS_CD, callback->callback, callback);
-	return(retval);
-}
-
-static int script_unbind(char *table_name, char *flags, char *mask, char *name)
-{
-	bind_table_t *table;
-	script_callback_t *callback;
-	int retval;
-
-	table = bind_table_lookup(table_name);
-	if (!table) return(1);
-
-	retval = bind_entry_del(table, -1, mask, name, &callback);
-	if (callback) callback->del(callback);
-	return(retval);
-}
-
-static int script_rebind(char *table_name, char *flags, char *mask, char *command, char *newflags, char *newmask)
-{
-	bind_table_t *table;
-
-	table = bind_table_lookup(table_name);
-	if (!table) return(-1);
-	return bind_entry_modify(table, -1, mask, command, newflags, newmask);
-}
-
-int findanyidx(register int z)
-{
-  register int j;
-
-  for (j = 0; j < dcc_total; j++)
-    if (dcc[j].type && dcc[j].sock == z)
-      return j;
-  return -1;
-}
-
-/* Returns a list of binds in a given table, or the list of bind tables. */
-static int script_binds(script_var_t *retval, char *tablename)
-{
-	bind_table_t *table;
-	bind_entry_t *entry;
-	script_var_t *sublist, *func, *flags, *mask, *nhits;
-	char flagbuf[128];
-
-	retval->type = SCRIPT_ARRAY | SCRIPT_FREE | SCRIPT_VAR;
-	retval->len = 0;
-	retval->value = NULL;
-
-	/* No table name? Then return the list of tables. */
-	if (!tablename) {
-		for (table = bind_table_list_head; table; table = table->next) {
-			if (table->flags & BIND_DELETED) return(0);
-			script_list_append(retval, script_string(table->name, -1));
-		}
-		return(0);
-	}
-
-	table = bind_table_lookup(tablename);
-	if (!table) return(0);
-
-	for (entry = table->entries; entry; entry = entry->next) {
-		if (entry->flags & BIND_DELETED) continue;
-
-		mask = script_string(entry->mask, -1);
-		build_flags(flagbuf, &entry->user_flags, NULL);
-		flags = script_copy_string(flagbuf, -1);
-		nhits = script_int(entry->nhits);
-		func = script_string(entry->function_name, -1);
-		sublist = script_list(4, flags, mask, nhits, func);
-		script_list_append(retval, sublist);
-	}
 	return(0);
 }
 
@@ -417,7 +277,7 @@ static int bind_entry_exec(bind_table_t *table, bind_entry_t *entry, void **al)
 	return entry->callback(al[0], al[1], al[2], al[3], al[4], al[5], al[6], al[7], al[8], al[9]);
 }
 
-int check_bind(bind_table_t *table, const char *match, struct flag_record *flags, ...)
+int bind_check(bind_table_t *table, const char *match, ...)
 {
 	void *args[11];
 	bind_entry_t *entry, *next;
@@ -426,7 +286,7 @@ int check_bind(bind_table_t *table, const char *match, struct flag_record *flags
 
 	check_bind_executing++;
 
-	va_start(ap, flags);
+	va_start(ap, match);
 	for (i = 1; i <= table->nargs; i++) {
 		args[i] = va_arg(ap, void *);
 	}
@@ -445,11 +305,11 @@ int check_bind(bind_table_t *table, const char *match, struct flag_record *flags
 		winner = NULL;
 		for (entry = table->entries; entry; entry = entry->next) {
 			if (entry->flags & BIND_DELETED) continue;
-			if (table->flags & BIND_USE_ATTR) {
+			/*if (table->flags & BIND_USE_ATTR) {
 				if (table->flags & BIND_STRICT_ATTR) cmp = flagrec_eq(&entry->user_flags, flags);
 				else cmp = flagrec_ok(&entry->user_flags, flags);
 				if (!cmp) continue;
-			}
+			}*/
 			masklen = strlen(entry->mask);
 			if (!strncasecmp(match, entry->mask, masklen < matchlen ? masklen : matchlen)) {
 				winner = entry;
@@ -478,11 +338,11 @@ int check_bind(bind_table_t *table, const char *match, struct flag_record *flags
 		if (cmp) continue; /* Doesn't match. */
 
 		/* Check flags. */
-		if (table->flags & BIND_USE_ATTR) {
+		/*if (table->flags & BIND_USE_ATTR) {
 			if (table->flags & BIND_STRICT_ATTR) cmp = flagrec_eq(&entry->user_flags, flags);
 			else cmp = flagrec_ok(&entry->user_flags, flags);
 			if (!cmp) continue;
-		}
+		}*/
 
 		retval = bind_entry_exec(table, entry, args);
 		if ((table->flags & BIND_BREAKABLE) && (retval & BIND_RET_BREAK)) {
@@ -494,20 +354,20 @@ int check_bind(bind_table_t *table, const char *match, struct flag_record *flags
 	return(retval);
 }
 
-void add_builtins(const char *table_name, cmd_t *cmds)
+void bind_add_list(const char *table_name, bind_list_t *cmds)
 {
 	char name[50];
 	bind_table_t *table;
 
 	table = bind_table_lookup_or_fake(table_name);
 
-	for (; cmds->name; cmds++) {
-		snprintf(name, 50, "*%s:%s", table->name, cmds->funcname ? cmds->funcname : cmds->name);
-		bind_entry_add(table, cmds->flags, cmds->name, name, 0, cmds->func, NULL);
+	for (; cmds->mask; cmds++) {
+		snprintf(name, 50, "*%s:%s", table->name, cmds->mask);
+		bind_entry_add(table, cmds->mask, name, 0, cmds->callback, NULL);
 	}
 }
 
-void rem_builtins(const char *table_name, cmd_t *cmds)
+void bind_rem_list(const char *table_name, bind_list_t *cmds)
 {
 	char name[50];
 	bind_table_t *table;
@@ -515,8 +375,8 @@ void rem_builtins(const char *table_name, cmd_t *cmds)
 	table = bind_table_lookup(table_name);
 	if (!table) return;
 
-	for (; cmds->name; cmds++) {
-		sprintf(name, "*%s:%s", table->name, cmds->funcname ? cmds->funcname : cmds->name);
-		bind_entry_del(table, -1, cmds->name, name, NULL);
+	for (; cmds->mask; cmds++) {
+		snprintf(name, 50, "*%s:%s", table->name, cmds->mask);
+		bind_entry_del(table, -1, cmds->mask, name, NULL);
 	}
 }

@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: javascript.c,v 1.12 2002/09/21 07:40:16 stdarg Exp $";
+static const char rcsid[] = "$Id: javascript.c,v 1.13 2002/10/10 04:41:59 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -685,8 +685,8 @@ static void javascript_report(int idx, int details)
 	dprintf(idx, "    Using JavaScript version %s\n", version_str);
 }
 
-static cmd_t dcc_commands[] = {
-	{"js", 	"n", 	(Function) cmd_js,	NULL},
+static bind_list_t dcc_commands[] = {
+	{"js", (Function) cmd_js},
 	{0}
 };
 
@@ -717,7 +717,7 @@ char *javascript_LTX_start(eggdrop_t *eggdrop)
 	script_register_module(&my_script_interface);
 	script_playback(&my_script_interface);
 
-	add_builtins("dcc", dcc_commands);
+	bind_add_list("dcc", dcc_commands);
 
 	return(NULL);
 }
@@ -729,7 +729,7 @@ static char *javascript_close()
 
 	script_unregister_module(&my_script_interface);
 
-	rem_builtins("dcc", dcc_commands);
+	bind_rem_list("dcc", dcc_commands);
 
 	module_undepend("javascript");
 	return(NULL);

@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dcc.c,v 1.93 2002/10/07 22:36:36 stdarg Exp $";
+static const char rcsid[] = "$Id: dcc.c,v 1.94 2002/10/10 04:41:59 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -36,11 +36,6 @@ static const char rcsid[] = "$Id: dcc.c,v 1.93 2002/10/07 22:36:36 stdarg Exp $"
 #include "dns.h"
 #include "misc.h"
 #include "cmdt.h"	/* cmd_t				*/
-#include "tclhash.h"	/* BIND_RET_BREAK	*/
-#include "core_binds.h"	/* check_bind_chof, check_bind_filt, 
-			   check_bind_dcc, check_bind_chat, 
-			   check_bind_chjn, check_bind_chon,
-			   check_bind_listen				*/
 #include "users.h"	/* match_ignore, addignore, get_user_by_host	*/
 //#include "chanprog.h"	/* reaffirm_owners				*/
 //#include "cmds.h"	/* check_dcc_attrs				*/
@@ -54,6 +49,7 @@ static const char rcsid[] = "$Id: dcc.c,v 1.93 2002/10/07 22:36:36 stdarg Exp $"
 			   deluser					*/
 #include "match.h"	/* wild_match					*/
 #include "dcc.h"	/* prototypes					*/
+#include "core_binds.h"
 
 extern struct userrec	*userlist;
 extern struct chanset_t	*chanset;
@@ -357,10 +353,7 @@ static void eof_dcc_chat(int idx)
   if (dcc[idx].u.chat->channel >= 0) {
     chanout_but(idx, dcc[idx].u.chat->channel, "*** %s lost dcc link.\n",
 		dcc[idx].nick);
-    check_bind_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock,
-		   dcc[idx].u.chat->channel);
   }
-  check_bind_chof(dcc[idx].nick, idx);
   killsock(dcc[idx].sock);
   lostdcc(idx);
 }
@@ -379,8 +372,6 @@ static void dcc_chat(int idx, char *buf, int i)
   if (!iscommand && detect_dcc_flood(&dcc[idx].timeval, dcc[idx].u.chat, idx)) return;
 
   dcc[idx].timeval = now;
-
-  strcpy(buf, check_bind_filt(idx, buf));
 
     /* Check for beeps and cancel annoying ones */
     v = buf;
@@ -464,9 +455,8 @@ static void dcc_chat(int idx, char *buf, int i)
 	  }
 	}
     } else {
-	int r;
+	int r = 0;
 
-	r = check_bind_chat(dcc[idx].nick, dcc[idx].u.chat->channel, buf);
 	if (r & BIND_RET_BREAK) return;
 
 	if (dcc[idx].u.chat->away != NULL)
@@ -1044,10 +1034,7 @@ static void dcc_script(int idx, char *buf, int len)
     if (dcc[idx].type == &DCC_CHAT) {
       if (dcc[idx].u.chat->channel >= 0) {
 	chanout_but(-1, dcc[idx].u.chat->channel, _("*** %s has joined the party line.\n"), dcc[idx].nick);
-	check_bind_chjn(botnetnick, dcc[idx].nick, dcc[idx].u.chat->channel,
-		       geticon(dcc[idx].user), dcc[idx].sock, dcc[idx].host);
       }
-      check_bind_chon(dcc[idx].nick, idx);
     }
   }
 }
@@ -1319,7 +1306,7 @@ void dcc_telnet_got_ident(int i, char *host)
     dcc[i].type = &DCC_SOCKET;
     dcc[i].u.other = NULL;
     strcpy(dcc[i].nick, "*");
-    check_bind_listen(dcc[idx].host, dcc[i].sock);
+    //check_bind_listen(dcc[idx].host, dcc[i].sock);
     return;
   }
   /* Do not buffer data anymore. All received and stored data is passed

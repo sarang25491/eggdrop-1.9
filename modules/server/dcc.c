@@ -594,7 +594,6 @@ static void update_snapshot(dcc_send_t *send, int len)
 
 static void got_chat(char *nick, char *uhost, user_t *u, char *text)
 {
-	struct flag_record fr = {FR_GLOBAL, 0, 0, 0, 0, 0};
 	char type[256], ip[256], port[32];
 	int nport;
 
@@ -611,8 +610,7 @@ static void got_chat(char *nick, char *uhost, user_t *u, char *text)
 
 	nport = atoi(port);
 
-	get_user_flagrec(u, &fr, NULL);
-	check_bind(BT_dcc_chat, nick, &fr, nick, uhost, u, type, ip, nport);
+	bind_check(BT_dcc_chat, nick, nick, uhost, u, type, ip, nport);
 }
 
 static void got_resume(char *nick, char *uhost, struct userrec *u, char *text)
@@ -706,7 +704,7 @@ static void got_send(char *nick, char *uhost, user_t *u, char *text)
 	}
 
 	get_user_flagrec(u, &fr, NULL);
-	check_bind(BT_dcc_recv, nick, &fr, nick, uhost, u, fname, ip, port, size);
+	bind_check(BT_dcc_recv, nick, nick, uhost, u, fname, ip, port, size);
 }
 
 /* PRIVMSG ((target) :^ADCC CHAT ((type) ((longip) ((port)^A */
@@ -727,7 +725,7 @@ static int got_dcc(char *nick, char *uhost, struct userrec *u, char *dest, char 
 	return(0);
 }
 
-cmd_t ctcp_dcc_binds[] = {
-	{"DCC", "", (Function) got_dcc, NULL},
-	{NULL, NULL, NULL, NULL}
+bind_list_t ctcp_dcc_binds[] = {
+	{"DCC", (Function) got_dcc},
+	{0}
 };

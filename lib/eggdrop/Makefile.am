@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.10 2002/10/07 22:33:54 stdarg Exp $
+# $Id: Makefile.am,v 1.11 2002/10/10 04:41:58 stdarg Exp $
 
 MAINTAINERCLEANFILES	= Makefile.in
 
@@ -6,8 +6,8 @@ INCLUDES		= -I$(top_srcdir) -I$(top_srcdir)/lib
 
 lib_LTLIBRARIES 	= libeggdrop.la
 
-libeggdrop_la_SOURCES	= botnetutil.c \
-			botnetutil.h \
+libeggdrop_la_SOURCES	= binds.c binds.h \
+			botnetutil.c botnetutil.h \
 			common.h \
 			eggdrop.c \
 			eggdrop.h \

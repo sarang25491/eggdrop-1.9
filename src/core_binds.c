@@ -1,33 +1,8 @@
-/*
- * core_binds.c --
- */
-/*
- * Copyright (C) 2002 Eggheads Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA	02111-1307, USA.
- */
-
-#ifndef lint
-static const char rcsid[] = "$Id: core_binds.c,v 1.6 2002/10/07 22:36:36 stdarg Exp $";
-#endif
-
+#include <eggdrop/eggdrop.h>
 #include "main.h"
 #include "users.h"
 #include "logfile.h"
 #include "cmdt.h"
-#include "tclhash.h"
 #include "userrec.h"
 
 static bind_table_t *BT_time, *BT_event;
@@ -79,103 +54,31 @@ void check_bind_time(struct tm *tm)
 {
 	char full[32];
 	snprintf(full, sizeof(full), "%02d %02d %02d %02d %04d", tm->tm_min, tm->tm_hour, tm->tm_mday, tm->tm_mon, tm->tm_year + 1900);
-	check_bind(BT_time, full, NULL, tm->tm_min, tm->tm_hour, tm->tm_mday, tm->tm_mon, tm->tm_year + 1900);
+	bind_check(BT_time, full, tm->tm_min, tm->tm_hour, tm->tm_mday, tm->tm_mon, tm->tm_year + 1900);
 }
 
 void check_bind_event(char *event)
 {
-	check_bind(BT_event, event, NULL, event);
-}
-
-void check_bind_away(const char *bot, int idx, const char *msg)
-{
-	check_bind(BT_away, bot, NULL, bot, idx, msg);
+	bind_check(BT_event, event, NULL, event);
 }
 
 void check_bind_dcc(const char *cmd, int idx, const char *text)
 {
-	struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 	int x;
 
-	get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.chat->con_chan);
-
-	x = check_bind(BT_dcc, cmd, &fr, dcc[idx].user, idx, text);
+	x = bind_check(BT_dcc, cmd, dcc[idx].user, idx, text);
 	if (x & BIND_RET_LOG) {
 		putlog(LOG_CMDS, "*", "#%s# %s %s", dcc[idx].nick, cmd, text);
 	}
 }
 
-void check_bind_bot(const char *nick, const char *code, const char *param)
-{
-	check_bind(BT_bot, code, NULL, nick, code, param);
-}
-
-void check_bind_chon(char *hand, int idx)
-{
-	struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
-	struct userrec *u;
-
-	u = get_user_by_handle(userlist, hand);
-	touch_laston(u, "partyline", now);
-	get_user_flagrec(u, &fr, NULL);
-	check_bind(BT_chon, hand, &fr, hand, idx);
-}
-
-void check_bind_chof(char *hand, int idx)
-{
-	struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
-	struct userrec *u;
-
-	u = get_user_by_handle(userlist, hand);
-	touch_laston(u, "partyline", now);
-	get_user_flagrec(u, &fr, NULL);
-	check_bind(BT_chof, hand, &fr, hand, idx);
-}
-
-int check_bind_chat(const char *from, int chan, const char *text)
-{
-	return check_bind(BT_chat, text, NULL, from, chan, text);
-}
-
-void check_bind_act(const char *from, int chan, const char *text)
-{
-	check_bind(BT_act, text, NULL, from, chan, text);
-}
-
-void check_bind_bcst(const char *from, int chan, const char *text)
-{
-	check_bind(BT_bcst, text, NULL, from, chan, text);
-}
-
-void check_bind_nkch(const char *ohand, const char *nhand)
-{
-	check_bind(BT_nkch, ohand, NULL, ohand, nhand);
-}
-
-void check_bind_link(const char *bot, const char *via)
-{
-	check_bind(BT_link, bot, NULL, bot, via);
-}
-
-void check_bind_disc(const char *bot)
-{
-	check_bind(BT_disc, bot, NULL, bot);
-}
-
 const char *check_bind_filt(int idx, const char *text)
 {
 	int x;
-	struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
-	get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.chat->con_chan);
 	global_filt_string = strdup(text);
-	x = check_bind(BT_filt, text, &fr, idx, text);
+	x = bind_check(BT_filt, text, idx, text);
 	return(global_filt_string);
-}
-
-int check_bind_note(const char *from, const char *to, const char *text)
-{
-	return check_bind(BT_note, to, NULL, from, to, text);
 }
 
 void check_bind_listen(const char *cmd, int idx)
@@ -194,36 +97,3 @@ void check_bind_listen(const char *cmd, int idx)
 */
 
 }
-
-void check_bind_chjn(const char *bot, const char *nick, int chan,
-				const char type, int sock, const char *host)
-{
-	struct flag_record fr = {FR_GLOBAL, 0, 0, 0, 0, 0};
-	char s[11], t[2];
-
-	t[0] = type;
-	t[1] = 0;
-	switch (type) {
-	case '*':
-		fr.global = USER_OWNER;
-		break;
-	case '+':
-		fr.global = USER_MASTER;
-		break;
-	case '@':
-		fr.global = USER_OP;
-		break;
-	case '%':
-		fr.global = USER_BOTMAST;
-	}
-	snprintf(s, sizeof s, "%d", chan);
-	check_bind(BT_chjn, s, &fr, bot, nick, chan, t, sock, host);
-}
-
-void check_bind_chpt(const char *bot, const char *hand, int sock, int chan)
-{
-	char v[11];
-	
-	snprintf(v, sizeof v, "%d", chan);
-	check_bind(BT_chpt, v, NULL, bot, hand, sock, chan);
-}	 

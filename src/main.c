@@ -30,9 +30,10 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.124 2002/10/07 22:36:37 stdarg Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.125 2002/10/10 04:41:59 stdarg Exp $";
 #endif
 
+#include <eggdrop/eggdrop.h>
 #include "main.h"
 #include <fcntl.h>
 #include <time.h>
@@ -456,7 +457,6 @@ void script_net_init();
 void dns_init();
 void binds_init();
 void dcc_init();
-int user_init();
 
 void patch(const char *str)
 {

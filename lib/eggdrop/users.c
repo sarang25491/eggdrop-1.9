@@ -201,6 +201,10 @@ static user_t *real_user_new(const char *handle, int uid)
 	if (!uid) uid = user_get_uid();
 	u->uid = uid;
 
+	/* All users have the global setting by default. */
+	u->settings = calloc(1, sizeof(*u->settings));
+	u->nsettings = 1;
+
 	hash_table_insert(handle_ht, u->handle, u);
 	hash_table_insert(uid_ht, (void *)u->uid, u);
 	hash_table_check_resize(&handle_ht);
@@ -248,6 +252,7 @@ int user_delete(user_t *u)
 			if (setting->extended[j].value) free(setting->extended[j].value);
 		}
 		if (setting->extended) free(setting->extended);
+		if (setting->chan) free(setting->chan);
 	}
 	if (u->settings) free(u->settings);
 	u->settings = NULL;

@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tcluser.c,v 1.44 2002/10/07 22:36:37 stdarg Exp $";
+static const char rcsid[] = "$Id: tcluser.c,v 1.45 2002/10/10 04:41:59 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -351,71 +351,6 @@ static int script_ignorelist(script_var_t *retval)
   return(0);
 }
 
-static int tcl_getuser STDVAR
-{
-  struct user_entry_type *et;
-  struct userrec *u;
-  struct user_entry *e;
-
-  BADARGS(3, 999, " handle type");
-  if (!(et = find_entry_type(argv[2])) && strcasecmp(argv[2], "HANDLE")) {
-    Tcl_AppendResult(irp, "No such info type: ", argv[2], NULL);
-    return TCL_ERROR;
-  }
-  if (!(u = get_user_by_handle(userlist, argv[1]))) {
-    if (argv[1][0] != '*') {
-      Tcl_AppendResult(irp, "No such user.", NULL);
-      return TCL_ERROR;
-    } else
-      return TCL_OK;		/* silently ignore user * */
-  }
-  if (!strcasecmp(argv[2], "HANDLE")) {
-    Tcl_AppendResult(irp,u->handle, NULL);
-  } else {
-  e = find_user_entry(et, u);
-  if (e)
-    return et->tcl_get(irp, u, e, argc, argv);
-  }
-  return TCL_OK;
-}
-
-static int tcl_setuser STDVAR
-{
-  struct user_entry_type *et;
-  struct userrec *u;
-  struct user_entry *e;
-  int r;
-
-  BADARGS(3, 999, " handle type ?setting....?");
-  if (!(et = find_entry_type(argv[2]))) {
-    Tcl_AppendResult(irp, "No such info type: ", argv[2], NULL);
-    return TCL_ERROR;
-  }
-  if (!(u = get_user_by_handle(userlist, argv[1]))) {
-    if (argv[1][0] != '*') {
-      Tcl_AppendResult(irp, "No such user.", NULL);
-      return TCL_ERROR;
-    } else
-      return TCL_OK;		/* Silently ignore user * */
-  }
-  if (!(e = find_user_entry(et, u))) {
-    e = malloc(sizeof(struct user_entry));
-    e->type = et;
-    e->name = NULL;
-    e->u.list = NULL;
-    list_insert((&(u->entries)), e);
-  }
-  r = et->tcl_set(irp, u, e, argc, argv);
-  /* Yeah... e is freed, and we read it... (tcl: setuser hand HOSTS none) */
-  if (!e->u.list) {
-    if (list_delete((struct list_type **) &(u->entries),
-		    (struct list_type *) e))
-      free(e);
-    /* else maybe already freed... (entry_type==HOSTS) <drummer> */
-  }
-  return r;
-}
-
 script_command_t script_user_cmds[] = {
 	{"", "countusers", script_countusers, NULL, 0, "", "", SCRIPT_INTEGER, 0},
 	{"", "validuser", script_validuser, NULL, 1, "s", "handle", SCRIPT_INTEGER, 0},
@@ -437,11 +372,4 @@ script_command_t script_user_cmds[] = {
 	{"", "killignore", (Function) script_killignore, NULL, 1, "s", "hostmask", SCRIPT_INTEGER, 0},
 	{"", "ignorelist", (Function) script_ignorelist, NULL, 0, "", "", 0, SCRIPT_PASS_RETVAL},
 	{0}
-};
-
-tcl_cmds tcluser_cmds[] =
-{
-  {"getuser",		tcl_getuser},
-  {"setuser",		tcl_setuser},
-  {NULL,		NULL}
 };
