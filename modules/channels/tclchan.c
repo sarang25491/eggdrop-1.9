@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.8 2002/02/13 23:56:17 eule Exp $
+ * $Id: tclchan.c,v 1.9 2002/02/24 08:14:35 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -721,7 +721,10 @@ static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
     sprintf(buf, "%c%s", dir, flag_map->name);
     Tcl_AppendElement(irp, buf);
   }
-  for (ul = udef; ul && ul->defined && ul->name; ul = ul->next) {
+  for (ul = udef; ul; ul = ul->next) {
+      /* If it's undefined, skip it. */
+      if (!ul->defined || !ul->name) continue;
+
       if (ul->type == UDEF_FLAG) {
         simple_sprintf(s, "%c%s", getudef(ul->values, chan->dname) ? '+' : '-',
 		       ul->name);

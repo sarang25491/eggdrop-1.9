@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.11 2002/02/17 12:40:44 ite Exp $
+ * $Id: server.c,v 1.12 2002/02/24 08:14:35 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1393,7 +1393,7 @@ static void server_secondly()
 
 static void server_5minutely()
 {
-  if (check_stoned) {
+  if (check_stoned && server_online) {
     if (waiting_for_awake) {
       /* Uh oh!  Never got pong from last time, five minutes ago!
        * Server is probably stoned.

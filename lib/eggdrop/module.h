@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.15 2002/02/07 22:19:00 wcc Exp $
+ * $Id: module.h,v 1.16 2002/02/24 08:14:35 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -195,7 +195,7 @@
 #define debug_output (*(int *)(global[106]))
 #define noshare (*(int *)(global[107]))
 /* 108 - 111 */
-#define gban_total (*(int*)global[108])
+/* 108: gban_total -- UNUSED (Eule) */
 #define make_userfile (*(int*)global[109])
 #define default_flags (*(int*)global[110])
 #define dcc_total (*(int*)global[111])
@@ -337,8 +337,8 @@
 /* 220 - 223 */
 #define global_exempts (*(maskrec **)(global[220]))
 #define global_invites (*(maskrec **)(global[221]))
-#define ginvite_total (*(int*)global[222])
-#define gexempt_total (*(int*)global[223])
+/* 222: ginvite_total -- UNUSED (Eule) */
+/* 223: gexempt_total -- UNUSED (Eule) */
 /* 224 - 227 */
 /* 224: H_event -- UNUSED (stdarg) */
 #define use_exempts (*(int *)(global[225]))	/* drummer/Jason */

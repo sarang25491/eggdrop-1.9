@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  *
- * $Id: dccutil.c,v 1.45 2002/02/07 22:19:05 wcc Exp $
+ * $Id: dccutil.c,v 1.46 2002/02/24 08:14:36 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -252,6 +252,9 @@ void dcc_chatter(int idx)
  */
 void lostdcc(int n)
 {
+  /* Make sure it's a valid dcc index. */
+  if (n < 0 || n >= max_dcc) return;
+
   if (dcc[n].type && dcc[n].type->kill)
     dcc[n].type->kill(n, dcc[n].u.other);
   else if (dcc[n].u.other)

@@ -1,10 +1,17 @@
-$Id: UPDATES1.6,v 1.197 2002/02/20 03:29:43 wcc Exp $
+$Id: UPDATES1.6,v 1.198 2002/02/24 08:14:34 guppy Exp $
 
 Changes in Eggdrop: (since v1.6.0)
 ----------------------------------
 
 1.6.9
 Found by  Fixed by  What...
+MC_8      stdarg    "channel info" will properly list all user-defined settings
+          Eule      removed gban_total, gexempt_total and ginvite_total since they were
+                    unused
+dw        guppy     fixed a crash that would happen when we disconnected from our server
+                    but did not reconnect to a server before we checked if a server was
+                    stoned
+BarkerJr  TaKeDa    update a bot's laston info when the bot unlinks
           Wcc       more cosmetic fixes to src/cmds.c
           Eule      small cosmetic fix to cmd_store
           TaKeDa    changed how kicking flooders works when -dontkickops

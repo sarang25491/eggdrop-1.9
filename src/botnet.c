@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.53 2002/02/07 22:19:04 wcc Exp $
+ * $Id: botnet.c,v 1.54 2002/02/24 08:14:36 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -324,6 +324,7 @@ void partyaway(char *bot, int sock, char *msg)
 void rembot(char *who)
 {
   tand_t **ptr = &tandbot, *ptr2;
+  struct userrec *u;
 
   while (*ptr) {
     if (!strcasecmp((*ptr)->bot, who))
@@ -334,6 +335,10 @@ void rembot(char *who)
     /* May have just .unlink *'d */
     return;
   check_tcl_disc(who);
+
+  u = get_user_by_handle(userlist, who);
+  if (u != NULL)
+    touch_laston(u, "unlinked", now);
 
   ptr2 = *ptr;
   *ptr = ptr2->next;

@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.10 2002/02/07 22:19:03 wcc Exp $
+ * $Id: servmsg.c,v 1.11 2002/02/24 08:14:35 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -601,7 +601,6 @@ static int gotpong(char *from, char *ignore, char *msg)
 
   newsplit(&msg);
   fixcolon(msg);		/* Scrap server name */
-  waiting_for_awake = 0;
   sscanf(msg, "%u", &arg);
   server_lag = now - arg;
   if (server_lag > 99999) {
@@ -771,7 +770,6 @@ static int gotnick(char *from, char *ignore, char *msg)
     /* Regained nick! */
     strncpyz(botname, msg, NICKLEN);
     altnick_char = 0;
-    waiting_for_awake = 0;
     if (!strcmp(msg, origbotname)) {
       putlog(LOG_SERV | LOG_MISC, "*", "Regained nickname '%s'.", msg);
       nick_juped = 0;
@@ -898,9 +896,9 @@ static void server_activity(int idx, char *msg, int len)
     strcpy(dcc[idx].nick, "(server)");
     putlog(LOG_SERV, "*", "Connected to %s", dcc[idx].host);
     trying_server = 0;
-    waiting_for_awake = 0;
     SERVER_SOCKET.timeout_val = 0;
   }
+  waiting_for_awake = 0;
   from = "";
   if (msg[0] == ':') {
     msg++;

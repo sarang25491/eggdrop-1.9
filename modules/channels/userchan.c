@@ -1,7 +1,7 @@
 /*
  * userchan.c -- part of channels.mod
  *
- * $Id: userchan.c,v 1.4 2002/02/07 22:19:01 wcc Exp $
+ * $Id: userchan.c,v 1.5 2002/02/24 08:14:35 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -265,8 +265,6 @@ static int u_delban(struct chanset_t *c, char *who, int doit)
 	free(mask);
       }
     }
-    if (!c)
-      gban_total--;
     free((*u)->mask);
     if ((*u)->desc)
       free((*u)->desc);
@@ -316,8 +314,6 @@ static int u_delexempt (struct chanset_t * c, char * who, int doit)
 	free(mask);
       }
     }
-    if (!c)
-      gexempt_total--;
     free((*u)->mask);
     if ((*u)->desc)
       free((*u)->desc);
@@ -367,8 +363,6 @@ static int u_delinvite(struct chanset_t *c, char *who, int doit)
 	free(mask);
       }
     }
-    if (!c)
-      ginvite_total--;
     free((*u)->mask);
     if ((*u)->desc)
       free((*u)->desc);
