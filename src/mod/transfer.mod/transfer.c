@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.49 2001/10/17 00:19:17 stdarg Exp $
+ * $Id: transfer.c,v 1.50 2001/10/18 02:57:52 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1794,7 +1794,7 @@ static int ctcp_DCC_RESUME(char *nick, char *from, char *handle,
     return 0;
   fn = newsplit(&msg);
   port = atoi(newsplit(&msg));
-  offset = my_atoul(newsplit(&msg));
+  sscanf(newsplit(&msg), "%ul", &offset);
   /* Search for existing SEND */
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_GET_PENDING) &&

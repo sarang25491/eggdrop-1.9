@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.62 2001/10/11 18:24:03 tothwolf Exp $
+ * $Id: share.c,v 1.63 2001/10/18 02:57:52 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1134,8 +1134,11 @@ static void share_ufsend(int idx, char *par)
       dprintf(idx, "s e Can't connect to you!\n");
       zapfbot(idx);
     } else {
+      unsigned int ip_int;
+
       i = new_dcc(&DCC_FORK_SEND, sizeof(struct xfer_info));
-      strcpy(dcc[i].addr, iptostr(htonl(my_atoul(ip))));
+      sscanf(ip, "%u", &ip_int);
+      strcpy(dcc[i].addr, iptostr(htonl(ip_int)));
       dcc[i].port = atoi(port);
       strcpy(dcc[i].nick, "*users");
       malloc_strcpy(dcc[i].u.xfer->filename, s);

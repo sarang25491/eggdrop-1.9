@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.67 2001/10/17 00:19:17 stdarg Exp $
+ * $Id: module.h,v 1.68 2001/10/18 02:57:51 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -194,7 +194,7 @@
 /* 88 - 91 */
 #define check_bind_event ((void * (*) (const char *))global[88])
 /* 89: my_memcpy / egg_memcpy -- UNUSED (Tothwolf) */
-#define my_atoul ((IP(*)(char *))global[90])
+/* #define my_atoul ((IP(*)(char *))global[90]) */
 #define my_strcpy ((int (*)(char *, const char *))global[91])
 /* 92 - 95 */
 #define dcc (*(struct dcc_t **)global[92])

@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.77 2001/10/16 11:42:30 tothwolf Exp $
+ * $Id: servmsg.c,v 1.78 2001/10/18 02:57:52 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -639,10 +639,13 @@ static void minutely_checks()
  */
 static int gotpong(char *from, char *ignore, char *msg)
 {
+  unsigned int arg;
+
   newsplit(&msg);
   fixcolon(msg);		/* Scrap server name */
   waiting_for_awake = 0;
-  server_lag = now - my_atoul(msg);
+  sscanf(msg, "%u", &arg);
+  server_lag = now - arg;
   if (server_lag > 99999) {
     /* IRCnet lagmeter support by drummer */
     server_lag = now - lastpingtime;

@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.46 2001/10/13 12:00:22 stdarg Exp $
+ * $Id: net.c,v 1.47 2001/10/18 02:57:51 stdarg Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -65,21 +65,6 @@ adns_state ads;
 /* Types of proxy */
 #define PROXY_SOCKS   1
 #define PROXY_SUN     2
-
-
-/* I need an UNSIGNED long for dcc type stuff
- */
-IP my_atoul(char *s)
-{
-  IP ret = 0;
-
-  while ((*s >= '0') && (*s <= '9')) {
-    ret *= 10;
-    ret += ((*s) - '0');
-    s++;
-  }
-  return ret;
-}
 
 /* Initialize the socklist
  */

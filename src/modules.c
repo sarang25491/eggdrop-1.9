@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.74 2001/10/17 00:19:16 stdarg Exp $
+ * $Id: modules.c,v 1.75 2001/10/18 02:57:51 stdarg Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -252,7 +252,7 @@ Function global_table[] =
   /* 88 - 91 */
   (Function) check_bind_event,
   (Function) 0,
-  (Function) my_atoul,
+  (Function) 0,
   (Function) my_strcpy,
   /* 92 - 95 */
   (Function) & dcc,		 /* struct dcc_t *			*/

@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.56 2001/10/17 00:19:17 stdarg Exp $
+ * $Id: filesys.c,v 1.57 2001/10/18 02:57:51 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -849,8 +849,11 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
       putlog(LOG_FILES, "*", "%s: %s!%s", _("Refused DCC chat (invalid port)"), nick, from);
 
     } else {
+      unsigned int ip_int;
+
       i = new_dcc(&DCC_FILES_PASS, sizeof(struct file_info));
-      strcpy(dcc[i].addr, iptostr(htonl(my_atoul(ip))));
+      sscanf(ip, "%u", &ip_int);
+      strcpy(dcc[i].addr, iptostr(htonl(ip_int)));
       dcc[i].port = atoi(prt);
       dcc[i].sock = sock;
       strcpy(dcc[i].nick, u->handle);
