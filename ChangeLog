@@ -1,3 +1,10 @@
+2002-01-16 20:29  stdarg <stdarg@techmonkeys.org>
+
+	* src/cmds.c:
+
+	
+	* Fixed crash on .who 
+
 2002-01-16 18:12  stdarg <stdarg@techmonkeys.org>
 
 	* modules/tclscript/tclscript.c:
