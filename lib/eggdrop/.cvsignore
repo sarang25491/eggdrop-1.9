@@ -1,3 +1,5 @@
 Makefile
 Makefile.in
+libeggdrop.la
+.deps
 
