@@ -24,7 +24,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: cmds.c,v 1.121 2003/12/11 00:49:11 wcc Exp $";
+static const char rcsid[] = "$Id: cmds.c,v 1.122 2003/12/14 19:38:28 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -1944,6 +1944,7 @@ static int cmd_quit(user_t *u, int idx, char *text)
     dcc[idx].user = get_user_by_handle(userlist, dcc[idx].u.chat->su_nick);
     dcc[idx].type = &DCC_CHAT;
     dprintf(idx, _("Returning to real nick %s!\n"), dcc[idx].u.chat->su_nick);
+    strcpy(dcc[idx].nick, dcc[idx].u.chat->su_nick);
     free_null(dcc[idx].u.chat->su_nick);
     dcc_chatter(idx);
   } else if ((dcc[idx].sock != STDOUT) || backgrd) {

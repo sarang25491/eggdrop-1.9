@@ -10,10 +10,6 @@
 		</help>
 	</owner>
 	<userfile>users.xml</userfile>
-	<telnet_vhost />
-	<telnet_port>3141</telnet_port>
-	<telnet_stealth>0</telnet_stealth>
-	<telnet_max_retries>3</telnet_max_retries>
 	<logfile_suffix>.%d%b%Y</logfile_suffix>
 	<max_logsize>0</max_logsize>
 	<switch_logfiles_at>0</switch_logfiles_at>
@@ -23,10 +19,10 @@
 	<autoload>
 		<module>telnetparty</module>
 		<module>ircparty</module>
+		<module>dccparty</module>
 		<module>tclscript</module>
 		<module>script</module>
 		<module>server</module>
-		<script>config.tcl</script>
 	</autoload>
 	<admin />
 	<help_path />
@@ -36,6 +32,10 @@
 <server>
 	<user>user</user>
 	<realname>real name</realname>
+	<nick>primary</nick>
+	<nick>altnick1</nick>
+	<nick>altnick2</nick>
+	<nick>...</nick>
 	<connect_timeout>30</connect_timeout>
 	<ping_timeout>30</ping_timeout>
 	<dcc_timeout>30</dcc_timeout>

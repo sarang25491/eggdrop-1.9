@@ -56,8 +56,8 @@ static int server_newclient(void *client_data, int idx, int newidx, const char *
 	char buf[512];
 	int buflen, i;
 
-	sslmode_on(newidx, 1);
-	zipmode_on(newidx);
+	//sslmode_on(newidx, 1);
+	//zipmode_on(newidx);
 	linemode_on(newidx);
 	sockbuf_set_handler(newidx, &client_handler, NULL);
 
