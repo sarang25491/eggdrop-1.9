@@ -1,3 +1,9 @@
+2001-10-14 23:32  Federico Mennite <ite@techmonkeys.org>
+
+	* src/mod/compress.mod/compress.c:
+
+	Finished gettextification in compress.mod, plurals excepted.  
+
 2001-10-14 23:13  stdarg <stdarg@techmonkeys.org>
 
 	* src/: Makefile.am, core_binds.c, core_binds.h, main.c, modules.c,
