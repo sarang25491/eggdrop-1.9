@@ -1,3 +1,9 @@
+2003-03-04 01:56  Tothwolf <tothwolf@techmonkeys.org>
+
+	* modules/irc/: chan.c, mode.c:
+
+	Fixed a couple of egg_snprintf/snprintf typos.  
+
 2003-03-03 22:31  stdarg <stdarg@techmonkeys.org>
 
 	* acconfig/acinclude.m4, modules/javascript/javascript.c,
