@@ -25,7 +25,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: mode.c,v 1.25 2003/05/12 23:32:40 wcc Exp $";
+static const char rcsid[] = "$Id: mode.c,v 1.26 2003/08/02 05:56:44 tothwolf Exp $";
 #endif
 */
 
@@ -541,7 +541,7 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from, char *who)
       for (b = cycle ? chan->bans : global_bans; b; b = b->next) {
         if (wild_match(b->mask, who)) {
           if (b->desc && b->desc[0] != '@')
-            snprintf(resn, sizeof resn, "%s%s", IRC_PREBANNED, b->desc);
+            snprintf(resn, sizeof resn, "%s %s", _("banned:"), b->desc);
           else
 	    resn[0] = 0;
         }

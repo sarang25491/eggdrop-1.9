@@ -24,7 +24,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: cmds.c,v 1.119 2003/06/09 02:21:53 stdarg Exp $";
+static const char rcsid[] = "$Id: cmds.c,v 1.120 2003/08/02 05:56:44 tothwolf Exp $";
 #endif
 
 #include "main.h"
@@ -1122,12 +1122,12 @@ static int cmd_chattr(user_t *u, int idx, char *par)
   if (chg) {
     if (!arg && strpbrk(chg, "&|")) {
       /* .chattr <handle> *[&|]*: use console channel if found... */
-      if (!strcmp ((arg = dcc[idx].u.chat->con_chan), "*"))
+      if (!strcmp((arg = dcc[idx].u.chat->con_chan), "*"))
         arg = NULL;
       else
         chan = findchan_by_dname(arg);
       if (arg && !chan) {
-        dprintf (idx, _("Invalid console channel %s.\n"), arg);
+        dprintf(idx, _("Invalid console channel %s.\n"), arg);
 	return(0);
       }
     } else if (arg && !strpbrk(chg, "&|")) {
@@ -1299,12 +1299,12 @@ static int cmd_botattr(user_t *u, int idx, char *par)
   if (chg) {
     if (!arg && strpbrk(chg, "&|")) {
       /* botattr <handle> *[&|]*: use console channel if found... */
-      if (!strcmp ((arg = dcc[idx].u.chat->con_chan), "*"))
+      if (!strcmp((arg = dcc[idx].u.chat->con_chan), "*"))
         arg = NULL;
       else
         chan = findchan_by_dname(arg);
       if (arg && !chan) {
-        dprintf (idx, _("Invalid console channel %s.\n"), arg);
+        dprintf(idx, _("Invalid console channel %s.\n"), arg);
 	return(0);
       }
     } else if (arg && !strpbrk(chg, "&|")) {

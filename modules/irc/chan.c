@@ -27,7 +27,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: chan.c,v 1.36 2003/03/06 12:08:15 tothwolf Exp $";
+static const char rcsid[] = "$Id: chan.c,v 1.37 2003/08/02 05:56:44 tothwolf Exp $";
 #endif
 */
 
@@ -232,10 +232,10 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
           do_mask(chan, chan->channel.ban, b->mask, 'b');
           b->lastactive = now;
           if (b->desc && b->desc[0] != '@')
-            snprintf(c, sizeof c, "%s%s", IRC_PREBANNED, b->desc);
+            snprintf(c, sizeof c, "%s %s", _("banned:"), b->desc);
           else
             c[0] = 0;
-          kick_all(chan, b->mask, c[0] ? c : IRC_YOUREBANNED, 0);
+          kick_all(chan, b->mask, c[0] ? c : _("You are banned"), 0);
           return; /* Drop out on 1st ban. */
         }
       }

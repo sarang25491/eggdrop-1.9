@@ -24,7 +24,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: msgcmds.c,v 1.19 2003/05/12 11:54:53 wingman Exp $";
+static const char rcsid[] = "$Id: msgcmds.c,v 1.20 2003/08/02 05:56:44 tothwolf Exp $";
 #endif
 */
 
@@ -42,7 +42,7 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
 
   strlcpy(handle, nick, sizeof handle);
   if (get_user_by_handle(userlist, handle)) {
-    dprintf(DP_HELP, _("NOTICE %s :I dont recognize you from that host.\n"), nick);
+    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("I dont recognize you from that host.");
     dprintf(DP_HELP, _("NOTICE %s :Either you are using someone elses nickname or you need to type: /MSG %s IDENT (password)\n"), nick, botname);
     return 1;
   }
@@ -152,7 +152,7 @@ static int msg_ident(char *nick, char *host, struct userrec *u, char *par)
   u2 = get_user_by_handle(userlist, who);
   if (!u2) {
     if (u && !quiet_reject)
-      dprintf(DP_HELP, _("NOTICE %s :Youre not %s, youre %s.\n"), nick, nick, u->handle);
+      dprintf(DP_HELP, _("NOTICE %s :You're not %s, you're %s.\n"), nick, nick, u->handle);
   } else if (irccmp(who, origbotname) && !(u2->flags & USER_BOT)) {
     /* This could be used as detection... */
     if (u_pass_match(u2, "-")) {
@@ -163,12 +163,16 @@ static int msg_ident(char *nick, char *host, struct userrec *u, char *par)
       if (!quiet_reject)
 	dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("Access denied."));
     } else if (u == u2) {
-      if (!quiet_reject)
-	dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("I recognize you there."));
+      /*
+       * NOTE: Checking quiet_reject *after* u_pass_match()
+       * verifies the password makes NO sense!
+       * (Broken since 1.3.0+bel17)  Bad Beldin! No Cookie!
+       *   -Toth  [July 30, 2003]
+       */
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, _("I recognize you there."));
       return 1;
     } else if (u) {
-      if (!quiet_reject)
-	dprintf(DP_HELP, _("NOTICE %s :Youre not %s, youre %s.\n"), nick, who, u->handle);
+      dprintf(DP_HELP, _("NOTICE %s :You're not %s, you're %s.\n"), nick, who, u->handle);
       return 1;
     } else {
       putlog(LOG_CMDS, "*", "(%s!%s) !*! IDENT %s", nick, host, who);
@@ -377,7 +381,7 @@ static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
     return 0;
   if (!par[0]) {
     dprintf(DP_HELP, "NOTICE %s :%s: /msg %s whois <handle>\n", nick,
-	    MISC_USAGE, botname);
+	    _("Usage"), botname);
     return 0;
   }
 
