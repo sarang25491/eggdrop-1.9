@@ -23,20 +23,19 @@ typedef struct egg_timer_b {
 static egg_timer_t *timer_list_head = NULL;
 static unsigned int timer_next_id = 1;
 
-static int script_single_timer(int sec, int usec, script_callback_t *callback);
-static int script_repeat_timer(int sec, int usec, script_callback_t *callback);
+static int script_single_timer(int nargs, int sec, int usec, script_callback_t *callback);
+static int script_repeat_timer(int nargs, int sec, int usec, script_callback_t *callback);
 
-static script_simple_command_t script_cmds[] = {
-	{"", NULL, NULL, NULL, 0},
-	{"timer", script_single_timer, "iic", "seconds microseconds callback", SCRIPT_INTEGER},
-	{"rtimer", script_repeat_timer, "iic", "seconds microseconds callback", SCRIPT_INTEGER},
-	{"killtimer", timer_destroy, "i", "timer-id", SCRIPT_INTEGER},
+static script_command_t script_cmds[] = {
+	{"", "timer", script_single_timer, NULL, 2, "iic", "seconds ?microseconds? callback", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT | SCRIPT_PASS_COUNT},
+	{"", "rtimer", script_repeat_timer, NULL, 2, "iic", "seconds ?microseconds? callback", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT | SCRIPT_PASS_COUNT},
+	{"", "killtimer", timer_destroy, NULL, 1, "i", "timer-id", SCRIPT_INTEGER, 0},
 	{0}
 };
 
 void timer_init()
 {
-	script_create_simple_cmd_table(script_cmds);
+	script_create_cmd_table(script_cmds);
 }
 
 /* Based on TclpGetTime from Tcl 8.3.3 */
@@ -114,9 +113,10 @@ int timer_destroy(int timer_id)
 
 int timer_destroy_all()
 {
-	egg_timer_t *timer;
+	egg_timer_t *timer, *next;
 
-	for (timer = timer_list_head; timer; timer = timer->next) {
+	for (timer = timer_list_head; timer; timer = next) {
+		next = timer->next;
 		free(timer);
 	}
 	timer_list_head = NULL;
@@ -201,13 +201,23 @@ static int script_timer(int sec, int usec, script_callback_t *callback, int flag
 	return(id);
 }
 
-static int script_single_timer(int sec, int usec, script_callback_t *callback)
+static int script_single_timer(int nargs, int sec, int usec, script_callback_t *callback)
 {
+	if (nargs < 3) {
+		sec = usec;
+		usec = 0;
+	}
+
 	callback->flags |= SCRIPT_CALLBACK_ONCE;
 	return script_timer(sec, usec, callback, 0);
 }
 
-static int script_repeat_timer(int sec, int usec, script_callback_t *callback)
+static int script_repeat_timer(int nargs, int sec, int usec, script_callback_t *callback)
 {
+	if (nargs < 3) {
+		sec = usec;
+		usec = 0;
+	}
+
 	return script_timer(sec, usec, callback, TIMER_REPEAT);
 }
