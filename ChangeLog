@@ -1,3 +1,19 @@
+2002-05-17 07:29  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/module.h, modules/channels/channels.c,
+	modules/console/console.c, modules/ctcp/ctcp.c,
+	modules/filesys/filesys.c, modules/irc/irc.c,
+	modules/javascript/javascript.c, modules/notes/notes.c,
+	modules/perlscript/mod_iface.c, modules/server/server.c,
+	modules/share/share.c, modules/tclscript/tclscript.c,
+	modules/transfer/transfer.c, modules/uptime/uptime.c,
+	modules/woobie/woobie.c, src/botnet.c, src/core_binds.c,
+	src/modules.c, src/tcl.c, src/tclhash.c, src/tclhash.h:
+
+	
+	* Bind table cleanups, especially renaming bind table functions and
+	making add/rem_builtins take a char * instead of a bind_table_t *.  
+
 2002-05-16 22:56  stdarg <stdarg@techmonkeys.org>
 
 	* src/: botnet.c, dcc.c, dccutil.c:
