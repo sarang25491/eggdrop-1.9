@@ -1,3 +1,9 @@
+2001-08-15 06:13  Federico Mennite <ite@techmonkeys.org>
+
+	* .cvsignore, src/adns/.cvsignore, src/mod/compress.mod/.cvsignore:
+
+	Added more entries in .cvsignore files.  
+
 2001-08-14 18:30  Jeff Fisher <guppy@techmonkeys.org>
 
 	* text/: banner, motd:
