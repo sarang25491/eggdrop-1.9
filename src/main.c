@@ -19,24 +19,27 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.157 2003/12/16 22:36:38 wcc Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.158 2003/12/17 08:12:43 wcc Exp $";
 #endif
 
 #if HAVE_CONFIG_H
 #  include <config.h>
 #endif
 
+#include <eggdrop/eggdrop.h>
 #include <ctype.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <eggdrop/eggdrop.h>
-#include "lib/compat/compat.h"
-#include "main.h"
-#include "debug.h"
-#include "core_config.h"
-#include "bg.h"
-#include "core_binds.h"
-#include "logfile.h"
+#include <string.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <errno.h>
+#include <signal.h>
+#include <netdb.h>
+#include <setjmp.h>
+#include <locale.h>
+#include <ctype.h>
+#include <ltdl.h>
 
 #ifdef TIME_WITH_SYS_TIME
 #  include <sys/time.h>
@@ -49,14 +52,14 @@ static const char rcsid[] = "$Id: main.c,v 1.157 2003/12/16 22:36:38 wcc Exp $";
 #  endif
 #endif
 
-#include <sys/stat.h>
-#include <errno.h>
-#include <signal.h>
-#include <netdb.h>
-#include <setjmp.h>
-#include <locale.h>
-#include <ctype.h>
-#include <ltdl.h>
+
+#include "lib/compat/compat.h"
+#include "main.h"
+#include "debug.h"
+#include "core_config.h"
+#include "bg.h"
+#include "core_binds.h"
+#include "logfile.h"
 
 #ifdef STOP_UAC /* OSF/1 complains a lot */
 #  include <sys/sysinfo.h>

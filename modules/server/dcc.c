@@ -2,18 +2,20 @@
  * dcc.c -- take care of dcc stuff
  */
 
+#include <eggdrop/eggdrop.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <eggdrop/eggdrop.h>
-#include "egg_server_api.h"
-#include "server.h"
-#include "output.h"
-#include "binds.h"
 #include <netinet/in.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
+#include "egg_server_api.h"
 #include "dcc.h"
+#include "server.h"
+#include "output.h"
+#include "binds.h"
 
 typedef struct dcc_listen {
 	int serv, client;

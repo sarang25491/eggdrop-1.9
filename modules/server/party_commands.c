@@ -1,6 +1,7 @@
 #include <eggdrop/eggdrop.h>
 #include <ctype.h>
-
+#include <string.h>
+#include <stdlib.h>
 #include "egg_server_api.h"
 #include "server.h"
 #include "serverlist.h"

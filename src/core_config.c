@@ -18,10 +18,11 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_config.c,v 1.10 2003/12/16 21:45:35 wcc Exp $";
+static const char rcsid[] = "$Id: core_config.c,v 1.11 2003/12/17 08:12:43 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
+#include <string.h>
 #include "core_config.h"
 
 extern char configfile[];

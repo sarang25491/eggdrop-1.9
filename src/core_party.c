@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.16 2003/12/16 22:36:38 wcc Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.17 2003/12/17 08:12:43 wcc Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -28,6 +28,8 @@ static const char rcsid[] = "$Id: core_party.c,v 1.16 2003/12/16 22:36:38 wcc Ex
 #include <eggdrop/eggdrop.h>
 #include <ctype.h>
 #include <unistd.h>
+#include <string.h>
+#include <stdlib.h>
 #include "core_config.h"
 #include "logfile.h"
 
