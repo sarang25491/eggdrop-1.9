@@ -1,3 +1,10 @@
+2001-12-01 14:27  Federico Mennite <ite@techmonkeys.org>
+
+	* modules/irc/mode.c:
+
+	Ban reason string was unitialized. Patch by Matthew Hallacy
+	<poptix@techmonkeys.org> 
+
 2001-12-01 13:46  Federico Mennite <ite@techmonkeys.org>
 
 	* modules/irc/tclirc.c:
