@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.67 2001/10/04 21:37:44 stdarg Exp $
+ * $Id: cmds.c,v 1.68 2001/10/05 04:28:48 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -2724,7 +2724,7 @@ static void cmd_quit(struct userrec *u, int idx, char *text)
 		check_tcl_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock, dcc[idx].u.chat->channel);
 	}
 	check_tcl_chof(dcc[idx].nick, dcc[idx].sock);
-	dprintf(idx, "*** See you later cowboy!\n\n");
+        dprintf(idx, _("*** Ja mata!\n"));
 	flush_lines(idx, dcc[idx].u.chat);
 	putlog(LOG_MISC, "*", _("DCC connection closed (%s!%s)"), dcc[idx].nick, dcc[idx].host);
 	if (dcc[idx].u.chat->channel >= 0) {
