@@ -1,3 +1,18 @@
+2002-05-01 05:39  stdarg <stdarg@techmonkeys.org>
+
+	* src/tcluser.c:
+
+	
+	* Fixed crash in script_matchuser (found by blaster^
+	<blasterb@wanadoo.Fr>) 
+
+2002-05-01 05:31  stdarg <stdarg@techmonkeys.org>
+
+	* doc/tcl-commands.doc, modules/server/scriptcmds.c:
+
+	
+	* now putserv -noqueue adds \r\n to the end of your text for you 
+
 2002-05-01 04:28  stdarg <stdarg@techmonkeys.org>
 
 	* scripts/compat.tcl:
