@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.22 2004/01/10 01:43:18 stdarg Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.23 2004/01/11 12:02:38 stdarg Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -95,7 +95,6 @@ done:
 static void *lookup_setting(partymember_t *p, const char *path)
 {
 	void *root;
-	char *flags;
 
 	root = config_get_root("eggdrop");
 	root = config_exists(root, path, 0, NULL);
@@ -244,6 +243,64 @@ static int party_who(partymember_t *p, const char *nick, user_t *u, const char *
 	return(0);
 }
 
+static int party_whois(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	user_t *who;
+	flags_t flags;
+	char *item, *chan, *setting, *value, flagstr[64];
+	const char *next;
+	int i;
+
+	if (text && *text) who = user_lookup_by_handle(text);
+	else who = u;
+
+	if (!who) {
+		partymember_printf(p, "No such user.");
+		return(0);
+	}
+
+	next = core_config.whois_items;
+	while (next && *next) {
+		egg_get_arg(next, &next, &item);
+		if (!strcasecmp(item, "handle")) {
+			partymember_printf(p, "%s: '%s'", item, who->handle);
+		}
+		else if (!strcasecmp(item, "uid")) {
+			partymember_printf(p, "%s: '%d'", item, who->uid);
+		}
+		else if (!strcasecmp(item, "ircmasks")) {
+			partymember_printf(p, "%s:", item);
+			for (i = 0; i < who->nircmasks; i++) {
+				partymember_printf(p, "   %d. '%s'", i+1, who->ircmasks[i]);
+			}
+		}
+		else {
+			if (setting = strchr(item, '.')) {
+				chan = item;
+				*setting = 0;
+				setting++;
+			}
+			else {
+				chan = NULL;
+				setting = item;
+			}
+			if (!strcasecmp(setting, "flags")) {
+				user_get_flags(who, chan, &flags);
+				flag_to_str(&flags, flagstr);
+				value = flagstr;
+			}
+			else {
+				user_get_setting(who, chan, setting, &value);
+			}
+
+			if (chan) partymember_printf(p, "%s.%s: %s", chan, setting, value);
+			else partymember_printf(p, "%s: %s", setting, value);
+		}
+		free(item);
+	}
+	return(0);
+}
+
 static int party_die(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	putlog(LOG_MISC, "*", _("Saving user file..."));
@@ -355,6 +412,7 @@ static bind_list_t core_party_binds[] = {
 	{NULL, "part", party_part},
 	{NULL, "quit", party_quit},
 	{NULL, "who", party_who},
+	{NULL, "whois", party_whois},
 	{"n", "get", party_get},
 	{"n", "set", party_set},
 	{"n", "unset", party_unset},

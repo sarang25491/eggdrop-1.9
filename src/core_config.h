@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: core_config.h,v 1.6 2003/12/16 21:45:35 wcc Exp $
+ * $Id: core_config.h,v 1.7 2004/01/11 12:02:38 stdarg Exp $
  */
 
 #ifndef _EGG_CORE_CONFIG_H_
@@ -43,6 +43,9 @@ typedef struct {
 	int switch_logfiles_at;
 	int keep_all_logs;
 	int quick_logs;
+
+	/* Info to display in whois command. */
+	char *whois_items;
 
 	/* Other. */
 	int die_on_sigterm;

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_config.c,v 1.12 2003/12/20 00:34:37 stdarg Exp $";
+static const char rcsid[] = "$Id: core_config.c,v 1.13 2004/01/11 12:02:38 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -50,6 +50,9 @@ static config_var_t core_config_vars[] = {
 	{"switch_logfiles_at", &core_config.switch_logfiles_at, CONFIG_INT},
 	{"keep_all_logs", &core_config.keep_all_logs, CONFIG_INT},
 	{"quick_logs", &core_config.quick_logs, CONFIG_INT},
+
+	/* Whois. */
+	{"whois_items", &core_config.whois_items, CONFIG_STRING},
 
 	/* Other. */
 	{"die_on_sigterm", &core_config.die_on_sigterm, CONFIG_INT},
