@@ -375,7 +375,7 @@ void bind_add_list(const char *table_name, bind_list_t *cmds)
 	table = bind_table_lookup_or_fake(table_name);
 
 	for (; cmds->callback; cmds++) {
-		snprintf(name, 50, "*%s:%s", table->name, cmds->mask);
+		snprintf(name, 50, "*%s:%s", table->name, cmds->mask ? cmds->mask : "");
 		bind_entry_add(table, cmds->user_flags, cmds->mask, name, 0, cmds->callback, NULL);
 	}
 }

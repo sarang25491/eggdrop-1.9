@@ -85,6 +85,7 @@ int partychan_free_common(partymember_common_t *common);
 partymember_t *partymember_lookup_pid(int pid);
 partymember_t *partymember_new(int pid, user_t *user, const char *nick, const char *ident, const char *host, partyline_event_t *handler, void *client_data);
 int partymember_update_info(partymember_t *p, const char *ident, const char *host);
+int partymember_who(int **pids, int *len);
 int partymember_write_pid(int pid, const char *text, int len);
 int partymember_write(partymember_t *p, const char *text, int len);
 int partymember_printf_pid(int pid, const char *fmt, ...);

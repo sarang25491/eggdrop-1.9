@@ -4,6 +4,8 @@
 #define USER_HASH_SIZE	50
 #define HOST_HASH_SIZE	50
 
+#define USER_DELETED	1
+
 typedef struct {
 	char *name;
 	char *value;
@@ -33,6 +35,9 @@ typedef struct user {
 	/* Settings for this user. */
 	user_setting_t *settings;
 	int nsettings;
+
+	/* Flags for the structure, e.g. USER_DELETED. */
+	int flags;
 } user_t;
 
 int user_init();

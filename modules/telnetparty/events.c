@@ -38,12 +38,9 @@ static int on_quit(void *client_data, partymember_t *src, const char *text, int 
 {
 	telnet_session_t *session = client_data;
 
-	if (src == session->party) {
-		sockbuf_delete(session->idx);
-	}
-	else {
-		egg_iprintf(session->idx, "%s (%s@%s) has quit: %s\n", src->nick, src->ident, src->host, text);
-	}
+	egg_iprintf(session->idx, "%s (%s@%s) has quit: %s\n", src->nick, src->ident, src->host, text);
+	if (src == session->party) sockbuf_delete(session->idx);
+
 	return(0);
 }
 

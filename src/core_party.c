@@ -57,14 +57,84 @@ static int party_newpass(partymember_t *p, const char *nick, user_t *u, const ch
 	return(0);
 }
 
+static int intsorter(const void *left, const void *right)
+{
+	return(*(int *)left - *(int *)right);
+}
+
+static int party_who(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	partymember_t *who;
+	int *pids, len, i;
+
+	partymember_printf(p, "Partyline members");
+	partymember_who(&pids, &len);
+	qsort(pids, len, sizeof(int), intsorter);
+	for (i = 0; i < len; i++) {
+		who = partymember_lookup_pid(pids[i]);
+		partymember_printf(p, "  [%.5d] %s (%s@%s)", who->pid, who->nick, who->ident, who->host);
+	}
+	free(pids);
+	return(0);
+}
+
+static int party_die(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	exit(0);
+}
+
+static int party_plus_user(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	user_t *newuser;
+
+	if (!text || !*text) {
+		partymember_printf(p, "Syntax: +user <handle>");
+		return(0);
+	}
+	if (user_lookup_by_handle(text)) {
+		partymember_printf(p, "User '%s' already exists!");
+		return(0);
+	}
+	newuser = user_new(text);
+	if (newuser) partymember_printf(p, "User '%s' created", text);
+	else partymember_printf(p, "Could not create user '%s'", text);
+	return(0);
+}
+
+static int party_minus_user(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	user_t *who;
+
+	if (!text || !*text) {
+		partymember_printf(p, "Syntax: -user <handle>");
+		return(0);
+	}
+	who = user_lookup_by_handle(text);
+	if (!who) partymember_printf(p, "User '%s' not found");
+	else {
+		partymember_printf(p, "Deleting user '%s'", who->handle);
+		user_delete(who);
+	}
+	return(0);
+}
+
+static int party_plus_host(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	return(0);
+}
+
 static bind_list_t core_party_binds[] = {
 	{NULL, "join", party_join},
 	{NULL, "msg", party_msg},
 	{NULL, "newpass", party_newpass},
 	{NULL, "part", party_part},
 	{NULL, "quit", party_quit},
+	{NULL, "who", party_who},
 	{"n", "set", party_set},
 	{"n", "save", party_save},
+	{"n", "die", party_die},
+	{"n", "+user", party_plus_user},
+	{"n", "-user", party_minus_user},
 	{0}
 };
 

@@ -78,7 +78,7 @@ xml_node_t *xml_node_vlookup(xml_node_t *root, va_list args, int create)
 		index = va_arg(args, int);
 		child = NULL;
 		for (i = 0; i < root->nchildren; i++) {
-			if (!strcasecmp(root->children[i]->name, path)) {
+			if (root->children[i]->name && !strcasecmp(root->children[i]->name, path)) {
 				if (index-- > 0) continue;
 				child = root->children[i];
 				break;

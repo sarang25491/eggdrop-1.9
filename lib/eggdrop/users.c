@@ -34,7 +34,8 @@ static ircmask_list_t ircmask_list = {NULL};
 
 /* Bind tables. */
 static bind_table_t *BT_uflags = NULL,	/* user flags */
-	*BT_uset = NULL;	/* settings */
+	*BT_uset = NULL,	/* settings */
+	*BT_udelete = NULL;	/* user got deleted */
 
 /* Prototypes for internal functions. */
 static user_t *real_user_new(const char *handle, int uid);
@@ -52,8 +53,9 @@ int user_init()
 	irchost_cache_ht = hash_table_create(NULL, NULL, HOST_HASH_SIZE, HASH_TABLE_STRINGS);
 
 	/* And bind tables. */
-	BT_uflags = bind_table_add("uflag", 4, "ssss", MATCH_MASK, 0);
-	BT_uset = bind_table_add("uset", 4, "ssss", MATCH_MASK, 0);
+	BT_uflags = bind_table_add("uflag", 4, "ssss", MATCH_MASK, BIND_STACKABLE);
+	BT_uset = bind_table_add("uset", 4, "ssss", MATCH_MASK, BIND_STACKABLE);
+	BT_udelete = bind_table_add("udelete", 1, "U", MATCH_NONE, BIND_STACKABLE);
 	return(0);
 }
 
@@ -237,24 +239,15 @@ user_t *user_new(const char *handle)
 	return(u);
 }
 
-int user_delete(user_t *u)
+static int user_really_delete(void *client_data)
 {
 	int i, j;
+	user_t *u = client_data;
 	user_setting_t *setting;
 
-	nusers--;
-	hash_table_delete(handle_ht, u->handle, NULL);
-	hash_table_delete(uid_ht, (void *)u->uid, NULL);
-
-	/* Get rid of the ircmasks. */
-	cache_user_del(u, "*");
-	for (i = 0; i < u->nircmasks; i++) {
-		ircmask_list_del(&ircmask_list, u->ircmasks[i], u);
-		free(u->ircmasks[i]);
-	}
+	/* Free the ircmasks. */
+	for (i = 0; i < u->nircmasks; i++) free(u->ircmasks[i]);
 	if (u->ircmasks) free(u->ircmasks);
-	u->ircmasks = NULL;
-	u->nircmasks = 0;
 
 	/* And all of the settings. */
 	for (i = 0; i < u->nsettings; i++) {
@@ -267,9 +260,26 @@ int user_delete(user_t *u)
 		if (setting->chan) free(setting->chan);
 	}
 	if (u->settings) free(u->settings);
-	u->settings = NULL;
-	u->nsettings = 0;
 
+	memset(u, 0, sizeof(*u));
+	free(u);
+	return(0);
+}
+
+int user_delete(user_t *u)
+{
+	int i;
+
+	if (!u || (u->flags & USER_DELETED)) return(-1);
+
+	nusers--;
+	hash_table_delete(handle_ht, u->handle, NULL);
+	hash_table_delete(uid_ht, (void *)u->uid, NULL);
+	cache_user_del(u, "*");
+	for (i = 0; i < u->nircmasks; i++) ircmask_list_del(&ircmask_list, u->ircmasks[i], u);
+	u->flags |= USER_DELETED;
+	bind_check(BT_udelete, NULL, NULL, u);
+	garbage_add(user_really_delete, u, 0);
 	return(0);
 }
 
@@ -376,7 +386,7 @@ static int cache_user_del(user_t *u, const char *ircmask)
 	hash_table_walk(irchost_cache_ht, cache_check_del, &info);
 	for (i = 0; i < info.nentries; i++) {
 		hash_table_delete(irchost_cache_ht, info.entries[i], NULL);
-		free(info.entries[i]);
+		free((void *)info.entries[i]);
 	}
 	if (info.entries) free(info.entries);
 

@@ -22,7 +22,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: main.h,v 1.34 2003/04/15 08:18:03 stdarg Exp $
+ * $Id: main.h,v 1.35 2003/06/15 05:43:24 stdarg Exp $
  */
 
 #ifndef _EGG_MAIN_H
@@ -39,6 +39,5 @@
 extern eggdrop_t *egg;
 
 void fatal(const char *, int);
-int owner_check(const char *handle);
 
 #endif				/* !_EGG_MAIN_H */

@@ -6,13 +6,21 @@
 
 static hash_table_t *pid_ht = NULL;
 static partymember_t *party_head = NULL;
+static int npartymembers = 0;
 static int g_pid = 0;	/* Keep track of next available pid. */
 
 static int partymember_cleanup(void *client_data);
+static int on_udelete(user_t *u);
+
+static bind_list_t partymember_udelete_binds[] = {
+	{NULL, NULL, on_udelete},
+	{0}
+};
 
 int partymember_init()
 {
 	pid_ht = hash_table_create(NULL, NULL, 13, HASH_TABLE_INTS);
+	bind_add_list("udelete", partymember_udelete_binds);
 	return(0);
 }
 
@@ -85,6 +93,8 @@ partymember_t *partymember_new(int pid, user_t *user, const char *nick, const ch
 	mem->next = party_head;
 	if (party_head) party_head->prev = mem;
 	party_head = mem;
+	hash_table_insert(pid_ht, (void *)pid, mem);
+	npartymembers++;
 	return(mem);
 }
 
@@ -99,6 +109,7 @@ int partymember_delete(partymember_t *p, const char *text)
 	/* Mark it as deleted so it doesn't get reused before it's free. */
 	p->flags |= PARTY_DELETED;
 	garbage_add(partymember_cleanup, NULL, GARBAGE_ONCE);
+	npartymembers--;
 
 	len = strlen(text);
 
@@ -157,6 +168,23 @@ int partymember_update_info(partymember_t *p, const char *ident, const char *hos
 	return(0);
 }
 
+int partymember_who(int **pids, int *len)
+{
+	int i;
+	partymember_t *p;
+
+	*pids = malloc(sizeof(int) * (npartymembers+1));
+	*len = npartymembers;
+	i = 0;
+	for (p = party_head; p; p = p->next) {
+		if (p->flags & PARTY_DELETED) continue;
+		(*pids)[i] = p->pid;
+		i++;
+	}
+	(*pids)[i] = -1;
+	return(0);
+}
+
 int partymember_write_pid(int pid, const char *text, int len)
 {
 	partymember_t *p;
@@ -203,5 +231,15 @@ int partymember_printf(partymember_t *p, const char *fmt, ...)
 	partymember_write(p, ptr, len);
 
 	if (ptr != buf) free(ptr);
+	return(0);
+}
+
+static int on_udelete(user_t *u)
+{
+	partymember_t *p;
+
+	for (p = party_head; p; p = p->next) {
+		if (p->user == u) partymember_delete(p, "User deleted!");
+	}
 	return(0);
 }
