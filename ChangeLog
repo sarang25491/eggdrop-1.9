@@ -1,3 +1,20 @@
+2001-12-18 05:49  Jeff Fisher <guppy@techmonkeys.org>
+
+	* eggdrop.complete.conf, doc/html/egg-core.html,
+	doc/settings/core.settings, src/dcc.c, src/tcl.c:
+
+	stealth-telnets has been removed, this could be changed using
+	gettext .. the setting changed one line to another line ... not
+	super useful 
+
+2001-12-18 05:33  Jeff Fisher <guppy@techmonkeys.org>
+
+	* eggdrop.complete.conf, doc/html/mod-server.html,
+	doc/settings/mod.server, modules/server/server.c,
+	modules/server/servmsg.c, modules/server/help/set/server.help:
+
+	removed never-give-up as a config setting 
+
 2001-12-17 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
