@@ -593,6 +593,70 @@ static void tclscript_report(int idx, int details)
 	*/
 }
 
+typedef struct tcl_listener {
+	struct tcl_listener *next;
+	char *name;
+	int fd;
+} tcl_listener_t;
+
+static tcl_listener_t *listener_list_head = NULL;
+
+/* Two Tcl-only commands to add/remove sockbuf listeners. */
+static int add_tcl_chan(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+	Tcl_Channel chan;
+	char *chan_name;
+	int modes;
+	void *fd;
+	tcl_listener_t *listener;
+
+	if (objc != 2) {
+		Tcl_WrongNumArgs(interp, 0, NULL, "channel-name");
+		return(TCL_ERROR);
+	}
+
+	chan_name = Tcl_GetStringFromObj(objv[1], NULL);
+	if (!chan_name) return(TCL_ERROR);
+	chan = Tcl_GetChannel(interp, chan_name, &modes);
+	if (!chan) return(TCL_ERROR);
+	if (Tcl_GetChannelHandle(chan, TCL_READABLE, &fd)) return(TCL_ERROR);
+	listener = malloc(sizeof(*listener));
+	listener->next = listener_list_head;
+	listener->name = strdup(chan_name);
+	listener->fd = (int) fd;
+	listener_list_head = listener;
+	sockbuf_attach_listener((int) fd);
+	return(0);
+}
+
+static int rem_tcl_chan(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+	char *chan_name;
+	tcl_listener_t *listener, *prev;
+
+	if (objc != 2) {
+		Tcl_WrongNumArgs(interp, 0, NULL, "channel-name");
+		return(TCL_ERROR);
+	}
+
+	chan_name = Tcl_GetStringFromObj(objv[1], NULL);
+	if (!chan_name) return(TCL_ERROR);
+
+	prev = NULL;
+	for (listener = listener_list_head; listener; listener = listener->next) {
+		if (!strcasecmp(listener->name, chan_name)) break;
+		prev = listener;
+	}
+	if (!listener) return(TCL_ERROR);
+
+	if (prev) prev->next = listener->next;
+	else listener_list_head = listener->next;
+	sockbuf_detach_listener(listener->fd);
+	free(listener->name);
+	free(listener);
+	return(0);
+}
+
 static int tclscript_secondly()
 {
 	Tcl_DoOneEvent(TCL_ALL_EVENTS | TCL_DONT_WAIT);
@@ -614,7 +678,7 @@ static int tclscript_close(int why)
 	Tcl_DeleteInterp(ginterp);
 
 	bind_rem_list("party", party_commands);
-	bind_add_list("secondly", secondly_binds);
+	bind_rem_list("secondly", secondly_binds);
 
 	script_unregister_module(&my_script_interface);
 	return(0);
@@ -640,6 +704,9 @@ int tclscript_LTX_start(egg_module_t *modinfo)
 
 	bind_add_list("party", party_commands);
 	bind_add_list("secondly", secondly_binds);
+
+	Tcl_CreateObjCommand(ginterp, "net_add_tcl", add_tcl_chan, NULL, NULL);
+	Tcl_CreateObjCommand(ginterp, "net_rem_tcl", rem_tcl_chan, NULL, NULL);
 	return(0);
 }
 

@@ -30,7 +30,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.145 2003/04/15 08:18:03 stdarg Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.146 2003/04/15 18:05:01 stdarg Exp $";
 #endif
 
 #include <unistd.h>
@@ -340,27 +340,6 @@ static int core_secondly()
 void core_party_init();
 void core_config_init();
 void telnet_init();
-
-int owner_check(const char *handle)
-{
-	int len;
-	char *powner;
-
-	len = strlen(handle);
-	if (!len) return(-1);
-
-	powner = core_config.owner;
-	while (powner) {
-		while (*powner && !isalnum(*powner)) powner++;
-		if (!*powner) break;
-		if (!strncasecmp(powner, handle, len)) {
-			powner += len;
-			if (!*powner || isalnum(*powner)) return(0);
-		}
-		while (*powner && isalnum(*powner)) powner++;
-	}
-	return(-1);
-}
 
 int file_check(const char *filename)
 {

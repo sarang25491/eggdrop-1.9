@@ -469,3 +469,15 @@ accurate for Eggdrop v1.7.0.
 
   net_throttle_off <idx>
     Description: Removes throttling from an idx.
+
+*** TCL ONLY ***
+
+  net_add_tcl <channel>
+    Description: Adds a tcl channel to eggdrop's event loop so that its events
+      can be serviced quickly.
+    Returns: Nothing.
+
+  net_rem_tcl <channel>
+    Description: Removes a previously added tcl channel from eggdrop's event
+      loop.
+    Returns: Nothing.
