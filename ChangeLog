@@ -1,3 +1,10 @@
+2002-03-13 14:16  stdarg <stdarg@techmonkeys.org>
+
+	* testcode/client.c:
+
+	
+	* Updated chat client 
+
 2002-03-13 00:27  stdarg <stdarg@techmonkeys.org>
 
 	* src/: tcldcc.c, tclmisc.c:
