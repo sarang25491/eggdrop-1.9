@@ -1,3 +1,11 @@
+2001-08-14 16:39  Jeff Fisher <guppy@techmonkeys.org>
+
+	* misc/cvs2cl.pl:
+
+	removed cvs2cl.pl since we have automatic changelogs setup now.
+	every 30 minutes the ChangeLog will be regenerated if anything has
+	been changed. Thanks to the irssi people for their little script.  
+
 2001-08-13 23:38  Federico Mennite <ite@techmonkeys.org>
 
 	* bootstrap:
