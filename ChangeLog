@@ -1,3 +1,16 @@
+2003-03-06 12:40  Tothwolf <tothwolf@techmonkeys.org>
+
+	* lib/compat/Makefile.am:
+
+	* LTLIBOBJS -> LIBOBJS 
+
+2003-03-06 12:33  Tothwolf <tothwolf@techmonkeys.org>
+
+	* configure.ac, acconfig/acinclude.m4:
+
+	* Removed EGG_LTLIBOBJS macro.  
+	  + See: 'AC_LIBOBJ vs. LIBOBJS' in the autoconf manual.  
+
 2003-03-06 12:08  Tothwolf <tothwolf@techmonkeys.org>
 
 	* modules/blowfish/blowfish.c, modules/channels/tclchan.c,
