@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: nicklist.c,v 1.9 2004/06/07 23:14:48 stdarg Exp $";
+static const char rcsid[] = "$Id: nicklist.c,v 1.10 2004/06/24 06:19:56 wcc Exp $";
 #endif
 
 #include "server.h"
@@ -34,7 +34,8 @@ void try_next_nick()
 
 	nick = nick_get_next();
 	if (!nick) {
-		putlog(LOG_MISC, "*", _("Using random nick because %s."), nick_list_len ? _("none of the defined nicks are valid") : _("there are no nicks defined"));
+		putlog(LOG_MISC, "*", _("Using random nick because %s."),
+		       nick_list_len ? _("none of the defined nicks are valid") : _("there are no nicks defined"));
 		try_random_nick();
 		return;
 	}
@@ -78,12 +79,14 @@ int nick_add(const char *nick)
 /* Remove a nick from the nick list based on its index. */
 int nick_del(int num)
 {
-	if (num >= 0 && num < nick_list_len) {
-		free(nick_list[num]);
-		memmove(nick_list+num, nick_list+num+1, nick_list_len-num-1);
-	}
-	if (num < nick_list_index) nick_list_index--;
+	if (num < 0 || num >= nick_list_len)
+		return(-1); /* Invalid nick index. */
+
+	free(nick_list[num]);
+	memmove(nick_list + num, nick_list + num + 1, nick_list_len - num - 1);
 	nick_list_len--;
+	if (num < nick_list_index)
+		nick_list_index--;
 
 	return(0);
 }
@@ -93,9 +96,23 @@ int nick_clear()
 {
 	int i;
 
-	for (i = 0; i < nick_list_len; i++) free(nick_list[i]);
-	if (nick_list) free(nick_list);
+	for (i = 0; i < nick_list_len; i++)
+		free(nick_list[i]);
+	if (nick_list)
+		free(nick_list);
 	nick_list = NULL;
 	nick_list_len = 0;
+
 	return(0);
+}
+
+/* Return the index of the first matching server in the list. */
+int nick_find(const char *nick)
+{
+	int i;
+
+	for (i = 0; i < nick_list_len; i++)
+		if (!nick || !strcasecmp(nick_list[i], nick))
+			return(i);
+	return(-1);
 }

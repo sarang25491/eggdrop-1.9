@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dcc.c,v 1.20 2004/06/07 23:14:48 stdarg Exp $";
+static const char rcsid[] = "$Id: dcc.c,v 1.21 2004/06/24 06:19:56 wcc Exp $";
 #endif
 
 #include <unistd.h>
@@ -84,7 +84,7 @@ static sockbuf_handler_t dcc_listen_handler = {
 	dcc_listen_delete
 };
 
-#define DCC_FILTER_LEVEL	(SOCKBUF_LEVEL_TEXT_BUFFER+100)
+#define DCC_FILTER_LEVEL (SOCKBUF_LEVEL_TEXT_BUFFER + 100)
 
 static sockbuf_filter_t dcc_chat_filter = {
 	"DCC chat", DCC_FILTER_LEVEL,
@@ -255,7 +255,9 @@ int dcc_start_send(const char *nick, const char *fname, int timeout)
 	char *quote, *slash;
 
 	fd = open(fname, O_RDONLY);
-	if (!fd) return(-1);
+	if (!fd)
+		return(-2); /* File could not be opened. */
+
 	size = lseek(fd, 0, SEEK_END);
 	lseek(fd, 0, SEEK_SET);
 
@@ -286,12 +288,17 @@ int dcc_start_send(const char *nick, const char *fname, int timeout)
 	send->nick = strdup(nick);
 
 	slash = strrchr(fname, '/');
-	if (slash) fname = slash+1;
+	if (slash)
+		fname = slash+1;
 
-	if (strchr(fname, ' ')) quote = "\"";
-	else quote = "";
+	if (strchr(fname, ' '))
+		quote = "\"";
+	else
+		quote = "";
 
-	printserv(SERVER_NORMAL, "PRIVMSG %s :%cDCC SEND %s%s%s %u %d %d%c", nick, 1, quote, fname, quote, current_server.mylongip, listen->port, size, 1);
+	printserv(SERVER_NORMAL, "PRIVMSG %s :%cDCC SEND %s%s%s %u %d %d%c", nick, 1, quote, fname, quote,
+		  current_server.mylongip, listen->port, size, 1);
+
 	return(idx);
 }
 
@@ -349,6 +356,7 @@ static int dcc_send_read(void *client_data, int idx, char *data, int len)
 	ack = ntohl(ack);
 	send->acks++;
 	send->bytes_acked = ack;
+
 	return(0);
 }
 
@@ -365,7 +373,9 @@ static int dcc_send_written(void *client_data, int idx, int len, int remaining)
 	/* Pass the event up to whoever's listening. */
 
 	sockbuf_on_written(idx, DCC_FILTER_LEVEL, len, remaining);
-	if (!sockbuf_isvalid(idx)) return(0);
+
+	if (!sockbuf_isvalid(idx))
+		return(0);
 
 	/* Send as much data as we can until we block. dcc_send_bytes()
 	 * returns -1 when the file has eof(). */
@@ -426,10 +436,12 @@ int dcc_send_info(int idx, int field, void *valueptr)
 	dcc_send_t *send;
 	int i, n, now;
 
-	if (!valueptr) return(-1);
-	if (sockbuf_get_filter_data(idx, &dcc_send_filter, &send) < 0) {
-		if (sockbuf_get_filter_data(idx, &dcc_recv_filter, &send) < 0) return(-1);
-	}
+	if (!valueptr)
+		return(-1);
+
+	if (sockbuf_get_filter_data(idx, &dcc_send_filter, &send) < 0)
+		if (sockbuf_get_filter_data(idx, &dcc_recv_filter, &send) < 0)
+			return(-1);
 
 	timer_get_now_sec(&now);
 	switch (field) {
@@ -440,10 +452,12 @@ int dcc_send_info(int idx, int field, void *valueptr)
 			*(int *)valueptr = send->bytes_left;
 			break;
 		case DCC_SEND_CPS_TOTAL:
-			if (!send->connect_time) n = 0;
-			else if (send->connect_time >= now) n = send->bytes_sent;
-			else n = (int) ((float) send->bytes_sent / ((float) now - (float) send->connect_time));
-
+			if (!send->connect_time)
+				n = 0;
+			else if (send->connect_time >= now)
+				n = send->bytes_sent;
+			else
+				n = (int) ((float) send->bytes_sent / ((float) now - (float) send->connect_time));
 			*(int *)valueptr = n;
 			break;
 		case DCC_SEND_CPS_SNAPSHOT:
@@ -454,10 +468,13 @@ int dcc_send_info(int idx, int field, void *valueptr)
 			 * be accurate. */
 			n = 0;
 			for (i = 0; i < 5; i++) {
-				if (i != send->snapshot_counter) n += send->snapshot_bytes[i];
+				if (i != send->snapshot_counter)
+					n += send->snapshot_bytes[i];
 			}
-			if (now - send->connect_time >= 5) n = (int) ((float) n / 4.0);
-			else if (now - send->connect_time > 1) n = (int) ((float) n / (float) (now - send->connect_time - 1));
+			if (now - send->connect_time >= 5)
+				n = (int) ((float) n / 4.0);
+			else if (now - send->connect_time > 1)
+				n = (int) ((float) n / (float) (now - send->connect_time - 1));
 			else n = 0;
 			*(int *)valueptr = n;
 			break;

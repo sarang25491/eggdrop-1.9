@@ -1,6 +1,11 @@
+$Id: SCRIPTING-COMMANDS,v 1.11 2004/06/24 06:19:56 wcc Exp $
+
 Eggdrop Scripting Commands
-Last revised: July 21, 2004
+Last revised: July 22, 2004
      _________________________________________________________________
+
+                        Eggdrop Scripting Commands
+
 
 This is an exhaustive list of all of the scripting commands added to Eggdrop.
 All of the normal built-in commands specific to the scripting module you are
@@ -23,40 +28,124 @@ Unless otherwise specified, commands return 0.
     Returns: nothing
     Module: core
 
-  <FINISH ME>
+  <DXX: SCRIPTING-COMMANDS docs for the core.>
 
 
 *** SERVER MODULE COMMANDS ***
 
-  get_uhost <nick>
-    Returns:
-      The uhost for the given nick, or "" if unknown.
+Channel Commands:
 
-  irccmp <str1> <str2>
-    Description:
-      Compares str1 and str2 case independently, as specified by the current
-      server's method of string comparison. Typical uses are comparing nicks
-      and channel names.
+  channel_list
     Returns:
-      < 0 if str1 < str2
-      = 0 if str1 = str2
-      > 0 if str1 > str2
+      The list of channels that the bot is currently on.
+
+  channel_members <chan>
+    Returns:
+      The list of nicks on the given channel.
+
+  channel_mode <chan> [nick]
+    Returns:
+      Either the mode of the channel, with no arguments (such as key),
+      or the mode of the nick on that channel (if given).
+
+  channel_mask_list <chan> <type>
+    Returns:
+      The list of bans, exempts, or invites in the channel. Each item of the
+      list is itself a list of the form {mask, who_set_it, when_it_was_set}.
+
+  channel_key <chan>
+    Returns:
+      The key of the given channel.
+
+  channel_limit <chan>
+    Returns:
+      The limit of the given channel.
+
+  channel_topic <chan>
+    Returns:
+      The topic, nick that set the topic, and time the topic was set for the
+      specified channel.
+
+
+
+Botnick Commands:
+
+  nick_add <nick>
+    Description:
+      Adds a nick to the bot's list of nicks. If the first nick in the list
+      cannot be used, the next nick will be used. If all nicks cannot be used,
+      a random nick starting with "egg" will be used.
+
+  nick_del <nick number>
+    Description:
+      Removes a nick from the bot's list of nicks.
+    Returns:
+      0 for success; -1 otherwise.
+
+  nick_clear
+    Description:
+      Clears the bot's list of nicks.
+
+  nick_find <nick>
+    Returns:
+      The nick number corresponding to the specified nick, or -1 if not found.
 
   isbotnick <nick>
     Returns:
       1 if the specified nick matches the bot's current nick; 0 otherwise.
 
-  jump [server number]
+
+
+DCC Commands:
+
+  dcc_chat <nick> [timeout]
     Description:
-      Jumps the bot to the server corresponding to the given server number.
-      If no server number is specified, the next server in the list will be
-      used.
+      Starts a dcc chat with the specified nick. Timeout is specified in
+      seconds. Specify 0 to use the default timeout, or -1 for no timeout.
+    Returns:
+      An unconnected idx, or -1 on failure.
+
+  dcc_send <nick> <filename> [timeout]
+    Description:
+      Starts a dcc send to the given nick. Resumes are handled automatically.
+      Timeout is specified in seconds. Specify 0 to use the default timeout,
+      or -1 for no timeout.
+    Returns:
+      An unconnected idx, -2 if the file could not be opened, or -1 on other
+      failure.
+
+  dcc_send_info <idx> <stat-type>
+    Returns:
+      Information about a DCC send. <stat-type> may be one of:
+
+        connect_time - The time the DCC send connection was actually
+                       established.
+        request_time - The (unixtime) time the DCC send was initiated
+                       or accepted.
+        bytes_left   - The number of bytes remaining to be sent.
+        bytes_sent   - The number of bytes already sent.
+        total_cps    - The average CPS (Characters Per Second) since the send
+                       began.
+        snapshot_cps - The average CPS (Characters Per Second) over the last
+                       several seconds.
+
+  dcc_accept_send <nick> <localfile> <remotefile> <size> <resume> <ip> <port> [timeout]
+    Description:
+      Accepts a dcc send, as triggered by the dcc_recv bind. Timeout is specified
+      in seconds. Specify 0 to use the default timeout, or -1 for no timeout.
+    Returns:
+      An unconnected idx, or -1 on failure.
+
+
+
+Input / Output Commands:
 
   putserv [queue] [next] <text>
     Description:
       Sends text to the IRC server.
 
       Queue may be one of:
+
         normal  - Messages are sent at a normal rate.
         fast    - Messages are sent at a rate faster than "normal".
         slow    - Messages are sent at a rate slower than "normal".
@@ -66,6 +155,15 @@ Unless otherwise specified, commands return 0.
 
       If "next" is specified, the message will be moved to the front of the
       queue.
+
+  server_fake_input <text>
+    Description:
+      Causes the server module to interpret the given text as if the server
+      had sent it.
+
+
+
+Server List Commands:
 
   server_add <host> [port] [password]
     Description:
@@ -81,7 +179,85 @@ Unless otherwise specified, commands return 0.
     Description:
       Clears the server list.
 
-  DXX: Write server module scripting docs.
+  server_find <host> [port] [password]
+    Returns:
+      The server number matching the server details specified. -1 will be
+      returned if the server could not be found in the list.
+
+  jump [server number]
+    Description:
+      Jumps the bot to the server corresponding to the given server number.
+      If no server number is specified, the next server in the list will be
+      used.
+
+
+
+005 Commands:
+
+  server_support_val <field>
+    Description:
+      Provides an interface to the 005 numeric.
+    Returns:
+      The value of the field (parsed from fieldname=fieldvalue). Use
+      server_supports instead for items with no value.
+
+  server_supports <value>
+    Description:
+      Provides an interface to the 005 numeric for items with no value.
+    Returns:
+      1 if the value is supported by the server; 0 otherwise.
+
+
+
+Queue Commands:
+
+  server_queue_len <queue> [next]
+    Returns:
+      The number of messages in the given queue. [queue] may be one of: "fast",
+      "slow", or "normal". If "next" is specified, only messages with the "next"
+      flag (as with putserv [queue] next) are counted.
+
+  server_queue_get [queue] [next] <msgnum>
+    Description:
+      Allows scripts to read the server's output queues. Messages start at
+      number 0. If [queue] isn't given, the normal queue is assumed. If the
+      message was queued with the "next" flag, then then "next" flag must be
+      used to retrieve it.
+    Returns:
+      The text of the desired message; or nothing if not found.
+
+  server_queue_set [queue] [next] <msgnum> <msg>
+    Description:
+      Allows scripts to overwrite messages in the server's output queues.
+      [queue] and [next] work exactly as with server_queue_get and
+      server_queue_set.
+    Returns:
+      0 on success; -1 otherwise.
+
+  server_queue_insert [queue] [next] <msgnum> <msg>
+    Description:
+      Inserts messages into the given output queue. The message that was
+      previously at <msgnum> will be moved back in the queue. To add a message
+      to the end, make <msgnum> larger than the current queue length. Or use
+      putserv :)
+
+
+
+Misc Server Commands:
+
+  get_uhost <nick>
+    Returns:
+      The uhost for the given nick, or "" if unknown.
+
+  irccmp <str1> <str2>
+    Description:
+      Compares str1 and str2 case independently, as specified by the current
+      server's method of string comparison. Typical uses are comparing nicks
+      and channel names.
+    Returns:
+      < 0 if str1 < str2
+      = 0 if str1 = str2
+      > 0 if str1 > str2
 
 
 
@@ -89,97 +265,6 @@ Unless otherwise specified, commands return 0.
 
   <WRITE ME>
 
-
-*** SERVER MODULE COMMANDS ***
-
-
-
-  putserv [noqueue|quick|normal|slow] [next] <text>
-    Description: sends text to the server through the specified queue. The
-      default queue is the normal queue. You can specify the "next"
-      option even if you are using others options.
-    Options:
-      noqueue: send the message without waiting
-      quick: high priority queue
-      normal: default queue
-      slow: low priority queue
-    Returns: nothing
-
-  server_fake_input <text>
-    Description: Causes the server module to interpret the given text as if
-      the server had sent it.
-    Returns: Nothing
-
-  server_support <field>
-    Description: Provides an interface to the 005 numeric.
-    Returns: The value of the field (parsed from fieldname=fieldvalue) or
-      the string "true" for items with no value.
-
-  channel_list
-    Returns: the list of channels that the bot is currently on
-
-  channel_members <chan>
-    Returns: the list of nicks on the given channel
-
-  channel_topic <chan>
-    Returns: the topic, nick that set the topic, time topic was set
-
-  channel_mode <chan> [nick]
-    Returns: Either the mode of the channel, with no arguments (such as key),
-      or the mode of the nick on that channel (if given).
-
-  channel_key <chan>
-    Returns: The key of the given channel.
-
-  channel_limit <chan>
-    Returns: The limit of the given channel.
-
-  channel_bans <chan>
-    Returns: The list of bans in the channel. Each item of the list is itself
-      a list of the form {banmask, who_set_it, when_it_was_set}
-
-  server_queue_len <queue> [next]
-    Returns: Number of messages in the given queue
-
-  server_queue_get [queue] [next] <msgnum>
-    Description: Allows scripts to read the server's output queues. Messages
-      start at number 0. If [queue] isn't given, the normal queue is assumed.
-    Returns: The text of the desired message
-
-  server_queue_set [queue] [next] <msgnum> <msg>
-    Description: Allows scripts to overwrite messages in the server's output
-      queues. If [queue] isn't given, the normal queue is assumed.
-    Returns: Nothing
-
-  server_queue_insert [queue] [next] <msgnum> <msg>
-    Description: Inserts messages into the given output queue. To add a message
-      to the end, make <msgnum> larger than the current queue length. Or use
-      putserv :)
-    Returns: Nothing
-
-  dcc_chat <nick> [timeout]
-    Description: Starts a dcc chat with the given nick.
-    Returns: An unconnected idx.
-
-  dcc_send <nick> <filename> [timeout]
-    Description: Starts a dcc send with the given nick. Resumes are handled
-      automatically.
-    Returns: An unconnected idx.
-
-  dcc_send_info <idx> <stat-type>
-    Description: Returns information about a dcc send.
-    Options for stat-type:
-      bytes_left: number of bytes remaining to be sent
-      bytes_sent: number of bytes already sent
-      total_cps: average cps since the send began
-      snapshot_cps: average cps over the last several seconds
-    Returns: The requested information
-
-  dcc_accept_send <nick> <localfile> <remotefile> <size> <resume> <ip> <port> [timeout]
-    Description: Accepts a dcc send, as triggered by the dcc_recv bind.
-    Returns: An unconnected idx
-
-  <FINISH ME>
 
 
 *** GLOBAL VARIABLES ***
@@ -300,3 +385,6 @@ Unless otherwise specified, commands return 0.
     Description: Removes a previously added tcl channel from eggdrop's event
       loop.
     Returns: Nothing.
+       _________________________________________________________________
+
+   Copyright (C) 2002, 2003, 2004 Eggheads Development Team

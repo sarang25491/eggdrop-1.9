@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.41 2004/06/22 20:47:38 wcc Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.42 2004/06/24 06:19:56 wcc Exp $";
 #endif
 
 #include "server.h"
@@ -102,18 +102,30 @@ static int script_dcc_send_info(int idx, char *what)
 {
 	int field, value;
 
-	if (!strcasecmp(what, "bytes_left")) field = DCC_SEND_LEFT;
-	else if (!strcasecmp(what, "bytes_sent")) field = DCC_SEND_SENT;
-	else if (!strcasecmp(what, "total_cps")) field = DCC_SEND_CPS_TOTAL;
-	else if (!strcasecmp(what, "snapshot_cps")) field = DCC_SEND_CPS_SNAPSHOT;
-	else if (!strcasecmp(what, "acks")) field = DCC_SEND_ACKS;
-	else if (!strcasecmp(what, "bytes_acked")) field = DCC_SEND_BYTES_ACKED;
-	else if (!strcasecmp(what, "resumed_at")) field = DCC_SEND_RESUMED_AT;
-	else if (!strcasecmp(what, "request_time")) field = DCC_SEND_REQUEST_TIME;
-	else if (!strcasecmp(what, "connect_time")) field = DCC_SEND_CONNECT_TIME;
-	else return(-1);
+	if (!strcasecmp(what, "bytes_left"))
+		field = DCC_SEND_LEFT;
+	else if (!strcasecmp(what, "bytes_sent"))
+		field = DCC_SEND_SENT;
+	else if (!strcasecmp(what, "total_cps"))
+		field = DCC_SEND_CPS_TOTAL;
+	else if (!strcasecmp(what, "snapshot_cps"))
+		field = DCC_SEND_CPS_SNAPSHOT;
+	else if (!strcasecmp(what, "acks"))
+		field = DCC_SEND_ACKS;
+	else if (!strcasecmp(what, "bytes_acked"))
+		field = DCC_SEND_BYTES_ACKED;
+	else if (!strcasecmp(what, "resumed_at"))
+		field = DCC_SEND_RESUMED_AT;
+	else if (!strcasecmp(what, "request_time"))
+		field = DCC_SEND_REQUEST_TIME;
+	else if (!strcasecmp(what, "connect_time"))
+		field = DCC_SEND_CONNECT_TIME;
+	else
+		return(-1);
 
-	if (dcc_send_info(idx, field, &value) < 0) return(-1);
+	if (dcc_send_info(idx, field, &value) < 0)
+		return(-1);
+
 	return(value);
 }
 
@@ -339,46 +351,52 @@ static script_linked_var_t server_script_vars[] = {
 };
 
 static script_command_t server_script_cmds[] = {
-	{"", "isbotnick", script_isbotnick, NULL, 1, "s", "nick", SCRIPT_INTEGER, 0},				/* DDD	*/
-	{"", "irccmp", script_irccmp, NULL, 2, "ss", "str1 str2", SCRIPT_INTEGER, 0},				/* DDD	*/
-	{"", "get_uhost", uhost_cache_lookup, NULL, 1, "s", "nick", SCRIPT_STRING, 0},				/* DDD	*/
-	{"", "nick_add", nick_add, NULL, 1, "s", "nick", SCRIPT_INTEGER, 0},					/* DDD 	*/
-	{"", "nick_del", nick_del, NULL, 1, "i", "nick-num", SCRIPT_INTEGER, 0},				/* DDD	*/
-	{"", "nick_clear", nick_clear, NULL, 0, "", "", SCRIPT_INTEGER, 0},					/* DDD	*/
+	/* Misc commands. */
+	{"", "irccmp", script_irccmp, NULL, 2, "ss", "str1 str2", SCRIPT_INTEGER, 0},	/* DDC */
+	{"", "get_uhost", uhost_cache_lookup, NULL, 1, "s", "nick", SCRIPT_STRING, 0},	/* DDC */
 
-	/* Server commands. */
-	{"", "jump", script_jump, NULL, 0, "i", "num", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_PASS_COUNT},	/* DDD	*/
-	{"", "server_add", server_add, NULL, 1, "sis", "host ?port? ?pass?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},	/* DDD	*/
-	{"", "server_del", server_del, NULL, 1, "i", "server-num", SCRIPT_INTEGER, 0},				/* DDD	*/
-	{"", "server_clear", server_clear, NULL, 0, "", "", SCRIPT_INTEGER, 0},					/* DDD	*/
-	{"", "server_find", server_find, NULL, 1, "sis", "host ?port? ?pass?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},/* DDD	*/
-	{"", "server_supports", script_supports, NULL, 1, "s", "name", SCRIPT_INTEGER, 0},			/* DDD	*/
-	{"", "server_support_val", script_support_val, NULL, 1, "s", "name", SCRIPT_STRING, 0},			/* DDD	*/
-	{"", "putserv", script_putserv, NULL, 1, "sss", "?queue? ?next? text", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT},	/* DDD */
+	/* Botnick commands. */
+	{"", "nick_add", nick_add, NULL, 1, "s", "nick", SCRIPT_INTEGER, 0},		/* DDC */
+	{"", "nick_del", nick_del, NULL, 1, "i", "nick-num", SCRIPT_INTEGER, 0},	/* DDC */
+	{"", "nick_clear", nick_clear, NULL, 0, "", "", SCRIPT_INTEGER, 0},		/* DDC */
+	{"", "nick_find", nick_find, NULL, 0, "s", "nick", SCRIPT_INTEGER, 0},		/* DDC */
+	{"", "isbotnick", script_isbotnick, NULL, 1, "s", "nick", SCRIPT_INTEGER, 0},	/* DDC */
+
+	/* Server List commands. */
+	{"", "jump", script_jump, NULL, 0, "i", "num", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_PASS_COUNT},	/* DDC */
+	{"", "server_add", server_add, NULL, 1, "sis", "host ?port? ?pass?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},	/* DDC */
+	{"", "server_del", server_del, NULL, 1, "i", "server-num", SCRIPT_INTEGER, 0},				/* DDC */
+	{"", "server_clear", server_clear, NULL, 0, "", "", SCRIPT_INTEGER, 0},					/* DDC */
+	{"", "server_find", server_find, NULL, 1, "sis", "host ?port? ?pass?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},/* DDC */
+
+	/* 005 Commands */
+	{"", "server_supports", script_supports, NULL, 1, "s", "name", SCRIPT_INTEGER, 0},			/* DDC */
+	{"", "server_support_val", script_support_val, NULL, 1, "s", "name", SCRIPT_STRING, 0},			/* DDC */
 
 	/* DCC commands. */
-	{"", "dcc_chat", dcc_start_chat, NULL, 1, "si", "nick ?timeout?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},	/* DDD	*/
-	{"", "dcc_send", dcc_start_send, NULL, 2, "ssi", "nick filename ?timeout?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},	/* DDD	*/
+	{"", "dcc_chat", dcc_start_chat, NULL, 1, "si", "nick ?timeout?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},		/* DDC */
+	{"", "dcc_send", dcc_start_send, NULL, 2, "ssi", "nick filename ?timeout?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},	/* DDC */
 	{"", "dcc_send_info", script_dcc_send_info, NULL, 2, "is", "idx stat", SCRIPT_INTEGER, 0}, /* DDD */
 	{"", "dcc_accept_send", dcc_accept_send, NULL, 7, "sssiisii", "nick localfile remotefile size resume ip port ?timeout?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS}, /* DDD */
 
 	/* Channel commands. */
-	{"", "channel_list", script_channel_list, NULL, 0, "", "", 0, SCRIPT_PASS_RETVAL},	/* DDD */
-	{"", "channel_members", script_channel_members, NULL, 1, "s", "channel", 0, SCRIPT_PASS_RETVAL},	/* DDD */
-	{"", "channel_topic", script_channel_topic, NULL, 1, "s", "channel", 0, SCRIPT_PASS_RETVAL},		/* DDD */
-	{"", "channel_mask_list", script_channel_mask_list, NULL, 2, "ss", "channel type", 0, SCRIPT_PASS_RETVAL},	/* DDD */
-	{"", "channel_mode", script_channel_mode, NULL, 1, "ss", "channel ?nick?", SCRIPT_STRING|SCRIPT_FREE, SCRIPT_VAR_ARGS},	/* DDD */
-	{"", "channel_key", script_channel_key, NULL, 1, "s", "channel", SCRIPT_STRING, 0},	/* DDD */
-	{"", "channel_limit", script_channel_limit, NULL, 1, "s", "channel", SCRIPT_INTEGER, 0},	/* DDD */
+	{"", "channel_list", script_channel_list, NULL, 0, "", "", 0, SCRIPT_PASS_RETVAL},					/* DDC */
+	{"", "channel_members", script_channel_members, NULL, 1, "s", "channel", 0, SCRIPT_PASS_RETVAL},			/* DDC */
+	{"", "channel_topic", script_channel_topic, NULL, 1, "s", "channel", 0, SCRIPT_PASS_RETVAL},				/* DDC */
+	{"", "channel_mask_list", script_channel_mask_list, NULL, 2, "ss", "channel type", 0, SCRIPT_PASS_RETVAL},		/* DDC */
+	{"", "channel_mode", script_channel_mode, NULL, 1, "ss", "channel ?nick?", SCRIPT_STRING|SCRIPT_FREE, SCRIPT_VAR_ARGS},	/* DDC */
+	{"", "channel_key", script_channel_key, NULL, 1, "s", "channel", SCRIPT_STRING, 0},					/* DDC */
+	{"", "channel_limit", script_channel_limit, NULL, 1, "s", "channel", SCRIPT_INTEGER, 0},				/* DDC */
 
-	/* Input commands. */
-	{"", "server_fake_input", server_parse_input, NULL, 1, "s", "text", SCRIPT_INTEGER, 0},	/* DDD */
+	/* Input / Output commands. */
+	{"", "server_fake_input", server_parse_input, NULL, 1, "s", "text", SCRIPT_INTEGER, 0},						/* DDC */
+	{"", "putserv", script_putserv, NULL, 1, "sss", "?queue? ?next? text", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_VAR_FRONT},	/* DDC */
 
 	/* Output queue commands. */
-	{"", "server_queue_len", script_queue_len, NULL, 1, "ssi", "queue ?next?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},	/* DDD */
-	{"", "server_queue_get", script_queue_get, NULL, 1, "ssi", "?queue? ?next? msgnum", SCRIPT_STRING|SCRIPT_FREE, SCRIPT_VAR_ARGS|SCRIPT_VAR_FRONT},	/* DDD */
-	{"", "server_queue_set", script_queue_set, NULL, 2, "ssis", "?queue? ?next? msgnum msg", SCRIPT_INTEGER, SCRIPT_VAR_ARGS|SCRIPT_VAR_FRONT}, /* DDD */
-	{"", "server_queue_insert", script_queue_insert, NULL, 2, "ssis", "?queue? ?next? msgnum msg", SCRIPT_INTEGER, SCRIPT_VAR_ARGS|SCRIPT_VAR_FRONT}, /* DDD */
+	{"", "server_queue_len", script_queue_len, NULL, 1, "ssi", "queue ?next?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},						/* DDC */
+	{"", "server_queue_get", script_queue_get, NULL, 1, "ssi", "?queue? ?next? msgnum", SCRIPT_STRING|SCRIPT_FREE, SCRIPT_VAR_ARGS|SCRIPT_VAR_FRONT},	/* DDC */
+	{"", "server_queue_set", script_queue_set, NULL, 2, "ssis", "?queue? ?next? msgnum msg", SCRIPT_INTEGER, SCRIPT_VAR_ARGS|SCRIPT_VAR_FRONT},		/* DDC */
+	{"", "server_queue_insert", script_queue_insert, NULL, 2, "ssis", "?queue? ?next? msgnum msg", SCRIPT_INTEGER, SCRIPT_VAR_ARGS|SCRIPT_VAR_FRONT},	/* DDC */
 
         {0}
 };

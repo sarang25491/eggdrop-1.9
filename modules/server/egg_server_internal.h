@@ -71,6 +71,7 @@
 #define nick_add server_LTX_nick_add
 #define nick_del server_LTX_nick_del
 #define nick_clear server_LTX_nick_clear
+#define nick_find server_LTX_nick_find
 
 /* Things from output.c */
 #define global_output_string server_LTX_global_output_string

@@ -1,0 +1,26 @@
+$Id: TAGS,v 1.1 2004/06/24 06:19:56 wcc Exp $
+
+Eggdrop 1.9 Tags
+Last revised: July 22, 2004
+     _________________________________________________________________
+
+                             Eggdrop 1.9 Tags
+
+Several "tags" are used throughout the Eggdrop 1.9 source. These tags are
+intended to mark certian parts of the code for later review.
+
+Current tags:
+
+  DDC - Documented.
+  DDD - Needs to be documented.
+  DXX - Doc FIXME.
+  XXX - FIXME.
+
+You can locate tags in the code by using:
+
+    grep -Hrn TAG *
+
+in the eggdrop1.9/ directory.
+       _________________________________________________________________
+
+   Copyright (C) 2004 Eggheads Development Team

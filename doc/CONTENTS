@@ -1,13 +1,17 @@
+$Id: CONTENTS,v 1.12 2004/06/24 06:19:56 wcc Exp $
+
 Directory Contents - doc/
-Last revised: June 21, 2004
+Last revised: June 22, 2004
      _________________________________________________________________
 
                           Directory Contents - doc/
 
 
-  settings/
-    This directory contains documentation for all config file and module
-    settings.
+  developer/
+    This contains documents for use by Eggdrop 1.9 developers.
+
+  internals/
+    This contains documents about the internal functions of Eggdrop 1.9.
 
   howto/
     This contains several tutorials and documents explaining how to preform
@@ -17,12 +21,6 @@ Last revised: June 21, 2004
     Fill out this form and e-mail it to bugs@eggheads.org if you find a bug
     in Eggdrop.
 
-  MODULES
-    Information on writing Eggdrop modules can be found in this document.
-
   SCRIPTING-COMMANDS
     Documentation on Eggdrop Tcl commands available to scripters can be found
     here.
-
-  UPDATES1.6
-    This is a complete list of changes made to Eggdrop 1.6.
