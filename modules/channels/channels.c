@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.24 2003/01/30 03:05:18 wcc Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.25 2003/02/02 05:34:24 wcc Exp $";
 #endif
 
 #define MODULE_NAME "channels"
@@ -419,7 +419,7 @@ ban_time %d exempt_time %d invite_time %d \
 	else if (ul->type == UDEF_STR) {
 		char *p;
 		p = (char *)getudef(ul->values, chan->dname);
-		if (!p) strcpy(s, "{}");
+		if (!p) strcpy(p, "{}");
 		fprintf(f, "udef_str_%s %s ", ul->name, p);
 	}
 	else
