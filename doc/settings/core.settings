@@ -278,12 +278,6 @@ set protect-telnet 0
     Valid settings are 0 for OFF and 1 ON.
 
 
-set stealth-telnets 0
-    If you don't want eggdrop to identify itself on a telnet connection, set
-    this setting to 1. Eggdrop will display its nickname instead.
-    Valid settings are 0 for OFF and 1 ON.
-
-
 set quiet-reject 1
     If turned to 1, the bot will squelch the error message when rejecting a
     DCC CHAT or SEND.

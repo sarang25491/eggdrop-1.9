@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.66 2001/12/10 03:22:29 guppy Exp $
+ * $Id: dcc.c,v 1.67 2001/12/18 05:49:39 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -51,7 +51,6 @@ int	dcc_total = 0;		/* Total dcc's				   */
 char	tempdir[121] = "";	/* Temporary directory
 				   (default: current directory)		   */
 int	learn_users = 0;	/* Allow people to introduce themselves    */
-int	stealth_telnets = 0;	/* Be paranoid? <cybah>			   */
 char	network[41] = "unknown-net"; /* Name of the IRC network you're on  */
 int	password_timeout = 180;	/* Time to wait for a password from a user */
 int	bot_timeout = 60;	/* Bot timeout value			   */
@@ -1980,15 +1979,9 @@ void dcc_telnet_got_ident(int i, char *host)
   /* Displays a telnet banner if the file exists. */
   show_telnet_banner(i);
 
-  /* This is so we dont tell someone doing a portscan anything
-   * about ourselves. <cybah>
-   */
-  if (stealth_telnets)
-    sub_lang(i, _("\nNickname.\n"));
-  else {
-    dprintf(i, "\n\n");
-    sub_lang(i, _("%B  (%E)\n\nPlease enter your nickname.\n"));
-  }
+  dprintf(i, "\n\n");
+  sub_lang(i, _("%B  (%E)\n\nPlease enter your nickname.\n"));
+
   if (learn_users)
     dprintf(i, "(If you are new, enter 'NEW' here.)\n");
 }
