@@ -1,3 +1,10 @@
+2002-02-20 02:37  Jeff Fisher <guppy@techmonkeys.org>
+
+	* doc/UPDATES1.6, modules/console/console.c, modules/irc/chan.c,
+	modules/irc/irc.c, src/patch.h:
+
+	added a few patches to sync with 1.6 
+
 2002-02-19 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
