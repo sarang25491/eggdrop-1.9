@@ -1,3 +1,11 @@
+2002-01-14 15:39  stdarg <stdarg@techmonkeys.org>
+
+	* src/modules.c:
+
+	
+	* ginvite_total and gexempt_total were mixed up in the export table
+	(thanks to amir on egghelp.org for finding this) 
+
 2002-01-14 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
