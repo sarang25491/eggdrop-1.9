@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.63 2002/04/25 23:18:03 stdarg Exp $
+ * $Id: tclhash.c,v 1.64 2002/05/01 02:30:55 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -60,7 +60,7 @@ static int script_binds(script_var_t *retval, char *tablename);
 
 static script_command_t tclhash_script_cmds[] = {
 	{"", "bindtables", script_bind_tables, NULL, 0, "", "", 0, SCRIPT_PASS_RETVAL},
-	{"", "binds", script_binds, NULL, 1, "s", "bind-table", 0, SCRIPT_PASS_RETVAL},
+	{"", "binds", script_binds, NULL, 0, "s", "?bind-table?", 0, SCRIPT_PASS_RETVAL | SCRIPT_VAR_ARGS},
 	{"", "bind", script_bind, NULL, 4, "sssc", "table flags mask command", SCRIPT_INTEGER, 0},
 	{"", "unbind", script_unbind, NULL, 4, "ssss", "table flags mask command", SCRIPT_INTEGER},
 	{0}
@@ -310,16 +310,29 @@ static int script_binds(script_var_t *retval, char *tablename)
 	retval->len = 0;
 	retval->value = NULL;
 
+	/* No table name? Then return the list of tables. */
+	if (!tablename) {
+		for (table = bind_table_list_head; table; table = table->next) {
+			script_list_append(retval, script_string(table->name, -1));
+		}
+		return(0);
+	}
+
 	table = find_bind_table2(tablename);
-	if (!table) return(0);
+	if (!table) {
+		retval->type = SCRIPT_STRING | SCRIPT_ERROR;
+		retval->value = "Bind table not found";
+		retval->len = -1;
+		return(0);
+	}
 
 	for (chain = table->chains; chain; chain = chain->next) {
 		for (entry = chain->entries; entry; entry = entry->next) {
-			mask = script_string(strdup(chain->mask), -1);
+			mask = script_string(chain->mask, -1);
 			build_flags(flagbuf, &entry->user_flags, NULL);
-			flags = script_string(strdup(flagbuf), -1);
+			flags = script_copy_string(flagbuf, -1);
 			hits = script_int(entry->hits);
-			func = script_string(strdup(entry->function_name), -1);
+			func = script_string(entry->function_name, -1);
 			sublist = script_list(4, flags, mask, hits, func);
 			script_list_append(retval, sublist);
 		}

@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.57 2002/04/28 03:13:39 ite Exp $
+ * $Id: tcldcc.c,v 1.58 2002/05/01 02:30:55 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -404,7 +404,7 @@ static int script_botlist(script_var_t *retval)
 		uplink = script_string((bot->uplink == (tand_t *)1) ? botnetnick : bot->uplink->bot, -1);
 		version = script_int(bot->ver);
 		sharestr[0] = bot->share;
-		share = script_string(strdup(sharestr), -1);
+		share = script_copy_string(sharestr, -1);
 
 		sublist = script_list(4, nick, uplink, version, share);
 		script_list_append(retval, sublist);
@@ -433,7 +433,7 @@ static int script_dcclist(script_var_t *retval, char *match)
 		type = script_string(dcc[i].type->name, -1);
 		if (dcc[i].type->display) dcc[i].type->display(i, other);
 		else sprintf(other, "?:%X !! ERROR !!", (int) dcc[i].type);
-		othervar = script_string(strdup(other), -1);
+		othervar = script_copy_string(other, -1);
 		othervar->type |= SCRIPT_FREE;
 		timestamp = script_int(dcc[i].timeval);
 
@@ -454,8 +454,7 @@ static void whom_entry(script_var_t *retval, char *nick, char *bot, char *host ,
 
 	flag[0] = icon;
 	flag[1] = 0;
-	vflag = script_string(strdup(flag), 1);
-	vflag->type |= SCRIPT_FREE;
+	vflag = script_copy_string(flag, 1);
 
 	vidle = script_int((now - idletime) / 60);
 	vaway = script_string(away ? away : "", -1);

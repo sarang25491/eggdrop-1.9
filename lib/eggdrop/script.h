@@ -2,7 +2,7 @@
  * script.h
  *   stuff needed for scripting modules
  *
- * $Id: script.h,v 1.2 2002/04/25 04:06:39 stdarg Exp $
+ * $Id: script.h,v 1.3 2002/05/01 02:30:55 stdarg Exp $
  */
 /*
  * Copyright (C) 2001, 2002 Eggheads Development Team
@@ -169,6 +169,8 @@ extern int script_delete_cmd_table(script_command_t *table);
 extern int script_create_simple_cmd_table(script_simple_command_t *table);
 
 extern script_var_t *script_string(char *str, int len);
+script_var_t *script_dynamic_string(char *str, int len);
+script_var_t *script_copy_string(char *str, int len);
 extern script_var_t *script_int(int val);
 extern script_var_t *script_list(int nitems, ...);
 extern int script_list_append(script_var_t *list, script_var_t *item);

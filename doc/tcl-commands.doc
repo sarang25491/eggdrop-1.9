@@ -851,10 +851,11 @@ specific commands, see later.
     removes a previously-made binding
     returns: name of the command that was removed
 
-  binds ?type/mask?
-   returns: a list of tcl binds, each item in the list will be a sublist of
-     five elements:
-       {<type> <flags> <name> <hits> <proc>}
+  binds ?table-name?
+   returns: With no arguments, it returns a list of bind table names. If you
+     specify a table name, it returns the list of entries in that table. Each
+     entry is a sublist in the following format:
+       {<flags> <mask> <hits> <proc>}
 
   logfile [<modes> <channel> <filename>]
     creates a new logfile, which will log the modes given for the channel

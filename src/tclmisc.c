@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.49 2002/04/28 07:37:12 stdarg Exp $
+ * $Id: tclmisc.c,v 1.50 2002/05/01 02:30:55 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -241,15 +241,13 @@ static int script_modules(script_var_t *retval)
 
 	for (current = module_list; current; current = current->next) {
 		name = script_string(current->name, -1);
-		version = script_string(msprintf("%d.%d", current->major, current->minor), -1);
-		version->type |= SCRIPT_FREE;
+		version = script_dynamic_string(msprintf("%d.%d", current->major, current->minor), -1);
 		deplist = script_list(0);
 		for (dep = dependancy_list; dep; dep = dep->next) {
 			script_var_t *depname, *depver;
 
 			depname = script_string(dep->needed->name, -1);
-			depver = script_string(msprintf("%d.%d", dep->needed->major, dep->needed->minor), -1);
-			depver->type |= SCRIPT_FREE;
+			depver = script_copy_string(msprintf("%d.%d", dep->needed->major, dep->needed->minor), -1);
 
 			script_list_append(deplist, script_list(2, depname, depver));
 		}

@@ -2,7 +2,7 @@
  * script.c
  *   stuff needed for scripting modules
  *
- * $Id: script.c,v 1.2 2002/04/25 04:06:39 stdarg Exp $
+ * $Id: script.c,v 1.3 2002/05/01 02:30:55 stdarg Exp $
  */
 /*
  * Copyright (C) 2001, 2002 Eggheads Development Team
@@ -208,6 +208,23 @@ script_var_t *script_string(char *str, int len)
 	if (len < 0) len = strlen(str);
 	var->len = len;
 	return(var);
+}
+
+script_var_t *script_dynamic_string(char *str, int len)
+{	script_var_t *var = script_string(str, len);
+	var->type |= SCRIPT_FREE;
+	return(var);
+}
+
+script_var_t *script_copy_string(char *str, int len)
+{
+	char *copy;
+
+	if (len < 0) len = strlen(str);
+	copy = (char *)malloc(len+1);
+	memcpy(copy, str, len);
+	copy[len] = 0;
+	return script_dynamic_string(copy, len);
 }
 
 script_var_t *script_int(int val)
