@@ -1,3 +1,9 @@
+2004-06-08 05:15  Automatic CVS Scripts
+
+	* po/eggdrop.pot:
+
+	Pots 
+
 2004-06-08 00:51  stdarg <stdarg@techmonkeys.org>
 
 	* ABOUT-NLS, Makefile.am, bootstrap, configure.ac,
