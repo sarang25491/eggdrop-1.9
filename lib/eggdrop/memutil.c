@@ -3,7 +3,7 @@
  *   some macros and functions for common operations with strings and memory
  *   in general.
  *
- * $Id: memutil.c,v 1.2 2002/01/23 22:18:14 ite Exp $
+ * $Id: memutil.c,v 1.3 2002/01/25 21:25:32 ite Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -24,6 +24,7 @@
  */
 
 #include <stdio.h>
+#include <ctype.h>
 #include "memutil.h"
 
 /*        This implementation wont overrun dst - 'max' is the max bytes that dst
@@ -237,17 +238,16 @@ char *strchr_unescape(char *str, const char div, register const char esc_char)
  */
 void rmspace(char *s)    
 {                        
-#define whitespace(c) (((c) == 32) || ((c) == 9) || ((c) == 13) || ((c) == 10))
   char *p;               
 
   if (*s == '\0')
         return;
 
   /* Wipe end of string */
-  for (p = s + strlen(s) - 1; ((whitespace(*p)) && (p >= s)); p--);
+  for (p = s + strlen(s) - 1; ((isspace(*p)) && (p >= s)); p--);
     if (p != s + strlen(s) - 1)
       *(p + 1) = 0;
-  for (p = s; ((whitespace(*p)) && (*p)); p++);
+  for (p = s; ((isspace(*p)) && (*p)); p++);
     if (p != s)
       strcpy(s, p);
 }
