@@ -1,3 +1,35 @@
+2003-03-07 11:44  Tothwolf <tothwolf@techmonkeys.org>
+
+	* m4/Makefile.am:
+
+	* Make maintainer-clean make target remove m4/Makefile.in.  
+
+2003-03-07 11:30  Tothwolf <tothwolf@techmonkeys.org>
+
+	* ABOUT-NLS, Makefile.am, configure.ac, acconfig/codeset.m4,
+	acconfig/config.rpath, acconfig/gettext.m4, acconfig/glibc21.m4,
+	acconfig/iconv.m4, acconfig/isc-posix.m4, acconfig/lcmessage.m4,
+	acconfig/progtest.m4, intl/Makefile.in, intl/VERSION,
+	intl/bindtextdom.c, intl/config.charset, intl/dcgettext.c,
+	intl/dcigettext.c, intl/dcngettext.c, intl/dgettext.c,
+	intl/dngettext.c, intl/eval-plural.h, intl/gettext.c,
+	intl/gettext.h, intl/gettextP.h, intl/gmo.h, intl/hash-string.h,
+	intl/intl-compat.c, intl/l10nflist.c, intl/libgettext.h,
+	intl/libgnuintl.h, intl/loadinfo.h, intl/loadmsgcat.c,
+	intl/localcharset.c, intl/localealias.c, intl/localename.c,
+	intl/ngettext.c, intl/os2compat.c, intl/os2compat.h, intl/osdep.c,
+	intl/plural-exp.c, intl/plural-exp.h, intl/plural.c, intl/plural.y,
+	intl/textdomain.c, m4/Makefile.am, m4/codeset.m4, m4/gettext.m4,
+	m4/glibc21.m4, m4/iconv.m4, m4/intdiv0.m4, m4/inttypes-pri.m4,
+	m4/inttypes.m4, m4/inttypes_h.m4, m4/isc-posix.m4, m4/lcmessage.m4,
+	m4/lib-ld.m4, m4/lib-link.m4, m4/lib-prefix.m4, m4/progtest.m4,
+	m4/stdint_h.m4, m4/uintmax_t.m4, m4/ulonglong.m4,
+	po/Makefile.in.in, po/Makevars, po/Rules-quot, po/boldquot.sed,
+	po/en@boldquot.header, po/en@quot.header, po/insert-header.sin,
+	po/quot.sed, po/remove-potcdate.sin:
+
+	* Upgraded gettext to version 0.11.5.  
+
 2003-03-07 08:16  Tothwolf <tothwolf@techmonkeys.org>
 
 	* acconfig/: config.guess, config.sub:
