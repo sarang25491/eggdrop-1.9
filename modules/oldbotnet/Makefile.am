@@ -1,10 +1,10 @@
-# $Id: Makefile.am,v 1.1 2003/12/12 19:45:27 stdarg Exp $
+# $Id: Makefile.am,v 1.2 2003/12/14 08:51:02 stdarg Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 pkglibdir		= $(exec_prefix)/modules
 
 pkglib_LTLIBRARIES	= oldbotnet.la
-oldbotnet_la_SOURCES	= oldbotnet.c events.c
+oldbotnet_la_SOURCES	= oldbotnet.c oldbotnet.h events.c
 oldbotnet_la_LDFLAGS	= -module -avoid-version -no-undefined
 oldbotnet_la_LIBADD	= @LIBS@ $(top_builddir)/lib/eggdrop/libeggdrop.la
 

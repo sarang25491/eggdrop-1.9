@@ -5,7 +5,7 @@ AC_CONFIG_AUX_DIR(acconfig)
 AM_CONFIG_HEADER(config.h)
 
 # FIXME: make module Makefile list dynamic
-AC_CONFIG_FILES([Makefile doc/Makefile intl/Makefile lib/Makefile lib/compat/Makefile lib/eggdrop/Makefile lib/egglib/Makefile m4/Makefile modules/Makefile modules/blowfish/Makefile modules/dccparty/Makefile modules/ircparty/Makefile modules/javascript/Makefile modules/oldbotnet/Makefile modules/perlscript/Makefile modules/script/Makefile modules/server/Makefile modules/tclscript/Makefile modules/telnetparty/Makefile nettype/Makefile po/Makefile.in scripts/Makefile src/Makefile])
+AC_CONFIG_FILES([Makefile intl/Makefile lib/Makefile lib/compat/Makefile lib/eggdrop/Makefile lib/egglib/Makefile m4/Makefile modules/Makefile modules/blowfish/Makefile modules/dccparty/Makefile modules/ircparty/Makefile modules/javascript/Makefile modules/oldbotnet/Makefile modules/perlscript/Makefile modules/script/Makefile modules/server/Makefile modules/tclscript/Makefile modules/telnetparty/Makefile nettype/Makefile po/Makefile.in scripts/Makefile src/Makefile])
 
 EGG_MSG_CONFIGURE_START
 AM_INIT_AUTOMAKE(eggdrop, 1.7.0)

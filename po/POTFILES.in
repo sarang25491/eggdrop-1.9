@@ -23,13 +23,5 @@ modules/server/input.c
 modules/tclscript/tclscript.c
 modules/uptime/uptime.c
 src/bg.c
-src/chanprog.c
-src/cmds.c
-src/egg.h
 src/logfile.c
 src/main.c
-src/misc.c
-src/modules.c
-src/userrec.c
-src/users.c
-

@@ -7,14 +7,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2003-03-10 22:16-0500\n"
+"POT-Creation-Date: 2003-12-14 01:54-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
 #: lib/compat/getopt.c:681
 #, c-format
@@ -36,19 +35,16 @@ msgstr ""
 msgid "%s: option `%s' requires an argument\n"
 msgstr ""
 
-#. --option
 #: lib/compat/getopt.c:758
 #, c-format
 msgid "%s: unrecognized option `--%s'\n"
 msgstr ""
 
-#. +option or -option
 #: lib/compat/getopt.c:762
 #, c-format
 msgid "%s: unrecognized option `%c%s'\n"
 msgstr ""
 
-#. 1003.2 specifies the format of this message.
 #: lib/compat/getopt.c:788
 #, c-format
 msgid "%s: illegal option -- %c\n"
@@ -59,7 +55,6 @@ msgstr ""
 msgid "%s: invalid option -- %c\n"
 msgstr ""
 
-#. 1003.2 specifies the format of this message.
 #: lib/compat/getopt.c:821 lib/compat/getopt.c:951
 #, c-format
 msgid "%s: option requires an argument -- %c\n"
@@ -75,26 +70,13 @@ msgstr ""
 msgid "%s: option `-W %s' doesn't allow an argument\n"
 msgstr ""
 
-#: modules/blowfish/blowfish.c:384
-msgid "You can't unload an encryption module"
-msgstr ""
-
-#: modules/blowfish/blowfish.c:414 src/modules.c:193
-msgid "Already loaded."
-msgstr ""
-
-#: modules/blowfish/blowfish.c:425 modules/filesys/filesys.c:1325
-#: modules/uptime/uptime.c:240
-msgid "This module requires eggdrop1.7.0 or later"
-msgstr ""
-
-#: modules/channels/channels.c:509
+#: modules/channels/channels.c:138
 msgid "lurking"
 msgstr ""
 
 #: modules/channels/cmdschan.c:62 modules/channels/cmdschan.c:788
-#: modules/channels/cmdschan.c:966 modules/irc/cmdsirc.c:736
-#: modules/irc/cmdsirc.c:765 modules/irc/cmdsirc.c:794
+#: modules/channels/cmdschan.c:966 modules/irc/cmdsirc.c:728
+#: modules/irc/cmdsirc.c:757 modules/irc/cmdsirc.c:786
 msgid "That channel doesn't exist!\n"
 msgstr ""
 
@@ -185,8 +167,7 @@ msgid "Your default info is now: %s\n"
 msgstr ""
 
 #: modules/channels/cmdschan.c:456 modules/channels/cmdschan.c:659
-#: modules/channels/cmdschan.c:705 src/cmds.c:698 src/cmds.c:1375
-#: src/cmds.c:1737
+#: modules/channels/cmdschan.c:705
 msgid "No such user.\n"
 msgstr ""
 
@@ -258,8 +239,8 @@ msgid "User %1$s already has a channel record for %2$s.\n"
 msgstr ""
 
 #: modules/channels/cmdschan.c:715 modules/channels/cmdschan.c:981
-#: modules/irc/cmdsirc.c:49 modules/irc/cmdsirc.c:743
-#: modules/irc/cmdsirc.c:772 modules/irc/cmdsirc.c:801
+#: modules/irc/cmdsirc.c:49 modules/irc/cmdsirc.c:735
+#: modules/irc/cmdsirc.c:764 modules/irc/cmdsirc.c:793
 msgid "Invalid console channel.\n"
 msgstr ""
 
@@ -436,7 +417,7 @@ msgstr ""
 msgid "Use .invites all to see the total list"
 msgstr ""
 
-#: modules/channels/userchan.c:920 src/userrec.c:372 src/userrec.c:384
+#: modules/channels/userchan.c:920
 msgid "ERROR writing user file."
 msgstr ""
 
@@ -447,7 +428,6 @@ msgstr ""
 #: modules/channels/userchan.c:991 modules/channels/userchan.c:1008
 #: modules/channels/userchan.c:1036 modules/channels/userchan.c:1082
 #: modules/channels/userchan.c:1110 modules/channels/userchan.c:1128
-#: src/users.c:224
 msgid "expired"
 msgstr ""
 
@@ -529,20 +509,6 @@ msgstr ""
 msgid "Failed to compress file `%s': gzclose failed."
 msgstr ""
 
-#: modules/compress/compress.c:351
-#, c-format
-msgid "    Compressed %u file,"
-msgid_plural "    Compressed %u files,"
-msgstr[0] ""
-msgstr[1] ""
-
-#: modules/compress/compress.c:353
-#, c-format
-msgid " uncompressed %u file.\n"
-msgid_plural " uncompressed %u files.\n"
-msgstr[0] ""
-msgstr[1] ""
-
 #: modules/compress/compress.c:396
 msgid "This module needs eggdrop1.7.0 or later"
 msgstr ""
@@ -613,21 +579,14 @@ msgstr ""
 msgid "No files in this directory.\n"
 msgstr ""
 
-#: modules/filesys/filedb3.c:1045 modules/filesys/files.c:534
-#: modules/filesys/files.c:549 modules/filesys/files.c:602
-#: modules/filesys/files.c:618 modules/filesys/files.c:644
-#: modules/filesys/files.c:660 modules/filesys/files.c:728
-#: modules/filesys/files.c:765 modules/filesys/files.c:790
-#: modules/filesys/files.c:810 modules/filesys/files.c:1135
+#: modules/filesys/filedb3.c:1045 modules/filesys/files.c:535
+#: modules/filesys/files.c:550 modules/filesys/files.c:603
+#: modules/filesys/files.c:619 modules/filesys/files.c:645
+#: modules/filesys/files.c:661 modules/filesys/files.c:729
+#: modules/filesys/files.c:766 modules/filesys/files.c:791
+#: modules/filesys/files.c:811 modules/filesys/files.c:1136
 msgid "No matching files.\n"
 msgstr ""
-
-#: modules/filesys/filedb3.c:1049
-#, c-format
-msgid "--- %d file.\n"
-msgid_plural "--- %d files.\n"
-msgstr[0] ""
-msgstr[1] ""
 
 #: modules/filesys/files.c:153
 msgid "Welcome to the %B file server\n"
@@ -650,121 +609,120 @@ msgstr ""
 msgid "(The files-path is set to an invalid directory.)\n"
 msgstr ""
 
-#: modules/filesys/files.c:177 modules/filesys/files.c:381
+#: modules/filesys/files.c:177 modules/filesys/files.c:382
 msgid "Current directory"
 msgstr ""
 
-#: modules/filesys/files.c:200 modules/filesys/files.c:434
-#: modules/filesys/files.c:454 modules/filesys/files.c:470
-#: modules/filesys/files.c:519
+#: modules/filesys/files.c:200 modules/filesys/files.c:435
+#: modules/filesys/files.c:455 modules/filesys/files.c:471
+#: modules/filesys/files.c:520
 msgid "Illegal directory.\n"
 msgstr ""
 
-#: modules/filesys/files.c:393 modules/filesys/files.c:405
-#: modules/filesys/files.c:502 modules/filesys/files.c:592
-#: modules/filesys/files.c:634 modules/filesys/files.c:678
-#: modules/filesys/files.c:780 modules/filesys/files.c:827
-#: modules/filesys/files.c:985 modules/irc/msgcmds.c:313
-#: modules/irc/msgcmds.c:556 modules/irc/msgcmds.c:657
-#: modules/notes/cmdsnote.c:36 modules/notes/cmdsnote.c:78
-#: modules/notes/cmdsnote.c:158 modules/notes/cmdsnote.c:192
-#: modules/notes/cmdsnote.c:226 modules/notes/notes.c:752
-#: modules/notes/notes.c:788 src/cmds.c:1505 src/cmds.c:1527 src/cmds.c:1789
+#: modules/filesys/files.c:394 modules/filesys/files.c:406
+#: modules/filesys/files.c:503 modules/filesys/files.c:593
+#: modules/filesys/files.c:635 modules/filesys/files.c:679
+#: modules/filesys/files.c:781 modules/filesys/files.c:828
+#: modules/filesys/files.c:986 modules/irc/msgcmds.c:302
+#: modules/irc/msgcmds.c:384 modules/irc/msgcmds.c:545
+#: modules/irc/msgcmds.c:646 modules/notes/cmdsnote.c:36
+#: modules/notes/cmdsnote.c:78 modules/notes/cmdsnote.c:158
+#: modules/notes/cmdsnote.c:192 modules/notes/cmdsnote.c:226
+#: modules/notes/notes.c:752 modules/notes/notes.c:788
 msgid "Usage"
 msgstr ""
 
-#: modules/filesys/files.c:409 modules/filesys/files.c:882
-#: modules/filesys/files.c:934 modules/filesys/files.c:940
+#: modules/filesys/files.c:410 modules/filesys/files.c:883
+#: modules/filesys/files.c:935 modules/filesys/files.c:941
 msgid "No such directory.\n"
 msgstr ""
 
-#: modules/filesys/files.c:418
+#: modules/filesys/files.c:419
 msgid "New current directory"
 msgstr ""
 
-#: modules/filesys/files.c:508
+#: modules/filesys/files.c:509
 msgid "Be reasonable.\n"
 msgstr ""
 
-#: modules/filesys/files.c:610 modules/filesys/files.c:622
+#: modules/filesys/files.c:611 modules/filesys/files.c:623
 msgid "Hid"
 msgstr ""
 
-#: modules/filesys/files.c:652 modules/filesys/files.c:664
+#: modules/filesys/files.c:653 modules/filesys/files.c:665
 msgid "Unhid"
 msgstr ""
 
-#: modules/filesys/files.c:738
+#: modules/filesys/files.c:739
 #, c-format
 msgid "You didnt upload %s\n"
 msgstr ""
 
-#: modules/filesys/files.c:755
+#: modules/filesys/files.c:756
 msgid "Changed"
 msgstr ""
 
-#: modules/filesys/files.c:757
+#: modules/filesys/files.c:758
 msgid "Blanked"
 msgstr ""
 
-#: modules/filesys/files.c:802 modules/filesys/files.c:814
+#: modules/filesys/files.c:803 modules/filesys/files.c:815
 msgid "Erased"
 msgstr ""
 
-#: modules/filesys/files.c:869 modules/filesys/files.c:965
-#: modules/irc/cmdsirc.c:963 src/cmds.c:650 src/cmds.c:682 src/cmds.c:1708
-#: src/cmds.c:1836
+#: modules/filesys/files.c:870 modules/filesys/files.c:966
+#: modules/irc/cmdsirc.c:955
 msgid "Failed.\n"
 msgstr ""
 
-#: modules/filesys/files.c:879
+#: modules/filesys/files.c:880
 msgid "Created directory"
 msgstr ""
 
-#: modules/filesys/files.c:893
+#: modules/filesys/files.c:894
 #, c-format
 msgid "Changed %s/ to require +%s to access\n"
 msgstr ""
 
-#: modules/filesys/files.c:896
+#: modules/filesys/files.c:897
 #, c-format
 msgid "Changes %s/ to require no flags to access\n"
 msgstr ""
 
-#: modules/filesys/files.c:955
+#: modules/filesys/files.c:956
 msgid "Removed directory"
 msgstr ""
 
-#: modules/filesys/files.c:994
+#: modules/filesys/files.c:995
 msgid "Illegal source directory.\n"
 msgstr ""
 
-#: modules/filesys/files.c:1015
+#: modules/filesys/files.c:1016
 msgid "Illegal destination directory.\n"
 msgstr ""
 
-#: modules/filesys/files.c:1028
+#: modules/filesys/files.c:1029
 #, c-format
 msgid "You cant %s files on top of themselves.\n"
 msgstr ""
 
-#: modules/filesys/files.c:1028 modules/filesys/files.c:1077
+#: modules/filesys/files.c:1029 modules/filesys/files.c:1078
 msgid "copy"
 msgstr ""
 
-#: modules/filesys/files.c:1028 modules/filesys/files.c:1077
+#: modules/filesys/files.c:1029 modules/filesys/files.c:1078
 msgid "move"
 msgstr ""
 
-#: modules/filesys/files.c:1076
+#: modules/filesys/files.c:1077
 msgid "onto itself?  Nuh uh."
 msgstr ""
 
-#: modules/filesys/files.c:1141
+#: modules/filesys/files.c:1142
 msgid "Copied"
 msgstr ""
 
-#: modules/filesys/files.c:1141
+#: modules/filesys/files.c:1142
 msgid "Moved"
 msgstr ""
 
@@ -808,13 +766,6 @@ msgstr ""
 #: modules/filesys/filesys.c:690
 msgid "There is no file transfer area.\n"
 msgstr ""
-
-#: modules/filesys/filesys.c:693
-#, c-format
-msgid "The maximum of %d person is in the file area right now.\n"
-msgid_plural "The maximum of %d people are in the file area right now.\n"
-msgstr[0] ""
-msgstr[1] ""
 
 #: modules/filesys/filesys.c:699
 msgid "You don't have access to the file area.\n"
@@ -953,7 +904,15 @@ msgstr ""
 msgid "You have been booted from the filesystem, module unloaded.\n"
 msgstr ""
 
-#: modules/irc/chan.c:316 modules/irc/chan.c:1506
+#: modules/filesys/filesys.c:1325 modules/uptime/uptime.c:240
+msgid "This module requires eggdrop1.7.0 or later"
+msgstr ""
+
+#: modules/irc/chan.c:235 modules/irc/mode.c:544
+msgid "banned:"
+msgstr ""
+
+#: modules/irc/chan.c:238 modules/irc/chan.c:316 modules/irc/chan.c:1506
 msgid "You are banned"
 msgstr ""
 
@@ -996,9 +955,8 @@ msgstr ""
 msgid "Switching back to altnick %s"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:61 modules/irc/cmdsirc.c:277
-#: modules/irc/cmdsirc.c:287 modules/irc/cmdsirc.c:330
-#: modules/irc/cmdsirc.c:340
+#: modules/irc/cmdsirc.c:61 modules/irc/cmdsirc.c:283
+#: modules/irc/cmdsirc.c:332
 #, c-format
 msgid "You are not a channel op on %s.\n"
 msgstr ""
@@ -1018,16 +976,16 @@ msgstr ""
 msgid "Cannot say to %s, it is moderated.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:182 modules/irc/cmdsirc.c:292
-#: modules/irc/cmdsirc.c:345 modules/irc/cmdsirc.c:381
-#: modules/irc/cmdsirc.c:419 modules/irc/cmdsirc.c:474
-#: modules/irc/cmdsirc.c:541
+#: modules/irc/cmdsirc.c:182 modules/irc/cmdsirc.c:288
+#: modules/irc/cmdsirc.c:337 modules/irc/cmdsirc.c:373
+#: modules/irc/cmdsirc.c:411 modules/irc/cmdsirc.c:466
+#: modules/irc/cmdsirc.c:533
 #, c-format
 msgid "I'm not on %s right now!\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:187 modules/irc/cmdsirc.c:479
-#: modules/irc/cmdsirc.c:536
+#: modules/irc/cmdsirc.c:187 modules/irc/cmdsirc.c:471
+#: modules/irc/cmdsirc.c:528
 #, c-format
 msgid "I can't help you now because I'm not a channel op on %s.\n"
 msgstr ""
@@ -1036,22 +994,22 @@ msgstr ""
 msgid "I'm not going to kickban myself.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:204 modules/irc/cmdsirc.c:494
+#: modules/irc/cmdsirc.c:204 modules/irc/cmdsirc.c:486
 #, c-format
 msgid "%1$s is not on %2$s\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:212 modules/irc/cmdsirc.c:502
+#: modules/irc/cmdsirc.c:212 modules/irc/cmdsirc.c:494
 #, c-format
 msgid "%s is a legal op.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:217 modules/irc/cmdsirc.c:507
+#: modules/irc/cmdsirc.c:217 modules/irc/cmdsirc.c:499
 #, c-format
 msgid "%1$s is a %2$s master.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:221 modules/irc/cmdsirc.c:511
+#: modules/irc/cmdsirc.c:221 modules/irc/cmdsirc.c:503
 #, c-format
 msgid "%s is another channel bot!\n"
 msgstr ""
@@ -1061,250 +1019,250 @@ msgstr ""
 msgid "%s is permanently exempted!\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:252 src/cmds.c:868
+#: modules/irc/cmdsirc.c:252
 msgid "requested"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:256 modules/irc/cmdsirc.c:516
+#: modules/irc/cmdsirc.c:256 modules/irc/cmdsirc.c:508
 msgid "Okay, done.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:296 modules/irc/cmdsirc.c:385
-#: modules/irc/cmdsirc.c:423
+#: modules/irc/cmdsirc.c:292 modules/irc/cmdsirc.c:377
+#: modules/irc/cmdsirc.c:415
 #, c-format
 msgid "I can't help you now because I'm not a chan op on %s.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:304 modules/irc/cmdsirc.c:357
-#: modules/irc/cmdsirc.c:393 modules/irc/cmdsirc.c:431
+#: modules/irc/cmdsirc.c:300 modules/irc/cmdsirc.c:349
+#: modules/irc/cmdsirc.c:385 modules/irc/cmdsirc.c:423
 #, c-format
 msgid "%1$s is not on %2$s.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:309
+#: modules/irc/cmdsirc.c:305
 #, c-format
 msgid "Gave voice to %1$s on %2$s\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:349
+#: modules/irc/cmdsirc.c:341
 #, c-format
 msgid "I can't do that right now I'm not a chan op on %s.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:362
+#: modules/irc/cmdsirc.c:354
 #, c-format
 msgid "Devoiced %1$s on %2$s\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:400
+#: modules/irc/cmdsirc.c:392
 #, c-format
 msgid "Gave op to %1$s on %2$s\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:435
+#: modules/irc/cmdsirc.c:427
 msgid "I'm not going to deop myself.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:443
+#: modules/irc/cmdsirc.c:435
 #, c-format
 msgid "%1$s is a master for %2$s\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:448
+#: modules/irc/cmdsirc.c:440
 #, c-format
 msgid "%1$s has the op flag for %2$s\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:452
+#: modules/irc/cmdsirc.c:444
 #, c-format
 msgid "Took op from %1$s on %2$s\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:487
+#: modules/irc/cmdsirc.c:479
 msgid "request"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:489
+#: modules/irc/cmdsirc.c:481
 msgid "I'm not going to kick myself.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:547
+#: modules/irc/cmdsirc.c:539
 #, c-format
 msgid "%1$s is already on %2$s!\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:551
+#: modules/irc/cmdsirc.c:543
 #, c-format
 msgid "Inviting %1$s to %2$s.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:569
+#: modules/irc/cmdsirc.c:561
 #, c-format
 msgid "Processing channel %s"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:571
+#: modules/irc/cmdsirc.c:563
 #, c-format
 msgid "Channel %s"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:573
+#: modules/irc/cmdsirc.c:565
 #, c-format
 msgid "Desiring channel %s"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:577
+#: modules/irc/cmdsirc.c:569
 msgid "Channel Topic"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:678
+#: modules/irc/cmdsirc.c:670
 msgid "FAKE CHANOP GIVEN BY SERVER"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:680
+#: modules/irc/cmdsirc.c:672
 msgid "pending +o -- Im lagged"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:682
+#: modules/irc/cmdsirc.c:674
 msgid "pending -o -- Im lagged"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:684
+#: modules/irc/cmdsirc.c:676
 msgid "pending kick"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:687
+#: modules/irc/cmdsirc.c:679
 msgid "End of channel info."
 msgstr ""
 
-#: modules/irc/cmdsirc.c:705
+#: modules/irc/cmdsirc.c:697
 #, c-format
 msgid ""
 "I'm not on %s right now!\n"
 ")"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:710
+#: modules/irc/cmdsirc.c:702
 #, c-format
 msgid ""
 "The topic for %1$s is: %2$s\n"
 ")"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:713
+#: modules/irc/cmdsirc.c:705
 #, c-format
 msgid ""
 "No topic is set for %s\n"
 ")"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:715
+#: modules/irc/cmdsirc.c:707
 #, c-format
 msgid "I'm not a channel op on %s and the channel is +t.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:719
+#: modules/irc/cmdsirc.c:711
 msgid "Changing topic...)\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:750
+#: modules/irc/cmdsirc.c:742
 #, c-format
 msgid "Resetting bans on %s...\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:779
+#: modules/irc/cmdsirc.c:771
 #, c-format
 msgid "Resetting exemptions on %s...\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:808
+#: modules/irc/cmdsirc.c:800
 #, c-format
 msgid "Resetting invitations on %s...\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:845
+#: modules/irc/cmdsirc.c:837
 msgid "You can't have strange characters in a nick.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:848 src/cmds.c:1650
+#: modules/irc/cmdsirc.c:840
 #, c-format
 msgid "You can't start a nick with '%c'.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:860 modules/irc/cmdsirc.c:925
+#: modules/irc/cmdsirc.c:852 modules/irc/cmdsirc.c:917
 #, c-format
 msgid "%s is not on any channels I monitor\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:868
+#: modules/irc/cmdsirc.c:860
 #, c-format
 msgid "%1$s is already known as %2$s.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:874 src/cmds.c:1748
+#: modules/irc/cmdsirc.c:866
 msgid "You can't add hostmasks to the bot owner/master.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:897
+#: modules/irc/cmdsirc.c:889
 #, c-format
 msgid "Added hostmask %s to %s.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:932
+#: modules/irc/cmdsirc.c:924
 #, c-format
 msgid "%s is not a valid user.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:945 src/cmds.c:1683
+#: modules/irc/cmdsirc.c:937
 msgid "You can't remove a bot owner!\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:947
+#: modules/irc/cmdsirc.c:939
 msgid "You can't remove a bot master!\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:949
+#: modules/irc/cmdsirc.c:941
 msgid "You can't remove a channel owner!\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:951
+#: modules/irc/cmdsirc.c:943
 msgid "You can't remove a channel master!\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:953
+#: modules/irc/cmdsirc.c:945
 msgid "You can't remove a bot!\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:960 src/cmds.c:1706
+#: modules/irc/cmdsirc.c:952
 #, c-format
 msgid "Deleted %s.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:975 modules/irc/msgcmds.c:229
-#: modules/irc/msgcmds.c:318 modules/irc/msgcmds.c:847
+#: modules/irc/cmdsirc.c:967 modules/irc/msgcmds.c:218
+#: modules/irc/msgcmds.c:307 modules/irc/msgcmds.c:836
 msgid "I dont monitor that channel."
 msgstr ""
 
-#: modules/irc/cmdsirc.c:979
+#: modules/irc/cmdsirc.c:971
 #, c-format
 msgid "You are not a master on %s.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:981
+#: modules/irc/cmdsirc.c:973
 #, c-format
 msgid "I'm not on %s at the moment!\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:984
+#: modules/irc/cmdsirc.c:976
 #, c-format
 msgid "Resetting channel info for %s...\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:989
+#: modules/irc/cmdsirc.c:981
 msgid "You are not a Bot Master.\n"
 msgstr ""
 
-#: modules/irc/cmdsirc.c:992
+#: modules/irc/cmdsirc.c:984
 msgid "Resetting channel info for all channels...\n"
 msgstr ""
 
@@ -1328,41 +1286,40 @@ msgstr ""
 msgid "want ops!"
 msgstr ""
 
-#: modules/irc/mode.c:395 modules/irc/mode.c:446 modules/irc/mode.c:914
+#: modules/irc/mode.c:399 modules/irc/mode.c:450 modules/irc/mode.c:916
 #, c-format
 msgid "* Mode change on %s for nonexistant %s!"
 msgstr ""
 
-#: modules/irc/mode.c:546
+#: modules/irc/mode.c:550
 msgid "Banned"
 msgstr ""
 
-#: modules/irc/mode.c:732
+#: modules/irc/mode.c:736
 #, c-format
 msgid "Oops.   Someone made me join %s... leaving..."
 msgstr ""
 
-#: modules/irc/mode.c:752
+#: modules/irc/mode.c:756
 #, c-format
 msgid "Mode change by fake op on %s!  Reversing..."
 msgstr ""
 
-#: modules/irc/mode.c:754
+#: modules/irc/mode.c:758
 msgid "Abusing ill-gained server ops"
 msgstr ""
 
-#: modules/irc/mode.c:758
+#: modules/irc/mode.c:763
 #, c-format
 msgid "Mode change by non-chanop on %s!  Reversing..."
 msgstr ""
 
-#: modules/irc/mode.c:760
+#: modules/irc/mode.c:764
 msgid "Abusing desync"
 msgstr ""
 
 #: modules/irc/msgcmds.c:45
-#, c-format
-msgid "NOTICE %s :I dont recognize you from that host.\n"
+msgid "I dont recognize you from that host."
 msgstr ""
 
 #: modules/irc/msgcmds.c:46
@@ -1424,159 +1381,153 @@ msgid ""
 "help   Cya!\n"
 msgstr ""
 
-#. Notify the user that his/her handle was truncated.
 #: modules/irc/msgcmds.c:87
 #, c-format
 msgid ""
 "NOTICE %s :Your nick was too long and therefore it was truncated to %s.\n"
 msgstr ""
 
-#: modules/irc/msgcmds.c:89
-#, c-format
-msgid "introduced to %s from %s"
-msgstr ""
-
-#: modules/irc/msgcmds.c:121 modules/irc/msgcmds.c:176
-#: modules/irc/msgcmds.c:224 modules/irc/msgcmds.c:711
-#: modules/irc/msgcmds.c:772 modules/irc/msgcmds.c:841
-#: modules/irc/msgcmds.c:872
+#: modules/irc/msgcmds.c:106 modules/irc/msgcmds.c:161
+#: modules/irc/msgcmds.c:213 modules/irc/msgcmds.c:700
+#: modules/irc/msgcmds.c:761 modules/irc/msgcmds.c:830
+#: modules/irc/msgcmds.c:861
 msgid "You dont have a password set."
 msgstr ""
 
-#: modules/irc/msgcmds.c:121
+#: modules/irc/msgcmds.c:106
 msgid "You have a password set."
 msgstr ""
 
-#: modules/irc/msgcmds.c:127
+#: modules/irc/msgcmds.c:112
 msgid "You already have a password set."
 msgstr ""
 
-#: modules/irc/msgcmds.c:132
+#: modules/irc/msgcmds.c:117
 msgid "Incorrect password."
 msgstr ""
 
-#: modules/irc/msgcmds.c:143
+#: modules/irc/msgcmds.c:128
 msgid "Please use at least 6 characters."
 msgstr ""
 
-#: modules/irc/msgcmds.c:148
+#: modules/irc/msgcmds.c:133
 msgid "Password set to:"
 msgstr ""
 
-#: modules/irc/msgcmds.c:148
+#: modules/irc/msgcmds.c:133
 msgid "Password changed to:"
 msgstr ""
 
-#: modules/irc/msgcmds.c:170 modules/irc/msgcmds.c:186
+#: modules/irc/msgcmds.c:155 modules/irc/msgcmds.c:175
 #, c-format
-msgid "NOTICE %s :Youre not %s, youre %s.\n"
+msgid "NOTICE %s :You're not %s, you're %s.\n"
 msgstr ""
 
-#: modules/irc/msgcmds.c:179
+#: modules/irc/msgcmds.c:164
 msgid "Access denied."
 msgstr ""
 
-#: modules/irc/msgcmds.c:182
+#: modules/irc/msgcmds.c:172
 msgid "I recognize you there."
 msgstr ""
 
-#: modules/irc/msgcmds.c:192
+#: modules/irc/msgcmds.c:181
 msgid "Added hostmask"
 msgstr ""
 
-#: modules/irc/msgcmds.c:244
+#: modules/irc/msgcmds.c:233
 msgid "Your info line is locked"
 msgstr ""
 
-#: modules/irc/msgcmds.c:251
+#: modules/irc/msgcmds.c:240
 msgid "Removed your info line on"
 msgstr ""
 
-#: modules/irc/msgcmds.c:256
+#: modules/irc/msgcmds.c:245
 msgid "Removed your info line."
 msgstr ""
 
-#: modules/irc/msgcmds.c:263
+#: modules/irc/msgcmds.c:252
 msgid "Now:"
 msgstr ""
 
-#: modules/irc/msgcmds.c:284
+#: modules/irc/msgcmds.c:273
 msgid "Currently:"
 msgstr ""
 
-#: modules/irc/msgcmds.c:286
+#: modules/irc/msgcmds.c:275
 msgid "To remove it:"
 msgstr ""
 
-#: modules/irc/msgcmds.c:290
+#: modules/irc/msgcmds.c:279
 msgid "You have no info set on"
 msgstr ""
 
-#: modules/irc/msgcmds.c:292
+#: modules/irc/msgcmds.c:281
 msgid "You have no info set."
 msgstr ""
 
-#: modules/irc/msgcmds.c:325
+#: modules/irc/msgcmds.c:314
 msgid "Channel is currently hidden."
 msgstr ""
 
-#: modules/irc/msgcmds.c:419
+#: modules/irc/msgcmds.c:408
 msgid "No user record."
 msgstr ""
 
-#: modules/irc/msgcmds.c:436
+#: modules/irc/msgcmds.c:425
 msgid "Now on channel"
 msgstr ""
 
-#: modules/irc/msgcmds.c:448
+#: modules/irc/msgcmds.c:437
 msgid "Last seen at"
 msgstr ""
 
-#: modules/irc/msgcmds.c:453
+#: modules/irc/msgcmds.c:442
 msgid "Never joined one of my channels."
 msgstr ""
 
-#: modules/irc/msgcmds.c:455
+#: modules/irc/msgcmds.c:444
 msgid "  (is a global op)"
 msgstr ""
 
-#: modules/irc/msgcmds.c:457
+#: modules/irc/msgcmds.c:446
 msgid "  (is a bot)"
 msgstr ""
 
-#: modules/irc/msgcmds.c:459
+#: modules/irc/msgcmds.c:448
 msgid "  (is a master)"
 msgstr ""
 
-#: modules/irc/msgcmds.c:476
+#: modules/irc/msgcmds.c:465
 msgid "I dont know you; please introduce yourself first."
 msgstr ""
 
-#: modules/irc/msgcmds.c:496
+#: modules/irc/msgcmds.c:485
 msgid "No help."
 msgstr ""
 
-#: modules/irc/msgcmds.c:560 modules/irc/msgcmds.c:661
+#: modules/irc/msgcmds.c:549 modules/irc/msgcmds.c:650
 msgid "Not on that channel right now."
 msgstr ""
 
-#: modules/irc/msgcmds.c:776
+#: modules/irc/msgcmds.c:765
 msgid "Bot shut down beginning...."
 msgstr ""
 
-#: modules/irc/msgcmds.c:799 src/cmds.c:842
+#: modules/irc/msgcmds.c:788
 msgid "Rehashing..."
 msgstr ""
 
-#: modules/irc/msgcmds.c:851 modules/irc/msgcmds.c:856
+#: modules/irc/msgcmds.c:840 modules/irc/msgcmds.c:845
 msgid "Resetting channel info."
 msgstr ""
 
-#: modules/irc/msgcmds.c:889
+#: modules/irc/msgcmds.c:878
 msgid "Jumping servers..."
 msgstr ""
 
-#: modules/javascript/javascript.c:665 modules/tclscript/tclscript.c:585
+#: modules/javascript/javascript.c:665
 msgid ""
 "You must be a permanent owner (defined in the config file) to use this "
 "command.\n"
@@ -1623,7 +1574,7 @@ msgstr ""
 msgid "Note ignores for %s:\n"
 msgstr ""
 
-#: modules/notes/cmdsnote.c:164 src/cmds.c:1803
+#: modules/notes/cmdsnote.c:164
 msgid "No such user."
 msgstr ""
 
@@ -1733,20 +1684,6 @@ msgstr ""
 msgid "Erased all notes"
 msgstr ""
 
-#: modules/notes/notes.c:667
-#, c-format
-msgid "Erased %d note"
-msgid_plural "Erased %d notes"
-msgstr[0] ""
-msgstr[1] ""
-
-#: modules/notes/notes.c:669
-#, c-format
-msgid "%d left."
-msgid_plural "%d left."
-msgstr[0] ""
-msgstr[1] ""
-
 #: modules/notes/notes.c:793
 msgid "I don't know anyone by that name.\n"
 msgstr ""
@@ -1785,15 +1722,11 @@ msgstr ""
 msgid "NOTICE %s :You have %d note%s waiting on %s.\n"
 msgstr ""
 
-#: modules/server/input.c:433
+#: modules/server/input.c:448
 msgid "Nick change was too fast."
 msgstr ""
 
-#. Usually if we get this then we really messed up somewhere
-#. * or this is a non-standard server, so we log it and kill the socket
-#. * hoping the next server will work :) -poptix
-#.
-#: modules/server/input.c:443
+#: modules/server/input.c:458
 #, c-format
 msgid "%s says I'm not registered, trying next one."
 msgstr ""
@@ -1802,664 +1735,26 @@ msgstr ""
 msgid "You need the server module to use the uptime module."
 msgstr ""
 
-#. Kill bot incase a botchk is run from crond.
-#: src/bg.c:134 src/bg.c:142 src/main.c:612 src/main.c:618
+#: src/bg.c:134 src/bg.c:142 src/main.c:560 src/main.c:566
 #, c-format
 msgid "* Warning!  Could not write %s file!\n"
 msgstr ""
 
-#: src/chanprog.c:205
-msgid "*unknown*"
-msgstr ""
-
-#: src/chanprog.c:214
-#, c-format
-msgid "I am %1$s, running %2$s:  "
-msgstr ""
-
-#: src/chanprog.c:215
-#, c-format
-msgid "%d user\n"
-msgid_plural "%d users\n"
-msgstr[0] ""
-msgstr[1] ""
-
-#: src/chanprog.c:222
-#, c-format
-msgid "%d day"
-msgid_plural "%d days"
-msgstr[0] ""
-msgstr[1] ""
-
-#: src/chanprog.c:233 src/cmds.c:347
-msgid "background"
-msgstr ""
-
-#: src/chanprog.c:236 src/cmds.c:347
-msgid "terminal mode"
-msgstr ""
-
-#: src/chanprog.c:238 src/cmds.c:348
-msgid "status mode"
-msgstr ""
-
-#: src/chanprog.c:240 src/cmds.c:348
-msgid "log dump mode"
-msgstr ""
-
-#: src/chanprog.c:257 src/cmds.c:346
-msgid "Online for"
-msgstr ""
-
-#: src/chanprog.c:258
-msgid "cache hit"
-msgstr ""
-
-#: src/chanprog.c:261
-#, c-format
-msgid "Admin: %s\n"
-msgstr ""
-
-#: src/chanprog.c:262
-#, c-format
-msgid "Config file: %s\n"
-msgstr ""
-
-#: src/chanprog.c:263
-#, c-format
-msgid "OS: %1$s %2$s\n"
-msgstr ""
-
-#: src/chanprog.c:273
-#, c-format
-msgid "My name: %s\n"
-msgstr ""
-
-#: src/chanprog.c:275
-#, c-format
-msgid "Firewall: %1$s, port %2$d\n"
-msgstr ""
-
-#: src/chanprog.c:276
-#, c-format
-msgid "Userfile: %1$s   Motd: %2$s\n"
-msgstr ""
-
-#: src/chanprog.c:277
-msgid "Directories:\n"
-msgstr ""
-
-#: src/chanprog.c:278
-#, c-format
-msgid "  Help    : %s\n"
-msgstr ""
-
-#: src/chanprog.c:279
-#, c-format
-msgid "  Modules : %s\n"
-msgstr ""
-
-#: src/chanprog.c:283
-msgid "New users get flags"
-msgstr ""
-
-#: src/chanprog.c:284
-msgid "notify"
-msgstr ""
-
-#: src/chanprog.c:287
-#, c-format
-msgid "Permanent owner(s): %s\n"
-msgstr ""
-
-#: src/chanprog.c:288
-#, c-format
-msgid "Ignores last %d mins\n"
-msgstr ""
-
-#: src/chanprog.c:326
-msgid ""
-"STARTING BOT IN USERFILE CREATION MODE.\n"
-"Telnet to the bot and enter 'NEW' as your nickname."
-msgstr ""
-
-#: src/chanprog.c:332
-#, c-format
-msgid "USER FILE NOT FOUND!  (try ./eggdrop -m %s to make one)\n"
-msgstr ""
-
-#: src/chanprog.c:335
-msgid ""
-"\n"
-"\n"
-"STARTING BOT IN USERFILE CREATION MODE.\n"
-"Telnet to the bot and enter 'NEW' as your nickname.\n"
-msgstr ""
-
-#: src/chanprog.c:338
-#, c-format
-msgid "OR go to IRC and type:  /msg %s hello\n"
-msgstr ""
-
-#: src/chanprog.c:339
-msgid ""
-"This will make the bot recognize you as the master.\n"
-"\n"
-msgstr ""
-
-#: src/chanprog.c:342
-msgid "USERFILE ALREADY EXISTS (drop the -m)\n"
-msgstr ""
-
-#: src/chanprog.c:355
-msgid "Cant reload user file!"
-msgstr ""
-
-#: src/chanprog.c:362
-msgid "User file is missing!"
-msgstr ""
-
-#: src/cmds.c:122 src/cmds.c:165
-msgid "Other people on the bot:\n"
-msgstr ""
-
-#: src/cmds.c:188
-msgid "You have chat turned off.\n"
-msgstr ""
-
-#: src/cmds.c:234 src/cmds.c:715
-msgid "Please use at least 6 characters.\n"
-msgstr ""
-
-#: src/cmds.c:239
-#, c-format
-msgid "Changed password to '%s'\n"
-msgstr ""
-
-#: src/cmds.c:245
-msgid "Reload help cache...\n"
-msgstr ""
-
-#: src/cmds.c:358 src/cmds.c:1146 src/cmds.c:1322
-msgid "You do not have Bot Master privileges.\n"
-msgstr ""
-
-#: src/cmds.c:395
-msgid "You can't boot a bot owner.\n"
-msgstr ""
-
-#: src/cmds.c:399
-msgid "You can't boot a bot master.\n"
-msgstr ""
-
-#: src/cmds.c:404
-#, c-format
-msgid "Booted %s from the file area.\n"
-msgstr ""
-
-#: src/cmds.c:406
-#, c-format
-msgid "Booted %s from the party line.\n"
-msgstr ""
-
-#: src/cmds.c:411
-msgid "Who?  No such person on the party line.\n"
-msgstr ""
-
-#: src/cmds.c:553 src/cmds.c:1648
-msgid "Someone already exists by that name.\n"
-msgstr ""
-
-#: src/cmds.c:558
-#, c-format
-msgid "You can't start a botnick with '%c'.\n"
-msgstr ""
-
-#: src/cmds.c:600
-#, c-format
-msgid "Added bot '%s' with %s%s%s%s and %s%s%s%s.\n"
-msgstr ""
-
-#: src/cmds.c:608
-msgid ""
-"You'll want to add a hostmask if this bot will ever be on any channels that "
-"I'm on.\n"
-msgstr ""
-
-#: src/cmds.c:629
-#, c-format
-msgid "Bizarre quantum forces prevent nicknames from starting with %c.\n"
-msgstr ""
-
-#: src/cmds.c:633 src/cmds.c:674
-#, c-format
-msgid "Somebody is already using %s.\n"
-msgstr ""
-
-#: src/cmds.c:639
-msgid "You can't change handles for non-bots.\n"
-msgstr ""
-
-#: src/cmds.c:642
-msgid "You can't change a bot owner's handle.\n"
-msgstr ""
-
-#: src/cmds.c:644
-msgid "You can't change a permanent bot owner's handle.\n"
-msgstr ""
-
-#: src/cmds.c:646 src/cmds.c:1652
-msgid "Hey! That's MY name!\n"
-msgstr ""
-
-#: src/cmds.c:648
-msgid "Changed.\n"
-msgstr ""
-
-#: src/cmds.c:670
-#, c-format
-msgid "Bizarre quantum forces prevent handle from starting with '%c'\n"
-msgstr ""
-
-#: src/cmds.c:676
-msgid "Hey!  That's MY name!\n"
-msgstr ""
-
-#: src/cmds.c:680
-msgid "Okay, changed.\n"
-msgstr ""
-
-#: src/cmds.c:701
-msgid "You can't change passwords for non-bots.\n"
-msgstr ""
-
-#: src/cmds.c:704
-msgid "You can't change a bot owner's password.\n"
-msgstr ""
-
-#: src/cmds.c:706
-msgid "You can't change a permanent bot owner's password.\n"
-msgstr ""
-
-#: src/cmds.c:709
-msgid "Removed password.\n"
-msgstr ""
-
-#: src/cmds.c:718
-msgid "Changed password.\n"
-msgstr ""
-
-#: src/cmds.c:743
-msgid "This command is only useful for tandem bots.\n"
-msgstr ""
-
-#: src/cmds.c:746
-msgid "Changed bot's address.\n"
-msgstr ""
-
-#: src/cmds.c:803 src/cmds.c:1088 src/cmds.c:1675
-msgid "No such user!\n"
-msgstr ""
-
-#: src/cmds.c:808
-msgid "Can't change comment on the bot owner.\n"
-msgstr ""
-
-#: src/cmds.c:812
-msgid "Okay, comment blanked.\n"
-msgstr ""
-
-#: src/cmds.c:816
-msgid "Changed comment.\n"
-msgstr ""
-
-#: src/cmds.c:824
-msgid "You cannot .restart a bot when running -n (due to tcl)."
-msgstr ""
-
-#: src/cmds.c:827
-msgid "Restarting.\n"
-msgstr ""
-
-#: src/cmds.c:831
-msgid "Restarting ..."
-msgstr ""
-
-#: src/cmds.c:838
-msgid "Rehashing."
-msgstr ""
-
-#: src/cmds.c:849
-msgid "Reloading user file..."
-msgstr ""
-
-#: src/cmds.c:859 src/cmds.c:865
-msgid "BOT SHUTDOWN"
-msgstr ""
-
-#: src/cmds.c:861 src/cmds.c:867
-msgid "DIE BY"
-msgstr ""
-
-#: src/cmds.c:865
-msgid "Authorized by"
-msgstr ""
-
-#: src/cmds.c:885
-msgid "Unable to '.simul' permanent owners.\n"
-msgstr ""
-
-#: src/cmds.c:897
-msgid "No such user on the party line.\n"
-msgstr ""
-
-#: src/cmds.c:903
-msgid "Saving user file...\n"
-msgstr ""
-
-#: src/cmds.c:910
-msgid "Backing up the channel & user files...\n"
-msgstr ""
-
-#: src/cmds.c:944
-msgid "You are no longer a master on this bot.\n"
-msgstr ""
-
-#: src/cmds.c:949
-msgid "You are now a master on this bot.\n"
-msgstr ""
-
-#: src/cmds.c:953
-msgid "You are now a botnet master on this bot.\n"
-msgstr ""
-
-#: src/cmds.c:957
-msgid "You are no longer a botnet master on this bot.\n"
-msgstr ""
-
-#: src/cmds.c:961
-msgid "You are now an OWNER of this bot.\n"
-msgstr ""
-
-#: src/cmds.c:965
-msgid "You are no longer an owner of this bot.\n"
-msgstr ""
-
-#: src/cmds.c:987
-msgid ""
-"You no longer have file area access.\n"
-"\n"
-msgstr ""
-
-#: src/cmds.c:988
-#, c-format
-msgid "DCC user [%s]%s removed from file system"
-msgstr ""
-
-#: src/cmds.c:1027
-#, c-format
-msgid "You are no longer a master on %s.\n"
-msgstr ""
-
-#: src/cmds.c:1037
-#, c-format
-msgid "You are now a master on %s.\n"
-msgstr ""
-
-#: src/cmds.c:1041
-#, c-format
-msgid "You are now an OWNER of %s.\n"
-msgstr ""
-
-#: src/cmds.c:1045
-#, c-format
-msgid "You are no longer an owner of %s.\n"
-msgstr ""
-
-#: src/cmds.c:1119 src/cmds.c:1296
-#, c-format
-msgid "No channel record for %s.\n"
-msgstr ""
-
-#: src/cmds.c:1130 src/cmds.c:1307
-#, c-format
-msgid "Invalid console channel %s.\n"
-msgstr ""
-
-#: src/cmds.c:1153
-#, c-format
-msgid "You do not have channel master privileges for channel %s.\n"
-msgstr ""
-
-#: src/cmds.c:1215
-#, c-format
-msgid "Global flags for %1$s are now +%2$s.\n"
-msgstr ""
-
-#: src/cmds.c:1217
-#, c-format
-msgid "No global flags for %s.\n"
-msgstr ""
-
-#: src/cmds.c:1226
-#, c-format
-msgid "Channel flags for %1$s on %2$s are now +%3$s.\n"
-msgstr ""
-
-#: src/cmds.c:1229
-#, c-format
-msgid "No flags for %1$s on %2$s.\n"
-msgstr ""
-
-#: src/cmds.c:1258
-msgid "No such bot!\n"
-msgstr ""
-
-#: src/cmds.c:1266
-msgid "You may not change the attributes of a directly linked bot.\n"
-msgstr ""
-
-#: src/cmds.c:1346
-#, c-format
-msgid "Bot flags for %1$s are now +%2$s.\n"
-msgstr ""
-
-#: src/cmds.c:1348
-#, c-format
-msgid "No bot flags for %s.\n"
-msgstr ""
-
-#: src/cmds.c:1355
-#, c-format
-msgid "Bot flags for %1$s on %2$s are now +%3$s.\n"
-msgstr ""
-
-#: src/cmds.c:1358
-#, c-format
-msgid "No bot flags for %1$s on %2$s.\n"
-msgstr ""
-
-#: src/cmds.c:1377
-msgid "Can't su to a bot... then again, why would you wanna?\n"
-msgstr ""
-
-#: src/cmds.c:1379
-msgid "You cannot currently double .su, try .su'ing directly\n"
-msgstr ""
-
-#: src/cmds.c:1383
-#, c-format
-msgid "No party line access permitted for %s.\n"
-msgstr ""
-
-#: src/cmds.c:1392
-msgid "No password set for user. You may not .su to them.\n"
-msgstr ""
-
-#: src/cmds.c:1416
-#, c-format
-msgid "Setting your username to %s.\n"
-msgstr ""
-
-#: src/cmds.c:1435
-msgid "Turned on telnet codes\n"
-msgstr ""
-
-#: src/cmds.c:1442
-msgid "Turned off telnet codes\n"
-msgstr ""
-
-#: src/cmds.c:1456
-#, c-format
-msgid "Currently paging outputs to %d lines.\n"
-msgstr ""
-
-#: src/cmds.c:1459
-msgid "You don't have paging on.\n"
-msgstr ""
-
-#: src/cmds.c:1468
-msgid "Paging turned off.\n"
-msgstr ""
-
-#: src/cmds.c:1471
-#, c-format
-msgid "Paging turned on, stopping every %d line.\n"
-msgid_plural "Paging turned on, stopping every %d lines.\n"
-msgstr[0] ""
-msgstr[1] ""
-
-#: src/cmds.c:1501 src/cmds.c:1523
-msgid "What?  You need .help\n"
-msgstr ""
-
-#: src/cmds.c:1509
-msgid "Error loading module:"
-msgstr ""
-
-#: src/cmds.c:1511 src/modules.c:224
-#, c-format
-msgid "Module loaded: %-16s"
-msgstr ""
-
-#: src/cmds.c:1531
-msgid "Error unloading module:"
-msgstr ""
-
-#: src/cmds.c:1533
-msgid "Module unloaded:"
-msgstr ""
-
-#: src/cmds.c:1605
-msgid "That already matches an existing ignore.\n"
-msgstr ""
-
-#: src/cmds.c:1623
-#, c-format
-msgid "No longer ignoring: %s\n"
-msgstr ""
-
-#: src/cmds.c:1625
-msgid "That ignore cannot be found.\n"
-msgstr ""
-
-#: src/cmds.c:1655
-#, c-format
-msgid "Added %1$s (%2$s) with no password and no flags.\n"
-msgstr ""
-
-#: src/cmds.c:1656
-msgid "no host"
-msgstr ""
-
-#: src/cmds.c:1679
-msgid "You can't remove the permanent bot owner!\n"
-msgstr ""
-
-#: src/cmds.c:1691
-msgid "You can't remove a directly linked bot.\n"
-msgstr ""
-
-#: src/cmds.c:1697
-msgid "You can't remove users who aren't bots!\n"
-msgstr ""
-
-#: src/cmds.c:1744
-msgid "You can't add hostmasks to non-bots.\n"
-msgstr ""
-
-#: src/cmds.c:1767
-msgid "That hostmask is already there.\n"
-msgstr ""
-
-#: src/cmds.c:1789
-msgid "handle"
-msgstr ""
-
-#: src/cmds.c:1790
-msgid "hostmask"
-msgstr ""
-
-#: src/cmds.c:1811
-msgid "You can't remove hostmasks from non-bots.\n"
-msgstr ""
-
-#: src/cmds.c:1815
-msgid "You can't remove hostmasks from a bot owner/master.\n"
-msgstr ""
-
-#: src/cmds.c:1824
-msgid "Permission denied.\n"
-msgstr ""
-
-#: src/cmds.c:1829
-#, c-format
-msgid "Removed '%1$s' from %2$s.\n"
-msgstr ""
-
-#: src/cmds.c:1844
-msgid "Modules loaded:\n"
-msgstr ""
-
-#: src/cmds.c:1847
-msgid "End of modules list.\n"
-msgstr ""
-
-#: src/cmds.c:1932
-#, c-format
-msgid "You are %s@%s.\n"
-msgstr ""
-
-#: src/cmds.c:1938
-msgid "*** Ja mata!\n"
-msgstr ""
-
-#: src/cmds.c:1940
-#, c-format
-msgid "DCC connection closed (%s!%s)"
-msgstr ""
-
-#: src/cmds.c:1949
-#, c-format
-msgid "Returning to real nick %s!\n"
-msgstr ""
-
-#: src/logfile.c:103
+#: src/logfile.c:104
 msgid "Cycling logfiles"
 msgstr ""
 
-#: src/logfile.c:203 src/logfile.c:250
+#: src/logfile.c:203 src/logfile.c:245
 #, c-format
 msgid "Last message repeated %d time(s).\n"
 msgstr ""
 
-#. It's too big.
-#: src/logfile.c:236
+#: src/logfile.c:231
 #, c-format
 msgid "Cycling logfile %s, over max-logsize (%d kilobytes)"
 msgstr ""
 
-#: src/main.c:229
+#: src/main.c:204
 msgid ""
 "\n"
 "  -h, --help                 Print help and exit\n"
@@ -2472,124 +1767,16 @@ msgid ""
 "  FILE  optional config filename (default 'config.xml')\n"
 msgstr ""
 
-#: src/main.c:538
+#: src/main.c:447
 msgid "ERROR: Eggdrop will not run as root!"
 msgstr ""
 
-#: src/main.c:588
+#: src/main.c:520
 #, c-format
 msgid "I detect %s already running from this directory.\n"
 msgstr ""
 
-#: src/main.c:589
+#: src/main.c:521
 #, c-format
 msgid "If this is incorrect, erase the %s\n"
-msgstr ""
-
-#: src/misc.c:755 src/misc.c:794
-msgid "No help available on that."
-msgstr ""
-
-#: src/misc.c:818 src/misc.c:843
-msgid "No help available on that.\n"
-msgstr ""
-
-#: src/modules.c:153
-#, c-format
-msgid "error during libtdl initialization: %s\n"
-msgstr ""
-
-#: src/modules.c:160
-msgid "Cant determine current directory."
-msgstr ""
-
-#: src/modules.c:162 src/modules.c:164
-msgid "Invalid module's search path."
-msgstr ""
-
-#: src/modules.c:204
-msgid "No start function defined."
-msgstr ""
-
-#: src/modules.c:208
-msgid "Malloc error"
-msgstr ""
-
-#: src/modules.c:240
-msgid "Needed by another module"
-msgstr ""
-
-#: src/modules.c:244
-msgid "No close function"
-msgstr ""
-
-#: src/modules.c:259
-#, c-format
-msgid "Module unloaded: %s"
-msgstr ""
-
-#: src/modules.c:265
-msgid "No such module"
-msgstr ""
-
-#: src/users.c:186
-msgid "placed by"
-msgstr ""
-
-#: src/users.c:201
-msgid "Currently ignoring"
-msgstr ""
-
-#: src/users.c:223
-msgid "No longer ignoring"
-msgstr ""
-
-#: src/users.c:534
-msgid "Cant find anyone matching that"
-msgstr ""
-
-#: src/users.c:554
-msgid "Matching"
-msgstr ""
-
-#: src/users.c:560
-msgid "skipping first"
-msgstr ""
-
-#: src/users.c:588 src/users.c:596 src/users.c:607
-#, c-format
-msgid "(more than %d matches; list truncated)\n"
-msgstr ""
-
-#: src/users.c:612
-#, c-format
-msgid "--- Found %d match%s.\n"
-msgstr ""
-
-#: src/users.c:619
-msgid "Backing up user file..."
-msgstr ""
-
-#: src/users.c:687
-msgid "Old userfile, use tclsh scripts/weed <userfile> c to convert"
-msgstr ""
-
-#: src/users.c:690
-msgid "Invalid userfile format."
-msgstr ""
-
-#: src/users.c:894
-msgid "Corrupt user record"
-msgstr ""
-
-#: src/users.c:899
-msgid "Duplicate user record"
-msgstr ""
-
-#: src/users.c:910
-msgid "Corrupted password reset for"
-msgstr ""
-
-#: src/users.c:931
-msgid "Ignored masks for channel(s):"
 msgstr ""

@@ -13,7 +13,6 @@
 
 #include <eggdrop/base64.h>
 #include <eggdrop/binds.h>
-#include <eggdrop/botnetutil.h>
 #include <eggdrop/eggconfig.h>
 #include <eggdrop/eggdns.h>
 #include <eggdrop/eggident.h>

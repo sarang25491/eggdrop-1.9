@@ -1,10 +1,10 @@
-# $Id: Makefile.am,v 1.1 2003/12/06 23:46:30 stdarg Exp $
+# $Id: Makefile.am,v 1.2 2003/12/14 08:51:02 stdarg Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 pkglibdir		= $(exec_prefix)/modules
 
 pkglib_LTLIBRARIES	= ircparty.la
-ircparty_la_SOURCES	= ircparty.c events.c
+ircparty_la_SOURCES	= ircparty.c ircparty.h events.c
 ircparty_la_LDFLAGS	= -module -avoid-version -no-undefined
 ircparty_la_LIBADD	= @LIBS@ $(top_builddir)/lib/eggdrop/libeggdrop.la
 
