@@ -16,6 +16,7 @@
 	<switch_logfiles_at>0</switch_logfiles_at>
 	<keep_all_logs>0</keep_all_logs>
 	<quick_logs>0</quick_logs>
+	<module_path>modules/</module_path>
 	<autoload>
 		<module>blowfish</module>
 		<module>tclscript</module>
