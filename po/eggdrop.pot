@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2001-12-02 04:00-0600\n"
+"POT-Creation-Date: 2001-12-03 04:00-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1161,7 +1161,7 @@ msgid "    %d assocs using %d bytes\n"
 msgstr ""
 
 #: modules/assoc/assoc.c:406 modules/blowfish/blowfish.c:467
-#: modules/uptime/uptime.c:237
+#: modules/uptime/uptime.c:236
 msgid "This module requires eggdrop1.7.0 or later"
 msgstr ""
 
@@ -1743,7 +1743,7 @@ msgstr ""
 msgid "Mass deop.  Go sit in a corner."
 msgstr ""
 
-#: modules/irc/chan.c:420 modules/irc/mode.c:658
+#: modules/irc/chan.c:420 modules/irc/mode.c:660
 msgid "banned: "
 msgstr ""
 
@@ -1878,35 +1878,35 @@ msgstr ""
 msgid "want ops!"
 msgstr ""
 
-#: modules/irc/mode.c:376 modules/irc/mode.c:473 modules/irc/mode.c:1059
+#: modules/irc/mode.c:376 modules/irc/mode.c:474 modules/irc/mode.c:1061
 #, c-format
 msgid "* Mode change on %s for nonexistant %s!"
 msgstr ""
 
-#: modules/irc/mode.c:664
+#: modules/irc/mode.c:666
 msgid "Banned"
 msgstr ""
 
-#: modules/irc/mode.c:876
+#: modules/irc/mode.c:878
 #, c-format
 msgid "Oops.   Someone made me join %s... leaving..."
 msgstr ""
 
-#: modules/irc/mode.c:897
+#: modules/irc/mode.c:899
 #, c-format
 msgid "Mode change by fake op on %s!  Reversing..."
 msgstr ""
 
-#: modules/irc/mode.c:899
+#: modules/irc/mode.c:901
 msgid "Abusing ill-gained server ops"
 msgstr ""
 
-#: modules/irc/mode.c:903
+#: modules/irc/mode.c:905
 #, c-format
 msgid "Mode change by non-chanop on %s!  Reversing..."
 msgstr ""
 
-#: modules/irc/mode.c:905
+#: modules/irc/mode.c:907
 msgid "Abusing desync"
 msgstr ""
 
@@ -2405,7 +2405,7 @@ msgid "%s says Im not registered, trying next one."
 msgstr ""
 
 #: modules/server/servmsg.c:786
-msgid "You have a fucked up server."
+msgid "The server says we are not registered yet."
 msgstr ""
 
 #: modules/server/servmsg.c:887
@@ -2424,19 +2424,19 @@ msgstr ""
 msgid "DNS lookup failed"
 msgstr ""
 
-#: modules/share/share.c:1598 modules/share/share.c:1623
+#: modules/share/share.c:1592 modules/share/share.c:1617
 msgid "ERROR writing user file to transfer."
 msgstr ""
 
-#: modules/share/share.c:1775
+#: modules/share/share.c:1769
 msgid "CANT READ NEW USERFILE"
 msgstr ""
 
-#: modules/share/share.c:1785
+#: modules/share/share.c:1779
 msgid "Userlist transfer complete; switched over"
 msgstr ""
 
-#: modules/share/share.c:1905
+#: modules/share/share.c:1899
 msgid "Cant send userfile to you (internal error)"
 msgstr ""
 
@@ -2444,7 +2444,7 @@ msgstr ""
 msgid "Failed connection; aborted userfile transfer."
 msgstr ""
 
-#: modules/uptime/uptime.c:240
+#: modules/uptime/uptime.c:239
 msgid "You need the server module to use the uptime module."
 msgstr ""
 
