@@ -51,7 +51,7 @@
  *  Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  *
- *  $Id: adns.h,v 1.2 2001/07/27 00:46:33 drummer Exp $
+ *  $Id: adns.h,v 1.1 2001/10/28 13:30:32 ite Exp $
  */
 
 #ifndef ADNS_H_INCLUDED

@@ -2,7 +2,7 @@
  * snprintf.h
  *   prototypes for snprintf.c
  *
- * $Id: snprintf.h,v 1.8 2001/10/19 01:55:06 tothwolf Exp $
+ * $Id: snprintf.h,v 1.1 2001/10/28 13:30:32 ite Exp $
  */
 /*
  * Copyright (C) 2000, 2001 Eggheads Development Team

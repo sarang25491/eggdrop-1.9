@@ -2,7 +2,7 @@
  * inet_aton.c
  *   provides inet_aton()
  *
- * $Id: inet_aton.c,v 1.8 2001/10/19 01:55:06 tothwolf Exp $
+ * $Id: inet_aton.c,v 1.1 2001/10/28 13:30:32 ite Exp $
  */
 /*
  * ++Copyright++ 1983, 1990, 1993

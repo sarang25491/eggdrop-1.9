@@ -1,12 +1,11 @@
 /*
- * memset.c
- *   provides memset()
+ * inet_pton.h
+ *   prototypes for inet_pton.c
  *
- * $Id: memset.c,v 1.6 2001/10/19 01:55:06 tothwolf Exp $
+ * $Id: inet_pton.h,v 1.1 2001/10/28 13:30:32 ite Exp $
  */
 /*
- * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ * Copyright (C) 2000, 2001 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,12 +21,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+#ifndef _EGG_INET_PTON_H
+#define _EGG_INET_PTON_H
 
-#include <stdio.h>
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
 
-void *memset(void *dest, int c, size_t n)
-{
-  while (n--)
-    *((unsigned char *) dest)++ = c;
-  return dest;
-}
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
+#ifndef HAVE_INET_PTON
+int inet_pton(int af, const char *src, void *dst);
+#endif
+
+#endif				/* !_EGG_INET_PTON_H */

@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.48 2001/10/19 01:55:05 tothwolf Exp $
+ * $Id: net.c,v 1.49 2001/10/28 13:30:33 ite Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -26,7 +26,7 @@
 #endif
 #include <setjmp.h>
 
-#include "adns/adns.h"
+#include "lib/adns/adns.h"
 #include "egg_timer.h"
 
 #if !HAVE_GETDTABLESIZE

@@ -1,8 +1,8 @@
 /*
- * memcpy.h
- *   prototypes for memcpy.c
+ * memset.h
+ *   prototypes for memset.c
  *
- * $Id: memcpy.h,v 1.5 2001/10/19 01:55:06 tothwolf Exp $
+ * $Id: memset.h,v 1.1 2001/10/28 13:30:32 ite Exp $
  */
 /*
  * Copyright (C) 2000, 2001 Eggheads Development Team
@@ -21,8 +21,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-#ifndef _EGG_MEMCPY_H
-#define _EGG_MEMCPY_H
+#ifndef _EGG_MEMSET_H
+#define _EGG_MEMSET_H
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -30,8 +30,8 @@
 
 #include <stdio.h>
 
-#ifndef HAVE_MEMCPY
-void *memcpy(void *dest, const void *src, size_t n);
+#ifndef HAVE_MEMSET
+void *memset(void *dest, int c, size_t n);
 #endif
 
-#endif				/* !_EGG_MEMCPY_H */
+#endif				/* !_EGG_MEMSET_H */

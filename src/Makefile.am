@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.14 2001/10/27 16:34:54 ite Exp $
+# $Id: Makefile.am,v 1.15 2001/10/28 13:30:33 ite Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 bindir			= $(exec_prefix)
@@ -9,7 +9,6 @@ XLIBS			= @TCL_LIBS@ @LIBS@
 TCLLIB			= @TCLLIB@
 TCLLIBFN		= @TCLLIBFN@
 
-SUBDIRS			= adns compat egglib
 MAINTAINERCLEANFILES	= Makefile.in
 
 INCLUDES		= -I$(top_builddir) -I$(top_srcdir) @INCLTDL@ \
@@ -111,9 +110,9 @@ eggdrop_LDADD		= @LIBLTDL@ \
 			-dlopen ../modules/transfer/transfer.la \
 			-dlopen ../modules/uptime/uptime.la \
 			-dlopen ../modules/woobie/woobie.la \
-			compat/libcompat.la \
-			adns/libadns.la \
-			egglib/libegg.la \
+			../lib/compat/libcompat.la \
+			../lib/adns/libadns.la \
+			../lib/egglib/libegg.la \
 			$(XLIBS)
 
 libtcle.a: $(TCLLIB)/lib$(TCLLIBFN)

@@ -1,11 +1,12 @@
 /*
- * strftime.h
- *   prototypes for strftime.c
+ * memcpy.c
+ *   provides memcpy()
  *
- * $Id: strftime.h,v 1.2 2001/10/19 01:55:06 tothwolf Exp $
+ * $Id: memcpy.c,v 1.1 2001/10/28 13:30:32 ite Exp $
  */
 /*
- * Copyright (C) 2000, 2001 Eggheads Development Team
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,19 +22,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-#ifndef _EGG_STRFTIME_H
-#define _EGG_STRFTIME_H
-
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
 
 #include <stdio.h>
-#include <time.h>
 
-#ifndef HAVE_STRFTIME
-size_t strftime(char *s, size_t maxsize, const char *format,
-		const struct tm *tp);
-#endif
-
-#endif			/* !_EGG_STRFTIME_H */
+void *memcpy(void *dest, const void *src, size_t n)
+{
+  while (n--)
+    *((char *) dest)++ = *((char *) src)++;
+  return dest;
+}

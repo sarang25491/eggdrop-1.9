@@ -1,12 +1,12 @@
-# $Id: Makefile.am,v 1.3 2001/10/21 16:05:52 tothwolf Exp $
+# $Id: Makefile.am,v 1.1 2001/10/28 13:30:32 ite Exp $
 
 ## libcompat is built as convenience library
 
 MAINTAINERCLEANFILES	= Makefile.in
 
 INCLUDES		= -I$(top_builddir) -I$(top_srcdir) \
-			-I$(top_builddir)/src/compat \
-			-I$(top_srcdir)/src/compat
+			-I$(top_builddir)/lib/compat \
+			-I$(top_srcdir)/lib/compat
 
 noinst_LTLIBRARIES	= libadns.la
 libadns_la_SOURCES	= adns.h \

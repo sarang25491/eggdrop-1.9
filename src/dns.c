@@ -4,7 +4,7 @@
  *   provides the code used by the bot if the DNS module is not loaded
  *   DNS script commands
  *
- * $Id: dns.c,v 1.30 2001/10/24 10:08:03 stdarg Exp $
+ * $Id: dns.c,v 1.31 2001/10/28 13:30:33 ite Exp $
  */
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -34,7 +34,7 @@
 #include <arpa/inet.h>
 
 #include "dns.h"
-#include "adns/adns.h"
+#include "lib/adns/adns.h"
 #include "script_api.h"
 #include "script.h"
 

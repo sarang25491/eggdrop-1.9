@@ -2,7 +2,7 @@
  * snprintf.c
  *   provides snprintf, vsnprintf, vasprintf, and asprintf if needed
  *
- * $Id: snprintf.c,v 1.6 2001/10/19 01:55:06 tothwolf Exp $
+ * $Id: snprintf.c,v 1.1 2001/10/28 13:30:32 ite Exp $
  */
 /*
  * Copyright Patrick Powell 1995

@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.5 2001/10/21 16:05:52 tothwolf Exp $
+# $Id: Makefile.am,v 1.1 2001/10/28 13:30:32 ite Exp $
 
 ## libcompat is built as convenience library
 

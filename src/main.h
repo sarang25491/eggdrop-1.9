@@ -2,7 +2,7 @@
  * main.h
  *   include file to include most other include files
  *
- * $Id: main.h,v 1.21 2001/10/12 15:50:26 tothwolf Exp $
+ * $Id: main.h,v 1.22 2001/10/28 13:30:33 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -68,7 +68,7 @@
 #include "tclhash.h"
 #include "chan.h"
 #include "users.h"
-#include "compat/compat.h"
+#include "lib/compat/compat.h"
 
 /* For pre Tcl7.5p1 versions */
 #ifndef HAVE_TCL_FREE

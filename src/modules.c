@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.83 2001/10/26 22:22:22 stdarg Exp $
+ * $Id: modules.c,v 1.84 2001/10/28 13:30:33 ite Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -31,8 +31,8 @@
 #include "registry.h"
 #include "core_binds.h"
 #include <ctype.h>
-#include "egglib/msprintf.h"
-#include "egglib/mstack.h"
+#include "lib/egglib/msprintf.h"
+#include "lib/egglib/mstack.h"
 
 #include <ltdl.h>
 

@@ -2,7 +2,7 @@
  * inet_ntop.c
  *   provides inet_ntop()
  *
- * $Id: inet_ntop.c,v 1.4 2001/10/19 01:55:06 tothwolf Exp $
+ * $Id: inet_ntop.c,v 1.1 2001/10/28 13:30:32 ite Exp $
  */
 /*
  * Copyright (c) 1996-1999 by Internet Software Consortium.

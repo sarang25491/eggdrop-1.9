@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.95 2001/10/26 22:22:22 stdarg Exp $
+ * $Id: main.c,v 1.96 2001/10/28 13:30:33 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -56,7 +56,7 @@
 #include "egg_timer.h"
 #include "core_binds.h"
 
-#include "adns/adns.h"
+#include "lib/adns/adns.h"
 
 #ifdef CYGWIN_HACKS
 #include <windows.h>

@@ -1,8 +1,8 @@
 /*
- * inet_ntop.h
- *   prototypes for inet_ntop.c
+ * compat.h
+ *   prototypes for compability functions
  *
- * $Id: inet_ntop.h,v 1.3 2001/10/19 01:55:06 tothwolf Exp $
+ * $Id: compat.h,v 1.1 2001/10/28 13:30:32 ite Exp $
  */
 /*
  * Copyright (C) 2000, 2001 Eggheads Development Team
@@ -21,19 +21,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-#ifndef _EGG_INET_NTOP_H
-#define _EGG_INET_NTOP_H
+#ifndef _EGG_COMPAT_H
+#define _EGG_COMPAT_H
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
+/*
+ * Include prototypes
+ */
+#include "memcpy.h"
+#include "memset.h"
+#include "strcasecmp.h"
+#include "strncasecmp.h"
+#include "snprintf.h"
+#include "strftime.h"
+#include "inet_aton.h"
+#include "inet_ntop.h"
+#include "inet_pton.h"
 
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-
-#ifndef HAVE_INET_NTOP
-const char *inet_ntop(int af, const void *src, char *dst, socklen_t size);
-#endif
-
-#endif				/* !_EGG_INET_NTOP_H */
+#endif				/* !_EGG_COMPAT_H */

@@ -4,8 +4,8 @@
 #include <perl.h>
 #include <XSUB.h>
 #include "lib/eggdrop/module.h"
-#include "src/egglib/mstack.h"
-#include "src/egglib/msprintf.h"
+#include "lib/egglib/mstack.h"
+#include "lib/egglib/msprintf.h"
 #include "src/script_api.h"
 
 #define MODULE_NAME "perlscript"

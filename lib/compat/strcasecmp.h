@@ -1,12 +1,11 @@
 /*
- * strcasecmp.c
- *   provides strncasecmp()
+ * strcasecmp.h
+ *   prototypes for strcasecmp.c
  *
- * $Id: strncasecmp.c,v 1.1 2001/10/19 01:55:06 tothwolf Exp $
+ * $Id: strcasecmp.h,v 1.1 2001/10/28 13:30:32 ite Exp $
  */
 /*
- * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ * Copyright (C) 2000, 2001 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,17 +21,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+#ifndef _EGG_STRCASECMP_H
+#define _EGG_STRCASECMP_H
 
-#include <stdio.h>
-#include <ctype.h>
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
 
-int strncasecmp(const char *s1, const char *s2, size_t n)
-{
-  if (!n)
-    return 0;
-  while (--n && (*s1) && (*s2) && (toupper(*s1) == toupper(*s2))) {
-    s1++;
-    s2++;
-  }
-  return toupper(*s1) - toupper(*s2);
-}
+#ifndef HAVE_STRCASECMP
+int strcasecmp(const char *, const char *);
+#endif
+
+#endif				/* !_EGG_STRCASECMP_H */

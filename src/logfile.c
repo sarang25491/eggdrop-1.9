@@ -1,6 +1,6 @@
 #include "main.h"
 #include <modvals.h>
-#include "egglib/msprintf.h"
+#include "lib/egglib/msprintf.h"
 #include "script_api.h"
 #include "script.h"
 

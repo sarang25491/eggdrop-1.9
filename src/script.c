@@ -3,7 +3,7 @@ typedef int (*Function)();
 #include "registry.h"
 #include "script_api.h"
 #include "script.h"
-#include "egglib/mstack.h"
+#include "lib/egglib/mstack.h"
 
 static Function load_script, link_int, unlink_int, link_str, unlink_str, create_cmd, delete_cmd;
 static void *load_script_h, *link_int_h, *unlink_int_h, *link_str_h, *unlink_str_h, *create_cmd_h, *delete_cmd_h;

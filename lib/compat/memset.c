@@ -1,11 +1,12 @@
 /*
- * memset.h
- *   prototypes for memset.c
+ * memset.c
+ *   provides memset()
  *
- * $Id: memset.h,v 1.5 2001/10/19 01:55:06 tothwolf Exp $
+ * $Id: memset.c,v 1.1 2001/10/28 13:30:32 ite Exp $
  */
 /*
- * Copyright (C) 2000, 2001 Eggheads Development Team
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,17 +22,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-#ifndef _EGG_MEMSET_H
-#define _EGG_MEMSET_H
-
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
 
 #include <stdio.h>
 
-#ifndef HAVE_MEMSET
-void *memset(void *dest, int c, size_t n);
-#endif
-
-#endif				/* !_EGG_MEMSET_H */
+void *memset(void *dest, int c, size_t n)
+{
+  while (n--)
+    *((unsigned char *) dest)++ = c;
+  return dest;
+}

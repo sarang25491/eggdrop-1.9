@@ -1,8 +1,8 @@
 /*
- * inet_pton.h
- *   prototypes for inet_pton.c
+ * strncasecmp.h
+ *   prototypes for strncasecmp.c
  *
- * $Id: inet_pton.h,v 1.3 2001/10/19 01:55:06 tothwolf Exp $
+ * $Id: strncasecmp.h,v 1.1 2001/10/28 13:30:32 ite Exp $
  */
 /*
  * Copyright (C) 2000, 2001 Eggheads Development Team
@@ -21,19 +21,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-#ifndef _EGG_INET_PTON_H
-#define _EGG_INET_PTON_H
+#ifndef _EGG_STRNCASECMP_H
+#define _EGG_STRNCASECMP_H
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
 
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#include <stdio.h>
 
-#ifndef HAVE_INET_PTON
-int inet_pton(int af, const char *src, void *dst);
+#ifndef HAVE_STRNCASECMP
+int strncasecmp(const char *, const char *, size_t);
 #endif
 
-#endif				/* !_EGG_INET_PTON_H */
+#endif				/* !_EGG_STRNCASECMP_H */

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "egglib/hash_table.h"
+#include "lib/egglib/hash_table.h"
 typedef int (*Function)();
 #include "registry.h"
 
