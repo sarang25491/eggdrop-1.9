@@ -95,6 +95,18 @@ void *config_lookup_section(void *config_root, ...)
 	return(root);
 }
 
+int config_exists(void *config_root, ...)
+{
+	va_list args;
+	xml_node_t *root = config_root;
+
+	va_start(args, config_root);
+	root = xml_node_vlookup(root, args, 0);
+	va_end(args);
+	if (root) return(1);
+	return(0);
+}
+
 int config_get_int(int *intptr, void *config_root, ...)
 {
 	va_list args;

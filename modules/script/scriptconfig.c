@@ -49,6 +49,33 @@ static int script_config_set(char *handle, char *path, char *val)
 	return(0);
 }
 
+static int script_config_exists(char *handle, char *path)
+{
+	void *root;
+	char *save, *work, *period;
+	int r = 0;
+
+	if (!handle) handle = "eggdrop";
+
+	root = config_get_root(handle);
+	if (!root) return(0);
+
+	work = strdup(path);
+	save = work;
+	while ((period = strchr(work, '.'))) {
+		*period = 0;
+		if (!config_exists(root, work, 0, NULL)) goto notfound;
+		root = config_lookup_section(root, work, 0, NULL);
+		if (!root) goto notfound;
+		work = period+1;
+	}
+	r = config_exists(root, work, 0, NULL);
+
+notfound:
+	free(save);
+	return(r);
+}
+
 static int script_config_load(char *handle, char *fname)
 {
 	void *root;
@@ -70,6 +97,7 @@ static int script_config_save(char *handle, char *fname)
 }
 
 script_command_t script_config_cmds[] = {
+	{"", "config_exists", script_config_exists, NULL, 1, "ss", "?handle? path", SCRIPT_INTEGER, SCRIPT_VAR_ARGS|SCRIPT_VAR_FRONT},
 	{"", "config_get", script_config_get, NULL, 1, "ss", "?handle? path", SCRIPT_STRING, SCRIPT_VAR_ARGS|SCRIPT_VAR_FRONT},
 	{"", "config_set", script_config_set, NULL, 2, "sss", "?handle? path value", SCRIPT_INTEGER, SCRIPT_VAR_ARGS|SCRIPT_VAR_FRONT},
 	{"", "config_load", script_config_load, NULL, 2, "ss", "handle filename", SCRIPT_INTEGER, 0},

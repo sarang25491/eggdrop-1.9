@@ -20,6 +20,7 @@ int config_set_root(const char *handle, void *config_root);
 int config_delete_root(const char *handle);
 
 void *config_lookup_section(void *config_root, ...);
+int config_exists(void *config_root, ...);
 int config_get_int(int *intptr, void *config_root, ...);
 int config_get_str(char **strptr, void *config_root, ...);
 int config_set_int(int intval, void *config_root, ...);

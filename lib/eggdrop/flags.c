@@ -35,7 +35,7 @@ int flag_merge_str(flags_t *flags, const char *str)
 		if (*str >= 'a' && *str <= 'z') {
 			add_flag(&flags->builtin, dir, *str - 'a');
 		}
-		else if (*str >= 'A' && *str <= 'A') {
+		else if (*str >= 'A' && *str <= 'Z') {
 			add_flag(&flags->udef, dir, *str - 'A');
 		}
 		else if (*str == '-') dir = -1;
@@ -61,7 +61,7 @@ int flag_match_subset(flags_t *left, flags_t *right)
 
 	builtin = (left->builtin & right->builtin) == left->builtin;
 	udef = (left->udef & right->udef) == left->udef;
-	return builtin && udef;
+	return (builtin && udef);
 }
 
 /* Are all on-bits in left also on in right, and all off-bits also off? */
@@ -81,5 +81,5 @@ int flag_match_partial(flags_t *left, flags_t *right)
 
 	builtin = left->builtin & right->builtin;
 	udef = left->udef & right->udef;
-	return builtin || udef;
+	return (builtin || udef);
 }

@@ -110,6 +110,31 @@ static char *script_getflags(user_t *u, char *chan)
 	return strdup(flagstr);
 }
 
+static int script_matchflags(void *client_data, user_t *u, char *chan, char *flagstr)
+{
+	flags_t flags_left, flags_right;
+	int r = 0;
+
+	if (!flagstr) {
+		flagstr = chan;
+		chan = NULL;
+	}
+	if (user_get_flags(u, chan, &flags_right)) return(0);
+	flag_from_str(&flags_left, flagstr);
+
+	switch ((int)client_data) {
+		case 0:
+			/* Are all bits on in left also on in right? */
+			r = flag_match_subset(&flags_left, &flags_right);
+			break;
+		case 1:
+			/* Is at least one bit on in the left also on in right? */
+			r = flag_match_partial(&flags_left, &flags_right);
+			break;
+	}
+	return(r);
+}
+
 script_command_t script_new_user_cmds[] = {
 	{"", "user_uid_to_handle", script_uid_to_handle, NULL, 1, "i", "uid", SCRIPT_STRING, 0},
 	{"", "user_handle_to_uid", script_handle_to_uid, NULL, 1, "U", "handle", SCRIPT_INTEGER, 0},
@@ -122,6 +147,8 @@ script_command_t script_new_user_cmds[] = {
 	{"", "user_set", script_user_set, NULL, 3, "Usss", "user ?channel? setting value", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_PASS_COUNT},
 	{"", "user_getflags", script_getflags, NULL, 1, "Us", "user ?chan?", SCRIPT_STRING | SCRIPT_FREE, SCRIPT_VAR_ARGS},
 	{"", "user_setflags", script_setflags, NULL, 2, "Uss", "user ?chan? flags", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
+	{"", "user_matchflags", script_matchflags, 0, 2, "Uss", "user ?chan? flags", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_PASS_CDATA},
+	{"", "user_matchflags_or", script_matchflags, (void *)1, 2, "Uss", "user ?chan? flags", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_PASS_CDATA},
 	{"", "user_load", user_save, NULL, 0, "s", "?fname?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
 	{"", "user_save", script_user_save, NULL, 0, "s", "?fname?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
 	{"", "user_haspass", user_has_pass, NULL, 1, "U", "user", SCRIPT_INTEGER, 0},
