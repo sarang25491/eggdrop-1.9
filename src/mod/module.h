@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.71 2001/10/20 10:22:14 stdarg Exp $
+ * $Id: module.h,v 1.72 2001/10/20 21:57:15 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -292,9 +292,9 @@
 /*#define H_load (*(p_tcl_bind_list *)(global[178])) */
 /*#define H_unld (*(p_tcl_bind_list *)(global[179])) */
 /* 180 - 183 */
-#define H_chat (*(p_tcl_bind_list *)(global[180]))
-#define H_act (*(p_tcl_bind_list *)(global[181]))
-#define H_bcst (*(p_tcl_bind_list *)(global[182]))
+/* 180: H_chat -- UNUSED (oskar) */
+/* 181: H_act -- UNUSED (oskar) */
+/* 182: H_bcst -- UNUSED (oskar) */
 #define H_bot (*(p_tcl_bind_list *)(global[183]))
 /* 184 - 187 */
 #define H_link (*(p_tcl_bind_list *)(global[184]))

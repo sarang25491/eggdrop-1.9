@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.50 2001/10/20 10:22:13 stdarg Exp $
+ * $Id: tclhash.c,v 1.51 2001/10/20 21:57:15 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -46,9 +46,12 @@ static bind_table_t *BT_link;
 static bind_table_t *BT_disc;
 static bind_table_t *BT_away;
 static bind_table_t *BT_dcc;
+static bind_table_t *BT_chat;
+static bind_table_t *BT_act;
+static bind_table_t *BT_bcst;
 
 p_tcl_bind_list		bind_table_list;
-p_tcl_bind_list		H_chat, H_act, H_bcst, H_chon, H_chof,
+p_tcl_bind_list		H_chon, H_chof,
 			H_link, H_disc, H_chjn, H_chpt,
 			H_bot, H_time, H_nkch, H_note, H_filt;
 
@@ -60,7 +63,6 @@ static int builtin_chpt();
 static int builtin_chjn();
 static int builtin_idxchar();
 static int builtin_charidx();
-static int builtin_chat();
 static int builtin_dcc();
 
 /* Delete trigger/command.
@@ -169,6 +171,9 @@ void binds_init(void)
 	BT_away = add_bind_table2("away", 3, "sis", MATCH_MASK, BIND_STACKABLE);
 	BT_dcc = add_bind_table2("dcc", 3, "Uis", MATCH_MASK, BIND_USE_ATTR);
 	add_builtins2(BT_dcc, C_dcc);
+	BT_chat = add_bind_table2("chat", 3, "Uis", MATCH_MASK, BIND_STACKABLE | BIND_BREAKABLE);
+	BT_act = add_bind_table2("act", 3, "sis", MATCH_MASK, BIND_STACKABLE);
+	BT_bcst = add_bind_table2("bcst", 3, "sis", MATCH_MASK, BIND_STACKABLE);
 }
 
 void init_old_binds(void)
@@ -184,10 +189,7 @@ void init_old_binds(void)
   H_chon = add_bind_table("chon", HT_STACKABLE, builtin_charidx);
   H_chof = add_bind_table("chof", HT_STACKABLE, builtin_charidx);
   H_chjn = add_bind_table("chjn", HT_STACKABLE, builtin_chjn);
-  H_chat = add_bind_table("chat", HT_STACKABLE, builtin_chat);
   H_bot = add_bind_table("bot", 0, builtin_3char);
-  H_bcst = add_bind_table("bcst", HT_STACKABLE, builtin_chat);
-  H_act = add_bind_table("act", HT_STACKABLE, builtin_chat);
   Context;
 }
 
@@ -688,18 +690,6 @@ static int builtin_charidx STDVAR
   return TCL_OK;
 }
 
-static int builtin_chat STDVAR
-{
-  Function F = (Function) cd;
-  int ch;
-
-  BADARGS(4, 4, " handle idx text");
-  CHECKVALIDITY(builtin_chat);
-  ch = atoi(argv[2]);
-  F(argv[1], ch, argv[3]);
-  return TCL_OK;
-}
-
 /* trigger (execute) a proc */
 static int trigger_bind(const char *proc, const char *param)
 {
@@ -988,17 +978,19 @@ void check_tcl_chonof(char *hand, int sock, tcl_bind_list_t *tl)
 		 BIND_USE_ATTR | BIND_STACKABLE | BIND_WANTRET);
 }
 
-void check_tcl_chatactbcst(const char *from, int chan, const char *text,
-			   tcl_bind_list_t *tl)
+int check_tcl_chat(struct userrec *u, int chan, const char *text)
 {
-  char s[11];
+  return check_bind(BT_chat, text, NULL, u, chan, text);
+}
 
-  snprintf(s, sizeof s, "%d", chan);
-  Tcl_SetVar(interp, "_cab1", (char *) from, 0);
-  Tcl_SetVar(interp, "_cab2", (char *) s, 0);
-  Tcl_SetVar(interp, "_cab3", (char *) text, 0);
-  check_tcl_bind(tl, text, 0, " $_cab1 $_cab2 $_cab3",
-		 MATCH_MASK | BIND_STACKABLE);
+void check_tcl_act(const char *from, int chan, const char *text)
+{
+  check_bind(BT_act, text, NULL, from, chan, text);
+}
+
+void check_tcl_bcst(const char *from, int chan, const char *text)
+{
+  check_bind(BT_bcst, text, NULL, from, chan, text);
 }
 
 void check_tcl_nkch(const char *ohand, const char *nhand)

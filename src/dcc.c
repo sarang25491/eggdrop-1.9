@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.60 2001/10/19 01:55:05 tothwolf Exp $
+ * $Id: dcc.c,v 1.61 2001/10/20 21:57:15 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -917,6 +917,11 @@ static void dcc_chat(int idx, char *buf, int i)
 	  }
 	}
     } else {
+	int r;
+
+	r = check_tcl_chat(dcc[idx].user, dcc[idx].u.chat->channel, buf);
+	if (r & BIND_RET_BREAK) return;
+
 	if (dcc[idx].u.chat->away != NULL)
 	  not_away(idx);
 	if (dcc[idx].status & STAT_ECHO)
@@ -927,7 +932,6 @@ static void dcc_chat(int idx, char *buf, int i)
 		      dcc[idx].nick, buf);
 	botnet_send_chan(-1, botnetnick, dcc[idx].nick,
 			 dcc[idx].u.chat->channel, buf);
-	check_tcl_chat(dcc[idx].nick, dcc[idx].u.chat->channel, buf);
       }
   }
   if (dcc[idx].type == &DCC_CHAT)	/* Could have change to files */
