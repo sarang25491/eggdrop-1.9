@@ -386,10 +386,18 @@ date_Dateerror(s)
 {
 }
 
-int date_timezone(time_t time)
+int date_timezone()
 {
-	localtime(0);
-	return(timezone/60);
+	struct tm gmt, local;
+	time_t now;
+	int zone;
+
+	time(&now);
+	gmt = *(gmtime(&now));
+	local = *(localtime(&now));
+	local.tm_isdst = gmt.tm_isdst = 0;
+	zone = (int)(mktime(&local) - mktime(&gmt));
+	return(zone/60);
 }
 
 static time_t
@@ -593,7 +601,7 @@ RelativeMonth(Start, RelMonth, TimePtr)
      */
 
     if (date_DateTimezone == 0) {
-        Julian += date_timezone((unsigned long) Start) * 60L;
+        Julian += date_timezone() * 60L;
     }
 
     /*
@@ -838,7 +846,7 @@ int date_scan(char *timestr, time_t *now, int zone, time_t *timeptr)
     int thisyear;
 
     /* Look up timezone if required. */
-    if (zone == EGG_TIMEZONE_LOOKUP) zone = date_timezone(0);
+    if (zone == EGG_TIMEZONE_LOOKUP) zone = date_timezone();
 
     date_DateInput = timestr;
     /* now has to be cast to a time_t for 64bit compliance */
