@@ -1,3 +1,31 @@
+2002-01-19 20:08  Federico Mennite <ite@techmonkeys.org>
+
+	* lib/eggdrop/eggdrop.h, lib/eggdrop/module.h,
+	modules/filesys/filesys.h, modules/irc/irc.h,
+	modules/perlscript/perlscript.c, src/Makefile.am, src/botcmd.c,
+	src/botmsg.c, src/botnet.c, src/chanprog.c, src/cmds.c, src/dcc.c,
+	src/dccutil.c, src/dns.c, src/dns.h, src/egg.h, src/flags.c,
+	src/logfile.c, src/logfile.h, src/main.c, src/misc.c, src/misc.h,
+	src/modules.c, src/net.c, src/proto.h, src/tcl.c, src/tcldcc.c,
+	src/tclhash.c, src/tclmisc.c, src/userent.c, src/userrec.c,
+	src/users.c:
+
+	* varoius header inclusion cleanups 
+	* moved FILEDB* defines from src/egg.h to a more suitable place in
+	modules/filesys/filesys.h 
+	* moved NORMAL and QUICK defines from src/egg.h to a more suitable
+	place in modules/irc/irc.h 
+	* fixed a warning in modules/perlscript/perlscript.c 
+	* created src/misc.h and src/logfile.h. Moved in them the respective
+	prototypes from src/proto.h, and the respective defines from
+	src/egg.h 
+	* moved private structures from src/dns.h to src/dns.c 
+	* moved src/dns.c's related prototypes from src/egg.h to src/dns.h 
+	* moved RES_* defines from src/egg.h to dns.h 
+	* removed some unneeded defines here and there 
+	* moved LOG_* defines from src/egg.h to src/logfile.h 
+	* dns_events wasn't static 
+
 2002-01-19 14:03  Tothwolf <tothwolf@techmonkeys.org>
 
 	* AUTHORS, doc/html/authors.html:
