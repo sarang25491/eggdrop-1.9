@@ -126,7 +126,7 @@ int partymember_write(partymember_t *p, const char *text, int len)
 	if (!p || p->flags & PARTY_DELETED) return(-1);
 
 	if (len < 0) len = strlen(text);
-	(p->handler->on_write)(p->client_data, p, text, len);
+	(p->handler->on_privmsg)(p->client_data, p, NULL, text, len);
 	return(0);
 }
 

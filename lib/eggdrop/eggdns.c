@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
+#include <sys/types.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -351,10 +352,6 @@ static int dns_make_query(const char *host, int type, char **buf, int *query_len
 		else if (type == DNS_IPV6) ns_type = 28; /* IPv6 */
 		else return(-1);
 
-		/* hmm, casting const to char * doesn't seem to
-  		 * be a good idea ;-) shouldn't the funciton be changed
-		 * (i.e. removing the const identifier?)
-		 */
 		newhost = (char *)host;
 	}
 

@@ -45,9 +45,7 @@ typedef struct partychan {
 } partychan_t;
 
 typedef struct partyline_event {
-	int (*on_write)(void *client_data, partymember_t *dest, const char *text, int len);
 	int (*on_privmsg)(void *client_data, partymember_t *dest, partymember_t *src, const char *text, int len);
-	int (*on_chanwrite)(void *client_data, partychan_t *chan, const char *text, int len);
 	int (*on_chanmsg)(void *client_data, partychan_t *chan, partymember_t *src, const char *text, int len);
 	int (*on_join)(void *client_data, partychan_t *chan, partymember_t *src);
 	int (*on_part)(void *client_data, partychan_t *chan, partymember_t *src, const char *text, int len);
