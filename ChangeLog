@@ -1,3 +1,10 @@
+2001-12-02 13:36  Federico Mennite <ite@techmonkeys.org>
+
+	* scripts/alltools.tcl:
+
+	testip wasn't working correctly in scripts/alltools.tcl. Patch by
+	Hanno <unknown> 
+
 2001-12-02 13:22  Federico Mennite <ite@techmonkeys.org>
 
 	* eggdrop.complete.conf:
