@@ -1,3 +1,9 @@
+2002-01-04 03:36  Federico Mennite <ite@techmonkeys.org>
+
+	* lib/eggdrop/botnetutil.c, src/botmsg.c, src/main.h, src/proto.h:
+
+	Applied missing parts from the previous commit.  
+
 2002-01-04 02:56  Federico Mennite <ite@techmonkeys.org>
 
 	* configure.ac, lib/eggdrop/.cvsignore, lib/eggdrop/Makefile.am,
