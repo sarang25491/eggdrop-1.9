@@ -1,3 +1,11 @@
+2003-03-04 03:12  Will Buckner <wcc@techmonkeys.org>
+
+	* AUTHORS, CONTENTS, doc/AUTHORS, doc/CONTENTS, doc/Makefile.in,
+	doc/howto/CONTENTS, doc/howto/README, src/traffic.c:
+
+	* More doc stuff.  
+	* Traffic cleanups.  
+
 2003-03-04 01:56  Tothwolf <tothwolf@techmonkeys.org>
 
 	* modules/irc/: chan.c, mode.c:
