@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.68 2002/01/16 22:09:43 ite Exp $
+ * $Id: dcc.c,v 1.69 2002/01/17 00:52:20 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -184,7 +184,10 @@ static void bot_version(int idx, char *par)
 #ifndef NO_OLD_BOTNET
   if (b_numver(idx) < NEAT_BOTNET) {
 #if HANDLEN != 9
-    dprintf(idx, "error Non-matching handle length: mine %d, yours 9\n",
+    putlog(LOG_BOTS,"*", "Non-matching handle lengths with %s, they use 9 characters.",
+	  dcc[idx].nick);
+
+dprintf(idx, "error Non-matching handle length: mine %d, yours 9\n",
 	    HANDLEN);
     dprintf(idx, "bye %s\n", "bad handlen");
     killsock(dcc[idx].sock);
@@ -198,6 +201,8 @@ static void bot_version(int idx, char *par)
     dprintf(idx, "tb %s\n", botnetnick);
     l = atoi(newsplit(&par));
     if (l != HANDLEN) {
+      putlog(LOG_BOTS, "*", "Non-matching handle lengths with %s, they use %d characters.", 
+	    dcc[idx].nick, l);
       dprintf(idx, "error Non-matching handle length: mine %d, yours %d\n",
 	      HANDLEN, l);
       dprintf(idx, "bye %s\n", "bad handlen");
@@ -1042,29 +1047,13 @@ static void dcc_telnet(int idx, char *buf, int i)
   /* Buffer data received on this socket.  */
   sockoptions(sock, EGG_OPTION_SET, SOCK_BUFFER);
 
-  /* <bindle> [09:37] Telnet connection: 168.246.255.191/0
-   * <bindle> [09:37] Lost connection while identing [168.246.255.191/0]
-   *
-   * These are hardcoded now (perhaps move to a #define when we clean up
-   * more) since in over a year since this setting was added, I've never
-   * seen anyone who actually knew what this setting did it change it for
-   * the better (including myself) -- guppy (13Aug2001) 
-   *
-   */
   if ((port < 1024) || (port > 65535)) {
     putlog(LOG_BOTS, "*", _("Refused %s/%d (bad src port)"), s, port);
     killsock(sock);
     return;
   }
+
   j = strlen(ip);
-  /* Deny ips that ends with 0 or 255, dw */
-  if ((j > 4) &&
-      ((ip[j - 1] == '0' && ip[j - 2] == '.') || (ip[j - 1] == '5' &&
-        ip[j - 2] == '5' && ip[j - 3] == '2' && ip[j - 4] == '.'))) {
-    putlog(LOG_BOTS, "*", _("Refused %s/%d (invalid ip)"), s, port);
-    killsock(sock);
-    return;
-  }
   i = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
   dcc[i].sock = sock;
   strcpy(dcc[i].addr, ip);
