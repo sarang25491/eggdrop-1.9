@@ -1,3 +1,79 @@
+2001-10-10 10:44  tothwolf
+
+	* acinclude.m4, configure.in, src/Makefile.am, src/botnet.c,
+	src/chanprog.c, src/cmds.c, src/dcc.c, src/dccutil.c, src/dns.c,
+	src/dns.h, src/eggdrop.h, src/flags.c, src/main.c, src/main.h,
+	src/match.c, src/mem.c, src/misc.c, src/modules.c, src/modules.h,
+	src/net.c, src/proto.h, src/tcl.c, src/tcldcc.c, src/tclhash.c,
+	src/tclhash.h, src/tcluser.c, src/userent.c, src/userrec.c,
+	src/users.c, src/users.h, src/compat/Makefile.am,
+	src/compat/compat.h, src/compat/inet_aton.c, src/compat/memcpy.c,
+	src/compat/memcpy.h, src/compat/memset.c, src/compat/memset.h,
+	src/compat/strcasecmp.c, src/egglib/hash_table.c,
+	src/egglib/linked_list.c, src/mod/module.h, src/mod/modvals.h,
+	src/mod/assoc.mod/assoc.c, src/mod/blowfish.mod/blowfish.c,
+	src/mod/channels.mod/channels.c, src/mod/channels.mod/channels.h,
+	src/mod/channels.mod/cmdschan.c, src/mod/channels.mod/tclchan.c,
+	src/mod/channels.mod/udefchan.c, src/mod/channels.mod/userchan.c,
+	src/mod/compress.mod/compress.c, src/mod/console.mod/console.c,
+	src/mod/filesys.mod/dbcompat.c, src/mod/filesys.mod/filedb3.c,
+	src/mod/filesys.mod/filedb3.h, src/mod/filesys.mod/filelist.c,
+	src/mod/filesys.mod/files.c, src/mod/filesys.mod/filesys.c,
+	src/mod/filesys.mod/tclfiles.c, src/mod/irc.mod/chan.c,
+	src/mod/irc.mod/irc.c, src/mod/irc.mod/mode.c,
+	src/mod/irc.mod/msgcmds.c, src/mod/notes.mod/cmdsnote.c,
+	src/mod/notes.mod/notes.c, src/mod/server.mod/server.c,
+	src/mod/server.mod/server.h, src/mod/server.mod/servmsg.c,
+	src/mod/server.mod/tclserv.c, src/mod/share.mod/share.c,
+	src/mod/share.mod/uf_features.c, src/mod/transfer.mod/transfer.c,
+	src/mod/uptime.mod/uptime.c, src/mod/woobie.mod/woobie.c:
+
+	all expmem functions and support removed all memory status/debugging
+	code removed all #ifdef DEBUG_MEM code removed 
+	
+	nmalloc macro/n_malloc function removed, use malloc() now mod_malloc
+	function removed my_strdup function removed, use malloc_strcpy macro
+	now channel_malloc removed, use malloc_memset macro now 
+	n_malloc_null function removed, use malloc_memset macro now 
+	user_malloc macro/_user_malloc function removed, use malloc() now 
+	
+	nrealloc macro/n_realloc function removed, use realloc() now 
+	mod_realloc function removed 
+	
+	nfree macro/n_free function removed, use free() now mod_free
+	function removed my_free macro removed, use free_null macro now 
+	Tcl_Free compat macro now uses free() instead of removed n_free
+	function 
+	
+	malloc->strcpy now uses malloc_strcpy macro free(ptr);ptr=NULL; now
+	uses free_null macro malloc->bzero now uses malloc_memset macro 
+	get_data_ptr macro/_get_data_ptr function removed, use malloc_memset
+	macro now 
+	
+	compat memcpy removed compat memset removed egg_memcpy/my_memcpy
+	misuse/mess changed to memcpy egg_bzero/bzero macro removed, use
+	memset() now 
+	
+	many uninitialized pointers now default to NULL 
+	
+	match.c is now compiled on it's own instead of being included into
+	tclhash.c match.c cleanup, removed broken/incomplete ircII compat
+	code wild_match macro removed, _wild_match function renamed to
+	wild_match wild_match_per function no longer declared static added
+	prototypes for wild_match and wild_match_per functions 
+	
+	Major function/macro changes: 
+	  nmalloc -> malloc() 
+	  nrealloc -> realloc() 
+	  nfree -> free() 
+	
+	Bugs found and fixed during audit: 
+	  buffer overflow in adduser() 
+	
+	Bugs fixed when code was removed: 
+	  typo in filedb3.c: EBUG_MEM -> DEBUG_MEM 
+	  extra egg_bzero call from filesys.c 
+
 2001-10-10 01:20  Federico Mennite <ite@techmonkeys.org>
 
 	* .cvsignore, ABOUT-NLS, AUTHORS, Makefile.am, Makefile.in,
