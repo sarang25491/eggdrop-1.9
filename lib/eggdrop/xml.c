@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xml.c,v 1.6 2003/12/17 07:39:14 wcc Exp $";
+static const char rcsid[] = "$Id: xml.c,v 1.7 2004/01/11 14:30:23 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -27,7 +27,6 @@ static const char rcsid[] = "$Id: xml.c,v 1.6 2003/12/17 07:39:14 wcc Exp $";
 #include <stdarg.h>
 #include "xml.h"
 
-#ifdef AMP_CHARS
 xml_amp_conversion_t builtin_conversions[] = {
 	{"quot", '"'},
 	{"lt", '<'},
@@ -37,7 +36,6 @@ xml_amp_conversion_t builtin_conversions[] = {
 	{"nbsp", ' '},
 	{0}
 };
-#endif
 
 /* Get a new, blank node. */
 xml_node_t *xml_node_new()

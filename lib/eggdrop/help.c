@@ -18,10 +18,8 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: help.c,v 1.1 2004/01/11 12:16:08 wcc Exp $";
+static const char rcsid[] = "$Id: help.c,v 1.2 2004/01/11 14:30:23 stdarg Exp $";
 #endif
-
-#define AMP_CHARS
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -133,6 +131,7 @@ int help_print_party(partymember_t *p, help_t *h)
 
 	if (!h->nseealso) return(0);
 	partymember_printf(p, "");
+	seealsobuf[0] = 0;
 	for (i = 0; i < h->nseealso; i++) {
 		if (!h->seealso[i] || !h->seealso[i][0]) continue;
 		if ((strlen(seealsobuf) + strlen(h->seealso[i])) > 67) {

@@ -18,22 +18,19 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xmlread.c,v 1.7 2004/01/11 12:16:08 wcc Exp $";
+static const char rcsid[] = "$Id: xmlread.c,v 1.8 2004/01/11 14:30:23 stdarg Exp $";
 #endif
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdarg.h>
-#include "xml.h"
+#include <eggdrop/eggdrop.h>
 
 extern xml_amp_conversion_t builtin_conversions[];
 
 /* These are pretty much in 'most common' order. */
 static const char *spaces = " \t\n\r\v";
 static const char *name_terminators = "= \t\n\r\v?/>";
-
-extern int putlog();
 
 /*
  * Skip over whitespace.
@@ -127,11 +124,9 @@ int xml_decode_text(char *text, int inlen)
 {
 	char *end, *result, *orig;
 	int n;
-#ifdef AMP_CHARS
 	/* Some variables for &char; conversion. */
 	char *amp, *colon, *next;
 	int i;
-#endif
 
 	/* text = input, result = output */
 	orig = result = text;
@@ -144,38 +139,32 @@ int xml_decode_text(char *text, int inlen)
 		/* Get count of non-spaces. */
 		n = strcspn(text, spaces);
 
-#ifdef AMP_CHARS
 		/* If we're supporting &char; notation, here's where it
 			happens. If we can't find the &char; in the conversions
 			table, then we leave the '&' for it by default. The
 			conversion table is defined in xml.c. */
 
-		amp = text;
 		next = text+n;
-		while (n > 0 && (amp = memchr(amp, '&', n))) {
+		while (n > 0 && (amp = memchr(text, '&', n))) {
+			memmove(result, text, (amp-text));
+			result += (amp-text);
+			n -= (amp-text);
 			colon = memchr(amp, ';', n);
-			amp++;
 			if (!colon) break;
-			*colon++ = 0;
+			*colon = 0;
+			text = colon+1;
+			n -= (colon-amp);
+			amp++; /* Skip past &. */
 			for (i = 0; builtin_conversions[i].key; i++) {
 				if (!strcasecmp(amp, builtin_conversions[i].key)) {
-					*(amp-1) = builtin_conversions[i].value;
+					*result++ = builtin_conversions[i].value;
 					break;
 				}
 			}
-			n -= (colon-amp);
-
-			/* Shift bytes down, including trailing null. */
-			memmove(amp, colon, n);
 		}
-		memcpy(result, text, n);
-		text = next;
-#else
-		/* If we don't support conversions, just copy the text. */
-		memcpy(result, text, n);
-		text += n;
-#endif
+		memmove(result, text, n);
 		result += n;
+		text = next;
 
 		/* Skip over whitespace. */
 		n = skip_whitespace(&text);
@@ -188,6 +177,7 @@ int xml_decode_text(char *text, int inlen)
 	}
 
 	*result = 0;
+
 	return(result - orig);
 }
 
@@ -273,7 +263,6 @@ int xml_read_node(xml_node_t *parent, char **data)
 			*data = end+3;
 			return(0); /* Skip past '-->' part. */
 		}
-		printf("Unsupported <! type.\n");
 	}
 
 	/* Read in the tag name. */
