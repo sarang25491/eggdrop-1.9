@@ -1,3 +1,22 @@
+2002-04-16 22:52  Federico Mennite <ite@techmonkeys.org>
+
+	* src/dcc.c:
+
+	Users with only +x can now only login via dcc chat, they cannot use
+	telnet (synch 1.6) 
+
+2002-04-16 22:40  Federico Mennite <ite@techmonkeys.org>
+
+	* scripts/botchk:
+
+	Better botchk comments (synch 1.6) 
+
+2002-04-16 22:34  Federico Mennite <ite@techmonkeys.org>
+
+	* doc/: compiling.FAQ, html/compiling.html:
+
+	Added a referenece to LD_LIBRARY_PATH in compiling FAQ.  
+
 2002-04-14 23:22  Federico Mennite <ite@techmonkeys.org>
 
 	* acconfig/acinclude.m4:
