@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.28 2003/04/15 08:18:03 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.29 2003/08/06 18:01:00 stdarg Exp $";
 #endif
 */
 
@@ -36,9 +36,6 @@ static const char rcsid[] = "$Id: scriptcmds.c,v 1.28 2003/04/15 08:18:03 stdarg
 #include "servsock.h"
 #include "dcc.h"
 #include "channels.h"
-
-/* From serverlist.c */
-extern int server_list_index;
 
 /* From server.c */
 extern int cycle_delay;

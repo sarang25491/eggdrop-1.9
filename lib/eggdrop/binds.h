@@ -73,7 +73,7 @@ bind_table_t *bind_table_lookup_or_fake(const char *name);
 
 int bind_entry_add(bind_table_t *table, const char *user_flags, const char *mask, const char *function_name, int bind_flags, Function callback, void *client_data);
 
-int bind_entry_del(bind_table_t *table, int id, const char *mask, const char *function_name, void *cdataptr);
+int bind_entry_del(bind_table_t *table, int id, const char *mask, const char *function_name, Function callback, void *cdataptr);
 
 int bind_entry_modify(bind_table_t *table, int id, const char *mask, const char *function_name, const char *newflags, const char *newmask);
 
@@ -81,6 +81,10 @@ int bind_entry_overwrite(bind_table_t *table, int id, const char *mask, const ch
 
 void bind_add_list(const char *table_name, bind_list_t *cmds);
 
+void bind_add_simple(const char *table_name, const char *flags, const char *mask, Function callback);
+
 void bind_rem_list(const char *table_name, bind_list_t *cmds);
+
+void bind_rem_simple(const char *table_name, const char *flags, const char *mask, Function callback);
 
 #endif

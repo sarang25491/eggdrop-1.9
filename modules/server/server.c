@@ -72,32 +72,31 @@ static int server_secondly()
 	return(0);
 }
 
-/* A report on the module status.  */
-static void server_report(int idx, int details)
+static void server_status(partymember_t *p, int details)
 {
 	if (!current_server.connected) {
 		if (current_server.idx >= 0) {
-			dprintf(idx, "   Connecting to server %s:%d\n", current_server.server_host, current_server.port);
+			partymember_printf(p, "   Connecting to server %s:%d", current_server.server_host, current_server.port);
 		}
 		else {
-			dprintf(idx, "   Connecting to next server in %d seconds\n", cycle_delay);
+			partymember_printf(p, "   Connecting to next server in %d seconds", cycle_delay);
 		}
 	}
 	else {
 		/* First line, who we've connected to. */
-		dprintf(idx, "   Connected to %s:%d\n", current_server.server_self ? current_server.server_self : current_server.server_host, current_server.port);
+		partymember_printf(p, "   Connected to %s:%d", current_server.server_self ? current_server.server_self : current_server.server_host, current_server.port);
 
 		/* Second line, who we're connected as. */
 		if (current_server.registered) {
 			if (current_server.user) {
-				dprintf(idx, "    Online as %s!%s@%s (%s)\n", current_server.nick, current_server.user, current_server.host, current_server.real_name);
+				partymember_printf(p, "    Online as %s!%s@%s (%s)", current_server.nick, current_server.user, current_server.host, current_server.real_name);
 			}
 			else {
-				dprintf(idx, "    Online as %s (still waiting for WHOIS result)\n", current_server.nick);
+				partymember_printf(p, "    Online as %s (still waiting for WHOIS result)", current_server.nick);
 			}
 		}
 		else {
-			dprintf(idx, "   Still logging in\n");
+			partymember_printf(p, "   Still logging in");
 		}
 	}
 }

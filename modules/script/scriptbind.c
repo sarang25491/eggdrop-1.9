@@ -73,7 +73,7 @@ static int script_unbind(char *table_name, char *mask, char *name)
 	table = bind_table_lookup(table_name);
 	if (!table) return(1);
 
-	retval = bind_entry_del(table, -1, mask, name, &callback);
+	retval = bind_entry_del(table, -1, mask, name, NULL, &callback);
 	if (callback) callback->del(callback);
 	return(retval);
 }

@@ -173,6 +173,10 @@ static int got376(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 	if (!current_server.type4modes) current_server.type4modes = strdup("imnprst");
 	if (!current_server.modeprefix) current_server.modeprefix = strdup("ov");
 	if (!current_server.whoprefix) current_server.whoprefix = strdup("@+");
+	if (strlen(current_server.modeprefix) != strlen(current_server.whoprefix)) {
+		str_redup(&current_server.modeprefix, "ov");
+		str_redup(&current_server.whoprefix, "@+");
+	}
 	return(0);
 }
 
@@ -462,12 +466,15 @@ static int goterror(char *from_nick, char *from_uhost, user_t *u, char *cmd, int
 	if (current_server.registered) {
 		char *uhost, *full;
 
-		uhost = egg_mprintf("%s@%s", current_server.user, current_server.host);
-		full = egg_mprintf("%s!%s", current_server.nick, uhost);
-		u = user_lookup_by_irchost_nocache(full);
+		if (current_server.user && current_server.host) {
+			uhost = egg_mprintf("%s@%s", current_server.user, current_server.host);
+			full = egg_mprintf("%s!%s", current_server.nick, uhost);
+			u = user_lookup_by_irchost_nocache(full);
+			free(full);
+		}
+		else uhost = NULL;
 		channel_on_quit(current_server.nick, uhost, u);
-		free(full);
-		free(uhost);
+		if (uhost) free(uhost);
 	}
 
 	putlog(LOG_MSGS | LOG_SERV, "*", "-ERROR from server- %s", args[0]);

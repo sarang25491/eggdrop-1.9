@@ -8,8 +8,6 @@ extern int dcc_total;
 static bind_table_t *bind_table_list_head = NULL;
 
 /* Garbage collection stuff. */
-static int check_bind_executing = 0;
-static int already_scheduled = 0;
 static void bind_table_really_del(bind_table_t *table);
 static void bind_entry_really_del(bind_table_t *table, bind_entry_t *entry);
 
@@ -29,20 +27,12 @@ static int internal_bind_cleanup()
 			if (entry->flags & BIND_DELETED) bind_entry_really_del(table, entry);
 		}
 	}
-	already_scheduled = 0;
 	return(0);
 }
 
 static void schedule_bind_cleanup()
 {
-	egg_timeval_t when;
-
-	if (already_scheduled) return;
-	already_scheduled = 1;
-
-	when.sec = 0;
-	when.usec = 0;
-	timer_create(&when, "bind table cleanup", internal_bind_cleanup);
+	garbage_add(internal_bind_cleanup, NULL, GARBAGE_ONCE);
 }
 
 void kill_binds(void)
@@ -89,13 +79,8 @@ void bind_table_del(bind_table_t *table)
 	}
 
 	/* Now delete it. */
-	if (check_bind_executing) {
-		table->flags |= BIND_DELETED;
-		schedule_bind_cleanup();
-	}
-	else {
-		bind_table_really_del(table);
-	}
+	table->flags |= BIND_DELETED;
+	schedule_bind_cleanup();
 }
 
 static void bind_table_really_del(bind_table_t *table)
@@ -132,7 +117,7 @@ bind_table_t *bind_table_lookup_or_fake(const char *name)
 }
 
 /* Look up a bind entry based on either function name or id. */
-bind_entry_t *bind_entry_lookup(bind_table_t *table, int id, const char *mask, const char *function_name)
+bind_entry_t *bind_entry_lookup(bind_table_t *table, int id, const char *mask, const char *function_name, Function callback)
 {
 	bind_entry_t *entry;
 	int hit;
@@ -147,27 +132,25 @@ bind_entry_t *bind_entry_lookup(bind_table_t *table, int id, const char *mask, c
 			if (entry->mask && !strcmp(entry->mask, mask)) hit++;
 			else if (!entry->mask) hit++;
 			if (entry->function_name && !strcmp(entry->function_name, function_name)) hit++;
-			if (hit == 2) break;
+			if (entry->callback == callback || !callback) hit++;
+			if (hit == 3) break;
 		}
 	}
 	return(entry);
 }
 
-int bind_entry_del(bind_table_t *table, int id, const char *mask, const char *function_name, void *cdataptr)
+int bind_entry_del(bind_table_t *table, int id, const char *mask, const char *function_name, Function callback, void *cdataptr)
 {
 	bind_entry_t *entry;
 
-	entry = bind_entry_lookup(table, id, mask, function_name);
+	entry = bind_entry_lookup(table, id, mask, function_name, callback);
 	if (!entry) return(-1);
 
 	if (cdataptr) *(void **)cdataptr = entry->client_data;
 
 	/* Delete it. */
-	if (check_bind_executing) {
-		entry->flags |= BIND_DELETED;
-		schedule_bind_cleanup();
-	}
-	else bind_entry_really_del(table, entry);
+	entry->flags |= BIND_DELETED;
+	schedule_bind_cleanup();
 	return(0);
 }
 
@@ -187,7 +170,7 @@ int bind_entry_modify(bind_table_t *table, int id, const char *mask, const char 
 {
 	bind_entry_t *entry;
 
-	entry = bind_entry_lookup(table, id, mask, function_name);
+	entry = bind_entry_lookup(table, id, mask, function_name, NULL);
 	if (!entry) return(-1);
 
 	/* Modify it. */
@@ -202,7 +185,7 @@ int bind_entry_overwrite(bind_table_t *table, int id, const char *mask, const ch
 {
 	bind_entry_t *entry;
 
-	entry = bind_entry_lookup(table, id, mask, function_name);
+	entry = bind_entry_lookup(table, id, mask, function_name, NULL);
 	if (!entry) return(-1);
 
 	entry->callback = callback;
@@ -214,7 +197,7 @@ int bind_entry_add(bind_table_t *table, const char *flags, const char *mask, con
 {
 	bind_entry_t *entry, *old_entry;
 
-	old_entry = bind_entry_lookup(table, -1, mask, function_name);
+	old_entry = bind_entry_lookup(table, -1, mask, function_name, NULL);
 
 	if (old_entry) {
 		if (table->flags & BIND_STACKABLE) {
@@ -305,8 +288,6 @@ int bind_check(bind_table_t *table, flags_t *user_flags, const char *match, ...)
 	int tie = 0, matchlen = 0;
 	va_list ap;
 
-	check_bind_executing++;
-
 	va_start(ap, match);
 	for (i = 1; i <= table->nargs; i++) {
 		args[i] = va_arg(ap, void *);
@@ -363,7 +344,6 @@ int bind_check(bind_table_t *table, flags_t *user_flags, const char *match, ...)
 	if (winner && tie == 1) {
 		retval = bind_entry_exec(table, winner, args);
 	}
-	check_bind_executing--;
 	return(retval);
 }
 
@@ -376,8 +356,21 @@ void bind_add_list(const char *table_name, bind_list_t *cmds)
 
 	for (; cmds->callback; cmds++) {
 		snprintf(name, 50, "*%s:%s", table->name, cmds->mask ? cmds->mask : "");
+		name[49] = 0;
 		bind_entry_add(table, cmds->user_flags, cmds->mask, name, 0, cmds->callback, NULL);
 	}
+}
+
+void bind_add_simple(const char *table_name, const char *flags, const char *mask, Function callback)
+{
+	char name[50];
+	bind_table_t *table;
+
+	table = bind_table_lookup_or_fake(table_name);
+
+	snprintf(name, 50, "*%s:%s", table->name, mask ? mask : "");
+	name[49] = 0;
+	bind_entry_add(table, flags, mask, name, 0, callback, NULL);
 }
 
 void bind_rem_list(const char *table_name, bind_list_t *cmds)
@@ -390,6 +383,20 @@ void bind_rem_list(const char *table_name, bind_list_t *cmds)
 
 	for (; cmds->mask; cmds++) {
 		snprintf(name, 50, "*%s:%s", table->name, cmds->mask);
-		bind_entry_del(table, -1, cmds->mask, name, NULL);
+		name[49] = 0;
+		bind_entry_del(table, -1, cmds->mask, name, cmds->callback, NULL);
 	}
+}
+
+void bind_rem_simple(const char *table_name, const char *flags, const char *mask, Function callback)
+{
+	char name[50];
+	bind_table_t *table;
+
+	table = bind_table_lookup(table_name);
+	if (!table) return;
+
+	snprintf(name, 50, "*%s:%s", table->name, mask);
+	name[49] = 0;
+	bind_entry_del(table, -1, mask, name, callback, NULL);
 }

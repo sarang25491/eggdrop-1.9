@@ -8,6 +8,10 @@ typedef struct server {
 	char *pass;
 } server_t;
 
+extern server_t *server_list;
+extern int server_list_index;
+extern int server_list_len;
+
 server_t *server_get_next();
 void server_set_next(int next);
 int server_add(char *host, int port, char *pass);
