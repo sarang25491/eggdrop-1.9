@@ -1,3 +1,11 @@
+2002-05-19 04:41  stdarg <stdarg@techmonkeys.org>
+
+	* modules/filesys/filesys.c, modules/server/server.c, src/net.c:
+
+	
+	* Got rid of some inet_ntoa 
+	* Converted dcc ip nums to dotted decimal notation 
+
 2002-05-18 07:41  stdarg <stdarg@techmonkeys.org>
 
 	* configure.ac, lib/adns/internal.h, lib/adns/setup.c,
