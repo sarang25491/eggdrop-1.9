@@ -1,3 +1,10 @@
+2002-05-11 01:08  stdarg <stdarg@techmonkeys.org>
+
+	* modules/javascript/javascript.c, src/cmds.c:
+
+	
+	* Fixed a lot of duplicate log messages from dcc commands.  
+
 2002-05-09 21:23  Federico Mennite <ite@techmonkeys.org>
 
 	* configure.ac, acconfig/acinclude.m4, modules/Makefile.am,
