@@ -1,3 +1,12 @@
+2002-05-09 21:23  Federico Mennite <ite@techmonkeys.org>
+
+	* configure.ac, acconfig/acinclude.m4, modules/Makefile.am,
+	modules/javascript/.cvsignore, modules/javascript/Makefile.am,
+	modules/javascript/javascript.c:
+
+	Added preliminary support libjs detection and javascript module
+	Makefile 
+
 2002-05-09 07:37  stdarg <stdarg@techmonkeys.org>
 
 	* src/: dcc.c, egg.h, tcldcc.c, tclmisc.c:
