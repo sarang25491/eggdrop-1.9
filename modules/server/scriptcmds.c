@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.23 2003/04/01 05:56:02 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.24 2003/04/04 18:18:48 stdarg Exp $";
 #endif
 */
 
@@ -31,6 +31,7 @@ static const char rcsid[] = "$Id: scriptcmds.c,v 1.23 2003/04/01 05:56:02 stdarg
 #include "server.h"
 #include "serverlist.h"
 #include "nicklist.h"
+#include "input.h"
 #include "output.h"
 #include "servsock.h"
 #include "dcc.h"
@@ -350,6 +351,9 @@ static script_command_t server_script_cmds[] = {
 	{"", "channel_mode", script_channel_mode, NULL, 1, "ss", "channel ?nick?", SCRIPT_STRING|SCRIPT_FREE, SCRIPT_VAR_ARGS},
 	{"", "channel_key", script_channel_key, NULL, 1, "s", "channel", SCRIPT_STRING, 0},
 	{"", "channel_limit", script_channel_limit, NULL, 1, "s", "channel", SCRIPT_INTEGER, 0},
+
+	/* Input commands. */
+	{"", "server_fake_input", server_parse_input, NULL, 1, "s", "text", SCRIPT_INTEGER, 0},
 
 	/* Output queue commands. */
 	{"", "server_queue_len", script_queue_len, NULL, 1, "ssi", "queue ?next?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
