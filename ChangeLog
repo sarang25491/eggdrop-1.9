@@ -1,3 +1,10 @@
+2001-08-25 02:43  Federico Mennite <ite@techmonkeys.org>
+
+	* src/Makefile.in:
+
+	Defined a variable in Makefile.in needed for the link with the non
+	system install gexttext.  
+
 2001-08-24 19:54  stdarg
 
 	* src/tclhash.c:
