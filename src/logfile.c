@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: logfile.c,v 1.41 2004/06/17 13:32:44 wingman Exp $";
+static const char rcsid[] = "$Id: logfile.c,v 1.42 2004/06/19 16:11:53 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -239,7 +239,7 @@ static int on_putlog(int flags, const char *chan, const char *text, int len)
 
 		}
 		
-		fprintf (stdout, "%s%s\n", timestamp, text);
+		fprintf (stdout, "%s %s%s\n", chan, timestamp, text);
 	}
 		
 	return(0);

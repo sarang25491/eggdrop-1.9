@@ -13,12 +13,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
+ * alon	with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partyline.c,v 1.16 2004/06/19 10:30:41 wingman Exp $";
+static const char rcsid[] = "$Id: partyline.c,v 1.17 2004/06/19 16:11:53 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -61,7 +61,7 @@ int partyline_is_command(const char *text)
 }
 
 /* Process any input from someone on the partyline (not bots, just users).
- * Everything is either a command or public text. Private messages and all that
+ * Everythin	is either a command or public text. Private messages and all that
  * are handled via commands. */
 int partyline_on_input(partychan_t *chan, partymember_t *p, const char *text, int len)
 {
@@ -73,7 +73,7 @@ int partyline_on_input(partychan_t *chan, partymember_t *p, const char *text, in
 		text++;
 		len--;
 		/* If there are 2 command chars in a row, then it's not a
-		 * command. We skip the command char and treat it as text. */
+		* command. We skip the command char and treat it as text. */
 		if (*text != *(text-1)) {
 			const char *space;
 
@@ -114,6 +114,22 @@ int partyline_on_command(partymember_t *p, const char *cmd, const char *text)
 	if (hits == 0)
 		partymember_printf (p, _("Unknown command '%s', perhaps you need '.help'?"),
 			cmd);
+	else {
+		switch (r) {
+			/* logs everythin	*/
+			case (BIND_RET_LOG):
+				putlog(LOG_MISC, "*", "#%s# %s %s", p->nick, cmd, (text) ? text : "");
+				break;
+			/* usefull if e.g. a .chpass is issued */
+			case (BIND_RET_LOG_COMMAND):
+				putlog(LOG_MISC, "*", "#%s# %s ...", p->nick, cmd);
+				break;
+			/* command doesn't want any lo	entry at all */
+			case (BIND_RET_BREAK):
+				break;
+		}
+		
+	}
 
 	return(r);
 }
@@ -187,17 +203,74 @@ int partyline_printf_all_but(int pid, const char *fmt, ...)
 }
 #endif
 
-/* Logging stuff. */
+/* Loggin	stuff. */
 static int on_putlog(int flags, const char *chan, const char *text, int len)
 {
 	partychan_t *chanptr;
-	char *ptr, buf[1024];
-	int buflen;
 
 	chanptr = partychan_lookup_name(chan);
-	if (!chanptr) return(0);
-	ptr = egg_msprintf(buf, sizeof(buf), &buflen, "[log] %s", text);
-	partychan_msg(chanptr, NULL, ptr, buflen);
-	if (ptr != buf) free(ptr);
+	if (!chanptr)
+		return(0);
+
+	partychan_msg(chanptr, NULL, text, len);
 	return(0);
 }
+
+int partyline_idx_privmsg(int idx,  partymember_t *dest, partymember_t *src, const char *text, int len)
+{
+	if (src) egg_iprintf(idx, "[%s] %s\r\n", src->nick, text);
+	else egg_iprintf(idx, "%s\r\n", text);
+	return 0;
+}
+
+int partyline_idx_nick(int idx, partymember_t *src, const char *oldnick, const char *newnick)
+{
+	char ts[32];
+
+	timer_get_timestamp(ts, sizeof(ts));
+
+	egg_iprintf(idx, "* %s*** %s is now known as %s.\n", ts, oldnick, newnick);
+	return 0;
+}
+
+int partyline_idx_quit(int idx, partymember_t *src, const char *text, int len)
+{
+	char ts[32];
+
+	timer_get_timestamp(ts, sizeof(ts));
+
+	egg_iprintf(idx, "* %s*** %s (%s@%s) has quit: %s\n", ts, src->nick, src->ident, src->host, text);
+	return 0;
+}
+
+int partyline_idx_chanmsg(int idx, partychan_t *chan, partymember_t *src, const char *text, int len)
+{
+	char ts[32];
+
+	timer_get_timestamp(ts, sizeof(ts));
+
+	if (src) egg_iprintf(idx, "%s %s<%s> %s\r\n", chan->name, ts, src->nick, text);
+	else egg_iprintf(idx, "%s %s%s\r\n", chan->name, ts, text);
+	return 0;
+}
+
+int partyline_idx_join(int idx, partychan_t *chan, partymember_t *src)
+{
+	char ts[32];
+
+	timer_get_timestamp(ts, sizeof(ts));
+
+	egg_iprintf(idx, "%s %s*** %s (%s@%s) has joined the channel.\r\n", chan->name, ts, src->nick, src->ident, src->host);
+	return 0;
+}
+
+int partyline_idx_part(int idx, partychan_t *chan, partymember_t *src, const char *text, int len)
+{
+	char ts[32];
+
+	timer_get_timestamp(ts, sizeof(ts));
+	
+	egg_iprintf(idx, "%s %s*** (%s@%s) has left %s: %s\r\n", chan->name, ts, src->nick, src->ident, src->host, chan->name, text);
+	return 0;
+}
+

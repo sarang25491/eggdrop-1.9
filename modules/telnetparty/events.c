@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: events.c,v 1.7 2003/12/18 06:50:47 wcc Exp $";
+static const char rcsid[] = "$Id: events.c,v 1.8 2004/06/19 16:11:53 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -43,52 +43,38 @@ partyline_event_t telnet_party_handler = {
 
 static int on_privmsg(void *client_data, partymember_t *dest, partymember_t *src, const char *text, int len)
 {
-	telnet_session_t *session = client_data;
-
-	if (src) egg_iprintf(session->idx, "[%s] %s\r\n", src->nick, text);
-	else egg_iprintf(session->idx, "%s\r\n", text);
-	return(0);
+	return partyline_idx_privmsg (((telnet_session_t *)client_data)->idx, dest, src, text, len);
 }
 
 static int on_nick(void *client_data, partymember_t *src, const char *oldnick, const char *newnick)
 {
-	telnet_session_t *session = client_data;
-
-	egg_iprintf(session->idx, "%s is now known as %s.\n", oldnick, newnick);
-	return(0);
+	return partyline_idx_nick (((telnet_session_t *)client_data)->idx, src, oldnick, newnick);
 }
 
 static int on_quit(void *client_data, partymember_t *src, const char *text, int len)
 {
 	telnet_session_t *session = client_data;
 
-	egg_iprintf(session->idx, "%s (%s@%s) has quit: %s\n", src->nick, src->ident, src->host, text);
-	if (src == session->party) sockbuf_delete(session->idx);
+	partyline_idx_quit(session->idx, src, text, len);
+
+	/* if this quit are we delete our sockbuf. */
+	if (src == session->party)
+		sockbuf_delete(session->idx);
 
 	return(0);
 }
 
 static int on_chanmsg(void *client_data, partychan_t *chan, partymember_t *src, const char *text, int len)
 {
-	telnet_session_t *session = client_data;
-
-	if (src) egg_iprintf(session->idx, "%s <%s> %s\r\n", chan->name, src->nick, text);
-	else egg_iprintf(session->idx, "%s %s\r\n", chan->name, text);
-	return(0);
+	return partyline_idx_chanmsg (((telnet_session_t *)client_data)->idx, chan, src, text, len);
 }
 
 static int on_join(void *client_data, partychan_t *chan, partymember_t *src)
 {
-	telnet_session_t *session = client_data;
-
-	egg_iprintf(session->idx, "%s %s (%s@%s) has joined the channel.\r\n", chan->name, src->nick, src->ident, src->host);
-	return(0);
+	return partyline_idx_join(((telnet_session_t *)client_data)->idx, chan, src);
 }
 
 static int on_part(void *client_data, partychan_t *chan, partymember_t *src, const char *text, int len)
 {
-	telnet_session_t *session = client_data;
-
-	egg_iprintf(session->idx, "%s %s (%s@%s) has left the channel: %s\r\n", chan->name, src->nick, src->ident, src->host, text);
-	return(0);
+	return partyline_idx_part(((telnet_session_t *)client_data)->idx, chan, src, text, len);
 }

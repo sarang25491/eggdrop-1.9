@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: telnetparty.h,v 1.3 2003/12/18 06:50:47 wcc Exp $
+ * $Id: telnetparty.h,v 1.4 2004/06/19 16:11:53 wingman Exp $
  */
 
 #ifndef _EGG_MOD_TELNETPARTY_TELNETPARTY_H_
@@ -46,6 +46,8 @@
 #define TFLAG_PASSWORD	4
 
 typedef struct {
+	int idx;
+
 	/* Pointer to our entry in the partyline. */
 	partymember_t *party;
 
@@ -53,7 +55,6 @@ typedef struct {
 	user_t *user;
 	char *nick, *ident, *host, *ip;
 	int port;
-	int idx;
 	int pid;
 
 	/* Flags for this connection. */

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: binds.h,v 1.6 2004/06/15 12:23:19 wingman Exp $
+ * $Id: binds.h,v 1.7 2004/06/19 16:11:53 wingman Exp $
  */
 
 #ifndef _EGG_BINDS_H_
@@ -44,8 +44,9 @@
 ***/
 
 /* Flags for return values from bind callbacks. */
-#define BIND_RET_LOG 1
-#define BIND_RET_BREAK 2
+#define BIND_RET_LOG		1
+#define BIND_RET_BREAK		2
+#define BIND_RET_LOG_COMMAND	3
 
 /* This lets you add a null-terminated list of binds all at once. */
 typedef struct {

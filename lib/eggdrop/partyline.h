@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: partyline.h,v 1.15 2004/06/19 10:30:41 wingman Exp $
+ * $Id: partyline.h,v 1.16 2004/06/19 16:11:53 wingman Exp $
  */
 
 #ifndef _EGG_PARTYLINE_H_
@@ -47,6 +47,7 @@ typedef struct partymember {
 	char *nick, *ident, *host;
 	user_t *user;
 	int flags;
+	int type;
 
 	struct partychan **channels;
 	int nchannels;
@@ -88,6 +89,14 @@ typedef struct partyline_event {
 	int (*on_join)(void *client_data, partychan_t *chan, partymember_t *src);
 	int (*on_part)(void *client_data, partychan_t *chan, partymember_t *src, const char *text, int len);
 } partyline_event_t;
+
+/* helper handler for partyline events to reduce work in e.g. telnetparty module. */
+int partyline_idx_privmsg(int idx,  partymember_t *dest, partymember_t *src, const char *text, int len);
+int partyline_idx_nick(int idx, partymember_t *src, const char *oldnick, const char *newnick);
+int partyline_idx_quit(int idx, partymember_t *src, const char *text, int len);
+int partyline_idx_chanmsg(int idx, partychan_t *chan, partymember_t *src, const char *text, int len);
+int partyline_idx_join(int idx, partychan_t *chan, partymember_t *src);
+int partyline_idx_part(int idx, partychan_t *chan, partymember_t *src, const char *text, int len);
 
 int partyline_init();
 partymember_t *partymember_new(int pid, user_t *user, const char *nick, const char *ident, const char *host, partyline_event_t *handler, void *client_data);
