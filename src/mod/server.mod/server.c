@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.85 2001/10/11 18:24:03 tothwolf Exp $
+ * $Id: server.c,v 1.86 2001/10/12 13:43:34 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -100,7 +100,6 @@ static void disconnect_server(int);
 static char *get_altbotnick(void);
 static int calc_penalty(char *);
 static int fast_deq(int);
-static char *splitnicks(char **);
 static void check_queues(char *, char *);
 static void parse_q(struct msgq_head *, char *, char *);
 static void purge_kicks(struct msgq_head *);
@@ -132,6 +131,25 @@ static int burst;
 #include "cmdsserv.c"
 #include "tclserv.c"
 
+
+/* FIXME: get rid of this */
+char *splitnicks(char **rest)
+{
+  register char *o, *r;
+
+  if (!rest)
+    return *rest = "";
+  o = *rest;
+  while (*o == ' ')
+    o++;
+  r = o;
+  while (*o && *o != ',')
+    o++;
+  if (*o)
+    *o++ = 0;
+  *rest = o;
+  return r;
+}
 
 /*
  *     Bot server queues
@@ -241,7 +259,7 @@ static void deq_msg()
 
 static int calc_penalty(char * msg)
 {
-  char *cmd, *par1, *par2, *par3;
+  char *cmd, *par1, *par2;
   register int penalty, i, ii;
 
   if (!use_penalties &&
@@ -263,18 +281,14 @@ static int calc_penalty(char * msg)
   if (!egg_strcasecmp(cmd, "KICK")) {
     par1 = newsplit(&msg); /* channel */
     par2 = newsplit(&msg); /* victim(s) */
-    par3 = splitnicks(&par2);
+    strtok(par2, ",");
     penalty++;
-    while (strlen(par3) > 0) {
-      par3 = splitnicks(&par2);
+    while (strtok(NULL, ",") != NULL)
       penalty++;
-    }
     ii = penalty;
-    par3 = splitnicks(&par1);
-    while (strlen(par1) > 0) {
-      par3 = splitnicks(&par1);
+    strtok(par1, " ");
+    while (strtok(NULL, ",") != NULL)
       penalty += ii;
-    }
   } else if (!egg_strcasecmp(cmd, "MODE")) {
     i = 0;
     par1 = newsplit(&msg); /* channel */
@@ -293,9 +307,11 @@ static int calc_penalty(char * msg)
       i += 2;
     }
     ii = 0;
-    while (strlen(par1) > 0) {
-      splitnicks(&par1);
+    if (strlen(par1)) {
+      strtok(par1, ",");
       ii++;
+      while (strtok(NULL, ",") != NULL)
+        ii++;
     }
     penalty += (ii * i);
   } else if (!egg_strcasecmp(cmd, "TOPIC")) {
@@ -303,30 +319,35 @@ static int calc_penalty(char * msg)
     par1 = newsplit(&msg); /* channel */
     par2 = newsplit(&msg); /* topic */
     if (strlen(par2) > 0) {  /* topic manipulation => 2 penalty points */
+      strtok(par1, ",");
       penalty += 2;
-      par3 = splitnicks(&par1);
-      while (strlen(par1) > 0) {
-        par3 = splitnicks(&par1);
+      while (strtok(NULL, ",") != NULL)
         penalty += 2;
-      }
     }
   } else if (!egg_strcasecmp(cmd, "PRIVMSG") ||
 	     !egg_strcasecmp(cmd, "NOTICE")) {
     par1 = newsplit(&msg); /* channel(s)/nick(s) */
     /* Add one sec penalty for each recipient */
-    while (strlen(par1) > 0) {
-      splitnicks(&par1);
+    if (strlen(par1)) {
+      strtok(par1, ",");
       penalty++;
+      while (strtok(NULL, ",") != NULL)
+        penalty++;
     }
   } else if (!egg_strcasecmp(cmd, "WHO")) {
     par1 = newsplit(&msg); /* masks */
-    par2 = par1;
-    while (strlen(par1) > 0) {
-      par2 = splitnicks(&par1);
+    if (strlen(par1)) {
+      par2 = strtok(par1, ",");
       if (strlen(par2) > 4)   /* long WHO-masks receive less penalty */
-        penalty += 3;
+	penalty += 3;
       else
-        penalty += 5;
+	penalty += 5;
+      while ((par2 = strtok(NULL, ",")) != NULL) {
+	if (strlen(par2) > 4)   /* long WHO-masks receive less penalty */
+	  penalty += 3;
+	else
+	  penalty += 5;
+      }
     }
   } else if (!egg_strcasecmp(cmd, "AWAY")) {
     if (strlen(msg) > 0)
@@ -368,24 +389,6 @@ static int calc_penalty(char * msg)
   if (debug_output && penalty != 0)
     putlog(LOG_SRVOUT, "*", "Adding penalty: %i", penalty);
   return penalty;
-}
-
-char *splitnicks(char **rest)
-{
-  register char *o, *r;
-
-  if (!rest)
-    return *rest = "";
-  o = *rest;
-  while (*o == ' ')
-    o++;
-  r = o;
-  while (*o && *o != ',')
-    o++;
-  if (*o)
-    *o++ = 0;
-  *rest = o;
-  return r;
 }
 
 static int fast_deq(int which)
@@ -538,8 +541,9 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
       newsplit(&msg);
       chan = newsplit(&msg);
       nicks = newsplit(&msg);
+/* FIXME: get rid of splitnicks() */
       while (strlen(nicks) > 0) {
-        nick = splitnicks(&nicks);
+	nick = splitnicks(&nicks);
         if (!egg_strcasecmp(nick, oldnick) &&
             ((9 + strlen(chan) + strlen(newnicks) + strlen(newnick) +
               strlen(nicks) + strlen(msg)) < 510)) {
@@ -598,9 +602,10 @@ static void purge_kicks(struct msgq_head *q)
       newsplit(&reason);
       chan = newsplit(&reason);
       nicks = newsplit(&reason);
+/* FIXME: get rid of splitnicks() */
       while (strlen(nicks) > 0) {
         found = 0;
-        nick = splitnicks(&nicks);
+	nick = splitnicks(&nicks);
         strncpyz(chans, chan, sizeof chans);
         chns = chans;
         while (strlen(chns) > 0) {
@@ -705,8 +710,9 @@ static int deq_kick(int which)
       chan2 = newsplit(&reason2);
       nicks = newsplit(&reason2);
       if (!egg_strcasecmp(chan, chan2) && !egg_strcasecmp(reason, reason2)) {
-        while (strlen(nicks) > 0) {
-          nick = splitnicks(&nicks);
+/* FIXME: get rid of splitnicks() */
+	while (strlen(nicks) > 0) {
+	  nick = splitnicks(&nicks);
           if ((nr < kick_method) &&
              ((9 + strlen(chan) + strlen(newnicks) + strlen(nick) +
              strlen(reason)) < 510)) {
