@@ -1,3 +1,9 @@
+2002-05-04 14:14  Federico Mennite <ite@techmonkeys.org>
+
+	* acconfig/acinclude.m4:
+
+	Cygwin's binmode static library name was wrong.  
+
 2002-05-04 13:32  Tothwolf <tothwolf@techmonkeys.org>
 
 	* testcode/Makefile:
