@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dcc.c,v 1.89 2002/05/26 08:34:13 stdarg Exp $";
+static const char rcsid[] = "$Id: dcc.c,v 1.90 2002/05/31 03:07:23 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -65,7 +65,6 @@ static const char rcsid[] = "$Id: dcc.c,v 1.89 2002/05/26 08:34:13 stdarg Exp $"
 
 extern struct userrec	*userlist;
 extern struct chanset_t	*chanset;
-extern Tcl_Interp	*interp;
 extern time_t		 now;
 extern int		 egg_numver, connect_timeout, conmask, backgrd,
 			 make_userfile, default_flags, debug_output,

@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: server.c,v 1.27 2002/05/31 02:01:06 stdarg Exp $";
+static const char rcsid[] = "$Id: server.c,v 1.28 2002/05/31 03:07:23 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "server"
@@ -44,8 +44,8 @@ static int newserverport;	/* new server port? */
 static char newserverpass[121];	/* new server password? */
 static time_t trying_server;	/* trying to connect to a server right now? */
 static int server_lag;		/* how lagged (in seconds) is the server? */
-static char altnick[NICKLEN];	/* possible alternate nickname to use */
-static char raltnick[NICKLEN];	/* random nick created from altnick */
+static char *altnick = NULL;	/* possible alternate nickname to use */
+static char *raltnick = NULL;	/* random nick created from altnick */
 static int curserv;		/* current position in server list: */
 static int flud_thr;		/* msg flood threshold */
 static int flud_time;		/* msg flood time */
@@ -72,7 +72,7 @@ static struct server_list *serverlist;	/* old-style queue, still used by
 					   server list */
 static int cycle_time;		/* cycle time till next server connect */
 static int default_port;	/* default IRC port */
-static char oldnick[NICKLEN];	/* previous nickname *before* rehash */
+static char *oldnick = NULL;	/* previous nickname *before* rehash */
 static int trigger_on_ignore;	/* trigger bindings if user is ignored ? */
 static int answer_ctcp;		/* answer how many stacked ctcp's ? */
 static int check_mode_r;	/* check for IRCNET +r modes */
@@ -1086,23 +1086,12 @@ static void rand_nick(char *nick)
  */
 static char *get_altbotnick(void)
 {
-  /* A random-number nick? */
-  if (strchr(altnick, '?')) {
-    if (!raltnick[0]) {
-      strlcpy(raltnick, altnick, NICKLEN);
-      rand_nick(raltnick);
-    }
-    return raltnick;
-  } else
-    return altnick;
-}
-
-static char *altnick_change(ClientData cdata, Tcl_Interp *irp, char *name1,
-			    char *name2, int flags)
-{
-  /* Always unset raltnick. Will be regenerated when needed. */
-  raltnick[0] = 0;
-  return NULL;
+	/* Generate a new one if necessary. */
+	if (!raltnick) {
+		raltnick = strdup(altnick);
+		rand_nick(raltnick);
+	}
+	return raltnick;
 }
 
 static char *traced_botname(ClientData cdata, Tcl_Interp *irp, char *name1,
@@ -1146,7 +1135,6 @@ static char *traced_nicklen(ClientData cdata, Tcl_Interp *irp, char *name1,
 static tcl_strings my_tcl_strings[] =
 {
   {"botnick",			NULL,		0,		STR_PROTECT},
-  {"altnick",			altnick,	NICKMAX,	0},
   {"realname",			botrealname,	80,		0},
   {"stackable_commands",	stackablecmds,	510,		0},
   {"stackable2_commands",	stackable2cmds,	510,		0},
@@ -1334,7 +1322,7 @@ static void server_5minutely()
 
 static void server_prerehash()
 {
-  strcpy(oldnick, botname);
+	str_redup(&oldnick, botname);
 }
 
 static void server_postrehash()
@@ -1344,14 +1332,14 @@ static void server_postrehash()
     fatal("NO BOT NAME.", 0);
   if (serverlist == NULL)
     fatal("NO SERVER.", 0);
-    if (oldnick[0] && !irccmp(oldnick, botname)
+  if (oldnick && !irccmp(oldnick, botname)
        && !irccmp(oldnick, get_altbotnick())) {
     /* Change botname back, don't be premature. */
     strcpy(botname, oldnick);
     dprintf(DP_SERVER, "NICK %s\n", origbotname);
   }
   /* Change botname back incase we were using altnick previous to rehash. */
-  else if (oldnick[0])
+  else if (oldnick)
     strcpy(botname, oldnick);
   check_bind_event("init-server");
 }
@@ -1459,8 +1447,6 @@ static char *server_close()
   Tcl_UntraceVar(interp, "nick",
 		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		 nick_change, NULL);
-  Tcl_UntraceVar(interp, "altnick",
-		 TCL_TRACE_WRITES | TCL_TRACE_UNSETS, altnick_change, NULL);
   Tcl_UntraceVar(interp, "botname",
 		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		 traced_botname, NULL);
@@ -1549,8 +1535,8 @@ char *start(eggdrop_t *eggdrop)
   botname[0] = 0;
   trying_server = 0L;
   server_lag = 0;
-  altnick[0] = 0;
-  raltnick[0] = 0;
+  altnick = strdup("egg??????");
+  raltnick = NULL;
   curserv = 0;
   flud_thr = 5;
   flud_time = 60;
@@ -1568,7 +1554,7 @@ char *start(eggdrop_t *eggdrop)
   serverlist = NULL;
   cycle_time = 0;
   default_port = 6667;
-  oldnick[0] = 0;
+  oldnick = NULL;
   trigger_on_ignore = 0;
   answer_ctcp = 1;
   check_mode_r = 0;
@@ -1602,8 +1588,6 @@ char *start(eggdrop_t *eggdrop)
   Tcl_TraceVar(interp, "nick",
 	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 	       nick_change, NULL);
-  Tcl_TraceVar(interp, "altnick",
-	       TCL_TRACE_WRITES | TCL_TRACE_UNSETS, altnick_change, NULL);
   Tcl_TraceVar(interp, "botname",
 	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 	       traced_botname, NULL);

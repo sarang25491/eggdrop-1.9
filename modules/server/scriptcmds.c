@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.5 2002/05/24 06:52:05 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.6 2002/05/31 03:07:22 stdarg Exp $";
 #endif
 */
 
@@ -35,8 +35,17 @@ static int script_clearqueue (script_var_t *retval, char *queuetype);
 static int script_queuesize (script_var_t *retval, int nargs, char *queuetype, int flags);
 static int script_server_list(script_var_t *retval);
 
+static int altnick_on_write(script_linked_var_t *linked_var, script_var_t *newvalue);
+
+static script_var_callbacks_t altnick_callbacks = {
+	NULL,
+	altnick_on_write,
+	NULL
+};
+
 static script_linked_var_t server_script_vars[] = {
 	{"", "server", &curserv, SCRIPT_INTEGER, NULL},
+	{"", "altnick", &altnick, SCRIPT_STRING, &altnick_callbacks},
 	{0}
 };
 
@@ -265,5 +274,13 @@ static int script_server_list(script_var_t *retval)
 		);
 		script_list_append(retval, sublist);
 	}
+	return(0);
+}
+
+static int altnick_on_write(script_linked_var_t *linked_var, script_var_t *newvalue)
+{
+	str_redup(&altnick, newvalue->value);
+	if (raltnick) free(raltnick);
+	raltnick = NULL;
 	return(0);
 }

@@ -22,7 +22,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: memutil.h,v 1.8 2002/05/05 16:40:32 tothwolf Exp $
+ * $Id: memutil.h,v 1.9 2002/05/31 03:07:22 stdarg Exp $
  */
 
 #ifndef _EGG_MEMUTIL_H
@@ -65,6 +65,8 @@ extern char *strchr_unescape(char *, const char, register const char);
 #define str_unescape(str, esc_char) strchr_unescape(str, 0, esc_char)
 
 extern void rmspace(char *);
+
+extern void str_redup(char **str, char *newstr);
 
 END_C_DECLS
 
