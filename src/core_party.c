@@ -1,4 +1,5 @@
 #include <eggdrop/eggdrop.h>
+#include <ctype.h>
 #include "core_config.h"
 
 static int party_join(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
@@ -34,14 +35,85 @@ static int party_msg(partymember_t *p, const char *nick, user_t *u, const char *
 	return(0);
 }
 
+static void *lookup_and_check(partymember_t *p, const char *path)
+{
+	void *root;
+	char *flags;
+	flags_t uflags, rflags;
+
+	root = config_get_root("eggdrop");
+	root = config_exists(root, path, 0, NULL);
+	if (!root) {
+		partymember_printf(p, "That setting was not found.");
+		return(NULL);
+	}
+
+	config_get_str(&flags, root, "flags", 0, NULL);
+	if (flags) {
+		flag_from_str(&rflags, flags);
+		if (!p->user) goto nope;
+		user_get_flags(p->user, NULL, &uflags);
+		if (!flag_match_partial(&uflags, &rflags)) goto nope;
+	}
+	return(root);
+nope:
+	partymember_printf(p, "You cannot access that setting.");
+	return(NULL);
+}
+
+static int party_get(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	void *root;
+	char *str = NULL;
+
+	if (!text || !*text) {
+		partymember_printf(p, "Syntax: get <path>");
+		return(0);
+	}
+
+	root = lookup_and_check(p, text);
+	if (!root) return(0);
+
+	config_get_str(&str, root, NULL);
+	if (str) {
+		partymember_printf(p, "==> '%s'", str);
+	}
+	else {
+		partymember_printf(p, "Config setting not found.");
+	}
+	return(0);
+}
+
 static int party_set(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
+	void *root;
+	char *path, *str;
+	const char *next;
+
+	egg_get_word(text, &next, &path);
+	if (next) while (isspace(*next)) next++;
+	if (!next || !path || !*path) {
+		partymember_printf(p, "Syntax: set <path> <new value>");
+		if (path) free(path);
+		return(0);
+	}
+	root = lookup_and_check(p, path);
+	free(path);
+	if (!root) return(0);
+
+	config_get_str(&str, root, NULL);
+	partymember_printf(p, "old value: '%s'", str);
+	config_set_str(next, root, NULL);
+	config_get_str(&str, root, NULL);
+	partymember_printf(p, "new value: '%s'", str);
 	return(0);
 }
 
 static int party_save(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
+	putlog(LOG_MISC, "*", "Saving user file...");
 	user_save(core_config.userfile);
+	putlog(LOG_MISC, "*", "Saving config file...");
 	core_config_save();
 	return(1);
 }
@@ -170,11 +242,14 @@ static bind_list_t core_party_binds[] = {
 	{NULL, "part", party_part},
 	{NULL, "quit", party_quit},
 	{NULL, "who", party_who},
+	{"n", "get", party_get},
 	{"n", "set", party_set},
 	{"n", "save", party_save},
 	{"n", "die", party_die},
 	{"n", "+user", party_plus_user},
 	{"n", "-user", party_minus_user},
+	{"n", "+host", party_plus_host},
+	{"n", "-host", party_minus_host},
 	{"n", "chattr", party_chattr},
 	{0}
 };

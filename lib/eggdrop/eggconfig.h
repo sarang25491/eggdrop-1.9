@@ -24,7 +24,7 @@ void *config_exists(void *config_root, ...);
 int config_get_int(int *intptr, void *config_root, ...);
 int config_get_str(char **strptr, void *config_root, ...);
 int config_set_int(int intval, void *config_root, ...);
-int config_set_str(char *strval, void *config_root, ...);
+int config_set_str(const char *strval, void *config_root, ...);
 int config_link_table(config_var_t *table, void *config_root, ...);
 int config_update_table(config_var_t *table, void *config_root, ...);
 int config_unlink_table(config_var_t *table, void *config_root, ...);

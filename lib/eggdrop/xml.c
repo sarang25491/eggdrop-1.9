@@ -69,27 +69,13 @@ xml_node_t *xml_node_add(xml_node_t *parent, xml_node_t *child)
 xml_node_t *xml_node_vlookup(xml_node_t *root, va_list args, int create)
 {
 	char *path;
-	int i, index;
-	xml_node_t *child, newchild;
+	int index;
 
 	for (; root;) {
 		path = va_arg(args, char *);
 		if (!path) break;
 		index = va_arg(args, int);
-		child = NULL;
-		for (i = 0; i < root->nchildren; i++) {
-			if (root->children[i]->name && !strcasecmp(root->children[i]->name, path)) {
-				if (index-- > 0) continue;
-				child = root->children[i];
-				break;
-			}
-		}
-		if (!child && create) {
-			memset(&newchild, 0, sizeof(newchild));
-			newchild.name = strdup(path);
-			child = xml_node_add(root, &newchild);
-		}
-		root = child;
+		root = xml_node_path_lookup(root, path, index, create);
 	}
 	return(root);
 }
@@ -103,6 +89,74 @@ xml_node_t *xml_node_lookup(xml_node_t *root, int create, ...)
 	node = xml_node_vlookup(root, args, create);
 	va_end(args);
 	return(node);
+}
+
+xml_node_t *xml_node_path_lookup(xml_node_t *root, const char *path, int index, int create)
+{
+	int i, thisindex, len;
+	xml_node_t *child, newchild;
+	const char *next;
+	char *name, *sep, buf[512];
+
+	for (; root && path; path = next) {
+		/* Get the next path element. */
+		sep = strchr(path, '.');
+		if (sep) {
+			next = sep+1;
+			len = sep - path;
+		}
+		else {
+			next = NULL;
+			len = strlen(path);
+		}
+
+		/* If it's empty, skip it, otherwise copy it. */
+		if (!len) continue;
+		else if (len > sizeof(buf) - 10) {
+			name = malloc(len+1);
+		}
+		else {
+			name = buf;
+		}
+		memcpy(name, path, len);
+		name[len] = 0;
+
+		/* Ok, now see if there's an [index] at the end. The length
+		 * has to be at least 4, because it's like "a[x]" at least. */
+		thisindex = 0;
+		if (len > 3 && name[len-1] == ']') {
+			sep = strrchr(name, '[');
+			if (sep) {
+				*sep = 0;
+				name[len-1] = 0;
+				thisindex = atoi(sep+1);
+			}
+		}
+
+		/* If it's the last path element, add the index param. */
+		if (!next) thisindex += index;
+
+		child = NULL;
+		for (i = 0; i < root->nchildren; i++) {
+			if (root->children[i]->name && !strcasecmp(root->children[i]->name, name)) {
+				if (thisindex-- > 0) continue;
+				child = root->children[i];
+				break;
+			}
+		}
+
+		if (!child && create) {
+			do {
+				memset(&newchild, 0, sizeof(newchild));
+				newchild.name = strdup(name);
+				child = xml_node_add(root, &newchild);
+			} while (thisindex-- > 0);
+		}
+		root = child;
+
+		if (name != buf) free(name);
+	}
+	return(root);
 }
 
 char *xml_node_fullname(xml_node_t *thenode)
@@ -188,7 +242,7 @@ int xml_node_set_int(int value, xml_node_t *node, ...)
 	return(0);
 }
 
-int xml_node_set_str(char *str, xml_node_t *node, ...)
+int xml_node_set_str(const char *str, xml_node_t *node, ...)
 {
 	va_list args;
 

@@ -136,17 +136,12 @@ int config_get_str(char **strptr, void *config_root, ...)
 {
 	va_list args;
 	xml_node_t *root = config_root;
-	char *str;
 
 	va_start(args, config_root);
 	root = xml_node_vlookup(root, args, 0);
 	va_end(args);
 
-	if (!xml_node_get_str(&str, root, NULL)) {
-		str_redup(strptr, str);
-		return(0);
-	}
-	return(-1);
+	return xml_node_get_str(strptr, root, NULL);
 }
 
 int config_set_int(int intval, void *config_root, ...)
@@ -179,7 +174,7 @@ int config_set_int(int intval, void *config_root, ...)
 	return(0);
 }
 
-int config_set_str(char *strval, void *config_root, ...)
+int config_set_str(const char *strval, void *config_root, ...)
 {
 	va_list args;
 	xml_node_t *root = config_root;
@@ -229,7 +224,11 @@ int config_link_table(config_var_t *table, void *config_root, ...)
 		node = xml_node_lookup(root, 1, table->name, 0, NULL);
 		node->client_data = table;
 		if (table->type == CONFIG_INT) config_get_int(table->ptr, root, table->name, 0, NULL);
-		else if (table->type == CONFIG_STRING) config_get_str(table->ptr, root, table->name, 0, NULL);
+		else if (table->type == CONFIG_STRING) {
+			char *str;
+			config_get_str(&str, root, table->name, 0, NULL);
+			str_redup(table->ptr, str);
+		}
 		table++;
 	}
 

@@ -301,6 +301,7 @@ int xml_read_node(xml_node_t *parent, char **data)
 	return(1);
 }
 
+extern int putlog();
 int xml_read(xml_node_t *root, const char *fname)
 {
 	FILE *fp;
@@ -324,5 +325,9 @@ int xml_read(xml_node_t *root, const char *fname)
 		; /* empty */
 	}
 	free(data);
+
+	/* Ok, the recursive xml_read_node() has read in all the text value for
+		this node, so decode it now. */
+	root->len = xml_decode_text(root->text, root->len);
 	return(0);
 }
