@@ -1,6 +1,6 @@
-# $Id: Makefile.am,v 1.4 2002/11/03 23:16:09 stdarg Exp $
+# $Id: Makefile.am,v 1.5 2003/03/07 12:10:25 tothwolf Exp $
 
-## libcompat is built as convenience library
+## libegg is built as convenience library
 
 MAINTAINERCLEANFILES	= Makefile.in
 
