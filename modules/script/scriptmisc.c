@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptmisc.c,v 1.15 2004/06/23 11:19:52 wingman Exp $";
+static const char rcsid[] = "$Id: scriptmisc.c,v 1.16 2004/06/23 21:12:57 stdarg Exp $";
 #endif
 
 #include <string.h>
@@ -184,6 +184,7 @@ script_command_t script_misc_cmds[] = {
 	{"", "unames", (Function) script_unames, NULL, 0, "", "", SCRIPT_STRING | SCRIPT_FREE, 0}, /* DDD */
 	{"", "md5", (Function) script_md5, NULL, 1, "s", "data", SCRIPT_STRING | SCRIPT_FREE, 0}, /* DDD */
 	{"", "eggdrop_event", (Function) eggdrop_event, NULL, 1, "s", "event", SCRIPT_INTEGER, 0}, /* DDD */
+	{"", "eggdrop_param", eggdrop_get_param, NULL, 1, "s", "param", SCRIPT_STRING, 0},
 	{"", "script_export", script_export, NULL, 3, "ssc", "export-name syntax callback", SCRIPT_INTEGER, 0}, /* DDD */
 	{0}
 };

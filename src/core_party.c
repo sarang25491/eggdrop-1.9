@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.34 2004/06/21 20:35:11 wingman Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.35 2004/06/23 21:12:57 stdarg Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -195,8 +195,9 @@ static int party_status(partymember_t *p, const char *nick, user_t *u, const cha
 #ifdef HAVE_UNAME
 	if (!uname(&un)) partymember_printf(p, _("OS: %1$s %2$s"), un.sysname, un.release);
 #endif
-	partymember_printf(p, _("Help path: %s (%d entries, %d sections)"), core_config.help_path, help_count_entries(),
-		help_count_sections ());
+	partymember_printf(p, _("Help path: %s (%d entries, %d sections)"),
+			core_config.help_path, help_count_entries(),
+			help_count_sections());
 	partymember_printf(p, "");
 	check_bind_status(p, text);
 	return(0);

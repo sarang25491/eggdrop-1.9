@@ -18,14 +18,19 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggdrop.c,v 1.20 2004/06/22 21:55:31 wingman Exp $";
+static const char rcsid[] = "$Id: eggdrop.c,v 1.21 2004/06/23 21:12:57 stdarg Exp $";
 #endif
 
 #include <stdlib.h>
 #include <string.h>
 #include "eggdrop.h"
 
+/* Event bind table. */
 static bind_table_t *BT_event = NULL;
+
+/* Eggdrop's command line parameters. */
+static const char **eggparams = NULL;
+static int neggparams = 0;
 
 int eggdrop_init(void)
 {
@@ -62,4 +67,22 @@ int eggdrop_shutdown(void)
 int eggdrop_event(const char *event)
 {
 	return bind_check(BT_event, NULL, event, event);
+}
+
+int eggdrop_set_params(const char **params, int nparams)
+{
+	eggparams = params;
+	neggparams = nparams;
+	return(0);
+}
+
+const char *eggdrop_get_param(const char *key)
+{
+	int i, nparams;
+
+	nparams = neggparams - 1;
+	for (i = 0; i < nparams; i += 2) {
+		if (!strcasecmp(eggparams[i], key)) return(eggparams[i+1]);
+	}
+	return(NULL);
 }

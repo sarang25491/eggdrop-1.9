@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: module.c,v 1.3 2004/06/22 20:12:37 wingman Exp $";
+static const char rcsid[] = "$Id: module.c,v 1.4 2004/06/23 21:12:57 stdarg Exp $";
 #endif
 
 #include <ltdl.h>
@@ -57,9 +57,6 @@ int module_init(void)
 
 int module_shutdown(void)
 {
-	if (module_list_head) {
-		free(module_list_head); module_list_head = NULL;
-	}
 	bind_table_del(BT_load);
 	bind_table_del(BT_unload);
 
@@ -159,11 +156,9 @@ egg_module_t *module_lookup(const char *name)
 	return(NULL);
 }
 
-int
-module_loaded (const char *name)
+int module_loaded(const char *name)
 {
-	if (name == NULL)
-		return 0;
+	if (name == NULL) return 0;
 
 	return (find_module (name) != NULL);
 }

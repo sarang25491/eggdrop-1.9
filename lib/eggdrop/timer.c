@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: timer.c,v 1.3 2004/06/22 18:47:28 wingman Exp $";
+static const char rcsid[] = "$Id: timer.c,v 1.4 2004/06/23 21:12:57 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -58,9 +58,14 @@ int timer_init()
 
 int timer_shutdown()
 {
-	if (timestamp_format) free(timestamp_format);
-	if (timestamp) free(timestamp);
-	timestamp = NULL;
+	if (timestamp_format) {
+		free(timestamp_format);
+		timestamp_format = NULL;
+	}
+	if (timestamp) {
+		free(timestamp);
+		timestamp = NULL;
+	}
 	timestamp_len = 0;
 	return(0);
 }

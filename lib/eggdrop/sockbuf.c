@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: sockbuf.c,v 1.13 2004/06/23 17:24:43 wingman Exp $";
+static const char rcsid[] = "$Id: sockbuf.c,v 1.14 2004/06/23 21:12:57 stdarg Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -116,12 +116,21 @@ int sockbuf_shutdown(void)
 		sockbuf_delete(idx_array[i]);
 	}
 
-	if (idx_array) free(idx_array); idx_array = NULL;
+	if (idx_array) {
+		free(idx_array);
+		idx_array = NULL;
+	}
 
-	if (pollfds) free(pollfds); pollfds = NULL;
+	if (pollfds) {
+		free(pollfds);
+		pollfds = NULL;
+	}
 	npollfds = 0;
 
-	if (sockbufs) free(sockbufs); sockbufs = NULL;
+	if (sockbufs) {
+		free(sockbufs);
+		sockbufs = NULL;
+	}
 	nsockbufs = 0;
 
 	return (0);
@@ -599,14 +608,10 @@ int sockbuf_delete(int idx)
 	if (sbuf->stats) free(sbuf->stats);
 
 	/* Free filters */
-	if (sbuf->filters)
-		free(sbuf->filters);
-	sbuf->filters = NULL;
+	if (sbuf->filters) free(sbuf->filters);
 
 	/* Free filter client data */
-	if (sbuf->filter_client_data)
-		free(sbuf->filter_client_data);
-	sbuf->filter_client_data = NULL;
+	if (sbuf->filter_client_data) free(sbuf->filter_client_data);
 
 	/* Mark it as deleted. */
 	memset(sbuf, 0, sizeof(*sbuf));

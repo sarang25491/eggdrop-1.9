@@ -20,11 +20,15 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: bg.c,v 1.19 2004/06/22 10:54:42 wingman Exp $";
+static const char rcsid[] = "$Id: bg.c,v 1.20 2004/06/23 21:12:57 stdarg Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
+#endif
+
+#ifdef CYGWIN_HACKS
+#  include <windows.h>
 #endif
 
 #include <unistd.h>	/* fork(), setpgid() */
@@ -88,16 +92,11 @@ void bg_begin_split()
 	exit(1);
 }
 
-void bg_close()
+void bg_finish_split()
 {
 	/* Send parent the USR1 signal, which tells it to print a message
 	 * and exit. */
 	kill(parent_pid, SIGUSR1);
-}
-
-void bg_finish_split()
-{
-	bg_close();
 
 #if HAVE_SETPGID && !defined(CYGWIN_HACKS)
 	setpgid(0, 0);

@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.178 2004/06/23 17:24:43 wingman Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.179 2004/06/23 21:12:57 stdarg Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -165,7 +165,7 @@ static void print_help(char *const *argv)
 	printf("\n");
 }
 
-static void do_args(int argc, char *const *argv)
+static void do_args(int argc, char **argv)
 {
 	int c;
 
@@ -222,7 +222,10 @@ static void do_args(int argc, char *const *argv)
 				break; /* this should never be reached */
 		}
 	}
-	if (optind < argc) configfile = argv[optind];
+	if (optind < argc) {
+		configfile = argv[optind++];
+		eggdrop_set_params(argv+optind, argc-optind);
+	}
 	else configfile = "config.xml";
 }
 

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: terminal.c,v 1.4 2004/06/23 17:24:43 wingman Exp $";
+static const char rcsid[] = "$Id: terminal.c,v 1.5 2004/06/23 21:12:57 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>			/* partyline_*		*/
@@ -56,7 +56,7 @@ static partyline_event_t terminal_party_handler = {
 struct {
 	int in_idx, out_idx;
 	partymember_t *party;
-} terminal_session = { 0, 0, NULL };
+} terminal_session = {-1, -1, NULL};
 
 static user_t *terminal_user = NULL;
 
@@ -94,21 +94,27 @@ int terminal_init(void)
 
 int terminal_shutdown(void)
 {
-        if (terminal_session.party)
-                partymember_delete(terminal_session.party, _("Shutdown"));
-        terminal_session.party = NULL;
+        if (terminal_session.party) {
+		partymember_delete(terminal_session.party, _("Shutdown"));
+		terminal_session.party = NULL;
+	}
 
-	if (terminal_session.in_idx != 0)
+	if (terminal_session.in_idx != -1) {
+		sockbuf_set_sock(terminal_session.in_idx, -1, 0);
 		sockbuf_delete(terminal_session.in_idx);
-	terminal_session.in_idx = 0;
+		terminal_session.in_idx = -1;
+	}
 
-	if (terminal_session.out_idx != 0)
+	if (terminal_session.out_idx != -1) {
+		sockbuf_set_sock(terminal_session.out_idx, -1, 0);
 		sockbuf_delete(terminal_session.out_idx);
-	terminal_session.out_idx = 0;
+		terminal_session.out_idx = -1;
+	}
 
-	if (terminal_user)
-		 user_delete(terminal_user);
-	terminal_user = NULL;
+	if (terminal_user) {
+		user_delete(terminal_user);
+		terminal_user = NULL;
+	}
 
 	/* let logfile.c know that there's no longer the faked
 	 * stdout sockbuf of our HQ partymember */
