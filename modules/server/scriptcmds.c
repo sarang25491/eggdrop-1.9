@@ -22,7 +22,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.11 2002/09/21 07:40:16 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.12 2002/09/22 08:50:46 stdarg Exp $";
 #endif
 */
 
@@ -33,6 +33,7 @@ static const char rcsid[] = "$Id: scriptcmds.c,v 1.11 2002/09/21 07:40:16 stdarg
 #include "nicklist.h"
 #include "output.h"
 #include "servsock.h"
+#include "dcc.h"
 
 static int script_isbotnick (char *nick);
 static int script_putserv(char *queue, char *next, char *text);
@@ -62,6 +63,7 @@ script_command_t server_script_cmds[] = {
 	{"", "nick_add", nick_add, NULL, 1, "s", "nick", SCRIPT_INTEGER, 0},
 	{"", "nick_del", nick_del, NULL, 1, "i", "nick-num", SCRIPT_INTEGER, 0},
 	{"", "nick_clear", nick_clear, NULL, 0, "", "", SCRIPT_INTEGER, 0},
+	{"", "dcc_chat", dcc_start_chat, NULL, 1, "si", "nick ?timeout?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},
         {0}
 };
 

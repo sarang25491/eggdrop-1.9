@@ -52,7 +52,7 @@ int egg_iprintf(int idx, const char *format, ...)
 }
 
 /* Create a listening socket on a port. */
-int egg_server(const char *vip, int port)
+int egg_server(const char *vip, int port, int *real_port)
 {
 	int idx, sock, ntries;
 
@@ -60,7 +60,11 @@ int egg_server(const char *vip, int port)
 	do {
 		sock = socket_create(NULL, 0, vip, port+ntries, SOCKET_SERVER|SOCKET_TCP|SOCKET_NONBLOCK);
 		ntries++;
-	} while (sock < 0 && ntries < 20);
+	} while (sock < 0 && ntries < 20 && port);
+
+	if (sock < 0) return(sock);
+
+	if (real_port) socket_get_name(sock, NULL, real_port);
 
 	idx = sockbuf_new();
 	sockbuf_set_sock(idx, sock, SOCKBUF_SERVER);
@@ -84,12 +88,12 @@ int egg_client(const char *ip, int port, const char *vip, int vport)
 
 /* Open a listen port. If proxies/firewalls/vhosts are configured, it will
  * automatically use them. Returns an idx for the new socket. */
-int egg_listen(int port)
+int egg_listen(int port, int *real_port)
 {
 	int idx;
 
 	/* Proxy/firewall/vhost code goes here. */
-	idx = egg_server(NULL, port);
+	idx = egg_server(NULL, port, real_port);
 	return(idx);
 }
 

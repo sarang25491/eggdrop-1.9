@@ -362,6 +362,12 @@ int sockbuf_new()
 	return(idx);
 }
 
+int sockbuf_get_sock(int idx)
+{
+	if (!sockbuf_isvalid(idx)) return(-1);
+	return(sockbufs[idx].sock);
+}
+
 int sockbuf_set_sock(int idx, int sock, int flags)
 {
 	int i;

@@ -15,7 +15,8 @@ bind_table_t *BT_wall = NULL,
 	*BT_pub = NULL,
 	*BT_pubm = NULL,
 	*BT_ctcp = NULL,
-	*BT_ctcr = NULL;
+	*BT_ctcr = NULL,
+	*BT_dcc_chat = NULL;
 
 void server_binds_destroy()
 {
@@ -29,6 +30,7 @@ void server_binds_destroy()
 	bind_table_del(BT_pub);
 	bind_table_del(BT_ctcr);
 	bind_table_del(BT_ctcp);
+	bind_table_del(BT_dcc_chat);
 }
 
 void server_binds_init()
@@ -44,6 +46,7 @@ void server_binds_init()
 	BT_pubm = bind_table_add("pubm", 5, "ssUss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
 	BT_ctcr = bind_table_add("ctcr", 6, "ssUsss", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
 	BT_ctcp = bind_table_add("ctcp", 6, "ssUsss", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
+	BT_dcc_chat = bind_table_add("dcc_chat", 4, "ssss", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
 }
 
 void check_tcl_notc(char *nick, char *uhost, struct userrec *u, char *dest, char *arg)

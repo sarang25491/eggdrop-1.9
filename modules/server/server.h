@@ -11,6 +11,7 @@ typedef struct {
 	int cycle_delay;
 	int default_port;
 	int ping_timeout;
+	int dcc_timeout;
 	char *user;
 	char *realname;
 } server_config_t;

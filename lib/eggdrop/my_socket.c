@@ -38,14 +38,6 @@ static int socket_name(sockname_t *name, const char *ipaddr, int port)
 {
 	memset(name, 0, sizeof(*name));
 
-	if (!ipaddr) {
-		#ifdef DO_IPV6
-		ipaddr = "::";
-		#else
-		ipaddr = "0.0.0.0";
-		#endif
-	}
-
 	#ifdef DO_IPV6
 	if (inet_pton(AF_INET6, ipaddr, &name->u.ipv6.sin6_addr) > 0) {
 		name->len = sizeof(name->u.ipv6);
@@ -69,29 +61,67 @@ static int socket_name(sockname_t *name, const char *ipaddr, int port)
 	return(-1);
 }
 
+int socket_get_name(int sock, char **ip, int *port)
+{
+	sockname_t name;
+	int namelen;
+
+	if (ip) *ip = NULL;
+	if (port) *port = 0;
+
+	#ifdef DO_IPV4
+	namelen = sizeof(name.u.ipv4);
+	if (!getsockname(sock, &name.u.addr, &namelen) && namelen == sizeof(name.u.ipv4)) {
+		if (ip) {
+			*ip = (char *)malloc(32);
+			inet_ntop(AF_INET, &name.u.ipv4.sin_addr, *ip, 32);
+		}
+		if (port) *port = ntohs(name.u.ipv4.sin_port);
+		return(0);
+	}
+	#endif
+	#ifdef DO_IPV6
+	namelen = sizeof(name.u.ipv6);
+	if (!getsockname(sock, &name.u.addr, &namelen) && namelen == sizeof(name.u.ipv6)) {
+		if (ip) {
+			*ip = (char *)malloc(128);
+			inet_ntop(AF_INET6, &name.u.ipv6.sin6_addr, *ip, 128);
+		}
+		if (port) *port = ntohs(name.u.ipv6.sin6_port);
+		return(0);
+	}
+	#endif
+
+	return(-1);
+}
+
 int socket_get_peer_name(int sock, char **peer_ip, int *peer_port)
 {
 	sockname_t name;
 	int namelen;
 
-	*peer_ip = NULL;
-	*peer_port = 0;
+	if (peer_ip) *peer_ip = NULL;
+	if (peer_port) *peer_port = 0;
 
 	#ifdef DO_IPV4
 	namelen = sizeof(name.u.ipv4);
 	if (!getpeername(sock, &name.u.addr, &namelen) && namelen == sizeof(name.u.ipv4)) {
-		*peer_ip = (char *)malloc(32);
-		*peer_port = ntohs(name.u.ipv4.sin_port);
-		inet_ntop(AF_INET, &name.u.ipv4.sin_addr, *peer_ip, 32);
+		if (peer_ip) {
+			*peer_ip = (char *)malloc(32);
+			inet_ntop(AF_INET, &name.u.ipv4.sin_addr, *peer_ip, 32);
+		}
+		if (peer_port) *peer_port = ntohs(name.u.ipv4.sin_port);
 		return(0);
 	}
 	#endif
 	#ifdef DO_IPV6
 	namelen = sizeof(name.u.ipv6);
 	if (!getpeername(sock, &name.u.addr, &namelen) && namelen == sizeof(name.u.ipv6)) {
-		*peer_ip = (char *)malloc(128);
-		*peer_port = ntohs(name.u.ipv6.sin6_port);
-		inet_ntop(AF_INET6, &name.u.ipv6.sin6_addr, *peer_ip, 128);
+		if (peer_ip) {
+			*peer_ip = (char *)malloc(128);
+			inet_ntop(AF_INET6, &name.u.ipv6.sin6_addr, *peer_ip, 128);
+		}
+		if (peer_port) *peer_port = ntohs(name.u.ipv6.sin6_port);
 		return(0);
 	}
 	#endif
@@ -143,25 +173,31 @@ int socket_accept(int sock, char **peer_ip, int *peer_port)
 /* -4: connect() failure */
 int socket_create(const char *dest_ip, int dest_port, const char *src_ip, int src_port, int flags)
 {
-	int sock, pfamily;
+	char *passive[] = {"::", "0.0.0.0"};
+	int sock = -1, pfamily, try;
 	sockname_t dest_name, src_name;
 
-	/* Resolve the ip addresses. */
-	socket_name(&dest_name, dest_ip, dest_port);
-	socket_name(&src_name, src_ip, src_port);
+	/* If no source ip address is given, try :: and 0.0.0.0 (passive). */
+	for (try = 0; try < 2; try++) {
+		/* Resolve the ip addresses. */
+		socket_name(&dest_name, dest_ip ? dest_ip : passive[try], dest_port);
+		socket_name(&src_name, src_ip ? src_ip : passive[try], src_port);
 
-	if (src_ip || src_port) flags |= SOCKET_BIND;
+		if (src_ip || src_port) flags |= SOCKET_BIND;
 
-	if (flags & SOCKET_CLIENT) pfamily = dest_name.family;
-	else if (flags & SOCKET_SERVER) pfamily = src_name.family;
-	else {
-		errno = EADDRNOTAVAIL;
-		return(-1);
+		if (flags & SOCKET_CLIENT) pfamily = dest_name.family;
+		else if (flags & SOCKET_SERVER) pfamily = src_name.family;
+		else {
+			errno = EADDRNOTAVAIL;
+			return(-1);
+		}
+
+		/* Create the socket. */
+		if (flags & SOCKET_UDP) sock = socket(pfamily, SOCK_DGRAM, 0);
+		else sock = socket(pfamily, SOCK_STREAM, 0);
+
+		if (sock >= 0) break;
 	}
-
-	/* Create the socket. */
-	if (flags & SOCKET_UDP) sock = socket(pfamily, SOCK_DGRAM, 0);
-	else sock = socket(pfamily, SOCK_STREAM, 0);
 
 	if (sock < 0) return(-2);
 

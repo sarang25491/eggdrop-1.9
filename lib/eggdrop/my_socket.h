@@ -11,6 +11,7 @@
 int socket_create(const char *dest_ip, int dest_port, const char *src_ip, int src_port, int flags);
 int socket_close(int sock);
 int socket_set_nonblock(int desc, int value);
+int socket_get_name(int sock, char **ip, int *port);
 int socket_get_peer_name(int sock, char **peer_ip, int *peer_port);
 int socket_get_error(int sock);
 int socket_accept(int sock, char **peer_ip, int *peer_port);

@@ -145,12 +145,18 @@ static int script_net_linemode(int idx, int onoff)
 
 static int script_net_handler(int idx, const char *event, script_callback_t *callback)
 {
-	script_net_info_t *info = script_net_info_lookup(idx);
+	script_net_info_t *info;
 	script_callback_t **replace = NULL;
 	const char *newsyntax;
 
-	/* Not a script-controlled idx. */
-	if (!info) return(-1);
+	/* See if it's already script-controlled. */
+	info = script_net_info_lookup(idx);
+	if (!info) {
+		/* Nope, take it over. */
+		script_net_takeover(idx);
+		info = script_net_info_lookup(idx);
+		if (!info) return(-1);
+	}
 
 	if (!strcasecmp(event, "connect")) {
 		replace = &info->on_connect;

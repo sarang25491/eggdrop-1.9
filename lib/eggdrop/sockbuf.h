@@ -67,6 +67,7 @@ int sockbuf_isvalid(int idx);
 int sockbuf_close(int idx);
 int sockbuf_flush(int idx);
 int sockbuf_set_handler(int idx, sockbuf_handler_t *handler, void *client_data);
+int sockbuf_get_sock(int idx);
 int sockbuf_set_sock(int idx, int sock, int flags);
 int sockbuf_attach_listener(int fd);
 int sockbuf_detach_listener(int fd);

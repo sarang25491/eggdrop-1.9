@@ -20,6 +20,7 @@ static server_config_t default_config = {
 	10,	/* cycle delay */
 	6667,	/* default port */
 	30,	/* ping timeout */
+	30,	/* dcc timeout */
 	NULL,	/* user */
 	NULL,	/* real name */
 };
@@ -128,6 +129,8 @@ char *start(eggdrop_t *eggdrop)
 
 	/* Let's wait for the new config system before we redo all this mess. */
 	memcpy(&config, &default_config, sizeof(config));
+	config.user = strdup("user");
+	config.realname = strdup("real name");
 
 	memset(&current_server, 0, sizeof(current_server));
 	current_server.idx = -1;
