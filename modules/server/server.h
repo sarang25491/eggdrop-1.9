@@ -19,7 +19,7 @@ typedef struct {
 
 	int raw_log;
 
-	int ip_lookup;	/* 0 - normal, 1 - server */
+	int ip_lookup;	/* For dcc stuff, 0 - normal, 1 - server */
 } server_config_t;
 
 /* All the stuff we need to know about the currently connected server. */
@@ -39,6 +39,10 @@ typedef struct {
 	/* Information about this server. */
 	char *chantypes;
 	int (*strcmp)(const char *s1, const char *s2);
+
+	/* Our dcc information for this server. */
+	char *myip;
+	unsigned int mylongip;
 } current_server_t;
 
 extern server_config_t server_config;

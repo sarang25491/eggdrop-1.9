@@ -344,7 +344,7 @@ static int got451(char *from_nick, char *from_uhost, user_t *u, char *cmd, int n
 /* Got error */
 static int goterror(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
-	putlog("ms", "*", "-ERROR from server- %s", args[0]);
+	putlog(LOG_MSGS | LOG_SERV, "*", "-ERROR from server- %s", args[0]);
 	putlog(LOG_SERV, "*", "Disconnecting from server.");
 	kill_server("disconnecting due to error");
 	return(0);

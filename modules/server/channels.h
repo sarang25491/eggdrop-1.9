@@ -1,7 +1,8 @@
 #ifndef _CHANNELS_H_
 #define _CHANNELS_H_
 
-typedef struct {
+typedef struct channel_member {
+	struct channel_member *next;
 	char *nick;
 	char *modes;
 	int imode;
@@ -9,7 +10,11 @@ typedef struct {
 
 typedef struct {
 	char *name;
-	char *topic;
+
+	/* Topic. */
+	char *topic, *topic_nick;
+	int topic_time;
+
 	char *modes;
 	int imode;
 	int limit;

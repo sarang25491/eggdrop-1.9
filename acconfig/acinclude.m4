@@ -1,7 +1,7 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.20 2003/03/01 08:25:58 wcc Exp $
+dnl $Id: acinclude.m4,v 1.21 2003/03/03 22:31:46 stdarg Exp $
 dnl
 
 
@@ -1239,7 +1239,14 @@ dnl  EGG_PERLSCRIPT_MODULE
 dnl
 AC_DEFUN(EGG_PERLSCRIPT_MODULE, [dnl
 
+AC_ARG_WITH(perlscript,
+            AC_HELP_STRING([--without-perlscript],
+                           [build without the perl module]),
+                           egg_with_perlscript="$withval", egg_with_perlscript=yes)
 egg_perlscript=no
+
+if test "$egg_with_perlscript" = yes
+then
 
 AC_PATH_PROG(perlcmd, perl)
 PERL_LDFLAGS=`$perlcmd -MExtUtils::Embed -e ldopts 2>/dev/null`
@@ -1258,6 +1265,7 @@ else
   AC_SUBST(PERL_CCFLAGS)
 fi
 
+fi
 AM_CONDITIONAL(EGG_PERLSCRIPT, test "$egg_perlscript" = "yes")
 ])
 

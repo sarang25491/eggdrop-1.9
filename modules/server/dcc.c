@@ -95,14 +95,11 @@ static sockbuf_filter_t dcc_recv_filter = {
 	NULL, dcc_recv_delete
 };
 
-static char *myip = NULL;
-static unsigned int mylongip = 0;
-
 static int dcc_dns_callback(void *client_data, const char *host, const char *ip)
 {
-	if (ip) str_redup(&myip, ip);
-	else str_redup(&myip, "127.0.0.1");
-	socket_ip_to_uint(myip, &mylongip);
+	if (ip) str_redup(&current_server.myip, ip);
+	else str_redup(&current_server.myip, "127.0.0.1");
+	socket_ip_to_uint(current_server.myip, &current_server.mylongip);
 	return(0);
 }
 
@@ -159,7 +156,7 @@ int dcc_start_chat(const char *nick, int timeout)
 	sockbuf_attach_filter(idx, &dcc_chat_filter, (void *)listen->serv);
 	listen->client = idx;
 
-	printserv(SERVER_NORMAL, "PRIVMSG %s :%cDCC CHAT chat %u %d%c", nick, 1, mylongip, listen->port, 1);
+	printserv(SERVER_NORMAL, "PRIVMSG %s :%cDCC CHAT chat %u %d%c", nick, 1, current_server.mylongip, listen->port, 1);
 	return(idx);
 }
 
@@ -279,7 +276,7 @@ int dcc_start_send(const char *nick, const char *fname, int timeout)
 	if (strchr(fname, ' ')) quote = "\"";
 	else quote = "";
 
-	printserv(SERVER_NORMAL, "PRIVMSG %s :%cDCC SEND %s%s%s %u %d %d%c", nick, 1, quote, fname, quote, mylongip, listen->port, size, 1);
+	printserv(SERVER_NORMAL, "PRIVMSG %s :%cDCC SEND %s%s%s %u %d %d%c", nick, 1, quote, fname, quote, current_server.mylongip, listen->port, size, 1);
 	return(idx);
 }
 

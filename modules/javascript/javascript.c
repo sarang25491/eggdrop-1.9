@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: javascript.c,v 1.15 2003/01/02 21:33:15 wcc Exp $";
+static const char rcsid[] = "$Id: javascript.c,v 1.16 2003/03/03 22:31:46 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -32,8 +32,6 @@ static const char rcsid[] = "$Id: javascript.c,v 1.15 2003/01/02 21:33:15 wcc Ex
 #include <jsapi.h>
 
 #include "lib/eggdrop/module.h"
-#include "lib/egglib/mstack.h"
-#include "lib/egglib/msprintf.h"
 #include <eggdrop/eggdrop.h>
 
 #define MODULE_NAME "javascript"
@@ -220,7 +218,7 @@ static int my_link_var(void *ignore, script_linked_var_t *var)
 	char *varname;
 	JSObject *obj;
 
-	if (var->class && strlen(var->class)) varname = msprintf("%s(%s)", var->class, var->name);
+	if (var->class && strlen(var->class)) varname = egg_mprintf("%s(%s)", var->class, var->name);
 	else varname = strdup(var->name);
 
 	obj = JS_DefineObject(global_js_context, global_js_object,
@@ -244,7 +242,7 @@ static int my_unlink_var(void *ignore, script_linked_var_t *var)
 {
 	char *varname;
 
-	if (var->class && strlen(var->class)) varname = msprintf("%s(%s)", var->class, var->name);
+	if (var->class && strlen(var->class)) varname = egg_mprintf("%s(%s)", var->class, var->name);
 	else varname = strdup(var->name);
 
 	JS_DeleteProperty(global_js_context, global_js_object, varname);
@@ -338,7 +336,7 @@ static int my_create_command(void *ignore, script_raw_command_t *info)
 	JSObject *obj;
 
 	if (info->class && strlen(info->class)) {
-		cmdname = msprintf("%s_%s", info->class, info->name);
+		cmdname = egg_mprintf("%s_%s", info->class, info->name);
 	}
 	else {
 		cmdname = strdup(info->name);
@@ -362,7 +360,7 @@ static int my_delete_command(void *ignore, script_raw_command_t *info)
 	char *cmdname;
 
 	if (info->class && strlen(info->class)) {
-		cmdname = msprintf("%s_%s", info->class, info->name);
+		cmdname = egg_mprintf("%s_%s", info->class, info->name);
 	}
 	else {
 		cmdname = strdup(info->name);
@@ -638,32 +636,32 @@ static int javascript_init()
 	return(0);
 }
 
-/* Here we process the dcc console .tcl command. */
-static int cmd_js(struct userrec *u, int idx, char *text)
+/* Here we process the dcc console .js command. */
+static int party_js(int pid, char *nick, user_t *u, char *cmd, char *text)
 {
 	static int curline = 1;
 	int retval;
 	jsval js_rval;
 
-	if (!isowner(dcc[idx].nick)) {
-		dprintf(idx, _("You must be a permanent owner (defined in the config file) to use this command.\n"));
+	if (!u || owner_check(u->handle)) {
+		partyline_write(pid, _("You must be a permanent owner (defined in the config file) to use this command.\n"));
 		return(BIND_RET_LOG);
 	}
 
 	retval = JS_EvaluateScript(global_js_context, global_js_object,
 			text, strlen(text), "console", curline++, &js_rval);
 	if (!retval) {
-		dprintf(idx, "JS Error: unknown for now\n");
+		partyline_printf(pid, "JS Error: unknown for now\n");
 	}
 	else {
 		JSString *str;
 
 		str = JS_ValueToString(global_js_context, js_rval);
 		if (!str) {
-			dprintf(idx, "JS:\n");
+			partyline_printf(pid, "JS:\n");
 		}
 		else {
-			dprintf(idx, "JS: %s\n", JS_GetStringBytes(str));
+			partyline_printf(pid, "JS: %s\n", JS_GetStringBytes(str));
 		}
 	}
 	return(0);
@@ -685,8 +683,8 @@ static void javascript_report(int idx, int details)
 	dprintf(idx, "    Using JavaScript version %s\n", version_str);
 }
 
-static bind_list_t dcc_commands[] = {
-	{"js", (Function) cmd_js},
+static bind_list_t party_commands[] = {
+	{"js", party_js},
 	{0}
 };
 
@@ -717,7 +715,7 @@ char *javascript_LTX_start(eggdrop_t *eggdrop)
 	script_register_module(&my_script_interface);
 	script_playback(&my_script_interface);
 
-	bind_add_list("dcc", dcc_commands);
+	bind_add_list("party", party_commands);
 
 	return(NULL);
 }
@@ -729,7 +727,7 @@ static char *javascript_close()
 
 	script_unregister_module(&my_script_interface);
 
-	bind_rem_list("dcc", dcc_commands);
+	bind_rem_list("party", party_commands);
 
 	module_undepend("javascript");
 	return(NULL);

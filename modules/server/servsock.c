@@ -9,6 +9,7 @@
 #include "nicklist.h"
 #include "output.h"
 #include "binds.h"
+#include "dcc.h"
 
 /* From server.c. */
 extern int cycle_delay;
@@ -107,6 +108,18 @@ static int server_on_eof(void *client_data, int idx, int err, const char *errmsg
 
 static int server_on_connect(void *client_data, int idx, const char *peer_ip, int peer_port)
 {
+	/* If ip_lookup is 0, then we get our ip address from the socket we used
+	 * to connect to the server. If it's 1, it's handled in got001(). */
+	if (server_config.ip_lookup == 0) {
+		int sock;
+		char *ip;
+
+		sock = sockbuf_get_sock(idx);
+		socket_get_name(sock, &ip, NULL);
+		dcc_dns_set(ip);
+		free(ip);
+	}
+
 	linemode_on(current_server.idx);
 
 	current_server.connected = 1;
