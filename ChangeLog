@@ -1,3 +1,28 @@
+2001-08-19 08:49  stdarg
+
+	* doc/tcl-commands.doc:
+
+	Changed <arg> to <rest> in the binding part so that people won't be
+	tempted to name it "args" 
+
+2001-08-19 08:42  Matthew Hallacy <poptix@techmonkeys.org>
+
+	* doc/tcl-commands.doc:
+
+	
+	
+	doc fixes for SIGN 
+
+2001-08-19 08:33  Matthew Hallacy <poptix@techmonkeys.org>
+
+	* src/mod/irc.mod/chan.c:
+
+	
+	
+	fixed the SIGN and SPLT binds not properly looking up users, now you
+	can bind with flags, as well as getting the handle of the user in
+	the $hand 
+
 2001-08-19 02:49  Dobos Lorant <drummer@buli.sk>
 
 	* src/: net.c, proto.h:
