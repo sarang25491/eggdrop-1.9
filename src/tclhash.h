@@ -1,7 +1,7 @@
 /*
  * tclhash.h
  *
- * $Id: tclhash.h,v 1.14 2001/09/28 03:15:34 stdarg Exp $
+ * $Id: tclhash.h,v 1.15 2001/09/30 04:27:38 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -34,6 +34,7 @@
 
 /* Flags for bind tables */
 #define BIND_STRICT_ATTR 0x80
+#define BIND_BREAKABLE 0x100
 
 /* Will replace tcl_cmd_t */
 /* This holds the final information for a function listening on a bind

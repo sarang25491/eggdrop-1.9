@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.36 2001/09/28 03:15:34 stdarg Exp $
+ * $Id: tclhash.c,v 1.37 2001/09/30 04:27:38 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -46,6 +46,7 @@ static bind_table_t *BT_link;
 static bind_table_t *BT_disc;
 static bind_table_t *BT_away;
 static bind_table_t *BT_time;
+static bind_table_t *BT_dcc;
 
 p_tcl_bind_list		bind_table_list;
 p_tcl_bind_list		H_chat, H_act, H_bcst, H_chon, H_chof,
@@ -234,6 +235,8 @@ void init_bind2(void)
 	BT_disc = add_bind_table2("disc", 1, "s", MATCH_MASK, BIND_STACKABLE);
 	BT_away = add_bind_table2("away", 3, "sis", MATCH_MASK, BIND_STACKABLE);
 	BT_time = add_bind_table2("time", 5, "iiiii", MATCH_MASK, BIND_STACKABLE);
+	BT_dcc = add_bind_table2("dcc", 3, "sis", MATCH_MASK, BIND_USE_ATTR);
+	add_builtins2(BT_dcc, C_dcc);
 }
 
 void init_bind(void)
@@ -261,13 +264,12 @@ void init_bind(void)
   H_away = add_bind_table("away", HT_STACKABLE, builtin_chat);
   H_act = add_bind_table("act", HT_STACKABLE, builtin_chat);
   H_event = add_bind_table("evnt", HT_STACKABLE, builtin_char);
-  add_builtins(H_dcc, C_dcc);
+  /* add_builtins(H_dcc, C_dcc); */
   Context;
 }
 
 void kill_bind2(void)
 {
-	rem_builtins(H_dcc, C_dcc);
 	while (bind_table_list_head) del_bind_table2(bind_table_list_head);
 }
 
@@ -275,7 +277,9 @@ void kill_bind(void)
 {
   tcl_bind_list_t	*tl, *tl_next;
 
-  rem_builtins(H_dcc, C_dcc);
+  /* rem_builtins(H_dcc, C_dcc); */
+  rem_builtins2(BT_dcc, C_dcc);
+
   for (tl = bind_table_list; tl; tl = tl_next) {
     tl_next = tl->next;
 
@@ -518,9 +522,9 @@ int add_bind_entry(bind_table_t *table, const char *flags, const char *mask, con
 	}
 
 	/* If we have an old entry, re-use it. */
-	/* Otherwise, create a new entry. */
 	if (entry) nfree(entry->function_name);
 	else {
+		/* Otherwise, create a new entry. */
 		entry = (bind_entry_t *)nmalloc(sizeof(*entry));
 		entry->next = chain->entries;
 		chain->entries = entry;
@@ -924,6 +928,9 @@ int check_bind(bind_table_t *table, const char *match, struct flag_record *_flag
 	/* Keep track of how many binds execute (or would) */
 	hits = 0;
 
+	/* Default return value is 0 */
+	r = 0;
+
 	/* For each chain in the table... */
 	for (chain = table->chains; chain; chain = chain->next) {
 		/* Test to see if it matches. */
@@ -961,6 +968,9 @@ int check_bind(bind_table_t *table, const char *match, struct flag_record *_flag
 			}
 			else al++;
 
+			/* Default return value is 0. */
+			r = 0;
+
 			switch (table->nargs) {
 				case 0: r = cb(); break;
 				case 1: r = cb(al[0]); break;
@@ -969,13 +979,18 @@ int check_bind(bind_table_t *table, const char *match, struct flag_record *_flag
 				case 4: r = cb(al[0], al[1], al[2], al[3]); break;
 				case 5: r = cb(al[0], al[1], al[2], al[3], al[4]); break;
 				case 6: r = cb(al[0], al[1], al[2], al[3], al[4], al[5]); break;
+				case 7: r = cb(al[0], al[1], al[2], al[3], al[4], al[5], al[6]);
+				case 8: r = cb(al[0], al[1], al[2], al[3], al[4], al[5], al[6], al[7]);
 			}
 
 			if (entry->bind_flags & BIND_WANTS_CD) table->nargs--;
 			else al--;
+
+			if (table->flags & BIND_BREAKABLE & r) break;
 		}
+		if (table->flags & BIND_BREAKABLE & r) break;
 	}
-	return(0);
+	return(r);
 }
 
 int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
@@ -1119,6 +1134,7 @@ int check_tcl_dcc(const char *cmd, int idx, const char *args)
   char			s[11];
 
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.chat->con_chan);
+
   egg_snprintf(s, sizeof s, "%ld", dcc[idx].sock);
   Tcl_SetVar(interp, "_dcc1", (char *) dcc[idx].nick, 0);
   Tcl_SetVar(interp, "_dcc2", (char *) s, 0);
@@ -1130,7 +1146,11 @@ int check_tcl_dcc(const char *cmd, int idx, const char *args)
     return 0;
   }
   if (x == BIND_NOMATCH) {
-    dprintf(idx, _("What?  You need .help\n"));
+    /* Temporary fix for special-case quit command. */
+    /* Later I'll fix the real quit command so that it's not special. */
+    if (!strcmp(cmd, "quit")) return(1);
+    /* Check the new bind table. */
+    check_bind(BT_dcc, cmd, &fr, dcc[idx].user, idx, args);
     return 0;
   }
   if (x == BIND_EXEC_BRK)

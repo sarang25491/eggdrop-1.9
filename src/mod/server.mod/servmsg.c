@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.65 2001/09/28 03:15:35 stdarg Exp $
+ * $Id: servmsg.c,v 1.66 2001/09/30 04:27:38 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -126,7 +126,7 @@ static void check_tcl_notc(char *nick, char *uhost, struct userrec *u,
   if (u) hand = u->handle;
   else hand = "*";
 
-  check_bind(BT_notc, arg, &fr, nick, uhost, hand, arg, dest);
+  check_bind(BT_notice, arg, &fr, nick, uhost, hand, arg, dest);
 
   Tcl_SetVar(interp, "_notc1", nick, 0);
   Tcl_SetVar(interp, "_notc2", uhost, 0);
@@ -183,13 +183,23 @@ static int check_tcl_ctcpr(char *nick, char *uhost, struct userrec *u,
 			   char *dest, char *keyword, char *args,
 			   p_tcl_bind_list table)
 {
+  bind_table_t *bt_table;
   struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
   int x;
+  char *hand;
 
   get_user_flagrec(u, &fr, NULL);
+  if (u) hand = u->handle;
+  else hand = "*";
+
+  if (table == H_ctcp) bt_table = BT_ctcp;
+  else bt_table = BT_ctcr;
+
+  check_bind(bt_table, keyword, &fr, nick, uhost, hand, dest, keyword, args);
+
   Tcl_SetVar(interp, "_ctcpr1", nick, 0);
   Tcl_SetVar(interp, "_ctcpr2", uhost, 0);
-  Tcl_SetVar(interp, "_ctcpr3", u ? u->handle : "*", 0);
+  Tcl_SetVar(interp, "_ctcpr3", hand, 0);
   Tcl_SetVar(interp, "_ctcpr4", dest, 0);
   Tcl_SetVar(interp, "_ctcpr5", keyword, 0);
   Tcl_SetVar(interp, "_ctcpr6", args, 0);
@@ -221,10 +231,16 @@ static int check_tcl_flud(char *nick, char *uhost, struct userrec *u,
 			  char *ftype, char *chname)
 {
   int x;
+  char *hand;
+
+  if (u) hand = u->handle;
+  else hand = "*";
+
+  check_bind(BT_flood, ftype, NULL, nick, uhost, hand, ftype, chname);
 
   Tcl_SetVar(interp, "_flud1", nick, 0);
   Tcl_SetVar(interp, "_flud2", uhost, 0);
-  Tcl_SetVar(interp, "_flud3", u ? u->handle : "*", 0);
+  Tcl_SetVar(interp, "_flud3", hand, 0);
   Tcl_SetVar(interp, "_flud4", ftype, 0);
   Tcl_SetVar(interp, "_flud5", chname, 0);
   x = check_tcl_bind(H_flud, ftype, 0,
@@ -1249,7 +1265,7 @@ static void server_resolve_success(int servidx)
     if (pass[0])
       dprintf(DP_MODE, "PASS %s\n", pass);
     dprintf(DP_MODE, "NICK %s\n", botname);
-    dprintf(DP_MODE, "USER %s . . :%s\n", botuser, botrealname);
+    dprintf(DP_MODE, "USER %s localhost %s :%s\n", botuser, dcc[servidx].host, botrealname);
     /* Wait for async result now */
   }
 }

@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.79 2001/09/28 03:15:35 stdarg Exp $
+ * $Id: server.c,v 1.80 2001/09/30 04:27:38 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -95,6 +95,8 @@ static int optimize_kicks;
 static p_tcl_bind_list H_wall, H_raw, H_notc, H_msgm, H_msg, H_flud,
 		       H_ctcr, H_ctcp;
 
+static p_tcl_bind_list my_H_dcc; /* Imported from core */
+
 static void empty_msgq(void);
 static void next_server(int *, char *, unsigned int *, char *);
 static void disconnect_server(int);
@@ -109,7 +111,11 @@ static int deq_kick(int);
 static void msgq_clear(struct msgq_head *qh);
 
 /* New bind tables. */
-static bind_table_t *BT_wall, *BT_raw, *BT_notc, *BT_msg, *BT_msgm;
+static bind_table_t *BT_wall, *BT_raw, *BT_notice, *BT_msg, *BT_msgm;
+static bind_table_t *BT_flood, *BT_ctcr, *BT_ctcp;
+
+/* Imported bind tables. */
+static bind_table_t *BT_dcc;
 
 #include "servmsg.c"
 
@@ -1677,12 +1683,15 @@ static char *server_close()
   cycle_time = 100;
   nuke_server("Connection reset by peer");
   clearq(serverlist);
-  rem_builtins(H_dcc, C_dcc_serv);
 
+  /* rem_builtins(my_H_dcc, C_dcc_serv); */
   /* rem_builtins(H_raw, my_raw_binds); */
-  rem_builtins2(BT_raw, my_raw_binds);
+  /* rem_builtins(H_ctcp, my_ctcps); */
 
-  rem_builtins(H_ctcp, my_ctcps);
+  rem_builtins2(BT_dcc, C_dcc_serv);
+  rem_builtins2(BT_raw, my_raw_binds);
+  rem_builtins2(BT_ctcp, my_ctcps);
+
   /* Restore original commands. */
   del_bind_table(H_wall);
   del_bind_table(H_raw);
@@ -1870,12 +1879,20 @@ char *server_start(Function *global_funcs)
 	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 	       traced_nicklen, NULL);
 
+	/* Create our own bind tables. */
 	BT_wall = add_bind_table2("wall", 2, "ss", MATCH_MASK, BIND_STACKABLE);
 	BT_raw = add_bind_table2("raw", 3, "sss", MATCH_MASK, BIND_STACKABLE);
-	BT_notc = add_bind_table2("notc", 5, "sssss", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
+	BT_notice = add_bind_table2("notice", 5, "sssss", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
 	BT_msg = add_bind_table2("msg", 4, "ssss", 0, BIND_USE_ATTR);
 	BT_msgm = add_bind_table2("msgm", 4, "ssss", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
+	BT_flood = add_bind_table2("flood", 5, "sssss", MATCH_MASK, BIND_STACKABLE);
+	BT_ctcr = add_bind_table2("ctcr", 6, "ssssss", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
+	BT_ctcp = add_bind_table2("ctcp", 6, "ssssss", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
 
+	/* Import bind tables. */
+	BT_dcc = find_bind_table2("dcc");
+
+  /* Create the old tables for compatibility (temporary). */
   H_wall = add_bind_table("wall", HT_STACKABLE, server_2char);
   H_raw = add_bind_table("raw", HT_STACKABLE, server_raw);
   H_notc = add_bind_table("notc", HT_STACKABLE, server_6char);
@@ -1886,10 +1903,12 @@ char *server_start(Function *global_funcs)
   H_ctcp = add_bind_table("ctcp", HT_STACKABLE, server_6char);
 
   /* add_builtins(H_raw, my_raw_binds); */
+  /* add_builtins(H_ctcp, my_ctcps); */
+  /* add_builtins(H_dcc, C_dcc_serv); */
   add_builtins2(BT_raw, my_raw_binds);
+  add_builtins2(BT_ctcp, my_ctcps);
+  add_builtins2(BT_dcc, C_dcc_serv);
 
-  add_builtins(H_dcc, C_dcc_serv);
-  add_builtins(H_ctcp, my_ctcps);
   add_help_reference("server.help");
   my_tcl_strings[0].buf = botname;
   add_tcl_strings(my_tcl_strings);
