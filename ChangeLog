@@ -1,3 +1,14 @@
+2003-02-14 07:06  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/eggconfig.c, lib/eggdrop/eggconfig.h,
+	lib/eggdrop/eggdrop.h, lib/eggdrop/egglog.h, lib/eggdrop/script.c,
+	lib/eggdrop/script.h, modules/script/Makefile.am,
+	modules/script/scriptconfig.c, modules/script/scriptlog.c,
+	modules/script/scriptmod.c, src/core_config.c:
+
+	
+	* Initial scripting support for config.  
+
 2003-02-12 08:42  Will Buckner <wcc@techmonkeys.org>
 
 	* eggdrop.conf, modules/channels/channels.c,
