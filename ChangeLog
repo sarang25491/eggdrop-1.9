@@ -1,3 +1,10 @@
+2001-12-01 16:03  Federico Mennite <ite@techmonkeys.org>
+
+	* src/tcluser.c:
+
+	Fixed more potential crashes in src/tcluser.c. Patch by Matthew
+	Hallacy <poptix@techmonkeys.org> 
+
 2001-12-01 15:44  Federico Mennite <ite@techmonkeys.org>
 
 	* doc/tcl-commands.doc:
