@@ -1,3 +1,10 @@
+2001-12-09 03:55  stdarg <stdarg@techmonkeys.org>
+
+	* src/: main.c, modules.c, tcl.c, tclhash.c, tclhash.h, tclmisc.c:
+
+	
+	* Converted more tcl commands to language-independence.  
+
 2001-12-08 21:16  Tothwolf <tothwolf@techmonkeys.org>
 
 	* doc/UPDATES1.6:
