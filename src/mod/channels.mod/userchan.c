@@ -1,7 +1,7 @@
 /*
  * userchan.c -- part of channels.mod
  *
- * $Id: userchan.c,v 1.30 2001/10/14 11:08:10 tothwolf Exp $
+ * $Id: userchan.c,v 1.31 2001/10/14 13:50:30 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -725,15 +725,16 @@ static void display_invite (int idx, int number, maskrec *invite,
 
 static void tell_bans(int idx, int show_inact, char *match)
 {
+  char *p = NULL, *chname;
   int k = 1;
-  char *chname;
   struct chanset_t *chan = NULL;
   maskrec *u;
 
   /* Was a channel given? */
   if (match[0]) {
-    chname = newsplit(&match);
-    if (chname[0] && (strchr(CHANMETA, chname[0]) != NULL)) {
+    p = strdup(match);
+    chname = strtok(p, " ");
+    if (chname && (strchr(CHANMETA, chname[0]))) {
       chan = findchan_by_dname(chname);
       if (!chan) {
 	dprintf(idx, "%s.\n", _("No such channel defined"));
@@ -741,11 +742,16 @@ static void tell_bans(int idx, int show_inact, char *match)
       }
     } else
       match = chname;
+    if (p)
+      free_null(p);
   }
+
+  /* don't return here, we want to show global bans even if no chan */
   if (!chan && !(chan = findchan_by_dname(dcc[idx].u.chat->con_chan)) &&
       !(chan = chanset))
-    return;
-  if (show_inact)
+    chan = NULL;
+
+  if (chan && show_inact)
     dprintf(idx, "%s:   (! = %s %s)\n", _("Global bans"),
 	    _("not active on"), chan->dname);
   else
@@ -760,47 +766,49 @@ static void tell_bans(int idx, int show_inact, char *match)
     } else
       display_ban(idx, k++, u, chan, show_inact);
   }
-  if (show_inact)
-    dprintf(idx, _("Channel bans for %s:   (! = not active, * = not placed by bot)\n"),
-	    chan->dname);
-  else
-    dprintf(idx, _("Channel bans for %s:  (* = not placed by bot)\n"),
-	    chan->dname);
-  for (u = chan->bans; u; u = u->next) {
-    if (match[0]) {
-      if ((wild_match(match, u->mask)) ||
-	  (wild_match(match, u->desc)) ||
-	  (wild_match(match, u->user)))
-	display_ban(idx, k, u, chan, 1);
-      k++;
-    } else
-      display_ban(idx, k++, u, chan, show_inact);
-  }
-  if (chan->status & CHAN_ACTIVE) {
-    masklist *b;
-    /* FIXME: possible buffer overflow in fill[] */
-    char buf[UHOSTLEN], *nick, *uhost, fill[UHOSTLEN * 2];
-    int min, sec;
-
-    for (b = chan->channel.ban; b && b->mask[0]; b = b->next) {    
-      if ((!u_equals_mask(global_bans, b->mask)) &&
-	  (!u_equals_mask(chan->bans, b->mask))) {
-	strncpyz(buf, b->who, sizeof buf);
-	nick = strtok(buf, "!");
-	uhost = strtok(NULL, "!");
-	if (nick)
-	  sprintf(fill, "%s (%s!%s)", b->mask, nick, uhost);
-	else
-	  sprintf(fill, "%s (server %s)", b->mask, uhost);
-	if (b->timer != 0) {
-	  min = (now - b->timer) / 60;
-	  sec = (now - b->timer) - (min * 60);
-	  sprintf(buf, " (active %02d:%02d)", min, sec);
-	  strcat(fill, buf);
-	}
-	if ((!match[0]) || (wild_match(match, b->mask)))
-	  dprintf(idx, "* [%3d] %s\n", k, fill);
+  if (chan) {
+    if (show_inact)
+      dprintf(idx, _("Channel bans for %s:   (! = not active, * = not placed by bot)\n"),
+	      chan->dname);
+    else
+      dprintf(idx, _("Channel bans for %s:  (* = not placed by bot)\n"),
+	      chan->dname);
+    for (u = chan->bans; u; u = u->next) {
+      if (match[0]) {
+        if ((wild_match(match, u->mask)) ||
+  	    (wild_match(match, u->desc)) ||
+	    (wild_match(match, u->user)))
+	  display_ban(idx, k, u, chan, 1);
 	k++;
+      } else
+	display_ban(idx, k++, u, chan, show_inact);
+    }
+    if (chan->status & CHAN_ACTIVE) {
+      masklist *b;
+      /* FIXME: possible buffer overflow in fill[] */
+      char buf[UHOSTLEN], *nick, *uhost, fill[UHOSTLEN * 2];
+      int min, sec;
+
+      for (b = chan->channel.ban; b && b->mask[0]; b = b->next) {    
+	if ((!u_equals_mask(global_bans, b->mask)) &&
+	    (!u_equals_mask(chan->bans, b->mask))) {
+	  strncpyz(buf, b->who, sizeof buf);
+	  nick = strtok(buf, "!");
+	  uhost = strtok(NULL, "!");
+	  if (nick)
+	    sprintf(fill, "%s (%s!%s)", b->mask, nick, uhost);
+	  else
+	    sprintf(fill, "%s (server %s)", b->mask, uhost);
+	  if (b->timer != 0) {
+	    min = (now - b->timer) / 60;
+	    sec = (now - b->timer) - (min * 60);
+	    sprintf(buf, " (active %02d:%02d)", min, sec);
+	    strcat(fill, buf);
+	  }
+	  if ((!match[0]) || (wild_match(match, b->mask)))
+	    dprintf(idx, "* [%3d] %s\n", k, fill);
+	  k++;
+	}
       }
     }
   }
@@ -812,15 +820,16 @@ static void tell_bans(int idx, int show_inact, char *match)
 
 static void tell_exempts(int idx, int show_inact, char *match)
 {
+  char *p = NULL, *chname;
   int k = 1;
-  char *chname;
   struct chanset_t *chan = NULL;
   maskrec *u;
 
   /* Was a channel given? */
   if (match[0]) {
-    chname = newsplit(&match);
-    if (chname[0] && strchr(CHANMETA, chname[0])) {
+    p = strdup(match);
+    chname = strtok(p, " ");
+    if (chname && (strchr(CHANMETA, chname[0]))) {
       chan = findchan_by_dname(chname);
       if (!chan) {
 	dprintf(idx, _("No such channel defined.\n"));
@@ -828,11 +837,16 @@ static void tell_exempts(int idx, int show_inact, char *match)
       }
     } else
       match = chname;
+    if (p)
+      free_null(p);
   }
+
+  /* don't return here, we want to show global exempts even if no chan */
   if (!chan && !(chan = findchan_by_dname(dcc[idx].u.chat->con_chan))
       && !(chan = chanset))
-    return;
-  if (show_inact)
+    chan = NULL;
+
+  if (chan && show_inact)
     dprintf(idx, "%s:   (! = %s %s)\n", _("Global exempts"),
 	    _("not active on"), chan->dname);
   else
@@ -847,50 +861,52 @@ static void tell_exempts(int idx, int show_inact, char *match)
     } else
       display_exempt(idx, k++, u, chan, show_inact);
   }
-  if (show_inact)
-    dprintf(idx, "%s %s:   (! = %s, * = %s)\n",
-	    _("Channel exempts for"), chan->dname,
-	    _("not active"),
-	    _("not placed by bot"));
-  else
-    dprintf(idx, "%s %s:  (* = %s)\n",
-	    _("Channel exempts for"), chan->dname,
-	    _("not placed by bot"));
-  for (u = chan->exempts; u; u = u->next) {
-    if (match[0]) {
-      if ((wild_match(match, u->mask)) ||
-	  (wild_match(match, u->desc)) ||
-	  (wild_match(match, u->user)))
-	display_exempt(idx, k, u, chan, 1);
-      k++;
-    } else
-      display_exempt(idx, k++, u, chan, show_inact);
-  }
-  if (chan->status & CHAN_ACTIVE) {
-    masklist *e;
-    /* FIXME: possible buffer overflow in fill[] */
-    char buf[UHOSTLEN], *nick, *uhost, fill[UHOSTLEN * 2];
-    int min, sec;
-
-    for (e = chan->channel.exempt; e && e->mask[0]; e = e->next) {
-      if ((!u_equals_mask(global_exempts,e->mask)) &&
-	  (!u_equals_mask(chan->exempts, e->mask))) {
-	strncpyz(buf, e->who, sizeof buf);
-	nick = strtok(buf, "!");
-	uhost = strtok(NULL, "!");
-	if (nick)
-	  sprintf(fill, "%s (%s!%s)", e->mask, nick, uhost);
-	else
-	  sprintf(fill, "%s (server %s)", e->mask, uhost);
-	if (e->timer != 0) {
-	  min = (now - e->timer) / 60;
-	  sec = (now - e->timer) - (min * 60);
-	  sprintf(buf, " (active %02d:%02d)", min, sec);
-	  strcat(fill, buf);
-	}
-	if ((!match[0]) || (wild_match(match, e->mask)))
-	  dprintf(idx, "* [%3d] %s\n", k, fill);
+  if (chan) {
+    if (show_inact)
+      dprintf(idx, "%s %s:   (! = %s, * = %s)\n",
+	      _("Channel exempts for"), chan->dname,
+	      _("not active"),
+	      _("not placed by bot"));
+    else
+      dprintf(idx, "%s %s:  (* = %s)\n",
+	      _("Channel exempts for"), chan->dname,
+	      _("not placed by bot"));
+    for (u = chan->exempts; u; u = u->next) {
+      if (match[0]) {
+	if ((wild_match(match, u->mask)) ||
+	    (wild_match(match, u->desc)) ||
+	    (wild_match(match, u->user)))
+	  display_exempt(idx, k, u, chan, 1);
 	k++;
+      } else
+	display_exempt(idx, k++, u, chan, show_inact);
+    }
+    if (chan->status & CHAN_ACTIVE) {
+      masklist *e;
+      /* FIXME: possible buffer overflow in fill[] */
+      char buf[UHOSTLEN], *nick, *uhost, fill[UHOSTLEN * 2];
+      int min, sec;
+
+      for (e = chan->channel.exempt; e && e->mask[0]; e = e->next) {
+	if ((!u_equals_mask(global_exempts,e->mask)) &&
+	    (!u_equals_mask(chan->exempts, e->mask))) {
+	  strncpyz(buf, e->who, sizeof buf);
+	  nick = strtok(buf, "!");
+	  uhost = strtok(NULL, "!");
+	  if (nick)
+	    sprintf(fill, "%s (%s!%s)", e->mask, nick, uhost);
+	  else
+	    sprintf(fill, "%s (server %s)", e->mask, uhost);
+	  if (e->timer != 0) {
+	    min = (now - e->timer) / 60;
+	    sec = (now - e->timer) - (min * 60);
+	    sprintf(buf, " (active %02d:%02d)", min, sec);
+	    strcat(fill, buf);
+	  }
+	  if ((!match[0]) || (wild_match(match, e->mask)))
+	    dprintf(idx, "* [%3d] %s\n", k, fill);
+	  k++;
+	}
       }
     }
   }
@@ -902,15 +918,16 @@ static void tell_exempts(int idx, int show_inact, char *match)
 
 static void tell_invites(int idx, int show_inact, char *match)
 {
+  char *p = NULL, *chname;
   int k = 1;
-  char *chname;
   struct chanset_t *chan = NULL;
   maskrec *u;
 
   /* Was a channel given? */
   if (match[0]) {
-    chname = newsplit(&match);
-    if (chname[0] && strchr(CHANMETA, chname[0])) {
+    p = strdup(match);
+    chname = strtok(p, " ");
+    if (chname && (strchr(CHANMETA, chname[0]))) {
       chan = findchan_by_dname(chname);
       if (!chan) {
 	dprintf(idx, "%s.\n", _("No such channel defined"));
@@ -918,11 +935,16 @@ static void tell_invites(int idx, int show_inact, char *match)
       }
     } else
       match = chname;
+    if (p)
+      free_null(p);
   }
+
+  /* don't return here, we want to show global invites even if no chan */
   if (!chan && !(chan = findchan_by_dname(dcc[idx].u.chat->con_chan))
       && !(chan = chanset))
-    return;
-  if (show_inact)
+    chan = NULL;
+
+  if (chan && show_inact)
     dprintf(idx, "%s:   (! = %s %s)\n", _("Global invites"),
 	    _("not active on"), chan->dname);
   else
@@ -937,50 +959,52 @@ static void tell_invites(int idx, int show_inact, char *match)
     } else
       display_invite(idx, k++, u, chan, show_inact);
   }
-  if (show_inact)
-    dprintf(idx, "%s %s:   (! = %s, * = %s)\n",
-	    _("Channel invites for"), chan->dname,
-	    _("not active"),
-	    _("not placed by bot"));
-  else
-    dprintf(idx, "%s %s:  (* = %s)\n",
-	    _("Channel invites for"), chan->dname,
-	    _("not placed by bot"));
-  for (u = chan->invites; u; u = u->next) {
-    if (match[0]) {
-      if ((wild_match(match, u->mask)) ||
-	  (wild_match(match, u->desc)) ||
-	  (wild_match(match, u->user)))
-	display_invite(idx, k, u, chan, 1);
-      k++;
-    } else
-      display_invite(idx, k++, u, chan, show_inact);
-  }
-  if (chan->status & CHAN_ACTIVE) {
-    masklist *i;
-    /* FIXME: possible buffer overflow in fill[] */
-    char buf[UHOSTLEN], *nick, *uhost, fill[UHOSTLEN * 2];
-    int min, sec;
-
-    for (i = chan->channel.invite; i && i->mask[0]; i = i->next) {
-      if ((!u_equals_mask(global_invites,i->mask)) &&
-	  (!u_equals_mask(chan->invites, i->mask))) {
-	strncpyz(buf, i->who, sizeof buf);
-	nick = strtok(buf, "!");
-	uhost = strtok(NULL, "!");
-	if (nick)
-	  sprintf(fill, "%s (%s!%s)", i->mask, nick, uhost);
-	else
-	  sprintf(fill, "%s (server %s)", i->mask, uhost);
-	if (i->timer != 0) {
-	  min = (now - i->timer) / 60;
-	  sec = (now - i->timer) - (min * 60);
-	  sprintf(buf, " (active %02d:%02d)", min, sec);
-	  strcat(fill, buf);
-	}
-	if ((!match[0]) || (wild_match(match, i->mask)))
-	  dprintf(idx, "* [%3d] %s\n", k, fill);
+  if (chan) {
+    if (show_inact)
+      dprintf(idx, "%s %s:   (! = %s, * = %s)\n",
+	      _("Channel invites for"), chan->dname,
+	      _("not active"),
+	      _("not placed by bot"));
+    else
+      dprintf(idx, "%s %s:  (* = %s)\n",
+	      _("Channel invites for"), chan->dname,
+	      _("not placed by bot"));
+    for (u = chan->invites; u; u = u->next) {
+      if (match[0]) {
+	if ((wild_match(match, u->mask)) ||
+	    (wild_match(match, u->desc)) ||
+	    (wild_match(match, u->user)))
+	  display_invite(idx, k, u, chan, 1);
 	k++;
+      } else
+	display_invite(idx, k++, u, chan, show_inact);
+    }
+    if (chan->status & CHAN_ACTIVE) {
+      masklist *i;
+      /* FIXME: possible buffer overflow in fill[] */
+      char buf[UHOSTLEN], *nick, *uhost, fill[UHOSTLEN * 2];
+      int min, sec;
+
+      for (i = chan->channel.invite; i && i->mask[0]; i = i->next) {
+	if ((!u_equals_mask(global_invites,i->mask)) &&
+	    (!u_equals_mask(chan->invites, i->mask))) {
+	  strncpyz(buf, i->who, sizeof buf);
+	  nick = strtok(buf, "!");
+	  uhost = strtok(NULL, "!");
+	  if (nick)
+	    sprintf(fill, "%s (%s!%s)", i->mask, nick, uhost);
+	  else
+	    sprintf(fill, "%s (server %s)", i->mask, uhost);
+	  if (i->timer != 0) {
+	    min = (now - i->timer) / 60;
+	    sec = (now - i->timer) - (min * 60);
+	    sprintf(buf, " (active %02d:%02d)", min, sec);
+	    strcat(fill, buf);
+	  }
+	  if ((!match[0]) || (wild_match(match, i->mask)))
+	    dprintf(idx, "* [%3d] %s\n", k, fill);
+	  k++;
+	}
       }
     }
   }
