@@ -1,3 +1,24 @@
+2001-10-14 04:46  stdarg <stdarg@techmonkeys.org>
+
+	* src/mod/tclscript.mod/: Makefile.am, tclscript.c:
+
+	Oops forgot to add Makefile.am and tclscript.c 
+
+2001-10-14 04:44  stdarg <stdarg@techmonkeys.org>
+
+	* configure.in, src/Makefile.am, src/main.c, src/modules.c,
+	src/registry.c, src/registry.h, src/script.c, src/script_api.h,
+	src/tcl.c, src/egglib/Makefile.am, src/egglib/msprintf.c,
+	src/egglib/msprintf.h, src/egglib/mstack.c, src/egglib/mstack.h,
+	src/mod/Makefile.am, src/mod/module.h:
+
+	Added code for tclscript.mod Made it compile correctly with
+	configure et al (hopefully...) Removed stuff for encodings from
+	tcl.c egglib/msprintf - like sprintf but mallocs a big enough buffer
+	for you (no overruns, no truncated data) egglib/mstack - simple
+	stack structure (push, pop) that grows with malloc and is accessible
+	in array form 
+
 2001-10-13 21:36  Tothwolf <tothwolf@techmonkeys.org>
 
 	* acconfig.h, acinclude.m4, configure.in, src/Makefile.am,
