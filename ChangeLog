@@ -1,3 +1,10 @@
+2001-10-20 06:04  Tothwolf <tothwolf@techmonkeys.org>
+
+	* Makefile.am:
+
+	* added distclean-local and maintainer-clean-local Makefile.am
+	targets 
+
 2001-10-20 01:19  Tothwolf <tothwolf@techmonkeys.org>
 
 	* acinclude.m4, bootstrap, codeset.m4, configure.ac, gettext.m4,
