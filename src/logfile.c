@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: logfile.c,v 1.42 2004/06/19 16:11:53 wingman Exp $";
+static const char rcsid[] = "$Id: logfile.c,v 1.43 2004/06/20 13:33:48 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -28,6 +28,7 @@ static const char rcsid[] = "$Id: logfile.c,v 1.42 2004/06/19 16:11:53 wingman E
 #include <string.h>
 #include <stdlib.h>
 #include "core_config.h"
+#include "terminal.h"					/* TERMINAL_NICK	*/
 #include "logfile.h"
 
 typedef struct log_b {
@@ -41,7 +42,7 @@ typedef struct log_b {
 	FILE *fp;
 } log_t;
 
-extern int backgrd, use_stderr;
+extern int backgrd, use_stderr, terminal_mode;
 static int terminal_enabled = 0;
 extern time_t now;
 
@@ -73,11 +74,20 @@ static bind_list_t log_events[] = {
 	{0}
 };
 
-void logfile_init()
+void logfile_init(void)
 {
 	script_create_commands(log_script_cmds);
 	bind_add_list("log", log_binds);
 	bind_add_list("event", log_events);
+}
+
+void logfile_shutdown(void)
+{
+	flushlogs();
+	
+	script_delete_commands(log_script_cmds);
+	bind_rem_list("log", log_binds);
+	bind_rem_list("event", log_events);
 }
 
 static int logfile_minutely()
@@ -226,13 +236,13 @@ static int on_putlog(int flags, const char *chan, const char *text, int len)
 
 	if (!backgrd || use_stderr) {
 	
-		if (partyline_terminal_mode) {
+		if (terminal_mode) {
 			/* check if HQ is on console. If yes we disable
 			 * output to stdout since otherwise everything would
 			 * be printed out twice. */		
 			if (!terminal_enabled) {
 				terminal_enabled = (
-					partymember_lookup_nick (PARTY_TERMINAL_NICK) != NULL);
+					partymember_lookup_nick (TERMINAL_NICK) != NULL);
 			}
 			if (terminal_enabled)
 				return 0;

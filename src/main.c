@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.170 2004/06/19 18:07:01 wingman Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.171 2004/06/20 13:33:48 wingman Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -60,6 +60,7 @@ static const char rcsid[] = "$Id: main.c,v 1.170 2004/06/19 18:07:01 wingman Exp
 #include "core_party.h"
 #include "core_binds.h"
 #include "logfile.h"
+#include "terminal.h"
 #include "bg.h"
 #include "main.h"
 
@@ -76,9 +77,14 @@ static const char rcsid[] = "$Id: main.c,v 1.170 2004/06/19 18:07:01 wingman Exp
 #  define _POSIX_SOURCE 1 /* Solaris needs this */
 #endif
 
-int running = 1;	/* The most important variable ever!  */
+#define RUNMODE_NORMAL		1
+#define RUNMODE_SHUTDOWN	2
+#define RUNMODE_RESTART		3
+
+int runmode = 1;	/* The most important variable ever!  */
 int backgrd = 1;	/* Run in the background? */
 int make_userfile = 0;	/* Start bot in make-userfile mode? */
+int terminal_mode = 0;	/* Terminal mode			*/
 
 const char *configfile = NULL;	/* Name of the config file */
 char pid_file[512];		/* Name of Eggdrop's pid file */
@@ -137,17 +143,10 @@ static void got_fpe(int z)
 static void got_term(int z)
 {
 	eggdrop_event("sigterm");
-	if (core_config.die_on_sigterm) {
-		putlog(LOG_MISC, "*", _("Saving user file..."));
-		user_save(core_config.userfile);
-		putlog(LOG_MISC, "*", _("Saving config file..."));
-		core_config_save();
-		putlog(LOG_MISC, "*", _("Bot shutting down: received TERMINATE signal."));
-		flushlogs();
-		unlink(pid_file);
-		exit(0);
-	}
-	else putlog(LOG_MISC, "*", _("Received TERMINATE signal (ignoring)."));
+	if (core_config.die_on_sigterm)
+		core_shutdown (SHUTDOWN_SIGTERM, NULL, NULL);
+	else
+		putlog(LOG_MISC, "*", _("Received TERM signal (ignoring)."));
 }
 
 static void got_quit(int z)
@@ -222,7 +221,7 @@ static void do_args(int argc, char *const *argv)
 				backgrd = 0;
 				break;
 			case 't':
-				partyline_terminal_mode = 1;
+				terminal_mode = 1;
 				break;
 			case 'm':
 				make_userfile = 1;
@@ -309,50 +308,54 @@ int file_check(const char *filename)
 	return(0);
 }
 
-int main(int argc, char **argv)
+static int create_userfile(void)
 {
-	int xx, i, timeout;
-	char s[25], *modname, *scriptname;
-	FILE *f;
+	user_t *owner;
+	char handle[512], password[12];
+	int len;
+	
+	printf("\n");
+	if (user_count() != 0) {
+		printf("You are trying to create a new userfile, but the old one still exists (%s)!\n", core_config.userfile);
+		printf("Please remove the userfile, or do not pass the -m option.\n\n");
+		return 0;
+	}
+	
+	printf("Hello! I see you are creating a new userfile.\n\n");
+	printf("Let's create the owner account.\n\n");
+	do {
+		printf("Enter the owner handle: ");
+		fflush(stdout);
+		fgets(handle, sizeof(handle), stdin);
+		for (len = 0; handle[len]; len++) {
+		        if (!ispunct(handle[len]) && !isalnum(handle[len])) break;
+		}
+		if (len == 0) printf("Come on, enter a real handle.\n\n");
+	} while (len <= 0);
+	handle[len] = 0;
+
+	owner = user_new(handle);
+	if (!owner) {
+		printf("Failed to create user record! Out of memory?\n\n");
+		return 0;
+	}
+	
+	user_rand_pass(password, sizeof(password));
+	user_set_pass(owner, password);
+	user_set_flags_str(owner, NULL, "+n");
+	printf("Your owner handle is '%s' and your password is '%s' (without the quotes).\n\n", handle, password);
+	memset(password, 0, sizeof(password));
+	str_redup(&core_config.owner, handle);
+	core_config_save();	
+	user_save(core_config.userfile);
+	
+	return 1;
+}
+
+static void init_signals(void)
+{
 	struct sigaction sv;
-	egg_timeval_t howlong;
-	void *config_root, *entry;
 
-#ifdef DEBUG
-	{
-#  include <sys/resource.h>
-		struct rlimit cdlim;
-
-		cdlim.rlim_cur = RLIM_INFINITY;
-		cdlim.rlim_max = RLIM_INFINITY;
-		setrlimit(RLIMIT_CORE, &cdlim);
-	}
-#endif
-
-#ifdef ENABLE_NLS
-	setlocale(LC_MESSAGES, "");
-	bindtextdomain(PACKAGE, LOCALEDIR);
-	textdomain(PACKAGE);
-#endif
-
-	/* Initialize ltdl. */
-	LTDL_SET_PRELOADED_SYMBOLS();
-	if (lt_dlinit()) {
-		printf("Fatal error initializing ltdl: %s\n", lt_dlerror());
-		return(-1);
-	}
-
-	snprintf(version, sizeof version, "Eggdrop v%s (C) 1997 Robey Pointer (C) 2004 Eggheads Development Team", VERSION);
-
-#ifdef STOP_UAC
-	{
-		int nvpair[2];
-
-		nvpair[0] = SSIN_UACPROC;
-		nvpair[1] = UAC_NOPRINT;
-		setsysinfo(SSI_NVPAIRS, (char *) nvpair, 1, NULL, 0);
-	}
-#endif
 
 	sv.sa_handler = got_bus;
 	sigemptyset(&sv.sa_mask);
@@ -389,76 +392,20 @@ int main(int argc, char **argv)
 	sv.sa_handler = got_ill;
 	sigaction(SIGILL, &sv, NULL);
 #endif
+}
 
-	timer_update_now(&egg_timeval_now);
-	now = egg_timeval_now.sec;
-	memcpy(&nowtm, localtime(&now), sizeof(struct tm));
-	lastmin = nowtm.tm_min;
+static int init_bg_and_pid (void)
+{
+	FILE *f;
+	int xx;
+	char s[25];	
+	
+	if (backgrd)
+		bg_prepare_split();
 
-	srandom(now % (getpid() + getppid()));
-
-	do_args(argc, argv);
-	printf("\n%s\n", version);
-	printf("WARNING: Do NOT run this DEVELOPMENT version for any purpose other than testing.\n\n");
-
-	if (((int) getuid() == 0) || ((int) geteuid() == 0)) fatal("Eggdrop will not run as root!", 0);
-
-	if (file_check(configfile)) {
-		if (errno) perror(configfile);
-		else fprintf(stderr, "ERROR\n\nCheck file permissions on your config file!\nMake sure other groups and users cannot read/write it.\n");
-		exit(-1);
-	}
-
-	eggdrop_init();
-	core_config_init(configfile);
-	logfile_init();
-	if (core_config.userfile)
-		user_load(core_config.userfile);
-	core_binds_init();
-	core_party_init();
-
-	if (make_userfile) {
-		user_t *owner;
-		char handle[512], password[12];
-		int len;
-
-		if (user_count() != 0) {
-			printf("\n\n\nYou are trying to create a new userfile, but the old one still exists (%s)!\n\nPlease remove the userfile, or do not pass the -m option.\n\n", core_config.userfile);
-			exit(1);
-		}
-
-		printf("\n\n\nHello! I see you are creating a new userfile.\n\n");
-		printf("Let's create the owner account.\n\n");
-		do {
-			printf("Enter the owner handle: ");
-			fflush(stdout);
-			fgets(handle, sizeof(handle), stdin);
-			for (len = 0; handle[len]; len++) {
-				if (!ispunct(handle[len]) && !isalnum(handle[len])) break;
-			}
-			if (len == 0) printf("Come on, enter a real handle.\n\n");
-		} while (len <= 0);
-		handle[len] = 0;
-		owner = user_new(handle);
-		if (!owner) {
-			printf("Failed to create user record! Out of memory?\n\n");
-			exit(1);
-		}
-		user_rand_pass(password, sizeof(password));
-		user_set_pass(owner, password);
-		user_set_flags_str(owner, NULL, "+n");
-		printf("Your owner handle is '%s' and your password is '%s' (without the quotes).\n\n", handle, password);
-		memset(password, 0, sizeof(password));
-		str_redup(&core_config.owner, handle);
-		core_config_save();
-		user_save(core_config.userfile);
-	}
-
-	if (backgrd) bg_prepare_split();
-
-	strlcpy(s, ctime(&now), sizeof s);
-	strcpy(&s[11], &s[20]);
-	putlog(LOG_ALL, "*", "Loading Eggdrop %s (%s)", VERSION, s);
+	/* XXX: what shall we do if we've restarted and one changed our
+	 * XXX: botname? Remove old pid_file and create new one? Then this
+ 	 * XXX: is the wrong place. */
 	snprintf(pid_file, sizeof pid_file, "pid.%s", core_config.botname);
 
 	f = fopen(pid_file, "r");
@@ -470,28 +417,8 @@ int main(int argc, char **argv)
 			printf("I detect %s already running from this directory.\n", core_config.botname);
 			printf("If this is incorrect, please erase '%s'.\n", pid_file);
 			bg_send_quit(BG_ABORT);
-			exit(1);
+			return 0;
 		}
-	}
-
-	/* Load core help */
-	help_load_by_module ("core");
-
-	/* Put the module directory in the ltdl search path. */
-	if (core_config.module_path)
-		module_add_dir(core_config.module_path);
-
-	/* Scan the autoload section of config. */
-	config_root = config_get_root("eggdrop");
-	for (i = 0; (entry = config_exists(config_root, "eggdrop", 0, "autoload", 0, "module", i, NULL)); i++) {
-		modname = NULL;
-		config_get_str(&modname, entry, NULL);
-		module_load(modname);
-	}
-	for (i = 0; (entry = config_exists(config_root, "eggdrop", 0, "autoload", 0, "script", i, NULL)); i++) {
-		scriptname = NULL;
-		config_get_str(&scriptname, entry, NULL);
-		script_load(scriptname);
 	}
 
 	if (backgrd) { /* Move into background? */
@@ -539,67 +466,260 @@ int main(int argc, char **argv)
 #endif
 	}
 
-	online_since = now;
-	howlong.sec = 1;
-	howlong.usec = 0;
-	timer_create_repeater(&howlong, "main loop", core_secondly);
+	return 1;
+}
 
-	putlog(LOG_DEBUG, "*", "Entering main loop.");
-	
-	core_init();
-	
-	putlog(LOG_DEBUG, "*", "Entering main loop.");
+static void core_shutdown_or_restart()
+{
+	/* notifiy shutdown listeners */
+	check_bind_shutdown();
 
-	while (running) {
-		timer_update_now(&egg_timeval_now);
-		now = egg_timeval_now.sec;
-		random(); /* Woop, lets really jumble things */
-		timer_run();
-		if (timer_get_shortest(&howlong)) timeout = 1000;
-		else timeout = howlong.sec * 1000 + howlong.usec / 1000;
-		sockbuf_update_all(timeout);
-		garbage_run();
+	putlog(LOG_MISC, "*", _("Saving user file..."));
+	user_save(core_config.userfile);
+
+	putlog(LOG_MISC, "*", _("Saving config file..."));
+	core_config_save();
+	
+	/* shutdown logging */ 
+	logfile_shutdown();
+	
+	/* shutdown libeggdrop */
+	eggdrop_shutdown();
+
+	/* force an garbage run */	
+	garbage_run();
+
+	/* just remove pid file if didn't restart */ 
+	if (runmode != RUNMODE_RESTART)
+		unlink(pid_file);
+}
+
+
+int main(int argc, char **argv)
+{
+	int timeout;
+
+#ifdef DEBUG
+	{
+#  include <sys/resource.h>
+		struct rlimit cdlim;
+
+		cdlim.rlim_cur = RLIM_INFINITY;
+		cdlim.rlim_max = RLIM_INFINITY;
+		setrlimit(RLIMIT_CORE, &cdlim);
+	}
+#endif
+
+	init_signals();
+	
+#ifdef ENABLE_NLS
+	setlocale(LC_MESSAGES, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+#endif
+
+	/* Initialize ltdl. */
+	LTDL_SET_PRELOADED_SYMBOLS();
+	if (lt_dlinit()) {
+		printf("Fatal error initializing ltdl: %s\n", lt_dlerror());
+		return(-1);
+	}
+
+	snprintf(version, sizeof version, "Eggdrop v%s (C) 1997 Robey Pointer (C) 2004 Eggheads Development Team", VERSION);
+
+#ifdef STOP_UAC
+	{
+		int nvpair[2];
+
+		nvpair[0] = SSIN_UACPROC;
+		nvpair[1] = UAC_NOPRINT;
+		setsysinfo(SSI_NVPAIRS, (char *) nvpair, 1, NULL, 0);
+	}
+#endif
+
+	timer_update_now(&egg_timeval_now);
+	now = egg_timeval_now.sec;
+	memcpy(&nowtm, localtime(&now), sizeof(struct tm));
+	lastmin = nowtm.tm_min;
+
+	srandom(now % (getpid() + getppid()));
+
+	do_args(argc, argv);
+	printf("\n%s\n", version);
+	printf("WARNING: Do NOT run this DEVELOPMENT version for any purpose other than testing.\n\n");
+
+	/* we may not ru as root */
+	if (((int) getuid() == 0) || ((int) geteuid() == 0)) {
+		fatal("Eggdrop will not run as root!", 0);
+		return -1;
+	}
+
+	/* config file may not be world read/writeable */
+	if (file_check(configfile)) {
+		if (errno) perror(configfile);
+		else {
+			fprintf(stderr, "ERROR\n");
+			fprintf(stderr, "\tCheck file permissions on your config file!");
+			fprintf(stderr, "\tMake sure other groups and users cannot read/write it.\n");
+			return -1;
+		}
 	}
 	
-	/* No work need to be done here ever since if we can only reach this
-  	 * if someone called core_shutdown. So do your shutdown work THERE! */
+	/* set uptime */
+	online_since = now;
+	
+	do {
+		egg_timeval_t howlong;
+		
+		/* default select timeout is 1 sec */
+		howlong.sec  = 1;
+		howlong.usec = 0;
+		
+		timer_create_repeater(&howlong, "main loop", core_secondly);
+		
+		/* init core */
+		core_init();
 
+		/* set normal running mode */
+		runmode = RUNMODE_NORMAL;
+					
+		putlog(LOG_DEBUG, "*", "Entering main loop.");
+
+		/* main loop */
+		while (runmode == RUNMODE_NORMAL) {
+			timer_update_now(&egg_timeval_now);
+			now = egg_timeval_now.sec;
+			random(); /* Woop, lets really jumble things */
+			timer_run();
+			if (timer_get_shortest(&howlong)) timeout = 1000;
+			else timeout = howlong.sec * 1000 + howlong.usec / 1000;
+			sockbuf_update_all(timeout);
+			garbage_run();
+		}
+		
+		/* Save user file, config file, ... */
+		core_shutdown_or_restart();					
+
+		/* the only chance to loop again is that running = 2, meaning
+		   we have a restart */
+	} while (runmode == RUNMODE_RESTART);
+	
 	return 1;
 }
 
 int core_init()
-{
-	check_bind_init();
+{		
+	int i;
+	char *name;
+	void *config_root, *entry;
+	char s[25];	
+	
+	/* init libeggdrop */
+	eggdrop_init();
 
+	/* load config */	
+	core_config_init(configfile);	
+	
+	/* init background mode and pid file */
+	if (runmode != RUNMODE_RESTART)
+		init_bg_and_pid();	
+	
+	/* init logging */
+	logfile_init();	
+
+	/* just issue this "Loading Eggdrop" message if we are not
+	 * restarting */
+	if (runmode != RUNMODE_RESTART) {	
+		strlcpy(s, ctime(&now), sizeof s);
+		strcpy(&s[11], &s[20]);
+		putlog(LOG_ALL, "*", "Loading Eggdrop %s (%s)", VERSION, s);
+	}	
+		
+	/* load userlist */
+	if (core_config.userfile)
+		user_load(core_config.userfile);
+		
+	/* init core bindings */
+	core_binds_init();
+	
+	/* init core partyline */
+	core_party_init();
+
+	/* did the user specify -m? */
+	if (make_userfile) {
+		if (!create_userfile())
+			return 0;
+		make_userfile = 0;
+	}
+
+	/* Load core help */
+	help_load_by_module ("core");
+
+	/* Put the module directory in the ltdl search path. */
+	if (core_config.module_path)
+		module_add_dir(core_config.module_path);
+
+	/* Scan the autoload section of config. */
+	config_root = config_get_root("eggdrop");
+	for (i = 0; (entry = config_exists(config_root, "eggdrop", 0, "autoload", 0, "module", i, NULL)); i++) {
+		name = NULL;
+		config_get_str(&name, entry, NULL);
+		module_load(name);
+	}
+	for (i = 0; (entry = config_exists(config_root, "eggdrop", 0, "autoload", 0, "script", i, NULL)); i++) {
+		name = NULL;
+		config_get_str(&name, entry, NULL);
+		script_load(name);
+	}
+		
+	/* notify init listeners */
+	check_bind_init();
+	
+	/* start terminal */
+	if (runmode != RUNMODE_RESTART)
+		if (terminal_mode)
+			terminal_init();
+
+	return 1;
+}
+
+int core_restart(const char *nick)
+{
+	putlog(LOG_MISC, "*", "Restarting...");
+	runmode = RUNMODE_RESTART;
 	return 1;
 }
 
 int core_shutdown(int how, const char *nick, const char *reason)
 {
-	putlog(LOG_MISC, "*", "Shutdown requested by %s: %s", nick, (reason) ? reason : "No reason");
+	if (how == SHUTDOWN_SIGTERM)
+		putlog(LOG_MISC, "*", ("Received TERM signal, shutting down."));	
+	else if (how != SHUTDOWN_RESTART)
+		putlog(LOG_MISC, "*", ("Shutdown requested by %s: %s"), nick,
+				(reason) ? reason : _("No reason"));
 
-	/* notify that we go down NOW */
-	check_bind_shutdown();
-
-	/* XXX: move this to users.c */
-	putlog(LOG_MISC, "*", _("Saving user file..."));
-	user_save(core_config.userfile);
-	
-	/* flush logs */
-	flushlogs();
-
-	/* remove pid file */
-	unlink(pid_file);
-
+	/* check how to shut down */
 	switch (how) {
 
+		case (SHUTDOWN_RESTART):
+			runmode = RUNMODE_RESTART;
+			break;
+			
 		case (SHUTDOWN_GRACEFULL):
-			running = 0;
+			runmode = RUNMODE_SHUTDOWN;
 			break;
 
+		/* These two cases are treaded special because something
+		 * unusual happened and we're better off if we exit() NOW 
+		 * than doing a gracefull shutdown with freeing all
+  		 * memory, closing all sockets, ... */
 		case (SHUTDOWN_HARD):
+		case (SHUTDOWN_SIGTERM):
+			runmode = RUNMODE_SHUTDOWN;
+			core_shutdown_or_restart();
 			exit(0);
 			break;
+			
 	}
 
 	return BIND_RET_LOG;

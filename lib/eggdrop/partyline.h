@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: partyline.h,v 1.17 2004/06/19 16:15:13 wingman Exp $
+ * $Id: partyline.h,v 1.18 2004/06/20 13:33:48 wingman Exp $
  */
 
 #ifndef _EGG_PARTYLINE_H_
@@ -25,11 +25,6 @@
 /* Flags for partyline. */
 #define PARTY_DELETED	1
 #define PARTY_SELECTED	2
-
-/* Terminal user settings */
-#define PARTY_TERMINAL_NICK	"HQ"
-#define PARTY_TERMINAL_USER	"HQ"
-#define PARTY_TERMINAL_HOST	"0.0.0.0"
 
 /* Bind table names for partyline events */
 #define BTN_PARTYLINE_JOIN	"partyjoin"
@@ -104,8 +99,6 @@ int partyline_is_command(const char *text);
 int partyline_on_input(partychan_t *chan, partymember_t *p, const char *text, int len);
 int partyline_on_command(partymember_t *p, const char *cmd, const char *text);
 int partyline_update_info(partymember_t *p, const char *ident, const char *host);
-
-extern int partyline_terminal_mode;
 
 /* Channel functions. */
 partychan_t *partychan_new(int cid, const char *name);

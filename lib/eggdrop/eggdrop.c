@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggdrop.c,v 1.13 2004/06/19 10:30:41 wingman Exp $";
+static const char rcsid[] = "$Id: eggdrop.c,v 1.14 2004/06/20 13:33:48 wingman Exp $";
 #endif
 
 #include <stdlib.h>
@@ -27,7 +27,7 @@ static const char rcsid[] = "$Id: eggdrop.c,v 1.13 2004/06/19 10:30:41 wingman E
 
 static bind_table_t *BT_event = NULL;
 
-int eggdrop_init()
+int eggdrop_init(void)
 {
 	config_init();
 	egg_net_init();
@@ -38,7 +38,23 @@ int eggdrop_init()
 	partyline_init();
 	module_init();
 	BT_event = bind_table_add(BTN_EVENT, 1, "s", MATCH_MASK, BIND_STACKABLE);	/* DDD	*/
-	return(0);
+	
+	return 1;
+}
+
+int eggdrop_shutdown(void)
+{
+	/* XXX: bind_table_del(BTN_EVENT); */
+	/* XXX: module_shutdown(); */
+	/* XXX: partyline_shutdown(); */
+	/* XXX: script_shutdown(); */
+	/* XXX: help_shutdown(); */
+	/* XXX: user_shutdown(); */
+	egglog_shutdown();
+	/* XXX: egg_net_shutdown(); */
+	/* XXX: config_shutdown(); */
+	
+	return 1;
 }
 
 int eggdrop_event(const char *event)

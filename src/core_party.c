@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.32 2004/06/19 18:07:01 wingman Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.33 2004/06/20 13:33:48 wingman Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -39,6 +39,7 @@ static const char rcsid[] = "$Id: core_party.c,v 1.32 2004/06/19 18:07:01 wingma
 #include "core_config.h"
 #include "core_binds.h"
 #include "logfile.h"
+#include "terminal.h"			/* TERMINAL_NICK				*/
 #include "main.h"			/* SHUTDOWN_*, core_shutdown, core_restart	*/
 
 /* from main.c */
@@ -66,7 +67,7 @@ static int party_part(partymember_t *p, const char *nick, user_t *u, const char 
 
 static int party_quit(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
-	if (partyline_terminal_mode && 0 == strcmp (p->nick, PARTY_TERMINAL_NICK)) {
+	if (0 == strcmp (p->nick, TERMINAL_NICK)) {
 		partymember_printf (p, "You can't leave the partyline in terminal mode.");
 		return -1;
 	}
@@ -557,6 +558,13 @@ static int party_binds(partymember_t *p, const char *nick, user_t *u, const char
 	return BIND_RET_LOG;
 }
 
+static int party_restart(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	core_restart (nick);
+	
+	return BIND_RET_LOG;
+}
+
 static bind_list_t core_party_binds[] = {
 	{NULL, "join", party_join},		/* DDD	*/
 	{NULL, "whisper", party_whisper},	/* DDD	*/
@@ -573,6 +581,7 @@ static bind_list_t core_party_binds[] = {
 	{"n", "status", party_status},		/* DDC	*/
 	{"n", "save", party_save},		/* DDD	*/
 	{"n", "die", party_die},		/* DDD	*/
+	{"n", "restart", party_restart},	/* DDD	*/
 	{"n", "+user", party_plus_user},	/* DDC	*/
 	{"n", "-user", party_minus_user},	/* DDC	*/
 	{"n", "chattr", party_chattr},		/* DDC	*/

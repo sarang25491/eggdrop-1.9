@@ -1,6 +1,6 @@
-/* logfile.h: header for logfile.c
+/* terminal.h: header for terminal.c
  *
- * Copyright (C) 2002, 2003, 2004 Eggheads Development Team
+ * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,17 +16,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: logfile.h,v 1.10 2004/06/20 13:33:48 wingman Exp $
+ * $Id: terminal.h,v 1.1 2004/06/20 13:33:48 wingman Exp $
  */
+#ifndef _EGG_TERMINAL_H
+#define _EGG_TERMINAL_H
 
-#ifndef _EGG_LOGILE_H
-#define _EGG_LOGILE_H
+/* Terminal user settings */
+#define TERMINAL_NICK	"HQ"
+#define TERMINAL_USER	"hq"
+#define TERMINAL_HANDLE	"HQ"
+#define TERMINAL_HOST	"localhost"
 
-extern void logfile_init(void); 
-extern void logfile_shutdown(void);
+void terminal_init(void);
 
-extern char *logfile_add(char *, char *, char *);
-extern int logfile_del(char *);
-extern void flushlogs(); 
-
-#endif /* !_EGG_LOGFILE_H */
+#endif /* _EGG_TERMINAL_H */

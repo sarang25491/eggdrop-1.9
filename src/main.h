@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: main.h,v 1.39 2004/06/19 18:07:01 wingman Exp $
+ * $Id: main.h,v 1.40 2004/06/20 13:33:48 wingman Exp $
  */
 
 #ifndef _EGG_MAIN_H
@@ -27,6 +27,8 @@ void fatal(const char *, int);
 
 #define SHUTDOWN_GRACEFULL	0
 #define SHUTDOWN_HARD		1
+#define SHUTDOWN_RESTART	2
+#define SHUTDOWN_SIGTERM	3
 
 int core_init();
 int core_restart(const char *nick);

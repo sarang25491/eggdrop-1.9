@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: telnetparty.c,v 1.15 2004/06/17 13:32:44 wingman Exp $";
+static const char rcsid[] = "$Id: telnetparty.c,v 1.16 2004/06/20 13:33:48 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -46,8 +46,6 @@ extern partyline_event_t telnet_party_handler;
 
 static int telnet_idx = -1;
 static int telnet_port = 0;
-static int terminal_idx = -1;
-static user_t *terminal_user = NULL;
 
 static int telnet_on_newclient(void *client_data, int idx, int newidx, const char *peer_ip, int peer_port);
 static int telnet_on_read(void *client_data, int idx, char *data, int len);
@@ -83,30 +81,11 @@ static sockbuf_handler_t client_handler = {
 	telnet_on_delete
 };
 
-static void
-terminal_mode ()
-{	
-	putlog (LOG_MISC, "*", "Entering terminal mode.");
-	
-	terminal_idx = sockbuf_new ();
-	sockbuf_set_sock (terminal_idx, fileno (stdin), SOCKBUF_CLIENT);
-	telnet_on_newclient (NULL, telnet_idx, terminal_idx, "127.0.0.1", 0);	
-}
-
 int telnet_init()
 {	
 	/* Open our listening socket. */
 	telnet_idx = egg_server(telnet_config.vhost, telnet_config.port, &telnet_port);
 	sockbuf_set_handler(telnet_idx, &server_handler, NULL);
-	
-	/* XXX: invent something for better access of command line args
-	 * XXX: in modules. */
-	if (partyline_terminal_mode) {
-		/* We don't go into terminal right now since not all modules might be
-	    	 * loaded at this stage. So right before we enter our main loop we 
-	  	 * enable our terminal. */
-		bind_add_simple ("init", NULL, NULL, (Function)terminal_mode);	
-	}
 	
 	return(0);
 }
@@ -321,26 +300,6 @@ static int telnet_on_newclient(void *client_data, int idx, int newidx, const cha
 	sockbuf_attach_filter(newidx, &telnet_filter, session);
 	linemode_on(newidx);
 
-	if (newidx == terminal_idx) {
-		if (terminal_user == NULL) {
-			terminal_user = user_lookup_by_handle (PARTY_TERMINAL_NICK);
-			if (terminal_user == NULL) {
-				terminal_user = user_new (PARTY_TERMINAL_NICK);
-				user_set_flags_str (terminal_user, NULL, "n");
- 			}
-		}
-
-			
-		session->state = STATE_PARTYLINE;
-		session->party = partymember_new (-1,
-			terminal_user, PARTY_TERMINAL_NICK, PARTY_TERMINAL_USER,
-			PARTY_TERMINAL_HOST, &telnet_party_handler, session);
-			
-		/* Put them on the main channel. */
-		partychan_join_name("*", session->party);		
-		return 0;		
-	}
-		
 	/* Stealth logins are where we don't say anything until we know they
 	 * are a valid user. */
 	if (telnet_config.stealth) {
@@ -645,12 +604,6 @@ static int telnet_filter_delete(void *client_data, int idx)
 
 static int telnetparty_close(int why)
 {	
-	if (terminal_user != NULL)
-		user_delete (terminal_user);
-		
-	if (terminal_idx != -1)
-		sockbuf_delete (terminal_idx);
-		
 	sockbuf_delete(telnet_idx);
 	return(0);
 }

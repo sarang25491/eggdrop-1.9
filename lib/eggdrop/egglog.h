@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: egglog.h,v 1.6 2004/06/19 10:30:41 wingman Exp $
+ * $Id: egglog.h,v 1.7 2004/06/20 13:33:48 wingman Exp $
  */
 
 #ifndef _EGG_EGGLOG_H_
@@ -49,7 +49,9 @@
 /* Bind table names for logging */
 #define BTN_LOG		"log"
 
-extern void egglog_init(); 
+extern void egglog_init(void); 
+extern void egglog_shutdown(void);
+
 extern int putlog(int flags, const char *chan, const char *format, ...);
 
 #endif /* !_EGG_EGGLOG_H_ */
