@@ -1,3 +1,11 @@
+2002-01-08 00:09  stdarg <stdarg@techmonkeys.org>
+
+	* testcode/: Makefile, chat.c, client.c, linemode.c, my_socket.c,
+	my_socket.h, sockbuf.c, sockbuf.h, zipmode.c:
+
+	Err, I don't know if I already added these files or not, so I'll add
+	them again.  
+
 2002-01-07 21:04  Federico Mennite <ite@techmonkeys.org>
 
 	* lib/eggdrop/memutil.h:
