@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.52 2001/08/23 04:06:10 stdarg Exp $
+ * $Id: tclchan.c,v 1.53 2001/08/29 19:21:12 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -806,7 +806,7 @@ static int tcl_channel_get(Tcl_Interp * irp, struct chanset_t *chan, char *setti
 	int flagval;
 
 #define CHECK(x) !strcmp(setting, x)
-	if (CHECK("mode")) {
+	if (CHECK("chanmode")) {
 		get_mode_protect(chan, s);
 	}
 	else if (CHECK("idle-kick")) simple_sprintf(s, "%d", chan->idle_kick);
