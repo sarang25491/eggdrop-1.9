@@ -61,7 +61,7 @@
  **************************************************************/
 
 #ifndef lint
-static const char rcsid[] = "$Id: snprintf.c,v 1.5 2003/03/04 10:33:56 tothwolf Exp $";
+static const char rcsid[] = "$Id: snprintf.c,v 1.6 2003/03/04 22:02:27 wcc Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -83,7 +83,7 @@ static const char rcsid[] = "$Id: snprintf.c,v 1.5 2003/03/04 10:33:56 tothwolf 
 #include <stdlib.h>
 #endif
 
-#if defined(HAVE_SNPRINTF) && defined(HAVE_VSNPRINTF) && defined(HAVE_C99_VSNPRINTF)
+#ifdef defined(HAVE_SNPRINTF) && defined(HAVE_VSNPRINTF)
 /* only include stdio.h if we are not re-defining snprintf or vsnprintf */
 #include <stdio.h>
  /* make the compiler happy with an empty file */
@@ -756,14 +756,14 @@ static void dopr_outch(char *buffer, size_t *currlen, size_t maxlen, char c)
 	(*currlen)++;
 }
 
-#if !defined(HAVE_VSNPRINTF) || !defined(HAVE_C99_VSNPRINTF)
+#ifndef HAVE_VSNPRINTF
  int vsnprintf (char *str, size_t count, const char *fmt, va_list args)
 {
 	return dopr(str, count, fmt, args);
 }
 #endif
 
-#if !defined(HAVE_SNPRINTF) || !defined(HAVE_C99_VSNPRINTF)
+#ifndef HAVE_SNPRINTF
  int snprintf(char *str,size_t count,const char *fmt,...)
 {
 	size_t ret;

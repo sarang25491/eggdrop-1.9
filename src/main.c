@@ -30,7 +30,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.140 2003/02/25 10:28:22 stdarg Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.141 2003/03/04 22:02:27 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -334,7 +334,8 @@ static int core_secondly()
     /* In case for some reason more than 1 min has passed: */
     while (nowtm.tm_min != lastmin) {
       /* Timer drift, dammit */
-      debug2("timer: drift (lastmin=%d, now=%d)", lastmin, nowtm.tm_min);
+      putlog(LOG_DEBUG, "*", "timer: drift (lastmin=%d, now=%d)", lastmin,
+             nowtm.tm_min);
       i++;
       lastmin = (lastmin + 1) % 60;
       call_hook(HOOK_MINUTELY);
@@ -652,7 +653,7 @@ int main(int argc, char **argv)
 
   call_hook(HOOK_LOADED);
 
-  debug0("main: entering loop");
+  putlog(LOG_DEBUG, "*", "main: entering loop");
 	while (1) {
 		timer_update_now(&egg_timeval_now);
 		now = egg_timeval_now.sec;

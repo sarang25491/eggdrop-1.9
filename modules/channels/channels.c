@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.29 2003/02/15 05:04:57 wcc Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.30 2003/03/04 22:02:27 wcc Exp $";
 #endif
 
 #define MODULE_NAME "channels"
@@ -390,7 +390,7 @@ static void write_channels()
 		fprintf(f, "udef_str_%s %s ", ul->name, p);
 	}
 	else
-	  debug1("UDEF-ERROR: unknown type %d", ul->type);
+          putlog(LOG_DEBUG, "*", "UDEF-ERROR: unknown type %d", ul->type);
       }
     }
     fprintf(f, "%s\n", channel_static(chan) ? "" : "}");

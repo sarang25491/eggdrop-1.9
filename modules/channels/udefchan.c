@@ -23,7 +23,7 @@
 
 /* FIXME: #include mess
 #ifndef lint
-static const char rcsid[] = "$Id: udefchan.c,v 1.5 2003/01/02 21:33:14 wcc Exp $";
+static const char rcsid[] = "$Id: udefchan.c,v 1.6 2003/03/04 22:02:27 wcc Exp $";
 #endif
 */
 
@@ -80,16 +80,17 @@ static void initudef(int type, char *name, int defined)
 
   if (strlen(name) < 1)
     return;
+
   for (ul = udef; ul; ul_last = ul, ul = ul->next)
     if (ul->name && !strcasecmp(ul->name, name)) {
       if (defined) {
-        debug1("UDEF: %s defined", ul->name);
+        putlog(LOG_DEBUG, "*", "UDEF: %s defined", ul->name);
         ul->defined = 1;
       }
       return;
     }
 
-  debug2("Creating %s (type %d)", name, type);
+  putlog(LOG_DEBUG, "*", "Creating %s (type %d)", name, type);
   ul = malloc(sizeof(struct udef_struct));
   ul->name = strdup(name);
   if (defined)

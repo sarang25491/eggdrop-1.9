@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: filesys.c,v 1.21 2003/02/15 09:24:57 wcc Exp $";
+static const char rcsid[] = "$Id: filesys.c,v 1.22 2003/03/04 22:02:27 wcc Exp $";
 #endif
 
 #include <fcntl.h>
@@ -265,7 +265,8 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
   long dccfilesize;
   FILE *f, *dccfile;
 
-debug1("|FILESYS| raw_dcc_resend_send(... addr=\"%s\")", addr);
+  putlog(LOG_DEBUG, "*", "|FILESYS| raw_dcc_resend_send(... addr=\"%s\")",
+         addr);
   zz = -1;
   dccfile = fopen(filename,"r");
   fseek(dccfile, 0, SEEK_END);
@@ -1024,13 +1025,13 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
 	       param, nick, from);
 	return;
       }
-debug1("|FILESYS| dcc send ip: (%s)", ip);
-    ipnum = strtoul(ip, NULL, 10);
-    ipnum = htonl(ipnum);
-    inet_ntop(AF_INET, &ipnum, ipbuf, sizeof(ipbuf));
-    ip = ipbuf;
-    strlcpy(dcc[i].addr, ip, ADDRLEN);
-debug1("|FILESYS| addr: (%s)", dcc[i].addr);
+      putlog(LOG_DEBUG, "*", "|FILESYS| dcc send ip: (%s)", ip);
+      ipnum = strtoul(ip, NULL, 10);
+      ipnum = htonl(ipnum);
+      inet_ntop(AF_INET, &ipnum, ipbuf, sizeof(ipbuf));
+      ip = ipbuf;
+      strlcpy(dcc[i].addr, ip, ADDRLEN);
+      putlog(LOG_DEBUG, "*", "|FILESYS| addr: (%s)", dcc[i].addr);
       dcc[i].port = atoi(prt);
       dcc[i].sock = (-1);
       dcc[i].user = u;

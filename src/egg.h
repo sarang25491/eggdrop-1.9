@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: egg.h,v 1.16 2003/02/26 01:51:14 wcc Exp $
+ * $Id: egg.h,v 1.17 2003/03/04 22:02:27 wcc Exp $
  */
 
 #ifndef _EGG_EGG_H
@@ -161,13 +161,6 @@ typedef unsigned char		u_8bit_t;
 /* IP type */
 typedef u_32int_t		IP;
 
-#define debug0(x)		putlog(LOG_DEBUG,"*",x)
-#define debug1(x,a1)		putlog(LOG_DEBUG,"*",x,a1)
-#define debug2(x,a1,a2)		putlog(LOG_DEBUG,"*",x,a1,a2)
-#define debug3(x,a1,a2,a3)	putlog(LOG_DEBUG,"*",x,a1,a2,a3)
-#define debug4(x,a1,a2,a3,a4)	putlog(LOG_DEBUG,"*",x,a1,a2,a3,a4)
-
-/***********************************************************************/
 
 /* Public structure for the listening port map */
 struct portmap {

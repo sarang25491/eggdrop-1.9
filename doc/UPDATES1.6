@@ -1,10 +1,28 @@
-$Id: UPDATES1.6,v 1.210 2003/02/16 07:05:25 wcc Exp $
+$Id: UPDATES1.6,v 1.211 2003/03/04 22:02:27 wcc Exp $
 
 Changes in Eggdrop: (since v1.6.0)
 ----------------------------------
 
 1.6.14
 Found by  Fixed by  What...
+          Sven/     added NO_HALFOP_CHANMODES and NOHALFOPS_MODES defines to
+          Wcc       chan.h to allow halfop-related mode behavior to be changed
+                    on IRCd's that implement halfops differently
+Shane0    Wcc       fixed a compile error on Tru64 UNIX
+          Sven      the WASHALFOP flag now works correctly
+fbs       Wcc       kill a transfer connection after sending a
+                    TRANSFER_DCC_IGNORED notice to a user
+          ppslim    flood-pub should be flood-chan when using 'channel get'
+          BarkerJr  '~' and '&' are now correctly recognized as a meaning a
+                    user has ops on a channel
+          winkey    fixed uhost buffer length
+winkey    Wcc       don't use help queue for dcc sends or gets
+          Wcc       case-changes should be traced when the 'nick' Tcl variable
+                    is modified
+          TheAvatar added a set of Danish language files
+          Wcc       fixed an out-of-bounds error in delignore()
+Tothwolf  Wcc       argument checking for cmd_comment() and cmd_botaddr() was
+                    incorrect
           Wcc       GLOBAL_CHANS is now used where it should be to make
                     changing the number of botnet channels easier
           Wcc       fixed a logic problem when reversing in got_[op|halfop]()
