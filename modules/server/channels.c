@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.29 2004/08/19 18:39:36 darko Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.30 2004/08/26 18:32:07 darko Exp $";
  #endif
 
 #include "server.h"
@@ -392,6 +392,9 @@ void channel_on_join(const char *chan_name, const char *nick, const char *uhost)
 			for (i = 0; i < chan->nlists; i++)
 				chan->lists[i]->loading = 1;
 			printserv(SERVER_NORMAL, "MODE %s %s\r\n", chan_name, current_server.type1modes);
+		}
+		else {
+/* FIXME - Traverse ban list in search for closest ban */
 		}
 		return;
 	}
@@ -957,6 +960,7 @@ static int got_list_end(void *client_data, char *from_nick, char *from_uhost, us
 	if (!chan) return(0);
 	l = channel_get_mask_list(chan, type);
 	if (l) l->loading = 0;
+/* FIXME - See if we need to set any modes */
 	return(0);
 }
 
@@ -1553,6 +1557,8 @@ static int chanfile_load(const char *fname)
 	xml_node_t *doc, *root, *chan_node, *setting_node;
 	channel_t *chan = NULL;
 	char *tmpptr, *tmp2ptr;
+	/* FIXME - storage size of cursecs is wrong */
+	int cursecs;
 
 	if (xml_load_file(fname?fname:"channels.xml", &doc, XML_TRIM_TEXT) != 0) {
 		putlog(LOG_MISC, "*", _("Failed to load channel file '%s': %s"), fname, xml_last_error());
@@ -1603,10 +1609,14 @@ static int chanfile_load(const char *fname)
 		}
 
 		j = 0;
+		timer_get_now_sec(&cursecs);
 		while ((setting_node = xml_node_lookup(chan_node, 0, "chanmask", j++, 0))) {
 			char *type, *mask, *creator, *comment;
 			/* FIXME - 'expire' should be long */
 			int expire, lastused, sticky;
+			if ((xml_node_get_int(&expire, setting_node, "expire", 0, 0) == -1) ||
+			    (cursecs > expire))
+				continue;
 			if (xml_node_get_str(&type, setting_node, "type", 0, 0) == -1)
 				continue;
 			if (xml_node_get_str(&mask, setting_node, "mask", 0, 0) == -1)
@@ -1614,8 +1624,6 @@ static int chanfile_load(const char *fname)
 			if (xml_node_get_str(&creator, setting_node, "creator", 0, 0) == -1)
 				continue;
 			if (xml_node_get_str(&comment, setting_node, "comment", 0, 0) == -1)
-				continue;
-			if (xml_node_get_int(&expire, setting_node, "expire", 0, 0) == -1)
 				continue;
 			if (xml_node_get_int(&lastused, setting_node, "lastused", 0, 0) == -1)
 				continue;
@@ -1659,23 +1667,42 @@ void update_channel_structures()
 /* Do the stuff like need-* or cycle.. */
 static int channels_minutely()
 {
+	channel_mask_t *m;
 	channel_t *chan;
+	/* FIXME - storage size of cursecs is wrong */
+	int cursecs = 0;
+	int i;
+
+	timer_get_now_sec(&cursecs);
+
+	/* Expire global masks */
+	for (i = 0; i < global_chan.nlists; i++)
+		for (m = (&global_chan)->lists[i]->head; m; m = m->next)
+			if (m->expire && cursecs > m->expire)
+				channel_del_mask(NULL, (&global_chan)->lists[i]->type, m->mask, 1);
 
 	if (!current_server.registered)
 		return 0;
 
+	/* Stuff to do only if we're connected */
 	for (chan = channel_head; chan; chan = chan->next) {
-		/* +cycle */
 		if (chan->status & CHANNEL_JOINED && /* If we actaully are on channel */
-		   !(chan->builtin_bools & CHAN_INACTIVE) && /* and channel is not inactive */
-		   chan->builtin_bools & CHAN_CYCLE &&/* and channel is +cycle */
-		   chan->nmembers == 1 && /* and we are alone */
-		   !BOT_CAN_SET_MODES(chan) /* and we are not op/halfop */
-		   ) {
-			putlog(LOG_MISC, "*", _("Cycling channel '%s' for ops."), chan->name);
-			printserv(SERVER_NORMAL, "PART %s\r\n", chan->name);
-			printserv(SERVER_NORMAL, "JOIN %s %s\r\n", chan->name,
-					chan->key?chan->key:"");
+		   !(chan->builtin_bools & CHAN_INACTIVE)) { /* and channel is not inactive */
+			/* +cycle */
+			if (chan->builtin_bools & CHAN_CYCLE &&/* Channel is +cycle */
+			   chan->nmembers == 1 && /* and we are alone */
+			   !BOT_CAN_SET_MODES(chan) /* and we are not op/halfop */
+			   ) {
+				putlog(LOG_MISC, "*", _("Cycling channel '%s' for ops."), chan->name);
+				printserv(SERVER_NORMAL, "PART %s\r\n", chan->name);
+				printserv(SERVER_NORMAL, "JOIN %s %s\r\n", chan->name,
+						chan->key?chan->key:"");
+			}
+			/* expire channel masks */
+			for (i = 0; i < chan->nlists; i++)
+				for (m = chan->lists[i]->head; m; m = m->next)
+					if (m->expire && cursecs > m->expire)
+						channel_del_mask(chan, chan->lists[i]->type, m->mask, 1);
 		}
 	}
 	return 0;

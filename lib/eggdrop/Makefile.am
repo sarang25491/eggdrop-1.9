@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.35 2004/06/28 17:36:34 wingman Exp $
+# $Id: Makefile.am,v 1.36 2004/08/26 18:32:07 darko Exp $
 
 MAINTAINERCLEANFILES	= Makefile.in
 
@@ -52,7 +52,8 @@ libeggdrop_la_SOURCES	= base64.c base64.h \
 			users.c users.h \
 			xml.c xml.h \
 			xmlread.c xmlwrite.c \
-			variant.c variant.h
+			variant.c variant.h \
+			timeutil.c timeutil.h
 
 libeggdrop_la_LIBADD	= @LIBLTDL@ \
 			$(top_builddir)/lib/compat/libcompat.la

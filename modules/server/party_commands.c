@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: party_commands.c,v 1.14 2004/08/19 18:39:36 darko Exp $";
+static const char rcsid[] = "$Id: party_commands.c,v 1.15 2004/08/26 18:32:07 darko Exp $";
 #endif
 
 #include "server.h"
@@ -301,6 +301,8 @@ static int party_plus_mask(partymember_t *p, const char *nick, user_t *u, const 
 	char typechar, *mask = NULL, *channame = NULL, *duration = NULL, *comment = NULL;
 	channel_t *chanptr = NULL;
 	int tmpint;
+	/* FIXME - this should be long/time_t */
+	int unixduration = 0;
 
 	if (!strcasecmp("+ban", cmd))
 		typechar = 'b';
@@ -364,12 +366,19 @@ static int party_plus_mask(partymember_t *p, const char *nick, user_t *u, const 
 		}
 	}
 
+	if (duration)
+		unixduration = parse_expire_string(duration);
+	if (unixduration) {
+		/* FIXME - int2long thing again */
+		int tmptime;
+		timer_get_now_sec(&tmptime);
+		unixduration+=tmptime;
+	}
+
 	if (comment && *comment == '@')
-		tmpint = channel_notirc_add_mask(chanptr, typechar, mask, u->handle, &comment[1],
-							parse_expire_string(duration), 0, 1, 1);
+		tmpint = channel_notirc_add_mask(chanptr, typechar, mask, u->handle, &comment[1], unixduration, 0, 1, 1);
 	else
-		tmpint = channel_notirc_add_mask(chanptr, typechar, mask, u->handle, comment,
-							parse_expire_string(duration), 0, 0, 1);
+		tmpint = channel_notirc_add_mask(chanptr, typechar, mask, u->handle, comment, unixduration, 0, 0, 1);
 
 	if (tmpint == 2)
 		partymember_printf(p, _("Error: Entry already exists!"));

@@ -18,9 +18,10 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: timeutil.c,v 1.1 2004/08/19 18:39:36 darko Exp $";
+static const char rcsid[] = "$Id: timeutil.c,v 1.2 2004/08/26 18:32:07 darko Exp $";
 #endif
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
