@@ -1,3 +1,9 @@
+2002-01-10 17:20  stdarg <stdarg@techmonkeys.org>
+
+	* testcode/: sslmode.c, zipmode.c:
+
+	Found the probem with truncated output, I think.  
+
 2002-01-10 16:44  stdarg <stdarg@techmonkeys.org>
 
 	* testcode/sslmode.c:
