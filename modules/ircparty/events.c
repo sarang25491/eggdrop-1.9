@@ -22,7 +22,7 @@ static int on_privmsg(void *client_data, partymember_t *dest, partymember_t *src
 	irc_session_t *session = client_data;
 
 	if (src) egg_iprintf(session->idx, ":%s-%d!%s@%s PRIVMSG %s :%s\r\n", src->nick, src->pid, src->ident, src->host, dest->nick, text);
-	else egg_iprintf(session->idx, "NOTICE %s\r\n", text);
+	else egg_iprintf(session->idx, ":* NOTICE * :%s\r\n", text);
 	return(0);
 }
 
