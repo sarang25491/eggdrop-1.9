@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: ircmasks.c,v 1.11 2005/03/03 21:37:36 lordares Exp $";
+static const char rcsid[] = "$Id: ircmasks.c,v 1.12 2005/03/03 21:40:33 lordares Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -111,13 +111,14 @@ char *ircmask_create_separate(int type, const char *nick, const char *user, cons
 	char *mask;
 	char ustar[2] = {0, 0};
 	char *domain;
+/*
 	int replace_numbers = 0;
 
 	if (type >= 10) {
 		replace_numbers = 1;
 		type -= 10;
 	}
-
+*/
 	if (type < 5) nick = "*";
 	if (type == 2 || type == 7) user = "*";
 	else if (type == 1 || type == 3 || type == 6 || type == 8) {
@@ -152,13 +153,14 @@ char *ircmask_create_separate(int type, const char *nick, const char *user, cons
 	}
 	mask = egg_mprintf("%s!%s%s@%s", nick, ustar, user, domain);
 	free(domain);
-	/* replaces numbers with '?' */
+	/* replaces numbers with '?' 
 	if (replace_numbers) {
 		char *c = NULL;
 
 		for (c = mask; *c; ++c)
 			if (isdigit((unsigned char) *c)) *c = '?';
 	}
+	*/
 	return(mask);
 }
 
