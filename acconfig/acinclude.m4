@@ -1,7 +1,7 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.33 2004/06/07 23:14:48 stdarg Exp $
+dnl $Id: acinclude.m4,v 1.34 2004/06/08 00:51:58 stdarg Exp $
 dnl
 
 
@@ -581,14 +581,14 @@ AM_GNU_GETTEXT(, need-ngettext)
 dnl  EGG_LIBTOOL
 dnl
 AC_DEFUN(EGG_LIBTOOL, [dnl
-AC_DISABLE_FAST_INSTALL
-AC_DISABLE_STATIC
+
 AC_LIBTOOL_WIN32_DLL
-AC_LIBLTDL_CONVENIENCE
+AC_LIBLTDL_CONVENIENCE(libltdl)
 AC_LIBTOOL_DLOPEN
 AC_PROG_LIBTOOL
 AC_SUBST(INCLTDL)
 AC_SUBST(LIBLTDL)
+AC_SUBST(LIBTOOL_DEPS)
 
 if test "$enable_shared" = no
 then

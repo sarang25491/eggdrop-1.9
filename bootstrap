@@ -1,11 +1,11 @@
 #! /bin/sh
 #
-# $Id: bootstrap,v 1.12 2003/12/17 02:24:42 ite Exp $
+# $Id: bootstrap,v 1.13 2004/06/08 00:51:58 stdarg Exp $
 #
 # Recommended development tools versions:
-#   autoconf 2.53
+#   autoconf 2.57
 #   automake 1.6.3
-#   libtool 1.4.2
+#   libtool 1.4.3
 #
 # NOTE:
 #   There are a couple of known bugs in libtool that will be fixed with the
@@ -32,22 +32,22 @@
 set -x
 
 # Bring gettext files
-#gettextize --copy --force
-
-# Generate aclocal.m4 from acconfig/*.m4 files
-aclocal-1.6 -I acconfig
+#gettextize --force --copy
 
 # Bring in libtool with libtdl abstraction
-libtoolize --copy --ltdl
+libtoolize --automake --ltdl --force --copy
+
+# Generate aclocal.m4 from acconfig/*.m4 files
+aclocal -I acconfig -I m4
+
+# Generate configure script
+autoconf
 
 # Generate config.h.in from configure.in
 autoheader
 
 # Generate Makefile.in from Makefile.am
-automake-1.6 --add-missing --copy
-
-# Generate configure script
-autoconf
+automake --add-missing
 
 # Remove previous config.cache
 if test -f config.cache

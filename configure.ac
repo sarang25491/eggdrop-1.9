@@ -5,7 +5,7 @@ AC_CONFIG_AUX_DIR(acconfig)
 AM_CONFIG_HEADER(config.h)
 
 # FIXME: make module Makefile list dynamic
-AC_CONFIG_FILES([Makefile intl/Makefile lib/Makefile lib/compat/Makefile lib/eggdrop/Makefile lib/egglib/Makefile m4/Makefile modules/Makefile modules/blowfish/Makefile modules/dccparty/Makefile modules/ircparty/Makefile modules/javascript/Makefile modules/oldbotnet/Makefile modules/perlscript/Makefile modules/proxy/Makefile modules/script/Makefile modules/server/Makefile modules/tclscript/Makefile modules/telnetparty/Makefile po/Makefile.in src/Makefile])
+AC_CONFIG_FILES([Makefile lib/Makefile lib/compat/Makefile lib/eggdrop/Makefile lib/egglib/Makefile m4/Makefile modules/Makefile modules/blowfish/Makefile modules/dccparty/Makefile modules/ircparty/Makefile modules/javascript/Makefile modules/oldbotnet/Makefile modules/perlscript/Makefile modules/proxy/Makefile modules/script/Makefile modules/server/Makefile modules/tclscript/Makefile modules/telnetparty/Makefile po/Makefile.in src/Makefile])
 
 EGG_MSG_CONFIGURE_START
 AM_INIT_AUTOMAKE(eggdrop, 1.7.0)
@@ -117,7 +117,7 @@ EGG_PERLSCRIPT_MODULE
 EGG_TCLSCRIPT_MODULE
 EGG_JAVASCRIPT_MODULE
 
-AC_CONFIG_SUBDIRS(libltdl)
+AC_CONFIG_SUBDIRS(libltdl intl)
 
 AC_SUBST(ac_aux_dir)
 

@@ -1,3 +1,20 @@
+2004-06-07  gettextize  <bug-gnu-gettext@gnu.org>
+
+	* Makefile.am (SUBDIRS): Remove intl.
+
+2004-06-07  gettextize  <bug-gnu-gettext@gnu.org>
+
+	* Makefile.am (SUBDIRS): Remove intl.
+
+2004-06-07  gettextize  <bug-gnu-gettext@gnu.org>
+
+	* Makefile.am (SUBDIRS): Remove intl.
+
+2004-06-07  gettextize  <bug-gnu-gettext@gnu.org>
+
+	* Makefile.am (SUBDIRS): Remove intl.
+	* configure.ac (AC_CONFIG_FILES): Remove intl/Makefile.
+
 2004-06-07 17:24  Will Buckner <wcc@techmonkeys.org>
 
 	* config.xml, config.xml:

@@ -16,7 +16,6 @@ SHELL = /bin/sh
 
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
-top_builddir = @top_builddir@
 VPATH = @srcdir@
 
 prefix = @prefix@
