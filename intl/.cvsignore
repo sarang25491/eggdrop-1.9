@@ -1,6 +1,5 @@
 Makefile
-Makefile.in
-libeggdrop.la
+libintl.h
 *.o
 *.obj
 *.a
