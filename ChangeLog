@@ -1,3 +1,28 @@
+2002-06-18 06:15  Jeff Fisher <guppy@techmonkeys.org>
+
+	* help/cmds2.help:
+
+	forgot to remove a reference to highlight in a help file 
+
+2002-06-18 06:12  Jeff Fisher <guppy@techmonkeys.org>
+
+	* configure.ac, eggdrop.complete.conf, help/cmds2.help,
+	help/core.help, lib/eggdrop/module.h, modules/Makefile.am,
+	modules/console/console.c, modules/irc/chan.c,
+	modules/irc/cmdsirc.c, modules/server/servmsg.c, src/Makefile.am,
+	src/botcmd.c, src/cmds.c, src/cmds.h, src/dcc.c, src/egg.h,
+	src/flags.c, src/flags.h, src/main.c, src/misc.c, src/modules.c,
+	src/tcldcc.c:
+
+	
+	
+	- removed userflag +k 
+	- removed userflag +h 
+	- removed all the code related to .strip since stdarg is going to
+	redo it in a better fashion using network filters.  
+	- removed woobie since woobie is useless and we would be much better
+	suited with a "sample" module that actually does something useful 
+
 2002-06-18 04:40  Jeff Fisher <guppy@techmonkeys.org>
 
 	* eggdrop.complete.conf, doc/html/mod-server.html,
@@ -326,9 +351,9 @@
 	modules/javascript/javascript.c, modules/notes/notes.c,
 	modules/perlscript/mod_iface.c, modules/server/server.c,
 	modules/share/share.c, modules/tclscript/tclscript.c,
-	modules/transfer/transfer.c, modules/uptime/uptime.c,
-	modules/woobie/woobie.c, src/botnet.c, src/core_binds.c,
-	src/modules.c, src/tcl.c, src/tclhash.c, src/tclhash.h:
+	modules/transfer/transfer.c, modules/uptime/uptime.c, src/botnet.c,
+	src/core_binds.c, src/modules.c, src/tcl.c, src/tclhash.c,
+	src/tclhash.h:
 
 	
 	* Bind table cleanups, especially renaming bind table functions and
@@ -583,21 +608,21 @@
 	modules/share/share.c, modules/share/share.h,
 	modules/share/uf_features.c, modules/tclscript/tclscript.c,
 	modules/transfer/transfer.c, modules/transfer/transfer.h,
-	modules/uptime/uptime.c, modules/uptime/uptime.h,
-	modules/woobie/woobie.c, src/bg.c, src/bg.h, src/botcmd.c,
-	src/botcmd.h, src/botmsg.c, src/botmsg.h, src/botnet.c,
-	src/botnet.h, src/chan.h, src/chanprog.c, src/chanprog.h,
-	src/cmds.c, src/cmds.h, src/cmdt.h, src/core_binds.c,
-	src/core_binds.h, src/dcc.c, src/dcc.h, src/dccutil.c,
-	src/dccutil.h, src/debug.h, src/dns.c, src/dns.h, src/egg.h,
-	src/egg_timer.c, src/egg_timer.h, src/flags.c, src/flags.h,
-	src/irccmp.c, src/irccmp.h, src/logfile.c, src/logfile.h,
-	src/main.c, src/main.h, src/match.c, src/match.h, src/misc.c,
-	src/misc.h, src/modules.c, src/modules.h, src/net.c, src/net.h,
-	src/patch.h, src/tandem.h, src/tcl.c, src/tcl.h, src/tcldcc.c,
-	src/tclegg.h, src/tclhash.c, src/tclhash.h, src/tclmisc.c,
-	src/tcluser.c, src/traffic.h, src/userent.c, src/userent.h,
-	src/userrec.c, src/userrec.h, src/users.c, src/users.h:
+	modules/uptime/uptime.c, modules/uptime/uptime.h, src/bg.c,
+	src/bg.h, src/botcmd.c, src/botcmd.h, src/botmsg.c, src/botmsg.h,
+	src/botnet.c, src/botnet.h, src/chan.h, src/chanprog.c,
+	src/chanprog.h, src/cmds.c, src/cmds.h, src/cmdt.h,
+	src/core_binds.c, src/core_binds.h, src/dcc.c, src/dcc.h,
+	src/dccutil.c, src/dccutil.h, src/debug.h, src/dns.c, src/dns.h,
+	src/egg.h, src/egg_timer.c, src/egg_timer.h, src/flags.c,
+	src/flags.h, src/irccmp.c, src/irccmp.h, src/logfile.c,
+	src/logfile.h, src/main.c, src/main.h, src/match.c, src/match.h,
+	src/misc.c, src/misc.h, src/modules.c, src/modules.h, src/net.c,
+	src/net.h, src/patch.h, src/tandem.h, src/tcl.c, src/tcl.h,
+	src/tcldcc.c, src/tclegg.h, src/tclhash.c, src/tclhash.h,
+	src/tclmisc.c, src/tcluser.c, src/traffic.h, src/userent.c,
+	src/userent.h, src/userrec.c, src/userrec.h, src/users.c,
+	src/users.h:
 
 	Grafted GPL header onto newer files.  Storing rcsid in binary files
 	now.  
@@ -1144,10 +1169,9 @@
 	modules/server/server.c, modules/share/share.c,
 	modules/tclscript/Makefile.am, modules/tclscript/tclscript.c,
 	modules/transfer/transfer.c, modules/uptime/uptime.c,
-	modules/woobie/woobie.c, src/Makefile.am, src/egg.h,
-	src/egg_timer.c, src/egg_timer.h, src/main.c, src/main.h,
-	src/modules.c, src/modules.h, src/registry.c, src/registry.h,
-	src/script.c, src/script.h:
+	src/Makefile.am, src/egg.h, src/egg_timer.c, src/egg_timer.h,
+	src/main.c, src/main.h, src/modules.c, src/modules.h,
+	src/registry.c, src/registry.h, src/script.c, src/script.h:
 
 	* Created eggdrop's library context.  
 	* Moved registry stuff to libeggdrop.  
@@ -1640,17 +1664,17 @@
 	modules/share/share.c, modules/share/share.h,
 	modules/share/uf_features.c, modules/transfer/transfer.c,
 	modules/transfer/transfer.h, modules/uptime/uptime.c,
-	modules/uptime/uptime.h, modules/woobie/woobie.c,
-	scripts/autobotchk, scripts/ques5.tcl, src/bg.c, src/bg.h,
-	src/botcmd.c, src/botmsg.c, src/botnet.c, src/chan.h,
-	src/chanprog.c, src/cmds.c, src/cmdt.h, src/dcc.c, src/dccutil.c,
-	src/debug.h, src/dns.c, src/dns.h, src/egg.h, src/flags.c,
-	src/flags.h, src/irccmp.c, src/irccmp.h, src/logfile.h, src/main.c,
-	src/main.h, src/misc.c, src/misc.h, src/modules.c, src/modules.h,
-	src/patch.h, src/proto.h, src/tandem.h, src/tcl.c, src/tcldcc.c,
-	src/tclegg.h, src/tclhash.c, src/tclhash.h, src/tclmisc.c,
-	src/tcluser.c, src/userent.c, src/userrec.c, src/users.c,
-	src/users.h, FEATURES, INSTALL, NEWS, README:
+	modules/uptime/uptime.h, scripts/autobotchk, scripts/ques5.tcl,
+	src/bg.c, src/bg.h, src/botcmd.c, src/botmsg.c, src/botnet.c,
+	src/chan.h, src/chanprog.c, src/cmds.c, src/cmdt.h, src/dcc.c,
+	src/dccutil.c, src/debug.h, src/dns.c, src/dns.h, src/egg.h,
+	src/flags.c, src/flags.h, src/irccmp.c, src/irccmp.h,
+	src/logfile.h, src/main.c, src/main.h, src/misc.c, src/misc.h,
+	src/modules.c, src/modules.h, src/patch.h, src/proto.h,
+	src/tandem.h, src/tcl.c, src/tcldcc.c, src/tclegg.h, src/tclhash.c,
+	src/tclhash.h, src/tclmisc.c, src/tcluser.c, src/userent.c,
+	src/userrec.c, src/users.c, src/users.h, FEATURES, INSTALL, NEWS,
+	README:
 
 	Updated copyright info for 2002 
 
@@ -2359,9 +2383,8 @@
 	modules/perlscript/Makefile.am, modules/server/Makefile.am,
 	modules/share/Makefile.am, modules/tclscript/Makefile.am,
 	modules/transfer/Makefile.am, modules/uptime/Makefile.am,
-	modules/woobie/Makefile.am, src/Makefile.am, src/egg.h,
-	src/eggdrop.h, src/logfile.c, src/main.h, src/modules.c,
-	src/modules.h, src/proto.h:
+	src/Makefile.am, src/egg.h, src/eggdrop.h, src/logfile.c,
+	src/main.h, src/modules.c, src/modules.h, src/proto.h:
 
 	* Moved some botnet utility functions from the core to libeggdrop.  
 	* Moved some common macros to libeggdrop.  
@@ -2697,8 +2720,7 @@
 2001-12-18 07:04  Jeff Fisher <guppy@techmonkeys.org>
 
 	* doc/MODULES, lib/eggdrop/module.h, modules/uptime/uptime.c,
-	modules/woobie/woobie.c, src/eggdrop.h, src/main.c, src/modules.c,
-	src/net.c, src/proto.h:
+	src/eggdrop.h, src/main.c, src/modules.c, src/net.c, src/proto.h:
 
 	removed Context and ContextNote 
 
@@ -3257,7 +3279,7 @@
 	modules/perlscript/Makefile.am, modules/server/Makefile.am,
 	modules/share/Makefile.am, modules/tclscript/Makefile.am,
 	modules/transfer/Makefile.am, modules/uptime/Makefile.am,
-	modules/woobie/Makefile.am, src/eggdrop.h:
+	src/eggdrop.h:
 
 	Added mssing stuff in Makefile.am's that prevented compilation in
 	some environments.  
@@ -3488,7 +3510,7 @@
 	modules/perlscript/Makefile.am, modules/server/Makefile.am,
 	modules/share/Makefile.am, modules/tclscript/Makefile.am,
 	modules/transfer/Makefile.am, modules/uptime/Makefile.am,
-	modules/woobie/Makefile.am, src/Makefile.am, src/modules.c:
+	src/Makefile.am, src/modules.c:
 
 	Created libeggdrop: libadns, libegg and libcompat are now linked in
 	it. Cleaned up some unneeded function exports :) 
@@ -3625,9 +3647,7 @@
 	modules/transfer/transfer.c, modules/transfer/transfer.h,
 	modules/transfer/help/set/transfer.help, modules/uptime/.cvsignore,
 	modules/uptime/Makefile.am, modules/uptime/modinfo,
-	modules/uptime/uptime.c, modules/uptime/uptime.h,
-	modules/woobie/.cvsignore, modules/woobie/Makefile.am,
-	modules/woobie/modinfo, modules/woobie/woobie.c, src/Makefile.am,
+	modules/uptime/uptime.c, modules/uptime/uptime.h, src/Makefile.am,
 	src/logfile.c, src/modules.h:
 
 	* Renamed src/mod to modules.  
