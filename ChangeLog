@@ -1,3 +1,16 @@
+2004-01-20 22:47  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/eggstring.c, src/core_party.c:
+
+	
+	* Added +/-host 
+
+2004-01-20 18:15  Automatic CVS Scripts
+
+	* po/eggdrop.pot:
+
+	Pots 
+
 2004-01-20 12:15  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
