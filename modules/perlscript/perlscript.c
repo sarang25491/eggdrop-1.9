@@ -171,6 +171,7 @@ static SV *my_resolve_variable(script_var_t *v)
 
 	switch (v->type & SCRIPT_TYPE_MASK) {
 		case SCRIPT_INTEGER:
+		case SCRIPT_UNSIGNED:
 			result = newSViv((int) v->value);
 			break;
 		case SCRIPT_STRING:
@@ -258,6 +259,7 @@ static XS(my_command_handler)
 				mstack_push(args, (void *)val);
 				break;
 			}
+			case SCRIPT_UNSIGNED:
 			case SCRIPT_INTEGER: { /* Integer. */
 				int val;
 				val = SvIV(ST(i));
