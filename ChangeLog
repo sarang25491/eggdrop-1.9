@@ -1,3 +1,28 @@
+2003-05-11 02:40  stdarg <stdarg@techmonkeys.org>
+
+	* src/: egg.h, userent.c, userent.h, userrec.c, userrec.h, users.c,
+	users.h:
+
+	
+	* Remove some stray files 
+
+2003-05-11 02:33  stdarg <stdarg@techmonkeys.org>
+
+	* src/main.c:
+
+	
+	* stray code removal heh 
+
+2003-05-11 02:30  stdarg <stdarg@techmonkeys.org>
+
+	* configure.ac, acconfig/acinclude.m4, acconfig/tcl.m4,
+	modules/blowfish/Makefile.am, modules/server/Makefile.am,
+	modules/tclscript/Makefile.am, src/Makefile.am, src/chan.h,
+	src/chanprog.c, src/chanprog.h, src/main.c:
+
+	
+	* Trying out the autoconf way of detecting tcl (test) 
+
 2003-05-10 00:29  stdarg <stdarg@techmonkeys.org>
 
 	* lib/eggdrop/my_socket.c:
