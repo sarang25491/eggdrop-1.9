@@ -27,6 +27,8 @@ static config_var_t core_config_vars[] = {
 	{"keep_all_logs", &core_config.keep_all_logs, CONFIG_INT},
 	{"quick_logs", &core_config.quick_logs, CONFIG_INT},
 
+	/* Other. */
+	{"die_on_sigterm", &core_config.die_on_sigterm, CONFIG_INT},
 	{0}
 };
 

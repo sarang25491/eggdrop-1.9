@@ -5,19 +5,22 @@
  */
 
 #include <eggdrop/eggdrop.h>
+
 #ifdef TIME_WITH_SYS_TIME
-# include <sys/time.h>
-# include <time.h>
-#else
-# ifdef HAVE_SYS_TIME_H
 #  include <sys/time.h>
-# else
 #  include <time.h>
-# endif
+#else
+#  ifdef HAVE_SYS_TIME_H
+#    include <sys/time.h>
+#  else
+#    include <time.h>
+#  endif
 #endif
+
 #include <sys/stat.h>
+
 #ifdef HAVE_UNAME
-#include <sys/utsname.h>
+#  include <sys/utsname.h>
 #endif
 
 static char *script_duration(unsigned int sec)
@@ -111,22 +114,23 @@ static int script_die(const char *reason)
 
 static char *script_unames()
 {
-  char *unix_n, *vers_n, *retval;
+	char *unix_n, *vers_n, *retval;
 #ifdef HAVE_UNAME
-  struct utsname un;
+	struct utsname un;
 
-  if (uname(&un) < 0) {
+	if (!uname(&un) < 0) {
 #endif
-    unix_n = "*unknown*";
-    vers_n = "";
+		unix_n = "unknown";
+		vers_n = "";
 #ifdef HAVE_UNAME
-  } else {
-    unix_n = un.sysname;
-    vers_n = un.release;
-  }
+	}
+	else {
+		unix_n = un.sysname;
+		vers_n = un.release;
+	}
 #endif
-  retval = msprintf("%s %s", unix_n, vers_n);
-  return(retval);
+	retval = msprintf("%s%s%s", unix_n, *vers_n ? ' ' : "", vers_n);
+	return(retval);
 }
 
 static char *script_md5(char *data)

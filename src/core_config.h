@@ -22,11 +22,14 @@ typedef struct {
 	int switch_logfiles_at;
 	int keep_all_logs;
 	int quick_logs;
+
+	/* Other. */
+	int die_on_sigterm;
 } core_config_t;
 
 extern core_config_t core_config;
 
-void core_config_init();
+void core_config_init(const char *);
 void core_config_save();
 
 #endif

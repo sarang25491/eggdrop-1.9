@@ -30,7 +30,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.153 2003/12/11 00:49:11 wcc Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.154 2003/12/16 03:13:51 wcc Exp $";
 #endif
 
 #include <ctype.h>
@@ -38,17 +38,22 @@ static const char rcsid[] = "$Id: main.c,v 1.153 2003/12/11 00:49:11 wcc Exp $";
 #include <eggdrop/eggdrop.h>
 #include "main.h"
 #include "core_config.h"
+#include "bg.h"
+#include "core_binds.h"
+#include "logfile.h"
 #include <fcntl.h>
+
 #ifdef TIME_WITH_SYS_TIME
-# include <sys/time.h>
-# include <time.h>
-#else
-# ifdef HAVE_SYS_TIME_H
 #  include <sys/time.h>
-# else
 #  include <time.h>
-# endif
+#else
+#  ifdef HAVE_SYS_TIME_H
+#    include <sys/time.h>
+#  else
+#    include <time.h>
+#  endif
 #endif
+
 #include <sys/stat.h>
 #include <errno.h>
 #include <signal.h>
@@ -58,150 +63,128 @@ static const char rcsid[] = "$Id: main.c,v 1.153 2003/12/11 00:49:11 wcc Exp $";
 #include <ctype.h>
 #include <ltdl.h>
 
-#ifdef STOP_UAC				/* osf/1 complains a lot */
-#include <sys/sysinfo.h>
-#define UAC_NOPRINT    0x00000001	/* Don't report unaligned fixups */
+#ifdef STOP_UAC /* OSF/1 complains a lot */
+#  include <sys/sysinfo.h>
+#  define UAC_NOPRINT 0x00000001 /* Don't report unaligned fixups */
 #endif
-/* Some systems have a working sys/wait.h even though configure will
- * decide it's not bsd compatable.  Oh well.
- */
-
-#include "bg.h"
-#include "core_binds.h"
-#include "logfile.h"
 
 #ifdef CYGWIN_HACKS
-#include <windows.h>
+#  include <windows.h>
 #endif
 
 #ifndef _POSIX_SOURCE
-/* Solaris needs this */
-#define _POSIX_SOURCE 1
+#  define _POSIX_SOURCE 1 /* Solaris needs this */
 #endif
 
-char	egg_version[1024] = VERSION;
-int	egg_numver = VERSION_NUM;
+eggdrop_t *egg = NULL;	/* Eggdrop's context */
 
-eggdrop_t *egg = NULL;		/* Eggdrop's context */
+int backgrd = 1;	/* Run in the background? */
+int con_chan = 0;	/* Foreground: constantly display channel stats? */
+int term_z = 0;		/* Foreground: use the terminal as a partyline? */
+int make_userfile = 0;	/* Start bot in make-userfile mode? */
 
-int	default_flags = 0;	/* Default user flags and */
-int	default_uflags = 0;	/* Default userdefinied flags for people
-				   who say 'hello' or for .adduser */
+char configfile[121] = "config.xml";	/* Name of the config file */
+char helpdir[121] = "help/";		/* Directory of help files (if used) */
+char textdir[121] = "text/";		/* Directory for text files that get dumped */
+char pid_file[120];			/* Name of Eggdrop's pid file */
 
-int	backgrd = 1;		/* Run in the background? */
-int	con_chan = 0;		/* Foreground: constantly display channel
-				   stats? */
-int	term_z = 0;		/* Foreground: use the terminal as a party
-				   line? */
-char	configfile[121] = "config.xml"; /* Name of the config file */
-char	helpdir[121] = "help/";	/* Directory of help files (if used) */
-char	textdir[121] = "text/";	/* Directory for text files that get dumped */
-time_t	online_since;		/* Unix-time that the bot loaded up */
-int	make_userfile = 0;	/* Using bot in make-userfile mode? (first
-				   user to 'hello' becomes master) */
-char	pid_file[120];		/* Name of the file for the pid to be
-				   stored in */
-int	save_users_at = 0;	/* How many minutes past the hour to
-				   save the userfile? */
-char	version[81];		/* Version info (long form) */
-char	ver[41];		/* Version info (short form) */
-int	use_stderr = 1;		/* Send stuff to stderr instead of logfiles? */
-int	do_restart = 0;		/* .restart has been called, restart asap */
-int	die_on_sighup = 0;	/* die if bot receives SIGHUP */
-int	die_on_sigterm = 1;	/* die if bot receives SIGTERM */
-int	resolve_timeout = 15;	/* hostname/address lookup timeout */
-char	quit_msg[1024];		/* quit message */
-time_t	now;			/* duh, now :) */
-egg_timeval_t egg_timeval_now;	/* Same thing, but seconds and microseconds. */
+time_t online_since;		/* Time the bot was started */
+time_t now;			/* Current time */
+egg_timeval_t egg_timeval_now;	/* Current time in seconds and microseconds. */
+
+int use_stderr = 1;		/* Send stuff to stderr instead of logfiles? */
+
+static int lastmin = 99;
+static struct tm nowtm;
+
+void core_party_init();
+void core_config_init();
 
 void fatal(const char *s, int recoverable)
 {
-  putlog(LOG_MISC, "*", "* %s", s);
-  flushlogs();
-  unlink(pid_file);
-  if (!recoverable) {
-    bg_send_quit(BG_ABORT);
-    exit(1);
-  }
+	putlog(LOG_MISC, "*", "Fatal: %s", s);
+	flushlogs();
+	unlink(pid_file);
+	if (!recoverable) {
+		bg_send_quit(BG_ABORT);
+		exit(1);
+	}
 }
 
 static void got_bus(int z)
 {
-  fatal("BUS ERROR -- CRASHING!", 1);
+	fatal("BUS ERROR.", 1);
 #ifdef SA_RESETHAND
-  kill(getpid(), SIGBUS);
+	kill(getpid(), SIGBUS);
 #else
-  bg_send_quit(BG_ABORT);
-  exit(1);
+	bg_send_quit(BG_ABORT);
+	exit(1);
 #endif
 }
 
 static void got_segv(int z)
 {
-  fatal("SEGMENT VIOLATION -- CRASHING!", 1);
+	fatal("SEGMENT VIOLATION.", 1);
 #ifdef SA_RESETHAND
-  kill(getpid(), SIGSEGV);
+	kill(getpid(), SIGSEGV);
 #else
-  bg_send_quit(BG_ABORT);
-  exit(1);
+	bg_send_quit(BG_ABORT);
+	exit(1);
 #endif
 }
 
 static void got_fpe(int z)
 {
-  fatal("FLOATING POINT ERROR -- CRASHING!", 0);
+	fatal("FLOATING POINT ERROR.", 0);
 }
 
 static void got_term(int z)
 {
-  eggdrop_event("sigterm");
-  if (die_on_sigterm) {
-    fatal("TERMINATE SIGNAL -- SIGNING OFF", 0);
-  } else {
-    putlog(LOG_MISC, "*", "RECEIVED TERMINATE SIGNAL (IGNORING)");
-  }
+	eggdrop_event("sigterm");
+	if (core_config.die_on_sigterm) {
+		putlog(LOG_MISC, "*", "Saving user file...");
+		user_save(core_config.userfile);
+		putlog(LOG_MISC, "*", "Saving config file...");
+		core_config_save();
+		putlog(LOG_MISC, "*", "Bot shutting down: received TERMINATE signal.");
+		flushlogs();
+		unlink(pid_file);
+		exit(0);
+	}
+	else putlog(LOG_MISC, "*", "Received TERMINATE signal (ignoring).");
 }
 
 static void got_quit(int z)
 {
-  eggdrop_event("sigquit");
-  putlog(LOG_MISC, "*", "RECEIVED QUIT SIGNAL (IGNORING)");
-  return;
+	eggdrop_event("sigquit");
+	putlog(LOG_MISC, "*", "Received QUIT signal (ignoring).");
+	return;
 }
 
 static void got_hup(int z)
 {
-  eggdrop_event("sighup");
-  if (die_on_sighup) {
-    fatal("HANGUP SIGNAL -- SIGNING OFF", 0);
-  } else
-    putlog(LOG_MISC, "*", "Received HUP signal: rehashing...");
-  do_restart = -2;
-  return;
+	eggdrop_event("sighup");
+	putlog(LOG_MISC, "*", "Received HUP signal (ignoring).");
+	return;
 }
 
-/* Got ILL signal
- */
 static void got_ill(int z)
 {
-  eggdrop_event("sigill");
+	eggdrop_event("sigill");
+	putlog(LOG_MISC, "*", "Received ILL signal (ignoring).");
 }
 
 
 static void print_version(void)
 {
-  char x[1024];
-    
-  strlcpy(x, egg_version, sizeof x);
-  printf("%s\n", version);
+	printf("%s\n", version);
 }
 
-static void print_help(void)
+static void print_help(const char **argv)
 {
-  print_version ();
-  printf("\n\
-Usage: %s [OPTIONS]... [FILE]\n", PACKAGE);
-  printf(_("\n\
+	print_version();
+	printf("\nUsage: %s [OPTIONS]... [FILE]\n", argv[0]);
+	printf(_("\n\
   -h, --help                 Print help and exit\n\
   -v, --version              Print version and exit\n\
   -n, --foreground           Don't go into the background (default=off)\n\
@@ -209,133 +192,117 @@ Usage: %s [OPTIONS]... [FILE]\n", PACKAGE);
   -t  --terminal             (with -n) Use terminal to simulate dcc-chat\n\
   -m  --make-userfile        Userfile creation mode\n\
   FILE  optional config filename (default 'config.xml')\n"));
-  printf("\n");
+	printf("\n");
 }
 
-static void do_args(int argc, char * const *argv)
+static void do_args(int argc, const char **argv)
 {
-  int c;
-  
-  optarg = 0;
-  optind = 1;
-  opterr = 1;
-  optopt = '?';
-	  
-  while (1) {
-    int option_index = 0;
-    static struct option long_options[] = {
-      { "help",       0, NULL, 'h' },
-      { "version",    0, NULL, 'v' },
-      { "load-module",    1, NULL, 'p' },
-      { "foreground",      0, NULL, 'n' },
-      { "channel-stats",      0, NULL, 'c' },
-      { "terminal",   0, NULL, 't' },
-      { "make-userfile",      0, NULL, 'm' },
-      { NULL, 0, NULL, 0 }
-    };
-	  
-    c = getopt_long (argc, argv, "hvp:nctm", long_options, &option_index);
+	int c;
 
-    if (c == -1) break;
-    
-    switch (c) {
-      case 'n':
-	backgrd = 0;
-	break;
+	optarg = 0;
+	optind = 1;
+	opterr = 1;
+	optopt = '?';
 
-      case 'c':
-	con_chan = 1;
-	term_z = 0;
-	break;
+	while (1) {
+		int option_index = 0;
 
-      case 't':
-	con_chan = 0;
-	term_z = 1;
-        break;
+		static struct option long_options[] = {
+			{"help", 0, NULL, 'h'},
+			{"version", 0, NULL, 'v'},
+			{"load-module", 1, NULL, 'p'},
+			{"foreground", 0, NULL, 'n'},
+			{"channel-stats", 0, NULL, 'c'},
+			{"terminal", 0, NULL, 't'},
+			{"make-userfile", 0, NULL, 'm'},
+			{NULL, 0, NULL, 0}
+		};
 
-      case 'm':
-	make_userfile = 1;
-        break;
-
-      case 'v':
-	print_version();
-	bg_send_quit(BG_ABORT);
-	exit(0);
-        break; /* this should never be reached */
-
-      case 'h':
-	print_help();
-	bg_send_quit(BG_ABORT);
-	exit(0);
-	break; /* this should never be reached */
-
-      case 0: /* Long option with no short option */
-      case '?':       /* Invalid option.  */
-	/* getopt_long() already printed an error message.  */
-	bg_send_quit(BG_ABORT);
-	exit(1);
-
-      default:        /* bug: option not considered.  */
-	fprintf (stderr, "%s: option unknown: %c\n", PACKAGE, c);
-	bg_send_quit(BG_ABORT);
-	exit(1);
-	break; /* this should never be reached */
-    }
-  }
-  if (optind < argc)
-    strlcpy(configfile, argv[optind], sizeof configfile);
+		c = getopt_long(argc, argv, "hvp:nctm", long_options, &option_index);
+		if (c == -1) break;
+		switch (c) {
+			case 'n':
+				backgrd = 0;
+				break;
+			case 'c':
+				con_chan = 1;
+				term_z = 0;
+				break;
+			case 't':
+				con_chan = 0;
+				term_z = 1;
+				break;
+			case 'm':
+				make_userfile = 1;
+				break;
+			case 'v':
+				print_version();
+				bg_send_quit(BG_ABORT);
+				exit(0);
+				break; /* this should never be reached */
+			case 'h':
+				print_help(argv);
+				bg_send_quit(BG_ABORT);
+				exit(0);
+				break; /* this should never be reached */
+			case 0: /* Long option with no short option */
+			case '?': /* Invalid option. */
+				/* getopt_long() already printed an error message. */
+				bg_send_quit(BG_ABORT);
+				exit(1);
+			default: /* bug: option not considered.  */
+				fprintf(stderr, "%s: option unknown: %c\n", argv[0], c);
+				bg_send_quit(BG_ABORT);
+				exit(1);
+				break; /* this should never be reached */
+		}
+	}
+	if (optind < argc) strlcpy(configfile, argv[optind], sizeof configfile);
 }
-
-/* Timer info */
-static int		lastmin = 99;
-static struct tm	nowtm;
 
 /* Called once a second.
  */
 static int core_secondly()
 {
-  static int cnt = 0;
-  int miltime;
+	static int cnt = 0;
+	int miltime;
 
-  check_bind_secondly();
-  cnt++;
-  memcpy(&nowtm, localtime(&now), sizeof(struct tm));
-  if (nowtm.tm_min != lastmin) {
-    int i = 0;
+	check_bind_secondly();
+	cnt++;
+	memcpy(&nowtm, localtime(&now), sizeof(struct tm));
+	if (nowtm.tm_min != lastmin) {
+		int i = 0;
 
-    /* Once a minute */
-    lastmin = (lastmin + 1) % 60;
-    eggdrop_event("minutely");
-    check_bind_time(&nowtm);
-    /* In case for some reason more than 1 min has passed: */
-    while (nowtm.tm_min != lastmin) {
-      /* Timer drift, dammit */
-      putlog(LOG_DEBUG, "*", "timer: drift (lastmin=%d, now=%d)", lastmin,
-             nowtm.tm_min);
-      i++;
-      lastmin = (lastmin + 1) % 60;
-      eggdrop_event("minutely");
-    }
-    if (i > 1)
-      putlog(LOG_MISC, "*", "(!) timer drift -- spun %d minutes", i);
-    miltime = (nowtm.tm_hour * 100) + (nowtm.tm_min);
-    if (((int) (nowtm.tm_min / 5) * 5) == (nowtm.tm_min)) {	/* 5 min */
-	    eggdrop_event("5minutely");
-      if (!miltime) {	/* At midnight */
-	char s[25];
+		/* Once a minute */
+		lastmin = (lastmin + 1) % 60;
+		eggdrop_event("minutely");
+		check_bind_time(&nowtm);
+		/* In case for some reason more than 1 min has passed: */
+		while (nowtm.tm_min != lastmin) {
+			/* Timer drift, dammit */
+			putlog(LOG_DEBUG, "*", "timer: drift (lastmin=%d, now=%d)", lastmin, nowtm.tm_min);
+			i++;
+			lastmin = (lastmin + 1) % 60;
+			eggdrop_event("minutely");
+		}
+		if (i > 1) putlog(LOG_MISC, "*", "Warning: timer drift (%d minutes).", i);
 
-	strlcpy(s, ctime(&now), sizeof s);
-	putlog(LOG_ALL, "*", "--- %.11s%s", s, s + 20);
-	eggdrop_event("backup");
-	eggdrop_event("daily");
-      }
-    }
-  }
-  return(0);
+		miltime = (nowtm.tm_hour * 100) + (nowtm.tm_min);
+		if (((int) (nowtm.tm_min / 5) * 5) == (nowtm.tm_min)) { /* 5 minutes */
+			eggdrop_event("5minutely");
+			if (!miltime) { /* At midnight */
+				char s[25];
+
+				strlcpy(s, ctime(&now), sizeof s);
+				putlog(LOG_ALL, "*", "--- %.11s%s", s, s + 20);
+				eggdrop_event("backup");
+				eggdrop_event("daily");
+			}
+		}
+	}
+	return(0);
 }
 
-void core_party_init();
-void core_config_init();
 
 int file_check(const char *filename)
 {
@@ -351,33 +318,28 @@ int file_check(const char *filename)
 
 int main(int argc, char **argv)
 {
-  int xx, i;
-  char s[25];
-  FILE *f;
-  struct sigaction sv;
-  egg_timeval_t howlong;
-  int timeout;
-  void *config_root, *entry;
-  char *modname, *scriptname;
+	int xx, i, timeout;
+	char s[25], *modname, *scriptname;
+	FILE *f;
+	struct sigaction sv;
+	egg_timeval_t howlong;
+	void *config_root, *entry;
 
 #ifdef DEBUG
-  /* Make sure it can write core, if you make debug. Else it's pretty
-   * useless (dw)
-   */
-  {
-#include <sys/resource.h>
-    struct rlimit cdlim;
+	{
+#  include <sys/resource.h>
+		struct rlimit cdlim;
 
-    cdlim.rlim_cur = RLIM_INFINITY;
-    cdlim.rlim_max = RLIM_INFINITY;
-    setrlimit(RLIMIT_CORE, &cdlim);
-  }
+		cdlim.rlim_cur = RLIM_INFINITY;
+		cdlim.rlim_max = RLIM_INFINITY;
+		setrlimit(RLIMIT_CORE, &cdlim);
+	}
 #endif
 
 #ifdef ENABLE_NLS
-  setlocale(LC_MESSAGES, "");
-  bindtextdomain(PACKAGE, LOCALEDIR);
-  textdomain(PACKAGE);
+	setlocale(LC_MESSAGES, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
 #endif
 
 	/* Initialize ltdl. */
@@ -387,64 +349,63 @@ int main(int argc, char **argv)
 		return(-1);
 	}
 
-  /* Version info! */
-  snprintf(ver, sizeof ver, "%s v%s", PACKAGE, egg_version);
-  snprintf(version, sizeof version, "Eggdrop v%s (C) 1997 Robey Pointer (C) 2003 Eggheads",
-	       egg_version);
-  /* Now add on the patchlevel (for Tcl) */
-  sprintf(&egg_version[strlen(egg_version)], " %u", egg_numver);
+	snprintf(version, sizeof version, "Eggdrop v%s (C) 1997 Robey Pointer (C) 2004 Eggheads Development Team", VERSION);
+
 #ifdef STOP_UAC
-  {
-    int nvpair[2];
+	{
+		int nvpair[2];
 
-    nvpair[0] = SSIN_UACPROC;
-    nvpair[1] = UAC_NOPRINT;
-    setsysinfo(SSI_NVPAIRS, (char *) nvpair, 1, NULL, 0);
-  }
+		nvpair[0] = SSIN_UACPROC;
+		nvpair[1] = UAC_NOPRINT;
+		setsysinfo(SSI_NVPAIRS, (char *) nvpair, 1, NULL, 0);
+	}
 #endif
 
-  /* Set up error traps: */
-  sv.sa_handler = got_bus;
-  sigemptyset(&sv.sa_mask);
+	sv.sa_handler = got_bus;
+	sigemptyset(&sv.sa_mask);
 #ifdef SA_RESETHAND
-  sv.sa_flags = SA_RESETHAND;
+	sv.sa_flags = SA_RESETHAND;
 #else
-  sv.sa_flags = 0;
+	sv.sa_flags = 0;
 #endif
-  sigaction(SIGBUS, &sv, NULL);
-  sv.sa_handler = got_segv;
-  sigaction(SIGSEGV, &sv, NULL);
+	sigaction(SIGBUS, &sv, NULL);
+
+	sv.sa_handler = got_segv;
+	sigaction(SIGSEGV, &sv, NULL);
 #ifdef SA_RESETHAND
-  sv.sa_flags = 0;
+	sv.sa_flags = 0;
 #endif
-  sv.sa_handler = got_fpe;
-  sigaction(SIGFPE, &sv, NULL);
-  sv.sa_handler = got_term;
-  sigaction(SIGTERM, &sv, NULL);
-  sv.sa_handler = got_hup;
-  sigaction(SIGHUP, &sv, NULL);
-  sv.sa_handler = got_quit;
-  sigaction(SIGQUIT, &sv, NULL);
-  sv.sa_handler = SIG_IGN;
-  sigaction(SIGPIPE, &sv, NULL);
-  sv.sa_handler = got_ill;
-  sigaction(SIGILL, &sv, NULL);
 
-  /* Initialize variables and stuff */
-  timer_update_now(&egg_timeval_now);
-  now = egg_timeval_now.sec;
-  memcpy(&nowtm, localtime(&now), sizeof(struct tm));
-  lastmin = nowtm.tm_min;
-  srandom(now % (getpid() + getppid()));
+	sv.sa_handler = got_fpe;
+	sigaction(SIGFPE, &sv, NULL);
 
-  do_args(argc, argv);
+	sv.sa_handler = got_term;
+	sigaction(SIGTERM, &sv, NULL);
 
-  printf("\n%s\n", version);
-  printf("   *** WARNING: Do NOT run this DEVELOPMENT version for any purpose other than testing.\n\n");
+	sv.sa_handler = got_hup;
+	sigaction(SIGHUP, &sv, NULL);
 
-  /* Don't allow eggdrop to run as root */
-  if (((int) getuid() == 0) || ((int) geteuid() == 0))
-    fatal(_("ERROR: Eggdrop will not run as root!"), 0);
+	sv.sa_handler = got_quit;
+	sigaction(SIGQUIT, &sv, NULL);
+
+	sv.sa_handler = SIG_IGN;
+	sigaction(SIGPIPE, &sv, NULL);
+
+	sv.sa_handler = got_ill;
+	sigaction(SIGILL, &sv, NULL);
+
+	timer_update_now(&egg_timeval_now);
+	now = egg_timeval_now.sec;
+	memcpy(&nowtm, localtime(&now), sizeof(struct tm));
+	lastmin = nowtm.tm_min;
+
+	srandom(now % (getpid() + getppid()));
+
+	do_args(argc, argv);
+	printf("\n%s\n", version);
+	printf("WARNING: Do NOT run this DEVELOPMENT version for any purpose other than testing.\n\n");
+
+	if (((int) getuid() == 0) || ((int) geteuid() == 0)) fatal(_("Eggdrop will not run as root!"), 0);
 
 	if (file_check(configfile)) {
 		if (errno) perror(configfile);
@@ -479,9 +440,7 @@ int main(int argc, char **argv)
 			for (len = 0; handle[len]; len++) {
 				if (!ispunct(handle[len]) && !isalnum(handle[len])) break;
 			}
-			if (len == 0) {
-				printf("Come on, enter a real handle.\n\n");
-			}
+			if (len == 0) printf("Come on, enter a real handle.\n\n");
 		} while (len <= 0);
 		handle[len] = 0;
 		owner = user_new(handle);
@@ -499,30 +458,25 @@ int main(int argc, char **argv)
 		user_save(core_config.userfile);
 	}
 
-  if (backgrd)
-    bg_prepare_split();
+	if (backgrd) bg_prepare_split();
 
-  strlcpy(s, ctime(&now), sizeof s);
-  strcpy(&s[11], &s[20]);
-  putlog(LOG_ALL, "*", "--- Loading %s (%s)", ver, s);
+	strlcpy(s, ctime(&now), sizeof s);
+	strcpy(&s[11], &s[20]);
+	putlog(LOG_ALL, "*", "Loading Eggdrop %s (%s)", VERSION, s);
+	snprintf(pid_file, sizeof pid_file, "pid.%s", core_config.botname);
 
-  if (!pid_file[0])
-    snprintf(pid_file, sizeof pid_file, "pid.%s", core_config.botname);
-
-  /* Check for pre-existing eggdrop! */
-  f = fopen(pid_file, "r");
-  if (f != NULL) {
-    fgets(s, 10, f);
-    xx = atoi(s);
-    kill(xx, SIGCHLD);		/* Meaningless kill to determine if pid
-				   is used */
-    if (errno != ESRCH) {
-      printf(_("I detect %s already running from this directory.\n"), core_config.botname);
-      printf(_("If this is incorrect, erase the %s\n"), pid_file);
-      bg_send_quit(BG_ABORT);
-      exit(1);
-    }
-  }
+	f = fopen(pid_file, "r");
+	if (f != NULL) {
+		fgets(s, 10, f);
+		xx = atoi(s);
+		kill(xx, SIGCHLD); /* Meaningless kill to determine if pid is used */
+		if (errno != ESRCH) {
+			printf(_("I detect %s already running from this directory.\n"), core_config.botname);
+			printf(_("If this is incorrect, please erase '%s'.\n"), pid_file);
+			bg_send_quit(BG_ABORT);
+			exit(1);
+		}
+	}
 
 	/* Put the module directory in the ltdl search path. */
 	if (core_config.module_path) module_add_dir(core_config.module_path);
@@ -540,70 +494,64 @@ int main(int argc, char **argv)
 		script_load(scriptname);
 	}
 
-  /* Move into background? */
-  if (backgrd) {
+	if (backgrd) { /* Move into background? */
 #ifndef CYGWIN_HACKS
-    bg_do_split();
-  } else {			/* !backgrd */
+		bg_do_split();
+	}
+	else {
 #endif
-    xx = getpid();
-    if (xx != 0) {
-      FILE *fp;
+		xx = getpid();
+		if (xx != 0) {
+			FILE *fp;
 
-      /* Write pid to file */
-      unlink(pid_file);
-      fp = fopen(pid_file, "w");
-      if (fp != NULL) {
-        fprintf(fp, "%u\n", xx);
-        if (fflush(fp)) {
-	  /* Let the bot live since this doesn't appear to be a botchk */
-	  printf(_("* Warning!  Could not write %s file!\n"), pid_file);
-	  fclose(fp);
-	  unlink(pid_file);
-        } else
- 	  fclose(fp);
-      } else
-        printf(_("* Warning!  Could not write %s file!\n"), pid_file);
+			unlink(pid_file);
+			fp = fopen(pid_file, "w");
+			if (fp != NULL) {
+				fprintf(fp, "%u\n", xx);
+				if (fflush(fp)) {
+					/* Let the bot live since this doesn't appear to be a botchk */
+					printf("WARNING: Could not write pid file '%s'.\n", pid_file);
+					fclose(fp);
+					unlink(pid_file);
+				}
+				else fclose(fp);
+			}
+			else printf("WARNING: Could not write pid file '%s'.\n", pid_file);
 #ifdef CYGWIN_HACKS
-      printf("Launched into the background  (pid: %d)\n\n", xx);
+			printf("Launched into the background  (pid: %d)\n\n", xx);
 #endif
-    }
-  }
+		}
+	}
 
+	use_stderr = 0; /* Stop writing to stderr now */
 
-  use_stderr = 0;		/* Stop writing to stderr now */
-  if (backgrd) {
-    /* Ok, try to disassociate from controlling terminal (finger cross) */
+	if (backgrd) {
+		/* Try to disassociate from controlling terminal (finger cross) */
 #if HAVE_SETPGID && !defined(CYGWIN_HACKS)
-    setpgid(0, 0);
+		setpgid(0, 0);
 #endif
-    /* Tcl wants the stdin, stdout and stderr file handles kept open. */
-    freopen("/dev/null", "r", stdin);
-    freopen("/dev/null", "w", stdout);
-    freopen("/dev/null", "w", stderr);
+		/* Tcl wants the stdin, stdout and stderr file handles kept open. */
+		freopen("/dev/null", "r", stdin);
+		freopen("/dev/null", "w", stdout);
+		freopen("/dev/null", "w", stderr);
 #ifdef CYGWIN_HACKS
-    FreeConsole();
+		FreeConsole();
 #endif
-  }
+	}
 
-  online_since = now;
-  howlong.sec = 1;
-  howlong.usec = 0;
-  timer_create_repeater(&howlong, "main loop", core_secondly);
+	online_since = now;
+	howlong.sec = 1;
+	howlong.usec = 0;
+	timer_create_repeater(&howlong, "main loop", core_secondly);
 
-  putlog(LOG_DEBUG, "*", "main: entering loop");
+	putlog(LOG_DEBUG, "*", "Entering main loop.");
 	while (1) {
 		timer_update_now(&egg_timeval_now);
 		now = egg_timeval_now.sec;
 		random(); /* Woop, lets really jumble things */
 		timer_run();
-
-		if (timer_get_shortest(&howlong)) {
-			timeout = 1000;
-		}
-		else {
-			timeout = howlong.sec * 1000 + howlong.usec / 1000;
-		}
+		if (timer_get_shortest(&howlong)) timeout = 1000;
+		else timeout = howlong.sec * 1000 + howlong.usec / 1000;
 		sockbuf_update_all(timeout);
 		garbage_run();
 	}

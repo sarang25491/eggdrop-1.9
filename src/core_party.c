@@ -1,6 +1,18 @@
 #include <eggdrop/eggdrop.h>
 #include <ctype.h>
+
 #include "core_config.h"
+#include "logfile.h"
+
+#ifdef HAVE_CONFIG_H
+#  include <config.h>
+#endif
+
+#ifdef HAVE_UNAME
+#  include <sys/utsname.h>
+#endif
+
+extern char pid_file[];
 
 static int party_join(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
@@ -111,21 +123,37 @@ static int party_set(partymember_t *p, const char *nick, user_t *u, const char *
 	const char *next;
 
 	egg_get_word(text, &next, &path);
-	if (next) while (isspace(*next)) next++;
-	if (!next || !path || !*path) {
+	if (!next || !*next || !path || !*path) {
 		partymember_printf(p, "Syntax: set <path> <new value>");
 		if (path) free(path);
 		return(0);
 	}
+	while (isspace(*next)) next++;
+
 	root = lookup_and_check(p, path);
 	free(path);
 	if (!root) return(0);
 
 	config_get_str(&str, root, NULL);
-	partymember_printf(p, "old value: '%s'", str);
+	partymember_printf(p, "Old value: '%s'", str);
 	config_set_str(next, root, NULL);
 	config_get_str(&str, root, NULL);
-	partymember_printf(p, "new value: '%s'", str);
+	partymember_printf(p, "New value: '%s'", str);
+	return(0);
+}
+
+static int party_status(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+#ifdef HAVE_UNAME
+	struct utsname un;
+#endif
+
+	partymember_printf(p, "I am %s, running Eggdrop %s.", core_config.botname, VERSION);
+	partymember_printf(p, "Owner: %s", core_config.owner);
+	if (core_config.admin) partymember_printf(p, "Admin: %s", core_config.admin);
+#ifdef HAVE_UNAME
+	if (!uname(&un) >= 0) partymember_printf(p, "OS: %s %s", un.sysname, un.release);
+#endif
 	return(0);
 }
 
@@ -181,6 +209,8 @@ static int party_die(partymember_t *p, const char *nick, user_t *u, const char *
 	putlog(LOG_MISC, "*", "Saving config file...");
 	core_config_save();
 	putlog(LOG_MISC, "*", "Bot shutting down: %s", reason);
+	flushlogs();
+	unlink(pid_file);
 	exit(0);
 }
 
@@ -239,12 +269,12 @@ static int party_chattr(partymember_t *p, const char *nick, user_t *u, const cha
 	int n;
 
 	n = egg_get_words(text, &next, &who, &chan, &flags, NULL);
-	if (!chan) {
+	if (!chan || !*chan) {
 		if (who) free(who);
 		partymember_printf(p, "Syntax: chattr <user> [channel] <+/-flags>");
 		return(0);
 	}
-	if (!flags) {
+	if (!flags || !*flags) {
 		flags = chan;
 		chan = NULL;
 	}
@@ -285,6 +315,7 @@ static bind_list_t core_party_binds[] = {
 	{NULL, "who", party_who},
 	{"n", "get", party_get},
 	{"n", "set", party_set},
+	{"n", "status", party_status},
 	{"n", "save", party_save},
 	{"n", "die", party_die},
 	{"n", "+user", party_plus_user},

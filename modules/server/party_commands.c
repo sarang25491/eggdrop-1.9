@@ -122,17 +122,35 @@ static int party_msg(partymember_t *p, const char *nick, user_t *u, const char *
 	const char *next;
 
 	egg_get_word(text, &next, &dest);
-	if (!next || !dest) {
-		partymember_printf(p, "Syntax: %s <nick/chan> <text>", cmd);
+	if (!next || !*next || !dest || !*dest) {
+		partymember_printf(p, "Syntax: %s <nick/chan> <message>", cmd);
 		if (dest) free(dest);
 		return(0);
 	}
 	while (isspace(*next)) next++;
 	printserv(SERVER_NORMAL, "PRIVMSG %s :%s\r\n", dest, next);
+	partymember_printf(p, "Msg to %s: %s", dest, next);
 	free(dest);
 	return(0);
 }
 
+static int party_act(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	char *dest;
+	const char *next;
+
+	egg_get_word(text, &next, &dest);
+	if (!next || !*next || !dest || !*dest) {
+		partymember_printf(p, "Syntax: act <nick/chan> <action>");
+		if (dest) free(dest);
+		return(0);
+	}
+	while (isspace(*next)) next++;
+	printserv(SERVER_NORMAL, "PRIVMSG %s :\001ACTION %s\001\r\n", dest, next);
+	partymember_printf(p, "Action to %s: %s", dest, next);
+	free(dest);
+	return(0);
+}
 
 bind_list_t server_party_commands[] = {
 	{"", "servers", party_servers},
@@ -142,5 +160,6 @@ bind_list_t server_party_commands[] = {
 	{"m", "jump", party_jump},
 	{"m", "msg", party_msg},
 	{"m", "say", party_msg},
+	{"m", "act", party_act},
 	{0}
 };

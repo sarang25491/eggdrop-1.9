@@ -24,7 +24,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: bg.c,v 1.13 2003/12/11 00:49:11 wcc Exp $";
+static const char rcsid[] = "$Id: bg.c,v 1.14 2003/12/16 03:13:51 wcc Exp $";
 #endif
 
 #ifdef HAVE_CONFIG_H
@@ -43,8 +43,7 @@ static const char rcsid[] = "$Id: bg.c,v 1.13 2003/12/11 00:49:11 wcc Exp $";
 #include "main.h"              /* fatal()                              */
 #include "bg.h"                /* bg_quit_t, prototypes                */
 
-
-extern char	pid_file[];
+extern char pid_file[];
 
 /* When threads are started during eggdrop's init phase, we can't simply
  * fork() later on, because that only copies the VM space over and
@@ -113,7 +112,7 @@ typedef struct {
 	pid_t		child_pid;	/* PID of split process.	 */
 } bg_t;
 
-static bg_t	bg = { 0 };
+static bg_t bg = { 0 };
 
 
 /* Do everything we normally do after we have split off a new
@@ -122,29 +121,27 @@ static bg_t	bg = { 0 };
  */
 static void bg_do_detach(pid_t p)
 {
-  FILE	*fp;
+	FILE *fp;
 
-  /* Need to attempt to write pid now, not later. */
-  unlink(pid_file);
-  fp = fopen(pid_file, "w");
-  if (fp != NULL) {
-    fprintf(fp, "%u\n", p);
-    if (fflush(fp)) {
-      /* Kill bot incase a botchk is run from crond. */
-      printf(_("* Warning!  Could not write %s file!\n"), pid_file);
-      printf("  Try freeing some disk space\n");
-      fclose(fp);
-      unlink(pid_file);
-      exit(1);
-    }
-    fclose(fp);
-  } else
-    printf(_("* Warning!  Could not write %s file!\n"), pid_file);
-  printf("Launched into the background  (pid: %d)\n\n", p);
+	unlink(pid_file);
+	fp = fopen(pid_file, "w");
+	if (fp != NULL) {
+		fprintf(fp, "%u\n", p);
+		if (fflush(fp)) {
+			/* Kill bot incase a botchk is run from crond. */
+			printf("Fatal: Could not write pid file '%s'.\n", pid_file);
+			fclose(fp);
+			unlink(pid_file);
+			exit(1);
+		}
+		fclose(fp);
+	}
+	else printf("WARNING: Could not write pid file '%s'.\n", pid_file);
+	printf("Launched into the background (pid: %d).\n\n", p);
 #ifdef HAVE_SETPGID
-  setpgid(p, p);
+	setpgid(p, p);
 #endif
-  exit(0);
+	exit(0);
 }
 
 void bg_prepare_split(void)
