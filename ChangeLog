@@ -1,3 +1,19 @@
+2002-05-02 03:21  stdarg <stdarg@techmonkeys.org>
+
+	* doc/howto/porting.txt:
+
+	
+	* Oops botnet-nick, not bot-nick 
+
+2002-05-02 03:16  stdarg <stdarg@techmonkeys.org>
+
+	* doc/howto/: README, porting.txt, timers.txt:
+
+	
+	* Added 'porting.txt', which gives some pointers for porting scripts
+	from older versions of Eggdrop to 1.7.  
+	* Updated the howto for timers.  
+
 2002-05-01 05:39  stdarg <stdarg@techmonkeys.org>
 
 	* src/tcluser.c:
