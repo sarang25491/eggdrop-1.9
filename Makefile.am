@@ -1,10 +1,13 @@
-# $Id: Makefile.am,v 1.2 2001/10/14 10:22:49 tothwolf Exp $
+# $Id: Makefile.am,v 1.3 2001/10/19 23:07:46 tothwolf Exp $
 
 AUX_DIST                = $(ac_aux_dir)/install-sh \
 			$(ac_aux_dir)/ltmain.sh \
 			$(ac_aux_dir)/missing \
 			$(ac_aux_dir)/mkinstalldirs \
-			$(ac_aux_dir)/depcomp 
+			$(ac_aux_dir)/depcomp \
+			$(ac_aux_dir)/config.guess \
+			$(ac_aux_dir)/config.sub
+
 AUX_DIST_EXTRA		= $(ac_aux_dir)/codeset.m4 \
 			$(ac_aux_dir)/gettext.m4 \
 			$(ac_aux_dir)/glibc21.m4 \

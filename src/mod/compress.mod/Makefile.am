@@ -1,9 +1,8 @@
-# $Id: Makefile.am,v 1.3 2001/10/14 10:22:50 tothwolf Exp $
+# $Id: Makefile.am,v 1.4 2001/10/19 23:07:46 tothwolf Exp $
 
 # FIXME: optionally allow a system wide install by ignoring the line below.
 pkglibdir = $(exec_prefix)/modules
 
-# FIXME: dependency on gnu make
 if EGG_COMPRESS
   EGG_CMP = compress.la
 else
