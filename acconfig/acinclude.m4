@@ -1,7 +1,7 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.24 2003/03/04 11:31:48 tothwolf Exp $
+dnl $Id: acinclude.m4,v 1.25 2003/03/05 02:16:20 wcc Exp $
 dnl
 
 
@@ -363,7 +363,7 @@ egg_cv_var_sys_errlist,
 ])
 if test x"$egg_cv_var_sys_errlist" = xyes; then
   AC_DEFINE([HAVE_SYS_ERRLIST], 1,
-           [Define if your system libraries has a sys_errlist variable.])
+           [Define if your system libraries have a sys_errlist variable.])
 fi
 ])
 
