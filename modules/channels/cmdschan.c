@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.2 2002/01/16 22:09:40 ite Exp $
+ * $Id: cmdschan.c,v 1.3 2002/01/18 22:28:52 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -109,8 +109,8 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
     else
       strncpyz(s, who, sizeof s);
     if ((me = module_find("server", 0, 0)) && me->funcs)
-      snprintf(s1, sizeof s1, "%s!%s", me->funcs[SERVER_BOTNAME],
-	            me->funcs[SERVER_BOTUSERHOST]);
+      snprintf(s1, sizeof s1, "%s!%s", (char *)(me->funcs[SERVER_BOTNAME]),
+	            (char *)(me->funcs[SERVER_BOTUSERHOST]));
     else
       s1[0] = 0;
     if (s1[0] && wild_match(s, s1)) {
