@@ -1,3 +1,10 @@
+2001-12-08 20:03  Federico Mennite <ite@techmonkeys.org>
+
+	* modules/irc/irc.c:
+
+	Don't show status_log if we don't have a server. Patch by Jeff
+	Fisher <guppy@techmonkeys.org> 
+
 2001-12-08 19:48  Federico Mennite <ite@techmonkeys.org>
 
 	* configure.ac, acconfig/acinclude.m4, doc/compiling.FAQ:
