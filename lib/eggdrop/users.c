@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.27 2004/06/22 23:20:23 wingman Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.28 2004/06/23 17:24:43 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -203,7 +203,7 @@ static int save_walker(const void *key, void *dataptr, void *param)
 			xml_node_set_str(setting->extended[j].value, user_node, "setting", i, "extended", j, "value", 0, 0);
 		}
 	}
-	xml_node_append_child(root, user_node);
+	xml_node_append(root, user_node);
 	return(0);
 }
 
@@ -212,6 +212,8 @@ int user_save(const char *fname)
 	xml_node_t *root;
 
 	root = xml_node_new();
+	root->name = strdup("users");
+
 	xml_node_set_int(g_uid, root, "next_uid", 0, 0);
 	xml_node_set_int(uid_wraparound, root, "uid_wraparound", 0, 0);
 	hash_table_walk(uid_ht, save_walker, root);

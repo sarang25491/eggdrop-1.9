@@ -1,75 +1,74 @@
-<eggdrop>
-	<botname>
-		eggdrop
-		<help>The identity of the bot as seen by users.</help>
-	</botname>
-	<owner>
-		--yourhandle--
-		<help>
-			The owner of the bot gets special privileges and protection. You can specify multiple owners using a comma separated list, e.g. "owner1, owner2, owner3".
-		</help>
-	</owner>
-	<userfile>users.xml</userfile>
-	<logfile_suffix>.%d%b%Y</logfile_suffix>
-	<max_logsize>0</max_logsize>
-	<switch_logfiles_at>0</switch_logfiles_at>
-	<keep_all_logs>0</keep_all_logs>
-	<quick_logs>0</quick_logs>
-	<whois_items>Handle UID Flags Ircmasks</whois_items>
-	<die_on_sigterm>1</die_on_sigterm>
-	<module_path>modules/</module_path>
-	<autoload>
-		<module>telnetparty</module>
-		<module>ircparty</module>
-		<module>dccparty</module>
-		<module>tclscript</module>
-		<module>script</module>
-		<module>server</module>
-	</autoload>
-	<admin />
-	<help_path>help/</help_path>
-	<temp_path />
-	<text_path />
-</eggdrop>
-<server>
-	<user>user</user>
-	<realname>real name</realname>
-	<nicklist>
-		<nick>primary</nick>
-		<nick>altnick1</nick>
-		<nick>altnick2</nick>
-		<nick>...</nick>
-	</nicklist>
-	<connect_timeout>30</connect_timeout>
-	<ping_timeout>30</ping_timeout>
-	<dcc_timeout>30</dcc_timeout>
-	<trigger_on_ignore>0</trigger_on_ignore>
-	<keepnick>0</keepnick>
-	<cycle_delay>10</cycle_delay>
-	<default_port>6667</default_port>
-	<fake005 />
-	<raw_log>0</raw_log>
-	<ip_lookup>0</ip_lookup>
-	<serverlist>
-		<server>
-			<host>some.host.com</host>
-			<port>6667</port>
-		</server>
-		<server>
-			<host>another.host.com</host>
-			<pass>thepassword</pass>
-			<port>7000</port>
-		</server>
-	</serverlist>
-</server>
-<telnetparty>
-	<vhost />
-	<port>3333</port>
-	<stealth>0</stealth>
-	<max_retries>3</max_retries>
-</telnetparty>
-<ircparty>
-	<vhost />
-	<port>6667</port>
-	<stealth>0</stealth>
-</ircparty>
+<config version="1.0">
+	<eggdrop>
+		<botname>
+			eggdrop
+			<help>The identity of the bot as seen by users.</help>
+		</botname>
+		<owner>
+			--yourhandle--
+		</owner>
+		<userfile>users.xml</userfile>
+		<logfile_suffix>.%d%b%Y</logfile_suffix>
+		<max_logsize>0</max_logsize>
+		<switch_logfiles_at>0</switch_logfiles_at>
+		<keep_all_logs>0</keep_all_logs>
+		<quick_logs>0</quick_logs>
+		<whois_items>Handle UID Flags Ircmasks</whois_items>
+		<die_on_sigterm>1</die_on_sigterm>
+		<module_path>modules/</module_path>
+		<autoload>
+			<module>telnetparty</module>
+			<module>ircparty</module>
+			<module>dccparty</module>
+			<module>tclscript</module>
+			<module>script</module>
+			<module>server</module>
+		</autoload>
+		<admin />
+		<help_path>help/</help_path>
+		<temp_path />
+		<text_path />
+	</eggdrop>
+	<server>
+		<user>user</user>
+		<realname>real name</realname>
+		<nicklist>
+			<nick>primary</nick>
+			<nick>altnick1</nick>
+			<nick>altnick2</nick>
+			<nick>...</nick>
+		</nicklist>
+		<connect_timeout>30</connect_timeout>
+		<ping_timeout>30</ping_timeout>
+		<dcc_timeout>30</dcc_timeout>
+		<trigger_on_ignore>0</trigger_on_ignore>
+		<keepnick>0</keepnick>
+		<cycle_delay>10</cycle_delay>
+		<default_port>6667</default_port>
+		<fake005 />
+		<raw_log>0</raw_log>
+		<ip_lookup>0</ip_lookup>
+		<serverlist>
+			<server>
+				<host>some.host.com</host>
+				<port>6667</port>
+			</server>
+			<server>
+				<host>another.host.com</host>
+				<pass>thepassword</pass>
+				<port>7000</port>
+			</server>
+		</serverlist>
+	</server>
+	<telnetparty>
+		<vhost />
+		<port>3333</port>
+		<stealth>0</stealth>
+		<max_retries>3</max_retries>
+	</telnetparty>
+	<ircparty>
+		<vhost />
+		<port>6667</port>
+		<stealth>0</stealth>
+	</ircparty>
+</config>

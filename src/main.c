@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.177 2004/06/22 23:20:23 wingman Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.178 2004/06/23 17:24:43 wingman Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -100,8 +100,6 @@ char version[81];
 
 static int lastmin = 99;
 static struct tm nowtm;
-
-void core_config_init();
 
 void fatal(const char *errmsg)
 {
@@ -402,7 +400,7 @@ static void core_shutdown_or_restart()
 int main(int argc, char **argv)
 {
 	int timeout;
-
+	
 #ifdef DEBUG
 	{
 #  include <sys/resource.h>
@@ -483,7 +481,8 @@ int main(int argc, char **argv)
 		tid = timer_create_repeater(&howlong, "main loop", core_secondly);
 
 		/* init core */
-		core_init();
+		if (!core_init())
+			break;
 
 		/* set normal running mode */
 		runmode = RUNMODE_NORMAL;
@@ -539,7 +538,8 @@ int core_init()
 	eggdrop_init();
 
 	/* load config */	
-	core_config_init(configfile);	
+	if (core_config_init(configfile) != 0)
+		return (-1);
 
 	/* init logging */
 	logfile_init();	

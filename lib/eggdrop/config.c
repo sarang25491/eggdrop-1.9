@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: config.c,v 1.4 2004/06/22 21:55:31 wingman Exp $";
+static const char rcsid[] = "$Id: config.c,v 1.5 2004/06/23 17:24:43 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -82,6 +82,9 @@ void *config_get_root(const char *handle)
 
 int config_set_root(const char *handle, void *config_root)
 {
+	egg_assert_val(handle != NULL, -1);
+	egg_assert_val(config_root != NULL, -1);
+
 	roots = realloc(roots, sizeof(*roots) * (nroots+1));
 	roots[nroots].handle = strdup(handle);
 	roots[nroots].root = config_root;
@@ -112,26 +115,30 @@ void *config_load(const char *fname)
 {
 	xml_node_t *root;
 
-	if (xml_load_file(fname, &root, XML_TRIM_TEXT) != 0)
+	if (xml_load_file(fname, &root, XML_TRIM_TEXT) != 0) {
+		/* don't use putlog here since logging may not be initialized at 
+		 * this stage */
+		fprintf(stderr, "*** ERROR: Failed to load config file '%s': %s\n\n",
+			fname, xml_last_error());
 		return NULL;
+	}
 
-	return(root);
+	return xml_root_element(root);
 }
 
 int config_save(const char *handle, const char *fname)
 {
 	xml_node_t *root;
-	FILE *fp;
 
 	root = config_get_root(handle);
 	if (!root) return(-1);
 	bind_check(BT_config_save, NULL, handle, handle);
 	if (!fname) fname = "config.xml";
-	fp = fopen(fname, "w");
-	if (!fp) return(-1);
-	xml_write_node(fp, root, 0);
-	fclose(fp);
-	return(0);
+
+	if (xml_save_file(fname, root, XML_INDENT) == 0)
+		return (0);
+
+	return (-1);
 }
 
 static void config_delete_var(void *client_data)

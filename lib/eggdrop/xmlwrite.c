@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xmlwrite.c,v 1.7 2004/06/22 23:20:23 wingman Exp $";
+static const char rcsid[] = "$Id: xmlwrite.c,v 1.8 2004/06/23 17:24:43 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -27,74 +27,267 @@ static const char rcsid[] = "$Id: xmlwrite.c,v 1.7 2004/06/22 23:20:23 wingman E
 #include <stdarg.h>
 
 #include <eggdrop/memory.h>
+#include <eggdrop/memutil.h>
 #include <eggdrop/xml.h>
 
-int xml_write_node(FILE *fp, xml_node_t *node, int indent)
+#define STREAM_STRING 	0
+#define STREAM_FILE	1
+
+#define XML_INDENT_CHAR	'\t'
+
+static int write_options = XML_NONE;
+
+typedef struct 
 {
-	char *tabs;
-	int i;
+	union
+	{
+		FILE *file;
+		struct
+		{
+			char *buf;
+			size_t length;
+			size_t size;
+		} string;
+	} data;
+	int type;
+} stream_t;
 
-	tabs = (char *)malloc(indent+1);
-	memset(tabs, '\t', indent);
-	tabs[indent] = 0;
-	if (node->name) {
-		if (node->type == 0) fprintf(fp, "%s<%s", tabs, node->name);
-		else fprintf(fp, "%s<?%s", tabs, node->name);
-	}
-	else if (node->type == 2) {
-		/* comment like <!-- ... --> */
-		fprintf(fp, "%s<!--%s-->\n", tabs, node->text);
-		free(tabs);
-		return(0);
-	}
+static int xml_write_node(stream_t *stream, xml_node_t *node);
 
-	for (i = 0; i < node->nattributes; i++) fprintf(fp, " %s='%s'", node->attributes[i].name, node->attributes[i].value);
-	if (node->len > 50 || node->nchildren) {
-		if (node->name) fprintf(fp, ">\n");
-	}
-	else if (node->len > 0) {
-		/* If it's just small text and no children... */
-		fprintf(fp, ">%s</%s>\n", node->text, node->name);
-		free(tabs);
-		return(0);
-	}
-	else {
-		free(tabs);
-		if (node->type == 0) fprintf(fp, " />\n");
-		else fprintf(fp, " ?>\n");
-		return(0);
-	}
-
-	if (node->len) fprintf(fp, "%s\t%s\n", tabs, node->text);
-	if (node->name) indent++;
-	for (i = 0; i < node->nchildren; i++) xml_write_node(fp, node->children[i], indent);
-	if (node->name) fprintf(fp, "%s</%s>\n", tabs, node->name);
-	free(tabs);
-	return(0);
-}
-
-int xml_save(FILE *fd, xml_node_t *node, int options)
+static int stream_printf(stream_t *stream, const char *format, ...)
 {
-	return xml_write_node(fd, node, (options & XML_INDENT) ? 1 : 0);	
-}
+	va_list args;
+	int ret = 0;
 
-int xml_save_file(const char *file, xml_node_t *node, int options)
-{
-	FILE *fd;
-	int ret;
+	va_start(args, format);
+	switch (stream->type) {
 
-	fd = fopen(file, "r");
-	if (fd == NULL)
-		return -1;
-	ret = xml_save(fd, node, options);
-	fclose(fd);
+		case (STREAM_STRING):
+			while (1) {
+				/* (try to) write into our buffer */
+				if (stream->data.string.buf != NULL) {
+					ret = vsnprintf(stream->data.string.buf + stream->data.string.length,
+						stream->data.string.size - stream->data.string.length, format, args);
+				}
+
+				/* check if we succeeded */
+				if (stream->data.string.buf == NULL
+					|| ret >= stream->data.string.size - stream->data.string.length)
+				{	
+					/* we need to resize our buffer */
+					stream->data.string.buf = realloc(stream->data.string.buf,
+						stream->data.string.size + 256);
+
+					/* realloc failed, damn */
+					if (stream->data.string.buf == NULL)
+						return (-1);
+
+					memset(stream->data.string.buf + stream->data.string.length, 0,
+						stream->data.string.size - stream->data.string.length);
+
+					/* update size */
+					stream->data.string.size += 256;
+
+				} else {	
+					stream->data.string.length += ret;
+					break;
+				}
+			}
+
+			break;
+
+		case (STREAM_FILE):
+			ret = vfprintf(stream->data.file, format, args);
+			break;
+	
+		default:
+			ret = -1;
+			break;
+	}
+	va_end(args);
 
 	return ret;
 }
 
-#if 0
+static int level = 0;
+static char indent[32] = {0};
+
+static int xml_write_children(stream_t *stream, xml_node_t *node)
+{
+	int i, ret = 0;
+
+	/* init indent */
+	memset(indent, '\t', sizeof(indent));
+
+	indent[++level] = 0;
+
+	/* XXX: encode text */
+	if (node->text && *node->text)
+		stream_printf(stream, "%s%s\n", indent, node->text);
+
+        for (i = 0; i < node->nchildren; i++) {
+		stream_printf(stream, "%s", indent);
+                if ((ret = xml_write_node(stream, node->children[i])) == -1)
+			break;
+	}
+
+	indent[--level] = 0;
+
+        return ret;
+}
+
+static int xml_write_attributes(stream_t *stream, xml_node_t *node)
+{
+	int i;
+
+	for (i = 0; i < node->nattributes; i++) {
+		xml_attr_t *attr = &node->attributes[i];
+		if (stream_printf(stream, " %s=\"%s\"", attr->name, attr->value) == -1)
+			return (-1);
+	}
+
+	return (0);
+}
+
+static int xml_write_element(stream_t *stream, xml_node_t *node)
+{
+	if (stream_printf(stream, "<%s", node->name) == -1)
+		return (-1);
+	
+	if (xml_write_attributes(stream, node) == -1)
+		return (-1);
+
+	if (node->nchildren == 0) {
+		if (node->text) {
+			stream_printf(stream, ">%s</%s>\n", node->text, node->name);
+		} else {
+			stream_printf(stream, "/>\n");
+		}
+
+		return (0);
+	}
+
+	stream_printf(stream, ">\n");
+	if (xml_write_children(stream, node) == -1)
+		return (-1);
+
+	return stream_printf(stream, "%s</%s>\n", indent, node->name);
+}
+
+static int xml_write_document(stream_t *stream, xml_node_t *node)
+{
+	return xml_write_children(stream, node);
+}
+
+static int xml_write_comment(stream_t *stream, xml_node_t *node)
+{
+	/* XXX: that's wrong, text needs to encoded */
+	return stream_printf(stream, "<!--%s-->\n", node->text);
+}
+
+static int xml_write_cdata_section(stream_t *stream, xml_node_t *node)
+{
+	return stream_printf(stream, "<[CDATA[%s]]>\n", node->text);
+}
+
+static int xml_write_processing_instruction(stream_t *stream, xml_node_t *node)
+{
+	if (stream_printf(stream, "<?%s", node->name) == -1)
+		return (-1);
+	
+	if (xml_write_attributes(stream, node) == -1)
+		return (-1);
+
+	if (stream_printf(stream, "?>\n") == -1)
+		return (-1);
+
+	return (0);
+}
+
+static int xml_write_node(stream_t *stream, xml_node_t *node)
+{
+	switch (node->type) {
+	
+		case (XML_DOCUMENT):
+			return xml_write_document(stream, node);
+
+		case (XML_ELEMENT):
+			return xml_write_element(stream, node);
+
+		case (XML_COMMENT):
+			return xml_write_comment(stream, node);
+	
+		case (XML_CDATA_SECTION):
+			return xml_write_cdata_section(stream, node);
+
+		case (XML_PROCESSING_INSTRUCTION):
+			return xml_write_processing_instruction(stream, node);
+			
+	}
+
+	return (-1);
+}
+
+int xml_save(FILE *fd, xml_node_t *node, int options)
+{
+        stream_t stream;
+        int ret;
+
+        stream.data.file = fd;
+        stream.type = STREAM_FILE;
+
+        if (stream.data.file == NULL)
+                return -1;
+
+	write_options = options;
+        ret = xml_write_node(&stream, node);
+	write_options = XML_NONE;
+
+        return ret;
+}
+
+int xml_save_file(const char *file, xml_node_t *node, int options)
+{
+	stream_t stream;
+	int ret;
+
+	stream.data.file = fopen(file, "w");
+	stream.type = STREAM_FILE;
+
+	if (stream.data.file == NULL)
+		return -1;
+
+	write_options = options;
+	ret = xml_write_node(&stream, node);
+	write_options = XML_NONE;
+
+	fclose(stream.data.file);
+
+	return ret;
+}
+
 int xml_save_str(char **str, xml_node_t *node, int options)
 {
-	return -1; /* not supported */
+	stream_t stream;
+	int ret;
+
+	stream.data.string.buf = NULL;
+	stream.data.string.length = 0;
+	stream.data.string.size = 0;
+
+	stream.type = STREAM_STRING;
+
+	write_options = options;
+	ret = xml_write_node(&stream, node);
+	write_options = XML_NONE;
+	
+	*str = NULL;
+	if (ret == -1) {
+		if (stream.data.string.length > 0)
+			free(stream.data.string.buf);
+	} else {
+		(*str) = stream.data.string.buf;
+	}
+
+	return ret;
 }
-#endif

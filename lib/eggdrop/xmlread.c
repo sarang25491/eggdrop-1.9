@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xmlread.c,v 1.14 2004/06/22 20:12:37 wingman Exp $";
+static const char rcsid[] = "$Id: xmlread.c,v 1.15 2004/06/23 17:24:43 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -26,7 +26,8 @@ static const char rcsid[] = "$Id: xmlread.c,v 1.14 2004/06/22 20:12:37 wingman E
 #include <string.h>
 #include <eggdrop/eggdrop.h>
 
-extern xml_amp_conversion_t builtin_conversions[];
+extern xml_amp_conversion_t builtin_conversions[];	/* from xml.c		*/
+extern char *last_error;				/* from xml.c		*/
 
 static int read_options = XML_NONE;
 
@@ -224,11 +225,10 @@ static void read_attributes(xml_node_t *node, char **data)
  */
 static int xml_read_node(xml_node_t *parent, char **data)
 {
-	xml_node_t node, *ptr;
+	xml_node_t *node;
 	int n;
 	char *end;
 	
-
 	/* Read in any excess data and save it with the parent. */
 	read_text(parent, data);
 
@@ -242,14 +242,13 @@ static int xml_read_node(xml_node_t *parent, char **data)
 	/* If this is a closing tag like </blah> then we're done. */
 	if (**data == '/') return(2);
 
-	/* Initialize the node. */
-	memset(&node, 0, sizeof(node));
-
 	/* If this is the start of the xml declaration, <?xml version=...?> then
 		we read it like a normal tag, but set the 'decl' member. */
 	if (**data == '?') {
 		(*data)++;
-		node.type = XML_PROCESSING_INSTRUCTION;
+	
+		node = xml_node_new();
+		node->type = XML_PROCESSING_INSTRUCTION;
 	}
 	else if (**data == '!') {
 		(*data)++;
@@ -260,15 +259,23 @@ static int xml_read_node(xml_node_t *parent, char **data)
 			*data += 2; /* Skip past '--' part. */
 			end = strstr(*data, "-->");
 			len = end - *data;
-			node.text = (char *)malloc(len+1);
-			memcpy(node.text, *data, len);
-			node.text[len] = 0;
-			node.len = len;
-			node.type = XML_COMMENT;
+
+			node = xml_node_new();
+			node->text = (char *)malloc(len+1);
+			memcpy(node->text, *data, len);
+			node->text[len] = 0;
+			node->len = len;
+			node->type = XML_COMMENT;
 	
-			xml_node_add(parent, &node);
+			xml_node_append(parent, node);
 			*data = end+3;
 			return(0); /* Skip past '-->' part. */
+		} else {
+			/* set error */
+			str_redup(&last_error, "Invalid comment declaration, expected character '-' not found.");
+
+			/* invalid tag start */
+			return (-1);
 		}
 	}
 	else if (**data == '[') {
@@ -287,15 +294,16 @@ static int xml_read_node(xml_node_t *parent, char **data)
 		len = (size_t)(ptr - *data);
 
 		/* copy text */
-		node.text = malloc(len + 1);
-		memcpy(node.text, *data, len - 1);
-		node.text[len] = 0;
+		node = xml_node_new();
+		node->text = malloc(len + 1);
+		memcpy(node->text, *data, len - 1);
+		node->text[len] = 0;
 
 		/* set type */
-		node.type = XML_CDATA_SECTION;
+		node->type = XML_CDATA_SECTION;
 
 		/* add to parent */
-		xml_node_add (parent, &node);
+		xml_node_append(parent, node);
 
 		/* skip text + ]]> */
 		*data += len + 3;
@@ -303,17 +311,34 @@ static int xml_read_node(xml_node_t *parent, char **data)
 		return 0;
 
 	} else {
-		node.type = XML_ELEMENT;
+		node = xml_node_new();
+		node->type = XML_ELEMENT;
 	}
 
 	/* Read in the tag name. */
-	read_name(data, &node.name);
+	read_name(data, &node->name);
 	
+	/* sanity check for more than one document element */
+	if (parent->type == XML_DOCUMENT) {
+		int i, count = 0;
+
+		/* sanity check */
+		for (i = 0; i < parent->nchildren; i++) {
+			if (parent->children[i]->type == XML_ELEMENT)
+				count++;
+		}		
+
+		if (count > 0) {
+			str_redup(&last_error, "Only one root element allowed.");
+			return (-1);
+		}
+	}
+
 	/* Now that we have a name, go ahead and add the node to the tree. */
-	ptr = xml_node_add(parent, &node);
+	xml_node_append(parent, node);
 
 	/* Read in the attributes. */
-	read_attributes(ptr, data);
+	read_attributes(node, data);
 
 	/* Now we should be pointing at ?, /, or >. */
 
@@ -330,12 +355,13 @@ static int xml_read_node(xml_node_t *parent, char **data)
 
 	/* Parse children and text value. */
 	do {
-		n = xml_read_node(ptr, data);
+		if ((n = xml_read_node(node, data)) == -1)
+			return -1;
 	} while (n == 0);
 
 	/* Ok, the recursive xml_read_node() has read in all the text value for
 		this node, so decode it now. */
-	ptr->len = xml_decode_text(ptr->text, ptr->len);
+	node->len = xml_decode_text(node->text, node->len);
 
 	/* Ok, now 1 means we reached end-of-input. */
 	/* 2 means we reached end-of-node. */
@@ -395,25 +421,36 @@ int xml_load_file(const char *file, xml_node_t **node, int options)
 
 int xml_load_str(char *str, xml_node_t **node, int options)
 {
+	int ret;
 	xml_node_t *root;
 
 	(*node) = NULL;
 
-	root = malloc (sizeof(xml_node_t));
-	if (root == NULL)
-		return 0;
-	memset(root, 0, sizeof(xml_node_t));
+	root = xml_node_new();
+	root->type = XML_DOCUMENT;
+
+	/* clear last error */
+	last_error = NULL;
 
 	read_options = options;
-	while (!xml_read_node(root, &str)) {
-		; /* empty */
-	}
+	do { 
+		if ((ret = xml_read_node(root, &str)) == -1)
+			break;
+	} while (ret == 0);
 	read_options = XML_NONE;
 
-	if (root->nchildren == 0) {
-		free (root);
-		return -1;
+	/* empty file will produce no errors so we check here for any
+	 * root element */
+	if (ret == -1 || xml_root_element(root) == NULL) {
+
+		/* emtpy file? heh... */
+		if (last_error == NULL)
+			str_redup(&last_error, "No elements found.");
+		xml_node_delete(root);
+
+		return (-1);
 	}
+
 	root->len = xml_decode_text(root->text, root->len);
 
 	(*node) = root;

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xml.c,v 1.14 2004/06/22 23:20:23 wingman Exp $";
+static const char rcsid[] = "$Id: xml.c,v 1.15 2004/06/23 17:24:43 wingman Exp $";
 #endif
 
 #include <stdio.h>
@@ -45,15 +45,25 @@ xml_amp_conversion_t builtin_conversions[] =
 	{0}
 };
 
+char *last_error = NULL;
+
+const char *xml_last_error(void)
+{
+	return last_error;
+}
+
 /* Get a new, blank node. */
 xml_node_t *xml_node_new(void)
 {
 	xml_node_t *node;
 
-	node = (xml_node_t *)malloc (sizeof (xml_node_t));
+	node = (xml_node_t *)malloc(sizeof(xml_node_t));
 	if (node == NULL)
 		return NULL;
-	memset (node, 0, sizeof (xml_node_t));
+	memset(node, 0, sizeof(xml_node_t));
+
+	/* default type is element */	
+	node->type = XML_ELEMENT;
 	
 	return node;
 }
@@ -82,47 +92,37 @@ void xml_node_delete_callbacked(xml_node_t *node, void (*callback)(void *))
 		}
 		parent->nchildren--;
 	}
-	if (node->text) free(node->text);
-	if (node->name) free(node->name);
+
+	/* free attributes */
 	for (i = 0; i < node->nattributes; i++) {
 		if (node->attributes[i].name) free(node->attributes[i].name);
 		if (node->attributes[i].value) free(node->attributes[i].value);
 	}
 	if (node->attributes) free(node->attributes);
+
+	/* free children */
 	for (i = 0; i < node->nchildren; i++) {
 		node->children[i]->parent = NULL;
 		xml_node_delete_callbacked(node->children[i], callback);
 	}
 	if (node->children) free(node->children);
+
+	free(node->text);
+	free(node->name);
 	free(node);
 }
 
-/* Append a node to another node's children. */
-xml_node_t *xml_node_add(xml_node_t *parent, xml_node_t *child)
+const char *xml_node_type(xml_node_t *node)
 {
-	xml_node_t *newnode, *node;
-	int i;
-
-	newnode = malloc(sizeof(*newnode));
-	memcpy(newnode, child, sizeof(*child));
-	newnode->parent = parent;
-
-	parent->children = realloc(parent->children, sizeof(child) * (parent->nchildren+1));
-	parent->children[parent->nchildren] = newnode;
-	parent->nchildren++;
-	newnode->next = newnode->prev = NULL;
-
-	if (child->name) {
-		for (i = parent->nchildren-2; i >= 0; i--) {
-			node = parent->children[i];
-			if (node->name && !strcasecmp(node->name, newnode->name)) {
-				node->next = child;
-				newnode->prev = node;
-				break;
-			}
-		}
+	switch (node->type) {
+		case (XML_DOCUMENT): return "XML_DOCUMENT";
+		case (XML_ELEMENT): return "XML_ELEMENT";
+		case (XML_CDATA_SECTION): return "XML_CDATA_SECTION";
+		case (XML_PROCESSING_INSTRUCTION): return "XML_PROCESSING_INSTRUCTION";
+		case (XML_COMMENT): return "XML_COMMENT";
 	}
-	return(newnode);
+
+	return "unknown";
 }
 
 xml_node_t *xml_node_vlookup(xml_node_t *root, va_list args, int create)
@@ -153,7 +153,7 @@ xml_node_t *xml_node_lookup(xml_node_t *root, int create, ...)
 xml_node_t *xml_node_path_lookup(xml_node_t *root, const char *path, int index, int create)
 {
 	int i, thisindex, len;
-	xml_node_t *child, newchild;
+	xml_node_t *child, *newchild;
 	const char *next;
 	char *name, *sep, buf[512];
 
@@ -206,9 +206,10 @@ xml_node_t *xml_node_path_lookup(xml_node_t *root, const char *path, int index, 
 
 		if (!child && create) {
 			do {
-				memset(&newchild, 0, sizeof(newchild));
-				newchild.name = strdup(name);
-				child = xml_node_add(root, &newchild);
+				newchild = xml_node_new();
+				newchild->name = strdup(name);
+				xml_node_append(root, newchild);
+				child = newchild;
 			} while (thisindex-- > 0);
 		}
 		root = child;
@@ -399,7 +400,7 @@ xml_attr_t *xml_node_lookup_attr(xml_node_t *node, const char *name)
 	return NULL;
 }
 
-void xml_node_remove_child(xml_node_t *parent, xml_node_t *child)
+void xml_node_remove(xml_node_t *parent, xml_node_t *child)
 {
 	int i;
 
@@ -416,24 +417,33 @@ void xml_node_remove_child(xml_node_t *parent, xml_node_t *child)
 			parent->children = realloc(parent->children, (parent->nchildren - 1) * sizeof(xml_node_t *));
 		}
 		parent->nchildren--;
+
+		child->prev = NULL;
+		child->parent = NULL;
+		child->next = NULL;
 		return;
 	}
 }
 
-void xml_node_append_child(xml_node_t *parent, xml_node_t *child)
+void xml_node_append(xml_node_t *parent, xml_node_t *child)
 {
 	egg_return_if_fail(parent != NULL);
 	egg_return_if_fail(child != NULL);
 
 	/* remove from previous parent */
 	if (child->parent)
-		xml_node_remove_child(child->parent, child);
+		xml_node_remove(child->parent, child);
 
-	parent->children = realloc(parent->children, parent->nchildren + 1);
-	parent->children[parent->nchildren++] = child;
+	parent->children = realloc(parent->children, sizeof(xml_node_t *) * (parent->nchildren + 1));
+	parent->children[parent->nchildren] = child;
+
+	if (parent->nchildren > 0)
+		parent->children[parent->nchildren - 1]->next = child;
 
 	/* set new parent */
 	child->parent = parent;
+
+	parent->nchildren++;
 }
 
 void xml_node_append_attr (xml_node_t *node, xml_attr_t *attr)

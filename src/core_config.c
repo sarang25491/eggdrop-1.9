@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_config.c,v 1.19 2004/06/22 10:54:42 wingman Exp $";
+static const char rcsid[] = "$Id: core_config.c,v 1.20 2004/06/23 17:24:43 wingman Exp $";
 #endif
 
 #include <string.h>
@@ -60,7 +60,7 @@ static config_var_t core_config_vars[] = {
 	{0}
 };
 
-void core_config_init(const char *fname)
+int core_config_init(const char *fname)
 {
 	/* Set default vals. */
 	memset(&core_config, 0, sizeof(core_config));
@@ -69,6 +69,9 @@ void core_config_init(const char *fname)
 	egg_setowner(&core_config.owner);
 
 	config_root = config_load(fname);
+	if (config_root == NULL)
+		return -1;
+
 	config_set_root("eggdrop", config_root);
 	config_link_table(core_config_vars, config_root, "eggdrop", 0, NULL);
 	if (!core_config.botname) core_config.botname = strdup("eggdrop");
@@ -78,10 +81,14 @@ void core_config_init(const char *fname)
 	if (!core_config.logfile_suffix) core_config.logfile_suffix = strdup(".%d%b%Y");
 
 	config_update_table(core_config_vars, config_root, "eggdrop", 0, NULL);
+
+	return (0);
 }
 
-void core_config_save()
+int core_config_save(void)
 {
 	config_update_table(core_config_vars, config_root, "eggdrop", 0, NULL);
 	config_save("eggdrop", configfile);
+
+	return (0);
 }

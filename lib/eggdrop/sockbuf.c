@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: sockbuf.c,v 1.12 2004/06/22 23:20:23 wingman Exp $";
+static const char rcsid[] = "$Id: sockbuf.c,v 1.13 2004/06/23 17:24:43 wingman Exp $";
 #endif
 
 #if HAVE_CONFIG_H
@@ -109,7 +109,7 @@ int sockbuf_shutdown(void)
 	for (i = npollfds - 1; i >= 0; i--) {
         	sockbuf_t *sbuf = &sockbufs[idx_array[i]];
 
-		putlog(LOG_DEBUG, "*", "Socket %s:%i shouldn't be opened at this stage, closing.\n",
+		putlog(LOG_DEBUG, "*", "Socket %i %s:%i shouldn't be opened at this stage, closing.", idx_array[i],
 			(sbuf->peer_ip) ? sbuf->peer_ip : sbuf->my_ip,
 			(sbuf->peer_ip) ? sbuf->peer_port : sbuf->my_port);
 			

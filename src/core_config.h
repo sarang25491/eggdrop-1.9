@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: core_config.h,v 1.8 2004/06/21 19:04:51 stdarg Exp $
+ * $Id: core_config.h,v 1.9 2004/06/23 17:24:43 wingman Exp $
  */
 
 #ifndef _EGG_CORE_CONFIG_H_
@@ -54,7 +54,7 @@ typedef struct {
 
 extern core_config_t core_config;
 
-void core_config_init(const char *);
-void core_config_save();
+int core_config_init(const char *);
+int core_config_save(void);
 
 #endif /* !_EGG_CORE_CONFIG_H_ */

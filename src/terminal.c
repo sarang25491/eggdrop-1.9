@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: terminal.c,v 1.3 2004/06/22 20:12:37 wingman Exp $";
+static const char rcsid[] = "$Id: terminal.c,v 1.4 2004/06/23 17:24:43 wingman Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>			/* partyline_*		*/
@@ -94,6 +94,10 @@ int terminal_init(void)
 
 int terminal_shutdown(void)
 {
+        if (terminal_session.party)
+                partymember_delete(terminal_session.party, _("Shutdown"));
+        terminal_session.party = NULL;
+
 	if (terminal_session.in_idx != 0)
 		sockbuf_delete(terminal_session.in_idx);
 	terminal_session.in_idx = 0;
@@ -101,10 +105,6 @@ int terminal_shutdown(void)
 	if (terminal_session.out_idx != 0)
 		sockbuf_delete(terminal_session.out_idx);
 	terminal_session.out_idx = 0;
-
-	if (terminal_session.party)
-		partymember_delete(terminal_session.party, _("Shutdown"));
-	terminal_session.party = NULL;
 
 	if (terminal_user)
 		 user_delete(terminal_user);
