@@ -1,3 +1,10 @@
+2002-10-11 07:27  stdarg <stdarg@techmonkeys.org>
+
+	* lib/eggdrop/flags.c:
+
+	
+	* Forgot a file.  
+
 2002-10-11 06:56  stdarg <stdarg@techmonkeys.org>
 
 	* lib/compat/compat.h, lib/compat/strdup.h,
