@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: javascript.c,v 1.8 2002/05/12 05:59:51 stdarg Exp $";
+static const char rcsid[] = "$Id: javascript.c,v 1.9 2002/05/17 07:29:24 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -84,6 +84,7 @@ static char *error_logfile = NULL;
 
 /* When Javascript tries to use one of our linked vars, it calls this function
 	with "id" set to the property it's trying to look up. */
+/*
 static int my_eggvar_getter(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
 {
 	char *str;
@@ -107,6 +108,7 @@ static int my_eggvar_setter(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
 	putlog(LOG_MISC, "*", "my_setter: %s, %s", linked_var->name, str);
 	return JS_FALSE;
 }
+*/
 
 static JSClass eggvar_class = {
 	"EggdropVariable", JSCLASS_HAS_PRIVATE,
@@ -119,7 +121,7 @@ static JSClass eggfunc_class = {
 	JS_PropertyStub, JS_PropertyStub, JS_PropertyStub, JS_PropertyStub,
 	JS_EnumerateStub, JS_ResolveStub, JS_ConvertStub, JS_FinalizeStub,
 	NULL, NULL,
-	my_command_handler
+	(JSNative) my_command_handler
 };
 
 static JSClass global_class = {"global", JSCLASS_HAS_PRIVATE,
@@ -245,11 +247,11 @@ static int my_link_var(void *ignore, script_linked_var_t *var)
 	}
 	JS_SetPrivate(global_js_context, obj, var);
 	JS_DefineFunction(global_js_context, obj,
-		"toString", my_eggvar_value_of, 0, 0);
+		"toString", (JSNative) my_eggvar_value_of, 0, 0);
 	JS_DefineFunction(global_js_context, obj,
-		"valueOf", my_eggvar_value_of, 0, 0);
+		"valueOf", (JSNative) my_eggvar_value_of, 0, 0);
 	JS_DefineFunction(global_js_context, obj,
-		"set", my_eggvar_set, 0, 0);
+		"set", (JSNative) my_eggvar_set, 0, 0);
 	return(0);
 }
 
@@ -709,8 +711,6 @@ static Function javascript_table[] = {
 
 char *javascript_LTX_start(eggdrop_t *eggdrop)
 {
-	bind_table_t *dcc_table;
-
 	egg = eggdrop;
 
 	javascript_init();
@@ -726,23 +726,19 @@ char *javascript_LTX_start(eggdrop_t *eggdrop)
 	script_register_module(&my_script_interface);
 	script_playback(&my_script_interface);
 
-	dcc_table = find_bind_table2("dcc");
-	if (dcc_table) add_builtins2(dcc_table, dcc_commands);
+	add_builtins("dcc", dcc_commands);
 
 	return(NULL);
 }
 
 static char *javascript_close()
 {
-	bind_table_t *dcc_table;
-
 	/* When tcl is gone from the core, this will be uncommented. */
 	/* Tcl_DeleteInterp(ginterp); */
 
 	script_unregister_module(&my_script_interface);
 
-	dcc_table = find_bind_table2("dcc");
-	if (dcc_table) rem_builtins2(dcc_table, dcc_commands);
+	rem_builtins("dcc", dcc_commands);
 
 	module_undepend("javascript");
 	return(NULL);

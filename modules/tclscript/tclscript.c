@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tclscript.c,v 1.17 2002/05/12 05:59:52 stdarg Exp $";
+static const char rcsid[] = "$Id: tclscript.c,v 1.18 2002/05/17 07:29:25 stdarg Exp $";
 #endif
 
 #include "lib/eggdrop/module.h"
@@ -633,8 +633,6 @@ static Function tclscript_table[] = {
 
 char *tclscript_LTX_start(eggdrop_t *eggdrop)
 {
-	bind_table_t *dcc_table;
-
 	egg = eggdrop;
 
 	/* When tcl is gone from the core, this will be uncommented. */
@@ -653,21 +651,17 @@ char *tclscript_LTX_start(eggdrop_t *eggdrop)
 	script_register_module(&my_script_interface);
 	script_playback(&my_script_interface);
 
-	dcc_table = find_bind_table2("dcc");
-	if (dcc_table) add_builtins2(dcc_table, dcc_commands);
+	add_builtins("dcc", dcc_commands);
 
 	return(NULL);
 }
 
 static char *tclscript_close()
 {
-	bind_table_t *dcc_table;
-
 	/* When tcl is gone from the core, this will be uncommented. */
 	/* Tcl_DeleteInterp(ginterp); */
 
-	dcc_table = find_bind_table2("dcc");
-	if (dcc_table) rem_builtins2(dcc_table, dcc_commands);
+	rem_builtins("dcc", dcc_commands);
 
 	module_undepend("tclscript");
 	script_unregister_module(&my_script_interface);

@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: share.c,v 1.15 2002/05/05 16:40:36 tothwolf Exp $";
+static const char rcsid[] = "$Id: share.c,v 1.16 2002/05/17 07:29:24 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "share"
@@ -57,9 +57,6 @@ static int allow_resync = 0;
 static struct flag_record fr = {0, 0, 0, 0, 0, 0};
 static int resync_time = 900;
 static int overr_local_bots = 0;	/* Override local bots?		    */
-
-static bind_table_t *BT_dcc;
-
 
 struct delay_mode {
   struct delay_mode *next;
@@ -2088,7 +2085,7 @@ static char *share_close()
   delay_free_mem();
   rem_tcl_ints(my_ints);
   rem_tcl_strings(my_strings);
-  if (BT_dcc) rem_builtins2(BT_dcc, my_cmds);
+  rem_builtins("dcc", my_cmds);
   rem_help_reference("share.help");
   return NULL;
 }
@@ -2192,8 +2189,7 @@ char *start(eggdrop_t *eggdrop)
   DCC_BOT.kill = cancel_user_xfer;
   add_tcl_ints(my_ints);
   add_tcl_strings(my_strings);
-  BT_dcc = find_bind_table2("dcc");
-  if (BT_dcc) add_builtins2(BT_dcc, my_cmds);
+  add_builtins("dcc", my_cmds);
   uff_init();
   uff_addtable(internal_uff_table);
   return NULL;

@@ -20,7 +20,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_binds.c,v 1.3 2002/05/05 16:40:38 tothwolf Exp $";
+static const char rcsid[] = "$Id: core_binds.c,v 1.4 2002/05/17 07:29:25 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -32,8 +32,8 @@ static bind_table_t *BT_time, *BT_event;
 
 void core_binds_init()
 {
-	BT_time = add_bind_table2("time", 5, "iiiii", MATCH_MASK, BIND_STACKABLE);
-	BT_event = add_bind_table2("event", 1, "s", MATCH_MASK, BIND_STACKABLE);
+	BT_time = bind_table_add("time", 5, "iiiii", MATCH_MASK, BIND_STACKABLE);
+	BT_event = bind_table_add("event", 1, "s", MATCH_MASK, BIND_STACKABLE);
 }
 
 void check_bind_time(struct tm *tm)

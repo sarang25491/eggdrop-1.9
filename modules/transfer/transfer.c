@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: transfer.c,v 1.14 2002/05/05 16:40:37 tothwolf Exp $";
+static const char rcsid[] = "$Id: transfer.c,v 1.15 2002/05/17 07:29:25 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "transfer"
@@ -55,8 +55,6 @@ static int dcc_limit = 3;	/* Maximum number of simultaneous file
 static int dcc_block = 1024;	/* Size of one dcc block */
 static int quiet_reject;        /* Quietly reject dcc chat or sends from
                                    users without access? */
-
-static bind_table_t *BT_load;
 
 /*
  * Prototypes
@@ -1788,10 +1786,7 @@ static cmd_t transfer_ctcps[] =
 /* Add our CTCP bindings if the server module is loaded. */
 static int server_transfer_setup(char *mod)
 {
-  bind_table_t *BT_ctcp;
-
-  if ((BT_ctcp = find_bind_table2("ctcp")))
-    add_builtins2(BT_ctcp, transfer_ctcps);
+  add_builtins("ctcp", transfer_ctcps);
   return 1;
 }
 
@@ -1808,8 +1803,6 @@ static cmd_t transfer_load[] =
 static char *transfer_close()
 {
   int i;
-  bind_table_t *BT_ctcp;
-
   putlog(LOG_MISC, "*", "Unloading transfer module, killing all transfer connections...");
   for (i = dcc_total - 1; i >= 0; i--) {
     if (dcc[i].type == &DCC_GET || dcc[i].type == &DCC_GET_PENDING)
@@ -1822,14 +1815,12 @@ static char *transfer_close()
   while (fileq)
     deq_this(fileq);
   del_entry_type(&USERENTRY_FSTAT);
-  del_bind_table2(BT_rcvd);
-  del_bind_table2(BT_sent);
-  del_bind_table2(BT_lost);
-  del_bind_table2(BT_tout);
-  if (BT_load) rem_builtins2(BT_load, transfer_load);
-  /* Try to remove our CTCP bindings */
-  if ((BT_ctcp = find_bind_table2("ctcp")))
-    rem_builtins2(BT_ctcp, transfer_ctcps);
+  bind_table_del(BT_rcvd);
+  bind_table_del(BT_sent);
+  bind_table_del(BT_lost);
+  bind_table_del(BT_tout);
+  rem_builtins("load", transfer_load);
+  rem_builtins("ctcp", transfer_ctcps);
   rem_tcl_commands(mytcls);
   rem_tcl_ints(myints);
   rem_help_reference("transfer.help");
@@ -1882,17 +1873,16 @@ char *start(eggdrop_t *eggdrop)
     return "This module requires eggdrop1.7.0 or later";
   }
 
-  BT_load = find_bind_table2("load");
-  if (BT_load) add_builtins2(BT_load, transfer_load);
+  add_builtins("load", transfer_load);
 
   add_tcl_commands(mytcls);
   add_tcl_ints(myints);
   server_transfer_setup(NULL);
   add_help_reference("transfer.help");
-  BT_rcvd = add_bind_table2("rcvd", 3, "Uss", MATCH_MASK, BIND_STACKABLE);
-  BT_sent = add_bind_table2("sent", 3, "Uss", MATCH_MASK, BIND_STACKABLE);
-  BT_lost = add_bind_table2("lost", 5, "Ussii", MATCH_MASK, BIND_STACKABLE);
-  BT_tout = add_bind_table2("tout", 5, "Ussii", MATCH_MASK, BIND_STACKABLE);
+  BT_rcvd = bind_table_add("rcvd", 3, "Uss", MATCH_MASK, BIND_STACKABLE);
+  BT_sent = bind_table_add("sent", 3, "Uss", MATCH_MASK, BIND_STACKABLE);
+  BT_lost = bind_table_add("lost", 5, "Ussii", MATCH_MASK, BIND_STACKABLE);
+  BT_tout = bind_table_add("tout", 5, "Ussii", MATCH_MASK, BIND_STACKABLE);
 
   USERENTRY_FSTAT.get = def_get;
   add_entry_type(&USERENTRY_FSTAT);

@@ -27,7 +27,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: botnet.c,v 1.60 2002/05/16 22:56:41 stdarg Exp $";
+static const char rcsid[] = "$Id: botnet.c,v 1.61 2002/05/17 07:29:25 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -94,14 +94,11 @@ static void init_bots();
 
 void botnet_init()
 {
-	bind_table_t *BT_event;
-
 	init_bots();
 
 	/* Add our event handlers */
 	add_hook(HOOK_5MINUTELY, (Function) check_botnet_pings);
-	BT_event = find_bind_table2("event");
-	if (BT_event) add_builtins2(BT_event, botnet_events);
+	add_builtins("event", botnet_events);
 }
 
 /* Handle TERM signal */

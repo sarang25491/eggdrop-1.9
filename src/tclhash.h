@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: tclhash.h,v 1.29 2002/05/05 16:40:39 tothwolf Exp $
+ * $Id: tclhash.h,v 1.30 2002/05/17 07:29:25 stdarg Exp $
  */
 
 #ifndef _EGG_TCLHASH_H
@@ -76,7 +76,7 @@ typedef struct bind_table_b {
 
 #ifndef MAKING_MODS
 
-void kill_bind2(void);
+void kill_binds(void);
 
 void check_tcl_dcc(const char *, int, const char *);
 void check_tcl_chjn(const char *, const char *, int, char, int, const char *);
@@ -99,19 +99,19 @@ void check_tcl_chof(char *, int);
 
 int check_bind(bind_table_t *table, const char *match, struct flag_record *_flags, ...);
 
-bind_table_t *add_bind_table2(const char *name, int nargs, const char *syntax, int match_type, int flags);
+bind_table_t *bind_table_add(const char *name, int nargs, const char *syntax, int match_type, int flags);
 
-void del_bind_table2(bind_table_t *table);
+void bind_table_del(bind_table_t *table);
 
-bind_table_t *find_bind_table2(const char *name);
+bind_table_t *bind_table_find(const char *name);
 
-int add_bind_entry(bind_table_t *table, const char *flags, const char *mask, const char *function_name, int bind_flags, Function callback, void *client_data);
+int bind_entry_add(bind_table_t *table, const char *flags, const char *mask, const char *function_name, int bind_flags, Function callback, void *client_data);
 
-int del_bind_entry(bind_table_t *table, const char *flags, const char *mask, const char *function_name, void *cdata);
+int bind_entry_del(bind_table_t *table, const char *flags, const char *mask, const char *function_name, void *cdata);
 
-void add_builtins2(bind_table_t *table, cmd_t *cmds);
+void add_builtins(const char *table_name, cmd_t *cmds);
 
-void rem_builtins2(bind_table_t *table, cmd_t *cmds);
+void rem_builtins(const char *table_name, cmd_t *cmds);
 
 #endif				/* !MAKING_MODS */
 

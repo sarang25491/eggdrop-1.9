@@ -34,7 +34,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: uptime.c,v 1.9 2002/05/05 16:40:37 tothwolf Exp $";
+static const char rcsid[] = "$Id: uptime.c,v 1.10 2002/05/17 07:29:25 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "uptime"
@@ -71,7 +71,6 @@ typedef struct PackUp
 
 PackUp upPack;
 
-static bind_table_t *BT_dcc;
 static Function *server_funcs = NULL;
 static eggdrop_t *egg = NULL;
 
@@ -214,7 +213,7 @@ static char *uptime_close()
 {
 	rem_tcl_strings(mystrings);
 	rem_tcl_ints(myints);
-	if (BT_dcc) rem_builtins2(BT_dcc, mydcc);
+	rem_builtins("dcc", mydcc);
 	free(uptime_host);
 	close(uptimesock);
 	del_hook(HOOK_HOURLY, (Function) check_hourly);
@@ -245,8 +244,7 @@ char *start(eggdrop_t *eggdrop)
 	module_register(MODULE_NAME, uptime_table, 1, 1);
 	add_tcl_strings(mystrings);
 	add_tcl_ints(myints);
-	BT_dcc = find_bind_table2("dcc");
-	if (BT_dcc) add_builtins2(BT_dcc, mydcc);
+	add_builtins("dcc", mydcc);
 	add_hook(HOOK_HOURLY, (Function) check_hourly);
 	uptime_host = strdup(UPTIME_HOST);
 	init_uptime();

@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tcl.c,v 1.81 2002/05/12 05:59:52 stdarg Exp $";
+static const char rcsid[] = "$Id: tcl.c,v 1.82 2002/05/17 07:29:25 stdarg Exp $";
 #endif
 
 #include <stdlib.h>		/* getenv()				*/
@@ -346,7 +346,7 @@ void kill_tcl()
   rem_tcl_coups(def_tcl_coups);
   rem_tcl_strings(def_tcl_strings);
   rem_tcl_ints(def_tcl_ints);
-  kill_bind2();
+  kill_binds();
   Tcl_DeleteInterp(interp);
 }
 

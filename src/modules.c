@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: modules.c,v 1.110 2002/05/12 06:12:07 stdarg Exp $";
+static const char rcsid[] = "$Id: modules.c,v 1.111 2002/05/17 07:29:25 stdarg Exp $";
 #endif
 
 #include "main.h"		/* NOTE: when removing this, include config.h */
@@ -524,12 +524,12 @@ Function global_table[] =
   (Function) getlocaladdr,
   (Function) kill_bot,
   (Function) quit_msg,                /* char *				  */
-  (Function) add_bind_table2,
+  (Function) bind_table_add,
   /* 276 - 279 */
-  (Function) del_bind_table2,
-  (Function) add_builtins2,
-  (Function) rem_builtins2,
-  (Function) find_bind_table2,
+  (Function) bind_table_del,
+  (Function) add_builtins,
+  (Function) rem_builtins,
+  (Function) bind_table_find,
   /* 280 - 283 */
   (Function) check_bind,
   (Function) 0,
@@ -552,8 +552,8 @@ void modules_init()
   /* FIXME: keep this hack until the global table mess is gone */
   egg->global = global_table;
 
-  BT_load = add_bind_table2("load", 1, "s", MATCH_MASK, 0);
-  BT_unload = add_bind_table2("unload", 1, "s", MATCH_MASK, 0);
+  BT_load = bind_table_add("load", 1, "s", MATCH_MASK, 0);
+  BT_unload = bind_table_add("unload", 1, "s", MATCH_MASK, 0);
 
   module_list = malloc(sizeof(module_entry));
   module_list->name = strdup("eggdrop");

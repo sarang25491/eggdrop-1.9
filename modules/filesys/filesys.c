@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: filesys.c,v 1.11 2002/05/05 16:40:35 tothwolf Exp $";
+static const char rcsid[] = "$Id: filesys.c,v 1.12 2002/05/17 07:29:23 stdarg Exp $";
 #endif
 
 #include <fcntl.h>
@@ -60,7 +60,7 @@ static const char rcsid[] = "$Id: filesys.c,v 1.11 2002/05/05 16:40:35 tothwolf 
 
 #define start filesys_LTX_start
 
-static bind_table_t *BT_dcc, *BT_load, *BT_file;
+static bind_table_t *BT_file;
 static Function *transfer_funcs = NULL;
 
 static eggdrop_t *egg = NULL;
@@ -845,10 +845,7 @@ static cmd_t myctcp[] =
 
 static void init_server_ctcps(char *module)
 {
-  bind_table_t *BT_ctcp;
-
-  if ((BT_ctcp = find_bind_table2("ctcp")))
-    add_builtins2(BT_ctcp, myctcp);
+  add_builtins("ctcp", myctcp);
 }
 
 static cmd_t myload[] =
@@ -878,7 +875,6 @@ static void filesys_report(int idx, int details)
 static char *filesys_close()
 {
   int i;
-  bind_table_t *BT_ctcp;
 
   putlog(LOG_MISC, "*", _("Unloading filesystem, killing all filesystem connections."));
   for (i = 0; i < dcc_total; i++)
@@ -895,12 +891,11 @@ static char *filesys_close()
   rem_tcl_commands(mytcls);
   rem_tcl_strings(mystrings);
   rem_tcl_ints(myints);
-  if (BT_dcc) rem_builtins2(BT_dcc, mydcc);
-  if (BT_load) rem_builtins2(BT_load, myload);
+  rem_builtins("dcc", mydcc);
+  rem_builtins("load", myload);
   rem_help_reference("filesys.help");
-  if ((BT_ctcp = find_bind_table2("ctcp")))
-    rem_builtins2(BT_ctcp, myctcp);
-  del_bind_table2(BT_file);
+  rem_builtins("ctcp", myctcp);
+  bind_table_del(BT_file);
   del_entry_type(&USERENTRY_DCCDIR);
   module_undepend(MODULE_NAME);
   return NULL;
@@ -938,12 +933,10 @@ char *start(eggdrop_t *eggdrop)
   add_tcl_commands(mytcls);
   add_tcl_strings(mystrings);
   add_tcl_ints(myints);
-  BT_file = add_bind_table2("file", 3, "sis", MATCH_MASK, BIND_STACKABLE);
-  BT_dcc = find_bind_table2("dcc");
-  BT_load = find_bind_table2("load");
-  if (BT_dcc) add_builtins2(BT_dcc, mydcc);
-  if (BT_load) add_builtins2(BT_load, myload);
-  add_builtins2(BT_file, myfiles);
+  BT_file = bind_table_add("file", 3, "sis", MATCH_MASK, BIND_STACKABLE);
+  add_builtins("dcc", mydcc);
+  add_builtins("load", myload);
+  add_builtins("file", myfiles);
   add_help_reference("filesys.help");
   init_server_ctcps(0);
   memcpy(&USERENTRY_DCCDIR, &USERENTRY_INFO,

@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: irc.c,v 1.19 2002/05/12 06:23:39 stdarg Exp $";
+static const char rcsid[] = "$Id: irc.c,v 1.20 2002/05/17 07:29:23 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "irc"
@@ -38,8 +38,8 @@ static const char rcsid[] = "$Id: irc.c,v 1.19 2002/05/12 06:23:39 stdarg Exp $"
 
 #define start irc_LTX_start
 
-/* We import some bind tables from server.mod */
-static bind_table_t *BT_dcc, *BT_raw, *BT_msg, *BT_ctcp, *BT_ctcr;
+/* Import some bind tables from the server module. */
+static bind_table_t *BT_ctcp, *BT_ctcr;
 
 /* We also create a few. */
 static bind_table_t *BT_topic, *BT_split, *BT_rejoin, *BT_quit, *BT_join, *BT_part, *BT_kick, *BT_nick, *BT_mode, *BT_need, *BT_pub, *BT_pubm;
@@ -867,23 +867,23 @@ static char *irc_close()
   dprintf(DP_MODE, "JOIN 0\n");
   for (chan = chanset; chan; chan = chan->next)
     clear_channel(chan, 1);
-  del_bind_table2(BT_topic);
-  del_bind_table2(BT_split);
-  del_bind_table2(BT_quit);
-  del_bind_table2(BT_rejoin);
-  del_bind_table2(BT_part);
-  del_bind_table2(BT_nick);
-  del_bind_table2(BT_mode);
-  del_bind_table2(BT_kick);
-  del_bind_table2(BT_join);
-  del_bind_table2(BT_pubm);
-  del_bind_table2(BT_pub);
-  del_bind_table2(BT_need);
+  bind_table_del(BT_topic);
+  bind_table_del(BT_split);
+  bind_table_del(BT_quit);
+  bind_table_del(BT_rejoin);
+  bind_table_del(BT_part);
+  bind_table_del(BT_nick);
+  bind_table_del(BT_mode);
+  bind_table_del(BT_kick);
+  bind_table_del(BT_join);
+  bind_table_del(BT_pubm);
+  bind_table_del(BT_pub);
+  bind_table_del(BT_need);
   rem_tcl_ints(myints);
 
-  if (BT_dcc) rem_builtins2(BT_dcc, irc_dcc);
-  if (BT_raw) rem_builtins2(BT_raw, irc_raw);
-  if (BT_msg) rem_builtins2(BT_msg, C_msg);
+  rem_builtins("dcc", irc_dcc);
+  rem_builtins("raw", irc_raw);
+  rem_builtins("msg", C_msg);
 
   script_delete_commands(irc_script_cmds);
   rem_help_reference("irc.help");
@@ -952,34 +952,28 @@ char *start(eggdrop_t *eggdrop)
 	       traced_rfccompliant, NULL);
   add_tcl_ints(myints);
 
-  /* Import bind tables from other places. */
-  BT_dcc = find_bind_table2("dcc");
-  BT_raw = find_bind_table2("raw");
-  BT_msg = find_bind_table2("msg");
-  BT_ctcp = find_bind_table2("ctcp");
-  BT_ctcr = find_bind_table2("ctcr");
+  /* Add our commands. */
+  add_builtins("dcc", irc_dcc);
+  add_builtins("raw", irc_raw);
+  add_builtins("msg", C_msg);
 
-  /* Add our commands to the imported tables. */
-  if (BT_dcc) add_builtins2(BT_dcc, irc_dcc);
-  else putlog(LOG_MISC, "*", "Couldn't load dcc bind table!");
-  if (BT_raw) add_builtins2(BT_raw, irc_raw);
-  else putlog(LOG_MISC, "*", "Couldn't load raw bind table!");
-  if (BT_msg) add_builtins2(BT_msg, C_msg);
-  else putlog(LOG_MISC, "*", "Couldn't load msg bind table!");
+  /* Import tables. */
+  BT_ctcp = bind_table_find("ctcp");
+  BT_ctcr = bind_table_find("ctcr");
 
   /* Create our own bind tables. */
-  BT_topic = add_bind_table2("topic", 5, "ssUss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
-  BT_split = add_bind_table2("split", 4, "ssUs", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
-  BT_rejoin = add_bind_table2("rejoin", 4, "ssUs", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
-  BT_quit = add_bind_table2("sign", 5, "ssUss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
-  BT_join = add_bind_table2("join", 4, "ssUs", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
-  BT_part = add_bind_table2("part", 5, "ssUss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
-  BT_nick = add_bind_table2("nick", 5, "ssUss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
-  BT_mode = add_bind_table2("mode", 6, "ssUsss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
-  BT_kick = add_bind_table2("kick", 6, "ssUsss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
-  BT_need = add_bind_table2("need", 2, "ss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
-  BT_pub = add_bind_table2("pub", 5, "ssUss", 0, BIND_USE_ATTR);
-  BT_pubm = add_bind_table2("pubm", 5, "ssUss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
+  BT_topic = bind_table_add("topic", 5, "ssUss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
+  BT_split = bind_table_add("split", 4, "ssUs", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
+  BT_rejoin = bind_table_add("rejoin", 4, "ssUs", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
+  BT_quit = bind_table_add("sign", 5, "ssUss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
+  BT_join = bind_table_add("join", 4, "ssUs", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
+  BT_part = bind_table_add("part", 5, "ssUss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
+  BT_nick = bind_table_add("nick", 5, "ssUss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
+  BT_mode = bind_table_add("mode", 6, "ssUsss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
+  BT_kick = bind_table_add("kick", 6, "ssUsss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
+  BT_need = bind_table_add("need", 2, "ss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
+  BT_pub = bind_table_add("pub", 5, "ssUss", 0, BIND_USE_ATTR);
+  BT_pubm = bind_table_add("pubm", 5, "ssUss", MATCH_MASK, BIND_STACKABLE | BIND_USE_ATTR);
 
   script_create_commands(irc_script_cmds);
   add_help_reference("irc.help");

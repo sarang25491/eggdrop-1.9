@@ -25,7 +25,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: woobie.c,v 1.5 2002/05/05 16:40:37 tothwolf Exp $";
+static const char rcsid[] = "$Id: woobie.c,v 1.6 2002/05/17 07:29:25 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "woobie"
@@ -39,9 +39,6 @@ static const char rcsid[] = "$Id: woobie.c,v 1.5 2002/05/05 16:40:37 tothwolf Ex
  * woobie_start().
  */
 static eggdrop_t *egg = NULL;
-
-/* Bind table for dcc commands. We import it using find_bind_table(). */
-static bind_table_t *BT_dcc;
 
 static int cmd_woobie(struct userrec *u, int idx, char *par)
 {
@@ -77,7 +74,7 @@ static cmd_t mydcc[] =
 
 static char *woobie_close()
 {
-  if (BT_dcc) rem_builtins2(BT_dcc, mydcc);
+  rem_builtins("dcc", mydcc);
   module_undepend(MODULE_NAME);
   return NULL;
 }
@@ -121,10 +118,9 @@ char *woobie_start(eggdrop_t *eggdrop)
     return "This module requires eggdrop1.7.0 or later";
   }
 
-  /* Add command table to bind list BT_dcc, responsible for dcc commands.
+  /* Add command table to the "dcc" table, responsible for dcc commands.
    * Currently we only add one command, `woobie'.
    */
-  BT_dcc = find_bind_table2("dcc");
-  if (BT_dcc) add_builtins2(BT_dcc, mydcc);
+  add_builtins("dcc", mydcc);
   return NULL;
 }

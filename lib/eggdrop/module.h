@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: module.h,v 1.21 2002/05/12 06:12:07 stdarg Exp $
+ * $Id: module.h,v 1.22 2002/05/17 07:29:22 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_MODULE_H
@@ -441,12 +441,12 @@
 #define getlocaladdr ((char* (*) (int))egg->global[272])
 #define kill_bot ((void (*)(char *, char *))egg->global[273])
 #define quit_msg ((char *)(egg->global[274]))
-#define add_bind_table2 ((bind_table_t *(*)(const char *, int, char *, int, int))egg->global[275])
+#define bind_table_add ((bind_table_t *(*)(const char *, int, char *, int, int))egg->global[275])
 /* 276 - 279 */
-#define del_bind_table2 ((void (*)(bind_table_t *))egg->global[276])
-#define add_builtins2 ((void (*)(bind_table_t *, cmd_t *))egg->global[277])
-#define rem_builtins2 ((void (*)(bind_table_t *, cmd_t *))egg->global[278])
-#define find_bind_table2 ((bind_table_t *(*)(const char *))egg->global[279]) 
+#define bind_table_del ((void (*)(bind_table_t *))egg->global[276])
+#define add_builtins ((void (*)(const char *, cmd_t *))egg->global[277])
+#define rem_builtins ((void (*)(const char *, cmd_t *))egg->global[278])
+#define bind_table_find ((bind_table_t *(*)(const char *))egg->global[279]) 
 /* 280 - 283 */
 #define check_bind ((int (*)(bind_table_t *, const char *, struct flag_record *, ...))egg->global[280])
 /* #define registry_lookup ((int (*)(const char *, const char *, Function *, void **))egg->global[281]) */

@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: ctcp.c,v 1.7 2002/05/13 17:40:04 stdarg Exp $";
+static const char rcsid[] = "$Id: ctcp.c,v 1.8 2002/05/17 07:29:23 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "ctcp"
@@ -35,9 +35,6 @@ static const char rcsid[] = "$Id: ctcp.c,v 1.7 2002/05/13 17:40:04 stdarg Exp $"
 #include <arpa/inet.h>
 
 #define start ctcp_LTX_start
-
-/* Import this bind table from server.mod */
-static bind_table_t *BT_ctcp;
 
 static eggdrop_t *egg = NULL;
 static Function *server_funcs = NULL;
@@ -208,7 +205,7 @@ static char *ctcp_close()
 {
   rem_tcl_strings(mystrings);
   rem_tcl_ints(myints);
-  if (BT_ctcp) rem_builtins2(BT_ctcp, myctcp);
+  rem_builtins("ctcp", myctcp);
   rem_help_reference("ctcp.help");
   module_undepend(MODULE_NAME);
   return NULL;
@@ -239,8 +236,7 @@ char *start(eggdrop_t *eggdrop)
   }
   add_tcl_strings(mystrings);
   add_tcl_ints(myints);
-  BT_ctcp = find_bind_table2("ctcp");
-  if (BT_ctcp) add_builtins2(BT_ctcp, myctcp);
+  add_builtins("ctcp", myctcp);
   add_help_reference("ctcp.help");
   if (!ctcp_version[0]) {
     strncpy(ctcp_version, ver, 120);

@@ -23,7 +23,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: console.c,v 1.8 2002/05/05 16:40:34 tothwolf Exp $";
+static const char rcsid[] = "$Id: console.c,v 1.9 2002/05/17 07:29:23 stdarg Exp $";
 #endif
 
 #define MODULE_NAME "console"
@@ -38,8 +38,6 @@ static eggdrop_t *egg = NULL;
 static int console_autosave = 0;
 static int force_channel = 0;
 static int info_party = 0;
-
-static bind_table_t *BT_dcc, *BT_chon;
 
 struct console_info {
   char *channel;
@@ -343,8 +341,8 @@ static cmd_t mydcc[] =
 
 static char *console_close()
 {
-  if (BT_chon) rem_builtins2(BT_chon, mychon);
-  if (BT_dcc) rem_builtins2(BT_dcc, mydcc);
+  rem_builtins("chon", mychon);
+  rem_builtins("dcc", mydcc);
   rem_tcl_ints(myints);
   rem_help_reference("console.help");
   del_entry_type(&USERENTRY_CONSOLE);
@@ -373,11 +371,8 @@ char *start(eggdrop_t *eggdrop)
     return "This module requires eggdrop1.7.0 or later";
   }
 
-  BT_dcc = find_bind_table2("dcc");
-  BT_chon = find_bind_table2("chon");
-
-  if (BT_dcc) add_builtins2(BT_dcc, mydcc);
-  if (BT_chon) add_builtins2(BT_chon, mychon);
+  add_builtins("dcc", mydcc);
+  add_builtins("chon", mychon);
   add_tcl_ints(myints);
   add_help_reference("console.help");
   USERENTRY_CONSOLE.get = def_get;

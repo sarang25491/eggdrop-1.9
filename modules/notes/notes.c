@@ -45,8 +45,6 @@ static int notify_onjoin = 1;   /* Notify users they have notes on join?
 				   drummer */
 static eggdrop_t *egg = NULL;
 
-static bind_table_t *BT_dcc, *BT_load, *BT_away, *BT_nkch, *BT_chon;
-
 static struct user_entry_type USERENTRY_FWD =
 {
   NULL,				/* always 0 ;) */
@@ -1156,19 +1154,13 @@ static tcl_cmds notes_tcls[] =
 
 static int notes_irc_setup(char *mod)
 {
-  bind_table_t *table;
-
-  if ((table = find_bind_table2("join")))
-    add_builtins2(table, notes_join);
+  add_builtins("join", notes_join);
   return 0;
 }
 
 static int notes_server_setup(char *mod)
 {
-  bind_table_t *table;
-
-  if ((table = find_bind_table2("msg")))
-    add_builtins2(table, notes_msgs);
+  add_builtins("msg", notes_msgs);
   return 0;
 }
 
@@ -1181,20 +1173,16 @@ static cmd_t notes_load[] =
 
 static char *notes_close()
 {
-  bind_table_t *table;
-
   rem_tcl_ints(notes_ints);
   rem_tcl_strings(notes_strings);
   rem_tcl_commands(notes_tcls);
-  if ((table = find_bind_table2("msg")))
-    rem_builtins2(table, notes_msgs);
-  if ((table = find_bind_table2("join")))
-    rem_builtins2(table, notes_join);
-  if (BT_dcc) rem_builtins2(BT_dcc, notes_cmds);
-  if (BT_chon) rem_builtins2(BT_chon, notes_chon);
-  if (BT_away) rem_builtins2(BT_away, notes_away);
-  if (BT_nkch) rem_builtins2(BT_nkch, notes_nkch);
-  if (BT_load) rem_builtins2(BT_load, notes_load);
+  rem_builtins("msg", notes_msgs);
+  rem_builtins("join", notes_join);
+  rem_builtins("dcc", notes_cmds);
+  rem_builtins("chon", notes_chon);
+  rem_builtins("away", notes_away);
+  rem_builtins("nkch", notes_nkch);
+  rem_builtins("load", notes_load);
   rem_help_reference("notes.help");
   del_hook(HOOK_MATCH_NOTEREJ, (Function) match_note_ignore);
   del_hook(HOOK_HOURLY, (Function) notes_hourly);
@@ -1242,17 +1230,12 @@ char *start(eggdrop_t *eggdrop)
   add_tcl_strings(notes_strings);
   add_tcl_commands(notes_tcls);
 
-  BT_dcc = find_bind_table2("dcc");
-  BT_load = find_bind_table2("load");
-  BT_away = find_bind_table2("away");
-  BT_nkch = find_bind_table2("nkch");
-  BT_chon = find_bind_table2("chon");
-  if (BT_dcc) add_builtins2(BT_dcc, notes_cmds);
-  if (BT_load) add_builtins2(BT_load, notes_load);
+  add_builtins("dcc", notes_cmds);
+  add_builtins("load", notes_load);
+  add_builtins("chon", notes_chon);
+  add_builtins("away", notes_away);
+  add_builtins("nkch", notes_nkch);
 
-  if (BT_chon) add_builtins2(BT_chon, notes_chon);
-  if (BT_away) add_builtins2(BT_away, notes_away);
-  if (BT_nkch) add_builtins2(BT_nkch, notes_nkch);
   add_help_reference("notes.help");
   notes_server_setup(0);
   notes_irc_setup(0);

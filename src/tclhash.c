@@ -28,7 +28,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tclhash.c,v 1.67 2002/05/12 05:59:52 stdarg Exp $";
+static const char rcsid[] = "$Id: tclhash.c,v 1.68 2002/05/17 07:29:25 stdarg Exp $";
 #endif
 
 #include "main.h"
@@ -81,30 +81,30 @@ void binds_init(void)
 	global_filt_string = strdup("");
 	script_link_vars(tclhash_script_vars);
 	script_create_commands(tclhash_script_cmds);
-	BT_link = add_bind_table2("link", 2, "ss", MATCH_MASK, BIND_STACKABLE);
-	BT_nkch = add_bind_table2("nkch", 2, "ss", MATCH_MASK, BIND_STACKABLE);
-	BT_disc = add_bind_table2("disc", 1, "s", MATCH_MASK, BIND_STACKABLE);
-	BT_away = add_bind_table2("away", 3, "sis", MATCH_MASK, BIND_STACKABLE);
-	BT_dcc = add_bind_table2("dcc", 3, "Uis", MATCH_MASK, BIND_USE_ATTR);
-	add_builtins2(BT_dcc, C_dcc);
-	BT_chat = add_bind_table2("chat", 3, "sis", MATCH_MASK, BIND_STACKABLE | BIND_BREAKABLE);
-	BT_act = add_bind_table2("act", 3, "sis", MATCH_MASK, BIND_STACKABLE);
-	BT_bcst = add_bind_table2("bcst", 3, "sis", MATCH_MASK, BIND_STACKABLE);
-	BT_note = add_bind_table2("note", 3 , "sss", MATCH_EXACT, 0);
-	BT_bot = add_bind_table2("bot", 3, "sss", MATCH_EXACT, 0);
-	BT_chon = add_bind_table2("chon", 2, "si", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
-	BT_chof = add_bind_table2("chof", 2, "si", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
-	BT_chpt = add_bind_table2("chpt", 4, "ssii", MATCH_MASK, BIND_STACKABLE);
-	BT_chjn = add_bind_table2("chjn", 6, "ssisis", MATCH_MASK, BIND_STACKABLE);
-	BT_filt = add_bind_table2("filt", 2, "is", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
+	BT_link = bind_table_add("link", 2, "ss", MATCH_MASK, BIND_STACKABLE);
+	BT_nkch = bind_table_add("nkch", 2, "ss", MATCH_MASK, BIND_STACKABLE);
+	BT_disc = bind_table_add("disc", 1, "s", MATCH_MASK, BIND_STACKABLE);
+	BT_away = bind_table_add("away", 3, "sis", MATCH_MASK, BIND_STACKABLE);
+	BT_dcc = bind_table_add("dcc", 3, "Uis", MATCH_MASK, BIND_USE_ATTR);
+	add_builtins("dcc", C_dcc);
+	BT_chat = bind_table_add("chat", 3, "sis", MATCH_MASK, BIND_STACKABLE | BIND_BREAKABLE);
+	BT_act = bind_table_add("act", 3, "sis", MATCH_MASK, BIND_STACKABLE);
+	BT_bcst = bind_table_add("bcst", 3, "sis", MATCH_MASK, BIND_STACKABLE);
+	BT_note = bind_table_add("note", 3 , "sss", MATCH_EXACT, 0);
+	BT_bot = bind_table_add("bot", 3, "sss", MATCH_EXACT, 0);
+	BT_chon = bind_table_add("chon", 2, "si", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
+	BT_chof = bind_table_add("chof", 2, "si", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
+	BT_chpt = bind_table_add("chpt", 4, "ssii", MATCH_MASK, BIND_STACKABLE);
+	BT_chjn = bind_table_add("chjn", 6, "ssisis", MATCH_MASK, BIND_STACKABLE);
+	BT_filt = bind_table_add("filt", 2, "is", MATCH_MASK, BIND_USE_ATTR | BIND_STACKABLE);
 }
 
-void kill_bind2(void)
+void kill_binds(void)
 {
-	while (bind_table_list_head) del_bind_table2(bind_table_list_head);
+	while (bind_table_list_head) bind_table_del(bind_table_list_head);
 }
 
-bind_table_t *add_bind_table2(const char *name, int nargs, const char *syntax, int match_type, int flags)
+bind_table_t *bind_table_add(const char *name, int nargs, const char *syntax, int match_type, int flags)
 {
 	bind_table_t *table;
 
@@ -124,7 +124,7 @@ bind_table_t *add_bind_table2(const char *name, int nargs, const char *syntax, i
 	return(table);
 }
 
-void del_bind_table2(bind_table_t *table)
+void bind_table_del(bind_table_t *table)
 {
 	bind_table_t *cur, *prev;
 	bind_chain_t *chain, *next_chain;
@@ -153,7 +153,7 @@ void del_bind_table2(bind_table_t *table)
 	}
 }
 
-bind_table_t *find_bind_table2(const char *name)
+bind_table_t *bind_table_find(const char *name)
 {
 	bind_table_t *table;
 
@@ -163,7 +163,7 @@ bind_table_t *find_bind_table2(const char *name)
 	return(table);
 }
 
-int del_bind_entry(bind_table_t *table, const char *flags, const char *mask, const char *function_name, void *cdata)
+int bind_entry_del(bind_table_t *table, const char *flags, const char *mask, const char *function_name, void *cdata)
 {
 	bind_chain_t *chain;
 	bind_entry_t *entry, *prev;
@@ -190,7 +190,7 @@ int del_bind_entry(bind_table_t *table, const char *flags, const char *mask, con
 	return(0);
 }
 
-int add_bind_entry(bind_table_t *table, const char *flags, const char *mask, const char *function_name, int bind_flags, Function callback, void *client_data)
+int bind_entry_add(bind_table_t *table, const char *flags, const char *mask, const char *function_name, int bind_flags, Function callback, void *client_data)
 {
 	bind_chain_t *chain;
 	bind_entry_t *entry;
@@ -247,11 +247,11 @@ static int script_bind(char *table_name, char *flags, char *mask, script_callbac
 	bind_table_t *table;
 	int retval;
 
-	table = find_bind_table2(table_name);
+	table = bind_table_find(table_name);
 	if (!table) return(1);
 
 	callback->syntax = strdup(table->syntax);
-	retval = add_bind_entry(table, flags, mask, callback->name, BIND_WANTS_CD, callback->callback, callback);
+	retval = bind_entry_add(table, flags, mask, callback->name, BIND_WANTS_CD, callback->callback, callback);
 	return(retval);
 }
 
@@ -261,10 +261,10 @@ static int script_unbind(char *table_name, char *flags, char *mask, char *name)
 	script_callback_t *callback;
 	int retval;
 
-	table = find_bind_table2(table_name);
+	table = bind_table_find(table_name);
 	if (!table) return(1);
 
-	retval = del_bind_entry(table, flags, mask, name, &callback);
+	retval = bind_entry_del(table, flags, mask, name, &callback);
 	if (callback) callback->del(callback);
 	return(retval);
 }
@@ -325,7 +325,7 @@ static int script_binds(script_var_t *retval, char *tablename)
 		return(0);
 	}
 
-	table = find_bind_table2(tablename);
+	table = bind_table_find(tablename);
 	if (!table) {
 		retval->type = SCRIPT_STRING | SCRIPT_ERROR;
 		retval->value = "Bind table not found";
@@ -569,22 +569,30 @@ void check_tcl_away(const char *bot, int idx, const char *msg)
   check_bind(BT_away, bot, NULL, bot, idx, msg);
 }
 
-void add_builtins2(bind_table_t *table, cmd_t *cmds)
+void add_builtins(const char *table_name, cmd_t *cmds)
 {
 	char name[50];
+	bind_table_t *table;
+
+	table = bind_table_find(table_name);
+	if (!table) return;
 
 	for (; cmds->name; cmds++) {
 		snprintf(name, 50, "*%s:%s", table->name, cmds->funcname ? cmds->funcname : cmds->name);
-		add_bind_entry(table, cmds->flags, cmds->name, name, 0, cmds->func, NULL);
+		bind_entry_add(table, cmds->flags, cmds->name, name, 0, cmds->func, NULL);
 	}
 }
 
-void rem_builtins2(bind_table_t *table, cmd_t *cmds)
+void rem_builtins(const char *table_name, cmd_t *cmds)
 {
 	char name[50];
+	bind_table_t *table;
+
+	table = bind_table_find(table_name);
+	if (!table) return;
 
 	for (; cmds->name; cmds++) {
 		sprintf(name, "*%s:%s", table->name, cmds->funcname ? cmds->funcname : cmds->name);
-		del_bind_entry(table, cmds->flags, cmds->name, name, NULL);
+		bind_entry_del(table, cmds->flags, cmds->name, name, NULL);
 	}
 }
