@@ -1,3 +1,11 @@
+2001-10-18 02:57  stdarg <stdarg@techmonkeys.org>
+
+	* src/: modules.c, net.c, proto.h, mod/module.h,
+	mod/filesys.mod/filesys.c, mod/server.mod/servmsg.c,
+	mod/share.mod/share.c, mod/transfer.mod/transfer.c:
+
+	Converted my_atoul to sscanf.  
+
 2001-10-17 06:08  stdarg <stdarg@techmonkeys.org>
 
 	* src/: egg_timer.c, main.c, script_api.h, tclmisc.c,
