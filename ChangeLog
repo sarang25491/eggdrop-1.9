@@ -1,3 +1,20 @@
+2001-10-14 14:16  Federico Mennite <ite@techmonkeys.org>
+
+	* configure.ac, configure.in:
+
+	Renamed configure.in to configure.ac, since we use automake >= 2.50 
+
+2001-10-14 14:09  Federico Mennite <ite@techmonkeys.org>
+
+	* INSTALL, README, acinclude.m4, bootstrap, configure.in,
+	po/eggdrop.pot, src/main.c, src/modules.c, src/mod/modvals.h:
+
+	* STATIC is #defined again on static builds.  
+	* Removed code for old module loading emulation on static builds.  
+	* Updated README and INSTALL: new static build explanation.  
+	* More string's gettextized- 
+	* Synched po/eggdrop.pot with sources.  
+
 2001-10-14 13:50  Tothwolf <tothwolf@techmonkeys.org>
 
 	* src/mod/channels.mod/userchan.c:
