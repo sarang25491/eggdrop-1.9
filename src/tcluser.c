@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  *
- * $Id: tcluser.c,v 1.29 2001/12/01 15:13:49 ite Exp $
+ * $Id: tcluser.c,v 1.30 2001/12/01 16:03:48 ite Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -190,7 +190,7 @@ static int tcl_botattr STDVAR
   } else {
     user.match = FR_BOT;
     chan = NULL;
-    chg = argv[2];
+    chg = NULL;
   }
   if (chan && !findchan_by_dname(chan)) {
     Tcl_AppendResult(irp, "no such channel", NULL);
@@ -226,8 +226,7 @@ static int tcl_matchattr STDVAR
   int ok = 0, f;
 
   BADARGS(3, 4, " handle flags ?channel?");
-  if ((u = get_user_by_handle(userlist, argv[1])) &&
-      ((argc == 3) || findchan_by_dname(argv[3]))) {
+  if ((u = get_user_by_handle(userlist, argv[1]))) {
     user.match = FR_GLOBAL | (argc == 4 ? FR_CHAN : 0) | FR_BOT;
     get_user_flagrec(u, &user, argv[3]);
     plus.match = user.match;
@@ -451,10 +450,10 @@ static int tcl_newignore STDVAR
   if (argc == 4)
      expire_time = now + (60 * ignore_time);
   else {
-    if (atol(argv[4]) == 0)
+    if (argc == 5 && atol(argv[4]) == 0)
       expire_time = 0L;
     else
-      expire_time = now + (60 * atol(argv[4]));
+      expire_time = now + (60 * atol(argv[4])); /* This is a potential crash. FIXME  -poptix */
   }
   addignore(ign, from, cmt, expire_time);
   return TCL_OK;
