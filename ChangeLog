@@ -1,3 +1,10 @@
+2002-03-03 18:14  stdarg <stdarg@techmonkeys.org>
+
+	* testcode/: Makefile, chat.c, client.c, ipv6.c, my_socket.c,
+	sockbuf.c, sockbuf.h, sslmode.c, zipmode.c:
+
+	[no log message] 
+
 2002-03-03 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
