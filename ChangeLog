@@ -1,3 +1,14 @@
+2001-10-31 04:02  Tothwolf <tothwolf@techmonkeys.org>
+
+	* configure.ac, lib/egglib/hash_table.c, lib/egglib/linked_list.c,
+	lib/egglib/mempool.c, lib/egglib/msprintf.c, lib/egglib/mstack.c,
+	modules/filesys/filesys.c, modules/transfer/transfer.c, src/bg.c,
+	src/bg.h, src/botnet.c, src/chanprog.c, src/egg_timer.c,
+	src/irccmp.h, src/logfile.c, src/main.c, src/match.h, src/misc.c,
+	src/registry.c, src/script.c, src/tcl.c:
+
+	* 39 less gcc warnings...  
+
 2001-10-30 10:00  Automatic CVS Scripts
 
 	* po/eggdrop.pot:
