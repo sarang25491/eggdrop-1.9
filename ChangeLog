@@ -1,3 +1,12 @@
+2002-05-07 22:09  stdarg <stdarg@techmonkeys.org>
+
+	* modules/javascript/javascript.c:
+
+	
+	* The javascript module seems to be on par with tcl and perl now.
+	Who's yo daddy! Later we can add special things, like a real
+	EggdropUser object, and EggdropChannel, etc.  
+
 2002-05-07 10:02  stdarg <stdarg@techmonkeys.org>
 
 	* modules/javascript/javascript.c:
