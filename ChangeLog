@@ -1,3 +1,18 @@
+2002-05-03 07:59  stdarg <stdarg@techmonkeys.org>
+
+	* src/traffic.h:
+
+	
+	* Ah, and traffic.h to define the struct 
+
+2002-05-03 07:57  stdarg <stdarg@techmonkeys.org>
+
+	* src/: cmds.c, main.c, net.c, tcl.c, tcldcc.c:
+
+	
+	* Made itraffic_* otraffic_* into a single struct.  
+	* mod-path -> mod_path 
+
 2002-05-03 01:21  Federico Mennite <ite@techmonkeys.org>
 
 	* configure.ac, acconfig/acinclude.m4, lib/compat/Makefile.am,
