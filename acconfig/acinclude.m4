@@ -1,7 +1,7 @@
 dnl acinclude.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: acinclude.m4,v 1.7 2002/02/14 00:55:11 ite Exp $
+dnl $Id: acinclude.m4,v 1.8 2002/02/14 01:36:10 ite Exp $
 dnl
 
 
@@ -1163,7 +1163,7 @@ done
 cd ..
 AC_MSG_RESULT($ALL_LINGUAS)
 
-AM_GNU_GETTEXT
+AM_GNU_GETTEXT(, need-ngettext)
 ])
 
 
