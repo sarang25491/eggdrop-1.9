@@ -1,3 +1,9 @@
+2001-10-17 02:01  Matthew Hallacy <poptix@techmonkeys.org>
+
+	* src/: patch.h, tcluser.c:
+
+	* bad pointer in tcl_userlist, userlist * = crash 
+
 2001-10-17 01:03  stdarg <stdarg@techmonkeys.org>
 
 	* eggdrop.complete.conf, eggdrop.simple.conf:
