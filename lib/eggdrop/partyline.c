@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partyline.c,v 1.24 2004/10/17 05:14:06 stdarg Exp $";
+static const char rcsid[] = "$Id: partyline.c,v 1.25 2004/10/17 08:38:11 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -268,7 +268,7 @@ int partyline_idx_join(int idx, partychan_t *chan, partymember_t *src)
 
 int partyline_idx_part(int idx, partychan_t *chan, partymember_t *src, const char *text, int len)
 {
-	egg_iprintf(idx, "%s %s*** (%s@%s) has left %s: %s\r\n", chan->name, timer_get_timestamp(), src->nick, src->ident, src->host, chan->name, text);
+	egg_iprintf(idx, "%s %s*** %s (%s@%s) has left %s: %s\r\n", chan->name, timer_get_timestamp(), src->nick, src->ident, src->host, chan->name, text);
 	return 0;
 }
 

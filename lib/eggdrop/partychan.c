@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partychan.c,v 1.18 2004/10/17 05:14:06 stdarg Exp $";
+static const char rcsid[] = "$Id: partychan.c,v 1.19 2004/10/17 08:38:11 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -136,7 +136,6 @@ static int partychan_cleanup(partychan_t *chan)
 			i--;
 		}
 	}
-	if (dirty) chan->members = realloc(chan->members, sizeof(*chan->members) * chan->nmembers);
 
 	return(0);
 }
@@ -378,6 +377,7 @@ partymember_common_t *partychan_get_common(partymember_t *p)
 	common->len = 0;
 	for (i = 0; i < p->nchannels; i++) {
 		chan = p->channels[i];
+		if (chan->flags & PARTY_DELETED) continue;
 		for (j = 0; j < chan->nmembers; j++) {
 			if (chan->members[j].flags & PARTY_DELETED) continue;
 			mem = chan->members[j].p;

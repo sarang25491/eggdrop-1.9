@@ -1,11 +1,11 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 dnl
-dnl $Id: configure.ac,v 1.55 2004/10/17 05:14:06 stdarg Exp $
+dnl $Id: configure.ac,v 1.56 2004/10/17 08:38:11 stdarg Exp $
 
 AC_PREREQ(2.57)
 AC_INIT([Eggdrop], [1.9.0], [bugs@eggheads.org])
 AC_COPYRIGHT([Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team])
-AC_REVISION($Revision: 1.55 $)
+AC_REVISION($Revision: 1.56 $)
 AC_CONFIG_AUX_DIR(acconfig)
 AM_CONFIG_HEADER(config.h)
 AC_CONFIG_FILES([Makefile lib/Makefile lib/compat/Makefile lib/eggdrop/Makefile m4/Makefile po/Makefile.in src/Makefile modules/Makefile acconfig/module.mk intl/Makefile])
@@ -47,6 +47,9 @@ EGG_C_LONG_LONG
 
 # Gettext support
 EGG_GNU_GETTEXT
+if test "$USE_INCLUDED_LIBINTL" = "yes"; then
+	CPPFLAGS="${CPPFLAGS} -I\${top_builddir}/intl"
+fi
 
 
 # Libtool support
