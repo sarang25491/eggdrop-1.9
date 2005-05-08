@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptuser.c,v 1.10 2004/10/17 05:14:07 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptuser.c,v 1.11 2005/05/08 04:40:12 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -164,6 +164,7 @@ script_command_t script_new_user_cmds[] = {
 	{"", "user_validhandle", script_validhandle, NULL, 1, "s", "handle", SCRIPT_INTEGER, 0},	/* DDD */
 	{"", "user_validuid", script_validuid, NULL, 1, "i", "uid", SCRIPT_INTEGER, 0},			/* DDD */
 	{"", "user_add", script_adduser, NULL, 1, "s", "handle", SCRIPT_INTEGER, 0},			/* DDD */
+	{"", "user_delete", user_delete, NULL, 1, "U", "user", SCRIPT_INTEGER, 0},			/* DDD */
 	{"", "user_addmask", user_add_ircmask, NULL, 2, "Us", "user ircmask", SCRIPT_INTEGER, 0},	/* DDD */
 	{"", "user_getmasks", script_get_ircmasks, NULL, 1, "U", "user", 0, SCRIPT_PASS_RETVAL},	/* DDD */
 	{"", "user_delmask", user_del_ircmask, NULL, 2, "Us", "user ircmask", SCRIPT_INTEGER, 0},	/* DDD */

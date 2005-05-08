@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channel_events.c,v 1.3 2005/03/03 18:45:26 stdarg Exp $";
+static const char rcsid[] = "$Id: channel_events.c,v 1.4 2005/05/08 04:40:13 stdarg Exp $";
  #endif
 
 #include "server.h"
@@ -63,6 +63,9 @@ static void clear_masklists(channel_t *chan)
 	for (i = 0; i < chan->nlists; i++) {
 		clear_masklist(chan->lists[i]);
 	}
+	if (chan->lists) free(chan->lists);
+	chan->nlists = 0;
+	chan->lists = NULL;
 }
 
 static void clear_masklist(channel_mask_list_t *l)
@@ -102,10 +105,9 @@ void channel_free_online(channel_t *chan)
 	if (chan->args) free(chan->args);
 
 	chan->topic = chan->topic_nick = chan->key = NULL;
-	chan->lists = NULL;
 	chan->args = NULL;
 	chan->member_head = NULL;
-	chan->status = chan->nlists = chan->nargs = chan->nmembers = 0;
+	chan->status = chan->nargs = chan->nmembers = 0;
 	chan->limit = -1;
 }
 
@@ -517,7 +519,6 @@ static int gotnick(char *from_nick, char *from_uhost, user_t *u, char *cmd, int 
 static void parse_chan_mode(char *from_nick, char *from_uhost, user_t *u, int nargs, char *args[], int trigger_bind)
 {
 	int hasarg, curarg, modify_member, modify_channel, modify_list;
-	int i;
 	channel_member_t *m;
 	char changestr[3];
 	char *dest;
@@ -589,6 +590,9 @@ static void parse_chan_mode(char *from_nick, char *from_uhost, user_t *u, int na
 			else channel_del_mask(chan, *change, arg);
 		}
 		else if (changestr[0] == '+') {
+			channel_mode_arg_t *modearg = channel_get_arg(chan, *change);
+			if (modearg) str_redup(&modearg->value, arg);
+
 			/* + flag change that requires special handling. */
 			switch (*change) {
 				case 'k':
@@ -598,14 +602,11 @@ static void parse_chan_mode(char *from_nick, char *from_uhost, user_t *u, int na
 					chan->limit = atoi(arg);
 					break;
 			}
-			for (i = 0; i < chan->nargs; i++) {
-				if (chan->args[i].type == *change) {
-					str_redup(&chan->args[i].value, arg);
-					break;
-				}
-			}
 		}
 		else {
+			channel_mode_arg_t *modearg = channel_get_arg(chan, *change);
+			if (modearg) str_redup(&modearg->value, NULL);
+
 			/* - flag change that requires special handling. */
 			switch (*change) {
 				case 'k':
@@ -613,14 +614,8 @@ static void parse_chan_mode(char *from_nick, char *from_uhost, user_t *u, int na
 					chan->key = NULL;
 					break;
 				case 'l':
-					chan->limit = 0;
+					chan->limit = -1;
 					break;
-			}
-			for (i = 0; i < chan->nargs; i++) {
-				if (chan->args[i].type == *change) {
-					str_redup(&chan->args[i].value, NULL);
-					break;
-				}
 			}
 		}
 

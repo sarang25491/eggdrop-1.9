@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: egg_server_api.h,v 1.5 2005/03/03 18:45:26 stdarg Exp $
+ * $Id: egg_server_api.h,v 1.6 2005/05/08 04:40:13 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_SERVER_API_H_
@@ -53,7 +53,7 @@ typedef struct channel_member {
 
 	char *nick;
 	char *uhost;
-	int join_time;
+	long join_time;
 	flags_t mode;
 } channel_member_t;
 
@@ -62,8 +62,8 @@ typedef struct channel_mask {
 	char *mask;
 	char *set_by;
 /* FIXME - these should be long, not int. (EGGTIMEVALT) */
-	int time;
-	int last_used;
+	long time;
+	long last_used;
 } channel_mask_t;
 
 typedef struct channel_mask_list {
@@ -84,7 +84,7 @@ typedef struct channel {
 	char *name;
 
 	char *topic, *topic_nick;	/* Topic and who set it. */
-	int topic_time;			/* When it was set. */
+	long topic_time;		/* When it was set. */
 
 	flags_t mode;			/* Mode bits. */
 	int limit;			/* Channel limit. */

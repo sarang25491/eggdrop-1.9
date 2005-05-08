@@ -18,17 +18,18 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: ircmasks.c,v 1.13 2005/03/05 18:14:17 lordares Exp $";
+static const char rcsid[] = "$Id: ircmasks.c,v 1.14 2005/05/08 04:40:12 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
+
+static int compute_hash(const char *str, int *hash1, int *hash2);
 
 int ircmask_list_clear(ircmask_list_t *list)
 {
 	ircmask_list_entry_t *entry, *next;
 
-	if (list == NULL)
-		return -1;
+	if (list == NULL) return -1;
 
 	for (entry = list->head; entry; ) {
 		next = entry->next;
@@ -62,6 +63,7 @@ int ircmask_list_add(ircmask_list_t *list, const char *ircmask, void *data)
 	entry->ircmask = strdup(ircmask);
 	entry->len = len;
 	entry->data = data;
+	compute_hash(ircmask, &entry->hash1, &entry->hash2);
 	if (prev) {
 		entry->next = prev->next;
 		prev->next = entry;
@@ -94,12 +96,23 @@ int ircmask_list_del(ircmask_list_t *list, const char *ircmask, void *data)
 int ircmask_list_find(ircmask_list_t *list, const char *irchost, void *dataptr)
 {
 	ircmask_list_entry_t *entry;
+	int hash1, hash2;
+	// ################ see if this is effective... remove later
+	static int searches = 0, stops = 0, misses = 0;
 
+	compute_hash(irchost, &hash1, &hash2);
 	for (entry = list->head; entry; entry = entry->next) {
+		searches++;
+		if (searches % 1000 == 0) putlog(LOG_MISC, "*", "ircmask_list_find: %d successful stops, %d false hits, %d total searches... efficiency = %0.1f%%", stops, misses, searches, 100.0*(float)(searches-misses)/(float)searches);
+		if ((entry->hash1 & hash1) != entry->hash1 || (entry->hash2 & hash2) != entry->hash2) {
+			stops++;
+			continue;
+		}
 		if (wild_match(entry->ircmask, irchost) > 0) {
 			*(void **)dataptr = entry->data;
 			return(0);
 		}
+		misses++;
 	}
 	*(void **)dataptr = NULL;
 	return(-1);
@@ -195,4 +208,30 @@ char *ircmask_create_full(int type, const char *nuhost)
 	mask = ircmask_create_separate(type, nick, user, host);
 	free(buf);
 	return(mask);
+}
+
+static int compute_hash(const char *str, int *hash1, int *hash2)
+{
+	unsigned int pair;
+	int last = 0;
+
+	*hash1 = *hash2 = 0;
+	for (; *str; str++) {
+		if (*str == '*' || *str == '?') {
+			last = -1;
+			continue;
+		}
+		if (last != -1) {
+			pair = (last * 71317 + ((unsigned)tolower(*str)) * 1937) % 64;
+			if (pair > 31) *hash2 |= 1 << (pair-31);
+			else *hash1 |= 1 << pair;
+		}
+		last = (unsigned) tolower(*str);
+	}
+	if (last > 0) {
+		pair = (last * 3133719) % 64;
+		if (pair > 31) *hash2 |= 1 << (pair-31);
+		else *hash1 |= 1 << pair;
+	}
+	return(0);
 }

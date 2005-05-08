@@ -38,6 +38,7 @@
 #define channel_on_leave server_LTX_channel_on_leave
 #define channel_on_quit server_LTX_channel_on_quit
 #define channel_on_nick server_LTX_channel_on_nick
+#define channel_get_arg server_LTX_channel_get_arg
 #define channel_get_mask_list server_LTX_channel_get_mask_list
 #define channel_add_mask server_LTX_channel_add_mask
 #define channel_del_mask server_LTX_channel_del_mask

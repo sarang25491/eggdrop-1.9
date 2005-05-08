@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: eggdrop.c,v 1.24 2004/10/17 05:14:06 stdarg Exp $";
+static const char rcsid[] = "$Id: eggdrop.c,v 1.25 2005/05/08 04:40:12 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -32,6 +32,8 @@ static int neggparams = 0;
 
 int eggdrop_init(void)
 {
+	BT_event = bind_table_add(BTN_EVENT, 1, "s", MATCH_MASK, BIND_STACKABLE);	/* DDD	*/
+
 	config_init();
 	timer_init();
 	egg_net_init();
@@ -41,7 +43,7 @@ int eggdrop_init(void)
 	partyline_init();
 	module_init();
 	help_init();
-	BT_event = bind_table_add(BTN_EVENT, 1, "s", MATCH_MASK, BIND_STACKABLE);	/* DDD	*/
+
 	
 	return 1;
 }

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.44 2004/10/17 05:14:06 stdarg Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.45 2005/05/08 04:40:12 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -29,7 +29,8 @@ typedef struct {
 	user_t *u;
 	const char *ircmask;
 	const char **entries;
-	int nentries;
+	int nentries, maxentries;
+	int rand_delete;
 } walker_info_t;
 
 typedef struct {
@@ -71,6 +72,7 @@ static user_t *real_user_new(const char *handle, int uid);
 static int user_get_uid();
 static int cache_check_add(const void *key, void *dataptr, void *client_data);
 static int cache_check_del(const void *key, void *dataptr, void *client_data);
+static int cache_rand_cleanup(const char *event);
 static int cache_user_del(user_t *u, const char *ircmask);
 static void append_setting(user_t *u, const char *chan, const char *flag_str, xml_node_t *extended);
 
@@ -86,6 +88,10 @@ int user_init(void)
 	BT_uflags = bind_table_add(BTN_USER_CHANGE_FLAGS, 4, "ssss", MATCH_MASK, BIND_STACKABLE);	/* DDD	*/
 	BT_uset = bind_table_add(BTN_USER_CHANGE_SETTINGS, 4, "ssss", MATCH_MASK, BIND_STACKABLE);	/* DDD	*/
 	BT_udelete = bind_table_add(BTN_USER_DELETE, 1, "U", MATCH_NONE, BIND_STACKABLE);	/* DDD	*/
+
+	/* Add binds. */
+	bind_add_simple("event", NULL, "hourly", cache_rand_cleanup);
+
 	return(0);
 }
 
@@ -396,8 +402,11 @@ static int cache_check_del(const void *key, void *dataptr, void *client_data)
 	user_t *u = *(user_t **)dataptr;
 	walker_info_t *info = client_data;
 
-	if (u == info->u && wild_match(info->ircmask, irchost)) {
-		info->entries = realloc(info->entries, sizeof(*info->entries) * (info->nentries+1));
+	if ((info->rand_delete && (rand() & 1)) || (!info->rand_delete && u == info->u && wild_match(info->ircmask, irchost))) {
+		if (info->nentries >= info->maxentries) {
+			info->maxentries = 2*info->maxentries+1;
+			info->entries = realloc(info->entries, sizeof(*info->entries) * (info->maxentries+1));
+		}
 		info->entries[info->nentries] = irchost;
 		info->nentries++;
 	}
@@ -414,6 +423,8 @@ static int cache_user_del(user_t *u, const char *ircmask)
 	info.ircmask = ircmask;
 	info.entries = NULL;
 	info.nentries = 0;
+	info.maxentries = 0;
+	info.rand_delete = 0;
 	hash_table_walk(irchost_cache_ht, cache_check_del, &info);
 	for (i = 0; i < info.nentries; i++) {
 		hash_table_remove(irchost_cache_ht, info.entries[i], NULL);
@@ -423,6 +434,28 @@ static int cache_user_del(user_t *u, const char *ircmask)
 
 	/* And remove it from the ircmask_list. */
 	ircmask_list_del(&ircmask_list, ircmask, u);
+	return(0);
+}
+
+static int cache_rand_cleanup(const char *event)
+{
+	walker_info_t info;
+	int i;
+
+	/* Check irchost_cache_ht for changes in the users. */
+	info.u = NULL;
+	info.ircmask = NULL;
+	info.entries = NULL;
+	info.nentries = 0;
+	info.maxentries = 0;
+	info.rand_delete = 1;
+	hash_table_walk(irchost_cache_ht, cache_check_del, &info);
+	putlog(LOG_MISC, "*", "user_rand_cleanup: deleting %d entries from cache", info.nentries);
+	for (i = 0; i < info.nentries; i++) {
+		hash_table_remove(irchost_cache_ht, info.entries[i], NULL);
+		free((void *)info.entries[i]);
+	}
+	if (info.entries) free(info.entries);
 	return(0);
 }
 

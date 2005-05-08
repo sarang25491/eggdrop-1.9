@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.35 2005/03/03 18:45:26 stdarg Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.36 2005/05/08 04:40:13 stdarg Exp $";
  #endif
 
 #include "server.h"
@@ -70,7 +70,6 @@ void channel_free(channel_t *chan)
 channel_t *channel_probe(const char *chan_name, int create)
 {
 	channel_t *chan, *prev;
-	int i;
 
 	prev = NULL;
 	for (chan = channel_head; chan; chan = chan->next) {
@@ -85,23 +84,6 @@ channel_t *channel_probe(const char *chan_name, int create)
 	chan->name = strdup(chan_name);
 	chan->settings = xml_node_new();
 	chan->settings->name = strdup("settings");
-
-	if (current_server.type1modes) {
-		chan->nlists = strlen(current_server.type1modes);
-		chan->lists = calloc(chan->nlists, sizeof(*chan->lists));
-		for (i = 0; i < chan->nlists; i++) {
-			chan->lists[i] = calloc(1, sizeof(*chan->lists[i]));
-			chan->lists[i]->type = current_server.type1modes[i];
-		}
-	}
-
-	if (current_server.type2modes) {
-		chan->nargs = strlen(current_server.type2modes);
-		chan->args = calloc(chan->nargs, sizeof(*chan->args));
-		for (i = 0; i < chan->nargs; i++) {
-			chan->args[i].type = current_server.type2modes[i];
-		}
-	}
 
 	/* Link to list. */
 	if (prev) prev->next = chan;
@@ -137,13 +119,38 @@ int channel_remove(const char *name)
 	return(0);
 }
 
-channel_mask_list_t *channel_get_mask_list(channel_t *chan, char type)
+channel_mode_arg_t *channel_get_arg(channel_t *chan, int type)
 {
 	int i;
 
+	if (!chan->args && current_server.type2modes) {
+		chan->nargs = strlen(current_server.type2modes);
+		chan->args = calloc(chan->nargs, sizeof(*chan->args));
+		for (i = 0; i < chan->nargs; i++) {
+			chan->args[i].type = current_server.type2modes[i];
+		}
+	}
+	for (i = 0; i < chan->nargs; i++) {
+		if (chan->args[i].type == type) return chan->args+i;
+	}
+	return(NULL);
+}
+
+channel_mask_list_t *channel_get_mask_list(channel_t *chan, int type)
+{
+	int i;
+
+	if (!chan->lists && current_server.type1modes) {
+		chan->nlists = strlen(current_server.type1modes);
+		chan->lists = calloc(chan->nlists, sizeof(*chan->lists));
+		for (i = 0; i < chan->nlists; i++) {
+			chan->lists[i] = calloc(1, sizeof(*chan->lists[i]));
+			chan->lists[i]->type = current_server.type1modes[i];
+		}
+	}
+
 	for (i = 0; i < chan->nlists; i++) {
-		if (chan->lists[i]->type == type)
-			return(chan->lists[i]);
+		if (chan->lists[i]->type == type) return(chan->lists[i]);
 	}
 	return(NULL);
 }
@@ -174,6 +181,8 @@ void channel_del_mask(channel_t *chan, char type, const char *mask)
 	channel_mask_t *m, *prev;
 
 	l = channel_get_mask_list(chan, type);
+	if (!l) return;
+
 	prev = NULL;
 	for (m = l->head; m; m = m->next) {
 		if (m->mask && !strcasecmp(m->mask, mask)) {

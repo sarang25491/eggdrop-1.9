@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dcc.c,v 1.21 2004/06/24 06:19:56 wcc Exp $";
+static const char rcsid[] = "$Id: dcc.c,v 1.22 2005/05/08 04:40:13 stdarg Exp $";
 #endif
 
 #include <unistd.h>
@@ -49,10 +49,11 @@ typedef struct dcc_send {
 	/* A bunch of stats. */
 	int bytes_sent, bytes_left;
 	int snapshot_bytes[5];
-	int snapshot_counter, last_snapshot;
+	int snapshot_counter;
+	long last_snapshot;
 	int acks, bytes_acked;
-	int resumed_at;
-	int request_time, connect_time;
+	long resumed_at;
+	long request_time, connect_time;
 } dcc_send_t;
 
 static dcc_send_t *dcc_send_head = NULL;
@@ -434,7 +435,8 @@ static int dcc_send_done(dcc_send_t *send)
 int dcc_send_info(int idx, int field, void *valueptr)
 {
 	dcc_send_t *send;
-	int i, n, now;
+	int i, n;
+	long now;
 
 	if (!valueptr)
 		return(-1);

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: channels.h,v 1.23 2005/03/03 18:45:26 stdarg Exp $
+ * $Id: channels.h,v 1.24 2005/05/08 04:40:13 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_SERVER_CHANNELS_H_
@@ -64,7 +64,8 @@ extern int channel_get_int(channel_t *chan, int *intptr, ...);
 extern xml_node_t *channel_get_node(channel_t *chan, ...);
 extern int channel_mode(const char *chan_name, const char *nick, char *buf);
 extern int channel_mode_arg(const char *chan_name, int type, const char **value);
-extern channel_mask_list_t *channel_get_mask_list(channel_t *chan, char type);
+extern channel_mode_arg_t *channel_get_arg(channel_t *chan, int type);
+extern channel_mask_list_t *channel_get_mask_list(channel_t *chan, int type);
 extern void channel_add_mask(channel_t *chan, char type, const char *mask, const char *set_by, int time);
 extern void channel_del_mask(channel_t *chan, char type, const char *mask);
 

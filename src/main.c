@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.186 2004/10/17 05:14:07 stdarg Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.187 2005/05/08 04:40:13 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -235,16 +235,15 @@ static int core_secondly()
 		if (i > 1) putlog(LOG_MISC, "*", _("Warning: timer drift (%d minutes)."), i);
 
 		miltime = (nowtm.tm_hour * 100) + (nowtm.tm_min);
-		if (nowtm.tm_min % 5 == 0) { /* 5 minutes */
-			eggdrop_event("5minutely");
-			if (!miltime) { /* At midnight */
-				char s[25];
+		if (nowtm.tm_min % 5 == 0) eggdrop_event("5minutely");
+		if (nowtm.tm_min == 0) eggdrop_event("hourly");
+		if (!miltime) { /* At midnight */
+			char s[25];
 
-				strlcpy(s, ctime(&now), sizeof s);
-				putlog(LOG_ALL, "*", "--- %.11s%s", s, s + 20);
-				eggdrop_event("backup");
-				eggdrop_event("daily");
-			}
+			strlcpy(s, ctime(&now), sizeof s);
+			putlog(LOG_ALL, "*", "--- %.11s%s", s, s + 20);
+			eggdrop_event("backup");
+			eggdrop_event("daily");
 		}
 	}
 	return(0);

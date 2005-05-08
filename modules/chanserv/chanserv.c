@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: chanserv.c,v 1.2 2005/03/03 18:45:26 stdarg Exp $";
+static const char rcsid[] = "$Id: chanserv.c,v 1.3 2005/05/08 04:40:12 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -202,9 +202,11 @@ int chanserv_update_stats(int stat, const char *chan, const char *nick, const ch
 	int diff;
 
 	if (stat < 0 || stat >= CHANSERV_STAT_LEN) return(-1);
+	if (!nick || !uhost) return(-1);
 
 	if (chan) chanstats = chanserv_probe_chan(chan, 1);
 	m = chanserv_probe_member(chanstats, nick, uhost, 1);
+	if (!m) return(-1);
 
 	/* Take care of channel stats first. */
 

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: ircmasks.h,v 1.5 2005/03/03 18:44:47 stdarg Exp $
+ * $Id: ircmasks.h,v 1.6 2005/05/08 04:40:12 stdarg Exp $
  */
 
 #ifndef _EGG_IRCMASKS_H_
@@ -25,7 +25,7 @@
 typedef struct ircmask_list_entry {
 	struct ircmask_list_entry *next;
 	char *ircmask;
-	int len;
+	int len, hash1, hash2;
 	void *data;
 } ircmask_list_entry_t;
 

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: events.c,v 1.2 2005/03/03 18:45:26 stdarg Exp $";
+static const char rcsid[] = "$Id: events.c,v 1.3 2005/05/08 04:40:12 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -110,7 +110,10 @@ static modefight_t *modefight_probe(const char *chan, const char *nick, const ch
 {
 	modefight_t *m;
 	for (m = modefight_head; m; m = m->next) {
-		if (m->mode == mode && !strcasecmp(target, m->target) && !strcasecmp(chan, m->chan)) return(m);
+		if (m->mode != mode || strcasecmp(chan, m->chan)) continue;
+		if ((target && !m->target) || (!target && m->target)) continue;
+		if ((target && m->target) && strcasecmp(target, m->target)) continue;
+		return(m);
 	}
 	if (!create) return(NULL);
 	m = calloc(1, sizeof(*m));
@@ -119,7 +122,7 @@ static modefight_t *modefight_probe(const char *chan, const char *nick, const ch
 	m->lastsource = strdup(nick);
 	m->lastdir = dir;
 	m->mode = mode;
-	m->target = strdup(target);
+	if (target) m->target = strdup(target);
 	m->next = modefight_head;
 	modefight_head = m;
 	return(m);
