@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: ident.c,v 1.3 2004/10/17 05:14:06 stdarg Exp $";
+static const char rcsid[] = "$Id: ident.c,v 1.4 2005/05/10 06:50:39 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -93,6 +93,7 @@ int egg_ident_cancel(int id, int issue_callback)
 	if (!ptr) return(-1);
 	if (prev) prev->next = ptr->next;
 	else ident_head = ptr->next;
+	sockbuf_delete(ptr->idx);
 	if (issue_callback) {
 		ptr->callback(ptr->client_data, ptr->ip, ptr->their_port, NULL);
 	}
