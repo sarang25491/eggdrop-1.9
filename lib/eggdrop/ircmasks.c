@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: ircmasks.c,v 1.14 2005/05/08 04:40:12 stdarg Exp $";
+static const char rcsid[] = "$Id: ircmasks.c,v 1.15 2005/05/15 17:34:23 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -97,22 +97,16 @@ int ircmask_list_find(ircmask_list_t *list, const char *irchost, void *dataptr)
 {
 	ircmask_list_entry_t *entry;
 	int hash1, hash2;
-	// ################ see if this is effective... remove later
-	static int searches = 0, stops = 0, misses = 0;
 
 	compute_hash(irchost, &hash1, &hash2);
 	for (entry = list->head; entry; entry = entry->next) {
-		searches++;
-		if (searches % 1000 == 0) putlog(LOG_MISC, "*", "ircmask_list_find: %d successful stops, %d false hits, %d total searches... efficiency = %0.1f%%", stops, misses, searches, 100.0*(float)(searches-misses)/(float)searches);
 		if ((entry->hash1 & hash1) != entry->hash1 || (entry->hash2 & hash2) != entry->hash2) {
-			stops++;
 			continue;
 		}
 		if (wild_match(entry->ircmask, irchost) > 0) {
 			*(void **)dataptr = entry->data;
 			return(0);
 		}
-		misses++;
 	}
 	*(void **)dataptr = NULL;
 	return(-1);
@@ -223,14 +217,14 @@ static int compute_hash(const char *str, int *hash1, int *hash2)
 		}
 		if (last != -1) {
 			pair = (last * 71317 + ((unsigned)tolower(*str)) * 1937) % 64;
-			if (pair > 31) *hash2 |= 1 << (pair-31);
+			if (pair > 31) *hash2 |= 1 << (pair-32);
 			else *hash1 |= 1 << pair;
 		}
 		last = (unsigned) tolower(*str);
 	}
 	if (last > 0) {
 		pair = (last * 3133719) % 64;
-		if (pair > 31) *hash2 |= 1 << (pair-31);
+		if (pair > 31) *hash2 |= 1 << (pair-32);
 		else *hash1 |= 1 << pair;
 	}
 	return(0);
