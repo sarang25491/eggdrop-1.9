@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: chanserv.h,v 1.2 2005/03/03 18:45:26 stdarg Exp $
+ * $Id: chanserv.h,v 1.3 2005/05/31 03:35:08 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_CHANSERV_CHANSERV_H_
@@ -31,6 +31,9 @@
 #define events_shutdown chanserv_LTX_events_shutdown
 
 #include "events.h"
+
+#define CHANSERV_CLEANUP_TIME	120
+#define CHANSERV_CLEANUP_TIMER	60
 
 enum {
 	CHANSERV_STAT_JOIN = 0,
@@ -54,7 +57,7 @@ typedef struct {
 	char *who;
 	int stats[CHANSERV_STAT_LEN];
 	time_t last_event_time[CHANSERV_STAT_LEN];
-	time_t join_time;
+	time_t last_event;
 } chanserv_member_stats_t;
 
 typedef struct chanserv_channel_stats {

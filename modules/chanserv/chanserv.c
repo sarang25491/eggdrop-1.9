@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: chanserv.c,v 1.3 2005/05/08 04:40:12 stdarg Exp $";
+static const char rcsid[] = "$Id: chanserv.c,v 1.4 2005/05/31 03:35:08 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -28,6 +28,8 @@ static const char rcsid[] = "$Id: chanserv.c,v 1.3 2005/05/08 04:40:12 stdarg Ex
 chanserv_config_t chanserv_config;
 egg_server_api_t *server = NULL;
 static chanserv_channel_stats_t global_chan;
+static int timer_id;
+static int chanserv_timer(void *client_data);
 
 /* This array is in the same sequence as the CHANSERV_STAT_* constants. */
 static const char *channel_config_names[] = {
@@ -81,12 +83,17 @@ static int on_chanset(const char *chan, const char *setting, const char *oldvalu
 
 static int chanserv_init()
 {
+	egg_timeval_t howlong;
+
 	memset(&global_chan, 0, sizeof(global_chan));
 	BT_chanflood = bind_table_add("chanflood", 5, "ssiii", MATCH_MASK, BIND_STACKABLE);
 	BT_memflood = bind_table_add("memflood", 7, "ssssiii", MATCH_MASK, BIND_STACKABLE);
 	server = module_get_api("server", 1, 0);
 	bind_add_simple("chanset", NULL, "settings.chanserv.*", on_chanset);
 	events_init();
+	howlong.sec = CHANSERV_CLEANUP_TIMER;
+	howlong.usec = 0;
+	timer_id = timer_create_complex(&howlong, "chanserv stats cleanup", chanserv_timer, NULL, TIMER_REPEAT);
 	return(0);
 }
 
@@ -98,8 +105,9 @@ static int chanserv_shutdown()
 	return(0);
 }
 
-int chanserv_refresh_channel_config(chanserv_channel_stats_t *chanstats)
+int chanserv_refresh_channel_config(void *client_data)
 {
+	chanserv_channel_stats_t *chanstats = client_data;
 	channel_t *chan = server->channel_lookup(chanstats->name);
 	int i, setting;
 
@@ -173,6 +181,7 @@ chanserv_member_stats_t *chanserv_probe_member(chanserv_channel_stats_t *chan, c
 	/* Add new member. */
 	chan->members = realloc(chan->members, sizeof(*chan->members) * (chan->nmembers+1));
 	chan->nmembers++;
+	memset(chan->members+i, 0, sizeof(*chan->members));
 	chan->members[i].who = ircmask_create(5, nick, uhost);
 	return(chan->members+i);
 }
@@ -240,6 +249,7 @@ int chanserv_update_stats(int stat, const char *chan, const char *nick, const ch
 
 	/* Now update member stats. */
 	if (m) {
+		m->last_event = now;
 		/* Figure out the period and limit for this stat. */
 		period = global_chan.periods[stat];
 		if (period > 0) {
@@ -263,16 +273,45 @@ int chanserv_update_stats(int stat, const char *chan, const char *nick, const ch
 		}
 		
 		switch (stat) {
-			case CHANSERV_STAT_JOIN:
-				m->join_time = now;
-				break;
 			case CHANSERV_STAT_LEAVE:
-				if (now - m->join_time < chanserv_config.cycle_time) {
+				if (now - m->last_event_time[CHANSERV_STAT_JOIN] < chanserv_config.cycle_time) {
 					chanserv_update_stats(CHANSERV_STAT_CYCLE, chan, nick, uhost);
 				}
 				break;
 		}
 	}
+	return(0);
+}
+
+/* Clean up old entries. */
+static int cleanup_old_members(chanserv_channel_stats_t *chan)
+{
+	chanserv_member_stats_t *m;
+	time_t now;
+	int i;
+
+	now = timer_get_now_sec(NULL);
+
+	for (i = 0; i < chan->nmembers; i++) {
+		m = chan->members+i;
+		if (now - m->last_event > CHANSERV_CLEANUP_TIME) {
+			free(m->who);
+			memmove(chan->members+i, chan->members+i+1, sizeof(*chan->members)*(chan->nmembers-i-1));
+			chan->nmembers--;
+			i--;
+		}
+	}
+	return(0);
+}
+
+static int chanserv_timer(void *client_data)
+{
+	chanserv_channel_stats_t *chan;
+
+	for (chan = chanstats_head; chan; chan = chan->next) {
+		cleanup_old_members(chan);
+	}
+	cleanup_old_members(&global_chan);
 	return(0);
 }
 

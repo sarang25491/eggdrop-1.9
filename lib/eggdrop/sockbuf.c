@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: sockbuf.c,v 1.17 2004/10/17 05:14:06 stdarg Exp $";
+static const char rcsid[] = "$Id: sockbuf.c,v 1.18 2005/05/31 03:35:08 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -376,6 +376,7 @@ static void sockbuf_got_readable_server(int idx)
 	timer_get_now(&sockbufs[newidx].stats->connected_at);
 	sockbuf_set_sock(newidx, newsock, SOCKBUF_INBOUND);
 	sockbuf_on_newclient(idx, SOCKBUF_LEVEL_INTERNAL, newidx, peer_ip, peer_port);
+	free(peer_ip);
 }
 
 /* This is called when the POLLOUT condition is true for already-connected
@@ -614,8 +615,9 @@ int sockbuf_delete(int idx)
 	/* Close the file descriptor. */
 	if (sbuf->sock >= 0) socket_close(sbuf->sock);
 
-	/* Free the peer ip. */
+	/* Free ip data. */
 	if (sbuf->peer_ip) free(sbuf->peer_ip);
+	if (sbuf->my_ip) free(sbuf->my_ip);
 
 	/* Free its output buffer. */
 	if (sbuf->data) free(sbuf->data);

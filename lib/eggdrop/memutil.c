@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: memutil.c,v 1.20 2004/10/17 05:14:06 stdarg Exp $";
+static const char rcsid[] = "$Id: memutil.c,v 1.21 2005/05/31 03:35:07 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -85,5 +85,6 @@ char *egg_mvsprintf(char *buf, int len, int *final_len, const char *format, va_l
 		if (!(n % 1024)) n = strlen(output);
 		*final_len = n;
 	}
+	if (output != buf && len - n > 256) output = realloc(output, n+20);
 	return(output);
 }

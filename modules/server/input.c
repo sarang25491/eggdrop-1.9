@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: input.c,v 1.37 2004/10/04 15:48:30 stdarg Exp $";
+static const char rcsid[] = "$Id: input.c,v 1.38 2005/05/31 03:35:08 stdarg Exp $";
 #endif
 
 #include "server.h"
@@ -68,6 +68,7 @@ int server_parse_input(char *text)
 	}
 
 	bind_check(BT_raw, NULL, msg.cmd, from_nick, from_uhost, u, msg.cmd, msg.nargs, msg.args);
+	irc_msg_cleanup(&msg);
 	return(0);
 }
 
