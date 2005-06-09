@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: chanserv.c,v 1.4 2005/05/31 03:35:08 stdarg Exp $";
+static const char rcsid[] = "$Id: chanserv.c,v 1.5 2005/06/09 02:56:44 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -304,12 +304,32 @@ static int cleanup_old_members(chanserv_channel_stats_t *chan)
 	return(0);
 }
 
+static int free_channel(chanserv_channel_stats_t *chan)
+{
+	int i;
+
+	/* ###### test to make sure this gets called properly, remove later */
+	putlog(LOG_MISC, "*", "chanserv: freeing channel '%s'", chan->name);
+	free(chan->name);
+	for (i = 0; i < chan->nmembers; i++) {
+		free(chan->members[i].who);
+	}
+	free(chan->members);
+	if (chan->prev) chan->prev->next = chan->next;
+	else chanstats_head = chan->next;
+	if (chan->next) chan->next->prev = chan->prev;
+	free(chan);
+	return(0);
+}
+
 static int chanserv_timer(void *client_data)
 {
-	chanserv_channel_stats_t *chan;
+	chanserv_channel_stats_t *chan, *next;
 
-	for (chan = chanstats_head; chan; chan = chan->next) {
-		cleanup_old_members(chan);
+	for (chan = chanstats_head; chan; chan = next) {
+		next = chan->next;
+		if (!server->channel_lookup(chan->name)) free_channel(chan);
+		else cleanup_old_members(chan);
 	}
 	cleanup_old_members(&global_chan);
 	return(0);

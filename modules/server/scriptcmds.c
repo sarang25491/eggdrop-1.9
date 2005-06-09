@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptcmds.c,v 1.46 2004/10/04 15:48:30 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptcmds.c,v 1.47 2005/06/09 02:56:44 stdarg Exp $";
 #endif
 
 #include "server.h"
@@ -42,6 +42,19 @@ static int script_isbotnick(char *nick)
 static int script_irccmp(char *nick1, char *nick2)
 {
 	return (current_server.strcmp)(nick1, nick2);
+}
+
+static int script_server_list(script_var_t *retval)
+{
+	server_t *s;
+
+	retval->type = SCRIPT_ARRAY | SCRIPT_FREE | SCRIPT_VAR;
+	retval->len = 0;
+
+	for (s = server_list; s; s = s->next) {
+		script_list_append(retval, script_list(3, script_string(s->host, -1), script_string(s->pass, -1), script_int(s->port)));
+	}
+	return(0);
 }
 
 static int name_to_priority(const char *queue, const char *next)
@@ -390,6 +403,7 @@ static script_command_t server_script_cmds[] = {
 
 	/* Server List commands. */
 	{"", "jump", script_jump, NULL, 0, "i", "num", SCRIPT_INTEGER, SCRIPT_VAR_ARGS | SCRIPT_PASS_COUNT},	/* DDC */
+	{"", "server_list", script_server_list, NULL, 0, "", "", 0, SCRIPT_PASS_RETVAL},
 	{"", "server_add", server_add, NULL, 1, "sis", "host ?port? ?pass?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},	/* DDC */
 	{"", "server_del", server_del, NULL, 1, "i", "server-num", SCRIPT_INTEGER, 0},				/* DDC */
 	{"", "server_clear", server_clear, NULL, 0, "", "", SCRIPT_INTEGER, 0},					/* DDC */

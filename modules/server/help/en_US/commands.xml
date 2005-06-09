@@ -120,6 +120,136 @@
 		</seealso>
 	</help>
 	<help>
+		<name>dump</name>
+		<summary>send raw text to the server</summary>
+		<args>
+			<arg>
+				<name>text</name>
+				<desc>the text to send</desc>
+			</arg>
+		</args>
+		<desc>
+			<line>The dump command sends raw text to the server. The only</line>
+			<line>change is that a CRLF (\r\n) is added to the end of the line.</line>
+		</desc>
+	</help>
+	<help>
+		<name>+chan</name>
+		<summary>add a static channel to the bot</summary>
+		<args>
+			<arg>
+				<name>channel</name>
+				<desc>channel to add</desc>
+			</arg>
+		</args>
+		<desc>
+			<line>The +chan command adds a static channel to the bot.</line>
+			<line>A static channel is a channel that the bot saves information about</line>
+			<line>and remembers even if the bot is restarted at another time.</line>
+			<line>Static channels are joined automatically unless you set the +inactive</line>
+			<line>flag on the channel.</line>
+			<line></line>
+			<line>When you add static channels, don't forget to use the chansave command</line>
+			<line>to force the bot to rewrite the channel file. Not doing so</line>
+			<line>risks losing the new information if the bot is restarted before</line>
+			<line>the channel file is saved automatically.</line>
+		</desc>
+		<seealso>
+			<see>-chan</see>
+			<see>chanset</see>
+			<see>chaninfo</see>
+			<see>chansave</see>
+		</seealso>
+	</help>
+	<help>
+		<name>-chan</name>
+		<summary>removes a static channel from the bot</summary>
+		<args>
+			<arg>
+				<name>channel</name>
+				<desc>channel to remove</desc>
+			</arg>
+			<arg>
+				<name>text</name>
+				<desc>the text of the action message</desc>
+			</arg>
+		</args>
+		<desc>
+			<line>The say command sends an action to either a nick or a channel.</line>
+			<line>It is like typing /me blah blah blah in mIRC or X-Chat.</line>
+		</desc>
+		<seealso>
+			<see>say</see>
+			<see>msg</see>
+		</seealso>
+	</help>
+	<help>
+		<name>act</name>
+		<summary>send an ACTION ctcp to a nick (or channel)</summary>
+		<args>
+			<arg>
+				<name>dest</name>
+				<desc>nick or channel to send action to</desc>
+			</arg>
+			<arg>
+				<name>text</name>
+				<desc>the text of the action message</desc>
+			</arg>
+		</args>
+		<desc>
+			<line>The say command sends an action to either a nick or a channel.</line>
+			<line>It is like typing /me blah blah blah in mIRC or X-Chat.</line>
+		</desc>
+		<seealso>
+			<see>say</see>
+			<see>msg</see>
+		</seealso>
+	</help>
+	<help>
+		<name>act</name>
+		<summary>send an ACTION ctcp to a nick (or channel)</summary>
+		<args>
+			<arg>
+				<name>dest</name>
+				<desc>nick or channel to send action to</desc>
+			</arg>
+			<arg>
+				<name>text</name>
+				<desc>the text of the action message</desc>
+			</arg>
+		</args>
+		<desc>
+			<line>The say command sends an action to either a nick or a channel.</line>
+			<line>It is like typing /me blah blah blah in mIRC or X-Chat.</line>
+		</desc>
+		<seealso>
+			<see>say</see>
+			<see>msg</see>
+		</seealso>
+	</help>
+	<help>
+		<name>act</name>
+		<summary>send an ACTION ctcp to a nick (or channel)</summary>
+		<args>
+			<arg>
+				<name>dest</name>
+				<desc>nick or channel to send action to</desc>
+			</arg>
+			<arg>
+				<name>text</name>
+				<desc>the text of the action message</desc>
+			</arg>
+		</args>
+		<desc>
+			<line>The say command sends an action to either a nick or a channel.</line>
+			<line>It is like typing /me blah blah blah in mIRC or X-Chat.</line>
+		</desc>
+		<seealso>
+			<see>say</see>
+			<see>msg</see>
+		</seealso>
+	</help>
+	<help>
 		<name>op</name>
 		<summary>give ops to a nick on a channel</summary>
 		<args>
@@ -179,7 +309,7 @@
 			<arg>
 				<name>channel</name>
 				<optional>1</optional>
-				<desc>channel to remove ops on, or partyline channel if omitted</desc>
+				<desc>channel to give voice on, or partyline channel if omitted</desc>
 			</arg>
 			<arg>
 				<name>nick</name>
@@ -199,4 +329,96 @@
 			<see>devoice</see>
 		</seealso>
 	</help>
-</helpfile>
+	<help>
+		<name>devoice</name>
+		<summary>take voice from a nick on a channel</summary>
+		<args>
+			<arg>
+				<name>channel</name>
+				<optional>1</optional>
+				<desc>channel to take voice on, or partyline channel if omitted</desc>
+			</arg>
+			<arg>
+				<name>nick</name>
+				<desc>nick to take voice to</desc>
+			</arg>
+		</args>
+		<desc>
+<line>The devoice command takes voice (-v) from the specified nick. If a</line>
+<line>channel is not specified, the current partyline channel name is</line>
+<line>used.</line>
+		</desc>
+		<seealso>
+			<see>op</see>
+			<see>deop</see>
+			<see>halfop</see>
+			<see>dehalfop</see>
+			<see>voice</see>
+		</seealso>
+	</help>
+	<help>
+		<name>msg</name>
+		<summary>send a privmsg to a nick (or channel)</summary>
+		<args>
+			<arg>
+				<name>dest</name>
+				<desc>nick or channel to send privmsg to</desc>
+			</arg>
+			<arg>
+				<name>text</name>
+				<desc>the text to send</desc>
+			</arg>
+		</args>
+		<desc>
+			<line>The msg command sends a privmsg to either a nick or a channel.</line>
+			<line>It is a synonym for the say command.</line>
+		</desc>
+		<seealso>
+			<see>say</see>
+			<see>act</see>
+		</seealso>
+	</help>
+	<help>
+		<name>say</name>
+		<summary>send a privmsg to a nick (or channel)</summary>
+		<args>
+			<arg>
+				<name>dest</name>
+				<desc>nick or channel to send privmsg to</desc>
+			</arg>
+			<arg>
+				<name>text</name>
+				<desc>the text to send</desc>
+			</arg>
+		</args>
+		<desc>
+			<line>The say command sends a privmsg to either a nick or a channel.</line>
+			<line>It is a synonym for the msg command.</line>
+		</desc>
+		<seealso>
+			<see>msg</see>
+			<see>act</see>
+		</seealso>
+	</help>
+	<help>
+		<name>act</name>
+		<summary>send an ACTION ctcp to a nick (or channel)</summary>
+		<args>
+			<arg>
+				<name>dest</name>
+				<desc>nick or channel to send action to</desc>
+			</arg>
+			<arg>
+				<name>text</name>
+				<desc>the text of the action message</desc>
+			</arg>
+		</args>
+		<desc>
+			<line>The say command sends an action to either a nick or a channel.</line>
+			<line>It is like typing /me blah blah blah in mIRC or X-Chat.</line>
+		</desc>
+		<seealso>
+			<see>say</see>
+			<see>msg</see>
+		</seealso>
+	</help>

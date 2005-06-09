@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.36 2005/05/08 04:40:13 stdarg Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.37 2005/06/09 02:56:44 stdarg Exp $";
  #endif
 
 #include "server.h"
@@ -194,6 +194,7 @@ void channel_del_mask(channel_t *chan, char type, const char *mask)
 			free(m);
 			break;
 		}
+		prev = m;
 	}
 }
 

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: events.c,v 1.3 2005/05/08 04:40:12 stdarg Exp $";
+static const char rcsid[] = "$Id: events.c,v 1.4 2005/06/09 02:56:44 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -158,7 +158,7 @@ int events_init()
 	bind_add_simple("pubm", NULL, NULL, got_pub);
 	bind_add_simple("msgm", NULL, NULL, got_msg);
 	bind_add_simple("mode", NULL, NULL, got_mode);
-	timer_create_repeater(&howlong, "modefight_cleanup", modefight_cleanup);
+	modefight_timer_id = timer_create_repeater(&howlong, "modefight_cleanup", modefight_cleanup);
 	return(0);
 }
 
