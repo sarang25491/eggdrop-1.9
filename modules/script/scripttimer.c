@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scripttimer.c,v 1.9 2005/03/03 18:45:26 stdarg Exp $";
+static const char rcsid[] = "$Id: scripttimer.c,v 1.10 2005/06/09 02:59:03 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -85,7 +85,6 @@ static int script_timer_info(script_var_t *retval, int timer_id)
 {
 	egg_timeval_t howlong, trigger_time, start_time, diff, now;
 	egg_timer_t *timer;
-	char *name;
 
 	retval->type = SCRIPT_VAR | SCRIPT_FREE | SCRIPT_ARRAY;
 	retval->len = 0;
@@ -99,7 +98,7 @@ static int script_timer_info(script_var_t *retval, int timer_id)
 		how long it's run already, how long until it triggers,
 		absolute time when it triggers. */
 
-	script_list_append(retval, script_string(name, -1));
+	script_list_append(retval, script_string(timer->name, -1));
 
 	timer_diff(&timer->howlong, &timer->trigger_time, &start_time);
 	script_list_append(retval, script_int(start_time.sec));
