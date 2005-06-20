@@ -320,7 +320,8 @@ xml_node_t *xml_parse_file(const char *fname)
 		xml_set_error("out of memory");
 		return(NULL);
 	}
-	fread(buf, 1, len, fp);
+	len = fread(buf, 1, len, fp);
+	buf[len] = '\0';
 	fclose(fp);
 	root = xml_node_new();
 	root->type = XML_DOCUMENT;
