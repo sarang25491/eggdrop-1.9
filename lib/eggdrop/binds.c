@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: binds.c,v 1.22 2004/12/13 15:02:29 stdarg Exp $";
+static const char rcsid[] = "$Id: binds.c,v 1.23 2005/06/21 02:55:34 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -443,8 +443,8 @@ void bind_add_simple(const char *table_name, const char *flags, const char *mask
 
 	table = bind_table_lookup_or_fake(table_name);
 
-	snprintf(name, 50, "*%s:%s", table->name, mask ? mask : "");
-	name[49] = 0;
+	snprintf(name, sizeof(name), "*%s:%s", table->name, mask ? mask : "");
+	name[sizeof(name)-1] = 0;
 	
 	bind_entry_add(table, flags, mask, name, 0, callback, NULL);
 }
@@ -458,8 +458,8 @@ void bind_rem_list(const char *table_name, bind_list_t *cmds)
 	if (!table) return;
 
 	for (; cmds->mask; cmds++) {
-		snprintf(name, 50, "*%s:%s", table->name, cmds->mask);
-		name[49] = 0;
+		snprintf(name, sizeof(name), "*%s:%s", table->name, cmds->mask);
+		name[sizeof(name)-1] = 0;
 		bind_entry_del(table, -1, cmds->mask, name, cmds->callback, NULL);
 	}
 }
@@ -472,7 +472,7 @@ void bind_rem_simple(const char *table_name, const char *flags, const char *mask
 	table = bind_table_lookup(table_name);
 	if (!table) return;
 
-	snprintf(name, 50, "*%s:%s", table->name, mask);
-	name[49] = 0;
+	snprintf(name, sizeof(name), "*%s:%s", table->name, mask ? mask : "");
+	name[sizeof(name)-1] = 0;
 	bind_entry_del(table, -1, mask, name, callback, NULL);
 }

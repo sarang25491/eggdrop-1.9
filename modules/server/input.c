@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: input.c,v 1.38 2005/05/31 03:35:08 stdarg Exp $";
+static const char rcsid[] = "$Id: input.c,v 1.39 2005/06/21 02:55:34 stdarg Exp $";
 #endif
 
 #include "server.h"
@@ -516,6 +516,21 @@ static int gotping(char *from_nick, char *from_uhost, user_t *u, char *cmd, int 
 	return(0);
 }
 
+/* Process pongs to see if we've pinged out. */
+static int gotpong(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
+{
+	egg_timeval_t now;
+
+	if (nargs > 0 && current_server.ping_id == atoi(args[nargs-1])) {
+		timer_get_time(&now);
+		timer_diff(&current_server.last_ping_sent, &now, &current_server.last_ping_time);
+		if (current_server.time_to_ping == 0) current_server.time_to_ping = random() % 60 + 30;
+		current_server.npings++;
+	}
+
+	return(0);
+}
+
 /* 311 : save our user@host from whois reply */
 static int got311(char *from_nick, char *from_uhost, user_t *u, char *cmd, int nargs, char *args[])
 {
@@ -549,6 +564,7 @@ bind_list_t server_raw_binds[] = {
 	{NULL, "NOTICE", gotnotice},
 	{NULL, "WALLOPS", gotwall},
 	{NULL, "PING", gotping},
+	{NULL, "PONG", gotpong},
 	{NULL, "ERROR", goterror},
 	{NULL, "001", got001},
 	{NULL, "005", got005},

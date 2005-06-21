@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: server.h,v 1.24 2004/10/17 05:14:07 stdarg Exp $
+ * $Id: server.h,v 1.25 2005/06/21 02:55:34 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_SERVER_SERVER_H_
@@ -61,6 +61,12 @@ typedef struct {
 	char *server_self;	/* What the server calls itself (from 001). */
 	int port;		/* The port we connected to. */
 	int connected;		/* Are we connected yet? */
+
+	/* Ping timeout information. */
+	egg_timeval_t last_ping_sent, last_ping_time;
+	int ping_id;		/* Random value to distinguish each ping. */
+	int time_to_ping;	/* How many secs until we send our next ping. */
+	int npings;		/* Number of pings we've recieved. */
 
 	/* Our info on the server. */
 	int registered;		/* Has the server accepted our registration? */

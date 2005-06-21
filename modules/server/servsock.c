@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: servsock.c,v 1.24 2004/10/01 16:13:31 stdarg Exp $";
+static const char rcsid[] = "$Id: servsock.c,v 1.25 2005/06/21 02:55:34 stdarg Exp $";
 #endif
 
 #include "server.h"
@@ -99,6 +99,7 @@ static void disconnect_server()
 	if (current_server.support) free(current_server.support);
 	memset(&current_server, 0, sizeof(current_server));
 	current_server.idx = -1;
+	current_server.time_to_ping = -1;
 
 	if (idx != -1) sockbuf_delete(idx);
 	if (connected) eggdrop_event("disconnect-server");
@@ -135,6 +136,9 @@ static int server_on_connect(void *client_data, int idx, const char *peer_ip, in
 	linemode_on(current_server.idx);
 
 	current_server.connected = 1;
+	current_server.time_to_ping = random() % 30 + 30;
+	current_server.npings = 0;
+
 	nick_list_on_connect();
 	putlog(LOG_SERV, "*", _("Connected to %s, logging in."), current_server.server_host);
 	eggdrop_event("connect-server");

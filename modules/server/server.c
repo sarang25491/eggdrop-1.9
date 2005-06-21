@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: server.c,v 1.63 2004/10/06 02:35:15 stdarg Exp $";
+static const char rcsid[] = "$Id: server.c,v 1.64 2005/06/21 02:55:34 stdarg Exp $";
 #endif
 
 #include "server.h"
@@ -78,6 +78,33 @@ static int server_secondly()
 
 	/* Try to dequeue some stuff. */
 	dequeue_messages();
+
+	/* Check to see if we're pinged out once in a while. */
+	if (current_server.idx >= 0) {
+		if (current_server.time_to_ping == 0) {
+			egg_timeval_t now, diff;
+
+			timer_get_time(&now);
+			timer_diff(&current_server.last_ping_sent, &now, &diff);
+
+			/* Update ping time if it surpasses the old one, even
+			 * though we haven't received the actual ping reply. */
+			if (diff.sec > current_server.last_ping_time.sec || (diff.sec <= current_server.last_ping_time.sec && diff.usec > current_server.last_ping_time.usec)) {
+				current_server.last_ping_time = diff;
+			}
+			if (diff.sec >= server_config.ping_timeout) {
+				kill_server("ping timeout");
+			}
+		}
+		else if (current_server.time_to_ping > 0) {
+			current_server.time_to_ping--;
+			if (current_server.time_to_ping == 0) {
+				current_server.ping_id = random();
+				timer_get_time(&current_server.last_ping_sent);
+				printserv(SERVER_NOQUEUE, "PING :%d", current_server.ping_id);
+			}
+		}
+	}
 	return(0);
 }
 
@@ -97,6 +124,7 @@ static int server_status(partymember_t *p, const char *text)
 		else partymember_printf(p, _("   Connecting to next server in %d seconds."), cycle_delay);
 		return(0);
 	}
+
 	/* First line, who we've connected to. */
 	partymember_printf(p, _("   Connected to %s/%d."), current_server.server_self ? current_server.server_self : current_server.server_host, current_server.port);
 
@@ -106,6 +134,11 @@ static int server_status(partymember_t *p, const char *text)
 		else partymember_printf(p, _("   Online as %s (still waiting for WHOIS result)."), current_server.nick);
 	}
 	else partymember_printf(p, _("   Still logging in."));
+
+	/* Third line, ping time. */
+	if (current_server.time_to_ping >= 0 && current_server.npings > 0) {
+		partymember_printf(p, _("   Last server ping %d.%03d seconds"), current_server.last_ping_time.sec, current_server.last_ping_time.usec / 1000);
+	}
 
 	/* Print the channel list if we have one. */
 	for (chan = channel_head; chan; chan = chan->next) {
