@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partychan.c,v 1.19 2004/10/17 08:38:11 stdarg Exp $";
+static const char rcsid[] = "$Id: partychan.c,v 1.20 2005/06/22 19:45:11 darko Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -119,9 +119,35 @@ partychan_t *partychan_new(int cid, const char *name)
 static int partychan_cleanup(partychan_t *chan)
 {
 	int i;
-	int dirty = 0;
 
 	if (chan->flags & PARTY_DELETED) {
+		/* Following is bulky code to resolve recursive referencing.
+		   Don't bother reading it (unless hunting for bugs).
+		   All it does is searches through a memeber list of a channel
+		   and then updates each member so to NOT contain said channel in it's
+		   channel list. Eh, sounds funky even in English. */
+		   
+		for (i = 0; i < chan->nmembers; i++) {
+			int j;
+			for (j = 0; j < chan->members[i].p->nchannels; j++) {
+				if (chan == chan->members[i].p->channels[j]) {
+					if (j + 1 < chan->members[i].p->nchannels)
+						memmove(chan->members[i].p->channels[j], chan->members[i].p->channels[j+1],
+								(chan->members[i].p->nchannels-j-1) * sizeof(*chan));
+					chan->members[i].p->nchannels--;
+					break;
+				}
+			}
+		}
+
+		if (chan->prev) {
+			chan->prev->next = chan->next;
+			if (chan->next)
+				chan->next->prev = chan->prev;
+		}
+		else if (chan->next)
+			chan->next->prev = NULL;
+
 		free(chan->name);
 		free(chan->members);
 		free(chan);
@@ -132,7 +158,6 @@ static int partychan_cleanup(partychan_t *chan)
 		if (chan->members[i].flags & PARTY_DELETED) {
 			memmove(chan->members+i, chan->members+i+1, sizeof(*chan->members) * (chan->nmembers-i-1));
 			chan->nmembers--;
-			dirty++;
 			i--;
 		}
 	}
