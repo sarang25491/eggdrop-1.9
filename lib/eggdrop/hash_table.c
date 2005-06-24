@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: hash_table.c,v 1.18 2005/03/03 18:44:47 stdarg Exp $";
+static const char rcsid[] = "$Id: hash_table.c,v 1.19 2005/06/24 19:00:57 darko Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -65,6 +65,8 @@ int hash_table_delete(hash_table_t *ht)
 		row = ht->rows+i;
 		for (entry = row->head; entry; entry = next) {
 			next = entry->next;
+			if (ht->flags & HASH_TABLE_FREE_KEY)
+				free(entry->key);
 			free(entry);
 		}
 	}
@@ -191,6 +193,9 @@ int hash_table_remove(hash_table_t *ht, const void *key, void *dataptr)
 			/* Remove it from the row's list. */
 			if (last) last->next = entry->next;
 			else row->head = entry->next;
+
+			if (ht->flags & HASH_TABLE_FREE_KEY)
+				free(entry->key);
 
 			free(entry);
 			ht->cells_in_use--;

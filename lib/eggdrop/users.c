@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.45 2005/05/08 04:40:12 stdarg Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.46 2005/06/24 19:00:57 darko Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -75,6 +75,7 @@ static int cache_check_del(const void *key, void *dataptr, void *client_data);
 static int cache_rand_cleanup(const char *event);
 static int cache_user_del(user_t *u, const char *ircmask);
 static void append_setting(user_t *u, const char *chan, const char *flag_str, xml_node_t *extended);
+static int userlist_delete_walker(const void *key, void *dataptr, void *client_data);
 
 int user_init(void)
 {
@@ -82,7 +83,7 @@ int user_init(void)
 	/* Create hash tables. */
 	handle_ht = hash_table_create(NULL, NULL, USER_HASH_SIZE, HASH_TABLE_STRINGS);
 	uid_ht = hash_table_create(NULL, NULL, USER_HASH_SIZE, HASH_TABLE_INTS);
-	irchost_cache_ht = hash_table_create(NULL, NULL, HOST_HASH_SIZE, HASH_TABLE_STRINGS);
+	irchost_cache_ht = hash_table_create(NULL, NULL, HOST_HASH_SIZE, HASH_TABLE_STRINGS | HASH_TABLE_FREE_KEY);
 
 	/* And bind tables. */
 	BT_uflags = bind_table_add(BTN_USER_CHANGE_FLAGS, 4, "ssss", MATCH_MASK, BIND_STACKABLE);	/* DDD	*/
@@ -102,6 +103,8 @@ int user_shutdown(void)
 	bind_table_del(BT_udelete);
 	bind_table_del(BT_uset);
 	bind_table_del(BT_uflags);
+
+	hash_table_walk(uid_ht, userlist_delete_walker, NULL);
 
 	/* flush any pending user delete events */
 	garbage_run();
@@ -318,6 +321,11 @@ int user_delete(user_t *u)
 	bind_check(BT_udelete, NULL, NULL, u);
 	garbage_add(user_really_delete, u, 0);
 	return(0);
+}
+
+static int userlist_delete_walker(const void *key, void *dataptr, void *client_data)
+{
+	return user_delete(*(user_t **)dataptr);
 }
 
 user_t *user_lookup_by_handle(const char *handle)
