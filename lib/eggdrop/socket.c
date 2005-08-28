@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: socket.c,v 1.7 2004/10/17 05:14:06 stdarg Exp $";
+static const char rcsid[] = "$Id: socket.c,v 1.8 2005/08/28 01:39:48 lordares Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -235,13 +235,19 @@ int socket_create(const char *dest_ip, int dest_port, const char *src_ip, int sr
 		int yes = 1;
 
 		setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
-		if (bind(sock, &src_name.u.addr, src_name.len) != 0) return(-3);
+		if (bind(sock, &src_name.u.addr, src_name.len) != 0) {
+			close(sock);
+			return(-3);
+		}
 		if (flags & SOCKET_SERVER) listen(sock, 50);
 	}
 
 	if (flags & SOCKET_CLIENT) {
 		if (connect(sock, &dest_name.u.addr, dest_name.len) != 0) {
-			if (errno != EINPROGRESS) return(-4);
+			if (errno != EINPROGRESS) {
+				close(sock);
+				return(-4);
+			}
 		}
 	}
 
