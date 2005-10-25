@@ -53,6 +53,7 @@
 		<keepnick>0</keepnick>
 		<cycle_delay>10</cycle_delay>
 		<default_port>6667</default_port>
+		<max_line_len>510</max_line_len>
 		<fake005 />
 		<raw_log>0</raw_log>
 		<ip_lookup>0</ip_lookup>
