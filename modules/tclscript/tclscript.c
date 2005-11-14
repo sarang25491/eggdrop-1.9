@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tclscript.c,v 1.47 2004/06/23 11:19:52 wingman Exp $";
+static const char rcsid[] = "$Id: tclscript.c,v 1.48 2005/11/14 04:44:43 wcc Exp $";
 #endif
 
 #include <string.h>
@@ -236,7 +236,7 @@ static int my_tcl_callbacker(script_callback_t *me, ...)
 	script_var_t var;
 	my_callback_cd_t *cd; /* My callback client data */
 	int i, n, retval;
-	script_callback_t **al;
+	va_list va;
 
 	/* This struct contains the interp and the obj command. */
 	cd = (my_callback_cd_t *)me->callback_data;
@@ -244,18 +244,19 @@ static int my_tcl_callbacker(script_callback_t *me, ...)
 	/* Get a copy of the command, then append args. */
 	final_command = Tcl_DuplicateObj(cd->command);
 
-	al = &me;
-	al++;
 	if (me->syntax) n = strlen(me->syntax);
 	else n = 0;
 
+	va_start(va, me);
 	for (i = 0; i < n; i++) {
 		var.type = me->syntax[i];
-		var.value = al[i];
+		if (var.type == SCRIPT_INTEGER || var.type == SCRIPT_UNSIGNED) var.value = (void *) (va_arg(va, int));
+		else var.value = va_arg(va, void *);
 		var.len = -1;
 		arg = c_to_tcl_var(cd->myinterp, &var);
 		Tcl_ListObjAppendElement(cd->myinterp, final_command, arg);
 	}
+	va_end(va);
 
 	interp = cd->myinterp;
 

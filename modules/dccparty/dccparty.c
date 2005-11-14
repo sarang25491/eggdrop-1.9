@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dccparty.c,v 1.9 2004/10/17 05:14:06 stdarg Exp $";
+static const char rcsid[] = "$Id: dccparty.c,v 1.10 2005/11/14 04:44:43 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -217,9 +217,12 @@ static int dcc_on_eof(void *client_data, int idx, int err, const char *errmsg)
 		if (!err) errmsg = "Client disconnected";
 		else if (!errmsg) errmsg = "Unknown error";
 		partymember_delete(session->party, errmsg);
-		session->party = NULL;
+		/* This will call our on_quit handler which will delete the sockbuf
+		 * which will call our on_delete handler which will kill the session.
+		 * Summery: All the data is gone, don't touch any of the variables */
+	} else {
+		sockbuf_delete(idx);
 	}
-	sockbuf_delete(idx);
 	return(0);
 }
 

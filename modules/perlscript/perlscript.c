@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: perlscript.c,v 1.29 2003/12/20 08:13:41 stdarg Exp $";
+static const char rcsid[] = "$Id: perlscript.c,v 1.30 2005/11/14 04:44:43 wcc Exp $";
 #endif
 
 #ifdef DEBUG
@@ -204,24 +204,25 @@ static int my_perl_callbacker(script_callback_t *me, ...)
 	int retval, i, n, count;
 	script_var_t var;
 	SV *cmd, *arg;
-	int *al;
+	va_list va;
 	dSP;
 
 	ENTER;
 	SAVETMPS;
 	PUSHMARK(SP);
 
-	al = (int *)&me;
-	al++;
 	if (me->syntax) n = strlen(me->syntax);
 	else n = 0;
+	va_start(va, me);
 	for (i = 0; i < n; i++) {
 		var.type = me->syntax[i];
-		var.value = (void *)al[i];
+		if (var.type == SCRIPT_INTEGER || var.type == SCRIPT_UNSIGNED) var.value = (void *) (va_arg(va, int));
+		else var.value = va_arg(va, void *);
 		var.len = -1;
 		arg = c_to_perl_var(&var);
 		XPUSHs(sv_2mortal(arg));
 	}
+	va_end(va);
 	PUTBACK;
 
 	/* If it's a one-time callback, delete it. */

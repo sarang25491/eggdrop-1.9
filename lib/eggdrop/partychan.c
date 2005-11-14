@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partychan.c,v 1.20 2005/06/22 19:45:11 darko Exp $";
+static const char rcsid[] = "$Id: partychan.c,v 1.21 2005/11/14 04:44:43 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -307,7 +307,7 @@ int partychan_part(partychan_t *chan, partymember_t *p, const char *text)
 	/* Remove the channel entry from the member. */
 	if (!(p->flags & PARTY_DELETED)) for (i = 0; i < p->nchannels; i++) {
 		if (p->channels[i] == chan) {
-			memcpy(p->channels+i, p->channels+i+1, sizeof(chan) * (p->nchannels-i-1));
+			memmove(p->channels+i, p->channels+i+1, sizeof(chan) * (p->nchannels-i-1));
 			p->nchannels--;
 			break;
 		}

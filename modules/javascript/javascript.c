@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: javascript.c,v 1.25 2004/06/23 11:19:52 wingman Exp $";
+static const char rcsid[] = "$Id: javascript.c,v 1.26 2005/11/14 04:44:43 wcc Exp $";
 #endif
 
 #include <stdio.h>
@@ -271,23 +271,24 @@ static int my_js_callbacker(script_callback_t *me, ...)
 	script_var_t var;
 	my_callback_cd_t *cd; /* My callback client data */
 	int i, n, retval = 0;
-	void **al;
+	va_list va;
 
 	/* This struct contains the interp and the obj command. */
 	cd = (my_callback_cd_t *)me->callback_data;
 
-	al = (void **)&me;
-	al++;
 	if (me->syntax) n = strlen(me->syntax);
 	else n = 0;
 
 	argv = (jsval *)malloc(n * sizeof(jsval));
+	va_start(va, me);
 	for (i = 0; i < n; i++) {
 		var.type = me->syntax[i];
-		var.value = al[i];
+		if (var.type == SCRIPT_INTEGER || var.type == SCRIPT_UNSIGNED) var.value = (void *) (va_arg(va, int));
+		else var.value = va_arg(va, void *);
 		var.len = -1;
 		c_to_js_var(cd->mycx, &var, argv+i);
 	}
+	va_end(va);
 
 	mycx = cd->mycx;
 	myobj = cd->myobj;
