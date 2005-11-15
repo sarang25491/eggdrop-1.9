@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: sockbuf.c,v 1.19 2005/11/14 04:44:43 wcc Exp $";
+static const char rcsid[] = "$Id: sockbuf.c,v 1.20 2005/11/15 03:59:49 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -174,7 +174,7 @@ static int sockbuf_real_write(int idx, const char *data, int len)
 	int nbytes = 0;
 	sockbuf_t *sbuf = &sockbufs[idx];
 
-	if (sbuf->sock <= 0) return 0;
+	if (sbuf->sock < 0) return 0;
 	/* If it's not blocked already, write as much as we can. */
 	if (!(sbuf->flags & SOCKBUF_BLOCK)) {		
 		nbytes = write (sbuf->sock, data, len);
@@ -388,6 +388,7 @@ static void sockbuf_got_writable(int idx)
 	int nbytes;
 	sockbuf_t *sbuf = &sockbufs[idx];
 
+	if (sbuf->sock < 0) return;
 	/* Try to write any buffered data. */
 	errno = 0;
 	nbytes = write(sbuf->sock, sbuf->data, sbuf->len);
@@ -415,7 +416,7 @@ static void sockbuf_got_readable(int idx)
 	char buf[4097];
 	int nbytes;
 
-	if (sbuf->sock <= 0) return;
+	if (sbuf->sock < 0) return;
 	errno = 0;
 	nbytes = read(sbuf->sock, buf, sizeof(buf)-1);
 	if (nbytes > 0) {
