@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: nicklist.c,v 1.10 2004/06/24 06:19:56 wcc Exp $";
+static const char rcsid[] = "$Id: nicklist.c,v 1.11 2005/11/26 23:41:03 stdarg Exp $";
 #endif
 
 #include "server.h"
@@ -79,14 +79,12 @@ int nick_add(const char *nick)
 /* Remove a nick from the nick list based on its index. */
 int nick_del(int num)
 {
-	if (num < 0 || num >= nick_list_len)
-		return(-1); /* Invalid nick index. */
+	if (num < 0 || num >= nick_list_len) return(-1); /* Invalid nick index. */
 
 	free(nick_list[num]);
-	memmove(nick_list + num, nick_list + num + 1, nick_list_len - num - 1);
+	memmove(nick_list + num, nick_list + num + 1, sizeof(*nick_list) * (nick_list_len - num - 1));
 	nick_list_len--;
-	if (num < nick_list_index)
-		nick_list_index--;
+	if (num < nick_list_index) nick_list_index--;
 
 	return(0);
 }
@@ -96,10 +94,8 @@ int nick_clear()
 {
 	int i;
 
-	for (i = 0; i < nick_list_len; i++)
-		free(nick_list[i]);
-	if (nick_list)
-		free(nick_list);
+	for (i = 0; i < nick_list_len; i++) free(nick_list[i]);
+	if (nick_list) free(nick_list);
 	nick_list = NULL;
 	nick_list_len = 0;
 
@@ -111,8 +107,8 @@ int nick_find(const char *nick)
 {
 	int i;
 
-	for (i = 0; i < nick_list_len; i++)
-		if (!nick || !strcasecmp(nick_list[i], nick))
-			return(i);
+	for (i = 0; i < nick_list_len; i++) {
+		if (!nick || !strcasecmp(nick_list[i], nick)) return(i);
+	}
 	return(-1);
 }

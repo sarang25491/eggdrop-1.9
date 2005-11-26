@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dcc.c,v 1.22 2005/05/08 04:40:13 stdarg Exp $";
+static const char rcsid[] = "$Id: dcc.c,v 1.23 2005/11/26 23:41:03 stdarg Exp $";
 #endif
 
 #include <unistd.h>
@@ -187,7 +187,7 @@ static int dcc_listen_newclient(void *client_data, int idx, int newidx, const ch
 
 	/* Give the waiting sockbuf the new socket and mark it as a client
 	 * so that it fires the on_connect event. */
-	sockbuf_set_sock(chat->client, sock, SOCKBUF_CLIENT);
+	sockbuf_set_sock(chat->client, sock, SOCKBUF_CONNECTING|SOCKBUF_CLIENT);
 
 	/* Delete the listening idx since it's not needed. */
 	chat->client = -1;
