@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.46 2005/06/24 19:00:57 darko Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.47 2005/11/26 16:44:30 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -461,7 +461,6 @@ static int cache_rand_cleanup(const char *event)
 	putlog(LOG_MISC, "*", "user_rand_cleanup: deleting %d entries from cache", info.nentries);
 	for (i = 0; i < info.nentries; i++) {
 		hash_table_remove(irchost_cache_ht, info.entries[i], NULL);
-		free((void *)info.entries[i]);
 	}
 	if (info.entries) free(info.entries);
 	return(0);
