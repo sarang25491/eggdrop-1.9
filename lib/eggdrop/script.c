@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: script.c,v 1.20 2004/10/17 05:14:06 stdarg Exp $";
+static const char rcsid[] = "$Id: script.c,v 1.21 2005/11/27 20:47:15 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -192,9 +192,10 @@ static int my_command_handler(void *client_data, script_args_t *args, script_var
 	script_callback_t **callbacks, *static_callbacks[20];
 	int argstack_len, nfree_args, ncallbacks;
 	char *syntax;
-	int i, skip, nopts, err, simple_retval;
+	int i, skip, nopts, err;
+	void *simple_retval;
 	script_var_t var;
-	int (*callback)();
+	void *(*callback)();
 
 	/* Check if there is an argument count error. */
 	if (cmd->flags & SCRIPT_VAR_ARGS) err = (cmd->nargs > args->len);
@@ -269,7 +270,7 @@ static int my_command_handler(void *client_data, script_args_t *args, script_var
 	argstack_len -= nopts;
 
 	/* Execute the callback. */
-	callback = (int (*)())cmd->callback;
+	callback = (void *(*)())cmd->callback;
 	if (cmd->flags & SCRIPT_PASS_ARRAY) {
 		simple_retval = callback(argstack_len, argstack);
 	}
@@ -286,7 +287,7 @@ static int my_command_handler(void *client_data, script_args_t *args, script_var
 	if (!(cmd->flags & SCRIPT_PASS_RETVAL)) {
 		retval->type = cmd->retval_type;
 		retval->len = -1;
-		retval->value = (void *)simple_retval;
+		retval->value = simple_retval;
 	}
 
 cleanup_args:

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tclscript.c,v 1.48 2005/11/14 04:44:43 wcc Exp $";
+static const char rcsid[] = "$Id: tclscript.c,v 1.49 2005/11/27 20:47:16 wcc Exp $";
 #endif
 
 #include <string.h>
@@ -150,7 +150,6 @@ static char *my_trace_callback(ClientData client_data, Tcl_Interp *irp, char *na
 
 	if (flags & TCL_TRACE_READS) {
 		if (linked_var->callbacks && linked_var->callbacks->on_read) {
-			script_var_t newvalue = {0};
 			int r = (linked_var->callbacks->on_read)(linked_var, &newvalue);
 			if (r) return(NULL);
 		}
