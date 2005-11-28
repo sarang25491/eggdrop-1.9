@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dns.c,v 1.13 2004/12/23 00:12:34 lordares Exp $";
+static const char rcsid[] = "$Id: dns.c,v 1.14 2005/11/28 03:53:09 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -620,17 +620,20 @@ static void parse_reply(char *response, int nbytes)
 		if (reply.ttl && ((!q->answer.ttl) || (q->answer.ttl > reply.ttl))) q->answer.ttl = reply.ttl;
 
 		ptr += 10;
+		/* FIXME: Check DO_IPV4 here? */
 		if (reply.type == 1) {
 			/*fprintf(fp, "ipv4 reply\n");*/
 			inet_ntop(AF_INET, ptr, result, 512);
 			answer_add(&q->answer, result);
 		}
+		#ifdef DO_IPV6
 		else if (reply.type == 28) {
 			/*fprintf(fp, "ipv6 reply\n");*/
 			inet_ntop(AF_INET6, ptr, result, 512);
 			answer_add(&q->answer, result);
-			return;		/* why is this here? ... */
+			return;		/* FIXME: Why is this here? This either needs to be explained in a comment or removed... doesn't look right. */
 		}
+		#endif
 		else if (reply.type == 12) {
 			char *placeholder;
 			int len, dot;

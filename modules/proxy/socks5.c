@@ -58,22 +58,27 @@ static void send_connect_request(proxy_info_t *info)
 	int len;
 	unsigned short port;
 	struct sockaddr_in addr;
+	#ifdef DO_IPV6
 	struct sockaddr_in6 addr6;
+	#endif
 
 	/* VER        CMD        RESERVED  */
 	buf[0] = 5; buf[1] = 1; buf[2] = 0;
 
 	/* Try a regular ipv4 address first. */
+	/* FIXME: Check DO_IPV4 here? */
 	if (inet_pton(AF_INET, info->host, &addr) > 0) {
 		buf[3] = 1;
 		memcpy(buf+4, &addr.sin_addr, 4);
 		len = 8;
 	}
+	#ifdef DO_IPV6
 	else if (inet_pton(AF_INET6, info->host, &addr6) > 0) {
 		buf[3] = 4;
 		memcpy(buf+4, &addr6.sin6_addr, 16);
 		len = 20;
 	}
+	#endif
 	else {
 		buf[3] = 3;
 		len = strlen(info->host) % 255;
