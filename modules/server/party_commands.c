@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: party_commands.c,v 1.22 2005/11/28 06:29:07 wcc Exp $";
+static const char rcsid[] = "$Id: party_commands.c,v 1.23 2005/11/28 07:09:28 wcc Exp $";
 #endif
 
 #include "server.h"
@@ -27,13 +27,17 @@ static int party_servers(partymember_t *p, const char *nick, user_t *u, const ch
 {
 	server_t *s;
 
-	if (server_list_len <= 0) partymember_printf(p, _("The server list is empty."));
-	else partymember_printf(p, _("%d server%s:"), server_list_len, (server_list_len != 1) ? "s" : "");
+	if (server_list_len <= 0) {
+		partymember_printf(p, _("The server list is empty."));
+		return(BIND_RET_LOG);
+	}
+
+	partymember_printf(p, _("%d server%s:"), server_list_len, (server_list_len != 1) ? "s" : "");
 	for (s = server_list; s; s = s->next) {
 		if (s->port) partymember_printf(p, _("   %s (port %d)%s"), s->host, s->port, s->pass ? _(" (password set)") : "");
 		else partymember_printf(p, _("   %s (default port)%s"), s->host, s->pass ? _(" (password set)") : "");
 	}
-	return(0);
+	return(BIND_RET_LOG);
 }
 
 static void parse_server(const char *text, char **host, int *port, char **pass)
@@ -68,16 +72,18 @@ static int party_plus_server(partymember_t *p, const char *nick, user_t *u, cons
 		partymember_printf(p, _("Syntax: +server <host> [port] [pass]"));
 		return(0);
 	}
+
 	parse_server(text, &host, &port, &pass);
 	if (!strlen(host)) {
 		partymember_printf(p, _("Please specify a valid host."));
 		free(host);
 		return(0);
 	}
+
 	server_add(host, port, pass);
 	partymember_printf(p, _("Added %s/%d.\n"), host, port ? port : server_config.default_port);
 	free(host);
-	return(0);
+	return(BIND_RET_LOG);
 }
 
 static int party_minus_server(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
@@ -98,7 +104,7 @@ static int party_minus_server(partymember_t *p, const char *nick, user_t *u, con
 		server_del(i);
 		partymember_printf(p, _("Deleted server %d."), i+1);
 	}
-	return(0);
+	return(BIND_RET_LOG);
 }
 
 static int party_dump(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
@@ -107,6 +113,7 @@ static int party_dump(partymember_t *p, const char *nick, user_t *u, const char 
 		partymember_printf(p, _("Syntax: dump <server stuff>"));
 		return(0);
 	}
+
 	printserv(SERVER_NORMAL, "%s\r\n", text);
 	return(BIND_RET_LOG);
 }
@@ -128,7 +135,7 @@ static int party_jump(partymember_t *p, const char *nick, user_t *u, const char 
 	else num = server_list_index+1;
 	server_set_next(num);
 	kill_server("changing servers");
-	return(0);
+	return(BIND_RET_LOG);
 }
 
 static int party_chanmembermode(partymember_t *p, user_t *u, const char *cmd, const char *text, const char *flags, const char *mode)
@@ -143,6 +150,7 @@ static int party_chanmembermode(partymember_t *p, user_t *u, const char *cmd, co
 		partymember_printf(p, "Syntax: %s [channel] <nick>", cmd);
 		return(0);
 	}
+
 	if (text && *text) nick = strdup(text);
 	else {
 		nick = chan;
@@ -154,6 +162,7 @@ static int party_chanmembermode(partymember_t *p, user_t *u, const char *cmd, co
 			return(0);
 		}
 	}
+
 	ircchan = channel_probe(chan, 0);
 	if (!ircchan) {
 		partymember_printf(p, "I'm not on '%s', as far as I know!", chan);
@@ -215,10 +224,11 @@ static int party_msg(partymember_t *p, const char *nick, user_t *u, const char *
 		if (dest) free(dest);
 		return(0);
 	}
+
 	printserv(SERVER_NORMAL, "PRIVMSG %s :%s\r\n", dest, next);
 	partymember_printf(p, _("Msg to %1$s: %2$s"), dest, next);
 	free(dest);
-	return(0);
+	return(BIND_RET_LOG);
 }
 
 static int party_act(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
@@ -232,10 +242,11 @@ static int party_act(partymember_t *p, const char *nick, user_t *u, const char *
 		if (dest) free(dest);
 		return(0);
 	}
+
 	printserv(SERVER_NORMAL, "PRIVMSG %s :\001ACTION %s\001\r\n", dest, next);
 	partymember_printf(p, _("Action to %1$s: %2$s"), dest, next);
 	free(dest);
-	return(0);
+	return(BIND_RET_LOG);
 }
 
 static void parse_chanset(channel_t *chan, const char *settings)
@@ -274,6 +285,7 @@ static int party_pls_chan(partymember_t *p, const char *nick, user_t *u, const c
 		partymember_printf(p, "Syntax: %s <channel> [settings]", cmd);
 		return(0);
 	}
+
 	chan = channel_add(name);
 	free(name);
 	parse_chanset(chan, settings);
@@ -282,24 +294,27 @@ static int party_pls_chan(partymember_t *p, const char *nick, user_t *u, const c
 	if (key && strlen(key)) printserv(SERVER_NORMAL, "JOIN %s %s", chan->name, key);
 	else printserv(SERVER_NORMAL, "JOIN %s", chan->name);
 
-	return BIND_RET_LOG;
+	return(BIND_RET_LOG);
 }
 
 /* -chan <name> */
 static int party_mns_chan(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	while (text && isspace(*text)) text++;
+
 	if (!text || !*text) {
 		partymember_printf(p, "Syntax: %s <channel>", cmd);
 		return(0);
 	}
+
 	if (channel_remove(text)) {
 		partymember_printf(p, "Channel not found!");
 		return(0);
 	}
+
 	partymember_printf(p, "Channel removed.");
 	printserv(SERVER_NORMAL, "PART %s", text);
-	return BIND_RET_LOG;
+	return(BIND_RET_LOG);
 }
 
 /* channels */
@@ -307,10 +322,15 @@ static int party_channels(partymember_t *p, const char *nick, user_t *u, const c
 {
 	channel_t *chan;
 
+	if (nchannels <= 0) {
+		partymember_printf(p, _("The channel list is empty."));
+		return(BIND_RET_LOG);
+	}
+
 	for (chan = channel_head; chan; chan = chan->next) {
 		partymember_printf(p, "   %s : %d member%s", chan->name, chan->nmembers, chan->nmembers == 1 ? "" : "s");
 	}
-	return BIND_RET_LOG;
+	return(BIND_RET_LOG);
 }
 
 /* chanset <channel / *> <setting> [data] */
@@ -325,14 +345,16 @@ static int party_chanset(partymember_t *p, const char *nick, user_t *u, const ch
 		partymember_printf(p, "Syntax: %s <channel> [settings]", cmd);
 		return(0);
 	}
+
 	chan = channel_probe(name, 0);
 	free(name);
 	if (!chan) {
 		partymember_printf(p, "Channel not found! Use +chan if you want to create a new channel.");
 		return(0);
 	}
+
 	parse_chanset(chan, settings);
-	return BIND_RET_LOG;
+	return(BIND_RET_LOG);
 }
 
 /* chaninfo <channel> */
@@ -342,15 +364,18 @@ static int party_chaninfo(partymember_t *p, const char *nick, user_t *u, const c
 	char *next, *item, *value;
 
 	while (text && isspace(*text)) text++;
+
 	if (!text || !*text) {
 		partymember_printf(p, "Syntax: %s <channel>", cmd);
 		return(0);
 	}
+
 	chan = channel_probe(text, 0);
 	if (!chan) {
 		partymember_printf(p, "Channel not found!");
 		return(0);
 	}
+
 	partymember_printf(p, "Information about '%s':", chan->name);
 	if (!(chan->flags & CHANNEL_STATIC)) {
 		partymember_printf(p, "Saved settings: none (not a static channel)");
@@ -367,36 +392,37 @@ static int party_chaninfo(partymember_t *p, const char *nick, user_t *u, const c
 			free(item);
 		}
 	}
-	return BIND_RET_LOG;
+	return(BIND_RET_LOG);
 }
 
 /* chansave [filename] */
 static int party_chansave(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	while (text && isspace(*text)) text++;
+
 	channel_save(text && *text ? text : server_config.chanfile);
-	return BIND_RET_LOG;
+	return(BIND_RET_LOG);
 }
 
 /* +ban/+invite/+exempt <mask> [channel] [%XdYhZm] ["comment"] */
 /* +chanmask <type> <mask> [channel] [%XdYhZm] [comment] */
 static int party_plus_mask(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
-	return BIND_RET_LOG;
+	return(BIND_RET_LOG);
 }
 
 /* bans/invites/exempts [channel/all [mask]] */
 /* chanmask <type> [channel/all [mask]] */
 static int party_list_masks(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
-	return BIND_RET_LOG;
+	return(BIND_RET_LOG);
 }
 
 /* -ban/-invite/-exempt <mask/number> */
 /* -chanmask <type> <mask/number> */
 static int party_minus_mask(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
-	return BIND_RET_LOG;
+	return(BIND_RET_LOG);
 }
 
 

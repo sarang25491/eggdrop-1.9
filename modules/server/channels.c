@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.37 2005/06/09 02:56:44 stdarg Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.38 2005/11/28 07:09:28 wcc Exp $";
  #endif
 
 #include "server.h"
@@ -116,6 +116,7 @@ int channel_remove(const char *name)
 	chan = channel_probe(name, 0);
 	if (!chan) return(-1);
 	chan->flags &= ~CHANNEL_STATIC;
+	nchannels--;
 	return(0);
 }
 
