@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: party_commands.c,v 1.21 2005/11/28 04:02:07 stdarg Exp $";
+static const char rcsid[] = "$Id: party_commands.c,v 1.22 2005/11/28 06:29:07 wcc Exp $";
 #endif
 
 #include "server.h"
@@ -302,6 +302,17 @@ static int party_mns_chan(partymember_t *p, const char *nick, user_t *u, const c
 	return BIND_RET_LOG;
 }
 
+/* channels */
+static int party_channels(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	channel_t *chan;
+
+	for (chan = channel_head; chan; chan = chan->next) {
+		partymember_printf(p, "   %s : %d member%s", chan->name, chan->nmembers, chan->nmembers == 1 ? "" : "s");
+	}
+	return BIND_RET_LOG;
+}
+
 /* chanset <channel / *> <setting> [data] */
 static int party_chanset(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
@@ -390,7 +401,7 @@ static int party_minus_mask(partymember_t *p, const char *nick, user_t *u, const
 
 
 bind_list_t server_party_commands[] = {					/* Old flag requirements */
-	{"", "servers", party_servers},			/* DDD	*/
+	{"m", "servers", party_servers},		/* DDD	*/
 
 	/* Normal irc commands. */
 	{"o", "halfop", party_halfop},
@@ -419,6 +430,7 @@ bind_list_t server_party_commands[] = {					/* Old flag requirements */
 	{"m", "-server", party_minus_server},		/* DDD	*/
 	{"m", "dump", party_dump},			/* DDD	*/
 	{"m", "jump", party_jump},			/* DDD	*/
+	{"m", "channels", party_channels},		/* DDD	*/	/* m */
 	{"n", "+chan", party_pls_chan},			/* DDC	*/	/* n */
 	{"n", "-chan", party_mns_chan},			/* DDC	*/	/* n */
 	{"n", "chanset", party_chanset},		/* DDC	*/	/* n|n */
