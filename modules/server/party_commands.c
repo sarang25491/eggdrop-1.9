@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: party_commands.c,v 1.20 2004/10/06 04:53:26 stdarg Exp $";
+static const char rcsid[] = "$Id: party_commands.c,v 1.21 2005/11/28 04:02:07 stdarg Exp $";
 #endif
 
 #include "server.h"
@@ -267,6 +267,7 @@ static int party_pls_chan(partymember_t *p, const char *nick, user_t *u, const c
 	const char *settings;
 	char *name;
 	channel_t *chan;
+	char *key;
 
 	egg_get_arg(text, &settings, &name);
 	if (!name) {
@@ -276,6 +277,11 @@ static int party_pls_chan(partymember_t *p, const char *nick, user_t *u, const c
 	chan = channel_add(name);
 	free(name);
 	parse_chanset(chan, settings);
+
+	channel_get(chan, &key, "key", 0, NULL);
+	if (key && strlen(key)) printserv(SERVER_NORMAL, "JOIN %s %s", chan->name, key);
+	else printserv(SERVER_NORMAL, "JOIN %s", chan->name);
+
 	return BIND_RET_LOG;
 }
 
