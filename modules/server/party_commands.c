@@ -18,11 +18,12 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: party_commands.c,v 1.23 2005/11/28 07:09:28 wcc Exp $";
+static const char rcsid[] = "$Id: party_commands.c,v 1.24 2005/11/29 01:18:54 wcc Exp $";
 #endif
 
 #include "server.h"
 
+/* servers */
 static int party_servers(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	server_t *s;
@@ -63,6 +64,7 @@ static void parse_server(const char *text, char **host, int *port, char **pass)
 	}
 }
 
+/* +server <host> [port] [pass] */
 static int party_plus_server(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	char *host, *pass;
@@ -86,6 +88,7 @@ static int party_plus_server(partymember_t *p, const char *nick, user_t *u, cons
 	return(BIND_RET_LOG);
 }
 
+/* -server <host> [port] [pass] */
 static int party_minus_server(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	char *host, *pass;
@@ -107,10 +110,11 @@ static int party_minus_server(partymember_t *p, const char *nick, user_t *u, con
 	return(BIND_RET_LOG);
 }
 
+/* dump <commands> */
 static int party_dump(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	if (!text || !*text) {
-		partymember_printf(p, _("Syntax: dump <server stuff>"));
+		partymember_printf(p, _("Syntax: dump <commands>"));
 		return(0);
 	}
 
@@ -118,6 +122,7 @@ static int party_dump(partymember_t *p, const char *nick, user_t *u, const char 
 	return(BIND_RET_LOG);
 }
 
+/* jump [host] [port] [pass] */
 static int party_jump(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	char *host, *pass;
@@ -183,36 +188,43 @@ static int party_chanmembermode(partymember_t *p, user_t *u, const char *cmd, co
 	return(BIND_RET_LOG);
 }
 
+/* op [channel] <nick> */
 static int party_op(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	return party_chanmembermode(p, u, cmd, text, "o", "+o");
 }
 
+/* deop [channel] <nick> */
 static int party_deop(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	return party_chanmembermode(p, u, cmd, text, "o", "-o");
 }
 
+/* halfop [channel] <nick> */
 static int party_halfop(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	return party_chanmembermode(p, u, cmd, text, "lo", "+l");
 }
 
+/* dehalfop [channel] <nick> */
 static int party_dehalfop(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	return party_chanmembermode(p, u, cmd, text, "lo", "-l");
 }
 
+/* voice [channel] <nick> */
 static int party_voice(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	return party_chanmembermode(p, u, cmd, text, "lo", "+v");
 }
 
+/* devoice [channel] <nick> */
 static int party_devoice(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	return party_chanmembermode(p, u, cmd, text, "lo", "-v");
 }
 
+/* say|msg <nick/chan> <message> */
 static int party_msg(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	char *dest;
@@ -231,6 +243,7 @@ static int party_msg(partymember_t *p, const char *nick, user_t *u, const char *
 	return(BIND_RET_LOG);
 }
 
+/* act <nick/chan> <action> */
 static int party_act(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	char *dest;
@@ -276,13 +289,12 @@ static void parse_chanset(channel_t *chan, const char *settings)
 static int party_pls_chan(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	const char *settings;
-	char *name;
+	char *name, *key;
 	channel_t *chan;
-	char *key;
 
 	egg_get_arg(text, &settings, &name);
 	if (!name) {
-		partymember_printf(p, "Syntax: %s <channel> [settings]", cmd);
+		partymember_printf(p, "Syntax: +chan <channel> [settings]");
 		return(0);
 	}
 
@@ -298,12 +310,12 @@ static int party_pls_chan(partymember_t *p, const char *nick, user_t *u, const c
 }
 
 /* -chan <name> */
-static int party_mns_chan(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+static int party_minus_chan(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	while (text && isspace(*text)) text++;
 
 	if (!text || !*text) {
-		partymember_printf(p, "Syntax: %s <channel>", cmd);
+		partymember_printf(p, "Syntax: -chan <channel>");
 		return(0);
 	}
 
@@ -458,7 +470,7 @@ bind_list_t server_party_commands[] = {					/* Old flag requirements */
 	{"m", "jump", party_jump},			/* DDD	*/
 	{"m", "channels", party_channels},		/* DDD	*/	/* m */
 	{"n", "+chan", party_pls_chan},			/* DDC	*/	/* n */
-	{"n", "-chan", party_mns_chan},			/* DDC	*/	/* n */
+	{"n", "-chan", party_minus_chan},			/* DDC	*/	/* n */
 	{"n", "chanset", party_chanset},		/* DDC	*/	/* n|n */
 	{"m", "chaninfo", party_chaninfo},		/* DDC	*/	/* m|m */
 	{"n", "chansave", party_chansave},		/* DDC	*/	/* n|n */

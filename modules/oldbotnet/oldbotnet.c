@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: oldbotnet.c,v 1.11 2004/10/17 05:14:06 stdarg Exp $";
+static const char rcsid[] = "$Id: oldbotnet.c,v 1.12 2005/11/29 01:18:54 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -29,7 +29,8 @@ EXPORT_SCOPE int oldbotnet_LTX_start(egg_module_t *modinfo);
 static int oldbotnet_close(int why);
 
 /* Partyline commands. */
-static int party_plusobot(partymember_t *p, char *nick, user_t *u, char *cmd, char *text);
+static int party_plus_obot(partymember_t *p, char *nick, user_t *u, char *cmd, char *text);
+static int party_minus_obot(partymember_t *p, char *nick, user_t *u, char *cmd, char *text);
 static int party_olink(partymember_t *p, char *nick, user_t *u, char *cmd, char *text);
 
 /* Oldbotnet commands. */
@@ -49,7 +50,8 @@ static int oldbotnet_on_eof(void *client_data, int idx, int err, const char *err
 static int oldbotnet_on_delete(void *client_data, int idx);
 
 static bind_list_t party_binds[] = {
-	{"n", "+obot", party_plusobot},		/* DDD	*/
+	{"n", "+obot", party_plus_obot},	/* DDD	*/
+	{"n", "-obot", party_minus_obot},	/* DDD	*/
 	{"n", "olink", party_olink},		/* DDD	*/
 	{0}
 };
@@ -149,7 +151,8 @@ static int btoi(const char *b)
 	return(i);
 }
 
-static int party_plusobot(partymember_t *p, char *nick, user_t *u, char *cmd, char *text)
+/* +obot <obot> <host> <port> [username] [password] */
+static int party_plus_obot(partymember_t *p, char *nick, user_t *u, char *cmd, char *text)
 {
 	char *name, *host, *port, *username, *password;
 	user_t *obot;
@@ -157,7 +160,7 @@ static int party_plusobot(partymember_t *p, char *nick, user_t *u, char *cmd, ch
 
 	egg_get_words(text, NULL, &name, &host, &port, &username, &password, NULL);
 	if (!port) {
-		partymember_printf(p, _("Syntax: <obot> <host> <port> [username] [password]"));
+		partymember_printf(p, _("Syntax: +obot <obot> <host> <port> [username] [password]"));
 		goto done;
 	}
 
@@ -193,7 +196,37 @@ done:
 	return(0);
 }
 
-/* Partyline command to link to a 1.6 bot. */
+/* -obot <obot> */
+static int party_minus_obot(partymember_t *p, char *nick, user_t *u, char *cmd, char *text)
+{
+	char *host;
+	user_t *obot;
+
+	while (text && isspace(*text)) text++;
+
+	if (!text || !*text) {
+		partymember_printf(p, "Syntax: -obot <obot>");
+		return(0);
+	}
+
+	obot = user_lookup_by_handle(text);
+	if (!obot) {
+		partymember_printf(p, _("Could not find user '%s'."), text);
+		return(0);
+	}
+
+	user_get_setting(obot, "oldbotnet", "host", &host);
+	if (!host) {
+		partymember_printf(p, _("Error: '%s' is not an obot."), obot->handle);
+		return(0);
+	}
+
+	partymember_printf(p, _("Deleting user '%s'."), obot->handle);
+	user_delete(obot);
+	return(BIND_RET_LOG);
+}
+
+/* olink <obot> */
 static int party_olink(partymember_t *p, char *nick, user_t *u, char *cmd, char *text)
 {
 	char *host, *port, *username, *password;
