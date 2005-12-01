@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.47 2005/11/26 16:44:30 stdarg Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.48 2005/12/01 21:22:11 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -98,8 +98,6 @@ int user_init(void)
 
 int user_shutdown(void)
 {
-	ircmask_list_clear(&ircmask_list);
-
 	bind_table_del(BT_udelete);
 	bind_table_del(BT_uset);
 	bind_table_del(BT_uflags);
@@ -436,7 +434,6 @@ static int cache_user_del(user_t *u, const char *ircmask)
 	hash_table_walk(irchost_cache_ht, cache_check_del, &info);
 	for (i = 0; i < info.nentries; i++) {
 		hash_table_remove(irchost_cache_ht, info.entries[i], NULL);
-		free((void *)info.entries[i]);
 	}
 	if (info.entries) free(info.entries);
 

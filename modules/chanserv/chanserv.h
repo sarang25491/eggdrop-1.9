@@ -16,20 +16,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: chanserv.h,v 1.3 2005/05/31 03:35:08 stdarg Exp $
+ * $Id: chanserv.h,v 1.4 2005/12/01 21:22:11 stdarg Exp $
  */
 
 #ifndef _EGG_MOD_CHANSERV_CHANSERV_H_
 #define _EGG_MOD_CHANSERV_CHANSERV_H_
 
 #include <modules/server/egg_server_api.h>
-
-#define chanserv_config chanserv_LTX_chanserv_config
-#define server chanserv_LTX_server
-#define chanserv_update_stats chanserv_LTX_chanserv_update_stats
-#define events_init chanserv_LTX_events_init
-#define events_shutdown chanserv_LTX_events_shutdown
-
+#include "egg_chanserv_internal.h"
 #include "events.h"
 
 #define CHANSERV_CLEANUP_TIME	120

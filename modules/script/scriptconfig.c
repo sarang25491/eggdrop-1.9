@@ -18,10 +18,11 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptconfig.c,v 1.9 2004/10/17 05:14:07 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptconfig.c,v 1.10 2005/12/01 21:22:11 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
+#include "egg_script_internal.h"
 
 static void *resolve_path(void *root, char *path)
 {

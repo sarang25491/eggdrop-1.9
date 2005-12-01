@@ -1,0 +1,15 @@
+#ifndef _EGG_CHANSERV_INTERNAL_
+#define _EGG_CHANSERV_INTERNAL_
+
+#define chanserv_lookup_config chanserv_LTX_chanserv_lookup_config
+#define chanserv_config chanserv_LTX_chanserv_config
+#define chanserv_update_stats chanserv_LTX_chanserv_update_stats
+#define events_init chanserv_LTX_events_init
+#define events_shutdown chanserv_LTX_events_shutdown
+#define server chanserv_LTX_server
+#define start chanserv_LTX_start
+#define chanserv_probe_chan chanserv_LTX_chanserv_probe_chan
+#define chanserv_probe_member chanserv_LTX_chanserv_probe_member
+#define chanserv_refresh_channel_config chanserv_LTX_chanserv_refresh_channel_config
+
+#endif

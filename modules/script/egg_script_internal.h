@@ -1,0 +1,15 @@
+#ifndef _EGG_SCRIPT_INTERNAL_
+#define _EGG_SCRIPT_INTERNAL_
+
+#define script_bind_cmds script_LTX_script_bind_cmds
+#define script_config_cmds script_LTX_script_config_cmds
+#define script_export script_LTX_script_export
+#define script_log_cmds script_LTX_script_log_cmds
+#define start script_LTX_start
+#define script_misc_cmds script_LTX_script_misc_cmds
+#define script_net_cmds script_LTX_script_net_cmds
+#define script_new_user_cmds script_LTX_script_new_user_cmds
+#define script_party_cmds script_LTX_script_party_cmds
+#define script_timer_cmds script_LTX_script_timer_cmds
+
+#endif

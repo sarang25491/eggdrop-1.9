@@ -18,10 +18,11 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptparty.c,v 1.6 2004/10/17 05:14:07 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptparty.c,v 1.7 2005/12/01 21:22:11 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
+#include "egg_script_internal.h"
 
 script_command_t script_party_cmds[] = {
 	/*{"", "party_write", partyline_write, NULL, 2, "is", "pid text", SCRIPT_INTEGER, 0},*/

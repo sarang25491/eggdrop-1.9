@@ -18,10 +18,11 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scripttimer.c,v 1.10 2005/06/09 02:59:03 stdarg Exp $";
+static const char rcsid[] = "$Id: scripttimer.c,v 1.11 2005/12/01 21:22:11 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
+#include "egg_script_internal.h"
 
 static int script_single_timer(int nargs, int sec, int usec, script_callback_t *callback);
 static int script_repeat_timer(int nargs, int sec, int usec, script_callback_t *callback);
