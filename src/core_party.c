@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.46 2005/12/01 22:16:12 wcc Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.47 2005/12/01 22:18:52 lordares Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -738,7 +738,7 @@ chpassend:
 	free(user);
 	free(pass);
 
-	return(BIND_RET_LOG)_COMMAND;
+	return(BIND_RET_LOG_COMMAND);
 }
 
 /* Makes sure 'start' and 'limit' arguments for .match are reasonable, or else sets them -1 */
