@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: module.c,v 1.6 2004/10/17 05:14:06 stdarg Exp $";
+static const char rcsid[] = "$Id: module.c,v 1.7 2005/12/01 17:43:47 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -84,6 +84,8 @@ int module_load(const char *name)
 	lt_dlhandle hand;
 	module_list_t *entry;
 	egg_start_func_t startfunc;
+	char *startname;
+
 
 	/* See if it's already loaded. */
 	entry = find_module(name);
@@ -96,13 +98,11 @@ int module_load(const char *name)
 		return(-2);
 	}
 
-	startfunc = (egg_start_func_t)lt_dlsym(hand, "start");
+	startname = egg_mprintf("%s_LTX_start", name);
+	startfunc = (egg_start_func_t)lt_dlsym(hand, startname);
+	free(startname);
 	if (!startfunc) {
-		char *startname;
-
-		startname = egg_mprintf("%s_LTX_start", name);
-		startfunc = (egg_start_func_t)lt_dlsym(hand, startname);
-		free(startname);
+		startfunc = (egg_start_func_t)lt_dlsym(hand, "start");
 		if (!startfunc) {
 			lt_dlclose(hand);
 			return(-3);

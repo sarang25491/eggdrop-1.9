@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dccparty.c,v 1.10 2005/11/14 04:44:43 wcc Exp $";
+static const char rcsid[] = "$Id: dccparty.c,v 1.11 2005/12/01 17:43:47 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -88,7 +88,7 @@ static int got_chat_request(char *nick, char *uhost, user_t *u, char *type, char
 		return(0);
 	}
 
-	idx = egg_connect(ip, port, -1);
+	idx = egg_connect(ip, port, 0);
 
 	session = calloc(1, sizeof(*session));
 	session->nick = strdup(nick);

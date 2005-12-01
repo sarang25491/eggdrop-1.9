@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dcc.c,v 1.23 2005/11/26 23:41:03 stdarg Exp $";
+static const char rcsid[] = "$Id: dcc.c,v 1.24 2005/12/01 17:43:47 stdarg Exp $";
 #endif
 
 #include <unistd.h>
@@ -654,9 +654,9 @@ static void got_chat(char *nick, char *uhost, user_t *u, char *text)
 	/* Check if the ip is 'new-style' (dotted decimal or ipv6). If not,
 	 * it's the old-style long ip. */
 	if (!strchr(ip, '.') && !strchr(ip, ':')) {
-		unsigned int longip;
-		longip = (unsigned int) atol(ip);
-		sprintf(ip, "%d.%d.%d.%d", (longip >> 24) & 255, (longip >> 16) & 255, (longip >> 8) & 255, (longip) & 255);
+		unsigned long longip;
+		longip = strtoul(ip, NULL, 10);
+		snprintf(ip, sizeof(ip), "%lu.%lu.%lu.%lu", (longip >> 24) & 255, (longip >> 16) & 255, (longip >> 8) & 255, (longip) & 255);
 	}
 
 	nport = atoi(port);
