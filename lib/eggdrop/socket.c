@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: socket.c,v 1.8 2005/08/28 01:39:48 lordares Exp $";
+static const char rcsid[] = "$Id: socket.c,v 1.9 2005/12/01 18:03:07 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -110,8 +110,12 @@ int socket_get_name(int sock, char **ip, int *port)
 	if (!getsockname(sock, &name.u.addr, &namelen) && namelen == sizeof(name.u.ipv6)) {
 		if (ip) {
 			*ip = malloc(128);
-			inet_ntop(AF_INET6, &name.u.ipv6.sin6_addr, *ip, 128);
-			if (IN6_IS_ADDR_V4MAPPED((&name.u.ipv6.sin6_addr))) memmove(*ip, *ip+7, strlen(*ip)-7);
+			if (IN6_IS_ADDR_V4MAPPED((&name.u.ipv6.sin6_addr))) {
+				inet_ntop(AF_INET, &name.u.ipv6.sin6_addr.s6_addr32[3], *ip, 128);
+			}
+			else {
+				inet_ntop(AF_INET6, &name.u.ipv6.sin6_addr, *ip, 128);
+			}
 		}
 		if (port) *port = ntohs(name.u.ipv6.sin6_port);
 		return(0);
