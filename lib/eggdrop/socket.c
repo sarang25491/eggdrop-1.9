@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: socket.c,v 1.9 2005/12/01 18:03:07 stdarg Exp $";
+static const char rcsid[] = "$Id: socket.c,v 1.10 2005/12/01 22:16:11 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -162,6 +162,8 @@ int socket_get_peer_name(int sock, char **peer_ip, int *peer_port)
 int socket_get_error(int sock)
 {
 	int size, err;
+
+	if (sock < 0) return(0);
 
 	size = sizeof(int);
 	err = 0;

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: party_commands.c,v 1.24 2005/11/29 01:18:54 wcc Exp $";
+static const char rcsid[] = "$Id: party_commands.c,v 1.25 2005/12/01 22:16:12 wcc Exp $";
 #endif
 
 #include "server.h"
@@ -470,7 +470,7 @@ bind_list_t server_party_commands[] = {					/* Old flag requirements */
 	{"m", "jump", party_jump},			/* DDD	*/
 	{"m", "channels", party_channels},		/* DDD	*/	/* m */
 	{"n", "+chan", party_pls_chan},			/* DDC	*/	/* n */
-	{"n", "-chan", party_minus_chan},			/* DDC	*/	/* n */
+	{"n", "-chan", party_minus_chan},		/* DDC	*/	/* n */
 	{"n", "chanset", party_chanset},		/* DDC	*/	/* n|n */
 	{"m", "chaninfo", party_chaninfo},		/* DDC	*/	/* m|m */
 	{"n", "chansave", party_chansave},		/* DDC	*/	/* n|n */

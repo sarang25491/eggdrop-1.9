@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.45 2004/10/17 05:14:07 stdarg Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.46 2005/12/01 22:16:12 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -527,7 +527,7 @@ static int party_addlog(partymember_t *p, const char *nick, user_t *u, const cha
 {
 	putlog(LOG_MISC, "*", "%s: %s", nick, text);
 
-	return BIND_RET_LOG;
+	return(BIND_RET_LOG);
 }
 
 static int party_modules(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
@@ -540,7 +540,7 @@ static int party_modules(partymember_t *p, const char *nick, user_t *u, const ch
 	for (ctr = 0; ctr < nummods; ctr++) partymember_printf(p, "   %s", modules[ctr]);
 	free(modules);
 
-	return BIND_RET_LOG;
+	return(BIND_RET_LOG);
 }
 
 static int party_loadmod(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
@@ -563,7 +563,7 @@ static int party_loadmod(partymember_t *p, const char *nick, user_t *u, const ch
 			partymember_printf(p, _("Module '%s' does not have a valid initialization function. Perhaps it is not an eggdrop module?"), text);
 			break;
 	}
-	return BIND_RET_LOG;
+	return(BIND_RET_LOG);
 }
 
 static int party_unloadmod(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
@@ -586,7 +586,7 @@ static int party_unloadmod(partymember_t *p, const char *nick, user_t *u, const 
 			partymember_printf(p, _("Module '%s' refuses to be unloaded by you!"), text);
 			break;
 	}
-	return BIND_RET_LOG;
+	return(BIND_RET_LOG);
 }
 
 static int party_binds(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
@@ -605,7 +605,7 @@ static int party_binds(partymember_t *p, const char *nick, user_t *u, const char
 		}
 	}
 
-	return BIND_RET_LOG;
+	return(BIND_RET_LOG);
 }
 
 static int party_timers(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
@@ -663,7 +663,7 @@ static int party_restart(partymember_t *p, const char *nick, user_t *u, const ch
 {
 	core_restart (nick);
 
-	return BIND_RET_LOG;
+	return(BIND_RET_LOG);
 }
 
 /* Syntax: chhandle <old_handle> <new_handle> */
@@ -702,7 +702,7 @@ chhandleend:
 	free(newh);
 	free(old);
 
-	return BIND_RET_LOG;
+	return(BIND_RET_LOG);
 }
 
 /* Syntax: chpass <handle> [new_pass] */
@@ -738,7 +738,7 @@ chpassend:
 	free(user);
 	free(pass);
 
-	return BIND_RET_LOG_COMMAND;
+	return(BIND_RET_LOG)_COMMAND;
 }
 
 /* Makes sure 'start' and 'limit' arguments for .match are reasonable, or else sets them -1 */
@@ -860,7 +860,7 @@ static int party_match(partymember_t *p, const char *nick, user_t *u, const char
 
 	free(attr);
 
-	return BIND_RET_LOG;
+	return(BIND_RET_LOG);
 }
 
 static bind_list_t core_party_binds[] = {		/* Old flags requirement */

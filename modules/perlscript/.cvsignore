@@ -6,4 +6,4 @@ Makefile.in
 *.lo
 *.la
 *.obj
-
+*.loT

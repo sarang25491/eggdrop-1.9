@@ -4,6 +4,7 @@ libeggdrop.la
 *.o
 *.lo
 *.obj
+*.loT
 *.a
 *.la
 *.so

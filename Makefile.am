@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.25 2004/10/17 08:38:11 stdarg Exp $
+# $Id: Makefile.am,v 1.26 2005/12/01 22:16:11 wcc Exp $
 
 AUX_DIST		= $(ac_aux_dir)/install-sh \
 			$(ac_aux_dir)/ltmain.sh \
@@ -31,7 +31,7 @@ ACLOCAL			= aclocal -I $(ac_aux_dir)
 dist-hook:
 	(cd $(distdir) && mkdir -p $(ac_aux_dir))
 	for file in $(AUX_DIST) $(AUX_DIST_EXTRA); do \
-	  ln $$file $(distdir) 2>/dev/null || cp -p $$file $(distdir); \
+		ln $$file $(distdir) 2>/dev/null || cp -p $$file $(distdir); \
 	done
 
 install-data-hook:
