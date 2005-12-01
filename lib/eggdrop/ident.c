@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: ident.c,v 1.4 2005/05/10 06:50:39 stdarg Exp $";
+static const char rcsid[] = "$Id: ident.c,v 1.5 2005/12/01 15:02:32 stdarg Exp $";
 #endif
 
 #include <stdio.h>
@@ -161,6 +161,16 @@ static int ident_on_eof(void *client_data, int idx, int err, const char *errmsg)
 static int ident_result(void *client_data, const char *ident)
 {
 	ident_info_t *ident_info = client_data;
+	ident_info_t *ptr, *prev = NULL;
+	
+	for (ptr = ident_head; ptr; ptr = ptr->next) {
+		if (ptr == ident_info) break;
+		prev = ptr;
+	}
+
+	if (prev) prev->next = ptr->next;
+	else ident_head = ptr->next;
+
 	sockbuf_delete(ident_info->idx);
 	ident_info->callback(ident_info->client_data, ident_info->ip, ident_info->their_port, ident);
 	free(ident_info->ip);
