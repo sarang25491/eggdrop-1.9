@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: party_commands.c,v 1.25 2005/12/01 22:16:12 wcc Exp $";
+static const char rcsid[] = "$Id: party_commands.c,v 1.26 2005/12/07 03:17:49 wcc Exp $";
 #endif
 
 #include "server.h"
@@ -288,7 +288,7 @@ static void parse_chanset(channel_t *chan, const char *settings)
 /* +chan <name> [settings] */
 static int party_pls_chan(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
-	const char *settings;
+	const char *settings, *chantypes;
 	char *name, *key;
 	channel_t *chan;
 
@@ -298,8 +298,25 @@ static int party_pls_chan(partymember_t *p, const char *nick, user_t *u, const c
 		return(0);
 	}
 
+	if (server_support("CHANTYPES", &chantypes) == -1) chantypes = "#&";
+
+	if (!strchr(chantypes, *name)) {
+		partymember_printf(p, _("Error: '%c' is not a valid channel prefix."), *name);
+		partymember_printf(p, _("       This server supports '%s'"), chantypes);
+		free(name);
+		return(0);
+	}
+
+	if (channel_lookup(name)) {
+		partymember_printf(p, _("Error: Channel '%s' already exists!"), name);
+		free(name);
+		return(0);
+	}
+
 	chan = channel_add(name);
+	partymember_printf(p, _("Channel '%s' has been created."), name);
 	free(name);
+
 	parse_chanset(chan, settings);
 
 	channel_get(chan, &key, "key", 0, NULL);
@@ -324,7 +341,7 @@ static int party_minus_chan(partymember_t *p, const char *nick, user_t *u, const
 		return(0);
 	}
 
-	partymember_printf(p, "Channel removed.");
+	partymember_printf(p, "Channel '%s' has been removed.", text);
 	printserv(SERVER_NORMAL, "PART %s", text);
 	return(BIND_RET_LOG);
 }
