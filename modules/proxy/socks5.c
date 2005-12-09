@@ -58,7 +58,7 @@ static void send_connect_request(proxy_info_t *info)
 	int len;
 	unsigned short port;
 	struct sockaddr_in addr;
-	#ifdef DO_IPV6
+	#ifdef IPV6
 	struct sockaddr_in6 addr6;
 	#endif
 
@@ -72,7 +72,7 @@ static void send_connect_request(proxy_info_t *info)
 		memcpy(buf+4, &addr.sin_addr, 4);
 		len = 8;
 	}
-	#ifdef DO_IPV6
+	#ifdef IPV6
 	else if (inet_pton(AF_INET6, info->host, &addr6) > 0) {
 		buf[3] = 4;
 		memcpy(buf+4, &addr6.sin6_addr, 16);

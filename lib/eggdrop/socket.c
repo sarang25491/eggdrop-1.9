@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: socket.c,v 1.10 2005/12/01 22:16:11 wcc Exp $";
+static const char rcsid[] = "$Id: socket.c,v 1.11 2005/12/09 06:24:50 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -35,7 +35,7 @@ static const char rcsid[] = "$Id: socket.c,v 1.10 2005/12/01 22:16:11 wcc Exp $"
 #  define SHUT_RDWR 2
 #endif
 
-#ifdef AF_INET6
+#ifdef IPV6
 #  define DO_IPV6
 #endif
 #define DO_IPV4

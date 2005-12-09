@@ -18,13 +18,18 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dns.c,v 1.14 2005/11/28 03:53:09 wcc Exp $";
+static const char rcsid[] = "$Id: dns.c,v 1.15 2005/12/09 06:24:50 wcc Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+
+#ifdef IPV6
+#  define DO_IPV6
+#endif
+#define DO_IPV4
 
 typedef struct {
 	char **list;
@@ -620,21 +625,22 @@ static void parse_reply(char *response, int nbytes)
 		if (reply.ttl && ((!q->answer.ttl) || (q->answer.ttl > reply.ttl))) q->answer.ttl = reply.ttl;
 
 		ptr += 10;
-		/* FIXME: Check DO_IPV4 here? */
+		#ifdef DO_IPV4
 		if (reply.type == 1) {
 			/*fprintf(fp, "ipv4 reply\n");*/
 			inet_ntop(AF_INET, ptr, result, 512);
 			answer_add(&q->answer, result);
 		}
+		#endif
 		#ifdef DO_IPV6
-		else if (reply.type == 28) {
+		if (reply.type == 28) {
 			/*fprintf(fp, "ipv6 reply\n");*/
 			inet_ntop(AF_INET6, ptr, result, 512);
 			answer_add(&q->answer, result);
 			return;		/* FIXME: Why is this here? This either needs to be explained in a comment or removed... doesn't look right. */
 		}
 		#endif
-		else if (reply.type == 12) {
+		if (reply.type == 12) {
 			char *placeholder;
 			int len, dot;
 
