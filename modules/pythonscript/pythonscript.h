@@ -16,11 +16,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: pythonscript.h,v 1.1 2005/12/15 15:26:12 sven Exp $
+ * $Id: pythonscript.h,v 1.2 2005/12/17 01:25:06 sven Exp $
  */
 
 #define PYTHON_VAR 1
 #define PYTHON_FUNC 2
+
+#define Callable_Check(op) PyObject_TypeCheck(op, &Callable_Type)
+
+#define FlushAll() do {\
+  Flush(0);\
+  Flush(1);\
+} while (0)
 
 typedef struct {
 	PyObject_HEAD
@@ -32,8 +39,11 @@ typedef struct {
 	PyDictObject dict;
 } MyDictObject;
 
+partymember_t *LogTarget;
+
 script_module_t my_script_interface;
 
+void Flush(unsigned Target);
 PyObject *c_to_python_var(script_var_t *v);
 int python_to_c_var(PyObject *obj, script_var_t *var, int type);
 int MyModule_Init(void);
@@ -42,5 +52,5 @@ int SetVar(script_linked_var_t *var, PyObject *Value);
 PyObject *MyModule_Add(char *name, char *doc);
 PyObject *MyDict_New(PyTypeObject *Type, PyObject *args, PyObject *kwds);
 
-PyTypeObject Callable_Type, MyDict_Type;
+PyTypeObject Callable_Type, MyDict_Type, Stdio_Type;
 PyObject *EggdropModule;

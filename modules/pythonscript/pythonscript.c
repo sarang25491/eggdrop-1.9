@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: pythonscript.c,v 1.1 2005/12/15 15:26:12 sven Exp $";
+static const char rcsid[] = "$Id: pythonscript.c,v 1.2 2005/12/17 01:25:06 sven Exp $";
 #endif
 
 #include <Python.h>
@@ -45,8 +45,7 @@ script_module_t my_script_interface = {
 	my_get_arg
 };
 
-static char *error_logfile = NULL;
-static PyObject *SysPath, *CommonModule, *PartylineModule, *PartylineDict;
+static PyObject *SysPath, *CommonModule, *PartylineModule, *PartylineDict, *RealHelper, *SysMod;
 static PyObject *MinInt, *MaxInt, *MinUInt, *MaxUInt;
 
 /* Load a python script. */
@@ -77,6 +76,8 @@ static int my_load_script(void *ignore, char *fname)
 	PyList_Insert(SysPath, 0, PathString);
 	Py_DECREF(PathString);
 	if (!(NewMod = PyImport_ImportModule(name))) {
+		PyErr_Print();
+		FlushAll();
 		free(fullname);
 		return SCRIPT_ERR_CODE;
 	}
@@ -104,6 +105,7 @@ static int my_link_var(void *ignore, script_linked_var_t *var) {
 	O = PyObject_New(CallableObject, &Callable_Type);       /* new reference */
 	if (!O) {
 		PyErr_Print();
+		FlushAll();
 		return -1;
 	}
 
@@ -125,29 +127,7 @@ static int my_unlink_var(void *ignore, script_linked_var_t *var) {
 	/* at this point the Callable object might (should!) be gone. Don't try to access it */
 	return 0;
 }
-#if 0
-static void log_error_message(Tcl_Interp *myinterp)
-{
-	FILE *fp;
-	const char *errmsg;
-	time_t timenow;
 
-	errmsg = Tcl_GetStringResult(myinterp);
-	putlog(LOG_MISC, "*", "Tcl Error: %s", errmsg);
-
-	if (!error_logfile || !error_logfile[0]) return;
-
-	timenow = time(NULL);
-	fp = fopen(error_logfile, "a");
-	if (!fp) putlog(LOG_MISC, "*", _("Error opening Tcl error log (%s)!"), error_logfile);
-	else {
-		errmsg = Tcl_GetVar(myinterp, "errorInfo", TCL_GLOBAL_ONLY);
-		fprintf(fp, "%s", asctime(localtime(&timenow)));
-		fprintf(fp, "%s\n\n", errmsg);
-		fclose(fp);
-	}
-}
-#endif
 /* When you use a script_callback_t's callback() function, this gets executed.
 	It converts the C variables to Python variables and executes the Python script. */
 static int my_python_callbacker(script_callback_t *me, ...)
@@ -175,6 +155,7 @@ static int my_python_callbacker(script_callback_t *me, ...)
 		if (!arg) {
 			Py_DECREF(param);
 			PyErr_Print();
+			FlushAll();
 			return 0;
 		}
 		PyTuple_SET_ITEM(param, i, arg);   /* param steals the reference from arg */
@@ -185,9 +166,11 @@ static int my_python_callbacker(script_callback_t *me, ...)
 	if (me->flags & SCRIPT_CALLBACK_ONCE) me->del(me);
 
 	RetObj = PyObject_CallObject(cmd, param);
+	FlushAll();
 
 	if (!RetObj) {
 		PyErr_Print();
+		FlushAll();
 		return 0;
 	}
 	if (PyInt_Check(RetObj)) retval = PyInt_AS_LONG(RetObj);
@@ -218,6 +201,7 @@ static int my_create_command(void *ignore, script_raw_command_t *info) {
 	O->client_data = info;
 	if (PyModule_AddObject(EggdropModule, info->name, (PyObject *)O)) {
 		PyErr_Print();
+		FlushAll();
 		return 1;
 	}
 	return 0;
@@ -490,106 +474,59 @@ static int my_get_arg(void *ignore, script_args_t *args, int num, script_var_t *
 	return python_to_c_var(Parameter, var, type);
 }
 
-static int mls(partymember_t *p, char *nick, user_t *u, char *cmd, char *text)
-{
+static int mls(partymember_t *p, char *nick, user_t *u, char *cmd, char *text) {
+	LogTarget = p;
 	my_load_script(0, text);
+	LogTarget = 0;
 	return 0;
 }
 
 static int party_python(partymember_t *p, char *nick, user_t *u, char *cmd, char *text)
 {
-//	const char *str;
 	PyObject *ret;
 
-/*	if (!u || !egg_isowner(u->handle)) {
+	if (!u || !egg_isowner(u->handle)) {
 		partymember_write(p, _("You must be a permanent owner (defined in the config file) to use this command.\n"), -1);
 		return BIND_RET_LOG;
-	}*/
+	}
 
 	if (!text) {
 		partymember_write(p, _("Syntax: .python <pythonexpression>"), -1);
 		return 0;
 	}
 
+	LogTarget = p;
 	ret = PyRun_String(text, Py_single_input, PartylineDict, PartylineDict);
-	if (!ret) {
-//		PyObject *err1, *err2, *err3;
-//		PyErr_Fetch(&err1, &err2, &err3);
-//		printf("err1: \"%s\" - err2: \"%s\" - err3: \"%s\"\n", PyString_AsString(PyObject_Str(err1)), PyString_AsString(PyObject_Str(err2)), PyString_AsString(PyObject_Str(err3)));
-		/* XXX: do something */
-//		printf("error\n");
-		PyErr_Print();
-		return 0;
-	}
-	partymember_printf(p, _("Python: %s\n\n"), PyString_AsString(PyObject_Str(ret)));
+	if (!ret) PyErr_Print();
+	FlushAll();
+	LogTarget = 0;
 	return 0;
 }
 
-/*typedef struct tcl_listener {
-	struct tcl_listener *next;
-	char *name;
-	int fd;
-} tcl_listener_t;
+static PyObject *Help(PyObject *self, PyObject *Args) {
+	PyObject *O = 0, *Stdout, *Write, *DocStr, *HelpStr;
 
-static tcl_listener_t *listener_list_head = NULL;*/
-
-#if 0
-/* Two Tcl-only commands to add/remove sockbuf listeners. */
-static int add_tcl_chan(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
-{
-	Tcl_Channel chan;
-	char *chan_name;
-	int modes;
-	void *fd;
-	tcl_listener_t *listener;
-
-	if (objc != 2) {
-		Tcl_WrongNumArgs(interp, 0, NULL, "channel-name");
-		return(TCL_ERROR);
+	PyArg_ParseTuple(Args, "|O", &O);
+	if (!O || !Callable_Check(O)) return PyObject_CallObject(RealHelper, Args);
+	Stdout = PyObject_GetAttrString(SysMod, "stdout");
+	if (!Stdout || !(Write = PyObject_GetAttrString(Stdout, "write"))) return 0;
+	Py_DECREF(Stdout);
+	DocStr = PyObject_GetAttrString(O, "__doc__");
+	if (!(HelpStr = Py_BuildValue("(O)", DocStr))) {
+		Py_DECREF(Write);
+		return 0;
 	}
-
-	chan_name = Tcl_GetStringFromObj(objv[1], NULL);
-	if (!chan_name) return(TCL_ERROR);
-	chan = Tcl_GetChannel(interp, chan_name, &modes);
-	if (!chan) return(TCL_ERROR);
-	if (Tcl_GetChannelHandle(chan, TCL_READABLE, &fd)) return(TCL_ERROR);
-	listener = malloc(sizeof(*listener));
-	listener->next = listener_list_head;
-	listener->name = strdup(chan_name);
-	listener->fd = (int) fd;
-	listener_list_head = listener;
-	sockbuf_attach_listener((int) fd);
-	return(0);
+	Py_DECREF(DocStr);
+	PyObject_CallObject(Write, HelpStr);
+	Py_DECREF(HelpStr);
+	FlushAll();
+	Py_INCREF(Py_None);
+	return Py_None;
 }
 
-static int rem_tcl_chan(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
-{
-	char *chan_name;
-	tcl_listener_t *listener, *prev;
-
-	if (objc != 2) {
-		Tcl_WrongNumArgs(interp, 0, NULL, "channel-name");
-		return(TCL_ERROR);
-	}
-
-	chan_name = Tcl_GetStringFromObj(objv[1], NULL);
-	if (!chan_name) return(TCL_ERROR);
-
-	prev = NULL;
-	for (listener = listener_list_head; listener; listener = listener->next) {
-		if (!strcasecmp(listener->name, chan_name)) break;
-		prev = listener;
-	}
-	if (!listener) return(TCL_ERROR);
-
-	if (prev) prev->next = listener->next;
-	else listener_list_head = listener->next;
-	sockbuf_detach_listener(listener->fd);
-	free(listener->name);
-	free(listener);
-	return(0);
-}
-#endif
+static PyMethodDef HelpMethod = {
+	"help", Help, METH_VARARGS, 0
+};
 
 static bind_list_t party_commands[] = {
 	{"n", "python", (Function) party_python},
@@ -613,12 +550,8 @@ static PyMethodDef *methods = {
 
 EXPORT_SCOPE int pythonscript_LTX_start(egg_module_t *modinfo);
 
-script_linked_var_t errorlog_mapping = {
-	0, "error_logfile", &error_logfile, SCRIPT_STRING, 0
-};
-
 int pythonscript_LTX_start(egg_module_t *modinfo) {
-	PyObject *SysMod, *builtinModule;
+	PyObject *builtinModule, *Stdout, *Stderr, *Para, *Helper;
 
 	modinfo->name = "pythonscript";
 	modinfo->author = "eggdev";
@@ -632,6 +565,7 @@ int pythonscript_LTX_start(egg_module_t *modinfo) {
 	MyModule_Init();
 	PyType_Ready(&MyDict_Type);
 	PyType_Ready(&Callable_Type);
+	PyType_Ready(&Stdio_Type);
 	
 	MinInt = PyInt_FromLong(INT_MIN);
 	MaxInt = PyInt_FromLong(INT_MAX);
@@ -645,7 +579,6 @@ int pythonscript_LTX_start(egg_module_t *modinfo) {
 		Py_Finalize();
 		return -4;
 	}
-	Py_DECREF(SysMod);
 
 	EggdropModule = MyModule_Add("eggdrop", "this module contains the interface to the eggdrop bot");
 	CommonModule = Py_InitModule3("common", methods, "this module is a kind of semipersistent storage space for scripts");
@@ -658,16 +591,25 @@ int pythonscript_LTX_start(egg_module_t *modinfo) {
 		return -4;
 	}
 
+	Para = Py_BuildValue("(i)", 1);
+	Stdout = Stdio_Type.tp_new(&Stdio_Type, Para, 0);
+	Py_DECREF(Para);
+	Para = Py_BuildValue("(i)", 2);
+	Stderr = Stdio_Type.tp_new(&Stdio_Type, Para, 0);
+	Py_DECREF(Para);
+	PyModule_AddObject(SysMod, "stdout", Stdout);
+	PyModule_AddObject(SysMod, "stderr", Stderr);
 	
 	builtinModule = PyImport_ImportModule("__builtin__");
 	if (!builtinModule || PyModule_AddObject(PartylineModule, "__builtins__", builtinModule)) {
 		putlog(LOG_MISC, "*", "Error inserting '__buildin__' module. builtin commands will not be available from the partyline");
+	} else {
+		Helper = PyCFunction_NewEx(&HelpMethod, 0, 0);
+		RealHelper = PyObject_GetAttrString(builtinModule, "help");
+		PyModule_AddObject(builtinModule, "help", Helper);
 	}
 	Py_XDECREF(builtinModule);
 	PyErr_Clear();
-
-	error_logfile = strdup("logs/python_errors.log");
-	my_link_var(0, &errorlog_mapping);
 
 	script_register_module(&my_script_interface);
 	script_playback(&my_script_interface);

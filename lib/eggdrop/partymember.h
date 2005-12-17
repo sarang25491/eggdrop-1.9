@@ -16,26 +16,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: partymember.h,v 1.3 2004/10/17 05:14:06 stdarg Exp $
+ * $Id: partymember.h,v 1.4 2005/12/17 01:25:06 sven Exp $
  */
 
 #ifndef _EGG_PARTYMEMBER_H
 #define _EGG_PARTYMEMBER_H
 
 struct partymember {
-        partymember_t *next;
+  partymember_t *next;
 	partymember_t *prev;
 
-        int pid;
-        char *nick, *ident, *host;
-        user_t *user;
-        int flags;
+	int pid;
+	char *nick, *ident, *host;
+	user_t *user;
+	int flags;
 
-        partychan_t **channels;
-        int nchannels;
+	partychan_t **channels;
+	int nchannels;
 
-        partyline_event_t *handler;
-        void *client_data;
+	partyline_event_t *handler;
+	void *client_data;
 };
 
 partymember_t *partymember_lookup_pid(int pid);

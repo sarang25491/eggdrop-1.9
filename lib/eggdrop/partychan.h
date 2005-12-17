@@ -16,34 +16,34 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: partychan.h,v 1.2 2004/10/17 05:14:06 stdarg Exp $
+ * $Id: partychan.h,v 1.3 2005/12/17 01:25:06 sven Exp $
  */
 
 #ifndef _EGG_PARTYCHAN_H
 #define _EGG_PARTYCHAN_H
 
 struct partychan_member {
-        partymember_t *p;
-        int flags;
+	partymember_t *p;
+	int flags;
 };
 
 struct partychan {
-        partychan_t *next;
+	partychan_t *next;
 	partychan_t *prev;
 
-        int cid;
-        char *name;
-        int flags;
+	int cid;
+	char *name;
+	int flags;
 
-        partychan_member_t *members;
-        int nmembers;
+	partychan_member_t *members;
+	int nmembers;
 };
 
 struct partymember_common {
-        partymember_common_t *next;
-        partymember_t **members;
-        int len;
-        int max;
+	partymember_common_t *next;
+	partymember_t **members;
+	int len;
+	int max;
 };
 
 /* Channel functions. */

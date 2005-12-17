@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: config.m4,v 1.1 2005/12/15 15:26:12 sven Exp $
+dnl $Id: config.m4,v 1.2 2005/12/17 01:25:06 sven Exp $
 dnl
 
 EGG_MODULE_START(pythonscript, [python scripting support], "yes")
@@ -43,8 +43,9 @@ if test "$PYTHON_VER" -ge 22 ; then
 		py_libm=`grep '^LIBM=' $PYTHON_LIB_DIR/config/Makefile | sed -e 's/^.*=\t*//'`
 		py_liblocalmod=`grep '^LOCALMODLIBS=' $PYTHON_LIB_DIR/config/Makefile | sed -e 's/^.*=\t*//'`
 		py_libbasemod=`grep '^BASEMODLIBS=' $PYTHON_LIB_DIR/config/Makefile | sed -e 's/^.*=\t*//'`
+		py_linkerflags=`grep '^LINKFORSHARED=' $PYTHON_LIB_DIR/config/Makefile | sed -e 's/^.*=\t*//'`
 
-		PYTHON_LDFLAGS="-L$PYTHON_LIB_DIR/config $py_libs $py_libc $py_libm -lpython$PYTHON_VERSION $py_liblocalmod $py_libbasemod"
+		PYTHON_LDFLAGS="-L$PYTHON_LIB_DIR/config $py_libs $py_libc $py_libm -lpython$PYTHON_VERSION $py_liblocalmod $py_libbasemod $py_linkerflags"
 
 		AC_SUBST(PYTHON_INCLUDE)
   	AC_SUBST(PYTHON_LDFLAGS)

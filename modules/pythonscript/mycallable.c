@@ -18,13 +18,27 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: mycallable.c,v 1.1 2005/12/15 15:26:12 sven Exp $";
+static const char rcsid[] = "$Id: mycallable.c,v 1.2 2005/12/17 01:25:06 sven Exp $";
 #endif
 
 #include <Python.h>
 #include <eggdrop/eggdrop.h>
 
 #include "pythonscript.h"
+
+static char *ParameterType(int Type) {
+	if (Type == SCRIPT_STRING) return "a string";
+	if (Type == SCRIPT_STRING_LIST) return "a list of strings";
+	if (Type == SCRIPT_INTEGER) return "an integer";
+	if (Type == SCRIPT_UNSIGNED) return "an integer (or a small long)";
+	if (Type == SCRIPT_POINTER) return "a C pointer (what's that good for?)";
+	if (Type == SCRIPT_CALLBACK) return "a python function";
+	if (Type == SCRIPT_USER) return "an eggdrop user (ATM this is just an int)";
+	if (Type == SCRIPT_PARTIER) return "a partyline user (ATM this is just an int)";
+	if (Type == SCRIPT_BYTES) return "a string containing binary data";
+	if (Type == SCRIPT_VAR) return "no idea";
+	return "some kind of object I've never heard about";
+}
 
 static PyObject *my_command_handler(PyObject *self, PyObject *pythonargs, PyObject *kwd) {
 	script_var_t retval;
@@ -68,8 +82,7 @@ PyObject *Repr(PyObject *self) {
 
 	if (!Obj->client_data) return PyString_FromString("<Expired eggdrop object. DROP THIS REFERENCE!>");
 	if (Obj->type == PYTHON_FUNC) {
-		script_command_t *com = func->client_data;    /* Can we really assume this always works? */
-		return PyString_FromFormat("<Eggdrop function '%s': %s>", func->name, com->syntax_error);
+		return PyString_FromFormat("<Eggdrop function '%s'>", func->name);
 	}
 	Ret = GetVar(var);   /* new reference */
 	if (!Ret) {
@@ -85,6 +98,50 @@ PyObject *Repr(PyObject *self) {
 	Py_DECREF(Ret);
 	return Repr;
 }
+
+static PyObject *GetDoc(PyObject *self, void *ignored) {
+	CallableObject *Obj = (CallableObject *) self;
+	script_raw_command_t *func = Obj->client_data;
+
+	if (!Obj->client_data) return PyString_FromString("Expired eggdrop object. DROP THIS REFERENCE!");
+	if (Obj->type == PYTHON_FUNC) {
+		int minpara, maxpara, i;
+		char *Parnames, *Pos, *NextPos, *opt = 0;
+		script_command_t *com = func->client_data;    /* Can we really assume this always works? */
+		PyObject *Ret;
+
+		minpara = com->nargs;
+		maxpara = strlen(com->syntax);
+		if (minpara == maxpara) {
+			Ret = PyString_FromFormat("This is the internal eggdrop function '%s'.\nIt takes exactly %d parameters and returns %s.\nThe parameters are:\n \n", func->name, minpara, ParameterType(com->retval_type));
+		} else {
+			Ret = PyString_FromFormat("This is the internal eggdrop function '%s'.\nIt takes at least %d and up to %d parameters and returns %s.\nThe parameters are:\n \n", func->name, minpara, maxpara, ParameterType(com->retval_type));
+		}
+		Parnames = malloc(strlen(com->syntax_error) + 1);
+		strcpy(Parnames, com->syntax_error);
+		Pos = Parnames;
+		for (i = 0; i < maxpara; ++i) {
+			if (Pos) {
+				NextPos = strchr(Pos, ' ');
+				if (NextPos) *NextPos = 0;
+				++NextPos;
+			}
+			if (Pos && *Pos == '?') opt = " This parameter is optional.";
+			else opt = "";
+			PyString_ConcatAndDel(&Ret, PyString_FromFormat("\nParameter %d, %s: %s.%s", i + 1, Pos ? Pos : "?", ParameterType(com->syntax[i]), opt));
+			Pos = NextPos;
+		}
+		free(Parnames);
+		return Ret;
+	} else {
+		return PyString_FromFormat("You shouldn't get this reference. Don't do that! Ever!");
+	}
+}
+
+static PyGetSetDef GetSeter[] = {
+	{"__doc__", GetDoc, 0, 0, 0},
+	{0}
+};
 
 PyTypeObject Callable_Type = {
 	PyObject_HEAD_INIT(0)        /* required by law */
@@ -117,7 +174,7 @@ PyTypeObject Callable_Type = {
 	0,                           /* tp_iternext */
 	0,                           /* tp_methods */
 	0,                           /* tp_members */
-	0,                           /* tp_getset */
+	GetSeter,                    /* tp_getset */
 	0,                           /* tp_base */
 	0,                           /* tp_dict */
 	0,                           /* tp_descr_get */
