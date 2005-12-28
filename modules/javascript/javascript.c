@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: javascript.c,v 1.26 2005/11/14 04:44:43 wcc Exp $";
+static const char rcsid[] = "$Id: javascript.c,v 1.27 2005/12/28 17:27:31 sven Exp $";
 #endif
 
 #include <stdio.h>
@@ -42,6 +42,7 @@ typedef struct {
 static int my_command_handler(JSContext *cx, JSObject *obj, int argc, jsval *argv, jsval *rval);
 static int c_to_js_var(JSContext *cx, script_var_t *v, jsval *result);
 static int js_to_c_var(JSContext *cx, JSObject *obj, jsval val, script_var_t *var, int type);
+static int my_js_cb_delete(event_owner_t *owner, script_callback_t *me);
 
 /* Script module interface. */
 static int my_load_script(void *ignore, char *fname);
@@ -57,6 +58,12 @@ static script_module_t my_script_interface = {
 	my_link_var, my_unlink_var,
 	my_create_command, my_delete_command,
 	my_get_arg
+};
+
+static event_owner_t js_owner = {
+	"javascript", 0,
+	0, 0,
+	0
 };
 
 typedef struct {
@@ -294,9 +301,6 @@ static int my_js_callbacker(script_callback_t *me, ...)
 	myobj = cd->myobj;
 	command = cd->command;
 
-	/* If it's a one-time callback, delete it. */
-	if (me->flags & SCRIPT_CALLBACK_ONCE) me->del(me);
-
 	n = JS_CallFunction(mycx, myobj, command, n, argv, &result);
 	free(argv);
 	if (n) {
@@ -309,7 +313,7 @@ static int my_js_callbacker(script_callback_t *me, ...)
 }
 
 /* This implements the delete() member of JS script callbacks. */
-static int my_js_cb_delete(script_callback_t *me)
+static int my_js_cb_delete(event_owner_t *owner, script_callback_t *me)
 {
 	my_callback_cd_t *cd;
 
@@ -517,8 +521,8 @@ static int js_to_c_var(JSContext *cx, JSObject *obj, jsval val, script_var_t *va
 			cdata = (my_callback_cd_t *)calloc(1, sizeof(*cdata));
 			cback->callback = (Function) my_js_callbacker;
 			cback->callback_data = (void *)cdata;
-			cback->del = (Function) my_js_cb_delete;
 			cback->name = strdup(JS_GetFunctionName(func));
+			cback->owner = &js_owner;
 
 			cdata->mycx = cx;
 			cdata->myobj = obj;
@@ -680,6 +684,8 @@ static char *javascript_close();
 
 int javascript_LTX_start(egg_module_t *modinfo)
 {
+	js_owner.module = modinfo;
+
 	modinfo->name = "javascript";
 	modinfo->author = "eggdev";
 	modinfo->version = "1.0.0";

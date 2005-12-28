@@ -18,13 +18,18 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: server.c,v 1.65 2005/12/01 21:22:11 stdarg Exp $";
+static const char rcsid[] = "$Id: server.c,v 1.66 2005/12/28 17:27:31 sven Exp $";
 #endif
 
 #include "server.h"
 
 current_server_t current_server = {0};
 server_config_t server_config = {0};
+event_owner_t server_owner = {
+	"server", 0,
+	0, 0,
+	0
+};
 
 int cycle_delay = 0;
 
@@ -299,6 +304,8 @@ EXPORT_SCOPE int start(egg_module_t *modinfo);
 
 int start(egg_module_t *modinfo)
 {
+	server_owner.module = modinfo;
+
 	modinfo->name = "server";
 	modinfo->author = "eggdev";
 	modinfo->version = "1.0.0";

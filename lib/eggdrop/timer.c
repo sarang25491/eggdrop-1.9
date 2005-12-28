@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: timer.c,v 1.9 2005/03/03 18:44:47 stdarg Exp $";
+static const char rcsid[] = "$Id: timer.c,v 1.10 2005/12/28 17:27:31 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -137,15 +137,15 @@ static int timer_add_to_list(egg_timer_t *timer)
 
 int timer_create_secs(long secs, const char *name, Function callback)
 {
-        egg_timeval_t howlong;
+	egg_timeval_t howlong;
 
-        howlong.sec = secs;
-        howlong.usec = 0;
+	howlong.sec = secs;
+	howlong.usec = 0;
 
-        return timer_create_repeater(&howlong, name, callback);
+	return timer_create_repeater(&howlong, name, callback);
 }
 
-int timer_create_complex(egg_timeval_t *howlong, const char *name, Function callback, void *client_data, int flags)
+int timer_create_complex(egg_timeval_t *howlong, const char *name, Function callback, void *client_data, int flags, event_owner_t *owner)
 {
 	egg_timer_t *timer;
 
@@ -161,6 +161,7 @@ int timer_create_complex(egg_timeval_t *howlong, const char *name, Function call
 	timer->howlong.usec = howlong->usec;
 	timer->trigger_time.sec = now.sec + howlong->sec;
 	timer->trigger_time.usec = now.usec + howlong->usec;
+	timer->owner = owner;
 
 	timer_add_to_list(timer);
 
@@ -184,6 +185,7 @@ int timer_destroy(int timer_id)
 	if (prev) prev->next = timer->next;
 	else timer_list_head = timer->next;
 
+	if (timer->owner && timer->owner->on_delete) timer->owner->on_delete(timer->owner, timer->client_data);
 	if (timer->name) free(timer->name);
 	free(timer);
 	return(0);
@@ -195,12 +197,34 @@ int timer_destroy_all()
 
 	for (timer = timer_list_head; timer; timer = next) {
 		next = timer->next;
+
+		if (timer->owner && timer->owner->on_delete) timer->owner->on_delete(timer->owner, timer->client_data);
 		if (timer->name) free(timer->name);
 		free(timer);
 	}
 	timer_list_head = NULL;
 
 	return(0);
+}
+
+void timer_destroy_by_module(egg_module_t *module)
+{
+	egg_timer_t *timer, *prev = 0, *next;
+
+	for (timer = timer_list_head; timer; timer = next) {
+		next = timer->next;
+
+		if (timer->owner && timer->owner->module == module) {
+			if (prev) prev->next = timer->next;
+			else timer_list_head = timer->next;
+
+			if (timer->owner && timer->owner->on_delete) timer->owner->on_delete(timer->owner, timer->client_data);
+			if (timer->name) free(timer->name);
+			free(timer);
+		} else {
+			prev = timer;
+		}
+	}
 }
 
 int timer_get_shortest(egg_timeval_t *howlong)
@@ -230,6 +254,8 @@ int timer_run()
 		callback = timer->callback;
 		client_data = timer->client_data;
 
+		callback(client_data);
+
 		if (timer->flags & TIMER_REPEAT) {
 			/* Update timer. */
 			timer->trigger_time.sec += timer->howlong.sec;
@@ -243,11 +269,11 @@ int timer_run()
 			timer_add_to_list(timer);
 		}
 		else {
+			if (timer->owner && timer->owner->on_delete) timer->owner->on_delete(timer->owner, timer->client_data);
 			if (timer->name) free(timer->name);
 			free(timer);
 		}
 
-		callback(client_data);
 	}
 	return(0);
 }

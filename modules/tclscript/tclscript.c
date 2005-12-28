@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tclscript.c,v 1.49 2005/11/27 20:47:16 wcc Exp $";
+static const char rcsid[] = "$Id: tclscript.c,v 1.50 2005/12/28 17:27:31 sven Exp $";
 #endif
 
 #include <string.h>
@@ -48,6 +48,7 @@ typedef struct {
 static int my_command_handler(ClientData client_data, Tcl_Interp *myinterp, int objc, Tcl_Obj *CONST objv[]);
 static Tcl_Obj *c_to_tcl_var(Tcl_Interp *myinterp, script_var_t *v);
 static int tcl_to_c_var(Tcl_Interp *myinterp, Tcl_Obj *obj, script_var_t *var, int type);
+static int my_tcl_cb_delete(event_owner_t *owner, script_callback_t *me);
 
 /* Implementation of the script module interface. */
 static int my_load_script(void *ignore, char *fname);
@@ -56,6 +57,12 @@ static int my_unlink_var(void *ignore, script_linked_var_t *var);
 static int my_create_command(void *ignore, script_raw_command_t *info);
 static int my_delete_command(void *ignore, script_raw_command_t *info);
 static int my_get_arg(void *ignore, script_args_t *args, int num, script_var_t *var, int type);
+
+static event_owner_t tcl_owner = {
+	"tclscript", 0,
+	0, 0,
+	my_tcl_cb_delete
+};
 
 static script_module_t my_script_interface = {
 	"Tcl", NULL,
@@ -259,9 +266,6 @@ static int my_tcl_callbacker(script_callback_t *me, ...)
 
 	interp = cd->myinterp;
 
-	/* If it's a one-time callback, delete it. */
-	if (me->flags & SCRIPT_CALLBACK_ONCE) me->del(me);
-
 #ifdef USE_TCL_BYTE_ARRAYS
 	n = Tcl_EvalObjEx(interp, final_command, TCL_EVAL_GLOBAL);
 #else
@@ -284,7 +288,7 @@ static int my_tcl_callbacker(script_callback_t *me, ...)
 }
 
 /* This implements the delete() member of Tcl script callbacks. */
-static int my_tcl_cb_delete(script_callback_t *me)
+static int my_tcl_cb_delete(event_owner_t *owner, script_callback_t *me)
 {
 	my_callback_cd_t *cd;
 
@@ -516,8 +520,8 @@ static int tcl_to_c_var(Tcl_Interp *myinterp, Tcl_Obj *obj, script_var_t *var, i
 			cdata = (my_callback_cd_t *)calloc(1, sizeof(*cdata));
 			cback->callback = (Function) my_tcl_callbacker;
 			cback->callback_data = cdata;
-			cback->del = (Function) my_tcl_cb_delete;
 			cback->name = strdup(Tcl_GetString(obj));
+			cback->owner = &tcl_owner;
 			cdata->myinterp = myinterp;
 			cdata->command = obj;
 			Tcl_IncrRefCount(obj);
@@ -745,6 +749,8 @@ EXPORT_SCOPE int tclscript_LTX_start(egg_module_t *modinfo);
 
 int tclscript_LTX_start(egg_module_t *modinfo)
 {
+	tcl_owner.module = modinfo;
+
 	modinfo->name = "tclscript";
 	modinfo->author = "eggdev";
 	modinfo->version = "1.0.0";

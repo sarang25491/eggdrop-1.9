@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scripttimer.c,v 1.11 2005/12/01 21:22:11 stdarg Exp $";
+static const char rcsid[] = "$Id: scripttimer.c,v 1.12 2005/12/28 17:27:31 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -38,7 +38,7 @@ static int script_timer(int sec, int usec, script_callback_t *callback, int flag
 	howlong.usec = usec;
 	callback->syntax = (char *)malloc(1);
 	callback->syntax[0] = 0;
-	id = timer_create_complex(&howlong, callback->name, callback->callback, callback, flags);
+	id = timer_create_complex(&howlong, callback->name, callback->callback, callback, flags, callback->owner);
 	return(id);
 }
 

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: binds.c,v 1.23 2005/06/21 02:55:34 stdarg Exp $";
+static const char rcsid[] = "$Id: binds.c,v 1.24 2005/12/28 17:27:31 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -65,6 +65,25 @@ static void schedule_bind_cleanup()
 void kill_binds(void)
 {
 	while (bind_table_list_head) bind_table_del(bind_table_list_head);
+}
+
+void kill_binds_by_module(egg_module_t *module)
+{
+	int deleted = 0;
+	bind_entry_t *entry;
+	bind_table_t *table;
+
+	for (table = bind_table_list_head; table; table = table->next) {
+		if (table->flags & BIND_DELETED) continue;
+		for (entry = table->entries; entry; entry = entry->next) {
+			if (entry->flags & BIND_DELETED) continue;
+			if (entry->owner && entry->owner->module == module) {
+				deleted++;
+				entry->flags |= BIND_DELETED;
+			}
+		}
+	}
+	if (deleted) schedule_bind_cleanup();
 }
 
 bind_table_t *bind_table_add(const char *name, int nargs, const char *syntax, int match_type, int flags)
@@ -127,6 +146,7 @@ static void bind_table_really_del(bind_table_t *table)
 
 	for (entry = table->entries; entry; entry = next) {
 		next = entry->next;
+		if (entry->owner && entry->owner->on_delete) entry->owner->on_delete(entry->owner, entry->client_data);
 		if (entry->function_name) free(entry->function_name);
 		if (entry->mask) free(entry->mask);
 		free(entry);
@@ -177,7 +197,7 @@ bind_entry_t *bind_entry_lookup(bind_table_t *table, int id, const char *mask, c
 	return(entry);
 }
 
-int bind_entry_del(bind_table_t *table, int id, const char *mask, const char *function_name, Function callback, void *cdataptr)
+int bind_entry_del(bind_table_t *table, int id, const char *mask, const char *function_name, Function callback)
 {
 	bind_entry_t *entry;
 
@@ -196,8 +216,6 @@ int bind_entry_del(bind_table_t *table, int id, const char *mask, const char *fu
 	}
 	/*if (!entry) return(-1);*/
 
-	if (cdataptr) *(void **)cdataptr = entry->client_data;
-
 	/* Delete it. */
 	entry->flags |= BIND_DELETED;
 	schedule_bind_cleanup();
@@ -210,6 +228,7 @@ static void bind_entry_really_del(bind_table_t *table, bind_entry_t *entry)
 	if (entry->prev) entry->prev->next = entry->next;
 	else table->entries = entry->next;
 
+	if (entry->owner && entry->owner->on_delete) entry->owner->on_delete(entry->owner, entry->client_data);
 	if (entry->function_name) free(entry->function_name);
 	if (entry->mask) free(entry->mask);
 	free(entry);
@@ -231,19 +250,21 @@ int bind_entry_modify(bind_table_t *table, int id, const char *mask, const char 
 }
 
 /* Overwrite a bind entry's callback and client_data. */
-int bind_entry_overwrite(bind_table_t *table, int id, const char *mask, const char *function_name, Function callback, void *client_data)
+int bind_entry_overwrite(bind_table_t *table, int id, const char *mask, const char *function_name, Function callback, void *client_data, event_owner_t *owner)
 {
 	bind_entry_t *entry;
 
 	entry = bind_entry_lookup(table, id, mask, function_name, NULL);
 	if (!entry) return(-1);
 
-	entry->callback = callback;
+	if ((entry->client_data != client_data || entry->owner != owner) && entry->owner && entry->owner->on_delete) entry->owner->on_delete(entry->owner, entry->client_data);
+	callback = callback;
 	entry->client_data = client_data;
+	entry->owner = owner;
 	return(0);
 }
 
-int bind_entry_add(bind_table_t *table, const char *flags, const char *mask, const char *function_name, int bind_flags, Function callback, void *client_data)
+int bind_entry_add(bind_table_t *table, const char *flags, const char *mask, const char *function_name, int bind_flags, Function callback, void *client_data, event_owner_t *owner)
 {
 	bind_entry_t *entry, *old_entry;
 
@@ -259,6 +280,7 @@ int bind_entry_add(bind_table_t *table, const char *flags, const char *mask, con
 		}
 		else {
 			entry = old_entry;
+			if (entry->owner && entry->owner->on_delete) entry->owner->on_delete(entry->owner, entry->client_data);
 			if (entry->function_name) free(entry->function_name);
 			if (entry->mask) free(entry->mask);
 		}
@@ -279,6 +301,7 @@ int bind_entry_add(bind_table_t *table, const char *flags, const char *mask, con
 	entry->callback = callback;
 	entry->client_data = client_data;
 	entry->flags = bind_flags;
+	entry->owner = owner;
 
 	return(0);
 }
@@ -432,7 +455,7 @@ void bind_add_list(const char *table_name, bind_list_t *cmds)
 	for (; cmds->callback; cmds++) {
 		snprintf(name, 50, "*%s:%s", table->name, cmds->mask ? cmds->mask : "");
 		name[49] = 0;
-		bind_entry_add(table, cmds->user_flags, cmds->mask, name, 0, cmds->callback, NULL);
+		bind_entry_add(table, cmds->user_flags, cmds->mask, name, 0, cmds->callback, NULL, NULL);
 	}
 }
 
@@ -446,7 +469,7 @@ void bind_add_simple(const char *table_name, const char *flags, const char *mask
 	snprintf(name, sizeof(name), "*%s:%s", table->name, mask ? mask : "");
 	name[sizeof(name)-1] = 0;
 	
-	bind_entry_add(table, flags, mask, name, 0, callback, NULL);
+	bind_entry_add(table, flags, mask, name, 0, callback, NULL, NULL);
 }
 
 void bind_rem_list(const char *table_name, bind_list_t *cmds)
@@ -460,7 +483,7 @@ void bind_rem_list(const char *table_name, bind_list_t *cmds)
 	for (; cmds->mask; cmds++) {
 		snprintf(name, sizeof(name), "*%s:%s", table->name, cmds->mask);
 		name[sizeof(name)-1] = 0;
-		bind_entry_del(table, -1, cmds->mask, name, cmds->callback, NULL);
+		bind_entry_del(table, -1, cmds->mask, name, cmds->callback);
 	}
 }
 
@@ -474,5 +497,5 @@ void bind_rem_simple(const char *table_name, const char *flags, const char *mask
 
 	snprintf(name, sizeof(name), "*%s:%s", table->name, mask ? mask : "");
 	name[sizeof(name)-1] = 0;
-	bind_entry_del(table, -1, mask, name, callback, NULL);
+	bind_entry_del(table, -1, mask, name, callback);
 }

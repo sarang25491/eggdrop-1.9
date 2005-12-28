@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: mod_iface.c,v 1.18 2003/12/18 06:50:47 wcc Exp $";
+static const char rcsid[] = "$Id: mod_iface.c,v 1.19 2005/12/28 17:27:31 sven Exp $";
 #endif
 
 #include <stdio.h>
@@ -30,6 +30,7 @@ extern int perlscript_init();
 extern int perlscript_destroy();
 extern script_module_t my_script_interface;
 extern char *real_perl_cmd(char *text);
+extern event_owner_t perl_owner;
 
 /* Log an error message. */
 int log_error(char *msg)
@@ -81,6 +82,8 @@ EXPORT_SCOPE int perlscript_LTX_start(egg_module_t *modinfo);
 
 int perlscript_LTX_start(egg_module_t *modinfo)
 {
+	perl_owner.module = modinfo;
+
 	modinfo->name = "perlscript";
 	modinfo->author = "eggdev";
 	modinfo->version = "1.0.0";

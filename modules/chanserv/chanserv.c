@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: chanserv.c,v 1.5 2005/06/09 02:56:44 stdarg Exp $";
+static const char rcsid[] = "$Id: chanserv.c,v 1.6 2005/12/28 17:27:31 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -29,6 +29,12 @@ chanserv_config_t chanserv_config;
 egg_server_api_t *server = NULL;
 static chanserv_channel_stats_t global_chan;
 static int timer_id;
+static event_owner_t chanserv_owner = {
+	"chanserv", 0,
+	0, 0,
+	0
+};
+
 static int chanserv_timer(void *client_data);
 
 /* This array is in the same sequence as the CHANSERV_STAT_* constants. */
@@ -93,7 +99,7 @@ static int chanserv_init()
 	events_init();
 	howlong.sec = CHANSERV_CLEANUP_TIMER;
 	howlong.usec = 0;
-	timer_id = timer_create_complex(&howlong, "chanserv stats cleanup", chanserv_timer, NULL, TIMER_REPEAT);
+	timer_id = timer_create_complex(&howlong, "chanserv stats cleanup", chanserv_timer, NULL, TIMER_REPEAT, &chanserv_owner);
 	return(0);
 }
 
@@ -348,6 +354,8 @@ static int chanserv_close(int why)
 int chanserv_LTX_start(egg_module_t *modinfo)
 {
 	void *config_root;
+
+	chanserv_owner.module = modinfo;
 
 	modinfo->name = "chanserv";
 	modinfo->author = "eggdev";

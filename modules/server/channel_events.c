@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channel_events.c,v 1.4 2005/05/08 04:40:13 stdarg Exp $";
+static const char rcsid[] = "$Id: channel_events.c,v 1.5 2005/12/28 17:27:31 sven Exp $";
  #endif
 
 #include "server.h"
@@ -41,12 +41,12 @@ void channel_events_init()
 
 	/* FIXME Putting these here for now... but they should probably be
 	 * configurable or moved to an addon module/script. */
-	bind_entry_add(table, NULL, "367", "banlistitem", BIND_WANTS_CD, got_list_item, (void *)'b');
-	bind_entry_add(table, NULL, "346", "invitelistitem", BIND_WANTS_CD, got_list_item, (void *)'I');
-	bind_entry_add(table, NULL, "348", "exceptlistitem", BIND_WANTS_CD, got_list_item, (void *)'e');
-	bind_entry_add(table, NULL, "368", "banlistend", BIND_WANTS_CD, got_list_end, (void *)'b');
-	bind_entry_add(table, NULL, "347", "invitelistend", BIND_WANTS_CD, got_list_end, (void *)'I');
-	bind_entry_add(table, NULL, "349", "exceptlistend", BIND_WANTS_CD, got_list_end, (void *)'e');
+	bind_entry_add(table, NULL, "367", "banlistitem", BIND_WANTS_CD, got_list_item, (void *)'b', NULL);
+	bind_entry_add(table, NULL, "346", "invitelistitem", BIND_WANTS_CD, got_list_item, (void *)'I', NULL);
+	bind_entry_add(table, NULL, "348", "exceptlistitem", BIND_WANTS_CD, got_list_item, (void *)'e', NULL);
+	bind_entry_add(table, NULL, "368", "banlistend", BIND_WANTS_CD, got_list_end, (void *)'b', NULL);
+	bind_entry_add(table, NULL, "347", "invitelistend", BIND_WANTS_CD, got_list_end, (void *)'I', NULL);
+	bind_entry_add(table, NULL, "349", "exceptlistend", BIND_WANTS_CD, got_list_end, (void *)'e', NULL);
 }
 
 static inline void free_member(channel_member_t *m)

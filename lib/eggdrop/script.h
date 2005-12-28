@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: script.h,v 1.16 2004/06/22 21:55:32 wingman Exp $
+ * $Id: script.h,v 1.17 2005/12/28 17:27:31 sven Exp $
  */
 
 #ifndef _EGG_SCRIPT_H_
@@ -44,7 +44,7 @@ enum
 };
 
 /* Byte-arrays are simply strings with their length given explicitly, so it
- * can have embedded NULLs. */
+ * can have embedded NULs. */
 typedef struct byte_array_b {
 	unsigned char *bytes;
 	int len;
@@ -116,11 +116,11 @@ typedef struct byte_array_b {
 typedef struct script_callback_b {
 	int (*callback)();
 	void *callback_data;
-	int (*del)();
 	void *delete_data;
 	char *syntax;
 	char *name;
 	int flags;
+	event_owner_t *owner;
 } script_callback_t;
 
 typedef struct script_var_b {

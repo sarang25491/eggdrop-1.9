@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: script.c,v 1.21 2005/11/27 20:47:15 wcc Exp $";
+static const char rcsid[] = "$Id: script.c,v 1.22 2005/12/28 17:27:31 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -296,7 +296,7 @@ cleanup_args:
 	}
 	if (err) {
 		for (i = 0; i < ncallbacks; i++) {
-			if (callbacks[i]) callbacks[i]->del(callbacks[i]);
+			if (callbacks[i] && callbacks[i]->owner && callbacks[i]->owner->on_delete) callbacks[i]->owner->on_delete(callbacks[i]->owner, callbacks[i]);
 		}
 	}
 	if (argstack != static_argstack) {

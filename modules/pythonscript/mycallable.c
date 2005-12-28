@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: mycallable.c,v 1.2 2005/12/17 01:25:06 sven Exp $";
+static const char rcsid[] = "$Id: mycallable.c,v 1.3 2005/12/28 17:27:31 sven Exp $";
 #endif
 
 #include <Python.h>
@@ -113,9 +113,9 @@ static PyObject *GetDoc(PyObject *self, void *ignored) {
 		minpara = com->nargs;
 		maxpara = strlen(com->syntax);
 		if (minpara == maxpara) {
-			Ret = PyString_FromFormat("This is the internal eggdrop function '%s'.\nIt takes exactly %d parameters and returns %s.\nThe parameters are:\n \n", func->name, minpara, ParameterType(com->retval_type));
+			Ret = PyString_FromFormat("This is the internal eggdrop function '%s'.\nIt takes exactly %d parameter%s and returns %s.\nThe parameters are:\n \n", func->name, minpara, minpara == 1 ? "" : "s", (com->flags & SCRIPT_PASS_RETVAL) ? "a variable data type" : ParameterType(com->retval_type));
 		} else {
-			Ret = PyString_FromFormat("This is the internal eggdrop function '%s'.\nIt takes at least %d and up to %d parameters and returns %s.\nThe parameters are:\n \n", func->name, minpara, maxpara, ParameterType(com->retval_type));
+			Ret = PyString_FromFormat("This is the internal eggdrop function '%s'.\nIt takes at least %d and up to %d parameter%s and returns %s.\nThe parameters are:\n \n", func->name, minpara, maxpara, maxpara == 1 ? "" : "s", ParameterType(com->retval_type));
 		}
 		Parnames = malloc(strlen(com->syntax_error) + 1);
 		strcpy(Parnames, com->syntax_error);
@@ -128,7 +128,7 @@ static PyObject *GetDoc(PyObject *self, void *ignored) {
 			}
 			if (Pos && *Pos == '?') opt = " This parameter is optional.";
 			else opt = "";
-			PyString_ConcatAndDel(&Ret, PyString_FromFormat("\nParameter %d, %s: %s.%s", i + 1, Pos ? Pos : "?", ParameterType(com->syntax[i]), opt));
+			PyString_ConcatAndDel(&Ret, PyString_FromFormat("\nParameter %d, %s: %s.%s", i + 1, Pos ? Pos : "?",ParameterType(com->syntax[i]), opt));
 			Pos = NextPos;
 		}
 		free(Parnames);

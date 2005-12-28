@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: perlscript.c,v 1.30 2005/11/14 04:44:43 wcc Exp $";
+static const char rcsid[] = "$Id: perlscript.c,v 1.31 2005/12/28 17:27:31 sven Exp $";
 #endif
 
 #ifdef DEBUG
@@ -38,6 +38,7 @@ static PerlInterpreter *ginterp; /* Our global interpreter. */
 static XS(my_command_handler);
 static SV *c_to_perl_var(script_var_t *v);
 static int perl_to_c_var(SV *sv, script_var_t *var, int type);
+static int my_perl_cb_delete(event_owner_t *owner, script_callback_t *me);
 
 static int my_load_script(void *ignore, char *fname);
 static int my_link_var(void *ignore, script_linked_var_t *linked_var);
@@ -52,6 +53,12 @@ script_module_t my_script_interface = {
 	my_link_var, my_unlink_var,
 	my_create_command, my_delete_command,
 	my_get_arg
+};
+
+event_owner_t perl_owner = {
+	"perlscript", 0,
+	0, 0,
+	my_perl_cb_delete
 };
 
 typedef struct {
@@ -225,10 +232,8 @@ static int my_perl_callbacker(script_callback_t *me, ...)
 	va_end(va);
 	PUTBACK;
 
-	/* If it's a one-time callback, delete it. */
 	cmd = me->callback_data;
 	SvREFCNT_inc(cmd);
-	if (me->flags & SCRIPT_CALLBACK_ONCE) me->del(me);
 
 	count = call_sv(cmd, G_EVAL|G_SCALAR);
 	SvREFCNT_dec(cmd);
@@ -255,7 +260,7 @@ static int my_perl_callbacker(script_callback_t *me, ...)
 	return(retval);
 }
 
-static int my_perl_cb_delete(script_callback_t *me)
+static int my_perl_cb_delete(event_owner_t *owner, script_callback_t *me)
 {
 	if (me->syntax) free(me->syntax);
 	if (me->name) free(me->name);
@@ -405,10 +410,11 @@ static int perl_to_c_var(SV *sv, script_var_t *var, int type)
 
 			cback = (script_callback_t *)calloc(1, sizeof(*cback));
 			cback->callback = (Function) my_perl_callbacker;
-			cback->del = (Function) my_perl_cb_delete;
 			name = SvPV(sv, len);
 			cback->name = strdup(name);
 			cback->callback_data = newSVsv(sv);
+			cback->owner = &perl_owner;
+
 			var->value = cback;
 			break;
 		}

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: pythonscript.c,v 1.2 2005/12/17 01:25:06 sven Exp $";
+static const char rcsid[] = "$Id: pythonscript.c,v 1.3 2005/12/28 17:27:31 sven Exp $";
 #endif
 
 #include <Python.h>
@@ -37,12 +37,20 @@ static int my_create_command(void *ignore, script_raw_command_t *info);
 static int my_delete_command(void *ignore, script_raw_command_t *info);
 static int my_get_arg(void *ignore, script_args_t *args, int num, script_var_t *var, int type);
 
+static int my_python_cb_delete(event_owner_t *owner, script_callback_t *me);
+
 script_module_t my_script_interface = {
 	"Python", NULL,
 	my_load_script,
 	my_link_var, my_unlink_var,
 	my_create_command, my_delete_command,
 	my_get_arg
+};
+
+static event_owner_t python_owner = {
+	"pythonscript", 0,
+	0, 0,
+	my_python_cb_delete
 };
 
 static PyObject *SysPath, *CommonModule, *PartylineModule, *PartylineDict, *RealHelper, *SysMod;
@@ -162,9 +170,6 @@ static int my_python_callbacker(script_callback_t *me, ...)
 	}
 	va_end(va);
 
-	/* If it's a one-time callback, delete it. */
-	if (me->flags & SCRIPT_CALLBACK_ONCE) me->del(me);
-
 	RetObj = PyObject_CallObject(cmd, param);
 	FlushAll();
 
@@ -182,8 +187,7 @@ static int my_python_callbacker(script_callback_t *me, ...)
 }
 
 /* This implements the delete() member of Python script callbacks. */
-static int my_python_cb_delete(script_callback_t *me)
-{
+static int my_python_cb_delete(event_owner_t *owner, script_callback_t *me) {
 	PyObject *Callback = me->callback_data;
 
 	Py_DECREF(Callback);
@@ -396,10 +400,13 @@ int python_to_c_var(PyObject *obj, script_var_t *var, int type) {
 				sprintf(cback->name, "%s.0x%08x", CModName, ((int) obj) & 0xFFFFFFFF);
 			}
 				
-			cback->del = my_python_cb_delete;
+			Py_XDECREF(ModuleName);
+			Py_XDECREF(FunctionName);
+
 			cback->delete_data = 0;
 			cback->syntax = 0;
 			cback->flags = 0;
+			cback->owner = &python_owner;
 
 			var->value = cback;
 			return 0;
@@ -552,6 +559,8 @@ EXPORT_SCOPE int pythonscript_LTX_start(egg_module_t *modinfo);
 
 int pythonscript_LTX_start(egg_module_t *modinfo) {
 	PyObject *builtinModule, *Stdout, *Stderr, *Para, *Helper;
+
+	python_owner.module = modinfo;
 
 	modinfo->name = "pythonscript";
 	modinfo->author = "eggdev";

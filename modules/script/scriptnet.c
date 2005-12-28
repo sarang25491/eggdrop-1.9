@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptnet.c,v 1.9 2005/12/01 21:22:11 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptnet.c,v 1.10 2005/12/28 17:27:31 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -191,7 +191,7 @@ static int script_net_handler(int idx, const char *event, script_callback_t *cal
 		return(-2);
 	}
 
-	if (*replace) (*replace)->del(*replace);
+	if (*replace && (*replace)->owner && (*replace)->owner->on_delete) (*replace)->owner->on_delete((*replace)->owner, *replace);
 	if (callback) callback->syntax = strdup(newsyntax);
 	*replace = callback;
 	return(0);
@@ -292,15 +292,15 @@ static int on_delete(void *client_data, int idx)
 {
 	script_net_info_t *info = client_data;
 
-	if (info->on_connect) info->on_connect->del(info->on_connect);
-	if (info->on_eof) info->on_eof->del(info->on_eof);
-	if (info->on_newclient) info->on_newclient->del(info->on_newclient);
-	if (info->on_read) info->on_read->del(info->on_read);
-	if (info->on_written) info->on_written->del(info->on_written);
+	if (info->on_connect && info->on_connect->owner && info->on_connect->owner->on_delete) info->on_connect->owner->on_delete(info->on_connect->owner, info->on_connect);
+	if (info->on_eof && info->on_eof->owner && info->on_eof->owner->on_delete) info->on_eof->owner->on_delete(info->on_eof->owner, info->on_eof);
+	if (info->on_newclient && info->on_newclient->owner && info->on_newclient->owner->on_delete) info->on_newclient->owner->on_delete(info->on_newclient->owner, info->on_newclient);
+	if (info->on_read && info->on_read->owner && info->on_read->owner->on_delete) info->on_read->owner->on_delete(info->on_read->owner, info->on_read);
+	if (info->on_written && info->on_written->owner && info->on_written->owner->on_delete) info->on_written->owner->on_delete(info->on_written->owner, info->on_written);
 
 	if (info->on_delete) {
 		info->on_delete->callback(info->on_delete, idx);
-		info->on_delete->del(info->on_delete);
+		if (info->on_delete && info->on_delete->owner && info->on_delete->owner->on_delete) info->on_delete->owner->on_delete(info->on_delete->owner, info->on_delete);
 	}
 	script_net_info_remove(info);
 	free(info);

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptbind.c,v 1.14 2005/12/01 21:22:11 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptbind.c,v 1.15 2005/12/28 17:27:31 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -45,7 +45,7 @@ static int fake_bind_placeholder(void *client_data, ...)
 
 	callback = fake->callback;
 	callback->syntax = strdup(fake->table->syntax);
-	bind_entry_overwrite(fake->table, fake->bind_id, NULL, NULL, callback->callback, callback);
+	bind_entry_overwrite(fake->table, fake->bind_id, NULL, NULL, callback->callback, callback, callback->owner);
 
 	args[0] = callback;
 	va_start(ap, client_data);
@@ -71,7 +71,7 @@ static int script_bind(char *table_name, char *flags, char *mask, script_callbac
 
 	if (table->syntax) {
 		callback->syntax = strdup(table->syntax);
-		retval = bind_entry_add(table, flags, mask, callback->name, BIND_WANTS_CD, callback->callback, callback);
+		retval = bind_entry_add(table, flags, mask, callback->name, BIND_WANTS_CD, callback->callback, callback, callback->owner);
 	}
 	else {
 		fake_bind_placeholder_t *fake;
@@ -79,7 +79,7 @@ static int script_bind(char *table_name, char *flags, char *mask, script_callbac
 		fake = calloc(1, sizeof(*fake));
 		fake->table = table;
 		fake->callback = callback;
-		fake->bind_id = bind_entry_add(table, flags, mask, callback->name, BIND_WANTS_CD, (Function) fake_bind_placeholder, fake);
+		fake->bind_id = bind_entry_add(table, flags, mask, callback->name, BIND_WANTS_CD, (Function) fake_bind_placeholder, fake, callback->owner);
 		retval = fake->bind_id;
 	}
 	return(retval);
@@ -88,14 +88,12 @@ static int script_bind(char *table_name, char *flags, char *mask, script_callbac
 static int script_unbind(char *table_name, char *mask, char *name)
 {
 	bind_table_t *table;
-	script_callback_t *callback = NULL;
 	int retval;
 
 	table = bind_table_lookup(table_name);
 	if (!table) return(1);
 
-	retval = bind_entry_del(table, -1, mask, name, NULL, &callback);
-	if (callback) callback->del(callback);
+	retval = bind_entry_del(table, -1, mask, name, NULL);
 	return(retval);
 }
 

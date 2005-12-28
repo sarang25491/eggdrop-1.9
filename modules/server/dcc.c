@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dcc.c,v 1.24 2005/12/01 17:43:47 stdarg Exp $";
+static const char rcsid[] = "$Id: dcc.c,v 1.25 2005/12/28 17:27:31 sven Exp $";
 #endif
 
 #include <unistd.h>
@@ -146,7 +146,7 @@ static dcc_listen_t *dcc_listen(int timeout)
 		snprintf(buf, sizeof(buf), "dcc listen port %d", port);
 		howlong.sec = timeout;
 		howlong.usec = 0;
-		listen->timer_id = timer_create_complex(&howlong, buf, dcc_listen_timeout, listen, 0);
+		listen->timer_id = timer_create_complex(&howlong, buf, dcc_listen_timeout, listen, 0, &server_owner);
 	}
 
 	return(listen);
@@ -516,7 +516,7 @@ int dcc_accept_send(char *nick, char *localfname, char *fname, int size, int res
 		snprintf(buf, sizeof(buf), "dcc recv %s/%d", ip, port);
 		howlong.sec = timeout;
 		howlong.usec = 0;
-		send->timer_id = timer_create_complex(&howlong, buf, dcc_recv_timeout, send, 0);
+		send->timer_id = timer_create_complex(&howlong, buf, dcc_recv_timeout, send, 0, &server_owner);
 	}
 	else send->connect_time = -1;
 
