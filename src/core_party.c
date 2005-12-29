@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.47 2005/12/01 22:18:52 lordares Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.48 2005/12/29 01:38:12 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -595,13 +595,13 @@ static int party_binds(partymember_t *p, const char *nick, user_t *u, const char
 	bind_entry_t *entry;
 	char flags[64];
 
-	partymember_printf(p, "%-16s %-16s %-16s %-10s %-5s %s", _("TABLE"), _("SYNTAX"),
-		 _("FUNCTION"), _("MASK"), _("FLAGS"), _("HITS"));
+	partymember_printf(p, "%-16s %-16s %-16s %-10s %-5s %5s %s", _("TABLE"), _("SYNTAX"),
+		 _("FUNCTION"), _("MASK"), _("FLAGS"), _("ID"), _("HITS"));
 	for (table = bind_table_list(); table; table = table->next) {
 		for (entry = table->entries; entry; entry = entry->next) {
 			flag_to_str(&entry->user_flags, flags);
-			partymember_printf(p, "%-16s %-16s %-16s %-10s %-5s %i", table->name, table->syntax,
-				entry->function_name, entry->mask, flags, entry->nhits);
+			partymember_printf(p, "%-16s %-16s %-16s %-10s %-5s %5i %i", table->name, table->syntax,
+				entry->function_name, entry->mask, flags, entry->id, entry->nhits);
 		}
 	}
 

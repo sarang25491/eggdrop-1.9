@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: binds.c,v 1.24 2005/12/28 17:27:31 sven Exp $";
+static const char rcsid[] = "$Id: binds.c,v 1.25 2005/12/29 01:38:12 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -179,20 +179,28 @@ bind_table_t *bind_table_lookup_or_fake(const char *name)
 bind_entry_t *bind_entry_lookup(bind_table_t *table, int id, const char *mask, const char *function_name, Function callback)
 {
 	bind_entry_t *entry;
-	int hit;
+	int hit, searchall = 0;
 
-	for (entry = table->entries; entry; entry = entry->next) {
-		if (entry->flags & BIND_DELETED) continue;
-		if (id != -1 && entry->id >= 0) {
-			if (entry->id == id) break;
+	if (!table) {
+		searchall = 1;
+		table = bind_table_list_head;
+	}
+	
+	for (; table; table = table->next) {
+		for (entry = table->entries; entry; entry = entry->next) {
+			if (entry->flags & BIND_DELETED) continue;
+			if (id != -1 && entry->id >= 0) {
+				if (entry->id == id) break;
+			}
+			else {
+				hit = 0;
+				if (!entry->mask || !strcmp(entry->mask, mask)) hit++;
+				if (!entry->function_name || !strcmp(entry->function_name, function_name)) hit++;
+				if (!callback || entry->callback == callback) hit++;
+				if (hit == 3) break;
+			}
 		}
-		else {
-			hit = 0;
-			if (!entry->mask || !strcmp(entry->mask, mask)) hit++;
-			if (!entry->function_name || !strcmp(entry->function_name, function_name)) hit++;
-			if (!callback || entry->callback == callback) hit++;
-			if (hit == 3) break;
-		}
+		if (entry || !searchall) break;
 	}
 	return(entry);
 }
@@ -206,11 +214,16 @@ int bind_entry_del(bind_table_t *table, int id, const char *mask, const char *fu
 	/* better to issue a warning message than silently ignoring 
 	 * that this entry is not found...at least for now */
 	if (entry == NULL) {
-		putlog(LOG_DEBUG, "*", "A bind entry '%i/%s/%s' is marked for destroying but isn't found in table '%s'.",
-			id, mask, function_name, table->name);
-		putlog(LOG_DEBUG, "*", "Current entries are:");
-		for (entry = table->entries; entry; entry = entry->next) {
-			putlog(LOG_DEBUG, "*", "  %i/%s/%s", entry->id, entry->mask, entry->function_name);
+		if (table) {
+			putlog(LOG_DEBUG, "*", "A bind entry '%i/%s/%s' is marked for destroying but isn't found in table '%s'.",
+				id, mask, function_name, table->name);
+			putlog(LOG_DEBUG, "*", "Current entries are:");
+			for (entry = table->entries; entry; entry = entry->next) {
+				putlog(LOG_DEBUG, "*", "  %i/%s/%s", entry->id, entry->mask, entry->function_name);
+			}
+		} else {
+			putlog(LOG_DEBUG, "*", "A bind entry '%i/%s/%s' is marked for destroying but isn't found in any table.",
+				id, mask, function_name);
 		}
 		return -1;
 	}
@@ -266,7 +279,20 @@ int bind_entry_overwrite(bind_table_t *table, int id, const char *mask, const ch
 
 int bind_entry_add(bind_table_t *table, const char *flags, const char *mask, const char *function_name, int bind_flags, Function callback, void *client_data, event_owner_t *owner)
 {
+	static int next_id = 1, warparound = 0;
 	bind_entry_t *entry, *old_entry;
+
+	if (next_id < 1) {
+		next_id = 1;
+		warparound = 1;
+	}
+	if (warparound) {
+		while (bind_entry_lookup(0, next_id, 0, 0, 0)) {
+			next_id++;
+			if (next_id < 1) next_id = 1;
+			break;
+		}
+	}
 
 	old_entry = bind_entry_lookup(table, -1, mask, function_name, NULL);
 
@@ -302,8 +328,9 @@ int bind_entry_add(bind_table_t *table, const char *flags, const char *mask, con
 	entry->client_data = client_data;
 	entry->flags = bind_flags;
 	entry->owner = owner;
+	entry->id = next_id++;
 
-	return(0);
+	return(entry->id);
 }
 
 /* Execute a bind entry with the given argument list. */

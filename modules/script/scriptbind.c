@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptbind.c,v 1.15 2005/12/28 17:27:31 sven Exp $";
+static const char rcsid[] = "$Id: scriptbind.c,v 1.16 2005/12/29 01:38:12 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -97,6 +97,14 @@ static int script_unbind(char *table_name, char *mask, char *name)
 	return(retval);
 }
 
+static int script_unbind_id(int id)
+{
+	int retval;
+
+	retval = bind_entry_del(NULL, id, NULL, NULL, NULL);
+	return(retval);
+}
+
 static int script_rebind(char *table_name, char *flags, char *mask, char *command, char *newflags, char *newmask)
 {
 	bind_table_t *table;
@@ -106,9 +114,16 @@ static int script_rebind(char *table_name, char *flags, char *mask, char *comman
 	return bind_entry_modify(table, -1, mask, command, newflags, newmask);
 }
 
+static int script_rebind_id(int id, char *newflags, char *newmask)
+{
+	return bind_entry_modify(NULL, id, NULL, NULL, newflags, newmask);
+}
+
 script_command_t script_bind_cmds[] = {
 	{"", "bind", script_bind, NULL, 4, "sssc", "table flags mask command", SCRIPT_INTEGER, 0},	/* DDD	*/
 	{"", "unbind", script_unbind, NULL, 3, "sss", "table mask command", SCRIPT_INTEGER, 0},		/* DDD	*/
+	{"", "unbind_id", script_unbind_id, NULL, 1, "i", "id", SCRIPT_INTEGER, 0},		/* DDD	*/
 	{"", "rebind", script_rebind, NULL, 6, "ssssss", "table flags mask command newflags newmask", SCRIPT_INTEGER, 0},
+	{"", "rebind_id", script_rebind_id, NULL, 3, "iss", "id newflags newmask", SCRIPT_INTEGER, 0},
 	{0}
 };
