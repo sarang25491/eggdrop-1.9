@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: binds.c,v 1.25 2005/12/29 01:38:12 sven Exp $";
+static const char rcsid[] = "$Id: binds.c,v 1.26 2006/01/03 02:39:36 guppy Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -279,14 +279,14 @@ int bind_entry_overwrite(bind_table_t *table, int id, const char *mask, const ch
 
 int bind_entry_add(bind_table_t *table, const char *flags, const char *mask, const char *function_name, int bind_flags, Function callback, void *client_data, event_owner_t *owner)
 {
-	static int next_id = 1, warparound = 0;
+	static int next_id = 1, wraparound = 0;
 	bind_entry_t *entry, *old_entry;
 
 	if (next_id < 1) {
 		next_id = 1;
-		warparound = 1;
+		wraparound = 1;
 	}
-	if (warparound) {
+	if (wraparound) {
 		while (bind_entry_lookup(0, next_id, 0, 0, 0)) {
 			next_id++;
 			if (next_id < 1) next_id = 1;
