@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: mycallable.c,v 1.3 2005/12/28 17:27:31 sven Exp $";
+static const char rcsid[] = "$Id: mycallable.c,v 1.4 2006/01/05 20:42:42 sven Exp $";
 #endif
 
 #include <Python.h>
@@ -33,7 +33,7 @@ static char *ParameterType(int Type) {
 	if (Type == SCRIPT_UNSIGNED) return "an integer (or a small long)";
 	if (Type == SCRIPT_POINTER) return "a C pointer (what's that good for?)";
 	if (Type == SCRIPT_CALLBACK) return "a python function";
-	if (Type == SCRIPT_USER) return "an eggdrop user (ATM this is just an int)";
+	if (Type == SCRIPT_USER) return "an eggdrop user";
 	if (Type == SCRIPT_PARTIER) return "a partyline user (ATM this is just an int)";
 	if (Type == SCRIPT_BYTES) return "a string containing binary data";
 	if (Type == SCRIPT_VAR) return "no idea";
@@ -67,6 +67,7 @@ static PyObject *my_command_handler(PyObject *self, PyObject *pythonargs, PyObje
 
 	cmd->callback(cmd->client_data, &args, &retval);
 	if (retval.type & SCRIPT_ERROR) {
+		if (PyErr_Occurred()) return 0;
 		if (retval.type & SCRIPT_STRING) PyErr_SetString(PyExc_RuntimeError, retval.value);
 		else PyErr_SetString(PyExc_TypeError, "error message unavailable");
 		return 0;
@@ -74,7 +75,7 @@ static PyObject *my_command_handler(PyObject *self, PyObject *pythonargs, PyObje
 	return c_to_python_var(&retval);
 }
 
-PyObject *Repr(PyObject *self) {
+static PyObject *Repr(PyObject *self) {
 	PyObject *Ret, *Repr;
 	CallableObject *Obj = (CallableObject *) self;
 	script_linked_var_t *var = Obj->client_data;
@@ -125,6 +126,8 @@ static PyObject *GetDoc(PyObject *self, void *ignored) {
 				NextPos = strchr(Pos, ' ');
 				if (NextPos) *NextPos = 0;
 				++NextPos;
+			} else {
+				NextPos = 0;
 			}
 			if (Pos && *Pos == '?') opt = " This parameter is optional.";
 			else opt = "";

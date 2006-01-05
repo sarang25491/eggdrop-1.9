@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: pythonscript.c,v 1.3 2005/12/28 17:27:31 sven Exp $";
+static const char rcsid[] = "$Id: pythonscript.c,v 1.4 2006/01/05 20:42:42 sven Exp $";
 #endif
 
 #include <Python.h>
@@ -37,7 +37,7 @@ static int my_create_command(void *ignore, script_raw_command_t *info);
 static int my_delete_command(void *ignore, script_raw_command_t *info);
 static int my_get_arg(void *ignore, script_args_t *args, int num, script_var_t *var, int type);
 
-static int my_python_cb_delete(event_owner_t *owner, script_callback_t *me);
+static int my_python_cb_delete(event_owner_t *owner, void *client_data);
 
 script_module_t my_script_interface = {
 	"Python", NULL,
@@ -92,6 +92,7 @@ static int my_load_script(void *ignore, char *fname)
 
 	CommonDict = PyObject_GetAttrString(CommonModule, name);
 	if (!CommonDict) {
+		PyErr_Clear();
 		CommonDict = PyDict_New();
 		PyModule_AddObject(CommonModule, name, CommonDict);   /* CommonModule steals a reference to CommonDict */
 	} else {
@@ -187,7 +188,8 @@ static int my_python_callbacker(script_callback_t *me, ...)
 }
 
 /* This implements the delete() member of Python script callbacks. */
-static int my_python_cb_delete(event_owner_t *owner, script_callback_t *me) {
+static int my_python_cb_delete(event_owner_t *owner, void *client_data) {
+	script_callback_t *me = client_data;
 	PyObject *Callback = me->callback_data;
 
 	Py_DECREF(Callback);
@@ -341,7 +343,9 @@ PyObject *c_to_python_var(script_var_t *v) {
 			user_t *u = v->value;
 
 			if (u) {
-				result = PyInt_FromLong(u->uid);
+				EgguserObject *O = (EgguserObject *) Egguser_Type.tp_new(&Egguser_Type, 0, 0);
+				O->user = u;
+				result = (PyObject *) O;
 			} else {
 				Py_INCREF(Py_None);
 				result = Py_None;
@@ -381,7 +385,10 @@ int python_to_c_var(PyObject *obj, script_var_t *var, int type) {
 			PyObject *FunctionName, *ModuleName;
 			char *CFuncName = 0, *CModName = 0;
 
-			if (!PyCallable_Check(obj)) return 1;
+			if (!PyCallable_Check(obj)) {
+				PyErr_Format(PyExc_TypeError, "Object of type %s is not callable.", obj->ob_type->tp_name);
+				return 1;
+			}
 			cback = malloc(sizeof(*cback));
 			cback->callback = (Function) my_python_callbacker;
 			cback->callback_data = obj;
@@ -451,16 +458,17 @@ int python_to_c_var(PyObject *obj, script_var_t *var, int type) {
 		}
 #endif
 		case SCRIPT_USER: {
-			user_t *u;
-			int uid;
+			EgguserObject *O = (EgguserObject *) obj;
 
-			uid = PyInt_AsLong(obj);
-			u = user_lookup_by_uid(uid);
-			var->value = u;
-			if (!u) {
-				PyErr_SetString(PyExc_LookupError, "User not found");
+			if (!Egguser_Check(obj)) {
+				PyErr_Format(PyExc_TypeError, "Expected eggdrop.egguser, got %s", obj->ob_type->tp_name);
 				return 1;
 			}
+			if (!O->user || (O->user->flags & USER_DELETED)) {
+				PyErr_SetString(PyExc_RuntimeError, "This user has been deleted.");
+				return 1;
+			}
+			var->value = O->user;
 			return 0;
 		}
 	}
@@ -575,7 +583,8 @@ int pythonscript_LTX_start(egg_module_t *modinfo) {
 	PyType_Ready(&MyDict_Type);
 	PyType_Ready(&Callable_Type);
 	PyType_Ready(&Stdio_Type);
-	
+	PyType_Ready(&Egguser_Type);
+
 	MinInt = PyInt_FromLong(INT_MIN);
 	MaxInt = PyInt_FromLong(INT_MAX);
 	MinUInt = PyInt_FromLong(0);
@@ -599,6 +608,11 @@ int pythonscript_LTX_start(egg_module_t *modinfo) {
 		Py_Finalize();
 		return -4;
 	}
+
+	Py_INCREF(&Stdio_Type);
+	Py_INCREF(&Egguser_Type);
+	PyModule_AddObject(EggdropModule, "stdio", (PyObject *) &Stdio_Type);
+	PyModule_AddObject(EggdropModule, "egguser", (PyObject *) &Egguser_Type);
 
 	Para = Py_BuildValue("(i)", 1);
 	Stdout = Stdio_Type.tp_new(&Stdio_Type, Para, 0);

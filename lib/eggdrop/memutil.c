@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: memutil.c,v 1.21 2005/05/31 03:35:07 stdarg Exp $";
+static const char rcsid[] = "$Id: memutil.c,v 1.22 2006/01/05 20:42:42 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -71,8 +71,12 @@ char *egg_mvsprintf(char *buf, int len, int *final_len, const char *format, va_l
 		len = 512;
 	}
 	while (1) {
+		va_list temp_args;
+
 		len -= 10;
-		n = vsnprintf(output, len, format, args);
+		va_copy(temp_args, args);
+		n = vsnprintf(output, len, format, temp_args);
+		va_end(temp_args);
 		if (n > -1 && n < len) break;
 		if (n > len) len = n+1;
 		else len *= 2;

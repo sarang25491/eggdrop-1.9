@@ -16,13 +16,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: pythonscript.h,v 1.2 2005/12/17 01:25:06 sven Exp $
+ * $Id: pythonscript.h,v 1.3 2006/01/05 20:42:42 sven Exp $
  */
 
 #define PYTHON_VAR 1
 #define PYTHON_FUNC 2
 
 #define Callable_Check(op) PyObject_TypeCheck(op, &Callable_Type)
+#define Egguser_Check(op) PyObject_TypeCheck(op, &Egguser_Type)
 
 #define FlushAll() do {\
   Flush(0);\
@@ -34,6 +35,11 @@ typedef struct {
 	int type;
 	void *client_data;
 } CallableObject;
+
+typedef struct {
+	PyObject_HEAD
+	user_t *user;
+} EgguserObject;
 
 typedef struct {
 	PyDictObject dict;
@@ -52,5 +58,5 @@ int SetVar(script_linked_var_t *var, PyObject *Value);
 PyObject *MyModule_Add(char *name, char *doc);
 PyObject *MyDict_New(PyTypeObject *Type, PyObject *args, PyObject *kwds);
 
-PyTypeObject Callable_Type, MyDict_Type, Stdio_Type;
+PyTypeObject Callable_Type, MyDict_Type, Stdio_Type, Egguser_Type;
 PyObject *EggdropModule;

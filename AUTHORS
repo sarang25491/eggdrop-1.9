@@ -1,7 +1,7 @@
-$Id: AUTHORS,v 1.18 2004/07/05 05:20:57 wcc Exp $
+$Id: AUTHORS,v 1.19 2006/01/05 20:42:42 sven Exp $
 
 Eggdrop Developers and Contributers
-Last revised: March 9, 2002
+Last revised: January 5, 2006
      _________________________________________________________________
 
                     Eggdrop Developers and Contributers
@@ -47,6 +47,7 @@ Last revised: March 9, 2002
     RebuM      Martin Matuska
     rtc        Peter 'Rattacresh' Backes
     SegFault   Ryan Butler
+    SET        Sven Trenkel
     Shaun      Shaun Braun
     slennox    Shayne Lennox
     stdarg

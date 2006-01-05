@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: binds.c,v 1.26 2006/01/03 02:39:36 guppy Exp $";
+static const char rcsid[] = "$Id: binds.c,v 1.27 2006/01/05 20:42:42 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -178,7 +178,7 @@ bind_table_t *bind_table_lookup_or_fake(const char *name)
 /* Look up a bind entry based on either function name or id. */
 bind_entry_t *bind_entry_lookup(bind_table_t *table, int id, const char *mask, const char *function_name, Function callback)
 {
-	bind_entry_t *entry;
+	bind_entry_t *entry = NULL;
 	int hit, searchall = 0;
 
 	if (!table) {
@@ -290,7 +290,6 @@ int bind_entry_add(bind_table_t *table, const char *flags, const char *mask, con
 		while (bind_entry_lookup(0, next_id, 0, 0, 0)) {
 			next_id++;
 			if (next_id < 1) next_id = 1;
-			break;
 		}
 	}
 
