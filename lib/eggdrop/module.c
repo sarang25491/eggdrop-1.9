@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: module.c,v 1.8 2005/12/28 17:27:31 sven Exp $";
+static const char rcsid[] = "$Id: module.c,v 1.9 2006/01/06 19:01:40 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -54,6 +54,11 @@ int module_init(void)
 
 int module_shutdown(void)
 {
+	module_list_t **entry = &module_list_head;
+
+	while (*entry) {
+		if (module_unload((*entry)->modinfo.name, MODULE_RESTART)) entry = &(*entry)->next;
+	}
 	bind_table_del(BT_load);
 	bind_table_del(BT_unload);
 
