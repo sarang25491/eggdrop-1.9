@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: terminal.h,v 1.3 2004/06/22 20:12:37 wingman Exp $
+ * $Id: terminal.h,v 1.4 2006/01/06 03:59:30 sven Exp $
  */
 #ifndef _EGG_TERMINAL_H
 #define _EGG_TERMINAL_H
@@ -28,6 +28,6 @@
 #define TERMINAL_HOST	"terminal"
 
 int terminal_init(void);
-int terminal_shutdown(void);
+int terminal_shutdown(int runmode);
 
 #endif /* _EGG_TERMINAL_H */

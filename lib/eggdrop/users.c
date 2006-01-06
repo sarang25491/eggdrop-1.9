@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.48 2005/12/01 21:22:11 stdarg Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.49 2006/01/06 03:59:30 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -98,14 +98,14 @@ int user_init(void)
 
 int user_shutdown(void)
 {
-	bind_table_del(BT_udelete);
-	bind_table_del(BT_uset);
-	bind_table_del(BT_uflags);
-
 	hash_table_walk(uid_ht, userlist_delete_walker, NULL);
 
 	/* flush any pending user delete events */
 	garbage_run();
+
+	bind_table_del(BT_udelete);
+	bind_table_del(BT_uset);
+	bind_table_del(BT_uflags);
 
 	hash_table_delete(irchost_cache_ht);
 	hash_table_delete(uid_ht);

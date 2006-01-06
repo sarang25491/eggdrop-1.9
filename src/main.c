@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.187 2005/05/08 04:40:13 stdarg Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.188 2006/01/06 03:59:30 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -354,8 +354,8 @@ static void core_shutdown_or_restart()
 	user_save(core_config.userfile);
 
 	/* destroy terminal */
-	if (terminal_mode && runmode != RUNMODE_RESTART)
-		terminal_shutdown();
+	if (terminal_mode)
+		terminal_shutdown(runmode);
 
 	/* unload core help */
 	//help_unload_by_module("core");
@@ -603,8 +603,8 @@ int core_init()
 	/* start terminal */
 	if (runmode != RUNMODE_RESTART) {
 		if (backgrd) bg_finish_split();
-		if (terminal_mode) terminal_init();
 	}
+	if (terminal_mode) terminal_init();
 
 	return (0);
 }

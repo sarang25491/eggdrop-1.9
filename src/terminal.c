@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: terminal.c,v 1.5 2004/06/23 21:12:57 stdarg Exp $";
+static const char rcsid[] = "$Id: terminal.c,v 1.6 2006/01/06 03:59:30 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>			/* partyline_*		*/
@@ -72,13 +72,13 @@ int terminal_init(void)
 
 	/* Connect an idx to stdin. */
 	terminal_session.in_idx = sockbuf_new();
-	sockbuf_set_sock(terminal_session.in_idx, fileno(stdin), SOCKBUF_CLIENT);
+	sockbuf_set_sock(terminal_session.in_idx, dup(fileno(stdin)), SOCKBUF_CLIENT);
 	sockbuf_set_handler(terminal_session.in_idx, &terminal_sockbuf_handler, NULL);
 	linemode_on(terminal_session.in_idx);
 
 	/* And one for stdout. */
 	terminal_session.out_idx = sockbuf_new();
-	sockbuf_set_sock(terminal_session.out_idx, fileno(stdout), SOCKBUF_NOREAD);
+	sockbuf_set_sock(terminal_session.out_idx, dup(fileno(stdout)), SOCKBUF_NOREAD);
 
 	putlog(LOG_MISC, "*", _("Entering terminal mode."));
 
@@ -92,9 +92,16 @@ int terminal_init(void)
 	return (0);
 }
 
-int terminal_shutdown(void)
+#define RUNMODE_RESTART 3
+
+int terminal_shutdown(int runmode)
 {
-        if (terminal_session.party) {
+	if (runmode == RUNMODE_RESTART) {
+		terminal_user = NULL;
+		return(0);
+	}
+
+	if (terminal_session.party) {
 		partymember_delete(terminal_session.party, _("Shutdown"));
 		terminal_session.party = NULL;
 	}
