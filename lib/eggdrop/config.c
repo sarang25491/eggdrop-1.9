@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: config.c,v 1.10 2004/10/17 05:14:06 stdarg Exp $";
+static const char rcsid[] = "$Id: config.c,v 1.11 2006/01/06 00:53:10 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -97,8 +97,10 @@ int config_delete_root(const char *handle)
 			if (roots[i].handle) free(roots[i].handle);
 			xml_node_delete_callbacked(roots[i].root, config_delete_var);
 			memmove(roots+i, roots+i+1, sizeof(*roots) * (nroots-i-1));
-			if (--nroots == 0)
+			if (--nroots == 0) {
 				free(roots);
+				roots = NULL;
+			}
 			return (0);	
 		}
 	}
@@ -145,7 +147,7 @@ static void config_delete_var(void *client_data)
 	switch (var->type) {
 		case (CONFIG_STRING):
 			free(*(char **)var->ptr);
-			var->ptr = NULL;
+			*(char **) var->ptr = NULL;
 			break;
 		case (CONFIG_INT):
 			break;
