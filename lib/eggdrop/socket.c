@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: socket.c,v 1.11 2005/12/09 06:24:50 wcc Exp $";
+static const char rcsid[] = "$Id: socket.c,v 1.12 2006/05/21 19:32:19 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -111,7 +111,9 @@ int socket_get_name(int sock, char **ip, int *port)
 		if (ip) {
 			*ip = malloc(128);
 			if (IN6_IS_ADDR_V4MAPPED((&name.u.ipv6.sin6_addr))) {
-				inet_ntop(AF_INET, &name.u.ipv6.sin6_addr.s6_addr32[3], *ip, 128);
+				unsigned int ipv4part = 0;
+				memcpy(&ipv4part, &name.u.ipv6.sin6_addr.s6_addr[12], 4);
+				inet_ntop(AF_INET, &ipv4part, *ip, 128);
 			}
 			else {
 				inet_ntop(AF_INET6, &name.u.ipv6.sin6_addr, *ip, 128);
@@ -192,8 +194,14 @@ int socket_accept(int sock, char **peer_ip, int *peer_port)
 	if (len == sizeof(name.u.ipv6)) {
 		*peer_ip = malloc(128);
 		*peer_port = ntohs(name.u.ipv6.sin6_port);
-		inet_ntop(AF_INET6, &name.u.ipv6.sin6_addr, *peer_ip, 128);
-		if (IN6_IS_ADDR_V4MAPPED((&name.u.ipv6.sin6_addr))) memmove(*peer_ip, *peer_ip+7, strlen(*peer_ip)-6);
+		if (IN6_IS_ADDR_V4MAPPED((&name.u.ipv6.sin6_addr))) {
+			unsigned int ipv4part = 0;
+			memcpy(&ipv4part, &name.u.ipv6.sin6_addr.s6_addr[12], 4);
+			inet_ntop(AF_INET, &ipv4part, *peer_ip, 128);
+		}
+		else {
+			inet_ntop(AF_INET6, &name.u.ipv6.sin6_addr, *peer_ip, 128);
+		}
 	}
 #endif
 	return(newsock);
