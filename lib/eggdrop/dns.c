@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dns.c,v 1.15 2005/12/09 06:24:50 wcc Exp $";
+static const char rcsid[] = "$Id: dns.c,v 1.16 2006/06/19 15:47:33 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -637,7 +637,6 @@ static void parse_reply(char *response, int nbytes)
 			/*fprintf(fp, "ipv6 reply\n");*/
 			inet_ntop(AF_INET6, ptr, result, 512);
 			answer_add(&q->answer, result);
-			return;		/* FIXME: Why is this here? This either needs to be explained in a comment or removed... doesn't look right. */
 		}
 		#endif
 		if (reply.type == 12) {

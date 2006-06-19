@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptbind.c,v 1.16 2005/12/29 01:38:12 sven Exp $";
+static const char rcsid[] = "$Id: scriptbind.c,v 1.17 2006/06/19 15:47:33 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -29,60 +29,22 @@ static int script_bind(char *table_name, char *flags, char *mask, script_callbac
 static int script_unbind(char *table_name, char *mask, char *name);
 static int script_rebind(char *table_name, char *flags, char *mask, char *command, char *newflags, char *newmask);
 
-typedef struct {
-	int bind_id;
-	bind_table_t *table;
-	script_callback_t *callback;
-} fake_bind_placeholder_t;
-
-static int fake_bind_placeholder(void *client_data, ...)
-{
-	fake_bind_placeholder_t *fake = client_data;
-	script_callback_t *callback;
-	void *args[11];
-	int i;
-	va_list ap;
-
-	callback = fake->callback;
-	callback->syntax = strdup(fake->table->syntax);
-	bind_entry_overwrite(fake->table, fake->bind_id, NULL, NULL, callback->callback, callback, callback->owner);
-
-	args[0] = callback;
-	va_start(ap, client_data);
-	for (i = 1; i <= fake->table->nargs; i++) {
-		args[i] = va_arg(ap, void *);
-	}
-	va_end(ap);
-	free(fake);
-	return callback->callback(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10]);
-}
-
 static int script_bind(char *table_name, char *flags, char *mask, script_callback_t *callback)
 {
 	bind_table_t *table;
 	int retval;
 
-	table = bind_table_lookup_or_fake(table_name);
+	table = bind_table_lookup(table_name);
 	if (!table) {
 		putlog (LOG_MISC, "*", _("Script '%s' accessed non-existing bind table '%s'."),
 				NULL, table_name);
 		return(1);
 	}
 
-	if (table->syntax) {
-		callback->syntax = strdup(table->syntax);
-		retval = bind_entry_add(table, flags, mask, callback->name, BIND_WANTS_CD, callback->callback, callback, callback->owner);
-	}
-	else {
-		fake_bind_placeholder_t *fake;
+	if (table->syntax) callback->syntax = strdup(table->syntax);
+	else callback->syntax = NULL;
 
-		fake = calloc(1, sizeof(*fake));
-		fake->table = table;
-		fake->callback = callback;
-		fake->bind_id = bind_entry_add(table, flags, mask, callback->name, BIND_WANTS_CD, (Function) fake_bind_placeholder, fake, callback->owner);
-		retval = fake->bind_id;
-	}
-	return(retval);
+	return bind_entry_add(table, flags, mask, callback->name, BIND_WANTS_CD, callback->callback, callback, callback->owner);
 }
 
 static int script_unbind(char *table_name, char *mask, char *name)
@@ -93,15 +55,7 @@ static int script_unbind(char *table_name, char *mask, char *name)
 	table = bind_table_lookup(table_name);
 	if (!table) return(1);
 
-	retval = bind_entry_del(table, -1, mask, name, NULL);
-	return(retval);
-}
-
-static int script_unbind_id(int id)
-{
-	int retval;
-
-	retval = bind_entry_del(NULL, id, NULL, NULL, NULL);
+	retval = bind_entry_del(table, mask, name, NULL);
 	return(retval);
 }
 
@@ -111,19 +65,12 @@ static int script_rebind(char *table_name, char *flags, char *mask, char *comman
 
 	table = bind_table_lookup(table_name);
 	if (!table) return(-1);
-	return bind_entry_modify(table, -1, mask, command, newflags, newmask);
-}
-
-static int script_rebind_id(int id, char *newflags, char *newmask)
-{
-	return bind_entry_modify(NULL, id, NULL, NULL, newflags, newmask);
+	return bind_entry_modify(table, mask, command, newflags, newmask);
 }
 
 script_command_t script_bind_cmds[] = {
 	{"", "bind", script_bind, NULL, 4, "sssc", "table flags mask command", SCRIPT_INTEGER, 0},	/* DDD	*/
 	{"", "unbind", script_unbind, NULL, 3, "sss", "table mask command", SCRIPT_INTEGER, 0},		/* DDD	*/
-	{"", "unbind_id", script_unbind_id, NULL, 1, "i", "id", SCRIPT_INTEGER, 0},		/* DDD	*/
 	{"", "rebind", script_rebind, NULL, 6, "ssssss", "table flags mask command newflags newmask", SCRIPT_INTEGER, 0},
-	{"", "rebind_id", script_rebind_id, NULL, 3, "iss", "id newflags newmask", SCRIPT_INTEGER, 0},
 	{0}
 };

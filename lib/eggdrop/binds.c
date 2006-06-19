@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: binds.c,v 1.27 2006/01/05 20:42:42 sven Exp $";
+static const char rcsid[] = "$Id: binds.c,v 1.28 2006/06/19 15:47:33 stdarg Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -176,7 +176,7 @@ bind_table_t *bind_table_lookup_or_fake(const char *name)
 }
 
 /* Look up a bind entry based on either function name or id. */
-bind_entry_t *bind_entry_lookup(bind_table_t *table, int id, const char *mask, const char *function_name, Function callback)
+bind_entry_t *bind_entry_lookup(bind_table_t *table, const char *mask, const char *function_name, Function callback)
 {
 	bind_entry_t *entry = NULL;
 	int hit, searchall = 0;
@@ -189,9 +189,6 @@ bind_entry_t *bind_entry_lookup(bind_table_t *table, int id, const char *mask, c
 	for (; table; table = table->next) {
 		for (entry = table->entries; entry; entry = entry->next) {
 			if (entry->flags & BIND_DELETED) continue;
-			if (id != -1 && entry->id >= 0) {
-				if (entry->id == id) break;
-			}
 			else {
 				hit = 0;
 				if (!entry->mask || !strcmp(entry->mask, mask)) hit++;
@@ -205,25 +202,25 @@ bind_entry_t *bind_entry_lookup(bind_table_t *table, int id, const char *mask, c
 	return(entry);
 }
 
-int bind_entry_del(bind_table_t *table, int id, const char *mask, const char *function_name, Function callback)
+int bind_entry_del(bind_table_t *table, const char *mask, const char *function_name, Function callback)
 {
 	bind_entry_t *entry;
 
-	entry = bind_entry_lookup(table, id, mask, function_name, callback);
+	entry = bind_entry_lookup(table, mask, function_name, callback);
 	
 	/* better to issue a warning message than silently ignoring 
 	 * that this entry is not found...at least for now */
 	if (entry == NULL) {
 		if (table) {
-			putlog(LOG_DEBUG, "*", "A bind entry '%i/%s/%s' is marked for destroying but isn't found in table '%s'.",
-				id, mask, function_name, table->name);
+			putlog(LOG_DEBUG, "*", "A bind entry '%s/%s' is marked for destroying but isn't found in table '%s'.",
+				mask, function_name, table->name);
 			putlog(LOG_DEBUG, "*", "Current entries are:");
 			for (entry = table->entries; entry; entry = entry->next) {
-				putlog(LOG_DEBUG, "*", "  %i/%s/%s", entry->id, entry->mask, entry->function_name);
+				putlog(LOG_DEBUG, "*", "  %s/%s", entry->mask, entry->function_name);
 			}
 		} else {
-			putlog(LOG_DEBUG, "*", "A bind entry '%i/%s/%s' is marked for destroying but isn't found in any table.",
-				id, mask, function_name);
+			putlog(LOG_DEBUG, "*", "A bind entry '%s/%s' is marked for destroying but isn't found in any table.",
+				mask, function_name);
 		}
 		return -1;
 	}
@@ -248,11 +245,11 @@ static void bind_entry_really_del(bind_table_t *table, bind_entry_t *entry)
 }
 
 /* Modify a bind entry's flags and mask. */
-int bind_entry_modify(bind_table_t *table, int id, const char *mask, const char *function_name, const char *newflags, const char *newmask)
+int bind_entry_modify(bind_table_t *table, const char *mask, const char *function_name, const char *newflags, const char *newmask)
 {
 	bind_entry_t *entry;
 
-	entry = bind_entry_lookup(table, id, mask, function_name, NULL);
+	entry = bind_entry_lookup(table, mask, function_name, NULL);
 	if (!entry) return(-1);
 
 	/* Modify it. */
@@ -263,11 +260,11 @@ int bind_entry_modify(bind_table_t *table, int id, const char *mask, const char 
 }
 
 /* Overwrite a bind entry's callback and client_data. */
-int bind_entry_overwrite(bind_table_t *table, int id, const char *mask, const char *function_name, Function callback, void *client_data, event_owner_t *owner)
+int bind_entry_overwrite(bind_table_t *table, const char *mask, const char *function_name, Function callback, void *client_data, event_owner_t *owner)
 {
 	bind_entry_t *entry;
 
-	entry = bind_entry_lookup(table, id, mask, function_name, NULL);
+	entry = bind_entry_lookup(table, mask, function_name, NULL);
 	if (!entry) return(-1);
 
 	if ((entry->client_data != client_data || entry->owner != owner) && entry->owner && entry->owner->on_delete) entry->owner->on_delete(entry->owner, entry->client_data);
@@ -279,21 +276,9 @@ int bind_entry_overwrite(bind_table_t *table, int id, const char *mask, const ch
 
 int bind_entry_add(bind_table_t *table, const char *flags, const char *mask, const char *function_name, int bind_flags, Function callback, void *client_data, event_owner_t *owner)
 {
-	static int next_id = 1, wraparound = 0;
 	bind_entry_t *entry, *old_entry;
 
-	if (next_id < 1) {
-		next_id = 1;
-		wraparound = 1;
-	}
-	if (wraparound) {
-		while (bind_entry_lookup(0, next_id, 0, 0, 0)) {
-			next_id++;
-			if (next_id < 1) next_id = 1;
-		}
-	}
-
-	old_entry = bind_entry_lookup(table, -1, mask, function_name, NULL);
+	old_entry = bind_entry_lookup(table, mask, function_name, NULL);
 
 	if (old_entry) {
 		if (table->flags & BIND_STACKABLE) {
@@ -327,9 +312,8 @@ int bind_entry_add(bind_table_t *table, const char *flags, const char *mask, con
 	entry->client_data = client_data;
 	entry->flags = bind_flags;
 	entry->owner = owner;
-	entry->id = next_id++;
 
-	return(entry->id);
+	return(0);
 }
 
 /* Execute a bind entry with the given argument list. */
@@ -437,7 +421,7 @@ static int bind_vcheck_hits(bind_table_t *table, flags_t *user_flags, const char
 
 		if (table->match_type & MATCH_NONE || !entry->mask) cmp = 0;
 		else if (table->match_type & MATCH_MASK) {
-			cmp = !wild_match_per((unsigned char *)entry->mask, (unsigned char *)match);
+			cmp = !wild_match_per(entry->mask, match);
 		}
 		else if (table->match_type & MATCH_PARTIAL) {
 			cmp = 1;
@@ -509,7 +493,7 @@ void bind_rem_list(const char *table_name, bind_list_t *cmds)
 	for (; cmds->mask; cmds++) {
 		snprintf(name, sizeof(name), "*%s:%s", table->name, cmds->mask);
 		name[sizeof(name)-1] = 0;
-		bind_entry_del(table, -1, cmds->mask, name, cmds->callback);
+		bind_entry_del(table, cmds->mask, name, cmds->callback);
 	}
 }
 
@@ -523,5 +507,5 @@ void bind_rem_simple(const char *table_name, const char *flags, const char *mask
 
 	snprintf(name, sizeof(name), "*%s:%s", table->name, mask ? mask : "");
 	name[sizeof(name)-1] = 0;
-	bind_entry_del(table, -1, mask, name, callback);
+	bind_entry_del(table, mask, name, callback);
 }

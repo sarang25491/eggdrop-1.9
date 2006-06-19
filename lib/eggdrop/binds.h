@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: binds.h,v 1.10 2005/12/28 17:27:31 sven Exp $
+ * $Id: binds.h,v 1.11 2006/06/19 15:47:33 stdarg Exp $
  */
 
 #ifndef _EGG_BINDS_H_
@@ -74,7 +74,6 @@ typedef struct bind_entry_b {
 	void *client_data;
 	int nhits;
 	int flags;
-	int id;
 	event_owner_t *owner;
 } bind_entry_t;
 
@@ -99,9 +98,9 @@ void kill_binds_by_module(struct egg_module *module);
 bind_table_t *bind_table_lookup(const char *name);
 bind_table_t *bind_table_lookup_or_fake(const char *name);
 int bind_entry_add(bind_table_t *table, const char *user_flags, const char *mask, const char *function_name, int bind_flags, Function callback, void *client_data, event_owner_t *owner);
-int bind_entry_del(bind_table_t *table, int id, const char *mask, const char *function_name, Function callback);
-int bind_entry_modify(bind_table_t *table, int id, const char *mask, const char *function_name, const char *newflags, const char *newmask);
-int bind_entry_overwrite(bind_table_t *table, int id, const char *mask, const char *function_name, Function callback, void *client_data, event_owner_t *owner);
+int bind_entry_del(bind_table_t *table, const char *mask, const char *function_name, Function callback);
+int bind_entry_modify(bind_table_t *table, const char *mask, const char *function_name, const char *newflags, const char *newmask);
+int bind_entry_overwrite(bind_table_t *table, const char *mask, const char *function_name, Function callback, void *client_data, event_owner_t *owner);
 void bind_add_list(const char *table_name, bind_list_t *cmds);
 void bind_add_simple(const char *table_name, const char *flags, const char *mask, Function callback);
 
