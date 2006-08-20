@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: linemode.h,v 1.2 2003/12/17 07:39:14 wcc Exp $
+ * $Id: linemode.h,v 1.3 2006/08/20 15:23:05 sven Exp $
  */
 
 #ifndef _EGG_LINEMODE_H_
@@ -24,5 +24,6 @@
 
 int linemode_on(int idx);
 int linemode_off(int idx);
+int linemode_check(int idx);
 
 #endif /* !_EGG_LINEMODE_H_ */

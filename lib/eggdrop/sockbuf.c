@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: sockbuf.c,v 1.20 2005/11/15 03:59:49 wcc Exp $";
+static const char rcsid[] = "$Id: sockbuf.c,v 1.21 2006/08/20 15:23:05 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -758,7 +758,7 @@ int sockbuf_get_filter_data(int idx, sockbuf_filter_t *filter, void *client_data
 	sbuf = &sockbufs[idx];
 	for (i = 0; i < sbuf->nfilters; i++) {
 		if (sbuf->filters[i] == filter) {
-			*(void **)client_data_ptr = sbuf->filter_client_data[i];
+			if (client_data_ptr) *(void **)client_data_ptr = sbuf->filter_client_data[i];
 			return(0);
 		}
 	}
@@ -777,8 +777,8 @@ int sockbuf_detach_filter(int idx, sockbuf_filter_t *filter, void *client_data_p
 
 	for (i = 0; i < sbuf->nfilters; i++) if (sbuf->filters[i] == filter) break;
 	if (i == sbuf->nfilters) {
-		if (client_data_ptr) client_data_ptr = NULL;
-		return(0);
+		if (client_data_ptr) *(void **)client_data_ptr = NULL;
+		return(-1);
 	}
 
 	if (client_data_ptr) *(void **)client_data_ptr = sbuf->filter_client_data[i];

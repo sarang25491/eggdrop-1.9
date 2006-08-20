@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: linemode.c,v 1.7 2004/10/17 05:14:06 stdarg Exp $";
+static const char rcsid[] = "$Id: linemode.c,v 1.8 2006/08/20 15:23:05 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -96,8 +96,8 @@ static int linemode_on_eof(void *client_data, int idx, int err, const char *errm
 	/* If there is any buffered data, do one more on->read callback. */
 	if (old_data->len) {
 		old_data->data[old_data->len] = 0;
-		old_data->len = 0;
 		sockbuf_on_read(idx, LINEMODE_LEVEL, old_data->data, old_data->len);
+		old_data->len = 0;
 	}
 
 	/* And now continue the eof event chain. */
@@ -121,23 +121,62 @@ static sockbuf_filter_t linemode_filter = {
 	NULL, linemode_on_delete
 };
 
+/*!
+ * \brief Turns linebuffering on an index on
+ *
+ * \param idx the index to turn on linebuffering for
+ * \return 0 on success, -1 on error
+ */
+
 int linemode_on(int idx)
 {
 	linemode_t *old_data;
 
+	if (linemode_check(idx)) return -1;
 	old_data = calloc(1, sizeof(*old_data));
 	sockbuf_attach_filter(idx, &linemode_filter, old_data);
 	return(0);
 }
 
+/*!
+ * \brief Turns linebuffering on an index off
+ *
+ * If there if a line currently buffered it's send of immidiatly.
+ *
+ * \param idx the index to turn off linebuffering for
+ * \return 0 on success, -1 on error
+ */
+
 int linemode_off(int idx)
 {
+	int ret;
 	linemode_t *old_data;
 
-	sockbuf_detach_filter(idx, &linemode_filter, &old_data);
+	ret = sockbuf_detach_filter(idx, &linemode_filter, &old_data);
+	if (ret) return ret;
 	if (old_data) {
-		if (old_data->data) free(old_data->data);
+		if (old_data->data) {
+			if (old_data->len) {
+				old_data->data[old_data->len] = 0;
+				sockbuf_on_read(idx, LINEMODE_LEVEL, old_data->data, old_data->len);
+				old_data->len = 0;
+			}
+			free(old_data->data);
+		}
 		free(old_data);
 	}
 	return(0);
+}
+
+/*!
+ * \brief Checks if an index is in linebuffered mode
+ *
+ * \param idx the index to check
+ * \return 1 if linebuffered, 0 if not linebuffered, -1 on error
+ */
+
+int linemode_check(int idx)
+{
+	if (!sockbuf_isvalid(idx)) return -1;
+	return !sockbuf_get_filter_data(idx, &linemode_filter, 0);
 }
