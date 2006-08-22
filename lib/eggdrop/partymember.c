@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partymember.c,v 1.20 2006/08/22 01:41:28 sven Exp $";
+static const char rcsid[] = "$Id: partymember.c,v 1.21 2006/08/22 05:21:02 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -144,7 +144,7 @@ partymember_t *partymember_new(int pid, user_t *user, const char *nick, const ch
 	party_head = mem;
 	hash_table_insert(pid_ht, (void *)pid, mem);
 	npartymembers++;
-	bind_check(BT_new, &user->settings[0].flags, user->handle, mem);
+	bind_check(BT_new, NULL, nick, mem);
 	return(mem);
 }
 
@@ -156,7 +156,7 @@ int partymember_delete(partymember_t *p, const char *text)
 
 	if (p->flags & PARTY_DELETED) return(-1);
 
-	bind_check(BT_quit, &p->user->settings[0].flags, p->user->handle, p, text);
+	bind_check(BT_quit, NULL, p->nick, p, text);
 
 	/* Mark it as deleted so it doesn't get reused before it's free. */
 	p->flags |= PARTY_DELETED;
@@ -208,7 +208,7 @@ int partymember_set_nick(partymember_t *p, const char *nick)
 		}
 		partychan_free_common(common);
 	}
-	bind_check(BT_nick, &p->user->settings[0].flags, NULL, p, oldnick, p->nick);
+	bind_check(BT_nick, NULL, NULL, p, oldnick, p->nick);
 	if (oldnick) free(oldnick);
 	p->flags &= ~PARTY_SELECTED;
 	return(0);

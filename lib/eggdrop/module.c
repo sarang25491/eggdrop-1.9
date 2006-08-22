@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: module.c,v 1.9 2006/01/06 19:01:40 sven Exp $";
+static const char rcsid[] = "$Id: module.c,v 1.10 2006/08/22 05:21:01 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -48,7 +48,7 @@ static module_list_t *find_module(const char *name)
 int module_init(void)
 {
 	BT_load = bind_table_add(BTN_LOAD_MODULE, 1, "s", MATCH_MASK, 0);		/* DDD	*/
-	BT_unload = bind_table_add(BTN_UNLOAD_MODULE, 1, "s", MATCH_MASK, 0);		/* DDD	*/
+	BT_unload = bind_table_add(BTN_UNLOAD_MODULE, 2, "ss", MATCH_MASK, 0);		/* DDD	*/
 	return(0);
 }
 
@@ -153,7 +153,7 @@ int module_unload(const char *name, int why)
 	if (prev) prev->next = entry->next;
 	else module_list_head = entry->next;
 	free(entry);
-	bind_check(BT_unload, NULL, name, name);
+	bind_check(BT_unload, NULL, name, name, why == MODULE_USER ? "request" : why == MODULE_SHUTDOWN ? "shutdown" : "restart");
 	putlog(LOG_MISC, "*", "Module unloaded: %s", name);
 	return(0);
 }
