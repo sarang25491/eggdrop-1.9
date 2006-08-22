@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: partyline.h,v 1.23 2004/10/17 05:14:06 stdarg Exp $
+ * $Id: partyline.h,v 1.24 2006/08/22 01:41:28 sven Exp $
  */
 
 #ifndef _EGG_PARTYLINE_H_
@@ -27,6 +27,8 @@
 #define PARTY_SELECTED	2
 
 /* Bind table names for partyline events */
+#define BTN_PARTYLINE_NEW  "partynew"
+#define BTN_PARTYLINE_QUIT  "partyquit"
 #define BTN_PARTYLINE_JOIN	"partyjoin"
 #define BTN_PARTYLINE_NICK	"partynick"
 #define BTN_PARTYLINE_PART	"partypart"

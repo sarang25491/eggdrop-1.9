@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.49 2006/06/19 15:47:33 stdarg Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.50 2006/08/22 01:41:28 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -677,28 +677,27 @@ static int party_chhandle(partymember_t *p, const char *nick, user_t *u, const c
 		if (old) free(old);
 		if (newh) free(newh);
 		partymember_printf(p, _("Syntax: chhandle <old_handle> <new_handle>"));
-		goto chhandleend;
+		return 0;
 	}
 
 	dest = user_lookup_by_handle(old);
 	if (!dest) {
+		partymember_printf(p, _("Error: User '%s' does not exist."), old);
 		free(old);
 		free(newh);
-		partymember_printf(p, _("Error: User '%s' does not exist."), old);
-		goto chhandleend;
+		return 0;
 	}
 
 	if (user_lookup_by_handle(newh)) {
+		partymember_printf(p, _("Error: User '%s' already exists."), newh);
 		free(old);
 		free(newh);
-		partymember_printf(p, _("Error: User '%s' already exists."), newh);
 		return 0;
 	}
 
 	if (!user_change_handle(dest, newh))
 		partymember_printf(p, _("Ok, changed."));
 
-chhandleend:
 	free(newh);
 	free(old);
 

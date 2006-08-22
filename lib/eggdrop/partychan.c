@@ -18,16 +18,13 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partychan.c,v 1.21 2005/11/14 04:44:43 wcc Exp $";
+static const char rcsid[] = "$Id: partychan.c,v 1.22 2006/08/22 01:41:28 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
 
 /* When does cid wrap around? This lets cids get up to 99999. */
 #define CID_WRAPAROUND 100000
-
-/* Flags for partyline members. */
-#define PARTY_DELETED 1
 
 static hash_table_t *cid_ht = NULL;
 static partychan_t *partychan_head = NULL;
@@ -37,7 +34,7 @@ static partymember_common_t *common_list_head = NULL;
 /* Some bind tables for partyline channels. */
 static bind_table_t *BT_partyjoin = NULL,
 	*BT_partypart = NULL,
-	*BT_partypub = NULL;;
+	*BT_partypub = NULL;
 
 int partychan_init(void)
 {

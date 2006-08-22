@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partymember.c,v 1.19 2004/10/17 05:14:06 stdarg Exp $";
+static const char rcsid[] = "$Id: partymember.c,v 1.20 2006/08/22 01:41:28 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -38,13 +38,15 @@ static bind_list_t partymember_udelete_binds[] = {
 	{0}
 };
 
-static bind_table_t *BT_nick = NULL;
+static bind_table_t *BT_nick = NULL, *BT_new = NULL, *BT_quit = NULL;
 
 int partymember_init(void)
 {
 	pid_ht = hash_table_create(NULL, NULL, 13, HASH_TABLE_INTS);
 	bind_add_list(BTN_USER_DELETE, partymember_udelete_binds);
 	BT_nick = bind_table_add(BTN_PARTYLINE_NICK, 3, "Pss", MATCH_NONE, BIND_STACKABLE);
+	BT_new = bind_table_add(BTN_PARTYLINE_NEW, 1, "P", MATCH_MASK, BIND_STACKABLE);
+	BT_quit = bind_table_add(BTN_PARTYLINE_QUIT, 2, "Ps", MATCH_MASK, BIND_STACKABLE);
 	return(0);
 }
 
@@ -52,6 +54,8 @@ int partymember_shutdown(void)
 {
 	bind_rem_list(BTN_USER_DELETE, partymember_udelete_binds);
 	bind_table_del(BT_nick);
+	bind_table_del(BT_new);
+	bind_table_del(BT_quit);
 
 	/* force a garbage run since we might have some partymembers 
  	 * marked as deleted and w/o a garbage_run we may not destroy
@@ -140,6 +144,7 @@ partymember_t *partymember_new(int pid, user_t *user, const char *nick, const ch
 	party_head = mem;
 	hash_table_insert(pid_ht, (void *)pid, mem);
 	npartymembers++;
+	bind_check(BT_new, &user->settings[0].flags, user->handle, mem);
 	return(mem);
 }
 
@@ -150,6 +155,8 @@ int partymember_delete(partymember_t *p, const char *text)
 	partymember_t *mem;
 
 	if (p->flags & PARTY_DELETED) return(-1);
+
+	bind_check(BT_quit, &p->user->settings[0].flags, p->user->handle, p, text);
 
 	/* Mark it as deleted so it doesn't get reused before it's free. */
 	p->flags |= PARTY_DELETED;
