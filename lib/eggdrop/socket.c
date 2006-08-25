@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: socket.c,v 1.12 2006/05/21 19:32:19 stdarg Exp $";
+static const char rcsid[] = "$Id: socket.c,v 1.13 2006/08/25 17:22:50 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -311,7 +311,7 @@ int socket_ip_to_uint(const char *ip, unsigned int *longip)
 }
 
 /* Converts shorthand ipv6 notation (123:456::789) into long dotted-decimal
- * notation. 'dots' must be 16*4+1 = 65 bytes long. */
+ * notation. 'dots' must be 32*2 = 64 bytes long. */
 int socket_ipv6_to_dots(const char *ip, char *dots)
 {
 #ifndef DO_IPV6
@@ -322,15 +322,23 @@ int socket_ipv6_to_dots(const char *ip, char *dots)
 
 	dots[0] = 0;
 	if (inet_pton(AF_INET6, ip, &buf) <= 0) return(-1);
-	sprintf(dots, "%u.%u.%u.%u.%u.%u.%u.%u.%u.%u.%u.%u.%u.%u.%u.%u",
-		buf.s6_addr[0], buf.s6_addr[1],
-		buf.s6_addr[2], buf.s6_addr[3],
-		buf.s6_addr[4], buf.s6_addr[5],
-		buf.s6_addr[6], buf.s6_addr[7],
-		buf.s6_addr[8], buf.s6_addr[9],
-		buf.s6_addr[10], buf.s6_addr[11],
-		buf.s6_addr[12], buf.s6_addr[13],
-		buf.s6_addr[14], buf.s6_addr[15]
+	sprintf(dots, "%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x",
+		buf.s6_addr[0] >> 4, buf.s6_addr[0] & 0xf,
+		buf.s6_addr[1] >> 4, buf.s6_addr[1] & 0xf,
+		buf.s6_addr[2] >> 4, buf.s6_addr[2] & 0xf,
+		buf.s6_addr[3] >> 4, buf.s6_addr[3] & 0xf,
+		buf.s6_addr[4] >> 4, buf.s6_addr[4] & 0xf,
+		buf.s6_addr[5] >> 4, buf.s6_addr[5] & 0xf,
+		buf.s6_addr[6] >> 4, buf.s6_addr[6] & 0xf,
+		buf.s6_addr[7] >> 4, buf.s6_addr[7] & 0xf,
+		buf.s6_addr[8] >> 4, buf.s6_addr[8] & 0xf,
+		buf.s6_addr[9] >> 4, buf.s6_addr[9] & 0xf,
+		buf.s6_addr[10] >> 4, buf.s6_addr[10] & 0xf,
+		buf.s6_addr[11] >> 4, buf.s6_addr[11] & 0xf,
+		buf.s6_addr[12] >> 4, buf.s6_addr[12] & 0xf,
+		buf.s6_addr[13] >> 4, buf.s6_addr[13] & 0xf,
+		buf.s6_addr[14] >> 4, buf.s6_addr[14] & 0xf,
+		buf.s6_addr[15] >> 4, buf.s6_addr[15] & 0xf
 	);
 	return(0);
 #endif

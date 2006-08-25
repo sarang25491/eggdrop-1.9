@@ -8,6 +8,7 @@
 #define start script_LTX_start
 #define script_misc_cmds script_LTX_script_misc_cmds
 #define script_net_cmds script_LTX_script_net_cmds
+#define script_dns_cmds script_LTX_script_dns_cmds
 #define script_new_user_cmds script_LTX_script_new_user_cmds
 #define script_party_cmds script_LTX_script_party_cmds
 #define script_timer_cmds script_LTX_script_timer_cmds

@@ -18,13 +18,13 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptmod.c,v 1.13 2005/12/01 21:22:11 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptmod.c,v 1.14 2006/08/25 17:22:51 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
 #include "egg_script_internal.h"
 
-extern script_command_t script_bind_cmds[], script_net_cmds[], script_new_user_cmds[], script_party_cmds[], script_timer_cmds[],
+extern script_command_t script_bind_cmds[], script_net_cmds[], script_dns_cmds[], script_new_user_cmds[], script_party_cmds[], script_timer_cmds[],
        script_log_cmds[], script_config_cmds[], script_misc_cmds[];
 
 static int script_module_unload(char *name)
@@ -53,6 +53,7 @@ int script_LTX_start(egg_module_t *modinfo)
 	script_create_commands(script_log_cmds);
 	script_create_commands(script_bind_cmds);
 	script_create_commands(script_net_cmds);
+	script_create_commands(script_dns_cmds);
 	script_create_commands(script_new_user_cmds);
 	script_create_commands(script_party_cmds);
 	script_create_commands(script_timer_cmds);

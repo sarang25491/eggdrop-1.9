@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dns.c,v 1.16 2006/06/19 15:47:33 stdarg Exp $";
+static const char rcsid[] = "$Id: dns.c,v 1.17 2006/08/25 17:22:50 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -190,8 +190,8 @@ int egg_dns_lookup(const char *host, int timeout, dns_callback_t callback, void 
 	cache_id = cache_find(host);
 	if (cache_id >= 0) {
 		shuffleArray(cache[cache_id].answer.list, cache[cache_id].answer.len);
-	        callback(client_data, host, cache[cache_id].answer.list);
-	        return(-1);
+		callback(client_data, host, cache[cache_id].answer.list);
+		return(-1);
 	}
 
 	/* Ok, now see if it's in our host cache. */
@@ -272,19 +272,19 @@ int egg_dns_reverse(const char *ip, int timeout, dns_callback_t callback, void *
 	cache_id = cache_find(ip);
 	if (cache_id >= 0) {
 		shuffleArray(cache[cache_id].answer.list, cache[cache_id].answer.len);
-        	callback(client_data, ip, cache[cache_id].answer.list);
-	        return(-1);
+		callback(client_data, ip, cache[cache_id].answer.list);
+		return(-1);
 	}
 
 	/* We need to transform the ip address into the proper form
 	 * for reverse lookup. */
 	if (strchr(ip, ':')) {
-		char temp[65];
+		char temp[64];
 
 		socket_ipv6_to_dots(ip, temp);
 		reversed_ip = malloc(strlen(temp) + 10);
 		reverse_ip(temp, reversed_ip);
-		strcat(reversed_ip, ".in6.arpa");
+		strcat(reversed_ip, ".ip6.arpa");
 	}
 	else {
 		reversed_ip = malloc(strlen(ip) + 14);
