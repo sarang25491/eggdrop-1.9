@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: input.c,v 1.39 2005/06/21 02:55:34 stdarg Exp $";
+static const char rcsid[] = "$Id: input.c,v 1.40 2006/08/29 02:15:55 sven Exp $";
 #endif
 
 #include "server.h"
@@ -569,6 +569,7 @@ bind_list_t server_raw_binds[] = {
 	{NULL, "001", got001},
 	{NULL, "005", got005},
 	{NULL, "376", got376},
+	{NULL, "422", got376},
 	{NULL, "432", got432},
 	{NULL, "433", got433},
 	{NULL, "435", got435},

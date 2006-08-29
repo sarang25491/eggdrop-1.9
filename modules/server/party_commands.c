@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: party_commands.c,v 1.26 2005/12/07 03:17:49 wcc Exp $";
+static const char rcsid[] = "$Id: party_commands.c,v 1.27 2006/08/29 02:15:55 sven Exp $";
 #endif
 
 #include "server.h"
@@ -307,10 +307,16 @@ static int party_pls_chan(partymember_t *p, const char *nick, user_t *u, const c
 		return(0);
 	}
 
-	if (channel_lookup(name)) {
-		partymember_printf(p, _("Error: Channel '%s' already exists!"), name);
-		free(name);
-		return(0);
+	chan = channel_lookup(name);
+	if (chan) {
+		if (chan->flags & CHANNEL_STATIC) {
+			partymember_printf(p, _("Error: Channel '%s' already exists!"), name);
+			free(name);
+			return(0);
+		}
+		chan->flags |= CHANNEL_STATIC;
+		partymember_printf(p, _("Channel '%s' has been made permanent."), name);
+		return(BIND_RET_LOG);
 	}
 
 	chan = channel_add(name);

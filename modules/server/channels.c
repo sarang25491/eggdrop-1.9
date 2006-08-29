@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.38 2005/11/28 07:09:28 wcc Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.39 2006/08/29 02:15:55 sven Exp $";
  #endif
 
 #include "server.h"
@@ -64,6 +64,7 @@ void channel_free(channel_t *chan)
 	if (chan->prev) chan->prev->next = chan->next;
 	else channel_head = chan->next;
 	if (chan->next) chan->next->prev = chan->prev;
+	nchannels--;
 }
 
 /* Find or create channel when passed 0 or 1 */
@@ -116,7 +117,6 @@ int channel_remove(const char *name)
 	chan = channel_probe(name, 0);
 	if (!chan) return(-1);
 	chan->flags &= ~CHANNEL_STATIC;
-	nchannels--;
 	return(0);
 }
 
