@@ -96,6 +96,7 @@
 #define server_list server_LTX_server_list
 #define server_list_index server_LTX_server_list_index
 #define server_list_len server_LTX_server_list_len
+#define server_owner server_LTX_server_owner
 #define server_parse_input server_LTX_server_parse_input
 #define server_party_commands server_LTX_server_party_commands
 #define server_raw_binds server_LTX_server_raw_binds

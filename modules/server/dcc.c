@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dcc.c,v 1.25 2005/12/28 17:27:31 sven Exp $";
+static const char rcsid[] = "$Id: dcc.c,v 1.26 2006/09/12 01:50:51 sven Exp $";
 #endif
 
 #include <unistd.h>
@@ -118,7 +118,7 @@ static int dcc_dns_callback(void *client_data, const char *host, char **ips)
 
 int dcc_dns_set(const char *host)
 {
-	egg_dns_lookup(host, 0, dcc_dns_callback, NULL);
+	egg_dns_lookup(host, 0, dcc_dns_callback, NULL, &server_owner);
 	return(0);
 }
 

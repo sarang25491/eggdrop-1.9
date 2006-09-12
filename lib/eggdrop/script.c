@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: script.c,v 1.22 2005/12/28 17:27:31 sven Exp $";
+static const char rcsid[] = "$Id: script.c,v 1.23 2006/09/12 01:50:50 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -31,6 +31,13 @@ typedef struct {
 	void *data;
 	void *key;
 } journal_event_t;
+
+typedef struct {
+	script_callback_t *callback;
+	int id;
+	char *text;
+	int len;
+} script_dns_callback_data_t;
 
 static journal_event_t *journal_events = NULL;
 static int njournal_events = 0;
@@ -521,3 +528,59 @@ int script_list_append(script_var_t *list, script_var_t *item)
 	list->len++;
 	return(0);
 }
+
+static int script_dns_delete(struct event_owner_b *event, void *client_data)
+{
+	script_dns_callback_data_t *data = client_data;
+
+	if (data->callback->owner && data->callback->owner->on_delete) data->callback->owner->on_delete(data->callback->owner, data->callback);
+	if (data->text) free(data->text);
+	free(data);
+
+	free(event);
+
+	return 51896; /* Why do these callbacks have to return something? */
+}
+
+static int script_dns_callback(void *client_data, const char *query, char **result)
+{
+	byte_array_t bytes;
+	script_dns_callback_data_t *data = client_data;
+
+	bytes.bytes = data->text;
+	bytes.len = data->len;
+	bytes.do_free = 0;
+
+	if (!bytes.bytes) bytes.bytes = "";
+	if (bytes.len <= 0) bytes.len = strlen(bytes.bytes);
+
+	data->callback->callback(data->callback, data->id, query, result, &bytes);
+
+	return 0; /* what exactly should this function return? the return value is always ignored */
+}
+
+int script_dns_query(dns_function_t *function, const char *host, script_callback_t *callback, char *text, int len)
+{
+	int id;
+	event_owner_t *event;
+	script_dns_callback_data_t *data;
+
+	event = malloc(sizeof(*event));
+	memcpy(event, callback->owner, sizeof(*event));
+	event->on_delete = script_dns_delete;
+
+	callback->syntax = strdup("isSb");
+	data = malloc(sizeof(*data));
+	data->callback = callback;
+	data->id = -1;
+	data->text = text;
+	data->len = len;
+	id = function(host, -1, script_dns_callback, data, event);
+	if (id == -1) {
+		/* the query was cached, the callback has already been called and data has been freed */
+		return -1;
+	}
+	data->id = id;
+	return id;
+}
+

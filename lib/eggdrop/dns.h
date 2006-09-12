@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: dns.h,v 1.2 2004/06/22 18:47:27 wingman Exp $
+ * $Id: dns.h,v 1.3 2006/09/12 01:50:50 sven Exp $
  */
 
 #ifndef _EGG_DNS_H_
@@ -34,8 +34,8 @@ int egg_dns_init(void);
 int egg_dns_shutdown(void);
 
 void egg_dns_send(char *query, int len);
-int egg_dns_lookup(const char *host, int timeout, dns_callback_t callback, void *client_data);
-int egg_dns_reverse(const char *ip, int timeout, dns_callback_t callback, void *client_data);
+int egg_dns_lookup(const char *host, int timeout, dns_callback_t callback, void *client_data, event_owner_t *owner);
+int egg_dns_reverse(const char *ip, int timeout, dns_callback_t callback, void *client_data, event_owner_t *owner);
 int egg_dns_cancel(int id, int issue_callback);
 
 #endif /* !_EGG_DNS_H_ */

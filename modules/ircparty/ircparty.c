@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: ircparty.c,v 1.14 2005/11/14 04:44:43 wcc Exp $";
+static const char rcsid[] = "$Id: ircparty.c,v 1.15 2006/09/12 01:50:50 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -32,6 +32,12 @@ static config_var_t irc_config_vars[] = {
 	{"port", &irc_config.port, CONFIG_INT},
 	{"stealth", &irc_config.stealth, CONFIG_INT},
 	{0}
+};
+
+static event_owner_t irc_owner = {
+	"ircparty", 0,
+	0, 0,
+	0
 };
 
 EXPORT_SCOPE int ircparty_LTX_start(egg_module_t *modinfo);
@@ -133,7 +139,7 @@ static int irc_on_newclient(void *client_data, int idx, int newidx, const char *
 
 	/* Start lookups. */
 	session->ident_id = egg_ident_lookup(peer_ip, peer_port, irc_port, -1, ident_result, session);
-	session->dns_id = egg_dns_reverse(peer_ip, -1, dns_result, session);
+	session->dns_id = egg_dns_reverse(peer_ip, -1, dns_result, session, &irc_owner);
 
 	return(0);
 }
@@ -349,6 +355,8 @@ static int ircparty_close(int why)
 int ircparty_LTX_start(egg_module_t *modinfo)
 {
 	void *config_root;
+
+	irc_owner.module = modinfo;
 
 	modinfo->name = "ircparty";
 	modinfo->author = "eggdev";

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: script.h,v 1.17 2005/12/28 17:27:31 sven Exp $
+ * $Id: script.h,v 1.18 2006/09/12 01:50:50 sven Exp $
  */
 
 #ifndef _EGG_SCRIPT_H_
@@ -205,10 +205,13 @@ typedef struct script_module_b {
 	int (*get_arg)(void *client_data, script_args_t *args, int num, script_var_t *var, int type);
 } script_module_t;
 
+typedef int dns_function_t(const char *query, int timeout, dns_callback_t callback, void *data, event_owner_t *event);
+
 extern int script_register_module(script_module_t *module);
 extern int script_unregister_module(script_module_t *module);
 extern int script_playback(script_module_t *module);
 extern int script_linked_var_on_write(script_linked_var_t *var, script_var_t *newval);
+extern int script_dns_query(dns_function_t *function, const char *host, script_callback_t *callback, char *text, int len);
 
 END_C_DECLS
 

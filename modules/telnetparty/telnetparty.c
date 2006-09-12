@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: telnetparty.c,v 1.20 2005/11/14 04:44:43 wcc Exp $";
+static const char rcsid[] = "$Id: telnetparty.c,v 1.21 2006/09/12 01:50:51 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -33,6 +33,12 @@ static config_var_t telnet_config_vars[] = {
 	{"stealth", &telnet_config.stealth, CONFIG_INT},
 	{"max_retries", &telnet_config.max_retries, CONFIG_INT},
 	{0}
+};
+
+static event_owner_t telnet_owner = {
+	"telnetparty", 0,
+	0, 0,
+	0
 };
 
 EXPORT_SCOPE int telnetparty_LTX_start(egg_module_t *modinfo);
@@ -314,7 +320,7 @@ static int telnet_on_newclient(void *client_data, int idx, int newidx, const cha
 
 	/* Start lookups. */
 	session->ident_id = egg_ident_lookup(peer_ip, peer_port, telnet_port, -1, ident_result, session);
-	session->dns_id = egg_dns_reverse(peer_ip, -1, dns_result, session);
+	session->dns_id = egg_dns_reverse(peer_ip, -1, dns_result, session, &telnet_owner);
 
 	return(0);
 }
@@ -616,6 +622,7 @@ int telnetparty_LTX_start(egg_module_t *modinfo)
 {
 	void *config_root;
 
+	telnet_owner.module = modinfo;
 	modinfo->name = "telnetparty";
 	modinfo->author = "eggdev";
 	modinfo->version = "1.0.0";

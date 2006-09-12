@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dccparty.c,v 1.11 2005/12/01 17:43:47 stdarg Exp $";
+static const char rcsid[] = "$Id: dccparty.c,v 1.12 2006/09/12 01:50:50 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -34,6 +34,12 @@ static config_var_t dcc_config_vars[] = {
 	{"max_retries", &dcc_config.max_retries, CONFIG_INT},
 
 	{0}
+};
+
+static event_owner_t dcc_owner = {
+	"dccparty", 0,
+	0, 0,
+	0
 };
 
 EXPORT_SCOPE int dccparty_LTX_start(egg_module_t *modinfo);
@@ -115,7 +121,7 @@ static int dcc_on_connect(void *client_data, int idx, const char *peer_ip, int p
 
 	/* Start lookups. */
 	session->ident_id = egg_ident_lookup(peer_ip, peer_port, our_port, -1, ident_result, session);
-	session->dns_id = egg_dns_reverse(peer_ip, -1, dns_result, session);
+	session->dns_id = egg_dns_reverse(peer_ip, -1, dns_result, session, &dcc_owner);
 
 	return(0);
 }
@@ -246,6 +252,8 @@ static int dccparty_close(int why)
 int dccparty_LTX_start(egg_module_t *modinfo)
 {
 	void *config_root;
+
+	dcc_owner.module = modinfo;
 
 	modinfo->name = "dccparty";
 	modinfo->author = "eggdev";

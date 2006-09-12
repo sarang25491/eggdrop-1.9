@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dns.c,v 1.17 2006/08/25 17:22:50 sven Exp $";
+static const char rcsid[] = "$Id: dns.c,v 1.18 2006/09/12 01:50:50 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -45,6 +45,7 @@ typedef struct dns_query {
 	dns_answer_t answer;
 	dns_callback_t callback;
 	void *client_data;
+	event_owner_t *owner;
 } dns_query_t;
 
 typedef struct {
@@ -169,7 +170,7 @@ void egg_dns_send(char *query, int len)
 /* Perform an async dns lookup. This is host -> ip. For ip -> host, use
  * egg_dns_reverse(). We return a dns id that you can use to cancel the
  * lookup. */
-int egg_dns_lookup(const char *host, int timeout, dns_callback_t callback, void *client_data)
+int egg_dns_lookup(const char *host, int timeout, dns_callback_t callback, void *client_data, event_owner_t *owner)
 {
 	char buf[512];
 	dns_query_t *q;
@@ -183,6 +184,7 @@ int egg_dns_lookup(const char *host, int timeout, dns_callback_t callback, void 
 		answer_add(&answer, host);
 		callback(client_data, host, answer.list);
 		answer_free(&answer);
+		if (owner && owner->on_delete) owner->on_delete(owner, client_data);
 		return(-1);
 	}
 	
@@ -191,6 +193,7 @@ int egg_dns_lookup(const char *host, int timeout, dns_callback_t callback, void 
 	if (cache_id >= 0) {
 		shuffleArray(cache[cache_id].answer.list, cache[cache_id].answer.len);
 		callback(client_data, host, cache[cache_id].answer.list);
+		if (owner && owner->on_delete) owner->on_delete(owner, client_data);
 		return(-1);
 	}
 
@@ -203,6 +206,7 @@ int egg_dns_lookup(const char *host, int timeout, dns_callback_t callback, void 
 			answer_add(&answer, hosts[i].ip);
 			callback(client_data, host, answer.list);
 			answer_free(&answer);
+			if (owner && owner->on_delete) owner->on_delete(owner, client_data);
 			return(-1);
 		}
 	}
@@ -214,6 +218,7 @@ int egg_dns_lookup(const char *host, int timeout, dns_callback_t callback, void 
 	q->query = strdup(host);
 	q->callback = callback;
 	q->client_data = client_data;
+	q->owner = owner;
 	q->next = query_head;
 	query_head = q;
 
@@ -243,7 +248,7 @@ int egg_dns_lookup(const char *host, int timeout, dns_callback_t callback, void 
 /* Perform an async dns reverse lookup. This does ip -> host. For host -> ip
  * use egg_dns_lookup(). We return a dns id that you can use to cancel the
  * lookup. */
-int egg_dns_reverse(const char *ip, int timeout, dns_callback_t callback, void *client_data)
+int egg_dns_reverse(const char *ip, int timeout, dns_callback_t callback, void *client_data, event_owner_t *owner)
 {
 	dns_query_t *q;
 	char buf[512], *reversed_ip;
@@ -252,6 +257,7 @@ int egg_dns_reverse(const char *ip, int timeout, dns_callback_t callback, void *
 	if (!socket_valid_ip(ip)) {
 		/* If it's not a valid ip, don't even make the request. */
 		callback(client_data, ip, NULL);
+		if (owner && owner->on_delete) owner->on_delete(owner, client_data);
 		return(-1);
 	}
 
@@ -264,6 +270,7 @@ int egg_dns_reverse(const char *ip, int timeout, dns_callback_t callback, void *
 			answer_add(&answer, hosts[i].host);
 			callback(client_data, ip, answer.list);
 			answer_free(&answer);
+			if (owner && owner->on_delete) owner->on_delete(owner, client_data);
 			return(-1);
 		}
 	}
@@ -273,6 +280,7 @@ int egg_dns_reverse(const char *ip, int timeout, dns_callback_t callback, void *
 	if (cache_id >= 0) {
 		shuffleArray(cache[cache_id].answer.list, cache[cache_id].answer.len);
 		callback(client_data, ip, cache[cache_id].answer.list);
+		if (owner && owner->on_delete) owner->on_delete(owner, client_data);
 		return(-1);
 	}
 
@@ -305,6 +313,7 @@ int egg_dns_reverse(const char *ip, int timeout, dns_callback_t callback, void *
 	q->query = strdup(ip);
 	q->callback = callback;
 	q->client_data = client_data;
+	q->owner = owner;
 	q->next = query_head;
 	query_head = q;
 
@@ -559,6 +568,7 @@ int egg_dns_cancel(int id, int issue_callback)
 	else query_head = q->next;
 
 	if (issue_callback) q->callback(q->client_data, q->query, NULL);
+	if (q->owner && q->owner->on_delete) q->owner->on_delete(q->owner, q->client_data);
 	free(q);
 	return(0);
 }
@@ -680,6 +690,7 @@ static void parse_reply(char *response, int nbytes)
 	cache_add(q->query, &q->answer);
 
 	q->callback(q->client_data, q->query, q->answer.list);
+	if (q->owner && q->owner->on_delete) q->owner->on_delete(q->owner, q->client_data);
 	answer_free(&q->answer);
 	free(q->query);
 	free(q);

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: net.c,v 1.6 2005/12/28 17:27:31 sven Exp $";
+static const char rcsid[] = "$Id: net.c,v 1.7 2006/09/12 01:50:50 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -112,7 +112,7 @@ int egg_client(int idx, const char *host, int port, const char *vip, int vport, 
 
 	/* Resolve the hostname. */
 	connect_info = attach(idx, host, port, timeout);
-	connect_info->dns_id = egg_dns_lookup(host, -1, connect_host_resolved, connect_info);
+	connect_info->dns_id = egg_dns_lookup(host, -1, connect_host_resolved, connect_info, NULL);
 	return(idx);
 }
 
