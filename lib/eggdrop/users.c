@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.49 2006/01/06 03:59:30 sven Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.50 2006/10/01 00:48:59 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -42,6 +42,8 @@ typedef struct {
 	flags_t musthave[2];
 	flags_t mustnothave[2];
 } cmd_match_data_t;
+
+#define BAD_HANDLE_CHARS " *?"
 
 /* Keep track of the next available uid. Also keep track of when uid's wrap
  * around (probably won't happen), so that we know when we can trust g_uid. */
@@ -245,13 +247,23 @@ static int user_get_uid()
 	return(uid);
 }
 
+const char *user_invalid_handle(const char *handle)
+{
+	if (user_lookup_by_handle(handle)) return _("Handle already exists!");
+	for (; *handle; ++handle) {
+		if (*handle < 32 || strchr(BAD_HANDLE_CHARS, *handle)) {
+			return _("Handle contains invalid characters!");
+		}
+	}
+	return NULL;
+}
+
 static user_t *real_user_new(const char *handle, int uid)
 {
 	user_t *u;
 
-	/* Make sure the handle is unique. */
-	u = user_lookup_by_handle(handle);
-	if (u) return(NULL);
+	/* Make sure the handle is valid. */
+	if (user_invalid_handle(handle)) return(NULL);
 
 	u = calloc(1, sizeof(*u));
 	u->handle = strdup(handle);
@@ -748,6 +760,7 @@ int user_change_handle(user_t *u, const char *newhandle)
 {
 	partymember_t *p = NULL;
 
+	if (user_invalid_handle(newhandle)) return 1;
 	p = partymember_lookup_nick(u->handle);
 	hash_table_remove(handle_ht, u->handle, NULL);
 	free(u->handle);

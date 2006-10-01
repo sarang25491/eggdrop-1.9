@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.50 2006/08/22 01:41:28 sven Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.51 2006/10/01 00:48:59 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -376,14 +376,17 @@ static int party_die(partymember_t *p, const char *nick, user_t *u, const char *
 
 static int party_plus_user(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
+	const char *error;
 	user_t *newuser;
 
 	if (!text || !*text) {
 		partymember_printf(p, _("Syntax: +user <handle>"));
 		return(0);
 	}
-	if (user_lookup_by_handle(text)) {
-		partymember_printf(p, _("User '%s' already exists!"));
+
+	error = user_invalid_handle(text);
+	if (error) {
+		partymember_printf(p, _("Error: %s"), error);
 		return(0);
 	}
 	newuser = user_new(text);
@@ -669,6 +672,7 @@ static int party_restart(partymember_t *p, const char *nick, user_t *u, const ch
 /* Syntax: chhandle <old_handle> <new_handle> */
 static int party_chhandle(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
+	const char *error;
 	char *old = NULL, *newh = NULL;
 	user_t *dest;
 
@@ -688,8 +692,9 @@ static int party_chhandle(partymember_t *p, const char *nick, user_t *u, const c
 		return 0;
 	}
 
-	if (user_lookup_by_handle(newh)) {
-		partymember_printf(p, _("Error: User '%s' already exists."), newh);
+	error = user_invalid_handle(newh);
+	if (error) {
+		partymember_printf(p, _("Error: %s"), error);
 		free(old);
 		free(newh);
 		return 0;

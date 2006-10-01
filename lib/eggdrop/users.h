@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: users.h,v 1.16 2004/10/06 02:35:15 stdarg Exp $
+ * $Id: users.h,v 1.17 2006/10/01 00:48:59 sven Exp $
  */
 
 #ifndef _EGG_USERS_H_
@@ -66,6 +66,7 @@ int user_shutdown(void);
 
 int user_load(const char *fname);
 int user_save(const char *fname);
+const char *user_invalid_handle(const char *handle);
 user_t *user_new(const char *handle);
 int user_delete(user_t *u);
 user_t *user_lookup_by_handle(const char *handle);
