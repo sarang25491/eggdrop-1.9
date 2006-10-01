@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.50 2006/10/01 00:48:59 sven Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.51 2006/10/01 21:59:25 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -560,7 +560,10 @@ int user_set_flags(user_t *u, const char *chan, flags_t *flags)
 {
 	flags_t *oldflags, newflags;
 
-	if (get_flags(u, chan, &oldflags)) return(-1);
+	if (get_flags(u, chan, &oldflags)) {
+		append_setting(u, chan, NULL, NULL);
+		if (get_flags(u, chan, &oldflags)) return -1;
+	}
 	newflags.builtin = flags->builtin;
 	newflags.udef = flags->udef;
 	if (check_flag_change(u, chan, oldflags, &newflags)) return(0);
@@ -577,7 +580,10 @@ int user_set_flags_str(user_t *u, const char *chan, const char *flags)
 {
 	flags_t *oldflags, newflags;
 
-	if (get_flags(u, chan, &oldflags)) return(-1);
+	if (get_flags(u, chan, &oldflags)) {
+		append_setting(u, chan, NULL, NULL);
+		if (get_flags(u, chan, &oldflags)) return(-1);
+	}
 	newflags.builtin = oldflags->builtin;
 	newflags.udef = oldflags->udef;
 	flag_merge_str(&newflags, flags);
