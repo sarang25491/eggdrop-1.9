@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: ircparty.c,v 1.15 2006/09/12 01:50:50 sven Exp $";
+static const char rcsid[] = "$Id: ircparty.c,v 1.16 2006/10/03 04:02:13 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -138,7 +138,7 @@ static int irc_on_newclient(void *client_data, int idx, int newidx, const char *
 	}
 
 	/* Start lookups. */
-	session->ident_id = egg_ident_lookup(peer_ip, peer_port, irc_port, -1, ident_result, session);
+	session->ident_id = egg_ident_lookup(peer_ip, peer_port, irc_port, -1, ident_result, session, &irc_owner);
 	session->dns_id = egg_dns_reverse(peer_ip, -1, dns_result, session, &irc_owner);
 
 	return(0);

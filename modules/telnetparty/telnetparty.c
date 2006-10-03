@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: telnetparty.c,v 1.21 2006/09/12 01:50:51 sven Exp $";
+static const char rcsid[] = "$Id: telnetparty.c,v 1.22 2006/10/03 04:02:13 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -319,7 +319,7 @@ static int telnet_on_newclient(void *client_data, int idx, int newidx, const cha
 	}
 
 	/* Start lookups. */
-	session->ident_id = egg_ident_lookup(peer_ip, peer_port, telnet_port, -1, ident_result, session);
+	session->ident_id = egg_ident_lookup(peer_ip, peer_port, telnet_port, -1, ident_result, session, &telnet_owner);
 	session->dns_id = egg_dns_reverse(peer_ip, -1, dns_result, session, &telnet_owner);
 
 	return(0);

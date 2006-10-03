@@ -16,13 +16,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: ident.h,v 1.1 2004/06/21 20:35:11 wingman Exp $
+ * $Id: ident.h,v 1.2 2006/10/03 04:02:12 sven Exp $
  */
 
 #ifndef _EGG_IDENT_H_
 #define _EGG_IDENT_H_
 
-int egg_ident_lookup(const char *ip, int their_port, int our_port, int timeout, int (*callback)(), void *client_data);
+typedef int ident_callback_t(void *client_data, const char *ip, int port, const char *ident);
+
+int egg_ident_lookup(const char *ip, int their_port, int our_port, int timeout, ident_callback_t *callback, void *client_data, event_owner_t *owner);
 int egg_ident_cancel(int id, int issue_callback);
+int egg_ident_cancel_by_owner(struct egg_module *module, void *script);
 
 #endif /* !_EGG_IDENT_H_ */

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: timer.c,v 1.12 2006/01/03 03:00:17 guppy Exp $";
+static const char rcsid[] = "$Id: timer.c,v 1.13 2006/10/03 04:02:13 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -225,16 +225,18 @@ int timer_destroy_all()
 	return(0);
 }
 
-void timer_destroy_by_module(egg_module_t *module)
+int timer_destroy_by_owner(egg_module_t *module, void *script)
 {
+	int removed = 0;
 	egg_timer_t *timer, *prev = 0, *next;
 
 	for (timer = timer_list_head; timer; timer = next) {
 		next = timer->next;
 
-		if (timer->owner && timer->owner->module == module) {
+		if (timer->owner && timer->owner->module == module && (!script || timer->owner->client_data == script)) {
 			if (prev) prev->next = timer->next;
 			else timer_list_head = timer->next;
+			++removed;
 
 			if (timer->owner && timer->owner->on_delete) timer->owner->on_delete(timer->owner, timer->client_data);
 			if (timer->name) free(timer->name);
@@ -243,6 +245,7 @@ void timer_destroy_by_module(egg_module_t *module)
 			prev = timer;
 		}
 	}
+	return removed;
 }
 
 int timer_get_shortest(egg_timeval_t *howlong)
@@ -319,7 +322,7 @@ int timer_set_timestamp(char *format)
 
 char *timer_get_timestamp(void)
 {
-        time_t now_secs = (time_t)now.sec;
+	time_t now_secs = (time_t)now.sec;
 	int len;
 
 	while (1) {

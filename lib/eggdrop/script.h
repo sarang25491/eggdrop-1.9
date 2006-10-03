@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: script.h,v 1.18 2006/09/12 01:50:50 sven Exp $
+ * $Id: script.h,v 1.19 2006/10/03 04:02:13 sven Exp $
  */
 
 #ifndef _EGG_SCRIPT_H_
@@ -174,6 +174,7 @@ typedef struct {
 
 extern int script_init(void);
 extern int script_shutdown(void);
+extern int script_remove_events_by_owner(egg_module_t *module, void *script);
 
 extern int script_load(char *filename);
 extern int script_link_vars(script_linked_var_t *table);

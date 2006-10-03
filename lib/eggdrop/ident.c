@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: ident.c,v 1.5 2005/12/01 15:02:32 stdarg Exp $";
+static const char rcsid[] = "$Id: ident.c,v 1.6 2006/10/03 04:02:12 sven Exp $";
 #endif
 
 #include <stdio.h>
@@ -34,14 +34,15 @@ typedef struct _ident_info {
 	int their_port, our_port;
 	int idx;
 	int timeout;
-	int (*callback)();
+	ident_callback_t *callback;
 	void *client_data;
+	event_owner_t *owner;
 } ident_info_t;
 
 static int ident_on_connect(void *client_data, int idx, const char *peer_ip, int peer_port);
 static int ident_on_read(void *client_data, int idx, char *data, int len);
 static int ident_on_eof(void *client_data, int idx, int err, const char *errmsg);
-static int ident_result(void *client_data, const char *ident);
+static int ident_result(ident_info_t *ident_info, const char *ident);
 
 static sockbuf_handler_t ident_handler = {
 	"ident",
@@ -54,7 +55,7 @@ static ident_info_t *ident_head = NULL;
 
 
 /* Perform an async ident lookup and call 'callback' with the result. */
-int egg_ident_lookup(const char *ip, int their_port, int our_port, int timeout, int (*callback)(), void *client_data)
+int egg_ident_lookup(const char *ip, int their_port, int our_port, int timeout, ident_callback_t *callback, void *client_data, event_owner_t *owner)
 {
 	static int ident_id = 0;
 	int idx;
@@ -63,6 +64,7 @@ int egg_ident_lookup(const char *ip, int their_port, int our_port, int timeout, 
 	idx = egg_connect(ip, 113, -1);
 	if (idx < 0) {
 		callback(client_data, ip, their_port, NULL);
+		if (owner && owner->on_delete) owner->on_delete(owner, client_data);
 		return(-1);
 	}
 	ident_info = calloc(1, sizeof(*ident_info));
@@ -72,6 +74,7 @@ int egg_ident_lookup(const char *ip, int their_port, int our_port, int timeout, 
 	ident_info->timeout = timeout;
 	ident_info->callback = callback;
 	ident_info->client_data = client_data;
+	ident_info->owner = owner;
 	ident_info->idx = idx;
 	ident_info->id = ident_id++;
 	ident_info->next = ident_head;
@@ -97,9 +100,32 @@ int egg_ident_cancel(int id, int issue_callback)
 	if (issue_callback) {
 		ptr->callback(ptr->client_data, ptr->ip, ptr->their_port, NULL);
 	}
+	if (ptr->owner && ptr->owner->on_delete) ptr->owner->on_delete(ptr->owner, ptr->client_data);
 	free(ptr->ip);
 	free(ptr);
 	return(0);
+}
+
+int egg_ident_cancel_by_owner(egg_module_t *module, void *script)
+{
+	int removed = 0;
+	ident_info_t *ptr, *prev = NULL, *next;
+
+	for (ptr = ident_head; ptr; ptr = next) {
+		next = ptr->next;
+		if (!ptr->owner || ptr->owner->module != module || (script && ptr->owner->client_data != script)) {
+			prev = ptr;
+			continue;
+		}
+		if (prev) prev->next = ptr->next;
+		else ident_head = ptr->next;
+		++removed;
+		sockbuf_delete(ptr->idx);
+		if (ptr->owner && ptr->owner->on_delete) ptr->owner->on_delete(ptr->owner, ptr->client_data);
+		free(ptr->ip);
+		free(ptr);
+	}
+	return removed;
 }
 
 static int ident_on_connect(void *client_data, int idx, const char *peer_ip, int peer_port)
@@ -132,7 +158,7 @@ static int ident_on_read(void *client_data, int idx, char *data, int len)
 	ident = strchr(colon, ':');
 	if (!ident) goto ident_error;
 	ident++;
-	while (isspace(*ident)) ident++;
+	while (*ident && isspace(*ident)) ident++;
 
 	/* Replace bad chars. */
 	len = strlen(ident);
@@ -143,6 +169,7 @@ static int ident_on_read(void *client_data, int idx, char *data, int len)
 		}
 		if (!isalnum(ident[i]) && ident[i] != '_') ident[i] = 'x';
 	}
+	if (!*ident) goto ident_error;
 	if (len > 20) ident[20] = 0;
 	ident_result(client_data, ident);
 	return(0);
@@ -158,9 +185,8 @@ static int ident_on_eof(void *client_data, int idx, int err, const char *errmsg)
 	return(0);
 }
 
-static int ident_result(void *client_data, const char *ident)
+static int ident_result(ident_info_t *ident_info, const char *ident)
 {
-	ident_info_t *ident_info = client_data;
 	ident_info_t *ptr, *prev = NULL;
 	
 	for (ptr = ident_head; ptr; ptr = ptr->next) {
@@ -173,6 +199,7 @@ static int ident_result(void *client_data, const char *ident)
 
 	sockbuf_delete(ident_info->idx);
 	ident_info->callback(ident_info->client_data, ident_info->ip, ident_info->their_port, ident);
+	if (ident_info->owner && ident_info->owner->on_delete) ident_info->owner->on_delete(ident_info->owner, ident_info->client_data);
 	free(ident_info->ip);
 	free(ident_info);
 	return(0);

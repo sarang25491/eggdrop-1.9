@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: binds.c,v 1.28 2006/06/19 15:47:33 stdarg Exp $";
+static const char rcsid[] = "$Id: binds.c,v 1.29 2006/10/03 04:02:12 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -67,7 +67,7 @@ void kill_binds(void)
 	while (bind_table_list_head) bind_table_del(bind_table_list_head);
 }
 
-void kill_binds_by_module(egg_module_t *module)
+int kill_binds_by_owner(egg_module_t *module, void *script)
 {
 	int deleted = 0;
 	bind_entry_t *entry;
@@ -77,13 +77,14 @@ void kill_binds_by_module(egg_module_t *module)
 		if (table->flags & BIND_DELETED) continue;
 		for (entry = table->entries; entry; entry = entry->next) {
 			if (entry->flags & BIND_DELETED) continue;
-			if (entry->owner && entry->owner->module == module) {
+			if (entry->owner && entry->owner->module == module && (!script || entry->owner->client_data == script)) {
 				deleted++;
 				entry->flags |= BIND_DELETED;
 			}
 		}
 	}
-	if (deleted) schedule_bind_cleanup();
+	internal_bind_cleanup();
+	return deleted;
 }
 
 bind_table_t *bind_table_add(const char *name, int nargs, const char *syntax, int match_type, int flags)

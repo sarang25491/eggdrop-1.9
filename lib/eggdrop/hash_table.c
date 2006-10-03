@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: hash_table.c,v 1.19 2005/06/24 19:00:57 darko Exp $";
+static const char rcsid[] = "$Id: hash_table.c,v 1.20 2006/10/03 04:02:12 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -115,7 +115,7 @@ int hash_table_resize(hash_table_t *ht, int nrows)
 	return(0);
 }
 
-int hash_table_insert(hash_table_t *ht, const void *key, void *data)
+int hash_table_insert(hash_table_t *ht, void *key, void *data)
 {
 	unsigned int hash;
 	int idx;
@@ -276,7 +276,7 @@ static unsigned int my_mixed_hash (const void *key)
 	const unsigned char *k;
 	unsigned int hash;
 
-        k = key;
+	k = key;
 	hash = 0;
 	while (*k) {
 		hash *= 16777619;

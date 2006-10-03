@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dns.c,v 1.18 2006/09/12 01:50:50 sven Exp $";
+static const char rcsid[] = "$Id: dns.c,v 1.19 2006/10/03 04:02:12 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -571,6 +571,27 @@ int egg_dns_cancel(int id, int issue_callback)
 	if (q->owner && q->owner->on_delete) q->owner->on_delete(q->owner, q->client_data);
 	free(q);
 	return(0);
+}
+
+int egg_dns_cancel_by_owner(egg_module_t *module, void *script)
+{
+	int removed = 0;
+	dns_query_t *q, *prev= NULL, *next;
+
+	for (q = query_head; q; q = next) {
+		next = q->next;
+		if (!q->owner || q->owner->module != module || (script && q->owner->client_data != script)) {
+			prev = q;
+			continue;
+		}
+		if (prev) prev->next = q->next;
+		else query_head = q->next;
+		++removed;
+
+		if (q->owner && q->owner->on_delete) q->owner->on_delete(q->owner, q->client_data);
+		free(q);
+	}
+	return removed;
 }
 
 static int skip_name(unsigned char *ptr)

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: binds.h,v 1.11 2006/06/19 15:47:33 stdarg Exp $
+ * $Id: binds.h,v 1.12 2006/10/03 04:02:12 sven Exp $
  */
 
 #ifndef _EGG_BINDS_H_
@@ -94,7 +94,7 @@ int bind_check_hits(bind_table_t *table, flags_t *user_flags, const char *match,
 
 bind_table_t *bind_table_add(const char *name, int nargs, const char *syntax, int match_type, int flags);
 void bind_table_del(bind_table_t *table);
-void kill_binds_by_module(struct egg_module *module);
+int kill_binds_by_owner(struct egg_module *module, void *script);
 bind_table_t *bind_table_lookup(const char *name);
 bind_table_t *bind_table_lookup_or_fake(const char *name);
 int bind_entry_add(bind_table_t *table, const char *user_flags, const char *mask, const char *function_name, int bind_flags, Function callback, void *client_data, event_owner_t *owner);

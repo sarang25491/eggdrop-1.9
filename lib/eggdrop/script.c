@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: script.c,v 1.23 2006/09/12 01:50:50 sven Exp $";
+static const char rcsid[] = "$Id: script.c,v 1.24 2006/10/03 04:02:12 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -87,6 +87,17 @@ int script_shutdown(void)
 	if (journal_events) free(journal_events); journal_events = NULL;
 
 	return (0);
+}
+
+int script_remove_events_by_owner(egg_module_t *module, void *script)
+{
+	int removed = 0;
+
+	removed += kill_binds_by_owner(module, script);
+	removed += timer_destroy_by_owner(module, script);
+	removed += egg_dns_cancel_by_owner(module, script);
+	removed += egg_ident_cancel_by_owner(module, script);
+	return removed;
 }
 
 /* Called by scripting modules to register themselves. */

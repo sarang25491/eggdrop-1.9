@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: timer.h,v 1.5 2005/12/28 17:27:31 sven Exp $
+ * $Id: timer.h,v 1.6 2006/10/03 04:02:13 sven Exp $
  */
 
 #ifndef _EGG_TIMER_H_
@@ -58,7 +58,7 @@ extern int timer_create_secs(long secs, const char *name, Function callback);
 extern int timer_create_complex(egg_timeval_t *howlong, const char *name, Function callback, void *client_data, int flags, event_owner_t *owner);
 extern int timer_destroy(int timer_id);
 extern int timer_destroy_all();
-extern void timer_destroy_by_module(egg_module_t *module);
+extern int timer_destroy_by_owner(egg_module_t *module, void *script);
 extern int timer_get_shortest(egg_timeval_t *howlong);
 extern int timer_run();
 extern egg_timer_t *timer_list();

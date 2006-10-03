@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: net.h,v 1.2 2004/06/22 18:47:28 wingman Exp $
+ * $Id: net.h,v 1.3 2006/10/03 04:02:12 sven Exp $
  */
 
 #ifndef _EGG_NET_H_
@@ -37,7 +37,6 @@ int egg_client(int idx, const char *host, int port, const char *vip, int vport, 
 int egg_listen(int port, int *real_port);
 int egg_connect(const char *host, int port, int timeout);
 int egg_reconnect(int idx, const char *host, int port, int timeout);
-int egg_ident_lookup(const char *ip, int their_port, int our_port, int timeout, int (*callback)(), void *client_data);
 
 /* Proxy interface functions. */
 int egg_proxy_add(egg_proxy_t *proxy);
