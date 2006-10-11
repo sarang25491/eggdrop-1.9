@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partyline.c,v 1.25 2004/10/17 08:38:11 stdarg Exp $";
+static const char rcsid[] = "$Id: partyline.c,v 1.26 2006/10/11 01:54:04 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -232,8 +232,19 @@ static int on_putlog(int flags, const char *chan, const char *text, int len)
 
 int partyline_idx_privmsg(int idx, partymember_t *dest, partymember_t *src, const char *text, int len)
 {
-	if (src) egg_iprintf(idx, "[%s] %s\r\n", src->nick, text);
-	else egg_iprintf(idx, "%s\r\n", text);
+	char *ts;
+
+	ts = timer_get_timestamp();
+
+	if (src) {
+		if (len >= 9 && !strncasecmp(text, "\1ACTION ", 8) && text[len - 1] == 1) {
+			egg_iprintf(idx, "%s* %s %.*s\r\n", ts, src->nick, len - 9, text + 8);
+		} else {
+			egg_iprintf(idx, "%s[%s] %s\r\n", ts, src->nick, text);
+		}
+	} else {
+		egg_iprintf(idx, "%s\r\n", text);
+	}
 	return 0;
 }
 
@@ -255,8 +266,15 @@ int partyline_idx_chanmsg(int idx, partychan_t *chan, partymember_t *src, const 
 
 	ts = timer_get_timestamp();
 
-	if (src) egg_iprintf(idx, "%s %s<%s> %s\r\n", chan->name, ts, src->nick, text);
-	else egg_iprintf(idx, "%s %s%s\r\n", chan->name, ts, text);
+	if (src) {
+		if (len >= 9 && !strncasecmp(text, "\1ACTION ", 8) && text[len - 1] == 1) {
+			egg_iprintf(idx, "%s %s* %s %.*s\r\n", chan->name, ts, src->nick, len - 9, text + 8);
+		} else {
+			egg_iprintf(idx, "%s %s<%s> %s\r\n", chan->name, ts, src->nick, text);
+		}
+	} else {
+		egg_iprintf(idx, "%s %s%s\r\n", chan->name, ts, text);
+	}
 	return 0;
 }
 

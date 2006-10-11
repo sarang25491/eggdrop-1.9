@@ -18,15 +18,16 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: timer.c,v 1.13 2006/10/03 04:02:13 sven Exp $";
+static const char rcsid[] = "$Id: timer.c,v 1.14 2006/10/11 01:54:04 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
 
+#define TIMEBUFLEN 1024
+
 static egg_timeval_t now;
 static char *timestamp_format = NULL;
-static char *timestamp = NULL;
-static int timestamp_len = 0;
+static char timestamp[TIMEBUFLEN];
 
 /* We keep a sorted list of active timers. */
 static egg_timer_t *timer_list_head = NULL;
@@ -34,9 +35,7 @@ static int timer_next_id = 1;
 
 int timer_init()
 {
-	timestamp_len = 32;
 	timestamp_format = strdup("[%H:%M] ");
-	timestamp = malloc(timestamp_len);
 	return(0);
 }
 
@@ -46,11 +45,6 @@ int timer_shutdown()
 		free(timestamp_format);
 		timestamp_format = NULL;
 	}
-	if (timestamp) {
-		free(timestamp);
-		timestamp = NULL;
-	}
-	timestamp_len = 0;
 	return(0);
 }
 
@@ -325,23 +319,9 @@ char *timer_get_timestamp(void)
 	time_t now_secs = (time_t)now.sec;
 	int len;
 
-	while (1) {
-		len = strftime(timestamp, timestamp_len, timestamp_format, localtime(&now_secs));
-
-		/* Did it work and fit in the buffer? */
-		if (len > 0 && len < timestamp_len) break;
-		else if (len >= timestamp_len) {
-			/* Adjust buffer. */
-			timestamp_len = len+1;
-			free(timestamp);
-			timestamp = malloc(timestamp_len);
-		}
-		else {
-			/* Error with strftime, or empty timestamp. */
-			*timestamp = 0;
-			break;
-		}
-	}
+	len = strftime(timestamp, TIMEBUFLEN, timestamp_format, localtime(&now_secs));
+	/* Did it work and fit in the buffer? */
+	if (!len) *timestamp = 0;
 
 	return timestamp;
 }

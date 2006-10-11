@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: events.c,v 1.5 2004/06/23 11:19:52 wingman Exp $";
+static const char rcsid[] = "$Id: events.c,v 1.6 2006/10/11 01:54:04 sven Exp $";
 #endif
 
 #include <string.h>
@@ -47,8 +47,15 @@ static int on_privmsg(void *client_data, partymember_t *dest, partymember_t *src
 {
 	dcc_session_t *session = client_data;
 
-	if (src) egg_iprintf(session->idx, "[%s] %s\r\n", src->nick, text);
-	else egg_iprintf(session->idx, "%s\r\n", text);
+	if (src) {
+		if (len >= 9 && !strncasecmp(text, "\1ACTION ", 8) && text[len - 1] == 1) {
+			egg_iprintf(session->idx, "%s %.*s\r\n", src->nick, len - 9, text + 8);
+		} else {
+			egg_iprintf(session->idx, "[%s] %s\r\n", src->nick, text);
+		}
+	} else {
+		egg_iprintf(session->idx, "%s\r\n", text);
+	}
 	return(0);
 }
 
@@ -74,8 +81,15 @@ static int on_chanmsg(void *client_data, partychan_t *chan, partymember_t *src, 
 {
 	dcc_session_t *session = client_data;
 
-	if (src) egg_iprintf(session->idx, "%s <%s> %s\r\n", chan->name, src->nick, text);
-	else egg_iprintf(session->idx, "%s %s\r\n", chan->name, text);
+	if (src) {
+		if (len >= 9 && !strncasecmp(text, "\1ACTION ", 8) && text[len - 1] == 1) {
+			egg_iprintf(session->idx, "%s %s %.*s\r\n", chan->name, src->nick, len - 9, text + 8);
+		} else {
+			egg_iprintf(session->idx, "%s <%s> %s\r\n", chan->name, src->nick, text);
+		}
+	} else {
+		egg_iprintf(session->idx, "%s %s\r\n", chan->name, text);
+	}
 	return(0);
 }
 
