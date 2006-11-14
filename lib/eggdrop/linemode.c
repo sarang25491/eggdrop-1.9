@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: linemode.c,v 1.8 2006/08/20 15:23:05 sven Exp $";
+static const char rcsid[] = "$Id: linemode.c,v 1.9 2006/11/14 14:51:23 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -75,6 +75,8 @@ static int linemode_on_read(void *client_data, int idx, char *data, int len)
 		}
 
 		sockbuf_on_read(idx, LINEMODE_LEVEL, line, linelen);
+
+		if (!sockbuf_isvalid(idx)) return 0; /* We've been deleted */
 
 		/* If we're out of data, we're done. */
 		if (savelen <= 0) return(0);

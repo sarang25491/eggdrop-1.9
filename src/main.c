@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.188 2006/01/06 03:59:30 sven Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.189 2006/11/14 14:51:24 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -575,6 +575,9 @@ int core_init()
 
 	/* Put the module directory in the ltdl search path. */
 	if (core_config.module_path) module_add_dir(core_config.module_path);
+
+	/* Set a botname. */
+	if (core_config.botname) botnet_set_name(core_config.botname);
 
 	/* Initialize help system. */
 	if (core_config.help_path) {

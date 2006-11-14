@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: events.c,v 1.6 2006/10/11 01:54:04 sven Exp $";
+static const char rcsid[] = "$Id: events.c,v 1.7 2006/11/14 14:51:24 sven Exp $";
 #endif
 
 #include <string.h>
@@ -29,9 +29,9 @@ static const char rcsid[] = "$Id: events.c,v 1.6 2006/10/11 01:54:04 sven Exp $"
 
 static int on_privmsg(void *client_data, partymember_t *dest, partymember_t *src, const char *text, int len);
 static int on_nick(void *client_data, partymember_t *src, const char *oldnick, const char *newnick);
-static int on_quit(void *client_data, partymember_t *src, const char *text, int len);
+static int on_quit(void *client_data, partymember_t *src, const botnet_bot_t *lostbot, const char *text, int len);
 static int on_chanmsg(void *client_data, partychan_t *chan, partymember_t *src, const char *text, int len);
-static int on_join(void *client_data, partychan_t *chan, partymember_t *src);
+static int on_join(void *client_data, partychan_t *chan, partymember_t *src, int linking);
 static int on_part(void *client_data, partychan_t *chan, partymember_t *src, const char *text, int len);
 
 partyline_event_t dcc_party_handler = {
@@ -49,9 +49,9 @@ static int on_privmsg(void *client_data, partymember_t *dest, partymember_t *src
 
 	if (src) {
 		if (len >= 9 && !strncasecmp(text, "\1ACTION ", 8) && text[len - 1] == 1) {
-			egg_iprintf(session->idx, "%s %.*s\r\n", src->nick, len - 9, text + 8);
+			egg_iprintf(session->idx, "%s %.*s\r\n", src->common_name, len - 9, text + 8);
 		} else {
-			egg_iprintf(session->idx, "[%s] %s\r\n", src->nick, text);
+			egg_iprintf(session->idx, "[%s] %s\r\n", src->common_name, text);
 		}
 	} else {
 		egg_iprintf(session->idx, "%s\r\n", text);
@@ -63,15 +63,17 @@ static int on_nick(void *client_data, partymember_t *src, const char *oldnick, c
 {
 	dcc_session_t *session = client_data;
 
-	egg_iprintf(session->idx, "%s is now known as %s.\n", oldnick, newnick);
+	if (src->bot) egg_iprintf(session->idx, "%s@%s is now known as %s@%s.\n", oldnick, src->bot->name, newnick,src->bot->name);
+	else egg_iprintf(session->idx, "%s is now known as %s.\n", oldnick, newnick);
 	return(0);
 }
 
-static int on_quit(void *client_data, partymember_t *src, const char *text, int len)
+static int on_quit(void *client_data, partymember_t *src, const botnet_bot_t *lostbot, const char *text, int len)
 {
 	dcc_session_t *session = client_data;
 
-	egg_iprintf(session->idx, "%s (%s@%s) has quit: %s\n", src->nick, src->ident, src->host, text);
+	if (lostbot) return 0;
+	egg_iprintf(session->idx, "%s (%s@%s) has quit: %s\n", src->common_name, src->ident, src->host, text);
 	if (src == session->party) sockbuf_delete(session->idx);
 
 	return(0);
@@ -83,9 +85,9 @@ static int on_chanmsg(void *client_data, partychan_t *chan, partymember_t *src, 
 
 	if (src) {
 		if (len >= 9 && !strncasecmp(text, "\1ACTION ", 8) && text[len - 1] == 1) {
-			egg_iprintf(session->idx, "%s %s %.*s\r\n", chan->name, src->nick, len - 9, text + 8);
+			egg_iprintf(session->idx, "%s %s %.*s\r\n", chan->name, src->common_name, len - 9, text + 8);
 		} else {
-			egg_iprintf(session->idx, "%s <%s> %s\r\n", chan->name, src->nick, text);
+			egg_iprintf(session->idx, "%s <%s> %s\r\n", chan->name, src->common_name, text);
 		}
 	} else {
 		egg_iprintf(session->idx, "%s %s\r\n", chan->name, text);
@@ -93,11 +95,11 @@ static int on_chanmsg(void *client_data, partychan_t *chan, partymember_t *src, 
 	return(0);
 }
 
-static int on_join(void *client_data, partychan_t *chan, partymember_t *src)
+static int on_join(void *client_data, partychan_t *chan, partymember_t *src, int linking)
 {
 	dcc_session_t *session = client_data;
 
-	egg_iprintf(session->idx, "%s %s (%s@%s) has joined the channel.\r\n", chan->name, src->nick, src->ident, src->host);
+	if (!linking) egg_iprintf(session->idx, "%s %s (%s@%s) has joined the channel.\r\n", chan->name, src->common_name, src->ident, src->host);
 	return(0);
 }
 
@@ -105,6 +107,6 @@ static int on_part(void *client_data, partychan_t *chan, partymember_t *src, con
 {
 	dcc_session_t *session = client_data;
 
-	egg_iprintf(session->idx, "%s %s (%s@%s) has left the channel: %s\r\n", chan->name, src->nick, src->ident, src->host, text);
+	egg_iprintf(session->idx, "%s %s (%s@%s) has left the channel: %s\r\n", chan->name, src->common_name, src->ident, src->host, text);
 	return(0);
 }

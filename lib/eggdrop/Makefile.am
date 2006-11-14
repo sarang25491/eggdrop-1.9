@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.39 2004/10/17 05:14:06 stdarg Exp $
+# $Id: Makefile.am,v 1.40 2006/11/14 14:51:23 sven Exp $
 
 MAINTAINERCLEANFILES	= Makefile.in
 
@@ -42,6 +42,7 @@ libeggdrop_la_SOURCES	= base64.c base64.h \
 			md5.c md5.h \
 			memutil.c memutil.h \
 			socket.c socket.h \
+			botnet.c botnet.h \
 			partyline.c partyline.h \
 			partychan.c partychan.h \
 			partymember.c partymember.h \

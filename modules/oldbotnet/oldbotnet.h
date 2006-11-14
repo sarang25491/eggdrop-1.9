@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: oldbotnet.h,v 1.3 2003/12/18 06:50:47 wcc Exp $
+ * $Id: oldbotnet.h,v 1.4 2006/11/14 14:51:24 sven Exp $
  */
 
 #ifndef _EGG_MOD_OLDBOTNET_OLDBOTNET_H_
@@ -33,21 +33,20 @@ typedef struct {
 } oldbotnet_session_t;
 
 typedef struct {
-	user_t *obot;
+	botnet_bot_t *bot;
+	user_t *user;
 	char *host;
 	int port;
 	int idx;
 	char *name;
 	char *password;
+	int linking;
 	int connected;
 	int handlen;
-	int oversion;
+	int version;
 } oldbotnet_t;
 
 /* From events.c */
 extern int oldbotnet_events_init();
-
-/* From oldbotnet.c */
-extern oldbotnet_t oldbotnet;
 
 #endif /* !_EGG_MOD_OLDBOTNET_OLDBOTNET_H_ */

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: users.h,v 1.17 2006/10/01 00:48:59 sven Exp $
+ * $Id: users.h,v 1.18 2006/11/14 14:51:23 sven Exp $
  */
 
 #ifndef _EGG_USERS_H_
@@ -26,7 +26,8 @@
 #define HOST_HASH_SIZE	50
 
 /* User structure flags. */
-#define USER_DELETED 1
+#define USER_DELETED     1
+#define USER_LINKED_BOT  2
 
 /* Bind table names for user events */
 #define BTN_USER_CHANGE_FLAGS		"uflags"

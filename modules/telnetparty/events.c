@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: events.c,v 1.9 2004/06/21 11:33:40 wingman Exp $";
+static const char rcsid[] = "$Id: events.c,v 1.10 2006/11/14 14:51:24 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -26,9 +26,9 @@ static const char rcsid[] = "$Id: events.c,v 1.9 2004/06/21 11:33:40 wingman Exp
 
 static int on_privmsg(void *client_data, partymember_t *dest, partymember_t *src, const char *text, int len);
 static int on_nick(void *client_data, partymember_t *src, const char *oldnick, const char *newnick);
-static int on_quit(void *client_data, partymember_t *src, const char *text, int len);
+static int on_quit(void *client_data, partymember_t *src, const botnet_bot_t *lostbot, const char *text, int len);
 static int on_chanmsg(void *client_data, partychan_t *chan, partymember_t *src, const char *text, int len);
-static int on_join(void *client_data, partychan_t *chan, partymember_t *src);
+static int on_join(void *client_data, partychan_t *chan, partymember_t *src, int linking);
 static int on_part(void *client_data, partychan_t *chan, partymember_t *src, const char *text, int len);
 
 partyline_event_t telnet_party_handler = {
@@ -50,10 +50,11 @@ static int on_nick(void *client_data, partymember_t *src, const char *oldnick, c
 	return partyline_idx_nick (((telnet_session_t *)client_data)->idx, src, oldnick, newnick);
 }
 
-static int on_quit(void *client_data, partymember_t *src, const char *text, int len)
+static int on_quit(void *client_data, partymember_t *src, const botnet_bot_t *lostbot, const char *text, int len)
 {
 	telnet_session_t *session = client_data;
 
+	if (lostbot) return 0;
 	partyline_idx_quit(session->idx, src, text, len);
 
 	/* if this quit are we delete our sockbuf. */
@@ -68,8 +69,9 @@ static int on_chanmsg(void *client_data, partychan_t *chan, partymember_t *src, 
 	return partyline_idx_chanmsg (((telnet_session_t *)client_data)->idx, chan, src, text, len);
 }
 
-static int on_join(void *client_data, partychan_t *chan, partymember_t *src)
+static int on_join(void *client_data, partychan_t *chan, partymember_t *src, int linking)
 {
+	if (linking) return 0;
 	return partyline_idx_join(((telnet_session_t *)client_data)->idx, chan, src);
 }
 

@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: logfile.c,v 1.50 2004/10/17 05:14:07 stdarg Exp $";
+static const char rcsid[] = "$Id: logfile.c,v 1.51 2006/11/14 14:51:24 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -282,8 +282,7 @@ static int on_putlog(int flags, const char *chan, const char *text, int len)
 			 * output to stdout since otherwise everything would
 			 * be printed out twice. */		
 			if (!terminal_enabled) {
-				terminal_enabled = (
-					partymember_lookup_nick (TERMINAL_NICK) != NULL);
+				terminal_enabled = (partymember_lookup(TERMINAL_NICK, NULL, -1) != NULL);
 			}
 			if (terminal_enabled)
 				return 0;

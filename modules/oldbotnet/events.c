@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: events.c,v 1.7 2004/10/17 05:14:06 stdarg Exp $";
+static const char rcsid[] = "$Id: events.c,v 1.8 2006/11/14 14:51:24 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -31,9 +31,9 @@ static int on_part(const char *name, int cid, partymember_t *src, const char *te
 
 int oldbotnet_events_init()
 {
-	bind_add_simple(BTN_PARTYLINE_PUBLIC, NULL, NULL, on_pub);
-	bind_add_simple(BTN_PARTYLINE_JOIN, NULL, NULL, on_join);
-	bind_add_simple(BTN_PARTYLINE_PART, NULL, NULL, on_part);
+//	bind_add_simple(BTN_PARTYLINE_PUBLIC, NULL, NULL, on_pub);
+//	bind_add_simple(BTN_PARTYLINE_JOIN, NULL, NULL, on_join);
+//	bind_add_simple(BTN_PARTYLINE_PART, NULL, NULL, on_part);
 	return(0);
 }
 
@@ -92,28 +92,28 @@ static int on_quit(void *client_data, partymember_t *src, const char *text, int 
 
 static int on_pub(const char *name, int cid, partymember_t *src, const char *text, int len)
 {
-	if (!oldbotnet.connected || !validchan(name)) return(0);
+/*	if (!oldbotnet.connected || !validchan(name)) return(0);
 
 	if (!src) egg_iprintf(oldbotnet.idx, "c %s %s %s\n", oldbotnet.name, sto64(name), text);
 	else if (src->pid < BOT_PID_MULT) egg_iprintf(oldbotnet.idx, "c %s@%s %s %s\n", src->nick, oldbotnet.name, sto64(name), text);
-
+*/
 	return(0);
 }
 
 static int on_join(const char *name, int cid, partymember_t *src)
 {
-	if (!oldbotnet.connected || !validchan(name) || src->pid >= BOT_PID_MULT) return(0);
+/*	if (!oldbotnet.connected || !validchan(name) || src->pid >= BOT_PID_MULT) return(0);
 
 	egg_iprintf(oldbotnet.idx, "j %s %s %s *%s %s@%s\n", oldbotnet.name, src->nick, sto64(name), ito64(src->pid), src->ident, src->host);
-
+*/
 	return(0);
 }
 
 static int on_part(const char *name, int cid, partymember_t *src, const char *text, int len)
 {
-	if (!oldbotnet.connected || !validchan(name) || src->pid >= BOT_PID_MULT) return(0);
+/*	if (!oldbotnet.connected || !validchan(name) || src->pid >= BOT_PID_MULT) return(0);
 
 	egg_iprintf(oldbotnet.idx, "pt %s %s %s %s\n", oldbotnet.name, src->nick, ito64(src->pid), text ? text : "");
-
+*/
 	return(0);
 }

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: telnetparty.c,v 1.22 2006/10/03 04:02:13 sven Exp $";
+static const char rcsid[] = "$Id: telnetparty.c,v 1.23 2006/11/14 14:51:24 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -410,13 +410,13 @@ static int telnet_on_read(void *client_data, int idx, char *data, int len)
 				session->state = STATE_NICKNAME;
 			}
 			else {
-				session->party = partymember_new(-1, session->user, session->nick, session->ident ? session->ident : "~telnet", session->host ? session->host : session->ip, &telnet_party_handler, session);
+				session->party = partymember_new(-1, session->user, NULL, session->nick, session->ident ? session->ident : "~telnet", session->host ? session->host : session->ip, &telnet_party_handler, session);
 				session->state = STATE_PARTYLINE;
 				egg_iprintf(idx, "\r\nWelcome to the telnet partyline interface!\r\n");
 				if (session->ident) egg_iprintf(idx, "Your ident is: %s\r\n", session->ident);
 				if (session->host) egg_iprintf(idx, "Your hostname is: %s\r\n", session->host);
 				/* Put them on the main channel. */
-				partychan_join_name("*", session->party);
+				partychan_join_name("*", session->party, 0);
 			}
 			break;
 	}
@@ -430,7 +430,7 @@ static int telnet_on_eof(void *client_data, int idx, int err, const char *errmsg
 	if (session->party) {
 		if (!err) errmsg = "Client disconnected";
 		else if (!errmsg) errmsg = "Unknown error";
-		partymember_delete(session->party, errmsg);
+		partymember_delete(session->party, NULL, errmsg);
 		/* This will call our on_quit handler which will delete the sockbuf
 		 * which will call our on_delete handler which will kill the session.
 		 * Summery: All the data is gone, don't touch any of the variables */
@@ -445,7 +445,7 @@ static int telnet_on_delete(void *client_data, int idx)
 	telnet_session_t *session = client_data;
 
 	if (session->party) {
-		partymember_delete(session->party, "Deleted!");
+		partymember_delete(session->party, NULL, "Deleted!");
 		session->party = NULL;
 	}
 	kill_session(session);

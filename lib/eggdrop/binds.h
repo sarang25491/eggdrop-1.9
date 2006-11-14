@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: binds.h,v 1.12 2006/10/03 04:02:12 sven Exp $
+ * $Id: binds.h,v 1.13 2006/11/14 14:51:23 sven Exp $
  */
 
 #ifndef _EGG_BINDS_H_
@@ -34,7 +34,7 @@
 
 /* Flags for binds. */
 #define BIND_WANTS_CD   1 /* Does the callback want their client_data inserted as the first argument? */
-#define BIND_BREAKABLE	2
+#define BIND_BREAKABLE	6 /* Breakable binds are always stackable. Doesn't make any sense otherwise. */
 #define BIND_STACKABLE	4
 #define BIND_DELETED	8
 #define BIND_FAKE	16

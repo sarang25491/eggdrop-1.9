@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: script.h,v 1.19 2006/10/03 04:02:13 sven Exp $
+ * $Id: script.h,v 1.20 2006/11/14 14:51:23 sven Exp $
  */
 
 #ifndef _EGG_SCRIPT_H_
@@ -101,17 +101,18 @@ typedef struct byte_array_b {
 #define SCRIPT_READONLY	4096
 
 /* Types for variables. */
-#define SCRIPT_STRING		((int)'s')
-#define SCRIPT_STRING_LIST	((int)'S')
-#define SCRIPT_INTEGER		((int)'i')
-#define SCRIPT_UNSIGNED		((int)'u')
-#define SCRIPT_POINTER		((int)'p')
-#define SCRIPT_CALLBACK		((int)'c')
-#define SCRIPT_USER		((int)'U')
-#define SCRIPT_PARTIER		((int)'P')
-#define SCRIPT_BYTES		((int)'b')
-#define SCRIPT_VAR		((int)'v')
-#define SCRIPT_TYPE_MASK	255
+#define SCRIPT_STRING		    's'
+#define SCRIPT_STRING_LIST	'S'
+#define SCRIPT_INTEGER		  'i'
+#define SCRIPT_UNSIGNED		  'u'
+#define SCRIPT_POINTER		  'p'
+#define SCRIPT_CALLBACK		  'c'
+#define SCRIPT_USER		      'U'
+#define SCRIPT_BOT          'B'
+#define SCRIPT_PARTIER		  'P'
+#define SCRIPT_BYTES		    'b'
+#define SCRIPT_VAR		      'v'
+#define SCRIPT_TYPE_MASK	  255
 
 typedef struct script_callback_b {
 	int (*callback)();

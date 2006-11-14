@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.51 2006/10/01 00:48:59 sven Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.52 2006/11/14 14:51:24 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -106,7 +106,7 @@ static int party_join(partymember_t *p, const char *nick, user_t *u, const char 
 		partymember_printf(p, _("Syntax: join <channel>"));
 		return(0);
 	}
-	partychan_join_name(text, p);
+	partychan_join_name(text, p, 0);
 	return(0);
 }
 
@@ -128,8 +128,8 @@ static int party_quit(partymember_t *p, const char *nick, user_t *u, const char 
 	}
 
 	partymember_printf(p, "Goodbye!");
-	if (!text || !*text) partymember_delete(p, "Quit");
-	else partymember_delete(p, text);
+	if (!text || !*text) partymember_delete(p, NULL, "Quit");
+	else partymember_delete(p, NULL, text);
 	return(0);
 }
 
@@ -145,7 +145,7 @@ static int party_whisper(partymember_t *p, const char *nick, user_t *u, const ch
 		goto done;
 	}
 
-	dest = partymember_lookup_nick(who);
+	dest = partymember_lookup(who, NULL, -1);
 	if (!dest) {
 		partymember_printf(p, _("No such user '%s'."), who);
 		goto done;
@@ -257,6 +257,34 @@ static int party_status(partymember_t *p, const char *nick, user_t *u, const cha
 	return(0);
 }
 
+static int party_bots(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	int len, bots = 1;
+	char obuf[201] = "";
+	const char *botname;
+	const botnet_bot_t *bot;
+
+	botname = botnet_get_name();
+	if (strlen(botname) < 100) strcpy(obuf, botname);
+	else sprintf(obuf, "%.96s...", botname);
+
+	for (bot = botnet_get_head(); bot; bot = bot->next) {
+		++bots;
+		len = strlen(bot->name);
+		if (strlen(obuf) + (len < 100 ? len : 99) + 2 > 200) {
+			partymember_printf(p, _("Bots: %s"), obuf);
+			if (strlen(botname) < 100) strcpy(obuf, bot->name);
+			else sprintf(obuf, "%.96s...", bot->name);
+		} else {
+			if (strlen(botname) < 100) sprintf(obuf + strlen(obuf), ", %s", bot->name);
+			else sprintf(obuf + strlen(obuf), ", %.96s...", bot->name);
+		}
+	}
+	partymember_printf(p, _("Bots: %s"), obuf);
+	partymember_printf(p, _("Total: %d"), bots);
+	return 0;
+}
+
 static int party_save(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	putlog(LOG_MISC, "*", _("Saving user file..."));
@@ -285,13 +313,13 @@ static int intsorter(const void *left, const void *right)
 static int party_who(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
 	partymember_t *who;
-	int *pids, len, i, width = 0;
+	int *ids, len, i, width = 0;
 
 	partymember_printf(p, _("Partyline members:"));
-	partymember_who(&pids, &len);
-	qsort(pids, len, sizeof(int), intsorter);
+	partymember_who(&ids, &len);
+	qsort(ids, len, sizeof(int), intsorter);
 	if (len > 0) {
-		i = pids[len-1];
+		i = ids[len-1];
 		if (!i) i++;
 		while (i != 0) {
 			i /= 10;
@@ -299,10 +327,10 @@ static int party_who(partymember_t *p, const char *nick, user_t *u, const char *
 		}
 	}
 	for (i = 0; i < len; i++) {
-		who = partymember_lookup_pid(pids[i]);
-		partymember_printf(p, "  [%*d] %s (%s@%s)", width, who->pid, who->nick, who->ident, who->host);
+		who = partymember_lookup(NULL, NULL, ids[i]);
+		partymember_printf(p, "  [%*d] %s (%s@%s)", width, who->id, who->nick, who->ident, who->host);
 	}
-	free(pids);
+	free(ids);
 	return(0);
 }
 
@@ -404,12 +432,40 @@ static int party_minus_user(partymember_t *p, const char *nick, user_t *u, const
 		return(0);
 	}
 	who = user_lookup_by_handle(text);
-	if (!who) partymember_printf(p, _("User '%s' not found."));
+	if (!who) partymember_printf(p, _("User '%s' not found."), text);
 	else {
 		partymember_printf(p, _("Deleting user '%s'."), who->handle);
 		user_delete(who);
 	}
 	return(0);
+}
+
+static int party_link(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	int error;
+	user_t *who;
+
+	if (!text || !*text) {
+		partymember_printf(p, _("Syntax: link <handle>"));
+		return 0;
+	}
+	who = user_lookup_by_handle(text);
+	if (!who) {
+		partymember_printf(p, _("User '%s' not found."), text);
+		return 0;
+	}
+	error = botnet_link(who);
+	if (!error) return 0;
+
+	if (error == -1) {
+		partymember_printf(p, _("Error linking to '%s': User is not a bot."), who->handle);
+	} else if (error == -2) {
+		partymember_printf(p, _("Error linking to '%s': Bot type not set."), who->handle);
+	} else if (error == -3) {
+		partymember_printf(p, _("Error linking to '%s': No module loaded to link to that bot type."), who->handle);
+	}
+
+	return 0;
 }
 
 static int party_plus_host(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
@@ -878,6 +934,7 @@ static bind_list_t core_party_binds[] = {		/* Old flags requirement */
 	{NULL, "who", party_who},		/* DDD	*/
 	{NULL, "whois", party_whois},		/* DDC	*/ /* ot|o */
 	{NULL, "match", party_match},		/* DDC	*/ /* ot|o */
+	{NULL, "bots", party_bots},        /* DDD  */ /* -|- */
 	{"n", "addlog", party_addlog},		/* DDD	*/ /* ot|o */
 	{"n", "get", party_get},		/* DDC	*/
 	{"n", "set", party_set},		/* DDC	*/
@@ -888,6 +945,7 @@ static bind_list_t core_party_binds[] = {		/* Old flags requirement */
 	{"n", "restart", party_restart},	/* DDD	*/ /* m|- */
 	{"n", "+user", party_plus_user},	/* DDC	*/ /* m|- */
 	{"n", "-user", party_minus_user},	/* DDC	*/ /* m|- */
+	{"n", "link", party_link},        /* DDD  */ /* t|- */
 	{"n", "chattr", party_chattr},		/* DDC	*/ /* m|m */
 	{"n", "modules", party_modules},	/* DDD	*/ /* n|- */
 	{"n", "loadmod", party_loadmod},	/* DDD	*/ /* n|- */

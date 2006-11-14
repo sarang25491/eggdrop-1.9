@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dccparty.c,v 1.13 2006/10/03 04:02:13 sven Exp $";
+static const char rcsid[] = "$Id: dccparty.c,v 1.14 2006/11/14 14:51:23 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -202,13 +202,13 @@ static int dcc_on_read(void *client_data, int idx, char *data, int len)
 				session->state = STATE_NICKNAME;
 			}
 			else {
-				session->party = partymember_new(-1, session->user, session->nick, session->ident ? session->ident : "~dcc", session->host ? session->host : session->ip, &dcc_party_handler, session);
+				session->party = partymember_new(-1, session->user, NULL, session->nick, session->ident ? session->ident : "~dcc", session->host ? session->host : session->ip, &dcc_party_handler, session);
 				session->state = STATE_PARTYLINE;
 				egg_iprintf(idx, _("\r\nWelcome to the dcc partyline interface!\r\n"));
 				if (session->ident) egg_iprintf(idx, _("Your ident is: %s\r\n"), session->ident);
 				if (session->host) egg_iprintf(idx, _("Your hostname is: %s\r\n"), session->host);
 				/* Put them on the main channel. */
-				partychan_join_name("*", session->party);
+				partychan_join_name("*", session->party, 0);
 			}
 			break;
 	}
@@ -222,7 +222,7 @@ static int dcc_on_eof(void *client_data, int idx, int err, const char *errmsg)
 	if (session->party) {
 		if (!err) errmsg = "Client disconnected";
 		else if (!errmsg) errmsg = "Unknown error";
-		partymember_delete(session->party, errmsg);
+		partymember_delete(session->party, NULL, errmsg);
 		/* This will call our on_quit handler which will delete the sockbuf
 		 * which will call our on_delete handler which will kill the session.
 		 * Summery: All the data is gone, don't touch any of the variables */
@@ -237,7 +237,7 @@ static int dcc_on_delete(void *client_data, int idx)
 	dcc_session_t *session = client_data;
 
 	if (session->party) {
-		partymember_delete(session->party, "Deleted!");
+		partymember_delete(session->party, NULL, "Deleted!");
 		session->party = NULL;
 	}
 	kill_session(session);

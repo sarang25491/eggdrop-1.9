@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: partymember.h,v 1.4 2005/12/17 01:25:06 sven Exp $
+ * $Id: partymember.h,v 1.5 2006/11/14 14:51:23 sven Exp $
  */
 
 #ifndef _EGG_PARTYMEMBER_H
@@ -25,11 +25,18 @@
 struct partymember {
   partymember_t *next;
 	partymember_t *prev;
+	partymember_t *next_on_bot;
+	partymember_t *prev_on_bot;
 
-	int pid;
+	int id;
 	char *nick, *ident, *host;
 	user_t *user;
+	struct botnet_bot *bot;
 	int flags;
+
+	char *full_id_name;
+	const char *full_name;
+	const char *common_name;
 
 	partychan_t **channels;
 	int nchannels;
@@ -38,18 +45,21 @@ struct partymember {
 	void *client_data;
 };
 
-partymember_t *partymember_lookup_pid(int pid);
-partymember_t *partymember_lookup_nick(const char *nick);
-partymember_t *partymember_new(int pid, user_t *user, const char *nick, const char *ident, const char *host, partyline_event_t *handler, void *client_data);
-int partymember_delete(partymember_t *p, const char *text);
+partymember_t *partymember_lookup(const char *name, struct botnet_bot *bot, int id);
+partymember_t *partymember_new(int id, user_t *user, struct botnet_bot *bot, const char *nick, const char *ident, const char *host, partyline_event_t *handler, void *client_data);
+partymember_t *partymember_get_head(void);
+int partymember_delete(partymember_t *p, const struct botnet_bot *lost_bot, const char *text);
 int partymember_update_info(partymember_t *p, const char *ident, const char *host);
-int partymember_who(int **pids, int *len);
-int partymember_write_pid(int pid, const char *text, int len);
+int partymember_who(int **ids, int *len);
+int partymember_write_id(int id, const char *text, int len);
 int partymember_write(partymember_t *p, const char *text, int len);
 int partymember_msg(partymember_t *p, partymember_t *src, const char *text, int len);
-int partymember_printf_pid(int pid, const char *fmt, ...);
+int partymember_printf_id(int id, const char *fmt, ...);
 int partymember_printf(partymember_t *p, const char *fmt, ...);
 int partymember_set_nick(partymember_t *p, const char *nick);
+
+int partymember_count_by_bot(const struct botnet_bot *bot);
+int partymember_delete_by_bot(const struct botnet_bot *bot, const struct botnet_bot *lost_bot, const char *reason);
 
 #endif /* !_EGG_PARTYMEMBER_H */
 

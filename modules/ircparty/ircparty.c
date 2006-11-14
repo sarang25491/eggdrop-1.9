@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: ircparty.c,v 1.16 2006/10/03 04:02:13 sven Exp $";
+static const char rcsid[] = "$Id: ircparty.c,v 1.17 2006/11/14 14:51:24 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -203,7 +203,7 @@ static void irc_greet(irc_session_t *session)
 static int got_join(partymember_t *p, int idx, char *cmd, int nargs, char *args[])
 {
 	if (nargs != 1 || strlen(args[0]) < 2) egg_iprintf(idx, ":eggdrop.bot 461 %s JOIN :Not enough parameters.\r\n", p->nick);
-	else partychan_join_name(args[0]+1, p);
+	else partychan_join_name(args[0]+1, p, 0);
 	return(0);
 }
 
@@ -235,7 +235,7 @@ static int got_privmsg(partymember_t *p, int idx, char *cmd, int nargs, char *ar
 		else partyline_on_input(partychan_lookup_name(args[0]+1), p, args[1], -1);
 	}
 	else {
-		partymember_t *dest = partymember_lookup_nick(args[0]);
+		partymember_t *dest = partymember_lookup(args[0], NULL, -1);
 		if (!dest) egg_iprintf(idx, ":eggdrop.bot 401 %s %s :No such nick/channel\r\n", p->nick, args[0]);
 		else partymember_msg(dest, p, args[1], -1);
 	}
@@ -306,10 +306,10 @@ static int irc_on_read(void *client_data, int idx, char *data, int len)
 				}
 				free(session->pass);
 				session->pass = NULL;
-				session->party = partymember_new(-1, session->user, session->nick, session->ident ? session->ident : "~ircparty", session->host ? session->host : session->ip, &irc_party_handler, session);
+				session->party = partymember_new(-1, session->user, NULL, session->nick, session->ident ? session->ident : "~ircparty", session->host ? session->host : session->ip, &irc_party_handler, session);
 				session->state = STATE_PARTYLINE;
 				irc_greet(session);
-				partychan_join_name("*", session->party);
+				partychan_join_name("*", session->party, 0);
 			}
 			break;
 	}
@@ -324,7 +324,7 @@ static int irc_on_eof(void *client_data, int idx, int err, const char *errmsg)
 	if (session->party) {
 		if (!err) errmsg = "Client disconnected";
 		else if (!errmsg) errmsg = "Unknown error";
-		partymember_delete(session->party, errmsg);
+		partymember_delete(session->party, NULL, errmsg);
 		/* This will call our on_quit handler which will delete the sockbuf
 		 * which will call our on_delete handler which will kill the session.
 		 * Summery: All the data is gone, don't touch any of the variables */
@@ -339,7 +339,7 @@ static int irc_on_delete(void *client_data, int idx)
 	irc_session_t *session = client_data;
 
 	if (session->party) {
-		partymember_delete(session->party, "Deleted!");
+		partymember_delete(session->party, NULL, "Deleted!");
 		session->party = NULL;
 	}
 	kill_session(session);

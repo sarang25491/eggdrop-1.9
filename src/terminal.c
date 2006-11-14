@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: terminal.c,v 1.6 2006/01/06 03:59:30 sven Exp $";
+static const char rcsid[] = "$Id: terminal.c,v 1.7 2006/11/14 14:51:24 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>			/* partyline_*		*/
@@ -28,9 +28,9 @@ extern int terminal_enabled; /* from logfile.c */
 
 static int on_privmsg(void *client_data, partymember_t *dest, partymember_t *src, const char *text, int len);
 static int on_nick(void *client_data, partymember_t *src, const char *oldnick, const char *newnick);
-static int on_quit(void *client_data, partymember_t *src, const char *text, int len);
+static int on_quit(void *client_data, partymember_t *src, const botnet_bot_t *lostbot, const char *text, int len);
 static int on_chanmsg(void *client_data, partychan_t *chan, partymember_t *src, const char *text, int len);
-static int on_join(void *client_data, partychan_t *chan, partymember_t *src);
+static int on_join(void *client_data, partychan_t *chan, partymember_t *src, int linking);
 static int on_part(void *client_data, partychan_t *chan, partymember_t *src, const char *text, int len);
 static int on_read(void *client_data, int idx, char *data, int len);
 
@@ -83,11 +83,11 @@ int terminal_init(void)
 	putlog(LOG_MISC, "*", _("Entering terminal mode."));
 
 	terminal_session.party = partymember_new(-1,
-		terminal_user, TERMINAL_NICK, TERMINAL_USER,
+		terminal_user, NULL, TERMINAL_NICK, TERMINAL_USER,
 			TERMINAL_HOST, &terminal_party_handler, NULL);
 
 	/* Put them on the main channel. */
-	partychan_join_name("*", terminal_session.party);	
+	partychan_join_name("*", terminal_session.party, 0);
 
 	return (0);
 }
@@ -102,7 +102,7 @@ int terminal_shutdown(int runmode)
 	}
 
 	if (terminal_session.party) {
-		partymember_delete(terminal_session.party, _("Shutdown"));
+		partymember_delete(terminal_session.party, NULL, _("Shutdown"));
 		terminal_session.party = NULL;
 	}
 
@@ -148,8 +148,9 @@ static int on_nick(void *client_data, partymember_t *src, const char *oldnick, c
 	return partyline_idx_nick (terminal_session.out_idx, src, oldnick, newnick);
 }
 
-static int on_quit(void *client_data, partymember_t *src, const char *text, int len)
+static int on_quit(void *client_data, partymember_t *src, const botnet_bot_t *lostbot, const char *text, int len)
 {
+	if (lostbot) return 0;
 	partyline_idx_quit(terminal_session.out_idx, src, text, len);
 
 	/* if this quit are we delete our sockbuf. */
@@ -164,8 +165,9 @@ static int on_chanmsg(void *client_data, partychan_t *chan, partymember_t *src, 
 	return partyline_idx_chanmsg(terminal_session.out_idx, chan, src, text, len);
 }
 
-static int on_join(void *client_data, partychan_t *chan, partymember_t *src)
+static int on_join(void *client_data, partychan_t *chan, partymember_t *src, int linking)
 {
+	if (linking) return 0;
 	return partyline_idx_join(terminal_session.out_idx, chan, src);
 }
 

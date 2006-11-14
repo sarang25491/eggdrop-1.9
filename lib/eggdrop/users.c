@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.51 2006/10/01 21:59:25 sven Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.52 2006/11/14 14:51:23 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -43,7 +43,7 @@ typedef struct {
 	flags_t mustnothave[2];
 } cmd_match_data_t;
 
-#define BAD_HANDLE_CHARS " *?"
+#define BAD_HANDLE_CHARS " *?@:"
 
 /* Keep track of the next available uid. Also keep track of when uid's wrap
  * around (probably won't happen), so that we know when we can trust g_uid. */
@@ -764,17 +764,19 @@ int user_check_partial_flags_str(user_t *u, const char *chan, const char *flags)
 
 int user_change_handle(user_t *u, const char *newhandle)
 {
+	char *old = u->handle;
 	partymember_t *p = NULL;
 
 	if (user_invalid_handle(newhandle)) return 1;
-	p = partymember_lookup_nick(u->handle);
 	hash_table_remove(handle_ht, u->handle, NULL);
-	free(u->handle);
 	u->handle = strdup(newhandle);
 	hash_table_insert(handle_ht, u->handle, u);
-	if (p) { /* Is person online? */
+
+	while ((p = partymember_lookup(old, NULL, -1))) {
 		partymember_set_nick(p, u->handle);
 	}
+
+	free(u->handle);
 	return(0);
 }
 

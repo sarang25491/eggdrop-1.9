@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partychan.c,v 1.22 2006/08/22 01:41:28 sven Exp $";
+static const char rcsid[] = "$Id: partychan.c,v 1.23 2006/11/14 14:51:23 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -220,25 +220,25 @@ int partychan_ison(partychan_t *chan, partymember_t *p)
 	return(0);
 }
 
-int partychan_join_name(const char *chan, partymember_t *p)
+int partychan_join_name(const char *chan, partymember_t *p, int linking)
 {
 	partychan_t *chanptr;
 
 	if (!chan) return(-1);
 	chanptr = partychan_lookup_name(chan);
 	if (!chanptr) chanptr = partychan_new(-1, chan);
-	return partychan_join(chanptr, p);
+	return partychan_join(chanptr, p, linking);
 }
 
-int partychan_join_cid(int cid, partymember_t *p)
+int partychan_join_cid(int cid, partymember_t *p, int linking)
 {
 	partychan_t *chanptr;
 
 	chanptr = partychan_lookup_cid(cid);
-	return partychan_join(chanptr, p);
+	return partychan_join(chanptr, p, linking);
 }
 
-int partychan_join(partychan_t *chan, partymember_t *p)
+int partychan_join(partychan_t *chan, partymember_t *p, int linking)
 {
 	partychan_member_t *mem;
 	int i;
@@ -271,8 +271,10 @@ int partychan_join(partychan_t *chan, partymember_t *p)
 		mem = chan->members+i;
 		if (mem->flags & PARTY_DELETED || mem->p->flags & PARTY_DELETED) continue;
 		if (mem->p->handler && mem->p->handler->on_join)
-			(mem->p->handler->on_join)(mem->p->client_data, chan, p);
+			(mem->p->handler->on_join)(mem->p->client_data, chan, p, linking);
 	}
+
+	botnet_member_join(chan, p, linking);
 
 	return(0);
 }
@@ -340,26 +342,12 @@ int partychan_part(partychan_t *chan, partymember_t *p, const char *text)
 			(mem->p->handler->on_part)(mem->p->client_data, chan, p, text, len);
 	}
 
+	botnet_member_part(chan, p, text, len);
+
 	return(0);
 }
 
-int partychan_msg_name(const char *name, partymember_t *src, const char *text, int len)
-{
-	partychan_t *chan;
-
-	chan = partychan_lookup_name(name);
-	return partychan_msg(chan, src, text, len);
-}
-
-int partychan_msg_cid(int cid, partymember_t *src, const char *text, int len)
-{
-	partychan_t *chan;
-
-	chan = partychan_lookup_cid(cid);
-	return partychan_msg(chan, src, text, len);
-}
-
-int partychan_msg(partychan_t *chan, partymember_t *src, const char *text, int len)
+static int chan_msg(partychan_t *chan, partymember_t *src, const char *text, int len, int local)
 {
 	partychan_member_t *mem;
 	int i;
@@ -377,10 +365,39 @@ int partychan_msg(partychan_t *chan, partymember_t *src, const char *text, int l
 		if (mem->p->handler && mem->p->handler->on_chanmsg)
 			(mem->p->handler->on_chanmsg)(mem->p->client_data, chan, src, text, len);
 	}
+
+	if (!local) botnet_chanmsg(chan, src, text, len);
+
 	return(0);
 }
 
-/* Build a list of members on the same channels as p. */
+int partychan_msg_name(const char *name, partymember_t *src, const char *text, int len)
+{
+	partychan_t *chan;
+
+	chan = partychan_lookup_name(name);
+	return chan_msg(chan, src, text, len, 0);
+}
+
+int partychan_msg_cid(int cid, partymember_t *src, const char *text, int len)
+{
+	partychan_t *chan;
+
+	chan = partychan_lookup_cid(cid);
+	return chan_msg(chan, src, text, len, 0);
+}
+
+int partychan_msg(partychan_t *chan, partymember_t *src, const char *text, int len)
+{
+	return chan_msg(chan, src, text, len, 0);
+}
+
+int localchan_msg(partychan_t *chan, partymember_t *src, const char *text, int len)
+{
+	return chan_msg(chan, src, text, len, 1);
+}
+
+/* Build a list of local members on the same channels as p. */
 partymember_common_t *partychan_get_common(partymember_t *p)
 {
 	partymember_common_t *common;
@@ -404,6 +421,7 @@ partymember_common_t *partychan_get_common(partymember_t *p)
 			if (chan->members[j].flags & PARTY_DELETED) continue;
 			mem = chan->members[j].p;
 			if (mem->flags & (PARTY_DELETED | PARTY_SELECTED)) continue;
+			if (mem->bot) continue;
 			mem->flags |= PARTY_SELECTED;
 			if (common->len >= common->max) {
 				common->max = common->len + 10;

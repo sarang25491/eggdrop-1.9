@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: perlscript.c,v 1.31 2005/12/28 17:27:31 sven Exp $";
+static const char rcsid[] = "$Id: perlscript.c,v 1.32 2006/11/14 14:51:24 sven Exp $";
 #endif
 
 #ifdef DEBUG
@@ -376,7 +376,9 @@ static SV *c_to_perl_var(script_var_t *v)
 		}
 		case SCRIPT_PARTIER: {
 			partymember_t *p = v->value;
-			result = newSViv(p->pid);
+
+			if (p) result = newSVpv(p->full_id_name, strlen(p->full_id_name));
+			else result = newSVpv("*", 1);
 			break;
 		}
 		default:
@@ -419,7 +421,7 @@ static int perl_to_c_var(SV *sv, script_var_t *var, int type)
 			break;
 		}
 		case SCRIPT_PARTIER: {
-			var->value = partymember_lookup_pid(SvIV(sv));
+			var->value = partymember_lookup(SvPV(sv, len), NULL, -1);
 			break;
 		}
 		case SCRIPT_USER: { /* User. */

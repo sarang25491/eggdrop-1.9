@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partyline.c,v 1.26 2006/10/11 01:54:04 sven Exp $";
+static const char rcsid[] = "$Id: partyline.c,v 1.27 2006/11/14 14:51:23 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -226,7 +226,7 @@ static int on_putlog(int flags, const char *chan, const char *text, int len)
 	if (!chanptr)
 		return(0);
 
-	partychan_msg(chanptr, NULL, text, len);
+	localchan_msg(chanptr, NULL, text, len);
 	return(0);
 }
 
@@ -238,9 +238,9 @@ int partyline_idx_privmsg(int idx, partymember_t *dest, partymember_t *src, cons
 
 	if (src) {
 		if (len >= 9 && !strncasecmp(text, "\1ACTION ", 8) && text[len - 1] == 1) {
-			egg_iprintf(idx, "%s* %s %.*s\r\n", ts, src->nick, len - 9, text + 8);
+			egg_iprintf(idx, "%s* %s %.*s\r\n", ts, src->common_name, len - 9, text + 8);
 		} else {
-			egg_iprintf(idx, "%s[%s] %s\r\n", ts, src->nick, text);
+			egg_iprintf(idx, "%s[%s] %s\r\n", ts, src->common_name, text);
 		}
 	} else {
 		egg_iprintf(idx, "%s\r\n", text);
@@ -250,13 +250,14 @@ int partyline_idx_privmsg(int idx, partymember_t *dest, partymember_t *src, cons
 
 int partyline_idx_nick(int idx, partymember_t *src, const char *oldnick, const char *newnick)
 {
-	egg_iprintf(idx, "* %s*** %s is now known as %s.\n", timer_get_timestamp(), oldnick, newnick);
+	if (src->bot) egg_iprintf(idx, "* %s*** %s@%s is now known as %s@%s.\n", timer_get_timestamp(), oldnick, src->bot->name, newnick, src->bot->name);
+	else egg_iprintf(idx, "* %s*** %s is now known as %s.\n", timer_get_timestamp(), oldnick, newnick);
 	return 0;
 }
 
 int partyline_idx_quit(int idx, partymember_t *src, const char *text, int len)
 {
-	egg_iprintf(idx, "* %s*** %s (%s@%s) has quit: %s\n", timer_get_timestamp(), src->nick, src->ident, src->host, text);
+	egg_iprintf(idx, "* %s*** %s (%s@%s) has quit: %s\n", timer_get_timestamp(), src->common_name, src->ident, src->host, text);
 	return 0;
 }
 
@@ -268,9 +269,9 @@ int partyline_idx_chanmsg(int idx, partychan_t *chan, partymember_t *src, const 
 
 	if (src) {
 		if (len >= 9 && !strncasecmp(text, "\1ACTION ", 8) && text[len - 1] == 1) {
-			egg_iprintf(idx, "%s %s* %s %.*s\r\n", chan->name, ts, src->nick, len - 9, text + 8);
+			egg_iprintf(idx, "%s %s* %s %.*s\r\n", chan->name, ts, src->common_name, len - 9, text + 8);
 		} else {
-			egg_iprintf(idx, "%s %s<%s> %s\r\n", chan->name, ts, src->nick, text);
+			egg_iprintf(idx, "%s %s<%s> %s\r\n", chan->name, ts, src->common_name, text);
 		}
 	} else {
 		egg_iprintf(idx, "%s %s%s\r\n", chan->name, ts, text);
@@ -280,13 +281,13 @@ int partyline_idx_chanmsg(int idx, partychan_t *chan, partymember_t *src, const 
 
 int partyline_idx_join(int idx, partychan_t *chan, partymember_t *src)
 {
-	egg_iprintf(idx, "%s %s*** %s (%s@%s) has joined the channel.\r\n", chan->name, timer_get_timestamp(), src->nick, src->ident, src->host);
+	egg_iprintf(idx, "%s %s*** %s (%s@%s) has joined the channel.\r\n", chan->name, timer_get_timestamp(), src->common_name, src->ident, src->host);
 	return 0;
 }
 
 int partyline_idx_part(int idx, partychan_t *chan, partymember_t *src, const char *text, int len)
 {
-	egg_iprintf(idx, "%s %s*** %s (%s@%s) has left %s: %s\r\n", chan->name, timer_get_timestamp(), src->nick, src->ident, src->host, chan->name, text);
+	egg_iprintf(idx, "%s %s*** %s (%s@%s) has left %s: %s\r\n", chan->name, timer_get_timestamp(), src->common_name, src->ident, src->host, chan->name, text);
 	return 0;
 }
 

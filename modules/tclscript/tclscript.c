@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tclscript.c,v 1.50 2005/12/28 17:27:31 sven Exp $";
+static const char rcsid[] = "$Id: tclscript.c,v 1.51 2006/11/14 14:51:24 sven Exp $";
 #endif
 
 #include <string.h>
@@ -433,11 +433,9 @@ static Tcl_Obj *c_to_tcl_var(Tcl_Interp *myinterp, script_var_t *v)
 		}
 		case SCRIPT_PARTIER: {
 			partymember_t *p = v->value;
-			int pid;
 
-			if (p) pid = p->pid;
-			else pid = -1;
-			result = Tcl_NewIntObj(pid);
+			if (p) result = Tcl_NewStringObj(p->full_id_name, -1);
+			else result = Tcl_NewStringObj("*", -1);
 			break;
 		}
 		case SCRIPT_USER: {
@@ -492,7 +490,7 @@ static int tcl_to_c_var(Tcl_Interp *myinterp, Tcl_Obj *obj, script_var_t *var, i
 		case SCRIPT_BYTES: {
 			byte_array_t *byte_array;
 
-			byte_array = (byte_array_t *)malloc(sizeof(*byte_array));
+			byte_array = malloc(sizeof(*byte_array));
 
 #ifdef USE_TCL_BYTE_ARRAYS
 			byte_array->bytes = Tcl_GetByteArrayFromObj(obj, &byte_array->len);
@@ -509,15 +507,15 @@ static int tcl_to_c_var(Tcl_Interp *myinterp, Tcl_Obj *obj, script_var_t *var, i
 			int intval = 0;
 
 			err = Tcl_GetIntFromObj(myinterp, obj, &intval);
-			var->value = (void *)intval;
+			var->value = (void *) intval;
 			break;
 		}
 		case SCRIPT_CALLBACK: {
 			script_callback_t *cback; /* Callback struct */
 			my_callback_cd_t *cdata; /* Our client data */
 
-			cback = (script_callback_t *)calloc(1, sizeof(*cback));
-			cdata = (my_callback_cd_t *)calloc(1, sizeof(*cdata));
+			cback = calloc(1, sizeof(*cback));
+			cdata = calloc(1, sizeof(*cdata));
 			cback->callback = (Function) my_tcl_callbacker;
 			cback->callback_data = cdata;
 			cback->name = strdup(Tcl_GetString(obj));
@@ -530,11 +528,10 @@ static int tcl_to_c_var(Tcl_Interp *myinterp, Tcl_Obj *obj, script_var_t *var, i
 			break;
 		}
 		case SCRIPT_PARTIER: {
-			int pid = -1;
+			const char *name;
 
-			err = Tcl_GetIntFromObj(myinterp, obj, &pid);
-			if (!err) var->value = partymember_lookup_pid(pid);
-			else var->value = NULL;
+			name = Tcl_GetString(obj);
+			var->value = partymember_lookup(name, NULL, -1);
 			break;
 		}
 		case SCRIPT_USER: {
