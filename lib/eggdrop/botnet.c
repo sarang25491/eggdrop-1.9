@@ -28,7 +28,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: botnet.c,v 1.1 2006/11/14 14:51:23 sven Exp $";
+static const char rcsid[] = "$Id: botnet.c,v 1.2 2006/11/21 01:38:41 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -56,7 +56,55 @@ static int botnet_clear_all(void);
 //	{0}
 //};
 
-static bind_table_t *BT_request_link, *BT_link = NULL, *BT_disc = NULL;
+/*!
+ * \bind
+ * This bind is triggered every time the bot wants to link to another bot for
+ * some reason.
+ * \name request-link
+ * \flags Ignored.
+ * \match The bot's type.
+ * \param user The user record of the bot to be linked.
+ * \param string The type of the bot. (Same as the match.)
+ * \breakable
+ * \return A function should return ::BIND_RET_BREAK if it tried to establish a
+ *         link or 0 otherwise.
+ */
+
+static bind_table_t *BT_request_link;
+
+/*!
+ * \bind
+ * This bind is triggered every time a new bot is somehow linked to the botnet.
+ * There is no way to determine if it happened because it was directly linked
+ * or because another bot was linked and introduced it.
+ * \name link
+ * \flags Ignored.
+ * \match The new bot's name.
+ * \param bot The new bot.
+ * \stackable
+ * \noreturn
+ */
+
+static bind_table_t *BT_link;
+
+/*!
+ * \bind
+ * This bind is triggered every time a bot is lost from the botnet. If a bot
+ * gets disconnected this bind is triggered for all bots behind the lost one
+ * first, beginning with the most distant bots. That means that for some bots
+ * this bind is triggered for, the uplink still exists in this bots database
+ * even though it has already been lost.
+ * \name disc
+ * \flags Ignored.
+ * \match The lost bot's name.
+ * \param bot The lost bot.
+ * \param bot The bot that really got disconnected and caused the bots behind it to get lost.
+ * \param string Some kind of reason for the disconnect.
+ * \stackable
+ * \return Any return value will be ignored.
+ */
+
+static bind_table_t *BT_disc;
 
 /*!
  * \brief Inits the whole botnet stuff
@@ -74,7 +122,7 @@ int botnet_init()
 	bot_ht = hash_table_create(NULL, NULL, 13, HASH_TABLE_STRINGS);
 
 	BT_request_link = bind_table_add(BTN_BOTNET_REQUEST_LINK, 2, "Us", MATCH_MASK, BIND_BREAKABLE);
-	BT_link = bind_table_add(BTN_BOTNET_LINK, 2, "B", MATCH_MASK, BIND_STACKABLE);
+	BT_link = bind_table_add(BTN_BOTNET_LINK, 1, "B", MATCH_MASK, BIND_STACKABLE);
 	BT_disc = bind_table_add(BTN_BOTNET_DISC, 3, "BBs", MATCH_MASK, BIND_STACKABLE);
 	return 0;
 }
@@ -242,7 +290,7 @@ botnet_bot_t *botnet_new(const char *name, user_t *user, botnet_bot_t *uplink, b
 		if (tmp->handler && tmp->handler->on_new_bot) tmp->handler->on_new_bot(tmp->client_data, bot, netburst);
 	}
 
-	bind_check(BT_link, NULL, bot->name, bot, bot->user);
+	bind_check(BT_link, NULL, bot->name, bot);
 
 	if (!netburst) {
 		if (!bot->uplink) putlog(LOG_MISC, "*", "Linked to %s.", bot->name);

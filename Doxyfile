@@ -158,7 +158,14 @@ TAB_SIZE               = 2
 # will result in a user-defined paragraph with heading "Side Effects:". 
 # You can put \n's in the value part of an alias to insert newlines.
 
-ALIASES                = 
+ALIASES                = "bind=\xrefitem bind \"Bind\" \"Bind List\""
+ALIASES               += "name=\par \"Name:\" "
+ALIASES               += "flags=\par \"Flags:\" "
+ALIASES               += "match=\par \"Match:\" "
+ALIASES               += "stackable=\par \"Note:\" This bind is stackable."
+ALIASES               += "breakable=\par \"Note:\" This bind is stackable and breakable."
+ALIASES               += "noparam=\par \"Parameters:\" None."
+ALIASES               += "noreturn=\return Any return value will be ignored."
 
 # Set the OPTIMIZE_OUTPUT_FOR_C tag to YES if your project consists of C sources 
 # only. Doxygen will then generate output that is more tailored for C. 
