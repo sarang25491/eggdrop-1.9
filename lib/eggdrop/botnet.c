@@ -28,7 +28,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: botnet.c,v 1.2 2006/11/21 01:38:41 sven Exp $";
+static const char rcsid[] = "$Id: botnet.c,v 1.3 2006/12/02 04:05:11 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -333,10 +333,10 @@ static int botnet_clear_all()
  * \param bot The bot to get rid of.
  * \param reason Some kind of explanation.
  *
- * \return Always 0.
+ * \return 0 on success, -1 if the bot's uplink doesn't have an on_unlink
+ *         handler, -2 if we don't want to unlink.
  *
- * \todo Return something useful or void. Do some kind of check if we really
- *       want the unlink.
+ * \todo Do some kind of check if we really want the unlink.
  */
 
 int botnet_unlink(partymember_t *from, botnet_bot_t *bot, const char *reason)
@@ -344,16 +344,15 @@ int botnet_unlink(partymember_t *from, botnet_bot_t *bot, const char *reason)
 	char obuf[512];
 
 	if (bot->direction != bot) {
-		if (bot->direction->handler && bot->direction->handler->on_unlink) {
-			bot->direction->handler->on_unlink(bot->direction->client_data, from, bot, reason);
-		}
+		if (!bot->direction->handler || !bot->direction->handler->on_unlink) return -1;
+		bot->direction->handler->on_unlink(bot->direction->client_data, from, bot, reason);
 		return 0;
 	}
 
-	if (from->nick) snprintf(obuf, sizeof(obuf), "%s (%s@%s)", reason, from->nick, from->bot ? from->bot->name : botname);
-	else snprintf(obuf, sizeof(obuf), "%s (%s)", reason, from->bot ? from->bot->name : botname);
+	snprintf(obuf, sizeof(obuf), "%s (%s)", reason, from->full_name);
 
 	if (bot->handler && bot->handler->on_lost_bot) bot->handler->on_lost_bot(bot->client_data, bot, obuf);
+	if (from->nick) partymember_msg(from, 0, _("Unlinked from %s."), bot->name);
 	botnet_delete(bot, reason);
 
 	return 0;

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.52 2006/11/14 14:51:24 sven Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.53 2006/12/02 04:05:11 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -438,6 +438,29 @@ static int party_minus_user(partymember_t *p, const char *nick, user_t *u, const
 		user_delete(who);
 	}
 	return(0);
+}
+
+static int party_unlink(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
+{
+	char *botname;
+	const char *reason;
+	botnet_bot_t *bot;
+
+	egg_get_arg(text, &reason, &botname);
+	if (!botname || !*botname) {
+		partymember_printf(p, _("Syntax: unlink <handle> [reason]"));
+		free(botname);
+		return 0;
+	}
+
+	bot = botnet_lookup(botname);
+	free(botname);
+	if (!bot) {
+		partymember_printf(p, _("Not connected to that bot."));
+		return 0;
+	}
+	botnet_unlink(p, bot, reason);
+	return 0;
 }
 
 static int party_link(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
@@ -945,6 +968,7 @@ static bind_list_t core_party_binds[] = {		/* Old flags requirement */
 	{"n", "restart", party_restart},	/* DDD	*/ /* m|- */
 	{"n", "+user", party_plus_user},	/* DDC	*/ /* m|- */
 	{"n", "-user", party_minus_user},	/* DDC	*/ /* m|- */
+	{"n", "unlink", party_unlink},        /* DDD  */ /* t|- */
 	{"n", "link", party_link},        /* DDD  */ /* t|- */
 	{"n", "chattr", party_chattr},		/* DDC	*/ /* m|m */
 	{"n", "modules", party_modules},	/* DDD	*/ /* n|- */

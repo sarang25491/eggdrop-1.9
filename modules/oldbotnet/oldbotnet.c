@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: oldbotnet.c,v 1.13 2006/11/14 14:51:24 sven Exp $";
+static const char rcsid[] = "$Id: oldbotnet.c,v 1.14 2006/12/02 04:05:11 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -289,7 +289,8 @@ static int on_lost_bot(void *client_data, botnet_bot_t *bot, const char *reason)
 {
 	oldbotnet_t *obot = client_data;
 
-	egg_iprintf(obot->idx, "un %s %s\n", bot->name, reason);
+	if (bot == obot->bot) egg_iprintf(obot->idx, "bye %s", reason);
+	else egg_iprintf(obot->idx, "un %s %s\n", bot->name, reason);
 
 	return 0;
 }

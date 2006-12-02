@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: module.c,v 1.11 2006/10/03 04:02:12 sven Exp $";
+static const char rcsid[] = "$Id: module.c,v 1.12 2006/12/02 04:05:11 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -84,6 +84,22 @@ int module_add_dir(const char *moddir)
 	return(0);
 }
 
+/*!
+ * \brief Load a module.
+ *
+ * This function loads a module and executes its start function. If the module
+ * name does not contain a path the default paths will be searched. If it does
+ * have an extenteion the plattforms default library extentions will be added.
+ *
+ * \param name The name of the module to load.
+ *
+ * \return 0 on success. (This will be logged.)
+ * \return -1 if the module is already loaded. (Nothing will be logged.)
+ * \return -2 if the module could not be opened. (This will be logged.)
+ * \return -3 if no start function is present. (Nothing will be logged.)
+ * \return -4 if the start function returned an error. (Nothing will be logged.)
+ */
+
 int module_load(const char *name)
 {
 	lt_dlhandle hand;
@@ -118,6 +134,7 @@ int module_load(const char *name)
 	entry = calloc(1, sizeof(*entry));
 	entry->next = module_list_head;
 	entry->refcount = 0;
+	entry->hand = hand;
 	module_list_head = entry;
 
 	if (startfunc(&entry->modinfo)) {
@@ -132,10 +149,31 @@ int module_load(const char *name)
 	return(0);
 }
 
+/*!
+ * \brief Unload a module.
+ *
+ * If a module's reference count is 0 its closing function will be executed.
+ * If the closing function did not veto the unloading all of the modules
+ * asyncronous events will be canceled. Finally the module itself is unloaded.
+ *
+ * \param name The name of the module to unload.
+ * \param why The reason this function was called: ::MODULE_USER,
+ *            ::MODULE_RESTART or ::MODULE_SHUTDOWN.
+ *
+ * \return 0 on success. (This will be logged.)
+ * \return -1 if the module is not loaded. (Nothing will be logged.)
+ * \return -2 if the module is in use by another module. (Nothing will be logged.)
+ * \return -3 if the module's closing function vetoed. (Nothing will be logged.)
+ * \return -4 on a ltdl error. (This will be logged.)
+ *
+ * \bug Not all events have owners right now: scripting functions and sockbufs will \b not be unloaded!
+ */
+
 int module_unload(const char *name, int why)
 {
 	module_list_t *entry, *prev;
-	int retval;
+	int retval, errors;
+	const char *error;
 
 	for (entry = module_list_head, prev = NULL; entry; prev = entry, entry = entry->next) {
 		if (!strcasecmp(entry->modinfo.name, name)) break;
@@ -143,12 +181,17 @@ int module_unload(const char *name, int why)
 	if (!entry) return(-1);
 	if (entry->refcount > 0) return(-2);
 	if (entry->modinfo.close_func) {
-		retval = (entry->modinfo.close_func)(why);
+		retval = entry->modinfo.close_func(why);
 		if (retval) return(-3);
 	}
 	script_remove_events_by_owner(&entry->modinfo, 0);
 
-	lt_dlclose(entry->hand);
+	errors = lt_dlclose(entry->hand);
+	if (errors) {
+		putlog(LOG_MISC, "*", "Error unloading %s!", name);
+		while ((error = lt_dlerror())) putlog(LOG_MISC, "*", "ltdlerror: %s", error);
+		return -4;
+	}
 	if (prev) prev->next = entry->next;
 	else module_list_head = entry->next;
 	free(entry);

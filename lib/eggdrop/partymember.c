@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partymember.c,v 1.22 2006/11/14 14:51:23 sven Exp $";
+static const char rcsid[] = "$Id: partymember.c,v 1.23 2006/12/02 04:05:11 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -308,7 +308,7 @@ int partymember_msg(partymember_t *p, partymember_t *src, const char *text, int 
 
 	if (len < 0) len = strlen(text);
 	if (p->handler && p->handler->on_privmsg)
-		(p->handler->on_privmsg)(p->client_data, p, src, text, len);
+		p->handler->on_privmsg(p->client_data, p, src, text, len);
 	return(0);
 }
 
