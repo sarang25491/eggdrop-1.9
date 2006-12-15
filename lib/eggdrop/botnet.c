@@ -28,7 +28,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: botnet.c,v 1.3 2006/12/02 04:05:11 sven Exp $";
+static const char rcsid[] = "$Id: botnet.c,v 1.4 2006/12/15 09:30:47 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -492,6 +492,43 @@ int botnet_delete(botnet_bot_t *bot, const char *reason)
 	garbage_add(botnet_cleanup, NULL, GARBAGE_ONCE);
 
 	return 0;
+}
+
+/*!
+ * \brief Deletes all bots with a given owner.
+ *
+ * Calls botnet_delete() for every bot with a given owner. In the first search
+ * only the list of local bots is searched. After that the whole list is searched
+ * but it'd be a really wyrd botnet if a match was found there.
+ *
+ * \param module The module whose bots should be deleted.
+ * \param script The script whose bots should be deleted. NULL matches everything.
+ *
+ * \return The number of deleted bots. (Not counting recursive deletes.
+ */
+
+int botnet_delete_by_owner(struct egg_module *module, void *script)
+{
+	int ret = 0;
+	botnet_bot_t *tmp;
+
+	for (tmp = localbot_head; tmp; tmp = tmp->next_local) {
+		if (tmp->flags & BOT_DELETED) continue;
+		if (tmp->owner && tmp->owner->module == module && (!script || tmp->owner->client_data == script)) {
+			++ret;
+			botnet_delete(tmp, _("Module unloaded"));
+		}
+	}
+
+	for (tmp = bot_head; tmp; tmp = tmp->next_local) {
+		if (tmp->flags & BOT_DELETED) continue;
+		if (tmp->owner && tmp->owner->module == module && (!script || tmp->owner->client_data == script)) {
+			++ret;
+			botnet_delete(tmp, _("Module unloaded"));
+		}
+	}
+
+	return ret;
 }
 
 /*!

@@ -23,7 +23,7 @@
 /*!
  * \bind
  * This bind is triggered once a minute. It is similar to ::BT_event minutely
- * but lets you match a specified date and time.
+ * but allows you to match a specified date and time.
  * \name time
  * \flags Ignored.
  * \match The currect date and time in the format: "minute hour day month year".

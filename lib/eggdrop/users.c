@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.52 2006/11/14 14:51:23 sven Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.53 2006/12/15 09:30:47 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -64,10 +64,56 @@ static hash_table_t *uid_ht = NULL;
 /* List to keep all users' ircmasks in. */
 static ircmask_list_t ircmask_list = {NULL};
 
-/* Bind tables. */
-static bind_table_t *BT_uflags = NULL,	/* user flags */
-	*BT_uset = NULL,	/* settings */
-	*BT_udelete = NULL;	/* user got deleted */
+/*!
+ * \bind
+ * This flag is triggered every time the flags of a user are changed.
+ * \name uflags
+ * \flags ignored
+ * \match "channel oldflags newflags"
+ * \param string The user's handle.
+ * \param string The channel.
+ * \param string The old flags.
+ * \param string The new flags.
+ * \stackable
+ * \return The return value is broken.
+ * \bug The flags are ignored, the return value is treated as if the bind is
+ *      breakable, the user is passed as a string.
+ */
+
+static bind_table_t *BT_uflags = NULL;
+
+/*!
+ * \bind
+ * This flag is triggered every time a user's settings are changed.
+ * \name uset
+ * \flags ignored
+ * \match "channel setting"
+ * \param string The user's handle.
+ * \param string The channel.
+ * \param string The setting.
+ * \param string The value.
+ * \stackable
+ * \return The return value is broken.
+ * \bug The flags are ignored, the return value is treated as if the bind is
+ *      breakable, the user is passed as a string.
+ */
+
+static bind_table_t *BT_uset = NULL;
+
+/*!
+ * \bind
+ * This flag is triggered every time a user is deleted.
+ * \name udelete
+ * \flags ignored
+ * \match Nothing.
+ * \param user The deleted user.
+ * \stackable
+ * \noreturn
+ * \bug The flags are ignored, nothing is matched, the bind is triggered after
+ *      the user was deleted.
+ */
+
+static bind_table_t *BT_udelete = NULL;
 
 /* Prototypes for internal functions. */
 static user_t *real_user_new(const char *handle, int uid);
