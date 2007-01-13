@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: partymember.h,v 1.5 2006/11/14 14:51:23 sven Exp $
+ * $Id: partymember.h,v 1.6 2007/01/13 12:23:40 sven Exp $
  */
 
 #ifndef _EGG_PARTYMEMBER_H
@@ -43,17 +43,20 @@ struct partymember {
 
 	partyline_event_t *handler;
 	void *client_data;
+	event_owner_t *owner;
 };
 
 partymember_t *partymember_lookup(const char *name, struct botnet_bot *bot, int id);
-partymember_t *partymember_new(int id, user_t *user, struct botnet_bot *bot, const char *nick, const char *ident, const char *host, partyline_event_t *handler, void *client_data);
+partymember_t *partymember_new(int id, user_t *user, struct botnet_bot *bot, const char *nick, const char *ident, const char *host, partyline_event_t *handler, void *client_data, event_owner_t *owner);
 partymember_t *partymember_get_head(void);
 int partymember_delete(partymember_t *p, const struct botnet_bot *lost_bot, const char *text);
+int partymember_delete_by_owner(struct egg_module *module, void *script);
 int partymember_update_info(partymember_t *p, const char *ident, const char *host);
 int partymember_who(int **ids, int *len);
 int partymember_write_id(int id, const char *text, int len);
 int partymember_write(partymember_t *p, const char *text, int len);
 int partymember_msg(partymember_t *p, partymember_t *src, const char *text, int len);
+int partymember_msgf(partymember_t *p, partymember_t *src, const char *fmt, ...);
 int partymember_printf_id(int id, const char *fmt, ...);
 int partymember_printf(partymember_t *p, const char *fmt, ...);
 int partymember_set_nick(partymember_t *p, const char *nick);

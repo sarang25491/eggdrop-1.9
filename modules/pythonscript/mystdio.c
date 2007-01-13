@@ -18,10 +18,11 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: mystdio.c,v 1.1 2005/12/17 01:25:06 sven Exp $";
+static const char rcsid[] = "$Id: mystdio.c,v 1.2 2007/01/13 12:23:40 sven Exp $";
 #endif
 
 #include <Python.h>
+#include <structmember.h>
 #include <eggdrop/eggdrop.h>
 
 #include "pythonscript.h"
@@ -30,7 +31,8 @@ static const char rcsid[] = "$Id: mystdio.c,v 1.1 2005/12/17 01:25:06 sven Exp $
 
 typedef struct {
 	PyObject_HEAD
-	unsigned  Type;
+	int softspace;
+	unsigned Type;
 } StdioObject;
 
 typedef struct {
@@ -59,6 +61,7 @@ static PyObject *Stdio_New(PyTypeObject *Type, PyObject *args, PyObject *kwds) {
 		return 0;
 	}
 	if (!(Stdio = (StdioObject *) Type->tp_alloc(Type, 0))) return 0;
+	Stdio->softspace = 0;
 	Stdio->Type = IOtype;
 	return (PyObject *) Stdio;
 }
@@ -85,7 +88,7 @@ static size_t WriteLine(unsigned Target, char *Text, size_t len) {
 	written = newline - Text + 1;
 	*newline = 0;
 	if (written > 1 && newline[-1] == '\r') newline[-1] = 0;
-	if (*Text) Log(Target, Text);
+	Log(Target, Text);
 	return written;
 }
 
@@ -113,7 +116,7 @@ static void Write(int Target, const char *Text, int len) {
 }
 
 void Flush(unsigned Target) {
-	Write(Target, "\n", 1);
+	if (LineBuf[Target].strlen) Write(Target, "\n", 1);
 }
 
 static PyObject *Stdio_Write(PyObject *self, PyObject *args) {
@@ -134,6 +137,11 @@ static PyObject *Stdio_Flush(PyObject *self, PyObject *args) {
 	Py_INCREF(Py_None);
 	return Py_None;
 }
+
+static PyMemberDef Stdio_Members[] = {
+	{"softspace", T_INT, offsetof(StdioObject, softspace), 0, "Has a documented use for print and an undocumented use for the interactive interpreter."},
+	{0}
+};
 
 static PyMethodDef Stdio_Methods[] = {
  {"write", Stdio_Write, METH_VARARGS, "Write some text"},
@@ -172,7 +180,7 @@ PyTypeObject Stdio_Type = {
 	0,                           /* tp_iter */
 	0,                           /* tp_iternext */
 	Stdio_Methods,               /* tp_methods */
-	0,                           /* tp_members */
+	Stdio_Members,               /* tp_members */
 	0,                           /* tp_getset */
 	0,                           /* tp_base */
 	0,                           /* tp_dict */

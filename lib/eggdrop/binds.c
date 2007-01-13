@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: binds.c,v 1.29 2006/10/03 04:02:12 sven Exp $";
+static const char rcsid[] = "$Id: binds.c,v 1.30 2007/01/13 12:23:39 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -491,8 +491,8 @@ void bind_rem_list(const char *table_name, bind_list_t *cmds)
 	table = bind_table_lookup(table_name);
 	if (!table) return;
 
-	for (; cmds->mask; cmds++) {
-		snprintf(name, sizeof(name), "*%s:%s", table->name, cmds->mask);
+	for (; cmds->callback; cmds++) {
+		snprintf(name, sizeof(name), "*%s:%s", table->name, cmds->mask ? cmds->mask : "");
 		name[sizeof(name)-1] = 0;
 		bind_entry_del(table, cmds->mask, name, cmds->callback);
 	}

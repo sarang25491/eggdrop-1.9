@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: sockbuf.c,v 1.21 2006/08/20 15:23:05 sven Exp $";
+static const char rcsid[] = "$Id: sockbuf.c,v 1.22 2007/01/13 12:23:40 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -279,7 +279,7 @@ int sockbuf_on_read(int idx, int level, char *data, int len)
 	}
 
 	sbuf->stats->bytes_in += len;
-	if (sbuf->handler->on_read ){
+	if (sbuf->handler->on_read) {
 		sbuf->handler->on_read(sbuf->client_data, idx, data, len);
 	}
 	return(0);

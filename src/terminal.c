@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: terminal.c,v 1.7 2006/11/14 14:51:24 sven Exp $";
+static const char rcsid[] = "$Id: terminal.c,v 1.8 2007/01/13 12:23:41 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>			/* partyline_*		*/
@@ -84,7 +84,7 @@ int terminal_init(void)
 
 	terminal_session.party = partymember_new(-1,
 		terminal_user, NULL, TERMINAL_NICK, TERMINAL_USER,
-			TERMINAL_HOST, &terminal_party_handler, NULL);
+			TERMINAL_HOST, &terminal_party_handler, NULL, NULL);
 
 	/* Put them on the main channel. */
 	partychan_join_name("*", terminal_session.party, 0);

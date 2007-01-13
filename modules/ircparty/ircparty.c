@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: ircparty.c,v 1.17 2006/11/14 14:51:24 sven Exp $";
+static const char rcsid[] = "$Id: ircparty.c,v 1.18 2007/01/13 12:23:40 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -32,12 +32,6 @@ static config_var_t irc_config_vars[] = {
 	{"port", &irc_config.port, CONFIG_INT},
 	{"stealth", &irc_config.stealth, CONFIG_INT},
 	{0}
-};
-
-static event_owner_t irc_owner = {
-	"ircparty", 0,
-	0, 0,
-	0
 };
 
 EXPORT_SCOPE int ircparty_LTX_start(egg_module_t *modinfo);
@@ -63,6 +57,7 @@ static int irc_on_newclient(void *client_data, int idx, int newidx, const char *
 static int irc_on_read(void *client_data, int idx, char *data, int len);
 static int irc_on_eof(void *client_data, int idx, int err, const char *errmsg);
 static int irc_on_delete(void *client_data, int idx);
+static int irc_pm_delete(event_owner_t *owner, void *client_data);
 
 static int ident_result(void *client_data, const char *ip, int port, const char *reply);
 static int dns_result(void *client_data, const char *ip, char **hosts);
@@ -76,6 +71,18 @@ static bind_list_t ircparty_binds[] = {
 	{NULL, "MODE", got_mode},
 	{NULL, "WHO", got_who},
 	{0}
+};
+
+static event_owner_t irc_generic_owner = {
+	"ircparty", 0,
+	0, 0,
+	0
+};
+
+static event_owner_t irc_pm_owner = {
+	"ircparty", 0,
+	0, 0,
+	irc_pm_delete
 };
 
 static sockbuf_handler_t server_handler = {
@@ -138,8 +145,8 @@ static int irc_on_newclient(void *client_data, int idx, int newidx, const char *
 	}
 
 	/* Start lookups. */
-	session->ident_id = egg_ident_lookup(peer_ip, peer_port, irc_port, -1, ident_result, session, &irc_owner);
-	session->dns_id = egg_dns_reverse(peer_ip, -1, dns_result, session, &irc_owner);
+	session->ident_id = egg_ident_lookup(peer_ip, peer_port, irc_port, -1, ident_result, session, &irc_generic_owner);
+	session->dns_id = egg_dns_reverse(peer_ip, -1, dns_result, session, &irc_generic_owner);
 
 	return(0);
 }
@@ -306,7 +313,7 @@ static int irc_on_read(void *client_data, int idx, char *data, int len)
 				}
 				free(session->pass);
 				session->pass = NULL;
-				session->party = partymember_new(-1, session->user, NULL, session->nick, session->ident ? session->ident : "~ircparty", session->host ? session->host : session->ip, &irc_party_handler, session);
+				session->party = partymember_new(-1, session->user, NULL, session->nick, session->ident ? session->ident : "~ircparty", session->host ? session->host : session->ip, &irc_party_handler, session, &irc_pm_owner);
 				session->state = STATE_PARTYLINE;
 				irc_greet(session);
 				partychan_join_name("*", session->party, 0);
@@ -334,6 +341,15 @@ static int irc_on_eof(void *client_data, int idx, int err, const char *errmsg)
 	return(0);
 }
 
+static int irc_pm_delete(event_owner_t *owner, void *client_data)
+{
+	irc_session_t *session = client_data;
+
+	sockbuf_delete(session->idx);
+
+	return 0;
+}
+
 static int irc_on_delete(void *client_data, int idx)
 {
 	irc_session_t *session = client_data;
@@ -348,6 +364,11 @@ static int irc_on_delete(void *client_data, int idx)
 
 static int ircparty_close(int why)
 {
+	void *config_root;
+
+	config_root = config_get_root("eggdrop");
+	config_unlink_table(irc_config_vars, config_root, "ircparty", 0, NULL);
+
 	sockbuf_delete(irc_idx);
 	return(0);
 }
@@ -356,7 +377,7 @@ int ircparty_LTX_start(egg_module_t *modinfo)
 {
 	void *config_root;
 
-	irc_owner.module = modinfo;
+	irc_generic_owner.module = irc_pm_owner.module = modinfo;
 
 	modinfo->name = "ircparty";
 	modinfo->author = "eggdev";

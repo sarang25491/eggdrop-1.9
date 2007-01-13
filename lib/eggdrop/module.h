@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: module.h,v 1.47 2004/06/22 20:12:37 wingman Exp $
+ * $Id: module.h,v 1.48 2007/01/13 12:23:39 sven Exp $
  */
 
 #ifndef _EGG_MODULE_H_
@@ -36,6 +36,7 @@ typedef struct egg_module egg_module_t;
 
 typedef int (*egg_start_func_t)(egg_module_t *modinfo);
 typedef int (*egg_close_func_t)(int why);
+typedef void (*egg_unload_func_t)(void);
 
 struct egg_module {
 	const char *name;
@@ -44,6 +45,7 @@ struct egg_module {
 	const char *description;
 
 	egg_close_func_t close_func;
+	egg_unload_func_t unload_func;
 	void *module_data;
 
 	/* API and versioning info. */

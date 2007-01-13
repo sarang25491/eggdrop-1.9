@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: pythonscript.c,v 1.4 2006/01/05 20:42:42 sven Exp $";
+static const char rcsid[] = "$Id: pythonscript.c,v 1.5 2007/01/13 12:23:40 sven Exp $";
 #endif
 
 #include <Python.h>
@@ -551,12 +551,16 @@ static bind_list_t party_commands[] = {
 
 static int pythonscript_close(int why)
 {
-	Py_Finalize();
-
 	bind_rem_list("party", party_commands);
 
 	script_unregister_module(&my_script_interface);
+
 	return 0;
+}
+
+static void pythonscript_unload(void)
+{
+	Py_Finalize();
 }
 
 static PyMethodDef *methods = {
@@ -575,6 +579,7 @@ int pythonscript_LTX_start(egg_module_t *modinfo) {
 	modinfo->version = "0.0.1";
 	modinfo->description = "provides python scripting support";
 	modinfo->close_func = pythonscript_close;
+	modinfo->unload_func = pythonscript_unload;
 
 	/* Create the interpreter and let tcl load its init.tcl */
 	Py_Initialize();

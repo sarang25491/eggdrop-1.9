@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: events.c,v 1.10 2006/11/14 14:51:24 sven Exp $";
+static const char rcsid[] = "$Id: events.c,v 1.11 2007/01/13 12:23:40 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -56,10 +56,6 @@ static int on_quit(void *client_data, partymember_t *src, const botnet_bot_t *lo
 
 	if (lostbot) return 0;
 	partyline_idx_quit(session->idx, src, text, len);
-
-	/* if this quit are we delete our sockbuf. */
-	if (src == session->party)
-		sockbuf_delete(session->idx);
 
 	return(0);
 }

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: telnetparty.c,v 1.23 2006/11/14 14:51:24 sven Exp $";
+static const char rcsid[] = "$Id: telnetparty.c,v 1.24 2007/01/13 12:23:41 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -33,12 +33,6 @@ static config_var_t telnet_config_vars[] = {
 	{"stealth", &telnet_config.stealth, CONFIG_INT},
 	{"max_retries", &telnet_config.max_retries, CONFIG_INT},
 	{0}
-};
-
-static event_owner_t telnet_owner = {
-	"telnetparty", 0,
-	0, 0,
-	0
 };
 
 EXPORT_SCOPE int telnetparty_LTX_start(egg_module_t *modinfo);
@@ -61,6 +55,19 @@ static int telnet_filter_delete(void *client_data, int idx);
 static int ident_result(void *client_data, const char *ip, int port, const char *reply);
 static int dns_result(void *client_data, const char *ip, char **hosts);
 static int process_results(telnet_session_t *session);
+static int telnet_pm_delete(event_owner_t *owner, void *client_data);
+
+static event_owner_t telnet_generic_owner = {
+	"telnetparty", 0,
+	0, 0,
+	0
+};
+
+static event_owner_t telnet_partymember_owner = {
+	"telnetparty", 0,
+	0, 0,
+	telnet_pm_delete
+};
 
 static sockbuf_handler_t server_handler = {
 	"telnet server",
@@ -91,6 +98,15 @@ int telnet_init()
 	sockbuf_set_handler(telnet_idx, &server_handler, NULL);
 	
 	return(0);
+}
+
+static int telnet_pm_delete(event_owner_t *owner, void *client_data)
+{
+	telnet_session_t *session = client_data;
+
+	sockbuf_delete(session->idx);
+
+	return 0;
 }
 
 void telnet_code(int idx, int cmd, int what)
@@ -319,8 +335,8 @@ static int telnet_on_newclient(void *client_data, int idx, int newidx, const cha
 	}
 
 	/* Start lookups. */
-	session->ident_id = egg_ident_lookup(peer_ip, peer_port, telnet_port, -1, ident_result, session, &telnet_owner);
-	session->dns_id = egg_dns_reverse(peer_ip, -1, dns_result, session, &telnet_owner);
+	session->ident_id = egg_ident_lookup(peer_ip, peer_port, telnet_port, -1, ident_result, session, &telnet_generic_owner);
+	session->dns_id = egg_dns_reverse(peer_ip, -1, dns_result, session, &telnet_generic_owner);
 
 	return(0);
 }
@@ -410,7 +426,7 @@ static int telnet_on_read(void *client_data, int idx, char *data, int len)
 				session->state = STATE_NICKNAME;
 			}
 			else {
-				session->party = partymember_new(-1, session->user, NULL, session->nick, session->ident ? session->ident : "~telnet", session->host ? session->host : session->ip, &telnet_party_handler, session);
+				session->party = partymember_new(-1, session->user, NULL, session->nick, session->ident ? session->ident : "~telnet", session->host ? session->host : session->ip, &telnet_party_handler, session, &telnet_partymember_owner);
 				session->state = STATE_PARTYLINE;
 				egg_iprintf(idx, "\r\nWelcome to the telnet partyline interface!\r\n");
 				if (session->ident) egg_iprintf(idx, "Your ident is: %s\r\n", session->ident);
@@ -614,6 +630,11 @@ static int telnet_filter_delete(void *client_data, int idx)
 
 static int telnetparty_close(int why)
 {	
+	void *config_root;
+
+	config_root = config_get_root("eggdrop");
+	config_unlink_table(telnet_config_vars, config_root, "telnetparty", 0, NULL);
+
 	sockbuf_delete(telnet_idx);
 	return(0);
 }
@@ -622,7 +643,7 @@ int telnetparty_LTX_start(egg_module_t *modinfo)
 {
 	void *config_root;
 
-	telnet_owner.module = modinfo;
+	telnet_generic_owner.module = telnet_partymember_owner.module = modinfo;
 	modinfo->name = "telnetparty";
 	modinfo->author = "eggdev";
 	modinfo->version = "1.0.0";

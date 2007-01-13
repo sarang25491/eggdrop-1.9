@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: script.c,v 1.25 2006/12/15 09:30:47 sven Exp $";
+static const char rcsid[] = "$Id: script.c,v 1.26 2007/01/13 12:23:40 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -101,8 +101,7 @@ int script_shutdown(void)
  * \return The number of deleted events.
  *
  * \bug Not all event types have a *_delete_by_owner() function yet.
- *      partymembers, sockets, socketfilters and scripting functions are
- *      missing.
+ *      sockets, socketfilters and scripting functions are missing.
  */
 
 int script_remove_events_by_owner(egg_module_t *module, void *script)
@@ -110,6 +109,7 @@ int script_remove_events_by_owner(egg_module_t *module, void *script)
 	int removed = 0;
 
 	removed += botnet_delete_by_owner(module, script);
+	removed += partymember_delete_by_owner(module, script);
 	removed += kill_binds_by_owner(module, script);
 	removed += timer_destroy_by_owner(module, script);
 	removed += egg_dns_cancel_by_owner(module, script);

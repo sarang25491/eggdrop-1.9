@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: server.c,v 1.66 2005/12/28 17:27:31 sven Exp $";
+static const char rcsid[] = "$Id: server.c,v 1.67 2007/01/13 12:23:40 sven Exp $";
 #endif
 
 #include "server.h"
@@ -200,32 +200,6 @@ static int server_config_save(const char *handle)
 	return(0);
 }
 
-static int server_close(int why)
-{
-	kill_server(_("server module unloading"));
-	cycle_delay = 100;
-
-	bind_rem_list("raw", server_raw_binds);
-	//bind_rem_list("party", server_party_commands);
-	bind_rem_simple("secondly", NULL, NULL, server_secondly);
-	bind_rem_simple("status", NULL, NULL, server_status);
-	bind_rem_simple("config_save", NULL, "eggdrop", server_config_save);
-
-	/* Clear the server and nick lists. */
-	server_clear();
-	nick_clear();
-
-	server_binds_destroy();
-
-	channel_destroy();
-	channel_events_destroy();
-	uhost_cache_destroy();
-
-	server_script_destroy();
-
-	return(0);
-}
-
 static config_var_t server_config_vars[] = {
 	{"chanfile", &server_config.chanfile, CONFIG_STRING},
 	/* Registration information. */
@@ -252,6 +226,37 @@ static config_var_t server_config_vars[] = {
 	{"ip_lookup", &server_config.ip_lookup, CONFIG_INT},
 	{0}
 };
+
+static int server_close(int why)
+{
+	void *config_root;
+
+	kill_server(_("server module unloading"));
+	cycle_delay = 100;
+
+	config_root = config_get_root("eggdrop");
+	config_unlink_table(server_config_vars, config_root, "server", 0, NULL);
+
+	bind_rem_list("raw", server_raw_binds);
+	//bind_rem_list("party", server_party_commands);
+	bind_rem_simple("secondly", NULL, NULL, server_secondly);
+	bind_rem_simple("status", NULL, NULL, server_status);
+	bind_rem_simple("config_save", NULL, "eggdrop", server_config_save);
+
+	/* Clear the server and nick lists. */
+	server_clear();
+	nick_clear();
+
+	server_binds_destroy();
+
+	channel_destroy();
+	channel_events_destroy();
+	uhost_cache_destroy();
+
+	server_script_destroy();
+
+	return(0);
+}
 
 static void server_config_init()
 {

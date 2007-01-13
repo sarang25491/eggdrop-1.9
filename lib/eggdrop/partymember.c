@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partymember.c,v 1.23 2006/12/02 04:05:11 sven Exp $";
+static const char rcsid[] = "$Id: partymember.c,v 1.24 2007/01/13 12:23:39 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -48,6 +48,7 @@ int partymember_init(void)
 
 int partymember_shutdown(void)
 {
+	while (party_head) partymember_delete(party_head, NULL, _("Bot shutdown"));
 	bind_rem_list(BTN_USER_DELETE, partymember_udelete_binds);
 	bind_table_del(BT_nick);
 	bind_table_del(BT_new);
@@ -112,7 +113,7 @@ static int partymember_get_id(botnet_bot_t *bot)
 	return(id);
 }
 
-partymember_t *partymember_new(int id, user_t *user, botnet_bot_t *bot, const char *nick, const char *ident, const char *host, partyline_event_t *handler, void *client_data)
+partymember_t *partymember_new(int id, user_t *user, botnet_bot_t *bot, const char *nick, const char *ident, const char *host, partyline_event_t *handler, void *client_data, event_owner_t *owner)
 {
 	partymember_t *mem;
 
@@ -129,6 +130,7 @@ partymember_t *partymember_new(int id, user_t *user, botnet_bot_t *bot, const ch
 	mem->common_name = bot ? mem->full_name : mem->nick;
 	mem->handler = handler;
 	mem->client_data = client_data;
+	mem->owner = owner;
 
 	mem->next = party_head;
 	if (party_head) party_head->prev = mem;
@@ -148,6 +150,33 @@ partymember_t *partymember_new(int id, user_t *user, botnet_bot_t *bot, const ch
 	npartymembers++;
 	bind_check(BT_new, NULL, nick, mem);
 	return(mem);
+}
+
+/*!
+ * \brief Deletes all partymembers with a given owner.
+ *
+ * Calls partymember_delete() for every partymember with a given owner.
+ *
+ * \param module The module whose partymembers should be deleted.
+ * \param script The script whose partymembers should be deleted. NULL matches everything.
+ *
+ * \return The number of deleted partymembers.
+ */
+
+int partymember_delete_by_owner(struct egg_module *module, void *script)
+{
+	int ret = 0;
+	partymember_t *p;
+
+	for (p = party_head; p; p = p->next) {
+		if (p->flags & PARTY_DELETED) continue;
+		if (p->owner && p->owner->module == module && (!script || p->owner->client_data == script)) {
+			partymember_delete(p, NULL, "Module unloaded");
+			++ret;
+		}
+	}
+
+	return ret;
 }
 
 int partymember_delete(partymember_t *p, const botnet_bot_t *lost_bot, const char *text)
@@ -188,6 +217,7 @@ int partymember_delete(partymember_t *p, const botnet_bot_t *lost_bot, const cha
 	if (p->handler && p->handler->on_quit) {
 		(p->handler->on_quit)(p->client_data, p, lost_bot, text, strlen(text));
 	}
+	if (p->owner && p->owner->on_delete) p->owner->on_delete(p->owner, p->client_data);
 	return(0);
 }
 
@@ -339,6 +369,22 @@ int partymember_printf(partymember_t *p, const char *fmt, ...)
 	va_end(args);
 
 	partymember_write(p, ptr, len);
+
+	if (ptr != buf) free(ptr);
+	return(0);
+}
+
+int partymember_msgf(partymember_t *p, partymember_t *src, const char *fmt, ...)
+{
+	va_list args;
+	char *ptr, buf[1024];
+	int len;
+
+	va_start(args, fmt);
+	ptr = egg_mvsprintf(buf, sizeof(buf), &len, fmt, args);
+	va_end(args);
+
+	partymember_msg(p, src, ptr, len);
 
 	if (ptr != buf) free(ptr);
 	return(0);

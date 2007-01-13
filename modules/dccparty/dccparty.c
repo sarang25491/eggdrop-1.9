@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dccparty.c,v 1.14 2006/11/14 14:51:23 sven Exp $";
+static const char rcsid[] = "$Id: dccparty.c,v 1.15 2007/01/13 12:23:40 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -36,12 +36,6 @@ static config_var_t dcc_config_vars[] = {
 	{0}
 };
 
-static event_owner_t dcc_owner = {
-	"dccparty", 0,
-	0, 0,
-	0
-};
-
 EXPORT_SCOPE int dccparty_LTX_start(egg_module_t *modinfo);
 static int dccparty_close(int why);
 
@@ -54,10 +48,23 @@ static int dcc_on_connect(void *client_data, int idx, const char *peer_ip, int p
 static int dcc_on_read(void *client_data, int idx, char *data, int len);
 static int dcc_on_eof(void *client_data, int idx, int err, const char *errmsg);
 static int dcc_on_delete(void *client_data, int idx);
+static int dcc_pm_delete(event_owner_t *owner, void *client_data);
 
 static int ident_result(void *client_data, const char *ip, int port, const char *reply);
 static int dns_result(void *client_data, const char *ip, char **hosts);
 static int process_results(dcc_session_t *session);
+
+static event_owner_t dcc_generic_owner = {
+	"dccparty", 0,
+	0, 0,
+	0
+};
+
+static event_owner_t dcc_pm_owner = {
+	"dccparty", 0,
+	0, 0,
+	dcc_pm_delete
+};
 
 static sockbuf_handler_t dcc_handler = {
 	"dcc",
@@ -120,8 +127,8 @@ static int dcc_on_connect(void *client_data, int idx, const char *peer_ip, int p
 	session->count = 0;
 
 	/* Start lookups. */
-	session->ident_id = egg_ident_lookup(peer_ip, peer_port, our_port, -1, ident_result, session, &dcc_owner);
-	session->dns_id = egg_dns_reverse(peer_ip, -1, dns_result, session, &dcc_owner);
+	session->ident_id = egg_ident_lookup(peer_ip, peer_port, our_port, -1, ident_result, session, &dcc_generic_owner);
+	session->dns_id = egg_dns_reverse(peer_ip, -1, dns_result, session, &dcc_generic_owner);
 
 	return(0);
 }
@@ -202,7 +209,7 @@ static int dcc_on_read(void *client_data, int idx, char *data, int len)
 				session->state = STATE_NICKNAME;
 			}
 			else {
-				session->party = partymember_new(-1, session->user, NULL, session->nick, session->ident ? session->ident : "~dcc", session->host ? session->host : session->ip, &dcc_party_handler, session);
+				session->party = partymember_new(-1, session->user, NULL, session->nick, session->ident ? session->ident : "~dcc", session->host ? session->host : session->ip, &dcc_party_handler, session, &dcc_pm_owner);
 				session->state = STATE_PARTYLINE;
 				egg_iprintf(idx, _("\r\nWelcome to the dcc partyline interface!\r\n"));
 				if (session->ident) egg_iprintf(idx, _("Your ident is: %s\r\n"), session->ident);
@@ -232,6 +239,15 @@ static int dcc_on_eof(void *client_data, int idx, int err, const char *errmsg)
 	return(0);
 }
 
+static int dcc_pm_delete(event_owner_t *owner, void *client_data)
+{
+	dcc_session_t *session = client_data;
+
+	sockbuf_delete(session->idx);
+
+	return 0;
+}
+
 static int dcc_on_delete(void *client_data, int idx)
 {
 	dcc_session_t *session = client_data;
@@ -246,6 +262,11 @@ static int dcc_on_delete(void *client_data, int idx)
 
 static int dccparty_close(int why)
 {
+	void *config_root;
+
+	config_root = config_get_root("eggdrop");
+	config_unlink_table(dcc_config_vars, config_root, "dccparty", 0, NULL);
+
 	return(0);
 }
 
@@ -253,7 +274,7 @@ int dccparty_LTX_start(egg_module_t *modinfo)
 {
 	void *config_root;
 
-	dcc_owner.module = modinfo;
+	dcc_generic_owner.module = dcc_pm_owner.module = modinfo;
 
 	modinfo->name = "dccparty";
 	modinfo->author = "eggdev";

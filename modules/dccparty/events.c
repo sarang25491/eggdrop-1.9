@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: events.c,v 1.7 2006/11/14 14:51:24 sven Exp $";
+static const char rcsid[] = "$Id: events.c,v 1.8 2007/01/13 12:23:40 sven Exp $";
 #endif
 
 #include <string.h>
@@ -74,7 +74,6 @@ static int on_quit(void *client_data, partymember_t *src, const botnet_bot_t *lo
 
 	if (lostbot) return 0;
 	egg_iprintf(session->idx, "%s (%s@%s) has quit: %s\n", src->common_name, src->ident, src->host, text);
-	if (src == session->party) sockbuf_delete(session->idx);
 
 	return(0);
 }

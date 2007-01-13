@@ -28,7 +28,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: botnet.c,v 1.4 2006/12/15 09:30:47 sven Exp $";
+static const char rcsid[] = "$Id: botnet.c,v 1.5 2007/01/13 12:23:39 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -352,7 +352,7 @@ int botnet_unlink(partymember_t *from, botnet_bot_t *bot, const char *reason)
 	snprintf(obuf, sizeof(obuf), "%s (%s)", reason, from->full_name);
 
 	if (bot->handler && bot->handler->on_lost_bot) bot->handler->on_lost_bot(bot->client_data, bot, obuf);
-	if (from->nick) partymember_msg(from, 0, _("Unlinked from %s."), bot->name);
+	if (from->nick) partymember_msgf(from, 0, _("Unlinked from %s."), bot->name);
 	botnet_delete(bot, reason);
 
 	return 0;
@@ -504,7 +504,7 @@ int botnet_delete(botnet_bot_t *bot, const char *reason)
  * \param module The module whose bots should be deleted.
  * \param script The script whose bots should be deleted. NULL matches everything.
  *
- * \return The number of deleted bots. (Not counting recursive deletes.
+ * \return The number of deleted bots. (Not counting recursive deletes.)
  */
 
 int botnet_delete_by_owner(struct egg_module *module, void *script)

@@ -54,6 +54,11 @@ static int proxy_init()
 
 static int proxy_close(int why)
 {
+	void *config_root;
+
+	config_root = config_get_root("eggdrop");
+	config_unlink_table(proxy_config_vars, config_root, "proxy", 0, NULL);
+
 	return(0);
 }
 

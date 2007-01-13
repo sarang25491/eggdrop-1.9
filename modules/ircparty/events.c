@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: events.c,v 1.9 2006/11/14 14:51:24 sven Exp $";
+static const char rcsid[] = "$Id: events.c,v 1.10 2007/01/13 12:23:40 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -56,9 +56,9 @@ static int on_nick(void *client_data, partymember_t *src, const char *oldnick, c
 {
 	irc_session_t *session = client_data;
 
-	if (src != session->party && src->bot) egg_iprintf(session->idx, ":%s*%s:%d!%s@%s NICK %s*%s:%d\n", oldnick, src->bot->name, src->id, src->ident, src->host, newnick, src->bot->name, src->id);
-	else if (src != session->party) egg_iprintf(session->idx, ":%s:%d!%s@%s NICK %s:%d\n", oldnick, src->id, src->ident, src->host, newnick, src->bot->name, src->id); 
-	else egg_iprintf(session->idx, ":%s!%s@%s NICK %s\n", oldnick, src->ident, src->host, newnick);
+	if (src != session->party && src->bot) egg_iprintf(session->idx, ":%s*%s:%d!%s@%s NICK %s*%s:%d\r\n", oldnick, src->bot->name, src->id, src->ident, src->host, newnick, src->bot->name, src->id);
+	else if (src != session->party) egg_iprintf(session->idx, ":%s:%d!%s@%s NICK %s:%d\r\n", oldnick, src->id, src->ident, src->host, newnick, src->bot->name, src->id); 
+	else egg_iprintf(session->idx, ":%s!%s@%s NICK %s\r\n", oldnick, src->ident, src->host, newnick);
 	return(0);
 }
 
@@ -66,9 +66,9 @@ static int on_quit(void *client_data, partymember_t *src, const botnet_bot_t *lo
 {
 	irc_session_t *session = client_data;
 
-	if (src != session->party && src->bot) egg_iprintf(session->idx, ":%s*%s:%d!%s@%s QUIT :%s\n", src->nick, src->bot->name, src->id, src->ident, src->host, text);
-	else if (src != session->party) egg_iprintf(session->idx, ":%s:%d!%s@%s QUIT :%s\n", src->nick, src->id, src->ident, src->host, text);
-	else sockbuf_delete(session->idx);
+	if (src != session->party && src->bot) egg_iprintf(session->idx, ":%s*%s:%d!%s@%s QUIT :%s\r\n", src->nick, src->bot->name, src->id, src->ident, src->host, text);
+	else if (src != session->party) egg_iprintf(session->idx, ":%s:%d!%s@%s QUIT :%s\r\n", src->nick, src->id, src->ident, src->host, text);
+	else egg_iprintf(session->idx, "ERROR :%s\r\n", text);
 
 	return(0);
 }

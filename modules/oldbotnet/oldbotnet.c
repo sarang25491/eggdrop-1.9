@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: oldbotnet.c,v 1.14 2006/12/02 04:05:11 sven Exp $";
+static const char rcsid[] = "$Id: oldbotnet.c,v 1.15 2007/01/13 12:23:40 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -65,6 +65,12 @@ static event_owner_t bot_owner = {
 	"oldbotnet", NULL,
 	NULL, NULL,
 	bot_on_delete
+};
+
+static event_owner_t generic_owner = {
+	"oldbotnet", NULL,
+	NULL, NULL,
+	NULL
 };
 
 /*static event_owner_t sock_owner = {
@@ -526,7 +532,7 @@ static int got_nlinked(botnet_bot_t *bot, const char *cmd, const char *next)
 	}
 
 	if (word[2][0] == '!') linking = 0;
-	new = botnet_new(word[0], NULL, src, bot, NULL, NULL, NULL, linking);
+	new = botnet_new(word[0], NULL, src, bot, NULL, NULL, &generic_owner, linking);
 	if (!new) {
 		/* Invalid botname ... should probably do some really clever name mangleing here ... */
 		char obuf[512];
@@ -609,7 +615,7 @@ static int got_join(botnet_bot_t *bot, const char *cmd, const char *next)
 		}
 		else host = word[0];
 
-		p = partymember_new(id, NULL, frombot, word[1], ident, host, &oldbotnet_party, NULL);
+		p = partymember_new(id, NULL, frombot, word[1], ident, host, &oldbotnet_party, NULL, &generic_owner);
 	}
 	partychan_join_name(assoc_get_name(btoi(word[2])), p, linking);
 	egg_free_word_array(word, 5);
@@ -759,7 +765,7 @@ static int oldbotnet_close(int why)
 
 int oldbotnet_LTX_start(egg_module_t *modinfo)
 {
-	bot_owner.module = /*sock_owner.module = */modinfo;
+	bot_owner.module = generic_owner.module = modinfo;
 	modinfo->name = "oldbotnet";
 	modinfo->author = "eggdev";
 	modinfo->version = "1.0.0";
