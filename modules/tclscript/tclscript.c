@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: tclscript.c,v 1.51 2006/11/14 14:51:24 sven Exp $";
+static const char rcsid[] = "$Id: tclscript.c,v 1.52 2007/04/14 15:21:13 sven Exp $";
 #endif
 
 #include <string.h>
@@ -48,7 +48,7 @@ typedef struct {
 static int my_command_handler(ClientData client_data, Tcl_Interp *myinterp, int objc, Tcl_Obj *CONST objv[]);
 static Tcl_Obj *c_to_tcl_var(Tcl_Interp *myinterp, script_var_t *v);
 static int tcl_to_c_var(Tcl_Interp *myinterp, Tcl_Obj *obj, script_var_t *var, int type);
-static int my_tcl_cb_delete(event_owner_t *owner, script_callback_t *me);
+static int my_tcl_cb_delete(event_owner_t *owner, void *me);
 
 /* Implementation of the script module interface. */
 static int my_load_script(void *ignore, char *fname);
@@ -288,11 +288,12 @@ static int my_tcl_callbacker(script_callback_t *me, ...)
 }
 
 /* This implements the delete() member of Tcl script callbacks. */
-static int my_tcl_cb_delete(event_owner_t *owner, script_callback_t *me)
+static int my_tcl_cb_delete(event_owner_t *owner, void *data)
 {
+	script_callback_t *me = data;
 	my_callback_cd_t *cd;
 
-	cd = (my_callback_cd_t *)me->callback_data;
+	cd = me->callback_data;
 	Tcl_DecrRefCount(cd->command);
 	if (cd->name) free(cd->name);
 	if (me->syntax) free(me->syntax);
@@ -390,7 +391,7 @@ static Tcl_Obj *c_to_tcl_var(Tcl_Interp *myinterp, script_var_t *v)
 			if (!str) str = "";
 			if (v->len == -1) v->len = strlen(str);
 #ifdef USE_TCL_BYTE_ARRAYS
-			result = Tcl_NewByteArrayObj(str, v->len);
+			result = Tcl_NewByteArrayObj((unsigned char *) str, v->len);
 #else
 			result = Tcl_NewStringObj(str, v->len);
 #endif
@@ -404,7 +405,7 @@ static Tcl_Obj *c_to_tcl_var(Tcl_Interp *myinterp, script_var_t *v)
 			result = Tcl_NewListObj(0, NULL);
 			while (str && *str) {
 #ifdef USE_TCL_BYTE_ARRAYS
-				element = Tcl_NewByteArrayObj(*str, strlen(*str));
+				element = Tcl_NewByteArrayObj((unsigned char *) (*str), strlen(*str));
 #else
 				element = Tcl_NewStringObj(*str, strlen(*str));
 #endif
@@ -473,10 +474,10 @@ static int tcl_to_c_var(Tcl_Interp *myinterp, Tcl_Obj *obj, script_var_t *var, i
 			int len;
 
 #ifdef USE_TCL_BYTE_ARRAYS
-				char *bytes;
+				unsigned char *bytes;
 
 				bytes = Tcl_GetByteArrayFromObj(obj, &len);
-				str = (char *)malloc(len+1);
+				str = malloc(len+1);
 				memcpy(str, bytes, len);
 				str[len] = 0;
 				var->type |= SCRIPT_FREE;

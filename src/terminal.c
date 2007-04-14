@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: terminal.c,v 1.8 2007/01/13 12:23:41 sven Exp $";
+static const char rcsid[] = "$Id: terminal.c,v 1.9 2007/04/14 15:21:13 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>			/* partyline_*		*/
@@ -26,10 +26,10 @@ static const char rcsid[] = "$Id: terminal.c,v 1.8 2007/01/13 12:23:41 sven Exp 
 
 extern int terminal_enabled; /* from logfile.c */
 
-static int on_privmsg(void *client_data, partymember_t *dest, partymember_t *src, const char *text, int len);
+static int on_privmsg(void *client_data, partymember_t *dest, botnet_entity_t *src, const char *text, int len);
 static int on_nick(void *client_data, partymember_t *src, const char *oldnick, const char *newnick);
 static int on_quit(void *client_data, partymember_t *src, const botnet_bot_t *lostbot, const char *text, int len);
-static int on_chanmsg(void *client_data, partychan_t *chan, partymember_t *src, const char *text, int len);
+static int on_chanmsg(void *client_data, partychan_t *chan, botnet_entity_t *src, const char *text, int len);
 static int on_join(void *client_data, partychan_t *chan, partymember_t *src, int linking);
 static int on_part(void *client_data, partychan_t *chan, partymember_t *src, const char *text, int len);
 static int on_read(void *client_data, int idx, char *data, int len);
@@ -138,7 +138,7 @@ static int on_read(void *client_data, int idx, char *data, int len)
 	return 0;
 }
 
-static int on_privmsg(void *client_data, partymember_t *dest, partymember_t *src, const char *text, int len)
+static int on_privmsg(void *client_data, partymember_t *dest, botnet_entity_t *src, const char *text, int len)
 {
 	return partyline_idx_privmsg(terminal_session.out_idx, dest, src, text, len);
 }
@@ -160,7 +160,7 @@ static int on_quit(void *client_data, partymember_t *src, const botnet_bot_t *lo
 	return(0);
 }
 
-static int on_chanmsg(void *client_data, partychan_t *chan, partymember_t *src, const char *text, int len)
+static int on_chanmsg(void *client_data, partychan_t *chan, botnet_entity_t *src, const char *text, int len)
 {
 	return partyline_idx_chanmsg(terminal_session.out_idx, chan, src, text, len);
 }

@@ -28,7 +28,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: botnet.c,v 1.5 2007/01/13 12:23:39 sven Exp $";
+static const char rcsid[] = "$Id: botnet.c,v 1.6 2007/04/14 15:21:11 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -101,10 +101,26 @@ static bind_table_t *BT_link;
  * \param bot The bot that really got disconnected and caused the bots behind it to get lost.
  * \param string Some kind of reason for the disconnect.
  * \stackable
- * \return Any return value will be ignored.
+ * \noreturn
  */
 
 static bind_table_t *BT_disc;
+
+/*!
+ * \bind
+ * Triggered by a message coming from another bot in the botnet. The first
+ * word is the command and the rest becomes the text argument.
+ * \name bot
+ * \flags Ignored.
+ * \match The command.
+ * \param bot The bot the message is from.
+ * \param string The command.
+ * \param string The rest of the line, possibly nothing.
+ * \stackable
+ * \noreturn
+ */
+
+static bind_table_t *BT_bot;
 
 /*!
  * \brief Inits the whole botnet stuff
@@ -121,9 +137,10 @@ int botnet_init()
 	botname = default_botname;
 	bot_ht = hash_table_create(NULL, NULL, 13, HASH_TABLE_STRINGS);
 
-	BT_request_link = bind_table_add(BTN_BOTNET_REQUEST_LINK, 2, "Us", MATCH_MASK, BIND_BREAKABLE);
-	BT_link = bind_table_add(BTN_BOTNET_LINK, 1, "B", MATCH_MASK, BIND_STACKABLE);
-	BT_disc = bind_table_add(BTN_BOTNET_DISC, 3, "BBs", MATCH_MASK, BIND_STACKABLE);
+	BT_request_link = bind_table_add(BTN_BOTNET_REQUEST_LINK, 2, "Us", 0, BIND_BREAKABLE);
+	BT_link = bind_table_add(BTN_BOTNET_LINK, 1, "B", 0, BIND_STACKABLE);
+	BT_disc = bind_table_add(BTN_BOTNET_DISC, 3, "BBs", 0, BIND_STACKABLE);
+	BT_bot = bind_table_add(BTN_BOTNET_BOT, 2, "Bss", 0, 0);
 	return 0;
 }
 
@@ -143,7 +160,7 @@ int botnet_shutdown(void)
 	 * there should be no botnet. But just to make sure ... */
 
 	leaked = botnet_clear_all();
-	if (leaked) putlog(LOG_MISC, "*", "Warning: Some botnet module leaded %d bots. Fix this!", leaked);
+	if (leaked) putlog(LOG_MISC, "*", "Warning: Some botnet module leaked %d bots. Fix this!", leaked);
 
 	bind_table_del(BT_request_link);
 	bind_table_del(BT_link);
@@ -329,7 +346,7 @@ static int botnet_clear_all()
  * If the bot is directly linked, the link is broken and the unlinked event
  * is sent on in all directions.
  *
- * \param from Who did it. Might be a bot.
+ * \param from Who did it.
  * \param bot The bot to get rid of.
  * \param reason Some kind of explanation.
  *
@@ -339,7 +356,7 @@ static int botnet_clear_all()
  * \todo Do some kind of check if we really want the unlink.
  */
 
-int botnet_unlink(partymember_t *from, botnet_bot_t *bot, const char *reason)
+int botnet_unlink(botnet_entity_t *from, botnet_bot_t *bot, const char *reason)
 {
 	char obuf[512];
 
@@ -352,7 +369,7 @@ int botnet_unlink(partymember_t *from, botnet_bot_t *bot, const char *reason)
 	snprintf(obuf, sizeof(obuf), "%s (%s)", reason, from->full_name);
 
 	if (bot->handler && bot->handler->on_lost_bot) bot->handler->on_lost_bot(bot->client_data, bot, obuf);
-	if (from->nick) partymember_msgf(from, 0, _("Unlinked from %s."), bot->name);
+	if (from->what == ENTITY_PARTYMEMBER) partymember_msgf(from->user, 0, _("Unlinked from %s."), bot->name);
 	botnet_delete(bot, reason);
 
 	return 0;
@@ -653,14 +670,29 @@ void botnet_member_part(partychan_t *chan, partymember_t *p, const char *reason,
 	}
 }
 
-void botnet_chanmsg(partychan_t *chan, partymember_t *p, const char *text, int len)
+void botnet_chanmsg(partychan_t *chan, botnet_entity_t *src, const char *text, int len)
+{
+	botnet_bot_t *tmp, *srcbot;
+
+	if (src->what == ENTITY_PARTYMEMBER) srcbot = src->user->bot;
+	else srcbot = src->bot;
+
+	for (tmp = localbot_head; tmp; tmp = tmp->next_local) {
+		if (tmp->flags & BOT_DELETED || (srcbot && tmp == srcbot->direction)) continue;
+		if (tmp->handler && tmp->handler->on_chanmsg) tmp->handler->on_chanmsg(tmp->client_data, chan, src, text, len);
+	}
+}
+
+void botnet_broadcast(botnet_entity_t *src, const char *text, int len)
 {
 	botnet_bot_t *tmp;
 
+	if (len < 0) len = strlen(text);
 	for (tmp = localbot_head; tmp; tmp = tmp->next_local) {
-		if (tmp->flags & BOT_DELETED || (p && p->bot && tmp == p->bot->direction)) continue;
-		if (tmp->handler && tmp->handler->on_chanmsg) tmp->handler->on_chanmsg(tmp->client_data, chan, p, text, len);
+		if (tmp->flags & BOT_DELETED || (src && src->bot && tmp == src->bot->direction)) continue;
+		if (tmp->handler && tmp->handler->on_bcast) tmp->handler->on_bcast(tmp->client_data, src, text, len);
 	}
+	partymember_local_broadcast(src, text, len);
 }
 
 void botnet_member_quit(partymember_t *p, const char *reason, int len)
@@ -670,5 +702,33 @@ void botnet_member_quit(partymember_t *p, const char *reason, int len)
 	for (tmp = localbot_head; tmp; tmp = tmp->next_local) {
 		if (tmp->flags & BOT_DELETED || (p->bot && tmp == p->bot->direction)) continue;
 		if (tmp->handler && tmp->handler->on_quit) tmp->handler->on_quit(tmp->client_data, p, reason, len);
+	}
+}
+
+void botnet_botmsg(botnet_bot_t *src, botnet_bot_t *dst, const char *command, const char *text, int len)
+{
+	if (!text) len = 0;
+	else if (len < 0) len = strlen(text);
+
+	if (dst) {
+		botnet_bot_t *dir = dst->direction;
+		if (dir->handler && dir->handler->on_botmsg) dir->handler->on_botmsg(dir->client_data, src, dst, command, text, len);
+		return;
+	}
+	bind_check(BT_bot, NULL, command, command, text);
+}
+
+void botnet_botbroadcast(botnet_bot_t *src, const char *command, const char *text, int len)
+{
+	botnet_bot_t *tmp;
+
+	if (!text) len = 0;
+	else if (len < 0) len = strlen(text);
+
+	bind_check(BT_bot, NULL, command, command, text);
+
+	for (tmp = localbot_head; tmp; tmp = tmp->next_local) {
+		if (tmp->flags & BOT_DELETED || (src && tmp == src->direction)) continue;
+		if (tmp->handler && tmp->handler->on_botbroadcast) tmp->handler->on_botbroadcast(tmp->client_data, src, command, text, len);
 	}
 }

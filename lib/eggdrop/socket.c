@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: socket.c,v 1.13 2006/08/25 17:22:50 sven Exp $";
+static const char rcsid[] = "$Id: socket.c,v 1.14 2007/04/14 15:21:12 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -89,7 +89,7 @@ static int socket_name(sockname_t *name, const char *ipaddr, int port)
 int socket_get_name(int sock, char **ip, int *port)
 {
 	sockname_t name;
-	int namelen;
+	socklen_t namelen;
 
 	if (ip) *ip = NULL;
 	if (port) *port = 0;
@@ -130,7 +130,7 @@ int socket_get_name(int sock, char **ip, int *port)
 int socket_get_peer_name(int sock, char **peer_ip, int *peer_port)
 {
 	sockname_t name;
-	int namelen;
+	socklen_t namelen;
 
 	if (peer_ip) *peer_ip = NULL;
 	if (peer_port) *peer_port = 0;
@@ -163,7 +163,8 @@ int socket_get_peer_name(int sock, char **peer_ip, int *peer_port)
 
 int socket_get_error(int sock)
 {
-	int size, err;
+	int err;
+	socklen_t size;
 
 	if (sock < 0) return(0);
 
@@ -175,8 +176,9 @@ int socket_get_error(int sock)
 
 int socket_accept(int sock, char **peer_ip, int *peer_port)
 {
-	int newsock, len;
+	int newsock;
 	sockname_t name;
+	socklen_t len;
 
 	*peer_ip = NULL;
 	*peer_port = 0;

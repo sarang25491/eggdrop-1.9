@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: partychan.h,v 1.4 2006/11/14 14:51:23 sven Exp $
+ * $Id: partychan.h,v 1.5 2007/04/14 15:21:11 sven Exp $
  */
 
 #ifndef _EGG_PARTYCHAN_H
@@ -60,10 +60,10 @@ int partychan_join(partychan_t *chan, partymember_t *p, int linking);
 int partychan_part_name(const char *chan, partymember_t *p, const char *text);
 int partychan_part_cid(int cid, partymember_t *p, const char *text);
 int partychan_part(partychan_t *chan, partymember_t *p, const char *text);
-int partychan_msg_name(const char *name, partymember_t *src, const char *text, int len);
-int partychan_msg_cid(int cid, partymember_t *src, const char *text, int len);
-int partychan_msg(partychan_t *chan, partymember_t *src, const char *text, int len);
-int localchan_msg(partychan_t *chan, partymember_t *src, const char *text, int len);
+int partychan_msg_name(const char *name, botnet_entity_t *src, const char *text, int len);
+int partychan_msg_cid(int cid, botnet_entity_t *src, const char *text, int len);
+int partychan_msg(partychan_t *chan, botnet_entity_t *src, const char *text, int len);
+int localchan_msg(partychan_t *chan, botnet_entity_t *src, const char *text, int len);
 partymember_common_t *partychan_get_common(partymember_t *p);
 int partychan_free_common(partymember_common_t *common);
 

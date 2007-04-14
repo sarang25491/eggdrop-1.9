@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: perlscript.c,v 1.32 2006/11/14 14:51:24 sven Exp $";
+static const char rcsid[] = "$Id: perlscript.c,v 1.33 2007/04/14 15:21:13 sven Exp $";
 #endif
 
 #ifdef DEBUG
@@ -38,7 +38,7 @@ static PerlInterpreter *ginterp; /* Our global interpreter. */
 static XS(my_command_handler);
 static SV *c_to_perl_var(script_var_t *v);
 static int perl_to_c_var(SV *sv, script_var_t *var, int type);
-static int my_perl_cb_delete(event_owner_t *owner, script_callback_t *me);
+static int my_perl_cb_delete(event_owner_t *owner, void *me);
 
 static int my_load_script(void *ignore, char *fname);
 static int my_link_var(void *ignore, script_linked_var_t *linked_var);
@@ -260,8 +260,10 @@ static int my_perl_callbacker(script_callback_t *me, ...)
 	return(retval);
 }
 
-static int my_perl_cb_delete(event_owner_t *owner, script_callback_t *me)
+static int my_perl_cb_delete(event_owner_t *owner, void *data)
 {
+	script_callback_t *me = data;
+
 	if (me->syntax) free(me->syntax);
 	if (me->name) free(me->name);
 	sv_2mortal((SV *)me->callback_data);

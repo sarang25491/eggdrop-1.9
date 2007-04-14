@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: partymember.h,v 1.6 2007/01/13 12:23:40 sven Exp $
+ * $Id: partymember.h,v 1.7 2007/04/14 15:21:12 sven Exp $
  */
 
 #ifndef _EGG_PARTYMEMBER_H
@@ -55,11 +55,12 @@ int partymember_update_info(partymember_t *p, const char *ident, const char *hos
 int partymember_who(int **ids, int *len);
 int partymember_write_id(int id, const char *text, int len);
 int partymember_write(partymember_t *p, const char *text, int len);
-int partymember_msg(partymember_t *p, partymember_t *src, const char *text, int len);
-int partymember_msgf(partymember_t *p, partymember_t *src, const char *fmt, ...);
+int partymember_msg(partymember_t *p, botnet_entity_t *src, const char *text, int len);
+int partymember_msgf(partymember_t *p, botnet_entity_t *src, const char *fmt, ...);
 int partymember_printf_id(int id, const char *fmt, ...);
 int partymember_printf(partymember_t *p, const char *fmt, ...);
 int partymember_set_nick(partymember_t *p, const char *nick);
+int partymember_local_broadcast(botnet_entity_t *src, const char *text, int len);
 
 int partymember_count_by_bot(const struct botnet_bot *bot);
 int partymember_delete_by_bot(const struct botnet_bot *bot, const struct botnet_bot *lost_bot, const char *reason);

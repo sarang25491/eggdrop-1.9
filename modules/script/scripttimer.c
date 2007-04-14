@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scripttimer.c,v 1.12 2005/12/28 17:27:31 sven Exp $";
+static const char rcsid[] = "$Id: scripttimer.c,v 1.13 2007/04/14 15:21:13 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -84,7 +84,7 @@ static int script_timers(script_var_t *retval)
 
 static int script_timer_info(script_var_t *retval, int timer_id)
 {
-	egg_timeval_t howlong, trigger_time, start_time, diff, now;
+	egg_timeval_t start_time, diff, now;
 	egg_timer_t *timer;
 
 	retval->type = SCRIPT_VAR | SCRIPT_FREE | SCRIPT_ARRAY;
@@ -105,8 +105,8 @@ static int script_timer_info(script_var_t *retval, int timer_id)
 	script_list_append(retval, script_int(start_time.sec));
 	script_list_append(retval, script_int(start_time.usec));
 
-	script_list_append(retval, script_int(howlong.sec));
-	script_list_append(retval, script_int(howlong.usec));
+	script_list_append(retval, script_int(timer->howlong.sec));
+	script_list_append(retval, script_int(timer->howlong.usec));
 
 	timer_diff(&start_time, &now, &diff);
 	script_list_append(retval, script_int(diff.sec));
@@ -116,8 +116,8 @@ static int script_timer_info(script_var_t *retval, int timer_id)
 	script_list_append(retval, script_int(diff.sec));
 	script_list_append(retval, script_int(diff.usec));
 
-	script_list_append(retval, script_int(trigger_time.sec));
-	script_list_append(retval, script_int(trigger_time.usec));
+	script_list_append(retval, script_int(timer->trigger_time.sec));
+	script_list_append(retval, script_int(timer->trigger_time.usec));
 
 	return(0);
 }

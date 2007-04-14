@@ -18,17 +18,17 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: events.c,v 1.10 2007/01/13 12:23:40 sven Exp $";
+static const char rcsid[] = "$Id: events.c,v 1.11 2007/04/14 15:21:12 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
 
 #include "ircparty.h"
 
-static int on_privmsg(void *client_data, partymember_t *dest, partymember_t *src, const char *text, int len);
+static int on_privmsg(void *client_data, partymember_t *dest, botnet_entity_t *src, const char *text, int len);
 static int on_nick(void *client_data, partymember_t *src, const char *oldnick, const char *newnick);
 static int on_quit(void *client_data, partymember_t *src, const botnet_bot_t *lostbot, const char *text, int len);
-static int on_chanmsg(void *client_data, partychan_t *chan, partymember_t *src, const char *text, int len);
+static int on_chanmsg(void *client_data, partychan_t *chan, botnet_entity_t *src, const char *text, int len);
 static int on_join(void *client_data, partychan_t *chan, partymember_t *src, int linking);
 static int on_part(void *client_data, partychan_t *chan, partymember_t *src, const char *text, int len);
 
@@ -41,13 +41,14 @@ partyline_event_t irc_party_handler = {
 	on_part
 };
 
-static int on_privmsg(void *client_data, partymember_t *dest, partymember_t *src, const char *text, int len)
+static int on_privmsg(void *client_data, partymember_t *dest, botnet_entity_t *src, const char *text, int len)
 {
 	irc_session_t *session = client_data;
 
-	if (src && src->nick && src->bot) egg_iprintf(session->idx, ":%s*%s:%d!%s@%s PRIVMSG %s :%s\r\n", src->nick, src->bot->name, src->id, src->ident, src->host, dest->nick, text);
-	else if (src && src->nick) egg_iprintf(session->idx, ":%s:%d!%s@%s PRIVMSG %s :%s\r\n", src->nick, src->id, src->ident, src->host, dest->nick, text); 
-	else if (src) egg_iprintf(session->idx, ":%s!%s@%s PRIVMSG %s :%s\r\n", src->bot->name, src->bot->name, src->bot->name, dest->nick, text);
+	if (src && src->what == ENTITY_PARTYMEMBER && src->user->bot) egg_iprintf(session->idx, ":%s*%s:%d!%s@%s PRIVMSG %s :%s\r\n", src->user->nick, src->user->bot->name, src->user->id, src->user->ident, src->user->host, dest->nick, text);
+	else if (src && src->what == ENTITY_PARTYMEMBER) egg_iprintf(session->idx, ":%s:%d!%s@%s PRIVMSG %s :%s\r\n", src->user->nick, src->user->id, src->user->ident, src->user->host, dest->nick, text); 
+	else if (src && src->bot) egg_iprintf(session->idx, ":%s!%s@%s PRIVMSG %s :%s\r\n", src->bot->name, src->bot->name, src->bot->name, dest->nick, text);
+	else if (src) egg_iprintf(session->idx, ":%s!%s@%s PRIVMSG %s :%s\r\n", botnet_get_name(), botnet_get_name(), botnet_get_name(), dest->nick, text);
 	else egg_iprintf(session->idx, ":* NOTICE * :%s\r\n", text);
 	return(0);
 }
@@ -73,14 +74,15 @@ static int on_quit(void *client_data, partymember_t *src, const botnet_bot_t *lo
 	return(0);
 }
 
-static int on_chanmsg(void *client_data, partychan_t *chan, partymember_t *src, const char *text, int len)
+static int on_chanmsg(void *client_data, partychan_t *chan, botnet_entity_t *src, const char *text, int len)
 {
 	irc_session_t *session = client_data;
 
-	if (src == session->party) return 0;
-	if (src && src->nick && src->bot) egg_iprintf(session->idx, ":%s*%s:%d!%s@%s PRIVMSG #%s :%s\r\n", src->nick, src->bot->name, src->id, src->ident, src->host, chan->name, text);
-	else if (src && src->nick) egg_iprintf(session->idx, ":%s:%d!%s@%s PRIVMSG #%s :%s\r\n", src->nick, src->id, src->ident, src->host, chan->name, text);
-	else if (src) egg_iprintf(session->idx, ":%s!%s@%s PRIVMSG #%s :%s\r\n", src->bot->name, src->bot->name, src->bot->name, chan->name, text);
+	if (src->what == ENTITY_PARTYMEMBER && src->user == session->party) return 0;
+	if (src && src->what == ENTITY_PARTYMEMBER && src->user->bot) egg_iprintf(session->idx, ":%s*%s:%d!%s@%s PRIVMSG #%s :%s\r\n", src->user->nick, src->user->bot->name, src->user->id, src->user->ident, src->user->host, chan->name, text);
+	else if (src && src->what == ENTITY_PARTYMEMBER) egg_iprintf(session->idx, ":%s:%d!%s@%s PRIVMSG #%s :%s\r\n", src->user->nick, src->user->id, src->user->ident, src->user->host, chan->name, text);
+	else if (src && src->bot) egg_iprintf(session->idx, ":%s!%s@%s PRIVMSG #%s :%s\r\n", src->user->bot->name, src->user->bot->name, src->user->bot->name, chan->name, text);
+	else if (src) egg_iprintf(session->idx, ":%s!%s@%s PRIVMSG #%s :%s\r\n", botnet_get_name(), botnet_get_name(), botnet_get_name(), chan->name, text);
 	else egg_iprintf(session->idx, ":* PRIVMSG #%s :%s\r\n", chan->name, text);
 	return 0;
 }

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: string.h,v 1.4 2004/12/23 00:12:34 lordares Exp $
+ * $Id: string.h,v 1.5 2007/04/14 15:21:12 sven Exp $
  */
 
 #ifndef _EGG_STRING_H_
@@ -26,8 +26,8 @@ int str_ends_with(const char *text, const char *str);
 int str_starts_with(const char *text, const char *str);
 void str_tolower(char *str);
 
-int egg_get_word(const unsigned char *text, const char **next, char **word);
-int egg_get_arg(const unsigned char *text, const char **next, char **arg);
+int egg_get_word(const char *text, const char **next, char **word);
+int egg_get_arg(const char *text, const char **next, char **arg);
 int egg_get_words(const char *text, const char **next, char **word, ...);
 int egg_get_args(const char *text, const char **next, char **arg, ...);
 int egg_get_word_array(const char *text, const char **next, char **words, int nwords);

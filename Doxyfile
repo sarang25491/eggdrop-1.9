@@ -166,6 +166,7 @@ ALIASES               += "stackable=\par \"Note:\" This bind is stackable."
 ALIASES               += "breakable=\par \"Note:\" This bind is stackable and breakable."
 ALIASES               += "noparam=\par \"Parameters:\" None."
 ALIASES               += "noreturn=\return Any return value will be ignored."
+ALIASES               += "format=\par \"Format:\" "
 
 # Set the OPTIMIZE_OUTPUT_FOR_C tag to YES if your project consists of C sources 
 # only. Doxygen will then generate output that is more tailored for C. 

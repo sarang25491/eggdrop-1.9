@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dns.c,v 1.19 2006/10/03 04:02:12 sven Exp $";
+static const char rcsid[] = "$Id: dns.c,v 1.20 2007/04/14 15:21:11 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -671,7 +671,7 @@ static void parse_reply(char *response, int nbytes)
 		}
 		#endif
 		if (reply.type == 12) {
-			char *placeholder;
+			unsigned char *placeholder;
 			int len, dot;
 
 			/*fprintf(fp, "reverse-lookup reply\n");*/
@@ -685,7 +685,7 @@ static void parse_reply(char *response, int nbytes)
 				else {
 					dot = ptr[len];
 					ptr[len] = 0;
-					strcat(result, ptr);
+					strcat(result, (char *) ptr);
 					strcat(result, ".");
 					ptr[len] = dot;
 					ptr += len;

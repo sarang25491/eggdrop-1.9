@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.53 2006/12/15 09:30:47 sven Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.54 2007/04/14 15:21:12 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -713,7 +713,8 @@ int user_has_pass(user_t *u)
 
 int user_check_pass(user_t *u, const char *pass)
 {
-	char *hash, *salt, test[16], testhex[33];
+	char *hash, *salt, testhex[33];
+	unsigned char test[16];
 	MD5_CTX ctx;
 
 	user_get_setting(u, NULL, "pass", &hash);
@@ -730,7 +731,8 @@ int user_check_pass(user_t *u, const char *pass)
 
 int user_set_pass(user_t *u, const char *pass)
 {
-	char hash[16], hashhex[33], *salt, new_salt[33];
+	char hashhex[33], *salt, new_salt[33];
+	unsigned char hash[16];
 	MD5_CTX ctx;
 
 	user_get_setting(u, NULL, "salt", &salt);

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: partyline.h,v 1.25 2006/11/14 14:51:23 sven Exp $
+ * $Id: partyline.h,v 1.26 2007/04/14 15:21:12 sven Exp $
  */
 
 #ifndef _EGG_PARTYLINE_H_
@@ -36,7 +36,8 @@
 #define BTN_PARTYLINE_CMD	"party"
 #define BTN_PARTYLINE_OUT	"party_out"
 
-struct botnet_bot;
+typedef struct botnet_bot botnet_bot_t;
+typedef struct botnet_entity botnet_entity_t;
 typedef struct partymember partymember_t;
 typedef struct partychan partychan_t;
 typedef struct partychan_member partychan_member_t;
@@ -45,21 +46,21 @@ typedef struct partyline_event partyline_event_t;
 
 struct partyline_event {
 	/* Events that don't depend on a single chan. */
-	int (*on_privmsg)(void *client_data, partymember_t *dest, partymember_t *src, const char *text, int len);
+	int (*on_privmsg)(void *client_data, partymember_t *dest, botnet_entity_t *src, const char *text, int len);
 	int (*on_nick)(void *client_data, partymember_t *src, const char *oldnick, const char *newnick);
 	int (*on_quit)(void *client_data, partymember_t *src, const struct botnet_bot *bot, const char *text, int len);
 
 	/* Channel events. */
-	int (*on_chanmsg)(void *client_data, partychan_t *chan, partymember_t *src, const char *text, int len);
+	int (*on_chanmsg)(void *client_data, partychan_t *chan, botnet_entity_t *src, const char *text, int len);
 	int (*on_join)(void *client_data, partychan_t *chan, partymember_t *src, int linking);
 	int (*on_part)(void *client_data, partychan_t *chan, partymember_t *src, const char *text, int len);
 };
 
 /* helper handler for partyline events to reduce work in e.g. telnetparty module. */
-int partyline_idx_privmsg(int idx,  partymember_t *dest, partymember_t *src, const char *text, int len);
+int partyline_idx_privmsg(int idx,  partymember_t *dest, botnet_entity_t *src, const char *text, int len);
 int partyline_idx_nick(int idx, partymember_t *src, const char *oldnick, const char *newnick);
 int partyline_idx_quit(int idx, partymember_t *src, const char *text, int len);
-int partyline_idx_chanmsg(int idx, partychan_t *chan, partymember_t *src, const char *text, int len);
+int partyline_idx_chanmsg(int idx, partychan_t *chan, botnet_entity_t *src, const char *text, int len);
 int partyline_idx_join(int idx, partychan_t *chan, partymember_t *src);
 int partyline_idx_part(int idx, partychan_t *chan, partymember_t *src, const char *text, int len);
 

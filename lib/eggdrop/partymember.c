@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partymember.c,v 1.24 2007/01/13 12:23:39 sven Exp $";
+static const char rcsid[] = "$Id: partymember.c,v 1.25 2007/04/14 15:21:12 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -332,7 +332,7 @@ int partymember_write(partymember_t *p, const char *text, int len)
 	return partymember_msg(p, NULL, text, len);
 }
 
-int partymember_msg(partymember_t *p, partymember_t *src, const char *text, int len)
+int partymember_msg(partymember_t *p, botnet_entity_t *src, const char *text, int len)
 {
 	if (!p || p->flags & PARTY_DELETED) return(-1);
 
@@ -340,6 +340,18 @@ int partymember_msg(partymember_t *p, partymember_t *src, const char *text, int 
 	if (p->handler && p->handler->on_privmsg)
 		p->handler->on_privmsg(p->client_data, p, src, text, len);
 	return(0);
+}
+
+int partymember_local_broadcast(botnet_entity_t *src, const char *text, int len)
+{
+	partymember_t *p;
+
+	if (len < 0) len = strlen(text);
+	for (p = local_party_head; p; p = p->next_on_bot) {
+		if (p->flags & PARTY_DELETED) continue;
+		partymember_msg(p, src, text, len);
+	}
+	return 0;
 }
 
 /*int partymember_printf_id(int id, const char *fmt, ...)
@@ -374,7 +386,7 @@ int partymember_printf(partymember_t *p, const char *fmt, ...)
 	return(0);
 }
 
-int partymember_msgf(partymember_t *p, partymember_t *src, const char *fmt, ...)
+int partymember_msgf(partymember_t *p, botnet_entity_t *src, const char *fmt, ...)
 {
 	va_list args;
 	char *ptr, buf[1024];
@@ -394,7 +406,7 @@ static int on_udelete(user_t *u)
 {
 	partymember_t *p;
 
-	for (p = local_party_head; p; p = p->next) {
+	for (p = local_party_head; p; p = p->next_on_bot) {
 		if (p->user == u) partymember_delete(p, NULL, "User deleted!");
 	}
 	return(0);

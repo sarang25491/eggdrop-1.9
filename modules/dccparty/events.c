@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: events.c,v 1.8 2007/01/13 12:23:40 sven Exp $";
+static const char rcsid[] = "$Id: events.c,v 1.9 2007/04/14 15:21:12 sven Exp $";
 #endif
 
 #include <string.h>
@@ -27,10 +27,10 @@ static const char rcsid[] = "$Id: events.c,v 1.8 2007/01/13 12:23:40 sven Exp $"
 
 #include "dccparty.h"
 
-static int on_privmsg(void *client_data, partymember_t *dest, partymember_t *src, const char *text, int len);
+static int on_privmsg(void *client_data, partymember_t *dest, botnet_entity_t *src, const char *text, int len);
 static int on_nick(void *client_data, partymember_t *src, const char *oldnick, const char *newnick);
 static int on_quit(void *client_data, partymember_t *src, const botnet_bot_t *lostbot, const char *text, int len);
-static int on_chanmsg(void *client_data, partychan_t *chan, partymember_t *src, const char *text, int len);
+static int on_chanmsg(void *client_data, partychan_t *chan, botnet_entity_t *src, const char *text, int len);
 static int on_join(void *client_data, partychan_t *chan, partymember_t *src, int linking);
 static int on_part(void *client_data, partychan_t *chan, partymember_t *src, const char *text, int len);
 
@@ -43,7 +43,7 @@ partyline_event_t dcc_party_handler = {
 	on_part
 };
 
-static int on_privmsg(void *client_data, partymember_t *dest, partymember_t *src, const char *text, int len)
+static int on_privmsg(void *client_data, partymember_t *dest, botnet_entity_t *src, const char *text, int len)
 {
 	dcc_session_t *session = client_data;
 
@@ -78,7 +78,7 @@ static int on_quit(void *client_data, partymember_t *src, const botnet_bot_t *lo
 	return(0);
 }
 
-static int on_chanmsg(void *client_data, partychan_t *chan, partymember_t *src, const char *text, int len)
+static int on_chanmsg(void *client_data, partychan_t *chan, botnet_entity_t *src, const char *text, int len)
 {
 	dcc_session_t *session = client_data;
 

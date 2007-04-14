@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.53 2006/12/02 04:05:11 sven Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.54 2007/04/14 15:21:13 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -137,6 +137,7 @@ static int party_whisper(partymember_t *p, const char *nick, user_t *u, const ch
 {
 	char *who;
 	const char *next;
+	botnet_entity_t src = user_entity(p);
 	partymember_t *dest;
 
 	egg_get_arg(text, &next, &who);
@@ -151,7 +152,7 @@ static int party_whisper(partymember_t *p, const char *nick, user_t *u, const ch
 		goto done;
 	}
 
-	partymember_msg(dest, p, next, -1);
+	partymember_msg(dest, &src, next, -1);
 done:
 	if (who) free(who);
 	return(0);
@@ -444,6 +445,7 @@ static int party_unlink(partymember_t *p, const char *nick, user_t *u, const cha
 {
 	char *botname;
 	const char *reason;
+	botnet_entity_t src = user_entity(p);
 	botnet_bot_t *bot;
 
 	egg_get_arg(text, &reason, &botname);
@@ -459,7 +461,7 @@ static int party_unlink(partymember_t *p, const char *nick, user_t *u, const cha
 		partymember_printf(p, _("Not connected to that bot."));
 		return 0;
 	}
-	botnet_unlink(p, bot, reason);
+	botnet_unlink(&src, bot, reason);
 	return 0;
 }
 

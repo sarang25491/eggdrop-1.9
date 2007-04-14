@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: ircparty.c,v 1.18 2007/01/13 12:23:40 sven Exp $";
+static const char rcsid[] = "$Id: ircparty.c,v 1.19 2007/04/14 15:21:13 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -242,9 +242,11 @@ static int got_privmsg(partymember_t *p, int idx, char *cmd, int nargs, char *ar
 		else partyline_on_input(partychan_lookup_name(args[0]+1), p, args[1], -1);
 	}
 	else {
+		botnet_entity_t src = user_entity(p);
+
 		partymember_t *dest = partymember_lookup(args[0], NULL, -1);
 		if (!dest) egg_iprintf(idx, ":eggdrop.bot 401 %s %s :No such nick/channel\r\n", p->nick, args[0]);
-		else partymember_msg(dest, p, args[1], -1);
+		else partymember_msg(dest, &src, args[1], -1);
 	}
 	return(0);
 }

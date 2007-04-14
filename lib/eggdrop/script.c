@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: script.c,v 1.26 2007/01/13 12:23:40 sven Exp $";
+static const char rcsid[] = "$Id: script.c,v 1.27 2007/04/14 15:21:12 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -35,7 +35,7 @@ typedef struct {
 typedef struct {
 	script_callback_t *callback;
 	int id;
-	char *text;
+	unsigned char *text;
 	int len;
 } script_dns_callback_data_t;
 
@@ -572,6 +572,7 @@ static int script_dns_delete(struct event_owner_b *event, void *client_data)
 
 static int script_dns_callback(void *client_data, const char *query, char **result)
 {
+	static unsigned char no_data = 0;
 	byte_array_t bytes;
 	script_dns_callback_data_t *data = client_data;
 
@@ -579,8 +580,8 @@ static int script_dns_callback(void *client_data, const char *query, char **resu
 	bytes.len = data->len;
 	bytes.do_free = 0;
 
-	if (!bytes.bytes) bytes.bytes = "";
-	if (bytes.len <= 0) bytes.len = strlen(bytes.bytes);
+	if (!bytes.bytes) bytes.bytes = &no_data;
+	if (bytes.len <= 0) bytes.len = strlen((char *) bytes.bytes);
 
 	data->callback->callback(data->callback, data->id, query, result, &bytes);
 

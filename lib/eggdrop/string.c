@@ -18,15 +18,15 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: string.c,v 1.4 2004/12/23 00:12:34 lordares Exp $";
+static const char rcsid[] = "$Id: string.c,v 1.5 2007/04/14 15:21:12 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>				/* egg_return_val_if_fail	*/
 
-int egg_get_word(const unsigned char *text, const char **next, char **word)
+int egg_get_word(const char *text, const char **next, char **word)
 {
 	int len;
-	const unsigned char *ptr;
+	const char *ptr;
 
 	if (!word || !text) {
 		if (next) *next = NULL;
@@ -48,7 +48,7 @@ int egg_get_word(const unsigned char *text, const char **next, char **word)
 	return(0);
 }
 
-int egg_get_arg(const unsigned char *text, const char **next, char **arg)
+int egg_get_arg(const char *text, const char **next, char **arg)
 {
 	int len = 0, max = 64, inquote = 0, insingle = 0, n, done;
 

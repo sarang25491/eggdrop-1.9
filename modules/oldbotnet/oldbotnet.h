@@ -16,13 +16,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: oldbotnet.h,v 1.4 2006/11/14 14:51:24 sven Exp $
+ * $Id: oldbotnet.h,v 1.5 2007/04/14 15:21:13 sven Exp $
  */
 
 #ifndef _EGG_MOD_OLDBOTNET_OLDBOTNET_H_
 #define _EGG_MOD_OLDBOTNET_OLDBOTNET_H_
 
-#define BOT_PID_MULT	1000
+#define bothandler   oldbotnet_LTX_bothandler
+#define assoc_get_id oldbotnet_LTX_assoc_get_id
 
 typedef struct {
 	char *host;
@@ -47,6 +48,7 @@ typedef struct {
 } oldbotnet_t;
 
 /* From events.c */
-extern int oldbotnet_events_init();
+botnet_handler_t bothandler;
+int assoc_get_id(const char *name);
 
 #endif /* !_EGG_MOD_OLDBOTNET_OLDBOTNET_H_ */

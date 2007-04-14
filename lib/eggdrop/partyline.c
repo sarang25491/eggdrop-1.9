@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partyline.c,v 1.27 2006/11/14 14:51:23 sven Exp $";
+static const char rcsid[] = "$Id: partyline.c,v 1.28 2007/04/14 15:21:11 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -110,7 +110,8 @@ int partyline_on_input(partychan_t *chan, partymember_t *p, const char *text, in
 		}
 	}
 	/* It's not a command, so it's public text. */
-	partychan_msg(chan, p, text, len);
+	botnet_entity_t src = user_entity(p);
+	partychan_msg(chan, &src, text, len);
 	return(0);
 }
 
@@ -230,7 +231,7 @@ static int on_putlog(int flags, const char *chan, const char *text, int len)
 	return(0);
 }
 
-int partyline_idx_privmsg(int idx, partymember_t *dest, partymember_t *src, const char *text, int len)
+int partyline_idx_privmsg(int idx, partymember_t *dest, botnet_entity_t *src, const char *text, int len)
 {
 	char *ts;
 
@@ -261,7 +262,7 @@ int partyline_idx_quit(int idx, partymember_t *src, const char *text, int len)
 	return 0;
 }
 
-int partyline_idx_chanmsg(int idx, partychan_t *chan, partymember_t *src, const char *text, int len)
+int partyline_idx_chanmsg(int idx, partychan_t *chan, botnet_entity_t *src, const char *text, int len)
 {
 	char *ts;
 

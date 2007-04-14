@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: script.h,v 1.20 2006/11/14 14:51:23 sven Exp $
+ * $Id: script.h,v 1.21 2007/04/14 15:21:12 sven Exp $
  */
 
 #ifndef _EGG_SCRIPT_H_
@@ -110,8 +110,10 @@ typedef struct byte_array_b {
 #define SCRIPT_USER		      'U'
 #define SCRIPT_BOT          'B'
 #define SCRIPT_PARTIER		  'P'
+#define SCRIPT_ENTITY       'E'
 #define SCRIPT_BYTES		    'b'
 #define SCRIPT_VAR		      'v'
+#define SCRIPT_OBJECT       'o'
 #define SCRIPT_TYPE_MASK	  255
 
 typedef struct script_callback_b {

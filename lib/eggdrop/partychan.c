@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partychan.c,v 1.23 2006/11/14 14:51:23 sven Exp $";
+static const char rcsid[] = "$Id: partychan.c,v 1.24 2007/04/14 15:21:11 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -44,7 +44,7 @@ int partychan_init(void)
 	 * channel name, channel id, partier */
 	BT_partyjoin = bind_table_add(BTN_PARTYLINE_JOIN, 3, "siP", MATCH_NONE, BIND_STACKABLE);	/* DDD	*/
 	BT_partypart = bind_table_add(BTN_PARTYLINE_PART, 5, "siPsi", MATCH_NONE, BIND_STACKABLE);	/* DDD	*/
-	BT_partypub = bind_table_add(BTN_PARTYLINE_PUBLIC, 5, "siPsi", MATCH_NONE, BIND_STACKABLE);	/* DDD	*/
+	BT_partypub = bind_table_add(BTN_PARTYLINE_PUBLIC, 5, "siEsi", MATCH_NONE, BIND_STACKABLE);	/* DDD	*/
 	return(0);
 }
 
@@ -347,7 +347,7 @@ int partychan_part(partychan_t *chan, partymember_t *p, const char *text)
 	return(0);
 }
 
-static int chan_msg(partychan_t *chan, partymember_t *src, const char *text, int len, int local)
+static int chan_msg(partychan_t *chan, botnet_entity_t *src, const char *text, int len, int local)
 {
 	partychan_member_t *mem;
 	int i;
@@ -371,7 +371,7 @@ static int chan_msg(partychan_t *chan, partymember_t *src, const char *text, int
 	return(0);
 }
 
-int partychan_msg_name(const char *name, partymember_t *src, const char *text, int len)
+int partychan_msg_name(const char *name, botnet_entity_t *src, const char *text, int len)
 {
 	partychan_t *chan;
 
@@ -379,7 +379,7 @@ int partychan_msg_name(const char *name, partymember_t *src, const char *text, i
 	return chan_msg(chan, src, text, len, 0);
 }
 
-int partychan_msg_cid(int cid, partymember_t *src, const char *text, int len)
+int partychan_msg_cid(int cid, botnet_entity_t *src, const char *text, int len)
 {
 	partychan_t *chan;
 
@@ -387,12 +387,12 @@ int partychan_msg_cid(int cid, partymember_t *src, const char *text, int len)
 	return chan_msg(chan, src, text, len, 0);
 }
 
-int partychan_msg(partychan_t *chan, partymember_t *src, const char *text, int len)
+int partychan_msg(partychan_t *chan, botnet_entity_t *src, const char *text, int len)
 {
 	return chan_msg(chan, src, text, len, 0);
 }
 
-int localchan_msg(partychan_t *chan, partymember_t *src, const char *text, int len)
+int localchan_msg(partychan_t *chan, botnet_entity_t *src, const char *text, int len)
 {
 	return chan_msg(chan, src, text, len, 1);
 }

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: telnetparty.c,v 1.24 2007/01/13 12:23:41 sven Exp $";
+static const char rcsid[] = "$Id: telnetparty.c,v 1.25 2007/04/14 15:21:13 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -474,7 +474,7 @@ static int telnet_filter_read(void *client_data, int idx, char *data, int len)
 	int type, arg, remove;
 	telnet_session_t *session = client_data;
 
-	cmd = data;
+	cmd = (unsigned char *) data;
 	while ((cmd = memchr(cmd, TELNET_CMD, len))) {
 		type = *(cmd+1);
 		switch (type) {
