@@ -16,20 +16,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: botnet.h,v 1.3 2007/04/14 15:21:11 sven Exp $
+ * $Id: botnet.h,v 1.4 2007/04/18 01:45:52 sven Exp $
  */
 
 #ifndef _EGG_BOTNET_H_
 #define _EGG_BOTNET_H_
 
 #define BTN_BOTNET_REQUEST_LINK "request-link"
-#define BTN_BOTNET_LINK "link"
-#define BTN_BOTNET_DISC "disc"
-#define BTN_BOTNET_BOT  "bot"
+#define BTN_BOTNET_LINK         "link"
+#define BTN_BOTNET_DISC         "disc"
+#define BTN_BOTNET_BOT          "bot"
+#define BTN_BOTNET_EXTENSION    "ext"
+
+#define EXTENSION_ONE        1
+#define EXTENSION_ALL        2
+#define EXTENSION_NEIGHBOURS 3
 
 typedef struct {
 	/* Events that don't depend on a single chan. */
 	int (*on_bcast)(void *client_data, botnet_entity_t *src, const char *text, int len);
+	int (*on_privmsg)(void *client_data, botnet_entity_t *src, partymember_t *dst, const char *text, int len);
 	int (*on_nick)(void *client_data, partymember_t *src, const char *oldnick, const char *newnick);
 	int (*on_quit)(void *client_data, partymember_t *src, const char *text, int len);
 
@@ -44,7 +50,7 @@ typedef struct {
 	int (*on_unlink)(void *client_data, botnet_entity_t *from, struct botnet_bot *bot, const char *reason);
 	int (*on_botmsg)(void *client_data, botnet_bot_t *src, botnet_bot_t *dst, const char *command, const char *text, int len);
 	int (*on_botbroadcast)(void *client_data, botnet_bot_t *src, const char *command, const char *text, int len);
-	int (*on_extension)(void *client_data, botnet_entity_t *src, botnet_bot_t *dst, egg_module_t *mod, const char *cmd, const char *text, int len);
+	int (*on_extension)(void *client_data, botnet_entity_t *src, botnet_bot_t *dst, const char *cmd, const char *text, int len);
 
 	/* Module/Script responsible for this bot */
 } botnet_handler_t;
@@ -154,6 +160,6 @@ void botnet_chanmsg(partychan_t *chan, botnet_entity_t *src, const char *reason,
 void botnet_member_quit(partymember_t *p, const char *reason, int len);
 void botnet_botmsg(botnet_bot_t *src, botnet_bot_t *dst, const char *command, const char *text, int len);
 void botnet_botbroadcast(botnet_bot_t *src, const char *command, const char *text, int len);
-void botnet_extension(botnet_entity_t *src, botnet_bot_t *dst, egg_module_t *mod, const char *cmd, const char *text, int len);
+void botnet_extension(int mode, botnet_entity_t *src, botnet_bot_t *dst, egg_module_t *mod, const char *cmd, const char *text, int len);
 
 #endif /* !_EGG_BOTNET_H_ */

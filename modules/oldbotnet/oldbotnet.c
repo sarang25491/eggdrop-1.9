@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: oldbotnet.c,v 1.16 2007/04/14 15:21:13 sven Exp $";
+static const char rcsid[] = "$Id: oldbotnet.c,v 1.17 2007/04/18 01:45:52 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -45,10 +45,13 @@ static int got_join(botnet_bot_t *bot, const char *cmd, const char *next);
 static int got_part(botnet_bot_t *bot, const char *cmd, const char *next);
 static int got_chat(botnet_bot_t *bot, const char *cmd, const char *next);
 static int got_nlinked(botnet_bot_t *bot, const char *cmd, const char *next);
+static int got_unlink(botnet_bot_t *bot, const char *cmd, const char *next);
 static int got_unlinked(botnet_bot_t *bot, const char *cmd, const char *next);
 static int got_bye(botnet_bot_t *bot, const char *cmd, const char *text);
 static int got_endlink(botnet_bot_t *bot, const char *cmd, const char *next);
 static int got_thisbot(botnet_bot_t *bot, const char *cmd, const char *next);
+static int got_privmsg(botnet_bot_t *bot, const char *cmd, const char *next);
+static int got_who(botnet_bot_t *bot, const char *cmd, const char *next);
 static int got_botmsg(botnet_bot_t *bot, const char *cmd, const char *next);
 static int got_botbroadcast(botnet_bot_t *bot, const char *cmd, const char *next);
 
@@ -101,38 +104,56 @@ static bind_list_t party_binds[] = {
 static bind_list_t obot_binds[] = {
 	{NULL, "a", got_actchan},
 	{NULL, "actchan", got_actchan},
+
 	{NULL, "bye", got_bye},
+
 	{NULL, "c", got_chat},
 	{NULL, "chan", got_chat},
+
 	{NULL, "ct", got_bcast}, 
 	{NULL, "chat", got_bcast},
+
 	{NULL, "el", got_endlink},
+
 	{NULL, "h", got_handshake},
 	{NULL, "handshake", got_handshake},
+
 	{NULL, "i", got_idle},
 	{NULL, "idle", got_idle},
+
 	{NULL, "j", got_join},
 	{NULL, "join", got_join},
+
 	{NULL, "n", got_nlinked},
 	{NULL, "nlinked", got_nlinked},
+
+	{NULL, "p", got_privmsg},
+	{NULL, "priv", got_privmsg},
+
 	{NULL, "pi", got_ping},
 	{NULL, "ping", got_ping},
+
 	{NULL, "pt", got_part},
 	{NULL, "part", got_part},
+
 	{NULL, "tb", got_thisbot},
 	{NULL, "thisbot", got_thisbot},
+
+	{NULL, "ul", got_unlink},
+	{NULL, "unlink", got_unlink},
+
 	{NULL, "un", got_unlinked},
 	{NULL, "unlinked", got_unlinked},
+
+	{NULL, "w", got_who},
+	{NULL, "who", got_who},
+
 	{NULL, "z", got_botmsg},
 	{NULL, "zapf", got_botmsg},
+
 	{NULL, "zb", got_botbroadcast},
 	{NULL, "zapf-broad", got_botbroadcast},
 	{0}
-};
-
-static partyline_event_t oldbotnet_party = {
-	NULL, NULL, NULL,
-	NULL, NULL, NULL
 };
 
 static sockbuf_handler_t oldbotnet_handler = {
@@ -191,15 +212,6 @@ int assoc_get_id(const char *name)
 	a->next = assocs.next;
 	assocs.next = a;
 	return a->id;
-}
-
-static int oldbotnet_init()
-{
-	BT_obot = bind_table_add("obot", 3, "Bss", MATCH_MASK, BIND_STACKABLE);	/* DDD */
-	bind_add_list("obot", obot_binds);
-	bind_add_list("party", party_binds);
-	bind_add_simple(BTN_BOTNET_REQUEST_LINK, NULL, "old-eggdrop", do_link);
-	return(0);
 }
 
 static char base64to[256] = {
@@ -466,6 +478,7 @@ static int got_bcast(botnet_bot_t *bot, const char *cmd, const char *text)
 	botnet_bot_t *srcbot;
 
 	if (egg_get_word(text, &text, &srcname)) return BIND_RET_BREAK;
+	while (isspace(*text)) text++;
 
 	srcbot = botnet_lookup(srcname);
 	free(srcname);
@@ -557,6 +570,86 @@ static int got_bye(botnet_bot_t *bot, const char *cmd, const char *text)
 	return BIND_RET_BREAK;
 }
 
+static int get_entity(botnet_bot_t *bot, botnet_entity_t *src, char *word)
+{
+	if (!strchr(word, '@')) {
+		botnet_bot_t *b = botnet_lookup(word);
+		if (botnet_check_direction(bot, b)) return -1;
+		set_bot_entity(src, b);
+		return 0;
+	}
+
+	partymember_t *p = partymember_lookup(word, NULL, -1);
+	if (p) {
+		set_user_entity(src, p);
+		return 0;
+	}
+
+	int id = -1;
+	char *nick = word, *ptr = strchr(word, '@');
+	botnet_bot_t *srcbot = botnet_lookup(ptr + 1);
+
+	if (botnet_check_direction(bot, srcbot)) return -1;
+	*ptr = 0;
+	ptr = strchr(word, ':');
+	if (ptr) {
+		*ptr = 0;
+		id = atoi(word);
+		nick = ptr + 1;
+	}
+	p = partymember_new(id, NULL, srcbot, nick, "temp", "user.on.an.old.bot", NULL, NULL, &generic_owner);
+	set_user_entity(src, p);
+	return 1;
+}
+
+/*!
+ * \brief Remote request to unlink a bot
+ *
+ * Someone on another bot wants us or a bot further downstream to unlink from
+ * a bot. In any case, the details are handled by botnet_unlink(), we just
+ * pass it on.
+ *
+ * \param bot The bot the msg came from.
+ * \param cmd "unlink" or "ul".
+ * \param next The parameters.
+ *
+ * \format \b unlink from@bot dst bot-to-kill [reason]
+ */
+
+static int got_unlink(botnet_bot_t *bot, const char *cmd, const char *text)
+{
+	int n;
+	char *word[3];
+	const char *reason;
+	botnet_bot_t *target;
+	botnet_entity_t src;
+
+	n = egg_get_word_array(text, &text, word, 3);
+	if (n != 3) {
+		egg_free_word_array(word, 3);
+		return BIND_RET_BREAK;
+	}
+	while (isspace(*text)) text++;
+	if (text && *text) reason = text;
+	else reason = "No reason.";
+
+	target = botnet_lookup(word[2]);
+
+	if (!target) {
+		egg_free_word_array(word, 3);
+		return BIND_RET_BREAK;
+	}
+
+	n = get_entity(bot, &src, word[0]);
+	if (n < 0) {
+		egg_free_word_array(word, 3);
+		return BIND_RET_BREAK;
+	}
+
+	botnet_unlink(&src, target, reason);
+	return BIND_RET_BREAK;
+}
+
 static int got_unlinked(botnet_bot_t *bot, const char *cmd, const char *text)
 {
 	char *lostname;
@@ -631,7 +724,7 @@ static int got_join(botnet_bot_t *bot, const char *cmd, const char *next)
 		}
 		else host = word[0];
 
-		p = partymember_new(id, NULL, frombot, word[1], ident, host, &oldbotnet_party, NULL, &generic_owner);
+		p = partymember_new(id, NULL, frombot, word[1], ident, host, NULL, NULL, &generic_owner);
 	}
 	partychan_join_name(assoc_get_name(btoi(word[2])), p, linking);
 	egg_free_word_array(word, 5);
@@ -651,6 +744,7 @@ static int got_part(botnet_bot_t *bot, const char *cmd, const char *next)
 		egg_free_word_array(word, 3);
 		return BIND_RET_BREAK;
 	}
+	while (isspace(*next)) next++;
 	if (next && *next) reason = next;
 	else reason = "No reason.";
 
@@ -664,6 +758,62 @@ static int got_part(botnet_bot_t *bot, const char *cmd, const char *next)
 	p = partymember_lookup(word[1], src, id);
 	if (p) partymember_delete(p, NULL, reason);
 	egg_free_word_array(word, 3);
+	return BIND_RET_BREAK;
+}
+
+/*!
+ * \brief Private message for someone.
+ *
+ * A partymember or a bot have a private message for someone, local or remote.
+ * In any case, the details are handled by insert_here(), we just pass it on.
+ *
+ * \param bot The bot the msg came from.
+ * \param cmd "priv" or "p".
+ * \param next The parameters.
+ *
+ * \format \b priv from@bot dst message
+ */
+
+static int got_privmsg(botnet_bot_t *bot, const char *cmd, const char *next)
+{
+	int n;
+	char *word[2];
+	const char *original = next;
+	botnet_entity_t src;
+	partymember_t *dst;
+
+	n = egg_get_word_array(next, &next, word, 2);
+	if (n != 2) {
+		egg_free_word_array(word, 2);
+		return BIND_RET_BREAK;
+	}
+	while (isspace(*next)) next++;
+	if (!next || !*next) {
+		egg_free_word_array(word, 2);
+		return BIND_RET_BREAK;
+	}
+
+	n = get_entity(bot, &src, word[0]);
+	if (n < 0) {
+		egg_free_word_array(word, 2);
+		return BIND_RET_BREAK;
+	}
+
+	dst = partymember_lookup(word[1], NULL, -1);
+
+	if (!dst) {
+		char *p = strchr(word[1], '@');
+		if (p) {
+			botnet_bot_t *dstbot = botnet_lookup(p + 1);
+			if (dstbot || !strcmp(p + 1, botnet_get_name())) {
+				botnet_extension(EXTENSION_ONE, &src, dstbot, NULL, "note", strchr(original, ' ') + 1, -1);
+			}
+		}
+		egg_free_word_array(word, 2);
+		return BIND_RET_BREAK;
+	}
+
+	partymember_msg(dst, &src, next, -1);
 	return BIND_RET_BREAK;
 }
 
@@ -746,6 +896,7 @@ static int got_botmsg(botnet_bot_t *bot, const char *cmd, const char *next)
 		return BIND_RET_BREAK;
 	}
 
+	while (isspace(*next)) next++;
 	if (!dst && !strcmp(word[2], "assoc") && next && *next) got_assoc(src, next);
 	botnet_botmsg(src, dst, word[2], next, -1);
 	egg_free_word_array(word, 3);
@@ -785,7 +936,39 @@ static int got_botbroadcast(botnet_bot_t *bot, const char *cmd, const char *next
 		return BIND_RET_BREAK;
 	}
 
+	while (isspace(*next)) next++;
 	botnet_botbroadcast(src, word[1], next, -1);
+	egg_free_word_array(word, 2);
+	return BIND_RET_BREAK;
+}
+
+static int got_who(botnet_bot_t *bot, const char *cmd, const char *next)
+{
+	int n;
+	char *word[2];
+	botnet_entity_t src;
+	botnet_bot_t *dst;
+
+	n = egg_get_word_array(next, &next, word, 2);
+	if (n != 2) {
+		egg_free_word_array(word, 2);
+		return BIND_RET_BREAK;
+	}
+
+	dst = botnet_lookup(word[1]);
+	if (!dst && strcmp(word[1], botnet_get_name())) {
+		egg_free_word_array(word, 2);
+		return BIND_RET_BREAK;
+	}
+
+	n = get_entity(bot, &src, word[0]);
+	if (n < 0 || src.what == ENTITY_BOT || botnet_check_direction(bot, src.user->bot)) {
+		egg_free_word_array(word, 2);
+		return BIND_RET_BREAK;
+	}
+
+	while (isspace(*next)) next++;
+	botnet_extension(EXTENSION_ONE, &src, dst, NULL, "who", next, -1);
 	egg_free_word_array(word, 2);
 	return BIND_RET_BREAK;
 }
@@ -810,7 +993,7 @@ static int oldbotnet_on_read(void *client_data, int idx, char *data, int len)
 
 	if (next) while (isspace(*next)) next++;
 
-	if (!strcasecmp(cmd, "error") || (!bot->connected && !strcasecmp(cmd, "bye"))) {
+	if (!strcasecmp(cmd, "e") || !strcasecmp(cmd, "error") || (!bot->connected && !strcasecmp(cmd, "bye"))) {
 		putlog(LOG_MISC, "*", _("Botnet error from %s: %s"), bot->user->handle, next);
 		if (bot->connected) botnet_delete(bot->bot, next);
 		else sockbuf_delete(bot->idx);
@@ -872,6 +1055,15 @@ static int oldbotnet_on_delete(void *client_data, int idx)
 	return 0;
 }
 
+static int oldbotnet_init()
+{
+	BT_obot = bind_table_add("obot", 3, "Bss", MATCH_MASK, BIND_STACKABLE);
+	bind_add_list("obot", obot_binds);
+	bind_add_list("party", party_binds);
+	bind_add_simple(BTN_BOTNET_REQUEST_LINK, NULL, "old-eggdrop", do_link);
+	return 0;
+}
+
 static int oldbotnet_close(int why)
 {
 	assoc_t *a, *next;
@@ -882,7 +1074,13 @@ static int oldbotnet_close(int why)
 		free(a);
 	} 
 	assocs.next = NULL;
-	return(0);
+
+	bind_table_del(BT_obot);
+	bind_rem_list("obot", obot_binds);
+	bind_rem_list("party", party_binds);
+	bind_rem_simple(BTN_BOTNET_REQUEST_LINK, NULL, "old-eggdrop", do_link);
+
+	return 0;
 }
 
 int oldbotnet_LTX_start(egg_module_t *modinfo)

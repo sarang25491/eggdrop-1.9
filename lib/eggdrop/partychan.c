@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partychan.c,v 1.24 2007/04/14 15:21:11 sven Exp $";
+static const char rcsid[] = "$Id: partychan.c,v 1.25 2007/04/18 01:45:52 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -332,7 +332,7 @@ int partychan_part(partychan_t *chan, partymember_t *p, const char *text)
 	/* Trigger the partyline channel part bind. */
 	bind_check(BT_partypart, NULL, NULL, chan->name, chan->cid, p, text, len);
 
-	if (p->handler->on_part) (p->handler->on_part)(p->client_data, chan, p, text, len);
+	if (p->handler && p->handler->on_part) p->handler->on_part(p->client_data, chan, p, text, len);
 
 	/* Send out the part event to the members. */
 	for (i = 0; i < chan->nmembers; i++) {

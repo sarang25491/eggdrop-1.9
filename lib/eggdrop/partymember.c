@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partymember.c,v 1.25 2007/04/14 15:21:12 sven Exp $";
+static const char rcsid[] = "$Id: partymember.c,v 1.26 2007/04/18 01:45:52 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -118,7 +118,7 @@ partymember_t *partymember_new(int id, user_t *user, botnet_bot_t *bot, const ch
 	partymember_t *mem;
 
 	mem = calloc(1, sizeof(*mem));
-	if (id == -1) id = partymember_get_id(NULL);
+	if (id == -1) id = partymember_get_id(bot);
 	mem->id = id;
 	mem->user = user;
 	mem->bot = bot;
@@ -339,7 +339,9 @@ int partymember_msg(partymember_t *p, botnet_entity_t *src, const char *text, in
 	if (len < 0) len = strlen(text);
 	if (p->handler && p->handler->on_privmsg)
 		p->handler->on_privmsg(p->client_data, p, src, text, len);
-	return(0);
+	else if (p->bot && p->bot->direction->handler && p->bot->direction->handler->on_privmsg)
+		p->bot->direction->handler->on_privmsg(p->bot->direction->client_data, src, p, text, len);
+	return 0;
 }
 
 int partymember_local_broadcast(botnet_entity_t *src, const char *text, int len)

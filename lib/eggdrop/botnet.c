@@ -28,7 +28,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: botnet.c,v 1.6 2007/04/14 15:21:11 sven Exp $";
+static const char rcsid[] = "$Id: botnet.c,v 1.7 2007/04/18 01:45:52 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -122,6 +122,9 @@ static bind_table_t *BT_disc;
 
 static bind_table_t *BT_bot;
 
+/*! \todo Document me */
+
+static bind_table_t *BT_extension;
 /*!
  * \brief Inits the whole botnet stuff
  *
@@ -140,7 +143,8 @@ int botnet_init()
 	BT_request_link = bind_table_add(BTN_BOTNET_REQUEST_LINK, 2, "Us", 0, BIND_BREAKABLE);
 	BT_link = bind_table_add(BTN_BOTNET_LINK, 1, "B", 0, BIND_STACKABLE);
 	BT_disc = bind_table_add(BTN_BOTNET_DISC, 3, "BBs", 0, BIND_STACKABLE);
-	BT_bot = bind_table_add(BTN_BOTNET_BOT, 2, "Bss", 0, 0);
+	BT_bot = bind_table_add(BTN_BOTNET_BOT, 3, "Bss", 0, 0);
+	BT_extension = bind_table_add(BTN_BOTNET_EXTENSION, 3, "Ess", 0, 0);
 	return 0;
 }
 
@@ -165,6 +169,8 @@ int botnet_shutdown(void)
 	bind_table_del(BT_request_link);
 	bind_table_del(BT_link);
 	bind_table_del(BT_disc);
+	bind_table_del(BT_bot);
+	bind_table_del(BT_extension);
 
 	/* force a garbage run since we might have some partymembers 
  	 * marked as deleted and w/o a garbage_run we may not destroy
@@ -715,7 +721,7 @@ void botnet_botmsg(botnet_bot_t *src, botnet_bot_t *dst, const char *command, co
 		if (dir->handler && dir->handler->on_botmsg) dir->handler->on_botmsg(dir->client_data, src, dst, command, text, len);
 		return;
 	}
-	bind_check(BT_bot, NULL, command, command, text);
+	bind_check(BT_bot, NULL, command, src, command, text);
 }
 
 void botnet_botbroadcast(botnet_bot_t *src, const char *command, const char *text, int len)
@@ -725,10 +731,31 @@ void botnet_botbroadcast(botnet_bot_t *src, const char *command, const char *tex
 	if (!text) len = 0;
 	else if (len < 0) len = strlen(text);
 
-	bind_check(BT_bot, NULL, command, command, text);
+	bind_check(BT_bot, NULL, command, src, command, text);
 
 	for (tmp = localbot_head; tmp; tmp = tmp->next_local) {
 		if (tmp->flags & BOT_DELETED || (src && tmp == src->direction)) continue;
 		if (tmp->handler && tmp->handler->on_botbroadcast) tmp->handler->on_botbroadcast(tmp->client_data, src, command, text, len);
+	}
+}
+
+void botnet_extension(int mode, botnet_entity_t *src, botnet_bot_t *dst, egg_module_t *mod, const char *cmd, const char *text, int len)
+{
+	botnet_bot_t *tmp, *srcbot = src->what == ENTITY_BOT ? src->bot : src->user->bot;
+
+	if (!text) len = 0;
+	else if (len < 0) len = strlen(text);
+
+	if (!dst) bind_check(BT_extension, NULL, cmd, src, cmd, text);
+	if (mode == EXTENSION_ONE) {
+		if (dst && dst->direction->handler && dst->direction->handler->on_extension)
+			dst->direction->handler->on_extension(dst->direction->client_data, src, dst, cmd, text, len);
+		return;
+	}
+
+	for (tmp = localbot_head; tmp; tmp = tmp->next_local) {
+		if (tmp->flags & BOT_DELETED || (srcbot && tmp == srcbot->direction)) continue;
+		if (mod && !(tmp->owner && tmp->owner->module == mod)) continue;
+		dst->direction->handler->on_extension(dst->direction->client_data, src, mode == EXTENSION_ALL ? NULL : tmp, cmd, text, len);
 	}
 }
