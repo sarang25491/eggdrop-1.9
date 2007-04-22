@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: botnet.h,v 1.4 2007/04/18 01:45:52 sven Exp $
+ * $Id: botnet.h,v 1.5 2007/04/22 13:18:32 sven Exp $
  */
 
 #ifndef _EGG_BOTNET_H_
@@ -36,7 +36,7 @@ typedef struct {
 	/* Events that don't depend on a single chan. */
 	int (*on_bcast)(void *client_data, botnet_entity_t *src, const char *text, int len);
 	int (*on_privmsg)(void *client_data, botnet_entity_t *src, partymember_t *dst, const char *text, int len);
-	int (*on_nick)(void *client_data, partymember_t *src, const char *oldnick, const char *newnick);
+	int (*on_nick)(void *client_data, partymember_t *src, const char *newnick);
 	int (*on_quit)(void *client_data, partymember_t *src, const char *text, int len);
 
 	/* Channel events. */
@@ -45,9 +45,10 @@ typedef struct {
 	int (*on_part)(void *client_data, partychan_t *chan, partymember_t *src, const char *text, int len);
 
 	/* Botnet events. */
-	int (*on_new_bot)(void *client_data, struct botnet_bot *bot, int netburst);
-	int (*on_lost_bot)(void *client_data, struct botnet_bot *bot, const char *reason);
-	int (*on_unlink)(void *client_data, botnet_entity_t *from, struct botnet_bot *bot, const char *reason);
+	int (*on_new_bot)(void *client_data, botnet_bot_t *bot, int netburst);
+	int (*on_lost_bot)(void *client_data, botnet_bot_t *bot_t, const char *reason);
+	int (*on_link)(void *client_data, botnet_entity_t *from, botnet_bot_t *dst, const char *target);
+	int (*on_unlink)(void *client_data, botnet_entity_t *from, botnet_bot_t *bot, const char *reason);
 	int (*on_botmsg)(void *client_data, botnet_bot_t *src, botnet_bot_t *dst, const char *command, const char *text, int len);
 	int (*on_botbroadcast)(void *client_data, botnet_bot_t *src, const char *command, const char *text, int len);
 	int (*on_extension)(void *client_data, botnet_entity_t *src, botnet_bot_t *dst, const char *cmd, const char *text, int len);
@@ -148,7 +149,7 @@ void botnet_count_subtree(botnet_bot_t *bot, int *bots, int *members);
 int botnet_delete_by_owner(struct egg_module *module, void *script);
 int botnet_delete(botnet_bot_t *bot, const char *reason);
 int botnet_unlink(botnet_entity_t *from, botnet_bot_t *bot, const char *reason);
-int botnet_link(user_t *user);
+int botnet_link(botnet_entity_t *src, botnet_bot_t *dst, const char *target);
 
 void botnet_replay_net(botnet_bot_t *bot);
 int botnet_check_direction(botnet_bot_t *direction, botnet_bot_t *src);
@@ -158,6 +159,7 @@ void botnet_member_join(partychan_t *chan, partymember_t *p, int linking);
 void botnet_member_part(partychan_t *chan, partymember_t *p, const char *reason, int len);
 void botnet_chanmsg(partychan_t *chan, botnet_entity_t *src, const char *reason, int len);
 void botnet_member_quit(partymember_t *p, const char *reason, int len);
+void botnet_set_nick(partymember_t *p, const char *oldnick);
 void botnet_botmsg(botnet_bot_t *src, botnet_bot_t *dst, const char *command, const char *text, int len);
 void botnet_botbroadcast(botnet_bot_t *src, const char *command, const char *text, int len);
 void botnet_extension(int mode, botnet_entity_t *src, botnet_bot_t *dst, egg_module_t *mod, const char *cmd, const char *text, int len);

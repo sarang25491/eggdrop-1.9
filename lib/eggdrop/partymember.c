@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partymember.c,v 1.26 2007/04/18 01:45:52 sven Exp $";
+static const char rcsid[] = "$Id: partymember.c,v 1.27 2007/04/22 13:18:32 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -232,6 +232,7 @@ int partymember_set_nick(partymember_t *p, const char *nick)
 	p->nick = strdup(nick);
 	if (p->handler && p->handler->on_nick)
 		(p->handler->on_nick)(p->client_data, p, oldnick, nick);
+	botnet_set_nick(p, oldnick);
 	p->flags |= PARTY_SELECTED;
 	common = partychan_get_common(p);
 	if (common) {

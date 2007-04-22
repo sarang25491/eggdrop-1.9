@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: core_party.c,v 1.54 2007/04/14 15:21:13 sven Exp $";
+static const char rcsid[] = "$Id: core_party.c,v 1.55 2007/04/22 13:18:32 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -467,28 +467,32 @@ static int party_unlink(partymember_t *p, const char *nick, user_t *u, const cha
 
 static int party_link(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
-	int error;
-	user_t *who;
+	char *via;
+	const char *target;
+	botnet_bot_t *dst = NULL;
+	botnet_entity_t src = user_entity(p);
 
 	if (!text || !*text) {
-		partymember_printf(p, _("Syntax: link <handle>"));
+		partymember_printf(p, _("Syntax: link <handle> [via-bot]"));
 		return 0;
 	}
-	who = user_lookup_by_handle(text);
-	if (!who) {
-		partymember_printf(p, _("User '%s' not found."), text);
-		return 0;
-	}
-	error = botnet_link(who);
-	if (!error) return 0;
 
-	if (error == -1) {
-		partymember_printf(p, _("Error linking to '%s': User is not a bot."), who->handle);
-	} else if (error == -2) {
-		partymember_printf(p, _("Error linking to '%s': Bot type not set."), who->handle);
-	} else if (error == -3) {
-		partymember_printf(p, _("Error linking to '%s': No module loaded to link to that bot type."), who->handle);
-	}
+	egg_get_arg(text, &target, &via);
+	while (target && isspace(*target)) ++target;
+
+	if (target && *target) {
+		dst = botnet_lookup(via);
+		if (!dst && strcmp(via, botnet_get_name())) {
+			partymember_printf(p, _("No such bot: %s."), via);
+			free(via);
+			return 0;
+		}
+		free(via);
+	} else {
+		target = text;
+		free(via);
+	}	
+	botnet_link(&src, dst, target);
 
 	return 0;
 }

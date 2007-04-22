@@ -28,7 +28,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: botnet.c,v 1.7 2007/04/18 01:45:52 sven Exp $";
+static const char rcsid[] = "$Id: botnet.c,v 1.8 2007/04/22 13:18:31 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -36,6 +36,7 @@ static const char rcsid[] = "$Id: botnet.c,v 1.7 2007/04/18 01:45:52 sven Exp $"
 #define BAD_BOTNAME_CHARS " *?@:"   //!< A string of characters that aren't allowed in a botname.
 
 #define BOT_DELETED 1
+
 
 static char *botname;
 static char *default_botname = "eggdrop";
@@ -602,7 +603,7 @@ void botnet_replay_net(botnet_bot_t *dst)
 int botnet_check_direction(botnet_bot_t *direction, botnet_bot_t *src)
 {
 	if (!src || src->direction != direction) {
-		putlog(LOG_MISC, "*", _("Fake message from %s rejected! (direction != %s)."), direction->name, src ? src->name : "non-existant bot");
+		putlog(LOG_MISC, "*", _("Fake message from %s rejected! (direction != %s)."), direction->name, src ? src->name : _("non-existent bot"));
 		return 1;
 	}
 	return 0;
@@ -629,14 +630,32 @@ static int botnet_cleanup(void *client_data)
 	return 0;
 }
 
-int botnet_link(user_t *user)
+int botnet_link(botnet_entity_t *src, botnet_bot_t *dst, const char *target)
 {
 	char *type;
+	user_t *user;
+	botnet_entity_t entity_me = bot_entity((botnet_bot_t *) 0);
 
-	if (!user_check_flags_str(user, NULL, "b")) return -1;
-	if (user_get_setting(user, NULL, "bot-type", &type)) return -2;
+	if (dst) {
+		if (dst->direction->handler && dst->direction->handler->on_link)
+			dst->direction->handler->on_link(dst->direction->client_data, src, dst, target);
+		return 0;
+	}
 
-	if (!bind_check(BT_request_link, NULL, type, user, type)) return -3;
+	user = user_lookup_by_handle(target);
+	if (!user || !user_check_flags_str(user, NULL, "b")) {
+		if (src->what == ENTITY_PARTYMEMBER) partymember_msg(src->user, &entity_me, _("Can't link there: No such bot."), -1);
+		return -1;
+	}
+	if (user_get_setting(user, NULL, "bot-type", &type)) {
+		if (src->what == ENTITY_PARTYMEMBER) partymember_msg(src->user, &entity_me, _("Can't link there: Unknown bot type."), -1);
+		return -2;
+	}
+
+	if (!bind_check(BT_request_link, NULL, type, user, type)) {
+		if (src->what == ENTITY_PARTYMEMBER) partymember_msg(src->user, &entity_me, _("Can't link there: Module not loaded."), -1);
+		return -3;
+	}
 
 	return 0;
 }
@@ -701,6 +720,16 @@ void botnet_broadcast(botnet_entity_t *src, const char *text, int len)
 	partymember_local_broadcast(src, text, len);
 }
 
+void botnet_set_nick(partymember_t *p, const char *oldnick)
+{
+	botnet_bot_t *tmp;
+
+	for (tmp = localbot_head; tmp; tmp = tmp->next_local) {
+		if (tmp->flags & BOT_DELETED || (p->bot && tmp == p->bot->direction)) continue;
+		if (tmp->handler && tmp->handler->on_nick) tmp->handler->on_nick(tmp->client_data, p, oldnick);
+	}
+}
+
 void botnet_member_quit(partymember_t *p, const char *reason, int len)
 {
 	botnet_bot_t *tmp;
@@ -756,6 +785,7 @@ void botnet_extension(int mode, botnet_entity_t *src, botnet_bot_t *dst, egg_mod
 	for (tmp = localbot_head; tmp; tmp = tmp->next_local) {
 		if (tmp->flags & BOT_DELETED || (srcbot && tmp == srcbot->direction)) continue;
 		if (mod && !(tmp->owner && tmp->owner->module == mod)) continue;
-		dst->direction->handler->on_extension(dst->direction->client_data, src, mode == EXTENSION_ALL ? NULL : tmp, cmd, text, len);
+		if (tmp->handler && tmp->handler->on_extension)
+			tmp->handler->on_extension(tmp->client_data, src, mode == EXTENSION_ALL ? NULL : tmp, cmd, text, len);
 	}
 }

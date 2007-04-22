@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: oldbotnet.c,v 1.17 2007/04/18 01:45:52 sven Exp $";
+static const char rcsid[] = "$Id: oldbotnet.c,v 1.18 2007/04/22 13:18:32 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -37,23 +37,29 @@ static int party_minus_obot(partymember_t *p, char *nick, user_t *u, char *cmd, 
 
 /* Oldbotnet commands. */
 static int got_actchan(botnet_bot_t *bot, const char *cmd, const char *next);
+static int got_away(botnet_bot_t *bot, const char *cmd, const char *next);
 static int got_bcast(botnet_bot_t *bot, const char *cmd, const char *next);
+static int got_botmsg(botnet_bot_t *bot, const char *cmd, const char *next);
+static int got_botbroadcast(botnet_bot_t *bot, const char *cmd, const char *next);
+static int got_bye(botnet_bot_t *bot, const char *cmd, const char *text);
+static int got_chat(botnet_bot_t *bot, const char *cmd, const char *next);
+static int got_endlink(botnet_bot_t *bot, const char *cmd, const char *next);
 static int got_handshake(botnet_bot_t *bot, const char *cmd, const char *next);
-static int got_ping(botnet_bot_t *bot, const char *cmd, char *next);
 static int got_idle(botnet_bot_t *bot, const char *cmd, const char *next);
 static int got_join(botnet_bot_t *bot, const char *cmd, const char *next);
+static int got_motd(botnet_bot_t *bot, const char *cmd, const char *next);
+static int got_nickchange(botnet_bot_t *bot, const char *cmd, const char *next);
 static int got_part(botnet_bot_t *bot, const char *cmd, const char *next);
-static int got_chat(botnet_bot_t *bot, const char *cmd, const char *next);
+static int got_ping(botnet_bot_t *bot, const char *cmd, const char *next);
+static int got_pong(botnet_bot_t *bot, const char *cmd, const char *next);
+static int got_link(botnet_bot_t *bot, const char *cmd, const char *next);
 static int got_nlinked(botnet_bot_t *bot, const char *cmd, const char *next);
 static int got_unlink(botnet_bot_t *bot, const char *cmd, const char *next);
 static int got_unlinked(botnet_bot_t *bot, const char *cmd, const char *next);
-static int got_bye(botnet_bot_t *bot, const char *cmd, const char *text);
-static int got_endlink(botnet_bot_t *bot, const char *cmd, const char *next);
+static int got_versions(botnet_bot_t *bot, const char *cmd, const char *next);
 static int got_thisbot(botnet_bot_t *bot, const char *cmd, const char *next);
 static int got_privmsg(botnet_bot_t *bot, const char *cmd, const char *next);
 static int got_who(botnet_bot_t *bot, const char *cmd, const char *next);
-static int got_botmsg(botnet_bot_t *bot, const char *cmd, const char *next);
-static int got_botbroadcast(botnet_bot_t *bot, const char *cmd, const char *next);
 
 /* Sockbuf handler. */
 static int oldbotnet_on_connect(void *client_data, int idx, const char *peer_ip, int peer_port);
@@ -105,6 +111,10 @@ static bind_list_t obot_binds[] = {
 	{NULL, "a", got_actchan},
 	{NULL, "actchan", got_actchan},
 
+	{NULL, "aw", got_away},
+	{NULL, "away", got_away},
+	{NULL, "unaway", got_away},
+
 	{NULL, "bye", got_bye},
 
 	{NULL, "c", got_chat},
@@ -124,14 +134,25 @@ static bind_list_t obot_binds[] = {
 	{NULL, "j", got_join},
 	{NULL, "join", got_join},
 
+	{NULL, "l", got_link},
+	{NULL, "link", got_link},
+
+	{NULL, "m", got_motd},
+	{NULL, "motd", got_motd},
+
 	{NULL, "n", got_nlinked},
 	{NULL, "nlinked", got_nlinked},
+
+	{NULL, "nc", got_nickchange},
 
 	{NULL, "p", got_privmsg},
 	{NULL, "priv", got_privmsg},
 
 	{NULL, "pi", got_ping},
 	{NULL, "ping", got_ping},
+
+	{NULL, "po", got_pong},
+	{NULL, "pong", got_pong},
 
 	{NULL, "pt", got_part},
 	{NULL, "part", got_part},
@@ -141,6 +162,8 @@ static bind_list_t obot_binds[] = {
 
 	{NULL, "ul", got_unlink},
 	{NULL, "unlink", got_unlink},
+
+	{NULL, "v", got_versions},
 
 	{NULL, "un", got_unlinked},
 	{NULL, "unlinked", got_unlinked},
@@ -244,6 +267,38 @@ static int btoi(const char *b)
 
 	while (*b) i = (i << 6) + base64to[(unsigned char) *b++];
 	return(i);
+}
+
+static int get_entity(botnet_bot_t *bot, botnet_entity_t *src, char *word)
+{
+	if (!strchr(word, '@')) {
+		botnet_bot_t *b = botnet_lookup(word);
+		if (botnet_check_direction(bot, b)) return -1;
+		set_bot_entity(src, b);
+		return 0;
+	}
+
+	partymember_t *p = partymember_lookup(word, NULL, -1);
+	if (p) {
+		set_user_entity(src, p);
+		return 0;
+	}
+
+	int id = -1;
+	char *nick = word, *ptr = strchr(word, '@');
+	botnet_bot_t *srcbot = botnet_lookup(ptr + 1);
+
+	if (botnet_check_direction(bot, srcbot)) return -1;
+	*ptr = 0;
+	ptr = strchr(word, ':');
+	if (ptr) {
+		*ptr = 0;
+		id = atoi(word);
+		nick = ptr + 1;
+	}
+	p = partymember_new(id, NULL, srcbot, nick, "temp", "user.on.an.old.bot", NULL, NULL, &generic_owner);
+	set_user_entity(src, p);
+	return 1;
 }
 
 /* +obot <obot> <host> <port> [username] [password] */
@@ -500,7 +555,7 @@ static int got_bcast(botnet_bot_t *bot, const char *cmd, const char *text)
  * \param next Nothing.
  */
 
-static int got_ping(botnet_bot_t *bot, const char *cmd, char *next)
+static int got_ping(botnet_bot_t *bot, const char *cmd, const char *next)
 {
 	oldbotnet_t *obot = bot->client_data;
 
@@ -522,6 +577,106 @@ static int got_thisbot(botnet_bot_t *bot, const char *cmd, const char *next)
 		putlog(LOG_MISC, "*", "Wrong bot--wanted %s, got %s", bot->name, next);
 		botnet_delete(bot, "imposer");
 	}
+	return BIND_RET_BREAK;
+}
+
+static int got_motd(botnet_bot_t *bot, const char *cmd, const char *next)
+{
+	char *word[2];
+	int n;
+	botnet_bot_t *dst;
+	botnet_entity_t src;
+
+	n = egg_get_word_array(next, NULL, word, 2);
+	if (n != 2) {
+		egg_free_word_array(word, 2);
+		return BIND_RET_BREAK;
+	}
+
+	dst = botnet_lookup(word[1]);
+	if (!dst && strcmp(word[1], botnet_get_name())) {
+		egg_free_word_array(word, 2);
+		return BIND_RET_BREAK;
+	}
+
+	n = get_entity(bot, &src, word[0]);
+	if (n < 0 || src.what != ENTITY_PARTYMEMBER || botnet_check_direction(bot, src.user->bot)) {
+		egg_free_word_array(word, 2);
+		return BIND_RET_BREAK;
+	}
+
+	botnet_extension(EXTENSION_ONE, &src, dst, NULL, "motd", "", 0);
+	return BIND_RET_BREAK;
+}
+
+static int got_versions(botnet_bot_t *bot, const char *cmd, const char *next)
+{
+	char *word[3];
+	int n;
+	botnet_bot_t *dst, *srcbot;
+	partymember_t *src;
+
+	n = egg_get_word_array(next, NULL, word, 3);
+	if (n != 3) {
+		egg_free_word_array(word, 3);
+		return BIND_RET_BREAK;
+	}
+
+	srcbot = botnet_lookup(word[0]);
+	dst = botnet_lookup(word[1]);
+	if (!srcbot || botnet_check_direction(bot, srcbot) || (!dst && strcmp(word[1], botnet_get_name()))) {
+		egg_free_word_array(word, 3);
+		return BIND_RET_BREAK;
+	}
+
+	src = partymember_lookup(word[2], srcbot, -1);
+	if (!src) {
+		int id;
+		char *ptr = strchr(word[2], ':');
+
+		if (ptr) {
+			*ptr = 0;
+			id = atoi(word[2]);
+			++ptr;
+		} else {
+			ptr = word[2];
+			src = partymember_new(id, NULL, srcbot, ptr, "temp", "user.on.an.old.bot", NULL, NULL, &generic_owner);
+		}
+	}
+	botnet_entity_t e = user_entity(src);
+
+	botnet_extension(EXTENSION_ONE, &e, dst, NULL, "versions", "", 0);
+	return BIND_RET_BREAK;
+}
+
+static int got_nickchange(botnet_bot_t *bot, const char *cmd, const char *next)
+{
+	char *word[3];
+	int n, id;
+	botnet_bot_t *srcbot;
+	partymember_t *src;
+
+	n = egg_get_word_array(next, NULL, word, 3);
+	if (n != 3) {
+		egg_free_word_array(word, 3);
+		return BIND_RET_BREAK;
+	}
+
+	srcbot = botnet_lookup(word[0]);
+	if (botnet_check_direction(bot, srcbot)) {
+		egg_free_word_array(word, 3);
+		return BIND_RET_BREAK;
+	}
+
+	id = btoi(word[1]);
+	src = partymember_lookup(NULL, srcbot, id);
+	if (!src) {
+		egg_free_word_array(word, 3);
+		return BIND_RET_BREAK;
+	}
+
+	partymember_set_nick(src, word[2]);
+
 	return BIND_RET_BREAK;
 }
 
@@ -570,36 +725,9 @@ static int got_bye(botnet_bot_t *bot, const char *cmd, const char *text)
 	return BIND_RET_BREAK;
 }
 
-static int get_entity(botnet_bot_t *bot, botnet_entity_t *src, char *word)
+static int got_pong(botnet_bot_t *bot, const char *cmd, const char *next)
 {
-	if (!strchr(word, '@')) {
-		botnet_bot_t *b = botnet_lookup(word);
-		if (botnet_check_direction(bot, b)) return -1;
-		set_bot_entity(src, b);
-		return 0;
-	}
-
-	partymember_t *p = partymember_lookup(word, NULL, -1);
-	if (p) {
-		set_user_entity(src, p);
-		return 0;
-	}
-
-	int id = -1;
-	char *nick = word, *ptr = strchr(word, '@');
-	botnet_bot_t *srcbot = botnet_lookup(ptr + 1);
-
-	if (botnet_check_direction(bot, srcbot)) return -1;
-	*ptr = 0;
-	ptr = strchr(word, ':');
-	if (ptr) {
-		*ptr = 0;
-		id = atoi(word);
-		nick = ptr + 1;
-	}
-	p = partymember_new(id, NULL, srcbot, nick, "temp", "user.on.an.old.bot", NULL, NULL, &generic_owner);
-	set_user_entity(src, p);
-	return 1;
+	return BIND_RET_BREAK;
 }
 
 /*!
@@ -647,6 +775,44 @@ static int got_unlink(botnet_bot_t *bot, const char *cmd, const char *text)
 	}
 
 	botnet_unlink(&src, target, reason);
+	return BIND_RET_BREAK;
+}
+
+static int got_away(botnet_bot_t *bot, const char *cmd, const char *next)
+{
+	char *word[2];
+	int n, linking = 0;
+	botnet_bot_t *src;
+	partymember_t *p;
+
+	n = egg_get_word_array(next, &next, word, 2);
+	if (n != 2) {
+		egg_free_word_array(word, 2);
+		return BIND_RET_BREAK;
+	}
+
+	if (word[0][0] == '!') {
+		linking = 1;
+		src = botnet_lookup(word[0] + 1);
+	} else {
+		src = botnet_lookup(word[0]);
+	}
+	if (botnet_check_direction(bot, src)) {
+		egg_free_word_array(word, 2);
+		return BIND_RET_BREAK;
+	}
+
+	p = partymember_lookup(NULL, src, btoi(word[1]));
+	if (!p) {
+		egg_free_word_array(word, 2);
+		return BIND_RET_BREAK;
+	}
+
+	while (isspace(*next)) ++next;
+
+	botnet_entity_t s = user_entity(p);
+	botnet_extension(EXTENSION_ALL, &s, NULL, NULL, "away", next, -1);
+
 	return BIND_RET_BREAK;
 }
 
@@ -900,6 +1066,31 @@ static int got_botmsg(botnet_bot_t *bot, const char *cmd, const char *next)
 	if (!dst && !strcmp(word[2], "assoc") && next && *next) got_assoc(src, next);
 	botnet_botmsg(src, dst, word[2], next, -1);
 	egg_free_word_array(word, 3);
+	return BIND_RET_BREAK;
+}
+
+static int got_link(botnet_bot_t *bot, const char *cmd, const char *next)
+{
+	int n;
+	char *word[3];
+	botnet_bot_t *dst;
+	botnet_entity_t src;
+
+	n = egg_get_word_array(next, &next, word, 3);
+	if (n != 3) {
+		egg_free_word_array(word, 3);
+		return BIND_RET_BREAK;
+	}
+
+	n = get_entity(bot, &src, word[0]);
+	dst = botnet_lookup(word[1]);
+	if (n < 0 || botnet_check_direction(bot, src.what == ENTITY_BOT ? src.bot : src.user->bot) || (!dst && strcmp(word[1], botnet_get_name()))) {
+		egg_free_word_array(word, 3);
+		return BIND_RET_BREAK;
+	}
+
+	botnet_link(&src, dst, word[2]);
+
 	return BIND_RET_BREAK;
 }
 

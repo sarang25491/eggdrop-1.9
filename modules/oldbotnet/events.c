@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: events.c,v 1.10 2007/04/18 01:45:52 sven Exp $";
+static const char rcsid[] = "$Id: events.c,v 1.11 2007/04/22 13:18:32 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -28,21 +28,23 @@ static const char rcsid[] = "$Id: events.c,v 1.10 2007/04/18 01:45:52 sven Exp $
 /* botnet callbacks */
 static int on_bcast(void *client_data, botnet_entity_t *src, const char *text, int len);
 static int on_privmsg(void *client_data, botnet_entity_t *src, partymember_t *dst, const char *text, int len);
+static int on_nick(void *client_data, partymember_t *src, const char *oldnick);
 static int on_quit(void *client_data, partymember_t *src, const char *text, int len);
 static int on_chanmsg(void *client_data, partychan_t *chan, botnet_entity_t *src, const char *text, int len);
 static int on_join(void *client_data, partychan_t *chan, partymember_t *src, int linking);
 static int on_part(void *client_data, partychan_t *chan, partymember_t *src, const char *reason, int len);
 static int on_new_bot(void *client_data, botnet_bot_t *bot, int linking);
 static int on_lost_bot(void *client_data, botnet_bot_t *bot, const char *reason);
+static int on_link(void *client_data, botnet_entity_t *from, botnet_bot_t *dst, const char *target);
 static int on_unlink(void *client_data, botnet_entity_t *from, botnet_bot_t *bot, const char *reason);
 static int on_botmsg(void *client_data, botnet_bot_t *src, botnet_bot_t *dst, const char *command, const char *text, int len);
 static int on_botbroadcast(void *client_data, botnet_bot_t *src, const char *command, const char *text, int len);
 static int on_extension(void *client_data, botnet_entity_t *src, botnet_bot_t *dst, const char *cmd, const char *text, int len);
 
 botnet_handler_t bothandler = {
-	on_bcast, on_privmsg, NULL, on_quit,
+	on_bcast, on_privmsg, on_nick, on_quit,
 	on_chanmsg, on_join, on_part,
-	on_new_bot, on_lost_bot, on_unlink, on_botmsg, on_botbroadcast, on_extension
+	on_new_bot, on_lost_bot, on_link, on_unlink, on_botmsg, on_botbroadcast, on_extension
 };
 
 static int tobase64[] = {
@@ -129,6 +131,15 @@ static int on_quit(void *client_data, partymember_t *src, const char *text, int 
 	return 0;
 }
 
+static int on_nick(void *client_data, partymember_t *src, const char *oldnick)
+{
+	oldbotnet_t *obot = client_data;
+
+	egg_iprintf(obot->idx, "nc %s %s %s\n", src->bot ? src->bot->name : botnet_get_name(), itob(src->id), src->nick);
+
+	return 0;
+}
+
 static int on_chanmsg(void *client_data, partychan_t *chan, botnet_entity_t *src, const char *text, int len)
 {
 	oldbotnet_t *obot = client_data;
@@ -190,11 +201,20 @@ static int on_lost_bot(void *client_data, botnet_bot_t *bot, const char *reason)
 	return 0;
 }
 
+static int on_link(void *client_data, botnet_entity_t *from, struct botnet_bot *dst, const char *target)
+{
+	oldbotnet_t *obot = client_data;
+
+	egg_iprintf(obot->idx, "l %s %s %s\n", from->full_id_name, dst->name, target);
+
+	return 0;
+}
+
 static int on_unlink(void *client_data, botnet_entity_t *from, struct botnet_bot *bot, const char *reason)
 {
 	oldbotnet_t *obot = client_data;
 
-	egg_iprintf(obot->idx, "ul %s %s %s %s\n", from->full_name, bot->uplink->name, bot->name, reason);
+	egg_iprintf(obot->idx, "ul %s %s %s %s\n", from->full_id_name, bot->uplink->name, bot->name, reason);
 
 	return 0;
 }
@@ -229,6 +249,13 @@ static int on_extension(void *client_data, botnet_entity_t *src, botnet_bot_t *d
 		egg_iprintf(obot->idx, "p %s %s\n", src->full_id_name, text);
 	} else if (!strcmp(cmd, "who")) {
 		egg_iprintf(obot->idx, "w %s %s %s\n", src->full_id_name, dst->name, text);
+	} else if (!strcmp(cmd, "motd")) {
+		egg_iprintf(obot->idx, "m %s %s\n", src->full_id_name, dst->name);
+	} else if (!strcmp(cmd, "versions")) {
+		egg_iprintf(obot->idx, "v %s %s %d:%s\n", src->user->bot->name, dst->name, src->user->id, src->user->nick);
+	} else if (!strcmp(cmd, "away")) {
+		if (*text) egg_iprintf(obot->idx, "aw %s %s %s\n", src->user->bot ? src->user->bot->name : botnet_get_name(), itob(src->user->id), text);
+		else egg_iprintf(obot->idx, "aw %s %s\n", src->user->bot ? src->user->bot->name : botnet_get_name(), itob(src->user->id));
 	}
 
 	return 0;
