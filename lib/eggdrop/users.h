@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: users.h,v 1.18 2006/11/14 14:51:23 sven Exp $
+ * $Id: users.h,v 1.19 2007/05/09 01:32:31 sven Exp $
  */
 
 #ifndef _EGG_USERS_H_
@@ -27,7 +27,9 @@
 
 /* User structure flags. */
 #define USER_DELETED     1
-#define USER_LINKED_BOT  2
+#define USER_BOT         2
+#define USER_LINKED_BOT  4
+#define USER_LINKING_BOT 8
 
 /* Bind table names for user events */
 #define BTN_USER_CHANGE_FLAGS		"uflags"
@@ -60,6 +62,9 @@ typedef struct user {
 
 	/* Flags for the structure, e.g. USER_DELETED. */
 	int flags;
+
+	struct user *prev;
+	struct user *next;
 } user_t;
 
 int user_init(void);
@@ -70,6 +75,7 @@ int user_save(const char *fname);
 const char *user_invalid_handle(const char *handle);
 user_t *user_new(const char *handle);
 int user_delete(user_t *u);
+user_t *user_get_list(void);
 user_t *user_lookup_by_handle(const char *handle);
 user_t *user_lookup_authed(const char *handle, const char *pass);
 user_t *user_lookup_by_uid(int uid);

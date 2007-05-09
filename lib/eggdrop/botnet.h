@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: botnet.h,v 1.5 2007/04/22 13:18:32 sven Exp $
+ * $Id: botnet.h,v 1.6 2007/05/09 01:32:31 sven Exp $
  */
 
 #ifndef _EGG_BOTNET_H_
@@ -138,6 +138,7 @@ struct botnet_entity {
 int botnet_init(void);
 int botnet_shutdown(void);
 
+void botnet_autolink(void);
 int botnet_set_name(const char *name);
 const char *botnet_get_name(void);
 const botnet_bot_t *botnet_get_head(void);
@@ -145,7 +146,8 @@ const botnet_bot_t *botnet_get_head(void);
 botnet_bot_t *botnet_lookup(const char *name);
 botnet_bot_t *botnet_new(const char *name, user_t *user, botnet_bot_t *uplink, botnet_bot_t *direction, botnet_handler_t *handler, void *client_data, event_owner_t *owner, int netburst);
 void botnet_count_subtree(botnet_bot_t *bot, int *bots, int *members);
-
+void botnet_link_failed(user_t *user, const char *reason);
+void botnet_link_success(botnet_bot_t *bot);
 int botnet_delete_by_owner(struct egg_module *module, void *script);
 int botnet_delete(botnet_bot_t *bot, const char *reason);
 int botnet_unlink(botnet_entity_t *from, botnet_bot_t *bot, const char *reason);

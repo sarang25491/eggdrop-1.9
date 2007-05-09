@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.54 2007/04/14 15:21:12 sven Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.55 2007/05/09 01:32:31 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -51,6 +51,8 @@ static int g_uid = 1, uid_wraparound = 0;
 
 /* The number of users we have. */
 static int nusers = 0;
+
+static user_t *users = NULL;
 
 /* Hash table to associate irchosts (nick!user@host) with users. */
 static hash_table_t *irchost_cache_ht = NULL;
@@ -273,6 +275,11 @@ int user_save(const char *fname)
 	return(0);
 }
 
+user_t *user_get_list()
+{
+	return users;
+}
+
 static int user_get_uid()
 {
 	user_t *u;
@@ -316,6 +323,11 @@ static user_t *real_user_new(const char *handle, int uid)
 	if (!uid) uid = user_get_uid();
 	u->uid = uid;
 
+	u->prev = NULL;
+	u->next = users;
+	if (users) users->prev = u;
+	users = u;
+
 	hash_table_insert(handle_ht, u->handle, u);
 	hash_table_insert(uid_ht, (void *)u->uid, u);
 	nusers++;
@@ -358,6 +370,11 @@ static int user_really_delete(void *client_data)
 	}
 	if (u->settings) free(u->settings);
 	if (u->handle) free(u->handle);
+
+	if (u->next) u->next->prev = u->prev;
+	if (u->prev) u->prev->next = u->next;
+	else users = u->next;
+
 	free(u);
 	return(0);
 }
@@ -366,7 +383,7 @@ int user_delete(user_t *u)
 {
 	int i;
 
-	if (!u || (u->flags & USER_DELETED)) return(-1);
+	if (!u || (u->flags & (USER_DELETED | USER_LINKING_BOT | USER_LINKED_BOT))) return(-1);
 
 	nusers--;
 	hash_table_remove(handle_ht, u->handle, NULL);
@@ -591,6 +608,7 @@ static int check_flag_change(user_t *u, const char *chan, flags_t *oldflags, fla
 	char oldstr[64], newstr[64], *change;
 	int r;
 
+	if (u->flags & (USER_LINKING_BOT | USER_LINKED_BOT) && !chan && (oldflags->builtin & 2) != (newflags->builtin & 2)) return -1;
 	flag_to_str(oldflags, oldstr);
 	flag_to_str(newflags, newstr);
 	change = egg_msprintf(NULL, 0, NULL, "%s %s %s", chan ? chan : "", oldstr, newstr);
@@ -599,6 +617,10 @@ static int check_flag_change(user_t *u, const char *chan, flags_t *oldflags, fla
 
 	/* Does a callback want to cancel this flag change? */
 	if (r & BIND_RET_BREAK) return(-1);
+	if (!chan) {
+		if (newflags->builtin & 2) u->flags |= USER_BOT;
+		else u->flags &= ~USER_BOT;
+	}
 	return(0);
 }
 
@@ -652,6 +674,7 @@ static void append_setting(user_t *u, const char *chan, const char *flag_str, xm
 	memset(setting, 0, sizeof(*setting));
 	if (chan) setting->chan = strdup(chan);
 	if (flag_str) flag_from_str(&setting->flags, flag_str);
+	if (!chan && setting->flags.builtin & 2) u->flags |= USER_BOT;
 	if (extended) {
 		xml_node_unlink(extended);
 		setting->extended = extended;

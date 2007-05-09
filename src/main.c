@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.189 2006/11/14 14:51:24 sven Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.190 2007/05/09 01:32:32 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -235,7 +235,12 @@ static int core_secondly()
 		if (i > 1) putlog(LOG_MISC, "*", _("Warning: timer drift (%d minutes)."), i);
 
 		miltime = (nowtm.tm_hour * 100) + (nowtm.tm_min);
-		if (nowtm.tm_min % 5 == 0) eggdrop_event("5minutely");
+		if (nowtm.tm_min % 5 == 0) {
+			botnet_entity_t me = bot_entity((botnet_bot_t *) 0);
+			eggdrop_event("5minutely");
+			botnet_extension(EXTENSION_NEIGHBOURS, &me, NULL, NULL, "ping", "", 0);
+			botnet_autolink();
+		}
 		if (nowtm.tm_min == 0) eggdrop_event("hourly");
 		if (!miltime) { /* At midnight */
 			char s[25];
@@ -473,6 +478,9 @@ int main(int argc, char **argv)
 
 		/* set normal running mode */
 		runmode = RUNMODE_NORMAL;
+
+		/* try to link other bots */
+		botnet_autolink();
 
 		putlog(LOG_DEBUG, "*", "Entering main loop.");
 

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: events.c,v 1.11 2007/04/22 13:18:32 sven Exp $";
+static const char rcsid[] = "$Id: events.c,v 1.12 2007/05/09 01:32:31 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -256,6 +256,15 @@ static int on_extension(void *client_data, botnet_entity_t *src, botnet_bot_t *d
 	} else if (!strcmp(cmd, "away")) {
 		if (*text) egg_iprintf(obot->idx, "aw %s %s %s\n", src->user->bot ? src->user->bot->name : botnet_get_name(), itob(src->user->id), text);
 		else egg_iprintf(obot->idx, "aw %s %s\n", src->user->bot ? src->user->bot->name : botnet_get_name(), itob(src->user->id));
+	} else if (!strcmp(cmd, "ping")) {
+		if (obot->idle == -1) {
+			botnet_delete(obot->bot, _("Ping timeout"));
+		} else if (obot->idle == 0) {
+			obot->idle = 1;
+		} else {
+			obot->idle = -1;
+			egg_iprintf(obot->idx, "pi\n");
+		}
 	}
 
 	return 0;

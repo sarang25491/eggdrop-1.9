@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: oldbotnet.c,v 1.18 2007/04/22 13:18:32 sven Exp $";
+static const char rcsid[] = "$Id: oldbotnet.c,v 1.19 2007/05/09 01:32:32 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -306,24 +306,11 @@ static int party_plus_obot(partymember_t *p, char *nick, user_t *u, char *cmd, c
 {
 	char *name, *host, *port, *username, *password;
 	user_t *obot;
-	int freeusername = 1;
 
 	egg_get_words(text, NULL, &name, &host, &port, &username, &password, NULL);
 	if (!port) {
 		partymember_printf(p, _("Syntax: +obot <obot> <host> <port> [username] [password]"));
 		goto done;
-	}
-
-	if (!username) {
-		/* No username, so look up the botname. */
-		void *config_root = config_get_root("eggdrop");
-		config_get_str(&username, config_root, "eggdrop.botname");
-		if (!username) {
-			partymember_printf(p, _("Could not get local botname; please specify a username to log in as."));
-			goto done;
-		}
-		partymember_printf(p, _("No username specified, using '%s' by default."), username);
-		freeusername = 0;
 	}
 
 	obot = user_new(name);
@@ -332,18 +319,20 @@ static int party_plus_obot(partymember_t *p, char *nick, user_t *u, char *cmd, c
 		goto done;
 	}
 
-	user_set_setting(obot, "oldbotnet", "host", host);
-	user_set_setting(obot, "oldbotnet", "port", port);
-	user_set_setting(obot, "oldbotnet", "username", username);
-	if (password) user_set_setting(obot, "oldbotnet", "password", password);
+	user_set_flags_str(obot, NULL, "+b");
+	user_set_setting(obot, "bot", "type", "old-eggdrop");
+	user_set_setting(obot, "bot", "host", host);
+	user_set_setting(obot, "bot", "port", port);
+	if (username) user_set_setting(obot, "bot", "username", username);
+	if (password) user_set_setting(obot, "bot", "password", password);
 
 done:
 	if (name) free(name);
 	if (host) free(host);
 	if (port) free(port);
-	if (username && freeusername) free(username);
+	if (username) free(username);
 	if (password) free(password);
-	return(0);
+	return 0;
 }
 
 /* -obot <obot> */
@@ -378,14 +367,19 @@ static int party_minus_obot(partymember_t *p, char *nick, user_t *u, char *cmd, 
 
 static int do_link(user_t *user, const char *type)
 {
-	char *host = NULL, *port = NULL, *username = NULL, *password = NULL;
+	char *host = NULL, *portstr = NULL, *un = NULL, *password = NULL;
+	const char *username;
+	int port;
 	oldbotnet_t *data;
 
-	user_get_setting(user, NULL, "botnet.host", &host);
-	user_get_setting(user, NULL, "botnet.port", &port);
-	user_get_setting(user, NULL, "botnet.username", &username);
-	user_get_setting(user, NULL, "botnet.password", &password);
-	if (!host || !port || !username) {
+	user_get_setting(user, NULL, "bot.host", &host);
+	user_get_setting(user, NULL, "bot.port", &portstr);
+	user_get_setting(user, NULL, "bot.username", &un);
+	user_get_setting(user, NULL, "bot.password", &password);
+	if (un) username = un;
+	else username = botnet_get_name();
+	if (portstr) port = atoi(portstr);
+	if (!host || !portstr || port < 0 || port > 65535) {
 		putlog(LOG_MISC, "*", _("Error linking %s: Invalid telnet address:port stored."), user->handle);
 		return BIND_RET_BREAK;
 	}
@@ -393,18 +387,16 @@ static int do_link(user_t *user, const char *type)
 	data = malloc(sizeof(*data));
 	data->bot = NULL;
 	data->user = user;
-	data->host = strdup(host);
-	data->port = atoi(port);
 	data->name = strdup(username);
 	if (password) data->password = strdup(password);
 	else data->password = NULL;
-	data->idx = egg_connect(data->host, data->port, -1);
-	data->connected = 0;
+	data->idx = egg_connect(host, port, -1);
+	data->idle = 0;
 
 	sockbuf_set_handler(data->idx, &oldbotnet_handler, data);
 	linemode_on(data->idx);
 
-	putlog(LOG_MISC, "*", _("Linking to %s (%s %d) on idx %d as %s."), user->handle, data->host, data->port, data->idx, data->name);
+	putlog(LOG_MISC, "*", _("Linking to %s (%s %d) on idx %d as %s."), user->handle, host, port, data->idx, data->name);
 	return BIND_RET_BREAK;
 }
 
@@ -492,9 +484,14 @@ static void got_version(oldbotnet_t *bot, const char *next)
 	egg_iprintf(bot->idx, "tb %s\n", bot->name);
 
 	/* And now we're connected. */
-	bot->connected = 1;
 	bot->linking = 1;
 	bot->bot = botnet_new(bot->user->handle, bot->user, NULL, NULL, &bothandler, bot, &bot_owner, 0);
+	if (!bot->bot) {
+		botnet_failed_link(bot->user, "Could not create bot.");
+		bot->user = NULL;
+		sockbuf_delete(bot->idx);
+		return;
+	}
 	botnet_replay_net(bot->bot);
 	egg_iprintf(bot->idx, "el\n");
 }
@@ -568,6 +565,7 @@ static int got_endlink(botnet_bot_t *bot, const char *cmd, const char *next)
 	oldbotnet_t *obot = bot->client_data;
 
 	obot->linking = 0;
+	botnet_link_success(obot->bot);
 	return BIND_RET_BREAK;
 }
 
@@ -725,6 +723,20 @@ static int got_bye(botnet_bot_t *bot, const char *cmd, const char *text)
 	return BIND_RET_BREAK;
 }
 
+/*!
+ * \brief Handle pong event.
+ *
+ * Actually, don't handle pong event. The fact that a line was received is
+ * enough to reset the bots idle counter and that already happened. So there's
+ * nothing left to do.
+ *
+ * \param bot The bot the msg came from.
+ * \param cmd "pong" or "po".
+ * \param text Nothing.
+ *
+ * \format \b pong
+ */
+
 static int got_pong(botnet_bot_t *bot, const char *cmd, const char *next)
 {
 	return BIND_RET_BREAK;
@@ -739,9 +751,9 @@ static int got_pong(botnet_bot_t *bot, const char *cmd, const char *next)
  *
  * \param bot The bot the msg came from.
  * \param cmd "unlink" or "ul".
- * \param next The parameters.
+ * \param text The parameters.
  *
- * \format \b unlink from@bot dst bot-to-kill [reason]
+ * \format \b unlink from@@bot dst bot-to-kill [reason]
  */
 
 static int got_unlink(botnet_bot_t *bot, const char *cmd, const char *text)
@@ -937,7 +949,7 @@ static int got_part(botnet_bot_t *bot, const char *cmd, const char *next)
  * \param cmd "priv" or "p".
  * \param next The parameters.
  *
- * \format \b priv from@bot dst message
+ * \format \b priv from@@bot dst message
  */
 
 static int got_privmsg(botnet_bot_t *bot, const char *cmd, const char *next)
@@ -1179,24 +1191,33 @@ static int oldbotnet_on_read(void *client_data, int idx, char *data, int len)
 	const char *next;
 	oldbotnet_t *bot = client_data;
 
+	bot->idle = 0;
 	egg_get_word(data, &next, &cmd);
 	if (!cmd) return(0);
 
 	if (next) while (isspace(*next)) next++;
 
-	if (!strcasecmp(cmd, "e") || !strcasecmp(cmd, "error") || (!bot->connected && !strcasecmp(cmd, "bye"))) {
-		putlog(LOG_MISC, "*", _("Botnet error from %s: %s"), bot->user->handle, next);
-		if (bot->connected) botnet_delete(bot->bot, next);
-		else sockbuf_delete(bot->idx);
+	if (!strcasecmp(cmd, "e") || !strcasecmp(cmd, "error") || (!bot->bot && !strcasecmp(cmd, "bye"))) {
+		char buf[512];
+		snprintf(buf, sizeof(buf), _("Botnet error from %s: %s"), bot->user->handle, next);
+		if (bot->bot) {
+			botnet_delete(bot->bot, buf);
+		} else {
+			botnet_failed_link(bot->user, buf);
+			bot->user = NULL;
+			sockbuf_delete(bot->idx);
+		}
 		free(cmd);
 		return 0;
 	}
 
-	if (!bot->connected) {
+	if (!bot->bot) {
 		if (!strcasecmp(cmd, "passreq")) {
 			got_passreq(bot, next);
 		} else if (!strcasecmp(cmd, "badpass")) {
-			putlog(LOG_MISC, "*", _("Botnet error: Password was rejected."));
+			botnet_failed_link(bot->user, _("Botnet error: Password was rejected."));
+			bot->user = NULL;
+			sockbuf_delete(bot->idx);
 		} else if (!strcasecmp(cmd, "version") || !strcasecmp(cmd, "v")) {
 			got_version(bot, next);
 		}
@@ -1216,8 +1237,9 @@ static int oldbotnet_on_eof(void *client_data, int idx, int err, const char *err
 {
 	oldbotnet_t *bot = client_data;
 
-	if (!bot->connected) {
-		putlog(LOG_MISC, "*", _("eof while trying to link %s (%s)."), bot->user->handle, errmsg ? errmsg : "no error");
+	if (!bot->bot) {
+		if (bot->user->flags & USER_LINKING_BOT) botnet_failed_link(bot->user, errmsg ? errmsg : "no error");
+		bot->user = NULL;   /* Might already be in the process of being reconnected, forget about it. */
 		sockbuf_delete(idx);
 	} else {
 		putlog(LOG_MISC, "*", _("eof from %s (%s)."), bot->bot->name, errmsg ? errmsg : "no error");
@@ -1230,7 +1252,8 @@ static int bot_on_delete(event_owner_t *owner, void *client_data)
 {
 	oldbotnet_t *bot = client_data;
 
-	sockbuf_delete(bot->idx);
+	bot->bot = NULL;
+	if (bot->idx >= 0) sockbuf_delete(bot->idx);
 
 	return 0;
 }
@@ -1239,10 +1262,14 @@ static int oldbotnet_on_delete(void *client_data, int idx)
 {
 	oldbotnet_t *bot = client_data;
 
-	if (bot->host) free(bot->host);
+	bot->idx = -1;
+	if (bot->bot) botnet_delete(bot->bot, _("Socket deleted."));
+	else if (bot->user && bot->user->flags & USER_LINKING_BOT) botnet_failed_link(bot->user, "Socket deleted.");
+
 	if (bot->name) free(bot->name);
 	if (bot->password) free(bot->password);
 	free(bot);
+
 	return 0;
 }
 

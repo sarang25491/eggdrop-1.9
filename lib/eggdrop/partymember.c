@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partymember.c,v 1.27 2007/04/22 13:18:32 sven Exp $";
+static const char rcsid[] = "$Id: partymember.c,v 1.28 2007/05/09 01:32:31 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -117,6 +117,7 @@ partymember_t *partymember_new(int id, user_t *user, botnet_bot_t *bot, const ch
 {
 	partymember_t *mem;
 
+	if (user && user->flags & USER_BOT) return NULL;
 	mem = calloc(1, sizeof(*mem));
 	if (id == -1) id = partymember_get_id(bot);
 	mem->id = id;

@@ -28,7 +28,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: botnet.c,v 1.8 2007/04/22 13:18:31 sven Exp $";
+static const char rcsid[] = "$Id: botnet.c,v 1.9 2007/05/09 01:32:31 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -44,7 +44,7 @@ static char *default_botname = "eggdrop";
 static hash_table_t *bot_ht = NULL;
 static botnet_bot_t *bot_head, *localbot_head;
 static int nbots = 0;
-
+static int linking_bots = 0; //!< Number of bots that are currently in the process of being linked.
 static int botnet_cleanup(void *client_data);
 static void botnet_really_delete(botnet_bot_t *bot);
 static int botnet_clear_all(void);
@@ -445,6 +445,7 @@ static void botnet_recursive_delete(botnet_bot_t *bot, botnet_bot_t *root, const
 	/* And finally this bot */
 	bind_check(BT_disc, NULL, bot->name, bot, root, reason);
 	bot->flags |= BOT_DELETED;
+	if (bot->user) bot->user->flags &= ~USER_LINKED_BOT;
 	if (bot->owner && bot->owner->on_delete) bot->owner->on_delete(bot->owner, bot->client_data);
 	--nbots;
 }
@@ -512,6 +513,8 @@ int botnet_delete(botnet_bot_t *bot, const char *reason)
 
 	if (!bot->uplink) putlog(LOG_MISC, "*", "%s", reason);
 	else putlog(LOG_MISC, "*", "(%s) %s", bot->uplink->name, reason);
+
+	if (bot->user && bot->user->flags & USER_LINKING_BOT) botnet_link_failed(bot->user, reason);
 
 	garbage_add(botnet_cleanup, NULL, GARBAGE_ONCE);
 
@@ -600,6 +603,97 @@ void botnet_replay_net(botnet_bot_t *dst)
 	botnet_recursive_replay_net(dst, NULL, partymember_get_head());
 }
 
+/*!
+ * \brief Does some cleanup in case a connection attempt to a bot failed.
+ *
+ * This function clears the ::USER_LINKING_BOT flag, logs some kind of message
+ * and runs the botnet_autolink() function.
+ *
+ * \param user The user record of the bot that should have been linked.
+ * \param reason Some kind of reason why it didn't work.
+ */
+
+void botnet_link_failed(user_t *user, const char *reason)
+{
+	putlog(LOG_MISC, "*", _("Failed to link to %s (%s)."), user->handle, reason);
+	--linking_bots;
+	user->flags &= ~USER_LINKING_BOT;
+	if (!linking_bots) botnet_autolink();
+}
+
+/*!
+ * \brief Does some cleanup after the connection has been fully established.
+ *
+ * This function clears the ::USER_LINKING_BOT flag and runs the
+ * botnet_autolink() function.
+ *
+ * \param bot The bot that was linked.
+ */
+
+void botnet_link_success(botnet_bot_t *bot)
+{
+	if (linking_bots > 0 && bot->user->flags & USER_LINKING_BOT) --linking_bots;
+	bot->user->flags &= ~USER_LINKING_BOT;
+	bot->user->flags |= USER_LINKED_BOT;
+	if (!linking_bots) botnet_autolink();
+}
+
+/*!
+ * \brief Try to link one or more bots based on their priority setting.
+ *
+ * This function should be called regulary by the core. If there are no bots
+ * in the process of being linked at the moment this function will try to
+ * link to some of the bots that are currently not connected to the botnet.
+ *
+ * To determine which bots should be linked in which order the user setting
+ * \e bot.link-priority is used. If it exists and has a positive integer
+ * value the bot is considered for linking.
+ *
+ * The first time this function is called it will search all user records for
+ * the one with the lowest positive link-priority. All bots with this exact
+ * priority will be linked simultaniously. Once the last of this connection
+ * attempts has succeded or failed this function will be called again and try
+ * to link to the bot with the lowest priority that is higher than the
+ * privious one. This will continue until no bot to link to is found. In that
+ * case the priority threahold is reset to 1. When this function is called by
+ * the core the next time the whole process will start again.
+ */
+
+void botnet_autolink()
+{
+	static int priority = 0;
+	int p, min_prio = INT_MAX;
+	char *prio;
+	user_t *u;
+	botnet_entity_t me = bot_entity((botnet_bot_t *) 0);
+
+	if (linking_bots) return;
+	for (u = user_get_list(); u; u = u->next) {
+		if (u->flags & USER_DELETED || !(u->flags & USER_BOT) || u->flags & USER_LINKED_BOT) continue;
+		if (u->flags & USER_LINKING_BOT) {
+			putlog(LOG_MISC, "*", _("Warning: botnet_autolink() was called while still connecting to %s."), u->handle);
+			if (linking_bots < 1) linking_bots = 1;
+			return;
+		}
+		if (botnet_lookup(u->handle) || user_get_setting(u, NULL, "bot.link-priority", &prio)) continue;
+		p = atoi(prio);
+		if (p > priority && p < min_prio) min_prio = p;
+	}
+	
+	if (min_prio == INT_MAX) {
+		priority = 0;
+		return;
+	}
+
+	priority = min_prio;
+
+	for (u = user_get_list(); u; u = u->next) {
+		if (!(u->flags & USER_BOT) || u->flags & (USER_LINKING_BOT | USER_LINKED_BOT)) continue;
+		if (botnet_lookup(u->handle) || user_get_setting(u, NULL, "bot.link-priority", &prio)) continue;
+		if (atoi(prio) == priority) botnet_link(&me, NULL, u->handle);
+	}
+}
+
 int botnet_check_direction(botnet_bot_t *direction, botnet_bot_t *src)
 {
 	if (!src || src->direction != direction) {
@@ -632,7 +726,7 @@ static int botnet_cleanup(void *client_data)
 
 int botnet_link(botnet_entity_t *src, botnet_bot_t *dst, const char *target)
 {
-	char *type;
+	char *type, *priority;
 	user_t *user;
 	botnet_entity_t entity_me = bot_entity((botnet_bot_t *) 0);
 
@@ -643,18 +737,30 @@ int botnet_link(botnet_entity_t *src, botnet_bot_t *dst, const char *target)
 	}
 
 	user = user_lookup_by_handle(target);
-	if (!user || !user_check_flags_str(user, NULL, "b")) {
+	if (!user || !(user->flags & USER_BOT)) {
 		if (src->what == ENTITY_PARTYMEMBER) partymember_msg(src->user, &entity_me, _("Can't link there: No such bot."), -1);
 		return -1;
 	}
-	if (user_get_setting(user, NULL, "bot-type", &type)) {
-		if (src->what == ENTITY_PARTYMEMBER) partymember_msg(src->user, &entity_me, _("Can't link there: Unknown bot type."), -1);
+	if (user->flags & USER_LINKING_BOT || botnet_lookup(user->handle)) {
+		if (src->what == ENTITY_PARTYMEMBER) partymember_msg(src->user, &entity_me, _("Can't link there: Already linked."), -1);
 		return -2;
 	}
-
-	if (!bind_check(BT_request_link, NULL, type, user, type)) {
-		if (src->what == ENTITY_PARTYMEMBER) partymember_msg(src->user, &entity_me, _("Can't link there: Module not loaded."), -1);
+	if (user_get_setting(user, NULL, "bot.type", &type)) {
+		if (src->what == ENTITY_PARTYMEMBER) partymember_msg(src->user, &entity_me, _("Can't link there: Unknown bot type."), -1);
 		return -3;
+	}
+	if (!user_get_setting(user, NULL, "bot.link-priority", &priority) && atoi(priority) < 0) {
+		if (src->what == ENTITY_PARTYMEMBER) partymember_msg(src->user, &entity_me, _("Won't link there: Negative link priority."), -1);
+		return -4;
+	}
+
+	user->flags |= USER_LINKING_BOT;
+	++linking_bots;
+	if (!bind_check(BT_request_link, NULL, type, user, type)) {
+		user->flags &= ~USER_LINKING_BOT;
+		--linking_bots;
+		if (src->what == ENTITY_PARTYMEMBER) partymember_msg(src->user, &entity_me, _("Can't link there: Module not loaded."), -1);
+		return -4;
 	}
 
 	return 0;
