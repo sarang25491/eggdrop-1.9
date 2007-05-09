@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: oldbotnet.c,v 1.19 2007/05/09 01:32:32 sven Exp $";
+static const char rcsid[] = "$Id: oldbotnet.c,v 1.20 2007/05/09 01:39:24 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -487,7 +487,7 @@ static void got_version(oldbotnet_t *bot, const char *next)
 	bot->linking = 1;
 	bot->bot = botnet_new(bot->user->handle, bot->user, NULL, NULL, &bothandler, bot, &bot_owner, 0);
 	if (!bot->bot) {
-		botnet_failed_link(bot->user, "Could not create bot.");
+		botnet_link_failed(bot->user, "Could not create bot.");
 		bot->user = NULL;
 		sockbuf_delete(bot->idx);
 		return;
@@ -1203,7 +1203,7 @@ static int oldbotnet_on_read(void *client_data, int idx, char *data, int len)
 		if (bot->bot) {
 			botnet_delete(bot->bot, buf);
 		} else {
-			botnet_failed_link(bot->user, buf);
+			botnet_link_failed(bot->user, buf);
 			bot->user = NULL;
 			sockbuf_delete(bot->idx);
 		}
@@ -1215,7 +1215,7 @@ static int oldbotnet_on_read(void *client_data, int idx, char *data, int len)
 		if (!strcasecmp(cmd, "passreq")) {
 			got_passreq(bot, next);
 		} else if (!strcasecmp(cmd, "badpass")) {
-			botnet_failed_link(bot->user, _("Botnet error: Password was rejected."));
+			botnet_link_failed(bot->user, _("Botnet error: Password was rejected."));
 			bot->user = NULL;
 			sockbuf_delete(bot->idx);
 		} else if (!strcasecmp(cmd, "version") || !strcasecmp(cmd, "v")) {
@@ -1238,7 +1238,7 @@ static int oldbotnet_on_eof(void *client_data, int idx, int err, const char *err
 	oldbotnet_t *bot = client_data;
 
 	if (!bot->bot) {
-		if (bot->user->flags & USER_LINKING_BOT) botnet_failed_link(bot->user, errmsg ? errmsg : "no error");
+		if (bot->user->flags & USER_LINKING_BOT) botnet_link_failed(bot->user, errmsg ? errmsg : "no error");
 		bot->user = NULL;   /* Might already be in the process of being reconnected, forget about it. */
 		sockbuf_delete(idx);
 	} else {
@@ -1264,7 +1264,7 @@ static int oldbotnet_on_delete(void *client_data, int idx)
 
 	bot->idx = -1;
 	if (bot->bot) botnet_delete(bot->bot, _("Socket deleted."));
-	else if (bot->user && bot->user->flags & USER_LINKING_BOT) botnet_failed_link(bot->user, "Socket deleted.");
+	else if (bot->user && bot->user->flags & USER_LINKING_BOT) botnet_link_failed(bot->user, "Socket deleted.");
 
 	if (bot->name) free(bot->name);
 	if (bot->password) free(bot->password);
