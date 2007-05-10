@@ -28,7 +28,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: botnet.c,v 1.9 2007/05/09 01:32:31 sven Exp $";
+static const char rcsid[] = "$Id: botnet.c,v 1.10 2007/05/10 00:25:07 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -37,6 +37,11 @@ static const char rcsid[] = "$Id: botnet.c,v 1.9 2007/05/09 01:32:31 sven Exp $"
 
 #define BOT_DELETED 1
 
+
+typedef struct {
+	int priority;
+	int min_prio;
+} botnet_search_prio_t;
 
 static char *botname;
 static char *default_botname = "eggdrop";
@@ -366,6 +371,7 @@ static int botnet_clear_all()
 int botnet_unlink(botnet_entity_t *from, botnet_bot_t *bot, const char *reason)
 {
 	char obuf[512];
+	botnet_entity_t me = bot_entity((botnet_bot_t *) 0);
 
 	if (bot->direction != bot) {
 		if (!bot->direction->handler || !bot->direction->handler->on_unlink) return -1;
@@ -376,7 +382,7 @@ int botnet_unlink(botnet_entity_t *from, botnet_bot_t *bot, const char *reason)
 	snprintf(obuf, sizeof(obuf), "%s (%s)", reason, from->full_name);
 
 	if (bot->handler && bot->handler->on_lost_bot) bot->handler->on_lost_bot(bot->client_data, bot, obuf);
-	if (from->what == ENTITY_PARTYMEMBER) partymember_msgf(from->user, 0, _("Unlinked from %s."), bot->name);
+	if (from->what == ENTITY_PARTYMEMBER) partymember_msgf(from->user, &me, _("Unlinked from %s."), bot->name);
 	botnet_delete(bot, reason);
 
 	return 0;
@@ -639,6 +645,68 @@ void botnet_link_success(botnet_bot_t *bot)
 }
 
 /*!
+ * \brief callback function for the user walker.
+ *
+ * This function is a helper function for botnet_autolink(). It is called by
+ * user_walk() for every user in the bots database. It searches for the user
+ * with the lowest link priority.
+ *
+ * \param uid A pointer to the uid of the user. Ignored.
+ * \param userptr A a pointer to the pointer to the user.
+ * \param param A ::botnet_search_prio_t struct.
+ * \return Always 0 and never checked.
+ */
+
+static int botnet_find_min(const void *uid, void *userptr, void *param)
+{
+	int p;
+	char *prio;
+	user_t *u = *(user_t **) userptr;
+	botnet_search_prio_t *data = param;
+
+	if (!(u->flags & USER_BOT) || u->flags & USER_LINKED_BOT) return 0;
+	if (u->flags & USER_LINKING_BOT) {
+		putlog(LOG_MISC, "*", _("Warning: botnet_autolink() was called while still connecting to %s."), u->handle);
+		if (linking_bots < 1) linking_bots = 1;
+		return 0;
+	}
+	if (botnet_lookup(u->handle) || user_get_setting(u, NULL, "bot.link-priority", &prio)) return 0;
+
+	p = atoi(prio);
+	if (p > data->priority && p < data->min_prio) data->min_prio = p;
+
+	return 0;
+}
+
+/*!
+ * \brief callback function for the user walker.
+ *
+ * This function is a helper function for botnet_autolink(). It is called by
+ * user_walk() for every user in the bots database. It links tries to link to
+ * every user with a given priority.
+ *
+ * \param uid A pointer to the uid of the user. Ignored.
+ * \param userptr A a pointer to the pointer to the user.
+ * \param param A pointer to an int containing the priority to link to.
+ * \return Always 0 and never checked.
+ */
+
+static int botnet_link_prio(const void *uid, void *userptr, void *param)
+{
+	char *prio;
+	user_t *u = *(user_t **) userptr;
+	int *priority = param;
+	botnet_entity_t me = bot_entity((botnet_bot_t *) 0);
+
+	if (!(u->flags & USER_BOT) || u->flags & (USER_LINKING_BOT | USER_LINKED_BOT)) return 0;
+	if (botnet_lookup(u->handle) || user_get_setting(u, NULL, "bot.link-priority", &prio)) return 0;
+
+	if (atoi(prio) == *priority) botnet_link(&me, NULL, u->handle);
+
+	return 0;
+}
+
+/*!
  * \brief Try to link one or more bots based on their priority setting.
  *
  * This function should be called regulary by the core. If there are no bots
@@ -662,36 +730,19 @@ void botnet_link_success(botnet_bot_t *bot)
 void botnet_autolink()
 {
 	static int priority = 0;
-	int p, min_prio = INT_MAX;
-	char *prio;
-	user_t *u;
-	botnet_entity_t me = bot_entity((botnet_bot_t *) 0);
+	botnet_search_prio_t data = {priority, INT_MAX};
 
 	if (linking_bots) return;
-	for (u = user_get_list(); u; u = u->next) {
-		if (u->flags & USER_DELETED || !(u->flags & USER_BOT) || u->flags & USER_LINKED_BOT) continue;
-		if (u->flags & USER_LINKING_BOT) {
-			putlog(LOG_MISC, "*", _("Warning: botnet_autolink() was called while still connecting to %s."), u->handle);
-			if (linking_bots < 1) linking_bots = 1;
-			return;
-		}
-		if (botnet_lookup(u->handle) || user_get_setting(u, NULL, "bot.link-priority", &prio)) continue;
-		p = atoi(prio);
-		if (p > priority && p < min_prio) min_prio = p;
-	}
+	user_walk(botnet_find_min, &data);
 	
-	if (min_prio == INT_MAX) {
+	if (data.min_prio == INT_MAX) {
 		priority = 0;
 		return;
 	}
 
-	priority = min_prio;
+	priority = data.min_prio;
 
-	for (u = user_get_list(); u; u = u->next) {
-		if (!(u->flags & USER_BOT) || u->flags & (USER_LINKING_BOT | USER_LINKED_BOT)) continue;
-		if (botnet_lookup(u->handle) || user_get_setting(u, NULL, "bot.link-priority", &prio)) continue;
-		if (atoi(prio) == priority) botnet_link(&me, NULL, u->handle);
-	}
+	user_walk(botnet_link_prio, &priority);
 }
 
 int botnet_check_direction(botnet_bot_t *direction, botnet_bot_t *src)

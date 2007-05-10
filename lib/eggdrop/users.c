@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: users.c,v 1.55 2007/05/09 01:32:31 sven Exp $";
+static const char rcsid[] = "$Id: users.c,v 1.56 2007/05/10 00:25:07 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -51,8 +51,6 @@ static int g_uid = 1, uid_wraparound = 0;
 
 /* The number of users we have. */
 static int nusers = 0;
-
-static user_t *users = NULL;
 
 /* Hash table to associate irchosts (nick!user@host) with users. */
 static hash_table_t *irchost_cache_ht = NULL;
@@ -164,6 +162,10 @@ int user_shutdown(void)
 	return (0);
 }
 
+void user_walk(hash_table_node_func callback, void *data)
+{
+	hash_table_walk(uid_ht, callback, data);
+}
 
 int user_load(const char *fname)
 {
@@ -275,11 +277,6 @@ int user_save(const char *fname)
 	return(0);
 }
 
-user_t *user_get_list()
-{
-	return users;
-}
-
 static int user_get_uid()
 {
 	user_t *u;
@@ -323,11 +320,6 @@ static user_t *real_user_new(const char *handle, int uid)
 	if (!uid) uid = user_get_uid();
 	u->uid = uid;
 
-	u->prev = NULL;
-	u->next = users;
-	if (users) users->prev = u;
-	users = u;
-
 	hash_table_insert(handle_ht, u->handle, u);
 	hash_table_insert(uid_ht, (void *)u->uid, u);
 	nusers++;
@@ -370,10 +362,6 @@ static int user_really_delete(void *client_data)
 	}
 	if (u->settings) free(u->settings);
 	if (u->handle) free(u->handle);
-
-	if (u->next) u->next->prev = u->prev;
-	if (u->prev) u->prev->next = u->next;
-	else users = u->next;
 
 	free(u);
 	return(0);

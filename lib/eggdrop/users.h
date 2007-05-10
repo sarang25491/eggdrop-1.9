@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: users.h,v 1.19 2007/05/09 01:32:31 sven Exp $
+ * $Id: users.h,v 1.20 2007/05/10 00:25:07 sven Exp $
  */
 
 #ifndef _EGG_USERS_H_
@@ -62,20 +62,17 @@ typedef struct user {
 
 	/* Flags for the structure, e.g. USER_DELETED. */
 	int flags;
-
-	struct user *prev;
-	struct user *next;
 } user_t;
 
 int user_init(void);
 int user_shutdown(void);
 
+void user_walk(hash_table_node_func callback, void *data);
 int user_load(const char *fname);
 int user_save(const char *fname);
 const char *user_invalid_handle(const char *handle);
 user_t *user_new(const char *handle);
 int user_delete(user_t *u);
-user_t *user_get_list(void);
 user_t *user_lookup_by_handle(const char *handle);
 user_t *user_lookup_authed(const char *handle, const char *pass);
 user_t *user_lookup_by_uid(int uid);
