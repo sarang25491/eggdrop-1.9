@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: oldbotnet.c,v 1.20 2007/05/09 01:39:24 sven Exp $";
+static const char rcsid[] = "$Id: oldbotnet.c,v 1.21 2007/05/12 02:04:24 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -29,6 +29,7 @@ EXPORT_SCOPE int oldbotnet_LTX_start(egg_module_t *modinfo);
 static int oldbotnet_close(int why);
 static int do_link(user_t *u, const char *text);
 static int bot_on_delete(event_owner_t *owner, void *client_data);
+static int anonymous_on_delete(event_owner_t *owner, void *client_data);
 //static int sock_on_delete(event_owner_t *owner, void *client_data);
 
 /* Partyline commands. */
@@ -71,6 +72,12 @@ static event_owner_t bot_owner = {
 	"oldbotnet", NULL,
 	NULL, NULL,
 	bot_on_delete
+};
+
+static event_owner_t anonymous_owner = {
+	"oldbotnet", NULL,
+	NULL, NULL,
+	anonymous_on_delete
 };
 
 static event_owner_t generic_owner = {
@@ -271,6 +278,8 @@ static int btoi(const char *b)
 
 static int get_entity(botnet_bot_t *bot, botnet_entity_t *src, char *word)
 {
+	oldbotnet_t *obot = bot->client_data;
+
 	if (!strchr(word, '@')) {
 		botnet_bot_t *b = botnet_lookup(word);
 		if (botnet_check_direction(bot, b)) return -1;
@@ -296,7 +305,9 @@ static int get_entity(botnet_bot_t *bot, botnet_entity_t *src, char *word)
 		id = atoi(word);
 		nick = ptr + 1;
 	}
-	p = partymember_new(id, NULL, srcbot, nick, "temp", "user.on.an.old.bot", NULL, NULL, &generic_owner);
+	if (obot->anonymous) partymember_delete(obot->anonymous, NULL, "Temp user expired");
+	obot->anonymous = p = partymember_new(id, NULL, srcbot, nick, "temp", "user.on.an.old.bot", NULL, obot, &anonymous_owner);
+	if (!p) return 0;
 	set_user_entity(src, p);
 	return 1;
 }
@@ -392,6 +403,7 @@ static int do_link(user_t *user, const char *type)
 	else data->password = NULL;
 	data->idx = egg_connect(host, port, -1);
 	data->idle = 0;
+	data->anonymous = NULL;
 
 	sockbuf_set_handler(data->idx, &oldbotnet_handler, data);
 	linemode_on(data->idx);
@@ -629,8 +641,9 @@ static int got_versions(botnet_bot_t *bot, const char *cmd, const char *next)
 
 	src = partymember_lookup(word[2], srcbot, -1);
 	if (!src) {
-		int id;
+		int id = -1;
 		char *ptr = strchr(word[2], ':');
+		oldbotnet_t *obot = bot->client_data;
 
 		if (ptr) {
 			*ptr = 0;
@@ -638,8 +651,9 @@ static int got_versions(botnet_bot_t *bot, const char *cmd, const char *next)
 			++ptr;
 		} else {
 			ptr = word[2];
-			src = partymember_new(id, NULL, srcbot, ptr, "temp", "user.on.an.old.bot", NULL, NULL, &generic_owner);
 		}
+		if (obot->anonymous) partymember_delete(obot->anonymous, NULL, "Temp user expired");
+		obot->anonymous = src = partymember_new(id, NULL, srcbot, ptr, "temp", "user.on.an.old.bot", NULL, obot, &anonymous_owner);
 	}
 	botnet_entity_t e = user_entity(src);
 
@@ -732,7 +746,7 @@ static int got_bye(botnet_bot_t *bot, const char *cmd, const char *text)
  *
  * \param bot The bot the msg came from.
  * \param cmd "pong" or "po".
- * \param text Nothing.
+ * \param next Nothing.
  *
  * \format \b pong
  */
@@ -881,9 +895,14 @@ static int got_join(botnet_bot_t *bot, const char *cmd, const char *next)
 	id = btoi(word[3] + 1);
 
 	p = partymember_lookup(NULL, frombot, id);
-	if (p && strcmp(p->nick, word[1])) {
-		partymember_delete(p, NULL, "Botnet desync");
-		p = NULL;
+	if (p) {
+		if (p == obot->anonymous) {
+			partymember_delete(p, NULL, "Temp user expired");
+			p = NULL;
+		} else if (strcmp(p->nick, word[1])) {
+			partymember_delete(p, NULL, "Botnet desync");
+			p = NULL;
+		}
 	}
 
 	if (p) {
@@ -1258,6 +1277,15 @@ static int bot_on_delete(event_owner_t *owner, void *client_data)
 	return 0;
 }
 
+static int anonymous_on_delete(event_owner_t *owner, void *client_data)
+{
+	oldbotnet_t *bot = client_data;
+
+	bot->anonymous = NULL;
+
+	return 0;
+}
+
 static int oldbotnet_on_delete(void *client_data, int idx)
 {
 	oldbotnet_t *bot = client_data;
@@ -1303,7 +1331,7 @@ static int oldbotnet_close(int why)
 
 int oldbotnet_LTX_start(egg_module_t *modinfo)
 {
-	bot_owner.module = generic_owner.module = modinfo;
+	bot_owner.module = anonymous_owner.module = generic_owner.module = modinfo;
 	modinfo->name = "oldbotnet";
 	modinfo->author = "eggdev";
 	modinfo->version = "1.0.0";

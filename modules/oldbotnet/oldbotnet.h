@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: oldbotnet.h,v 1.6 2007/05/09 01:32:32 sven Exp $
+ * $Id: oldbotnet.h,v 1.7 2007/05/12 02:04:24 sven Exp $
  */
 
 #ifndef _EGG_MOD_OLDBOTNET_OLDBOTNET_H_
@@ -43,6 +43,7 @@ typedef struct {
 	int handlen;
 	int version;
 	int idle;
+	partymember_t *anonymous;
 } oldbotnet_t;
 
 /* From events.c */
