@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: eggdrop.h,v 1.47 2006/11/14 14:51:23 sven Exp $
+ * $Id: eggdrop.h,v 1.48 2007/06/03 23:43:45 sven Exp $
  */
 
 #ifndef _EGG_EGGDROP_H_
@@ -49,6 +49,7 @@
 #include <eggdrop/irccmp.h>
 #include <eggdrop/ircparse.h>
 #include <eggdrop/linemode.h>
+#include <eggdrop/netstring.h>
 #include <eggdrop/match.h>
 #include <eggdrop/md5.h>
 #include <eggdrop/memutil.h>

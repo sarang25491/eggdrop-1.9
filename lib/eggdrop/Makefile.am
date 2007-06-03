@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.40 2006/11/14 14:51:23 sven Exp $
+# $Id: Makefile.am,v 1.41 2007/06/03 23:43:45 sven Exp $
 
 MAINTAINERCLEANFILES	= Makefile.in
 
@@ -37,6 +37,7 @@ libeggdrop_la_SOURCES	= base64.c base64.h \
 			ircmasks.c ircmasks.h \
 			ircparse.c ircparse.h \
 			linemode.c linemode.h \
+			netstring.c netstring.h \
 			logging.c logging.h \
 			match.c match.h \
 			md5.c md5.h \

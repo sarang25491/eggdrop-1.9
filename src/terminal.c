@@ -18,10 +18,11 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: terminal.c,v 1.9 2007/04/14 15:21:13 sven Exp $";
+static const char rcsid[] = "$Id: terminal.c,v 1.10 2007/06/03 23:43:46 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>			/* partyline_*		*/
+#include <unistd.h>               /* dup */
 #include "terminal.h"				/* protoypes		*/
 
 extern int terminal_enabled; /* from logfile.c */

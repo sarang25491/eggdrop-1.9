@@ -37,9 +37,9 @@ These nodes have a name and a value, both being strings.
 
 \section common User settings that are commonly used by some modules.
 
-\arg \c host The IP or hostname the bot is running on.
-\arg \c port The port number the bot is listening on.
-\arg \c password The password to send the bot to log in.
+\arg \c bot.host The IP or hostname the bot is running on.
+\arg \c bot.port The port number the bot is listening on.
+\arg \c bot.password The password to send the bot to log in.
 
 */
 
