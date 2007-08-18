@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xml.c,v 1.25 2005/03/03 18:44:47 stdarg Exp $";
+static const char rcsid[] = "$Id: xml.c,v 1.26 2007/08/18 22:32:23 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -35,7 +35,12 @@ void xml_set_error(const char *err)
 	str_redup(&last_error, err);
 }
 
-/* Get a new, blank node. */
+/*!
+ * \brief Get a new, blank node.
+ *
+ * \return The new, empty node.
+ */
+
 xml_node_t *xml_node_new()
 {
 	xml_node_t *node;
@@ -45,7 +50,14 @@ xml_node_t *xml_node_new()
 	return node;
 }
 
-/* Get a new, named node. */
+/*!
+ * \brief Get a new, named node.
+ *
+ * \param name The name of the node.
+ *
+ * \return The new, empty node.
+ */
+
 xml_node_t *xml_node_new_named(const char *name)
 {
 	xml_node_t *node = xml_node_new();
@@ -53,7 +65,12 @@ xml_node_t *xml_node_new_named(const char *name)
 	return(node);
 }
 
-/* Free all memory associated with a node. */
+/*!
+ * \brief Free all memory associated with a node.
+ *
+ * \param node The node to be free'd.
+ */
+
 void xml_node_free(xml_node_t *node)
 {
 	xml_attr_t *attr;
@@ -66,7 +83,17 @@ void xml_node_free(xml_node_t *node)
 		xml_attr_free(attr);
 	}
 	if (node->attributes) free(node->attributes);
+	free(node);
 }
+
+/*!
+ * \brief Unlinks a XML node from a tree.
+ *
+ * Removes a node from a tree. Unlinks the node from its parent and siblings,
+ * but all nodes descending from this one will still be attached.
+ *
+ * \param node The node to unlink.
+ */
 
 void xml_node_unlink(xml_node_t *node)
 {
@@ -90,10 +117,31 @@ void xml_node_unlink(xml_node_t *node)
 	if (node->next_sibling) node->next_sibling->prev_sibling = node->prev_sibling;
 }
 
+/*!
+ * \brief Deletes a node.
+ *
+ * This function is a wrapper for xml_node_delete_callbacked() without a
+ * callback.
+ *
+ * \todo Might be better as a macro.
+ *
+ * \param node The node to delete.
+ */
+
 void xml_node_delete(xml_node_t *node)
 {
 	xml_node_delete_callbacked(node, NULL);
 }
+
+/*!
+ * \brief Deletes a node and executes a callback function.
+ *
+ * This function deletes a node and all of its children and attributes. For
+ * every deleted node the callback function is executed.
+ *
+ * \param node The node to delete.
+ * \param callback The callback function to execute. May be NULL.
+ */
 
 void xml_node_delete_callbacked(xml_node_t *node, void (*callback)(void *))
 {
@@ -112,6 +160,15 @@ void xml_node_delete_callbacked(xml_node_t *node, void (*callback)(void *))
 	/* Free memory taken by node. */
 	xml_node_free(node);
 }
+
+/*!
+ * \brief Deletes an entire tree.
+ *
+ * This function will delete the entire tree a node is in. The node does not
+ * have to be the root of that tree, any node of the tree will do.
+ *
+ * \param root Any node in the tree that will be deleted. Does not really have to be the root node.
+ */
 
 void xml_doc_delete(xml_node_t *root)
 {
@@ -143,6 +200,23 @@ xml_node_t *xml_node_lookup(xml_node_t *root, int create, ...)
 	va_end(args);
 	return(node);
 }
+
+/*!
+ * \brief Get a child of a node by its name.
+ *
+ * This function searches a tree beginning with a given node and its children
+ * for a child by a given name.
+ *
+ * This name can be very complex with serveral layers of the tree seperated by
+ * '.' and an index with "[x]. Example: "layer1.layer2[3].layer3".
+ *
+ * \param root The node to start searching from.
+ * \param path The name or path of the child to search for.
+ * \param index Added to the index of every layer. Best used for a simple query without multiple layers.
+ * \param create If this is non-zero and the node was not found it will be created.
+ *
+ * \return The node searched for or, if it was not found and \e create was zero, NULL.
+ */
 
 xml_node_t *xml_node_path_lookup(xml_node_t *root, const char *path, int index, int create)
 {
@@ -255,6 +329,19 @@ int xml_node_get_int(int *value, xml_node_t *node, ...)
 	return(-1);
 }
 
+/*!
+ * \brief Get an int or the default value from a node.
+ *
+ * Will convert the text of a given node to an int and return the value. If
+ * no node was given or the node does not contain text, a default value will
+ * be returned.
+ *
+ * \param node The node to extract the int from.
+ * \param def The default value to return in case the node does not contain text.
+ *
+ * \return Either the value from the node or the default value.
+ */
+
 int xml_node_int(xml_node_t *node, int def)
 {
 	int value;
@@ -280,6 +367,18 @@ int xml_node_get_str(char **str, xml_node_t *node, ...)
 	*str = NULL;
 	return(-1);
 }
+
+/*!
+ * \brief Get a string or the default value from a node.
+ *
+ * Will return the text of a given node as a string. If no node was given or
+ * the node does not contain text, a default value will be returned.
+ *
+ * \param node The node to return the string from.
+ * \param def The default value to return in case the node does not contain text.
+ *
+ * \return Either the value from the node or the default value.
+ */
 
 char *xml_node_str(xml_node_t *node, char *def)
 {
@@ -385,6 +484,16 @@ xml_node_t *xml_root_element(xml_node_t *node)
 	 return node;
 }
 
+/*!
+ * \brief Attaches a node to a parent.
+ *
+ * Sets a node as a child of a parent node. This node must not have a parent!
+ * If it does, use xml_node_unlink() first!
+ *
+ * \param parent The node that will be the parent.
+ * \param child The node that will be attached to the parent.
+ */
+
 void xml_node_append(xml_node_t *parent, xml_node_t *child)
 {	
 	xml_node_t *node;
@@ -402,14 +511,28 @@ void xml_node_append(xml_node_t *parent, xml_node_t *child)
 
 	parent->last_child = child;
 
+	if (!child->name) return;
 	for (node = child->prev; node; node = node->prev) {
-		if (!strcasecmp(node->name, child->name)) {
+		if (node->name && !strcasecmp(node->name, child->name)) {
 			node->next_sibling = child;
 			child->prev_sibling = node;
 			break;
 		}
 	}
 }
+
+/*!
+ * \brief Create a new attribute.
+ *
+ * Creates a new attribute and fills its fields. The strings used as
+ * parameters to this function will not be dup'd but used as is. The
+ * parameters must not be NULL.
+ *
+ * \param name The name of the attribute.
+ * \param value The value of the attribute. An empty string is fine, NULL is not.
+ *
+ * \return The new attribute.
+ */
 
 xml_attr_t *xml_attr_new(char *name, char *value)
 {
@@ -422,6 +545,14 @@ xml_attr_t *xml_attr_new(char *name, char *value)
 	return(attr);
 }
 
+/*!
+ * \brief Frees a node's attribute.
+ *
+ * This will delete an attribute and free all it's memory.
+ *
+ * \param attr The attribute to free.
+ */
+
 void xml_attr_free(xml_attr_t *attr)
 {
 	if (attr->name) free(attr->name);
@@ -429,12 +560,33 @@ void xml_attr_free(xml_attr_t *attr)
 	free(attr);
 }
 
+/*!
+ * \brief Append an attribute to a node.
+ *
+ * \param node The node to appand the attribute to.
+ * \param attr The attribute to append.
+ *
+ * \return Always 0.
+ */
+
 int xml_node_append_attr(xml_node_t *node, xml_attr_t *attr)
 {
 	node->attributes = realloc(node->attributes, sizeof(*node->attributes) * (node->nattributes+1));
 	node->attributes[node->nattributes++] = attr;
 	return(0);
 }
+
+/*!
+ * \brief Searches for an attribute with a given name.
+ *
+ * Searches all attributes of a node for a given name. If an attribute with
+ * that name is found, it's returned.
+ *
+ * \param node The node to search.
+ * \param name The name of the attribute to search for.
+ *
+ * \return The attribute if found, otherwise NULL.
+ */
 
 xml_attr_t *xml_attr_lookup(xml_node_t *node, const char *name)
 {
@@ -446,12 +598,40 @@ xml_attr_t *xml_attr_lookup(xml_node_t *node, const char *name)
 	return(NULL);
 }
 
+/*!
+ * \brief Get an int or the default value from an attribute of a node.
+ *
+ * Will return the int value of the text of a given attribute of a node. If
+ * the node does not have an attribute of the given name or the attribute does
+ * not contain text, a default value will be returned.
+ *
+ * \param node The node to return the int from.
+ * \param name The name of the attribute.
+ * \param def The default value to return in case no text is available.
+ *
+ * \return Either the value of the attribute or the default value.
+ */
+
 int xml_attr_int(xml_node_t *node, const char *name, int def)
 {
 	xml_attr_t *attr = xml_attr_lookup(node, name);
 	if (attr && attr->value) return atoi(attr->value);
 	else return(def);
 }
+
+/*!
+ * \brief Get a string or the default value from an attribute of a node.
+ *
+ * Will return the text of a given attribute of a node as a string. If the
+ * node does not have an attribute of the given name or the attribute does
+ * not contain text, a default value will be returned.
+ *
+ * \param node The node to return the string from.
+ * \param name The name of the attribute.
+ * \param def The default value to return in case no text is available.
+ *
+ * \return Either the value of the attribute or the default value.
+ */
 
 char *xml_attr_str(xml_node_t *node, const char *name, char *def)
 {

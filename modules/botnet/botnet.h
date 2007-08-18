@@ -16,26 +16,30 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: botnet.h,v 1.1 2007/06/03 23:43:45 sven Exp $
+ * $Id: botnet.h,v 1.2 2007/08/18 22:32:24 sven Exp $
  */
 
-#ifndef _EGG_MOD_OLDBOTNET_OLDBOTNET_H_
-#define _EGG_MOD_OLDBOTNET_OLDBOTNET_H_
+#ifndef _EGG_MOD_BOTNET_BOTNET_H_
+#define _EGG_MOD_BOTNET_BOTNET_H_
 
 #define bothandler   botnet_LTX_bothandler
+
+typedef struct {
+	int dummy;
+} bot_proto_t;
 
 typedef struct {
 	botnet_bot_t *bot;
 	user_t *user;
 	int idx;
-	char *password;
+	bot_proto_t *proto;
+	char *pass;
 	int incoming;
 	int linking;
-	int version;
 	int idle;
 } bot_t;
 
 /* From events.c */
 botnet_handler_t bothandler;
 
-#endif /* !_EGG_MOD_OLDBOTNET_OLDBOTNET_H_ */
+#endif /* !_EGG_MOD_BOTNET_BOTNET_H_ */

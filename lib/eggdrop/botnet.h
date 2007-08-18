@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: botnet.h,v 1.6 2007/05/09 01:32:31 sven Exp $
+ * $Id: botnet.h,v 1.7 2007/08/18 22:32:23 sven Exp $
  */
 
 #ifndef _EGG_BOTNET_H_
@@ -34,6 +34,7 @@
 
 typedef struct {
 	/* Events that don't depend on a single chan. */
+	int (*on_login)(void *client_data, partymember_t *new, int netburst);
 	int (*on_bcast)(void *client_data, botnet_entity_t *src, const char *text, int len);
 	int (*on_privmsg)(void *client_data, botnet_entity_t *src, partymember_t *dst, const char *text, int len);
 	int (*on_nick)(void *client_data, partymember_t *src, const char *newnick);
@@ -74,6 +75,7 @@ struct botnet_bot {
 	void *client_data;                 //!< Some data passed back to every callback function.
 	event_owner_t *owner;              //!< The owner of this bot.
 	partymember_t *partys;             //!< Start of the list of partymembers on this bot.
+	xml_node_t *info;                  //!< Save anything you want here.
 	struct botnet_bot *prev;           //!< Previous bot in the list.
 	struct botnet_bot *next;           //!< Next bot in the list.
 	struct botnet_bot *prev_local;     //!< Previous bot in the list of local bots. NULL if this bot isn't local.
@@ -95,7 +97,7 @@ struct botnet_bot {
  * \endcode
  */
 
-#define user_entity(user) {ENTITY_PARTYMEMBER, (user), 0, (user)->full_id_name, (user)->full_name, (user)->common_name}
+#define user_entity(user) {ENTITY_PARTYMEMBER, (user), 0}
 
 /*!
  * \brief Creates an entity from a bot.
@@ -106,34 +108,32 @@ struct botnet_bot {
  * Example:
  * \code
  * botnet_entity_t other = bot_entity(some_bot);
- * botnet_entity_t me = bot_entity(0);
+ * botnet_entity_t me = bot_entity((botnet_bot *) 0);
  * \endcode
  */
 
-#define bot_entity(bot) {ENTITY_BOT, 0, (bot), (bot) ? (bot)->name : botnet_get_name(), (bot) ? (bot)->name : botnet_get_name(), (bot) ? (bot)->name : botnet_get_name()}
+#define bot_entity(bot) {ENTITY_BOT, 0, (bot)}
 
 #define set_user_entity(e, u) do {\
 	(e)->what = ENTITY_PARTYMEMBER;\
 	(e)->user = (u);\
-	(e)->full_id_name = (u)->full_id_name;\
-	(e)->full_name = (u)->full_name;\
-	(e)->common_name = (u)->common_name;\
 } while (0)
 
 #define set_bot_entity(e, b) do {\
 	(e)->what = ENTITY_BOT;\
 	(e)->bot = (b);\
-	(e)->full_id_name = (e)->full_name = (e)->common_name = (b) ? (b)->name : botnet_get_name();\
 } while (0)
 
 struct botnet_entity {
 	int what;                          //!< ::ENTITY_PARTYMEMBER or ::ENTITY_BOT
 	partymember_t *user;
 	botnet_bot_t *bot;
-	const char *full_id_name;
-	const char *full_name;
-	const char *common_name;
 };
+
+#define entity_full_id_name(e) ((e)->what == ENTITY_BOT ? (e)->bot ? (e)->bot->name : botnet_get_name() : (e)->user->full_id_name)
+#define entity_full_name(e) ((e)->what == ENTITY_BOT ? (e)->bot ? (e)->bot->name : botnet_get_name() : (e)->user->full_name)
+#define entity_common_name(e) ((e)->what == ENTITY_BOT ? (e)->bot ? (e)->bot->name : botnet_get_name() : (e)->user->bot ? (e)->user->full_name : (e)->user->nick)
+#define entity_net_name(e) ((e)->what == ENTITY_BOT ? (e)->bot ? (e)->bot->name : botnet_get_name() : (e)->user->net_name)
 
 int botnet_init(void);
 int botnet_shutdown(void);
@@ -152,6 +152,10 @@ int botnet_delete_by_owner(struct egg_module *module, void *script);
 int botnet_delete(botnet_bot_t *bot, const char *reason);
 int botnet_unlink(botnet_entity_t *from, botnet_bot_t *bot, const char *reason);
 int botnet_link(botnet_entity_t *src, botnet_bot_t *dst, const char *target);
+
+const char *botnet_get_info(botnet_bot_t *bot, const char *name);
+void botnet_set_info(botnet_bot_t *bot, const char *name, const char *value);
+void botnet_set_info_int(botnet_bot_t *bot, const char *name, int value);
 
 void botnet_replay_net(botnet_bot_t *bot);
 int botnet_check_direction(botnet_bot_t *direction, botnet_bot_t *src);

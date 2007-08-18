@@ -28,7 +28,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: botnet.c,v 1.10 2007/05/10 00:25:07 sven Exp $";
+static const char rcsid[] = "$Id: botnet.c,v 1.11 2007/08/18 22:32:23 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -295,6 +295,7 @@ botnet_bot_t *botnet_new(const char *name, user_t *user, botnet_bot_t *uplink, b
 	bot->handler = handler;
 	bot->client_data = client_data;
 	bot->owner = owner;
+	bot->info = xml_node_new();
 
 	hash_table_insert(bot_ht, bot->name, bot);
 	
@@ -379,7 +380,7 @@ int botnet_unlink(botnet_entity_t *from, botnet_bot_t *bot, const char *reason)
 		return 0;
 	}
 
-	snprintf(obuf, sizeof(obuf), "%s (%s)", reason, from->full_name);
+	snprintf(obuf, sizeof(obuf), "%s (%s)", reason, entity_full_name(from));
 
 	if (bot->handler && bot->handler->on_lost_bot) bot->handler->on_lost_bot(bot->client_data, bot, obuf);
 	if (from->what == ENTITY_PARTYMEMBER) partymember_msgf(from->user, &me, _("Unlinked from %s."), bot->name);
@@ -417,6 +418,7 @@ static void botnet_really_delete(botnet_bot_t *bot)
 	}
 	hash_table_remove(bot_ht, bot->name, NULL);
 
+	xml_node_delete(bot->info);
 	free(bot->name);
 	free(bot);
 }
@@ -570,7 +572,7 @@ int botnet_delete_by_owner(struct egg_module *module, void *script)
  * \warning Don't call this unless you're botnet_replay_net().
  */
 
-static void botnet_recursive_replay_net(botnet_bot_t *dst, botnet_bot_t *start, partymember_t *members)
+static void botnet_recursive_replay_net(botnet_bot_t *dst, botnet_bot_t *start)
 {
 	int i;
 	botnet_bot_t *tmp;
@@ -578,19 +580,17 @@ static void botnet_recursive_replay_net(botnet_bot_t *dst, botnet_bot_t *start, 
 
 	if (start && dst->handler->on_new_bot) dst->handler->on_new_bot(dst->client_data, start, 1);
 	
-	if (dst->handler->on_join) {
-		for (p = members; p; p = p->next) {
-			if (p->flags & PARTY_DELETED) continue;
-			if (p->bot != start) continue;
-			for (i = 0; i < p->nchannels; ++i) {
-				dst->handler->on_join(dst->client_data, p->channels[i], p, 1);
-			}
+	for (p = start->partys; p; p = p->next_on_bot) {
+		if (p->flags & PARTY_DELETED) continue;
+		if (dst->handler->on_login) dst->handler->on_login(dst->client_data, p, 1);
+		for (i = 0; i < p->nchannels; ++i) {
+			if (dst->handler->on_join) dst->handler->on_join(dst->client_data, p->channels[i], p, 1);
 		}
 	}
 
 	for (tmp = bot_head; tmp; tmp = tmp->next) {
 		if (tmp->flags & BOT_DELETED || tmp == dst) continue;
-		if (tmp->uplink == start) botnet_recursive_replay_net(dst, tmp, members);
+		if (tmp->uplink == start) botnet_recursive_replay_net(dst, tmp);
 	}
 }
 
@@ -606,7 +606,7 @@ static void botnet_recursive_replay_net(botnet_bot_t *dst, botnet_bot_t *start, 
 
 void botnet_replay_net(botnet_bot_t *dst)
 {
-	botnet_recursive_replay_net(dst, NULL, partymember_get_head());
+	botnet_recursive_replay_net(dst, NULL);
 }
 
 /*!
@@ -796,13 +796,10 @@ int botnet_link(botnet_entity_t *src, botnet_bot_t *dst, const char *target)
 		if (src->what == ENTITY_PARTYMEMBER) partymember_msg(src->user, &entity_me, _("Can't link there: Already linked."), -1);
 		return -2;
 	}
-	if (user_get_setting(user, NULL, "bot.type", &type)) {
-		if (src->what == ENTITY_PARTYMEMBER) partymember_msg(src->user, &entity_me, _("Can't link there: Unknown bot type."), -1);
-		return -3;
-	}
+	if (user_get_setting(user, NULL, "bot.type", &type)) type = "eggdrop";
 	if (!user_get_setting(user, NULL, "bot.link-priority", &priority) && atoi(priority) < 0) {
 		if (src->what == ENTITY_PARTYMEMBER) partymember_msg(src->user, &entity_me, _("Won't link there: Negative link priority."), -1);
-		return -4;
+		return -3;
 	}
 
 	user->flags |= USER_LINKING_BOT;
@@ -815,6 +812,24 @@ int botnet_link(botnet_entity_t *src, botnet_bot_t *dst, const char *target)
 	}
 
 	return 0;
+}
+
+const char *botnet_get_info(botnet_bot_t *bot, const char *name)
+{
+	char *ret;
+
+	xml_node_get_str(&ret, bot->info, name, (void *) 0);
+	return ret;
+}
+
+void botnet_set_info(botnet_bot_t *bot, const char *name, const char *value)
+{
+	xml_node_set_str(value, bot->info, name, (void *) 0);
+}
+
+void botnet_set_info_int(botnet_bot_t *bot, const char *name, int value)
+{
+	xml_node_set_int(value, bot->info, name, (void *) 0);
 }
 
 /*!

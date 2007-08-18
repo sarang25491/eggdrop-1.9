@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: events.c,v 1.9 2007/04/14 15:21:12 sven Exp $";
+static const char rcsid[] = "$Id: events.c,v 1.10 2007/08/18 22:32:24 sven Exp $";
 #endif
 
 #include <string.h>
@@ -49,9 +49,9 @@ static int on_privmsg(void *client_data, partymember_t *dest, botnet_entity_t *s
 
 	if (src) {
 		if (len >= 9 && !strncasecmp(text, "\1ACTION ", 8) && text[len - 1] == 1) {
-			egg_iprintf(session->idx, "%s %.*s\r\n", src->common_name, len - 9, text + 8);
+			egg_iprintf(session->idx, "%s %.*s\r\n", entity_common_name(src), len - 9, text + 8);
 		} else {
-			egg_iprintf(session->idx, "[%s] %s\r\n", src->common_name, text);
+			egg_iprintf(session->idx, "[%s] %s\r\n", entity_common_name(src), text);
 		}
 	} else {
 		egg_iprintf(session->idx, "%s\r\n", text);
@@ -84,9 +84,9 @@ static int on_chanmsg(void *client_data, partychan_t *chan, botnet_entity_t *src
 
 	if (src) {
 		if (len >= 9 && !strncasecmp(text, "\1ACTION ", 8) && text[len - 1] == 1) {
-			egg_iprintf(session->idx, "%s %s %.*s\r\n", chan->name, src->common_name, len - 9, text + 8);
+			egg_iprintf(session->idx, "%s %s %.*s\r\n", chan->name, entity_common_name(src), len - 9, text + 8);
 		} else {
-			egg_iprintf(session->idx, "%s <%s> %s\r\n", chan->name, src->common_name, text);
+			egg_iprintf(session->idx, "%s <%s> %s\r\n", chan->name, entity_common_name(src), text);
 		}
 	} else {
 		egg_iprintf(session->idx, "%s %s\r\n", chan->name, text);

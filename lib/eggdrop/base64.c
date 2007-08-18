@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: base64.c,v 1.3 2004/06/25 17:44:03 darko Exp $";
+static const char rcsid[] = "$Id: base64.c,v 1.4 2007/08/18 22:32:23 sven Exp $";
 #endif
 
 #include <stdlib.h>
@@ -116,4 +116,77 @@ int b64dec_buf(const unsigned char *data, int len, char *dest)
 	}
 	dest[i] = 0;
 	return(i);
+}
+static char base64to[256] = {
+	 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	 0,  0,  0,  0,	 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	 0,  0,  0,  0,  0,  0,  0,  0,	 0,  0,  0,  0,  0,  0,  0,  0,
+	52, 53, 54, 55, 56, 57, 58, 59, 60, 61,  0,  0,  0,  0,  0,  0,
+	 0,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
+	15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 62,  0, 63,  0,  0,
+	 0, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+	41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,  0,  0,  0,  0,  0,
+	 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0
+};
+
+static int tobase64[64] = {
+	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+	'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
+	'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+	'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '[', ']'
+};
+
+/*!
+ * \brief Decodes a base64 string into an int.
+ *
+ * \note Uses the non-standard eggdrop1.6 style algorithm.
+ *
+ * \param b A base64 string.
+ *
+ * \return The decoded int value.
+ */
+
+int b64dec_int(const char *b)
+{
+	int i = 0;
+
+	while (*b) i = (i << 6) + base64to[(unsigned char) *b++];
+	return i;
+}
+
+/*!
+ * \brief Calculate the base64 value of an int.
+ *
+ * \note Uses the non-standard eggdrop1.6 style algotithm.
+ *
+ * \param i The number to convert.
+ *
+ * \return A string containing the base64 value of \e i.
+ *
+ * \warning This function returns a pointer to a static buffer. Calling it
+ *          again will overwrite it. \b Always \b remember!
+ */
+
+const char *b64enc_int(int i)
+{
+	char *pos;
+	static char ret[12];
+
+	pos = ret + 11;
+	*pos = 0;
+
+	do {
+		--pos;
+		*pos = tobase64[i & 0x3F];
+		i >>= 6;
+	} while (i);
+
+	return pos;
 }

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partymember.c,v 1.28 2007/05/09 01:32:31 sven Exp $";
+static const char rcsid[] = "$Id: partymember.c,v 1.29 2007/08/18 22:32:23 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -75,10 +75,11 @@ static void partymember_really_delete(partymember_t *p)
 	if (p->next_on_bot) p->next_on_bot->prev_on_bot = p->prev_on_bot;
 
 	/* Free! */
-	if (p->nick) free(p->nick);
+	free(p->nick);
 	if (p->ident) free(p->ident);
 	if (p->host) free(p->host);
-	if (p->full_id_name) free(p->full_id_name);
+	free(p->net_name);
+	free(p->full_id_name);
 	if (p->channels) free(p->channels);
 
 	/* Zero it out in case anybody has kept a reference (bad!). */
@@ -126,6 +127,7 @@ partymember_t *partymember_new(int id, user_t *user, botnet_bot_t *bot, const ch
 	mem->nick = strdup(nick);
 	mem->ident = strdup(ident);
 	mem->host = strdup(host);
+	mem->net_name = egg_mprintf("%s@%s", b64enc_int(id), bot ? bot->name : botnet_get_name());
 	mem->full_id_name = egg_mprintf("%d:%s@%s", id, nick, bot ? bot->name : botnet_get_name());
 	mem->full_name = strchr(mem->full_id_name, ':') + 1;
 	mem->common_name = bot ? mem->full_name : mem->nick;

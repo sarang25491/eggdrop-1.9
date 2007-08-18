@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partyline.c,v 1.28 2007/04/14 15:21:11 sven Exp $";
+static const char rcsid[] = "$Id: partyline.c,v 1.29 2007/08/18 22:32:23 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -239,9 +239,9 @@ int partyline_idx_privmsg(int idx, partymember_t *dest, botnet_entity_t *src, co
 
 	if (src) {
 		if (len >= 9 && !strncasecmp(text, "\1ACTION ", 8) && text[len - 1] == 1) {
-			egg_iprintf(idx, "%s* %s %.*s\r\n", ts, src->common_name, len - 9, text + 8);
+			egg_iprintf(idx, "%s* %s %.*s\r\n", ts, entity_common_name(src), len - 9, text + 8);
 		} else {
-			egg_iprintf(idx, "%s[%s] %s\r\n", ts, src->common_name, text);
+			egg_iprintf(idx, "%s[%s] %s\r\n", ts, entity_common_name(src), text);
 		}
 	} else {
 		egg_iprintf(idx, "%s\r\n", text);
@@ -270,9 +270,9 @@ int partyline_idx_chanmsg(int idx, partychan_t *chan, botnet_entity_t *src, cons
 
 	if (src) {
 		if (len >= 9 && !strncasecmp(text, "\1ACTION ", 8) && text[len - 1] == 1) {
-			egg_iprintf(idx, "%s %s* %s %.*s\r\n", chan->name, ts, src->common_name, len - 9, text + 8);
+			egg_iprintf(idx, "%s %s* %s %.*s\r\n", chan->name, ts, entity_common_name(src), len - 9, text + 8);
 		} else {
-			egg_iprintf(idx, "%s %s<%s> %s\r\n", chan->name, ts, src->common_name, text);
+			egg_iprintf(idx, "%s %s<%s> %s\r\n", chan->name, ts, entity_common_name(src), text);
 		}
 	} else {
 		egg_iprintf(idx, "%s %s%s\r\n", chan->name, ts, text);

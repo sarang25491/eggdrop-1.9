@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: base64.h,v 1.2 2003/12/17 07:39:14 wcc Exp $
+ * $Id: base64.h,v 1.3 2007/08/18 22:32:23 sven Exp $
  */
 
 #ifndef _EGG_BASE64_H_
@@ -27,5 +27,10 @@ int b64enc_buf(const unsigned char *data, int len, char *dest);
 
 char *b64dec(const unsigned char *data, int len);
 int b64dec_buf(const unsigned char *data, int len, char *dest);
+
+const char *b64enc_int(int i);
+char *b64enc_int_buf(int i, char *dest);
+
+int b64dec_int(const char *b);
 
 #endif /* !_EGG_BASE64_H_ */

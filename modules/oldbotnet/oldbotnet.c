@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: oldbotnet.c,v 1.21 2007/05/12 02:04:24 sven Exp $";
+static const char rcsid[] = "$Id: oldbotnet.c,v 1.22 2007/08/18 22:32:24 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -244,38 +244,6 @@ int assoc_get_id(const char *name)
 	return a->id;
 }
 
-static char base64to[256] = {
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-
-
-	0, 0, 0, 0, 0, 0, 0, 0, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 0, 0,
-	
-	0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
-	
-	15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 62, 0, 63, 0, 0, 0, 26, 27, 28,
-	
-	29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48,
-	
-	49, 50, 51, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-
-	
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-};
-
-static int btoi(const char *b)
-{
-	int i = 0;
-
-	while (*b) i = (i << 6) + base64to[(unsigned char) *b++];
-	return(i);
-}
-
 static int get_entity(botnet_bot_t *bot, botnet_entity_t *src, char *word)
 {
 	oldbotnet_t *obot = bot->client_data;
@@ -434,15 +402,13 @@ static void got_passreq(oldbotnet_t *bot, const char *next)
 	if (next && *next == '<') {
 		MD5_CTX md5;
 		unsigned char hash[16];
-		char hex[64];
-		int i;
+		char hex[33];
 
 		MD5_Init(&md5);
 		MD5_Update(&md5, next, strlen(next));
 		MD5_Update(&md5, bot->password, strlen(bot->password));
 		MD5_Final(hash, &md5);
-		for (i = 0; i < 16; i++) sprintf(hex+2*i, "%.2x", (unsigned char) hash[i]);
-		hex[33] = 0;
+		MD5_Hex(hash, hex);
 		putlog(LOG_MISC, "*", _("Received challenge from %s... sending response ..."), bot->user->handle);
 		egg_iprintf(bot->idx, "digest %s\n", hex);
 	} else {
@@ -488,6 +454,7 @@ static int got_handshake(botnet_bot_t *bot, const char *cmd, const char *text)
 
 static void got_version(oldbotnet_t *bot, const char *next)
 {
+	char buf[32];
 	/* Get their version and handlen. */
 	sscanf(next, "%d %d", &bot->version, &bot->handlen);
 
@@ -504,6 +471,11 @@ static void got_version(oldbotnet_t *bot, const char *next)
 		sockbuf_delete(bot->idx);
 		return;
 	}
+	if (bot->version % 100) sprintf(buf, "eggdrop%d.%d.%d.%d", bot->version / 1000000, bot->version / 10000 % 100, bot->version / 100 % 100, bot->version % 100);
+	else sprintf(buf, "eggdrop%d.%d.%d", bot->version / 1000000, bot->version / 10000 % 100, bot->version / 100 % 100);
+	botnet_set_info(bot->bot, "type", "eggdrop");
+	botnet_set_info_int(bot->bot, "numversion", bot->version);
+	botnet_set_info(bot->bot, "version", buf);
 	botnet_replay_net(bot->bot);
 	egg_iprintf(bot->idx, "el\n");
 }
@@ -529,7 +501,7 @@ static int got_actchan(botnet_bot_t *bot, const char *cmd, const char *next)
 
 	while (isspace(*next)) next++;
 	action = egg_msprintf(buf, sizeof(buf), &len, "\1ACTION %s\1", next);
-	partychan_msg_name(assoc_get_name(btoi(word[1])), &src, action, len);  
+	partychan_msg_name(assoc_get_name(b64dec_int(word[1])), &src, action, len);  
 	if (action != buf) free(action);
 
 	egg_free_word_array(word, 2);
@@ -680,7 +652,7 @@ static int got_nickchange(botnet_bot_t *bot, const char *cmd, const char *next)
 		return BIND_RET_BREAK;
 	}
 
-	id = btoi(word[1]);
+	id = b64dec_int(word[1]);
 	src = partymember_lookup(NULL, srcbot, id);
 	if (!src) {
 		egg_free_word_array(word, 3);
@@ -692,10 +664,25 @@ static int got_nickchange(botnet_bot_t *bot, const char *cmd, const char *next)
 	return BIND_RET_BREAK;
 }
 
+/*!
+ * \brief A new bot has linked to the botnet somewhere else.
+ *
+ * Triggered every time a new bot joins the net to introduce that bot and all
+ * the bots behind it. There might be an '!' as the first char of the version
+ * string. If that isn't there, don't announce the new bot on the partyline,
+ * it's probably from a net join. Might get spammy otherwise.
+ *
+ * \param bot The bot the msg came from.
+ * \param cmd "nlinked" or "n".
+ * \param next The parameters.
+ *
+ * \format \b nlinked newbot uplink [!]version
+ */
+
 static int got_nlinked(botnet_bot_t *bot, const char *cmd, const char *next)
 {
-	char *word[3];
-	int n, linking = 1;
+	char *word[3], buf[32];
+	int n, linking = 1, version;
 	botnet_bot_t *src, *new;
 	oldbotnet_t *obot = bot->client_data;
 
@@ -719,7 +706,12 @@ static int got_nlinked(botnet_bot_t *bot, const char *cmd, const char *next)
 		return BIND_RET_BREAK;
 	}
 
-	if (word[2][0] == '!') linking = 0;
+	if (word[2][0] == '!') {
+		linking = 0;
+		version = b64dec_int(word[2] + 1);
+	} else {
+		version = b64dec_int(word[2]);
+	}
 	new = botnet_new(word[0], NULL, src, bot, NULL, NULL, &generic_owner, linking);
 	if (!new) {
 		/* Invalid botname ... should probably do some really clever name mangleing here ... */
@@ -728,6 +720,11 @@ static int got_nlinked(botnet_bot_t *bot, const char *cmd, const char *next)
 		botnet_delete(bot, obuf);
 		/* or just be lazy and kill the bot -_- */
 	}
+	if (version % 100) sprintf(buf, "eggdrop%d.%d.%d.%d", version / 1000000, version / 10000 % 100, version / 100 % 100, version % 100);
+	else sprintf(buf, "eggdrop%d.%d.%d", version / 1000000, version / 10000 % 100, version / 100 % 100);
+	botnet_set_info(new, "type", "eggdrop");
+	botnet_set_info_int(new, "numversion", version);
+	botnet_set_info(new, "version", buf);
 	return BIND_RET_BREAK;
 }
 
@@ -828,7 +825,7 @@ static int got_away(botnet_bot_t *bot, const char *cmd, const char *next)
 		return BIND_RET_BREAK;
 	}
 
-	p = partymember_lookup(NULL, src, btoi(word[1]));
+	p = partymember_lookup(NULL, src, b64dec_int(word[1]));
 	if (!p) {
 		egg_free_word_array(word, 2);
 		return BIND_RET_BREAK;
@@ -892,7 +889,7 @@ static int got_join(botnet_bot_t *bot, const char *cmd, const char *next)
 		return BIND_RET_BREAK;
 	}
 
-	id = btoi(word[3] + 1);
+	id = b64dec_int(word[3] + 1);
 
 	p = partymember_lookup(NULL, frombot, id);
 	if (p) {
@@ -923,7 +920,7 @@ static int got_join(botnet_bot_t *bot, const char *cmd, const char *next)
 
 		p = partymember_new(id, NULL, frombot, word[1], ident, host, NULL, NULL, &generic_owner);
 	}
-	partychan_join_name(assoc_get_name(btoi(word[2])), p, linking);
+	partychan_join_name(assoc_get_name(b64dec_int(word[2])), p, linking);
 	egg_free_word_array(word, 5);
 	return BIND_RET_BREAK;
 }
@@ -946,7 +943,7 @@ static int got_part(botnet_bot_t *bot, const char *cmd, const char *next)
 	else reason = "No reason.";
 
 	src = botnet_lookup(word[0]);
-	id = btoi(word[2]);
+	id = b64dec_int(word[2]);
 	if (botnet_check_direction(bot, src)) {
 		egg_free_word_array(word, 3);
 		return BIND_RET_BREAK;
@@ -1043,7 +1040,7 @@ static int got_chat(botnet_bot_t *bot, const char *cmd, const char *next)
 	}
 
 	while (isspace(*next)) next++;
-	partychan_msg_name(assoc_get_name(btoi(word[1])), &src, next, strlen(next));
+	partychan_msg_name(assoc_get_name(b64dec_int(word[1])), &src, next, strlen(next));
 
 	egg_free_word_array(word, 2);
 	return BIND_RET_BREAK;
@@ -1292,7 +1289,7 @@ static int oldbotnet_on_delete(void *client_data, int idx)
 
 	bot->idx = -1;
 	if (bot->bot) botnet_delete(bot->bot, _("Socket deleted."));
-	else if (bot->user && bot->user->flags & USER_LINKING_BOT) botnet_link_failed(bot->user, "Socket deleted.");
+	else if (bot->user && bot->user->flags & USER_LINKING_BOT) botnet_link_failed(bot->user, _("Socket deleted."));
 
 	if (bot->name) free(bot->name);
 	if (bot->password) free(bot->password);

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: partymember.h,v 1.7 2007/04/14 15:21:12 sven Exp $
+ * $Id: partymember.h,v 1.8 2007/08/18 22:32:23 sven Exp $
  */
 
 #ifndef _EGG_PARTYMEMBER_H
@@ -34,6 +34,7 @@ struct partymember {
 	struct botnet_bot *bot;
 	int flags;
 
+	char *net_name;
 	char *full_id_name;
 	const char *full_name;
 	const char *common_name;
