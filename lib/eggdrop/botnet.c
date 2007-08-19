@@ -28,7 +28,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: botnet.c,v 1.11 2007/08/18 22:32:23 sven Exp $";
+static const char rcsid[] = "$Id: botnet.c,v 1.12 2007/08/19 19:49:16 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -272,7 +272,7 @@ botnet_bot_t *botnet_lookup(const char *name)
  * \todo Find a better way to log this. But for now ::LOG_MISC is good enough.
  */
 
-botnet_bot_t *botnet_new(const char *name, user_t *user, botnet_bot_t *uplink, botnet_bot_t *direction, botnet_handler_t *handler, void *client_data, event_owner_t *owner, int netburst)
+botnet_bot_t *botnet_new(const char *name, user_t *user, botnet_bot_t *uplink, botnet_bot_t *direction, xml_node_t *info, botnet_handler_t *handler, void *client_data, event_owner_t *owner, int netburst)
 {
 	const char *temp;
 	botnet_bot_t *bot, *tmp;
@@ -295,7 +295,7 @@ botnet_bot_t *botnet_new(const char *name, user_t *user, botnet_bot_t *uplink, b
 	bot->handler = handler;
 	bot->client_data = client_data;
 	bot->owner = owner;
-	bot->info = xml_node_new();
+	bot->info = info ? info : xml_node_new();
 
 	hash_table_insert(bot_ht, bot->name, bot);
 	
@@ -580,7 +580,7 @@ static void botnet_recursive_replay_net(botnet_bot_t *dst, botnet_bot_t *start)
 
 	if (start && dst->handler->on_new_bot) dst->handler->on_new_bot(dst->client_data, start, 1);
 	
-	for (p = start->partys; p; p = p->next_on_bot) {
+	for (p = start ? start->partys : partymember_get_local_head(); p; p = p->next_on_bot) {
 		if (p->flags & PARTY_DELETED) continue;
 		if (dst->handler->on_login) dst->handler->on_login(dst->client_data, p, 1);
 		for (i = 0; i < p->nchannels; ++i) {
@@ -818,18 +818,18 @@ const char *botnet_get_info(botnet_bot_t *bot, const char *name)
 {
 	char *ret;
 
-	xml_node_get_str(&ret, bot->info, name, (void *) 0);
+	xml_node_get_str(&ret, bot->info, name, 0, (void *) 0);
 	return ret;
 }
 
 void botnet_set_info(botnet_bot_t *bot, const char *name, const char *value)
 {
-	xml_node_set_str(value, bot->info, name, (void *) 0);
+	xml_node_set_str(value, bot->info, name, 0, (void *) 0);
 }
 
 void botnet_set_info_int(botnet_bot_t *bot, const char *name, int value)
 {
-	xml_node_set_int(value, bot->info, name, (void *) 0);
+	xml_node_set_int(value, bot->info, name, 0, (void *) 0);
 }
 
 /*!

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: oldbotnet.c,v 1.22 2007/08/18 22:32:24 sven Exp $";
+static const char rcsid[] = "$Id: oldbotnet.c,v 1.23 2007/08/19 19:49:18 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -455,6 +455,7 @@ static int got_handshake(botnet_bot_t *bot, const char *cmd, const char *text)
 static void got_version(oldbotnet_t *bot, const char *next)
 {
 	char buf[32];
+	xml_node_t *info;
 	/* Get their version and handlen. */
 	sscanf(next, "%d %d", &bot->version, &bot->handlen);
 
@@ -462,20 +463,24 @@ static void got_version(oldbotnet_t *bot, const char *next)
 	egg_iprintf(bot->idx, "version 1090000 %d eggdrop v1.9 <alrighty.then>\n", bot->handlen);
 	egg_iprintf(bot->idx, "tb %s\n", bot->name);
 
+	if (bot->version % 100) sprintf(buf, "eggdrop%d.%d.%d.%d", bot->version / 1000000, bot->version / 10000 % 100, bot->version / 100 % 100, bot->version % 100);
+	else sprintf(buf, "eggdrop%d.%d.%d", bot->version / 1000000, bot->version / 10000 % 100, bot->version / 100 % 100);
+
+	info = xml_node_new();
+	xml_node_set_str("eggdrop", info, "type", 0, (void *) 0);
+	xml_node_set_int(bot->version, info, "numversion", 0, (void *) 0);
+	xml_node_set_str(buf, info, "version", 0, (void *) 0);
+
 	/* And now we're connected. */
 	bot->linking = 1;
-	bot->bot = botnet_new(bot->user->handle, bot->user, NULL, NULL, &bothandler, bot, &bot_owner, 0);
+	bot->bot = botnet_new(bot->user->handle, bot->user, NULL, NULL, info, &bothandler, bot, &bot_owner, 0);
 	if (!bot->bot) {
 		botnet_link_failed(bot->user, "Could not create bot.");
 		bot->user = NULL;
 		sockbuf_delete(bot->idx);
+		xml_node_delete(info);
 		return;
 	}
-	if (bot->version % 100) sprintf(buf, "eggdrop%d.%d.%d.%d", bot->version / 1000000, bot->version / 10000 % 100, bot->version / 100 % 100, bot->version % 100);
-	else sprintf(buf, "eggdrop%d.%d.%d", bot->version / 1000000, bot->version / 10000 % 100, bot->version / 100 % 100);
-	botnet_set_info(bot->bot, "type", "eggdrop");
-	botnet_set_info_int(bot->bot, "numversion", bot->version);
-	botnet_set_info(bot->bot, "version", buf);
 	botnet_replay_net(bot->bot);
 	egg_iprintf(bot->idx, "el\n");
 }
@@ -684,6 +689,7 @@ static int got_nlinked(botnet_bot_t *bot, const char *cmd, const char *next)
 	char *word[3], buf[32];
 	int n, linking = 1, version;
 	botnet_bot_t *src, *new;
+	xml_node_t *info;
 	oldbotnet_t *obot = bot->client_data;
 
 	n = egg_get_word_array(next, NULL, word, 3);
@@ -712,19 +718,23 @@ static int got_nlinked(botnet_bot_t *bot, const char *cmd, const char *next)
 	} else {
 		version = b64dec_int(word[2]);
 	}
-	new = botnet_new(word[0], NULL, src, bot, NULL, NULL, &generic_owner, linking);
+
+	if (version % 100) sprintf(buf, "eggdrop%d.%d.%d.%d", version / 1000000, version / 10000 % 100, version / 100 % 100, version % 100);
+	else sprintf(buf, "eggdrop%d.%d.%d", version / 1000000, version / 10000 % 100, version / 100 % 100);
+	info = xml_node_new();
+	xml_node_set_str("eggdrop", info, "type", 0, (void *) 0);
+	xml_node_set_int(version, info, "numversion", 0, (void *) 0);
+	xml_node_set_str(buf, info, "version", 0, (void *) 0);
+
+	new = botnet_new(word[0], NULL, src, bot, info, NULL, NULL, &generic_owner, linking);
 	if (!new) {
 		/* Invalid botname ... should probably do some really clever name mangleing here ... */
 		char obuf[512];
 		snprintf(obuf, sizeof(obuf), "Botname incompatiblity: %s linked from %s", word[0], src->name);
 		botnet_delete(bot, obuf);
 		/* or just be lazy and kill the bot -_- */
+		xml_node_delete(info);
 	}
-	if (version % 100) sprintf(buf, "eggdrop%d.%d.%d.%d", version / 1000000, version / 10000 % 100, version / 100 % 100, version % 100);
-	else sprintf(buf, "eggdrop%d.%d.%d", version / 1000000, version / 10000 % 100, version / 100 % 100);
-	botnet_set_info(new, "type", "eggdrop");
-	botnet_set_info_int(new, "numversion", version);
-	botnet_set_info(new, "version", buf);
 	return BIND_RET_BREAK;
 }
 

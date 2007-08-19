@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: xml.c,v 1.26 2007/08/18 22:32:23 sven Exp $";
+static const char rcsid[] = "$Id: xml.c,v 1.27 2007/08/19 19:49:17 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -145,14 +145,15 @@ void xml_node_delete(xml_node_t *node)
 
 void xml_node_delete_callbacked(xml_node_t *node, void (*callback)(void *))
 {
-	xml_node_t *child;
+	xml_node_t *child, *child_next;
 
 	if (node->client_data && callback) callback(node->client_data);
 
 	xml_node_unlink(node);
 
 	/* Delete children. */
-	for (child = node->children; child; child = child->next) {
+	for (child = node->children; child; child = child_next) {
+		child_next = child->next;
 		child->parent = NULL;
 		xml_node_delete_callbacked(child, callback);
 	}

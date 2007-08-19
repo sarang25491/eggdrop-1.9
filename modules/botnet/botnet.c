@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: botnet.c,v 1.2 2007/08/18 22:32:24 sven Exp $";
+static const char rcsid[] = "$Id: botnet.c,v 1.3 2007/08/19 19:49:18 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -232,19 +232,24 @@ static int do_link(user_t *user, const char *type)
 static int got_newbot(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len)
 {
 	int flags;
+	xml_node_t *info;
 	botnet_bot_t *new;
 
 	if (argc < 5) return 0;
 	
 	flags = b64dec_int(argv[4]);
-	new = botnet_new(argv[0], NULL, src->bot, bot->bot, NULL, NULL, &generic_owner, flags & 1);
+
+	info = xml_node_new();
+	xml_node_set_str(argv[1], info, "type", 0, (void *) 0);
+	xml_node_set_int(b64dec_int(argv[2]), info, "numversion", 0, (void *) 0);
+	xml_node_set_str(argv[3], info, "version", (void *) 0);
+
+	new = botnet_new(argv[0], NULL, src->bot, bot->bot, info, NULL, NULL, &generic_owner, flags & 1);
 	if (!new) {
 		botnet_delete(bot->bot, _("Couldn't create introduced bot"));
+		xml_node_delete(info);
 		return 0;
 	}
-	botnet_set_info(new, "type", argv[1]);
-	botnet_set_info_int(new, "numversion", b64dec_int(argv[2]));
-	botnet_set_info(new, "version", argv[3]);
 
 	return 0;
 }
@@ -356,6 +361,8 @@ static int recving_login(bot_t *bot, char *src, char *cmd, int argc, char *argv[
 		*bot->pass = 0;
 		egg_iprintf(bot->idx, "thisbot %s eggdrop %s %s :%s", botnet_get_name(), "1090000", "eggdrop1.9.0+cvs", "some informative stuff");
 	} else if (!strcasecmp(cmd, "THISBOT")) {
+		xml_node_t *info;
+
 		if (!bot->pass || *bot->pass || argc != 5 || strcmp(bot->user->handle, argv[0])) {
 			sockbuf_delete(bot->idx);
 			return 0;
@@ -363,10 +370,13 @@ static int recving_login(bot_t *bot, char *src, char *cmd, int argc, char *argv[
 		free(bot->pass);
 		bot->pass = NULL;
 		bot->linking = 0;
-		bot->bot = botnet_new(bot->user->handle, bot->user, NULL, NULL, &bothandler, bot, &bot_owner, 0);
-		botnet_set_info(bot->bot, "type", argv[0]);
-		botnet_set_info_int(bot->bot, "numversion", b64dec_int(argv[2]));
-		botnet_set_info(bot->bot, "version", argv[3]);
+		
+		info = xml_node_new();
+		xml_node_set_str(argv[0], info, "type", 0, (void *) 0);
+		xml_node_set_int(b64dec_int(argv[2]), info, "numversion", 0, (void *) 0);
+		xml_node_set_str(argv[3], info, "version", 0, (void *) 0);
+		
+		bot->bot = botnet_new(bot->user->handle, bot->user, NULL, NULL, info, &bothandler, bot, &bot_owner, 0);
 		botnet_replay_net(bot->bot);
 		egg_iprintf(bot->idx, "el");
 	} else {
@@ -409,6 +419,8 @@ static int sending_login(bot_t *bot, char *src, char *cmd, int argc, char *argv[
 		egg_iprintf(bot->idx, "pass %s", buf);
 		*bot->pass = 0;
 	} else if (!strcasecmp(cmd, "THISBOT")) {
+		xml_node_t *info;
+
 		if (argc != 5 || strcmp(bot->user->handle, argv[0])) {
 			sockbuf_delete(bot->idx);
 			return 0;
@@ -417,10 +429,13 @@ static int sending_login(bot_t *bot, char *src, char *cmd, int argc, char *argv[
 		free(bot->pass);
 		bot->pass = NULL;
 		bot->linking = 0;
-		bot->bot = botnet_new(bot->user->handle, bot->user, NULL, NULL, &bothandler, bot, &bot_owner, 0);
-		botnet_set_info(bot->bot, "type", argv[0]);
-		botnet_set_info_int(bot->bot, "numversion", b64dec_int(argv[2]));
-		botnet_set_info(bot->bot, "version", argv[3]);
+
+		info = xml_node_new();
+		xml_node_set_str(argv[0], info, "type", 0, (void *) 0);
+		xml_node_set_int(b64dec_int(argv[2]), info, "numversion", 0, (void *) 0);
+		xml_node_set_str(argv[3], info, "version", 0, (void *) 0);
+
+		bot->bot = botnet_new(bot->user->handle, bot->user, NULL, NULL, info, &bothandler, bot, &bot_owner, 0);
 		botnet_replay_net(bot->bot);
 		egg_iprintf(bot->idx, "el");
 	} else {

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: partymember.h,v 1.8 2007/08/18 22:32:23 sven Exp $
+ * $Id: partymember.h,v 1.9 2007/08/19 19:49:17 sven Exp $
  */
 
 #ifndef _EGG_PARTYMEMBER_H
@@ -50,6 +50,7 @@ struct partymember {
 partymember_t *partymember_lookup(const char *name, struct botnet_bot *bot, int id);
 partymember_t *partymember_new(int id, user_t *user, struct botnet_bot *bot, const char *nick, const char *ident, const char *host, partyline_event_t *handler, void *client_data, event_owner_t *owner);
 partymember_t *partymember_get_head(void);
+partymember_t *partymember_get_local_head(void);
 int partymember_delete(partymember_t *p, const struct botnet_bot *lost_bot, const char *text);
 int partymember_delete_by_owner(struct egg_module *module, void *script);
 int partymember_update_info(partymember_t *p, const char *ident, const char *host);

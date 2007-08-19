@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partymember.c,v 1.29 2007/08/18 22:32:23 sven Exp $";
+static const char rcsid[] = "$Id: partymember.c,v 1.30 2007/08/19 19:49:17 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -71,7 +71,7 @@ static void partymember_really_delete(partymember_t *p)
 
 	if (p->prev_on_bot) p->prev_on_bot->next_on_bot = p->next_on_bot;
 	else if (p->bot) p->bot->partys = p->next_on_bot;
-	else local_party_head = p->next_on_bot;
+	else if (local_party_head == p) local_party_head = p->next_on_bot;
 	if (p->next_on_bot) p->next_on_bot->prev_on_bot = p->prev_on_bot;
 
 	/* Free! */
@@ -102,6 +102,11 @@ static int partymember_cleanup(void *client_data)
 partymember_t *partymember_get_head()
 {
 	return party_head;
+}
+
+partymember_t *partymember_get_local_head()
+{
+	return local_party_head;
 }
 
 static int partymember_get_id(botnet_bot_t *bot)
@@ -221,6 +226,7 @@ int partymember_delete(partymember_t *p, const botnet_bot_t *lost_bot, const cha
 		(p->handler->on_quit)(p->client_data, p, lost_bot, text, strlen(text));
 	}
 	if (p->owner && p->owner->on_delete) p->owner->on_delete(p->owner, p->client_data);
+	p->bot = NULL;
 	return(0);
 }
 
@@ -318,8 +324,8 @@ partymember_t *partymember_lookup(const char *full_name, botnet_bot_t *bot, int 
 		}
 	}
 
+	if (p && id != -1 && nick && strcmp(p->nick, nick)) p = NULL;
 	if (name) free(name);
-	if (p && id != -1 && nick && strcmp(p->nick, nick)) return NULL;
 	return p;
 }
 
