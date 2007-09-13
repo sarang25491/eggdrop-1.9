@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: ircparty.c,v 1.19 2007/04/14 15:21:13 sven Exp $";
+static const char rcsid[] = "$Id: ircparty.c,v 1.20 2007/09/13 22:20:56 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -56,7 +56,7 @@ static int got_mode(partymember_t *p, int idx, char *cmd, int nargs, char *args[
 static int irc_on_newclient(void *client_data, int idx, int newidx, const char *peer_ip, int peer_port);
 static int irc_on_read(void *client_data, int idx, char *data, int len);
 static int irc_on_eof(void *client_data, int idx, int err, const char *errmsg);
-static int irc_on_delete(void *client_data, int idx);
+static int irc_on_delete(event_owner_t *owner, void *client_data);
 static int irc_pm_delete(event_owner_t *owner, void *client_data);
 
 static int ident_result(void *client_data, const char *ip, int port, const char *reply);
@@ -79,6 +79,12 @@ static event_owner_t irc_generic_owner = {
 	0
 };
 
+static event_owner_t irc_sock_owner = {
+	"ircparty", 0,
+	0, 0,
+	irc_on_delete
+};
+
 static event_owner_t irc_pm_owner = {
 	"ircparty", 0,
 	0, 0,
@@ -94,8 +100,7 @@ static sockbuf_handler_t server_handler = {
 static sockbuf_handler_t client_handler = {
 	"ircparty",
 	NULL, irc_on_eof, NULL,
-	irc_on_read, NULL,
-	irc_on_delete
+	irc_on_read, NULL
 };
 
 int irc_init()
@@ -104,7 +109,7 @@ int irc_init()
 	bind_add_list("ircparty", ircparty_binds);
 	/* Open our listening socket. */
 	irc_idx = egg_server(irc_config.vhost, irc_config.port, &irc_port);
-	sockbuf_set_handler(irc_idx, &server_handler, NULL);
+	sockbuf_set_handler(irc_idx, &server_handler, NULL, NULL);
 	return(0);
 }
 
@@ -129,7 +134,7 @@ static int irc_on_newclient(void *client_data, int idx, int newidx, const char *
 	session->port = peer_port;
 	session->idx = newidx;
 
-	sockbuf_set_handler(newidx, &client_handler, session);
+	sockbuf_set_handler(newidx, &client_handler, session, &irc_sock_owner);
 	linemode_on(newidx);
 
 	/* Stealth logins are where we don't say anything until we know they
@@ -347,12 +352,13 @@ static int irc_pm_delete(event_owner_t *owner, void *client_data)
 {
 	irc_session_t *session = client_data;
 
+	session->party = NULL;
 	sockbuf_delete(session->idx);
 
 	return 0;
 }
 
-static int irc_on_delete(void *client_data, int idx)
+static int irc_on_delete(event_owner_t *owner, void *client_data)
 {
 	irc_session_t *session = client_data;
 
@@ -379,7 +385,7 @@ int ircparty_LTX_start(egg_module_t *modinfo)
 {
 	void *config_root;
 
-	irc_generic_owner.module = irc_pm_owner.module = modinfo;
+	irc_generic_owner.module = irc_sock_owner.module = irc_pm_owner.module = modinfo;
 
 	modinfo->name = "ircparty";
 	modinfo->author = "eggdev";

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: telnetparty.c,v 1.25 2007/04/14 15:21:13 sven Exp $";
+static const char rcsid[] = "$Id: telnetparty.c,v 1.26 2007/09/13 22:20:58 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -47,7 +47,7 @@ static int telnet_port = 0;
 static int telnet_on_newclient(void *client_data, int idx, int newidx, const char *peer_ip, int peer_port);
 static int telnet_on_read(void *client_data, int idx, char *data, int len);
 static int telnet_on_eof(void *client_data, int idx, int err, const char *errmsg);
-static int telnet_on_delete(void *client_data, int idx);
+static int telnet_on_delete(event_owner_t *owner, void *client_data);
 static int telnet_filter_read(void *client_data, int idx, char *data, int len);
 static int telnet_filter_write(void *client_data, int idx, const char *data, int len);
 static int telnet_filter_delete(void *client_data, int idx);
@@ -61,6 +61,12 @@ static event_owner_t telnet_generic_owner = {
 	"telnetparty", 0,
 	0, 0,
 	0
+};
+
+static event_owner_t telnet_sockbuf_owner = {
+	"telnetparty", 0,
+	0, 0,
+	telnet_on_delete
 };
 
 static event_owner_t telnet_partymember_owner = {
@@ -87,15 +93,14 @@ static sockbuf_filter_t telnet_filter = {
 static sockbuf_handler_t client_handler = {
 	"telnet",
 	NULL, telnet_on_eof, NULL,
-	telnet_on_read, NULL,
-	telnet_on_delete
+	telnet_on_read, NULL
 };
 
 int telnet_init()
 {	
 	/* Open our listening socket. */
 	telnet_idx = egg_server(telnet_config.vhost, telnet_config.port, &telnet_port);
-	sockbuf_set_handler(telnet_idx, &server_handler, NULL);
+	sockbuf_set_handler(telnet_idx, &server_handler, NULL, NULL);
 	
 	return(0);
 }
@@ -317,7 +322,7 @@ static int telnet_on_newclient(void *client_data, int idx, int newidx, const cha
 	session->port = peer_port;
 	session->idx = newidx;
 
-	sockbuf_set_handler(newidx, &client_handler, session);
+	sockbuf_set_handler(newidx, &client_handler, session, &telnet_sockbuf_owner);
 	sockbuf_attach_filter(newidx, &telnet_filter, session);
 	linemode_on(newidx);
 
@@ -456,7 +461,7 @@ static int telnet_on_eof(void *client_data, int idx, int err, const char *errmsg
 	return(0);
 }
 
-static int telnet_on_delete(void *client_data, int idx)
+static int telnet_on_delete(event_owner_t *owner, void *client_data)
 {
 	telnet_session_t *session = client_data;
 
@@ -643,7 +648,7 @@ int telnetparty_LTX_start(egg_module_t *modinfo)
 {
 	void *config_root;
 
-	telnet_generic_owner.module = telnet_partymember_owner.module = modinfo;
+	telnet_generic_owner.module = telnet_sockbuf_owner.module = telnet_partymember_owner.module = modinfo;
 	modinfo->name = "telnetparty";
 	modinfo->author = "eggdev";
 	modinfo->version = "1.0.0";

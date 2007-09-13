@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: botnet.c,v 1.3 2007/08/19 19:49:18 sven Exp $";
+static const char rcsid[] = "$Id: botnet.c,v 1.4 2007/09/13 22:20:56 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -47,16 +47,21 @@ static int idx_on_newclient(void *client_data, int idx, int newidx, const char *
 static int idx_on_connect(void *client_data, int idx, const char *peer_ip, int peer_port);
 static int idx_on_read(void *client_data, int idx, char *data, int len);
 static int idx_on_eof(void *client_data, int idx, int err, const char *errmsg);
-static int idx_on_delete(void *client_data, int idx);
+static int idx_on_delete(event_owner_t *owner, void *client_data);
 
+static int got_join(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len);
+static int got_login(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len);
 static int got_newbot(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len);
 
 static struct {
 	char *cmd;
 	int source;
+	int min_argc;
 	int (*function)(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len);
 } cmd_mapping[] = {
-	{"newbot", ENTITY_BOT, got_newbot}
+	{"join", ENTITY_PARTYMEMBER, 1, got_join},
+	{"login", ENTITY_BOT, 4, got_login},
+	{"newbot", ENTITY_BOT, 4, got_newbot}
 };
 
 static int cmd_num = sizeof(cmd_mapping) / sizeof(cmd_mapping[0]);
@@ -83,6 +88,12 @@ static event_owner_t bot_owner = {
 	bot_on_delete
 };
 
+static event_owner_t sock_owner = {
+	"botnet", NULL,
+	NULL, NULL,
+	idx_on_delete
+};
+
 static event_owner_t generic_owner = {
 	"botnet", NULL,
 	NULL, NULL,
@@ -104,8 +115,7 @@ static bind_list_t party_binds[] = {
 static sockbuf_handler_t client_handler = {
 	"botnet",
 	idx_on_connect, idx_on_eof, NULL,
-	idx_on_read, NULL,
-	idx_on_delete
+	idx_on_read, NULL
 };
 
 /* +bot <bot> <host> <port> */
@@ -220,29 +230,47 @@ static int do_link(user_t *user, const char *type)
 	data->linking = 1;
 	data->idle = 0;
 
-	sockbuf_set_handler(data->idx, &client_handler, data);
+	sockbuf_set_handler(data->idx, &client_handler, data, &sock_owner);
 	netstring_on(data->idx);
 
 	putlog(LOG_MISC, "*", _("Linking to %s (%s %d) on idx %d."), user->handle, host, port, data->idx);
 	return BIND_RET_BREAK;
 }
 
+/* login channel [netburst] */
+
+static int got_join(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len)
+{
+	int netburst = 0;
+
+	if (argc >= 2) netburst = b64dec_int(argv[1]) & 1;
+	partychan_join_name(argv[0], src->user, netburst);
+
+	return 0;
+}
+
+/* login nick ident host id */
+
+static int got_login(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len)
+{
+	partymember_new(b64dec_int(argv[3]), NULL, src->bot, argv[0], argv[1], argv[2], NULL, NULL, &generic_owner);
+	return 0;
+}
+
 /* newbot uplink name type version fullversion linking */
 
 static int got_newbot(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len)
 {
-	int flags;
+	int flags = 0;
 	xml_node_t *info;
 	botnet_bot_t *new;
 
-	if (argc < 5) return 0;
-	
-	flags = b64dec_int(argv[4]);
+	if (argc >= 5) flags = b64dec_int(argv[4]);
 
 	info = xml_node_new();
 	xml_node_set_str(argv[1], info, "type", 0, (void *) 0);
 	xml_node_set_int(b64dec_int(argv[2]), info, "numversion", 0, (void *) 0);
-	xml_node_set_str(argv[3], info, "version", (void *) 0);
+	xml_node_set_str(argv[3], info, "version", 0, (void *) 0);
 
 	new = botnet_new(argv[0], NULL, src->bot, bot->bot, info, NULL, NULL, &generic_owner, flags & 1);
 	if (!new) {
@@ -268,7 +296,7 @@ static int idx_on_newclient(void *client_data, int idx, int newidx, const char *
 	session->linking = 1;
 	session->idle = 0;
 
-	sockbuf_set_handler(newidx, &client_handler, session);
+	sockbuf_set_handler(newidx, &client_handler, session, &sock_owner);
 	netstring_on(newidx);
 
 	return 0;
@@ -359,11 +387,11 @@ static int recving_login(bot_t *bot, char *src, char *cmd, int argc, char *argv[
 			return 0;
 		}
 		*bot->pass = 0;
-		egg_iprintf(bot->idx, "thisbot %s eggdrop %s %s :%s", botnet_get_name(), "1090000", "eggdrop1.9.0+cvs", "some informative stuff");
+		egg_iprintf(bot->idx, ":%s thisbot eggdrop %s %s :%s", botnet_get_name(), b64enc_int(1090000), "eggdrop1.9.0+cvs", "some informative stuff");
 	} else if (!strcasecmp(cmd, "THISBOT")) {
 		xml_node_t *info;
 
-		if (!bot->pass || *bot->pass || argc != 5 || strcmp(bot->user->handle, argv[0])) {
+		if (!bot->pass || *bot->pass || argc != 4) {
 			sockbuf_delete(bot->idx);
 			return 0;
 		}
@@ -373,8 +401,8 @@ static int recving_login(bot_t *bot, char *src, char *cmd, int argc, char *argv[
 		
 		info = xml_node_new();
 		xml_node_set_str(argv[0], info, "type", 0, (void *) 0);
-		xml_node_set_int(b64dec_int(argv[2]), info, "numversion", 0, (void *) 0);
-		xml_node_set_str(argv[3], info, "version", 0, (void *) 0);
+		xml_node_set_int(b64dec_int(argv[1]), info, "numversion", 0, (void *) 0);
+		xml_node_set_str(argv[2], info, "version", 0, (void *) 0);
 		
 		bot->bot = botnet_new(bot->user->handle, bot->user, NULL, NULL, info, &bothandler, bot, &bot_owner, 0);
 		botnet_replay_net(bot->bot);
@@ -421,19 +449,19 @@ static int sending_login(bot_t *bot, char *src, char *cmd, int argc, char *argv[
 	} else if (!strcasecmp(cmd, "THISBOT")) {
 		xml_node_t *info;
 
-		if (argc != 5 || strcmp(bot->user->handle, argv[0])) {
+		if (argc != 4) {
 			sockbuf_delete(bot->idx);
 			return 0;
 		}
-		egg_iprintf(bot->idx, "thisbot eggdrop %s %s %s :%s", botnet_get_name(), "1090000", "eggdrop1.9.0+cvs", "some informative stuff");
+		egg_iprintf(bot->idx, ":%s thisbot eggdrop %s %s :%s", botnet_get_name(), b64enc_int(1090000), "eggdrop1.9.0+cvs", "some informative stuff");
 		free(bot->pass);
 		bot->pass = NULL;
 		bot->linking = 0;
 
 		info = xml_node_new();
 		xml_node_set_str(argv[0], info, "type", 0, (void *) 0);
-		xml_node_set_int(b64dec_int(argv[2]), info, "numversion", 0, (void *) 0);
-		xml_node_set_str(argv[3], info, "version", 0, (void *) 0);
+		xml_node_set_int(b64dec_int(argv[1]), info, "numversion", 0, (void *) 0);
+		xml_node_set_str(argv[2], info, "version", 0, (void *) 0);
 
 		bot->bot = botnet_new(bot->user->handle, bot->user, NULL, NULL, info, &bothandler, bot, &bot_owner, 0);
 		botnet_replay_net(bot->bot);
@@ -480,13 +508,20 @@ static int idx_on_read(void *client_data, int idx, char *data, int len)
 	len -= argv[argc - 1] - start;
 	argv[argc] = NULL;
 	if (!bot->bot) {
-		if (bot->incoming) return recving_login(bot, srcstr, argv[0], argc, argv + 1, len);
-		else return sending_login(bot, srcstr, argv[0], argc, argv + 1, len);
+		if (bot->incoming) return recving_login(bot, srcstr, argv[0], argc - 1, argv + 1, len);
+		else return sending_login(bot, srcstr, argv[0], argc - 1, argv + 1, len);
 	}
 
 	if (srcstr) {
+		char *at;
 		botnet_bot_t *srcbot;
-		get_entity(&src, srcstr);
+
+		at = strchr(srcstr, '@');
+		if (get_entity(&src, srcstr)) {
+			if (at && !*at) putlog(LOG_MISC, "*", _("Botnet: Desync! %s says %s came from %s@%s who doesn't exist!"), bot->bot->name, argv[0], srcstr, at + 1);
+			else putlog(LOG_MISC, "*", _("Botnet: Desync! %s says %s came from %s who doesn't exist!"), bot->bot->name, argv[0], srcstr);
+			return 0;
+		}
 		if (src.what == ENTITY_BOT) srcbot = src.bot;
 		else srcbot = src.user->bot;
 		if (botnet_check_direction(bot->bot, srcbot)) return 0;
@@ -498,13 +533,13 @@ static int idx_on_read(void *client_data, int idx, char *data, int len)
 	while (min <= max) {
 		int ret = strcasecmp(argv[0], cmd_mapping[cur].cmd);
 		if (!ret) {
+			if (argc < cmd_mapping[cur].min_argc) return 0;
 			if (cmd_mapping[cur].source && cmd_mapping[cur].source != src.what) return 0;
-			return cmd_mapping[cur].function(bot, &src, argv[0], argc, argv + 1, len);
+			return cmd_mapping[cur].function(bot, &src, argv[0], argc - 1, argv + 1, len);
 		} else if (ret < 0) {
-			max = cur;
+			max = cur - 1;
 		} else {
-			if (min == cur) ++min;
-			else min = cur;
+			min = cur + 1;
 		}
 		cur = (min + max) / 2;
 	}
@@ -530,7 +565,7 @@ static int idx_on_eof(void *client_data, int idx, int err, const char *errmsg)
 	return 0;
 }
 
-static int idx_on_delete(void *client_data, int idx)
+static int idx_on_delete(event_owner_t *owner, void *client_data)
 {
 	bot_t *bot = client_data;
 
@@ -578,7 +613,7 @@ static void bot_init()
 	config_update_table(botnet_config_vars, config_root, "botnet", 0, NULL);
 
 	listen_idx = egg_server(botnet_config.ip, botnet_config.port, &real_port);
-	sockbuf_set_handler(listen_idx, &server_handler, NULL);
+	sockbuf_set_handler(listen_idx, &server_handler, NULL, &sock_owner);
 
 	bind_add_simple(BTN_BOTNET_REQUEST_LINK, NULL, "eggdrop", do_link);
 }
@@ -599,7 +634,7 @@ static int bot_close(int why)
 
 int botnet_LTX_start(egg_module_t *modinfo)
 {
-	bot_owner.module = generic_owner.module = modinfo;
+	bot_owner.module = sock_owner.module = generic_owner.module = modinfo;
 	modinfo->name = "botnet";
 	modinfo->author = "eggdev";
 	modinfo->version = "1.0.0";

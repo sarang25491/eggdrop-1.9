@@ -12,5 +12,10 @@
 #define script_new_user_cmds script_LTX_script_new_user_cmds
 #define script_party_cmds script_LTX_script_party_cmds
 #define script_timer_cmds script_LTX_script_timer_cmds
+#define script_event_cleanup script_LTX_script_event_cleanup
+#define socket_owner script_LTX_socket_owner
+
+void script_event_cleanup(egg_module_t *m);
+event_owner_t socket_owner;
 
 #endif

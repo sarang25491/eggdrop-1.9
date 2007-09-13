@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: server.h,v 1.26 2005/12/28 17:27:31 sven Exp $
+ * $Id: server.h,v 1.27 2007/09/13 22:20:58 sven Exp $
  */
 
 #ifndef _EGG_MOD_SERVER_SERVER_H_
@@ -102,7 +102,7 @@ typedef struct {
 
 extern server_config_t server_config;
 extern current_server_t current_server;
-extern event_owner_t server_owner;
+extern event_owner_t server_owner, server_dcclistener_owner;
 
 extern int server_support(const char *name, const char **value);
 extern void *server_get_api();

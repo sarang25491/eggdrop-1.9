@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: oldbotnet.c,v 1.23 2007/08/19 19:49:18 sven Exp $";
+static const char rcsid[] = "$Id: oldbotnet.c,v 1.24 2007/09/13 22:20:56 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -66,7 +66,7 @@ static int got_who(botnet_bot_t *bot, const char *cmd, const char *next);
 static int oldbotnet_on_connect(void *client_data, int idx, const char *peer_ip, int peer_port);
 static int oldbotnet_on_read(void *client_data, int idx, char *data, int len);
 static int oldbotnet_on_eof(void *client_data, int idx, int err, const char *errmsg);
-static int oldbotnet_on_delete(void *client_data, int idx);
+static int oldbotnet_on_delete(event_owner_t *owner, void *client_data);
 
 static event_owner_t bot_owner = {
 	"oldbotnet", NULL,
@@ -86,11 +86,11 @@ static event_owner_t generic_owner = {
 	NULL
 };
 
-/*static event_owner_t sock_owner = {
+static event_owner_t sock_owner = {
 	"oldbotnet", NULL,
 	NULL, NULL,
-	sock_on_delete
-};*/
+	oldbotnet_on_delete
+};
 
 typedef struct assoc {
 	char *name;
@@ -189,8 +189,7 @@ static bind_list_t obot_binds[] = {
 static sockbuf_handler_t oldbotnet_handler = {
 	"oldbotnet",
 	oldbotnet_on_connect, oldbotnet_on_eof, NULL,
-	oldbotnet_on_read, NULL,
-	oldbotnet_on_delete
+	oldbotnet_on_read, NULL
 };
 
 static bind_table_t *BT_obot = NULL;
@@ -373,7 +372,7 @@ static int do_link(user_t *user, const char *type)
 	data->idle = 0;
 	data->anonymous = NULL;
 
-	sockbuf_set_handler(data->idx, &oldbotnet_handler, data);
+	sockbuf_set_handler(data->idx, &oldbotnet_handler, data, &sock_owner);
 	linemode_on(data->idx);
 
 	putlog(LOG_MISC, "*", _("Linking to %s (%s %d) on idx %d as %s."), user->handle, host, port, data->idx, data->name);
@@ -1293,7 +1292,7 @@ static int anonymous_on_delete(event_owner_t *owner, void *client_data)
 	return 0;
 }
 
-static int oldbotnet_on_delete(void *client_data, int idx)
+static int oldbotnet_on_delete(event_owner_t *owner, void *client_data)
 {
 	oldbotnet_t *bot = client_data;
 
@@ -1338,7 +1337,7 @@ static int oldbotnet_close(int why)
 
 int oldbotnet_LTX_start(egg_module_t *modinfo)
 {
-	bot_owner.module = anonymous_owner.module = generic_owner.module = modinfo;
+	sock_owner.module = bot_owner.module = anonymous_owner.module = generic_owner.module = modinfo;
 	modinfo->name = "oldbotnet";
 	modinfo->author = "eggdev";
 	modinfo->version = "1.0.0";

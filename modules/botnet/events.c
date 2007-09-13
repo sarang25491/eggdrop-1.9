@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: events.c,v 1.2 2007/08/18 22:32:24 sven Exp $";
+static const char rcsid[] = "$Id: events.c,v 1.3 2007/09/13 22:20:56 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -26,7 +26,7 @@ static const char rcsid[] = "$Id: events.c,v 1.2 2007/08/18 22:32:24 sven Exp $"
 #include "botnet.h"
 
 /* botnet callbacks */
-static int on_login(void *client_data, partymember_t *src, int linking);
+static int on_login(void *client_data, partymember_t *src);
 static int on_bcast(void *client_data, botnet_entity_t *src, const char *text, int len);
 static int on_privmsg(void *client_data, botnet_entity_t *src, partymember_t *dst, const char *text, int len);
 static int on_nick(void *client_data, partymember_t *src, const char *oldnick);
@@ -48,12 +48,12 @@ botnet_handler_t bothandler = {
 	on_new_bot, on_lost_bot, on_link, on_unlink, on_botmsg, on_botbroadcast, on_extension
 };
 
-static int on_login(void *client_data, partymember_t *src, int linking)
+static int on_login(void *client_data, partymember_t *src)
 {
 	bot_t *b = client_data;
 
-	if (src->bot) egg_iprintf(b->idx, ":%s login %s %s %s %s %d", src->bot->name, src->nick, src->ident, src->host, b64enc_int(src->id), linking);
-	else egg_iprintf(b->idx, "login %s %s %s %s %d", src->nick, src->ident, src->host, b64enc_int(src->id), linking);
+	if (src->bot) egg_iprintf(b->idx, ":%s login %s %s %s %s %d", src->bot->name, src->nick, src->ident, src->host, b64enc_int(src->id));
+	else egg_iprintf(b->idx, "login %s %s %s %s %d", src->nick, src->ident, src->host, b64enc_int(src->id));
 
 	return 0;
 }
@@ -121,7 +121,7 @@ static int on_join(void *client_data, partychan_t *chan, partymember_t *src, int
 {
 	bot_t *b = client_data;
 
-	egg_iprintf(b->idx, ":%s join %s %d", src->net_name, chan->name, linking);
+	egg_iprintf(b->idx, ":%s join %s%s", src->net_name, chan->name, linking ? " B" : "");
 
 	return 0;
 }
@@ -147,7 +147,8 @@ static int on_new_bot(void *client_data, botnet_bot_t *bot, int linking)
 	if (!type) type = "unknown";
 	if (ver) version = atoi(ver);
 	if (!fullversion) fullversion = "unknown";
-	egg_iprintf(b->idx, ":%s newbot %s %s %s %s %s", bot->uplink ? bot->uplink->name : botnet_get_name(), bot->name, type, b64enc_int(version), fullversion, linking ? "B" : "A");
+	if (bot->uplink) egg_iprintf(b->idx, ":%s newbot %s %s %s %s %s", bot->uplink->name, bot->name, type, b64enc_int(version), fullversion, linking ? "B" : "A");
+	else egg_iprintf(b->idx, "newbot %s %s %s %s%s", bot->name, type, b64enc_int(version), fullversion, linking ? " B" : "");
 
 	return 0;
 }

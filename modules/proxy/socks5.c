@@ -17,16 +17,21 @@ typedef struct {
 static int socks5_on_read(void *client_data, int idx, char *data, int len);
 static int socks5_on_eof(void *client_data, int idx, int err, const char *errmsg);
 static int socks5_on_connect(void *client_data, int idx, const char *peer_ip, int peer_port);
-static int socks5_on_delete(void *client_data, int idx);
+static int socks5_on_delete(event_owner_t *owner, void *client_data);
 
 static int socks5_on_their_eof(void *client_data, int idx, int err, const char *errmsg);
 static int socks5_on_their_delete(void *client_data, int idx);
 
+event_owner_t socks5_owner = {
+	"proxy", NULL,
+	NULL, NULL,
+	socks5_on_delete
+};
+
 static sockbuf_handler_t socks5_events = {
 	"socks5 proxy",
 	socks5_on_connect, socks5_on_eof, NULL,
-	socks5_on_read, NULL,
-	socks5_on_delete
+	socks5_on_read, NULL
 };
 
 static sockbuf_filter_t delete_listener = {
@@ -251,7 +256,7 @@ static int socks5_on_eof(void *client_data, int idx, int err, const char *errmsg
 
 /* When our idx is deleted, we have to send an error to the original idx and
  * free our stuff. */
-static int socks5_on_delete(void *client_data, int idx)
+static int socks5_on_delete(event_owner_t *owner, void *client_data)
 {
 	proxy_info_t *info = client_data;
 
@@ -328,7 +333,7 @@ int socks5_reconnect(int idx, const char *host, int port)
 	if (idx >= 0) info->their_idx = idx;
 	else info->their_idx = sockbuf_new();
 
-	sockbuf_set_handler(info->our_idx, &socks5_events, info);
+	sockbuf_set_handler(info->our_idx, &socks5_events, info, &socks5_owner);
 	sockbuf_attach_filter(info->their_idx, &delete_listener, info);
 
 	return(info->their_idx);

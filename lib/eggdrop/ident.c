@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: ident.c,v 1.6 2006/10/03 04:02:12 sven Exp $";
+static const char rcsid[] = "$Id: ident.c,v 1.7 2007/09/13 22:20:55 sven Exp $";
 #endif
 
 #include <stdio.h>
@@ -47,8 +47,7 @@ static int ident_result(ident_info_t *ident_info, const char *ident);
 static sockbuf_handler_t ident_handler = {
 	"ident",
 	ident_on_connect, ident_on_eof, NULL,
-	ident_on_read, NULL,
-	NULL
+	ident_on_read, NULL
 };
 
 static ident_info_t *ident_head = NULL;
@@ -79,7 +78,7 @@ int egg_ident_lookup(const char *ip, int their_port, int our_port, int timeout, 
 	ident_info->id = ident_id++;
 	ident_info->next = ident_head;
 	ident_head = ident_info;
-	sockbuf_set_handler(idx, &ident_handler, ident_info);
+	sockbuf_set_handler(idx, &ident_handler, ident_info, NULL);
 	return(ident_info->id);
 }
 

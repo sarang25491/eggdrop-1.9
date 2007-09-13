@@ -16,14 +16,19 @@ typedef struct {
 static int http_on_connect(void *client_data, int idx, const char *peer_ip, int peer_port);
 static int http_on_eof(void *client_data, int idx, int err, const char *errmsg);
 static int http_on_read(void *client_data, int idx, char *data, int len);
-static int http_on_delete(void *client_data, int idx);
+static int http_on_delete(event_owner_t *owner, void *client_data);
 static int http_on_their_delete(void *client_data, int idx);
+
+event_owner_t http_owner = {
+	"proxy", NULL,
+	NULL, NULL,
+	http_on_delete
+};
 
 static sockbuf_handler_t http_events = {
 	"http proxy",
 	http_on_connect, http_on_eof, NULL,
-	http_on_read, NULL,
-	http_on_delete
+	http_on_read, NULL
 };
 
 static sockbuf_filter_t delete_listener = {
@@ -42,7 +47,7 @@ static void http_err(proxy_info_t *info, int err, const char *errmsg)
 	sockbuf_on_eof(idx, SOCKBUF_LEVEL_INTERNAL, err, errmsg);
 }
 
-static int http_on_delete(void *client_data, int idx)
+static int http_on_delete(event_owner_t *owner, void *client_data)
 {
 	proxy_info_t *info = client_data;
 	sockbuf_detach_filter(info->their_idx, &delete_listener, info);
@@ -167,7 +172,7 @@ int http_reconnect(int idx, const char *host, int port)
 
 	info->status = 0;
 
-	sockbuf_set_handler(info->our_idx, &http_events, info);
+	sockbuf_set_handler(info->our_idx, &http_events, info, &http_owner);
 	sockbuf_attach_filter(info->their_idx, &delete_listener, info);
 
 	return(info->their_idx);

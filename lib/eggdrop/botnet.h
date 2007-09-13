@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: botnet.h,v 1.8 2007/08/19 19:49:17 sven Exp $
+ * $Id: botnet.h,v 1.9 2007/09/13 22:20:55 sven Exp $
  */
 
 #ifndef _EGG_BOTNET_H_
@@ -28,13 +28,16 @@
 #define BTN_BOTNET_BOT          "bot"
 #define BTN_BOTNET_EXTENSION    "ext"
 
+#define BOT_DELETED          1
+#define BOT_LINKING          2
+
 #define EXTENSION_ONE        1
 #define EXTENSION_ALL        2
 #define EXTENSION_NEIGHBOURS 3
 
 typedef struct {
 	/* Events that don't depend on a single chan. */
-	int (*on_login)(void *client_data, partymember_t *new, int netburst);
+	int (*on_login)(void *client_data, partymember_t *new);
 	int (*on_bcast)(void *client_data, botnet_entity_t *src, const char *text, int len);
 	int (*on_privmsg)(void *client_data, botnet_entity_t *src, partymember_t *dst, const char *text, int len);
 	int (*on_nick)(void *client_data, partymember_t *src, const char *newnick);
@@ -161,6 +164,7 @@ void botnet_replay_net(botnet_bot_t *bot);
 int botnet_check_direction(botnet_bot_t *direction, botnet_bot_t *src);
 
 void botnet_broadcast(botnet_entity_t *src, const char *text, int len);
+void botnet_announce_login(partymember_t *p);
 void botnet_member_join(partychan_t *chan, partymember_t *p, int linking);
 void botnet_member_part(partychan_t *chan, partymember_t *p, const char *reason, int len);
 void botnet_chanmsg(partychan_t *chan, botnet_entity_t *src, const char *reason, int len);

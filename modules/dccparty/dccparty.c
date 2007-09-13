@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dccparty.c,v 1.15 2007/01/13 12:23:40 sven Exp $";
+static const char rcsid[] = "$Id: dccparty.c,v 1.16 2007/09/13 22:20:56 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -47,7 +47,7 @@ static int got_chat_request(char *nick, char *uhost, user_t *u, char *type, char
 static int dcc_on_connect(void *client_data, int idx, const char *peer_ip, int peer_port);
 static int dcc_on_read(void *client_data, int idx, char *data, int len);
 static int dcc_on_eof(void *client_data, int idx, int err, const char *errmsg);
-static int dcc_on_delete(void *client_data, int idx);
+static int dcc_on_delete(event_owner_t *owner, void *client_data);
 static int dcc_pm_delete(event_owner_t *owner, void *client_data);
 
 static int ident_result(void *client_data, const char *ip, int port, const char *reply);
@@ -66,11 +66,16 @@ static event_owner_t dcc_pm_owner = {
 	dcc_pm_delete
 };
 
+static event_owner_t dcc_sock_owner = {
+	"dccparty", 0,
+	0, 0,
+	dcc_on_delete
+};
+
 static sockbuf_handler_t dcc_handler = {
 	"dcc",
 	dcc_on_connect, dcc_on_eof, NULL,
-	dcc_on_read, NULL,
-	dcc_on_delete
+	dcc_on_read, NULL
 };
 
 int dcc_init()
@@ -107,7 +112,7 @@ static int got_chat_request(char *nick, char *uhost, user_t *u, char *type, char
 	session->nick = strdup(nick);
 	session->idx = idx;
 
-	sockbuf_set_handler(idx, &dcc_handler, session);
+	sockbuf_set_handler(idx, &dcc_handler, session, &dcc_sock_owner);
 	linemode_on(idx);
 	return(0);
 }
@@ -243,15 +248,18 @@ static int dcc_pm_delete(event_owner_t *owner, void *client_data)
 {
 	dcc_session_t *session = client_data;
 
+	session->party = NULL;
+
 	sockbuf_delete(session->idx);
 
 	return 0;
 }
 
-static int dcc_on_delete(void *client_data, int idx)
+static int dcc_on_delete(event_owner_t *owner, void *client_data)
 {
 	dcc_session_t *session = client_data;
 
+	session->idx = -1;
 	if (session->party) {
 		partymember_delete(session->party, NULL, "Deleted!");
 		session->party = NULL;
@@ -274,7 +282,7 @@ int dccparty_LTX_start(egg_module_t *modinfo)
 {
 	void *config_root;
 
-	dcc_generic_owner.module = dcc_pm_owner.module = modinfo;
+	dcc_generic_owner.module = dcc_sock_owner.module = dcc_pm_owner.module = modinfo;
 
 	modinfo->name = "dccparty";
 	modinfo->author = "eggdev";

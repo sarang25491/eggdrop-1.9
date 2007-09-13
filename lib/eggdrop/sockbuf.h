@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: sockbuf.h,v 1.8 2004/10/10 04:55:11 stdarg Exp $
+ * $Id: sockbuf.h,v 1.9 2007/09/13 22:20:55 sven Exp $
  */
 
 #ifndef _EGG_SOCKBUF_H_
@@ -95,21 +95,21 @@ typedef struct {
 	int (*on_written)(void *client_data, int idx, int len, int remaining);
 
 	/* Command-level events. */
-	int (*on_delete)(void *client_data, int idx);
+//	int (*on_delete)(void *client_data, int idx);
 } sockbuf_handler_t;
 
 int sockbuf_init(void);
 int sockbuf_shutdown(void);
 
 int sockbuf_write(int idx, const char *data, int len);
-int sockbuf_new();
+int sockbuf_new(void);
 int sockbuf_delete(int idx);
 int sockbuf_list(int **idx, int *len, int flags);
 int sockbuf_isvalid(int idx);
 int sockbuf_close(int idx);
 int sockbuf_flush(int idx);
 int sockbuf_get_handler(int idx, sockbuf_handler_t **handler, void *client_data_ptr);
-int sockbuf_set_handler(int idx, sockbuf_handler_t *handler, void *client_data);
+int sockbuf_set_handler(int idx, sockbuf_handler_t *handler, void *client_data, event_owner_t *owner);
 int sockbuf_get_sock(int idx);
 int sockbuf_set_sock(int idx, int sock, int flags);
 int sockbuf_get_peer(int idx, const char **peer_ip, int *peer_port);

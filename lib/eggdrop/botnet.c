@@ -28,15 +28,12 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: botnet.c,v 1.12 2007/08/19 19:49:16 sven Exp $";
+static const char rcsid[] = "$Id: botnet.c,v 1.13 2007/09/13 22:20:55 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
 
 #define BAD_BOTNAME_CHARS " *?@:"   //!< A string of characters that aren't allowed in a botname.
-
-#define BOT_DELETED 1
-
 
 typedef struct {
 	int priority;
@@ -582,7 +579,7 @@ static void botnet_recursive_replay_net(botnet_bot_t *dst, botnet_bot_t *start)
 	
 	for (p = start ? start->partys : partymember_get_local_head(); p; p = p->next_on_bot) {
 		if (p->flags & PARTY_DELETED) continue;
-		if (dst->handler->on_login) dst->handler->on_login(dst->client_data, p, 1);
+		if (dst->handler->on_login) dst->handler->on_login(dst->client_data, p);
 		for (i = 0; i < p->nchannels; ++i) {
 			if (dst->handler->on_join) dst->handler->on_join(dst->client_data, p->channels[i], p, 1);
 		}
@@ -854,6 +851,29 @@ void botnet_member_join(partychan_t *chan, partymember_t *p, int linking)
 	for (tmp = localbot_head; tmp; tmp = tmp->next_local) {
 		if (tmp->flags & BOT_DELETED || (p->bot && tmp == p->bot->direction)) continue;
 		if (tmp->handler && tmp->handler->on_join) tmp->handler->on_join(tmp->client_data, chan, p, linking);
+	}
+}
+
+/*!
+ * \brief Sends a partyline join out to the botnet
+ *
+ * This function simply calls the on_login callback for all directly linked
+ * bots except the one the event came from. It should only be called by
+ * exactly one function.
+ *
+ * \param p The user that has joined the partyline.
+ *
+ * \warning If this function is referenced by \e any other function
+ *          except partychan_new() it is a bug.
+ */
+
+void botnet_announce_login(partymember_t *p)
+{
+	botnet_bot_t *tmp;
+
+	for (tmp = localbot_head; tmp; tmp = tmp->next_local) {
+		if (tmp->flags & BOT_DELETED || (p->bot && tmp == p->bot->direction)) continue;
+		if (tmp->handler && tmp->handler->on_login) tmp->handler->on_login(tmp->client_data, p);
 	}
 }
 

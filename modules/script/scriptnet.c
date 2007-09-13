@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptnet.c,v 1.11 2006/08/20 15:23:05 sven Exp $";
+static const char rcsid[] = "$Id: scriptnet.c,v 1.12 2007/09/13 22:20:57 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -56,14 +56,52 @@ static int on_eof(void *client_data, int idx, int err, const char *errmsg);
 static int on_newclient(void *client_data, int idx, int newidx, const char *peer_ip, int peer_port);
 static int on_read(void *client_data, int idx, char *data, int len);
 static int on_written(void *client_data, int idx, int len, int remaining);
-static int on_delete(void *client_data, int idx);
+static int on_delete(event_owner_t *owner, void *client_data);
 
 static sockbuf_handler_t sock_handler = {
 	"script",
 	on_connect, on_eof, on_newclient,
-	on_read, on_written,
+	on_read, on_written
+};
+
+event_owner_t socket_owner = {
+	"script", NULL,
+	NULL, NULL,
 	on_delete
 };
+
+void script_event_cleanup(egg_module_t *module) {
+	script_net_info_t *i, *next;
+
+	for (i = script_net_info_head; i; i = next) {
+		next = i->next;
+		if (i->on_connect && i->on_connect->owner && i->on_connect->owner->module == module) {
+			if (i->on_connect->owner->on_delete) i->on_connect->owner->on_delete(i->on_connect->owner, i->on_connect);
+			i->on_connect = NULL;
+		}
+		if (i->on_eof && i->on_eof->owner && i->on_eof->owner->module == module) {
+			if (i->on_eof->owner->on_delete) i->on_eof->owner->on_delete(i->on_eof->owner, i->on_eof);
+			i->on_eof = NULL;
+		}
+		if (i->on_newclient && i->on_newclient->owner && i->on_newclient->owner->module == module) {
+			if (i->on_newclient->owner->on_delete) i->on_newclient->owner->on_delete(i->on_newclient->owner, i->on_newclient);
+			i->on_newclient = NULL;
+		}
+		if (i->on_read && i->on_read->owner && i->on_read->owner->module == module) {
+			if (i->on_read->owner->on_delete) i->on_read->owner->on_delete(i->on_read->owner, i->on_read);
+			i->on_read = NULL;
+		}
+		if (i->on_written && i->on_written->owner && i->on_written->owner->module == module) {
+			if (i->on_written->owner->on_delete) i->on_written->owner->on_delete(i->on_written->owner, i->on_written);
+			i->on_written = NULL;
+		}
+		if (i->on_delete && i->on_delete->owner && i->on_delete->owner->module == module) {
+			if (i->on_delete->owner->on_delete) i->on_delete->owner->on_delete(i->on_delete->owner, i->on_delete);
+			i->on_delete = NULL;
+		}
+		if (!i->on_connect && !i->on_eof && !i->on_newclient && !i->on_read && !i->on_written && !i->on_delete) sockbuf_delete(i->idx);
+	}
+}
 
 /* Put an idx under script control. */
 static int script_net_takeover(int idx)
@@ -73,7 +111,7 @@ static int script_net_takeover(int idx)
 	info = calloc(1, sizeof(*info));
 	info->idx = idx;
 	script_net_info_add(info);
-	sockbuf_set_handler(info->idx, &sock_handler, info);
+	sockbuf_set_handler(info->idx, &sock_handler, info, &socket_owner);
 	return(0);
 }
 
@@ -288,7 +326,7 @@ static int on_written(void *client_data, int idx, int len, int remaining)
 	return(0);
 }
 
-static int on_delete(void *client_data, int idx)
+static int on_delete(event_owner_t *owner, void *client_data)
 {
 	script_net_info_t *info = client_data;
 
@@ -299,7 +337,7 @@ static int on_delete(void *client_data, int idx)
 	if (info->on_written && info->on_written->owner && info->on_written->owner->on_delete) info->on_written->owner->on_delete(info->on_written->owner, info->on_written);
 
 	if (info->on_delete) {
-		info->on_delete->callback(info->on_delete, idx);
+		info->on_delete->callback(info->on_delete, info->idx);
 		if (info->on_delete && info->on_delete->owner && info->on_delete->owner->on_delete) info->on_delete->owner->on_delete(info->on_delete->owner, info->on_delete);
 	}
 	script_net_info_remove(info);

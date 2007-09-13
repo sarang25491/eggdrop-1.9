@@ -64,6 +64,7 @@ static int proxy_close(int why)
 
 int proxy_LTX_start(egg_module_t *modinfo)
 {
+	http_owner.module = socks5_owner.module = modinfo;
 	modinfo->name = "proxy";
 	modinfo->author = "eggdev";
 	modinfo->version = "1.0.0";

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dcc.c,v 1.26 2006/09/12 01:50:51 sven Exp $";
+static const char rcsid[] = "$Id: dcc.c,v 1.27 2007/09/13 22:20:57 sven Exp $";
 #endif
 
 #include <unistd.h>
@@ -60,7 +60,7 @@ static dcc_send_t *dcc_send_head = NULL;
 static dcc_send_t *dcc_recv_head = NULL;
 
 static int dcc_listen_newclient(void *client_data, int idx, int newidx, const char *peer_ip, int peer_port);
-static int dcc_listen_delete(void *client_data, int idx);
+static int dcc_listen_delete(event_owner_t *owner, void *client_data);
 static int dcc_listen_timeout(void *client_data);
 static int dcc_chat_connect(void *client_data, int idx, const char *peer_ip, int peer_port);
 static int dcc_chat_eof(void *client_data, int idx, int err, const char *errmsg);
@@ -78,11 +78,16 @@ static int dcc_recv_eof(void *client_data, int idx, int err, const char *errmsg)
 static int dcc_recv_delete(void *client_data, int idx);
 static void update_snapshot(dcc_send_t *send, int len);
 
+event_owner_t server_dcclistener_owner = {
+	"server", 0,
+	0, 0,
+	dcc_listen_delete
+};
+
 static sockbuf_handler_t dcc_listen_handler = {
 	"DCC listen",
 	NULL, NULL, dcc_listen_newclient,
-	NULL, NULL,
-	dcc_listen_delete
+	NULL, NULL
 };
 
 #define DCC_FILTER_LEVEL (SOCKBUF_LEVEL_TEXT_BUFFER + 100)
@@ -135,7 +140,7 @@ static dcc_listen_t *dcc_listen(int timeout)
 	listen->serv = idx;
 	listen->port = port;
 
-	sockbuf_set_handler(idx, &dcc_listen_handler, listen);
+	sockbuf_set_handler(idx, &dcc_listen_handler, listen, &server_dcclistener_owner);
 
 	/* See if they want the default timeout. */
 	if (!timeout) timeout = server_config.dcc_timeout;
@@ -195,7 +200,7 @@ static int dcc_listen_newclient(void *client_data, int idx, int newidx, const ch
 	return(0);
 }
 
-static int dcc_listen_delete(void *client_data, int idx)
+static int dcc_listen_delete(event_owner_t *owner, void *client_data)
 {
 	dcc_listen_t *listen = client_data;
 

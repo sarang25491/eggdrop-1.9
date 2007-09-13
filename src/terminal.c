@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: terminal.c,v 1.10 2007/06/03 23:43:46 sven Exp $";
+static const char rcsid[] = "$Id: terminal.c,v 1.11 2007/09/13 22:20:58 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>			/* partyline_*		*/
@@ -41,7 +41,6 @@ static sockbuf_handler_t terminal_sockbuf_handler = {
 	NULL,
 	NULL,
 	on_read,
-	NULL,
 	NULL
 };
 
@@ -74,7 +73,7 @@ int terminal_init(void)
 	/* Connect an idx to stdin. */
 	terminal_session.in_idx = sockbuf_new();
 	sockbuf_set_sock(terminal_session.in_idx, dup(fileno(stdin)), SOCKBUF_CLIENT);
-	sockbuf_set_handler(terminal_session.in_idx, &terminal_sockbuf_handler, NULL);
+	sockbuf_set_handler(terminal_session.in_idx, &terminal_sockbuf_handler, NULL, NULL);
 	linemode_on(terminal_session.in_idx);
 
 	/* And one for stdout. */

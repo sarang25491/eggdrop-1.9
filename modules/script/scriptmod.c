@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptmod.c,v 1.14 2006/08/25 17:22:51 sven Exp $";
+static const char rcsid[] = "$Id: scriptmod.c,v 1.15 2007/09/13 22:20:57 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -44,10 +44,12 @@ EXPORT_SCOPE int script_LTX_start(egg_module_t *modinfo);
 
 int script_LTX_start(egg_module_t *modinfo)
 {
+	socket_owner.module = modinfo;
 	modinfo->name = "script";
 	modinfo->author = "eggdev";
 	modinfo->version = "1.0.0";
 	modinfo->description = "provides core scripting functions";
+	modinfo->event_cleanup = script_event_cleanup;
 
 	script_create_commands(script_config_cmds);
 	script_create_commands(script_log_cmds);

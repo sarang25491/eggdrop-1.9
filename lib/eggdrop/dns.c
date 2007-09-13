@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dns.c,v 1.20 2007/04/14 15:21:11 sven Exp $";
+static const char rcsid[] = "$Id: dns.c,v 1.21 2007/09/13 22:20:55 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -154,7 +154,7 @@ static void get_dns_idx()
 	}
 	if (i == 5) return;
 	dns_idx = sockbuf_new();
-	sockbuf_set_handler(dns_idx, &dns_handler, NULL);
+	sockbuf_set_handler(dns_idx, &dns_handler, NULL, NULL);
 	sockbuf_set_sock(dns_idx, sock, 0);
 }
 

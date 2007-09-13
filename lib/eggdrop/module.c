@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: module.c,v 1.14 2007/08/19 19:49:17 sven Exp $";
+static const char rcsid[] = "$Id: module.c,v 1.15 2007/09/13 22:20:55 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -248,6 +248,7 @@ static void module_really_unload(module_list_t *entry)
 {
 	int errors;
 	const char *error;
+	module_list_t *m;
 
 	if (entry->prev) entry->prev->next = entry->next;
 	else deleted_head = entry->next;
@@ -257,6 +258,14 @@ static void module_really_unload(module_list_t *entry)
 
 	script_remove_events_by_owner(&entry->modinfo, 0);
 
+	for (m = module_list_head; m; m = m->next) {
+		if (m->modinfo.event_cleanup) m->modinfo.event_cleanup(&entry->modinfo);
+	}
+	
+	for (m = deleted_head; m; m = m->next) {
+		if (m->modinfo.event_cleanup) m->modinfo.event_cleanup(&entry->modinfo);
+	}
+	
 	errors = lt_dlclose(entry->hand);
 	if (errors) {
 		putlog(LOG_MISC, "*", "Error unloading %s!", entry->modinfo.name);

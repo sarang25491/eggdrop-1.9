@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: sockbuf.c,v 1.22 2007/01/13 12:23:40 sven Exp $";
+static const char rcsid[] = "$Id: sockbuf.c,v 1.23 2007/09/13 22:20:55 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -58,6 +58,7 @@ typedef struct {
 
 	sockbuf_handler_t *handler;	/* User's event handlers */
 	void *client_data;	/* User's client data */
+	event_owner_t *owner;
 } sockbuf_t;
 
 static sockbuf_t *sockbufs = NULL;
@@ -613,7 +614,7 @@ int sockbuf_delete(int idx)
 		}
 	}
 
-	if (sbuf->handler->on_delete) sbuf->handler->on_delete(sbuf->client_data, idx);
+	if (sbuf->owner && sbuf->owner->on_delete) sbuf->owner->on_delete(sbuf->owner, sbuf->client_data);
 
 	/* Close the file descriptor. */
 	if (sbuf->sock >= 0) socket_close(sbuf->sock);
@@ -669,11 +670,12 @@ int sockbuf_get_handler(int idx, sockbuf_handler_t **handler, void *client_data_
 	return(0);
 }
 
-int sockbuf_set_handler(int idx, sockbuf_handler_t *handler, void *client_data)
+int sockbuf_set_handler(int idx, sockbuf_handler_t *handler, void *client_data, event_owner_t *owner)
 {
 	if (!sockbuf_isvalid(idx)) return(-1);
 	sockbufs[idx].handler = handler;
 	sockbufs[idx].client_data = client_data;
+	sockbufs[idx].owner = owner;
 
 	return(0);
 }

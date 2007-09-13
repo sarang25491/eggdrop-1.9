@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: servsock.c,v 1.25 2005/06/21 02:55:34 stdarg Exp $";
+static const char rcsid[] = "$Id: servsock.c,v 1.26 2007/09/13 22:20:58 sven Exp $";
 #endif
 
 #include "server.h"
@@ -30,13 +30,11 @@ static void disconnect_server();
 static int server_on_connect(void *client_data, int idx, const char *peer_ip, int peer_port);
 static int server_on_eof(void *client_data, int idx, int err, const char *errmsg);
 static int server_on_read(void *client_data, int idx, char *text, int len);
-static int server_on_delete(void *client_data, int idx);
 
 static sockbuf_handler_t server_handler = {
 	"server",
 	server_on_connect, server_on_eof, NULL,
-	server_on_read, NULL,
-	server_on_delete
+	server_on_read, NULL
 };
 
 /**********************************************************************
@@ -66,7 +64,7 @@ void connect_to_next_server() {
 	if (current_server.idx < 0) {
 		putlog(LOG_SERV, "*", _("Error connecting to server."));
 	}
-	sockbuf_set_handler(current_server.idx, &server_handler, NULL);
+	sockbuf_set_handler(current_server.idx, &server_handler, NULL, NULL);
 }
 
 /* Close the current server connection. */
@@ -154,10 +152,5 @@ static int server_on_read(void *client_data, int idx, char *text, int len)
 {
 	if (!len) return(0);
 	server_parse_input(text);
-	return(0);
-}
-
-static int server_on_delete(void *client_data, int idx)
-{
 	return(0);
 }

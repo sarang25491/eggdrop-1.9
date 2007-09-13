@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: server.c,v 1.67 2007/01/13 12:23:40 sven Exp $";
+static const char rcsid[] = "$Id: server.c,v 1.68 2007/09/13 22:20:57 sven Exp $";
 #endif
 
 #include "server.h"
@@ -309,7 +309,7 @@ EXPORT_SCOPE int start(egg_module_t *modinfo);
 
 int start(egg_module_t *modinfo)
 {
-	server_owner.module = modinfo;
+	server_owner.module = server_dcclistener_owner.module = modinfo;
 
 	modinfo->name = "server";
 	modinfo->author = "eggdev";
