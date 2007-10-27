@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: botnet.c,v 1.4 2007/09/13 22:20:56 sven Exp $";
+static const char rcsid[] = "$Id: botnet.c,v 1.5 2007/10/27 19:55:51 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -49,9 +49,22 @@ static int idx_on_read(void *client_data, int idx, char *data, int len);
 static int idx_on_eof(void *client_data, int idx, int err, const char *errmsg);
 static int idx_on_delete(event_owner_t *owner, void *client_data);
 
+static int got_bbroadcast(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len);
+static int got_botmsg(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len);
+static int got_bquit(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len);
+static int got_broadcast(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len);
+static int got_chanmsg(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len);
+static int got_endlink(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len);
+static int got_extension(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len);
 static int got_join(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len);
+static int got_link(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len);
 static int got_login(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len);
 static int got_newbot(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len);
+static int got_nick(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len);
+static int got_part(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len);
+static int got_privmsg(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len);
+static int got_quit(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len);
+static int got_unlink(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len);
 
 static struct {
 	char *cmd;
@@ -59,9 +72,22 @@ static struct {
 	int min_argc;
 	int (*function)(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len);
 } cmd_mapping[] = {
+	{"bbroadcast", ENTITY_BOT, 1, got_bbroadcast},
+	{"botmsg", ENTITY_BOT, 1, got_botmsg},
+	{"bquit", ENTITY_BOT, 0, got_bquit},
+	{"broadcast", 0, 1, got_broadcast},
+	{"chanmsg", 0, 2, got_chanmsg},
+	{"el", ENTITY_BOT, 0, got_endlink},
+	{"extension", 0, 2, got_extension},
 	{"join", ENTITY_PARTYMEMBER, 1, got_join},
+	{"link", 0, 2, got_link},
 	{"login", ENTITY_BOT, 4, got_login},
-	{"newbot", ENTITY_BOT, 4, got_newbot}
+	{"newbot", ENTITY_BOT, 4, got_newbot},
+	{"nick", ENTITY_PARTYMEMBER, 1, got_nick},
+	{"part", ENTITY_PARTYMEMBER, 1, got_part},
+	{"privmsg", 0, 2, got_privmsg},
+	{"quit", ENTITY_PARTYMEMBER, 0, got_quit},
+	{"unlink", 0, 2, got_unlink}
 };
 
 static int cmd_num = sizeof(cmd_mapping) / sizeof(cmd_mapping[0]);
@@ -178,7 +204,7 @@ static int party_minus_bot(partymember_t *p, char *nick, user_t *u, char *cmd, c
 	return(BIND_RET_LOG);
 }
 
-static int get_entity(botnet_entity_t *ent, const char *text)
+static int get_entity(botnet_entity_t *ent, char *text)
 {
 	char *p;
 	int id = -1;
@@ -237,6 +263,73 @@ static int do_link(user_t *user, const char *type)
 	return BIND_RET_BREAK;
 }
 
+static int got_bbroadcast(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len)
+{
+	if (argc <= 1) len = 0;
+	botnet_botbroadcast(src->bot, argv[0], argv[argc - 1], len);
+
+	return 0;
+}
+
+static int got_botmsg(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len)
+{
+	botnet_entity_t dst;
+
+	if (get_entity(&dst, argv[0])) return 0;
+	if (dst.what != ENTITY_BOT) return 0;
+
+	if (argc <= 2) len = 0;
+	botnet_botmsg(src->bot, dst.bot, argv[1], argv[argc - 1], len);
+
+	return 0;
+}
+
+static int got_bquit(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len)
+{
+	botnet_delete(src->bot, len ? argv[0] : "No reason");
+
+	return 0;
+}
+
+static int got_broadcast(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len)
+{
+	botnet_broadcast(src, argv[0], len);
+
+	return 0;
+}
+
+static int got_chanmsg(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len)
+{
+	partychan_msg_name(argv[0], src, argv[1], len);
+
+	return 0;
+}
+
+static int got_endlink(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len)
+{
+	botnet_link_success(src->bot);
+
+	return 0;
+}
+
+static int got_extension(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len)
+{
+	botnet_entity_t dst;
+
+	if (argc <= 2) len = 0;
+
+	if (argv[0][0] == '*') {
+		botnet_extension(EXTENSION_ALL, src, NULL, NULL, argv[1], argv[argc - 1], len);
+	}
+
+	if (get_entity(&dst, argv[0])) return 0;
+	if (dst.what != ENTITY_BOT) return 0;
+
+	botnet_extension(EXTENSION_ONE, src, dst.bot, NULL, argv[1], argv[argc - 1], len);
+
+	return 0;
+}
+
 /* login channel [netburst] */
 
 static int got_join(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len)
@@ -246,6 +339,17 @@ static int got_join(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char 
 	if (argc >= 2) netburst = b64dec_int(argv[1]) & 1;
 	partychan_join_name(argv[0], src->user, netburst);
 
+	return 0;
+}
+
+static int got_link(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len)
+{
+	botnet_entity_t dst;
+
+	if (get_entity(&dst, argv[0])) return 0;
+	if (dst.what != ENTITY_BOT) return 0;
+
+	botnet_link(src, dst.bot, argv[1]);
 	return 0;
 }
 
@@ -279,6 +383,51 @@ static int got_newbot(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, cha
 		return 0;
 	}
 
+	return 0;
+}
+
+static int got_nick(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len)
+{
+	partymember_set_nick(src->user, argv[0]);
+	return 0;
+}
+
+static int got_part(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len)
+{
+	char *reason = NULL;
+
+	if (argc >= 2) reason = argv[argc - 1];
+	partychan_part_name(argv[0], src->user, reason);
+
+	return 0;
+}
+
+static int got_privmsg(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len)
+{
+	partymember_t *dst;
+	botnet_entity_t ent;
+
+	if (get_entity(&ent, argv[0])) return 0;
+	if (ent.what != ENTITY_PARTYMEMBER) return 0;
+	dst = ent.user;
+	partymember_msg(dst, src, argv[1], len);
+	return 0;
+}
+
+static int got_quit(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len)
+{
+	partymember_delete(src->user, NULL, len ? argv[0] : "No reason.");
+	return 0;
+}
+
+static int got_unlink(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len)
+{
+	botnet_entity_t dst;
+
+	if (get_entity(&dst, argv[0])) return 0;
+	if (dst.what != ENTITY_BOT) return 0;
+
+	botnet_link(src, dst.bot, argv[1]);
 	return 0;
 }
 

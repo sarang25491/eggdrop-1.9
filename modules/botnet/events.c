@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: events.c,v 1.3 2007/09/13 22:20:56 sven Exp $";
+static const char rcsid[] = "$Id: events.c,v 1.4 2007/10/27 19:55:51 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -52,8 +52,8 @@ static int on_login(void *client_data, partymember_t *src)
 {
 	bot_t *b = client_data;
 
-	if (src->bot) egg_iprintf(b->idx, ":%s login %s %s %s %s %d", src->bot->name, src->nick, src->ident, src->host, b64enc_int(src->id));
-	else egg_iprintf(b->idx, "login %s %s %s %s %d", src->nick, src->ident, src->host, b64enc_int(src->id));
+	if (src->bot) egg_iprintf(b->idx, ":%s login %s %s %s %s", src->bot->name, src->nick, src->ident, src->host, b64enc_int(src->id));
+	else egg_iprintf(b->idx, "login %s %s %s %s", src->nick, src->ident, src->host, b64enc_int(src->id));
 
 	return 0;
 }
@@ -112,7 +112,7 @@ static int on_chanmsg(void *client_data, partychan_t *chan, botnet_entity_t *src
 {
 	bot_t *b = client_data;
 
-	egg_iprintf(b->idx, ":%s chanmsg %s :%s", entity_net_name(src), chan->name, text ? text : text);
+	egg_iprintf(b->idx, ":%s chanmsg %s :%s", entity_net_name(src), chan->name, text ? text : "");
 
 	return 0;
 }
@@ -157,7 +157,7 @@ static int on_lost_bot(void *client_data, botnet_bot_t *bot, const char *reason)
 {
 	bot_t *b = client_data;
 
-	egg_iprintf(b->idx, ":%s bquit :%s", bot->name, reason ? reason : reason);
+	egg_iprintf(b->idx, ":%s bquit :%s", bot->name, reason ? reason : "No reason");
 
 	return 0;
 }
