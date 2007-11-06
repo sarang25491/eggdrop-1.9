@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.43 2007/08/18 23:03:09 sven Exp $
+# $Id: Makefile.am,v 1.44 2007/11/06 00:05:39 sven Exp $
 
 MAINTAINERCLEANFILES	= Makefile.in
 
@@ -49,6 +49,7 @@ libeggdrop_la_SOURCES	= base64.c base64.h \
 			partymember.c partymember.h \
 			script.c script.h \
 			sockbuf.c sockbuf.h \
+			socktimer.c socktimer.h \
 			stat.h \
 			throttle.c throttle.h \
 			users.c users.h \

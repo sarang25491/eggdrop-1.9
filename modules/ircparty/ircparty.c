@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: ircparty.c,v 1.20 2007/09/13 22:20:56 sven Exp $";
+static const char rcsid[] = "$Id: ircparty.c,v 1.21 2007/11/06 00:05:40 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -135,6 +135,7 @@ static int irc_on_newclient(void *client_data, int idx, int newidx, const char *
 	session->idx = newidx;
 
 	sockbuf_set_handler(newidx, &client_handler, session, &irc_sock_owner);
+	socktimer_on(newidx, 60, 0, NULL, NULL, &irc_generic_owner);
 	linemode_on(newidx);
 
 	/* Stealth logins are where we don't say anything until we know they
@@ -323,6 +324,7 @@ static int irc_on_read(void *client_data, int idx, char *data, int len)
 				session->party = partymember_new(-1, session->user, NULL, session->nick, session->ident ? session->ident : "~ircparty", session->host ? session->host : session->ip, &irc_party_handler, session, &irc_pm_owner);
 				session->state = STATE_PARTYLINE;
 				irc_greet(session);
+				socktimer_off(idx);
 				partychan_join_name("*", session->party, 0);
 			}
 			break;

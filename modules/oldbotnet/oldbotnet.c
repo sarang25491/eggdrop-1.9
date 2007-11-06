@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: oldbotnet.c,v 1.24 2007/09/13 22:20:56 sven Exp $";
+static const char rcsid[] = "$Id: oldbotnet.c,v 1.25 2007/11/06 00:05:40 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -374,9 +374,24 @@ static int do_link(user_t *user, const char *type)
 
 	sockbuf_set_handler(data->idx, &oldbotnet_handler, data, &sock_owner);
 	linemode_on(data->idx);
+	socktimer_on(data->idx, 30, 0, NULL, NULL, &generic_owner);
 
 	putlog(LOG_MISC, "*", _("Linking to %s (%s %d) on idx %d as %s."), user->handle, host, port, data->idx, data->name);
 	return BIND_RET_BREAK;
+}
+
+static void do_ping(int idx, void *client_data)
+{
+	oldbotnet_t *obot = client_data;
+
+	if (obot->idle == -1) {
+		botnet_delete(obot->bot, _("Ping timeout"));
+	} else if (obot->idle == 0) {
+		obot->idle = 1;
+	} else {
+		obot->idle = -1;
+		egg_iprintf(obot->idx, "pi\n");
+	}
 }
 
 /*!
@@ -480,6 +495,7 @@ static void got_version(oldbotnet_t *bot, const char *next)
 		xml_node_delete(info);
 		return;
 	}
+	socktimer_on(bot->idx, 90, TIMER_REPEAT, do_ping, bot, &generic_owner);
 	botnet_replay_net(bot->bot);
 	egg_iprintf(bot->idx, "el\n");
 }

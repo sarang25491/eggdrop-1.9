@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: botnet.c,v 1.5 2007/10/27 19:55:51 sven Exp $";
+static const char rcsid[] = "$Id: botnet.c,v 1.6 2007/11/06 00:05:40 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -62,6 +62,8 @@ static int got_login(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char
 static int got_newbot(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len);
 static int got_nick(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len);
 static int got_part(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len);
+static int got_ping(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len);
+static int got_pong(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len);
 static int got_privmsg(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len);
 static int got_quit(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len);
 static int got_unlink(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len);
@@ -85,6 +87,8 @@ static struct {
 	{"newbot", ENTITY_BOT, 4, got_newbot},
 	{"nick", ENTITY_PARTYMEMBER, 1, got_nick},
 	{"part", ENTITY_PARTYMEMBER, 1, got_part},
+	{"ping", ENTITY_BOT, 0, got_ping},
+	{"pong", ENTITY_BOT, 0, got_pong},
 	{"privmsg", 0, 2, got_privmsg},
 	{"quit", ENTITY_PARTYMEMBER, 0, got_quit},
 	{"unlink", 0, 2, got_unlink}
@@ -258,9 +262,24 @@ static int do_link(user_t *user, const char *type)
 
 	sockbuf_set_handler(data->idx, &client_handler, data, &sock_owner);
 	netstring_on(data->idx);
+	socktimer_on(data->idx, 30, 0, NULL, NULL, &generic_owner);
 
 	putlog(LOG_MISC, "*", _("Linking to %s (%s %d) on idx %d."), user->handle, host, port, data->idx);
 	return BIND_RET_BREAK;
+}
+
+static void do_ping(int idx, void *client_data)
+{
+	bot_t *bot = client_data;
+
+	if (bot->idle == -1) {
+		botnet_delete(bot->bot, _("Ping timeout"));
+	} else if (bot->idle == 0) {
+		bot->idle = 1;
+	} else {
+		bot->idle = -1;
+		egg_iprintf(bot->idx, "ping\n");
+	}
 }
 
 static int got_bbroadcast(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len)
@@ -402,6 +421,18 @@ static int got_part(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char 
 	return 0;
 }
 
+static int got_ping(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len)
+{
+	egg_iprintf(bot->idx, "pong\n");
+
+	return 0;
+}
+
+static int got_pong(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len)
+{
+	return 0;
+}
+
 static int got_privmsg(bot_t *bot, botnet_entity_t *src, char *cmd, int argc, char *argv[21], int len)
 {
 	partymember_t *dst;
@@ -447,13 +478,20 @@ static int idx_on_newclient(void *client_data, int idx, int newidx, const char *
 
 	sockbuf_set_handler(newidx, &client_handler, session, &sock_owner);
 	netstring_on(newidx);
+	socktimer_on(newidx, 30, 0, NULL, NULL, &generic_owner);
 
 	return 0;
 }
 
 static int idx_on_connect(void *client_data, int idx, const char *peer_ip, int peer_port)
 {
-	egg_iprintf(idx, ":%s proto", botnet_get_name());
+	bot_t *bot = client_data;
+
+	// no special features yet
+	// egg_iprintf(idx, "proto para1 para2");
+	bot->proto = malloc(sizeof(*bot->proto));
+	bot->proto->dummy = 0;
+	egg_iprintf(idx, ":%s hello %s", botnet_get_name(), bot->user->handle);
 
 	return 0;
 }
@@ -472,11 +510,8 @@ static int idx_on_connect(void *client_data, int idx, const char *peer_ip, int p
  */
 
 static int recving_login(bot_t *bot, char *src, char *cmd, int argc, char *argv[], int len) {
-	if (!bot->user) {
-		if (!src) {
-			sockbuf_delete(bot->idx);
-			return 0;
-		} else {
+	if (src) {
+		if (!bot->user) {
 			bot->user = user_lookup_by_handle(src);
 			if (!bot->user || !(bot->user->flags & USER_BOT) || !strcmp(src, botnet_get_name())) {
 				sockbuf_delete(bot->idx);
@@ -486,11 +521,12 @@ static int recving_login(bot_t *bot, char *src, char *cmd, int argc, char *argv[
 				sockbuf_delete(bot->idx);
 				return 0;
 			}
+		} else {
+			if (src && strcmp(src, bot->user->handle)) {
+				sockbuf_delete(bot->idx);
+				return 0;
+			}
 		}
-	}
-	if (src && strcmp(src, bot->user->handle)) {
-		sockbuf_delete(bot->idx);
-		return 0;
 	}
 	if (!strcasecmp(cmd, "PROTO")) {
 		if (bot->proto) {
@@ -500,7 +536,18 @@ static int recving_login(bot_t *bot, char *src, char *cmd, int argc, char *argv[
 		bot->proto = malloc(sizeof(*bot->proto));
 		bot->proto->dummy = 0;
 		egg_iprintf(bot->idx, "PROTO");
-	} else if (!strcasecmp(cmd, "HELLO")) {
+		return 0;
+	}
+	if (!bot->user) {
+		sockbuf_delete(bot->idx);
+		return 0;
+	}
+	if (!bot->proto) {
+		bot->proto = malloc(sizeof(*bot->proto));
+		bot->proto->dummy = 0;
+	}
+
+	if (!strcasecmp(cmd, "HELLO")) {
 		int i;
 		char salt[33], *pass = NULL;
 		unsigned char hash[16];
@@ -519,8 +566,8 @@ static int recving_login(bot_t *bot, char *src, char *cmd, int argc, char *argv[
 		for (i = 0; i < 32; ++i) {
 			salt[i] = random() % 62;
 			if (salt[i] < 26) salt[i] += 'A';
-			else if (salt[i] < 52) salt[i] += 'a';
-			else salt[i] += '0';
+			else if (salt[i] < 52) salt[i] += 'a' - 26;
+			else salt[i] += '0' - 52;
 		}
 		salt[32] = 0;
 		MD5_Init(&md5);
@@ -554,6 +601,7 @@ static int recving_login(bot_t *bot, char *src, char *cmd, int argc, char *argv[
 		xml_node_set_str(argv[2], info, "version", 0, (void *) 0);
 		
 		bot->bot = botnet_new(bot->user->handle, bot->user, NULL, NULL, info, &bothandler, bot, &bot_owner, 0);
+		socktimer_on(bot->idx, 90, TIMER_REPEAT, do_ping, bot, &generic_owner);
 		botnet_replay_net(bot->bot);
 		egg_iprintf(bot->idx, "el");
 	} else {
@@ -577,7 +625,7 @@ static int sending_login(bot_t *bot, char *src, char *cmd, int argc, char *argv[
 		}
 		bot->proto = malloc(sizeof(*bot->proto));
 		bot->proto->dummy = 0;
-		egg_iprintf(bot->idx, "hello %s", bot->user->handle);
+		egg_iprintf(bot->idx, ":%s hello %s", botnet_get_name(), bot->user->handle);
 	} else if (!strcasecmp(cmd, "PASSREQ")) {
 		char buf[33];
 		unsigned char hash[16];
@@ -613,6 +661,7 @@ static int sending_login(bot_t *bot, char *src, char *cmd, int argc, char *argv[
 		xml_node_set_str(argv[2], info, "version", 0, (void *) 0);
 
 		bot->bot = botnet_new(bot->user->handle, bot->user, NULL, NULL, info, &bothandler, bot, &bot_owner, 0);
+		socktimer_on(bot->idx, 90, TIMER_REPEAT, do_ping, bot, &generic_owner);
 		botnet_replay_net(bot->bot);
 		egg_iprintf(bot->idx, "el");
 	} else {
@@ -656,6 +705,14 @@ static int idx_on_read(void *client_data, int idx, char *data, int len)
 
 	len -= argv[argc - 1] - start;
 	argv[argc] = NULL;
+
+	if (!strcasecmp(argv[0], "error")) {
+		putlog(LOG_MISC, "*", _("Botnet: Error from %s: %s"), bot->user ? bot->user->handle : "unknown", argv[1] ? argv[1] : "no reason");
+		if (bot->bot) botnet_delete(bot->bot, "Error from bot.");
+		else sockbuf_delete(bot->idx);
+		return 0;
+	}
+
 	if (!bot->bot) {
 		if (bot->incoming) return recving_login(bot, srcstr, argv[0], argc - 1, argv + 1, len);
 		else return sending_login(bot, srcstr, argv[0], argc - 1, argv + 1, len);
@@ -762,7 +819,7 @@ static void bot_init()
 	config_update_table(botnet_config_vars, config_root, "botnet", 0, NULL);
 
 	listen_idx = egg_server(botnet_config.ip, botnet_config.port, &real_port);
-	sockbuf_set_handler(listen_idx, &server_handler, NULL, &sock_owner);
+	sockbuf_set_handler(listen_idx, &server_handler, NULL, &generic_owner);
 
 	bind_add_simple(BTN_BOTNET_REQUEST_LINK, NULL, "eggdrop", do_link);
 }

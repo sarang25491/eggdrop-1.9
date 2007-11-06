@@ -19,7 +19,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: main.c,v 1.190 2007/05/09 01:32:32 sven Exp $";
+static const char rcsid[] = "$Id: main.c,v 1.191 2007/11/06 00:05:40 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -236,9 +236,7 @@ static int core_secondly()
 
 		miltime = (nowtm.tm_hour * 100) + (nowtm.tm_min);
 		if (nowtm.tm_min % 5 == 0) {
-			botnet_entity_t me = bot_entity((botnet_bot_t *) 0);
 			eggdrop_event("5minutely");
-			botnet_extension(EXTENSION_NEIGHBOURS, &me, NULL, NULL, "ping", "", 0);
 			botnet_autolink();
 		}
 		if (nowtm.tm_min == 0) eggdrop_event("hourly");

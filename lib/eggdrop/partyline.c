@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: partyline.c,v 1.29 2007/08/18 22:32:23 sven Exp $";
+static const char rcsid[] = "$Id: partyline.c,v 1.30 2007/11/06 00:05:40 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -222,12 +222,13 @@ int partyline_printf_all_but(int pid, const char *fmt, ...)
 static int on_putlog(int flags, const char *chan, const char *text, int len)
 {
 	partychan_t *chanptr;
+	botnet_entity_t me = bot_entity(NULL);
 
 	chanptr = partychan_lookup_name(chan);
 	if (!chanptr)
 		return(0);
 
-	localchan_msg(chanptr, NULL, text, len);
+	localchan_msg(chanptr, &me, text, len);
 	return(0);
 }
 

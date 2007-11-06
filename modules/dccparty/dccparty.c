@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: dccparty.c,v 1.16 2007/09/13 22:20:56 sven Exp $";
+static const char rcsid[] = "$Id: dccparty.c,v 1.17 2007/11/06 00:05:40 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -114,6 +114,7 @@ static int got_chat_request(char *nick, char *uhost, user_t *u, char *type, char
 
 	sockbuf_set_handler(idx, &dcc_handler, session, &dcc_sock_owner);
 	linemode_on(idx);
+	socktimer_on(idx, 60, 0, NULL, NULL, &dcc_generic_owner);
 	return(0);
 }
 
@@ -219,6 +220,7 @@ static int dcc_on_read(void *client_data, int idx, char *data, int len)
 				egg_iprintf(idx, _("\r\nWelcome to the dcc partyline interface!\r\n"));
 				if (session->ident) egg_iprintf(idx, _("Your ident is: %s\r\n"), session->ident);
 				if (session->host) egg_iprintf(idx, _("Your hostname is: %s\r\n"), session->host);
+				socktimer_off(idx);
 				/* Put them on the main channel. */
 				partychan_join_name("*", session->party, 0);
 			}

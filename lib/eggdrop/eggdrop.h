@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: eggdrop.h,v 1.48 2007/06/03 23:43:45 sven Exp $
+ * $Id: eggdrop.h,v 1.49 2007/11/06 00:05:39 sven Exp $
  */
 
 #ifndef _EGG_EGGDROP_H_
@@ -60,6 +60,7 @@
 #include <eggdrop/botnet.h>
 #include <eggdrop/help.h>
 #include <eggdrop/sockbuf.h>
+#include <eggdrop/socktimer.h>
 #include <eggdrop/script.h>
 #include <eggdrop/throttle.h>
 #include <eggdrop/timeutil.h>

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: telnetparty.c,v 1.26 2007/09/13 22:20:58 sven Exp $";
+static const char rcsid[] = "$Id: telnetparty.c,v 1.27 2007/11/06 00:05:40 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -324,6 +324,7 @@ static int telnet_on_newclient(void *client_data, int idx, int newidx, const cha
 
 	sockbuf_set_handler(newidx, &client_handler, session, &telnet_sockbuf_owner);
 	sockbuf_attach_filter(newidx, &telnet_filter, session);
+	socktimer_on(newidx, 60, 0, NULL, NULL, &telnet_generic_owner);
 	linemode_on(newidx);
 
 	/* Stealth logins are where we don't say anything until we know they
@@ -431,6 +432,7 @@ static int telnet_on_read(void *client_data, int idx, char *data, int len)
 				session->state = STATE_NICKNAME;
 			}
 			else {
+				socktimer_off(idx);
 				session->party = partymember_new(-1, session->user, NULL, session->nick, session->ident ? session->ident : "~telnet", session->host ? session->host : session->ip, &telnet_party_handler, session, &telnet_partymember_owner);
 				session->state = STATE_PARTYLINE;
 				egg_iprintf(idx, "\r\nWelcome to the telnet partyline interface!\r\n");
