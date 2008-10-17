@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptnet.c,v 1.12 2007/09/13 22:20:57 sven Exp $";
+static const char rcsid[] = "$Id: scriptnet.c,v 1.13 2008/10/17 15:57:43 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -346,17 +346,17 @@ static int on_delete(event_owner_t *owner, void *client_data)
 }
 
 script_command_t script_net_cmds[] = {
-	{"", "net_takeover", script_net_takeover, NULL, 1, "i", "idx", SCRIPT_INTEGER, 0},	/* DDD */
-	{"", "net_listen", script_net_listen, NULL, 1, "i", "port", 0, SCRIPT_PASS_RETVAL},	/* DDD */
-	{"", "net_open", script_net_open, NULL, 2, "sii", "host port ?timeout?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},	/* DDD */
-	{"", "net_close", script_net_close, NULL, 1, "i", "idx", SCRIPT_INTEGER, 0},	/* DDD */
-	{"", "net_write", script_net_write, NULL, 2, "isi", "idx text ?len?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},	/* DDD */
-	{"", "net_handler", script_net_handler, NULL, 2, "isc", "idx event callback", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},	/* DDD */
-	{"", "net_linemode", script_net_linemode, NULL, 1, "ii", "idx ?on-off?", SCRIPT_INTEGER, SCRIPT_PASS_COUNT | SCRIPT_VAR_ARGS},	/* DDD */
-	{"", "net_info", script_net_info, NULL, 2, "is", "idx what", 0, SCRIPT_PASS_RETVAL},	/* DDD */
-	{"", "net_throttle", script_net_throttle, NULL, 3, "iii", "idx speed-in speed-out", SCRIPT_INTEGER, 0},	/* DDD */
-	{"", "net_throttle_in", script_net_throttle_set, (void *)0, 2, "ii", "idx speed", SCRIPT_INTEGER, SCRIPT_PASS_CDATA},	/* DDD */
-	{"", "net_throttle_out", script_net_throttle_set, (void *)1, 2, "ii", "idx speed", SCRIPT_INTEGER, SCRIPT_PASS_CDATA},	/* DDD */
-	{"", "net_throttle_off", throttle_off, NULL, 1, "i", "idx", SCRIPT_INTEGER, 0},	/* DDD */
+	{"net", "takeover", script_net_takeover, NULL, 1, "i", "idx", SCRIPT_INTEGER, 0},	/* DDD */
+	{"net", "listen", script_net_listen, NULL, 1, "i", "port", 0, SCRIPT_PASS_RETVAL},	/* DDD */
+	{"net", "open", script_net_open, NULL, 2, "sii", "host port ?timeout?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},	/* DDD */
+	{"net", "close", script_net_close, NULL, 1, "i", "idx", SCRIPT_INTEGER, 0},	/* DDD */
+	{"net", "write", script_net_write, NULL, 2, "isi", "idx text ?len?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},	/* DDD */
+	{"net", "handler", script_net_handler, NULL, 2, "isc", "idx event callback", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},	/* DDD */
+	{"net", "linemode", script_net_linemode, NULL, 1, "ii", "idx ?on-off?", SCRIPT_INTEGER, SCRIPT_PASS_COUNT | SCRIPT_VAR_ARGS},	/* DDD */
+	{"net", "info", script_net_info, NULL, 2, "is", "idx what", 0, SCRIPT_PASS_RETVAL},	/* DDD */
+	{"net", "throttle", script_net_throttle, NULL, 3, "iii", "idx speed-in speed-out", SCRIPT_INTEGER, 0},	/* DDD */
+	{"net", "throttle_in", script_net_throttle_set, (void *)0, 2, "ii", "idx speed", SCRIPT_INTEGER, SCRIPT_PASS_CDATA},	/* DDD */
+	{"net", "throttle_out", script_net_throttle_set, (void *)1, 2, "ii", "idx speed", SCRIPT_INTEGER, SCRIPT_PASS_CDATA},	/* DDD */
+	{"net", "throttle_off", throttle_off, NULL, 1, "i", "idx", SCRIPT_INTEGER, 0},	/* DDD */
 	{0}
 };

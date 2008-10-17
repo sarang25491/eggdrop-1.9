@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptconfig.c,v 1.10 2005/12/01 21:22:11 stdarg Exp $";
+static const char rcsid[] = "$Id: scriptconfig.c,v 1.11 2008/10/17 15:57:43 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -111,10 +111,10 @@ static int script_config_load(char *handle, char *fname)
 }
 
 script_command_t script_config_cmds[] = {
-	{"", "config_exists", script_config_exists, NULL, 1, "ss", "?handle? path", SCRIPT_INTEGER, SCRIPT_VAR_ARGS|SCRIPT_VAR_FRONT},	/* DDD */
-	{"", "config_get", script_config_get, NULL, 1, "ss", "?handle? path", SCRIPT_STRING, SCRIPT_VAR_ARGS|SCRIPT_VAR_FRONT}, /* DDD */
-	{"", "config_set", script_config_set, NULL, 2, "sss", "?handle? path value", SCRIPT_INTEGER, SCRIPT_VAR_ARGS|SCRIPT_VAR_FRONT}, /* DDD */
-	{"", "config_load", script_config_load, NULL, 2, "ss", "handle filename", SCRIPT_INTEGER, 0}, /* DDD */
-	{"", "config_save", config_save, NULL, 2, "ss", "handle filename", SCRIPT_INTEGER, 0}, /* DDD */
+	{"config", "exists", script_config_exists, NULL, 1, "ss", "?handle? path", SCRIPT_INTEGER, SCRIPT_VAR_ARGS|SCRIPT_VAR_FRONT},	/* DDD */
+	{"config", "get", script_config_get, NULL, 1, "ss", "?handle? path", SCRIPT_STRING, SCRIPT_VAR_ARGS|SCRIPT_VAR_FRONT}, /* DDD */
+	{"config", "set", script_config_set, NULL, 2, "sss", "?handle? path value", SCRIPT_INTEGER, SCRIPT_VAR_ARGS|SCRIPT_VAR_FRONT}, /* DDD */
+	{"config", "load", script_config_load, NULL, 2, "ss", "handle filename", SCRIPT_INTEGER, 0}, /* DDD */
+	{"config", "save", config_save, NULL, 2, "ss", "handle filename", SCRIPT_INTEGER, 0}, /* DDD */
 	{0}
 };

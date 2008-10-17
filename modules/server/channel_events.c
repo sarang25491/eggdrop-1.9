@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channel_events.c,v 1.5 2005/12/28 17:27:31 sven Exp $";
+static const char rcsid[] = "$Id: channel_events.c,v 1.6 2008/10/17 15:57:43 sven Exp $";
  #endif
 
 #include "server.h"
@@ -560,8 +560,8 @@ static void parse_chan_mode(char *from_nick, char *from_uhost, user_t *u, int na
 		else if (strchr(current_server.type2modes, *change)) {
 			hasarg = 1;
 		}
-		else if (changestr[0] == '+' && strchr(current_server.type3modes, *change)) {
-			hasarg = 1;
+		else if (strchr(current_server.type3modes, *change)) {
+			if (changestr[0] == '+') hasarg = 1;
 		}
 		else {
 			modify_channel = 1;
@@ -579,6 +579,7 @@ static void parse_chan_mode(char *from_nick, char *from_uhost, user_t *u, int na
 		if (modify_member) {
 			/* Find the person it modifies and apply. */
 			m = channel_lookup_member(chan, arg);
+			flag_merge_str(&m->mode, changestr);
 		}
 		else if (modify_channel) {
 			/* Simple flag change for channel. */

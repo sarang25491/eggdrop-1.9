@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: pythonscript.c,v 1.5 2007/01/13 12:23:40 sven Exp $";
+static const char rcsid[] = "$Id: pythonscript.c,v 1.6 2008/10/17 15:57:42 sven Exp $";
 #endif
 
 #include <Python.h>
@@ -110,6 +110,7 @@ static int my_load_script(void *ignore, char *fname)
 /* This function creates the Python <-> C variable linkage on reads, writes, and dels. */
 static int my_link_var(void *ignore, script_linked_var_t *var) {
 	CallableObject *O;
+	char *cmdname;
 
 	O = PyObject_New(CallableObject, &Callable_Type);       /* new reference */
 	if (!O) {
@@ -118,9 +119,16 @@ static int my_link_var(void *ignore, script_linked_var_t *var) {
 		return -1;
 	}
 
+	if (var->class && strlen(var->class)) {
+		cmdname = egg_mprintf("%s_%s", var->class, var->name);
+	}
+	else {
+		cmdname = strdup(var->name);
+	}
 	O->type = PYTHON_VAR;
 	O->client_data = var;
-	PyModule_AddObject(EggdropModule, var->name, (PyObject *) O); /* EggdropModule steals a reference to O */
+	PyModule_AddObject(EggdropModule, cmdname, (PyObject *) O); /* EggdropModule steals a reference to O */
+	free(cmdname);
 	return 0;
 }
 
@@ -201,15 +209,24 @@ static int my_python_cb_delete(event_owner_t *owner, void *client_data) {
 
 /* Create Python commands with a C callback. */
 static int my_create_command(void *ignore, script_raw_command_t *info) {
+	char *cmdname;
 	CallableObject *O = PyObject_New(CallableObject, &Callable_Type);
 
+	if (info->class && strlen(info->class)) {
+		cmdname = egg_mprintf("%s_%s", info->class, info->name);
+	}
+	else {
+		cmdname = strdup(info->name);
+	}
 	O->type = PYTHON_FUNC;
 	O->client_data = info;
-	if (PyModule_AddObject(EggdropModule, info->name, (PyObject *)O)) {
+	if (PyModule_AddObject(EggdropModule, cmdname, (PyObject *)O)) {
+		free(cmdname);
 		PyErr_Print();
 		FlushAll();
 		return 1;
 	}
+	free(cmdname);
 	return 0;
 }
 

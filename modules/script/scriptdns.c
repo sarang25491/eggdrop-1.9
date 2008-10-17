@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptdns.c,v 1.2 2006/09/12 01:50:51 sven Exp $";
+static const char rcsid[] = "$Id: scriptdns.c,v 1.3 2008/10/17 15:57:43 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -35,8 +35,8 @@ static int script_dns_reverse(const char *ip, script_callback_t *callback, char 
 }
 
 script_command_t script_dns_cmds[] = {
-	{"", "dns_lookup", script_dns_lookup, NULL, 2, "scsi", "host callback ?callbackdata? ?len?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},	/* DDD */
-	{"", "dns_reverse", script_dns_reverse, NULL, 2, "scsi", "ip  callback ?callbackdata? ?len?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},	/* DDD */
-	{"", "dns_cancel", egg_dns_cancel, NULL, 1, "ii", "id ?docallback?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},	/* DDD */
+	{"dns", "lookup", script_dns_lookup, NULL, 2, "scsi", "host callback ?callbackdata? ?len?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},	/* DDD */
+	{"dns", "reverse", script_dns_reverse, NULL, 2, "scsi", "ip  callback ?callbackdata? ?len?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},	/* DDD */
+	{"dns", "cancel", egg_dns_cancel, NULL, 1, "ii", "id ?docallback?", SCRIPT_INTEGER, SCRIPT_VAR_ARGS},	/* DDD */
 	{0}
 };

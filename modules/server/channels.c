@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: channels.c,v 1.39 2006/08/29 02:15:55 sven Exp $";
+static const char rcsid[] = "$Id: channels.c,v 1.40 2008/10/17 15:57:43 sven Exp $";
  #endif
 
 #include "server.h"
@@ -123,12 +123,17 @@ int channel_remove(const char *name)
 channel_mode_arg_t *channel_get_arg(channel_t *chan, int type)
 {
 	int i;
+	char *c;
+	channel_mode_arg_t *arg;
 
-	if (!chan->args && current_server.type2modes) {
-		chan->nargs = strlen(current_server.type2modes);
+	if (!chan->args && (current_server.type2modes || current_server.type3modes)) {
+		chan->nargs = strlen(current_server.type2modes) + strlen(current_server.type3modes);
 		chan->args = calloc(chan->nargs, sizeof(*chan->args));
-		for (i = 0; i < chan->nargs; i++) {
-			chan->args[i].type = current_server.type2modes[i];
+		for (arg = chan->args, c = current_server.type2modes; *c; arg++, c++) {
+			arg->type = *c;
+		}
+		for (c = current_server.type3modes; *c; arg++, c++) {
+			arg->type = *c;
 		}
 	}
 	for (i = 0; i < chan->nargs; i++) {

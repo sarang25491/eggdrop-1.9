@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: scriptmod.c,v 1.15 2007/09/13 22:20:57 sven Exp $";
+static const char rcsid[] = "$Id: scriptmod.c,v 1.16 2008/10/17 15:57:43 sven Exp $";
 #endif
 
 #include <eggdrop/eggdrop.h>
@@ -33,10 +33,10 @@ static int script_module_unload(char *name)
 }
 
 static script_command_t script_mod_cmds[] = {
-	{"", "module_load", (Function) module_load, NULL, 1, "s", "name", SCRIPT_INTEGER, 0},	/* DDD */
-	{"", "module_unload", (Function) script_module_unload, NULL, 1, "s", "name", SCRIPT_INTEGER, 0},	/* DDD */
-	{"", "module_add_dir", (Function) module_add_dir, NULL, 1, "s", "dir", SCRIPT_INTEGER, 0},	/* DDD */
-	{"", "module_loaded", (Function) module_loaded, NULL, 1, "s", "name", SCRIPT_INTEGER, 0},	/* DDD */
+	{"module", "load", (Function) module_load, NULL, 1, "s", "name", SCRIPT_INTEGER, 0},	/* DDD */
+	{"module", "unload", (Function) script_module_unload, NULL, 1, "s", "name", SCRIPT_INTEGER, 0},	/* DDD */
+	{"module", "add_dir", (Function) module_add_dir, NULL, 1, "s", "dir", SCRIPT_INTEGER, 0},	/* DDD */
+	{"module", "loaded", (Function) module_loaded, NULL, 1, "s", "name", SCRIPT_INTEGER, 0},	/* DDD */
 	{0}
 };
 

@@ -18,7 +18,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: party_commands.c,v 1.27 2006/08/29 02:15:55 sven Exp $";
+static const char rcsid[] = "$Id: party_commands.c,v 1.28 2008/10/17 15:57:43 sven Exp $";
 #endif
 
 #include "server.h"
@@ -352,20 +352,88 @@ static int party_minus_chan(partymember_t *p, const char *nick, user_t *u, const
 	return(BIND_RET_LOG);
 }
 
+static int channel_get_modes(channel_t *chan, char *buf, int maxlen)
+{
+	int i, len, l;
+
+	flag_to_str(&chan->mode, buf);
+	len = strlen(buf);
+	for (i = 0; i < chan->nargs; ++i) {
+		if (!chan->args[i].value) continue;
+		buf[len++] = chan->args[i].type;
+		if (len + 1 > maxlen) {
+			buf[len] = 0;
+			return 1;
+		}
+	}
+	buf[len] = 0;
+	for (i = 0; i < chan->nargs; ++i) {
+		if (!chan->args[i].value) continue;
+		l = strlen(chan->args[i].value);
+		if (len + 2 + l > maxlen) return 1;
+		buf[len++] = ' ';
+		strcpy(buf + len, chan->args[i].value);
+		len += l;
+	}
+	return 0;
+}
+
+static char channel_get_prefix(channel_member_t *m)
+{
+	int i, len;
+	char buf[256];
+
+	flag_to_str(&m->mode, buf);
+	len = strlen(current_server.modeprefix);
+	for (i = 0; i < len; ++i) {
+		if (strchr(buf, current_server.modeprefix[i])) return current_server.whoprefix[i];
+	}
+	return ' ';
+}
+
 /* channels */
 static int party_channels(partymember_t *p, const char *nick, user_t *u, const char *cmd, const char *text)
 {
+	char buf[512];
+	user_t *user;
 	channel_t *chan;
+	channel_member_t *m;
 
-	if (nchannels <= 0) {
-		partymember_printf(p, _("The channel list is empty."));
-		return(BIND_RET_LOG);
+	if ( !text || !*text) {
+		if (nchannels <= 0) {
+			partymember_printf(p, _("The channel list is empty."));
+			return BIND_RET_LOG;
+		}
+
+		for (chan = channel_head; chan; chan = chan->next) {
+			partymember_printf(p, "   %s : %d member%s", chan->name, chan->nmembers, chan->nmembers == 1 ? "" : "s");
+		}
+		return BIND_RET_LOG;
 	}
 
-	for (chan = channel_head; chan; chan = chan->next) {
-		partymember_printf(p, "   %s : %d member%s", chan->name, chan->nmembers, chan->nmembers == 1 ? "" : "s");
+	chan = channel_probe(text, 0);
+	if (!chan) {
+		partymember_printf(p, "Channel not found!");
+		return 0;
 	}
-	return(BIND_RET_LOG);
+
+	if (!chan->nmembers) {
+		partymember_printf(p, "Not in channel.");
+		return 0;
+	}
+
+	channel_get_modes(chan, buf, 512);
+	partymember_printf(p, "Channel %s, %d member%s, mode +%s:", chan->name, chan->nmembers, chan->nmembers == 1 ? "" : "s", buf);
+	partymember_printf(p, "Channel Topic: %s", chan->topic);
+	partymember_printf(p, "(n = owner, m = master, o = op, d = deop, b = bot)");
+	partymember_printf(p, " NICKNAME        HANDLE          JOIN  IDLE  USER@HOST");
+	for (m = chan->member_head; m; m = m->next) {
+		snprintf(buf, 512, "%s!%s", m->nick, m->uhost);
+		user = user_lookup_by_irchost(buf);
+		partymember_printf(p, "%c%-15s %-15s %-5s %-5s %s", channel_get_prefix(m), m->nick, user ? user->handle : "*", "N/A", "N/A", m->uhost);
+	}
+	partymember_printf(p, "End of channel info.");
+	return BIND_RET_LOG;
 }
 
 /* chanset <channel / *> <setting> [data] */
